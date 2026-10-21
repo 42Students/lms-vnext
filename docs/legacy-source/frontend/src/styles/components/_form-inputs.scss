@@ -1,0 +1,24 @@
+// Shared default field geometry. Dense/small and large variants keep Ant's explicit sizing;
+// role/page-specific forms imported later can intentionally override these defaults.
+.ant-input:not(.ant-input-sm):not(.ant-input-lg),
+.ant-input-affix-wrapper:not(.ant-input-affix-wrapper-sm):not(.ant-input-affix-wrapper-lg),
+.ant-picker:not(.ant-picker-small):not(.ant-picker-large),
+.ant-input-number:not(.ant-input-number-sm):not(.ant-input-number-lg) {
+  min-height: 40px;
+  border-radius: $radius-control;
+}
+
+// The input inside a wrapper (search boxes, inputs with a prefix or clear icon) takes the wrapper's height. Without this
+// it kept its own 40px on top of the wrapper's padding, and every search box stood 58px tall beside 40px buttons.
+.ant-input-affix-wrapper > input.ant-input:not(.ant-input-sm):not(.ant-input-lg) {
+  min-height: 0;
+}
+
+.ant-select:not(.ant-select-sm):not(.ant-select-lg) {
+  .ant-select-selector {
+    min-height: 40px;
+    border-radius: $radius-control !important;
+    display: flex;
+    align-items: center;
+  }
+}

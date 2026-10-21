@@ -1,0 +1,1075 @@
+// Sign-in page (src/loginPages/Login.js): one white card on the product's own light page, with faint commit-graph traces
+// at the edges (LoginDecor.jsx). Colours are the app's: ink and lines from _tpo-tokens.scss, the product teal for actions.
+// The page always uses 42LMS colours, the same for every college; a college adds only its logo and name.
+
+.ln2 {
+  --ln2-accent: #0a7c88;
+  --ln2-accent-strong: #086974;
+  --ln2-pulse: #14a3b0;
+  --ln2-ring: rgba(10, 124, 136, 0.16);
+  --ln2-ink: #172033;
+  --ln2-ink-2: #334155;
+  --ln2-muted: #5b6b82;
+  --ln2-faint: #66758d;
+  --ln2-line: #e7ecf2;
+  --ln2-field: #c3cfdd;
+  --ln2-bg: #f6f8fb;
+
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background-color: var(--ln2-bg);
+  background-image: linear-gradient(180deg, #f8fafc 0%, #f2f5f9 100%);
+  background-size: cover;
+  background-position: center;
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--ln2-ink);
+  -webkit-font-smoothing: antialiased;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  h1,
+  h2,
+  p {
+    margin: 0;
+  }
+
+  // Soft light: a white glow behind the card and a faint teal haze from two corners.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background:
+      radial-gradient(640px 480px at 50% 46%, rgba(255, 255, 255, 0.5), transparent 70%);
+    pointer-events: none;
+  }
+
+  // Fine grid, only towards the edges (it fades out around the card).
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(rgba(23, 32, 51, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(23, 32, 51, 0.035) 1px, transparent 1px);
+    background-size: 48px 48px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 75% at 50% 46%, transparent 30%, #000 80%);
+    mask-image: radial-gradient(ellipse 70% 75% at 50% 46%, transparent 30%, #000 80%);
+    pointer-events: none;
+  }
+}
+
+.ln2-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 24px 72px; // the extra bottom room lifts the card group ~20px above the centre
+}
+
+.ln2-top {
+  display: flex;
+  align-self: stretch;
+  padding: 24px 8px 0;
+}
+
+.ln2-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  // The logo files are the full "42 Learn" lockup: show only the 42 symbol (the left part) next to the 42LMS wordmark.
+  &__mark {
+    width: 37px;
+    height: 35px;
+    object-fit: cover;
+    object-position: left center;
+  }
+
+  &__word {
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--ln2-ink);
+  }
+}
+
+.ln2-card {
+  width: 100%;
+  max-width: 440px;
+  padding: 40px 36px 32px;
+  border: 1px solid var(--ln2-line);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow:
+    0 1px 2px rgba(16, 24, 40, 0.03),
+    0 20px 60px -28px rgba(16, 24, 40, 0.1),
+    0 48px 96px -48px rgba(10, 124, 136, 0.12);
+}
+
+.ln2-card__head {
+  margin-bottom: 28px;
+}
+
+// The college on its own address: logo (or a monogram in its colour) and name, above the title.
+.ln2-college {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--ln2-line);
+
+  &__logo {
+    flex: 0 0 auto;
+    max-width: 120px;
+    max-height: 44px;
+    object-fit: contain;
+  }
+
+  &__mark {
+    display: inline-grid;
+    flex: 0 0 44px;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 11px;
+    background: color-mix(in srgb, var(--ln2-accent) 10%, #fff);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ln2-accent) 22%, #fff);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--ln2-accent);
+  }
+
+  &__name {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--ln2-ink);
+  }
+}
+
+.ln2-title {
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--ln2-ink);
+}
+
+.ln2-subtitle {
+  margin-top: 8px !important;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ln2-muted);
+
+  strong {
+    font-weight: 600;
+    color: var(--ln2-ink);
+  }
+}
+
+// Email / Phone toggle (order and availability per college, see methodOrder in Login.js).
+.ln2-switch {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 24px;
+  padding: 4px;
+  border: 1px solid var(--ln2-line);
+  border-radius: 12px;
+  background: #f1f4f8;
+
+  &__thumb {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 4px;
+    width: calc(50% - 4px);
+    border-radius: 9px;
+    background: #fff;
+    box-shadow:
+      0 1px 2px rgba(16, 24, 40, 0.08),
+      0 2px 6px -2px rgba(16, 24, 40, 0.08);
+    transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  &[data-active="1"] &__thumb {
+    transform: translateX(100%);
+  }
+
+  &__option {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 9px;
+    background: none;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ln2-muted);
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    svg {
+      width: 17px;
+      height: 17px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    &:hover:not(.is-active) {
+      color: var(--ln2-ink-2);
+    }
+
+    &.is-active {
+      font-weight: 600;
+      color: var(--ln2-ink);
+
+      svg {
+        color: var(--ln2-accent);
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ln2-accent);
+      outline-offset: 2px;
+    }
+  }
+}
+
+.ln2-label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ln2-ink-2);
+}
+
+.ln2-form {
+  .ant-form-item {
+    margin-bottom: 20px;
+  }
+
+  .ant-form-item-explain-error {
+    margin-top: 6px;
+    font-size: 13px;
+    color: #d92d20;
+  }
+
+  .ant-form-item-with-help .ant-form-item-explain {
+    margin-bottom: 10px;
+  }
+}
+
+// Inputs (plain and with the +91 prefix, which antd wraps in .ant-input-affix-wrapper)
+.ln2 .ln2-input,
+.ln2 .ant-input-affix-wrapper.ln2-input {
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--ln2-field);
+  border-radius: 10px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 16px; // 16px keeps iOS from zooming into the field
+  color: var(--ln2-ink);
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &::placeholder,
+  input::placeholder {
+    color: #a3abb8;
+  }
+
+  &:hover {
+    border-color: #a6b5c8;
+  }
+
+  &:focus,
+  &.ant-input-affix-wrapper-focused,
+  &:focus-within {
+    border-color: var(--ln2-accent);
+    box-shadow: 0 0 0 4px var(--ln2-ring);
+    outline: none;
+  }
+
+  input {
+    height: 100%;
+    font-size: 16px;
+    color: var(--ln2-ink);
+    background: transparent;
+  }
+}
+
+.ln2 .ant-form-item-has-error .ln2-input,
+.ln2 .ant-form-item-has-error .ant-input-affix-wrapper.ln2-input {
+  border-color: #f04438;
+
+  &:focus,
+  &:focus-within {
+    box-shadow: 0 0 0 4px rgba(240, 68, 56, 0.14);
+  }
+}
+
+.ln2-cc {
+  margin-right: 6px;
+  padding-right: 12px;
+  border-right: 1px solid var(--ln2-field);
+  font-weight: 500;
+  color: var(--ln2-ink-2);
+}
+
+.ln2 .ln2-input--otp {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.42em;
+
+  &::placeholder {
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: normal;
+  }
+}
+
+// Primary button
+.ln2 .ln2-btn.ant-btn {
+  height: 48px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--ln2-accent);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.08);
+  transition: background-color 0.12s ease, box-shadow 0.12s ease, transform 0.08s ease, opacity 0.12s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--ln2-accent-strong);
+    color: #fff;
+    box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--ln2-accent) 55%, transparent);
+  }
+
+  &:active:not(:disabled) {
+    background: color-mix(in srgb, var(--ln2-accent-strong) 88%, #000);
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.1);
+    transform: translateY(1px) scale(0.995);
+  }
+
+  &:focus-visible {
+    outline: none;
+    color: #fff;
+    box-shadow: 0 0 0 4px var(--ln2-ring);
+  }
+
+  // Number not complete yet: muted, no lift; still clickable so the field can say what's missing.
+  &.ln2-btn--waiting:not(.ant-btn-loading) {
+    background: color-mix(in srgb, var(--ln2-accent) 45%, #fff);
+    box-shadow: none;
+
+    &:hover,
+    &:active {
+      background: color-mix(in srgb, var(--ln2-accent) 52%, #fff);
+      box-shadow: none;
+      transform: none;
+    }
+  }
+
+  // While sending: just a small spinner in the middle, no text.
+  &.ant-btn-loading {
+    opacity: 1;
+    color: transparent;
+
+    .ant-btn-loading-icon {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      margin: 0;
+      color: #fff;
+    }
+  }
+
+  &:disabled {
+    background: #c7d2de;
+    color: #fff;
+  }
+}
+
+.ln2-submit {
+  margin-bottom: 0 !important;
+}
+
+.ln2-consent {
+  margin-top: 16px !important;
+  font-size: 12.5px;
+  line-height: 1.55;
+  text-align: center;
+  color: var(--ln2-faint);
+
+  a {
+    color: var(--ln2-ink-2);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+
+    &:hover {
+      color: var(--ln2-accent);
+    }
+  }
+}
+
+.ln2-inline-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  color: var(--ln2-accent);
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    color: var(--ln2-accent-strong);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ln2-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  &:disabled {
+    color: var(--ln2-faint);
+    font-weight: 500;
+    cursor: default;
+  }
+}
+
+.ln2-otp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin: -6px 0 22px;
+  font-size: 14px;
+}
+
+.ln2-hint {
+  margin: -6px 0 14px !important;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ln2-muted);
+
+  &--warn {
+    margin: -4px 0 16px !important;
+    padding: 9px 12px;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    background: #fffbeb;
+    color: #92400e;
+  }
+}
+
+.ln2-alt {
+  margin-top: 18px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.ln2-link {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ln2-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ln2-alert {
+  margin-bottom: 22px;
+  padding: 14px 16px;
+  border: 1px solid #fed7aa;
+  border-radius: 12px;
+  background: #fff7ed;
+
+  &__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #9a3412;
+  }
+
+  &__body {
+    margin-top: 4px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: #7c2d12;
+  }
+}
+
+// Account picker (one number registered in more than one place)
+.ln2-accounts {
+  margin: 4px 0 22px;
+
+  .ln2-label {
+    margin-bottom: 2px;
+  }
+
+  .ln2-hint {
+    margin: 0 0 12px !important;
+  }
+
+  &__list,
+  &__group {
+    display: grid;
+    gap: 8px;
+  }
+}
+
+.ln2-account {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--ln2-line);
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover:not(:disabled) {
+    border-color: #c5cfdc;
+    background: #f9fbfd;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px var(--ln2-ring);
+  }
+
+  &.is-selected {
+    border-color: var(--ln2-accent);
+    background: #f2f8fb;
+    box-shadow: 0 0 0 3px var(--ln2-ring);
+  }
+
+  &.is-disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &__radio {
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #c5cfdc;
+    border-radius: 50%;
+    background: #fff;
+  }
+
+  &.is-selected &__radio {
+    border-color: var(--ln2-accent);
+    background: var(--ln2-accent);
+    box-shadow: inset 0 0 0 3px #fff;
+  }
+
+  &__main {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__org {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--ln2-ink);
+  }
+
+  &__meta {
+    overflow: hidden;
+    font-size: 13px;
+    color: var(--ln2-muted);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 4px;
+  }
+}
+
+.ln2-tag {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &--info {
+    background: #e0f2fe;
+    color: #075985;
+  }
+
+  &--warn {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  &--danger {
+    background: #fee4e2;
+    color: #b42318;
+  }
+}
+
+.ln2-footer {
+  width: 100%;
+  max-width: 440px;
+  margin-top: 20px;
+  font-size: 13.5px;
+  text-align: center;
+  color: var(--ln2-muted);
+
+  .ln2-inline-link {
+    font-weight: 500;
+  }
+
+  p + p {
+    margin-top: 18px !important;
+  }
+
+  &__legal {
+    font-size: 11.5px;
+    letter-spacing: 0.01em;
+    word-spacing: 0.08em;
+    color: #8592a6;
+
+    strong {
+      font-weight: 600;
+      color: var(--ln2-ink-2);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+
+      &:hover {
+        color: var(--ln2-ink);
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+
+// The card sits in the optical centre of the page.
+.ln2-card {
+  margin-top: auto;
+}
+
+.ln2-footer {
+  margin-bottom: auto;
+}
+
+
+// ------------------------------------------------------------------ floating coding symbols (LoginDecor.jsx)
+.ln2-decor {
+  --ln2-mx: 0;
+  --ln2-my: 0;
+
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+// One soft halo of 42LMS teal centred behind the card, breathing slowly.
+.ln2-aurora {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+
+  span {
+    position: absolute;
+    border-radius: 50%;
+    animation: ln2-halo ease-in-out infinite alternate;
+    will-change: transform;
+  }
+
+  // Wide outer light.
+  &__a {
+    top: calc(46% - 42vmax);
+    left: calc(50% - 56vmax);
+    width: 112vmax;
+    height: 84vmax;
+    background: radial-gradient(
+      ellipse at center,
+      color-mix(in srgb, #26bac7 17%, transparent) 0%,
+      color-mix(in srgb, #7dd3e0 8%, transparent) 38%,
+      transparent 66%
+    );
+    animation-duration: 18s;
+  }
+
+  // Deeper core just behind the card, slightly off-centre so it shifts as it breathes.
+  &__b {
+    top: calc(48% - 22vmax);
+    left: calc(52% - 30vmax);
+    width: 60vmax;
+    height: 44vmax;
+    background: radial-gradient(
+      ellipse at center,
+      color-mix(in srgb, #0a7c88 9%, transparent) 0%,
+      transparent 62%
+    );
+    animation-duration: 24s;
+    animation-delay: -9s;
+  }
+}
+
+@keyframes ln2-halo {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(1.5vmax, -1vmax, 0) scale(1.06);
+  }
+
+  100% {
+    transform: translate3d(-1.5vmax, 1vmax, 0) scale(0.97);
+  }
+}
+
+.ln2-decor__item {
+  position: absolute;
+  transform: translate(
+    calc(-50% + var(--ln2-mx) * var(--d) * 1px),
+    calc(-50% + var(--ln2-my) * var(--d) * 1px)
+  );
+  will-change: transform;
+
+  &--ink {
+    color: rgba(23, 32, 51, 0.17);
+  }
+
+  &--accent {
+    color: color-mix(in srgb, var(--ln2-accent) 30%, transparent);
+  }
+
+  &--token {
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-weight: 400;
+    line-height: 1;
+    white-space: nowrap;
+    font-variant-ligatures: none; // keep => and && as typed, not merged into arrows
+  }
+
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.ln2-decor__float {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: rotate(var(--rot));
+  animation: ln2-drift ease-in-out infinite alternate;
+}
+
+@keyframes ln2-drift {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(var(--rot));
+  }
+
+  50% {
+    transform: translate3d(6px, -12px, 0) rotate(calc(var(--rot) + 4deg));
+  }
+
+  100% {
+    transform: translate3d(-4px, 8px, 0) rotate(calc(var(--rot) - 3deg));
+  }
+}
+
+// Phones: the card fills the width, so only the symbols in the lower part of the page show, smaller and fainter.
+@media (max-width: 600px) {
+  .ln2-decor__item {
+    opacity: 0.7;
+    scale: 0.75;
+
+    &:not(.ln2-decor__item--phone) {
+      display: none;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ln2-decor__float,
+  .ln2-aurora span {
+    animation: none;
+  }
+}
+
+// ------------------------------------------------------------------ smaller screens
+@media (max-width: 600px) {
+  .ln2-main {
+    padding: 0 20px 24px;
+  }
+
+  .ln2::after {
+    opacity: 0.5;
+  }
+
+  .ln2-top {
+    padding: 22px 4px 0;
+    margin-bottom: 28px;
+  }
+
+  .ln2-card {
+    margin-top: 0;
+    padding: 28px 22px 24px;
+  }
+
+  .ln2-title {
+    font-size: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ln2 * {
+    transition: none !important;
+  }
+}
+
+// ------------------------------------------------------------------ the robot leaning on the card (LoginRobot.jsx)
+.ln2-card {
+  position: relative;
+}
+
+.ln2-robot {
+  --ln2-ex: 0px;
+  --ln2-ey: 0px;
+  position: absolute;
+  left: calc(100% - 30px); // its hand (svg x 30) rests on the card's right edge
+  bottom: 18px;
+  z-index: 2;
+  width: 232px; // drawing is 200 wide; the extra 32 keeps the raised, waving hand inside the box (it was cut off)
+  pointer-events: none;
+  user-select: none;
+
+  &__svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+
+    // Only the still hover box catches the mouse (hovering the robot waves hello); the moving parts never do.
+    * {
+      pointer-events: none;
+    }
+
+    .ln2-robot__hit {
+      fill: transparent;
+      pointer-events: all;
+    }
+  }
+
+  &__bubble {
+    position: absolute;
+    left: 44px; // a long tip still ends ~35px inside the narrowest desktop screen (1001px)
+    bottom: calc(100% - 22px); // above the antenna; longer tips grow upwards
+    max-width: 230px;
+    padding: 7px 12px;
+    border: 1px solid var(--ln2-line);
+    border-radius: 12px 12px 12px 4px;
+    background: #fff;
+    box-shadow: 0 8px 24px -12px rgba(16, 24, 40, 0.18);
+    color: var(--ln2-ink-2);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+    width: max-content;
+    animation: ln2-bubble-in 0.35s ease-out both;
+  }
+
+  &__shadow { fill: rgba(23, 32, 51, 0.08); }
+  &__shell { stroke: #d3dde8; stroke-width: 1.5; }
+  &__limb { fill: #e3eaf2; stroke: #d3dde8; stroke-width: 1.5; }
+  &__dark { fill: #2a3548; }
+  &__panel { fill: #e6f5f6; stroke: #c7e6e9; stroke-width: 1; }
+  &__visor { fill: #172033; }
+  &__ear { fill: var(--ln2-accent); }
+  &__antenna { stroke: #9aa9bb; stroke-width: 3; stroke-linecap: round; }
+  &__bulb { fill: var(--ln2-pulse); transition: fill 0.3s; }
+  &__hand { fill: #fff; stroke: #d3dde8; stroke-width: 1.5; }
+  &__arm-line { fill: none; stroke: #d3dde8; stroke-width: 14; stroke-linecap: round; }
+  &__arm-fill { fill: none; stroke: #fff; stroke-width: 11; stroke-linecap: round; }
+  &__blush { fill: #ff9fb2; opacity: 0; transition: opacity 0.3s; }
+
+  &__body {
+    transform-box: view-box;
+    transform-origin: 142px 250px;
+    transform: rotate(-4deg);
+  }
+
+  &__head {
+    transform-box: view-box;
+    transform-origin: 141px 122px;
+    animation: ln2-robot-breathe 4.5s ease-in-out infinite;
+  }
+
+  &__heart { animation: ln2-robot-pulse 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+
+  &__eyes {
+    transform: translate(var(--ln2-ex), var(--ln2-ey));
+    transition: transform 0.18s ease-out;
+    fill: #5ce1e6;
+    stroke: #5ce1e6;
+    filter: drop-shadow(0 0 3px rgba(92, 225, 230, 0.75));
+  }
+
+  &__eye-open {
+    stroke: none;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: ln2-robot-blink 5s infinite;
+  }
+
+  &__eye-closed,
+  &__eye-happy {
+    fill: none;
+    stroke-width: 3.2;
+    stroke-linecap: round;
+    display: none;
+  }
+
+  &__eye-sad {
+    stroke: none;
+    display: none;
+  }
+
+  &__free-arm {
+    transform-box: view-box;
+    transform-origin: 168px 146px;
+    transition: transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+
+  // shy: eyes closed, the free hand over its eyes, a little blush
+  &--shy &__eye-open { display: none; }
+  &--shy &__eye-closed { display: inline; }
+  &--shy &__free-arm { transform: rotate(180deg); }
+  &--shy &__blush { opacity: 0.8; }
+
+  // oops: sad eyes, amber antenna, a small tilt
+  &--oops &__eye-open { display: none; }
+  &--oops &__eye-sad { display: inline; }
+  &--oops &__bulb { fill: #f0a020; }
+  &--oops &__head { animation: ln2-robot-tilt 0.9s ease-in-out; }
+
+  // wave (hello, and on hover) and happy (signed in): smiling eyes and a wave
+  &--wave &__eye-open { display: none; }
+  &--wave &__eye-happy { display: inline; }
+  &--wave &__free-arm { animation: ln2-robot-wave 0.45s ease-in-out infinite alternate; }
+
+  &--happy &__eye-open { display: none; }
+  &--happy &__eye-happy { display: inline; }
+  &--happy &__free-arm { animation: ln2-robot-wave 0.6s ease-in-out infinite alternate; }
+}
+
+@keyframes ln2-robot-breathe {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+@keyframes ln2-robot-blink {
+  0%, 93%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+
+@keyframes ln2-robot-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+@keyframes ln2-robot-tilt {
+  0%, 100% { transform: rotate(0); }
+  30% { transform: rotate(-7deg); }
+  65% { transform: rotate(4deg); }
+}
+
+@keyframes ln2-robot-wave {
+  from { transform: rotate(-112deg); }
+  to { transform: rotate(-142deg); }
+}
+
+@keyframes ln2-bubble-in {
+  from { opacity: 0; transform: translateY(4px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+
+// Not enough room beside the card: only the head peeks over its top edge, behind the card.
+@media (max-width: 1000px) {
+  .ln2-robot {
+    left: auto;
+    right: 18px;
+    bottom: auto;
+    top: -58px;
+    z-index: -1;
+    width: 130px;
+  }
+
+  .ln2-robot__bubble {
+    display: none;
+  }
+
+  .ln2-robot__svg .ln2-robot__hit {
+    pointer-events: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ln2-robot__head,
+  .ln2-robot__heart,
+  .ln2-robot__eye-open,
+  .ln2-robot__bubble {
+    animation: none;
+  }
+
+  .ln2-robot--happy .ln2-robot__free-arm,
+  .ln2-robot--wave .ln2-robot__free-arm {
+    animation: none;
+    transform: rotate(-125deg); // a raised hand instead of a moving wave
+  }
+}

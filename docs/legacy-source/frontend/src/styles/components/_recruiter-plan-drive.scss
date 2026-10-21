@@ -1,0 +1,388 @@
+// HR Plan Drive — guided multi-college opportunity setup.
+.recruiter-plan-drive {
+  &__header {
+    margin-bottom: 14px;
+
+    .listing-page-header__title {
+      color: #172033;
+      letter-spacing: -0.025em;
+    }
+
+    .ant-btn {
+      min-height: 38px;
+      border-radius: 8px;
+    }
+  }
+
+  &__eyebrow.ant-typography {
+    display: block;
+    color: #66758d;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  &__intro {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 14px;
+    padding: 17px 18px;
+    border: 1px solid #e7ecf2;
+    border-radius: 13px;
+    background: #f8fafc;
+
+    h4.ant-typography {
+      margin: 3px 0 2px !important;
+      color: #172033;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    > div:first-child > .ant-typography:last-child {
+      font-size: 12px;
+      line-height: 1.45;
+    }
+  }
+
+  &__intro-count {
+    flex: 0 0 auto;
+    min-width: 94px;
+    padding: 10px 12px;
+    border: 1px solid #dce5ef;
+    border-radius: 10px;
+    background: #fff;
+    text-align: center;
+
+    strong,
+    span {
+      display: block;
+    }
+
+    strong {
+      color: #172033;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    span {
+      margin-top: 4px;
+      color: $tpo-muted;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+  }
+
+  &__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+    gap: 16px;
+    align-items: start;
+  }
+
+  &__form-column {
+    min-width: 0;
+  }
+
+  &__section.ant-card,
+  &__review .ant-card,
+  &__result-card.ant-card {
+    margin-bottom: 14px;
+    overflow: hidden;
+    border: 1px solid #e7ecf2;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(26, 45, 72, 0.045);
+
+    .ant-card-head {
+      min-height: 48px;
+      padding-inline: 16px;
+      border-bottom-color: #edf1f5;
+      background: #fcfdff;
+    }
+
+    .ant-card-head-title {
+      color: #24324a;
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .ant-card-body {
+      padding: 16px !important;
+    }
+
+    .ant-form-item-label > label {
+      color: #44536a;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .ant-input,
+    .ant-input-number,
+    .ant-select-selector {
+      width: 100%;
+      border-radius: 8px !important;
+    }
+  }
+
+  &__field-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+
+    &--two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ant-input-number {
+      width: 100%;
+    }
+  }
+
+  &__college-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+
+    > .ant-typography {
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .ant-input-affix-wrapper {
+      width: min(320px, 100%);
+      min-height: 36px;
+      border-radius: 8px;
+    }
+  }
+
+  &__college-list {
+    max-height: 360px;
+    overflow-y: auto;
+    border: 1px solid #edf1f5;
+    border-radius: 9px;
+
+    .ant-list-item {
+      padding: 10px 12px !important;
+      border-bottom-color: #edf1f5 !important;
+      transition: background 0.15s ease;
+
+      &.is-selected {
+        background: #f5f9ff;
+      }
+
+      .ant-checkbox-wrapper {
+        min-width: 0;
+        color: #334155;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      > .ant-typography {
+        font-size: 12px;
+        text-align: right;
+      }
+    }
+  }
+
+  &__no-match {
+    padding: 30px 12px;
+    text-align: center;
+  }
+
+  &__review {
+    position: sticky;
+    top: 12px;
+
+    .ant-card {
+      margin-bottom: 0;
+    }
+
+    .ant-card-body > .ant-typography {
+      margin-top: 12px;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .ant-btn {
+      min-height: 40px;
+      border-radius: 8px;
+      font-weight: 650;
+    }
+  }
+
+  &__review-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid #edf1f5;
+
+    span {
+      color: $tpo-muted;
+      font-size: 12px;
+      font-weight: 650;
+      text-transform: uppercase;
+    }
+
+    strong {
+      max-width: 66%;
+      overflow: hidden;
+      color: #334155;
+      font-size: 12px;
+      text-align: right;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  &__result-card.ant-card {
+    .ant-card-body {
+      padding: 0 !important;
+    }
+  }
+
+  &__result-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 16px 18px 12px;
+    border-bottom: 1px solid #edf1f5;
+    background: #fcfdff;
+
+    h4.ant-typography {
+      margin: 3px 0 0 !important;
+      color: #172033;
+      font-size: 18px;
+    }
+
+    .ant-tag {
+      margin: 0;
+      border-radius: 999px;
+    }
+  }
+
+  &__result-list {
+    .ant-list-item {
+      padding: 12px 18px !important;
+      border-bottom-color: #edf1f5 !important;
+
+      .ant-tag {
+        border-radius: 999px;
+      }
+
+      .ant-btn {
+        border-radius: 7px;
+      }
+    }
+  }
+
+  &__result-actions {
+    display: flex;
+    gap: 8px;
+    padding: 14px 18px 18px;
+
+    .ant-btn {
+      min-height: 38px;
+      border-radius: 8px;
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  .recruiter-plan-drive {
+    &__layout {
+      grid-template-columns: 1fr;
+    }
+
+    &__review {
+      position: static;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .recruiter-plan-drive {
+    &__header {
+      .listing-page-header__right {
+        width: 100%;
+
+        .ant-btn {
+          width: 100%;
+        }
+      }
+    }
+
+    &__intro {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 9px;
+      padding: 14px 13px;
+    }
+
+    &__intro-count {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      padding: 9px 11px;
+      align-items: baseline;
+      justify-content: space-between;
+      text-align: left;
+
+      span {
+        margin-top: 0;
+      }
+    }
+
+    &__section.ant-card,
+    &__review .ant-card {
+      .ant-card-head {
+        padding-inline: 13px;
+      }
+
+      .ant-card-body {
+        padding: 13px !important;
+      }
+    }
+
+    &__field-grid,
+    &__field-grid--two {
+      grid-template-columns: 1fr;
+    }
+
+    &__college-toolbar {
+      align-items: stretch;
+      flex-direction: column;
+
+      .ant-input-affix-wrapper {
+        width: 100%;
+      }
+    }
+
+    &__college-list .ant-list-item {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 4px;
+
+      > .ant-typography {
+        text-align: left;
+      }
+    }
+
+    &__result-actions {
+      flex-direction: column;
+
+      .ant-btn {
+        width: 100%;
+      }
+    }
+  }
+}

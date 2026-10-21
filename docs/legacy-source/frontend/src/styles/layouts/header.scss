@@ -1,0 +1,374 @@
+.ln-head {
+  height: 64px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  border-bottom: 1px solid $neutral-200;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+
+  @media (max-width: 767px) {
+    // Padding and height are controlled by _learn-layout.scss which includes
+    // safe-area-inset-top. Only set height: auto here as a base fallback.
+    height: auto;
+    min-height: 56px;
+  }
+}
+
+.menu-side-icon {
+  img {
+    height: 40px !important;
+    width: 40px !important;
+  }
+}
+
+.ln-org-text-mob {
+  display: none !important;
+}
+
+@media (max-width: 767px) {
+  .ln-org-text-desk {
+    display: none !important;
+  }
+  /* ln-head-notif (notification bell) kept visible for mobile drawer */
+
+  .ln-org-txt {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  .ln-org-text-mob {
+    display: flex !important;
+    width: 10rem !important;
+  }
+}
+
+.ln-head-notif {
+  @media (max-width: 767px) {
+  }
+}
+
+.ln-org-txt {
+  @media (max-width: 767px) {
+  }
+}
+
+.ln-org-current-chip {
+  margin: 0 !important;
+  padding: 2px 10px !important;
+  border-radius: 999px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+  background: rgba(15, 23, 42, 0.05) !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  color: $neutral-700 !important;
+  white-space: nowrap;
+}
+
+.ln-org-current {
+  min-width: 0;
+  max-width: min(320px, 28vw);
+}
+
+.ln-org-current__title {
+  display: inline-block;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ln-org-current-role {
+  margin-left: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: $neutral-600;
+  white-space: nowrap;
+}
+
+.ln-org-switcher-trigger {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  max-width: 100%;
+  line-height: 1;
+  padding: 0;
+}
+
+.ln-org-switcher-trigger__title {
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: $neutral-900;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ln-org-switcher-trigger__role {
+  display: none;
+  margin-left: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: $neutral-600;
+  white-space: nowrap;
+}
+
+.ln-org-switcher-trigger__chip {
+  margin: 0 !important;
+  padding: 2px 10px !important;
+  border-radius: 999px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+  background: rgba(15, 23, 42, 0.05) !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  color: $neutral-700 !important;
+  white-space: nowrap;
+}
+
+.ln-org-switcher-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.06);
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  color: $neutral-700;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+// --- Org switcher (navbar) ---
+.ln-org-switcher {
+  .ant-select-selection-item {
+    line-height: 1.2 !important;
+    padding-inline-end: 0 !important;
+  }
+
+  .ant-select-selector {
+    border-radius: 18px !important;
+    padding: 0 14px !important;
+    border: 1px solid rgba(17, 24, 39, 0.14) !important;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+    background: #fff;
+    min-height: 46px !important;
+    align-items: center;
+  }
+
+  &.ant-select-single .ant-select-selector .ant-select-selection-item,
+  &.ant-select-single .ant-select-selector .ant-select-selection-placeholder {
+    display: flex;
+    align-items: center;
+    height: auto;
+    padding: 4px 0;
+  }
+
+  &.ant-select-focused .ant-select-selector {
+    border-color: rgba(38, 104, 145, 0.75) !important;
+    box-shadow: 0 0 0 3px rgba(38, 104, 145, 0.10), 0 6px 18px rgba(38, 104, 145, 0.10) !important;
+  }
+
+  &:hover .ant-select-selector {
+    border-color: rgba(38, 104, 145, 0.30) !important;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  }
+
+  .ant-select-arrow {
+    color: $neutral-500;
+  }
+}
+
+.ln-org-switcher--mobile {
+  .ant-select-selector {
+    padding: 0 10px !important;
+    min-height: 42px !important;
+    border-radius: 16px !important;
+  }
+
+  .ln-org-switcher-trigger__title {
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .ln-org-switcher-trigger__chip {
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.ln-org-text-desk {
+  gap: 12px;
+  max-width: min(480px, 36vw);
+  min-width: 0;
+}
+
+.ln-org-switcher-dropdown {
+  // AntD Select dropdown uses its own portal; set a usable max-height on small screens.
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
+
+  .ant-select-item-group {
+    padding: 12px 14px 6px;
+    font-weight: 600;
+    color: $neutral-600;
+    letter-spacing: 0.01em;
+  }
+
+  .ant-select-item-option {
+    padding: 14px 14px !important;
+  }
+
+  .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+    // The global .ant-select-item-option-selected rule (_antddesign.scss) pairs a solid dark
+    // background with white text. This dropdown overrides the background to a pale tint to match
+    // its lighter design, but without also overriding color, the inherited white text lands on a
+    // near-white background and becomes unreadable. Match it to this file's other selected-state
+    // text color ($neutral-900, same as .ln-org-switcher-option__title).
+    background: rgba(38, 104, 145, 0.08) !important;
+    color: $neutral-900 !important;
+  }
+
+  .ln-org-switcher-option {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    width: 100%;
+  }
+
+  .ln-org-switcher-option__text {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .ln-org-switcher-option__title {
+    font-weight: 600;
+    color: $neutral-900;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .ln-org-switcher-option__sub {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    color: $neutral-500;
+    font-size: 12px;
+    line-height: 1.45;
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+
+  .ln-org-switcher-option__host {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    color: $neutral-400;
+  }
+
+  .ln-org-switcher-option__tags {
+    display: inline-flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .ln-org-switcher-chip {
+    display: inline-flex;
+    align-items: center;
+    height: 18px;
+    padding: 0 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid transparent;
+    white-space: nowrap;
+  }
+
+  .ln-org-switcher-chip--info {
+    background: rgba(38, 104, 145, 0.10);
+    border-color: rgba(38, 104, 145, 0.25);
+    color: #1e5577;
+  }
+
+  .ln-org-switcher-chip--warn {
+    background: rgba(245, 158, 11, 0.12);
+    border-color: rgba(245, 158, 11, 0.35);
+    color: #92400e;
+  }
+
+  .ln-org-switcher-chip--danger {
+    background: rgba(239, 68, 68, 0.10);
+    border-color: rgba(239, 68, 68, 0.28);
+    color: #991b1b;
+  }
+}
+
+@media (max-width: 767px) {
+  .ln-org-text-mob {
+    gap: 8px !important;
+    width: auto !important;
+    max-width: 42vw;
+    min-width: 0;
+  }
+
+  .ln-org-switcher-dropdown {
+    width: calc(100vw - 24px) !important;
+    min-width: 0 !important;
+    max-width: calc(100vw - 24px) !important;
+    left: 12px !important;
+    right: 12px !important;
+
+    .ant-select-item-option {
+      padding: 12px !important;
+    }
+
+    .ln-org-switcher-option {
+      gap: 10px;
+    }
+
+    .ln-org-switcher-option__tags {
+      justify-content: flex-start;
+    }
+  }
+
+  .ln-org-current--mobile {
+    max-width: 42vw;
+    align-items: center;
+  }
+
+  .ln-org-current--mobile .ln-org-current__title {
+    max-width: 42vw;
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .ln-org-switcher--mobile {
+    max-width: 42vw;
+
+    .ant-select-selector {
+      max-width: 42vw;
+    }
+
+    .ln-org-switcher-trigger__title {
+      max-width: calc(42vw - 42px);
+    }
+  }
+}

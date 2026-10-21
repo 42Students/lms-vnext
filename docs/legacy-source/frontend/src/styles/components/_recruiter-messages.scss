@@ -1,0 +1,337 @@
+// HR Messages — unified recruiter inbox across colleges.
+.recruiter-messages {
+  &__header {
+    margin-bottom: 14px;
+
+    .listing-page-header__title {
+      color: #172033;
+      letter-spacing: -0.025em;
+    }
+  }
+
+  &__eyebrow.ant-typography {
+    display: block;
+    color: #66758d;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  &__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 12px;
+    padding: 17px 18px;
+    border: 1px solid #e7ecf2;
+    border-radius: 13px;
+    background: #f8fafc;
+
+    h4.ant-typography {
+      margin: 3px 0 2px !important;
+      color: #172033;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    > div:first-child > .ant-typography:last-child {
+      font-size: 12px;
+      line-height: 1.45;
+    }
+  }
+
+  &__summary-count {
+    flex: 0 0 auto;
+    min-width: 94px;
+    padding: 10px 12px;
+    border: 1px solid #dce5ef;
+    border-radius: 10px;
+    background: #fff;
+    text-align: center;
+
+    strong,
+    span {
+      display: block;
+    }
+
+    strong {
+      color: #b45309;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    span {
+      margin-top: 4px;
+      color: $tpo-muted;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+  }
+
+  &__metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 180px));
+    gap: 10px;
+    margin-bottom: 14px;
+
+    > div {
+      padding: 11px 13px;
+      border: 1px solid #e7ecf2;
+      border-radius: 10px;
+      background: #fff;
+    }
+
+    span,
+    strong {
+      display: block;
+    }
+
+    span {
+      color: $tpo-muted;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.055em;
+      text-transform: uppercase;
+    }
+
+    strong {
+      margin-top: 3px;
+      color: #172033;
+      font-size: 20px;
+      line-height: 1.1;
+    }
+  }
+
+  &__stale-alert {
+    margin-bottom: 12px;
+    border-radius: 9px;
+  }
+
+  &__workspace.ant-card,
+  &__state-card.ant-card {
+    overflow: hidden;
+    border: 1px solid #e7ecf2;
+    border-radius: 14px;
+    box-shadow: 0 5px 20px rgba(26, 45, 72, 0.05);
+  }
+
+  &__workspace.ant-card > .ant-card-body {
+    padding: 0 !important;
+  }
+
+  &__state-card.ant-card > .ant-card-body {
+    padding: 18px !important;
+  }
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 14px 16px;
+    border-bottom: 1px solid #edf1f5;
+    background: #fcfdff;
+
+    > div > .ant-typography:last-child {
+      display: block;
+      margin-top: 2px;
+      color: #334155;
+      font-size: 12px;
+    }
+  }
+
+  &__search.ant-input-affix-wrapper {
+    width: min(360px, 100%);
+    min-height: 38px;
+    border-radius: 8px;
+  }
+
+  &__list.ant-list {
+    .ant-list-item {
+      border-bottom-color: #edf1f5 !important;
+    }
+  }
+
+  &__thread.ant-list-item {
+    display: flex;
+    min-height: 76px;
+    padding: 12px 16px !important;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: background 0.15s ease, opacity 0.15s ease;
+
+    &:hover {
+      background: #f8fbff;
+    }
+
+    &--unread {
+      background: #fffdf7;
+
+      &:hover {
+        background: #fffaf0;
+      }
+    }
+
+    &--opening {
+      opacity: 0.65;
+      pointer-events: none;
+    }
+
+    .ant-list-item-meta {
+      min-width: 0;
+      margin-bottom: 0;
+    }
+
+    .ant-list-item-meta-title {
+      margin-bottom: 4px;
+    }
+
+    .ant-list-item-meta-description {
+      max-width: 680px;
+    }
+  }
+
+  &__thread-icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e4e9ef;
+    border-radius: 10px;
+    background: #f7f9fc;
+    color: #68768b;
+    font-size: 16px;
+  }
+
+  &__thread--unread &__thread-icon {
+    border-color: #efdcae;
+    background: #fffaf0;
+    color: #92400e;
+  }
+
+  &__thread-title {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    > .ant-typography {
+      min-width: 0;
+      overflow: hidden;
+      color: #334155;
+      font-size: 12px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    > div {
+      display: flex;
+      flex: 0 0 auto;
+      gap: 4px;
+    }
+
+    .ant-tag {
+      margin: 0;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+  }
+
+  &__thread-time {
+    flex: 0 0 auto;
+    min-width: 70px;
+    text-align: right;
+
+    .ant-typography {
+      font-size: 12px;
+      white-space: nowrap;
+    }
+  }
+
+  &__empty {
+    display: flex;
+    min-height: 280px;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  .recruiter-messages {
+    &__summary {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 9px;
+      padding: 14px 13px;
+    }
+
+    &__summary-count {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      padding: 9px 11px;
+      align-items: baseline;
+      justify-content: space-between;
+      text-align: left;
+
+      span {
+        margin-top: 0;
+      }
+    }
+
+    &__metrics {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+
+      > div {
+        padding: 9px;
+      }
+
+      span {
+        font-size: 12px;
+      }
+
+      strong {
+        font-size: 18px;
+      }
+    }
+
+    &__toolbar {
+      align-items: stretch;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px;
+    }
+
+    &__search.ant-input-affix-wrapper {
+      width: 100%;
+    }
+
+    &__thread.ant-list-item {
+      align-items: flex-start;
+      padding: 11px 12px !important;
+      flex-wrap: wrap;
+    }
+
+    &__thread-title {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    &__thread-time {
+      width: 100%;
+      padding-left: 50px;
+      text-align: left;
+    }
+  }
+}

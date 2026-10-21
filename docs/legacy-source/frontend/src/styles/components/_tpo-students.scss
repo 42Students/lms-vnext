@@ -1,0 +1,1179 @@
+// TPO Students — roster, readiness and student request queue.
+.tpo-students {
+  &__header {
+    margin-bottom: 14px;
+
+    .listing-page-header__title {
+      color: $tpo-ink;
+      letter-spacing: -0.025em;
+    }
+  }
+
+  &__import.ant-btn {
+    min-height: 40px;
+    border-radius: 9px;
+    font-weight: 600;
+  }
+
+  &__pulse {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  &__pulse-item {
+    display: flex;
+    padding: 13px 14px;
+    border: 1px solid $tpo-line;
+    border-radius: 12px;
+    background: $tpo-surface-soft;
+    flex-direction: column;
+    gap: 4px;
+    text-align: left;
+    font: inherit;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+
+    &:hover,
+    &:focus-visible {
+      border-color: rgba($clrThird, 0.35);
+      background: $teal-subtle;
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.14);
+    }
+
+    span {
+      overflow: hidden;
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      font-weight: 650;
+      letter-spacing: 0.045em;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    strong {
+      color: $tpo-ink;
+      font-size: 24px;
+      line-height: 1.1;
+    }
+
+    &--attention {
+      border-color: #ffd9a0;
+      background: $tpo-warn-bg;
+
+      span,
+      strong {
+        color: #ad6800;
+      }
+    }
+
+    &--success {
+      border-color: #cce6ce;
+      background: #f7fff5;
+
+      strong {
+        color: #237804;
+      }
+    }
+  }
+
+  &__tabs.ant-tabs {
+    .ant-tabs-nav {
+      margin-bottom: 14px;
+      border-bottom: 1px solid #e9eef4;
+
+      &::before {
+        border-bottom: 0;
+      }
+    }
+
+    .ant-tabs-tab {
+      margin-right: 24px !important;
+      padding: 11px 2px !important;
+      color: $tpo-muted;
+      font-weight: 650;
+    }
+  }
+
+  &__roster.ant-card,
+  &__requests-card.ant-card {
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: $radius-card;
+    box-shadow: 0 5px 20px rgba(26, 45, 72, 0.05);
+
+    > .ant-card-body {
+      padding: 0 !important;
+    }
+  }
+
+  &__stale-alert {
+    margin: 16px 18px 0;
+    border-radius: 9px;
+  }
+
+  &__roster-heading,
+  &__requests-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 22px;
+    padding: 18px 18px 14px;
+    border-bottom: 1px solid $tpo-line;
+    background: $tpo-surface-soft;
+
+    > div {
+      min-width: 0;
+    }
+
+    > .ant-typography {
+      max-width: 620px;
+      text-align: right;
+      font-size: 13px;
+    }
+
+    h4.ant-typography {
+      margin: 3px 0 0 !important;
+      color: $tpo-ink;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+  }
+
+  &__eyebrow.ant-typography {
+    display: block;
+    color: $tpo-muted;
+    font-size: $tpo-fs-xs;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  &__filters {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid $tpo-line;
+    background: #fff;
+
+    > .ant-select {
+      flex: 0 0 auto;
+    }
+  }
+
+  &__view-selector.ant-segmented {
+    min-width: 0;
+    max-width: calc(100% - 192px);
+    overflow-x: auto;
+    padding: 4px;
+    border: 1px solid $tpo-line;
+    border-radius: 11px;
+    background: $tpo-surface-soft;
+    scrollbar-width: thin;
+
+    .ant-segmented-group {
+      width: max-content;
+      min-width: 100%;
+      gap: 2px;
+    }
+
+    .ant-segmented-item {
+      min-height: 34px;
+      border-radius: 8px;
+      color: $tpo-muted;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .ant-segmented-item-selected {
+      color: $tpo-ink;
+      box-shadow: 0 1px 4px rgba(26, 45, 72, 0.08);
+    }
+  }
+
+  &__roster {
+    > .ant-card-body > div:last-child {
+      padding: 16px 18px 20px;
+    }
+
+    > .ant-card-body > div:last-child > .ant-space:first-child {
+      min-height: 40px;
+      margin-bottom: 14px !important;
+      padding-bottom: 14px;
+      border-bottom: 1px solid $tpo-line;
+
+      .ant-input-affix-wrapper,
+      .ant-select-selector,
+      .ant-btn {
+        border-radius: 8px;
+      }
+
+      > .ant-typography {
+        margin-left: auto;
+        color: $tpo-muted;
+        font-size: 12px;
+      }
+    }
+
+    .ant-table-thead > tr > th {
+      padding-top: 11px;
+      padding-bottom: 11px;
+      background: $tpo-surface-soft !important;
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      font-weight: 700;
+      letter-spacing: 0.035em;
+      text-transform: uppercase;
+    }
+
+    .ant-table-tbody > tr > td {
+      padding-top: 11px;
+      padding-bottom: 11px;
+      border-bottom-color: $tpo-line;
+      vertical-align: middle;
+    }
+
+    .ant-table-tbody > tr:hover > td {
+      background: $tpo-surface-soft !important;
+    }
+  }
+
+  &__student-link {
+    display: inline-flex;
+    min-width: 170px;
+    max-width: 280px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover .tpo-students__student-name,
+    &:focus-visible .tpo-students__student-name {
+      color: $tpo-primary;
+    }
+
+    &:focus-visible {
+      border-radius: 4px;
+      outline: 2px solid $clrThird;
+      outline-offset: 3px;
+    }
+  }
+
+  &__student-name {
+    max-width: 100%;
+    overflow: hidden;
+    color: #223049;
+    font-weight: 650;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color 0.15s ease;
+  }
+
+  &__student-meta {
+    max-width: 100%;
+    overflow: hidden;
+    color: $tpo-muted;
+    font-size: 12px;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__status-pill.ant-tag {
+    margin-inline-end: 0;
+    border-radius: 999px;
+    font-size: $tpo-fs-xs;
+  }
+
+  &__requests-card > .ant-card-body > .tpo-student-requests {
+    padding: 16px 18px 20px;
+  }
+}
+
+.tpo-student-requests {
+  &__alert {
+    margin-bottom: 12px;
+    border-radius: 9px;
+  }
+
+  &__filter.ant-segmented {
+    padding: 4px;
+    border: 1px solid $tpo-line;
+    border-radius: 10px;
+    background: $tpo-surface-soft;
+
+    .ant-segmented-item {
+      border-radius: 7px;
+      color: $tpo-muted;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .ant-segmented-item-selected {
+      color: $tpo-ink;
+    }
+  }
+
+  > div > .ant-space:first-child {
+    padding-bottom: 13px;
+    border-bottom: 1px solid $tpo-line;
+
+    .ant-input-affix-wrapper,
+    .ant-btn {
+      border-radius: 8px;
+    }
+
+    > .ant-typography {
+      margin-left: auto;
+      color: $tpo-muted;
+      font-size: 12px;
+    }
+  }
+
+  .ant-table-thead > tr > th {
+    padding-top: 11px;
+    padding-bottom: 11px;
+    background: $tpo-surface-soft !important;
+    color: $tpo-muted;
+    font-size: $tpo-fs-xs;
+    font-weight: 700;
+    letter-spacing: 0.035em;
+    text-transform: uppercase;
+  }
+
+  .ant-table-tbody > tr > td {
+    padding-top: 11px;
+    padding-bottom: 11px;
+    border-bottom-color: $tpo-line;
+    vertical-align: middle;
+  }
+}
+
+@media (max-width: 991px) {
+  .tpo-students {
+    &__pulse {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    &__roster-heading,
+    &__requests-heading {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 4px;
+
+      > .ant-typography {
+        max-width: none;
+        text-align: left;
+      }
+    }
+
+    &__filters {
+      align-items: stretch;
+      flex-direction: column;
+
+      > .ant-select {
+        width: 100% !important;
+      }
+    }
+
+    &__view-selector.ant-segmented {
+      max-width: 100%;
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .tpo-students {
+    &__header {
+      .listing-page-header__right,
+      .tpo-students__import {
+        width: 100%;
+      }
+    }
+
+    &__pulse {
+      gap: 8px;
+    }
+
+    &__pulse-item {
+      padding: 11px 12px;
+
+      strong {
+        font-size: 21px;
+      }
+    }
+
+    &__tabs.ant-tabs .ant-tabs-tab {
+      margin-right: 18px !important;
+    }
+
+    &__roster-heading,
+    &__requests-heading {
+      padding: 15px 13px 12px;
+    }
+
+    &__filters {
+      padding: 12px 13px;
+    }
+
+    &__stale-alert {
+      margin: 13px 13px 0;
+    }
+
+    &__roster > .ant-card-body > div:last-child,
+    &__requests-card > .ant-card-body > .tpo-student-requests {
+      padding: 13px 12px 16px;
+    }
+
+    &__roster > .ant-card-body > div:last-child > .ant-space:first-child {
+      width: 100%;
+
+      .ant-input-affix-wrapper {
+        width: 100% !important;
+        flex: 1 1 100%;
+      }
+
+      > .ant-typography {
+        width: 100%;
+        margin-left: 0;
+      }
+    }
+
+    &__student-link {
+      min-width: 145px;
+      max-width: 205px;
+    }
+  }
+
+  .tpo-student-requests {
+    > div > .ant-space:first-child {
+      width: 100%;
+
+      .ant-input-affix-wrapper {
+        width: 100% !important;
+        flex: 1 1 100%;
+      }
+
+      > .ant-typography {
+        width: 100%;
+        margin-left: 0;
+      }
+    }
+
+    .ant-table-cell .ant-space {
+      flex-wrap: wrap;
+    }
+  }
+}
+
+
+// TPO Students Demo/Wow pass — talent intelligence and Placement 360.
+.tpo-students {
+  &__intelligence {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(340px, 0.85fr);
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  &__intelligence-card.ant-card {
+    overflow: hidden;
+    border: 0;
+    border-radius: 18px;
+    background:
+      radial-gradient(circle at 94% 12%, rgba(34, 211, 238, 0.18), transparent 30%),
+      linear-gradient(135deg, $tpo-ink 0%, $tpo-ink 100%);
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.16);
+    color: #fff;
+
+    > .ant-card-body {
+      padding: 20px !important;
+    }
+  }
+
+  &__intelligence-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+
+    h3.ant-typography {
+      margin: 4px 0 !important;
+      color: #fff;
+      font-size: clamp(20px, 2vw, 27px);
+      line-height: 1.2;
+      letter-spacing: -0.025em;
+    }
+
+    > div:first-child > .ant-typography:last-child {
+      color: $tpo-line-strong;
+      font-size: $tpo-fs-xs;
+      line-height: 1.45;
+    }
+  }
+
+  &__intelligence-eyebrow.ant-typography {
+    color: $tpo-primary;
+    font-size: $tpo-fs-xs;
+    font-weight: 750;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  &__pool-count {
+    flex: 0 0 auto;
+    min-width: 105px;
+    padding: 10px 12px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.055);
+    text-align: center;
+
+    strong,
+    span {
+      display: block;
+    }
+
+    strong {
+      color: #fff;
+      font-size: 23px;
+      line-height: 1;
+    }
+
+    span {
+      margin-top: 4px;
+      color: $tpo-muted;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+  }
+
+  &__readiness {
+    display: grid;
+    grid-template-columns: minmax(170px, 0.7fr) minmax(0, 1.3fr);
+    gap: 18px;
+    margin-top: 18px;
+    padding: 14px;
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: $radius-card;
+    background: rgba(15, 23, 42, 0.28);
+  }
+
+  &__readiness-copy {
+    > .ant-typography {
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    strong {
+      display: block;
+      margin-top: 4px;
+      color: #fff;
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    > span {
+      display: block;
+      margin-top: 6px;
+      color: $tpo-line-strong;
+      font-size: $tpo-fs-xs;
+      line-height: 1.4;
+    }
+  }
+
+  &__readiness-visual {
+    min-width: 0;
+  }
+
+  &__readiness-bar {
+    display: flex;
+    height: 14px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+
+    > span {
+      min-width: 0;
+      transition: width 0.2s ease;
+    }
+
+    .is-ready {
+      background: #22c55e;
+    }
+
+    .is-support {
+      background: #f59e0b;
+    }
+
+    .is-not-ready {
+      background: #ef4444;
+    }
+
+    .is-unknown {
+      background: $tpo-muted;
+    }
+  }
+
+  &__readiness-legend {
+    display: flex;
+    margin-top: 10px;
+    flex-wrap: wrap;
+    gap: 7px 12px;
+
+    > span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: #cbd5e1;
+      font-size: $tpo-fs-xs;
+    }
+
+    i {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+
+      &.is-ready { background: #22c55e; }
+      &.is-support { background: #f59e0b; }
+      &.is-not-ready { background: #ef4444; }
+      &.is-unknown { background: $tpo-muted; }
+    }
+
+    strong {
+      color: #fff;
+      font-size: $tpo-fs-xs;
+    }
+  }
+
+  &__cohorts {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+
+    > button {
+      min-width: 0;
+      padding: 11px 10px;
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+
+      &:hover,
+      &:focus-visible {
+        border-color: rgba(103, 232, 249, 0.38);
+        outline: none;
+        background: rgba(255, 255, 255, 0.085);
+        transform: translateY(-1px);
+      }
+
+      span,
+      strong,
+      small {
+        display: block;
+      }
+
+      span {
+        color: $tpo-line-strong;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.045em;
+        text-transform: uppercase;
+      }
+
+      strong {
+        margin-top: 4px;
+        color: #fff;
+        font-size: 20px;
+        line-height: 1;
+      }
+
+      small {
+        margin-top: 5px;
+        color: $tpo-muted;
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      &.is-attention {
+        border-color: rgba(245, 158, 11, 0.35);
+        background: rgba(245, 158, 11, 0.09);
+
+        strong {
+          color: #fbbf24;
+        }
+      }
+
+      &.is-success strong {
+        color: #4ade80;
+      }
+    }
+  }
+
+  &__branch-intelligence.ant-card {
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: 18px;
+    box-shadow: 0 12px 34px rgba(26, 45, 72, 0.07);
+
+    > .ant-card-body {
+      padding: 16px !important;
+    }
+  }
+
+  &__branch-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+
+    h4.ant-typography {
+      margin: 3px 0 0 !important;
+      color: $tpo-ink;
+      font-size: 17px;
+    }
+
+    > .ant-typography {
+      max-width: 120px;
+      text-align: right;
+      font-size: $tpo-fs-xs;
+      line-height: 1.35;
+    }
+  }
+
+  &__branch-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+
+    > button {
+      min-width: 0;
+      padding: 10px;
+      border: 1px solid $tpo-line;
+      border-radius: 10px;
+      background: $tpo-surface-soft;
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+
+      &:hover,
+      &:focus-visible {
+        border-color: #c9d9ea;
+        outline: none;
+        background: #f6faff;
+        transform: translateY(-1px);
+      }
+    }
+  }
+
+  &__branch-title {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px;
+
+    strong {
+      overflow: hidden;
+      color: $tpo-text;
+      font-size: $tpo-fs-xs;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    span {
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      white-space: nowrap;
+    }
+  }
+
+  &__branch-bar {
+    height: 6px;
+    margin-top: 7px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: $tpo-line;
+
+    > span {
+      display: block;
+      height: 100%;
+      min-width: 2px;
+      border-radius: inherit;
+      background: linear-gradient(90deg, $light-cyan, $clrThird);
+    }
+  }
+
+  &__branch-facts {
+    display: flex;
+    margin-top: 7px;
+    justify-content: space-between;
+    gap: 5px;
+
+    span {
+      color: $tpo-muted;
+      font-size: 12px;
+      white-space: nowrap;
+
+      strong {
+        color: $tpo-text;
+      }
+
+      &.is-attention {
+        color: #b45309;
+
+        strong {
+          color: $tpo-warn;
+        }
+      }
+    }
+  }
+
+  &__branch-empty {
+    display: flex;
+    min-height: 180px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+.tpo-student-panel {
+  .ant-drawer-content-wrapper { max-width: 100vw; }
+  .ant-drawer-header { padding: 14px 20px; border-bottom-color: #e8edf3; background: #fff; }
+  .ant-drawer-body { padding: 16px 20px 24px; background: $tpo-surface-soft; }
+
+  &__title { display: flex; min-width: 0; flex-direction: column; gap: 2px; }
+  &__name { overflow: hidden; color: $tpo-ink; font-size: 17px; font-weight: 700; line-height: 1.3; text-overflow: ellipsis; white-space: nowrap; }
+  &__where { overflow: hidden; color: $tpo-muted; font-size: 13px; font-weight: 400; text-overflow: ellipsis; white-space: nowrap; }
+
+  &__drive.ant-alert { margin-bottom: 12px; }
+
+  // Who they are at a glance: the status chips, then four numbers that open the tab they come from.
+  &__hero {
+    margin-bottom: 12px;
+    padding: 14px;
+    border: 1px solid #e3e9f0;
+    border-radius: 12px;
+    background: #fff;
+  }
+  &__facts {
+    margin-bottom: 14px;
+    .ant-tag { padding: 2px 10px; border-radius: 999px; font-size: 13px; line-height: 20px; }
+  }
+  &__metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    > button {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+      padding: 10px 12px;
+      border: 1px solid #edf1f5;
+      border-radius: 10px;
+      background: #f8fafc;
+      cursor: pointer;
+      font: inherit;
+      text-align: left;
+      transition: border-color 0.15s, background 0.15s;
+      &:hover, &:focus-visible { border-color: $tpo-primary; background: #fff; outline: none; }
+    }
+    span { color: $tpo-muted; font-size: 12px; }
+    strong { overflow: hidden; color: $tpo-ink; font-size: 18px; font-weight: 700; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
+    strong.is-verified { color: #16a34a; }
+    strong.is-pending, strong.is-sent_back { color: #b45309; }
+    strong.is-incomplete { font-size: 15px; color: $tpo-muted; }
+  }
+
+  // What needs doing about this student: one line each, with where to act.
+  &__attention {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0 0 12px;
+    padding: 0;
+    list-style: none;
+    > li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border: 1px solid #e3e9f0;
+      border-radius: 10px;
+      background: #fff;
+      font-size: 13px;
+      &.is-error { border-color: #ffccc7; background: #fff7f6; .tpo-student-panel__attention-icon { color: #cf1322; } }
+      &.is-warning { border-color: #fde4b0; background: #fffbf0; .tpo-student-panel__attention-icon { color: #d97706; } }
+      &.is-info .tpo-student-panel__attention-icon { color: $tpo-muted; }
+    }
+  }
+  &__attention-text { flex: 1; min-width: 0; color: $tpo-ink; }
+
+  .ant-tabs-nav { margin-bottom: 12px; }
+  .ant-tabs-tab { font-size: 13px; font-weight: 600; }
+
+  &__section {
+    margin-bottom: 14px;
+    &:last-child { margin-bottom: 0; }
+  }
+  &__section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+    > .ant-typography:first-child { color: $tpo-ink; font-size: 13px; }
+    > .ant-typography:not(:first-child), > a { font-size: 12px; }
+  }
+
+  .ant-descriptions-bordered {
+    overflow: hidden;
+    border-radius: 10px;
+    background: #fff;
+    .ant-descriptions-item-label { width: 150px; color: $tpo-muted; font-size: 13px; }
+    .ant-descriptions-item-content { font-size: 13px; }
+  }
+  &__list.ant-list {
+    padding: 0 14px;
+    border: 1px solid #e3e9f0;
+    border-radius: 10px;
+    background: #fff;
+    .ant-list-item-meta-title { margin-bottom: 4px; font-size: 13px; }
+    .ant-tag { margin-inline-end: 0; }
+  }
+  &__ok { color: #16a34a; font-weight: 600; }
+
+  &__note-box {
+    margin-bottom: 12px;
+    padding: 12px;
+    border: 1px solid #e3e9f0;
+    border-radius: 10px;
+    background: #fff;
+  }
+  &__note-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px; font-size: 12px; }
+
+  &__history.ant-timeline {
+    padding: 14px 14px 0;
+    border: 1px solid #e3e9f0;
+    border-radius: 10px;
+    background: #fff;
+    font-size: 13px;
+  }
+
+  .tpo-student-requests--compact { padding: 0; }
+}
+
+@media (max-width: 1100px) {
+  .tpo-students {
+    &__intelligence {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .tpo-students {
+    &__intelligence-card.ant-card > .ant-card-body {
+      padding: 15px !important;
+    }
+
+    &__intelligence-head {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    &__pool-count {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      align-items: baseline;
+      justify-content: space-between;
+      text-align: left;
+
+      span {
+        margin-top: 0;
+      }
+    }
+
+    &__readiness {
+      grid-template-columns: 1fr;
+    }
+
+    &__cohorts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    &__branch-head {
+      align-items: flex-start;
+      flex-direction: column;
+
+      > .ant-typography {
+        max-width: none;
+        text-align: left;
+      }
+    }
+  }
+
+  .tpo-student-panel {
+    &__metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+}
+
+@media (max-width: 480px) {
+  .tpo-students {
+    &__cohorts,
+    &__branch-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+// Filter side panel (Students): sections of labelled fields, Apply and Reset pinned at the bottom.
+.tpo-student-filters {
+  .ant-drawer-body { padding: 16px 20px; }
+  &__section { display: flex; flex-direction: column; gap: 10px; }
+  &__title.ant-typography { color: $tpo-muted; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+  &__field { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: $tpo-text;
+    .ant-select, .ant-picker, .ant-input-number { width: 100%; }
+  }
+  &__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  &__grid--two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  &__hint.ant-typography { font-size: 12px; }
+  &__footer { display: flex; justify-content: space-between; gap: 8px; }
+}
+
+// ---- Top of the Students page: selectors and the journey strip (StudentsTop) -------------------------------------------------
+// The page's notices (registration not open, a failed refresh) sit apart from the pickers below them, with the same rounded
+// edge as the cards. As banners they had no space under them and touched the Batch / Program / Department / Class row.
+.tpo-students__registration.ant-alert,
+.tpo-students__stale-alert.ant-alert {
+  margin-bottom: 16px;
+  border-radius: 10px;
+}
+.tpo-students__top { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
+.tpo-students__selectors {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px; .ant-select { flex: none; }
+  @media (max-width: 767px) { .ant-select { width: 100% !important; } }
+}
+.tpo-students__picked { color: $tpo-muted; font-size: $tpo-fs-sm; }
+.tpo-journey-wrap { display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px solid $tpo-line; border-radius: $tpo-radius; background: $tpo-surface; }
+.tpo-journey__caption { font-size: $tpo-fs-sm; color: $tpo-muted; }
+.tpo-journey__narrowed { color: $tpo-warn; }
+// One "picked" pattern everywhere on the strip: a 2px border in the item's own colour, filled. Nothing is highlighted unless picked.
+.tpo-journey {
+  display: flex; align-items: stretch; flex-wrap: wrap; gap: 4px;
+  &__part { display: flex; align-items: stretch; gap: 4px; flex: 1 1 150px; min-width: 0; }
+  &__step {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 2px; flex: 1 1 0; min-width: 96px; padding: 8px 10px;
+    border: 1px solid $tpo-line; border-radius: $tpo-radius-sm; background: $tpo-surface-soft; cursor: pointer; text-align: left;
+    &:hover { border-color: $tpo-line-strong; background: $tpo-surface; }
+    &.is-on { border: 2px solid $tpo-primary; padding: 7px 9px; background: #e6f4f5; .tpo-journey__n { color: $tpo-primary; } }
+  }
+  &__n { font-size: 20px; font-weight: 700; color: $tpo-ink; line-height: 1.1; }
+  &__label { font-size: $tpo-fs-sm; color: $tpo-text; }
+  &__pct { font-size: $tpo-fs-xs; color: $tpo-muted; }
+  &__between { display: flex; align-items: center; justify-content: center; gap: 4px; flex: none; }
+  &__arrow { color: $tpo-muted; font-size: 12px; }
+  &__gap {
+    padding: 2px 8px; border: 1px dashed $tpo-warn; border-radius: 999px; background: $tpo-warn-bg; color: $tpo-warn; font-size: $tpo-fs-xs;
+    cursor: pointer; line-height: 1.4; white-space: nowrap;
+    &:hover { background: #fdecc8; }
+    &.is-on { border: 2px solid $tpo-warn; padding: 1px 7px; background: #fdecc8; font-weight: 600; }
+  }
+  &__extras { display: flex; flex-wrap: wrap; gap: 8px; }
+  &__extra {
+    padding: 2px 10px; border: 1px solid $tpo-line-strong; border-radius: 999px; background: $tpo-surface; color: $tpo-text; font-size: $tpo-fs-sm; cursor: pointer;
+    &:hover { border-color: $tpo-primary; color: $tpo-primary; }
+    &.is-on { border: 2px solid $tpo-primary; padding: 1px 9px; background: #e6f4f5; color: $tpo-primary; }
+  }
+  // Phone: every row is the same two columns (the step, then its gap), so the cards line up; the last step keeps the empty column.
+  @media (max-width: 767px) {
+    &__part { flex: 1 1 100%; display: grid; grid-template-columns: minmax(0, 1fr) 150px; gap: 6px; }
+    &__between { justify-content: flex-start; }
+  }
+}
+
+// ---- The Actions window (StudentActions) ------------------------------------------------------------------------------------
+.tpo-actions {
+  &__body { display: flex; gap: 16px; min-height: 380px; }
+  &__nav { flex: 0 0 240px; display: flex; flex-direction: column; gap: 12px; border-right: 1px solid $tpo-line; padding-right: 12px; }
+  &__group { display: flex; flex-direction: column; gap: 2px; }
+  &__group-label { font-size: $tpo-fs-xs; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: $tpo-muted; padding: 0 8px 4px; }
+  &__item {
+    display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 6px 8px 6px 10px; border: 0; border-left: 3px solid transparent;
+    border-radius: 0 6px 6px 0; background: none; color: $tpo-text; font-size: $tpo-fs-md; cursor: pointer; text-align: left;
+    &:hover { background: $tpo-surface-soft; }
+    &.is-active { border-left-color: $tpo-primary; background: $tpo-surface-soft; color: $tpo-primary; font-weight: 600; }
+    &.is-none { color: #94a3b8; .tpo-actions__count { background: transparent; color: #94a3b8; } }
+  }
+  &__picker { width: 100%; margin-bottom: 12px; }
+  &__none {
+    display: flex; align-items: flex-start; gap: 8px; padding: 10px 12px; border: 1px solid $tpo-line; border-radius: $tpo-radius-sm;
+    background: $tpo-surface-soft; color: $tpo-text;
+    .anticon { margin-top: 3px; color: $tpo-muted; }
+  }
+  &__count { font-size: $tpo-fs-xs; padding: 0 6px; border-radius: 999px; background: $tpo-surface-soft; color: $tpo-muted; }
+  &__panel { flex: 1 1 auto; min-width: 0; }
+  // Who an action leaves out, by reason (named in the window, not only in the next step).
+  &__left-out {
+    margin: -4px 0 12px; font-size: 13px;
+    ul { margin: 4px 0 0; padding-left: 18px; color: $tpo-muted; }
+    li { margin: 2px 0; }
+  }
+  @media (max-width: 767px) {
+    &__body { flex-direction: column; }
+    &__nav { flex: none; border-right: 0; border-bottom: 1px solid $tpo-line; padding: 0 0 12px; }
+  }
+}
+
+// Journey strip: "N got this far" under a step, and gaps that are never cut off however many steps there are.
+.tpo-journey__reached { font-size: $tpo-fs-xs; color: $tpo-muted; font-style: italic; }
+// A part never gets narrower than its step plus its whole gap chip: when the row is too narrow the strip wraps to a second line
+// instead of the next card covering the chip ("14 awaiting a d…" on a drive, test run 15 Oct 2026).
+.tpo-journey__between { min-width: max-content; padding-right: 6px; }
+.tpo-journey__part { min-width: min-content; }
+
+// Drives list: the "Needs doing" links above the tabs.
+.tpo-drives__work { align-items: center; margin: 4px 0 12px; }
+.tpo-drives__work-label { color: $tpo-muted; font-size: $tpo-fs-sm; }
+
+// Reports: group heading stacked (title, then what the group answers); one quiet line of context on a report; filters on one row.
+.tpo-reports__group-heading.is-stacked { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; }
+.tpo-report-detail__context { margin: 4px 0 12px; }
+.tpo-report-detail__filters.is-one-row .ant-card-body { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.tpo-report-detail__filters.is-one-row .tpo-report-detail__filter-grid { display: flex; flex-wrap: wrap; gap: 8px; order: -1; flex: 1 1 auto; > * { min-width: 180px; } }
+.tpo-report-detail .tpo-report-detail__context { display: block !important; }
+.tpo-report-detail .tpo-report-detail__filters.is-one-row .tpo-report-detail__filter-grid {
+  display: flex !important; flex-wrap: wrap; gap: 8px; .ant-select, .ant-select-auto-complete { width: 200px !important; }
+}

@@ -1,0 +1,50 @@
+@import "../../../styles/components/variables";
+
+
+.curDateWrapper {
+    border: 1px solid $neutral-200;
+    padding: 4px;
+    border-radius: $radius-control;
+    display: inline-flex;
+    align-items: center;
+
+    // Were 15x15px <span>s. WCAG 2.5.8 asks for 24x24 minimum and touch guidance for 44; these
+    // are now real buttons with a real target and a visible focus ring.
+    .leftArrow,
+    .rightArrow{
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        border: 0;
+        border-radius: $radius-control;
+        background: transparent;
+        color: $neutral-700;
+        font-size: 12px;
+        cursor: pointer;
+        transition: background $duration-fast $ease-std, color $duration-fast $ease-std;
+
+        &:hover {
+            background: $teal-subtle;
+            color: $teal-text;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $teal-text;
+            outline-offset: 2px;
+        }
+    }
+
+    .selectedDate {
+        font-size: 14px;
+        font-weight: 600;
+        color: $neutral-900;
+        vertical-align: middle;
+        margin: 0 12px;
+        min-width: 120px;
+        text-align: center;
+        font-variant-numeric: tabular-nums;
+    }
+}

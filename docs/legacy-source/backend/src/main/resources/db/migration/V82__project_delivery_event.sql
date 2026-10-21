@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS project_delivery_event (
+    id INT NOT NULL AUTO_INCREMENT,
+    created_at DATETIME NULL,
+    updated_at DATETIME NULL,
+    is_deleted BOOLEAN DEFAULT FALSE,
+    project_id INT NOT NULL,
+    delivery_id INT NOT NULL,
+    action VARCHAR(60) NULL,
+    status VARCHAR(60) NULL,
+    actor_id INT NULL,
+    actor_name VARCHAR(160) NULL,
+    actor_type VARCHAR(20) NULL,
+    notes TEXT NULL,
+    attachment_url TEXT NULL,
+    feedback TEXT NULL,
+    revision_count INT DEFAULT 0,
+    PRIMARY KEY (id),
+    KEY idx_project_delivery_event_delivery (project_id, delivery_id, is_deleted, id),
+    CONSTRAINT fk_project_delivery_event_project FOREIGN KEY (project_id) REFERENCES project_workspace(id),
+    CONSTRAINT fk_project_delivery_event_delivery FOREIGN KEY (delivery_id) REFERENCES project_delivery(id)
+);

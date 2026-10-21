@@ -1,0 +1,435 @@
+// ---------------------------------------------------------------------------
+// Quiz & assignment report pages (QuizReportContent, AssignmentReportContent)
+// ---------------------------------------------------------------------------
+// A standalone page, not a modal -- deep enough content (distribution + question breakdown +
+// full student table) that a modal would just become its own scrolling mess. Reuses the same
+// card/spacing tokens as the rest of the app rather than a one-off layout.
+
+.ln-report-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: $space-5 $space-4 $space-8;
+  display: grid;
+  gap: $space-5;
+
+  &--loading {
+    min-height: 40vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.ln-report-header {
+  &__nav {
+    display: flex;
+    justify-content: space-between;
+    gap: $space-2;
+    margin-bottom: $space-3;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 800;
+    color: $text;
+    line-height: 1.25;
+  }
+
+  &__subtitle {
+    margin: 4px 0 0;
+    font-size: 14px;
+    color: $text-muted;
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: $space-3;
+    margin-top: $space-4;
+  }
+
+  &__stat {
+    padding: $space-3;
+    border: 1px solid $border;
+    border-radius: $radius-card;
+    background: $white;
+    display: grid;
+    gap: 2px;
+  }
+
+  &__stat-value {
+    font-size: 20px;
+    font-weight: 800;
+    color: $text;
+    font-variant-numeric: tabular-nums;
+
+    &--warning { color: $status-error; }
+  }
+
+  &__stat-label {
+    font-size: 12px;
+    color: $text-muted;
+  }
+}
+
+.ln-report-section {
+  padding: $space-4 !important;
+  border: 1px solid $border;
+  border-radius: $radius-card;
+  background: $white;
+
+  &__title {
+    margin: 0 0 2px;
+    font-size: 16px;
+    font-weight: 700;
+    color: $text;
+  }
+
+  &__subtitle {
+    margin: 0 0 $space-3;
+    font-size: 12px;
+    color: $text-muted;
+  }
+
+  // Section title with no subtitle right after it still needs breathing room before its content.
+  &__title:last-of-type {
+    margin-bottom: $space-3;
+  }
+}
+
+// --- Question accuracy list -------------------------------------------------------------------
+
+.ln-question-accuracy {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: $space-2;
+
+  &__row {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) 96px;
+    align-items: center;
+    gap: $space-3;
+    padding: $space-2 $space-3;
+    border-radius: $radius-control;
+    background: $neutral-100;
+  }
+
+  &__index {
+    font-size: 12px;
+    font-weight: 700;
+    color: $text-muted;
+    text-align: center;
+  }
+
+  &__body {
+    min-width: 0;
+    display: grid;
+    gap: 4px;
+  }
+
+  &__prompt {
+    margin: 0;
+    font-size: 13px;
+    color: $text;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__track {
+    height: 6px;
+    border-radius: 999px;
+    background: $border;
+    overflow: hidden;
+  }
+
+  &__fill {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+
+    &--good { background: $status-success; }
+    &--fair { background: $status-warning; }
+    &--poor { background: $status-error; }
+    &--unanswered { background: $neutral-400; }
+  }
+
+  &__value {
+    text-align: right;
+    display: grid;
+    gap: 1px;
+
+    strong {
+      font-size: 14px;
+      font-weight: 800;
+      color: $text;
+      font-variant-numeric: tabular-nums;
+    }
+
+    small {
+      font-size: 11px;
+      color: $text-muted;
+    }
+  }
+
+  &__no-data {
+    color: $text-muted;
+    font-style: italic;
+  }
+
+  &--poor { border-left: 3px solid $status-error; }
+  &--fair { border-left: 3px solid $status-warning; }
+
+  &__empty {
+    margin: 0;
+    font-size: 13px;
+    color: $text-muted;
+  }
+}
+
+// --- Student table -----------------------------------------------------------------------------
+
+.ln-report-table {
+  display: grid;
+  gap: $space-2;
+
+  &__search {
+    max-width: 280px;
+    margin-bottom: $space-2;
+  }
+
+  &__head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 90px 120px;
+    padding: 0 $space-3;
+    font-size: 11px;
+    font-weight: 700;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1px;
+    background: $border;
+    border-radius: $radius-control;
+    overflow: hidden;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 90px 120px;
+    align-items: center;
+    gap: $space-2;
+    padding: 10px $space-3;
+    background: $white;
+  }
+
+  &__student {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    min-width: 0;
+  }
+
+  &__avatar {
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  &__name {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__score {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    font-variant-numeric: tabular-nums;
+
+    strong { font-size: 13px; color: $text; }
+    small { font-size: 11px; color: $text-muted; }
+  }
+
+  &__score-value--low { color: $status-error; }
+
+  &__no-score { color: $text-muted; }
+
+  &__extra {
+    font-size: 12px;
+    color: $text-muted;
+  }
+
+  &__empty {
+    margin: 0;
+    padding: $space-3;
+    font-size: 13px;
+    color: $text-muted;
+    text-align: center;
+  }
+}
+
+// --- Submission timing (assignment report) ------------------------------------------------------
+
+.ln-submission-timing {
+  display: grid;
+  gap: $space-3;
+
+  &__split {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $space-3;
+  }
+
+  &__stat {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    padding: $space-3;
+    border-radius: $radius-control;
+    background: $neutral-100;
+    font-size: 20px;
+
+    div { display: grid; gap: 1px; }
+
+    strong {
+      font-size: 18px;
+      font-weight: 800;
+      color: $text;
+      font-variant-numeric: tabular-nums;
+    }
+
+    span {
+      font-size: 11px;
+      color: $text-muted;
+    }
+
+    &--on-time { color: $status-success; }
+    &--late { color: $status-error; }
+  }
+
+  &__bar {
+    display: flex;
+    height: 8px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: $neutral-100;
+  }
+
+  &__bar-segment {
+    display: block;
+    height: 100%;
+
+    &--on-time { background: $status-success; }
+    &--late { background: $status-error; }
+  }
+
+  &__missing {
+    padding-top: $space-2;
+    border-top: 1px solid $border;
+
+    h4 {
+      margin: 0 0 $space-2;
+      font-size: 13px;
+      font-weight: 700;
+      color: $text;
+    }
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    li {
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: $status-error-bg;
+      color: $status-error;
+      font-size: 12px;
+      font-weight: 600;
+    }
+  }
+}
+
+.ln-report-table__late-badge {
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: $status-error-bg;
+  color: $status-error;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+@media (max-width: 767px) {
+  .ln-report-header__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ln-report-table__head {
+    display: none;
+  }
+
+  .ln-report-table__row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "student score" "student extra";
+    row-gap: 2px;
+  }
+
+  .ln-report-table__student { grid-area: student; }
+  .ln-report-table__score { grid-area: score; justify-self: end; }
+  .ln-report-table__extra { grid-area: extra; justify-self: end; }
+
+  .ln-question-accuracy__row {
+    grid-template-columns: 20px minmax(0, 1fr);
+    grid-template-areas: "index body" ". value";
+    row-gap: 6px;
+  }
+
+  .ln-question-accuracy__index { grid-area: index; }
+  .ln-question-accuracy__body { grid-area: body; }
+  .ln-question-accuracy__value {
+    grid-area: value;
+    text-align: left;
+    flex-direction: row;
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+  }
+}
+
+
+.ln-score-distribution__empty {
+  min-height: 88px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $text-muted;
+  font-size: 13px;
+  text-align: center;
+}

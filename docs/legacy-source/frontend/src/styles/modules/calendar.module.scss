@@ -1,0 +1,153 @@
+@import "../components/variables";
+.mainWrapper{
+    background-color: #fff;
+    padding: 0 24px 32px;
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar { display: none; }
+
+    @media (min-width: 768px) {
+        overflow-x: hidden; // No horizontal scroll on desktop
+    }
+}
+.courses{
+   width: 22%;
+}
+
+.calendarDate{
+    background-color: #fff;
+    padding: 16px 24px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+.calLegend {
+    height: 19px;
+    width: 12px;
+    background-color: $legendLightBlue;
+    border-radius: 4px;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+
+.calDateNav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.calDateNavArrow {
+    font-size: 12px;
+    cursor: pointer;
+    color: #6b7280;
+    padding: 4px 8px;
+    transition: color 0.2s;
+    &:hover {
+        color: $activeCalendarDayColor;
+    }
+}
+.calDateLabel {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 8px;
+    user-select: none;
+}
+
+.calToolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+}
+.calTodayBtn {
+    color: $activeCalendarDayColor;
+    border: 1px solid $activeCalendarDayColor;
+    white-space: nowrap;
+    &:hover {
+        color: $activeCalendarDayColor !important;
+        border-color: $activeCalendarDayColor !important;
+    }
+}
+
+.calLegendDots {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-left: 8px;
+    padding-left: 8px;
+    border-left: 1px solid #e5e7eb;
+}
+.calLegendItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.calLegendDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+  @media only screen and (max-width: 992px) {
+   .calHeader{
+    flex-direction: column;
+    padding: 15px 10px;
+    gap: 15px;
+   }
+   .mainWrapper {
+    padding: 0 10px 20px;
+   }
+   .calendarDate {
+    padding: 12px 10px;
+    font-size: 14px;
+    gap: 10px;
+   }
+   .calDateLabel {
+    font-size: 14px;
+   }
+   .calTodayBtn {
+    padding: 4px 10px;
+    font-size: 12px;
+   }
+   .calLegendDots {
+    margin-left: 0;
+    padding-left: 0;
+    border-left: none;
+   }
+  }
+
+  @media only screen and (max-width: 576px) {
+    .calHeader {
+      padding: 10px;
+    }
+    .mainWrapper {
+      padding: 0 5px 15px;
+    }
+    .calendarDate {
+      padding: 10px;
+      font-size: 13px;
+    }
+    .calDateLabel {
+      font-size: 13px;
+      margin: 0 4px;
+    }
+    .calTodayBtn {
+      padding: 4px 8px;
+      font-size: 11px;
+    }
+    .calDateNavArrow {
+      font-size: 10px;
+    }
+    .calLegendDots {
+      width: 100%;
+      padding-top: 4px;
+    }
+  }

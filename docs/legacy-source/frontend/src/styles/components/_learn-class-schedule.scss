@@ -1,0 +1,478 @@
+@import "./variables.scss";
+
+$learn-mobile-footer-height: 4rem !default;
+$learn-mobile-bp: 767px !default;
+
+$cal-primary: $clrThird;
+$cal-primary-dark: $teal-dark;
+$cal-text: $neutral-900;
+$cal-text-muted: $neutral-500;
+$cal-text-subtle: $neutral-400;
+$cal-bg: $white;
+$cal-border: $neutral-200;
+$cal-radius: 8px;
+$cal-radius-lg: 12px;
+
+$cal-s1: 8px;
+$cal-s2: 16px;
+$cal-s3: 24px;
+$cal-s4: 32px;
+$cal-s6: 48px;
+$cal-touch-min: 44px;
+
+// ---------------------------------------------------------------------------
+// Page layout
+// ---------------------------------------------------------------------------
+.learn-class-schedule-page {
+  --cal-height: calc(100vh - 200px);
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+
+  // `background`/`min-height` removed — correct back when this div was the outer scrollable
+  // page. Now it's ordinary content inside PageShell's white ln-module-card (see
+  // src/components/Common/PageShell.jsx), so the gray showed through as a visible band.
+  // Mobile-footer clearance padding kept — still legitimate.
+  &--scroll {
+    padding-bottom: calc(#{$learn-mobile-footer-height} + 24px + env(safe-area-inset-bottom, 0px));
+
+    @media (min-width: #{$learn-mobile-bp + 1}) {
+      padding-bottom: 48px;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Grid section — calendar floats directly on gray background
+// ---------------------------------------------------------------------------
+.learn-class-schedule-grid-section {
+  margin-top: $cal-s3;
+
+  @media (max-width: $learn-mobile-bp) {
+    margin-top: $cal-s2;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Alert
+// ---------------------------------------------------------------------------
+.learn-class-schedule-alert {
+  margin-bottom: $cal-s2 !important;
+}
+
+.learn-class-schedule-upcoming {
+  display: grid;
+  gap: $cal-s2;
+  margin-bottom: $cal-s2;
+  padding: $cal-s2;
+  border: 1px solid rgba($cal-primary, 0.12);
+  border-radius: $cal-radius-lg;
+  background: $cal-bg;
+}
+
+.learn-class-schedule-upcoming__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $cal-s1;
+
+  span {
+    color: $cal-text-muted;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  strong {
+    color: $cal-text;
+    font-size: 14px;
+    font-weight: 850;
+  }
+}
+
+.learn-class-schedule-upcoming__list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $cal-s1;
+
+  @media (max-width: $learn-mobile-bp) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.learn-class-schedule-upcoming__item {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+  padding: 12px;
+  border: 1px solid $cal-border;
+  border-radius: $cal-radius;
+  background: rgba($cal-primary, 0.035);
+  text-align: left;
+  cursor: pointer;
+
+  span,
+  small {
+    color: $cal-text-muted;
+    font-size: 12px;
+    font-weight: 750;
+  }
+
+  strong {
+    overflow: hidden;
+    color: $cal-text;
+    font-size: 14px;
+    font-weight: 850;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.learn-class-schedule-upcoming__empty {
+  margin: 0;
+  padding: 12px;
+  border: 1px dashed $cal-border;
+  border-radius: $cal-radius;
+  color: $cal-text-muted;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+// ---------------------------------------------------------------------------
+// Calendar card — seamless toolbar + content
+// ---------------------------------------------------------------------------
+.learn-class-schedule-card {
+  margin-top: $cal-s2;
+  overflow: hidden;
+  padding: 0 !important;
+}
+
+// ---------------------------------------------------------------------------
+// Toolbar — nav + actions, touch-friendly
+// ---------------------------------------------------------------------------
+.learn-class-schedule-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: $cal-s2;
+  padding: $cal-s2 $cal-s3;
+  background: $cal-bg;
+  border-bottom: 1px solid $cal-border;
+
+  @media (max-width: $learn-mobile-bp) {
+    padding: $cal-s2;
+  }
+}
+
+.learn-class-schedule-toolbar__nav {
+  display: flex;
+  align-items: center;
+  gap: $cal-s1;
+}
+
+.learn-class-schedule-toolbar__accent {
+  width: 12px;
+  height: 20px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, $cal-primary 0%, $cal-primary-dark 100%);
+}
+
+.learn-class-schedule-toolbar__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: $cal-touch-min;
+  height: $cal-touch-min;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: $cal-text-muted;
+  border-radius: $cal-radius;
+  transition: color 0.2s ease, background 0.2s ease;
+
+  &:hover {
+    color: $cal-primary;
+    background: rgba($cal-primary, 0.08);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $cal-primary;
+    outline-offset: 2px;
+  }
+
+  .anticon {
+    font-size: 14px;
+  }
+}
+
+.learn-class-schedule-toolbar__label {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: $cal-text;
+  margin: 0 $cal-s1;
+  user-select: none;
+  min-width: 140px;
+  text-align: center;
+
+  @media (max-width: $learn-mobile-bp) {
+    font-size: 14px;
+    min-width: 120px;
+  }
+}
+
+.learn-class-schedule-toolbar__actions {
+  display: flex;
+  align-items: center;
+  gap: $cal-s1;
+
+  @media (max-width: $learn-mobile-bp) {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+.learn-class-schedule-toolbar__today {
+  color: $cal-primary !important;
+  border-color: $cal-primary !important;
+  min-height: $cal-touch-min !important;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+
+  &:hover {
+    color: $cal-primary-dark !important;
+    border-color: $cal-primary-dark !important;
+    background: rgba($cal-primary, 0.08) !important;
+  }
+}
+
+.learn-class-schedule-toolbar__view.ant-select {
+  width: 120px;
+
+  .ant-select-selector {
+    min-height: $cal-touch-min;
+    border-radius: $cal-radius;
+    border-color: $cal-border;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+  }
+
+  &.ant-select-focused .ant-select-selector {
+    border-color: $cal-primary;
+    box-shadow: 0 0 0 2px rgba($cal-primary, 0.2);
+  }
+}
+
+.learn-class-schedule-toolbar__course-filter.ant-select {
+  min-width: 160px;
+  max-width: 260px;
+
+  .ant-select-selector {
+    min-height: $cal-touch-min;
+    border-radius: $cal-radius;
+    border-color: $cal-border;
+    font-size: 14px;
+  }
+
+  &.ant-select-focused .ant-select-selector {
+    border-color: $cal-primary;
+    box-shadow: 0 0 0 2px rgba($cal-primary, 0.2);
+  }
+
+  @media (max-width: $learn-mobile-bp) {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Calendar content / wrapper — full width for week/day view
+// ---------------------------------------------------------------------------
+.learn-class-schedule-content {
+  position: relative;
+  min-height: 320px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-x: visible;
+  z-index: 1;
+
+  // Ensure tooltips render above other calendar elements
+  .ant-tooltip {
+    z-index: 1070;
+  }
+
+  &.mainWrapper.calendar-wrapper {
+    overflow-x: visible;
+  }
+
+  .learn-calendar-desktop {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    > * {
+      flex: 1;
+      min-width: 0;
+      width: 100%;
+    }
+  }
+
+  [class*="calendarWrapper"] {
+    width: 100% !important;
+    overflow-x: visible;
+
+    @media (min-width: #{$learn-mobile-bp + 1}) {
+      min-width: 0 !important;
+    }
+  }
+
+  .rbc-calendar {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .rbc-time-view,
+  .rbc-month-view {
+    width: 100% !important;
+  }
+
+  .rbc-time-header-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .rbc-day-bg,
+  .rbc-header {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Loading state
+// ---------------------------------------------------------------------------
+.learn-class-schedule-loading {
+  min-height: 300px;
+  padding: $cal-s3;
+  background: $cal-bg;
+}
+
+.learn-class-schedule-skeleton {
+  padding: $cal-s2;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-top: $cal-s2;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Mobile adjustments
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-class-schedule-page {
+    --cal-height: calc(100vh - 160px);
+  }
+
+  // Was `.learn-placements-dashboard__body` — that wrapper div was removed when this page moved
+  // onto PageShell (src/components/Common/PageShell.jsx); its content wrapper is `.learn-projects__content`.
+  .learn-class-schedule-page .learn-projects__content {
+    padding: $cal-s2;
+  }
+
+  // Hide parent toolbar on mobile — CalendarMobileList has its own
+  .learn-class-schedule-card .learn-class-schedule-toolbar {
+    display: none !important;
+  }
+
+  // Calendar content — no extra padding
+  .learn-class-schedule-card .learn-class-schedule-content,
+  .learn-class-schedule-card .calendar-wrapper {
+    padding: 0 !important;
+  }
+
+  .learn-class-schedule-card .mainWrapper {
+    padding: 0 !important;
+  }
+
+  // Card — edge-to-edge on mobile for maximum content area
+  .learn-class-schedule-card {
+    margin-left: calc(-1 * #{$cal-s2}) !important;
+    margin-right: calc(-1 * #{$cal-s2}) !important;
+    width: calc(100% + #{$cal-s2} * 2) !important;
+    max-width: none !important;
+    border-radius: 12px 12px 0 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    box-shadow: 0 -1px 0 0 $cal-border;
+  }
+
+  // CalendarMobileList — ensure event cards don't distort
+  .learn-class-schedule-content .learn-calendar-mobile,
+  .learn-class-schedule-content .learn-calendar-mobile-list {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+
+    [class*="eventCard"] {
+      min-height: $cal-touch-min !important;
+      padding: $cal-s2 !important;
+    }
+  }
+
+  // rbc-calendar — force contain on mobile to prevent horizontal scroll
+  .rbc-calendar {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow-x: hidden;
+  }
+
+  .rbc-time-view,
+  .rbc-month-view {
+    width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .rbc-time-header-content,
+  .rbc-day-bg,
+  .rbc-header {
+    min-width: 0 !important;
+  }
+}
+@media (max-width: 767px) {
+  .learn-class-schedule-loading {
+    overflow: hidden;
+  }
+
+  .learn-class-schedule-skeleton {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .learn-class-schedule-skeleton__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .learn-class-schedule-skeleton__grid .ant-skeleton,
+  .learn-class-schedule-skeleton__grid .ant-skeleton-button,
+  .learn-class-schedule-skeleton__grid .ant-skeleton-input {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}

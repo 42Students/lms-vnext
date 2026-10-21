@@ -1,0 +1,537 @@
+// TPO Calendar — command bar, filters and responsive scheduling canvas.
+.tpo-calendar {
+  &__header {
+    margin-bottom: 14px;
+
+    .listing-page-header__title {
+      color: $tpo-ink;
+      letter-spacing: -0.025em;
+    }
+  }
+
+  &__view-switch.ant-segmented {
+    padding: 3px;
+    border: 1px solid #e4e9f0;
+    border-radius: 10px;
+    background: #f6f8fb;
+
+    .ant-segmented-item {
+      min-width: 74px;
+      font-weight: 600;
+    }
+  }
+
+  &__command-bar.ant-card {
+    margin-bottom: 16px;
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: $radius-card;
+    background: #fff;
+    box-shadow: 0 4px 18px rgba(26, 45, 72, 0.045);
+
+    > .ant-card-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 14px 20px;
+      padding: 16px 18px !important;
+    }
+  }
+
+  &__navigation {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 16px;
+  }
+
+  &__nav-buttons {
+    flex: 0 0 auto;
+
+    .ant-btn {
+      min-height: 36px;
+      border-radius: 8px;
+    }
+  }
+
+  &__range {
+    min-width: 0;
+
+    h4.ant-typography {
+      margin: 2px 0 1px !important;
+      color: $tpo-ink;
+      font-size: 17px;
+      line-height: 1.3;
+    }
+
+    > .ant-typography:last-child {
+      font-size: 12px;
+    }
+  }
+
+  &__eyebrow.ant-typography {
+    display: block;
+    color: $tpo-muted;
+    font-size: $tpo-fs-xs;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  &__filters {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  &__type-filter.ant-select {
+    min-width: 235px;
+  }
+
+  &__company-filter.ant-select {
+    width: 180px;
+  }
+
+  &__filters {
+    .ant-select-selector {
+      min-height: 40px !important;
+      border-radius: 8px !important;
+    }
+  }
+
+  &__legend {
+    display: flex;
+    grid-column: 1 / -1;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding-top: 12px;
+    border-top: 1px solid $tpo-line;
+
+    .ant-tag {
+      margin: 0;
+      border-radius: 999px;
+      font-size: $tpo-fs-xs;
+    }
+  }
+
+  &__stale-alert {
+    margin-bottom: 12px;
+    border-radius: 10px;
+  }
+
+  &__week {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(150px, 1fr));
+    gap: 8px;
+    padding-bottom: 8px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+  }
+
+  &__day.ant-card {
+    min-width: 150px;
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: 12px;
+    box-shadow: none;
+    transition: border-color 0.15s ease, background 0.15s ease;
+
+    .ant-card-head {
+      min-height: 44px;
+      padding-inline: 10px;
+      border-bottom-color: $tpo-line;
+      background: $tpo-surface-soft;
+    }
+
+    .ant-card-head-title {
+      padding: 8px 0;
+    }
+
+    .ant-card-body {
+      min-height: 176px;
+      padding: 9px !important;
+    }
+
+    &--today {
+      border-color: #a9cdf9;
+
+      .ant-card-head {
+        background: $teal-subtle;
+      }
+
+      .tpo-calendar__day-title strong {
+        color: $tpo-primary;
+      }
+    }
+
+    &--drop {
+      border-color: $light-cyan;
+      background: $teal-subtle;
+
+      .ant-card-body {
+        background: #eaf4ff;
+      }
+    }
+  }
+
+  &__day-title {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+
+    span {
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    strong {
+      color: $tpo-text;
+      font-size: 16px;
+    }
+
+    small {
+      min-width: 18px;
+      margin-left: auto;
+      padding: 1px 5px;
+      border-radius: 999px;
+      background: $tpo-line;
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      line-height: 16px;
+      text-align: center;
+    }
+  }
+
+  &__empty-day.ant-typography {
+    display: block;
+    padding: 16px 2px;
+    font-size: $tpo-fs-xs;
+    text-align: center;
+  }
+
+  &__event {
+    margin: 3px 0;
+    padding: 5px 7px;
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-left: 4px solid var(--event-color);
+    border-radius: 7px;
+    background: $tpo-surface-soft;
+    color: $tpo-text;
+    font-size: $tpo-fs-xs;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+
+    &:hover {
+      background: #f6f9fd;
+      border-top-color: #dde6f0;
+      border-right-color: #dde6f0;
+      border-bottom-color: #dde6f0;
+    }
+
+    b {
+      color: $tpo-text;
+      font-size: $tpo-fs-xs;
+    }
+
+    &--draggable {
+      cursor: grab;
+
+      &:active {
+        cursor: grabbing;
+      }
+    }
+  }
+
+  &__month.ant-card,
+  &__agenda.ant-card {
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: $radius-card;
+    box-shadow: 0 4px 18px rgba(26, 45, 72, 0.045);
+  }
+
+  &__month {
+    > .ant-card-body {
+      padding: 10px 14px 14px !important;
+    }
+
+    .ant-picker-calendar-date {
+      border-top-color: $tpo-line !important;
+    }
+
+    .ant-picker-calendar-date-today {
+      background: #f6faff;
+    }
+  }
+
+  &__month-event {
+    max-width: 100%;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    background: transparent;
+    color: #44546a;
+    font: inherit;
+    font-size: $tpo-fs-xs;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+      color: $tpo-primary;
+      outline: none;
+      text-decoration: underline;
+    }
+  }
+
+  &__more.ant-typography {
+    font-size: $tpo-fs-xs;
+  }
+
+  &__agenda {
+    .ant-card-body {
+      padding: 4px 18px 12px !important;
+    }
+  }
+
+  &__agenda-day.ant-list-item {
+    display: grid !important;
+    grid-template-columns: 138px minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+    padding: 15px 0 !important;
+    border-bottom-color: $tpo-line !important;
+  }
+
+  &__agenda-date {
+    h5.ant-typography {
+      margin: 2px 0 0 !important;
+      color: $tpo-text;
+      font-size: 14px;
+    }
+  }
+
+  &__agenda-events {
+    min-width: 0;
+
+    .tpo-calendar__event {
+      max-width: 720px;
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  .tpo-calendar {
+    &__command-bar.ant-card > .ant-card-body {
+      grid-template-columns: 1fr;
+    }
+
+    &__filters {
+      justify-content: flex-start;
+    }
+
+    &__legend {
+      grid-column: auto;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .tpo-calendar {
+    &__header {
+      .listing-page-header__right,
+      .tpo-calendar__view-switch {
+        width: 100%;
+      }
+
+      .tpo-calendar__view-switch .ant-segmented-group {
+        width: 100%;
+      }
+
+      .tpo-calendar__view-switch .ant-segmented-item {
+        flex: 1;
+        min-width: 0;
+        text-align: center;
+      }
+    }
+
+    &__command-bar.ant-card > .ant-card-body {
+      padding: 13px !important;
+    }
+
+    &__navigation {
+      align-items: stretch;
+      flex-direction: column-reverse;
+      gap: 10px;
+    }
+
+    &__nav-buttons {
+      display: grid !important;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      width: 100%;
+
+      .ant-btn {
+        width: 100%;
+      }
+    }
+
+    &__filters {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    &__type-filter.ant-select,
+    &__company-filter.ant-select {
+      width: 100%;
+      min-width: 0;
+    }
+
+    &__week {
+      grid-template-columns: repeat(7, minmax(180px, 1fr));
+    }
+
+    &__agenda.ant-card .ant-card-body {
+      padding-inline: 13px !important;
+    }
+
+    &__agenda-day.ant-list-item {
+      grid-template-columns: 1fr;
+      gap: 7px;
+    }
+  }
+}
+
+
+// TPO Calendar Demo/Wow pass — placement operations planner.
+.tpo-calendar {
+  &__planner {
+    display:grid;
+    grid-template-columns:minmax(0,1.5fr) minmax(290px,.65fr);
+    gap:14px;
+    margin-bottom:14px;
+  }
+
+  &__planner-hero.ant-card {
+    overflow:hidden; border:0; border-radius:18px;
+    background:
+      radial-gradient(circle at 91% 10%,rgba(139,92,246,.16),transparent 30%),
+      linear-gradient(135deg,$tpo-ink 0%,$tpo-ink 100%);
+    box-shadow:0 16px 40px rgba(15,23,42,.16); color:#fff;
+    > .ant-card-body { padding:20px !important; }
+  }
+
+  &__planner-head {
+    display:flex; align-items:flex-start; justify-content:space-between; gap:20px;
+    h3.ant-typography { margin:4px 0 !important; color:#fff; font-size:clamp(20px,2vw,27px); letter-spacing:-.025em; }
+    > div:first-child > .ant-typography:last-child { color:$tpo-line-strong; font-size: $tpo-fs-xs; line-height:1.45; }
+  }
+
+  &__planner-eyebrow.ant-typography {
+    color: $tpo-primary; font-size: $tpo-fs-xs; font-weight:750; letter-spacing:.1em; text-transform:uppercase;
+  }
+
+  &__planner-count {
+    flex:0 0 auto; min-width:105px; padding:10px 12px; border:1px solid rgba(148,163,184,.18);
+    border-radius:10px; background:rgba(255,255,255,.055); text-align:center;
+    strong,span { display:block; }
+    strong { color:#fff; font-size:23px; line-height:1; }
+    span { margin-top:4px; color:$tpo-muted; font-size: 12px; font-weight:700; text-transform:uppercase; }
+  }
+
+  &__planner-metrics {
+    display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin-top:15px;
+    > button {
+      min-width:0; padding:10px; border:1px solid rgba(148,163,184,.14); border-radius:10px;
+      background:rgba(255,255,255,.05); color:inherit; font:inherit; text-align:left; cursor:pointer;
+      &:hover,&:focus-visible { border-color:rgba(196,181,253,.34); outline:none; background:rgba(255,255,255,.08); }
+      span,strong,small { display:block; }
+      span { color: $tpo-primary; font-size:7px; font-weight:700; text-transform:uppercase; }
+      span .anticon { margin-right:3px; }
+      strong { margin-top:4px; color:#fff; font-size:19px; line-height:1; }
+      small { margin-top:4px; color:$tpo-muted; font-size:7px; line-height:1.35; }
+    }
+  }
+
+  &__planner-mix {
+    display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:5px; margin-top:8px;
+    > button {
+      min-width:0; padding:7px; border:1px solid transparent; border-radius:8px; background:rgba(15,23,42,.24);
+      color:inherit; font:inherit; text-align:left; cursor:pointer;
+      &:hover,&:focus-visible { border-color:rgba(196,181,253,.25); outline:none; background:rgba(255,255,255,.06); }
+      > span,> strong { display:block; }
+      > span { overflow:hidden; color:$tpo-muted; font-size:7px; font-weight:700; text-overflow:ellipsis; text-transform:uppercase; white-space:nowrap; }
+      > strong { margin-top:2px; color:#fff; font-size:14px; }
+      > div { height:4px; margin-top:5px; overflow:hidden; border-radius:999px; background:rgba(255,255,255,.08); }
+      > div i { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg, $light-cyan, $clrThird); }
+    }
+  }
+
+  &__planner-brief.ant-card {
+    overflow:hidden; border:1px solid $tpo-line; border-radius:18px; box-shadow:0 12px 34px rgba(26,45,72,.07);
+    > .ant-card-body { padding:16px !important; }
+    h4.ant-typography { margin:3px 0 11px !important; color:$tpo-ink; font-size:17px; }
+    .ant-btn { margin-top:5px; padding-left:0; font-size: $tpo-fs-xs; }
+  }
+
+  &__planner-brief-list {
+    display:flex; flex-direction:column; gap:7px;
+    > div { padding:10px; border:1px solid $tpo-line; border-radius:10px; background:$tpo-surface-soft; }
+    span,strong,small { display:block; }
+    span { color:$tpo-muted; font-size: 12px; font-weight:700; text-transform:uppercase; }
+    strong { margin-top:3px; overflow:hidden; color:$tpo-text; font-size:12px; text-overflow:ellipsis; white-space:nowrap; }
+    small { margin-top:3px; color:$tpo-muted; font-size: 12px; line-height:1.35; }
+  }
+}
+
+@media(max-width:1000px){
+  .tpo-calendar__planner { grid-template-columns:1fr; }
+}
+@media(max-width:767px){
+  .tpo-calendar {
+    &__planner-hero.ant-card > .ant-card-body { padding:15px !important; }
+    &__planner-head { align-items:flex-start; flex-direction:column; gap:9px; }
+    &__planner-count { display:flex; width:100%; min-width:0; align-items:baseline; justify-content:space-between; text-align:left; }
+    &__planner-count span { margin-top:0; }
+    &__planner-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    &__planner-mix { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  }
+}
+@media(max-width:480px){
+  .tpo-calendar__planner-metrics { grid-template-columns:1fr; }
+}
+
+// Type chips: the legend and the filter in one row.
+.tpo-calendar__type-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.tpo-calendar__type-chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid $tpo-line; border-radius: 999px;
+  background: #fff; color: $tpo-muted; font-size: 13px; cursor: pointer;
+  &.is-on { border-color: var(--chip-color); color: $tpo-text; background: color-mix(in srgb, var(--chip-color) 8%, #fff); }
+  &:focus-visible { outline: 2px solid $tpo-primary; outline-offset: 2px; }
+}
+.tpo-calendar__type-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--chip-color); }
+.tpo-calendar__type-chip.is-off .tpo-calendar__type-dot { opacity: 0.35; }
+// Everything shown: quiet chips (a legend). Narrowed: the picked style only on the types kept.
+.tpo-calendar__type-chip.is-all { color: $tpo-text; }
+.tpo-calendar__type-chip.is-on { border-width: 2px; padding: 3px 9px; }
+.tpo-calendar__type-chip.is-off { color: $tpo-muted; opacity: 0.8; }
+// The Today card, its items, the focused list and the hint.
+.tpo-calendar__today { margin: 12px 0; }
+.tpo-calendar__today-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.tpo-calendar__today-item {
+  padding: 4px 10px; border: 1px solid $tpo-line; border-left: 3px solid var(--event-color); border-radius: 6px; background: #fff; cursor: pointer; text-align: left;
+  &:hover { border-color: $tpo-line-strong; border-left-color: var(--event-color); }
+}
+.tpo-calendar__focus { margin-bottom: 12px; }
+.tpo-calendar__hint { margin: 0 0 8px; font-size: 13px; }
+.tpo-calendar__type-count { color: $tpo-muted; font-variant-numeric: tabular-nums; }
+.tpo-calendar__range h4 { white-space: nowrap; }

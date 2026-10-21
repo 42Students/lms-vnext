@@ -1,0 +1,19 @@
+// Shared icon-only control alignment. Explicit page-level icon sizes may override this scale.
+.ant-btn.ant-btn-icon-only {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  > .anticon {
+    font-size: $text-md;
+    line-height: 1;
+  }
+
+  &.ant-btn-sm > .anticon {
+    font-size: $text-base;
+  }
+
+  &.ant-btn-lg > .anticon {
+    font-size: $text-lg;
+  }
+}

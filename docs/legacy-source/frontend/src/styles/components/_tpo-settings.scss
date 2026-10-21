@@ -1,0 +1,307 @@
+// TPO Settings — navigation and shared configuration-page visual system.
+.tpo-settings {
+  &__header {
+    margin-bottom: 14px;
+
+    .listing-page-header__title {
+      color: $tpo-ink;
+      letter-spacing: -0.025em;
+    }
+  }
+
+  &__context {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    margin-bottom: 16px;
+    padding: 18px 20px;
+    border: 1px solid #e4ebf3;
+    border-radius: 14px;
+    background: linear-gradient(135deg, $tpo-surface-soft 0%, $tpo-surface-soft 55%, $tpo-surface-soft 100%);
+
+    > div:first-child {
+      min-width: 0;
+      max-width: 800px;
+    }
+
+    h3.ant-typography {
+      margin: 3px 0 5px !important;
+      color: $tpo-ink;
+      font-size: clamp(21px, 2vw, 25px);
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+
+    .ant-typography {
+      margin-bottom: 0;
+      line-height: 1.5;
+    }
+  }
+
+  &__eyebrow.ant-typography {
+    display: block;
+    color: $tpo-muted;
+    font-size: $tpo-fs-xs;
+    font-weight: 700;
+    letter-spacing: 0.095em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  &__context-meta {
+    flex: 0 0 auto;
+    min-width: 118px;
+    padding: 12px 14px;
+    border: 1px solid #dbe5f0;
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.85);
+    text-align: center;
+
+    strong,
+    span {
+      display: block;
+    }
+
+    strong {
+      color: $tpo-ink;
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    span {
+      margin-top: 4px;
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+  }
+
+  &__tabs.ant-tabs {
+    .ant-tabs-nav {
+      margin-bottom: 16px;
+      border: 1px solid $tpo-line;
+      border-radius: 12px;
+      background: $tpo-surface-soft;
+
+      &::before {
+        border-bottom: 0;
+      }
+    }
+
+    .ant-tabs-nav-wrap {
+      padding: 4px 6px;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+
+    .ant-tabs-nav-list {
+      gap: 2px;
+    }
+
+    .ant-tabs-tab {
+      margin: 0 !important;
+      padding: 8px 11px !important;
+      border-radius: 8px;
+      color: $tpo-muted;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: background 0.15s ease, color 0.15s ease;
+
+      &:hover {
+        background: #eef4fb;
+        color: $tpo-text;
+      }
+    }
+
+    .ant-tabs-tab-active {
+      background: #fff;
+      box-shadow: 0 1px 5px rgba(26, 45, 72, 0.08);
+
+      .ant-tabs-tab-btn {
+        color: $tpo-primary;
+      }
+    }
+
+    .ant-tabs-ink-bar {
+      display: none;
+    }
+
+    .ant-tabs-content-holder {
+      min-width: 0;
+    }
+
+    .ant-tabs-tabpane {
+      min-width: 0;
+
+      > .ant-card,
+      > .ant-space > .ant-space-item > .ant-card {
+        overflow: hidden;
+        border: 1px solid $tpo-line;
+        border-radius: 14px;
+        box-shadow: 0 4px 18px rgba(26, 45, 72, 0.045);
+      }
+
+      > .ant-card > .ant-card-head,
+      > .ant-space > .ant-space-item > .ant-card > .ant-card-head {
+        min-height: 50px;
+        padding-inline: 17px;
+        border-bottom-color: $tpo-line;
+        background: $tpo-surface-soft;
+      }
+
+      > .ant-card > .ant-card-body,
+      > .ant-space > .ant-space-item > .ant-card > .ant-card-body {
+        padding: 18px !important;
+      }
+
+      .ant-card-head-title {
+        color: $tpo-text;
+        font-size: 15px;
+        font-weight: 650;
+      }
+
+      .ant-card-extra .ant-btn,
+      > .ant-card > .ant-card-body > .ant-btn[type="button"],
+      > .ant-space > .ant-space-item > .ant-card .ant-btn {
+        border-radius: 8px;
+      }
+
+      .ant-form-item-label > label {
+        color: #44536a;
+        font-weight: 600;
+      }
+
+      .ant-input,
+      .ant-input-number,
+      .ant-picker,
+      .ant-select-selector {
+        border-radius: 8px !important;
+      }
+
+      .ant-alert {
+        border-radius: 9px;
+      }
+
+      .ant-table-thead > tr > th {
+        background: $tpo-surface-soft !important;
+        color: $tpo-muted;
+        font-size: $tpo-fs-xs;
+        font-weight: 700;
+        letter-spacing: 0.035em;
+        text-transform: uppercase;
+      }
+
+      .ant-table-tbody > tr > td {
+        border-bottom-color: $tpo-line;
+      }
+
+      .ant-list-item {
+        border-bottom-color: $tpo-line;
+      }
+
+      .ant-divider {
+        border-color: $tpo-line;
+      }
+    }
+  }
+
+  // Sentence-style policy forms remain readable while gaining enough vertical separation
+  // to stop Rules from looking like one long paragraph of controls.
+  &__tabs .ant-tabs-tabpane {
+    .ant-form > .ant-space {
+      min-height: 44px;
+      width: 100%;
+      padding: 7px 10px;
+      border: 1px solid $tpo-line;
+      border-radius: 9px;
+      background: $tpo-surface-soft;
+    }
+
+    .ant-switch {
+      flex: 0 0 auto;
+    }
+
+    .ant-tag {
+      border-radius: 999px;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .tpo-settings {
+    &__context {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px 14px;
+    }
+
+    &__context-meta {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      padding: 9px 11px;
+      align-items: baseline;
+      justify-content: space-between;
+      text-align: left;
+
+      span {
+        margin-top: 0;
+      }
+    }
+
+    &__tabs.ant-tabs {
+      .ant-tabs-nav-wrap {
+        padding: 4px;
+      }
+
+      .ant-tabs-tab {
+        padding: 8px 10px !important;
+      }
+
+      .ant-tabs-tabpane {
+        > .ant-card > .ant-card-head,
+        > .ant-space > .ant-space-item > .ant-card > .ant-card-head {
+          padding-inline: 13px;
+        }
+
+        > .ant-card > .ant-card-body,
+        > .ant-space > .ant-space-item > .ant-card > .ant-card-body {
+          padding: 14px 13px !important;
+        }
+
+        .ant-card-head-wrapper {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 8px;
+          padding-block: 10px;
+        }
+
+        .ant-card-extra {
+          margin-inline-start: 0;
+
+          .ant-btn {
+            width: 100%;
+          }
+        }
+
+        .ant-table-wrapper {
+          overflow-x: auto;
+        }
+
+        .ant-space {
+          max-width: 100%;
+        }
+      }
+    }
+  }
+}
+
+.tpo-settings__rule { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 0;
+  & + & { border-top: 1px solid $tpo-line; }
+  @media (max-width: 575px) { flex-direction: column; align-items: flex-start; }
+}

@@ -1,0 +1,495 @@
+// TPO Create/Edit Drive — guided setup flow with a persistent review rail.
+.tpo-drive-form {
+  &__header {
+    margin-bottom: 14px;
+
+    .listing-page-header__title {
+      color: $tpo-ink;
+      letter-spacing: -0.025em;
+    }
+  }
+
+  &__save-state {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  &__save-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #b7c0cc;
+
+    &--saving {
+      background: $tpo-primary;
+      box-shadow: 0 0 0 3px rgba($tpo-primary, 0.12);
+    }
+
+    &--saved {
+      background: #52c41a;
+    }
+
+    &--error {
+      background: #ff4d4f;
+      box-shadow: 0 0 0 3px rgba(255, 77, 79, 0.1);
+    }
+  }
+
+  &__header-actions {
+    .ant-btn {
+      min-height: 38px;
+      border-radius: 8px;
+    }
+  }
+
+  &__alert {
+    margin-bottom: 12px;
+    border-radius: 10px;
+  }
+
+  &__intro {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 16px;
+    padding: 17px 18px;
+    border: 1px solid $tpo-line;
+    border-radius: 13px;
+    background: $tpo-surface-soft;
+
+    > div:first-child {
+      min-width: 0;
+      max-width: 780px;
+    }
+
+    h4.ant-typography {
+      margin: 3px 0 3px !important;
+      color: $tpo-ink;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    > div:first-child > .ant-typography:last-child {
+      font-size: 12px;
+      line-height: 1.45;
+    }
+  }
+
+  &__eyebrow.ant-typography {
+    display: block;
+    color: $tpo-muted;
+    font-size: $tpo-fs-xs;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  &__progress {
+    flex: 0 0 auto;
+    min-width: 112px;
+    padding: 11px 13px;
+    border: 1px solid #dce5ef;
+    border-radius: 10px;
+    background: #fff;
+    text-align: center;
+
+    strong,
+    span {
+      display: block;
+    }
+
+    strong {
+      color: $tpo-ink;
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    span {
+      margin-top: 4px;
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+  }
+
+  &__layout {
+    align-items: flex-start;
+  }
+
+  &__section.ant-card {
+    margin-bottom: 16px;
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(26, 45, 72, 0.045);
+
+    .ant-card-head {
+      min-height: 48px;
+      padding-inline: 16px;
+      border-bottom-color: $tpo-line;
+      background: $tpo-surface-soft;
+    }
+
+    .ant-card-head-title {
+      color: $tpo-text;
+      font-size: 15px;
+      font-weight: 650;
+    }
+
+    .ant-card-body {
+      padding: 16px !important;
+    }
+
+    .ant-form-item-label > label {
+      color: #44536a;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .ant-input,
+    .ant-input-number,
+    .ant-picker,
+    .ant-select-selector {
+      border-radius: 8px !important;
+    }
+
+    .ant-divider {
+      border-color: $tpo-line;
+    }
+  }
+
+  &__start.ant-card {
+    border-style: dashed;
+    background: $tpo-surface-soft;
+
+    .ant-card-body {
+      background: $tpo-surface-soft;
+    }
+
+    .ant-alert {
+      border-radius: 9px;
+    }
+  }
+
+  &__role-option {
+    margin-bottom: 12px;
+    padding: 14px;
+    border: 1px solid $tpo-line;
+    border-radius: 11px;
+    background: $tpo-surface-soft;
+
+    &:last-of-type {
+      margin-bottom: 10px;
+    }
+
+    .ant-form-item {
+      margin-bottom: 13px;
+    }
+  }
+
+  &__review-rail {
+    position: sticky;
+    top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  &__review.ant-card,
+  &__reach.ant-card {
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(26, 45, 72, 0.045);
+
+    .ant-card-head {
+      min-height: 46px;
+      padding-inline: 15px;
+      border-bottom-color: $tpo-line;
+      background: $tpo-surface-soft;
+    }
+
+    .ant-card-head-title {
+      color: $tpo-text;
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .ant-card-body {
+      padding: 15px !important;
+    }
+  }
+
+  &__checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    > div {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      gap: 9px;
+      padding: 8px 0;
+      align-items: start;
+      border-bottom: 1px solid #f0f3f6;
+
+      &:last-child {
+        border-bottom: 0;
+      }
+
+      > span {
+        display: inline-flex;
+        width: 25px;
+        height: 25px;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid $tpo-line;
+        border-radius: 50%;
+        background: $tpo-surface-soft;
+        color: $tpo-muted;
+        font-size: $tpo-fs-xs;
+        font-weight: 700;
+      }
+
+      > div {
+        min-width: 0;
+      }
+
+      strong,
+      small {
+        display: block;
+      }
+
+      strong {
+        color: $tpo-text;
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      small {
+        margin-top: 2px;
+        overflow: hidden;
+        color: $tpo-muted;
+        font-size: $tpo-fs-xs;
+        line-height: 1.35;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      &.is-complete > span {
+        border-color: #b7dfaa;
+        background: #f6ffed;
+        color: #237804;
+      }
+
+      &.is-complete strong {
+        color: #1f5130;
+      }
+    }
+  }
+
+  &__reach-stats {
+    .ant-statistic {
+      padding: 10px 11px;
+      border: 1px solid $tpo-line;
+      border-radius: 9px;
+      background: $tpo-surface-soft;
+    }
+
+    .ant-statistic-title {
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      font-weight: 650;
+      text-transform: uppercase;
+    }
+
+    .ant-statistic-content {
+      color: $tpo-ink;
+      font-size: 22px;
+      font-weight: 650;
+    }
+  }
+
+  &__reach-note.ant-typography {
+    margin: 10px 0 0;
+    font-size: $tpo-fs-xs;
+    line-height: 1.45;
+  }
+
+  &__branches {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    > div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .ant-tag {
+      margin: 0;
+      border-radius: 999px;
+      font-size: $tpo-fs-xs;
+    }
+
+    strong {
+      color: $tpo-text;
+      font-size: 12px;
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  .tpo-drive-form {
+    &__review-rail {
+      position: static;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .tpo-drive-form {
+    &__header {
+      .listing-page-header__right,
+      .tpo-drive-form__header-actions {
+        width: 100%;
+      }
+    }
+
+    &__header-actions {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr;
+
+      .ant-btn {
+        width: 100%;
+      }
+    }
+
+    &__intro {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 10px;
+      padding: 14px 13px;
+    }
+
+    &__progress {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      padding: 9px 11px;
+      align-items: baseline;
+      justify-content: space-between;
+      text-align: left;
+
+      span {
+        margin-top: 0;
+      }
+    }
+
+    &__section.ant-card {
+      .ant-card-head {
+        padding-inline: 13px;
+      }
+
+      .ant-card-body {
+        padding: 13px !important;
+      }
+    }
+
+    &__role-option {
+      padding: 12px;
+    }
+
+    &__review.ant-card,
+    &__reach.ant-card {
+      .ant-card-head,
+      .ant-card-body {
+        padding-inline: 13px !important;
+      }
+    }
+  }
+}
+
+// "Who this reaches": the rules that keep students out, most first.
+.tpo-drive-form__why {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 12px;
+
+  > div {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #475569;
+  }
+}
+
+// Clone a past drive: each option says its status and month; the copy says where it came from and what it left behind.
+.tpo-drive-form__clone-option { display: flex; justify-content: space-between; gap: 12px; > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } }
+.tpo-drive-form__clone-list { margin: 4px 0 0; padding-left: 18px; }
+
+// Recruiter phase 1, N10: the top bar (title, last saved, Invite the recruiter to review, Publish) stays while the form scrolls.
+.tpo-drive-form__header {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: $tpo-surface-soft;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+// Strong company search (docs/companies/COMPANY-SEARCH-2026-10-13.md): each result says why it matched; a near spelling reads as a
+// question; names from Engage sit in their own group.
+.tpo-company-picker__option {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  white-space: normal;
+}
+
+.tpo-company-picker__reason {
+  font-size: 12px;
+  color: $tpo-primary;
+}
+
+.tpo-company-picker__option--fuzzy .tpo-company-picker__reason {
+  color: $tpo-warn;
+}
+
+.tpo-company-picker__domains {
+  font-size: 12px;
+}
+
+.tpo-company-picker__group {
+  font-size: 12px;
+  font-weight: 600;
+  color: $tpo-muted;
+}
+
+.tpo-company-picker__same {
+  margin-bottom: 16px;
+}
+
+// A company verified by 42 keeps the field's full width when it locks.
+.tpo-company-picker__locked {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .ant-input-affix-wrapper {
+    flex: 1;
+    min-width: 0;
+  }
+
+  > a {
+    white-space: nowrap;
+  }
+}

@@ -1,0 +1,2685 @@
+@import "./variables.scss";
+
+// Placements palette — color theory: analogous teal scale + single warm accent
+// 60% neutral | 30% teal family | 10% warm (attention)
+$learn-accent: $clrThird;
+$learn-accent-dark: $teal-dark;
+$learn-accent-light: #5bc4d0;
+$learn-secondary: #1e5f6b; // darker teal for depth
+$learn-text: $neutral-900;
+$learn-text-muted: $neutral-500;
+$learn-text-subtle: $neutral-400;
+$learn-border: $neutral-200;
+$learn-border-soft: $neutral-50;
+$learn-bg: $white;
+$learn-bg-subtle: $neutral-100;
+$learn-warning: $status-warning;
+$learn-success: $status-success;
+$learn-error: $status-error;
+$learn-info: $teal-text;
+
+// Stat cards — teal + warm amber + soft green (reduce blue dominance)
+$tint-teal-1: rgba($clrThird, 0.09);
+$tint-teal-2: rgba(45, 125, 138, 0.08);
+$tint-teal-3: rgba(30, 95, 107, 0.08);
+$tint-amber: rgba($status-warning, 0.08);
+$tint-green: rgba($status-success, 0.08);
+
+$learn-mobile-footer-height: 4rem !default;
+$learn-mobile-bp: 767px !default;
+$learn-touch-min: 44px;
+$learn-s1: 8px;
+$learn-s2: 16px;
+$learn-s3: 24px;
+$learn-s4: 32px;
+
+// My Placements Hub — layout (mirrors learn-course-layout)
+// Design system: content-padding-desktop 24px, content-padding-mobile 16px (page only, not header/tabs)
+.learn-placements-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; // tight gap between tabs and page content
+  min-height: 100%;
+  box-sizing: border-box;
+
+  @media (max-width: $learn-mobile-bp) {
+    gap: $learn-s1; // 8px mobile
+  }
+
+  &.learn-course-layout .ant-tabs-dashboard.learn-placements-tabs {
+    flex-shrink: 0;
+    .ant-tabs-tab {
+      min-height: $learn-touch-min;
+      @media (max-width: $learn-mobile-bp) {
+        min-height: $learn-touch-min;
+        padding: $learn-s1 $learn-s2;
+      }
+    }
+  }
+
+  // Page content only — horizontal padding (tabs stay full width)
+  // Targets both direct page children and the .placements-page-content wrapper's children
+  & > *:not(.ant-tabs-dashboard):not(.placements-page-content) {
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    padding-left: $learn-s3 !important;
+    padding-right: $learn-s3 !important;
+
+    @media (max-width: $learn-mobile-bp) {
+      padding-left: $learn-s2 !important;
+      padding-right: $learn-s2 !important;
+    }
+  }
+
+  & > .placements-page-content > * {
+    padding-left: $learn-s3 !important;
+    padding-right: $learn-s3 !important;
+
+    @media (max-width: $learn-mobile-bp) {
+      padding-left: $learn-s2 !important;
+      padding-right: $learn-s2 !important;
+    }
+  }
+
+  .ant-tabs-ink-bar {
+    background: $learn-accent !important;
+  }
+
+  .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: $learn-accent !important;
+  }
+}
+
+// Dashboard — neutral flat bg per blueprint
+.learn-placements-layout .scroll-container.learn-placements-dashboard {
+  background: $learn-bg-subtle;
+}
+
+@media (max-width: $learn-mobile-bp) {
+  // `.learn-placements-page` isn't present on the Dashboard content (pages/learn/my-placements/index.js) —
+  // scope directly off the layout instead so this actually matches.
+  .learn-placements-layout .learn-placements-dashboard__body {
+    padding: $learn-s2;
+  }
+}
+
+// Grid section wrapping all dashboard widgets
+.learn-placements-grid-section {
+  margin-top: $learn-s3;
+
+  @media (max-width: $learn-mobile-bp) {
+    margin-top: $learn-s2;
+  }
+}
+
+.learn-placements-dashboard {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding-bottom: calc(#{$learn-mobile-footer-height} + 24px + env(safe-area-inset-bottom, 0px));
+
+  @media (min-width: 768px) {
+    padding-bottom: 48px;
+  }
+
+  &__card {
+    padding: 0; // override ln-module-card's 24px — __body provides the real padding
+    border-radius: 12px;
+    border: 1px solid $learn-border;
+    box-shadow: $elev-1;
+    background: $learn-bg;
+  }
+
+  &__body {
+    padding: $learn-s3;
+
+    @media (max-width: $learn-mobile-bp) {
+      padding: $learn-s2;
+    }
+  }
+
+  // Hero / Overview — white zone flush with the top navbar, full card-width bleed
+  // Stats have been moved to a separate section below; this is hero text only.
+  &__overview {
+    display: block;
+    margin: 0 calc(-1 * #{$learn-s3}) 0;
+    padding: $learn-s3;
+    background: $learn-bg; // white — merges visually with navbar
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid $learn-border; // separator before stats + content
+
+    @media (max-width: $learn-mobile-bp) {
+      margin: 0 calc(-1 * #{$learn-s2}) 0;
+      padding: $learn-s2;
+    }
+  }
+
+  &__hero {
+    flex: 1;
+    min-width: 0;
+    background: none;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+
+    @media (max-width: $learn-mobile-bp) {
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  &__momentum {
+    display: inline-block;
+    margin-top: $learn-s1;
+    padding: 4px $learn-s1;
+    font-size: 12px;
+    color: $learn-text-muted;
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 9999px;
+    font-family: $font-latoReg, sans-serif !important;
+  }
+
+  &__badge {
+    margin-left: $learn-s1;
+    padding: 4px $learn-s1;
+    font-size: 12px;
+    font-weight: 600;
+    color: $learn-bg;
+    background: $learn-warning;
+    border-radius: 9999px;
+    vertical-align: middle;
+  }
+
+  &__greeting {
+    font-size: 28px;
+    font-weight: 600;
+    color: $learn-text;
+    margin: 0 0 $learn-s1;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    font-family: $font-latoBold, sans-serif !important;
+    font-weight: 700 !important;  // family alias no longer implies bold
+  }
+
+  &__subtext {
+    font-size: 14px;
+    color: $learn-text-muted;
+    margin: 0;
+    line-height: 1.5;
+    font-family: $font-latoReg, sans-serif !important;
+  }
+
+  // Hero welcome — padding handled by __overview now
+  .learn-placements-hero-welcome {
+    padding: 0 !important;
+    position: relative;
+  }
+
+  .learn-placements-hero-welcome .learn-placements-dashboard__greeting {
+    font-size: 28px;
+    margin: 0 0 $learn-s1;
+
+    @media (max-width: $learn-mobile-bp) {
+      font-size: 20px;
+    }
+  }
+
+  .learn-placements-hero-welcome .learn-placements-dashboard__subtext {
+    font-size: 14px;
+    color: $learn-text-muted;
+    margin: 0;
+  }
+
+  .learn-courses-hero-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $learn-s1;
+    margin-top: $learn-s1;
+    position: relative;
+  }
+
+  // Status badge
+  .learn-placements-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  // Stat card trend
+  .learn-placements-stat-card__value-row {
+    display: flex;
+    align-items: center;
+    gap: $learn-s1;
+    flex-wrap: wrap;
+  }
+
+  .learn-placements-stat-card__trend {
+    font-size: 12px;
+    line-height: 1.3;
+    color: $learn-text-muted;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    &--up {
+      color: $learn-success;
+    }
+
+    &--down {
+      color: $learn-error;
+    }
+  }
+
+  // Stat cards — inline right of hero on desktop, stacked below on mobile
+  .learn-placements-stats-row {
+    flex-shrink: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: $learn-s1;
+    margin-bottom: 0;
+    max-width: 50%;
+    min-width: 240px;
+
+    @media (max-width: $learn-mobile-bp) {
+      max-width: none;
+      min-width: 0;
+      grid-template-columns: repeat(2, 1fr);
+      gap: $learn-s2;
+    }
+  }
+
+  .learn-placements-stat-card {
+    background: $learn-bg;
+    border-radius: 12px;
+    padding: $learn-s1 $learn-s2;
+    border: 1px solid $learn-border-soft;
+    min-height: 64px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: $learn-s2;
+    cursor: pointer;
+    text-align: left;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: $elev-2;
+      border-color: $learn-border;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $learn-accent;
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.4;
+    }
+
+    &--skeleton .ant-skeleton {
+      .ant-skeleton-content .ant-skeleton-title,
+      .ant-skeleton-content .ant-skeleton-paragraph > li {
+        border-radius: 4px;
+      }
+    }
+
+    // Color variants — white card, color only on the 32px icon circle
+    &--teal {
+      background: $learn-bg;
+      border-color: $learn-border-soft;
+
+      .learn-placements-stat-card__icon-wrap {
+        background: rgba($learn-accent, 0.12);
+      }
+      .learn-placements-stat-card__icon {
+        color: $learn-accent;
+      }
+    }
+
+    &--blue {
+      background: $learn-bg;
+      border-color: $learn-border-soft;
+
+      .learn-placements-stat-card__icon-wrap {
+        background: rgba($learn-accent-light, 0.12);
+      }
+      .learn-placements-stat-card__icon {
+        color: $learn-accent-light;
+      }
+    }
+
+    &--purple {
+      background: $learn-bg;
+      border-color: $learn-border-soft;
+
+      .learn-placements-stat-card__icon-wrap {
+        background: rgba($learn-secondary, 0.12);
+      }
+      .learn-placements-stat-card__icon {
+        color: $learn-secondary;
+      }
+    }
+
+    &--amber {
+      background: $learn-bg;
+      border-color: $learn-border-soft;
+
+      .learn-placements-stat-card__icon-wrap {
+        background: rgba($learn-warning, 0.10);
+      }
+      .learn-placements-stat-card__icon {
+        color: darken($learn-warning, 8%);
+      }
+
+      .learn-placements-stat-card__microcopy {
+        color: darken($learn-warning, 5%);
+      }
+    }
+
+    &--green {
+      background: $learn-bg;
+      border-color: $learn-border-soft;
+
+      .learn-placements-stat-card__icon-wrap {
+        background: rgba($learn-success, 0.10);
+      }
+      .learn-placements-stat-card__icon {
+        color: $learn-success;
+      }
+
+      .learn-placements-stat-card__microcopy {
+        color: darken($learn-success, 5%);
+      }
+    }
+  }
+
+  .learn-placements-stat-card__icon-wrap {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .learn-placements-stat-card__icon {
+    font-size: 16px;
+  }
+
+  .learn-placements-stat-card__content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: $learn-s1; /* 8px gap between value and label */
+  }
+
+  .learn-placements-stat-card__value {
+    font-size: 20px;
+    font-weight: 600;
+    color: $learn-text;
+    line-height: 1.2;
+    font-family: $font-latoBold, sans-serif !important;
+    font-weight: 700 !important;  // family alias no longer implies bold
+  }
+
+  .learn-placements-stat-card__label {
+    font-size: 12px;
+    color: $learn-text-muted;
+    margin: 0;
+    line-height: 1.3;
+    font-family: $font-latoReg, sans-serif !important;
+  }
+
+  .learn-placements-stat-card__microcopy {
+    font-size: 12px; // Minimum readable size on mobile; was 11px
+    color: $learn-text-subtle;
+    margin-top: 4px;
+    line-height: 1.3;
+    font-family: $font-latoReg, sans-serif !important;
+  }
+
+  // Needs attention — card-style items, clear hierarchy
+  &__attention {
+    margin-bottom: $learn-s4;
+  }
+
+  .learn-placements-attention-header {
+    display: flex;
+    align-items: center;
+    gap: $learn-s2;
+    margin-bottom: $learn-s2;
+  }
+
+  .learn-placements-attention-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    color: $learn-text;
+    margin: 0;
+    font-family: $font-latoBold, sans-serif !important;
+    font-weight: 700 !important;  // family alias no longer implies bold
+
+    .anticon {
+      font-size: 20px;
+      color: $learn-warning;
+    }
+  }
+
+  .learn-placements-attention-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 $learn-s1;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 600;
+    color: $learn-bg;
+    background: $learn-warning;
+    border-radius: 9999px;
+    font-family: $font-latoBold, sans-serif !important;
+    font-weight: 700 !important;  // family alias no longer implies bold
+  }
+
+  .learn-placements-attention-list {
+    display: flex;
+    flex-direction: column;
+    gap: $learn-s2;
+  }
+
+  .learn-placements-action-item {
+    display: flex;
+    align-items: flex-start;
+    gap: $learn-s2;
+    width: 100%;
+    padding: $learn-s2 $learn-s3;
+    text-align: left;
+    background: $learn-bg;
+    border: 1px solid $learn-border;
+    border-radius: 12px;
+    box-shadow: $elev-1;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      border-color: rgba($learn-warning, 0.4);
+      box-shadow: $elev-2;
+    }
+
+    &:active {
+      opacity: 0.98;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $learn-accent;
+      outline-offset: 2px;
+    }
+
+    &__avatar {
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    &__content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    &__label {
+      display: block;
+      font-size: 12px;
+      line-height: 1.3;
+      font-weight: 600;
+      color: $learn-warning;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+      font-family: $font-latoBold, sans-serif !important;
+      font-weight: 700 !important;  // family alias no longer implies bold
+    }
+
+    &__title {
+      font-size: 14px;
+      font-weight: 600;
+      color: $learn-text;
+      margin: 0 0 4px;
+      line-height: 1.35;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      font-family: $font-latoBold, sans-serif !important;
+      font-weight: 700 !important;  // family alias no longer implies bold
+    }
+
+    &__company {
+      display: block;
+      font-size: 14px;
+      color: $learn-text-muted;
+      margin-bottom: $learn-s1;
+      font-family: $font-latoReg, sans-serif !important;
+    }
+
+    &__meta {
+      display: block;
+      font-size: 14px;
+      line-height: 1.3;
+      color: $learn-text-subtle;
+      font-family: $font-latoReg, sans-serif !important;
+    }
+
+    &__urgency {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 4px 8px;
+      background: rgba($learn-warning, 0.15);
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: darken($learn-warning, 12%);
+      font-family: $font-latoBold, sans-serif !important;
+      font-weight: 700 !important;  // family alias no longer implies bold
+    }
+
+    &__cta {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba($learn-accent, 0.1);
+      color: $learn-accent;
+      font-size: 18px;
+      margin-top: 0;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    &:hover &__cta {
+      background: rgba($learn-accent, 0.18);
+      color: $learn-accent-dark;
+    }
+
+    &--high &__label {
+      color: $learn-error;
+    }
+
+    &--high &__cta {
+      background: rgba($learn-error, 0.1);
+      color: $learn-error;
+    }
+
+    &--high:hover &__cta {
+      background: rgba($learn-error, 0.18);
+    }
+
+    @media (max-width: $learn-mobile-bp) {
+      padding: $learn-s2;
+      min-height: $learn-touch-min;
+
+      &__avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+      }
+
+      &__title {
+        font-size: 14px;
+      }
+
+      &__company {
+        font-size: 14px;
+      }
+
+      &__cta {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        min-height: 40px;
+      }
+    }
+  }
+
+  // Section grid
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $learn-s4;
+    margin-bottom: $learn-s4;
+
+    @media (min-width: #{$learn-mobile-bp + 1}) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  &__section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $learn-s2;
+  }
+
+  &__section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: $learn-text;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &__view-all.ant-btn {
+    font-size: 14px;
+    color: $learn-accent;
+    padding: 0;
+    font-family: $font-latoReg, sans-serif !important;
+
+    &:hover {
+      color: $learn-accent-dark;
+    }
+  }
+
+  & .learn-placements-section-card {
+    padding: $learn-s3 !important;
+    border-radius: 12px;
+    border: 1px solid $learn-border;
+    background: $learn-bg-subtle;
+    box-shadow: $elev-1;
+    transition: box-shadow 0.2s ease;
+
+    &:hover {
+      box-shadow: $elev-2;
+    }
+
+    @media (max-width: $learn-mobile-bp) {
+      padding: $learn-s2 !important;
+    }
+  }
+
+  // List
+  .learn-placements-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .learn-placements-list__item {
+    border-bottom: 1px solid $learn-border-soft;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &--next {
+      position: relative;
+      padding-left: $learn-s3;
+      background: rgba($learn-accent, 0.04);
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: $learn-accent;
+        border-radius: 0 2px 2px 0;
+      }
+
+      .learn-placements-list__link {
+        margin-left: 0;
+      }
+    }
+  }
+
+  .learn-placements-list__link {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    padding: $learn-s2 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    min-height: 44px;
+    justify-content: center;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: rgba($learn-accent, 0.05);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $learn-accent;
+      outline-offset: 2px;
+    }
+
+    .learn-placements-list__item--next &:hover {
+      background: rgba($learn-accent, 0.08);
+    }
+  }
+
+  .learn-placements-list__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: $learn-text;
+  }
+
+  .learn-placements-list__meta {
+    font-size: 14px;
+    line-height: 1.4;
+    color: $learn-text-muted;
+    margin-top: $learn-s1;
+
+    &--status {
+      text-transform: capitalize;
+    }
+  }
+
+  .learn-placements-list__meta-row {
+    margin-top: $learn-s1;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $learn-s1;
+  }
+
+  .learn-placements-list__time-to {
+    font-size: 12px;
+    line-height: 1.3;
+    color: $learn-success;
+    padding: 4px 8px;
+    background: rgba($learn-success, 0.1);
+    border-radius: 6px;
+  }
+
+  // Empty state
+  .learn-placements-empty {
+    text-align: center;
+    padding: $learn-s4 $learn-s3;
+
+    &__icon {
+      font-size: 40px;
+      color: $learn-text-subtle;
+      margin-bottom: $learn-s2;
+      display: block;
+      opacity: 0.7;
+    }
+
+    p {
+      font-size: 14px;
+      color: $learn-text-muted;
+      margin: 0 0 $learn-s2;
+      font-family: $font-latoReg, sans-serif !important;
+    }
+
+    .ant-btn-link {
+      color: $learn-accent;
+      font-family: $font-latoReg, sans-serif !important;
+    }
+
+    &--rich {
+      padding: $learn-s4 $learn-s3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .learn-placements-empty__illustration {
+        margin-bottom: $learn-s2;
+      }
+
+      .learn-placements-empty-illus {
+        width: 100%;
+        max-width: 140px;
+        height: auto;
+      }
+
+      .learn-placements-empty__icon {
+        font-size: 32px;
+        margin-bottom: $learn-s1;
+      }
+
+      .learn-placements-empty__title {
+        font-size: 20px;
+        color: $learn-text;
+        margin: 0 0 $learn-s1;
+      }
+
+      .learn-placements-empty__subtitle {
+        font-size: 14px;
+        color: $learn-text-muted;
+        margin: 0 0 $learn-s4;
+        max-width: 280px;
+        text-align: center;
+      }
+
+      .learn-placements-empty__cta {
+        font-family: $font-latoBold, sans-serif !important;
+        font-weight: 700 !important;  // family alias no longer implies bold
+      }
+    }
+  }
+
+  // Application journey — Pictograph pipeline (Design System Blueprint aligned)
+  .learn-placements-pipeline {
+    margin-bottom: $learn-s4;
+    padding: $learn-s3;
+    background: $learn-bg;
+    border-radius: 12px;
+    border: 1px solid $learn-border;
+    box-shadow: $elev-1;
+
+    &__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: $learn-s2;
+    }
+
+    &__title {
+      font-size: 20px;
+      font-weight: 600;
+      color: $learn-text;
+      margin: 0;
+      line-height: 1.3;
+    }
+
+    &__view-all {
+      font-size: 14px;
+      color: $learn-accent;
+      padding: 0;
+      font-family: $font-latoReg, sans-serif !important;
+
+      &:hover {
+        color: $learn-accent-dark;
+      }
+    }
+
+    &__list {
+      display: flex;
+      flex-direction: column;
+      gap: $learn-s2;
+    }
+
+    &__row {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+      padding: $learn-s2;
+      text-align: left;
+      background: $learn-bg-subtle;
+      border: 1px solid $learn-border-soft;
+      border-radius: 8px;
+      cursor: pointer;
+      min-height: 44px;
+      transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      font-family: inherit;
+
+      &:hover {
+        background: rgba($learn-accent, 0.04);
+        border-color: rgba($learn-accent, 0.2);
+      }
+
+      &:focus-visible {
+        outline: 2px solid $learn-accent;
+        outline-offset: 2px;
+      }
+    }
+
+    &__row-main {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: $learn-s1 $learn-s2;
+      width: 100%;
+    }
+
+    &__label {
+      font-size: 16px;
+      color: $learn-text;
+      flex-shrink: 0;
+      min-width: 0;
+    }
+
+    &__icons {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    &__icon {
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    &__more {
+      font-size: 12px;
+      line-height: 1.3;
+      color: $learn-text-muted;
+    }
+
+    &__count {
+      font-size: 14px;
+      color: $learn-text;
+      flex-shrink: 0;
+    }
+
+    &__microcopy {
+      font-size: 12px;
+      color: $learn-text-muted;
+      margin: $learn-s1 0 0 0;
+      line-height: 1.4;
+    }
+  }
+
+  // Calendar preview
+  .learn-placements-calendar-preview {
+    margin-bottom: $learn-s4;
+
+    &__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: $learn-s1;
+      margin-bottom: $learn-s2;
+    }
+
+    &__header-right {
+      display: flex;
+      align-items: center;
+      gap: $learn-s2;
+      flex-wrap: wrap;
+    }
+
+    &__summary {
+      font-size: 14px;
+      line-height: 1.3;
+      color: $learn-success;
+      padding: 4px $learn-s1;
+      background: rgba($learn-success, 0.1);
+      border-radius: 8px;
+      font-family: $font-latoReg, sans-serif !important;
+    }
+
+    &__card {
+      padding: $learn-s2 !important;
+      border-radius: 12px;
+      border: 1px solid $learn-border;
+      background: $learn-bg-subtle;
+    }
+
+    &__days {
+      display: flex;
+      gap: $learn-s1;
+      overflow-x: auto;
+      padding-bottom: $learn-s1;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      &::-webkit-scrollbar { display: none; }
+    }
+  }
+
+  .learn-placements-calendar-day {
+    flex: 1;
+    min-width: 44px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: $learn-s2 $learn-s1;
+    background: $learn-bg;
+    border: 1px solid $learn-border-soft;
+    border-radius: 8px;
+    cursor: pointer;
+    // Specific properties only — avoid transition: all
+    transition: background 0.15s ease, border-color 0.15s ease;
+
+    &:hover {
+      border-color: rgba($learn-accent, 0.3);
+      background: rgba($learn-accent, 0.04);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $learn-accent;
+      outline-offset: 2px;
+    }
+
+    &--has {
+      border-color: rgba($learn-accent, 0.4);
+      background: rgba($learn-accent, 0.06);
+
+      .learn-placements-calendar-day__date {
+        color: $learn-accent;
+      }
+    }
+
+    &--today {
+      border-color: rgba($learn-warning, 0.35);
+      background: rgba($learn-warning, 0.06);
+      box-shadow: 0 0 0 2px rgba($learn-warning, 0.15);
+
+      .learn-placements-calendar-day__date {
+        color: $learn-warning;
+        font-weight: 700;
+      }
+    }
+
+    &__today-label {
+      font-size: 10px;
+      line-height: 1.3;
+      text-transform: uppercase;
+      color: $learn-warning;
+      font-weight: 600;
+      margin-top: 4px;
+      font-family: $font-latoReg, sans-serif !important;
+    }
+
+    &__week {
+      font-size: 12px;
+      line-height: 1.3;
+      color: $learn-text-muted;
+      text-transform: uppercase;
+    }
+
+    &__date {
+      font-size: 16px;
+      color: $learn-text;
+      margin-top: $learn-s1;
+    }
+
+    &__badge {
+      margin-top: $learn-s1;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: $learn-bg;
+      background: $learn-accent;
+      border-radius: 9999px;
+    }
+  }
+
+  // Micro-interactions — staggered fade-in
+  .learn-placements-animate-in {
+    will-change: opacity, transform; // Promote to GPU layer before animation
+
+    @media (prefers-reduced-motion: no-preference) {
+      animation: learn-placements-fade-in 0.2s ease forwards;
+    }
+  }
+
+  .learn-placements-skeleton {
+    .ant-skeleton-content .ant-skeleton-paragraph > li {
+      border-radius: 6px;
+    }
+  }
+
+  // CTA
+  &__cta {
+    margin-bottom: $learn-s4;
+  }
+
+  & .learn-placements-cta-card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: $learn-s3;
+    padding: $learn-s4 !important;
+    background: $learn-bg-subtle !important;
+    border: 1px solid $learn-border !important;
+    box-shadow: none !important;
+    transition: border-color 0.2s ease;
+
+    &:hover {
+      border-color: rgba($learn-accent, 0.3) !important;
+    }
+
+    @media (min-width: 640px) {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .learn-placements-cta__content {
+    flex: 1;
+  }
+
+  .learn-placements-cta__title {
+    font-size: 20px;
+    font-weight: 600;
+    color: $learn-text;
+    margin: 0 0 $learn-s1;
+  }
+
+  .learn-placements-cta__sub {
+    font-size: 14px;
+    color: $learn-text-muted;
+    margin: 0;
+  }
+
+  .learn-placements-cta__btn.ant-btn {
+    flex-shrink: 0;
+    min-height: $learn-touch-min;
+    font-weight: 600;
+    background: $learn-accent !important;
+    border-color: $learn-accent !important;
+    font-family: $font-latoBold, sans-serif !important;
+    font-weight: 700 !important;  // family alias no longer implies bold
+    box-shadow: none;
+
+    &:hover {
+      background: $learn-accent-dark !important;
+      border-color: $learn-accent-dark !important;
+    }
+  }
+
+  // Quick nav
+  &__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $learn-s2;
+  }
+
+  .learn-placements-nav-item {
+    display: inline-flex;
+    align-items: center;
+    gap: $learn-s1;
+    padding: $learn-s2 $learn-s3;
+    font-size: 14px;
+    color: $learn-text-muted;
+    background: $learn-bg;
+    border: 1px solid $learn-border;
+    border-radius: 8px;
+    cursor: pointer;
+    min-height: $learn-touch-min;
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    font-family: $font-latoReg, sans-serif !important;
+
+    &:hover {
+      color: $learn-accent;
+      border-color: rgba($learn-accent, 0.4);
+      background: rgba($learn-accent, 0.04);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $learn-accent;
+      outline-offset: 2px;
+    }
+
+    .anticon {
+      font-size: 16px;
+    }
+
+    &__count {
+      margin-left: $learn-s1;
+      padding: 4px $learn-s1;
+      font-size: 12px;
+      line-height: 1.3;
+      font-weight: 600;
+      border-radius: 9999px;
+      min-width: 20px;
+      text-align: center;
+    }
+
+    &--calendar:hover {
+      color: $learn-warning;
+      border-color: rgba($learn-warning, 0.35);
+      background: rgba($learn-warning, 0.06);
+
+      .learn-placements-nav-item__count {
+        background: $learn-warning;
+        color: $learn-bg;
+      }
+    }
+
+    &--applications:hover {
+      color: $learn-success;
+      border-color: rgba($learn-success, 0.35);
+      background: rgba($learn-success, 0.06);
+
+      .learn-placements-nav-item__count {
+        background: $learn-success;
+        color: $learn-bg;
+      }
+    }
+
+    &--interviews:hover {
+      color: $learn-accent;
+      border-color: rgba($learn-accent, 0.4);
+      background: rgba($learn-accent, 0.04);
+
+      .learn-placements-nav-item__count {
+        background: $learn-accent;
+        color: $learn-bg;
+      }
+    }
+
+    &--calendar .learn-placements-nav-item__count {
+      background: rgba($learn-warning, 0.15);
+      color: darken($learn-warning, 10%);
+    }
+
+    &--applications .learn-placements-nav-item__count {
+      background: rgba($learn-success, 0.15);
+      color: $learn-success;
+    }
+
+    &--assessments .learn-placements-nav-item__count {
+      background: rgba($learn-warning, 0.15);
+      color: darken($learn-warning, 5%);
+    }
+
+    &--interviews .learn-placements-nav-item__count {
+      background: rgba($learn-accent, 0.15);
+      color: $learn-accent;
+    }
+  }
+}
+
+@keyframes learn-placements-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Mobile overrides
+@media (max-width: $learn-mobile-bp) {
+  .learn-placements-dashboard .learn-placements-list__link {
+    min-height: 48px;
+    padding: $learn-s2;
+  }
+
+  .learn-placements-dashboard .learn-placements-list__item--next {
+    padding-left: $learn-s2;
+
+    &::before {
+      width: 4px;
+    }
+  }
+
+  .learn-placements-dashboard__nav {
+    display: none;
+  }
+
+  .learn-placements-dashboard .learn-placements-action-btn.ant-btn {
+    min-height: $learn-touch-min;
+  }
+
+  .learn-placements-dashboard .learn-placements-stat-card {
+    min-height: 64px;
+    padding: $learn-s1 $learn-s2;
+  }
+
+  // Section titles: tighter on mobile
+  .learn-placements-dashboard__section-title {
+    font-size: 16px;
+  }
+
+  // CTA card: tighter padding on mobile
+  .learn-placements-dashboard .learn-placements-cta-card {
+    padding: $learn-s3 !important;
+    gap: $learn-s2;
+  }
+
+  // Attention title scale
+  .learn-placements-dashboard .learn-placements-attention-title {
+    font-size: 16px;
+  }
+
+  // Nav items: wrap to 2-col grid on narrow phones
+  .learn-placements-dashboard__nav {
+    display: none; // already hidden; keep for reference
+  }
+
+  .learn-placements-pipeline {
+    padding: $learn-s2;
+    border-radius: 10px;
+
+    &__header {
+      flex-wrap: wrap;
+      gap: 4px $learn-s1;
+      margin-bottom: $learn-s1;
+    }
+
+    &__title {
+      font-size: 16px;
+    }
+
+    &__view-all {
+      font-size: 14px;
+    }
+
+    &__list {
+      gap: $learn-s1;
+    }
+
+    &__row {
+      min-height: $learn-touch-min;
+      padding: 12px $learn-s2;
+    }
+
+    &__row-main {
+      flex-direction: row;
+      align-items: center;
+      gap: $learn-s1;
+    }
+
+    &__label {
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    &__icons {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    &__icon {
+      font-size: 12px;
+    }
+
+    &__count {
+      font-size: 14px;
+      flex-shrink: 0;
+      margin-left: auto;
+      background: rgba($learn-accent, 0.08);
+      color: $learn-accent;
+      border-radius: 10px;
+      padding: 2px 8px;
+      min-width: 24px;
+      text-align: center;
+    }
+
+    &__microcopy {
+      font-size: 12px;
+      margin-top: 4px;
+      line-height: 1.3;
+    }
+
+    &__more {
+      font-size: 12px;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Slide page transitions — placement tab navigation
+// ---------------------------------------------------------------------------
+.learn-placements-layout {
+  overflow-x: hidden; // prevent horizontal scrollbar during slide animation
+}
+
+.placements-page-content {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+// Slide from right (forward: tab index increases)
+@keyframes placements-slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Slide from left (backward: tab index decreases)
+@keyframes placements-slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.placements-slide--left {
+  animation: placements-slide-in-left 0.2s ease-out;
+}
+
+.placements-slide--right {
+  animation: placements-slide-in-right 0.2s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .placements-slide--left,
+  .placements-slide--right {
+    animation: none;
+  }
+}
+
+// =============================================================================
+// Focused My Placements dashboard.
+//
+// RADIUS SYSTEM — exactly three radii, applied strictly by nesting depth:
+//   container ($radius-xl, 20px)  hero, panels, alert, attention list, onboarding
+//   card      ($radius-lg, 14px)  stat cards, activity rows, panel error, icons
+//   control   ($radius-md, 10px)  stage rows, day cells, bars, skeleton blocks
+// $radius-full is reserved for genuinely circular chrome (dots, count badges).
+//
+// VERTICAL RHYTHM — every top-level section is separated by $space-5 (24px);
+// every panel uses one internal padding ($space-5); the page ends on an
+// explicit terminus so content never dies against the viewport edge.
+// =============================================================================
+
+.placements-focus-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// --- Shared skeleton primitive ----------------------------------------------
+.placements-focus-skeleton {
+  display: block;
+  border-radius: $radius-md;
+  background: linear-gradient(
+    90deg,
+    $neutral-100 25%,
+    rgba(229, 233, 240, 0.75) 37%,
+    $neutral-100 63%
+  );
+  background-size: 400% 100%;
+  animation: placements-focus-shimmer 1.4s ease infinite;
+
+  &--pagetitle {
+    width: 240px;
+    height: 36px;
+  }
+
+  &--eyebrow {
+    width: 132px;
+    height: 12px;
+    margin-bottom: $space-2;
+  }
+
+  &--title {
+    width: min(420px, 70%);
+    height: 28px;
+  }
+
+  &--body {
+    width: min(560px, 92%);
+    height: 14px;
+    margin-top: $space-2;
+  }
+
+  &--button {
+    width: 148px;
+    height: 40px;
+    border-radius: $radius-md;
+  }
+
+  // Sized to the real value box (24px type / 1.1 line-height) so nothing
+  // shifts when the number lands.
+  &--value {
+    width: 56px;
+    height: 27px;
+  }
+
+  &--label {
+    width: 84px;
+    height: 16px;
+    margin-top: $space-1;
+  }
+
+  &--helper {
+    width: 104px;
+    height: 15px;
+    margin-top: $space-1;
+  }
+
+  // Sized to the real content each of the three panel skeletons stands in for
+  // (pipeline stage row, 7-day cell, activity list item) — panels used to fall
+  // back to antd's generic <Skeleton> (a stack of full-width paragraph bars)
+  // which bore no resemblance to the grid/row layouts that replaced them,
+  // producing a visible "two different screens" swap once data landed.
+  &--stage-label {
+    width: min(180px, 60%);
+    height: 15px;
+  }
+
+  &--stage-count {
+    width: 22px;
+    height: 18px;
+  }
+
+  &--day-label {
+    width: 20px;
+    height: 11px;
+    margin: 0 auto;
+  }
+
+  &--day-num {
+    width: 26px;
+    height: 20px;
+    margin: $space-1 auto 0;
+  }
+
+  &--activity-type {
+    width: 88px;
+    height: 11px;
+  }
+
+  &--activity-title {
+    width: 156px;
+    height: 15px;
+    margin-top: 5px;
+  }
+
+  &--activity-badge {
+    width: 78px;
+    height: 22px;
+    border-radius: $radius-full;
+  }
+}
+
+@keyframes placements-focus-shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .placements-focus-skeleton {
+    animation: none;
+  }
+}
+
+// --- Global alert ------------------------------------------------------------
+.placements-focus-alert {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  margin-bottom: $space-5;
+  padding: $space-3 $space-4;
+  border: 1px solid rgba(180, 83, 9, 0.28);
+  border-radius: $radius-xl;
+  background: $gold-subtle;
+  color: #7c3a06; // 7.4:1 on #fef6e7
+
+  > .anticon {
+    flex: 0 0 auto;
+    font-size: $text-lg;
+  }
+
+  > div {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  strong,
+  span {
+    font-size: $text-sm;
+    line-height: $leading-snug;
+  }
+}
+
+.placements-focus-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: $space-2;
+  color: $neutral-700; // 7.3:1 on white — AA for small uppercase text
+  font-size: $text-xs;
+  font-weight: $fnt-semi;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+// --- Hero --------------------------------------------------------------------
+.placements-focus-hero {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: $space-4;
+  margin-bottom: $space-5;
+  padding: $space-5;
+  border: 1px solid rgba(14, 124, 135, 0.22);
+  border-radius: $radius-xl;
+  background:
+    radial-gradient(circle at top left, rgba(38, 186, 199, 0.12), transparent 34%),
+    linear-gradient(135deg, #ffffff 0%, #f8fcfd 100%);
+  box-shadow: $elev-2;
+
+  h2 {
+    margin: 0;
+    color: $neutral-900;
+    font-size: $text-2xl;
+    font-weight: $fnt-semi;
+    letter-spacing: -0.03em;
+    line-height: $leading-tight;
+  }
+
+  p {
+    max-width: 780px;
+    margin: $space-2 0 0;
+    color: $neutral-700;
+    font-size: $text-base;
+    line-height: $leading-normal;
+  }
+
+  .ant-btn {
+    min-width: 148px;
+    border-radius: $radius-md;
+    font-weight: $fnt-semi;
+  }
+}
+
+.placements-focus-hero__greeting {
+  margin: 0 0 $space-1;
+  color: $neutral-700;
+  font-size: $text-sm;
+  font-weight: $fnt-medium;
+  line-height: $leading-snug;
+}
+
+.placements-focus-hero__content {
+  min-width: 0;
+
+  .placements-focus-eyebrow {
+    margin-bottom: $space-1;
+  }
+}
+
+.placements-focus-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+}
+
+.placements-focus-hero__icon {
+  width: 52px;
+  height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-lg;
+  color: $teal-deep;
+  background: rgba(38, 186, 199, 0.12);
+  font-size: $text-2xl;
+}
+
+.placements-focus-hero__icon--loading {
+  background: $neutral-100;
+}
+
+// --- First-run onboarding — owns the whole canvas -----------------------------
+.placements-focus-onboarding {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: $space-5 0;
+  padding: $space-7 $space-5;
+  border: 1px solid rgba(14, 124, 135, 0.2);
+  border-radius: $radius-xl;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(38, 186, 199, 0.12), transparent 60%),
+    #ffffff;
+  box-shadow: $elev-2;
+
+  h2 {
+    max-width: 22ch;
+    margin: 0 0 $space-3;
+    color: $neutral-900;
+    font-size: $text-3xl;
+    font-weight: $fnt-semi;
+    letter-spacing: -0.03em;
+    line-height: $leading-tight;
+  }
+
+  .ant-btn {
+    min-width: 200px;
+    height: 48px;
+    border-radius: $radius-md;
+    font-weight: $fnt-semi;
+  }
+}
+
+.placements-focus-onboarding__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: $space-4;
+  border-radius: $radius-lg;
+  color: $teal-deep;
+  background: rgba(38, 186, 199, 0.12);
+  font-size: 30px;
+}
+
+.placements-focus-onboarding__greeting {
+  margin: 0 0 $space-2;
+  color: $neutral-700;
+  font-size: $text-base;
+  font-weight: $fnt-medium;
+}
+
+.placements-focus-onboarding__promise {
+  max-width: 52ch;
+  margin: 0 0 $space-5;
+  color: $neutral-700;
+  font-size: $text-md;
+  line-height: $leading-normal;
+}
+
+// --- Needs attention ---------------------------------------------------------
+.placements-focus-attention-list {
+  margin-bottom: $space-5;
+  padding: $space-4 $space-5;
+  border: 1px solid #f4cd7a;
+  border-radius: $radius-xl;
+  background: #fffbeb;
+
+  &__head {
+    margin-bottom: $space-2;
+
+    h2 {
+      margin: 0;
+      color: #7c3a06; // 7.9:1 on #fffbeb
+      font-size: $text-base;
+      font-weight: $fnt-semi;
+      line-height: $leading-snug;
+    }
+  }
+
+  &__items {
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    width: 100%;
+    padding: $space-2 $space-3;
+    border: 1px solid rgba(180, 83, 9, 0.14);
+    border-radius: $radius-lg;
+    background: #ffffff;
+    text-align: left;
+    cursor: pointer;
+    transition: box-shadow $duration-fast $ease-std, border-color $duration-fast $ease-std;
+
+    &:hover {
+      border-color: rgba(180, 83, 9, 0.32);
+      box-shadow: $elev-2;
+    }
+
+    // Highest-stakes button on the page — it gets a focus ring like everything else.
+    &:focus-visible {
+      outline: 2px solid $teal-deep;
+      outline-offset: 2px;
+    }
+  }
+
+  &__icon {
+    color: #8a4708; // 6.6:1 on white
+    font-size: $text-base;
+  }
+
+  &__text {
+    flex: 1;
+    min-width: 0;
+    color: $neutral-900;
+    font-size: $text-sm;
+
+    strong {
+      font-weight: $fnt-semi;
+    }
+
+    em {
+      color: $neutral-700;
+      font-style: normal;
+    }
+  }
+
+  &__due {
+    flex-shrink: 0;
+    color: #8a4708;
+    font-size: $text-xs;
+    font-weight: $fnt-semi;
+  }
+
+  &__more {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: $space-1;
+
+    .ant-btn {
+      padding-right: 0;
+      color: #8a4708;
+      font-weight: $fnt-semi;
+    }
+  }
+}
+
+// --- Snapshot ----------------------------------------------------------------
+.placements-focus-snapshot {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: $space-3;
+  margin-bottom: $space-5;
+}
+
+.placements-focus-stat {
+  min-width: 0;
+  padding: $space-4;
+  text-align: left;
+  border: 1px solid $neutral-200;
+  border-radius: $radius-lg;
+  background: #ffffff;
+  cursor: pointer;
+  transition:
+    border-color $duration-fast $ease-std,
+    box-shadow $duration-fast $ease-std,
+    transform $duration-fast $ease-std;
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: rgba(14, 124, 135, 0.35);
+    box-shadow: $elev-2;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $teal-deep;
+    outline-offset: 2px;
+  }
+}
+
+.placements-focus-stat--loading {
+  cursor: default;
+}
+
+.placements-focus-stat__icon {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $space-3;
+  border-radius: $radius-md;
+  color: $teal-deep;
+  background: rgba(38, 186, 199, 0.1);
+  font-size: 17px;
+}
+
+.placements-focus-stat__value,
+.placements-focus-stat__label,
+.placements-focus-stat__helper {
+  display: block;
+}
+
+.placements-focus-stat__value {
+  color: $neutral-900;
+  font-size: $text-2xl;
+  font-weight: $fnt-semi;
+  line-height: 1.1;
+}
+
+.placements-focus-stat__label {
+  margin-top: $space-1;
+  color: $neutral-700;
+  font-size: $text-base;
+  font-weight: $fnt-medium;
+  line-height: $leading-snug;
+}
+
+.placements-focus-stat__helper {
+  display: flex;
+  align-items: center;
+  gap: $space-1;
+  margin-top: $space-1;
+  min-height: 15px;
+  color: $neutral-700;
+  font-size: $text-xs;
+  line-height: $leading-snug;
+
+  .anticon {
+    color: $status-success;
+    font-size: $text-xs;
+  }
+}
+
+.placements-focus-stat__helper--failed {
+  color: #a33a10; // 5.3:1 on white
+
+  .anticon {
+    color: #a33a10;
+  }
+}
+
+// --- Panels ------------------------------------------------------------------
+.placements-focus-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+  gap: $space-5;
+  margin-bottom: $space-5;
+}
+
+.placements-focus-panel {
+  padding: $space-5;
+  border: 1px solid $neutral-200;
+  border-radius: $radius-xl;
+  background: #ffffff;
+  box-shadow: $elev-1;
+}
+
+.placements-focus-activity {
+  margin-bottom: $space-5;
+}
+
+.placements-focus-panel__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $space-3;
+  margin-bottom: $space-4;
+
+  h2 {
+    margin: 0;
+    color: $neutral-900;
+    font-size: $text-lg;
+    font-weight: $fnt-semi;
+    letter-spacing: -0.02em;
+    line-height: $leading-snug;
+  }
+
+  .ant-btn {
+    padding-right: 0;
+    color: $teal-deep;
+    font-weight: $fnt-semi;
+  }
+}
+
+// --- Panel-level failure state ------------------------------------------------
+.placements-focus-panel-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: $space-5 $space-4;
+  border: 1px dashed rgba(163, 58, 16, 0.35);
+  border-radius: $radius-lg;
+  background: rgba(239, 68, 68, 0.04);
+
+  &__icon {
+    color: #a33a10;
+    font-size: $text-2xl;
+  }
+
+  &__title {
+    margin: $space-3 0 $space-1;
+    color: $neutral-900;
+    font-size: $text-base;
+    font-weight: $fnt-semi;
+  }
+
+  &__subtitle {
+    max-width: 42ch;
+    margin: 0 0 $space-4;
+    color: $neutral-700;
+    font-size: $text-sm;
+    line-height: $leading-snug;
+  }
+
+  .ant-btn {
+    border-radius: $radius-md;
+    font-weight: $fnt-semi;
+  }
+}
+
+// --- Application pipeline funnel ---------------------------------------------
+.placements-focus-funnel {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.placements-focus-funnel__bar {
+  display: flex;
+  width: 100%;
+  height: 12px;
+  overflow: hidden;
+  border-radius: $radius-md;
+  background: $neutral-100;
+}
+
+.placements-focus-funnel__segment {
+  flex-basis: 0;
+  min-width: 4px;
+  height: 100%;
+
+  + .placements-focus-funnel__segment {
+    border-left: 2px solid #ffffff;
+  }
+}
+
+.placements-focus-funnel__list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    margin: 0;
+  }
+}
+
+.placements-focus-funnel__closed {
+  padding-top: $space-4;
+  border-top: 1px solid $neutral-200;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.placements-focus-funnel__closed-title {
+  margin: 0;
+  color: $neutral-700;
+  font-size: $text-xs;
+  font-weight: $fnt-semi;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.placements-focus-stage {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: $space-3;
+  width: 100%;
+  min-height: 48px;
+  padding: $space-2 $space-3;
+  border: 1px solid $neutral-100;
+  border-radius: $radius-md;
+  background: $neutral-50;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color $duration-fast $ease-std,
+    border-color $duration-fast $ease-std,
+    box-shadow $duration-fast $ease-std;
+
+  &:hover {
+    background-color: $neutral-100;
+    border-color: $neutral-200;
+    box-shadow: $elev-2;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $teal-deep;
+    outline-offset: 2px;
+  }
+}
+
+.placements-focus-stage--closed {
+  background: #ffffff;
+  min-height: 40px;
+}
+
+.placements-focus-stage--loading {
+  cursor: default;
+
+  &:hover {
+    background-color: $neutral-50;
+    border-color: $neutral-100;
+    box-shadow: none;
+  }
+}
+
+.placements-focus-stage__step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: $radius-full;
+  background: $neutral-100;
+  color: $neutral-700;
+  font-size: $text-xs;
+  font-weight: $fnt-semi;
+  font-variant-numeric: tabular-nums;
+}
+
+.placements-focus-stage__body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.placements-focus-stage__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: $radius-full;
+}
+
+.placements-focus-stage__label {
+  min-width: 0;
+  color: $neutral-700;
+  font-size: $text-base;
+  font-weight: $fnt-medium;
+  line-height: $leading-snug;
+}
+
+.placements-focus-stage__track {
+  display: block;
+  width: 100%;
+  height: 6px;
+  border-radius: $radius-full;
+  background: $neutral-100;
+  overflow: hidden;
+}
+
+.placements-focus-stage__fill {
+  display: block;
+  height: 100%;
+  border-radius: $radius-full;
+}
+
+.placements-focus-stage__count {
+  color: $neutral-900;
+  font-size: $text-md;
+  font-weight: $fnt-semi;
+  font-variant-numeric: tabular-nums;
+}
+
+// --- 7 day strip -------------------------------------------------------------
+// Seven cells always fit the available width — no horizontal scroll, so the
+// layout's swipe-to-change-tab gesture is never fighting an inner scroller.
+.placements-focus-week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: $space-2;
+  touch-action: pan-y;
+}
+
+.placements-focus-day {
+  min-width: 0;
+  min-height: 76px;
+  padding: $space-2 $space-1;
+  border: 1px solid $neutral-100;
+  border-radius: $radius-md;
+  background: $neutral-50;
+  color: $neutral-700;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    background-color $duration-fast $ease-std,
+    border-color $duration-fast $ease-std,
+    box-shadow $duration-fast $ease-std;
+
+  span,
+  strong {
+    display: block;
+  }
+
+  span {
+    color: $neutral-700;
+    font-size: $text-xs;
+    font-weight: $fnt-medium;
+  }
+
+  strong {
+    margin-top: $space-1;
+    color: $neutral-900;
+    font-size: $text-lg;
+    font-variant-numeric: tabular-nums;
+  }
+
+  em {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    margin-top: $space-1;
+    border-radius: $radius-full;
+    color: #ffffff;
+    background: $teal-deep; // 4.9:1 against white text
+    font-size: $text-xs;
+    font-style: normal;
+    font-weight: $fnt-semi;
+  }
+
+  &:hover {
+    background-color: $neutral-100;
+    border-color: $neutral-200;
+    box-shadow: $elev-2;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $teal-deep;
+    outline-offset: 2px;
+  }
+}
+
+.placements-focus-day--loading {
+  cursor: default;
+
+  &:hover {
+    background-color: $neutral-50;
+    border-color: $neutral-100;
+    box-shadow: none;
+  }
+}
+
+// "Today" is marked by weight + underline rule as well as tint — never colour alone.
+.placements-focus-day--today {
+  position: relative;
+  border-color: rgba(14, 124, 135, 0.45);
+  background: rgba(38, 186, 199, 0.08);
+  overflow: hidden;
+
+  // Shape cue, not just a tint: a solid rule anchors "today".
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    background: $teal-deep;
+  }
+
+  span {
+    color: $teal-deep;
+    font-weight: $fnt-semi;
+  }
+}
+
+// --- Recent activity ----------------------------------------------------------
+.placements-focus-activity__list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.placements-focus-activity__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $space-4;
+  width: 100%;
+  padding: $space-3;
+  border: 1px solid $neutral-100;
+  border-radius: $radius-lg;
+  background: #ffffff;
+  text-align: left;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid $teal-deep;
+    outline-offset: 2px;
+  }
+
+  span {
+    display: block;
+    color: $neutral-700;
+    font-size: $text-xs;
+    font-weight: $fnt-semi;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  strong {
+    display: block;
+    margin-top: 3px;
+    color: $neutral-900;
+    font-size: $text-base;
+    font-weight: $fnt-semi;
+  }
+
+  p {
+    margin: 3px 0 0;
+    color: $neutral-700;
+    font-size: $text-sm;
+  }
+}
+
+.placements-focus-activity__item--loading {
+  cursor: default;
+}
+
+.placements-focus-activity__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex: 0 0 auto;
+
+  small {
+    color: $neutral-700;
+    font-size: $text-xs;
+  }
+}
+
+// Explicit bottom terminus so the last panel never dies against the viewport.
+.placements-focus-terminus {
+  height: $space-6;
+}
+
+// --- Mobile -------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .placements-focus-hero {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "icon content"
+      "actions actions";
+    align-items: start;
+    gap: $space-3;
+    padding: $space-4;
+
+    .placements-focus-hero__icon {
+      grid-area: icon;
+      width: 40px;
+      height: 40px;
+      font-size: $text-xl;
+    }
+
+    .placements-focus-hero__content {
+      grid-area: content;
+    }
+
+    .placements-focus-hero__actions {
+      grid-area: actions;
+      margin-top: $space-3;
+    }
+
+    h2 {
+      font-size: $text-xl;
+    }
+
+    .ant-btn {
+      width: 100%;
+    }
+  }
+
+  .placements-focus-onboarding {
+    padding: $space-6 $space-4;
+
+    h2 {
+      font-size: $text-2xl;
+    }
+
+    .ant-btn {
+      width: 100%;
+      min-width: 0;
+    }
+  }
+
+  .placements-focus-alert,
+  .placements-focus-activity__item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  // 2 x 2 compact grid — not four stacked full-width slabs.
+  .placements-focus-snapshot {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $space-2;
+  }
+
+  .placements-focus-stat {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "icon value"
+      "label label"
+      "helper helper";
+    align-items: center;
+    column-gap: $space-2;
+    padding: $space-3;
+
+    .placements-focus-stat__icon {
+      grid-area: icon;
+      width: 28px;
+      height: 28px;
+      margin-bottom: 0;
+      font-size: $text-base;
+    }
+
+    .placements-focus-stat__value,
+    .placements-focus-skeleton--value {
+      grid-area: value;
+      justify-self: end;
+      font-size: $text-xl;
+    }
+
+    .placements-focus-stat__label {
+      grid-area: label;
+      margin-top: $space-2;
+      font-size: $text-sm;
+    }
+
+    .placements-focus-stat__helper,
+    .placements-focus-skeleton--helper {
+      grid-area: helper;
+    }
+  }
+
+  .placements-focus-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: $space-4;
+  }
+
+  .placements-focus-panel {
+    padding: $space-4;
+  }
+
+  // Keep the head a row so "View all" stays an inline right-aligned chevron
+  // instead of a stretched full-width block.
+  .placements-focus-panel__head {
+    flex-direction: row;
+    align-items: center;
+
+    h2 {
+      font-size: $text-md;
+    }
+
+    .ant-btn {
+      flex: 0 0 auto;
+      width: auto;
+      padding: 0;
+      font-size: $text-sm;
+    }
+  }
+
+  // Seven two-character labels fit a 320px viewport comfortably.
+  .placements-focus-week {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: $space-1;
+    overflow: visible;
+  }
+
+  .placements-focus-day {
+    min-height: 62px;
+    padding: 6px 2px;
+
+    span {
+      font-size: 11px;
+    }
+
+    strong {
+      margin-top: 2px;
+      font-size: $text-md;
+    }
+
+    em {
+      min-width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      font-size: 11px;
+    }
+  }
+
+  .placements-focus-activity__meta {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: $space-2;
+  }
+
+  .placements-focus-terminus {
+    height: $space-5;
+  }
+}
+
+// =============================================================================
+// PREMIUM PASS — typography, elevation and interaction states
+// Scoped to .learn-placements-layout so the rest of the app is untouched.
+// =============================================================================
+
+.learn-placements-layout {
+  // Was a scoped Playfair Display serif override ("Display serif for page/section titles") —
+  // the one clear typography divergence found auditing every student-facing page: every other
+  // page (Course, Projects, Quizzes, Assignments, Attendance, Notifications, Profile...) renders
+  // headings in the app's Lato sans stack, so this module alone read as a visually different
+  // product. Kept the rest of the polish (weight/tracking/line-height), dropped only the face.
+  .listing-page-header__title,
+  .learn-placements-dashboard__greeting,
+  .placements-focus-hero h2,
+  .learn-placements-page > h1,
+  .learn-placements-page > h2 {
+    font-weight: $fnt-semi;
+    letter-spacing: -0.01em;
+    line-height: $leading-tight;
+  }
+
+  // --- Numeric displays: stop digits from dancing --------------------------
+  .learn-placements-stat-card__value,
+  .learn-placements-attention-badge,
+  .learn-placements-dashboard__badge,
+  .placements-focus-stat__value,
+  .placements-focus-stage__count,
+  .placements-focus-day strong,
+  .placements-focus-day em,
+  .placements-focus-activity__meta small,
+  .learn-placements-metric__value,
+  .learn-placements-pipeline__count {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+
+  // --- Card elevation: rest at $elev-1, lift to $elev-2 --------------------
+  .placements-focus-stat,
+  .placements-focus-activity__item,
+  .placements-focus-stage,
+  .placements-focus-day {
+    box-shadow: $elev-1;
+    transition:
+      background-color $duration-fast $ease-std,
+      border-color $duration-fast $ease-std,
+      box-shadow $duration-fast $ease-std,
+      transform $duration-fast $ease-std;
+  }
+
+  // --- Interactive buttons: hover + focus-visible --------------------------
+  .placements-focus-stage,
+  .placements-focus-day,
+  .placements-focus-activity__item {
+    &:hover {
+      background-color: $neutral-100;
+      border-color: $neutral-200;
+      box-shadow: $elev-2;
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: $elev-1;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $teal-deep;
+      outline-offset: 2px;
+    }
+  }
+
+  .placements-focus-activity__item:hover {
+    background-color: $neutral-50;
+  }
+
+  .placements-focus-stat:focus-visible {
+    outline: 2px solid $teal-deep;
+    outline-offset: 2px;
+  }
+
+  .placements-focus-day--today {
+    border-color: rgba($teal-deep, 0.35);
+    background: rgba($teal-deep, 0.07);
+
+    &:hover {
+      background: rgba($teal-deep, 0.11);
+      border-color: rgba($teal-deep, 0.45);
+    }
+
+    em {
+      background: $teal-deep;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .placements-focus-stat,
+    .placements-focus-stage,
+    .placements-focus-day,
+    .placements-focus-activity__item {
+      transition: none;
+    }
+  }
+}

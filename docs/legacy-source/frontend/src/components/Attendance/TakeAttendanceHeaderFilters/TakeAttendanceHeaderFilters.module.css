@@ -1,0 +1,57 @@
+.courseType {
+  color: #A9A7AE;
+  margin-right: 5px;
+}
+
+.pipe {
+  color: #A9A7AE;
+  margin: 0 20px;
+}
+
+.bookIcon {
+  margin-left: 10px;
+}
+
+.bookIcon,
+.calIcon {
+  color: #A9A7AE;
+  margin-right: 5px;
+  margin-top: 2px;
+}
+
+.todayBtn {
+  color: #26BAC7;
+  border: 1px solid #26BAC7;
+  margin-right: 10px;
+}
+
+.todayBtn:hover {
+  color: #26BAC7 !important;
+  border: 1px solid #26BAC7 !important;
+}
+
+.courseWrapper {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-right: 15px;
+}
+
+.curDateWrapper {
+  border: 1px solid #ddd;
+  padding: 6px;
+  border-radius: 5px;
+}
+.curDateWrapper .leftArrow,
+.curDateWrapper .rightArrow {
+  font-size: 10px;
+  vertical-align: middle;
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  margin-top: 3px;
+}
+.curDateWrapper .selectedDate {
+  font-size: 14px;
+  vertical-align: middle;
+  margin: 0 15px;
+}/*# sourceMappingURL=TakeAttendanceHeaderFilters.module.css.map */

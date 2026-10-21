@@ -1,0 +1,760 @@
+// TPO Reports landing — report library grouped by the decision each report supports.
+.tpo-reports {
+  &__header {
+    margin-bottom: 14px;
+
+    .listing-page-header__title {
+      color: $tpo-ink;
+      letter-spacing: -0.025em;
+    }
+  }
+
+  &__hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    margin-bottom: 24px;
+    padding: 20px 22px;
+    border: 1px solid #e4ebf3;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #f7faff 0%, $tpo-surface-soft 52%, #f7fafc 100%);
+
+    > div:first-child {
+      min-width: 0;
+      max-width: 760px;
+    }
+
+    h3.ant-typography {
+      margin: 4px 0 6px !important;
+      color: $tpo-ink;
+      font-size: clamp(21px, 2vw, 26px);
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+
+    .ant-typography {
+      margin-bottom: 0;
+    }
+  }
+
+  &__hero-stat {
+    flex: 0 0 auto;
+    min-width: 126px;
+    padding: 14px 16px;
+    border: 1px solid #dbe5f0;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.82);
+    text-align: center;
+
+    strong,
+    span {
+      display: block;
+    }
+
+    strong {
+      color: $tpo-ink;
+      font-size: 30px;
+      line-height: 1;
+    }
+
+    span {
+      margin-top: 5px;
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      font-weight: 700;
+      letter-spacing: 0.065em;
+      text-transform: uppercase;
+    }
+  }
+
+  &__eyebrow.ant-typography {
+    display: block;
+    color: #65758d;
+    font-size: $tpo-fs-xs;
+    font-weight: 700;
+    letter-spacing: 0.095em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  &__groups {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+
+  &__group {
+    padding-top: 2px;
+
+    & + & {
+      padding-top: 24px;
+      border-top: 1px solid $tpo-line;
+    }
+  }
+
+  &__group-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 12px;
+
+    > div {
+      min-width: 0;
+    }
+
+    > .ant-typography {
+      max-width: 620px;
+      text-align: right;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    h4.ant-typography {
+      margin: 3px 0 0 !important;
+      color: $tpo-ink;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  &__card {
+    display: flex;
+    min-height: 154px;
+    padding: 16px;
+    border: 1px solid $tpo-line;
+    border-radius: $radius-card;
+    background: #fff;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+    font: inherit;
+    cursor: pointer;
+    box-shadow: 0 3px 14px rgba(26, 45, 72, 0.035);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+
+    &:hover,
+    &:focus-visible {
+      border-color: #bcd7fb;
+      outline: none;
+      box-shadow: 0 8px 22px rgba(26, 45, 72, 0.075);
+      transform: translateY(-2px);
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.14), 0 8px 22px rgba(26, 45, 72, 0.075);
+    }
+
+    &--featured {
+      border-color: #c8dcf7;
+      background: linear-gradient(180deg, $tpo-surface-soft 0%, #fff 100%);
+    }
+
+    > .ant-typography {
+      line-height: 1.45;
+    }
+  }
+
+  &__card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+
+    > div {
+      min-width: 0;
+    }
+
+    .ant-tag {
+      margin: 0 0 8px;
+      border-radius: 999px;
+      font-size: $tpo-fs-xs;
+      font-weight: 650;
+    }
+
+    h5.ant-typography {
+      margin: 0 !important;
+      color: #233047;
+      font-size: 15px;
+      line-height: 1.35;
+    }
+  }
+
+  &__card-arrow {
+    margin-top: 2px;
+    color: $tpo-muted;
+    font-size: 13px;
+    transition: color 0.15s ease, transform 0.15s ease;
+  }
+
+  &__card:hover &__card-arrow,
+  &__card:focus-visible &__card-arrow {
+    color: $tpo-primary;
+    transform: translateX(2px);
+  }
+}
+
+@media (max-width: 1199px) {
+  .tpo-reports {
+    &__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .tpo-reports {
+    &__hero {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 14px;
+      padding: 17px 15px;
+    }
+
+    &__hero-stat {
+      display: flex;
+      min-width: 0;
+      width: 100%;
+      padding: 10px 12px;
+      align-items: baseline;
+      justify-content: space-between;
+      text-align: left;
+
+      span {
+        margin-top: 0;
+      }
+    }
+
+    &__group-heading {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 4px;
+
+      > .ant-typography {
+        max-width: none;
+        text-align: left;
+      }
+    }
+
+    &__grid {
+      grid-template-columns: 1fr;
+    }
+
+    &__card {
+      min-height: 0;
+      padding: 14px;
+    }
+  }
+}
+
+
+// Shared TPO report detail — KPIs, filters, chart and underlying data.
+.tpo-report-detail {
+  &__header {
+    margin-bottom: 14px;
+
+    .listing-page-header__title {
+      color: $tpo-ink;
+      letter-spacing: -0.025em;
+    }
+  }
+
+  &__header-actions {
+    .ant-btn {
+      min-height: 40px;
+      border-radius: 8px;
+    }
+  }
+
+  &__context {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 22px;
+    margin-bottom: 12px;
+    padding: 16px 18px;
+    border: 1px solid $tpo-line;
+    border-radius: $radius-card;
+    background: $tpo-surface-soft;
+
+    h4.ant-typography {
+      margin: 3px 0 2px !important;
+      color: $tpo-ink;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    > div:first-child > .ant-typography:last-child {
+      font-size: $tpo-fs-xs;
+    }
+  }
+
+  &__eyebrow.ant-typography {
+    display: block;
+    color: $tpo-muted;
+    font-size: $tpo-fs-xs;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  &__result-count {
+    flex: 0 0 auto;
+    min-width: 92px;
+    padding: 10px 12px;
+    border: 1px solid #dce5ef;
+    border-radius: 10px;
+    background: #fff;
+    text-align: center;
+
+    strong,
+    span {
+      display: block;
+    }
+
+    strong {
+      color: $tpo-ink;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    span {
+      margin-top: 4px;
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+  }
+
+  &__stale-alert,
+  &__info {
+    margin-bottom: 12px;
+    border-radius: 9px;
+  }
+
+  &__stats {
+    margin-bottom: 12px;
+
+    .ant-col {
+      display: flex;
+    }
+
+    .ant-card {
+      width: 100%;
+      min-height: 104px;
+      border: 1px solid $tpo-line;
+      border-radius: 12px;
+      box-shadow: 0 3px 14px rgba(26, 45, 72, 0.035);
+    }
+
+    .ant-card-body {
+      padding: 14px !important;
+    }
+
+    .ant-statistic-title {
+      min-height: 30px;
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      font-weight: 650;
+      line-height: 1.3;
+    }
+
+    .ant-statistic-content {
+      color: $tpo-ink;
+      font-size: 24px;
+      font-weight: 650;
+    }
+  }
+
+  &__filters.ant-card,
+  &__chart.ant-card,
+  &__table-card.ant-card,
+  &__loading.ant-card {
+    margin-bottom: 12px;
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: $radius-card;
+    box-shadow: 0 4px 18px rgba(26, 45, 72, 0.045);
+  }
+
+  &__filters.ant-card .ant-card-body,
+  &__chart.ant-card .ant-card-body {
+    padding: 15px 16px !important;
+  }
+
+  &__loading.ant-card {
+    min-height: 300px;
+
+    .ant-card-body {
+      padding: 22px !important;
+    }
+  }
+
+  &__unknown {
+    display: flex;
+    min-height: 320px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid $tpo-line;
+    border-radius: $radius-card;
+    background: #fff;
+  }
+
+  &__filter-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(130px, 1fr));
+    gap: 8px;
+
+    .ant-input,
+    .ant-select-selector {
+      min-height: 40px !important;
+      border-radius: 8px !important;
+    }
+
+    .ant-select {
+      width: 100%;
+    }
+  }
+
+  &__chart.ant-card {
+    // keep chart geometry stable when a filter refresh changes between populated/no-data states
+    .ant-card-body {
+      min-height: 116px;
+    }
+
+    .ant-card-head {
+      min-height: 48px;
+      padding-inline: 16px;
+      border-bottom-color: $tpo-line;
+      background: $tpo-surface-soft;
+    }
+
+    .ant-card-head-title {
+      color: $tpo-text;
+      font-size: 14px;
+      font-weight: 650;
+    }
+  }
+
+  &__bar-row {
+    display: grid;
+    // The value column fits "147 (97.4%)": a fixed 52px clipped it (night audit).
+    grid-template-columns: minmax(120px, 180px) minmax(0, 1fr) minmax(52px, max-content);
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__bar-label {
+    overflow: hidden;
+    color: #44536a;
+    font-size: $tpo-fs-xs;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__bar-track {
+    height: 11px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: $tpo-line;
+  }
+
+  &__bar-fill {
+    min-width: 2px;
+    height: 100%;
+    border-radius: inherit;
+    background: $clrThird;
+  }
+
+  &__bar-value {
+    color: $tpo-text;
+    font-size: $tpo-fs-xs;
+    font-weight: 650;
+    text-align: right;
+  }
+
+  &__table-card.ant-card {
+    > .ant-card-body {
+      padding: 0 !important;
+    }
+
+    .ant-table-wrapper {
+      padding: 0 16px 16px;
+    }
+
+    .ant-table-thead > tr > th {
+      padding-top: 11px;
+      padding-bottom: 11px;
+      background: $tpo-surface-soft !important;
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      font-weight: 700;
+      letter-spacing: 0.035em;
+      text-transform: uppercase;
+    }
+
+    .ant-table-tbody > tr > td {
+      padding-top: 10px;
+      padding-bottom: 10px;
+      border-bottom-color: $tpo-line;
+    }
+
+    .ant-table-tbody > tr:hover > td {
+      background: $tpo-surface-soft !important;
+    }
+  }
+
+  &__table-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 16px 11px;
+    border-bottom: 1px solid $tpo-line;
+    background: $tpo-surface-soft;
+
+    > .ant-typography {
+      font-size: $tpo-fs-xs;
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  .tpo-report-detail {
+    &__filter-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .tpo-report-detail {
+    &__header {
+      .listing-page-header__right,
+      .tpo-report-detail__header-actions {
+        width: 100%;
+      }
+    }
+
+    // Two per row, and the report's own action ("Export CSV for NAAC / NIRF", "Act on them on Students") on a row of its
+    // own: three equal columns clipped those labels on a phone (night audit).
+    &__header-actions {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+
+      > .ant-space-item:nth-child(n + 3) {
+        grid-column: 1 / -1;
+      }
+
+      .ant-btn {
+        width: 100%;
+        height: auto;
+        min-height: 32px;
+        white-space: normal;
+      }
+    }
+
+    &__context {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 9px;
+      padding: 14px 13px;
+    }
+
+    &__result-count {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      padding: 9px 11px;
+      align-items: baseline;
+      justify-content: space-between;
+      text-align: left;
+
+      span {
+        margin-top: 0;
+      }
+    }
+
+    &__stats {
+      .ant-card {
+        min-height: 94px;
+      }
+
+      .ant-card-body {
+        padding: 12px !important;
+      }
+
+      .ant-statistic-title {
+        min-height: 28px;
+        font-size: $tpo-fs-xs;
+      }
+
+      .ant-statistic-content {
+        font-size: 21px;
+      }
+    }
+
+    &__filter-grid {
+      grid-template-columns: 1fr;
+    }
+
+    &__bar-row {
+      grid-template-columns: minmax(92px, 120px) minmax(0, 1fr) minmax(46px, max-content);
+      gap: 7px;
+      align-items: start;
+    }
+
+    &__bar-label {
+      overflow: visible;
+      text-overflow: clip;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      line-height: 1.3;
+    }
+
+    &__table-card.ant-card .ant-table-wrapper {
+      padding: 0 10px 12px;
+    }
+
+    &__table-head {
+      padding-inline: 12px;
+    }
+  }
+}
+
+
+// TPO Reports Demo/Wow pass — management review + projector-friendly presentation mode.
+.tpo-reports {
+  &__management {
+    display:grid;
+    grid-template-columns:minmax(0,1.5fr) minmax(280px,.6fr);
+    gap:14px;
+    margin-bottom:24px;
+  }
+
+  &__management-hero.ant-card {
+    overflow:hidden;
+    border:0;
+    border-radius:18px;
+    background:
+      radial-gradient(circle at 91% 12%, rgba(96,165,250,.2), transparent 30%),
+      linear-gradient(135deg,$tpo-ink 0%,$tpo-ink 100%);
+    box-shadow:0 16px 40px rgba(15,23,42,.16);
+    color:#fff;
+
+    > .ant-card-body { padding:20px !important; }
+  }
+
+  &__management-head {
+    display:flex; align-items:flex-start; justify-content:space-between; gap:20px;
+    h3.ant-typography { margin:4px 0 !important; color:#fff; font-size:clamp(20px,2vw,27px); letter-spacing:-.025em; }
+    > div > .ant-typography:last-child { color:$tpo-line-strong; font-size: $tpo-fs-xs; }
+    .ant-btn { flex:0 0 auto; min-height:40px; border-radius:9px; font-size: $tpo-fs-xs; font-weight:650; }
+  }
+
+  &__management-eyebrow.ant-typography {
+    color: $tpo-primary; font-size: $tpo-fs-xs; font-weight:750; letter-spacing:.1em; text-transform:uppercase;
+  }
+
+  &__management-metrics {
+    display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin-top:16px;
+    > div { padding:11px 10px; border:1px solid rgba(148,163,184,.15); border-radius:10px; background:rgba(255,255,255,.05); }
+    span,strong,small { display:block; }
+    span { color: $tpo-primary; font-size: 12px; font-weight:700; text-transform:uppercase; }
+    strong { margin-top:4px; color:#fff; font-size:21px; line-height:1; }
+    small { margin-top:5px; color:$tpo-muted; font-size: 12px; line-height:1.35; }
+  }
+
+  &__management-footer {
+    display:flex; margin-top:10px; padding:9px 10px; align-items:flex-start; gap:7px;
+    border-radius:9px; background:rgba(15,23,42,.24); color:$tpo-line-strong; font-size: 12px; line-height:1.4;
+    .anticon { margin-top:1px; color:#fbbf24; }
+  }
+
+  &__library-overview.ant-card {
+    border:1px solid $tpo-line; border-radius:18px; box-shadow:0 12px 34px rgba(26,45,72,.07);
+    > .ant-card-body { padding:16px !important; }
+    h4.ant-typography { margin:3px 0 7px !important; color:$tpo-ink; font-size:17px; }
+    > .ant-card-body > .ant-typography { font-size: $tpo-fs-xs; line-height:1.45; }
+  }
+
+  &__library-tags {
+    display:flex; margin-top:13px; flex-wrap:wrap; gap:5px;
+    .ant-tag { margin:0; border-radius:999px; font-size: 12px; }
+  }
+}
+
+.tpo-report-detail--presentation {
+  background:#f3f6fa;
+
+  .tpo-report-detail__header {
+    .listing-page-header__title { font-size:clamp(28px,3vw,40px); }
+  }
+
+  .tpo-report-detail__context-legacy {
+    padding:22px 24px;
+    border-radius:16px;
+    background:linear-gradient(135deg,$tpo-ink,$tpo-ink);
+    border:0;
+    color:#fff;
+    box-shadow:0 14px 34px rgba(15,23,42,.14);
+
+    .tpo-report-detail__eyebrow,
+    > div:first-child > .ant-typography:last-child { color:$tpo-line-strong; }
+
+    h4.ant-typography { color:#fff; font-size:24px; }
+
+    .tpo-report-detail__result-count {
+      border-color:rgba(148,163,184,.18);
+      background:rgba(255,255,255,.07);
+      strong { color:#fff; }
+      span { color:$tpo-line-strong; }
+    }
+  }
+
+  // The totals strip is the headline in a review room: large and readable from the back.
+  .tpo-strip { gap: 14px; margin-bottom: 24px; }
+  .tpo-strip__item { padding: 20px 28px; border-radius: 15px; box-shadow: 0 8px 22px rgba(26, 45, 72, .07); }
+  .tpo-strip__value { font-size: 44px; }
+  .tpo-strip__label { font-size: 16px; }
+
+  .tpo-report-detail__chart.ant-card {
+    border-radius:16px;
+    .ant-card-head-title { font-size:16px; }
+    .ant-card-body { padding:20px !important; }
+  }
+
+  .tpo-report-detail__filters,
+  .tpo-report-detail__table-card,
+  .tpo-report-detail__info {
+    display:none;
+  }
+}
+
+@media (max-width:1000px) {
+  .tpo-reports__management { grid-template-columns:1fr; }
+}
+
+@media (max-width:767px) {
+  .tpo-reports {
+    &__management-head { align-items:stretch; flex-direction:column; }
+    &__management-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  }
+  .tpo-report-detail--presentation .tpo-report-detail__context { padding:17px 14px; }
+}

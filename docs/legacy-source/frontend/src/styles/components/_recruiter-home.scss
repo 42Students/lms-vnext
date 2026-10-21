@@ -1,0 +1,392 @@
+// HR Home — global recruiter portfolio and scoped college workspace.
+.recruiter-home {
+  &__header {
+    margin-bottom: 14px;
+
+    .listing-page-header__title {
+      color: $tpo-ink;
+      letter-spacing: -0.025em;
+    }
+  }
+
+  &__eyebrow.ant-typography {
+    display: block;
+    color: $tpo-muted;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  &__intro,
+  &__college-context {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 14px;
+    padding: 17px 18px;
+    border: 1px solid $tpo-line;
+    border-radius: 13px;
+    background: $tpo-surface-soft;
+
+    > div:first-child {
+      min-width: 0;
+      max-width: 780px;
+    }
+
+    h4.ant-typography {
+      margin: 3px 0 2px !important;
+      color: $tpo-ink;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    > div:first-child > .ant-typography:last-child {
+      font-size: 12px;
+      line-height: 1.45;
+    }
+  }
+
+  &__portfolio-count {
+    flex: 0 0 auto;
+    min-width: 96px;
+    padding: 10px 12px;
+    border: 1px solid $tpo-line-strong;
+    border-radius: 10px;
+    background: #fff;
+    text-align: center;
+
+    strong,
+    span {
+      display: block;
+    }
+
+    strong {
+      color: $tpo-ink;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    span {
+      margin-top: 4px;
+      color: $tpo-muted;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+  }
+
+  &__dashboard-state.ant-card {
+    margin-bottom: 14px;
+    border: 1px solid $tpo-line;
+    border-radius: 13px;
+    box-shadow: 0 4px 18px rgba(26, 45, 72, 0.04);
+  }
+
+  &__metrics {
+    margin-bottom: 14px;
+
+    .ant-col {
+      display: flex;
+    }
+  }
+
+  &__metric.ant-card {
+    width: 100%;
+    min-height: 105px;
+    border: 1px solid $tpo-line;
+    border-radius: 12px;
+    box-shadow: 0 3px 14px rgba(26, 45, 72, 0.035);
+
+    .ant-card-body {
+      padding: 14px !important;
+    }
+
+    .ant-statistic-title {
+      min-height: 30px;
+      color: $tpo-muted;
+      font-size: 12px;
+      font-weight: 650;
+      line-height: 1.3;
+    }
+
+    .ant-statistic-content {
+      color: $tpo-ink;
+      font-size: 24px;
+      font-weight: 650;
+    }
+
+    &--action {
+      cursor: pointer;
+
+      &:hover {
+        border-color: #c8dcf7;
+        background: #f8fbff;
+      }
+    }
+  }
+
+  &__recent.ant-card,
+  &__college-card.ant-card,
+  &__empty.ant-card,
+  &__college-drives .ant-card,
+  &__college-panel .ant-card {
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: 13px;
+    box-shadow: 0 4px 18px rgba(26, 45, 72, 0.045);
+  }
+
+  &__recent.ant-card {
+    margin-bottom: 18px;
+
+    .ant-card-head {
+      min-height: 48px;
+      border-bottom-color: $tpo-line;
+      background: $tpo-surface;
+    }
+
+    .ant-list-item {
+      padding: 11px 0 !important;
+    }
+  }
+
+  &__section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin: 4px 0 10px;
+
+    h4.ant-typography {
+      margin: 3px 0 0 !important;
+      color: $tpo-ink;
+      font-size: 18px;
+    }
+
+    > .ant-typography {
+      max-width: 520px;
+      text-align: right;
+      font-size: 12px;
+    }
+  }
+
+  &__college-card.ant-card {
+    height: 100%;
+
+    > .ant-card-body {
+      display: flex;
+      min-height: 190px;
+      padding: 15px !important;
+      flex-direction: column;
+    }
+
+    img {
+      border: 1px solid $tpo-line;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .ant-tag {
+      margin-top: 4px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+
+    .ant-btn {
+      min-height: 38px;
+      margin-top: auto;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+  }
+
+  &__back-row {
+    margin-bottom: 14px;
+
+    .ant-btn {
+      min-height: 36px;
+      border-radius: 8px;
+    }
+  }
+
+  &__college-drives {
+    margin-bottom: 14px;
+  }
+}
+
+.recruiter-home-invites {
+  margin-bottom: 14px;
+
+  &__error,
+  &__item {
+    margin-bottom: 8px;
+    border-radius: 10px;
+  }
+
+  &__item:last-child {
+    margin-bottom: 0;
+  }
+
+  .ant-btn {
+    border-radius: 7px;
+  }
+}
+
+.recruiter-home-drives.ant-card {
+  .ant-card-head {
+    min-height: 48px;
+    border-bottom-color: $tpo-line;
+    background: $tpo-surface;
+  }
+
+  .ant-card-head-title {
+    color: $tpo-text;
+    font-size: 15px;
+    font-weight: 650;
+  }
+
+  .ant-card-body {
+    padding: 16px !important;
+  }
+}
+
+.recruiter-home-drives__item.ant-list-item {
+  padding: 11px 0 !important;
+
+  .ant-tag {
+    border-radius: 999px;
+    font-size: 12px;
+  }
+}
+
+.recruiter-home-college-panel {
+  &__students.ant-card,
+  &__requests.ant-card {
+    height: 100%;
+
+    .ant-card-head {
+      min-height: 48px;
+      border-bottom-color: $tpo-line;
+      background: $tpo-surface;
+    }
+
+    .ant-card-head-title {
+      color: $tpo-text;
+      font-size: 15px;
+      font-weight: 650;
+    }
+
+    .ant-card-body {
+      padding: 16px !important;
+    }
+  }
+
+  &__students {
+    h2.ant-typography {
+      color: $tpo-ink;
+      font-size: 28px;
+    }
+
+    .ant-list {
+      border-top: 1px solid $tpo-line;
+    }
+
+    .ant-list-item {
+      padding: 8px 0 !important;
+    }
+  }
+
+  &__requests {
+    .ant-card-extra .ant-btn {
+      min-height: 36px;
+      border-radius: 8px;
+    }
+
+    .ant-list-item {
+      padding: 10px 0 !important;
+    }
+
+    .ant-tag {
+      border-radius: 999px;
+      font-size: 12px;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .recruiter-home {
+    &__intro,
+    &__college-context {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 9px;
+      padding: 14px 13px;
+    }
+
+    &__portfolio-count {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      padding: 9px 11px;
+      align-items: baseline;
+      justify-content: space-between;
+      text-align: left;
+
+      span {
+        margin-top: 0;
+      }
+    }
+
+    &__metric.ant-card {
+      min-height: 94px;
+
+      .ant-card-body {
+        padding: 12px !important;
+      }
+
+      .ant-statistic-title {
+        min-height: 28px;
+        font-size: 12px;
+      }
+
+      .ant-statistic-content {
+        font-size: 21px;
+      }
+    }
+
+    &__section-head {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 4px;
+
+      > .ant-typography {
+        max-width: none;
+        text-align: left;
+      }
+    }
+
+    &__college-card.ant-card > .ant-card-body {
+      min-height: 0;
+    }
+  }
+
+  .recruiter-home-college-panel {
+    &__students.ant-card,
+    &__requests.ant-card {
+      .ant-card-head-wrapper {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+        padding-block: 9px;
+      }
+
+      .ant-card-extra {
+        margin-inline-start: 0;
+      }
+    }
+  }
+}

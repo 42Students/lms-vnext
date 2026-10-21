@@ -1,0 +1,74 @@
+// =============================================================================
+// _fonts.scss — font-face declarations
+// =============================================================================
+// Previously "Lato-Regular" and "Lato-Bold" were registered as two SEPARATE families, and both
+// declared `font-weight: normal`. Because the body only ever used "Lato-Regular", every
+// `font-weight: 500/600/700` in the app asked a family that had no bold for a bold — so the
+// browser SYNTHESISED one by smearing the 400 outlines. Faux bold has uneven stems and muddy
+// counters, and it was applied to every heading, label and emphasised word in the product.
+//
+// Both files are now registered under ONE family with correct weight descriptors, so:
+//   400        -> real Lato Regular
+//   500        -> real Lato Regular   (nearest available below 500)
+//   600 / 700  -> real Lato Bold      (nearest available at or above)
+// No synthesis at any weight the codebase actually uses.
+//
+// Also: `font-display: swap` (text was previously invisible while fonts loaded), and only woff2
+// is shipped — the .eot/.svg/.ttf variants existed for IE8 and cost bytes for browsers that no
+// longer exist.
+
+@font-face {
+  font-family: "Lato";
+  src: url("../../fonts/Lato/Regular/Lato-Regular.woff2") format("woff2"),
+       url("../../fonts/Lato/Regular/Lato-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lato";
+  src: url("../../fonts/Lato/Bold/Lato-Bold.woff2") format("woff2"),
+       url("../../fonts/Lato/Bold/Lato-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+// Display face for major headings.
+@font-face {
+  font-family: "Domine";
+  src: url("../../fonts/Domine-Bold/Domine-Bold.woff2") format("woff2"),
+       url("../../fonts/Domine-Bold/Domine-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+// --- Backward-compatible aliases -------------------------------------------------------------
+// ~14 rules still reference the old family names directly. Registering them as aliases of the
+// correct weight keeps those rules rendering real (not synthesised) type without a sweeping edit.
+
+@font-face {
+  font-family: "Lato-Regular";
+  src: url("../../fonts/Lato/Regular/Lato-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lato-Bold";
+  src: url("../../fonts/Lato/Bold/Lato-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Domine-Bold";
+  src: url("../../fonts/Domine-Bold/Domine-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

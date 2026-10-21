@@ -1,0 +1,7 @@
+.sideTabs {
+  background: red;
+}
+.sideTabs .antTabsContentHolder {
+  background: red;
+  display: flex;
+}/*# sourceMappingURL=tabs.module.css.map */

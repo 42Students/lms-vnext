@@ -1,0 +1,162 @@
+// Standalone TPO Requests page — reuses RequestsPanel behavior with a proper decision-queue shell.
+.tpo-requests {
+  &__header {
+    margin-bottom: 14px;
+
+    .listing-page-header__title {
+      color: $tpo-ink;
+      letter-spacing: -0.025em;
+    }
+  }
+
+  &__workspace.ant-card {
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: 14px;
+    box-shadow: 0 5px 20px rgba(26, 45, 72, 0.05);
+
+    > .ant-card-body {
+      padding: 0 !important;
+    }
+  }
+
+  &__heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 22px;
+    padding: 17px 18px 14px;
+    border-bottom: 1px solid $tpo-line;
+    background: $tpo-surface-soft;
+
+    > div {
+      min-width: 0;
+    }
+
+    > .ant-typography {
+      max-width: 650px;
+      text-align: right;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    h4.ant-typography {
+      margin: 3px 0 0 !important;
+      color: $tpo-ink;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+  }
+
+  &__eyebrow.ant-typography {
+    display: block;
+    color: $tpo-muted;
+    font-size: $tpo-fs-xs;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  &__panel {
+    padding: 16px 18px 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  .tpo-requests {
+    &__heading {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 4px;
+      padding: 14px 13px 12px;
+
+      > .ant-typography {
+        max-width: none;
+        text-align: left;
+      }
+    }
+
+    &__panel {
+      padding: 13px 12px 16px;
+    }
+  }
+}
+
+
+// TPO Requests Demo/Wow pass — controlled exception decision centre.
+.tpo-student-requests {
+  &__intelligence {
+    display:grid;
+    grid-template-columns:minmax(250px,.75fr) minmax(0,1.25fr);
+    gap:14px;
+    margin-bottom:13px;
+    padding:14px;
+    border:1px solid #dfe7f0;
+    border-radius:13px;
+    background:
+      radial-gradient(circle at 92% 10%,rgba(245,158,11,.08),transparent 26%),
+      linear-gradient(135deg,$tpo-surface-soft,$tpo-surface-soft);
+  }
+
+  &__intelligence-copy {
+    min-width:0;
+    h4.ant-typography { margin:3px 0 !important; color:$tpo-ink; font-size:16px; line-height:1.3; }
+    > .ant-typography:last-child { font-size: $tpo-fs-xs; line-height:1.4; }
+  }
+
+  &__eyebrow.ant-typography {
+    color:#b45309; font-size: 12px; font-weight:750; letter-spacing:.09em; text-transform:uppercase;
+  }
+
+  &__intelligence-metrics {
+    display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:7px;
+    > button {
+      min-width:0; padding:9px 10px; border:1px solid $tpo-line; border-radius:9px;
+      background:#fff; color:inherit; font:inherit; text-align:left; cursor:pointer;
+      &:hover,&:focus-visible,&.is-active { border-color:rgba($clrThird,0.35); outline:none; background:$teal-subtle; }
+      &.is-attention { border-color:#f0d399; background:#fff8e8; }
+      span,strong,small { display:block; }
+      span { color:$tpo-muted; font-size:7px; font-weight:700; text-transform:uppercase; }
+      strong { margin-top:3px; color:$tpo-text; font-size:17px; line-height:1; }
+      small { margin-top:4px; color:$tpo-muted; font-size:7px; line-height:1.3; }
+      &.is-attention strong { color:$tpo-warn; }
+    }
+  }
+
+  &__toolbar {
+    display:flex; align-items:center; gap:8px; margin-bottom:12px;
+    .tpo-student-requests__filter { margin-bottom:0 !important; }
+    .ant-tag { margin:0; border-radius:999px; font-size: $tpo-fs-xs; }
+  }
+}
+
+@media(max-width:900px){
+  .tpo-student-requests__intelligence { grid-template-columns:1fr; }
+}
+@media(max-width:767px){
+  .tpo-student-requests {
+    &__intelligence-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    &__toolbar { align-items:flex-start; flex-direction:column; }
+  }
+}
+@media(max-width:480px){
+  .tpo-student-requests__intelligence-metrics { grid-template-columns:1fr; }
+}
+
+.tpo-student-requests__details { display: flex; flex-direction: column; gap: 2px; min-width: 180px; max-width: 360px; }
+.tpo-student-requests__payload { color: $tpo-text; }
+.tpo-student-requests__noproof { font-size: 12px; }
+
+// Requests page: student context on the row, round time under the drive, type chips with counts.
+.tpo-student-requests__student, .tpo-student-requests__drive, .tpo-student-requests__decided { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+.tpo-student-requests__context.ant-typography { font-size: 12px; }
+.tpo-student-requests__types { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 12px; }
+.tpo-student-requests__type {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid $tpo-line; border-radius: 999px;
+  background: #fff; color: $tpo-text; font-size: 13px; cursor: pointer;
+  span { color: $tpo-muted; font-variant-numeric: tabular-nums; }
+  &.is-on { border-color: $tpo-primary; color: $tpo-primary; }
+  &:focus-visible { outline: 2px solid $tpo-primary; outline-offset: 2px; }
+}
+.tpo-student-requests__toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }

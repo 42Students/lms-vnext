@@ -1,0 +1,34 @@
+@import "../components/variables";
+
+// notifications
+
+.ln-notification {
+  .ant-list-item {
+    padding: {
+      top: 1.2rem !important;
+      bottom: 1.2rem !important;
+    }
+  }
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.ln-profile-fig {
+  object-fit: cover;
+  border-radius: $border-radius10;
+}
+
+.ln-badge-btm-lft {
+  .ant-badge-dot {
+    left: -0.2rem !important;
+    bottom: 0 !important;
+    top: inherit !important;
+    height: rem(10px) !important;
+    width: rem(10px) !important;
+    min-width: auto !important;
+    transform: translate(0, 0) !important;
+    border: 1.5px solid $white;
+  }
+}

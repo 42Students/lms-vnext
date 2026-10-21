@@ -1,0 +1,19 @@
+.curDateWrapper {
+  border: 1px solid #ddd;
+  padding: 6px;
+  border-radius: 5px;
+}
+.curDateWrapper .leftArrow,
+.curDateWrapper .rightArrow {
+  font-size: 10px;
+  vertical-align: middle;
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  margin-top: 3px;
+}
+.curDateWrapper .selectedDate {
+  font-size: 14px;
+  vertical-align: middle;
+  margin: 0 15px;
+}/*# sourceMappingURL=CourseAttendeeHeaderFilters.module.css.map */

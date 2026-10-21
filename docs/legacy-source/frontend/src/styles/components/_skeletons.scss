@@ -1,0 +1,305 @@
+@import "./variables.scss";
+
+// Shared loading placeholders. Compositions should reserve the geometry that is actually
+// arriving; page-specific skeletons remain preferred when a generic composition would lie.
+
+$lms-skeleton-base: $neutral-100;
+$lms-skeleton-highlight: $neutral-50;
+
+.lms-skeleton-region {
+  width: 100%;
+  min-width: 0;
+}
+
+.lms-refresh-status {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 $space-3;
+  padding: 6px 10px;
+  border-radius: $radius-pill;
+  background: $teal-subtle;
+  color: $teal-text;
+  font-size: $text-sm;
+  font-weight: $fnt-semi;
+  line-height: 1.35;
+}
+
+.lms-refresh-status__dot {
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: $clrThird;
+  animation: lms-refresh-pulse 1.2s ease-in-out infinite;
+}
+
+.lms-skeleton-block {
+  position: relative;
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  background: $lms-skeleton-base;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba($white, 0.72) 48%,
+      transparent 100%
+    );
+    animation: lms-skeleton-shimmer 1.35s ease-in-out infinite;
+  }
+}
+
+.lms-skeleton-text {
+  display: grid;
+  gap: $space-2;
+  width: 100%;
+}
+
+.lms-skeleton-card-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--lms-skeleton-columns, 3), minmax(0, 1fr));
+  gap: $space-5;
+}
+
+.lms-skeleton-card {
+  display: grid;
+  align-content: start;
+  gap: $space-3;
+  min-width: 0;
+  padding: $space-4;
+  border: 1px solid $neutral-200;
+  border-radius: $radius-card;
+  background: $white;
+}
+
+.lms-skeleton-card__media {
+  aspect-ratio: 16 / 9;
+  height: auto !important;
+}
+
+.lms-skeleton-list {
+  overflow: hidden;
+  border: 1px solid $neutral-200;
+  border-radius: $radius-card;
+  background: $white;
+}
+
+.lms-skeleton-list__row {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  min-height: 68px;
+  padding: $space-3 $space-4;
+
+  & + & {
+    border-top: 1px solid $neutral-200;
+  }
+}
+
+.lms-skeleton-list__content {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: grid;
+  gap: $space-2;
+}
+
+.lms-skeleton-list__action {
+  flex: 0 0 auto;
+}
+
+.lms-skeleton-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid $neutral-200;
+  border-radius: $radius-card;
+  background: $white;
+}
+
+.lms-skeleton-table {
+  min-width: 560px;
+}
+
+.lms-skeleton-table__row {
+  display: grid;
+  grid-template-columns: repeat(var(--lms-skeleton-columns, 4), minmax(92px, 1fr));
+  align-items: center;
+  gap: $space-4;
+  min-height: 52px;
+  padding: 0 $space-4;
+
+  & + & {
+    border-top: 1px solid $neutral-200;
+  }
+
+  &--head {
+    min-height: 44px;
+    background: $neutral-50;
+  }
+}
+
+.lms-skeleton-detail {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.85fr) minmax(0, 1.4fr);
+  gap: $space-5;
+  padding: $space-5;
+  border: 1px solid $neutral-200;
+  border-radius: $radius-card;
+  background: $white;
+}
+
+.lms-skeleton-detail__media {
+  min-height: 220px;
+}
+
+.lms-skeleton-detail__content {
+  display: grid;
+  align-content: start;
+  gap: $space-4;
+  min-width: 0;
+}
+
+.lms-skeleton-detail__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+}
+
+.lms-skeleton-dashboard {
+  display: grid;
+  gap: $space-5;
+}
+
+.lms-skeleton-dashboard__heading {
+  max-width: 640px;
+}
+
+.lms-skeleton-dashboard__metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: $space-4;
+}
+
+.lms-skeleton-metric,
+.lms-skeleton-dashboard__panel {
+  display: grid;
+  align-content: start;
+  gap: $space-3;
+  min-width: 0;
+  padding: $space-4;
+  border: 1px solid $neutral-200;
+  border-radius: $radius-card;
+  background: $white;
+}
+
+.lms-skeleton-dashboard__panels {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.7fr);
+  gap: $space-5;
+}
+
+.lms-skeleton-page {
+  display: grid;
+  gap: $space-5;
+}
+
+.lms-skeleton-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-4;
+}
+
+.lms-skeleton-page__title {
+  flex: 1 1 auto;
+  display: grid;
+  gap: $space-2;
+  min-width: 0;
+}
+
+.lms-skeleton-page__default {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $space-5;
+}
+
+@keyframes lms-refresh-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes lms-skeleton-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (max-width: $smd) {
+  .lms-skeleton-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lms-skeleton-dashboard__metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lms-skeleton-dashboard__panels,
+  .lms-skeleton-detail {
+    grid-template-columns: 1fr;
+  }
+
+  .lms-skeleton-page__default {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: $ssm) {
+  .lms-skeleton-card-grid,
+  .lms-skeleton-dashboard__metrics,
+  .lms-skeleton-page__default {
+    grid-template-columns: 1fr;
+  }
+
+  .lms-skeleton-list__row {
+    align-items: flex-start;
+  }
+
+  .lms-skeleton-list__action {
+    width: 56px !important;
+  }
+
+  .lms-skeleton-page__header {
+    align-items: flex-start;
+  }
+
+  .lms-skeleton-page__title .lms-skeleton-block:last-child {
+    width: min(70vw, 320px) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lms-skeleton-block::after {
+    display: none;
+    animation: none;
+  }
+
+  .lms-refresh-status__dot {
+    animation: none;
+  }
+}

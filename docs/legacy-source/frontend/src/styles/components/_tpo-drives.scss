@@ -1,0 +1,445 @@
+// TPO Drives listing — lifecycle workspace.
+.tpo-drives {
+  &__header {
+    margin-bottom: 16px;
+
+    .listing-page-header__title {
+      color: $tpo-ink;
+      letter-spacing: -0.02em;
+    }
+  }
+
+  &__create.ant-btn {
+    min-height: 40px;
+    border-radius: 9px;
+    padding-inline: 16px;
+    font-weight: 600;
+  }
+
+  &__past-season {
+    margin-bottom: 14px;
+    border-radius: 10px;
+  }
+
+  &__workspace.ant-card {
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: $radius-card;
+    box-shadow: 0 5px 20px rgba(26, 45, 72, 0.055);
+
+    > .ant-card-body {
+      padding: 0 !important;
+    }
+  }
+
+  &__stale-alert {
+    margin: 16px 20px 0;
+    border-radius: 9px;
+  }
+
+  &__overview {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 18px 20px 14px;
+    background: linear-gradient(180deg, $tpo-surface-soft 0%, #ffffff 100%);
+  }
+
+  &__overview-copy {
+    min-width: 0;
+    max-width: 760px;
+  }
+
+  &__eyebrow.ant-typography {
+    display: block;
+    margin-bottom: 3px;
+    color: $tpo-muted;
+    font-size: $tpo-fs-xs;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  &__overview-title.ant-typography {
+    margin: 0 0 3px !important;
+    color: $tpo-ink;
+    font-size: 19px;
+    line-height: 1.3;
+  }
+
+  &__overview-count {
+    flex: 0 0 auto;
+    min-width: 84px;
+    padding: 8px 12px;
+    border: 1px solid #e4e9f0;
+    border-radius: 10px;
+    background: $tpo-surface-soft;
+    text-align: center;
+
+    strong,
+    span {
+      display: block;
+    }
+
+    strong {
+      color: $tpo-ink;
+      font-size: 22px;
+      line-height: 1.1;
+    }
+
+    span {
+      margin-top: 2px;
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+  }
+
+  &__tabs.ant-tabs {
+    margin: 0;
+
+    .ant-tabs-nav {
+      margin: 0 !important;
+      padding: 0 20px;
+      border-top: 1px solid $tpo-line;
+      border-bottom: 1px solid $tpo-line;
+      background: $tpo-surface-soft;
+
+      &::before {
+        border-bottom: 0;
+      }
+    }
+
+    .ant-tabs-tab {
+      margin: 0 24px 0 0 !important;
+      padding: 13px 2px !important;
+      color: $tpo-muted;
+      font-weight: 600;
+    }
+
+    .ant-tabs-tab-active .tpo-drives__tab-label {
+      color: $tpo-primary;
+    }
+  }
+
+  &__tab-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  &__tab-count {
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: $tpo-line;
+    color: $tpo-text;
+    font-size: $tpo-fs-xs;
+    font-weight: 700;
+    line-height: 22px;
+    text-align: center;
+
+    &--attention {
+      background: #fff1d6;
+      color: #8a4b00;
+    }
+  }
+
+  &__table {
+    padding: 16px 20px 20px;
+
+    > div > .ant-space:first-child {
+      min-height: 40px;
+      margin-bottom: 14px !important;
+      padding-bottom: 14px;
+      border-bottom: 1px solid $tpo-line;
+
+      .ant-input-affix-wrapper,
+      .ant-select-selector,
+      .ant-btn {
+        border-radius: 8px;
+      }
+
+      .ant-input-affix-wrapper {
+        min-height: 40px;
+      }
+
+      .ant-btn {
+        min-height: 40px;
+      }
+
+      > .ant-typography {
+        margin-left: auto;
+        color: $tpo-muted;
+        font-size: 12px;
+      }
+    }
+
+    .ant-table-wrapper {
+      .ant-table {
+        color: #2d3b52;
+      }
+
+      .ant-table-thead > tr > th {
+        padding-top: 11px;
+        padding-bottom: 11px;
+        background: $tpo-surface-soft !important;
+        color: $tpo-muted;
+        font-size: $tpo-fs-xs;
+        font-weight: 700;
+        letter-spacing: 0.035em;
+        text-transform: uppercase;
+      }
+
+      .ant-table-tbody > tr > td {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        border-bottom-color: $tpo-line;
+        vertical-align: middle;
+      }
+
+      .ant-table-tbody > tr:hover > td {
+        background: $tpo-surface-soft !important;
+      }
+    }
+
+    .ant-pagination {
+      margin-bottom: 0;
+    }
+  }
+
+  &__drive-link {
+    display: inline-flex;
+    min-width: 180px;
+    max-width: 300px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover .tpo-drives__company,
+    &:focus-visible .tpo-drives__company {
+      color: $tpo-primary;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $clrThird;
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+  }
+
+  &__company {
+    color: #223049;
+    font-weight: 650;
+    line-height: 1.35;
+    transition: color 0.15s ease;
+  }
+
+  &__role {
+    max-width: 100%;
+    overflow: hidden;
+    color: $tpo-muted;
+    font-size: 12px;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__status-tag,
+  &__type-tag {
+    margin-inline-end: 0;
+    border-radius: 999px;
+    font-size: $tpo-fs-xs;
+  }
+}
+
+@media (max-width: 767px) {
+  .tpo-drives {
+    &__header {
+      .listing-page-header__right,
+      .tpo-drives__create {
+        width: 100%;
+      }
+
+      .tpo-drives__create {
+        justify-content: center;
+      }
+    }
+
+    &__overview {
+      align-items: flex-start;
+      padding: 15px 14px 12px;
+    }
+
+    &__overview-count {
+      min-width: 68px;
+      padding: 7px 9px;
+
+      strong {
+        font-size: 19px;
+      }
+    }
+
+    &__tabs.ant-tabs {
+      .ant-tabs-nav {
+        padding: 0 14px;
+      }
+
+      .ant-tabs-nav-wrap {
+        overflow-x: auto;
+      }
+
+      .ant-tabs-tab {
+        margin-right: 18px !important;
+      }
+    }
+
+    &__stale-alert {
+      margin: 13px 12px 0;
+    }
+
+    &__table {
+      padding: 13px 12px 16px;
+
+      > div > .ant-space:first-child {
+        display: flex;
+        width: 100%;
+
+        .ant-input-affix-wrapper {
+          width: 100% !important;
+          flex: 1 1 100%;
+        }
+
+        > .ant-typography {
+          width: 100%;
+          margin-left: 0;
+        }
+      }
+    }
+
+    &__drive-link {
+      min-width: 150px;
+      max-width: 210px;
+    }
+  }
+}
+
+
+// TPO Drives Demo/Wow pass — season hiring portfolio.
+.tpo-drives {
+  &__portfolio { margin-bottom:14px; }
+
+  &__portfolio-hero.ant-card {
+    overflow:hidden; border:0; border-radius:18px;
+    background:
+      radial-gradient(circle at 91% 10%,rgba(56,189,248,.18),transparent 30%),
+      linear-gradient(135deg,$tpo-ink 0%,$tpo-ink 100%);
+    box-shadow:0 16px 40px rgba(15,23,42,.16); color:#fff;
+    > .ant-card-body { padding:20px !important; }
+  }
+
+  &__portfolio-head {
+    display:flex; align-items:flex-start; justify-content:space-between; gap:20px;
+    h3.ant-typography { margin:4px 0 !important; color:#fff; font-size:clamp(20px,2vw,27px); letter-spacing:-.025em; }
+    > div:first-child > .ant-typography:last-child { color:$tpo-line-strong; font-size: $tpo-fs-xs; line-height:1.45; }
+  }
+
+  &__portfolio-eyebrow.ant-typography {
+    color: $tpo-primary; font-size: $tpo-fs-xs; font-weight:750; letter-spacing:.1em; text-transform:uppercase;
+  }
+
+  &__portfolio-count {
+    flex:0 0 auto; min-width:105px; padding:10px 12px; border:1px solid rgba(148,163,184,.18);
+    border-radius:10px; background:rgba(255,255,255,.055); text-align:center;
+    strong,span { display:block; }
+    strong { color:#fff; font-size:23px; line-height:1; }
+    span { margin-top:4px; color:$tpo-muted; font-size: 12px; font-weight:700; text-transform:uppercase; }
+  }
+
+  &__portfolio-metrics {
+    display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin-top:15px;
+    > button {
+      min-width:0; padding:11px 10px; border:1px solid rgba(148,163,184,.15); border-radius:10px;
+      background:rgba(255,255,255,.05); color:inherit; font:inherit; text-align:left; cursor:pointer;
+      &:hover,&:focus-visible { border-color:rgba(103,232,249,.35); outline:none; background:rgba(255,255,255,.085); }
+      &.is-attention { border-color:rgba(245,158,11,.35); background:rgba(245,158,11,.08); }
+      span,strong,small { display:block; }
+      span { color: $tpo-primary; font-size: 12px; font-weight:700; text-transform:uppercase; }
+      span .anticon { margin-right:4px; }
+      strong { margin-top:4px; color:#fff; font-size:20px; line-height:1; }
+      small { margin-top:5px; color:$tpo-muted; font-size: 12px; line-height:1.35; }
+    }
+  }
+
+  &__lifecycle-map {
+    display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; margin-top:9px;
+    > button {
+      padding:8px; border:1px solid transparent; border-radius:9px; background:rgba(15,23,42,.24);
+      color:inherit; font:inherit; text-align:left; cursor:pointer;
+      &:hover,&:focus-visible,&.is-active { border-color:rgba(125,211,252,.28); outline:none; background:rgba(255,255,255,.065); }
+      > div:first-child { display:flex; align-items:baseline; justify-content:space-between; gap:6px; }
+      span { color:$tpo-muted; font-size:7px; font-weight:700; text-transform:uppercase; }
+      strong { color:#fff; font-size:14px; }
+    }
+  }
+
+  &__lifecycle-track {
+    height:4px; margin-top:5px; overflow:hidden; border-radius:999px; background:rgba(255,255,255,.08);
+    i { display:block; height:100%; min-width:2px; border-radius:inherit; background:linear-gradient(90deg, $light-cyan, $clrThird); }
+  }
+
+  &__mode-mix {
+    display:flex; margin-top:9px; padding:8px 10px; flex-wrap:wrap; align-items:center; gap:6px 14px;
+    border-radius:9px; background:rgba(15,23,42,.22); color:$tpo-muted; font-size: 12px;
+    > span { font-weight:750; letter-spacing:.06em; text-transform:uppercase; }
+    strong { color:#cbd5e1; font-weight:600; }
+  }
+}
+
+@media(max-width:767px){
+  .tpo-drives {
+    &__portfolio-hero.ant-card > .ant-card-body { padding:15px !important; }
+    &__portfolio-head { align-items:flex-start; flex-direction:column; gap:9px; }
+    &__portfolio-count { display:flex; width:100%; min-width:0; align-items:baseline; justify-content:space-between; text-align:left; }
+    &__portfolio-count span { margin-top:0; }
+    &__portfolio-metrics,&__lifecycle-map { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  }
+}
+@media(max-width:480px){
+  .tpo-drives__portfolio-metrics { grid-template-columns:1fr; }
+}
+
+// Phone: the deadline and applied count ride under the role (their columns are hidden there),
+// and the four lifecycle tabs fit without a "..." overflow.
+.tpo-drives__meta-xs { display: none; }
+@media (max-width: 575px) {
+  .tpo-drives__meta-xs { display: block; margin-top: 2px; color: $tpo-muted; font-size: 12px; line-height: 1.35; }
+  .tpo-drives__tabs.ant-tabs {
+    .ant-tabs-nav { padding: 0 6px !important; }
+    .ant-tabs-tab { padding: 10px 0; font-size: 13px; }
+    .ant-tabs-tab + .ant-tabs-tab { margin-left: 10px !important; }
+    .tpo-drives__tab-label { gap: 4px; }
+    .tpo-drives__tab-count { min-width: 18px; padding: 0 5px; font-size: 12px; }
+    .ant-tabs-nav-operations { display: none !important; }
+    .tpo-drives__tab-count.is-zero { display: none; } // a zero count says nothing on a phone, and the four tabs then fit
+  }
+}
+
+// Drives list, Live tab: where each drive is, with the round progress under it.
+.tpo-drives__where {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.35;
+
+  .ant-typography { font-size: 12px; }
+}

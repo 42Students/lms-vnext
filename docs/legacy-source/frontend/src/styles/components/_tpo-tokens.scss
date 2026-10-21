@@ -1,0 +1,30 @@
+// TPO design tokens. One place for the neutrals every TPO stylesheet uses.
+// Imported before every `_tpo-*.scss` partial (see components.scss). Do not write raw hex for these
+// roles in a TPO partial: tpoTokens.test.js fails the build if a legacy grey comes back.
+// Brand colour comes from _variables.scss ($clrThird, $teal-*); only neutrals and signal colours live here.
+
+$tpo-ink: #172033;            // headings, key numbers
+$tpo-text: #334155;           // body copy
+$tpo-muted: #5b6b82;          // secondary text, labels (>= 4.5:1 on white)
+$tpo-line: #e7ecf2;           // hairline borders and dividers
+$tpo-line-strong: #d6e1ee;    // input borders, emphasised dividers
+$tpo-surface: #ffffff;
+$tpo-surface-soft: #f8fafc;   // page background, subtle wells
+$tpo-primary: #0a7c88;        // brand teal deep enough for white text and for teal text on white (4.9:1)
+$tpo-primary-hover: #086670;  // hover/pressed teal for primary interactions
+$tpo-primary-soft: #eff8fa;   // restrained teal surface for selected/attention states
+$tpo-warn: #b45309;           // text on warning tint (>= 4.5:1)
+$tpo-warn-bg: #fffaf0;
+
+// Structural tokens deliberately alias the product-wide visual system. TPO/recruiter keeps
+// its accessible deep-teal colour treatment, but controls/cards/type should not become a
+// separate mini design system.
+$tpo-radius: $radius-card;
+$tpo-radius-sm: $radius-control;
+$tpo-shadow-card: $elev-1;
+
+// Type scale: use the product-wide canonical scale; nothing below 12px.
+$tpo-fs-xs: $text-xs;
+$tpo-fs-sm: $text-sm;
+$tpo-fs-md: $text-base;
+$tpo-fs-lg: $text-md;

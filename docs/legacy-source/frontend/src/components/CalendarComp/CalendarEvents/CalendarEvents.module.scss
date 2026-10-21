@@ -1,0 +1,15 @@
+.calendarWrapper{
+    width: 100%;
+    min-width: 700px; /* Ensure calendar has minimum width for proper display */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar { display: none; }
+}
+
+@media only screen and (max-width: 768px) {
+    .calendarWrapper {
+        min-width: 600px;
+    }
+}

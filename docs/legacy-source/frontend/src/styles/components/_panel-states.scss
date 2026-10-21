@@ -1,0 +1,148 @@
+// Product-wide empty/error/permission/network/partial/completion and status states.
+
+.panel-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 40px 20px;
+  gap: 6px;
+
+  &__icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+    color: $neutral-500;
+
+    &--error,
+    &--not-found {
+      color: $status-error;
+    }
+
+    &--offline,
+    &--partial {
+      color: $status-warning;
+    }
+
+    &--permission {
+      color: $neutral-700;
+    }
+
+    &--success {
+      color: $status-success;
+    }
+
+    &--empty {
+      color: $clrThird;
+      opacity: 0.55;
+    }
+  }
+
+  &__title {
+    font-weight: 600;
+    font-size: $text-md;
+    color: $neutral-900;
+    margin: 0;
+  }
+
+  &__subtitle {
+    color: $neutral-500;
+    font-size: $text-sm;
+    margin: 0 0 8px;
+    max-width: 420px;
+  }
+
+  &__action {
+    margin-top: 2px;
+  }
+
+  &--compact {
+    padding: 16px 12px;
+    gap: 4px;
+
+    .panel-state__icon {
+      margin-bottom: 4px;
+      font-size: 24px;
+    }
+
+    .panel-state__subtitle {
+      margin-bottom: 4px;
+    }
+  }
+
+  &--partial {
+    border: 1px solid rgba($status-warning, 0.2);
+    border-radius: 12px;
+    background: $status-warning-bg;
+  }
+
+  &--success {
+    border: 1px solid rgba($status-success, 0.18);
+    border-radius: 12px;
+    background: $status-success-bg;
+  }
+}
+
+.lms-status-badge.ant-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 24px;
+  margin-inline-end: 0;
+  border-radius: 999px;
+  border: 1px solid $neutral-200;
+  background: $neutral-100;
+  color: $neutral-700;
+  font-weight: 600;
+  line-height: 20px;
+
+  .lms-status-badge__dot {
+    width: 7px;
+    height: 7px;
+    flex: 0 0 7px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  &.lms-status-badge--info {
+    color: $status-info;
+    background: $status-info-bg;
+    border-color: rgba($status-info, 0.2);
+  }
+
+  &.lms-status-badge--success {
+    color: $status-success;
+    background: $status-success-bg;
+    border-color: rgba($status-success, 0.2);
+  }
+
+  &.lms-status-badge--warning {
+    color: $status-warning;
+    background: $status-warning-bg;
+    border-color: rgba($status-warning, 0.2);
+  }
+
+  &.lms-status-badge--error {
+    color: $status-error;
+    background: $status-error-bg;
+    border-color: rgba($status-error, 0.2);
+  }
+}
+
+// Labelled status chips (components/Common/Facts.jsx): each chip says what it is about, then its value.
+.lms-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin: 0;
+
+  &__item { display: flex; min-width: 0; flex-direction: column; gap: 4px; }
+  dt { color: #64748b; font-size: 12px; font-weight: 500; line-height: 16px; }
+  dd { display: flex; flex-wrap: wrap; gap: 4px; margin: 0; }
+  dd .ant-tag { margin: 0; }
+
+  &--small {
+    gap: 6px 18px;
+    dt { font-size: 11px; }
+  }
+}
+.lms-job-header__facts { margin-top: 8px; }

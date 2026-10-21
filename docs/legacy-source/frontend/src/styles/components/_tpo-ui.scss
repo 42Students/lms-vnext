@@ -1,0 +1,428 @@
+// Shared TPO building blocks (src/components/tpo/ui). Tokens only; no raw greys.
+
+.tpo-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+
+  li { display: flex; }
+
+  &__item {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 8px 14px;
+    border: 1px solid $tpo-line;
+    border-radius: $tpo-radius-sm;
+    background: $tpo-surface;
+    color: $tpo-text;
+    font: inherit;
+    text-decoration: none;
+    transition: border-color 0.15s ease, background 0.15s ease;
+
+    &--attention { border-color: #f0cf91; background: $tpo-warn-bg; .tpo-strip__value { color: $tpo-warn; } }
+    &--good .tpo-strip__value { color: $tpo-primary; }
+  }
+
+  a.tpo-strip__item, button.tpo-strip__item {
+    cursor: pointer;
+    &:hover { border-color: $clrThird; background: $teal-subtle; color: $tpo-ink; }
+    &:focus-visible { outline: 2px solid $clrThird; outline-offset: 2px; }
+  }
+
+  &__value { color: $tpo-ink; font-size: $tpo-fs-lg + 2; font-weight: 700; line-height: 1; }
+  &__label { color: $tpo-muted; font-size: $tpo-fs-sm; }
+}
+
+.tpo-row-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  &:hover { color: inherit; }
+  &:focus-visible { outline: 2px solid $clrThird; outline-offset: 2px; border-radius: $tpo-radius-sm; }
+}
+
+.tpo-reason-picker {
+  &__chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .ant-tag-checkable {
+    padding: 4px 12px;
+    border: 1px solid $tpo-line-strong;
+    border-radius: 999px;
+    font-size: $tpo-fs-sm;
+    &:hover { color: $tpo-primary; }
+  }
+  .ant-tag-checkable-checked { border-color: $clrThird; background: $clrThird; color: #fff; &:hover { color: #fff; } }
+}
+
+// Command palette (was inline styles with raw colours)
+.tpo-palette {
+  &__input { border-bottom: 1px solid $tpo-line; border-radius: 0; }
+  &__list { max-height: 420px; overflow-y: auto; padding: 4px 0; }
+  &__group { display: block; padding: 8px 16px 4px; color: $tpo-muted; font-size: $tpo-fs-xs; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+  &__item { padding: 8px 16px; color: $tpo-text; cursor: pointer; &.is-active { background: $teal-subtle; color: $tpo-ink; } }
+  &__foot { display: flex; gap: 12px; padding: 6px 16px; border-top: 1px solid $tpo-line; .ant-typography { font-size: $tpo-fs-xs; } }
+  &__empty { margin: 32px 0; }
+}
+
+.tpo-message-panel__quick { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; .ant-tag-checkable { border: 1px solid $tpo-line-strong; border-radius: 999px; padding: 2px 10px; font-size: $tpo-fs-sm; } }
+.tpo-message-panel__attention { margin-bottom: 10px; }
+
+// Headers: a long title wraps instead of running under the action buttons.
+.listing-page-header[class*="tpo-"] {
+  flex-wrap: wrap;
+  @media (min-width: 768px) { .listing-page-header__left { flex: 1 1 320px; } }
+  .listing-page-header__title { flex-shrink: 1; min-width: 0; overflow-wrap: anywhere; font-size: 24px; }
+  .listing-page-header__right { flex: 0 1 auto; flex-wrap: wrap; justify-content: flex-end; }
+}
+
+// "Needs your attention" on the drive page: one line per item, each is the action.
+.tpo-drive-detail__needs { display: grid; gap: 8px; margin-bottom: 12px; }
+.tpo-drive-detail__need {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 14px; text-align: left;
+  border: 1px solid $tpo-line; border-left: 3px solid $clrThird; border-radius: $tpo-radius-sm;
+  background: $tpo-surface; color: $tpo-text; font: inherit; cursor: pointer;
+  &.is-warn, &.is-attention { border-left-color: $tpo-warn; background: $tpo-warn-bg; }
+  strong { display: block; color: $tpo-ink; font-size: $tpo-fs-md; }
+  small { display: block; color: $tpo-muted; font-size: $tpo-fs-sm; }
+  &:hover { border-color: $clrThird; }
+  &:focus-visible { outline: 2px solid $clrThird; outline-offset: 2px; }
+}
+
+// Settings: grouped section list on the left, one panel on the right. On a phone the list becomes a wrapped row.
+.tpo-settings__layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 24px; align-items: start; }
+.tpo-settings__nav { position: sticky; top: 12px; display: grid; gap: 16px; }
+.tpo-settings__nav-group { display: grid; gap: 2px; }
+.tpo-settings__nav-label { padding: 0 10px 4px; color: $tpo-muted; font-size: $tpo-fs-xs; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+.tpo-settings__nav-item {
+  padding: 8px 10px; border: 0; border-radius: $tpo-radius-sm; background: transparent; color: $tpo-text;
+  font: inherit; font-size: $tpo-fs-md; text-align: left; cursor: pointer;
+  &:hover { background: $tpo-surface-soft; }
+  &.is-active { background: $teal-subtle; color: $tpo-primary; font-weight: 600; }
+  &:focus-visible { outline: 2px solid $clrThird; outline-offset: 1px; }
+}
+.tpo-settings__panel-head { margin-bottom: 12px; h3.ant-typography { margin: 0 0 4px; } .ant-typography { margin-bottom: 0; } }
+.tpo-settings__unsaved { margin-top: 8px; }
+// The recruiter status filter scrolls sideways on a phone instead of widening the section.
+.tpo-settings__segmented-scroll { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+@media (max-width: 767px) {
+  // minmax(0, 1fr): a wide table in a section (Recruiters with access) scrolls inside it instead of widening the page (night audit).
+  .tpo-settings__layout { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .tpo-settings__nav { position: static; display: flex; flex-wrap: wrap; gap: 6px; }
+  .tpo-settings__nav-group { display: contents; }
+  .tpo-settings__nav-label { display: none; }
+  .tpo-settings__nav-item { border: 1px solid $tpo-line-strong; }
+}
+
+.tpo-prepared__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.tpo-prepared__list { max-height: 420px; overflow-y: auto; }
+
+// Phone: the command bar is ONE row (season, search icon, New, messages, bell). It used to run off the right edge
+// (search box wider than the screen, season chip cut to "Curre"). The mobile header has a fixed height, so it cannot grow a second row.
+@media (max-width: 767px) {
+  .tpo-shell-header.ln-head {
+    padding: 0 12px !important; gap: 8px;
+    flex-wrap: nowrap !important;
+    // The bar shares the row with the avatar; width:100% pushed the avatar out of line and over the page title.
+    .tpo-command-bar { display: flex !important; align-items: center; gap: 8px; flex: 1 1 0; min-width: 0; width: auto; }
+    .tpo-shell-header__account { flex: 0 0 auto; }
+    // The college name does not fit beside season, search, New, two bells and the avatar; it stays in the account menu.
+    .ln-org-text-mob { display: none !important; }
+    .ln-mob-ham { flex: 0 0 auto; width: auto; }
+    .tpo-command-bar__scope { flex: 1 1 0; min-width: 104px !important; }
+    // The finder looks people up, which is exactly what a TPO at a drive-day desk needs: a search icon, not hidden.
+    .tpo-command-bar__search { flex: 0 0 36px; width: 36px; padding: 0; justify-content: center; > span:not(.anticon), kbd { display: none; } }
+    // Icon-only "New" on a phone (the + still opens the same menu) so the season selector stays readable.
+    .tpo-command-bar__new { width: 38px; padding: 0; > span:not(.ant-btn-icon) { display: none; } }
+    .tpo-command-bar__scope .tpo-command-bar__eyebrow { display: none; }
+    .tpo-command-bar .tpo-season-lens.ant-select { width: 100% !important; }
+    .tpo-command-bar__actions { flex: 0 0 auto; gap: 6px; }
+  }
+  // Needs you: let the action drop under the title instead of squeezing the title to one word per line.
+  .tpo-home__needs-list .ant-list-item > div, .tpo-home__needs-list .ant-list-item > div:first-child { flex-direction: row !important; flex-wrap: wrap; align-items: center !important; }
+  .tpo-home__needs-list .ant-list-item-meta { flex: 1 1 100% !important; min-width: 0; max-width: 100%; }
+}
+
+// A strip that follows a card row needs air above it.
+.tpo-home__content > .tpo-strip, .tpo-home__content .ant-row + .tpo-strip { margin-top: 16px; }
+
+// Results entry (paste roll numbers + inline pickers)
+.tpo-results__paste { padding: 12px; margin-bottom: 12px; border: 1px dashed $tpo-line-strong; border-radius: $tpo-radius-sm; background: $tpo-surface-soft; }
+.tpo-results__summary { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 8px; }
+.tpo-results__rest { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; cursor: pointer; }
+
+// Rounds: drag to reorder
+.tpo-drive-rounds__order-hint { display: block; font-size: $tpo-fs-sm; }
+.tpo-drive-rounds__item { border-radius: $tpo-radius; transition: box-shadow 0.15s ease, opacity 0.15s ease;
+  &.is-dragging { opacity: 0.5; }
+  &.is-drop { box-shadow: 0 0 0 2px $clrThird; }
+}
+.tpo-drive-rounds__handle { color: $tpo-muted; cursor: grab; }
+
+// Slot generator and "place the ones that did not fit"
+.tpo-slotgen { margin-top: 16px; padding: 12px; border: 1px dashed $tpo-line-strong; border-radius: $tpo-radius-sm; background: $tpo-surface-soft; }
+.tpo-slot-row.is-drop > td { background: $teal-subtle !important; box-shadow: inset 0 0 0 1px $clrThird; }
+.tpo-unplaced { display: grid; gap: 6px; margin-top: 4px; }
+.tpo-unplaced__row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 10px; border: 1px solid $tpo-line; border-radius: $tpo-radius-sm; background: $tpo-surface; cursor: grab; }
+
+// Applicants: filters, board, one-by-one review
+.tpo-applicant-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; &__spacer { flex: 1 1 auto; } }
+
+.tpo-board { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(210px, 1fr); gap: 12px; overflow-x: auto; padding-bottom: 8px; }
+.tpo-board__col { display: flex; flex-direction: column; min-height: 220px; padding: 10px; border: 1px solid $tpo-line; border-radius: $tpo-radius; background: $tpo-surface-soft;
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; color: $tpo-ink; }
+  &.is-over { border-color: $clrThird; background: $teal-subtle; box-shadow: 0 0 0 2px $clrThird; }
+  &.is-blocked { opacity: 0.55; }
+}
+.tpo-board__cards { display: grid; gap: 8px; align-content: start; }
+.tpo-board__empty { padding: 12px 4px; font-size: $tpo-fs-sm; }
+.tpo-board__card { display: grid; gap: 2px; padding: 10px; border: 1px solid $tpo-line; border-radius: $tpo-radius-sm; background: $tpo-surface; box-shadow: $tpo-shadow-card; cursor: grab;
+  &.is-dragging { opacity: 0.4; }
+}
+.tpo-board__name { padding: 0; border: 0; background: transparent; color: $tpo-ink; font: inherit; font-weight: 600; text-align: left; cursor: pointer; &:hover { color: $tpo-primary; } }
+.tpo-board__meta { color: $tpo-muted; font-size: $tpo-fs-sm; }
+.tpo-board__move { margin-top: 6px; width: 100%; }
+
+.tpo-review__card { margin: 16px 0; padding: 16px; border: 1px solid $tpo-line; border-radius: $tpo-radius; background: $tpo-surface-soft; }
+.tpo-review__actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; kbd { margin-left: 6px; padding: 0 5px; border: 1px solid currentColor; border-radius: 4px; font-size: $tpo-fs-xs; opacity: 0.75; } }
+.tpo-review__count { display: block; margin-top: 10px; font-size: $tpo-fs-sm; }
+
+.tpo-shortcuts { display: grid; gap: 4px; margin-top: 12px; .ant-typography { margin-top: 8px; } }
+.tpo-shortcuts__row { display: flex; align-items: center; justify-content: space-between; padding: 2px 0; kbd { min-width: 22px; margin-left: 4px; padding: 1px 6px; border: 1px solid $tpo-line-strong; border-radius: 4px; background: $tpo-surface-soft; font-size: $tpo-fs-xs; text-align: center; } }
+
+// Drive day field mode
+.tpo-drive-day-roster__live { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: 999px; background: #fdecec; color: #b42318; font-size: $tpo-fs-xs; font-weight: 700; letter-spacing: 0.06em;
+  i { width: 8px; height: 8px; border-radius: 50%; background: #d92d20; animation: lms-live-pulse 1.4s $lms-motion-ease infinite; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tpo-drive-day-roster__live i { animation: none; }
+}
+.tpo-drive-day-roster__gate { margin-bottom: 12px; .ant-input-search-large .ant-input { font-size: $tpo-fs-lg + 2; } }
+
+// Week time grid
+.tpo-timegrid { border: 1px solid $tpo-line; border-radius: $tpo-radius; background: $tpo-surface; overflow-x: auto; }
+.tpo-timegrid__head, .tpo-timegrid__allday { display: grid; grid-template-columns: 56px repeat(7, minmax(120px, 1fr)); }
+.tpo-timegrid__corner { padding: 6px; color: $tpo-muted; font-size: $tpo-fs-xs; text-align: right; }
+.tpo-timegrid__dayhead { display: flex; align-items: baseline; justify-content: center; gap: 6px; padding: 8px; border-left: 1px solid $tpo-line; color: $tpo-muted;
+  strong { color: $tpo-ink; font-size: $tpo-fs-lg; }
+  &.is-today strong { padding: 0 8px; border-radius: 999px; background: $clrThird; color: #fff; }
+}
+.tpo-timegrid__allday { border-top: 1px solid $tpo-line; border-bottom: 1px solid $tpo-line; background: $tpo-surface-soft; }
+.tpo-timegrid__allday-cell { display: grid; gap: 2px; min-height: 28px; padding: 3px; border-left: 1px solid $tpo-line; }
+.tpo-timegrid__body { position: relative; display: grid; grid-template-columns: 56px repeat(7, minmax(120px, 1fr)); }
+.tpo-timegrid__hours { > div { padding: 0 6px; color: $tpo-muted; font-size: $tpo-fs-xs; text-align: right; transform: translateY(-8px); } }
+.tpo-timegrid__col { position: relative; border-left: 1px solid $tpo-line; cursor: cell; &.is-droppable { background: rgba($clrThird, 0.04); } }
+.tpo-timegrid__line { border-top: 1px solid $tpo-line; pointer-events: none; }
+.tpo-timegrid__now { position: absolute; left: 0; right: 0; height: 2px; background: #d92d20; z-index: 3; pointer-events: none; }
+.tpo-timegrid__col .tpo-calendar__event { overflow: hidden; z-index: 2; cursor: pointer; font-size: $tpo-fs-xs; line-height: 1.25; }
+
+// Leads board drag
+.tpo-crm__board-column {
+  &.is-droppable { border-color: $clrThird; background: rgba($clrThird, 0.05); }
+  &.is-over { box-shadow: 0 0 0 2px $clrThird; }
+  &.is-locked { opacity: 0.55; }
+}
+.tpo-crm__drop-hint { display: block; margin-bottom: 8px; font-size: $tpo-fs-xs; }
+.tpo-crm__lead-card[draggable="true"] { cursor: grab; }
+
+.tpo-report-detail__saved { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 8px; }
+.tpo-report-detail__saved-manage { display: flex; flex-wrap: wrap; padding: 4px 8px; border-top: 1px solid $tpo-line; }
+
+.tpo-report-detail__saved .ant-select { width: 220px; flex: 0 0 auto; }
+
+// antd 5 gives .ant-card-body (and the head) ::before/::after clearfix boxes. Inside the grid and flex card bodies used across the
+// TPO and HR screens they become empty items, which adds phantom gaps and pushes content to one side (seen on HR "Needs you").
+[class*="tpo-"] .ant-card-body::before, [class*="tpo-"] .ant-card-body::after,
+[class*="hr-"] .ant-card-body::before, [class*="hr-"] .ant-card-body::after { display: none; }
+
+.tpo-company-detail__person { flex: 1 1 auto; min-width: 0; }
+
+// Students list: the "Best so far" journey chip and its filter row.
+.tpo-students__journey { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.tpo-students__journey-company { color: var(--tpo-text-muted, #5b6b82); font-size: 12px; }
+.tpo-students__journey-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; padding: 12px 18px; border-bottom: 1px solid $tpo-line; background: #fff; }
+@media (max-width: 767px) {
+  .tpo-students__journey-filters { padding: 12px 13px; }
+  .tpo-students__journey-filters .ant-select { width: 100% !important; }
+}
+
+// ---------------------------------------------------------------------------
+// Shell audit (contrast and touch). Colours that follow the antd theme (layouts/tpoHrTheme.js) need no rule here;
+// these are the ones that are written in CSS. `body.portal-tpo-recruiter` is set by layouts/layout.js so they reach modals and drawers too.
+.tpo-shell-header .tpo-command-bar__search kbd { color: $tpo-muted; }
+body.portal-tpo-recruiter {
+  .ln-footer-label { font-size: $tpo-fs-xs; font-weight: 600; color: $tpo-muted; max-width: 72px; }
+  .active .ln-footer-label { color: $tpo-primary; }
+}
+@media (max-width: 767px) {
+  // 24px buttons are hard to hit with a thumb.
+  body.portal-tpo-recruiter .ant-btn-sm { min-height: 32px; padding-inline: 12px; }
+  body.portal-tpo-recruiter .ant-select-sm .ant-select-selector { min-height: 32px; }
+}
+// The app-wide primary button forces the brand teal (white on it is 2.4:1). In these portals it is the deeper teal (4.9:1).
+body.portal-tpo-recruiter .ant-btn.ant-btn-primary:not(:disabled):not(.ant-btn-disabled):not(.ant-btn-background-ghost) {
+  background: $tpo-primary;
+  border-color: $tpo-primary;
+  &:hover:not(.ant-btn-loading), &:active { background: $tpo-primary-hover; border-color: $tpo-primary-hover; }
+}
+
+// Cross-page audit: tabs, empty texts and links that were written in the brand teal (2.4:1 on white).
+body.portal-tpo-recruiter {
+  // _common.scss forces the brand teal with !important, so this has to be more specific and !important too.
+  .ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn,
+  .ant-tabs .ant-tabs-tab:hover .ant-tabs-tab-btn { color: $tpo-primary !important; }
+  .ant-tabs .ant-tabs-ink-bar { background: $tpo-primary; }
+  .ant-list-empty-text, .ant-table-placeholder .ant-empty-description, .ant-empty-description { color: $tpo-muted; }
+  .panel-state__subtitle { color: $tpo-muted; }
+  .ant-pagination .ant-pagination-item-active { border-color: $tpo-primary; a { color: $tpo-primary; } }
+}
+// Outlined ("ghost") primary buttons keep a clear background and use the deep teal for text and border.
+body.portal-tpo-recruiter .ant-btn.ant-btn-primary.ant-btn-background-ghost:not(:disabled) {
+  background: transparent; color: $tpo-primary; border-color: $tpo-primary;
+  &:hover { background: rgba($tpo-primary, 0.06); color: $tpo-primary-hover; border-color: $tpo-primary-hover; }
+}
+
+// The shared profile page (also used by faculty and others) keeps its own colours; inside TPO and HR they read at 4.5:1.
+body.portal-tpo-recruiter {
+  .profile-completeness-tag--success.ant-tag, .profile-completeness-tag--success.ant-tag .anticon + span { color: #047857; }
+  .profile-completeness-tag--warning.ant-tag, .profile-completeness-tag--warning.ant-tag .anticon + span { color: #92400e; }
+  .profile-completeness .ant-btn-link, .ant-card-extra .ant-btn-link, .ant-card-extra a { color: $tpo-primary; }
+  .ant-btn-link { color: $tpo-primary; &:hover { color: $tpo-primary-hover; } }
+  .ant-select-disabled .ant-select-selection-item, .ant-btn:disabled { color: $tpo-muted; }
+}
+
+// ---------------------------------------------------------------------------
+// The shared data table on a phone: rows become cards (name first, the rest wrapping underneath) instead of
+// a table that scrolls sideways and cuts its Status column in half. Which columns show is still decided by each
+// page's `responsive` settings, so this only changes how those columns are laid out.
+@media (max-width: 767px) {
+  .tpo-datatable.ant-table-wrapper {
+    .ant-table-content > table { width: 100% !important; min-width: 0 !important; table-layout: auto; }
+    .ant-table-thead { display: none; }
+    .ant-table-tbody > tr.ant-table-row {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 12px 8px;
+      border-bottom: 1px solid $tpo-line;
+      > td { display: block; padding: 0 !important; border: 0 !important; background: transparent !important; min-width: 0; }
+      > td.ant-table-selection-column { flex: 0 0 auto; width: auto; }
+      > td:not(.ant-table-selection-column):first-of-type, > td.ant-table-selection-column + td { flex: 1 1 0; min-width: 60%; }
+      > td.ant-table-cell-fix-right { margin-inline-start: auto; }
+    }
+    .ant-table-tbody > tr.ant-table-placeholder { display: table-row; }
+    .ant-table-cell { white-space: normal; }
+    .ant-pagination { flex-wrap: wrap; row-gap: 6px; }
+  }
+}
+
+// View selectors (Segmented with many options) wrap into chips on a phone instead of running off the right edge.
+@media (max-width: 767px) {
+  body.portal-tpo-recruiter .tpo-students__view-selector.ant-segmented {
+    display: block; width: 100%; max-width: 100%; overflow: visible; background: transparent; border: 0; padding: 0;
+    .ant-segmented-group { display: flex; flex-wrap: wrap; gap: 6px; width: 100%; min-width: 0; }
+    .ant-segmented-thumb { display: none; }
+    .ant-segmented-item { border: 1px solid $tpo-line-strong; border-radius: 999px; background: $tpo-surface; }
+    .ant-segmented-item-selected { background: $tpo-primary; border-color: $tpo-primary; color: #fff; box-shadow: none; }
+  }
+}
+
+// Inactive tabs were the global light grey (2.3:1); table headers use the muted token (4.4:1 before).
+body.portal-tpo-recruiter {
+  .ant-tabs .ant-tabs-tab:not(.ant-tabs-tab-active) .ant-tabs-tab-btn { color: $tpo-muted !important; }
+  .ant-table-placeholder .ant-table-cell { color: $tpo-muted; }
+  .ant-table-thead > tr > th.ant-table-cell { color: $tpo-muted; }
+}
+
+// ---------------------------------------------------------------------------
+// Drawers (student panel, notifications, applicant, drive messages). A global drawer rule left the body with no padding and
+// the close button as a 508px-wide block floating above the title. Close sits top right, the extra buttons to its left.
+body.portal-tpo-recruiter .ant-drawer {
+  .ant-drawer-header { position: relative; padding: 14px 56px 14px 20px; }
+  .ant-drawer-header-title { flex-direction: row; min-width: 0; }
+  .ant-drawer-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ant-drawer-close {
+    position: absolute; top: 14px; right: 14px; width: 32px; height: 32px; margin: 0; padding: 0;
+    display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; color: $tpo-muted;
+    &:hover { background: rgba($tpo-ink, 0.06); color: $tpo-ink; }
+  }
+  .ant-drawer-extra { margin-inline-start: 12px; }
+  // _antddesign.scss sets `.ant-drawer-body { padding: 0 !important; overflow: hidden !important }`, which also stopped long drawers from scrolling.
+  .ant-drawer-body { padding: 16px 20px 24px !important; overflow-x: hidden !important; overflow-y: auto !important; }
+}
+@media (max-width: 767px) {
+  body.portal-tpo-recruiter .ant-drawer .ant-drawer-body { padding: 12px 14px 20px !important; }
+}
+// Keyboard hints in the command palette mean nothing on a touch screen.
+@media (max-width: 767px) { .tpo-palette__foot { display: none; } }
+
+// Forms inside modals: fields sit on one grid and fill it, instead of each having its own pixel width.
+.tpo-form-grid {
+  .tpo-form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; @media (max-width: 575px) { grid-template-columns: minmax(0, 1fr); } }
+  .tpo-form-row__wide { grid-column: 1 / -1; }
+  .ant-input, .ant-input-number, .ant-select, .ant-picker, .ant-input-affix-wrapper { width: 100%; }
+}
+
+// Top bars: every control is 36px tall, and the profile-completion ring (a stray red arc on the avatar) is not shown in these portals.
+.tpo-shell-header, .recruiter-shell-header {
+  .ln-profile__progress-ring { display: none; }
+}
+
+// Finder results: the name, then what tells two people apart (roll number and branch, company, status).
+.tpo-palette__item { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.tpo-palette__label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: $tpo-ink; font-weight: 600; }
+.tpo-palette__hint { flex: 0 0 auto; color: $tpo-muted; font-size: $tpo-fs-xs; }
+
+// The TPO bell panel: unread items carry a dot and a soft tint; each item is a real button (keyboard reachable).
+.tpo-bell-panel__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.tpo-bell-panel__item {
+  position: relative; display: grid; gap: 2px; width: 100%; padding: 10px 12px 10px 24px; border: 1px solid $tpo-line; border-radius: $tpo-radius-sm;
+  background: $tpo-surface; text-align: left; font: inherit; color: $tpo-text; cursor: pointer;
+  &:hover, &:focus-visible { border-color: $tpo-line-strong; background: $tpo-surface-soft; outline: none; }
+  &.is-new { background: rgba($tpo-primary, 0.04); border-color: rgba($tpo-primary, 0.25); }
+}
+.tpo-bell-panel__dot { position: absolute; left: 10px; top: 16px; width: 7px; height: 7px; border-radius: 50%; background: $tpo-primary; }
+.tpo-bell-panel__title { color: $tpo-ink; font-weight: 600; }
+.tpo-bell-panel__body { color: $tpo-text; font-size: $tpo-fs-sm; }
+.tpo-bell-panel__when { color: $tpo-muted; font-size: $tpo-fs-xs; }
+
+// Phone top bar: everything has to fit in 366px (menu, season, finder, New, messages, bell, avatar). The desktop gaps alone took 48px.
+@media (max-width: 767px) {
+  body.portal-tpo-recruiter {
+    .tpo-shell-header.ln-head { gap: 6px !important; }
+    .tpo-shell-header .tpo-command-bar { gap: 6px; }
+    .tpo-shell-header .tpo-command-bar__scope { min-width: 72px !important; }
+    .tpo-shell-header .tpo-season-lens .ant-select-selector { padding-inline: 8px 24px !important; }
+    .tpo-shell-header .tpo-command-bar__actions { gap: 6px; .ant-badge { width: auto; } }
+    .tpo-shell-header__account { flex: 0 0 auto; gap: 0 !important; .ln-profile__avatar-wrap { width: 36px; height: 36px; } .ln-profile__icon { width: 34px; height: 34px; } }
+  }
+}
+// Phone: the season box is narrow, so it drops its arrow and ends in "…" instead of being cut mid-word under the arrow.
+@media (max-width: 767px) {
+  body.portal-tpo-recruiter .tpo-shell-header .tpo-season-lens {
+    .ant-select-arrow { display: none; }
+    .ant-select-selector { padding-inline: 8px !important; }
+    .ant-select-selection-item { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block !important; }
+  }
+}
+
+// Phone: an alert's action button goes under the text instead of squeezing it into a narrow column.
+@media (max-width: 575px) {
+  body.portal-tpo-recruiter .ant-alert:has(.ant-alert-action) { flex-wrap: wrap; }
+  body.portal-tpo-recruiter .ant-alert .ant-alert-action { flex-basis: 100%; margin: 10px 0 0 !important; }
+}
+
+
+// Phase 6: filtered grids must explain zero results and offer an obvious recovery path.
+.tpo-elig__zero-results {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 8px 0 12px;
+  padding: 10px 12px;
+  border: 1px solid $tpo-line;
+  border-radius: $tpo-radius-sm;
+  background: $tpo-surface-soft;
+}

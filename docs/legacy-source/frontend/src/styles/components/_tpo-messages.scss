@@ -1,0 +1,540 @@
+// TPO Messages — recruiter inbox and conversation workspace.
+.tpo-messages {
+  &__header {
+    margin-bottom: 14px;
+
+    .listing-page-header__title {
+      color: $tpo-ink;
+      letter-spacing: -0.025em;
+    }
+  }
+
+  &__workspace.ant-card {
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: $radius-card;
+    box-shadow: 0 5px 20px rgba(26, 45, 72, 0.05);
+
+    > .ant-card-body {
+      padding: 0 !important;
+    }
+  }
+}
+
+.tpo-message-panel {
+  display: grid;
+  min-height: 610px;
+  grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+  background: #fff;
+
+  &--drawer {
+    display: block;
+    min-height: 0;
+
+    .tpo-message-panel__conversation {
+      min-height: 500px;
+      border-left: 0;
+    }
+  }
+
+  &__inbox {
+    min-width: 0;
+    background: $tpo-surface-soft;
+  }
+
+  &__inbox-head,
+  &__conversation-head {
+    display: flex;
+    min-height: 72px;
+    padding: 15px 16px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid $tpo-line;
+
+    h5.ant-typography {
+      margin: 2px 0 0 !important;
+      color: $tpo-ink;
+      font-size: 16px;
+      line-height: 1.3;
+    }
+
+    .ant-tag {
+      margin: 0;
+      border-radius: 999px;
+      font-size: $tpo-fs-xs;
+    }
+  }
+
+  &__eyebrow.ant-typography {
+    display: block;
+    color: $tpo-muted;
+    font-size: $tpo-fs-xs;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  &__search.ant-input-affix-wrapper {
+    width: calc(100% - 24px);
+    min-height: 40px;
+    margin: 12px;
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  &__thread-list {
+    max-height: 510px;
+    overflow-y: auto;
+    border-top: 1px solid $tpo-line;
+    scrollbar-width: thin;
+
+    .ant-list-empty-text {
+      padding: 34px 12px;
+    }
+  }
+
+  &__alert {
+    margin: 10px 12px;
+    border-radius: 9px;
+  }
+
+  &__thread.ant-list-item {
+    padding: 12px 13px !important;
+    border-bottom: 1px solid $tpo-line !important;
+    cursor: pointer;
+    transition: background 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover {
+      background: $teal-subtle;
+    }
+
+    &--active {
+      position: relative;
+      background: $teal-subtle;
+
+      &::before {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 3px;
+        background: $clrThird;
+        content: "";
+      }
+    }
+
+    .ant-list-item-meta {
+      min-width: 0;
+      margin-bottom: 0;
+    }
+
+    .ant-list-item-meta-title {
+      margin-bottom: 3px;
+    }
+  }
+
+  &__thread-title {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    > span:first-child {
+      overflow: hidden;
+      color: $tpo-text;
+      font-weight: 650;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .ant-badge-count {
+      box-shadow: none;
+      font-size: $tpo-fs-xs;
+    }
+  }
+
+  &__thread-description {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 2px;
+
+    .ant-typography {
+      max-width: 100%;
+      font-size: $tpo-fs-xs;
+    }
+
+    .ant-tag {
+      width: fit-content;
+      margin-top: 3px;
+      border-radius: 999px;
+      font-size: $tpo-fs-xs;
+    }
+  }
+
+  &__subject {
+    overflow: hidden;
+    color: #52627a;
+    font-size: $tpo-fs-xs;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__conversation {
+    display: flex;
+    min-width: 0;
+    min-height: 610px;
+    border-left: 1px solid $tpo-line;
+    background: #fff;
+    flex-direction: column;
+  }
+
+  &__conversation-head {
+    flex: 0 0 auto;
+    background: $tpo-surface-soft;
+
+    > div {
+      min-width: 0;
+    }
+
+    > div > .ant-typography:last-child {
+      display: block;
+      max-width: 100%;
+      overflow: hidden;
+      font-size: 12px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  &__empty-conversation {
+    display: flex;
+    flex: 1;
+    min-height: 360px;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+  }
+
+  &__messages {
+    flex: 1 1 auto;
+    min-height: 310px;
+    max-height: 430px;
+    overflow-y: auto;
+    padding: 20px 22px;
+    background: $tpo-surface-soft;
+    scrollbar-width: thin;
+  }
+
+  &__empty-messages {
+    display: flex;
+    min-height: 270px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+
+    .ant-typography:last-child {
+      max-width: 390px;
+    }
+  }
+
+  &__message-row {
+    display: flex;
+    margin: 11px 0;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+
+    &--mine {
+      align-items: flex-end;
+    }
+  }
+
+  &__bubble {
+    max-width: min(76%, 620px);
+    padding: 9px 12px;
+    border: 1px solid #e3e8ef;
+    border-radius: 5px 13px 13px 13px;
+    background: #fff;
+    color: #2e3c52;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+    box-shadow: 0 2px 8px rgba(26, 45, 72, 0.035);
+
+    &--mine {
+      border-color: #cce1fb;
+      border-radius: $radius-card 5px 13px 13px;
+      background: #edf6ff;
+      color: #20344f;
+    }
+  }
+
+  &__message-meta.ant-typography {
+    font-size: $tpo-fs-xs;
+  }
+
+  &__composer {
+    flex: 0 0 auto;
+    padding: 14px 16px;
+    border-top: 1px solid $tpo-line;
+    background: #fff;
+
+    .ant-input {
+      resize: none;
+      border-radius: 9px;
+    }
+  }
+
+  &__composer-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 9px;
+
+    > .ant-typography {
+      font-size: $tpo-fs-xs;
+    }
+
+    .ant-btn {
+      min-height: 36px;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+  }
+}
+
+@media (max-width: 899px) {
+  .tpo-message-panel {
+    grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+
+    &__bubble {
+      max-width: 86%;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .tpo-message-panel {
+    display: block;
+    min-height: 0;
+
+    &__inbox {
+      border-bottom: 1px solid $tpo-line;
+    }
+
+    &__thread-list {
+      max-height: 300px;
+    }
+
+    &__conversation {
+      min-height: 500px;
+      border-left: 0;
+    }
+
+    &__messages {
+      min-height: 280px;
+      max-height: 380px;
+      padding: 16px 13px;
+    }
+
+    &__bubble {
+      max-width: 90%;
+    }
+
+    &__composer {
+      padding: 12px 13px;
+    }
+
+    &__composer-footer {
+      align-items: stretch;
+      flex-direction: column;
+
+      .ant-btn {
+        width: 100%;
+      }
+    }
+  }
+}
+
+
+// TPO Messages Demo/Wow pass — recruiter response command centre.
+.tpo-message-panel {
+  &:not(.tpo-message-panel--drawer) {
+    grid-template-rows:auto minmax(0,1fr);
+  }
+
+  &__intelligence {
+    display:grid;
+    grid-column:1 / -1;
+    grid-template-columns:minmax(260px,.7fr) minmax(0,1.3fr);
+    gap:16px;
+    padding:15px 16px;
+    border-bottom:1px solid #dce5ef;
+    background:
+      radial-gradient(circle at 92% 12%,rgba(56,189,248,.11),transparent 25%),
+      linear-gradient(135deg,#f7fbff,$tpo-surface-soft);
+  }
+
+  &__intelligence-copy {
+    min-width:0;
+    h4.ant-typography { margin:3px 0 !important; color:$tpo-ink; font-size:16px; line-height:1.3; }
+    > .ant-typography:last-child { color:$tpo-muted; font-size: $tpo-fs-xs; line-height:1.4; }
+  }
+
+  &__intelligence-eyebrow.ant-typography {
+    color: $tpo-primary; font-size: 12px; font-weight:750; letter-spacing:.09em; text-transform:uppercase;
+  }
+
+  &__intelligence-metrics {
+    display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:7px;
+    > button,> div {
+      min-width:0; padding:9px 10px; border:1px solid #e4eaf1; border-radius:9px;
+      background:#fff; color:inherit; font:inherit; text-align:left;
+    }
+    > button {
+      cursor:pointer;
+      &:hover,&:focus-visible,&.is-active { border-color:rgba($clrThird,0.35); outline:none; background: $teal-subtle; }
+      &.is-attention { border-color:#f0d399; background:$tpo-warn-bg; }
+    }
+    span,strong,small { display:block; }
+    span { color:$tpo-muted; font-size:7px; font-weight:700; text-transform:uppercase; }
+    strong { margin-top:3px; color:$tpo-text; font-size:17px; line-height:1; }
+    small { margin-top:4px; color:$tpo-muted; font-size:7px; line-height:1.3; }
+    .is-attention strong { color:$tpo-warn; }
+  }
+}
+
+@media(max-width:899px){
+  .tpo-message-panel {
+    &__intelligence { grid-template-columns:1fr; }
+  }
+}
+@media(max-width:767px){
+  .tpo-message-panel {
+    &__intelligence-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  }
+}
+@media(max-width:480px){
+  .tpo-message-panel__intelligence-metrics { grid-template-columns:1fr; }
+}
+
+.tpo-message-panel__new { margin-bottom: 10px; }
+.tpo-message-panel__back { display: none; }
+// Phone: one pane at a time. The inbox until a conversation is open, then the conversation with a way back.
+@media (max-width: 767px) {
+  .tpo-message-panel:not(.tpo-message-panel--drawer) {
+    &:not(.tpo-message-panel--has-active) .tpo-message-panel__conversation { display: none; }
+    &.tpo-message-panel--has-active .tpo-message-panel__inbox { display: none; }
+    .tpo-message-panel__thread-list { max-height: none; }
+    .tpo-message-panel__back { display: inline-flex; margin-right: 4px; }
+    .tpo-message-panel__conversation-head { justify-content: flex-start; gap: 4px; }
+  }
+}
+
+// Thread list: when the thread last moved, beside the unread badge.
+.tpo-message-panel__thread-when {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  font-size: 12px;
+}
+
+// A change request inside a drive's Discussion (both sides): a step's line in the timeline, and the quote a "Discuss" message carries.
+.drive-request-event {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin: 12px auto;
+  max-width: 92%;
+  padding: 6px 12px;
+  border: 1px dashed $tpo-line-strong;
+  border-radius: 9px;
+  background: $tpo-surface-soft;
+  text-align: center;
+  overflow-wrap: anywhere;
+
+  &__detail.ant-typography {
+    color: $tpo-ink;
+    font-weight: 500;
+  }
+
+  &__meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: $tpo-fs-xs;
+
+    .ant-btn-link {
+      height: auto;
+      padding: 0 4px;
+      font-size: $tpo-fs-xs;
+    }
+  }
+}
+
+.drive-request-quote {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  max-width: min(76%, 620px);
+  margin-bottom: 2px;
+  padding: 6px 10px;
+  border-left: 3px solid #8fb8ea;
+  border-radius: 6px;
+  background: #f2f7fd;
+  overflow-wrap: anywhere;
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__kicker.ant-typography {
+    font-size: $tpo-fs-xs;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__side {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: flex-start;
+    gap: 2px;
+
+    .ant-btn-link {
+      height: auto;
+      padding: 0 4px;
+      font-size: $tpo-fs-xs;
+    }
+  }
+}
+
+.tpo-message-panel__composer .drive-request-quote,
+.recruiter-drive-detail__messages .drive-request-quote {
+  max-width: 100%;
+  margin-bottom: 8px;
+}
+
+.drive-change-request {
+  transition: background-color 0.4s ease;
+
+  &--flash {
+    background: $tpo-warn-bg;
+  }
+}
+
+.recruiter-drive-detail__message-body {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

@@ -1,0 +1,296 @@
+// Student placements redesign (14 Oct 2026): Home, Applications, Schedule, Offers, Notices and Placement cell share these blocks.
+// Prefix `sp-`. Tokens from _variables.scss.
+
+$sp-good: $status-success;
+$sp-bad: #b42318;
+$sp-wait: $status-warning;
+$sp-now: $teal-deep;
+
+.sp-muted { color: $neutral-500; }
+.sp-small { font-size: 13px; }
+.sp-text-bad { color: $sp-bad; font-weight: 600; }
+.sp-gap { margin-bottom: 16px; }
+.sp-label { display: block; font-weight: 600; font-size: 13px; color: $neutral-900; margin: 12px 0 6px; }
+.sp-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.sp-stack { display: flex; flex-direction: column; gap: 10px; }
+.sp-empty { color: $neutral-500; margin: 0; padding: 8px 0; line-height: 1.55; }
+
+// ---------------------------------------------------------------- chips
+.sp-chip {
+  display: inline-flex; align-items: center; gap: 4px; white-space: nowrap;
+  font-size: 12px; font-weight: 600; line-height: 1; padding: 5px 9px; border-radius: $radius-pill;
+  background: $neutral-100; color: $neutral-700;
+  &--good { background: $status-success-bg; color: #047857; }
+  &--bad { background: rgba(180, 35, 24, 0.08); color: $sp-bad; }
+  &--wait { background: $status-warning-bg; color: #b45309; }
+  &--now { background: $teal-subtle; color: $sp-now; }
+  &--later, &--off { background: $neutral-100; color: $neutral-500; }
+}
+
+// ---------------------------------------------------------------- panels
+.sp-panel {
+  background: #fff; border: 1px solid $neutral-200; border-radius: $radius-card; padding: 18px 20px; margin-bottom: 16px;
+  &__head {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px;
+    h2 { font-size: 16px; font-weight: 700; color: $neutral-900; margin: 0; }
+    a { font-size: 13px; font-weight: 600; color: $teal-text; white-space: nowrap; }
+  }
+}
+
+.sp-page-intro { color: $neutral-700; margin: 0 0 16px; line-height: 1.55; max-width: 760px; }
+
+// Segmented filter (Ahead / Past, Active / Ended...)
+.sp-seg {
+  display: inline-flex; gap: 4px; padding: 4px; border-radius: $radius-pill; background: $neutral-100; margin-bottom: 16px; flex-wrap: wrap;
+  button {
+    border: 0; background: transparent; padding: 7px 14px; border-radius: $radius-pill; font-weight: 600; font-size: 13px; color: $neutral-700; cursor: pointer;
+    &[aria-pressed="true"] { background: #fff; color: $neutral-900; box-shadow: $elev-1; }
+    &:focus-visible { outline: 2px solid $sp-now; outline-offset: 2px; }
+  }
+}
+
+// ---------------------------------------------------------------- home: the next step
+.sp-next {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  padding: 22px 24px; border-radius: $radius-feature; margin-bottom: 16px;
+  background: linear-gradient(120deg, #effafb 0%, #f7fbfc 100%); border: 1px solid #cdeef1;
+  &--offer { background: linear-gradient(120deg, #ecfdf5 0%, #f6fefb 100%); border-color: #bfe9d6; }
+  &--placed { background: linear-gradient(120deg, #ecfdf5 0%, #fffbeb 100%); border-color: #d9e9c8; }
+  &--quiet { background: $neutral-50; border-color: $neutral-200; }
+  &__text { min-width: 0; flex: 1 1 360px; }
+  &__hello { margin: 0 0 6px; color: $neutral-500; font-size: 13px; }
+  &__eyebrow { margin: 0; text-transform: uppercase; letter-spacing: 0.06em; font-size: 11px; font-weight: 700; color: $sp-now; }
+  &--offer &__eyebrow, &--placed &__eyebrow { color: #047857; }
+  &__title { margin: 4px 0 6px; font-size: 22px; line-height: 1.3; font-weight: 700; color: $neutral-900; overflow-wrap: anywhere; }
+  &__line { margin: 0; color: $neutral-700; }
+  &__bring { margin: 6px 0 0; color: $neutral-700; font-size: 13px; }
+  &__cta { flex: 0 0 auto; }
+}
+
+.sp-home__grid {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px;
+  .sp-panel { margin-bottom: 0; }
+  margin-bottom: 16px;
+  @media (max-width: 900px) { grid-template-columns: minmax(0, 1fr); }
+}
+
+// ---------------------------------------------------------------- to-do
+.sp-todo {
+  list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px;
+  &__item {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 12px 14px; border-radius: $radius-md; border: 1px solid $neutral-200; background: $neutral-50;
+    &--urgent { border-color: #f5c8a8; background: #fff8f2; }
+  }
+  &__text { display: flex; flex-direction: column; min-width: 0; }
+  &__title { font-weight: 700; color: $neutral-900; }
+  &__sub { color: $neutral-500; font-size: 13px; overflow-wrap: anywhere; }
+  &__cta { display: inline-flex; align-items: center; gap: 4px; font-weight: 700; color: $teal-text; white-space: nowrap; font-size: 13px; }
+}
+
+// ---------------------------------------------------------------- schedule event
+.sp-event {
+  display: flex; gap: 14px; padding: 14px; border: 1px solid $neutral-200; border-radius: $radius-card; background: #fff;
+  &--past { background: $neutral-50; .sp-event__date { opacity: 0.6; } }
+  &--compact { padding: 10px 12px; .sp-event__date { width: 46px; } }
+  &__date {
+    flex: 0 0 auto; width: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border-radius: $radius-md; background: $teal-subtle; color: $sp-now; padding: 6px 0; align-self: flex-start;
+  }
+  &__month { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+  &__day { font-size: 22px; font-weight: 800; line-height: 1.1; }
+  &__wd { font-size: 11px; color: $neutral-500; }
+  &__body { min-width: 0; flex: 1; }
+  &__top { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 8px; }
+  &__when { font-weight: 700; color: $neutral-900; font-size: 13px; }
+  &__title { margin: 4px 0 2px; font-size: 15px; font-weight: 700; color: $neutral-900; overflow-wrap: anywhere; }
+  &__meta {
+    display: flex; flex-wrap: wrap; gap: 2px 0; color: $neutral-500; font-size: 13px;
+    > span:not(:last-child)::after { content: "·"; margin: 0 6px; }
+    a { color: $teal-text; }
+  }
+  &__bring { margin: 8px 0 0; font-size: 13px; color: $neutral-700; }
+  &__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+}
+
+.sp-day-head { font-size: 13px; font-weight: 700; color: $neutral-500; text-transform: uppercase; letter-spacing: 0.05em; margin: 18px 0 8px; &:first-child { margin-top: 0; } }
+
+// ---------------------------------------------------------------- rounds
+.sp-steps {
+  list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 0;
+  &__item {
+    display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: $neutral-500;
+    &:not(:last-child)::after { content: ""; width: 14px; height: 1px; background: $neutral-300; margin: 0 6px; }
+  }
+  &__dot { width: 8px; height: 8px; border-radius: 50%; background: $neutral-300; flex: 0 0 auto; }
+  .sp-tone--good .sp-steps__dot { background: $sp-good; }
+  .sp-tone--bad .sp-steps__dot { background: $sp-bad; }
+  .sp-tone--wait .sp-steps__dot { background: $sp-wait; }
+  .sp-tone--now .sp-steps__dot { background: $sp-now; box-shadow: 0 0 0 3px rgba(14, 124, 135, 0.18); }
+  .sp-tone--now { color: $neutral-900; font-weight: 700; }
+  .sp-tone--off { text-decoration: line-through; }
+}
+
+.sp-track {
+  list-style: none; margin: 0; padding: 0;
+  &__item {
+    position: relative; display: flex; gap: 12px; padding-bottom: 16px;
+    &:not(:last-child)::before { content: ""; position: absolute; left: 13px; top: 28px; bottom: 0; width: 2px; background: $neutral-200; }
+    &:last-child { padding-bottom: 0; }
+  }
+  &__dot {
+    flex: 0 0 auto; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; background: $neutral-100; color: $neutral-500; border: 2px solid $neutral-200;
+  }
+  .sp-tone--good .sp-track__dot { background: $sp-good; border-color: $sp-good; color: #fff; }
+  .sp-tone--bad .sp-track__dot { background: $sp-bad; border-color: $sp-bad; color: #fff; }
+  .sp-tone--wait .sp-track__dot { background: #fff; border-color: $sp-wait; color: #b45309; }
+  .sp-tone--now .sp-track__dot { background: $sp-now; border-color: $sp-now; color: #fff; box-shadow: 0 0 0 4px rgba(14, 124, 135, 0.15); }
+  .sp-tone--off .sp-track__name { color: $neutral-400; }
+  &__body { min-width: 0; flex: 1; padding-top: 3px; }
+  &__head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  &__name { font-weight: 700; color: $neutral-900; }
+  &__meta {
+    display: flex; flex-wrap: wrap; color: $neutral-500; font-size: 13px; margin-top: 2px;
+    > span:not(:last-child)::after { content: "·"; margin: 0 6px; }
+  }
+  &__note { margin-top: 4px; font-size: 13px; color: #b45309; }
+}
+
+// ---------------------------------------------------------------- applications
+.sp-apps {
+  list-style: none; margin: 0; padding: 0;
+  &__item {
+    display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid $neutral-200;
+    &:first-child { border-top: 0; padding-top: 0; }
+    > .sp-chip { flex: 0 0 auto; }
+    // On a phone the stage chip goes under the name (the name column collapsed to one letter wide beside it).
+    @media (max-width: 600px) { flex-wrap: wrap; .sp-apps__main { flex: 1 1 calc(100% - 52px); } > .sp-chip { margin-left: 52px; } }
+  }
+  &__main { min-width: 0; flex: 1; }
+  &__role { font-weight: 700; color: $neutral-900; overflow-wrap: anywhere; }
+}
+
+.sp-app {
+  background: #fff; border: 1px solid $neutral-200; border-radius: $radius-card; margin-bottom: 12px; overflow: hidden;
+  &__head { display: flex; align-items: flex-start; gap: 12px; padding: 16px 18px; cursor: pointer; }
+  &__head:focus-visible { outline: 2px solid $sp-now; outline-offset: -2px; }
+  &__id { min-width: 0; flex: 1; }
+  &__role { margin: 0; font-size: 16px; font-weight: 700; color: $neutral-900; overflow-wrap: anywhere; }
+  &__sub { color: $neutral-500; font-size: 13px; margin-top: 2px; > span:not(:last-child)::after { content: "·"; margin: 0 6px; } }
+  &__side { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex: 0 0 auto; }
+  @media (max-width: 600px) {
+    &__head { flex-wrap: wrap; }
+    &__id { flex: 1 1 calc(100% - 90px); }
+    &__side { flex-direction: row; align-items: center; width: 100%; justify-content: space-between; padding-left: 56px; }
+  }
+  &__body { padding: 4px 18px 18px 74px; border-top: 1px solid $neutral-100; @media (max-width: 600px) { padding-left: 18px; } }
+  &__section { margin-top: 14px; h4 { font-size: 13px; font-weight: 700; color: $neutral-500; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 10px; } }
+  &__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  &--ended { .sp-app__role { color: $neutral-700; } }
+}
+
+.sp-avatar {
+  flex: 0 0 auto; border-radius: $radius-md; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; overflow: hidden;
+  border: 1px solid $neutral-200; background: #fff;
+  img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+}
+
+// ---------------------------------------------------------------- offers
+.sp-offer {
+  background: #fff; border: 1px solid $neutral-200; border-radius: $radius-card; padding: 18px 20px; margin-bottom: 12px;
+  &--open { border-color: #9ad7c0; box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.08); }
+  &__head { display: flex; align-items: center; gap: 12px; }
+  &__id { min-width: 0; flex: 1; }
+  &__company { margin: 0; font-size: 17px; font-weight: 800; color: $neutral-900; }
+  &__role { color: $teal-text; font-weight: 600; }
+  &__facts {
+    display: flex; flex-wrap: wrap; gap: 12px 28px; margin: 16px 0 0;
+    div { min-width: 0; }
+    dt { font-size: 12px; color: $neutral-500; font-weight: 600; }
+    dd { margin: 2px 0 0; font-weight: 700; color: $neutral-900; }
+  }
+  &__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .ant-alert { margin-top: 14px; }
+}
+
+.sp-impact {
+  p { margin: 0 0 8px; }
+  &__group { margin-top: 12px; h4 { margin: 0; font-size: 14px; font-weight: 700; } ul { margin: 6px 0 0; padding-left: 18px; } }
+}
+
+// ---------------------------------------------------------------- notices
+.sp-notices {
+  list-style: none; margin: 0; padding: 0;
+  &__item {
+    display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid $neutral-200;
+    &:first-child { border-top: 0; padding-top: 0; }
+    > div { min-width: 0; display: flex; flex-direction: column; }
+    time { white-space: nowrap; }
+  }
+  &__title { font-weight: 700; color: $neutral-900; a { color: $neutral-900; } a:hover { color: $teal-text; } }
+  &__body { color: $neutral-700; font-size: 13px; overflow-wrap: anywhere; }
+}
+
+// ---------------------------------------------------------------- rules
+.sp-rules {
+  list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px;
+  li { padding: 14px 16px; border-radius: $radius-md; background: $neutral-50; border: 1px solid $neutral-200; }
+  h3 { font-size: 14px; font-weight: 700; margin: 0 0 4px; color: $neutral-900; }
+  p { margin: 0; color: $neutral-700; font-size: 13px; line-height: 1.55; }
+}
+.sp-personal { padding: 12px 14px; border-radius: $radius-md; background: $teal-subtle; color: $neutral-900; margin-bottom: 12px; }
+
+// ---------------------------------------------------------------- registration
+.sp-choices {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin: 8px 0 4px;
+  label {
+    display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: $radius-md; border: 1px solid $neutral-200; cursor: pointer; background: #fff;
+    &:has(input:checked) { border-color: $sp-now; background: $teal-subtle; }
+    input { margin-top: 3px; accent-color: $sp-now; }
+    b { display: block; color: $neutral-900; }
+    span { color: $neutral-500; font-size: 13px; }
+  }
+}
+
+// ---------------------------------------------------------------- calendar (month)
+.sp-month {
+  &__bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; h3 { margin: 0; font-size: 16px; font-weight: 700; } }
+  &__grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border: 1px solid $neutral-200; border-radius: $radius-md; overflow: hidden; }
+  &__wd { padding: 6px; font-size: 11px; font-weight: 700; color: $neutral-500; text-transform: uppercase; background: $neutral-50; border-bottom: 1px solid $neutral-200; text-align: center; }
+  &__cell {
+    min-height: 92px; padding: 6px; border-top: 1px solid $neutral-100; border-left: 1px solid $neutral-100; min-width: 0;
+    &:nth-child(7n + 1) { border-left: 0; }
+    &--out { background: $neutral-50; .sp-month__num { color: $neutral-400; } }
+    &--today .sp-month__num { background: $sp-now; color: #fff; }
+    &--blocked { background: repeating-linear-gradient(135deg, #fff, #fff 6px, #fdf2f2 6px, #fdf2f2 12px); }
+    @media (max-width: 600px) { min-height: 56px; padding: 3px; }
+  }
+  &__num { display: inline-flex; width: 22px; height: 22px; border-radius: 50%; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: $neutral-700; }
+  &__ev {
+    display: block; width: 100%; text-align: left; border: 0; margin-top: 3px; padding: 2px 5px; border-radius: 4px; font-size: 11px; line-height: 1.35;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; background: $teal-subtle; color: $sp-now; font-weight: 600;
+    &--deadline { background: $status-warning-bg; color: #b45309; }
+    &--talk { background: #eef2ff; color: #4338ca; }
+    &--blocked { background: rgba(180, 35, 24, 0.08); color: $sp-bad; cursor: default; }
+    &--done { background: $neutral-100; color: $neutral-500; }
+    @media (max-width: 600px) { font-size: 0; height: 6px; padding: 0; }
+  }
+  &__legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; font-size: 12px; color: $neutral-500; span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; background: var(--c); } }
+}
+
+@media (max-width: 600px) {
+  .sp-panel { padding: 14px; }
+  .sp-next { padding: 18px; &__title { font-size: 19px; } &__cta { width: 100%; } }
+  .sp-event { gap: 10px; padding: 12px; }
+  .sp-event__date { width: 46px; }
+  .sp-offer { padding: 16px; }
+}
+
+// Drive rules checklist (inside the drive page's "Can you apply" card)
+.sp-checks {
+  list-style: none; margin: 8px 0; padding: 0; display: flex; flex-direction: column; gap: 4px;
+  li { display: flex; gap: 8px; align-items: baseline; font-size: 13px; color: $neutral-900; }
+  .is-pass .anticon { color: $sp-good; }
+  .is-fail .anticon { color: $sp-bad; }
+}

@@ -1,0 +1,718 @@
+// TPO Drive Day landing — fast, phone-friendly entry into today's assigned rounds.
+.tpo-drive-day-home {
+  &__header {
+    margin-bottom: 14px;
+
+    .listing-page-header__title {
+      color: $tpo-ink;
+      letter-spacing: -0.025em;
+    }
+  }
+
+  &__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 14px;
+    padding: 17px 18px;
+    border: 1px solid $tpo-line;
+    border-radius: 13px;
+    background: $tpo-surface-soft;
+
+    > div:first-child {
+      min-width: 0;
+      max-width: 760px;
+    }
+
+    h4.ant-typography {
+      margin: 3px 0 2px !important;
+      color: $tpo-ink;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    > div:first-child > .ant-typography:last-child {
+      font-size: 12px;
+      line-height: 1.45;
+    }
+  }
+
+  &__eyebrow.ant-typography {
+    display: block;
+    color: $tpo-muted;
+    font-size: $tpo-fs-xs;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  &__count {
+    flex: 0 0 auto;
+    min-width: 94px;
+    padding: 11px 13px;
+    border: 1px solid #dce5ef;
+    border-radius: 10px;
+    background: #fff;
+    text-align: center;
+
+    strong,
+    span {
+      display: block;
+    }
+
+    strong {
+      color: $tpo-ink;
+      font-size: 25px;
+      line-height: 1;
+    }
+
+    span {
+      margin-top: 4px;
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+  }
+
+  &__loading.ant-card,
+  &__empty.ant-card {
+    min-height: 250px;
+    border: 1px solid $tpo-line;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(26, 45, 72, 0.045);
+
+    > .ant-card-body {
+      padding: 22px !important;
+    }
+  }
+
+  &__empty.ant-card > .ant-card-body {
+    display: flex;
+    min-height: 250px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__stale-alert {
+    margin-bottom: 12px;
+    border-radius: 9px;
+  }
+
+  &__rounds {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  &__round.ant-card {
+    border: 1px solid $tpo-line;
+    border-radius: 13px;
+    box-shadow: 0 4px 18px rgba(26, 45, 72, 0.04);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+
+    &:hover {
+      border-color: #c7d9ee;
+      box-shadow: 0 7px 20px rgba(26, 45, 72, 0.065);
+      transform: translateY(-1px);
+    }
+
+    > .ant-card-body {
+      display: flex;
+      min-height: 132px;
+      padding: 16px !important;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .ant-btn {
+      flex: 0 0 auto;
+      min-height: 38px;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+  }
+
+  &__round-copy {
+    min-width: 0;
+
+    h5.ant-typography {
+      margin: 4px 0 3px !important;
+      color: $tpo-text;
+      font-size: 15px;
+      line-height: 1.35;
+    }
+
+    > .ant-typography:last-child {
+      font-size: 12px;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .tpo-drive-day-home {
+    &__summary {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 10px;
+      padding: 14px 13px;
+    }
+
+    &__count {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      padding: 9px 11px;
+      align-items: baseline;
+      justify-content: space-between;
+      text-align: left;
+
+      span {
+        margin-top: 0;
+      }
+    }
+
+    &__rounds {
+      grid-template-columns: 1fr;
+    }
+
+    &__round.ant-card > .ant-card-body {
+      min-height: 0;
+      padding: 14px !important;
+      align-items: stretch;
+      flex-direction: column;
+
+      .ant-btn {
+        width: 100%;
+      }
+    }
+  }
+}
+
+
+// TPO Drive Day live roster — phone-first attendance and result staging.
+.tpo-drive-day-roster {
+  padding: 12px;
+
+  &__shell {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  &--state {
+    display: flex;
+    min-height: 65vh;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__state-card.ant-card,
+  &__loading.ant-card,
+  &__empty.ant-card {
+    border: 1px solid $tpo-line;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(26, 45, 72, 0.045);
+  }
+
+  &__state-card.ant-card {
+    width: min(620px, 100%);
+
+    .ant-card-body {
+      padding: 16px !important;
+    }
+  }
+
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 12px;
+
+    h4.ant-typography {
+      margin: 2px 0 0 !important;
+      color: $tpo-ink;
+      font-size: 20px;
+      line-height: 1.3;
+    }
+
+    > div > .ant-typography:last-child {
+      display: block;
+      margin-top: 1px;
+      font-size: $tpo-fs-xs;
+    }
+
+    .ant-btn {
+      min-height: 36px;
+      border-radius: 8px;
+    }
+  }
+
+  &__eyebrow.ant-typography {
+    display: block;
+    color: $tpo-muted;
+    font-size: $tpo-fs-xs;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  &__stale-alert {
+    margin-bottom: 10px;
+    border-radius: 9px;
+  }
+
+  &__counts {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 7px;
+    margin-bottom: 10px;
+  }
+
+  &__count {
+    padding: 9px 10px;
+    border: 1px solid $tpo-line;
+    border-radius: 10px;
+    background: $tpo-surface-soft;
+
+    span,
+    strong {
+      display: block;
+    }
+
+    span {
+      overflow: hidden;
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    strong {
+      margin-top: 2px;
+      color: $tpo-ink;
+      font-size: 19px;
+      line-height: 1;
+    }
+
+    &--present {
+      border-color: #d3ead0;
+      background: #f7fff5;
+
+      strong {
+        color: #237804;
+      }
+    }
+
+    &--in_interview {
+      border-color: #d2e6ff;
+      background: #f4f9ff;
+
+      strong {
+        color: $tpo-primary;
+      }
+    }
+
+    &--absent {
+      border-color: #ffd3d0;
+      background: #fff7f6;
+
+      strong {
+        color: #cf1322;
+      }
+    }
+  }
+
+  &__controls.ant-card {
+    position: sticky;
+    top: 8px;
+    z-index: 4;
+    margin-bottom: 10px;
+    border: 1px solid #dfe7f0;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(26, 45, 72, 0.065);
+
+    .ant-card-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(180px, 0.9fr) auto;
+      gap: 8px;
+      padding: 10px !important;
+      align-items: center;
+    }
+
+    .ant-input-affix-wrapper,
+    .ant-input {
+      border-radius: 8px;
+    }
+
+    > .ant-card-body > .ant-typography {
+      font-size: $tpo-fs-xs;
+      white-space: nowrap;
+    }
+  }
+
+  &__loading.ant-card,
+  &__empty.ant-card {
+    min-height: 240px;
+
+    .ant-card-body {
+      padding: 20px !important;
+    }
+  }
+
+  &__empty.ant-card .ant-card-body {
+    display: flex;
+    min-height: 240px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__students {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__student.ant-card {
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: 12px;
+    box-shadow: 0 3px 14px rgba(26, 45, 72, 0.04);
+
+    .ant-card-body {
+      padding: 12px !important;
+    }
+  }
+
+  &__student-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  &__identity {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 10px;
+
+    .ant-avatar {
+      flex: 0 0 auto;
+      border: 1px solid #e3e8ef;
+      background: #f4f7fa;
+    }
+
+    > div {
+      min-width: 0;
+    }
+
+    > div > .ant-typography {
+      display: block;
+      overflow: hidden;
+      color: $tpo-text;
+      line-height: 1.3;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  &__student-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    margin-top: 2px;
+
+    span {
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+
+      & + span::before {
+        margin-right: 8px;
+        color: #c1c8d1;
+        content: "·";
+      }
+    }
+  }
+
+  &__status.ant-tag {
+    flex: 0 0 auto;
+    margin: 0;
+    border-radius: 999px;
+    font-size: $tpo-fs-xs;
+    font-weight: 650;
+  }
+
+  &__attendance-actions {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 7px;
+
+    .ant-btn {
+      width: 100%;
+      min-height: 38px;
+      border-radius: 8px;
+      padding-inline: 7px;
+      font-size: 12px;
+    }
+  }
+
+  &__secondary-actions {
+    display: grid;
+    grid-template-columns: auto minmax(150px, 1fr);
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid $tpo-line;
+
+    .ant-btn,
+    .ant-select-selector {
+      min-height: 36px !important;
+      border-radius: 8px !important;
+    }
+
+    .ant-select {
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .tpo-drive-day-roster {
+    padding: 9px;
+
+    &__counts {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    &__controls.ant-card .ant-card-body {
+      grid-template-columns: 1fr;
+
+      > .ant-typography {
+        white-space: normal;
+      }
+    }
+
+    &__attendance-actions {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    &__secondary-actions {
+      grid-template-columns: 1fr;
+
+      .ant-btn {
+        width: 100%;
+      }
+    }
+  }
+}
+
+
+/* Demo/Wow pass: live placement control room */
+.tpo-drive-day-roster {
+  &__shell { max-width: 1080px; }
+
+  &__control-room {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(290px, .65fr);
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  &__live-hero.ant-card {
+    overflow: hidden;
+    border: 0;
+    border-radius: 16px;
+    background:
+      radial-gradient(circle at 92% 10%, rgba(34,211,238,.18), transparent 30%),
+      linear-gradient(135deg, $tpo-ink 0%, #15304b 100%);
+    box-shadow: 0 14px 34px rgba(15,23,42,.16);
+    color: #fff;
+
+    > .ant-card-body { padding: 17px !important; }
+  }
+
+  &__live-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+
+    h3.ant-typography {
+      margin: 3px 0 !important;
+      color: #fff;
+      font-size: clamp(19px, 2vw, 25px);
+      letter-spacing: -.02em;
+    }
+
+    > div:first-child > .ant-typography:last-child {
+      color: $tpo-line-strong;
+      font-size: $tpo-fs-xs;
+    }
+  }
+
+  &__live-eyebrow.ant-typography {
+    color: $tpo-primary;
+    font-size: 12px;
+    font-weight: 750;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+
+  &__live-indicator {
+    display: inline-flex;
+    padding: 5px 8px;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid rgba(74,222,128,.26);
+    border-radius: 999px;
+    background: rgba(34,197,94,.1);
+
+    i {
+      width: 6px; height: 6px; border-radius: 50%; background: #4ade80;
+      box-shadow: 0 0 0 4px rgba(74,222,128,.1);
+    }
+
+    span { color: #86efac; font-size: 12px; font-weight: 800; letter-spacing: .1em; }
+  }
+
+  &__live-metrics {
+    display: grid;
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 7px;
+    margin-top: 14px;
+
+    > button {
+      min-width: 0;
+      padding: 10px;
+      border: 1px solid rgba(148,163,184,.14);
+      border-radius: 9px;
+      background: rgba(255,255,255,.05);
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+
+      &:hover,&:focus-visible {
+        border-color: rgba(103,232,249,.34);
+        outline: none;
+        background: rgba(255,255,255,.08);
+      }
+
+      span,strong,small { display:block; }
+      span { color: $tpo-primary; font-size:7px; font-weight:700; text-transform:uppercase; }
+      span .anticon { margin-right:3px; }
+      strong { margin-top:4px; color:#fff; font-size:19px; line-height:1; }
+      small { margin-top:4px; color:$tpo-muted; font-size:7px; line-height:1.35; }
+    }
+  }
+
+  &__flow {
+    margin-top: 8px;
+    padding: 10px;
+    border: 1px solid rgba(148,163,184,.13);
+    border-radius: 9px;
+    background: rgba(15,23,42,.24);
+  }
+
+  &__flow-head {
+    display:flex; margin-bottom:7px; justify-content:space-between; gap:8px;
+    span { color:#cbd5e1; font-size: 12px; font-weight:700; text-transform:uppercase; }
+    small { color:$tpo-muted; font-size:7px; }
+  }
+
+  &__flow-grid {
+    display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:5px;
+
+    > button {
+      min-width:0; padding:7px; border:1px solid transparent; border-radius:7px;
+      background:rgba(255,255,255,.03); color:inherit; font:inherit; text-align:left; cursor:pointer;
+
+      &:hover,&:focus-visible,&.is-active {
+        border-color:rgba(103,232,249,.26); outline:none; background:rgba(255,255,255,.07);
+      }
+
+      > span,> strong { display:block; }
+      > span { overflow:hidden; color:$tpo-muted; font-size:7px; font-weight:700; text-overflow:ellipsis; text-transform:uppercase; white-space:nowrap; }
+      > strong { margin-top:2px; color:#fff; font-size:14px; }
+      > div { height:4px; margin-top:5px; overflow:hidden; border-radius:999px; background:rgba(255,255,255,.08); }
+      > div i { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg, $light-cyan, $clrThird); }
+    }
+  }
+
+  &__panels.ant-card {
+    overflow:hidden; border:1px solid $tpo-line; border-radius:16px;
+    box-shadow:0 10px 28px rgba(26,45,72,.07);
+    > .ant-card-body { padding:14px !important; }
+  }
+
+  &__panels-head {
+    display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:10px;
+    h4.ant-typography { margin:2px 0 0 !important; color:$tpo-ink; font-size:15px; }
+    > .anticon { color:$tpo-muted; font-size:17px; }
+  }
+
+  &__panel-list {
+    display:flex; flex-direction:column; gap:6px;
+
+    > button {
+      display:flex; width:100%; min-width:0; padding:8px 9px; align-items:center; justify-content:space-between;
+      gap:8px; border:1px solid $tpo-line; border-radius:9px; background:$tpo-surface-soft;
+      color:inherit; font:inherit; text-align:left; cursor:pointer;
+
+      &:hover,&:focus-visible,&.is-active { border-color:#c8d9eb; outline:none; background:#f4f9ff; }
+
+      > div:first-child { min-width:0; }
+      > div:first-child strong,> div:first-child span { display:block; }
+      > div:first-child strong { overflow:hidden; color:$tpo-text; font-size: $tpo-fs-xs; text-overflow:ellipsis; white-space:nowrap; }
+      > div:first-child span { margin-top:1px; color:$tpo-muted; font-size: 12px; }
+    }
+  }
+
+  &__panel-flow {
+    display:flex; flex:0 0 auto; gap:5px;
+    span { padding:2px 5px; border-radius:999px; background:#f0f4f8; color:$tpo-muted; font-size:7px; white-space:nowrap; }
+  }
+
+  &__panels-footer {
+    margin-top:9px; padding:8px 9px; border-radius:8px; background:$tpo-surface-soft; color:$tpo-muted; font-size: 12px;
+    strong { color:$tpo-text; }
+  }
+
+  &__count {
+    border:1px solid $tpo-line; font:inherit; text-align:left; cursor:pointer;
+    &:hover,&:focus-visible,&.is-active { border-color:rgba($clrThird,0.35); outline:none; box-shadow:0 0 0 2px rgba($clrThird,.08); }
+  }
+
+  &__filter-summary {
+    display:flex; align-items:center; gap:4px;
+    .ant-btn { height:auto; padding:0 3px; font-size: $tpo-fs-xs; }
+  }
+}
+
+@media (max-width:900px) {
+  .tpo-drive-day-roster__control-room { grid-template-columns:1fr; }
+}
+
+@media (max-width:640px) {
+  .tpo-drive-day-roster {
+    &__live-hero.ant-card > .ant-card-body { padding:14px !important; }
+    &__live-head { align-items:flex-start; flex-direction:column; gap:8px; }
+    &__live-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    &__flow-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    &__panel-flow { flex-wrap:wrap; justify-content:flex-end; }
+  }
+}
+
+@media (max-width:420px) {
+  .tpo-drive-day-roster__live-metrics { grid-template-columns:1fr; }
+}

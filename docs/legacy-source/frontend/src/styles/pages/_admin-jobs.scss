@@ -1,0 +1,283 @@
+// Admin Jobs list - best UI/UX for desktop table + mobile cards
+// Matches admin-interviews pattern
+
+@import "../components/variables.scss";
+
+$aj-primary: $clrThird;
+$aj-border: $neutral-200;
+$aj-bg: $white;
+$aj-bg-subtle: $neutral-50;
+$aj-text: $neutral-900;
+$aj-text-muted: $neutral-500;
+$aj-radius: 8px;
+$aj-touch-min: 44px;
+$aj-bp: 768px;
+
+.admin-jobs-page {
+  padding-bottom: 24px;
+
+  @media (max-width: #{$ssm}) {
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+.admin-jobs-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  .admin-jobs-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $aj-text;
+
+    @media (max-width: #{$ssm}) {
+      font-size: 1.25rem;
+    }
+  }
+
+  .admin-jobs-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+
+    .ant-select {
+      min-width: 160px;
+
+      @media (max-width: #{$ssm}) {
+        min-width: 0;
+        flex: 1;
+      }
+    }
+
+    .ant-btn {
+      @media (max-width: #{$ssm}) {
+        min-height: $aj-touch-min;
+      }
+    }
+  }
+}
+
+// Desktop: table
+.admin-jobs-desktop {
+  display: none;
+
+  @media (min-width: #{$aj-bp}) {
+    display: block;
+  }
+
+  .ant-table-wrapper {
+    background: $aj-bg;
+    border-radius: $aj-radius;
+    border: 1px solid $aj-border;
+    overflow: hidden;
+  }
+
+  .ant-table-cell {
+    padding: 12px 16px;
+  }
+
+  .ant-btn {
+    min-height: 32px;
+  }
+}
+
+// Mobile: cards
+.admin-jobs-mobile {
+  display: block;
+
+  @media (min-width: #{$aj-bp}) {
+    display: none;
+  }
+}
+
+.admin-jobs-mobile-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-jobs-mobile-card {
+  background: $aj-bg;
+  border: 1px solid $aj-border;
+  border-radius: $aj-radius;
+  padding: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  transition: box-shadow 0.2s, border-color 0.2s;
+
+  &:hover,
+  &:focus-within {
+    border-color: rgba($aj-primary, 0.5);
+    box-shadow: 0 4px 12px rgba($aj-primary, 0.12);
+  }
+}
+
+.admin-jobs-mobile-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.admin-jobs-mobile-card__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $aj-text;
+  line-height: 1.4;
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-jobs-mobile-card__company {
+  font-size: 14px;
+  color: $aj-text-muted;
+  margin-bottom: 12px;
+}
+
+.admin-jobs-mobile-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+
+  .ant-tag {
+    font-size: 12px;
+    margin: 0;
+  }
+}
+
+.admin-jobs-mobile-card__deadline {
+  font-size: 12px;
+  color: $aj-text-muted;
+  margin-bottom: 12px;
+}
+
+.admin-jobs-mobile-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid $aj-border;
+
+  .ant-btn {
+    min-height: $aj-touch-min;
+    padding: 0 12px;
+  }
+}
+
+// JobApplications - touch targets and mobile table overflow
+.admin-job-applications-table {
+  .ant-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  // Horizontal movement is essential on this wide operational table. Hiding the scrollbar made
+  // the extra columns effectively undiscoverable on touch devices; keep a compact affordance.
+  .ant-table-content {
+    scrollbar-width: thin;
+  }
+
+  @media (max-width: #{$aj-bp}) {
+    .ant-table-cell-fix-left {
+      background: $aj-bg;
+    }
+
+    .ant-table-cell-fix-left-last::after {
+      box-shadow: 6px 0 8px -8px rgba(15, 23, 42, 0.35);
+    }
+
+    .ant-table-cell {
+      padding: 12px 10px;
+      font-size: 14px;
+    }
+
+    .ant-btn {
+      min-height: $aj-touch-min;
+      padding: 0 10px;
+    }
+  }
+}
+
+.admin-jobs-error-card {
+  .ant-btn {
+    min-height: $aj-touch-min;
+    padding: 0 24px;
+  }
+}
+
+// Company-wise hiring report: bold the rolled-up total row ahead of a company's per-job rows.
+.hiring-company-total-row {
+  font-weight: 600;
+  background: $aj-bg-subtle;
+}
+
+
+// Shared placements overview — CA + Super Admin
+.placements-page-overview {
+  margin-bottom: 16px;
+  border-color: $aj-border;
+  box-shadow: none;
+}
+
+.placements-page-overview__topline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.placements-page-overview__copy { min-width: 0; max-width: 760px; }
+
+.placements-page-overview__eyebrow {
+  display: block;
+  color: $aj-text-muted;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.placements-page-overview__title { margin: 3px 0 4px !important; }
+.placements-page-overview__description { margin-bottom: 0 !important; max-width: 720px; }
+.placements-page-overview__actions { flex: 0 0 auto; }
+
+.placements-page-overview__metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid $aj-border;
+}
+
+.placements-page-overview__metric {
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid $aj-border;
+  border-radius: $aj-radius;
+  background: $aj-bg-subtle;
+
+  .ant-typography { display: block; font-size: 0.75rem; }
+  > div { margin-top: 2px; color: $aj-text; font-size: 1.125rem; font-weight: 700; }
+  > span { display: block; margin-top: 2px; color: $aj-text-muted; font-size: 0.6875rem; }
+}
+
+@media (max-width: #{$aj-bp}) {
+  .placements-page-overview__topline { flex-direction: column; }
+  .placements-page-overview__actions { width: 100%; }
+  .placements-page-overview__metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 420px) {
+  .placements-page-overview__metrics { grid-template-columns: 1fr; }
+}

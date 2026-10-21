@@ -1,0 +1,87 @@
+.ant-table-wrapper {
+  .ant-table-tbody,
+  .ant-table-thead {
+    font-family: $font-latoReg;
+  }
+
+  // Medium default density for bare Ant tables. LMS tables with an explicit density/class keep
+  // their own contract; TPO/recruiter table styles are imported later and remain authoritative.
+  &:not(.ln-table):not(.table-header-height-sm) {
+    font-size: $text-base;
+
+    .ant-table-thead > tr > th,
+    .ant-table-tbody > tr > td {
+      padding: $space-3 $space-4;
+      border-bottom-color: $border;
+    }
+
+    .ant-table-thead > tr > th {
+      background: $neutral-50;
+      color: $neutral-500;
+      font-size: $text-sm;
+      font-weight: $fnt-semi;
+    }
+  }
+
+  &.table-header-gray .ant-table-thead th {
+    background-color: inherit;
+    color: $gray7AE;
+
+    &:before {
+      display: none;
+    }
+  }
+
+  &.table-header-height-sm .ant-table-thead th {
+    padding: 0 12px;
+  }
+
+  // Shared interaction language for raw Ant tables. Page-specific/TPO grids can override it,
+  // but bare admin/course tables should never lose hover, keyboard focus, selection or sort state.
+  .ant-table-tbody > tr.ant-table-row > td {
+    transition: background-color 120ms ease, box-shadow 120ms ease;
+  }
+
+  .ant-table-tbody > tr.ant-table-row:hover > td {
+    background: $neutral-50;
+  }
+
+  .ant-table-tbody > tr.ant-table-row-selected > td {
+    background: $teal-subtle;
+  }
+
+  .ant-table-tbody > tr.ant-table-row:focus-within > td {
+    box-shadow: inset 0 0 0 1px rgba($clrThird, 0.32);
+  }
+
+  .ant-table-column-sorter-up.active,
+  .ant-table-column-sorter-down.active,
+  .ant-table-filter-trigger.active {
+    color: $clrThird;
+  }
+
+  // Sticky/fixed table affordances must remain above cells without ever competing with overlays.
+  .ant-table-cell-fix-left,
+  .ant-table-cell-fix-right {
+    z-index: 2;
+  }
+
+  .ant-table-thead .ant-table-cell-fix-left,
+  .ant-table-thead .ant-table-cell-fix-right,
+  .ant-table-sticky-holder {
+    z-index: 4;
+  }
+
+  // Opt-in for prose/IDs that should stay scan-friendly instead of widening a whole table.
+  .lms-table-cell-truncate {
+    display: block;
+    max-width: min(36rem, 52vw);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  // .ant-table-tbody tr:nth-child(even) {
+  //   background-color: $clrGray8FA;
+  // }
+}

@@ -1,0 +1,31 @@
+.ln-notification {
+  overflow-y: auto;
+}
+.ln-notification .ant-list-item {
+  padding-top: 1.2rem !important;
+  padding-bottom: 1.2rem !important;
+}
+.ln-notification::-webkit-scrollbar {
+  width: 8px;
+}
+.ln-notification::-webkit-scrollbar-thumb {
+  background-color: #b8b9b9;
+  border-radius: 1px;
+}
+
+.ln-profile-fig {
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 10px;
+}
+
+.ln-badge-btm-lft .ant-badge-dot {
+  left: -0.2rem !important;
+  bottom: 0 !important;
+  top: inherit !important;
+  height: rem(10px) !important;
+  width: rem(10px) !important;
+  min-width: auto !important;
+  transform: translate(0, 0) !important;
+  border: 1.5px solid #ffffff;
+}/*# sourceMappingURL=notifications.css.map */

@@ -1,0 +1,6766 @@
+@import "./variables.scss";
+
+// ---------------------------------------------------------------------------------------------
+// Spacing scale (4pt).
+//
+// X-5: this module ran TWO spacing systems side by side. Card INTERIORS had been put on these
+// tokens in an earlier pass, while every CONTAINER around them kept hand-picked values — and
+// those values were not merely untokenised, they were off the 4pt grid entirely: 6, 10, 14, 18
+// and 22px, none of which are multiples of 4. So a card whose padding is 16 sat inside a frame
+// whose gap is 14, inside a panel whose padding is 18. Nothing lines up with anything, and the
+// mismatch is small enough per-instance to be invisible and large enough in aggregate to read as
+// sloppiness — which is exactly the "why does this look unfinished?" signature.
+//
+// The off-grid values are snapped to their nearest token (6→8, 10→12, 14→16, 18→20, 22→24) so
+// the whole module shares one rhythm. The scale is completed here with the steps that were
+// missing, since several of those snaps had no token to land on.
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 20px;
+$space-6: 24px;
+$space-7: 32px;
+
+// ---------------------------------------------------------------------------------------------
+// Elevation scale.
+//
+// This module had accumulated ~25 distinct box-shadow values, most of them variations on the same
+// "resting card" idea differing only by a pixel or two (0 8px 18px / 0 8px 20px / 0 8px 24px /
+// 0 10px 24px / 0 10px 30px / 0 12px 28px / 0 12px 30px ...). Individually each looks fine; in
+// aggregate that near-miss inconsistency is precisely what reads as unpolished, because nothing
+// shares a rhythm.
+//
+// Each step is TWO layers: a tight contact shadow that grounds the element against the surface
+// below it, plus a wider ambient shadow. Single-layer shadows are the main reason a UI looks flat
+// even when the blur radius is generous — real objects cast both.
+$elev-1: 0 1px 2px rgba($text, 0.04), 0 2px 6px rgba($text, 0.03);
+$elev-2: 0 1px 2px rgba($text, 0.04), 0 8px 20px rgba($text, 0.05);
+$elev-3: 0 2px 6px rgba($text, 0.05), 0 14px 32px rgba($text, 0.09);
+$elev-4: 0 8px 20px rgba($text, 0.10), 0 28px 64px rgba($text, 0.16);
+
+// Motion tokens. Previously 0.15s / 0.16s / 0.18s all with the bare `ease` keyword — three
+// durations close enough to be indistinguishable individually, but with no shared cadence.
+// One duration pair and one curve means every hover, state change and highlight across all six
+// tabs moves with the same rhythm. `ease-out` (fast start, gentle settle) is the correct curve
+// for elements responding to input; symmetric `ease` makes UI feel sluggish off the mark.
+$motion-fast: 140ms;
+$motion-base: 200ms;
+$ease-out: cubic-bezier(0.2, 0, 0, 1);
+
+// ---------------------------------------------------------------------------------------------
+// Radius scale.
+//
+// X-7: the previous scale was 12 / 14 / 16 / 18 / 20 / 24 — SIX steps spanning 12px, five of them
+// two pixels apart. A 2px difference in corner radius is below the threshold at which anyone
+// perceives a difference, so the scale did no work: `$radius-xs` and `$radius-sm` produced
+// visually identical corners, as did `sm`/`md` and `md`/`lg`. That is the failure mode of a
+// decorative scale — six named tiers that a reader experiences as one, so choosing between them
+// is arbitrary and the names encode no meaning.
+//
+// (An earlier pass in this session deliberately declined to fix this, on the grounds that
+// re-radiusing common values would restyle many components. That was the wrong call: it
+// tokenised a scale without making it mean anything, which is the cost of the change with none
+// of the benefit.)
+//
+// The scale is now uniform 4px steps, which IS perceptible, and each tier is tied to a surface
+// class so the choice between them follows from what the element is rather than from taste:
+$radius-xs: 8px;    // Chips, badges, inline callouts — small elements read as over-rounded above this
+$radius-sm: 12px;   // Compact rows and list items
+$radius-md: 16px;   // Standard cards
+$radius-lg: 20px;   // Panels, lane columns, section surfaces
+$radius-xl: 24px;   // Hero surfaces
+$radius-2xl: 28px;  // Modals
+
+.learn-projects {
+  .learn-projects__shell {
+    padding: $space-6;
+  }
+
+  // ---------------------------------------------------------------------------------------
+  // Board drag offset — primary root cause.
+  //
+  // _learn-layout.scss lifts .ln-module-card on hover (`transform: translateY(-2px)`), and this
+  // shell IS an .ln-module-card wrapping the whole Board tab. A CSS transform makes an element
+  // the containing block for its `position: fixed` descendants — and dnd-kit's <DragOverlay>
+  // (the card that follows the cursor) is exactly that. Because the pointer is inside this
+  // wrapper for the entire duration of a drag, the hover rule was live the whole time, so the
+  // overlay's fixed coordinates resolved against this shell's border box instead of the
+  // viewport. The dragged card was therefore displaced by the shell's own offset from the
+  // viewport origin — i.e. roughly the sidebar width and header height — which is the "card is
+  // far away from my pointer" behaviour.
+  //
+  // That same file already documents this exact hazard twice (it deliberately uses
+  // `backface-visibility: hidden` rather than `translateZ(0)` for GPU compositing, precisely to
+  // avoid trapping fixed-position children) — the always-on case was handled, the :hover case
+  // was not. Neutralised here rather than in _learn-layout.scss so the lift is preserved for
+  // every other module card that has no fixed-position descendant to break.
+  //
+  // Specificity note: the upstream rule is `.learn-layout--learner .ln-module-card:hover`
+  // (three classes). This compiles to four, so it wins regardless of stylesheet import order
+  // rather than relying on source position.
+  .learn-projects__shell.ln-module-card:hover {
+    transform: none;
+  }
+
+  .learn-projects__breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    margin-bottom: 18px;
+    font-size: 12px;
+    color: $text-muted;
+
+    a {
+      color: $text;
+      font-weight: 600;
+
+      &:hover {
+        color: $clrThird;
+      }
+    }
+  }
+
+  .learn-projects__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+    margin-bottom: 20px;
+  }
+
+  // Was referenced in JSX (ProjectsContent.jsx / ProjectDetailContent.jsx loading states) with no
+  // matching rule, so the Spin rendered flush-left/unpositioned instead of centered.
+  .learn-projects__loading {
+    display: flex;
+    justify-content: center;
+    padding: 48px;
+  }
+
+  // These six pills are the primary navigation for every Projects page, and they previously had
+  // no hover state, no focus ring and no transition — the single most-used control in the module
+  // gave no feedback at all on interaction, and was invisible to keyboard users mid-tab-order.
+  .learn-projects__tab {
+    display: inline-flex;
+    align-items: center;
+    // A pill never shrinks or wraps its label: with more tabs than fit (My Placements has 8) the row scrolls sideways. They
+    // used to shrink to one letter wide on a phone ("D-a-s-h-b-o-a-r-d") (night audit 13 Oct 2026).
+    flex: 0 0 auto;
+    white-space: nowrap;
+    min-height: 40px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid $border;
+    color: $text;
+    background: $white;
+    font-weight: 600;
+    font-size: 14px;
+    // Anchors don't get this by default and the label shifting weight on select would reflow the
+    // row; reserving the bold width up front keeps neighbours from nudging sideways.
+    text-decoration: none;
+    transition:
+      background $motion-fast $ease-out,
+      border-color $motion-fast $ease-out,
+      color $motion-fast $ease-out,
+      box-shadow $motion-fast $ease-out;
+
+    &:hover {
+      border-color: rgba($clrThird, 0.32);
+      background: rgba($clrThird, 0.05);
+      color: $clrThird;
+    }
+
+    // :focus-visible rather than :focus so a mouse click doesn't leave a ring behind, while
+    // keyboard traversal still gets a clearly visible target. Uses an outline (not a shadow) so
+    // it stays visible in forced-colors / high-contrast mode.
+    &:focus-visible {
+      outline: 2px solid rgba($clrThird, 0.65);
+      outline-offset: 2px;
+    }
+
+    &--active {
+      border-color: rgba($clrThird, 0.26);
+      background: rgba($clrThird, 0.08);
+      color: $clrThird;
+      // A touch of lift so the current tab reads as raised out of the row rather than relying on
+      // the low-contrast tint alone — `visual-hierarchy`: don't signal state with colour only.
+      box-shadow: $elev-1;
+
+      &:hover {
+        background: rgba($clrThird, 0.11);
+      }
+    }
+  }
+
+  .learn-projects__content {
+    display: block;
+  }
+
+  .learn-projects__list {
+    display: grid;
+    gap: $space-4;
+  }
+
+  .learn-projects-card {
+    width: 100%;
+    text-align: left;
+    background: $white;
+    border: 1px solid $border;
+    border-radius: $radius-md;
+    padding: $space-5;
+    display: grid;
+    gap: $space-3;
+    box-shadow: $shadow-sm;
+    transition: transform $motion-base $ease-out, box-shadow $motion-base $ease-out, border-color $motion-base $ease-out;
+
+    &:hover {
+      transform: translateY(-1px);
+      border-color: rgba($clrThird, 0.24);
+      box-shadow: $elev-2;
+    }
+  }
+
+  .learn-projects-card__top {
+    display: flex;
+    // Was flex-start, which pinned the chevron to the top and left it visually stranded above a
+    // two-line wrapping title instead of centered against the card's title block.
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-3;
+
+    // The title/meta column (first child) had no min-width/flex-basis floor, so a long
+    // unbroken title could overflow the card's flex row instead of wrapping.
+    > div:first-child {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    h3 {
+      margin: 6px 0 4px;
+      font-size: 20px;
+      color: $text;
+      overflow-wrap: anywhere;
+    }
+
+    p {
+      margin: 0;
+      color: $text-muted;
+      font-size: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: $space-2;
+      align-items: center;
+    }
+  }
+
+  .learn-projects-card__sep {
+    color: $border;
+    font-weight: 700;
+  }
+
+  .learn-projects-card__progress {
+    display: grid;
+    gap: $space-2;
+  }
+
+  .learn-projects-card__progress-label {
+    display: flex;
+    justify-content: space-between;
+    gap: $space-3;
+    font-size: 13px;
+    color: $text-muted;
+    font-weight: 600;
+  }
+
+  .learn-projects-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+    color: $text-muted;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .learn-projects-card__action {
+    display: flex;
+    justify-content: space-between;
+    gap: $space-3;
+    align-items: center;
+
+    strong {
+      color: $text;
+      font-size: 14px;
+      font-weight: 600;
+      flex: 1;
+      // A flex item's default min-width is auto, which lets long unbroken nextAction text push
+      // the "Open workspace" link out of the card instead of wrapping.
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .learn-projects-card__link {
+    color: $clrThird;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  // Shape-matched loading state for .learn-projects-card above — previously this list showed a
+  // centered <Spin/> (a single spinner, layout-less) while loading, then swapped to this card grid
+  // once data landed, which reads as two different screens rather than one screen filling in.
+  // Mirrors the same DOM structure/class shape as the real card, with shimmer-fill boxes standing
+  // in for text, using the same rgba($text, 0.07) pulse convention as the activity-tab skeleton
+  // below (.learn-projects-detail__activity-skeleton-*).
+  .learn-projects-card-skeleton {
+    width: 100%;
+    background: $white;
+    border: 1px solid $border;
+    border-radius: $radius-md;
+    padding: $space-5;
+    display: grid;
+    gap: $space-3;
+    box-shadow: $shadow-sm;
+  }
+
+  .learn-projects-card-skeleton__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-3;
+  }
+
+  .learn-projects-card-skeleton__meta {
+    min-width: 0;
+    flex: 1 1 auto;
+    display: grid;
+    gap: $space-2;
+  }
+
+  .learn-projects-card-skeleton__tag {
+    width: 76px;
+    height: 20px;
+    border-radius: 999px;
+    background: rgba($text, 0.07);
+  }
+
+  .learn-projects-card-skeleton__title {
+    width: 58%;
+    height: 20px;
+    border-radius: 6px;
+    background: rgba($text, 0.07);
+  }
+
+  .learn-projects-card-skeleton__subtitle {
+    width: 38%;
+    height: 14px;
+    border-radius: 6px;
+    background: rgba($text, 0.07);
+  }
+
+  .learn-projects-card-skeleton__chevron {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    flex: 0 0 auto;
+    background: rgba($text, 0.07);
+  }
+
+  .learn-projects-card-skeleton__progress {
+    display: grid;
+    gap: $space-2;
+  }
+
+  .learn-projects-card-skeleton__progress-label {
+    display: flex;
+    justify-content: space-between;
+    gap: $space-3;
+  }
+
+  .learn-projects-card-skeleton__progress-label span {
+    width: 72px;
+    height: 12px;
+    border-radius: 6px;
+    background: rgba($text, 0.07);
+  }
+
+  .learn-projects-card-skeleton__progress-bar {
+    width: 100%;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba($text, 0.07);
+  }
+
+  .learn-projects-card-skeleton__action {
+    height: 14px;
+    width: 44%;
+    border-radius: 6px;
+    background: rgba($text, 0.07);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .learn-projects-card-skeleton__tag,
+    .learn-projects-card-skeleton__title,
+    .learn-projects-card-skeleton__subtitle,
+    .learn-projects-card-skeleton__chevron,
+    .learn-projects-card-skeleton__progress-label span,
+    .learn-projects-card-skeleton__progress-bar,
+    .learn-projects-card-skeleton__action {
+      animation: learn-projects-activity-shimmer 1.4s $ease-out infinite;
+    }
+  }
+
+  // Shape-matched loading state for the mentor Meetings (calendar.js) and mentor Notifications
+  // (notifications.js) pages — both previously showed a bare centered <Spin/> while loading, then
+  // swapped to a column of .ln-card rows once data landed. Applied on top of the existing .ln-card
+  // class those pages already use for real rows, so only the inner shimmer lines need defining here.
+  .learn-projects-meeting-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .learn-projects-meeting-skeleton__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .learn-projects-meeting-skeleton__meta {
+    min-width: 0;
+    flex: 1 1 auto;
+    display: grid;
+    gap: 6px;
+  }
+
+  .learn-projects-meeting-skeleton__title {
+    width: 46%;
+    height: 15px;
+    border-radius: 6px;
+    background: rgba($text, 0.07);
+  }
+
+  .learn-projects-meeting-skeleton__subtitle {
+    width: 30%;
+    height: 12px;
+    border-radius: 6px;
+    background: rgba($text, 0.07);
+  }
+
+  .learn-projects-meeting-skeleton__tag {
+    width: 72px;
+    height: 20px;
+    border-radius: 999px;
+    flex: 0 0 auto;
+    background: rgba($text, 0.07);
+  }
+
+  .learn-projects-meeting-skeleton__row {
+    display: flex;
+    gap: 16px;
+  }
+
+  .learn-projects-meeting-skeleton__row span {
+    width: 96px;
+    height: 12px;
+    border-radius: 6px;
+    background: rgba($text, 0.07);
+  }
+
+  .learn-projects-meeting-skeleton__link {
+    width: 88px;
+    height: 12px;
+    border-radius: 6px;
+    background: rgba($text, 0.07);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .learn-projects-meeting-skeleton__title,
+    .learn-projects-meeting-skeleton__subtitle,
+    .learn-projects-meeting-skeleton__tag,
+    .learn-projects-meeting-skeleton__row span,
+    .learn-projects-meeting-skeleton__link {
+      animation: learn-projects-activity-shimmer 1.4s $ease-out infinite;
+    }
+  }
+
+  // Shape-matched loading state for NotificationRow's icon + title/tag + description row shape
+  // (mentor notifications.js) — same "bare Spin swaps to a real row list" bug as the meeting rows
+  // above.
+  .learn-projects-notification-skeleton {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .learn-projects-notification-skeleton__icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+    background: rgba($text, 0.07);
+  }
+
+  .learn-projects-notification-skeleton__body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: grid;
+    gap: 6px;
+  }
+
+  .learn-projects-notification-skeleton__top {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .learn-projects-notification-skeleton__title {
+    width: 60%;
+    height: 15px;
+    border-radius: 6px;
+    background: rgba($text, 0.07);
+  }
+
+  .learn-projects-notification-skeleton__tag {
+    width: 88px;
+    height: 20px;
+    border-radius: 999px;
+    flex: 0 0 auto;
+    background: rgba($text, 0.07);
+  }
+
+  .learn-projects-notification-skeleton__desc {
+    width: 42%;
+    height: 12px;
+    border-radius: 6px;
+    background: rgba($text, 0.07);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .learn-projects-notification-skeleton__icon,
+    .learn-projects-notification-skeleton__title,
+    .learn-projects-notification-skeleton__tag,
+    .learn-projects-notification-skeleton__desc {
+      animation: learn-projects-activity-shimmer 1.4s $ease-out infinite;
+    }
+  }
+
+  .learn-projects-detail {
+    display: grid;
+    gap: $space-4;
+
+    // The global .ant-btn-primary rule forces the brand teal background with
+    // !important, which also paints over antd's disabled-state background —
+    // restore the normal greyed-out disabled look inside the Projects module.
+    .ant-btn-primary:disabled,
+    .ant-btn-primary.ant-btn-disabled {
+      background: rgba(0, 0, 0, 0.04) !important;
+      border-color: rgb(191, 201, 218) !important;
+      color: rgba(0, 0, 0, 0.25) !important;
+    }
+
+    // White text on the brand teal fails WCAG AA (~2.35:1) — darken the background enough
+    // for white text to clear 4.5:1 without changing the hue.
+    .ant-btn-primary:not(:disabled):not(.ant-btn-disabled) {
+      background: darken($clrThird, 16%) !important;
+      border-color: darken($clrThird, 16%) !important;
+    }
+
+    // AntD's default light "green" tag text also fails AA at this size (~3.37:1).
+    .ant-tag-green {
+      color: #237804;
+    }
+
+    // AntD's default "danger" text button red is borderline (~3.27:1) — darken slightly.
+    .ant-btn-dangerous:not(.ant-btn-primary) {
+      color: #cf1322;
+    }
+  }
+
+  // OV-20: `padding: 0 6px 4px` inset this block 6px from the left while every content card
+  // below it starts at the container edge — so the surviving subtitle sat visibly out of
+  // alignment with the column it introduces. With the heading clipped to sr-only there is
+  // nothing left here that needs the inset.
+  .learn-projects-detail__page-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $space-4;
+    padding: 0 0 4px;
+
+    h3 {
+      margin: 0;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: $text;
+      line-height: 1.2;
+    }
+
+    // The section heading duplicated the active tab pill verbatim (see the JSX comment on this
+    // element). Hidden visually but left in the accessibility tree so the document keeps a real
+    // heading for this region — the standard clip-rect technique rather than `display: none`
+    // or `visibility: hidden`, both of which would remove it from screen readers too.
+    .learn-projects-detail__page-head-title--sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    p {
+      margin: 8px 0 0;
+      color: $text-muted;
+      font-size: 15px;
+      line-height: 1.55;
+    }
+  }
+
+  .learn-projects-detail__hero {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $space-4;
+    padding: $space-5;
+    border: 1px solid $border;
+    border-radius: $radius-md;
+    background: $bg;
+  }
+
+  .learn-projects-detail__hero-copy {
+    display: grid;
+    gap: $space-2;
+
+    h3 {
+      margin: 0;
+      font-size: 22px;
+      color: $text;
+    }
+
+    p {
+      margin: 0;
+      color: $text-muted;
+    }
+  }
+
+  .learn-projects-detail__hero-meta {
+    display: grid;
+    gap: $space-3;
+    min-width: 180px;
+    justify-items: end;
+    text-align: right;
+
+    span {
+      display: block;
+      font-size: 12px;
+      color: $text-muted;
+      font-weight: 600;
+    }
+
+    strong {
+      display: block;
+      font-size: 16px;
+      color: $text;
+      line-height: 1.2;
+    }
+  }
+
+  .learn-projects-detail__body {
+    display: block;
+  }
+
+  .learn-projects-detail__content {
+    border: 1px solid $border;
+    border-radius: $radius-md;
+    background: $white;
+    padding: $space-5;
+    min-height: 360px;
+    display: block;
+  }
+
+  .learn-projects-detail__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $space-3;
+  }
+
+  // Used by several forms (resource, meeting, task-create) for a tighter field group than the
+  // default __grid — was already referenced in JSX but had no matching rule, so odd-numbered
+  // field groups (3/5 fields) left the last field alone in a half-width row with no visual
+  // difference from the base __grid.
+  .learn-projects-detail__grid--compact {
+    gap: $space-3;
+
+    > .ant-form-item:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
+  }
+
+  // Task Details modal — previously used its own inline `styles` object with a gradient "hero"
+  // panel, fully pill-shaped (999px) tags/buttons, and a separate hardcoded hex palette
+  // (#64748b/#111827/#0f172a/#94a3b8/#334155), producing a visible style seam against every other
+  // modal in this module (which all use this flat-bordered card language + $text/$text-muted).
+  .learn-projects-detail__task-modal-shell {
+    display: grid;
+    gap: $space-4;
+    min-width: 0;
+  }
+
+  .learn-projects-detail__task-modal-hero {
+    display: grid;
+    gap: $space-3;
+    padding: $space-5;
+    border: 1px solid $border;
+    border-radius: $radius-md;
+    background: $bg;
+  }
+
+  // A blocker reason can run to a full sentence or two — cramming it into a Tag pill (as this
+  // used to) truncated or wrapped awkwardly next to short one-word chips like "HIGH priority".
+  // An Alert gives it room to read as a sentence and separates it visually from the compact
+  // metadata chips above.
+  .learn-projects-detail__task-modal-blocker-alert {
+    border-radius: $radius-xs;
+    align-items: flex-start;
+
+    .ant-alert-message {
+      font-weight: 700;
+      color: $text;
+    }
+
+    .ant-alert-description {
+      color: $text-muted;
+      line-height: 1.55;
+    }
+  }
+
+  .learn-projects-detail__task-modal-kicker {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    flex-wrap: wrap;
+    color: $text-muted;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .learn-projects-detail__task-modal-title {
+    margin: 0;
+    color: $text;
+    font-size: 22px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .learn-projects-detail__task-modal-description {
+    margin: 0;
+    color: $text-muted;
+    line-height: 1.6;
+    max-width: 74ch;
+  }
+
+  // Stage 3: the task's acceptance criteria, read-only in the hero so it's visible to both roles
+  // without opening the edit form.
+  .learn-projects-detail__task-modal-acceptance {
+    margin-top: $space-2;
+
+    p {
+      margin: 2px 0 0;
+      color: $text;
+      max-width: 74ch;
+    }
+  }
+
+  .learn-projects-detail__task-modal-acceptance-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: $text-muted;
+  }
+
+  // Audit fix: who created this task and who last edited it, with when -- the modal had no
+  // attribution or timestamp anywhere, unlike a sprint card's "Started by X"/"Completed by X".
+  .learn-projects-detail__task-modal-attribution {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-1 $space-4;
+    font-size: 12px;
+    color: $text-muted;
+
+    strong {
+      color: $text;
+      font-weight: 600;
+    }
+  }
+
+  .learn-projects-detail__task-modal-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-3;
+    flex-wrap: wrap;
+  }
+
+  .learn-projects-detail__task-modal-section-title {
+    margin: 0;
+    color: $text;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .learn-projects-detail__task-modal-section-note {
+    margin: 0;
+    color: $text-muted;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .learn-projects-detail__task-modal-panel {
+    display: grid;
+    gap: $space-4;
+    padding: $space-5 $space-5;
+    border: 1px solid $border;
+    border-radius: $radius-md;
+    background: $white;
+  }
+
+  .learn-projects-detail__task-modal-note {
+    margin: 0;
+    color: $text-muted;
+    line-height: 1.65;
+  }
+
+  .learn-projects-detail__task-modal-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-3;
+  }
+
+  .learn-projects-detail__task-modal-meta-card {
+    display: grid;
+    gap: $space-1;
+    padding: $space-3 $space-4;
+    border-radius: $radius-sm;
+    border: 1px solid $border;
+    background: $bg;
+  }
+
+  .learn-projects-detail__task-modal-meta-label {
+    margin: 0;
+    color: $text-muted;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .learn-projects-detail__task-modal-meta-value {
+    margin: 0;
+    color: $text;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  // Activity events are system-generated (posted by the status-action buttons, not typed by a
+  // person) — a compact one-line timeline row, deliberately lighter-weight than the full comment
+  // card below, so the two are visually distinguishable at a glance and not just by a tag color.
+  .learn-projects-detail__task-modal-activity-list {
+    display: grid;
+    gap: 2px;
+  }
+
+  .learn-projects-detail__task-modal-activity-item {
+    display: flex;
+    align-items: baseline;
+    gap: $space-2;
+    padding: 7px 4px;
+    border-bottom: 1px solid rgba($border, 0.6);
+    font-size: 13px;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .learn-projects-detail__task-modal-activity-icon {
+    display: inline-flex;
+    align-items: center;
+    color: rgba($clrThird, 0.85);
+    font-size: 13px;
+    flex: 0 0 auto;
+  }
+
+  .learn-projects-detail__task-modal-activity-text {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: $text-muted;
+
+    strong {
+      color: $text;
+      font-weight: 600;
+    }
+  }
+
+  .learn-projects-detail__task-modal-activity-time {
+    flex: 0 0 auto;
+    color: rgba($text-muted, 0.85);
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .learn-projects-detail__task-modal-comment {
+    display: grid;
+    gap: $space-2;
+    padding: $space-3 $space-4;
+    border-radius: $radius-sm;
+    border: 1px solid $border;
+    background: $bg;
+  }
+
+  .learn-projects-detail__task-modal-comment-name {
+    color: $text;
+    font-size: 13px;
+  }
+
+  // Was #94a3b8 on a near-white card background — ~2.3-2.5:1 contrast at 12px, well under the
+  // 4.5:1 WCAG AA minimum. $text-muted ($neutral-500, #6b7280) passes.
+  .learn-projects-detail__task-modal-comment-time {
+    color: $text-muted;
+    font-size: 12px;
+  }
+
+  .learn-projects-detail__task-modal-comment-body {
+    margin: 0;
+    color: $text;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .learn-projects-detail__card {
+    border: 1px solid $border;
+    border-radius: $radius-sm;
+    // X-5: was a bare `14px` / `8px`, off the module's own 4pt scale.
+    padding: $space-4;
+    background: $bg;
+    display: grid;
+    gap: $space-2;
+
+    // OV-17 / AC-4: this was an UNSCOPED descendant selector — `.card strong` — matching every
+    // <strong> anywhere inside any card in the module, at any depth. Two consequences:
+    //
+    //   * OV-17: the Overview hero carries `__card` for its surface, so this leaked a 14px
+    //     font-size into everything nested inside it, including elements that had set their own
+    //     size and lost.
+    //   * AC-4: it out-specified `.card .activity-title` — (0,2,1) versus (0,2,0), because an
+    //     element selector counts — so the activity row's deliberately-designed 15/14/12 type
+    //     hierarchy shipped as 14/14/12 and the row had no focal point at all. The title has
+    //     since become an <h4>, which escapes this selector entirely; scoping it to DIRECT
+    //     children is what stops the same trap from catching the next element too.
+    > strong {
+      color: $text;
+      font-size: 14px;
+    }
+
+    > p {
+      margin: 0;
+      color: $text-muted;
+      line-height: 1.5;
+    }
+
+    // X-3: `&--wide` produced `.learn-projects-detail__card--wide { grid-column: 1 / -1 }` — and
+    // no `.learn-projects-detail__card` is ever a grid ITEM in this module (they are children of
+    // `__stack`, which is `display: grid` with a single column, or of flex containers), so
+    // `grid-column` had no effect anywhere. The class was applied 15 times across the component
+    // and read as a deliberate full-width instruction. Both the rule and every usage are gone.
+  }
+
+  .learn-projects-detail__stack {
+    display: grid;
+    gap: $space-3;
+  }
+
+  .learn-projects-detail__overview-banner {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $space-4;
+    padding: $space-5 $space-5;
+    border: 1px solid rgba($clrThird, 0.16);
+    border-radius: $radius-md;
+    background: linear-gradient(180deg, rgba($clrThird, 0.05) 0%, rgba($bg, 0.95) 100%);
+  }
+
+  .learn-projects-detail__overview-hero {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $space-5;
+    padding: $space-5 $space-6;
+    border: 1px solid rgba($clrThird, 0.18);
+    border-radius: $radius-lg;
+    background: linear-gradient(180deg, rgba($clrThird, 0.06) 0%, rgba($white, 0.98) 100%);
+  }
+  .learn-projects-detail__overview-hero--split {
+    gap: $space-5;
+    align-items: flex-start;
+  }
+
+  .learn-projects-detail__overview-hero-copy {
+    display: grid;
+    gap: $space-3;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .learn-projects-detail__overview-about {
+    flex: 1 1 58%;
+    display: grid;
+    gap: $space-4;
+    align-content: start;
+    align-self: flex-start;
+  }
+
+  .learn-projects-detail__overview-about-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $space-3;
+    margin-bottom: 0;
+
+    // On a phone the due date / mentor / Edit column squeezed "About this project" to one word a
+    // line; let the actions drop under the title instead.
+    > .learn-projects-detail__section-title {
+      flex: 1 0 auto;
+    }
+  }
+
+  .learn-projects-detail__overview-about-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: $space-4;
+    align-items: center;
+  }
+
+  .learn-projects-detail__overview-about-due {
+    color: $text-muted;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    padding: $space-2 $space-3;
+    border-radius: 999px;
+    background: rgba($bg, 0.72);
+    border: 1px solid rgba($border, 0.72);
+  }
+
+  .learn-projects-detail__overview-about-edit {
+    padding: 0;
+    height: auto;
+    font-weight: 600;
+    color: $clrThird;
+  }
+  .learn-projects-detail__overview-richtext {
+    display: grid;
+    gap: $space-2;
+
+    p {
+      margin: 0;
+      color: $text;
+      font-size: 16px;
+      line-height: 1.75;
+      // OV-10: the project description is free text a mentor pastes in, and it had NO
+      // `overflow-wrap`. A single pasted URL or long unbroken token has no break opportunity, so
+      // it pushed this block wider than its grid track and forced the whole hero — and with it
+      // the page — into a horizontal scroll. The sibling `.resource-row-title strong` in this
+      // same file already carries `overflow-wrap: anywhere` for exactly this reason; the
+      // description, which is far more likely to contain a pasted link, did not.
+      overflow-wrap: anywhere;
+    }
+
+    strong {
+      color: $text;
+      font-weight: 700;
+    }
+
+    em {
+      color: $text-muted;
+      font-style: italic;
+    }
+  }
+
+  .learn-projects-detail__overview-about-card {
+    padding: $space-5 $space-5;
+    border-radius: $radius-xl;
+    border: 1px solid rgba($border, 0.8);
+    background: linear-gradient(180deg, rgba($white, 0.95) 0%, rgba($bg, 0.72) 100%);
+    box-shadow: inset 0 1px 0 rgba($white, 0.8);
+  }
+
+  .learn-projects-detail__overview-about-block {
+    display: grid;
+    gap: $space-2;
+    padding: $space-4 $space-4;
+    border-radius: $radius-lg;
+    border: 1px solid rgba($border, 0.75);
+    background: linear-gradient(180deg, rgba($white, 0.95) 0%, rgba($bg, 0.76) 100%);
+    box-shadow: inset 0 1px 0 rgba($white, 0.8);
+
+    p {
+      margin: 0;
+      color: $text;
+      font-size: 15px;
+      line-height: 1.65;
+    }
+  }
+
+  .learn-projects-detail__overview-about-label {
+    color: $text-muted;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  // OV-11: deliverables were laid out as a wrapping row of 999px stadium CHIPS — a shape that
+  // only works for one- or two-word values. Deliverables are written as full sentences ("A
+  // working prototype deployed to a public URL"), so each chip wrapped to two or three lines and
+  // the pill radius degenerated into a lozenge with large empty corners, while `line-height: 1.2`
+  // (set for single-line chips) crammed the wrapped lines together. They are a checklist, and
+  // they are now laid out as one.
+  .learn-projects-detail__overview-deliverables {
+    display: grid;
+    gap: $space-2;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .learn-projects-detail__overview-deliverable-item {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-2;
+    padding: $space-2 $space-3;
+    border-radius: $radius-xs;
+    border: 1px solid rgba($clrThird, 0.16);
+    background: rgba($clrThird, 0.06);
+    color: $text;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+
+    .anticon {
+      margin-top: 4px;
+      flex: 0 0 auto;
+      color: rgba($clrThird, 0.9);
+    }
+  }
+
+  // OV-12: the deliverables empty state, which now carries the action that fixes it.
+  .learn-projects-detail__overview-deliverables-empty {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $space-2;
+
+    p {
+      margin: 0;
+      color: $text-muted;
+    }
+  }
+
+  .learn-projects-detail__overview-about-block--deliverables {
+    margin-top: 2px;
+  }
+
+  // #1: Definition of done / Who's who collapse behind an accordion once they're long enough to
+  // be the actual problem (pushing the whole Overview tab's height down) -- strip antd's default
+  // Collapse chrome (ghost already drops most of it) so the header reads exactly like the plain
+  // label above it, just clickable.
+  .learn-projects-detail__overview-about-block--collapsible {
+    padding: 0;
+    background: none;
+    border: none;
+    box-shadow: none;
+  }
+
+  .learn-projects-detail__overview-about-collapse.ant-collapse {
+    background: transparent;
+
+    .ant-collapse-item {
+      border: 1px solid rgba($border, 0.75);
+      border-radius: $radius-lg;
+      background: linear-gradient(180deg, rgba($white, 0.95) 0%, rgba($bg, 0.76) 100%);
+      overflow: hidden;
+    }
+
+    .ant-collapse-header {
+      align-items: center !important;
+      padding: $space-4 !important;
+    }
+
+    .ant-collapse-content-box {
+      padding: 0 $space-4 $space-4 !important;
+    }
+
+    .learn-projects-detail__overview-deliverables {
+      margin-top: $space-2;
+    }
+  }
+
+  .learn-projects-detail__overview-about-count {
+    text-transform: none;
+    font-weight: 600;
+    color: $text-muted;
+    letter-spacing: normal;
+  }
+  .learn-projects-detail__overview-donut-card {
+    flex: 1 1 42%;
+    display: grid;
+    gap: $space-4;
+    align-content: start;
+    justify-items: center;
+    padding: $space-5;
+    border-radius: $radius-xl;
+    border: 1px solid rgba($border, 0.8);
+    background: linear-gradient(180deg, rgba($white, 0.98) 0%, rgba($clrThird, 0.03) 100%);
+  }
+
+  .learn-projects-detail__overview-donut {
+    width: 210px;
+    height: 210px;
+    border-radius: 50%;
+    position: relative;
+    box-shadow: inset 0 0 0 1px rgba($border, 0.55), 0 14px 34px rgba($text, 0.08);
+  }
+
+  .learn-projects-detail__overview-donut-hole {
+    position: absolute;
+    inset: 26px;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: rgba($white, 0.98);
+    box-shadow: inset 0 0 0 1px rgba($border, 0.7);
+
+    strong {
+      color: $text;
+      font-size: 42px;
+      line-height: 1;
+      // The headline figure of the Overview tab. At 42px, proportional digits shift the number
+      // off-centre inside the donut every time the percentage changes (e.g. 11% -> 88%);
+      // tabular figures keep it optically locked to the middle.
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum" 1;
+      letter-spacing: -0.02em;
+    }
+
+    span {
+      color: $text-muted;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: -4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+  }
+
+  // OV-13: this was locked to TWO columns at every breakpoint, and the legend has FIVE items —
+  // so one item always orphaned onto a row by itself, at every screen size, with no breakpoint
+  // anywhere overriding it. `auto-fit` lets the row count follow the available width (and the
+  // item count, which is now variable since zero-value segments are filtered out).
+  .learn-projects-detail__overview-donut-legend {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: $space-2 $space-3;
+  }
+
+  .learn-projects-detail__overview-donut-legend-item {
+    display: grid;
+    grid-template-columns: 12px minmax(0, 1fr);
+    gap: $space-3;
+    align-items: start;
+    padding: $space-3 $space-3;
+    border-radius: $radius-sm;
+    background: rgba($bg, 0.72);
+    border: 1px solid rgba($border, 0.72);
+
+    strong {
+      display: block;
+      color: $text;
+      font-size: 13px;
+      line-height: 1.3;
+    }
+
+    span {
+      display: block;
+      color: $text-muted;
+      font-size: 12px;
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+  }
+
+  // OV-24: the swatch was optically centred against its label by a magic `margin-top: 3px` —
+  // a value that only holds for the label's current font-size and line-height, and silently
+  // misaligns the moment either changes. The parent is a grid; aligning the swatch's own track
+  // is what the grid is for, and it stays correct at any type size.
+  .learn-projects-detail__overview-donut-swatch {
+    width: 12px;
+    height: 12px;
+    align-self: center;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba($white, 0.9);
+  }
+
+  // OV-1: the note that reconciles the donut's task-only percentage with readiness, which also
+  // counts sprints.
+  .learn-projects-detail__overview-donut-note {
+    margin: 0;
+    color: $text-muted;
+    font-size: 12px;
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  // OV-3: the genuinely-empty donut. Deliberately NOT a decorative gradient — the previous
+  // fallback was a teal/indigo gradient ring visually indistinguishable from a real data ring,
+  // so an empty project appeared to be displaying a task distribution.
+  .learn-projects-detail__overview-donut-empty {
+    display: grid;
+    justify-items: center;
+    gap: $space-3;
+    text-align: center;
+
+    p {
+      margin: 0;
+      color: $text-muted;
+      font-size: 13px;
+      line-height: 1.55;
+      max-width: 34ch;
+    }
+  }
+
+  .learn-projects-detail__overview-donut--empty {
+    background: rgba($border, 0.35);
+
+    .learn-projects-detail__overview-donut-hole strong {
+      color: $text-muted;
+    }
+  }
+
+  .learn-projects-detail__next-step-strip {
+    width: 100%;
+    min-height: 78px;
+    display: grid !important;
+    grid-template-columns: 1fr auto;
+    gap: $space-3 $space-5;
+    align-items: center;
+    text-align: left;
+    padding: $space-5 $space-6;
+    border-radius: $radius-xl;
+    border: 1px solid rgba($clrThird, 0.22) !important;
+    background: linear-gradient(135deg, rgba($clrThird, 0.08) 0%, rgba($white, 0.98) 100%) !important;
+    // Same rest-equals-hover no-op the activity card had: this sat at elev-3 in both states, so
+    // the hover below only moved it 1px with no change in depth. It's a prominent CTA strip, so
+    // it legitimately rests above a plain card — elev-2 rest / elev-3 hover gives it that
+    // prominence AND an actual response to the pointer.
+    box-shadow: $elev-2;
+    transition:
+      transform $motion-base $ease-out,
+      box-shadow $motion-base $ease-out,
+      border-color $motion-base $ease-out;
+  }
+
+  .learn-projects-detail__next-step-strip-main {
+    display: grid;
+    gap: $space-2;
+    min-width: 0;
+  }
+
+  .learn-projects-detail__next-step-strip-action {
+    align-self: center;
+    justify-self: end;
+    color: $clrThird;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .learn-projects-detail__next-step-strip:hover {
+    border-color: rgba($clrThird, 0.34) !important;
+    transform: translateY(-1px);
+    box-shadow: $elev-3;
+  }
+
+  .learn-projects-detail__next-step-strip-label {
+    color: $text-muted;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .learn-projects-detail__next-step-strip-copy {
+    color: $text;
+    font-size: 15px;
+    line-height: 1.45;
+    font-weight: 600;
+  }
+  .learn-projects-detail__donut::after {
+    content: "";
+    position: absolute;
+    inset: 18px;
+    border-radius: 50%;
+    background: rgba($white, 0.98);
+    box-shadow: inset 0 0 0 1px rgba($border, 0.7);
+  }
+  .learn-projects-detail__quick-links {
+    display: grid;
+    gap: $space-3;
+    padding: $space-5 $space-5;
+    border: 1px solid rgba($border, 0.9);
+    border-radius: $radius-lg;
+    background: rgba($white, 0.98);
+    box-shadow: $elev-2;
+
+    > strong {
+      color: $text;
+      font-size: 16px;
+      line-height: 1.2;
+    }
+  }
+
+  .learn-projects-detail__quick-links-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-3;
+  }
+
+  // OV-19: the ≤991px media query further down sets `grid-template-columns: 1fr` on this — but
+  // the base rule here is ALREADY a single `minmax(0, 1fr)` track, so that override has never
+  // done anything. It is removed there rather than kept as reassuring-looking dead code.
+  // OV-22 / X-5: `gap: 14px` was one of four different section gaps on this tab.
+  .learn-projects-detail__overview-bottom {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: $space-4;
+  }
+
+  // OV-22 / X-6: the Overview stack's gap, previously an inline `style={{ gap: 16 }}` in the JSX.
+  .learn-projects-detail__overview-stack {
+    gap: $space-4;
+  }
+
+  // OV-20: the surviving page-head subtitle, now aligned with the content column below it.
+  .learn-projects-detail__page-head-subtitle {
+    margin: 0;
+  }
+
+  // OV-2: the due-date states that `projectDueState` computed and nothing rendered.
+  .learn-projects-detail__overview-about-due--overdue {
+    color: $status-error;
+    font-weight: 700;
+  }
+
+  .learn-projects-detail__overview-about-due--dueSoon {
+    color: sr-text(risk);
+    font-weight: 600;
+  }
+
+  // OV-15: the mentor name, which the Overview never showed despite resolving it.
+  .learn-projects-detail__overview-about-lead {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2;
+    color: $text-muted;
+    font-size: 13px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  .learn-projects-detail__overview-modal-shell {
+    display: grid;
+    gap: $space-5;
+    padding: $space-6;
+  }
+
+  .learn-projects-detail__overview-modal-head {
+    display: grid;
+    gap: $space-2;
+
+    h3 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.2;
+      color: $text;
+    }
+
+    p {
+      margin: 0;
+      color: $text-muted;
+      line-height: 1.6;
+    }
+  }
+
+  .learn-projects-detail__overview-form {
+    display: grid;
+    gap: $space-2;
+  }
+
+  .learn-projects-detail__overview-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $space-3;
+    margin-top: 4px;
+  }
+
+  // Shared footer-button-row treatment — the overview/meeting modals above already matched this,
+  // but the member modal used a different gap (10px) and the submission modal forced its buttons
+  // to a 190px min-width with no justify-content, and the task-create modal used an inline style
+  // instead of any shared class. New consumers should use this class directly instead of adding
+  // another one-off variant.
+  .learn-projects-detail__modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $space-3;
+    margin-top: 4px;
+  }
+
+  // Meeting request/edit modal — previously had no matching rules at all (unlike every sibling
+  // modal above), so the two-section form grid stacked full width and the footer buttons
+  // rendered flush-left with no gap.
+  .learn-projects-detail__meeting-modal-shell {
+    display: grid;
+    gap: $space-5;
+    padding: $space-6;
+  }
+
+  // PM-11: this was a hard two-column grid inside a `width={1120}` modal with ZERO responsive
+  // collapse anywhere — no breakpoint in this file touched the meeting modal at all. On any
+  // viewport under about 1160px the modal was wider than the screen, and on a phone the two
+  // columns were roughly 180px each: every DatePicker, TimePicker and Select crushed to
+  // unusable. The whole tab had no mobile treatment, and this modal was the worst of it.
+  //
+  // `auto-fit` + a `minmax` floor collapses to one column the moment two columns would put a
+  // field below ~320px, with no breakpoint needed. The modal's own width is capped below.
+  .learn-projects-detail__meeting-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: $space-4;
+  }
+
+  // PM-11: `width={1120}` is a fixed pixel width; antd applies it regardless of viewport. This
+  // caps it against the actual screen so the modal can never exceed it.
+  .learn-projects-detail__meeting-modal {
+    max-width: calc(100vw - #{$space-4 * 2});
+  }
+
+  .learn-projects-detail__meeting-form-section {
+    display: grid;
+    gap: $space-3;
+    align-content: start;
+
+    &--wide {
+      grid-column: 1 / -1;
+    }
+  }
+
+  // X-1: this section title is now an <h4>, not a <strong>.
+  .learn-projects-detail__meeting-form-section-head {
+    display: grid;
+    gap: $space-1;
+
+    .learn-projects-detail__section-title {
+      display: block;
+      font-size: 14px;
+      color: $text;
+    }
+  }
+
+  // Stage 6: retro fields, shown only when the meeting's Ceremony is Retrospective. A left
+  // accent distinguishes the block from the plain agenda/notes fields around it without a full
+  // card border, since it's still part of the same form section.
+  .learn-projects-detail__retro-fields {
+    display: grid;
+    gap: $space-1;
+    padding: $space-3 $space-4;
+    margin-bottom: $space-3;
+    border-left: 3px solid $clrThird;
+    background: rgba($clrThird, 0.05);
+    border-radius: 0 $radius-md $radius-md 0;
+  }
+
+  .learn-projects-detail__meeting-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $space-3;
+    margin-top: 4px;
+  }
+
+  .learn-projects-detail__meeting-request-modal .ant-modal-body {
+    padding: $space-6;
+  }
+
+  .learn-projects-detail__overview-submission {
+    display: grid;
+    gap: $space-4;
+    padding: 24px 24px 22px;
+    border: 1px solid rgba($clrThird, 0.18);
+    background:
+      linear-gradient(180deg, rgba($white, 0.99) 0%, rgba($white, 0.96) 100%);
+    box-shadow: $elev-3;
+  }
+
+  .learn-projects-detail__submission-summary-head {
+    align-items: center;
+    gap: $space-3;
+    margin-bottom: 0;
+  }
+
+  .learn-projects-detail__submission-summary-title {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    min-width: 0;
+
+    > strong {
+      font-size: 19px;
+      color: $text;
+      line-height: 1.2;
+    }
+  }
+
+  // OV-21: 11px, uppercase, and muted-grey-on-muted-grey — the lowest-contrast, smallest text on
+  // the tab, carrying its single most consequential piece of information ("Ready for review" vs
+  // "Waiting for completion" vs "Submitted"). Raised to a legible size and given real colour
+  // separation between its states below.
+  .learn-projects-detail__status-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px $space-3;
+    border-radius: 999px;
+    // Was `rgba($neutral-500, 0.08)` behind `$text-muted` text — a muted grey on a muted grey,
+    // measuring well under AA. The waiting state is now a real amber, which is also what makes it
+    // distinguishable from the ready state by more than a faint tint.
+    background: rgba($status-warning, 0.1);
+    color: $status-warning;
+    // Was 11px UPPERCASE with 0.04em tracking. Uppercase costs legibility at small sizes (it
+    // removes the ascender/descender shape cues readers use), and 11px is below this module's
+    // smallest body size — for the field that answers "can I submit yet?".
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+
+  .learn-projects-detail__status-pill--ready {
+    background: rgba($success, 0.14);
+    color: darken($success, 10%);
+  }
+
+  .learn-projects-detail__submission-summary-copy {
+    margin: 0;
+    color: $text-muted;
+    line-height: 1.6;
+    max-width: 68ch;
+    font-size: 14px;
+  }
+
+  // X-6: replaces an inline `style={{ fontWeight: 600 }}`.
+  .learn-projects-detail__submission-summary-copy--emphasis {
+    color: $text;
+    font-weight: 600;
+  }
+
+  // OV-14: this stayed at THREE fixed columns down to 375px, where each tile is about 69px wide
+  // — narrower than the labels inside them ("Sprints signed off"), so every tile's caption
+  // wrapped to three or four lines. Sibling stat grids in this file (`__stats`,
+  // `__resource-hero-stats`) all received small-screen overrides; this one was missed. `auto-fit`
+  // means it no longer depends on remembering to add one.
+  .learn-projects-detail__submission-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: $space-3;
+  }
+
+  .learn-projects-detail__submission-metric {
+    display: grid;
+    gap: $space-1;
+    padding: $space-4 $space-5;
+    border-radius: $radius-lg;
+    border: 1px solid rgba($border, 0.9);
+    background: rgba($white, 0.92);
+    box-shadow: inset 0 1px 0 rgba($white, 0.9);
+    min-height: 84px;
+
+    span {
+      font-size: 11px;
+      font-weight: 600;
+      color: $text-muted;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    strong {
+      font-size: 17px;
+      line-height: 1.15;
+      color: $text;
+    }
+  }
+
+  .learn-projects-detail__submission-actions {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-3;
+    flex-wrap: wrap;
+    padding-top: 4px;
+  }
+
+  .learn-projects-detail__submission-actions-copy {
+    max-width: 42ch;
+    line-height: 1.5;
+  }
+
+  .learn-projects-detail__submission-modal-wrap {
+    .ant-modal-content {
+      border-radius: $radius-2xl;
+      overflow: hidden;
+      box-shadow: $elev-4;
+    }
+
+    .ant-modal-close {
+      top: 18px;
+      inset-inline-end: 18px;
+    }
+  }
+
+  .learn-projects-detail__submission-shell {
+    display: grid;
+    gap: $space-4;
+    padding: $space-6;
+    background:
+      radial-gradient(circle at top right, rgba($clrThird, 0.08), transparent 35%),
+      linear-gradient(180deg, rgba($white, 1) 0%, rgba($white, 0.98) 100%);
+  }
+
+  .learn-projects-detail__submission-hero {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $space-5;
+    padding: $space-5 $space-5;
+    border-radius: $radius-xl;
+    border: 1px solid rgba($clrThird, 0.16);
+    background: linear-gradient(180deg, rgba($white, 0.98) 0%, rgba($white, 0.94) 100%);
+    box-shadow: $elev-3;
+  }
+
+  .learn-projects-detail__submission-hero-copy {
+    display: grid;
+    gap: $space-2;
+
+    h3 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.15;
+      color: $text;
+      letter-spacing: -0.02em;
+    }
+
+    .learn-projects-detail__muted {
+      margin-bottom: 0;
+      max-width: 70ch;
+    }
+  }
+
+  .learn-projects-detail__submission-hero-status {
+    display: grid;
+    gap: $space-2;
+    justify-items: end;
+    text-align: right;
+    padding-top: 2px;
+    min-width: 180px;
+  }
+
+  .learn-projects-detail__submission-tag {
+    margin-inline: 0;
+    padding: $space-2 $space-3;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .learn-projects-detail__submission-hero-status-copy {
+    color: $text-muted;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .learn-projects-detail__submission-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: $space-3;
+  }
+
+  .learn-projects-detail__submission-meta--compact {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .learn-projects-detail__submission-stat {
+    display: grid;
+    gap: $space-2;
+    padding: $space-4 $space-5;
+    border-radius: $radius-lg;
+    border: 1px solid rgba($border, 0.9);
+    background: rgba($white, 0.92);
+    box-shadow: inset 0 1px 0 rgba($white, 0.9);
+
+    span {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: $text-muted;
+    }
+
+    strong {
+      font-size: 20px;
+      line-height: 1.1;
+      color: $text;
+    }
+  }
+
+  .learn-projects-detail__submission-layout {
+    display: grid;
+    gap: $space-4;
+  }
+
+  .learn-projects-detail__submission-layout--mentor {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    // MRMD-10: fixed at two columns with no breakpoint anywhere overriding it — on a narrow
+    // viewport this squeezed the read-only submission-content panel and the "Review outcome"
+    // form into two very narrow side-by-side columns (CSS Grid places DOM children into columns
+    // left-to-right, it doesn't stack them) instead of the content panel sitting above the
+    // review form the way a mentor actually needs to read it before deciding. Stack to one
+    // column below the same 767px breakpoint already used elsewhere in this file.
+    @media (max-width: 767px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .learn-projects-detail__submission-panel {
+    display: grid;
+    gap: $space-4;
+    padding: $space-5 $space-5;
+    border-radius: $radius-xl;
+    border: 1px solid rgba($border, 0.9);
+    background: rgba($white, 0.98);
+    box-shadow: $elev-3;
+  }
+
+  .learn-projects-detail__submission-details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $space-3;
+  }
+
+  .learn-projects-detail__submission-summary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $space-3;
+  }
+
+  .learn-projects-detail__submission-detail,
+  .learn-projects-detail__submission-readonly-item {
+    display: grid;
+    gap: $space-1;
+    padding: $space-4 $space-4;
+    border-radius: $radius-md;
+    border: 1px solid rgba($border, 0.8);
+    background: rgba($white, 0.9);
+
+    span {
+      color: $text-muted;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    strong {
+      color: $text;
+      font-size: 15px;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+  }
+
+  .learn-projects-detail__submission-readonly {
+    display: grid;
+    gap: $space-3;
+  }
+
+  .learn-projects-detail__submission-notes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $space-3;
+  }
+
+  .learn-projects-detail__submission-readonly-item {
+    p {
+      margin: 0;
+      color: $text;
+      line-height: 1.65;
+    }
+  }
+
+  .learn-projects-detail__submission-actions-copy {
+    color: $text-muted;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .learn-projects-detail__overview-blocker {
+    display: grid;
+    gap: $space-3;
+    padding: $space-5 $space-5;
+    border-radius: $radius-lg;
+    border: 1px solid rgba(#fb7185, 0.34);
+    background: linear-gradient(180deg, rgba(#fff1f2, 0.95) 0%, rgba($white, 0.98) 100%);
+    box-shadow: $elev-2;
+
+    > strong {
+      color: #be123c;
+      font-size: 16px;
+      line-height: 1.2;
+    }
+
+    p {
+      color: #9f1239;
+      margin-bottom: 0;
+      line-height: 1.6;
+    }
+
+    &--clear {
+      border: 1px solid rgba($text, 0.08);
+      background: rgba($white, 0.98);
+
+      > strong {
+        color: $text;
+      }
+
+      p {
+        color: rgba($text, 0.65);
+      }
+    }
+  }
+
+  .learn-projects-detail__latest-update {
+    padding: $space-5;
+  }
+
+  .learn-projects-detail__overview-banner-copy {
+    display: grid;
+    gap: $space-2;
+
+    strong {
+      color: $text;
+      font-size: 18px;
+      line-height: 1.2;
+    }
+
+    p {
+      margin: 0;
+      color: $text-muted;
+      line-height: 1.5;
+      max-width: 60ch;
+    }
+  }
+
+  // Was a narrow, right-aligned column designed to sit beside a description on the left
+  // (`.learn-projects-detail__overview-banner-copy`) inside the flex `overview-banner` — but that
+  // copy half was removed from the Sprints tab's banner (see ML-16 above) and nothing ever
+  // used `overview-banner-copy` in JSX, so this became the banner's ONLY child. A `min-width:200px`
+  // right-aligned column with nothing to its left just pins itself to the card's left edge,
+  // leaving the rest of the wide card empty. Laid out as a left-aligned horizontal row of tiles
+  // instead, so the stats read as a stat bar that fills the card the way the design intends.
+  .learn-projects-detail__overview-banner-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-6;
+
+    span {
+      display: block;
+      font-size: 12px;
+      color: $text-muted;
+      font-weight: 600;
+    }
+
+    strong {
+      display: block;
+      font-size: 18px;
+      color: $text;
+      line-height: 1.2;
+
+      // ML-7: the "3 of 8" suffix on the Completed tile.
+      small {
+        font-size: 13px;
+        font-weight: 600;
+        color: $text-muted;
+      }
+    }
+  }
+
+  // ML-7 / ML-6: the overdue-sprint count, shown only when there is one. It is the only
+  // number in this banner that demands action, so it is the only one that is not neutral.
+  .learn-projects-detail__overview-banner-meta-alert {
+    strong {
+      color: $status-error;
+    }
+
+    span {
+      color: $status-error;
+    }
+  }
+
+  // RS-18: `.learn-projects-detail__row` was declared TWICE in this file with incompatible
+  // layouts — this block (`display: grid` + a three-track `grid-template-columns`) and a second
+  // block further down (`display: flex`). Same specificity, so the later one silently won and
+  // every grid declaration here was dead — including the three-column track definition the
+  // resource row's markup was written against, and (knock-on) the `grid-template-columns: 1fr`
+  // override in the ≤575px media query, which had nothing to override.
+  //
+  // The flex declaration is the one that has actually been rendering, so it is now the only one.
+  // Only the descendant rules that were doing real work are kept here.
+  .learn-projects-detail__row {
+    strong {
+      color: $text;
+    }
+
+    p {
+      margin: 4px 0 0;
+      color: $text-muted;
+    }
+  }
+
+  .learn-projects-detail__row--sprint {
+    align-items: start;
+  }
+
+  .learn-projects-detail__progress {
+    min-width: 220px;
+    display: grid;
+    gap: $space-2;
+  }
+
+  .learn-projects-detail__inline-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-3;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .learn-projects-detail__stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: $space-3;
+    margin-top: 4px;
+
+    > div {
+      border: 1px solid rgba($border, 0.9);
+      border-radius: $radius-sm;
+      background: $white;
+      padding: $space-3 $space-4;
+      display: grid;
+      gap: $space-1;
+      box-shadow: $elev-1;
+      transition: border-color $motion-fast $ease-out, box-shadow $motion-fast $ease-out;
+
+      &:hover {
+        border-color: rgba($clrThird, 0.28);
+        box-shadow: $elev-2;
+      }
+    }
+
+    strong {
+      color: $text;
+      font-size: 18px;
+      line-height: 1;
+      // Tabular figures: proportional digits have different widths (a "1" is much narrower than
+      // a "8"), so these counters visibly jiggled and re-centred every time a number changed as
+      // tasks moved. Locking to monospaced digits keeps the row rock-steady.
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum" 1;
+      // Slightly tighter tracking on large numerals reads as more deliberate at display size.
+      letter-spacing: -0.01em;
+    }
+
+    span {
+      color: $text-muted;
+      font-size: 12px;
+      font-weight: 600;
+    }
+  }
+
+  .learn-projects-detail__team-summary {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $space-4;
+    padding: $space-5 $space-5;
+    background: linear-gradient(180deg, rgba($clrThird, 0.06) 0%, rgba($bg, 1) 100%);
+  }
+
+  .learn-projects-detail__team-summary-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: $space-2;
+    align-items: center;
+  }
+
+  .learn-projects-detail__team-list {
+    display: grid;
+    gap: $space-3;
+  }
+
+  // PM-14: two sibling cards on the SAME tab used two different card shells — this one
+  // (radius-md, 14/16px padding, flat $bg, no shadow) and the meeting card below (radius-lg,
+  // 18/20px padding, a gradient, elev-2). Nothing about a roster row versus a meeting row
+  // justifies two different surface treatments stacked directly on top of each other; it just
+  // reads as one of them being unfinished. Aligned to the meeting card's treatment, which is the
+  // one the rest of the module uses.
+  .learn-projects-detail__team-card {
+    border: 1px solid rgba($clrThird, 0.12);
+    border-radius: $radius-lg;
+    padding: $space-4 $space-4;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: $space-3;
+    align-items: center;
+    background: linear-gradient(180deg, rgba($white, 0.995), rgba($bg, 0.965));
+    box-shadow: $elev-2;
+  }
+
+  // PM-7: the people line on a meeting card / hero.
+  .learn-projects-detail__meeting-card-people,
+  .learn-projects-detail__meeting-summary-people {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    margin: 4px 0 0;
+    color: $text-muted;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+
+  // X-1 / PM-17: real section headings. These were <strong> everywhere in the module, so
+  // heading-based navigation found nothing. Styled to match what the <strong> looked like, so
+  // this is a semantics fix with no visual change.
+  // X-1: the shared section-heading style. Every section title in this module was a <strong>;
+  // they are now real <h3>/<h4> elements, so this must reset the browser's default heading
+  // margin and font-size. The values reproduce exactly what the <strong> rendered as, which is
+  // what makes the whole X-1 sweep a semantics change with no visual change.
+  .learn-projects-detail__section-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: $text;
+    overflow-wrap: anywhere;
+  }
+
+  .learn-projects-detail__team-avatar {
+    background: rgba($clrThird, 0.12);
+    color: darken($clrThird, 10%);
+    font-weight: 700;
+  }
+
+  // PM-24: nothing in this module clamped or wrapped names, roles, meeting titles or
+  // descriptions. A single unbroken token — a pasted URL, an email address, a long unspaced name
+  // — had no break opportunity and simply overflowed its card, pushing the row wider than the
+  // container and forcing the whole page into a horizontal scroll. `overflow-wrap: anywhere` is
+  // the fix that costs nothing for normal text and only engages when there is no other option.
+  .learn-projects-detail__team-copy {
+    min-width: 0;
+    display: grid;
+    gap: $space-1;
+
+    strong {
+      font-size: 15px;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+
+    p {
+      margin: 0;
+      color: $text-muted;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    span {
+      color: $text-muted;
+      font-size: 13px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .learn-projects-detail__team-title {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $space-2;
+  }
+
+  .learn-projects-detail__team-title-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2;
+    flex-wrap: wrap;
+  }
+
+  // #5: a mentor is an industry professional brought in to guide the team, not just another
+  // roster row -- this deliberately reads as a different KIND of card, not a bigger version of
+  // the plain one. Elevated background wash + a real border in the brand accent, same instinct
+  // as the "different shape entirely" cards built elsewhere this session (At-risk Students,
+  // Performance) rather than a decorative badge doing all the work.
+  .learn-projects-detail__mentor-spotlight {
+    position: relative;
+    border: 1px solid rgba($clrThird, 0.28);
+    border-radius: $radius-lg;
+    padding: $space-5 $space-4 $space-4;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: $space-3;
+    align-items: start;
+    background: linear-gradient(160deg, rgba($clrThird, 0.08), rgba($white, 0.99) 55%);
+    box-shadow: $elev-3;
+  }
+
+  .learn-projects-detail__mentor-spotlight-badge {
+    position: absolute;
+    top: -1px;
+    left: $space-4;
+    transform: translateY(-50%);
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: $clrThird;
+    color: $white;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    box-shadow: 0 1px 4px rgba($clrThird, 0.4);
+  }
+
+  .learn-projects-detail__mentor-spotlight-avatar {
+    background: $clrThird;
+    color: $white;
+    font-weight: 700;
+    font-size: 20px;
+    box-shadow: 0 0 0 3px rgba($clrThird, 0.16);
+  }
+
+  .learn-projects-detail__mentor-spotlight-headline {
+    margin: 0;
+    color: $clrThird;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+
+  .learn-projects-detail__mentor-spotlight-bio {
+    margin: 2px 0 0;
+    color: $text;
+    font-size: 13px;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+  }
+
+  .learn-projects-detail__mentor-spotlight-linkedin {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+    color: $clrThird;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    width: fit-content;
+
+    &:hover, &:focus-visible {
+      text-decoration: underline;
+    }
+  }
+
+  // #5: nudges the mentor themselves to fill in a profile, rather than the feature silently
+  // doing nothing until they happen to notice. Never shown to a learner.
+  .learn-projects-detail__mentor-spotlight-nudge {
+    color: $clrThird !important;
+    font-style: italic;
+  }
+
+  .learn-projects-detail__member-modal-wrap {
+    .ant-modal-content {
+      border-radius: $radius-2xl;
+      overflow: hidden;
+      box-shadow: $elev-4;
+    }
+
+    .ant-modal-close {
+      top: 18px;
+      inset-inline-end: 18px;
+    }
+  }
+
+  .learn-projects-detail__member-modal-shell {
+    display: grid;
+    gap: $space-5;
+    padding: $space-6;
+    background: linear-gradient(180deg, rgba($white, 0.98) 0%, rgba($bg, 0.96) 100%);
+  }
+
+  .learn-projects-detail__member-modal-head {
+    display: grid;
+    gap: $space-2;
+
+    h3 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.15;
+      color: $text;
+    }
+
+    p {
+      margin: 0;
+      color: $text-muted;
+      line-height: 1.5;
+    }
+  }
+
+  .learn-projects-detail__member-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $space-3;
+    flex-wrap: wrap;
+    padding-top: 2px;
+  }
+
+  .learn-projects-detail__team-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+    justify-content: flex-end;
+  }
+
+  .learn-projects-detail__sprint-card {
+    border: 1px solid $border;
+    border-radius: $radius-lg;
+    padding: $space-4;
+    background: linear-gradient(180deg, rgba($clrThird, 0.05) 0%, rgba($bg, 1) 100%);
+    display: grid;
+    gap: $space-3;
+    box-shadow: $elev-2;
+  }
+
+  // Stage 1: sprint lifecycle row (number/state chip + dates + release flag) sits above the
+  // existing due-date/status row, so the two never compete for the same visual slot.
+  .learn-projects-detail__sprint-meta-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $space-2;
+  }
+
+  .learn-projects-detail__sprint-goal {
+    margin: 0;
+    font-size: 13.5px;
+    color: $text-muted;
+    font-style: italic;
+  }
+
+  // ML-11: this had no `flex-wrap`. At 375px the three items it can hold (due date, status tag,
+  // and the template tag) exceed the card width, and without wrapping the status tag was pushed
+  // out of the row and stranded mid-card overlapping its neighbour.
+  // Was `justify-content: space-between` — fine with exactly two items (due date, status tag)
+  // pinned to opposite edges, but Stage 1 added a second header row above this one
+  // (.sprint-meta-row) that packs its chips left-aligned with a normal gap. On a wide card,
+  // space-between stretched this row's items across the full width while the row above stayed
+  // tightly packed, so the two rows read as two different alignment systems stacked on top of
+  // each other — which is what showed up as "chips not aligned" / the header looking scattered.
+  // flex-start + a fixed gap matches the row above and reads as one consistent header block.
+  .learn-projects-detail__sprint-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: $space-3;
+  }
+
+  // ML-22 / ML-6: replaces `.sprint-pill`, which rendered the literal word "Sprint" (with a
+  // calendar icon beside the WORD rather than beside a date) in the card's most prominent slot,
+  // inside a list of sprints on a tab called Sprints. This slot now carries the due date,
+  // which is what the calendar icon was always implying, and it has the overdue/due-soon states
+  // the sprint UI previously lacked entirely.
+  .learn-projects-detail__sprint-due {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2;
+    color: $text-muted;
+    font-weight: 600;
+    font-size: 13px;
+    min-width: 0;
+  }
+
+  .learn-projects-detail__sprint-due--dueSoon {
+    color: $status-warning;
+  }
+
+  .learn-projects-detail__sprint-due--overdue {
+    color: $status-error;
+    font-weight: 700;
+  }
+
+  // ML-20: was `align-items: end`, which bottom-aligns the two tracks. When the title wraps to
+  // two or three lines (it clamps at three) the left track grows downward, and bottom-alignment
+  // strands the entire progress module against the BOTTOM of that tall title with a growing band
+  // of empty space above it — the taller the title, the more detached the bar looked from the
+  // sprint it measures. `start` keeps them shoulder to shoulder.
+  .learn-projects-detail__sprint-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+    gap: $space-4;
+    align-items: start;
+  }
+
+  // ML-10: sprint titles are <h4> now rather than <strong>, both for heading structure and to
+  // escape the generic `.card strong` rule. The clamp and sizing move with them.
+  .learn-projects-detail__sprint-title {
+    margin: 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    overflow-wrap: anywhere;
+    font-size: 18px;
+    font-weight: 600;
+    color: $text;
+    line-height: 1.25;
+  }
+
+  // ML-2: the acceptance criteria, rendered for the first time.
+  .learn-projects-detail__sprint-description {
+    margin: 0;
+    color: $text-muted;
+    font-size: 14px;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+  }
+
+  // ML-4: shown when status and progress cannot both be true.
+  .learn-projects-detail__sprint-conflict {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-2;
+    margin: 0;
+    padding: $space-2 $space-3;
+    border-radius: $radius-xs;
+    border: 1px solid rgba($status-warning, 0.24);
+    background: rgba($status-warning, 0.08);
+    color: $status-warning;
+    font-size: 12px;
+    line-height: 1.45;
+
+    .anticon {
+      margin-top: 2px;
+      flex: 0 0 auto;
+    }
+  }
+
+  .learn-projects-detail__sprint-copy {
+    display: grid;
+    gap: $space-2;
+  }
+
+  // ML-14: the list is described as a timeline everywhere, so it is now an ordered list sorted by
+  // due date. The default numbering is suppressed — the dates carry the order visibly, and a
+  // second numbering system beside them would be redundant — but the `<ol>` semantics remain for
+  // assistive tech.
+  .learn-projects-detail__sprint-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    // ML-18: was an inline `style={{ gap: 12 }}` on the wrapping stack.
+    gap: $space-3;
+  }
+
+  // #7: Sprints tab redesign -- overdue/blocked sprints project-wide, surfaced above everything
+  // else. Same red-flag instinct as the At-risk Students card on faculty Home.
+  .learn-projects-detail__sprint-attention {
+    border-left: 3px solid $status-error;
+  }
+
+  .learn-projects-detail__sprint-attention-head {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    color: $status-error;
+    margin-bottom: $space-2;
+
+    strong { color: $text; font-size: 14px; }
+  }
+
+  .learn-projects-detail__sprint-attention-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: $space-2;
+
+    li {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: $space-2;
+      font-size: 13px;
+    }
+  }
+
+  .learn-projects-detail__sprint-attention-title {
+    font-weight: 600;
+    color: $text;
+  }
+
+  .learn-projects-detail__sprint-grouped {
+    display: grid;
+    gap: $space-4;
+  }
+
+  // The one sprint worth zero clicks -- visually distinct from the accordion below it so it
+  // reads as "pinned", not as just the first item in a list.
+  .learn-projects-detail__sprint-pinned {
+    display: grid;
+    gap: $space-2;
+  }
+
+  .learn-projects-detail__sprint-pinned-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: $clrThird;
+  }
+
+  .learn-projects-detail__sprint-search {
+    max-width: 360px;
+  }
+
+  .learn-projects-detail__sprint-search-empty {
+    padding: $space-4;
+    border: 1px dashed rgba($border, 0.9);
+    border-radius: $radius-lg;
+    background: rgba($bg, 0.7);
+    color: $text-muted;
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .learn-projects-detail__sprint-unassigned {
+    display: grid;
+    gap: $space-3;
+  }
+
+  // ML-13: about 45 lines of `.sprint-state--*` rules lived here — an ENTIRELY SEPARATE status
+  // palette (its own hexes, its own alphas, its own pill geometry) for a class that appears
+  // nowhere in any component in this repo. It competed conceptually with the `.sprint-tag--*`
+  // rules further down, which are the ones actually rendering, and — like them — it was missing
+  // a `--blocked` variant, so the most urgent state had no styling in either system. Deleted;
+  // `.sprint-tag--*` is the single status palette, and its missing --blocked is added there.
+
+  .learn-projects-detail__sprint-progress {
+    display: grid;
+    gap: $space-2;
+  }
+
+  // ML-5: the link that turns "8 of 12 tasks complete" into a route to those twelve tasks.
+  .learn-projects-detail__sprint-task-link {
+    color: $clrThird;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      text-decoration: underline;
+    }
+  }
+
+  // Q2: the tasks inside a sprint, closed by default -- same "collapsed until asked for" instinct
+  // as the release accordion above it.
+  .learn-projects-detail__sprint-tasks {
+    display: grid;
+    gap: $space-2;
+    margin-top: $space-1;
+  }
+
+  .learn-projects-detail__sprint-tasks-toggle {
+    justify-self: start;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: $clrThird;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover, &:focus-visible {
+      text-decoration: underline;
+    }
+  }
+
+  .learn-projects-detail__sprint-tasks-list {
+    list-style: none;
+    margin: 0;
+    padding: $space-2;
+    border-radius: $radius-control;
+    background: rgba($bg, 0.6);
+    display: grid;
+    gap: $space-1;
+    max-height: 260px;
+    overflow-y: auto;
+  }
+
+  .learn-projects-detail__sprint-tasks-item {
+    display: grid;
+    grid-template-columns: 8px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: $space-2;
+    padding: 4px 6px;
+    border-radius: $radius-xs;
+
+    &:hover {
+      background: rgba($white, 0.7);
+    }
+  }
+
+  .learn-projects-detail__sprint-tasks-status {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+
+    &--backlog { background: #8a94a6; }
+    &--in-progress { background: #2db7c4; }
+    &--in-review { background: #7c92ff; }
+    &--blocked { background: #cf1322; }
+    &--completed { background: #237804; }
+  }
+
+  .learn-projects-detail__sprint-tasks-title {
+    font-size: 13px;
+    color: $text;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .learn-projects-detail__sprint-progress-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-3;
+    color: $text-muted;
+    font-size: 13px;
+    font-weight: 600;
+
+    strong {
+      color: $text;
+      font-size: 14px;
+    }
+  }
+
+  .learn-projects-detail__sprint-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+    justify-content: flex-end;
+  }
+
+  // Stage 2/5: product backlog + velocity cards, and the title-row header pattern they share.
+  .learn-projects-detail__section-title-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: $space-2;
+    margin-bottom: $space-3;
+  }
+
+  .learn-projects-detail__backlog-card,
+  .learn-projects-detail__velocity-card {
+    border: 1px solid $border;
+    border-radius: $radius-lg;
+    padding: $space-4;
+    background: $bg;
+    box-shadow: $elev-1;
+  }
+
+  // Plain-English explainer under a section heading (e.g. Velocity) — a mentor or student
+  // shouldn't need to already know the term to understand what the numbers below it mean.
+  .learn-projects-detail__section-description {
+    margin: 0 0 $space-3;
+    color: $text-muted;
+    font-size: 13px;
+    line-height: 1.5;
+    max-width: 62ch;
+  }
+
+  .learn-projects-detail__backlog-list,
+  .learn-projects-detail__velocity-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: $space-2;
+  }
+
+  .learn-projects-detail__backlog-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: $space-2;
+    padding: $space-2 $space-3;
+    border: 1px solid $border;
+    border-radius: $radius-md;
+  }
+
+  .learn-projects-detail__backlog-item-main {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $space-2;
+  }
+
+  .learn-projects-detail__backlog-item-title {
+    font-weight: 600;
+    color: $text;
+  }
+
+  .learn-projects-detail__velocity-item {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    padding: $space-2 0;
+    border-bottom: 1px solid $border;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    span {
+      flex: 1;
+      color: $text;
+    }
+
+    strong {
+      font-variant-numeric: tabular-nums;
+
+      small {
+        font-weight: 400;
+        color: $text-muted;
+      }
+    }
+  }
+
+  .learn-projects-detail__sprint-editor {
+    display: grid;
+    gap: $space-5;
+    padding: $space-6;
+    border-radius: $radius-xl;
+    background: linear-gradient(180deg, rgba(#f0fdff, 1) 0%, rgba($bg, 1) 100%);
+    box-shadow: $elev-3;
+  }
+
+  .learn-projects-detail__sprint-mode-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: $space-3;
+    padding: $space-3 $space-4;
+    border-radius: $radius-sm;
+    background: rgba($clrThird, 0.08);
+    border: 1px solid rgba($clrThird, 0.18);
+
+    strong {
+      font-size: 14px;
+      color: $text;
+    }
+
+    span {
+      color: $text-muted;
+      font-size: 13px;
+    }
+  }
+
+  .learn-projects-detail__sprint-editor-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-4;
+
+    // X-1: was `strong { … }`; the editor title is an <h4> now. ML-8 also removed the
+    // descriptive paragraph that used to sit under it, so the bottom margin that separated the
+    // two would now just push the title off-centre against the Cancel link beside it.
+    .learn-projects-detail__section-title {
+      display: block;
+      font-size: 18px;
+      color: $text;
+    }
+  }
+
+  // ML-8: the collapsed-state trigger row that replaces the permanently-expanded editor.
+  .learn-projects-detail__sprint-editor-trigger {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $space-3;
+  }
+
+  .learn-projects-detail__sprint-editor-grid {
+    margin-top: $space-2;
+  }
+
+  .learn-projects-detail__sprint-editor-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $space-3;
+  }
+
+  .learn-projects-detail__sprint-tag {
+    border-radius: 999px;
+    padding-inline: 10px;
+    font-weight: 700;
+  }
+
+  // V119 Release entity panel — sits above the sprint list on the Sprints tab.
+  .learn-projects-detail__releases-panel {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+  }
+
+  .learn-projects-detail__releases-panel-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $space-3;
+    flex-wrap: wrap;
+  }
+
+  .learn-projects-detail__releases-panel-title {
+    margin: 0 0 4px;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .learn-projects-detail__release-form {
+    padding: $space-3;
+    border: 1px solid $border;
+    border-radius: 10px;
+    background: $neutral-100;
+  }
+
+  // Audit fix: the large-project equivalent of releases-panel-head, sitting directly above the
+  // accordion once the standalone "Manage releases" panel is suppressed for that case.
+  .learn-projects-detail__sprint-release-toolbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $space-3;
+    flex-wrap: wrap;
+    margin-bottom: $space-1;
+
+    h4 {
+      margin: 0 0 4px;
+    }
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .learn-projects-detail__release-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+  }
+
+  .learn-projects-detail__release-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: $space-2;
+    padding: $space-2 $space-3;
+    border: 1px solid $border;
+    border-radius: 10px;
+  }
+
+  .learn-projects-detail__release-item-main {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $space-2;
+  }
+
+  .learn-projects-detail__release-item-title {
+    font-weight: 600;
+  }
+
+  // flex-basis:100% forces this onto its own line within the wrapping flex row above (title +
+  // status tag + stats) instead of squeezing in beside them — notes text is a description, not
+  // another stat chip.
+  .learn-projects-detail__release-item-notes {
+    flex-basis: 100%;
+    margin: 0;
+    color: $text-muted;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .learn-projects-detail__release-item-actions {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    flex-wrap: wrap;
+  }
+
+  // Gap-2: "Started/Completed by <name>" line on a sprint card, once it has a mentor to
+  // attribute to (never shown while still PLANNED).
+  .learn-projects-detail__sprint-attribution {
+    font-size: 12px;
+  }
+
+  // AntD's default light "green"/"cyan"/"orange"/"blue" preset tag text fails WCAG AA contrast
+  // at 12px (~3.4:1 against 4.5:1 required) — darken these tones within the module. The
+  // orange/blue overrides were previously missing even though "risk"/"progress" sprints use
+  // those exact presets (sprintStatusMeta), so "At risk"/"In progress" pills kept failing
+  // contrast while "Done"/"Upcoming" had already been fixed.
+  .learn-projects-detail__sprint-tag--completed.ant-tag-green {
+    color: #237804;
+  }
+
+  .learn-projects-detail__sprint-tag--next.ant-tag-cyan {
+    color: #06666a;
+  }
+
+  .learn-projects-detail__sprint-tag--risk.ant-tag-orange {
+    color: #ad6800;
+  }
+
+  // ML-12: contrast overrides existed for completed / next / risk / progress — four of the five
+  // statuses. `blocked`, the ONE that means "this has stopped and someone must act", was the one
+  // left on antd's default red, which is the lowest-contrast tag colour in the set. The most
+  // urgent state was the least readable one.
+  .learn-projects-detail__sprint-tag--blocked.ant-tag-red {
+    color: $status-error;
+    border-color: rgba($status-error, 0.35);
+    background: rgba($status-error, 0.1);
+    font-weight: 600;
+  }
+
+  .learn-projects-detail__sprint-tag--progress.ant-tag-blue {
+    color: #0958d9;
+  }
+
+  .learn-projects-detail__task-banner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr);
+    gap: $space-4;
+    align-items: stretch;
+    padding: $space-5;
+    border-radius: $radius-md;
+    border: 1px solid rgba($clrThird, 0.18);
+    background: linear-gradient(135deg, rgba($clrThird, 0.08), rgba($clrThird, 0.02));
+  }
+
+  .learn-projects-detail__task-banner-copy {
+    display: grid;
+    gap: $space-2;
+    align-content: start;
+
+    strong {
+      font-size: 18px;
+      color: $text;
+    }
+
+    p {
+      margin: 0;
+      color: $text-muted;
+      max-width: 38rem;
+    }
+  }
+
+  // Bug fix: this was nested under .task-banner-copy, so it only ever matched the ONE eyebrow
+  // that actually sits inside that specific banner -- every other usage on this page (Release/
+  // Sprint/Task modal headers, Project overview, Project people, Board action, Task action...)
+  // has a zero-specificity-match <span>, rendering as plain unstyled text instead of the small
+  // bold-caps kicker it was clearly designed to be. Promoted to a standalone rule so the one
+  // definition that exists actually reaches everywhere the class is used.
+  .learn-projects-detail__eyebrow {
+    color: rgba($clrThird, 0.98);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .learn-projects-detail__task-banner-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: $space-3;
+  }
+
+  .learn-projects-detail__task-banner-item {
+    border: 1px solid rgba($border, 0.9);
+    border-radius: $radius-sm;
+    background: rgba($white, 0.9);
+    padding: $space-3;
+    display: grid;
+    gap: $space-2;
+    align-content: start;
+
+    span {
+      color: $text-muted;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    strong {
+      color: $text;
+      font-size: 22px;
+      line-height: 1;
+    }
+  }
+
+  .learn-projects-detail__task-filter-card {
+    border-color: rgba($clrThird, 0.18);
+    background: linear-gradient(180deg, rgba($white, 1), rgba($bg, 0.96));
+    box-shadow: $elev-3;
+  }
+
+  .learn-projects-detail__task-toolbar {
+    display: grid;
+    grid-template-columns: minmax(240px, 1.4fr) repeat(4, minmax(150px, 1fr)) auto;
+    gap: $space-3;
+    align-items: center;
+    margin-top: 12px;
+
+    .ant-input,
+    .ant-select {
+      width: 100%;
+    }
+
+    .ant-input,
+    .ant-select-selector {
+      min-height: 42px !important;
+      border-radius: 12px !important;
+    }
+  }
+
+  .learn-projects-detail__task-toolbar-note {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    color: $text-muted;
+    flex-wrap: wrap;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 34px;
+      height: 26px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid rgba($clrThird, 0.2);
+      background: rgba($clrThird, 0.08);
+      color: $clrThird;
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    p {
+      margin: 0;
+      font-size: 13px;
+    }
+  }
+
+  .learn-projects-detail__task-card {
+    border: 1px solid rgba($border, 0.92);
+    border-radius: $radius-md;
+    background: linear-gradient(180deg, rgba($white, 1), rgba($bg, 0.99));
+    padding: $space-4;
+    display: grid;
+    gap: $space-3;
+    position: relative;
+    overflow: hidden;
+    box-shadow: $elev-2;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: rgba($clrThird, 0.28);
+    }
+  }
+
+  .learn-projects-detail__task-card--blocked::before {
+    background: rgba(255, 77, 79, 0.7);
+  }
+
+  .learn-projects-detail__task-card--review::before {
+    background: rgba(250, 173, 20, 0.75);
+  }
+
+  .learn-projects-detail__task-card--done::before {
+    background: rgba(82, 196, 26, 0.68);
+  }
+
+  .learn-projects-detail__task-card--progress::before {
+    background: rgba($clrThird, 0.78);
+  }
+
+  .learn-projects-detail__task-card-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: $space-5;
+    align-items: start;
+  }
+
+  .learn-projects-detail__task-copy {
+    display: grid;
+    gap: $space-2;
+    min-width: 0;
+
+    p {
+      margin: 0;
+      color: $text-muted;
+    }
+  }
+
+  .learn-projects-detail__task-title-row {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    flex-wrap: wrap;
+
+    strong {
+      color: $text;
+      font-size: 16px;
+    }
+  }
+
+  .learn-projects-detail__task-sep {
+    color: $border;
+    font-weight: 700;
+    margin: 0 2px;
+  }
+
+  .learn-projects-detail__task-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+    align-items: center;
+  }
+
+  .learn-projects-detail__task-summary {
+    margin: 0;
+    color: $text-muted;
+    line-height: 1.5;
+    max-width: 58rem;
+  }
+
+  .learn-projects-detail__task-actions {
+    display: flex;
+    gap: $space-2;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .learn-projects-detail__task-side {
+    display: grid;
+    gap: $space-3;
+    justify-items: end;
+    align-content: start;
+    min-width: 160px;
+    padding-left: 16px;
+    border-left: 1px solid rgba($border, 0.9);
+  }
+
+  .learn-projects-detail__task-status-select {
+    min-width: 170px;
+  }
+
+  .learn-projects-detail__task-status-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 92px;
+    padding: $space-2 $space-3;
+    border-radius: 999px;
+    background: rgba($clrThird, 0.08);
+    border: 1px solid rgba($clrThird, 0.16);
+    color: $text;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .learn-projects-detail__task-modal,
+  .learn-projects-detail__task-modal-wrap {
+    .ant-modal-content {
+      border: 1px solid rgba($clrThird, 0.12);
+      border-radius: $radius-2xl;
+      overflow: hidden;
+      box-shadow: $elev-4;
+      background:
+        radial-gradient(circle at top right, rgba($clrThird, 0.04), transparent 24%),
+        linear-gradient(180deg, rgba($white, 1) 0%, rgba($bg, 0.985) 100%);
+    }
+
+    .ant-modal-header {
+      border-bottom: 1px solid rgba($border, 0.72);
+      padding: 20px 24px 18px;
+      margin-bottom: 0;
+      background: transparent;
+    }
+
+    .ant-modal-body {
+      padding: 20px 24px 24px;
+    }
+
+    .ant-modal-close {
+      top: 16px;
+      inset-inline-end: 16px;
+      color: rgba($text, 0.56);
+
+      &:hover {
+        color: $text;
+        background: rgba($clrThird, 0.08);
+      }
+    }
+  }
+
+  .learn-projects-detail__task-modal-shell {
+    display: grid;
+    gap: $space-5;
+    min-width: 0;
+  }
+.learn-projects-detail__task-modal-simple {
+  display: grid;
+  gap: $space-5;
+  min-width: 0;
+}
+
+.learn-projects-detail__task-modal-simple-head {
+  display: grid;
+  gap: $space-4;
+  padding: $space-6 $space-6;
+  border: 1px solid rgba($clrThird, 0.12);
+  border-radius: $radius-xl;
+  background:
+    linear-gradient(180deg, rgba($white, 1), rgba($clrThird, 0.03));
+  box-shadow: $elev-2;
+
+  strong {
+    display: block;
+    margin-top: 2px;
+    color: $text;
+    font-size: 24px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    margin: 0;
+    max-width: 72ch;
+    color: $text-muted;
+    line-height: 1.75;
+  }
+}
+
+.learn-projects-detail__task-modal-simple-kicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3;
+  align-items: center;
+
+  span {
+    color: $text-muted;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+}
+
+.learn-projects-detail__task-modal-simple-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+}
+
+.learn-projects-detail__task-modal-simple-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $space-3;
+}
+
+.learn-projects-detail__task-modal-simple-card {
+  display: grid;
+  gap: $space-1;
+  padding: $space-4 $space-4;
+  border: 1px solid rgba($border, 0.8);
+  border-radius: $radius-md;
+  background: rgba($white, 0.98);
+  box-shadow: $elev-2;
+
+  span {
+    color: $text-muted;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  strong {
+    color: $text;
+    font-size: 15px;
+    line-height: 1.35;
+  }
+}
+
+.learn-projects-detail__task-modal-simple-panel {
+  display: grid;
+  gap: $space-4;
+  padding: $space-5 $space-6;
+  border: 1px solid rgba($border, 0.85);
+  border-radius: $radius-xl;
+  background: rgba($white, 0.98);
+  box-shadow: $elev-2;
+}
+
+.learn-projects-detail__task-modal-simple-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3;
+}
+
+.learn-projects-detail__task-modal-simple-form-wrap {
+  display: grid;
+  gap: $space-4;
+}
+
+.learn-projects-detail__task-modal-simple-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $space-3 $space-4;
+
+  .ant-form-item {
+    margin-bottom: 0;
+  }
+}
+
+  .learn-projects-detail__task-modal-shell .learn-projects-detail__card {
+    background:
+      linear-gradient(180deg, rgba($white, 1), rgba($bg, 0.98));
+    box-shadow: $elev-2;
+  }
+
+  .learn-projects-detail__task-modal-shell .learn-projects-detail__section-head {
+    margin-bottom: 2px;
+  }
+
+  .learn-projects-detail__task-modal-shell .ant-tag {
+    border-radius: 999px;
+    font-weight: 600;
+  }
+
+  .learn-projects-detail__task-modal-simple {
+    display: grid;
+    gap: $space-5;
+    min-width: 0;
+  }
+
+  .learn-projects-detail__task-modal-simple-head {
+    display: grid;
+    gap: $space-4;
+    padding: $space-6 $space-6;
+    border: 1px solid rgba($clrThird, 0.12);
+    border-radius: $radius-xl;
+    background:
+      linear-gradient(180deg, rgba($white, 1), rgba($clrThird, 0.03));
+    box-shadow: $elev-2;
+
+    strong {
+      display: block;
+      margin-top: 2px;
+      color: $text;
+      font-size: 24px;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      margin: 0;
+      max-width: 72ch;
+      color: $text-muted;
+      line-height: 1.75;
+    }
+  }
+
+  .learn-projects-detail__task-modal-simple-kicker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-3;
+    align-items: center;
+
+    span {
+      color: $text-muted;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+  }
+
+  .learn-projects-detail__task-modal-simple-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+  }
+
+  .learn-projects-detail__task-modal-simple-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $space-3;
+  }
+
+  .learn-projects-detail__task-modal-simple-card {
+    display: grid;
+    gap: $space-1;
+    padding: $space-4 $space-4;
+    border: 1px solid rgba($border, 0.8);
+    border-radius: $radius-md;
+    background: rgba($white, 0.98);
+    box-shadow: $elev-2;
+
+    span {
+      color: $text-muted;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    strong {
+      color: $text;
+      font-size: 15px;
+      line-height: 1.35;
+    }
+  }
+
+  .learn-projects-detail__task-modal-simple-panel {
+    display: grid;
+    gap: $space-4;
+    padding: $space-5 $space-6;
+    border: 1px solid rgba($border, 0.85);
+    border-radius: $radius-xl;
+    background: rgba($white, 0.98);
+    box-shadow: $elev-2;
+  }
+
+  .learn-projects-detail__task-modal-simple-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-3;
+  }
+
+  .learn-projects-detail__task-modal-simple-form-wrap {
+    display: grid;
+    gap: $space-4;
+  }
+
+  .learn-projects-detail__task-modal-simple-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $space-3 $space-4;
+
+    .ant-form-item {
+      margin-bottom: 0;
+    }
+  }
+
+  .learn-projects-detail__meeting-link-block {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: $space-5;
+    align-items: center;
+  }
+
+  .learn-projects-detail__meeting-link-url {
+    margin-bottom: 0;
+    margin-top: 6px;
+    color: $text;
+    word-break: break-all;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .learn-projects-detail__meeting-link-actions {
+    display: flex;
+    gap: $space-2;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .learn-projects-detail__meetings {
+    display: grid;
+    gap: $space-5;
+  }
+
+  .learn-projects-detail__meetings-form,
+  .learn-projects-detail__meetings-list {
+    border-color: rgba($border, 0.9);
+    background: rgba($white, 0.98);
+    box-shadow: $elev-2;
+  }
+
+  .learn-projects-detail__people-meetings {
+    display: grid;
+    gap: $space-5;
+    padding: $space-6;
+    border-radius: $radius-2xl;
+    border: 1px solid rgba($clrThird, 0.16);
+    background:
+      radial-gradient(circle at top right, rgba($clrThird, 0.1), transparent 38%),
+      linear-gradient(180deg, rgba($white, 0.99), rgba($bg, 0.96));
+    box-shadow: $elev-3;
+  }
+
+  .learn-projects-detail__people-meetings .learn-projects-detail__section-head {
+    align-items: flex-start;
+    gap: $space-6;
+    margin-bottom: 0;
+
+    > div {
+      display: grid;
+      gap: $space-2;
+    }
+
+    // X-1: was `strong { … }`; the title is an <h3> here now.
+    .learn-projects-detail__section-title {
+      font-size: 18px;
+      line-height: 1.2;
+    }
+
+    .learn-projects-detail__section-copy {
+      max-width: 560px;
+      margin: 0;
+      line-height: 1.55;
+    }
+
+    .ant-btn {
+      margin-top: 6px;
+      box-shadow: 0 12px 22px rgba($clrThird, 0.16);
+    }
+  }
+
+  .learn-projects-detail__meeting-summary {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: $space-5;
+    padding: 24px 26px;
+    border-radius: $radius-2xl;
+    border: 1px solid rgba($clrThird, 0.14);
+    background:
+      linear-gradient(135deg, rgba($clrThird, 0.07), rgba($white, 0.985) 38%),
+      linear-gradient(180deg, rgba($white, 0.98), rgba($bg, 0.95));
+    box-shadow:
+      inset 0 1px 0 rgba($white, 0.72),
+      0 14px 32px rgba($text, 0.05);
+  }
+
+  .learn-projects-detail__meeting-summary-main {
+    display: grid;
+    gap: $space-2;
+    min-width: 0;
+    flex: 1;
+
+    .learn-projects-detail__meeting-summary-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: $space-2;
+      width: fit-content;
+      padding: 6px 11px;
+      border-radius: 999px;
+      background: rgba($clrThird, 0.1);
+      color: darken($clrThird, 10%);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+
+      .anticon {
+        font-size: 13px;
+      }
+    }
+
+    strong {
+      font-size: 19px;
+      line-height: 1.3;
+      color: $text;
+    }
+
+    p {
+      margin: 0;
+      color: $text-muted;
+      line-height: 1.55;
+    }
+  }
+
+  .learn-projects-detail__meeting-summary-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+  }
+
+  .learn-projects-detail__meeting-summary-actions {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-2;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+
+    .ant-btn {
+      min-width: 84px;
+    }
+  }
+
+  .learn-projects-detail__people-meetings-history {
+    display: grid;
+    // PM-25: was `gap: 22px` (off-scale) with the label below pulled back by `margin-bottom: -10px`
+    // to fake a tighter gap under it — two mechanisms fighting, and any change to this gap
+    // silently broke the label's spacing. One on-scale gap, no negative margin.
+    gap: $space-3;
+
+    // PM-26: was a blanket `strong { font-size: 14px }` descendant selector written for the
+    // section label, which also matched every past meeting's TITLE (and would silently restyle
+    // any <strong> added to a history card later). Scoped to the label it was meant for.
+    > .learn-projects-detail__people-meetings-history-label strong {
+      color: $text;
+      font-size: 14px;
+    }
+  }
+
+  .learn-projects-detail__people-meetings-history-label {
+    color: $text-muted;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .learn-projects-detail__people-meetings-history-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-3;
+
+    span {
+      color: $text-muted;
+      font-size: 12px;
+      font-weight: 600;
+    }
+  }
+
+  // PM-2: This base rule did not exist. Only `--compact`, `--clickable`, `:hover` and the child
+  // element rules were defined, so the element defaulted to `display: block` and BOTH of
+  // `--compact`'s layout declarations (`grid-template-columns`, `gap`) were inert — the calendar
+  // icon, the body and the action buttons stacked vertically instead of forming a row on every
+  // past-meeting card. `--compact`'s `border-color` was dead too, since no `border-style`/`width`
+  // was ever set, so the cards rendered borderless.
+  //
+  // PM-3: `position: relative` here is also what anchors the `--clickable::after` "Click to join"
+  // badge. Without it that badge resolved against whatever ancestor happened to be positioned,
+  // landing somewhere up in the page chrome.
+  .learn-projects-detail__meeting-card {
+    position: relative;
+    display: grid;
+    border: 1px solid $border;
+    border-radius: $radius-md;
+    background: $bg;
+  }
+
+  .learn-projects-detail__meeting-card--compact {
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: $space-5;
+    padding: $space-5 $space-5;
+    border-radius: $radius-lg;
+    border-color: rgba($clrThird, 0.12);
+    background:
+      linear-gradient(180deg, rgba($white, 0.995), rgba($bg, 0.965));
+    box-shadow: $elev-2;
+  }
+
+  // PM-12: `meetings-list-body` was referenced in the JSX but had no rule at all, so the history
+  // cards were flush-stacked with no gap while every sibling list in the module is spaced.
+  .learn-projects-detail__meetings-list-body {
+    display: grid;
+    gap: $space-3;
+  }
+
+  // PM-19 / PM-3: `.meeting-card--clickable` is gone from the markup and its ~44 lines of rules
+  // are deleted with it.
+  //
+  // The card used to be `role="button"` with three real buttons nested inside it, each carrying
+  // a stopPropagation call to stop its own click from also firing the card's — nested interactive
+  // controls inside a button are invalid, unreachable in the expected order by keyboard, and
+  // ambiguous to a screen reader. Joining is now an explicit "Join" button like every other
+  // action on the card.
+  //
+  // That also retires the `::after` "Click to join" badge (PM-3), which was `position: absolute`
+  // with no positioned ancestor and landed wherever the nearest positioned element happened to
+  // be. The base `.meeting-card` rule added for PM-2 still carries `position: relative`, so
+  // anything positioned inside these cards in future resolves against the card itself.
+
+  
+  .learn-projects-detail__meeting-card:hover {
+    transform: translateY(-1px);
+    border-color: rgba($clrThird, 0.25);
+    box-shadow: $elev-3;
+  }
+
+  .learn-projects-detail__meeting-card-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: $radius-sm;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba($clrThird, 0.08);
+    color: rgba($clrThird, 0.92);
+    font-size: 18px;
+  }
+
+  .learn-projects-detail__meeting-card-body {
+    min-width: 0;
+    display: grid;
+    gap: $space-3;
+  }
+
+  // PM-24: no wrapping anywhere on meeting titles or their date lines — an unbroken token
+  // overflowed the card. `flex-wrap` also matters here: the title block and the status tag are
+  // flex siblings, and without it a long title pushed the tag off the row.
+  .learn-projects-detail__meeting-card-head {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: $space-3;
+    align-items: flex-start;
+
+    > div {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    strong {
+      display: block;
+      color: $text;
+      font-size: 16px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    p {
+      margin: 6px 0 0;
+      color: $text-muted;
+      line-height: 1.55;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .learn-projects-detail__meeting-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+  }
+
+  .learn-projects-detail__meeting-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+    justify-content: flex-end;
+  }
+
+  .learn-projects-detail__people-meetings {
+    .learn-projects-detail__meeting-summary + .learn-projects-detail__people-meetings-history {
+      margin-top: 22px;
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .learn-projects-detail__task-comment-card {
+    border: 1px solid rgba($border, 0.82);
+    border-radius: $radius-md;
+    padding: 14px 15px;
+    background:
+      linear-gradient(180deg, rgba($white, 0.98), rgba($bg, 0.96));
+    box-shadow: $elev-2;
+    display: grid;
+    gap: $space-3;
+  }
+
+.learn-projects-detail__task-comment-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: $space-3;
+  align-items: center;
+}
+
+.learn-projects-detail__task-comment-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, rgba($clrThird, 0.15), rgba($clrThird, 0.08));
+  box-shadow: inset 0 1px 0 rgba($white, 0.75), 0 4px 14px rgba($clrThird, 0.08);
+  color: $clrThird;
+  font-weight: 800;
+}
+
+  .learn-projects-detail__task-comment-meta {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+
+    strong {
+      color: $text;
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
+    span {
+      color: $text-muted;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+  }
+
+.learn-projects-detail__task-comment-message {
+  margin: 0;
+  color: $text;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+  .learn-projects-detail__task-comment-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+  }
+
+  .learn-projects-detail__task-readonly {
+    border: 1px solid rgba($border, 0.86);
+    border-radius: $radius-lg;
+    background:
+      linear-gradient(180deg, rgba($white, 1), rgba($bg, 0.98));
+    padding: $space-5;
+    box-shadow: $elev-2;
+    display: grid;
+    gap: $space-4;
+  }
+
+  .learn-projects-detail__task-readonly-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-3;
+    flex-wrap: wrap;
+
+    strong {
+      color: $text;
+      font-size: 16px;
+      line-height: 1.25;
+    }
+  }
+
+  .learn-projects-detail__task-readonly-copy {
+    color: $text-muted;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  // #9: six lanes squeezed into a fixed-width `fr` grid meant every column shrank as content grew
+  // (49 sprints' worth of cards in one project left almost no room to read a title or a due date).
+  // Horizontal scroll — the same answer the ≤767px board below already used, now brought to
+  // desktop too — lets each lane keep a real working width regardless of how many lanes are
+  // showing. dnd-kit's DragOverlay/autoScroll (on by default, no extra config) already scrolls
+  // the nearest scrollable ancestor when a drag nears its edge, which is this container.
+  .learn-projects-detail__board {
+    display: flex;
+    align-items: start;
+    gap: $space-3;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    padding-bottom: $space-2;
+    // Reversed on direct request: this was previously a deliberate visible-but-unobtrusive
+    // scrollbar (six lanes wide enough to be worth scrolling should show there's more to the
+    // right). Hidden now, same as the release roadmap strip -- still fully scrollable
+    // (trackpad/touch/shift+wheel/keyboard), just without the native scrollbar chrome.
+    scrollbar-width: none; // Firefox
+    -ms-overflow-style: none; // legacy Edge/IE
+
+    &::-webkit-scrollbar {
+      display: none; // Chrome/Safari/new Edge
+    }
+  }
+
+  .learn-projects-detail__board-col {
+    // Wide enough that a card's title, priority tag and due date sit on their natural lines
+    // instead of wrapping into the cramped multi-line mess a shrunk `fr` column forced -- this is
+    // the actual width fix; the container above just makes room for N of them without squeezing.
+    flex: 0 0 320px;
+    width: 320px;
+  }
+
+  // The Unscheduled (Backlog) column is a holding pen, not a place work actively happens -- it
+  // doesn't need the same width as the five workflow lanes.
+  .learn-projects-detail__board-col--unscheduled {
+    flex-basis: 260px;
+    width: 260px;
+  }
+
+  // Filtering the board to a single lane: let it fill the available width instead of sitting at a
+  // fixed 320px with the rest of the (now-empty) scroll track beside it.
+  .learn-projects-detail__board.learn-projects-detail__board--single .learn-projects-detail__board-col {
+    flex: 1 1 auto;
+    width: auto;
+    max-width: 640px;
+  }
+
+  // While a card is in flight, suppress the columns' hover lift. It isn't just cosmetic:
+  // getBoundingClientRect() includes transforms, so a 1px translateY on whichever column the
+  // pointer happens to be over shifts that column's measured drop rect mid-drag and feeds
+  // collision detection a target that moves as you approach it.
+  .learn-projects-detail__board--dragging {
+    .learn-projects-detail__board-col:hover {
+      transform: none;
+      box-shadow: $elev-2;
+    }
+
+    // Same reasoning for the cards: a hover lift on a sibling while it's being displaced by the
+    // sort competes with the transform dnd-kit is already driving on it.
+    .learn-projects-detail__board-card:hover {
+      transform: none;
+    }
+  }
+
+  // BD-22: the whole board FRAME (hero, actions, filter bar, columns, lane heads, lane bodies)
+  // was spaced with hand-picked 10/12/14/16px values while every card INTERIOR in this same file
+  // already used the $space-* tokens. Two spacing systems in one component means nothing lines up
+  // across the boundary between them. The frame is now on the same 4pt scale as its contents.
+  .learn-projects-detail__board-hero {
+    display: grid;
+    gap: $space-4;
+  }
+
+  .learn-projects-detail__board-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: $space-2;
+    flex-wrap: wrap;
+  }
+
+  // BD-16: when there is no submission action to offer, the explanation renders as this note
+  // instead of as a permanently-disabled button.
+  .learn-projects-detail__board-submission-note {
+    margin: 0;
+    color: $text-muted;
+    font-size: 13px;
+    line-height: 1.5;
+    text-align: right;
+    max-width: 42ch;
+  }
+
+  // BD-Scale: tells a mentor the board is showing the active sprint + backlog, not the
+  // project's full task history, so a narrowed view doesn't read as "the rest is missing."
+  .learn-projects-detail__board-scope-note {
+    margin: $space-2 0 0;
+    color: $text-muted;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  // Lives inside the Filters Drawer now (a fixed ~320px column), not a full-width row above the
+  // board — so this is a simple vertical stack of groups rather than a flex-wrap row that has to
+  // reflow around the Lane chips' width. The Drawer itself already provides the surface/border,
+  // so this no longer needs its own background or padding.
+  .learn-projects-detail__board-filters {
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
+  }
+
+  .learn-projects-detail__board-filters-group {
+    display: grid;
+    gap: $space-2;
+    align-content: start;
+    min-width: 0;
+  }
+
+  .learn-projects-detail__board-filters-label {
+    color: $text-muted;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .learn-projects-detail__board-filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+    min-width: 0;
+  }
+
+  // BD-9: the "saving your change" status that replaces `cursor: wait` as the board's only
+  // feedback during a drop's four sequential round trips.
+  .learn-projects-detail__board-saving {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2;
+    color: $text-muted;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  // BD-15: the selected lane chip used antd's `type="primary"` solid brand fill — identical to
+  // the page's real CTA. This is the quieter selected state that replaces it: legible, clearly
+  // "on", and unmistakably not a call to action.
+  .learn-projects-detail__board-filter-chip--active.ant-btn {
+    border-color: $clrThird;
+    background: rgba($clrThird, 0.12);
+    color: darken($clrThird, 16%);
+    font-weight: 600;
+
+    &:hover,
+    &:focus {
+      border-color: $clrThird;
+      background: rgba($clrThird, 0.18);
+      color: darken($clrThird, 20%);
+    }
+  }
+
+  // BD-8 / X-8: the board-level empty state, which now distinguishes "no tasks exist" from
+  // "your filters matched nothing" and carries the matching action for each.
+  .learn-projects-detail__board-empty {
+    padding: $space-4;
+    border: 1px dashed rgba($border, 0.9);
+    border-radius: $radius-lg;
+    background: rgba($bg, 0.7);
+  }
+
+  // BD-25: the undo affordance inside the post-move toast.
+  .learn-projects-detail__board-undo {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-1;
+
+    .ant-btn-link {
+      padding: 0 4px;
+      height: auto;
+      font-weight: 700;
+    }
+  }
+
+  .learn-projects-detail__board-filters .ant-select {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .learn-projects-detail__board-filters .ant-btn {
+    border-radius: 999px;
+  }
+
+  // Matches the Lane chips' active-selection treatment (primary-color border) for the
+  // Priority/Assignee filter Selects when a non-default value is chosen, so a filter left
+  // applied after navigating away and back stays visually obvious.
+  .learn-projects-detail__board-filter-select--active .ant-select-selector {
+    border-color: $clrThird !important;
+    box-shadow: 0 0 0 1px rgba($clrThird, 0.2) !important;
+  }
+
+  // Safety re-audit: this same class is also applied directly to the "Filters" trigger Button
+  // (not a Select) when at least one filter is active -- the rule above only ever matched a
+  // .ant-select-selector descendant, so on the Button it silently did nothing. Same visual
+  // language (tinted border) applied to the button itself instead of a descendant.
+  .learn-projects-detail__board-filter-select--active.ant-btn {
+    border-color: $clrThird;
+    box-shadow: 0 0 0 1px rgba($clrThird, 0.2);
+    color: darken($clrThird, 16%);
+  }
+
+  .learn-projects-detail__board-col {
+    border: 1px solid rgba($clrThird, 0.16);
+    border-radius: $radius-lg;
+    // BD-22: was a bare `14px`.
+    padding: $space-3;
+    background: linear-gradient(180deg, rgba($clrThird, 0.04), rgba($white, 1) 28%);
+    display: grid;
+    gap: $space-3;
+    align-content: start;
+    min-height: 260px;
+    // Decelerate curve rather than plain `ease` — the accepting-lane highlight lands crisply
+    // instead of easing in and out symmetrically, which is what makes the target feel responsive
+    // to the card arriving rather than lazily catching up to it.
+    transition:
+      border-color $motion-base $ease-out,
+      background $motion-base $ease-out,
+      box-shadow $motion-base $ease-out,
+      transform $motion-base $ease-out;
+    box-shadow: $elev-2;
+  }
+
+  .learn-projects-detail__board-col:hover {
+    transform: translateY(-1px);
+    border-color: rgba($clrThird, 0.28);
+    box-shadow: $elev-3;
+  }
+
+  // BD-17: this was `position: sticky; top: 0` with a blurred translucent background and a bare
+  // `z-index: 1`. Because no ancestor scrolled, it stuck to the VIEWPORT — so scrolling a long
+  // board detached all five lane headers from their columns and floated them over whatever
+  // happened to be beneath, while the uncoordinated z-index put them in an undefined stacking
+  // relationship with the app's own chrome. Now that `board-col-body` is itself the scroll
+  // container (BD-4), the header sits permanently above the scrolling region by construction and
+  // needs neither sticky positioning nor a z-index to stay in place.
+  .learn-projects-detail__board-col-head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    // BD-22: was `gap: 10px` / `padding: 2px 2px 0` — hand-picked values off the module's own
+    // 4pt scale, in a file where every card interior already uses the $space-* tokens.
+    gap: $space-2;
+    padding-bottom: $space-2;
+    border-bottom: 1px solid rgba($border, 0.6);
+    background: transparent;
+  }
+
+  // The accepting-target state. Previously a flat border/background swap that was easy to miss
+  // mid-drag; this reads as the lane genuinely opening up to receive the card.
+  .learn-projects-detail__board-col--over {
+    border-color: rgba($clrThird, 0.9);
+    background: rgba($clrThird, 0.07);
+    box-shadow:
+      0 0 0 2px rgba($clrThird, 0.16) inset,
+      0 14px 34px rgba($clrThird, 0.14);
+  }
+
+  // A lane a learner cannot drop into (e.g. Completed) — no accepting highlight is applied even
+  // while a card is dragged over it, and this dims the column so the restriction is visible
+  // before the user commits to the drag gesture, not only after the drop is rejected.
+  .learn-projects-detail__board-col--disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .learn-projects-detail__board-col-head strong {
+    font-size: 14px;
+    letter-spacing: 0.01em;
+  }
+
+  .learn-projects-detail__board-col-head .ant-tag {
+    margin: 0;
+    border-radius: 999px;
+    padding: 0 10px;
+    font-weight: 600;
+    // Lane counts change constantly as cards are dragged between columns. Tabular figures plus a
+    // reserved min-width stop the badge from resizing (and nudging the lane title) on every move.
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+    min-width: 28px;
+    text-align: center;
+  }
+
+  // BD-4: the lane body had no height bound and no scroll container, so a lane simply grew.
+  // Fifty tasks in one lane produced roughly 6,000px of page — one enormously tall column beside
+  // four short empty ones, with the board's own header scrolled far out of sight and no way to
+  // compare lanes. Capping each lane to a viewport-relative height turns the board back into a
+  // board: five columns of equal height that scroll independently.
+  //
+  // `overscroll-behavior: contain` stops a lane that has hit its end from chaining the scroll on
+  // to the page, which is what makes scrolling a lane feel like scrolling a lane.
+  .learn-projects-detail__board-col-body {
+    display: flex;
+    flex-direction: column;
+    // BD-22: was `gap: 10px`, off-scale.
+    gap: $space-2;
+    max-height: min(62vh, 720px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    // Room for the card focus ring and hover lift so neither is clipped by the new scroll box.
+    padding: 4px 4px $space-2;
+    margin: 0 -4px;
+    // Scrollbar hidden entirely — the lane still scrolls, there is just no visible track/thumb.
+    // `scrollbar-width: thin` alone (the previous rule) left Firefox's system scrollbar colour in
+    // charge, which on several OS themes renders as solid black; `none` removes it outright rather
+    // than trying to recolour something the page doesn't fully control.
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  // The "No tasks" state for an empty lane. This doubles as the visible drop affordance when a
+  // card is dragged toward an empty column, so it gets a little more presence than a plain label:
+  // a minimum height that matches roughly one card, so an empty lane still reads as a place a
+  // card can go rather than as collapsed dead space.
+  .learn-projects-detail__board-col-body .learn-projects-detail__muted {
+    margin: 4px 0 0;
+    padding: $space-5 $space-4;
+    min-height: 84px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed rgba($border, 0.9);
+    border-radius: $radius-md;
+    background: rgba($bg, 0.9);
+    text-align: center;
+    font-size: 13px;
+    transition: border-color $motion-base $ease-out, background $motion-base $ease-out;
+  }
+
+  // When the lane being hovered during a drag is empty, brighten its placeholder so the target
+  // is unmistakable — otherwise an empty column gives almost no feedback that it will accept
+  // the card, which is exactly when the user most needs the reassurance.
+  .learn-projects-detail__board-col--over .learn-projects-detail__board-col-body .learn-projects-detail__muted {
+    border-color: rgba($clrThird, 0.55);
+    background: rgba($clrThird, 0.06);
+  }
+
+  .learn-projects-detail__board-card {
+    border: 1px solid rgba($border, 0.85);
+    border-radius: $radius-md;
+    padding: $space-3;
+    color: $text-muted;
+    background: $white;
+    display: grid;
+    gap: $space-2;
+    box-shadow: $elev-2;
+    transition: transform $motion-base $ease-out, box-shadow $motion-base $ease-out, border-color $motion-base $ease-out;
+
+    // These cards are keyboard-focusable (they carry role="button" + tabIndex so a task can be
+    // opened without a mouse), which makes a visible focus ring mandatory, not optional — a
+    // focusable control the user can't see is worse than one they can't reach. Outline rather
+    // than box-shadow so it survives forced-colors/high-contrast mode, and :focus-visible so a
+    // mouse click doesn't leave a ring sitting on the card afterwards.
+    &:focus-visible {
+      outline: 2px solid rgba($clrThird, 0.7);
+      outline-offset: 2px;
+      border-color: rgba($clrThird, 0.4);
+    }
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: $elev-3;
+      border-color: rgba($clrThird, 0.28);
+    }
+
+    strong {
+      color: $text;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    span {
+      font-size: 12px;
+    }
+  }
+
+  .learn-projects-detail__board-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    // BD-22: was `gap: 10px`.
+    gap: $space-2;
+  }
+
+  .learn-projects-detail__board-card-title {
+    display: flex;
+    align-items: flex-start;
+    // BD-22: was `gap: 8px` as a raw literal; same value, now on the token.
+    gap: $space-2;
+    min-width: 0;
+    flex: 1 1 auto;
+
+    // BD-7: with the 40px decorative handle gone, the title's own wrapper carries the min-width:0
+    // that lets the clamp below actually compute against the card width. The title previously had
+    // roughly 148px of a 188px row and clamped at ~14 characters per line; it now has the full row.
+    .learn-projects-detail__board-card-title-text {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    strong {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      overflow-wrap: anywhere;
+      margin-bottom: 2px;
+    }
+
+    .learn-projects-detail__board-priority-chip {
+      margin: 0;
+      border-radius: 999px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    span {
+      color: $text-muted;
+      font-size: 12px;
+    }
+  }
+
+  // BD-12: wraps the single avatar and its "+N" overflow count so a multi-assignee task is
+  // visibly different from a single-assignee one.
+  .learn-projects-detail__board-card-assignee {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-1;
+    flex: 0 0 auto;
+  }
+
+  .learn-projects-detail__board-card-assignee-more {
+    font-size: 11px;
+    font-weight: 700;
+    color: $text-muted;
+    font-variant-numeric: tabular-nums;
+  }
+
+  // BD-11: the blocker reason, promoted out of a hover-only Tooltip into a persistent inline
+  // strip. Given its own colour (danger, not the `volcano` it used to share with High priority)
+  // and its own row so it can wrap to as many lines as the reason needs.
+  .learn-projects-detail__board-card-blocker {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-2;
+    padding: 6px $space-2;
+    border-radius: $radius-xs;
+    border: 1px solid rgba($status-error, 0.22);
+    background: rgba($status-error, 0.07);
+    color: $status-error;
+    font-size: 12px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+
+    .anticon {
+      margin-top: 2px;
+      flex: 0 0 auto;
+    }
+  }
+
+  .learn-projects-detail__drag-handle {
+    appearance: none;
+    border: 0;
+    background: rgba($clrThird, 0.08);
+    padding: 0;
+    margin: 0;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    cursor: grab;
+    flex: 0 0 auto;
+    touch-action: none;
+    user-select: none;
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    &:focus-visible {
+      outline: 2px solid rgba($clrThird, 0.38);
+      outline-offset: 2px;
+      background: rgba($clrThird, 0.14);
+    }
+  }
+
+  // BD-18: `--static` and `-icon` were the decorative board-card handle, removed from the markup.
+  // Both rules are deleted rather than left behind — the resources list uses the real interactive
+  // `.drag-handle` above, and nothing else referenced these.
+
+  .learn-projects-detail__board-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+    align-items: center;
+  }
+
+  // Sprint and due-date used to be full AntD Tag pills (border, background, shadow) sitting
+  // right next to the priority chip and the assignee's own "Assigned to Name" line — three visual
+  // weights competing for attention on one small card. They're informational, not alerts (unlike
+  // the blocker/removed-from-template chips below), so they render as plain icon+text instead.
+  .learn-projects-detail__board-card-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: $text-muted;
+    font-size: 12px;
+
+    .anticon {
+      font-size: 12px;
+      flex: 0 0 auto;
+      color: rgba($text-muted, 0.75);
+    }
+  }
+
+  // Card carries a learner submission link (see BoardCardBody).
+  .learn-projects-detail__board-card-meta-item--submitted {
+    color: #047857;
+    font-weight: 600;
+
+    .anticon {
+      color: #059669;
+    }
+  }
+
+  .learn-projects-detail__board-card-meta-item--overdue {
+    color: $status-error;
+    font-weight: 600;
+
+    .anticon {
+      color: $status-error;
+    }
+  }
+
+  .learn-projects-detail__board-card-meta-item--due-soon {
+    color: sr-text(risk);
+    font-weight: 600;
+
+    .anticon {
+      color: $status-warning;
+    }
+  }
+
+  // Base treatment shared by every chip in the board card's meta row (sprint/due already have
+  // their own dedicated classes above) — the blocker ("Requires attention") and
+  // "Removed from template" tags previously had no className and fell back to AntD's default
+  // square-cornered Tag, so the same row could show rounded pills next to sharp rectangles.
+  .learn-projects-detail__board-chip {
+    margin: 0;
+    border-radius: 999px;
+    font-weight: 600;
+    box-shadow: $elev-1;
+
+    &.ant-tag {
+      padding-inline: 10px;
+      padding-block: 2px;
+    }
+  }
+
+  .learn-projects-detail__board-card-assignees {
+    display: none;
+  }
+
+  .learn-projects-detail__board-card-assignee-avatar {
+    flex: 0 0 auto;
+    border: 1px solid rgba($border, 0.85);
+    background: rgba($clrThird, 0.1);
+    color: $text;
+    font-size: 10px;
+    font-weight: 700;
+    box-shadow: $elev-1;
+  }
+
+  .learn-projects-detail__board-card-assignee-avatar--header {
+    margin-top: 2px;
+  }
+
+  .learn-projects-detail__board-card-assignee-empty {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2;
+    padding: $space-1 $space-3;
+    border-radius: 999px;
+    border: 1px dashed rgba($border, 0.95);
+    background: rgba($bg, 0.85);
+    color: rgba($text-muted, 0.86);
+    font-size: 12px;
+    line-height: 1;
+
+    svg {
+      font-size: 12px;
+    }
+  }
+
+  .learn-projects-detail__board-card-assignee-empty--header {
+    width: 26px;
+    height: 26px;
+    // Matches --avatar--header's margin-top above so the assignee avatar and the "unassigned"
+    // fallback icon sit at the same vertical position in the card header regardless of which one
+    // renders.
+    margin-top: 2px;
+    justify-content: center;
+    padding: 0;
+    border-radius: 999px;
+  }
+
+  .learn-projects-detail__board-card-desc {
+    // Unbounded before — one task with a long description silently stretched its card taller
+    // than every neighboring card in the lane, breaking the kanban's row rhythm. Clamp to 2
+    // lines; the full text is still available from the task details modal.
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: $text-muted;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  // BD-18: `--indented` existed solely to push the description past the decorative drag handle's
+  // 40px. With the handle gone, every card's title starts at the card's left edge, so the indent
+  // would now misalign the description under nothing. Rule and class both removed.
+
+  .learn-projects-detail__board-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $space-2;
+    padding-top: 4px;
+    border-top: 1px solid rgba($border, 0.6);
+  }
+
+  .learn-projects-detail__board-card-status {
+    min-width: 152px;
+  }
+
+  // OFFSET FIX (root cause 2 of 2). dnd-kit sizes its own overlay wrapper to the measured rect
+  // of the card you grabbed, then translates that wrapper so your grab point stays put relative
+  // to the card. The old `min-width: 260px; max-width: 320px` here fought that: the wrapper was
+  // (say) 360px wide on a wide viewport while this card inside it was clamped to 320px, so the
+  // card no longer filled the box dnd-kit was aligning — grab near the right edge and the
+  // pointer ended up past the card's edge entirely. Fill the wrapper exactly instead and let
+  // dnd-kit's measurement be the single source of truth for size.
+  .learn-projects-detail__board-card--overlay {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    max-width: none;
+    background: $white;
+    cursor: grabbing;
+    // dnd-kit drives the wrapper's position every pointer move. Any transform/transition
+    // inherited from the base .board-card rule would interpolate the lift below on each frame
+    // and visibly trail the cursor, so pin it off here.
+    transition: none;
+    // The lift: a small scale and tilt is what sells "picked up" rather than "teleported".
+    // Kept deliberately subtle — this transform is applied about the card's own centre, so it
+    // shifts the edges slightly relative to the pointer, and the whole point of this change was
+    // to remove pointer misalignment. 1.02/-1.2deg is under ~3px of edge movement on a
+    // typical 300px card: readable as depth, small enough not to feel loose.
+    transform: scale(1.02) rotate(-1.2deg);
+    transform-origin: center center;
+    box-shadow:
+      0 26px 50px -12px rgba($text, 0.28),
+      0 8px 16px -8px rgba($text, 0.16),
+      0 0 0 1px rgba($clrThird, 0.22);
+    border-color: rgba($clrThird, 0.42);
+    // Promote to its own compositor layer so the per-frame transform never triggers paint.
+    will-change: transform;
+
+    // The base rule's hover lift must not stack on top of the lift above — the pointer is by
+    // definition inside the overlay for the entire drag.
+    &:hover {
+      transform: scale(1.02) rotate(-1.2deg);
+      box-shadow:
+        0 26px 50px -12px rgba($text, 0.28),
+        0 8px 16px -8px rgba($text, 0.16),
+        0 0 0 1px rgba($clrThird, 0.22);
+    }
+  }
+
+  // The lift is decorative; the shadow alone communicates "picked up" without any motion. Users
+  // who ask the OS to reduce motion still need the drag to be usable, so only the transform is
+  // dropped here — position tracking, the drop animation's existence, and every state colour
+  // stay intact.
+  @media (prefers-reduced-motion: reduce) {
+    .learn-projects-detail__board-card--overlay,
+    .learn-projects-detail__board-card--overlay:hover {
+      transform: none;
+    }
+
+    .learn-projects-detail__board-card,
+    .learn-projects-detail__board-col {
+      transition: none;
+    }
+
+    // AC-16: this block covered only the board. The activity feed, the resource rows and the
+    // meeting cards all animate on hover and none of them were listed, so a reduced-motion user
+    // still got every one of those transitions. Motion preference is a global preference, not a
+    // per-component one.
+    .learn-projects-detail__activity-card,
+    .learn-projects-detail__activity-skeleton-icon,
+    .learn-projects-detail__activity-skeleton-line,
+    .learn-projects-detail__row,
+    .learn-projects-detail__meeting-card {
+      transition: none;
+      animation: none;
+    }
+  }
+
+  // What's left behind in the source lane while the overlay is in flight. Reads as the slot the
+  // card will drop back into, rather than a faded second copy of the card (which, combined with
+  // the overlay, made it look like two cards existed).
+  .learn-projects-detail__board-card--placeholder {
+    background: rgba($clrThird, 0.035);
+    border-style: dashed;
+    border-color: rgba($clrThird, 0.4);
+    box-shadow: none;
+    // dnd-kit is not animating this element; leaving the base transform transition on it makes
+    // it lurch when the drag ends and the sort transform is removed.
+    transition: background $motion-base $ease-out, border-color $motion-base $ease-out;
+
+    // Keep the card's exact height so the lane doesn't collapse and re-measure mid-drag, but
+    // mute the content so the slot reads as empty.
+    > * {
+      opacity: 0.25;
+      filter: saturate(0.2);
+    }
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+      border-color: rgba($clrThird, 0.4);
+    }
+  }
+
+  .learn-projects-detail__task-modal-shell {
+    .learn-projects-detail__task-modal-header {
+      position: relative;
+    }
+
+    .learn-projects-detail__task-modal-header-main {
+      padding-right: 8px;
+    }
+
+    .learn-projects-detail__task-modal-title {
+      letter-spacing: -0.03em;
+    }
+
+    .learn-projects-detail__task-modal-description {
+      max-width: 68ch;
+    }
+
+    .learn-projects-detail__task-modal-layout {
+      align-items: stretch;
+    }
+
+    .learn-projects-detail__task-modal-main,
+    .learn-projects-detail__task-modal-sidebar {
+      min-width: 0;
+    }
+  }
+
+  // RS-14: was a two-column grid whose left track held `resource-hero-copy` — a gradient panel
+  // reduced (by the earlier heading removal) to one small button and a timestamp, dressed as a
+  // page hero. The wrapper is gone from the markup; the action and freshness stamp now share one
+  // row with the counts, at a weight that matches what they actually say.
+  .learn-projects-detail__resource-hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-4;
+    padding: $space-4;
+    border: 1px solid rgba($clrThird, 0.18);
+    border-radius: $radius-lg;
+    background:
+      linear-gradient(180deg, rgba($clrThird, 0.05), rgba($white, 0.98)),
+      $white;
+    box-shadow: $elev-2;
+  }
+
+  .learn-projects-detail__resource-hero-lead {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+
+  // RS-25: was `repeat(auto-fit, minmax(84px, 1fr))`, which reflowed as the number of tiles
+  // changed — three tiles filled the row, and the fourth "Other" tile (rendered only when its
+  // count was non-zero) wrapped onto an orphan second row. So the panel's geometry changed based
+  // on data the reader can't see. The tile count is now fixed at four in the markup, and the
+  // track count is fixed here to match.
+  .learn-projects-detail__resource-hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(72px, 1fr));
+    gap: $space-2;
+    align-self: center;
+  }
+
+  .learn-projects-detail__resource-stat {
+    padding: $space-4;
+    border-radius: $radius-md;
+    border: 1px solid rgba($border, 0.9);
+    background: rgba($white, 0.95);
+    display: grid;
+    gap: $space-1;
+    box-shadow: $elev-2;
+
+    span {
+      color: $text-muted;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    strong {
+      color: $text;
+      font-size: 22px;
+      line-height: 1;
+    }
+  }
+
+  // RS-10: the "of N" suffix on the Showing tile when a filter is narrowing the list.
+  .learn-projects-detail__resource-stat-of {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-muted;
+  }
+
+  // RS-12: confirms which file the form currently has attached.
+  .learn-projects-detail__resource-upload-confirm {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    margin: $space-2 0 0;
+    color: $status-success;
+    font-size: 12px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  // RS-22: replaces an inline `style={{ display:"flex", gap:8, marginTop:12 }}` object.
+  .learn-projects-detail__resource-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+    margin-top: $space-4;
+  }
+
+  .learn-projects-detail__resource-toolbar {
+    margin-top: 14px;
+    padding: $space-4;
+    border: 1px solid rgba($border, 0.9);
+    border-radius: $radius-lg;
+    background: rgba($bg, 0.85);
+    display: grid;
+    gap: $space-4;
+  }
+
+  .learn-projects-detail__resource-filters {
+    display: grid;
+    // 1 search field + 4 selects (Type/Status/Sprint/Task) = 5 columns, not 6 — the extra
+    // phantom column previously left unused grid space and let each select auto-size to its
+    // own content instead of filling its column, so the row read as unevenly spaced.
+    grid-template-columns: minmax(220px, 1.4fr) repeat(4, minmax(140px, 1fr));
+    gap: $space-4;
+    align-items: end;
+
+    .ant-form-item {
+      margin-bottom: 0;
+    }
+
+    .ant-select {
+      width: 100%;
+    }
+  }
+
+  .learn-projects-detail__resource-filter-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: $space-3;
+  }
+
+  .learn-projects-detail__resource-editor {
+    border-color: rgba($clrThird, 0.16);
+    background: linear-gradient(180deg, rgba($white, 0.98), rgba($bg, 0.95));
+    box-shadow: $elev-2;
+  }
+
+  // RS-13: the row's left gutter. Holds the type icon always, with the drag handle stacked above
+  // it when reordering is available, so the icon stays in a fixed column regardless of role or
+  // filter state.
+  .learn-projects-detail__resource-row-gutter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $space-1;
+    flex: 0 0 auto;
+  }
+
+  .learn-projects-detail__resource-kind-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: $radius-xs;
+    background: rgba($clrThird, 0.09);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba($clrThird, 0.9);
+    flex: 0 0 auto;
+    margin-top: 2px;
+  }
+
+  .learn-projects-detail__resource-row-main {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    gap: $space-3;
+  }
+
+  .learn-projects-detail__resource-row-head {
+    display: flex;
+    justify-content: space-between;
+    gap: $space-4;
+    align-items: flex-start;
+  }
+
+  .learn-projects-detail__resource-row-title {
+    display: grid;
+    gap: $space-2;
+    min-width: 0;
+
+    strong {
+      font-size: 15px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .learn-projects-detail__resource-row-body {
+    margin: 0;
+    color: $text-muted;
+    line-height: 1.55;
+  }
+
+  // RS-6: this was `color: $clrThird` — the brand teal (#26bac7) on white, which measures about
+  // 2.35:1. That is below WCAG AA for ANY text size, and it was being used for the access notes:
+  // the row's most operationally important line ("request credentials from the mentor first"),
+  // the one a student most needs to be able to read. Restyled as a proper callout — dark text on
+  // a tinted ground, with the teal kept as an accent rule rather than as the text colour.
+  .learn-projects-detail__resource-row-body--notes {
+    color: $text;
+    background: rgba($clrThird, 0.07);
+    border-left: 3px solid rgba($clrThird, 0.55);
+    border-radius: 0 $radius-xs $radius-xs 0;
+    padding: $space-2 $space-3;
+    font-size: 13px;
+  }
+
+  .learn-projects-detail__resource-row-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2 $space-3;
+    color: $text-muted;
+    font-size: 12px;
+
+    span {
+      padding: $space-2 $space-3;
+      border-radius: 999px;
+      background: rgba($bg, 0.9);
+      border: 1px solid rgba($border, 0.75);
+    }
+  }
+
+  .learn-projects-detail__resource-row-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  // RS-5: `--desktop` and `--mobile` were the two duplicated action blocks, CSS-switched. Both
+  // are gone from the markup (one definition now, reflowed rather than duplicated), so both
+  // modifier rules are deleted with them.
+  //
+  // RS-21: `--desktop` also carried `min-width: 330px`, sized for the mentor's three buttons.
+  // A student's row renders ONE button into that reserved 330px, so roughly 330px of every row
+  // was permanently empty for the majority of users — and the title column, which has no
+  // min-width floor, was squeezed to make space for it. The action group is now sized by its
+  // contents, so a row with one button gives the other ~250px back to the title.
+
+  .learn-projects-detail__delivery-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: $space-4;
+    align-items: start;
+    padding: $space-5;
+    border: 1px solid rgba($clrThird, 0.18);
+    border-radius: $radius-lg;
+    background:
+      linear-gradient(180deg, rgba($clrThird, 0.05), rgba($white, 0.98)),
+      $white;
+    box-shadow: $elev-2;
+  }
+
+  .learn-projects-detail__delivery-hero-copy {
+    display: grid;
+    gap: $space-3;
+  }
+
+  .learn-projects-detail__delivery-hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: $space-3;
+  }
+
+  .learn-projects-detail__delivery-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(300px, 0.9fr);
+    gap: $space-4;
+    align-items: start;
+  }
+
+  .learn-projects-detail__delivery-form {
+    border-color: rgba($border, 0.9);
+    background: rgba($white, 0.98);
+    box-shadow: $elev-2;
+  }
+
+  .learn-projects-detail__delivery-summary {
+    display: grid;
+    gap: $space-3;
+  }
+
+  .learn-projects-detail__delivery-summary .learn-projects-detail__card {
+    background: rgba($bg, 0.9);
+  }
+
+  .learn-projects-detail__delivery-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-3;
+    align-items: center;
+  }
+
+  .learn-projects-detail__delivery-history {
+    border-color: rgba($border, 0.9);
+    background: rgba($white, 0.98);
+    box-shadow: $elev-2;
+  }
+
+  .learn-projects-detail__empty-note {
+    padding: $space-4 $space-4;
+    border: 1px dashed rgba($border, 0.95);
+    border-radius: $radius-sm;
+    background: rgba($bg, 0.75);
+    color: $text-muted;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  // RS-18: the single surviving `.__row` definition (see the note on the deleted grid block).
+  .learn-projects-detail__row {
+    display: flex;
+    align-items: start;
+    gap: $space-3;
+    padding: $space-4;
+    border: 1px solid rgba($border, 0.9);
+    border-radius: $radius-md;
+    background: $white;
+    box-shadow: $elev-2;
+    // RS-26: rows had no hover or focus response of any kind. This is deliberately NOT the
+    // lift-and-shadow treatment the clickable board cards use — the row is not clickable, and
+    // promising a click that does not exist is the AC-1 mistake. A quiet border/background shift
+    // is enough to track which row the pointer is on in a long list.
+    transition: border-color $motion-fast $ease-out, background $motion-fast $ease-out;
+
+    &:hover,
+    &:focus-within {
+      border-color: rgba($clrThird, 0.4);
+      background: rgba($clrThird, 0.03);
+    }
+  }
+
+  // RS-20: `--muted` was defined here and applied to nothing — archived resources rendered at
+  // full strength beside live ones. It is now applied by SortableResourceRow, and additionally
+  // demotes the row's primary action so an archived resource does not present the loudest button
+  // in the list.
+  .learn-projects-detail__row--muted {
+    opacity: 0.72;
+    background: rgba($bg, 0.88);
+
+    &:hover,
+    &:focus-within {
+      opacity: 1;
+      background: rgba($bg, 0.94);
+    }
+
+    .learn-projects-detail__resource-row-actions .ant-btn-primary {
+      background: transparent;
+      border-color: rgba($border, 1);
+      color: $text-muted;
+      box-shadow: none;
+
+      &:hover {
+        border-color: rgba($clrThird, 0.5);
+        color: $clrThird;
+      }
+    }
+  }
+
+  .learn-projects-detail__muted {
+    margin: 0;
+    color: $text-muted;
+    font-size: 13px;
+  }
+
+  .learn-projects-detail__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+  }
+
+  .learn-projects-detail__quick-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+
+    button {
+      min-width: 96px;
+    }
+  }
+
+  .learn-projects-detail__activity {
+    display: grid;
+    grid-template-columns: 12px 1fr;
+    gap: $space-3;
+    align-items: start;
+
+    span {
+      width: 12px;
+      height: 12px;
+      margin-top: 6px;
+      border-radius: 999px;
+      background: $clrThird;
+    }
+
+    p {
+      margin: 0;
+      color: $text;
+    }
+  }
+
+  .learn-projects-detail__activity-empty {
+    padding: 28px 20px;
+    border: 1px dashed rgba($border, 0.9);
+    background: rgba($white, 0.72);
+  }
+
+  .learn-projects-detail__activity-card {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    // AC-24: was `gap: 10px` / `padding: 12px 14px` / `$radius-lg` — off the module's own scales.
+    gap: $space-3;
+    padding: $space-3 $space-4;
+    border-radius: $radius-sm;
+    border: 1px solid rgba($border, 0.75);
+    border-left: 3px solid rgba($clrThird, 0.4);
+    background: linear-gradient(180deg, rgba($white, 0.99), rgba($bg, 0.94));
+    // AC-1: NO hover lift, and no transform/box-shadow transition.
+    //
+    // These rows are inert — a plain <div> with no onClick, no href, no role, no tabIndex, and
+    // nothing focusable inside. An earlier pass in this session gave them the same lift/elevation
+    // hover signature the genuinely-clickable board and resource cards use, which reads as
+    // "click me" and does nothing. That was the wrong correction: the original problem was that
+    // hover changed nothing visually, and the right answer was to remove the pointer response,
+    // not strengthen it. A card that responds to the pointer is a promise; this one can't keep it.
+    box-shadow: $elev-2;
+  }
+
+  .learn-projects-detail__activity-icon {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 14px;
+    background: rgba($clrThird, 0.12);
+    color: $clrThird;
+  }
+
+  // AC-22: these six pairs carried TEN raw Tailwind hex literals (#3b82f6, #2563eb, #f59e0b,
+  // #b45309, #8b5cf6, #6d28d9, #22c55e, #15803d, #ec4899, #be185d) with inconsistent alpha —
+  // 0.12 for meeting, 0.14 for everything else — none of them from this project's design system,
+  // none of them adjustable from _variables.scss, and none reused anywhere else in the codebase.
+  //
+  // They are hoisted into a single local map here. That does not make them design tokens, but it
+  // does mean the category palette is defined in ONE place with ONE alpha rule, so it can be
+  // moved wholesale into _variables.scss without hunting through six scattered blocks.
+  //
+  // AC-21: `--general` (the fallback category, used by every Overview event) had NO entry at all,
+  // so it inherited the base teal — the identical hue to `--task`, differing only in the base
+  // rule's 0.12 vs task's 0.14 alpha. Two categories that were, in practice, indistinguishable.
+  // It now has its own slate accent.
+  $activity-categories: (
+    meeting: (#3b82f6, #2563eb),
+    resource: (#f59e0b, #b45309),
+    sprint: (#8b5cf6, #6d28d9),
+    delivery: (#22c55e, #15803d),
+    member: (#ec4899, #be185d),
+    task: ($clrThird, #0f6b73),
+    general: (#64748b, #475569),
+  );
+
+  @each $name, $pair in $activity-categories {
+    $accent: nth($pair, 1);
+    $ink: nth($pair, 2);
+
+    .learn-projects-detail__activity-card--#{$name} {
+      border-left-color: rgba($accent, 0.55);
+    }
+
+    .learn-projects-detail__activity-icon--#{$name} {
+      background: rgba($accent, 0.14);
+      color: $ink;
+    }
+  }
+
+  // AC-5: this lacked `flex: 1`. Its parent `.activity-topline` uses `justify-content:
+  // space-between` to push the timestamp to the right — but space-between distributes space
+  // between the FLEX CHILDREN, and with the body sized to its content the "right edge" was the
+  // end of the body's own text, not the end of the card. So every timestamp sat wherever that
+  // row's meta chips happened to end, producing a ragged zigzag down the feed instead of the
+  // scannable right-hand column the design intends. `flex: 1 1 auto` is what makes the body
+  // actually fill the row so space-between has room to work with.
+  .learn-projects-detail__activity-body {
+    min-width: 0;
+    flex: 1 1 auto;
+    display: grid;
+    gap: $space-1;
+  }
+
+  .learn-projects-detail__activity-topline {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: $space-2;
+  }
+
+  // AC-14: this had no `min-width: 0` while its title and summary siblings both had explicit
+  // wrapping. A flex item's default `min-width: auto` refuses to shrink below its content, so a
+  // long actor name ("Dr. Priyadarshini Venkataraman") pushed the whole meta group wider than the
+  // row and shoved the timestamp off the right edge of the card entirely.
+  .learn-projects-detail__activity-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $space-2;
+    min-width: 0;
+    color: $text-muted;
+    font-size: 12px;
+  }
+
+  .learn-projects-detail__activity-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2;
+    min-width: 0;
+    // AC-14: `white-space: nowrap` with no ellipsis meant a long name could only overflow. It can
+    // now truncate, which is what keeps the timestamp on the row.
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  // AC-15: the separator rule was `content: ""` — an EMPTY string, so it generated a zero-width
+  // box and the meta chips ran together as one undifferentiated grey line ("Priya Task Board").
+  // A real separator is what makes three independent facts read as three facts.
+  .learn-projects-detail__activity-meta span + span::before {
+    content: "\00B7";
+    margin-right: 6px;
+    color: rgba($text-muted, 0.7);
+  }
+
+  // AC-15: actor identity is the field a reader scans a feed FOR, and it was rendered in the same
+  // muted 12px as the event type and the category chip. It leads the row now and carries the
+  // weight; it is also first, so the separator above never applies to it.
+  .learn-projects-detail__activity-actor {
+    color: $text;
+    font-weight: 600;
+  }
+
+  .learn-projects-detail__activity-time {
+    flex-shrink: 0;
+    color: $text-muted;
+    font-size: 12px;
+    line-height: 1.25;
+    white-space: nowrap;
+    // Relative labels ("3d ago" / "12mo ago") change width as they age; tabular figures keep the
+    // right-hand column from jittering between rows.
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+
+  // AC-4: this element never got its 15px. The generic `.learn-projects-detail__card strong`
+  // rule elsewhere in this file has specificity (0,2,1) — a class plus an element — while
+  // `.learn-projects-detail__card .learn-projects-detail__activity-title` is (0,2,0). The
+  // element selector won, so the deliberately designed 15/14/12 hierarchy (title / summary /
+  // meta) shipped as 14/14/12: the title and its own summary were the SAME SIZE, and the row had
+  // no focal point at all. The markup now uses <h4> instead of <strong> — which both escapes the
+  // `strong` selector entirely and gives the feed the heading structure AC-8 needs — and the
+  // margin/weight reset below is because a bare h4 carries browser defaults.
+  .learn-projects-detail__activity-title {
+    display: block;
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.45;
+    color: $text;
+    overflow-wrap: anywhere;
+  }
+
+  // AC-13: `white-space: pre-wrap` with no clamp. pre-wrap PRESERVES newlines, so a summary
+  // pasted from a commit message or an email — which these often are — rendered every one of its
+  // blank lines, and a single 800-character entry could stand taller than the ten rows around it,
+  // destroying the feed's scanability. Clamped to four lines; the full text stays in the DOM, so
+  // nothing is destroyed, only bounded.
+  .learn-projects-detail__activity-summary {
+    margin: 0;
+    color: $text-muted;
+    font-size: 14px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+  }
+
+  .learn-projects-detail__activity-feed {
+    display: grid;
+    // AC-24: was `gap: 8px`; same value, on the token.
+    gap: $space-2;
+  }
+
+  // AC-19 / AC-20: replaces the inline `style={{ display:"flex", gap:12, marginBottom:16 }}` and
+  // the dead `card--wide` class that used to stand in for this rule.
+  .learn-projects-detail__activity-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $space-3;
+  }
+
+  // AC-19: was an inline `width: 200` with `flex: 0 0 auto` — explicitly forbidden from
+  // shrinking, in a tab with zero responsive rules. It now has a comfortable desktop width and a
+  // floor it can shrink to, with the small-screen block below taking it full-width.
+  .learn-projects-detail__activity-source-select {
+    flex: 1 1 200px;
+    max-width: 260px;
+    min-width: 0;
+  }
+
+  // #11: same comfortable-desktop-width/shrinkable-floor treatment as the Type select above.
+  .learn-projects-detail__activity-date-select {
+    flex: 1 1 240px;
+    max-width: 280px;
+    min-width: 0;
+  }
+
+  .learn-projects-detail__activity-tz {
+    color: $text-muted;
+    font-size: 12px;
+    margin-left: auto;
+  }
+
+  .learn-projects-detail__activity-more {
+    display: flex;
+    justify-content: center;
+    padding-top: $space-2;
+  }
+
+  // AC-23: the loading state was a bare Spin inside the dashed EMPTY-STATE container — so
+  // "loading" and "there is nothing here" wore the same costume, and the page collapsed by
+  // ~1500px while the request was in flight. This skeleton reserves the feed's real height.
+  .learn-projects-detail__activity-skeleton {
+    display: grid;
+    gap: $space-2;
+  }
+
+  .learn-projects-detail__activity-skeleton-row {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-3;
+    padding: $space-3 $space-4;
+    border: 1px solid rgba($border, 0.6);
+    border-radius: $radius-sm;
+    background: $white;
+  }
+
+  .learn-projects-detail__activity-skeleton-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+    background: rgba($text, 0.07);
+  }
+
+  .learn-projects-detail__activity-skeleton-lines {
+    display: grid;
+    gap: $space-2;
+    flex: 1 1 auto;
+    min-width: 0;
+    padding-top: 4px;
+  }
+
+  .learn-projects-detail__activity-skeleton-line {
+    height: 10px;
+    border-radius: 999px;
+    background: rgba($text, 0.07);
+  }
+
+  .learn-projects-detail__activity-skeleton-line--short {
+    width: 38%;
+  }
+
+  // AC-16: the skeleton's pulse is the only animation on this tab, and the module's existing
+  // prefers-reduced-motion block did not cover any `.activity-*` selector. Gating the animation
+  // behind `no-preference` means it is opt-in by default rather than something a reduced-motion
+  // user has to have suppressed for them.
+  @media (prefers-reduced-motion: no-preference) {
+    .learn-projects-detail__activity-skeleton-icon,
+    .learn-projects-detail__activity-skeleton-line {
+      animation: learn-projects-activity-shimmer 1.4s $ease-out infinite;
+    }
+  }
+
+  @media (max-width: 991px) {
+    .learn-projects-detail__stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .learn-projects-detail__donut-wrap,
+    .learn-projects-detail__resource-hero,
+    .learn-projects-detail__resource-filters {
+      grid-template-columns: 1fr;
+    }
+
+    .learn-projects-detail__resource-hero-stats {
+      grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+    }
+
+    .learn-projects-detail__delivery-hero,
+    .learn-projects-detail__delivery-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .learn-projects-detail__task-banner {
+      grid-template-columns: 1fr;
+    }
+
+    .learn-projects-detail__task-banner-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .learn-projects-detail__task-toolbar {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .learn-projects-detail__task-modal-hero {
+      grid-template-columns: 1fr;
+    }
+
+    .learn-projects-detail__task-modal-header,
+    .learn-projects-detail__task-modal-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .learn-projects-detail__task-modal-hero-meta {
+      padding-left: 0;
+      border-left: 0;
+      padding-top: 14px;
+      border-top: 1px solid rgba($border, 0.85);
+    }
+
+    .learn-projects-detail__task-modal-summary-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .learn-projects-detail__task-modal-actions-grid,
+    .learn-projects-detail__task-modal-form-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .learn-projects-detail__task-modal-actions-grid {
+      .ant-btn {
+        width: 100%;
+      }
+    }
+
+    // #9 audit fix: this used to force a 2-column grid at this breakpoint, but the base
+    // `.board` rule is now `display: flex; overflow-x: auto` (see #9's fix above) --
+    // `grid-template-columns` is a no-op on a flex container, so this had silently become dead
+    // code. The base flex/horizontal-scroll behavior already works correctly at this width, so
+    // there is nothing to override here.
+
+  }
+
+  // Between ~768-991px the title column (no min-width floor) was squeezed against the action
+  // block before the row ever reached the 767px stacked layout below. RS-21 removed the 330px
+  // reservation that caused most of that squeeze, but the title still needs a floor of its own.
+  @media (max-width: 991px) {
+    .learn-projects-detail__resource-row-title {
+      min-width: 160px;
+      flex-shrink: 1;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .learn-projects-detail__resource-row-head {
+      flex-direction: column;
+    }
+
+    .learn-projects-detail__overview-hero {
+      flex-direction: column;
+    }
+    // RS-5: this pair used to hide one duplicated action block and reveal the other. With a
+    // single block in the markup, the small-screen behaviour it was emulating (actions on their
+    // own left-aligned row under the title) is expressed directly.
+    .learn-projects-detail__resource-row-actions {
+      width: 100%;
+      justify-content: flex-start;
+    }
+
+    // RS-15: the stat tiles stacked to a single column here, producing roughly 320px of counters
+    // above the list — which pushed the first actual resource entirely below the fold on a 375px
+    // screen. The tiles are supporting information; two columns keeps them to about 160px and
+    // gets the content the user came for back onto the first screen.
+    .learn-projects-detail__resource-hero-stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .learn-projects-detail__resource-filter-actions {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    // AC-19: not one `.activity-*` selector appeared in ANY media query in this file, so the tab
+    // shipped with literally no small-screen treatment. These three rules are the whole fix: the
+    // filter takes the full width instead of sitting at a fixed 200px, the timezone note drops
+    // below it rather than being pushed off-row by `margin-left: auto`, and the card's horizontal
+    // padding tightens so a 375px screen isn't spending 32px of its width on gutters.
+    .learn-projects-detail__activity-source-select {
+      flex: 1 1 100%;
+      max-width: none;
+    }
+
+    .learn-projects-detail__activity-date-select {
+      flex: 1 1 100%;
+      max-width: none;
+    }
+
+    .learn-projects-detail__activity-tz {
+      margin-left: 0;
+      flex: 1 1 100%;
+    }
+
+    .learn-projects-detail__activity-card {
+      padding: $space-3;
+      gap: $space-2;
+    }
+
+    // PM-11: the meeting modal and the People tab had NO small-screen rules at all. The modal is
+    // padded down so its fields keep usable width, the roster row drops its rigid three-track
+    // grid (which reserved a fixed action column beside a squeezed name), and the meeting card
+    // does the same.
+    .learn-projects-detail__meeting-modal-shell {
+      padding: $space-4;
+      gap: $space-3;
+    }
+
+    .learn-projects-detail__team-card {
+      grid-template-columns: auto minmax(0, 1fr);
+      row-gap: $space-3;
+      padding: $space-3;
+    }
+
+    .learn-projects-detail__team-card > *:last-child {
+      grid-column: 1 / -1;
+    }
+
+    .learn-projects-detail__meeting-card--compact {
+      grid-template-columns: auto minmax(0, 1fr);
+      row-gap: $space-3;
+      padding: $space-3;
+    }
+
+    .learn-projects-detail__meeting-card-actions {
+      grid-column: 1 / -1;
+      justify-content: flex-start;
+    }
+
+    .learn-projects-detail__meeting-summary {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .learn-projects-detail__delivery-hero-stats {
+      grid-template-columns: 1fr;
+    }
+
+    .learn-projects-detail__delivery-actions {
+      flex-direction: column;
+      align-items: stretch;
+
+      .ant-btn,
+      .ant-upload {
+        width: 100%;
+      }
+    }
+  }
+
+  @media (max-width: 767px) {
+    .learn-projects__shell {
+      padding: $space-4;
+    }
+
+    .learn-projects-detail__hero {
+      flex-direction: column;
+    }
+
+    .learn-projects-detail__task-banner-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .learn-projects-detail__task-toolbar {
+      grid-template-columns: 1fr;
+    }
+
+    .learn-projects-detail__task-modal-summary-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .learn-projects-detail__task-modal-header-side {
+      order: 2;
+    }
+
+    .learn-projects-detail__task-modal-actions-grid,
+    .learn-projects-detail__task-modal-form-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .learn-projects-detail__task-comment-head {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .learn-projects-detail__task-comment-head .ant-tag {
+      grid-column: 1 / -1;
+      justify-self: start;
+    }
+
+    .learn-projects-detail__task-side {
+      min-width: 0;
+      justify-items: start;
+    }
+
+    .learn-projects-detail__hero-meta {
+      width: 100%;
+      justify-items: start;
+      text-align: left;
+    }
+
+    .learn-projects-detail__overview-banner {
+      flex-direction: column;
+    }
+
+    .learn-projects-detail__overview-banner-meta {
+      width: 100%;
+    }
+
+    .learn-projects-detail__grid {
+      grid-template-columns: 1fr;
+    }
+
+    // BD-3: the board used to collapse to `grid-template-columns: 1fr`, stacking all five lanes
+    // vertically at full width. That makes cross-lane dragging effectively impossible: the source
+    // and target lanes are several screen-heights apart, so the gesture depends entirely on
+    // dnd-kit's default autoscroll carrying the card through hundreds of pixels of intervening
+    // cards without the user losing the pointer or lifting a finger. It also destroys the one
+    // thing a board is for — seeing lanes side by side.
+    //
+    // A horizontally snapping row is the standard mobile kanban answer: lanes keep their columnar
+    // identity, two are partly visible at once (so a drop target is always adjacent), and the
+    // gesture distance stays within a screen.
+    .learn-projects-detail__board {
+      display: flex;
+      grid-template-columns: none;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x proximity;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: $space-2;
+
+      > * {
+        flex: 0 0 82%;
+        scroll-snap-align: start;
+      }
+    }
+
+    // A single lane is showing because the Lane filter is set — let it use the full width rather
+    // than sitting at 82% with dead space beside it.
+    .learn-projects-detail__board--single > * {
+      flex: 0 0 100%;
+    }
+
+    // Lanes are already height-capped on desktop; on a phone the viewport is the tighter
+    // constraint, so give each lane more of it before it starts scrolling internally.
+    .learn-projects-detail__board-col-body {
+      max-height: 58vh;
+    }
+
+    // The Filters Drawer is already a narrow, vertically-stacked column at every width (see the
+    // base `.board-filters` rule) — this just pins each group's width so a long Select can't force
+    // horizontal scroll on a narrow phone.
+    .learn-projects-detail__board-filters-group {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .learn-projects-detail__stats {
+      grid-template-columns: 1fr;
+    }
+
+    .learn-projects-detail__row {
+      grid-template-columns: 1fr;
+      justify-items: start;
+    }
+
+    .learn-projects-detail__task-card-head {
+      flex-direction: column;
+    }
+
+    .learn-projects-detail__sprint-main {
+      grid-template-columns: 1fr;
+      align-items: start;
+    }
+
+    .learn-projects-detail__task-actions {
+      justify-content: flex-start;
+    }
+
+    .learn-projects-detail__progress {
+      min-width: 0;
+      width: 100%;
+    }
+
+    .learn-projects-detail__quick-links {
+      flex-direction: column;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+}
+
+// Sprints & Releases redesign: the release/sprint/task 3-level hierarchy (Release -> Sprint ->
+// Task, each collapsed by default, row click opens a detail modal, a separate chevron expands
+// children) and its two new detail modals. Declared flat/top-level like the other modal-content
+// classes above (learn-projects-detail__task-modal-simple-*) rather than nested inside
+// .learn-projects, for the same reason: these render inside ProjectModalShell/antd Collapse
+// portals, not inside that wrapper's own DOM subtree, so nesting them there would only be
+// cosmetic grouping with no actual scoping benefit — the tokens ($space-*, $text, etc.) are
+// available file-wide via the @import at the top regardless.
+
+// The roadmap glance at the top of the tab -- a read-only antd Steps, one step per release.
+//
+// Post-push audit fix: antd Steps flex-distributes its items evenly across the container width
+// by default, which is fine for 3-4 releases and actively broken for the 12 most real projects
+// here actually carry (the seeded capstone template ships exactly 12) -- 12 evenly-squeezed
+// titles in a ~700px card is illegible. Scroll instead of squeeze: the wrapper scrolls
+// horizontally, and each step gets a fixed min-width instead of shrinking to fit.
+.learn-projects-detail__releases-loading {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Sprints & Releases tab. Built for real project sizes (10+ releases, ~4 sprints each, 5-6 tasks
+// per sprint): one-line rows, a colour-coded status at every level, no text below 12px, and a
+// fixed column layout so the eye can scan status/dates/progress straight down the page.
+// ---------------------------------------------------------------------------------------------
+// One colour per status, from the design-system tokens, used for EVERY tag, rail, bar and
+// roadmap segment on this tab (mirrors SR_TONE_HEX in ProjectDetailContent.jsx). Text uses the
+// darker shade so small labels clear WCAG AA on the light tint.
+$sr-tones: (
+  completed: (fill: $status-success, text: #047857),
+  progress: (fill: $status-info, text: #0e7490),
+  review: (fill: #6366f1, text: #4338ca),
+  risk: (fill: $status-warning, text: #b45309),
+  blocked: (fill: #dc2626, text: #b91c1c),
+  planned: (fill: #94a3b8, text: #475569),
+);
+@function sr-fill($tone) { @return map-get(map-get($sr-tones, $tone), fill); }
+@function sr-text($tone) { @return map-get(map-get($sr-tones, $tone), text); }
+$sr-hover-bg: #f8fafc;
+
+// Shared status pill (release status, sprint status, task status, detail modals).
+.learn-projects-detail__sr-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 9px;
+  border-radius: $radius-pill;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 22px;
+  white-space: nowrap;
+
+  &::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    flex: 0 0 auto;
+  }
+
+  @each $tone, $_ in $sr-tones {
+    &--#{$tone} {
+      color: sr-text($tone);
+      background: rgba(sr-fill($tone), 0.13);
+
+      &::before { background: sr-fill($tone); }
+    }
+  }
+}
+
+// Board / Task Allocation Filters drawer. _antddesign.scss restyles EVERY antd Drawer for the
+// left-hand mobile menu: `.ant-drawer-body { padding: 0 !important; overflow: hidden !important }`,
+// a close button forced to `flex: 100%` (so it wraps onto its own row above a 24px title), and a
+// left-edge shadow. On this right-hand filter panel that left the filters flush against the edges,
+// unscrollable, under a broken header. Scoped to rootClassName so no other drawer changes.
+.learn-projects-filter-drawer {
+  &.ant-drawer .ant-drawer-content-wrapper {
+    box-shadow: -8px 0 24px rgba(15, 23, 42, 0.12) !important;
+  }
+
+  .ant-drawer-header {
+    padding: $space-4 $space-5 !important;
+    border-bottom: 1px solid $border !important;
+    box-shadow: none;
+  }
+
+  .ant-drawer-header .ant-drawer-header-title {
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: $space-2;
+
+    .ant-drawer-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: $text;
+    }
+  }
+
+  .ant-drawer-header .ant-drawer-close {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 4px;
+    text-align: center;
+
+    svg {
+      color: $text-muted;
+    }
+  }
+
+  .ant-drawer-extra .ant-btn {
+    border-radius: $radius-pill;
+  }
+
+  .ant-drawer-body {
+    padding: $space-5 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+}
+
+// Sprint form dropdowns (Status, Ships in release). antd portals the menu to <body>, so this is a
+// top-level rule keyed off popupClassName. The app-wide selected style (solid teal + white text)
+// would swallow the coloured status pills, so selection here is a light tint + bold text instead.
+.learn-projects-detail__sr-select-dropdown {
+  .ant-select-item-option {
+    padding-block: 6px;
+  }
+
+  .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+    background-color: $sr-hover-bg;
+  }
+
+  .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+    background-color: rgba($status-info, 0.1) !important;
+    color: $text !important;
+    font-weight: 600;
+  }
+
+  .ant-select-item-option-content {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.learn-projects-detail__sr-release-option {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  width: 100%;
+  min-width: 0;
+}
+
+.learn-projects-detail__sr-release-option-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.learn-projects-detail__sr-release-option-date {
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 400;
+  color: $text-muted;
+  font-variant-numeric: tabular-nums;
+}
+
+// Roadmap summary: one segment per release, always fits, click jumps to the release.
+.learn-projects-detail__sr-summary {
+  display: grid;
+  gap: $space-3;
+}
+
+.learn-projects-detail__sr-summary-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: $space-3;
+  flex-wrap: wrap;
+}
+
+.learn-projects-detail__sr-summary-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.learn-projects-detail__sr-summary-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: $text-muted;
+}
+
+.learn-projects-detail__sr-summary-text {
+  font-size: 15px;
+  color: $text;
+}
+
+.learn-projects-detail__sr-summary-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 700;
+  color: $text;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    color: $clrThird;
+    text-decoration: underline;
+  }
+}
+
+.learn-projects-detail__sr-summary-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-muted;
+  white-space: nowrap;
+}
+
+.learn-projects-detail__sr-track {
+  display: flex;
+  gap: 4px;
+  padding-top: 8px; // room for the needs-attention dot above a segment
+}
+
+.learn-projects-detail__sr-segment {
+  flex: 1 1 0;
+  min-width: 6px;
+  height: 10px;
+  padding: 0;
+  border: 0;
+  border-radius: $radius-pill;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+
+  position: relative;
+
+  &--completed { background: sr-fill(completed); }
+  &--progress { background: sr-fill(progress); }
+  &--planned { background: rgba(sr-fill(planned), 0.45); }
+
+  &.has-trouble::after {
+    content: "";
+    position: absolute;
+    top: -7px;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    margin-left: -3px;
+    border-radius: 50%;
+    background: sr-fill(blocked);
+  }
+
+  &.is-current {
+    box-shadow: 0 0 0 2px $white, 0 0 0 4px rgba(sr-fill(progress), 0.45);
+  }
+
+  &:hover,
+  &:focus-visible {
+    transform: scaleY(1.4);
+    outline: none;
+  }
+}
+
+.learn-projects-detail__sr-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2 $space-4;
+  font-size: 12px;
+  color: $text-muted;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+.learn-projects-detail__sr-legend-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+
+  &--shipped { background: sr-fill(completed); }
+  &--progress { background: sr-fill(progress); }
+  &--planned { background: rgba(sr-fill(planned), 0.45); }
+  &--trouble { width: 6px; height: 6px; background: sr-fill(blocked); }
+}
+
+// The "current sprint" strip -- compact, click opens the same sprint detail modal as any row.
+.learn-projects-detail__current-sprint {
+  display: grid;
+  gap: $space-2;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    border-color: $status-info;
+  }
+}
+
+.learn-projects-detail__current-sprint-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-2;
+}
+
+.learn-projects-detail__current-sprint-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: $text-muted;
+}
+
+.learn-projects-detail__current-sprint-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: $text;
+}
+
+// Toolbar: search on the left, Expand/Collapse all + Add release on the right.
+.learn-projects-detail__sr-toolbar {
+  align-items: center;
+
+  .learn-projects-detail__sprint-search {
+    flex: 1 1 260px;
+  }
+}
+
+.learn-projects-detail__sr-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  flex-wrap: wrap;
+}
+
+// Shared status tag + mini progress bar used on release and sprint rows.
+.learn-projects-detail__sr-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  white-space: nowrap;
+}
+
+.learn-projects-detail__sr-bar {
+  position: relative;
+  display: inline-block;
+  width: 72px;
+  height: 6px;
+  border-radius: $radius-pill;
+  background: $neutral-100;
+  overflow: hidden;
+  flex: 0 0 auto;
+}
+
+.learn-projects-detail__sr-bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: $radius-pill;
+  background: sr-fill(progress);
+
+  @each $tone, $_ in $sr-tones {
+    &--#{$tone} { background: sr-fill($tone); }
+  }
+}
+
+.learn-projects-detail__sr-progress-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: $text-muted;
+  font-variant-numeric: tabular-nums;
+}
+
+.learn-projects-detail__sr-empty-line {
+  margin: 0;
+  padding: $space-2 0;
+  font-size: 13px;
+  color: $text-muted;
+}
+
+// Level 1: releases. One header line: title + target date on the left, status/progress on the
+// right. The left colour rail carries status so 10 stacked releases don't read as one block.
+.learn-projects-detail__release-accordion.ant-collapse {
+  display: grid;
+  gap: $space-2;
+  background: transparent;
+  border: none;
+
+  > .ant-collapse-item {
+    position: relative;
+    border: 1px solid $border;
+    border-left: 4px solid sr-fill(planned);
+    border-radius: $radius-md;
+    background: $white;
+    overflow: hidden;
+    margin: 0;
+
+    &.learn-projects-detail__release-panel--progress {
+      border-left-color: sr-fill(progress);
+    }
+
+    &.learn-projects-detail__release-panel--completed {
+      border-left-color: sr-fill(completed);
+      background: rgba($neutral-100, 0.35);
+    }
+
+    &.ant-collapse-item-active {
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+    }
+  }
+
+  > .ant-collapse-item > .ant-collapse-header {
+    align-items: center !important;
+    padding: $space-3 $space-4 !important;
+  }
+
+  .ant-collapse-content {
+    border-top: 1px solid rgba($border, 0.7);
+    background: transparent;
+  }
+
+  .ant-collapse-content-box {
+    padding: $space-2 $space-3 $space-3 !important;
+  }
+}
+
+.learn-projects-detail__release-panel--completed .learn-projects-detail__release-row-title {
+  color: $text-muted;
+}
+
+.learn-projects-detail__release-row {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+  min-width: 0;
+  scroll-margin-top: 96px;
+}
+
+.learn-projects-detail__release-row-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+// The one precise-click target on the row: opens the release detail modal and stops the
+// header's own toggle click.
+.learn-projects-detail__release-row-title {
+  justify-self: start;
+  max-width: 100%;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: $text;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    color: $clrThird;
+    text-decoration: underline;
+  }
+}
+
+.learn-projects-detail__release-row-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: $text-muted;
+  white-space: nowrap;
+
+  &.is-warn {
+    color: sr-text(risk);
+    font-weight: 600;
+  }
+
+  &.is-trouble {
+    color: sr-text(blocked);
+    font-weight: 700;
+  }
+}
+
+.learn-projects-detail__release-row-stats {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  flex: 0 0 auto;
+}
+
+.learn-projects-detail__release-row-add.ant-btn {
+  font-size: 12px;
+}
+
+// Level 2: sprints inside a release. Each sprint is its own bordered row with a status rail,
+// separated from its neighbours, so a release with 4 sprints reads as 4 clear items.
+.learn-projects-detail__sprint-sublist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: $space-2;
+}
+
+.learn-projects-detail__sprint-row {
+  border: 1px solid rgba($border, 0.85);
+  border-left: 3px solid sr-fill(planned);
+  border-radius: $radius-sm;
+  background: $white;
+
+  @each $tone, $_ in $sr-tones {
+    &--#{$tone} { border-left-color: sr-fill($tone); }
+  }
+
+  &.is-expanded {
+    background: $sr-hover-bg;
+  }
+}
+
+// Whole head toggles the task list; only the title opens the sprint detail modal.
+.learn-projects-detail__sprint-row-head {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-2 $space-3;
+  cursor: pointer;
+  border-radius: $radius-sm;
+
+  &:hover {
+    background: $sr-hover-bg;
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba($clrThird, 0.5);
+    outline-offset: -2px;
+  }
+}
+
+.learn-projects-detail__chevron-icon {
+  flex: 0 0 auto;
+  font-size: 12px;
+  color: $text-muted;
+  transition: transform 0.15s ease;
+
+  &.is-open {
+    transform: rotate(90deg);
+  }
+}
+
+.learn-projects-detail__sprint-row-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.learn-projects-detail__sprint-row-titleline {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  min-width: 0;
+}
+
+.learn-projects-detail__sprint-row-title {
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: $text;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    color: $clrThird;
+    text-decoration: underline;
+  }
+}
+
+.learn-projects-detail__sr-active-pill {
+  flex: 0 0 auto;
+  padding: 0 8px;
+  border-radius: $radius-pill;
+  background: rgba(sr-fill(progress), 0.13);
+  color: sr-text(progress);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+// Supporting text: smaller and muted, clamped to one line so it never competes with the title.
+.learn-projects-detail__sprint-row-desc {
+  font-size: 12px;
+  line-height: 1.4;
+  color: $text-muted;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+// Fixed-width stat columns so tag / dates / progress line up from one sprint row to the next.
+.learn-projects-detail__sprint-row-stats {
+  display: grid;
+  grid-template-columns: 104px 168px 150px 14px;
+  align-items: center;
+  justify-items: start;
+  gap: $space-3;
+  flex: 0 0 auto;
+}
+
+.learn-projects-detail__sprint-row-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: $text-muted;
+  white-space: nowrap;
+
+  &.is-warn {
+    color: sr-text(risk);
+    font-weight: 600;
+  }
+
+  &.is-trouble {
+    color: sr-text(blocked);
+    font-weight: 700;
+  }
+}
+
+.learn-projects-detail__sprint-row-body {
+  padding: 0 $space-3 $space-3 36px;
+}
+
+// Level 3: tasks as a light table -- status label, title, owner, points.
+.learn-projects-detail__task-row-list-label {
+  margin: 0 0 $space-1;
+  color: $text-muted;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.learn-projects-detail__task-table {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid rgba($border, 0.8);
+  border-radius: $radius-sm;
+  background: $white;
+  overflow: hidden;
+}
+
+.learn-projects-detail__task-table-empty {
+  padding: $space-2 $space-3;
+  font-size: 13px;
+  color: $text-muted;
+}
+
+.learn-projects-detail__task-table-row {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr) minmax(0, 160px) 56px;
+  align-items: center;
+  gap: $space-3;
+  padding: 7px $space-3;
+  cursor: pointer;
+
+  & + & {
+    border-top: 1px solid rgba($border, 0.6);
+  }
+
+  &:hover {
+    background: $sr-hover-bg;
+
+    .learn-projects-detail__task-table-title {
+      color: $clrThird;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba($clrThird, 0.5);
+    outline-offset: -2px;
+  }
+}
+
+.learn-projects-detail__task-pill {
+  justify-self: start;
+}
+
+.learn-projects-detail__task-table-title {
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: $text;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.learn-projects-detail__task-table-assignee {
+  min-width: 0;
+  font-size: 12px;
+  color: $text;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &.is-empty {
+    color: $text-muted;
+    font-style: italic;
+  }
+}
+
+.learn-projects-detail__task-table-points {
+  justify-self: end;
+  font-size: 12px;
+  font-weight: 600;
+  color: $text-muted;
+  font-variant-numeric: tabular-nums;
+}
+
+// Shipped group: one quiet line that expands to the finished releases.
+.learn-projects-detail__sr-shipped {
+  display: grid;
+  gap: $space-2;
+}
+
+.learn-projects-detail__sr-shipped-toggle {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  width: 100%;
+  padding: $space-3 $space-4;
+  border: 1px dashed rgba($border, 1);
+  border-radius: $radius-md;
+  background: rgba($neutral-100, 0.35);
+  font-size: 14px;
+  font-weight: 600;
+  color: $text;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    border-color: sr-fill(completed);
+    outline: none;
+  }
+}
+
+.learn-projects-detail__sr-shipped-icon {
+  color: sr-text(completed);
+}
+
+.learn-projects-detail__sr-shipped-count {
+  padding: 0 8px;
+  border-radius: $radius-pill;
+  background: rgba(sr-fill(completed), 0.12);
+  color: sr-text(completed);
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.learn-projects-detail__sr-shipped-hint {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 600;
+  color: $clrThird;
+}
+
+.learn-projects-detail__sr-all-shipped {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-3 $space-4;
+  border-radius: $radius-md;
+  background: rgba(sr-fill(completed), 0.08);
+  color: sr-text(completed);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+// Laptop widths: drop the fixed date column width so rows don't overflow.
+@media (max-width: 1180px) {
+  .learn-projects-detail__sprint-row-stats {
+    grid-template-columns: auto auto auto 14px;
+  }
+
+  .learn-projects-detail__task-table-row {
+    grid-template-columns: 104px minmax(0, 1fr) minmax(0, 120px) 48px;
+  }
+}
+
+// Tablet / phone: stack -- title on top, stats wrap underneath; task rows become two lines.
+@media (max-width: 860px) {
+  .learn-projects-detail__release-row {
+    flex-wrap: wrap;
+    gap: $space-2;
+  }
+
+  .learn-projects-detail__release-row-main {
+    flex-basis: 100%;
+  }
+
+  .learn-projects-detail__release-row-stats {
+    flex-wrap: wrap;
+    gap: $space-2;
+  }
+
+  .learn-projects-detail__sprint-row-head {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .learn-projects-detail__sprint-row-main {
+    flex: 1 1 calc(100% - 30px);
+  }
+
+  .learn-projects-detail__sprint-row-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2 $space-3;
+    padding-left: 24px;
+  }
+
+  .learn-projects-detail__sprint-row-body {
+    padding-left: $space-3;
+  }
+
+  .learn-projects-detail__task-table-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "title points"
+      "status assignee";
+    row-gap: 4px;
+  }
+
+  .learn-projects-detail__task-table-title { grid-area: title; }
+  .learn-projects-detail__task-table-points { grid-area: points; }
+  .learn-projects-detail__task-pill { grid-area: status; }
+  .learn-projects-detail__task-table-assignee { grid-area: assignee; justify-self: end; }
+}
+
+// Shared by the release and sprint detail modals (ProjectModalShell content).
+.learn-projects-detail__detail-modal-facts {
+  margin-top: $space-2;
+}
+
+.learn-projects-detail__detail-modal-progress {
+  margin-top: $space-4;
+}
+
+.learn-projects-detail__detail-modal-notes {
+  margin-top: $space-4;
+}
+
+.learn-projects-detail__detail-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  justify-content: flex-end;
+  margin-top: $space-5;
+  padding-top: $space-4;
+  border-top: 1px solid $border;
+}
+
+// Tasks & Performance. The column shell (.learn-projects-detail__board / board-col / board-col-
+// head / board-col-body / board-col--over / board--dragging) is deliberately the SAME classes
+// Board already uses -- same polish, same invisible-scrollbar column, zero duplicated CSS. Only
+// what's genuinely new to this tab gets its own rules below.
+
+.learn-projects-detail__performance-scope-row {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  flex-wrap: wrap;
+}
+
+.learn-projects-detail__performance-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  flex-wrap: wrap;
+  margin-bottom: $space-1;
+}
+
+.learn-projects-detail__performance-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+}
+
+// Avatar + name as one flex group occupying .board-col-head's first (1fr) grid slot, with a
+// task-count Tag in the second (auto) slot -- mirrors the Unassigned column's own title+count
+// head exactly, rather than avatar and name each fighting the 2-column grid separately.
+.learn-projects-detail__performance-col-title {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  min-width: 0;
+
+  strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+// A member column's workload line -- quiet by default, only the blocked count (when non-zero)
+// gets the "trouble stands out" red treatment already used everywhere else in this redesign.
+.learn-projects-detail__board-col-meta {
+  display: block;
+  color: $text-muted;
+  font-size: 12px;
+  margin: -4px 0 4px;
+}
+
+.learn-projects-detail__board-col-meta--trouble {
+  color: $status-error;
+  font-weight: 600;
+}
+
+.learn-projects-detail__performance-card-wrap {
+  display: grid;
+  gap: 4px;
+}
+
+// A genuinely unassigned-AND-committed task (inside the active sprint, nobody on it) -- the one
+// thing on this whole tab that's actually a problem, per the "backlog-unassigned is normal,
+// active-sprint-unassigned is not" rule this page was designed around.
+.learn-projects-detail__performance-flag {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  padding: 1px $space-2;
+  border-radius: $radius-pill;
+  background: $status-error-bg;
+  color: $status-error;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+// Suggestion #1's non-drag reassignment fallback -- sits under every card, always visible (not
+// hidden behind a menu), so touch and keyboard users have the exact same capability mouse users
+// get from dragging, not a degraded alternative.
+.learn-projects-detail__performance-reassign-select {
+  width: 100%;
+
+  .ant-select-selector {
+    font-size: 12px;
+  }
+}
+
+// Visual audit: My tasks / Team tasks (student view) used to render as plain .task-row <li>
+// rows -- a dot, a title, a due label -- while the mentor's bucket board shows the exact same
+// task data as a full BoardTaskCard. Reusing that card here (via renderPerformanceCard) needed
+// a plain vertical list wrapper, not .board-col-body's fixed-height scrolling column (there's no
+// multi-column kanban layout on this branch, just a normal page section that should grow with
+// its content).
+.learn-projects-detail__performance-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.learn-projects-detail__performance-team-list {
+  display: grid;
+  gap: $space-4;
+}
+
+.learn-projects-detail__performance-team-member {
+  h5 {
+    margin: 0 0 $space-1;
+  }
+}
+
+// AC-23: the activity skeleton's pulse. Declared at file scope rather than inside the module's
+// nesting block because @keyframes is not scoped by a parent selector — nesting it there works in
+// Sass but reads as though it were scoped, which it is not.
+@keyframes learn-projects-activity-shimmer {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.45;
+  }
+}

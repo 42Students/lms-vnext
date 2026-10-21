@@ -1,0 +1,1722 @@
+@import "./variables.scss";
+
+// =============================================================================
+// _learn-job-detail.scss — Job detail + apply page (student placements)
+//
+// Owns every visual style for `JobDetailContent.jsx`. All values come from the
+// design tokens in `_variables.scss` — no hardcoded hex, no inline styles in the
+// component. Mobile rules live in this file too (media queries at the bottom of
+// each block), not in `_learn-mobile.scss`.
+// =============================================================================
+
+$ljd-mobile-footer-height: 4rem !default;
+$ljd-bp-rail: 992px; // desktop: sticky apply rail
+$ljd-bp-mobile: 767px; // phone layout
+$ljd-touch: 44px;
+
+$ljd-surface: $white;
+$ljd-border: $neutral-200;
+$ljd-text: $neutral-900;
+$ljd-text-body: $neutral-700;
+$ljd-text-muted: $neutral-500;
+
+// -----------------------------------------------------------------------------
+// Page shell
+// -----------------------------------------------------------------------------
+.ljd {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  color: $ljd-text-body;
+  // Room for the fixed mobile action bar + the app's mobile footer nav.
+  padding-bottom: calc(#{$ljd-mobile-footer-height} + 96px + env(safe-area-inset-bottom, 0px));
+
+  &.ljd--applied {
+    padding-bottom: calc(#{$ljd-mobile-footer-height} + #{$space-4} + env(safe-area-inset-bottom, 0px));
+  }
+
+  @media (min-width: #{$ljd-bp-rail}) {
+    padding-bottom: $space-7;
+
+    &.ljd--applied {
+      padding-bottom: $space-7;
+    }
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Back affordance — one treatment, present in every state
+// -----------------------------------------------------------------------------
+.ljd-backbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2 $space-4;
+  padding: $space-3 $space-4 $space-2;
+
+  @media (min-width: #{$ljd-bp-mobile + 1}) {
+    padding: $space-4 0 $space-3;
+  }
+}
+
+// Breadcrumb — the reliable path back, independent of history depth.
+.ljd-crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: $text-xs;
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-1;
+    min-width: 0;
+  }
+}
+
+.ljd-crumb {
+  max-width: 22ch;
+  padding: $space-1 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: $teal-deep;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &:hover {
+    color: $ink-700;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $teal-deep;
+    outline-offset: 2px;
+    border-radius: $radius-sm;
+  }
+
+  &.ljd-crumb--current {
+    color: $ljd-text-muted;
+    text-decoration: none;
+    cursor: default;
+  }
+}
+
+.ljd-crumb__sep {
+  font-size: 9px;
+  color: $neutral-400;
+}
+
+// Screen-reader-only helper (loading announcements).
+.ljd-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.ljd-back {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  min-height: $ljd-touch;
+  padding: 0 $space-3 0 $space-2;
+  border: 1px solid transparent;
+  border-radius: $radius-full;
+  background: transparent;
+  color: $teal-deep;
+  font-size: $text-base;
+  font-weight: $fnt-medium;
+  line-height: $leading-snug;
+  cursor: pointer;
+  transition: background-color $duration-fast $ease-std,
+    border-color $duration-fast $ease-std,
+    color $duration-fast $ease-std;
+
+  .anticon {
+    font-size: $text-xs;
+    transition: transform $duration-fast $ease-std;
+  }
+
+  &:hover {
+    background: rgba($teal-deep, 0.07);
+    border-color: rgba($teal-deep, 0.18);
+    color: $ink-700;
+
+    .anticon {
+      transform: translateX(-2px);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $teal-deep;
+    outline-offset: 2px;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Two-column layout: content + sticky apply rail
+// -----------------------------------------------------------------------------
+.ljd-layout {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr);
+  gap: $space-4 !important;
+  align-items: start;
+  width: 100%;
+  max-width: 100%;
+  padding: 0 $space-4 !important;
+
+  @media (min-width: #{$ljd-bp-mobile + 1}) {
+    padding: 0 !important;
+    gap: $space-5 !important;
+  }
+
+  @media (min-width: #{$ljd-bp-rail}) {
+    grid-template-columns: minmax(0, 1fr) 348px;
+  }
+
+  &.ljd-layout--single {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.ljd-main {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  min-width: 0;
+
+  @media (min-width: #{$ljd-bp-mobile + 1}) {
+    gap: $space-5;
+  }
+}
+
+.ljd-rail {
+  min-width: 0;
+
+  @media (min-width: #{$ljd-bp-rail}) {
+    position: sticky;
+    top: $space-4;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Card primitive
+// -----------------------------------------------------------------------------
+.ljd-card {
+  background: $ljd-surface;
+  border: 1px solid $ljd-border;
+  border-radius: $radius-lg;
+  box-shadow: $elev-1;
+  padding: $space-5;
+  transition: box-shadow $duration-normal $ease-std;
+
+  @media (min-width: #{$ljd-bp-mobile + 1}) {
+    padding: $space-6;
+  }
+}
+
+.ljd-section-title {
+  margin: 0 0 $space-3;
+  font-size: $text-lg;
+  font-weight: $fnt-semi;
+  line-height: $leading-snug;
+  letter-spacing: -0.01em;
+  color: $ljd-text;
+}
+
+.ljd-section-note {
+  margin: -#{$space-2} 0 $space-4;
+  font-size: $text-xs;
+  line-height: $leading-normal;
+  color: $ljd-text-muted;
+}
+
+.ljd-empty-note {
+  margin: 0;
+  font-size: $text-base;
+  line-height: $leading-normal;
+  color: $ljd-text-muted;
+}
+
+// -----------------------------------------------------------------------------
+// Hero
+// -----------------------------------------------------------------------------
+// Job type is encoded in the tag only — the hero keeps a clean edge and a subtle
+// brand-tinted surface rather than a data-table style colour rail.
+.ljd-hero {
+  position: relative;
+  box-shadow: $elev-2;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 140px;
+    background: linear-gradient(180deg, rgba($teal-deep, 0.06), rgba($teal-deep, 0));
+    pointer-events: none;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.ljd-hero__top {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-4;
+}
+
+.ljd-hero__avatar {
+  flex-shrink: 0;
+}
+
+.ljd-hero__headings {
+  flex: 1;
+  min-width: 0;
+}
+
+.ljd-hero__title {
+  margin: 0 0 $space-2;
+  // Was a scoped Playfair Display override — see _learn-placements.scss's "PREMIUM PASS"
+  // comment for why it's gone: every other student-facing page uses the app's Lato stack.
+  font-size: $text-2xl;
+  font-weight: $fnt-semi;
+  line-height: $leading-tight;
+  letter-spacing: -0.015em;
+  color: $ink-900;
+  overflow-wrap: anywhere;
+
+  @media (min-width: #{$ljd-bp-mobile + 1}) {
+    font-size: $text-3xl;
+  }
+}
+
+.ljd-hero__org {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2;
+  margin: 0;
+  font-size: $text-base;
+  line-height: $leading-snug;
+  color: $ljd-text-body;
+}
+
+.ljd-hero__company {
+  font-weight: $fnt-medium;
+  color: $ljd-text;
+}
+
+// Raised from $neutral-300 — the old value was effectively invisible on white.
+.ljd-hero__sep {
+  color: $neutral-500;
+}
+
+.ljd-hero__location {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  color: $ljd-text-muted;
+
+  .anticon {
+    font-size: $text-xs;
+  }
+}
+
+.ljd-save {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: $ljd-touch;
+  min-height: $ljd-touch;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: $radius-full;
+  background: transparent;
+  cursor: pointer;
+  font-size: $text-xl;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color $duration-fast $ease-std,
+    border-color $duration-fast $ease-std,
+    opacity $duration-fast $ease-std;
+
+  .anticon {
+    font-size: $text-xl;
+  }
+
+  &:hover {
+    background: rgba($teal-deep, 0.07);
+    border-color: rgba($teal-deep, 0.18);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $teal-deep;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// Hero fact strip ---------------------------------------------------------
+// Aligned label/value pairs rather than one flat run of small grey text, so the
+// deadline can carry its own weight without shouting over everything else.
+.ljd-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $space-4;
+  margin: $space-4 0 0;
+  padding: $space-4 0 0;
+  border-top: 1px solid $neutral-200;
+
+  @media (min-width: #{$ljd-bp-mobile + 1}) {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+}
+
+.ljd-facts__item {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  min-width: 0;
+
+  + .ljd-facts__item {
+    @media (min-width: #{$ljd-bp-mobile + 1}) {
+      padding-left: $space-4;
+      border-left: 1px solid $neutral-200;
+    }
+  }
+}
+
+.ljd-facts__label {
+  margin: 0;
+  font-size: $text-xs;
+  font-weight: $fnt-semi;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: $leading-snug;
+  color: $ljd-text-muted;
+}
+
+.ljd-facts__value {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-1 $space-2;
+  margin: 0;
+  font-size: $text-base;
+  font-weight: $fnt-medium;
+  line-height: $leading-snug;
+  color: $ljd-text;
+
+  &.ljd-facts__value--tag .ant-tag {
+    margin: 0;
+    border-radius: $radius-sm;
+    font-size: $text-xs;
+  }
+}
+
+.ljd-facts__sub {
+  width: 100%;
+  font-size: $text-xs;
+  font-weight: $fnt-reg;
+  color: $ljd-text-muted;
+}
+
+// Pay: one or more packages, so it takes the full row width rather than sharing the
+// two-column grid with a single-line fact.
+// The pay row spans the strip: no divider in front of it or of the item that starts the next row (both were indented).
+.ljd-facts .ljd-facts__item.ljd-facts__item--pay,
+.ljd-facts .ljd-facts__item--pay + .ljd-facts__item {
+  padding-left: 0;
+  border-left: 0;
+}
+
+.ljd-facts__item--pay {
+  grid-column: 1 / -1;
+}
+
+.ljd-pay-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  width: 100%;
+}
+
+.ljd-pay-list__row {
+  font-size: $text-sm;
+  color: $ljd-text-body;
+}
+
+.ljd-pay-list__name {
+  font-weight: $fnt-semi;
+}
+
+.ljd-pay-list__split,
+.ljd-pay-list__bonus,
+// Deadline urgency: colour AND icon AND wording all change together.
+.ljd-deadline {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  padding: 2px $space-2;
+  border-radius: $radius-full;
+  border: 1px solid transparent;
+  font-size: $text-sm;
+  font-weight: $fnt-semi;
+  line-height: $leading-snug;
+
+  .anticon {
+    font-size: $text-xs;
+  }
+
+  &[data-tone="calm"] {
+    padding-left: 0;
+    color: $ljd-text;
+
+    .anticon {
+      color: $ljd-text-muted;
+    }
+  }
+
+  &[data-tone="soon"] {
+    background: $gold-subtle;
+    border-color: rgba($gold-accent, 0.35);
+    color: $gold-accent;
+  }
+
+  &[data-tone="urgent"] {
+    background: $status-error-bg;
+    border-color: rgba($status-error, 0.45);
+    color: #b42318; // AA on the 10%-tint fill; $status-error itself is only ~3.7:1
+  }
+
+  &[data-tone="closed"] {
+    background: $neutral-100;
+    border-color: $neutral-200;
+    color: $neutral-700;
+  }
+}
+
+.ljd-facts--skeleton .ljd-facts__skel .ant-skeleton-button {
+  width: 100% !important;
+  height: 34px !important;
+  border-radius: $radius-sm;
+}
+
+// -----------------------------------------------------------------------------
+// Eligibility panel
+// -----------------------------------------------------------------------------
+.ljd-eligibility__head {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-3;
+}
+
+.ljd-eligibility__icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-md;
+  font-size: $text-lg;
+}
+
+.ljd-eligibility__title {
+  margin: 0 0 $space-1;
+  font-size: $text-md;
+  font-weight: $fnt-semi;
+  line-height: $leading-snug;
+  color: $ljd-text;
+}
+
+.ljd-eligibility__desc {
+  margin: 0;
+  font-size: $text-base;
+  line-height: $leading-normal;
+  color: $ljd-text-body;
+}
+
+.ljd-eligibility--ok {
+  border-color: rgba($status-success, 0.28);
+  background: linear-gradient(180deg, rgba($status-success, 0.05), $ljd-surface 64px);
+
+  .ljd-eligibility__icon {
+    background: $status-success-bg;
+    color: $status-success;
+  }
+}
+
+.ljd-eligibility--blocked {
+  border-color: rgba($status-warning, 0.32);
+  background: linear-gradient(180deg, rgba($status-warning, 0.06), $ljd-surface 64px);
+
+  .ljd-eligibility__icon {
+    background: $status-warning-bg;
+    color: darken($status-warning, 6%);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// About this role (rich text)
+// -----------------------------------------------------------------------------
+.ljd-about__body {
+  font-size: $text-base;
+  line-height: $leading-normal;
+  color: $ljd-text-body;
+
+  :where(h1, h2, h3, h4) {
+    font-size: $text-md;
+    font-weight: $fnt-semi;
+    color: $ljd-text;
+    margin-top: $space-4;
+    margin-bottom: $space-2;
+  }
+
+  :where(p, li) {
+    font-size: $text-base;
+    line-height: $leading-normal;
+  }
+
+  :where(img, table) {
+    max-width: 100%;
+    border-radius: $radius-md;
+  }
+
+  :where(a) {
+    color: $teal-deep;
+    text-decoration: underline;
+  }
+}
+
+// RichTextDisplay is shared with other modules and ships its own global rule
+// (`.rich-text-display a { color:#0a7c88; text-decoration:none }`, specificity 0,1,1).
+// Scope the override from here rather than editing the shared component: links keep a
+// persistent underline so they are never distinguished by colour alone.
+.ljd-about .rich-text-display {
+  a {
+    color: $teal-deep;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-thickness: 1px;
+    border-radius: 2px;
+  }
+
+  a:hover,
+  a:focus-visible {
+    color: $ink-700;
+    text-decoration-thickness: 2px;
+  }
+
+  a:focus-visible {
+    outline: 2px solid $teal-deep;
+    outline-offset: 2px;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Requirements & preferences — designed definition list (replaces Descriptions)
+// -----------------------------------------------------------------------------
+.ljd-req__list {
+  margin: 0;
+  padding: 0;
+}
+
+.ljd-req__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: $space-1 $space-4;
+  padding: $space-3 0;
+  border-top: 1px solid $neutral-100;
+
+  &:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+
+  @media (min-width: #{$ljd-bp-mobile + 1}) {
+    grid-template-columns: minmax(140px, 34%) minmax(0, 1fr);
+    align-items: baseline;
+  }
+}
+
+.ljd-req__label {
+  margin: 0;
+  font-size: $text-xs;
+  font-weight: $fnt-semi;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $ljd-text-muted;
+}
+
+.ljd-req__value {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2;
+  margin: 0;
+  font-size: $text-base;
+  line-height: $leading-normal;
+  color: $ljd-text;
+}
+
+.ljd-req__text {
+  overflow-wrap: anywhere;
+}
+
+.ljd-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+}
+
+.ljd-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: $space-1 $space-3;
+  border-radius: $radius-full;
+  border: 1px solid rgba($teal-deep, 0.22);
+  background: rgba($teal-deep, 0.06);
+  font-size: $text-sm;
+  font-weight: $fnt-medium;
+  line-height: $leading-snug;
+  color: $ink-700;
+}
+
+// -----------------------------------------------------------------------------
+// Key dates timeline
+// -----------------------------------------------------------------------------
+.ljd-dates__list {
+  position: relative;
+  margin: 0;
+  padding: 0 0 0 $space-5;
+  list-style: none;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    border-radius: $radius-full;
+    background: $neutral-200;
+  }
+}
+
+.ljd-dates__item {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: $space-1 $space-3;
+  padding: $space-2 0;
+}
+
+.ljd-dates__marker {
+  position: absolute;
+  left: -#{$space-5};
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin-top: -6px;
+  border-radius: $radius-full;
+  border: 2px solid $ljd-surface;
+  background: $teal-deep;
+  box-shadow: 0 0 0 2px rgba($teal-deep, 0.25);
+}
+
+.ljd-dates__label {
+  font-size: $text-base;
+  font-weight: $fnt-medium;
+  color: $ljd-text;
+}
+
+.ljd-dates__date {
+  font-size: $text-sm;
+  font-variant-numeric: tabular-nums;
+  color: $ljd-text-muted;
+}
+
+.ljd-dates__item--past {
+  .ljd-dates__marker {
+    background: $neutral-300;
+    box-shadow: 0 0 0 2px $neutral-100;
+  }
+
+  .ljd-dates__label {
+    color: $ljd-text-muted;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Apply card (rail)
+// -----------------------------------------------------------------------------
+.ljd-apply {
+  box-shadow: $elev-2;
+}
+
+.ljd-apply__title {
+  margin: 0 0 $space-1;
+  font-size: $text-md;
+  font-weight: $fnt-semi;
+  line-height: $leading-snug;
+  color: $ljd-text;
+}
+
+.ljd-apply__subtitle {
+  margin: 0 0 $space-4;
+  font-size: $text-sm;
+  line-height: $leading-normal;
+  color: $ljd-text-muted;
+}
+
+.ljd-apply__closed {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-2;
+  margin: 0 0 $space-4;
+  padding: $space-3;
+  border-radius: $radius-md;
+  background: $neutral-100;
+  border: 1px solid $neutral-200;
+  font-size: $text-sm;
+  line-height: $leading-normal;
+  color: $neutral-700;
+
+  .anticon {
+    margin-top: 3px;
+    flex-shrink: 0;
+  }
+}
+
+.ljd-apply__hint {
+  margin: $space-3 0 0;
+  font-size: $text-xs;
+  line-height: $leading-normal;
+  color: $ljd-text-muted;
+  text-align: center;
+}
+
+// Resume picker -----------------------------------------------------------
+// A real radiogroup: native inputs + labels, one tab stop, arrow-key navigation.
+// The upload / preview controls sit OUTSIDE the radios' activation region, so
+// there are no interactive controls nested inside a control.
+.ljd-fieldset {
+  margin: 0 0 $space-4;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.ljd-fieldset__legend {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  padding: 0;
+  margin-bottom: $space-3;
+  font-size: $text-sm;
+  font-weight: $fnt-semi;
+  color: $ljd-text;
+}
+
+.ljd-fieldset__badge {
+  padding: 2px $space-2;
+  border-radius: $radius-full;
+  background: rgba($teal-deep, 0.1);
+  border: 1px solid rgba($teal-deep, 0.22);
+  font-size: $text-xs;
+  font-weight: $fnt-semi;
+  color: $teal-deep;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.ljd-radiogroup {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.ljd-radio {
+  position: relative;
+  display: flex;
+  min-width: 0;
+}
+
+.ljd-radio__input {
+  position: absolute;
+  top: 50%;
+  left: $space-4;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0;
+  accent-color: $teal-deep;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.ljd-radio__label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  min-height: $ljd-touch;
+  justify-content: center;
+  padding: $space-3 $space-4 $space-3 calc(#{$space-4} + 18px + #{$space-3});
+  border: 1.5px solid $neutral-200;
+  border-radius: $radius-md;
+  background: $ljd-surface;
+  cursor: pointer;
+  transition: border-color $duration-fast $ease-std,
+    background-color $duration-fast $ease-std,
+    box-shadow $duration-fast $ease-std;
+
+  &:hover {
+    border-color: rgba($teal-deep, 0.45);
+    box-shadow: $elev-1;
+  }
+}
+
+.ljd-radio__input:checked + .ljd-radio__label {
+  border-color: $teal-deep;
+  background: rgba($teal-deep, 0.045);
+}
+
+.ljd-radio__input:focus-visible + .ljd-radio__label {
+  outline: 2px solid $teal-deep;
+  outline-offset: 2px;
+}
+
+.ljd-radio__input:disabled + .ljd-radio__label {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.ljd-radio__title {
+  font-size: $text-base;
+  font-weight: $fnt-semi;
+  line-height: $leading-snug;
+  color: $ljd-text;
+}
+
+.ljd-radio__meta {
+  font-size: $text-xs;
+  line-height: $leading-snug;
+  color: $ljd-text-muted;
+  overflow-wrap: anywhere;
+}
+
+.ljd-resume-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2;
+  margin-top: $space-3;
+}
+
+// The selected document, shown with what fidelity the API gives us.
+.ljd-doc {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  margin-top: $space-3;
+  padding: $space-3;
+  border-radius: $radius-md;
+  border: 1px solid rgba($teal-deep, 0.22);
+  background: rgba($teal-deep, 0.05);
+}
+
+.ljd-doc__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-sm;
+  background: $white;
+  border: 1px solid rgba($teal-deep, 0.2);
+  color: $teal-deep;
+}
+
+.ljd-doc__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ljd-doc__name {
+  font-size: $text-sm;
+  font-weight: $fnt-semi;
+  color: $ink-700;
+  overflow-wrap: anywhere;
+}
+
+.ljd-doc__meta {
+  font-size: $text-xs;
+  color: $ljd-text-muted;
+}
+
+.ljd-resume-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  margin-bottom: $space-4;
+
+  .ljd-resume-skeleton__item .ant-skeleton-button {
+    width: 100% !important;
+    height: 68px !important;
+    border-radius: $radius-md;
+  }
+}
+
+.ljd-smallbtn.ant-btn {
+  font-size: $text-xs;
+  border-radius: $radius-sm;
+}
+
+// Primary CTA -------------------------------------------------------------
+.ljd-cta.ant-btn {
+  min-height: $ljd-touch;
+  border-radius: $radius-md;
+  font-weight: $fnt-semi;
+}
+
+.ljd-cta--apply.ant-btn {
+  height: 48px;
+  font-size: $text-md;
+  letter-spacing: 0.005em;
+
+  &.ant-btn-primary {
+    background: $teal-deep;
+    border-color: $teal-deep;
+    box-shadow: 0 2px 8px rgba($teal-deep, 0.22);
+
+    &:not(:disabled):hover {
+      background: darken($teal-deep, 5%);
+      border-color: darken($teal-deep, 5%);
+      box-shadow: 0 4px 14px rgba($teal-deep, 0.28);
+    }
+  }
+}
+
+.ljd-cta--secondary.ant-btn {
+  border-color: $neutral-300;
+  color: $ink-700;
+  font-weight: $fnt-medium;
+
+  &:not(:disabled):hover {
+    border-color: $teal-deep;
+    color: $teal-deep;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Text links (tertiary actions, inline error actions)
+// -----------------------------------------------------------------------------
+.ljd-textlink {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  padding: $space-1 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: $text-sm;
+  font-weight: $fnt-medium;
+  color: $teal-deep;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+
+  &:hover {
+    color: $ink-700;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $teal-deep;
+    outline-offset: 2px;
+    border-radius: $radius-sm;
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &.ljd-textlink--muted {
+    color: $ljd-text-muted;
+  }
+
+  &.ljd-textlink--danger {
+    color: #b42318; // AA on white; $status-error alone is only ~3.7:1
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Inline, persistent error — anchored to the control that failed. Replaces the
+// auto-dismissing toasts on the apply / withdraw / resume-upload paths.
+// -----------------------------------------------------------------------------
+.ljd-inline-error {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-3;
+  margin: $space-3 0;
+  padding: $space-3;
+  border-radius: $radius-md;
+  border: 1px solid rgba($status-error, 0.45);
+  background: $status-error-bg;
+  text-align: left;
+}
+
+.ljd-inline-error__icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #b42318;
+
+  .anticon {
+    font-size: $text-md;
+  }
+}
+
+.ljd-inline-error__body {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  min-width: 0;
+}
+
+.ljd-inline-error__title {
+  font-size: $text-sm;
+  font-weight: $fnt-semi;
+  color: #7a271a;
+}
+
+.ljd-inline-error__detail {
+  font-size: $text-sm;
+  line-height: $leading-normal;
+  color: $ink-700;
+  overflow-wrap: anywhere;
+}
+
+.ljd-inline-error__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-4;
+  margin-top: $space-1;
+}
+
+// -----------------------------------------------------------------------------
+// Applied / success state
+// -----------------------------------------------------------------------------
+.ljd-applied {
+  text-align: center;
+  border-color: rgba($status-success, 0.3);
+  box-shadow: $elev-2;
+  background: linear-gradient(180deg, rgba($status-success, 0.06), $ljd-surface 96px);
+}
+
+.ljd-applied__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: $space-3;
+  border-radius: $radius-full;
+  background: $status-success-bg;
+  color: $status-success;
+
+  .anticon {
+    font-size: $text-2xl;
+  }
+}
+
+.ljd-applied__title {
+  margin: 0 0 $space-1;
+  // Was a scoped Playfair Display override — see _learn-placements.scss's "PREMIUM PASS"
+  // comment for why it's gone: every other student-facing page uses the app's Lato stack.
+  font-size: $text-xl;
+  font-weight: $fnt-semi;
+  line-height: $leading-tight;
+  color: $ink-900;
+}
+
+.ljd-applied__role {
+  margin: 0 0 $space-4;
+  font-size: $text-base;
+  line-height: $leading-snug;
+  color: $ljd-text-body;
+}
+
+.ljd-applied__company {
+  color: $ljd-text-muted;
+}
+
+// Durable receipt — reference, timestamp, and the resume that was actually sent.
+.ljd-receipt {
+  margin: 0 0 $space-5;
+  padding: $space-3 $space-4;
+  text-align: left;
+  border-radius: $radius-md;
+  border: 1px solid $neutral-200;
+  background: $white;
+}
+
+.ljd-receipt__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: $space-4;
+  padding: $space-2 0;
+
+  + .ljd-receipt__row {
+    border-top: 1px solid $neutral-100;
+  }
+
+  dt {
+    flex-shrink: 0;
+    font-size: $text-xs;
+    font-weight: $fnt-semi;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: $ljd-text-muted;
+  }
+
+  dd {
+    margin: 0;
+    text-align: right;
+    font-size: $text-sm;
+    font-weight: $fnt-medium;
+    color: $ljd-text;
+    overflow-wrap: anywhere;
+  }
+}
+
+.ljd-receipt__mono {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.ljd-receipt__muted {
+  color: $ljd-text-muted;
+  font-weight: $fnt-reg;
+}
+
+.ljd-receipt__file {
+  font-size: $text-sm;
+  text-align: right;
+}
+
+.ljd-applied__next {
+  margin: 0 0 $space-5;
+  padding: $space-4;
+  list-style: none;
+  text-align: left;
+  border-radius: $radius-md;
+  background: $neutral-50;
+  border: 1px solid $neutral-200;
+  counter-reset: ljd-step;
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-3;
+    font-size: $text-sm;
+    line-height: $leading-normal;
+    color: $ljd-text-body;
+
+    + li {
+      margin-top: $space-3;
+    }
+  }
+}
+
+.ljd-applied__step-index {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: $radius-full;
+  background: rgba($teal-deep, 0.12);
+  color: $teal-deep;
+  font-size: $text-xs;
+  font-weight: $fnt-bold;
+}
+
+.ljd-applied__actions {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  margin-top: $space-3;
+}
+
+// Withdraw is a destructive dead-end, not a next step: demoted to a small
+// tertiary link, visually separated, never a full-width red button.
+.ljd-applied__tertiary {
+  margin: $space-4 0 0;
+  padding-top: $space-3;
+  border-top: 1px solid $neutral-100;
+  text-align: center;
+
+  .ljd-textlink {
+    font-size: $text-xs;
+    min-height: 32px;
+  }
+}
+
+// Subtle celebration — a single settle, never a loop.
+.ljd-applied--celebrate {
+  animation: ljd-settle $duration-slow $ease-spring both;
+
+  .ljd-applied__icon {
+    animation: ljd-pop 420ms $ease-spring both;
+  }
+}
+
+@keyframes ljd-settle {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes ljd-pop {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+// -----------------------------------------------------------------------------
+// Loading / empty / error states
+// -----------------------------------------------------------------------------
+.ljd-state {
+  text-align: center;
+  padding: $space-7 $space-5;
+  box-shadow: $elev-2;
+}
+
+.ljd-state__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: $space-4;
+  border-radius: $radius-full;
+  background: $neutral-100;
+  color: $neutral-500;
+
+  .anticon {
+    font-size: $text-2xl;
+  }
+
+  &.ljd-state__icon--warn {
+    background: $status-warning-bg;
+    color: darken($status-warning, 6%);
+  }
+}
+
+.ljd-state__title {
+  margin: 0 0 $space-2;
+  // Was a scoped Playfair Display override — see _learn-placements.scss's "PREMIUM PASS"
+  // comment for why it's gone: every other student-facing page uses the app's Lato stack.
+  font-size: $text-2xl;
+  font-weight: $fnt-semi;
+  line-height: $leading-tight;
+  color: $ink-900;
+}
+
+.ljd-state__desc {
+  max-width: 46ch;
+  margin: 0 auto $space-5;
+  font-size: $text-base;
+  line-height: $leading-normal;
+  color: $ljd-text-body;
+}
+
+.ljd-state__actions {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  max-width: 300px;
+  margin: 0 auto;
+
+  .ant-btn {
+    width: 100%;
+  }
+}
+
+.ljd-hero--skeleton {
+  &::after {
+    display: none;
+  }
+
+  .ljd-hero__headings .ant-skeleton {
+    width: 100%;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Fixed mobile action bar (below the rail breakpoint)
+// -----------------------------------------------------------------------------
+.ljd-mobilebar {
+  display: none;
+}
+
+@media (max-width: #{$ljd-bp-rail - 1}) {
+  .ljd-mobilebar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: calc(#{$ljd-mobile-footer-height} + env(safe-area-inset-bottom, 0px));
+    z-index: 150;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-3;
+    padding: $space-3 $space-4 calc(#{$space-3} + env(safe-area-inset-bottom, 0px));
+    background: $ljd-surface;
+    border-top: 1px solid $ljd-border;
+    box-shadow: 0 -4px 16px rgba(16, 24, 40, 0.08);
+  }
+
+  .ljd-mobilebar__meta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .ljd-mobilebar__title {
+    font-size: $text-sm;
+    font-weight: $fnt-semi;
+    color: $ljd-text;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .ljd-mobilebar__sub {
+    font-size: $text-xs;
+    color: $ljd-text-muted;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .ljd-mobilebar .ljd-cta.ant-btn {
+    flex-shrink: 0;
+    min-width: 132px;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Phone refinements
+// -----------------------------------------------------------------------------
+@media (max-width: #{$ljd-bp-mobile}) {
+  .ljd-card {
+    padding: $space-4;
+    border-radius: $radius-md;
+  }
+
+  .ljd-hero__top {
+    gap: $space-3;
+  }
+
+  .ljd-hero__title {
+    font-size: $text-xl;
+  }
+
+  .ljd-hero__org {
+    font-size: $text-sm;
+  }
+
+  .ljd-state {
+    padding: $space-6 $space-4;
+  }
+
+  .ljd-state__title {
+    font-size: $text-xl;
+  }
+
+  .ljd-facts {
+    gap: $space-3 $space-4;
+  }
+
+  .ljd-receipt__row {
+    flex-direction: column;
+    gap: 2px;
+
+    dd {
+      text-align: left;
+    }
+  }
+
+  .ljd-receipt__file {
+    text-align: left;
+  }
+
+  // Every interactive control clears the 44px touch minimum.
+  .ljd-radio__label,
+  .ljd-save,
+  .ljd-back {
+    min-height: $ljd-touch;
+  }
+
+  .ljd-smallbtn.ant-btn {
+    min-height: 36px;
+  }
+
+  .ljd-textlink {
+    min-height: 36px;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Confirm-to-apply modal
+// -----------------------------------------------------------------------------
+.ljd-modal {
+  .ant-modal-content {
+    border-radius: $radius-lg;
+    box-shadow: $elev-4;
+  }
+
+  .ant-modal-footer .ant-btn {
+    min-height: $ljd-touch;
+    border-radius: $radius-md;
+    font-weight: $fnt-semi;
+  }
+}
+
+.ljd-modal--apply {
+  .ant-modal-body {
+    padding-top: $space-2;
+  }
+
+  .ant-modal-footer {
+    display: flex;
+    gap: $space-3;
+
+    .ant-btn {
+      flex: 1;
+      margin: 0 !important;
+    }
+  }
+}
+
+.ljd-confirm {
+  text-align: center;
+  padding: $space-2 0 0;
+}
+
+.ljd-confirm__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: $space-3;
+  border-radius: $radius-full;
+  background: rgba($teal-deep, 0.1);
+  color: $teal-deep;
+
+  .anticon {
+    font-size: $text-2xl;
+  }
+}
+
+.ljd-confirm__title {
+  margin: 0 0 $space-2;
+  // Was a scoped Playfair Display override — see _learn-placements.scss's "PREMIUM PASS"
+  // comment for why it's gone: every other student-facing page uses the app's Lato stack.
+  font-size: $text-xl;
+  font-weight: $fnt-semi;
+  line-height: $leading-tight;
+  color: $ink-900;
+}
+
+.ljd-confirm__lede {
+  margin: 0 0 $space-4;
+  font-size: $text-sm;
+  line-height: $leading-normal;
+  color: $ljd-text-body;
+}
+
+// Layered privacy notice: the lede above is layer one; this toggle reveals layer two — exactly
+// what gets shared, with whom, and what stays internal.
+.ljd-confirm__disclosure-toggle {
+  display: inline-block;
+  margin: 0 0 $space-3;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: $text-xs;
+  font-weight: $fnt-semi;
+  color: $teal-deep;
+  text-decoration: underline;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.ljd-confirm__disclosure {
+  margin: 0 0 $space-4;
+  padding: $space-3 $space-4;
+  text-align: left;
+  border-radius: $radius-md;
+  background: $neutral-50;
+  border: 1px solid $neutral-200;
+  list-style: disc;
+  padding-left: calc(#{$space-4} + 16px);
+
+  li {
+    font-size: $text-xs;
+    color: $ljd-text-muted;
+    line-height: $leading-normal;
+
+    + li {
+      margin-top: $space-1;
+    }
+  }
+}
+
+.ljd-confirm__summary {
+  margin: 0;
+  padding: $space-3 $space-4;
+  text-align: left;
+  border-radius: $radius-md;
+  background: $neutral-50;
+  border: 1px solid $neutral-200;
+
+  > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: $space-4;
+    padding: $space-2 0;
+
+    + div {
+      border-top: 1px solid $neutral-100;
+    }
+  }
+
+  dt {
+    flex-shrink: 0;
+    font-size: $text-xs;
+    font-weight: $fnt-semi;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: $ljd-text-muted;
+  }
+
+  dd {
+    margin: 0;
+    text-align: right;
+    font-size: $text-base;
+    font-weight: $fnt-medium;
+    color: $ljd-text;
+    overflow-wrap: anywhere;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Resume preview modal — the document is shown inline, not thrown at a new tab.
+// -----------------------------------------------------------------------------
+.ljd-modal--preview {
+  .ljd-preview__frame {
+    display: block;
+    width: 100%;
+    height: min(70vh, 720px);
+    border: 1px solid $ljd-border;
+    border-radius: $radius-md;
+    background: $neutral-100;
+  }
+
+  .ljd-preview__fallback {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-2;
+    margin: 0;
+    padding: $space-5;
+    border-radius: $radius-md;
+    background: $neutral-50;
+    border: 1px solid $ljd-border;
+    font-size: $text-base;
+    line-height: $leading-normal;
+    color: $ljd-text-body;
+
+    .anticon {
+      margin-top: 3px;
+      color: $teal-deep;
+    }
+  }
+
+  .ljd-preview__actions {
+    margin: $space-3 0 0;
+    text-align: right;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Reduced motion
+// -----------------------------------------------------------------------------
+@media (prefers-reduced-motion: reduce) {
+  .ljd,
+  .ljd *,
+  .ljd-modal *,
+  .ljd-applied--celebrate,
+  .ljd-applied--celebrate .ljd-applied__icon {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .ljd-back:hover .anticon {
+    transform: none;
+  }
+}

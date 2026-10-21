@@ -1,0 +1,4507 @@
+@import "./variables.scss";
+
+$learn-mobile-footer-height: 4rem !default;
+$learn-mobile-bp: 767px !default;
+
+$primary: $clrThird;
+$primary-dark: $teal-dark;
+$learn-warning: $status-warning;
+$learn-success: $status-success;
+$text: $neutral-900;
+$text-muted: $neutral-500;
+$text-subtle: $neutral-400;
+$bg: $white;
+$bg-page: $neutral-100;
+$border: $neutral-200;
+$radius: 8px;
+$radius-lg: $radius-card;
+
+// Aliased to the global scale in _variables.scss so these can never drift apart. They agreed by
+// coincidence before, not by contract — this file and _learn-layout.scss each declared their own.
+$s1: $space-2;   //  8px
+$s2: $space-4;   // 16px
+$s3: $space-5;   // 24px
+$s4: $space-6;   // 32px
+$s6: $space-8;   // 48px
+$touch-min: $touch-target;
+
+// ---------------------------------------------------------------------------
+// Page layout
+// ---------------------------------------------------------------------------
+.learn-courses-page {
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  padding-bottom: calc(#{$learn-mobile-footer-height} + $s3 + env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
+  overflow-x: hidden;
+
+  @media (min-width: #{$learn-mobile-bp + 1}) {
+    padding: 0;
+    padding-bottom: $s6;
+  }
+
+  &.learn-placements-dashboard {
+    background: $bg-page;
+  }
+
+  &--placements {
+    background: $bg-page;
+    min-height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+}
+
+.teacher-courses-page.learn-courses-page--placements {
+  background: $bg-page;
+}
+
+// ---------------------------------------------------------------------------
+// Program chip — inline with title on desktop, wraps below on mobile
+// ---------------------------------------------------------------------------
+.learn-courses-program-chip {
+  display: inline-flex;
+  align-items: center;
+  font-size: $text-base;
+  font-weight: 400;
+  line-height: 1.5;
+  color: $text-subtle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+  letter-spacing: 0;
+}
+
+@media (max-width: $learn-mobile-bp) {
+  .learn-courses-program-chip {
+    max-width: 100%;
+    font-size: $text-base;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Course grid section — cards directly on gray page background
+// ---------------------------------------------------------------------------
+.learn-courses-grid-section {
+  margin-top: $s3;
+
+  @media (max-width: $learn-mobile-bp) {
+    margin-top: $s2;
+  }
+}
+
+.learn-courses-results-info {
+  font-size: 14px;
+  line-height: 1.4;
+  color: $text-muted;
+  margin: 0 0 $s2;
+}
+
+.learn-courses-results-info--refreshing {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: $radius-pill;
+  background: $teal-subtle;
+  color: $teal-text;
+  font-weight: 600;
+}
+
+.learn-courses-results-info--error {
+  padding: 10px 12px;
+  border-radius: $radius-card;
+  background: $status-error-bg;
+  color: #b91c1c;
+}
+
+// Grid: tighter gap than base _courses.scss (32px → 24px)
+.learn-courses-grid-section .learn-courses-grid {
+  margin: 0;
+  padding: 0;
+  gap: $s3;
+}
+
+// "Electives" divider inside the grid: spans every column so electives start on a new row.
+.learn-courses-grid-section .learn-courses-group-title {
+  grid-column: 1 / -1;
+  margin: $s3 0 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+// Image: aspect-ratio instead of fixed 140px height
+.learn-courses-grid-section .learn-course-card__img {
+  height: auto;
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(135deg, $teal-subtle 0%, #f0f8fa 100%);
+}
+
+// Tighter card body padding (24px → 16px)
+.learn-courses-grid-section .learn-course-card__body {
+  padding: $s2;
+}
+
+// Resting shadow — cards on gray background need visible elevation
+.learn-courses-grid-section .learn-course-card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
+}
+
+// Hover: neutral border + lift shadow
+.learn-courses-grid-section .learn-course-card:hover {
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.10);
+}
+
+// Footer spacing
+.learn-courses-grid-section .learn-course-card__footer {
+  margin-top: $s1;
+}
+
+// Title: 2-line clamp for consistent card heights
+.learn-courses-grid-section .learn-course-card__title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// Snippet: CSS 2-line clamp (replaces JS substring truncation)
+.learn-courses-grid-section .learn-course-card__snippet {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-top: $s1;
+}
+
+// ---------------------------------------------------------------------------
+// Tag / badge overrides — professional neutral palette
+// ---------------------------------------------------------------------------
+
+// Credits badge
+.learn-course-card__credits {
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.3;
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: $teal-text;
+  background: rgba($clrThird, 0.08);
+  border: 1px solid rgba($clrThird, 0.15);
+}
+
+// Semester / academic year badges
+.learn-course-card__semester-badge,
+.learn-course-card__year-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.3;
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: $text-muted;
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.10);
+}
+
+// #1: faculty section/class filter — only rendered once a faculty member actually teaches more
+// than one section, same "don't show a dead control" rule as the electives toggle below.
+.learn-courses-section-filter {
+  min-width: 160px;
+  max-width: 220px;
+}
+
+// ---------------------------------------------------------------------------
+// Regular / Electives toggle — only rendered once a learner actually has at
+// least one elective, so it never shows up as a dead control for everyone else.
+// ---------------------------------------------------------------------------
+$elective-accent: #722ed1; // matches the purple Tag already used on elective cards
+
+.learn-courses-type-toggle {
+  padding: 3px;
+  border-radius: $radius;
+
+  .ant-segmented-item {
+    border-radius: calc(#{$radius} - 3px);
+    transition: color 0.2s ease;
+  }
+
+  .ant-segmented-item-selected {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  }
+
+  &__option {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  &__count {
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+    padding: 1px 6px;
+    border-radius: 999px;
+    color: $text-muted;
+    background: rgba(0, 0, 0, 0.06);
+  }
+
+  // The Electives segment picks up the same purple accent as its card tag, so the
+  // control visually previews what selecting it will show before you even click.
+  &__option--elective {
+    color: $elective-accent;
+
+    .learn-courses-type-toggle__count { color: $elective-accent; background: rgba($elective-accent, 0.1); }
+  }
+
+  @media (max-width: $learn-mobile-bp) {
+    width: 100%;
+
+    .ant-segmented-group { width: 100%; }
+    .ant-segmented-item { flex: 1; text-align: center; }
+    &__option { justify-content: center; }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Empty / search-empty states
+// ---------------------------------------------------------------------------
+.learn-courses-empty-search {
+  padding: $s6 $s4;
+  text-align: center;
+  color: $text-muted;
+  font-size: 14px;
+  line-height: 1.4;
+  grid-column: 1 / -1;
+}
+
+.learn-courses-empty {
+  padding: $s6 $s4;
+  text-align: center;
+}
+
+// ---------------------------------------------------------------------------
+// Mobile adjustments — courses listing page
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  // Was `.learn-placements-dashboard__body` — that wrapper div was removed when this page moved
+  // onto PageShell (src/components/Common/PageShell.jsx); its content wrapper is `.learn-projects__content`.
+  .learn-courses-page .learn-projects__content,
+  .teacher-courses-page .learn-projects__content {
+    padding: $s2;
+  }
+
+  // Course grid mobile — single column
+  .learn-courses-grid-section .learn-courses-grid {
+    grid-template-columns: 1fr;
+    gap: $s2;
+  }
+
+  // Course card touch target
+  .learn-course-card {
+    min-height: $touch-min;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .learn-course-card__title {
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Course Home Page — placements dashboard layout
+// ---------------------------------------------------------------------------
+.learn-course-home {
+  &.learn-course-home--placements.learn-placements-dashboard {
+    background: $bg-page;
+    padding: 0;
+
+    @media (min-width: #{$learn-mobile-bp + 1}) {
+      padding: 0;
+    }
+  }
+
+  &__header {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: $s2;
+
+    .learn-course-back-btn {
+      min-height: $touch-min;
+
+      @media (max-width: $learn-mobile-bp) {
+        min-height: $touch-min;
+      }
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: $s3;
+    margin-top: $s2;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+// Section cards for course home (about, progress, activity)
+//
+// These sit inside CourseTabsLayout's own outer .learn-projects-detail__content card (see
+// syllabus.js/Home.js), which is also plain white — `background: $bg` here resolves to that same
+// $white, so a sub-card was a literal white box inside an identical white box, distinguishable
+// only by a second border. A subtle gradient tint (matching the pattern ProjectDetailContent uses
+// for its own nested "about"/panel cards) reads as a deliberate layer instead of an accidental
+// repeat of the same card motif.
+.learn-course-home__about-card,
+.learn-course-home__progress-card,
+.learn-course-home__activity-card {
+  margin-top: 0;
+  padding: $s3 !important;
+  border-radius: $radius-lg;
+  border: 1px solid $border;
+  background: linear-gradient(180deg, $white 0%, $neutral-50 100%);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  overflow: visible;
+
+  @media (max-width: $learn-mobile-bp) {
+    padding: $s2 !important;
+  }
+}
+
+.learn-course-home__about-card .cas {
+  margin-bottom: 0;
+}
+
+.learn-course-home__progress-card .learner-dashboard {
+  margin: 0;
+}
+
+.learner-dashboard__error-state {
+  padding: 24px;
+  text-align: center;
+  background: $white;
+  border-radius: 12px;
+  border: 1px solid $neutral-200;
+}
+
+.learner-dashboard__error-msg {
+  color: $neutral-500;
+  margin-bottom: 16px;
+}
+
+.learner-dashboard__error-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.learner-dashboard__empty-state {
+  padding: 32px 16px;
+  text-align: center;
+  background: $neutral-100;
+  border-radius: 12px;
+  border: 1px dashed $neutral-200;
+  margin-bottom: 24px;
+
+  @media (max-width: $learn-mobile-bp) {
+    padding: 24px 16px;
+  }
+}
+
+.learner-dashboard__empty-msg {
+  color: $neutral-500;
+  font-size: 14px;
+  margin: 0;
+}
+
+.learn-course-home__progress-card .compact-progress-bar {
+  margin-bottom: 0;
+}
+
+.learn-course-home__activity-card .unified-activity {
+  margin-top: 0;
+  border: 1px solid $border !important;
+  border-radius: $radius-lg;
+  background: $white !important;
+  padding: $s2 !important;
+  box-sizing: border-box;
+}
+
+.ln-lecture-path__content--button,
+.ln-resource-section__title-button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  color: inherit;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.ln-lecture-path__content--button:hover strong,
+.ln-resource-section__title-button:hover h4 {
+  color: $teal-text;
+}
+
+.ln-resource-section__header-actions,
+.ln-live-lesson-group__actions,
+.course-assessments-section__actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $s1;
+  flex-wrap: wrap;
+}
+
+.learn-lesson-nav {
+  gap: $s1;
+}
+
+.learn-lesson-nav--bottom {
+  margin-top: $s3;
+  padding-top: $s2;
+  border-top: 1px solid $border;
+}
+
+.learn-lesson-nav-btn.ant-btn {
+  border: 1px solid $border !important;
+  border-radius: 999px !important;
+  background: $white !important;
+  color: $text-muted !important;
+  min-height: 38px;
+  padding-inline: $s2 !important;
+}
+
+.learn-lesson-nav-btn.ant-btn:hover {
+  border-color: rgba($primary, 0.32) !important;
+  color: $primary !important;
+}
+
+.learn-lesson-nav-switch.ant-btn {
+  color: $primary !important;
+  border-color: rgba($primary, 0.28) !important;
+}
+
+.ln-lecture-continue {
+  margin-bottom: $s3 !important;
+}
+
+.course-assessments-section--attention,
+.course-assessments-section__head,
+.course-assessments-blueprint__head {
+  background: $white !important;
+  border-color: $border !important;
+}
+
+.course-assessments-section__head {
+  padding: $s2 !important;
+  border-radius: $radius-lg !important;
+}
+
+.learn-course-students-table-wrap .ant-table-thead > tr > th:first-child,
+.learn-course-students-table-wrap .ant-table-tbody > tr > td:first-child {
+  padding-left: 24px !important;
+}
+
+@media (max-width: $learn-mobile-bp) {
+  .ln-menu-drawer-root .ant-drawer-content-wrapper {
+    width: min(284px, calc(100vw - 40px)) !important;
+    max-width: none !important;
+    height: 100dvh !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: auto !important;
+    bottom: 0 !important;
+    border-radius: 0 18px 18px 0 !important;
+  }
+
+  .ln-menu-drawer-root .ant-drawer-content {
+    border-radius: 0 18px 18px 0 !important;
+  }
+
+  .ln-drawer-widget-root .ant-drawer-content-wrapper,
+  .ln-course-direct-drawer-root .ant-drawer-content-wrapper {
+    width: calc(100vw - 24px) !important;
+    max-width: 520px !important;
+    height: calc(100dvh - 140px) !important;
+    top: 64px !important;
+    right: 12px !important;
+    bottom: 76px !important;
+    border-radius: 18px !important;
+    overflow: hidden;
+  }
+
+  .ln-drawer-widget-root .ant-drawer-content,
+  .ln-course-direct-drawer-root .ant-drawer-content {
+    border-radius: 18px !important;
+  }
+
+  .ln-drawer-widget-root .ant-drawer-body,
+  .ln-course-direct-drawer-root .ant-drawer-body {
+    padding: 16px !important;
+  }
+
+  .ln-resource-section__header,
+  .ln-live-lesson-group__head,
+  .course-assessments-section__head {
+    align-items: flex-start !important;
+  }
+
+  .ln-resource-section__header-actions,
+  .ln-live-lesson-group__actions,
+  .course-assessments-section__actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .learn-lesson-nav {
+    flex-direction: row;
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  .learn-lesson-nav__group {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    gap: $s1;
+  }
+
+  .learn-lesson-nav-btn.ant-btn {
+    flex: 1 1 auto;
+    justify-content: center;
+    min-width: min(140px, 100%);
+  }
+
+  .learn-lesson-contents .learn-lesson-nav {
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    gap: $s1;
+  }
+
+  .learn-lesson-contents .learn-lesson-nav__group {
+    display: flex !important;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    gap: $s1;
+  }
+
+  .learn-lesson-contents .learn-lesson-nav-back.ant-btn,
+  .learn-lesson-contents .learn-lesson-nav .learn-lesson-nav-btn.ant-btn {
+    justify-content: center;
+    min-width: 0;
+  }
+
+  .learn-lesson-contents .learn-lesson-nav-back.ant-btn {
+    flex: 1 1 100%;
+  }
+
+  .learn-lesson-contents .learn-lesson-nav .learn-lesson-nav-btn.ant-btn {
+    flex: 1 1 calc(50% - #{$s1});
+  }
+
+  .ln-menu-drawer-root.ln-drawer-widget-root .ant-drawer-content-wrapper {
+    width: min(284px, calc(100vw - 40px)) !important;
+    height: 100dvh !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: auto !important;
+    bottom: 0 !important;
+    border-radius: 0 18px 18px 0 !important;
+  }
+
+  .ln-menu-drawer-root.ln-drawer-widget-root .ant-drawer-content {
+    border-radius: 0 18px 18px 0 !important;
+  }
+}
+
+@media (max-width: $learn-mobile-bp) {
+  .learn-course-home.learn-course-home--placements .learn-placements-dashboard__body {
+    padding: $s2;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  // Prevent section cards from bleeding past screen edge
+  .learn-course-home__about-card,
+  .learn-course-home__progress-card,
+  .learn-course-home__activity-card {
+    overflow: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Course tabs (learn-course-layout) — ink bar + active tab teal
+// Global _antddesign.scss hides the ink bar for all tabs; restore it here.
+// ---------------------------------------------------------------------------
+.learn-course-layout .ant-tabs-dashboard {
+  .ant-tabs-ink-bar {
+    background: $primary !important;
+  }
+
+  .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: $primary !important;
+  }
+
+  .ant-tabs-tab:hover .ant-tabs-tab-btn {
+    color: $primary-dark !important;
+  }
+}
+
+// ─── Course home header ────────────────────────────────────────────────────────
+.learn-course-home-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  // The actions slot carries a Back button plus up to three buttons on the admin workspace and
+  // template shells. Without wrapping, that row and a long project title fight over one line at
+  // tablet width and the buttons get squeezed past their labels — __left is flex:1 min-width:0, so
+  // the title truncates first, but the actions still overflow once they can't shrink any further.
+  flex-wrap: wrap;
+  gap: $s3;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: $s2;
+  padding-bottom: $s2;
+  border-bottom: 1px solid $border;
+
+  &__left {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $s1;
+  }
+
+  &__title {
+    font-size: $text-3xl;
+    font-weight: 600;
+    color: $text;
+    margin: 0;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+
+  &__subtitle {
+    margin: 8px 0 0;
+    color: $text-muted;
+    font-size: $text-base;
+    line-height: 1.55;
+  }
+
+  &__metrics {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $s1;
+    margin-top: $s1;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: $s1;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: $learn-mobile-bp) {
+    flex-direction: column;
+    gap: $s2;
+
+    &__title {
+      font-size: $text-xl;
+    }
+
+    &__actions,
+    &__actions .ant-btn {
+      width: 100%;
+    }
+  }
+}
+
+.learn-course-home-metric {
+  display: inline-flex;
+  align-items: center;
+  gap: $s1;
+  padding: $s1 $s2;
+  border-radius: $radius;
+  font-size: $text-base;
+  font-weight: 500;
+  line-height: 1.3;
+  white-space: nowrap;
+
+  .anticon {
+    font-size: $text-base;
+  }
+
+  &--teal,
+  &--green,
+  &--amber,
+  &--emerald {
+    color: $text-muted;
+    background: rgba(0, 0, 0, 0.04);
+  }
+}
+
+.learn-course-home-command {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $s2;
+  margin: $s3 0;
+
+  &__next,
+  &__health {
+    padding: 20px !important;
+    border: 1px solid $border;
+    border-radius: $radius-lg;
+    background: $bg;
+  }
+
+  &__next {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $s2;
+    background: $white;
+  }
+
+  &__copy {
+    min-width: 0;
+  }
+
+  &__eyebrow {
+    color: $teal-text;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  &__title {
+    margin: 6px 0 4px;
+    color: $text;
+    font-size: 22px;
+    line-height: 1.25;
+  }
+
+  &__detail,
+  &__meta {
+    margin: 0;
+    color: $text-muted;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  &__button {
+    flex-shrink: 0;
+    border-radius: $radius-lg;
+    font-weight: 700;
+  }
+
+  &__health {
+    display: grid;
+    align-content: center;
+    gap: 12px;
+  }
+
+  &__health-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    color: $text-muted;
+    font-weight: 700;
+
+    strong {
+      color: $text;
+      font-size: 22px;
+      line-height: 1;
+    }
+  }
+
+  &__track {
+    height: 8px;
+    border-radius: 999px;
+    background: $neutral-100;
+    overflow: hidden;
+  }
+
+  &__fill {
+    height: 100%;
+    border-radius: 999px;
+    background: $primary;
+  }
+}
+
+.learn-course-home-section {
+  margin-bottom: $s3;
+
+  &__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: $s2;
+    margin-bottom: 12px;
+  }
+
+  &__title {
+    margin: 0;
+    color: $text;
+    font-size: 18px;
+    line-height: 1.25;
+  }
+
+  &__subtitle {
+    margin: 4px 0 0;
+    color: $text-muted;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+}
+
+.learn-course-home-map {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+
+  &__card {
+    width: 100%;
+    padding: $s2 !important;
+    border: 1px solid $border !important;
+    text-align: left;
+    background: $white;
+    cursor: pointer;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+
+    &:hover:not(:disabled) {
+      border-color: rgba($primary, 0.35) !important;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.5;
+    }
+  }
+
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  &__icon {
+    color: $teal-text;
+    font-size: 18px;
+  }
+
+  &__arrow {
+    color: $text-subtle;
+    font-size: 12px;
+    transition: color $duration-fast $ease-std;
+  }
+
+  &:focus-visible {
+    border-radius: $radius-card;
+  }
+
+  &__title {
+    display: block;
+    margin-top: 12px;
+    color: $text;
+    font-size: 16px;
+  }
+
+  &__subtitle {
+    display: block;
+    min-height: 36px;
+    margin-top: 4px;
+    color: $text-muted;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  &__value {
+    display: block;
+    margin-top: 10px;
+    color: $neutral-900;
+    // The number is the only thing that changes and the only reason the card is data rather than
+    // a link — it should not be body-sized. tabular-nums stops percentages jittering on refresh.
+    font-size: 28px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  // Shimmer placeholder so the value slot reserves its real height. The page used to paint
+  // "0 pending" / "Clear" / "--" before data arrived — reassuring falsehoods, then a reflow.
+  &__value-skeleton {
+    display: block;
+    margin-top: 10px;
+    height: 29px;
+    width: 60%;
+    border-radius: 6px;
+    background: linear-gradient(90deg, $neutral-100 25%, $neutral-200 37%, $neutral-100 63%);
+    background-size: 400% 100%;
+    animation: lnCourseShimmer 1.4s ease infinite;
+  }
+}
+
+@keyframes lnCourseShimmer {
+  0%   { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .learn-course-home-map__card__value-skeleton { animation: none; }
+}
+
+.learn-course-home-priorities {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $s2;
+
+  &__card {
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: $s2;
+    padding: $s2 !important;
+    border: 1px solid $border !important;
+    text-align: left;
+    background: $white;
+    cursor: pointer;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+
+    &:hover:not(:disabled) {
+      border-color: rgba($primary, 0.35) !important;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.5;
+    }
+
+    &--warning {
+      border-color: rgba($status-warning, 0.22) !important;
+    }
+
+    &--success {
+      border-color: $border !important;
+    }
+  }
+
+  &__icon {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-lg;
+    color: $text-muted;
+    background: $neutral-100;
+    font-size: 18px;
+  }
+
+  &__content {
+    min-width: 0;
+    display: grid;
+    gap: 4px;
+  }
+
+  &__title {
+    color: $text;
+    font-size: 15px;
+    line-height: 1.25;
+  }
+
+  &__subtitle {
+    color: $text-muted;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  &__value {
+    color: $neutral-900;
+    font-size: 20px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 1024px) {
+  .learn-course-home-map {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: $learn-mobile-bp) {
+  .learn-course-home-command {
+    grid-template-columns: 1fr;
+    gap: $s2;
+    margin: $s2 0;
+
+    &__next {
+      align-items: stretch;
+      flex-direction: column;
+      padding: $s2 !important;
+    }
+
+    &__button {
+      width: 100%;
+      justify-content: center;
+    }
+
+    &__title {
+      font-size: 19px;
+    }
+
+    &__health {
+      padding: $s2 !important;
+    }
+  }
+
+  .learn-course-home-map {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $s2;
+
+    &__subtitle {
+      min-height: auto;
+      font-size: 12px;
+    }
+
+    &__card {
+      min-height: 132px;
+    }
+  }
+
+  .learn-course-home-priorities {
+    grid-template-columns: 1fr;
+
+    &__card {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    &__value {
+      grid-column: 2;
+      font-size: 18px;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Course tab mobile stabilization
+// One shell, one rhythm. The tab pages are rendered outside AntD Tabs, so the
+// generated empty tab panes must not reserve mobile space.
+// ---------------------------------------------------------------------------
+.learn-course-layout {
+  width: 100%;
+  max-width: 100%;
+  background: $bg-page;
+  overflow-x: hidden;
+}
+
+.learn-course-tabs-bar {
+  position: sticky;
+  top: 0;
+  // Was a magic 18, which sits above $z-raised (10) but below $z-dropdown (100) — any
+  // non-portalled popover inside course content would render behind this bar.
+  z-index: $z-sticky;
+  background: $bg;
+  border-bottom: 1px solid $border;
+
+  .ant-tabs {
+    margin: 0;
+  }
+
+  .ant-tabs-nav {
+    margin: 0 !important;
+    padding: 0 18px;
+  }
+
+  @media (min-width: #{$learn-mobile-bp + 1}) {
+    .ant-tabs-nav {
+      min-height: 58px;
+    }
+
+    .ant-tabs-nav-wrap,
+    .ant-tabs-nav-list {
+      min-height: 58px;
+      align-items: center;
+    }
+
+    .ant-tabs-tab {
+      min-height: 58px;
+      display: inline-flex;
+      align-items: center;
+      margin: 0 28px 0 0 !important;
+      padding: 0 !important;
+    }
+
+    .ant-tabs-tab-btn {
+      font-size: 15px;
+      font-weight: 650;
+      line-height: 1.25;
+    }
+  }
+
+  .ant-tabs-content-holder {
+    display: none !important;
+  }
+}
+
+// This used to be the outermost content container (padding + a 1360px reading-measure cap were
+// added here on purpose, to stop the roster/attendance grid running edge-to-edge on wide
+// monitors). It no longer is: every course tab now renders inside PageShell's own
+// `ln-module-card learn-projects__shell`, which already supplies 24-32px of padding once for
+// every module that uses PageShell (Course, Projects, Placements alike). Keeping padding and a
+// max-width here stacked a SECOND inset on top of the shell's — Course tabs sat visibly indented
+// and narrower than every sibling module, which is not the case anywhere else in the app. No
+// other PageShell-based content wrapper caps width at this layer, so Course doesn't either now.
+.learn-course-tab-page {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.learn-course-layout .scroll-container {
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-y: visible !important;
+  padding: 0 !important;
+}
+
+.learn-course-layout .ln-module-card,
+.learn-course-layout .learn-placements-dashboard__card {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: $learn-mobile-bp) {
+  .learn-course-layout {
+    background: $bg-page;
+  }
+
+  .learn-course-tabs-bar {
+    top: 0;
+    box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
+
+    .ant-tabs-nav {
+      padding: 0 8px !important;
+      overflow: hidden;
+    }
+
+    .ant-tabs-nav-wrap {
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    .ant-tabs-nav-list {
+      min-width: max-content;
+      flex-wrap: nowrap;
+      gap: 22px;
+      padding: 0 4px;
+    }
+
+    .ant-tabs-tab {
+      flex: 0 0 auto;
+      min-height: $touch-min;
+      margin: 0 !important;
+      padding: 12px 0 !important;
+      white-space: nowrap;
+    }
+
+    .ant-tabs-tab-btn {
+      font-size: 14px;
+      font-weight: 650;
+      line-height: 1.2;
+    }
+  }
+
+  .learn-course-tab-page {
+    padding: 8px 8px calc(#{$learn-mobile-footer-height} + 12px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .learn-course-layout .scroll-container {
+    padding: 0 !important;
+    min-height: auto !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+  }
+
+  .learn-course-layout .ln-module-card,
+  .learn-course-layout .learn-placements-dashboard__card,
+  .learn-course-layout .learn-announcements-list-card,
+  .learn-course-layout .learn-course-home__about-card,
+  .learn-course-layout .learn-course-home__progress-card,
+  .learn-course-layout .learn-course-home__activity-card {
+    padding: 16px !important;
+    border-radius: 14px !important;
+    border: 1px solid $border;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.045);
+  }
+
+  .learn-course-layout .learn-placements-dashboard__body {
+    padding: 0 !important;
+  }
+
+  .learn-course-home-header,
+  .learn-course-announcements-header {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    gap: 10px;
+  }
+
+  .learn-course-home-header__title,
+  .learn-course-announcements-header__title {
+    font-size: 20px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .learn-course-home-header__metrics,
+  .learn-course-announcements-header__metrics {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .learn-course-home-metric,
+  .learn-course-announcements-metric {
+    flex: 0 0 auto;
+    padding: 7px 10px;
+    font-size: 12px;
+    background: $neutral-50 !important;
+    color: $text-muted !important;
+  }
+
+  .learn-course-layout .ant-btn {
+    min-height: $touch-min;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Course overview: mobile should behave like an executive summary, not a wall.
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-course-home__content,
+  .learn-course-home.learn-placements-dashboard {
+    gap: 14px;
+  }
+
+  .learn-course-home-command {
+    margin: 0 0 14px;
+  }
+
+  .learn-course-home-command__next,
+  .learn-course-home-command__health {
+    padding: 16px !important;
+    border-radius: 14px;
+  }
+
+  .learn-course-home-command__title {
+    font-size: 18px;
+  }
+
+  .learn-course-home-map {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .learn-course-home-map__card {
+    min-height: auto;
+    padding: 14px !important;
+  }
+
+  .learn-course-home-priorities {
+    gap: 10px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Lectures + resources: force a clean single-column mobile reading path.
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-syllabus-list,
+  .learn-lesson-contents {
+    width: 100%;
+  }
+
+  .learn-syllabus-list .learn-syllabus-header,
+  .learn-resource-library__hero,
+  .ln-resource-library__hero,
+  .ln-lecture-studio__hero,
+  .ln-live-hero {
+    grid-template-columns: 1fr !important;
+    padding: 16px !important;
+    border-radius: 14px !important;
+  }
+
+  .ln-resource-library__summary,
+  .ln-lecture-studio__summary,
+  .ln-live-hero__stats {
+    min-width: 0 !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .ln-resource-library__toolbar {
+    margin-left: -2px;
+    margin-right: -2px;
+    padding-bottom: 4px;
+  }
+
+  .ln-resource-library__filter,
+  .ln-resource-library__search {
+    min-height: 40px;
+    border-radius: 999px;
+  }
+
+  .ln-resource-list__item,
+  .ln-lecture-path__item,
+  .ln-lecture-continue {
+    grid-template-columns: auto minmax(0, 1fr) !important;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px !important;
+    border-radius: 14px !important;
+  }
+
+  .ln-lecture-card-grid .ln-lecture-path__item--card,
+  .ln-resource-lesson-grid .ln-resource-section--card {
+    grid-template-columns: 1fr !important;
+    min-height: auto;
+  }
+
+  .ln-lecture-card-grid .ln-lecture-path__meta--cta {
+    grid-column: auto;
+    width: auto;
+  }
+
+  .ln-resource-list__action,
+  .ln-lecture-path__meta,
+  .ln-lecture-continue__action {
+    grid-column: 2;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .learn-lesson-contents .lesson-content-detail__item {
+    padding: 16px !important;
+    border-radius: 14px !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Assessments: cards only on mobile, with full-width actions and compact stats.
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .course-assessments-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .course-assessments-summary__card {
+    padding: 12px !important;
+    border-radius: 14px !important;
+    min-width: 0;
+  }
+
+  .course-assessments-section {
+    margin-top: 16px !important;
+  }
+
+  .course-assessments-section__head {
+    align-items: flex-start !important;
+    gap: 10px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .course-assessments-section__head h3 {
+    font-size: 17px;
+    line-height: 1.25;
+  }
+
+  .course-assessments-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .course-assessment-card {
+    padding: 14px !important;
+    border-radius: 14px !important;
+  }
+
+  .course-assessment-card__top,
+  .course-assessment-card__meta,
+  .course-assessment-card__actions {
+    gap: 8px !important;
+  }
+
+  .course-assessment-card__title {
+    font-size: 16px;
+    line-height: 1.35;
+  }
+
+  .course-assessment-card__actions {
+    display: grid !important;
+    grid-template-columns: 1fr;
+  }
+
+  .course-assessment-card__actions .ant-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Attendance + live sessions + students: remove table pressure from mobile.
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-course-attendance .ln-module-card {
+    padding: 14px !important;
+  }
+
+  .learn-course-attendance .attendee-header-wrapper,
+  .learn-course-attendance .attendee-header-row {
+    display: grid !important;
+    grid-template-columns: 1fr;
+    gap: 10px !important;
+    padding: 0 !important;
+  }
+
+  .learn-course-attendance .ant-select,
+  .learn-course-attendance .takeAttendanceBtn {
+    width: 100% !important;
+  }
+
+  .learn-attendance-student-card,
+  .learn-course-students-card,
+  .ln-live-session-card {
+    border-radius: 14px !important;
+    padding: 14px !important;
+  }
+
+  .learn-course-students-mobile {
+    display: grid !important;
+    gap: 12px;
+  }
+
+  .learn-course-students-card .ant-avatar {
+    flex: 0 0 auto;
+  }
+
+  .ln-live-section__header {
+    grid-template-columns: 1fr;
+    padding: 14px !important;
+    border-radius: 14px !important;
+  }
+
+  .ln-live-timeline,
+  .ln-live-archive {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .ln-live-session-card__action {
+    width: 100%;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Announcements + discussions: timeline/cards, not squeezed desktop canvas.
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-announcements-toolbar {
+    gap: 10px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .learn-announcements-filter {
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .learn-announcements-row-card {
+    border-radius: 14px !important;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04) !important;
+  }
+
+  .learn-announcements-row-card__main {
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr);
+    padding: 14px !important;
+  }
+
+  .learn-announcements-row-card__content,
+  .learn-announcements-row-card__actions {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .learn-announcements-row-card__actions {
+    justify-content: flex-start;
+    margin-left: 0;
+  }
+
+  .learn-course-discussions .discussion-topic-list,
+  .learn-course-discussions .discussion-topic-card,
+  .learn-course-discussions .ln-cont-diss {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .learn-course-discussions .discussion-topic-card {
+    border-radius: 14px;
+    padding: 14px !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Global mobile overlays used from course tabs.
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-course-layout .ant-modal,
+  .learn-course-layout .ant-drawer-content-wrapper {
+    max-width: 100vw !important;
+  }
+
+  .learn-course-layout .ant-drawer-body,
+  .learn-course-layout .ant-modal-body {
+    padding: 16px !important;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Course tabs low-color system
+// Keep the course area cognitively calm: neutral surfaces by default, brand
+// color only for selected navigation, primary actions, and genuinely active
+// states such as "live now" or errors.
+// ---------------------------------------------------------------------------
+.learn-course-layout {
+  .learn-course-home-metric,
+  .learn-course-announcements-metric,
+  .learn-course-students-metric,
+  .course-assessments-summary__card,
+  .course-assessment-card__type,
+  .course-assessment-card__status,
+  .course-assessments-section__head .ant-tag,
+  .course-assessments-blueprint__head .ant-tag,
+  .ln-live-lesson-group__head .ant-tag,
+  .ln-resource-library__filter,
+  .ln-resource-list__meta span,
+  .ln-resource-list__type,
+  .ln-lecture-path__chip,
+  .ln-live-session-card__meta span {
+    color: $text-muted !important;
+    background: $neutral-100 !important;
+    border-color: $border !important;
+  }
+
+  // ---- Status is not decoration; exempt it from the calm pass. ----------------------------
+  // The block above was flattening genuine state signals to the same neutral grey as inert
+  // chrome: every learner avatar became identical, the amber "roll missing" data-quality warning
+  // rendered exactly like the neutral headcount beside it, and "17 submissions need grading" was
+  // pixel-identical to "No pending grading". That isn't colour-only-meaning — the colour had been
+  // deleted, leaving no signal at all. Urgency is carried by a left rail + tinted icon so it still
+  // reads in greyscale and stays calm.
+  .learn-course-students-metric--amber,
+  .learn-course-home-metric--amber {
+    color: $status-warning !important;
+    background: $status-warning-bg !important;
+    border-color: rgba($status-warning, 0.28) !important;
+  }
+
+  .learn-course-home-priorities__card--warning {
+    border-color: rgba($status-warning, 0.32) !important;
+    border-left: 3px solid $status-warning !important;
+
+    .learn-course-home-priorities__icon {
+      color: $status-warning !important;
+      background: $status-warning-bg !important;
+    }
+  }
+
+  .learn-course-home-priorities__card--danger {
+    border-color: rgba($status-error, 0.32) !important;
+    border-left: 3px solid $status-error !important;
+
+    .learn-course-home-priorities__icon {
+      color: $status-error !important;
+      background: $status-error-bg !important;
+    }
+  }
+
+  // Error/warning alerts must never read as body copy.
+  .fcd-alert-item--amber {
+    color: #92400e !important;
+    background: $status-warning-bg !important;
+    border-left: 3px solid $status-warning !important;
+
+    .anticon { color: $status-warning !important; }
+  }
+
+  .fcd-alert-item--red {
+    color: #9f1239 !important;
+    background: $status-error-bg !important;
+    border-left: 3px solid $status-error !important;
+
+    .anticon { color: $status-error !important; }
+  }
+
+  .learn-course-home-metric .anticon,
+  .learn-course-announcements-metric .anticon,
+  .learn-course-students-metric .anticon,
+  .course-assessments-summary__icon,
+  .course-assessment-card__type .anticon,
+  .course-assessment-card__meta .anticon,
+  .ln-resource-library__eyebrow,
+  .ln-resource-library__eyebrow .anticon,
+  .ln-resource-list__icon,
+  .ln-lecture-studio__eyebrow,
+  .ln-lecture-studio__eyebrow .anticon,
+  .ln-lecture-continue__icon,
+  .ln-lecture-path__rail,
+  .ln-live-hero__eyebrow,
+  .ln-live-hero__eyebrow .anticon,
+  .ln-live-next__label,
+  .ln-live-next__label .anticon,
+  .ln-live-section__header span,
+  .ln-live-lesson-group__head span,
+  .learn-course-students-hero__eyebrow,
+  .learn-course-students__empty-icon {
+    color: $text-muted !important;
+  }
+
+  .ln-resource-library__filter--active,
+  .ln-resource-library__filter--active .anticon {
+    color: $primary !important;
+    background: $white !important;
+    border-color: rgba($primary, 0.28) !important;
+  }
+
+  .ln-resource-library__hero,
+  .ln-lecture-studio__hero,
+  .ln-live-hero,
+  .ln-live-section__header,
+  .ln-live-lesson-group,
+  .ln-live-lesson-group--empty,
+  .course-assessments-blueprint,
+  .course-assessments-section,
+  .learn-course-students-hero {
+    background: $white !important;
+    border-color: $border !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+  }
+
+  .ln-resource-section__header,
+  .course-assessments-section__head,
+  .course-assessments-blueprint__head {
+    background: $white !important;
+    border-color: $border !important;
+  }
+
+  .ln-resource-list__item,
+  .ln-lecture-path__item,
+  .ln-lecture-continue,
+  .ln-live-session-card,
+  .course-assessment-card,
+  .learn-course-students-card,
+  .discussion-topic-card,
+  .learn-announcements-row-card {
+    border-color: $border !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+  }
+
+  .ln-resource-list__item:hover,
+  .ln-lecture-path__item:hover,
+  .ln-lecture-continue:hover,
+  .course-assessment-card:hover,
+  .discussion-topic-card:hover,
+  .learn-announcements-row-card:hover {
+    border-color: rgba(15, 23, 42, 0.16) !important;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06) !important;
+  }
+
+  .learn-roadmap {
+    display: grid;
+    gap: 20px;
+  }
+
+  .learn-roadmap__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    padding: 2px 0 0;
+  }
+
+  .learn-roadmap__filter {
+    appearance: none;
+    border: 1px solid $border;
+    border-radius: 999px;
+    background: linear-gradient(180deg, $white 0%, $neutral-50 100%);
+    color: $text-muted;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    padding: 10px 14px;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+    transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+    user-select: none;
+  }
+
+  .learn-roadmap__filter:hover {
+    border-color: rgba($primary, 0.24);
+    color: $teal-text;
+    transform: translateY(-1px);
+  }
+
+  .learn-roadmap__filter--active {
+    // Filled, not tinted. A selected chip must be distinguishable from an unselected one without
+    // relying on hue — this reads correctly in greyscale, on a projector, and for colour-blind
+    // users, none of which was true of teal-on-near-white at ~2.2:1.
+    border-color: $teal-text;
+    background: $teal-text;
+    color: $white;
+    font-weight: 700;
+    box-shadow: 0 8px 18px rgba(20, 184, 166, 0.14);
+  }
+
+  // #10: .learn-roadmap__filter:hover (a plain :hover, specificity 0,2,0) sets color: $teal-text
+  // unconditionally -- which beats --active's color: $white (specificity 0,1,0) the moment you
+  // hover the chip that's ALREADY selected, since :hover wins regardless of source order. The
+  // background stays solid teal (only --active sets it, :hover never touches it), so the text
+  // silently became teal-on-teal: invisible, exactly while pointing at the very control you're
+  // interacting with. Needs to win over the plain :hover by matching its specificity.
+  .learn-roadmap__filter--active:hover {
+    color: $white;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .learn-roadmap__list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .learn-roadmap__card {
+    display: grid;
+    gap: 14px;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 20px;
+    // #4: $border (neutral-200, #e5e9f0) on a white card is barely legible as a boundary -- and
+    // this is the card's DEFAULT/closed state, the one most cards are in most of the time. Every
+    // other state here (--open, --current) already reaches for a stronger neutral-300 or the teal
+    // accent; the resting state was the one left with the weakest line of all. Matches the
+    // neutral-300 already used one selector down for --open, so closed and open read as the same
+    // family of card, not two different qualities of border.
+    border: 1px solid $neutral-300;
+    background: $white;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 12px 30px rgba(15, 23, 42, 0.02);
+    transition: border-color $duration-normal $ease-std, box-shadow $duration-normal $ease-std;
+  }
+
+  .learn-roadmap__card--current {
+    position: relative;
+    border-color: $teal-text;
+    box-shadow: 0 0 0 1px $teal-text, 0 12px 28px rgba(38, 186, 199, 0.14);
+    overflow: hidden;
+
+    // A 3px rail survives low-chroma rendering and greyscale printing, unlike a tinted border.
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 3px;
+      background: $teal-text;
+    }
+  }
+
+  .learn-roadmap__card--open {
+    // A background tint alone reads as almost nothing next to --current's persistent teal ring
+    // above — expanding a *different* lesson barely changed anything visually, so the "current"
+    // card looked like it stayed selected regardless of which one you'd actually opened. Uses a
+    // neutral border+shadow (not teal) specifically so it never gets mistaken for the "current
+    // lesson" signal — the two states are independent (a lesson can be current, open, both, or
+    // neither) and needed to look like two different, ANDable signals, not vary shades of one.
+    background: linear-gradient(180deg, rgba($primary, 0.04), $white 52%);
+    border-color: $neutral-300;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.10), 0 1px 2px rgba(15, 23, 42, 0.06);
+  }
+
+  // Both classes can land on the same card (the current lesson, opened). --open comes after
+  // --current in source order and would otherwise win on border-color/box-shadow (same
+  // specificity), silently dropping the teal ring exactly when the learner is looking straight at
+  // it. Restore it here, layered with --open's stronger elevation so "open" still reads too.
+  .learn-roadmap__card--current.learn-roadmap__card--open {
+    border-color: $teal-text;
+    box-shadow: 0 0 0 1px $teal-text, 0 12px 28px rgba(38, 186, 199, 0.14);
+  }
+
+  .learn-roadmap__toggle {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 16px;
+    align-items: start;
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .learn-roadmap__number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 54px;
+    height: 54px;
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba($primary, 0.16), rgba($primary, 0.10));
+    color: $teal-text;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+  }
+
+  .learn-roadmap__title-block {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .learn-roadmap__title-block small {
+    color: $text-muted;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .learn-roadmap__title-block strong {
+    font-size: 18px;
+    line-height: 1.35;
+    color: $neutral-900;
+    overflow-wrap: anywhere;
+  }
+
+  .learn-roadmap__status-row {
+    display: inline-flex;
+    align-items: center;
+    justify-self: end;
+    gap: 10px;
+    min-width: 0;
+    padding-top: 2px;
+    align-self: center;
+  }
+
+  .learn-roadmap__status {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    border: 1px solid transparent;
+  }
+
+  .learn-roadmap__chevron {
+    color: $text-subtle;
+    transition: transform 0.18s ease, color 0.18s ease;
+  }
+
+  .learn-roadmap__chevron--open {
+    transform: rotate(90deg);
+    color: $teal-text;
+  }
+
+  // Marks the lesson the learner should resume from. Deliberately a filled chip with a literal
+  // label — the old "current" treatment was a 0.22-alpha border colour, effectively invisible.
+  .learn-roadmap__status--current {
+    color: $white;
+    background: $teal-text;
+    border-color: $teal-text;
+  }
+
+  .learn-roadmap__status--done {
+    color: #047857;
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.16);
+  }
+
+  .learn-roadmap__status--progress {
+    color: #1d4ed8;
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.16);
+  }
+
+  .learn-roadmap__status--todo {
+    color: $text-muted;
+    background: $neutral-100;
+    border-color: $border;
+  }
+
+  .learn-roadmap__count {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba($primary, 0.08);
+    color: $teal-text;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .learn-roadmap__content {
+    display: grid;
+    gap: 16px;
+    min-width: 0;
+    padding-top: 6px;
+  }
+
+  // Authoring control, not learner content. A single "Add content" trigger up top (see
+  // syllabus.js) replaced the 5-button row that used to render after the item list via
+  // `order: 2` -- so adding to a lesson that already had content meant scrolling past
+  // everything else first. This sits before .learn-roadmap__items in both DOM and paint order.
+  .learn-roadmap__add-bar {
+    display: flex;
+    margin-bottom: $space-1;
+  }
+
+  .learn-roadmap__add-bar-btn {
+    // Matches the $touch-target minimum the old five-button row got, for the same reason: this
+    // is a faculty authoring control, not incidental chrome.
+    min-height: $touch-target;
+    border-radius: $radius-pill;
+    font-weight: 600;
+  }
+
+  .learn-roadmap__items {
+    display: grid;
+    gap: 14px;
+  }
+
+  .learn-roadmap__item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 16px;
+    align-items: center;
+    width: 100%;
+    min-height: 72px;
+    padding: 16px 18px;
+    border-radius: 18px;
+    // #4: same washed-out $border fix as .learn-roadmap__card above -- these item rows sit
+    // *inside* the card, on the same white background, so the weaker token made them nearly
+    // blend into each other and the card, not read as distinct rows.
+    border: 1px solid $neutral-300;
+    background: $white;
+    cursor: pointer;
+    text-align: left;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+    // Without this the :hover rule below (border + shadow + translateY) had nothing to
+    // interpolate and snapped instantly — the cheapest possible "unfinished" tell.
+    transition: border-color $duration-normal $ease-std, box-shadow $duration-normal $ease-std,
+      transform $duration-normal $ease-std;
+  }
+
+  // Was 5 broken lines: two stray `:hover .child` rules that painted an outline ring on the
+  // nested status pill AND the chevron icon simultaneously whenever the row was hovered (every
+  // unit row is one <button> — see learn-roadmap__toggle in syllabus.js — so those two children
+  // were never independently hoverable to begin with), plus a missing comma after
+  // `.learn-roadmap__item:hover` that silently merged it into the next selector instead of
+  // joining this list. The actual intent is just a keyboard focus-visible outline.
+  .learn-roadmap__toggle:focus-visible,
+  .learn-roadmap__item:focus-visible,
+  .learn-roadmap__filter:focus-visible,
+  .learn-roadmap__add-bar-btn:focus-visible,
+  .learn-roadmap__actions .ant-btn:focus-visible {
+    // __filter and __add-bar-btn were previously absent from this list with no global fallback,
+    // so keyboard users tabbing the filter chips and the "Add content" trigger saw nothing at all.
+    outline: 3px solid rgba($primary, 0.35);
+    outline-offset: 3px;
+  }
+
+  .learn-roadmap__item:hover {
+    border-color: rgba($primary, 0.22);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+    transform: translateY(-1px);
+  }
+
+  .learn-roadmap__item-index {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    background: $neutral-100;
+    color: $neutral-900;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .learn-roadmap__item-body {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .learn-roadmap__item-body strong {
+    color: $neutral-900;
+    font-size: 16px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  .learn-roadmap__item-body small {
+    color: $text-muted;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+
+
+  .learn-roadmap__item--assessment .learn-roadmap__item-index {
+    background: rgba(139, 92, 246, 0.12);
+    color: #6d28d9;
+  }
+
+  .learn-roadmap__item--live .learn-roadmap__item-index {
+    background: rgba(239, 68, 68, 0.12);
+    color: #b91c1c;
+  }
+
+  .learn-roadmap__item--lecture .learn-roadmap__item-index {
+    background: rgba(20, 184, 166, 0.12);
+    color: #0f766e;
+  }
+
+  .learn-roadmap__item--resource .learn-roadmap__item-index {
+    background: rgba(245, 158, 11, 0.12);
+    color: #b45309;
+  }
+
+  .learn-roadmap__empty-inline {
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: $neutral-50;
+    color: $text-muted;
+  }
+
+
+
+
+
+
+
+  .learn-roadmap__actions {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .learn-roadmap__actions .ant-btn {
+    min-width: 180px;
+    height: 44px;
+    border-radius: 14px;
+    font-weight: 700;
+  }
+
+  .learn-roadmap__empty {
+    display: grid;
+    gap: 6px;
+    padding: 22px 24px;
+    border-radius: 20px;
+    border: 1px dashed $border;
+    background: $white;
+  }
+
+  .learn-roadmap__empty p {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: $neutral-900;
+  }
+
+  .learn-roadmap__empty span {
+    color: $text-muted;
+  }
+
+  .learn-lessons-browser {
+    display: grid;
+    gap: 18px;
+  }
+
+  .learn-lessons-browser__grid {
+    display: grid;
+    gap: 18px;
+  }
+
+  .learn-lessons-browser__card {
+    display: grid;
+    gap: 14px;
+    padding: 18px;
+    border-radius: 22px;
+    border: 1px solid $border;
+    background: $white;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 12px 30px rgba(15, 23, 42, 0.02);
+  }
+
+  .learn-lessons-browser__hero {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 16px;
+    align-items: center;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .learn-lessons-browser__number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba($primary, 0.16), rgba($primary, 0.10));
+    color: $teal-text;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+  }
+
+  .learn-lessons-browser__hero-body {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .learn-lessons-browser__hero-body small {
+    color: $text-muted;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .learn-lessons-browser__hero-body strong {
+    color: $neutral-900;
+    font-size: 20px;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+
+  .learn-lessons-browser__subtle {
+    color: $text-muted;
+    font-size: 13px;
+  }
+
+  .learn-lessons-browser__hero-action {
+    color: $teal-text;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  .learn-lessons-browser__strip {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(220px, 280px);
+    gap: 14px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scroll-snap-type: x proximity;
+  }
+
+  .learn-lessons-browser__tile {
+    display: grid;
+    gap: 8px;
+    align-content: start;
+    min-height: 176px;
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid $border;
+    background: linear-gradient(180deg, $white 0%, $neutral-50 100%);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+    text-align: left;
+    cursor: pointer;
+    scroll-snap-align: start;
+  }
+
+  .learn-lessons-browser__tile:hover {
+    border-color: rgba($primary, 0.22);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+    transform: translateY(-1px);
+  }
+
+  .learn-lessons-browser__tile-index {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    background: $neutral-100;
+    color: $neutral-900;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .learn-lessons-browser__tile-type {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba($primary, 0.08);
+    color: $teal-text;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .learn-lessons-browser__tile strong {
+    color: $neutral-900;
+    font-size: 16px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  .learn-lessons-browser__tile small {
+    color: $text-muted;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .learn-lessons-browser__empty {
+    padding: 18px;
+    border-radius: 16px;
+    border: 1px dashed $border;
+    color: $text-muted;
+    background: $white;
+  }
+
+  @media (max-width: $learn-mobile-bp) {
+    .learn-lessons-browser__card {
+      padding: 16px;
+    }
+
+    .learn-lessons-browser__hero {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .learn-lessons-browser__hero-action {
+      grid-column: 1 / -1;
+      justify-self: start;
+    }
+
+    .learn-lessons-browser__strip {
+      grid-auto-columns: minmax(200px, 75vw);
+    }
+  }
+
+  @media (max-width: $learn-mobile-bp) {
+    .learn-roadmap {
+      gap: 14px;
+    }
+
+
+
+    .learn-roadmap__filters {
+      gap: 8px;
+    }
+
+    .learn-roadmap__filter {
+      padding: 9px 12px;
+      font-size: 12px;
+    }
+
+
+
+
+
+    .learn-roadmap__card {
+      padding: 16px;
+    }
+
+    .learn-roadmap__toggle {
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 12px 14px;
+    }
+
+    .learn-roadmap__status-row {
+      grid-column: 1 / -1;
+      justify-self: start;
+      padding-top: 0;
+    }
+
+    .learn-roadmap__chevron {
+      grid-column: 2 / 3;
+      justify-self: end;
+    }
+
+    .learn-roadmap__item {
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 12px 14px;
+      align-items: start;
+      padding: 14px 15px;
+    }
+
+
+
+    .learn-roadmap__actions .ant-btn {
+      width: 100%;
+    }
+  }
+
+  .course-assessments-summary__card--warning,
+  .course-assessment-card__status--soon,
+  .course-assessment-card__status--overdue,
+  .ln-live-session-card__tag--pending {
+    color: $text-muted !important;
+    background: $neutral-100 !important;
+    border-color: $border !important;
+  }
+
+  .ln-live-session-card--live {
+    border-color: rgba($status-error, 0.28) !important;
+  }
+
+  .ln-live-session-card__tag--live {
+    color: $status-error !important;
+    background: rgba($status-error, 0.08) !important;
+    border-color: rgba($status-error, 0.18) !important;
+  }
+
+  .ln-live-session-card__tag--upcoming,
+  .ln-live-session-card__tag--completed {
+    color: $text-muted !important;
+    background: $neutral-100 !important;
+    border-color: $border !important;
+  }
+
+  .course-assessment-card--highlighted,
+  .ln-live-session-card--highlighted,
+  .ln-card-syllabus--continue {
+    border-color: rgba($primary, 0.28) !important;
+    box-shadow: 0 0 0 2px rgba($primary, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+  }
+
+  .learn-course-students__avatar {
+    // Was pinned to one grey with !important, which also made the getAvatarColor() fix moot —
+    // every learner in every class rendered identically. Identity is the whole job of an avatar.
+    background: var(--avatar-color, #{$neutral-100});
+    color: $neutral-900;
+    border-color: $border;
+  }
+
+  // Course overview low-color pass
+  .learn-course-home-command__next,
+  .learn-course-home-command__health,
+  .learn-course-home-map__card,
+  .learn-course-home-priorities__card,
+  .learn-course-home-widget,
+  .unified-activity,
+  .compact-progress-bar,
+  .learner-dash-hero,
+  .learner-dash-stat-card,
+  .learner-dash-continue,
+  .learner-dash-breakdown {
+    background: $white !important;
+    border-color: $border !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+  }
+
+  .learn-course-home-command__eyebrow,
+  .learn-course-home-map__icon,
+  .learn-course-home-priorities__icon,
+  .learn-course-home-widget__title .anticon,
+  .learn-course-home-widget__item-icon,
+  .unified-activity__icon,
+  .unified-activity__title .anticon,
+  .learner-dash-stat-card__icon,
+  .learner-dash-stat-card__badge,
+  .learner-dash-breakdown__row-icon,
+  .learner-dash-continue__header,
+  .learner-dash-continue__cta,
+  .learner-dash-hero__next-hint {
+    color: $text-muted !important;
+  }
+
+  .learn-course-home-priorities__card--warning,
+  .learn-course-home-priorities__card--success,
+  .learner-dash-continue {
+    border-color: $border !important;
+  }
+
+  .learn-course-home-command__track,
+  .learner-dash-hero__bar-wrap,
+  .learner-dash-stat-card__bar-wrap,
+  .learner-dash-continue__progress-bar,
+  .learner-dash-breakdown__row-bar-wrap {
+    background: $neutral-100 !important;
+  }
+
+  .learn-course-home-command__fill,
+  .learner-dash-hero__bar-fill,
+  .learner-dash-stat-card__bar-fill,
+  .learner-dash-continue__progress-fill,
+  .learner-dash-breakdown__row-bar-fill {
+    background: $neutral-500 !important;
+  }
+
+  .cas__takeaway-icon,
+  .cas__expand,
+  .learn-course-home-widget__expand-btn,
+  .learn-course-home-widget__link,
+  .unified-activity__expand,
+  .unified-activity__expand-btn,
+  .unified-activity__link {
+    color: $text-muted !important;
+  }
+
+  .learn-course-home-map__card:hover:not(:disabled),
+  .learn-course-home-priorities__card:hover:not(:disabled),
+  .learner-dash-stat-card:hover,
+  .learner-dash-continue:hover {
+    border-color: rgba(15, 23, 42, 0.16) !important;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06) !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Reduced motion
+// ---------------------------------------------------------------------------
+// This file previously contained no prefers-reduced-motion block at all, so every hover lift,
+// chevron rotation and card transition ignored the user's OS setting.
+@media (prefers-reduced-motion: reduce) {
+  .learn-course-layout,
+  .learn-courses-page {
+    .learn-roadmap__card,
+    .learn-roadmap__item,
+    .learn-roadmap__filter,
+    .learn-roadmap__add-bar-btn,
+    .learn-roadmap__chevron,
+    .learn-course-home-map__card,
+    .learn-course-home-priorities__card {
+      transition: none !important;
+      animation: none !important;
+    }
+
+    .learn-roadmap__item:hover,
+    .learn-roadmap__filter:hover,
+    .learn-course-home-map__card:hover,
+    .learn-course-home-priorities__card:hover {
+      transform: none !important;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Course breadcrumb — identity + exit for the course shell
+// ---------------------------------------------------------------------------
+.learn-course-crumb {
+  position: sticky;
+  top: 0;
+  z-index: $z-sticky + 1;
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  min-height: 46px;
+  padding: 0 $space-5;
+  background: $bg;
+  border-bottom: 1px solid $border;
+
+  &__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 32px;
+    padding: 0 8px 0 6px;
+    border: 0;
+    border-radius: $radius-control;
+    background: transparent;
+    color: $text-muted;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background $duration-fast $ease-std, color $duration-fast $ease-std;
+
+    &:hover {
+      background: $teal-subtle;
+      color: $teal-text;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $teal-text;
+      outline-offset: 2px;
+    }
+  }
+
+  &__sep {
+    color: $text-subtle;
+    font-size: 13px;
+  }
+
+  &__title {
+    margin: 0;
+    min-width: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: $text;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// The tab bar sits directly under the breadcrumb, so it must stick below it rather than at 0.
+.learn-course-layout .learn-course-tabs-bar {
+  top: 46px;
+}
+
+@media (max-width: 767px) {
+  .learn-course-crumb {
+    padding: 0 $space-3;
+    min-height: 42px;
+
+    &__title { font-size: 14px; }
+  }
+
+  .learn-course-layout .learn-course-tabs-bar {
+    top: 42px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Mobile tab overflow affordance
+// ---------------------------------------------------------------------------
+// The nav scrolls horizontally with scrollbars hidden and AntD's ping-shadow gradients never
+// styled, so with 5 faculty tabs at 360px "Students" sat off-screen with no fade, arrow, or
+// peeking partial tab to say so.
+@media (max-width: 767px) {
+  .learn-course-tabs-bar {
+    position: sticky;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 1px;
+      width: 36px;
+      pointer-events: none;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0), $white 78%);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Roadmap — heading semantics + type/completion signalling
+// ---------------------------------------------------------------------------
+// Lesson and item titles became real headings (h3/h4) so a 12-lesson path exposes a usable
+// heading outline. They must not change visually, so the type scale is reset here.
+.learn-roadmap__title-block h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: $text;
+  letter-spacing: -0.01em;
+}
+
+.learn-roadmap__item-body h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: $text;
+}
+
+// The index chip now carries the content-type icon rather than an ordinal that read 03, 07, 11
+// once a filter was applied.
+.learn-roadmap__item-index .anticon {
+  font-size: 16px;
+}
+
+// Completion, carried by a glyph as well as a tint.
+.learn-roadmap__item-done {
+  color: $status-success;
+  font-size: 17px;
+}
+
+// A learner used to have to click into an already-expired quiz to discover it was too late (#9
+// blocks the open, but only at that point) -- this surfaces it directly on the list row instead,
+// same "don't make them click to find out" fix as #11's live-session link.
+.learn-roadmap__item-expired {
+  flex: 0 0 auto;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: $status-error-bg;
+  color: $status-error;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.learn-roadmap__item--done {
+  .learn-roadmap__item-body h4 {
+    color: $text-muted;
+  }
+}
+
+// Past-deadline, unsubmitted quiz: muted, and clicking opens the read-only answer review.
+.learn-roadmap__item--expired {
+  .learn-roadmap__item-body h4,
+  .learn-roadmap__item-index {
+    opacity: 0.6;
+  }
+}
+
+// Assessments get a rail so they are findable in peripheral vision without reading the caption.
+.learn-roadmap__item--assessment {
+  border-left: 3px solid rgba(139, 92, 246, 0.55);
+}
+
+.learn-roadmap__item--live {
+  border-left: 3px solid rgba(239, 68, 68, 0.55);
+}
+
+// The reserved third grid column previously held .learn-roadmap__item-action, which is never
+// rendered — leaving a permanent phantom gutter on the right of every row. The done glyph now
+// occupies it; when absent the column collapses.
+.learn-roadmap__item {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+// The content modal is the destination for every item on the roadmap, and had no responsive
+// thinking: at 375px a 680px-min iframe inside a `centered` modal is taller than the viewport,
+// so the top was unreachable. Below the tablet breakpoint it becomes a full-screen sheet.
+@media (max-width: 767px) {
+  .ln-roadmap-content-modal {
+    top: 0 !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    padding-bottom: 0 !important;
+
+    .ant-modal-content {
+      min-height: 100dvh;
+      border-radius: 0;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Faculty insight cards — At-risk Students + Performance
+// ---------------------------------------------------------------------------
+// Both replaced a single stat-button that had genuinely rich, already-computed data
+// (useFacultyCourseStats: named at-risk students with reasons; a full grade distribution) behind
+// nothing but one number. Side by side on desktop, stacked on mobile, matching the two-up rhythm
+// of .learn-course-home-priorities above them.
+.learn-course-home-insights {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $s2;
+  margin-top: $space-4;
+  align-items: start;
+}
+
+@mixin insight-card-shell {
+  padding: $space-4 !important;
+  border: 1px solid $border !important;
+  border-radius: $radius-card;
+  background: $white;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+@mixin insight-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-3;
+}
+
+@mixin insight-card-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-3;
+  min-width: 0;
+}
+
+@mixin insight-card-icon {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-lg;
+  background: $neutral-100;
+  color: $text-muted;
+  font-size: 16px;
+}
+
+@mixin insight-card-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: $text;
+  line-height: 1.25;
+}
+
+@mixin insight-card-subtitle {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: $text-muted;
+  line-height: 1.4;
+}
+
+@mixin insight-card-cta {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: $teal-text;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+
+  svg { width: 11px; height: 11px; }
+
+  &:hover { text-decoration: underline; }
+
+  &:focus-visible {
+    outline: 2px solid $teal-text;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+// Shared score-distribution bar chart (ScoreDistributionBars.jsx) -- used by PerformanceCard
+// (averaged across all graded content) and the quiz/assignment report pages (scoped to one item).
+// Generic class names since it's no longer specific to the course-home card.
+.ln-score-distribution {
+  display: grid;
+  gap: 6px;
+
+  &__row {
+    display: grid;
+    grid-template-columns: 62px minmax(0, 1fr) 18px;
+    align-items: center;
+    gap: $space-2;
+  }
+
+  &__label {
+    font-size: 11px;
+    color: $text-muted;
+    white-space: nowrap;
+  }
+
+  &__track {
+    height: 8px;
+    border-radius: 999px;
+    background: $neutral-100;
+    overflow: hidden;
+  }
+
+  &__fill {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+
+    &--excellent { background: $status-success; }
+    &--good { background: mix($status-success, $status-warning, 55%); }
+    &--fair { background: $status-warning; }
+    &--weak { background: mix($status-warning, $status-error, 55%); }
+    &--poor { background: $status-error; }
+  }
+
+  &__count {
+    font-size: 12px;
+    font-weight: 700;
+    color: $text;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__row--clickable {
+    cursor: pointer;
+
+    .ln-score-distribution__label { text-decoration: underline dotted; text-decoration-color: $text-muted; }
+  }
+
+  &__row-btn {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: none;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    border-radius: $radius-control;
+
+    &:hover, &:focus-visible {
+      background: $neutral-100;
+    }
+  }
+
+  &__names {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+    min-width: 160px;
+    max-height: 220px;
+    overflow-y: auto;
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      gap: $space-3;
+      font-size: 12px;
+
+      span:first-child { color: $text; }
+      span:last-child { color: $text-muted; font-weight: 700; font-variant-numeric: tabular-nums; }
+    }
+  }
+}
+
+.learn-risk-card {
+  @include insight-card-shell;
+
+  &__head { @include insight-card-head; }
+  &__heading { @include insight-card-heading; }
+  &__icon {
+    @include insight-card-icon;
+
+    &--warning {
+      background: $status-warning-bg;
+      color: $status-warning;
+    }
+  }
+  &__title { @include insight-card-title; }
+  &__subtitle { @include insight-card-subtitle; }
+
+  &__breakdown {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 6px;
+  }
+
+  &__chip {
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+
+    &--critical {
+      background: $status-error-bg;
+      color: $status-error;
+    }
+
+    &--moderate {
+      background: $status-warning-bg;
+      color: $status-warning;
+    }
+  }
+
+  &__empty {
+    margin: 0;
+    font-size: 13px;
+    color: $text-muted;
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: $space-2;
+  }
+
+  &__row-wrap {
+    // Popconfirm/Popover need a single child to anchor to -- the <li> just hosts that anchor.
+    display: block;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: "avatar name" "avatar reasons";
+    column-gap: $space-2;
+    row-gap: 2px;
+    align-items: center;
+    width: 100%;
+    padding: $space-1;
+    margin: 0 (-$space-1);
+    border: none;
+    border-radius: $radius-control;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s ease;
+
+    &:hover, &:focus-visible {
+      background: $neutral-100;
+    }
+  }
+
+  &__avatar {
+    grid-area: avatar;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  &__name {
+    grid-area: name;
+    font-size: 13px;
+    font-weight: 600;
+    color: $text;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__reasons {
+    grid-area: reasons;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  &__reason {
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: $neutral-100;
+    color: $text-muted;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+
+    &--critical {
+      background: $status-error-bg;
+      color: $status-error;
+    }
+  }
+
+  &__cta { @include insight-card-cta; }
+
+  &__skeleton {
+    display: grid;
+    gap: $space-2;
+  }
+
+  &__skeleton-row {
+    height: 30px;
+    border-radius: $radius-control;
+    background: $neutral-100;
+  }
+}
+
+// Click-through detail for a single at-risk row (#6): risk %, plus whichever of
+// attendance/missing-submissions/average-grade actually applies to that student -- never a
+// fabricated number for a signal that isn't there.
+.learn-risk-snapshot {
+  display: grid;
+  gap: $space-3;
+  min-width: 220px;
+  padding: 2px;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+  }
+
+  &__avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex: 0 0 auto;
+  }
+
+  &__name {
+    font-size: 13px;
+    font-weight: 700;
+    color: $text;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__risk-pill {
+    flex: 0 0 auto;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    background: $status-warning-bg;
+    color: $status-warning;
+    white-space: nowrap;
+
+    &--critical {
+      background: $status-error-bg;
+      color: $status-error;
+    }
+  }
+
+  &__stats {
+    display: grid;
+    gap: $space-2;
+  }
+
+  &__stat {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr) 34px;
+    align-items: center;
+    gap: $space-2;
+
+    &--plain {
+      grid-template-columns: 92px 1fr;
+    }
+  }
+
+  &__stat-label {
+    font-size: 11px;
+    color: $text-muted;
+    white-space: nowrap;
+  }
+
+  &__stat-track {
+    height: 6px;
+    border-radius: 999px;
+    background: $neutral-100;
+    overflow: hidden;
+  }
+
+  &__stat-fill {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+
+    &--good { background: $status-success; }
+    &--fair { background: $status-warning; }
+    &--poor { background: $status-error; }
+  }
+
+  &__stat-value {
+    font-size: 12px;
+    font-weight: 700;
+    color: $text;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.learn-risk-snapshot-popover .ant-popover-inner-content {
+  padding: $space-3;
+}
+
+.learn-performance-card {
+  @include insight-card-shell;
+
+  &__head { @include insight-card-head; }
+  &__heading { @include insight-card-heading; }
+  &__icon { @include insight-card-icon; }
+  &__title { @include insight-card-title; }
+  &__subtitle { @include insight-card-subtitle; }
+
+  &__avg {
+    flex: 0 0 auto;
+    font-size: 22px;
+    font-weight: 800;
+    color: $status-success;
+    font-variant-numeric: tabular-nums;
+
+    &--low { color: $status-error; }
+  }
+
+  &__empty {
+    margin: 0;
+    font-size: 13px;
+    color: $text-muted;
+  }
+
+  &__insight {
+    margin: 0;
+    padding: $space-2 $space-3;
+    border-radius: $radius-control;
+    background: $neutral-100;
+    font-size: 12px;
+    color: $text-muted;
+    line-height: 1.5;
+
+    strong { color: $text; }
+
+    &--weak { border-left: 3px solid $status-error; }
+    &--strong { border-left: 3px solid $status-success; }
+  }
+
+  &__cta { @include insight-card-cta; }
+
+  &__skeleton {
+    height: 96px;
+    border-radius: $radius-control;
+    background: $neutral-100;
+  }
+}
+
+@media (max-width: 767px) {
+  .learn-course-home-insights {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Card nesting — one container level, not three
+// ---------------------------------------------------------------------------
+// The Overview page produced .ln-module-card (page wrapper) > .ln-module-card (About) and
+// .learn-course-home__activity-card > .unified-activity, each with its own border, radius and
+// padding. Nested same-colour containers are the clearest signature of a page assembled by
+// composition rather than designed. Let the inner element be the card.
+.learn-course-home__activity-card {
+  padding: 0 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.learn-course-home__activity-card .unified-activity {
+  border: 1px solid $border !important;
+  border-radius: $radius-card;
+  background: $white !important;
+  padding: $s2 !important;
+}
+
+// The page wrapper is structure, not a surface — the About card inside it already provides one.
+.learn-course-home > .ln-module-card.learn-placements-dashboard__card {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+// ---------------------------------------------------------------------------
+// Per-tab loading skeletons
+// ---------------------------------------------------------------------------
+.course-skeleton {
+  --sk-base: #{$neutral-100};
+  --sk-high: #{$neutral-200};
+  display: grid;
+  gap: $space-4;
+
+  &__bar,
+  &__avatar,
+  &__chip,
+  &__cell {
+    display: block;
+    background: linear-gradient(90deg, var(--sk-base) 25%, var(--sk-high) 37%, var(--sk-base) 63%);
+    background-size: 400% 100%;
+    animation: lnCourseShimmer 1.4s ease infinite;
+  }
+
+  &__avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    flex: none;
+  }
+
+  &__chip {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    flex: none;
+  }
+
+  &__stack {
+    display: grid;
+    gap: 7px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: $space-4;
+    padding: 13px 4px;
+    border-bottom: 1px solid $neutral-100;
+
+    &--head { border-bottom-color: $neutral-200; }
+  }
+
+  &--table { gap: 0; }
+
+  &__grid-row {
+    display: flex;
+    align-items: center;
+    gap: $space-4;
+    padding: 9px 4px;
+  }
+
+  &__cells {
+    display: flex;
+    gap: 5px;
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+
+  &__cell {
+    width: 26px;
+    height: 26px;
+    border-radius: 5px;
+    flex: none;
+  }
+
+  &__msg {
+    display: flex;
+    gap: $space-3;
+    padding: $space-2 0;
+
+    &--alt { opacity: 0.72; }
+  }
+
+  &__lesson {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    padding: 18px;
+    border: 1px solid $neutral-200;
+    border-radius: 20px;   // matches .learn-roadmap__card
+  }
+
+  &__about {
+    display: grid;
+    gap: 10px;
+    padding-bottom: $space-4;
+    border-bottom: 1px solid $neutral-100;
+  }
+
+  &__cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: $space-4;
+  }
+
+  &__card {
+    display: grid;
+    gap: 9px;
+    padding: 18px;
+    border: 1px solid $neutral-200;
+    border-radius: $radius-card;
+  }
+
+  // Faculty-only Home skeleton shapes -- see FacultyOverviewSkeleton. Sized to mirror
+  // .learn-course-home-command__next and .learn-course-home-priorities__card so the swap from
+  // skeleton to real content doesn't reflow the page.
+  &__command {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-4;
+    padding: 20px;
+    margin: $space-4 0;
+    border: 1px solid $neutral-200;
+    border-radius: $radius-lg;
+  }
+
+  &__cta {
+    flex: none;
+    width: 160px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--sk-base) 25%, var(--sk-high) 37%, var(--sk-base) 63%);
+    background-size: 400% 100%;
+    animation: lnCourseShimmer 1.4s ease infinite;
+  }
+
+  &__priorities {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $space-2;
+  }
+
+  &__priority-card {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    padding: $space-2;
+    border: 1px solid $neutral-200;
+    border-radius: $radius-card;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .course-skeleton__bar,
+  .course-skeleton__avatar,
+  .course-skeleton__chip,
+  .course-skeleton__cell {
+    animation: none;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Resource viewer (resource.js) -- used in the Learning Path modal AND the lesson page. The
+// materials rules used to live under .learn-course-layout only, but antd portals the Learning
+// Path modal to <body>, so in the modal every row rendered completely unstyled. Top-level and
+// scoped to .ln-resource-viewer so both places get the same treatment.
+// ---------------------------------------------------------------------------
+.ln-resource-viewer {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+
+  .ln-resource-viewer__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-2;
+  }
+
+  .ln-resource-viewer__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $space-2;
+  }
+
+  .ln-resource-viewer__type {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: $radius-pill;
+    background: rgba($primary, 0.1);
+    color: $teal-text;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 18px;
+  }
+
+  .ln-resource-viewer__scope {
+    padding: 3px 10px;
+    border-radius: $radius-pill;
+    background: $neutral-100;
+    color: $text-muted;
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  .ln-resource-viewer__actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  // Instructor notes: a quiet panel with comfortable line length/height, not a bare paragraph.
+  .ln-resource-viewer__notes {
+    padding: $space-4;
+    border-radius: $radius-card;
+    background: $neutral-50;
+    border: 1px solid $neutral-100;
+    color: $text;
+    font-size: 14px;
+    line-height: 1.65;
+
+    p {
+      margin: 0 0 $space-2;
+    }
+
+    > :last-child,
+    .resource-notes > :last-child {
+      margin-bottom: 0;
+    }
+
+    a {
+      color: $teal-text;
+      text-decoration: underline;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: $radius-md;
+    }
+  }
+
+  .ln-resource-viewer__text {
+    white-space: pre-wrap;
+  }
+
+  .ln-resource-viewer__materials {
+    display: grid;
+    gap: $space-2;
+  }
+
+  .ln-resource-viewer__section-title {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: $text-muted;
+  }
+
+  .ln-resource-viewer__count {
+    padding: 0 8px;
+    border-radius: $radius-pill;
+    background: $neutral-100;
+    color: $text;
+    font-size: 12px;
+    line-height: 20px;
+    letter-spacing: 0;
+  }
+
+  .ln-resource-materials {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: $space-2;
+  }
+
+  .ln-resource-materials__row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: $space-3;
+    padding: 12px 16px;
+    border-radius: $radius-card;
+    border: 1px solid $neutral-300;
+    background: $white;
+    transition: border-color $duration-normal $ease-std, box-shadow $duration-normal $ease-std;
+
+    &:hover {
+      border-color: rgba($primary, 0.35);
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+    }
+  }
+
+  .ln-resource-materials__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: $radius-lg;
+    font-size: 18px;
+
+    &--file {
+      background: rgba($primary, 0.1);
+      color: $teal-text;
+    }
+
+    &--link {
+      background: $status-warning-bg;
+      color: $status-warning;
+    }
+  }
+
+  .ln-resource-materials__info {
+    min-width: 0;
+    display: grid;
+    gap: 2px;
+  }
+
+  .ln-resource-materials__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: $text;
+    overflow-wrap: anywhere;
+  }
+
+  .ln-resource-materials__caption {
+    font-size: 12px;
+    color: $text-muted;
+  }
+
+  .ln-resource-materials__unavailable {
+    font-size: 12px;
+    color: $text-muted;
+    font-style: italic;
+    white-space: nowrap;
+  }
+
+  // Learner sign-off: its own footer row instead of a stray button under the list.
+  .ln-resource-viewer__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-3;
+    padding-top: $space-4;
+    border-top: 1px solid $neutral-100;
+  }
+
+  .ln-resource-viewer__footer-hint {
+    font-size: 13px;
+    color: $text-muted;
+  }
+
+  .mark-complete-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    .ant-btn {
+      height: 36px;
+      padding: 0 16px;
+      border-radius: $radius-pill;
+      font-weight: 600;
+    }
+  }
+
+  .mark-complete-button--done {
+    padding: 6px 14px;
+    border-radius: $radius-pill;
+    background: $status-success-bg;
+    color: $status-success;
+    font-size: 13px;
+    font-weight: 600;
+  }
+}
+
+// Phones: stack the Open button under the material's name so long titles keep room.
+@media (max-width: 575px) {
+  .ln-resource-viewer {
+    .ln-resource-materials__row {
+      grid-template-columns: auto minmax(0, 1fr);
+
+      > .ant-btn,
+      > .ln-resource-materials__unavailable {
+        grid-column: 1 / -1;
+        justify-self: stretch;
+      }
+    }
+
+    .ln-resource-viewer__footer {
+      flex-direction: column;
+      align-items: stretch;
+
+      .mark-complete-button .ant-btn {
+        width: 100%;
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Assignment view + submit drawers (ViewAssignmentModal / SubmitAssignmentModal), opened from the
+// Learning Path, the lesson page and All Assignments. `className` lands on .ant-drawer-content.
+// The app-wide drawer rules in _antddesign.scss wrap the close button onto its own row and force a
+// 24px title; these two drawers get a single-row header instead, plus real cards for resources and
+// submission methods in place of bare bootstrap boxes.
+// ---------------------------------------------------------------------------
+.ln-assignment-view-drawer,
+.ln-assignment-submit-drawer {
+  .ant-drawer-header {
+    padding: $space-4 $space-5;
+    border-bottom: 1px solid $neutral-100 !important;
+    box-shadow: none;
+  }
+
+  .ant-drawer-header .ant-drawer-header-title {
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: $space-3;
+
+    .ant-drawer-title {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.35;
+      color: $text;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .ant-drawer-header .ant-drawer-close {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 6px;
+    border-radius: $radius-sm;
+    text-align: center;
+
+    svg {
+      color: $text-muted;
+    }
+
+    &:hover {
+      background: $neutral-100;
+    }
+  }
+
+  .ln-drawer-body {
+    padding: $space-5 $space-5 $space-6;
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
+    font-size: 14px;
+    line-height: 1.6;
+    color: $text;
+  }
+
+  .ant-drawer-footer {
+    border-top: 1px solid $neutral-100 !important;
+    padding: $space-3 $space-5 !important;
+  }
+}
+
+// Summary strip: due date, learner status, accepted submission types.
+.ln-assign-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3 $space-6;
+  padding: $space-4;
+  border-radius: $radius-card;
+  background: $neutral-50;
+  border: 1px solid $neutral-100;
+}
+
+.ln-assign-summary__item {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+
+  &--wide {
+    flex-basis: 100%;
+  }
+}
+
+.ln-assign-summary__label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $text-muted;
+}
+
+.ln-assign-summary__value {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: $text;
+
+  &.is-soon { color: $status-warning; }
+  &.is-late { color: $status-error; }
+}
+
+.ln-assign-summary__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ln-assign-chip {
+  padding: 2px 10px;
+  border-radius: $radius-pill;
+  background: $white;
+  border: 1px solid $neutral-300;
+  font-size: 12px;
+  color: $text;
+}
+
+.ln-assign-status {
+  justify-self: start;
+  padding: 2px 10px;
+  border-radius: $radius-pill;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 20px;
+
+  &--done { background: $status-success-bg; color: $status-success; }
+  &--late { background: $status-error-bg; color: $status-error; }
+  &--soon { background: $status-warning-bg; color: $status-warning; }
+  &--open { background: $neutral-100; color: $text-muted; }
+}
+
+.ln-assign-alert.ant-alert {
+  margin: 0;
+  border-radius: $radius-card;
+}
+
+.ln-assign-cta-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: $space-3;
+
+  .ln-assignment-view-submissions-cta {
+    margin-bottom: 0;
+  }
+}
+
+.ln-assign-section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-3;
+}
+
+.ln-assign-section-title {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: $text;
+}
+
+.ln-assign-count {
+  padding: 0 8px;
+  border-radius: $radius-pill;
+  background: $neutral-100;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.ln-assign-section-sub {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: $text-muted;
+}
+
+.ln-assign-resource-list {
+  display: grid;
+  gap: $space-3;
+}
+
+.ln-assign-resource {
+  display: grid;
+  gap: $space-3;
+  padding: $space-4;
+  border: 1px solid $neutral-300;
+  border-radius: $radius-card;
+  background: $white;
+}
+
+.ln-assign-resource__head {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  min-width: 0;
+}
+
+.ln-assign-resource__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border-radius: $radius-lg;
+  font-size: 18px;
+  background: rgba($primary, 0.1);
+  color: $teal-text;
+}
+
+.ln-assign-resource--link .ln-assign-resource__icon {
+  background: $status-warning-bg;
+  color: $status-warning;
+}
+
+.ln-assign-resource--text .ln-assign-resource__icon {
+  background: $neutral-100;
+  color: $text;
+}
+
+.ln-assign-resource__heading {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.ln-assign-resource__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: $text;
+  overflow-wrap: anywhere;
+}
+
+.ln-assign-resource__kind {
+  font-size: 12px;
+  color: $text-muted;
+}
+
+.ln-assign-resource__actions {
+  display: flex;
+  gap: $space-2;
+  flex: 0 0 auto;
+}
+
+.ln-assign-resource__url {
+  font-size: 13px;
+  color: $teal-text;
+  overflow-wrap: anywhere;
+}
+
+.ln-assign-resource__muted {
+  font-size: 13px;
+  color: $text-muted;
+  font-style: italic;
+}
+
+// Faculty-written instructions: readable rich text inside the card.
+.ln-assign-rich {
+  font-size: 14px;
+  line-height: 1.7;
+  color: $text;
+  overflow-wrap: anywhere;
+
+  p { margin: 0 0 $space-2; }
+  ul, ol { margin: 0 0 $space-2; padding-left: 1.4em; }
+  h1, h2, h3, h4, h5, h6 { margin: $space-3 0 $space-2; font-size: 15px; font-weight: 700; }
+  a { color: $teal-text; text-decoration: underline; }
+  img { max-width: 100%; height: auto; border-radius: $radius-md; }
+  code { background: $neutral-100; border-radius: $radius-sm; padding: 2px 6px; font-size: 13px; }
+  pre { background: $neutral-100; border-radius: $radius-sm; padding: $space-3; overflow-x: auto; font-size: 13px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { border: 1px solid $neutral-300; padding: 6px 10px; }
+
+  > :last-child { margin-bottom: 0; }
+}
+
+// Submit drawer
+.ln-assignment-submit-drawer .ln-assignment-submit-form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
+  }
+}
+
+.ln-assign-submit-intro {
+  display: grid;
+  gap: 2px;
+}
+
+.ln-assign-submit-intro__eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $text-muted;
+}
+
+.ln-assign-submit-intro__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: $text;
+}
+
+.ln-assign-submit-intro__sub {
+  margin: 0;
+  font-size: 13px;
+  color: $text-muted;
+}
+
+.ln-assign-method {
+  display: grid;
+  gap: $space-3;
+  padding: $space-4;
+  border: 1px solid $neutral-300;
+  border-radius: $radius-card;
+  background: $white;
+}
+
+.ln-assign-method__head {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.ln-assign-method__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: $radius-sm;
+  background: rgba($primary, 0.1);
+  color: $teal-text;
+  font-size: 15px;
+}
+
+.ln-assign-method__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: $text;
+}
+
+.ln-assign-method__add.ant-btn {
+  margin-left: auto;
+  padding-inline: 4px;
+  font-size: 13px;
+}
+
+.ln-assign-method__entry {
+  display: grid;
+  gap: $space-2;
+}
+
+.ln-assign-method__entry + .ln-assign-method__entry {
+  padding-top: $space-3;
+  border-top: 1px dashed $neutral-300;
+}
+
+.ln-assign-method__entry-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+  color: $text-muted;
+}
+
+.ln-assign-upload {
+  display: grid;
+  gap: $space-2;
+
+  .ant-upload,
+  .ant-upload-select {
+    display: block;
+    width: 100%;
+  }
+}
+
+.ln-assign-dropzone.ant-btn {
+  height: auto;
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: $space-3;
+  border: 1.5px dashed rgba($primary, 0.55);
+  border-radius: $radius-card;
+  background: rgba($primary, 0.04);
+  color: $teal-text;
+  font-weight: 600;
+  white-space: normal;
+
+  &:hover:not(:disabled) {
+    border-color: $primary;
+    background: rgba($primary, 0.08);
+    color: $teal-text;
+  }
+}
+
+.ln-assign-dropzone__hint {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: $text-muted;
+}
+
+.ln-assign-drive-btn.ant-btn {
+  border-radius: $radius-card;
+}
+
+.ln-assign-file-chip {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  padding: 10px 12px;
+  border-radius: $radius-card;
+  background: $status-success-bg;
+}
+
+.ln-assign-file-chip__ok {
+  color: $status-success;
+  font-size: 16px;
+}
+
+.ln-assign-file-chip__name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: $text;
+  overflow-wrap: anywhere;
+}
+
+.ln-assign-method__link-row {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.ln-assign-method__editor {
+  border-radius: $radius-card;
+  overflow: hidden;
+}
+
+@media (max-width: 575px) {
+  .ln-assignment-view-drawer .ln-drawer-body,
+  .ln-assignment-submit-drawer .ln-drawer-body {
+    padding: $space-4;
+  }
+
+  .ln-assign-resource__head {
+    flex-wrap: wrap;
+  }
+
+  .ln-assign-resource__actions,
+  .ln-assign-resource__head > .ant-btn {
+    flex-basis: 100%;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Live session viewer (syllabus/liveclass.js) -- Learning Path modal and lesson page. Was two
+// plain grey Tags and inline-styled buttons; now one session card (date block, status, time and
+// duration, provider) with the join action under it and the learner sign-off in a footer.
+// ---------------------------------------------------------------------------
+.ln-live-view {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.ln-live-view__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-2;
+}
+
+.ln-live-view__type {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: $radius-pill;
+  background: $status-error-bg;
+  color: #b91c1c;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+}
+
+.ln-live-view__head-actions {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  margin-left: auto;
+}
+
+.ln-live-view__card {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+  padding: $space-4;
+  border: 1px solid $neutral-300;
+  border-left: 4px solid $neutral-300;
+  border-radius: $radius-card;
+  background: $white;
+
+  &--live { border-left-color: #dc2626; background: rgba(220, 38, 38, 0.03); }
+  &--upcoming { border-left-color: $primary; }
+  &--ended { border-left-color: $neutral-300; background: $neutral-50; }
+}
+
+.ln-live-view__date {
+  flex: 0 0 auto;
+  display: grid;
+  justify-items: center;
+  min-width: 64px;
+  padding: $space-2 $space-3;
+  border-radius: $radius-card;
+  background: $neutral-100;
+  line-height: 1.1;
+}
+
+.ln-live-view__date-month {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #b91c1c;
+}
+
+.ln-live-view__date-day {
+  font-size: 24px;
+  font-weight: 800;
+  color: $text;
+}
+
+.ln-live-view__date-weekday {
+  font-size: 11px;
+  color: $text-muted;
+}
+
+.ln-live-view__info {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.ln-live-view__status {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border-radius: $radius-pill;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 20px;
+
+  &--live { background: rgba(220, 38, 38, 0.1); color: #b91c1c; }
+  &--upcoming { background: rgba($primary, 0.12); color: $teal-text; }
+  &--scheduled { background: $neutral-100; color: $text-muted; }
+  &--ended { background: $neutral-100; color: $text-muted; }
+}
+
+.ln-live-view__pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #dc2626;
+  animation: lms-live-pulse 1.4s $lms-motion-ease infinite;
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .ln-live-view__pulse { animation: none; }
+}
+
+.ln-live-view__time {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: $text;
+}
+
+.ln-live-view__duration {
+  padding: 0 8px;
+  border-radius: $radius-pill;
+  background: $neutral-100;
+  font-size: 12px;
+  font-weight: 500;
+  color: $text-muted;
+}
+
+.ln-live-view__provider {
+  font-size: 13px;
+  color: $text-muted;
+}
+
+.ln-live-view__join {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+}
+
+.ln-live-view__join-text {
+  margin: 0;
+  font-size: 14px;
+  color: $text-muted;
+}
+
+.ln-live-view__join-actions {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.ln-live-view__join-btn.ant-btn {
+  border-radius: $radius-pill;
+  font-weight: 700;
+  padding-inline: 22px;
+}
+
+.ln-live-view__empty {
+  margin: 0;
+  padding: $space-4;
+  border-radius: $radius-card;
+  background: $neutral-50;
+  font-size: 14px;
+  color: $text-muted;
+}
+
+.ln-live-view__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  padding-top: $space-4;
+  border-top: 1px solid $neutral-100;
+
+  .mark-complete-button .ant-btn {
+    height: 36px;
+    padding: 0 16px;
+    border-radius: $radius-pill;
+    font-weight: 600;
+  }
+
+  .mark-complete-button--done {
+    padding: 6px 14px;
+    border-radius: $radius-pill;
+    background: $status-success-bg;
+    color: $status-success;
+    font-size: 13px;
+    font-weight: 600;
+  }
+}
+
+.ln-live-view__footer-hint {
+  font-size: 13px;
+  color: $text-muted;
+}
+
+// Learning Path rows: live/ended chips next to a live session's schedule.
+.learn-roadmap__item-live,
+.learn-roadmap__item-ended {
+  flex: 0 0 auto;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.learn-roadmap__item-live {
+  background: rgba(220, 38, 38, 0.1);
+  color: #b91c1c;
+}
+
+.learn-roadmap__item-ended {
+  background: $neutral-100;
+  color: $text-muted;
+}
+
+@media (max-width: 575px) {
+  .ln-live-view__card {
+    align-items: flex-start;
+  }
+
+  .ln-live-view__join-actions {
+    width: 100%;
+
+    .ln-live-view__join-btn.ant-btn {
+      flex: 1 1 auto;
+    }
+  }
+}
+
+// Learning Path rows: assignment overdue (late still accepted) and partial video progress.
+.learn-roadmap__item-overdue,
+.learn-roadmap__item-progress {
+  flex: 0 0 auto;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.learn-roadmap__item-overdue {
+  background: $status-warning-bg;
+  color: #b45309;
+  text-transform: uppercase;
+}
+
+.learn-roadmap__item-progress {
+  background: rgba($primary, 0.12);
+  color: $teal-text;
+}
+
+// Lesson page: assignment and quiz cards (LessonActivityCards.jsx). Replace an auto-opening
+// assignment drawer and an inline quiz attempt iframe with a card that opens them on demand.
+.ln-activity-card {
+  display: grid;
+  gap: $space-3;
+}
+
+.ln-activity-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-2;
+}
+
+.ln-activity-card__body {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-3 $space-4;
+  border: 1px solid $neutral-300;
+  border-radius: $radius-card;
+  background: $neutral-50;
+}
+
+.ln-activity-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border-radius: $radius-lg;
+  background: rgba($primary, 0.1);
+  color: $teal-text;
+  font-size: 18px;
+}
+
+.ln-activity-card__info {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.ln-activity-card__due {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: $text-muted;
+
+  &.is-late { color: $status-error; font-weight: 600; }
+}
+
+.ln-activity-card__action.ant-btn {
+  flex: 0 0 auto;
+  border-radius: $radius-pill;
+  font-weight: 600;
+}
+
+.ln-activity-status {
+  justify-self: start;
+  padding: 2px 10px;
+  border-radius: $radius-pill;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 20px;
+
+  &--done { background: $status-success-bg; color: $status-success; }
+  &--late { background: $status-warning-bg; color: #b45309; }
+  &--missed { background: $status-error-bg; color: #b91c1c; }
+  &--open { background: $neutral-100; color: #475569; }
+}
+
+@media (max-width: 575px) {
+  .ln-activity-card__body {
+    flex-wrap: wrap;
+  }
+
+  .ln-activity-card__action.ant-btn {
+    width: 100%;
+  }
+}

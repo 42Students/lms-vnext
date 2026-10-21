@@ -1,0 +1,1092 @@
+@import "./variables.scss";
+
+// =============================================================================
+// _learn-jobs.scss — Jobs list (browse) page
+//
+// Owns every visual style for `JobsListContent.jsx`. All values come from the
+// design tokens in `_variables.scss`. Mobile rules live in this file (media
+// queries beside each block), not in `_learn-mobile.scss`.
+//
+// NOTE: `_learn-mobile.scss` L1394–1509 still targets `.learn-job-card`,
+// `.learn-job-card-mobile`, `.learn-jobs-list-item` and `.learn-jobs-filter-tags`.
+// No component has emitted those class names for some time — that block is dead
+// and should be deleted from `_learn-mobile.scss` (out of scope for this file).
+// The mobile layout below is authored here instead.
+//
+// The former `learn-job-detail-*` blocks were removed: `JobDetailContent.jsx`
+// styles itself entirely through `ljd-*` in `_learn-job-detail.scss`.
+// =============================================================================
+
+$jobs-primary: $clrThird;
+$jobs-accent: $teal-deep; // interactive accent that passes AA as text on white
+$jobs-link: $teal-text; // teal as text on light tints (~4.6:1)
+$jobs-success: $status-success;
+$jobs-warning: $status-warning;
+$jobs-error: $status-error;
+$jobs-error-text: darken($status-error, 18%);
+$jobs-text: $neutral-900; // headings
+$jobs-text-body: $neutral-700; // body copy
+$jobs-text-muted: $neutral-500; // captions / labels — the AA floor for text here
+$jobs-bg: $white;
+$jobs-bg-subtle: $neutral-50;
+$jobs-bg-page: $neutral-100;
+$jobs-border: $neutral-200;
+$jobs-border-soft: $neutral-100;
+
+$jobs-radius: $radius-control;
+$jobs-radius-card: $radius-card;
+$jobs-radius-pill: $radius-pill;
+
+$learn-mobile-footer-height: 4rem !default;
+$learn-mobile-bp: 767px !default;
+$jobs-touch-min: 44px;
+$jobs-facts-col: 208px;
+
+// ---------------------------------------------------------------------------
+// Page shell
+// ---------------------------------------------------------------------------
+.learn-jobs-page {
+  width: 100%;
+  max-width: 100%;
+  padding: 0 $space-4;
+  padding-bottom: calc(#{$learn-mobile-footer-height} + #{$space-5} + env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
+
+  @media (min-width: #{$learn-mobile-bp + 1}) {
+    padding: 0 $space-5;
+    padding-bottom: $space-8;
+  }
+
+  &--placements {
+    background: $jobs-bg-page;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+}
+
+.learn-jobs-page .learn-placements-dashboard__overview {
+  border-bottom: none;
+  padding-bottom: $space-4;
+  margin-bottom: $space-5;
+}
+
+// ---------------------------------------------------------------------------
+// Header
+// ---------------------------------------------------------------------------
+.learn-jobs-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-5;
+  width: 100%;
+  box-sizing: border-box;
+
+  &__left {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+  }
+
+  &__title {
+    font-size: 28px;
+    font-weight: 600;
+    color: $jobs-text;
+    margin: 0;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+
+  // Metrics are prose, not filter chips — only the Saved one is a real control.
+  &__metrics {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $space-4;
+    margin: 0;
+    font-size: $text-base;
+    color: $jobs-text-body;
+  }
+
+  @media (max-width: $learn-mobile-bp) {
+    flex-direction: column;
+    gap: $space-4;
+
+    &__title { font-size: $text-xl; }
+  }
+}
+
+.learn-jobs-metric {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  font-size: $text-base;
+  line-height: 1.4;
+  color: $jobs-text-body;
+  white-space: nowrap;
+
+  .anticon { font-size: $text-base; color: $jobs-text-muted; }
+
+  // The Saved metric is actionable — it switches to the Saved tab.
+  &--action {
+    border: 1px solid rgba($jobs-accent, 0.28);
+    background: rgba($jobs-primary, 0.08);
+    color: $jobs-link;
+    border-radius: $jobs-radius-pill;
+    padding: $space-1 $space-3;
+    min-height: 32px;
+    cursor: pointer;
+    transition: background-color $duration-fast $ease-std, border-color $duration-fast $ease-std;
+
+    .anticon { color: currentColor; }
+
+    &:hover {
+      background: rgba($jobs-primary, 0.14);
+      border-color: rgba($jobs-accent, 0.45);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $jobs-accent;
+      outline-offset: 2px;
+    }
+
+    @media (max-width: $learn-mobile-bp) {
+      min-height: $jobs-touch-min;
+      padding: $space-2 $space-4;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Company avatar — neutral tile; real logos are contained, never cropped
+// ---------------------------------------------------------------------------
+.learn-jobs-avatar {
+  border-radius: $jobs-radius;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $jobs-bg-subtle;
+  border: 1px solid $jobs-border;
+  box-sizing: border-box;
+
+  &--initial {
+    font-weight: 700;
+    user-select: none;
+  }
+
+  &--logo {
+    padding: $space-1;
+    background: $white;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    // `cover` cropped wide wordmarks down to a meaningless slice.
+    object-fit: contain;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Tabs
+// ---------------------------------------------------------------------------
+.learn-jobs-grid-section {
+  margin-top: $space-5;
+
+  @media (max-width: $learn-mobile-bp) {
+    margin-top: $space-4;
+  }
+}
+
+.learn-jobs-section__tabs {
+  margin-bottom: $space-4;
+}
+
+.learn-jobs-tabs {
+  margin-bottom: 0;
+  border-bottom: 1px solid $jobs-border-soft;
+  background: $jobs-bg;
+
+  .ant-tabs-nav { margin-bottom: 0; }
+
+  .ant-tabs-tab {
+    font-size: $text-base;
+    padding: $space-2 $space-4;
+    margin-left: 0;
+  }
+
+  .ant-tabs-tab:first-child { padding-left: $space-2; }
+
+  .ant-tabs-ink-bar { background: $jobs-accent; }
+
+  .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn { color: $jobs-accent; }
+
+  @media (max-width: $learn-mobile-bp) {
+    .ant-tabs-nav-list { width: 100%; }
+    .ant-tabs-tab {
+      flex: 1;
+      justify-content: center;
+      min-height: $jobs-touch-min;
+      padding: $space-3 $space-4;
+    }
+    .ant-tabs-ink-bar { width: 50% !important; }
+  }
+}
+
+.learn-jobs-tab-saved {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.learn-jobs-tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 $space-2;
+  font-size: $text-xs;
+  font-weight: 600;
+  line-height: 1;
+  color: $white;
+  background: $gold-accent;
+  border-radius: $jobs-radius-pill;
+}
+
+// ---------------------------------------------------------------------------
+// Triage toolbar — search + sort + facets
+// ---------------------------------------------------------------------------
+.learn-jobs-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  margin-bottom: $space-4;
+
+  &__row {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: $space-3;
+  }
+
+  &__search.ant-input-affix-wrapper {
+    flex: 1 1 240px;
+    min-width: 0;
+    max-width: 340px;
+    min-height: $jobs-touch-min;
+    border-radius: $jobs-radius;
+    border-color: $jobs-border;
+    transition: border-color $duration-fast $ease-std, box-shadow $duration-fast $ease-std;
+
+    input { font-size: $text-base; }
+    .anticon { color: $jobs-text-muted; }
+
+    &:focus,
+    &.ant-input-affix-wrapper-focused {
+      border-color: $jobs-accent;
+      box-shadow: 0 0 0 2px rgba($jobs-accent, 0.18);
+    }
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+    min-width: 0;
+  }
+
+  &__field-label {
+    font-size: $text-xs;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: $jobs-text-muted;
+  }
+
+  &__select.ant-select {
+    width: 172px;
+
+    .ant-select-selector {
+      min-height: $jobs-touch-min;
+      border-radius: $jobs-radius !important;
+      border-color: $jobs-border;
+      font-size: $text-base;
+      display: flex;
+      align-items: center;
+    }
+
+    &.ant-select-focused .ant-select-selector {
+      border-color: $jobs-accent;
+      box-shadow: 0 0 0 2px rgba($jobs-accent, 0.18);
+    }
+  }
+
+  &__facets {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $space-2;
+  }
+
+  @media (max-width: $learn-mobile-bp) {
+    &__row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    &__search.ant-input-affix-wrapper {
+      max-width: none;
+      flex: 1 1 auto;
+    }
+
+    &__select.ant-select { width: 100%; }
+  }
+}
+
+.learn-jobs-facet {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  min-height: 36px;
+  padding: $space-2 $space-3;
+  font-size: $text-base;
+  line-height: 1.3;
+  color: $jobs-text-body;
+  background: $jobs-bg;
+  border: 1px solid $jobs-border;
+  border-radius: $jobs-radius-pill;
+  cursor: pointer;
+  transition: background-color $duration-fast $ease-std, border-color $duration-fast $ease-std,
+    color $duration-fast $ease-std;
+
+  &:hover {
+    border-color: rgba($jobs-accent, 0.45);
+    color: $jobs-text;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $jobs-accent;
+    outline-offset: 2px;
+  }
+
+  // Selected state carries a check glyph as well as colour.
+  &[aria-pressed="true"] {
+    background: rgba($jobs-primary, 0.1);
+    border-color: rgba($jobs-accent, 0.5);
+    color: $jobs-link;
+    font-weight: 600;
+
+    &::before {
+      content: "✓";
+      font-size: $text-xs;
+      line-height: 1;
+    }
+  }
+
+  &__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    padding: 0 $space-1;
+    font-size: $text-xs;
+    font-weight: 600;
+    color: $jobs-text-muted;
+    background: $neutral-100;
+    border-radius: $jobs-radius-pill;
+  }
+
+  &__clear.ant-btn {
+    padding: 0 $space-2;
+    font-size: $text-base;
+    color: $jobs-link;
+    min-height: 36px;
+  }
+
+  @media (max-width: $learn-mobile-bp) {
+    min-height: $jobs-touch-min;
+    padding: $space-2 $space-4;
+
+    &__clear.ant-btn { min-height: $jobs-touch-min; }
+  }
+}
+
+.learn-jobs-results-info {
+  font-size: $text-base;
+  line-height: 1.4;
+  color: $jobs-text-body;
+  margin: 0 0 $space-4;
+}
+
+.learn-jobs-alert.ant-alert {
+  margin-bottom: $space-4;
+  border-radius: $jobs-radius;
+  align-items: flex-start;
+}
+
+.learn-jobs-list-wrap {
+  // transparent wrapper — the cards carry the surface
+}
+
+.learn-jobs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.learn-jobs-list__item {
+  margin-bottom: $space-3;
+
+  &:last-child { margin-bottom: 0; }
+}
+
+// ---------------------------------------------------------------------------
+// Job card — fixed comparison grid
+//
+// Columns are identical for every row (avatar · body · facts · save) so CTC,
+// deadline and location line up vertically down the whole list.
+// ---------------------------------------------------------------------------
+.learn-jobs-card {
+  --jobs-card-accent: #{$jobs-primary};
+
+  position: relative;
+  display: grid;
+  // Column 4 is `auto` so it sits at the heart's 44px unless an inline save error
+  // needs room — the card widens the column instead of clipping the message.
+  grid-template-columns: auto minmax(0, 1fr) $jobs-facts-col auto;
+  grid-template-areas: "avatar body facts save";
+  align-items: start;
+  gap: $space-4;
+  padding: $space-4 $space-4 $space-4 $space-5;
+  background: $jobs-bg;
+  border: 1px solid $jobs-border;
+  border-radius: $jobs-radius-card;
+  box-shadow: $elev-1;
+  transition: box-shadow $duration-fast $ease-std, border-color $duration-fast $ease-std,
+    transform $duration-fast $ease-std;
+
+  &:hover {
+    box-shadow: $elev-2;
+    border-color: rgba($jobs-accent, 0.3);
+    transform: translateY(-1px);
+  }
+
+  &__accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 4px;
+    border-radius: $jobs-radius-card 0 0 $jobs-radius-card;
+    background: var(--jobs-card-accent);
+  }
+
+  &__avatar {
+    grid-area: avatar;
+  }
+
+  &__body {
+    grid-area: body;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+  }
+
+  &__badges {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $space-2;
+    margin-bottom: $space-1;
+
+    .ant-tag {
+      margin: 0;
+      font-size: $text-xs;
+      line-height: 1.4;
+      padding: 2px $space-2;
+      border-radius: $jobs-radius;
+    }
+  }
+
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    font-size: $text-xs;
+    font-weight: 600;
+    line-height: 1.4;
+    padding: 2px $space-2;
+    border-radius: $jobs-radius;
+
+    &--blocked {
+      color: $jobs-error-text;
+      background: rgba($jobs-error, 0.1);
+      border: 1px solid rgba($jobs-error, 0.28);
+    }
+
+    &--closed {
+      color: $jobs-text-body;
+      background: $neutral-100;
+      border: 1px solid $jobs-border;
+    }
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: $jobs-text;
+    margin: 0;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  // Stretched link — the whole card is clickable, but only this anchor is focusable.
+  &__link {
+    color: inherit;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+      color: $jobs-accent;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      border-radius: $jobs-radius-card;
+    }
+
+    &:focus-visible {
+      outline: none;
+
+      &::after {
+        outline: 2px solid $jobs-accent;
+        outline-offset: -2px;
+      }
+    }
+  }
+
+  &__company {
+    font-size: $text-base;
+    color: $jobs-text-body;
+    margin: 0;
+    line-height: 1.45;
+  }
+
+  &__snippet {
+    font-size: $text-base;
+    color: $jobs-text-muted;
+    margin: $space-1 0 0;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__posted {
+    font-size: $text-xs;
+    color: $jobs-text-muted;
+    margin: $space-1 0 0;
+    line-height: 1.4;
+  }
+
+  // visibilityReason promoted to a real explanation with a next step.
+  &__notice {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-2;
+    margin: $space-2 0 0;
+    padding: $space-2 $space-3;
+    font-size: $text-sm;
+    line-height: 1.5;
+    color: $jobs-error-text;
+    background: rgba($jobs-error, 0.06);
+    border: 1px solid rgba($jobs-error, 0.2);
+    border-radius: $jobs-radius;
+
+    strong { font-weight: 700; }
+
+    .anticon {
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    &--muted {
+      color: $jobs-text-body;
+      background: $neutral-100;
+      border-color: $jobs-border;
+    }
+  }
+
+  // ---- Fixed comparison column ------------------------------------------
+  &__facts {
+    grid-area: facts;
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+    margin: 0;
+    min-width: 0;
+  }
+
+  &__fact {
+    min-width: 0;
+  }
+
+  &__fact-label {
+    display: flex;
+    align-items: center;
+    gap: $space-1;
+    font-size: $text-xs;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: $jobs-text-muted;
+    margin: 0 0 2px;
+
+    .anticon { font-size: $text-xs; }
+  }
+
+  &__fact-value {
+    margin: 0;
+    font-size: $text-base;
+    font-weight: 600;
+    line-height: 1.4;
+    color: $jobs-text;
+    overflow-wrap: anywhere;
+
+    &--empty {
+      font-weight: 400;
+      color: $jobs-text-muted;
+    }
+  }
+
+  // Urgency is carried by the wording ("Closes in 2 days") as well as the tone.
+  &__deadline {
+    display: inline-flex;
+    align-items: center;
+    font-size: $text-base;
+    line-height: 1.4;
+    border-radius: $jobs-radius;
+
+    &[data-tone="urgent"] {
+      font-weight: 700;
+      color: $gold-accent;
+      background: $gold-subtle;
+      border: 1px solid rgba($gold-accent, 0.3);
+      padding: 2px $space-2;
+    }
+
+    &[data-tone="soon"] {
+      font-weight: 700;
+      color: $jobs-text;
+    }
+
+    &[data-tone="normal"] {
+      font-weight: 600;
+      color: $jobs-text-body;
+    }
+
+    &[data-tone="closed"] {
+      font-weight: 600;
+      color: $jobs-text-body;
+      background: $neutral-100;
+      border: 1px solid $jobs-border;
+      padding: 2px $space-2;
+    }
+
+    &[data-tone="none"] {
+      font-weight: 400;
+      color: $jobs-text-muted;
+    }
+  }
+
+  // ---- Save --------------------------------------------------------------
+  &__actions {
+    grid-area: save;
+    position: relative;
+    z-index: 2; // above the stretched link overlay
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: $space-1;
+  }
+
+  &__save {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: $jobs-touch-min;
+    min-height: $jobs-touch-min;
+    padding: $space-2;
+    border: none;
+    background: transparent;
+    color: $jobs-text-muted;
+    border-radius: $jobs-radius;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color $duration-fast $ease-std, background-color $duration-fast $ease-std;
+
+    .anticon { font-size: 18px; }
+
+    &:hover {
+      color: $jobs-accent;
+      background: rgba($jobs-primary, 0.1);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $jobs-accent;
+      outline-offset: 2px;
+    }
+
+    &[data-saved="true"] {
+      color: $gold-accent;
+
+      .anticon {
+        animation: learn-jobs-heart-pop $duration-normal $ease-std;
+      }
+
+      &:hover { background: rgba($gold-accent, 0.12); }
+    }
+  }
+
+  &__save-error {
+    font-size: $text-xs;
+    line-height: 1.35;
+    text-align: right;
+    color: $jobs-error-text;
+    max-width: 132px;
+  }
+
+  // ---- States: never dimmed with opacity; muted through colour tokens only --
+  &[data-state="closed"],
+  &[data-state="ineligible"],
+  &[data-state="applied"] {
+    background: $jobs-bg-subtle;
+
+    .learn-jobs-card__title { color: $jobs-text-body; }
+    .learn-jobs-avatar { filter: grayscale(1); }
+  }
+
+  &[data-state="ineligible"] {
+    border-color: rgba($jobs-error, 0.22);
+  }
+
+  &[data-state="applied"] {
+    border-color: rgba($jobs-success, 0.35);
+
+    .learn-jobs-avatar { filter: none; }
+  }
+
+  // ---- Mobile: logo + title + company, then CTC · deadline, heart top-right --
+  @media (max-width: $learn-mobile-bp) {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "avatar body save"
+      "facts facts facts";
+    gap: $space-3;
+    padding: $space-3 $space-3 $space-3 $space-4;
+
+    &:hover { transform: none; }
+
+    &__snippet { display: none; }
+
+    &__facts {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: $space-2 $space-4;
+      padding-top: $space-2;
+      border-top: 1px solid $jobs-border-soft;
+    }
+
+    &__fact {
+      display: flex;
+      align-items: baseline;
+      gap: $space-2;
+    }
+
+    &__fact-label { margin: 0; }
+
+    &__actions { align-items: flex-end; }
+
+    &__save-error { max-width: 112px; }
+  }
+}
+
+@keyframes learn-jobs-heart-pop {
+  0% { transform: scale(0.7); }
+  55% { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+
+// ---------------------------------------------------------------------------
+// Skeleton — built from the card's own grid so nothing shifts on load
+// ---------------------------------------------------------------------------
+.learn-jobs-card--skeleton {
+  cursor: default;
+  pointer-events: none;
+  box-shadow: $elev-1;
+  margin-bottom: $space-3;
+
+  &:hover {
+    transform: none;
+    box-shadow: $elev-1;
+    border-color: $jobs-border;
+  }
+
+  .learn-jobs-card__accent { background: $neutral-200; }
+  .learn-jobs-card__body { gap: $space-2; }
+}
+
+.learn-jobs-sk {
+  display: block;
+  border-radius: $jobs-radius;
+  background: linear-gradient(90deg, $neutral-100 25%, $neutral-200 37%, $neutral-100 63%);
+  background-size: 400% 100%;
+  animation: learn-jobs-sk-shimmer 1.4s ease infinite;
+
+  &--avatar { width: 48px; height: 48px; }
+  &--chip { width: 72px; height: 20px; border-radius: $jobs-radius; }
+  &--chip-sm { width: 54px; }
+  &--title { width: 58%; height: 18px; }
+  &--company { width: 38%; height: 14px; }
+  &--line { width: 100%; height: 12px; }
+  &--line-short { width: 64%; }
+  &--fact { width: 100%; height: 34px; }
+  &--save { width: 32px; height: 32px; border-radius: $jobs-radius; }
+}
+
+@keyframes learn-jobs-sk-shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+// ---------------------------------------------------------------------------
+// Pagination + expired saved section
+// ---------------------------------------------------------------------------
+.learn-jobs-pagination {
+  display: flex;
+  justify-content: center;
+  padding: $space-5 0 $space-2;
+
+  .ant-pagination-item,
+  .ant-pagination-prev,
+  .ant-pagination-next {
+    min-width: 36px;
+    height: 36px;
+    line-height: 34px;
+  }
+
+  .ant-pagination-item-active {
+    border-color: $jobs-accent;
+    a { color: $jobs-accent; }
+  }
+
+  @media (max-width: $learn-mobile-bp) {
+    .ant-pagination-item,
+    .ant-pagination-prev,
+    .ant-pagination-next {
+      min-width: $jobs-touch-min;
+      height: $jobs-touch-min;
+      line-height: 42px;
+    }
+  }
+}
+
+.learn-jobs-expired {
+  margin-top: $space-6;
+  padding-top: $space-4;
+  border-top: 1px solid $jobs-border;
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    font-size: $text-lg;
+    font-weight: 600;
+    color: $jobs-text;
+    margin: 0 0 $space-1;
+  }
+
+  &__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 $space-2;
+    font-size: $text-xs;
+    font-weight: 600;
+    color: $jobs-text-body;
+    background: $neutral-100;
+    border-radius: $jobs-radius-pill;
+  }
+
+  &__note {
+    font-size: $text-base;
+    color: $jobs-text-muted;
+    margin: 0 0 $space-4;
+    line-height: 1.5;
+  }
+}
+
+.learn-jobs-not-open {
+  margin-top: $space-6;
+  padding-top: $space-4;
+  border-top: 1px solid $jobs-border;
+
+  &__toggle {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: $text-lg;
+    font-weight: 600;
+    color: $jobs-text;
+
+    &:hover {
+      color: $jobs-text-body;
+    }
+  }
+
+  &__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 $space-2;
+    font-size: $text-xs;
+    font-weight: 600;
+    color: $jobs-text-body;
+    background: $neutral-100;
+    border-radius: $jobs-radius-pill;
+  }
+
+  .learn-jobs-list {
+    margin-top: $space-4;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Empty states — every branch gets illustration + copy + a way out
+// ---------------------------------------------------------------------------
+.learn-jobs-empty {
+  border: none;
+  background: $jobs-bg;
+  text-align: center;
+
+  &--rich {
+    padding: $space-8 $space-5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &__illustration { margin-bottom: $space-4; }
+
+  .learn-jobs-empty-illus {
+    width: 100%;
+    max-width: 140px;
+    height: auto;
+  }
+
+  &__title {
+    font-size: $text-xl;
+    font-weight: 600;
+    color: $jobs-text;
+    margin: 0 0 $space-2;
+    overflow-wrap: anywhere;
+  }
+
+  &__subtitle {
+    font-size: $text-base;
+    color: $jobs-text-body;
+    margin: 0 0 $space-5;
+    max-width: 380px;
+    line-height: 1.55;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: $space-3;
+  }
+
+  &__cta.ant-btn {
+    min-height: $jobs-touch-min;
+    border-radius: $jobs-radius;
+  }
+
+  @media (max-width: $learn-mobile-bp) {
+    &--rich { padding: $space-6 $space-4; }
+
+    &__actions {
+      width: 100%;
+      flex-direction: column;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Error card (initial load failure)
+// ---------------------------------------------------------------------------
+.learn-jobs-error-card {
+  padding: $space-6;
+  text-align: center;
+  background: $jobs-bg;
+  border: 1px solid rgba($jobs-error, 0.25);
+  border-radius: $jobs-radius-card;
+}
+
+.learn-jobs-error-icon {
+  font-size: 40px;
+  color: $jobs-error;
+  margin-bottom: $space-4;
+  display: block;
+}
+
+.learn-jobs-error-text {
+  display: block !important;
+  color: $jobs-text-body !important;
+  margin-bottom: $space-4 !important;
+}
+
+.learn-jobs-cta-btn.ant-btn {
+  min-height: $jobs-touch-min;
+  border-radius: $jobs-radius;
+}
+
+// ---------------------------------------------------------------------------
+// Motion preferences
+// ---------------------------------------------------------------------------
+@media (prefers-reduced-motion: reduce) {
+  .learn-jobs-card,
+  .learn-jobs-card__save,
+  .learn-jobs-facet,
+  .learn-jobs-metric--action {
+    transition: none;
+  }
+
+  .learn-jobs-card:hover { transform: none; }
+
+  .learn-jobs-card__save[data-saved="true"] .anticon { animation: none; }
+
+  .learn-jobs-sk { animation: none; }
+}

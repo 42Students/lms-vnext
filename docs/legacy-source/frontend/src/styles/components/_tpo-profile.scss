@@ -1,0 +1,207 @@
+// TPO Profile — scoped polish around the shared faculty profile component.
+.tpo-profile {
+  &__header {
+    margin-bottom: 14px;
+
+    .listing-page-header__title {
+      color: $tpo-ink;
+      letter-spacing: -0.025em;
+    }
+  }
+
+  &__intro {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 16px;
+    padding: 16px 18px;
+    border: 1px solid $tpo-line;
+    border-radius: 13px;
+    background: $tpo-surface-soft;
+
+    > div {
+      min-width: 0;
+    }
+
+    > .ant-typography {
+      max-width: 580px;
+      text-align: right;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    h4.ant-typography {
+      margin: 3px 0 0 !important;
+      color: $tpo-ink;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+  }
+
+  &__eyebrow.ant-typography {
+    display: block;
+    color: $tpo-muted;
+    font-size: $tpo-fs-xs;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  &__loading,
+  &__error,
+  &__content {
+    width: 100%;
+  }
+
+  &__loading,
+  &__error {
+    min-height: 300px;
+    padding: 24px;
+    border: 1px solid $tpo-line;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 4px 18px rgba(26, 45, 72, 0.045);
+  }
+
+  &__error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+
+    h4.ant-typography {
+      margin-bottom: 5px;
+      color: $tpo-ink;
+    }
+
+    .ant-typography {
+      max-width: 500px;
+    }
+
+    .ant-btn {
+      min-width: 110px;
+      min-height: 38px;
+      margin-top: 4px;
+      border-radius: 8px;
+    }
+  }
+
+  &__content {
+    .profile-sections {
+      row-gap: 16px !important;
+    }
+
+    .profile-sections-row {
+      row-gap: 16px !important;
+    }
+
+    .profile-sections .ant-card {
+      overflow: hidden;
+      border: 1px solid $tpo-line;
+      border-radius: 14px;
+      box-shadow: 0 4px 18px rgba(26, 45, 72, 0.045);
+    }
+
+    .profile-sections .ant-card-head {
+      min-height: 50px;
+      padding-inline: 16px;
+      border-bottom-color: $tpo-line;
+      background: $tpo-surface-soft;
+    }
+
+    .profile-sections .ant-card-body {
+      padding: 16px !important;
+    }
+
+    .profile-sections .profile-btn {
+      min-height: 34px;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+
+    .profile-sections .ant-input,
+    .profile-sections .ant-picker,
+    .profile-sections .ant-select-selector,
+    .profile-sections .ant-input-number {
+      border-radius: 8px !important;
+    }
+
+    .profile-sections .ant-tag {
+      border-radius: 999px;
+    }
+
+    .profile-sections .ant-divider {
+      border-color: $tpo-line;
+    }
+
+    .profile-sections .ant-list-item {
+      border-bottom-color: $tpo-line;
+    }
+
+    .profile-sections .ant-descriptions-bordered {
+      overflow: hidden;
+      border-radius: 10px;
+    }
+
+    .profile-sections .ant-descriptions-item-label {
+      background: $tpo-surface-soft !important;
+      color: $tpo-muted;
+      font-size: 12px;
+      font-weight: 600;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .tpo-profile {
+    &__intro {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 4px;
+      padding: 14px 13px;
+
+      > .ant-typography {
+        max-width: none;
+        text-align: left;
+      }
+    }
+
+    &__loading,
+    &__error {
+      min-height: 250px;
+      padding: 16px 13px;
+    }
+
+    &__content {
+      .profile-sections {
+        row-gap: 12px !important;
+      }
+
+      .profile-sections-row {
+        row-gap: 12px !important;
+      }
+
+      .profile-sections .ant-card-head {
+        padding-inline: 13px;
+      }
+
+      .profile-sections .ant-card-body {
+        padding: 13px !important;
+      }
+
+      .profile-sections .ant-card-head-wrapper {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+        padding-block: 9px;
+      }
+
+      .profile-sections .ant-card-extra {
+        margin-inline-start: 0;
+      }
+    }
+  }
+}

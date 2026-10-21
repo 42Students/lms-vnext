@@ -1,0 +1,2072 @@
+@import "./variables.scss";
+
+$learn-mobile-footer-height: 4rem !default;
+$learn-mobile-bp: 767px !default;
+
+// ---------------------------------------------------------------------------
+// Interviews design system: Stripe/Linear SaaS aesthetic
+// 8px spacing, 24/20/16/14 typography, minimal palette (primary, success, warning, error)
+// ---------------------------------------------------------------------------
+
+$primary: $clrThird;
+$primary-dark: $teal-dark;
+$success: $status-success;
+$warning: $status-warning;
+$error: $status-error;
+$text: $neutral-900;
+$text-muted: $neutral-500;
+$text-subtle: $neutral-400;
+$bg: $white;
+$bg-subtle: $neutral-50;
+$border: $neutral-200;
+$radius: 8px;
+
+$s1: 8px;
+$s2: 16px;
+$s3: 24px;
+$s4: 32px;
+$s5: 40px;
+$t-h1: 24px;
+$t-h2: 20px;
+$t-body: 16px;
+$t-caption: 14px;
+$t-small: 12px;
+
+// ---------------------------------------------------------------------------
+// Connected header — placements mode merges with navbar
+// ---------------------------------------------------------------------------
+.learn-interviews-page--placements .learn-placements-dashboard__overview {
+  border-bottom: none;
+  padding-top: $s2;
+  padding-bottom: $s2;
+  margin-bottom: $s3;
+}
+
+// ─── New compact header ──────────────────────────────────────────────────────
+.learn-interviews-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $s3;
+  width: 100%;
+  box-sizing: border-box;
+
+  &__left {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $s1;
+  }
+
+  &__title {
+    font-size: 28px;
+    font-weight: 600;
+    color: $text;
+    margin: 0;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+
+  &__metrics {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $s1;
+    margin-top: $s1;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: $s1;
+    flex-shrink: 0;
+    padding-top: $s1;
+
+    .learn-interviews-search-input.ant-input-affix-wrapper {
+      width: 220px;
+      min-height: 44px;
+      border-radius: $radius;
+      border-color: $border;
+
+      &.ant-input-affix-wrapper-focused {
+        border-color: $primary;
+        box-shadow: 0 0 0 2px rgba($primary, 0.2);
+      }
+
+      input { font-size: 14px; }
+    }
+  }
+}
+
+// ─── Filter bar (tab pills below header) ─────────────────────────────────────
+.learn-interviews-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: $s1;
+  margin-bottom: $s2;
+}
+
+// ─── Metric pills ─────────────────────────────────────────────────────────────
+.learn-interviews-metric {
+  display: inline-flex;
+  align-items: center;
+  gap: $s1;
+  padding: $s1 $s2;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  white-space: nowrap;
+
+  .anticon { font-size: 14px; }
+
+  &--teal {
+    background: rgba($primary, 0.08);
+    color: $teal-text;
+  }
+
+  &--green {
+    background: rgba($success, 0.08);
+    color: $status-success;
+  }
+
+  &--muted {
+    background: $neutral-100;
+    color: $neutral-700; // 7.1:1 on #f1f4f9 — AA
+  }
+}
+
+// ─── Tab pills ────────────────────────────────────────────────────────────────
+.learn-interviews-tab-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: $s1;
+  padding: $s1 $s2;
+  min-height: 44px;
+  line-height: 1.3;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid $border;
+  background: transparent;
+  color: $text-muted;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  white-space: nowrap;
+
+  &:hover {
+    color: $primary;
+    border-color: rgba($primary, 0.4);
+    background: rgba($primary, 0.04);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary;
+    outline-offset: 2px;
+  }
+
+  &--active {
+    background: $primary;
+    border-color: $primary;
+    color: $white;
+
+    &:hover {
+      background: $primary-dark;
+      border-color: $primary-dark;
+      color: $white;
+    }
+  }
+
+  &__count {
+    font-size: 12px;
+    line-height: 1.3;
+    opacity: 0.85;
+  }
+}
+
+// ─── Interview Tags (design system colors) ───────────────────────────────────
+.learn-iv-tag {
+  &--teal.ant-tag {
+    background: rgba($primary, 0.08);
+    color: $teal-text;
+    border-color: rgba($primary, 0.2);
+  }
+  &--green.ant-tag {
+    background: rgba($success, 0.08);
+    color: $status-success;
+    border-color: rgba($success, 0.2);
+  }
+  &--amber.ant-tag {
+    background: rgba($warning, 0.08);
+    color: $status-warning;
+    border-color: rgba($warning, 0.2);
+  }
+  &--red.ant-tag {
+    background: rgba($error, 0.08);
+    color: $error;
+    border-color: rgba($error, 0.2);
+  }
+  &--gray.ant-tag {
+    background: rgba(0, 0, 0, 0.04);
+    color: $text-muted;
+    border-color: $border;
+  }
+  &--purple.ant-tag {
+    background: rgba(139, 92, 246, 0.08);
+    color: #6d28d9;
+    border-color: rgba(139, 92, 246, 0.2);
+  }
+}
+
+// ─── Grid section ─────────────────────────────────────────────────────────────
+.learn-interviews-grid-section {
+  margin-top: $s3;
+}
+
+.learn-interviews-results-info {
+  font-size: 14px;
+  line-height: 1.4;
+  color: $text-muted;
+  margin: 0 0 $s2;
+}
+
+// ─── Mobile ───────────────────────────────────────────────────────────────────
+@media (max-width: $learn-mobile-bp) {
+  // Compound selector, not descendant: both classes now live on the same div (see
+  // src/components/Common/PageShell.jsx for why the old wrapper div is gone).
+  .learn-interviews-page--placements.learn-placements-dashboard__body {
+    padding: $s2;
+  }
+
+  .learn-interviews-header {
+    flex-direction: column;
+    align-items: stretch;
+
+    &__right {
+      width: 100%;
+      padding-top: 0;
+
+      .learn-interviews-search-input.ant-input-affix-wrapper {
+        flex: 1;
+        width: 100%;
+      }
+    }
+  }
+
+  .learn-interviews-header__title {
+    font-size: 20px;
+  }
+
+  .learn-interviews-filter-bar {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: $s1;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Page layout
+// ---------------------------------------------------------------------------
+.learn-interviews-page {
+  width: 100%;
+  max-width: 100%;
+  padding: 0 $s2;
+  padding-bottom: calc(#{$learn-mobile-footer-height} + 24px + env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
+
+  @media (min-width: #{$learn-mobile-bp + 1}) {
+    padding: 0 $s3;
+    padding-bottom: 48px;
+  }
+
+  // Was `background: $neutral-100` + its own independent scroll container — correct back when
+  // this div WAS the outer scrollable page. Now it's ordinary content inside PageShell's white
+  // ln-module-card (see src/components/Common/PageShell.jsx), so its own gray page-background
+  // showed through as a visible band in the gaps between sections.
+  &--placements {
+  }
+}
+
+.learn-interviews-card {
+  border-radius: 12px;
+  border: 1px solid $border;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  background: $bg;
+}
+
+.learn-interviews-card__body {
+  padding: $s3;
+
+  @media (max-width: $learn-mobile-bp) {
+    padding: $s2;
+  }
+}
+
+.learn-interviews-hero {
+  padding: $s3 $s4;
+  margin: 0 calc(-1 * #{$s3}) $s3;
+  background: linear-gradient(135deg, rgba($primary, 0.05) 0%, rgba($warning, 0.03) 40%, rgba($success, 0.02) 100%);
+  border-radius: 12px;
+  border: 1px solid rgba($primary, 0.1);
+
+  @media (max-width: $learn-mobile-bp) {
+    margin: 0 calc(-1 * #{$s2}) $s3;
+    padding: $s2;
+  }
+}
+
+.learn-interviews-hero__title {
+  font-size: 28px;
+  font-weight: 600;
+  color: $text;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.learn-interviews-hero__subtext {
+  font-size: 14px;
+  color: $text-muted;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.learn-interviews-module {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.learn-interviews-module .ln-module__head.learn-interviews-header {
+  background: $bg;
+  padding: $s3 $s2;
+  border-bottom: 1px solid $border;
+  margin: 0 calc(-1 * #{$s2});
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: $s2;
+
+  @media (min-width: #{$learn-mobile-bp + 1}) {
+    padding: $s3 $s3;
+    margin: 0 calc(-1 * #{$s3});
+  }
+
+  h1 {
+    font-size: $t-h1 !important;
+    font-weight: 600 !important;
+    color: $text !important;
+    margin: 0 !important;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+
+  .learn-interviews-subtitle {
+    font-size: $t-caption;
+    line-height: 1.4;
+    color: $text-muted;
+    margin-top: $s1;
+    display: block;
+  }
+
+  .ant-btn {
+    font-size: $t-caption;
+  }
+}
+
+.learn-interviews-module .ln-module__body.learn-interviews-scroll {
+  padding-top: $s2;
+  padding-bottom: 0;
+}
+
+// ---------------------------------------------------------------------------
+// Section — tabs, filter, list (matches Jobs/Applications)
+// ---------------------------------------------------------------------------
+.learn-interviews-section {
+  margin-top: $s4;
+
+  &--standalone {
+    margin-top: $s3;
+  }
+}
+
+.learn-interviews-section__tabs {
+  margin-bottom: $s2;
+}
+
+.learn-interviews-tabs {
+  margin-bottom: 0;
+  padding: 0 $s2;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid $neutral-50;
+  background: $bg;
+
+  .ant-tabs-nav { margin-bottom: 0; margin-left: 0; padding-left: 0; }
+  .ant-tabs-nav-list { padding-left: 0; }
+  .ant-tabs-tab { font-size: 14px; padding: $s1 $s2; margin-left: 0; }
+  .ant-tabs-tab:first-child { padding-left: $s1; }
+  .ant-tabs-ink-bar { background: $primary; }
+  .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn { color: $primary; }
+
+  @media (min-width: #{$learn-mobile-bp + 1}) { padding: 0 $s3; }
+}
+
+.learn-interviews-tab-upcoming,
+.learn-interviews-tab-past {
+  display: inline-flex;
+  align-items: center;
+  gap: $s1;
+}
+
+.learn-interviews-tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  color: $white;
+  background: $warning;
+  border-radius: 9999px;
+}
+
+.learn-interviews-stats .learn-placements-stat-card {
+  min-width: 0;
+}
+
+.learn-interviews-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: $s2;
+  flex-wrap: wrap;
+  margin-bottom: $s2;
+  padding: $s2 0;
+  background: transparent;
+
+  .learn-interviews-search-input.ant-input-affix-wrapper,
+  .ant-input-affix-wrapper {
+    max-width: 280px;
+    flex: 1 1 200px;
+    min-height: 40px;
+    border-radius: $radius;
+    border-color: $border;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:focus, &.ant-input-affix-wrapper-focused {
+      border-color: $primary;
+      box-shadow: 0 0 0 2px rgba($primary, 0.2);
+    }
+
+    input { font-size: $t-caption; }
+    .anticon { color: $text-subtle; }
+  }
+
+  .learn-interviews-filter-count {
+    margin-left: auto;
+    font-size: $t-small;
+    color: $text-muted;
+    white-space: nowrap;
+  }
+}
+
+.learn-interviews-list-card {
+  margin-top: $s2;
+  overflow: hidden;
+}
+
+.learn-interviews-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.learn-interviews-list__item {
+  margin-bottom: $s2;
+  &:last-child { margin-bottom: 0; }
+}
+
+$interviews-touch-min: 44px;
+
+// Interview row card — modern card layout
+.learn-interviews-row-card {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  text-align: left;
+  background: $bg;
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: $elev-1;
+  // Only animate transform (GPU-composited). box-shadow and border-color applied instantly.
+  transition: transform $duration-fast $ease-std;
+
+  // Status accent rail — replaces the old inline STATUS_ROW_TINT background hexes.
+  // Always paired with a text status tag, never colour-only.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 4px;
+    background: transparent;
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: $elev-2;
+    border-color: rgba($primary, 0.25);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary;
+    outline-offset: 2px;
+  }
+
+  &--skeleton {
+    cursor: default;
+    pointer-events: none;
+
+    .ant-skeleton-avatar { border-radius: $radius-sm; }
+    .learn-interviews-row-card__content { flex: 1; min-width: 0; }
+  }
+  // Highlight must not change the box model: a 1px → 2px border swap nudged every
+  // neighbouring card when the highlight applied and again when the 5s timer cleared it.
+  // The ring is drawn outside the border box instead, so geometry is identical either way.
+  &--highlight {
+    border-color: $primary;
+    box-shadow: 0 0 0 2px rgba($primary, 0.45), $elev-2;
+  }
+
+  // ── Past treatment — declared first so status surfaces below still win ─────
+  &--past {
+    background: $neutral-50;
+
+    .learn-interviews-row-card__title,
+    .learn-interviews-row-card__when-date { color: $neutral-700; }
+
+    .learn-interviews-row-card__avatar { opacity: 0.75; }
+  }
+
+  // ── Status surfaces (former STATUS_ROW_TINT) ───────────────────────────────
+  &--status-scheduled::before { background: $primary; }
+  &--status-confirmed::before { background: $status-success; }
+
+  &--status-reschedule-requested {
+    background: $gold-subtle;
+    border-color: rgba($warning, 0.35);
+    &::before { background: $warning; }
+  }
+
+  &--status-cancelled,
+  &--status-no-show {
+    background: $status-error-bg;
+    border-color: rgba($error, 0.3);
+    &::before { background: $error; }
+  }
+
+  &--status-completed::before { background: $neutral-300; }
+
+  // ── Live / imminent emphasis ───────────────────────────────────────────────
+  &--live {
+    border-color: rgba($primary, 0.55);
+    box-shadow: $elev-2;
+    &::before { background: $teal-deep; width: 5px; }
+  }
+
+  &--outcome-completed::before { background: $status-success; }
+  &--outcome-lapsed::before { background: $neutral-300; }
+
+  &__main {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-4;
+    padding: $space-5;
+    padding-left: calc(#{$space-5} + 4px); // clear the status rail
+
+    @media (max-width: $learn-mobile-bp) {
+      flex-direction: column;
+      padding: $space-4;
+      padding-left: calc(#{$space-4} + 4px);
+    }
+  }
+
+  &__avatar {
+    flex-shrink: 0;
+
+    @media (max-width: $learn-mobile-bp) {
+      display: none;
+    }
+  }
+
+  &__content {
+    flex: 1;
+    min-width: 0;
+    min-height: 80px; // Prevents card collapse when description is empty
+    padding-right: $s2;
+
+    @media (max-width: $learn-mobile-bp) {
+      padding-right: 0;
+      min-height: 0;
+      width: 100%;
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $s1;
+    margin-bottom: $s1;
+
+    @media (max-width: $learn-mobile-bp) {
+      flex-direction: column;
+      gap: $s1;
+    }
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: $text;
+    margin: 0;
+    line-height: 1.35;
+    word-wrap: break-word;
+    flex: 1;
+    min-width: 0;
+
+    @media (max-width: $learn-mobile-bp) { font-size: 14px; }
+  }
+
+  &__job-link {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+
+    &:hover { color: $primary; }
+
+    &:focus-visible {
+      outline: 2px solid $primary;
+      outline-offset: 2px;
+      border-radius: $radius-sm;
+    }
+  }
+
+  // Stretched link: the title anchor's ::after covers the whole card, so the card is one
+  // clickable surface with exactly one accessible name — no role="button" wrapper, no
+  // nested-interactive ARIA violation, no stopPropagation scaffolding on the buttons.
+  &__stretched::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  &__round { font-weight: 400; color: $text-muted; font-size: 14px; line-height: 1.4; }
+
+  &__badges {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $s1;
+    flex-shrink: 0;
+
+    .ant-tag { margin: 0; font-size: 12px; line-height: 1.3; padding: 4px $s1; border-radius: 6px; }
+  }
+
+  &__company {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $space-2;
+    font-size: $text-base;
+    color: $neutral-700; // AA on white and on $neutral-50
+    margin: 0 0 $space-3;
+    line-height: $leading-snug;
+  }
+
+  // ── When block: date + timezone + live countdown ──────────────────────────
+  &__when {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $space-2;
+    margin-bottom: $space-2;
+  }
+
+  &__when-date {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2;
+    font-size: $text-md;
+    font-weight: 600;
+    line-height: $leading-snug;
+    color: $neutral-900;
+
+    .anticon { color: $teal-deep; font-size: $text-base; }
+
+    @media (max-width: $learn-mobile-bp) { font-size: $text-base; }
+  }
+
+  &__tz {
+    font-size: $text-xs;
+    font-weight: 500;
+    color: $neutral-700;
+    background: $neutral-100;
+    border-radius: $radius-sm;
+    padding: 2px 6px;
+    white-space: nowrap;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $space-3;
+    font-size: $text-xs;
+    line-height: $leading-snug;
+    color: $neutral-700;
+
+    .anticon { font-size: $text-xs; margin-right: 4px; }
+    .ant-tag { margin: 0; }
+  }
+
+  &__meta-item { display: inline-flex; align-items: center; }
+
+  &__location {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    font-size: $text-base;
+    color: $neutral-700;
+    margin: $space-2 0 0;
+    line-height: $leading-snug;
+  }
+
+  &__join-link {
+    color: $teal-deep;
+    font-weight: 500;
+
+    &:hover { color: $primary-dark; text-decoration: underline; }
+  }
+
+  // ── Action model: 1 primary + at most 1 secondary + overflow ──────────────
+  // Raised above the stretched-link overlay so the buttons stay independently clickable
+  // as ordinary siblings — this is what replaces the old stopPropagation calls.
+  &__actions {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    flex-shrink: 0;
+    margin-left: auto;
+    align-self: center;
+
+    .ant-btn {
+      min-height: $interviews-touch-min;
+      border-radius: $radius-md;
+    }
+
+    @media (max-width: $learn-mobile-bp) {
+      margin-left: 0;
+      margin-top: $space-4;
+      width: 100%;
+      align-self: stretch;
+
+      // Primary grows, secondary stays compact, overflow keeps its 44px square.
+      .learn-interviews-row-card__cta { flex: 1 1 auto; }
+      .learn-interviews-row-card__btn-details { flex: 0 0 auto; }
+      .learn-interviews-row-card__btn-more { flex: 0 0 $interviews-touch-min; }
+    }
+  }
+
+  &__cta {
+    min-height: $interviews-touch-min !important;
+    height: $interviews-touch-min !important;
+    padding: 0 $space-4 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    box-sizing: border-box !important;
+    font-weight: 600;
+    white-space: nowrap;
+
+    &.ant-btn {
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+      border-radius: $radius-md;
+    }
+  }
+
+  &__btn-details {
+    flex-shrink: 0;
+    color: $neutral-700;
+    font-weight: 500;
+
+    &:hover { color: $teal-deep; background: $teal-subtle; }
+  }
+
+  &__btn-more {
+    flex-shrink: 0;
+    width: $interviews-touch-min;
+    min-width: $interviews-touch-min;
+    height: $interviews-touch-min;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: $neutral-700;
+
+    &:hover { color: $neutral-900; background: $neutral-100; }
+  }
+}
+
+// ── Round context chip ───────────────────────────────────────────────────────
+.learn-interviews-round-chip {
+  display: inline-flex;
+  align-items: center;
+  font-size: $text-xs;
+  font-weight: 600;
+  line-height: $leading-snug;
+  letter-spacing: 0.01em;
+  color: $ink-700;
+  background: $neutral-100;
+  border: 1px solid $neutral-200;
+  border-radius: $radius-full;
+  padding: 2px $space-2;
+  white-space: nowrap;
+}
+
+// ── Live countdown chip ──────────────────────────────────────────────────────
+.learn-interviews-countdown {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: $text-xs;
+  font-weight: 600;
+  line-height: $leading-snug;
+  border-radius: $radius-full;
+  padding: 3px $space-3;
+  white-space: nowrap;
+  border: 1px solid transparent;
+
+  .anticon { font-size: $text-xs; }
+
+  &--live {
+    color: $white;
+    background: $teal-deep; // 4.9:1 for white text
+    border-color: $teal-deep;
+  }
+
+  &--imminent {
+    color: $status-warning;
+    background: $gold-subtle;
+    border-color: rgba($warning, 0.35);
+  }
+
+  &--soon {
+    color: $teal-text;
+    background: $teal-subtle;
+    border-color: rgba($primary, 0.25);
+  }
+
+  &--later {
+    color: $neutral-700;
+    background: $neutral-100;
+    border-color: $neutral-200;
+  }
+
+  &--past {
+    color: $neutral-700;
+    background: $neutral-100;
+    border-color: $neutral-200;
+  }
+
+  // Student V1 §7 "Changed slot" badge — a reschedule the student hasn't confirmed yet.
+  &--changed {
+    color: $status-warning;
+    background: $gold-subtle;
+    border-color: rgba($warning, 0.35);
+  }
+}
+
+.learn-interviews-row-card__prev-date {
+  text-decoration: line-through;
+  color: $neutral-500;
+  margin-right: 6px;
+}
+
+// Gentle pulse for the live chip only — suppressed for reduced-motion users.
+@media (prefers-reduced-motion: no-preference) {
+  .learn-interviews-countdown--live {
+    animation: learn-iv-live-pulse 2.4s $ease-std infinite;
+  }
+}
+
+@keyframes learn-iv-live-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(14, 124, 135, 0.35); }
+  50% { box-shadow: 0 0 0 5px rgba(14, 124, 135, 0); }
+}
+
+// ── Join-window notice (a visible state, not buried prose) ───────────────────
+.learn-interviews-join-notice {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: $space-3 0 0;
+  padding: 6px $space-3;
+  font-size: $text-xs;
+  line-height: $leading-snug;
+  border-radius: $radius-sm;
+  border: 1px solid transparent;
+
+  &--open {
+    color: darken($status-success, 4%);
+    background: $status-success-bg;
+    border-color: rgba($status-success, 0.25);
+  }
+
+  &--pending {
+    color: $neutral-700;
+    background: $neutral-100;
+    border-color: $neutral-200;
+  }
+}
+
+// ── Reschedule requested / awaiting approval ─────────────────────────────────
+.learn-interviews-pending-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: $space-3 0 0;
+  padding: $space-2 $space-3;
+  font-size: $text-xs;
+  line-height: $leading-snug;
+  color: $status-warning;
+  background: $gold-subtle;
+  border: 1px solid rgba($warning, 0.3);
+  border-radius: $radius-sm;
+
+  .anticon { margin-top: 2px; }
+}
+
+// ── Past outcome ─────────────────────────────────────────────────────────────
+.learn-interviews-outcome {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: $space-3 0 0;
+  font-size: $text-xs;
+  font-weight: 600;
+  line-height: $leading-snug;
+  color: $neutral-700;
+
+  &--block {
+    align-items: flex-start;
+    gap: $space-3;
+    padding: $space-4;
+    border-radius: $radius-md;
+    border: 1px solid $neutral-200;
+    background: $neutral-50;
+    font-weight: 400;
+    font-size: $text-base;
+    margin: 0 0 $space-5;
+
+    > .anticon { font-size: $text-lg; margin-top: 2px; }
+  }
+
+  &__title { display: block; font-weight: 600; }
+  &__detail { display: block; margin-top: 4px; color: $neutral-700; font-size: $text-base; line-height: $leading-normal; }
+
+  &--completed { color: darken($status-success, 4%); }
+  &--completed.learn-interviews-outcome--block {
+    background: $status-success-bg;
+    border-color: rgba($status-success, 0.25);
+  }
+
+  &--no-show,
+  &--cancelled { color: darken($error, 12%); }
+  &--no-show.learn-interviews-outcome--block,
+  &--cancelled.learn-interviews-outcome--block {
+    background: $status-error-bg;
+    border-color: rgba($error, 0.25);
+  }
+
+  &--lapsed { color: $neutral-700; }
+}
+
+// ── Day grouping for upcoming interviews ─────────────────────────────────────
+.learn-interviews-groups {
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+}
+
+.learn-interviews-group {
+  &__label {
+    display: flex;
+    align-items: baseline;
+    gap: $space-3;
+    margin: 0 0 $space-3;
+    font-size: $text-base;
+    font-weight: 600;
+    line-height: $leading-snug;
+    color: $neutral-700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  &__count {
+    font-size: $text-xs;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    color: $neutral-500;
+  }
+
+  // "Today" / "Tomorrow" — the next thing must be unmistakable.
+  &--emphasis &__label {
+    font-size: $text-lg;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    color: $ink-800;
+  }
+
+  &--emphasis &__day {
+    position: relative;
+    padding-left: $space-4;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 8px;
+      border-radius: $radius-full;
+      background: $teal-deep;
+    }
+  }
+}
+
+// ── Overflow menu ────────────────────────────────────────────────────────────
+.learn-interviews-menu {
+  .ant-dropdown-menu {
+    min-width: 232px;
+    padding: $space-2;
+    border-radius: $radius-md;
+    box-shadow: $elev-3;
+  }
+
+  .ant-dropdown-menu-item {
+    min-height: $interviews-touch-min;
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    border-radius: $radius-sm;
+    font-size: $text-base;
+    color: $neutral-900;
+  }
+
+  .learn-interviews-menu__link {
+    color: inherit;
+    display: block;
+    width: 100%;
+  }
+}
+
+@media (max-width: #{$learn-mobile-bp}) {
+  .learn-interviews-tabs {
+    .ant-tabs-nav-list { width: 100%; }
+    .ant-tabs-tab {
+      flex: 1;
+      justify-content: center;
+      min-height: $interviews-touch-min;
+      padding: $s2;
+    }
+    .ant-tabs-ink-bar { width: 50% !important; }
+  }
+}
+
+// Prevent tab label truncation on very narrow phones
+@media (max-width: 380px) {
+  .learn-interviews-tabs .ant-tabs-tab {
+    padding: 8px 8px;
+    font-size: 12px;
+    letter-spacing: -0.01em;
+  }
+}
+
+// Empty states — rich
+.learn-interviews-empty--rich {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $s2;
+  padding: $s5 $s3 !important;
+  text-align: center;
+
+  @media (max-width: $learn-mobile-bp) {
+    padding: $s3 $s2 !important;
+  }
+}
+
+.learn-interviews-empty__icon {
+  font-size: 28px;
+  color: $teal-deep;
+  margin-bottom: 0;
+  width: 64px;
+  height: 64px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-full;
+  background: $teal-subtle;
+
+  &--error {
+    color: $error;
+    background: $status-error-bg;
+  }
+}
+
+.learn-interviews-empty__action {
+  margin-top: $space-2;
+  min-height: 44px;
+  border-radius: $radius-md;
+}
+
+.learn-interviews-empty--error .learn-interviews-empty__title { color: $neutral-900; }
+
+.learn-interviews-empty__title {
+  font-size: 20px;
+  font-weight: 600;
+  color: $text;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.learn-interviews-empty__subtitle {
+  font-size: 14px;
+  color: $text-muted;
+  margin: 0;
+  line-height: 1.5;
+  max-width: 360px;
+}
+
+.learn-interviews-empty-filter { margin-top: 0; }
+
+// ---------------------------------------------------------------------------
+// Legacy desktop table (kept for reference)
+// ---------------------------------------------------------------------------
+.learn-interviews-desktop {
+  background: $bg !important;
+  border: 1px solid $border;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+
+  .ant-table-wrapper {
+    background: $bg !important;
+  }
+
+  .ant-table {
+    background: $bg !important;
+  }
+
+  /* Hide horizontal scrollbar — scroll still works */
+  .ant-table-body,
+  .ant-table-content {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
+.learn-interviews-desktop .ant-table {
+  font-size: $t-caption;
+
+  .ant-table-row-highlight td {
+    background: rgba($primary, 0.08) !important;
+    transition: background 0.2s ease;
+  }
+
+  .ant-table-thead > tr > th {
+    font-size: $t-small;
+    font-weight: 600;
+    color: $text-muted;
+    background: $bg-subtle !important;
+    border-bottom: 1px solid $border;
+  }
+
+  .ant-table-tbody > tr > td {
+    background: $bg;
+    border-bottom: 1px solid $border;
+  }
+
+  .ant-table-tbody > tr:hover > td {
+    background: rgba($primary, 0.02) !important;
+  }
+
+  .ant-tag {
+    font-size: $t-small;
+    border-radius: 6px;
+    margin: 0;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Mobile cards
+// ---------------------------------------------------------------------------
+.learn-interview-cards {
+  display: flex;
+  flex-direction: column;
+  gap: $s2;
+  width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.learn-interview-card {
+  border-radius: $radius !important;
+  border: 1px solid $border !important;
+  box-shadow: none !important;
+  background: $bg;
+  transition: border-color 0.15s;
+  overflow: hidden;
+
+  &:hover {
+    border-color: rgba($primary, 0.4) !important;
+  }
+
+  .ant-card-body {
+    padding: $s2 !important;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+  .ant-tag {
+    font-size: $t-small;
+    border-radius: 6px;
+    margin: 0;
+  }
+
+  // Desktop: actions inline
+  .learn-interview-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+}
+
+// Long job title wrap on mobile
+.learn-interview-card-title {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+
+  .ant-typography {
+    white-space: normal !important;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+// View Job link (table + cards)
+.learn-interview-job-link {
+  color: $text !important;
+
+  &:hover {
+    color: $primary !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Empty state — white card for consistency
+// ---------------------------------------------------------------------------
+.learn-interviews-empty {
+  border-radius: 12px !important;
+  border: 1px solid $border !important;
+  background: $bg !important;
+  padding: $s5 $s3 !important;
+  text-align: center;
+
+  .ant-empty-description {
+    max-width: 360px;
+    margin: 0 auto;
+  }
+
+  .ant-empty-image {
+    margin-bottom: $s2;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Detail modal (consistent with design system)
+// ---------------------------------------------------------------------------
+.learn-interview-detail-modal {
+  .ant-modal-content {
+    border-radius: $radius-lg;
+    box-shadow: $elev-3;
+    overflow: hidden;
+    padding: 0;
+  }
+
+  .ant-modal-header { display: none; }
+
+  .ant-modal-body { padding: 0 !important; }
+
+  .ant-modal-close {
+    top: $space-4;
+    inset-inline-end: $space-4;
+    width: 36px;
+    height: 36px;
+    border-radius: $radius-full;
+    color: $neutral-700;
+
+    &:hover { background: rgba(255, 255, 255, 0.7); color: $neutral-900; }
+  }
+}
+
+.learn-interview-detail {
+  display: flex;
+  flex-direction: column;
+
+  // ── Hero: company / role / round ───────────────────────────────────────────
+  &__hero {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-4;
+    padding: $space-6 $space-6 $space-5;
+    background: linear-gradient(135deg, $teal-subtle 0%, $neutral-50 62%, $white 100%);
+    border-bottom: 1px solid $neutral-200;
+  }
+
+  &__hero-avatar { flex-shrink: 0; }
+
+  &__hero-text { min-width: 0; flex: 1; padding-right: $space-6; }
+
+  &__company {
+    margin: 0 0 4px;
+    font-size: $text-base;
+    line-height: $leading-snug;
+    color: $neutral-700;
+    letter-spacing: 0.02em;
+  }
+
+  &__title {
+    margin: 0 0 $space-3;
+    font-size: $text-2xl;
+    font-weight: 600;
+    line-height: $leading-tight;
+    letter-spacing: -0.02em;
+    color: $ink-900;
+    word-break: break-word;
+  }
+
+  &__job-link {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover { color: $teal-deep; text-decoration: underline; }
+    &:focus-visible { outline: 2px solid $primary; outline-offset: 2px; border-radius: $radius-sm; }
+  }
+
+  &__tags {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $space-2;
+
+    .ant-tag { margin: 0; border-radius: $radius-sm; }
+  }
+
+  // ── When / where headline block ────────────────────────────────────────────
+  &__when {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: $space-3;
+    margin: $space-5 $space-6 $space-5;
+    padding: $space-4 $space-5;
+    border-radius: $radius-md;
+    border: 1px solid $neutral-200;
+    background: $neutral-50;
+  }
+
+  &__when-main { min-width: 0; }
+
+  &__when-date {
+    margin: 0 0 4px;
+    font-size: $text-lg;
+    font-weight: 600;
+    line-height: $leading-snug;
+    color: $ink-900;
+  }
+
+  &__when-time {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $space-2;
+    font-size: $text-base;
+    line-height: $leading-snug;
+    color: $neutral-700;
+  }
+
+  &__tz {
+    font-size: $text-xs;
+    font-weight: 500;
+    color: $neutral-700;
+    background: $neutral-100;
+    border-radius: $radius-sm;
+    padding: 2px 6px;
+  }
+
+  &__dot { color: $neutral-400; }
+
+  // ── Facts ─────────────────────────────────────────────────────────────────
+  &__facts {
+    margin: 0 $space-6 $space-5;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $space-4 $space-5;
+  }
+
+  &__fact {
+    min-width: 0;
+
+    dt {
+      margin: 0 0 4px;
+      font-size: $text-xs;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: $neutral-500;
+    }
+
+    dd {
+      margin: 0;
+      font-size: $text-base;
+      line-height: $leading-snug;
+      color: $neutral-900;
+      word-break: break-word;
+
+      .anticon { color: $teal-deep; margin-right: 6px; }
+    }
+
+    &:first-child { grid-column: span 1; }
+  }
+
+  &__people { display: flex; flex-direction: column; gap: 4px; }
+  &__person { display: inline-flex; align-items: center; }
+
+  &__muted { color: $neutral-500; }
+
+  &__join-link {
+    color: $teal-deep;
+    font-weight: 600;
+    text-decoration: underline;
+
+    &:hover { color: $primary-dark; }
+  }
+
+  // ── Preparation / notes ───────────────────────────────────────────────────
+  &__prep {
+    margin: 0 $space-6 $space-5;
+    padding: $space-4 $space-5;
+    border-radius: $radius-md;
+    border: 1px solid $neutral-200;
+    background: $white;
+  }
+
+  &__section-title {
+    margin: 0 0 $space-2;
+    font-size: $text-xs;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: $neutral-500;
+  }
+
+  &__prose {
+    margin: 0;
+    font-size: $text-base;
+    line-height: $leading-normal;
+    color: $neutral-700;
+    white-space: pre-line;
+
+    &--notes { margin-top: $space-3; }
+    strong { color: $neutral-900; }
+  }
+
+  // ── "How to prepare" — round-type guidance ────────────────────────────────
+  &__prep--guide {
+    border-color: $gold-accent;
+    background: $gold-subtle;
+
+    .learn-interview-detail__section-title {
+      display: flex;
+      align-items: center;
+      gap: $space-2;
+      color: darken($gold-accent, 6%); // AA on $gold-subtle
+      text-transform: none;
+      letter-spacing: 0;
+      font-size: $text-md;
+    }
+  }
+
+  &__prep-intent {
+    margin: 0 0 $space-3;
+    font-size: $text-base;
+    line-height: $leading-normal;
+    color: $ink-900;
+    font-weight: 500;
+  }
+
+  &__prep-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+  }
+
+  &__prep-point {
+    position: relative;
+    padding-left: $space-5;
+    font-size: $text-base;
+    line-height: $leading-normal;
+    color: $neutral-900;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 6px;
+      height: 6px;
+      border-radius: $radius-full;
+      background: $gold-accent;
+    }
+  }
+
+  &__prep-people {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-2;
+    margin: $space-4 0 0;
+    padding-top: $space-3;
+    border-top: 1px solid rgba($gold-accent, 0.35);
+    font-size: $text-base;
+    line-height: $leading-normal;
+    color: $neutral-900;
+
+    .anticon { margin-top: 3px; color: darken($gold-accent, 6%); }
+    strong { color: $ink-900; }
+  }
+
+  // ── Actions ───────────────────────────────────────────────────────────────
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    padding: $space-4 $space-6 $space-6;
+    border-top: 1px solid $neutral-200;
+    margin-top: auto;
+
+    .ant-btn { min-height: 44px; border-radius: $radius-md; }
+  }
+
+  &__primary { font-weight: 600; }
+  &__secondary { flex-shrink: 0; }
+
+  // Modal-level notices sit inside the page gutter.
+  .learn-interviews-join-notice,
+  .learn-interviews-pending-notice { margin: 0 $space-6 $space-5; }
+
+  .learn-interviews-outcome--block { margin: 0 $space-6 $space-5; }
+}
+
+// ── Designed confirm dialogs (reschedule / decline / cancel request) ─────────
+.learn-interviews-confirm-modal {
+  .ant-modal-content {
+    border-radius: $radius-lg;
+    box-shadow: $elev-3;
+  }
+
+  .ant-modal-confirm-title { width: 100%; }
+
+  .ant-modal-confirm-body > .anticon { display: none; }
+
+  .ant-modal-confirm-content {
+    margin-inline-start: 0 !important;
+    margin-top: $space-3;
+  }
+
+  .ant-modal-confirm-btns {
+    margin-top: $space-5;
+    display: flex;
+    justify-content: flex-end;
+    gap: $space-2;
+
+    .ant-btn {
+      min-height: 44px;
+      border-radius: $radius-md;
+      margin-inline-start: 0 !important;
+    }
+  }
+}
+
+.learn-interviews-confirm__head {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+}
+
+.learn-interviews-confirm__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: $radius-full;
+  font-size: $text-lg;
+
+  &--info { color: $teal-deep; background: $teal-subtle; }
+  &--warning { color: $status-warning; background: $gold-subtle; }
+  &--danger { color: darken($error, 10%); background: $status-error-bg; }
+}
+
+.learn-interviews-confirm__title {
+  font-size: $text-lg;
+  font-weight: 600;
+  line-height: $leading-snug;
+  color: $ink-900;
+}
+
+.learn-interviews-confirm__body {
+  font-size: $text-base;
+  line-height: $leading-normal;
+  color: $neutral-700;
+
+  p { margin: 0 0 $space-2; &:last-child { margin-bottom: 0; } }
+}
+
+.learn-interviews-confirm__warning {
+  color: darken($error, 10%);
+  font-weight: 500;
+}
+
+.learn-interviews-confirm__consequence {
+  color: $neutral-900;
+  font-weight: 500;
+}
+
+// ── Designed confirm shell (custom Modal, not Modal.confirm) ─────────────────
+.learn-interviews-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  padding: $space-2 0;
+
+  .learn-interviews-confirm__head { margin: 0; }
+  .learn-interviews-confirm__title { margin: 0; }
+}
+
+// Restates *which* interview the action applies to.
+.learn-interviews-confirm__identity {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-3;
+  padding: $space-3 $space-4;
+  border: 1px solid $neutral-200;
+  border-radius: $radius-md;
+  background: $neutral-50;
+
+  &-text { min-width: 0; }
+
+  &-role {
+    margin: 0;
+    font-size: $text-md;
+    font-weight: 600;
+    line-height: $leading-snug;
+    color: $ink-900;
+    word-break: break-word;
+  }
+
+  &-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $space-2;
+    margin: $space-1 0 0;
+    font-size: $text-base;
+    line-height: $leading-snug;
+    color: $neutral-700;
+  }
+
+  &-when {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $space-2;
+    margin: $space-2 0 0;
+    font-size: $text-base;
+    font-weight: 600;
+    line-height: $leading-snug;
+    color: $neutral-900;
+
+    .anticon { color: $teal-deep; }
+  }
+}
+
+// Typed gate for the one irreversible action (Decline).
+.learn-interviews-confirm__gate {
+  padding: $space-3 $space-4;
+  border: 1px solid $status-error;
+  border-radius: $radius-md;
+  background: $status-error-bg;
+}
+
+.learn-interviews-confirm__gate-label {
+  display: block;
+  margin-bottom: $space-2;
+  font-size: $text-base;
+  line-height: $leading-snug;
+  color: $neutral-900;
+
+  strong { letter-spacing: 0.08em; }
+}
+
+.learn-interviews-confirm__gate-input.ant-input {
+  min-height: 44px;
+  border-radius: $radius-md;
+  letter-spacing: 0.08em;
+}
+
+.learn-interviews-confirm__gate-help {
+  margin: $space-2 0 0;
+  font-size: $text-xs;
+  line-height: $leading-normal;
+  color: $neutral-700;
+}
+
+.learn-interviews-confirm__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-2;
+
+  .ant-btn {
+    min-height: 44px;
+    border-radius: $radius-md;
+  }
+}
+
+.learn-interviews-confirm__ok { font-weight: 600; }
+
+.learn-interviews-confirm__summary {
+  margin: 0;
+  padding: $space-3 $space-4;
+  border: 1px solid $neutral-200;
+  border-radius: $radius-md;
+  background: $neutral-50;
+  font-family: inherit;
+  font-size: $text-base;
+  line-height: $leading-normal;
+  color: $neutral-900;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+// ── Reschedule request form ─────────────────────────────────────────────────
+.learn-interviews-form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+
+  &__field { min-width: 0; }
+
+  &__fieldset {
+    margin: 0;
+    padding: $space-3 $space-4;
+    border: 1px solid $neutral-200;
+    border-radius: $radius-md;
+    background: $neutral-50;
+  }
+
+  &__label {
+    display: block;
+    margin-bottom: $space-2;
+    padding: 0;
+    font-size: $text-base;
+    font-weight: 600;
+    line-height: $leading-snug;
+    color: $ink-900;
+  }
+
+  &__required,
+  &__optional {
+    margin-left: $space-2;
+    font-size: $text-xs;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-radius: $radius-full;
+    padding: 2px 8px;
+  }
+
+  &__required { color: darken($error, 12%); background: $status-error-bg; }
+  &__optional { color: $neutral-700; background: $neutral-100; }
+
+  &__hint {
+    margin: 0 0 $space-3;
+    font-size: $text-xs;
+    line-height: $leading-normal;
+    color: $neutral-700;
+  }
+
+  &__control { width: 100%; }
+
+  .ant-select-selector,
+  .ant-input,
+  .ant-input-affix-wrapper { min-height: 44px !important; border-radius: $radius-md !important; }
+
+  .ant-select-single .ant-select-selector { display: flex; align-items: center; }
+
+  &__window {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    margin-bottom: $space-2;
+
+    &:last-of-type { margin-bottom: 0; }
+  }
+
+  &__window-index {
+    flex: 0 0 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-full;
+    background: $neutral-200;
+    color: $ink-900;
+    font-size: $text-xs;
+    font-weight: 600;
+  }
+
+  &__window-day { flex: 1 1 55%; min-width: 0; }
+  &__window-band { flex: 1 1 45%; min-width: 0; }
+
+  &__error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: $space-2 0 0;
+    font-size: $text-xs;
+    font-weight: 500;
+    line-height: $leading-normal;
+    color: darken($error, 12%);
+
+    &::before { content: "!"; display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: $radius-full; background: darken($error, 12%); color: $white; font-size: 11px; font-weight: 700; }
+  }
+}
+
+// ── Inline (non-blocking) fetch error that survives tab switches ─────────────
+.learn-interviews-inline-error {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $space-2;
+  margin-bottom: $space-4;
+  padding: $space-3 $space-4;
+  border: 1px solid $status-error;
+  border-radius: $radius-md;
+  background: $status-error-bg;
+  color: darken($error, 14%);
+
+  &__text {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: $text-base;
+    line-height: $leading-snug;
+    color: darken($error, 14%);
+  }
+
+  &__retry.ant-btn {
+    min-height: 32px;
+    border-radius: $radius-md;
+  }
+}
+
+// ── Empty-state extras ──────────────────────────────────────────────────────
+.learn-interviews-empty__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: $space-2;
+
+  .ant-btn { min-height: 44px; border-radius: $radius-md; }
+}
+
+.learn-interviews-empty__foot {
+  margin: $space-3 0 0;
+  font-size: $text-xs;
+  line-height: $leading-normal;
+  color: $neutral-700;
+}
+
+// Past count is unknown until the Past tab loads — reserve a stable slot so the pill
+// does not resize (and shift the row) when the number finally arrives.
+.learn-interviews-tab-pill__count--reserved {
+  min-width: 22px;
+  text-align: center;
+}
+
+// ── Screen-reader-only helper (scoped to this module) ───────────────────────
+.learn-interviews-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// ── Mobile: real layout for the action model at 375px ────────────────────────
+@media (max-width: $learn-mobile-bp) {
+  .learn-interviews-row-card__when { gap: $space-2; }
+
+  .learn-interviews-row-card__badges .ant-tag { font-size: $text-xs; }
+
+  .learn-interviews-group__label { font-size: $text-xs; }
+  .learn-interviews-group--emphasis .learn-interviews-group__label { font-size: $text-md; }
+
+  .learn-interviews-groups { gap: $space-5; }
+
+  // Detail modal becomes a near-full-height sheet.
+  .learn-interview-detail-modal {
+    .ant-modal { max-width: calc(100vw - #{$space-4}); margin: $space-2 auto; }
+
+    .ant-modal-close { top: $space-3; inset-inline-end: $space-3; }
+  }
+
+  .learn-interview-detail {
+    &__hero { padding: $space-5 $space-4 $space-4; gap: $space-3; }
+    &__hero-text { padding-right: $space-6; }
+    &__title { font-size: $text-xl; }
+
+    &__when {
+      margin: $space-4 $space-4;
+      padding: $space-3 $space-4;
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    &__facts {
+      grid-template-columns: 1fr;
+      margin: 0 $space-4 $space-4;
+      gap: $space-3;
+    }
+
+    &__prep { margin: 0 $space-4 $space-4; padding: $space-3 $space-4; }
+
+    .learn-interviews-join-notice,
+    .learn-interviews-pending-notice,
+    .learn-interviews-outcome--block { margin: 0 $space-4 $space-4; }
+
+    &__actions {
+      flex-wrap: wrap;
+      padding: $space-4;
+
+      .ant-btn { flex: 1 1 140px; }
+      .learn-interviews-row-card__btn-more { flex: 0 0 44px; }
+    }
+  }
+
+  .learn-interviews-confirm-modal .ant-modal-confirm-btns {
+    flex-direction: column-reverse;
+    .ant-btn { width: 100%; }
+  }
+}
+
+// Very narrow phones (≤375px): keep the primary + overflow, drop the text on secondary.
+@media (max-width: 380px) {
+  .learn-interviews-row-card__actions {
+    .learn-interviews-row-card__cta { padding: 0 $space-3 !important; }
+  }
+}
+
+// ── Reduced motion ───────────────────────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .learn-interviews-row-card,
+  .learn-interviews-tab-pill {
+    transition: none !important;
+  }
+
+  .learn-interviews-row-card:hover { transform: none; }
+
+  .learn-interviews-countdown--live { animation: none !important; }
+}
+
+// ─── Company Avatar ───────────────────────────────────────────────────────────
+.learn-interviews-avatar {
+  border-radius: $radius;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $bg-subtle;
+
+  &--initial {
+    font-weight: 600;
+    user-select: none;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}

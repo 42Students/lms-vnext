@@ -1,0 +1,218 @@
+// HR shell — shared LMS header structure with a compact recruiter command area.
+.recruiter-shell-header.ln-head {
+  min-height: 64px;
+  height: 64px;
+  padding-block: 0 !important;
+  gap: 16px;
+  border-bottom: 1px solid $tpo-line;
+  box-shadow: 0 1px 3px rgba(26, 45, 72, 0.03);
+
+  .recruiter-command-bar {
+    display: flex;
+    min-width: 0;
+    flex: 1 1 auto;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 18px;
+  }
+}
+
+.recruiter-command-bar {
+  &__actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 7px;
+
+    .ant-btn {
+      min-height: 36px;
+      border-radius: 8px;
+      font-weight: 600;
+      box-shadow: none;
+    }
+  }
+
+  &__plan.ant-btn {
+    padding-inline: 13px;
+  }
+
+  &__plan-short { display: none; }
+
+  &__messages.ant-btn {
+    padding-inline: 12px;
+    border-color: $tpo-line-strong;
+    color: #4b5b72;
+    background: #fff;
+
+    &:hover {
+      border-color: rgba($clrThird, 0.45);
+      color: $tpo-primary;
+      background: $teal-subtle;
+    }
+  }
+
+  &__bell {
+    display: inline-flex;
+    align-items: center;
+
+    .ant-badge {
+      line-height: 1;
+    }
+
+    .ant-btn {
+      width: 36px;
+      min-width: 36px;
+      height: 36px;
+      padding: 0;
+      border-color: $tpo-line-strong;
+      color: #56657a;
+      background: #fff;
+
+      &:hover {
+        border-color: rgba($clrThird, 0.45);
+        color: $tpo-primary;
+        background: $teal-subtle;
+      }
+    }
+
+    .ant-badge-count {
+      min-width: 17px;
+      height: 17px;
+      padding-inline: 4px;
+      border: 2px solid #fff;
+      box-shadow: none;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 13px;
+    }
+  }
+}
+
+.recruiter-shell-header__account {
+  flex: 0 0 auto;
+  gap: 10px !important;
+
+  .ln-org-text-desk {
+    max-width: 260px;
+  }
+
+  .ln-org-current__title,
+  .ln-org-switcher-trigger__title {
+    color: $tpo-text;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .ln-org-switcher .ant-select-selector {
+    min-height: 36px !important;
+    border-radius: 8px !important;
+    border-color: $tpo-line-strong !important;
+    box-shadow: none;
+  }
+
+  .ln-profile__avatar-wrap {
+    width: 40px;
+    height: 40px;
+  }
+
+  .ln-profile__progress-ring {
+    transform: scale(0.8);
+  }
+
+  .ln-profile__icon {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-width: 1023px) and (min-width: 768px) {
+  .recruiter-shell-header.ln-head {
+    gap: 10px;
+
+    .recruiter-command-bar {
+      max-width: 520px;
+      gap: 10px;
+    }
+  }
+
+  .recruiter-command-bar {
+    &__messages.ant-btn {
+      width: 36px;
+      min-width: 36px;
+      padding: 0;
+
+      span:not(.anticon) {
+        display: none;
+      }
+    }
+  }
+
+  .recruiter-shell-header__account {
+    .ln-org-text-desk {
+      max-width: 190px;
+    }
+
+    .ln-org-switcher {
+      min-width: 170px !important;
+      max-width: 200px !important;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .recruiter-shell-header.ln-head {
+    min-height: 58px;
+    height: auto;
+    padding: max(7px, env(safe-area-inset-top, 0px)) 10px 7px !important;
+    gap: 6px;
+
+    .recruiter-command-bar {
+      display: flex;
+      flex: 0 0 auto;
+      margin-left: auto;
+      justify-content: flex-end;
+      gap: 4px;
+    }
+  }
+
+  .recruiter-command-bar {
+    // The one action stays on a phone with a short label: a bare "+" said nothing (recruiter UX audit, 19 Oct 2026).
+    &__plan.ant-btn { padding-inline: 10px; }
+    &__plan-long { display: none; }
+    &__plan-short { display: inline; }
+
+    &__actions {
+      gap: 4px;
+    }
+
+    &__messages.ant-btn {
+      width: 36px;
+      min-width: 36px;
+      padding: 0;
+
+      span:not(.anticon) {
+        display: none;
+      }
+    }
+  }
+
+  .recruiter-shell-header__account {
+    gap: 5px !important;
+
+    .ln-profile__avatar-wrap {
+      width: 40px;
+      height: 40px;
+    }
+
+    .ln-profile__icon {
+      width: 36px;
+      height: 36px;
+    }
+  }
+}
+
+// The bell matches every other top-bar control: a 36px rounded square, not a circle.
+.recruiter-bell__button.ant-btn {
+  width: 36px; min-width: 36px; height: 36px; padding: 0; border-color: $tpo-line; border-radius: 9px; color: #56657a; background: #fff; box-shadow: none;
+  &:hover { border-color: #b9cce2; color: $tpo-primary; background: $teal-subtle; }
+}

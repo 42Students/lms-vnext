@@ -1,0 +1,204 @@
+// HR V2 workspace: Today, drive overview, focused review, calendar, company, search.
+// Calm, one accent (the app's blue), status colours kept for status only.
+
+.recruiter-v2__eyebrow.ant-typography {
+  display: block;
+  margin-bottom: 8px;
+  color: $tpo-muted;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+kbd {
+  padding: 0 5px;
+  border: 1px solid $tpo-line-strong;
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: #fff;
+  color: $tpo-muted;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+// ---- Today
+.recruiter-today {
+  &__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+    // Needs you and the live drive on the left, This week down the right.
+    > aside { grid-column: 2; grid-row: 1 / span 2; }
+  }
+  &__live-col { grid-column: 1; }
+  &__live-col .recruiter-today__live-head { margin-top: 0; }
+
+  &__queue { display: flex; flex-direction: column; gap: 10px; }
+
+  // antd 5 gives .ant-card-body ::before/::after clearfix boxes; inside a grid they become empty cells and push the content around.
+  &__task .ant-card-body::before, &__task .ant-card-body::after { display: none; }
+
+  &__task .ant-card-body {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: center;
+    padding: 14px 16px;
+  }
+
+  &__task-copy { display: flex; flex-direction: column; min-width: 0; gap: 2px; }
+
+  &__dot {
+    width: 10px; height: 10px; border-radius: 50%; background: #cbd5e1;
+    &--urgent { background: #d9363e; }
+    &--soon { background: #e8a317; }
+    &--fine { background: $tpo-primary; }
+  }
+
+  &__done .ant-card-body { padding: 26px 20px; text-align: center; }
+  &__waiting-head, &__live-head { margin-top: 22px; }
+  &__waiting-row { display: flex; flex-direction: column; padding: 8px 0; border-top: 1px solid $tpo-line; &:first-child { border-top: 0; } }
+
+  &__week-row {
+    display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 10px; align-items: center;
+    padding: 9px 0; border-top: 1px solid $tpo-line; cursor: pointer;
+    &:first-child { border-top: 0; }
+    &:hover { background: $tpo-surface-soft; }
+  }
+  &__week-when { color: $tpo-text; font-size: 12px; font-variant-numeric: tabular-nums; }
+  &__week-what { display: flex; flex-direction: column; min-width: 0; }
+  &__live { cursor: pointer; }
+  &__live-stat { display: flex; align-items: baseline; gap: 6px; margin: 4px 0; strong { font-size: 28px; line-height: 1; } span { color: $tpo-muted; } }
+  &__stale { margin-bottom: 12px; }
+}
+
+// ---- Drive overview
+.recruiter-strip {
+  display: grid; grid-template-columns: repeat(6, minmax(72px, 1fr)); gap: 6px; margin: 4px 0 16px; padding: 0; list-style: none; overflow-x: auto;
+
+  &__step { display: flex; flex-direction: column; gap: 6px; color: $tpo-muted; font-size: 12px; font-weight: 600; }
+  &__bar { height: 4px; border-radius: 4px; background: $tpo-line-strong; }
+  &__step--done { color: $tpo-text; .recruiter-strip__bar { background: $tpo-primary; } }
+  &__step--now { color: $tpo-primary; .recruiter-strip__bar { background: $tpo-primary; box-shadow: 0 0 0 3px rgba($tpo-primary, 0.16); } }
+  &__step--off { color: #b8c0cc; text-decoration: line-through; }
+}
+
+.recruiter-next {
+  margin-bottom: 18px;
+  .ant-card-body { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding: 14px 16px; > div { display: flex; flex-direction: column; } }
+  &--act { border-color: rgba($tpo-primary, 0.28); background: $tpo-primary-soft; }
+  &__title.ant-typography { font-size: 15px; }
+}
+
+.recruiter-overview {
+  &__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+  &__seg { margin-bottom: 10px; }
+  &__facts { display: flex; gap: 22px; margin: 12px 0; padding: 12px 0; border-block: 1px solid $tpo-line;
+    div { display: flex; flex-direction: column; } dt { color: $tpo-muted; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; } dd { margin: 0; font-size: 16px; font-weight: 700; } }
+}
+
+.recruiter-review-cta .ant-card-body { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+// ---- Drives list
+.recruiter-drives {
+  &__list { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+  &__row .ant-card-body { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding: 14px 16px; }
+  &__row--attention { border-color: #f5c27a; background: #fffaf2; }
+  &__row-main { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  &__row-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; color: $tpo-muted; font-size: 13px; }
+  &__row-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+}
+
+// ---- Focused review (full screen)
+.recruiter-review {
+  position: fixed; inset: 0; z-index: 1100; display: flex; flex-direction: column; background: $tpo-surface-soft; outline: none;
+
+  &__top { display: flex; align-items: center; gap: 14px; padding: 12px 20px; border-bottom: 1px solid $tpo-line; background: #fff; flex-wrap: wrap; }
+  &__bar { flex: 1 1 120px; min-width: 100px; margin: 0 !important; }
+  &__count { font-variant-numeric: tabular-nums; }
+  &__body { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 20px; width: 100%; max-width: 1100px; margin: 0 auto; padding: 20px; overflow: auto; flex: 1; }
+  &__card { padding: 26px; border: 1px solid $tpo-line; border-radius: 12px; background: #fff; align-self: start; }
+  &__facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px 22px; margin: 16px 0; padding: 16px 0; border-block: 1px solid $tpo-line;
+    div { display: flex; flex-direction: column; min-width: 0; } dt { color: $tpo-muted; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; } dd { margin: 0; font-size: 16px; font-weight: 600; overflow-wrap: anywhere; } }
+  &__links { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
+  &__shared-note { display: block; margin-top: 12px; font-size: 12px; }
+  &__decide { display: flex; flex-direction: column; gap: 10px; align-self: start; position: sticky; top: 0; }
+  &__btn { display: flex !important; align-items: center; justify-content: space-between; height: 52px !important; font-weight: 700; font-size: 16px;
+    &--pass { border-color: #1f9d55 !important; color: #1f7a45 !important; }
+    &--fail { border-color: #d9363e !important; color: #b3261e !important; }
+    &--hold { border-color: #e8a317 !important; color: #8a5a00 !important; } }
+  &__nav { display: flex; gap: 8px; > * { flex: 1; } }
+  &__note { display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px dashed $tpo-line-strong; border-radius: 10px; background: #fff; }
+  &__summary, &__empty { max-width: 560px; margin: 60px auto; padding: 30px; border: 1px solid $tpo-line; border-radius: 12px; background: #fff; text-align: center; }
+  &__tally { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 18px 0; div { display: flex; flex-direction: column; padding: 14px 6px; border-radius: 10px; background: #f3f6fa; } strong { font-size: 26px; line-height: 1.1; } span { color: $tpo-muted; font-size: 12px; } }
+  &__summary-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+}
+
+// ---- Calendar
+.recruiter-calendar {
+  &__nav { display: flex; gap: 8px; }
+  &__range { display: block; margin: 4px 0 12px; }
+  &__board { display: grid; grid-template-columns: repeat(7, minmax(150px, 1fr)); gap: 10px; overflow-x: auto; padding-bottom: 6px; }
+  &__day { min-height: 140px; .ant-card-body { display: flex; flex-direction: column; gap: 8px; } }
+  &__day--today { border-color: $tpo-primary; box-shadow: 0 0 0 1px $tpo-primary inset; }
+  &__none { font-size: 12px; }
+  &__event { display: flex; flex-direction: column; gap: 2px; padding: 8px; border: 1px solid $tpo-line; border-radius: 8px; cursor: pointer; background: #fff; &:hover { background: $tpo-surface-soft; } }
+  &__time { color: $tpo-text; font-size: 12px; font-variant-numeric: tabular-nums; }
+  &__error, &__empty { margin-bottom: 12px; }
+}
+
+// ---- Company & Team
+.recruiter-funnel__row { display: grid; grid-template-columns: 110px minmax(0, 1fr) minmax(120px, auto); align-items: center; gap: 12px; padding: 4px 0; }
+.recruiter-funnel__label { font-weight: 600; }
+.recruiter-funnel__num { text-align: right; font-variant-numeric: tabular-nums; }
+
+.recruiter-plan-drive__note, .recruiter-plan-drive__restored { margin-bottom: 12px; }
+
+@media (max-width: 860px) {
+  .recruiter-today__grid, .recruiter-overview__grid, .recruiter-review__body { grid-template-columns: minmax(0, 1fr); }
+  .recruiter-today__grid > aside, .recruiter-today__live-col { grid-column: auto; grid-row: auto; }
+  .recruiter-today__task .ant-card-body { grid-template-columns: auto minmax(0, 1fr); .ant-btn { grid-column: 2; justify-self: start; } }
+  .recruiter-review__decide { position: static; }
+  .recruiter-review__tally { grid-template-columns: repeat(2, 1fr); }
+  .recruiter-calendar__board { grid-template-columns: minmax(0, 1fr); }
+  .recruiter-funnel__row { grid-template-columns: 90px minmax(0, 1fr); .recruiter-funnel__num { grid-column: 1 / -1; text-align: left; } }
+}
+
+// HR audit pass: first-drive start, quiet empty week, the placement cell's ask on sent-back drives.
+.recruiter-today__first {
+  .ant-card-body { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+}
+.recruiter-today__steps { margin: 0; padding-left: 18px; color: $tpo-muted; line-height: 1.55; }
+.recruiter-today__week-empty { display: block; padding: 6px 2px; }
+.recruiter-drives__row-note { display: block; margin-top: 6px; font-size: 13px; }
+.recruiter-next__note { display: block; margin-top: 6px; font-style: italic; }
+
+// ---- Recruiter UX audit, 19 Oct 2026 --------------------------------------------------------------------------------------
+// Request a drive: Send sits in the preview panel on a wide screen and at the end of the form on a phone.
+.recruiter-plan-drive__send-bottom { display: none; margin-top: 4px; }
+@media (max-width: 767px) {
+  .recruiter-plan-drive__send-bottom { display: block; }
+  .recruiter-plan-drive__send-aside { display: none !important; }
+}
+// A drive's Discussion: the requests, then the conversation.
+.recruiter-drive-detail__discussion { display: flex; flex-direction: column; gap: 16px; }
+// Applicants: stage filters and the search on one line.
+.recruiter-applicants__filters { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.recruiter-applicants__search { width: 280px; max-width: 100%; }
+// Calendar: a day-by-day agenda (only days with something on them), time on the left.
+.recruiter-calendar__agenda { display: flex; flex-direction: column; gap: 12px; }
+.recruiter-calendar__agenda .recruiter-calendar__day-head { display: block; margin-bottom: 6px; }
+.recruiter-calendar__agenda .recruiter-calendar__event {
+  display: grid; grid-template-columns: 170px minmax(0, 1fr) auto; gap: 12px; align-items: center;
+  padding: 10px 4px; border-top: 1px solid $tpo-line; cursor: pointer;
+  &:first-of-type { border-top: 0; }
+  &:hover { background: $tpo-surface-soft; }
+}
+.recruiter-calendar__what { display: flex; flex-direction: column; min-width: 0; }
+@media (max-width: 767px) {
+  .recruiter-calendar__agenda .recruiter-calendar__event { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+}

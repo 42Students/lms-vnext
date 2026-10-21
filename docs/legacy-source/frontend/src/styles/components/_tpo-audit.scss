@@ -1,0 +1,348 @@
+// TPO Audit log — dense, trustworthy operational history.
+.tpo-audit {
+  &__header {
+    margin-bottom: 14px;
+
+    .listing-page-header__title {
+      color: $tpo-ink;
+      letter-spacing: -0.025em;
+    }
+  }
+
+  &__pulse {
+    display: grid;
+    grid-template-columns: minmax(130px, 170px) minmax(120px, 150px) minmax(190px, 240px);
+    gap: 10px;
+    margin-bottom: 14px;
+
+    > div {
+      padding: 12px 14px;
+      border: 1px solid $tpo-line;
+      border-radius: 11px;
+      background: $tpo-surface-soft;
+    }
+
+    span,
+    strong {
+      display: block;
+    }
+
+    span {
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      font-weight: 700;
+      letter-spacing: 0.055em;
+      text-transform: uppercase;
+    }
+
+    strong {
+      margin-top: 3px;
+      color: $tpo-ink;
+      font-size: 22px;
+      line-height: 1.15;
+    }
+  }
+
+  &__latest strong {
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
+  &__workspace.ant-card {
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: 14px;
+    box-shadow: 0 5px 20px rgba(26, 45, 72, 0.05);
+
+    > .ant-card-body {
+      padding: 0 !important;
+    }
+  }
+
+  &__workspace-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 17px 18px;
+    border-bottom: 1px solid $tpo-line;
+    background: $tpo-surface-soft;
+
+    > div {
+      min-width: 0;
+      max-width: 760px;
+    }
+
+    h4.ant-typography {
+      margin: 3px 0 2px !important;
+      color: $tpo-ink;
+      font-size: 18px;
+      line-height: 1.3;
+    }
+
+    > div > .ant-typography:last-child {
+      font-size: 12px;
+    }
+  }
+
+  &__eyebrow.ant-typography {
+    display: block;
+    color: $tpo-muted;
+    font-size: $tpo-fs-xs;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  &__entity-filter.ant-select {
+    flex: 0 0 auto;
+    width: 200px;
+
+    .ant-select-selector {
+      min-height: 38px;
+      border-radius: 8px !important;
+    }
+  }
+
+  &__stale-alert {
+    margin: 14px 18px 0;
+    border-radius: 9px;
+  }
+
+  &__table {
+    padding: 16px 18px 20px;
+
+    > div > .ant-space:first-child {
+      min-height: 40px;
+      margin-bottom: 14px !important;
+      padding-bottom: 14px;
+      border-bottom: 1px solid $tpo-line;
+
+      .ant-input-affix-wrapper,
+      .ant-btn {
+        border-radius: 8px;
+      }
+
+      > .ant-typography {
+        margin-left: auto;
+        color: $tpo-muted;
+        font-size: 12px;
+      }
+    }
+
+    .ant-table-thead > tr > th {
+      padding-top: 11px;
+      padding-bottom: 11px;
+      background: $tpo-surface-soft !important;
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      font-weight: 700;
+      letter-spacing: 0.035em;
+      text-transform: uppercase;
+    }
+
+    .ant-table-tbody > tr > td {
+      padding-top: 11px;
+      padding-bottom: 11px;
+      border-bottom-color: $tpo-line;
+      vertical-align: middle;
+    }
+
+    .ant-table-tbody > tr:hover > td {
+      background: $tpo-surface-soft !important;
+    }
+  }
+
+  &__event {
+    display: flex;
+    min-width: 190px;
+    max-width: 320px;
+    flex-direction: column;
+    gap: 4px;
+
+    > span {
+      overflow: hidden;
+      color: #28374e;
+      font-weight: 650;
+      line-height: 1.35;
+      text-overflow: ellipsis;
+      text-transform: capitalize;
+      white-space: nowrap;
+    }
+
+    .ant-tag {
+      width: fit-content;
+      max-width: 100%;
+      margin: 0;
+      overflow: hidden;
+      border-radius: 999px;
+      color: #5d6c82;
+      font-size: $tpo-fs-xs;
+      text-overflow: ellipsis;
+    }
+  }
+
+  &__actor {
+    color: #52627a;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  &__when {
+    min-width: 78px;
+
+    strong,
+    span {
+      display: block;
+    }
+
+    strong {
+      color: $tpo-text;
+      font-size: 12px;
+      line-height: 1.3;
+    }
+
+    span {
+      margin-top: 1px;
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .tpo-audit {
+    &__pulse {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+
+      > div {
+        padding: 10px 11px;
+      }
+    }
+
+    &__latest {
+      grid-column: 1 / -1;
+    }
+
+    &__workspace-head {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 10px;
+      padding: 14px 13px 12px;
+    }
+
+    &__entity-filter.ant-select {
+      width: 100%;
+    }
+
+    &__stale-alert {
+      margin: 12px 13px 0;
+    }
+
+    &__table {
+      padding: 13px 12px 16px;
+
+      > div > .ant-space:first-child {
+        width: 100%;
+
+        .ant-input-affix-wrapper {
+          width: 100% !important;
+          flex: 1 1 100%;
+        }
+
+        > .ant-typography {
+          width: 100%;
+          margin-left: 0;
+        }
+      }
+    }
+
+    &__event {
+      min-width: 145px;
+      max-width: 210px;
+    }
+  }
+}
+
+
+// TPO Audit Demo/Wow pass — visible placement governance.
+.tpo-audit {
+  &__governance { margin-bottom:14px; }
+
+  &__governance-hero.ant-card {
+    overflow:hidden; border:0; border-radius:18px;
+    background:
+      radial-gradient(circle at 92% 10%,rgba(45,212,191,.16),transparent 30%),
+      linear-gradient(135deg,$tpo-ink 0%,#17304a 100%);
+    box-shadow:0 16px 40px rgba(15,23,42,.16); color:#fff;
+    > .ant-card-body { padding:20px !important; }
+  }
+
+  &__governance-head {
+    display:flex; align-items:flex-start; justify-content:space-between; gap:20px;
+    h3.ant-typography { margin:4px 0 !important; color:#fff; font-size:clamp(20px,2vw,27px); letter-spacing:-.025em; }
+    > div:first-child > .ant-typography:last-child { color:$tpo-line-strong; font-size: $tpo-fs-xs; line-height:1.45; }
+  }
+
+  &__governance-eyebrow.ant-typography {
+    color: $tpo-primary; font-size: $tpo-fs-xs; font-weight:750; letter-spacing:.1em; text-transform:uppercase;
+  }
+
+  &__governance-count {
+    flex:0 0 auto; min-width:105px; padding:10px 12px; border:1px solid rgba(148,163,184,.18);
+    border-radius:10px; background:rgba(255,255,255,.055); text-align:center;
+    strong,span { display:block; }
+    strong { color:#fff; font-size:23px; line-height:1; }
+    span { margin-top:4px; color:$tpo-muted; font-size: 12px; font-weight:700; text-transform:uppercase; }
+  }
+
+  &__governance-metrics {
+    display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin-top:15px;
+    > div,> button {
+      min-width:0; padding:10px; border:1px solid rgba(148,163,184,.14); border-radius:10px;
+      background:rgba(255,255,255,.05); color:inherit; font:inherit; text-align:left;
+    }
+    > button {
+      cursor:pointer;
+      &:hover,&:focus-visible { border-color:rgba(94,234,212,.34); outline:none; background:rgba(255,255,255,.08); }
+    }
+    span,strong,small { display:block; }
+    span { color:#99f6e4; font-size:7px; font-weight:700; text-transform:uppercase; }
+    strong { margin-top:4px; color:#fff; font-size:19px; line-height:1; }
+    small { margin-top:4px; color:$tpo-muted; font-size:7px; line-height:1.35; }
+  }
+
+  &__entity-mix {
+    display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:5px; margin-top:8px;
+    > button {
+      min-width:0; padding:7px; border:1px solid transparent; border-radius:8px;
+      background:rgba(15,23,42,.24); color:inherit; font:inherit; text-align:left; cursor:pointer;
+      &:hover,&:focus-visible { border-color:rgba(94,234,212,.24); outline:none; background:rgba(255,255,255,.06); }
+      > span,> strong { display:block; }
+      > span { overflow:hidden; color:$tpo-muted; font-size:7px; font-weight:700; text-overflow:ellipsis; text-transform:capitalize; white-space:nowrap; }
+      > strong { margin-top:2px; color:#fff; font-size:14px; }
+      > div { height:4px; margin-top:5px; overflow:hidden; border-radius:999px; background:rgba(255,255,255,.08); }
+      > div i { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg, $light-cyan, $clrThird); }
+    }
+  }
+}
+
+@media(max-width:767px){
+  .tpo-audit {
+    &__governance-hero.ant-card > .ant-card-body { padding:15px !important; }
+    &__governance-head { align-items:flex-start; flex-direction:column; gap:9px; }
+    &__governance-count { display:flex; width:100%; min-width:0; align-items:baseline; justify-content:space-between; text-align:left; }
+    &__governance-count span { margin-top:0; }
+    &__governance-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    &__entity-mix { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  }
+}
+@media(max-width:480px){
+  .tpo-audit__governance-metrics { grid-template-columns:1fr; }
+}
+
+.tpo-audit__event { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+// The detail is what was written (a reason, a label): never re-capitalised.
+.tpo-audit__detail, .tpo-audit__event > span.tpo-audit__detail { font-size: 13px; text-transform: none; white-space: normal; }
+.tpo-audit__open { font-size: 13px; }

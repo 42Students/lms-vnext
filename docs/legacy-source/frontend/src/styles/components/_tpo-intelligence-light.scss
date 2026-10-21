@@ -1,0 +1,758 @@
+// TPO Intelligence visual system
+// The "wow" comes from placement intelligence and interaction, not a separate dark dashboard.
+// Imported after every TPO page stylesheet so all premium surfaces stay native to the white LMS UI.
+
+$tpo-intel-surface: #ffffff;
+$tpo-intel-subtle: $tpo-surface-soft;
+$tpo-intel-accent-subtle: $teal-subtle;
+$tpo-intel-border: $tpo-line;
+$tpo-intel-border-strong: $tpo-line-strong;
+$tpo-intel-title: $tpo-ink;
+$tpo-intel-text: $tpo-text;
+$tpo-intel-muted: $tpo-muted;
+$tpo-intel-muted-soft: $tpo-muted;
+
+// Reuse the LMS brand system instead of introducing a TPO-only accent.
+// Canonical source: _variables.scss — "Teal-on-white palette".
+$tpo-intel-accent: $clrThird;
+$tpo-intel-accent-dark: $teal-dark;
+$tpo-intel-accent-text: $teal-text;
+$tpo-intel-accent-soft: $light-cyan;
+
+// All large intelligence / command-centre cards use the same white enterprise surface.
+.tpo-home__executive-card.ant-card,
+.tpo-students__intelligence-card.ant-card,
+.tpo-crm__engine.ant-card,
+.tpo-company-detail__employer-hero.ant-card,
+.tpo-drives__portfolio-hero.ant-card,
+.tpo-drive-detail__mission-hero.ant-card,
+.tpo-drive-day-roster__live-hero.ant-card,
+.tpo-calendar__planner-hero.ant-card,
+.tpo-reports__management-hero.ant-card,
+.tpo-audit__governance-hero.ant-card,
+.tpo-drive-day-hero {
+  border: 1px solid $tpo-intel-border;
+  background: $tpo-intel-surface;
+  box-shadow: 0 8px 28px rgba(26, 45, 72, 0.07);
+  color: $tpo-intel-text;
+}
+
+// Hero headings and supporting copy no longer switch into a separate dark-mode vocabulary.
+.tpo-home__executive-head,
+.tpo-students__intelligence-head,
+.tpo-crm__engine-head,
+.tpo-company-detail__employer-head,
+.tpo-drives__portfolio-head,
+.tpo-drive-detail__mission-head,
+.tpo-drive-day-roster__live-head,
+.tpo-calendar__planner-head,
+.tpo-reports__management-head,
+.tpo-audit__governance-head {
+  h3.ant-typography {
+    color: $tpo-intel-title;
+  }
+
+  > div:first-child > .ant-typography:last-child,
+  > div > .ant-typography:last-child {
+    color: $tpo-intel-muted;
+  }
+}
+
+.tpo-home__executive-eyebrow.ant-typography,
+.tpo-students__intelligence-eyebrow.ant-typography,
+.tpo-crm__engine-eyebrow.ant-typography,
+.tpo-company-detail__employer-eyebrow.ant-typography,
+.tpo-drives__portfolio-eyebrow.ant-typography,
+.tpo-drive-detail__mission-eyebrow.ant-typography,
+.tpo-drive-day-roster__live-eyebrow.ant-typography,
+.tpo-calendar__planner-eyebrow.ant-typography,
+.tpo-reports__management-eyebrow.ant-typography,
+.tpo-audit__governance-eyebrow.ant-typography,
+// Top-right numeric wells become ordinary LMS metric wells.
+.tpo-home__summary-count,
+.tpo-students__pool-count,
+.tpo-crm__engine-count,
+.tpo-drives__portfolio-count,
+.tpo-drive-detail__mission-status,
+.tpo-calendar__planner-count,
+.tpo-audit__governance-count {
+  border-color: $tpo-intel-border;
+  background: $tpo-intel-subtle;
+
+  strong,
+  span {
+    color: $tpo-intel-title;
+  }
+
+  span {
+    color: $tpo-intel-muted;
+  }
+}
+
+// Reusable light metric tile treatment.
+.tpo-home__hero-kpis > button,
+.tpo-students__cohorts > button,
+.tpo-crm__engine-metrics > div,
+.tpo-crm__pipeline > button,
+.tpo-company-detail__employer-metrics > div,
+.tpo-drives__portfolio-metrics > button,
+.tpo-drives__lifecycle-map > button,
+.tpo-drive-detail__mission-metrics > button,
+.tpo-drive-detail__mission-funnel-grid > button,
+.tpo-drive-day-roster__live-metrics > button,
+.tpo-drive-day-roster__flow-grid > button,
+.tpo-calendar__planner-metrics > button,
+.tpo-calendar__planner-mix > button,
+.tpo-reports__management-metrics > div,
+.tpo-audit__governance-metrics > div,
+.tpo-audit__governance-metrics > button,
+.tpo-audit__entity-mix > button {
+  border-color: $tpo-intel-border;
+  background: $tpo-intel-subtle;
+  color: $tpo-intel-text;
+
+  &:hover,
+  &:focus-visible,
+  &.is-active {
+    border-color: rgba($clrThird, 0.35);
+    outline: none;
+    background: $tpo-intel-accent-subtle;
+  }
+
+  > span,
+  span {
+    color: $tpo-intel-muted;
+  }
+
+  > strong,
+  strong {
+    color: $tpo-intel-title;
+  }
+
+  > small,
+  small {
+    color: $tpo-intel-muted-soft;
+  }
+}
+
+// ---- Home -----------------------------------------------------------------
+.tpo-home {
+  &__executive-card.ant-card {
+    > .ant-card-body {
+      background: #fff;
+    }
+  }
+
+  &__executive-actions {
+    .ant-btn-background-ghost {
+      border-color: $tpo-line-strong;
+      background: #fff;
+      color: $tpo-intel-text;
+
+      &:hover,
+      &:focus-visible {
+        border-color: $tpo-intel-accent-soft;
+        background: $tpo-intel-accent-subtle;
+        color: $tpo-intel-accent;
+      }
+    }
+  }
+
+  &__placement-rate {
+    border-color: $tpo-intel-border;
+    background: $tpo-intel-subtle;
+    backdrop-filter: none;
+
+    .ant-progress-text {
+      color: $tpo-intel-title !important;
+    }
+
+    > div:last-child > .ant-typography {
+      color: $tpo-intel-muted;
+    }
+
+    strong,
+    .tpo-home__placement-rate-value {
+      color: $tpo-intel-title;
+    }
+
+    span:not(.ant-progress-text) {
+      color: $tpo-intel-text;
+    }
+
+    small {
+      color: $tpo-intel-muted-soft;
+    }
+  }
+
+  &__placement-composition {
+    background: $tpo-line;
+
+    > span {
+      background: linear-gradient(90deg, $tpo-intel-accent-soft, $tpo-intel-accent);
+    }
+  }
+
+  &__hero-kpis > button {
+    &:hover,
+    &:focus-visible {
+      transform: translateY(-1px);
+    }
+
+    > span {
+      color: $tpo-intel-accent;
+    }
+  }
+
+  &__placement-pace {
+    border-color: $tpo-intel-border;
+    background: #fff;
+
+    > .anticon {
+      color: $tpo-intel-accent;
+    }
+
+    strong {
+      color: $tpo-intel-text;
+    }
+
+    small {
+      color: $tpo-intel-muted;
+    }
+
+    &.is-ahead {
+      border-color: #d8ead7;
+      background: #f7fff5;
+
+      > .anticon {
+        color: #237804;
+      }
+
+      strong {
+        color: #2f5131;
+      }
+    }
+
+    &.is-behind {
+      border-color: #f4d49d;
+      background: $tpo-warn-bg;
+
+      > .anticon {
+        color: $tpo-warn;
+      }
+
+      strong {
+        color: #8a4b08;
+      }
+    }
+  }
+
+  // The existing "drive day today" card should also feel native, not like a blue banner.
+  .tpo-drive-day-hero {
+    border: 1px solid $tpo-intel-border;
+    background: #fff;
+    color: $tpo-intel-text;
+    box-shadow: 0 8px 24px rgba(26, 45, 72, 0.07);
+
+    .ant-list-item {
+      border-block-end-color: $tpo-line !important;
+    }
+
+    .ant-list-item-meta-title,
+    .ant-list-item-meta-description {
+      color: inherit;
+    }
+
+    .ant-btn-background-ghost {
+      border-color: $tpo-intel-accent-soft;
+      background: $tpo-intel-accent-subtle;
+      color: $tpo-intel-accent;
+    }
+  }
+
+  &__branch-fill {
+    background: linear-gradient(90deg, $tpo-intel-accent-soft, $tpo-intel-accent);
+  }
+
+  &__compensation-band > div i {
+    background: linear-gradient(90deg, $tpo-intel-accent-soft, $tpo-intel-accent);
+  }
+}
+
+// ---- Students / Placement 360 ---------------------------------------------
+.tpo-students {
+  &__intelligence-card.ant-card {
+    > .ant-card-body {
+      background: #fff;
+    }
+  }
+
+  &__readiness {
+    border-color: $tpo-intel-border;
+    background: $tpo-intel-subtle;
+  }
+
+  &__readiness-copy {
+    > .ant-typography {
+      color: $tpo-intel-muted;
+    }
+
+    strong {
+      color: $tpo-intel-title;
+    }
+
+    > span {
+      color: $tpo-intel-muted;
+    }
+  }
+
+  &__readiness-bar {
+    background: $tpo-line;
+  }
+
+  &__readiness-legend > span {
+    color: $tpo-intel-text;
+
+    strong {
+      color: $tpo-intel-title;
+    }
+  }
+
+  &__cohorts > button {
+    &.is-attention {
+      border-color: #f4d49d;
+      background: $tpo-warn-bg;
+
+      strong {
+        color: $tpo-warn;
+      }
+    }
+
+    &.is-success {
+      border-color: #d8ead7;
+      background: #f7fff5;
+
+      strong {
+        color: #237804;
+      }
+    }
+  }
+
+  &__branch-bar > span {
+    background: linear-gradient(90deg, $tpo-intel-accent-soft, $tpo-intel-accent);
+  }
+}
+
+// ---- Employer CRM / Employer 360 ------------------------------------------
+.tpo-crm {
+  &__engine.ant-card > .ant-card-body {
+    background: #fff;
+  }
+
+  &__engine-count {
+    border-color: $tpo-intel-border;
+    background: $tpo-intel-subtle;
+
+    strong {
+      color: $tpo-intel-title;
+    }
+
+    span {
+      color: $tpo-intel-muted;
+    }
+  }
+
+  &__engine-metrics > div > span,
+  &__pipeline > button > span {
+    color: $tpo-intel-accent;
+  }
+
+  &__pipeline > button i {
+    color: $tpo-muted;
+  }
+}
+
+.tpo-company-detail {
+  &__employer-hero.ant-card > .ant-card-body {
+    background: #fff;
+  }
+
+  &__employer-metrics > div {
+    span {
+      color: $tpo-intel-muted;
+    }
+  }
+
+  &__hiring-bars {
+    border-color: $tpo-intel-border;
+    background: $tpo-intel-subtle;
+  }
+
+  &__hiring-bars-head {
+    span {
+      color: $tpo-intel-text;
+    }
+
+    small {
+      color: $tpo-intel-muted;
+    }
+  }
+
+  &__hiring-row {
+    > span {
+      color: $tpo-intel-muted;
+    }
+
+    > div {
+      background: $tpo-line;
+
+      i {
+        background: linear-gradient(90deg, $tpo-intel-accent-soft, $tpo-intel-accent);
+      }
+    }
+
+    strong {
+      color: $tpo-intel-title;
+    }
+  }
+}
+
+// ---- Hiring portfolio ------------------------------------------------------
+.tpo-drives {
+  &__portfolio-hero.ant-card > .ant-card-body {
+    background: #fff;
+  }
+
+  &__portfolio-metrics > button {
+    > span {
+      color: $tpo-intel-accent;
+    }
+
+    &.is-attention {
+      border-color: #f4d49d;
+      background: $tpo-warn-bg;
+
+      strong {
+        color: $tpo-warn;
+      }
+    }
+  }
+
+  &__lifecycle-map > button {
+    > div:first-child {
+      span {
+        color: $tpo-intel-muted;
+      }
+
+      strong {
+        color: $tpo-intel-title;
+      }
+    }
+  }
+
+  &__lifecycle-track {
+    background: $tpo-line;
+
+    i {
+      background: linear-gradient(90deg, $tpo-intel-accent-soft, $tpo-intel-accent);
+    }
+  }
+
+  &__mode-mix {
+    background: $tpo-intel-subtle;
+    color: $tpo-intel-muted;
+
+    strong {
+      color: $tpo-intel-text;
+    }
+  }
+}
+
+// ---- Drive mission control -------------------------------------------------
+.tpo-drive-detail {
+  &__mission-hero.ant-card > .ant-card-body {
+    background: #fff;
+  }
+
+  &__mission-status {
+    border-color: $tpo-intel-border;
+    background: $tpo-intel-subtle;
+
+    span {
+      color: $tpo-intel-title;
+    }
+
+    small {
+      color: $tpo-intel-muted;
+    }
+  }
+
+  &__mission-metrics > button > span {
+    color: $tpo-intel-accent;
+  }
+
+  &__mission-funnel {
+    border-color: $tpo-intel-border;
+    background: $tpo-intel-subtle;
+  }
+
+  &__mission-funnel-head {
+    span {
+      color: $tpo-intel-text;
+    }
+
+    small {
+      color: $tpo-intel-muted;
+    }
+  }
+
+  &__mission-funnel-grid > button {
+    > span {
+      color: $tpo-intel-muted;
+    }
+
+    > strong {
+      color: $tpo-intel-title;
+    }
+
+    > div {
+      background: $tpo-line;
+
+      i {
+        background: linear-gradient(90deg, $tpo-intel-accent-soft, $tpo-intel-accent);
+      }
+    }
+  }
+}
+
+// ---- Live Drive Day --------------------------------------------------------
+.tpo-drive-day-roster {
+  &__live-hero.ant-card > .ant-card-body {
+    background: #fff;
+  }
+
+  // LIVE remains semantic green; only the surrounding surface changes.
+  &__live-indicator {
+    border-color: #d8ead7;
+    background: #f7fff5;
+
+    i {
+      background: #52c41a;
+      box-shadow: 0 0 0 4px rgba(82, 196, 26, 0.1);
+    }
+
+    span {
+      color: #237804;
+    }
+  }
+
+  &__live-metrics > button > span {
+    color: $tpo-intel-accent;
+  }
+
+  &__flow {
+    border-color: $tpo-intel-border;
+    background: $tpo-intel-subtle;
+  }
+
+  &__flow-head {
+    span {
+      color: $tpo-intel-text;
+    }
+
+    small {
+      color: $tpo-intel-muted;
+    }
+  }
+
+  &__flow-grid > button {
+    > span {
+      color: $tpo-intel-muted;
+    }
+
+    > strong {
+      color: $tpo-intel-title;
+    }
+
+    > div {
+      background: $tpo-line;
+
+      i {
+        background: linear-gradient(90deg, $tpo-intel-accent-soft, $tpo-intel-accent);
+      }
+    }
+  }
+}
+
+// ---- Calendar / operations planner ----------------------------------------
+.tpo-calendar {
+  &__planner-hero.ant-card > .ant-card-body {
+    background: #fff;
+  }
+
+  &__planner-metrics > button > span {
+    color: $tpo-intel-accent;
+  }
+
+  &__planner-mix > button {
+    > span {
+      color: $tpo-intel-muted;
+    }
+
+    > strong {
+      color: $tpo-intel-title;
+    }
+
+    > div {
+      background: $tpo-line;
+
+      i {
+        background: linear-gradient(90deg, $tpo-intel-accent-soft, $tpo-intel-accent);
+      }
+    }
+  }
+}
+
+// ---- Management reports ---------------------------------------------------
+.tpo-reports {
+  &__management-hero.ant-card > .ant-card-body {
+    background: #fff;
+  }
+
+  &__management-head {
+    .ant-btn-background-ghost {
+      border-color: $tpo-intel-accent-soft;
+      background: $tpo-intel-accent-subtle;
+      color: $tpo-intel-accent;
+
+      &:hover,
+      &:focus-visible {
+        border-color: $tpo-intel-accent;
+        background: $tpo-intel-accent-subtle;
+        color: $tpo-intel-accent-dark;
+      }
+    }
+  }
+
+  &__management-metrics > div {
+    span {
+      color: $tpo-intel-muted;
+    }
+  }
+
+  &__management-footer {
+    background: $tpo-intel-subtle;
+    color: $tpo-intel-muted;
+
+    .anticon {
+      color: #a16207;
+    }
+  }
+}
+
+// Presentation mode stays presentation-focused through scale/whitespace, not a dark theme.
+.tpo-report-detail--presentation {
+  .tpo-report-detail__context {
+    border: 1px solid $tpo-intel-border;
+    background: #fff;
+    color: $tpo-intel-text;
+    box-shadow: 0 8px 24px rgba(26, 45, 72, 0.07);
+
+    .tpo-report-detail__eyebrow,
+    > div:first-child > .ant-typography:last-child {
+      color: $tpo-intel-muted;
+    }
+
+    h4.ant-typography {
+      color: $tpo-intel-title;
+    }
+
+    .tpo-report-detail__result-count {
+      border-color: $tpo-intel-border;
+      background: $tpo-intel-subtle;
+
+      strong {
+        color: $tpo-intel-title;
+      }
+
+      span {
+        color: $tpo-intel-muted;
+      }
+    }
+  }
+}
+
+// ---- Messages / Requests --------------------------------------------------
+// These were already light; explicitly anchor them to the shared system.
+.tpo-message-panel__intelligence,
+.tpo-student-requests__intelligence {
+  border-color: $tpo-intel-border;
+  background: #fff;
+}
+
+.tpo-message-panel__intelligence-metrics > button,
+.tpo-message-panel__intelligence-metrics > div,
+.tpo-student-requests__intelligence-metrics > button {
+  border-color: $tpo-intel-border;
+  background: $tpo-intel-subtle;
+}
+
+// ---- Governance ------------------------------------------------------------
+.tpo-audit {
+  &__governance-hero.ant-card > .ant-card-body {
+    background: #fff;
+  }
+
+  &__governance-metrics > div > span,
+  &__governance-metrics > button > span {
+    color: $tpo-intel-accent;
+  }
+
+  &__entity-mix > button {
+    > span {
+      color: $tpo-intel-muted;
+    }
+
+    > strong {
+      color: $tpo-intel-title;
+    }
+
+    > div {
+      background: $tpo-line;
+
+      i {
+        background: linear-gradient(90deg, $tpo-intel-accent-soft, $tpo-intel-accent);
+      }
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .tpo-home__executive-card.ant-card,
+  .tpo-students__intelligence-card.ant-card,
+  .tpo-crm__engine.ant-card,
+  .tpo-company-detail__employer-hero.ant-card,
+  .tpo-drives__portfolio-hero.ant-card,
+  .tpo-drive-detail__mission-hero.ant-card,
+  .tpo-drive-day-roster__live-hero.ant-card,
+  .tpo-calendar__planner-hero.ant-card,
+  .tpo-reports__management-hero.ant-card,
+  .tpo-audit__governance-hero.ant-card {
+    box-shadow: 0 5px 18px rgba(26, 45, 72, 0.055);
+  }
+}
+
+
+/* Shared chart-track normalization for light intelligence surfaces. */
+.tpo-home__placement-composition,
+.tpo-students__readiness-bar,
+.tpo-students__branch-bar,
+.tpo-company-detail__hiring-row > div,
+.tpo-drives__lifecycle-track,
+.tpo-drive-detail__mission-funnel-grid > button > div,
+.tpo-drive-day-roster__flow-grid > button > div,
+.tpo-calendar__planner-mix > button > div,
+.tpo-audit__entity-mix > button > div,
+.tpo-home__compensation-band > div {
+  background: $tpo-line;
+}

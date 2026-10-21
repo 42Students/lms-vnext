@@ -1,0 +1,443 @@
+// Admin Interviews page – best UI/UX for columns & filters
+// Desktop: Ant Design Table with inline column filters
+// Mobile: Filter bar + interview cards
+
+@import "../components/variables.scss";
+
+$ai-primary: $clrThird;
+$ai-primary-dark: $neutral-900;
+$ai-border: $neutral-200;
+$ai-bg: $white;
+$ai-bg-subtle: $neutral-50;
+$ai-text: $neutral-900;
+$ai-text-muted: $neutral-500;
+$ai-radius: 8px;
+$ai-touch-min: 44px;
+$ai-bp: 768px;
+
+// ---------------------------------------------------------------------------
+// Page
+// ---------------------------------------------------------------------------
+.admin-interviews-page {
+  padding-bottom: 24px;
+  min-height: 60vh;
+
+  @media (max-width: #{$ssm}) {
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+.admin-interviews-module {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.admin-interviews-header {
+  padding: 20px 24px !important;
+  border-bottom: 1px solid $ai-border;
+
+  @media (max-width: #{$ssm}) {
+    padding: 16px !important;
+  }
+}
+
+.admin-interviews-header__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  .admin-list-page__title {
+    margin: 0 !important;
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    color: $ai-text !important;
+
+    @media (max-width: #{$ssm}) {
+      font-size: 1.25rem !important;
+    }
+  }
+}
+
+.admin-interviews-body {
+  padding: 20px 24px !important;
+  background: $ai-bg-subtle;
+
+  @media (max-width: #{$ssm}) {
+    padding: 16px !important;
+  }
+}
+
+.admin-interviews-alert {
+  margin-bottom: 16px !important;
+}
+
+.admin-interviews-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 280px;
+  gap: 12px;
+  background: $ai-bg;
+  border-radius: $ai-radius;
+  border: 1px solid $ai-border;
+}
+
+.admin-interviews-empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 280px;
+  padding: 40px;
+  background: $ai-bg;
+  border-radius: $ai-radius;
+  border: 1px solid $ai-border;
+  text-align: center;
+
+  .ant-empty-description {
+    max-width: 360px;
+    margin: 0 auto;
+    color: $ai-text-muted;
+  }
+}
+
+.admin-interviews-empty-icon {
+  font-size: 48px;
+  color: $neutral-400;
+  margin-bottom: 8px;
+
+  .anticon {
+    font-size: inherit;
+  }
+}
+
+.admin-interviews-refresh-overlay {
+  text-align: center;
+  padding: 8px 0;
+}
+
+// ---------------------------------------------------------------------------
+// Toolbar (count + clear filters)
+// ---------------------------------------------------------------------------
+.admin-interviews-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-interviews-count {
+  font-size: 14px;
+}
+
+.admin-interviews-clear {
+  color: $ai-primary !important;
+  font-size: 14px;
+
+  &:hover {
+    color: darken($ai-primary, 8%) !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Desktop: Table with column filters
+// ---------------------------------------------------------------------------
+.admin-interviews-desktop {
+  display: none;
+
+  @media (min-width: #{$ai-bp}) {
+    display: block;
+    background: $ai-bg;
+    border-radius: $ai-radius;
+    border: 1px solid $ai-border;
+    overflow: hidden;
+  }
+}
+
+.admin-interview-table {
+  .ant-table {
+    font-size: 14px;
+  }
+
+  .ant-table-thead > tr > th {
+    background: $ai-bg-subtle !important;
+    font-weight: 500;
+    color: $ai-text-muted;
+    border-bottom: 1px solid $ai-border;
+    padding: 12px 16px;
+  }
+
+  .ant-table-tbody > tr > td {
+    border-bottom: 1px solid $ai-border;
+    padding: 12px 16px;
+    vertical-align: middle;
+  }
+
+  .ant-table-tbody > tr:hover > td {
+    background: rgba($ai-primary, 0.04) !important;
+  }
+
+  .ant-table-tbody > tr.ant-table-row:hover {
+    cursor: pointer;
+  }
+
+  .ant-pagination {
+    margin: 16px !important;
+  }
+}
+
+.admin-interview-table__col-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+
+  &--filter {
+    min-width: 0;
+  }
+}
+
+.admin-interview-table__col-search {
+  max-width: 180px;
+
+  .ant-input {
+    font-size: 12px;
+  }
+}
+
+.admin-interview-table__col-select {
+  width: 100%;
+  max-width: 120px;
+  padding: 6px 8px;
+  font-size: 12px;
+  border: 1px solid $ai-border;
+  border-radius: 6px;
+  background: $ai-bg;
+  color: $ai-text;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: $ai-primary;
+    box-shadow: 0 0 0 2px rgba($ai-primary, 0.15);
+  }
+}
+
+.admin-interview-table__job-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-interview-table__job-title {
+  color: $ai-text;
+}
+
+.admin-interview-table__job-company {
+  font-size: 12px;
+  color: $ai-text-muted;
+}
+
+// ---------------------------------------------------------------------------
+// Mobile: Filter bar + cards
+// ---------------------------------------------------------------------------
+.admin-interviews-mobile {
+  display: block;
+
+  @media (min-width: #{$ai-bp}) {
+    display: none;
+  }
+}
+
+.admin-interviews-mobile-filters {
+  background: $ai-bg;
+  border-radius: $ai-radius;
+  border: 1px solid $ai-border;
+  padding: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-interviews-mobile-search {
+  width: 100%;
+  min-height: $ai-touch-min;
+
+  .ant-input {
+    font-size: 16px; // prevents zoom on iOS
+  }
+}
+
+.admin-interviews-mobile-filters-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-interviews-mobile-select {
+  flex: 1;
+  min-width: 85px;
+  max-width: 120px;
+
+  .ant-select-selector {
+    min-height: 38px !important;
+    height: 38px !important;
+    padding: 0 10px !important;
+    font-size: 14px !important;
+    border-radius: 8px !important;
+    align-items: center !important;
+  }
+}
+
+// Mobile dropdown panel - compact options, no oversized feel
+.admin-interviews-mobile-dropdown {
+  .ant-select-item {
+    font-size: 14px !important;
+    padding: 10px 12px !important;
+    min-height: 40px !important;
+    line-height: 20px !important;
+  }
+
+  .ant-select-item-option-active,
+  .ant-select-item-option-selected {
+    background: rgba($ai-primary, 0.08) !important;
+  }
+}
+
+.admin-interviews-mobile-clear {
+  align-self: flex-start;
+  color: $ai-primary !important;
+}
+
+.admin-interviews-mobile-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-interview-mobile-card {
+  border-radius: $ai-radius !important;
+  border: 1px solid $ai-border !important;
+  background: $ai-bg !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  transition: box-shadow 0.2s, border-color 0.2s;
+
+  &:hover {
+    border-color: rgba($ai-primary, 0.5) !important;
+    box-shadow: 0 4px 12px rgba($ai-primary, 0.12);
+  }
+
+  .ant-card-body {
+    padding: 16px !important;
+  }
+}
+
+.admin-interview-mobile-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.admin-interview-mobile-card__title {
+  font-size: 1rem;
+  color: $ai-text;
+  line-height: 1.4;
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-interview-mobile-card__view {
+  flex-shrink: 0;
+  padding: 0 4px !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+.admin-interview-mobile-card__company {
+  font-size: 14px;
+  color: $ai-text-muted;
+  margin-bottom: 4px;
+}
+
+.admin-interview-mobile-card__learner {
+  font-size: 14px;
+  color: $ai-text-muted;
+  margin-bottom: 12px;
+}
+
+.admin-interview-mobile-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+
+  .ant-tag {
+    font-size: 12px;
+    margin: 0;
+  }
+}
+
+.admin-interview-mobile-card__date {
+  font-size: 12px;
+  color: $ai-text-muted;
+}
+
+.admin-interview-mobile-card__mode {
+  .admin-interview-mobile-card__mode-tag {
+    font-size: 12px;
+  }
+}
+
+
+.admin-interviews-header__description,
+.admin-interviews-header__scope {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.8125rem;
+}
+
+.admin-interviews-header__scope {
+  margin-top: 1px;
+}
+
+.admin-interviews-header__metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid $ai-border;
+
+  > div {
+    min-width: 0;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: $ai-bg-subtle;
+  }
+
+  .ant-typography {
+    display: block;
+    font-size: 0.75rem;
+  }
+
+  strong {
+    display: block;
+    margin-top: 1px;
+    color: $ai-text;
+    font-size: 1rem;
+  }
+
+  @media (max-width: #{$ssm}) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

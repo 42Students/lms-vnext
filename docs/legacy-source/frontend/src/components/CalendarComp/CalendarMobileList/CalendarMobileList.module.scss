@@ -1,0 +1,373 @@
+@import "../../../styles/components/variables";
+
+$ml-touch-min: 44px;
+$ml-pad: 16px;
+$ml-s1: 8px;
+$ml-s2: 16px;
+$ml-s3: 24px;
+$ml-primary: $clrThird;
+$ml-border: $neutral-200;
+$ml-text: $neutral-900;
+$ml-text-muted: $neutral-500;
+$ml-radius-lg: 12px;
+$ml-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+$ml-shadow-md: 0 2px 6px rgba(0, 0, 0, 0.06);
+
+.wrapper {
+  background: $white;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 $ml-s3;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+// ---------------------------------------------------------------------------
+// Mini calendar (month grid) - hybrid view
+// ---------------------------------------------------------------------------
+.miniCal {
+  flex-shrink: 0;
+  padding: $ml-s2 $ml-pad;
+  border-bottom: 1px solid $ml-border;
+  background: $white;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.miniCalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.miniCalNav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: $ml-touch-min;
+  min-height: $ml-touch-min;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: $ml-text-muted;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 8px;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    background: rgba($ml-primary, 0.06);
+  }
+}
+
+.miniCalMonth {
+  font-size: 16px;
+  font-weight: 600;
+  color: $ml-text;
+  user-select: none;
+}
+
+.miniCalWeekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 6px;
+}
+
+.miniCalWeekday {
+  font-size: 11px;
+  font-weight: 600;
+  color: $ml-text-muted;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.miniCalGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.miniCalDayEmpty {
+  aspect-ratio: 1;
+  min-height: 32px;
+}
+
+.miniCalDay {
+  aspect-ratio: 1;
+  min-height: 32px;
+  max-height: $ml-touch-min;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: $ml-text;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    opacity: 0.9;
+  }
+}
+
+.miniCalDayNum {
+  line-height: 1.2;
+}
+
+.miniCalDot {
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: $ml-primary;
+}
+
+.miniCalDayToday {
+  background: rgba($ml-primary, 0.12);
+  color: $ml-primary;
+  font-weight: 600;
+
+  .miniCalDot {
+    background: $ml-primary;
+  }
+}
+
+.miniCalDaySelected {
+  background: $ml-primary;
+  color: #fff;
+  font-weight: 600;
+
+  .miniCalDot {
+    background: rgba(255, 255, 255, 0.9);
+  }
+}
+
+.miniCalDayOther {
+  color: $neutral-400;
+  pointer-events: none;
+  cursor: default;
+}
+
+.toolbar {
+  // Hidden on mobile — MiniCalendar already provides month navigation + Today button
+  display: none;
+
+  @media (min-width: 768px) {
+    display: block;
+    padding: $ml-s2 $ml-pad;
+    background: $white;
+    border-bottom: 1px solid $ml-border;
+    flex-shrink: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+.navRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $ml-s1;
+  gap: $ml-s1;
+}
+
+.navBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: $ml-touch-min;
+  min-height: $ml-touch-min;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: $ml-text-muted;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    background: rgba($ml-primary, 0.06);
+  }
+}
+
+.monthLabel {
+  font-size: 17px;
+  font-weight: 600;
+  color: $ml-text;
+  flex: 1;
+  text-align: center;
+  user-select: none;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+  width: 100%;
+
+  .todayBtn {
+    flex-shrink: 0;
+    min-height: $ml-touch-min;
+    height: 40px;
+    padding: 0 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    line-height: 1;
+    color: $ml-primary !important;
+    border-color: $ml-primary !important;
+    font-weight: 500;
+
+    &:hover {
+      color: #1e9aa8 !important;
+      border-color: #1e9aa8 !important;
+      background: rgba($ml-primary, 0.08) !important;
+    }
+
+    .anticon {
+      margin-right: 6px;
+    }
+  }
+
+  .viewSelect,
+  .ant-select {
+    flex-shrink: 0;
+    min-height: $ml-touch-min;
+    height: $ml-touch-min;
+
+    .ant-select-selector {
+      min-height: $ml-touch-min !important;
+      height: $ml-touch-min !important;
+      display: flex !important;
+      align-items: center !important;
+      padding-left: 12px !important;
+      padding-right: 28px !important;
+    }
+
+    .ant-select-selection-item,
+    .ant-select-selection-placeholder {
+      line-height: $ml-touch-min !important;
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+.list {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  padding: 0 $ml-pad;
+  width: 100%;
+  box-sizing: border-box;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.empty {
+  padding: 48px $ml-pad;
+  text-align: center;
+}
+
+.dayBlock {
+  padding: $ml-s2 0;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid $ml-border;
+  }
+}
+
+.dayHeader {
+  font-size: 12px;
+  font-weight: 600;
+  color: $ml-text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: $ml-s1;
+  padding-left: 4px;
+}
+
+.dayEvents {
+  display: flex;
+  flex-direction: column;
+  gap: $ml-s1;
+}
+
+// Event card — modern row-card look (matches Interviews/Applications)
+.eventCard {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: $ml-s2 $ml-s2;
+  min-height: $ml-touch-min;
+  border: 1px solid $ml-border;
+  border-left: 4px solid $ml-primary;
+  border-radius: $ml-radius-lg;
+  background: $white;
+  cursor: pointer;
+  box-shadow: $ml-shadow-sm;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover {
+    box-shadow: $ml-shadow-md;
+    border-color: rgba($ml-primary, 0.25);
+  }
+
+  &:active {
+    opacity: 0.96;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $ml-primary;
+    outline-offset: 2px;
+    box-shadow: $ml-shadow-md;
+    border-color: rgba($ml-primary, 0.25);
+  }
+}
+
+.eventTime {
+  font-size: 12px;
+  color: $ml-text-muted;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.eventTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: $ml-text;
+  line-height: 1.35;
+  word-break: break-word;
+
+  @media (max-width: 767px) {
+    font-size: 15px;
+  }
+}
+
+.eventSub {
+  font-size: 14px;
+  color: $ml-text-muted;
+  margin-top: 4px;
+  line-height: 1.4;
+  word-break: break-word;
+}

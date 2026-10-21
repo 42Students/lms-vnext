@@ -1,0 +1,710 @@
+.login-page {
+  // Mobile browsers (especially iOS Safari/Chrome) treat 100vh as the "largest possible" viewport,
+  // so when the address bar/keyboard shows up we get blank/black bands. Use dynamic viewport units.
+  min-height: 100dvh;
+  height: auto;
+  background-color: #ffffff;
+  position: relative;
+
+  // Desktop-only decorative layers (mobile keeps its own background-image below, set in the
+  // max-width: 767px block). Split into two independent layers, both positioned purely in
+  // percentages of `.login-page` itself, instead of one `background-size: cover` raster image:
+  // `cover` crops the image differently depending on the viewport's aspect ratio, so the diagonal's
+  // on-screen x-position used to drift independently of the form's Bootstrap-grid x-position
+  // (also percentage-based, but width-only) — in sync at some sizes (1366x768), desynced at others
+  // (1440x900, 1920x1200), leaving the white "Mobile Number"/"Resend OTP" text sitting over the
+  // wrong (white) side and effectively invisible. A clip-path polygon on a plain div tracks the
+  // same percentage-of-width math the grid uses, so the two can never drift apart again.
+  &__diagonal {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background-color: #004aad;
+    clip-path: polygon(62% 0, 100% 0, 100% 100%, 38% 100%);
+    pointer-events: none;
+  }
+
+  &__illustration {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background-image: url("/assets/images/login/login-illustration.png");
+    background-repeat: no-repeat;
+    background-position: left center;
+    // Was height-based (`auto 60%`/`auto 78%`), which scales the image's on-screen *width* from
+    // its own aspect ratio rather than from the container - so the image's right edge tracked
+    // viewport height while __diagonal's left edge tracks viewport width (`clip-path` is a
+    // percentage of the box). At most aspect ratios those two disagreed, leaving an unanchored
+    // wedge of the page's plain white background showing between the two shapes (the "white
+    // cone" - it grows or shrinks with the window instead of staying a fixed seam). Sizing by
+    // width instead - to the diagonal's own top-vertex percentage (62%) - keeps the image's
+    // right edge locked to the same measurement the diagonal already uses, so they always meet.
+    background-size: 62% auto;
+    pointer-events: none;
+    // Sizing by width fixed the top of the seam, but the image's box is a plain rectangle while
+    // __diagonal's edge slants from 62% down to 38% - so a wedge of white still showed below the
+    // image (where its box is still 62% wide, past the diagonal's now-narrower boundary). Clip the
+    // illustration to that exact same line, mirrored, so the two edges are identical at every
+    // height instead of only agreeing at the top.
+    clip-path: polygon(0 0, 62% 0, 38% 100%, 0 100%);
+  }
+
+  @media (min-width: 768px) {
+    &__diagonal,
+    &__illustration {
+      display: block;
+    }
+  }
+
+  .Login-Section {
+    // Absolutely-positioned elements paint above normal in-flow content regardless of DOM order,
+    // so without a stacking context of its own, this section's content (label, inputs, links)
+    // would silently render *underneath* the decorative diagonal/illustration layers above —
+    // position + z-index puts it in the same stacking bucket as those layers, ordered by DOM
+    // position (this section comes later, so it wins).
+    position: relative;
+    z-index: 1;
+    height: calc(100vh - 88px);
+    .ant-switch-inner {
+      background-color: #26bac7 !important;
+    }
+    /* unvisited link */
+
+    .ln-form-bg {
+      a:link {
+        color: white !important;
+      }
+
+      /* visited link */
+      a:visited {
+        color: white !important;
+      }
+
+      /* mouse over link */
+      a:hover {
+        color: white !important;
+      }
+
+      /* selected link */
+      a:active {
+        color: white !important;
+      }
+    }
+
+    @media (min-width: 767px) {
+      .ln-login-form {
+        margin-top: 5em;
+        // A fixed 10rem eats a much bigger share of the row at narrower desktop widths (it could
+        // even push the form left of where the diagonal panel starts) and looks needlessly empty
+        // at very wide ones. clamp() keeps it a comfortable, viewport-proportional inset instead.
+        margin-right: clamp(2rem, 8vw, 10rem);
+      }
+    }
+
+    @media (max-width: 767px) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: auto;
+      min-height: 100dvh;
+      padding: calc(env(safe-area-inset-top, 0px) + 18px) 0 calc(env(safe-area-inset-bottom, 0px) + 18px);
+      overflow-y: auto;
+
+      > .row {
+        margin-top: 0 !important;
+        width: 100% !important;
+        margin-left: 0;
+        margin-right: 0;
+        align-items: center;
+        justify-content: center !important;
+      }
+
+      .ln-login-form {
+        width: 100%;
+        max-width: 430px;
+        padding: 0 18px;
+      }
+
+      .ln-form-bg {
+        background: rgba(255, 255, 255, 0.94);
+        color: #0f172a;
+        padding: 24px 20px 18px;
+        border: 1px solid rgba(255, 255, 255, 0.72);
+        border-radius: 24px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        box-shadow: 0 24px 70px rgba(2, 8, 23, 0.28);
+        backdrop-filter: blur(18px);
+        max-height: calc(100dvh - 36px);
+        overflow-y: auto;
+        scrollbar-width: thin;
+
+        .ant-input::placeholder {
+          color: rgba(100, 116, 139, 0.78) !important;
+        }
+
+        label {
+          color: #0f172a;
+        }
+
+        .white {
+          color: #0f172a !important;
+        }
+
+        a,
+        a:link,
+        a:visited,
+        a:hover,
+        a:active {
+          color: #087c8f !important;
+        }
+
+        .ln-login-input,
+        .ant-input {
+          min-height: 48px;
+          border-radius: 14px;
+          border-color: rgba(15, 23, 42, 0.14);
+          background: rgba(255, 255, 255, 0.92);
+          color: #0f172a;
+          box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+        }
+
+        .ln-login-input:focus,
+        .ant-input:focus {
+          border-color: rgba(8, 124, 143, 0.68);
+          box-shadow: 0 0 0 3px rgba(8, 124, 143, 0.12);
+        }
+
+        .ant-select {
+          width: 100%;
+        }
+
+        .ant-select:not(.ant-select-disabled) .ant-select-selector {
+          border-radius: 14px !important;
+          min-height: 48px;
+          padding: 0 12px !important;
+          background: rgba(255, 255, 255, 0.92) !important;
+          border: 1px solid rgba(15, 23, 42, 0.14) !important;
+          box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+        }
+
+        .ant-select:not(.ant-select-disabled) .ant-select-selector:hover {
+          border-color: rgba(8, 124, 143, 0.45) !important;
+        }
+
+        .ant-select-focused:not(.ant-select-disabled) .ant-select-selector {
+          border-color: rgba(8, 124, 143, 0.68) !important;
+          box-shadow: 0 0 0 3px rgba(8, 124, 143, 0.12) !important;
+        }
+
+        .ant-select-selection-item,
+        .ant-select-selection-placeholder {
+          color: #0f172a !important;
+        }
+
+        .ant-select-selection-placeholder {
+          opacity: 0.75;
+        }
+
+        .ant-select-arrow {
+          color: rgba(15, 23, 42, 0.68) !important;
+        }
+
+        .ln-btn.ln-btn--pri,
+        .ln-btn.ln-btn--default {
+          background: linear-gradient(135deg, #0aa6b8, #087c8f) !important;
+          border: 0 !important;
+          color: #ffffff !important;
+          width: 100%;
+          min-height: 48px;
+          border-radius: 14px;
+          box-shadow: 0 14px 28px rgba(8, 124, 143, 0.24);
+        }
+
+        .ln-btn.ln-btn--sec {
+          background: rgba(8, 124, 143, 0.07) !important;
+          border: 1px solid rgba(8, 124, 143, 0.18) !important;
+          color: #075e6c !important;
+          width: auto;
+          min-width: 96px;
+          min-height: 40px;
+          border-radius: 12px;
+        }
+
+        .ln-btn:disabled {
+          color: #64748b;
+          opacity: 0.5;
+        }
+
+        .ln-login-actions {
+          position: sticky;
+          bottom: 0;
+          padding-top: 12px;
+          background: linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.88) 25%,
+            rgba(255, 255, 255, 0.96) 100%
+          );
+        }
+      }
+    }
+  }
+
+  &--jntu {
+    background-image: url("/assets/images/login/jntu-login-cover.png") !important;
+    background-position: unset !important;
+    .Login-Section {
+      height: unset !important;
+
+      .ln-login-flap {
+        height: 100vh;
+        .ln-flap-cont {
+          margin-top: 6rem !important;
+          a {
+            color: #266891 !important;
+          }
+          p span {
+            color: #000;
+          }
+        }
+      }
+
+      @media (min-width: 767px) {
+        .ln-login-form {
+          margin-top: 5em;
+          margin-right: 10rem;
+        }
+      }
+
+      @media (max-width: 767px) {
+        padding-top: 0px;
+        align-items: flex-start;
+      }
+    }
+  }
+}
+
+.ln-login-btn {
+  &:hover {
+    border-color: #ffffff !important;
+  }
+}
+
+.ln-login-lb {
+  @media (min-width: 768px) {
+    color: #ffffff;
+  }
+}
+
+.login-checkbox {
+  .ant-checkbox-checked {
+    &::after {
+      background-color: unset !important;
+    }
+  }
+}
+
+.ln-login-tc {
+  // background-color: rgba(0, 0, 0, 0.75);
+  a {
+    text-decoration: underline;
+  }
+}
+
+.ln-login-email-fallback-link {
+  color: #ffffff;
+}
+
+.ln-login-account-picker {
+  margin-bottom: 14px;
+
+  &__intro {
+    margin: 0 0 12px;
+    color: rgba(255, 255, 255, 0.76);
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  &__groups {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.ln-login-banner {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.ln-login-account-group {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(6, 13, 24, 0.34);
+  border-radius: 18px;
+  padding: 14px;
+  backdrop-filter: blur(14px);
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  &__titleWrap {
+    min-width: 0;
+  }
+
+  &__title {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  &__meta {
+    margin-top: 2px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  &__items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+.ln-login-account-card {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: left;
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+
+  &:hover:not(.is-disabled),
+  &:focus-visible:not(.is-disabled) {
+    border-color: rgba(124, 208, 255, 0.55);
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+    outline: none;
+  }
+
+  &.is-selected {
+    border-color: rgba(124, 208, 255, 0.9);
+    background: linear-gradient(135deg, rgba(124, 208, 255, 0.18), rgba(38, 104, 145, 0.22));
+    box-shadow: 0 14px 34px rgba(18, 52, 79, 0.34);
+  }
+
+  &.is-disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+
+  &__main {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  &__role {
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  &__meta {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  &__side {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+}
+
+.ln-login-account-option {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__title {
+    font-weight: 600;
+    line-height: 1.2;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  &__sub {
+    font-size: 12px;
+    line-height: 1.1;
+    color: rgba(17, 24, 39, 0.75);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  &__dot {
+    opacity: 0.5;
+    flex: 0 0 auto;
+  }
+
+  &__host {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    opacity: 0.95;
+    flex: 0 0 auto;
+  }
+
+  &__tags {
+    display: inline-flex;
+    gap: 6px;
+    flex-shrink: 0;
+    align-items: center;
+  }
+}
+
+.ln-login-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  line-height: 18px;
+  font-weight: 700;
+  border: 1px solid transparent;
+  white-space: nowrap;
+
+  &--warn {
+    background: rgba(245, 158, 11, 0.12);
+    color: #92400e;
+    border-color: rgba(245, 158, 11, 0.35);
+  }
+
+  &--danger {
+    background: rgba(239, 68, 68, 0.12);
+    color: #991b1b;
+    border-color: rgba(239, 68, 68, 0.28);
+  }
+
+  &--info {
+    background: rgba(38, 104, 145, 0.10);
+    color: #1e5577;
+    border-color: rgba(38, 104, 145, 0.25);
+  }
+
+  &--neutral {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.92);
+    border-color: rgba(255, 255, 255, 0.14);
+  }
+}
+
+.ln-login-account-dropdown {
+  padding: 6px;
+  border-radius: 14px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
+
+  .ant-select-item-option {
+    border-radius: 10px;
+    margin: 4px 0;
+  }
+
+  .ant-select-item-option-content {
+    padding: 10px 10px;
+  }
+
+  .ant-select-item-option-content {
+    display: flex;
+    align-items: stretch;
+  }
+
+  .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+    background: rgba(38, 104, 145, 0.06);
+  }
+
+  .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+    background: rgba(38, 104, 145, 0.08);
+  }
+}
+
+// Login account select should visually match our navbar org switcher (pill + clean border).
+.ln-login-account-select {
+  .ant-select-selector {
+    border-radius: 12px !important;
+    min-height: 44px;
+    padding: 0 12px !important;
+  }
+}
+
+.dgi-login {
+}
+
+// Desktop logo in header
+.ln-header-logo {
+  width: auto;
+  height: 90px;
+}
+
+// Logo shown inside the form card — mobile only
+.ln-mobile-logo {
+  display: none;
+
+  @media (max-width: 767px) {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.25em;
+  }
+
+  &__img {
+    height: 56px;
+    width: auto;
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 6px 12px;
+  }
+}
+
+// Mobile overrides for login page
+@media (max-width: 767px) {
+  .login-page {
+    // Mobile keeps the original single-image treatment (unaffected by the desktop drift fix
+    // above): it already renders correctly as a centered card over the image at this breakpoint.
+    background-image: url("/assets/images/login/login-bg2.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center right 34%;
+
+    // Hide the top header on mobile — logo lives inside the card instead
+    .ln-header {
+      display: none;
+    }
+
+    // Section is already flex-centered via the nested rule above
+    .Login-Section {
+      height: auto;
+      min-height: 100dvh;
+    }
+  }
+
+  // Full-width login button
+  .ln-login-btn {
+    width: 100%;
+  }
+
+  // Terms/privacy text readable on mobile
+  .ln-login-tc {
+    font-size: 13px;
+
+    p {
+      margin-bottom: 4px;
+    }
+  }
+
+  .ln-login-account-group {
+    background: rgba(248, 250, 252, 0.92);
+    border-color: rgba(15, 23, 42, 0.08);
+    backdrop-filter: none;
+    padding: 12px;
+
+    &__header {
+      flex-direction: column;
+      margin-bottom: 10px;
+    }
+  }
+
+  .ln-login-account-card {
+    background: #ffffff;
+    border-color: rgba(15, 23, 42, 0.08);
+    padding: 13px 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+
+    &__side {
+      width: 100%;
+      justify-content: flex-start;
+    }
+
+    &.is-selected {
+      border-color: rgba(8, 124, 143, 0.55);
+      background: linear-gradient(135deg, rgba(8, 124, 143, 0.08), rgba(10, 166, 184, 0.10));
+      box-shadow: 0 12px 28px rgba(8, 124, 143, 0.14);
+    }
+
+    &__role {
+      color: #0f172a;
+    }
+
+    &__meta {
+      color: #64748b;
+    }
+  }
+
+  .ln-login-account-picker__intro,
+  .ln-login-account-group__meta {
+    color: #64748b;
+  }
+
+  .ln-login-account-group__title {
+    color: #0f172a;
+  }
+
+  .ln-login-banner {
+    border-radius: 14px;
+    background: rgba(8, 124, 143, 0.10);
+    border-color: rgba(8, 124, 143, 0.20);
+    color: #0f172a;
+  }
+
+  .ln-login-chip--neutral,
+  .ln-login-chip--info {
+    background: rgba(8, 124, 143, 0.08);
+    color: #075e6c;
+    border-color: rgba(8, 124, 143, 0.18);
+  }
+
+  .ln-login-email-fallback-link {
+    color: #196080 !important;
+  }
+}

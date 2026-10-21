@@ -1,0 +1,1411 @@
+// TPO CRM — Leads, lead detail and company relationship workspace.
+
+.tpo-crm {
+  &__header {
+    margin-bottom: 14px;
+
+    .listing-page-header__title {
+      color: $tpo-ink;
+      letter-spacing: -0.025em;
+    }
+  }
+
+  &__header-actions {
+    .ant-btn {
+      min-height: 40px;
+      border-radius: 9px;
+      font-weight: 600;
+    }
+  }
+
+  &__pulse {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  &__pulse-item {
+    display: flex;
+    min-width: 0;
+    padding: 13px 14px;
+    border: 1px solid $tpo-line;
+    border-radius: 12px;
+    background: $tpo-surface-soft;
+    flex-direction: column;
+    gap: 4px;
+    text-align: left;
+    font: inherit;
+    cursor: default;
+
+    &[type="button"] {
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+
+      &:hover,
+      &:focus-visible {
+        border-color: rgba($clrThird, 0.35);
+        background: $teal-subtle;
+        outline: none;
+        transform: translateY(-1px);
+      }
+
+      &:focus-visible {
+        box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.14);
+      }
+    }
+
+    span {
+      overflow: hidden;
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      font-weight: 650;
+      letter-spacing: 0.045em;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    strong {
+      color: $tpo-ink;
+      font-size: 24px;
+      line-height: 1.1;
+    }
+
+    &--attention {
+      border-color: #ffd9a0;
+      background: $tpo-warn-bg;
+
+      span,
+      strong {
+        color: #ad6800;
+      }
+    }
+  }
+
+  &__views.ant-tabs {
+    .ant-tabs-nav {
+      margin-bottom: 14px;
+      border-bottom: 1px solid #e9eef4;
+
+      &::before {
+        border-bottom: 0;
+      }
+    }
+
+    .ant-tabs-tab {
+      margin-right: 24px !important;
+      padding: 11px 2px !important;
+      color: $tpo-muted;
+      font-weight: 650;
+    }
+  }
+
+  &__table-card.ant-card,
+  &__companies-card.ant-card {
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: $radius-card;
+    box-shadow: 0 5px 20px rgba(26, 45, 72, 0.05);
+
+    > .ant-card-body {
+      padding: 16px 18px !important;
+    }
+
+    > .ant-card-body > div > .ant-space:first-child {
+      min-height: 40px;
+      margin-bottom: 14px !important;
+      padding-bottom: 14px;
+      border-bottom: 1px solid $tpo-line;
+
+      .ant-input-affix-wrapper,
+      .ant-select-selector,
+      .ant-btn {
+        border-radius: 8px;
+      }
+
+      > .ant-typography {
+        margin-left: auto;
+        color: $tpo-muted;
+        font-size: 12px;
+      }
+    }
+
+    .ant-table-thead > tr > th {
+      padding-top: 11px;
+      padding-bottom: 11px;
+      background: $tpo-surface-soft !important;
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      font-weight: 700;
+      letter-spacing: 0.035em;
+      text-transform: uppercase;
+    }
+
+    .ant-table-tbody > tr > td {
+      padding-top: 11px;
+      padding-bottom: 11px;
+      border-bottom-color: $tpo-line;
+      vertical-align: middle;
+    }
+
+    .ant-table-tbody > tr:hover > td {
+      background: $tpo-surface-soft !important;
+    }
+  }
+
+  &__contact-link {
+    display: inline-flex;
+    min-width: 175px;
+    max-width: 280px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover .tpo-crm__contact-name,
+    &:focus-visible .tpo-crm__contact-name {
+      color: $tpo-primary;
+    }
+
+    &:focus-visible {
+      border-radius: 4px;
+      outline: 2px solid $clrThird;
+      outline-offset: 3px;
+    }
+  }
+
+  &__contact-name {
+    max-width: 100%;
+    overflow: hidden;
+    color: #223049;
+    font-weight: 650;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color 0.15s ease;
+  }
+
+  &__company-name {
+    max-width: 100%;
+    overflow: hidden;
+    color: $tpo-muted;
+    font-size: 12px;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__board {
+    flex-wrap: nowrap !important;
+    padding-bottom: 10px;
+    overflow-x: auto !important;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+
+    // The seven stage columns share the width (min 140px each) so the whole board fits a laptop screen; a narrow screen scrolls.
+    // A fixed 260px used to push "Recruited" and "Not now" off the right edge with no visible scrollbar.
+    > .ant-col {
+      flex: 1 1 0;
+      max-width: none;
+      min-width: 140px !important;
+    }
+  }
+
+  &__board-column.ant-card {
+    height: 100%;
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: $radius-card;
+    background: $tpo-surface-soft;
+    box-shadow: none;
+
+    .ant-card-head {
+      min-height: 46px;
+      padding-inline: 12px;
+      border-bottom-color: #e8edf3;
+      background: #f4f7fb;
+    }
+
+    .ant-card-head-title > span {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .ant-card-body {
+      padding: 10px !important;
+    }
+  }
+
+  &__lead-card.ant-card {
+    border: 1px solid $tpo-line;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: none;
+
+    &:hover {
+      border-color: #cad9ec;
+      box-shadow: 0 4px 14px rgba(26, 45, 72, 0.055);
+    }
+
+    .ant-card-body {
+      padding: 11px !important;
+    }
+
+    a > b {
+      color: $tpo-text;
+    }
+  }
+}
+
+.tpo-recruiter-lead-detail {
+  &__header {
+    margin-bottom: 14px;
+
+    .listing-page-header__title {
+      color: $tpo-ink;
+      font-size: clamp(23px, 2vw, 29px);
+      letter-spacing: -0.025em;
+    }
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 7px;
+  }
+
+  &__invite-status.ant-tag {
+    margin: 0;
+    border-radius: 999px;
+    color: #526581;
+    background: #f6f8fb;
+    border-color: #e2e8f0;
+    font-size: $tpo-fs-xs;
+  }
+
+  &__header-actions {
+    .ant-btn {
+      min-height: 40px;
+      border-radius: 8px;
+    }
+  }
+
+  &__alert {
+    margin-bottom: 12px;
+    border-radius: 10px;
+  }
+
+  &__panel.ant-card {
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: $radius-card;
+    box-shadow: 0 4px 18px rgba(26, 45, 72, 0.05);
+
+    .ant-card-head {
+      min-height: 48px;
+      padding-inline: 16px;
+      border-bottom-color: $tpo-line;
+      background: $tpo-surface-soft;
+    }
+
+    .ant-card-head-title {
+      color: $tpo-text;
+      font-size: 15px;
+      font-weight: 650;
+    }
+
+    .ant-card-body {
+      padding: 16px !important;
+    }
+  }
+
+  &__person {
+    .ant-descriptions-item-label {
+      width: 72px;
+      color: $tpo-muted;
+      font-size: 12px;
+    }
+
+    .ant-descriptions-item-content {
+      color: #2d3b52;
+    }
+  }
+
+  &__company {
+    h5.ant-typography a {
+      color: $tpo-text;
+
+      &:hover {
+        color: $tpo-primary;
+      }
+    }
+
+    .ant-list-item {
+      padding: 9px 0 !important;
+    }
+  }
+
+  &__log {
+    background: linear-gradient(180deg, $tpo-surface-soft 0%, #fff 100%);
+  }
+
+  &__section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 14px;
+
+    h5.ant-typography {
+      margin: 2px 0 0 !important;
+      color: $tpo-ink;
+      font-size: 17px;
+    }
+
+    > .ant-typography {
+      max-width: 420px;
+      text-align: right;
+      font-size: 12px;
+    }
+  }
+
+  &__eyebrow.ant-typography {
+    display: block;
+    color: $tpo-muted;
+    font-size: $tpo-fs-xs;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  &__log-actions {
+    .ant-btn {
+      min-height: 40px;
+      border-radius: 8px;
+    }
+  }
+
+  &__followups {
+    .ant-list-item {
+      gap: 10px;
+      padding: 11px 0 !important;
+    }
+
+    .ant-list-item > .ant-space {
+      min-width: 0;
+    }
+  }
+
+  &__timeline {
+    .ant-timeline-item-content {
+      color: $tpo-text;
+      line-height: 1.45;
+    }
+  }
+
+  &__load-state,
+  &__loading.ant-card {
+    min-height: 280px;
+    border: 1px solid $tpo-line;
+    border-radius: $radius-card;
+    background: #fff;
+    box-shadow: 0 4px 18px rgba(26, 45, 72, 0.05);
+  }
+
+  &__load-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__loading.ant-card .ant-card-body {
+    padding: 24px !important;
+  }
+}
+
+.tpo-company-detail {
+  &__header {
+    margin-bottom: 14px;
+
+    .listing-page-header__title {
+      color: $tpo-ink;
+      font-size: clamp(23px, 2vw, 29px);
+      letter-spacing: -0.025em;
+    }
+
+    .listing-page-header__right .ant-btn {
+      min-height: 40px;
+      border-radius: 9px;
+      font-weight: 600;
+    }
+  }
+
+  &__summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+
+    > div {
+      padding: 13px 14px;
+      border: 1px solid $tpo-line;
+      border-radius: 12px;
+      background: $tpo-surface-soft;
+    }
+
+    span,
+    strong {
+      display: block;
+    }
+
+    span {
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      font-weight: 650;
+      letter-spacing: 0.045em;
+      text-transform: uppercase;
+    }
+
+    strong {
+      margin-top: 4px;
+      color: $tpo-ink;
+      font-size: 24px;
+      line-height: 1.1;
+    }
+  }
+
+  &__panel.ant-card {
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: $radius-card;
+    box-shadow: 0 4px 18px rgba(26, 45, 72, 0.05);
+
+    .ant-card-head {
+      min-height: 48px;
+      padding-inline: 16px;
+      border-bottom-color: $tpo-line;
+      background: $tpo-surface-soft;
+    }
+
+    .ant-card-head-title {
+      color: $tpo-text;
+      font-size: 15px;
+      font-weight: 650;
+    }
+
+    .ant-card-body {
+      padding: 16px !important;
+    }
+
+    .ant-table-thead > tr > th {
+      background: $tpo-surface-soft !important;
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      font-weight: 700;
+      letter-spacing: 0.035em;
+      text-transform: uppercase;
+    }
+  }
+
+  &__people {
+    .ant-list-item {
+      border-radius: 8px;
+      padding: 10px 8px !important;
+      transition: background 0.15s ease;
+
+      &:hover {
+        background: #f7faff;
+      }
+    }
+
+    .ant-list-item-meta-title {
+      color: $tpo-text;
+      font-weight: 600;
+    }
+  }
+
+  &__documents {
+    .ant-list-item {
+      gap: 8px;
+      padding: 9px 0 !important;
+    }
+  }
+
+  &__timeline {
+    .ant-timeline-item-content {
+      color: $tpo-text;
+      line-height: 1.45;
+    }
+  }
+
+  &__load-state,
+  &__loading.ant-card {
+    min-height: 280px;
+    border: 1px solid $tpo-line;
+    border-radius: $radius-card;
+    background: #fff;
+    box-shadow: 0 4px 18px rgba(26, 45, 72, 0.05);
+  }
+
+  &__load-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__loading.ant-card .ant-card-body {
+    padding: 24px !important;
+  }
+}
+
+@media (max-width: 991px) {
+  .tpo-crm {
+    &__pulse {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .tpo-recruiter-lead-detail {
+    &__section-head {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 4px;
+
+      > .ant-typography {
+        max-width: none;
+        text-align: left;
+      }
+    }
+  }
+
+  .tpo-company-detail {
+    &__summary {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .tpo-crm {
+    &__header-actions,
+    .listing-page-header__right {
+      width: 100%;
+    }
+
+    &__header-actions {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr;
+
+      .ant-btn {
+        width: 100%;
+      }
+    }
+
+    &__pulse {
+      gap: 8px;
+    }
+
+    &__pulse-item {
+      padding: 11px 12px;
+
+      strong {
+        font-size: 21px;
+      }
+    }
+
+    &__views.ant-tabs {
+      .ant-tabs-tab {
+        margin-right: 18px !important;
+      }
+    }
+
+    &__table-card.ant-card,
+    &__companies-card.ant-card {
+      > .ant-card-body {
+        padding: 12px !important;
+      }
+
+      > .ant-card-body > div > .ant-space:first-child {
+        width: 100%;
+
+        .ant-input-affix-wrapper {
+          width: 100% !important;
+          flex: 1 1 100%;
+        }
+
+        > .ant-typography {
+          width: 100%;
+          margin-left: 0;
+        }
+      }
+    }
+
+    &__contact-link {
+      min-width: 145px;
+      max-width: 205px;
+    }
+  }
+
+  .tpo-recruiter-lead-detail {
+    &__header-actions,
+    .listing-page-header__right {
+      width: 100%;
+    }
+
+    &__header-actions {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+
+      .ant-btn,
+      .ant-dropdown-trigger {
+        width: 100%;
+      }
+    }
+
+    &__panel.ant-card {
+      .ant-card-head,
+      .ant-card-body {
+        padding-inline: 13px !important;
+      }
+    }
+
+    &__log-actions {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      width: 100%;
+
+      .ant-btn {
+        width: 100%;
+      }
+    }
+
+    &__followups .ant-list-item {
+      align-items: flex-start;
+      flex-direction: column;
+
+      .ant-list-item-action {
+        margin-inline-start: 0;
+      }
+    }
+  }
+
+  .tpo-company-detail {
+    &__header .listing-page-header__right,
+    &__header .ant-btn {
+      width: 100%;
+    }
+
+    &__summary {
+      gap: 8px;
+
+      > div {
+        padding: 11px 12px;
+      }
+
+      strong {
+        font-size: 21px;
+      }
+    }
+
+    &__panel.ant-card {
+      .ant-card-head,
+      .ant-card-body {
+        padding-inline: 13px !important;
+      }
+    }
+  }
+}
+
+
+// TPO CRM Demo/Wow pass — employer relationship intelligence.
+.tpo-crm {
+  &__intelligence {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(300px, 0.7fr);
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  &__engine.ant-card {
+    overflow: hidden;
+    border: 0;
+    border-radius: 18px;
+    background:
+      radial-gradient(circle at 88% 14%, rgba(56, 189, 248, 0.18), transparent 30%),
+      radial-gradient(circle at 62% 90%, rgba(168, 85, 247, 0.12), transparent 34%),
+      linear-gradient(135deg, $tpo-ink 0%, $tpo-ink 100%);
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.16);
+    color: #fff;
+
+    > .ant-card-body {
+      padding: 20px !important;
+    }
+  }
+
+  &__engine-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+
+    h3.ant-typography {
+      margin: 4px 0 !important;
+      color: #fff;
+      font-size: clamp(20px, 2vw, 27px);
+      line-height: 1.2;
+      letter-spacing: -0.025em;
+    }
+
+    > div:first-child > .ant-typography:last-child {
+      color: $tpo-line-strong;
+      font-size: $tpo-fs-xs;
+      line-height: 1.45;
+    }
+  }
+
+  &__engine-eyebrow.ant-typography {
+    color: $tpo-primary;
+    font-size: $tpo-fs-xs;
+    font-weight: 750;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  &__engine-count {
+    flex: 0 0 auto;
+    min-width: 96px;
+    padding: 10px 12px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.055);
+    text-align: center;
+
+    strong,
+    span {
+      display: block;
+    }
+
+    strong {
+      color: #fff;
+      font-size: 23px;
+      line-height: 1;
+    }
+
+    span {
+      margin-top: 4px;
+      color: $tpo-muted;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+  }
+
+  &__engine-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 16px;
+
+    > div {
+      min-width: 0;
+      padding: 11px 10px;
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    span,
+    strong,
+    small {
+      display: block;
+    }
+
+    span {
+      color: $tpo-primary;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+
+      .anticon {
+        margin-right: 4px;
+      }
+    }
+
+    strong {
+      margin-top: 4px;
+      color: #fff;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    small {
+      margin-top: 5px;
+      color: $tpo-muted;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+  }
+
+  &__pipeline {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 5px;
+    margin-top: 10px;
+
+    > button {
+      position: relative;
+      min-width: 0;
+      padding: 10px 8px;
+      border: 1px solid rgba(148, 163, 184, 0.13);
+      border-radius: 9px;
+      background: rgba(15, 23, 42, 0.28);
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+
+      &:hover,
+      &:focus-visible {
+        border-color: rgba(103, 232, 249, 0.35);
+        outline: none;
+        background: rgba(255, 255, 255, 0.07);
+      }
+
+      span,
+      strong {
+        display: block;
+      }
+
+      span {
+        overflow: hidden;
+        color: $tpo-muted;
+        font-size: 7px;
+        font-weight: 700;
+        letter-spacing: 0.045em;
+        text-overflow: ellipsis;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      strong {
+        margin-top: 3px;
+        color: #fff;
+        font-size: 17px;
+        line-height: 1;
+      }
+
+      i {
+        position: absolute;
+        top: 50%;
+        right: -6px;
+        z-index: 2;
+        color: $tpo-muted;
+        font-size: $tpo-fs-xs;
+        font-style: normal;
+        transform: translateY(-50%);
+      }
+    }
+  }
+
+  &__health.ant-card {
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: 18px;
+    box-shadow: 0 12px 34px rgba(26, 45, 72, 0.07);
+
+    > .ant-card-body {
+      padding: 16px !important;
+    }
+  }
+
+  &__health-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+
+    h4.ant-typography {
+      margin: 3px 0 0 !important;
+      color: $tpo-ink;
+      font-size: 17px;
+    }
+
+    > .anticon {
+      color: $tpo-muted;
+      font-size: 18px;
+    }
+  }
+
+  &__health-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+
+    > button {
+      min-width: 0;
+      padding: 10px;
+      border: 1px solid $tpo-line;
+      border-radius: 10px;
+      background: $tpo-surface-soft;
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+
+      &:hover,
+      &:focus-visible {
+        border-color: #cad9ea;
+        outline: none;
+        background: #f6faff;
+      }
+
+      span,
+      strong,
+      small {
+        display: block;
+      }
+
+      span {
+        color: $tpo-muted;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.045em;
+        text-transform: uppercase;
+      }
+
+      strong {
+        margin-top: 3px;
+        color: $tpo-text;
+        font-size: 19px;
+        line-height: 1;
+      }
+
+      small {
+        margin-top: 4px;
+        color: $tpo-muted;
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      &.is-attention {
+        border-color: #f4d49d;
+        background: $tpo-warn-bg;
+
+        strong {
+          color: $tpo-warn;
+        }
+      }
+    }
+  }
+
+  &__health-footer {
+    margin-top: 10px;
+    padding: 9px 10px;
+    border-radius: 9px;
+    background: #f6f9fc;
+    color: $tpo-muted;
+    font-size: $tpo-fs-xs;
+
+    strong {
+      color: $tpo-text;
+    }
+  }
+}
+
+@media (max-width: 1100px) {
+  .tpo-crm {
+    &__intelligence {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .tpo-crm {
+    &__engine.ant-card > .ant-card-body {
+      padding: 15px !important;
+    }
+
+    &__engine-head {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    &__engine-count {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      align-items: baseline;
+      justify-content: space-between;
+      text-align: left;
+
+      span {
+        margin-top: 0;
+      }
+    }
+
+    &__engine-metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    &__pipeline {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+
+      > button i {
+        display: none;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .tpo-crm {
+    &__engine-metrics,
+    &__health-list {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+
+// TPO Company Detail Demo/Wow pass — Employer 360.
+.tpo-company-detail {
+  &__header-actions {
+    display: flex;
+    gap: 8px;
+
+    .ant-btn {
+      min-height: 40px;
+      border-radius: 9px;
+      font-weight: 600;
+    }
+  }
+
+  &__intelligence {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.7fr);
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  &__employer-hero.ant-card {
+    overflow: hidden;
+    border: 0;
+    border-radius: 18px;
+    background:
+      radial-gradient(circle at 90% 14%, rgba(45, 212, 191, 0.18), transparent 30%),
+      linear-gradient(135deg, $tpo-ink 0%, #17304a 100%);
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.16);
+    color: #fff;
+
+    > .ant-card-body {
+      padding: 20px !important;
+    }
+  }
+
+  &__employer-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+
+    h3.ant-typography {
+      margin: 4px 0 !important;
+      color: #fff;
+      font-size: clamp(21px, 2vw, 28px);
+      letter-spacing: -0.025em;
+    }
+
+    > div > .ant-typography:last-child {
+      color: $tpo-line-strong;
+      font-size: $tpo-fs-xs;
+    }
+
+    > .ant-tag {
+      flex: 0 0 auto;
+      margin: 0;
+      border-radius: 999px;
+      font-size: $tpo-fs-xs;
+    }
+  }
+
+  &__employer-eyebrow.ant-typography {
+    color: $tpo-primary;
+    font-size: $tpo-fs-xs;
+    font-weight: 750;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  &__employer-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 16px;
+
+    > div {
+      padding: 11px 10px;
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    span,
+    strong,
+    small {
+      display: block;
+    }
+
+    span {
+      color: $tpo-muted;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    strong {
+      margin-top: 4px;
+      color: #fff;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    small {
+      margin-top: 5px;
+      color: $tpo-muted;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+  }
+
+  &__hiring-bars {
+    margin-top: 10px;
+    padding: 11px;
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.24);
+  }
+
+  &__hiring-bars-head {
+    display: flex;
+    margin-bottom: 8px;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+
+    span {
+      color: #cbd5e1;
+      font-size: $tpo-fs-xs;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    small {
+      color: $tpo-muted;
+      font-size: 12px;
+    }
+  }
+
+  &__hiring-row {
+    display: grid;
+    grid-template-columns: 70px minmax(0, 1fr) 28px;
+    gap: 8px;
+    margin-top: 6px;
+    align-items: center;
+
+    > span {
+      overflow: hidden;
+      color: $tpo-line-strong;
+      font-size: $tpo-fs-xs;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    > div {
+      height: 7px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+
+      i {
+        display: block;
+        height: 100%;
+        min-width: 2px;
+        border-radius: inherit;
+        background: linear-gradient(90deg, $light-cyan, $clrThird);
+      }
+    }
+
+    strong {
+      color: #fff;
+      font-size: $tpo-fs-xs;
+      text-align: right;
+    }
+  }
+
+  &__memory.ant-card {
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: 18px;
+    box-shadow: 0 12px 34px rgba(26, 45, 72, 0.07);
+
+    > .ant-card-body {
+      padding: 16px !important;
+    }
+  }
+
+  &__memory-head {
+    h4.ant-typography {
+      margin: 3px 0 12px !important;
+      color: $tpo-ink;
+      font-size: 17px;
+    }
+  }
+
+  &__memory-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+
+    > div {
+      padding: 10px;
+      border: 1px solid $tpo-line;
+      border-radius: 10px;
+      background: $tpo-surface-soft;
+    }
+
+    span,
+    strong,
+    small {
+      display: block;
+    }
+
+    span {
+      color: $tpo-muted;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    strong {
+      margin-top: 3px;
+      color: $tpo-text;
+      font-size: 13px;
+      line-height: 1.25;
+    }
+
+    small {
+      margin-top: 3px;
+      color: $tpo-muted;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+  }
+
+  &__outcome-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+
+    > div {
+      padding: 10px;
+      border: 1px solid $tpo-line;
+      border-radius: 9px;
+      background: $tpo-surface-soft;
+    }
+
+    span,
+    strong {
+      display: block;
+    }
+
+    span {
+      color: $tpo-muted;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    strong {
+      margin-top: 3px;
+      color: $tpo-text;
+      font-size: 18px;
+    }
+  }
+}
+
+@media (max-width: 1100px) {
+  .tpo-company-detail {
+    &__intelligence {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .tpo-company-detail {
+    &__header-actions {
+      display: grid;
+      width: 100%;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    &__employer-hero.ant-card > .ant-card-body {
+      padding: 15px !important;
+    }
+
+    &__employer-head {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    &__employer-metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .tpo-company-detail {
+    &__header-actions,
+    &__employer-metrics,
+    &__outcome-summary {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+// The board scrolls inside its own box; nothing above it may grow to the board's width (that pushed the whole page sideways).
+.tpo-crm .ant-tabs, .tpo-crm .ant-tabs-content-holder, .tpo-crm .ant-tabs-content, .tpo-crm .ant-tabs-tabpane { min-width: 0; max-width: 100%; }
+.tpo-crm__board-scroll { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; padding-bottom: 6px; }
+// The row is the container's width and the seven columns share it (min 140px each); only a narrow screen scrolls.
+.tpo-crm__board-scroll > .tpo-crm__board { width: 100%; min-width: 0; overflow: visible !important; }
+
+// Phone: the filters sit in a tidy two-column grid instead of a ragged wrap.
+@media (max-width: 575px) {
+  .tpo-crm__filters { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; gap: 8px !important;
+    > .ant-space-item { min-width: 0; }
+    .ant-select { width: 100% !important; }
+  }
+}
+
+// Board with filters from the Table view: say so, with a way back to everyone.
+.tpo-crm__board-filtered { margin-bottom: 12px; }
+.tpo-crm__spellings { font-size: 12px; }
+
+// Recruiter lead header: company line, then labelled Stage / Invite / Owner (components/Common/Facts.jsx).
+.tpo-recruiter-lead-detail__meta { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }

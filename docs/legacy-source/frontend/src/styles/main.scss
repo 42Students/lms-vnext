@@ -1,0 +1,25 @@
+@import "../styles/components/variables";
+@import "../styles/plugins/bootstrap.scss";
+@import "../../node_modules/bootstrap-icons/font/bootstrap-icons.scss";
+@import "../styles/pages/pages.scss";
+@import "../styles/components/components.scss";
+@import "../styles/layouts/layouts.scss";
+@import "node_modules/video-react/dist/video-react.css";
+
+// No visible scrollbars anywhere, vertical or horizontal (user, 5 Oct 2026). Everything still scrolls with the wheel,
+// trackpad, touch and keyboard. !important so component-level scrollbar styles cannot bring them back.
+* {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+*::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+// AG Grid keeps a strip for its own horizontal scrollbar; with scrollbars hidden it is an empty band, so collapse it.
+.ag-body-horizontal-scroll {
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+}

@@ -1,0 +1,16 @@
+package com._42students.lms.dto.request;
+
+import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+
+@Data
+public class MobileAuthVerifyRequest {
+    @NotBlank
+    private String attemptId;
+
+    @NotBlank
+    private String otp;
+}
+
+

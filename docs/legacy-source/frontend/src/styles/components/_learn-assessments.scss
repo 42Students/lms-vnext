@@ -1,0 +1,1856 @@
+@import "./variables.scss";
+
+$learn-mobile-footer-height: 4rem !default;
+$learn-mobile-bp: 767px !default;
+
+$assess-primary: $clrThird;
+$assess-primary-dark: $teal-dark;
+$assess-text: $neutral-900;
+$assess-text-muted: $neutral-500;
+$assess-text-subtle: $neutral-400;
+$assess-bg: $white;
+$assess-bg-page: $neutral-100;
+$assess-border: $neutral-200;
+$assess-border-soft: $neutral-50;
+$assess-radius: 8px;
+$assess-radius-lg: 12px;
+$assess-touch-min: 44px;
+
+$s1: 8px;
+$s2: 16px;
+$s3: 24px;
+$s4: 32px;
+$s5: 40px;
+
+// --- Urgency palette -------------------------------------------------------
+// Rail/fill colours use the raw status tokens; TEXT uses darkened variants so
+// every label clears WCAG AA (4.5:1) on the light surfaces used here.
+$assess-danger-rail : $status-error;    // #ef4444
+$assess-danger-text : #b42318;          // 5.9:1 on #fff, 5.4:1 on #fef2f2
+$assess-danger-bg   : #fef2f2;
+$assess-warn-rail   : $status-warning;  // #d97706
+$assess-warn-text   : #8a4b06;          // 6.3:1 on #fff, 5.8:1 on #fdf6ec
+$assess-warn-bg     : #fdf6ec;
+$assess-calm-rail   : $teal-deep;       // #0e7c87
+$assess-calm-text   : #0b6570;          // 5.6:1 on #fff
+$assess-calm-bg     : #eef8f9;
+$assess-quiet-rail  : $neutral-200;
+$assess-done-text   : #047857;
+$assess-done-bg     : #ecfdf5;
+// "In progress" is a state, not a severity — deliberately ink-neutral so it can
+// never be confused with the amber/red urgency ladder.
+$assess-progress-text : $ink-900;
+$assess-progress-bg   : rgba($ink-900, 0.06);
+
+// ---------------------------------------------------------------------------
+// Connected header — placements mode merges with navbar
+// ---------------------------------------------------------------------------
+.learn-assessments-page--placements .learn-placements-dashboard__overview {
+  border-bottom: none;
+  padding-top: $s2;
+  padding-bottom: $s2;
+  margin-bottom: $s3;
+}
+
+// ─── New compact header ──────────────────────────────────────────────────────
+.learn-assessments-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $s3;
+  width: 100%;
+  box-sizing: border-box;
+
+  &__left {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $s1;
+  }
+
+  &__title {
+    font-size: 28px;
+    font-weight: 600;
+    color: $assess-text;
+    margin: 0;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+
+  &__metrics {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $s1;
+    margin-top: $s1;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: $s1;
+    flex-shrink: 0;
+    padding-top: $s1;
+
+    .learn-assessments-search-input.ant-input-affix-wrapper {
+      width: 220px;
+      min-height: 44px;
+      border-radius: $assess-radius;
+      border-color: $assess-border;
+
+      &.ant-input-affix-wrapper-focused {
+        border-color: $assess-primary;
+        box-shadow: 0 0 0 2px rgba($assess-primary, 0.2);
+      }
+
+      input { font-size: 14px; }
+    }
+  }
+}
+
+// ─── Metric pills ─────────────────────────────────────────────────────────────
+.learn-assessments-metric {
+  display: inline-flex;
+  align-items: center;
+  gap: $s1;
+  padding: $s1 $s2;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  white-space: nowrap;
+
+  .anticon { font-size: 14px; }
+
+  &--amber {
+    background: rgba($status-warning, 0.08);
+    color: $status-warning;
+  }
+
+  &--green {
+    background: rgba($status-success, 0.08);
+    color: $status-success;
+  }
+
+  &--critical {
+    background: $assess-danger-bg;
+    color: $assess-danger-text;
+    font-weight: 600;
+  }
+
+  &--muted {
+    background: $neutral-100;
+    color: $neutral-700;
+  }
+
+  &--progress {
+    background: $assess-progress-bg;
+    color: $assess-progress-text;
+    font-weight: 600;
+  }
+
+  &--info {
+    background: $assess-calm-bg;
+    color: $assess-calm-text;
+  }
+}
+
+// Amber metric pill needs the AA-safe text tone, not the raw rail colour.
+.learn-assessments-metric--amber {
+  background: $assess-warn-bg;
+  color: $assess-warn-text;
+}
+
+// ─── Quiet background-refresh indicator ──────────────────────────────────────
+.learn-assessments-refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  font-size: $text-xs;
+  line-height: $leading-snug;
+  color: $neutral-500;
+  opacity: 0.85;
+
+  .anticon {
+    font-size: 11px;
+  }
+}
+
+// ─── Screen-reader-only live region ──────────────────────────────────────────
+.learn-assessments-sr-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+// ─── View tabs (To do / Past) ────────────────────────────────────────────────
+.learn-assessments-viewtabs {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  margin-top: $space-4;
+  padding: $space-1;
+  background: $neutral-100;
+  border: 1px solid $neutral-200;
+  border-radius: $radius-full;
+}
+
+.learn-assessments-viewtab {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  min-height: 36px;
+  padding: 0 $space-4;
+  border: 0;
+  border-radius: $radius-full;
+  background: transparent;
+  color: $neutral-700;
+  font-size: $text-base;
+  font-weight: 500;
+  line-height: $leading-snug;
+  cursor: pointer;
+  transition: background $duration-fast $ease-std, color $duration-fast $ease-std, box-shadow $duration-fast $ease-std;
+
+  .anticon {
+    font-size: $text-xs;
+  }
+
+  &:hover {
+    color: $ink-800;
+    background: rgba($white, 0.7);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $teal-deep;
+    outline-offset: 2px;
+  }
+
+  &--active {
+    background: $white;
+    color: $ink-900;
+    font-weight: 600;
+    box-shadow: $elev-1;
+  }
+
+  &__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: $radius-full;
+    background: $neutral-200;
+    color: $neutral-700;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  &--active &__count {
+    background: $assess-calm-bg;
+    color: $assess-calm-text;
+  }
+}
+
+// ─── Deadline group headers ──────────────────────────────────────────────────
+.learn-assessments-group {
+  margin-bottom: $space-6;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &__head {
+    display: flex;
+    align-items: baseline;
+    gap: $space-2;
+    margin: 0 0 $space-3;
+    padding-bottom: $space-2;
+    border-bottom: 1px solid $neutral-200;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: $text-xs;
+    font-weight: 700;
+    line-height: $leading-snug;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: $neutral-700;
+  }
+
+  &__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: $radius-full;
+    background: $neutral-100;
+    color: $neutral-700;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  &__hint {
+    margin-left: auto;
+    font-size: $text-xs;
+    line-height: $leading-snug;
+    color: $neutral-500;
+  }
+
+  // Quiet but unmistakable: only the two ends of the scale take a tint.
+  &--today &__title {
+    color: $assess-danger-text;
+  }
+
+  &--today &__count {
+    background: $assess-danger-bg;
+    color: $assess-danger-text;
+  }
+
+  &--overdue &__title,
+  &--overdue &__hint {
+    color: $neutral-500;
+  }
+
+  // Blocked-by-employer group reads as informational, never as pressure.
+  &--awaitinglink &__title {
+    color: $assess-calm-text;
+  }
+
+  &--awaitinglink &__count {
+    background: $assess-calm-bg;
+    color: $assess-calm-text;
+  }
+}
+
+// ─── Grid section ─────────────────────────────────────────────────────────────
+.learn-assessments-grid-section {
+  margin-top: $s3;
+}
+
+.learn-assessments-results-info {
+  font-size: 14px;
+  line-height: 1.4;
+  color: $assess-text-muted;
+  margin: 0 0 $s2;
+}
+
+// ─── Mobile ───────────────────────────────────────────────────────────────────
+@media (max-width: $learn-mobile-bp) {
+  // Compound selector, not descendant: both classes now live on the same div (the wrapper div
+  // that used to hold `.learn-placements-dashboard__body` separately was removed when this page
+  // moved onto PageShell — see src/components/Common/PageShell.jsx).
+  .learn-assessments-page--placements.learn-placements-dashboard__body {
+    padding: $s2;
+  }
+
+  .learn-assessments-header {
+    flex-direction: column;
+    align-items: stretch;
+
+    &__right {
+      width: 100%;
+      padding-top: 0;
+
+      .learn-assessments-search-input.ant-input-affix-wrapper {
+        width: 100%;
+      }
+    }
+  }
+
+  .learn-assessments-header__title {
+    font-size: 20px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Assessments page
+// ---------------------------------------------------------------------------
+.learn-assessments-page {
+  width: 100%;
+  max-width: 100%;
+  padding: 0 $s2;
+  padding-bottom: calc(#{$learn-mobile-footer-height} + $s3 + env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
+
+  @media (min-width: #{$learn-mobile-bp + 1}) {
+    padding: 0 $s3;
+    padding-bottom: 48px;
+  }
+
+  // Was `background: $assess-bg-page` + its own independent scroll container
+  // (overflow-y/hidden-scrollbar) — correct back when this div WAS the outer scrollable page.
+  // Now it's ordinary content inside PageShell's white ln-module-card (see
+  // src/components/Common/PageShell.jsx), so its own gray page-background showed through as a
+  // visible band in the gaps between sections, and the independent scroll region was dead weight.
+  &--placements {
+  }
+}
+
+.learn-assessments-hero--standalone {
+  padding: $s3 0;
+  margin-bottom: $s3;
+  border-bottom: 1px solid $assess-border-soft;
+}
+
+.learn-assessments-hero__title {
+  font-size: 28px;
+  font-weight: 600;
+  color: $assess-text;
+  margin: 0 0 $s1;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.learn-assessments-hero__subtext {
+  font-size: 14px;
+  color: $assess-text-muted;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.learn-assessments-module .ln-module__body.learn-assessments-scroll {
+  padding-top: $s2;
+  padding-bottom: 0;
+}
+
+// ---------------------------------------------------------------------------
+// Section — filter, list (matches Jobs/Applications)
+// ---------------------------------------------------------------------------
+.learn-assessments-section {
+  margin-top: $s4;
+
+  &--standalone {
+    margin-top: $s3;
+  }
+}
+
+.learn-assessments-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: $s2;
+  flex-wrap: wrap;
+  margin-bottom: $s2;
+  padding: $s2 0;
+  background: transparent;
+
+  .learn-assessments-search-input.ant-input-affix-wrapper,
+  .ant-input-affix-wrapper {
+    max-width: 280px;
+    flex: 1 1 200px;
+    min-height: 40px;
+    border-radius: $assess-radius;
+    border-color: $assess-border;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:focus,
+    &.ant-input-affix-wrapper-focused {
+      border-color: $assess-primary;
+      box-shadow: 0 0 0 2px rgba($assess-primary, 0.2);
+    }
+
+    input {
+      font-size: 14px;
+    }
+
+    .anticon {
+      color: $assess-text-subtle;
+    }
+  }
+
+  .learn-assessments-filter-count {
+    margin-left: auto;
+    font-size: 12px;
+    color: $assess-text-muted;
+    white-space: nowrap;
+  }
+}
+
+.learn-assessments-stats .learn-placements-stat-card {
+  min-width: 0;
+  cursor: default;
+}
+
+.learn-assessments-list-card {
+  margin-top: $s2;
+  overflow: hidden;
+}
+
+.learn-assessments-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.learn-assessments-list__item {
+  margin-bottom: $s2;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Assessment row card — modern card layout
+.learn-assessments-row-card {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  text-align: left;
+  background: $assess-bg;
+  border: 1px solid $assess-border;
+  border-radius: $assess-radius-lg;
+  overflow: hidden;
+  box-shadow: $elev-1;
+  transition: box-shadow $duration-normal $ease-std, border-color $duration-normal $ease-std, transform $duration-normal $ease-std;
+
+  &[role="button"] {
+    cursor: pointer;
+  }
+
+  &:hover {
+    box-shadow: $elev-2;
+    border-color: rgba($assess-primary, 0.25);
+  }
+
+  &[role="button"]:hover {
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $teal-deep;
+    outline-offset: 2px;
+  }
+
+  &--skeleton {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  &--highlight {
+    border-color: $teal-deep;
+    box-shadow: 0 0 0 3px rgba($assess-primary, 0.18), $elev-2;
+  }
+
+  // ── Urgency rail ─────────────────────────────────────────────────────────
+  // Colour is a reinforcement only; the countdown text always states the
+  // urgency in words, so nothing depends on the rail alone.
+  &__rail {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 4px;
+    background: $assess-quiet-rail;
+    border-radius: $radius-full 0 0 $radius-full;
+  }
+
+  &--level-soon &__rail { background: $assess-calm-rail; }
+  &--level-urgent &__rail { background: $assess-warn-rail; }
+  &--level-critical &__rail { background: $assess-danger-rail; width: 5px; }
+  &--level-expired &__rail { background: $neutral-400; }
+  &--done &__rail { background: $status-success; }
+
+  // State rails win over the deadline ladder: no pressure while blocked by the
+  // employer, and a settled tone once the student has marked it submitted.
+  &--awaiting-link &__rail { background: $assess-calm-rail; }
+  // …but a genuinely urgent deadline still outranks the "in progress" tone.
+  &--in-progress:not(.learn-assessments-row-card--level-critical):not(.learn-assessments-row-card--level-urgent) &__rail {
+    background: $ink-900;
+    width: 5px;
+  }
+  &--awaiting-result &__rail { background: $status-success; }
+
+  &--awaiting-link {
+    border-color: rgba($assess-calm-rail, 0.22);
+  }
+
+  &--in-progress {
+    border-color: rgba($ink-900, 0.22);
+  }
+
+  &--awaiting-result {
+    border-color: rgba($status-success, 0.24);
+    background: $white;
+  }
+
+  &--level-critical {
+    border-color: rgba($assess-danger-rail, 0.35);
+  }
+
+  &--level-urgent {
+    border-color: rgba($assess-warn-rail, 0.3);
+  }
+
+  &--level-expired {
+    background: $neutral-50;
+  }
+
+  &--done {
+    background: $neutral-50;
+  }
+
+  &__main {
+    display: flex;
+    align-items: flex-start;
+    gap: $s2;
+    padding: $s3;
+    padding-left: calc(#{$s3} + 4px);
+
+    @media (max-width: $learn-mobile-bp) {
+      flex-wrap: wrap;
+      padding: $s2;
+      padding-left: calc(#{$s2} + 4px);
+    }
+  }
+
+  &__avatar {
+    flex-shrink: 0;
+  }
+
+  &__content {
+    flex: 1;
+    min-width: 0;
+    padding-right: $s2;
+
+    @media (max-width: $learn-mobile-bp) {
+      order: 1;
+      flex: 1 1 100%;
+      padding-right: 0;
+    }
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: $assess-text;
+    margin: 0 0 $s1;
+    line-height: 1.35;
+    word-wrap: break-word;
+    flex: 1;
+    min-width: 0;
+
+    @media (max-width: $learn-mobile-bp) {
+      font-size: 14px;
+    }
+  }
+
+  &__company {
+    display: block;
+    font-size: 14px;
+    color: $assess-text-muted;
+    margin: 0 0 $s1;
+    line-height: 1.4;
+
+    @media (max-width: $learn-mobile-bp) {
+      font-size: 14px;
+    }
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $s1;
+    font-size: 12px;
+    line-height: 1.4;
+    color: $assess-text-subtle;
+    margin-bottom: $s1;
+
+    .anticon {
+      font-size: 12px;
+      margin-right: 4px;
+    }
+  }
+
+  &__meta-item {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &__deadline-block {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $space-2 $space-3;
+    margin-top: $space-2;
+  }
+
+  &__deadline {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-1;
+    font-size: $text-xs;
+    color: $neutral-500;
+    margin: 0;
+    line-height: $leading-snug;
+
+    .anticon {
+      margin-right: 0;
+    }
+  }
+
+  // Inline explanatory note. Each variant pairs its tint with an icon and an
+  // explicit sentence, so the state is never carried by colour alone.
+  &__note {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-2;
+    max-width: 62ch;
+    margin: $space-3 0 0;
+    padding: $space-2 $space-3;
+    border-radius: $radius-md;
+    border: 1px solid $neutral-200;
+    background: $neutral-100;
+    color: $neutral-700;
+    font-size: $text-xs;
+    line-height: $leading-normal;
+
+    strong { font-weight: 600; }
+
+    .anticon {
+      margin-top: 2px;
+      margin-right: 0;
+      color: $neutral-500;
+      flex-shrink: 0;
+    }
+
+    // Blocked by the employer — reassuring, not alarming.
+    &--awaiting {
+      background: $assess-calm-bg;
+      border-color: rgba($assess-calm-rail, 0.22);
+      color: $assess-calm-text;
+
+      .anticon { color: $assess-calm-text; }
+    }
+
+    // Blocked by you — the only state that asks for an action.
+    &--progress {
+      background: $assess-progress-bg;
+      border-color: rgba($ink-900, 0.16);
+      color: $assess-progress-text;
+
+      .anticon { color: $assess-progress-text; }
+    }
+
+    &--submitted {
+      background: $assess-done-bg;
+      border-color: rgba($status-success, 0.28);
+      color: $assess-done-text;
+
+      .anticon { color: $assess-done-text; }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: $s1;
+    flex-shrink: 0;
+    margin-left: auto;
+
+    @media (max-width: $learn-mobile-bp) {
+      order: 0;
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+  }
+
+  &__cta {
+    min-height: $assess-touch-min;
+  }
+
+  // Real box model — replaces the previous inline min-height/padding hacks.
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2;
+    min-height: 38px;
+    padding: 0 $space-3;
+    font-size: $text-base;
+    font-weight: 500;
+    line-height: $leading-snug;
+    white-space: nowrap;
+    color: $neutral-700;
+    background: $neutral-100;
+    border-radius: $radius-md;
+    border: 1px solid $neutral-200;
+
+    .anticon { font-size: $text-xs; }
+
+    &--expired {
+      color: $neutral-700;
+      background: $neutral-100;
+      border-color: $neutral-200;
+    }
+
+    &--done {
+      color: $assess-done-text;
+      background: $assess-done-bg;
+      border-color: rgba($status-success, 0.28);
+    }
+
+    // Blocked by the employer — informational, never alarming.
+    &--awaiting-link {
+      color: $assess-calm-text;
+      background: $assess-calm-bg;
+      border-color: rgba($assess-calm-rail, 0.28);
+      white-space: normal;
+      max-width: 190px;
+      padding: $space-2 $space-3;
+      text-align: left;
+    }
+
+    // Blocked by nobody — you've done your part, the recruiter hasn't replied.
+    &--awaiting-result {
+      color: $assess-done-text;
+      background: $assess-done-bg;
+      border-color: rgba($status-success, 0.28);
+    }
+  }
+
+  &__secondary-cta.ant-btn {
+    min-height: $assess-touch-min;
+    border-radius: $radius-md;
+    border-color: $neutral-200;
+    color: $ink-900;
+    font-weight: 500;
+
+    &:hover {
+      border-color: $assess-primary;
+      color: $assess-primary-dark;
+    }
+  }
+
+  &__undo {
+    font-size: $text-xs;
+    color: $neutral-700;
+
+    &:hover { color: $ink-900; }
+  }
+
+  // Job metadata is context, not the point of this page.
+  &__meta--demoted {
+    margin-top: $space-2;
+    color: $neutral-500;
+    font-size: 11px;
+
+    .learn-assessments-row-card__meta-item + .learn-assessments-row-card__meta-item::before {
+      content: "·";
+      margin-right: $space-2;
+      color: $neutral-400;
+    }
+  }
+
+  &__job-link {
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1.3;
+    color: $assess-primary;
+    display: inline-flex;
+    align-items: center;
+    gap: $s1;
+    min-height: $assess-touch-min;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: $assess-primary-dark;
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $assess-primary;
+      outline-offset: 2px;
+    }
+
+    .anticon {
+      font-size: 12px;
+    }
+  }
+}
+
+// ─── Countdown pill ──────────────────────────────────────────────────────────
+// Always carries the full sentence ("Due in 4 hours", "Overdue by 1 day"), so
+// the tint is redundant reinforcement rather than the only signal.
+.learn-assessments-countdown {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  padding: 4px $space-3;
+  border-radius: $radius-full;
+  font-size: $text-xs;
+  font-weight: 600;
+  line-height: $leading-snug;
+  letter-spacing: 0.01em;
+  color: $neutral-700;
+  background: $neutral-100;
+  border: 1px solid transparent;
+
+  .anticon { font-size: $text-xs; }
+
+  &--normal {
+    color: $neutral-700;
+    background: $neutral-100;
+  }
+
+  &--soon {
+    color: $assess-calm-text;
+    background: $assess-calm-bg;
+    border-color: rgba($assess-calm-rail, 0.22);
+  }
+
+  &--urgent {
+    color: $assess-warn-text;
+    background: $assess-warn-bg;
+    border-color: rgba($assess-warn-rail, 0.3);
+  }
+
+  &--critical {
+    color: $assess-danger-text;
+    background: $assess-danger-bg;
+    border-color: rgba($assess-danger-rail, 0.35);
+  }
+
+  &--expired {
+    color: $neutral-700;
+    background: $neutral-100;
+    border-color: $neutral-200;
+  }
+
+  &--none {
+    color: $neutral-500;
+    background: $neutral-50;
+    border-color: $neutral-200;
+  }
+
+  // Deadline shown for planning only — used whenever escalation is suppressed.
+  &--info {
+    color: $neutral-700;
+    background: $neutral-50;
+    border-color: $neutral-200;
+    font-weight: 500;
+  }
+}
+
+// ─── Platform chip ───────────────────────────────────────────────────────────
+// Where the assessment actually happens, derived from the link host. Sits beside
+// the countdown because "which platform" and "how long left" are the two facts
+// that answer "can I start this right now?".
+.learn-assessments-platform-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  padding: 4px $space-3;
+  border-radius: $radius-full;
+  border: 1px solid $neutral-200;
+  background: $white;
+  color: $neutral-700;
+  font-size: $text-xs;
+  line-height: $leading-snug;
+  white-space: nowrap;
+
+  strong {
+    font-weight: 600;
+    color: $ink-900;
+  }
+
+  .anticon {
+    font-size: $text-xs;
+    color: $neutral-500;
+  }
+}
+
+// ─── Background-change pill ──────────────────────────────────────────────────
+// Distinct from the deep-link highlight ring: this says *what* changed and stays
+// until the student dismisses it.
+.learn-assessments-change-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  max-width: 100%;
+  margin: 0 0 $space-2;
+  padding: 2px 2px 2px $space-3;
+  border-radius: $radius-full;
+  border: 1px solid rgba($gold-accent, 0.35);
+  background: $gold-subtle;
+  color: $gold-accent;
+  font-size: $text-xs;
+  font-weight: 600;
+  line-height: $leading-snug;
+
+  .anticon { font-size: $text-xs; }
+
+  &__text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__dismiss {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    padding: 0;
+    border: 0;
+    border-radius: $radius-full;
+    background: transparent;
+    color: $gold-accent;
+    cursor: pointer;
+
+    &:hover { background: rgba($gold-accent, 0.14); }
+
+    &:focus-visible {
+      outline: 2px solid $gold-accent;
+      outline-offset: 1px;
+    }
+
+    .anticon { font-size: 10px; }
+  }
+}
+
+// A single, slow breath on the most critical items only — disabled entirely
+// under prefers-reduced-motion.
+@keyframes learnAssessmentsCriticalBreath {
+  0%, 100% { box-shadow: 0 0 0 0 rgba($assess-danger-rail, 0); }
+  50% { box-shadow: 0 0 0 4px rgba($assess-danger-rail, 0.12); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .learn-assessments-countdown--critical {
+    animation: learnAssessmentsCriticalBreath 3.2s $ease-std infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .learn-assessments-row-card,
+  .learn-assessments-viewtab,
+  .learn-assessments-countdown {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .learn-assessments-row-card[role="button"]:hover {
+    transform: none;
+  }
+}
+
+// ─── Panel / filter select / skeleton helpers ────────────────────────────────
+.learn-assessments-panel {
+  min-width: 0;
+}
+
+.learn-assessments-filter-select.ant-select {
+  min-width: 160px;
+
+  .ant-select-selector {
+    min-height: 44px;
+    border-radius: $radius-md;
+  }
+}
+
+.learn-assessments-skeleton-avatar.ant-skeleton-avatar {
+  border-radius: $radius-sm;
+}
+
+.learn-assessments-skeleton-cta.ant-skeleton-button {
+  width: 140px;
+  border-radius: $radius-md;
+}
+
+.learn-assessments-row-card__content--skeleton {
+  flex: 1;
+  min-width: 0;
+}
+
+// ─── External handoff modal ──────────────────────────────────────────────────
+.learn-assessments-handoff-modal {
+  .ant-modal-content {
+    padding: $space-5;
+    border-radius: $radius-lg;
+    box-shadow: $elev-4;
+  }
+
+  .ant-modal-confirm-body > .anticon { display: none; }
+
+  .ant-modal-confirm-title {
+    width: 100%;
+  }
+
+  .ant-modal-confirm-content {
+    margin-top: $space-4;
+    margin-inline-start: 0 !important;
+    max-width: 100%;
+  }
+
+  .ant-modal-confirm-btns {
+    margin-top: $space-5;
+
+    .ant-btn {
+      min-height: 40px;
+      border-radius: $radius-md;
+    }
+  }
+}
+
+.learn-assessments-handoff {
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+  }
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: $radius-md;
+    background: $assess-calm-bg;
+    color: $assess-calm-text;
+    font-size: $text-md;
+  }
+
+  &__title {
+    // Was a scoped Playfair Display override — see _learn-placements.scss's "PREMIUM PASS"
+    // comment for why it's gone: every other student-facing page uses the app's Lato stack.
+    font-size: $text-xl;
+    font-weight: 600;
+    line-height: $leading-tight;
+    color: $ink-900;
+  }
+
+  &__lead {
+    margin: 0 0 $space-4;
+    font-size: $text-base;
+    line-height: $leading-snug;
+    color: $neutral-700;
+  }
+
+  // The real stakes, stated before the mechanics.
+  &__stakes {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-2;
+    margin: 0 0 $space-4;
+    padding: $space-3;
+    border-radius: $radius-md;
+    border: 1px solid rgba($assess-warn-rail, 0.3);
+    background: $assess-warn-bg;
+    color: $assess-warn-text;
+    font-size: $text-xs;
+    line-height: $leading-normal;
+
+    .anticon {
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+  }
+
+  &__facts {
+    margin: 0 0 $space-4;
+    padding: $space-3 $space-4;
+    border-radius: $radius-md;
+    background: $neutral-50;
+    border: 1px solid $neutral-200;
+  }
+
+  &__fact {
+    display: flex;
+    align-items: baseline;
+    gap: $space-3;
+    padding: 6px 0;
+
+    + .learn-assessments-handoff__fact {
+      border-top: 1px solid $neutral-200;
+    }
+
+    dt {
+      flex: 0 0 96px;
+      font-size: $text-xs;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: $neutral-500;
+    }
+
+    dd {
+      margin: 0;
+      font-size: $text-base;
+      line-height: $leading-snug;
+      color: $ink-800;
+      word-break: break-word;
+    }
+  }
+
+  &__tips {
+    margin: 0;
+    padding-left: $space-4;
+    font-size: $text-xs;
+    line-height: $leading-normal;
+    color: $neutral-700;
+
+    li + li { margin-top: $space-1; }
+  }
+}
+
+// Empty / error
+.learn-assessments-empty {
+  padding: $s5 $s3;
+  text-align: center;
+  border-radius: $assess-radius-lg;
+  border: 1px solid $assess-border;
+  background: $assess-bg;
+
+  &--rich {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $s2;
+  }
+}
+
+.learn-assessments-empty__illustration {
+  width: 120px;
+  height: 80px;
+  margin-bottom: 8px;
+
+  .learn-assessments-empty-illus {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+.learn-assessments-empty__icon {
+  font-size: 32px;
+  color: $assess-text-subtle;
+}
+
+.learn-assessments-empty__title {
+  font-size: 20px;
+  font-weight: 600;
+  color: $assess-text;
+  margin: 0;
+}
+
+.learn-assessments-empty__subtitle {
+  font-size: 14px;
+  line-height: 1.5;
+  color: $assess-text-muted;
+  margin: 0;
+  max-width: 360px;
+}
+
+.learn-assessments-error-text {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.learn-assessments-empty__cta {
+  margin-top: 8px;
+  min-height: $assess-touch-min;
+}
+
+.learn-assessments-empty__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: $space-3;
+
+  @media (max-width: $learn-mobile-bp) {
+    flex-direction: column;
+    align-self: stretch;
+
+    .learn-assessments-empty__cta.ant-btn {
+      width: 100%;
+    }
+  }
+}
+
+.learn-assessments-empty-filter {
+  margin-top: 0;
+}
+
+.learn-assessments-error-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $s2;
+  padding: $s5 $s3;
+  text-align: center;
+  border-radius: $assess-radius-lg;
+  border: 1px solid $assess-border;
+  background: $assess-bg;
+}
+
+.learn-assessments-error-icon {
+  font-size: 40px;
+  color: $assess-text-subtle;
+}
+
+.learn-assessments-cta-btn {
+  min-width: 140px;
+}
+
+// Mobile: touch targets and layout
+@media (max-width: $learn-mobile-bp) {
+  .learn-assessments-empty__cta,
+  .learn-assessments-cta-btn {
+    min-height: 44px;
+    padding: $s1 $s2;
+  }
+
+  .learn-assessment-card__cta.ant-btn {
+    min-height: 44px;
+  }
+}
+
+// ─── Company Avatar ───────────────────────────────────────────────────────────
+.learn-assessments-avatar {
+  border-radius: $assess-radius;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $assess-bg-page;
+
+  &--initial {
+    font-weight: 600;
+    user-select: none;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Mobile — assessments list. Scoped here on purpose: _learn-mobile.scss is
+// owned elsewhere, so every override for this page lives in this file.
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-assessments-viewtabs {
+    display: flex;
+    width: 100%;
+    margin-top: $space-4;
+  }
+
+  .learn-assessments-viewtab {
+    flex: 1 1 0;
+    justify-content: center;
+    min-height: $assess-touch-min;
+    padding: 0 $space-2;
+  }
+
+  .learn-assessments-header__right {
+    flex-wrap: wrap;
+
+    .learn-assessments-filter-select.ant-select {
+      width: 100%;
+      min-width: 0;
+    }
+  }
+
+  .learn-assessments-filter-bar {
+    .learn-assessments-filter-select.ant-select {
+      flex: 1 1 100%;
+      width: 100%;
+    }
+
+    .learn-assessments-filter-count {
+      margin-left: 0;
+      width: 100%;
+    }
+  }
+
+  .learn-assessments-group {
+    margin-bottom: $space-5;
+
+    &__head {
+      flex-wrap: wrap;
+    }
+
+    &__hint {
+      margin-left: 0;
+      flex: 1 1 100%;
+    }
+  }
+
+  .learn-assessments-row-card {
+    &__actions {
+      order: 2;
+      flex: 1 1 100%;
+      width: 100%;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: $space-3;
+      margin-left: 0;
+      margin-top: $space-3;
+    }
+
+    &__cta.ant-btn {
+      flex: 1 1 auto;
+      min-height: $assess-touch-min;
+    }
+
+    &__badge {
+      flex: 1 1 auto;
+      justify-content: center;
+      min-height: $assess-touch-min;
+
+      &--awaiting-link {
+        max-width: 100%;
+        text-align: center;
+      }
+    }
+
+    &__secondary-cta.ant-btn {
+      flex: 1 1 auto;
+      min-height: $assess-touch-min;
+    }
+
+    &__meta--demoted {
+      font-size: 11px;
+    }
+
+    &__job-link {
+      flex: 0 0 auto;
+      min-height: $assess-touch-min;
+      padding: 0 $space-2;
+    }
+
+    &__deadline-block {
+      gap: $space-2;
+    }
+
+    &__pending {
+      max-width: 100%;
+    }
+  }
+
+  .learn-assessments-countdown,
+  .learn-assessments-platform-chip {
+    padding: 6px $space-3;
+  }
+
+  .learn-assessments-platform-chip {
+    white-space: normal;
+  }
+
+  // Keep the dismiss control a real touch target on small screens.
+  .learn-assessments-change-pill {
+    width: 100%;
+    padding: 4px 4px 4px $space-3;
+
+    &__dismiss {
+      width: $assess-touch-min;
+      height: 36px;
+    }
+  }
+
+  .learn-assessments-handoff-modal {
+    .ant-modal-content { padding: $space-4; }
+
+    .ant-modal-confirm-btns {
+      display: flex;
+      flex-direction: column-reverse;
+
+      .ant-btn {
+        width: 100%;
+        min-height: $assess-touch-min;
+        margin-inline-start: 0 !important;
+
+        + .ant-btn { margin-bottom: $space-2; }
+      }
+    }
+  }
+
+  .learn-assessments-handoff__fact {
+    flex-direction: column;
+    gap: 2px;
+
+    dt { flex: none; }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Course assessments tab
+// ---------------------------------------------------------------------------
+.course-assessments-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: $s2;
+  margin: $s3 0;
+}
+
+.course-assessments-summary__card {
+  display: flex;
+  align-items: center;
+  gap: $s2;
+  padding: $s2;
+  border: 1px solid $assess-border;
+  border-radius: $assess-radius-lg;
+  background: $assess-bg;
+}
+
+.course-assessments-summary__card--warning {
+  background: $assess-bg;
+  border-color: rgba($status-warning, 0.2);
+}
+
+.course-assessments-summary__icon {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $assess-radius-lg;
+  color: $assess-text-muted;
+  background: $assess-border-soft;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.course-assessments-summary__copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+
+  strong {
+    color: $assess-text;
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  small {
+    color: $assess-text-muted;
+    font-size: 12px;
+    font-weight: 700;
+  }
+}
+
+.course-assessments-section {
+  margin-top: $s3;
+}
+
+.course-assessments-section--attention {
+  padding: $s2;
+  border: 1px solid rgba($status-warning, 0.18);
+  border-radius: $assess-radius-lg;
+  background: $assess-bg;
+}
+
+.course-assessments-blueprint {
+  margin-top: $s3;
+}
+
+.course-assessments-blueprint__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: $s2;
+  margin-bottom: $s2;
+
+  h3 {
+    margin: 0;
+    color: $assess-text;
+    font-size: 18px;
+    line-height: 1.25;
+  }
+
+  p {
+    margin: 4px 0 0;
+    color: $assess-text-muted;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+}
+
+.course-assessments-blueprint__list {
+  display: grid;
+  gap: $s2;
+}
+
+.course-assessments-section--lesson {
+  margin-top: 0;
+  padding: $s2;
+  border: 1px solid $assess-border;
+  border-radius: $assess-radius-lg;
+  background: $assess-bg;
+}
+
+.course-assessments-section--empty-lesson {
+  background: $assess-border-soft;
+}
+
+.course-assessments-section__eyebrow {
+  display: inline-flex;
+  margin-bottom: 4px;
+  color: $assess-primary;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.course-assessments-section__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: $s2;
+  margin-bottom: $s2;
+
+  h3 {
+    margin: 0;
+    color: $assess-text;
+    font-size: 18px;
+    line-height: 1.25;
+  }
+
+  p {
+    margin: 4px 0 0;
+    color: $assess-text-muted;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+}
+
+.course-assessments-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $s2;
+}
+
+.course-assessment-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 220px;
+  padding: $s2;
+  border: 1px solid $assess-border;
+  border-radius: $assess-radius-lg;
+  background: $assess-bg;
+  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.04);
+}
+
+.course-assessment-card--highlighted {
+  border-color: rgba($assess-primary, 0.28);
+  box-shadow: 0 0 0 2px rgba($assess-primary, 0.08);
+}
+
+.course-assessment-card__top,
+.course-assessment-card__meta,
+.course-assessment-card__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $s1;
+}
+
+.course-assessment-card__top {
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.course-assessment-card__type,
+.course-assessment-card__status,
+.course-assessment-card__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.course-assessment-card__type {
+  padding: 5px 10px;
+  color: $assess-text-muted;
+  background: rgba(15, 23, 42, 0.04);
+}
+
+.course-assessment-card__status {
+  padding: 5px 10px;
+  color: $assess-text-muted;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.course-assessment-card__status--soon,
+.course-assessment-card__status--overdue {
+  color: $status-warning;
+  background: rgba($status-warning, 0.1);
+}
+
+.course-assessment-card__title {
+  margin: 0 0 6px;
+  color: $assess-text;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.course-assessment-card__lesson {
+  margin: 0 0 $s2;
+  color: $assess-text-muted;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.course-assessment-card__meta {
+  margin-top: auto;
+
+  span {
+    padding: 4px 8px;
+    color: rgba(15, 23, 42, 0.72);
+    background: rgba(15, 23, 42, 0.04);
+  }
+}
+
+.course-assessment-card__actions {
+  justify-content: flex-end;
+  margin-top: $s2;
+
+  .ant-btn {
+    min-height: $assess-touch-min;
+    border-radius: $assess-radius;
+    font-weight: 700;
+  }
+}
+
+.assignment-builder-modal {
+  .ant-modal-content {
+    border-radius: 18px;
+  }
+
+  .ln-com-drw {
+    padding-bottom: 0 !important;
+  }
+
+  .ln-drwr-foot-btn-container {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    gap: 10px;
+    padding: 14px 0 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.84), #fff 24%);
+
+    > div,
+    > button {
+      margin-right: 0 !important;
+    }
+  }
+
+  &__context {
+    margin-bottom: 18px;
+    border-radius: 14px;
+  }
+}
+
+.learn-course-home-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.course-assessments-empty {
+  padding: $s3;
+  border: 1px solid $assess-border;
+  border-radius: $assess-radius-lg;
+  background: $assess-bg;
+}
+
+.course-assessments-empty--lesson {
+  padding: $s2;
+  background: transparent;
+  box-shadow: none;
+}
+
+@media (max-width: 1100px) {
+  .course-assessments-grid,
+  .course-assessments-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: $learn-mobile-bp) {
+  .course-assessments-blueprint__head,
+  .course-assessments-section__head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .course-assessments-summary,
+  .course-assessments-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .course-assessment-card {
+    min-height: auto;
+  }
+
+  .course-assessment-card__actions {
+    justify-content: stretch;
+
+    .ant-btn {
+      width: 100%;
+    }
+  }
+
+  .learn-course-home-header__actions {
+    width: 100%;
+
+    .ant-btn {
+      width: 100%;
+      min-height: $assess-touch-min;
+    }
+  }
+
+  .assignment-builder-modal {
+    .ant-modal-body {
+      max-height: calc(100dvh - 148px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+      overflow-y: auto;
+      padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .ln-drwr-foot-btn-container {
+      flex-direction: column-reverse;
+      padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+
+      > div,
+      > button,
+      button {
+        width: 100%;
+        min-height: $assess-touch-min;
+      }
+    }
+  }
+}

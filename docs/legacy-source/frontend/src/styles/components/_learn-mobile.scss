@@ -1,0 +1,3501 @@
+/**
+ * Learner mobile-first styles (industry-standard UX).
+ * All rules are mobile-only (max-width: 767px). Desktop unchanged.
+ * Safe areas, touch targets (44px), bottom nav spacing.
+ */
+@import "./variables.scss";
+
+// ---------------------------------------------------------------------------
+// Variables for learner mobile (must be before first use)
+// ---------------------------------------------------------------------------
+$learn-mobile-bp: 767px;
+$learn-mobile-footer-height: 4rem; // 64px
+$learn-touch-min: 44px;
+$learn-mobile-pad: 16px;
+
+// ---------------------------------------------------------------------------
+// Header: safe area and compact layout on mobile
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .ln-dashboard-header.ln-head {
+    padding-top: calc(12px + env(safe-area-inset-top, 0px)) !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    min-height: $learn-touch-min;
+    flex-wrap: wrap;
+
+    .ln-mob-ham {
+      min-width: $learn-touch-min;
+      min-height: $learn-touch-min;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ln-mob-ham-btn {
+      min-width: $learn-touch-min;
+      min-height: $learn-touch-min;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 4px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .ln-org-text-mob {
+      flex: 1;
+      min-width: 0;
+      justify-content: center;
+
+      .ln-org-txt {
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+
+    .gap-3.d-flex {
+      gap: 8px !important;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Safe area + root (for viewport-fit=cover)
+// 100dvh fixes iOS Safari 100vh cut-off; 24px buffer ensures last content clears footer
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .dashboard-container {
+    /* Extra 24px buffer so scroll reaches end without cutting content (real device vs DevTools) */
+    padding-bottom: calc(#{$learn-mobile-footer-height} + 24px + env(safe-area-inset-bottom, 0px));
+    min-height: 100vh;
+    min-height: 100dvh;
+    height: 100vh;
+    height: 100dvh; /* Fixes iOS Safari — 100vh cuts off bottom on real devices */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Fix viewport height on iOS/Android — 100vh can cut off content on real devices */
+  .learn-layout.s-fix-100vh {
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  .ln-module {
+    min-height: auto;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+
+    &__head {
+      padding: 12px $learn-mobile-pad 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+
+      .col-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
+
+      .col-6:first-child {
+        flex: 1 1 auto;
+        max-width: none;
+      }
+
+      .col-6:last-child {
+        flex: 0 0 auto;
+      }
+
+      .h1, h1 {
+        font-size: 1.25rem;
+        white-space: normal;
+        word-break: break-word;
+      }
+    }
+
+    &__body {
+      padding-bottom: 8px;
+    }
+  }
+
+  .ln-module__head.bg-white.d-flex.align-items-center {
+    display: flex !important;
+    flex-wrap: wrap;
+  }
+
+  // Page content padding (learn pages use px-4 py-3)
+  .px-4 {
+    padding-left: $learn-mobile-pad !important;
+    padding-right: $learn-mobile-pad !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Mobile footer (fixed bar) - safe area
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .ln-footer {
+    height: calc(#{$learn-mobile-footer-height} + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    min-height: $learn-touch-min;
+    z-index: 100;
+
+    ul {
+      height: 100%;
+      margin: 0;
+      padding: 0 4px;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      flex-wrap: nowrap;
+    }
+
+    li {
+      flex: 1 1 0;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        min-width: $learn-touch-min;
+        min-height: $learn-touch-min;
+        padding: 4px 2px;
+        text-decoration: none;
+        color: $neutral-400;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      img {
+        width: 22px;
+        height: 22px;
+        opacity: 0.55;
+      }
+
+      // Ant Badge wrapper — keep centered in the column flow
+      .ant-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      // Active state
+      &.active a {
+        color: $clrThird;
+      }
+      &.active img {
+        opacity: 1;
+      }
+    }
+
+    .ln-footer-label {
+      display: block;
+      font-size: 10px;
+      line-height: 1.2;
+      font-weight: 500;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 64px;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Touch targets - buttons and links (learner scope)
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .ln-module .ant-btn,
+  .ln-module .ant-btn-sm {
+    min-height: $learn-touch-min;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .ln-module .ant-input,
+  .ln-module .ant-select-selector {
+    min-height: $learn-touch-min;
+  }
+
+  .ln-module .ant-tag {
+    padding: 4px 10px;
+    line-height: 1.4;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Scroll container (calendar, long content)
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .scroll-container {
+    padding: $learn-mobile-pad;
+    height: auto;
+    max-height: none;
+    min-height: 50vh;
+  }
+
+  .scroll-container--courselanding {
+    min-height: 50vh;
+    max-height: none;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Drawers: full-width on mobile (prevent 520px/600px overflow)
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .ant-drawer .ant-drawer-content-wrapper {
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+
+  .ant-drawer-body {
+    padding: $learn-mobile-pad !important;
+    padding-bottom: calc(#{$learn-mobile-pad} + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Ant Tables: horizontally scrollable on mobile
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .ant-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+
+    .ant-table {
+      min-width: 500px; // force scroll instead of squish
+    }
+  }
+
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr:not(.ant-table-measure-row) > td {
+    white-space: nowrap;
+    padding: 12px 8px !important;
+    font-size: 13px;
+  }
+  // antd's hidden column-measure row (tables with scroll.x) must stay 0 tall; the padding above
+  // turned it into a blank 24px stripe under the header of every such table on a phone.
+}
+
+// Admin list cards: a header with action buttons (Refresh, Export CSV) left the title a few
+// letters wide ("Registered...") on a phone. Let the buttons drop under the title instead.
+@media (max-width: $learn-mobile-bp) {
+  .admin-list-page .ant-card-head-wrapper {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+
+  .admin-list-page .ant-card-head-title {
+    flex-basis: 100%;
+    white-space: normal;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Modals: bottom-sheet style on mobile (industry standard)
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .ant-modal-wrap {
+    display: flex !important;
+    align-items: flex-end !important;
+  }
+
+  .ant-modal-wrap .ant-modal {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    top: auto !important;
+    padding-bottom: 0;
+  }
+
+  .ant-modal-content {
+    border-radius: 16px 16px 0 0;
+    max-height: 90vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  .ant-modal-body {
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+// ---------------------------------------------------------------------------
+// My Applications: card grid on desktop and mobile
+// ---------------------------------------------------------------------------
+.learn-app-card,
+.learn-app-card--mobile {
+  @media (max-width: $learn-mobile-bp) {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+// Applications list: scroll area, card padding, touch targets
+@media (max-width: $learn-mobile-bp) {
+  .learn-my-applications-page .learn-my-applications-scroll {
+    padding-left: $learn-mobile-pad;
+    padding-right: $learn-mobile-pad;
+  }
+
+  .learn-apps-mobile .learn-app-card.ant-card .ant-card-body {
+    padding: $learn-mobile-pad !important;
+  }
+
+  .learn-app-card-mobile__inner {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .learn-app-card-mobile__content {
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+
+  .learn-app-card-mobile__title {
+    flex: 1 1 100%;
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal !important;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+}
+
+// Empty / error states: full-width primary CTA on mobile
+@media (max-width: $learn-mobile-bp) {
+  .learn-my-applications-error .learn-my-applications-retry-btn,
+  .learn-my-applications-empty .learn-my-applications-browse-btn,
+  .learn-apps-error-card .learn-apps-cta-btn,
+  .learn-apps-empty__cta {
+    width: 100%;
+    min-height: $learn-touch-min;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .learn-my-applications-error.ant-card,
+  .learn-my-applications-empty.ant-card,
+  .learn-apps-error-card,
+  .learn-apps-empty {
+    padding-left: $learn-mobile-pad;
+    padding-right: $learn-mobile-pad;
+    box-sizing: border-box;
+  }
+}
+
+// NOTE: the Applications desktop filter-bar sizing block was removed — the
+// `learn-apps-*` layout branch was deleted along with the unreachable standalone
+// design, and the status `<Select>` it sized no longer exists (replaced by the
+// stage strip in `_learn-my-applications.scss`, which owns its own sizing).
+
+// Filter bars: stack on mobile, tags wrap, compact search/select
+@media (max-width: $learn-mobile-bp) {
+  .learn-my-applications-page {
+    overflow-x: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  // Header: keep title + Refresh on one row (don’t stack), title flexes, Refresh right-aligned
+  .learn-my-applications-page .ln-module__head {
+    align-items: flex-start;
+    .col-6 {
+      flex: 0 0 auto;
+      max-width: none;
+    }
+    .col-6:first-child {
+      flex: 1 1 0;
+      min-width: 0;
+      overflow: visible;
+      padding-right: 8px;
+      .h1, h1 {
+        overflow: visible;
+        white-space: normal;
+        word-break: normal;
+        overflow-wrap: normal;
+      }
+    }
+    .col-6:last-child {
+      flex: 0 0 auto;
+      flex-shrink: 0;
+    }
+  }
+
+  .learn-my-applications-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    padding: 0 !important;
+    gap: 10px !important;
+
+    .learn-apps-search-input.ant-input-affix-wrapper,
+    .learn-my-applications-search-input.ant-input-affix-wrapper,
+    .ant-input-affix-wrapper {
+      max-width: 100% !important;
+      width: 100% !important;
+      min-width: 0 !important;
+      flex: none !important;
+      min-height: 38px !important;
+      height: 38px !important;
+
+      input.ant-input {
+        min-height: 34px !important;
+        height: 34px !important;
+        font-size: 14px !important;
+      }
+    }
+
+    .ant-select {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+
+      .ant-select-selector {
+        min-height: 38px !important;
+        height: 38px !important;
+        font-size: 14px !important;
+        display: flex !important;
+        align-items: center !important;
+      }
+    }
+
+    .learn-apps-filter-count {
+      margin-left: 0 !important;
+    }
+  }
+}
+
+// Application detail modal: touch-friendly on mobile
+@media (max-width: $learn-mobile-bp) {
+  .learn-app-detail-modal .ant-modal-content {
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .learn-app-detail-modal .ant-modal-header {
+    flex-shrink: 0;
+  }
+
+  .learn-app-detail-modal .ant-modal-body {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .learn-app-detail-modal .ant-modal-close {
+    min-width: $learn-touch-min;
+    min-height: $learn-touch-min;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .learn-app-detail-modal__actions {
+    flex-direction: column;
+    gap: $learn-s1;
+
+    .ant-btn {
+      min-height: $learn-touch-min;
+      width: 100%;
+    }
+  }
+}
+
+// Interviews modal (My Applications): touch-friendly list and buttons, title wrap, close button
+@media (max-width: $learn-mobile-bp) {
+  .learn-interviews-modal .ant-modal-close {
+    min-width: $learn-touch-min;
+    min-height: $learn-touch-min;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .learn-interviews-modal .ant-modal-header .ant-modal-title {
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.4;
+    font-size: 1rem;
+  }
+
+  .learn-interviews-modal .ant-modal-body {
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    word-break: break-word;
+  }
+
+  .learn-interviews-modal-list .ant-card {
+    min-height: $learn-touch-min;
+  }
+
+  .learn-interviews-modal-list .ant-card .ant-card-body {
+    padding: $learn-mobile-pad !important;
+  }
+
+  .learn-interviews-modal-list .ant-btn {
+    min-height: $learn-touch-min;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Interviews: table on desktop, card list on mobile
+// ---------------------------------------------------------------------------
+.learn-interviews-desktop {
+  @media (max-width: $learn-mobile-bp) {
+    display: none !important;
+  }
+}
+
+.learn-interviews-mobile {
+  display: none;
+
+  @media (max-width: $learn-mobile-bp) {
+    display: block !important;
+  }
+}
+
+.learn-interview-card {
+  &:active {
+    opacity: 0.98;
+  }
+
+  @media (max-width: $learn-mobile-bp) {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// My Interviews page: scroll, header, empty, cards, detail modal
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-interviews-page {
+    overflow-x: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .learn-interviews-page .learn-interviews-scroll {
+    padding-left: $learn-mobile-pad;
+    padding-right: $learn-mobile-pad;
+  }
+
+  // Header: title + Refresh on one row, title wraps at words (no mid-word break)
+  .learn-interviews-page .ln-module__head.learn-interviews-header,
+  .learn-interviews-page .ln-module__head {
+    align-items: flex-start;
+
+    > div:first-child {
+      flex: 1 1 0;
+      min-width: 0;
+      overflow: visible;
+      padding-right: 8px;
+    }
+
+    h1 {
+      overflow: visible;
+      white-space: normal;
+      word-break: normal;
+      overflow-wrap: normal;
+    }
+
+    > .ant-btn {
+      flex: 0 0 auto;
+      flex-shrink: 0;
+    }
+  }
+
+  .learn-interviews-subtitle {
+    font-size: 12px;
+    display: block;
+    margin-top: 2px;
+  }
+
+  .learn-interviews-empty.ant-card {
+    padding-left: $learn-mobile-pad;
+    padding-right: $learn-mobile-pad;
+    box-sizing: border-box;
+  }
+
+  .learn-interviews-mobile .learn-interview-card.ant-card .ant-card-body {
+    padding: $learn-mobile-pad !important;
+  }
+
+  .learn-interview-card-title {
+    flex: 1 1 100%;
+    min-width: 0;
+    max-width: 100%;
+
+    .ant-typography {
+      white-space: normal !important;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .learn-interview-join-btn {
+    min-height: $learn-touch-min !important;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .learn-interview-location-text {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .learn-interview-card-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    margin-top: 12px;
+    flex-shrink: 0;
+
+    .ant-btn {
+      width: 100%;
+      min-height: $learn-touch-min !important;
+      padding: 12px 16px;
+      box-sizing: border-box;
+      border-radius: 8px;
+    }
+  }
+
+  .learn-interview-card-title-text {
+    .learn-interview-job-link.ant-btn {
+      white-space: normal !important;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      text-align: left;
+    }
+  }
+}
+
+// Interview detail modal (My Interviews page)
+@media (max-width: $learn-mobile-bp) {
+  .learn-interview-detail-modal .ant-modal-close {
+    min-width: $learn-touch-min;
+    min-height: $learn-touch-min;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .learn-interview-detail-modal .ant-modal-body {
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .learn-interview-detail-content .ant-descriptions-item-content,
+  .learn-interview-detail-content .ant-descriptions-item-label {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .learn-interview-detail-content .ant-descriptions-item-content a {
+    min-height: $learn-touch-min;
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 0;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// All Assignments (learner): table on desktop, card list on mobile
+// ---------------------------------------------------------------------------
+.learn-assignments-desktop {
+  @media (max-width: $learn-mobile-bp) {
+    display: none !important;
+  }
+}
+
+.learn-assignments-mobile {
+  display: none;
+
+  @media (max-width: $learn-mobile-bp) {
+    display: block !important;
+  }
+}
+
+.learn-assignment-card {
+  &:active {
+    opacity: 0.98;
+  }
+
+  @media (max-width: $learn-mobile-bp) {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    -webkit-tap-highlight-color: transparent;
+    min-height: $learn-touch-min;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// All Assignments list: mobile card padding and empty state (8px system)
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-assignments-page .learn-assignments-scroll,
+  .teacher-assignments-page .learn-assignments-scroll {
+    padding-left: $learn-mobile-pad !important;
+    padding-right: $learn-mobile-pad !important;
+    padding-top: 24px !important;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .learn-assignments-scroll .learn-assignments-wrap {
+    padding: 0;
+  }
+
+  .learn-assignment-card {
+    -webkit-tap-highlight-color: transparent;
+    border-radius: 12px;
+
+    &:focus-within {
+      box-shadow: 0 0 0 2px $clrThird;
+    }
+  }
+
+  .learn-assignments-empty,
+  .learn-assignments-empty-state {
+    padding: 24px $learn-mobile-pad;
+    text-align: center;
+  }
+
+  .learn-assignments-empty-state__icon {
+    font-size: 40px;
+  }
+
+  .learn-assignments-empty-state__cta {
+    min-height: $learn-touch-min;
+  }
+
+  /* All Quizzes: mobile scroll padding (8px system) */
+  .learn-quizzes-page .learn-quizzes-scroll {
+    padding-left: $learn-mobile-pad !important;
+    padding-right: $learn-mobile-pad !important;
+    padding-top: 24px !important;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .learn-quizzes-page .learn-quizzes-header,
+  .teacher-quizzes-page .learn-quizzes-header,
+  .teacher-quizzes-page .ln-module__head {
+    padding-top: calc(16px + env(safe-area-inset-top, 0px));
+    padding-left: $learn-mobile-pad;
+    padding-right: $learn-mobile-pad;
+  }
+
+  .learn-quizzes-page__title,
+  .teacher-quizzes-page .ln-module__head h1 {
+    font-size: 20px;
+  }
+
+  .teacher-quizzes-page__subtitle {
+    font-size: 14px;
+  }
+
+  /* Hide Create button in header on mobile; show full-width bar instead */
+  .teacher-quizzes-page__action {
+    display: none !important;
+  }
+
+  .learn-assignments-page .learn-assignments-header,
+  .teacher-assignments-page .learn-assignments-header,
+  .teacher-assignments-page .teacher-assignments-header {
+    padding-top: calc(16px + env(safe-area-inset-top, 0px));
+    padding-left: $learn-mobile-pad !important;
+    padding-right: $learn-mobile-pad !important;
+  }
+
+  .learn-assignments-page__title,
+  .teacher-assignments-page .learn-assignments-header h1 {
+    font-size: 20px;
+  }
+
+  .teacher-assignments-page__subtitle,
+  .learn-assignments-page__subtitle {
+    font-size: 14px;
+  }
+
+  /* Hide Create button in header on mobile; show full-width bar instead */
+  .teacher-assignments-page__action {
+    display: none !important;
+  }
+
+  /* Teacher All Assignments: same padding as other pages */
+  .teacher-assignments-page .teacher-assignments-scroll {
+    padding-left: $learn-mobile-pad !important;
+    padding-right: $learn-mobile-pad !important;
+    padding-top: 24px !important;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* Teacher All Quizzes: same scroll padding as learner */
+  .teacher-quizzes-page .teacher-quizzes-scroll {
+    padding-left: $learn-mobile-pad !important;
+    padding-right: $learn-mobile-pad !important;
+    padding-top: 24px !important;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* Teacher Create New: hide in title on mobile, show full-width bar below header */
+  .teacher-create-in-title {
+    display: none !important;
+  }
+  .teacher-create-bar-mobile {
+    display: flex !important;
+    width: 100%;
+    padding: 12px $learn-mobile-pad 16px;
+    background: $ann-bg;
+    border-bottom: 1px solid $ann-border;
+    box-sizing: border-box;
+  }
+  .teacher-create-bar-mobile__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    min-height: $learn-touch-min;
+    padding: 12px 16px;
+    background: $ann-primary;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: none;
+    outline: none;
+    transition: opacity 0.2s;
+  }
+  .teacher-create-bar-mobile__btn:active {
+    opacity: 0.95;
+  }
+}
+
+/* Teacher Create New: desktop shows button in title; mobile bar hidden by default until max-width overrides */
+.teacher-create-bar-mobile {
+  display: none;
+}
+
+// ---------------------------------------------------------------------------
+// Attendance (learner): table on desktop, card list on mobile
+// ---------------------------------------------------------------------------
+.learn-attendance-desktop {
+  @media (max-width: $learn-mobile-bp) {
+    display: none !important;
+  }
+}
+
+.learn-attendance-mobile {
+  display: none;
+
+  @media (max-width: $learn-mobile-bp) {
+    display: block !important;
+  }
+}
+
+.learn-attendance-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.learn-attendance-card {
+  background: $white;
+  border: 1px solid $neutral-200;
+  border-radius: 12px;
+  padding: $learn-mobile-pad;
+  transition: box-shadow 0.2s, border-color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    opacity: 0.98;
+  }
+
+  &__date {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: $neutral-900;
+  }
+
+  &__day {
+    font-size: 14px;
+    color: $neutral-500;
+    margin-bottom: 8px;
+  }
+
+  &__time {
+    font-size: 14px;
+    color: $neutral-500;
+    margin-bottom: 12px;
+  }
+
+  &__status {
+    min-height: $learn-touch-min;
+    display: flex;
+    align-items: center;
+  }
+}
+
+@media (max-width: $learn-mobile-bp) {
+  .learn-attendance-page .learn-attendance-header,
+  .learn-attendance-page .ln-module__head {
+    padding-top: calc(16px + env(safe-area-inset-top, 0px));
+    padding-left: $learn-mobile-pad;
+    padding-right: $learn-mobile-pad;
+  }
+
+  .learn-attendance-page__title {
+    font-size: 20px;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  .learn-attendance-page .learn-attendance-scroll {
+    padding-top: 24px !important;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-left: $learn-mobile-pad !important;
+    padding-right: $learn-mobile-pad !important;
+  }
+
+  .learn-attendance-card-wrap {
+    padding: $learn-mobile-pad !important;
+  }
+
+  .learn-attendance-header-filters {
+    width: 100%;
+    max-width: 100%;
+
+    .learn-attendance-filters-row {
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+      gap: 16px;
+    }
+
+    .learn-attendance-filter-course {
+      width: 100% !important;
+      max-width: none;
+      margin-right: 0;
+      margin-bottom: 0;
+
+      .ant-select {
+        width: 100% !important;
+        min-width: 0 !important;
+      }
+    }
+
+    .learn-attendance-filter-date {
+      width: 100% !important;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+  }
+
+  .learn-attendance-scroll {
+    padding-left: $learn-mobile-pad;
+    padding-right: $learn-mobile-pad;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Assignment view drawer (view content + PDF): full width, safe area, touch
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .ln-assignment-view-drawer.ant-drawer,
+  .ln-assignment-create-drawer.ant-drawer {
+    .ant-drawer-content-wrapper {
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+
+    .ant-drawer-body {
+      padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      &::-webkit-scrollbar { display: none; }
+    }
+  }
+
+  .ln-assignment-view-drawer-body {
+    padding: 0 4px;
+  }
+
+  .ln-assignment-pdf-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 16px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  .ln-assignment-pdf-page {
+    min-width: min(100%, 752px);
+  }
+
+  .ln-assignment-pdf-pagenum {
+    font-size: 14px;
+    margin-top: 8px;
+  }
+
+  .ln-assignment-pdf-nav {
+    gap: 8px;
+
+    .ln-assignment-drawer-btn {
+      min-height: $learn-touch-min;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      min-width: 120px;
+    }
+  }
+
+  .ln-assignment-view-drawer .ln-assignment-drawer-footer,
+  .ln-assignment-create-drawer .ln-assignment-drawer-footer,
+  .ln-assignment-submit-drawer .ln-assignment-drawer-footer {
+    padding-left: $learn-mobile-pad;
+    padding-right: $learn-mobile-pad;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+
+    .ant-btn,
+    button {
+      min-height: $learn-touch-min;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Assignment submit drawer (file upload): full width, form, touch
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .ln-assignment-submit-drawer.ant-drawer,
+  .ln-assignment-create-drawer.ant-drawer {
+    .ant-drawer-content-wrapper {
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+
+    .ant-drawer-body {
+      padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    }
+  }
+
+  .ln-assignment-submit-drawer-body .ln-assignment-submit-form,
+  .ln-assignment-create-drawer .ln-com-drw {
+    .ant-form-item {
+      margin-bottom: 16px;
+    }
+
+    .ant-select-selector,
+    .ant-input,
+    .ln-upload .ant-btn {
+      min-height: $learn-touch-min !important;
+    }
+
+    .ln-editor-wraper {
+      min-height: 120px;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Quiz creation drawer (teacher): full width, safe areas, 44px touch targets
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .ln-quiz-create-drawer.ant-drawer {
+    .ant-drawer-content-wrapper {
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+
+    .ant-drawer-header {
+      padding-top: calc(12px + env(safe-area-inset-top, 0px)) !important;
+      padding-left: 16px !important;
+      padding-right: 8px !important;
+      padding-bottom: 12px !important;
+    }
+
+    .ant-drawer-close {
+      min-width: $learn-touch-min !important;
+      min-height: $learn-touch-min !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+
+    .ant-drawer-body {
+      padding: 0 !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      &::-webkit-scrollbar { display: none; }
+    }
+
+    .ln-quiz-create-drawer-body {
+      padding: 16px $learn-mobile-pad calc(100px + env(safe-area-inset-bottom, 0px)) $learn-mobile-pad !important;
+      min-height: 100%;
+      box-sizing: border-box;
+    }
+
+    .ln-drwr-foot-btn-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 12px $learn-mobile-pad calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .ln-drwr-foot-btn-container .ln-btn {
+      min-height: $learn-touch-min !important;
+      min-width: 80px;
+      padding: 10px 16px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+
+    .ln-com-drw .ant-select-selector,
+    .ln-com-drw .ant-input,
+    .ln-com-drw .ln-in2 {
+      min-height: $learn-touch-min !important;
+    }
+
+    .ln-com-drw .ant-radio-group,
+    .ln-com-drw .ant-checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .ln-com-drw .ant-radio-wrapper,
+    .ln-com-drw .ant-checkbox-wrapper {
+      min-height: $learn-touch-min;
+      display: inline-flex;
+      align-items: center;
+      margin-right: 0;
+    }
+
+    .ln-com-drw .ln-editor-wraper {
+      min-height: 120px;
+    }
+
+    .ln-add-options {
+      min-height: $learn-touch-min !important;
+      min-width: 120px;
+      padding: 10px 16px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 8px;
+    }
+
+    .ln-delet-btn {
+      min-width: $learn-touch-min !important;
+      min-height: $learn-touch-min !important;
+      padding: 8px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Quiz submission view - mobile page layout (full screen, in-page feel)
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .ln-quiz-submission-page {
+    padding-top: env(safe-area-inset-top, 0);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .ln-quiz-submission-layout {
+    flex-direction: column !important;
+  }
+
+  .ln-quiz-submission-aside {
+    width: 100% !important;
+    min-width: 0;
+    padding: $learn-mobile-pad !important;
+    border-right: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    max-height: 40vh;
+  }
+
+  .ln-quiz-submission-aside__header {
+    margin-bottom: 12px;
+  }
+
+  .ln-quiz-submission-aside__list {
+    max-height: 160px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  .ln-quiz-submission-radios .ant-radio-wrapper {
+    min-height: $learn-touch-min !important;
+    padding: 12px 0 !important;
+  }
+
+  .ln-quiz-submission-main {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .ln-quiz-submission-header {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: $learn-mobile-pad !important;
+  }
+
+  .ln-quiz-submission-header__title-wrap {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ln-quiz-submission-header__title {
+    font-size: 15px;
+  }
+
+  .ln-quiz-submission-back-btn {
+    width: 100%;
+    min-height: $learn-touch-min !important;
+    padding: 12px 16px !important;
+  }
+
+  .ln-quiz-submission-content {
+    padding: $learn-mobile-pad !important;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .scroll-container--submissions {
+    min-height: 200px !important;
+    max-height: none !important;
+    padding: 0 !important;
+  }
+
+  .ln-quiz-submission-learner-view {
+    max-width: 100%;
+    padding: 0 0 24px;
+  }
+
+  .ln-quiz-submission-summary {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px !important;
+  }
+
+  .ln-quiz-submission-summary__score {
+    flex-wrap: wrap;
+  }
+
+  .ln-quiz-submission-card {
+    padding: 16px !important;
+  }
+
+  .ln-quiz-submission-card__header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ln-quiz-submission-card__question {
+    font-size: 14px;
+  }
+
+  .ln-quiz-submission-card__row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ln-quiz-submission-card__label {
+    min-width: auto;
+  }
+
+  .ln-quiz-panel {
+    padding: 16px 0 !important;
+    width: 100% !important;
+  }
+
+  .ln-quiz-progress-bar {
+    margin-bottom: 12px;
+  }
+
+  .ln-quiz-footer--submission .ant-btn,
+  .ln-quiz-footer--submission button {
+    min-height: $learn-touch-min !important;
+    padding: 12px 16px !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Jobs — responsive list
+//
+// The jobs list is now laid out entirely from `_learn-jobs.scss`, which owns its
+// own media queries. Everything that used to live here targeted class names the
+// rewritten `JobsListContent.jsx` no longer emits (`.learn-job-card`,
+// `.learn-job-card-mobile*`, `.learn-jobs-list-item`, `.learn-jobs-filter-bar`
+// and friends) and has been removed. Only the page-level overflow guard below
+// still matches live markup.
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-jobs-page {
+    overflow-x: hidden;
+  }
+
+}
+
+// ---------------------------------------------------------------------------
+// Job detail: sticky apply card, touch targets, content padding, overflow
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-job-detail-page {
+    overflow-x: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0);
+  }
+
+  // NOTE: the rest of the legacy `learn-job-detail-*` mobile rules were removed —
+  // the rewritten `JobDetailContent.jsx` styles itself entirely through `ljd-*`
+  // in `_learn-job-detail.scss` (which owns its own media queries) and no longer
+  // emits the back-bar, hero, description, apply-card, resume-option or
+  // requirements class names those rules targeted. Only the page overflow guard
+  // above and the touch-target floor below still match live markup.
+  .learn-job-detail-empty-actions .ant-btn.learn-job-detail-cta-touch {
+    min-height: $learn-touch-min !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Career Calendar page: overflow, header (title + Refresh one row, wrap at words)
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-career-calendar-page {
+    overflow-x: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .learn-career-calendar-page .ln-module__head.d-flex.align-items-center {
+    align-items: flex-start;
+    .col-6 {
+      flex: 0 0 auto;
+      max-width: none;
+    }
+    .col-6:first-child {
+      flex: 1 1 0;
+      min-width: 0;
+      overflow: visible;
+      padding-right: 8px;
+      .h1, h1 {
+        overflow: visible;
+        white-space: normal;
+        word-break: normal;
+        overflow-wrap: normal;
+      }
+    }
+    .col-6:last-child {
+      flex: 0 0 auto;
+      flex-shrink: 0;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Profile page: overflow, header (title + Refresh one row), content padding, UserInfo, buttons 44px
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-profile-page {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding-left: $learn-mobile-pad !important;
+    padding-right: $learn-mobile-pad !important;
+  }
+
+  .learn-profile-page .learn-profile-page__head {
+    align-items: flex-start;
+
+    .learn-profile-page__title {
+      overflow: visible;
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    .learn-profile-page__refresh {
+      min-width: $learn-touch-min;
+      min-height: $learn-touch-min;
+    }
+  }
+
+  .learn-profile-page .learn-profile-content {
+    padding-top: 0 !important;
+    overflow-x: hidden;
+  }
+
+  // Scroll container must not add extra padding on top of __body's 16px
+  .learn-profile-page .scroll-container.scroll-container--courselanding {
+    padding: 0 !important;
+  }
+
+  // Zero out Ant Design row gutter on mobile — cards are full-width (xs=24), no horizontal gap needed
+  .learn-profile-page .profile-sections,
+  .learn-profile-page .profile-sections-row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .learn-profile-page .profile-sections .ant-col,
+  .learn-profile-page .profile-sections-row .ant-col {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .learn-profile-page .profile-userinfo__main {
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-align: center;
+  }
+
+  .learn-profile-page .profile-userinfo__avatar.ln-prof-img {
+    width: 96px;
+    height: 96px;
+    min-width: 96px;
+  }
+
+  .learn-profile-page .profile-userinfo__name {
+    font-size: 20px;
+    line-height: 1.25;
+  }
+
+  .learn-profile-page .profile-userinfo__content {
+    width: 100%;
+    padding-top: 0;
+  }
+
+  .learn-profile-page .profile-userinfo__identity,
+  .learn-profile-page .profile-userinfo__meta,
+  .learn-profile-page .profile-user-meta {
+    justify-content: center;
+  }
+
+  .learn-profile-page .ln-prof-img {
+    max-width: 96px;
+    width: 96px;
+    height: 96px;
+    min-width: 96px;
+  }
+
+  .learn-profile-page .ln-prof-img img,
+  .learn-profile-page .ln-prof-img .ant-image,
+  .learn-profile-page .profile-userinfo__avatar.ln-prof-img img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+  }
+
+  .learn-profile-page .profile-userinfo__description,
+  .learn-profile-page .learn-userinfo-description {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .learn-profile-page .profile-userinfo__video-section {
+    margin-top: 18px;
+    padding-top: 18px;
+  }
+
+  .learn-profile-page .profile-userinfo__video-header {
+    align-items: stretch;
+  }
+
+  .learn-profile-page .profile-userinfo__video-header .ant-btn {
+    width: 100%;
+  }
+
+  .learn-profile-page .profile-userinfo__video-loading,
+  .learn-profile-page .profile-userinfo__video-empty {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .learn-profile-page .ant-card .border-top .ant-btn {
+    min-height: $learn-touch-min;
+    min-width: $learn-touch-min;
+  }
+
+  .learn-profile-page .ant-card .ant-card-head .ant-btn,
+  .learn-profile-page .ant-card .ant-card-head-wrapper .ant-card-head .ant-btn,
+  .learn-profile-page .ant-card-header .ant-btn {
+    min-height: $learn-touch-min !important;
+    min-width: $learn-touch-min !important;
+  }
+
+  .learn-profile-page .ant-card-body .ant-btn {
+    min-height: $learn-touch-min !important;
+  }
+
+  .learn-profile-page .ant-card .ant-upload .ant-btn {
+    min-height: $learn-touch-min !important;
+  }
+
+  .learn-profile-page .ant-card .ant-btn-link {
+    min-height: $learn-touch-min;
+    display: inline-flex;
+    align-items: center;
+  }
+
+}
+
+// ---------------------------------------------------------------------------
+// Notifications page: overflow, header (title wrap), desktop hide / mobile cards
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-notifications-page {
+    overflow-x: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: $learn-mobile-pad !important;
+    padding-bottom: 0 !important;
+  }
+
+  .learn-notifications-page .learn-notifications-scroll {
+    padding-top: $learn-mobile-pad !important;
+    padding-left: $learn-mobile-pad !important;
+    padding-right: $learn-mobile-pad !important;
+    padding-bottom: calc(#{$learn-mobile-footer-height} + 16px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .learn-notifications-page__head {
+    padding: 16px $learn-mobile-pad !important;
+    padding-top: calc(16px + env(safe-area-inset-top, 0px)) !important;
+    margin-bottom: 0 !important;
+  }
+
+  .learn-notifications-page__title {
+    font-size: 20px !important;
+    overflow: visible;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  // Hide the whole table Card on mobile so column headers can't peek; modal is portaled so still works
+  .learn-notifications-page .ln-notification {
+    display: none !important;
+  }
+
+  .learn-notifications-desktop {
+    display: none !important;
+  }
+
+  .learn-notifications-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: $learn-mobile-pad;
+    padding: 0 0 calc(#{$learn-mobile-footer-height} + 16px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .learn-notification-card {
+    display: block;
+    width: 100%;
+    min-height: $learn-touch-min;
+    padding: 16px $learn-mobile-pad;
+    -webkit-tap-highlight-color: transparent;
+    text-align: left;
+    border: 1px solid $ann-border;
+    border-radius: 12px;
+    background: $ann-bg;
+    cursor: pointer;
+    box-sizing: border-box;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+
+    .learn-notification-card__title {
+      font-size: 16px;
+      font-weight: 600;
+      color: $ann-text;
+      margin-bottom: 8px;
+    }
+
+    .learn-notification-card__snippet {
+      font-size: 14px;
+      color: $ann-text-muted;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      margin-bottom: 8px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.4;
+    }
+
+    .learn-notification-card__meta {
+      font-size: 12px;
+      color: $ann-text-muted;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+
+      .learn-notification-card__context {
+        font-weight: 500;
+        color: $ann-text;
+      }
+    }
+  }
+
+  .learn-notification-detail-modal .ant-modal-content {
+    max-height: 90vh;
+    max-width: calc(100vw - 24px);
+    margin: 12px auto;
+  }
+
+  .learn-notification-detail-modal .ant-modal-body {
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .learn-notification-detail-modal.ant-modal .ant-modal-close {
+    min-width: $learn-touch-min;
+    min-height: $learn-touch-min;
+    inset-inline-end: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .learn-notification-detail-modal .ln-noti-modcont {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .learn-notifications-skeleton .ant-card-body {
+    padding: 16px $learn-mobile-pad !important;
+  }
+
+  .learn-notifications-error {
+    padding: $learn-mobile-pad !important;
+    padding-bottom: calc(#{$learn-mobile-footer-height} + 24px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .learn-notifications-mobile .ant-empty {
+    padding: 32px $learn-mobile-pad;
+    padding-bottom: calc(#{$learn-mobile-footer-height} + 24px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+.learn-notifications-mobile {
+  display: none;
+
+  @media (max-width: $learn-mobile-bp) {
+    display: block !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Calendar (Class Schedule + Career): mobile list view, hide desktop
+// ---------------------------------------------------------------------------
+.learn-calendar-toolbar-desktop {
+  @media (max-width: $learn-mobile-bp) {
+    display: none !important;
+  }
+}
+
+.learn-calendar-desktop {
+  @media (max-width: $learn-mobile-bp) {
+    display: none !important;
+  }
+}
+
+.learn-calendar-empty-desktop {
+  @media (max-width: $learn-mobile-bp) {
+    display: none !important;
+  }
+}
+
+.learn-calendar-mobile {
+  display: none;
+
+  @media (max-width: $learn-mobile-bp) {
+    display: block !important;
+  }
+}
+
+@media (max-width: $learn-mobile-bp) {
+  .learn-calendar-page .learn-calendar-header,
+  .learn-calendar-page .ln-module__head {
+    padding-top: calc(16px + env(safe-area-inset-top, 0px));
+    padding-left: $learn-mobile-pad;
+    padding-right: $learn-mobile-pad;
+  }
+
+  .learn-calendar-page__title {
+    font-size: 20px;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  .learn-calendar-page .learn-calendar-scroll {
+    padding-left: $learn-mobile-pad !important;
+    padding-right: $learn-mobile-pad !important;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .scroll-container--courselanding {
+    padding: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    min-height: 50vh;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+
+    .mainWrapper {
+      padding: 0 !important;
+      margin: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box;
+    }
+  }
+
+  .learn-calendar-mobile {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  .calendar-wrapper .rbc-calendar {
+    min-width: 0 !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .calendar-wrapper .rbc-calendar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Calendar mobile: view dropdown alignment (options inside Select)
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-calendar-view-dropdown.ant-select-dropdown {
+    min-width: 120px !important;
+
+    .ant-select-item,
+    .ant-select-item-option {
+      padding: 10px 12px;
+      min-height: $learn-touch-min;
+      display: flex;
+      align-items: center;
+    }
+
+    .ant-select-item-option-content {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Courses list: page, header, scroll padding, card touch targets
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-courses-page {
+    overflow-x: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .learn-courses-page .ln-module__head {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px $learn-mobile-pad;
+    padding-top: calc(16px + env(safe-area-inset-top, 0px));
+
+    .learn-courses-page__title {
+      overflow: visible;
+      white-space: normal;
+      word-break: normal;
+      overflow-wrap: normal;
+      font-size: 20px;
+    }
+
+    .learn-courses-page__meta {
+      margin-top: 4px;
+    }
+  }
+
+  /* Courses subtitle chips — mobile-optimized touch targets and wrapping */
+  .learn-layout .learn-courses-subtitle {
+    gap: 8px 10px;
+
+    &__text {
+      width: 100%;
+      margin-bottom: 2px;
+    }
+
+    &__chips {
+      gap: 6px;
+      width: 100%;
+    }
+
+    &__chip {
+      padding: 8px 12px;
+      font-size: 12px;
+      min-height: 36px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: min(180px, 100%);
+      flex-shrink: 1;
+      min-width: 0;
+
+      &.learn-courses-subtitle__semester,
+      &.learn-courses-subtitle__program {
+        box-shadow: none;
+      }
+    }
+  }
+
+  /* Equal padding, safe area - 8px system */
+  .learn-courses-page .learn-courses-scroll.scroll-container {
+    padding-top: 24px !important;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-left: $learn-mobile-pad !important;
+    padding-right: $learn-mobile-pad !important;
+  }
+
+  /* Single column grid on mobile */
+  .learn-courses-page .learn-courses-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .learn-courses-page .learn-course-card {
+    min-height: $learn-touch-min;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Course layout (tabs): title wrap, tabs 44px, content padding
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-course-layout {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .learn-course-layout .ln-module__head .h1,
+  .learn-course-layout .ln-module__head h1 {
+    overflow: visible;
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: normal;
+  }
+
+  .learn-course-layout .ant-tabs-dashboard .ant-tabs-nav {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  .learn-course-layout .ant-tabs-dashboard .ant-tabs-nav-wrap {
+    overflow: visible !important;
+  }
+
+  .learn-course-layout .ant-tabs-dashboard .ant-tabs-tab {
+    min-height: $learn-touch-min;
+    padding: 8px 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .learn-course-layout .ant-tabs-dashboard .ant-tabs-content-holder {
+    overflow-x: hidden;
+    padding-left: $learn-mobile-pad;
+    padding-right: $learn-mobile-pad;
+    padding-top: 8px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+
+}
+
+// ---------------------------------------------------------------------------
+// Course tab Back buttons (shared learner + teacher): proper button styling
+// LMS primary color ($clrThird) for arrow and text
+// ---------------------------------------------------------------------------
+.learn-course-back-btn-wrap .learn-course-back-btn.ant-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  border-radius: 6px;
+  color: $clrThird;
+  border-color: $clrThird;
+
+  &:hover,
+  &:focus-visible {
+    color: $teal-dark;
+    border-color: $teal-dark;
+  }
+
+  .anticon {
+    color: inherit;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Lesson contents: Nav buttons (Back, Previous, Next) — proper button styling
+// LMS primary color for arrow and text
+// ---------------------------------------------------------------------------
+.learn-lesson-contents .learn-lesson-nav .learn-lesson-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  border-radius: 6px;
+  color: $clrThird;
+
+  &:hover,
+  &:focus-visible {
+    color: $teal-dark;
+  }
+
+  .anticon {
+    color: inherit;
+  }
+}
+.learn-lesson-contents .learn-lesson-nav .learn-lesson-nav-btn.ant-btn .anticon {
+  font-size: 14px;
+}
+/* Next: arrow on the right for clearer affordance */
+.learn-lesson-contents .learn-lesson-nav .learn-lesson-nav-next.ant-btn {
+  flex-direction: row-reverse;
+}
+.learn-lesson-contents .learn-lesson-nav .learn-lesson-nav-next .anticon {
+  margin-right: 0;
+  margin-left: 6px;
+}
+
+// ---------------------------------------------------------------------------
+// Lesson contents: Add lesson content bar (teacher) — placement above list
+// ---------------------------------------------------------------------------
+.learn-lesson-contents .learn-lesson-add-content-bar {
+  margin-bottom: 16px;
+}
+.learn-lesson-contents .learn-lesson-add-content-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 0 18px;
+  height: 40px;
+}
+
+// ---------------------------------------------------------------------------
+// Course Home / Syllabus / Lesson contents: Back and nav buttons 44px
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-course-layout .scroll-container .ln-btn-normal,
+  .learn-syllabus-list .ln-btn-normal,
+  .learn-lesson-contents .ln-btn-normal {
+    min-height: $learn-touch-min !important;
+    min-width: $learn-touch-min !important;
+    padding: 10px 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Course tab Back buttons (Grading, Students, Discussions, Syllabus, etc.): touch-friendly */
+  .learn-course-layout .learn-course-back-btn-wrap .learn-course-back-btn.ant-btn,
+  .learn-syllabus-list .learn-course-back-btn-wrap .learn-course-back-btn.ant-btn {
+    min-height: $learn-touch-min !important;
+    padding: 8px 14px !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    border-radius: 6px;
+  }
+  .learn-course-discussions .ln-cont-diss .learn-course-back-btn-wrap .learn-course-back-btn.ant-btn {
+    min-height: $learn-touch-min !important;
+  }
+
+  .learn-syllabus-list .ln-card-syllabus {
+    min-height: $learn-touch-min;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .learn-syllabus-list .ln-card-syllabus__title {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .learn-lesson-contents .d-flex.align-items-center.justify-content-between .ln-btn-normal {
+    min-height: $learn-touch-min !important;
+    min-width: $learn-touch-min !important;
+  }
+
+  .learn-lesson-contents .ln-btn.ln-btn--regular {
+    min-height: $learn-touch-min !important;
+    min-width: $learn-touch-min !important;
+  }
+
+  /* Lesson nav: Back, Previous, Next — touch-friendly */
+  .learn-lesson-contents .learn-lesson-nav .learn-lesson-nav-btn.ant-btn {
+    min-height: $learn-touch-min !important;
+    padding: 8px 14px !important;
+  }
+
+  /* Add lesson content bar: full-width CTA on mobile */
+  .learn-lesson-contents .learn-lesson-add-content-bar {
+    margin-bottom: 16px;
+  }
+  .learn-lesson-contents .learn-lesson-add-content-btn {
+    width: 100%;
+    justify-content: center;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .learn-lesson-contents .lesson-content-detail__item .ant-btn,
+  .learn-lesson-contents .lesson-content-detail__item .ln-cont-btns .ant-btn {
+    min-height: $learn-touch-min !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Course tab pages (Announcements, Grading, Discussions, Students, Attendance): mobile UX
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  /* Symmetric padding for all course tab scroll containers; overrides base .scroll-container 24px 30px */
+  .learn-course-layout .scroll-container.learn-course-home,
+  .learn-course-layout .scroll-container.learn-course-announcements,
+  .learn-course-layout .scroll-container.learn-course-grading,
+  .learn-course-layout .scroll-container.learn-course-discussions,
+  .learn-course-layout .scroll-container.learn-course-students,
+  .learn-course-layout .scroll-container.learn-course-attendance,
+  .learn-course-layout .scroll-container.learn-syllabus-list,
+  .learn-course-layout .scroll-container.learn-lesson-contents,
+  .learn-placements-layout .scroll-container.learn-placements-dashboard {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+  }
+
+  .learn-course-layout .learn-course-announcements .ln-module-card,
+  .learn-course-layout .learn-course-grading .ln-module-card,
+  .learn-course-layout .learn-course-discussions .ln-module-card,
+  .learn-course-layout .learn-course-students .ln-module-card,
+  .learn-course-layout .learn-course-attendance .ln-module-card,
+  .learn-course-layout .learn-course-home .ln-module-card,
+  .learn-course-layout .learn-syllabus-list .ln-module-card,
+  .learn-placements-layout .learn-placements-dashboard .ln-module-card {
+    padding-left: $learn-mobile-pad;
+    padding-right: $learn-mobile-pad;
+    padding-top: 8px;
+    padding-bottom: 16px;
+    overflow-x: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Tables: horizontal scroll, touch-friendly rows, word-break */
+  .learn-course-announcements .ant-table-wrapper,
+  .learn-course-grading .ant-table-wrapper,
+  .learn-course-students .ant-table-wrapper,
+  .learn-course-attendance .ant-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  .learn-course-announcements .ant-table-tbody > tr > td,
+  .learn-course-grading .ant-table-tbody > tr > td,
+  .learn-course-students .ant-table-tbody > tr > td,
+  .learn-course-attendance .ant-table-tbody > tr > td {
+    min-height: $learn-touch-min;
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+    word-break: break-word;
+  }
+
+  .learn-course-announcements .ant-btn-link,
+  .learn-course-announcements .ant-table .ant-btn {
+    min-height: $learn-touch-min;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Announcement detail modal: close 44px, content word-break */
+  .learn-course-announcement-detail-modal.ant-modal-wrap .ant-modal .ant-modal-close {
+    min-width: $learn-touch-min !important;
+    min-height: $learn-touch-min !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .learn-course-announcement-detail-modal .ant-modal-body {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+  }
+
+  /* Discussions: topic cards touch-friendly */
+  .learn-course-discussions .discussion-topic-card {
+    min-height: $learn-touch-min;
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+
+  .learn-course-discussions .discussion-topic-list__title,
+  .learn-course-discussions .discussion-topic-card__title {
+    word-break: break-word;
+  }
+
+  // -------------------------------------------------------------------------
+  // Discussion inside page (ContentDiscussion / ln-cont-diss): mobile UX
+  // -------------------------------------------------------------------------
+  .learn-course-discussions .ln-cont-diss {
+    overflow-x: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding-bottom: 8px;
+  }
+
+  .learn-course-discussions .ln-cont-diss .ln-module-card {
+    padding-left: $learn-mobile-pad;
+    padding-right: $learn-mobile-pad;
+    box-sizing: border-box;
+  }
+
+  /* Back to Discussions: 44px touch target */
+  .learn-course-discussions .ln-cont-diss .ln-btn-normal {
+    min-height: $learn-touch-min !important;
+    min-width: $learn-touch-min !important;
+    display: inline-flex !important;
+    align-items: center;
+    padding: 10px 0;
+  }
+
+  /* Discussion title: readable on small screens */
+  .learn-course-discussions .ln-cont-diss .ln-module-card p.fnt-24 {
+    font-size: 18px !important;
+    line-height: 1.35;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    margin-bottom: 8px;
+  }
+
+  .learn-course-discussions .ln-cont-diss .ln-module-card hr {
+    margin: 12px 0;
+  }
+
+  /* Comment count */
+  .learn-course-discussions .ln-cont-diss .ln-module-card > div:last-of-type {
+    word-break: break-word;
+  }
+
+  /* Post cards: avatar + content with gap, word-break */
+  .learn-course-discussions .ln-cont-diss .ln-post-card {
+    display: flex !important;
+    gap: 12px;
+    align-items: flex-start;
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+    min-height: $learn-touch-min;
+  }
+
+  .learn-course-discussions .ln-cont-diss .ln-post-card p {
+    flex: 1;
+    min-width: 0;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    margin: 0 !important;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .learn-course-discussions .ln-cont-diss .ln-post-card .col-7 {
+    max-width: none !important;
+    flex: 1 1 auto !important;
+  }
+
+  /* Comment input card: stack on mobile, full-width input, 44px Post button */
+  .learn-course-discussions .ln-cont-diss .ln-comment-card {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px;
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+  }
+
+  .learn-course-discussions .ln-cont-diss .ln-comment-card .ant-image,
+  .learn-course-discussions .ln-cont-diss .ln-comment-card img[alt] {
+    align-self: flex-start;
+  }
+
+  .learn-course-discussions .ln-cont-diss .ln-comment-card .ln-in2,
+  .learn-course-discussions .ln-cont-diss .ln-comment-card .ln-dis-txtarea {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    min-height: 80px;
+    box-sizing: border-box;
+  }
+
+  .learn-course-discussions .ln-cont-diss .ln-comment-card .ant-input {
+    min-height: 80px !important;
+  }
+
+  .learn-course-discussions .ln-cont-diss .ln-comment-card .learn-discussion-post-btn,
+  .learn-course-discussions .ln-cont-diss .ln-comment-card [class*="col-sm-1"],
+  .learn-course-discussions .ln-cont-diss .ln-comment-card [class*="col-2"] {
+    align-self: flex-end;
+    min-height: $learn-touch-min !important;
+    min-width: 80px;
+  }
+
+  .learn-course-discussions .ln-cont-diss .ln-comment-card button,
+  .learn-course-discussions .ln-cont-diss .ln-comment-card .ant-btn,
+  .learn-course-discussions .ln-cont-diss .ln-comment-card .learn-discussion-post-btn {
+    min-height: $learn-touch-min !important;
+  }
+
+  /* Grading: desktop table hidden on mobile; mobile card list */
+  .learn-course-grading-desktop {
+    display: none !important;
+  }
+  .learn-course-grading-mobile {
+    display: block;
+    margin-top: 0;
+  }
+  .learn-course-grading-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .learn-course-grading-card {
+    -webkit-tap-highlight-color: transparent;
+    min-height: $learn-touch-min;
+
+    &:active {
+      opacity: 0.98;
+    }
+  }
+  .learn-course-grading-card__header {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+  }
+  .learn-course-grading-card__num {
+    min-width: 26px;
+    height: 26px;
+    font-size: 12px;
+  }
+  .learn-course-grading-card__title {
+    font-size: 16px;
+    word-break: break-word;
+  }
+  .learn-course-grading-card__row {
+    min-height: $learn-touch-min;
+    padding: 12px 0;
+    font-size: 14px;
+  }
+  .learn-course-grading-card__content,
+  .learn-course-grading-card__points {
+    word-break: break-word;
+  }
+  .learn-course-grading__summary {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .learn-course-grading__summary-value {
+    font-size: 18px;
+  }
+}
+
+// Grading: show table on desktop, cards only on mobile
+@media (min-width: 768px) {
+  .learn-course-grading-desktop {
+    display: block !important;
+  }
+  .learn-course-grading-mobile {
+    display: none !important;
+  }
+}
+
+// Attendance student: show table on desktop, cards only on mobile
+@media (min-width: 768px) {
+  .learn-attendance-student-desktop {
+    display: block !important;
+  }
+  .learn-attendance-student-mobile {
+    display: none !important;
+  }
+}
+
+// Students: show table on desktop, cards only on mobile
+@media (min-width: 768px) {
+  .learn-course-students-desktop {
+    display: block !important;
+  }
+  .learn-course-students-mobile {
+    display: none !important;
+  }
+}
+
+@media (max-width: $learn-mobile-bp) {
+  /* Students: desktop table hidden on mobile; mobile card list */
+  .learn-course-students-desktop {
+    display: none !important;
+  }
+  .learn-course-students-mobile {
+    display: block;
+    margin-top: 0;
+  }
+  .learn-course-students-card {
+    min-height: $learn-touch-min;
+    align-items: flex-start;
+  }
+
+  /* Attendance: header and controls touch-friendly */
+  .learn-course-attendance .attendee-header-wrapper {
+    flex-wrap: wrap;
+    padding-left: $learn-mobile-pad;
+    padding-right: $learn-mobile-pad;
+    gap: 12px;
+  }
+
+  .learn-course-attendance .attendee-header-wrapper .ant-select-selector,
+  .learn-course-attendance .takeAttendanceBtn {
+    min-height: $learn-touch-min;
+  }
+
+  /* Take Attendance switch: keep pill shape (do not stretch to square/circle) */
+  .learn-course-attendance .attendee-header-wrapper .ant-switch {
+    min-height: unset !important;
+    height: 22px !important;
+    min-width: 44px !important;
+    flex-shrink: 0;
+    border-radius: 100px !important;
+  }
+  .learn-course-attendance .attendee-header-wrapper .ant-switch .ant-switch-handle {
+    width: 18px !important;
+    height: 18px !important;
+  }
+  .learn-course-attendance .attendee-header-wrapper .ant-switch .ant-switch-inner {
+    border-radius: 100px;
+  }
+
+  .learn-course-attendance .takeAttendanceBtn {
+    display: inline-flex;
+    align-items: center;
+    min-height: $learn-touch-min;
+    gap: 8px;
+  }
+
+  .learn-course-attendance .attendance-list {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
+  /* Attendance: stacked header on mobile */
+  .learn-course-attendance .learn-attendance-inner .attendee-header-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .learn-course-attendance .attendee-header-row {
+    flex-wrap: wrap;
+  }
+
+  /* Attendance student: desktop table hidden, mobile cards */
+  .learn-attendance-student-desktop {
+    display: none !important;
+  }
+  .learn-attendance-student-mobile {
+    display: block;
+    margin-top: 16px;
+  }
+  .learn-attendance-student-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .learn-attendance-student-card {
+    background: $neutral-50;
+    border: 1px solid $neutral-100;
+    border-radius: 8px;
+    padding: 16px;
+    box-sizing: border-box;
+    min-height: $learn-touch-min;
+  }
+  .learn-attendance-student-card__date {
+    font-size: 14px;
+    font-weight: 600;
+    color: $neutral-900;
+    margin-bottom: 4px;
+    word-break: break-word;
+  }
+  .learn-attendance-student-card__day {
+    font-size: 14px;
+    color: $neutral-500;
+    margin-bottom: 4px;
+  }
+  .learn-attendance-student-card__time {
+    font-size: 14px;
+    color: $neutral-500;
+    margin-bottom: 8px;
+  }
+  .learn-attendance-student-card__status {
+    margin-top: 4px;
+  }
+  .learn-attendance-student-empty {
+    margin-top: 16px;
+  }
+
+  /* Attendance teacher: scrollable grid, sticky names */
+  .learn-course-attendance .attend-body {
+    flex-direction: column;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-top: 12px;
+    padding-bottom: 16px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  .learn-course-attendance .attend-body table {
+    min-width: max-content;
+  }
+
+  /* Announcements: Add button touch-friendly */
+  .learn-course-announcements .ln-module-card__head .ant-btn,
+  .learn-course-announcements .ln-module-card__head .custom-btn {
+    min-height: $learn-touch-min !important;
+    min-width: $learn-touch-min !important;
+  }
+
+  /* Home: content word-break */
+  .learn-course-home .ln-card-detail__body {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// File Explorer: page, header, scroll padding, Back 44px
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-file-explorer-page {
+    overflow-x: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .learn-file-explorer-page .ln-module__head .h1,
+  .learn-file-explorer-page .ln-module__head h1 {
+    overflow: visible;
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: normal;
+  }
+
+  .learn-file-explorer-page .learn-file-explorer-scroll {
+    padding-top: 16px !important;
+    padding-left: $learn-mobile-pad !important;
+    padding-right: $learn-mobile-pad !important;
+  }
+
+  .learn-file-explorer-page .ant-btn {
+    min-height: $learn-touch-min !important;
+    min-width: $learn-touch-min !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// All Quizzes (learner): table on desktop, card list on mobile
+// ---------------------------------------------------------------------------
+.learn-quizzes-desktop {
+  @media (max-width: $learn-mobile-bp) {
+    display: none !important;
+  }
+}
+
+.learn-quizzes-mobile {
+  display: none;
+
+  @media (max-width: $learn-mobile-bp) {
+    display: block !important;
+  }
+}
+
+.learn-quiz-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.learn-quiz-card {
+  background: $ann-bg;
+  border: 1px solid $ann-border;
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+
+  @media (max-width: $learn-mobile-bp) {
+    padding: 18px $learn-mobile-pad;
+  }
+
+  &:hover {
+    border-color: darken($ann-border, 8%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  &:active {
+    opacity: 0.98;
+  }
+
+  &:focus-within {
+    box-shadow: 0 0 0 2px $ann-primary;
+    outline: none;
+  }
+
+  &__title {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 8px;
+    line-height: 1.4;
+    word-break: break-word;
+    color: $ann-text;
+  }
+
+  &__meta {
+    font-size: 14px;
+    color: $ann-text-muted;
+    margin-bottom: 12px;
+  }
+
+  &__sep {
+    color: $ann-border;
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 14px;
+
+    .learn-quiz-card__label {
+      color: $ann-text-muted;
+    }
+
+    .learn-quiz-card__value {
+      min-height: $learn-touch-min;
+      display: inline-flex;
+      align-items: center;
+    }
+  }
+
+  &__actions {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid $ann-border;
+    min-height: $learn-touch-min;
+    display: flex;
+    align-items: center;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Quiz attempt page: layout, footer, safe areas (mobile only)
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .ln-quiz-page-section {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .ln-quiz-page {
+    flex-direction: column;
+    min-height: 100%;
+  }
+
+  .ln-quiz-left-panel {
+    width: 100%;
+    flex-shrink: 0;
+  }
+
+  .ln-quiz-status-panel {
+    width: 100% !important;
+
+    .ln-QZstatus-panel__logo {
+      padding: 16px $learn-mobile-pad 12px;
+    }
+
+    .ln-QZstatus-panel__body {
+      padding: 12px $learn-mobile-pad 16px;
+    }
+
+    .Question-status-list {
+      max-height: 140px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      &::-webkit-scrollbar { display: none; }
+    }
+
+    .Question-status-list__item {
+      padding: 10px 12px;
+    }
+  }
+
+  .ln-quiz-main {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 0 !important;
+    width: 100% !important;
+  }
+
+  .ln-quiz-body-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 100px; // space for fixed footer
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  .ln-quiz {
+    min-height: 200px !important;
+    height: auto !important;
+  }
+
+  .ln-quiz-footer.ln-quiz-footer-actions {
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding: 12px $learn-mobile-pad calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+    margin-bottom: 0 !important;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+
+    .ant-form-item {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 0 !important;
+    }
+
+    .ln-ant-btn,
+    .ant-btn {
+      min-height: $learn-touch-min;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      margin-right: 0 !important;
+    }
+
+    .w-160 {
+      min-width: 100px;
+    }
+  }
+
+  .ln-quiz-form-item-content {
+    .ant-radio-button-wrapper,
+    .ant-checkbox-group-item {
+      min-height: $learn-touch-min !important;
+    }
+
+    .quiz-input {
+      min-height: $learn-touch-min !important;
+    }
+
+    .quiz-textarea {
+      min-height: 120px !important;
+    }
+  }
+
+  .ln-quiz-progress-bar {
+    padding-bottom: 8px;
+  }
+
+  .ln-quiz-step-num {
+    font-size: 14px;
+  }
+}
+
+// ===========================================================================
+// MOBILE AUDIT FIXES — HIGH / MEDIUM / LOW
+// ===========================================================================
+
+// ---------------------------------------------------------------------------
+// HIGH: Placements tabs — 6 tabs cramped, horizontal scroll on mobile
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-placements-layout .ant-tabs-nav-list {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  .learn-placements-layout .ant-tabs-tab {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 8px 12px !important;
+    font-size: 13px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// HIGH: Course detail header — stacking on mobile
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-course-detail-header,
+  .ln-course-detail-header {
+    flex-direction: column;
+    gap: 12px;
+
+    .ln-course-detail-title,
+    h1 {
+      font-size: 20px !important;
+      white-space: normal;
+      word-break: break-word;
+    }
+  }
+
+  .learn-course-detail-page .ln-module__head {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// HIGH: Dashboard metric cards — ensure 2-col grid on mobile
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-dashboard-stats,
+  .ln-dashboard-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .learn-dashboard-stat-card,
+  .ln-dashboard-card {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// HIGH: Profile sections — form fields full-width on mobile
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-profile-page,
+  .ln-profile-container {
+    .ant-form-item {
+      width: 100%;
+      margin-bottom: 12px;
+    }
+
+    .profile-sections > .ant-col,
+    .profile-sections-row > .ant-col {
+      flex: 0 0 100% !important;
+      max-width: 100% !important;
+    }
+
+    .ant-input,
+    .ant-input-affix-wrapper,
+    .ant-select,
+    .ant-select-selector,
+    .ant-picker,
+    .ant-input-number,
+    .ant-upload,
+    .ant-upload .ant-btn {
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
+    .profile-section-actions {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 10px !important;
+
+      .ant-btn,
+      .ln-btn {
+        width: 100% !important;
+        margin-left: 0 !important;
+      }
+    }
+
+    .card-header-row--profile .card-header-actions {
+      width: 100%;
+
+      .ant-space,
+      .ant-space-item,
+      .ant-btn {
+        width: 100% !important;
+      }
+    }
+
+    .profile-avatar-row > :not(.ant-avatar) {
+      min-width: 0;
+      width: 100%;
+    }
+
+    .profile-resume-section__actions {
+      flex-direction: column;
+
+      .ant-btn {
+        width: 100%;
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// HIGH: Search inputs responsive at 320px viewport
+// ---------------------------------------------------------------------------
+@media (max-width: 400px) {
+  .ant-input-affix-wrapper,
+  .ant-input-search {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .ant-select {
+    min-width: 0 !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// MEDIUM: Touch targets — ensure minimum 44px on all interactive elements
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .ant-pagination-item,
+  .ant-pagination-prev,
+  .ant-pagination-next {
+    min-width: $learn-touch-min !important;
+    min-height: $learn-touch-min !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .ant-tabs-tab {
+    min-height: $learn-touch-min;
+  }
+
+  .ant-breadcrumb-link a,
+  .ant-breadcrumb-separator {
+    min-height: $learn-touch-min;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// MEDIUM: Status badges — prevent overflow on small screens
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .ant-tag,
+  .ln-status,
+  .learn-placements-status-badge {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// MEDIUM: Font sizes — enforce minimum readable size on mobile
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .ant-table-tbody > tr > td,
+  .ant-descriptions-item-label,
+  .ant-descriptions-item-content,
+  .ant-form-item-label > label {
+    font-size: 13px !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// MEDIUM: Card body padding — tighter on mobile
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .ant-card-body {
+    padding: $learn-mobile-pad !important;
+  }
+
+  // Exceptions: preserve specific component padding
+  .learn-placements-dashboard__card .ant-card-body {
+    padding: $learn-mobile-pad !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// MEDIUM: Empty state centering on mobile
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .ant-empty {
+    padding: 24px $learn-mobile-pad;
+
+    .ant-empty-image {
+      height: 80px;
+    }
+
+    .ant-empty-description {
+      font-size: 14px;
+      max-width: 280px;
+      margin: 8px auto 0;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// MEDIUM: Skeleton loaders — proper sizing on mobile
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .ant-skeleton {
+    max-width: 100%;
+
+    .ant-skeleton-content .ant-skeleton-title {
+      margin-bottom: 8px;
+    }
+
+    .ant-skeleton-content .ant-skeleton-paragraph > li {
+      margin-top: 8px;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// LOW: Notification detail modal — full width on mobile
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-notification-detail-modal .ant-modal {
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// LOW: Career calendar — toolbar and content mobile
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-career-calendar-wrapper {
+    padding: 0 $learn-mobile-pad $learn-mobile-pad !important;
+  }
+
+  .learn-career-calendar-toolbar__label {
+    font-size: 14px;
+    min-width: 110px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// LOW: Popover / tooltip overflow prevention
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .ant-popover {
+    max-width: calc(100vw - 32px);
+  }
+
+  .ant-popover-inner-content {
+    max-width: calc(100vw - 48px);
+    overflow-x: auto;
+    word-break: break-word;
+  }
+
+  .ant-tooltip {
+    max-width: calc(100vw - 32px);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// LOW: Pipeline icons — stack vertically on mobile instead of wrapping
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .learn-placements-pipeline__row-main {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .learn-placements-pipeline__icons {
+    flex-wrap: wrap;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// LOW: Learner sidebar overlay — full width on mobile (already handled
+// by sidebar code, but ensure z-index)
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .ln-sidebar-overlay {
+    z-index: 400;
+  }
+
+  .ln-sidebar.ln-sidebar--open {
+    z-index: 500;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// HIGH: Shared mobile overlay shell — course drawers/modals must not fight the
+// bottom navigation, top notification drawer, or older global AntD overrides.
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .ln-modal-container-root.ant-modal-root .ant-modal-wrap,
+  .ln-confirm-modal-root.ant-modal-root .ant-modal-wrap {
+    align-items: center !important;
+    justify-content: center !important;
+    padding: calc(12px + env(safe-area-inset-top, 0px)) 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .ln-modal-container-root.ant-modal-root .ant-modal,
+  .ln-confirm-modal-root.ant-modal-root .ant-modal {
+    width: min(560px, calc(100vw - 24px)) !important;
+    max-width: calc(100vw - 24px) !important;
+    margin: 0 auto !important;
+    top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .ln-modal-container-root.ant-modal-root .ant-modal-content,
+  .ln-confirm-modal-root.ant-modal-root .ant-modal-content {
+    max-height: calc(100dvh - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
+    overflow: hidden !important;
+    border-radius: 16px !important;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ln-modal-container-root.ant-modal-root .ant-modal-header,
+  .ln-confirm-modal-root.ant-modal-root .ant-modal-confirm-title {
+    flex: 0 0 auto;
+    padding-right: 36px;
+  }
+
+  .ln-modal-container-root.ant-modal-root .ant-modal-body,
+  .ln-confirm-modal-root.ant-modal-root .ant-modal-confirm-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: calc(100dvh - 156px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px !important;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  .ln-modal-container-root.ant-modal-root .ant-modal-footer,
+  .ln-confirm-modal-root.ant-modal-root .ant-modal-confirm-btns {
+    flex: 0 0 auto;
+    margin-top: 0 !important;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+    border-top: 1px solid rgba(15, 23, 42, 0.08);
+    background: #fff;
+  }
+
+  .ln-modal-container-root.ant-modal-root .ant-modal-footer > div,
+  .ln-confirm-modal-root.ant-modal-root .ant-modal-confirm-btns {
+    display: flex !important;
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .ln-modal-container-root.ant-modal-root .ant-modal-footer .ant-btn,
+  .ln-modal-container-root.ant-modal-root .ant-modal-footer button,
+  .ln-confirm-modal-root.ant-modal-root .ant-modal-confirm-btns .ant-btn {
+    width: 100%;
+    min-height: $learn-touch-min;
+  }
+
+  .ln-modal-container-root.ant-modal-root .ant-modal-close,
+  .ln-confirm-modal-root.ant-modal-root .ant-modal-close {
+    min-width: $learn-touch-min;
+    min-height: $learn-touch-min;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ln-drawer-widget-root.ant-drawer-root .ant-drawer-content-wrapper,
+  .ln-course-direct-drawer-root.ant-drawer-root .ant-drawer-content-wrapper,
+  .ln-notification-drawer-root.ant-drawer-root .ant-drawer-content-wrapper,
+  .Quiz-submission-drawer.ant-drawer .ant-drawer-content-wrapper {
+    width: 100vw !important;
+    max-width: 100vw !important;
+  }
+
+  .ln-drawer-widget-root.ant-drawer-root .ant-drawer-content,
+  .ln-course-direct-drawer-root.ant-drawer-root .ant-drawer-content,
+  .ln-notification-drawer-root.ant-drawer-root .ant-drawer-content {
+    height: 100dvh;
+    max-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ln-drawer-widget-root.ant-drawer-root .ant-drawer-header,
+  .ln-course-direct-drawer-root.ant-drawer-root .ant-drawer-header,
+  .ln-notification-drawer-root.ant-drawer-root .ant-drawer-header {
+    flex: 0 0 auto;
+    padding: calc(14px + env(safe-area-inset-top, 0px)) 16px 12px !important;
+  }
+
+  .ln-drawer-widget-root.ant-drawer-root .ant-drawer-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px !important;
+    padding-bottom: calc(#{$learn-mobile-footer-height} + 24px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .ln-course-direct-drawer-root.ant-drawer-root .ant-drawer-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px !important;
+    padding-bottom: calc(#{$learn-mobile-footer-height} + 24px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .ln-drawer-widget-root.ant-drawer-root .ant-drawer-footer {
+    flex: 0 0 auto;
+    position: sticky;
+    bottom: 0;
+    z-index: 4;
+    padding: 12px 16px calc(#{$learn-mobile-footer-height} + 12px + env(safe-area-inset-bottom, 0px)) !important;
+    background: #fff;
+    border-top: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 -10px 24px rgba(15, 23, 42, 0.06);
+  }
+
+  .ln-drawer-widget-root.ant-drawer-root .ant-drawer-footer > div,
+  .ln-drawer-widget-root.ant-drawer-root .ant-drawer-footer > div > div:last-child {
+    width: 100%;
+    flex-direction: column-reverse !important;
+    align-items: stretch !important;
+  }
+
+  .ln-drawer-widget-root.ant-drawer-root .ant-drawer-footer button {
+    width: 100%;
+    min-height: $learn-touch-min;
+  }
+
+  .ln-notification-drawer-root.ant-drawer-root .ant-drawer-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0 !important;
+  }
+
+  .ln-notification-drawer-root.ant-drawer-root .ln-notification-drawer-panel {
+    height: 100%;
+    min-height: 0;
+  }
+
+  .ln-notification-drawer-root.ant-drawer-root .ln-notification-drawer__body {
+    padding-bottom: calc(#{$learn-mobile-footer-height} + 12px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .ln-notification-drawer-root.ant-drawer-root .ln-notification-drawer__footer {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .ln-modal-container-root.ant-modal-root .ln-bg-modal.ant-modal {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100dvh !important;
+    margin: 0 !important;
+  }
+
+  .ln-modal-container-root.ant-modal-root .ln-bg-modal .ant-modal-content {
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+  }
+
+  .ln-modal-container-root.ant-modal-root .ln-bg-modal .ant-modal-body {
+    max-height: calc(100dvh - 56px - env(safe-area-inset-top, 0px)) !important;
+    padding: 12px !important;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// HIGH: Course overlay content — assignment/quiz/PDF/student overlays need
+// their inner layouts to obey the same mobile shell.
+// ---------------------------------------------------------------------------
+@media (max-width: $learn-mobile-bp) {
+  .ln-modal-container-root.ant-modal-root .ln-bg-modal .ln-mod-child {
+    height: calc(100dvh - 56px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
+    min-height: 0 !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .ln-modal-container-root.ant-modal-root .ln-bg-modal .ln-mod-child-left {
+    width: 100% !important;
+    max-height: 132px !important;
+    flex: 0 0 auto;
+    border-right: 0 !important;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px 12px !important;
+  }
+
+  .ln-modal-container-root.ant-modal-root .ln-bg-modal .ln-mod-child-left ul {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 8px;
+    min-width: max-content;
+  }
+
+  .ln-modal-container-root.ant-modal-root .ln-bg-modal .ln-mod-child-left .ln-assign-itm {
+    min-height: $learn-touch-min;
+    display: inline-flex !important;
+    align-items: center;
+    white-space: nowrap;
+    margin: 0 !important;
+    border-radius: 999px;
+  }
+
+  .ln-modal-container-root.ant-modal-root .ln-bg-modal .ln-mod-child-right {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .ln-modal-container-root.ant-modal-root .ln-bg-modal .ln-submit-cont {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none !important;
+    padding: 14px !important;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ln-modal-container-root.ant-modal-root .ln-bg-modal .ln-submiss-foot {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .ln-modal-container-root.ant-modal-root .ln-bg-modal .ln-grade-inp {
+    width: 100% !important;
+    min-height: $learn-touch-min;
+  }
+
+  .ln-modal-container-root.ant-modal-root .ln-bg-modal .pdf iframe,
+  .ln-modal-container-root.ant-modal-root .ln-pdf-viewer-modal__frame {
+    height: calc(100dvh - 112px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
+    min-height: 0 !important;
+  }
+
+  .ln-pdf-viewer-modal__body {
+    height: 100%;
+    min-height: 0;
+  }
+
+  .ln-drawer-widget-root.ant-drawer-root .ant-drawer-title {
+    font-size: 16px;
+    line-height: 1.35;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  .ln-course-direct-drawer-root.ant-drawer-root .ant-drawer-title {
+    font-size: 16px;
+    line-height: 1.35;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  .ln-course-direct-drawer-root.ant-drawer-root .ln-drawer-body {
+    min-height: 0;
+    padding: 0 !important;
+    overflow: visible;
+  }
+
+  .ln-course-direct-drawer-root.ant-drawer-root .ln-drawer-content {
+    min-height: 0 !important;
+    height: auto !important;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .ln-course-direct-drawer-root.ant-drawer-root .ln-drawer-btn,
+  .ln-course-direct-drawer-root.ant-drawer-root .ln-drawer-btn-pos {
+    position: sticky !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    z-index: 3;
+    margin-top: auto !important;
+    padding: 12px 0 calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+    background: #fff;
+    border-top: 1px solid rgba(15, 23, 42, 0.08);
+    gap: 8px;
+  }
+
+  .ln-course-direct-drawer-root.ant-drawer-root .ln-drawer-btn button,
+  .ln-course-direct-drawer-root.ant-drawer-root .ln-drawer-btn-pos button {
+    width: 100%;
+    min-height: $learn-touch-min;
+    margin: 0 !important;
+  }
+
+  .ln-course-direct-drawer-root.ant-drawer-root .ln-editor-wraper,
+  .ln-course-direct-drawer-root.ant-drawer-root .ql-container,
+  .ln-course-direct-drawer-root.ant-drawer-root iframe {
+    max-width: 100%;
+  }
+
+  .ln-drawer-widget-root.ant-drawer-root .ln-drawer-body,
+  .ln-drawer-widget-root.ant-drawer-root .ln-assignment-view-drawer-body {
+    padding: 0 !important;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .ln-drawer-widget-root.ant-drawer-root .ln-editor-wraper,
+  .ln-drawer-widget-root.ant-drawer-root .ql-container {
+    max-width: 100%;
+  }
+
+  .ln-drawer-widget-root.ant-drawer-root .ln-assignment-pdf-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ln-drawer-widget-root.ant-drawer-root .ln-assignment-pdf-nav {
+    gap: 8px;
+  }
+
+  .ln-drawer-widget-root.ant-drawer-root .ln-assignment-pdf-nav > div,
+  .ln-drawer-widget-root.ant-drawer-root .ln-assignment-drawer-btn {
+    width: 100%;
+    margin: 0 !important;
+  }
+
+  .learn-course-students-photo-modal.ant-modal {
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
+  }
+
+  .ln-course-direct-modal-root.ant-modal-root .ant-modal-wrap {
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 12px !important;
+  }
+
+  .learn-course-students-photo-modal img,
+  .learn-course-students-photo-modal .ant-image-img {
+    max-width: calc(100vw - 56px) !important;
+    max-height: calc(100dvh - 180px) !important;
+    object-fit: contain;
+  }
+}

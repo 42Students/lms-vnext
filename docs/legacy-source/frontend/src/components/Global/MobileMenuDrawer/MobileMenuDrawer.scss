@@ -1,0 +1,70 @@
+/* Mobile navigation must override the desktop sidebar's <=767px display:none rule. */
+@media (max-width: 767px) {
+  .ln-menu-drawer-root .ant-drawer-content-wrapper {
+    width: min(320px, 88vw) !important;
+  }
+
+  .ln-menu-drawer .ant-drawer-body {
+    min-height: 0;
+    padding: 0;
+  }
+
+  .ln-menu-drawer .fl-d-panel-l {
+    display: flex !important;
+    width: 100% !important;
+    height: 100%;
+    min-height: 0;
+    padding-inline: 8px !important;
+    border-right: 0;
+  }
+
+  .ln-menu-drawer .fl-d-panel-l:hover {
+    width: 100% !important;
+  }
+
+  // Drawer already owns the logo/header; prevent a duplicated logo inside Sidebar.
+  .ln-menu-drawer .fl-d-panel-l__head {
+    display: none;
+  }
+
+  .ln-menu-drawer .fl-d-panel-l > .mt-2 {
+    margin-top: 0 !important;
+  }
+
+  .ln-menu-drawer .ln-hov__visible {
+    overflow-y: auto !important;
+  }
+
+  .ln-menu-drawer .fl-d-panel-l__body {
+    padding-top: 8px;
+  }
+
+  .ln-menu-drawer .fl-module-link {
+    min-height: 44px;
+    justify-content: flex-start !important;
+  }
+
+  .ln-menu-drawer .menu-txt {
+    display: block !important;
+  }
+
+  .ln-menu-drawer .fl-module-link__badge {
+    position: static !important;
+    margin-left: auto !important;
+    transform: none !important;
+  }
+
+  // TPO section labels are useful in the drawer too; align them with the menu text column.
+  .ln-menu-drawer .tpo-sidebar-panel .fl-panel-module-list__section {
+    display: flex !important;
+    height: 18px;
+    min-height: 18px !important;
+    margin: 12px 12px 6px 46px;
+    justify-content: flex-start;
+    font-size: 9px !important;
+  }
+
+  .ln-menu-drawer .tpo-sidebar-panel .fl-panel-module-list__section::after {
+    display: none !important;
+  }
+}
