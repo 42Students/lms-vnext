@@ -110,7 +110,7 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
 /* Legacy: components___form.scss:57-60 and
    components___variables.scss:28 — muted placeholder #a9a7ae. */
 :where(input:not([type="checkbox"]):not([type="radio"]), textarea):not(:where([data-unskin], [data-unskin] *))::placeholder {
-  color: #a9a7ae;
+  color: var(--lms-neutral-400);
   opacity: 1;
 }
 /* The legacy sources do not specify UA autofill colour: limit the fix to
@@ -123,8 +123,8 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
 /* Legacy: components___variables.scss:10-13 and old-lms-shell.css:45-48.
    Selection is paint-only and retains readable dark text. */
 ::selection {
-  color: #1a1d21;
-  background-color: #eff8fa;
+  color: var(--lms-neutral-900);
+  background-color: var(--lms-primary-subtle);
 }
 
 /* Legacy: components___antddesign.scss:134-136 selected menu items;
