@@ -95,8 +95,7 @@ export async function verifyPreuserChallenge(raw:unknown){
   await tx.update(identityPreuserChallenges).set({
     attempts:row.attempts+1,...(verified?{verifiedAt:now}:{})
   }).where(eq(identityPreuserChallenges.id,row.id));
-  if(!verified)throw new Error("ONBOARDING_CODE_INVALID");
-  return {verified:true,challengeId:row.id};
+  return {verified,challengeId:row.id};
  });
 }
 /** Verified contact proof is consumed only after real learner membership is
