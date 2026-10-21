@@ -264,7 +264,7 @@ export function FacultyLessonAuthoring({
     try {
       let createdContentId:string|null=null;
       const cleanTitle = title.trim();
-      if (!cleanTitle) {
+      if (!cleanTitle || cleanTitle.length > 255) {
         throw new Error(
           mode === "RESOURCE"
             ? "Choose a course/lesson and enter a Resource title (1–255 characters)."
@@ -282,10 +282,21 @@ export function FacultyLessonAuthoring({
         throw new Error("Points must be a whole number between 0 and 1000.");
 
       if (mode === "RESOURCE") {
-        if (!notes.trim() && !url.trim()) {
-          throw new Error(
-            "Add notes or an HTTPS resource link.",
-          );
+        const resourceLink = url.trim();
+        if (!notes.trim() && !resourceLink) {
+          throw new Error("Add notes or an HTTPS resource link.");
+        }
+        if (resourceLink) {
+          let address: URL;
+          try {
+            address = new URL(resourceLink);
+          } catch {
+            throw new Error("Enter a valid HTTPS Resource link.");
+          }
+          if (address.protocol !== "https:" || address.username || address.password ||
+              /\s/.test(resourceLink)) {
+            throw new Error("Enter a valid HTTPS Resource link.");
+          }
         }
 
         const receipt=await post(
@@ -298,8 +309,7 @@ export function FacultyLessonAuthoring({
             points: contentPointValue,
             notes:
               notes.trim() || null,
-            externalUrl:
-              url.trim() || null,
+            externalUrl: resourceLink || null,
             sequence:
               nextContentSequence,
           },
@@ -814,6 +824,13 @@ export function FacultyLessonAuthoring({
                   }
                 />
               </label>
+            ) : null}
+
+            {mode === "RESOURCE" ? (
+              <p className="mt-3 text-xs leading-5 text-muted-foreground">
+                Private file attachments require the separate verified upload workflow;
+                this quick form currently saves notes and HTTPS links only.
+              </p>
             ) : null}
 
             {(mode==="RESOURCE"||mode==="YOUTUBE"||mode==="LIVE_CLASS")?
