@@ -2,7 +2,7 @@ import "server-only";
 import {and,eq} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {collegeMemberships,learnerProfiles,membershipRoles,users} from "@/db/schema";
+import {collegeMemberships,learnerProfiles,membershipRoles,placementCandidatePreferences,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -20,7 +20,9 @@ import {learnerProfileDocumentEditInputSchema,learnerProfileChangedFields,learne
  *
  * Full-document edits use expectedDocument CAS; a JobPreferences-only patch
  * uses expectedJobPreferences CAS so unrelated sections are never replaced.
- * No cross-service transaction with notification preferences is implied.
+ * The legacy matching-job opt-out is synchronized with the persisted
+ * placement candidate preference in the SAME transaction as the profile edit:
+ * a toggle must affect actual outbox recipient filtering, not just profile UI.
  */
 const ownJobPreferencesPatchSchema=z.strictObject({
   jobPreferencesPatch:z.record(z.string().max(100),z.unknown())
@@ -67,6 +69,20 @@ export async function updateOwnLearnerProfileDocument(context:RequestContext,raw
     const fields=learnerProfileChangedFields(current,nextDocument);
     if(fields.includes("education")) learnerProfileEducationWriteSchema.parse(nextDocument.education);
     if(!fields.length)return {...locked,profileDocument:current};
+    if(current.jobPreferences.jobNotificationsEnabled !==
+       nextDocument.jobPreferences.jobNotificationsEnabled){
+      // The outbox's eligible recipient query consumes notifyMatchingJobs,
+      // whereas legacy profile screens edit jobNotificationsEnabled. Keep the
+      // single boolean decision aligned without overwriting independent
+      // application-update notification choices or job preferences.
+      const enabled=nextDocument.jobPreferences.jobNotificationsEnabled;
+      await tx.insert(placementCandidatePreferences).values({
+        membershipId:member.id,notifyMatchingJobs:enabled,
+      }).onConflictDoUpdate({
+        target:placementCandidatePreferences.membershipId,
+        set:{notifyMatchingJobs:enabled,updatedAt:new Date()},
+      });
+    }
     const [saved]=await tx.update(learnerProfiles).set({profileDocument:nextDocument,updatedAt:new Date()})
       .where(eq(learnerProfiles.membershipId,member.id)).returning();
     if(!saved)throw new Error("PROFILE_SAVE_UNAVAILABLE");
