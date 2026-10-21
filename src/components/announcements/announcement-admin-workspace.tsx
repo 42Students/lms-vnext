@@ -2,14 +2,11 @@
 import {Select} from "@/components/ui/select";
 import {EmptyState} from "@/components/ui/empty-state";
 import {Disclosure} from "@/components/ui/disclosure";
-import {Dropdown} from "@/components/ui/dropdown";
-import { Menu, MenuItem } from "@/components/ui/menu";
-
-
-import { useMemo, useRef, useState, useTransition } from "react";
+import { Fragment, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 import {platformAnnouncementPublicationSummary} from "@/modules/announcements/super-admin-publish-consent-model";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -39,6 +36,13 @@ export type AnnouncementAdminItem = {
   deletedAt: string | null;
   version: number;
   createdAt: string;
+  /** Present where the source has author and delivery-event metadata. */
+  authorName?: string | null;
+  updatedAt?: string | null;
+  sentAt?: string | null;
+  deliveryOutboxId?: string | null;
+  deliveryCollegeId?: string | null;
+  deliveryStatus?: "FAILED" | "SCHEDULED" | "SENT" | "PROCESSING" | null;
   visibilityState: "DELETED" | "SCHEDULED" | "EXPIRED" | "LIVE";
 };
 
@@ -61,6 +65,35 @@ function splitTarget(value: string) {
  * recipient copy of a Super Admin broadcast as if it were the whole broadcast. */
 function isBroadcastCopy(item: AnnouncementAdminItem) {
   return item.senderType === "SUPER_ADMIN" && item.receiverType === "COLLEGE";
+}
+
+/** Legacy announcement timestamp: 12 Oct, 2:05 PM (add year for historical rows). */
+function announcementWhen(value: string | null | undefined): string {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const nowYear = new Date().getFullYear();
+  const parts = new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric",
+    hour: "numeric", minute: "2-digit", hour12: true,
+  }).formatToParts(date);
+  const part = (type: string) => parts.find(item => item.type === type)?.value ?? "";
+  const calendarYear = Number(part("year"));
+  return part("day") + " " + part("month") +
+    (calendarYear === nowYear ? "" : " " + calendarYear) + ", " +
+    part("hour") + ":" + part("minute") + " " + part("dayPeriod").toUpperCase();
+}
+
+/** Linkify independently validated HTTPS URLs while React escapes all other text. */
+function LinkifiedAnnouncement({ body }: { body: string }) {
+  const expression = /(https:\/\/[^\s<>"')\]]+)/g;
+  return <>{body.split(expression).map((part, index) => {
+    if (index % 2 === 0) return <Fragment key={index}>{part}</Fragment>;
+    const safe = safeAnnouncementLink(part);
+    return safe ? <a key={index} href={safe} target="_blank" rel="noopener noreferrer"
+      className="break-all text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{part}</a>
+      : <Fragment key={index}>{part}</Fragment>;
+  })}</>;
 }
 
 export function AnnouncementAdminWorkspace({
@@ -88,6 +121,8 @@ export function AnnouncementAdminWorkspace({
   const [expiresAt, setExpiresAt] = useState("");
   const [pinned, setPinned] = useState(false);
   const [editing, setEditing] = useState<AnnouncementAdminItem | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [deliveryAction, setDeliveryAction] = useState<AnnouncementAdminItem | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<AnnouncementAdminItem | null>(null);
   const [editConsent,setEditConsent]=useState(false);
   const createTiming = announcementLocalTiming(scheduledAt, expiresAt);
@@ -134,6 +169,7 @@ export function AnnouncementAdminWorkspace({
         return;
       }
       resetCreate();
+      setCreateOpen(false);
       setReviewPublish(false);
       showToast({ tone: "success", title: "Announcement created" });
       router.refresh();
@@ -184,6 +220,32 @@ export function AnnouncementAdminWorkspace({
       router.refresh();
       } catch {showToast({tone:"error",title:"Announcement update failed",description:"Please retry."});}
       finally {flight.current=false;}
+    });
+  }
+
+  function requeueDelivery(item: AnnouncementAdminItem) {
+    if (pending || flight.current || !item.deliveryOutboxId || !item.deliveryCollegeId ||
+      (item.deliveryStatus !== "FAILED" && item.deliveryStatus !== "SCHEDULED")) return;
+    flight.current = true;
+    startTransition(async () => {
+      try {
+        const response = await fetch("/api/admin/notification-delivery/" +
+          encodeURIComponent(item.deliveryOutboxId!) + "/resend?collegeId=" +
+          encodeURIComponent(item.deliveryCollegeId!), { method: "POST" });
+        const payload = await response.json().catch(() => null);
+        if (!response.ok) {
+          showToast({tone:"error",title:"Cannot resend notification",description:
+            payload?.message ?? (payload?.error === "ALREADY_DELIVERED"
+              ? "That notification was already delivered. Compose a new one instead of resending it."
+              : "Unable to queue this notification.")});
+          return;
+        }
+        showToast({tone:"success",title:"Queued for immediate delivery"});
+        setDeliveryAction(null);
+        router.refresh();
+      } catch {
+        showToast({tone:"error",title:"Cannot resend notification",description:"Please retry."});
+      } finally { flight.current = false; }
     });
   }
 
@@ -242,7 +304,11 @@ export function AnnouncementAdminWorkspace({
 
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
-      <Disclosure title="Create announcement" className="min-w-0" contentClassName="pb-[var(--lms-space-4)]">
+      <div className="flex flex-wrap justify-end">
+        <Button type="button" onClick={() => setCreateOpen(true)}>+ Create announcement</Button>
+      </div>
+      <Dialog open={createOpen} onOpenChange={next => { if (!pending) setCreateOpen(next); }}
+       dismissible={!pending} title="Create announcement" className="max-w-[600px]">
         <section className="space-y-4 pt-[var(--lms-space-3)]">
         <div>
 
@@ -274,7 +340,7 @@ export function AnnouncementAdminWorkspace({
             </label>
             <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2 text-[13px]">
               Message
-              <Textarea className="w-full" value={message} maxLength={10000} onChange={(e) => setMessage(e.target.value)} />
+              <Textarea rows={6} className="w-full" value={message} maxLength={10000} onChange={(e) => setMessage(e.target.value)} />
             </label>
             <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
               Schedule · local time
@@ -297,55 +363,62 @@ export function AnnouncementAdminWorkspace({
           </div>
         )}
         </section>
-      </Disclosure>
+      </Dialog>
 
       <section className="min-w-0 space-y-[var(--lms-space-3)]">
         <h2 className="m-0 text-lg font-semibold text-foreground">Announcements</h2>
         {items.length === 0 ? (
-          <EmptyState title="No announcements" description={emptyMessage}/>
+          <EmptyState title={emptyMessage==="No announcements in this view."?"Nothing sent yet":emptyMessage} description={emptyMessage==="No announcements in this view."?undefined:emptyMessage}/>
         ) : (
           items.map((item) => {
             const targetLabel = targetLabels.get(`${item.receiverType}:${item.receiverId}`) ?? item.receiverId;
-            const safeLink = safeAnnouncementLink(item.message);
             return (
-              <article key={item.id} className="min-w-0 border-t border-border py-[var(--lms-space-4)]">
-                <div className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap gap-2 text-xs font-semibold text-muted-foreground">
-                      <span>{item.receiverType} · {targetLabel}</span>
-                      {item.isPinned ? <span>· Pinned</span> : null}
-                      <span>· {item.visibilityState.charAt(0) + item.visibilityState.slice(1).toLowerCase()}</span>
-                    </div>
-                    <h3 className="mt-2 text-base font-semibold text-foreground">{item.title}</h3>
-                    <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.message}</p>
-                    {item.buttonLabel&&item.buttonUrl&&/^https:\/\/[^\s]+$/i.test(item.buttonUrl)?<a href={item.buttonUrl}
-                      className="mt-2 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
-                      {item.buttonLabel} ↗
-                    </a>:null}
-                    {safeLink ? <a href={safeLink} className="mt-2 inline-flex min-h-11 items-center break-all text-sm font-semibold text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open linked resource ↗</a> : null}
-                    {item.expiresAt ? <p className="mt-2 text-xs text-muted-foreground">Show until {new Date(item.expiresAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</p> : null}
-                    <p className="mt-2 text-xs text-muted-foreground">
-                      Sender: {item.senderType} · Version {item.version}
-                    </p>
+              <article key={item.id} id={"announcement-"+item.id}
+               className={"flex min-w-0 flex-col gap-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-sm "+
+                 (item.isPinned?"border-l-[3px] border-l-[var(--lms-primary)]":"")}>
+                <header className="min-w-0 space-y-1">
+                  <div className="flex min-w-0 flex-wrap items-center gap-2">
+                    {item.isPinned?<svg role="img" aria-label="Pinned" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"
+                      className="shrink-0 text-[var(--lms-primary-text)]">
+                      <path d="M16 3 21 8l-3 1-3 5v3l-1 1-4-4-4 4-1-1 4-4-4-4 1-1h3l5-3z"/>
+                    </svg>:null}
+                    <h3 className="m-0 min-w-0 break-words text-base font-semibold text-[var(--lms-heading)]">{item.title}</h3>
+                    {item.version>1 || (item.updatedAt&&item.updatedAt!==item.createdAt)
+                      ?<Badge tone="neutral">Updated</Badge>:null}
+                    {item.visibilityState==="SCHEDULED"?<Badge tone="warning">Scheduled for {announcementWhen(item.scheduledAt)}</Badge>:null}
+                    {item.visibilityState==="EXPIRED"?<Badge tone="neutral">Ended</Badge>:null}
                   </div>
-                  <div className="flex min-w-0 shrink-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] min-[768px]:justify-end">
-                    {isBroadcastCopy(item) ? (
-                      <span role="status" className="max-w-56 text-xs text-muted-foreground">Group-wide broadcast editing and withdrawal are not available yet.</span>
-                    ) : !item.deletedAt ? (
-                      <>
-                        <Button size="sm" variant="secondary" disabled={pending} onClick={() => {setEditConsent(false);setEditing(item);}}>Edit</Button>
-                        <Dropdown trigger="More" label="Announcement actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
-                          <Menu className="w-full min-w-0">
-                            <MenuItem disabled={pending} onClick={() => mutate(item, "PIN")}>{item.isPinned ? "Unpin" : "Pin"}</MenuItem>
-                            <MenuItem disabled={pending} onClick={() => setConfirmDelete(item)}>Delete</MenuItem>
-                          </Menu>
-                        </Dropdown>
-                      </>
-                    ) : (
-                      <Button size="sm" disabled={pending} onClick={() => mutate(item, "RESTORE")}>Restore</Button>
-                    )}
+                  <p className="text-xs text-muted-foreground">{[
+                    item.authorName||item.senderType,
+                    announcementWhen(item.sentAt??item.createdAt),
+                    item.expiresAt&&item.visibilityState!=="EXPIRED"?"shows until "+announcementWhen(item.expiresAt):null,
+                   ].filter(Boolean).join(" · ")}</p>
+                  <span className="inline-flex text-xs text-muted-foreground">{item.receiverType} · {targetLabel}</span>
+                </header>
+                <p className="min-w-0 whitespace-pre-wrap break-words text-sm leading-[1.6] text-body"><LinkifiedAnnouncement body={item.message}/></p>
+                {item.buttonUrl&&/^https:\/\/[^\s]+$/i.test(item.buttonUrl)?
+                  <div className="flex flex-wrap"><a href={item.buttonUrl} target="_blank" rel="noopener noreferrer"
+                   className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+                    <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8">
+                     <path d="M10 13a5 5 0 0 0 7.1 0l2.1-2.1a5 5 0 0 0-7.1-7.1L11 5"/>
+                     <path d="M14 11a5 5 0 0 0-7.1 0l-2.1 2.1a5 5 0 1 0 7.1 7.1L13 19"/>
+                    </svg>{item.buttonLabel||"Open"}
+                   </a></div>:null}
+                <footer className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-t border-[var(--lms-canvas-border)] pt-3">
+                  <span className="text-xs text-muted-foreground">{item.visibilityState==="LIVE"?"Published":item.visibilityState.toLowerCase()}</span>
+                  <div className="flex flex-wrap gap-2">
+                    {item.deliveryOutboxId&&item.deliveryCollegeId&&(item.deliveryStatus==="FAILED"||item.deliveryStatus==="SCHEDULED")?
+                      <Button size="sm" variant="secondary" disabled={pending} onClick={()=>setDeliveryAction(item)}>
+                        {item.deliveryStatus==="FAILED"?"Retry":"Send now"}
+                      </Button>:null}
+                    {isBroadcastCopy(item)?<span role="status" className="text-xs text-muted-foreground">Edit placement-cell broadcasts together</span>
+                    :!item.deletedAt?<>
+                      <Button size="sm" variant="secondary" disabled={pending} onClick={()=>{setEditConsent(false);setEditing(item);}}>Edit</Button>
+                      <Button size="sm" variant="danger" disabled={pending} onClick={()=>setConfirmDelete(item)}>Delete</Button>
+                      <Button size="sm" variant="ghost" disabled={pending} onClick={()=>mutate(item,"PIN")}>{item.isPinned?"Unpin":"Pin"}</Button>
+                     </>:<Button size="sm" disabled={pending} onClick={()=>mutate(item,"RESTORE")}>Restore</Button>}
                   </div>
-                </div>
+                </footer>
               </article>
             );
           })
@@ -355,6 +428,15 @@ export function AnnouncementAdminWorkspace({
 
 
 
+      <Dialog open={Boolean(deliveryAction)} onOpenChange={next=>{if(!next&&!pending)setDeliveryAction(null);}}
+       dismissible={!pending} title="Send existing notification now"
+       description="This retries delivery of the saved notification. It does not create a new announcement or alter the message."
+       footer={<div className="flex flex-wrap justify-end gap-2">
+        <Button variant="secondary" disabled={pending} onClick={()=>setDeliveryAction(null)}>Cancel</Button>
+        <Button disabled={pending} onClick={()=>{if(deliveryAction)requeueDelivery(deliveryAction);}}>{pending?"Queueing…":"Send now"}</Button>
+       </div>}>
+        <p className="text-sm text-body">The existing content and audience are retained for this delivery attempt.</p>
+      </Dialog>
       {requiresPublicationConsent?<Dialog open={reviewPublish} dismissible={!pending} onOpenChange={next=>{if(!pending)setReviewPublish(next);}} title="Confirm announcement publication"
        description="The selected recipients will see this notice when it becomes visible. This does not send external SMS or email."
        footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto"><Button variant="secondary" disabled={pending} onClick={()=>setReviewPublish(false)}>Cancel</Button>
@@ -373,7 +455,7 @@ export function AnnouncementAdminWorkspace({
         onOpenChange={(open) => { if (!open && !pending) setConfirmDelete(null); }}
         dismissible={!pending}
         title="Delete this announcement?"
-        description="Recipients will stop seeing this announcement."
+        description="Placement cells stop seeing it."
         footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
           <Button variant="secondary" disabled={pending} onClick={() => setConfirmDelete(null)}>Cancel</Button>
           <Button variant="danger" disabled={pending} onClick={() => { if (confirmDelete) mutate(confirmDelete, "DELETE"); }}>{pending ? "Deleting…" : "Delete"}</Button>
@@ -390,7 +472,7 @@ export function AnnouncementAdminWorkspace({
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button variant="secondary" disabled={pending} onClick={() => setEditing(null)}>Cancel</Button>
-            <Button disabled={pending || !editing || (requiresPublicationConsent&&!editConsent)} onClick={saveEdit}>{pending ? "Saving…" : "Confirm reviewed changes"}</Button>
+            <Button disabled={pending || !editing || (requiresPublicationConsent&&!editConsent)} onClick={saveEdit}>{pending ? "Saving…" : requiresPublicationConsent ? "Confirm reviewed changes" : "Save"}</Button>
           </div>
         }
       >
@@ -430,7 +512,7 @@ export function AnnouncementAdminWorkspace({
             </label>
             <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
               Message
-              <Textarea name="message" defaultValue={editing.message} maxLength={editing.senderType === "SUPER_ADMIN" ? 8000 : 10000} className="w-full" />
+              <Textarea rows={6} name="message" defaultValue={editing.message} maxLength={editing.senderType === "SUPER_ADMIN" ? 8000 : 10000} className="w-full" />
             </label>
             <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
               Schedule · local time

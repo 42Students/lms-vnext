@@ -35,7 +35,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_app_auth_handoff_page.tsx.md` (edit src/app/auth/handoff/page.tsx; 26 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_app_authenticated_tpo_batches_page.tsx.md` (edit src/app/(authenticated)/tpo/batches/page.tsx; 26 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_people_faculty-profile-document.ts.md` (edit src/modules/people/faculty-profile-document.ts; 25 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_components_announcements_announcement-admin-workspace.tsx.md` (edit src/components/announcements/announcement-admin-workspace.tsx; 25 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_components_announcements_announcement-admin-workspace.tsx.md` (edit src/components/announcements/announcement-admin-workspace.tsx; 25 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_people_college-role-directory-service.ts.md` (edit src/modules/people/college-role-directory-service.ts; 25 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_people_college-contacts-service.ts.md` (edit src/modules/people/college-contacts-service.ts; 21 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_app_api_auth_login_verify_route.ts.md` (edit src/app/api/auth/login/verify/route.ts; 19 findings; best P2)

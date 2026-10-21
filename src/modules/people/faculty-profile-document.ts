@@ -391,8 +391,8 @@ export function facultyLegacyProfileExceptions(raw: unknown): string[] {
   const email = typeof contact.contactMail === "string" ? contact.contactMail.trim() : "";
   if (alternate && !primary) issues.push("Alternate contact requires primary mobile");
   if (alternate && alternate === primary) issues.push("Duplicate primary and alternate mobile");
-  if (primary && !/^\\d{10}$/.test(primary)) issues.push("Primary mobile must have 10 digits");
-  if (alternate && !/^\\d{10,15}$/.test(alternate)) issues.push("Alternate mobile must have 10 to 15 digits");
+  if (primary && !/^\d{10}$/.test(primary)) issues.push("Primary mobile must have 10 digits");
+  if (alternate && !/^\d{10,15}$/.test(alternate)) issues.push("Alternate mobile must have 10 to 15 digits");
   if (email && !z.email().safeParse(email).success) issues.push("Invalid contact email");
   const photo = record.profileImageUrl ?? record.profileImage;
   if (typeof photo === "string" && !legacyFacultyProfileImageUrlSchema.safeParse(photo).success) {
@@ -428,9 +428,9 @@ export function importLegacyFacultyProfileDocument(raw: unknown): {
   const date = (value: unknown): string => {
     const candidate = string(value);
     if (!candidate) return "";
-    const iso = candidate.match(/^(\\d{4}-\\d{2}-\\d{2})(?:T.*)?$/);
+    const iso = candidate.match(/^(\d{4}-\d{2}-\d{2})(?:T.*)?$/);
     if (iso) return iso[1];
-    const indian = candidate.match(/^(\\d{1,2})[/-](\\d{1,2})[/-](\\d{4})$/);
+    const indian = candidate.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
     if (indian) return indian[3] + "-" + indian[2].padStart(2, "0") + "-" + indian[1].padStart(2, "0");
     warnings.push("Historical date format needs review before import");
     return candidate;
