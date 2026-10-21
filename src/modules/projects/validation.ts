@@ -49,8 +49,11 @@ const sprintSchema = z
 const taskSchema = z
   .object({
     key: projectKeySchema,
-    sprintKey: projectKeySchema,
+    sprintKey: projectKeySchema.nullable().optional(),
     title: titleSchema,
+    taskType:z.enum(["STORY","BUG","CHORE","SPIKE"]).optional(),
+    dueLabel:z.string().trim().max(160).optional(),
+    approach:z.string().trim().max(4000).optional(),
     description: descriptionSchema,
     acceptanceCriteria: z
       .string()
@@ -122,7 +125,7 @@ export const projectTemplateBlueprintSchema = z
       .default({ deliverables: [] }),
     releases: z.array(releaseSchema).max(50).default([]),
     sprints: z.array(sprintSchema).max(200).default([]),
-    tasks: z.array(taskSchema).max(2000).default([]),
+    tasks: z.array(taskSchema).max(500).default([]),
     resources: z
       .array(resourceSchema)
       .max(200)
@@ -197,7 +200,7 @@ export const projectTemplateBlueprintSchema = z
       }
       taskKeys.add(task.key);
 
-      if (!sprintKeys.has(task.sprintKey)) {
+      if (task.sprintKey && !sprintKeys.has(task.sprintKey)) {
         ctx.addIssue({
           code: "custom",
           message: "Task must reference an existing sprint",
@@ -206,7 +209,7 @@ export const projectTemplateBlueprintSchema = z
       }
 
       const siblingSequence =
-        task.sprintKey + ":" + task.sequence;
+        (task.sprintKey??"__BACKLOG__") + ":" + task.sequence;
       if (taskSequences.has(siblingSequence)) {
         ctx.addIssue({
           code: "custom",
