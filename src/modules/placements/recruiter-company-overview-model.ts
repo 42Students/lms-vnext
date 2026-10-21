@@ -53,6 +53,6 @@ export function buildRecruiterCollegeAcademicBands(
  const byBranch=[...branches].filter(([,count])=>count>=minimumGroup)
   .sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],"en-IN"))
   .map(([branch,count])=>({branch,count:Math.round(count/5)*5}));
- return {cgpaBands,basedOn:safeSample?sample.length:null,byBranch,
+ return {cgpaBands,basedOn:safeSample?Math.round(sample.length/5)*5:null,byBranch,
   suppressed:!safeSample,minimumGroup};
 }

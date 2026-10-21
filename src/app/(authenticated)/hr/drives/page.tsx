@@ -24,6 +24,8 @@ import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-
 import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-drive-request-service";
 import {filterOwnRecruiterRequests,requestStageLabel} from "@/modules/placements/recruiter-request-list-model";
 import {recruiterRequestLegacyLabel} from "@/modules/placements/recruiter-drive-request-model";
+import {recruiterCollegeAcademicOverview} from "@/modules/placements/recruiter-college-academic-overview-service";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import {HrUnsentDriveAlert} from "@/components/hr/hr-unsent-drive-alert";
 import {RecruiterRequestCancelButton} from "@/components/hr/recruiter-request-cancel-button";
 import {RecruiterRequestFeedback} from "@/components/hr/recruiter-request-feedback";
@@ -94,7 +96,11 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         action={<Link href={returnTo} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Retry</Link>} />
     </div>;
   }
-  const requestView=filterOwnRecruiterRequests(requests,query.data.view,query.data.q);
+  const collegeOverview=await recruiterCollegeAcademicOverview(context,selectedCollege).catch(error=>{
+    if(error instanceof AuthorizationError)throw error;
+    return null;
+   });
+   const requestView=filterOwnRecruiterRequests(requests,query.data.view,query.data.q);
   // A request linked to a created job is not a second independent drive.
   // Approved draft receipts remain visible below in their own request section.
   const standaloneRequests = requests.filter(req=>!req.approvedJobId);
@@ -155,6 +161,26 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       </nav>
     </details>
     <p className="text-xs font-semibold text-muted-foreground">Hiring with {grants.find(grant=>grant.collegeId===selectedCollege)?.collegeName??"your selected college"}</p>
+    <details className="min-w-0 border-b border-border pb-3">
+      <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">About this college</summary>
+      {collegeOverview?<section aria-label="College hiring context" className="mt-2 space-y-3 text-sm text-body">
+        <p>Students (rounded): {collegeOverview.studentsTotal??"Withheld for privacy"}</p>
+        <p className="text-xs text-muted-foreground">Approximate active student counts; no individual records are shared. Updated {new Date(collegeOverview.asOf).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST.</p>
+        {collegeOverview.byBranch.length?<div>
+          <h3 className="font-semibold">By branch</h3>
+          <ul className="mt-1 flex flex-wrap gap-x-5 gap-y-1">
+            {collegeOverview.byBranch.map(branch=><li key={branch.branch}>{branch.branch}: about {branch.count}</li>)}
+          </ul>
+        </div>:<p>Branch counts are withheld for groups smaller than 10.</p>}
+        {collegeOverview.cgpaBands?<div>
+          <h3 className="font-semibold">CGPA bands (approximate)</h3>
+          <p className="text-xs text-muted-foreground">Based on about {collegeOverview.basedOn} recorded CGPAs; small bands are withheld.</p>
+          <ul className="mt-1 flex flex-wrap gap-x-5 gap-y-1">
+            {collegeOverview.cgpaBands.map(band=><li key={band.label}>{band.label}: {band.count??"Withheld"}</li>)}
+          </ul>
+        </div>:<p>CGPA bands are unavailable when fewer than 10 valid results are recorded.</p>}
+      </section>:<p role="status" className="mt-2 text-xs text-muted-foreground">The college overview could not be refreshed. Drive requests remain available.</p>}
+    </details>
     <RecruiterRequestFeedback storageKey={hrDriveSessionStorageKey(context.user.id,selectedCollege,null)+":feedback"}/>
     <HrUnsentDriveAlert collegeId={selectedCollege}
       storageKey={hrDriveSessionStorageKey(context.user.id,selectedCollege,null)}/>
@@ -242,7 +268,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         return <li key={req.id} className="min-w-0 py-4">
           <p className="min-w-0 break-words font-semibold text-foreground">{title}</p>
           <p className="mt-1"><StatusBadge tone={req.status==="REJECTED"||req.status==="CANCELLED"?"error":req.status==="SENT_BACK"?"warning":req.status==="DRAFT"?"info":"info"}>
-            {recruiterRequestLegacyLabel(req.status)}
+            {recruiterRequestLegacyLabel(req.status,req.approvedJobStatus?{status:req.approvedJobStatus}:null)}
           </StatusBadge><span className="ml-2 text-xs text-muted-foreground" title="Saved request lifecycle">{requestStageLabel(req.status)}</span></p>
           {req.status==="SENT_BACK"?<Alert tone="warning" className="mt-2">
             Placement-cell feedback: {req.decisionNote??"Please contact the placement cell for the requested changes."}
@@ -272,10 +298,10 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
             Hire again with changes
           </Link>:null}
           {req.status==="REJECTED"&&req.decisionNote?<p className="mt-2 text-sm text-body">Declined: “{req.decisionNote}”</p>:null}
-          {req.approvedJobId && req.status==="DRAFT"?
+          {req.approvedJobId && req.status==="DRAFT" && req.approvedJobStatus!=="PUBLISHED" && req.approvedJobStatus!=="CLOSED"?
             <Alert tone="info" className="mt-2">Approved · draft. The placement cell will publish this drive before students can apply.</Alert>:null}
-          {req.approvedJobId && req.status!=="DRAFT"?<Link href={"/recruiter/drives/"+encodeURIComponent(req.approvedJobId)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
-            className="mt-2 block text-sm text-primary-text underline min-h-11 md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open published drive</Link>:null}
+          {req.approvedJobId && (req.approvedJobStatus==="PUBLISHED" || req.approvedJobStatus==="CLOSED")?<Link href={"/recruiter/drives/"+encodeURIComponent(req.approvedJobId)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
+            className="mt-2 block text-sm text-primary-text underline min-h-11 md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{req.approvedJobStatus==="CLOSED"?"Open completed drive":"Open live drive"}</Link>:null}
         </li>;
       })}</ul>
     </section>:null}
