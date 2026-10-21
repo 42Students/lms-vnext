@@ -130,8 +130,10 @@ async function applyDriveChangeField(
   if(patch.field==="DEADLINE")changes.applicationDeadline=patch.changes.applicationDeadline;
   else changes.locations=patch.changes.locations;
  }else if(field==="ROLE_TITLE"){
-  if(value.length<3||value.length>255)throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
+  if(value.length<3||value.length>100)throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
+  requireSingleRole();
   changes.title=value;
+  roleChange={title:value};
  }else if(field==="DESCRIPTION"){
   if(value.length<2||value.length>2000)throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
   changes.description=value;
@@ -288,10 +290,11 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
      input.proposedValue.trim().toLocaleLowerCase("en-IN"))
     throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
    if(mode==="SUGGEST"&&input.field==="DEADLINE"){
-    const proposed=Date.parse(input.proposedValue);
-    if(!Number.isFinite(proposed)||proposed<=Date.now())
+    const patch=prepareSafeDriveChangeJobPatch({mode:"SUGGEST",field:"DEADLINE",
+     legacyField:null,proposedValue:input.proposedValue});
+    if(!patch||patch.field!=="DEADLINE")
      throw new PlacementsServiceError("PLACEMENT_JOB_INVALID_DEADLINE");
-    if(lockedJob.applicationDeadline?.getTime()===proposed)
+    if(lockedJob.applicationDeadline?.getTime()===patch.changes.applicationDeadline.getTime())
      throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
    }
    if(target==="COMPANY"&&(await recipients(tx,job,"COMPANY")).length===0)
