@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,eq,inArray} from "drizzle-orm";
+import {and,asc,eq,gt,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,
  placementApplications,placementJobs,placementJobRoleOptions,users} from "@/db/schema";
@@ -8,7 +8,7 @@ import {PlacementsServiceError} from "./errors";
 import {requireTpoJobActor,requireTpoJobCollege} from "./tpo-job-write-base";
 import {previewEligiblePublishedDrive} from "./tpo-drive-publish-effects";
 import {placementJobIdSchema} from "./validation";
-import {placementReminderDay,placementReminderPreviewToken,tpoRemindNotAppliedSchema}
+import {placementReminderCooldownCutoff,placementReminderDay,placementReminderPreviewToken,tpoRemindNotAppliedSchema}
  from "./tpo-remind-not-applied-model";
 
 
@@ -22,7 +22,7 @@ export const TPO_LEGACY_APPLICANT_ENDPOINT_CROSSWALK = [
  {old:"GET /not-applied",new:"GET /api/placements/tpo/jobs/[jobId]/remind-not-applied",method:"GET",success:200,
   scope:"TPO and published job college",change:"Eligible reminder preview count/token, not unrestricted student list"},
  {old:"POST /remind-not-applied",new:"POST /api/placements/tpo/jobs/[jobId]/remind-not-applied",method:"POST",success:200,
-  scope:"TPO, same-origin, live job, active registered recipients",change:"Requires expectedPreviewToken; once daily dedupe; reminded/alreadySent"},
+  scope:"TPO, same-origin, live job, active registered recipients",change:"Requires expectedPreviewToken; rolling 20h per drive; reminded/alreadySent"},
  {old:"POST /apply-on-behalf/{learnerId}",new:"Scoped drive-add workflow",method:"POST",success:201,
   scope:"TPO, writable college drive, learner membership",change:"No numeric learner override or unaudited direct add"},
  {old:"POST /add-students",new:"Scoped drive-add workflow",method:"POST",success:200,
@@ -70,9 +70,11 @@ function ensureLive(job:{status:string;applicationDeadline:Date|null},now:Date){
 export async function getTpoNonApplicantReminderPreview(context:RequestContext,rawJobId:unknown){
  const job=await scopedJob(context,rawJobId),now=new Date();
  const day=placementReminderDay(now);
- const key="placement-non-applicant-reminder:"+job.id+":"+day;
  const [past]=await getDb().select({id:activityEvents.id}).from(activityEvents)
-  .where(eq(activityEvents.dedupeKey,key)).limit(1);
+  .where(and(eq(activityEvents.subjectType,"placement_job"),
+   eq(activityEvents.subjectId,job.id),
+   eq(activityEvents.eventType,"PLACEMENTS_TPO_REMIND_NOT_APPLIED"),
+   gt(activityEvents.createdAt,placementReminderCooldownCutoff(now)))).limit(1);
  const allowed=job.status==="PUBLISHED"&&(!job.applicationDeadline||job.applicationDeadline>now);
  if(!allowed)return {jobId:job.id,day,count:0,allowed:false,alreadySent:Boolean(past),
   previewToken:null,reason:job.status!=="PUBLISHED"?"Drive is not published":"Application deadline has passed"};
@@ -93,6 +95,15 @@ export async function remindTpoNonApplicants(context:RequestContext,rawJobId:unk
   }).from(placementJobs).where(eq(placementJobs.id,job.id)).for("update").limit(1);
   if(!locked)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
   ensureLive(locked,now);
+  // The job row lock serializes competing reminder requests on the same
+  // drive. Recheck rolling cooldown INSIDE the transaction to cover 23:59
+  // followed by 00:01 without sending a second notification.
+  const [recent]=await tx.select({id:activityEvents.id}).from(activityEvents)
+   .where(and(eq(activityEvents.subjectType,"placement_job"),
+    eq(activityEvents.subjectId,job.id),
+    eq(activityEvents.eventType,"PLACEMENTS_TPO_REMIND_NOT_APPLIED"),
+    gt(activityEvents.createdAt,placementReminderCooldownCutoff(now)))).limit(1);
+  if(recent)return {reminded:0,alreadySent:true,reason:"This drive was reminded within the past 20 hours."};
   const recipients=await candidateAudience(tx,context,job);
   if(placementReminderPreviewToken(job.id,day,recipients)!==input.expectedPreviewToken)
    throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
@@ -106,7 +117,7 @@ export async function remindTpoNonApplicants(context:RequestContext,rawJobId:unk
    metadata:{jobId:job.id,recipientCount:recipients.length,day},
    dedupeKey:"placement-non-applicant-reminder:"+job.id+":"+day,
   }).onConflictDoNothing().returning({id:activityEvents.id});
-  if(!event)return {reminded:0,alreadySent:true,reason:"This drive has already been reminded today."};
+  if(!event)return {reminded:0,alreadySent:true,reason:"This drive was reminded within the past 20 hours."};
   for(let i=0;i<recipients.length;i+=100){
    await tx.insert(inAppNotifications).values(recipients.slice(i,i+100).map(userId=>({
     userId,eventId:event.id,title:"Placement application reminder",

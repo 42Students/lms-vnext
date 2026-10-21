@@ -15,3 +15,16 @@ export function placementReminderPreviewToken(jobId:string,day:string,recipients
   jobId,day,[...recipients].sort(),
  ])).digest("hex");
 }
+
+/** Legacy not-applied reminders suppress repeats for 20 elapsed hours, even
+ * when the interval crosses midnight in IST. A day key is still retained for
+ * unique insert idempotency, but it is not the eligibility/cooldown clock. */
+export const PLACEMENT_REMINDER_COOLDOWN_MS=20*60*60*1000;
+export function placementReminderCooldownCutoff(now:Date):Date{
+ if(!Number.isFinite(now.getTime()))throw new Error("Invalid reminder clock");
+ return new Date(now.getTime()-PLACEMENT_REMINDER_COOLDOWN_MS);
+}
+export function placementReminderWithinCooldown(sentAt:Date,now:Date):boolean{
+ return Number.isFinite(sentAt.getTime())&&
+  sentAt.getTime()>placementReminderCooldownCutoff(now).getTime();
+}
