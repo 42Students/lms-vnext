@@ -163,7 +163,15 @@ export function ProjectReadinessOverrideForm({
               {note.length} / 2000 characters
             </p>
           </div>
-        ) : null}
+        ) : state==="CLEAR"?<div className="space-y-2">
+          <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]"
+            htmlFor="project-readiness-cleared-note">Note</label>
+          <Textarea id="project-readiness-cleared-note" rows={3} maxLength={2000}
+            value={note} disabled aria-describedby="readiness-clear-description"/>
+          <p id="readiness-clear-description" className="text-xs text-body">
+            Clearing removes the manual override; the note is disabled because no new reason is needed.
+          </p>
+        </div>:null}
         <div className="flex min-w-0 justify-stretch md:justify-end">
         <Button type="submit" variant="primary" loading={pending||checking} disabled={pending||checking||!state} className="min-h-11 w-full md:min-h-9 md:w-auto">
           {checking?"Checking readiness…":copy.submit}
@@ -174,9 +182,12 @@ export function ProjectReadinessOverrideForm({
         open={confirmOpen}
         onOpenChange={next=>{if(!pending)setConfirmOpen(next);}}
         title={state === "CLEAR" ? copy.clearConfirm : copy.applyConfirm}
-        description={state === "CLEAR" ? "The manual override will be removed." :
-          "This changes the learner's ability to make a final delivery. The chosen override and your note will be visible to mentors and learners."}
-        confirmLabel="Apply override"
+        description={state === "CLEAR" ?
+          "The manual override will be removed. Readiness will again follow completed tasks, sprints and final submission state." :
+          liveHasSubmission?
+          "An existing final submission takes precedence. This override is audited but will not allow a duplicate final delivery.":
+          "Apply this override to the submission gate? The choice and note will be visible to mentors and learners."}
+        confirmLabel={state==="CLEAR"?"Clear override":"Apply override"}
         confirmVariant="primary"
         pending={pending}
         onConfirm={() => { void save(); }}

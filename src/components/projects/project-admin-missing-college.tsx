@@ -3,7 +3,14 @@ import {PageHeader} from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Alert } from "@/components/ui/alert";
 /** COL-projects-20: do not silently redirect a valid user with no selected college. */
-export function ProjectAdminMissingCollege({ variant }: { variant?: "at-risk" }) {
+export function ProjectAdminMissingCollege({ variant }: { variant?: "at-risk" | "readiness" }) {
+ if (variant === "readiness") return <div className="min-w-0 space-y-4">
+  <PageHeader title="Submission readiness"
+    description="See whether each team is ready to submit, and override the gate when you need to."/>
+  <Alert tone="warning" title="No college selected">
+    Select a college from the header to see submission readiness and manage overrides.
+  </Alert>
+ </div>;
  if (variant === "at-risk") return <div className="min-w-0 space-y-4">
   <PageHeader title="At-risk projects" />
   <Alert tone="warning" title="Select a college to continue">

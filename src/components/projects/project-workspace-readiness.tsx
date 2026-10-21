@@ -64,7 +64,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
       <PageHeader title={copy.title} eyebrow="Projects"
         description="Releases are informational. Task and sprint completion and the audited manual override determine submission readiness."
         actions={<div className="flex flex-wrap items-center gap-2">
-          <StatusBadge tone={isReady?"success":"warning"}>{isReady?"Ready":"Not ready"}</StatusBadge>
+          <StatusBadge tone={isReady?"success":"error"}>{isReady?"Ready":"Not ready"}{override.state?" (override)":""}</StatusBadge>
           <Link href="#manage-readiness-override"
             className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:border-primary md:min-h-9">
             Manage override
@@ -88,7 +88,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
             {isReady?"This workspace is ready to submit":"This workspace still has readiness gaps"}
           </h2>
         </div>
-        <StatusBadge tone={isReady?"success":"warning"}>{isReady?"Ready":"Not ready"}</StatusBadge>
+        <StatusBadge tone={isReady?"success":"error"}>{isReady?"Ready":"Not ready"}{override.state?" (override)":""}</StatusBadge>
       </div>
       {hasFinalSubmission?<p role="status" className="text-xs text-muted-foreground">
         An existing final submission takes precedence over manual readiness overrides.
@@ -113,11 +113,11 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
       </div>
       <dl className="grid min-w-0 grid-cols-2 gap-3 text-sm lg:grid-cols-4">
         <div className="min-w-0 rounded-[8px] border border-border p-3">
-          <dt className="text-xs text-muted-foreground">Tasks complete</dt>
+          <dt className="text-xs text-muted-foreground">Tasks completed</dt>
           <dd className="mt-2 text-lg font-semibold tabular-nums">{readiness.execution.tasks.done} / {readiness.execution.tasks.total}</dd>
         </div>
         <div className="min-w-0 rounded-[8px] border border-border p-3">
-          <dt className="text-xs text-muted-foreground">Sprints complete</dt>
+          <dt className="text-xs text-muted-foreground">Sprints completed</dt>
           <dd className="mt-2 text-lg font-semibold tabular-nums">{readiness.execution.sprints.completed} / {readiness.execution.sprints.total}</dd>
         </div>
         <div className="min-w-0 rounded-[8px] border border-border p-3">
@@ -148,8 +148,11 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
               <td className="py-2">{hasFinalSubmission?"Exists":"Not submitted"} · {readiness.finalSubmission.latest?.status??"—"}</td></tr>
             <tr><th scope="row" className="py-2 pr-4 font-medium">Workspace state</th>
               <td className="py-2">{readiness.projectStatus} · {readiness.execution.complete?"Complete":"Incomplete"}</td></tr>
+            <tr><th scope="row" className="py-2 pr-4 font-medium">Override active</th>
+              <td className="py-2">{override.state?"Yes":"No"}</td></tr>
             <tr><th scope="row" className="py-2 pr-4 font-medium">Override</th>
-              <td className="py-2">{override.state??"None"} · {override.note??"No override reason"}</td></tr>
+              <td className="py-2">{override.state==="FORCE_UNLOCK"?"Force unlocked":
+                override.state==="FORCE_BLOCK"?"Force blocked":"None"} · {override.note??"No override reason"}</td></tr>
             <tr><th scope="row" className="py-2 pr-4 font-medium">Override set by / at</th>
               <td className="py-2">{override.overriddenBy??"—"} · {overrideDate}</td></tr>
             <tr><th scope="row" className="py-2 pr-4 font-medium">Effective readiness</th>

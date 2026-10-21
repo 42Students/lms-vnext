@@ -18,7 +18,7 @@ export default async function CollegeProjectReadinessRoute({
     getProjectAdminCollegeId(context);
 
   if (!collegeId) {
-    return <ProjectAdminMissingCollege/>;
+    return <ProjectAdminMissingCollege variant="readiness"/>;
   }
 
   return (
