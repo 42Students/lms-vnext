@@ -48,6 +48,7 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
   externalUrl:lessonContents.externalUrl,durationSeconds:lessonContents.durationSeconds,
   startsAt:lessonContents.startsAt,endsAt:lessonContents.endsAt,
   status:lessonContents.status,sequence:lessonContents.sequence,
+  visibleToStudents:lessonContents.visibleToStudents,
  }).from(lessonContents)
  .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
