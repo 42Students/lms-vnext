@@ -28,7 +28,7 @@ export default async function CollegeGroupRulePreviewPage({
         title="Rule preview unavailable"
         description="This group does not have a supported, configured rule. No learners were evaluated or changed."
         action={<Link href={"/college/groups/" + encodeURIComponent(groupId)}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to group</Link>}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Back to group</Link>}
       />;
     }
     throw error;
@@ -53,7 +53,7 @@ export default async function CollegeGroupRulePreviewPage({
     ]}/>
     <section aria-label="Configured criteria" className="min-w-0 border-t border-border pt-3">
       <details className="min-w-0">
-        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Persisted rule criteria</summary>
+        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Persisted rule criteria</summary>
         <div className="min-w-0 space-y-3 pt-3">
       <dl className="grid min-w-0 gap-3 md:grid-cols-2">
         <div><dt className="text-xs text-muted-foreground">Programs allowed</dt>

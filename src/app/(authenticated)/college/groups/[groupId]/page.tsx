@@ -113,7 +113,7 @@ export default async function CollegeGroupDetailPage({
 
       {group.selfJoinOpenFrom || rule ? (
         <details className="min-w-0 border-b border-border pb-3">
-          <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Membership rule</summary>
+          <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Membership rule</summary>
           <section className="grid min-w-0 gap-[16px] pt-3 md:grid-cols-3">
           <Stat
             title="Self-join window"
@@ -142,7 +142,7 @@ export default async function CollegeGroupDetailPage({
       {rule ? (
         <section className="border-t border-border pt-4">
           <Link href={"/college/groups/" + encodeURIComponent(group.id) + "/rule-preview"}
-            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             Preview persisted membership rule (read-only)
           </Link>
           <p className="mt-1 text-xs text-muted-foreground">
@@ -184,10 +184,10 @@ export default async function CollegeGroupDetailPage({
 
       {group.kind === "STUDY_GROUP" ? <section className="min-w-0 space-y-3">
         <details className="min-w-0 border-b border-border pb-4">
-          <summary className="min-h-11 cursor-pointer py-2 font-semibold text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Manage members</summary>
+          <summary className="min-h-11 cursor-pointer py-2 font-semibold text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Manage members</summary>
           <div className="min-w-0 space-y-3 pt-3">
         <Link href={"/college/groups/" + encodeURIComponent(group.id) + "/import-preview"}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           Validate member CSV (dry run)
         </Link>
         <CollegeStudyMemberActions groupId={group.id} name={group.name}
@@ -212,7 +212,7 @@ export default async function CollegeGroupDetailPage({
 
       <section className="min-w-0 space-y-3">
         <details className="min-w-0 border-b border-border pb-3">
-          <summary className="min-h-11 cursor-pointer py-2 font-semibold text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Recent activity</summary>
+          <summary className="min-h-11 cursor-pointer py-2 font-semibold text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Recent activity</summary>
         {events.length === 0 ? (
           <EmptyState title="No activity yet" description="Membership changes appear here." />
         ) : (
