@@ -808,9 +808,12 @@ export async function revokeEligibilityOverride(
       .returning();
 
     if (!row) {
-      throw new PlacementsServiceError(
-        "PLACEMENT_ELIGIBILITY_OVERRIDE_NOT_FOUND",
-      );
+      // Legacy remove-when-already-clear is idempotent. Explicit optimistic
+      // undo, however, may never silently clear a different staff override.
+      if (options.expectedOverrideId) {
+        throw new PlacementsServiceError("PLACEMENT_ELIGIBILITY_OVERRIDE_STALE");
+      }
+      return null;
     }
     await recordEligibilityOverrideAudit(tx,context,liveJob.collegeId,jobId,membershipId,
       row.id,"CLEARED",options.reason??"Placement eligibility override cleared");
@@ -832,7 +835,7 @@ function numericCheck(
       status: "MISSING",
       actual: null,
       required: required / displayScale,
-      detail: "Evidence not provided",
+      detail: "Not provided",
     });
     return;
   }
@@ -1031,6 +1034,17 @@ export async function evaluatePlacementEligibility(
         .limit(2),
     ]);
 
+  // Legacy ↔ vNext eligibility crosswalk:
+  // - JobEligibility JSON scores → placement_job_eligibility_policies columns.
+  // - LearnerAcademicRecord/marks → placement_candidate_academic_evidence
+  //   (missing and verified-only are separate states, not implicit failures).
+  // - TPO per-student override → placement_eligibility_overrides.
+  // - Legacy job program/batch visibility → college-scoped program/cohort/
+  //   section memberships, checked BEFORE manual scoring exceptions.
+  // - Examination/calendar blocks are independent learner-round scheduling
+  //   constraints; do not synthesize academic evidence or bypass those guards.
+  // These stricter audience and verified-evidence gates are deliberate, never
+  // converted into an unrestricted INCLUDE override.
   // D16: two active enrollments are ambiguous. Never arbitrarily choose the
   // first one or allow an INCLUDE override to authorize the wrong cohort.
   if (hasAmbiguousActivePlacementEnrollment(enrollments)) {
@@ -1060,8 +1074,8 @@ export async function evaluatePlacementEligibility(
           ? "One of the eligible programs"
           : "One of the eligible cohorts",
         detail: wrongProgram
-          ? "Program is not eligible"
-          : "Cohort is not eligible",
+          ? "Program is not eligible (non-overridable audience restriction)"
+          : "Cohort is not eligible (non-overridable audience restriction)",
       }],
       override: null,
     };
@@ -1083,7 +1097,8 @@ export async function evaluatePlacementEligibility(
       activeSections.map(row => row.id))) {
       return { status: "INELIGIBLE", checks: [{
         criterion: "Cohort", status: "FAIL", actual: null,
-        required: "Eligible cohort", detail: "Cohort is not eligible",
+        required: "Eligible cohort",
+        detail: "Cohort is not eligible (non-overridable section restriction)",
       }], override: null };
     }
   }
@@ -1092,7 +1107,13 @@ export async function evaluatePlacementEligibility(
   // job. Evaluate this before per-learner INCLUDE overrides.
   if (policy?.requireVerifiedEvidence &&
       evaluatePlacementEvidenceVerification((evidence?.source as "SELF" | "VERIFIED" | null | undefined) ?? null, true) !== "PASS") {
-    return { status: "NEEDS_DATA", checks: [], override: null };
+    return { status: "NEEDS_DATA", checks: [{
+      criterion: "Verified academic evidence",
+      status: "MISSING",
+      actual: evidence?.source==="SELF"?"Self provided":"Not provided",
+      required: "College-verified academic evidence",
+      detail: "Not provided or not verified. Manual INCLUDE cannot bypass this requirement.",
+    }], override: null };
   }
 
   if (override) {
@@ -1101,7 +1122,13 @@ export async function evaluatePlacementEligibility(
         override.decision === "INCLUDE"
           ? "ELIGIBLE"
           : "INELIGIBLE",
-      checks: [],
+      checks: [{
+        criterion: "Eligibility override",
+        status: override.decision==="INCLUDE"?"PASS":"FAIL",
+        actual: override.decision==="INCLUDE"?"Added by college":"Excluded by college",
+        required: "College placement team decision",
+        detail: override.reason,
+      }],
       override: {
         id: override.id,
         decision:
