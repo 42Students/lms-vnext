@@ -12,7 +12,10 @@ import {publicIndependentPlacementCount} from "./independent-count-model";
 import {publicPublicationFresh} from "./publication-freshness-model";
 import {publicSalaryMetricsAllowed} from "./salary-privacy-model";
 
-/** A college-scoped, opt-in PUBLIC aggregate only. No identity or offer rows are queried. */
+/** Only aggregated, college-scoped opt-in PUBLIC statistics leave this
+ * boundary. No learner name, contact, offer body, letter or individual
+ * compensation is returned. Offer-ledger rows are queried internally to
+ * compute accepted-only distinct learner and company counts. */
 export async function getPublicPlacementStatistics(collegeId:string){
   if(!await publicPlacementTableReady())return null;
   const [row]=await getDb().select({
@@ -28,7 +31,11 @@ export async function getPublicPlacementStatistics(collegeId:string){
     .where(and(eq(publicPlacementPageSettings.collegeId,collegeId),
       eq(colleges.status,"ACTIVE"),eq(organizations.status,"ACTIVE")))
     .limit(1);
-  if(!row||!row.enabled||row.publishedAt===null||!publicPublicationFresh(row.publishedAt,new Date()))return null;
+  // Legacy publication is controlled by the college's enabled flag, not by
+  // an arbitrary rolling expiry. A never-published draft stays private;
+  // a published page can remain visible but MUST disclose snapshot staleness.
+  if(!row||!row.enabled||row.publishedAt===null)return null;
+  const publicationFresh=publicPublicationFresh(row.publishedAt,new Date());
   // T-S2-08: never display stale manually entered totals as "live". Read
   // the actual 12-month college-scoped offer ledger only after public opt-in.
   const now = new Date();
@@ -75,6 +82,14 @@ export async function getPublicPlacementStatistics(collegeId:string){
 
   return {
     publishedAt:row.publishedAt.toISOString(),
+    // vNext has an explicit published eligibility snapshot, whereas legacy
+    // recomputed PlacementEligibilityService live. Never imply that this
+    // denominator includes new/revoked learners after publication.
+    publicationFresh,
+    statisticsAsOf:now.toISOString(),
+    eligibilitySnapshotAsOf:row.publishedAt.toISOString(),
+    eligibilitySnapshotWarning:publicationFresh?null:
+      "The eligible student count is an older published snapshot. Ask the placement cell to refresh it.",
     populationBasis:"PUBLISHED_ELIGIBLE_SNAPSHOT" as const,
     placementBasis:"ACCEPTED_OFFERS" as const,
     offerWindowMonths:12,
