@@ -11,6 +11,8 @@ import {getCollegeQuizAuthoringOptions} from "@/modules/courses/college-quiz-aut
 import { adminAssessmentExportHref, adminAssessmentHref } from "@/modules/courses/admin-assessment-directory-model";
 import {parseSuperAdminQuizQuery} from "@/modules/admin-ui/super-admin-quiz-query-model";
 import { listCollegeAssessmentAggregate } from "@/modules/courses/college-assessment-aggregate-service";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 
 export default async function SuperAdminQuizzesPage({
   searchParams,
@@ -80,13 +82,13 @@ export default async function SuperAdminQuizzesPage({
         .map(([key,value])=><input key={key} type="hidden" name={key} value={String(value)}/>)}
        <label className="grid min-w-0 flex-1 gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] sm:max-w-[380px]">
         Course
-        <select name="courseCode" defaultValue={query.data.courseCode??""}
-         className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3 text-sm text-body md:min-h-9">
+        <Select name="courseCode" defaultValue={query.data.courseCode??""}
+         className="w-full">
          <option value="">All courses</option>
          {data.directoryCourses.map(course=><option key={course.code} value={course.code}>{course.code} · {course.name}</option>)}
-        </select>
+        </Select>
        </label>
-       <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] border border-[var(--lms-primary)] bg-[var(--lms-primary)] px-4 text-sm font-semibold text-white md:min-h-9">Apply</button>
+       <Button type="submit" >Apply</Button>
        {query.data.courseCode?<Link href="/admin/quizzes" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear</Link>:null}
       </form>
       <p role="status" aria-live="polite" className="text-sm text-muted-foreground">

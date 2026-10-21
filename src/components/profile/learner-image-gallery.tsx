@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 
 type Image = { id: string; imageId: string | number; displayOrder: number; isActive: boolean };
 export function LearnerImageGallery({ membershipId }: { membershipId?: string }) {
@@ -78,10 +80,10 @@ export function LearnerImageGallery({ membershipId }: { membershipId?: string })
         {images.map(image => <li key={image.id} className="rounded-xl border border-border bg-surface p-3">
           <p className="mb-2 text-xs text-muted-foreground">Image {image.displayOrder + 1}</p>
           <div className="flex flex-wrap gap-2">
-            <button type="button" disabled={busy} onClick={() => void open(image.id)}
-              className="min-h-9 rounded border border-border px-3 text-sm">View</button>
-            {canEdit ? <button type="button" disabled={busy} onClick={() => void deactivate(image.id)}
-              className="min-h-9 rounded border border-border px-3 text-sm">Remove</button> : null}
+            <Button variant="secondary" type="button" disabled={busy} onClick={() => void open(image.id)}
+              >View</Button>
+            {canEdit ? <Button variant="secondary" type="button" disabled={busy} onClick={() => void deactivate(image.id)}
+              >Remove</Button> : null}
           </div>
           {preview?.id === image.id ?
             <img className="mt-2 max-h-56 w-full rounded object-contain" src={preview.url}
@@ -92,13 +94,13 @@ export function LearnerImageGallery({ membershipId }: { membershipId?: string })
       <label htmlFor="gallery-receipt" className="block text-sm font-medium">
         Verified profile image receipt ID
       </label>
-      <input id="gallery-receipt" value={receipt} onChange={event => setReceipt(event.target.value)}
+      <Input id="gallery-receipt" value={receipt} onChange={event => setReceipt(event.target.value)}
         placeholder="Private image receipt UUID"
-        className="w-full rounded border border-border bg-surface px-3 py-2 text-sm" />
-      <button type="button" disabled={busy || !receipt.trim()} onClick={() => void add()}
-        className="min-h-9 rounded bg-[var(--lms-primary)] px-3 text-sm font-semibold text-white disabled:opacity-50">
+        className="w-full" />
+      <Button type="button" disabled={busy || !receipt.trim()} onClick={() => void add()}
+        >
         {busy ? "Saving…" : "Add image"}
-      </button>
+      </Button>
       <p className="text-xs text-muted-foreground">At most ten images. No public image links are accepted.</p>
     </div> : null}
     {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}

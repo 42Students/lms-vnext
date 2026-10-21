@@ -1,11 +1,11 @@
 import { PageBackLink } from "@/components/ui/page-back-link";
 import {Alert} from "@/components/ui/alert";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { ZodError } from "zod";
 import { CoursesServiceError } from "@/modules/courses/errors";
 import type { RequestContext } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
-import {hasMembershipRole,isSuperAdmin} from "@/modules/identity/context";
 import { Disclosure } from "@/components/ui/disclosure";
 import {AdminOfferingSectionTabs} from "./admin-offering-section-tabs";
 import { AdminCourseDisplayEditor } from "./admin-course-display-editor";
@@ -25,7 +25,6 @@ import {
 export async function AdminOfferingLearningPage({
   context,
   offeringId,
-  eyebrow,
   backHref,
   deliveryId=null,
 }: {
@@ -47,17 +46,10 @@ export async function AdminOfferingLearningPage({
         (error instanceof CoursesServiceError &&
           error.code === "OFFERING_NOT_FOUND")
       ) {
-        return "NOT_FOUND" as const;
+        notFound();
       }
       return null;
     });
-  if(workspace==="NOT_FOUND")return <div className="min-w-0 space-y-4">
-   <PageHeader title="Course not found"/>
-   <Alert tone="warning" role="alert">
-    Course not found. It may have been removed or may not belong to the selected college.
-   </Alert>
-   <PageBackLink href={backHref} label="Back"/>
-  </div>;
   if(!workspace)return <div className="min-w-0 space-y-4">
    <PageHeader title="Course unavailable" actions={<PageBackLink href={backHref} label="Back to Courses"/>}/>
    <Alert tone="error" role="alert" title="Server Notification">
@@ -80,17 +72,10 @@ export async function AdminOfferingLearningPage({
     .catch(()=>({value:null,failed:true as const})):
     {value:null,failed:false as const};
   const display=displayResult.value;
-  const canEditHome=displayEnabled&&
-   (hasMembershipRole(context,"COLLEGE_ADMIN")||isSuperAdmin(context));
 
   return (
     <div className="min-w-0 max-w-full space-y-4">
-      <nav aria-label="Breadcrumb" className="flex min-w-0 flex-wrap items-center gap-2 text-sm text-muted-foreground">
-        <Link href={backHref} className="font-semibold text-link underline underline-offset-4">Courses</Link>
-        <span aria-hidden="true">/</span>
-        <span className="break-words" aria-current="page">{workspace.offering.courseName}</span>
-      </nav>
-      <PageHeader eyebrow={eyebrow}
+      <PageHeader
         title={
           workspace.offering.courseName
         }
@@ -113,7 +98,7 @@ export async function AdminOfferingLearningPage({
         <a href={retryHref+"#course-home"} className="ml-2 font-semibold underline">Retry</a>
        </Alert>:null}
        {display?<section aria-label="In this Course" className="space-y-3 border-b border-border pb-4">
-        <h3 className="text-base font-semibold text-foreground">Course overview</h3>
+        <h3 className="text-base font-semibold text-foreground">In this Course</h3>
         {display.introductionText?<p className="whitespace-pre-wrap text-sm text-body">{display.introductionText}</p>:null}
         {display.bodyHtml?<div className="prose max-w-none text-sm text-body"
           dangerouslySetInnerHTML={{__html:display.bodyHtml}}/>:null}
@@ -121,33 +106,27 @@ export async function AdminOfferingLearningPage({
          {display.takeaways.map((value,index)=><li key={index}>{value}</li>)}
         </ul>:null}
        </section>:<p className="text-sm text-muted-foreground">In this Course: the Course introduction has not been added yet.</p>}
-       {canEditHome?<Disclosure title="Edit Course Home content"
+       {displayEnabled?<Disclosure title="Edit Course Home content"
         className="border-b border-[var(--lms-canvas-border)] pb-3" contentClassName="pt-3">
         <AdminCourseDisplayEditor courseId={workspace.offering.courseId} enabled={displayEnabled}
          initial={display?{introductionText:display.introductionText,bodyHtml:display.bodyHtml,
           takeaways:display.takeaways,thumbnailUrl:display.thumbnailUrl,version:display.version}:null}/>
        </Disclosure>:
-        null}
-       <section aria-label="Teachers" className="space-y-3 border-t border-border pt-4">
-        <h3 className="text-base font-semibold text-foreground">Teachers</h3>
-        {roster?<AdminOfferingTeachersPanel roster={roster}
-          academicPeriodName={workspace.offering.academicPeriodName}/>:
-         <Alert tone="warning" role="alert">
-          Faculty assignments couldn't be loaded.{" "}
-          <a className="font-semibold text-primary-text underline"
-            href={retryHref+"#course-home"}>Retry</a>
-         </Alert>}
-       </section>
-      </article>} syllabus={<article className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6">
-       <div><PageBackLink href={backHref} label="Back"/></div>
+        <AdminCourseDisplayEditor courseId={workspace.offering.courseId} enabled={false} initial={null}/>}
+      </div>} syllabus={<div className="space-y-4">
        <h2 className="text-lg font-semibold text-foreground">Syllabus</h2>
        <AdminOfferingLearningOverview workspace={workspace}/>
+       {roster?<AdminOfferingTeachersPanel roster={roster}
+        academicPeriodName={workspace.offering.academicPeriodName}/>:
+        <Alert tone="warning" role="alert">Faculty assignments couldn&apos;t be loaded.
+         <a className="ml-2 font-semibold underline" href={retryHref+"#course-syllabus"}>Retry</a>
+        </Alert>}
        {sectionPreview?<AdminOfferingSectionPreview data={sectionPreview}/>:
         <Alert tone="warning" role="alert" title="Server Notification">
          Sections couldn&apos;t be loaded, so you&apos;re seeing shared content only.
          <a className="ml-2 font-semibold underline" href={retryHref+"#course-syllabus"}>Retry</a>
         </Alert>}
-      </article>}/>
+      </div>}/>
     </div>
   );
 }
