@@ -301,26 +301,26 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-18.md: file, number of
 - [x] `src/app/(authenticated)/admin/projects/page.tsx`
 - [x] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
 - [x] `src/app/(authenticated)/college/activity/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/page.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/calendar/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/page.tsx`
-- [ ] `src/app/(authenticated)/college/verification/page.tsx`
-- [ ] `src/app/(authenticated)/dashboard/page.tsx`
-- [ ] `src/app/(authenticated)/hr/activity/page.tsx`
-- [ ] `src/app/(authenticated)/hr/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/hr/company/page.tsx`
-- [ ] `src/app/(authenticated)/hr/company/reports/page.tsx`
-- [ ] `src/app/(authenticated)/hr/conversations/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/page.tsx`
-- [ ] `src/app/(authenticated)/hr/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`
-- [ ] `src/app/(authenticated)/hr/round-results/page.tsx`
-- [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/announcements/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/assessments/results/page.tsx`
+- [x] `src/app/(authenticated)/college/attendance/page.tsx`
+- [x] `src/app/(authenticated)/college/contacts/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/calendar/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/page.tsx`
+- [x] `src/app/(authenticated)/college/verification/page.tsx`
+- [x] `src/app/(authenticated)/dashboard/page.tsx`
+- [x] `src/app/(authenticated)/hr/activity/page.tsx`
+- [x] `src/app/(authenticated)/hr/calendar/page.tsx`
+- [x] `src/app/(authenticated)/hr/company/page.tsx`
+- [x] `src/app/(authenticated)/hr/company/reports/page.tsx`
+- [x] `src/app/(authenticated)/hr/conversations/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/page.tsx`
+- [x] `src/app/(authenticated)/hr/notifications/page.tsx`
+- [x] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`
+- [x] `src/app/(authenticated)/hr/round-results/page.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/announcements/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/assessments/results/page.tsx`
 - [ ] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
 - [ ] `src/app/(authenticated)/learn/my-placements/preparation/page.tsx`
 - [ ] `src/app/(authenticated)/learn/my-placements/schedule/page.tsx`
