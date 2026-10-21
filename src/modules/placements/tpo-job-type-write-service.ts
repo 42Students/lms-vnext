@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,isNull,sql} from "drizzle-orm";
+import {and,eq,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,colleges,placementJobs} from "@/db/schema";
@@ -10,6 +10,15 @@ import {placementTableExists} from "./staged-tables";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {tpoJobTypeNameSchema} from "./tpo-configuration-model";
 import {TPO_BUILTIN_JOB_TYPES,isTpoBuiltinJobType} from "./tpo-builtin-job-types";
+
+// The job-type column belongs to the schema/migration lane. Until that
+// migration lands, block cross-drive writes instead of half-saving config.
+const jobTypeColumnReady = sql<boolean>`exists (
+ select 1 from information_schema.columns
+ where table_schema = current_schema()
+   and table_name = 'placement_jobs'
+   and column_name = 'job_type_label'
+)`;
 // Match the old LMS validation message while preserving the vNext schema's
 // supported Unicode letters and punctuation. Never echo unescaped HTML.
 const legacyLabelSchema=z.string().transform((raw,ctx)=>{
@@ -136,15 +145,20 @@ export async function renameTpoJobType(ctx:RequestContext,raw:unknown){
    .where(and(eq(placementTpoJobTypes.collegeId,collegeId),
     sql`lower(${placementTpoJobTypes.label}) = lower(${input.label}::text)`)).limit(1);
   if(existing&&existing.id!==current.id)throw new TpoConfigError("TPO_JOB_TYPE_EXISTS");
+  const [jobTypeColumn]=await tx.select({ready:jobTypeColumnReady});
+  if(!jobTypeColumn?.ready)throw new TpoConfigError("TPO_SETTINGS_PENDING");
   const [updated]=await tx.update(placementTpoJobTypes).set({label:input.label,
    updatedAt:sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementTpoJobTypes.updatedAt}) + interval '1 millisecond')`})
    .where(and(eq(placementTpoJobTypes.id,current.id),eq(placementTpoJobTypes.collegeId,collegeId),
     eq(placementTpoJobTypes.updatedAt,current.updatedAt))).returning();
   if(!updated)throw new TpoConfigError("TPO_SETTINGS_STALE");
-  // Legacy job types are stored on each drive; a rename must update those records atomically.
-  await tx.update(placementJobs).set({jobTypeLabel:updated.label})
-   .where(and(eq(placementJobs.collegeId,collegeId),
-    sql`lower(${placementJobs.jobTypeLabel}) = lower(${current.label}::text)`));
+  // Atomic tenant-scoped cascade, including historical/archived drives.
+  // Bump job CAS versions so another editor cannot overwrite a renamed type.
+  await tx.execute(sql`update placement_jobs
+   set job_type_label = ${updated.label},
+       version = version + 1,
+       updated_at = greatest(clock_timestamp(), date_trunc('milliseconds', updated_at) + interval '1 millisecond')
+   where college_id = ${collegeId} and lower(job_type_label) = lower(${current.label})`);
   await tx.insert(activityEvents).values({
    organizationId:college.organizationId,collegeId,actorUserId:ctx.user.id,
    actorMembershipId:ctx.membership!.id,module:"PLACEMENTS",eventType:"placements.tpo_job_type.renamed",
@@ -225,16 +239,20 @@ export async function setTpoJobTypeCountsAsPlaced(ctx:RequestContext,raw:unknown
   if(current.isBuiltin||isTpoBuiltinJobType(current.label))throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
   if(current.countsAsPlaced===input.countsAsPlaced)return {changed:false,updatedAt:current.updatedAt.toISOString()};
   if(current.updatedAt.toISOString()!==input.expectedVersion)throw new TpoConfigError("TPO_SETTINGS_STALE");
+  const [jobTypeColumn]=await tx.select({ready:jobTypeColumnReady});
+  if(!jobTypeColumn?.ready)throw new TpoConfigError("TPO_SETTINGS_PENDING");
   const [saved]=await tx.update(placementTpoJobTypes).set({countsAsPlaced:input.countsAsPlaced,
    updatedAt:sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementTpoJobTypes.updatedAt}) + interval '1 millisecond')`,
   })
    .where(and(eq(placementTpoJobTypes.id,current.id),eq(placementTpoJobTypes.collegeId,collegeId),
     eq(placementTpoJobTypes.updatedAt,current.updatedAt))).returning();
   if(!saved)throw new TpoConfigError("TPO_SETTINGS_STALE");
-  // Snapshot placement policy on every existing drive sharing this college type.
-  await tx.update(placementJobs).set({countsAsPlaced:input.countsAsPlaced})
-   .where(and(eq(placementJobs.collegeId,collegeId),
-    sql`lower(${placementJobs.jobTypeLabel}) = lower(${current.label}::text)`));
+  // Snapshot the new policy on all linked drives in the same transaction.
+  await tx.execute(sql`update placement_jobs
+   set counts_as_placed = ${input.countsAsPlaced},
+       version = version + 1,
+       updated_at = greatest(clock_timestamp(), date_trunc('milliseconds', updated_at) + interval '1 millisecond')
+   where college_id = ${collegeId} and lower(job_type_label) = lower(${current.label})`);
   await tx.insert(activityEvents).values({organizationId:college.organizationId,collegeId,
    actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,module:"PLACEMENTS",
    eventType:"placements.tpo_job_type.placed_rule_changed",subjectType:"JOB_TYPE",
@@ -263,10 +281,12 @@ export async function removeTpoJobType(ctx:RequestContext,raw:unknown){
   if(!current)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
   if(current.isBuiltin||isTpoBuiltinJobType(current.label))throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
   if(current.updatedAt.toISOString()!==input.expectedVersion)throw new TpoConfigError("TPO_SETTINGS_STALE");
+  const [jobTypeColumn]=await tx.select({ready:jobTypeColumnReady});
+  if(!jobTypeColumn?.ready)throw new TpoConfigError("TPO_SETTINGS_PENDING");
   const [usage]=await tx.select({n:sql<number>`count(*)::integer`}).from(placementJobs)
    .where(and(eq(placementJobs.collegeId,collegeId),
-    sql`lower(${placementJobs.jobTypeLabel}) = lower(${current.label}::text)`,
-    sql`${placementJobs.archivedAt} is null`));
+    sql`lower(job_type_label) = lower(${current.label})`));
+  // Even archived drives remain historical references and block deletion.
   if((usage?.n??0)>0)throw new TpoConfigError("TPO_JOB_TYPE_IN_USE");
   await tx.delete(placementTpoJobTypes).where(and(eq(placementTpoJobTypes.id,current.id),
    eq(placementTpoJobTypes.collegeId,collegeId)));
@@ -325,15 +345,16 @@ export async function saveTpoJobTypes(ctx:RequestContext,raw:unknown){
    throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
   if(customCount>30)throw new TpoConfigError("TPO_JOB_TYPE_LIMIT");
   if(!input.some(item=>item.active))throw new TpoConfigError("TPO_JOB_TYPE_LAST_ACTIVE");
+  const [jobTypeColumn]=await tx.select({ready:jobTypeColumnReady});
+  if(!jobTypeColumn?.ready)throw new TpoConfigError("TPO_SETTINGS_PENDING");
   const existing=await tx.select().from(placementTpoJobTypes)
    .where(eq(placementTpoJobTypes.collegeId,collegeId)).for("update");
   const byId=new Map(existing.map(item=>[item.id,item]));
   const usage=await tx.select({
-   label:sql<string>`lower(${placementJobs.jobTypeLabel})`,
+   label:sql<string>`lower(job_type_label)`,
    count:sql<number>`count(*)::integer`,
-  }).from(placementJobs).where(and(eq(placementJobs.collegeId,collegeId),
-    sql`${placementJobs.archivedAt} is null`))
-   .groupBy(sql`lower(${placementJobs.jobTypeLabel})`);
+  }).from(placementJobs).where(eq(placementJobs.collegeId,collegeId))
+   .groupBy(sql`lower(job_type_label)`);
   const counts=new Map(usage.map(item=>[item.label,item.count]));
   // Remove absent custom types before renames; only unused labels may be removed.
   for(const old of existing){
@@ -371,9 +392,12 @@ export async function saveTpoJobTypes(ctx:RequestContext,raw:unknown){
     throw new TpoConfigError("TPO_SETTINGS_STALE");
    if(old){
     if(old.label!==item.label||old.countsAsPlaced!==item.countsAsPlaced){
-     await tx.update(placementJobs).set({jobTypeLabel:item.label,countsAsPlaced:item.countsAsPlaced})
-      .where(and(eq(placementJobs.collegeId,collegeId),
-       sql`lower(${placementJobs.jobTypeLabel}) = lower(${old.label}::text)`));
+     await tx.execute(sql`update placement_jobs
+      set job_type_label = ${item.label},
+          counts_as_placed = ${item.countsAsPlaced},
+          version = version + 1,
+          updated_at = greatest(clock_timestamp(), date_trunc('milliseconds', updated_at) + interval '1 millisecond')
+      where college_id = ${collegeId} and lower(job_type_label) = lower(${old.label})`);
     }
     await tx.update(placementTpoJobTypes).set({
      label:item.label,active:item.active,countsAsPlaced:item.countsAsPlaced,sortOrder:index,

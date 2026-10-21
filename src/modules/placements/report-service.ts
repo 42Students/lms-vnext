@@ -60,7 +60,25 @@ export const placementReportQuerySchema = z
     mode: z.enum(["ON_CAMPUS", "POOL", "OFF_CAMPUS"]).optional(),
     category: z.enum(["REGULAR", "DREAM", "SUPER_DREAM"]).optional(),
   })
-  .strict();
+  .strict()
+  .superRefine((filters, ctx) => {
+    // Legacy POOL and SUPER_DREAM are not independently persisted. Returning
+    // zero rows for either would fabricate a valid empty result.
+    if (filters.mode === "POOL") {
+      ctx.addIssue({
+        code: "custom",
+        path: ["mode"],
+        message: "Pool-drive reporting needs a persisted pool classification; this filter is not available yet.",
+      });
+    }
+    if (filters.category === "SUPER_DREAM") {
+      ctx.addIssue({
+        code: "custom",
+        path: ["category"],
+        message: "Super-dream reporting needs a persisted category; this filter is not available yet.",
+      });
+    }
+  });
 
 export type PlacementReportQuery = z.input<
   typeof placementReportQuerySchema
@@ -177,8 +195,11 @@ export async function getPlacementReportWorkspace(
       companyId: placementCompanies.id,
       companyName: placementCompanies.name,
       employmentType: placementJobs.employmentType,
-      status:placementJobs.status,
-      jobTypeLabel:placementJobs.jobTypeLabel,
+      status: placementJobs.status,
+      recruiterDriveMode: placementJobs.recruiterDriveMode,
+      isDream: placementJobs.isDream,
+      // Type labels require the job_type_label migration; do not select a
+      // nonexistent Drizzle column or mislabel a custom drive as a built-in.
       countsAsPlaced: placementJobs.countsAsPlaced,
     })
     .from(placementJobs)
