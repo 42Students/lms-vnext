@@ -235,7 +235,7 @@ export function AnnouncementAdminWorkspace({
           <p className="text-sm text-muted-foreground">Select a college scope before creating an announcement.</p>
         ) : (
           <div className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+            <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
               Audience
               <Select
                 className="min-h-11 w-full md:min-h-9"
@@ -249,19 +249,19 @@ export function AnnouncementAdminWorkspace({
                 ))}
               </Select>
             </label>
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+            <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
               Title
               <Input className="w-full" value={title} maxLength={255} onChange={(e) => setTitle(e.target.value)} />
             </label>
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2 text-[13px]">
+            <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2 text-[13px]">
               Message
               <Textarea className="w-full" value={message} maxLength={10000} onChange={(e) => setMessage(e.target.value)} />
             </label>
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+            <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
               Schedule · local time
               <Input className="w-full" type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} />
             </label>
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+            <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
               Show until · local time
               <Input className="w-full" type="datetime-local" value={expiresAt} onChange={(e) => setExpiresAt(e.target.value)} />
             </label>
@@ -366,7 +366,7 @@ export function AnnouncementAdminWorkspace({
               <Checkbox checked={editConsent} onChange={e=>setEditConsent(e.target.checked)} />
               I reviewed the audience and notice contents and consent to applying changes to recipients.
             </label>:null}
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+            <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
               Audience
               <Select
                 name="target"
@@ -389,19 +389,19 @@ export function AnnouncementAdminWorkspace({
                 ))}
               </Select>
             </label>
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+            <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
               Title
               <Input name="title" defaultValue={editing.title} maxLength={255} className="w-full" />
             </label>
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+            <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
               Message
               <Textarea name="message" defaultValue={editing.message} maxLength={10000} className="w-full" />
             </label>
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+            <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
               Schedule · local time
               <Input name="scheduledAt" type="datetime-local" defaultValue={localInputValue(editing.scheduledAt)} className="w-full" />
             </label>
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+            <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
               Show until · local time
               <Input name="expiresAt" type="datetime-local" defaultValue={localInputValue(editing.expiresAt)} className="w-full" />
             </label>

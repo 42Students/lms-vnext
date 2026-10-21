@@ -320,42 +320,42 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-2.md: file, number of 
 - [x] `src/components/academics/college-hall-cancellation-action.tsx`
 - [x] `src/components/academics/college-promotion-confirmation.tsx`
 - [x] `src/components/academics/college-semester-management.tsx`
-- [ ] `src/components/academics/college-structure-directory.tsx`
-- [ ] `src/components/academics/college-term-mapping-manager.tsx`
-- [ ] `src/components/academics/learner-class-schedule.module.css`
-- [ ] `src/components/academics/learner-class-schedule.tsx`
-- [ ] `src/components/academics/legacy-class-month-grid.module.css`
-- [ ] `src/components/academics/section-operations.tsx`
-- [ ] `src/components/activity/activity-center.tsx`
-- [ ] `src/components/activity/learner-notifications-inbox.tsx`
-- [ ] `src/components/activity/notification-list.tsx`
-- [ ] `src/components/activity/notification-toolbar.tsx`
-- [ ] `src/components/admin/academic-module-scope-inventory.tsx`
-- [ ] `src/components/admin/academic-setup-steps.tsx`
-- [ ] `src/components/admin/admin-dashboard-actions.tsx`
-- [ ] `src/components/admin/admin-program-directory.tsx`
-- [ ] `src/components/admin/college-branding-form.tsx`
-- [ ] `src/components/admin/college-branding-preview.tsx`
-- [ ] `src/components/admin/college-logo-uploader.tsx`
-- [ ] `src/components/admin/college-setup-checklist.tsx`
-- [ ] `src/components/admin/department-directory.tsx`
-- [ ] `src/components/admin/learner-module-access-drawer.tsx`
-- [ ] `src/components/admin/lecture-hall-manager.tsx`
-- [ ] `src/components/admin/legacy-college-stat.module.css`
-- [ ] `src/components/admin/person-membership-actions.tsx`
-- [ ] `src/components/admin/person-onboard-dialog.tsx`
-- [ ] `src/components/admin/person-profile-dialog.tsx`
-- [ ] `src/components/admin/super-admin-hr-accounts.tsx`
-- [ ] `src/components/admin/super-admin-interview-operations.tsx`
-- [ ] `src/components/admin/super-admin-placement-detail-view.tsx`
-- [ ] `src/components/admin/tenant-domain-manager.tsx`
-- [ ] `src/components/admin/tenant-settings-other-keys.tsx`
-- [ ] `src/components/announcements/announcement-admin-workspace.tsx`
-- [ ] `src/components/announcements/super-admin-college-broadcast-form.tsx`
-- [ ] `src/components/attendance/college-attendance-policy-form.tsx`
-- [ ] `src/components/attendance/faculty-attendance-workspace.tsx`
-- [ ] `src/components/attendance/learner-attendance-workspace.tsx`
-- [ ] `src/components/auth/login-form.tsx`
+- [x] `src/components/academics/college-structure-directory.tsx`
+- [x] `src/components/academics/college-term-mapping-manager.tsx`
+- [x] `src/components/academics/learner-class-schedule.module.css`
+- [x] `src/components/academics/learner-class-schedule.tsx`
+- [x] `src/components/academics/legacy-class-month-grid.module.css`
+- [x] `src/components/academics/section-operations.tsx`
+- [x] `src/components/activity/activity-center.tsx`
+- [x] `src/components/activity/learner-notifications-inbox.tsx`
+- [x] `src/components/activity/notification-list.tsx`
+- [x] `src/components/activity/notification-toolbar.tsx`
+- [x] `src/components/admin/academic-module-scope-inventory.tsx`
+- [x] `src/components/admin/academic-setup-steps.tsx`
+- [x] `src/components/admin/admin-dashboard-actions.tsx`
+- [x] `src/components/admin/admin-program-directory.tsx`
+- [x] `src/components/admin/college-branding-form.tsx`
+- [x] `src/components/admin/college-branding-preview.tsx`
+- [x] `src/components/admin/college-logo-uploader.tsx`
+- [x] `src/components/admin/college-setup-checklist.tsx`
+- [x] `src/components/admin/department-directory.tsx`
+- [x] `src/components/admin/learner-module-access-drawer.tsx`
+- [x] `src/components/admin/lecture-hall-manager.tsx`
+- [x] `src/components/admin/legacy-college-stat.module.css`
+- [x] `src/components/admin/person-membership-actions.tsx`
+- [x] `src/components/admin/person-onboard-dialog.tsx`
+- [x] `src/components/admin/person-profile-dialog.tsx`
+- [x] `src/components/admin/super-admin-hr-accounts.tsx`
+- [x] `src/components/admin/super-admin-interview-operations.tsx`
+- [x] `src/components/admin/super-admin-placement-detail-view.tsx`
+- [x] `src/components/admin/tenant-domain-manager.tsx`
+- [x] `src/components/admin/tenant-settings-other-keys.tsx`
+- [x] `src/components/announcements/announcement-admin-workspace.tsx`
+- [x] `src/components/announcements/super-admin-college-broadcast-form.tsx`
+- [x] `src/components/attendance/college-attendance-policy-form.tsx`
+- [x] `src/components/attendance/faculty-attendance-workspace.tsx`
+- [x] `src/components/attendance/learner-attendance-workspace.tsx`
+- [x] `src/components/auth/login-form.tsx`
 - [ ] `src/components/auth/membership-chooser.tsx`
 - [ ] `src/components/college/college-admin-profile-editor.tsx`
 - [ ] `src/components/college/college-faculty-assignment-actions.tsx`

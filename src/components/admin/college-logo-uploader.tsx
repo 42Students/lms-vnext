@@ -104,13 +104,13 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
           style={{objectPosition:positionX+"% "+positionY+"%",transform:"scale("+zoom+")"}}/>
       </div>
       <div className="grid min-w-0 max-w-[480px] gap-[var(--lms-space-3)]">
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Horizontal crop position ({positionX}%)
+        <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Horizontal crop position ({positionX}%)
           <Input aria-label="Horizontal crop position" className="!min-h-11 !w-full !min-w-0 !border-0 !bg-transparent !px-0 accent-[var(--lms-primary)]" type="range" min={0} max={100} value={positionX} onChange={e=>setPositionX(Number(e.target.value))}/>
         </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Vertical crop position ({positionY}%)
+        <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Vertical crop position ({positionY}%)
           <Input aria-label="Vertical crop position" className="!min-h-11 !w-full !min-w-0 !border-0 !bg-transparent !px-0 accent-[var(--lms-primary)]" type="range" min={0} max={100} value={positionY} onChange={e=>setPositionY(Number(e.target.value))}/>
         </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Zoom ({Math.round(zoom*100)}%)
+        <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Zoom ({Math.round(zoom*100)}%)
           <Input aria-label="Crop zoom" className="!min-h-11 !w-full !min-w-0 !border-0 !bg-transparent !px-0 accent-[var(--lms-primary)]" type="range" min={1} max={2} step={0.1} value={zoom} onChange={e=>setZoom(Number(e.target.value))}/>
         </label>
       </div>

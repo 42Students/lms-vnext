@@ -275,7 +275,7 @@ export function LearnerAttendanceWorkspace({
   return (
     <div className="min-w-0 space-y-4 md:space-y-6">
       {urlNotice ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body">{urlNotice}</p> : null}
-      <section className="min-w-0 border-b border-border pb-5 pt-4 md:pb-6 md:pt-5">
+      <section className="min-w-0 border-b border-border pb-4 pt-4 md:pb-6 md:pt-6">
         <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-end md:justify-between md:gap-4">
           <label className="w-full max-w-sm font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Course
@@ -400,7 +400,7 @@ export function LearnerAttendanceWorkspace({
       </div>
       </Disclosure>
 
-      <section className="min-w-0 border-b border-border pb-5 pt-4 md:pb-6 md:pt-5">
+      <section className="min-w-0 border-b border-border pb-4 pt-4 md:pb-6 md:pt-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="m-0 text-sm font-semibold text-foreground">
@@ -442,7 +442,7 @@ export function LearnerAttendanceWorkspace({
         </p>
       ) : null}
 
-      <section className="min-w-0 border-b border-border pb-5 pt-4 md:pb-6 md:pt-5">
+      <section className="min-w-0 border-b border-border pb-4 pt-4 md:pb-6 md:pt-6">
         <Disclosure title="Course overview" contentClassName="pb-4">
         <div className="mt-3 grid min-w-0 gap-2 md:grid-cols-2 xl:grid-cols-3">
           {summaries.map((item) => (
