@@ -137,6 +137,7 @@ export async function listCollegeReassignmentWorkspaces(
   const matchingWorkspaces = await db.select({
     id: projectInstances.id,
     mentorMembershipId: projectMembers.membershipId,
+    roleLabel:projectMembers.roleLabel,
   }).from(projectInstances).leftJoin(projectMembers, and(
     eq(projectMembers.projectId, projectInstances.id), activePrimaryMentor,
   )).where(where).orderBy(asc(projectInstances.id))

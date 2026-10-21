@@ -146,6 +146,7 @@ export async function ProjectAdminReassignMentorPage({
             status: project.status,
             mentorName: project.mentorName,
             mentorMembershipId: project.mentorMembershipId,
+            roleLabel:project.roleLabel,
           }))}
         mentors={mentors}
       />
