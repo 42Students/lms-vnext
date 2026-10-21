@@ -44,7 +44,7 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U003 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Courses.js`
 - [x] U004 (FE page) `docs/legacy-source/frontend/src/pages/mentor/courses/[courseId]/index.js`
 - [x] U005 (FE page) `docs/legacy-source/frontend/src/pages/learn/my-placements/placement.js`
-- [ ] U006 (FE page) `docs/legacy-source/frontend/src/pages/learn/my-placements/applications.js`
+- [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/learn/my-placements/applications.js`
 - [ ] U007 (FE page) `docs/legacy-source/frontend/src/pages/learn/allAssignments.js`
 - [ ] U008 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/syllabus/youtube.js`
 - [ ] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Classroom/classroom.js`
