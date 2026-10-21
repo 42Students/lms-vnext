@@ -1455,30 +1455,6 @@ export function PlacementJobCreateForm({
             </label>
             <p className="text-xs text-muted-foreground">This records the employer's separate portal; it does not automatically register students. Keep the application mode and primary employer URL consistent.</p>
           </fieldset>
-          <div className="grid gap-2 sm:col-span-2">
-            <label htmlFor="drive-skills-input" className="text-sm font-semibold text-foreground">Skills the company wants</label>
-            <p className="text-xs text-muted-foreground">Type a skill and press Enter. Applicants get a skill match, but skills never decide who can apply. Up to 30 skills, 50 characters each.</p>
-            <input type="hidden" name="skillsWanted" value={wantedSkills.join(", ")} readOnly />
-            {wantedSkills.length>0?<div className="flex flex-wrap gap-2" aria-label="Skills selected">
-              {wantedSkills.map(skill=><span key={skill} className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-1 text-xs">
-                {skill}
-                <Button variant="secondary" type="button" className="min-h-7 px-1 py-0 text-xs text-danger"
-                  aria-label={"Remove skill "+skill} onClick={()=>{setWantedSkills(items=>items.filter(item=>item!==skill));markDirty();}}>×</Button>
-              </span>)}
-            </div>:null}
-            <Input id="drive-skills-input" className={inputClass} value={skillDraft} maxLength={50}
-              disabled={wantedSkills.length>=30} placeholder="e.g. Java, SQL, React"
-              onChange={event=>{
-                if(event.target.value.includes(","))addSkills(event.target.value);
-                else setSkillDraft(event.target.value);
-              }}
-              onKeyDown={event=>{if(event.key==="Enter"||event.key===","){
-                event.preventDefault();addSkills(skillDraft);
-              }}}
-              onBlur={()=>{if(skillDraft.trim())addSkills(skillDraft);}}
-            />
-            <p className="text-xs text-muted-foreground">{wantedSkills.length} of 30 skills selected</p>
-          </div>
           <label className="grid gap-2 text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4 text-[13px] text-[var(--lms-neutral-400)]">Responsibilities
             <Textarea name="responsibilities" rows={6} maxLength={15000} className={textareaClass} placeholder="Responsibilities, duties and expectations"/>
           </label>
@@ -1786,6 +1762,34 @@ export function PlacementJobCreateForm({
           </label>
           </div>
         </div>
+      </section>
+
+      <section aria-label="Skills the company wants" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
+        <h2 className="mb-3 text-base font-semibold text-foreground">Skills the company wants</h2>
+          <div className="grid gap-2 sm:col-span-2">
+            <label htmlFor="drive-skills-input" className="text-sm font-semibold text-foreground">Skills the company wants</label>
+            <p className="text-xs text-muted-foreground">Type a skill and press Enter. Applicants get a skill match, but skills never decide who can apply. Up to 30 skills, 50 characters each.</p>
+            <input type="hidden" name="skillsWanted" value={wantedSkills.join(", ")} readOnly />
+            {wantedSkills.length>0?<div className="flex flex-wrap gap-2" aria-label="Skills selected">
+              {wantedSkills.map(skill=><span key={skill} className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-1 text-xs">
+                {skill}
+                <Button variant="secondary" type="button" className="min-h-7 px-1 py-0 text-xs text-danger"
+                  aria-label={"Remove skill "+skill} onClick={()=>{setWantedSkills(items=>items.filter(item=>item!==skill));markDirty();}}>×</Button>
+              </span>)}
+            </div>:null}
+            <Input id="drive-skills-input" className={inputClass} value={skillDraft} maxLength={50}
+              disabled={wantedSkills.length>=30} placeholder="e.g. Java, SQL, React"
+              onChange={event=>{
+                if(event.target.value.includes(","))addSkills(event.target.value);
+                else setSkillDraft(event.target.value);
+              }}
+              onKeyDown={event=>{if(event.key==="Enter"||event.key===","){
+                event.preventDefault();addSkills(skillDraft);
+              }}}
+              onBlur={()=>{if(skillDraft.trim())addSkills(skillDraft);}}
+            />
+            <p className="text-xs text-muted-foreground">{wantedSkills.length} of 30 skills selected</p>
+          </div>
       </section>
 
       <section aria-label="Planned rounds" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
