@@ -17,5 +17,5 @@ Order of work: finish the unit you are on in your main queue, then continue the 
 - [x] L17-U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/QuizController.java`
 - [x] L18-U015 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/_Class.java`
 - [x] L18-U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicTrackerLogsAccessController.java`
-- [ ] L19-U021 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/request/ApplyToJobRequest.java`
+- [x] L19-U021 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/request/ApplyToJobRequest.java`
 - [ ] L19-U031 (Cross-cutting area) `cross/19: Messaging, discussions, classroom/forum, announcements`
