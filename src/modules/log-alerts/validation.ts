@@ -27,3 +27,15 @@ export const knownErrorMutationSchema = z.discriminatedUnion("action", [
 ]);
 
 export type KnownErrorMutation = z.infer<typeof knownErrorMutationSchema>;
+
+/** Optional legacy error-signature mute adapter. Never accept an arbitrary
+ * raw path/message as a signature ID: resolve one exact, environment-scoped
+ * persisted sample first. An ambiguous/missing sample fails closed.
+ */
+export const legacyKnownErrorMuteLookupSchema=z.strictObject({
+ environment:z.enum(["PRODUCTION","UAT","DEVELOPMENT"]),
+ message:z.string().trim().min(1).max(500),
+ path:z.string().trim().min(1).max(255),
+ muted:z.boolean(),
+ reason:z.string().trim().max(255).optional(),
+});

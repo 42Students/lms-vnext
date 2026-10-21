@@ -1,7 +1,7 @@
 import "server-only";
 import {z} from "zod";
 
-import { count, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, count, desc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   db10LogAlertSignatures,
@@ -13,6 +13,7 @@ import {
   knownErrorIdSchema,
   knownErrorListSchema,
   knownErrorMutationSchema,
+  legacyKnownErrorMuteLookupSchema,
 } from "./validation";
 import { knownErrorTriagePatch } from "./triage-policy";
 
@@ -187,4 +188,24 @@ export async function markLogAlertsViewed(context: RequestContext) {
     })
     .returning({ adminLastViewedAt: db10LogAlertStates.adminLastViewedAt });
   return state?.adminLastViewedAt ?? null;
+}
+
+/** Compatibility with the old `mute(message,path)` action without relaxing
+ * UUID mutation authority. Legacy sample text may have been normalized and
+ * redacted on ingestion; never fuzzy-match a different alert signature.
+ */
+export async function muteLegacyKnownErrorForAdmin(context:RequestContext,raw:unknown){
+ requireGlobalLogAdmin(context);
+ const input=legacyKnownErrorMuteLookupSchema.parse(raw);
+ const rows=await getDb().select({id:db10LogAlertSignatures.id})
+  .from(db10LogAlertSignatures)
+  .where(and(
+   eq(db10LogAlertSignatures.environment,input.environment),
+   eq(db10LogAlertSignatures.sampleMessage,input.message),
+   eq(db10LogAlertSignatures.samplePath,input.path),
+  )).limit(2);
+ if(rows.length!==1)throw new LogAlertsAdminError("KNOWN_ERROR_NOT_FOUND");
+ return mutateKnownErrorForAdmin(context,rows[0]!.id,{
+  action:"MUTE",muted:input.muted,reason:input.reason,
+ });
 }
