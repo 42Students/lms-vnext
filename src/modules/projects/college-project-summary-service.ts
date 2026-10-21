@@ -1,8 +1,8 @@
 import "server-only";
-import {and,eq,isNull,ne} from "drizzle-orm";
+import {and,eq,isNotNull,isNull,ne} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
-import {projectInstances,projectMembers,projectSubmissions,projectTasks,sections,cohorts,programs,departments} from "@/db/schema";
+import {projectInstances,projectMembers,projectSubmissions,projectSprints,projectTasks,sections,cohorts,programs,departments} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {ProjectsServiceError} from "./errors";
 import {requireProjectManageAccess} from "./access";
@@ -38,8 +38,19 @@ export async function updateCollegeProjectSummary(context:RequestContext,project
   const [existingTask] = await tx.select({id:projectTasks.id}).from(projectTasks)
    .where(and(eq(projectTasks.projectId,row.id),isNull(projectTasks.deletedAt)))
    .limit(1);
-  if(existingTask && input.progressPercent !== row.progressPercent)
+  const [existingSprint] = await tx.select({id:projectSprints.id}).from(projectSprints)
+   .where(and(eq(projectSprints.projectId,row.id),isNull(projectSprints.deletedAt)))
+   .limit(1);
+  if((existingTask || existingSprint) && input.progressPercent !== row.progressPercent)
    throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
+  if(input.estimationUnit !== row.estimationUnit) {
+   const [estimatedTask] = await tx.select({id:projectTasks.id}).from(projectTasks)
+    .where(and(eq(projectTasks.projectId,row.id),isNull(projectTasks.deletedAt),
+     isNotNull(projectTasks.estimatePoints))).limit(1);
+   // Estimates without an explicit conversion are never silently reinterpreted.
+   if(estimatedTask || (input.estimationUnit === "TASKS" && row.estimationUnit !== "TASKS"))
+    throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
+  }
   const [mentor]=await tx.select({id:projectMembers.id}).from(projectMembers)
    .where(and(eq(projectMembers.projectId,row.id),eq(projectMembers.role,"MENTOR"),
     isNull(projectMembers.endedAt))).limit(1);
