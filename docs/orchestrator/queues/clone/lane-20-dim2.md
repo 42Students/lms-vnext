@@ -391,17 +391,17 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-20.md: file, number of
 - [x] `src/components/projects/college-project-student-roster-dialog.tsx`
 - [x] `src/components/projects/learner-project-board-search.tsx`
 - [x] `src/components/projects/mentor-lane-board.tsx`
-- [ ] `src/components/projects/mentor-meeting-notes-editor.tsx`
-- [ ] `src/components/projects/mentor-meeting-reschedule.tsx`
-- [ ] `src/components/projects/mentor-sprint-details-edit.tsx`
-- [ ] `src/components/projects/mentor-sprint-write.tsx`
-- [ ] `src/components/projects/mentor-task-details-edit.tsx`
-- [ ] `src/components/projects/project-admin-submission-review.tsx`
-- [ ] `src/components/projects/project-create-control.tsx`
-- [ ] `src/components/projects/project-delivery-reopen-control.tsx`
-- [ ] `src/components/projects/project-resource-list.tsx`
-- [ ] `src/components/projects/project-team-controls.tsx`
-- [ ] `src/components/tpo/recruiter-lead-csv-import.tsx`
+- [x] `src/components/projects/mentor-meeting-notes-editor.tsx`
+- [x] `src/components/projects/mentor-meeting-reschedule.tsx`
+- [x] `src/components/projects/mentor-sprint-details-edit.tsx`
+- [x] `src/components/projects/mentor-sprint-write.tsx`
+- [x] `src/components/projects/mentor-task-details-edit.tsx`
+- [x] `src/components/projects/project-admin-submission-review.tsx`
+- [x] `src/components/projects/project-create-control.tsx`
+- [x] `src/components/projects/project-delivery-reopen-control.tsx`
+- [x] `src/components/projects/project-resource-list.tsx`
+- [x] `src/components/projects/project-team-controls.tsx`
+- [x] `src/components/tpo/recruiter-lead-csv-import.tsx`
 - [ ] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
 - [ ] `src/components/tpo/tpo-batch-eligibility-import.tsx`
 - [ ] `src/components/tpo/tpo-batch-invitation-control.tsx`
