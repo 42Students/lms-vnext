@@ -4,7 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { getShellNavigation } from "@/components/shell/shell-model";
 
 export const metadata: Metadata = {
-  title: "Page not found | 42LMS",
+  title: "Page Not Found | 42LMS",
   robots: { index: false, follow: false },
 };
 
@@ -21,7 +21,11 @@ export default async function NotFound() {
   } catch {
     // No signed-in role exists: the centralized dashboard handles sign-in.
   }
+  // GracefulScreen's legacy-404 presentation already renders the 4rem 404
+  // numeral, the "Page Not Found" heading, and the two original actions.
+  // The lowercase discriminator selects that layout; do not substitute
+  // the error heading/copy into JSON API responses.
   return <GracefulScreen title="Page not found"
     message="The page you are looking for doesn't exist, moved, or is no longer available."
-    homeHref={homeHref} homeLabel="Go to my workspace"/>;
+    homeHref={homeHref} homeLabel="Go to Home"/>;
 }
