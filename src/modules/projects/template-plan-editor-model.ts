@@ -63,12 +63,16 @@ export function updateTemplateSprint(
 export function removeTemplateSprint(
   blueprint: ProjectTemplateBlueprint, key: string,
 ): { blueprint: ProjectTemplateBlueprint; error: string | null } {
-  if (blueprint.tasks.some(item => item.sprintKey === key)) {
-    return { blueprint, error: "Move or remove this sprint's tasks first." };
-  }
   return {
-    blueprint: { ...blueprint, sprints: blueprint.sprints.filter(item => item.key !== key) },
-    error: null,
+    blueprint:{
+      ...blueprint,
+      sprints:blueprint.sprints.filter(item=>item.key!==key),
+      // A deleted legacy sprint moves its tasks into the product backlog;
+      // do not erase the tasks or invent a replacement association.
+      tasks:blueprint.tasks.map(item=>item.sprintKey===key?
+        {...item,sprintKey:null}:item),
+    },
+    error:null,
   };
 }
 
@@ -99,6 +103,6 @@ export function normalizeTemplatePlan(
   return {
     ...blueprint,
     sprints: normalize(blueprint.sprints, row => row.releaseKey),
-    tasks: normalize(blueprint.tasks, row => row.sprintKey),
+    tasks: normalize(blueprint.tasks, row => row.sprintKey??"__BACKLOG__"),
   };
 }
