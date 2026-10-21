@@ -199,6 +199,16 @@ export async function listSuperAdminGlobalCompanyCatalogue(
    companyStatus:placementCompanies.status,
    website:placementCompanies.websiteUrl,primaryDomain:placementCompanies.primaryDomain,
    industry:placementCompanies.industry,about:placementCompanies.about,
+   // Attribute the creating college only when the account has exactly one
+   // historic college membership. Do not guess a college for multi-college
+   // users or imply a linked college necessarily created the global identity.
+   addedByLabel:sql<string|null>`(case
+     when exists(select 1 from system_roles sr where sr.user_id=${placementCompanies.createdByUserId}
+       and sr.role='SUPER_ADMIN') then '42'
+     else (select case when count(distinct m.college_id)=1 then min(c.name) else null end
+       from college_memberships m inner join colleges c on c.id=m.college_id
+       where m.user_id=${placementCompanies.createdByUserId}) end)`,
+
    logoPublicUrl:placementCompanies.logoPublicUrl,verifiedAt:placementCompanies.verifiedAt,
    createdAt:placementCompanies.createdAt,updatedAt:placementCompanies.updatedAt,
    domains:sql<string[]>`(select coalesce(array_agg(d.domain order by d.domain),array[]::text[])
