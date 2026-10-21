@@ -4,14 +4,35 @@ import {platformSettingOverrides} from "@/db/schema";
 import {writeStructuredLog} from "@/observability/logger";
 
 /** Defaults preserve the current deployed behavior if no override exists. */
-export const LEARNER_PLAYBACK_DEFAULTS={saveIntervalMs:15000,watchedThresholdPercent:90,minInProgressPercent:5,chatPollIntervalMs:15000} as const;
+export const LEARNER_PLAYBACK_DEFAULTS={
+ chatPollIntervalMs:15000,
+ progressSaveIntervalMs:15000,
+ saveIntervalMs:15000,
+ watchedThresholdPercent:90,
+ minInProgressPercent:0,
+} as const;
+/** Legacy v1 client settings keys preserve their names and stable ordering.
+ * The additional minInProgressPercent is vNext-only. A positive saved position
+ * is IN_PROGRESS, even before 1% of the video has elapsed.
+ */
+export function legacyClientSettingsEnvelope(settings:Awaited<ReturnType<typeof readLearnerPlaybackSettings>>){
+ return {status:"success",message:"Client settings retrieved successfully",
+  data:{
+   chatPollIntervalMs:settings.chatPollIntervalMs,
+   progressSaveIntervalMs:settings.progressSaveIntervalMs,
+   watchedThresholdPercent:settings.watchedThresholdPercent,
+  }};
+}
 export function learnerPlaybackSettingValue(key:string,value:unknown):number|null{
- if(typeof value!=="string"||!/^\d{1,6}$/.test(value))return null;
- const n=Number(value);
+ // AppSettingsService stored signed integer strings. Clamp below the legacy
+ // floor instead of accidentally replacing an explicit 0 or -1 with default.
+ if(typeof value!=="string"||! /^-?\d{1,6}$/.test(value.trim()))return null;
+ const n=Number(value.trim());
+ if(!Number.isSafeInteger(n))return null;
  if(key==="ui.progressSaveIntervalMs")return n<=600000?Math.max(5000,n):null;
  if(key==="course.watchedThresholdPercent")return n>=1&&n<=100?n:null;
  if(key==="course.minInProgressPercent")return n>=0&&n<=100?n:null;
- if(key==="ui.chatPollIntervalMs")return n>=3000&&n<=600000?n:null;
+ if(key==="ui.chatPollIntervalMs")return n<=600000?Math.max(3000,n):null;
  return null;
 }
 /** Authenticated server helper. Persisted configuration is optional:
@@ -41,10 +62,12 @@ export async function readLearnerPlaybackSettings(_collegeId:string|undefined){
   }
   return value;
  };
+ const progressSaveIntervalMs=safeValue(keys[0],defaults.saveIntervalMs);
  return {
-  saveIntervalMs:safeValue(keys[0],defaults.saveIntervalMs),
+  chatPollIntervalMs:safeValue(keys[3],defaults.chatPollIntervalMs),
+  progressSaveIntervalMs,
+  saveIntervalMs:progressSaveIntervalMs,
   watchedThresholdPercent:safeValue(keys[1],defaults.watchedThresholdPercent),
   minInProgressPercent:safeValue(keys[2],defaults.minInProgressPercent),
-  chatPollIntervalMs:safeValue(keys[3],defaults.chatPollIntervalMs),
  };
 }
