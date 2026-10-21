@@ -662,6 +662,7 @@ export function ProjectWorkspace({
             </Link> : null}
           </div>
           {(mode==="ADMIN"||mode==="MENTOR")&&!readOnly?<WorkspaceBriefEditor
+            requireDeliverables={mode==="ADMIN"}
             projectId={workspace.project.id} initial={authoredBrief}
             updatedAt={workspace.project.updatedAt}/>:null}
           {mode==="MENTOR"&&!readOnly?<MentorProjectAboutEditor project={workspace.project}/>:null}
