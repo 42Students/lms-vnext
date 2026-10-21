@@ -1111,6 +1111,7 @@ export function RecruiterLeadsWorkspace({
               )}
             </section>
           ) : view === "table" ? (
+            <section className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-3 sm:p-4" aria-label="Recruiter leads table">
             <GridWorkspace rows={sortedVisible} columns={RECRUITER_GRID_COLUMNS}
               rowKey={lead=>lead.id} selection={{selected:selectedIds,onChange:setSelectedIds}}
               columnKeys={visibleColumns}
@@ -1154,6 +1155,7 @@ export function RecruiterLeadsWorkspace({
               </>}
 
             </GridWorkspace>
+            </section>
           ) : (
             <div className="flex gap-3 overflow-x-auto pb-3" role="region" aria-label="Recruiter stage board">
               {(["NEW", "CONTACTED", "INVITED", "JOINED", "DRIVE_PLANNED", "RECRUITED", "NOT_NOW"] as const).map(column => (
@@ -1191,10 +1193,13 @@ export function RecruiterLeadsWorkspace({
                         </Link>
                         <div className="mt-2 flex flex-wrap items-center gap-2">
                            {lead.nextFollowupAt?<span className="text-xs text-muted-foreground">
-                             Follow-up {new Date(lead.nextFollowupAt).toLocaleDateString("en-IN")}
+                             Follow-up {recruiterDate(lead.nextFollowupAt)}
                            </span>:null}
                            {lead.ownerName?<span className="text-xs text-muted-foreground">Owner: {lead.ownerName}</span>:null}
                          </div>
+                         {lead.manualStage==="NEW"?<Button variant="secondary" type="button"
+                           className="mt-2 min-h-11 w-full md:min-h-9" disabled={boardMoving}
+                           onClick={()=>void moveBoardLeadToContacted(lead.id)}>Move to Contacted</Button>:null}
                          <Dropdown mobileSheet align="end" label={"Actions for "+lead.name} trigger="Move to… / Actions" className="mt-2 max-w-full text-xs">
                            <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
                              Invited, Joined, Drive planned and Recruited update automatically.
