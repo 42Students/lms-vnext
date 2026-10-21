@@ -305,3 +305,6 @@
 
 - work2 #33 `learn/my-placements/interviews/error.tsx` | G2-17-005-016: exact historical "We could not load your schedule" error copy with same Retry control and explicit failure-not-empty guidance retained.
 - work2 #34 `placements/season-service.ts` | G2-8-022-030: documented old season endpoint crosswalk and added scoped current ACTIVE season resolver. Legacy open-registration intentionally not conflated with season creation; requires batch-invitation route, handed off.
+
+- work2 #35 `api/projects/[projectId]/route.ts` | G2-2-020-023: preserved CAS project summary PATCH and explicit 400 USE_VERSIONED_SECTION_ENDPOINTS for unsupported legacy nested releases/sprints/tasks/resources/sectionTokens instead of silently discarding updates. Authenticated section API adapter handoff.
+- work2 #36 `tpo-outcome-label-settings-service.ts` | G2-2-030-035/026: added fixed-only, ACTIVE-account catalog reader for recruiter/no-college sessions; dynamic custom labels remain strict college/TPO auth. Endpoint owner must use safe fallback without swallowing database outage.

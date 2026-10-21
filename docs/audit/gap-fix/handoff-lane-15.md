@@ -151,3 +151,6 @@
 - Faculty quiz/assignment report pages G2-3-007-024/G2-4-013-032: use `facultyAssessmentReportErrorCopy` to render exact "Report not found." without Retry for invalid/hidden route; for legitimate retriable load error preserve server-safe details and show Retry. Never show private details from 403.
 
 - Placement season API G2-8-022-030: if historic /current consumer required, expose `currentPlacementSeason` under persisted college scope; map legacy open-registration to authorized batch lifecycle invite with audit and preview, not generic season OPEN.
+
+- Legacy project workspace update adapter G2-2-020-023: split nested DTO into project summary and separately CAS-protected releases/sprints/tasks/resources endpoints under project scope and authorize every section; do not accept nested fields in summary route or execute partial untracked updates.
+- After-college choices endpoint G2-2-030-035/026: when account ACTIVE but no authorized college, use `fixedTpoOutcomeCatalog` rather than calling restricted `readTpoOutcomeLabels`; empty dynamic labels. Do not reveal college custom choices to recruiter/no scope or convert infrastructure errors to false success.
