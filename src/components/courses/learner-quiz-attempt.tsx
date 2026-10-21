@@ -352,7 +352,7 @@ export function LearnerQuizAttempt() {
         <Alert tone="error" className="mt-2">{error}</Alert>
         <div className="mt-4 flex flex-wrap gap-2">
           <Button onClick={() => void load()} className="min-h-11 md:min-h-9">Try Again</Button>
-          <Link href="/learn/allQuizzes" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">All Quizzes</Link>
+          <Link href="/learn/allQuizzes" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">All Quizzes</Link>
         </div>
       </div>
     );
