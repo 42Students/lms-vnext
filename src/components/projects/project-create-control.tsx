@@ -328,7 +328,7 @@ export function CreateProjectControl({
               {classes.map(item=><option key={item.id} value={item.id}>{item.name} · {item.code}</option>)}
             </Select>
           </label>
-          {classesError?<p role="alert" className="text-sm text-error md:col-span-2">Classes could not load. <Button variant="ghost" type="button" className="underline" onClick={()=>{setClassesError(false);setClassesRetry(value=>value+1);}}>Try again</Button></p>:null}
+          {classesError?<p role="alert" className="text-sm text-error md:col-span-2">Classes could not load. <Button variant="ghost" type="button" className="underline" onClick={()=>{setClassesError(false);setClassesRetry(value=>value+1);}}>Try Again</Button></p>:null}
           <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
             <Select value={initialStatus} onChange={e=>setInitialStatus(e.target.value as "PLANNED"|"ACTIVE")}
               className="w-full">
@@ -339,7 +339,7 @@ export function CreateProjectControl({
           {!mentorMembershipId?<p className="text-xs text-warning md:col-span-2">This workspace has no mentor.</p>:null}
           {sectionId?<section className="min-w-0 border-b border-border pb-4 md:col-span-2">
             <p className="mb-2 text-sm font-semibold text-foreground">Students · {learnerMembershipIds.length} selected</p>
-            {rosterError?<p role="alert" className="text-sm text-error">Class roster could not load. <Button variant="ghost" type="button" className="underline" onClick={()=>{setRosterError(false);setRosterRetry(value=>value+1);}}>Try again</Button></p>:null}
+            {rosterError?<p role="alert" className="text-sm text-error">Class roster could not load. <Button variant="ghost" type="button" className="underline" onClick={()=>{setRosterError(false);setRosterRetry(value=>value+1);}}>Try Again</Button></p>:null}
             {!rosterError&&loadedRosterSectionId!==sectionId?<p role="status" className="text-sm text-body">Loading class roster…</p>:null}
             <div className="flex flex-wrap gap-3 text-xs">
               <Button variant="ghost" type="button" disabled={loadedRosterSectionId!==sectionId} className="text-primary-text underline"
