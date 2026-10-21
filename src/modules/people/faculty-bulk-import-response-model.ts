@@ -3,7 +3,7 @@ import {z} from "zod";
 const resultRow=z.strictObject({
  row:z.number().int().min(1).max(500),
  name:z.string().max(300),
- status:z.enum(["CREATED","FAILED","SKIPPED"]),
+ status:z.enum(["CREATED","FAILED","SKIPPED","PARTIAL"]),
  message:z.string().max(2000),
 });
 export const facultyBulkImportResponseSchema=z.strictObject({
@@ -11,12 +11,14 @@ export const facultyBulkImportResponseSchema=z.strictObject({
  created:z.number().int().min(0).max(500),
  failed:z.number().int().min(0).max(500),
  skipped:z.number().int().min(0).max(500),
+ partial:z.number().int().min(0).max(500),
  results:z.array(resultRow).max(500),
 }).refine(value=>
  value.total===value.results.length&&
  value.created===value.results.filter(row=>row.status==="CREATED").length&&
  value.failed===value.results.filter(row=>row.status==="FAILED").length&&
- value.skipped===value.results.filter(row=>row.status==="SKIPPED").length,
+ value.skipped===value.results.filter(row=>row.status==="SKIPPED").length&&
+ value.partial===value.results.filter(row=>row.status==="PARTIAL").length,
  {message:"Inconsistent faculty import result totals"},
 );
 
