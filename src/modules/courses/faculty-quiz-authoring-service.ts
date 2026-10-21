@@ -58,6 +58,9 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
    if(!liveFaculty)throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
    let result:typeof courseQuizzes.$inferSelect;
    let eventType:typeof ACTIVITY_EVENT_TYPES[keyof typeof ACTIVITY_EVENT_TYPES];
+   // An identical unchanged question keeps its stable row ID and all option
+   // IDs. No learner attempt can exist when a draft bank is rewritten.
+   const preservedQuestionSequences=new Set<number>();
    if(input.action==="CREATE"){
     const [created]=await tx.insert(courseQuizzes).values({
      lessonId:input.lessonId,deliveryId,title:input.title,description:input.description,
@@ -121,13 +124,41 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
       (input.shuffleOptions===undefined||input.shuffleOptions===current.shuffleOptions))
       throw new CoursesServiceError("FACULTY_QUIZ_NO_CHANGE");
      if(input.questions){
-     const oldQuestions=await tx.select({id:quizQuestions.id}).from(quizQuestions)
-      .where(eq(quizQuestions.quizId,current.id));
-     const ids=oldQuestions.map(x=>x.id);
-     if(ids.length){
-      await tx.delete(quizOptions).where(inArray(quizOptions.questionId,ids));
-      await tx.delete(quizQuestions).where(eq(quizQuestions.quizId,current.id));
-     }
+      const oldQuestions=await tx.select({
+       id:quizQuestions.id,sequence:quizQuestions.sequence,
+       questionType:quizQuestions.questionType,prompt:quizQuestions.prompt,
+       points:quizQuestions.points,
+      }).from(quizQuestions).where(eq(quizQuestions.quizId,current.id));
+      const ids=oldQuestions.map(row=>row.id);
+      const oldOptions=ids.length?await tx.select({
+       questionId:quizOptions.questionId,sequence:quizOptions.sequence,
+       optionText:quizOptions.optionText,isCorrect:quizOptions.isCorrect,
+      }).from(quizOptions).where(inArray(quizOptions.questionId,ids)):[];
+      for(const question of input.questions){
+       const existing=oldQuestions.find(row=>row.sequence===question.sequence);
+       if(!existing||existing.questionType!==question.type||
+          existing.prompt!==question.prompt||existing.points!==question.points)continue;
+       const persisted=oldOptions.filter(row=>row.questionId===existing.id)
+        .sort((a,b)=>a.sequence-b.sequence);
+       const incoming=[...question.options].sort((a,b)=>a.sequence-b.sequence);
+       if(persisted.length===incoming.length&&persisted.every((option,index)=>
+         option.sequence===incoming[index]?.sequence&&
+         option.optionText===incoming[index]?.text&&
+         option.isCorrect===incoming[index]?.correct)){
+        preservedQuestionSequences.add(question.sequence);
+       }
+      }
+      const obsolete=oldQuestions.filter(row=>!preservedQuestionSequences.has(row.sequence))
+       .map(row=>row.id);
+      if(obsolete.length){
+       await tx.delete(quizOptions).where(inArray(quizOptions.questionId,obsolete));
+       await tx.delete(quizQuestions).where(inArray(quizQuestions.id,obsolete));
+      }
+      if(preservedQuestionSequences.size===input.questions.length&&
+        facultyQuizMetadataUnchanged(current,input)&&
+        (input.shuffleQuestions===undefined||input.shuffleQuestions===current.shuffleQuestions)&&
+        (input.shuffleOptions===undefined||input.shuffleOptions===current.shuffleOptions))
+        throw new CoursesServiceError("FACULTY_QUIZ_NO_CHANGE");
      }
      const now=new Date(Math.max(Date.now(),current.updatedAt.getTime()+1));
      const [edited]=await tx.update(courseQuizzes).set({
@@ -174,6 +205,7 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
    }
    if((input.action==="CREATE"||input.action==="EDIT")&&input.questions){
     for(const question of input.questions){
+     if(input.action==="EDIT"&&preservedQuestionSequences.has(question.sequence))continue;
      const [q]=await tx.insert(quizQuestions).values({
       quizId:result.id,questionType:question.type,prompt:question.prompt,
       points:question.points,sequence:question.sequence,
