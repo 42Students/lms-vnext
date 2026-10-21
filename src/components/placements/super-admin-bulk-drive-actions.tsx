@@ -1,5 +1,7 @@
 "use client";
 import { useRef, useState } from "react";
+import Link from "next/link";
+import {useToast} from "@/components/ui/toast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { InlineNotice } from "@/components/ui/inline-notice";
@@ -14,6 +16,7 @@ type Result = {updated: number; skipped: number;
 
 export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
   const router = useRouter();
+  const {showToast}=useToast();
   const [action, setAction] = useState<"OPEN" | "CLOSE">("CLOSE");
   const [selected, setSelected] = useState<string[]>([]);
   const [preview, setPreview] = useState<Preview | null>(null);
@@ -42,6 +45,15 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
         const response = payload as Result;
         setResult(response); setPreview(null); setConfirmOpen(false);
         setSelected(response.results.filter(r => r.status === "SKIPPED").map(r => r.jobId));
+        if(response.updated>0)showToast({
+          tone:"success",
+          title:response.updated+" drive(s) "+(action==="OPEN"?"opened":"closed"),
+          description:response.skipped>0?response.skipped+" failed. Retry only those drives.":undefined,
+        });
+        if(response.skipped>0)showToast({
+          tone:"error",title:response.skipped+" drive(s) could not be updated",
+          description:"Review the failed items and retry them without reapplying completed actions.",
+        });
         router.refresh();
       } else {setPreview(payload as Preview); setResult(null);}
     } catch (cause) {
@@ -78,16 +90,29 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
     {eligible.length>3?<p id="bulk-drive-scroll-cue" className="text-xs text-muted-foreground">More drives below ↓ · Scroll to review the eligible drives.</p>:null}
     <div tabIndex={0} role="region" aria-label="Eligible drive list" aria-describedby={eligible.length>3?"bulk-drive-scroll-cue":undefined}
       className="grid max-h-56 min-w-0 gap-2 overflow-y-auto overscroll-contain border-y border-border py-2 sm:grid-cols-2 xl:grid-cols-3">
-      {eligible.map(d=><label key={d.id} className="flex min-h-11 min-w-0 items-start gap-2 border-b border-border py-2 text-sm">
-        <Checkbox disabled={busy || (!selected.includes(d.id) && selected.length>=25)} checked={selected.includes(d.id)}
-          onChange={()=>toggle(d.id)}/>
-        <span className="min-w-0 break-words"><strong>{d.title}</strong><span className="block break-words text-muted-foreground">
-          {d.companyName} · {d.status}</span></span>
-      </label>)}
+      {eligible.map(d=><div key={d.id} className="min-w-0 border-b border-border py-2">
+        <label className="flex min-h-11 min-w-0 items-start gap-2 text-sm">
+          <Checkbox disabled={busy || (!selected.includes(d.id) && selected.length>=25)} checked={selected.includes(d.id)}
+            onChange={()=>toggle(d.id)}/>
+          <span className="min-w-0 break-words"><strong>{d.title}</strong><span className="block break-words text-muted-foreground">
+            {d.companyName} · {d.status}</span></span>
+        </label>
+        <div className="flex flex-wrap items-center gap-3 pl-6 text-xs">
+          <Link href={"/admin/placements/jobs/"+encodeURIComponent(d.id)+"/settings"}
+            className="min-h-9 py-2 font-semibold text-link underline">Edit drive</Link>
+          <Link href={"/admin/placements/jobs/"+encodeURIComponent(d.id)+"/applications"}
+            className="min-h-9 py-2 font-semibold text-link underline">View applications</Link>
+          <Button type="button" size="sm" variant="link" disabled={busy}
+            onClick={()=>{setSelected([d.id]);setPreview(null);setResult(null);}}>
+            Select only this drive
+          </Button>
+        </div>
+      </div>)}
     </div>
     <p className="text-xs text-muted-foreground">
       Opening applies to closed drives only; draft publication requires the workspace preflight.
-      Affected issued offers may be withdrawn when closing. Historical decisions remain.
+      Closing prevents further applications and may withdraw issued offers.
+      Learner notifications and historical application records follow the existing audited close workflow.
     </p>
     {preview?<div role="group" aria-label="Bulk action impact"
       className="min-w-0 space-y-3 border-y border-border py-3 text-sm">
@@ -117,7 +142,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
       onOpenChange={next=>{if(!next&&!busy)setConfirmOpen(false);}}
       title={"Confirm "+action.toLowerCase()+" for "+(preview?.eligible??0)+" drives?"}
       description={action==="CLOSE"?
-       "Affected issued offers may be withdrawn when closing. Historical decisions remain.":
+       "Closing prevents new applications and may withdraw issued offers. Applicant history is retained; notices follow the audited close workflow.":
        "Opening applies to closed drives only; draft publication requires the workspace preflight."}
       confirmLabel={"Confirm "+action.toLowerCase()}
       confirmVariant={action==="CLOSE"?"danger":"primary"}
