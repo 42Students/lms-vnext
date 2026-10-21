@@ -127,7 +127,7 @@ export function FacultyAttendanceScheduleEditor({
           onChange={e=>setEndsAt(e.target.value)} className="min-w-0 w-full text-base md:text-sm" />
       </label>
     </div>
-    <details key={action + (selected?.id ?? "")} defaultOpen={Boolean(location || description)}
+    <details key={action + (selected?.id ?? "")}
       className="min-w-0 border-y border-[var(--lms-canvas-border)] py-2">
       <summary className="flex min-h-11 cursor-pointer items-center py-2 text-[13px] font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Additional session details

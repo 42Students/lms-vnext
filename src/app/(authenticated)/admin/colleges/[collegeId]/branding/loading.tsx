@@ -9,7 +9,7 @@ export default function CollegeBrandingPreviewLoading() {
         title="Look and feel"
         description="Retrieving the college's stored public presentation fields."
       />
-      <GracefulPageLoading label="Loading college branding…" shape="form" />
+      <GracefulPageLoading label="Loading college branding…" shape="card" />
     </div>
   );
 }

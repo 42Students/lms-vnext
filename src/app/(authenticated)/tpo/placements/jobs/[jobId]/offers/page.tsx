@@ -64,7 +64,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
    </label><Button type="submit" className="min-h-11 w-full px-5 sm:w-auto md:min-h-9">Search</Button>
    {searchQuery||parsed.data.joining!=="ALL"||parsed.data.kind!=="ALL"||parsed.data.expiry!=="ALL"||parsed.data.minCtcLpa!==undefined||parsed.data.maxCtcLpa!==undefined?<Link href={root+"/offers?status="+data.status} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link hover:underline sm:w-auto focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>:null}
    </div>
-   <details className="group min-w-0 border-t border-border pt-3" defaultOpen={parsed.data.joining!=="ALL"||parsed.data.kind!=="ALL"||parsed.data.expiry!=="ALL"||parsed.data.minCtcLpa!==undefined||parsed.data.maxCtcLpa!==undefined}>
+   <details className="group min-w-0 border-t border-border pt-3">
     <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
       Filters <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
     </summary>
