@@ -67,7 +67,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_placements_company-share_column-model.ts.md` (edit src/modules/placements/company-share/column-model.ts; 4 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_app_api_people_faculty-self-document_route.ts.md` (edit src/app/api/people/faculty-self-document/route.ts; 4 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_placements_learner-support-request-model.ts.md` (edit src/modules/placements/learner-support-request-model.ts; 4 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_placements_learner-placement-job-detail.tsx.md` (edit src/components/placements/learner-placement-job-detail.tsx; 4 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_placements_learner-placement-job-detail.tsx.md` (edit src/components/placements/learner-placement-job-detail.tsx; 4 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_placements_tpo-outcome-label-settings-service.ts.md` (edit src/modules/placements/tpo-outcome-label-settings-service.ts; 4 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_shell_topbar_organization-switcher.tsx.md` (edit src/components/shell/topbar/organization-switcher.tsx; 4 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_activity_mentor-notifications-service.ts.md` (edit src/modules/activity/mentor-notifications-service.ts; 4 findings; best P2)

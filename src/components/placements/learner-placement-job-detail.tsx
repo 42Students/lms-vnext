@@ -34,10 +34,30 @@ export function LearnerPlacementJobDetail({
   initialSaved?:boolean;
 }) {
   const summary = learnerJobDetailSummary(items);
-  if (!summary) return null; // route has already returned notFound()
+  if (!summary) return <section role="alert" aria-live="assertive"
+    aria-labelledby="drive-unavailable" className="space-y-4 p-5">
+    <h1 id="drive-unavailable" tabIndex={-1} className="text-lg font-semibold">
+      This drive is unavailable
+    </h1>
+    <p className="text-sm text-body">
+      This drive may be hidden or the eligibility preview could not be loaded.
+      No application was submitted or changed.
+    </p>
+    <div className="flex flex-wrap gap-4">
+      <Link href={returnHref} className="min-h-11 inline-flex items-center font-semibold text-primary-text underline">
+        Browse current drives
+      </Link>
+      <Link href="/learn/my-placements/applications" className="min-h-11 inline-flex items-center font-semibold text-primary-text underline">
+        View my applications
+      </Link>
+    </div>
+  </section>;
   const item = items[0]!;
   const website = safeLearnerPlacementUrl(item.company.websiteUrl);
   const availability=learnerJobAvailabilityBanner(items);
+  const applied=items.filter(row=>row.application?.status==="SUBMITTED"&&row.application.id);
+  const evidencePreviewUnavailable=items.length>0&&items.every(row=>
+    row.eligibility.checks.length===0&&!row.application);
   const failed = items.filter((row) => row.eligibility.status === "INELIGIBLE");
   const requirements=learnerDriveEvidenceRequirements(items);
   // A positive eligibility score is not an application authorization.
@@ -107,6 +127,49 @@ export function LearnerPlacementJobDetail({
           ) : null}
         </div>
       </section>
+      {applied.length>0 ? (
+        <section role="status" aria-label="Application receipt" id="application-receipt"
+          className="rounded-lg border-2 border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] p-4">
+          <h2 className="font-semibold text-foreground">Applied successfully</h2>
+          <p className="mt-2 text-sm text-body">
+            {applied.length} role{applied.length===1?"":"s"} already recorded in your applications.
+          </p>
+          <ul className="mt-3 space-y-2 text-sm">
+            {applied.map(row=><li key={row.application!.id} className="break-words">
+              <span className="font-semibold">{row.roleOption.title}</span>
+              <span className="block text-xs">Receipt: {row.application!.id}</span>
+              <span className="block text-xs">Recorded: {new Intl.DateTimeFormat("en-IN",{
+                timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+              }).format(new Date(row.application!.submittedAt))}</span>
+            </li>)}
+          </ul>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link href="/learn/my-placements/applications"
+              className="inline-flex min-h-11 items-center rounded-md bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-white">
+              View applications
+            </Link>
+            <Link href={returnHref} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+              Browse drives
+            </Link>
+            <Link href="/learn/my-placements/offers" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+              Check official offers
+            </Link>
+          </div>
+        </section>
+      ):null}
+      {evidencePreviewUnavailable?(
+        <section role="alert" aria-label="Eligibility preview unavailable"
+          className="rounded-md border border-[var(--lms-warning-border)] p-4">
+          <h2 className="font-semibold">Eligibility preview unavailable</h2>
+          <p className="mt-1 text-sm">Role-specific evidence is not available here right now.
+            Review your profile and placement rules. No application has been changed.</p>
+          <div className="mt-3 flex flex-wrap gap-3">
+            <Link href="/learn/profile" className="min-h-11 inline-flex items-center text-sm font-semibold text-primary-text underline">Review profile</Link>
+            <Link href="/learn/my-placements/rules" className="min-h-11 inline-flex items-center text-sm font-semibold text-primary-text underline">Review rules</Link>
+            <Link href={returnHref} className="min-h-11 inline-flex items-center text-sm font-semibold text-primary-text underline">Browse drives</Link>
+          </div>
+        </section>
+      ):null}
       <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.55fr)]">
         <div className="min-w-0 space-y-5">
       {availability ? (
@@ -179,6 +242,14 @@ export function LearnerPlacementJobDetail({
           <Link href="/learn/profile"
             className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text underline">
             Review profile evidence →
+          </Link>
+          <Link href="/learn/my-placements#registration"
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+            Registration →
+          </Link>
+          <Link href="/learn/my-placements/schedule?view=calendar"
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+            Calendar →
           </Link>
         </div>
       </section>
@@ -321,7 +392,7 @@ export function LearnerPlacementJobDetail({
 
         </div>
         <aside className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 lg:sticky lg:top-24" aria-label="Application actions">
-      <section id="job-role-options" className="scroll-mt-24 space-y-4" aria-labelledby="role-options-title">
+      <section id="job-role-options" tabIndex={-1} className="scroll-mt-24 space-y-4 focus:outline-2 focus:outline-[var(--lms-primary)]" aria-labelledby="role-options-title">
         <div className="flex min-w-0 flex-wrap items-end justify-between gap-3">
           <div>
             <h2 id="role-options-title" className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
