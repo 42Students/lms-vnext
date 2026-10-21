@@ -33,7 +33,7 @@ export function FacultyCourseHomeSignals({
     : `/teacher/courses/${deliveryId}/blueprint#learning-path`;
 
   return (
-    <div className="space-y-5">
+    <div className="min-w-0 space-y-5">
       {missing.length ? (
         <Alert tone="warning" aria-label="Incomplete faculty course signals">
           <p className="font-semibold">Some faculty course signals are incomplete ({missing.join(", ")}).</p>
