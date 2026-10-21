@@ -28,7 +28,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_components_people_faculty-profile-editor.tsx.part2of2.md` (edit src/components/people/faculty-profile-editor.tsx; 1 findings; best P3)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_components_attendance_admin-attendance-workspace.tsx.md` (edit src/components/attendance/admin-attendance-workspace.tsx; 38 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_announcements_service.ts.md` (edit src/modules/announcements/service.ts; 32 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_NEW_docs_audit_gap2_lane-5_u009-attendance-shared-component.md.md` (new; 31 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_NEW_docs_audit_gap2_lane-5_u009-attendance-shared-component.md.md` (new; 31 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_attendance_faculty-service.ts.md` (edit src/modules/attendance/faculty-service.ts; 30 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_storage_private-object-storage.ts.md` (edit src/modules/storage/private-object-storage.ts; 27 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_NEW_docs_audit_gap2_lane-5_u006-superadmin-attendance.md.md` (new; 27 findings; best P2)

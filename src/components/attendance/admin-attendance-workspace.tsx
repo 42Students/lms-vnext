@@ -1,6 +1,5 @@
 "use client";
 
-import { Checkbox } from "@/components/ui/checkbox";
 import { ADMIN_ATTENDANCE_COPY } from "@/modules/attendance/admin-attendance-copy";
 import {AdminAttendanceParentContactEditor} from "./admin-attendance-parent-contact-editor";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -14,7 +13,7 @@ import {
 import { useRouter } from "next/navigation";
 import { Table } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Drawer } from "@/components/ui/drawer";
+import { Modal } from "@/components/ui/modal";
 import { Disclosure } from "@/components/ui/disclosure";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
@@ -431,19 +430,15 @@ export function AdminAttendanceWorkspace({
             </option>)}
           </Select>
         </label>:null}
-        <label className="flex items-center gap-2 text-sm text-body md:col-span-2 xl:col-span-3">
-          <Checkbox
-            
-            checked={showAllCourses}
-            onChange={(event) => {
-              setShowAllCourses(event.target.checked);
-              const validCourse=event.target.checked || offeredCourses.some((item) => item.id === courseId);
-              if (!validCourse) setCourseId("");
-              navigate(data.month,sectionId,validCourse?courseId:"",validCourse?deliveryId:"",event.target.checked);
-            }}
-          />
-          Show all college courses (including courses not taught to this class)
-        </label>
+        <Button type="button" variant="ghost"
+          className="min-h-11 justify-self-start px-0 text-sm font-semibold text-primary-text underline underline-offset-2 md:col-span-2 md:min-h-9 xl:col-span-3"
+          onClick={() => {
+            const next=!showAllCourses;
+            setShowAllCourses(next);
+            const validCourse=next || offeredCourses.some(item=>item.id===courseId);
+            if(!validCourse)setCourseId("");
+            navigate(data.month,sectionId,validCourse?courseId:"",validCourse?deliveryId:"",next);
+          }}>{showAllCourses?"Only courses taught to this class":"Show all college courses"}</Button>
         <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] md:col-span-2 md:flex-row md:flex-wrap md:items-center md:justify-between xl:col-span-3">
           <div className="flex min-w-0 items-center justify-between gap-[var(--lms-space-2)] md:justify-start flex-wrap">
             <Button size="sm" variant="secondary"
@@ -517,13 +512,12 @@ export function AdminAttendanceWorkspace({
                   }{" "}
                   of {heldSessions.length} held sessions marked
                 </p>
-                <dl className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 md:grid-cols-2 gap-[var(--lms-space-3)] text-xs text-body md:grid-cols-3 xl:grid-cols-6">
-                  <div><dt>Monthly attendance</dt><dd className="font-semibold">{monthPercent===null?"—":monthPercent+"%"}</dd></div>
-                  <div><dt>Students</dt><dd className="font-semibold">{data.grid.roster.length}</dd></div>
-                  <div><dt>Sessions held</dt><dd className="font-semibold">{heldSessions.length}</dd></div>
-                  <div><dt>Absences</dt><dd className="font-semibold">{absentMarks}</dd></div>
-                  <div><dt>Active days</dt><dd className="font-semibold">{activeDays}</dd></div>
-                  <div><dt>Not marked</dt><dd className="font-semibold">{notMarkedCount}</dd></div>
+                <p className="mt-2 text-3xl font-semibold tabular-nums text-foreground" aria-label="Monthly attendance percentage">{monthPercent===null?"—":monthPercent+"%"}</p>
+                <dl className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-3 gap-[var(--lms-space-3)] text-xs text-body">
+                  <div><dt>Students</dt><dd className="text-lg font-semibold">{data.grid.roster.length}</dd></div>
+                  <div><dt>Sessions held</dt><dd className="text-lg font-semibold">{heldSessions.length}</dd></div>
+                  <div><dt>Absences</dt><dd className="text-lg font-semibold">{absentMarks}</dd></div>
+                  {notMarkedCount>0?<div><dt>Not marked</dt><dd className="text-base font-semibold">{notMarkedCount}</dd></div>:null}
                 </dl>
                 <p className="mt-2 text-xs text-body">{presentMarks} present records across {heldSessions.length} held sessions</p>
               </div>
@@ -539,23 +533,23 @@ export function AdminAttendanceWorkspace({
               <caption className="sr-only">College attendance for every calendar day of the selected month. Cross means no scheduled class.</caption>
               <thead>
                 <tr>
-                  <th className="sticky left-0 z-20 bg-surface px-4">
-                    Learner
-                  </th>
-                  {sessionDays.map(({ day, sessions, weekday, isSunday }) => (
-                    <th key={day} scope="col" className={"min-w-16 px-2 text-center "+(isSunday?"bg-surface-subtle":"")}
-                      title={sessions.length?String(sessions.length) + " session(s)":"No class scheduled"}>
-                      <span className="block text-xs font-normal">{weekday}</span><span className="block">{day.slice(8)}</span>
-                      {sessions.length > 1 ? (
-                        <span className="sr-only">{sessions.length} sessions</span>
-                      ) : null}
+                  <th rowSpan={2} scope="col" className="sticky left-0 z-20 bg-surface px-4 text-left">Student</th>
+                  {sessionDays.map(({day,weekday,isSunday,sessions})=>(
+                    <th key={"weekday-"+day} scope="col"
+                      className={"min-w-16 px-2 py-2 text-center text-xs font-semibold "+(isSunday?"bg-surface-subtle":"")}
+                      title={sessions.length?String(sessions.length)+" sessions":"No class scheduled"}>{weekday}</th>
+                  ))}
+                  <th rowSpan={2} scope="col" className="px-4 text-center"
+                    aria-label={ADMIN_ATTENDANCE_COPY.monthPercentAria}
+                    title={ADMIN_ATTENDANCE_COPY.monthPercentTooltip}>{ADMIN_ATTENDANCE_COPY.monthPercentHeader}</th>
+                </tr>
+                <tr>
+                  {sessionDays.map(({day,isSunday})=>(
+                    <th key={"day-"+day} scope="col"
+                      className={"min-w-16 px-2 py-2 text-center text-sm font-semibold "+(isSunday?"bg-surface-subtle":"")}>
+                      {day.slice(8)}
                     </th>
                   ))}
-                  <th className="px-4 text-center"
-                    aria-label={ADMIN_ATTENDANCE_COPY.monthPercentAria}
-                    title={ADMIN_ATTENDANCE_COPY.monthPercentTooltip}>
-                    {ADMIN_ATTENDANCE_COPY.monthPercentHeader}
-                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -657,7 +651,7 @@ export function AdminAttendanceWorkspace({
 
       <AdminAttendanceParentContactEditor collegeId={data.collegeId} learners={data.grid?.roster??[]}/>
 
-      <Drawer
+      <Modal
         open={Boolean(target)}
         dismissible={!correcting&&!correctionGuard.pending}
         onOpenChange={(open) => {
@@ -737,6 +731,7 @@ export function AdminAttendanceWorkspace({
             {target.record?.note ? (
               <p className="text-sm text-body">Note: {target.record.note}</p>
             ) : null}
+            {target.record?.markedAt || target.session.attendanceMarkedAt ? (
             <dl className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
               <div>
                 <dt className="text-xs font-semibold uppercase text-muted-foreground">
@@ -764,6 +759,7 @@ export function AdminAttendanceWorkspace({
                 </dd>
               </div>
             </dl>
+            ) : null}
             {error ? (
               <p
                 role="alert"
@@ -774,12 +770,12 @@ export function AdminAttendanceWorkspace({
             ) : null}
           </div>
         ) : null}
-      </Drawer>
-      <Drawer
+      </Modal>
+      <Modal
         open={Boolean(chooser)}
         onOpenChange={(open) => { if (!open) setChooser(null); }}
-        title="Choose attendance session"
-        description={chooser ? learnerName(chooser.learner) : undefined}
+        title={chooser ? "Choose a session — " + learnerName(chooser.learner) : "Choose a session"}
+        description="Only the session you open will be corrected."
       >
         <div className="space-y-3">
           {chooser?.sessions.map((session) => {
@@ -803,7 +799,7 @@ export function AdminAttendanceWorkspace({
             );
           })}
         </div>
-      </Drawer>
+      </Modal>
     </div>
   );
 }

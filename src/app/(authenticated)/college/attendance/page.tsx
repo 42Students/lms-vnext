@@ -39,7 +39,7 @@ export default async function CollegeAttendancePage({
     context.membership?.collegeId ??
     (isSuperAdmin(context) ? context.adminScope?.collegeId : null);
   if (!collegeId) {
-    return <div className="min-w-0 space-y-6"><PageHeader title="Attendance" /><EmptyState title="Choose a college to view attendance" description="Select an active college in your scope switcher, then try again." action={<Link href="/college" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center px-4">Return to college dashboard</Link>}/></div>;
+    return <div className="min-w-0 space-y-6"><PageHeader title="Attendance" /><EmptyState title="Select a College to view attendance" description="Select an active college in your scope switcher, then try again." action={<Link href="/college" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center px-4">Return to college dashboard</Link>}/></div>;
   }
   const parsed = z.object({
     deliveryId: z.uuid().optional(),
@@ -130,7 +130,7 @@ export default async function CollegeAttendancePage({
     <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
       <PageHeader
         title="Attendance"
-        description={`College-wide attendance oversight for ${options.college.name}, including unmarked sessions and admin corrections.`}
+        description="Review monthly attendance by class and course, correct recent records, and export same grid shown on screen."
       />
       <Tabs
         ariaLabel="Attendance views"
