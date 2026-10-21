@@ -1,19 +1,23 @@
 import Link from "next/link";
+import type { Metadata, Viewport } from "next";
+export const metadata: Metadata = { title: "42Learn <-> Quiz", icons: {icon:"/assets/images/legacy-42lms-logo.svg"} };
+export const viewport: Viewport = { viewportFit:"cover" };
 import { Suspense } from "react";
 import { PageLoading } from "@/components/ui/page-loading";
 import { LearnerQuizAttempt } from "@/components/courses/learner-quiz-attempt";
 
 export default function LearnerQuizAttemptPage() {
   return (
-    <main className="min-h-dvh bg-[var(--lms-neutral-100)] px-4 py-6 text-[var(--lms-neutral-900)] min-[768px]:px-6">
-      <div className="mx-auto w-full min-w-0 max-w-6xl rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4 shadow-none min-[768px]:p-[var(--lms-canvas-padding)]">
+    <main className="min-h-dvh w-full bg-[var(--lms-neutral-100)] text-[var(--lms-neutral-900)]">
+      <div className="mx-auto min-h-dvh w-full min-w-0">
         <Link
           href="/learn/allQuizzes"
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9"
+          className="inline-flex min-h-11 items-center px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9"
         >
-          ← All Quizzes
+          <img src="/assets/images/legacy-42lms-logo.svg" alt="42Learn" width={130} height={40} className="mr-3 h-10 w-[130px] object-contain" />
+          <span>Cancel quiz · All Quizzes</span>
         </Link>
-        <div className="mt-5">
+        <div className="min-h-[calc(100dvh-4rem)]">
           <Suspense fallback={<PageLoading label="Loading quiz…" variant="form" count={4}/>}>
             <LearnerQuizAttempt />
           </Suspense>

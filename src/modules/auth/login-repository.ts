@@ -262,6 +262,17 @@ export const drizzleLoginRepository: LoginRepository = {
     return rowsOf(result).length === 1;
   },
 
+  async invalidateUndeliveredAttempt(id) {
+    // Preserve the row for abuse budgets, but remove all still-usable MACs.
+    await getDb().execute(sql`
+      UPDATE identity_auth_attempts
+      SET used_at=now(), sms_code_mac=NULL, sms_code_expires_at=NULL,
+          email_code_mac=NULL, email_code_expires_at=NULL,
+          version=version+1
+      WHERE id=${id} AND used_at IS NULL AND expires_at>now()
+    `);
+  },
+
   async releaseUndeliveredEmailCode(id, mac) {
     await getDb().execute(sql`
       UPDATE identity_auth_attempts
