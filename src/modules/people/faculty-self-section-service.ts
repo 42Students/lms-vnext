@@ -3,6 +3,12 @@ import type { RequestContext } from "@/modules/identity/context";
 import { facultySelfSectionPatchSchema,updateFacultyProfileSection } from "./faculty-self-section-model";
 import { loadOwnFacultyProfileDocumentStaged,saveOwnFacultyProfileDocumentStaged } from "./faculty-profile-self.staged";
 
+/** Legacy stale row index and the vNext version token both mean the form
+ * was edited against an outdated list. The client must retain entered fields,
+ * show this recovery copy, and allow an explicit refresh before retry. */
+export const facultySelfSectionStaleRecoveryMessage =
+ "Index out of bounds. Please refresh and try again.";
+
 /** Reusing the persisted-actor lock and optimistic CAS in the staged adapter. */
 export async function patchOwnFacultyProfileSection(context:RequestContext,raw:unknown){
  const input=facultySelfSectionPatchSchema.parse(raw);

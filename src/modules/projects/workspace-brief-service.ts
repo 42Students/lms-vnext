@@ -20,8 +20,16 @@ export async function updateProjectWorkspaceBrief(context:RequestContext,project
   if(!project||project.status==="ARCHIVED"||project.status==="COMPLETED"||
      project.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt))
    throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
+  // Legacy overviewFactsRef includes opaque template keys and
+  // definitionOfDone. A strict edit of the five native fields must not
+  // erase unrelated persisted JSON keys; a deliberate empty native field
+  // still clears that native field. Only DB-sourced keys are carried.
+  const prior=project.authoredBrief;
+  const original=prior&&typeof prior==="object"&&!Array.isArray(prior)
+    ?prior as Record<string,unknown>:{};
+  const mergedBrief={...original,...input.brief};
   const [updated]=await tx.update(projectInstances).set({
-    authoredBrief:input.brief,
+    authoredBrief:mergedBrief,
     updatedAt:new Date(Math.max(Date.now(),project.updatedAt.getTime()+1)),
   }).where(and(eq(projectInstances.id,project.id),eq(projectInstances.collegeId,scope.collegeId))).returning();
   if(!updated)throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");

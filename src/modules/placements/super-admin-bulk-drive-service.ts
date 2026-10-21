@@ -1,5 +1,5 @@
 import "server-only";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, count, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { placementApplications, placementCompanyRelationships, placementJobs,
@@ -10,6 +10,8 @@ import { resolveActingCollege } from "@/modules/permissions/acting-college";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { closePlacementJob } from "./job-service";
+import { PlacementsServiceError } from "./errors";
+import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 
@@ -39,9 +41,23 @@ export async function previewSuperAdminBulkDrives(context: RequestContext, raw: 
         eq(placementApplications.id, placementOffers.applicationId))
       .where(and(inArray(placementApplications.jobId, eligible.map(row => row.id)),
         eq(placementOffers.status, "ISSUED"))) : [];
+  const eligibleIds=eligible.map(row=>row.id);
+  const [applicationCount,interviewCount]=eligibleIds.length&&input.action==="CLOSE"
+    ?await Promise.all([
+      getDb().select({total:count()}).from(placementApplications)
+        .where(inArray(placementApplications.jobId,eligibleIds)),
+      getDb().select({total:count()}).from(placementRoundCandidateSlots)
+        .where(inArray(placementRoundCandidateSlots.jobId,eligibleIds)),
+    ]):[[{total:0}],[{total:0}]];
   return {requested: input.jobIds.length, eligible: eligible.length,
     ignored: rows.length - eligible.length, excluded: input.jobIds.length - rows.length,
-    pendingLettersWithdrawn: offers.length, rows};
+    pendingLettersWithdrawn: offers.length,
+    recordedApplications:applicationCount[0]?.total??0,
+    recordedInterviews:interviewCount[0]?.total??0,
+    actionDescription:input.action==="CLOSE"
+      ?"Close prevents new applications, preserves applications and interview history, withdraws issued offers, and records learner notifications. It does not delete the drive."
+      :"Reopen permits new applications; previously withdrawn offers are not restored.",
+    rows};
 }
 
 /** No membership cookie required; fully qualified write with an explicit selected college. */
@@ -101,9 +117,15 @@ export async function updateSuperAdminBulkDrives(context: RequestContext, raw: u
       if (input.action === "CLOSE") await closePlacementJob(context, jobId);
       else await reopenSuperAdminDrive(context, jobId);
       results.push({jobId, status: "UPDATED", reason: "Updated"});
-    } catch {
-      results.push({jobId, status: "SKIPPED",
-        reason: "Could not update this drive. Refresh and retry."});
+    } catch (error) {
+      const reason=error instanceof PlacementsServiceError
+        ?error.code==="PLACEMENT_JOB_NOT_CLOSABLE"
+          ?"Drive status changed or unreleased selections remain; resolve them and retry this drive."
+          :error.code==="PLACEMENT_SEASON_NOT_ACTIVE"
+            ?"The placement season is inactive. Update the season before reopening this drive."
+            :"This drive could not pass placement validation. Review its details, then retry."
+        :"Could not update this drive. Refresh and retry.";
+      results.push({jobId,status:"SKIPPED",reason});
     }
   }
   return {updated: results.filter(row => row.status === "UPDATED").length,
