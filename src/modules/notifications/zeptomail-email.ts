@@ -1,6 +1,9 @@
 import { outboundFetch } from "@/lib/outbound";
 import { writeStructuredLog } from "@/observability/logger";
 import type { EmailProvider } from "./types";
+import { executeScheduledJobWithLease, isAssignmentReminderDue,
+  type ScheduledJobLeaseStore } from "@/modules/operations/scheduled-job-runner";
+import { queueScheduledRecipientNotification } from "@/modules/operations/scheduled-notification-outbox";
 import { isValidRecipient, normalizeRecipient } from "@/modules/messaging/model";
 
 /**
@@ -463,4 +466,142 @@ export function createZeptoMailEmailProvider(
       return result.accepted;
     },
   };
+}
+
+
+/**
+ * Legacy NotificationSchedulerService's COURSE_ASSIGNMENT_DUE event is an
+ * in-app notification. A configured email template does NOT imply permission
+ * to send email: the channel registry deliberately keeps routine course
+ * reminders in-app. The durable outbox owns delivery to the learner inbox.
+ * The Cloud Scheduler caller must invoke this function in a backend worker;
+ * it must not be invoked during a learner page render.
+ */
+export type ScheduledCourseDueRecipient = {
+  organizationId: string;
+  collegeId: string;
+  /** Activity event for this published assessment in the same tenant. */
+  sourceEventId: string;
+  /** Persisted active system/faculty actor responsible for the event. */
+  authoredByUserId: string;
+  recipientUserId: string;
+  contentId: string;
+  deliveryId: string;
+  contentType: "ASSIGNMENT" | "QUIZ";
+  contentTitle: string;
+  courseName: string | null;
+  dueAt: Date | null;
+  /** All three are obtained from current tenant-scoped database records. */
+  published: boolean;
+  activeEnrollment: boolean;
+  submitted: boolean;
+};
+
+export const SCHEDULED_COURSE_DUE_EVENT = {
+  event: "COURSE_ASSIGNMENT_DUE",
+  templateKey: LEGACY_NOTIFICATION_TEMPLATE_KEYS.COURSE_ASSIGNMENT_DUE,
+  channels: ["IN_APP"],
+  schedule: "09:00 Asia/Kolkata",
+  advanceWindow: "[12h, 36h)",
+} as const;
+
+/** Match the legacy per-learner due template without exposing answers,
+ * recipient contact details or raw database identifiers in notification text. */
+export function scheduledCourseDueCopy(row: ScheduledCourseDueRecipient) {
+  const contentName = row.contentTitle.trim() || (row.contentType === "QUIZ" ? "Quiz" : "Assignment");
+  const courseName = row.courseName?.trim() || "Course";
+  const dueDate = row.dueAt && Number.isFinite(row.dueAt.getTime())
+    ? new Intl.DateTimeFormat("en-IN", {
+        dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
+      }).format(row.dueAt)
+    : "Not available";
+  const href = row.contentType === "QUIZ"
+    ? "/learn/allQuizzes?deliveryId=" + encodeURIComponent(row.deliveryId)
+    : "/learn/allAssignments/" + encodeURIComponent(row.contentId)
+        + "?deliveryId=" + encodeURIComponent(row.deliveryId);
+  return {
+    title: row.contentType === "QUIZ" ? "Quiz due soon" : "Assignment due soon",
+    body: contentName.slice(0, 200) + " · " + courseName.slice(0, 120)
+      + " · Due " + dueDate,
+    href,
+    variables: {
+      assignmentName: contentName, contentType: row.contentType,
+      dueDate, courseName, assignmentId: row.contentId,
+    },
+  };
+}
+
+/**
+ * The authorized database loader belongs to the scheduled worker. It MUST
+ * query only published, non-archived assessments and their active class
+ * memberships, with unsubmitted learner work excluded. This worker
+ * independently checks those flags and the original [12h,36h) window before
+ * queueing, while the outbox re-verifies recipient tenant membership.
+ *
+ * Outbox identity is event + recipient + daily IST window. A previous queued
+ * delivery is never resent directly to ZeptoMail / Exotel by this producer.
+ * The separate fenced outbox consumer writes the inbox and retains receipts.
+ */
+export async function runScheduledCourseDueReminderJob(
+  store: ScheduledJobLeaseStore,
+  input: {
+    holderId: string;
+    now: Date;
+    loadAuthorizedCandidates: () => Promise<readonly ScheduledCourseDueRecipient[]>;
+  },
+) {
+  if (!(input.now instanceof Date) || !Number.isFinite(input.now.getTime())) {
+    throw new Error("INVALID_SCHEDULED_REMINDER_TIME");
+  }
+  if (process.env.DB10_NOTIFICATION_OUTBOX_READY !== "DB10_VERIFIED") {
+    throw new Error("SCHEDULED_NOTIFICATION_OUTBOX_NOT_READY");
+  }
+  const day = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
+  }).format(input.now);
+  const time = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", hourCycle: "h23",
+  }).format(input.now);
+  if (time !== "09:00") return { ran: false as const, reason: "OUTSIDE_DAILY_WINDOW" as const };
+  return executeScheduledJobWithLease(
+    store,
+    { jobName: "notification.assignmentReminders", holderId: input.holderId, ttlMs: 60 * 60_000 },
+    async fence => {
+      await fence.assertCurrent();
+      const candidates = await input.loadAuthorizedCandidates();
+      // Bounding both work and memory is deliberate. The scheduler can page
+      // batches on subsequent ticks; never report a truncated batch as done.
+      if (candidates.length > 2000) throw new Error("SCHEDULED_REMINDER_BATCH_TOO_LARGE");
+      let queued = 0, alreadyQueued = 0, skipped = 0;
+      const seen = new Set<string>();
+      for (const row of candidates) {
+        await fence.assertCurrent();
+        const key = [row.organizationId, row.collegeId, row.sourceEventId,
+          row.recipientUserId, row.contentId, day].join(":");
+        if (seen.has(key)) { skipped++; continue; }
+        seen.add(key);
+        if (!row.published || !row.activeEnrollment || row.submitted ||
+            !isAssignmentReminderDue(input.now, row.dueAt)) {
+          skipped++;
+          continue;
+        }
+        if (!/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(row.contentId) ||
+            !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(row.deliveryId)) {
+          skipped++;
+          continue;
+        }
+        const copy = scheduledCourseDueCopy(row);
+        const outcome = await queueScheduledRecipientNotification({
+          organizationId: row.organizationId, collegeId: row.collegeId,
+          sourceEventId: row.sourceEventId, authoredByUserId: row.authoredByUserId,
+          recipientUserId: row.recipientUserId, kind: SCHEDULED_COURSE_DUE_EVENT.event,
+          windowKey: day + ":" + row.contentId,
+          scheduledAt: input.now, title: copy.title, body: copy.body,
+          actionHref: copy.href,
+        });
+        if (outcome === "QUEUED") queued++; else alreadyQueued++;
+      }
+      return { queued, alreadyQueued, skipped, event: SCHEDULED_COURSE_DUE_EVENT.event };
+    },
+  );
 }
