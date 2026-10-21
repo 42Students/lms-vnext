@@ -39,7 +39,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-12/src_components_activity_activity-center.tsx.md` (edit src/components/activity/activity-center.tsx; 11 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-12/src_components_tpo_tpo-notice-read-progress.tsx.md` (edit src/components/tpo/tpo-notice-read-progress.tsx; 10 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-12/NEW_docs_audit_gap2_lane-5_u007-superadmin-calendar.md.md` (new; 10 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_messages_page.tsx.md` (edit src/app/(authenticated)/tpo/messages/page.tsx; 9 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_messages_page.tsx.md` (edit src/app/(authenticated)/tpo/messages/page.tsx; 9 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-12/NEW_docs_audit_gap2_lane-6_l11-u017-tpo-more.md.md` (new; 9 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_modules_activity_service.ts.md` (edit src/modules/activity/service.ts; 9 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_mentor_projects_page.tsx.md` (edit src/app/(authenticated)/mentor/projects/page.tsx; 9 findings; best P1)
