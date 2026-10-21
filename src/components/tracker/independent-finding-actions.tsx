@@ -41,19 +41,21 @@ export function IndependentFindingActions({externalId,version,status,severity,ca
   if((action==="COMMENT"||action==="STATUS"&&["WONT_FIX","CANT_REPRODUCE","NEEDS_INFO","VERIFIED"].includes(nextStatus))&&note.trim().length<4){
    setError("Enter a reason of at least four characters.");return;
   }
-  if(!confirmed){setConfirmOpen(true);return;}
+  if(!confirmed){setError(null);setConfirmOpen(true);return;}
   lock.current=true;setPending(true);setError(null);
   try{
    const result=await apiFetch<{ok:boolean;version:number}>("/api/tracker/audit-findings/"+encodeURIComponent(externalId),{
     method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify(body()),
    });
    if(!result.ok||result.version<=version)throw new Error("The update could not be verified. Refresh and retry.");
+   setConfirmOpen(false);
    router.refresh();
   }catch{setError(friendlyApiError({}));}
-  finally{lock.current=false;setPending(false);setConfirmOpen(false);}
+  finally{lock.current=false;setPending(false);}
  }
  return <section className="min-w-0 max-w-3xl space-y-3 border-b border-border pb-4" aria-label="Finding actions">
   <h2 className="font-semibold text-foreground">Update finding</h2>
+  <div className="grid min-w-0 gap-3 md:grid-cols-2">
   <label className="grid min-w-0 w-full gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Action
    <Select value={action} disabled={pending} onChange={e=>setAction(e.target.value as Action)}
     className="min-h-11 text-sm md:min-h-9">
@@ -81,17 +83,20 @@ export function IndependentFindingActions({externalId,version,status,severity,ca
    <datalist id="finding-duplicate-candidates">{candidates.map(item=><option key={item.id}
      value={item.id}>{item.externalId} · {item.title}</option>)}</datalist>
    </label>:null}
-  {action==="FIX_COMMIT"?<div className="grid gap-2">
+  {action==="FIX_COMMIT"?<div className="grid min-w-0 gap-3 md:col-span-2 md:grid-cols-2">
    <label className="grid min-w-0 w-full gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Repository
     <Input value={repo} disabled={pending} onChange={e=>setRepo(e.target.value)} className="min-h-11 text-sm md:min-h-9"/></label>
    <label className="grid min-w-0 w-full gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Commit SHA
     <Input value={sha} disabled={pending} maxLength={40} onChange={e=>setSha(e.target.value)} className="min-h-11 text-sm md:min-h-9"/></label>
    </div>:null}
-  {(action==="COMMENT"||action==="STATUS")?<label className="grid min-w-0 w-full gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Note or reason
+  {(action==="COMMENT"||action==="STATUS")?<label className="grid min-w-0 w-full gap-1 md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Note or reason
     <Textarea rows={3} maxLength={1000} value={note} disabled={pending} onChange={e=>setNote(e.target.value)} className="min-h-11 text-sm md:min-h-9"/>
    </label>:null}
+  </div>
+  <div className="flex min-w-0 flex-col gap-2 md:items-end">
   <Button variant="primary" type="button" onClick={()=>void submit()} loading={pending} disabled={pending} className="min-h-11 w-full md:min-h-9 md:w-auto">{pending?"Saving…":"Save details"}</Button>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error&&!confirmOpen?<p role="alert" className="min-w-0 break-words [overflow-wrap:anywhere] text-sm text-error">{error}</p>:null}
+  </div>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
     title="Save this finding update? An immutable audit event will be recorded."
     confirmLabel="Save details" confirmVariant="primary" pending={pending}
