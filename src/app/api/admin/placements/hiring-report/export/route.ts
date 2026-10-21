@@ -1,7 +1,7 @@
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getSuperAdminCompanyHiringReport} from "@/modules/admin-ui/super-admin-hiring-report-service";
-import {superAdminHiringReportQuery,hiringCompanyRollups,COMPANY_HIRING_COLUMNS} from "@/modules/admin-ui/super-admin-hiring-report-model";
-import {placementReportCsv} from "@/modules/placements/report-model";
+import {superAdminHiringReportQuery,hiringCompanyRollups} from "@/modules/admin-ui/super-admin-hiring-report-model";
+import {placementReportCsv,placementReportCsvCell} from "@/modules/placements/report-model";
 import {apiErrorResponse} from "@/lib/api-error";
 
 export const runtime="nodejs";
@@ -22,28 +22,44 @@ export async function GET(request:Request){
   const stages=["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const;
   const funnelStages=["applied","shortlisted","assessment","interview","offered","hired"] as const;
   const summary:(string|number)[][]=[
-   ["Companies",groups.length],
-   ["Drives",data.rows.length],
-   ...stages.map(stage=>[stage,data.rows.reduce((total,row)=>total+row[stage],0)]),
+   ["Total Applications",data.rows.reduce((sum,row)=>sum+row.totalApplications,0)],
+   ...stages.slice(1).map(stage=>[
+    stage.charAt(0).toUpperCase()+stage.slice(1),
+    data.rows.reduce((sum,row)=>sum+row[stage],0),
+   ]),
   ];
+  const measured=data.funnelRows.filter(row=>
+   typeof row.averageHoursToFirstShortlist==="number"&&
+   Number.isFinite(row.averageHoursToFirstShortlist)&&
+   row.firstShortlistObservationCount>0);
+  const observed=measured.reduce((sum,row)=>sum+row.firstShortlistObservationCount,0);
+  if(observed>0)summary.push(["Avg. time to shortlist (hrs)",
+   Math.round(measured.reduce((sum,row)=>
+    sum+row.averageHoursToFirstShortlist!*row.firstShortlistObservationCount,0)/observed)]);
   const funnel:(string|number)[][]=funnelStages.map(stage=>[
-   stage,data.funnelRows.reduce((total,row)=>total+row[stage],0),
+   stage.charAt(0).toUpperCase()+stage.slice(1),
+   data.funnelRows.reduce((sum,row)=>sum+row[stage],0),
   ]);
+  const visibleStages=["applied","shortlisted","assessment","interview","offered","hired","rejected"] as const;
   const companyRows:(string|number)[][]=data.rows.map(row=>[
-   row.companyName,row.jobTitle,...stages.map(stage=>row[stage]),
+   row.companyName,row.jobTitle,...visibleStages.map(stage=>row[stage]),
   ]);
   const companyTotals:(string|number)[][]=groups.map(row=>[
-   row.companyName,"Company total",...stages.map(stage=>row[stage]),
+   row.companyName,...visibleStages.map(stage=>row[stage]),
   ]);
+  const jobColumns=["Company","Job","Applied","Shortlisted","Assessment","Interview","Offered","Hired","Rejected"];
+  const totalColumns=jobColumns.filter(column=>column!=="Job");
+  // Keep the legacy section names and delimit individual sections with a blank row.
+  // Use the shared formula-safe CSV encoder for imported employer and job names.
+  const section=(title:string,body:string)=>placementReportCsvCell(title)+"\r\n"+body;
   const csv=[
-   placementReportCsv(["Hiring Report Summary","Value"],summary),
-   placementReportCsv(["Hiring Funnel","Count"],funnel),
-   placementReportCsv([...COMPANY_HIRING_COLUMNS],companyRows),
-   placementReportCsv([...COMPANY_HIRING_COLUMNS],companyTotals),
-   ...(data.truncated?[
-    placementReportCsv(["Report Note"],[["TRUNCATED: report limited to 5000 drives"]]),
-   ]:[]),
-  ].join("\r\n");
+   section("Hiring Report Summary",summary.map(row=>row.map(placementReportCsvCell).join(",")).join("\r\n")),
+   section("Hiring Funnel",placementReportCsv(["Stage","Count"],funnel)),
+   section("Company-wise Report (per-job rows only; see Company Totals section below for rollups)",
+    placementReportCsv(jobColumns,companyRows)),
+   ...(companyTotals.length?[section("Company Totals",placementReportCsv(totalColumns,companyTotals))]:[]),
+   ...(data.truncated?[placementReportCsv(["Report Note"],[["TRUNCATED: report limited to 5000 drives"]])]:[]),
+  ].join("\r\n\r\n");
   const date=new Date().toISOString().slice(0,10);
   return new Response("\uFEFF"+csv,{
    headers:{
