@@ -31,7 +31,7 @@ export default async function TpoPlacementSeasonSettingsPage() {
       <TpoSettingsNav active="season" compact />
 
       <section className="space-y-2">
-        <p className="text-sm leading-6 text-body">
+        <p className="text-sm leading-[22px] text-body">
           College-specific placement seasons and their
           recorded dates and lifecycle status. A season
           marked ACTIVE is not necessarily open for
@@ -79,10 +79,10 @@ export default async function TpoPlacementSeasonSettingsPage() {
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <h3 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+                  <h3 className="m-0 text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
                     {season.name}
                   </h3>
-                  <p className="mt-1 text-xs text-muted-foreground">
+                  <p className="mt-1 text-xs text-muted-foreground leading-5">
                     Code: {season.code}
                   </p>
                 </div>

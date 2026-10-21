@@ -111,7 +111,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
  return <section aria-label="Company applicant sharing"
    className="min-w-0 space-y-4 border-b border-border pb-4">
   <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Share shortlisted applicants with a company</h2>
-  <p className="text-sm text-body">At most 10 live links may exist per drive. Links disclose only the same three fields shown above,
+  <p className="text-sm text-body leading-[22px]">At most 10 live links may exist per drive. Links disclose only the same three fields shown above,
    have a maximum 90-day lifetime, use a separate six-digit code, and may be revoked immediately. Private notes stay excluded.</p>
   {!ready?<Alert tone="warning">
    External sharing is unavailable until its audited database migration is registered.
@@ -150,7 +150,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
     Give this six-digit code to the company separately. It cannot be recovered later.
    </Alert>:null}
    {newUrl?<div className="min-w-0 space-y-[var(--lms-space-2)] border-y border-border py-[var(--lms-space-4)]">
-    <p className="text-xs font-semibold text-[var(--lms-muted-text)]">Copy this URL now. The secret cannot be recovered later.</p>
+    <p className="text-xs font-semibold text-[var(--lms-muted-text)] leading-5">Copy this URL now. The secret cannot be recovered later.</p>
     <Input aria-label="One-time share URL" readOnly value={newUrl} onFocus={event=>event.currentTarget.select()}
      className="w-full"/>
     <Button type="button" variant="link" onClick={()=>void copyLink()}
@@ -167,7 +167,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
     </span>
     {!link.revokedAt?<Button type="button" variant="link" disabled={pending}
      onClick={()=>setRevokeTarget(link.id)} className="min-h-11 w-full min-[768px]:ml-auto min-[768px]:w-auto md:min-h-9">Revoke</Button>:null}
-   </li>)}</ul>:<p className="text-sm text-body">{companyShareEmptyMessage(status)}</p>}
+   </li>)}</ul>:<p className="text-sm text-body leading-[22px]">{companyShareEmptyMessage(status)}</p>}
   </>}
   <ConfirmDialog open={revokeTarget!==null} onOpenChange={open=>{if(!open)setRevokeTarget(null);}} pending={pending}
     title="Revoke this company applicant link?" description="Anyone using it will immediately lose access."

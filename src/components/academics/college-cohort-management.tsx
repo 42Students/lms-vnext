@@ -90,9 +90,9 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
     });
   }
 
-  return <Disclosure ariaLabel="Create batch" title={<h2 className="m-0 text-lg font-semibold text-foreground">Create batch</h2>} className="min-w-0" contentClassName="pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
+  return <Disclosure ariaLabel="Create batch" title={<h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">Create batch</h2>} className="min-w-0" contentClassName="pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
     {programs.length === 0 || periods.length === 0
-      ? <p role="status" className="mt-2 text-sm text-muted-foreground">
+      ? <p role="status" className="mt-2 text-sm text-muted-foreground leading-[22px]">
         {programs.length === 0 ? "Create a program before adding batches." : <>
           Create a usable academic period before adding batches.{" "}
           <Link href={academicSetupHref} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Set up academic periods</Link>
@@ -152,7 +152,7 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
           </Button>
         </div>
       </form>}
-    {notice ? <p role="status" className="mt-[var(--lms-space-3)] max-w-prose break-words text-sm text-body">{notice}</p> : null}
+    {notice ? <p role="status" className="mt-[var(--lms-space-3)] max-w-prose break-words text-sm text-body leading-[22px]">{notice}</p> : null}
   </Disclosure>;
 }
 
@@ -275,14 +275,14 @@ export function CollegeCohortRowActions({ row, periods }: {
         : `Remove planned batch "${row.name}"? It will be archived, not physically deleted.`}
       confirmLabel={pendingLifecycleAction==="GRADUATE"?"Mark graduated":"Remove batch"}
       pending={pending} onConfirm={pendingLifecycleAction==="GRADUATE"?graduate:retire}/>
-    {blocked ? <p className="mt-1 text-xs text-muted-foreground">
+    {blocked ? <p className="mt-1 text-xs text-muted-foreground leading-5">
       &quot;Archived batches cannot be edited.&quot;
     </p> : null}
     {editing ? <Dialog open={editing} onOpenChange={next=>{if(!next)close();}}
       title={"Edit batch " + row.name}>
       <form onSubmit={save} className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
         
-        <p className="text-sm text-muted-foreground md:col-span-2">Program and starting period cannot change after creation.</p>
+        <p className="text-sm text-muted-foreground md:col-span-2 leading-[22px]">Program and starting period cannot change after creation.</p>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch name
           <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
             className="min-h-11 min-w-0 md:min-h-9" />
@@ -309,10 +309,10 @@ export function CollegeCohortRowActions({ row, periods }: {
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End Date
           <Input type="date" disabled={endDateLocked} value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)} className="min-h-11 min-w-0 md:min-h-9"/>
         </label>
-        {endDateLocked && <p className="text-xs text-muted-foreground md:col-span-2">
+        {endDateLocked && <p className="text-xs text-muted-foreground md:col-span-2 leading-5">
           End period is locked because the batch has enrolled learners or classes. Name and code remain editable.
         </p>}
-        {notice ? <p role="alert" className="text-sm text-body md:col-span-2">{notice}</p> : null}
+        {notice ? <p role="alert" className="text-sm text-body md:col-span-2 leading-[22px]">{notice}</p> : null}
         <div className="flex flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] md:col-span-2 md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
           <Button variant="secondary" disabled={pending} type="button" onClick={close}
             >
@@ -330,6 +330,6 @@ export function CollegeCohortRowActions({ row, periods }: {
       description="The changes to this batch will be lost."
       confirmLabel="Discard changes" pending={pending}
       onConfirm={()=>{setDiscardConfirm(false);setEditing(false);setNotice("");}}/>
-    {!editing && notice ? <p role="status" className="mt-1 text-xs text-body">{notice}</p> : null}
+    {!editing && notice ? <p role="status" className="mt-1 text-xs text-body leading-5">{notice}</p> : null}
   </div>;
 }

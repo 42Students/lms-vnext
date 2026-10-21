@@ -61,7 +61,7 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
      className="min-h-32 w-full min-w-0 font-mono text-sm leading-6" aria-invalid={Boolean(validation)} aria-describedby="admin-college-bulk-format"
      placeholder="name,code,city,state,country"/>
    </label>
-   <p id="admin-college-bulk-format" className="text-sm text-muted-foreground print:hidden">Header optional. Up to 200 rows. Quoted commas, newlines and escaped quotes are supported.</p>
+   <p id="admin-college-bulk-format" className="text-sm text-muted-foreground print:hidden leading-[22px]">Header optional. Up to 200 rows. Quoted commas, newlines and escaped quotes are supported.</p>
    {valid>0?<Alert tone="info">{valid} colleges ready</Alert>:null}
    {!organizations.length?<Alert tone="warning">Choose an organization before importing colleges.</Alert>:null}
    {(error||validation)?<Alert tone="error">{error||validation}</Alert>:null}
@@ -72,7 +72,7 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
     <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9 print:hidden" disabled={busy}
      onClick={()=>csv?setConfirmDiscard(true):discard()}>Discard draft</Button>
    </div>
-   {results.length>0?<div role="region" aria-label="College import results" aria-live="polite" className="min-w-0 space-y-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-3)]"><h3 className="font-semibold text-foreground">Import results</h3>
+   {results.length>0?<div role="region" aria-label="College import results" aria-live="polite" className="min-w-0 space-y-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-3)]"><h3 className="font-semibold text-[var(--lms-heading)]">Import results</h3>
     <DataTable caption="College bulk import results" rows={results} getRowKey={row=>String(row.line)}
      empty={<EmptyState title="No import results" description="No import results have been recorded."/>}
      columns={[

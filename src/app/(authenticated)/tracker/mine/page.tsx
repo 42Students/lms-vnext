@@ -33,7 +33,7 @@ export default async function MyTrackerReportsPage(){
         <Link href={"/tracker/mine/"+encodeURIComponent(item.publicId)}
           className="inline-flex min-h-11 min-w-0 items-center break-all font-semibold text-primary-text underline md:min-h-9">{item.publicId}</Link>
         <div className="mt-1 flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] text-sm text-body"><span className="break-words">{item.issueType}</span><StatusBadge>{item.status}</StatusBadge></div>
-        <p className="mt-1 max-w-3xl break-words [overflow-wrap:anywhere] text-sm leading-6 text-body">{item.description}</p>
+        <p className="mt-1 max-w-3xl break-words [overflow-wrap:anywhere] text-sm leading-[22px] text-body">{item.description}</p>
       </li>)}</ul>}
   </section>;
 }

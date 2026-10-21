@@ -166,7 +166,7 @@ export function CollegeCreateForm({
          </label>)}
         </div>
        </Disclosure>
-       <p id="college-code-help" className="text-xs text-muted-foreground">Unique ID / Code identifies this college across links and integrations. Choose it carefully; it is not editable after creation.</p>
+       <p id="college-code-help" className="text-xs text-muted-foreground leading-5">Unique ID / Code identifies this college across links and integrations. Choose it carefully; it is not editable after creation.</p>
       </div>
       <Button
         type="submit"

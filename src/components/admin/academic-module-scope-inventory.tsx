@@ -29,28 +29,28 @@ export function AcademicModuleScopeInventory({scopes,page=1,baseHref}:{
   {key:"path",header:"Academic path",mobilePriority:"secondary",cell:scope=>scope.label},
   {key:"projects",header:"Projects",mobilePriority:"secondary",cell:scope=><>
     <span className={scope.projectsShadowed?"line-through text-muted-foreground":""}>{scope.projectsRule}</span>
-    <p className="text-xs text-body">Effective: {scope.projectsEffective}</p>
+    <p className="text-xs text-body leading-5">Effective: {scope.projectsEffective}</p>
   </>},
   {key:"placements",header:"Placements",mobilePriority:"secondary",cell:scope=><>
     <span className={scope.placementsShadowed?"line-through text-muted-foreground":""}>{scope.placementsRule}</span>
-    <p className="text-xs text-body">Effective: {scope.placementsEffective}</p>
+    <p className="text-xs text-body leading-5">Effective: {scope.placementsEffective}</p>
   </>},
   {key:"electives",header:"Electives",mobilePriority:"secondary",cell:scope=><>
     <span className={scope.electivesShadowed?"line-through text-muted-foreground":""}>{scope.electivesRule}</span>
-    <p className="text-xs text-body">Effective: {scope.electivesEffective}</p>
+    <p className="text-xs text-body leading-5">Effective: {scope.electivesEffective}</p>
   </>},
   {key:"students",header:"Students in scope",mobilePriority:"secondary",
    cell:scope=><span className="tabular-nums">{scope.studentsInScope}</span>},
  ];
  return <section aria-label="Academic scope inventory" className="mt-4 space-y-3">
   <div className="flex flex-wrap items-center justify-between gap-2">
-   <h3 className="font-semibold text-foreground">Academic hierarchy</h3>
+   <h3 className="font-semibold text-[var(--lms-heading)]">Academic hierarchy</h3>
    <div className="flex flex-wrap gap-2 text-sm print:hidden">
     <Button type="button" variant="ghost" className="min-h-11 md:min-h-9 underline" disabled={expanded || scopes.length<=15} onClick={()=>setExpanded(true)}>Expand all</Button>
     <Button type="button" variant="ghost" className="min-h-11 md:min-h-9 underline" disabled={!expanded} onClick={()=>setExpanded(false)}>Collapse all</Button>
    </div>
   </div>
-  <p className="text-xs text-muted-foreground">{scopes.length} academic scopes loaded (including inheriting scopes). Effective values trace the configured scope hierarchy and locks; an individual learner still needs active enrollment and participation. Student counts include active learners with current enrollment in this college.</p>
+  <p className="text-xs text-muted-foreground leading-5">{scopes.length} academic scopes loaded (including inheriting scopes). Effective values trace the configured scope hierarchy and locks; an individual learner still needs active enrollment and participation. Student counts include active learners with current enrollment in this college.</p>
   <div className="max-h-96 overflow-auto print:max-h-none print:overflow-visible">
    <DataTable columns={columns} rows={visible}
     getRowKey={scope=>scope.scopeType+":"+scope.scopeId}

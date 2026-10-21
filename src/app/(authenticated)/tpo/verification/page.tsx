@@ -99,7 +99,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
    <Link href="/tpo/verification" className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-primary-text underline md:min-h-9">Reset filters</Link>
   </form>
   {queue.available&&queue.enabled&&queue.permitted&&queue.counts?
-   <p role="status" className="text-sm text-body">
+   <p role="status" className="text-sm text-body leading-[22px]">
     {queue.counts.WAITING} waiting · {queue.counts.SENT_BACK} sent back · {queue.counts.VERIFIED} verified
     {queue.hasMore?" · More students on the next page":""}
    </p>:null}
@@ -111,7 +111,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
    <Alert tone="warning">Verification records are not available right now. Please try again or contact your college admin.
    <Link href="/tpo/verification" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link></Alert>
   </section>:!queue.enabled||!queue.permitted?<section className="space-y-3">
-   <h2 className="text-base font-semibold text-foreground">You cannot verify profiles here</h2>
+   <h2 className="text-base font-semibold text-[var(--lms-heading)]">You cannot verify profiles here</h2>
    <Alert tone="warning">{!queue.enabled
     ?"Your college admin has not allowed the placement cell to verify profiles"
      :"Your verification access has been removed. Ask your college admin."}</Alert>

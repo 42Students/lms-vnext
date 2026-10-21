@@ -118,7 +118,7 @@ export function LearnerNotificationsInbox({
 
   return (
     <section className="min-w-0 space-y-[var(--lms-space-4)]" aria-label="Learner notifications inbox">
-      <p role="status" className="break-words text-sm text-body min-[768px]:hidden">{mobileSummary}</p>
+      <p role="status" className="break-words text-sm text-body min-[768px]:hidden leading-[22px]">{mobileSummary}</p>
       <nav aria-label="Filter notifications by type" className="min-w-0">
         <div className="flex min-w-0 gap-2 overflow-x-auto pb-2 min-[768px]:flex-wrap min-[768px]:overflow-visible min-[768px]:pb-0">
           {learnerNotificationCategories.map(({ key, label }) => (
@@ -165,14 +165,14 @@ export function LearnerNotificationsInbox({
       </div>
       {unreadPersonalCount>0 ? (
         <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] border-b border-border py-[var(--lms-space-3)] min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
-          <p className="text-sm text-body">{unreadPersonalCount} unread personal notifications</p>
+          <p className="text-sm text-body leading-[22px]">{unreadPersonalCount} unread personal notifications</p>
           <Button variant="secondary" size="sm" className="min-h-11 w-full min-[768px]:min-h-[var(--lms-control-height)] min-[768px]:w-auto" onClick={()=>{setMarkAllError(null);setConfirmReadAll(true);}}>
             Mark all personal as read
           </Button>
         </div>
       ):null}
       <div className="flex min-w-0 flex-col items-start justify-between gap-[var(--lms-space-2)] sm:flex-row sm:items-center">
-        <p role="status" className="text-sm text-body">Showing {visible.length} of {combined.length} loaded notifications in this filtered view.</p>
+        <p role="status" className="text-sm text-body leading-[22px]">Showing {visible.length} of {combined.length} loaded notifications in this filtered view.</p>
         <Link href="/learn/notifications/history" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-2 hover:text-[var(--lms-primary-text)] md:min-h-9">Browse personal history</Link>
       </div>
       <p className="max-w-3xl text-xs leading-5 text-muted-foreground">College announcements have no personal read status. {learnerNotificationPreviewNotice(personal.length,60)}</p>
@@ -224,7 +224,7 @@ export function LearnerNotificationsInbox({
             {markingAll?"Updating…":"Confirm mark all read"}
           </Button>
         </div>}>
-        {markAllError?<p role="alert" className="max-w-prose break-words text-sm text-error">{markAllError}</p>:null}
+        {markAllError?<p role="alert" className="max-w-prose break-words text-sm text-error leading-[22px]">{markAllError}</p>:null}
       </Dialog>
       <Dialog
         open={selected !== null}

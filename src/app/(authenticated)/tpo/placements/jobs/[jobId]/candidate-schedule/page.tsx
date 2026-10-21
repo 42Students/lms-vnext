@@ -52,7 +52,7 @@ export default async function TpoCandidateSchedulePage({
       <summary className="min-h-11 cursor-pointer py-2 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Persisted venue collision assessment</summary>
       {warning.state === "UNAVAILABLE" ?
         <Alert tone="warning">Assessment unavailable; no conflict-free claim is made.</Alert>
-        : <p className="mt-2 text-sm text-body">
+        : <p className="mt-2 text-sm text-body leading-[22px]">
           {warning.collisions} overlap warning(s) and {warning.unknown} unassessable
           round(s). {warning.state === "LIMITED" ?
             "The 90-day scan was truncated, so this is incomplete." :
@@ -84,7 +84,7 @@ export default async function TpoCandidateSchedulePage({
       <EmptyState title="No candidates shown for an unknown round." />
       : readiness.total === 0 ?
       <EmptyState title="No progression-eligible round participants are currently recorded. This does not imply slots were assigned." /> : <>
-        <p className="text-sm text-body">
+        <p className="text-sm text-body leading-[22px]">
           {roundId ? displayed.length+" candidate entries shown for this round." : readiness.total+" round-candidate combinations found."}
           {readiness.limited ? " Only the first 1,000 combined round entries were loaded; the selected round may be incomplete." : ""}
         </p>

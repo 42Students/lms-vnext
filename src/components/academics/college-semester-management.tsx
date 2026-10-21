@@ -73,7 +73,7 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
     <details aria-label={SEMESTER_COPY.createTitle} className="group min-w-0 border-b border-border pb-4">
       <summary className="flex min-h-11 cursor-pointer list-none items-center font-semibold text-primary-text marker:hidden [&::-webkit-details-marker]:hidden md:min-h-9">{SEMESTER_COPY.createTitle}</summary>
       {programs.length === 0 ? (
-        <p className="mt-2 text-sm text-muted-foreground">Create a program before adding semesters.</p>
+        <p className="mt-2 text-sm text-muted-foreground leading-[22px]">Create a program before adding semesters.</p>
       ) : (
         <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-3)] md:grid-cols-2">
           <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -96,7 +96,7 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
             <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)} placeholder={SEMESTER_COPY.namePlaceholder}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>
-          <p className="border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-xs text-body md:col-span-2">
+          <p className="border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-xs text-body md:col-span-2 leading-5">
             Total credits are calculated from courses mapped to this semester.
           </p>
           <div className="flex items-end justify-stretch md:col-span-2 md:justify-end">
@@ -106,7 +106,7 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
           </div>
         </form>
       )}
-      {notice ? <p role="status" className="mt-3 text-sm text-body">{notice}</p> : null}
+      {notice ? <p role="status" className="mt-3 text-sm text-body leading-[22px]">{notice}</p> : null}
     </details>
   );
 }
@@ -198,7 +198,7 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
             <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm text-foreground" />
           </label>
-          <p className="text-xs text-body">Credits come from mapped courses and cannot be edited here.</p>
+          <p className="text-xs text-body leading-5">Credits come from mapped courses and cannot be edited here.</p>
           <div className="flex flex-wrap items-center gap-2 text-xs text-body">
             <Switch label={SEMESTER_COPY.statusLabel} checked={isActive}
               disabled={pending} onChange={e => setIsActive(e.target.checked)} />
@@ -224,7 +224,7 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
         title="Discard semester changes?"
         description="Unsaved semester name and status changes will be lost."
         confirmLabel="Discard changes" confirmVariant="danger" pending={pending} onConfirm={discardEditor}/>
-      {notice ? <p role="status" className="text-xs text-body">{notice}</p> : null}
+      {notice ? <p role="status" className="text-xs text-body leading-5">{notice}</p> : null}
     </div>
   );
 }

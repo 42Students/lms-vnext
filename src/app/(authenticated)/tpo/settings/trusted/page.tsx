@@ -49,10 +49,10 @@ export default async function TpoTrustedCompaniesPage() {
 
       {!data.explicitDomainsAvailable ? (
         <Alert tone="warning">
-          <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+          <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
             Trusted-domain allowlist unavailable
           </h2>
-          <p className="mt-2 text-sm leading-6 text-body">
+          <p className="mt-2 text-sm leading-[22px] text-body">
             The placement trusted-domains table is not registered
             in this database. Its entries cannot be retrieved.
             The company trust flags below remain available from
@@ -92,10 +92,10 @@ export default async function TpoTrustedCompaniesPage() {
 
       <section className="border-t border-border">
         <div className="border-b border-border py-4">
-          <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+          <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
             Company trust
           </h2>
-          <p className="mt-1 text-sm leading-6 text-body">
+          <p className="mt-1 text-sm leading-[22px] text-body">
             Trust is derived from the active company relationship
             belonging to this college, not from the global
             employer record.
@@ -103,7 +103,7 @@ export default async function TpoTrustedCompaniesPage() {
         </div>
 
         {data.companies.length === 0 ? (
-          <p className="py-4 text-sm text-body">
+          <p className="py-4 text-sm text-body leading-[22px]">
             No active placement company relationships are
             available for this college.
           </p>
@@ -128,7 +128,7 @@ export default async function TpoTrustedCompaniesPage() {
               {key:"domain",header:"Company primary domain",mobilePriority:"secondary",cell:company=>
                 <div className="min-w-0 break-words text-body">
                   {company.primaryDomain??"Not recorded"}
-                  {company.primaryDomain?<p className="mt-1 text-xs text-muted-foreground">
+                  {company.primaryDomain?<p className="mt-1 text-xs text-muted-foreground leading-5">
                     Company metadata; not an allowlist grant
                   </p>:null}
                 </div>},
