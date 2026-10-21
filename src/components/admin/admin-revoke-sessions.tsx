@@ -42,7 +42,7 @@ export function AdminRevokeSessions({collegeId,userId,count}:{collegeId:string;u
    {busy?"Signing out…":"Sign out everywhere"}
   </Button>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} title="Sign out everywhere?"
-   description="All active sessions for this administrator, including other colleges, will be revoked immediately."
+   description="Ends every active session for this administrator, including other colleges. They can sign in again with their existing account. If you need to prevent future sign-ins, use Suspend instead."
    confirmLabel="Sign out everywhere" confirmVariant="danger" pending={busy} confirmDisabled={count<1} onConfirm={()=>void revoke()}>
     {errorMessage?<p role="alert" className="break-words border-l-2 border-error bg-error-subtle p-[var(--lms-space-3)] text-sm text-error">{errorMessage}</p>:null}
   </ConfirmDialog>
