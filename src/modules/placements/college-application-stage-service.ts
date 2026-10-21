@@ -69,7 +69,7 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
    const stage=await getDb().transaction(async tx=>{
     const [job]=await tx.select({id:placementJobs.id,status:placementJobs.status})
      .from(placementJobs).where(and(eq(placementJobs.id,jobId),
-      eq(placementJobs.collegeId,collegeId))).for("share").limit(1);
+      eq(placementJobs.collegeId,collegeId))).for(input.saveAssessmentUrlToJob?"update":"share").limit(1);
     if(!job||["CLOSED","ARCHIVED","CANCELLED"].includes(job.status))
      throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
     const [application]=await tx.select({
