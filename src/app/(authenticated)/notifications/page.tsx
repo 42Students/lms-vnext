@@ -10,39 +10,39 @@ import { Button } from "@/components/ui/button";
 import { listVisibleAnnouncementsForMembership } from "@/modules/announcements/service";
 import { Alert } from "@/components/ui/alert";
 import { NotificationToolbar } from "@/components/activity/notification-toolbar";
-import { countOwnUnreadNotifications, listOwnNotificationPage } from "@/modules/activity/notification-service";
+import {countOwnUnreadNotifications,listOwnNotificationPage,
+ countOwnUnreadNotificationCategory,ownNotificationCategoryChoices,
+ type OwnNotificationCategory} from "@/modules/activity/notification-service";
 import { parseNotificationCursor } from "@/modules/activity/notification-cursor";
 
 export default async function NotificationsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ view?: string; beforeCreatedAt?: string; beforeId?: string;
-    q?: string; classId?: string; courseId?: string }>;
+  searchParams: Promise<{ view?: string; category?: string; beforeCreatedAt?: string; beforeId?: string }>;
 }) {
   const params = await searchParams;
   const view = params.view === "unread" ? "unread" : "all";
   const context = await getCurrentRequestContext();
-  const q=(params.q??"").trim();
-  const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  const invalidScope=Boolean(params.classId&&params.courseId) ||
-    Boolean(params.classId&&!uuid.test(params.classId)) ||
-    Boolean(params.courseId&&!uuid.test(params.courseId)) || q.length>100;
-  const newest=!params.beforeCreatedAt&&!params.beforeId;
-  const filters={
-    ...(params.classId?{classId:params.classId}:{}),
-    ...(params.courseId?{courseId:params.courseId}:{}),
-    ...(q?{query:q}:{}),
-  };
+  const categoryChoices=ownNotificationCategoryChoices(context);
+  const category=categoryChoices.some(item=>item.id===params.category)
+    ?params.category as OwnNotificationCategory:undefined;
+  const invalidCategory=Boolean(params.category&&!category);
+  const categoryCounts=await Promise.all(categoryChoices.map(async item=>({
+   id:item.id,label:item.label,
+   unread:await countOwnUnreadNotificationCategory(context,item.id),
+  })));
   const parsedCursor = parseNotificationCursor({
     beforeCreatedAt: params.beforeCreatedAt,
     beforeId: params.beforeId,
   });
-  const [notificationResult, announcementResult, unreadResult] = await Promise.allSettled([
-    (parsedCursor.invalid||invalidScope)
-      ? Promise.resolve({items:[],nextCursor:null})
-      : listOwnNotificationPage(context,{
-          limit:50,unreadOnly:view==="unread",
-          ...(parsedCursor.cursor??{}),...filters,
+  const [page, unreadCount] = await Promise.all([
+    parsedCursor.invalid || invalidCategory
+      ? Promise.resolve({ items: [], nextCursor: null })
+      : listOwnNotificationPage(context, {
+          limit: 50,
+          unreadOnly: view === "unread",
+          ...(category?{category}:{}),
+          ...(parsedCursor.cursor ?? {}),
         }),
     !invalidScope && view==="all" && newest && !params.classId && !params.courseId
       ? listVisibleAnnouncementsForMembership(context,new Date(),{limit:75})
@@ -62,9 +62,10 @@ export default async function NotificationsPage({
   const retryHref="/notifications?"+baseParams.toString();
   const nextHref = page.nextCursor
     ? "/notifications?" + new URLSearchParams({
-        ...Object.fromEntries(baseParams.entries()),
-        beforeCreatedAt:page.nextCursor.beforeCreatedAt.toISOString(),
-        beforeId:page.nextCursor.beforeId,
+        view,
+        ...(category?{category}:{}),
+        beforeCreatedAt: page.nextCursor.beforeCreatedAt.toISOString(),
+        beforeId: page.nextCursor.beforeId,
       }).toString()
     : null;
   const items:NotificationListItem[]=[
@@ -95,31 +96,11 @@ export default async function NotificationsPage({
         title="Notifications"
         description="Deterministic workflow updates that need your attention, separate from noisy technical events."
       />
-      <NotificationToolbar view={view} unreadCount={unreadCount} />
-      <form method="get" action="/notifications" className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
-        <Input type="hidden" name="view" value={view}/>
-        <label className="grid gap-2 text-sm font-semibold">Search notifications
-          <Input type="search" name="q" maxLength={100} defaultValue={q} placeholder="Title or message"/>
-        </label>
-        <Button type="submit" className="min-h-11 self-end md:min-h-9">Search</Button>
-        <label className="grid gap-2 text-sm font-semibold">Class ID (current workspace)
-          <Input name="classId" defaultValue={params.classId??""} placeholder="Class UUID"/>
-        </label>
-        <label className="grid gap-2 text-sm font-semibold">Course ID (current workspace)
-          <Input name="courseId" defaultValue={params.courseId??""} placeholder="Course UUID"/>
-        </label>
-        <p className="text-xs text-muted-foreground sm:col-span-2">
-          Use a Class or Course filter, not both. Only your authorized notifications are searched.
-        </p>
-      </form>
-      {invalidScope?<Alert tone="error">Provide either classId or courseId, not both, and select a valid class or course.</Alert>:null}
-      {partialFailure?<Alert tone="warning">
-        Some notifications or announcements could not be loaded. Available items are still shown.
-        {" "}<Link href={retryHref} className="font-semibold text-primary-text underline">Retry</Link>
-      </Alert>:null}
-      {parsedCursor.invalid ? (
+      <NotificationToolbar view={view} unreadCount={unreadCount}
+        categories={categoryCounts} selectedCategory={category} />
+      {parsedCursor.invalid || invalidCategory ? (
         <Alert tone="error">
-          The notification page link is invalid.{" "}
+          The notification page link or category is invalid.{" "}
           <Link href={view === "unread" ? "/notifications?view=unread" : "/notifications?view=all"} className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
             Return to the newest notifications
           </Link>

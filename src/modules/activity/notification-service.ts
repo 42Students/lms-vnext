@@ -924,6 +924,7 @@ export async function listOwnNotifications(
     eventType?: string;
     importance?: string;
     notificationType?: string;
+    category?: OwnNotificationCategory;
   } = {},
 ) {
   const limit = z
@@ -1147,6 +1148,50 @@ export async function markAllOwnNotificationsRead(
  * authenticated recipient; an optional cursor never changes ownership.
  * Existing listOwnNotifications() remains unchanged for its other consumers.
  */
+/** Legacy category tabs remain a further filter on this user's own receipts.
+ * Faculty category requires an explicit stored audienceKind; without one,
+ * the notice remains visible in All, not misclassified. */
+export type OwnNotificationCategory="COURSE"|"PROJECT"|"ANNOUNCEMENTS"|"JOB"|
+ "COLLEGE"|"DEPARTMENT"|"FACULTY"|"PERSONAL";
+export function ownNotificationCategoryChoices(context:RequestContext){
+ if(context.membership?.roles.includes("LEARNER"))return [
+  {id:"COURSE",label:"Course"},{id:"PROJECT",label:"Project"},
+  {id:"ANNOUNCEMENTS",label:"Announcements"},{id:"JOB",label:"Job"},
+ ] as const;
+ if(context.membership?.roles.includes("FACULTY"))return [
+  {id:"COLLEGE",label:"College"},{id:"DEPARTMENT",label:"Department"},
+  {id:"FACULTY",label:"Faculty"},{id:"PERSONAL",label:"Personal"},
+ ] as const;
+ return [] as const;
+}
+function ownCategoryCondition(category:OwnNotificationCategory){
+ switch(category){
+  case "COURSE":return eq(activityEvents.module,"COURSES");
+  case "PROJECT":return eq(activityEvents.module,"PROJECTS");
+  case "ANNOUNCEMENTS":return or(eq(activityEvents.subjectType,"announcement"),
+   sql`${activityEvents.eventType} ilike '%announcement%'`)!;
+  case "JOB":return and(eq(activityEvents.module,"PLACEMENTS"),
+   sql`${activityEvents.subjectType} <> 'announcement'`)!;
+  default:return eq(sql<string>`${activityEvents.metadata} ->> 'audienceKind'`,category);
+ }
+}
+function requireOwnCategory(context:RequestContext,category:OwnNotificationCategory){
+ if(!ownNotificationCategoryChoices(context).some(row=>row.id===category))
+  throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
+}
+export async function countOwnUnreadNotificationCategory(
+ context:RequestContext,category:OwnNotificationCategory,
+){
+ requireOwnCategory(context,category);
+ const [row]=await getDb().select({total:count()}).from(inAppNotifications)
+ .innerJoin(activityEvents,eq(activityEvents.id,inAppNotifications.eventId))
+ .where(and(eq(inAppNotifications.userId,context.user.id),
+  isNull(inAppNotifications.readAt),
+  releasedNotificationEvent,releasedNotificationReceipt,
+  ownCategoryCondition(category)));
+ return Number(row?.total??0);
+}
+
 export async function listOwnNotificationPage(
   context: RequestContext,
   options: {
@@ -1190,6 +1235,10 @@ export async function listOwnNotificationPage(
   }
   appendNotificationContextFilters(conditions, options);
   appendNotificationCategoryFilters(conditions, options);
+  if(options.category){
+    requireOwnCategory(context,options.category);
+    conditions.push(ownCategoryCondition(options.category));
+  }
   if (options.beforeCreatedAt && options.beforeId) {
     const at = z.date().parse(options.beforeCreatedAt);
     const id = z.string().uuid().parse(options.beforeId);

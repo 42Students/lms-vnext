@@ -5,7 +5,7 @@ Packets moved to you from other lanes. Work them AFTER your own queue (lane-19-w
 Packets:
 
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-delete-draft-service.ts.md` (edit src/modules/placements/tpo-delete-draft-service.ts; 4 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-12/src_components_activity_notification-toolbar.tsx.md` (edit src/components/activity/notification-toolbar.tsx; 3 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-12/src_components_activity_notification-toolbar.tsx.md` (edit src/components/activity/notification-toolbar.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-13/src_modules_announcements_tpo-placement-write-service.ts.md` (edit src/modules/announcements/tpo-placement-write-service.ts; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_public-page_content-model.ts.md` (edit src/modules/placements/public-page/content-model.ts; 4 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-13/src_modules_attendance_learner-attendance-calendar-model.ts.md` (edit src/modules/attendance/learner-attendance-calendar-model.ts; 2 findings; best P1)
