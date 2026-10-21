@@ -2,6 +2,7 @@
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 
 type AvatarSnapshot={preview:string|null;version:number};
 
@@ -109,9 +110,9 @@ export function FacultyAvatarUpload({initialVersion,initials}:{initialVersion:nu
    aria-expanded={showLink} onClick={()=>setShowLink(value=>!value)}>Import from image link</button>
   {showLink?<div className="flex max-w-sm flex-col gap-2">
    <label className="text-xs font-semibold" htmlFor="faculty-avatar-link">HTTPS image URL</label>
-   <input id="faculty-avatar-link" type="url" value={link} onChange={event=>setLink(event.target.value)}
+   <Input id="faculty-avatar-link" type="url" value={link} onChange={event=>setLink(event.target.value)}
     maxLength={2048} placeholder="https://example.com/profile.jpg" disabled={pending||importing}
-    className="min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 text-sm"/>
+    className="w-full min-w-0"/>
    <Button variant="secondary" type="button" disabled={pending||importing||!link.trim()}
     onClick={()=>void importPhoto()}>Import image</Button>
    <p className="text-xs text-muted-foreground">The image host must allow browser downloads (CORS). Images undergo the same private upload and security scan.</p>

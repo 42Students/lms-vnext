@@ -7,6 +7,7 @@ import {useToast} from "@/components/ui/toast";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {roundApplyReportCsv} from "@/modules/placements/tpo-round-apply-csv-model";
+import {Input} from "@/components/ui/input";
 type Preview={ready:boolean;roundName?:string;staged:number;applied:number;
  outcomes:{PASS:number;FAIL:number;HOLD:number;ABSENT:number};destinations:{PASS:string;FAIL:string;HOLD:string;ABSENT:string};previewToken:string;
  rows:Array<{resultId:string;student:string;outcome:string;status:string;destination:string;rollNumber?:string|null;enteredBy?:string|null;reason?:string|null}>;
@@ -82,8 +83,8 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
     <div className="p-3"><dt>Absent</dt><dd className="font-semibold">{preview.outcomes.ABSENT}</dd></div>
    </dl>
    <label className="grid gap-1 text-sm font-semibold">Search student or results
-    <input type="search" value={previewSearch} onChange={event=>setPreviewSearch(event.target.value)}
-     placeholder="Student, roll or reason" className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-normal md:min-h-9"/>
+    <Input type="search" value={previewSearch} onChange={event=>setPreviewSearch(event.target.value)}
+     placeholder="Student, roll or reason" />
    </label>
    <div className="max-h-[360px] overflow-auto rounded-[var(--lms-control-radius)] border border-border">
     <table className="w-full min-w-[680px] border-collapse text-left text-sm">
