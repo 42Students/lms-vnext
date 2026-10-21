@@ -40,7 +40,7 @@ Facets (all mandatory):
 
 One unit at a time: finish the unit file completely before opening the next. Tick [x] the unit here in the same push as its file. Push to chatgpt/chat-12-b with [chat-12] after every 2 units (git fetch and rebase right before). Units:
 - [x] U001 (FE page) `docs/legacy-source/frontend/src/pages/request-demo.js`
-- [ ] U002 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/semester-courses.js`
+- [x] U002 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/semester-courses.js`
 - [ ] U003 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Courses.js`
 - [ ] U004 (FE page) `docs/legacy-source/frontend/src/pages/mentor/courses/[courseId]/index.js`
 - [ ] U005 (FE page) `docs/legacy-source/frontend/src/pages/learn/my-placements/placement.js`
