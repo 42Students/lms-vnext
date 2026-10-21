@@ -219,6 +219,33 @@ export async function listSuperAdminFeatureControls(
   const rules =
     await loadCollegeAncestorRules(collegeRows);
 
+  // Overview totals must describe every matched, authorized college, not
+  // just the 20 entries shown on the current matrix page. Resolve inherited
+  // rules in bounded batches with the exact same scope and filter predicates.
+  const scopeCounts = { shown: total, projectsOn: 0, placementsOn: 0 };
+  const aggregateBatchSize = 200;
+  for (let offset = 0; offset < total; offset += aggregateBatchSize) {
+    const scoped = await db.select({
+      id: colleges.id,
+      organizationId: colleges.organizationId,
+      name: colleges.name,
+      code: colleges.code,
+      status: colleges.status,
+    }).from(colleges).where(where).orderBy(asc(colleges.id))
+      .limit(aggregateBatchSize).offset(offset);
+    if (scoped.length === 0) break;
+    const scopedRules = await loadCollegeAncestorRules(scoped);
+    for (const college of scoped) {
+      const decisions = resolveCollegeModuleDecisions(
+        college.id, college.organizationId, scopedRules,
+      );
+      if (decisions.some((decision) => decision.module === "projects" && decision.enabled))
+        scopeCounts.projectsOn += 1;
+      if (decisions.some((decision) => decision.module === "placements" && decision.enabled))
+        scopeCounts.placementsOn += 1;
+    }
+  }
+
   // Request-time Super Admin authority can be revoked while the college
   // directory and ancestor rules are loading. Reconstruct persisted system
   // roles and reapply the selected-scope fence before exposing those rows.
@@ -261,6 +288,7 @@ export async function listSuperAdminFeatureControls(
     searchField: query.searchField,
     page: effectivePage,
     pageSize: COLLEGE_PAGE_SIZE,
+    scopeCounts,
     total,
     totalPages: Math.max(
       1,
@@ -463,47 +491,40 @@ export async function getSuperAdminCollegeModuleAccess(
   if(query.locks === "LOCKED") combinedConditions.push(sql`locked = true`);
   if(query.storedState !== "ALL") combinedConditions.push(sql`enabled = ${query.storedState === "ON"}`);
   const descendantFilter = combinedConditions.length ? sql`where ${sql.join(combinedConditions,sql` and `)}` : sql``;
-  const [countResult, overrideResult] =
-    await Promise.all([
-      db.execute<OverrideCountRow>(sql`
-        with scoped as (${descendantSql})
-        select count(*)::int as total
-        from scoped
-        ${descendantFilter}
-      `),
-      db.execute<OverrideQueryRow>(sql`
-        with scoped as (${descendantSql})
-        select
-          scope_type as "scopeType",
-          scope_id as "scopeId",
-          scope_label as "scopeLabel",
-          module,
-          enabled,
-          locked
-        from scoped
-        ${descendantFilter}
-        order by
-          case scope_type
-            when 'DEPARTMENT' then 1
-            when 'PROGRAM' then 2
-            when 'COHORT' then 3
-            when 'SECTION' then 4
-            when 'MEMBERSHIP' then 5
-            else 6
-          end,
-          scope_label,
-          scope_id,
-          module
-        limit ${OVERRIDE_PAGE_SIZE}
-        offset ${
-          (query.page - 1) * OVERRIDE_PAGE_SIZE
-        }
-      `),
-    ]);
-
-  const total = Number(
-    countResult.rows[0]?.total ?? 0,
-  );
+  const countResult = await db.execute<OverrideCountRow>(sql`
+    with scoped as (${descendantSql})
+    select count(*)::int as total
+    from scoped
+    ${descendantFilter}
+  `);
+  const total = Number(countResult.rows[0]?.total ?? 0);
+  const effectivePage = boundedAdminFeaturePage(query.page,total,OVERRIDE_PAGE_SIZE);
+  const overrideResult = await db.execute<OverrideQueryRow>(sql`
+    with scoped as (${descendantSql})
+    select
+      scope_type as "scopeType",
+      scope_id as "scopeId",
+      scope_label as "scopeLabel",
+      module,
+      enabled,
+      locked
+    from scoped
+    ${descendantFilter}
+    order by
+      case scope_type
+        when 'DEPARTMENT' then 1
+        when 'PROGRAM' then 2
+        when 'COHORT' then 3
+        when 'SECTION' then 4
+        when 'MEMBERSHIP' then 5
+        else 6
+      end,
+      scope_label,
+      scope_id,
+      module
+    limit ${OVERRIDE_PAGE_SIZE}
+    offset ${(effectivePage - 1) * OVERRIDE_PAGE_SIZE}
+  `);
 
   // Do not reveal stored descendant overrides to a Super Admin whose role
   // or selected-college permission was withdrawn during the database reads.
@@ -537,7 +558,7 @@ export async function getSuperAdminCollegeModuleAccess(
     ),
     descendants:
       overrideResult.rows as StoredModuleOverride[],
-    page: query.page,
+    page: effectivePage,
     moduleFilter: query.module ?? null,
     scopeFilter: query.scope ?? null,
     lockFilter: query.locks,

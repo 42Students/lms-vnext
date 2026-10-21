@@ -1,10 +1,10 @@
 import "server-only";
 import {moduleDisableImpactSummary} from "./admin-module-impact-model";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
-import {and,count,countDistinct,eq,isNull} from "drizzle-orm";
+import {and,count,countDistinct,eq,gt,isNull} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {colleges,collegeMemberships,membershipRoles,users,projectInstances,projectMembers,placementJobs,placementApplications,placementOffers} from "@/db/schema";
+import {colleges,collegeMemberships,membershipRoles,users,projectInstances,projectMembers,placementJobs,placementApplications,placementOffers,placementRoundCandidateSlots} from "@/db/schema";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 const id=z.uuid();
@@ -48,7 +48,7 @@ export async function readModuleDisableImpact(ctx:RequestContext,collegeRaw:stri
   return {module:moduleName,students,counts,summary:moduleDisableImpactSummary(moduleName,counts)};
  }
  if(moduleName==="placements"){
-  const [drives,applications,offers]=await Promise.all([
+  const [drives,applications,offers,interviews]=await Promise.all([
    db.select({total:count()}).from(placementJobs)
     .where(and(eq(placementJobs.collegeId,collegeId),eq(placementJobs.status,"PUBLISHED"))),
    db.select({total:count()}).from(placementApplications)
@@ -58,8 +58,18 @@ export async function readModuleDisableImpact(ctx:RequestContext,collegeRaw:stri
     .innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
     .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
     .where(and(eq(placementJobs.collegeId,collegeId),eq(placementOffers.status,"ISSUED"))),
+   db.select({total:count()}).from(placementRoundCandidateSlots)
+    .innerJoin(placementJobs,eq(placementJobs.id,placementRoundCandidateSlots.jobId))
+    .where(and(
+      eq(placementJobs.collegeId,collegeId),
+      eq(placementRoundCandidateSlots.status,"BOOKED"),
+      gt(placementRoundCandidateSlots.startsAt,new Date()),
+    )),
   ]);
-  const counts=[drives[0]?.total??0,applications[0]?.total??0,offers[0]?.total??0];
+  const counts=[
+    drives[0]?.total??0,applications[0]?.total??0,
+    offers[0]?.total??0,interviews[0]?.total??0,
+  ];
   await assertCurrentImpactScope(ctx,collegeId,college.organizationId);
   return {module:moduleName,counts,summary:moduleDisableImpactSummary(moduleName,counts)};
  }
