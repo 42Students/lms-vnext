@@ -268,49 +268,37 @@ export function ProgramActions({
           </AcademicDialogFooter>
         }
       >
-        <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-          {editError ? <div role="alert" className="flex items-start justify-between gap-3 rounded-[var(--lms-control-radius)] border border-error p-3 text-sm md:col-span-2">
+        <div className="grid min-w-0 gap-[var(--lms-space-4)]">
+          {editError ? <div role="alert" className="flex items-start justify-between gap-3 rounded-[var(--lms-control-radius)] border border-error p-3 text-sm">
             <p><strong>Program was not updated</strong>: {editError}</p>
-            <Button type="button" variant="secondary" onClick={() => setEditError("")}>Dismiss</Button>
+            <Button type="button" variant="secondary" disabled={pending}
+              onClick={() => setEditError("")}>Dismiss</Button>
           </div> : null}
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
-            Program name
-            <Input
-              value={name} aria-invalid={Boolean(editFieldErrors.name)}
-              onChange={(event) => { setName(event.target.value); setEditFieldErrors(current => ({...current, name:""})); }}
-              maxLength={255}
-            />
-            {editFieldErrors.name ? <span role="alert" className="text-xs text-error">{editFieldErrors.name}</span> : null}
-          </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Code
-            <Input
-              value={code} aria-invalid={Boolean(editFieldErrors.code)}
-              onChange={(event) => { setCode(event.target.value); setEditFieldErrors(current => ({...current,code:""})); }}
-              maxLength={64}
-            />
-            {editFieldErrors.code ? <span role="alert" className="text-xs text-error">{editFieldErrors.code}</span> : null}
-          </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            {displayDurationYears?"Duration (years)":"Duration terms"}
-            <Input
-              type="number"
-              min={1}
-              max={displayDurationYears?10:24}
-              step={1}
-              value={durationTerms} aria-invalid={Boolean(editFieldErrors.durationTerms)}
-              onChange={(event) => { setDurationTerms(event.target.value);
-                setEditFieldErrors(current => ({...current,durationTerms:""})); }}
-            />
-            {editFieldErrors.durationTerms ? <span role="alert" className="text-xs text-error">{editFieldErrors.durationTerms}</span> : null}
-          </label>
-          {departments.length ? <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
-            <Select value={departmentId} aria-invalid={Boolean(editFieldErrors.departmentId)}
-              onChange={event=>{setDepartmentId(event.target.value);setEditFieldErrors(current=>({...current,departmentId:""}));}}>
+          {departments.length ? <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Department
+            <Select value={departmentId} disabled={pending || programHasLinkedRecords}
+              title={programHasLinkedRecords?"Department is fixed after semesters, batches or classes are linked.":undefined}
+              aria-invalid={Boolean(editFieldErrors.departmentId)}
+              onChange={event => {setDepartmentId(event.target.value);setEditFieldErrors(current=>({...current,departmentId:""}));}}>
               {departments.map(department=><option key={department.id} value={department.id}>{department.name}</option>)}
             </Select>
             {editFieldErrors.departmentId ? <span role="alert" className="text-xs text-error">{editFieldErrors.departmentId}</span> : null}
           </label> : null}
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Program Name
+            <Input value={name} maxLength={255} disabled={pending}
+              aria-invalid={Boolean(editFieldErrors.name)}
+              onChange={event=>{setName(event.target.value);setEditFieldErrors(current=>({...current,name:""}));}}/>
+            {editFieldErrors.name ? <span role="alert" className="text-xs text-error">{editFieldErrors.name}</span> : null}
+          </label>
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            {displayDurationYears?"Duration (Years)":"Duration (Terms)"}
+            <Input type="number" min={1} max={displayDurationYears?10:24} step={1}
+              disabled={pending} value={durationTerms} aria-invalid={Boolean(editFieldErrors.durationTerms)}
+              onChange={event=>{setDurationTerms(event.target.value);
+                setEditFieldErrors(current=>({...current,durationTerms:""}));}}/>
+            {editFieldErrors.durationTerms ? <span role="alert" className="text-xs text-error">{editFieldErrors.durationTerms}</span> : null}
+          </label>
         </div>
       </Dialog>
 
