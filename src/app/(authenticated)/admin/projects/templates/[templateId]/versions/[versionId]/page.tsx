@@ -38,7 +38,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
         action={<PageBackLink href={"/admin/projects/templates/"+encodeURIComponent(ids.data.templateId)+"/versions"} label="Back to version history" />}/>
     </div>;
   }
-  return <div className="min-w-0 space-y-4 md:space-y-5">
+  return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageBackLink href={`/admin/projects/templates/${encodeURIComponent(detail.template.id)}/versions`} label="Version history" />
     <PageHeader title={detail.template.title}
       description={`Version ${detail.selected.version} compared with current version ${detail.current.version}. Existing workspaces retain their pinned snapshots.`}

@@ -49,7 +49,7 @@ export default async function TenantDirectory({searchParams}:{
  }
  const url=(page:number)=>tenantLifecycleHref({...data.query,page});
  const statuses = ["ACTIVE", "ARCHIVED", "ALL"] as const;
- return <div className="min-w-0 space-y-4 md:space-y-5">
+ return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Tenant Setup"
    description="Read-only active and archived colleges with explicit lifecycle state. The selected Super Admin safety scope always applies."
    actions={<div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
