@@ -287,3 +287,6 @@
 
 - work2 #21 `college/jobs/[jobId]/archive/route.ts` | G2-9-013-055: documented explicit legacy soft-delete→confirmed archive translation, preview impact GET, same-origin POST and preserved downstream application/event history. Physical DELETE intentionally unavailable.
 - work2 #22 `tpo/team/[threadId]/page.tsx` | G2-3-022-017/018: documented exact verified action outcome mapping. Server page is not a mutation result surface, so fake toast on load skipped; child interactive controls must announce verified operation results, handoff recorded.
+
+- work2 #23 `college-shortlisted-query.ts` | G2-9-014-005/024: typed ASSESSMENT default and URL stage/status/source/department/program/batch UUID filters; deep-link HREF retains active filters and ignores defaults. Existing page already uses canonical driveApplicationsParams; form/query wiring for department/program/batch handed off.
+- work2 #24 `tpo/profile/error.tsx` | G2-19-030-023/024: restored legacy error heading and in-place Retry, no unsupported assertion that faculty record actually missing. Stale-profile warning only when real retained card exists, so handed to profile data component rather than claiming nonexistent cache.
