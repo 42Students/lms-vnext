@@ -5,7 +5,7 @@ import {getDb} from "@/db/client";
 import {
   collegeMemberships,courseSectionDeliveries,courseTeachingAssignments,
   membershipRoles,courseOfferings,courses,departments,colleges,organizations,sections,academicPeriods,
-  cohorts,cohortProgressionState,programTerms,programTermCourses,
+  cohorts,cohortProgressionState,programTerms,programTermCourses,programs,
 } from "@/db/schema";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
