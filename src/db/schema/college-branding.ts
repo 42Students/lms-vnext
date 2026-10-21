@@ -35,6 +35,7 @@ export const collegeBranding = pgTable(
     legacyBrandingId: integer("legacy_branding_id"),
     legacyCollegeId: integer("legacy_college_id"),
     legacyLoginMethods: varchar("legacy_login_methods", { length: 32 }),
+    loginMethods: varchar("login_methods",{length:32}),
     legacyWasDeleted: boolean("legacy_was_deleted"),
     logoUrl: text("logo_url"),
     faviconUrl: text("favicon_url"),
@@ -56,6 +57,9 @@ export const collegeBranding = pgTable(
   },
   (table) => [
     check("college_branding_version_ck", sql`${table.version} >= 1`),
+    check("college_branding_login_methods_ck",sql`
+      ${table.loginMethods} is null or
+      ${table.loginMethods} in ('EMAIL_PHONE','PHONE_EMAIL','EMAIL_ONLY','PHONE_ONLY')`),
     check("college_branding_logo_url_ck", httpsUrl("logo_url")),
     check("college_branding_favicon_url_ck", httpsUrl("favicon_url")),
     check(
