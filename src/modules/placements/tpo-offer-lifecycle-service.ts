@@ -199,6 +199,10 @@ export async function recordTpoOfferLifecycle(
           ...(nextStatus === "WITHDRAWN" ? {
             withdrawnByUserId: context.user.id,
             withdrawnAt: now,
+            // Revocation closes an outstanding external dispute window.
+            // A finalized acceptance still requires the dedicated reversal
+            // path to undo sibling offer/application consequences.
+            acceptedDisputableUntil: null,
           } : {
             respondedByUserId: context.user.id,
             respondedAt: now,
@@ -297,7 +301,8 @@ export async function finalizeMaturedExternalTpoAcceptances(
       eq(placementOffers.acceptanceChannel, "EXTERNAL_IMPORT"),
       lte(placementOffers.acceptedDisputableUntil, now),
       isNull(placementOffers.cascadeId),
-      isNull(placementJobs.archivedAt),
+      // Archiving a drive must not strand an already-recorded external
+      // acceptance: maturity follows the offer, not the dashboard filter.
     ))
     .orderBy(asc(placementOffers.acceptedDisputableUntil), asc(placementOffers.id))
     .limit(Math.max(1, Math.min(100, Math.trunc(batchSize) || 40)));

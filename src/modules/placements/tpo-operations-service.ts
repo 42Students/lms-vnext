@@ -346,6 +346,7 @@ db
         draft: sql<number>`count(*) filter (where ${placementJobs.status} = 'DRAFT')::int`,
         published: sql<number>`count(*) filter (where ${placementJobs.status} = 'PUBLISHED')::int`,
         closed: sql<number>`count(*) filter (where ${placementJobs.status} = 'CLOSED')::int`,
+        cancelled: sql<number>`count(*) filter (where ${placementJobs.status} = 'CANCELLED')::int`,
       }).from(placementJobs).where(and(
         eq(placementJobs.collegeId, collegeId), isNull(placementJobs.archivedAt),
       )),
@@ -679,6 +680,10 @@ db
       draftJobs: Number(jobTotals?.draft ?? 0),
       publishedJobs: Number(jobTotals?.published ?? 0),
       closedJobs: Number(jobTotals?.closed ?? 0),
+      cancelledJobs: Number(jobTotals?.cancelled ?? 0),
+      // Dashboard samples contain up to 60 newest published jobs and 20
+      // other jobs, but these totals include every non-archived college job.
+      // Active=PUBLISHED, draft=DRAFT, closed=CLOSED; CANCELLED is separate.
       submittedApplications: Number(applicationTotals?.submitted ?? 0),
       pendingScreening: Number(applicationTotals?.pending ?? 0),
       stagedResults: Number(resultTotals?.staged ?? 0),
