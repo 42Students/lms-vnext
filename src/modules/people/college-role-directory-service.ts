@@ -207,7 +207,24 @@ export async function listCollegeRoleDirectory(
       eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),
       eq(learnerProgramEnrollments.status,"ACTIVE"),
       or(ilike(programs.name,search),ilike(programs.code,search),
-        ilike(cohorts.name,search),ilike(cohorts.code,search)),
+        ilike(cohorts.name,search),ilike(cohorts.code,search),ilike(departments.name,search)),
+    )));
+  const matchesLearnerClass = (search: string) => exists(db
+    .select({ enrollmentId: sectionEnrollments.learnerEnrollmentId })
+    .from(sectionEnrollments)
+    .innerJoin(learnerProgramEnrollments, and(
+      eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId),
+      eq(learnerProgramEnrollments.status,"ACTIVE")))
+    .innerJoin(sections,and(
+      eq(sections.id,sectionEnrollments.sectionId),
+      eq(sections.cohortId,learnerProgramEnrollments.cohortId),
+      eq(sections.status,"ACTIVE")))
+    .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
+    .innerJoin(programs,eq(programs.id,cohorts.programId))
+    .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
+    .where(and(
+      eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),
+      eq(sectionEnrollments.status,"ACTIVE"),ilike(sections.name,search),
     )));
   const matchesFacultyIdentity = (search: string) => exists(db.select({ member: facultyProfiles.membershipId })
     .from(facultyProfiles)
@@ -297,6 +314,7 @@ export async function listCollegeRoleDirectory(
         kind === "LEARNER" ? ilike(users.phoneE164, escapedSearch(filter.q)) : undefined,
         kind === "LEARNER" ? matchesLearnerIdentity(escapedSearch(filter.q)) : undefined,
         kind === "LEARNER" ? matchesLearnerProgram(escapedSearch(filter.q)) : undefined,
+        kind === "LEARNER" ? matchesLearnerClass(escapedSearch(filter.q)) : undefined,
         kind === "FACULTY" ? matchesFacultyIdentity(escapedSearch(filter.q)) : undefined,
       ) : undefined,
     )).as("college_role_directory");
@@ -549,4 +567,139 @@ export async function listFacultyAssignedClassLearners(
       rollNumber: row.rollNumber,
     })),
   };
+}
+
+/** The equivalent of the old learner search's college scope, but proof comes
+ * from a currently active persisted College Admin membership. This helper is
+ * intentionally shared by every exact/picker operation below so none of those
+ * methods fall back to a global lookup on malformed or missing tenant scope.
+ */
+async function authorizedCollegeLearnerLookup<T>(
+  context: RequestContext,
+  read: (collegeId: string) => Promise<T>,
+): Promise<T> {
+  const membership = context.membership;
+  if (!membership || membership.status !== "ACTIVE" ||
+      context.user.platformStatus !== "ACTIVE" ||
+      !hasMembershipRole(context,"COLLEGE_ADMIN")) {
+    throw new AuthorizationError("people.manage");
+  }
+  requirePermission(context,"people.manage",{
+    organizationId: membership.organizationId, collegeId: membership.collegeId,
+  });
+  return getDb().transaction(async tx => {
+    const checked = await assertPersistedPlatformPermission(tx, context,"people.manage",{
+      organizationId: membership.organizationId, collegeId: membership.collegeId,
+    });
+    if (!checked.membership || checked.membership.id !== membership.id ||
+        checked.membership.collegeId !== membership.collegeId ||
+        !checked.membership.roles.includes("COLLEGE_ADMIN")) {
+      throw new AuthorizationError("people.manage");
+    }
+    return read(membership.collegeId);
+  });
+}
+
+/** Exact full-name existence for authenticated pickers (never substring match).
+ * No result discloses contact details, even to other college members.
+ */
+export async function collegeLearnerExactNameExists(context:RequestContext,rawName:unknown):Promise<boolean> {
+  const name = z.string().trim().min(1).max(200).parse(rawName);
+  return authorizedCollegeLearnerLookup(context,async collegeId=>{
+    const [found] = await getDb().select({id:collegeMemberships.id})
+      .from(collegeMemberships)
+      .innerJoin(users,eq(users.id,collegeMemberships.userId))
+      .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+        eq(membershipRoles.role,"LEARNER")))
+      .where(and(eq(collegeMemberships.collegeId,collegeId),
+        eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
+        sql`lower(btrim(${users.displayName})) = lower(${name})`))
+      .limit(1);
+    return Boolean(found);
+  });
+}
+
+/** Legacy college+roll-number lookup returns a single member ID. Duplicate
+ * roll numbers are not arbitrarily resolved to the first person: callers must
+ * reconcile duplicates before writing or displaying a private learner detail.
+ */
+export async function findCollegeLearnerByExactRoll(context:RequestContext,rawRoll:unknown):Promise<{
+ membershipId:string;name:string;rollNumber:string;
+}|null> {
+  const roll=z.string().trim().min(1).max(120).parse(rawRoll);
+  return authorizedCollegeLearnerLookup(context,async collegeId=>{
+    const matches=await getDb().select({
+      membershipId:collegeMemberships.id,name:users.displayName,rollNumber:learnerProfiles.rollNumber,
+    }).from(collegeMemberships)
+      .innerJoin(users,eq(users.id,collegeMemberships.userId))
+      .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+        eq(membershipRoles.role,"LEARNER")))
+      .innerJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
+      .where(and(eq(collegeMemberships.collegeId,collegeId),
+        eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
+        sql`lower(btrim(${learnerProfiles.rollNumber})) = lower(${roll})`))
+      .orderBy(asc(collegeMemberships.id)).limit(2);
+    if(matches.length>1)throw new RangeError("DUPLICATE_COLLEGE_ROLL_NUMBER");
+    const match=matches[0];
+    return match&&match.rollNumber?{membershipId:match.membershipId,
+      name:match.name??"Unnamed member",rollNumber:match.rollNumber}:null;
+  });
+}
+
+/** Distinct departments where the college has active learner enrollments.
+ * Always checked against active memberships; labels are normalized only for
+ * comparison, not destructively rewritten in the academic records.
+ */
+export async function listCollegeLearnerDepartmentCategories(context:RequestContext):Promise<
+  {id:string;name:string}[]
+> {
+  return authorizedCollegeLearnerLookup(context,async collegeId=>{
+    const rows=await getDb().selectDistinct({id:departments.id,name:departments.name})
+      .from(learnerProgramEnrollments)
+      .innerJoin(collegeMemberships,and(
+        eq(collegeMemberships.id,learnerProgramEnrollments.membershipId),
+        eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE")))
+      .innerJoin(users,and(eq(users.id,collegeMemberships.userId),
+        eq(users.platformStatus,"ACTIVE")))
+      .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+        eq(membershipRoles.role,"LEARNER")))
+      .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
+      .innerJoin(departments,and(eq(departments.id,programs.departmentId),
+        eq(departments.collegeId,collegeId)))
+      .where(eq(learnerProgramEnrollments.status,"ACTIVE"))
+      .orderBy(asc(departments.name),asc(departments.id));
+    const seen=new Set<string>();
+    return rows.filter(row=>{
+      const label=row.name.trim().toLocaleLowerCase("en");
+      if(!label||seen.has(label))return false;
+      seen.add(label);return true;
+    });
+  });
+}
+
+/** Legacy zero-based page bridge. The old API's page=0 maps to the scoped
+ * vNext page=1; unpaged all-college scans are intentionally replaced with
+ * bounded cursors, never a hidden cross-tenant/global fallback.
+ */
+export async function listLegacyCollegeLearnerPage(context:RequestContext,raw:unknown){
+ const input=z.strictObject({
+  query:z.string().trim().max(100).default(""),
+  programId:z.string().uuid().optional(),
+  batchId:z.string().uuid().optional(),
+  classId:z.string().uuid().optional(),
+  page:z.number().int().min(0).max(9999).default(0),
+  size:z.union([z.literal(10),z.literal(25),z.literal(50),
+    z.literal(100),z.literal(200)]).default(50),
+  status:z.enum(["ALL","ACTIVE","SUSPENDED","ENDED"]).default("ACTIVE"),
+ }).parse(raw);
+ const result=await listCollegeRoleDirectory(context,"LEARNER",{
+  q:input.query,programId:input.programId,cohortId:input.batchId,
+  sectionId:input.classId,page:input.page+1,pageSize:input.size,
+  status:input.status,accountStatus:"ACTIVE",
+ });
+ return {content:result.items,totalElements:result.total,
+   totalPages:Math.ceil(result.total/input.size),
+   page:input.page,size:input.size,
+   hasNext:(input.page+1)*input.size<result.total,
+   hasPrevious:input.page>0};
 }
