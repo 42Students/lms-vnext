@@ -59,7 +59,7 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
       ]}
     />
     <ErrorState title="Invalid course filters" description="Check the search, sort or page and retry."
-      action={<Link href="/admin/courses" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
+      action={<Link href="/admin/courses" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
   </div>;
   const {catalogueQuery,duplicateCourseId}=parsed;
   const [workspace,lessonCountByCourse]=await Promise.all([

@@ -19,7 +19,7 @@ export default async function SuperAdminCollegeFeatureHistory({params,searchPara
   <PageHeader title="Recent module-access changes" description={"Recent changes to Projects, Placements and Electives at college, academic and learner scope for "+result.college.name+"."} actions={<PageBackLink href={"/admin/features/"+encodeURIComponent(collegeId)} label="College module access"/>}/>
   <div className="flex min-w-0 flex-col items-stretch sm:items-end">
   <Link href={collegePolicyHistoryHref(collegeId,cursor.data.beforeOccurredAt&&cursor.data.beforeId?{beforeOccurredAt:new Date(cursor.data.beforeOccurredAt),beforeId:cursor.data.beforeId}:null).replace("/history","/history/export")}
-    className="inline-flex min-h-11 w-full items-center justify-center self-start rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] sm:w-auto md:min-h-9">
+    className="inline-flex min-h-11 w-full items-center justify-center self-start rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] sm:w-auto md:min-h-9 hover:text-[var(--lms-primary-text)]">
     Export this audited page (CSV)
   </Link>
   </div>
@@ -33,6 +33,6 @@ export default async function SuperAdminCollegeFeatureHistory({params,searchPara
     <p className="mt-1 break-words text-xs text-body">Scope: {item.scope}{item.studentCount===undefined?"":" · "+item.studentCount+" students"}</p>
     <p className="mt-2 break-words text-xs text-muted-foreground">{item.actorName}</p>
    </li>)}</ol>}
-  {result.nextCursor?<Link href={collegePolicyHistoryHref(collegeId,result.nextCursor)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] sm:w-auto md:min-h-9">Load more changes →</Link>:null}
+  {result.nextCursor?<Link href={collegePolicyHistoryHref(collegeId,result.nextCursor)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] sm:w-auto md:min-h-9 hover:text-[var(--lms-primary-text)]">Load more changes →</Link>:null}
  </div>;
 }

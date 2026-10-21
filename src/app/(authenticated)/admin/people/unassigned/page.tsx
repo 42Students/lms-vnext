@@ -56,7 +56,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
   const roles = ["ALL", "SUPER_ADMIN", "NONE"] as const;
   return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Users without college memberships"
-      description="Read-only identities with no college membership. Users with active, suspended or ended memberships are excluded. Personal contact and session information are excluded." actions={<Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">← Users & Roles</Link>} />
+      description="Read-only identities with no college membership. Users with active, suspended or ended memberships are excluded. Personal contact and session information are excluded." actions={<Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)]">← Users & Roles</Link>} />
 
     <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_minmax(0,13rem)_auto]">
       <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name<Input type="search" name="q" maxLength={100}

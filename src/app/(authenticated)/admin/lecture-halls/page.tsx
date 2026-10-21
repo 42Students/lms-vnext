@@ -84,7 +84,7 @@ export default async function SuperAdminLectureHallsPage({
           <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Search</Button>
         </div>
         <details className="group min-w-0" open={Boolean(query.departmentId || query.roomType !== "ALL" || query.pageSize !== 10 || query.minimumCapacity || query.maximumCapacity || query.upcoming !== "ALL") || undefined}>
-          <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
+          <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
           <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 lg:grid-cols-3">
             <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
               <Select name="departmentId" defaultValue={query.departmentId ?? ""} className="min-h-11 w-full md:min-h-9">

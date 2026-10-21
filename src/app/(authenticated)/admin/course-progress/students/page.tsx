@@ -16,7 +16,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
  const context=await getCurrentRequestContext();
  requirePermission(context,"admin-scope.select");
  const offeringId=parseSuperAdminStudentProgressParams(await searchParams);
- const back=<Link href="/admin/course-progress" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to Course Progress</Link>;
+ const back=<Link href="/admin/course-progress" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to Course Progress</Link>;
  if(!offeringId)return <div className="space-y-6">
   <PageHeader title="Student Course Progress"/>
   <ErrorState title="Choose a course offering" description="Select a course and class from Course Progress first." action={back}/>
@@ -65,7 +65,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
   />
   <div className="flex min-w-0 justify-start print:hidden">
     <a href={"/api/admin/course-progress/students/export?offeringId="+encodeURIComponent(report.offeringId)}
-   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-4)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] transition-colors hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none md:min-h-9">Export CSV</a>
+   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-4)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] transition-colors hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-[var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none md:min-h-9">Export CSV</a>
   </div>
  </div>;
 }
