@@ -183,16 +183,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-15.md: file, number of
 - [x] `src/components/placements/college-drive-row-lifecycle-action.tsx`
 - [x] `src/components/placements/college-interview-status-actions.tsx`
 - [x] `src/components/placements/college-legacy-drive-settings.tsx`
-- [ ] `src/components/placements/learner-application-detail-withdraw.tsx`
-- [ ] `src/components/placements/learner-applications-browse.tsx`
-- [ ] `src/components/placements/learner-career-calendar.tsx`
-- [ ] `src/components/placements/learner-career-rounds-workspace.tsx`
-- [ ] `src/components/placements/learner-general-requests.tsx`
-- [ ] `src/components/placements/learner-interview-withdrawal-request.tsx`
-- [ ] `src/components/placements/learner-jobs-browse.tsx`
-- [ ] `src/components/placements/learner-placement-alert-action.tsx`
-- [ ] `src/components/placements/learner-placement-jobs.tsx`
-- [ ] `src/components/placements/learner-placement-journey.tsx`
+- [x] `src/components/placements/learner-application-detail-withdraw.tsx`
+- [x] `src/components/placements/learner-applications-browse.tsx`
+- [x] `src/components/placements/learner-career-calendar.tsx`
+- [x] `src/components/placements/learner-career-rounds-workspace.tsx`
+- [x] `src/components/placements/learner-general-requests.tsx`
+- [x] `src/components/placements/learner-interview-withdrawal-request.tsx`
+- [x] `src/components/placements/learner-jobs-browse.tsx`
+- [x] `src/components/placements/learner-placement-alert-action.tsx`
+- [x] `src/components/placements/learner-placement-jobs.tsx`
+- [x] `src/components/placements/learner-placement-journey.tsx`
 - [ ] `src/components/placements/learner-placement-offers.tsx`
 - [ ] `src/components/placements/learner-placement-registration.tsx`
 - [ ] `src/components/placements/learner-placements-dashboard.tsx`
