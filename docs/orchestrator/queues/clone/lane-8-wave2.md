@@ -38,7 +38,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_app_api_skills_route.ts.md` (edit src/app/api/skills/route.ts; 22 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_modules_academics_section-service.ts.md` (edit src/modules/academics/section-service.ts; 22 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_components_electives_college-slot-manager.tsx.md` (edit src/components/electives/college-slot-manager.tsx; 21 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_modules_academics_faculty-assignment-service.ts.md` (edit src/modules/academics/faculty-assignment-service.ts; 16 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_modules_academics_faculty-assignment-service.ts.md` (edit src/modules/academics/faculty-assignment-service.ts; 16 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_modules_academics_schedule-service.ts.md` (edit src/modules/academics/schedule-service.ts; 15 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_components_academics_college-promotion-confirmation.tsx.md` (edit src/components/academics/college-promotion-confirmation.tsx; 14 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_modules_academics_college-batch-promotion-model.ts.md` (edit src/modules/academics/college-batch-promotion-model.ts; 13 findings; best P2)
