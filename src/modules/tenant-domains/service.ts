@@ -1,4 +1,5 @@
 import { randomBytes } from "node:crypto";
+import {z} from "zod";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {
@@ -6,7 +7,9 @@ import {
   normalizeRequestHost,
   tenantDomainCollegeIdSchema,
   tenantDomainIdSchema,
+  tenantDomainHostSchema,
 } from "./validation";
+import {managedBaseDomain} from "./managed-subdomain-model";
 
 export type TenantDomainView = {
   id: string;
@@ -54,12 +57,19 @@ export interface TenantDomainRepository {
     host: string;
     verificationToken: string;
   }): Promise<TenantDomainView>;
+  editDomainHost(input:{
+    domainId:string;
+    expectedHost:string;
+    host:string;
+    verificationToken:string;
+    context:RequestContext;
+  }):Promise<TenantDomainView>;
   recordVerificationResult(
     domainId: string,
-    input: VerificationResult & { checkedAt: Date },
+    input: VerificationResult & { checkedAt: Date; expectedHost:string; expectedToken:string },
   ): Promise<TenantDomainView>;
   setPrimary(domainId: string): Promise<TenantDomainView>;
-  deleteDomain(domainId: string, confirmationHost?: string): Promise<void>;
+  deleteDomain(domainId: string, confirmationHost: string | undefined, context:RequestContext): Promise<void>;
   resolveVerifiedHost(host: string): Promise<ResolvedTenantHost | null>;
 }
 
@@ -68,7 +78,9 @@ export type TenantDomainServiceErrorCode =
   | "DOMAIN_NOT_FOUND"
   | "HOST_CONFLICT"
   | "DOMAIN_NOT_VERIFIED"
-  | "PRIMARY_HOST_CONFIRMATION_REQUIRED";
+  | "PRIMARY_HOST_CONFIRMATION_REQUIRED"
+  | "DOMAIN_HOST_STALE"
+  | "MANAGED_HOST_EDIT_UNSUPPORTED";
 
 export class TenantDomainServiceError extends Error {
   constructor(public readonly code: TenantDomainServiceErrorCode) {
@@ -221,6 +233,8 @@ export async function verifyTenantDomain(
   return repository.recordVerificationResult(domain.id, {
     ...result,
     checkedAt: new Date(),
+    expectedHost:domain.host,
+    expectedToken:domain.verificationToken,
   });
 }
 
@@ -242,6 +256,36 @@ export async function setPrimaryTenantDomain(
   return repository.setPrimary(domain.id);
 }
 
+/** Replacing a custom domain is not verification. Rotate the DNS challenge
+ * and clear primary/verified state atomically so the former host cannot be
+ * trusted after an edit. Managed wildcard addresses use their own workflow. */
+export async function editTenantDomainHost(
+  context:RequestContext,
+  domainIdInput:string,
+  rawInput:unknown,
+  repository:TenantDomainRepository,
+  tokenFactory:()=>string=verificationToken,
+){
+  const input=z.strictObject({
+    expectedHost:tenantDomainHostSchema,
+    host:tenantDomainHostSchema,
+  }).parse(rawInput);
+  const domain=await loadAuthorizedDomain(context,domainIdInput,repository);
+  if(domain.host!==input.expectedHost)
+    throw new TenantDomainServiceError("DOMAIN_HOST_STALE");
+  if(input.host===domain.host)return domain;
+  const base=managedBaseDomain(process.env.TENANT_MANAGED_BASE_DOMAIN,true);
+  if(base&&(domain.host.endsWith("."+base)||input.host.endsWith("."+base)))
+    throw new TenantDomainServiceError("MANAGED_HOST_EDIT_UNSUPPORTED");
+  return repository.editDomainHost({
+    domainId:domain.id,
+    expectedHost:domain.host,
+    host:input.host,
+    verificationToken:tokenFactory(),
+    context,
+  });
+}
+
 export async function deleteTenantDomain(
   context: RequestContext,
   domainIdInput: string,
@@ -257,7 +301,7 @@ export async function deleteTenantDomain(
   if (domain.isPrimary && confirmationHost !== domain.host) {
     throw new TenantDomainServiceError("PRIMARY_HOST_CONFIRMATION_REQUIRED");
   }
-  await repository.deleteDomain(domain.id, confirmationHost);
+  await repository.deleteDomain(domain.id, confirmationHost, context);
 }
 
 /**

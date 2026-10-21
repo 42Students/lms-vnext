@@ -5,12 +5,15 @@ import {
   asc,
   desc,
   eq,
+  isNull,
   ne,
   or,
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {
+  activityEvents,
   colleges,
   organizations,
   tenantDomains,
@@ -51,7 +54,7 @@ async function loadDomainFromDb(
     })
     .from(tenantDomains)
     .innerJoin(colleges, eq(colleges.id, tenantDomains.collegeId))
-    .where(eq(tenantDomains.id, domainId))
+    .where(and(eq(tenantDomains.id, domainId),isNull(tenantDomains.deletedAt)))
     .limit(1);
 
   return row ?? null;
@@ -78,7 +81,7 @@ async function loadDomainByHostFromDb(
     })
     .from(tenantDomains)
     .innerJoin(colleges, eq(colleges.id, tenantDomains.collegeId))
-    .where(sql<boolean>`lower(${tenantDomains.host}) = ${host}`)
+    .where(and(sql<boolean>`lower(${tenantDomains.host}) = ${host}`,isNull(tenantDomains.deletedAt)))
     .limit(1);
 
   return row ?? null;
@@ -128,7 +131,7 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
       })
       .from(tenantDomains)
       .innerJoin(colleges, eq(colleges.id, tenantDomains.collegeId))
-      .where(eq(tenantDomains.collegeId, collegeId))
+      .where(and(eq(tenantDomains.collegeId, collegeId),isNull(tenantDomains.deletedAt)))
       .orderBy(
         desc(tenantDomains.isPrimary),
         asc(tenantDomains.host),
@@ -180,6 +183,60 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
     }
   },
 
+  async editDomainHost(input) {
+    try {
+      await getDb().transaction(async tx=>{
+        const [row]=await tx.select({
+          id:tenantDomains.id,
+          collegeId:tenantDomains.collegeId,
+          organizationId:colleges.organizationId,
+          status:colleges.status,
+          host:tenantDomains.host,
+          wasPrimary:tenantDomains.isPrimary,
+        }).from(tenantDomains)
+          .innerJoin(colleges,eq(colleges.id,tenantDomains.collegeId))
+          .where(and(eq(tenantDomains.id,input.domainId),
+            sql`${tenantDomains.deletedAt} is null`))
+          .for("update").limit(1);
+        if(!row||row.status!=="ACTIVE")
+          throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+        await assertPersistedPlatformPermission(tx,input.context,"college.manage",{
+          organizationId:row.organizationId,collegeId:row.collegeId,
+        });
+        if(row.host!==input.expectedHost)
+          throw new TenantDomainServiceError("DOMAIN_HOST_STALE");
+        if(row.host===input.host)return;
+        const [taken]=await tx.select({id:tenantDomains.id})
+          .from(tenantDomains)
+          .where(and(sql<boolean>`lower(${tenantDomains.host}) = ${input.host}`,
+            sql`${tenantDomains.deletedAt} is null`)).limit(1);
+        if(taken&&taken.id!==row.id)
+          throw new TenantDomainServiceError("HOST_CONFLICT");
+        const now=new Date();
+        await tx.update(tenantDomains).set({
+          host:input.host,isVerified:false,isPrimary:false,
+          verifiedAt:null,verificationToken:input.verificationToken,
+          lastCheckedAt:null,lastCheckResult:null,lastFoundValues:null,updatedAt:now,
+        }).where(eq(tenantDomains.id,row.id));
+        await tx.insert(activityEvents).values({
+          organizationId:row.organizationId,collegeId:row.collegeId,
+          actorUserId:input.context.user.id,module:"PLATFORM",
+          eventType:"PLATFORM_COLLEGE_SUBDOMAIN_CHANGED",importance:"HIGH",
+          subjectType:"tenant_domain",subjectId:row.id,
+          summary:"Super Admin changed a custom college domain",
+          metadata:{action:"EDIT_HOST",from:row.host,to:input.host,
+            oldPrimary:row.wasPrimary,verificationReset:true},
+        });
+      });
+    }catch(error){
+      if(isUniqueViolation(error))throw new TenantDomainServiceError("HOST_CONFLICT");
+      throw error;
+    }
+    const updated=await loadDomainFromDb(input.domainId);
+    if(!updated)throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+    return updated;
+  },
+
   async recordVerificationResult(domainId, input) {
     const db = getDb();
 
@@ -190,16 +247,22 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
           collegeId: tenantDomains.collegeId,
           isVerified: tenantDomains.isVerified,
           isPrimary: tenantDomains.isPrimary,
+          host: tenantDomains.host,
+          verificationToken: tenantDomains.verificationToken,
           verifiedAt: tenantDomains.verifiedAt,
         })
         .from(tenantDomains)
-        .where(eq(tenantDomains.id, domainId))
+        .where(and(eq(tenantDomains.id, domainId),isNull(tenantDomains.deletedAt)))
         .for("update")
         .limit(1);
 
       if (!current) {
         throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
       }
+      // In-flight DNS verification cannot confirm a host that was edited.
+      if(current.host!==input.expectedHost ||
+         current.verificationToken!==input.expectedToken)
+        throw new TenantDomainServiceError("DOMAIN_HOST_STALE");
 
       let shouldBecomePrimary = current.isPrimary;
       if (input.verified && !current.isPrimary) {
@@ -236,7 +299,7 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
           lastCheckResult: input.result,
           updatedAt: input.checkedAt,
         })
-        .where(eq(tenantDomains.id, domainId));
+        .where(and(eq(tenantDomains.id, domainId),isNull(tenantDomains.deletedAt)));
     });
 
     const domain = await loadDomainFromDb(domainId);
@@ -257,7 +320,7 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
           isVerified: tenantDomains.isVerified,
         })
         .from(tenantDomains)
-        .where(eq(tenantDomains.id, domainId))
+        .where(and(eq(tenantDomains.id, domainId),isNull(tenantDomains.deletedAt)))
         .for("update")
         .limit(1);
 
@@ -304,20 +367,43 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
     return domain;
   },
 
-  async deleteDomain(domainId, confirmationHost) {
-    const db = getDb();
-    const [deleted] = await db
-      .delete(tenantDomains)
-      .where(and(eq(tenantDomains.id, domainId),or(
-        eq(tenantDomains.isPrimary,false),
-        and(eq(tenantDomains.isPrimary,true),eq(tenantDomains.host,confirmationHost ?? "")),
-      )))
-      .returning({ id: tenantDomains.id });
-
-    if (!deleted) {
-      const existing = await loadDomainFromDb(domainId);
-      throw new TenantDomainServiceError(existing ? "PRIMARY_HOST_CONFIRMATION_REQUIRED" : "DOMAIN_NOT_FOUND");
-    }
+  async deleteDomain(domainId, confirmationHost, context) {
+    // Soft deletion preserves host ownership and an immutable audit receipt,
+    // while the partial host uniqueness index releases the public address.
+    await getDb().transaction(async tx=>{
+      const [current]=await tx.select({
+        id:tenantDomains.id,
+        collegeId:tenantDomains.collegeId,
+        organizationId:colleges.organizationId,
+        status:colleges.status,
+        host:tenantDomains.host,
+        isPrimary:tenantDomains.isPrimary,
+      }).from(tenantDomains)
+        .innerJoin(colleges,eq(colleges.id,tenantDomains.collegeId))
+        .where(and(eq(tenantDomains.id,domainId),isNull(tenantDomains.deletedAt)))
+        .for("update").limit(1);
+      if(!current||current.status!=="ACTIVE")
+        throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+      await assertPersistedPlatformPermission(tx,context,"college.manage",{
+        organizationId:current.organizationId,collegeId:current.collegeId,
+      });
+      if(current.isPrimary&&confirmationHost!==current.host)
+        throw new TenantDomainServiceError("PRIMARY_HOST_CONFIRMATION_REQUIRED");
+      const now=new Date();
+      await tx.update(tenantDomains).set({
+        deletedAt:now,isPrimary:false,isVerified:false,
+        verificationToken:null,updatedAt:now,
+      }).where(and(eq(tenantDomains.id,current.id),isNull(tenantDomains.deletedAt)));
+      await tx.insert(activityEvents).values({
+        organizationId:current.organizationId,collegeId:current.collegeId,
+        actorUserId:context.user.id,module:"PLATFORM",
+        eventType:"PLATFORM_COLLEGE_SUBDOMAIN_CHANGED",importance:"HIGH",
+        subjectType:"tenant_domain",subjectId:current.id,
+        summary:"Super Admin removed a custom college domain",
+        metadata:{action:"DELETE_CUSTOM_HOST",host:current.host,
+          oldPrimary:current.isPrimary,softDeleted:true},
+      });
+    });
   },
 
   async resolveVerifiedHost(host) {
@@ -339,6 +425,7 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
         and(
           sql<boolean>`lower(${tenantDomains.host}) = ${host}`,
           eq(tenantDomains.isVerified, true),
+          isNull(tenantDomains.deletedAt),
           eq(colleges.status, "ACTIVE"),
           eq(organizations.status, "ACTIVE"),
         ),

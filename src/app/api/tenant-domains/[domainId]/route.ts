@@ -5,9 +5,10 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {
   deleteTenantDomainWithRuntime,
+  editTenantDomainHostWithRuntime,
   setPrimaryTenantDomainWithRuntime,
 } from "@/modules/tenant-domains/runtime";
-import { tenantDomainActionSchema } from "@/modules/tenant-domains/validation";
+import { tenantDomainActionSchema,tenantDomainHostSchema } from "@/modules/tenant-domains/validation";
 
 export const runtime = "nodejs";
 
@@ -39,13 +40,21 @@ export async function PATCH(
   }
 
   try {
-    tenantDomainActionSchema.parse(body);
+    const input=z.union([
+      tenantDomainActionSchema,
+      z.strictObject({
+        action:z.literal("EDIT_HOST"),
+        host:tenantDomainHostSchema,
+        expectedHost:tenantDomainHostSchema,
+      }),
+    ]).parse(body);
     const context = await getCurrentRequestContext();
     const { domainId } = await params;
-    const domain = await setPrimaryTenantDomainWithRuntime(
-      context,
-      domainId,
-    );
+    const domain = input.action==="EDIT_HOST"
+      ? await editTenantDomainHostWithRuntime(context,domainId,{
+          host:input.host,expectedHost:input.expectedHost,
+        })
+      : await setPrimaryTenantDomainWithRuntime(context,domainId);
 
     return NextResponse.json({ domain });
   } catch (error) {
