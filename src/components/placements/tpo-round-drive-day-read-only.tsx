@@ -100,6 +100,8 @@ export function TpoRoundDriveDayReadOnly({
   const [gateCandidates,setGateCandidates]=useState<RoundRow[]>([]);
   const [gateTarget,setGateTarget]=useState<RoundRow|null>(null);
   const [gateBusy,setGateBusy]=useState(false);
+  const lastSnapshotAt=useRef(Date.now());
+  const [staleSnapshot,setStaleSnapshot]=useState(false);
   const [roomBusy,setRoomBusy]=useState<string|null>(null);
   const inFlight=useRef(false);
   const [pasteOpen,setPasteOpen]=useState(false);
@@ -107,10 +109,17 @@ export function TpoRoundDriveDayReadOnly({
   const [pasteBusy,setPasteBusy]=useState(false);
   const [pasteFeedback,setPasteFeedback]=useState("");
   const [pasteFailure,setPasteFailure]=useState("");
+  // A failed route refresh leaves the last rendered roster on screen.
+  // Keep it visible but disclose when the last successful snapshot is old.
+  useEffect(()=>{
+    lastSnapshotAt.current=Date.now();
+    setStaleSnapshot(false);
+  },[data]);
   // Keep the operator's roster current while preserving draft gate and paste
   // entries; React refresh does not reset these controlled inputs.
   useEffect(()=>{
     const timer=window.setInterval(()=>{
+      if(Date.now()-lastSnapshotAt.current>60_000)setStaleSnapshot(true);
       if(!inFlight.current&&!pasteOpen&&document.visibilityState==="visible")
         router.refresh();
     },20_000);
@@ -197,6 +206,11 @@ export function TpoRoundDriveDayReadOnly({
         },
       );
       if(!response.ok)throw Error("Attendance has changed or could not be saved. Refresh the round before retrying.");
+      const confirmation:unknown=await response.json().catch(()=>null);
+      if(!confirmation||typeof confirmation!=="object"||!("attendance" in confirmation)||
+        !confirmation.attendance||typeof confirmation.attendance!=="object"||
+        !("status" in confirmation.attendance)||confirmation.attendance.status!=="PRESENT")
+        throw Error("Could not confirm that the present status was saved. Refresh and retry.");
       router.refresh();return true;
     }catch(error){
       setGateError(error instanceof Error?error.message:"Check-in failed.");
@@ -207,14 +221,22 @@ export function TpoRoundDriveDayReadOnly({
     const pasteTokens=pasteText.split(/[\n,;]+/).map(value=>value.trim()).filter(Boolean);
     const matched:RoundRow[]=[];
     const unresolved:string[]=[];
+    const unmatched:string[]=[];
+    const ambiguous:string[]=[];
+    let duplicates=0;
     const used=new Set<string>();
     for(const token of pasteTokens.slice(0,50)){
       const outcome=resolveGateRoll(data.rows,token);
-      if(outcome.kind==="MATCH"&&!used.has(outcome.student.applicationId)){
+      if(outcome.kind==="MATCH"){
+        if(used.has(outcome.student.applicationId)){duplicates++;continue;}
         matched.push(outcome.student);used.add(outcome.student.applicationId);
-      }else if(outcome.kind!=="MATCH"){unresolved.push(token);}
+      }else{
+        unresolved.push(token);
+        if(outcome.kind==="AMBIGUOUS")ambiguous.push(token);
+        else unmatched.push(token);
+      }
     }
-    return {matched,unresolved,tooMany:pasteTokens.length>50};
+    return {matched,unresolved,unmatched,ambiguous,duplicates,tooMany:pasteTokens.length>50};
   },[data.rows,pasteText]);
   async function markPasted(){
     if(locked||pasteBusy||inFlight.current||pastePreview.tooMany||pastePreview.matched.length===0)return;
@@ -236,11 +258,17 @@ export function TpoRoundDriveDayReadOnly({
             },
           );
           if(!response.ok)throw Error("Attendance changed");
+          const saved:unknown=await response.json().catch(()=>null);
+          if(!saved||typeof saved!=="object"||!("attendance" in saved)||
+            !saved.attendance||typeof saved.attendance!=="object"||
+            !("status" in saved.attendance)||saved.attendance.status!=="PRESENT")
+            throw Error("Could not confirm the saved present state");
           done++;
         }catch{failed.push(student.rollNumber??student.displayName);}
       }
       setPasteText(failed.join("\n"));
-      setPasteFeedback(done+" marked present"+(already>0?"; "+already+" already present":"")+".");
+      setPasteFeedback(done+" marked present"+(already>0?"; "+already+" already present":"")+
+        (pastePreview.duplicates>0?"; "+pastePreview.duplicates+" duplicate entries skipped":"")+".");
       if(failed.length>0)setPasteFailure(
         failed.length+" roll number(s) were unmatched, ambiguous or could not be saved. Review the remaining lines.");
       router.refresh();
@@ -281,6 +309,11 @@ export function TpoRoundDriveDayReadOnly({
       />
 
 
+      {staleSnapshot?<div role="status" className="flex flex-wrap items-center justify-between gap-3">
+        <InlineNotice tone="warning" message="The last successful roster snapshot is over a minute old. Check that attendance is current before editing."/>
+        <Button type="button" variant="secondary" disabled={gateBusy||pasteBusy}
+          onClick={()=>router.refresh()}>Retry roster refresh</Button>
+      </div>:null}
       <section aria-label="Gate quick check-in" className="min-w-0 space-y-3 border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -572,7 +605,7 @@ export function TpoRoundDriveDayReadOnly({
               placeholder="Paste one roll number per line"/>
           </label>
           <p className="text-xs text-body">
-            {pastePreview.matched.length} matched · {pastePreview.unresolved.length} unmatched or ambiguous.
+            {pastePreview.matched.length} matched · {pastePreview.unmatched.length} unmatched · {pastePreview.ambiguous.length} ambiguous · {pastePreview.duplicates} duplicates skipped.
           </p>
           {pastePreview.tooMany?<InlineNotice tone="error" message="Paste at most 50 roll numbers per batch."/>:null}
           {pasteFailure?<InlineNotice tone="error" message={pasteFailure}/>:null}
