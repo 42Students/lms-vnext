@@ -19,6 +19,7 @@ import { PlacementPanelErrorBoundary } from "@/components/admin/placement-panel-
 
 import { parseActivityDateBoundary } from "@/modules/activity/date-boundary";
 import type { RequestContext } from "@/modules/identity/context";
+import { AuthorizationError } from "@/modules/permissions/policy";
 
 import {
   initialCareerCalendarDay,
@@ -476,7 +477,10 @@ export async function PlacementCalendarWorkspace({
     state.view,
   );
 
-  const response =
+  // A single failed event source must not take down the interview calendar,
+  // its independently loaded appointment directory, or TPO needs-doing.
+  // Never label missing data as a legitimate zero.
+  const loadedResponse =
     await listPlacementCalendarEvents(
       context,
       {
@@ -488,7 +492,16 @@ export async function PlacementCalendarWorkspace({
         roundKind: state.roundKind,
         tpoLegacyScope:audience==="TPO",
       },
-    );
+    ).catch((error: unknown) => {
+      // Permission failures must remain permission failures; only an
+      // unavailable calendar data source receives an inline Retry state.
+      if (error instanceof AuthorizationError) throw error;
+      return null;
+    });
+  const response = loadedResponse ?? {
+    from: window.from, to: window.to,
+    events: [], days: [], summary: summarizePlacementCalendar([], now),
+  };
 
   const bookings=audience==="SUPER_ADMIN"?await listSuperAdminBookedInterviews(context,window.from,window.to)
     .then(value=>({...value,failed:false})).catch(()=>({events:[],truncated:false,failed:true})):null;
@@ -496,7 +509,7 @@ export async function PlacementCalendarWorkspace({
    ?await listPlacementCalendarEvents(context,{
     collegeId,from:window.from,to:window.to,tpoLegacyScope:true,
    }).catch(()=>null)
-   :response;
+   :loadedResponse;
   const countSourceEvents=eventTypeCountsSource?.events??[];
   const eventTypeCounts=new Map<string,number>();
   for(const item of countSourceEvents)
@@ -524,7 +537,8 @@ export async function PlacementCalendarWorkspace({
     tpoLegacyScope:true,
   }).catch(()=>null):null;
   const blockedDays=audience==="TPO"?await getTpoBlockedDates(context).catch(()=>null):null;
-  const partialCalendar=audience==="TPO"&&(!needsWindow||!eventTypeCountsSource||!blockedDays?.ready);
+  const partialCalendar=!loadedResponse ||
+    (audience==="TPO"&&(!needsWindow||!eventTypeCountsSource||!blockedDays?.ready));
   const blockedEvents=audience==="TPO"&&blockedDays?.ready&&(state.kinds.length ? state.kinds.includes("BLOCKED") : (!state.kind||state.kind==="BLOCKED"))?
     toTpoBlockedCalendarEvents(blockedDays.rows,window.from,window.to):[];
   const selectedEvents=state.kind==="BLOCKED" && !state.kinds.length ? blockedEvents : [...audienceEvents,...blockedEvents];
@@ -585,9 +599,10 @@ export async function PlacementCalendarWorkspace({
           day === placementCalendarDayKey(event.startsAt)))
       : [];
   const partialSummarySources = [
-    !needsWindow ? "today/next 7 days and overdue follow-ups" : null,
-    !eventTypeCountsSource ? "event-type counts" : null,
-    !blockedDays?.ready ? "blocked dates and conflicts" : null,
+    !loadedResponse ? "calendar events" : null,
+    isTpo && !needsWindow ? "today/next 7 days and overdue follow-ups" : null,
+    isTpo && !eventTypeCountsSource ? "event-type counts" : null,
+    isTpo && !blockedDays?.ready ? "blocked dates and conflicts" : null,
   ].filter((value): value is string => value !== null);
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
@@ -605,23 +620,31 @@ export async function PlacementCalendarWorkspace({
               : "Interview rounds and other employer events across your college, with company and job filters. Dates and times are shown in Indian Standard Time."
         }
         actions={
-          <Link
-            href={
-              isTpo
-                ? "/tpo/placements"
-                : audience === "SUPER_ADMIN"
-                  ? "/admin/placements"
-                  : "/college/placements"
-            }
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body sm:w-auto hover:border-primary hover:text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-          >
-            Placement operations →
-          </Link>
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
+            {audience === "COLLEGE_ADMIN" ? (
+              <Link href="/college/placements/interviews"
+                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-[var(--lms-link-text)] md:min-h-9">
+                View interviews
+              </Link>
+            ) : null}
+            <Link
+              href={
+                isTpo
+                  ? "/tpo/placements"
+                  : audience === "SUPER_ADMIN"
+                    ? "/admin/placements"
+                    : "/college/placements"
+              }
+              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-[var(--lms-link-text)] md:min-h-9"
+            >
+              Placement operations →
+            </Link>
+          </div>
         }
       />
 
       {partialCalendar?<Banner tone="warning" role="alert" action={<Link href={calendarHref(basePath,audience,state,{})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text md:min-h-9">Retry</Link>}>
-        <p className="font-semibold text-warning-text">Could not refresh {partialSummarySources.join(", ")}. The successful events remain visible; unavailable counts are not zero. Retry summary.</p>
+        <p className="font-semibold text-warning-text">Could not refresh {partialSummarySources.join(", ")}. {loadedResponse ? "The successful events remain visible." : "Calendar events are unavailable; other successful sources remain visible."} Missing counts are not zero. Retry summary.</p>
       </Banner>:null}
 
       {calendarFollowupsWritable ? (
@@ -711,7 +734,7 @@ export async function PlacementCalendarWorkspace({
               {label}
             </p>
             <p className="mt-1 text-2xl font-bold tabular-nums text-foreground">
-              {count}
+              {loadedResponse ? count : "Unavailable"}
             </p>
           </div>
         ))}
@@ -991,7 +1014,7 @@ export async function PlacementCalendarWorkspace({
               </p>
             ) : (
               <p className="mt-1 text-sm text-body">
-                No upcoming event matches this period and these filters.
+                {loadedResponse ? "No upcoming event matches this period and these filters." : "The event schedule could not be loaded. Retry."}
               </p>
             )}
           </div>
@@ -1154,8 +1177,9 @@ export async function PlacementCalendarWorkspace({
                 : "Events in visible period"}
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              {visibleEvents.length} matching event
-              {visibleEvents.length === 1 ? "" : "s"} ·{" "}
+              {loadedResponse
+                ? `${visibleEvents.length} matching event${visibleEvents.length === 1 ? "" : "s"}`
+                : "Matching event count unavailable"} ·{" "}
               {dateLabel(window.from)} –{" "}
               {dateLabel(window.to)}
             </p>
@@ -1166,7 +1190,11 @@ export async function PlacementCalendarWorkspace({
         </div>
 
         {state.view!=="agenda"?<p className="text-xs text-muted-foreground min-[992px]:hidden">Calendar events are listed below for a better fit on small screens.</p>:null}
-        {groups.length === 0 ? (
+        {!loadedResponse ? (
+          <div role="status" className="border-y border-border py-8 text-sm text-warning-text">
+            Calendar events could not be loaded. Use Retry above to refresh.
+          </div>
+        ) : groups.length === 0 ? (
           <div className="border-y border-border py-8 text-sm text-body">
             {state.view==="agenda"?TPO_EMPTY_AGENDA:
              "No calendar events match this date range and these filters. Try another date, company or event type."}
