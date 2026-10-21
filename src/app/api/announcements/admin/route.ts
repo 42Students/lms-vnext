@@ -39,7 +39,8 @@ export async function POST(request: Request) {
     try { body = await request.json(); }
     catch { return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 }); }
     const announcement = await createAnnouncement(context, body);
-    return NextResponse.json({ announcement }, { status: 201 });
+    // Preserve legacy HTTP 200/status OK while retaining the vNext document.
+    return NextResponse.json({ status: "OK", announcement }, { status: 200 });
   } catch (error) {
     return announcementApiError(error);
   }
