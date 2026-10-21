@@ -188,3 +188,10 @@
 
 ## Packet 43 — faculty/course association history
 - `src_db_schema_faculty-course-associations.ts.md` | Documented verified source ID mapping and active int→endedAt lifecycle semantics for G2-3-020-007/027/040/043. Existing active-only unique membership/course index protects current associations; historical ended rows stay possible and must be kept during imports. | No legacy rows in greenfield, no DDL/data copy; for future approved import resolve faculty/course ID UUID crosswalk and de-dupe active source records after role/college check. Service owner must enforce ACTIVE membership and teaching grant on writes. No migration needed.
+
+
+## Packet 44 — learner import lineage
+- `src_db_schema_db02-learner-import-batches.staged.ts.md` | Registered storage/export and migration 0167 for scoped import batch provenance and immutable membership links, with college-matching composite FKs and membership-once constraint (G2-5-019-010/046/069). | G2-5-019-055 generic bulk undo intentionally NOT enabled: must inspect downstream attendance, projects, applications, assignments and auth dependencies and use individually auditable reversals. Greenfield has no legacy IDs or batch rows to backfill. 0167 NOT EXECUTED.
+
+## Packet 45 — tracker audit finding source fidelity
+- `src_db_schema_db10-audit-findings.draft.ts.md` | Added roles, reportedSeverity, environment, sourceCommitSha, agent actor kind/label, file/commit and structured from/to evidence; sync repo, lastCommit, lastError and lastSuccessAt, preserving externalId+internal UUID. Registered migration 0168/export for G2-16-001-066/067/069. | Actual sync worker/status endpoint must record failures and last successful run truthfully, sanitize commits and sensitive notes, and honor DB10_AUDIT_FINDINGS_READY. No sync run occurred; migration NOT EXECUTED.
