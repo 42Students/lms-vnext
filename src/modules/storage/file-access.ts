@@ -4,6 +4,7 @@ import { CoursesServiceError } from "@/modules/courses/errors";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { ProjectsServiceError } from "@/modules/projects/errors";
 import { StorageFileError } from "./file-errors";
+import { issueObjectReadUrl, legacyFileReadOptions, type LegacyFileReadMode, type ReadableObject } from "./file-lifecycle";
 
 /**
  * Runs an authorization or scope lookup and converts every access denial into
@@ -23,4 +24,42 @@ export async function authorizeOrNotFound<T>(run: () => Promise<T>): Promise<T> 
     }
     throw error;
   }
+}
+
+/** A legacy filename is only a display name. Resolve and authorize its
+ * resource row BEFORE passing the immutable object reference into this grant.
+ * This preserves download/get/stream while never reintroducing public buckets.
+ */
+export async function authorizeLegacyFileReadGrant(
+  resolveAuthorizedObject: () => Promise<ReadableObject>,
+  input: { mode: LegacyFileReadMode; fileName: string },
+) {
+  return authorizeOrNotFound(async () => {
+    const file = await resolveAuthorizedObject();
+    const grant = await issueObjectReadUrl(file, legacyFileReadOptions(input.mode, input.fileName));
+    return {
+      url: grant.url,
+      expiresAt: grant.expiresAt,
+      expiresInSeconds: grant.expiresInSeconds,
+      // Old clients called this publicUrl. It is deliberately a short-lived
+      // private grant, NOT an anonymously reusable public R2 object URL.
+      access: "PRIVATE_SIGNED" as const,
+    };
+  });
+}
+
+/** Client-facing differences are safe to reveal only before authorization:
+ * malformed folder names differ from unsupported but well-formed folders.
+ */
+export function legacyFolderDeclarationError(rawFolder: string):
+  "INVALID_FOLDER_PATH" | "FOLDER_NOT_ALLOWED" | null {
+  if (!rawFolder.trim() || rawFolder.includes("/") || rawFolder.includes("\\") ||
+      rawFolder.includes("..") || rawFolder.length > 80 ||
+      /[^a-z0-9-]/.test(rawFolder)) return "INVALID_FOLDER_PATH";
+  const allowed = [
+    "assignments","lesson-content","profile-images","video-intros","resumes",
+    "course-images","identity-docs","marksheets","college-branding",
+    "offer-letters","jd-files",
+  ];
+  return allowed.includes(rawFolder) ? null : "FOLDER_NOT_ALLOWED";
 }
