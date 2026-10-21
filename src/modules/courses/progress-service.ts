@@ -252,7 +252,7 @@ async function atomicProgressUpdate(
     ...(shouldComplete
       ? {
           completedAt: sql<Date>`coalesce(${learnerContentProgress.completedAt}, ${now})`,
-          firstCompletedAt: sql<Date>`coalesce(${learnerContentProgress.firstCompletedAt}, ${now})`,
+          firstCompletedAt: sql<Date>`coalesce(${learnerContentProgress.firstCompletedAt}, ${learnerContentProgress.completedAt}, ${now})`,
         }
       : {}),
   };
@@ -322,7 +322,7 @@ async function completeManualContentOnce(
     if (existing) {
       [saved] = await tx.update(learnerContentProgress).set({
         completedAt: now,
-        firstCompletedAt: sql<Date>`coalesce(${learnerContentProgress.firstCompletedAt}, ${now})`,
+        firstCompletedAt: sql<Date>`coalesce(${learnerContentProgress.firstCompletedAt}, ${learnerContentProgress.completedAt}, ${now})`,
         updatedAt: now,
       }).where(and(
         eq(learnerContentProgress.id, existing.id),
@@ -341,7 +341,7 @@ async function completeManualContentOnce(
         completedAt: now, firstCompletedAt: now,
       }).returning();
     }
-    if (!saved) throw new CoursesServiceError("LEARNER_PROGRESS_ACCESS_DENIED");
+    if (!saved) throw new CoursesServiceError("LEARNER_PROGRESS_STALE_ATTEMPT");
     await recordActivityEventInTransaction(tx, context, {
       eventType: ACTIVITY_EVENT_TYPES.COURSES_LEARNER_CONTENT_COMPLETED,
       collegeId: context.membership!.collegeId,
@@ -349,8 +349,9 @@ async function completeManualContentOnce(
       subjectType: "lesson_content",
       subjectId: content.id,
       summary: "Learner completed course content",
-      metadata: { deliveryId, membershipId },
-      dedupeKey: "learner-content:" + membershipId + ":" + content.id + ":completed",
+      metadata: { deliveryId, membershipId, attempt: saved.attempt },
+      dedupeKey: "learner-content:" + membershipId + ":" + content.id +
+        ":attempt:" + saved.attempt + ":completed",
     });
     return buildLearnerProgressView(content, saved);
   });
@@ -381,6 +382,10 @@ export async function saveLearnerContentProgress(
   const isTimed = TIMED_TYPES.has(
     content.contentType,
   );
+  // Read the current attempt before computing progress. Previously saved
+  // duration remains authoritative if imported media has no authored duration.
+  const existing = isTimed ? await loadProgressRow(membershipId, contentId) : null;
+  const durationSeconds = content.durationSeconds ?? existing?.durationSeconds ?? 0;
   let positionSeconds = 0;
   let shouldComplete = false;
 
@@ -397,7 +402,7 @@ export async function saveLearnerContentProgress(
       );
     }
 
-    const duration=content.durationSeconds??0;
+    const duration = durationSeconds;
     // Media metadata can be unavailable for historical videos. Record the
     // learner's position, but do not trust client claims to award completion.
     positionSeconds = duration>0
@@ -426,11 +431,6 @@ export async function saveLearnerContentProgress(
     return completeManualContentOnce(context, content, membershipId, input.deliveryId);
   }
 
-  const existing = await loadProgressRow(
-    membershipId,
-    contentId,
-  );
-
   if (!existing) {
     try {
       const completedAt = shouldComplete ? new Date() : null;
@@ -441,7 +441,7 @@ export async function saveLearnerContentProgress(
           lessonContentId: contentId,
           attempt: 1,
           lastPositionSeconds: positionSeconds,
-          durationSeconds: content.durationSeconds ?? 0,
+          durationSeconds,
           completedAt,
           firstCompletedAt: completedAt,
         })
@@ -473,13 +473,13 @@ export async function saveLearnerContentProgress(
     contentId,
     currentRow.attempt,
     positionSeconds,
-    content.durationSeconds ?? 0,
+    durationSeconds,
     shouldComplete,
   );
 
   if (!updated) {
     throw new CoursesServiceError(
-      "LEARNER_PROGRESS_ACCESS_DENIED",
+      "LEARNER_PROGRESS_STALE_ATTEMPT",
     );
   }
 
