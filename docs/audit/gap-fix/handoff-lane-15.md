@@ -166,3 +166,6 @@
 
 - DB05 lesson order owner G2-3-027-083: promote lessonContentDeliverySequences only after verified old content_id/class_id→new contentId/deliveryId/college crosswalk and same-offering ownership, full-order transaction and SQL replay; do not use fabricated group-backed delivery.
 - Faculty roster directory owner G2-3-009-054: resolve legacy learnerId/classId to authorized collegeMembership and courseSectionDelivery with role/college verification; map legacy contact_mobile/contact_mail only through masked-to-role disclosure policy.
+
+- Learner autocomplete G2-3-014-012: wire `rankLearnerCourseAutocomplete` into authorized result set; merge approved legacy global synonyms and independently authenticated usage boosts before claiming full global search parity.
+- College quiz attempts G2-3-001-049: list all authorized section deliveryIds for a quiz, iterate `nextPage` for each, and combine with stable attempt identity in UI/export; no unpaged cross-college leakage or hard first-page assumption.

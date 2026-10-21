@@ -326,3 +326,6 @@
 
 - work2 #47 `lesson-content-order-service.ts` | G2-3-027-083: documented authenticated old class/content integer→verified delivery/content UUID crosswalk and active staged per-delivery order; existing full-order enforcement and runtime gate preserved. Migration/replay and group-backed class mapping handoff.
 - work2 #48 `faculty-student-detail-service.ts` | G2-3-009-054: mapped historical learner/class numeric IDs to authorized membership/section delivery UUIDs and name, roll, contact fields; existing active faculty + roster checks already restrict scope, no unsafe identity coercion. Future data import handoff.
+
+- work2 #49 `learner-course-card-search-model.ts` | G2-3-014-012: added bounded weighted ranking (exact 100/prefix 80/substring 60/edit distance <=2 40) with optional authorized usage boost and deterministic tie breaker for local course autocomplete. Full global synonym dictionary and cross-module usage unavailable; handoff for scoped source.
+- work2 #50 `api/courses/quiz-attempts/route.ts` | G2-3-001-049: explicit nextPage and deliveryId to permit reliable iteration across all section-scoped attempt pages, without truncating results silently or allowing unbounded cross-college query. Legacy college-wide consolidation remains authenticated consumer responsibility.
