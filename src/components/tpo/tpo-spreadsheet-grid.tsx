@@ -25,17 +25,19 @@ export type TpoSpreadsheetGridProps<Row> = {
  /** Hide duplicate columns/copy controls when GridWorkspace already owns them. */
  integratedWorkspace?:boolean;
  mobilePrimaryKeys?:readonly string[];
+ /** Ordered legacy default columns only when this view has no explicit URL selection. */
+ defaultVisibleKeys?:readonly string[];
  storageKey?:string;
  selection?:{selected:readonly string[];onChange:(ids:string[])=>void;allIds?:readonly string[]};
  openPrimary?:{columnKey:string;onOpen:(row:Row)=>void;ariaLabel:(row:Row)=>string};
 };
 export function TpoSpreadsheetGrid<Row>({
- rows,columns,rowKey,rowActions,openPrimary,mobileActionsCollapsible=false,integratedWorkspace=false,mobilePrimaryKeys,storageKey,selection,
+ rows,columns,rowKey,rowActions,openPrimary,mobileActionsCollapsible=false,integratedWorkspace=false,mobilePrimaryKeys,storageKey,selection,defaultVisibleKeys,
 }:TpoSpreadsheetGridProps<Row>){
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const permitted=columns.filter(column=>!column.exportOnly).map(column=>column.key);
  const selected=parseTpoGridColumns(params.get("columns")??undefined,permitted);
- const active=selected.length?selected:permitted;
+ const active=selected.length?selected:(defaultVisibleKeys?.filter(key=>permitted.includes(key))??permitted);
  const display=chosenTpoGridColumns(columns,active);
  const [sort,setSort]=useState<TpoGridSort|null>(null);
  const orderedRows=sortTpoGridRows(rows,display,sort);

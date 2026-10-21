@@ -89,8 +89,8 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"participation",label:"Participation",read:row=>tpoStudentDisplayLabel(row.participationStatus)},
  {key:"best",label:"Best so far",tooltip:row=>row.bestDriveResults?.join("\n"),read:row=>(row.bestCompany?row.bestCompany+": ":"")+tpoStudentDisplayLabel(row.bestSoFar)+
   ((row.interviewedCompanies?.length??0)>1?" · +"+((row.interviewedCompanies?.length??1)-1)+" more":"")},
- {key:"applications",label:"Applications",read:row=>row.applicationCount},
- {key:"offers",label:"Offers",read:row=>row.offerCount},
+ {key:"applications",label:"Applications",read:row=>row.applicationCount,sortKind:"number",sortValue:row=>row.applicationCount},
+ {key:"offers",label:"Offers",read:row=>row.offerCount,sortKind:"number",sortValue:row=>row.offerCount},
  {key:"offersAwaiting",label:"Offers waiting on their answer",read:row=>row.offersAwaitingAnswer},
  {key:"journey",label:"Journey",read:row=>tpoStudentDisplayLabel(row.journeyState)},
  {key:"email",label:"Email (export only)",read:row=>row.email,exportOnly:true},
@@ -110,8 +110,11 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
  const sortedRows=[...rows].sort((a,b)=>{
   const diff=pageSort.startsWith("APPLICATIONS")?a.applicationCount-b.applicationCount:
    pageSort.startsWith("OFFERS")?a.offerCount-b.offerCount:0;
-  return pageSort==="NAME"?a.displayName.localeCompare(b.displayName):
-   (pageSort.endsWith("_DESC")?-diff:diff)||a.displayName.localeCompare(b.displayName);
+  const [an,...restA]=a.displayName.trim().split(/\s+/);
+  const [bn,...restB]=b.displayName.trim().split(/\s+/);
+  const byName=(an??"").localeCompare(bn??"")||restA.join(" ").localeCompare(restB.join(" ")||a.membershipId.localeCompare(b.membershipId);
+  return pageSort==="NAME"?byName:
+   (pageSort.endsWith("_DESC")?-diff:diff)||byName;
  });
  // Translate historic numeric roll/registration bookmarks only inside
  // this already-authorized college roster; every mutation still uses a UUID.
@@ -148,11 +151,20 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
  }
 
  const open=(id:string|null)=>{const q=new URLSearchParams(params.toString());if(id)q.set("student",id);else q.delete("student");router.replace(pathname+(q.size?"?"+q.toString():""),{scroll:false});};
+ const afterCollegeColumn:TpoGridColumn<TpoStudentRow>={
+  key:"afterCollege",label:"After college",
+  filter:{urlKey:"afterCollege",options:AFTER_COLLEGE_OUTCOMES.map(value=>({value,label:AFTER_COLLEGE_LABELS[value]}))},
+  read:row=>afterCollegeDisplay(afterCollege[row.membershipId]?.outcome)??"Not decided",
+ };
+ const classNames=new Map(classes.map(item=>[item.id,item.name]));
+ const classColumn:TpoGridColumn<TpoStudentRow>={
+  key:"class",label:"Class",read:row=>row.classIds.map(id=>classNames.get(id)).filter(Boolean).join(", ")||"—",
+ };
+ const canonicalColumns=[...columns,afterCollegeColumn,classColumn];
+ const defaultVisibleKeys=["student","number","batch","stage","afterCollege","profile","best","applications","offers"];
  const displayColumns:readonly TpoGridColumn<TpoStudentRow>[]=[
-  ...columns.slice(0,5),
-  {key:"afterCollege",label:"After college",filter:{urlKey:"afterCollege",options:
-   AFTER_COLLEGE_OUTCOMES.map(value=>({value,label:AFTER_COLLEGE_LABELS[value]}))},read:row=>afterCollegeDisplay(afterCollege[row.membershipId]?.outcome)??"Not decided"},
-  ...columns.slice(5),
+  ...defaultVisibleKeys.map(key=>canonicalColumns.find(col=>col.key===key)!).filter(Boolean),
+  ...canonicalColumns.filter(col=>!defaultVisibleKeys.includes(col.key)),
  ];
  const filters:TpoFilterField[]=[
   {key:"programId",urlKey:"programId",label:"Program",options:programs.map(p=>({value:p.id,label:p.name}))},
@@ -181,6 +193,10 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   onKeyDown={event=>{
    const target=event.target;
    if(target instanceof HTMLElement&&target.closest("input,textarea,select,[contenteditable=true]"))return;
+   if(event.key==="Enter" && target instanceof HTMLElement && target.closest("[data-slot=grid-cell]")){
+    const current=sortedRows.find(row=>row.displayName===target.textContent?.trim());
+    if(current){event.preventDefault();open(current.membershipId);return;}
+   }
    if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="a"){
     event.preventDefault();setNoteSelection([...(shared?.allIds??rows.map(row=>row.membershipId))]);
    }
@@ -231,12 +247,12 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
     <option value="OFFERS_DESC">Offers · most</option><option value="OFFERS_ASC">Offers · fewest</option>
    </Select>
   </label>
-  <GridWorkspace rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
+  <GridWorkspace rows={sortedRows} columns={displayColumns} defaultVisibleKeys={defaultVisibleKeys} rowKey={row=>row.membershipId}
    selection={{selected:noteSelection,onChange:setNoteSelection}}
    filters={filters} rollOf={row=>[row.rollNumber??"",row.registrationNumber??""]}
    filterTitle="Filter students" exportName={viewName} xlsxHref={xlsxHref}
    savedViews={canManageViews?<TpoStudentSavedViews embedded/>:undefined}>
-  <TpoGrid integratedWorkspace mobilePrimaryKeys={["student","number","stage","profile","attention","offersAwaiting"]} storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
+  <TpoGrid integratedWorkspace defaultVisibleKeys={defaultVisibleKeys} mobilePrimaryKeys={["student","number","stage","profile","attention","offersAwaiting"]} storageKey="tpo-students-columns-v2" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),
      ariaLabel:row=>"Open student panel for "+row.displayName}}
    rowActions={row=><div className="flex flex-col items-start gap-1">
