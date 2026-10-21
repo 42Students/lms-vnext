@@ -48,15 +48,15 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-11.md: file, number of
 - [x] `src/components/ui/file-upload.tsx`
 - [x] `src/components/ui/popover.tsx`
 - [x] `src/components/ui/textarea.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/issues/page.tsx`
-- [ ] `src/components/academics/learner-class-schedule.tsx`
-- [ ] `src/components/admin/college-dashboard-section-failure.tsx`
-- [ ] `src/components/attendance/faculty-attendance-workspace.tsx`
-- [ ] `src/components/college/college-role-directory-workspace.tsx`
-- [ ] `src/components/courses/faculty-assessment-create.tsx`
-- [ ] `src/components/courses/faculty-course-workspace.tsx`
-- [ ] `src/components/courses/learner-course-discussion.tsx`
+- [x] `src/app/(authenticated)/tpo/students/page.tsx`
+- [x] `src/app/(authenticated)/tracker/issues/page.tsx`
+- [x] `src/components/academics/learner-class-schedule.tsx`
+- [x] `src/components/admin/college-dashboard-section-failure.tsx`
+- [x] `src/components/attendance/faculty-attendance-workspace.tsx`
+- [x] `src/components/college/college-role-directory-workspace.tsx`
+- [x] `src/components/courses/faculty-assessment-create.tsx`
+- [x] `src/components/courses/faculty-course-workspace.tsx`
+- [x] `src/components/courses/learner-course-discussion.tsx`
 - [ ] `src/components/hr/recruiter-notification-bell.tsx`
 - [ ] `src/components/placements/placement-report-ui.tsx`
 - [ ] `src/components/placements/tpo-interview-slot-planner.tsx`
