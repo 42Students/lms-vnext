@@ -35,3 +35,26 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     return apiErrorResponse(error);
   }
 }
+
+
+/** Legacy PUT shares the same validated, tenant-scoped update service. */
+export async function PUT(request:Request,context:RouteContext){
+ return PATCH(request,context);
+}
+
+/** Destructive legacy DELETE is migrated to safe, reversible archive.
+ * Future scheduled classes still block the operation inside the row lock. */
+export async function DELETE(request:Request,{params}:RouteContext){
+ if(!isSameOriginRequest(request))
+  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+ try{
+  const context=await getCurrentRequestContext();
+  const {hallId}=await params;
+  const hall=await updateLectureHall(context,hallId,{status:"ARCHIVED"});
+  return NextResponse.json({hall,archived:true,
+   message:"Lecture hall archived. Scheduled history was preserved."});
+ }catch(error){
+  if(error instanceof LectureHallError)return lectureHallErrorResponse(error);
+  return apiErrorResponse(error);
+ }
+}

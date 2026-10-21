@@ -1,6 +1,6 @@
 export const JOIN_ERROR_COPY={
- EMAIL_NO_MX:"This email domain has no mail server. Check the address.",
- EMAIL_MX_UNAVAILABLE:"We couldn\x27t verify this email domain right now. Please try again.",
+ EMAIL_NO_MX:"This domain doesn't receive email. Check the spelling",
+ EMAIL_MX_UNAVAILABLE:"We couldn't check the email domain right now. This does not mean your address is invalid. Retry sending the code.",
  PHONE_STORAGE_NOT_READY:"Mobile contact storage is not ready. Remove the optional mobile number or ask the placement cell to enable it.",
  INVALID_MOBILE:"Enter a valid 10-digit mobile number, or leave it blank.",
  WRONG_CODE:"That code isn't right. Check the latest email from us.",
@@ -12,7 +12,7 @@ export const JOIN_ERROR_COPY={
  OTHER_COMPANY_EMAIL:"Use your company work email address.",
  COMPANY_EXISTS:"That company already exists. Ask the placement cell to help you join.",
  COMPANY_REQUIRED:"Add your company's name",
- ACCESS_REMOVED:"The placement cell removed your access. Please contact them.",
+ ACCESS_REMOVED:"Your access was removed by the placement cell. Contact the placement cell to request a review or appeal.",
  ACCOUNT_UNAVAILABLE:"This account can't be used. Please contact the placement cell.",
  SERVICE_NOT_READY:"Recruiter verification is temporarily unavailable. Ask the placement cell to check the email service and network verification settings.",
  COULD_NOT_JOIN:"Something went wrong. Please try again.",
@@ -23,4 +23,25 @@ export function joinErrorMessage(code:unknown,defaultKind:"JOIN"|"SEND"="JOIN"){
  if(typeof code==="string"&&Object.prototype.hasOwnProperty.call(JOIN_ERROR_COPY,code))
   return JOIN_ERROR_COPY[code as JoinErrorCode];
  return defaultKind==="JOIN"?JOIN_ERROR_COPY.COULD_NOT_JOIN:JOIN_ERROR_COPY.COULD_NOT_SEND_CODE;
+}
+
+
+/** Field-level hints do not expose recruiter account or company existence. */
+export function joinFieldError(code:unknown):{
+ field:"email"|"company"|null;message:string;retryable:boolean;
+}{
+ const value=typeof code==="string"?code:"";
+ if(value==="EMAIL_MX_UNAVAILABLE")return {
+  field:"email",message:JOIN_ERROR_COPY.EMAIL_MX_UNAVAILABLE,retryable:true,
+ };
+ if(value==="EMAIL_NO_MX")return {
+  field:"email",message:JOIN_ERROR_COPY.EMAIL_NO_MX,retryable:false,
+ };
+ if(value==="OTHER_COMPANY_EMAIL"||value==="COMPANY_EMAIL_REQUIRED")
+  return {field:"email",message:value==="COMPANY_EMAIL_REQUIRED"
+   ?"Enter your company work email address.":JOIN_ERROR_COPY.OTHER_COMPANY_EMAIL,
+   retryable:false};
+ if(value==="COMPANY_REQUIRED")return {field:"company",
+  message:JOIN_ERROR_COPY.COMPANY_REQUIRED,retryable:false};
+ return {field:null,message:joinErrorMessage(code),retryable:false};
 }
