@@ -1,6 +1,8 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
-import {Fragment,type ReactNode} from "react";
-import {ProjectAuditActionSelect,ProjectAuditRefreshButton} from "@/components/projects/project-audit-filters";
+import {type ReactNode} from "react";
+import {ProjectAuditRefreshButton} from "@/components/projects/project-audit-filters";
+import {ActivityCenter,type ActivityCenterGroup} from "@/components/activity/activity-center";
+import {sanitizeActivityMetadata} from "@/modules/activity/metadata-sanitizer";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import {ProjectAuditPageExport} from "@/components/projects/project-audit-page-export";
@@ -140,7 +142,7 @@ export async function ProjectAdminAuditPage({
   const filters = parseProjectAdminAuditQuery(legacyLink.params);
   const { eventType, importance, subjectType, subjectId, from, to } = filters;
   const allTime=!from&&!to;
-  const pageLimit=allTime?25:200;
+  const pageLimit=25;
 
   const activityRead =
     await listActivityEvents(
@@ -171,6 +173,25 @@ export async function ProjectAdminAuditPage({
   const result = activityRead.value;
   const rawEvents=result.items;
   const coveredEvents=rawEvents.length;
+  const groups:ActivityCenterGroup[]=result.groups.map(group=>({
+    key:group.key,count:group.count,
+    latest:{
+      event:{
+        id:group.latest.event.id,
+        module:group.latest.event.module,
+        eventType:group.latest.event.eventType,
+        importance:group.latest.event.importance,
+        subjectType:group.latest.event.subjectType,
+        subjectId:group.latest.event.subjectId,
+        subjectLabel:group.latest.event.subjectLabel,
+        summary:group.latest.event.summary,
+        metadata:sanitizeActivityMetadata(group.latest.event.metadata),
+        occurredAt:group.latest.event.occurredAt.toISOString(),
+      },
+      actor:group.latest.actor,
+    },
+    earliest:{event:{occurredAt:group.earliest.event.occurredAt.toISOString()}},
+  }));
   const peopleCount=new Set(rawEvents.map(item=>item.actor.id)
     .filter((id):id is string=>Boolean(id))).size;
   const destructiveCount=rawEvents.filter(item=>destructiveProjectEventTypes.has(
@@ -244,7 +265,7 @@ export async function ProjectAdminAuditPage({
       <div className="min-w-0">
         <PageBackLink href={basePath} label="Project workspaces" />
         <PageHeader title="Project audit"
-          description={globalTemplateAudit?"Platform-wide Projects activity includes global template changes.":"Who changed what, and when — check daily for anything unexpected."}
+          description="Who changed what, and when — check daily for anything unexpected."
           actions={<div className="flex flex-wrap gap-2">
             <ProjectAuditRefreshButton/>
             <Link href={basePath==="/admin/projects"?"/admin/audit":"/college/activity"}
@@ -252,6 +273,7 @@ export async function ProjectAdminAuditPage({
           </div>}/>
       </div>
       <ProjectAdminNav basePath={basePath} active="audit" />
+      {globalTemplateAudit?<p className="text-xs text-body">Platform-wide Projects activity includes global template changes.</p>:null}
 
       {legacyLink.needsCursorReplay?<Banner tone="warning" role="status">
         This old audit link requested page {legacyLink.legacyPage+1}.
@@ -289,7 +311,7 @@ export async function ProjectAdminAuditPage({
       >
         <label>
           <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Action
+            Filter by action
           </span>
           <Select className={inputClass} name="action" defaultValue={eventType??""}>
             <option value="">All actions</option>
@@ -389,15 +411,17 @@ export async function ProjectAdminAuditPage({
           {label:"Actions shown"+(partialCoverage?" (partial)":""),value:coveredEvents},
           {label:"People who made changes"+(partialCoverage?" (partial)":""),value:peopleCount},
           {label:"Destructive actions"+(partialCoverage?" (partial)":""),value:destructiveCount},
-        ]).map(item=><div key={item.label} className="p-4">
+        ]).map(item=><div key={item.label} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
           <p className="text-xs font-semibold text-muted-foreground leading-[20px]">{item.label}</p>
-          <p className="mt-2 text-2xl font-semibold tabular-nums">{item.value}</p>
+          <p className={"mt-2 text-2xl font-semibold tabular-nums "+(item.label.startsWith("Destructive")?"text-error":"text-foreground")}>
+            {item.label.startsWith("Destructive")?<span aria-hidden="true" className="mr-2">⚠</span>:null}
+            {item.value}</p>
         </div>)}
       </section>
       <p role="status" className="text-xs text-body">
         Displaying {coveredEvents} raw audit actions in {groups.length} grouped entries.
         {partialCoverage?" Counts are minimums for this page; older events are available below.":""}
-        {allTime?" All-time pages show up to 25 actions.":" Date-filtered views show up to 200 actions."}
+        {" Up to 25 actions are shown per page."}
       </p>
       <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div className="flex min-w-0 flex-wrap items-center gap-3">
@@ -414,7 +438,8 @@ export async function ProjectAdminAuditPage({
         occurredAt:item.event.occurredAt.toISOString(),
       }))}/>
       </div>
-      <section aria-label="Workspace audit actions" className="space-y-2">
+      <section aria-label="Workspace audit actions" className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+        <h2 className="text-base font-semibold text-foreground">Change log</h2>
         <h2 className="text-sm font-semibold text-foreground">Workspace actions</h2>
         <div className="divide-y divide-border">
           {rawEvents.map(item=>{
