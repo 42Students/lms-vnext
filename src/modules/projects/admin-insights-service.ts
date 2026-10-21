@@ -62,6 +62,9 @@ const projectAdminQuerySchema = z.strictObject({
     .enum([
       "PLANNED",
       "ACTIVE",
+      "IN_PROGRESS",
+      "READY",
+      "BLOCKED",
       "COMPLETED",
       "ARCHIVED",
     ])
@@ -124,12 +127,23 @@ export async function listProjectAdminSnapshots(
         sql`${projectInstances.id}::text ilike ${searchPattern}`,
       )
     : undefined;
+  const workflowStatus = query.status==="READY"?
+    ilike(projectInstances.phase,"Ready"):
+    query.status==="BLOCKED"?
+      or(
+        sql`nullif(trim(${projectInstances.blocker}), '') is not null`,
+        ilike(projectInstances.phase,"Blocked"),
+        eq(projectInstances.legacyStatus,"BLOCKED")
+      ):
+    query.status==="IN_PROGRESS"?
+      and(eq(projectInstances.status,"ACTIVE"),
+        sql`nullif(trim(${projectInstances.blocker}), '') is null`,
+        sql`lower(coalesce(${projectInstances.phase},'')) not in ('ready','blocked')`):
+    query.status?eq(projectInstances.status,query.status):undefined;
   const where = and(
     eq(projectInstances.collegeId, college.id),
     isNull(projectInstances.deletedAt),
-    query.status
-      ? eq(projectInstances.status, query.status)
-      : undefined,
+    workflowStatus,
     search,
   );
   const [totalRow, projects] =
@@ -196,7 +210,8 @@ export async function listProjectAdminSnapshots(
         updatedAt: projectTasks.updatedAt,
       })
       .from(projectTasks)
-      .where(inArray(projectTasks.projectId, ids)),
+      .where(and(inArray(projectTasks.projectId, ids),
+        isNull(projectTasks.deletedAt))),
     db
       .select({
         projectId: projectSprints.projectId,
@@ -204,7 +219,8 @@ export async function listProjectAdminSnapshots(
         updatedAt: projectSprints.updatedAt,
       })
       .from(projectSprints)
-      .where(inArray(projectSprints.projectId, ids)),
+      .where(and(inArray(projectSprints.projectId, ids),
+        isNull(projectSprints.deletedAt))),
     db
       .select({
         projectId: projectReleases.projectId,
