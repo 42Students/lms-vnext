@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import {useMemo,useRef,useState} from "react";
+import {useEffect,useMemo,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -100,18 +100,69 @@ export function TpoRoundDriveDayReadOnly({
   const [gateCandidates,setGateCandidates]=useState<RoundRow[]>([]);
   const [gateTarget,setGateTarget]=useState<RoundRow|null>(null);
   const [gateBusy,setGateBusy]=useState(false);
+  const [roomBusy,setRoomBusy]=useState<string|null>(null);
   const inFlight=useRef(false);
   const [pasteOpen,setPasteOpen]=useState(false);
   const [pasteText,setPasteText]=useState("");
   const [pasteBusy,setPasteBusy]=useState(false);
   const [pasteFeedback,setPasteFeedback]=useState("");
   const [pasteFailure,setPasteFailure]=useState("");
+  // Keep the operator's roster current while preserving draft gate and paste
+  // entries; React refresh does not reset these controlled inputs.
+  useEffect(()=>{
+    const timer=window.setInterval(()=>{
+      if(!inFlight.current&&!pasteOpen&&document.visibilityState==="visible")
+        router.refresh();
+    },20_000);
+    return ()=>window.clearInterval(timer);
+  },[pasteOpen,router]);
   const shownRows=useMemo(()=>{
     const q=rosterSearch.trim().toLocaleLowerCase("en-IN");
     return q?data.rows.filter(row=>
       row.displayName.toLocaleLowerCase("en-IN").includes(q)||
       (row.rollNumber??"").toLocaleLowerCase("en-IN").includes(q)):data.rows;
   },[data.rows,rosterSearch]);
+  const roomQueues=useMemo(()=>{
+    const rooms=new Map<string,RoundRow[]>();
+    for(const student of data.rows){
+      const room=student.assignedRoom?.trim();
+      if(!room)continue;
+      const roster=rooms.get(room)??[];
+      roster.push(student);rooms.set(room,roster);
+    }
+    return [...rooms.entries()].map(([room,roster])=>({
+      room,
+      waiting:roster.filter(row=>row.attendance==="PRESENT").length,
+      inside:roster.filter(row=>row.attendance==="IN_INTERVIEW").length,
+      next:roster.filter(row=>row.attendance==="PRESENT").sort((a,b)=>
+        (a.rollNumber??"").localeCompare(b.rollNumber??"","en",{numeric:true})||
+        a.applicationId.localeCompare(b.applicationId))[0]??null,
+    })).sort((a,b)=>a.room.localeCompare(b.room));
+  },[data.rows]);
+  async function callNext(student:RoundRow,room:string){
+    if(locked||inFlight.current||student.attendance!=="PRESENT")return;
+    inFlight.current=true;setRoomBusy(room);setGateError("");setGateSuccess("");
+    try{
+      const response=await fetch("/api/placements/tpo/drive-day/"+
+        encodeURIComponent(data.round.id)+"/check-in",{
+        method:"POST",credentials:"same-origin",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({confirmed:true,applicationId:student.applicationId,
+          expectedAttendance:"PRESENT",status:"IN_INTERVIEW"}),
+      });
+      if(!response.ok)throw Error("Attendance changed. Refresh the room queue and retry.");
+      const result:unknown=await response.json().catch(()=>null);
+      if(!result||typeof result!=="object"||!("attendance" in result)||
+        !result.attendance||typeof result.attendance!=="object"||
+        !("status" in result.attendance)||result.attendance.status!=="IN_INTERVIEW")
+        throw Error("Could not confirm the saved room call. Refresh before retrying.");
+      setGateSuccess("Call next · "+room+": "+student.displayName+
+        (student.rollNumber?" ("+student.rollNumber+")":"")+" marked in interview.");
+      router.refresh();
+    }catch(error){
+      setGateError(error instanceof Error?error.message:"Unable to call the next candidate.");
+    }finally{setRoomBusy(null);inFlight.current=false;}
+  }
   function prepareGate(){
     if(locked||inFlight.current)return;
     setGateError("");setGateSuccess("");setGateCandidates([]);
@@ -263,6 +314,32 @@ export function TpoRoundDriveDayReadOnly({
         {pasteFeedback?<InlineNotice tone="success" message={pasteFeedback} onDismiss={()=>setPasteFeedback("")}/>:null}
         {pasteFailure?<InlineNotice tone="error" message={pasteFailure} onDismiss={()=>setPasteFailure("")}/>:null}
       </section>
+      {roomQueues.length>0?<section aria-label="Room queues" className="space-y-3 border-b border-border pb-4">
+        <h2 className="text-base font-semibold text-foreground">Room queues</h2>
+        <p className="text-sm text-body">
+          Call the next checked-in candidate for a room. A call records In interview
+          with a fresh attendance check; candidates already in a room are excluded.
+        </p>
+        <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {roomQueues.map(queue=><div key={queue.room}
+            className="min-w-0 space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3">
+            <strong className="block break-words text-sm font-semibold">{queue.room}</strong>
+            <p className="text-xs text-body">{queue.waiting} waiting · {queue.inside} in</p>
+            <p className="truncate text-sm text-body">
+              {queue.next?queue.next.displayName+" · "+(queue.next.rollNumber??"No roll number"):"No checked-in candidate waiting"}
+            </p>
+            <Button type="button" size="sm" variant="secondary"
+              disabled={locked||gateBusy||pasteBusy||roomBusy!==null||!queue.next}
+              onClick={()=>{if(queue.next)void callNext(queue.next,queue.room);}}>
+              {roomBusy===queue.room?"Calling…":"Call next · "+queue.room}
+            </Button>
+          </div>)}
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Within each room, available roll numbers determine the queue order.
+          Unassigned candidates are not automatically called into a room.
+        </p>
+      </section>:null}
       <section aria-label="Round progress">
         <h2 className="mb-3 text-base font-semibold text-foreground">
           Applicant progress
@@ -498,6 +575,8 @@ export function TpoRoundDriveDayReadOnly({
             {pastePreview.matched.length} matched · {pastePreview.unresolved.length} unmatched or ambiguous.
           </p>
           {pastePreview.tooMany?<InlineNotice tone="error" message="Paste at most 50 roll numbers per batch."/>:null}
+          {pasteFailure?<InlineNotice tone="error" message={pasteFailure}/>:null}
+          {pasteFeedback?<InlineNotice tone="success" message={pasteFeedback}/>:null}
           {pastePreview.unresolved.length>0?<p className="text-xs text-error">
             Type more of the roll number for ambiguous entries. Unresolved: {pastePreview.unresolved.slice(0,5).join(", ")}
           </p>:null}

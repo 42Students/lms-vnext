@@ -73,7 +73,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
           checked={eligible.length>0 && eligible.slice(0,25).every(d=>selected.includes(d.id))}
           onChange={e=>{setSelected(e.target.checked?eligible.slice(0,25).map(d=>d.id):[]);
             setPreview(null);setResult(null);}}/>
-        Select eligible on this page ({eligible.length})
+        Select up to 25 eligible drives ({eligible.length} available)
       </label>
       <label className="flex min-w-0 flex-col items-start gap-[6px] text-[13px]">Action
         <Select value={action} aria-label="Bulk action" disabled={busy} onChange={e=>{
@@ -139,7 +139,11 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
       {result.skipped>0?<Button type="button" variant="link" onClick={()=>void send(false)}
         className="!min-h-11 !px-0 !text-primary-text">Preview failed drives for retry</Button>:null}
     </div>:null}
-    {error?<InlineNotice tone="error" message={error}/>:null}
+    {error?<div className="space-y-2" role="alert">
+      <InlineNotice tone="error" message={error}/>
+      <Button type="button" variant="link" disabled={busy||selected.length===0}
+        onClick={()=>void send(false)}>Retry impact preview</Button>
+    </div>:null}
       </div>
     </details>
     <ConfirmDialog open={confirmOpen&&preview!==null} pending={busy}
@@ -169,6 +173,9 @@ export function SuperAdminDriveRowStatusAction({jobId,title,status}:{
  const action=status==="PUBLISHED"?"CLOSE":status==="CLOSED"?"OPEN":null;
  async function inspect(){
   if(!action||lock.current)return;
+  if(!beginDriveMutation(jobId)){
+   setError("Another action is updating this drive. Retry after it finishes.");return;
+  }
   lock.current=true;setBusy(true);setError("");
   try{
    const response=await apiFetch<Preview>("/api/admin/placements/drives/bulk",{
@@ -181,7 +188,7 @@ export function SuperAdminDriveRowStatusAction({jobId,title,status}:{
    setPreview(response);
   }catch(error){
    setError(error instanceof Error?error.message:"Could not preview this drive status. Nothing was changed.");
-  }finally{lock.current=false;setBusy(false);}
+  }finally{lock.current=false;setBusy(false);endDriveMutation(jobId);}
  }
  async function submit(){
   if(!action||lock.current||!preview)return;

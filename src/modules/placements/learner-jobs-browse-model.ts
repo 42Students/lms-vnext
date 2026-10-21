@@ -103,7 +103,10 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
   snapshotNowMs: number = Number.NaN,
 ): T[] {
   const search=filters.search.trim().toLocaleLowerCase();
-  const terms=[search,...(synonyms[search]??[])];
+  // Legacy search combines eight posting fields, but a query can contain
+  // words from different fields. Match each word (with recognized legacy
+  // synonyms) without requiring them to be adjacent in a single column.
+  const terms=search.split(/\s+/).filter(Boolean);
   const rows = items.filter((row) => {
     if (filters.availability !== "all" && learnerDriveAvailability(row) !== filters.availability) return false;
     // Eligibility may be true for a historical snapshot even after closure.
@@ -129,7 +132,8 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
       row.job?.jobTypeLabel,row.roleOption?.employmentType,...(row.roleOption?.locations??[]),
     ].filter((field):field is string=>typeof field==="string")
      .join(" ").toLocaleLowerCase();
-    return terms.some(term=>indexed.includes(term));
+    return indexed.includes(search)||terms.every(term=>
+      [term,...(synonyms[term]??[])].some(candidate=>indexed.includes(candidate)));
   });
 
   return [...rows].sort((a,b) => {

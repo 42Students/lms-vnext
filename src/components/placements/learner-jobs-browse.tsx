@@ -96,7 +96,9 @@ export function LearnerJobsBrowse({
   const allDrives=useMemo(()=>learnerDriveOverview(items),[items]);
   const savedSummary=learnerSavedDriveSummary(items.map(row=>row.job.id),savedJobIds);
   const accessibleIds=new Set(items.map(row=>row.job.id));
-  const historicSaved=savedHistory.filter(row=>!accessibleIds.has(row.jobId));
+  const ownSavedIds=new Set(savedJobIds);
+  const historicSaved=savedHistory.filter(row=>
+    ownSavedIds.has(row.jobId)&&!accessibleIds.has(row.jobId));
   const savedOnly=urlState.savedOnly||params.get("tab")==="saved";
   const matchingItems=savedOnly?items.filter(item=>savedSummary.visibleIds.has(item.job.id)):items;
   const visible = filterLearnerPlacementJobs(matchingItems, filters, Date.parse(snapshotNowIso));
@@ -141,7 +143,7 @@ export function LearnerJobsBrowse({
               value={search}
               maxLength={100}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search by title, company, location…"
+              placeholder="Search roles, companies, skills, departments, locations…"
               className={selectClass}
             />
           </label>
@@ -278,6 +280,10 @@ export function LearnerJobsBrowse({
             className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:underline">
             Review placement dashboard →
           </Link>
+          <Button type="button" variant="secondary" onClick={()=>router.refresh()}
+            className="min-h-11 w-full sm:w-auto md:min-h-9">
+            Retry loading drives
+          </Button>
         </div>
       ) : empty.kind==="FILTERED_OUT"&&!savedOnly ? (
         <div className="flex min-h-44 flex-col items-center justify-center gap-3 border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center" role="status">
