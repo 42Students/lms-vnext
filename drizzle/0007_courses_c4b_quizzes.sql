@@ -1,3 +1,8 @@
+-- Old option integer IDs, deleted flags, and last-updated dates are
+-- historic provenance, not active quiz-option state. Resolve option and
+-- question identities through the same-college quiz map. Deleted options
+-- remain in immutable submitted attempt snapshots but not current builders.
+-- Preserve zero-based sequence and source chronology before importing.
 CREATE TYPE "public"."course_quiz_status" AS ENUM('DRAFT', 'PUBLISHED', 'CLOSED', 'ARCHIVED');--> statement-breakpoint
 CREATE TYPE "public"."quiz_question_type" AS ENUM('SINGLE_CHOICE', 'MULTIPLE_CHOICE');--> statement-breakpoint
 CREATE TABLE "course_quizzes" (
