@@ -6,6 +6,7 @@ import {
   LectureHallError,
   updateLectureHall,
   getLectureHallDetail,
+  normalizeLegacyLectureHallUpdate,
 } from "@/modules/academics/lecture-hall-service";
 import { lectureHallErrorResponse } from "../error-response";
 
@@ -41,7 +42,9 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 });
     }
     return NextResponse.json({
-      hall: await updateLectureHall(context, hallId, body),
+      hall: await updateLectureHall(context, hallId,
+        new URL(request.url).searchParams.get("legacy") === "1"
+          ? normalizeLegacyLectureHallUpdate(body) : body),
     });
   } catch (error) {
     if (error instanceof LectureHallError) return lectureHallErrorResponse(error);

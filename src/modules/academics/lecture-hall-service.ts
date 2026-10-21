@@ -402,3 +402,168 @@ export async function updateLectureHall(
     throw error;
   }
 }
+
+
+/** Legacy v1 wire names mapped to the vNext contract. Numeric legacy IDs
+ * are historical aliases, not authoritative tenant or row identifiers.
+ * A caller must resolve them to an entitled UUID before entering this service. */
+export function normalizeLegacyLectureHallCreate(raw: unknown) {
+  const old = z.record(z.string(), z.unknown()).parse(raw);
+  const legacyDepartment = old.departmentId ?? old.deptId ?? old.dept_id;
+  const departmentId = legacyDepartment === 0 || legacyDepartment === "0"
+    ? null : legacyDepartment ?? null;
+  return createLectureHallSchema.parse({
+    collegeId: old.collegeId ?? old.college_id,
+    name: old.name ?? old.displayName,
+    capacity: old.capacity ?? 50,
+    roomType: old.roomType ?? old.room_type,
+    description: old.description ?? null,
+    departmentId,
+  });
+}
+
+export function normalizeLegacyLectureHallUpdate(raw: unknown) {
+  const old = z.record(z.string(), z.unknown()).parse(raw);
+  const patch: Record<string, unknown> = {};
+  for (const key of ["name", "capacity", "description", "status"] as const) {
+    if (Object.prototype.hasOwnProperty.call(old, key)) patch[key] = old[key];
+  }
+  if ("roomType" in old || "room_type" in old)
+    patch.roomType = old.roomType ?? old.room_type;
+  if ("departmentId" in old || "deptId" in old || "dept_id" in old) {
+    const dept = old.departmentId ?? old.deptId ?? old.dept_id;
+    patch.departmentId = dept === 0 || dept === "0" ? null : dept;
+  }
+  return updateLectureHallSchema.parse(patch);
+}
+
+const legacyLookupSchema = z.object({
+  collegeId: z.string().uuid(),
+  query: z.string().trim().max(100).default(""),
+  deptId: z.union([z.string().uuid(), z.literal("0"), z.literal(0)]).optional(),
+  roomType: z.enum(ROOM_TYPES).optional(),
+  limit: z.coerce.number().int().min(1).max(200).default(15),
+}).strict();
+
+function nearRoomTerm(a: string, b: string): boolean {
+  if (Math.abs(a.length - b.length) > 2) return false;
+  let previous = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    const current = [i];
+    for (let j = 1; j <= b.length; j++) {
+      current[j] = Math.min(
+        current[j - 1]! + 1,
+        previous[j]! + 1,
+        previous[j - 1]! + (a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1),
+      );
+    }
+    if (Math.min(...current) > 2) return false;
+    previous = current;
+  }
+  return previous[b.length]! <= 2;
+}
+
+/** Compact, tenant-scoped autosuggest. The primary directory remains
+ * alphabetic; this opt-in adapter applies legacy-inspired exact/prefix/word/
+ * contains ranking with a bounded typo fallback and capped usage boost.
+ * No cross-college cache or full 10k-room fuzzy scan is performed. */
+export async function searchLectureHallsForPicker(context: RequestContext, raw: unknown) {
+  const query = legacyLookupSchema.parse(raw);
+  const base = {
+    collegeId: query.collegeId,
+    departmentId: query.deptId === "0" || query.deptId === 0 ? undefined : query.deptId,
+    roomType: query.roomType,
+    status: "ACTIVE" as const,
+    limit: 200,
+    offset: 0,
+  };
+  const primary = await listLectureHalls(context, {
+    ...base, ...(query.query ? { q: query.query } : {}),
+  });
+  const primaryMatches = primary.items;
+  const candidateRows = query.query.length >= 3 && primaryMatches.length < 5
+    ? (await listLectureHalls(context, base)).items
+    : primaryMatches;
+  const unique = new Map(primaryMatches.map(row => [row.id, row]));
+  for (const row of candidateRows) unique.set(row.id, row);
+  const needle = query.query.toLocaleLowerCase("en");
+  const ranked = [...unique.values()].map(row => {
+    const name = row.name.trim().toLocaleLowerCase("en");
+    const type = row.roomType.replaceAll("_", " ").toLocaleLowerCase("en");
+    const description = (row.description ?? "").toLocaleLowerCase("en");
+    const score = !needle ? 0 :
+      name === needle ? 100 :
+      name.startsWith(needle) ? 80 :
+      name.split(/\s+/).some(word => word.startsWith(needle)) ? 60 :
+      name.includes(needle) || type.includes(needle) ? 40 :
+      description.includes(needle) ? 30 :
+      needle.length >= 3 && nearRoomTerm(name, needle) ? 20 : 0;
+    return { row, score: score + Math.min(10, Math.max(0, row.upcomingClasses)) };
+  }).filter(({ score }) => !needle || score >= 20).sort((a, b) =>
+    b.score - a.score || a.row.name.localeCompare(b.row.name) ||
+      a.row.id.localeCompare(b.row.id));
+  const data = ranked.slice(0, query.limit).map(({ row }) => ({
+    ...row,
+    // Native ID is always a UUID. Historical integer identity is exposed
+    // separately so a new room never masquerades as an old numeric row.
+    legacyId: row.legacyLectureHallId,
+    collegeId: query.collegeId,
+    deptId: row.legacyDepartmentId,
+    room_type: row.roomType,
+    department: row.departmentName || "-",
+  }));
+  return { status: "success" as const, message: "Lecture halls retrieved", data,
+    total: primary.pagination.total, limit: query.limit };
+}
+
+const legacyPageSchema = z.object({
+  collegeId: z.string().uuid(),
+  page: z.coerce.number().int().default(0).transform(value => Math.max(0, value)),
+  size: z.coerce.number().int().default(20).transform(value => Math.max(1, Math.min(100, value))),
+  deptId: z.union([z.string().uuid(), z.literal("0"), z.literal(0)]).optional(),
+  query: z.string().trim().max(100).optional(),
+}).strict();
+
+/** Pagination projection compatible with the historical 0-based page/size UI,
+ * while requiring verified UUID tenant scope and server-side permissions. */
+export async function listLectureHallsLegacyPage(context: RequestContext, raw: unknown) {
+  const query = legacyPageSchema.parse(raw);
+  const result = await listLectureHalls(context, {
+    collegeId: query.collegeId,
+    departmentId: query.deptId === "0" || query.deptId === 0 ? undefined : query.deptId,
+    q: query.query,
+    limit: query.size,
+    offset: query.page * query.size,
+  });
+  const totalElements = result.pagination.total;
+  const totalPages = Math.ceil(totalElements / query.size);
+  return {
+    status: "success" as const,
+    message: "Lecture halls retrieved",
+    data: {
+      content: result.items,
+      totalElements, totalPages,
+      size: query.size,
+      number: query.page,
+      first: query.page === 0,
+      last: query.page >= totalPages - 1,
+    },
+  };
+}
+
+/** Current-state statistics, not a stale in-memory cache. The unfiltered
+ * total deliberately includes ACTIVE and ARCHIVED; users see each count. */
+export async function getLectureHallStatistics(context: RequestContext, collegeId: string) {
+  const verifiedId = z.string().uuid().parse(collegeId);
+  const [all, active, archived] = await Promise.all([
+    listLectureHalls(context, { collegeId: verifiedId, limit: 1 }),
+    listLectureHalls(context, { collegeId: verifiedId, status: "ACTIVE", limit: 1 }),
+    listLectureHalls(context, { collegeId: verifiedId, status: "ARCHIVED", limit: 1 }),
+  ]);
+  return {
+    status: "success" as const,
+    message: "Lecture hall stats retrieved",
+    data: { total: all.pagination.total, active: active.pagination.total,
+      archived: archived.pagination.total },
+  };
+}
