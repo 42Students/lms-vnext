@@ -62,6 +62,10 @@ export const learnerProfileEducationEntries = pgTable(
     legacyCertificateUpload: text("legacy_certificate_upload"),
     legacyStartYearRaw: varchar("legacy_start_year_raw", { length: 32 }),
     legacyEndYearRaw: varchar("legacy_end_year_raw", { length: 32 }),
+    legacyGradeRaw: varchar("legacy_grade_raw",{length:120}),
+    legacyMaxGradeRaw: varchar("legacy_max_grade_raw",{length:120}),
+    legacyPursuingRaw: varchar("legacy_pursuing_raw",{length:16}),
+    legacyRecentRaw: varchar("legacy_recent_raw",{length:16}),
     legacyWasDeleted: boolean("legacy_was_deleted"),
 
     createdAt: timestamp("created_at", { withTimezone: true })
@@ -201,6 +205,10 @@ export const learnerProfileImages = pgTable(
     displayOrder: integer("display_order").notNull().default(0),
     /** Historical image identity/URL is a quarantined source snapshot, not a signed URL. */
     legacyImageId: integer("legacy_image_id"),
+    legacyImagePublicKey: varchar("legacy_image_public_key",{length:32}),
+    legacyIndex: integer("legacy_index"),
+    legacyFolderName: varchar("legacy_folder_name",{length:120}),
+    legacyActiveInt: integer("legacy_active_int"),
     legacyImageUrl: text("legacy_image_url"),
     legacyWasDeleted: boolean("legacy_was_deleted"),
     isActive: boolean("is_active").notNull().default(true),
@@ -230,6 +238,9 @@ export const learnerProfileImages = pgTable(
     index("learner_profile_images_legacy_source_idx")
       .on(table.learnerMembershipId, table.legacyImageId)
       .where(sql`${table.legacyImageId} is not null`),
+    index("learner_profile_images_stable_order_idx")
+      .on(table.learnerMembershipId,table.displayOrder,table.id)
+      .where(sql`${table.isActive} = true`),
     index("learner_profile_images_active_order_idx")
       .on(table.learnerMembershipId, table.displayOrder)
       .where(sql`${table.isActive} = true`),

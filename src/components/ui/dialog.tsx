@@ -55,3 +55,44 @@ export function Dialog({ open, onOpenChange, title, description, children, foote
     </div>
   </dialog>;
 }
+
+/** PDF preview is deliberately distinct from small forms/confirmation dialogs.
+ * Signed external sources require a verified, caller-supplied host.
+ */
+export function trustedPdfViewerUrl(url:string,source:"INTERNAL"|"SIGNED",signedHost?:string){
+ const value=url.trim();
+ if(source==="INTERNAL"){
+  return /^\/api\/[A-Za-z0-9/_?=&.%-]+$/.test(value)&&
+    !value.includes("..")?value:null;
+ }
+ if(!signedHost||!value.startsWith("https://"))return null;
+ try {
+  const parsed=new URL(value);
+  return parsed.hostname.toLowerCase()===signedHost.toLowerCase()&&
+    parsed.username===""&&parsed.password===""&&parsed.port===""?value:null;
+ }catch{return null;}
+}
+
+export function PdfViewerDialog({
+ open,onOpenChange,title="View document",securePdfUrl,source="INTERNAL",
+ trustedSignedHost,dismissible=true,
+}:{
+ open:boolean;onOpenChange:(open:boolean)=>void;title?:string;
+ securePdfUrl:string;source?:"INTERNAL"|"SIGNED";trustedSignedHost?:string;
+ dismissible?:boolean;
+}){
+ const accepted=trustedPdfViewerUrl(securePdfUrl,source,trustedSignedHost);
+ return <Dialog open={open} onOpenChange={onOpenChange} title={title}
+   dismissible={dismissible}
+   className="!max-w-[1400px] max-[767px]:!w-[100vw] max-[767px]:!max-h-[100dvh] max-[767px]:!rounded-none"
+   bodyClassName="!overflow-hidden !p-0"
+   footer={<Button type="button" variant="secondary" onClick={()=>onOpenChange(false)}>Got it</Button>}>
+   {accepted?<iframe src={accepted} title={title+" PDF preview"}
+     allowFullScreen loading="lazy"
+     className="block h-[80vh] min-h-0 w-full border-0 max-[767px]:h-[calc(100dvh_-_11rem)]"
+   />:
+   <div role="alert" className="flex min-h-48 items-center justify-center p-5 text-sm text-body">
+     Document preview is unavailable. Open the document from its authorized file details instead.
+   </div>}
+ </Dialog>;
+}
