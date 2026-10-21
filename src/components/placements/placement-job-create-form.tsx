@@ -885,7 +885,7 @@ export function PlacementJobCreateForm({
                 <p className="font-semibold">This may already be {matchingEmployer.name}</p>
                 <p className="mt-1 text-xs text-body">Reuse the existing college employer to keep recruiter and drive history together.</p>
                 <Button variant="secondary" type="button" onClick={()=>{setCompanyRelationshipId(matchingEmployer.relationshipId);setCompanyMode("EXISTING");setCompanySearch("");}}
-                  className="mt-2 min-h-11 rounded-[var(--lms-control-radius)] border border-primary px-3 font-semibold text-primary-text md:min-h-9">
+                  className="mt-2 min-h-11 rounded-[var(--lms-control-radius)] border border-primary px-3 font-[650] text-primary-text md:min-h-9">
                   Use {matchingEmployer.name}
                 </Button>
               </div>:null}
@@ -1099,7 +1099,7 @@ export function PlacementJobCreateForm({
             </label>
             <span id="drive-deadline-ist-help" className="mt-1 block text-xs text-body">Times are in IST (Asia/Kolkata). A newly selected date defaults to 11:59 PM; you can change the time.</span>
             <Button variant="secondary" type="button" aria-controls="tpo-drive-application-deadline"
-              className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9"
+              className="mt-2 inline-flex min-h-11 items-center text-sm font-[650] text-primary-text underline md:min-h-9"
               onClick={()=>{
                 const form=formRef.current;
                 const field=form?.elements.namedItem("applicationDeadline");
@@ -1459,15 +1459,15 @@ export function PlacementJobCreateForm({
             value="review-publish"
             aria-label="Publish after reviewing the drive"
             disabled={pending || !activeSeason || uncertainCreate}
-            className="w-full min-h-11 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50 sm:w-auto md:min-h-9"
+            className="w-full min-h-11 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-[650] text-primary-text disabled:opacity-50 sm:w-auto md:min-h-9"
           >
             Publish
           </Button>
         </div>
       </section>
       {uncertainCreate?<div role="alert" className="space-y-2 rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm text-body">
-        The previous create request may have succeeded. <Link href={basePath} className="font-semibold text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Review Drives</Link> before retrying.
-        <Button variant="secondary" type="button" className="mt-[var(--lms-space-2)] min-h-11 w-full font-semibold text-primary-text underline sm:ml-[var(--lms-space-3)] sm:mt-0 sm:w-auto md:min-h-9"
+        The previous create request may have succeeded. <Link href={basePath} className="font-semibold text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center focus-visible:underline">Review Drives</Link> before retrying.
+        <Button variant="secondary" type="button" className="mt-[var(--lms-space-2)] min-h-11 w-full font-[650] text-primary-text underline sm:ml-[var(--lms-space-3)] sm:mt-0 sm:w-auto md:min-h-9"
           onClick={()=>{try{localStorage.removeItem(uncertainKey);}catch{}setUncertainCreate(false);}}>
           I checked Drives — allow another attempt
         </Button>
@@ -1477,9 +1477,9 @@ export function PlacementJobCreateForm({
         clearedBackup.current=true;
         try{localStorage.removeItem(backupKey);}catch{}
         setRestoredBackup(false);
-      }} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text md:min-h-9">Discard saved browser backup</Button>:null}
+      }} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-[650] text-primary-text md:min-h-9">Discard saved browser backup</Button>:null}
       {partialJobId?<p role="alert" className="text-sm text-body">A draft exists. If setup did not finish, retry without changing the form or
-        <a className="ml-1 font-semibold text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center" href={basePath+"/jobs/"+encodeURIComponent(partialJobId)}>open the existing draft</a>.
+        <a className="ml-1 font-semibold text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center focus-visible:underline" href={basePath+"/jobs/"+encodeURIComponent(partialJobId)}>open the existing draft</a>.
         Do not submit a second drive.
       </p>:null}
       {dirty ? <p role="status" className="text-xs text-muted-foreground">You have unsaved changes. Save this draft before leaving the page.</p> : null}
