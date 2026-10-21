@@ -1,3 +1,8 @@
+"use client";
+import {useEffect,useRef,useState} from "react";
+import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
+import {Drawer} from "@/components/ui/drawer";
 import { Badge } from "@/components/ui/badge";
 import { Disclosure } from "@/components/ui/disclosure";
 import { StatTile } from "@/components/ui/stat-tile";
@@ -295,8 +300,18 @@ export function AdminOfferingLearningOverview({
 }: {
   workspace: Workspace;
 }) {
-  const { offering, learningPath } =
-    workspace;
+  const { offering, learningPath } = workspace;
+  const router=useRouter();
+  const [createOpen,setCreateOpen]=useState(false);
+  const [focusedLessonId,setFocusedLessonId]=useState<string|null>(null);
+  const previousCount=useRef(workspace.lessons.length);
+  useEffect(()=>{
+   if(workspace.lessons.length>previousCount.current&&createOpen)setCreateOpen(false);
+   previousCount.current=workspace.lessons.length;
+  },[workspace.lessons.length,createOpen]);
+  const focusedIndex=focusedLessonId===null?-1:
+   workspace.lessons.findIndex(lesson=>lesson.id===focusedLessonId);
+  const visibleLessons=focusedIndex<0?workspace.lessons:[workspace.lessons[focusedIndex]!];
 
   if (!learningPath) {
     return (
@@ -390,7 +405,10 @@ export function AdminOfferingLearningOverview({
           every active Section Delivery in this
           Offering. Faculty can add separate
           Section-specific items from their
-          Teaching Course workspace.
+          Teaching Course workspace. <a href="#section-content"
+           className="font-semibold text-primary-text underline underline-offset-2">
+           View shared and Section-specific content for a class
+          </a>.
         </div>
       </section>
 
@@ -404,11 +422,17 @@ export function AdminOfferingLearningOverview({
         </div>
       </section>
 
-      <div id="lesson-authoring">
-      <CreateLessonForm
-        learningPathId={learningPath.id}
-        nextSequence={nextLessonSequence}
-      />
+      <div id="lesson-authoring" className="flex flex-wrap items-center gap-3">
+       <Button type="button" onClick={()=>setCreateOpen(true)}
+        className="min-h-11 md:min-h-9">Create New Lesson</Button>
+       <Button type="button" variant="secondary" onClick={()=>router.refresh()}
+        className="min-h-11 md:min-h-9">Refresh lessons</Button>
+       <Drawer open={createOpen} onOpenChange={setCreateOpen} side="right"
+        title="Add Lesson" description={offering.courseName+" · "+offering.academicPeriodName}
+        footer={<Button type="button" variant="secondary" onClick={()=>{setCreateOpen(false);router.refresh();}}
+          className="min-h-11 md:min-h-9">Cancel and refresh</Button>}>
+        <CreateLessonForm learningPathId={learningPath.id} nextSequence={nextLessonSequence}/>
+       </Drawer>
       </div>
 
       {workspace.lessons.length === 0 ? (
@@ -423,10 +447,27 @@ export function AdminOfferingLearningOverview({
         </section>
       ) : (
         <div className="min-w-0 space-y-[var(--lms-space-4)]">
-          <CollegeLessonDragOrder learningPathId={learningPath.id}
-            lessons={workspace.lessons.map(row=>({id:row.id,name:row.name,sequence:row.sequence}))}/>
-          {workspace.lessons.map(
-            (lesson, lessonIndex) => {
+          {focusedIndex<0?<CollegeLessonDragOrder learningPathId={learningPath.id}
+            lessons={workspace.lessons.map(row=>({id:row.id,name:row.name,sequence:row.sequence}))}/>:null}
+          <nav aria-label="Lesson roadmap" className="space-y-2">
+           {focusedIndex<0?<div className="flex flex-wrap gap-2">
+            {workspace.lessons.map((lesson,index)=><Button key={lesson.id}
+             variant="secondary" type="button" onClick={()=>setFocusedLessonId(lesson.id)}
+             className="min-h-11 md:min-h-9">Lesson {index+1}: {lesson.name}</Button>)}
+           </div>:<div className="flex flex-wrap items-center gap-2">
+            <Button type="button" variant="secondary" onClick={()=>setFocusedLessonId(null)}
+             className="min-h-11 md:min-h-9">← Back to syllabus</Button>
+            <Button type="button" variant="secondary" disabled={focusedIndex===0}
+             onClick={()=>setFocusedLessonId(workspace.lessons[focusedIndex-1]?.id??null)}
+             className="min-h-11 md:min-h-9">Previous lesson</Button>
+            <Button type="button" variant="secondary" disabled={focusedIndex===workspace.lessons.length-1}
+             onClick={()=>setFocusedLessonId(workspace.lessons[focusedIndex+1]?.id??null)}
+             className="min-h-11 md:min-h-9">Next lesson</Button>
+           </div>}
+          </nav>
+          {visibleLessons.map(
+            (lesson, visibleIndex) => {
+              const lessonIndex=focusedIndex<0?visibleIndex:focusedIndex;
               const itemCount =
                 lesson.contents.length +
                 lesson.assignments.length +
