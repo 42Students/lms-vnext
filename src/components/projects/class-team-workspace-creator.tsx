@@ -93,16 +93,24 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
     try{
       const raw=window.localStorage.getItem(reportKey);
       if(!raw)return;
-      const saved=JSON.parse(raw) as {expiresAt?:number;report?:CohortCreationOutcome};
-      if(!saved.expiresAt||saved.expiresAt<Date.now()||!saved.report||
-        !Array.isArray(saved.report.individualResults)||
-        saved.report.individualResults.length>10000||
-        !saved.report.individualResults.every(item=>
-         item&&typeof item.membershipId==="string"&&
-         ["CREATED","ALREADY_COVERED"].includes(item.status))){
+      const saved=JSON.parse(raw) as {expiresAt?:number;report?:CohortCreationOutcome;
+        unconfirmedRows?:ClassTeamCreationResultRow[];checkedAt?:string};
+      const confirmed=Boolean(saved.report&&Array.isArray(saved.report.individualResults)&&
+        saved.report.individualResults.length<=10000&&
+        saved.report.individualResults.every(item=>
+          item&&typeof item.membershipId==="string"&&
+          ["CREATED","ALREADY_COVERED"].includes(item.status)));
+      const uncertain=Array.isArray(saved.unconfirmedRows)&&
+        saved.unconfirmedRows.length<=10000&&
+        saved.unconfirmedRows.every(item=>item&&typeof item.membershipId==="string"&&
+          item.status==="UNCONFIRMED"&&typeof item.reason==="string");
+      if(!saved.expiresAt||saved.expiresAt<Date.now()||(!confirmed&&!uncertain)){
         window.localStorage.removeItem(reportKey);return;
       }
-      setOutcome(saved.report);setOutcomeRestored(true);
+      if(confirmed)setOutcome(saved.report!);
+      if(uncertain)setUnconfirmedRows(saved.unconfirmedRows!);
+      setOutcomeCheckedAt(typeof saved.checkedAt==="string"?saved.checkedAt:null);
+      setOutcomeRestored(true);
     }catch{
       // Storage can be disabled in private browsing; creation still works.
     }
@@ -241,6 +249,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
     }
     createInFlight.current=true;
     let created=false;
+    let submitted=false;
     setPending(true);setError("");setNotice("");
     try {
       if(mode==="INDIVIDUAL"){
@@ -267,6 +276,9 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
         });
         if(!allowed)return;
       }
+      // Distinguish a request that may have committed from a failed preflight:
+      // only dispatched requests produce uncertain per-learner recovery rows.
+      submitted=true;
       const result=await projectMutation("/api/projects/class-team-workspaces","POST",{
         collegeId,classId:roster.classId,templateId,rosterRevision:roster.revision,
         baseTitle:title.trim(),baseSlug:slug.trim(),summary:summary.trim()||undefined,
@@ -276,12 +288,15 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
       if(result.batchMode==="ATOMIC"&&result.committed!==true)
         throw new Error("Creation was not committed. Refresh the roster before retrying.");
       setOutcome(result);
+      setUnconfirmedRows([]);
+      setOutcomeCheckedAt(new Date().toISOString());
       setResultPage(1);
       setOutcomeRestored(false);
       if(mode==="INDIVIDUAL"){
         try{
           window.localStorage.setItem(reportKey,JSON.stringify({
             expiresAt:Date.now()+7*24*60*60*1000,report:result,
+            unconfirmedRows:[],checkedAt:new Date().toISOString(),
           }));
         }catch{
           showToast({tone:"info",title:"Creation report could not be saved",
@@ -309,8 +324,28 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
       router.refresh();
     } catch(e) {
       const failure=classTeamCreationFeedback(e);
-      setError("Nothing was created. "+failure);
-      showToast({tone:"error",title:"Nothing was created",description:failure});
+      if(mode==="INDIVIDUAL"&&submitted){
+        // An interrupted HTTP response does not prove rollback. Keep per-learner
+        // details for a safe roster/preflight reconciliation, never claim FAIL.
+        const rows:ClassTeamCreationResultRow[]=groups.flatMap(group=>
+          group.membershipIds.map(membershipId=>({
+            membershipId,status:"UNCONFIRMED" as const,projectId:null,title:null,
+            reason:"Outcome not confirmed: "+failure,
+          })));
+        setUnconfirmedRows(rows);
+        const checkedAt=new Date().toISOString();
+        setOutcomeCheckedAt(checkedAt);
+        try{
+          window.localStorage.setItem(reportKey,JSON.stringify({
+            expiresAt:Date.now()+7*24*60*60*1000,unconfirmedRows:rows,checkedAt,
+          }));
+        }catch{/* Export remains available if local storage is disabled. */}
+        setError("The creation response could not be confirmed. Check existing workspaces before retrying. "+failure);
+        showToast({tone:"error",title:"Creation outcome not confirmed",description:failure});
+      }else{
+        setError("Nothing was created. "+failure);
+        showToast({tone:"error",title:"Nothing was created",description:failure});
+      }
     } finally {
       setPreflightLoading(false);
       // After a successful POST, keep Create locked until navigation unmounts this form.
@@ -615,7 +650,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
       <Button type="button" variant="secondary" onClick={()=>{
         try{
           const csv=classTeamCreationOutcomeCsv(unconfirmedRows,names);
-          const url=URL.createObjectURL(new Blob(["\\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
+          const url=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
           const link=document.createElement("a");
           link.href=url;link.download="cohort-unconfirmed-outcome.csv";
           document.body.appendChild(link);link.click();link.remove();
