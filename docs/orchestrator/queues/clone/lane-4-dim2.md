@@ -3,13 +3,13 @@
 591 files (591 files use this aspect; yours are the ones with the most instances). For EACH file: find every instance of this aspect, compare with the legacy values (docs/design/old-lms-shell-spec.md, legacy-styles/, ui-clone-checklist.md) and fix every deviation. Checklist: icon size, title and body text, CTA button, skeleton shape/colour/animation, error copy, retry button, centered spacing, no layout shift.
 Record ONE proof line per file in docs/audit/ux/dim2-lane-4.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
 
-- [ ] `src/app/(authenticated)/account/security/page.tsx`
-- [ ] `src/app/(authenticated)/admin/academics/page.tsx`
-- [ ] `src/app/(authenticated)/admin/assignments/error.tsx`
-- [ ] `src/app/(authenticated)/admin/assignments/page.tsx`
-- [ ] `src/app/(authenticated)/admin/attendance/page.tsx`
-- [ ] `src/app/(authenticated)/admin/audit/page.tsx`
-- [ ] `src/app/(authenticated)/admin/batch-promotion/error.tsx`
+- [x] `src/app/(authenticated)/account/security/page.tsx`
+- [x] `src/app/(authenticated)/admin/academics/page.tsx`
+- [x] `src/app/(authenticated)/admin/assignments/error.tsx`
+- [x] `src/app/(authenticated)/admin/assignments/page.tsx`
+- [x] `src/app/(authenticated)/admin/attendance/page.tsx`
+- [x] `src/app/(authenticated)/admin/audit/page.tsx`
+- [x] `src/app/(authenticated)/admin/batch-promotion/error.tsx`
 - [ ] `src/app/(authenticated)/admin/batch-promotion/page.tsx`
 - [ ] `src/app/(authenticated)/admin/batches/error.tsx`
 - [ ] `src/app/(authenticated)/admin/classes/error.tsx`
