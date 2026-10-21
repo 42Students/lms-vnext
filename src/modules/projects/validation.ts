@@ -607,6 +607,8 @@ export const reviewProjectSubmissionInputSchema =
         .min(1)
         .max(6000)
         .optional(),
+      expectedVersion:z.number().int().min(1).optional(),
+      expectedUpdatedAt:z.iso.datetime({offset:true}).optional(),
     })
     .strict()
     .refine(

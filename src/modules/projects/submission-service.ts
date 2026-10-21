@@ -520,9 +520,18 @@ export async function reviewProjectSubmission(
         );
       }
       if (submission.status !== "SUBMITTED" || submission.lockedAt) {
-        throw new ProjectsServiceError(
-          "PROJECT_SUBMISSION_INVALID_STATE",
-        );
+        throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
+      }
+      // A historical submitted delivery must never be approved when a newer
+      // version exists. The parent project lock also serializes draft creation.
+      const [latest]=await tx.select({id:projectSubmissions.id})
+       .from(projectSubmissions).where(eq(projectSubmissions.projectId,scope.project.id))
+       .orderBy(desc(projectSubmissions.version)).limit(1);
+      if(latest?.id!==submission.id||
+         input.expectedVersion!==undefined&&input.expectedVersion!==submission.version||
+         input.expectedUpdatedAt!==undefined&&
+           !projectDraftRevisionMatches(submission.updatedAt,input.expectedUpdatedAt)){
+        throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
       }
 
       // Re-read the reviewer grant while holding SHARE locks in this same
@@ -635,7 +644,7 @@ export async function listProjectSubmissions(
       projectIdInput,
     );
   const db = getDb();
-  const [submissions, reviews] =
+  const [submissions, reviews, deliveryEvents] =
     await Promise.all([
       db
         .select()
@@ -661,7 +670,43 @@ export async function listProjectSubmissions(
             projectSubmissionReviews.reviewedAt,
           ),
         ),
+      db.select().from(projectDeliveryEvents).where(
+       eq(projectDeliveryEvents.projectId,scope.project.id))
+       .orderBy(asc(projectDeliveryEvents.occurredAt)),
     ]);
-
-  return { submissions, reviews };
+  // Legacy flattened one delivery's history into a mutable DTO. vNext keeps
+  // immutable typed submission, feedback and technical events; this read-only
+  // crosswalk restores the chronological workflow without mutating snapshots.
+  type HistoryEntry={
+    id:string;submissionId:string;version:number;kind:string;
+    occurredAt:string;status:string|null;feedback:string|null;
+  };
+  const byId=new Map(submissions.map(submission=>[submission.id,submission]));
+  const history:HistoryEntry[]=[];
+  for(const submission of submissions){
+   history.push({id:"created:"+submission.id,submissionId:submission.id,
+     version:submission.version,kind:"DRAFT_CREATED",
+     occurredAt:submission.createdAt.toISOString(),status:"DRAFT",feedback:null});
+   if(submission.submittedAt)history.push({id:"submitted:"+submission.id,
+     submissionId:submission.id,version:submission.version,kind:"SUBMITTED",
+     occurredAt:submission.submittedAt.toISOString(),status:"SUBMITTED",feedback:null});
+  }
+  for(const review of reviews){
+   const submission=byId.get(review.submissionId);
+   if(!submission)continue;
+   history.push({id:"review:"+review.id,submissionId:review.submissionId,
+    version:submission.version,kind:"REVIEWED",occurredAt:review.reviewedAt.toISOString(),
+    status:review.decision,feedback:review.feedback});
+  }
+  for(const event of deliveryEvents){
+   const submission=byId.get(event.submissionId);
+   if(!submission)continue;
+   history.push({id:"event:"+event.id,submissionId:event.submissionId,
+    version:submission.version,kind:event.eventType,
+    occurredAt:event.occurredAt.toISOString(),status:event.legacyStatus??null,
+    feedback:event.legacyFeedback??null});
+  }
+  history.sort((a,b)=>a.occurredAt.localeCompare(b.occurredAt)||
+    a.version-b.version||a.id.localeCompare(b.id));
+  return {submissions,reviews,deliveryEvents,history};
 }
