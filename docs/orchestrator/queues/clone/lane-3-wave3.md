@@ -23,6 +23,6 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-3/W3_src_modules_courses_validation.ts.md` (edit src/modules/courses/validation.ts; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-3/W3_src_components_courses_lesson-resource-materials-control.tsx.md` (edit src/components/courses/lesson-resource-materials-control.tsx; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-3/W3_src_modules_courses_progress-service.ts.md` (edit src/modules/courses/progress-service.ts; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-3/W3_src_app_api_courses_progress_contentId_route.ts.md` (edit src/app/api/courses/progress/[contentId]/route.ts; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-3/W3_src_app_api_courses_progress_contentId_route.ts.md` (edit src/app/api/courses/progress/[contentId]/route.ts; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-3/W3_src_components_courses_super-admin-content-actions.tsx.md` (edit src/components/courses/super-admin-content-actions.tsx; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-3/W3_src_modules_courses_lesson-service.ts.md` (edit src/modules/courses/lesson-service.ts; 1 findings; best P1)
