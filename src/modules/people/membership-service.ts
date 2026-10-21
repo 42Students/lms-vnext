@@ -1,4 +1,4 @@
-import type { MembershipRole } from "@/modules/identity/constants";
+import { MEMBERSHIP_ROLE_LABELS, type MembershipRole } from "@/modules/identity/constants";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { PeopleServiceError } from "./errors";
@@ -10,6 +10,16 @@ import {
   personMembershipIdSchema,
   type MembershipLifecycleInput,
 } from "./validation";
+
+/** Distinguish the human-facing role from the immutable stored enum. */
+export function membershipRoleHumanLabel(role:MembershipRole):string {
+ return MEMBERSHIP_ROLE_LABELS[role];
+}
+export const MEMBERSHIP_TRANSITION_STATUS_COPY={
+ SUSPEND:"Membership suspended for the selected college.",
+ REACTIVATE:"Membership reactivated for the selected college.",
+ END:"Membership ended for the selected college. The platform account was not deleted.",
+} as const;
 
 export type MembershipMutationContext = {
   context: RequestContext;
@@ -159,6 +169,12 @@ export async function updateMembershipLifecycle(
     input,
     { context, person },
   );
-  return { ...updated, lifecycleScope: "COLLEGE_MEMBERSHIP" as const, userId: person.user.id };
+  return { ...updated, lifecycleScope: "COLLEGE_MEMBERSHIP" as const,
+   userId:person.user.id, collegeId:person.membership.collegeId,
+   roles:updated.membership.roles,
+   transitionMessage:MEMBERSHIP_TRANSITION_STATUS_COPY[input.action],
+   // The current user remains a platform identity even when this membership
+   // ends; client must refresh scoped role views rather than a deleted-user flag.
+   refreshView:"MEMBERSHIP_DETAIL" as const };
 
 }

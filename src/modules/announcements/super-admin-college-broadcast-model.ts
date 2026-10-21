@@ -3,8 +3,8 @@ export const superAdminCollegeBroadcastSchema=z.strictObject({
  audienceMode:z.enum(["ALL_COLLEGES","SELECTED_COLLEGES"]),
  collegeIds:z.array(z.uuid()).max(500),
  reviewedCollegeIds:z.array(z.uuid()).max(500).optional(),
- title:z.string().trim().min(1,{error:"Give the announcement a title"}).max(200,{error:"Keep the title under 200 characters"}),
- message:z.string().trim().min(1,{error:"Write the announcement"}).max(8000),
+ title:z.string().trim().min(1,{error:"Give it a title"}).max(200,{error:"Title must be 200 characters or fewer"}),
+ message:z.string().trim().min(1,{error:"Write the announcement"}).max(8000,{error:"Announcement must be 8000 characters or fewer"}),
  scheduledAt:z.iso.datetime({offset:true}).nullable(),
  expiresAt:z.iso.datetime({offset:true}).nullable(),
  isPinned:z.boolean(),
@@ -22,13 +22,28 @@ export const superAdminCollegeBroadcastSchema=z.strictObject({
  // leaving unsent bell notices indefinitely.
  if(v.scheduledAt)ctx.addIssue({code:"custom",path:["scheduledAt"],message:"Scheduled delivery is not available"});
  if(v.expiresAt&&new Date(v.expiresAt).getTime()<Date.now()-60_000)ctx.addIssue({code:"custom",path:["expiresAt"],message:"The end date has passed"});
-});
+}).transform(v=>({
+ ...v,
+ // Legacy permits URL-only calls; the CTA displays "Open" when the caller
+ // does not customize the label. A label without URL remains invalid.
+ buttonLabel:v.buttonUrl ? v.buttonLabel?.trim()||"Open" : null,
+}));
 export function requestedBroadcastCollegeIds(ids:readonly string[]):string[]{
  return [...new Set(ids)];
 }
 export function broadcastConsentSummary(mode:"ALL_COLLEGES"|"SELECTED_COLLEGES",count:number,scheduled:boolean){
  return (mode==="ALL_COLLEGES"?"All currently active authorized colleges":"Selected authorized colleges")+
   " · "+count+" college"+(count===1?"":"s")+" · "+(scheduled?"scheduled":"immediate")+" in-app notices";
+}
+
+/** All-college resolution happens exactly at immediate publication, AFTER a
+ * fresh reviewed preview. A change of eligible colleges invalidates the
+ * reviewed exact set; selected colleges are never silently promoted to ALL.
+ */
+export function broadcastAudienceResolution(mode:"ALL_COLLEGES"|"SELECTED_COLLEGES",count:number){
+ return mode==="ALL_COLLEGES"
+  ? `All ${count} currently eligible placement cells (resolved at publication)`
+  : `${count} reviewed selected placement cells (resolved at publication)`;
 }
 
 /** The reviewed audience is an exact set, never just a count. */
