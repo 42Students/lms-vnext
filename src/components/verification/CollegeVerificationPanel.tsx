@@ -178,7 +178,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
             {reason}
           </Button>)}
     </div>}
-    {bulkAction==="SEND_BACK"&&<label className="block text-sm">Correction reason for every selected request
+    {bulkAction==="SEND_BACK"&&<label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Correction reason for every selected request
      <Textarea disabled={bulkBusy} value={bulkReason} maxLength={500} onChange={event=>setBulkReason(event.target.value)}
       className="mt-1 min-h-20 w-full" placeholder="Describe the correction required"/>
      <span className="mt-1 block text-xs">A shared reason of at least 3 characters is required and will be recorded for each learner.</span>
@@ -217,10 +217,10 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   </section>}
   {bulkError&&<Banner tone="error">Bulk review issue: {bulkError}. Check the per-row outcome before retrying; earlier successful decisions remain recorded.</Banner>}
   <section aria-label="Verification queue controls" className="grid min-w-0 gap-3 border-t border-[var(--lms-canvas-border)] pt-3 text-[13px] sm:grid-cols-2 md:flex md:flex-wrap md:items-center">
-   <label className="grid min-w-0 gap-1">Sort by <Select value={query.sort??"OLDEST"} onChange={event=>navigate({sort:event.target.value,page:"1"})} className="w-full md:w-auto">
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort by <Select value={query.sort??"OLDEST"} onChange={event=>navigate({sort:event.target.value,page:"1"})} className="w-full md:w-auto">
     <option value="OLDEST">Oldest first</option><option value="NEWEST">Newest first</option><option value="NAME">Learner name A–Z</option>
    </Select></label>
-   <label className="grid min-w-0 gap-1">Requests per page <Select value={pageSize} onChange={event=>navigate({pageSize:event.target.value,page:"1"})} className="w-full md:w-auto">
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Requests per page <Select value={pageSize} onChange={event=>navigate({pageSize:event.target.value,page:"1"})} className="w-full md:w-auto">
     <option value="10">10</option><option value="25">25</option><option value="50">50</option>
    </Select></label>
    <span className="min-w-0 break-words sm:col-span-2 md:col-span-1">Showing {rows.length} of {total} requests in the selected view</span>

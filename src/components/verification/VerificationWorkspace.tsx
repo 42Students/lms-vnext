@@ -59,11 +59,11 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
    }))}
   />
   <div className="flex flex-wrap gap-2">
-   {!disableLocalSearch&&<label className="min-w-0 flex-1 text-sm">Search learners
+   {!disableLocalSearch&&<label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search learners
     <Input aria-label="Search learners" className="mt-1 w-full"
      value={query} onChange={e=>setQuery(e.target.value)} placeholder="Learner, batch or branch"/>
    </label>}
-   <label className="text-sm">Kind
+   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Kind
     <Select aria-label="Kind" value={kind} onChange={e=>onKindChange?onKindChange(e.target.value as typeof kind):setKind(e.target.value as typeof kind)}
      className="mt-1 w-full">
      <option value="ALL">All</option><option value="EDUCATION">Education</option><option value="IDENTITY">Identity</option>

@@ -56,13 +56,13 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
     onClick={()=>navigate({tab:"WAITING",waitingState:"UPDATE_PENDING",page:"1"})}>Updates to verified details</Button>:null}
   </div>
   <section aria-label="Verification filters" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2">
-   <label className="text-sm font-semibold">Marksheets
+   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Marksheets
     <Select value={filters.marksheets} onChange={e=>update("marksheets",e.target.value as TpoVerificationLocalFilters["marksheets"])}
      className="mt-1 block min-h-11 w-full min-w-0 md:min-h-9">
      <option value="ANY">Any</option><option value="MISSING">Missing</option><option value="PRESENT">All uploaded</option>
     </Select>
    </label>
-   <label className="text-sm font-semibold">Needs a closer look
+   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Needs a closer look
     <Select value={filters.attention} onChange={e=>update("attention",e.target.value as TpoVerificationLocalFilters["attention"])}
      className="mt-1 block min-h-11 w-full md:min-h-9">
      <option value="ALL">All requests</option><option value="MISSING_DOCUMENT">Missing document</option>

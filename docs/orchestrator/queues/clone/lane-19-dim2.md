@@ -269,18 +269,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-19.md: file, number of
 - [x] `src/components/ui/multi-select.tsx`
 - [x] `src/components/ui/otp-input.tsx`
 - [x] `src/components/ui/page-size-select.tsx`
-- [ ] `src/components/ui/password-input.tsx`
-- [ ] `src/components/ui/radio.tsx`
-- [ ] `src/components/ui/range-slider.tsx`
-- [ ] `src/components/ui/search-field.tsx`
-- [ ] `src/components/ui/searchable-select.tsx`
-- [ ] `src/components/ui/select.tsx`
-- [ ] `src/components/ui/textarea.tsx`
-- [ ] `src/components/verification/CollegeVerificationPanel.tsx`
-- [ ] `src/components/verification/SuperAdminVerificationPanel.tsx`
-- [ ] `src/components/verification/TpoVerificationPanel.tsx`
-- [ ] `src/components/verification/VerificationReviewDrawer.tsx`
-- [ ] `src/components/verification/VerificationWorkspace.tsx`
+- [x] `src/components/ui/password-input.tsx`
+- [x] `src/components/ui/radio.tsx`
+- [x] `src/components/ui/range-slider.tsx`
+- [x] `src/components/ui/search-field.tsx`
+- [x] `src/components/ui/searchable-select.tsx`
+- [x] `src/components/ui/select.tsx`
+- [x] `src/components/ui/textarea.tsx`
+- [x] `src/components/verification/CollegeVerificationPanel.tsx`
+- [x] `src/components/verification/SuperAdminVerificationPanel.tsx`
+- [x] `src/components/verification/TpoVerificationPanel.tsx`
+- [x] `src/components/verification/VerificationReviewDrawer.tsx`
+- [x] `src/components/verification/VerificationWorkspace.tsx`
 
 
 ## Dimension sweep: lane chat-19 owns "Wording: titles, labels, buttons, messages (part 3 of 3)" across the whole codebase

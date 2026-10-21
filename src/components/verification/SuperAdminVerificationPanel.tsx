@@ -109,7 +109,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    {bulkAction?<div className="space-y-[var(--lms-space-2)] border-t border-border pt-[var(--lms-space-3)]">
     <p className="text-sm">{applicable.length} ready, {skipped.length} left out because proof is missing. Decisions are individually rechecked by the server.</p>
     {skipped.length?<p className="text-xs text-warning-text">Skipped: {skipped.map(r=>r.learnerName).join(", ")}</p>:null}
-    {bulkAction==="SEND_BACK"?<label className="block text-sm">Reason for sending back
+    {bulkAction==="SEND_BACK"?<label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason for sending back
      <Textarea value={reason} onChange={e=>setReason(e.target.value)} maxLength={500}
       className="mt-2 w-full"/></label>:
      <label className="flex items-start gap-2 text-sm">
