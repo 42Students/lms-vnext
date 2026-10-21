@@ -9,15 +9,28 @@ import { publicPlacementDisclosure } from "@/modules/placements/public-placement
 import {getPublicPlacementPageContent} from "@/modules/placements/public-page/content-service";
 import {DEFAULT_PUBLIC_METRICS,PUBLIC_METRIC_LABELS,formatPublicPlacementMetric} from "@/modules/placements/public-page/content-model";
 import { getPublicPlacementStatistics } from "@/modules/placements/public-page/read-service";
+import { publicPlacementTableReady } from "@/modules/placements/public-page/readiness";
 import { readOptionalPublicPlacementData } from "@/modules/placements/public-page/optional-read-model";
-import { publicPageAvailabilityMessage } from "@/modules/placements/public-page/public-page-availability-model";
 
 /** Public route: never loads private placements, identities, or employer contacts.
  * A verified public publication producer and code delivery are still required
  * before displaying live numbers or accepting recruitment enquiries.
+ *
+ * Legacy college_placements_page mapping: enabled -> placement_public_page_settings.enabled,
+ * about -> placement_public_page_content.about, numbers[] -> reviewed metric_keys +
+ * ledger-backed aggregates, updated_by -> placements.public_page.* activity actor,
+ * updated_at -> the separate settings/content update timestamps. A public read
+ * requires enabled + published_at + fresh college-scoped aggregate evidence.
+ * Do not infer a legacy updated_by actor from anonymous public reads.
  */
 export default async function PublicPlacementsPage() {
   const tenant = await resolveRequestTenant((await headers()).get("host"));
+  if (tenant.kind !== "college") notFound();
+  // A missing/unfinished publication table is an infrastructure error,
+  // not evidence that a college explicitly unpublished its page.
+  if (!await publicPlacementTableReady()) {
+    throw new Error("PUBLIC_PLACEMENTS_PUBLICATION_NOT_READY");
+  }
   const brandRead=tenant.kind==="college"
     ? await readOptionalPublicPlacementData(()=>getPublicCollegeBranding(tenant.collegeId))
     : null;
@@ -28,6 +41,14 @@ export default async function PublicPlacementsPage() {
   const published = publicRead?.available ? publicRead.value : null;
   const contentRead=tenant.kind==="college"?await readOptionalPublicPlacementData(()=>getPublicPlacementPageContent(tenant.collegeId)):null;
   const content=contentRead?.available?contentRead.value:null;
+  // A transient database failure is not an unpublished page. Render the
+  // route-level, retryable error boundary instead of a partial empty page.
+  if (brandRead?.available === false ||
+      publicRead?.available === false ||
+      contentRead?.available === false ||
+      content?.ready === false) {
+    throw new Error("PUBLIC_PLACEMENTS_TEMPORARILY_UNAVAILABLE");
+  }
   const metricKeys=content?.metricKeys??DEFAULT_PUBLIC_METRICS;
   // An unknown host or an explicitly unpublished college page must be a 404.
   // An unavailable database is not evidence that the college unpublished it.
@@ -48,16 +69,6 @@ export default async function PublicPlacementsPage() {
           College-published figures last updated{" "}
           <time dateTime={published.publishedAt}>{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(published.publishedAt))}</time>.
           Individual records are never displayed here.
-        </p>
-      ) : null}
-      {brandRead && !brandRead.available ? (
-        <p role="status" className="mt-6 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
-          {publicPageAvailabilityMessage("branding")}
-        </p>
-      ) : null}
-      {publicRead && !publicRead.available ? (
-        <p role="status" className="mt-6 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body">
-          Public placement statistics are temporarily unavailable. No individual student information is shown.
         </p>
       ) : null}
       {published&&content?.about?<section className="mt-7 space-y-2">
