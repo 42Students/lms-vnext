@@ -34,6 +34,7 @@ import {getOwnLearnerPlacementGreeting} from "@/modules/placements/learner-dashb
 import {learnerPlacementApplicationFunnel} from "@/modules/placements/learner-dashboard-funnel-model";
 import { LearnerPlacementRequests } from "@/components/placements/learner-placement-requests";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
 import { LEARNER_PLACEMENTS_HOME_SUBTITLE } from "@/modules/placements/learner-placement-copy-model";
 import {getOwnLearnerVerificationStatus} from "@/modules/placements/learner-verification-status-service";
 import {readOptionalLearnerPlacementSource} from "@/modules/placements/learner-optional-placement-source";
@@ -57,8 +58,8 @@ export default async function LearnerPlacementsPage({
     : null;
   const context =
     await getCurrentRequestContext();
-  if (!hasMembershipRole(context, "LEARNER")) {
-    redirect("/dashboard");
+  if (!hasMembershipRole(context,"LEARNER")) {
+    redirect(context.membership?"/dashboard":"/");
   }
 
   // Authorization failures cannot be reduced to a "partially loaded" page.
@@ -237,6 +238,19 @@ export default async function LearnerPlacementsPage({
     return null;
   });
 
+  // Legacy first viewport: up to four live applications, with the original
+  // round snapshot and links to the UUID-scoped application detail, not an
+  // inferred selected/placed outcome.
+  const liveApplications=journey.filter(row=>
+   row.applicationStatus==="SUBMITTED" ||
+   offerRows?.some(offer=>offer.offer.applicationId===row.applicationId&&
+     offer.offer.status==="ISSUED")).slice(0,4);
+  const money=Number(countingAcceptedOffer?.offer.annualCtcInr??0);
+  const acceptedLpa=money>0&&Number.isFinite(money)
+    ?(Math.round(money/10000)/10).toFixed(1):null;
+  const dateFormatter=new Intl.DateTimeFormat("en-IN",{
+   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+  });
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
@@ -244,6 +258,16 @@ export default async function LearnerPlacementsPage({
         description={LEARNER_PLACEMENTS_HOME_SUBTITLE}
       />
 
+      <Tabs ariaLabel="Placements sections" renderPanel={false}
+        value="/learn/my-placements" items={[
+         {value:"/learn/my-placements",label:"Home",href:"/learn/my-placements"},
+         {value:"/learn/my-placements/jobs",label:"Jobs",href:"/learn/my-placements/jobs"},
+         {value:"/learn/my-placements/applications",label:"Applications",href:"/learn/my-placements/applications"},
+         {value:"/learn/my-placements/calendar",label:"Schedule",href:"/learn/my-placements/calendar"},
+         {value:"/learn/my-placements/offers",label:"Offers",href:"/learn/my-placements/offers"},
+         {value:"/learn/my-placements/announcements",label:"Announcements",href:"/learn/my-placements/announcements"},
+         {value:"/learn/my-placements/rules",label:"Placements",href:"/learn/my-placements/rules"},
+        ]}/>
       <div className="flex flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center">
         <Link href="/learn/my-placements/preparation"
           className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
@@ -266,74 +290,47 @@ export default async function LearnerPlacementsPage({
           Think this is wrong? Tell the placement cell
         </Link>
       </Alert>:null}
-      {registrationRead.status==="fulfilled"?<LearnerPlacementRegistration registration={registrationRead.value}/>:(
-        <Alert tone="warning" role="alert" aria-label="Placement registration">
-          <h2 className="font-semibold text-foreground">Registration</h2>
-          <p className="mt-2 text-sm text-body">Your batch registration status is temporarily unavailable. No registration choice has been assumed.</p>
-          <Link href="/learn/my-placements" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline">Retry registration</Link>
-        </Alert>
-      )}
-      {overviewUnavailable ? <Alert tone="error" role="alert">
-        <h2 className="font-semibold text-foreground">We could not load your placements</h2>
-        <p className="mt-2 text-sm text-body">
-          Your placement results have not been changed. Some account and registration
-          information may still be visible, but your journey and schedule could not be verified.
-        </p>
-        <Link href="/learn/my-placements" className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
-          Retry
-        </Link>
-      </Alert> : null}
-      {!availability.rounds || !availability.journey ? <Alert tone="warning" role="status">
-        {availability.rounds
-          ?"Your schedule and application history could not both be checked. Missing timeline entries are unknown, not proof of no events."
-          :"Your scheduled placement rounds could not be loaded. No upcoming event count has been assumed."}
-        <Link href="/learn/my-placements" className="ml-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
-          Retry
-        </Link>
-      </Alert> : null}
-      <LearnerPlacementPartialAlert missing={display.failed} />
-      {countingAcceptedOffer ? <Alert tone="info" role="status">
-        <p className="font-semibold text-foreground">
-          You're placed with {countingAcceptedOffer.company.name}
-        </p>
-        <p className="mt-2 text-sm text-body">
-          This accepted offer is recorded as counting toward placement. You may
-          still be eligible for other drives under your college's policy and each drive's eligibility rules.
-        </p>
-        <Link href="/learn/my-placements/jobs" className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
-          Browse other eligible drives →
-        </Link>
-      </Alert> : null}
       <LearnerPlacementsDashboard snapshot={dashboard} availability={availability} learnerName={learnerName} applicationFunnel={applicationFunnel} registration={registrationRead.status==="fulfilled"?registrationRead.value:null}
         profileFixes={verificationCue?.editHrefs??[]} acceptedOffer={countingOfferKnown?Boolean(countingAcceptedOffer):null} />
-
-
-      <section aria-labelledby="learner-placement-verification"
-        className="min-w-0 border-b border-border py-4 md:py-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 id="learner-placement-verification" className="text-base font-semibold text-foreground">Profile verification</h2>
-          <Link href="/learn/profile/verification" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">
-            Review education and identity verification →
-          </Link>
-        </div>
-        <p className="mt-2 text-sm text-body">
-          {verificationCue ? verificationCue.summary :
-            "Your current verification status is temporarily unavailable. Open your profile to retry."}
-        </p>
-        {verificationCue && verificationCue.editHrefs.length>0 ? (
-          <div className="mt-2 flex flex-wrap gap-3">
-            {verificationCue.editHrefs.map(link=>(
-              <Link key={link.href} href={link.href}
-                className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">
-                {link.label} →
-              </Link>
-            ))}
+      <section id="learner-next-seven-days" aria-labelledby="learner-next-seven-days-title"
+        className="min-w-0 border-b border-border py-4">
+       <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 id="learner-next-seven-days-title" className="text-lg font-semibold text-heading">Next 7 days</h2>
+        <Link href="/learn/my-placements/calendar" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Full schedule →</Link>
+       </div>
+       {!availability.rounds?<p role="status" className="mt-3 text-sm text-body">Upcoming events are temporarily unavailable. No empty schedule is assumed.</p>:
+        dashboard.weekEvents.length?<ul className="mt-3 divide-y divide-border">
+         {dashboard.weekEvents.slice(0,7).map(event=><li key={event.applicationId+":"+event.roundId} className="flex flex-wrap items-center justify-between gap-3 py-3">
+          <div><p className="font-semibold">{event.roundName} · {event.companyName}</p>
+           <p className="text-xs text-body">{event.roleTitle} · {dateFormatter.format(event.when)} IST</p></div>
+          <Link href={event.href} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">View event →</Link>
+         </li>)}
+        </ul>:<p className="mt-3 text-sm text-body">No scheduled events recorded for the next seven days.</p>}
+      </section>
+      <section id="learner-application-progress" aria-labelledby="learner-application-progress-title"
+       className="min-w-0 border-b border-border py-4">
+       <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 id="learner-application-progress-title" className="text-lg font-semibold text-heading">Where your applications stand</h2>
+        <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">All applications →</Link>
+       </div>
+       {!availability.journey?<p role="status" className="mt-3 text-sm text-body">Application journeys could not be loaded. No progress has been inferred.</p>:
+        liveApplications.length?<ul className="mt-3 divide-y divide-border">
+         {liveApplications.map(item=><li key={item.applicationId} className="flex min-w-0 flex-wrap items-center gap-3 py-3">
+          <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-border bg-primary-subtle text-sm font-bold text-primary-text">
+           {item.companyName.trim().charAt(0).toUpperCase()||"C"}
+          </span>
+          <div className="min-w-0 flex-1">
+           <p className="font-semibold text-heading">{item.companyName} · {item.jobTitle}</p>
+           <p className="text-xs text-body">Application: {item.applicationStatus.replaceAll("_"," ")}
+            {" · "}{item.results.length?item.results[item.results.length-1]!.roundName:"Awaiting next round"}</p>
+           {item.results.length?<p className="mt-1 text-xs text-muted-foreground">
+            {item.results.map(round=>round.roundName+": "+round.outcome).join(" → ")}
+           </p>:null}
           </div>
-        ) : null}
-        {verificationCue ? <p className="mt-2 text-xs text-muted-foreground">
-          Education: {verificationCue.educationLabel} · Identity: {verificationCue.identityLabel}.
-          This is profile review status, not a placement eligibility decision.
-        </p> : null}
+          <Link href={"/learn/my-placements/applications?applicationId="+encodeURIComponent(item.applicationId)}
+           className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Open →</Link>
+         </li>)}
+        </ul>:<p className="mt-3 text-sm text-body">No ongoing applications.</p>}
       </section>
       <section aria-labelledby="learner-college-notice-preview" className="min-w-0 border-b border-border py-4 md:py-6">
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
@@ -377,6 +374,75 @@ export default async function LearnerPlacementsPage({
           <Link href="/learn/my-placements/announcements#personal-updates"
             className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">See all personal updates →</Link>
         </div>
+      </section>
+      {registrationRead.status==="fulfilled"?<LearnerPlacementRegistration registration={registrationRead.value}/>:(
+        <Alert tone="warning" role="alert" aria-label="Placement registration">
+          <h2 className="font-semibold text-foreground">Registration</h2>
+          <p className="mt-2 text-sm text-body">Your batch registration status is temporarily unavailable. No registration choice has been assumed.</p>
+          <Link href="/learn/my-placements" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline">Retry registration</Link>
+        </Alert>
+      )}
+      {overviewUnavailable ? <Alert tone="error" role="alert">
+        <h2 className="font-semibold text-foreground">We could not load your placements</h2>
+        <p className="mt-2 text-sm text-body">
+          Your placement results have not been changed. Some account and registration
+          information may still be visible, but your journey and schedule could not be verified.
+        </p>
+        <Link href="/learn/my-placements" className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+          Retry
+        </Link>
+      </Alert> : null}
+      {!availability.rounds || !availability.journey ? <Alert tone="warning" role="status">
+        {availability.rounds
+          ?"Your schedule and application history could not both be checked. Missing timeline entries are unknown, not proof of no events."
+          :"Your scheduled placement rounds could not be loaded. No upcoming event count has been assumed."}
+        <Link href="/learn/my-placements" className="ml-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+          Retry
+        </Link>
+      </Alert> : null}
+      <LearnerPlacementPartialAlert missing={display.failed} />
+      {countingAcceptedOffer ? <Alert tone="info" role="status">
+        <p className="font-semibold text-foreground">
+          You're placed with {countingAcceptedOffer.company.name}
+        </p>
+        <p className="mt-2 text-sm text-body">
+          {acceptedLpa?"₹"+acceptedLpa+" LPA · ":""}
+          This accepted offer is recorded as counting toward placement. You may
+          still be eligible for other drives under your college's policy and each drive's eligibility rules.
+        </p>
+        <Link href="/learn/my-placements/jobs" className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+          Browse other eligible drives →
+        </Link>
+      </Alert> : null}
+
+
+
+      <section aria-labelledby="learner-placement-verification"
+        className="min-w-0 border-b border-border py-4 md:py-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 id="learner-placement-verification" className="text-base font-semibold text-foreground">Profile verification</h2>
+          <Link href="/learn/profile/verification" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">
+            Review education and identity verification →
+          </Link>
+        </div>
+        <p className="mt-2 text-sm text-body">
+          {verificationCue ? verificationCue.summary :
+            "Your current verification status is temporarily unavailable. Open your profile to retry."}
+        </p>
+        {verificationCue && verificationCue.editHrefs.length>0 ? (
+          <div className="mt-2 flex flex-wrap gap-3">
+            {verificationCue.editHrefs.map(link=>(
+              <Link key={link.href} href={link.href}
+                className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">
+                {link.label} →
+              </Link>
+            ))}
+          </div>
+        ) : null}
+        {verificationCue ? <p className="mt-2 text-xs text-muted-foreground">
+          Education: {verificationCue.educationLabel} · Identity: {verificationCue.identityLabel}.
+          This is profile review status, not a placement eligibility decision.
+        </p> : null}
       </section>
       {journeyBundle ? <LearnerRecentPlacementActivity events={journeyBundle.activity} /> : null}
 
