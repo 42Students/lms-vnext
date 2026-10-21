@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { apiFetch } from "@/lib/api-fetch";
+import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import {useToast} from "@/components/ui/toast";
 import { classLifecyclePrompt } from "@/modules/academics/college-section-lifecycle-model";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
@@ -39,7 +39,10 @@ export function CollegeSectionLifecycleAction({ row }: {
           ?"Historical class records remain available and this class can be restored.":undefined});
         router.refresh();
       } catch (reason) {
-        setError(reason instanceof Error ? reason.message : "We couldn't update this class. Please retry.");
+        // Preserve distinct learner, timetable, teaching and delivery blockers.
+        const code = reason instanceof FriendlyFetchError ? reason.code : null;
+        setError(academicSetupErrorMessage(code ?? reason,
+          "We couldn't update this class. Please retry."));
       } finally {
         inFlight.current = false;
       }
@@ -58,7 +61,12 @@ export function CollegeSectionLifecycleAction({ row }: {
       confirmLabel={action === "ARCHIVE" ? "Archive class" : "Restore class"}
       confirmVariant={action === "ARCHIVE" ? "danger" : "primary"}
       pending={pending} onConfirm={change}>
-      {error ? <Alert tone="error" className="mt-3">{error}</Alert> : null}
+      <p className="mb-2 text-xs text-muted-foreground">
+        {action === "ARCHIVE"
+          ? "Unlike the old Delete action, this preserves historical student, timetable and activity records. College academic administrators can restore the class later."
+          : "Restoring makes the class available again only if its batch and academic period are still valid."}
+      </p>
+      {error ? <Alert tone="error" title="Class could not be updated" className="mt-3">{error}</Alert> : null}
     </ConfirmDialog>
   </div>;
 }
