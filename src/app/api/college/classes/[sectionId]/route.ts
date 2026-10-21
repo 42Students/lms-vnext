@@ -6,6 +6,8 @@ import {
   CollegeSectionError, updateCollegeSection,
 } from "@/modules/academics/college-section-mutation-service";
 
+import { deleteCollegeSection, CollegeSectionLifecycleError } from "@/modules/academics/college-section-lifecycle-service";
+
 export const runtime = "nodejs";
 
 export async function PATCH(request: Request, {
@@ -27,6 +29,28 @@ export async function PATCH(request: Request, {
       return NextResponse.json({ error: error.code }, {
         status: error.code === "CLASS_NOT_FOUND" ||
           error.code === "CLASS_COHORT_NOT_FOUND" ? 404 : 409,
+      });
+    }
+    return apiErrorResponse(error);
+  }
+}
+
+export async function DELETE(request: Request, {
+  params,
+}: { params: Promise<{ sectionId: string }> }) {
+  if (!isSameOriginRequest(request)) {
+    return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
+  }
+  try {
+    const context = await getCurrentRequestContext();
+    const { sectionId } = await params;
+    const body: unknown = await request.json();
+    const deleted = await deleteCollegeSection(context, sectionId, body);
+    return NextResponse.json({ deleted });
+  } catch (error) {
+    if (error instanceof CollegeSectionLifecycleError) {
+      return NextResponse.json({ error: error.code }, {
+        status: error.code === "CLASS_NOT_FOUND" ? 404 : 409,
       });
     }
     return apiErrorResponse(error);
