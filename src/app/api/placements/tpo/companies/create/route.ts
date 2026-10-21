@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     const body: unknown = await request.json();
     const raw = body && typeof body === "object" && !Array.isArray(body)
       ? body as Record<string, unknown> : {};
-    // A verified recruiter email can provide the domain for a new employer.
+    // A validated work email can provide the domain for a new employer.
     // Never infer a domain from an unvalidated, personal or disposable address.
     const email = typeof raw.recruiterEmail === "string" ? raw.recruiterEmail.trim().toLowerCase() : "";
     const derivedDomain = email.includes("@") ? email.split("@")[1] : undefined;
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     const { confirmed: _confirmed, recruiterEmail, notTheSame, ...input } = parsed;
     void _confirmed;
     const claimedDomain = input.primaryDomain ??
-      (input.websiteUrl ? new URL(input.websiteUrl).hostname.replace(/^www\\./i, "") : "");
+      (input.websiteUrl ? new URL(input.websiteUrl).hostname.replace(/^www\./i, "") : "");
     if (recruiterEmail && !matchesCompanyDomain(recruiterEmail, claimedDomain)) {
       return NextResponse.json({
         error: "RECRUITER_EMAIL_DOMAIN_MISMATCH",
