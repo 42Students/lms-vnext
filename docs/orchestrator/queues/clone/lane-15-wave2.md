@@ -120,5 +120,5 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_placement-drive-requests.ts.md` (edit src/db/schema/placement-drive-requests.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_placements_learner-application-detail-model.ts.md` (edit src/modules/placements/learner-application-detail-model.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_placements_season-service.ts.md` (edit src/modules/placements/season-service.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_placements_college-drive-row-lifecycle-action.tsx.md` (edit src/components/placements/college-drive-row-lifecycle-action.tsx; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_placements_college-drive-row-lifecycle-action.tsx.md` (edit src/components/placements/college-drive-row-lifecycle-action.tsx; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_shell_college-account-copy.ts.md` (edit src/components/shell/college-account-copy.ts; 1 findings; best P3)
