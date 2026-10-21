@@ -100,6 +100,8 @@ export function TpoRoundDriveDayReadOnly({
   const [gateCandidates,setGateCandidates]=useState<RoundRow[]>([]);
   const [gateTarget,setGateTarget]=useState<RoundRow|null>(null);
   const [gateBusy,setGateBusy]=useState(false);
+  const lastSnapshotAt=useRef(Date.now());
+  const [staleSnapshot,setStaleSnapshot]=useState(false);
   const [roomBusy,setRoomBusy]=useState<string|null>(null);
   const inFlight=useRef(false);
   const [pasteOpen,setPasteOpen]=useState(false);
@@ -107,10 +109,17 @@ export function TpoRoundDriveDayReadOnly({
   const [pasteBusy,setPasteBusy]=useState(false);
   const [pasteFeedback,setPasteFeedback]=useState("");
   const [pasteFailure,setPasteFailure]=useState("");
+  // A failed route refresh leaves the last rendered roster on screen.
+  // Keep it visible but disclose when the last successful snapshot is old.
+  useEffect(()=>{
+    lastSnapshotAt.current=Date.now();
+    setStaleSnapshot(false);
+  },[data]);
   // Keep the operator's roster current while preserving draft gate and paste
   // entries; React refresh does not reset these controlled inputs.
   useEffect(()=>{
     const timer=window.setInterval(()=>{
+      if(Date.now()-lastSnapshotAt.current>60_000)setStaleSnapshot(true);
       if(!inFlight.current&&!pasteOpen&&document.visibilityState==="visible")
         router.refresh();
     },20_000);

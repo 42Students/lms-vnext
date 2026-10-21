@@ -27,6 +27,11 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
  const raw=Object.fromEntries(Object.entries(q).filter(([,v])=>typeof v==="string")) as Record<string,string>;
  const exportQuery=new URLSearchParams(raw).toString();
  const total=Math.max(1,data.totalApplications);
+ const cumulative=data.cumulativeTotals;
+ const comparisonStage:Partial<Record<(typeof order)[number],(typeof order)[number]>>={
+  SHORTLISTED:"APPLIED",ASSESSMENT:"SHORTLISTED",INTERVIEW:"ASSESSMENT",
+  OFFERED:"INTERVIEW",HIRED:"OFFERED",
+ };
  return <div className="min-w-0 space-y-4">
   <section className="min-w-0 space-y-4 border-b border-border pb-4">
    <div className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between">
@@ -87,27 +92,29 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
     </section>
   </section>
   <section className="min-w-0 space-y-4 border-b border-border pb-4">
-   <h2 className="text-lg font-semibold">Hiring Funnel</h2>
+   <h2 className="text-lg font-semibold">Hiring Funnel · observed progress</h2>
    {data.totalApplications===0?<div className="space-y-2">
     <p>No data for the selected filters</p>
     <Link href={collegeHiringAnalyticsHref({seasonId:selectedSeasonId??undefined,jobId:selectedJobId??undefined})}
      className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Clear filters</Link>
    </div>:<div className="space-y-3">
-    {order.map((stage,index)=><div key={stage} className={reportStyles.chartRow}>
+    {order.map(stage=><div key={stage} className={reportStyles.chartRow}>
       <div className="min-w-0 space-y-1">
         <span className={reportStyles.label}>{label(stage)}</span>
-        <span className="block text-xs tabular-nums text-body" title="Current stage count relative to the preceding stage, not a historical conversion rate">
-          {index===0?"100% of applied":(data.totals[order[index-1]!]??0)>0
-            ? Math.round(100*(data.totals[stage]??0)/(data.totals[order[index-1]!]??1))+"% vs "+label(order[index-1]!)
-            : "—"}
+        <span className="block text-xs tabular-nums text-body" title="Ever observed in this stage, from the selected applications and recorded transition history">
+          {stage==="APPLIED"?"100% of applied":comparisonStage[stage]&&
+           (cumulative[comparisonStage[stage]!]??0)>0
+            ?Math.round(100*(cumulative[stage]??0)/(cumulative[comparisonStage[stage]!]??1))+
+              "% vs observed "+label(comparisonStage[stage]!)
+            :Math.round(100*(cumulative[stage]??0)/total)+"% of applications"}
         </span>
       </div>
       <MetricBar label={label(stage)} size="default" className={reportStyles.track}
-       value={data.totals[stage]??0} maximum={total} unit="applications" />
-      <span className={reportStyles.value+" tabular-nums"}>{data.totals[stage]??0}</span>
+       value={cumulative[stage]??0} maximum={total} unit="applications" />
+      <span className={reportStyles.value+" tabular-nums"}>{cumulative[stage]??0}</span>
     </div>)}
    </div>}
-   <p className="text-xs text-muted-foreground leading-5">Counts show current pipeline stages, not cumulative conversion. A candidate can occupy only one current stage.</p>
+   <p className="text-xs text-muted-foreground leading-5">The status tiles above count one current stage per application. This chart counts an application once in each stage recorded in its current state or saved stage history. Missing imported transitions are not guessed; skipped stages and rejected/withdrawn paths may not form a continuous conversion chain.</p>
   </section>
   <section className="min-w-0 space-y-4 border-b border-border pb-4">
    <h2 className="text-lg font-semibold">Company-wise Hiring Report</h2>
