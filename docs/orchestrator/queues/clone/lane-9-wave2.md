@@ -54,7 +54,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_messaging_receipt-history-service.ts.md` (edit src/modules/messaging/receipt-history-service.ts; 12 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_assignment-submission-control.tsx.md` (edit src/components/courses/assignment-submission-control.tsx; 11 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_college-lesson-reorder-actions.tsx.md` (edit src/components/courses/college-lesson-reorder-actions.tsx; 11 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_app_api_courses_deliveries_deliveryId_discussions_route.ts.md` (edit src/app/api/courses/deliveries/[deliveryId]/discussions/route.ts; 11 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_app_api_courses_deliveries_deliveryId_discussions_route.ts.md` (edit src/app/api/courses/deliveries/[deliveryId]/discussions/route.ts; 11 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_app_api_courses_lesson-contents_route.ts.md` (edit src/app/api/courses/lesson-contents/route.ts; 10 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_messaging_model.ts.md` (edit src/modules/messaging/model.ts; 10 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_quiz-service.ts.md` (edit src/modules/courses/quiz-service.ts; 9 findings; best P2)
