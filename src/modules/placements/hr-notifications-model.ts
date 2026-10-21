@@ -4,7 +4,26 @@ export const hrNotificationsQuerySchema=z.strictObject({
   page:z.coerce.number().int().min(1).max(10000).default(1),
   q:z.string().trim().max(120).default(""),
 });
-export const HR_NOTIFICATION_EVENTS=["placements.job.published","placements.job.closed"] as const;
+/** Only known placement-job scoped activity types enter the recruiter inbox.
+ * Private learner/application activity is deliberately excluded.
+ * Event subjects still need to match an authorized employer job.
+ */
+export const HR_NOTIFICATION_EVENTS=[
+ "placements.job.published","placements.job.closed","placements.job.cancelled",
+ "placements.job.published_edited","placements.round.completed",
+ "placements.result.applied","placements.request.decided",
+ "placements.offer.responded",
+] as const;
+const HR_EVENT_LABELS:Record<(typeof HR_NOTIFICATION_EVENTS)[number],string>={
+ "placements.job.published":"Drive published",
+ "placements.job.closed":"Drive closed",
+ "placements.job.cancelled":"A drive was cancelled",
+ "placements.job.published_edited":"Your drive was updated",
+ "placements.round.completed":"An interview round was completed",
+ "placements.result.applied":"Round results were applied",
+ "placements.request.decided":"Your drive request was reviewed",
+ "placements.offer.responded":"An offer was answered",
+};
 export type HrNotificationRecord={id:string;subjectId:string;eventType:string;
  createdAt:Date;readAt:Date|null};
 export function projectHrNotifications(rows:readonly HrNotificationRecord[],jobs:readonly {id:string;title:string}[]) {
@@ -13,7 +32,7 @@ export function projectHrNotifications(rows:readonly HrNotificationRecord[],jobs
   Number.isFinite(row.createdAt.getTime())&&
   HR_NOTIFICATION_EVENTS.some(kind=>kind===row.eventType)).map(row=>({
   id:row.id,jobId:row.subjectId,title:names.get(row.subjectId)!,
-  label:row.eventType===HR_NOTIFICATION_EVENTS[0]?"Drive published":"Drive closed",
+  label:HR_EVENT_LABELS[row.eventType as keyof typeof HR_EVENT_LABELS],
   createdAt:row.createdAt,unread:row.readAt===null,
  }));
 }
