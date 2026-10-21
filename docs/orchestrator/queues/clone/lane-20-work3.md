@@ -4,7 +4,7 @@ Packets moved to you from other lanes. Work them AFTER your own queue (lane-20-w
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_placements_jobs_jobId_rounds_roundId_results_page.tsx.md` (edit src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/results/page.tsx; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_placements_jobs_jobId_rounds_roundId_results_page.tsx.md` (edit src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/results/page.tsx; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-academic-import-service.ts.md` (edit src/modules/placements/tpo-academic-import-service.ts; 4 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_modules_bug-tracker_independent-finding-actions-model.ts.md` (edit src/modules/bug-tracker/independent-finding-actions-model.ts; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-13/src_app_api_auth_devices_route.ts.md` (edit src/app/api/auth/devices/route.ts; 2 findings; best P1)

@@ -12,22 +12,33 @@ import {TpoRoundApplyControl} from "@/components/placements/tpo-round-apply-cont
 import {TpoRoundResultsImport} from "@/components/placements/tpo-round-results-import";
 import {TpoBulkRoundResultRecorder} from "@/components/placements/tpo-bulk-round-result-recorder";
 import {hasMembershipRole} from "@/modules/identity/context";
+import {z} from "zod";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoRoundResultTable} from "@/modules/placements/tpo-round-result-table-service";
 import {tpoRoundResultViewSchema,filterTpoRoundResultRows} from "@/modules/placements/tpo-round-result-table-model";
-type Props={params:Promise<{jobId:string;roundId:string}>;searchParams:Promise<{q?:string|string[];status?:string|string[]}>};
+type Props={params:Promise<{jobId:string;roundId:string}>;searchParams:Promise<{q?:string|string[];status?:string|string[];page?:string|string[]}>};
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function TpoRoundResultTablePage({params,searchParams}:Props){
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if(!context.membership||
+   !(hasMembershipRole(context,"TPO")||hasMembershipRole(context,"COLLEGE_ADMIN")))redirect("/dashboard");
  const {jobId,roundId}=await params;
  const raw=await searchParams;
  const selected=tpoRoundResultViewSchema.safeParse({q:first(raw.q),status:first(raw.status)});
- if(!selected.success)return <Alert tone="error"><p>Invalid round result filters. No learner data loaded.</p><Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(roundId)+"/results"} className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link></Alert>;
+ const requestedPage=z.coerce.number().int().min(1).max(10000).safeParse(first(raw.page)??"1");
+ if(!selected.success||!requestedPage.success)return <Alert tone="error"><p>Invalid round result filters. No learner data loaded.</p><Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(roundId)+"/results"} className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link></Alert>;
  let data:Awaited<ReturnType<typeof getTpoRoundResultTable>>;
- try{data=await getTpoRoundResultTable(context,{jobId,roundId});}
+ try{data=await getTpoRoundResultTable(context,{jobId,roundId,page:requestedPage.data!});}
  catch(error){if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_ROUND_NOT_FOUND")notFound();throw error;}
  const visibleRows=filterTpoRoundResultRows(data.rows,selected.data);
+ const pageHref=(number:number)=>{
+  const params=new URLSearchParams();
+  if(selected.data.q)params.set("q",selected.data.q);
+  if(selected.data.status!=="ALL")params.set("status",selected.data.status);
+  params.set("page",String(number));
+  return "/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+
+   encodeURIComponent(roundId)+"/results?"+params.toString();
+ };
  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
   <PageHeader eyebrow="TPO · Round results" title={data.round.name}
    description={data.round.jobTitle+" · Stage outcomes for eligible shortlisted submitted applications."}
@@ -43,12 +54,12 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
       Bulk stage round results <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
     </summary>
     <div className="pt-3">
-  {!data.truncated?<TpoBulkRoundResultRecorder roundId={roundId}
+  <p className="mb-3 text-sm text-body">Stage results for this roster page (up to 500 learners). Move to another page for the remaining candidates.</p>
+  <TpoBulkRoundResultRecorder roundId={roundId}
     round={{kind:data.round.kind,status:data.round.status}}
     rows={data.rows.map(row=>({applicationId:row.applicationId,
       displayName:row.student??"Learner",rollNumber:row.rollNumber,
-      resultStatus:row.resultStatus}))}/>:
-   <Alert tone="warning">Bulk staging is unavailable when the eligible roster exceeds 500. Use the reviewed result-import workflow instead.</Alert>}
+      resultStatus:row.resultStatus}))}/>
     </div>
   </details>
   <details className="group min-w-0 border-b border-border pb-4">
@@ -60,7 +71,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
     </div>
   </details>
   <p className="text-sm text-body leading-[22px]">Staging results records a version and immutable audit. Applying staged outcomes to candidate progression requires a separate confirmed action. Applied outcomes are read-only here.</p>
-  {data.truncated?<Alert tone="warning">Source capped at 500 application records; counts may be incomplete.</Alert>:null}
+  {data.truncated?<Alert tone="info">Showing roster page {data.page} of {data.totalPages}; counts above include every eligible application. Filter and stage within each page.</Alert>:null}
   <form method="get" className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-end" aria-label="Filter results">
    <label className="min-w-0 flex-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Student or role
     <Input name="q" type="search" maxLength={100} defaultValue={selected.data.q} className="mt-[6px] block min-h-11 w-full border border-border px-3 md:min-h-9"/>
@@ -72,7 +83,14 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
    </label>
    <Button type="submit" className="min-h-11 w-full rounded-[var(--lms-control-radius)] bg-primary px-4 text-primary-foreground sm:w-auto md:min-h-9">Filter</Button>
   </form>
-  <p role="status" className="text-sm text-body leading-[1.6]">{visibleRows.length} of {data.rows.length} eligible applications match these filters. Totals above describe the full round.</p>
+  <p role="status" className="text-sm text-body leading-[1.6]">{visibleRows.length} of {data.rows.length} applications on this page match these filters. {data.counts.eligible} eligible applications across all pages.</p>
+  <nav aria-label="Eligible applicant pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
+    <span>Page {data.page} of {data.totalPages}</span>
+    <div className="flex gap-4">
+      {data.page>1?<Link href={pageHref(data.page-1)} className="font-semibold text-link underline">← Previous 500</Link>:null}
+      {data.hasNext?<Link href={pageHref(data.page+1)} className="font-semibold text-link underline">Next 500 →</Link>:null}
+    </div>
+  </nav>
   {visibleRows.length===0?<EmptyState title="No eligible shortlisted submitted applicants match this round result filter."/>:
    <section className="min-w-0 divide-y divide-border border-y border-border" aria-label="Round result entries">
     {visibleRows.map(row=><article key={row.applicationId} className="min-w-0 py-[var(--lms-space-4)]">

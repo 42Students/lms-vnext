@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,ne} from "drizzle-orm";
+import {and,eq,ne,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,learnerProfiles,placementApplications,placementApplicationScreenings,
  placementJobRoleOptions,placementJobRounds,placementJobs,placementRoundResults,users} from "@/db/schema";
@@ -39,11 +39,35 @@ export async function getTpoRoundResultTable(context:RequestContext,raw:unknown)
   eq(placementRoundResults.applicationId,placementApplications.id),
   eq(placementRoundResults.roundId,scope.id),
   ne(placementRoundResults.status,"SUPERSEDED")))
- .where(eq(placementApplications.jobId,scope.jobId))
+ .where(and(eq(placementApplications.jobId,scope.jobId),
+   eq(placementApplications.status,"SUBMITTED"),
+   eq(placementApplicationScreenings.status,"SHORTLISTED")))
  .orderBy(placementApplications.submittedAt,placementApplications.id)
- .limit(501);
+ .limit(501).offset((input.page-1)*500);
+ // Full scoped counts are independent of the displayed 500-row page. In
+ // particular, eligible candidates beyond the first page remain accessible.
+ const [totals]=await db.select({
+  eligible:sql<number>`count(distinct ${placementApplications.id})::int`,
+  staged:sql<number>`count(distinct ${placementApplications.id}) filter (where ${placementRoundResults.status}='STAGED')::int`,
+  applied:sql<number>`count(distinct ${placementApplications.id}) filter (where ${placementRoundResults.status}='APPLIED')::int`,
+  remaining:sql<number>`count(distinct ${placementApplications.id}) filter (where ${placementRoundResults.id} is null)::int`,
+ }).from(placementApplications)
+ .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
+  eq(collegeMemberships.collegeId,collegeId)))
+ .innerJoin(placementJobRoleOptions,and(eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
+  eq(placementJobRoleOptions.jobId,scope.jobId)))
+ .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
+ .leftJoin(placementRoundResults,and(eq(placementRoundResults.applicationId,placementApplications.id),
+  eq(placementRoundResults.roundId,scope.id),ne(placementRoundResults.status,"SUPERSEDED")))
+ .where(and(eq(placementApplications.jobId,scope.jobId),
+  eq(placementApplications.status,"SUBMITTED"),
+  eq(placementApplicationScreenings.status,"SHORTLISTED")));
  const unique=new Map<string,RoundResultEntry>();
  for(const row of rows.slice(0,500))unique.set(row.applicationId,row);
+ const totalEligible=totals?.eligible??0;
  return {round:scope,...projectTpoRoundResultTable([...unique.values()],scope),
-  truncated:rows.length>500};
+  counts:{eligible:totalEligible,staged:totals?.staged??0,
+   applied:totals?.applied??0,remaining:totals?.remaining??0},
+  page:input.page,totalPages:Math.max(1,Math.ceil(totalEligible/500)),
+  truncated:totalEligible>500,hasNext:input.page*500<totalEligible};
 }
