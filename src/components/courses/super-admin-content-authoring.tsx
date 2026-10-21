@@ -21,7 +21,7 @@ export function SuperAdminContentAuthoring({kind,lessons,sections=[],allowVideoU
 }){
  const router=useRouter();
  const [resourceOpen,setResourceOpen]=useState(false);
- const [videoMode,setVideoMode]=useState<"UPLOAD"|"YOUTUBE">("UPLOAD");
+ const [videoMode,setVideoMode]=useState<"UPLOAD"|"YOUTUBE">(allowVideoUpload?"UPLOAD":"YOUTUBE");
  const [offeringId,setOfferingId]=useState(lessons[0]?.offeringId??"");
  const [lessonId,setLessonId]=useState(lessons[0]?.id??"");
  const [sectionId,setSectionId]=useState("");
