@@ -36,15 +36,30 @@ export async function listHrNotifications(context:RequestContext,raw:unknown={})
  const effectivePage=clampHrInboxPage(query.page,selectedTotal);
  const bounds=hrInboxPageBounds(effectivePage,selectedTotal);
  const rows=jobIds.length?await db.select({
-  id:inAppNotifications.id,createdAt:inAppNotifications.createdAt,
+  id:inAppNotifications.id,createdAt:activityEvents.occurredAt,
   readAt:inAppNotifications.readAt,subjectId:activityEvents.subjectId,
   eventType:activityEvents.eventType,
+  eventSummary:activityEvents.summary,
+  eventSubjectLabel:activityEvents.subjectLabel,
  }).from(inAppNotifications).innerJoin(activityEvents,eq(activityEvents.id,inAppNotifications.eventId))
  .where(query.unreadOnly==="true"?and(scope,isNull(inAppNotifications.readAt)):scope)
- .orderBy(desc(inAppNotifications.createdAt),desc(inAppNotifications.id))
+ .orderBy(desc(activityEvents.occurredAt),desc(inAppNotifications.id))
  .limit(HR_INBOX_PAGE_SIZE).offset((effectivePage-1)*HR_INBOX_PAGE_SIZE):[];
  return {status:"READY" as const,choices:grants,collegeId,
-  rows:projectHrNotifications(rows,jobs),
+  rows:projectHrNotifications(rows,jobs).map(row=>{
+    const source=rows.find(item=>item.id===row.id);
+    const summary=source?.eventSummary??"";
+    const type=source?.eventType??"";
+    const isInterview=type.includes("interview")||type.includes("round");
+    return {...row,
+      category:"JOB" as const,notificationType:isInterview?"INTERVIEW" as const:"JOB" as const,
+      eventAt:source?.createdAt??row.createdAt,
+      eventSummary:summary.slice(0,200),
+      roundName:isInterview?(source?.eventSubjectLabel??null):null,
+      // Learner-only interview notifications remain in their own inbox,
+      // never copied into the recruiter feed across recipient boundaries.
+    };
+  }),
   unread,total,truncated:bounds.pages>effectivePage,
   page:effectivePage,pages:bounds.pages,first:bounds.first,last:bounds.last};
 }
