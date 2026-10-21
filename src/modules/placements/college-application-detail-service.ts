@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,desc,eq,inArray} from "drizzle-orm";
+import {and,asc,desc,eq,gt,inArray} from "drizzle-orm";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
@@ -11,6 +11,7 @@ import {activityEvents,collegeMemberships,learnerProfiles,placementApplications,
  placementApplicationStatusHistory,placementJobRoleOptions,placementJobs,
  placementJobRounds,placementOffers,users} from "@/db/schema";
 import {placementApplicationNotes} from "@/db/schema/placement-application-notes";
+import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
 import {placementCollegeApplicationStages,placementCollegeApplicationStageHistory}
  from "@/db/schema/placement-college-application-stages";
 import {hasMembershipRole,isSuperAdmin,type RequestContext} from "@/modules/identity/context";
@@ -48,6 +49,75 @@ async function scoped(ctx:RequestContext,rawJobId:unknown,rawId:unknown){
  if(!application)throw Error("Application not found in this college drive");
  return {collegeId,jobId,application};
 }
+/** All-job, college-scoped learner summary backing legacy AdminJobController.
+ * The caller must have a selected college, and both membership and each job
+ * are filtered by that college. Future interview slots are read separately
+ * and joined by application ID, not by a cross-tenant learner email.
+ */
+export async function getCollegeLearnerPlacementSummary(
+ ctx:RequestContext,rawMembershipId:unknown,
+){
+ const collegeId=await requireCollegePlacementAdmin(ctx);
+ const membershipId=uuid.parse(rawMembershipId);
+ const db=getDb();
+ const [member]=await db.select({id:collegeMemberships.id})
+  .from(collegeMemberships).where(and(
+   eq(collegeMemberships.id,membershipId),
+   eq(collegeMemberships.collegeId,collegeId))).limit(1);
+ if(!member)throw Error("Learner not found in this college");
+ const portfolio=await db.select({
+  id:placementApplications.id,jobId:placementApplications.jobId,
+  job:placementJobs.title,role:placementJobRoleOptions.title,
+  status:placementApplications.status,
+  submittedAt:placementApplications.submittedAt,
+ }).from(placementApplications)
+  .innerJoin(placementJobs,and(eq(placementJobs.id,placementApplications.jobId),
+   eq(placementJobs.collegeId,collegeId)))
+  .innerJoin(placementJobRoleOptions,
+   eq(placementJobRoleOptions.id,placementApplications.roleOptionId))
+  .where(eq(placementApplications.membershipId,membershipId))
+  .orderBy(desc(placementApplications.submittedAt),desc(placementApplications.id))
+  .limit(501);
+ const applications=portfolio.slice(0,500);
+ if(!applications.length)
+  return {membershipId,applications:[],hasMore:false};
+ const upcoming=await db.select({
+  applicationId:placementRoundCandidateSlots.applicationId,
+  slotId:placementRoundCandidateSlots.id,
+  startsAt:placementRoundCandidateSlots.startsAt,
+  endsAt:placementRoundCandidateSlots.endsAt,
+  room:placementRoundCandidateSlots.room,
+  round:placementJobRounds.name,
+ }).from(placementRoundCandidateSlots)
+  .innerJoin(placementApplications,and(
+   eq(placementApplications.id,placementRoundCandidateSlots.applicationId),
+   eq(placementApplications.membershipId,membershipId)))
+  .innerJoin(placementJobs,and(
+   eq(placementJobs.id,placementApplications.jobId),
+   eq(placementJobs.collegeId,collegeId),
+   eq(placementJobs.id,placementRoundCandidateSlots.jobId)))
+  .innerJoin(placementJobRounds,and(
+   eq(placementJobRounds.id,placementRoundCandidateSlots.roundId),
+   eq(placementJobRounds.jobId,placementJobs.id),
+   eq(placementJobRounds.kind,"INTERVIEW")))
+  .where(and(
+   inArray(placementRoundCandidateSlots.applicationId,applications.map(row=>row.id)),
+   eq(placementRoundCandidateSlots.status,"BOOKED"),
+   gt(placementRoundCandidateSlots.startsAt,new Date())))
+  .orderBy(asc(placementRoundCandidateSlots.startsAt),asc(placementRoundCandidateSlots.id))
+  .limit(501);
+ const nextByApplication=new Map<string,(typeof upcoming)[number]>();
+ for(const slot of upcoming)if(slot.applicationId&&!nextByApplication.has(slot.applicationId))
+  nextByApplication.set(slot.applicationId,slot);
+ return {
+  membershipId,hasMore:portfolio.length>500,upcomingTruncated:upcoming.length>500,
+  applications:applications.map(row=>({
+   ...row,
+   nextInterview:nextByApplication.get(row.id)??null,
+  })),
+ };
+}
+
 /** History page is 0-based for the backend-compatible status-history reader.
  * Every date tie is ordered by immutable row UUID; pages preserve ASC legacy
  * sequence without silently truncating after the first hundred events. */
@@ -56,6 +126,7 @@ export async function getCollegeApplicationDetail(
 ){
  const historyPage=z.coerce.number().int().min(0).max(100000).parse(rawHistoryPage);
  const {application,jobId}=await scoped(ctx,job,id);
+ const learnerPortfolio=await getCollegeLearnerPlacementSummary(ctx,application.membershipId);
  const db=getDb();
  const [screening,history,stage,notes,rounds,offers]=await Promise.all([
   db.select().from(placementApplicationScreenings)
@@ -125,7 +196,7 @@ export async function getCollegeApplicationDetail(
  const rejectionReason=stageHistory.filter(row=>row.to==="REJECTED").at(-1)?.reason??
     screeningHistory.filter(row=>row.to==="REJECTED").at(-1)?.reason??null;
  const latestNote=notes[0]??null;
- return {application:{...application,rejectionReason},
+ return {application:{...application,rejectionReason},learnerPortfolio,
   screening:screening[0]??null,
   stage:stage[0]?.stage??null,stageHistory:stageHistory.slice(0,100),
   screeningHistory:screeningHistory.slice(0,100),
