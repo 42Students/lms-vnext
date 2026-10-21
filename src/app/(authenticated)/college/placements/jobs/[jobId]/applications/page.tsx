@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { z } from "zod";
+import { AuthorizationError } from "@/modules/permissions/policy";
+import { getPlacementJob } from "@/modules/placements/job-service";
+import { Alert } from "@/components/ui/alert";
+import { CollegeApplicationDependentFilters } from "@/components/placements/college-application-dependent-filters";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -21,18 +25,50 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
   searchParams: Promise<Record<string,string|string[]|undefined>>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) redirect("/dashboard");
+  if (!context.membership) return <div className="min-w-0 space-y-5">
+    <PageHeader title="Applications" />
+    <ErrorState title="Admin not assigned to a college"
+      description="Your account has no current college assignment. Contact your Super Admin to restore College Admin access." />
+  </div>;
   const {jobId} = await params;
+  if (!z.uuid().safeParse(jobId).success) return <div className="min-w-0 space-y-5">
+    <PageHeader title="Applications" />
+    <ErrorState title="Invalid job ID"
+      description="This placement drive link is invalid. Return to the college drive list and choose a valid drive."
+      action={<Link href="/college/placements/jobs" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Back to drives</Link>} />
+  </div>;
   const query = driveApplicationsParams(await searchParams);
   if (!query) return <div className="min-w-0 space-y-5">
     <PageHeader title="Applications" />
     <ErrorState title="Invalid applicant filters" description="The requested search, status, screening or page is invalid."
       action={<Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/applications`} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>}/>
   </div>;
-  const [data,filters] = await Promise.all([
+  // Independent reads: a failed register does not discard an available job header,
+  // and failed selector options must never hide a usable applicant list.
+  const [pipelineResult,filterResult,jobResult] = await Promise.allSettled([
     getCollegeApplicationPipeline(context,jobId,query),
     listCollegeDriveApplicationFilters(context),
-  ]);
+    getPlacementJob(context,jobId),
+  ] as const);
+  for (const result of [pipelineResult,filterResult,jobResult]) {
+    if (result.status==="rejected" && result.reason instanceof AuthorizationError) {
+      throw result.reason;
+    }
+  }
+  const job = jobResult.status==="fulfilled" ? jobResult.value : null;
+  const filters = filterResult.status==="fulfilled" ? filterResult.value :
+    {departments:[],programs:[],cohorts:[]};
+  if (pipelineResult.status==="rejected") return <div className="min-w-0 space-y-5">
+    <PageHeader title={"Applications"+(job ? " · "+job.title : "")}
+      actions={<Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/overview`} className="text-link underline">Drive overview</Link>} />
+    {job ? <Alert tone="info">Drive: {job.title} · {job.status}. The drive details remain available even though its applicant register could not be loaded.</Alert> : null}
+    <ErrorState title="Applications could not be loaded"
+      description="The applicant register could not be refreshed. No application data has been changed. Retry the same scoped view."
+      action={<Link href={driveApplicationsHref(jobId,query)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Retry applications</Link>} />
+  </div>;
+  const data = pipelineResult.value;
+  const assessmentUrl = job?.legacyPostingDetails?.assessmentUrl;
+  const safeAssessmentUrl = assessmentUrl && (assessmentUrl.startsWith("https://") || assessmentUrl.startsWith("http://")) ? assessmentUrl : null;
   const formatter = new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
   const columns:DataTableColumn<(typeof data.items)[number]>[]=[
     {key:"student",header:"Student",mobilePriority:"primary",cell:row=>row.name??"Unnamed learner"},
@@ -48,6 +84,27 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
     <PageHeader title={"Applications · " + data.drive.title}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
       actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-link underline min-h-11 md:min-h-[var(--lms-control-height)] inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Drive overview</Link>} />
+    <section aria-label="Drive and application summary" className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
+      <div className="flex flex-wrap items-center gap-3 text-[var(--lms-font-sm)]">
+        <strong className="font-semibold">{job?.title ?? data.drive.title}</strong>
+        {job ? <StatusBadge tone={job.status==="PUBLISHED"?"success":"neutral"}>{job.status}</StatusBadge> : null}
+        {job?.openings != null ? <span>{job.openings} advertised opening(s)</span> : null}
+      </div>
+      <div className="flex flex-wrap gap-2 text-[var(--lms-font-sm)]">
+        <span className="font-semibold">Pipeline:</span>
+        {Object.entries(data.stageCounts).map(([stage,count])=>
+          <span key={stage} className="rounded-md border border-[var(--lms-canvas-border)] px-2 py-1">
+            {stage}: {count.toLocaleString("en-IN")}
+          </span>)}
+      </div>
+    </section>
+    {safeAssessmentUrl ? <Alert tone="info" title="Assessment link">
+      <a href={safeAssessmentUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-link underline underline-offset-4">Open the drive assessment</a>
+    </Alert> : <Alert tone="info">No assessment URL is recorded for this drive.</Alert>}
+    {filterResult.status==="rejected" ? <Alert tone="warning">
+      Department, program and batch choices could not be refreshed. Existing filters and the applicant register are still available.
+      {" "}<Link href={driveApplicationsHref(jobId,query)} className="font-semibold underline underline-offset-4">Retry filter choices</Link>
+    </Alert> : null}
     <form method="get" role="search" aria-label="Application filters" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,2fr)_auto]">
       <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, email, roll or role
         <Input type="search" name="q" defaultValue={query.q} maxLength={100} />
@@ -75,30 +132,9 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
           {["ALL","INTERNAL","EXTERNAL"].map(item=><option key={item} value={item}>{item==="ALL"?"All sources":item}</option>)}
         </Select>
       </label>
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
-        <Select name="departmentId" defaultValue={query.departmentId??""} >
-          <option value="">All departments</option>
-          {query.departmentId&&!filters.departments.some(item=>item.id===query.departmentId)&&
-            <option value={query.departmentId}>Selected department</option>}
-          {filters.departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
-        </Select>
-      </label>
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
-        <Select name="programId" defaultValue={query.programId??""} >
-          <option value="">All programs</option>
-          {query.programId&&!filters.programs.some(item=>item.id===query.programId)&&
-            <option value={query.programId}>Selected program</option>}
-          {filters.programs.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
-        </Select>
-      </label>
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
-        <Select name="cohortId" defaultValue={query.cohortId??""} >
-          <option value="">All batches</option>
-          {query.cohortId&&!filters.cohorts.some(item=>item.id===query.cohortId)&&
-            <option value={query.cohortId}>Selected batch</option>}
-          {filters.cohorts.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
-        </Select>
-      </label>
+      <CollegeApplicationDependentFilters key={[query.departmentId,query.programId,query.cohortId].join(":")}
+        initial={{departmentId:query.departmentId,programId:query.programId,cohortId:query.cohortId}}
+        departments={filters.departments} programs={filters.programs} cohorts={filters.cohorts} />
         </div>
       </Disclosure>
     </form>
