@@ -20,6 +20,7 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
  const [error,setError]=useState<string|null>(null);
  const [notice,setNotice]=useState<string|null>(null);
  const [loading,setLoading]=useState(true);
+ const [openingMaterialId,setOpeningMaterialId]=useState<string|null>(null);
  const uri="/api/courses/lesson-contents/"+encodeURIComponent(contentId)+"/materials"+
   (deliveryId?"?deliveryId="+encodeURIComponent(deliveryId):"");
  const [prevUri,setPrevUri]=useState(uri);
@@ -45,6 +46,35 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
   }).finally(()=>{if(!controller.signal.aborted&&currentUriRef.current===uri)setLoading(false);});
   return ()=>controller.abort();
  },[uri]);
+ async function openFile(materialId:string){
+  if(openingMaterialId)return;
+  setOpeningMaterialId(materialId);setError(null);
+  try{
+   const grantUrl="/api/courses/lesson-contents/"+encodeURIComponent(contentId)+
+    "/materials/"+encodeURIComponent(materialId)+"/url"+
+    (deliveryId?"?deliveryId="+encodeURIComponent(deliveryId):"");
+   const response=await fetch(grantUrl,{cache:"no-store",credentials:"same-origin"});
+   if(!response.ok){
+    throw new Error(response.status===503?"Resource storage unavailable. Try again.":
+     response.status===404?"Resource not available.":
+     response.status===409?"The file is not ready. Try again shortly.":
+     "Cannot sign Resource file URL. Try again.");
+   }
+   const data:unknown=await response.json();
+   const parsed=data&&typeof data==="object"&&"data" in data?data.data:null;
+   const signed=parsed&&typeof parsed==="object"&&"url" in parsed?parsed.url:null;
+   if(typeof signed!=="string")throw new Error("Cannot sign Resource file URL. Try again.");
+   const target=new URL(signed);
+   if(target.protocol!=="https:"||target.username||target.password)
+    throw new Error("Cannot sign Resource file URL. Try again.");
+   if(currentUriRef.current===uri)window.location.assign(target.href);
+  }catch(cause){
+   if(currentUriRef.current===uri)
+    setError(cause instanceof Error?cause.message:"Resource storage unavailable. Try again.");
+  }finally{
+   if(currentUriRef.current===uri)setOpeningMaterialId(null);
+  }
+ }
  async function reload(){
   const response=await fetch(uri,{cache:"no-store"});
   if(!response.ok)throw new Error("Could not refresh resource materials.");
@@ -88,9 +118,17 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
      {material.kind==="LINK"&&facultyContentExternalHref("RESOURCE",material.externalUrl)?
       <a href={facultyContentExternalHref("RESOURCE",material.externalUrl)!} target="_blank" rel="noopener noreferrer"
        className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open link</a>:
-      material.kind==="FILE"?<span className="text-xs text-muted-foreground">
-       {material.uploadStatus==="READY"?"File ready; secure download requires a grant":"Checking file"}
-      </span>:null}
+      material.kind==="FILE"?<div className="flex items-center gap-2">
+       {material.uploadStatus==="READY"?
+        <Button size="sm" type="button" variant="secondary"
+         className="min-h-11 md:min-h-9"
+         loading={openingMaterialId===material.id}
+         disabled={busy||openingMaterialId!==null}
+         onClick={()=>void openFile(material.id)}>
+         {openingMaterialId===material.id?"Preparing file…":"Open file"}
+        </Button>:
+        <span className="text-xs text-muted-foreground">Checking file</span>}
+      </div>:null}
     </div>
     {editable&&material.kind==="LINK"?<div className="flex gap-2">
      <Button size="sm" type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={busy}
