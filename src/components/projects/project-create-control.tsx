@@ -7,11 +7,13 @@ import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
+import { useProjectEditorDiscardGuard } from "./project-editor-discard-guard";
 
 export type AssignedProjectTemplateChoice = {
   templateId: string;
@@ -34,9 +36,7 @@ export function CreateProjectControl({
   const router = useRouter();
   const { showToast } = useToast();
   const [open, setOpen] = useState(standalone);
-  const [templateId, setTemplateId] = useState(
-    templates[0]?.templateId ?? "",
-  );
+  const [templateId, setTemplateId] = useState("");
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [summary, setSummary] = useState("");
@@ -45,6 +45,7 @@ export function CreateProjectControl({
   >([]);
   const [mentorMembershipId, setMentorMembershipId] = useState("");
   const [mentorsLoading, setMentorsLoading] = useState(false);
+  const [mentorQuery, setMentorQuery] = useState("");
   const [mentorsError, setMentorsError] = useState<string | null>(null);
   const [classes,setClasses]=useState<{id:string;name:string;code:string}[]>([]);
   const [classesError,setClassesError]=useState(false);
@@ -55,17 +56,28 @@ export function CreateProjectControl({
   const [rosterError,setRosterError]=useState(false);
   const [rosterRetry,setRosterRetry]=useState(0);
   const [learnerMembershipIds,setLearnerMembershipIds]=useState<string[]>([]);
+  const [rosterSearch,setRosterSearch]=useState("");
   const [initialStatus,setInitialStatus]=useState<"PLANNED"|"ACTIVE">("PLANNED");
   const submitLock = useRef(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // A template is chosen explicitly, except when a valid creation link supplies it.
+  useEffect(() => {
+    if (!standalone) return;
+    const requested = new URLSearchParams(window.location.search).get("templateId");
+    if (requested && templates.some(template => template.templateId === requested)) {
+      setTemplateId(requested);
+    }
+  }, [standalone, templates]);
+
   function openDialog() {
-    setTemplateId(templates[0]?.templateId ?? "");
+    setTemplateId("");
     setTitle("");
     setSlug("");
     setSummary("");
     setMentorMembershipId("");
+    setMentorQuery("");setRosterSearch("");
     setSectionId("");setRoster([]);setLearnerMembershipIds([]);setInitialStatus("PLANNED");
     setLoadedRosterSectionId(null);setRosterError(false);setClassesError(false);
     setMentorsError(null);
@@ -78,50 +90,40 @@ export function CreateProjectControl({
   useEffect(() => {
     if (!open) return;
     const controller = new AbortController();
-
-    void fetch(
-      "/api/projects/mentor-candidates?collegeId=" +
-        encodeURIComponent(collegeId) +
-        "&limit=100",
-      { signal: controller.signal },
-    )
-      .then(async (response) => {
-        if (!response.ok) {
-          throw new Error(
-            "Mentor candidates could not be loaded.",
-          );
-        }
-        const body = (await response.json()) as {
-          mentors?: {
-            membershipId: string;
-            displayName: string;
-            email: string;
-          }[];
-        };
-        if (!controller.signal.aborted) setMentors(body.mentors ?? []);
-      })
-      .catch((caught: unknown) => {
-        if (
-          controller.signal.aborted ||
-          (caught instanceof DOMException && caught.name === "AbortError")
-        ) {
-          return;
-        }
-        setMentors([]);
-        setMentorsError(
-          caught instanceof Error
-            ? caught.message
-            : "Mentor candidates could not be loaded.",
-        );
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) {
-          setMentorsLoading(false);
-        }
-      });
-
-    return () => controller.abort();
-  }, [open, collegeId]);
+    setMentorsLoading(true);
+    setMentorsError(null);
+    // Search the college's whole mentor directory rather than requiring a
+    // candidate to appear in the first hundred alphabetically.
+    const timer = setTimeout(() => {
+      void fetch(
+        "/api/projects/mentor-candidates?collegeId=" +
+          encodeURIComponent(collegeId) + "&q=" + encodeURIComponent(mentorQuery.trim()) +
+          "&limit=100",
+        { signal: controller.signal, cache: "no-store" },
+      )
+        .then(async response => {
+          if (!response.ok) throw new Error("Mentor candidates could not be loaded.");
+          const body = await response.json() as {
+            mentors?: { membershipId: string; displayName: string; email: string }[];
+          };
+          if (controller.signal.aborted) return;
+          const found = body.mentors ?? [];
+          setMentors(previous => {
+            const selected = previous.find(mentor => mentor.membershipId === mentorMembershipId);
+            return selected && !found.some(row => row.membershipId === selected.membershipId)
+              ? [selected, ...found] : found;
+          });
+        })
+        .catch((caught: unknown) => {
+          if (controller.signal.aborted) return;
+          setMentorsError(caught instanceof Error ? caught.message : "Mentor candidates could not be loaded.");
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) setMentorsLoading(false);
+        });
+    }, 400);
+    return () => { clearTimeout(timer); controller.abort(); };
+  }, [open, collegeId, mentorQuery, mentorMembershipId]);
 
   useEffect(()=>{
     if(!open)return;
@@ -152,8 +154,24 @@ export function CreateProjectControl({
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (submitLock.current) return;
+    if (!templateId || !templates.some(item => item.templateId === templateId)) {
+      setError("Select a template to start from its sprint and task plan.");
+      return;
+    }
+    if (!title.trim()) {
+      setError("Title is required");
+      return;
+    }
+    if (title.trim().length > 160) {
+      setError("Title must be 160 characters or fewer");
+      return;
+    }
+    if (learnerMembershipIds.length > 500) {
+      setError("Select no more than 500 learners.");
+      return;
+    }
     if (initialStatus === "ACTIVE" && !mentorMembershipId) {
-      setError("Assign a Mentor before making this Project active.");
+      setError("A mentor is required before a workspace can be Active");
       return;
     }
     // A disabled Submit button is not an authorization or freshness gate:
@@ -188,28 +206,45 @@ export function CreateProjectControl({
           learnerMembershipIds,
           initialStatus,
         },
-      )) as { project: { id: string } };
+      )) as { project?: { id?: string } | null };
 
+      const createdId = result.project?.id;
+      if (!createdId) {
+        showToast({
+          tone: "warning",
+          title: "Workspace created",
+          description: "The workspace was created but could not be opened. Return to the workspaces list.",
+        });
+        setOpen(false);
+        router.push(basePath);
+        router.refresh();
+        return;
+      }
       showToast({
         tone: "success",
-        title: "Project created",
-        description:
-          "The assigned template was materialized into an independent workspace.",
+        title: standalone ? "Workspace created" : "Project created successfully",
       });
       setOpen(false);
-      router.push(`${basePath}/${result.project.id}`);
+      router.push(`${basePath}/${encodeURIComponent(createdId)}`);
       router.refresh();
     } catch (caught) {
       setError(
         caught instanceof Error
           ? caught.message
-          : "Could not create the Project.",
+          : "Failed to create workspace",
       );
     } finally {
       submitLock.current = false;
       setPending(false);
     }
   }
+
+  const dirty = Boolean(templateId || title || slug || summary || mentorMembershipId ||
+    sectionId || learnerMembershipIds.length || initialStatus !== "PLANNED");
+  const discard = useProjectEditorDiscardGuard(open, dirty, pending, () => {
+    setOpen(false);
+    if (standalone) router.push(basePath);
+  });
 
   if (templates.length === 0) {
     return (
@@ -239,6 +274,7 @@ export function CreateProjectControl({
                 setTemplateId(event.target.value)
               }
             >
+              <option value="">Select a template</option>
               {templates.map((template) => (
                 <option
                   key={template.templateId}
@@ -255,11 +291,12 @@ export function CreateProjectControl({
             </span>
             <Input
               required
-              maxLength={200}
+              maxLength={160}
               value={title}
               onChange={(event) => setTitle(event.target.value)}
-              placeholder="Campus placement portal"
+              placeholder="Campus Event Coordination"
             />
+            <span className="mt-1 block text-xs text-muted-foreground">{title.length}/160</span>
           </label>
           <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -296,9 +333,13 @@ export function CreateProjectControl({
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Primary mentor
             </span>
+            <Input className="mb-2" type="search" value={mentorQuery}
+              placeholder="Search mentors by name or email" aria-label="Search mentors"
+              disabled={pending} maxLength={120}
+              onChange={event => setMentorQuery(event.target.value)} />
             <Select
               value={mentorMembershipId}
-              disabled={mentorsLoading}
+              disabled={pending || mentorsLoading}
               onChange={(event) =>
                 setMentorMembershipId(event.target.value)
               }
@@ -333,10 +374,13 @@ export function CreateProjectControl({
             <Select value={initialStatus} onChange={e=>setInitialStatus(e.target.value as "PLANNED"|"ACTIVE")}
               className="w-full">
               <option value="PLANNED">Planned</option>
-              <option value="ACTIVE" disabled={!mentorMembershipId}>Active</option>
+              <option value="ACTIVE">Active</option>
             </Select>
           </label>
-          {!mentorMembershipId?<p className="text-xs text-warning md:col-span-2">This workspace has no mentor.</p>:null}
+          {!mentorMembershipId?<p className="text-xs text-warning md:col-span-2">
+            {initialStatus === "ACTIVE" ? "A mentor is required before a workspace can be Active" :
+              "This workspace has no mentor. A mentor can be assigned later while the workspace is Planned."}
+          </p>:null}
           {sectionId?<section className="min-w-0 border-b border-border pb-4 md:col-span-2">
             <p className="mb-2 text-sm font-semibold text-foreground">Students · {learnerMembershipIds.length} selected</p>
             {rosterError?<p role="alert" className="text-sm text-error">Class roster could not load. <Button variant="ghost" type="button" className="underline" onClick={()=>{setRosterError(false);setRosterRetry(value=>value+1);}}>Try Again</Button></p>:null}
@@ -347,8 +391,13 @@ export function CreateProjectControl({
               <Button variant="ghost" type="button" className="text-primary-text underline"
                 onClick={()=>setLearnerMembershipIds([])}>Clear</Button>
             </div>
+            <Input type="search" value={rosterSearch} maxLength={120}
+              aria-label="Search class learners" placeholder="Search learners by name or roll number"
+              onChange={event => setRosterSearch(event.target.value)} />
             <div tabIndex={0} aria-label="Class learner roster" className="mt-3 max-h-40 min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-              {roster.map(student=><label key={student.membershipId} className="flex min-h-11 min-w-0 items-center gap-2 py-2 text-[13px] leading-5 text-body focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">
+              {roster.filter(student => !rosterSearch.trim() ||
+                (student.displayName + " " + student.rollNumber).toLowerCase()
+                  .includes(rosterSearch.trim().toLowerCase())).map(student=><label key={student.membershipId} className="flex min-h-11 min-w-0 items-center gap-2 py-2 text-[13px] leading-5 text-body focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">
                 <Checkbox checked={learnerMembershipIds.includes(student.membershipId)}
                   onChange={e=>setLearnerMembershipIds(old=>e.target.checked?
                     [...old,student.membershipId]:old.filter(id=>id!==student.membershipId))}/>
@@ -364,9 +413,10 @@ export function CreateProjectControl({
             </p>
           ) : null}
           {error ? (
-            <p role="alert" className="m-0 text-sm font-semibold text-error md:col-span-2">
-              {error}
-            </p>
+            <div role="alert" className="m-0 border-l-2 border-error px-3 py-2 text-sm text-error md:col-span-2">
+              <p className="font-semibold">Project was not created</p>
+              <p className="mt-1">{error}</p>
+            </div>
           ) : null}
           <div className="flex min-w-0 flex-col-reverse gap-2 border-t border-border pt-4 md:col-span-2 md:flex-row md:justify-end">
             <Button
@@ -374,7 +424,7 @@ export function CreateProjectControl({
               variant="secondary"
               className="w-full md:w-auto"
               disabled={pending}
-              onClick={() => standalone ? router.push(basePath) : setOpen(false)}
+              onClick={discard.requestClose}
             >
               Cancel
             </Button>
@@ -408,7 +458,9 @@ export function CreateProjectControl({
       ) : (
         <Dialog
           open={open}
-          onOpenChange={next=>{if(!submitLock.current&&!pending)setOpen(next);}}
+          onOpenChange={next=>{if(pending||submitLock.current)return;
+            if(next)setOpen(true);else discard.requestClose();
+          }}
           dismissible={!pending}
           title="Create workspace"
           description="Create an independent Project workspace from the exact published template version assigned to this college."
@@ -416,6 +468,11 @@ export function CreateProjectControl({
           {form}
         </Dialog>
       )}
+      <ConfirmDialog open={discard.discardOpen} onOpenChange={discard.setDiscardOpen}
+        title="Discard unsaved changes?"
+        description="Leave this form and discard the workspace details you entered?"
+        confirmLabel="Discard changes" pending={pending}
+        onConfirm={discard.confirmDiscard} />
     </>
   );
 }
