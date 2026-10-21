@@ -58,7 +58,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_NEW_docs_audit_gap2_lane-20_project-meeting.md.md` (new; 7 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_NEW_docs_audit_gap2_lane-7_u020-college-admin-workspace-create.md.md` (new; 7 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_project-template-controls.tsx.md` (edit src/components/projects/project-template-controls.tsx; 7 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_mentor-sprint-details-edit.tsx.md` (edit src/components/projects/mentor-sprint-details-edit.tsx; 6 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_mentor-sprint-details-edit.tsx.md` (edit src/components/projects/mentor-sprint-details-edit.tsx; 6 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_learner-project-mobile-filters.tsx.md` (edit src/components/projects/learner-project-mobile-filters.tsx; 6 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_mentor-meeting-history.tsx.md` (edit src/components/projects/mentor-meeting-history.tsx; 6 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_modules_projects_mentor-final-delivery-decision-service.ts.md` (edit src/modules/projects/mentor-final-delivery-decision-service.ts; 6 findings; best P2)

@@ -1,6 +1,6 @@
 "use client";
 
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -36,6 +36,7 @@ export function MentorSprintDetailsEdit({
   const [start,setStart]=useState(originalStart??""),[end,setEnd]=useState(originalEnd??""),
     [due,setDue]=useState(originalDue??"");
   const [pending,setPending]=useState(false);
+  const [lastLoadedVersion,setLastLoadedVersion]=useState(updatedAt);
   const [error,setError]=useState<string|null>(null);
   const changed=title.trim()!==originalTitle||
     (dueLabel.trim()||null)!==(originalDueLabel??null)||
@@ -52,6 +53,19 @@ export function MentorSprintDetailsEdit({
     setStart(originalStart??"");setEnd(originalEnd??"");setDue(originalDue??"");
   }
   const guard=useProjectEditorDiscardGuard(open||confirmOpen,changed,pending,discardDraft);
+  // A server refresh can replace the sprint while the same component instance
+  // remains mounted. Only reseed a closed editor: an open draft must not be
+  // silently overwritten by the refreshed row.
+  useEffect(()=>{
+    if(lastLoadedVersion===updatedAt||open||confirmOpen)return;
+    setTitle(originalTitle);setDueLabel(originalDueLabel??"");
+    setDescription(originalDescription??"");
+    setGoal(originalGoal??"");setDone(originalDone??"");
+    setStart(originalStart??"");setEnd(originalEnd??"");setDue(originalDue??"");
+    setError(null);setLastLoadedVersion(updatedAt);
+  },[updatedAt,lastLoadedVersion,open,confirmOpen,
+    originalTitle,originalDueLabel,originalDescription,originalGoal,originalDone,
+    originalStart,originalEnd,originalDue]);
   function begin() {
     setTitle(originalTitle);setDueLabel(originalDueLabel??"");
     setDescription(originalDescription??"");
@@ -62,6 +76,10 @@ export function MentorSprintDetailsEdit({
   }
   function review(event:FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if(lastLoadedVersion!==updatedAt){
+      setError("This sprint changed since editing began. Close the editor and review the latest version.");
+      return;
+    }
     if(!changed){showToast({tone:"info",title:"No changes to save"});return;}
     if(!title.trim()){setError("Item 1: Title required");return;}
     if(title.trim().length>200){setError("Item 1: Title must be 200 characters or fewer");return;}
@@ -106,11 +124,18 @@ export function MentorSprintDetailsEdit({
     <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Edit sprint details"
       description="Edit sprint goals and dates. Dates are locked once a sprint is active.">
       <form onSubmit={review} className="grid min-w-0 gap-[var(--lms-space-4)]">
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          Sprint title
-          <Input required maxLength={200} value={title}
-            onChange={event=>setTitle(event.target.value)} />
-        </label>
+        <div className="grid gap-3 md:grid-cols-2">
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Sprint title
+            <Input required maxLength={200} value={title} placeholder="e.g. Kickoff & planning"
+              onChange={event=>setTitle(event.target.value)} />
+          </label>
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Due label
+            <Input value={dueLabel} maxLength={160} placeholder="e.g. Week 2"
+              onChange={event=>setDueLabel(event.target.value)}/>
+          </label>
+        </div>
         <div className="grid gap-3 md:grid-cols-2">
           <label className="grid gap-1 text-[13px] font-semibold text-body">
             Sprint key
@@ -121,11 +146,6 @@ export function MentorSprintDetailsEdit({
             <Input value={releaseTitle??"Release"} disabled/>
           </label>
         </div>
-        <label className="grid gap-1 text-[13px] font-semibold text-body">
-          Due label
-          <Input value={dueLabel} maxLength={160} placeholder="e.g. Week 2"
-            onChange={event=>setDueLabel(event.target.value)}/>
-        </label>
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Sprint description (optional)
           <Textarea maxLength={4000} value={description}
@@ -135,7 +155,8 @@ export function MentorSprintDetailsEdit({
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint goal
           <Textarea maxLength={4000} placeholder="One sentence: what this sprint is trying to achieve." value={goal} onChange={e=>setGoal(e.target.value)}/></label>
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">What does done look like?
-          <Textarea maxLength={4000} value={done} onChange={e=>setDone(e.target.value)}/></label>
+          <Textarea maxLength={4000} placeholder="List acceptance criteria for this sprint."
+            value={done} onChange={e=>setDone(e.target.value)}/></label>
         
         <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-3">
           {([{label:"Start Date",value:start,set:setStart},
@@ -177,7 +198,7 @@ export function MentorSprintDetailsEdit({
     </ConfirmDialog>
     <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
       title="Discard sprint changes?"
-      description="You have unsaved project changes. Leave this page and discard them?"
+      description="You have unsaved changes. Leave without saving them?"
       confirmLabel="Discard changes" pending={pending} onConfirm={guard.confirmDiscard}/>
   </>;
 }
