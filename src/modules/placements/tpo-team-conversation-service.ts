@@ -1,6 +1,11 @@
 import "server-only";
 import { and, desc, eq, or, sql } from "drizzle-orm";
 import { z } from "zod";
+import {createTpoInternalThread} from "./tpo-team-internal-create-service";
+import {postTpoInternalMessage} from "./tpo-team-internal-reply-service";
+import {createTpoTeamAsk} from "./tpo-team-asks-service";
+import {internalThreadSchema} from "./tpo-team-internal-model";
+import {tpoTeamAskCreateSchema} from "./tpo-team-asks-model";
 import { getDb } from "@/db/client";
 import {collegeMemberships,users} from "@/db/schema";
 import { placementTpoInternalThreads, placementTpoInternalMessages } from "@/db/schema/tpo-internal";
@@ -14,6 +19,93 @@ import { placementTableExists } from "./staged-tables";
 export const tpoThreadIdSchema = z.string().uuid();
 export const tpoMessagePageSchema = z.coerce.number().int().min(1).max(10000).default(1);
 const PAGE_SIZE = 500;
+
+/** Legacy start/send compatibility: use typed context, mentions and optional ask
+ * rather than trusting any legacy author or college ID. The scoped vNext
+ * writers re-check active team membership and persist audit/notifications.
+ * An optional ask is a separate audited action; a successful message with an
+ * unsuccessful ask is reported as PARTIAL, not rolled back or marked delivered.
+ */
+const legacyTeamSendSchema=z.strictObject({
+ threadId:z.string().uuid().optional(),
+ recipientMembershipId:z.string().uuid().optional(),
+ topic:z.string().trim().min(1).max(200).optional(),
+ body:z.string().trim().min(1).max(4000),
+ mentionMembershipIds:z.array(z.string().uuid()).max(20).default([]),
+ markDecision:z.boolean().default(false),
+ idempotencyKey:z.string().uuid().optional(),
+ ask:z.object({
+  assigneeMembershipId:z.string().uuid(),
+  title:z.string().trim().min(1).max(200),
+  dueAt:z.string().datetime({offset:true}).nullable().default(null),
+  requestKey:z.string().uuid(),
+ }).strict().optional(),
+}).superRefine((input,ctx)=>{
+ if(!input.threadId&&(!input.recipientMembershipId||!input.topic))ctx.addIssue({
+  code:"custom",path:["threadId"],message:"Choose an existing thread or a recipient and topic",
+ });
+ if(input.threadId&&(input.recipientMembershipId||input.topic))ctx.addIssue({
+  code:"custom",path:["threadId"],message:"Do not change recipients through Send",
+ });
+ if(new Set(input.mentionMembershipIds).size!==input.mentionMembershipIds.length)
+  ctx.addIssue({code:"custom",path:["mentionMembershipIds"],message:"Duplicate mention"});
+});
+export async function sendLegacyTpoTeamConversation(context:RequestContext,raw:unknown){
+ const input=legacyTeamSendSchema.parse(raw);
+ const member=context.membership;
+ if(!member||!hasPlacementTeamMembership(context))
+  throw new AuthorizationError("placements.manage");
+ // The visibility read distinguishes absent/inaccessible thread from a
+ // temporarily unregistered table, and never exposes private message bodies
+ // to an unverified caller.
+ const existing=input.threadId?await readTpoInternalConversation(context,input.threadId,1):null;
+ if(existing&&existing.status!=="READY")
+  return {status:existing.status,threadId:input.threadId??null};
+ if(existing?.status==="READY"&&input.mentionMembershipIds.length){
+  const authorized=new Set([
+   existing.thread.startedByMembershipId,existing.thread.invitedMembershipId,
+  ]);
+  // For a group, notifications already fan out to active participants in the
+  // persisted message writer; IDs outside the direct pair require a group
+  // participant membership service rather than an unscoped mention.
+  if(input.mentionMembershipIds.some(id=>!authorized.has(id)))
+   throw new AuthorizationError("placements.manage");
+ }
+ const threadId=input.threadId??(await createTpoInternalThread(context,
+  internalThreadSchema.parse({
+   recipientMembershipId:input.recipientMembershipId,
+   topic:input.topic,firstMessage:undefined,
+   idempotencyKey:input.idempotencyKey,
+  }))).id;
+ const message=await postTpoInternalMessage(context,{
+  threadId,body:input.body,markDecision:input.markDecision,
+  idempotencyKey:input.idempotencyKey,
+ });
+ if(!input.ask)return {status:"READY" as const,threadId,messageId:message.id,
+  notified:message.notified,askId:null};
+ const askInput=tpoTeamAskCreateSchema.parse({...input.ask,threadId});
+ try{
+  const ask=await createTpoTeamAsk(context,askInput);
+  return {status:"READY" as const,threadId,messageId:message.id,
+   notified:message.notified,askId:ask.id};
+ }catch{
+  // Do not repeat the already-committed message on a retry. Keep the real
+  // message receipt visible and direct the user to retry the separate ask.
+  return {status:"PARTIAL" as const,threadId,messageId:message.id,
+   notified:message.notified,askId:null,notice:"Message sent, but the team ask was not created."};
+ }
+}
+
+/** Normalize safe legacy detail states without allowing a failed request to
+ * masquerade as an empty thread or an unavailable deployment. */
+export async function legacyTpoTeamThreadDetail(context:RequestContext,id:string,page=1){
+ try{return await readTpoInternalConversation(context,id,page);}
+ catch(error){
+  if(error instanceof AuthorizationError)return {status:"FORBIDDEN" as const,
+   thread:null,messages:[],page,pages:1};
+  return {status:"FAILED" as const,thread:null,messages:[],page,pages:1};
+ }
+}
 
 /** A recruiter grant is never a credential for private TPO conversations. */
 export async function readTpoInternalConversation(context: RequestContext, rawId: unknown, rawPage: unknown = 1) {

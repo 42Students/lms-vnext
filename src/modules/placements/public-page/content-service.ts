@@ -1,5 +1,6 @@
 import "server-only";
 import {and,eq,sql} from "drizzle-orm";
+import {z} from "zod";
 import {getDb} from "@/db/client";
 import {placementPublicPageContent} from "@/db/schema/placement-public-page-content";
 import {activityEvents} from "@/db/schema/activity";
@@ -20,6 +21,34 @@ export async function getPublicPlacementPageContent(collegeId:string){
  }).from(placementPublicPageContent).where(eq(placementPublicPageContent.collegeId,collegeId)).limit(1);
  return {ready:true as const,about:row?.about??"",
   metricKeys:row?.metricKeys?normalizePublicPlacementMetricKeys(row.metricKeys):DEFAULT_PUBLIC_METRICS,updatedAt:row?.updatedAt.toISOString()??null};
+}
+/** Legacy combined PATCH payload, nullable fields mean keep the old value.
+ * Content publication is a separate persisted workflow in vNext; an enabled
+ * toggle must not be silently accepted by an about/metrics-only writer.
+ * Clearing about uses the empty string, not null.
+ */
+export const legacyPublicPlacementsPatchSchema=z.strictObject({
+ about:z.string().trim().max(4000).nullable().optional(),
+ numbers:z.array(z.string()).max(7).nullable().optional(),
+ enabled:z.boolean().nullable().optional(),
+});
+export async function saveLegacyPublicPlacementsContentPatch(
+ context:RequestContext,raw:unknown,
+){
+ const input=legacyPublicPlacementsPatchSchema.parse(raw);
+ if(input.enabled!==null&&input.enabled!==undefined)
+  throw new Error("PUBLIC_CONTENT_PUBLICATION_SEPARATE");
+ const member=context.membership;
+ if(!member||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+ await requirePlacementManageScope(context,member.collegeId);
+ const previous=await getPublicPlacementPageContent(member.collegeId);
+ if(!previous.ready)throw new Error("PUBLIC_CONTENT_NOT_READY");
+ const metricKeys=input.numbers===null||input.numbers===undefined?
+  previous.metricKeys:normalizePublicPlacementMetricKeys(input.numbers);
+ return saveTpoPublicPlacementContent(context,{
+  about:input.about===null||input.about===undefined?previous.about:input.about.trim(),
+  metricKeys,expectedUpdatedAt:previous.updatedAt,
+ });
 }
 export async function saveTpoPublicPlacementContent(context:RequestContext,raw:unknown){
  const input=publicPlacementContentInput.parse(raw);

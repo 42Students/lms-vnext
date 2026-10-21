@@ -25,6 +25,24 @@ export type LearnerApplicationBrowseFilters = {
 
 const companyNameCollator=new Intl.Collator("en-IN",{numeric:true,sensitivity:"base"});
 
+/** Legacy default keeps backend order; modern optional activity/company/
+ * stage sorting is explicit. A search input appears after five applications.
+ * Returning the first visible ID allows a detail panel to auto-open without
+ * exposing another learner's application.
+ */
+export function legacyApplicationsBrowseState<T extends LearnerApplicationBrowseItem>(
+ items:readonly T[],search="",pageSize=20,page=1,
+){
+ const needle=search.trim().toLocaleLowerCase("en-IN");
+ const matched=items.filter(row=>!needle||
+  (row.companyName+" "+row.jobTitle).trim().toLocaleLowerCase("en-IN").includes(needle));
+ const perPage=Math.max(1,Math.min(100,pageSize));
+ const current=Math.max(1,Math.trunc(page));
+ const visible=matched.slice((current-1)*perPage,current*perPage);
+ return {showSearch:items.length>5,total:matched.length,page:current,
+  totalPages:Math.max(1,Math.ceil(matched.length/perPage)),items:visible,
+  initiallyOpenedApplicationId:visible[0]?.applicationId??null};
+}
 export const DEFAULT_LEARNER_APPLICATION_FILTERS: LearnerApplicationBrowseFilters = {
   search: "", view: "progress", stage: "all", sort: "activity",
 };

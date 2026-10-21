@@ -1,9 +1,23 @@
+"use client";
+import {useState} from "react";
+import {Button} from "@/components/ui/button";
+import {Dialog} from "@/components/ui/dialog";
 import {Badge} from "@/components/ui/badge";
 import {projectTemplateSectionCounts} from "@/modules/projects/project-template-catalogue-model";
 
 type Entry=Record<string,unknown>;
 const object=(value:unknown):Entry=>
  value&&typeof value==="object"&&!Array.isArray(value)?value as Entry:{};
+/** Legacy blueprint JSON may arrive as a string or as an object; preserve
+ * unknown overview/delivery fields for inspectable read-only parity.
+ * Never evaluate code or inject parsed values as HTML. */
+function normalizedBlueprint(value:unknown):Entry{
+ if(typeof value==="string"){
+  if(value.length>300_000)return {};
+  try{return object(JSON.parse(value) as unknown);}catch{return {};}
+ }
+ return object(value);
+}
 const nonblank=(value:unknown):string=>
  typeof value==="string"?value.trim():"";
 function displayLabel(value:unknown):string{
@@ -21,22 +35,20 @@ function tag(value:string,index:number){
 }
 function templateCard(title:string,body:unknown,isOverview=false){
  const rows=rowsFor(body);
- const overview=object(body);
- const allowed=isOverview?([
-  ["goal",overview.goal],
-  ["deliverables",overview.deliverables],
- ] as const).filter(([key,value])=>key==="goal"?Boolean(nonblank(value)):
-  Array.isArray(value)&&value.length>0):[];
+ const overview=normalizedBlueprint(body);
+ const allowed=isOverview?Object.entries(overview)
+   .filter(([,value])=>value!==null&&value!==undefined&&value!==""):[];
  return <section aria-label={title} className="min-w-0 rounded-[8px] border border-[var(--lms-canvas-border)] bg-surface px-4 py-3">
   <h2 className="mb-3 text-base font-semibold text-[var(--lms-heading)]">{title}</h2>
   {isOverview?allowed.length?
    <dl className="min-w-0 overflow-hidden rounded border border-border text-sm">
     {allowed.map(([key,value])=><div key={key} className="grid min-w-0 border-b border-border last:border-b-0 sm:grid-cols-[165px_minmax(0,1fr)]">
-     <dt className="bg-muted px-3 py-2 font-semibold text-body">{key==="goal"?"Goal":"Deliverables"}</dt>
+     <dt className="bg-muted px-3 py-2 font-semibold text-body">{key==="goal"?"Goal":key==="deliverables"?"Deliverables":key}</dt>
      <dd className="min-w-0 px-3 py-2 break-words">
       {Array.isArray(value)?<div className="flex min-w-0 flex-wrap gap-2">
        {value.map((item,index)=>tag(displayLabel(item),index))}
-      </div>:nonblank(value)||"—"}
+      </div>:typeof value==="object"?JSON.stringify(value).slice(0,1200):
+       typeof value==="string"?value:String(value)}
      </dd>
     </div>)}
    </dl>:<p className="text-sm text-muted-foreground">No overview provided.</p>
@@ -53,9 +65,10 @@ function templateCard(title:string,body:unknown,isOverview=false){
  * Legacy name/label/title array rows are descriptive, never executable.
  */
 export function ProjectTemplateView({blueprint}:{blueprint:unknown}){
- const data=object(blueprint);
- const counts=projectTemplateSectionCounts(blueprint);
- const overview=object(data.overview);
+ const [previewOpen,setPreviewOpen]=useState(false);
+ const data=normalizedBlueprint(blueprint);
+ const counts=projectTemplateSectionCounts(data);
+ const overview=normalizedBlueprint(data.overview);
  const additional=object(data.legacy);
  const definitionOfDone=rowsFor(overview.definitionOfDone);
  const releases=rowsFor(data.releases);
@@ -64,6 +77,24 @@ export function ProjectTemplateView({blueprint}:{blueprint:unknown}){
   Object.keys(additional).length||Object.keys(submission).length||
   rowsFor(data.meetings).length||rowsFor(data.activity).length||Object.keys(object(data.delivery)).length);
  return <div className="min-w-0 max-w-full space-y-3">
+  <div className="flex justify-end">
+   <Button type="button" variant="secondary" onClick={()=>setPreviewOpen(true)}>Preview template</Button>
+  </div>
+  <Dialog open={previewOpen} onOpenChange={setPreviewOpen} title="Template preview"
+    description="Review the published template's sprints, tasks and resources."
+    className="!max-w-[820px]"
+    footer={<Button variant="secondary" onClick={()=>setPreviewOpen(false)}>Close</Button>}>
+   <div className="min-w-0 space-y-3">
+    {(["Sprints","Tasks","Resources"] as const).map(title=>
+     <section key={title} aria-label={"Preview "+title} className="rounded border border-border px-3 py-3">
+      <h3 className="mb-2 text-sm font-semibold">{title}</h3>
+      {rowsFor(data[title.toLowerCase()]).length?
+       <div className="flex flex-wrap gap-2">
+        {rowsFor(data[title.toLowerCase()]).slice(0,50).map((item,index)=>tag(displayLabel(item),index))}
+       </div>:<p className="text-sm text-muted-foreground">No {title.toLowerCase()} configured</p>}
+     </section>)}
+   </div>
+  </Dialog>
   <section aria-label="Section counts" className="min-w-0 rounded-[8px] border border-[var(--lms-canvas-border)] bg-surface p-4">
    <h2 className="mb-3 font-semibold text-[var(--lms-heading)]">Section counts</h2>
    <div className="flex min-w-0 flex-wrap gap-2">

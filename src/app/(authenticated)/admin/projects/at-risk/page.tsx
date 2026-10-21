@@ -5,7 +5,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
 import { ProjectAdminAtRiskPage } from "@/components/projects/project-admin-at-risk-page";
-import { EmptyState } from "@/components/ui/empty-state";
+import { Alert } from "@/components/ui/alert";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
@@ -42,10 +42,12 @@ export default async function SuperAdminProjectAtRiskRoute({
           actions={<PageBackLink href="/admin/projects" label="Project workspaces" />}
         />
         <ProjectAdminNav basePath="/admin/projects" active="at-risk" />
-        <EmptyState
-          title="Select a college to continue"
-          description="Choose a college in the header above to see its at-risk projects."
-        />
+        <Alert tone="warning" role="status">
+          Select a college to continue. Choose a college in the header before viewing at-risk projects.
+        </Alert>
+        <div aria-hidden="true" className="pointer-events-none opacity-60">
+          <Skeleton variant="row" count={4} label="Awaiting college scope"/>
+        </div>
       </div>
     );
   }
