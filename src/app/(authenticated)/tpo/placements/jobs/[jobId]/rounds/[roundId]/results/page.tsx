@@ -97,6 +97,11 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
      <div className="mb-3">
       <h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{row.student??"Name unavailable"}</h2>
       <p className="text-sm text-body leading-[22px]">{row.role} · {row.resultStatus??"No result"} · {row.outcome??"No outcome"}</p>
+      <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applicants/"+encodeURIComponent(row.applicationId)+"#applicant-detail"}
+       aria-label={"Open applicant details for "+(row.student??"learner")}
+       className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+       View applicant details →
+      </Link>
      </div>
      {row.editable?<details className="group min-w-0">
       <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">
