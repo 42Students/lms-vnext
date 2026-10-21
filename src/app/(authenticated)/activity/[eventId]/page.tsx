@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { SubjectEventHistory } from "@/components/activity/subject-event-history";
 import { ActivityServiceError } from "@/modules/activity/errors";
 import { getActivityEventDetail } from "@/modules/activity/service";
 import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
@@ -127,6 +128,8 @@ export default async function ActivityDetailPage({
           </pre>
         )}
       </section>
+
+      <SubjectEventHistory context={context} subjectType={event.subjectType} subjectId={event.subjectId}/>
 
       <details className="min-w-0 border-t border-border pt-4">
         <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Legacy audit gap notice</summary>
