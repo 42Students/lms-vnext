@@ -45,7 +45,7 @@ const corporateWebsiteSchema=z.string().trim().max(500).url().refine(
 export const createPlacementCompanyInputSchema = z
   .object({
     collegeId: z.string().uuid(),
-    name: z.string().trim().min(2,"Company name must be between 2 and 150 characters").max(150,"Company name must be between 2 and 150 characters"),
+    name: z.string().trim().min(2,"Company name must be between 2 and 100 characters").max(100,"Company name must be between 2 and 100 characters"),
     websiteUrl: corporateWebsiteSchema.optional(),
     primaryDomain: placementCompanyDomainSchema.optional(),
     isTrusted: z.boolean().optional().default(false),
@@ -307,8 +307,8 @@ const placementJobFieldsSchema = z
       .uuid()
       .optional(),
     companyRelationshipId: z.string().uuid(),
-    title: z.string().trim().min(3, "At least 3 characters").max(100),
-    description: z.string().trim().max(15_000).default(""),
+    title: z.string().trim().min(3, "Job title must be between 3 and 100 characters").max(100,"Job title must be between 3 and 100 characters"),
+    description: z.string().trim().max(5_000,"Job description must not exceed 5000 characters").default(""),
     legacyPostingDetails:placementLegacyPostingDetailsSchema.nullable().optional(),
     employmentType: z.enum(placementEmploymentTypes),
     /** Optional college Job types label, distinct from the normalized employment category. */
