@@ -1,12 +1,17 @@
 import {
   and,
   asc,
+  count,
   eq,
   isNull,
   ne,
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {z} from "zod";
+import {isSuperAdmin} from "@/modules/identity/context";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {
   collegeMemberships,
   colleges,
@@ -17,7 +22,7 @@ import {
   programs,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
-import { requirePermission } from "@/modules/permissions/policy";
+import { requirePermission,AuthorizationError } from "@/modules/permissions/policy";
 import {
   assertDepartmentCanArchive,
   type DepartmentUsage,
@@ -267,7 +272,8 @@ export async function createDepartment(
   const db = getDb();
 
   try {
-    const [created] = await db
+    const [created] = await db.transaction(async tx=>{
+      const [created] = await tx
       .insert(departments)
       .values({
         collegeId: input.collegeId,
@@ -280,6 +286,15 @@ export async function createDepartment(
         createdAt: departments.createdAt,
         updatedAt: departments.updatedAt,
       });
+      if(created)await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_DEPARTMENT_CREATED,
+        collegeId:college.id,organizationId:college.organizationId,
+        subjectType:"department",subjectId:created.id,subjectLabel:created.name,
+        summary:"Department created",
+        metadata:{collegeId:college.id,operation:"CREATE"},
+      });
+      return [created];
+    });
 
     return created;
   } catch (error) {
@@ -309,7 +324,8 @@ export async function renameDepartment(
   const db = getDb();
 
   try {
-    const [updated] = await db
+    const [updated] = await db.transaction(async tx=>{
+      const [updated] = await tx
       .update(departments)
       .set({
         name: input.name,
@@ -328,6 +344,15 @@ export async function renameDepartment(
         createdAt: departments.createdAt,
         updatedAt: departments.updatedAt,
       });
+      if(updated)await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_DEPARTMENT_UPDATED,
+        collegeId:scope.collegeId,organizationId:scope.organizationId,
+        subjectType:"department",subjectId:updated.id,subjectLabel:updated.name,
+        summary:"Department updated",
+        metadata:{operation:"RENAME"},
+      });
+      return [updated];
+    });
 
     if (!updated) {
       throw new DepartmentServiceError("DEPARTMENT_NOT_FOUND");
@@ -362,7 +387,8 @@ export async function archiveDepartment(
   const db = getDb();
   const archivedAt = new Date();
 
-  const [archived] = await db
+  const [archived] = await db.transaction(async tx=>{
+    const [archived] = await tx
     .update(departments)
     .set({
       archivedAt,
@@ -380,10 +406,84 @@ export async function archiveDepartment(
       name: departments.name,
       archivedAt: departments.archivedAt,
     });
+    if(archived)await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_DEPARTMENT_ARCHIVED,
+      collegeId:scope.collegeId,organizationId:scope.organizationId,
+      subjectType:"department",subjectId:archived.id,subjectLabel:archived.name,
+      summary:"Department archived",
+      metadata:{operation:"ARCHIVE",legacySoftDelete:true},
+    });
+    return [archived];
+  });
 
   if (!archived) {
     throw new DepartmentServiceError("DEPARTMENT_NOT_FOUND");
   }
 
   return archived;
+}
+
+
+/** Legacy GET /api/v1/department/fetchPage compatibility at the service
+ * boundary. Old 0-based page indexes are preserved but numeric department and
+ * college IDs are NOT cast to vNext UUIDs. Super Admin can read the selected
+ * college, selected organization or explicitly global active-college roster;
+ * College Admin never gains a global fallback. This is a paginated READ only.
+ */
+export const departmentPageQuery=z.strictObject({
+ collegeId:z.string().uuid().optional(),
+ page:z.coerce.number().int().min(0).max(100000).default(0),
+ size:z.coerce.number().int().min(1).max(100).default(20),
+});
+export async function fetchPagedDepartments(context:RequestContext,raw:unknown){
+ const input=departmentPageQuery.parse(raw);
+ const collegeId=input.collegeId??context.adminScope?.collegeId??
+  (!isSuperAdmin(context)?context.membership?.collegeId:null);
+ let organizationId:string|null=null;
+ if(collegeId){
+  const college=await loadActiveCollegeScope(collegeId);
+  organizationId=college.organizationId;
+  requirePermission(context,"department.read",{
+   collegeId:college.id,organizationId:college.organizationId,
+  });
+ }else{
+  // No other role may browse cross-tenant departments without explicit scope.
+  if(!isSuperAdmin(context))throw new AuthorizationError("department.read");
+  requirePermission(context,"admin-scope.select");
+  organizationId=context.adminScope?.organizationId??null;
+ }
+ const scopeConditions=[
+  isNull(departments.archivedAt),
+  eq(colleges.status,"ACTIVE"),
+  eq(organizations.status,"ACTIVE"),
+  ...(collegeId?[eq(departments.collegeId,collegeId)]:[]),
+  ...(!collegeId&&organizationId?[eq(colleges.organizationId,organizationId)]:[]),
+ ];
+ const base=()=>getDb().select({
+  id:departments.id,collegeId:departments.collegeId,name:departments.name,
+  createdAt:departments.createdAt,updatedAt:departments.updatedAt,
+  collegeName:colleges.name,
+ }).from(departments)
+  .innerJoin(colleges,eq(colleges.id,departments.collegeId))
+  .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
+  .where(and(...scopeConditions));
+ const [rows,totalRows]=await Promise.all([
+  base().orderBy(asc(colleges.name),asc(departments.name),asc(departments.id))
+    .limit(input.size).offset(input.page*input.size),
+  getDb().select({total:count()}).from(departments)
+   .innerJoin(colleges,eq(colleges.id,departments.collegeId))
+   .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
+   .where(and(...scopeConditions)),
+ ]);
+ const total=Number(totalRows[0]?.total??0);
+ return {
+  content:rows,page:input.page,size:input.size,totalElements:total,
+  totalPages:Math.ceil(total/input.size),numberOfElements:rows.length,
+  first:input.page===0,last:(input.page+1)*input.size>=total,
+  scope:{collegeId:collegeId??null,organizationId},
+  // Dependent UIs must resolve legacy chair/vice-chair integer actors through
+  // verified tenant-scoped membership mapping. This table has no chair FKs;
+  // do not fabricate or persist those roles until a migration is registered.
+  idKind:"UUID" as const,archival:"archivedAt" as const,
+ };
 }
