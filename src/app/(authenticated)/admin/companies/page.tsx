@@ -69,36 +69,58 @@ export default async function SuperAdminCompaniesPage({
   const availableColleges=collegesResult.status==="fulfilled"?collegesResult.value:[];
   const candidates=findPossibleCompanyDuplicates(data.rows);
   const nameConflicts=findCompanyNameIdentityConflicts(data.rows);
-  const globalCompanies=new Map<string,{row:AdminCompanyRow;collegeIds:Set<string>;drives:number}>();
-  if(view==="GLOBAL"){
-   for(const row of data.rows){
-    const prior=globalCompanies.get(row.companyId);
-    if(prior){prior.collegeIds.add(row.collegeId);prior.drives+=row.driveCount??0;}
-    else globalCompanies.set(row.companyId,{row,collegeIds:new Set([row.collegeId]),drives:row.driveCount??0});
-   }
-  }
-  const globalRows=[...globalCompanies.values()];
-  const globalColumns:DataTableColumn<(typeof globalRows)[number]>[]=[
-   {key:"name",header:"Company",mobilePriority:"primary",cell:group=><span className="font-semibold">{group.row.name}</span>},
-   {key:"domains",header:"Domains",cell:group=><span className="break-all">{group.row.domains?.length?group.row.domains.join(", "):"Not registered"}</span>},
-   {key:"colleges",header:"Added by Colleges",className:"w-[90px] tabular-nums",cell:group=>group.row.companyCollegeCount??group.collegeIds.size},
-   {key:"drives",header:"Drives",className:"w-[80px] tabular-nums",cell:group=><span>{group.drives}<span className="sr-only"> in this result page</span></span>},
-   {key:"actions",header:"Actions",mobilePriority:"action",cell:group=><div className="flex min-w-0 flex-col items-start gap-2">
-    {group.row.companyStatus==="ARCHIVED"?<SuperAdminCompanyRestore id={group.row.companyId} name={group.row.name}/>:<>
-     <SuperAdminCompanyVerification companyId={group.row.companyId} name={group.row.name} verified={Boolean(group.row.verifiedAt)}/>
-     {group.row.updatedAt?<SuperAdminCompanyEdit company={{
-      id:group.row.companyId,name:group.row.name,website:group.row.website,
-      industry:group.row.industry??null,about:group.row.about??null,
-      logoPublicUrl:group.row.logoPublicUrl??null,updatedAt:group.row.updatedAt.toISOString(),
-     }}/>:null}
-     <Disclosure title="Domains · Other names" className="min-w-0">
-      <SuperAdminCompanyIdentities companyId={group.row.companyId} name={group.row.name}
-       domains={group.row.domains??[]} aliases={group.row.aliases??[]}/>
+  // Legacy college table ordering is last-drive-activity first within this
+  // authorized server page; the service controls pagination and source scope.
+  const collegeRows=[...data.rows].sort((a,b)=>{
+   const aTime=a.lastActiveAt?new Date(a.lastActiveAt).getTime():0;
+   const bTime=b.lastActiveAt?new Date(b.lastActiveAt).getTime():0;
+   return bTime-aTime||b.name.localeCompare(a.name);
+  });
+  const collegeColumns:DataTableColumn<AdminCompanyRow>[]=[
+   {key:"company",header:"Company",mobilePriority:"primary",cell:row=><div className={"flex min-w-0 items-start gap-3 "+(row.companyStatus==="ARCHIVED"?"opacity-55":"")}>
+     <span aria-hidden="true" className="flex size-8 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-primary-subtle)] text-xs font-semibold text-primary-text">
+      {row.name.trim().split(/\s+/).slice(0,2).map(part=>part[0]?.toUpperCase()??"").join("")}
+     </span>
+     <div className="min-w-0 space-y-1">
+      <p className="font-semibold text-[var(--lms-heading)]">{row.name}</p>
+      {row.website?.startsWith("https://")?<a href={row.website} target="_blank" rel="noopener noreferrer"
+       className="inline-flex min-h-9 items-center break-all text-sm font-semibold text-primary-text underline">Visit ↗</a>:null}
+      {row.aliases?.length?<p className="break-words text-xs text-muted-foreground">Also known as {row.aliases.join(", ")}</p>:null}
+      <p className="break-all text-xs text-muted-foreground">Domains: {row.domains?.length?row.domains.join(", "):"None"}</p>
+      <div className="flex flex-wrap gap-2">
+       {row.companyStatus==="ARCHIVED"?<StatusBadge tone="neutral">Deleted</StatusBadge>:null}
+       {row.verifiedAt?<StatusBadge tone="success">Verified by 42</StatusBadge>:<StatusBadge tone="neutral">Not verified</StatusBadge>}
+      </div>
+     </div>
+    </div>},
+   {key:"industry",header:"Industry",cell:row=>row.industry??"—"},
+   {key:"drives",header:"Drives",className:"tabular-nums",cell:row=><span>{row.driveCount??0}</span>},
+   {key:"active",header:"Last active ↓",cell:row=><span>{row.lastActiveAt?
+    new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric"}).format(new Date(row.lastActiveAt)):
+    "Never posted"}</span>},
+   {key:"status",header:"Relationship",cell:row=><div className="space-y-1">
+     <StatusBadge tone={row.relationshipStatus==="ACTIVE"?"success":"neutral"}>{row.relationshipStatus}</StatusBadge>
+     {row.trusted?<StatusBadge tone="success">Trusted</StatusBadge>:null}
+     <p className="text-xs text-muted-foreground">{row.collegeName}</p>
+    </div>},
+   {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><div className="min-w-0 space-y-2">
+     {context.adminScope?.collegeId===row.collegeId?<SuperAdminCollegeCompanyRelationshipActions
+      relationshipId={row.relationshipId} name={row.name} trusted={row.trusted}
+      status={row.relationshipStatus} driveCount={row.driveCount??0} companyStatus={row.companyStatus}/>:null}
+     <Link href={"/admin/companies/"+encodeURIComponent(row.companyId)+"/drives"}
+      target="_blank" rel="noopener noreferrer"
+      className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">History</Link>
+     <Disclosure title="Company details" contentClassName="space-y-2 pb-3">
+      <p className="text-xs text-body">Added by: {row.addedByType??"—"}</p>
+      <p className="break-all text-xs text-body">Domains: {row.domains?.length?row.domains.join(", "):"None"}</p>
+      <p className="text-xs text-body">Other names: {row.aliases?.length?row.aliases.join(", "):"None"}</p>
+      {row.industry?<p className="text-xs text-body">Industry: {row.industry}</p>:null}
+      {row.about?<p className="text-xs text-body">{row.about}</p>:null}
+      <p className="text-xs text-body">Linked colleges: {row.companyCollegeCount??0}</p>
+      <Link href={"/admin/companies?"+new URLSearchParams({companyId:row.companyId,status:"ALL",companyStatus:"ALL",trust:"ALL",view:"COLLEGE"}).toString()}
+       className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Review relationships</Link>
      </Disclosure>
-    </>}
-    <Link href={"/admin/companies/"+encodeURIComponent(group.row.companyId)+"/drives"}
-      className="text-sm font-semibold text-primary-text underline">Drive history</Link>
-   </div>},
+    </div>},
   ];
   return <div className="min-w-0 space-y-[var(--lms-space-6)]">
     <PageHeader title="Companies"
@@ -206,66 +228,11 @@ export default async function SuperAdminCompaniesPage({
           <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{count}</p>
         </div>)}
     </div>
-    {view==="GLOBAL"?<section aria-label="Global company catalogue" className="min-w-0 space-y-3">
-      {globalRows.length?<DataTable caption="42's company list" columns={globalColumns}
-       rows={globalRows} getRowKey={group=>group.row.companyId}/>:
-       <EmptyState title="No companies" description="No global company identities appear in this authorized relationship result page."/>}
-      <p className="text-xs text-muted-foreground">
-       Distinct companies are deduplicated within this 50-relationship page. Added by Colleges uses the scoped service count; Drives counts displayed only relationships returned on this page. These are not authoritative platform-wide drive totals, and companies with no relationships are not returned by the current API.
-      </p>
-      <p className="text-xs text-muted-foreground">
-       Verify, Edit, Domains and Other names use existing scoped curation controls. Company Merge requires a selected, authorized college and is available in the curated duplicate review below.
-      </p>
-    </section>:data.rows.length ? <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
-      {data.rows.map(row => <article key={row.relationshipId} className={"min-w-0 bg-transparent py-[var(--lms-space-4)] "+(row.companyStatus==="ARCHIVED"?"opacity-55":"")}>
-        <h2 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">{row.name}</h2>
-        {row.companyStatus==="ARCHIVED"&&!context.adminScope?.collegeId&&!context.adminScope?.organizationId?
-         <SuperAdminCompanyRestore id={row.companyId} name={row.name}/>:null}
-        <p className="mt-1 text-sm text-body">{row.collegeName}</p>
-        {context.adminScope?.collegeId===row.collegeId?
-          <SuperAdminCollegeCompanyRelationshipActions relationshipId={row.relationshipId}
-            name={row.name} trusted={row.trusted} status={row.relationshipStatus}
-            driveCount={row.driveCount??0} companyStatus={row.companyStatus}/>:null}
-        <div className="mt-3 flex flex-wrap gap-2">
-          <StatusBadge tone={row.companyStatus==="ACTIVE"?"success":row.companyStatus==="ARCHIVED"?"neutral":"warning"}>{row.companyStatus==="ARCHIVED"?"Deleted":row.companyStatus}</StatusBadge>
-          <StatusBadge tone={row.relationshipStatus==="ACTIVE"?"success":row.relationshipStatus==="SUSPENDED"?"warning":"neutral"}>{row.relationshipStatus} relationship</StatusBadge>
-          {row.trusted ? <StatusBadge tone="success">Trusted</StatusBadge> : null}
-          {row.verifiedAt ? <StatusBadge tone="success">Verified by 42</StatusBadge> : <StatusBadge tone="neutral">Not verified</StatusBadge>}
-        </div>
-        {!context.adminScope?.collegeId&&!context.adminScope?.organizationId&&row.companyStatus==="ACTIVE"
-          ? <SuperAdminCompanyVerification companyId={row.companyId} name={row.name}
-              verified={Boolean(row.verifiedAt)} />:null}
-        <Disclosure title="Company details" className="mt-[var(--lms-space-3)]" contentClassName="space-y-[var(--lms-space-2)] pb-[var(--lms-space-3)]">
-        {row.website ? <p className="mt-2 break-all text-sm text-body">Website: {row.website}</p> : null}
-        <p className="mt-1 text-xs text-body">Added by: {row.addedByType??"Not recorded"}</p>
-        <p className="mt-1 break-all text-xs text-body">Domains: {row.domains?.length?row.domains.join(", "):"Not registered"}</p>
-        <p className="mt-1 text-xs text-body">Other names: {row.aliases?.length?row.aliases.join(", "):"Not registered"}</p>
-        {!context.adminScope?.collegeId&&!context.adminScope?.organizationId&&row.companyStatus==="ACTIVE"
-          ? <SuperAdminCompanyIdentities companyId={row.companyId} name={row.name}
-              domains={row.domains??[]} aliases={row.aliases??[]} />:null}
-        {row.industry?<p className="mt-1 text-sm text-body">Industry: {row.industry}</p>:null}
-        {row.about?<p className="mt-1 text-sm text-body">{row.about}</p>:null}
-        {!context.adminScope?.collegeId&&!context.adminScope?.organizationId&&row.companyStatus==="ACTIVE"
-          ? <SuperAdminCompanyEdit company={{id:row.companyId,name:row.name,
-              website:row.website,industry:row.industry??null,about:row.about??null,
-              logoPublicUrl:row.logoPublicUrl??null,updatedAt:row.updatedAt!.toISOString()}} />:null}
-        <dl className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-body">
-          <div><dt className="text-muted-foreground">Domain</dt><dd>{row.primaryDomain??"Not provided"}</dd></div>
-          <div><dt className="text-muted-foreground">Linked colleges</dt><dd className="tabular-nums">{row.companyCollegeCount??0}</dd></div>
-          <div><dt className="text-muted-foreground">Drives in this college</dt><dd className="tabular-nums">{row.driveCount??0}</dd></div>
-          <div><dt className="text-muted-foreground">Last drive activity</dt><dd>{row.lastActiveAt?new Date(row.lastActiveAt).toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric"}):"Never posted"}</dd></div>
-        </dl>
-        </Disclosure>
-        <Link target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
-          href={`/admin/companies/${encodeURIComponent(row.companyId)}/drives`}>
-          Drive history →
-        </Link>
-        <Link className="mt-2 ml-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
-          href={"/admin/companies?" + new URLSearchParams({companyId:row.companyId,status:"ALL",companyStatus:"ALL",trust:"ALL"}).toString()}>
-          Review this employer&apos;s relationships →
-        </Link>
-      </article>)}
-    </div> : <EmptyState title={data.query.q?"No matching companies":"No companies yet"} description={data.query.q?"No company relationships match your search.":"No companies yet — add one to start reusing it across job postings."}/>}
+    <DataTable caption="This college's companies" columns={collegeColumns} rows={collegeRows}
+      getRowKey={row=>row.relationshipId}
+      empty={<EmptyState title={data.query.q?"No matching companies":"No companies yet"}
+       description={data.query.q?"No company relationships match your search.":"No companies yet — add one to start reusing it across job postings."}/>}/>
+    <p className="text-xs text-muted-foreground">Results contain up to 50 scoped relationships per page. Dates and default page-local ordering use IST; “Never posted” means no drive activity has been recorded.</p>
     {data.truncated ? <p className="text-sm text-muted-foreground">Only 50 matching relationships are shown per page. Review other pages for remaining matches.</p> : null}
     <nav className="flex flex-wrap items-center gap-3 text-sm" aria-label="Company directory pages">
       {data.query.page > 1 ? <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 hover:text-[var(--lms-primary-text)]" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,searchField:data.query.searchField,companyStatus:data.query.companyStatus,verified:data.query.verified,view,sort:data.query.sort,...(data.query.companyId?{companyId:data.query.companyId}:{}),trust:data.query.trust,page:String(data.query.page-1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Previous</Link> : null}
