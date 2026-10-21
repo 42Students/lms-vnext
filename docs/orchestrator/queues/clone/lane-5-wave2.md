@@ -32,7 +32,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_components_admin_college-feature-rule-editor.tsx.md` (edit src/components/admin/college-feature-rule-editor.tsx; 33 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_components_admin_tenant-settings-editor.tsx.md` (edit src/components/admin/tenant-settings-editor.tsx; 32 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_components_admin_person-onboard-dialog.tsx.md` (edit src/components/admin/person-onboard-dialog.tsx; 31 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_NEW_docs_audit_gap2_lane-6_l11-u020-tpo-recruiters.md.md` (new; 31 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_NEW_docs_audit_gap2_lane-6_l11-u020-tpo-recruiters.md.md` (new; 31 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_NEW_docs_audit_gap2_lane-7_u018-college-admin-deleted-workspaces.md.md` (new; 31 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_NEW_docs_audit_gap2_lane-7_u005-college-admin-project-template-detail.md.md` (new; 30 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_NEW_docs_audit_gap2_lane-2_superadmin-audit-findings-controller.md.md` (new; 28 findings; best P2)
