@@ -4,7 +4,7 @@ import { and, asc, count, eq, isNull, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   academicPeriods, cohorts, colleges, courseSectionDeliveries,
-  departments, organizations, programs, sectionEnrollments,
+  departments, learnerProgramEnrollments, organizations, programs, sectionEnrollments,
   sectionFacultyAssignments, sectionScheduleEvents, sections,
 } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -27,11 +27,12 @@ export type CollegeSectionErrorCode =
   | "CLASS_NAME_CONFLICT"
   | "CLASS_CODE_CONFLICT"
   | "CLASS_HAS_DEPENDENCIES"
-  | "CLASS_CAPACITY_BELOW_ENROLLMENT";
+  | "CLASS_CAPACITY_BELOW_ENROLLMENT"
+  | "CLASS_MIN_SIZE_ABOVE_CAPACITY";
 
 export class CollegeSectionError extends Error {
-  constructor(public readonly code: CollegeSectionErrorCode) {
-    super(code);
+  constructor(public readonly code: CollegeSectionErrorCode, message?: string) {
+    super(message ?? code);
     this.name = "CollegeSectionError";
   }
 }
@@ -99,19 +100,22 @@ async function assertUnique(tx: Tx, cohortId: string, periodId: string,
 ) {
   const rows = await tx.select({
     id: sections.id, name: sections.name, code: sections.code,
+    academicPeriodId: sections.academicPeriodId,
   }).from(sections).where(and(
     eq(sections.cohortId, cohortId),
-    eq(sections.academicPeriodId, periodId),
     eq(sections.status, "ACTIVE"),
-    sql`(lower(${sections.name}) = ${name.toLowerCase()} or
-      lower(${sections.code}) = ${code.toLowerCase()})`,
+    or(
+      sql`lower(${sections.name}) = ${name.toLowerCase()}`,
+      and(eq(sections.academicPeriodId, periodId),
+        sql`lower(${sections.code}) = ${code.toLowerCase()}`),
+    ),
   ));
   for (const row of rows) {
     if (row.id === ignoreId) continue;
     if (row.name.toLowerCase() === name.toLowerCase()) {
       throw new CollegeSectionError("CLASS_NAME_CONFLICT");
     }
-    if (row.code.toLowerCase() === code.toLowerCase()) {
+    if (row.academicPeriodId === periodId && row.code.toLowerCase() === code.toLowerCase()) {
       throw new CollegeSectionError("CLASS_CODE_CONFLICT");
     }
   }
@@ -119,6 +123,10 @@ async function assertUnique(tx: Tx, cohortId: string, periodId: string,
 
 async function activeEnrollments(tx: Tx, sectionId: string) {
   const [row] = await tx.select({ total: count() }).from(sectionEnrollments)
+    .innerJoin(learnerProgramEnrollments, and(
+      eq(learnerProgramEnrollments.id, sectionEnrollments.learnerEnrollmentId),
+      eq(learnerProgramEnrollments.status, "ACTIVE"),
+    ))
     .where(and(
       eq(sectionEnrollments.sectionId, sectionId),
       eq(sectionEnrollments.status, "ACTIVE"),
@@ -149,6 +157,8 @@ function mapError(error: unknown): never {
       throw new CollegeSectionError("CLASS_CODE_CONFLICT");
     case "sections_capacity_ck":
       throw new CollegeSectionError("CLASS_CAPACITY_BELOW_ENROLLMENT");
+    case "sections_min_size_ck":
+      throw new CollegeSectionError("CLASS_MIN_SIZE_ABOVE_CAPACITY");
   }
   throw error;
 }
@@ -204,18 +214,33 @@ export async function updateCollegeSection(context: RequestContext,
           eq(sections.status, "ACTIVE"),
         )).for("update").limit(1);
       if (!current) throw new CollegeSectionError("CLASS_NOT_FOUND");
-      await assertPeriod(tx, cohort, current.academicPeriodId, member.collegeId);
-      if (sectionIdentityChanged(current, input) && await hasDependencies(tx, sectionId)) {
-        throw new CollegeSectionError("CLASS_HAS_DEPENDENCIES");
+      const nextCohortId = input.cohortId ?? current.cohortId;
+      const nextPeriodId = input.academicPeriodId ?? current.academicPeriodId;
+      const nextCohort = nextCohortId === current.cohortId
+        ? cohort : await lockCohort(tx, nextCohortId, member.collegeId);
+      await assertPeriod(tx, nextCohort, nextPeriodId, member.collegeId);
+      const reassigning = nextCohortId !== current.cohortId ||
+        nextPeriodId !== current.academicPeriodId;
+      if ((reassigning || sectionIdentityChanged(current, input)) &&
+          await hasDependencies(tx, sectionId)) {
+        throw new CollegeSectionError("CLASS_HAS_DEPENDENCIES",
+          "Move students and remove dependent schedules, teaching assignments and deliveries before reassigning this class.");
       }
       const occupied = await activeEnrollments(tx, sectionId);
       if (!sectionCapacityAllows(input.capacity, occupied)) {
-        throw new CollegeSectionError("CLASS_CAPACITY_BELOW_ENROLLMENT");
+        throw new CollegeSectionError("CLASS_CAPACITY_BELOW_ENROLLMENT",
+          `Move students out first: ${occupied} active learner(s) are enrolled.`);
       }
-      await assertUnique(tx, current.cohortId, current.academicPeriodId,
+      const nextMinSize = input.minSize === undefined ? current.minSize : input.minSize;
+      if (nextMinSize !== null && input.capacity !== null && nextMinSize > input.capacity) {
+        throw new CollegeSectionError("CLASS_MIN_SIZE_ABOVE_CAPACITY");
+      }
+      await assertUnique(tx, nextCohortId, nextPeriodId,
         input.name, input.code, sectionId);
       const [updated] = await tx.update(sections).set({
+        cohortId: nextCohortId, academicPeriodId: nextPeriodId,
         name: input.name, code: input.code, capacity: input.capacity,
+        minSize: nextMinSize,
         ...(input.description !== undefined ? { description: input.description } : {}), updatedAt: new Date(),
       }).where(and(eq(sections.id, sectionId), eq(sections.status, "ACTIVE")))
         .returning();
@@ -228,7 +253,10 @@ export async function updateCollegeSection(context: RequestContext,
         metadata: {
           cohortId: updated.cohortId, academicPeriodId: updated.academicPeriodId,
           fromName: current.name, fromCode: current.code,
+          fromCohortId: current.cohortId, toCohortId: updated.cohortId,
+          fromPeriodId: current.academicPeriodId, toPeriodId: updated.academicPeriodId,
           fromCapacity: current.capacity, toCapacity: updated.capacity,
+          fromMinSize: current.minSize, toMinSize: updated.minSize,
         },
       });
       return updated;

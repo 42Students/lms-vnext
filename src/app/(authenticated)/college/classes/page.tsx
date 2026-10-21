@@ -28,13 +28,16 @@ export default async function CollegeClassesPage({
       description={collegeDirectoryValidationMessage(parsed.error)}
       action={<Link href="/college/classes" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
   </div>;
-  const [classes, options] = await Promise.all([
+  const [classes, optionResult] = await Promise.all([
     listCollegeClasses(context, parsed.data),
-    listCollegeSectionOptions(context),
+    listCollegeSectionOptions(context).then(options => ({ options, error: false as const }))
+      .catch(() => ({ options: { cohorts: [], periods: [] }, error: true as const })),
   ]);
+  const options = optionResult.options;
   return <CollegeStructureDirectory data={classes} prepend={
     <div className="min-w-0 space-y-[var(--lms-space-3)]">
-      <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />
+      {optionResult.error ? <div role="alert" className="flex flex-wrap items-center gap-2 border border-amber-300 bg-amber-50 p-3 text-sm">Could not load class options. <Link href="/college/classes" className="font-semibold underline">Retry options</Link></div> :
+        <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />}
       <Disclosure title="More class tools" contentClassName="pt-[var(--lms-space-3)]">
         <div className="flex min-w-0 flex-col items-start gap-[var(--lms-space-3)] sm:flex-row sm:flex-wrap">
           <a href={classesExportHref(classes.query)}

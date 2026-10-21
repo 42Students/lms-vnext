@@ -36,14 +36,17 @@ export default async function CollegeElectivesPage({
       description={collegeDirectoryValidationMessage(parsed.error)}
       action={<Link href="/college/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto">Clear filters</Link>} />
   </div>;
-  const [data, options] = await Promise.all([
+  const [data, optionResult] = await Promise.all([
     listCollegeElectives(context, parsed.data),
-    listCollegeElectiveSlotOptions(context),
+    listCollegeElectiveSlotOptions(context).then(options => ({ options, error: false as const }))
+      .catch(() => ({ options: { programs: [], periods: [] }, error: true as const })),
   ]);
+  const options = optionResult.options;
   return <CollegeStructureDirectory data={data} electiveOptions={options}
     prepend={<div className="min-w-0 space-y-[var(--lms-space-3)]">
+      {optionResult.error ? <div role="alert" className="border border-amber-300 bg-amber-50 p-3 text-sm">Could not load elective options. <Link href="/college/electives" className="font-semibold underline">Retry options</Link></div> : null}
       <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] sm:flex-row sm:flex-wrap sm:items-center">
-        <CollegeSlotManager options={options} />
+        {!optionResult.error ? <CollegeSlotManager options={options} /> : null}
         <Link prefetch={false} download href={electiveCsvHref(data.query)}
           className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
           Export filtered electives CSV
