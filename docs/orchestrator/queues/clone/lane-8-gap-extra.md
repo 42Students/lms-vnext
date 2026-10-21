@@ -6,7 +6,7 @@ Differences: each item is tagged L<origin lane>-U<unit>. Write docs/audit/gap2/l
 
 Order of work: finish the unit you are on in your main queue, then continue the main queue to the end, then do this extra queue top to bottom. Strictly one unit at a time.
 
-- [ ] L11-U015 (FE page) `docs/legacy-source/frontend/src/pages/tpo/index.js`
+- [x] L11-U015 (FE page) `docs/legacy-source/frontend/src/pages/tpo/index.js`
 - [ ] L11-U018 (FE page) `docs/legacy-source/frontend/src/pages/tpo/notifications.js`
 - [ ] L11-U021 (FE page) `docs/legacy-source/frontend/src/pages/tpo/reports/[name].js`
 - [ ] L11-U024 (FE page) `docs/legacy-source/frontend/src/pages/tpo/settings.js`
