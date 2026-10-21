@@ -286,6 +286,20 @@ export async function getPlacementOfferReleaseState(
  const state=selection?.status??"NOT_SELECTED";
  const issued=latestOffer!==undefined;
  const activeOffer=latestOffer?.status==="ISSUED"||latestOffer?.status==="ACCEPTED";
+ const eligibleApplication=current.application.status==="SUBMITTED"&&
+   current.screening.status==="SHORTLISTED";
+ const expiredLatest=latestOffer?.status==="EXPIRED"||
+   (latestOffer?.status==="ISSUED"&&latestOffer.expiresAt!==null&&latestOffer.expiresAt.getTime()<=Date.now());
+ const releaseBlockReason=!eligibleApplication
+  ?"Only an active shortlisted application can receive an offer."
+  :state==="NOT_SELECTED"?"Select this applicant before verifying or releasing an offer."
+  :state==="SELECTED"?"Verify the selected applicant before releasing the offer."
+  :state==="CANCELLED"?"This selection was cancelled; select the applicant again."
+  :state==="RELEASED"?"This selection has already been released."
+  :activeOffer?"An active issued or accepted offer already exists."
+  :null;
+ const letterState=latestOffer?.offerLetterObjectPath?"ATTACHED":
+  latestOffer?.offerLetterUrl?"EXTERNAL_REFERENCE":"NOT_ATTACHED";
  return {
   applicationId,jobId:current.job.id,
   selectionId:selection?.id??null,selectionStatus:state,
@@ -295,10 +309,19 @@ export async function getPlacementOfferReleaseState(
   latestOffer:latestOffer?{
    id:latestOffer.id,status:latestOffer.status,kind:latestOffer.kind,
    version:latestOffer.version,issuedAt:latestOffer.issuedAt.toISOString(),
+   expiresAt:latestOffer.expiresAt?.toISOString()??null,
+   annualCtcInr:latestOffer.annualCtcInr,
+   fixedLpa:latestOffer.fixedLpa,variableLpa:latestOffer.variableLpa,
+   joiningBonusLpa:latestOffer.joiningBonusLpa,
+   createdByType:latestOffer.createdByType??"TPO",
+   letterState,
   }:null,
+  selectionRoleTitle:selection?.roleTitle??null,
+  selectionAnnualCtcInr:selection?.annualCtcInr??null,
+  releaseBlockReason,expiredLatest,
   // SELECTED/VERIFIED never imply an applicant-visible issued offer.
-  canVerifySelection:state==="SELECTED",
-  canReleaseSelection:state==="VERIFIED"&&!activeOffer,
+  canVerifySelection:state==="SELECTED"&&eligibleApplication,
+  canReleaseSelection:state==="VERIFIED"&&!activeOffer&&eligibleApplication,
   learnerOfferVisible:issued,
  };
 }
