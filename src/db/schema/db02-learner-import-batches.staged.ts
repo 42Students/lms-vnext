@@ -1,10 +1,14 @@
 /**
- * DB02 learner import lineage — STAGED ONLY.
+ * DB02 learner import lineage — registered storage in migration 0167.
  *
  * Current legacy production groups successfully-created learner accounts by a
  * bulk import UUID for audit/listing, but intentionally DISABLES generic batch
  * undo because imported learners may already own attendance/projects/etc.
  * This schema preserves lineage without creating a mass-delete primitive.
+ * Producer and undo endpoints remain disabled until authorized membership
+ * verification, dependency proof and reversible per-member actions are built.
+ * Legacy bulkImportBatchId maps only after a trusted college+user UUID
+ * crosswalk; vNext greenfield has no old rows to import.
  */
 import { foreignKey, pgTable, primaryKey, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { colleges } from "./colleges";

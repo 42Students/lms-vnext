@@ -13,7 +13,10 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
  const [messageTone,setMessageTone]=useState<"success"|"error">("success");
  const [pendingAction,setPendingAction]=useState<"ALLOT"|"CHANGE"|"REMOVE"|null>(null);
  const normalizedLabel=label.trim().toLowerCase();
- const labelInvalid=normalizedLabel.length>0&&!/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(normalizedLabel);
+ // Match the managed (not custom DNS) address contract in the old LMS.
+ // Domain-service still enforces its own tenant ownership and reserved names.
+ const managedLabelPattern=/^[a-z0-9](?:[a-z0-9-]{1,28}[a-z0-9])$/;
+ const labelInvalid=normalizedLabel.length>0&&!managedLabelPattern.test(normalizedLabel);
  useEffect(()=>{
   setState(initial);
   setLabel(initial.currentHost&&initial.baseDomain?initial.currentHost.slice(0,-initial.baseDomain.length-1):"");
@@ -22,6 +25,11 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
  async function send(action:"ALLOT"|"CHANGE"|"REMOVE"){
   if(!state.ready||busy)return;
   const host=label.trim().toLowerCase();
+  if(action!=="REMOVE"&&!managedLabelPattern.test(host)){
+   setMessageTone("error");
+   setMessage("Use 3 to 30 lowercase letters, numbers or hyphens, starting and ending with a letter or number.");
+   return;
+  }
   setBusy(true);setMessage("");
   try{
    const res=await fetch("/api/admin/colleges/"+encodeURIComponent(collegeId)+"/subdomain",{
@@ -36,15 +44,17 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
      SUBDOMAIN_CONFLICT:"This web address is already assigned.",
      HOST_CONFLICT:"This web address is already taken by another college.",
     };
-    throw Error(messages[problem.error??""]??problem.error??"Request failed");
+    throw Error(messages[problem.error??""]??
+      (action==="REMOVE"?"Couldn't remove the address. Try again.":"Couldn't allot this address. Try again."));
    }
    const data=await res.json() as {host:string|null};
    setState(current=>({...current,currentHost:data.host}));setPendingAction(null);
    if(action==="REMOVE")setLabel("");
    setMessageTone("success");
-   setMessage(data.host?data.host+" is live":"Managed web address removed.");
+   setMessage(data.host?data.host+" is live":"Web address removed");
    router.refresh();
-  }catch(err){setMessageTone("error");setMessage(err instanceof Error?err.message:"Unable to update address");}
+  }catch(err){setMessageTone("error");setMessage(err instanceof Error?err.message:
+     action==="REMOVE"?"Couldn't remove the address. Try again.":"Couldn't allot this address. Try again.");}
   finally{setBusy(false);}
  }
  return <section className="min-w-0 space-y-3 border-t border-border pt-4" aria-busy={busy} aria-label="Managed college web address">
@@ -58,13 +68,13 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
     </dl>
     <label className="grid min-w-0 max-w-xl gap-1.5 text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Subdomain
       <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] md:flex-row md:items-center">
-       <Input value={label} maxLength={63} autoCapitalize="none" spellCheck={false} disabled={busy}
+       <Input value={label} maxLength={30} autoCapitalize="none" spellCheck={false} disabled={busy}
         aria-invalid={labelInvalid} aria-describedby={hintId}
         onChange={e=>{setLabel(e.target.value);if(message)setMessage("");}}
         className="min-h-11 w-full min-w-0 flex-1 md:min-h-9"/>
        <span className="min-w-0 break-all text-sm text-body">.{state.baseDomain}</span>
       </div>
-      <span id={hintId} className={labelInvalid?"break-words text-xs font-normal leading-5 text-[var(--lms-error)]":"break-words text-xs font-normal leading-5 text-muted-foreground"}>{labelInvalid?"Use letters, numbers or internal hyphens without leading/trailing hyphens.":"Use a DNS label up to 63 characters."}</span>
+      <span id={hintId} className={labelInvalid?"break-words text-xs font-normal leading-5 text-[var(--lms-error)]":"break-words text-xs font-normal leading-5 text-muted-foreground"}>{labelInvalid?"Use 3 to 30 lowercase letters, numbers or hyphens, starting and ending with a letter or number.":"Use 3 to 30 lowercase letters, numbers or hyphens, starting and ending with a letter or number."}</span>
     </label>
     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
      <Button type="button" disabled={busy||!normalizedLabel||labelInvalid} onClick={()=>{setMessage("");setPendingAction(state.currentHost?"CHANGE":"ALLOT");}}
@@ -77,7 +87,15 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
    </>}
   <ConfirmDialog open={pendingAction!==null} onOpenChange={open=>{if(!open&&!busy)setPendingAction(null);}}
    title={pendingAction==="REMOVE"?"Remove this managed web address?":pendingAction==="CHANGE"?"Change this college's live web address?":"Allot this platform subdomain?"}
-   description="Confirm the managed web address change for this college."
+   description={pendingAction==="CHANGE"
+     ?"Moving this college's web address to "+normalizedLabel+"."+state.baseDomain+
+       " will stop the current address "+state.currentHost+
+       " from working immediately. Share the new address with everyone who signs in."
+     :pendingAction==="REMOVE"
+     ?"Removing "+state.currentHost+
+       " makes this college unreachable at that web address. College data and accounts are not deleted."
+     :"Confirm allotment of "+normalizedLabel+"."+state.baseDomain+
+       " to this college. Only the selected college's address will change."}
    confirmLabel={pendingAction==="REMOVE"?"Remove":pendingAction==="CHANGE"?"Change":"Allot"} confirmVariant={pendingAction==="REMOVE"?"danger":"primary"}
    pending={busy} confirmDisabled={!state.ready||(pendingAction!=="REMOVE"&&(!normalizedLabel||labelInvalid))}
    onConfirm={()=>{if(pendingAction)void send(pendingAction);}}>

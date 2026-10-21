@@ -181,3 +181,10 @@
 
 ## Packet 41 — immutable 0076 DB10 access grants
 - `drizzle_0076_db10_announcements_bug_tracker.sql.md` | Reviewed G2-19-020-041/057/058/059 against registered UUID access grants, role/hash checks and reporter FK. Historic LONG IDs can be imported only with audited UUID crosswalk in referential order (access grants→reports→events), and legacy token hashes never seeded into live credentials. | Existing migration 0076 deliberately UNMODIFIED (lane invariant); greenfield vNext contains no legacy bug-tracker records; invalid role/hash and unknown reporter must be quarantined rather than guessed. No migration executed.
+
+
+## Packet 42 — elective-backed class equivalence
+- `src_db_schema_electives.ts.md` | Added optional backedClassOfferingId to preserve distinct GROUP_BACKED class identity alongside required courseSectionDelivery, and same-roster composite FK + unique class link (0166). G2-10-006-077/G2-4-024-074/G2-9-007-075 crosswalk: old backed_class_id→group_backed_class_offerings.id (same rosterGroupId, correct academicPeriod), course+section delivery separately; old capacity=NULL remains unlimited in schema, no arbitrary cap. | G2-4-024-013/074 form and service currently force capacity and do not bind class; handed to electives owner. Existing vNext group uniqueness across archived offerings intentionally preserves old group_id uniqueness. 0166 NOT EXECUTED.
+
+## Packet 43 — faculty/course association history
+- `src_db_schema_faculty-course-associations.ts.md` | Documented verified source ID mapping and active int→endedAt lifecycle semantics for G2-3-020-007/027/040/043. Existing active-only unique membership/course index protects current associations; historical ended rows stay possible and must be kept during imports. | No legacy rows in greenfield, no DDL/data copy; for future approved import resolve faculty/course ID UUID crosswalk and de-dupe active source records after role/college check. Service owner must enforce ACTIVE membership and teaching grant on writes. No migration needed.

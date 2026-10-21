@@ -4,6 +4,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {useState,type FormEvent} from "react";
+import {useUnsavedDriveGuard} from "./use-unsaved-drive-guard";
+import {useToast} from "@/components/ui/toast";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -22,6 +24,10 @@ function optionalNumber(v:FormDataEntryValue|null){const s=String(v??"").trim();
 export function TpoDriveEditForm({job}:{job:Draft}){
  const router=useRouter();
  const {pending,run}=useGuardedAction({timeoutMs:30000});
+ const {dirty,markDirty,clearDirty,guardDialog}=useUnsavedDriveGuard();
+ const {showToast}=useToast();
+ const [version,setVersion]=useState(job.updatedAt);
+ const [saved,setSaved]=useState<{at:string;notified:number}|null>(null);
  const [error,setError]=useState<string|null>(null);
  const [confirmOpen,setConfirmOpen]=useState(false);
  const [proposal,setProposal]=useState<Record<string,unknown>|null>(null);
@@ -29,6 +35,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   event.preventDefault();if(pending)return;
   const fields=new FormData(event.currentTarget);
   setError(null);
+  setSaved(null);
   const amounts=["openings","minimumAnnualCtcInr","maximumAnnualCtcInr",
     "fixedCtcLpa","variableCtcLpa","stipendPerMonthInr"] as const;
   for(const key of amounts){
@@ -42,6 +49,24 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   if(minimum!==null&&maximum!==null&&maximum<minimum){
    setError("Maximum CTC must be greater than or equal to minimum CTC.");return;
   }
+  const fixed=optionalNumber(fields.get("fixedCtcLpa"));
+  const variable=optionalNumber(fields.get("variableCtcLpa"));
+  if(maximum!==null&&((fixed??0)+(variable??0))*100000>maximum){
+   setError("Fixed and variable pay cannot exceed the maximum annual CTC.");return;
+  }
+  const title=String(fields.get("title")??"").trim();
+  const description=String(fields.get("description")??"").trim();
+  if(title.length<2||title.length>200){
+   setError("Title must be between 2 and 200 characters.");return;
+  }
+  if(!description||description.length>20000){
+   setError("Description is required and must be 20,000 characters or fewer.");return;
+  }
+  const locations=String(fields.get("locations")??"").split(",").map(x=>x.trim()).filter(Boolean);
+  if(locations.length>20||locations.some(x=>x.length>120)||
+   new Set(locations.map(x=>x.toLowerCase())).size!==locations.length){
+   setError("Enter no more than 20 distinct locations, each at most 120 characters.");return;
+  }
   const reason=String(fields.get("reason")??"").trim();
   if(reason.length<10){setError("Explain the edit in at least 10 characters.");return;}
   let deadline:string|null;
@@ -49,16 +74,17 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    const raw=String(fields.get("applicationDeadline")??"").trim();
    deadline=raw?driveDeadlineIstToIso(raw):null;
   }catch{setError("Enter a valid application deadline in IST.");return;}
+  if(job.status==="PUBLISHED"&&deadline===null){
+   setError("A published drive requires an application deadline.");return;
+  }
   const cgpa=optionalNumber(fields.get("minCgpa"));
   if(cgpa!==null&&(!Number.isFinite(cgpa)||cgpa<0||cgpa>10)){
    setError("Enter a CGPA from 0 to 10.");return;
   }
   setProposal({
-   confirmed:true,expectedUpdatedAt:job.updatedAt,
+   confirmed:true,expectedUpdatedAt:version,
    applicationDeadline:deadline,minCgpaHundredths:cgpa===null?null:Math.round(cgpa*100),
-   reason,title:String(fields.get("title")??""),
-   description:String(fields.get("description")??""),
-   locations:String(fields.get("locations")??"").split(",").map(x=>x.trim()).filter(Boolean),
+   reason,title,description,locations,
    openings:optionalNumber(fields.get("openings")),
    minimumAnnualCtcInr:minimum,maximumAnnualCtcInr:maximum,
    fixedCtcLpa:optionalNumber(fields.get("fixedCtcLpa")),
@@ -72,12 +98,24 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   if(!proposal||pending)return;
   try{
    await run(async()=>{
-    await apiFetch("/api/placements/tpo/jobs/"+encodeURIComponent(job.id)+"/edit",{
-     method:"PATCH",credentials:"same-origin",headers:{"content-type":"application/json"},
-     body:JSON.stringify({...proposal,notifyApplicants}),
-    });
+    const result=await apiFetch<{id:string;status:string;updatedAt:string;notified:number}>(
+     "/api/placements/tpo/jobs/"+encodeURIComponent(job.id)+"/edit",{
+      method:"PATCH",credentials:"same-origin",headers:{"content-type":"application/json"},
+      body:JSON.stringify({...proposal,notifyApplicants}),
+     });
+    if(result.id!==job.id||!Number.isFinite(new Date(result.updatedAt).getTime()))
+     throw new Error("The save response could not be verified. Check the drive before trying again.");
+    setVersion(result.updatedAt);
+    setSaved({at:result.updatedAt,notified:result.notified});
+    setProposal(null);
+    setError(null);
     setConfirmOpen(false);
-    router.push("/tpo/placements/jobs/"+encodeURIComponent(job.id));router.refresh();
+    clearDirty();
+    showToast({tone:"success",title:job.status==="DRAFT"?
+     "Draft changes saved":"Drive changes saved",
+     description:result.notified>0?
+      result.notified+" applicants were notified in-app.":"Changes were audited and saved."});
+    router.refresh();
    });
   }catch(reason){
    setError(tpoDriveFormErrorMessage(reason));
@@ -85,7 +123,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   }
  }
  const cls="mt-2 min-h-11 w-full min-w-0 rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] py-[7px] text-[var(--lms-form-ink)] md:min-h-9";
- return <><form onSubmit={submit} className="min-w-0 space-y-4 border-b border-border pb-5 [overflow-wrap:anywhere]">
+ return <><form onSubmit={submit} onChange={()=>{markDirty();setSaved(null);}} className="min-w-0 space-y-4 border-b border-border pb-5 [overflow-wrap:anywhere]">
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Title<Input required name="title" defaultValue={job.title} minLength={2} maxLength={200} className={cls}/></label>
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Description<Textarea required name="description" defaultValue={job.description} maxLength={20000} rows={4} className={cls}/></label>
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Locations (comma-separated)<Input name="locations" defaultValue={job.locations.join(", ")} className={cls}/></label>
@@ -122,12 +160,38 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    </label>
   </div>
     <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Reason for edit (audited)<Textarea required name="reason" minLength={10} maxLength={1000} rows={2} className={cls}/></label>
-  <p className="text-xs text-body">Active-season draft and live drives can be edited. Live changes are audited; choose whether to notify existing applicants. A changed version must be refreshed before another save.</p>
-  {error?<InlineNotice tone="error" message={error}/>:null}
+  <section aria-label="Drive edit status" className="space-y-2 text-sm">
+   <p role="status" className="inline-flex items-center gap-2 text-body">
+    <span aria-hidden="true" className={dirty?"h-2 w-2 rounded-full bg-warning":"h-2 w-2 rounded-full bg-success"}/>
+    {dirty?"Unsaved changes — leave this page only after saving.":
+     "Last server save: "+new Intl.DateTimeFormat("en-IN",{
+      dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+     }).format(new Date(saved?.at??version))+" IST"}
+   </p>
+   <p className="text-xs text-body">Active-season draft and live drives can be edited. Live changes are audited. Applicant notices are sent only after you choose to notify; no automatic email is sent.</p>
+   {job.status==="PUBLISHED"?<p className="text-xs text-muted-foreground">
+    Recruiter-controlled application and interview records are managed separately. These fields do not reschedule interviews or change submitted applications automatically.
+   </p>:null}
+  </section>
+  {error?<div role="alert" className="space-y-2">
+    <InlineNotice tone="error" message={error}/>
+    <p className="text-sm text-body">Your edits are preserved. If another editor saved first, review the latest drive before trying again.</p>
+    <Button type="button" variant="secondary" onClick={()=>router.refresh()} disabled={pending}>
+     Reload current drive
+    </Button>
+   </div>:null}
+  {saved?<p role="status" className="text-sm text-body">Save confirmed.
+    {saved.notified>0?" "+saved.notified+" applicant(s) notified in-app.":" No applicant notices requested."}
+   </p>:null}
   <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
    <Button variant="primary" type="submit" loading={pending} disabled={pending} className="min-h-11 w-full px-5 sm:w-auto md:min-h-9">{pending?"Saving…":"Save changes"}</Button>
    <Link className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text underline sm:w-auto md:min-h-9"
     href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)}>Open drive page</Link>
+   {job.status==="DRAFT"?<Link
+    href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"?publish=1#drive-lifecycle-publish"}
+    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text underline sm:w-auto md:min-h-9">
+     Review &amp; publish
+    </Link>:null}
   </div>
  </form>
  {job.status==="PUBLISHED"?
@@ -145,5 +209,6 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    title="Save changes to this draft drive?"
    description="These changes are audited and will update this saved draft. Confirm only after checking the employer details."
    confirmVariant="primary" confirmLabel="Save changes" pending={pending} onConfirm={()=>void save(false)}/>}
+ {guardDialog}
  </>;
 }
