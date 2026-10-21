@@ -24,7 +24,7 @@ export default async function FacultyStudentDetailPage({
     <PageHeader eyebrow="Faculty · Course Students" title={name}
       description={[data.course.courseName, data.course.sectionName,
         data.course.academicPeriodName].join(" · ")}
-      actions={<Link href={root + "/students"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">← Students</Link>} />
+      actions={<Link href={root + "/students"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">← Students</Link>} />
     <section aria-label="Student details" className="grid grid-cols-1 gap-x-4 border-y border-[var(--lms-canvas-border)] sm:grid-cols-2 lg:grid-cols-4">
       {[
         ["Roll number", data.student.rollNumber ?? "Not assigned"],
@@ -76,7 +76,7 @@ export default async function FacultyStudentDetailPage({
                 cell:row=>row.markedAt?dateText(row.markedAt):"Not recorded" },
             ]}/>}
       <Link href={root + "/attendanceDetail"}
-        className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">
+        className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">
         View monthly class attendance →
       </Link>
     </section>
