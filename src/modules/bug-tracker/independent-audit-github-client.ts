@@ -82,9 +82,10 @@ export async function readAuditGithubInbox(){
   if(items.length>=MAX_INBOX_FILES)throw new Error("Findings inbox file limit exceeded");
   items.push({path:row.path,sha:row.sha});
  }
- return {repo:REPO,commit,items,token};
+ return {repo:REPO,commit,items,
+  readBlob:(blob:AuditInboxBlob)=>readAuditGithubBlob(token,blob)};
 }
-export async function readAuditGithubBlob(token:string,blob:AuditInboxBlob){
+async function readAuditGithubBlob(token:string,blob:AuditInboxBlob){
  if(!sha.test(blob.sha)||!/^inbox\/[a-zA-Z0-9_.-]{1,240}$/.test(blob.path))
   throw new Error("Unexpected findings inbox file path");
  const response=record(await githubJson("/repos/"+REPO+"/git/blobs/"+blob.sha,token));
