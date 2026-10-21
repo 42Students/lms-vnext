@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { DataTable } from "@/components/ui/data-table";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -49,7 +50,15 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
   const [size,setSize]=useState(5);
   const [seed,setSeed]=useState("class-project");
   const [title,setTitle]=useState("");
+  const [summary,setSummary]=useState("");
   const [slug,setSlug]=useState("");
+  const [slugEdited,setSlugEdited]=useState(false);
+  const [primaryMentorMembershipId,setPrimaryMentorMembershipId]=useState("");
+  const [mentorQuery,setMentorQuery]=useState("");
+  const [mentors,setMentors]=useState<{membershipId:string;displayName:string;email:string}[]>([]);
+  const [mentorsLoading,setMentorsLoading]=useState(false);
+  const [mentorsError,setMentorsError]=useState("");
+  const [initialStatus,setInitialStatus]=useState<"PLANNED"|"ACTIVE">("PLANNED");
   const [groups,setGroups]=useState<ProjectTeam[]>([]);
   const [loading,setLoading]=useState(true);
   const [rosterLoading,setRosterLoading]=useState(false);
@@ -107,6 +116,29 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
     },400);
     return()=>{window.clearTimeout(timer);controller.abort();};
   },[collegeId,classId,classQuery,classesRetry]);
+  useEffect(()=>{
+    const ctl=new AbortController();
+    setMentorsLoading(true);setMentorsError("");
+    const timer=window.setTimeout(()=>{
+      void fetch("/api/projects/mentor-candidates?collegeId="+encodeURIComponent(collegeId)+
+        "&q="+encodeURIComponent(mentorQuery.trim())+"&limit=100",
+        {cache:"no-store",signal:ctl.signal})
+        .then(async response=>{
+          if(!response.ok)throw new Error("Could not search eligible mentors.");
+          return response.json() as Promise<{mentors:typeof mentors}>;
+        })
+        .then(result=>{if(!ctl.signal.aborted)setMentors(previous=>{
+          const selected=previous.find(row=>row.membershipId===primaryMentorMembershipId);
+          return selected&&!result.mentors.some(row=>row.membershipId===selected.membershipId)
+            ?[selected,...result.mentors]:result.mentors;
+        });})
+        .catch(e=>{if(!ctl.signal.aborted)
+          setMentorsError(e instanceof Error?e.message:"Could not load mentors.");
+        }).finally(()=>{if(!ctl.signal.aborted)setMentorsLoading(false);});
+    },400);
+    return()=>{window.clearTimeout(timer);ctl.abort();};
+  },[collegeId,mentorQuery,primaryMentorMembershipId]);
+
   const rosterKey=collegeId+"|"+classId+"|"+rosterRefreshKey;
   const [prevRosterKey,setPrevRosterKey]=useState(rosterKey);
   if(prevRosterKey!==rosterKey){
@@ -170,7 +202,8 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
   },[preflightActive,collegeId,classId,templateId,roster,preflightScopeKey]);
   const names=new Map(roster?.members.map(m=>[m.membershipId,m] as const)??[]);
   const plannerEditable=canEditClassTeamPlanner(pending,rosterLoading);
-  const dirty=Boolean(classId||title.trim()||slug.trim()||classQuery||
+  const dirty=Boolean(classId||title.trim()||slug.trim()||summary.trim()||
+    primaryMentorMembershipId||mentorQuery.trim()||initialStatus!=="PLANNED"||
     mode!=="TEAMS"||order!=="ROLL"||size!==5||seed!=="class-project");
   const discard=useProjectEditorDiscardGuard(true,dirty,pending,()=>router.push(basePath));
   const balanced=groups.length>0&&Math.max(...groups.map(g=>g.membershipIds.length))-Math.min(...groups.map(g=>g.membershipIds.length))<=1;
@@ -178,6 +211,15 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
   async function create() {
     if(!mayBeginClassTeamCreation(createInFlight.current,Boolean(roster&&groups.length&&balanced&&!rosterLoading)))return;
     if(!roster)return;
+    if(initialStatus==="ACTIVE"&&!primaryMentorMembershipId){
+      setError("A mentor is required before a workspace can be Active");return;
+    }
+    if(title.trim().length>160){
+      setError("Title must be 160 characters or fewer");return;
+    }
+    if(!title.trim()){
+      setError("Title is required");return;
+    }
     if(!classId){
       setError(mode==="INDIVIDUAL"?"Pick the class to create one workspace per student.":
         "Pick the class to split into teams.");return;
@@ -202,7 +244,9 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
       }
       const result=await projectMutation("/api/projects/class-team-workspaces","POST",{
         collegeId,classId:roster.classId,templateId,rosterRevision:roster.revision,
-        baseTitle:title.trim(),baseSlug:slug.trim(),teams:groups,cohortMode:mode==="INDIVIDUAL",expectedPreviewVersion:previewVersion(groups),
+        baseTitle:title.trim(),baseSlug:slug.trim(),summary:summary.trim()||undefined,
+        primaryMentorMembershipId:primaryMentorMembershipId||undefined,initialStatus,
+        teams:groups,cohortMode:mode==="INDIVIDUAL",expectedPreviewVersion:previewVersion(groups),
       }) as CohortCreationOutcome;
       setOutcome(result);
       setOutcomeRestored(false);
@@ -278,11 +322,51 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
         </Select>
       </label>
       <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Workspace title
-        <Input value={title} disabled={!plannerEditable} onChange={e=>setTitle(e.target.value)} maxLength={170} placeholder="Capstone Project" />
+        <Input value={title} disabled={!plannerEditable}
+          onChange={event=>{
+            const next=event.target.value;
+            setTitle(next);
+            if(!slugEdited)setSlug(next.toLowerCase().normalize("NFKD")
+              .replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-")
+              .replace(/^-|-$/g,"").slice(0,50).replace(/-$/g,""));
+          }}
+          maxLength={160} placeholder="Campus Event Coordination" />
+        <span className="text-xs text-body">{title.length}/160</span>
       </label>
       <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Base slug
-        <Input value={slug} disabled={!plannerEditable} onChange={e=>setSlug(e.target.value.toLowerCase())} maxLength={50} placeholder="capstone-project" aria-invalid={slug.length>0&&!isValidClassTeamBaseSlug(slug)} />
+        <Input value={slug} disabled={!plannerEditable} onChange={e=>{setSlugEdited(true);setSlug(e.target.value.toLowerCase());}} maxLength={50} placeholder="capstone-project" aria-invalid={slug.length>0&&!isValidClassTeamBaseSlug(slug)} />
         {slug.length>0&&!isValidClassTeamBaseSlug(slug)?<span role="alert" className="block text-xs text-error">Use lowercase letters, numbers and single hyphens only. Start and end with a letter or number.</span>:null}
+      </label>
+      <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">Summary
+        <Textarea value={summary} disabled={!plannerEditable} maxLength={2000}
+          placeholder="Optional context for every workspace"
+          onChange={event=>setSummary(event.target.value)}/>
+      </label>
+      <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Primary mentor
+        <Input type="search" value={mentorQuery} maxLength={120} disabled={pending}
+          aria-label="Search project mentors" placeholder="Search mentors by name or email"
+          onChange={event=>setMentorQuery(event.target.value)}/>
+        <Select value={primaryMentorMembershipId} disabled={pending||mentorsLoading}
+          onChange={event=>setPrimaryMentorMembershipId(event.target.value)}>
+          <option value="">Assign later</option>
+          {mentors.map(row=><option key={row.membershipId} value={row.membershipId}>
+            {row.displayName} · {row.email}
+          </option>)}
+        </Select>
+        {mentorsLoading?<span className="text-xs text-body">Loading mentors…</span>:null}
+        {mentorsError?<span role="alert" className="text-xs text-error">{mentorsError}</span>:null}
+      </label>
+      <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+        <Select value={initialStatus} disabled={pending}
+          onChange={event=>setInitialStatus(event.target.value as "PLANNED"|"ACTIVE")}>
+          <option value="PLANNED">Planned</option>
+          <option value="ACTIVE">Active</option>
+          <option value="ARCHIVED" disabled>Archived (use Archive after creation)</option>
+        </Select>
+        {initialStatus==="ACTIVE"&&!primaryMentorMembershipId?
+          <span role="alert" className="text-xs text-error">
+            A mentor is required before a workspace can be Active
+          </span>:null}
       </label>
       <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Workspace mode
         <Select value={mode} disabled={!plannerEditable} onChange={e=>setMode(e.target.value as "TEAMS"|"WHOLE_CLASS"|"INDIVIDUAL")}>
