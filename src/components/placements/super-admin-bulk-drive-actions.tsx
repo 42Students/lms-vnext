@@ -51,7 +51,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
   return <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]"
     aria-label="Super Admin bulk drive actions">
     <details className="group min-w-0">
-      <summary className="flex min-h-11 w-full cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">Bulk Open / Close <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
+      <summary className="flex min-h-11 w-full cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">Bulk Open / Close <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
       <div className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
        <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] sm:flex-row sm:flex-wrap sm:items-center">
       <label className="flex min-h-11 items-center gap-2 text-sm text-body">
