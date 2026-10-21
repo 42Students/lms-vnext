@@ -138,6 +138,10 @@ export async function getTpoDriveLifecycleReadiness(
   return {
     jobId,
     status: job.status,
+    // Legacy isDraft/isActive are projections of the single lifecycle enum,
+    // never independently writable flags that can contradict the status.
+    isDraft: job.status === "DRAFT",
+    isActive: job.status === "PUBLISHED",
     facts,
     reach:{eligible:reach.eligible,excluded:reach.excluded,
       considered:reach.candidateCount},
@@ -159,6 +163,8 @@ export async function changeTpoDriveLifecycle(
   const collegeId = requireTpo(context);
   const jobId = placementJobIdSchema.parse(rawJobId);
   const input = tpoDriveLifecycleSchema.parse(raw);
+  // Email is not a configured delivery channel in vNext. Reject a requested
+  // email send instead of claiming APP+EMAIL parity without delivery receipts.
   if(input.action==="PUBLISH"&&input.notifyByEmail)
     throw new TpoPublishEmailUnavailable();
   const [owned] = await getDb().select({
@@ -198,7 +204,9 @@ export async function changeTpoDriveLifecycle(
     const event = await recordActivityEventInTransaction(tx, context, {
       eventType: input.action === "CLOSE"
         ? ACTIVITY_EVENT_TYPES.PLACEMENTS_JOB_CLOSED
-        : ACTIVITY_EVENT_TYPES.PLACEMENTS_JOB_PUBLISHED,
+        : input.action === "REOPEN"
+          ? ACTIVITY_EVENT_TYPES.PLACEMENTS_JOB_REOPENED
+          : ACTIVITY_EVENT_TYPES.PLACEMENTS_JOB_PUBLISHED,
       collegeId,
       subjectType: "placement_job",
       subjectId: jobId,
@@ -226,6 +234,8 @@ export async function changeTpoDriveLifecycle(
     return {
       id: updated.id,
       status: updated.status,
+      isDraft: updated.status === "DRAFT",
+      isActive: updated.status === "PUBLISHED",
       blockers: [] as string[],
       notifiedCount,debarmentCounted,emailSent:false,
     };

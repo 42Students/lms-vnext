@@ -176,15 +176,9 @@ export async function createPlacementRound(
         ),
       })
       .from(placementJobRounds)
-      .where(
-        and(
-          eq(placementJobRounds.jobId, job.id),
-          ne(
-            placementJobRounds.status,
-            "CANCELLED",
-          ),
-        ),
-      );
+      // Include cancelled rounds: historic sequence numbers may still appear
+      // in event logs or applicant results, and should never be reassigned.
+      .where(eq(placementJobRounds.jobId, job.id));
     const sequence =
       Number(aggregate?.maxSequence ?? 0) + 1;
 
@@ -670,11 +664,11 @@ export async function reorderPlacementRounds(
       );
     }
 
-    const maxSequence = active.reduce(
-      (value, round) =>
-        Math.max(value, round.sequence),
-      0,
-    );
+    const [historicMax] = await tx.select({
+      sequence: max(placementJobRounds.sequence),
+    }).from(placementJobRounds)
+      .where(eq(placementJobRounds.jobId, job.id));
+    const maxSequence = Number(historicMax?.sequence ?? 0);
     const offset = maxSequence + 1_000_000;
 
     await tx
