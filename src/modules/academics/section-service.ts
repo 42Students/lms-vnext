@@ -233,7 +233,7 @@ export async function searchSections(
     limit: z.number().int().min(1).max(100).default(20),
   }).strict().parse(raw);
   const acting = await resolveActingCollege(context, "academics.read");
-  const pattern = "%" + input.q.replace(/[\\%_]/g, "\\export async function createSection(") + "%";
+  const pattern = "%" + input.q.replace(/[\\%_]/g, "\\$&") + "%";
   return getDb().select({
     id: sections.id, name: sections.name, code: sections.code,
     cohortId: cohorts.id, cohortName: cohorts.name,

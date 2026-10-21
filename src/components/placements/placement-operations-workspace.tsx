@@ -88,6 +88,23 @@ export async function PlacementOperationsWorkspace({
         Couldn&apos;t load drives. Check your connection and retry.{retry}
         Other placement settings remain available.
       </Alert>}
+      <Disclosure title="Data retention report" className="border-b border-[var(--lms-canvas-border)]">
+        <p className="pb-3 text-sm text-body">
+          Retention checks use the selected college&apos;s real placements,
+          offers and applicant records. No retention purge is performed here.
+        </p>
+        <Link href={basePath+"/reports"} className="font-semibold text-link underline underline-offset-2">
+          Review placement reports
+        </Link>
+      </Disclosure>
+      <Disclosure title="Student placement lookup" className="border-b border-[var(--lms-canvas-border)]">
+        <p className="pb-3 text-sm text-body">
+          Search student registration, applications and outcomes in this college.
+        </p>
+        <Link href={basePath+"/student-lookup"} className="font-semibold text-link underline underline-offset-2">
+          Open student placement lookup
+        </Link>
+      </Disclosure>
       {seasons ? <Disclosure title="Placement season" defaultOpen={!seasons.some(season=>season.status==="ACTIVE")} className="border-b border-[var(--lms-canvas-border)]">
       <PlacementSeasonManager
         collegeId={collegeId}
@@ -156,16 +173,7 @@ export async function PlacementOperationsWorkspace({
       </Disclosure> : <Alert tone="warning">
         Recruiter access could not be refreshed.{retry}
       </Alert>}
-      <Disclosure title="Student placement lookup" className="border-b border-[var(--lms-canvas-border)]">
-        <p className="pb-3 text-sm text-body">
-          Find a student&apos;s placement registration, applications and outcomes
-          within the selected college.{" "}
-          <Link href={basePath+"/student-lookup"}
-            className="font-semibold text-link underline underline-offset-2">
-            Open student placement lookup
-          </Link>
-        </p>
-      </Disclosure>
+
     </div>
   );
 }
