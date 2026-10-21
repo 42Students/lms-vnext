@@ -1,3 +1,4 @@
+import {CollegeProgressCapture} from "@/components/courses/college-progress-last-good";
 import { CollegeCourseMissingScope } from "@/components/courses/college-course-missing-scope";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -73,15 +74,9 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
           Export recorded course activity CSV
         </Link>
       </div>} />
-    <CollegeLearnerProgressReport data={report}/>
-    {report.report?<CollegeCourseRetakeAction
-      learners={report.report.rows.map(learner=>({
-        membershipId:learner.membershipId,name:learner.name,rollNumber:learner.rollNumber,
-      }))}
-      offeringId={report.report.chosen.offeringId}
-      deliveryId={report.report.chosen.deliveryId}
-      courseName={report.report.chosen.courseName}
-    />:null}
-    <CollegeLearningDirectory data={await listCollegeCourseProgress(context, parsed.data)} showHeader={false} />
+    <CollegeProgressCapture>
+      <CollegeLearnerProgressReport data={report}/>
+      <CollegeLearningDirectory data={await listCollegeCourseProgress(context, parsed.data)} showHeader={false} />
+    </CollegeProgressCapture>
   </div>;
 }

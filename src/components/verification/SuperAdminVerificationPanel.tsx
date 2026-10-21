@@ -15,11 +15,11 @@ import {VerificationReviewDrawer} from "./VerificationReviewDrawer";
 import {verificationSelectionKey} from "@/modules/verification/selection-model";
 import {collegeBulkReviewPayload} from "@/modules/verification/bulk-client-payload";
 
-export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,initialKind,page,total,hasMore,query}:{
+export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,initialKind,page,total,hasMore,query,truncated=false}:{
  collegeId:string;
  rows:VerificationQueueCard[];counts:Record<VerificationTab,number>;
  activeTab:VerificationTab;initialKind:"ALL"|"EDUCATION"|"IDENTITY";
- page:number;total:number;hasMore:boolean;query:Record<string,string>;
+ page:number;total:number;hasMore:boolean;query:Record<string,string>;truncated?:boolean;
 }){
  const router=useRouter();
  const {showToast}=useToast();
@@ -92,6 +92,10 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    </Button>
    <p className="self-center text-xs text-muted-foreground">Review up to 20 waiting requests on this page. Each decision keeps its own audit history.</p>
   </div>:null}
+  {truncated?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-2 text-sm text-warning-text">
+    Only the first 1,000 matching source records were inspected. Counts and pages below are lower bounds, not complete college totals.
+    Narrow the server-side filters to see and review other learners. No unseen request has been silently marked reviewed.
+  </p>:null}
   <VerificationFilterPanel key={JSON.stringify(query)} query={query} onApply={filters=>navigate({...filters,page:"1"})}/>
   <div className="flex flex-wrap items-center justify-between gap-3">
    <p className="text-sm text-muted-foreground">Select only eligible requests on this page. Bulk actions are limited to 20 per operation.</p>
@@ -161,7 +165,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    <Button variant="secondary" type="button" onClick={()=>router.refresh()} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">Refresh</Button>
   </div>
   <nav aria-label="Verification pages" className="flex flex-wrap items-center gap-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-3)] text-sm">
-   <span>Showing {rows.length} of {total} in this status</span>
+   <span>Showing {rows.length} of {truncated?"at least "+total:total} in this status{truncated?" (incomplete scan)":""}</span>
    {page>1?<Button variant="ghost" type="button" onClick={()=>navigate({page:String(page-1)})} className="min-h-[var(--lms-control-height)] underline">Previous</Button>:null}
    {hasMore?<Button variant="ghost" type="button" onClick={()=>navigate({page:String(page+1)})} className="min-h-[var(--lms-control-height)] underline">Next</Button>:null}
   </nav>
