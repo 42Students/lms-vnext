@@ -186,12 +186,12 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-16.md: file, number of
 - [x] `src/app/(authenticated)/tpo/students/preparation-plan/page.tsx`
 - [x] `src/app/(authenticated)/tpo/students/requests/error.tsx`
 - [x] `src/app/(authenticated)/tpo/team/[threadId]/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/verification/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/verification/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/verification/page.tsx`
-- [ ] `src/app/campaign-unsubscribe/[token]/loading.tsx`
-- [ ] `src/app/quiz/page.tsx`
+- [x] `src/app/(authenticated)/tpo/team/page.tsx`
+- [x] `src/app/(authenticated)/tpo/verification/error.tsx`
+- [x] `src/app/(authenticated)/tpo/verification/loading.tsx`
+- [x] `src/app/(authenticated)/tpo/verification/page.tsx`
+- [x] `src/app/campaign-unsubscribe/[token]/loading.tsx`
+- [x] `src/app/quiz/page.tsx`
 - [ ] `src/components/academics/college-hall-cancellation-action.tsx`
 - [ ] `src/components/academics/college-recurring-preview.tsx`
 - [ ] `src/components/academics/college-section-lifecycle-action.tsx`
