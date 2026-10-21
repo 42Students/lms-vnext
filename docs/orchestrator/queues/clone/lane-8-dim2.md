@@ -153,66 +153,66 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-8.md: file, number of 
 - [x] `src/components/placements/placement-drive-controls.tsx`
 - [x] `src/components/placements/placement-drive-workspace.tsx`
 - [x] `src/components/placements/placement-employer-relationships.tsx`
-- [ ] `src/components/placements/placement-offer-controls.tsx`
-- [ ] `src/components/placements/recruiter-focused-review-shortcuts.tsx`
-- [ ] `src/components/placements/recruiter-interview-slot-form.tsx`
-- [ ] `src/components/placements/recruiter-placement-portfolio.tsx`
-- [ ] `src/components/placements/recruiter-result-controls.tsx`
-- [ ] `src/components/placements/report-interactive-table.tsx`
-- [ ] `src/components/placements/super-admin-bulk-drive-actions.tsx`
-- [ ] `src/components/placements/super-admin-drive-deadline.tsx`
-- [ ] `src/components/placements/super-admin-drive-duplicate.tsx`
-- [ ] `src/components/placements/tpo-applicant-review-drawer.tsx`
-- [ ] `src/components/placements/tpo-bulk-drive-reminder.tsx`
-- [ ] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
-- [ ] `src/components/placements/tpo-college-rules-control.tsx`
-- [ ] `src/components/placements/tpo-drive-act-on-panel.tsx`
-- [ ] `src/components/placements/tpo-drive-change-requests.tsx`
-- [ ] `src/components/placements/tpo-drive-clone-action.tsx`
-- [ ] `src/components/placements/tpo-drive-close-preview-form.tsx`
-- [ ] `src/components/placements/tpo-drive-deadline-form.tsx`
-- [ ] `src/components/placements/tpo-drive-edit-form.tsx`
-- [ ] `src/components/placements/tpo-drive-saved-views.tsx`
-- [ ] `src/components/placements/tpo-drive-selection-manager.tsx`
-- [ ] `src/components/placements/tpo-drive-workspace-nav.tsx`
-- [ ] `src/components/placements/tpo-general-requests-panel.tsx`
-- [ ] `src/components/placements/tpo-interview-reschedule-form.tsx`
-- [ ] `src/components/placements/tpo-interview-slot-planner.tsx`
-- [ ] `src/components/placements/tpo-joining-update-form.tsx`
-- [ ] `src/components/placements/tpo-mark-own-notification-read.tsx`
-- [ ] `src/components/placements/tpo-recruiter-grant-controls.tsx`
-- [ ] `src/components/placements/tpo-remind-non-applicants.tsx`
-- [ ] `src/components/placements/tpo-request-bulk-decision.tsx`
-- [ ] `src/components/placements/tpo-request-decision-control.tsx`
-- [ ] `src/components/placements/tpo-round-calendar-control.tsx`
-- [ ] `src/components/placements/tpo-round-check-in.tsx`
-- [ ] `src/components/placements/tpo-round-result-entry-form.tsx`
-- [ ] `src/components/placements/tpo-round-results-import.tsx`
-- [ ] `src/components/placements/tpo-season-controls.tsx`
-- [ ] `src/components/placements/tpo-selection-import.tsx`
-- [ ] `src/components/placements/tpo-trust-toggle.tsx`
-- [ ] `src/components/placements/tpo-waitlist-promotion-control.tsx`
-- [ ] `src/components/placements/tpo-week-hour-calendar.tsx`
-- [ ] `src/components/profile/learner-profile-workspace.tsx`
-- [ ] `src/components/profile/learner-skill-catalog-input.tsx`
-- [ ] `src/components/projects/college-project-mentor-dialog.tsx`
-- [ ] `src/components/projects/college-project-student-roster-dialog.tsx`
-- [ ] `src/components/projects/learner-board-task-detail-dialog.tsx`
-- [ ] `src/components/projects/legacy-project-touch-actions.module.css`
-- [ ] `src/components/projects/mentor-board-task-detail-dialog.tsx`
-- [ ] `src/components/projects/mentor-lane-board.tsx`
-- [ ] `src/components/projects/mentor-meeting-notes-editor.tsx`
-- [ ] `src/components/projects/mentor-meeting-reschedule.tsx`
-- [ ] `src/components/projects/mentor-product-backlog.tsx`
-- [ ] `src/components/projects/mentor-project-closeout-control.tsx`
-- [ ] `src/components/projects/mentor-release-editor.tsx`
-- [ ] `src/components/projects/mentor-sprint-details-edit.tsx`
-- [ ] `src/components/projects/mentor-sprint-write.tsx`
-- [ ] `src/components/projects/mentor-task-create.tsx`
-- [ ] `src/components/projects/mentor-task-delete-control.tsx`
-- [ ] `src/components/projects/mentor-task-details-edit.tsx`
-- [ ] `src/components/projects/mentor-task-status-transition.tsx`
-- [ ] `src/components/projects/project-admin-submission-review.tsx`
+- [x] `src/components/placements/placement-offer-controls.tsx`
+- [x] `src/components/placements/recruiter-focused-review-shortcuts.tsx`
+- [x] `src/components/placements/recruiter-interview-slot-form.tsx`
+- [x] `src/components/placements/recruiter-placement-portfolio.tsx`
+- [x] `src/components/placements/recruiter-result-controls.tsx`
+- [x] `src/components/placements/report-interactive-table.tsx`
+- [x] `src/components/placements/super-admin-bulk-drive-actions.tsx`
+- [x] `src/components/placements/super-admin-drive-deadline.tsx`
+- [x] `src/components/placements/super-admin-drive-duplicate.tsx`
+- [x] `src/components/placements/tpo-applicant-review-drawer.tsx`
+- [x] `src/components/placements/tpo-bulk-drive-reminder.tsx`
+- [x] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
+- [x] `src/components/placements/tpo-college-rules-control.tsx`
+- [x] `src/components/placements/tpo-drive-act-on-panel.tsx`
+- [x] `src/components/placements/tpo-drive-change-requests.tsx`
+- [x] `src/components/placements/tpo-drive-clone-action.tsx`
+- [x] `src/components/placements/tpo-drive-close-preview-form.tsx`
+- [x] `src/components/placements/tpo-drive-deadline-form.tsx`
+- [x] `src/components/placements/tpo-drive-edit-form.tsx`
+- [x] `src/components/placements/tpo-drive-saved-views.tsx`
+- [x] `src/components/placements/tpo-drive-selection-manager.tsx`
+- [x] `src/components/placements/tpo-drive-workspace-nav.tsx`
+- [x] `src/components/placements/tpo-general-requests-panel.tsx`
+- [x] `src/components/placements/tpo-interview-reschedule-form.tsx`
+- [x] `src/components/placements/tpo-interview-slot-planner.tsx`
+- [x] `src/components/placements/tpo-joining-update-form.tsx`
+- [x] `src/components/placements/tpo-mark-own-notification-read.tsx`
+- [x] `src/components/placements/tpo-recruiter-grant-controls.tsx`
+- [x] `src/components/placements/tpo-remind-non-applicants.tsx`
+- [x] `src/components/placements/tpo-request-bulk-decision.tsx`
+- [x] `src/components/placements/tpo-request-decision-control.tsx`
+- [x] `src/components/placements/tpo-round-calendar-control.tsx`
+- [x] `src/components/placements/tpo-round-check-in.tsx`
+- [x] `src/components/placements/tpo-round-result-entry-form.tsx`
+- [x] `src/components/placements/tpo-round-results-import.tsx`
+- [x] `src/components/placements/tpo-season-controls.tsx`
+- [x] `src/components/placements/tpo-selection-import.tsx`
+- [x] `src/components/placements/tpo-trust-toggle.tsx`
+- [x] `src/components/placements/tpo-waitlist-promotion-control.tsx`
+- [x] `src/components/placements/tpo-week-hour-calendar.tsx`
+- [x] `src/components/profile/learner-profile-workspace.tsx`
+- [x] `src/components/profile/learner-skill-catalog-input.tsx`
+- [x] `src/components/projects/college-project-mentor-dialog.tsx`
+- [x] `src/components/projects/college-project-student-roster-dialog.tsx`
+- [x] `src/components/projects/learner-board-task-detail-dialog.tsx`
+- [x] `src/components/projects/legacy-project-touch-actions.module.css`
+- [x] `src/components/projects/mentor-board-task-detail-dialog.tsx`
+- [x] `src/components/projects/mentor-lane-board.tsx`
+- [x] `src/components/projects/mentor-meeting-notes-editor.tsx`
+- [x] `src/components/projects/mentor-meeting-reschedule.tsx`
+- [x] `src/components/projects/mentor-product-backlog.tsx`
+- [x] `src/components/projects/mentor-project-closeout-control.tsx`
+- [x] `src/components/projects/mentor-release-editor.tsx`
+- [x] `src/components/projects/mentor-sprint-details-edit.tsx`
+- [x] `src/components/projects/mentor-sprint-write.tsx`
+- [x] `src/components/projects/mentor-task-create.tsx`
+- [x] `src/components/projects/mentor-task-delete-control.tsx`
+- [x] `src/components/projects/mentor-task-details-edit.tsx`
+- [x] `src/components/projects/mentor-task-status-transition.tsx`
+- [x] `src/components/projects/project-admin-submission-review.tsx`
 - [ ] `src/components/projects/project-archive-control.tsx`
 - [ ] `src/components/projects/project-create-control.tsx`
 - [ ] `src/components/projects/project-delivery-reopen-control.tsx`
