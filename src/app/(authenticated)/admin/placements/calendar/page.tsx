@@ -29,10 +29,10 @@ export default async function SuperAdminPlacementInterviewCalendarPage({
           description="Interview-calendar oversight requires an exact college safety scope."
           actions={<PageBackLink href="/admin/placements" label="Placement overview"/>}
         />
-        <EmptyState
-          title="Select a college scope"
-          description="Choose a college in the Super Admin scope selector before reviewing its placement interviews. An organization-level or all-platform scope is not sufficient."
-        />
+        <div className="border-l-2 border-warning bg-warning-subtle px-4 py-3">
+         <EmptyState title="Select an Organization + College in the header above to view interviews."
+          description="Interview appointments are visible only for one explicitly selected college. The organization or platform-wide view cannot display learner bookings."/>
+        </div>
       </div>
     );
   }

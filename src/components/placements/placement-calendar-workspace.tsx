@@ -48,6 +48,23 @@ import { TPO_CALENDAR_CHIP_CHOICES, filterTpoCalendarChipEvents, parseTpoCalenda
 
 type CalendarAudience = "TPO" | "COLLEGE_ADMIN" | "SUPER_ADMIN";
 
+/** Bounded same-principal, same-college, same-window last verified appointments.
+ * Errors never replace a successful snapshot or masquerade as zero bookings. */
+const lastAdminBooked=new Map<string,{
+ at:number;value:Awaited<ReturnType<typeof listSuperAdminBookedInterviews>>;
+}>();
+function recentAdminBooked(key:string,value:Awaited<ReturnType<typeof listSuperAdminBookedInterviews>>|null,now:number){
+ if(value){
+  if(lastAdminBooked.size>=100)lastAdminBooked.clear();
+  lastAdminBooked.set(key,{at:now,value});
+  return {events:value.events,truncated:value.truncated,failed:false,stale:false};
+ }
+ const cached=lastAdminBooked.get(key);
+ if(cached&&now-cached.at<=5*60_000)return {...cached.value,failed:true,stale:true};
+ if(cached)lastAdminBooked.delete(key);
+ return {events:[],truncated:false,failed:true,stale:false};
+}
+
 /**
  * Last-known TPO follow-up summary, scoped to the requesting principal and
  * college. Retains a bounded, short-lived view when an independently loaded
@@ -536,8 +553,11 @@ export async function PlacementCalendarWorkspace({
     events: [], days: [], summary: summarizePlacementCalendar([], now),
   };
 
-  const bookings=audience==="SUPER_ADMIN"?await listSuperAdminBookedInterviews(context,window.from,window.to)
-    .then(value=>({...value,failed:false})).catch(()=>({events:[],truncated:false,failed:true})):null;
+  const bookingResult=audience==="SUPER_ADMIN"?
+    await listSuperAdminBookedInterviews(context,window.from,window.to).catch(()=>null):null;
+  const bookings=audience==="SUPER_ADMIN"?recentAdminBooked(
+    context.user.id+":"+collegeId+":"+window.from+":"+window.to,
+    bookingResult,now.getTime()):null;
   const eventTypeCountsSource=audience==="TPO"&&(state.kind||state.company||state.kinds.length)
    ?await listPlacementCalendarEvents(context,{
     collegeId,from:window.from,to:window.to,tpoLegacyScope:true,
@@ -782,8 +802,9 @@ export async function PlacementCalendarWorkspace({
       {audience==="SUPER_ADMIN" ? <PlacementPanelErrorBoundary>
         {bookings?.failed ? <Banner tone="error" action={<Link href={calendarHref(basePath,audience,state,{})}
            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Retry interviews</Link>}>
-          Could not load candidate interviews right now. The calendar is still available.
-        </Banner> : <SuperAdminInterviewOperations today={today} events={bookings?.events??[]} truncated={bookings?.truncated??false} />}
+          {bookings.stale?"Could not refresh interviews. Displaying the last verified appointments for this account and college; refresh to check current changes.":"Could not load candidate interviews right now. The calendar is still available."}
+        </Banner>:null}
+        {(!bookings?.failed||bookings.stale)?<SuperAdminInterviewOperations today={today} events={bookings?.events??[]} truncated={bookings?.truncated??false}/>:null}
        </PlacementPanelErrorBoundary> : null}
       <section className={isTpo?"border-b border-border pb-5 "+calendarStyles.tpoCommandBar:"border-b border-border pb-5"}>
         <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] sm:flex-row sm:items-center sm:justify-between">

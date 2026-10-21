@@ -34,10 +34,12 @@ export default async function LearnerCoursesPage() {
   // Each delivery fails independently; one corrupt or temporarily unavailable
   // course must never hide the learner's remaining course cards.
   const seenDeliveries = new Set<string>();
+  const seenMappings = new Set<string>();
   const rows: LearnerCourseListRow[] = await mapLearnerCourseCardsLimited(
     courses, async (course, index) => {
-      const duplicate = seenDeliveries.has(course.deliveryId);
-      seenDeliveries.add(course.deliveryId);
+      const mappingKey=[course.courseId,course.academicPeriodId,course.sectionCode].join(":");
+      const duplicate=seenDeliveries.has(course.deliveryId)||seenMappings.has(mappingKey);
+      seenDeliveries.add(course.deliveryId);seenMappings.add(mappingKey);
       const baseCourse = {
         deliveryId: duplicate || !course.deliveryId ? "unavailable-" + index : course.deliveryId,
         courseId: course.courseId,
@@ -118,16 +120,19 @@ export default async function LearnerCoursesPage() {
     }, 4,
   );
 
-  const [setupStatus,programSemesters]=await Promise.all([
+  const [setupResult,semestersResult]=await Promise.allSettled([
     rows.length===0?getLearnerCourseSetupStatus(context):Promise.resolve(null),
     listLearnerProgramSemesters(context),
   ]);
+  const setupStatus=setupResult.status==="fulfilled"?setupResult.value:null;
+  const programSemesters=semestersResult.status==="fulfilled"?semestersResult.value:[];
+  const semestersUnavailable=semestersResult.status==="rejected";
   return (
     <div className="min-w-0 max-w-full space-y-[16px]">
       <PageHeader
         title="Courses"
       />
-      <LearnerCourseList rows={rows} setupStatus={setupStatus} programSemesters={programSemesters} />
+      <LearnerCourseList rows={rows} setupStatus={setupStatus} programSemesters={programSemesters} semestersUnavailable={semestersUnavailable}/>
     </div>
   );
 }
