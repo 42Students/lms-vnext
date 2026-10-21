@@ -23,6 +23,8 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import {
   TPO_AUDIT_KINDS,
   TPO_AUDIT_KIND_LABELS,
+  TPO_AUDIT_ABOUT_CATEGORIES,
+  tpoAuditAboutCategory,
   tpoAuditHref,
 } from "@/modules/placements/tpo-audit-model";
 import {
@@ -36,6 +38,7 @@ function currentTimeMs(){return Date.now();}
 
 type SearchParams = {
   kind?: string | string[];
+  f_about?:string|string[];
   from?: string | string[];
   to?: string | string[];
   q?: string | string[];
@@ -83,6 +86,7 @@ export default async function TpoAuditPage({
   const parsed =
     tpoAuditQuerySchema.safeParse({
       kind: first(params.kind) || undefined,
+      f_about:first(params.f_about)||undefined,
       from: first(params.from) || undefined,
       to: first(params.to) || undefined,
       q: first(params.q) || undefined,
@@ -96,8 +100,7 @@ export default async function TpoAuditPage({
     return (
       <div className="min-w-0 max-w-full space-y-4">
         <PageHeader
-          eyebrow="TPO · Oversight"
-          title="Audit Log"
+          title="Audit log"
           description="College-scoped history of persisted placement activity."
         />
         <ErrorState
@@ -151,11 +154,32 @@ export default async function TpoAuditPage({
 
   const toIstDate=tpoIndiaCalendarDay;
   const today=toIstDate(new Date());
+  const istCalendarOffset=(days:number)=>{
+   const [year,month,day]=today.split("-").map(Number);
+   return toIstDate(new Date(Date.UTC(year!,month!-1,day!-days,12)));
+  };
   const quickLooks=[{label:"Today",from:today,to:today},
-   {label:"7 days",from:toIstDate(new Date(currentTimeMs()-6*86400000)),to:today},
-   {label:"30 days",from:toIstDate(new Date(currentTimeMs()-29*86400000)),to:today},
-   {label:"Older",from:"",to:toIstDate(new Date(currentTimeMs()-30*86400000))},
+   {label:"Last 7 days",from:istCalendarOffset(6),to:today},
+   {label:"Last 30 days",from:istCalendarOffset(29),to:today},
+   {label:"Older",from:"",to:istCalendarOffset(30)},
   ];
+  const entityMix=Object.entries(items.reduce<Record<string,number>>((counts,row)=>{
+    const key=tpoAuditAboutCategory(row.eventType,row.entityType);
+    counts[key]=(counts[key]??0)+1;
+    return counts;
+  },{})).sort((a,b)=>b[1]-a[1]).slice(0,7);
+  const recentActors=new Set(items.map(item=>item.actorName||"System")).size;
+  const recentLatest=items[0]?.occurredAt;
+  const entityHref=(entity:string|null)=>{
+    const params=new URLSearchParams();
+    if(query.kind!=="ALL")params.set("kind",query.kind);
+    if(query.from)params.set("from",query.from);
+    if(query.to)params.set("to",query.to);
+    if(query.q)params.set("q",query.q);
+    if(query.who)params.set("who",query.who);
+    if(entity)params.set("f_about",entity);
+    return "/tpo/audit"+(params.size?"?"+params.toString():"");
+  };
   const quickHref=(from:string,to:string)=>{
    const params=new URLSearchParams({
     ...(query.kind!=="ALL"?{kind:query.kind}:{}),...(query.q?{q:query.q}:{}),...(query.who?{who:query.who}:{}),
@@ -164,10 +188,9 @@ export default async function TpoAuditPage({
    return "/tpo/audit?"+params.toString();
   };
   return (
-    <div className="min-w-0 max-w-full space-y-6">
+    <div data-testid="tpo.audit" className="min-w-0 max-w-full space-y-4">
       <PageHeader
-        eyebrow="TPO · Oversight"
-        title="Audit Log"
+        title="Audit log"
         description="A traceable history of placement decisions, changes, sharing and access across the workspace."
         actions={<div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
           <Link href="/tpo/audit/actors" className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
@@ -195,6 +218,17 @@ export default async function TpoAuditPage({
         </div>}
       />
 
+      <div role="group" aria-label="Quick looks" data-testid="audit.quick" className="flex flex-wrap items-center gap-2">
+        <span className="mr-1 text-sm font-semibold text-body">{items.length} recent events. Look at:</span>
+        {entityMix.map(([key,n])=>{
+          const selected=query.f_about.length===1&&query.f_about[0]===key;
+          const label=TPO_AUDIT_ABOUT_CATEGORIES.find(item=>item.value===key)?.label??key;
+          return <Link key={key} href={entityHref(selected?null:key)} role="button" aria-pressed={selected}
+            data-testid={"audit.quick."+key} className={"inline-flex min-h-9 items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-semibold "+(selected?"border-primary bg-primary text-on-primary":"border-border bg-surface text-body hover:bg-primary-subtle")}>
+            {label} · <strong>{n}</strong>
+          </Link>;
+        })}
+      </div>
       <section
         aria-label="Audit summary"
         className="grid min-w-0 grid-cols-2 gap-2 md:gap-3 xl:grid-cols-4"
@@ -213,8 +247,8 @@ export default async function TpoAuditPage({
             count: summary.shares,
           },
           {
-            label: "Other placement activity",
-            count: summary.canonicalEvents,
+            label: "Recent actors (this page)",
+            count: recentActors,
           },
         ].map((metric) => (
           <StatTile className={tpoTileStyles.tile} key={metric.label} label={metric.label} value={metric.count} />
@@ -228,14 +262,27 @@ export default async function TpoAuditPage({
       <p className="text-xs text-muted-foreground leading-5">About and What happened: use the category tabs. Who and When: use the actor/entity view and date filters. The actor view contains additional scoped audit filters.</p>
       <TpoAuditSavedViews
        filters={{kind:query.kind,from:query.from,to:query.to,q:query.q,who:query.who}}/>
-      <nav aria-label="Quick looks" className="flex flex-wrap gap-2">
-       <span className="self-center text-sm font-semibold">Quick looks</span>
-       {quickLooks.map(look=><FilterChipLink key={look.label} href={quickHref(look.from,look.to)} selected={query.from===look.from&&query.to===look.to}>{look.label}</FilterChipLink>)}
-      </nav>
+      <section className="min-w-0 overflow-hidden rounded-[14px] border border-[var(--lms-canvas-border)] bg-white shadow-[0_5px_20px_rgba(26,45,72,0.05)]">
+       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] px-[13px] py-3 md:px-[18px] md:py-[17px]">
+        <div className="min-w-0">
+         <p className="text-xs text-muted-foreground">
+          {query.from&&query.to
+            ? "Everything from "+query.from+" to "+query.to+"."
+            : "The latest "+items.length+" events. Pick dates to see everything in a period."}
+         </p>
+         {recentLatest?<p className="mt-1 text-xs text-muted-foreground">Latest: {auditDateTime(recentLatest)}</p>:null}
+        </div>
+        <nav aria-label="When" className="flex flex-wrap gap-2">
+         {quickLooks.map(look=><FilterChipLink key={look.label}
+          href={quickHref(query.from===look.from&&query.to===look.to?"":look.from,query.from===look.from&&query.to===look.to?"":look.to)}
+          selected={query.from===look.from&&query.to===look.to}>{look.label}</FilterChipLink>)}
+        </nav>
+       </div>
+       <div className="min-w-0 px-3 py-4 md:px-[18px] md:pb-5">
       <Tabs ariaLabel="Filter audit by category" renderPanel={false} value={query.kind} items={[{kind:"ALL" as const,label:"All",count:query.kind==="ALL"?summary.total:null},...TPO_AUDIT_KINDS.map(kind=>({kind,label:TPO_AUDIT_KIND_LABELS[kind],count:query.kind==="ALL"?summary.byKind[kind]:null}))].map(item=>({value:item.kind,label:item.label,count:item.count??undefined,href:tpoAuditHref({...paginationFilters,kind:item.kind,page:1})}))}/>
       <section aria-labelledby="section-audit-filters" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
         <h2 id="section-audit-filters" className="m-0 text-base font-semibold text-foreground">
-          Audit filters
+          Filter the audit log
         </h2>
 
         <form role="search" aria-label="tpo audit filters"
@@ -268,6 +315,7 @@ export default async function TpoAuditPage({
             From (IST)
             <DateInput mode="date"
               name="from"
+              aria-label="From"
               defaultValue={query.from ?? ""}
               className="min-h-11 md:min-h-9"
             />
@@ -277,6 +325,7 @@ export default async function TpoAuditPage({
             To (IST)
             <DateInput mode="date"
               name="to"
+              aria-label="To"
               defaultValue={query.to ?? ""}
               className="min-h-11 md:min-h-9"
             />
@@ -289,7 +338,7 @@ export default async function TpoAuditPage({
               name="q"
               maxLength={120}
               defaultValue={query.q}
-              placeholder="What happened, job or who"
+              placeholder="Search"
               className="min-h-11 md:min-h-9"
             />
           </label>
@@ -305,6 +354,7 @@ export default async function TpoAuditPage({
             </div>
           </Disclosure>
 
+          <input type="hidden" name="f_about" value={query.f_about.join(",")} />
           <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:col-span-2 lg:col-span-4">
             <Button
               type="submit"
@@ -354,7 +404,7 @@ export default async function TpoAuditPage({
           <EmptyState
             title={
               summary.total === 0
-                ? "Nothing logged yet"
+                ? (query.q||query.who||query.from||query.to||query.kind!=="ALL"||query.f_about.length?"No rows match the current filters":"Nothing logged yet")
                 : "No records on this page"
             }
             description={
@@ -417,6 +467,8 @@ export default async function TpoAuditPage({
         </nav>:null}
       </section>
 
+       </div>
+      </section>
       <p role="note" className="text-xs leading-5 text-muted-foreground">Audit totals count source records, not necessarily unique actions. Related records are retained so no recorded decision is silently discarded.</p>
       <p className="text-xs leading-5 text-muted-foreground">
         This history shows recorded placement decisions, changes, sharing and access. Sensitive personal details are hidden. Earlier changes may not appear if they were not recorded at the time.
