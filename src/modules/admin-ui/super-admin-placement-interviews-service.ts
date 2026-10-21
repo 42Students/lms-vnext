@@ -96,6 +96,8 @@ export async function listSuperAdminInterviews(
     secondaryLabel:row.applicationId?"View application":undefined,
     details:[
      "Job: "+row.jobTitle,
+     "Round: "+row.roundName,
+     "Location: "+row.room,
      "Candidate: "+candidate,
      "Type: "+kind,
      "Status: "+row.status,
@@ -106,4 +108,40 @@ export async function listSuperAdminInterviews(
     ],
    };
   })};
+}
+
+
+/** Legacy interviews.csv exports the selected-college filtered rows across
+ * pages, not a global all-college feed. Keep the same nine column names and
+ * field order and cap the response at 5000 appointments.
+ */
+export async function exportSuperAdminInterviewsCsv(
+ context:RequestContext,raw:unknown,
+):Promise<{csv:string;total:number;exported:number;truncated:boolean}>{
+ const base=superAdminReadQuerySchema.parse(raw);
+ const lines:string[]=[];
+ let total=0;
+ const quoted=(value:string)=>{
+  const protectedValue=/^\s*[=+\-@\t\r]/.test(value)?"'"+value:value;
+  return '"'+protectedValue.replaceAll('"','""')+'"';
+ };
+ const headers=["id","job","candidate","type","status","scheduledDate",
+  "interviewer","location","mode"];
+ lines.push(headers.map(quoted).join(","));
+ for(let page=1;page<=25;page++){
+  const batch=await listSuperAdminInterviews(context,{...base,page,pageSize:200});
+  total=batch.total;
+  for(const row of batch.items){
+   const detail=(prefix:string)=>
+    row.details.find(item=>item.startsWith(prefix))?.slice(prefix.length)??"";
+   lines.push([
+    row.id,row.title,detail("Candidate: "),detail("Type: "),
+    row.status,detail("Date & Time: "),detail("Interviewer: "),
+    detail("Location: "),detail("Mode: "),
+   ].map(quoted).join(","));
+  }
+  if(batch.items.length<200||page*200>=total)break;
+ }
+ return {csv:"\uFEFF"+lines.join("\r\n")+"\r\n",total,
+  exported:lines.length-1,truncated:lines.length-1<total};
 }
