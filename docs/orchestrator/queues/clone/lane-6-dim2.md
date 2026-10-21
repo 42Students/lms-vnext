@@ -183,16 +183,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/app/(authenticated)/tpo/team/page.tsx`
 - [x] `src/app/(authenticated)/tpo/verification/page.tsx`
 - [x] `src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/mine/page.tsx`
-- [ ] `src/app/home/page.tsx`
-- [ ] `src/app/page.tsx`
-- [ ] `src/app/request-demo/page.tsx`
-- [ ] `src/components/academics/college-academic-directory.tsx`
-- [ ] `src/components/academics/college-recurring-preview.tsx`
-- [ ] `src/components/academics/college-structure-directory.tsx`
-- [ ] `src/components/activity/learner-notifications-inbox.tsx`
-- [ ] `src/components/activity/notification-list.tsx`
+- [x] `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx`
+- [x] `src/app/(authenticated)/tracker/mine/page.tsx`
+- [x] `src/app/home/page.tsx`
+- [x] `src/app/page.tsx`
+- [x] `src/app/request-demo/page.tsx`
+- [x] `src/components/academics/college-academic-directory.tsx`
+- [x] `src/components/academics/college-recurring-preview.tsx`
+- [x] `src/components/academics/college-structure-directory.tsx`
+- [x] `src/components/activity/learner-notifications-inbox.tsx`
+- [x] `src/components/activity/notification-list.tsx`
 - [ ] `src/components/admin/academic-module-scope-inventory.tsx`
 - [ ] `src/components/admin/academic-setup-steps.tsx`
 - [ ] `src/components/admin/college-closing-quizzes-card.tsx`
