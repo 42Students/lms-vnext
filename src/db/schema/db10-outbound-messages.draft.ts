@@ -1,9 +1,8 @@
 /**
- * DB10 transactional outbox + suppression tables: MIGRATION DRAFT ONLY.
- *
- * DO NOT export from src/db/schema/index.ts until W01 registers the migration,
- * DB bootstrap is replayed and sender idempotency has end-to-end verification.
- * There is NO production sender or externally callable API in this batch.
+ * DB10 transactional outbox + suppression tables: migration 0164 is registered,
+ * but activation remains FAIL-CLOSED until owner-approved PostgreSQL replay,
+ * database role hardening, suppression race checks and dispatch verification.
+ * There is NO production sender or externally callable outbox API in this batch.
  * Invitation URLs/merge variables/recipient addresses MUST stay encrypted.
  */
 import { sql } from "drizzle-orm";
@@ -132,7 +131,11 @@ export const db10OutboundSuppressions = pgTable(
  * This table is intentionally EMAIL-only. Tenant-specific ADMIN_BLOCK and
  * future SMS/WhatsApp suppression remain in outbound_suppressions. No generic
  * worker access is granted until migration, role privileges and pre-send
- * rechecks pass independent database verification.
+ * rechecks pass independent database verification. A future import from legacy
+ * email_suppression.email_norm requires an OFFLINE canonical lowercase/trim
+ * normalization + domain-separated stable-key HMAC crosswalk: verify collisions,
+ * dedupe into this global table, securely discard raw identifiers, and never
+ * activate delivery while the HMAC key is missing or being rotated.
  */
 export const db10GlobalEmailSuppressions = pgTable(
   "outbound_global_email_suppressions",
