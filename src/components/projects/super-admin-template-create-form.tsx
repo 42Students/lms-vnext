@@ -29,8 +29,8 @@ export function SuperAdminTemplateCreateForm(){
   }finally{setSaving(false);}
  }
  const fields=[
-  {key:"title",label:"Template title",limit:200,required:true},
-  {key:"slug",label:"Slug",limit:64,required:true},
+  {key:"title",label:"Template title",limit:160,required:true},
+  {key:"slug",label:"Slug",limit:80,required:true},
   {key:"release",label:"First release",limit:200,required:true},
   {key:"sprint",label:"First sprint",limit:200,required:true},
   {key:"task",label:"First task",limit:200,required:true},
@@ -42,7 +42,10 @@ export function SuperAdminTemplateCreateForm(){
     {field.label}<Input required={field.required} maxLength={field.limit} disabled={saving}
      value={values[field.key]} onChange={event=>edit(field.key,field.key==="slug"?event.target.value.toLowerCase():event.target.value)}
      pattern={field.key==="slug"?"[a-z0-9]+(?:-[a-z0-9]+)*":undefined}
+     aria-describedby={field.key==="slug"?"template-slug-hint":field.key==="title"?"template-title-hint":undefined}
      className="w-full"/>
+    {field.key==="slug"?<span id="template-slug-hint" className="text-xs text-muted-foreground">80 characters maximum; lowercase letters, numbers and hyphens only.</span>:
+     field.key==="title"?<span id="template-title-hint" className="text-xs text-muted-foreground">160 characters maximum.</span>:null}
    </label>)}
   </div>
   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Custom summary (optional)
