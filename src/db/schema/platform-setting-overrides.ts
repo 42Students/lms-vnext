@@ -8,6 +8,9 @@ export const platformSettingOverrides=pgTable("platform_setting_overrides",{
  key:varchar("key",{length:120}).notNull(),
  value:varchar("value",{length:4096}).notNull(),
  version:integer("version").notNull().default(1),
+ /** Audit the row origin separately from the latest overriding editor. */
+ createdAt:timestamp("created_at",{withTimezone:true}).notNull().defaultNow(),
+ createdByUserId:uuid("created_by_user_id").references(()=>users.id,{onDelete:"restrict"}),
  updatedByUserId:uuid("updated_by_user_id").notNull().references(()=>users.id,{onDelete:"restrict"}),
  updatedAt:timestamp("updated_at",{withTimezone:true}).notNull().defaultNow(),
 },t=>[
