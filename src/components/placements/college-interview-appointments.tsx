@@ -11,7 +11,8 @@ import {Select} from "@/components/ui/select";
 import {Dialog} from "@/components/ui/dialog";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
-import {apiFetch} from "@/lib/api-fetch";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { Disclosure } from "@/components/ui/disclosure";
 import {collegeInterviewIcs} from "@/modules/placements/college-interview-calendar-model";
@@ -19,7 +20,8 @@ type Round={id:string;name:string;status:string;kind:string};
 type Candidate={applicationId:string;name:string|null;screening:string};
 type Appointment={id:string;roundId:string;applicationId:string;status:string;scheduledAt:string;
  durationMinutes:number;mode:string;venue:string|null;meetingUrl:string|null;
- interviewer:string|null;outcomeNote:string|null;version:number};
+ interviewer:string|null;outcomeNote:string|null;version:number;
+ interviewType?:string|null;roundDescription?:string|null};
 const display=(iso:string)=>new Intl.DateTimeFormat("en-IN",{
  dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
 }).format(new Date(iso))+" IST";
@@ -40,10 +42,69 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
  const [mode,setMode]=useState<"ON_CAMPUS"|"VIRTUAL">("ON_CAMPUS");
  const [venue,setVenue]=useState("");const [meetingUrl,setMeetingUrl]=useState("");
  const [interviewer,setInterviewer]=useState("");const [reason,setReason]=useState("");
+ const [interviewType,setInterviewType]=useState<"SCREENING"|"TECHNICAL"|"HR"|"MANAGERIAL"|"FINAL">("TECHNICAL");
+ const [roundDescription,setRoundDescription]=useState("");
+ const [fieldErrors,setFieldErrors]=useState<Record<string,string>>({});
  const [busy,setBusy]=useState(false);const [error,setError]=useState("");
  const [success,setSuccess]=useState("");
  const [decision,setDecision]=useState<{row:Appointment;action:"CANCEL"|"COMPLETED"|"NO_SHOW"}|null>(null);
  const [decisionReason,setDecisionReason]=useState("");
+ const [feedbackFor,setFeedbackFor]=useState<Appointment|null>(null);
+ const [feedbackRating,setFeedbackRating]=useState(3);
+ const [feedbackRecommendation,setFeedbackRecommendation]=useState<"SELECT"|"HOLD"|"REJECT">("HOLD");
+ const [feedbackComments,setFeedbackComments]=useState("");
+ const [feedbackExisting,setFeedbackExisting]=useState<{
+  rating:number;recommendation:string;comments:string;createdAt:string
+ }|null>(null);
+ const [feedbackBusy,setFeedbackBusy]=useState(false);
+ const [feedbackError,setFeedbackError]=useState("");
+ function feedbackUrl(id:string){
+  return "/api/placements/college/jobs/"+encodeURIComponent(jobId)+
+   "/interviews/"+encodeURIComponent(id)+"/feedback";
+ }
+ async function openFeedback(row:Appointment){
+  if(busy||feedbackBusy)return;
+  setFeedbackFor(row);setFeedbackRating(3);setFeedbackRecommendation("HOLD");
+  setFeedbackComments("");setFeedbackExisting(null);setFeedbackError("");
+  setFeedbackBusy(true);
+  try{
+   const response=await apiFetch<{feedback:typeof feedbackExisting}>(feedbackUrl(row.id),{cache:"no-store"});
+   setFeedbackExisting(response.feedback);
+  }catch(error){
+   setFeedbackError("Unable to load interview feedback. Please try again. "+
+    (error instanceof Error?error.message:""));
+  }finally{setFeedbackBusy(false);}
+ }
+ async function submitFeedback(){
+  if(!feedbackFor||feedbackBusy||feedbackComments.trim().length<3||feedbackExisting)return;
+  setFeedbackBusy(true);setFeedbackError("");
+  try{
+   await apiFetch(feedbackUrl(feedbackFor.id),{
+    method:"POST",headers:{"Content-Type":"application/json"},credentials:"same-origin",
+    body:JSON.stringify({expectedVersion:feedbackFor.version,confirmed:true,
+     rating:feedbackRating,recommendation:feedbackRecommendation,comments:feedbackComments.trim()}),
+   });
+   showToast({tone:"success",title:"Feedback submitted successfully"});
+   setFeedbackFor(null);router.refresh();onCommitted?.();
+  }catch(error){
+   setFeedbackError(error instanceof Error?error.message:"Feedback could not be saved.");
+  }finally{setFeedbackBusy(false);}
+ }
+ const quoteCsv=(value:string)=>{
+  // Prevent spreadsheet programs interpreting candidate-provided values as formulae.
+  const escaped=/^[\s]*[=+@-]/.test(value)?"'"+value:value;
+  return '"'+escaped.replaceAll('"','""')+'"';
+ };
+ const appointmentsCsv=[
+  ["Candidate","Round","Interview Type","Scheduled (IST)","Duration minutes",
+   "Mode","Location","Interviewer","Status"].map(quoteCsv).join(","),
+  ...appointments.map(row=>[
+   candidates.find(c=>c.applicationId===row.applicationId)?.name??"Applicant",
+   rounds.find(r=>r.id===row.roundId)?.name??"Interview round",
+   row.interviewType??"",display(row.scheduledAt),String(row.durationMinutes),
+   row.mode,row.venue??row.meetingUrl??"",row.interviewer??"",row.status,
+  ].map(quoteCsv).join(",")),
+ ].join("\r\n");
  function open(row?:Appointment){
   setEditing(row??null);setRoundId(row?.roundId??rounds[0]?.id??"");
   setApplicationId(row?.applicationId??candidates.find(c=>c.applicationId===preferredApplicationId)?.applicationId??candidates[0]?.applicationId??"");
@@ -51,17 +112,21 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   setMode(row?.mode==="VIRTUAL"?"VIRTUAL":"ON_CAMPUS");
   setVenue(row?.venue??"");setMeetingUrl(row?.meetingUrl??"");
   setInterviewer(row?.interviewer??"");setReason("");
+  const type=row?.interviewType;
+  setInterviewType(type==="SCREENING"||type==="TECHNICAL"||type==="HR"||
+   type==="MANAGERIAL"||type==="FINAL"?type:"TECHNICAL");
+  setRoundDescription(row?.roundDescription??rounds.find(r=>r.id===(row?.roundId??rounds[0]?.id))?.name??"");
   setDirty(false);setConfirmDiscard(false);
-  setError("");setSuccess("");setShow(true);
+  setError("");setSuccess("");setFieldErrors({});setShow(true);
  }
  function closeSetup(){
-  if(busy)return;
+  if(busy){showToast({tone:"info",title:"Wait for interview submission to finish."});return;}
   if(dirty)setConfirmDiscard(true);
   else setShow(false);
  }
  async function post(body:Record<string,unknown>){
   if(busy)return false;
-  setBusy(true);setError("");setSuccess("");
+  setBusy(true);setError("");setSuccess("");setFieldErrors({});
   try{
    const data=await apiFetch<{status?:string}>("/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/interviews",{
     method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
@@ -70,18 +135,29 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
    setSuccess(body.action==="SCHEDULE"?"Interview scheduled and candidate notified." :
     "Interview "+(data.status??"updated").toLowerCase().replaceAll("_"," ")+". The learner was notified.");
    if(body.action==="SCHEDULE"){
-    showToast({tone:"success",title:"Interview scheduled and candidate notified."});
+    showToast({tone:"success",title:"Interview scheduled successfully",
+     description:"Interview scheduled and candidate notified."});
    }
    setDirty(false);router.refresh();onCommitted?.();return true;
-  }catch(e){setError(e instanceof Error?e.message:"Interview action failed");return false;}
+  }catch(e){
+   if(e instanceof FriendlyFetchError&&"fieldErrors" in e&&
+    typeof e.fieldErrors==="object"&&e.fieldErrors!==null)
+    setFieldErrors(e.fieldErrors as Record<string,string>);
+   setError(e instanceof Error?e.message:"Interview action failed");return false;
+  }
   finally{setBusy(false);}
  }
  async function save(){
   if(!start||!applicationId||!roundId)return;
-  const parsed=new Date(start+"+05:30");
-  if(!Number.isFinite(parsed.getTime())){setError("Enter a valid date and time.");return;}
-  const iso=parsed.toISOString();
+  if(roundDescription.trim().length<10){
+   setFieldErrors({roundDescription:"Please describe what this round is about"});
+   setError("Please describe what this round is about");return;
+  }
+  let iso:string;
+  try{iso=driveDeadlineIstToIso(start);}
+  catch{setError("Enter a valid date and time in IST.");return;}
   const appointment={roundId,applicationId,scheduledAt:iso,durationMinutes:duration,
+   interviewType,roundDescription:roundDescription.trim(),
    mode,venue:mode==="ON_CAMPUS"?venue.trim():null,
    meetingUrl:mode==="VIRTUAL"?meetingUrl.trim():null,
    interviewer:interviewer.trim()||null};
@@ -123,8 +199,14 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] md:flex-row md:items-center md:justify-between">
    <div><h2 className="text-lg font-semibold">Candidate interviews</h2>
     <p className="mt-1 text-sm text-body">Schedule, edit, cancel, mark Completed or No Show. Actions are audited and notify the learner.</p></div>
-   <Button type="button" disabled={!available.length||!candidates.length} className="min-h-11 w-full md:w-auto md:min-h-9" onClick={()=>open()}
-    >Schedule interview</Button>
+   <div className="flex flex-col gap-2 sm:flex-row">
+    <a download="drive-interviews.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(appointmentsCsv)}
+     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] md:min-h-9">
+     Export CSV
+    </a>
+    <Button type="button" disabled={!available.length||!candidates.length}
+     className="min-h-11 w-full md:w-auto md:min-h-9" onClick={()=>open()}>Schedule interview</Button>
+   </div>
   </div>
   {!available.length||!candidates.length?<Banner tone="info">Schedule an interview when a pending or scheduled round and a candidate are available.</Banner>:null}
   <DataTable<(typeof appointments)[number]>
@@ -142,6 +224,17 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
         cell:row=>(row.mode==="VIRTUAL"?"Virtual":"On campus")+" · "+(row.venue??row.meetingUrl??"—")},
       {key:"interviewer",header:"Interviewer",mobilePriority:"secondary",
         cell:row=>row.interviewer??"Not recorded"},
+      {key:"clash",header:"Conflicts",mobilePriority:"secondary",cell:row=>{
+       const began=Date.parse(row.scheduledAt);
+       const ended=began+row.durationMinutes*60_000;
+       const conflict=appointments.some(other=>other.id!==row.id&&other.status==="SCHEDULED"&&
+        Date.parse(other.scheduledAt)<ended+15*60_000&&
+        Date.parse(other.scheduledAt)+other.durationMinutes*60_000>began-15*60_000&&
+        (other.applicationId===row.applicationId||
+         (Boolean(row.venue??row.meetingUrl)&&(other.venue??other.meetingUrl)=== (row.venue??row.meetingUrl))||
+         (Boolean(row.interviewer)&&other.interviewer===row.interviewer)));
+       return conflict?<StatusBadge tone="error">Conflict</StatusBadge>:"—";
+      }},
       {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="COMPLETED"?"success":row.status==="SCHEDULED"?"info":row.status==="CANCELLED"?"neutral":"warning"}>{row.status}</StatusBadge>},
       {key:"actions",header:"Actions",mobilePriority:"action",
         cell:row=><Disclosure title="Actions" className="min-w-0 md:min-w-40">
@@ -152,6 +245,8 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
        durationMinutes:row.durationMinutes,location:row.venue??row.meetingUrl,
       }))} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-[14px] font-[650] text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">
       Download .ics</a>:null}
+     {row.status==="COMPLETED"?<Button type="button" variant="secondary"
+      disabled={busy} onClick={()=>void openFeedback(row)}>Interview feedback</Button>:null}
      {row.status==="SCHEDULED"?<>
       <Button type="button" disabled={busy} variant="secondary" onClick={()=>open(row)}
        >Edit</Button>
@@ -171,7 +266,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   {error&&!show?<Banner tone="error">{error}</Banner>:null}
   <Dialog open={show} onOpenChange={next=>{if(!next)closeSetup();}} title={editing?"Edit interview":"Schedule interview"} dismissible={!busy}
    footer={<>
-    <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy||!start||!roundId||!applicationId||duration<5||duration>480||(Boolean(editing)&&reason.trim().length<3)} onClick={()=>void save()}>
+    <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy||!start||!roundId||!applicationId||duration<5||duration>480||roundDescription.trim().length<10||(Boolean(editing)&&reason.trim().length<3)} onClick={()=>void save()}>
      {busy?"Saving…":editing?"Save interview":"Schedule and notify"}</Button>
     <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy} variant="secondary" onClick={closeSetup}>Cancel</Button>
    </>}>
@@ -184,6 +279,25 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
      onChange={e=>{setApplicationId(e.target.value);setDirty(true);}} className="w-full">
      {candidates.map(c=><option key={c.applicationId} value={c.applicationId}>{c.name??"Learner"} · {c.screening}</option>)}
     </Select></label>
+    <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+     <label className="grid gap-[6px] text-[13px] font-semibold">Interview Type
+      <Select value={interviewType} onChange={event=>{
+       setInterviewType(event.target.value as typeof interviewType);setDirty(true);
+      }} className="w-full">
+       <option value="SCREENING">Screening</option><option value="TECHNICAL">Technical</option>
+       <option value="HR">HR</option><option value="MANAGERIAL">Managerial</option>
+       <option value="FINAL">Final</option>
+      </Select>
+     </label>
+     <label className="grid gap-[6px] text-[13px] font-semibold sm:col-span-2">
+      What this round is about <span className="text-xs text-muted-foreground">({roundDescription.length}/500)</span>
+      <Textarea rows={3} minLength={10} maxLength={500} value={roundDescription}
+       placeholder="Explain this interview round and how candidates should prepare"
+       onChange={event=>{setRoundDescription(event.target.value);setDirty(true);}}
+       className="w-full"/>
+      {fieldErrors.roundDescription?<span role="alert" className="text-error">{fieldErrors.roundDescription}</span>:null}
+     </label>
+    </div>
     <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date & time (IST)<Input type="datetime-local" required value={start}
       onChange={e=>{setStart(e.target.value);setDirty(true);}} className="w-full"/></label>
@@ -208,6 +322,50 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       <strong>Interview was not scheduled.</strong> {error}
     </Banner>:null}
 
+  </Dialog>
+  <Dialog open={feedbackFor!==null} onOpenChange={next=>{if(!next){
+   if(feedbackBusy)showToast({tone:"info",title:"Wait for feedback submission to finish."});
+   else setFeedbackFor(null);
+  }}} title="Interview feedback" description="Staff-only review. Rating and recommendation do not update selection results."
+   dismissible={true}
+   footer={<>
+    {!feedbackExisting?<Button type="button" disabled={feedbackBusy||
+     feedbackError.startsWith("Unable to load")||feedbackComments.trim().length<3}
+     onClick={()=>void submitFeedback()}>{feedbackBusy?"Submitting…":"Submit feedback"}</Button>:null}
+    <Button type="button" variant="secondary" onClick={()=>{
+     if(feedbackBusy){showToast({tone:"info",title:"Wait for feedback submission to finish."});return;}
+     setFeedbackFor(null);
+    }}>Close</Button>
+   </>}>
+   {feedbackBusy?<p role="status">Loading interview feedback…</p>:null}
+   {feedbackExisting?<div className="space-y-2 text-sm">
+    <p className="font-semibold">Feedback already submitted</p>
+    <p>Rating: {feedbackExisting.rating} / 5</p>
+    <p>Recommendation: {feedbackExisting.recommendation}</p>
+    <p className="whitespace-pre-wrap">Comments: {feedbackExisting.comments}</p>
+    <p className="text-xs text-muted-foreground">Recorded on {display(feedbackExisting.createdAt)}</p>
+   </div>:!feedbackBusy?<>
+    <label className="grid gap-2 text-[13px] font-semibold">Rating (1–5)
+     <Select value={String(feedbackRating)} onChange={event=>setFeedbackRating(Number(event.target.value))}>
+      {[1,2,3,4,5].map(value=><option key={value} value={value}>{value} / 5</option>)}
+     </Select>
+    </label>
+    <label className="mt-3 grid gap-2 text-[13px] font-semibold">Recommendation
+     <Select value={feedbackRecommendation} onChange={event=>
+      setFeedbackRecommendation(event.target.value as typeof feedbackRecommendation)}>
+      <option value="SELECT">Recommend selecting</option>
+      <option value="HOLD">Hold for review</option>
+      <option value="REJECT">Recommend not selecting</option>
+     </Select>
+    </label>
+    <label className="mt-3 grid gap-2 text-[13px] font-semibold">Feedback comments
+     <Textarea value={feedbackComments} rows={4} maxLength={5000}
+      onChange={event=>setFeedbackComments(event.target.value)}/>
+    </label>
+   </>:null}
+   {feedbackError?<Banner tone="error" action={<Button type="button" size="sm"
+    variant="secondary" onClick={()=>feedbackFor&&void openFeedback(feedbackFor)}>
+    Retry</Button>}>{feedbackError}</Banner>:null}
   </Dialog>
   <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard}
    title="Discard interview setup?"

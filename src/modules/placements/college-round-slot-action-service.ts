@@ -26,7 +26,8 @@ function viewSlot(s:typeof slots.$inferSelect,outcome?:string){
   durationMinutes:Math.round((s.endsAt.getTime()-s.startsAt.getTime())/60000),
   mode:virtual?"VIRTUAL":"ON_CAMPUS",venue:virtual?null:s.room,
   meetingUrl:virtual?s.room:null,interviewer:s.panel,outcomeNote:null,
-  version:s.version};
+  version:s.version,interviewType:s.legacyInterviewType,
+  roundDescription:s.legacyRoundDescription};
 }
 export type CollegeRoundSlotAppointmentFilters = {
  appointmentPage?:number;
@@ -237,6 +238,7 @@ export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobI
     const [saved]=await tx.insert(slots).values({
      jobId:job.id,roundId:a.roundId,applicationId:a.applicationId,
      startsAt:start,endsAt:end,room,panel:a.interviewer,status:"BOOKED",
+     legacyInterviewType:a.interviewType??null,legacyRoundDescription:a.roundDescription??null,
      source:"TPO",confirmedAt:new Date(),changedByUserId:ctx.user.id,
     }).returning();
     booked=saved;
@@ -249,6 +251,8 @@ export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobI
     if(!old||old.version!==cmd.expectedVersion||old.roundId!==a.roundId||
       old.applicationId!==a.applicationId)throw Error("Interview changed; refresh and retry.");
     const [saved]=await tx.update(slots).set({startsAt:start,endsAt:end,room,
+     legacyInterviewType:a.interviewType??old.legacyInterviewType,
+     legacyRoundDescription:a.roundDescription??old.legacyRoundDescription,
      panel:a.interviewer,version:old.version+1,changedByUserId:ctx.user.id,updatedAt:new Date()})
      .where(and(eq(slots.id,old.id),eq(slots.version,old.version))).returning();
     if(!saved)throw Error("Interview changed; refresh and retry.");
