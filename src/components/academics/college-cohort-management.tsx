@@ -346,7 +346,7 @@ export function CollegeCohortRowActions({ row, periods }: {
     if(pending)return;
     setNotice(""); setEditErrors({});
     if (!name.trim()) { setEditErrors({ name: "Enter a batch name" }); return; }
-    if (!validAcademicYear(academicYear)) {
+    if (academicYear !== (row.academicYear ?? "") && !validAcademicYear(academicYear)) {
       // Legacy persisted extended academic years can still be displayed, but new
       // edits use the old LMS consecutive-year format.
       setEditErrors({ academicYear: "Use consecutive years, e.g., 2026-27" }); return;
@@ -423,7 +423,7 @@ export function CollegeCohortRowActions({ row, periods }: {
       <Button type="button" variant="secondary" disabled={pending} onClick={retire}>Retry archive</Button>
     </Alert> : null}
     {blocked ? <p className="mt-1 text-xs text-muted-foreground leading-5">
-      &quot;Archived batches cannot be edited.&quot;
+      Archived batches cannot be edited.
     </p> : null}
     {editing ? <Dialog open={editing} onOpenChange={next=>{if(!next)close();}}
       title={"Edit Batch " + row.name}>
