@@ -8,9 +8,9 @@
   min-width: 260px;
   max-width: 260px;
   flex-shrink: 0;
-  border: 1px solid #e7ecf2;
+  border: 1px solid var(--lms-header-border);
   border-radius: 13px;
-  background: #f8fafc;
+  background: var(--lms-topbar-search);
   box-shadow: none;
   padding: 10px;
 }
@@ -21,8 +21,8 @@
   background: #f4f7fb;
 }
 .leadCard {
-  border: 1px solid #e7ecf2;
+  border: 1px solid var(--lms-header-border);
   border-radius: 10px;
-  background: #fff;
+  background: var(--lms-white);
   box-shadow: none;
 }

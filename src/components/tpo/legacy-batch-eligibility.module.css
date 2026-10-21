@@ -5,7 +5,7 @@
 .bar {
   height: 6px !important;
   border-radius: 999px;
-  background: #e7ecf2 !important;
+  background: var(--lms-header-border) !important;
 }
 .bar > span[title^="Eligible:"] { background-color: #15803d !important; }
-.bar > span[title^="Ineligible:"] { background-color: #b91c1c !important; }
+.bar > span[title^="Ineligible:"] { background-color: var(--lms-error-text) !important; }
