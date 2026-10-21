@@ -9,7 +9,7 @@ export default function LearnerQuizAttemptPage() {
       <div className="mx-auto w-full min-w-0 max-w-6xl rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4 shadow-none min-[768px]:p-[var(--lms-canvas-padding)]">
         <Link
           href="/learn/allQuizzes"
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9"
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9"
         >
           ← All Quizzes
         </Link>

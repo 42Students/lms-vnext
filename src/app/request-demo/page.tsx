@@ -16,7 +16,7 @@ export default function RequestDemoPage(){
     </ul>
    </section>
    <a href="mailto:hello@42lms.com?subject=42%20LMS%20demo%20request"
-    className="inline-flex min-h-11 w-full min-w-0 items-center justify-center min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary px-5 py-2 text-center text-sm font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] min-[768px]:w-auto">Email us to book a demo</a>
+    className="inline-flex min-h-11 w-full min-w-0 items-center justify-center min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary px-5 py-2 text-center text-sm font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:w-auto">Email us to book a demo</a>
    <p className="text-sm text-muted-foreground leading-[22px]">Contact: hello@42lms.com. No form data is collected on this page.</p>
   </section>
  </MarketingLayout>;
