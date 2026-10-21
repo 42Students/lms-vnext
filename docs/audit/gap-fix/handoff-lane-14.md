@@ -51,3 +51,7 @@
 - `src/modules/projects/mentor-reassignment-service.ts` / at-risk UI (projects owner) | G2-7-021-093, G2-7-029-093 | Scope status/blocked/readiness derived from legacy status before mentor workload calculations, exclude ARCHIVED.
 - `src/modules/projects/project-meeting-service.ts` (projects owner) | G2-19-028-022, G2-20-017-020 | Convert legacyMeetingsList to tenant-safe relational meetings, only show calendar error if a real sync producer exists.
 - `src/modules/projects/template-service.ts` (projects owner) | G2-6-017-017 | Preserve exact duplicate college-template assignment wording for verified unique conflict.
+
+- `src/modules/activity/service.ts` and audit routes (activity owner) | G2-18-024-007/-052, G2-10-003-034/-066, G2-16-021-003/-005/-007/-019/-032/-034 | Add reviewed legacy audit action/entity mapping, masked last4 actor role snapshot, privacy-gated IP digest and retention; never raw PII.
+- `src/app/api/notifications/*` and notification producers (notifications owner) | G2-17-026-007/-046/-047, G2-15-011-008/-011/-069/-070, G2-18-012-002/-009/-010 | Add college/org authorized admin directory, scoped int user expansion, schedule/delivery audit/soft delete, internal deep link and external URL allowlist.
+- `drizzle/meta/_journal.json` (lane 15 only) | G2-18-024-052 | Register 0212/0213 after privacy, tenant, migration tests and review.
