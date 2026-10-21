@@ -18,6 +18,10 @@ export const learnerProfiles = pgTable("learner_profiles", {
     .references(() => collegeMemberships.id, { onDelete: "restrict" }),
   rollNumber: varchar("roll_number", { length: 128 }),
   registrationNumber: varchar("registration_number", { length: 128 }),
+  /** Private storage key, never an expired signed URL or a client-supplied path. */
+  resumeObjectPath: varchar("resume_object_path", { length: 1024 }),
+  /** Independent compare-and-swap revision for learner document updates. */
+  profileDocumentVersion: integer("profile_document_version").notNull().default(0),
   profileDocument: jsonb("profile_document")
     .$type<Record<string, unknown>>()
     .notNull()
@@ -28,7 +32,9 @@ export const learnerProfiles = pgTable("learner_profiles", {
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-});
+}, (t) => [
+  check("learner_profiles_document_version_ck", sql`${t.profileDocumentVersion} >= 0`),
+]);
 
 export const facultyProfiles = pgTable(
   "faculty_profiles",
@@ -42,6 +48,8 @@ export const facultyProfiles = pgTable(
     ),
     employmentType: varchar("employment_type", { length: 128 }),
     academicTitle: varchar("academic_title", { length: 128 }),
+    /** Faculty photo key is owned and signed at access time by storage service. */
+    avatarObjectPath: varchar("avatar_object_path", { length: 1024 }),
     profileDocument: jsonb("profile_document")
       .$type<Record<string, unknown>>()
       .notNull()
