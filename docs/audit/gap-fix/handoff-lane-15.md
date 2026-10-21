@@ -154,3 +154,6 @@
 
 - Legacy project workspace update adapter G2-2-020-023: split nested DTO into project summary and separately CAS-protected releases/sprints/tasks/resources endpoints under project scope and authorize every section; do not accept nested fields in summary route or execute partial untracked updates.
 - After-college choices endpoint G2-2-030-035/026: when account ACTIVE but no authorized college, use `fixedTpoOutcomeCatalog` rather than calling restricted `readTpoOutcomeLabels`; empty dynamic labels. Do not reveal college custom choices to recruiter/no scope or convert infrastructure errors to false success.
+
+- TPO drive lifecycle UI/read owner G2-8-011-001: use `tpoLegacyLifecycleProjection` to distinguish placement_recruiter_drive_requests REQUEST/SENT_BACK/REJECTED from placement_jobs DRAFT/PUBLISHED/CLOSED/CANCELLED; never send request IDs to job cancellation route.
+- Learner project workspace DTO adapter G2-15-004-065: map actual active projectMembers mentor, latest projectSubmissions submittedAt, immutable review events, projectInstances progressPercent/endDate to `learnerLegacyProjectProgressProjection`; add fixtures for each status/nullable timestamp; no fake review dates.
