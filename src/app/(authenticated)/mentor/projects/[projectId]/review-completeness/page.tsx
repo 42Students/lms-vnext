@@ -29,7 +29,7 @@ export default async function MentorProjectReviewCompletenessPage({
     <PageHeader eyebrow="Mentor · Project Overview" title="Delivery review completeness"
       description={data.projectTitle??"Current assigned project"}
       actions={<Link data-unskin="" href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary w-full md:w-auto justify-center">
         Delivery workspace
       </Link>} />
     {!data.enabled?<section role="status"
