@@ -1450,6 +1450,13 @@
       "when": 1792353731266,
       "tag": "0206_lane15_assignment_resource_builder",
       "breakpoints": true
+    },
+    {
+      "idx": 207,
+      "version": "7",
+      "when": 1792353791266,
+      "tag": "0207_lane15_legacy_lesson_discussions",
+      "breakpoints": true
     }
   ]
 }

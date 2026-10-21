@@ -20,6 +20,7 @@ import {
   courseTeachingAssignments,
   membershipRoles,
   courseDiscussionMessages,
+  lessonContents,
   users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -39,8 +40,9 @@ import {facultyReplyParentTokenMatches} from "./faculty-discussion-reply-model";
  * delta/upsert/tombstones, with timestamps as exact PostgreSQL UTC strings.
  * Sender display names remain current-directory values, not historical
  * snapshots; a profile edit must not rewrite stored messages or identities.
- * Old lesson Discussion is represented by the delivery feed until a scoped
- * per-content thread identifier is persisted. */
+ * Lesson-scoped messages now have an optional checked lessonContentId;
+ * delivery-wide messages retain null. Query the specific lesson in its
+ * same-class delivery instead of merging unrelated lesson discussions. */
 const deliveryIdSchema = z.string().uuid();
 const messageIdSchema = z.string().uuid();
 const createDiscussionMessageSchema = z.object({
@@ -50,6 +52,7 @@ const createDiscussionMessageSchema = z.object({
       message: "Message is too long for this Discussion",
     }),
   replyToMessageId: messageIdSchema.optional(),
+  lessonContentId: messageIdSchema.optional(),
   expectedParentUpdatedAt:z.string().datetime({offset:true}).optional(),
   confirmed:z.literal(true).optional(),
 }).strict();
@@ -370,6 +373,14 @@ export async function createCourseDiscussionMessage(
     if(mode==="LEARNER")await assertLiveLearnerDiscussionWriter(tx,context);
     // Recheck the persisted teaching scope before the write, not only on read.
     if(mode==="FACULTY")await assertLiveFacultyDiscussionModerator(tx,context,deliveryId);
+    if(input.lessonContentId){
+      const [lesson]=await tx.select({id:lessonContents.id})
+        .from(lessonContents).where(and(
+          eq(lessonContents.id,input.lessonContentId),
+          eq(lessonContents.deliveryId,deliveryId),
+          isNull(lessonContents.deletedAt))).for("share").limit(1);
+      if(!lesson)throw new CoursesServiceError("LESSON_CONTENT_NOT_FOUND");
+    }
     const [parent]=input.replyToMessageId
       ? await tx.select().from(courseDiscussionMessages)
         .where(and(eq(courseDiscussionMessages.id,input.replyToMessageId),
@@ -378,12 +389,15 @@ export async function createCourseDiscussionMessage(
       : [null];
     if(input.replyToMessageId&&!parent)
       throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
+    if(parent&&parent.lessonContentId!==(input.lessonContentId??null))
+      throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
     if(mode==="FACULTY"&&parent&&(!input.confirmed||!input.expectedParentUpdatedAt||
        !facultyReplyParentTokenMatches(parent.updatedAt,input.expectedParentUpdatedAt)))
       throw new CoursesServiceError("DISCUSSION_STALE_VERSION");
     const messageText=formatDiscussionReply(input.messageText,parent?.id??null);
     const [created] = await tx.insert(courseDiscussionMessages).values({
       deliveryId,
+      lessonContentId:input.lessonContentId??null,
       senderMembershipId: membership.id,
       senderRole,
       messageText,
@@ -565,4 +579,48 @@ export async function deleteCourseDiscussionMessage(
     });
     return deleted;
   });
+}
+
+/** Lesson-only thread reader: require the delivery grant first, then verify
+ * the content belongs to this exact delivery. Cursor uses a stable UUID tie. */
+export async function listLessonContentDiscussionMessages(
+ context:RequestContext,deliveryIdInput:string,lessonContentIdInput:string,
+ rawPage:unknown={},
+){
+ const deliveryId=deliveryIdSchema.parse(deliveryIdInput);
+ const lessonContentId=messageIdSchema.parse(lessonContentIdInput);
+ const {mode}=await discussionAccess(context,deliveryId,true);
+ if(mode==="LEARNER")await requireOwnCourseLearnerRead(context);
+ const [content]=await getDb().select({id:lessonContents.id})
+  .from(lessonContents).where(and(
+   eq(lessonContents.id,lessonContentId),
+   eq(lessonContents.deliveryId,deliveryId),
+   isNull(lessonContents.deletedAt))).limit(1);
+ if(!content)throw new CoursesServiceError("LESSON_CONTENT_NOT_FOUND");
+ const page=historySchema.parse(rawPage);
+ const before=page.beforeCreatedAt&&page.beforeId
+  ?sql`(${courseDiscussionMessages.createdAt},${courseDiscussionMessages.id})
+    < (${page.beforeCreatedAt}::timestamptz,${page.beforeId}::uuid)`:undefined;
+ const rows=await getDb().select({
+  id:courseDiscussionMessages.id,
+  lessonContentId:courseDiscussionMessages.lessonContentId,
+  messageText:courseDiscussionMessages.messageText,
+  senderName:users.displayName,createdAt:courseDiscussionMessages.createdAt,
+  cursorCreatedAt:sql<string>`to_char(${courseDiscussionMessages.createdAt}
+    AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`,
+  legacySequence:courseDiscussionMessages.legacyLessonSequence,
+ }).from(courseDiscussionMessages)
+  .innerJoin(collegeMemberships,eq(collegeMemberships.id,courseDiscussionMessages.senderMembershipId))
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .where(and(eq(courseDiscussionMessages.deliveryId,deliveryId),
+    eq(courseDiscussionMessages.lessonContentId,lessonContentId),
+    isNull(courseDiscussionMessages.deletedAt),before))
+  .orderBy(desc(courseDiscussionMessages.createdAt),desc(courseDiscussionMessages.id))
+  .limit(page.limit+1);
+ const hasOlder=rows.length>page.limit;
+ const visible=(hasOlder?rows.slice(0,page.limit):rows).reverse();
+ const oldest=visible[0];
+ return {messages:visible,hasOlder,
+  nextCursor:hasOlder&&oldest?
+    {beforeCreatedAt:oldest.cursorCreatedAt,beforeId:oldest.id}:null};
 }
