@@ -25,18 +25,23 @@ import {GLOBAL_TPO_REQUEST_TYPES,TPO_REQUEST_STATUSES,tpoRequestStatusCounts,tpo
 import { getTpoGlobalRequestsInbox } from "@/modules/placements/tpo-global-requests-service";
 import {listPlacementJobs} from "@/modules/placements/job-service";
 import {getTpoAfterCollegeForRoster} from "@/modules/placements/tpo-after-college-roster-service";
-import {afterCollegeDisplay} from "@/modules/placements/tpo-after-college-model";
+import {afterCollegeDisplay,AFTER_COLLEGE_OUTCOMES,AFTER_COLLEGE_LABELS} from "@/modules/placements/tpo-after-college-model";
 import {tpoRequestAttentionOnPage} from "@/modules/placements/tpo-request-attention-model";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {AuthorizationError} from "@/modules/permissions/policy";
 
 export const dynamic = "force-dynamic";
-type Params = { urgentOnly?:string|string[]; jobId?:string|string[]; age?:string|string[]; sort?:string|string[]; requestType?:string|string[]; status?: string | string[]; search?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
+type Params = { proof?:string|string[];branchId?:string|string[];
+ registration?:string|string[];afterCollege?:string|string[];urgentOnly?:string|string[]; jobId?:string|string[]; age?:string|string[]; sort?:string|string[]; requestType?:string|string[]; status?: string | string[]; search?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
-function href(input: { status: string; age:string; sort:string; requestType:string; search: string; page: number; pageSize: number; urgentOnly?:boolean;jobId?:string }) {
+function href(input: { status: string; age:string; sort:string; requestType:string; search: string; page: number; pageSize: number; urgentOnly?:boolean;jobId?:string;proof?:string;branchId?:string;registration?:string;afterCollege?:string }) {
   const p = new URLSearchParams();
   p.set("status", input.status);if(input.age!=="ALL")p.set("age",input.age);p.set("sort",input.sort);if(input.requestType!=="ALL")p.set("requestType",input.requestType); if (input.search) p.set("search", input.search);if(input.urgentOnly)p.set("urgentOnly","true");if(input.jobId)p.set("jobId",input.jobId);
+  if(input.proof&&input.proof!=="ALL")p.set("proof",input.proof);
+  if(input.branchId)p.set("branchId",input.branchId);
+  if(input.registration&&input.registration!=="ALL")p.set("registration",input.registration);
+  if(input.afterCollege&&input.afterCollege!=="ALL")p.set("afterCollege",input.afterCollege);
   p.set("page", String(input.page)); p.set("pageSize", String(input.pageSize));
   return "/tpo/requests?" + p.toString();
 }
@@ -54,6 +59,8 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
     status:first(raw.status),age:first(raw.age),sort:first(raw.sort),
     requestType:first(raw.requestType),search:first(raw.search),
     urgentOnly:first(raw.urgentOnly),jobId:first(raw.jobId),
+    proof:first(raw.proof),branchId:first(raw.branchId),
+    registration:first(raw.registration),afterCollege:first(raw.afterCollege),
     page:first(raw.page),pageSize:first(raw.pageSize),
   });
   if(!parsed.success)return <div className="min-w-0 space-y-6">
@@ -107,21 +114,54 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
         <Input name="search" defaultValue={data.query.search} type="search" maxLength={150} className="block min-h-11 w-full min-[768px]:min-h-9" />
       </label>
       <Button type="submit" className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">Apply</Button>
-      <Disclosure title="Advanced request filters" className="min-w-0 min-[768px]:col-span-3" contentClassName="min-w-0 pt-[var(--lms-space-3)]">
+      <Disclosure title="Advanced request filters" defaultOpen={data.query.proof!=="ALL"||
+        Boolean(data.query.branchId)||data.query.registration!=="ALL"||
+        data.query.afterCollege!=="ALL"} className="min-w-0 min-[768px]:col-span-3" contentClassName="min-w-0 pt-[var(--lms-space-3)]">
         <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
+         <h3 className="text-sm font-semibold text-foreground min-[768px]:col-span-2 min-[992px]:col-span-3">Request</h3>
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Request kind<Select name="requestType" defaultValue={data.query.requestType} className="block min-h-11 w-full min-[768px]:min-h-9">{GLOBAL_TPO_REQUEST_TYPES.map(type=><option key={type} value={type}>{type==="ALL"?"All request kinds":type==="APPLICATION_WITHDRAWAL"?"Withdrawal request":type==="ROUND_RESCHEDULE"?"Reschedule interview":type==="OFFER_EXTENSION"?"Extend offer deadline":type}</option>)}</Select></label>
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drive<Select name="jobId" defaultValue={data.query.jobId??""} className="block min-h-11 w-full min-[768px]:min-h-9">
        <option value="">All drives</option>
        {data.query.jobId&&!jobChoices.some(row=>row.job.id===data.query.jobId)?<option value={data.query.jobId}>Previously selected drive</option>:null}
        {jobChoices.map(row=><option value={row.job.id} key={row.job.id}>{row.company.name} · {row.job.title}</option>)}
       </Select></label>
+      <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Proof
+       <Select name="proof" defaultValue={data.query.proof} className="block min-h-11 w-full min-[768px]:min-h-9">
+        <option value="ALL">Any proof status</option>
+        <option value="ATTACHED">Proof attached</option>
+        <option value="MISSING">Proof missing</option>
+       </Select>
+      </label>
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Page size
         <Select name="pageSize" defaultValue={String(data.query.pageSize)} className="block min-h-11 w-full min-[768px]:min-h-9">
           <option value="25">25</option><option value="50">50</option><option value="100">100</option><option value="500">500</option>
         </Select>
       </label>
-      <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Age<Select name="age" defaultValue={data.query.age} className="block min-h-11 w-full min-[768px]:min-h-9"><option value="ALL">Any age</option><option value="TODAY">Asked today</option><option value="ONE_TO_TWO_DAYS">1–2 days</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_2_DAYS">Older than 2 days</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option><option value="LAST_30_DAYS">Last 30 days</option></Select></label>
+      <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Waiting since / age<Select name="age" defaultValue={data.query.age} className="block min-h-11 w-full min-[768px]:min-h-9"><option value="ALL">Any age</option><option value="TODAY">Asked today</option><option value="ONE_TO_TWO_DAYS">1–2 days</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_2_DAYS">Older than 2 days</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option><option value="LAST_30_DAYS">Last 30 days</option></Select></label>
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order<Select name="sort" defaultValue={data.query.sort} className="block min-h-11 w-full min-[768px]:min-h-9"><option value="URGENCY_FIRST">Urgent first</option><option value="NEWEST_FIRST">Newest first</option><option value="OLDEST_FIRST">Oldest first</option><option value="DECIDED_NEWEST">Decided on · newest</option><option value="DECIDED_OLDEST">Decided on · oldest</option></Select></label>
+         <h3 className="text-sm font-semibold text-foreground min-[768px]:col-span-2 min-[992px]:col-span-3">Student</h3>
+         <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Branch
+          <Select name="branchId" defaultValue={data.query.branchId??""}>
+           <option value="">All branches</option>
+           {data.branches.map(branch=><option key={branch.id} value={branch.id}>{branch.name}</option>)}
+          </Select>
+         </label>
+         <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Registration
+          <Select name="registration" defaultValue={data.query.registration}>
+           <option value="ALL">All registration choices</option>
+           <option value="PLACEMENTS">Placements</option>
+           <option value="HIGHER_STUDIES">Higher studies</option>
+           <option value="NOT_INTERESTED">Not interested</option>
+           <option value="NOT_REGISTERED">Not registered</option>
+          </Select>
+         </label>
+         <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">After college
+          <Select name="afterCollege" defaultValue={data.query.afterCollege}>
+           <option value="ALL">All after-college outcomes</option>
+           <option value="NOT_RECORDED">Not recorded</option>
+           {AFTER_COLLEGE_OUTCOMES.map(value=><option key={value} value={value}>{AFTER_COLLEGE_LABELS[value]}</option>)}
+          </Select>
+         </label>
         </div>
       </Disclosure>
       <Link href={tpoRequestClearAdvancedHref(data.query.status)} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear search, age and drive filters</Link>
@@ -134,7 +174,9 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
       <Link href={href({...data.query,status:"PENDING",age:"OLDER_THAN_2_DAYS",page:1})}
        aria-current={data.query.age==="OLDER_THAN_2_DAYS"?"page":undefined}
        className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 py-2 text-[13px] font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Waiting more than 2 days · {attention.waitingOverTwoDays}</Link>
-      <span className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 py-2 text-[13px] text-[var(--lms-body-text)]">Proof missing · {attention.proofUnconfirmed}</span>
+      <Link href={href({...data.query,status:"PENDING",proof:"MISSING",page:1})}
+       aria-current={data.query.proof==="MISSING"?"page":undefined}
+       className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 py-2 text-[13px] font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)]">Proof missing · {data.requests.filter(row=>!row.proofAttached).length}</Link>
      </div>
      <p className="text-xs text-muted-foreground">Attention category numbers cover this visible request page only. Proof hints are text-based and are not verified attachment counts.</p>
     </section>
