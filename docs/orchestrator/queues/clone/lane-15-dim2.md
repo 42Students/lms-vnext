@@ -133,16 +133,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-15.md: file, number of
 - [x] `src/components/admin/tenant-settings-editor.tsx`
 - [x] `src/components/announcements/super-admin-college-broadcast-form.tsx`
 - [x] `src/components/attendance/admin-attendance-parent-contact-editor.tsx`
-- [ ] `src/components/attendance/admin-attendance-workspace.tsx`
-- [ ] `src/components/attendance/college-attendance-policy-form.tsx`
-- [ ] `src/components/attendance/faculty-attendance-workspace.tsx`
-- [ ] `src/components/attendance/learner-attendance-workspace.tsx`
-- [ ] `src/components/auth/login-form.tsx`
-- [ ] `src/components/auth/membership-chooser.tsx`
-- [ ] `src/components/auth/membership-recovery.tsx`
-- [ ] `src/components/colleges/college-contact-profile-form.tsx`
-- [ ] `src/components/courses/admin-course-create-panel.tsx`
-- [ ] `src/components/courses/assignment-file-submission-control.tsx`
+- [x] `src/components/attendance/admin-attendance-workspace.tsx`
+- [x] `src/components/attendance/college-attendance-policy-form.tsx`
+- [x] `src/components/attendance/faculty-attendance-workspace.tsx`
+- [x] `src/components/attendance/learner-attendance-workspace.tsx`
+- [x] `src/components/auth/login-form.tsx`
+- [x] `src/components/auth/membership-chooser.tsx`
+- [x] `src/components/auth/membership-recovery.tsx`
+- [x] `src/components/colleges/college-contact-profile-form.tsx`
+- [x] `src/components/courses/admin-course-create-panel.tsx`
+- [x] `src/components/courses/assignment-file-submission-control.tsx`
 - [ ] `src/components/courses/assignment-submission-control.tsx`
 - [ ] `src/components/courses/college-assignment-review.tsx`
 - [ ] `src/components/courses/college-content-authoring-control.tsx`
