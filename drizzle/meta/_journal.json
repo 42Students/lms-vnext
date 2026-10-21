@@ -1415,6 +1415,13 @@
       "when": 1792353431266,
       "tag": "0201_lane15_discussion_soft_delete_snapshot",
       "breakpoints": true
+    },
+    {
+      "idx": 202,
+      "version": "7",
+      "when": 1792353491266,
+      "tag": "0202_lane15_branding_signin_data_policy",
+      "breakpoints": true
     }
   ]
 }
