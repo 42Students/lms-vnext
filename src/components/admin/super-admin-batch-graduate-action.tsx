@@ -30,17 +30,20 @@ export function SuperAdminBatchGraduateAction({cohortId,name}:{cohortId:string;n
       (cohort as Record<string,unknown>).id!==cohortId||
       (cohort as Record<string,unknown>).status!=="COMPLETED")
      throw new Error("Graduation could not be confirmed. Refresh before retrying.");
-   setOpen(false);setSuccess("Marked "+name+" as graduated (Completed)");router.refresh();
+   // The server receipt is canonical; show final state only after confirmation.
+   const record=cohort as Record<string,unknown>;
+   if(record.id!==cohortId||record.status!=="COMPLETED")throw new Error("Graduation result changed. Refresh and inspect the batch.");
+   setOpen(false);setSuccess("Marked "+name+" as graduated (Completed). Reactivation remains available through the batch lifecycle controls.");router.refresh();
    });
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not graduate this batch. Try again.");}
  }
  return <div className="min-w-0 space-y-[var(--lms-space-2)] print:hidden">
   <Button type="button" variant="secondary" disabled={pending} onClick={()=>{setError("");setSuccess("");setOpen(true);}}
-   className="min-h-11 w-full sm:w-auto md:min-h-9">Mark graduated</Button>
+   className="min-h-11 w-full sm:w-auto md:min-h-9"><span aria-hidden="true" className="mr-2">✓</span>Mark graduated</Button>
   {success?<p role="status" aria-live="polite" className="max-w-prose text-sm text-success-text">{success}</p>:null}
   {error&&!open?<p role="alert" className="max-w-prose break-words text-sm text-error">{error}</p>:null}
   <ConfirmDialog open={open} onOpenChange={setOpen} title={"Mark "+name+" graduated?"}
-   description="This completes the batch lifecycle. Historical enrollment records are retained."
+   description="This completes the batch lifecycle. Historical enrollment records are retained. If the batch needs reactivation, an administrator can review its archived lifecycle and restore it after verifying academic dependencies."
    confirmLabel="Mark graduated" confirmVariant="danger" pending={pending} onConfirm={()=>void submit()}>
     <p className="max-w-prose text-sm leading-5 text-body">Confirm that this batch has completed its final semester.</p>
     {error?<p role="alert" className="mt-[var(--lms-space-3)] break-words border-l-2 border-error bg-error-subtle p-[var(--lms-space-3)] text-sm text-error">{error}</p>:null}

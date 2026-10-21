@@ -57,7 +57,7 @@ export function TpoRoundCheckIn({
       {attendance !== "PRESENT" ? (
         <Button variant="secondary" type="button" disabled={busy} onClick={() => setTarget("PRESENT")}
           className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-60 sm:w-auto md:min-h-9">
-          Mark checked-in
+          ✓ Present
         </Button>
       ) : null}
       {attendance==="PRESENT"?<Button variant="secondary" type="button" disabled={busy}
@@ -66,8 +66,8 @@ export function TpoRoundCheckIn({
         onClick={()=>setTarget("DONE")}>Done</Button>:null}
       {attendance !== "ABSENT" && attendance!=="DONE" && attendance!=="IN_INTERVIEW" ? (
         <Button variant="secondary" type="button" disabled={busy} onClick={() => setTarget("ABSENT")}
-          className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link disabled:opacity-60 sm:w-auto md:min-h-9">
-          Mark no-show
+          className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-error/50 px-3 text-sm font-semibold text-error disabled:opacity-60 sm:w-auto md:min-h-9">
+          ⚠ Absent
         </Button>
       ) : null}
       {lastAction?<div role="status" className="flex w-full flex-wrap items-center justify-between gap-2 border-l-2 border-primary bg-primary-subtle px-3 py-2 text-sm">
@@ -77,9 +77,9 @@ export function TpoRoundCheckIn({
       {error ? <div className="min-w-0 sm:w-full"><InlineNotice tone="error" message={error}/></div> : null}
       <ConfirmDialog open={target !== null}
         onOpenChange={next => { if (!next && !busy) setTarget(null); }}
-        title={"Confirm "+(target === "ABSENT" ? "no-show" : target==="IN_INTERVIEW"?"in interview":target==="DONE"?"done":"checked-in")+"?"}
-        description={"Confirm "+(target === "ABSENT" ? "no-show":target==="IN_INTERVIEW"?"in interview":target==="DONE"?"done":"checked-in")+" for "+displayName+"? This records an audited attendance change. Current attendance: "+attendance.toLowerCase()+"."}
-        confirmLabel={target === "ABSENT" ? "Mark no-show" : target==="IN_INTERVIEW"?"In interview":target==="DONE"?"Done":"Mark checked-in"}
+        title={"Confirm "+(target === "ABSENT" ? "absent" : target==="IN_INTERVIEW"?"in interview":target==="DONE"?"done":"present")+"?"}
+        description={"Confirm "+(target === "ABSENT" ? "absent":target==="IN_INTERVIEW"?"in interview":target==="DONE"?"done":"checked-in")+" for "+displayName+"? This records an audited attendance change. Current attendance: "+attendance.toLowerCase()+"."}
+        confirmLabel={target === "ABSENT" ? "⚠ Absent" : target==="IN_INTERVIEW"?"In interview":target==="DONE"?"Done":"✓ Present"}
         confirmVariant={target === "ABSENT" ? "danger" : "primary"} pending={busy}
         onConfirm={() => { if (target) void mark(target); }}/>
     </div>

@@ -2,7 +2,7 @@
 
 import { Tabs } from "@/components/ui/tabs";
 import { usePathname,useRouter } from "next/navigation";
-import {useRef} from "react";
+import {useEffect,useRef,useState} from "react";
 import {learnerPlacementSwipeDestination} from "@/modules/placements/learner-placements-swipe-model";
 
 export const learnerPlacementsLegacyTabs = [
@@ -25,13 +25,15 @@ export function LearnerPlacementsTabs({
   const pathname = usePathname();
   const router=useRouter();
   const touchStart=useRef<{x:number;y:number;scrollLeft:number;scroller:HTMLElement|null}|null>(null);
+  const [swiping,setSwiping]=useState(false);
+  useEffect(()=>setSwiping(false),[pathname]);
 
   const selected = learnerPlacementsLegacyTabs.find(tab =>
     pathname === tab.href || (tab.href !== "/learn/my-placements" && pathname.startsWith(tab.href + "/"))
   )?.href ?? "/learn/my-placements";
 
   return (
-    <div className="min-w-0" onTouchStart={event=>{
+    <div aria-busy={swiping} className={"min-w-0 motion-safe:transition-opacity motion-safe:duration-150 "+(swiping?"opacity-70":"opacity-100")} onTouchStart={event=>{
         const touch=event.touches[0];
         const scroller=event.currentTarget.querySelector<HTMLElement>('[data-slot="scroll-cue"][data-axis="x"] > div');
         touchStart.current=touch?{x:touch.clientX,y:touch.clientY,scrollLeft:scroller?.scrollLeft??0,scroller}:null;
@@ -54,7 +56,7 @@ export function LearnerPlacementsTabs({
         }
         const destination=learnerPlacementSwipeDestination(pathname,deltaX,
           end.clientY-start.y,learnerPlacementsLegacyTabs.map(tab=>tab.href));
-        if(destination)router.push(destination);
+        if(destination){setSwiping(true);router.push(destination);}
       }}>
       <Tabs ariaLabel="Placements workspace" renderPanel={false} value={selected}
         items={learnerPlacementsLegacyTabs.map(tab => ({
