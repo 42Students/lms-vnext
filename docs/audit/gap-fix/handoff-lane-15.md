@@ -125,3 +125,6 @@
 
 - `src/components/tpo/tpo-draft-drive-step-one-form.tsx` G2-3-011-033: currently only three employment categories; add separate college-scoped jobTypeLabel picker for all five built-ins and active custom rows; use `tpoDraftAvailableJobTypeLabels` helper. Never show hidden type for new drives, but retain saved hidden label in historical edits.
 - Public placements metric read service G2-17-022-026: return live 12-month time-windowed metrics only when publication settings are enabled, publishedAt exists and >=5 current consented learners; never substitute old population snapshot or return suppressed small cohorts.
+
+- `src/app/(authenticated)/learn/notifications/page.tsx` G2-18-004-037: show `LEARNER_NO_CURRENT_CLASS_NOTICES_HINT` when class enrollment absent but keep college, cohort and direct notices visible to authorized learner membership.
+- Legacy Super Admin audit adapter G2-18-024-025: current activity route is cursor-paginated; actorNames/targetNames dictionaries now supplied. For old page/size/total API, implement separately authenticated, scope-checked count+offset adapter (not false total from cursor) if required by old consumers.

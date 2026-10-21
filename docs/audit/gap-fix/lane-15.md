@@ -275,3 +275,6 @@
 
 - work2 #13 `college-drive-row-lifecycle-action.tsx` | G2-9-015-049: failed close/reopen impact preview now explicitly reassures that nothing changed; legacy deletion copy deliberately not misapplied because this control has no delete path.
 - work2 #14 `bug-tracker/admin-validation.ts` | G2-17-024-017: explicit human-readable Zod status/resolution labels for admin listing and workflow updates, while retaining strict enum checks.
+
+- work2 #15 `learner-notification-membership-service.ts` | G2-18-004-037: retained active college membership requirement without imposing current section/class prerequisite; exported classless notice hint. UI handoff for display rather than hiding college/direct notices.
+- work2 #16 `api/activity/route.ts` | G2-18-024-025: provided legacy-compatible actorNames/targetNames dictionaries from authorized response items; retained truthful vNext cursor. Skipped page/size/global total since unbounded offset totals cannot be derived accurately from cursor response; adapter handoff.
