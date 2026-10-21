@@ -138,6 +138,12 @@ export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unkno
    .innerJoin(placementJobs,and(eq(placementJobs.id,interviews.jobId),
     eq(placementJobs.collegeId,collegeId)))
    .where(and(eq(interviews.status,"BOOKED"),
+    // Persisted appointment outcome outranks slot capacity. Imported
+    // completed/cancelled/no-show bookings must not block future slots.
+    sql`coalesce(${interviews.legacyInterviewStatus},'SCHEDULED') not in
+      ('CANCELLED','COMPLETED','NO_SHOW')`,
+    sql`coalesce(${interviews.interviewOutcome},'SCHEDULED') not in
+      ('COMPLETED','NO_SHOW')`,
     lt(interviews.startsAt,new Date(windowEnd+buffer)),
     gt(interviews.endsAt,new Date(windowStart-buffer)),
     sql`not exists(select 1 from activity_events ended
