@@ -38,12 +38,13 @@ export function buildScoreDistribution(
   ];
   for (const percent of percentages) {
     if (!Number.isFinite(percent) || percent < 0 || percent > 100) continue;
-    // Fractional scores are common when questions have weighted points;
-    // do not lose 89.5% between integer-labeled histogram buckets.
-    const rounded = Math.round(percent);
+    // The legacy bucket ranges compare the raw percent against inclusive
+    // integer boundaries. 89.5 sits in the original gap between 89 and 90;
+    // it must not round into the 90–100 bucket. Assignment reports feed this
+    // function their own already-rounded learner percentages.
     const bucket = buckets.find(
       (candidate) =>
-        rounded >= candidate.min && rounded <= candidate.max,
+        percent >= candidate.min && percent <= candidate.max,
     );
     if (bucket) bucket.count += 1;
   }
@@ -84,7 +85,7 @@ export function questionAccuracy<
   },
 >(questions: readonly Q[], attempts: readonly A[]) {
   return questions
-    .map((question) => {
+    .map((question,authorIndex) => {
       let answeredCount = 0;
       let correctCount = 0;
       for (const attempt of attempts) {
@@ -98,6 +99,7 @@ export function questionAccuracy<
       }
       return {
         id: question.id,
+        authorIndex,
         prompt: question.prompt,
         points: question.points,
         answeredCount,
@@ -114,7 +116,7 @@ export function questionAccuracy<
       (left, right) =>
         (left.accuracyPercent ?? 101) -
           (right.accuracyPercent ?? 101) ||
-        left.prompt.localeCompare(right.prompt),
+        left.authorIndex-right.authorIndex,
     );
 }
 
@@ -253,11 +255,7 @@ export async function getFacultyQuizReport(
       attempt.score >= 0 &&
       attempt.score <= attempt.maxScore
         ? [
-            Math.round(
-              (attempt.score /
-                attempt.maxScore) *
-                100,
-            ),
+            Math.min(100,(attempt.score/attempt.maxScore)*100),
           ]
         : [],
   );
@@ -266,6 +264,7 @@ export async function getFacultyQuizReport(
   return {
     quiz,
     rosterUnavailable:rosterScope===null,
+    reportCompleteness:rosterScope===null?"PARTIAL_ROSTER_UNAVAILABLE":"COMPLETE",
     attempts:scopedAttempts,
     latestAttempts,
     distribution:
@@ -279,13 +278,13 @@ export async function getFacultyQuizReport(
       ...latestScoreSummary,
       totalAttempts: scopedAttempts.length,
       eligibleLearners:
-        rosterScope?.roster.length??latestAttempts.length,
+        rosterScope?.roster.length??null,
       eligibleLearnersKnown:rosterScope!==null,
       uniqueLearners: learners.size,
       submittedLearners:
         latestAttempts.length,
       notAttempted:
-        notAttemptedLearners.length,
+        rosterScope===null?null:notAttemptedLearners.length,
       questionCount:
         authoredQuiz.questions.length,
     },
@@ -345,14 +344,15 @@ export async function getFacultyAssignmentReport(
   return {
     assignment,
     rosterUnavailable:rosterScope===null,
+    reportCompleteness:rosterScope===null?"PARTIAL_ROSTER_UNAVAILABLE":"COMPLETE",
     submissions:scopedSubmissions,
     missingLearners,
     distribution: scores.distribution,
     metrics: {
       eligibleLearners:
-        rosterScope?.roster.length??0,
+        rosterScope?.roster.length??null,
       submitted: scopedSubmissions.length,
-      missing: missingLearners.length,
+      missing: rosterScope===null?null:missingLearners.length,
       onTime:
         scopedSubmissions.length - late.length,
       late: late.length,
@@ -364,4 +364,24 @@ export async function getFacultyAssignmentReport(
         scores.averagePercent,
     },
   };
+}
+
+/** Legacy LessonContent.id and classId were integers. New report IDs are
+ * quiz/assignment UUID and a delivery UUID; a caller MUST resolve legacy IDs
+ * through an authorized scoped import map before invoking the report.
+ * Past submissions survive learner transfers for authorized audit purposes,
+ * but current missing/eligibility counts derive ONLY from an active Section
+ * roster. No cross-college fallback or historical-author bypass is allowed.
+ */
+export function validateFacultyAssessmentLegacyLink(input:{
+ sourceId:number;sourceClassId:number;resolvedItemId:string;
+ resolvedDeliveryId:string;legacyCollegeId:number;actingCollegeId:number;
+}){
+ if(!Number.isSafeInteger(input.sourceId)||input.sourceId<=0||
+   !Number.isSafeInteger(input.sourceClassId)||input.sourceClassId<=0||
+   !Number.isSafeInteger(input.legacyCollegeId)||input.legacyCollegeId<=0||
+   input.legacyCollegeId!==input.actingCollegeId)
+  throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
+ return {itemId:uuid.parse(input.resolvedItemId),
+  deliveryId:uuid.parse(input.resolvedDeliveryId)};
 }
