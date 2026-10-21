@@ -82,13 +82,15 @@ export async function postProjectTaskComment(context:RequestContext,projectId:st
    taskStatusSnapshot:task.status,
   }).returning();
   if(!comment)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+  const [author]=await tx.select({displayName:users.displayName})
+   .from(users).where(eq(users.id,persisted.user.id)).limit(1);
   const event = await recordActivityEventInTransaction(tx,context,{
     eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TASK_DETAILS_UPDATED,
     collegeId:scope.collegeId,organizationId:scope.organizationId,
     subjectType:"project_task",subjectId:taskId,subjectLabel:task.title,
     summary:"Project task comment added",metadata:{projectId:scope.project.id,taskId,commentId:comment.id,
       commentKind:comment.commentKind,taskStatusAtComment:task.status,
-      authorMembershipId,authorDisplayName:persisted.user.displayName,
+      authorMembershipId,authorDisplayName:author?.displayName??null,
       taskUpdatedAtAtComment:task.updatedAt.toISOString()},
     groupKey:"project:"+scope.project.id,
   });
