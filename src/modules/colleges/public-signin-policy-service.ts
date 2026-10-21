@@ -2,7 +2,7 @@ import "server-only";
 import {eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeSigninPolicies} from "@/db/schema/college-signin";
-import {collegeSignInMethodSchema,legacyCollegeSignInMethodSchema,normalizeCollegeSignInMethod,signInCapabilities} from "./signin-methods-model";
+import {collegeSignInMethodSchema,legacyCollegeSignInMethodSchema,normalizeCollegeSignInMethod,signInCapabilities,signInChannelOrder} from "./signin-methods-model";
 
 /** No tenant selection from the request body: caller supplies the college
  * already resolved from the verified host. Missing row defaults to both. */
@@ -23,4 +23,21 @@ export async function effectiveCollegeSignInMethod(collegeId:string|null){
 }
 export async function effectiveCollegeSignInCapabilities(collegeId:string|null){
  return signInCapabilities(await effectiveCollegeSignInMethod(collegeId));
+}
+
+/** Public compatibility projection for legacy loginMethods consumers. The
+ * tenant host must already be verified by the caller; no college ID is accepted
+ * from a login payload. Disabled channels stay disabled for OTP initiation. */
+export async function effectivePublicCollegeSignInPolicy(collegeId:string|null){
+ const method=await effectiveCollegeSignInMethod(collegeId);
+ const capabilities=signInCapabilities(method);
+ return {
+  method,
+  legacyLoginMethods:method==="EMAIL_AND_PHONE"?"EMAIL_PHONE":
+   method==="PHONE_AND_EMAIL"?"PHONE_EMAIL":method,
+  channelOrder:signInChannelOrder(method),
+  emailEnabled:capabilities.email,
+  phoneEnabled:capabilities.phone,
+  primaryChannel:capabilities.primary,
+ } as const;
 }

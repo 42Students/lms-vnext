@@ -6,6 +6,8 @@ import {LearnerVerificationLiveRefresh} from "@/components/profile/learner-verif
 import {learnerVerificationNoticeCopy} from "@/modules/placements/learner-verification-notice-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getOwnLearnerVerificationStatus } from "@/modules/placements/learner-verification-status-service";
+import {getOwnLearnerProfileWithRuntime} from "@/modules/people/runtime";
+import {learnerProfileDocumentSchema} from "@/modules/people/profile-validation";
 import {LearnerVerificationSubmit} from "@/components/profile/learner-verification-submit";
 import {LearnerVerificationWithdraw} from "@/components/profile/learner-verification-withdraw";
 import {learnerVerificationDateLabel,learnerVerificationSubmissionDateFallback} from "@/modules/placements/learner-verification-date-model";
@@ -17,7 +19,13 @@ const details = [
 
 export default async function LearnerVerificationPage() {
   const context = await getCurrentRequestContext();
-  const status = await getOwnLearnerVerificationStatus(context);
+  const [status,currentProfile]=await Promise.all([
+    getOwnLearnerVerificationStatus(context),
+    getOwnLearnerProfileWithRuntime(context).catch(()=>null),
+  ]);
+  const currentEducation=currentProfile
+    ?learnerProfileDocumentSchema.parse(currentProfile.profile.profileDocument).education
+    :null;
   const label = {
     NOT_SUBMITTED: "Incomplete", WAITING: "Waiting for the college",
     SENT_BACK: "Needs a change", VERIFIED: "Verified", UPDATE_PENDING: "Verified · update waiting",
@@ -71,12 +79,36 @@ export default async function LearnerVerificationPage() {
             <p className="text-xs text-muted-foreground">{entry.marksheetRecorded?"Marksheet receipt linked (private)":"No marksheet link in submitted snapshot"}</p>
           </li>)}</ul>
         </section>:null}
+        {item.section==="EDUCATION"&&currentEducation?<section className="mt-4 border-t border-border pt-3"
+          aria-label="Current saved education compared with the submission">
+          <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Current saved education (not automatically submitted)</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Compare these current fields with Education submitted for review above. Edits do not replace a submitted or approved snapshot until you send another review request.
+          </p>
+          {currentEducation.length===0?<p className="mt-2 text-sm text-body">No current education entries are saved.</p>:
+            <ul className="mt-2 divide-y divide-border">{currentEducation.map(entry=><li key={entry.id} className="space-y-1 py-3 text-sm text-body">
+              <p className="font-semibold text-foreground">{entry.educationType||"Qualification not recorded"}</p>
+              <p>{[entry.program,entry.specialization,entry.institution].filter(Boolean).join(" · ")||"Institution not recorded"}</p>
+              <p>{[entry.endYear&&"Year "+entry.endYear,entry.gradingType,entry.gradeObtained&&"Grade "+entry.gradeObtained,
+                entry.maxGrade&&"Maximum "+entry.maxGrade].filter(Boolean).join(" · ")}</p>
+              <p className="text-xs text-muted-foreground">Private marksheet availability is checked separately from these editable details.</p>
+            </li>)}</ul>}
+          <Link href="/learn/profile?section=education" className="mt-2 inline-flex min-h-9 items-center font-semibold text-link underline">
+            Review or edit my education details
+          </Link>
+        </section>:null}
         {item.section==="EDUCATION"&&row.verifiedEducation.length>0?<details className="mt-3 border-t border-border pt-3">
           <summary className="cursor-pointer text-sm font-semibold text-link">Last verified education snapshot</summary>
           <ul className="mt-2 list-disc pl-5 text-sm text-body">{row.verifiedEducation.map((entry,index)=><li key={index}>
             {entry.qualification||"Qualification"} · {[entry.institution,entry.grade].filter(Boolean).join(" · ")||"No recorded details"}
           </li>)}</ul>
         </details>:null}
+        {row.decidedByName?<p className="mt-2 text-xs text-muted-foreground">Reviewed by: {row.decidedByName}</p>:null}
+        {row.verifiedAt?<p className="mt-1 text-xs text-muted-foreground">Verified at: {learnerVerificationDateLabel(row.verifiedAt)}</p>:null}
+        {item.section==="IDENTITY"?<Link href="/learn/profile?section=identity"
+          className="mt-3 inline-flex min-h-9 items-center font-semibold text-link underline">
+          Review my saved identity details privately
+        </Link>:null}
         {row.status === "SENT_BACK" ? <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
           Reason: {row.reason ?? "Contact the placement cell for the review reason."}
         </p> : null}
@@ -90,7 +122,7 @@ export default async function LearnerVerificationPage() {
         <p className="mt-3 text-xs text-muted-foreground">{item.section==="EDUCATION"
           ? "For verification, provide 10th, 12th or Diploma, and degree education with marks and their marksheets, plus a resume."
           : "For verification, provide Aadhaar or PAN details with a clean private document."}</p>
-        <p className="mt-2 text-xs text-muted-foreground">This checklist is preliminary. A clean receipt does not prove storage ownership or final eligibility; the submission server checks the actual private objects. Uploads awaiting scanning are not ready.</p>
+        <p className="mt-2 text-xs text-muted-foreground">A clean scan must be linked to the matching education entry or identity document and remain active, unexpired and owned by your membership. This checklist is preliminary. A clean receipt does not prove storage ownership or final eligibility; the submission server checks the actual private objects. Uploads awaiting scanning are not ready.</p>
         {row.status === "UPDATE_PENDING" ? <LearnerVerificationWithdraw
           key={item.section+":"+row.version} section={item.section}
           expectedVersion={row.version}/> : null}

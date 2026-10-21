@@ -76,10 +76,13 @@ export default async function FacultyCalendarPage({
       <h2 className="text-base font-semibold text-foreground">Next classes</h2>
       <p className="text-xs text-muted-foreground">{nextClasses.length} coming up · {schedule.courses.length} teaching sections</p>
      </div>
-     {!upcomingRead.available?<Alert tone="warning">
-       Couldn't load your next classes. Refresh this page to try again.
-       <Link href={facultyMonthHref(grid.query)} className="ml-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">Retry</Link>
-     </Alert>:nextClasses.length===0?<p className="text-sm text-muted-foreground">No upcoming classes scheduled in the next 180 days.</p>:
+     {!upcomingRead.available?<details open className="min-w-0">
+       <summary className="cursor-pointer text-sm font-semibold text-[var(--lms-warning-text)]">Failed to load course data</summary>
+       <Alert tone="warning" className="mt-2">
+         Calendar events may be incomplete. Your loaded class schedule remains available below.
+         <Link href={facultyMonthHref(grid.query)} className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">Retry class schedule</Link>
+       </Alert>
+     </details>:nextClasses.length===0?<p className="text-sm text-muted-foreground">No upcoming classes scheduled in the next 180 days.</p>:
        <ol className="divide-y divide-border border-y border-border">{nextClasses.map(item=><li key={item.id}
          className="flex min-w-0 flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
