@@ -49,8 +49,12 @@ export async function createMentorProjectSprint(
       }
       const existingKeys=await tx.select({
         templateKey:projectSprints.templateKey,legacySprintKey:projectSprints.legacySprintKey,
+        deletedAt:projectSprints.deletedAt,
       }).from(projectSprints).where(eq(projectSprints.projectId,scope.project.id));
-      const usedKeys=new Set(existingKeys.flatMap(row=>
+      const liveKeys=existingKeys.filter(row=>!row.deletedAt);
+      if(liveKeys.length>=500)
+        throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+      const usedKeys=new Set(liveKeys.flatMap(row=>
         [row.templateKey,row.legacySprintKey].filter((key):key is string=>Boolean(key))
           .map(key=>key.toLowerCase())));
       const requestedKey=input.key?.trim()??"";

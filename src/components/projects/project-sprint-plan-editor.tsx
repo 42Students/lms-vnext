@@ -146,10 +146,10 @@ export function ProjectSprintPlanEditor({ projectId, releaseId, sprints }: {
         Only this release is updated; tasks, meetings and resources are unchanged.
       </p>
       {draft.length>12?<div className="space-y-1">
-        <label className="block text-xs font-semibold text-body" htmlFor="sprint-plan-search">
+        <label className="block text-xs font-semibold text-body" htmlFor={"sprint-plan-search-"+releaseId}>
           Find an item in this section
         </label>
-        <Input id="sprint-plan-search" value={search}
+        <Input id={"sprint-plan-search-"+releaseId} value={search}
           placeholder="Find an item by title or content"
           onChange={event=>setSearch(event.target.value)}/>
         <p role="status" className="text-xs text-body">
@@ -191,11 +191,15 @@ export function ProjectSprintPlanEditor({ projectId, releaseId, sprints }: {
             </span>:null}
           </label>
           <div className="grid gap-3 md:grid-cols-2">
-            <label className="text-[13px] font-semibold text-body">Sprint key
+            <label className="text-[13px] font-semibold text-body">Key (optional)
               <Input className="mt-1" maxLength={120} value={row.key}
+                aria-invalid={!row.key.trim()}
                 onChange={event=>change(row.id,"key",event.target.value)}/>
+              {!row.key.trim()?<span role="alert" className="text-xs text-error">
+                Item {index+1}: Sprint key required
+              </span>:null}
             </label>
-            <label className="text-[13px] font-semibold text-body">Due label
+            <label className="text-[13px] font-semibold text-body">Due (optional)
               <Input className="mt-1" maxLength={160} value={row.dueLabel??""}
                 onChange={event=>change(row.id,"dueLabel",event.target.value)}/>
             </label>
@@ -204,8 +208,11 @@ export function ProjectSprintPlanEditor({ projectId, releaseId, sprints }: {
             {(["description", "goal", "definitionOfDone"] as const).map(field =>
               <label key={field} className="block text-[13px] font-semibold text-body">
                 {field === "description" ? "Description" :
-                  field === "goal" ? "Sprint goal" : "What does done look like?"}
+                  field === "goal" ? "Sprint goal (optional)" : "What does done look like?"}
                 <Textarea className="mt-1" maxLength={4000}
+                  placeholder={field==="definitionOfDone"?
+                    "Acceptance criteria — e.g. API returns paginated results and integration tests pass":
+                    field==="goal"?"One sentence: what this sprint is trying to achieve":undefined}
                   value={row[field] ?? ""}
                   onChange={event => change(row.id, field, event.target.value)} />
               </label>)}
