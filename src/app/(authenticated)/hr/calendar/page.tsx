@@ -185,6 +185,7 @@ function RecruiterCalendarEventCard({
               {event.jobTitle}
             </p>
           ) : null}
+          {event.note ? <p className="mt-1 text-sm text-body">{event.note}</p> : null}
 
           <p className="mt-2 text-sm text-body">
             <time dateTime={event.startsAt.toISOString()}>
@@ -235,18 +236,32 @@ function RecruiterCalendarEventCard({
   );
 }
 
-/** The old recruiter week folds slot dates under their scheduled round.
- * Keep orphan slots visible: otherwise a slot with no in-window parent would
- * vanish from the recruiter's calendar entirely. */
+/** Match the legacy foldWeek: combine slots only with a round on the same
+ * day, and show orphan interview slots once per round rather than repeating. */
 function foldRecruiterWeekDays(days: ReturnType<typeof combineHrCalendarDays>) {
-  const roundIds = new Set(days.flatMap(day =>
-    day.events.filter(event => event.kind === "ROUND" && event.roundId)
-      .map(event => event.roundId)));
-  return days.map(day => ({
-    ...day,
-    events: day.events.filter(event => event.kind !== "INTERVIEW_SLOT" ||
-      !event.roundId || !roundIds.has(event.roundId)),
-  })).filter(day => day.events.length > 0 || day.resultsDue.length > 0);
+  return days.map(day => {
+    const rounds = day.events.filter(event => event.kind !== "INTERVIEW_SLOT");
+    const slotsByRound = new Map<string, PlacementCalendarEvent[]>();
+    for (const slot of day.events.filter(event => event.kind === "INTERVIEW_SLOT")) {
+      const key = slot.jobId + ":" + (slot.roundId ?? slot.id);
+      slotsByRound.set(key, [...(slotsByRound.get(key) ?? []), slot]);
+    }
+    const events: PlacementCalendarEvent[] = [...rounds];
+    for (const slots of slotsByRound.values()) {
+      const firstSlot = slots[0]!;
+      const count = slots.length;
+      const note = count + " interview slot" + (count === 1 ? "" : "s");
+      const ownerIndex = events.findIndex(event => event.kind === "ROUND" &&
+        event.jobId === firstSlot.jobId && event.roundId !== null &&
+        event.roundId === firstSlot.roundId);
+      if (ownerIndex >= 0) {
+        events[ownerIndex] = { ...events[ownerIndex]!, note };
+      } else {
+        events.push({ ...firstSlot, title: "Interview slots", note });
+      }
+    }
+    return { ...day, events: events.sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime()) };
+  }).filter(day => day.events.length > 0 || day.resultsDue.length > 0);
 }
 
 export default async function HrCalendarPage({
