@@ -28,6 +28,10 @@ import {
 } from "@/db/schema";
 import { placementBatchRegistrations } from "@/db/schema/placement-registration";
 import { placementDriveSelections } from "@/db/schema/placement-drive-selections";
+import {
+  placementCollegeApplicationStages,
+  placementCollegeApplicationStageHistory,
+} from "@/db/schema/placement-college-application-stages";
 import type { RequestContext } from "@/modules/identity/context";
 import { isSuperAdmin } from "@/modules/identity/context";
 import {
@@ -321,7 +325,7 @@ export async function getPlacementReportWorkspace(
     "placement_batch_registrations",
   );
 
-  const [applicationRows, offerRows, selectionRows, registrationRows] =
+  const [applicationRows, offerRows, selectionRows, registrationRows, stageHistoryRows] =
     await Promise.all([
       db
         .select({
@@ -330,6 +334,7 @@ export async function getPlacementReportWorkspace(
           membershipId: placementApplications.membershipId,
           status: placementApplications.status,
           screeningStatus: placementApplicationScreenings.status,
+          submittedAt: placementApplications.submittedAt,
         })
         .from(placementApplications)
         .innerJoin(
@@ -451,7 +456,33 @@ export async function getPlacementReportWorkspace(
           )
         : Promise.resolve([] as { membershipId: string }[]),
 
-
+      // Historical TPO funnels must come from recorded stage transitions,
+      // not be reconstructed from today's screening status.
+      db.select({
+        applicationId: placementApplications.id,
+        membershipId: placementApplications.membershipId,
+        fromStage: placementCollegeApplicationStageHistory.fromStage,
+        toStage: placementCollegeApplicationStageHistory.toStage,
+        movedAt: placementCollegeApplicationStageHistory.movedAt,
+      })
+        .from(placementCollegeApplicationStageHistory)
+        .innerJoin(placementCollegeApplicationStages, eq(
+          placementCollegeApplicationStages.id,
+          placementCollegeApplicationStageHistory.stageId,
+        ))
+        .innerJoin(placementApplications, eq(
+          placementApplications.id,
+          placementCollegeApplicationStages.applicationId,
+        ))
+        .innerJoin(placementJobs, and(
+          eq(placementJobs.id, placementApplications.jobId),
+          eq(placementJobs.id, placementCollegeApplicationStages.jobId),
+        ))
+        .innerJoin(collegeMemberships, and(
+          eq(collegeMemberships.id, placementApplications.membershipId),
+          eq(collegeMemberships.collegeId, college.id),
+        ))
+        .where(selectedJobFilters),
     ]);
 
   // Restrict the academic-branch lookup to the actual selected report pool.
@@ -494,6 +525,7 @@ export async function getPlacementReportWorkspace(
       membershipId: row.membershipId,
       status: row.status,
       screeningStatus: row.screeningStatus,
+      submittedAt: row.submittedAt,
     }));
 
   const offers: PlacementReportOffer[] =
@@ -562,10 +594,20 @@ export async function getPlacementReportWorkspace(
     return branch?.departmentName.toLowerCase() === chosenBranch ||
       branch?.departmentId.toLowerCase() === chosenBranch;
   };
+  const scopedApplications = applications.filter((row) => inBranch(row.membershipId));
+  const scopedApplicationIds = new Set(scopedApplications.map((row) => row.id));
   const report = summarizePlacementReports({
     countsAsPlacedAt,
     jobs,
-    applications: applications.filter((row) => inBranch(row.membershipId)),
+    applications: scopedApplications,
+    stageHistory: stageHistoryRows
+      .filter((row) => scopedApplicationIds.has(row.applicationId))
+      .map((row) => ({
+        applicationId: row.applicationId,
+        fromStage: row.fromStage,
+        toStage: row.toStage,
+        movedAt: row.movedAt,
+      })),
     offers: offers.filter((row) => inBranch(row.membershipId)),
     selections: selections.filter((row) => inBranch(row.membershipId)),
     registrations: registrations.filter((row) => inBranch(row.membershipId)),
