@@ -23,7 +23,7 @@ export default async function HrProfilePage() {
         description="Manage your recruiter details."
       />
 
-      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5">
+      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-6">
         <h2 className="text-base font-semibold text-[var(--lms-heading)]">Your details</h2>
         <p className="mt-2 text-sm text-body">These details identify you to the placement cell.</p>
         <details className="mt-2 min-w-0">
@@ -47,7 +47,7 @@ export default async function HrProfilePage() {
         </dl>
       </section>
 
-      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5">
+      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-6">
         <h2 className="text-base font-semibold text-[var(--lms-heading)]">Account</h2>
         <dl className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
           <div>
@@ -60,7 +60,7 @@ export default async function HrProfilePage() {
 
       <section
         aria-labelledby="recruiter-account-status"
-        className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5"
+        className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-6"
       >
         <h2
           id="recruiter-account-status"
@@ -93,7 +93,7 @@ export default async function HrProfilePage() {
 
       <section
         aria-labelledby="recruiter-current-grants"
-        className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5"
+        className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-6"
       >
         <div className="pb-2">
           <h2

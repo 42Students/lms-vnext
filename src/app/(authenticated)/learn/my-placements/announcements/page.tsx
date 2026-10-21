@@ -188,7 +188,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       ) : (
         <ul className="min-w-0 divide-y divide-border">
           {pages.items.map((notice) => (
-            <li key={notice.id} id={learnerNoticeAnchor(notice.id)??undefined} className="min-w-0 scroll-mt-24 py-4 first:pt-0 last:pb-0 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary md:py-5">
+            <li key={notice.id} id={learnerNoticeAnchor(notice.id)??undefined} className="min-w-0 scroll-mt-24 py-4 first:pt-0 last:pb-0 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary md:py-4">
               <div className="flex flex-wrap items-center gap-2">
                 {notice.isPinned ? <Badge  tone="info">Pinned</Badge> : null}
                 {notice.updatedAt ? <Badge  tone="info">Updated</Badge> : null}
@@ -229,7 +229,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <span aria-current="page">Page {pages.page} of {pages.pages}</span>
         {pages.page<pages.pages ? <Link href={noticePageUrl(pages.page+1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center border border-border rounded-[var(--lms-control-radius)] px-3 text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link> : null}
       </nav> : null}
-      <div id="personal-updates" className="scroll-mt-24 border-t border-border pt-5"><h2 className="text-lg font-semibold text-foreground">Updates about you</h2></div>
+      <div id="personal-updates" className="scroll-mt-24 border-t border-border pt-6"><h2 className="text-lg font-semibold text-foreground">Updates about you</h2></div>
       <nav aria-label="Personal alert filter" className={placementFilterNavClass}>
         <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:false,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className={placementFilterPillClass} aria-current={!unreadOnly?"page":undefined}>All personal alerts</Link>
         <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:true,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className={placementFilterPillClass} aria-current={unreadOnly?"page":undefined}>Unread personal alerts</Link>

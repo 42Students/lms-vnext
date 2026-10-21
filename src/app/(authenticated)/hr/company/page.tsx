@@ -141,7 +141,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           </dl>
           <p className="mt-3 text-sm text-body">Industry not set</p>
           <p className="mt-2 max-w-prose text-xs text-muted-foreground">One company for everyone at it. The placement cell manages the verified company relationship.</p>
-          <section aria-label="Hiring footprint" className="mt-5 border-t border-border pt-5">
+          <section aria-label="Hiring footprint" className="mt-6 border-t border-border pt-6">
             <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">Hiring footprint with this college</h3>
             <p className="mt-1 text-sm text-body">Only published and closed jobs at this exact employer-college relationship are counted. Jobs are not attributed to individual recruiters.</p>
             {overview.recent.length ? <div className="mt-4 space-y-2">
