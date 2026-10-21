@@ -19,7 +19,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-2/W2_NEW_docs_audit_gap2_lane-8_project-template.md.part2of2.md` (new; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-2/W2_src_app_authenticated_admin_projects_page.tsx.md` (edit src/app/(authenticated)/admin/projects/page.tsx; 39 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-2/W2_src_app_authenticated_college_placements_drives_page.tsx.md` (edit src/app/(authenticated)/college/placements/drives/page.tsx; 37 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-2/W2_src_components_placements_public-recruiter-join-form.tsx.md` (edit src/components/placements/public-recruiter-join-form.tsx; 36 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-2/W2_src_components_placements_public-recruiter-join-form.tsx.md` (edit src/components/placements/public-recruiter-join-form.tsx; 36 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-2/W2_src_components_placements_learner-placement-offers.tsx.md` (edit src/components/placements/learner-placement-offers.tsx; 36 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-2/W2_src_components_placements_learner-career-calendar.tsx.md` (edit src/components/placements/learner-career-calendar.tsx; 34 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-2/W2_src_components_admin_admin-dashboard-actions.tsx.md` (edit src/components/admin/admin-dashboard-actions.tsx; 34 findings; best P2)
