@@ -67,7 +67,7 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/components/attendance/admin-attendance-parent-contact-editor.tsx`
 - [x] `src/components/attendance/admin-attendance-workspace.tsx`
 - [x] `src/components/attendance/college-attendance-policy-form.tsx`
-- [ ] `src/components/attendance/faculty-attendance-workspace.tsx`
+- [x] `src/components/attendance/faculty-attendance-workspace.tsx`
 - [ ] `src/components/attendance/learner-attendance-workspace.tsx`
 - [ ] `src/components/auth/device-list.tsx`
 - [ ] `src/components/auth/login-form.tsx`
