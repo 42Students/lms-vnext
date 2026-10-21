@@ -11,10 +11,10 @@ For EACH packet below, in order (highest severity first), strictly one at a time
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/packets/lane-3/src_modules_courses_assignment-submission-service.ts.part1of2.md` (edit src/modules/courses/assignment-submission-service.ts; 20 findings; best P0)
-- [ ] `docs/audit/gap-fix-work/packets/lane-3/src_modules_courses_assignment-submission-service.ts.part2of2.md` (edit src/modules/courses/assignment-submission-service.ts; 16 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-3/src_modules_courses_course-service.ts.part1of2.md` (edit src/modules/courses/course-service.ts; 20 findings; best P0)
-- [ ] `docs/audit/gap-fix-work/packets/lane-3/src_modules_courses_course-service.ts.part2of2.md` (edit src/modules/courses/course-service.ts; 6 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-3/src_modules_courses_assignment-submission-service.ts.part1of2.md` (edit src/modules/courses/assignment-submission-service.ts; 20 findings; best P0)
+- [x] `docs/audit/gap-fix-work/packets/lane-3/src_modules_courses_assignment-submission-service.ts.part2of2.md` (edit src/modules/courses/assignment-submission-service.ts; 16 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-3/src_modules_courses_course-service.ts.part1of2.md` (edit src/modules/courses/course-service.ts; 20 findings; best P0)
+- [x] `docs/audit/gap-fix-work/packets/lane-3/src_modules_courses_course-service.ts.part2of2.md` (edit src/modules/courses/course-service.ts; 6 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-3/NEW_docs_audit_gap2_lane-8_resource-file-controller.md.md` (new; 13 findings; best P0)
 - [ ] `docs/audit/gap-fix-work/packets/lane-3/src_modules_courses_discussion-service.ts.part1of2.md` (edit src/modules/courses/discussion-service.ts; 20 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-3/src_modules_courses_discussion-service.ts.part2of2.md` (edit src/modules/courses/discussion-service.ts; 15 findings; best P1)
