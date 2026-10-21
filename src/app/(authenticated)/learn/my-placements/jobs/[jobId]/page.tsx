@@ -18,6 +18,8 @@ function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number
       id: row.job.id,
       title: row.job.title,
       description: row.job.description,
+      jobTypeLabel: row.job.jobTypeLabel,
+      responsibilities: row.job.legacyPostingDetails?.responsibilities ?? "",
       employmentType: row.job.employmentType,
       workMode: row.job.workMode,
       locations: row.job.locations,
@@ -78,10 +80,14 @@ export default async function LearnerPlacementJobDetailPage({
   const back=legacyReturn || learnerJobReturnToDrivesHref(query.back??query.returnTo);
   const shell=<>
     <PageHeader title="My Placements" description="Opportunities and your application journey" />
-    <Tabs renderPanel={false} ariaLabel="My Placements" value="jobs" items={[
-      {value:"jobs",label:"Jobs",href:"/learn/my-placements/jobs"},
-      {value:"applications",label:"Applications",href:"/learn/my-placements/applications"},
-      {value:"offers",label:"Offers",href:"/learn/my-placements/offers"},
+    <Tabs renderPanel={false} ariaLabel="Placements sections" value="/learn/my-placements/jobs" items={[
+      {value:"/learn/my-placements",label:"Home",href:"/learn/my-placements"},
+      {value:"/learn/my-placements/jobs",label:"Jobs",href:"/learn/my-placements/jobs"},
+      {value:"/learn/my-placements/applications",label:"Applications",href:"/learn/my-placements/applications"},
+      {value:"/learn/my-placements/calendar",label:"Schedule",href:"/learn/my-placements/calendar"},
+      {value:"/learn/my-placements/offers",label:"Offers",href:"/learn/my-placements/offers"},
+      {value:"/learn/my-placements/announcements",label:"Announcements",href:"/learn/my-placements/announcements"},
+      {value:"/learn/my-placements/rules",label:"Placements",href:"/learn/my-placements/rules"},
     ]}/>
   </>;
   // Malformed and old integer URLs never reach a UUID database query.
