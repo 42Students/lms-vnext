@@ -13,6 +13,7 @@ import {TpoStudentsBulkDebar} from "@/components/tpo/tpo-students-bulk-debar";
 import {TpoStudentsSelectionProvider,TpoStudentsSelectionSummary} from "@/components/tpo/tpo-students-selection";
 import { TpoAcademicImportWorkspace } from "@/components/tpo/tpo-academic-import-workspace";
 import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
+import {TpoStudentsSelectedNote} from "@/components/tpo/tpo-students-selected-note";
 import {TpoRosterVerificationBulk} from "@/components/tpo/tpo-roster-verification-bulk";
 import {getTpoVerificationQueue} from "@/modules/placements/tpo-verification-queue-service";
 import {getTpoAfterCollegeForRoster} from "@/modules/placements/tpo-after-college-roster-service";
@@ -54,6 +55,7 @@ import {Table} from "@/components/ui/table";
 
 type SearchParams = {
   journeyState?: string | string[];
+  everyone?: string | string[];
   branchId?: string | string[];
   programId?: string | string[];
   afterCollege?:string|string[];
@@ -96,6 +98,7 @@ function first(value: string | string[] | undefined) {
 function studentsHref(
   filters: {
     journeyState?: string;
+    everyone?:boolean;
     legacyStage?:string;minRoundReached?:number;needsAttention?:boolean;debarred?:boolean;
     interviewedWith?:string;
     gender?:string;birthYear?:number;skillName?:string;minSkills?:number;minProjects?:number;minCertifications?:number;minExperiences?:number;hasProfileLinks?:boolean;hasResume?:boolean;hasCodingProfiles?:boolean;
@@ -124,6 +127,7 @@ function studentsHref(
   if (filters.journeyState) {
     params.set("journeyState",filters.journeyState);
   }
+  if (filters.everyone !== undefined) params.set("everyone", filters.everyone ? "YES" : "NO");
   if(filters.legacyStage)params.set("legacyStage",filters.legacyStage);
   if(filters.debarred!==undefined)params.set("debarred",filters.debarred?"YES":"NO");
   if(filters.interviewedWith)params.set("interviewedWith",filters.interviewedWith);
@@ -219,6 +223,7 @@ export default async function TpoStudentsPage({
   const parsed = tpoStudentsQuerySchema.safeParse({
     collegeId: context.membership.collegeId,
     journeyState:first(raw.journeyState)||undefined,
+    everyone:first(raw.everyone)||undefined,
     legacyStage:first(raw.legacyStage)||undefined,
     debarred:first(raw.debarred)||undefined,
     interviewedWith:first(raw.interviewedWith)||undefined,
@@ -262,7 +267,7 @@ export default async function TpoStudentsPage({
       <div className="min-w-0 space-y-4 md:space-y-6">
         <PageHeader
           title={TPO_OWNER_PAGE_COPY.students}
-          description="Everyone in placements, from the batches you made eligible."
+          description="Students by placement participation and college roster."
         />
         <Alert tone="error">
           <h2 className="text-lg font-semibold text-foreground">
@@ -325,7 +330,7 @@ export default async function TpoStudentsPage({
   };
 
   const scopedHref=(filters:Parameters<typeof studentsHref>[0],exportCsv=false)=>
-    studentsHref({...filters,skillName:filters.skillName??query.skillName,programId:filters.programId??query.programId,afterCollege:filters.afterCollege??query.afterCollege,profileStatus:filters.profileStatus??query.profileStatus,
+    studentsHref({...filters,everyone:filters.everyone??query.everyone,skillName:filters.skillName??query.skillName,programId:filters.programId??query.programId,afterCollege:filters.afterCollege??query.afterCollege,profileStatus:filters.profileStatus??query.profileStatus,
       minApplications:filters.minApplications??query.minApplications,maxApplications:filters.maxApplications??query.maxApplications,
       minOffers:filters.minOffers??query.minOffers,maxOffers:filters.maxOffers??query.maxOffers,offerWaiting:filters.offerWaiting??query.offerWaiting,minCgpa:filters.minCgpa??query.minCgpa,maxCgpa:filters.maxCgpa??query.maxCgpa,maxActiveBacklogs:filters.maxActiveBacklogs??query.maxActiveBacklogs,maxPastBacklogs:filters.maxPastBacklogs??query.maxPastBacklogs,cgpaRecorded:filters.cgpaRecorded??query.cgpaRecorded,classId:filters.classId??query.classId,batchId:query.batchId},exportCsv);
   const exportHref = scopedHref(
@@ -365,6 +370,8 @@ export default async function TpoStudentsPage({
   const currentFilters = {
     columns:first(raw.columns)?.slice(0,800),
     journeyState: query.journeyState,
+    everyone:query.everyone,
+    everyone:query.everyone,
     branchId: query.branchId,
     programId:query.programId,
     afterCollege:query.afterCollege,
@@ -410,7 +417,7 @@ export default async function TpoStudentsPage({
     <div className="min-w-0 space-y-4 md:space-y-6">
       <PageHeader
         title={TPO_OWNER_PAGE_COPY.students}
-        description="Everyone in placements, from the batches you made eligible."
+        description={query.everyone ? "All active learners in this college, including those not enrolled in placements." : "Everyone in placements, from the batches you made eligible."}
         actions={manageAllowed?<TpoAcademicImportWorkspace />:undefined}
       />
       <nav
@@ -446,6 +453,7 @@ export default async function TpoStudentsPage({
         {/* Program and Class are selected in the single grid filter panel.
             Preserve them through this separate advanced-filter form. */}
         <Input type="hidden" name="programId" value={query.programId??""}/>
+        <Input type="hidden" name="everyone" value={query.everyone?"YES":"NO"}/>
         <Input type="hidden" name="classId" value={query.classId??""}/>
         <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stage
           <Select name="legacyStage" defaultValue={query.legacyStage??""}
@@ -911,6 +919,14 @@ export default async function TpoStudentsPage({
           </label>
 
           <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Roster
+            <Select name="everyone" defaultValue={query.everyone?"YES":"NO"} className="min-h-11 md:min-h-9">
+              <option value="NO">In placements</option>
+              <option value="YES">Everyone at this college</option>
+            </Select>
+          </label>
+
+          <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Page size
             <Select
               name="pageSize"
@@ -976,6 +992,7 @@ export default async function TpoStudentsPage({
             label:student.displayName+" · "+(student.rollNumber??student.branchName),
             registered:student.registeredForPlacements,
           }))} />:null}
+        <TpoStudentsSelectedNote allowedIds={roster.total<=5000?(data.exportRows??[]).map(student=>student.membershipId):roster.items.map(student=>student.membershipId)}/>
         <TpoBulkActionPanel key={"students:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.pageSize+":"+query.search+":"+query.journeyState}
           target="STUDENTS"
           rows={roster.items.map(student=>({id:student.membershipId,

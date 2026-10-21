@@ -1,14 +1,14 @@
 import { z } from "zod";
 export const tpoStudentNudgeTemplates={
- REGISTRATION:"Please review your placement registration choice in LMS. No enrollment choice is assumed.",
- RESUME:"Please review your resume information in LMS. Contact the Placement Cell if uploading is unavailable.",
- PROFILE:"Please complete your learner profile and verify that your academic details are correct.",
- APPLY:"Please review published placement drives and apply only to those you wish to join.",
- OFFER:"Please review your outstanding offer and respond within the communicated deadline.",
+ REGISTRATION:"Registration for placements is open. Please choose Placements, Higher studies or Not interested in your Placements page.",
+ RESUME:"Please upload your resume to your profile. Companies see it when you apply.",
+ PROFILE:"Please complete your profile and academic details, with marksheets, and submit them for verification.",
+ APPLY:"There are open drives you can apply to. Please check your Placements page.",
+ OFFER:"You have an offer waiting for your answer. Please accept or decline it before it expires.",
  CUSTOM:"",
 } as const;
 export const tpoStudentNudgeLabels={
- REGISTRATION:"Register for placements",
+ REGISTRATION:"Register",
  RESUME:"Upload resume",
  PROFILE:"Complete profile",
  APPLY:"Apply to drives",
