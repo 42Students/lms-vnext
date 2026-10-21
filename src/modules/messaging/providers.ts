@@ -59,7 +59,7 @@ export type OutboundProviderWithOutcomes = OutboundProvider & {
 };
 
 export function readOutboundProviderConfig(templates: OutboundProviderConfig["templates"]): OutboundProviderConfig {
-  return { email: readZeptoMailConfig(), sms: readExotelConfig(), templates };
+  return { email: readZeptoMailConfig(), sms: readExotelConfig(), templates: registerLegacySmsTemplates(templates) };
 }
 
 /** Existing callers retain send():boolean; operators may inspect typed outcomes. */
@@ -166,4 +166,136 @@ export function createOutboundProvider(
       return (await sendDetailed(rawRequest)).status === "ACCEPTED";
     },
   };
+}
+
+
+/** The seven legacy job/SMS intents share exactly one TRAI-registered body. */
+export const LEGACY_JOB_SMS_INTENTS = [
+  "application-submitted", "shortlisted", "interview-round-update",
+  "selected", "rejected", "interview.reminder", "interview.confirmed",
+] as const;
+export type LegacyJobSmsIntent = (typeof LEGACY_JOB_SMS_INTENTS)[number];
+
+const DEFAULT_JOB_SMS_BODY =
+  "Reminder: Hello {#var#}, You have an update on the 42 LMS Jobs Portal. Login to 42lms.com to check - JRSPF";
+
+/** Remove the DLT token shape, bidi/format controls and excess whitespace. */
+export function dltSafeRecipientName(raw: string | null | undefined): string {
+  const normalized = (raw ?? "").replace(/\{#.*?#\}/g, "")
+    .replace(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]+/gu, " ")
+    .replace(/\s+/gu, " ").trim();
+  return Array.from(normalized || "User").slice(0, 30).join("").trim() || "User";
+}
+
+const safeDltId = (raw: string | undefined) =>
+  Boolean(raw && /^[0-9]{10,24}$/.test(raw.trim()));
+const safeSenderId = (raw: string | undefined) =>
+  Boolean(raw && /^[A-Za-z0-9]{3,11}$/.test(raw.trim()));
+
+/**
+ * Deployment or an already-authorized settings reader must supply approved
+ * DLT ID and exact registered body. The override is NOT user input. Missing
+ * mappings fail closed and never fall back to OTP templates.
+ */
+export function legacyJobSmsTemplate(
+  env: Record<string, string | undefined> = process.env,
+  approvedOverrides: { dltId?: string; body?: string; senderId?: string } = {},
+): OutboundTemplate | null {
+  const dltId = (approvedOverrides.dltId ?? env.EXOTEL_JOB_DLT_TEMPLATE_ID ?? "").trim();
+  const senderId = (approvedOverrides.senderId ?? env.EXOTEL_JOB_SENDER_ID ?? "FLERNR").trim();
+  const body = approvedOverrides.body ?? env.EXOTEL_JOB_UPDATE_TEMPLATE_BODY ?? DEFAULT_JOB_SMS_BODY;
+  if (!safeDltId(dltId) || !safeSenderId(senderId) ||
+    !body.includes("{#var#}") || body.indexOf("{#var#}") !== body.lastIndexOf("{#var#}") ||
+    body.length > 1500) return null;
+  return {
+    exotelDltTemplateId: dltId,
+    exotelSenderId: senderId,
+    renderSms: (variables) => body.replace("{#var#}",
+      dltSafeRecipientName(variables.learnerName ?? variables.recipientName)),
+  };
+}
+
+export function registerLegacySmsTemplates(
+  templates: OutboundProviderConfig["templates"],
+  env: Record<string, string | undefined> = process.env,
+  approvedOverrides: { dltId?: string; body?: string; senderId?: string } = {},
+): OutboundProviderConfig["templates"] {
+  const job = legacyJobSmsTemplate(env, approvedOverrides);
+  // Preserve explicit caller registrations; no silent OTP/global overrides.
+  return job && !Object.hasOwn(templates, "job.update")
+    ? { ...templates, "job.update": job } : templates;
+}
+
+export async function sendLegacyJobUpdateSms(
+  provider: OutboundProviderWithOutcomes,
+  intent: string,
+  recipient: string,
+  recipientName: string,
+): Promise<OutboundProviderOutcome> {
+  if (!(LEGACY_JOB_SMS_INTENTS as readonly string[]).includes(intent)) {
+    return { status: "SUPPRESSED", reason: "UNSUPPORTED_JOB_SMS_INTENT" };
+  }
+  return provider.sendDetailed({
+    channel: "SMS",
+    recipient,
+    templateKey: "job.update",
+    purpose: "legacy-job-sms:" + intent,
+    variables: { learnerName: dltSafeRecipientName(recipientName) },
+  });
+}
+
+/**
+ * Attendance/absence notices require a separately provisioned exact template;
+ * arbitrary text is never treated as a verified TRAI-approved SMS.
+ */
+export async function sendApprovedNotificationSms(
+  provider: OutboundProviderWithOutcomes,
+  templateKey: string,
+  recipient: string,
+  variables: Record<string, string>,
+): Promise<OutboundProviderOutcome> {
+  if (!isCampaignTemplateKey(templateKey) || templateKey === "job.update") {
+    return { status: "NOT_CONFIGURED", reason: "NOTIFICATION_DLT_TEMPLATE_REQUIRED" };
+  }
+  return provider.sendDetailed({
+    channel: "SMS",
+    recipient,
+    templateKey,
+    purpose: "legacy-notification:" + templateKey,
+    variables,
+  });
+}
+
+
+/**
+ * Notices must have independently registered DLT IDs and exact texts.
+ * The constructor does NOT accept an arbitrary SMS body at delivery time:
+ * an owner-provisioned template and its approved variable slots are required.
+ */
+export function registeredNoticeSmsTemplate(
+  env: Record<string, string | undefined> = process.env,
+  approvedBody?: string,
+  approvedDltId?: string,
+): OutboundTemplate | null {
+  const senderId = (env.EXOTEL_NOTIFICATION_SENDER_ID ?? "FLERNR").trim();
+  const dltId = (approvedDltId ?? env.EXOTEL_NOTIFICATION_DLT_TEMPLATE_ID ?? "").trim();
+  const body = (approvedBody ?? env.EXOTEL_NOTIFICATION_TEMPLATE_BODY ?? "").trim();
+  if (!safeSenderId(senderId) || !safeDltId(dltId) ||
+    body.length < 1 || body.length > 1500 ||
+    !body.includes("{#var#}") ||
+    body.indexOf("{#var#}") !== body.lastIndexOf("{#var#}")) return null;
+  return {
+    exotelSenderId: senderId, exotelDltTemplateId: dltId,
+    renderSms: (variables) => body.replace("{#var#}",
+      dltSafeRecipientName(variables.recipientName ?? variables.learnerName)),
+  };
+}
+
+/** SMS sends must be listed by the upstream delivery receipt repository.
+ * The provider deliberately has no database/tenant context: it cannot
+ * manufacture authorization, consent, or a persisted recipient attempt.
+ */
+export function legacyEventSmsTemplateKey(event: LegacyMailEvent): string | null {
+  if (!LEGACY_NOTIFICATION_CHANNELS[event].includes("SMS")) return null;
+  return "job.update";
 }
