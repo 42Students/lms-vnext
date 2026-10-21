@@ -9,6 +9,7 @@ type Learner={id:string;name:string};
 export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:readonly Learner[];collegeId:string}){
  const router=useRouter(),[selected,setSelected]=useState<string[]>([]);
  const pendingRef=useRef(false);
+ const lastClickedIndex=useRef<number|null>(null),shiftHandled=useRef(false);
  const [hydratedKey,setHydratedKey]=useState<string|null>(null);
  const storageKey="lms-vnext:student-bulk:"+collegeId;
  useEffect(()=>{
@@ -91,8 +92,20 @@ export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:reado
   }finally{pendingRef.current=false;setBusy(false);}
  }
  return <section aria-label="Bulk student access" className="min-w-0 space-y-3 pb-4">
-  <div className="flex flex-wrap justify-between gap-3"><h2 className="text-lg font-semibold text-[var(--lms-heading)]">Bulk module access</h2>
-   <p role="status" className="text-sm text-muted-foreground leading-[22px]">{selected.length} students selected across pages</p></div>
+  <div className="flex flex-wrap justify-between gap-3"><h2 className="text-lg font-semibold text-[var(--lms-heading)]">Bulk module access</h2></div>
+  {selected.length>0?<div role="status" aria-live="polite"
+    className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] p-3">
+    <strong className="text-sm text-body">{selected.length} students selected</strong>
+    <div className="flex flex-wrap gap-2">
+      <Button type="button" size="sm" variant={module==="projects"?"primary":"secondary"}
+       disabled={busy} onClick={()=>setModule("projects")}>Projects</Button>
+      <Button type="button" size="sm" variant={module==="electives"?"primary":"secondary"}
+       disabled={busy} onClick={()=>setModule("electives")}>Electives</Button>
+      <Button type="button" size="sm" variant="secondary" disabled
+       title="Placements access is set at college scope, not per student">Placements</Button>
+      <Button type="button" size="sm" variant="ghost" disabled={busy} onClick={()=>setSelected([])}>Clear selection</Button>
+    </div>
+  </div>:null}
   <p className="text-xs text-muted-foreground leading-5">Selection is retained across this college's roster pages and filters for this browser session. Updates are saved in validated batches of 25 with a separate audit event for each group. Placements remains configured at college scope (not per student); Projects and Electives can be overridden here. Locked ancestor policies remain protected.</p>
   <label className="flex min-h-11 items-center gap-2 text-sm text-body print:hidden">
    <Checkbox checked={allVisible}
@@ -100,9 +113,24 @@ export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:reado
    {allVisible?"Clear":"Select"} all {capped.length} students on this visible page
   </label>
   <div role="region" aria-label="Bulk student selection" tabIndex={0} className="grid max-h-44 gap-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] md:grid-cols-2 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] print:hidden">
-   {capped.map(learner=><label key={learner.id} className="flex min-h-11 items-center gap-2 text-sm text-body">
+   {capped.map((learner,index)=><label key={learner.id}
+     className={"flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm text-body "+(selected.includes(learner.id)?"bg-[var(--lms-primary-subtle)]":"")}>
     <Checkbox checked={selected.includes(learner.id)} disabled={busy}
-     onChange={e=>setSelected(curr=>e.target.checked?[...curr,learner.id]:curr.filter(id=>id!==learner.id))}/>
+     aria-label={"Select "+learner.name}
+     onClick={event=>{
+      if(event.shiftKey&&lastClickedIndex.current!==null){
+       const start=Math.min(lastClickedIndex.current,index),end=Math.max(lastClickedIndex.current,index);
+       const range=capped.slice(start,end+1).map(row=>row.id);
+       shiftHandled.current=true;
+       setSelected(curr=>[...new Set([...curr,...range])]);
+      }
+      lastClickedIndex.current=index;
+     }}
+     onChange={event=>{
+      if(shiftHandled.current){shiftHandled.current=false;return;}
+      setSelected(curr=>event.target.checked?[...new Set([...curr,learner.id])]:
+       curr.filter(id=>id!==learner.id));
+     }}/>
     <span className="min-w-0 break-words">{learner.name}</span>
    </label>)}
   </div>

@@ -16,7 +16,18 @@ export default function SuperAdminFeaturesError({
     : "Please retry loading the stored module rules.";
   return (
     <section className="min-w-0 space-y-[var(--lms-space-3)]">
-      <Banner tone="warning">Could not load feature controls. The module switches remain unavailable until the rules can be read.</Banner>
+      <Banner tone="warning" role="alert">
+       Could not load feature controls. The module catalog and the selected scope's stored rules are independent reads.
+       A missing catalog must not be treated as an empty module list; existing rules cannot be safely edited until both
+       sources are available. Retry without changing college or organization.
+      </Banner>
+      <div className="flex flex-wrap gap-2">
+       <Button type="button" variant="secondary" onClick={reset} className="min-h-11 w-full sm:w-auto md:min-h-9">
+        Retry module catalog
+       </Button>
+       <Button type="button" variant="secondary" onClick={()=>window.location.reload()}
+        className="min-h-11 w-full sm:w-auto md:min-h-9">Reload scoped rules</Button>
+      </div>
       <ErrorState
       title="Could not load Feature Controls"
       description={`The persisted module rules could not be retrieved. ${detail}`}
