@@ -69,11 +69,11 @@ export function CollegeProjectMentorDialog({projectId,collegeId}:{
    title="Reassign mentor"
    description="Choose an eligible mentor for this workspace. The outgoing primary mentor will be replaced.">
    <div className="space-y-4">
-    <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:items-end">
+    <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] md:flex-row md:items-end">
      <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search mentors
       <Input value={search} onChange={e=>setSearch(e.target.value)} maxLength={120} placeholder="Name or email"/>
      </label>
-     <Button type="button" variant="secondary" className="w-full sm:w-auto" loading={searching} disabled={searching||busy} onClick={()=>void load()}>
+     <Button type="button" variant="secondary" className="w-full md:w-auto" loading={searching} disabled={searching||busy} onClick={()=>void load()}>
       {searching?"Searching…":"Search"}
      </Button>
     </div>
@@ -91,9 +91,9 @@ export function CollegeProjectMentorDialog({projectId,collegeId}:{
     {!searching&&!error&&mentors.length===0?<p role="status" className="text-[13px] leading-5 text-[var(--lms-muted-text)]">No eligible mentors found. Search by another name or email.</p>:null}
     <p className="max-w-prose border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-[13px] leading-5 text-[var(--lms-body-text)]">The previous primary mentor will be replaced. Co-mentors remain assigned. Scheduled meetings and task assignments may change.</p>
     {error?<Banner tone="error">{error}</Banner>:null}
-    <div className="flex flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
-     <Button type="button" variant="secondary" className="w-full sm:w-auto" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
-     <Button type="button" className="w-full sm:w-auto" loading={busy} disabled={!mentorId||busy||searching} onClick={()=>void reassign()}>
+    <div className="flex flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end">
+     <Button type="button" variant="secondary" className="w-full md:w-auto" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
+     <Button type="button" className="w-full md:w-auto" loading={busy} disabled={!mentorId||busy||searching} onClick={()=>void reassign()}>
       {busy?"Reassigning…":"Confirm reassignment"}
      </Button>
     </div>

@@ -78,9 +78,9 @@ export function MentorTaskCreate({
     <Button size="sm" variant={primary?"primary":"secondary"} onClick={()=>setOpen(true)}>Create task</Button>
     <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Confirm new task"
       description="Leave Sprint blank for the backlog. Select an assignee, priority and task details."
-      footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
-        <Button className="w-full sm:w-auto" variant="secondary" disabled={busy} onClick={guard.requestClose}>Cancel</Button>
-        <Button className="w-full sm:w-auto" loading={busy} disabled={busy||!valid} onClick={()=>void create()}>
+      footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end">
+        <Button className="w-full md:w-auto" variant="secondary" disabled={busy} onClick={guard.requestClose}>Cancel</Button>
+        <Button className="w-full md:w-auto" loading={busy} disabled={busy||!valid} onClick={()=>void create()}>
           {busy?"Creating…":"Create task"}
         </Button>
       </div>}>

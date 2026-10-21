@@ -191,13 +191,13 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                   {preview.ignoredHeaders.length? " Ignored columns: "+preview.ignoredHeaders.join(", ")+".":""}
                 </p>
                 <p className="text-sm text-body leading-[22px]" role="status">New: {newRows} to import · Already recruiters: {existing.length} · To fix: {preview.invalid}. Uncheck any valid row to Skip row.</p>
-                <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap print:hidden">
-                  <Button className="w-full sm:w-auto min-h-11 md:min-h-9" type="button" variant="secondary" disabled={busy||Boolean(result)}
+                <div className="flex flex-col gap-2 md:flex-row md:flex-wrap print:hidden">
+                  <Button className="w-full md:w-auto min-h-11 md:min-h-9" type="button" variant="secondary" disabled={busy||Boolean(result)}
                     onClick={()=>{setReviewReady(false);
                       setSkipRows(preview.rows.filter(row=>row.lead&&!existingNumbers.has(row.row)).map(row=>row.row));}}>
                     Skip all new rows
                   </Button>
-                  <Button type="button" variant="secondary" className="w-full sm:w-auto min-h-11 md:min-h-9" disabled={busy||Boolean(result)}
+                  <Button type="button" variant="secondary" className="w-full md:w-auto min-h-11 md:min-h-9" disabled={busy||Boolean(result)}
                     onClick={()=>{setReviewReady(false);setSkipRows([]);}}>
                     Include all new rows
                   </Button>
@@ -234,7 +234,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                     type="button"
                     variant="primary"
                     disabled={busy || previewStatus!=="ready" || newRows <= 0}
-                    className="min-h-11 w-full md:min-h-9 sm:w-auto print:hidden"
+                    className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden"
                     loading={busy}
                     onClick={() => void commit()}
                   >
@@ -245,8 +245,8 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
             ) : null}
             {result ? (
               <div className="space-y-3" aria-live="polite">
-                <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap print:hidden">
-                <Button type="button" variant="secondary" className="min-h-11 w-full md:min-h-9 sm:w-auto" onClick={()=>{
+                <div className="flex flex-col gap-2 md:flex-row md:flex-wrap print:hidden">
+                <Button type="button" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={()=>{
                   const header="Row,Status,Reason";
                   const cell=safeReportCsvCell;
                   const lines=result.results.map(item=>[String(item.row),item.status,item.reason??""].map(cell).join(","));
@@ -257,7 +257,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                   try { link.click(); }
                   finally { link.remove();window.setTimeout(()=>URL.revokeObjectURL(url),1000); }
                 }}>Download row results CSV</Button>
-                <Button type="button" variant="secondary" className="min-h-11 w-full md:min-h-9 sm:w-auto" onClick={()=>void navigator.clipboard.writeText(
+                <Button type="button" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={()=>void navigator.clipboard.writeText(
                   result.results.filter(item=>item.status!=="created").map(item=>
                     "Row "+item.row+": "+item.status+(item.reason?" — "+item.reason:"")).join("\n")
                 ).then(()=>setCopyNotice("Non-created rows copied."),()=>setCopyNotice("Could not copy these results."))}>
