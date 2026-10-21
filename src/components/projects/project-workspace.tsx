@@ -1035,16 +1035,22 @@ export function ProjectWorkspace({
                   className="font-semibold text-link underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">add a release</a>,
                   then use Add sprint inside that release. The Board and Task Allocation will appear here.</p>}
             />:null}
-          {mode!=="MENTOR"&&workspace.releases.length===0?
-            <div className="space-y-2">
-              <EmptyState title={mode==="ADMIN"?"No releases on this project yet":"No sprints yet"}
-                description={mode==="ADMIN"
-                  ?"A sprint must belong to a release. Create or seed a project release before adding a new sprint."
-                  :"Add the sprints this project should be measured against."}/>
-              {mode==="ADMIN"?<Link href={"?retry=1"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+          {workspace.releasesLoadError ? (
+            <div role="alert" className="flex flex-wrap items-center justify-between gap-3 border-l-[3px] border-error bg-error-subtle px-3 py-3 text-sm">
+              <div>
+                <p className="font-semibold text-foreground">Could not load project releases.</p>
+                <p className="mt-1 text-body">Tasks, Team and other loaded workspace sections remain available.</p>
+              </div>
+              <Link href={"?retry=1"} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
                 Retry releases
-              </Link>:null}
-            </div>:null}
+              </Link>
+            </div>
+          ) : null}
+          {mode!=="MENTOR"&&!workspace.releasesLoadError&&workspace.releases.length===0?
+            <EmptyState title={mode==="ADMIN"?"No releases on this project yet":"No sprints yet"}
+              description={mode==="ADMIN"
+                ?"A sprint must belong to a release. Create or seed a project release before adding a new sprint."
+                :"Add the sprints this project should be measured against."}/>:null}
         </div>
         {mode==="LEARNER"?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
           {(()=>{
