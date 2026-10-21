@@ -338,7 +338,7 @@ export function LearnerCourseList({
           <Button type="button" onClick={() => window.location.reload()} variant="secondary" className="min-h-[var(--lms-control-height)] max-md:min-h-11">Retry</Button>
         </Alert>
       ) : null}
-      <p role="status" aria-live="polite" className="text-xs font-semibold text-muted-foreground">{learnerCourseResultSummary(Math.min(visibleLimit, visibleRows.length), visibleRows.length, periodRows.length)}</p>
+      <p role="status" aria-live="polite" className="text-xs font-semibold text-muted-foreground leading-[20px]">{learnerCourseResultSummary(Math.min(visibleLimit, visibleRows.length), visibleRows.length, periodRows.length)}</p>
       {visibleRows.length === 0 ? (
         <EmptyState title={
             periodRows.length===0&&selectedPeriod?("No courses found for "+selectedPeriod.name+"."):learnerCourseFilteredEmptyTitle({query,continueOnly,typeFilter:effectiveTypeFilter,termState,progressFilter,periodCount:periodRows.length})}
@@ -362,15 +362,15 @@ export function LearnerCourseList({
                 <article key={row.course.deliveryId} aria-disabled="true"
                   className="rounded-xl border border-warning bg-surface p-4 sm:p-5">
                   <StatusBadge tone="warning">Unavailable</StatusBadge>
-                  <h2 className="mt-3 text-lg font-semibold text-foreground">{row.unavailableLabel}</h2>
-                  <p className="mt-2 text-sm text-body">{row.course.courseName || "Course name unavailable"}</p>
-                  <p className="mt-3 text-sm text-muted-foreground">This course cannot be opened right now. Other courses remain available.</p>
+                  <h2 className="mt-3 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{row.unavailableLabel}</h2>
+                  <p className="mt-2 text-sm text-body leading-[22px]">{row.course.courseName || "Course name unavailable"}</p>
+                  <p className="mt-3 text-sm text-muted-foreground leading-[22px]">This course cannot be opened right now. Other courses remain available.</p>
                 </article>
               );
               return (
                 <Fragment key={row.course.deliveryId}>
                   {startsElectiveGroup ? (
-                    <h2 className="col-span-full mb-1 mt-2 text-base font-semibold text-foreground">
+                    <h2 className="col-span-full mb-1 mt-2 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
                       Electives
                     </h2>
                   ) : null}
@@ -397,14 +397,14 @@ export function LearnerCourseList({
                     </div>
 
                     <div className="flex flex-1 flex-col p-5">
-                      <h2 className="m-0 line-clamp-2 break-words text-lg font-semibold text-foreground">
+                      <h2 className="m-0 line-clamp-2 break-words font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
                         {row.course.courseName}
                       </h2>
                       <p className="mt-2 line-clamp-2 break-words text-sm leading-5 text-body">
                         {row.course.courseDescription ??
                           "No course description provided."}
                       </p>
-                      <p className="mt-3 text-xs font-semibold text-muted-foreground">
+                      <p className="mt-3 text-xs font-semibold text-muted-foreground leading-[20px]">
                         Instructor: {row.instructorNames.length > 0
                           ? row.instructorNames.join(", ")
                           : "Not assigned"}
@@ -436,9 +436,9 @@ export function LearnerCourseList({
                         {safeCardProgress(row) !== null ?
                           <MetricBar role="progressbar" label="Course progress" className={progressStyles.track}
                             value={safeCardProgress(row)!} maximum={100} unit="percent" />
-                          : <p className="text-xs text-muted-foreground">No published learning items to measure.</p>}
+                          : <p className="text-xs text-muted-foreground leading-[20px]">No published learning items to measure.</p>}
                         {!row.readOnly && row.overdueAssignments ? (
-                          <p className="mt-3 text-xs font-semibold text-warning" role="note">
+                          <p className="mt-3 text-xs font-semibold text-warning leading-[20px]" role="note">
                             {row.overdueAssignments} overdue {row.overdueAssignments === 1 ? "assignment" : "assignments"} · submission deadline passed
                           </p>
                         ) : null}
@@ -453,7 +453,7 @@ export function LearnerCourseList({
                           </p>
                         </div>
                         <div className="mt-4 flex items-center justify-between gap-3">
-                          <p className="m-0 line-clamp-1 text-sm font-semibold text-foreground">
+                          <p className="m-0 line-clamp-1 text-sm font-semibold text-foreground leading-[22px]">
                             {learnerCourseCardNextLabel(row)}
                           </p>
                           <span

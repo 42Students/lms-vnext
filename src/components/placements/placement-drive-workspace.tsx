@@ -277,7 +277,7 @@ export async function PlacementDriveWorkspace({
           <div className="flex min-w-0 w-full flex-col gap-[var(--lms-space-2)] sm:w-auto sm:flex-row sm:items-center">
           {!isTpo ? <Link href={applicationsHref ?? "/college/placements/jobs/" + encodeURIComponent(jobId) + "/applications"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-white hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">Applications</Link> : null}
           <Dropdown mobileSheet align="end" label="Drive actions" trigger="Actions" className="w-full sm:w-auto">
-            <p className="hidden text-xs text-muted-foreground group-open:block md:!hidden">Scroll for more drive actions ↓</p>
+            <p className="hidden text-xs text-muted-foreground group-open:block md:!hidden leading-[20px]">Scroll for more drive actions ↓</p>
             <div role="group" aria-label="Drive action choices" tabIndex={0}
               className="flex max-h-[65dvh] min-w-0 flex-col gap-2 overflow-y-auto overscroll-contain pb-4 md:max-h-72 md:flex-col md:overflow-y-auto md:pb-0">
             {nextStep ? (
@@ -413,9 +413,9 @@ export async function PlacementDriveWorkspace({
         job.legacyPostingDetails.campusPool?.travelNote||
         job.legacyPostingDetails.skillsWanted?.length)?(
         <section aria-label="Supplementary employer details" className="min-w-0 border-b border-border pb-4">
-          <h2 className="font-semibold text-foreground">Employer information</h2>
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Employer information</h2>
           {job.legacyPostingDetails.portal?.studentsRegisterSeparately?(
-            <p className="mt-2 text-sm text-body">
+            <p className="mt-2 text-sm text-body leading-[22px]">
               Students also register on {job.legacyPostingDetails.portal.name}.
               {/^https:\/\/[^/]+/i.test(job.legacyPostingDetails.portal.url)?(
                 <>{" "}<ThirdPartyLink href={job.legacyPostingDetails.portal.url} label="Open employer portal"/></>
@@ -423,20 +423,20 @@ export async function PlacementDriveWorkspace({
             </p>
           ):null}
           {job.legacyPostingDetails.campusPool?.hostCollege?(
-            <p className="mt-2 text-sm text-body">Pool host: {job.legacyPostingDetails.campusPool.hostCollege}</p>
+            <p className="mt-2 text-sm text-body leading-[22px]">Pool host: {job.legacyPostingDetails.campusPool.hostCollege}</p>
           ):null}
           {job.legacyPostingDetails.campusPool?.reportingTime?(
-            <p className="mt-2 text-sm text-body">Pool reporting time (IST): {new Intl.DateTimeFormat("en-IN",
+            <p className="mt-2 text-sm text-body leading-[22px]">Pool reporting time (IST): {new Intl.DateTimeFormat("en-IN",
               {dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(
                 new Date(job.legacyPostingDetails.campusPool.reportingTime))}</p>
           ):null}
           {job.legacyPostingDetails.campusPool?.travelNote?(
-            <p className="mt-2 whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm text-body">Travel: {job.legacyPostingDetails.campusPool.travelNote}</p>
+            <p className="mt-2 whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm text-body leading-[22px]">Travel: {job.legacyPostingDetails.campusPool.travelNote}</p>
           ):null}
           {job.legacyPostingDetails.skillsWanted?.length?(
-            <p className="mt-2 break-words [overflow-wrap:anywhere] text-sm text-body">Requested skills: {job.legacyPostingDetails.skillsWanted.join(", ")}</p>
+            <p className="mt-2 break-words [overflow-wrap:anywhere] text-sm text-body leading-[22px]">Requested skills: {job.legacyPostingDetails.skillsWanted.join(", ")}</p>
           ):null}
-          <p className="mt-2 text-xs text-muted-foreground">Supplementary details do not automatically create a venue, travel booking or eligibility rule.</p>
+          <p className="mt-2 text-xs text-muted-foreground leading-[20px]">Supplementary details do not automatically create a venue, travel booking or eligibility rule.</p>
         </section>
       ):null}
       {deadlineState?.extendable?(
@@ -449,8 +449,8 @@ export async function PlacementDriveWorkspace({
       ):null}
       {nextStep ? (
         <section aria-label="Next step" className="border-b border-border pb-4">
-          <h2 className="text-base font-semibold text-foreground">Next step</h2>
-          <p className="mt-2 text-sm text-body">{nextStep.primary.description}</p>
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Next step</h2>
+          <p className="mt-2 text-sm text-body leading-[22px]">{nextStep.primary.description}</p>
           <Link href={nextStep.primary.href}
             className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground sm:w-auto md:min-h-9">
             {nextStep.primary.label}
@@ -469,8 +469,8 @@ export async function PlacementDriveWorkspace({
         </section>
       ) : null}
       {journey?<section aria-label="Drive applicant journey" className="min-w-0 border-b border-border pb-4">
-        <h2 className="font-semibold text-foreground">Journey</h2>
-        <p className="mt-1 text-xs text-body">{journey.definition}</p>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Journey</h2>
+        <p className="mt-1 text-xs text-body leading-[20px]">{journey.definition}</p>
         <div className="mt-4 grid grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-3 xl:grid-cols-6">
           {journey.stages.map(stage=><Link key={stage.name} href={stage.href}
             className="min-w-0 border-b border-r border-border p-3 text-foreground hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] even:border-r-0 md:even:border-r md:[&:nth-child(3n)]:border-r-0 xl:[&:nth-child(3n)]:border-r xl:border-b-0 xl:last:border-r-0">
@@ -478,12 +478,12 @@ export async function PlacementDriveWorkspace({
             <strong className="mt-2 block text-2xl tabular-nums">{stage.count}</strong>
           </Link>)}
         </div>
-        <p className="mt-3 text-xs text-body">{journey.excluded} registered learners excluded or not notified from {journey.considered} considered.</p>
+        <p className="mt-3 text-xs text-body leading-[20px]">{journey.excluded} registered learners excluded or not notified from {journey.considered} considered.</p>
       </section>:null}
       {isTpo && driveDay.rounds.length > 0 ? (
         <section aria-label="Round journey" className="min-w-0 border-b border-border pb-4">
-          <h2 className="text-base font-semibold text-foreground">Rounds</h2>
-          <p className="mt-1 text-sm text-body">Round status, schedule and outcome progress. Open a round to see who has reached it.</p>
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Rounds</h2>
+          <p className="mt-1 text-sm text-body leading-[22px]">Round status, schedule and outcome progress. Open a round to see who has reached it.</p>
           <div className="mt-3 divide-y divide-border">
             {driveDay.rounds.map(round => {
               const staged = round.participants.filter(p => p.result?.status === "STAGED").length;
@@ -518,9 +518,9 @@ export async function PlacementDriveWorkspace({
                       : "Not set"}</dd></div>
                     <div><dt className="font-semibold">Duration</dt><dd>{round.durationMinutes ? round.durationMinutes+" minutes" : "Not specified"}</dd></div>
                   </dl>
-                  {round.platform ? <p className="mt-2 text-sm text-body">Platform: {round.platform}</p> : null}
+                  {round.platform ? <p className="mt-2 text-sm text-body leading-[22px]">Platform: {round.platform}</p> : null}
                   {round.testUrl&&/^https:\/\//i.test(round.testUrl)?<ThirdPartyLink href={round.testUrl} label="Open test instructions →"/>:null}
-                  {round.whatToBring ? <p className="mt-1 text-sm text-body">Bring: {round.whatToBring}</p> : null}
+                  {round.whatToBring ? <p className="mt-1 text-sm text-body leading-[22px]">Bring: {round.whatToBring}</p> : null}
                   <div className="mt-3 flex min-w-0 flex-col gap-2 text-sm sm:flex-row sm:flex-wrap">
                     <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/candidate-schedule?roundId="+encodeURIComponent(round.id)}
                       className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-link-text)] underline sm:w-auto md:min-h-9">See who reached this round →</Link>
@@ -551,10 +551,10 @@ export async function PlacementDriveWorkspace({
           aria-label="Current screening shortlist"
           className="min-w-0 border-b border-border pb-4"
         >
-          <h2 className="text-base font-semibold text-foreground">
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
             Persisted screening shortlist
           </h2>
-          <p className="mt-2 text-sm text-body">
+          <p className="mt-2 text-sm text-body leading-[22px]">
             {shortlist
               ? String(shortlist.total) + " currently shortlisted submitted application(s). " +
                 "This is an application count, not a unique learner count."
@@ -706,8 +706,8 @@ export async function PlacementDriveWorkspace({
       ) : null}
       {job.status==="PUBLISHED"?<section id="drive-registered-not-applied" aria-label="Registered students who have not applied"
         className="min-w-0 border-b border-border pb-4">
-        <h2 className="mb-2 font-semibold text-foreground">Registered, not applied</h2>
-        <p className="mb-3 text-sm text-body">{reminderPreview && reminderPreview.allowed
+        <h2 className="mb-2 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Registered, not applied</h2>
+        <p className="mb-3 text-sm text-body leading-[22px]">{reminderPreview && reminderPreview.allowed
           ? reminderPreview.count+" eligible registered students have not applied. Remind once per day, before the deadline."
           : "Remind eligible registered students who have not applied. Once per day, and only before the deadline."}</p>
         <TpoRemindNonApplicants jobId={jobId}/>
