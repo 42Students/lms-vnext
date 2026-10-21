@@ -38,8 +38,8 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     {key:"status",header:"Status",cell:item=><StatusBadge tone={item.status==="COMPLETED"?"success":item.status==="CANCELLED"?"error":"info"}>{item.status}</StatusBadge>},
   ];
   return <div className="min-w-0 space-y-[var(--lms-space-4)]">
-    <PageHeader title={"Interviews · "+data.job.title}
-      description="Schedule candidate interviews, track completed and no-show outcomes, and review interview rounds."
+    <PageHeader title="Interviews"
+      description={(data?.job.title??appointments?.job.title??"Drive schedule")+" · Candidate interviews, completed and no-show outcomes."}
       actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-link underline min-h-11 md:min-h-9 inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Drive overview</Link>} />
     <form method="get" role="search" aria-label="Interview round filters" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Round kind
