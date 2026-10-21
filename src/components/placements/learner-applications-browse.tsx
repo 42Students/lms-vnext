@@ -4,11 +4,9 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Drawer } from "@/components/ui/drawer";
 import { Dialog } from "@/components/ui/dialog";
 import { Disclosure } from "@/components/ui/disclosure";
-import { learnerApplicationWithdrawalSchema } from "@/modules/placements/learner-withdrawal-model";
-import {learnerWithdrawalMode} from "@/modules/placements/learner-withdrawal-mode-model";
+import { learnerApplicationWithdrawalSchema,learnerWithdrawalReasonSchema } from "@/modules/placements/learner-withdrawal-model";
 import {learnerApplicationJourneyTimeline} from "@/modules/placements/learner-application-journey-timeline-model";
 import {ownApplicationJobHref} from "@/modules/placements/learner-application-job-link-model";
 import {readLearnerApplicationUrl,updateLearnerApplicationUrl} from "@/modules/placements/learner-application-url-model";
@@ -51,6 +49,21 @@ function humanize(value: string) {
 }
 
 const formatDate=learnerApplicationDateLabel;
+/** Authorization is supplied by the scoped application reader; client
+ * screening/round heuristics must never grant withdrawal privileges. */
+type WithdrawalGrantItem=LearnerPlacementJourneyItem & {
+ withdraw?:"SELF"|"REQUEST"|null;
+ cancelledReason?:string|null;
+};
+function authorizedWithdrawalMode(item:LearnerPlacementJourneyItem|null){
+ if(!item||item.applicationStatus!=="SUBMITTED")return null;
+ const value=(item as WithdrawalGrantItem).withdraw;
+ if(value==="SELF"||value==="REQUEST")return value;
+ if(item.mayStaffOptOut===true && item.staffOptOutUntil instanceof Date &&
+    item.staffOptOutUntil.getTime()>Date.now())return "SELF";
+ return null;
+}
+
 
 export function LearnerApplicationsBrowse({
   items,interviewLinks=[],assessmentLinks=[],scheduledRounds=[],
@@ -112,21 +125,21 @@ export function LearnerApplicationsBrowse({
   },[search,url.q,updateQuery]);
   async function confirmWithdrawal() {
     if (!withdrawTarget || withdrawPending || pendingRef.current) return;
-    const parsed = learnerApplicationWithdrawalSchema.safeParse({
-      action: "WITHDRAW",
-      confirmed: true,
-      reason: withdrawReason,
+    const granted=authorizedWithdrawalMode(withdrawTarget);
+    if(!granted){setWithdrawError("Withdrawal is not currently available.");return;}
+    const requested=granted==="REQUEST";
+    const requestReason=requested?learnerWithdrawalReasonSchema.safeParse(withdrawReason):null;
+    if(requested && !requestReason?.success){
+      setWithdrawError(requestReason?.error.issues[0]?.message ?? "Enter a reason of at least three characters.");
+      return;
+    }
+    const parsed=learnerApplicationWithdrawalSchema.safeParse({
+      action:"WITHDRAW",confirmed:true,reason:withdrawReason,
     });
-    if (!parsed.success) {
+    if(!parsed.success){
       setWithdrawError(parsed.error.issues[0]?.message ?? "Enter a valid reason.");
       return;
     }
-    const requested=learnerWithdrawalMode({
-      applicationStatus:withdrawTarget.applicationStatus,
-      screeningStatus:withdrawTarget.screening.status,
-      scheduledRoundCount:scheduledRounds.filter(r=>
-        r.applicationId===withdrawTarget.applicationId&&(r.booked||r.isRescheduled)).length,
-    })==="REQUEST";
     pendingRef.current = true;
     setWithdrawPending(true);
     setWithdrawError(null);
@@ -139,15 +152,20 @@ export function LearnerApplicationsBrowse({
           }:parsed.data),
         });
       if (!response.ok) {
-        throw new Error("Withdrawal could not be saved. Your application has not been changed.");
+        const body:unknown=await response.json().catch(()=>null);
+        const message=body && typeof body==="object" &&
+          "message" in body && typeof body.message==="string" &&
+          body.message.length<=250 ? body.message : null;
+        throw new Error(message || (requested?"Could not send the request":"Could not withdraw"));
       }
       setWithdrawTarget(null);
       setWithdrawReason("");
-      setWithdrawNotice(requested?"Withdrawal request sent to the placement cell. Your application is still active until approved.":"Application withdrawn. The updated status will appear in your history.");
+      setWithdrawNotice(requested?"Sent. The placement cell will reply.":"Application withdrawn");
       updateQuery({ applicationId: null });
       router.refresh();
     } catch (error) {
-      setWithdrawError(error instanceof Error ? error.message : "Unable to withdraw application.");
+      setWithdrawError(error instanceof Error ? error.message :
+        requested ? "Could not send the request" : "Could not withdraw");
     } finally {
       pendingRef.current = false;
       setWithdrawPending(false);
@@ -172,6 +190,8 @@ export function LearnerApplicationsBrowse({
   const attention=learnerApplicationAttention(items);
   const selected = items.find((item) =>
     item.applicationId === url.applicationId) ?? null;
+  const selectedWithdrawMode=authorizedWithdrawalMode(selected);
+  const withdrawMode=authorizedWithdrawalMode(withdrawTarget);
   const selectedAssessment=selected
     ? assessmentLinks.find(link=>link.applicationId===selected.applicationId)??null
     : null;
@@ -365,12 +385,21 @@ export function LearnerApplicationsBrowse({
           }}/>
       ) : null}
 
-      <Drawer open={selected!==null}
-        bodyClassName="min-w-0 [&_dd]:min-w-0 [&_dd]:break-words [&_dd]:[overflow-wrap:anywhere]"
-        onOpenChange={(open) => {if(!open)updateQuery({applicationId:null});}}
-        title={selected ? selected.companyName + " · " + selected.jobTitle : "Application"}
-        description={selected ? "Your application history and confirmed outcome" : undefined}
-        footer={<div className="flex min-w-0 w-full flex-col-reverse items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
+      {selected ? <section id={"application-details-"+selected.applicationId}
+        aria-label={"Application details for "+selected.companyName}
+        className="min-w-0 scroll-mt-24 space-y-4 border-t border-border pt-5 [&_dd]:min-w-0 [&_dd]:break-words [&_dd]:[overflow-wrap:anywhere]">
+        <div className="flex min-w-0 items-center justify-between gap-3">
+          <div>
+            <h2 className="break-words text-lg font-semibold text-foreground">
+              {selected.companyName} · {selected.jobTitle}
+            </h2>
+            <p className="text-sm text-muted-foreground">Your application history and confirmed outcome</p>
+          </div>
+          <Button type="button" variant="ghost" aria-expanded={true}
+            aria-controls={"application-details-"+selected.applicationId}
+            onClick={()=>updateQuery({applicationId:null})}>Collapse details −</Button>
+        </div>
+        <div className="flex min-w-0 w-full flex-col-reverse items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
           {selected ? (
             <>
               {ownApplicationJobHref(selected.jobId) ? <Link
@@ -396,7 +425,7 @@ export function LearnerApplicationsBrowse({
               </Link>
             </>
           ) : null}
-          {selected?.applicationStatus === "SUBMITTED" ? (
+          {selectedWithdrawMode ? (
             <Button
               variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
               disabled={withdrawPending}
@@ -407,7 +436,7 @@ export function LearnerApplicationsBrowse({
                 setWithdrawNotice(null);
               }}
             >
-              {selected.screening.status==="SHORTLISTED"&&scheduledRounds.some(r=>r.applicationId===selected.applicationId)?"Ask to withdraw":"Withdraw application"}
+              {selectedWithdrawMode==="REQUEST"?"Ask to withdraw":"Withdraw application"}
             </Button>
           ) : null}
           <Link href={selectedAssessment?.href??"/learn/my-placements/assessments"}
@@ -418,14 +447,25 @@ export function LearnerApplicationsBrowse({
             {selectedInterview?"Open this interview":"Interviews"}
           </Link>
           <Button className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={() => updateQuery({applicationId:null})}>Got it</Button>
-        </div>}>
+        </div>
         {selected ? (
           <div className="space-y-5">
             {selected.driveStatus==="CANCELLED"?<div role="alert" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body">
               <p className="font-semibold text-foreground">This drive was cancelled</p>
-              <p>Review placement cell notices for any published reason. Your saved application history remains available.</p>
+              <p>{(selected as WithdrawalGrantItem).cancelledReason ?? "Review placement cell notices for any published reason. Your saved application history remains available."}</p>
               <Link href="/learn/my-placements/announcements" className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-primary-text underline focus-visible:underline">College notices</Link>
             </div>:selected.driveStatus==="CLOSED"?<p role="status" className="border-b border-[var(--lms-canvas-border)] py-3 text-sm text-body">This drive has closed. Previously recorded results remain visible.</p>:null}
+            {selected.mayStaffOptOut && selected.staffOptOutUntil &&
+              selected.staffOptOutUntil.getTime()>Date.now() ?
+              <p role="status" className="border-b border-border py-3 text-sm text-body">
+                The placement cell applied for you. You may opt out until {formatDate(selected.staffOptOutUntil)}.
+              </p> : null}
+            {selected.screening.status==="REJECTED" ? (
+              <p role="status" className="border-b border-border py-3 text-sm text-body">
+                Not selected by the company{selected.screening.candidateMessage?
+                  ": "+selected.screening.candidateMessage:"."}
+              </p>
+            ) : null}
             <dl className="grid gap-3 md:grid-cols-2">
               <div><dt className="text-xs font-semibold text-muted-foreground">Applied</dt>
                 <dd className="mt-1 text-sm text-foreground">{formatDate(selected.submittedAt)}</dd></div>
@@ -509,7 +549,7 @@ export function LearnerApplicationsBrowse({
             </p> : null}
           </div>
         ) : null}
-      </Drawer>
+      </section> : null}
 
       <Dialog
         open={withdrawTarget !== null}
@@ -519,9 +559,9 @@ export function LearnerApplicationsBrowse({
             setWithdrawError(null);
           }
         }}
-        title={withdrawTarget?.screening.status==="SHORTLISTED"&&scheduledRounds.some(r=>r.applicationId===withdrawTarget.applicationId)?"Ask to withdraw":"Confirm application withdrawal"}
-        description={withdrawTarget?.screening.status==="SHORTLISTED"&&scheduledRounds.some(r=>r.applicationId===withdrawTarget.applicationId)
-          ?"A scheduled round has been booked. Your request goes to the placement cell; it does not immediately withdraw your application."
+        title={withdrawMode==="REQUEST"?"Ask to withdraw":"Confirm application withdrawal"}
+        description={withdrawMode==="REQUEST"
+          ?"Your request goes to the placement cell; it does not immediately withdraw your application."
           :"This changes the official status of your submitted application. This action cannot be undone here."}
         footer={
           <div className="flex min-w-0 w-full flex-col-reverse items-stretch gap-2 sm:flex-row sm:justify-end [&_button]:min-h-11 [&_button]:w-full sm:[&_button]:w-auto md:[&_button]:min-h-9">
@@ -530,9 +570,12 @@ export function LearnerApplicationsBrowse({
               Keep application
             </Button>
             <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
-              disabled={withdrawPending || !learnerApplicationWithdrawalSchema.safeParse({
-                action: "WITHDRAW", confirmed: true, reason: withdrawReason,
-              }).success}
+              disabled={withdrawPending || !withdrawMode ||
+                (withdrawMode==="REQUEST" &&
+                  !learnerWithdrawalReasonSchema.safeParse(withdrawReason).success) ||
+                !learnerApplicationWithdrawalSchema.safeParse({
+                  action: "WITHDRAW", confirmed: true, reason: withdrawReason,
+                }).success}
               onClick={() => { void confirmWithdrawal(); }}
             >
               {withdrawPending ? "Withdrawing…" : "Confirm withdrawal"}
@@ -546,13 +589,13 @@ export function LearnerApplicationsBrowse({
               {withdrawTarget.companyName} · {withdrawTarget.jobTitle}
             </p>
             <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
-              Reason for withdrawal <span className="font-normal text-muted-foreground">(required)</span>
+              Reason for withdrawal <span className="font-normal text-muted-foreground">{withdrawMode==="REQUEST"?"(required)":"(optional)"}</span>
               <Textarea
                 value={withdrawReason}
                 onChange={(event) => { setWithdrawReason(event.target.value); setWithdrawError(null); }}
-                minLength={5}
-                maxLength={500}
-                rows={4}
+                minLength={withdrawMode==="REQUEST"?3:undefined}
+                maxLength={900}
+                rows={3}
                 disabled={withdrawPending}
                 aria-describedby="withdrawal-reason-hint"
                 className="mt-2 w-full"
@@ -560,7 +603,7 @@ export function LearnerApplicationsBrowse({
               />
             </label>
             <p id="withdrawal-reason-hint" className="text-xs text-muted-foreground">
-              5–500 characters. Your reason is stored in application status history
+              {withdrawMode==="REQUEST"?"3–900 characters.":"Optional; up to 900 characters."} Your reason is stored in application status history
               for the placement team; it is not shown on the public Learner timeline.
             </p>
             {withdrawError ? (
