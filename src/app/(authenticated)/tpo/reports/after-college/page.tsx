@@ -27,10 +27,10 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
  const batches=await listTpoBatches(ctx);
  const batchId=first(raw.batchId)||undefined,branchId=first(raw.branchId)||undefined;
  if(batchId&&!batches.batches.some(batch=>batch.id===batchId))
-  return <div className="space-y-4"><PageHeader title="After college"/><ErrorState title="Invalid batch" description="Choose an available batch for this college." action={<Link href="/tpo/reports/after-college" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear filters</Link>}/></div>;
+  return <div className="min-w-0 space-y-4"><PageHeader title="After college"/><ErrorState title="Invalid batch" description="Choose an available batch for this college." action={<Link href="/tpo/reports/after-college" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear filters</Link>}/></div>;
  const data=await getTpoAfterCollegeReport(ctx,{collegeId:ctx.membership.collegeId,batchId,branchId});
  const branches=new Map(data.branches.map(row=>[row.id,row.name]));
- if(branchId&&!branches.has(branchId))return <div className="space-y-4"><PageHeader title="After college"/><ErrorState title="Invalid branch" description="Choose a branch in this college." action={<Link href="/tpo/reports/after-college" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear filters</Link>}/></div>;
+ if(branchId&&!branches.has(branchId))return <div className="min-w-0 space-y-4"><PageHeader title="After college"/><ErrorState title="Invalid branch" description="Choose a branch in this college." action={<Link href="/tpo/reports/after-college" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear filters</Link>}/></div>;
  const query=new URLSearchParams({...batchId?{batchId}: {},...branchId?{branchId}:{}});
  const displayedCount=Math.min(data.rows.length,300);
  const pageCount=Math.max(1,Math.ceil(displayedCount/25));
