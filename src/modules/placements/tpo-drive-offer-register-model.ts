@@ -1,6 +1,6 @@
 import {z} from "zod";
 import {placementReportCsv} from "./report-model";
-export const offerRegisterQuery=z.object({jobId:z.string().uuid(),status:z.enum(["ALL","ISSUED","ACCEPTED","DECLINED","WITHDRAWN","EXPIRED"]).default("ALL"),page:z.coerce.number().int().min(1).max(10000).default(1),q:z.string().trim().max(100).default(""),joining:z.enum(["ALL","PENDING","JOINED","DEFERRED","DID_NOT_JOIN"]).default("ALL"),kind:z.enum(["ALL","OFFER","LOI"]).default("ALL"),expiry:z.enum(["ALL","EXPIRED","DUE_SOON","OPEN","UNKNOWN"]).default("ALL"),
+export const offerRegisterQuery=z.object({jobId:z.string().uuid(),status:z.enum(["ALL","SELECTED_NOT_RELEASED","PENDING_VERIFICATION","ISSUED","ACCEPTED","DECLINED","WITHDRAWN","REVOKED","EXPIRED"]).default("ALL"),page:z.coerce.number().int().min(1).max(10000).default(1),q:z.string().trim().max(100).default(""),joining:z.enum(["ALL","PENDING","JOINED","DEFERRED","DID_NOT_JOIN","NOT_JOINED"]).transform(value=>value==="NOT_JOINED"?"DID_NOT_JOIN" as const:value).default("ALL"),kind:z.enum(["ALL","OFFER","LOI"]).default("ALL"),expiry:z.enum(["ALL","EXPIRED","DUE_SOON","OPEN","UNKNOWN"]).default("ALL"),
  // Direct GET/CSV requests may include blank HTML or nullable JSON
  // numeric fields; absent means unbounded, not a zero-package filter.
  minCtcLpa:z.preprocess(value=>value==null||
@@ -13,7 +13,7 @@ export const offerRegisterQuery=z.object({jobId:z.string().uuid(),status:z.enum(
  if(input.minCtcLpa!==undefined&&input.maxCtcLpa!==undefined&&input.maxCtcLpa<input.minCtcLpa)
   ctx.addIssue({code:"custom",path:["maxCtcLpa"],message:"Maximum package must be at least the minimum package"});
 });
-export type OfferRegisterFact={offer:{id:string;status:string;roleTitle:string;kind:string;annualCtcInr:number|null;fixedLpa?:string|null;variableLpa?:string|null;joiningBonusLpa?:string|null;bondMonths?:number|null;bondAmount?:string|null;acceptanceChannel?:string|null;acceptedDisputableUntil?:Date|null;issuedAt:Date;respondedAt:Date|null;expiresAt?:Date|null},joining:{status:string}|null,candidate:{membershipId:string;displayName:string|null;email?:string|null;phone?:string|null;rollNumber?:string|null;batch?:string|null;branch?:string|null}};
+export type OfferRegisterFact={offer:{id:string;status:string;roleTitle:string;kind:string;annualCtcInr:number|null;fixedLpa?:string|null;variableLpa?:string|null;joiningBonusLpa?:string|null;bondMonths?:number|null;bondAmount?:string|null;acceptanceChannel?:string|null;acceptedDisputableUntil?:Date|null;issuedAt:Date;createdAt?:Date|null;respondedAt:Date|null;expiresAt?:Date|null},joining:{status:string}|null,candidate:{membershipId:string;displayName:string|null;email?:string|null;phone?:string|null;rollNumber?:string|null;batch?:string|null;branch?:string|null}};
 /** Legacy TPO offer rows defaulted to SELECTED even before a letter was
  * released. Only RELEASED establishes learner response eligibility. Do not
  * transform SELECTED to ISSUED while migrating historical offers. */
@@ -26,10 +26,33 @@ export function legacyOfferReleaseMapping(
   case "ACCEPTED":return "ACCEPTED";
   case "DECLINED":return "DECLINED";
   case "EXPIRED":return "EXPIRED";
+  case "REVOKED":case "PENDING_VERIFICATION":return "REVIEW_REQUIRED";
   default:return "REVIEW_REQUIRED";
  }
 }
 
+/** A selected candidate is not yet an issued offer. */
+export function offerRegisterStatusLabel(status:string):string{
+ const labels:Record<string,string>={
+  SELECTED:"Selected",SELECTED_NOT_RELEASED:"Selected",
+  PENDING_VERIFICATION:"Pending verification",ISSUED:"Issued",RELEASED:"Issued",
+  ACCEPTED:"Accepted",DECLINED:"Declined",WITHDRAWN:"Withdrawn",
+  REVOKED:"Revoked",EXPIRED:"Expired",
+ };
+ return labels[status]??"Status unavailable";
+}
+export function offerRegisterJoiningLabel(status:string|null|undefined):string{
+ const labels:Record<string,string>={
+  PENDING:"Pending",JOINED:"Joined",DEFERRED:"Deferred",
+  DID_NOT_JOIN:"Not joined",NOT_JOINED:"Not joined",
+ };
+ return status?labels[status]??"Status unavailable":"Not recorded";
+}
+export function offerRegisterAcceptanceChannelLabel(channel:string|null|undefined):string{
+ if(channel==="IN_APP")return "In app";
+ if(channel==="EXTERNAL_IMPORT")return "External import";
+ return channel?"Other channel":"Not recorded";
+}
 /** A badge computed from respondBy never updates persisted state. The
  * expiry worker must lock the offer and linked application, then reconcile
  * an already answered application BEFORE expiring a RELEASED/ISSUED letter. */
@@ -88,12 +111,15 @@ export function selectOfferRegisterFacts(facts:readonly OfferRegisterFact[],stat
   (maxCtcLpa===undefined||f.offer.annualCtcInr!==null&&f.offer.annualCtcInr<=maxCtcLpa*100000)&&
   (expiry==="ALL"||offerExpiryIndicator(f.offer.status,f.offer.expiresAt,asOf)===expiry)&&(!term||
   [f.candidate.displayName,f.candidate.email,f.candidate.phone,f.candidate.rollNumber,f.candidate.batch,f.candidate.branch,f.offer.roleTitle].some(value=>value?.toLocaleLowerCase("en-IN").includes(term)))&&
-  (joiningState==="ALL"||(f.offer.status==="ACCEPTED"&&(f.joining?.status??"PENDING")===joiningState))).sort((a,b)=>b.offer.issuedAt.getTime()-a.offer.issuedAt.getTime()||a.offer.id.localeCompare(b.offer.id));
+  (joiningState==="ALL"||(f.offer.status==="ACCEPTED"&&(f.joining?.status??"PENDING")===joiningState))).sort((a,b)=>(b.offer.createdAt??b.offer.issuedAt).getTime()-(a.offer.createdAt??a.offer.issuedAt).getTime()||a.offer.id.localeCompare(b.offer.id));
 }
 export function projectOfferRegister(facts:readonly OfferRegisterFact[],status:z.infer<typeof offerRegisterQuery>["status"],requestedPage=1,search="",joiningState:"ALL"|"PENDING"|"JOINED"|"DEFERRED"|"DID_NOT_JOIN"="ALL",asOf=new Date(),kind:"ALL"|"OFFER"|"LOI"="ALL",
  expiry:"ALL"|"EXPIRED"|"DUE_SOON"|"OPEN"|"UNKNOWN"="ALL",minCtcLpa?:number,maxCtcLpa?:number){
- const counts={all:facts.length,issued:0,accepted:0,declined:0,withdrawn:0,expired:0};
+ const counts={all:facts.length,selected:0,pendingVerification:0,issued:0,accepted:0,declined:0,withdrawn:0,revoked:0,expired:0};
  for(const f of facts){
+  if(f.offer.status==="SELECTED_NOT_RELEASED"||f.offer.status==="SELECTED")counts.selected++;
+  if(f.offer.status==="PENDING_VERIFICATION")counts.pendingVerification++;
+  if(f.offer.status==="REVOKED")counts.revoked++;
   if(f.offer.status==="ISSUED")counts.issued++;
   if(f.offer.status==="ACCEPTED")counts.accepted++;
   if(f.offer.status==="DECLINED")counts.declined++;
@@ -105,10 +131,10 @@ export function projectOfferRegister(facts:readonly OfferRegisterFact[],status:z
  const page=Math.max(1,Math.min(requestedPage,totalPages));
  const start=(page-1)*OFFER_REGISTER_PAGE_SIZE;
  return {counts,totalMatching:match.length,page,pageSize:OFFER_REGISTER_PAGE_SIZE,totalPages,rows:match.slice(start,start+OFFER_REGISTER_PAGE_SIZE).map(({offer,candidate,joining})=>({
-  id:offer.id,name:candidate.displayName?.trim()||"Unnamed learner",membershipId:candidate.membershipId,email:candidate.email??null,phone:candidate.phone??null,rollNumber:candidate.rollNumber??null,batch:candidate.batch??null,branch:candidate.branch??null,role:offer.roleTitle,kind:offer.kind,annualCtcInr:offer.annualCtcInr,fixedLpa:offer.fixedLpa??null,variableLpa:offer.variableLpa??null,joiningBonusLpa:offer.joiningBonusLpa??null,bondMonths:offer.bondMonths??null,bondAmount:offer.bondAmount??null,acceptanceChannel:offer.acceptanceChannel??null,acceptedDisputableUntil:optionalOfferInstantIso(offer.acceptedDisputableUntil),status:offer.status,ruleCheck:offerRulesCheck(offer.status,offer.kind),
+  id:offer.id,name:candidate.displayName?.trim()||"Unnamed learner",membershipId:candidate.membershipId,email:candidate.email??null,phone:candidate.phone??null,rollNumber:candidate.rollNumber??null,batch:candidate.batch??null,branch:candidate.branch??null,role:offer.roleTitle,kind:offer.kind,annualCtcInr:offer.annualCtcInr,fixedLpa:offer.fixedLpa??null,variableLpa:offer.variableLpa??null,joiningBonusLpa:offer.joiningBonusLpa??null,bondMonths:offer.bondMonths??null,bondAmount:offer.bondAmount??null,acceptanceChannel:offer.acceptanceChannel??null,acceptanceChannelLabel:offerRegisterAcceptanceChannelLabel(offer.acceptanceChannel),acceptedDisputableUntil:optionalOfferInstantIso(offer.acceptedDisputableUntil),status:offer.status,statusLabel:offerRegisterStatusLabel(offer.status),ruleCheck:offerRulesCheck(offer.status,offer.kind),
   issued:offer.issuedAt.toISOString(),responded:optionalOfferInstantIso(offer.respondedAt),
   expires:optionalOfferInstantIso(offer.expiresAt),respondByHours:offerResponseHoursRemaining(offer.status,offer.expiresAt,asOf),expiryIndicator:offerExpiryIndicator(offer.status,offer.expiresAt,asOf),
-  joining:offer.status==="ACCEPTED"?(joining?.status??"PENDING"):null,
+  joining:offer.status==="ACCEPTED"?(joining?.status==="NOT_JOINED"?"DID_NOT_JOIN":joining?.status??"PENDING"):null,
  }))};
 }
 
@@ -126,8 +152,8 @@ export function tpoDriveOfferRegisterCsv(
   f.offer.id,f.candidate.displayName?.trim()||"Unnamed learner",f.offer.roleTitle,
   f.offer.kind,f.offer.annualCtcInr,f.offer.fixedLpa??null,f.offer.variableLpa??null,f.offer.joiningBonusLpa??null,f.offer.bondMonths??null,f.offer.bondAmount??null,f.candidate.email??null,f.candidate.phone??null,
   f.candidate.rollNumber??null,f.candidate.batch??null,f.candidate.branch??null,
-  f.offer.status,f.offer.status==="ACCEPTED"?(f.joining?.status??"PENDING"):"Not applicable",
-  csvDate(f.offer.issuedAt),csvDate(f.offer.respondedAt),csvDate(f.offer.expiresAt),f.offer.acceptanceChannel??null,csvDate(f.offer.acceptedDisputableUntil),
+  offerRegisterStatusLabel(f.offer.status),f.offer.status==="ACCEPTED"?offerRegisterJoiningLabel(f.joining?.status??"PENDING"):"Not applicable",
+  csvDate(f.offer.issuedAt),csvDate(f.offer.respondedAt),csvDate(f.offer.expiresAt),offerRegisterAcceptanceChannelLabel(f.offer.acceptanceChannel),csvDate(f.offer.acceptedDisputableUntil),
   offerRulesCheck(f.offer.status,f.offer.kind),
   offerExpiryIndicator(f.offer.status,f.offer.expiresAt,asOf),
   offerResponseHoursRemaining(f.offer.status,f.offer.expiresAt,asOf),

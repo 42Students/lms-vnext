@@ -23,7 +23,9 @@ export async function GET(request: Request) {
         )
       : await listProjectTemplates(context);
 
-    return NextResponse.json({ templates });
+    // Preserve vNext {templates} and the legacy admin-list envelope.
+    return NextResponse.json({ templates, status: "success",
+      message: "Project templates retrieved", data: templates, count: templates.length });
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -51,7 +53,8 @@ export async function POST(request: Request) {
       body,
     );
 
-    return NextResponse.json({ ...result, message: "Project template created" }, {
+    return NextResponse.json({ ...result, status: "success",
+      message: "Project template created", data: result.template }, {
       status: 201,
     });
   } catch (error) {

@@ -26,7 +26,11 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
  const [error,setError]=useState("");
  const [outcomes,setOutcomes]=useState<BulkReviewOutcome[]>([]);
  const [receiptRows,setReceiptRows]=useState<VerificationQueueCard[]>([]);
- const waiting=rows.filter(row=>row.status==="SUBMITTED"||row.status==="UPDATE_PENDING");
+ const waiting=[...new Map(rows.filter(row=>
+  row.status==="SUBMITTED"||row.status==="UPDATE_PENDING"
+ ).map(row=>[verificationSelectionKey(row),row] as const)).values()];
+ const educationWaiting=waiting.filter(row=>row.section==="EDUCATION").length;
+ const identityWaiting=waiting.filter(row=>row.section==="IDENTITY").length;
  const checked=waiting.filter(row=>selected.includes(verificationSelectionKey(row)));
  const eligible=action==="VERIFY"?checked.filter(row=>!row.missingMarksheet&&!row.missingIdentityProof):checked;
  const skipped=checked.filter(row=>!eligible.includes(row));
@@ -64,11 +68,21 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not review selected students.");}
   finally{setBusy(false);}
  }
- if(!waiting.length&&!outcomes.length)return <p role="status" className="text-sm text-muted-foreground leading-[22px]">Nothing waiting for verification on this page.</p>;
+ if(!waiting.length&&!outcomes.length)return <section role="status" aria-label="Bulk profile verification" className="space-y-2">
+  <p className="text-sm text-muted-foreground leading-[22px]">Nothing waiting in Education or Identity on this page.</p>
+  <p className="text-xs text-muted-foreground">No submitted Education sections or Identity sections need review in the current {scope==="roster"?"student roster":"verification queue"} page.</p>
+ </section>;
  return <section aria-label="Bulk student profile verification" className="min-w-0 space-y-3 border-b border-border py-4">
   <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Verify profiles / Send back for correction</h2>
   <p className="text-sm text-muted-foreground leading-[22px]">Select up to 20 submitted Education or Identity sections from this current {scope==="roster"?"student roster":"verification queue"} page. Every decision is rechecked, audited, and sent to the student.</p>
-  <p role="status" aria-live="polite" className="text-sm tabular-nums leading-[22px]">{checked.length} selected of {waiting.length} visible waiting sections.</p>
+  <p role="status" aria-live="polite" className="text-sm tabular-nums leading-[22px]">
+   {checked.length} selected of {waiting.length} visible waiting sections ·
+   {" "}{waiting.length-checked.length} not selected · limit 20 sections per review.
+  </p>
+  <p className="text-xs text-muted-foreground">
+   Education: {educationWaiting} waiting · Identity: {identityWaiting} waiting.
+   Selecting a learner's Education section does not also select Identity.
+  </p>
   <label className="flex min-h-11 items-center gap-2 text-sm print:hidden">
    <Checkbox  disabled={busy} checked={waiting.length>0&&waiting.slice(0,20).every(row=>selected.includes(verificationSelectionKey(row)))}
     onChange={event=>{setSelected(event.target.checked?waiting.slice(0,20).map(verificationSelectionKey):[]);invalidate();}}/>
@@ -121,7 +135,20 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
    <h3 className="font-semibold">Bulk review results</h3>
    <p>{outcomes.filter(item=>item.result==="VERIFIED"||item.result==="SENT_BACK").length} saved; {outcomes.filter(item=>item.result!=="VERIFIED"&&item.result!=="SENT_BACK").length} need review.</p>
    {outcomes.some(item=>item.result!=="VERIFIED"&&item.result!=="SENT_BACK")?<p className="text-sm text-muted-foreground">Failed sections remain selected if still waiting. Refresh to retry with their latest versions. Sections no longer waiting cannot be retried.</p>:null}
-   <ul className="space-y-1 text-sm">{described.map(item=><li key={item.key}>{item.label} · {item.section}: {item.message}</li>)}</ul>
+   <div className="min-w-0 overflow-x-auto rounded-[var(--lms-control-radius)] border border-border">
+    <table className="w-full min-w-[420px] text-left text-sm">
+     <thead className="border-b border-border bg-muted/30"><tr>
+      <th scope="col" className="p-2 font-semibold">Learner</th>
+      <th scope="col" className="p-2 font-semibold">Section</th>
+      <th scope="col" className="p-2 font-semibold">Result</th>
+     </tr></thead>
+     <tbody className="divide-y divide-border">{described.map(item=><tr key={item.key}>
+      <td className="p-2">{item.label}</td>
+      <td className="p-2">{item.section}</td>
+      <td className="p-2">{item.message}</td>
+     </tr>)}</tbody>
+    </table>
+   </div>
   </div>:null}
   {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
  </section>;

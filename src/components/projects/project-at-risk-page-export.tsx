@@ -10,10 +10,19 @@ type Row={
  severity?:string|null;
 };
 /** SA-placements-projects-63: export exactly the visible, tenant-scoped page. */
-export function ProjectAtRiskPageExport({rows}:{rows:Row[];collegeId:string}){
+export function ProjectAtRiskPageExport({rows,visibleIds,query=""}:{
+ rows:Row[];collegeId:string;visibleIds?:readonly string[];query?:string;
+}){
+ // CSV must reflect the displayed page after any local text/ID refinement,
+ // rather than exporting hidden matches from the same server page.
+ const eligible=visibleIds?new Set(visibleIds):null;
+ const term=query.trim().toLocaleLowerCase("en-IN");
+ const visibleRows=rows.filter(row=>(!eligible||eligible.has(row.id))&&
+  (!term||[row.title,row.mentorName,row.status,row.severity,
+    row.blockerReason,...row.riskReasons].some(value=>value?.toLocaleLowerCase("en-IN").includes(term))));
  function save(){
   const headings=["Workspace","Mentor","Status","Severity","Risk reasons"];
-  const data=rows.map(row=>[
+  const data=visibleRows.map(row=>[
    row.title,row.mentorName??"",row.status??"",
    row.severity==="HIGH_RISK"?"High risk":
    row.severity==="AT_RISK"?"At risk":
@@ -30,7 +39,13 @@ export function ProjectAtRiskPageExport({rows}:{rows:Row[];collegeId:string}){
   document.body.appendChild(anchor);anchor.click();anchor.remove();
   window.setTimeout(()=>URL.revokeObjectURL(url),0);
  }
- return <Button variant="secondary" onClick={save} disabled={!rows.length}>
-  Export this page
+ return <Button variant="secondary" type="button" onClick={save} disabled={!visibleRows.length}
+  aria-label="Export CSV of the visible at-risk workspaces">
+  <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16"
+   fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"
+   strokeLinejoin="round" className="mr-1 inline-block shrink-0">
+   <path d="M12 3v12m-5-5 5 5 5-5M5 17v4h14v-4"/>
+  </svg>
+  Export CSV
  </Button>;
 }

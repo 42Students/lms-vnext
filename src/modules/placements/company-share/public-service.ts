@@ -22,6 +22,7 @@ export type PublicCompanyApplicantShare =
  | {kind:"READY";title:string;companyName:string;collegeName:string;
     sharedAt:string;expiresAt:string;rows:ReturnType<typeof projectCompanyShareRows>;
     total:number;page:number;totalPages:number;truncated:boolean;search:string;
+    exportLimit:number;exportWarning:string|null;
     selectedColumns:string[];shortlistBy:string|null};
 
 /**
@@ -68,6 +69,10 @@ export async function getPublicCompanyApplicantShare(
     !validCompanyShareAccessProof(rawProof,signed))
     return {kind:"CODE_REQUIRED" as const,title:grant.title,companyName:grant.companyName,expiresAt:grant.expiresAt.toISOString()};
   const selectionReady=await placementTableExists("placement_company_share_selections");
+  // A missing selection table must never broaden a capability grant to every
+  // shortlisted applicant. Deny the read until the share-selection migration
+  // exists instead of treating unavailable selection data as unrestricted.
+  if(!selectionReady)return {kind:"UNAVAILABLE" as const};
   const selected=selectionReady?await tx.select({applicationId:selectedShares.applicationId})
     .from(selectedShares).where(eq(selectedShares.shareId,grant.shareId)):[];
   const selectedIds=selected.map(item=>item.applicationId);
@@ -78,7 +83,7 @@ export async function getPublicCompanyApplicantShare(
   const selectedColumns=safeCompanyShareColumns(grant.selectedColumns);
   const filter=and(
    eq(placementApplications.jobId,grant.jobId),
-   selectedIds.length?inArray(placementApplications.id,selectedIds):undefined,
+   selectedIds.length?inArray(placementApplications.id,selectedIds):sql`false`,
    eq(placementApplications.status,"SUBMITTED"),
    eq(placementApplicationScreenings.status,"SHORTLISTED"),
    eq(collegeMemberships.collegeId,grant.collegeId),
@@ -114,7 +119,7 @@ export async function getPublicCompanyApplicantShare(
   const total=counter?.total??0;
   const pagination=clampCompanySharePage(page.data,total);
   const isCsv=eventKind==="CSV";
-  const records=await source().orderBy(asc(users.displayName),asc(placementApplications.id))
+  const records=await source().orderBy(asc(placementApplications.submittedAt),asc(placementApplications.id))
    .limit(isCsv?500:25).offset(isCsv?0:(pagination.page-1)*25);
   await tx.insert(views).values({
    shareId:grant.shareId,collegeId:grant.collegeId,eventKind,
@@ -141,6 +146,8 @@ export async function getPublicCompanyApplicantShare(
    rows:projectCompanyShareRows(visibleRecords,selectedColumns),
    total,page:isCsv?1:pagination.page,totalPages:pagination.totalPages,
    truncated:isCsv&&total>500,search:search.data,
+   exportLimit:500,exportWarning:total>500?
+    "The CSV includes only the first 500 authorized applicants in application order. Contact the placement cell for a separately approved complete export.":null,
    selectedColumns,shortlistBy:grant.shortlistBy?.toISOString()??null,
   };
  });

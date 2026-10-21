@@ -35,7 +35,11 @@ export async function PATCH(
     // Return the persisted post-CAS workflow snapshot, never the request body.
     // UI must replace stale status/version with this receipt and re-fetch
     // related activities; no intermediate cached envelope may be reused.
-    return NextResponse.json({ issue, currentVersion: issue.version }, {
+    return NextResponse.json({
+      // The nested receipt is the vNext contract; flat fields preserve the
+      // legacy controller's full issue response for status-only callers.
+      issue, ...issue, currentVersion: issue.version,
+    }, {
       headers: { "Cache-Control": "private, no-store" },
     });
   } catch (error) {

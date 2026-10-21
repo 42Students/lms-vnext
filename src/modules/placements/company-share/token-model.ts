@@ -3,10 +3,16 @@ import { z } from "zod";
 
 /** Raw secrets are issued only once. The database stores the SHA-256 digest. */
 export const companyShareTokenSchema = z.string().regex(/^[A-Za-z0-9_-]{43}$/);
+/** Old job URL slugs are NOT share capabilities. This validator must never
+ * be substituted for the independent 256-bit company share secret schema. */
+export const legacyJobSlugSchema=z.string().regex(/^smr-[A-Za-z0-9_-]{1,28}$/);
+export function isLegacyJobSlug(value:unknown):value is string{
+ return legacyJobSlugSchema.safeParse(value).success;
+}
 export const companyShareJobSchema = z.string().uuid();
 export const companyShareIssueSchema = z.object({
   jobId: companyShareJobSchema,
-  expiresInDays: z.coerce.number().int().min(1).max(90).default(2),
+  expiresInDays: z.coerce.number().int().min(1).max(90).default(7),
   selectedColumns:z.array(z.enum(["APPLICATION_ID","NAME","ROLL_NUMBER","BRANCH","UG_BAND","TENTH","TWELFTH","EMAIL","PHONE","RESUME","GITHUB","PORTFOLIO","STAGE"]))
    .min(1).max(11).refine(v=>new Set(v).size===v.length,"Columns must be unique")
    .default(["APPLICATION_ID","NAME","EMAIL"]),
@@ -14,6 +20,25 @@ export const companyShareIssueSchema = z.object({
   selectedApplicationIds:z.array(z.string().uuid()).min(1).max(200)
    .refine(ids=>new Set(ids).size===ids.length,"Duplicate applicant selection").optional(),
 }).strict();
+/** Read-only adapter for the old share-column vocabulary. Historical
+ * 'projects' mapped to two publicly linkable profile fields; private skill
+ * evaluations have no safe equivalent and must be explicitly rejected. */
+export function mapLegacyShareColumnSelection(values:readonly string[]){
+ const mappings:Record<string,readonly string[]>={
+  applicantId:["APPLICATION_ID"],name:["NAME"],roll:["ROLL_NUMBER"],
+  branch:["BRANCH"],cgpa:["UG_BAND"],tenth:["TENTH"],twelfth:["TWELFTH"],
+  email:["EMAIL"],phone:["PHONE"],resume:["RESUME"],
+  github:["GITHUB"],portfolio:["PORTFOLIO"],
+  projects:["GITHUB","PORTFOLIO"],stage:["STAGE"],
+ };
+ const result=new Set<string>(["APPLICATION_ID"]);
+ for(const name of values){
+  const expanded=mappings[name];
+  if(!expanded)throw new Error("This legacy share column is not supported in the protected applicant view");
+  for(const value of expanded)result.add(value);
+ }
+ return companyShareIssueSchema.shape.selectedColumns.parse([...result]);
+}
 export const companyShareRevokeSchema = z.object({
   shareId: z.string().uuid(),
   jobId: companyShareJobSchema,
