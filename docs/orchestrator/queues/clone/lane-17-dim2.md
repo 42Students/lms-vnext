@@ -441,4 +441,4 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-17.md: file, number of
 - [x] `src/components/ui/data-table.tsx`
 - [x] `src/components/ui/table.tsx`
 - [x] `src/components/verification/VerificationReviewDrawer.tsx`
-- [ ] `src/styles/micro-details.css`
+- [x] `src/styles/micro-details.css`
