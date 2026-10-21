@@ -52,7 +52,7 @@ export function TpoRoundResultEntryForm({roundId,applicationId,currentResultId}:
  return (
   <form onSubmit={submit} aria-busy={pending}
     className="grid min-w-0 max-w-3xl gap-[var(--lms-space-4)] md:grid-cols-2">
-   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-5 text-body">
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
     Outcome
     <Select name="outcome" value={outcome} disabled={pending||saved}
       onChange={event=>{setOutcome(event.target.value);setError(null);setFieldIssue(null);}}>
@@ -61,14 +61,14 @@ export function TpoRoundResultEntryForm({roundId,applicationId,currentResultId}:
     </Select>
    </label>
    {outcome==="HOLD"?(
-    <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-5 text-body">
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
      Waitlist rank
      <Input name="waitlistRank" type="number" min="1" max="100000" step="1" required
        error={fieldIssue==="waitlistRank"} disabled={pending||saved}
        onChange={()=>{setFieldIssue(null);setError(null);}} />
     </label>
    ):null}
-   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-5 text-body md:col-span-2">
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
     {outcome==="PASS"?"Internal result note":"Candidate-visible feedback"}
     <Textarea name="note" rows={3} minLength={1} maxLength={1000} required
       error={fieldIssue==="note"} disabled={pending||saved}

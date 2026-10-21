@@ -37,14 +37,14 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt}:{
   <Button type="button" variant="secondary"
    onClick={()=>setOpen(v=>!v)}>{open?"Close brief editor":"Edit project brief"}</Button>
   {open?<div className="mt-3 grid gap-3">
-   <label className="text-sm font-semibold">Project goal
+   <label className="text-[13px] font-semibold">Project goal
     <Textarea maxLength={2000} value={goal} onChange={e=>setGoal(e.target.value)} className={field}/></label>
-   <label className="text-sm font-semibold">Description
+   <label className="text-[13px] font-semibold">Description
     <Textarea maxLength={4000} value={description} onChange={e=>setDescription(e.target.value)} className={field}/></label>
    {([{label:"Deliverables",value:deliverables,change:setDeliverables},
       {label:"Completion conditions",value:conditions,change:setConditions},
       {label:"Personas",value:personas,change:setPersonas}]).map(item=>
-     <label key={item.label} className="text-sm font-semibold">{item.label} · one per line
+     <label key={item.label} className="text-[13px] font-semibold">{item.label} · one per line
       <Textarea value={item.value} onChange={e=>item.change(e.target.value)}
        className={field}/></label>)}
    <p className="text-xs text-muted-foreground">Up to 50 rows per group, 500 characters per row.</p>

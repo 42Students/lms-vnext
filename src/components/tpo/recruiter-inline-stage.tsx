@@ -31,13 +31,13 @@ export function RecruiterInlineStage({lead,onUpdated}:{lead:{id:string;name:stri
    {lead.stage.replaceAll("_"," ")} · Edit
   </Button>
   {open?<div role="group" aria-label={"Edit stage for "+lead.name} className="min-w-0 space-y-2">
-   <label className="block text-xs">Stage
+   <label className="block text-[13px]">Stage
     <Select value={action} disabled={busy} onChange={e=>setAction(e.target.value as typeof action)}
      className="min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface">
      <option value="CONTACTED">Contacted</option><option value="NOT_NOW">Not now</option>
     </Select>
    </label>
-   {action==="NOT_NOW"?<label className="block text-xs">Reason
+   {action==="NOT_NOW"?<label className="block text-[13px]">Reason
     <Input value={reason} maxLength={255} onChange={e=>setReason(e.target.value)}
      className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 md:min-h-9"/>
    </label>:null}
