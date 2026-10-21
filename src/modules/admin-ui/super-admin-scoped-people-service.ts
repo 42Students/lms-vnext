@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,count,eq,exists,ilike,or,sql} from "drizzle-orm";
+import {and,asc,count,desc,eq,exists,ilike,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {aliasedColumn} from "@/db/aliased-column";
 import {cohorts,colleges,collegeMemberships,departments,facultyProfiles,learnerProfiles,
@@ -8,8 +8,42 @@ import type {RequestContext} from "@/modules/identity/context";
 import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
 import {scopedSearchLike,superAdminReadPages,superAdminReadQuerySchema,type SuperAdminReadResult} from "./super-admin-read-directory-model";
 export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY"|"LEARNER",raw:unknown):Promise<SuperAdminReadResult>{
- const query=superAdminReadQuerySchema.parse(raw),
+ // Accept legacy faculty query aliases only after checking their type and
+ // keeping all results confined to the signed-in Super Admin's college.
+ const input=raw&&typeof raw==="object"&&!Array.isArray(raw)
+  ?{...(raw as Record<string,unknown>)}:{};
+ const sortBy=input.sortBy==="roll"?"roll":"name";
+ const sortDesc=input.sortOrder==="desc";
+ const departmentName=typeof input.departmentName==="string"?
+  input.departmentName.trim().slice(0,128):"";
+ if(input.sortBy!==undefined&&input.sortBy!=="roll"&&input.sortBy!=="name")
+  throw new Error("Invalid roster sort");
+ if(input.sortOrder!==undefined&&input.sortOrder!=="asc"&&input.sortOrder!=="desc")
+  throw new Error("Invalid roster sort direction");
+ delete input.sortBy;delete input.sortOrder;delete input.departmentName;
+ if(input.query!==undefined&&input.q===undefined)input.q=input.query;
+ delete input.query;
+ if(input.facultyType!==undefined&&input.employmentType===undefined)
+  input.employmentType=input.facultyType;
+ delete input.facultyType;
+ const query=superAdminReadQuerySchema.parse(input),
   selected=requireSuperAdminSelectedCollege(context,"people.manage"),db=getDb();
+ const personDocument=role==="FACULTY"?facultyProfiles.profileDocument:learnerProfiles.profileDocument;
+ const personName=sql<string>`coalesce(
+   nullif(trim(concat_ws(' ',
+     nullif(${personDocument}->'personalDetails'->>'firstName',''),
+     nullif(${personDocument}->'personalDetails'->>'lastName','')
+   )),''),
+   nullif(trim(${users.displayName}),''),
+   ${role==="FACULTY"?facultyProfiles.legacyFacultyCode:learnerProfiles.legacyUniqueId},
+   '-'
+  )`;
+ const like=query.q?scopedSearchLike(query.q):null;
+ const synonym=role==="FACULTY"?({
+  prof:"professor",hod:"head",asst:"assistant",
+  assoc:"associate",teacher:"lecturer",contact:"contact",
+ } as Record<string,string>)[query.q.toLowerCase()]:undefined;
+ const synonymLike=synonym?scopedSearchLike(synonym):null;
  const enrollmentFilter=role==="LEARNER"&&(query.programId||query.cohortId||query.departmentId||query.sectionId)
   ?exists(db.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
     .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
@@ -35,9 +69,11 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
   suspendedAt:collegeMemberships.suspendedAt,
   legacyMembershipId:collegeMemberships.legacyMembershipId,
   joinedAt:collegeMemberships.createdAt,
-  name:aliasedColumn(users.displayName,"admin_role_user_name"),
+  name:personName.as("admin_role_user_name"),
   platformStatus:users.platformStatus,
   email:users.email,phone:users.phoneE164,
+  facultyContactEmail:sql<string|null>`coalesce(nullif(${facultyProfiles.profileDocument}->'personalDetails'->>'contactMail',''),${users.email})`.as("admin_faculty_contact_mail"),
+  facultyContactMobile:sql<string|null>`coalesce(nullif(${facultyProfiles.profileDocument}->'personalDetails'->>'contactMobile',''),${users.phoneE164})`.as("admin_faculty_contact_mobile"),
   collegeName:aliasedColumn(colleges.name,"admin_role_college_name"),
   departmentName:departments.name,
   employmentType:facultyProfiles.employmentType,
@@ -111,16 +147,35 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
  .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
  .where(and(
   query.status==="ALL"?undefined:eq(collegeMemberships.status,query.status as "ACTIVE"|"SUSPENDED"|"ENDED"),
+  role==="FACULTY"&&departmentName?ilike(departments.name,departmentName):undefined,
   role==="FACULTY"&&query.departmentId?eq(departments.id,query.departmentId):undefined,
   role==="FACULTY"&&query.employmentType?
     query.employmentType.toLowerCase()==="mentor"
       ?sql`exists(select 1 from membership_roles mentor_filter where mentor_filter.membership_id=${collegeMemberships.id} and mentor_filter.role='MENTOR')`
       :eq(facultyProfiles.employmentType,query.employmentType):undefined,
   enrollmentFilter,
-  query.q?or(ilike(users.displayName,scopedSearchLike(query.q)),
-   ilike(users.email,scopedSearchLike(query.q)),
-   role==="LEARNER"?ilike(learnerProfiles.rollNumber,scopedSearchLike(query.q)):undefined,
-   ilike(users.phoneE164,scopedSearchLike(query.q))):undefined,
+  like?or(
+   ilike(personName,like),
+   ilike(users.displayName,like),
+   ilike(users.email,like),
+   ilike(users.phoneE164,like),
+   role==="FACULTY"?ilike(departments.name,like):undefined,
+   role==="FACULTY"?ilike(colleges.name,like):undefined,
+   role==="FACULTY"?ilike(facultyProfiles.legacyFacultyCode,like):undefined,
+   role==="FACULTY"?ilike(facultyProfiles.employmentType,like):undefined,
+   role==="FACULTY"?ilike(facultyProfiles.academicTitle,like):undefined,
+   role==="FACULTY"&&synonymLike?ilike(facultyProfiles.academicTitle,synonymLike):undefined,
+   role==="FACULTY"&&synonymLike?ilike(facultyProfiles.employmentType,synonymLike):undefined,
+   role==="LEARNER"?ilike(learnerProfiles.rollNumber,like):undefined,
+   role==="LEARNER"?ilike(learnerProfiles.registrationNumber,like):undefined,
+   role==="LEARNER"?ilike(learnerProfiles.legacyUniqueId,like):undefined,
+   role==="LEARNER"?ilike(sql<string>`coalesce(
+     nullif(${learnerProfiles.profileDocument}->'personalDetails'->>'contactMail',''),${users.email}
+    )`,like):undefined,
+   role==="LEARNER"?ilike(sql<string>`coalesce(
+     nullif(${learnerProfiles.profileDocument}->'personalDetails'->>'contactMobile',''),${users.phoneE164}
+    )`,like):undefined,
+  ):undefined,
  )).as("super_admin_role_directory");
  const [countRow]=await db.select({total:count()}).from(source);
  const total=countRow?.total??0;
@@ -129,7 +184,53 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
  // Super Admin directory, rather than reporting page 999 of 1 as empty.
  const totalPages=superAdminReadPages(total,query.pageSize);
  const page=Math.min(query.page,totalPages);
- const rows=await db.select().from(source).orderBy(asc(source.name),asc(source.id))
+ // The old learner roster used numeric-aware roll ordering, while the
+ // default faculty/learner directory is sorted by normalized full name.
+ const rollSort=sql<string>`case when ${source.rollNumber} ~ '^[0-9]{1,15}
+ const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
+ return {query:{...query,page},total,totalPages,items:rows.map(row=>({
+  id:row.id,title:row.name||"-",subtitle:row.collegeName+" · "+role,
+  // Legacy suspendedAt means this membership cannot act in the college;
+  // a platform block also prevents sign-in even if membership stayed ACTIVE.
+  status:row.status==="ACTIVE"&&(row.platformStatus!=="ACTIVE"||row.suspendedAt)
+    ?"SUSPENDED":row.status,
+  details:[
+   ...(role==="FACULTY"?[
+    "Department: "+(row.departmentName??"-"),
+    "Department ID: "+(row.facultyDepartmentId??"Not assigned"),
+    "Type: "+(row.employmentType??row.academicTitle??"Not set"),
+    "Faculty type: "+(row.employmentType??"Not set"),
+    "Mentor membership: "+(row.mentorRole?"Active":"Not assigned"),
+    "Academic title: "+(row.academicTitle??"Not set"),
+    "Faculty code: "+(row.legacyFacultyCode??"Not recorded"),
+    "Legacy faculty ID: "+(row.legacyFacultyId??"Not recorded"),
+    "Gender: "+(row.gender||"-"),
+    "Email: "+(row.facultyContactEmail??"-"),"Mobile: "+(row.facultyContactMobile??"-"),
+   ]:["Roll number: "+(row.rollNumber??"-"),"Class: "+(row.className??"-"),
+     "Classes: "+(row.classNames??"Not assigned"),
+     "Student ID: "+(row.legacyUniqueId??"Not recorded"),
+     "Registration number: "+(row.registrationNumber??"Not recorded"),
+     "Legacy learner ID: "+(row.legacyLearnerId??"Not recorded"),
+     "Gender: "+(row.gender||"-"),
+     "Email: "+(row.learnerContactEmail??"-"),
+     "Mobile: "+(row.learnerContactMobile??"-")]),
+   "College ID: "+row.collegeId,
+   "Organization ID: "+row.organizationId,
+   "Membership ID: "+row.id,
+   "Platform account ID: "+row.userId,
+   "Legacy membership ID: "+(row.legacyMembershipId??"Not recorded"),
+   "Membership suspension: "+(row.suspendedAt?"Suspended":"Not suspended"),
+   "Platform account: "+row.platformStatus,"Joined: "+fmt.format(row.joinedAt)+" IST",
+   "Contact shown only within selected college administrative scope.",
+  ],
+  href:`/admin/people/directory/${encodeURIComponent(row.id)}`,
+ }))};
+}
+
+    then lpad(${source.rollNumber},15,'0') else coalesce(${source.rollNumber},'') end`;
+ const sortKey=role==="LEARNER"&&sortBy==="roll"?rollSort:source.name;
+ const rows=await db.select().from(source)
+  .orderBy(sortDesc?desc(sortKey):asc(sortKey),asc(source.id))
   .limit(query.pageSize).offset((page-1)*query.pageSize);
  const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
  return {query:{...query,page},total,totalPages,items:rows.map(row=>({
@@ -169,4 +270,45 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
   ],
   href:`/admin/people/directory/${encodeURIComponent(row.id)}`,
  }))};
+}
+
+/** Strictly selected-college suggestions (legacy: 15 search, 10 popular). */
+export async function listAdminScopedPeopleSuggestions(
+ context:RequestContext,role:"FACULTY"|"LEARNER",search:string,limit=15,
+) {
+ const bounded=Number.isSafeInteger(limit)?Math.max(1,Math.min(15,limit)):15;
+ const q=search.trim().slice(0,100);
+ const result=await listAdminScopedPeople(context,role,{
+  q,page:1,pageSize:25,status:"ALL",
+ });
+ return result.items.slice(0,q?bounded:Math.min(10,bounded)).map(row=>({
+  id:row.id,label:row.title,kind:role,
+  // Historical school-wide caches are intentionally replaced with a fresh,
+  // permission-scoped SQL query. Never put contact fields in suggestion data.
+  subtitle:row.subtitle,
+ }));
+}
+
+/** Exact, case-insensitive name check for faculty duplicate warnings.
+ * Limited to the selected college and authorized people.manage scope.
+ */
+export async function existsAdminScopedFacultyName(
+ context:RequestContext,facultyName:string,
+):Promise<boolean>{
+ const name=facultyName.trim();
+ if(!name||name.length>100)return false;
+ const result=await listAdminScopedPeople(context,"FACULTY",{
+  q:name,page:1,pageSize:200,status:"ALL",
+ });
+ return result.items.some(row=>row.title.localeCompare(name,undefined,{sensitivity:"accent"})===0);
+}
+
+/** Counts must be computed inside the same college scope as the roster. */
+export async function adminScopedFacultyStats(context:RequestContext){
+ const [all,active,suspended]=await Promise.all([
+  listAdminScopedPeople(context,"FACULTY",{q:"",page:1,pageSize:10,status:"ALL"}),
+  listAdminScopedPeople(context,"FACULTY",{q:"",page:1,pageSize:10,status:"ACTIVE"}),
+  listAdminScopedPeople(context,"FACULTY",{q:"",page:1,pageSize:10,status:"SUSPENDED"}),
+ ]);
+ return {total:all.total,active:active.total,suspended:suspended.total};
 }
