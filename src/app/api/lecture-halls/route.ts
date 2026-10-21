@@ -6,6 +6,9 @@ import {
   LectureHallError,
   createLectureHall,
   listLectureHalls,
+  searchLectureHallsForPicker,
+  listLectureHallsLegacyPage,
+  getLectureHallStatistics,
 } from "@/modules/academics/lecture-hall-service";
 import { lectureHallErrorResponse } from "./error-response";
 
@@ -17,14 +20,36 @@ export async function GET(request: Request) {
     const search=new URL(request.url).searchParams;
     const legacy=search.get("legacy")==="1";
     const stats=search.get("stats")==="1";
+    const responseOptions = { headers: { "Cache-Control": "private, no-store" } };
+    const collegeId = search.get("collegeId");
+    if (stats) {
+      return NextResponse.json(await getLectureHallStatistics(context, collegeId ?? ""), responseOptions);
+    }
+    // Old query/limit autocomplete and 0-based page/size are explicit
+    // adapters. UUID college scope remains mandatory; never accept numeric
+    // legacy identities as a request-time tenant selector.
+    if (legacy && search.has("query")) {
+      return NextResponse.json(await searchLectureHallsForPicker(context, {
+        collegeId,
+        query: search.get("query") ?? "",
+        ...(search.has("deptId") ? { deptId: search.get("deptId") } : {}),
+        ...(search.has("limit") ? { limit: search.get("limit") } : {}),
+      }), responseOptions);
+    }
+    if (legacy && (search.has("page") || search.has("size"))) {
+      return NextResponse.json(await listLectureHallsLegacyPage(context, {
+        collegeId,
+        ...(search.has("page") ? { page: search.get("page") } : {}),
+        ...(search.has("size") ? { size: search.get("size") } : {}),
+        ...(search.has("deptId") ? { deptId: search.get("deptId") } : {}),
+      }), responseOptions);
+    }
     const params=Object.fromEntries([...search].filter(([key])=>
       !["legacy","stats","deptId","hallId"].includes(key)));
     if(search.has("deptId")&&!params.departmentId)params.departmentId=search.get("deptId")??"";
     if(search.has("hallId")&&!params.id)params.id=search.get("hallId")??"";
     const result=await listLectureHalls(context,params);
-    if(stats)return NextResponse.json({status:"success",message:"Lecture hall stats retrieved",
-      data:{total:result.pagination.total,displayed:result.items.length},
-    },{headers:{"Cache-Control":"private, no-store"}});
+
     if(legacy)return NextResponse.json({status:"success",message:"Lecture halls retrieved",
       data:result.items,total:result.pagination.total,
       pagination:result.pagination,collegeId:result.collegeId},
