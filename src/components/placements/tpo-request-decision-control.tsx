@@ -87,7 +87,7 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
         </Button>
       </div>}>
       {mode==="REJECT"?<div className="space-y-3">
-        <p className="text-sm font-semibold">Reason for rejection</p>
+        <p className="text-sm font-semibold leading-[22px]">Reason for rejection</p>
         <div role="group" aria-label="Rejection reasons" className="flex flex-wrap gap-2">
           {rejectionReasons.map(choice=><FilterChip key={choice} type="button" disabled={pending||guardedPending}
             aria-pressed={reason===choice} onClick={()=>{setReason(choice);setError(null);}}>{choice}</FilterChip>)}

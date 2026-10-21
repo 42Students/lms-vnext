@@ -102,7 +102,7 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
         [...previous,option.membershipId]:previous.filter(id=>id!==option.membershipId))}/>
       <span className="min-w-0 break-words">{option.displayName??option.email??"Learner"}</span>
      </label>)}
-     {!options.length?<p className="text-sm text-muted-foreground">No eligible learners available.</p>:null}
+     {!options.length?<p className="text-sm text-muted-foreground leading-[22px]">No eligible learners available.</p>:null}
     </fieldset>:searching?<LoadingState label="Loading eligible learners…"/>:error?<p role="alert" className="text-[13px] leading-5 text-[var(--lms-error-text)]">{error}</p>:null}
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role label (optional)
      <Input value={roleLabel} onChange={event=>setRoleLabel(event.target.value)} maxLength={120}/>

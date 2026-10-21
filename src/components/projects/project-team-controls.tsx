@@ -279,7 +279,7 @@ export function AddProjectMemberControl({
             </label>
           ) : null}
           {error ? (
-            <p role="alert" className="m-0 text-sm font-semibold text-error">
+            <p role="alert" className="m-0 text-sm font-semibold text-error leading-[22px]">
               {error}
             </p>
           ) : null}
