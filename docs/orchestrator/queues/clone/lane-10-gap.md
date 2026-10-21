@@ -46,7 +46,7 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U005 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/dashboard.js`
 - [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/electives.js`
 - [x] U007 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/features.js`
-- [ ] U008 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/hiring-dashboard.js`
+- [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/hiring-dashboard.js`
 - [ ] U009 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/inbound-mail.js`
 - [ ] U010 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/index.js`
 - [ ] U011 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/[jobId]/applications.js`
