@@ -29,7 +29,7 @@ export default async function FacultyAssessmentResultsPage({
   const context = await getCurrentRequestContext();
   const data = await getFacultyAssessmentResults(context,parsed.data);
   const emptyState = facultyResultsEmptyState(data.query,data.sections.length);
-  return <div className="min-w-0 max-w-full space-y-5">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Assessment results"
       description="Section-specific recorded response counts and scores from your current teaching assignments."
       actions={<div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
@@ -44,12 +44,12 @@ export default async function FacultyAssessmentResultsPage({
       </div>} />
     <form method="get" action="/teacher/results"
       className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-end">
-      <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
+      <label className="grid w-full min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
         <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
           
           placeholder="Assessment, course code or Section" />
       </label>
-      <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
+      <label className="grid w-full min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
         <Select name="kind" defaultValue={data.query.kind} >
           <option value="ALL">All</option>
           <option value="ASSIGNMENT">Assignments</option>
@@ -57,7 +57,7 @@ export default async function FacultyAssessmentResultsPage({
         </Select>
       </label>
       <Disclosure title="More filters" defaultOpen={Boolean(data.query.deliveryId || data.query.status !== "ALL" || data.query.due !== "ALL" || data.query.sort !== "DUE_DESC" || data.query.pageSize !== 5)} className="min-w-0 sm:col-span-2 lg:col-span-4" contentClassName="grid min-w-0 gap-3 py-3 md:grid-cols-2 lg:grid-cols-3">
-      <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Teaching Section
+      <label className="grid w-full min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Teaching Section
         <Select name="deliveryId" aria-label="Teaching Section" defaultValue={data.query.deliveryId ?? ""} >
           <option value="">All teaching sections</option>
           {data.sections.map(section => (
@@ -67,13 +67,13 @@ export default async function FacultyAssessmentResultsPage({
           ))}
         </Select>
       </label>
-      <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+      <label className="grid w-full min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
         <Select name="status" defaultValue={data.query.status} >
           <option value="ALL">All</option>
           <option value="PUBLISHED">Published</option>
         </Select>
       </label>
-      <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Due date
+      <label className="grid w-full min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Due date
         <Select name="due" defaultValue={data.query.due} >
           <option value="ALL">All due dates</option>
           <option value="OVERDUE">Past due, published</option>
@@ -81,14 +81,14 @@ export default async function FacultyAssessmentResultsPage({
           <option value="UNDATED">No due date</option>
         </Select>
       </label>
-      <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
+      <label className="grid w-full min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
         <Select name="sort" defaultValue={data.query.sort} >
           <option value="DUE_DESC">Latest due date</option>
           <option value="DUE_ASC">Earliest due date</option>
           <option value="TITLE">Assessment title</option>
         </Select>
       </label>
-      <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Records per page
+      <label className="grid w-full min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Records per page
         <Select name="pageSize" defaultValue={data.query.pageSize} >
           <option value="5">5</option><option value="10">10</option>
         </Select>
