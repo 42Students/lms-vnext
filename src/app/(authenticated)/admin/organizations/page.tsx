@@ -96,7 +96,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
         <div className="min-w-0 pt-[var(--lms-space-3)]"><OrganizationCreateForm /></div>
       </details> : null}
       <h2 className="text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Existing Organizations</h2>
-      <FilterBar title="Organization filters"><form method="get" role="search" aria-label="Search organizations" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] sm:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_12rem_auto_auto_auto]">
+      <FilterBar title="Organization filters"><form method="get" role="search" aria-label="Search organizations" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] sm:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_12rem_auto_auto_auto]">
        <label className="flex min-w-0 w-full flex-1 flex-col gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48">Search organizations
         <Input type="search" name="q" defaultValue={q} maxLength={100} placeholder="Search organizations"
          className="w-full" />
