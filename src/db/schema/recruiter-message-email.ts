@@ -3,7 +3,14 @@ import {check,index,pgTable,timestamp,uniqueIndex,uuid,varchar} from "drizzle-or
 import {placementTpoMessages,placementTpoMessageThreads} from "./tpo-collaboration";
 import {users} from "./users";
 
-/** Proposed recruiter email bridge tables: register matching SQL before enabling the worker. */
+/**
+ * Recruiter email bridge storage is already registered by 0135_lanes_round_3.
+ * Neither the dispatch worker nor inbound intake may activate without signed
+ * provider credentials, verified inbound signature, trusted sender evidence,
+ * reply-token expiry, registered table guard and explicit enablement.
+ * Raw inbound message identifiers and email contents never enter these rows.
+ * Legacy recruiter_emailed_at and raw reply token are deliberately retired.
+ */
 export const placementRecruiterMessageMailState=pgTable("placement_recruiter_message_mail_state",{
  threadId:uuid("thread_id").primaryKey().references(()=>placementTpoMessageThreads.id,{onDelete:"restrict"}),
  recruiterUserId:uuid("recruiter_user_id").notNull().references(()=>users.id,{onDelete:"restrict"}),
