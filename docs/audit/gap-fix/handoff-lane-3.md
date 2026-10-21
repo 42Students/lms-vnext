@@ -13,11 +13,13 @@
 
 ## MERGE ROBOT — schema lanes 14/15 handoff (2026-10-21)
 
-- **File:** `src/db/schema/tpo-configuration.ts` (OWNED BY schema lanes 14/15; lane-3 MUST NOT edit). **Finding IDs:** `G2-3-011-019`, `G2-3-011-045`, `G2-3-011-046`, `G2-3-011-051`. **Exact required fix:** retain `placementTpoJobTypes.label = varchar("label", { length: 40 }).notNull()`, `sortOrder = integer("sort_order").notNull().default(0)`, `countsAsPlaced = boolean("counts_as_placed").notNull().default(true)`, `isBuiltin = boolean("is_builtin").notNull().default(false)`, and case-insensitive `uniqueIndex("placement_tpo_job_types_college_label_uq").on(table.collegeId, sql\`lower(\${table.label})\`)`. Replace the currently interpolated **regex string as SQL bound parameter** (`\${"^[[:alnum:] +&/().,'-]{2,40}$"}`) with a **literal, correctly quote-escaped PostgreSQL regex in the tagged SQL**:
+- **File:** `src/db/schema/tpo-configuration.ts` (OWNED BY schema lanes 14/15; lane-3 MUST NOT edit). **Finding IDs:** `G2-3-011-019`, `G2-3-011-045`, `G2-3-011-046`, `G2-3-011-051`. **Exact change:** preserve `placementTpoJobTypes.label` as `varchar("label", { length: 40 }).notNull()`, `sortOrder` as `integer("sort_order").notNull().default(0)`, `countsAsPlaced` as `boolean("counts_as_placed").notNull().default(true)`, and `isBuiltin` as `boolean("is_builtin").notNull().default(false)`; keep the single case-insensitive unique index on `(college_id, lower(label))`. Replace the current SQL-bound regex value with a correctly escaped literal SQL check (do not bind the regex as a query parameter):
+
   ```ts
   check(
     "placement_tpo_job_types_label_ck",
-    sql\`length(btrim(\${table.label})) between 2 and 40 and \${table.label} ~ '^[[:alnum:] +&/().,''-]{2,40}$'\`,
-  )
+    sql`length(btrim(${table.label})) between 2 and 40 and ${table.label} ~ '^[[:alnum:] +&/().,''-]{2,40}$'`,
+  ),
   ```
-  The `''` is the escaped apostrophe in the SQL single-quoted literal, not a TS quote terminator. Do not truncate the `$'\` ending, remove the closing `);`, or add an extra index declaration. Match `drizzle/0138_job_type_drive_policy.sql` (lane-3 corrected its broken CHECK/duplicate index DDL in commit `ee56c867`) and preserve other schema lanes' changes. Do NOT copy the branch's stale/broken schema file over current `main`. Drizzle migration/schema consistency and PG acceptance remain untested.
+
+  The doubled apostrophe `''` escapes a literal apostrophe for PostgreSQL. Ensure valid TypeScript template syntax, proper closing delimiters, and consistency with `drizzle/0138_job_type_drive_policy.sql`, which lane-3 repaired in `ee56c867`. Do not restore stale schema changes over `main`. No PG acceptance run.
