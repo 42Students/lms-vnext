@@ -4,6 +4,7 @@ import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
+import {TpoAccreditationExportPreflight} from "@/components/placements/tpo-accreditation-export-preflight";
 import {Disclosure} from "@/components/ui/disclosure";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
@@ -73,10 +74,10 @@ export default async function TpoAccreditationReportPage({
         title="Accreditation export"
         description={TPO_LEGACY_REPORT_COPY["/tpo/reports/accreditation"].description}
         actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto"><PageBackLink href="/tpo/reports" label="All reports" />{selectedBatch&&studentReport&&studentReport.rows.length>0?
-          <a href={"/api/placements/reports?"+query.toString()}
-           className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-white sm:w-auto md:min-h-9">
-           Export student list CSV
-          </a>:
+          <TpoAccreditationExportPreflight href={"/api/placements/reports?"+query.toString()}
+           total={completeness?.total??studentReport.rows.length}
+           missingStudents={completeness?.missingStudents??0}
+           fields={completeness?.fields??[]}/>:
           <span aria-disabled="true" role="status" className="inline-flex min-h-11 w-full cursor-not-allowed items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-4 text-sm font-semibold text-muted-foreground sm:w-auto md:min-h-9">
            Export student list CSV — {selectedBatch?"No placed students":"Pick a batch first"}
           </span>
@@ -106,9 +107,9 @@ export default async function TpoAccreditationReportPage({
          <ul className="grid gap-1 text-sm min-[768px]:grid-cols-2">{completeness.fields.map(field=>
           <li key={field.key}>{field.label} — missing for {field.missing}</li>)}</ul>
          <p className="text-xs text-muted-foreground leading-5">This checks seven fields in the recorded placed-student export, not all graduating learners or external placement evidence.</p>
-         {studentReport.rows.length>0?<a href={"/api/placements/reports?"+query.toString()} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-link underline">
-          Export anyway
-         </a>:null}
+         {studentReport.rows.length>0?<TpoAccreditationExportPreflight href={"/api/placements/reports?"+query.toString()}
+          total={completeness.total} missingStudents={completeness.missingStudents}
+          fields={completeness.fields} compact/>:null}
         </div>:null}
         <p className="text-sm leading-[22px]">{studentReport.rows.length} placed students in this batch.</p>
         <p className="text-sm text-muted-foreground leading-[22px]">{studentReport.warning}</p>
