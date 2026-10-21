@@ -4,8 +4,8 @@ Packets moved to you from other lanes. Work them AFTER your own queue (lane-7-wo
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_college-readiness-releases-service.ts.md` (edit src/modules/projects/college-readiness-releases-service.ts; 3 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-12/src_components_tpo_tpo-custom-job-type-rename.tsx.md` (edit src/components/tpo/tpo-custom-job-type-rename.tsx; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_college-readiness-releases-service.ts.md` (edit src/modules/projects/college-readiness-releases-service.ts; 3 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-12/src_components_tpo_tpo-custom-job-type-rename.tsx.md` (edit src/components/tpo/tpo-custom-job-type-rename.tsx; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-13/src_app_api_auth_login_email_route.ts.md` (edit src/app/api/auth/login/email/route.ts; 3 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-admin-reassign-mentor-page.tsx.md` (edit src/components/projects/project-admin-reassign-mentor-page.tsx; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_components_tpo_tpo-custom-job-type-placed.tsx.md` (edit src/components/tpo/tpo-custom-job-type-placed.tsx; 1 findings; best P1)

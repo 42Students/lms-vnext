@@ -951,3 +951,6 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 ## Legacy class schedule date-range copy — lane-7 shared helper (2026-10-21)
 
 - G2-2-037-021 | `src/components/academics/college-class-schedule-editor.tsx + academic schedule API/UI` | Consume exported `validateClassScheduleDateRange` from `src/lib/safe-format.ts` for class-schedule-only start/end errors. Preserve `startDate`/`endDate` field names, do not replace generic date validation elsewhere. Existing helper is ready but not wired by this lane.
+
+- G2-7-032-051/-071 | `src/components/projects/project-admin-readiness-page.tsx` | Wire explicit selected archived record review and paged overrides; service workspace choices now accept page/pageSize/search.
+- G2-3-011-025 | `src/modules/placements/tpo-job-type-write-service.ts` | Add pre-confirm impacted drive count/read-only preview; rename service already cascades.
