@@ -233,3 +233,45 @@
 - G2-13-015-037 — src/modules/placements/offer-service.ts / offer detail presentation: Specify application status after offer withdrawal and exact learner notification semantics
 - G2-13-015-052 — src/modules/placements/offer-service.ts / offer detail presentation: Add expiry/status partial index if recurring sweeps become expensive across colleges
 - G2-13-015-056 — src/modules/placements/offer-service.ts / offer detail presentation: Specify migration table mapping, history versioning and legacy ID preservation
+
+## Wave 2 placements part 2 (cross-file authorized parity)
+- G2-13-015-060 — src/modules/placements/application-service.ts, company service and presentation: Align legacy ordering to createdAt vs issuedAt and release-to-expire mapping
+- G2-14-011-009 — src/modules/placements/job-service.ts and role editor: Make field by field display adapter including unstructured CTC text
+- G2-14-015-007 — src/modules/placements/application-service.ts, company service and presentation: Document field alias lifecycleStatus to status in compatibility projection
+- G2-14-015-009 — src/modules/placements/application-service.ts, company service and presentation: Crosswalk tabs and filtering for SENT_BACK/REQUEST/REJECTED
+- G2-14-016-010 — src/modules/placements/recruiter-service.ts and recruiter UI: Preserve revoker role in activity metadata or schema history
+- G2-14-016-031 — src/modules/placements/recruiter-service.ts and recruiter UI: Define historical reactivation or new-row provenance
+- G2-14-019-005 — src/modules/placements/round-service.ts and candidate round pages: Map roundDescription to contextual round instructions shown to candidates
+- G2-14-019-006 — src/modules/placements/round-service.ts and candidate round pages: Show room vs meeting URL by mode with original fallback
+- G2-14-019-009 — src/modules/placements/round-service.ts and candidate round pages: Preserve interviewType as typed annotation or name crosswalk
+- G2-14-019-013 — src/modules/placements/round-service.ts and candidate round pages: Map historical boolean to explicit recommendation action when known
+- G2-14-019-056 — src/modules/placements/round-service.ts and candidate round pages: Add mapping to original candidate-facing status wording
+- G2-14-019-057 — src/modules/placements/round-service.ts and candidate round pages: Map ONLINE to VIRTUAL and OFFLINE to ON_CAMPUS
+- G2-14-019-058 — src/modules/placements/round-service.ts and candidate round pages: Preserve sub-type labels in round titles
+- G2-14-020-007 — src/modules/placements/application-service.ts, company service and presentation: Resolve owner faculty membership and fallback labels on import
+- G2-14-020-012 — src/modules/placements/recruiter-service.ts and recruiter UI: Preserve invite funnel metrics as append-only events/counters
+- G2-14-020-018 — src/modules/placements/application-service.ts, company service and presentation: Backfill counters and event retention
+- G2-14-020-032 — src/modules/placements/application-service.ts, company service and presentation: Map deleted true to archived with tombstone reason
+- G2-14-020-039 — src/modules/placements/application-service.ts, company service and presentation: Implement idempotent joins and precise metrics
+- G2-14-020-050 — src/modules/placements/application-service.ts, company service and presentation: Use same trusted/opens/joins labels in company engagement view
+- G2-14-020-053 — src/modules/placements/application-service.ts, company service and presentation: Ensure rate limits and dedup to protect counters
+- G2-14-020-061 — src/modules/placements/application-service.ts, company service and presentation: Map historical soft-deletes and restores
+- G2-15-015-018 — src/modules/placements/application-service.ts, company service and presentation: Align min3 at server/DB or document intentional one-char allowance.
+- G2-15-015-060 — src/modules/placements/application-service.ts, company service and presentation: Align writer/readers to one canonical schema/decision values.
+- G2-15-015-064 — src/modules/placements/application-service.ts, company service and presentation: Enforce exact >=3 on migrated/new writes.
+- G2-15-014-012 — src/modules/placements/round-service.ts and candidate round pages: Map legacy testLink to new testUrl and resultsDue to resultsDueAt explicitly.
+- G2-15-014-049 — src/modules/placements/round-service.ts and candidate round pages: Preserve external assessment link and URL validation in fields.
+- G2-15-014-062 — src/modules/placements/application-service.ts, company service and presentation: Verify transaction reorder doesn't violate transient uniqueness.
+- G2-15-014-063 — src/modules/placements/round-service.ts and candidate round pages: Choose source IST policy and preserve exact local wall-time.
+- G2-15-016-007 — src/modules/placements/recruiter-service.ts and recruiter UI: Use Designation visible label while mapping to title.
+- G2-15-016-008 — src/modules/placements/recruiter-service.ts and recruiter UI: Expose old suspended/reason staff state and reinstate semantics.
+- G2-15-016-014 — src/modules/placements/recruiter-service.ts and recruiter UI: Preserve creator actor role and optimistic revision via updatedAt token.
+- G2-15-016-023 — src/modules/placements/recruiter-service.ts and recruiter UI: Persist/display staff suspension reason if recruiter suspensions supported.
+- G2-15-016-039 — src/modules/placements/recruiter-service.ts and recruiter UI: Clarify SUSPENDED vs ARCHIVED mapping and restore eligibility.
+- G2-15-016-054 — src/modules/placements/recruiter-service.ts and recruiter UI: Use old visible label Designation where exact clone required.
+- G2-16-014-011 — src/modules/placements/application-service.ts, company service and presentation: Document old-ID compatibility if migration needed.
+- G2-16-014-030 — src/modules/placements/application-service.ts, company service and presentation: Map enums intentionally and label accurately.
+- G2-16-014-032 — src/modules/placements/application-service.ts, company service and presentation: Verify application job/learner join indexes.
+- G2-16-014-033 — src/modules/placements/application-service.ts, company service and presentation: Add partial status/expiry and dispute-deadline indexes.
+- G2-16-014-035 — src/modules/placements/application-service.ts, company service and presentation: Implement strict DB-clock cutoff with idempotent cascade.
+- G2-16-014-037 — src/modules/placements/application-service.ts, company service and presentation: Record historical mapping or approved no-migration choice.

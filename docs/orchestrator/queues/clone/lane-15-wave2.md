@@ -12,7 +12,7 @@ This is wave 2 of the fix job. Work every packet below, in order, one at a time,
 Packets:
 
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_placements.ts.part1of6.md` (edit src/db/schema/placements.ts; 40 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_placements.ts.part2of6.md` (edit src/db/schema/placements.ts; 40 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_placements.ts.part2of6.md` (edit src/db/schema/placements.ts; 40 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_placements.ts.part3of6.md` (edit src/db/schema/placements.ts; 40 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_placements.ts.part4of6.md` (edit src/db/schema/placements.ts; 40 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_placements.ts.part5of6.md` (edit src/db/schema/placements.ts; 40 findings; best P2)

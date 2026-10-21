@@ -220,7 +220,11 @@ export const placementRecruiterProfiles = pgTable(
       .references(() => placementCompanies.id, {
         onDelete: "restrict",
       }),
+    /** Legacy designation label maps to title for UI display. */
     title: varchar("title", { length: 160 }),
+    suspendedAt: timestamp("suspended_at", {withTimezone:true}),
+    suspensionReason: varchar("suspension_reason",{length:500}),
+    legacyRecruiterId: integer("legacy_recruiter_id"),
     status: varchar("status", { length: 24 })
       .notNull()
       .default("ACTIVE"),
@@ -246,9 +250,14 @@ export const placementRecruiterProfiles = pgTable(
       table.companyId,
       table.status,
     ),
+    uniqueIndex("placement_recruiter_profiles_legacy_id_uq")
+      .on(table.legacyRecruiterId).where(sql`${table.legacyRecruiterId} is not null`),
+    check("placement_recruiter_profiles_suspension_ck",sql`
+      (${table.status} = 'SUSPENDED') = (${table.suspendedAt} is not null)
+      and (${table.suspensionReason} is null or length(${table.suspensionReason}) <= 500)`),
     check(
       "placement_recruiter_profiles_status_ck",
-      sql`${table.status} in ('ACTIVE', 'ARCHIVED')`,
+      sql`${table.status} in ('ACTIVE', 'SUSPENDED', 'ARCHIVED')`,
     ),
     check(
       "placement_recruiter_profiles_archive_shape_ck",
@@ -736,6 +745,8 @@ export const placementJobRoleOptions = pgTable(
         onDelete: "cascade",
       }),
     title: text("title").notNull(),
+    /** Original package-array order, separate from job role identity. */
+    position: smallint("position"),
     employmentType: varchar("employment_type", {
       length: 24,
     }).notNull(),
@@ -787,6 +798,10 @@ export const placementJobRoleOptions = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("placement_role_options_job_position_uq").on(table.jobId,table.position)
+      .where(sql`${table.position} is not null and ${table.status} = 'ACTIVE'`),
+    check("placement_role_options_position_ck",sql`
+      ${table.position} is null or ${table.position} between 0 and 100`),
     // Parent key for the role-option/job composite FK on applications.
     uniqueIndex("placement_job_role_options_id_job_uq").on(table.id, table.jobId),
     uniqueIndex(
@@ -1473,6 +1488,11 @@ export const placementJobRounds = pgTable(
         onDelete: "restrict",
       }),
     sequence: integer("sequence").notNull(),
+    legacyRoundId: integer("legacy_round_id"),
+    /** Round description and assessment/interview subtype are presentation data. */
+    legacyRoundDescription: text("legacy_round_description"),
+    legacyInterviewType: varchar("legacy_interview_type",{length:80}),
+    legacyMode: varchar("legacy_mode",{length:20}),
     kind: varchar("kind", { length: 24 }).notNull(),
     name: text("name").notNull(),
     mode: varchar("mode", { length: 24 }),
@@ -1517,6 +1537,10 @@ export const placementJobRounds = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("placement_job_rounds_legacy_id_uq").on(table.legacyRoundId)
+      .where(sql`${table.legacyRoundId} is not null`),
+    check("placement_job_rounds_legacy_description_ck",sql`
+      ${table.legacyRoundDescription} is null or length(${table.legacyRoundDescription}) <= 2000`),
     uniqueIndex("hr_interview_round_job_parent_uq").on(
       table.id,
       table.jobId,
