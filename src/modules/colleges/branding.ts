@@ -1,4 +1,31 @@
 import { z } from "zod";
+import {collegeSignInMethodSchema,signInCapabilities,signInChannelOrder} from "./signin-methods-model";
+
+/** Historic college_branding.login_methods value for public compatibility.
+ * Presentation branding remains separate from the audited sign-in policy.
+ * An absent or unrecognized imported value resolves to EMAIL_PHONE rather
+ * than activating or disabling an authentication channel unpredictably.
+ */
+export const legacyBrandLoginMethodSchema=z.enum([
+ "EMAIL_PHONE","PHONE_EMAIL","EMAIL_ONLY","PHONE_ONLY",
+]);
+export type LegacyBrandLoginMethod=z.infer<typeof legacyBrandLoginMethodSchema>;
+export const DEFAULT_LEGACY_BRAND_LOGIN_METHOD="EMAIL_PHONE" as const;
+export function effectiveLegacyBrandLoginMethod(raw:unknown):LegacyBrandLoginMethod{
+ if(typeof raw!=="string")return DEFAULT_LEGACY_BRAND_LOGIN_METHOD;
+ const parsed=legacyBrandLoginMethodSchema.safeParse(raw.trim().toUpperCase());
+ return parsed.success?parsed.data:DEFAULT_LEGACY_BRAND_LOGIN_METHOD;
+}
+/** Explicit four-choice projection and effect for verified college login UIs. */
+export function legacyBrandLoginChoice(raw:unknown){
+ const legacy=effectiveLegacyBrandLoginMethod(raw);
+ const canonical=legacy==="EMAIL_PHONE"?"EMAIL_AND_PHONE":
+   legacy==="PHONE_EMAIL"?"PHONE_AND_EMAIL":legacy;
+ const method=collegeSignInMethodSchema.parse(canonical);
+ return {legacy,method,channels:signInChannelOrder(method),
+  enabled:signInCapabilities(method)};
+}
+
 
 /**
  * College branding: validation plus the colour maths that keeps a college's
