@@ -12,7 +12,7 @@ export type MentorMeetingCalendarItem = {
   status: "DRAFT" | "REQUESTED" | "SCHEDULED" | "RESCHEDULED" | "COMPLETED" | "CANCELLED";
   meetingType?: "GENERAL" | "PLANNING" | "STANDUP" | "REVIEW" | "RETRO";
   startsAt: string;
-  endsAt: string | null;
+  endsAt: string;
   timeZone: string;
   meetingUrl: string | null;
   linkedSprintTitle: string | null;
