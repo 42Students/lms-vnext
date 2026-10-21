@@ -74,6 +74,11 @@ export function trackerLogNdjson(
 
 /** Group template-equivalent redacted errors without collapsing separate
  * routes, components or event kinds. Deployment-like events stay individual. */
+/** Only an actual server-redacted Cloud Logging event can become a deploy
+ * marker. We never synthesize a release from a commit SHA or HTTP path. */
+function isDeploymentLogEvent(event:string){
+ return /^(?:DEPLOY|DEPLOYMENT|RELEASE)[.:_-]/i.test(event);
+}
 function normalizedLogMessage(message:string){
  return message.toLowerCase()
   .replace(/\b[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b/gi,"<id>")
@@ -118,7 +123,7 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
     if(!groupSimilar)return items.map(item=>({item,count:1}));
     const groups=new Map<string,{item:Entry;count:number}>();
     for(const item of items){
-      const deploymentLike=/^(?:DEPLOY|DEPLOYMENT|RELEASE)[.:_-]/i.test(item.event);
+      const deploymentLike=isDeploymentLogEvent(item.event);
       const key=deploymentLike?item.id:
         [item.event,item.path,item.component??"",normalizedLogMessage(item.message)].join("|");
       const existing=groups.get(key);
@@ -198,6 +203,12 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
     void initial();
     return ()=>abort.abort();
   },[initialQuery,initialDetailId]);
+  function closeDetails(){
+    detailRequest.current++;
+    setDetailEntry(null);
+    setDetailError("");
+    setDetailLoading(false);
+  }
   async function showDetails(item:Entry){
     const generation=++detailRequest.current;
     setDetailEntry(item);setDetailLoading(true);setDetailError("");
@@ -369,8 +380,15 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
     {initialLoading?<div aria-live="polite" aria-busy="true" className="space-y-3">
       {[0,1,2].map(i=><div key={i} className="h-20 animate-pulse rounded-lg bg-[var(--lms-neutral-50)]"/>)}
     </div>:items.length?<ol aria-live="polite" aria-busy={pending} className="min-w-0 divide-y divide-border border-y border-border">
-      {grouped.map(({item,count})=><li key={item.id} id={"log-"+item.requestId}
+      {grouped.map(({item,count})=><li key={item.id} id={"log-"+encodeURIComponent(item.id)}
         className="min-w-0 py-3 text-sm">
+        {isDeploymentLogEvent(item.event)?<div aria-label="Deployment marker from Cloud Logging"
+          className="mb-2 flex flex-wrap items-center gap-2 border-l-[3px] border-[var(--lms-teal-deep)] bg-[var(--lms-neutral-50)] px-3 py-2 text-xs text-body">
+          <strong>Deployment log event</strong>
+          <time dateTime={item.time}>{displayTime(item.time)}</time>
+          <span className="min-w-0 break-all">{item.event}</span>
+          <span className="text-muted-foreground">Log-derived; release verification unavailable</span>
+        </div>:null}
         <Disclosure summaryClassName="min-w-0 break-words [overflow-wrap:anywhere]" title={displayTime(item.time)+" · "+item.event+" · "+item.path+(count>1?" · "+count+" similar":"")}>
           <p className="mt-2 whitespace-pre-wrap break-words text-body">{item.message}</p>
           <p className="mt-2 text-xs text-muted-foreground leading-[20px]">Reference: {item.requestId??"Not recorded"} · {item.component??"server"}</p>
@@ -404,11 +422,11 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
     {nextPage&&currentFilters===appliedFilters?<Button variant="secondary" type="button" onClick={()=>void load(true)} loading={pending} disabled={pending||exporting} className="min-h-11 w-full sm:w-auto md:min-h-9">
       {items.length?"Load older":"Continue search"}
     </Button>:null}
-    <Dialog open={detailEntry!==null} onOpenChange={open=>{if(!open){detailRequest.current++;setDetailEntry(null);setDetailError("");}}}
+    <Dialog open={detailEntry!==null} onOpenChange={open=>{if(!open)closeDetails();}}
       title={detailEntry?displayTime(detailEntry.time)+" · "+detailEntry.event:"Log details"}
       description="Redacted Cloud Logging details"
       className="!left-auto !right-0 !top-0 !h-[var(--lms-visual-height)] !max-h-[var(--lms-visual-height)] !w-[min(100vw,760px)] !max-w-[760px] !translate-x-0 !translate-y-0 !rounded-none"
-      footer={<Button type="button" variant="secondary" onClick={()=>setDetailEntry(null)}>Close</Button>}>
+      footer={<Button type="button" variant="secondary" onClick={closeDetails}>Close</Button>}>
       {detailEntry?<div className="space-y-3 text-sm">
         {detailLoading?<p role="status" className="text-xs text-muted-foreground">Verifying the provider entry…</p>:null}
         {detailError?<Alert tone="warning">{detailError}</Alert>:null}
