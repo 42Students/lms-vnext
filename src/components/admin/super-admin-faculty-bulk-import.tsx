@@ -107,7 +107,7 @@ export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
   try { element.click(); }
   finally { element.remove();window.setTimeout(()=>URL.revokeObjectURL(url),1000); }
  };
- return <section className="min-w-0 space-y-3 pb-2">
+ return <section aria-label="Faculty bulk registration" className="min-w-0 space-y-3 pb-2">
   {dialog}
   <h3 className="font-semibold text-foreground">Bulk register faculty</h3>
   <p className="text-sm text-body">
