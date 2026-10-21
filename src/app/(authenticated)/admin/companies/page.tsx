@@ -5,6 +5,7 @@ import type {AdminCompanyRow} from "@/modules/placements/admin-company-directory
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
+import {redirect} from "next/navigation";
 import { SuperAdminCompanyMerge } from "@/components/admin/super-admin-company-merge";
 import {SuperAdminCompanyRestore} from "@/components/admin/super-admin-company-restore";
 import {SuperAdminCompanyVerification} from "@/components/admin/super-admin-company-verification";
@@ -13,7 +14,7 @@ import {SuperAdminCompanyIdentities} from "@/components/admin/super-admin-compan
 import {SuperAdminCollegeCompanyCreate,SuperAdminCollegeCompanyRelationshipActions}
   from "@/components/admin/super-admin-college-company-actions";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import {SuperAdminGlobalCompanyCatalogue} from "@/components/admin/super-admin-global-company-catalogue";
+import {SuperAdminGlobalCompanyCatalogue,SuperAdminCompanyAvatar,safeCompanyWebsite} from "@/components/admin/super-admin-global-company-catalogue";
 import {SuperAdminCompanySearch} from "@/components/admin/super-admin-company-search";
 import { PageHeader } from "@/components/ui/page-header";
 import { Disclosure } from "@/components/ui/disclosure";
@@ -66,24 +67,25 @@ export default async function SuperAdminCompaniesPage({
    </div>;
   }
   const data=directoryResult.value;
+  if(data.query.page>data.totalPages){
+   const corrected=new URLSearchParams(Object.entries(params)
+    .filter((entry):entry is [string,string]=>typeof entry[1]==="string"));
+   corrected.set("page",String(data.totalPages));
+   corrected.set("view","COLLEGE");
+   redirect("/admin/companies?"+corrected.toString());
+  }
   const availableColleges=collegesResult.status==="fulfilled"?collegesResult.value:[];
   const candidates=findPossibleCompanyDuplicates(data.rows);
   const nameConflicts=findCompanyNameIdentityConflicts(data.rows);
-  // Legacy college table ordering is last-drive-activity first within this
-  // authorized server page; the service controls pagination and source scope.
-  const collegeRows=[...data.rows].sort((a,b)=>{
-   const aTime=a.lastActiveAt?new Date(a.lastActiveAt).getTime():0;
-   const bTime=b.lastActiveAt?new Date(b.lastActiveAt).getTime():0;
-   return bTime-aTime||b.name.localeCompare(a.name);
-  });
+  // Sort is applied by SQL before pagination, never page-locally.
+  const collegeRows=data.rows;
   const collegeColumns:DataTableColumn<AdminCompanyRow>[]=[
-   {key:"company",header:"Company",mobilePriority:"primary",cell:row=><div className={"flex min-w-0 items-start gap-3 "+(row.companyStatus==="ARCHIVED"?"opacity-55":"")}>
-     <span aria-hidden="true" className="flex size-8 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-primary-subtle)] text-xs font-semibold text-primary-text">
-      {row.name.trim().split(/\s+/).slice(0,2).map(part=>part[0]?.toUpperCase()??"").join("")}
-     </span>
+   {key:"company",header:"Company",mobilePriority:"primary",sortable:true,
+    sortDirection:data.query.sort==="NAME"?"ascending":data.query.sort==="NAME_DESC"?"descending":"none",cell:row=><div className={"flex min-w-0 items-start gap-3 "+(row.companyStatus==="ARCHIVED"?"opacity-55":"")}>
+     <SuperAdminCompanyAvatar name={row.name} url={row.logoPublicUrl??null}/>
      <div className="min-w-0 space-y-1">
       <p className="font-semibold text-[var(--lms-heading)]">{row.name}</p>
-      {row.website?.startsWith("https://")?<a href={row.website} target="_blank" rel="noopener noreferrer"
+      {safeCompanyWebsite(row.website)?<a href={safeCompanyWebsite(row.website)!} target="_blank" rel="noopener noreferrer"
        className="inline-flex min-h-9 items-center break-all text-sm font-semibold text-primary-text underline">Visit ↗</a>:null}
       {row.aliases?.length?<p className="break-words text-xs text-muted-foreground">Also known as {row.aliases.join(", ")}</p>:null}
       <p className="break-all text-xs text-muted-foreground">Domains: {row.domains?.length?row.domains.join(", "):"None"}</p>
@@ -94,8 +96,10 @@ export default async function SuperAdminCompaniesPage({
      </div>
     </div>},
    {key:"industry",header:"Industry",cell:row=>row.industry??"—"},
-   {key:"drives",header:"Drives",className:"tabular-nums",cell:row=><span>{row.driveCount??0}</span>},
-   {key:"active",header:"Last active ↓",cell:row=><span>{row.lastActiveAt?
+   {key:"drives",header:"Drives",className:"tabular-nums",sortable:true,
+    sortDirection:data.query.sort==="DRIVES"?"descending":data.query.sort==="DRIVES_ASC"?"ascending":"none",cell:row=><span>{row.driveCount??0}</span>},
+   {key:"active",header:"Last active",sortable:true,
+    sortDirection:data.query.sort==="LAST_ACTIVE"?"descending":data.query.sort==="LAST_ACTIVE_ASC"?"ascending":"none",cell:row=><span>{row.lastActiveAt?
     new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric"}).format(new Date(row.lastActiveAt)):
     "Never posted"}</span>},
    {key:"status",header:"Relationship",cell:row=><div className="space-y-1">
@@ -107,6 +111,10 @@ export default async function SuperAdminCompaniesPage({
      {context.adminScope?.collegeId===row.collegeId?<SuperAdminCollegeCompanyRelationshipActions
       relationshipId={row.relationshipId} name={row.name} trusted={row.trusted}
       status={row.relationshipStatus} driveCount={row.driveCount??0} companyStatus={row.companyStatus}/>:null}
+     {context.adminScope?.collegeId===row.collegeId&&row.companyStatus==="ACTIVE"?
+      <Disclosure title="Merge" className="min-w-0">
+       <SuperAdminCompanyMerge companies={[{id:row.companyId,name:row.name}]}/>
+      </Disclosure>:null}
      <Link href={"/admin/companies/"+encodeURIComponent(row.companyId)+"/drives"}
       target="_blank" rel="noopener noreferrer"
       className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">History</Link>
@@ -143,6 +151,11 @@ export default async function SuperAdminCompaniesPage({
       <Link href="/admin/companies?status=ALL&companyStatus=ARCHIVED" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Show deleted (archived) companies →</Link>
       <Link href="/admin/companies?status=ACTIVE&companyStatus=ACTIVE" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Active companies →</Link>
     </div>
+    {context.adminScope?.collegeId?
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
+       <h2 className="text-lg font-semibold text-[var(--lms-heading)]">This college's companies</h2>
+       <SuperAdminCollegeCompanyCreate collegeId={context.adminScope.collegeId}/>
+      </div>:null}
     <div className="grid min-w-0 grid-cols-2 border-t border-border md:grid-cols-3">
       {([["Companies in this page", data.distinctCompanies], ["Archived", data.archivedCompaniesOnPage],
         ["Visible now", data.visibleCompaniesOnPage],["With drives",data.relationshipsWithDrivesOnPage],
@@ -201,7 +214,7 @@ export default async function SuperAdminCompaniesPage({
       </label>
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Order
         <Select name="sort" defaultValue={data.query.sort} className="min-h-11 md:min-h-9">
-          <option value="NAME">Company name</option><option value="RECENT">Recently changed relationship</option>
+          <option value="LAST_ACTIVE">Last active (newest)</option><option value="NAME">Company name (A–Z)</option><option value="DRIVES">Drives (most)</option><option value="RECENT">Recently changed relationship</option>
         </Select>
       </label>
       {data.query.companyId ? <Input type="hidden" name="companyId" value={data.query.companyId}/> : null}
@@ -223,19 +236,31 @@ export default async function SuperAdminCompaniesPage({
       </Disclosure>
       <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto self-end px-4 md:col-start-2 md:row-start-1">Filter</Button>
     </form>
-    {context.adminScope?.collegeId?
-      <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
-       <h2 className="text-lg font-semibold text-[var(--lms-heading)]">This college's companies</h2>
-       <SuperAdminCollegeCompanyCreate collegeId={context.adminScope.collegeId}/>
-      </div>:null}
-    <p className="text-xs text-muted-foreground">{data.total.toLocaleString("en-IN")} matching college-company relationships · page {data.query.page} of {data.totalPages}; statistics and duplicate suggestions below are page-local.</p>
+    <p role="status" className="text-sm text-body">Showing {data.rows.length.toLocaleString("en-IN")} of {data.total.toLocaleString("en-IN")} college-company relationships · page {data.query.page} of {data.totalPages}.</p>
 
+    {data.total>0?<Link href={"/api/admin/companies/export?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,companyStatus:data.query.companyStatus,trust:data.query.trust,verified:data.query.verified,sort:data.query.sort,searchField:data.query.searchField,page:String(data.query.page),...(data.query.collegeId?{collegeId:data.query.collegeId}:{}),...(data.query.companyId?{companyId:data.query.companyId}:{})}).toString()}
+      className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-[14px] font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+      ↓ Export CSV (matching filters; up to 2,000 rows)
+    </Link>:<Button type="button" variant="secondary" disabled>Export CSV</Button>}
     <DataTable caption="This college's companies" columns={collegeColumns} rows={collegeRows}
+      sortHref={(key,next)=>{
+       const sort=key==="company"?(next==="ascending"?"NAME":"NAME_DESC"):
+         key==="drives"?(next==="ascending"?"DRIVES_ASC":"DRIVES"):
+         next==="ascending"?"LAST_ACTIVE_ASC":"LAST_ACTIVE";
+       return "/admin/companies?"+new URLSearchParams({
+        q:data.query.q,status:data.query.status,companyStatus:data.query.companyStatus,
+        owner:data.query.owner,website:data.query.website,verified:data.query.verified,
+        searchField:data.query.searchField,changedWithin:data.query.changedWithin,
+        trust:data.query.trust,view:"COLLEGE",sort,page:"1",
+        ...(data.query.collegeId?{collegeId:data.query.collegeId}:{}),
+        ...(data.query.companyId?{companyId:data.query.companyId}:{}),
+       }).toString();
+      }}
       getRowKey={row=>row.relationshipId}
       empty={<EmptyState title={data.query.q?"No matching companies":"No companies yet"}
        description={data.query.q?"No company relationships match your search.":"No companies yet — add one to start reusing it across job postings."}/>}/>
-    <p className="text-xs text-muted-foreground">Results contain up to 50 scoped relationships per page. Dates and default page-local ordering use IST; “Never posted” means no drive activity has been recorded.</p>
-    {data.truncated ? <p className="text-sm text-muted-foreground">Only 50 matching relationships are shown per page. Review other pages for remaining matches.</p> : null}
+    <p className="text-xs text-muted-foreground">Results contain up to 10 scoped relationships per page. Dates and default page-local ordering use IST; “Never posted” means no drive activity has been recorded.</p>
+    {data.truncated ? <p className="text-sm text-muted-foreground">Only 10 matching relationships are shown per page. Review other pages for remaining matches.</p> : null}
     <nav className="flex flex-wrap items-center gap-3 text-sm" aria-label="Company directory pages">
       {data.query.page > 1 ? <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 hover:text-[var(--lms-primary-text)]" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,searchField:data.query.searchField,companyStatus:data.query.companyStatus,verified:data.query.verified,view,sort:data.query.sort,...(data.query.companyId?{companyId:data.query.companyId}:{}),trust:data.query.trust,page:String(data.query.page-1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Previous</Link> : null}
       {data.query.page < data.totalPages ? <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 hover:text-[var(--lms-primary-text)]" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,trust:data.query.trust,searchField:data.query.searchField,companyStatus:data.query.companyStatus,verified:data.query.verified,view,sort:data.query.sort,...(data.query.companyId?{companyId:data.query.companyId}:{}),page:String(data.query.page+1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Next</Link> : null}
@@ -255,7 +280,7 @@ export default async function SuperAdminCompaniesPage({
           {context.adminScope?.collegeId ? <SuperAdminCompanyMerge companies={group.companies} /> :
             <p className="text-xs text-muted-foreground">Select one exact college scope to review a merge.</p>}
         </li>)}</ul>}
-      {data.truncated?<p className="text-xs text-muted-foreground">Only this 50-row page was checked. Move through pages before concluding there are no duplicate identities.</p>:null}
+      {data.truncated?<p className="text-xs text-muted-foreground">Only this 10-row page was checked. Move through pages before concluding there are no duplicate identities.</p>:null}
     </section>
     <section className="min-w-0 space-y-3 border-b border-border pb-4" aria-label="Name identity review">
       <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Same-name identities to review</h2>
@@ -268,10 +293,7 @@ export default async function SuperAdminCompaniesPage({
       {data.truncated?<p className="text-xs text-muted-foreground">Only this page of scoped relationships was reviewed.</p>:null}
     </section>
     </Disclosure>
-    <Link href={"/api/admin/companies/export?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,companyStatus:data.query.companyStatus,trust:data.query.trust,verified:data.query.verified,sort:data.query.sort,searchField:data.query.searchField,page:String(data.query.page),...(data.query.collegeId?{collegeId:data.query.collegeId}:{}),...(data.query.companyId?{companyId:data.query.companyId}:{})}).toString()}
-      className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-[14px] font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-      ↓ Export CSV (matching filters; up to 2,000 rows)
-    </Link>
+
     <Link href="/admin/placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">← Placement operations</Link>
   </div>;
 }

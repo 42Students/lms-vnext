@@ -22,13 +22,13 @@ type Filters=z.infer<typeof adminCompaniesQuerySchema>;
 const formatLast=(date:Date|null)=>date?new Intl.DateTimeFormat("en-IN",{
  timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric",
 }).format(date):"Never posted";
-function safeHttps(raw:string|null){
+export function safeCompanyWebsite(raw:string|null){
  if(!raw)return null;
  try{const u=new URL(raw);return u.protocol==="https:"&&!u.username&&!u.password?u.toString():null;}
  catch{return null;}
 }
-function Logo({name,url}:{name:string;url:string|null}){
- const safe=safeHttps(url);
+export function SuperAdminCompanyAvatar({name,url}:{name:string;url:string|null}){
+ const safe=safeCompanyWebsite(url);
  return <span aria-hidden="true" className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-primary-subtle)] text-xs font-semibold text-primary-text">
   {safe?<img width={32} height={32} loading="lazy" alt="" src={safe} className="size-8 object-contain"/>:
    name.split(/\s+/).slice(0,2).map(word=>word[0]?.toUpperCase()??"").join("")}
@@ -55,7 +55,7 @@ export async function SuperAdminGlobalCompanyCatalogue({context,filters}:{
  const data=load.value;
  const columns:DataTableColumn<(typeof data.rows)[number]>[]=[
   {key:"name",header:"Company",mobilePriority:"primary",cell:row=><div className="flex min-w-0 gap-3">
-   <Logo name={row.name} url={row.logoPublicUrl}/>
+   <SuperAdminCompanyAvatar name={row.name} url={row.logoPublicUrl}/>
    <div className="min-w-0 space-y-1">
     <div className="font-semibold text-[var(--lms-heading)]">{row.name}</div>
     {row.website?<div className="break-all text-xs text-muted-foreground">{row.website}</div>:null}
@@ -64,7 +64,7 @@ export async function SuperAdminGlobalCompanyCatalogue({context,filters}:{
    </div>
   </div>},
   {key:"domains",header:"Domains",mobilePriority:"secondary",cell:row=><span className="break-all">{row.domains.length?row.domains.join(", "):"None"}</span>},
-  {key:"added",header:"Added by",cell:row=><span>{row.companyCollegeCount?"college":"-"}</span>},
+  {key:"added",header:"Added by",cell:row=><span>{row.addedByLabel??"-"}</span>},
   {key:"drives",header:"Drives",cell:row=><span className="tabular-nums">{row.driveCount}</span>},
   {key:"last",header:"Last active",cell:row=><span>{formatLast(row.lastActiveAt)}</span>},
   {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><div className="flex flex-wrap items-center gap-2">
@@ -77,10 +77,7 @@ export async function SuperAdminGlobalCompanyCatalogue({context,filters}:{
        domains={row.domains} aliases={row.aliases}/>
      </Disclosure>
     </>}
-    <Link href={"/admin/companies/"+encodeURIComponent(row.companyId)+"/drives"}
-     target="_blank" rel="noopener noreferrer"
-     className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">History</Link>
-    <p className="text-xs text-muted-foreground">Select a college to merge</p>
+    <span className="text-xs text-muted-foreground">Select a college to review History or Merge</span>
    </div>},
  ];
  const csv=["Company,Website,Domains,Other names,Verified,Drives,Last active",
