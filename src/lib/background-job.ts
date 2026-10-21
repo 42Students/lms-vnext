@@ -4,6 +4,13 @@
  * Usage: await runBackgroundJob("email.delivery", () => deliver(), {
  *   idempotent: true, maxAttempts: 3,
  * }); // Returns a result, never a thrown background exception.
+ *
+ * Log polling does NOT run through this generic retry helper: its source
+ * limits and durable deduplication live in modules/log-alerts/scheduler.ts.
+ * That scheduler caps Telegram bursts at five per minute and drains at most
+ * two *complete* provider pages per invocation (stricter than the legacy
+ * four-page ceiling, to preserve the lease deadline). Generic retries here
+ * must never replay provider pages without the poll cursor.
  */
 import { createRequestId } from "@/lib/request-id";
 import { logError, logInfo } from "@/observability/logger";

@@ -52,6 +52,7 @@ export async function getCollegeStudentDetail(
     status: learnerProgramEnrollments.status,
     programName: programs.name,
     programCode: programs.code,
+    departmentName: departments.name,
     cohortName: cohorts.name,
     cohortCode: cohorts.code,
   }).from(learnerProgramEnrollments)
@@ -67,7 +68,11 @@ export async function getCollegeStudentDetail(
     .where(eq(learnerProgramEnrollments.membershipId, membershipId))
     .orderBy(asc(programs.name), asc(cohorts.name));
 
-  const activeEnrollIds = enrollments.filter(r => r.status === "ACTIVE").map(r => r.id);
+  // A suspended/ended membership retains its historical department label but
+  // must not inflate active programme/class blast-radius counts.
+  const activeEnrollIds = person.status === "ACTIVE"
+    ? enrollments.filter(r => r.status === "ACTIVE").map(r => r.id)
+    : [];
   const classes = activeEnrollIds.length
     ? await db.select({
       enrollmentId: sectionEnrollments.learnerEnrollmentId,
@@ -120,6 +125,8 @@ export async function getCollegeStudentDetail(
     filter,
     enrollments:filter.status === "ALL" ? enrollments : enrollments.filter(row=>row.status===filter.status),
     enrollmentTotal:enrollments.length,
+    activeEnrollmentCount:activeEnrollIds.length,
+    activeClassCount:classes.length,
     classes,
     attendance: recordedAttendanceSummary(attendance),
   };
