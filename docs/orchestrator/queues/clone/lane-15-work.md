@@ -70,4 +70,4 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-15/src_db_schema_recruiter-message-email.ts.md` (edit src/db/schema/recruiter-message-email.ts; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-15/src_db_schema_placement-tpo-notice-audiences.ts.md` (edit src/db/schema/placement-tpo-notice-audiences.ts; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-15/src_db_schema_college-signin.ts.md` (edit src/db/schema/college-signin.ts; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-15/drizzle_0131_placement_tpo_job_types_canonical.sql.md` (edit drizzle/0131_placement_tpo_job_types_canonical.sql; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-15/drizzle_0131_placement_tpo_job_types_canonical.sql.md` (edit drizzle/0131_placement_tpo_job_types_canonical.sql; 1 findings; best P1)
