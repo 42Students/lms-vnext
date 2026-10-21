@@ -1653,7 +1653,15 @@ export function ProjectWorkspace({
         </div>
         {mode==="ADMIN"?<AdminDeliveryOverview workspace={workspace}/>:null}
         {mode==="ADMIN"&&workspace.finalDelivery.submissions.length>0?
-         <h3 className="mt-4 text-sm font-semibold">Submission history</h3>:null}
+         <div className="mt-4 space-y-1">
+          <h3 className="text-sm font-semibold">Submission history</h3>
+          <p className="text-xs text-body">
+            {workspace.finalDelivery.submissions.length} recorded version{
+              workspace.finalDelivery.submissions.length===1?"":"s"}.
+            The latest version is shown first. Expand an earlier version to
+            review its original evidence and decisions.
+          </p>
+         </div>:null}
         {mode==="MENTOR" && workspace.mentorEvidence.latestDelivery ? (
           <p role="status" className="min-w-0 border-y border-[var(--lms-canvas-border)] py-3 text-sm text-body">
             Latest recorded delivery: version {workspace.mentorEvidence.latestDelivery?.version}
@@ -1671,7 +1679,8 @@ export function ProjectWorkspace({
           </div>
         ) : (
           <div className="space-y-3">
-            {workspace.finalDelivery.submissions.map(
+            {[...workspace.finalDelivery.submissions].sort(
+              (a,b)=>b.version-a.version).map(
               (submission) => {
                 const review =
                   reviewsBySubmission.get(
@@ -1689,7 +1698,9 @@ export function ProjectWorkspace({
                   submission.demoUrl,
                 );
 
-                return (
+                const historical=workspace.finalDelivery.submissions.some(
+                  row=>row.version>submission.version);
+                const content=(
                   <article
                     key={submission.id}
                     className="min-w-0 scroll-mt-24 border-b border-[var(--lms-canvas-border)] py-4"
@@ -1861,6 +1872,13 @@ export function ProjectWorkspace({
                     ) : null}
                   </article>
                 );
+                return historical?
+                  <Disclosure key={submission.id}
+                    title={"Earlier submission · version "+submission.version+
+                      " · "+label(submission.status)}
+                    className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-3">
+                    {content}
+                  </Disclosure>:content;
               },
             )}
           </div>
