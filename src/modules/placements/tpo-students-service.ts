@@ -315,6 +315,7 @@ export async function getTpoStudentsIntelligence(
       diplomaPctBasisPoints:placementCandidateAcademicEvidence.diplomaPctBasisPoints,
       undergraduatePctBasisPoints:placementCandidateAcademicEvidence.undergraduatePctBasisPoints,
       postgraduatePctBasisPoints:placementCandidateAcademicEvidence.postgraduatePctBasisPoints,
+      hasPostgraduateQualification:placementCandidateAcademicEvidence.hasPostgraduateQualification,
       academicImportedAt:placementCandidateAcademicEvidence.importedAt,
       academicVerifiedBy:placementCandidateAcademicEvidence.verifiedByUserId,
       passingYear:placementCandidateAcademicEvidence.passingYear,
@@ -463,7 +464,11 @@ export async function getTpoStudentsIntelligence(
         choice: placementBatchRegistrations.choice,
       })
       .from(placementBatchRegistrations)
-      .where(eq(placementBatchRegistrations.collegeId, college.id));
+      // Do not materialize years of unrelated or historical registrations.
+      // Every requested row belongs to this already-authorized college roster.
+      .where(and(eq(placementBatchRegistrations.collegeId,college.id),
+        inArray(placementBatchRegistrations.membershipId,
+          [...new Set(learners.map(learner=>learner.membershipId))])));
 
     for (const registration of registrations) {
       registrationChoiceByLearner.set(
@@ -1007,6 +1012,7 @@ export async function getTpoStudentsIntelligence(
         requiresAuthorizedDetailAccess:true as const,
       },
       academicProvenance:{
+        hasPostgraduateQualification:learner.hasPostgraduateQualification,
         pgPct:learner.postgraduatePctBasisPoints==null?null:learner.postgraduatePctBasisPoints/100,
         source:learner.academicSource,
         importedAt:learner.academicImportedAt,
