@@ -102,7 +102,8 @@ export default async function SuperAdminProjectTemplateDetailPage({
             {can(context, "project-template.manage") && detail.template.status === "DRAFT" ?
               <TemplateMetadataEditControl templateId={detail.template.id} title={detail.template.title}
                 summary={detail.template.summary} currentVersion={detail.template.currentVersion}
-                updatedAt={detail.template.updatedAt.toISOString()} /> : null}
+                updatedAt={detail.template.updatedAt.toISOString()}
+                slug={detail.template.slug} blueprint={detail.currentVersion!.blueprint} /> : null}
             {can(context, "project-template.manage") || context.adminScope?.collegeId ? (
             <ProjectTemplateActions
               templateId={detail.template.id}
@@ -112,6 +113,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
                 context.adminScope?.collegeId ?? null
               }
               allowGlobalActions={can(context, "project-template.manage")}
+              blueprint={detail.currentVersion?.blueprint}
               assignedToSelectedCollege={
                 Boolean(
                   context.adminScope?.collegeId &&
