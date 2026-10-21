@@ -70,3 +70,28 @@ export const moduleAccessRules = pgTable(
     ),
   ],
 );
+
+/** Every legacy AppSetting import is reviewed as (module, scope, ID, value,
+ * locked). Duplicate scope-module pairs with conflicting values are errors,
+ * never last-write-wins. Orphan locks become import exceptions, not false
+ * disabled rules. Public tree views may show both effective access and the
+ * nearest inherited lock, but cannot use this table as a permission grant. */
+export const LEGACY_MODULE_SETTING_KEYS={
+ "PROJECTS":"projects","PLACEMENTS":"placements","ELECTIVES":"electives",
+} as const;
+export function legacyModuleBooleanToken(raw:unknown):boolean{
+ if(typeof raw==="boolean")return raw;
+ if(typeof raw==="number")return raw===1;
+ if(typeof raw!=="string")return false;
+ const key=raw.trim().toLowerCase();
+ return key==="true"||key==="1"||key==="yes"||key==="on"||key==="enabled";
+}
+export function moduleRuleTreeProjection(input:{
+ effectiveEnabled:boolean;locked:boolean;
+ inheritedLocked:boolean;lockScope:string|null;
+}){
+ return {enabled:input.effectiveEnabled,
+   locked:input.locked||input.inheritedLocked,
+   lockInherited:input.inheritedLocked,
+   lockedByScope:input.lockScope};
+}
