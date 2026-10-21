@@ -52,10 +52,14 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
     {selected&&!controls.success?<ErrorState title="Invalid batch filters" description="Choose a valid program, status, page and page size." action={<Link href="/admin/batches" className="font-semibold text-link underline">Clear filters</Link>}/>:null}
     {selected&&controls.success&&!data?<ErrorState title="Could not load batches" description="The batch directory could not refresh. No records were changed." action={<Link href="/admin/batches" className="font-semibold text-link underline">Retry</Link>}/>:null}
     {data ? <>
-      <CollegeCohortCreateForm programs={data.programs.filter(row => row.status === "ACTIVE")} periods={periods} academicSetupHref="/admin/academics" />
       <Tabs ariaLabel="Batch lifecycle views" value={data.query.status} renderPanel={false} items={([
         ["ALL","All batches"],["ACTIVE","Active batches"],["INACTIVE","Show inactive"],["COMPLETED","Show completed"],
       ] as const).map(([value,label])=>({value,label,href:pageUrl({...data.query,status:value,page:1})}))}/>
+      <div className="grid min-w-0 items-start gap-[var(--lms-space-4)] min-[992px]:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
+       <div className="min-w-0">
+      <CollegeCohortCreateForm programs={data.programs.filter(row => row.status === "ACTIVE")} periods={periods} academicSetupHref="/admin/academics" />
+       </div>
+       <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <section aria-label="Filter managed batches" className="border-b border-border pb-4">
         <form action="/admin/batches" method="get" role="search" aria-label="Batch filters" className="grid min-w-0 items-end gap-[8px] min-[768px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
           <label className="grid min-w-0 w-full gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -136,6 +140,8 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
           Batch Promotion →
         </Link>
       </section>
+       </div>
+      </div>
     </> : null}
   </div>;
 }
