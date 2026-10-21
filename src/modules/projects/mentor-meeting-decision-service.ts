@@ -56,17 +56,24 @@ export async function decideMentorProjectMeeting(context:RequestContext,rawProje
     sql`date_trunc('milliseconds', ${projectMeetings.updatedAt}) = ${expected.toISOString()}::timestamptz`,
    )).returning();
   if(!updated)throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
-  // MEN-projects-meetings-27: an unsent mentor draft is not announced to learners.
-  if(current.status==="DRAFT")return updated;
+  // Record the revision even if it was an unpublished mentor draft; only
+  // outward learner notifications are suppressed for private drafts.
   const event=await recordActivityEventInTransaction(tx,context,{
    eventType:ACTIVITY_EVENT_TYPES.PROJECTS_MEETING_DECIDED,
    collegeId:scope.collegeId,organizationId:scope.organizationId,
    subjectType:"project_meeting",subjectId:updated.id,
    summary:input.action==="COMPLETE"?"Project meeting completed":"Project meeting cancelled",
-   metadata:{projectId:scope.project.id,previousStatus:current.status,status:updated.status,
+   metadata:{projectId:scope.project.id,meetingId:updated.id,
+    actorMembershipId:member.id,action:input.action,
+    before:{status:current.status,hasOutcome:Boolean(current.outcome),
+     hasCancellationNote:Boolean(current.cancellationNote),version:current.updatedAt.toISOString()},
+    after:{status:updated.status,hasOutcome:Boolean(updated.outcome),
+     hasCancellationNote:Boolean(updated.cancellationNote),version:updated.updatedAt.toISOString()},
+    previousStatus:current.status,status:updated.status,
     hadOutcome:Boolean(input.outcome),hadNote:Boolean(input.note)},
    groupKey:"project:"+scope.project.id+":meetings",
   });
+  if(current.status==="DRAFT")return updated;
   await notifyActiveProjectMembers(tx,event.id,{
     projectId:scope.project.id,collegeId:scope.collegeId,roles:["LEARNER"],
     exceptUserId:context.user.id,title:"Project meeting",
