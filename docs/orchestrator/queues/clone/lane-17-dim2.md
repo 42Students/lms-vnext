@@ -355,19 +355,19 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-17.md: file, number of
 - [x] `src/app/(authenticated)/hr/profile/page.tsx`
 - [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/page.tsx`
 - [x] `src/app/(authenticated)/tpo/audit/actors/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/[companyId]/contact-log/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/[companyId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/drive-day/[roundId]/no-shows/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/messages/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/accreditation/page.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/[companyId]/contact-log/page.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/[companyId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/drive-day/[roundId]/no-shows/page.tsx`
+- [x] `src/app/(authenticated)/tpo/messages/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/accreditation/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/after-college/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/branch-season/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
