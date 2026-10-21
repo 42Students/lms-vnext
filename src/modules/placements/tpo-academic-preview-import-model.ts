@@ -6,10 +6,10 @@ export const tpoAcademicPreviewRowSchema=z.object({
  activeBacklogs:z.coerce.number().int().min(0).max(100),
 }).strict();
 export function parseTpoAcademicPreviewCsv(csv:string){
- if(csv.length>50000)throw new Error("CSV exceeds 50,000 characters.");
+ if(csv.length>5_000_000)throw new Error("CSV exceeds 5,000,000 characters.");
  const rows=csv.trim().split(/\r?\n/);
  if(rows[0]?.trim()!=="studentCode,cgpa,activeBacklogs")throw new Error("Required header: studentCode,cgpa,activeBacklogs");
- if(rows.length>201)throw new Error("Maximum 200 data rows.");
+ if(rows.length-1>TPO_LEGACY_ACADEMIC_MAX_ROWS)throw new Error("Maximum 5000 data rows.");
  const seen=new Set<string>();
  return rows.slice(1).filter(Boolean).map((line,index)=>{
   if(line.includes('"')||line.split(",").length!==3)throw new Error("Invalid unquoted CSV at row "+(index+2));
@@ -30,10 +30,10 @@ export function previewTpoAcademicPageMatches<T extends {studentCode:string}>(ro
 /** Accept common LMS export header aliases without accepting ambiguous fields.
  * Import identifiers are college membership UUIDs, as in the Students CSV. */
 export function parseTpoAcademicImportCsv(csv: string) {
- if (csv.length > 200000) throw new Error("CSV exceeds 200,000 characters.");
+ if (csv.length > 5_000_000) throw new Error("CSV exceeds 5,000,000 characters.");
  const lines = csv.replace(/^\uFEFF/, "").trim().split(/\r?\n/);
  if (lines.length < 2) throw new Error("CSV needs a header and at least one student row.");
- if (lines.length > 201) throw new Error("Maximum 200 data rows.");
+ if (lines.length-1 > TPO_LEGACY_ACADEMIC_MAX_ROWS) throw new Error("Maximum 5000 data rows.");
  const clean = (v: string) => v.trim().replace(/^"|"$/g, "");
  const rawHeaders=lines[0]!.split(",").map(clean);
  const mapped=mapTpoImportHeaders(rawHeaders,["studentCode","cgpa","activeBacklogs"]);
