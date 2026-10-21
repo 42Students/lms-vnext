@@ -1,6 +1,18 @@
 import { z } from "zod";
 
 export const COLLEGE_ACADEMIC_PAGE_SIZE = 25;
+export const COLLEGE_ACADEMIC_AUTOCOMPLETE_LIMIT = 15;
+export const academicPageSizeOptions=[10,25,50,100] as const;
+export const academicDirectoryPageSizeStorageKey="admin-semesters-page-size";
+/** Read browser preference ONLY in client hydration, not a server render.
+ * Returns 25 for corrupt/disallowed preferences; remains bounded by Zod.
+ */
+export function readAcademicPageSizePreference(storage?:Pick<Storage,"getItem">|null):number {
+  let value:string|null=null;
+  try{value=storage?.getItem(academicDirectoryPageSizeStorageKey)??null;}catch{return 25;}
+  const number=Number(value);
+  return academicPageSizeOptions.some(size=>size===number)?number:COLLEGE_ACADEMIC_PAGE_SIZE;
+}
 
 // Browser query numbers must be decimal digits. z.coerce.number() would
 // silently accept exponent, hexadecimal, and whitespace forms.
@@ -14,7 +26,7 @@ const common = {
   q: z.string().trim().max(100).default(""),
   programId: z.string().uuid().optional(),
   page: directoryDecimal(1,1000).default(1),
-  pageSize: directoryDecimal(10,100).refine(n => [10,25,50,100].includes(n)).default(10),
+  pageSize: directoryDecimal(10,100).refine(n => [10,25,50,100].includes(n)).default(COLLEGE_ACADEMIC_PAGE_SIZE),
 };
 
 export const collegeSemesterDirectoryBaseSchema = z.object({
@@ -90,7 +102,7 @@ export function academicDirectoryHref(
   if ("activeClassState" in query && query.activeClassState && query.activeClassState !== "ALL") params.set("activeClassState",query.activeClassState);
   if ("activeLearnerState" in query && query.activeLearnerState && query.activeLearnerState !== "ALL") params.set("activeLearnerState",query.activeLearnerState);
   if (query.page !== 1) params.set("page", String(query.page));
-  if (query.pageSize !== 10) params.set("pageSize", String(query.pageSize));
+  if (query.pageSize !== COLLEGE_ACADEMIC_PAGE_SIZE) params.set("pageSize", String(query.pageSize));
   return params.size ? base + "?" + params.toString() : base;
 }
 
