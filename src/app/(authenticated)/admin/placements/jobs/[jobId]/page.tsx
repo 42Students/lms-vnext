@@ -89,32 +89,11 @@ export default async function AdminPlacementDrivePage({
         {item.label}
       </Link>)}
     </nav>
-    {attention.length>0?<Banner tone="warning" role="status">
-      <section aria-label="Needs attention" className="space-y-2">
-        <h2 className="text-sm font-semibold">Needs attention ({attention.reduce((sum,item)=>sum+item.count,0)})</h2>
-        <ul className="space-y-2">
-          {attention.map(item=><li key={item.label} className="flex min-w-0 flex-wrap items-baseline gap-2 text-sm">
-            <strong>{item.label} ({item.count})</strong>
-            <span>{item.details}</span>
-            {item.stage?<Link href={root+"/applications?stage="+encodeURIComponent(item.stage)+
-              (preserved?"&"+preserved.slice(1):"")}
-              className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">
-              Review applications →
-            </Link>:<span className="text-xs text-muted-foreground">Closing soon · low conversion</span>}
-          </li>)}
-        </ul>
-      </section>
-    </Banner>:null}
     <PlacementDriveWorkspace
       context={context}
       jobId={jobId}
       applicationsHref={withReturn(root+"/applications")}
-      overview={pipeline ? <SuperAdminDrivePipeline rows={pipeline}/> :
-        <Banner tone="warning" role="status"
-          action={<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)}
-            className="font-semibold text-primary-text underline">Retry metrics</Link>}>
-          Could not load pipeline metrics. The drive details and actions remain available.
-        </Banner>}
+      overview={<SuperAdminDrivePipeline rows={pipeline} attention={attention} jobId={jobId}/>}
     />
    </div>
   );
