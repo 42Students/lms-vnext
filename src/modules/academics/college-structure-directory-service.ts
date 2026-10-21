@@ -71,6 +71,7 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
     capacity: sections.capacity,
     description: sections.description,
     programId: sql<string | null>`${programs.id}`.as("class_program_id"),
+    linkedProgramId: sql<string | null>`${cohorts.programId}`.as("linked_class_program_id"),
     programName: sql<string | null>`${programs.name}`.as("class_program_name"),
     cohortName: sql<string | null>`${cohorts.name}`.as("class_cohort_name"),
     periodName: sql<string>`${academicPeriods.name}`.as("class_period_name"),
