@@ -320,14 +320,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-11.md: file, number of
 - [x] `src/components/courses/faculty-course-list.tsx`
 - [x] `src/components/courses/faculty-course-roster.tsx`
 - [x] `src/components/courses/learner-assessment-metric-glyph.tsx`
-- [ ] `src/components/courses/learner-course-card-image.tsx`
-- [ ] `src/components/marketing/marketing-layout.tsx`
-- [ ] `src/components/placements/learner-placement-snapshot-glyph.tsx`
-- [ ] `src/components/profile/learner-profile-workspace.tsx`
-- [ ] `src/components/projects/project-workspace.tsx`
-- [ ] `src/components/public/error-page-view.tsx`
-- [ ] `src/components/public/graceful-screen.tsx`
-- [ ] `src/components/public/public-page-loading.tsx`
+- [x] `src/components/courses/learner-course-card-image.tsx`
+- [x] `src/components/marketing/marketing-layout.tsx`
+- [x] `src/components/placements/learner-placement-snapshot-glyph.tsx`
+- [x] `src/components/profile/learner-profile-workspace.tsx`
+- [x] `src/components/projects/project-workspace.tsx`
+- [x] `src/components/public/error-page-view.tsx`
+- [x] `src/components/public/graceful-screen.tsx`
+- [x] `src/components/public/public-page-loading.tsx`
 - [ ] `src/components/shell/learner-faculty-mobile-footer.tsx`
 - [ ] `src/components/shell/mobile-navigation.tsx`
 - [ ] `src/components/shell/shell-nav-icons.tsx`
