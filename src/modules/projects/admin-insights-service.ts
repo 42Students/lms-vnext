@@ -620,6 +620,7 @@ export async function listProjectAdminRiskQueue(
         .from(projectInstances)
         .where(where)
         .orderBy(
+          query.riskSort==="INACTIVE_DESC"?desc(lastActivityAt):
           query.riskSort==="WORKSPACE"?asc(projectInstances.title):
             query.riskSort==="SEVERITY"
               ? asc(sql`case when ${blockedTask} or (${lastActivityAt} <= ${staleCutoff} and ${pendingReview}) then 0 else 1 end`)

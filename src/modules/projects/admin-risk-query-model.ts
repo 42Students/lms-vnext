@@ -8,11 +8,11 @@ const decimalPage = (min: number, max: number, fallback: number) => z.union([
 
 const schema = z.strictObject({
   riskBucket: z.enum(["STALLED","BLOCKER","REVIEW"]).optional(),
-  riskSort: z.enum(["INACTIVE","WORKSPACE","SEVERITY"]).optional(),
+  riskSort: z.enum(["INACTIVE","INACTIVE_DESC","WORKSPACE","SEVERITY"]).optional(),
   q: z.string().trim().max(120).optional(),
   status: z.enum(["PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).optional(),
   page: decimalPage(1,100000,1),
-  pageSize: decimalPage(10,100,25),
+  pageSize: z.literal(25).default(25),
 });
 const first = (value: string | string[] | undefined) => Array.isArray(value) ? value[0] : value;
 
@@ -30,7 +30,7 @@ export function parseProjectAdminRiskQuery(params: Record<string,string|string[]
     riskBucket: legacyFilter ? legacyFilter.toUpperCase() : first(params.riskBucket),
     riskSort: first(params.riskSort),
     q: first(params.search) ?? first(params.q), status: first(params.status),
-    page: first(params.page), pageSize: first(params.pageSize),
+    page: first(params.page), pageSize: first(params.pageSize)===undefined?25:first(params.pageSize)==="25"?25:NaN,
   };
   return schema.safeParse(Object.fromEntries(
     Object.entries(entries).filter(([key,value])=>value!==undefined&&(value!=="" || key==="page" || key==="pageSize")),

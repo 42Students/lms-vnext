@@ -15,22 +15,20 @@ type SubmissionRow = {
   demoUrl: string | null;
 };
 
-export function ProjectSubmissionsPageExport({ rows }: { rows: readonly SubmissionRow[] }) {
+export function ProjectSubmissionsPageExport({ rows,view="ALL" }: { rows: readonly SubmissionRow[]; view?:"ALL"|"NOT_SUBMITTED" }) {
   function exportPage() {
-    const headings = ["Workspace","Submission type","Review status","Pending (days)","Submitted",
-      "Revisions","Reviewed by","Source link","Demo link","Version"];
-    const data = rows.map(row => [row.workspace,row.submissionType,row.status,row.pendingDays,
-      row.submittedAt,row.revisions,row.reviewedBy,row.sourceUrl,row.demoUrl,row.version]);
+    const headings=view==="NOT_SUBMITTED"?["Workspace","Status","Progress"]:["Workspace","Submission type","Review status","Submitted at"];
+    const data=rows.map(row=>view==="NOT_SUBMITTED"?[row.workspace,row.status,String(row.pendingDays??0)+"%"]:[row.workspace,row.submissionType,row.status,row.submittedAt]);
     const csv = projectAdminCsv([headings,...data]);
     const objectUrl = URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
     const anchor = document.createElement("a");
     anchor.href = objectUrl;
-    anchor.download = "project-submissions-page.csv";
+    anchor.download = view==="NOT_SUBMITTED"?"project-not-submitted.csv":"project-submissions.csv";
     anchor.click();
     URL.revokeObjectURL(objectUrl);
   }
   return <Button variant="secondary" type="button" onClick={exportPage} disabled={rows.length===0}
     className="">
-    Export CSV
+    Export displayed page CSV
   </Button>;
 }

@@ -145,7 +145,11 @@ export async function ProjectAdminSubmissionsPage({
           className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Retry loading workspaces</Link>}/>:null}
       {unsubmitted?<section className="min-w-0 space-y-3 border-b border-border pb-4">
         <FilterBar title="Filters"><ProjectAdminFilters query={query} filterView="NOT_SUBMITTED"/></FilterBar>
-        <ListToolbar label="Unsubmitted workspaces" viewCount={unsubmitted.total} />
+        <ListToolbar label="Unsubmitted workspaces" viewCount={unsubmitted.total}
+          exportAction={<ProjectSubmissionsPageExport view="NOT_SUBMITTED" rows={unsubmitted.items.map(item=>({
+            workspace:item.title,version:0,status:item.status,submissionType:"",pendingDays:item.progressPercent,
+            submittedAt:null,revisions:0,reviewedBy:null,sourceUrl:null,demoUrl:null,
+          }))}/>} />
         <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Not submitted · {unsubmitted.total} workspaces</h2>
         <DataTable
           caption="Unsubmitted project workspaces"
