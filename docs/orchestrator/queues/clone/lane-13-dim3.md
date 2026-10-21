@@ -74,16 +74,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-13.md: file, number of
 - [x] `src/components/courses/learner-course-overview.tsx`
 - [x] `src/components/placements/college-drive-archive-action.tsx`
 - [x] `src/components/placements/learner-jobs-browse.tsx`
-- [ ] `src/components/placements/public-join-preview-retry.tsx`
-- [ ] `src/components/placements/tpo-offer-lifecycle-panel.tsx`
-- [ ] `src/components/projects/project-resource-files-panel.tsx`
-- [ ] `src/components/shell/topbar/organization-switcher.tsx`
-- [ ] `src/components/tpo/tpo-batch-workspace-tabs.tsx`
-- [ ] `src/components/tpo/tpo-team-ask-panel.tsx`
-- [ ] `src/components/ui/tabs.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/requests/loading.tsx`
-- [ ] `src/app/enterprises/page.tsx`
-- [ ] `src/components/activity/learner-notifications-inbox.tsx`
+- [x] `src/components/placements/public-join-preview-retry.tsx`
+- [x] `src/components/placements/tpo-offer-lifecycle-panel.tsx`
+- [x] `src/components/projects/project-resource-files-panel.tsx`
+- [x] `src/components/shell/topbar/organization-switcher.tsx`
+- [x] `src/components/tpo/tpo-batch-workspace-tabs.tsx`
+- [x] `src/components/tpo/tpo-team-ask-panel.tsx`
+- [x] `src/components/ui/tabs.tsx`
+- [x] `src/app/(authenticated)/tpo/students/requests/loading.tsx`
+- [x] `src/app/enterprises/page.tsx`
+- [x] `src/components/activity/learner-notifications-inbox.tsx`
 - [ ] `src/components/admin/person-onboard-dialog.tsx`
 - [ ] `src/components/college/college-student-import-history.tsx`
 - [ ] `src/components/courses/faculty-assignment-material-links.tsx`

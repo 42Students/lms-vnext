@@ -179,7 +179,7 @@ export function TpoOfferLifecyclePanel({
           className="mt-2 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm font-normal text-foreground"
         />
       </label>
-      <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+      <div className="flex flex-col items-stretch gap-3 md:flex-row md:flex-wrap md:items-center md:justify-between">
         <span className="text-sm text-body">{ids.length} / 200 selected</span>
         <label className="flex min-w-0 items-start gap-[6px] break-words text-[13px] text-[var(--lms-neutral-400)]">
           <Checkbox checked={reviewed} disabled={busy}
@@ -188,7 +188,7 @@ export function TpoOfferLifecyclePanel({
           This is an audited administrative action, not a learner self-response.
         </label>
         <Button
-          className="min-h-11 w-full sm:w-auto md:min-h-9"
+          className="min-h-11 w-full md:w-auto md:min-h-9"
           loading={busy}
           type="button"
           disabled={!valid || busy || !reviewed}

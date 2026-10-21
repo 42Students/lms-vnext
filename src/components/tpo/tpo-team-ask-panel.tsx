@@ -33,20 +33,20 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
   }catch{setError("Could not update this ask. Your note is still here. Try again.");}
   finally{pending.current=false;setBusy(false);}
  }
- return <div className="mt-2 flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
-  {canDone?<Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy}
+ return <div className="mt-2 flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap">
+  {canDone?<Button variant="secondary" type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy}
    
    onClick={()=>{setError("");setConfirmation("DONE");}}>Mark done</Button>:null}
-  {canCancel?<Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy}
+  {canCancel?<Button variant="secondary" type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy}
    
    onClick={()=>{setError("");setConfirmation("CANCEL");}}>Cancel ask</Button>:null}
   <Dialog open={Boolean(confirmation)} onOpenChange={next=>{if(!next&&!busy){setConfirmation(null);setError("");}}} dismissible={!busy} role="alertdialog"
    title={confirmation==="DONE"?"Mark the ask done":"Cancel this ask?"} className="max-w-md"
-   footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-    <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={busy} onClick={()=>{setConfirmation(null);setError("");}}>
+   footer={<div className="flex w-full flex-col-reverse gap-2 md:flex-row md:justify-end">
+    <Button variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-9" type="button" disabled={busy} onClick={()=>{setConfirmation(null);setError("");}}>
      {confirmation==="CANCEL"?"Keep it":"Not now"}
     </Button>
-    <Button variant={confirmation==="CANCEL"?"danger":"primary"} loading={busy} disabled={busy} type="button" onClick={()=>void submit()} className="min-h-11 w-full sm:w-auto md:min-h-9">
+    <Button variant={confirmation==="CANCEL"?"danger":"primary"} loading={busy} disabled={busy} type="button" onClick={()=>void submit()} className="min-h-11 w-full md:w-auto md:min-h-9">
      {busy?"Saving…":confirmation==="DONE"?"Mark done":"Cancel the ask"}
     </Button>
    </div>}>
@@ -105,7 +105,7 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,reci
      className="min-h-11 w-full min-w-0 md:min-h-9"/>
    </label>
    {error?<InlineNotice tone="error" message={error}/>:null}
-   <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" loading={busy} disabled={busy||!title.trim()||!recipientId}
+   <Button type="submit" className="min-h-11 w-full md:w-auto md:min-h-9" loading={busy} disabled={busy||!title.trim()||!recipientId}
     >
     {busy?"Sending…":"Ask someone"}</Button>
   </form>
