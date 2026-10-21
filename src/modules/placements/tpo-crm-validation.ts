@@ -18,11 +18,48 @@ export const normalizedTpoLeadPhoneSchema = z.string().trim()
     message: "Enter a phone number",
   });
 const phone = normalizedTpoLeadPhoneSchema;
+/** Legacy edits used primary/secondary contact fields. The canonical lead
+ * has one email and one phone, so never silently discard a second value. */
+export const tpoLegacyLeadContactSchema=z.strictObject({
+ primaryEmail:z.string().trim().optional(),
+ secondaryEmail:z.string().trim().optional(),
+ primaryPhone:z.string().trim().optional(),
+ secondaryPhone:z.string().trim().optional(),
+ designation:z.string().trim().max(100).nullable().optional(),
+});
+export function mapTpoLegacyLeadContacts(raw:unknown){
+ const input=tpoLegacyLeadContactSchema.parse(raw);
+ const e=[input.primaryEmail,input.secondaryEmail].filter((v):v is string=>Boolean(v?.trim()));
+ const phones=[input.primaryPhone,input.secondaryPhone].filter((v):v is string=>Boolean(v?.trim()));
+ if(e.length>1&&e[0]!.toLowerCase()!==e[1]!.toLowerCase())
+   throw new Error("Review both email addresses before updating the lead");
+ if(phones.length>1&&phones[0]!.replace(/\D/g,"")!==phones[1]!.replace(/\D/g,""))
+   throw new Error("Review both phone numbers before updating the lead");
+ return {email:e[0]?email.parse(e[0]):undefined,
+   phone:phones[0]?phone.parse(phones[0]):undefined,
+   designation:input.designation};
+}
+
 
 export const tpoCrmCollegeIdSchema = id;
 export const tpoCrmLeadIdSchema = id;
 export const tpoCrmFollowupIdSchema = id;
 
+/** Old manual dropdown includes seven pickable sources. MANUAL/IMPORT
+ * are reserved system provenance and cannot be chosen in the dropdown. */
+export const TPO_MANUAL_LEAD_SOURCE_CHOICES=[
+ {value:"ALUMNI",label:"Alumni"},
+ {value:"REFERRAL",label:"Referral"},
+ {value:"LINKEDIN",label:"LinkedIn"},
+ {value:"JOB_PORTAL",label:"Job portal"},
+ {value:"EVENT",label:"Event or job fair"},
+ {value:"COLD_OUTREACH",label:"Cold outreach"},
+ {value:"COMPANY_REACHED_OUT",label:"Company reached out"},
+] as const;
+export const TPO_LEAD_SOURCE_LABELS:Readonly<Record<string,string>>={
+ ...Object.fromEntries(TPO_MANUAL_LEAD_SOURCE_CHOICES.map(item=>[item.value,item.label])),
+ MANUAL:"Added by hand",IMPORT:"Imported",
+};
 export const tpoLeadSourceSchema = z.string().trim()
   .min(1).max(30)
   .transform(value => {
@@ -130,3 +167,26 @@ export type LogTpoLeadActivityInput = z.input<typeof logTpoLeadActivitySchema>;
 export type CreateTpoFollowupInput = z.input<typeof createTpoFollowupSchema>;
 export type MoveTpoFollowupInput = z.input<typeof moveTpoFollowupSchema>;
 export type MarkTpoNotNowInput = z.input<typeof markTpoNotNowSchema>;
+
+
+/** Offline historic follow-up reconciliation accepts source-local overdue
+ * timestamps only after a trusted user/college identity crosswalk. Manual
+ * create controls retain their future-only validation above. */
+export const legacyTpoLeadFollowupImportSchema=z.strictObject({
+ collegeId:id,
+ sourceLeadId:z.number().int().positive(),
+ sourceDueAtLocal:z.string().trim().min(10).max(40),
+ sourceTimezone:z.literal("Asia/Kolkata"),
+ note:z.string().trim().max(500).optional(),
+});
+export function legacyTpoLeadFollowupInstant(raw:unknown):Date{
+ const parsed=legacyTpoLeadFollowupImportSchema.parse(raw);
+ // Strict fixed-width source datetime prevents accidental browser-local Date()
+ // interpretation. Convert Asia/Kolkata's UTC+05:30 explicitly.
+ const match=/^(\d{4}-\d\d-\d\d)[ T](\d\d:\d\d:\d\d)(?:\.\d{1,6})?$/.exec(parsed.sourceDueAtLocal);
+ if(!match)throw new Error("Invalid historical follow-up timestamp");
+ const instant=new Date(match[1]+"T"+match[2]+"+05:30");
+ if(!Number.isFinite(instant.getTime())||instant.toISOString().slice(0,10)<"2000-01-01")
+   throw new Error("Invalid historical follow-up timestamp");
+ return instant;
+}
