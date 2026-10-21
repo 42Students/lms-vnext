@@ -11,10 +11,12 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
+import { Pagination } from "@/components/ui/pagination";
 import { Disclosure } from "@/components/ui/disclosure";
 import { CollegePromotionPreviewError, listCollegePromotionOptions,
   previewCollegeBatchPromotion } from "@/modules/academics/college-batch-promotion-service";
 import { readAdminPromotionParams, summarizeAdminPromotion } from "@/modules/academics/admin-batch-promotion-read-model";
+import { formatPromotionAcademicYear } from "@/modules/academics/college-batch-promotion-model";
 
 export default async function SuperAdminBatchPromotionPage({
   searchParams,
@@ -24,7 +26,7 @@ export default async function SuperAdminBatchPromotionPage({
   const showCompleted = raw.showCompleted==="1";
   if (!input.success) return <div className="min-w-0 space-y-5">
     <PageHeader  title="Batch Promotion" />
-    <ErrorState title="Invalid batch promotion filters" description="Use valid program, cohort and optional academic year values."
+    <ErrorState title="Invalid batch promotion filters" description="Use consecutive years, e.g. 2026-27. Check the selected program and batch."
       action={<Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
@@ -32,18 +34,42 @@ export default async function SuperAdminBatchPromotionPage({
     <PageHeader  title="Batch Promotion" />
     <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its batch promotion." />
   </div>;
-  const options = await listCollegePromotionOptions(context, input.data);
-  const visibleCohorts = showCompleted ? options.cohorts : options.cohorts.filter(item=>!["COMPLETED","ARCHIVED"].includes(item.status));
+  let options:Awaited<ReturnType<typeof listCollegePromotionOptions>>;
+  try{options=await listCollegePromotionOptions(context,input.data);}
+  catch{return <div className="min-w-0 space-y-5">
+    <PageHeader title="Batch Promotion"/>
+    <ErrorState title="Batches unavailable" description="Courses and batch choices could not be verified. No promotion has been prepared."
+      action={<Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry batches</Link>}/>
+  </div>;}
+  const visibleCohorts = showCompleted ? options.cohorts : options.cohorts.filter(item=>item.status==="ACTIVE");
+  const pageSize=typeof raw.pageSize==="string"&&["10","25","50"].includes(raw.pageSize)?Number(raw.pageSize):10;
+  const requestedPage=typeof raw.page==="string"&&/^[1-9][0-9]{0,3}$/.test(raw.page)?Number(raw.page):1;
+  const pageCount=Math.max(1,Math.ceil(visibleCohorts.length/pageSize));
+  const currentPage=Math.min(requestedPage,pageCount);
+  const shownCohorts=visibleCohorts.slice((currentPage-1)*pageSize,currentPage*pageSize);
+  function pageHref(page:number,size=pageSize){
+    const query=new URLSearchParams();
+    if(input.data.programId)query.set("programId",input.data.programId);
+    if(input.data.cohortId)query.set("cohortId",input.data.cohortId);
+    if(input.data.yearStart!==undefined)query.set("yearStart",formatPromotionAcademicYear(input.data.yearStart));
+    if(showCompleted)query.set("showCompleted","1");
+    if(size!==10)query.set("pageSize",String(size));
+    if(page>1)query.set("page",String(page));
+    return "/admin/batch-promotion"+(query.size?"?"+query.toString():"");
+  }
   let preview: Awaited<ReturnType<typeof previewCollegeBatchPromotion>> | null = null;
   let invalidCohort = false;
+  let invalidProgram = false;
+  let previewFailed = false;
   if (input.data.cohortId) {
     try {
       preview = await previewCollegeBatchPromotion(context, input.data);
     } catch (error) {
-      if (error instanceof CollegePromotionPreviewError && error.code === "BATCH_NOT_FOUND") {
-        invalidCohort = true;
-      } else {
-        throw error;
+      if(error instanceof CollegePromotionPreviewError){
+        if(error.code==="BATCH_NOT_FOUND")invalidCohort=true;
+        else invalidProgram=true;
+      }else{
+        previewFailed=true;
       }
     }
   }
@@ -69,8 +95,11 @@ export default async function SuperAdminBatchPromotionPage({
       <Disclosure title="More filters" defaultOpen={Boolean(input.data.yearStart || showCompleted)} className="order-last min-w-0 min-[768px]:col-span-2 min-[1200px]:col-span-3"
         contentClassName="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-4)] min-[768px]:grid-cols-2">
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic year start override
-        <Input name="yearStart" type="number" min={1900} max={9998} step={1}
-          defaultValue={input.data.yearStart ?? ""} className="min-h-11 min-[768px]:min-h-9" />
+        <Input name="yearStart" type="text" inputMode="numeric" maxLength={7} pattern="[0-9]{4}-[0-9]{2}"
+          placeholder="2026-27" title="Use consecutive years, e.g. 2026-27"
+          defaultValue={input.data.yearStart!==undefined?formatPromotionAcademicYear(input.data.yearStart):""}
+          className="min-h-11 min-[768px]:min-h-9" />
+        <span className="text-xs font-normal text-muted-foreground">Use consecutive years, e.g. 2026-27.</span>
       </label>
       <label className="flex min-h-11 items-center gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         <Checkbox name="showCompleted" value="1" defaultChecked={showCompleted}/> Show completed / inactive batches
@@ -82,18 +111,26 @@ export default async function SuperAdminBatchPromotionPage({
       <Disclosure title={<h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Batches</h2>} defaultOpen={!input.data.cohortId} contentClassName="pb-[var(--lms-space-4)]">
       <div className="flex flex-wrap items-center justify-between gap-3">
 
-        <p role="status" className="text-sm text-muted-foreground">{visibleCohorts.length} shown of {options.cohorts.length} batches</p>
+        <p role="status" className="text-sm text-muted-foreground">
+          {visibleCohorts.length?"Showing "+((currentPage-1)*pageSize+1)+"–"+Math.min(currentPage*pageSize,visibleCohorts.length):"Showing 0"} of {visibleCohorts.length} matching batches ({options.cohorts.length} total)
+        </p>
+        <div className="flex flex-wrap items-center gap-2 text-xs" aria-label="Rows per page">
+          <span>Rows per page:</span>
+          {[10,25,50].map(size=><Link key={size} href={pageHref(1,size)}
+            aria-current={size===pageSize?"page":undefined}
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)]">{size}</Link>)}
+        </div>
       </div>
       <DataTable<(typeof visibleCohorts)[number]>
         caption="Batches"
-        rows={visibleCohorts}
+        rows={shownCohorts}
         getRowKey={batch=>batch.id}
         empty={<EmptyState title="No matching batches" description="No batches match the selected program and status."/>}
         columns={[
           {key:"batch",header:"Batch",mobilePriority:"primary",cell:batch=><strong>{batch.programName} · {batch.name}</strong>},
           {key:"semester",header:"Semester",mobilePriority:"secondary",cell:batch=>batch.currentTermNumber??"—"},
           {key:"year",header:"Academic Year",mobilePriority:"secondary",cell:batch=>batch.currentAcademicYearStart?`${batch.currentAcademicYearStart}–${batch.currentAcademicYearStart+1}`:"—"},
-          {key:"students",header:"Students",mobilePriority:"secondary",cell:batch=><span className="tabular-nums">{batch.activeLearners}</span>},
+          {key:"students",header:"Active learners",mobilePriority:"secondary",cell:batch=><span className="tabular-nums">{batch.activeLearners}</span>},
           {key:"status",header:"Status",mobilePriority:"secondary",cell:batch=><StatusBadge tone={batch.status==="ACTIVE"?"success":"neutral"}>{batch.status}</StatusBadge>},
           {key:"action",header:"Action",mobilePriority:"action",cell:batch=><Link
             href={"/admin/batch-promotion?"+new URLSearchParams({
@@ -103,9 +140,15 @@ export default async function SuperAdminBatchPromotionPage({
             className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4">Preview →</Link>},
         ]}
       />
+      <Pagination page={currentPage} pageCount={pageCount} hrefForPage={page=>pageHref(page)}
+        label="Batch pages" showBoundaryLinks={false}/>
       </Disclosure>
     </section>
-    {invalidCohort ? <ErrorState title="Batch unavailable" description="The selected batch is not available within this college and program."
+    {invalidProgram ? <ErrorState title="Program unavailable" description="The parent program could not be loaded. Refresh your selected batch and program before trying again."
+      action={<Link href={pageHref(1)} className="font-semibold text-primary-text underline">Retry program details</Link>}/> :
+    previewFailed ? <ErrorState title="Couldn't verify promotion" description="Promotion preview failed. No promotion can be confirmed until the batch is rechecked."
+      action={<Link href={pageHref(1)} className="font-semibold text-primary-text underline">Retry preview</Link>}/> :
+    invalidCohort ? <ErrorState title="Batch unavailable" description="The selected batch is not available within this college and program."
       action={<Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Reset selection</Link>} /> :
     !preview || !summary ? <EmptyState title="Choose a batch" description="No learner data is fetched until you select a college-owned batch." /> :
     <>
