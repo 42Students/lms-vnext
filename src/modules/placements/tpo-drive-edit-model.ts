@@ -4,6 +4,8 @@ export const tpoDriveEditSchema=z.object({
  notifyApplicants:z.boolean().default(false),
  applicationDeadline:z.iso.datetime({offset:true}).nullable().optional(),
  minCgpaHundredths:z.number().int().min(0).max(1000).nullable().optional(),
+ allowedCohortIds:z.array(z.string().uuid()).max(100)
+  .refine(ids=>new Set(ids).size===ids.length,"Select each eligible batch only once.").optional(),
  expectedUpdatedAt:z.iso.datetime({offset:true})
   .transform(value=>new Date(value).toISOString()),
  reason:z.string().trim().min(10).max(1000),

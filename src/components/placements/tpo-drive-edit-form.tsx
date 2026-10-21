@@ -19,7 +19,8 @@ import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-erro
 type Draft={id:string;title:string;description:string;updatedAt:string;status:string;
  applicantCount:number;applicationDeadline:string|null;minCgpaHundredths:number|null;
  locations:string[];openings:number|null;minimumAnnualCtcInr:number|null;maximumAnnualCtcInr:number|null;
- fixedCtcLpa:string|null;variableCtcLpa:string|null;stipendPerMonthInr:number|null;isDream:boolean};
+ fixedCtcLpa:string|null;variableCtcLpa:string|null;stipendPerMonthInr:number|null;isDream:boolean;
+ allowedCohortIds:string[];availableBatches:Array<{id:string;name:string;code:string;status:string;program:string}>};
 function optionalNumber(v:FormDataEntryValue|null){const s=String(v??"").trim();return s===""?null:Number(s);}
 export function TpoDriveEditForm({job}:{job:Draft}){
  const router=useRouter();
@@ -84,6 +85,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   setProposal({
    confirmed:true,expectedUpdatedAt:version,
    applicationDeadline:deadline,minCgpaHundredths:cgpa===null?null:Math.round(cgpa*100),
+   allowedCohortIds:fields.getAll("allowedCohortIds").map(String),
    reason,title,description,locations,
    openings:optionalNumber(fields.get("openings")),
    minimumAnnualCtcInr:minimum,maximumAnnualCtcInr:maximum,
@@ -148,6 +150,21 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     <Checkbox name="isDream" defaultChecked={job.isDream} className="h-4 w-4 accent-primary"/>
     Dream drive — held-offer limit exception
   </label>
+  <fieldset className="min-w-0 space-y-2 border-y border-border py-3">
+   <legend className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">Eligible batches</legend>
+   <p className="text-xs leading-5 text-body">Choose batches allowed to apply. No selection means all batches, subject to the other eligibility rules.</p>
+   {job.availableBatches.length?<div className="grid max-h-52 gap-2 overflow-y-auto sm:grid-cols-2">
+    {job.availableBatches.map(batch=><label key={batch.id}
+      className="flex min-h-10 min-w-0 items-start gap-2 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm text-body">
+     <Checkbox name="allowedCohortIds" value={batch.id}
+       defaultChecked={job.allowedCohortIds.includes(batch.id)}
+       className="mt-0.5 h-4 w-4 shrink-0 accent-primary"/>
+     <span className="min-w-0 break-words">{batch.name} · {batch.program}
+       {batch.status!=="ACTIVE"?<span className="block text-xs text-warning">Previously targeted · inactive</span>:null}
+     </span>
+    </label>)}
+   </div>:<p className="text-sm text-muted-foreground">No active batches. Current targeting is unchanged until a batch is available.</p>}
+  </fieldset>
   <div className="grid min-w-0 gap-4 sm:grid-cols-2">
    <label className="block text-[length:var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Application deadline (IST)
     <DateInput name="applicationDeadline" mode="datetime-local"

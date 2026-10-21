@@ -5,7 +5,7 @@ Packets moved to you from lanes that still had a lot left. Same rules as your ot
 Packets:
 
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-4/W3_src_app_api_placements_jobs_jobId_change-requests_route.ts.md` (edit src/app/api/placements/jobs/[jobId]/change-requests/route.ts; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-4/W3_src_modules_placements_tpo-drive-edit-service.ts.md` (edit src/modules/placements/tpo-drive-edit-service.ts; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-4/W3_src_modules_placements_tpo-drive-edit-service.ts.md` (edit src/modules/placements/tpo-drive-edit-service.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-4/W3_src_components_placements_tpo-drive-change-requests.tsx.md` (edit src/components/placements/tpo-drive-change-requests.tsx; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-4/W3_src_modules_placements_college-placement-student-lookup-service.ts.md` (edit src/modules/placements/college-placement-student-lookup-service.ts; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-4/W3_src_components_placements_college-application-detail-drawer.tsx.md` (edit src/components/placements/college-application-detail-drawer.tsx; 7 findings; best P1)
