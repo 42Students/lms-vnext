@@ -235,3 +235,33 @@ export const placementTpoTeamAsks=pgTable("placement_tpo_team_asks",{
  check("tpo_team_asks_title_ck",sql`length(btrim(${t.title})) between 1 and 200`),
  check("tpo_team_asks_note_ck",sql`${t.doneNote} is null or length(${t.doneNote}) <= 2000`),
 ]);
+
+/** Privacy changes apply to the whole existing thread, not merely future rows. */
+export const placementTpoThreadPrivacyEvents=pgTable("placement_tpo_thread_privacy_events",{
+ id:uuid("id").defaultRandom().primaryKey(),
+ threadId:uuid("thread_id").notNull(),
+ collegeId:uuid("college_id").notNull(),
+ actorMembershipId:uuid("actor_membership_id").notNull(),
+ beforePrivate:boolean("before_private").notNull(),
+ afterPrivate:boolean("after_private").notNull(),
+ occurredAt:timestamp("occurred_at",{withTimezone:true}).notNull().defaultNow(),
+},t=>[
+ foreignKey({name:"tpo_thread_privacy_parent_fk",columns:[t.threadId,t.collegeId],
+   foreignColumns:[placementTpoInternalThreads.id,placementTpoInternalThreads.collegeId]}).onDelete("restrict"),
+ foreignKey({name:"tpo_thread_privacy_actor_fk",columns:[t.actorMembershipId,t.collegeId],
+   foreignColumns:[collegeMemberships.id,collegeMemberships.collegeId]}).onDelete("restrict"),
+ index("tpo_thread_privacy_history_idx").on(t.threadId,t.occurredAt),
+ check("tpo_thread_privacy_changed_ck",sql`${t.beforePrivate} <> ${t.afterPrivate}`),
+]);
+/** Adapter for legacy Send payload; final authorization remains service-owned. */
+export function normalizeLegacyTpoSendPayload(raw:{
+ message:string;decision?:boolean;askTitle?:string|null;mentionIds?:unknown;
+}) {
+ const body=raw.message.trim();
+ if(!body||body.length>4000)return null;
+ const mentions=Array.isArray(raw.mentionIds)?
+   [...new Set(raw.mentionIds.filter((id):id is string=>
+      typeof id==="string"&&/^[a-f0-9-]{36}$/i.test(id)))].slice(0,20):[];
+ return {body,markDecision:raw.decision===true,
+   askTitle:raw.askTitle?.trim().slice(0,200)||null,mentions};
+}

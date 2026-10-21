@@ -28,7 +28,7 @@ export async function createBugTrackerIssueForAdmin(context: RequestContext, raw
     const [actor] = await tx.select({
       displayName: users.displayName,
       platformStatus: users.platformStatus,
-    }).from(users).where(eq(users.id, context.user.id)).for("share").limit(1);
+    }).from(users).where(eq(users.id, context.user.id)).for("update").limit(1);
     if (!actor || actor.platformStatus !== "ACTIVE") {
       throw new TrackerAdminError("FORBIDDEN");
     }
@@ -37,16 +37,25 @@ export async function createBugTrackerIssueForAdmin(context: RequestContext, raw
     // names are not identities and may collide. User IDs are authoritative.
     // Existing rows are re-used so reporting does not create a new disabled
     // principal on every submission. No external login token is issued.
+    const [existingAccess]=await tx.select({id:db10BugTrackerAccess.id})
+      .from(db10BugTrackerAccess)
+      .where(eq(db10BugTrackerAccess.subjectUserId,context.user.id)).limit(1);
     const [prior] = await tx.select({ id: db10BugReports.reporterAccessId })
       .from(db10BugReports).where(eq(db10BugReports.reporterUserId, context.user.id))
       .orderBy(desc(db10BugReports.createdAt)).limit(1);
-    const reporter = prior ?? (await tx.insert(db10BugTrackerAccess).values({
+    const reporter = existingAccess ?? prior ?? (await tx.insert(db10BugTrackerAccess).values({
+      subjectUserId:context.user.id,
       displayName: reporterName,
       tokenHash: randomBytes(32).toString("hex"),
       accessRole: "REPORTER",
       active: false,
     }).returning({ id: db10BugTrackerAccess.id }))[0];
     if (!reporter) throw new Error("Tracker reporter could not be recorded");
+    if(prior && !existingAccess){
+      await tx.update(db10BugTrackerAccess)
+        .set({subjectUserId:context.user.id})
+        .where(eq(db10BugTrackerAccess.id,prior.id));
+    }
     const [report] = await tx.insert(db10BugReports).values({
       publicId,
       reporterAccessId: reporter.id,
