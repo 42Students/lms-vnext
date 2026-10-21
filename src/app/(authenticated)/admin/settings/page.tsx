@@ -2,6 +2,8 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import {getCollegeAttendancePolicy} from "@/modules/attendance/policy-service";
 import {SuperAdminAttendanceSettingsEditor} from "@/components/admin/super-admin-attendance-settings-editor";
 import {TenantSettingsEditor} from "@/components/admin/tenant-settings-editor";
+import {OrganizationSettingsCleanup} from "@/components/admin/organization-settings-cleanup";
+import {listOrganizationTenantSettings} from "@/modules/platform-settings/organization-settings-service";
 import {listAdminTenantSettings} from "@/modules/platform-settings/admin-editor-service";
 import {parseAdminInventoryQuery,filterPlatformInventory} from "@/modules/platform-settings/admin-inventory-filter";
 import {ErrorState} from "@/components/ui/error-state";
@@ -45,7 +47,11 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
     <ErrorState title="Invalid setting filter" description="Use a valid section or search query."
       action={<Link href="/admin/settings" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Clear filters</Link>}/>
   </div>;
+  const requestedScope=typeof raw.scope==="string"?raw.scope:null;
+  const viewScope=requestedScope??(context.adminScope?.collegeId?"COLLEGE":
+    context.adminScope?.organizationId?"ORG":"GLOBAL");
   const retryParams=new URLSearchParams();
+  retryParams.set("scope",viewScope);
   if(parsed.q)retryParams.set("q",parsed.q);
   if(parsed.section!=="ALL")retryParams.set("section",parsed.section);
   const retrySuffix=retryParams.toString();
@@ -63,6 +69,10 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
   const sections=filterPlatformInventory(allSections,parsed);
   const organizationOnly=Boolean(context.adminScope?.organizationId&&!context.adminScope?.collegeId);
   const editorScope=context.adminScope?.collegeId?"COLLEGE":"GLOBAL";
+  const organizationHistory=organizationOnly&&viewScope==="ORG"?
+   await listOrganizationTenantSettings(context,context.adminScope!.organizationId!)
+     .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const})):
+   null;
   const editorResult=editorScope==="COLLEGE"&&context.adminScope?.collegeId
    ?await listAdminTenantSettings(context,"COLLEGE",context.adminScope.collegeId)
      .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}))
@@ -79,7 +89,10 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
   const scopeLabel=adminControlScopeTag(context.adminScope);
   const documentedControls=allSections.reduce((sum,section)=>sum+section.items.filter(item=>
     editorScope==="COLLEGE"?item.origin!=="PLATFORM":item.origin!=="COLLEGE").length,0);
-  const editingLabel=organizationOnly?"Disabled":editorData?.ready?"Available":"Select scope";
+  const editingLabel=viewScope==="ORG"?
+    organizationHistory?.ok?"Historical cleanup":"Read only":
+    viewScope!==editorScope||organizationOnly?"Select scope":
+    editorData?.ready?"Available":"Unavailable";
 
 
   return (
@@ -129,8 +142,23 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
       <section aria-label="Tenant setting scope modes" className="border-b border-border pb-4">
         <h2 className="text-sm font-semibold text-[var(--lms-heading)]">Setting scope</h2>
         <p className="mt-2 text-sm leading-6 text-body">
-          Global settings · Organization (no applicable setting overrides) · College settings
+          Choose which settings scope to inspect. Switching views never changes the active college or authorizes another organization's data.
         </p>
+        <nav aria-label="Setting scope views" className="mt-3 flex flex-wrap gap-2">
+          {(["GLOBAL","ORG","COLLEGE"] as const).map(mode=>{
+            const params=new URLSearchParams();
+            if(parsed.q)params.set("q",parsed.q);
+            if(parsed.section!=="ALL")params.set("section",parsed.section);
+            params.set("scope",mode);
+            return <Link key={mode} href={"/admin/settings?"+params}
+              aria-current={viewScope===mode?"page":undefined}
+              className={"inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border px-4 text-sm font-semibold md:min-h-9 "+
+                (viewScope===mode?"border-primary bg-primary-subtle text-primary-text":
+                "border-border text-body hover:border-primary hover:text-primary-text")}>
+               {mode==="GLOBAL"?"Global":mode==="ORG"?"Organization":"College"}
+              </Link>;
+          })}
+        </nav>
         {organizationOnly?<Banner tone="warning" role="status" className="mt-3">
           <strong>No setting applies at organization level.</strong> No runtime reader consumes organization-level settings. Existing stored keys are for inspection or cleanup only; adding or saving ORG settings is disabled. Choose Global for platform-wide values or College for per-college settings.
         </Banner>:null}
@@ -145,9 +173,18 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           <Link href={"/admin/settings"+(retrySuffix?"?"+retrySuffix:"")} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Refresh</Link>
         </div>
       </section>
-      {editorData?<TenantSettingsEditor key={editorScope+":"+(context.adminScope?.collegeId??"GLOBAL")} scopeType={editorScope}
-       collegeId={context.adminScope?.collegeId??undefined}
-       ready={editorData.ready} entries={editorData.entries}/>:(
+      {viewScope==="ORG"&&organizationHistory?.ok?
+       <OrganizationSettingsCleanup
+        organizationId={context.adminScope!.organizationId!}
+        ready={organizationHistory.value.ready}
+        entries={organizationHistory.value.entries}/>:
+       viewScope==="ORG"?<Banner tone="warning" role="status">
+        Select the organization in the header to inspect or remove its historical unused keys. No new ORG settings can be created.
+       </Banner>:
+       viewScope===editorScope&&!organizationOnly&&editorData?
+        <TenantSettingsEditor key={editorScope+":"+(context.adminScope?.collegeId??"GLOBAL")} scopeType={editorScope}
+         collegeId={context.adminScope?.collegeId??undefined}
+         ready={editorData.ready} entries={editorData.entries}/>:(
        <Banner tone="warning">
         {organizationOnly?<p className="font-semibold">Select a college to view its settings.</p>:null}
         {editorResult&&!editorResult.ok

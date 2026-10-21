@@ -16,7 +16,8 @@ export function filterPlatformInventory(sections:readonly PlatformSettingsSectio
 
 /** Reject unrecognized and repeated URL fields instead of silently ignoring a filter. */
 export function parseAdminInventoryQuery(raw:Record<string,string|string[]|undefined>):AdminInventoryFilter|null {
- if(Object.keys(raw).some(key=>key!=="q"&&key!=="section"))return null;
- const parsed=adminInventoryFilterSchema.safeParse(raw);
+ if(Object.keys(raw).some(key=>key!=="q"&&key!=="section"&&key!=="scope"))return null;
+ if(raw.scope!==undefined&&(typeof raw.scope!=="string"||!["GLOBAL","ORG","COLLEGE"].includes(raw.scope)))return null;
+ const parsed=adminInventoryFilterSchema.safeParse({q:raw.q,section:raw.section});
  return parsed.success?parsed.data:null;
 }
