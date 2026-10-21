@@ -52,6 +52,7 @@ import { projectMeetingPlanToken } from "@/modules/projects/project-meeting-plan
 import { MentorTaskDetailsEdit } from "./mentor-task-details-edit";
 import { ProjectTaskAssigneeControl } from "./project-task-assignee-control";
 import {ProjectTaskComments} from "./project-task-comments";
+import {ProjectTaskSubmissionOverview} from "./project-task-submission-overview";
 import { LearnerTaskProgressControl } from "./learner-task-progress-control";
 import { learnerTaskCriteriaPreview } from "@/modules/projects/learner-task-criteria-model";
 import { projectTaskVisibleFacts,projectTaskDueState } from "@/modules/projects/project-task-visible-facts-model";
@@ -1168,6 +1169,51 @@ export function ProjectWorkspace({
               {release.title} · {label(release.status)}
             </a>)}
           </nav>:null}
+        {mode==="ADMIN"&&show("tasks")?(()=>{
+          const liveTasks=workspace.tasks.filter(task=>!task.deletedAt);
+          const latest=new Map<string,(typeof workspace.taskSubmissions)[number]>();
+          for(const item of workspace.taskSubmissions){
+            const prior=latest.get(item.taskId);
+            if(!prior||item.version>prior.version)latest.set(item.taskId,item);
+          }
+          const submitted=[...latest.values()].filter(item=>item.status==="SUBMITTED").length;
+          const done=liveTasks.filter(task=>task.status==="DONE").length;
+          const active=liveTasks.filter(task=>task.status==="IN_PROGRESS").length;
+          const needsReview=liveTasks.filter(task=>task.status==="IN_REVIEW").length;
+          return <div className="space-y-4">
+            <section aria-label="Task plan metrics" className="space-y-2">
+             <h3 className="text-base font-semibold text-foreground">Task plan</h3>
+             <p className="text-sm text-body">Only this workspace’s task plan is updated when you save.</p>
+             <dl className="grid grid-cols-2 border-y border-border sm:grid-cols-4">
+              {([
+               ["Total tasks",liveTasks.length],["Completed",done],
+               ["In progress",active],["Awaiting review",needsReview],
+              ] as const).map(([name,count])=><div key={name} className="border-b border-border p-3">
+               <dt className="text-xs text-body">{name}</dt>
+               <dd className="text-xl font-semibold tabular-nums">{count}</dd>
+              </div>)}
+             </dl>
+            </section>
+            <ProjectTaskSubmissionOverview
+              metrics={[
+                {label:"Total submissions",value:String(workspace.taskSubmissions.length)},
+                {label:"Submitted",value:String(submitted)},
+                {label:"Approved",value:String(workspace.taskSubmissions.filter(item=>item.status==="APPROVED").length)},
+                {label:"Changes requested",value:String(workspace.taskSubmissions.filter(item=>item.status==="CHANGES_REQUESTED").length)},
+              ]}
+              rows={workspace.taskSubmissions.map(item=>({
+                id:item.id,
+                taskTitle:workspace.tasks.find(task=>task.id===item.taskId)?.title??"Recorded task",
+                submitter:workspace.members.find(member=>
+                  member.membershipId===item.submittedByMembershipId)?.displayName??"Learner",
+                version:item.version,status:item.status,
+                submittedAt:item.submittedAt.toISOString(),
+                reviewedAt:item.reviewedAt?.toISOString()??null,
+                submissionUrl:safeHttpHref(item.submissionUrl),
+              })).sort((a,b)=>b.submittedAt.localeCompare(a.submittedAt))}
+            />
+          </div>;
+        })():null}
         {mode === "ADMIN" && !readOnly && show("tasks") ? (
           <ProjectTaskPlanEditor projectId={workspace.project.id}
             tasksToken={projectTaskPlanToken(workspace.tasks)}
@@ -1607,7 +1653,15 @@ export function ProjectWorkspace({
         </div>
         {mode==="ADMIN"?<AdminDeliveryOverview workspace={workspace}/>:null}
         {mode==="ADMIN"&&workspace.finalDelivery.submissions.length>0?
-         <h3 className="mt-4 text-sm font-semibold">Submission history</h3>:null}
+         <div className="mt-4 space-y-1">
+          <h3 className="text-sm font-semibold">Submission history</h3>
+          <p className="text-xs text-body">
+            {workspace.finalDelivery.submissions.length} recorded version{
+              workspace.finalDelivery.submissions.length===1?"":"s"}.
+            The latest version is shown first. Expand an earlier version to
+            review its original evidence and decisions.
+          </p>
+         </div>:null}
         {mode==="MENTOR" && workspace.mentorEvidence.latestDelivery ? (
           <p role="status" className="min-w-0 border-y border-[var(--lms-canvas-border)] py-3 text-sm text-body">
             Latest recorded delivery: version {workspace.mentorEvidence.latestDelivery?.version}
@@ -1625,7 +1679,8 @@ export function ProjectWorkspace({
           </div>
         ) : (
           <div className="space-y-3">
-            {workspace.finalDelivery.submissions.map(
+            {[...workspace.finalDelivery.submissions].sort(
+              (a,b)=>b.version-a.version).map(
               (submission) => {
                 const review =
                   reviewsBySubmission.get(
@@ -1643,7 +1698,9 @@ export function ProjectWorkspace({
                   submission.demoUrl,
                 );
 
-                return (
+                const historical=workspace.finalDelivery.submissions.some(
+                  row=>row.version>submission.version);
+                const content=(
                   <article
                     key={submission.id}
                     className="min-w-0 scroll-mt-24 border-b border-[var(--lms-canvas-border)] py-4"
@@ -1815,6 +1872,13 @@ export function ProjectWorkspace({
                     ) : null}
                   </article>
                 );
+                return historical?
+                  <Disclosure key={submission.id}
+                    title={"Earlier submission · version "+submission.version+
+                      " · "+label(submission.status)}
+                    className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-3">
+                    {content}
+                  </Disclosure>:content;
               },
             )}
           </div>
