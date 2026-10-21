@@ -90,10 +90,10 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
  }
  const available=rounds.filter(r=>["SCHEDULED","PENDING"].includes(r.status));
  return <section className="min-w-0 space-y-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-4)]">
-  <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] sm:flex-row sm:items-center sm:justify-between">
+  <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] md:flex-row md:items-center md:justify-between">
    <div><h2 className="text-lg font-semibold">Candidate interviews</h2>
     <p className="mt-1 text-sm text-body">Schedule, edit, cancel, mark Completed or No Show. Actions are audited and notify the learner.</p></div>
-   <Button type="button" disabled={!available.length||!candidates.length} className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>open()}
+   <Button type="button" disabled={!available.length||!candidates.length} className="min-h-11 w-full md:w-auto md:min-h-9" onClick={()=>open()}
     >Schedule interview</Button>
   </div>
   {!available.length||!candidates.length?<Banner tone="info">Schedule an interview when a pending or scheduled round and a candidate are available.</Banner>:null}
@@ -115,7 +115,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="COMPLETED"?"success":row.status==="SCHEDULED"?"info":row.status==="CANCELLED"?"neutral":"warning"}>{row.status}</StatusBadge>},
       {key:"actions",header:"Actions",mobilePriority:"action",
         cell:row=><Disclosure title="Actions" className="min-w-0 md:min-w-40">
-          <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] pb-2 sm:flex-row sm:flex-wrap">
+          <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] pb-2 md:flex-row md:flex-wrap">
      {row.status!=="CANCELLED"?<a download={"interview-"+row.id+".ics"}
       href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(collegeInterviewIcs({
        id:row.id,title:"College interview",date:row.scheduledAt,
@@ -141,9 +141,9 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   {error&&!show?<Banner tone="error">{error}</Banner>:null}
   <Dialog open={show} onOpenChange={next=>{if(!next&&!busy)setShow(false);}} title={editing?"Edit interview":"Schedule interview"} dismissible={!busy}
    footer={<>
-    <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy||!start||!roundId||!applicationId||duration<5||duration>480||(Boolean(editing)&&reason.trim().length<3)} onClick={()=>void save()}>
+    <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy||!start||!roundId||!applicationId||duration<5||duration>480||(Boolean(editing)&&reason.trim().length<3)} onClick={()=>void save()}>
      {busy?"Saving…":editing?"Save interview":"Schedule and notify"}</Button>
-    <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy} variant="secondary" onClick={()=>setShow(false)}>Cancel</Button>
+    <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy} variant="secondary" onClick={()=>setShow(false)}>Cancel</Button>
    </>}>
     <h3 className="sr-only">{editing?"Edit interview":"Schedule interview"}</h3>
     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Round<Select value={roundId} disabled={Boolean(editing)}
@@ -154,8 +154,8 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
      onChange={e=>setApplicationId(e.target.value)} className="w-full">
      {candidates.map(c=><option key={c.applicationId} value={c.applicationId}>{c.name??"Learner"} · {c.screening}</option>)}
     </Select></label>
-    <div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2">
-     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Date & time (IST)<Input type="datetime-local" required value={start}
+    <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
+     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date & time (IST)<Input type="datetime-local" required value={start}
       onChange={e=>setStart(e.target.value)} className="w-full"/></label>
      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Duration (minutes)<Input type="number" min={5} max={480} value={duration}
       onChange={e=>setDuration(Number(e.target.value))} className="w-full"/></label>

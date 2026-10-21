@@ -44,16 +44,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-13.md: file, number of
 - [x] `src/app/(authenticated)/tpo/students/preparation-prep/page.tsx`
 - [x] `src/app/(authenticated)/tracker/mine/page.tsx`
 - [x] `src/components/activity/activity-center.tsx`
-- [ ] `src/components/admin/lecture-hall-manager.tsx`
-- [ ] `src/components/college/college-department-insights.tsx`
-- [ ] `src/components/college/college-student-import-history.tsx`
-- [ ] `src/components/courses/faculty-assignment-material-links.tsx`
-- [ ] `src/components/courses/faculty-quiz-learner-preview.tsx`
-- [ ] `src/components/courses/learner-course-workspace.tsx`
-- [ ] `src/components/placements/college-interview-appointments.tsx`
-- [ ] `src/components/placements/recruiter-result-controls.tsx`
-- [ ] `src/components/placements/tpo-recruiter-grant-controls.tsx`
-- [ ] `src/components/projects/admin-readiness-workspace-picker.tsx`
+- [x] `src/components/admin/lecture-hall-manager.tsx`
+- [x] `src/components/college/college-department-insights.tsx`
+- [x] `src/components/college/college-student-import-history.tsx`
+- [x] `src/components/courses/faculty-assignment-material-links.tsx`
+- [x] `src/components/courses/faculty-quiz-learner-preview.tsx`
+- [x] `src/components/courses/learner-course-workspace.tsx`
+- [x] `src/components/placements/college-interview-appointments.tsx`
+- [x] `src/components/placements/recruiter-result-controls.tsx`
+- [x] `src/components/placements/tpo-recruiter-grant-controls.tsx`
+- [x] `src/components/projects/admin-readiness-workspace-picker.tsx`
 - [ ] `src/components/projects/project-activity-filtered-list.tsx`
 - [ ] `src/components/projects/project-list.tsx`
 - [ ] `src/components/tpo/tpo-blocked-dates-editor.tsx`
