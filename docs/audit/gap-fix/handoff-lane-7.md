@@ -350,3 +350,46 @@ The existing ten-check operational tenant-readiness gate is not a verified domai
 - G2-2-011-023 | `src/components/academics/college-recurring-preview.tsx` | Use human-readable per-date conflict reasons and separate unexpected failures.
 
 The Academics preview/execute workflow is an intentional vNext design with a 93-day limit, specific college-scoped authorization and transactional persistence. Per-date partial saves, 200-session recurrence and SA selected-college mutation require coordinated Academics owner decision. **17/17 handed off, not fixed**.
+
+## Project workspace resource audit — wave-1 handoff (2026-10-21)
+
+- G2-7-007-002 | `src/components/projects/project-workspace.tsx` | Generate `/college/projects/audit?subjectId=<uuid>&range=all` (or supported params) for College Admin; test route and role.
+- G2-7-007-005 | `src/components/projects/project-activity-filtered-list.tsx` | Recreate Resource activity Card with counters and 4-column data table.
+- G2-7-007-014 | `src/components/projects/project-activity-filtered-list.tsx` | Restore exact four-column semantic audit table.
+- G2-7-007-015 | `src/components/projects/project-activity-filtered-list.tsx` | Page resource history at 10, and show exact result range and total.
+- G2-7-007-021 | `src/components/projects/admin-project-section-page.tsx` | Fetch workspace summary and resource audit independently; show partial warning with usable audit history.
+- G2-7-007-022 | `src/components/projects/project-activity-filtered-list.tsx` | Add isolated audit initial-fetch error and exact retry action.
+- G2-7-007-026 | `src/modules/projects/workspace-view-service.ts` | Split dedicated resource-audit read from workspace summary; avoid failing audit on unrelated services.
+- G2-7-007-027 | `src/modules/projects/activity-service.ts` | Define dedicated resource-audit projection/endpoint retaining original resource fields/actions; keep typed event taxonomy migration.
+- G2-7-007-032 | `src/modules/projects/project-resource-audit-model.ts` | Default resource-audit view to resource events only; prevent generic activity leakage.
+- G2-7-007-034 | `src/modules/projects/activity-service.ts` | Expose before/after diff and changed fields through authorized resource audit projection.
+- G2-7-007-038 | `src/modules/projects/workspace-view-service.ts` | Separate partial errors from audit read and unrelated workspace services.
+- G2-7-007-049 | `src/modules/projects/activity-service.ts` | Push resource filter/search into paged DB query before limiting; include total.
+- G2-7-007-051 | `src/components/projects/project-workspace.tsx` | Use supported audit query parser keys and correct panel-specific root.
+- G2-7-007-053 | `src/db/schema/project-audit-staged.ts + SQL migration` | Promote audited migration and writer/reader or provide equivalent immutable event metadata with legacy fields and indexes.
+- G2-7-007-054 | `src/modules/projects/activity-service.ts` | Build typed audit adapter with actionType, resourceKey, actor role, changedFields, before/after, timestamp.
+- G2-7-007-057 | `src/modules/projects/workspace-view-service.ts` | Prioritize resilient isolated resource-history read with independent Retry.
+- G2-7-007-024 | `src/components/projects/project-activity-filtered-list.tsx` | Match error alert with Retry; keep nonmutation toast-free.
+
+Existing resource history is filtered over generic activity events and has no complete typed resource-diff ledger. Projects/schema owns its route, UI, projection and migration. Do not claim a resource audit is a lossless legacy audit until the DB-backed projection exists. **17/17 handed off, not fixed**.
+
+## Faculty OTP verification — wave-1 handoff (2026-10-21)
+
+- G2-18-019-002 | `src/modules/auth/login-service.ts` | Validate faculty membership/tenant before session and correct faculty redirect; never allow membership confusion
+- G2-18-019-006 | `src/db/schema/identity-auth-attempts.ts + migration contract` | Document faculty_id → user/membership UUID identity crosswalk; do not load old faculty IDs as UUIDs
+- G2-18-019-007 | `src/modules/auth/login-repository.ts` | Preserve phone normalization and account resolution; do not duplicate raw phone in auth-attempt rows
+- G2-18-019-008 | `src/db/schema/identity-auth-attempts.ts` | Treat keyed MAC as required security improvement; explicitly mark raw OTP intentionally dropped, never restore plaintext storage
+- G2-18-019-009 | `src/modules/auth/login-repository.ts` | Retain shared max-five attempt budget for all channels; record legacy field semantics and no migration needed for spent OTPs
+- G2-18-019-010 | `src/modules/auth/login-service.ts + src/components/auth/login-form.tsx` | Do not clone arbitrary string lockout; provide exact temporary block/retry time in Faculty UI backed by durable send/verify budget
+- G2-18-019-011 | `src/modules/auth/login-repository.ts` | Define verifiedAt/usedAt audit relationship; old boolean must not authorize new session
+- G2-18-019-012 | `src/modules/auth/login-service.ts` | Enforce clock-based five-minute expiry, never accept stale row simply because integer expired flag was not toggled
+- G2-18-019-014 | `src/modules/auth/login-repository.ts` | Migrate caller to attemptId; clear old challenge on new start and ensure stale OTP cannot authenticate
+- G2-18-019-017 | `src/modules/auth/login-service.ts` | Keep POST body and attemptId contract; don't add insecure GET verification endpoint
+- G2-18-019-025 | `src/modules/auth/login-service.ts` | Check delivery failure cannot leave a usable challenge or imply success; document record retention and phone costs
+- G2-18-019-031 | `src/modules/auth/config.ts` | Do not port any special-phone/global code; preserve isolated dev-only QA identities, disallow prod test OTP
+- G2-18-019-036 | `src/modules/auth/login-service.ts` | Verify SMS provider template/recipient, delivery retries and fallback recipients align required login reliability
+- G2-18-019-044 | `src/modules/auth/login-service.ts + Exotel provider integration` | Verify Exotel/actual provider credentials/templates and observed failure paths without leaking OTPs; audit provider integration separately
+- G2-18-019-046 | `src/db/schema/identity-auth-attempts.ts` | Document legacy row-to-user mapping; deliberate separate-table retirement means no 1:1 PK migration required for expired OTP rows
+- G2-18-019-047 | `src/db/schema/identity-auth-attempts.ts` | Maintain field-by-field disposition in schema ledger, protect raw OTP and phone, never expose hashed MAC via API
+
+Security non-regression requirements: do not reintroduce raw OTP, phone numbers in challenge rows, GET-query verification, static production bypass codes, or replay. The vNext user+membership UUID challenge with MAC, attempt caps and consumption remains the canonical contract. Auth and DB owners must verify provider, membership, error and retention details. **16/16 handed off, not fixed**.
