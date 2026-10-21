@@ -128,6 +128,29 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
        {!archived.length?<EmptyState title="No archived organizations" description="No archived organizations in this scope."/>:null}
       </Disclosure>:null}
 
+      {canCreate?<Disclosure title="Recovery inventory · 9 legacy categories" className="border-t border-border pt-[var(--lms-space-4)]">
+        <p className="mt-2 text-sm text-body">
+          Recovery is limited to authorized Super Admin records. Restoring a parent does not
+          automatically restore its children. Only organization and college restoration have
+          implemented vNext actions; other categories still need an audited restore workflow.
+        </p>
+        <ul className="mt-3 divide-y divide-border border-y border-border">
+          {(["Department","Program","Class","Semester","Lecture Hall","Quiz","Notification","College","Organization"] as const).map(kind=>(
+            <li key={kind} className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
+              <strong className="font-semibold text-body">{kind}</strong>
+              <span className="text-muted-foreground">
+                {kind==="Organization"?`Archived directory above · ${archived.length} shown (up to 200)`:
+                  kind==="College"?"Scoped restore endpoint exists; archived-college inventory is not available here.":
+                  "No self-service restore action available yet"}
+              </span>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-2 text-xs text-muted-foreground">
+          Unsupported categories are listed for visibility, not as working recovery controls.
+        </p>
+      </Disclosure>:null}
+
     </div>
   );
 }
