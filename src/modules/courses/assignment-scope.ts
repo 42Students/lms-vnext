@@ -14,6 +14,19 @@ import {
   loadCourseSectionDeliveryScope,
 } from "./scope";
 
+/** Legacy assignment-scope error copy for API/UI adapters. Identifiers in
+ * vNext are UUIDs; do not imply an old numeric lesson content ID is valid. */
+export function assignmentScopeUserMessage(code:string):string{
+ switch(code){
+  case "ASSIGNMENT_NOT_FOUND":return "Assignment not found";
+  case "LESSON_CONTENT_NOT_FOUND":return "Lesson content not found";
+  case "ASSIGNMENT_SUBMISSION_NOT_FOUND":return "Assignment submission not found";
+  case "ASSIGNMENT_DELIVERY_MISMATCH":return "This assignment is not in the selected class or course";
+  case "LEARNING_ACCESS_DENIED":return "You do not have access to this class or course";
+  default:return "Could not load this assignment. Check its lesson and class scope.";
+ }
+}
+
 export async function loadCourseAssignmentScope(
   assignmentId: string,
   includeArchived = false,

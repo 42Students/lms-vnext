@@ -22,8 +22,13 @@ export async function POST(request:Request){
   // The locked writer persists an immutable activity event AND an in-app notification
   // in the decision transaction. TODO(messaging): queue email/SMS intent via the
   // shared src/modules/messaging delivery interface once its outbox lands on main.
+  const sectionLabel=record.section==="EDUCATION"?"Education":"Identity";
+  const message=input.action==="VERIFY"?sectionLabel+" verified":
+   record.status==="VERIFIED"
+    ?sectionLabel+" update sent back. The previous verified snapshot remains in effect."
+    :sectionLabel+" sent back for changes";
   return NextResponse.json({decision:{learnerMembershipId:record.learnerMembershipId,
-   section:record.section,status:record.status,version:record.version}},
+   section:record.section,status:record.status,version:record.version},message},
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){
   if(error instanceof VerificationUnavailableError)
