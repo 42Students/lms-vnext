@@ -10,6 +10,8 @@
 - G2-4-010-031, 113: allow 255 title characters in create/edit and show `e.g., Module 1 Project` placeholder; existing API schema accepts 255.
 - G2-4-010-072, 124: implement current-page CSV export with legacy column order, IST wall-clock deadlines, `assignments-college-<college>-page-<page>.csv` filename and disabled action when page is empty. Preserve full-filter export as a separate action. Both College Admin and Super Admin routes have a page-only mode.
 
+- G2-4-010-068: assignment list now uses a dedicated failed-load error with retry, while a failure to load authoring choices leaves the authorized directory visible.
+
 **Partial rows (NOT credited as complete):**
 - G2-4-010-022: list now displays `not graded` as submitted-currently-eligible minus graded-currently-eligible; legacy denominator/history semantics remain to reconcile.
 - G2-4-010-008, 035, 040, 073: create trigger label, instructions placeholder and rows, stale-version copy, page-export column/order are aligned or improved, but the full modal/form/grade flow remains open.
