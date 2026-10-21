@@ -1,13 +1,13 @@
 import {z} from "zod";
 import {companyDomainSchema} from "./company-curation-domain-model";
-import {canonicalCompanyAlias} from "./company-curation-alias-model";
+import {canonicalCompanyAlias,LEGACY_COMPANY_ALIAS_MAX_LENGTH} from "./company-curation-alias-model";
 
 const action=z.enum(["ADD","REMOVE"]);
 export const companyDomainCommandSchema=z.strictObject({
  companyId:z.uuid(),action,domain:z.string().trim().min(4).max(253),
 });
 export const companyAliasCommandSchema=z.strictObject({
- companyId:z.uuid(),action,alias:z.string().trim().min(2).max(160),
+ companyId:z.uuid(),action,alias:z.string().trim().min(2).max(LEGACY_COMPANY_ALIAS_MAX_LENGTH),
 });
 export const PERSONAL_EMAIL_HOSTS=new Set([
  "gmail.com","yahoo.com","outlook.com","hotmail.com","live.com","icloud.com",
@@ -33,7 +33,7 @@ export function normalizeCompanyDomain(raw:string){
 }
 export function normalizeCompanyAlias(raw:string){
  const alias=raw.normalize("NFKC").trim().replace(/\s+/g," ");
- if(alias.length<2||alias.length>160||!canonicalCompanyAlias(alias))
-  throw new Error("Other name must be 2 to 160 characters.");
+ if(alias.length<2||alias.length>LEGACY_COMPANY_ALIAS_MAX_LENGTH||!canonicalCompanyAlias(alias))
+  throw new Error("Other name must be 2 to 150 characters.");
  return alias;
 }

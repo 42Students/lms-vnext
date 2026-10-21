@@ -408,7 +408,7 @@ export function PlacementEmployerRelationships({
                 <div role="cell" className="text-sm text-body">
                   {item.lastActive
                     ? new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(item.lastActive)
-                    : "Not recorded"}
+                    : "Never posted"}
                 </div>
                 <div role="cell" className="min-w-0 space-y-3">
                 <Button

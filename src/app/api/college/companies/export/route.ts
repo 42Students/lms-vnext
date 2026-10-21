@@ -10,12 +10,24 @@ export async function GET(request:Request) {
   const raw=Object.fromEntries(new URL(request.url).searchParams);
   const parsed=parseCollegeCompaniesQuery(raw);
   if(!parsed.success)return NextResponse.json({error:"INVALID_COMPANY_FILTERS"},{status:400});
-  const rows=await listCollegeCompanyDirectory(await getCurrentRequestContext(),parsed.data,{exportAll:true});
-  return new Response(collegeCompanyCsv(rows.items),{
+  const context=await getCurrentRequestContext();
+  const first=await listCollegeCompanyDirectory(context,parsed.data,{exportAll:true});
+  const all=[...first.items];
+  // Legacy exported the whole current college scope. Continue bounded,
+  // deterministic windows, never returning an apparently complete partial CSV.
+  while(all.length<first.total){
+   const batch=await listCollegeCompanyDirectory(context,parsed.data,{exportAll:true,exportOffset:all.length});
+   if(batch.items.length===0)break;
+   all.push(...batch.items);
+  }
+  const incomplete=all.length<first.total;
+  return new Response(collegeCompanyCsv(all),{
    headers:{"Content-Type":"text/csv; charset=utf-8",
     "Content-Disposition":'attachment; filename="companies.csv"',
     "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff",
-    "X-Export-Truncated":rows.truncated?"true":"false"},
+    "X-Export-Truncated":incomplete?"true":"false",
+    "X-Export-Total":String(first.total),
+    "X-Export-Included":String(all.length)},
   });
  }catch(error){return apiErrorResponse(error);}
 }
