@@ -4,6 +4,7 @@ import {projectAdminCsv,projectAdminCsvCell} from "./project-admin-csv-model";
 export type VisibleWorkspaceExportRow = {
   title: string;
   mentorName: string | null;
+  templateId?: string | null;
   status: string;
   riskReasons?: readonly string[];
   progressPercent: number;
@@ -11,7 +12,7 @@ export type VisibleWorkspaceExportRow = {
   updatedAt: Date;
 };
 
-const headings = ["Workspace","Mentor","Status","Progress %","Members","Last changed (IST)"] as const;
+const headings = ["Workspace","Status","Progress","Mentor","Template ID"] as const;
 
 /** Spreadsheet-safe CSV escaping for user-authored project workspace names. */
 export function projectWorkspaceCsvCell(value: string | number | null): string {
@@ -22,17 +23,12 @@ export function projectWorkspaceCsvCell(value: string | number | null): string {
 export function projectWorkspacePageCsv(
   items: readonly VisibleWorkspaceExportRow[],
 ): string {
-  const date = new Intl.DateTimeFormat("en-IN", {
-    timeZone: "Asia/Kolkata",
-    dateStyle: "short",
-  });
   const rows = items.map(item => [
     item.title,
-    item.mentorName ?? "Unassigned",
     collegeWorkspaceStatusLabel(item.status,item.riskReasons),
     item.progressPercent,
-    item.memberCount,
-    Number.isFinite(item.updatedAt.getTime()) ? date.format(item.updatedAt) : "Date unavailable",
+    item.mentorName ?? "Unassigned",
+    item.templateId ?? "Not available",
   ]);
   return projectAdminCsv([headings,...rows]);
 }

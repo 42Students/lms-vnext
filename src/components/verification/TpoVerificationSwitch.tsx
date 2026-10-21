@@ -16,7 +16,9 @@ export function TpoVerificationSwitch({initialEnabled,collegeId}:{initialEnabled
    const result=await apiFetch<{tpoCanVerify:boolean}>(collegeId?"/api/admin/verification/settings":"/api/college/verification/settings",{method:"PATCH",credentials:"same-origin",timeoutMs:12000,
     headers:{"Content-Type":"application/json"},body:JSON.stringify({tpoCanVerify:value,...(collegeId?{collegeId}:{})})});
    setEnabled(result.tpoCanVerify);
-   setNotice("Verification setting saved.");
+   setNotice(result.tpoCanVerify
+    ?"The placement cell can now verify profiles"
+    :"Only college admins verify profiles now");
   }catch(e){setError(e instanceof Error?e.message:friendlyApiError({network:true}));}
   finally{setBusy(false);}
  }
