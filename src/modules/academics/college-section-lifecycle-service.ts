@@ -82,3 +82,58 @@ export async function changeCollegeSectionLifecycle(context:RequestContext,rawId
     return updated;
   });
 }
+
+/** Legacy Delete is permitted only for a dependency-free class in the selected college.
+ * Keep the optimistic token and audit event in the same transaction.
+ */
+export async function deleteCollegeSection(context: RequestContext, rawId: unknown, raw: unknown) {
+  const id = z.string().uuid().parse(rawId);
+  const input = z.object({
+    expectedUpdatedAt: z.iso.datetime({ offset: true }),
+    confirm: z.literal(true),
+  }).strict().parse(raw);
+  const actor = await resolveActingCollege(context, "academics.manage");
+  return getDb().transaction(async tx => {
+    const [section] = await tx.select({
+      id: sections.id, name: sections.name,
+    }).from(sections)
+      .innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
+      .innerJoin(programs, eq(programs.id, cohorts.programId))
+      .innerJoin(departments, and(
+        eq(departments.id, programs.departmentId),
+        eq(departments.collegeId, actor.collegeId),
+      ))
+      .where(and(
+        eq(sections.id, id),
+        sql`date_trunc('milliseconds',${sections.updatedAt}) = ${input.expectedUpdatedAt}::timestamptz`,
+      )).for("update", { of: sections }).limit(1);
+    if (!section) throw new CollegeSectionLifecycleError("CLASS_STALE");
+
+    const [[enrolled], [faculty], [event], [delivery]] = await Promise.all([
+      tx.select({ id: sectionEnrollments.id }).from(sectionEnrollments)
+        .where(eq(sectionEnrollments.sectionId, id)).limit(1),
+      tx.select({ id: sectionFacultyAssignments.id }).from(sectionFacultyAssignments)
+        .where(eq(sectionFacultyAssignments.sectionId, id)).limit(1),
+      tx.select({ id: sectionScheduleEvents.id }).from(sectionScheduleEvents)
+        .where(eq(sectionScheduleEvents.sectionId, id)).limit(1),
+      tx.select({ id: courseSectionDeliveries.id }).from(courseSectionDeliveries)
+        .where(eq(courseSectionDeliveries.sectionId, id)).limit(1),
+    ]);
+    if (enrolled) throw new CollegeSectionLifecycleError("CLASS_HAS_LEARNERS");
+    if (faculty) throw new CollegeSectionLifecycleError("CLASS_HAS_TEACHING");
+    if (event) throw new CollegeSectionLifecycleError("CLASS_HAS_SCHEDULE");
+    if (delivery) throw new CollegeSectionLifecycleError("CLASS_HAS_DELIVERIES");
+
+    const [deleted] = await tx.delete(sections)
+      .where(eq(sections.id, id)).returning({ id: sections.id });
+    if (!deleted) throw new CollegeSectionLifecycleError("CLASS_STALE");
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_CLASS_UPDATED,
+      collegeId: actor.collegeId, organizationId: actor.organizationId,
+      subjectType: "section", subjectId: id, subjectLabel: section.name,
+      summary: isSuperAdmin(context) ? "Super Admin deleted class" : "College Admin deleted class",
+      metadata: { deleted: true, guarded: true },
+    });
+    return { id: deleted.id, name: section.name };
+  });
+}
