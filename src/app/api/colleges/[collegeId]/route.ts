@@ -41,10 +41,22 @@ export async function PATCH(
       );
     }
 
+    // Legacy allowed moving a college or reusing its unique ID. In the
+    // membership-based tenant model these are identity invariants: changing
+    // them would reparent roles, domains and historical audit records.
+    // Require an explicitly authorized migration to a newly created college.
+    if(!body||typeof body!=="object"||Array.isArray(body))
+      return NextResponse.json({error:"INVALID_REQUEST",message:"Failed to update college. Please try again or contact support."},{status:400});
+    const values=body as Record<string,unknown>;
+    if(["organizationId","code","uniqueId","collegeCode"].some(key=>key in values))
+      return NextResponse.json({
+        error:"IMMUTABLE_COLLEGE_IDENTITY",
+        message:"College code and organization cannot be changed. Create a new college and plan an authorized membership, domain and record migration.",
+      },{status:409});
     const college = await updateCollege(
       context,
       collegeId,
-      body as Record<string, unknown>,
+      values,
     );
 
     return NextResponse.json({ college });
@@ -74,8 +86,17 @@ export async function DELETE(
       collegeId,
     );
 
-    const response =
-      NextResponse.json({ college });
+    // DELETE is intentionally a reversible soft archive, not physical
+    // deletion. Dependency checks are performed before the status mutation.
+    // Existing memberships and audit records remain held under this college;
+    // restoration requires a separately authorized explicit request.
+    const response = NextResponse.json({
+      college,
+      operation:"ARCHIVED",
+      archivedRecordRetained:true,
+      restoreRequiresReview:true,
+      selectedCollegeScopeCleared:context.adminScope?.collegeId===college.id,
+    });
 
     if (
       context.adminScope?.collegeId ===

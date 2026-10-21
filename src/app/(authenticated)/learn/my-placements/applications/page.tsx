@@ -1,6 +1,8 @@
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { PageLoading } from "@/components/ui/page-loading";
+import {StatusBadge} from "@/components/ui/status-badge";
+import {safeTpoBrandLogoUrl} from "@/modules/placements/tpo-branding-model";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import type { LearnerPlacementJourneyItem } from "@/components/placements/learner-placement-journey";
@@ -69,6 +71,56 @@ export default async function LearnerPlacementApplicationsPage() {
       )} />
 
       
+      {rows.length>0?<section aria-label="Application cards" className="min-w-0 border-y border-border py-3">
+       <h2 className="mb-2 text-base font-semibold text-foreground">Your applications at a glance</h2>
+       <ul className="m-0 divide-y divide-border p-0">
+        {rows.map(row=>{
+         const logo=safeTpoBrandLogoUrl(row.company.logoPublicUrl);
+         const jobType=row.job.jobTypeLabel||row.job.employmentType;
+         const pay=row.job.ctcLpa!==null
+           ?String(row.job.ctcLpa)+" LPA"
+           :row.job.stipendPerMonthInr!==null
+             ?"₹"+Number(row.job.stipendPerMonthInr).toLocaleString("en-IN")+" / month"
+             :row.job.minimumAnnualCtcInr!==null
+               ?"From ₹"+Number(row.job.minimumAnnualCtcInr).toLocaleString("en-IN")+" annually"
+               :null;
+         const submitted=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
+          timeZone:"Asia/Kolkata"}).format(row.submittedAt)+" IST";
+         const optOutDeadline=row.staffOptOutUntil?new Intl.DateTimeFormat("en-IN",{
+          dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+         }).format(row.staffOptOutUntil)+" IST":null;
+         return <li key={row.applicationId} className="flex min-w-0 flex-col gap-3 py-4 sm:flex-row sm:items-start">
+          {logo?<img src={logo} alt="" width={44} height={44}
+            referrerPolicy="no-referrer" className="h-11 w-11 shrink-0 rounded-[var(--lms-control-radius)] border border-border object-contain"/>
+            :<span aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle text-sm font-semibold text-muted-foreground">
+              {row.company.name.slice(0,1).toUpperCase()}
+             </span>}
+          <div className="min-w-0 flex-1 space-y-1">
+           <p className="m-0 break-words text-sm font-semibold text-foreground">{row.job.title}</p>
+           <p className="m-0 break-words text-sm text-body">{row.company.name}</p>
+           <p className="m-0 text-xs text-muted-foreground">{jobType??"Role type not specified"}{pay?" · "+pay:""} · Applied {submitted}</p>
+           <div className="flex flex-wrap gap-2">
+            <StatusBadge tone={row.applicationStatus==="WITHDRAWN"?"warning":"info"}>
+             {row.applicationStatus.replaceAll("_"," ")}
+            </StatusBadge>
+            {row.offerStatus?<StatusBadge tone="success">Offer: {row.offerStatus.replaceAll("_"," ")}</StatusBadge>:null}
+            {row.job.driveStatus==="CANCELLED"?<StatusBadge tone="warning">Drive cancelled</StatusBadge>:null}
+           </div>
+           {row.applicationStatus==="SUBMITTED"?<p className="m-0 text-xs text-body">
+             {row.withdrawalMode==="SELF"?"Self-withdrawal available":row.withdrawalMode==="REQUEST"?
+               "Request withdrawal through the placement cell":"Withdrawal unavailable"}
+             {optOutDeadline&&row.channel==="PLACEMENT_CELL"?" · Placement-cell opt-out until "+optOutDeadline:""}
+           </p>:null}
+          </div>
+          <Link href={"/learn/my-placements/applications?applicationId="+encodeURIComponent(row.applicationId)}
+           className="inline-flex min-h-11 shrink-0 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+           View application →
+          </Link>
+         </li>;
+        })}
+       </ul>
+      </section>:null}
+
       {!roundsRead.available ? <Alert tone="error">
         Interview and assessment shortcuts are temporarily unavailable. Your saved applications remain visible and unchanged.
         <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry round shortcuts</Link>

@@ -152,6 +152,8 @@ export function CollegeBrandingForm({
           setVersion(data.branding.version);
         setErrors({});
         showToast({ title: "Branding saved", tone: "success" });
+        // Publish an edited logo only after a successful branding save.
+        window.dispatchEvent(new CustomEvent("college-branding-saved",{detail:{collegeId}}));
         return;
       }
 
