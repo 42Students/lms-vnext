@@ -15,6 +15,14 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {facultyAttendanceScheduleParamsSchema,facultyAttendanceScheduleSchema,facultyScheduleFieldsChanged}
   from "./faculty-schedule-mutation-model";
 
+/** Configurable near-now booking grace (legacy default: five minutes). */
+function bookingGraceMs() {
+  const minutes=Number(process.env.FACULTY_SCHEDULE_BOOKING_GRACE_MINUTES ?? "5");
+  if(!Number.isInteger(minutes)||minutes<0||minutes>30)
+    throw new Error("INVALID_FACULTY_SCHEDULE_BOOKING_GRACE");
+  return minutes*60_000;
+}
+
 /** Scoped course Session CREATE and RESCHEDULE. Marked sessions cannot move. */
 export async function commandFacultyAttendanceSchedule(
   context:RequestContext,rawParams:unknown,rawInput:unknown,
@@ -35,6 +43,8 @@ export async function commandFacultyAttendanceSchedule(
   const upper=Date.parse(owned.periodEndDate+"T00:00:00+05:30")+86400000;
   if(startsAt<new Date(lower)||endsAt>new Date(upper))
     throw new CoursesServiceError("SCHEDULE_EVENT_CONFLICT");
+  if(startsAt.getTime()<Date.now()-bookingGraceMs())
+    throw new CoursesServiceError("SCHEDULE_EVENT_CONFLICT");
   return getDb().transaction(async tx=>{
     // Lock the actor AND the Section: prevent concurrent conflicts even
     // when co-teachers schedule the same Section at the same instant.
@@ -43,6 +53,10 @@ export async function commandFacultyAttendanceSchedule(
     await assertPersistedFacultyTeachingMutation(tx,context,deliveryId,{
       collegeId:membership.collegeId,organizationId:membership.organizationId,
     });
+    // Recheck time under the same locked transaction: a paused request must
+    // not create a class that has since moved beyond the booking grace.
+    if(startsAt.getTime()<Date.now()-bookingGraceMs())
+      throw new CoursesServiceError("SCHEDULE_EVENT_CONFLICT");
     let current:typeof sectionScheduleEvents.$inferSelect|undefined;
     if(input.action==="RESCHEDULE"){
       [current]=await tx.select({event:sectionScheduleEvents}).from(sectionScheduleEvents)
@@ -65,19 +79,35 @@ export async function commandFacultyAttendanceSchedule(
       if(!facultyScheduleFieldsChanged(current,input))
         throw new CoursesServiceError("FACULTY_ATTENDANCE_SCHEDULE_NO_CHANGE");
     }
-    const conflict=await tx.select({id:sectionScheduleEvents.id})
+    // Existing hall assignments can be retained on RESCHEDULE. New faculty
+    // event creation has no lectureHallId field: a free-text location is NOT
+    // a trustworthy hall identity and cannot reserve a real shared hall.
+    if(current?.lectureHallId){
+      await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${"lecture-hall-schedule:"+current.lectureHallId}))`);
+    }
+    const conflict=await tx.select({
+      id:sectionScheduleEvents.id,
+      sectionId:sectionScheduleEvents.sectionId,
+      facultyMembershipId:sectionScheduleEvents.facultyMembershipId,
+      lectureHallId:sectionScheduleEvents.lectureHallId,
+    })
       .from(sectionScheduleEvents)
       .where(and(
         eq(sectionScheduleEvents.status,"SCHEDULED"),
         or(
           eq(sectionScheduleEvents.sectionId,owned.sectionId),
           eq(sectionScheduleEvents.facultyMembershipId,membership.id),
+          current?.lectureHallId?eq(sectionScheduleEvents.lectureHallId,current.lectureHallId):undefined,
         ),
         sql`${sectionScheduleEvents.startsAt} < ${endsAt}`,
         sql`${sectionScheduleEvents.endsAt} > ${startsAt}`,
         current?ne(sectionScheduleEvents.id,current.id):undefined,
       )).limit(1);
-    if(conflict.length)throw new CoursesServiceError("SCHEDULE_EVENT_CONFLICT");
+    if(conflict.length){
+      // This existing API has one public conflict code. Never disclose other
+      // faculty/section details; the caller can refresh its scoped schedule.
+      throw new CoursesServiceError("SCHEDULE_EVENT_CONFLICT");
+    }
     let saved:typeof sectionScheduleEvents.$inferSelect|undefined;
     const now=new Date(Math.max(Date.now(),(current?.updatedAt.getTime()??0)+1));
     if(input.action==="CREATE"){
