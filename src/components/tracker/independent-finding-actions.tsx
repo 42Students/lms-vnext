@@ -26,6 +26,9 @@ export function IndependentFindingActions({externalId,version,status,severity,cu
  const [pending,setPending]=useState(false);
   const [confirmOpen,setConfirmOpen]=useState(false);
  const [error,setError]=useState<string|null>(null);
+ const submitLabel=action==="COMMENT"?"Add comment":action==="STATUS"?"Set to status":
+  action==="SEVERITY"?"Update severity":action==="ASSIGNEE"?"Assign":
+  action==="DUPLICATE"?"Mark duplicate":"Attach fix commit";
  function body(){
   const base={action,expectedVersion:version};
   switch(action){
@@ -122,12 +125,12 @@ export function IndependentFindingActions({externalId,version,status,severity,cu
    </label>:null}
   </div>
   <div className="flex min-w-0 flex-col gap-2 md:items-end">
-  <Button variant="primary" type="button" onClick={()=>void submit()} loading={pending} className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||(action==="ASSIGNEE"&&assignee.trim()===(currentAssignee??""))||(action==="SEVERITY"&&nextSeverity===severity)||(action==="STATUS"&&nextStatus===status)}>{pending?"Saving…":action==="COMMENT"?"Add comment":action==="ASSIGNEE"?"Save":action==="STATUS"?"Set to status":"Save details"}</Button>
+  <Button variant="primary" type="button" onClick={()=>void submit()} loading={pending} className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||(action==="ASSIGNEE"&&assignee.trim()===(currentAssignee??""))||(action==="SEVERITY"&&nextSeverity===severity)||(action==="STATUS"&&nextStatus===status)}>{pending?"Saving…":submitLabel}</Button>
   {error&&!confirmOpen?<p role="alert" className="min-w-0 break-words [overflow-wrap:anywhere] text-sm text-error">{error}</p>:null}
   </div>
-  <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+  <ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!pending)setConfirmOpen(next);}}
     title="Save this finding update? An immutable audit event will be recorded."
-    confirmLabel={action==="COMMENT"?"Add comment":action==="STATUS"?"Set to status":"Save details"} confirmVariant="primary" pending={pending}
+    confirmLabel={submitLabel} confirmVariant="primary" pending={pending}
     onConfirm={()=>void submit(true)}>
     {error?<InlineNotice tone="error" message={error}/>:null}
   </ConfirmDialog>

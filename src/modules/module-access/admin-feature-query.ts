@@ -1,6 +1,6 @@
 import {z} from "zod";
 export const adminFeatureQuerySchema=z.strictObject({
- q:z.string().trim().max(100).default(""),
+ q:z.string().trim().max(100).transform(value=>value.normalize("NFKC").toLowerCase()).default(""),
  // URL pagination must be decimal; coercion would interpret 0x10 and 1e2.
  pageSize:z.union([
   z.literal(20),z.literal(50),z.literal(100),
