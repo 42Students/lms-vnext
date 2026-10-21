@@ -20,6 +20,11 @@ export async function PATCH(request: Request, { params }: Params) {
     ) });
   } catch (error) { return apiErrorResponse(error); }
 }
+/** The legacy DELETE was a destructive API; vNext archives for audit safety.
+ * A dependency conflict stays HTTP 409 via apiErrorResponse:
+ * {error:"DEPARTMENT_HAS_DEPENDENCIES",message,usage,requestId}.
+ * Never echo raw database exception text or turn a conflict into success.
+ */
 export async function DELETE(request: Request, { params }: Params) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
@@ -28,6 +33,6 @@ export async function DELETE(request: Request, { params }: Params) {
     const { departmentId } = await params;
     return NextResponse.json({ department: await archiveCollegeDepartment(
       context, departmentId, await request.json(),
-    ) });
+    ) }, {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) { return apiErrorResponse(error); }
 }

@@ -107,10 +107,14 @@ export default async function TpoFailureReasonsPage({
        rows={failures.byKind.map(row=>({label:FAILURE_KIND_LABELS[row.kind],value:row.count}))}/>
       <Disclosure title="Round and branch details" className="border-b border-border pb-3">
         <div className="min-w-0 space-y-4 pt-3">
-      <ReportBarChart title="Round failures by recorded round" units="failed decisions"
-       rows={workspace.roundFailureShares.map(row=>({
-        label:row.roundName,value:row.failed,
-       }))}/>
+      <ReportBarChart title="Round failures as share of applied decisions" units="percent"
+       rows={workspace.roundFailureShares
+        .filter(row=>row.shareOfRoundPercent!==null)
+        .map(row=>({label:row.roundName,value:row.shareOfRoundPercent!}))}/>
+      {workspace.roundFailureShares.some(row=>row.shareOfRoundPercent===null)
+        ? <p className="text-xs text-muted-foreground">
+            No applied round result denominator was recorded for some rounds; those percentages are omitted, not shown as zero.
+          </p>:null}
       <ReportTable title="Round failures and share of the round"
        headings={["Round","Failed decisions","Applied decisions","Share of the round"]}
        rows={workspace.roundFailureShares.map(row=>[
@@ -160,7 +164,7 @@ export default async function TpoFailureReasonsPage({
         ]}
         rows={failures.byReason.map((row) => [
           FAILURE_KIND_LABELS[row.kind],
-          row.reason,
+          row.reason?.trim() || "Not recorded",
           row.count,
         ])}
         emptyDescription="No persisted rejection, failure, decline or withdrawal reasons are available for this scope."
