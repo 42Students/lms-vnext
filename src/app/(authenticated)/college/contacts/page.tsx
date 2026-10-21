@@ -31,7 +31,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
  try{filter=parseCollegeContactsSearchParams(raw);}
  catch(error){return <div className="min-w-0 space-y-[var(--lms-space-4)]"><PageHeader title="Contacts"/>
   <ErrorState title="Invalid contact filters" description={collegeContactFilterMessage(error)}
-   action={<Link href="/college/contacts" className="inline-flex items-center min-h-11 md:min-h-9 underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Reset contact filters</Link>}/></div>;}
+   action={<Link href="/college/contacts" className="inline-flex items-center min-h-11 md:min-h-9 underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto">Reset contact filters</Link>}/></div>;}
  const [results,choices]=await Promise.all([listCollegeContacts(context,filter),listCollegeContactFilterOptions(context)]);
  const pageCount=Math.max(1,Math.ceil(results.total/results.pageSize));
  const range=collegeContactsPageRange(filter.page,results.pageSize,results.total);
@@ -48,7 +48,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
     {value:"STUDENT",label:"Student contacts",href:collegeContactsTabHref(filter,"STUDENT")},
    ]}/>
   {filter.membershipId&&<Banner tone="info"
-   action={<Link href={collegeContactsWithoutMemberHref(filter)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Show matching contact directory</Link>}>
+   action={<Link href={collegeContactsWithoutMemberHref(filter)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto">Show matching contact directory</Link>}>
    Showing the bookmarked contact record only.
   </Banner>}
   <div className="flex min-w-0 flex-wrap items-baseline gap-x-[var(--lms-space-4)] gap-y-[var(--lms-space-2)] text-xs leading-5 text-muted-foreground">
@@ -207,10 +207,10 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
    <p className="text-sm text-muted-foreground">{results.total} matching contacts · Page {filter.page}</p>
    <p className="text-xs text-muted-foreground" aria-label="Current page role breakdown">On this page: {roleCounts.facultyOnly} faculty-only · {roleCounts.learnerOnly} learner-only · {roleCounts.dual} dual-role contacts.</p>
    {results.items.length===0?<EmptyState title="No matching contacts" description="No contacts in this college match the selected filters."
-      action={<Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters in this tab</Link>}/>:
+      action={<Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto">Clear filters in this tab</Link>}/>:
     <DataTable rows={results.items} getRowKey={contact=>contact.membershipId}
       caption="Contacts" empty={<EmptyState title="No matching contacts" description="No contacts in this college match the selected filters."
-        action={<Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters in this tab</Link>}/>} rowHref={contact=>"/college/contacts/"+encodeURIComponent(contact.membershipId)}
+        action={<Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto">Clear filters in this tab</Link>}/>} rowHref={contact=>"/college/contacts/"+encodeURIComponent(contact.membershipId)}
       columns={[
         {key:"name",header:"Name",mobileLabel:"Name",mobilePriority:"primary" as const,
           cell:contact=><Link href={"/college/contacts/"+encodeURIComponent(contact.membershipId)}
