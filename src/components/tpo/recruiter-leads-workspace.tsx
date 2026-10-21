@@ -82,6 +82,14 @@ function sourceLabel(code:string|null|undefined):string{
  if(!code)return "Manual";
  return SOURCE_CHOICES.find(([key])=>key===code)?.[1]??code.replaceAll("_"," ").toLowerCase().replace(/^./,letter=>letter.toUpperCase());
 }
+function dueByEndOfTodayIst(value:string|null|undefined):boolean{
+ if(!value)return false;
+ const instant=new Date(value).getTime();
+ const now=Date.now();
+ const local=new Date(now+330*60_000);
+ const end=Date.UTC(local.getUTCFullYear(),local.getUTCMonth(),local.getUTCDate()+1)-330*60_000;
+ return Number.isFinite(instant)&&instant<end;
+}
 function inviteLabel(status:string):string{
  const labels:Record<string,string>={NOT_SENT:"Not sent",NOT_INVITED:"Not sent",SENT:"Sent",
   CLICKED:"Clicked",OPENED:"Clicked",JOINED:"Joined",BOUNCED:"Bounced"};
@@ -256,7 +264,7 @@ export function RecruiterLeadsWorkspace({
   const [query, setQuery] = useState(initialFilters.q??"");
   const [filterOpen,setFilterOpen]=useState(false);
   const [ownerFilter,setOwnerFilter]=useState(initialFilters.owner??"ALL");
-  const [inviteFilter,setInviteFilter]=useState(initialFilters.invite??"ALL");
+  const [inviteFilter,setInviteFilter]=useState(initialFilters.invite==="CLICKED"?"OPENED":initialFilters.invite??"ALL");
   const [statusFilter,setStatusFilter]=useState(initialFilters.status??"ALL");
   const [sourceFilter,setSourceFilter]=useState(initialFilters.source??"ALL");
   const [companyFilter,setCompanyFilter]=useState(initialFilters.company??"ALL");
@@ -297,6 +305,18 @@ export function RecruiterLeadsWorkspace({
     ...EMPTY,
     companyName: initialCompany,
   });
+  const suggestedCompanyDomains=useMemo(()=>{
+    const company=form.companyName.trim().toLocaleLowerCase("en");
+    if(!company)return [];
+    const banned=new Set(["gmail.com","yahoo.com","outlook.com","hotmail.com","icloud.com","rediffmail.com"]);
+    const domainSet=new Set<string>();
+    for(const row of rows){
+      if(row.companyName?.trim().toLocaleLowerCase("en")!==company)continue;
+      const candidate=row.emailNorm?.split("@")[1]?.toLocaleLowerCase("en");
+      if(candidate&&!banned.has(candidate)&&/^[a-z0-9.-]+\.[a-z]{2,}$/.test(candidate))domainSet.add(candidate);
+    }
+    return [...domainSet].slice(0,3);
+  },[rows,form.companyName]);
   const [saveError, setSaveError] = useState("");
   const [reviewingCreate,setReviewingCreate]=useState(false);
   const [saving, setSaving] = useState(false);
@@ -460,7 +480,8 @@ export function RecruiterLeadsWorkspace({
     source:sourceFilter,company:companyFilter,designation:designationFilter,reach:reachFilter,
     nextFollowup:nextFilter,lastActivity:activityFilter,added:addedFilter,drives:driveFilter};
   const visible=useMemo(()=>filterEngageRoster(rosterRows,filters,lead=>
-    matchesEngageNeed(lead,need)&&(attention==="ALL"||lead.chips?.includes(attention))&&
+    matchesEngageNeed(lead,need)&&(attention==="ALL"||(attention==="OVERDUE"?
+      dueByEndOfTodayIst(lead.nextFollowupAt):lead.chips?.includes(attention)))&&
       (placedFilter==="ALL"||
        (lead.studentsPlaced!==null&&(placedFilter==="NONE"?lead.studentsPlaced===0:
         placedFilter==="ONE_TWO"?lead.studentsPlaced>=1&&lead.studentsPlaced<=2:
@@ -755,7 +776,7 @@ export function RecruiterLeadsWorkspace({
           <section aria-label="Needs doing" className="space-y-2 border-b border-border py-3">
             <div className="flex min-w-0 flex-wrap gap-2">
               {([
-                ["OVERDUE","Follow-ups due",rows.filter(row=>row.chips?.includes("OVERDUE")).length],
+                ["OVERDUE","Follow-ups due",rows.filter(row=>dueByEndOfTodayIst(row.nextFollowupAt)).length],
                 ["NO_NEXT_STEP","No next step",rows.filter(row=>row.chips?.includes("NO_NEXT_STEP")).length],
                 ["QUIET","Gone quiet",rows.filter(row=>row.chips?.includes("QUIET")).length],
               ] as const).map(([key,label,count])=>
@@ -889,7 +910,7 @@ export function RecruiterLeadsWorkspace({
                 <Select className={inputStyle+" mt-1.5 min-w-0"} value={nextFilter}
                   onChange={e=>updateFilter("nextFollowup",e.target.value)}>
                   <option value="ALL">Any date</option>
-                  <option value="DUE">Due now</option>
+                  <option value="DUE">Overdue + today</option>
                   <option value="OVERDUE">Overdue</option>
                   <option value="TODAY">Today</option>
                   <option value="NEXT_7">In the next 7 days</option>
@@ -1205,6 +1226,10 @@ export function RecruiterLeadsWorkspace({
               <span className="mt-1 block text-xs text-muted-foreground">
                 Choose a company you&apos;ve worked with, or type a new company name.
               </span>
+              {suggestedCompanyDomains.length?<span className="mt-1 block text-xs text-muted-foreground">
+                Existing recruiter work email domain{suggestedCompanyDomains.length===1?"":"s"}:
+                {" "}{suggestedCompanyDomains.join(", ")}. Verify the address before creating an invitation.
+              </span>:null}
             </label>
             <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Where did you find them?
               <Select className={inputStyle + " mt-1.5 min-w-0"} value={form.source}
