@@ -103,10 +103,15 @@ export function LectureHallManager({
   const originalEditRef = useRef<string | null>(null);
   const [archiving, setArchiving] = useState<HallRow | null>(null);
   const [search,setSearch]=useState("");
+  const [page,setPage]=useState(1);
+  const [pageSize,setPageSize]=useState(10);
   const normalizedSearch=search.trim().toLocaleLowerCase("en");
   const visibleHalls=normalizedSearch?halls.filter(hall=>
     [hall.name,hall.roomType,ROOM_TYPE_LABELS[hall.roomType],hall.departmentName??"",hall.description??""]
       .some(value=>value.toLocaleLowerCase("en").includes(normalizedSearch))):halls;
+  const totalPages=Math.max(1,Math.ceil(visibleHalls.length/pageSize));
+  const currentPage=Math.min(page,totalPages);
+  const pageRows=visibleHalls.slice((currentPage-1)*pageSize,currentPage*pageSize);
   function exportCsv(){
     const escape=(value:string|number|null|undefined)=>{
       const text=String(value??"");
@@ -305,9 +310,15 @@ export function LectureHallManager({
           <h2 className="mb-[var(--lms-space-3)] text-base font-semibold text-foreground">Existing Lecture Halls / Rooms</h2>
           <div className="flex min-w-0 flex-wrap gap-2 print:hidden">
             <label htmlFor="hall-search" className="sr-only">Search halls</label>
-            <Input id="hall-search" type="search" value={search} onChange={event=>setSearch(event.target.value)} placeholder="Search halls" className="min-h-9 w-44"/>
+            <Input id="hall-search" type="search" value={search} onChange={event=>{setSearch(event.target.value);setPage(1);}} placeholder="Search halls" className="min-h-9 w-44"/>
             <Button type="button" size="sm" variant="secondary" disabled={pending} onClick={()=>router.refresh()}>Refresh</Button>
             <Button type="button" size="sm" variant="secondary" disabled={pending||visibleHalls.length===0} onClick={exportCsv}>Export CSV</Button>
+            <label className="inline-flex items-center gap-2 text-xs text-muted-foreground">Rows per page
+              <Select aria-label="Lecture halls rows per page" className="min-h-9 w-20" value={String(pageSize)}
+                onChange={event=>{setPageSize(Number(event.target.value));setPage(1);}}>
+                {[10,25,50,100].map(size=><option key={size} value={size}>{size}</option>)}
+              </Select>
+            </label>
           </div>
       {visibleHalls.length === 0 ? (
         <EmptyState
@@ -335,20 +346,28 @@ export function LectureHallManager({
                     Availability
                   </Link>
                   <Button type="button" variant="ghost" size="sm" disabled={pending}
-                    aria-label={"Edit "+hall.name} title={"Edit "+hall.name}
+                    aria-label={"Edit lecture hall "+hall.name} title={"Edit "+hall.name}
                     onClick={()=>open(hall)} className="min-h-11 md:min-h-9"><HallEditIcon /></Button>
                   {hall.status==="ACTIVE"?<Button type="button" variant="ghost" size="sm"
-                    aria-label={"Archive "+hall.name} title={"Archive "+hall.name}
+                    aria-label={"Archive lecture hall "+hall.name} title={"Archive "+hall.name}
                     disabled={pending} onClick={()=>setArchiving(hall)}
                     className="min-h-11 text-error md:min-h-9"><HallArchiveIcon /></Button>:<Button type="button" variant="ghost" size="sm" disabled={pending} aria-label={"Restore lecture hall "+hall.name} title={"Restore "+hall.name} onClick={()=>setStatus(hall,"ACTIVE")} className="min-h-11 md:min-h-9">Restore</Button>}
                 </div>
               ),
             },
           ]}
-          rows={visibleHalls}
+          rows={pageRows}
           getRowKey={(hall) => hall.id}
         />
       )}
+       {visibleHalls.length>0?<nav className="flex min-w-0 flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground" aria-label="Lecture halls pagination">
+        <span role="status">{(currentPage-1)*pageSize+1}–{Math.min(currentPage*pageSize,visibleHalls.length)} of {visibleHalls.length}</span>
+        <div className="flex items-center gap-2">
+         <Button type="button" size="sm" variant="secondary" disabled={pending||currentPage<=1} onClick={()=>setPage(currentPage-1)}>Previous</Button>
+         <span>Page {currentPage} of {totalPages}</span>
+         <Button type="button" size="sm" variant="secondary" disabled={pending||currentPage>=totalPages} onClick={()=>setPage(currentPage+1)}>Next</Button>
+        </div>
+       </nav>:null}
         </section>
       </div>
 
