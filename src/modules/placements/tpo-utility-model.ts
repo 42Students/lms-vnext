@@ -10,19 +10,19 @@
  * authenticated TPO page; authorisation is enforced by its route and APIs. */
 export const TPO_MORE_GROUPS = [
  {heading:"Work",description:"Placement workspaces",links:[
-  {label:"Placement eligibility",href:"/tpo/batches",description:"Check student eligibility, batches and placement participation."},
+  {label:"Placement eligibility",href:"/tpo/batches",description:"Who is in placements, batch by batch"},
   {label:"Requests",href:"/tpo/requests",description:"What students asked you to decide: withdrawals, off-campus offers, registration changes"},
   {label:"Calendar",href:"/tpo/calendar",description:"Talks, deadlines and rounds"},
-  {label:"Announcements",href:"/tpo/announcements",description:"Share placement updates with students"},
-  {label:"Messages",href:"/tpo/messages",description:"Your placement conversations"},
-  {label:"Placement team",href:"/tpo/team",description:"Manage your placement team"},
+  {label:"Announcements",href:"/tpo/announcements",description:"Tell your students; read what 42 tells you"},
+  {label:"Messages",href:"/tpo/messages",description:"Conversations with recruiters"},
+  {label:"Placement team",href:"/tpo/settings?tab=team",description:"Who is on the team and who owns what"},
  ]},
  {heading:"Insights",description:"Placement reports",links:[
   {label:"Reports",href:"/tpo/reports",description:"Placement summary, by branch, by company and more"},
  ]},
  {heading:"Account",description:"Your account and notifications",links:[
   {label:"Notifications",href:"/tpo/notifications",description:"Everything that has notified you"},
-  {label:"Settings",href:"/tpo/settings",description:"Placement settings and preferences"},
+  {label:"Settings",href:"/tpo/settings",description:"Rules, team, templates and branding"},
   {label:"Audit log",href:"/tpo/audit",description:"Who did what, and when"},
   {label:"Profile",href:"/tpo/profile",description:"Your own account details"},
  ]},

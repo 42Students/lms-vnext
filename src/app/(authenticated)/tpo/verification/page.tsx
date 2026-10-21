@@ -46,9 +46,16 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
  const directory=queue.available&&queue.enabled&&queue.permitted
   ? await listTpoBatches(context).catch(()=>null) : null;
  const branches=[...new Map(directory?.batches.map(item=>[item.departmentId,item.department] as const)??[])];
- return <div className="min-w-0 space-y-4">
-  <PageHeader title="Verification" description="Review learner education and identity verification requests."
-    actions={<Link href="/tpo/students" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Back to students</Link>} />
+ return <div data-testid="tpo.verification" className="min-w-0 space-y-4">
+  <PageHeader title="Verification" description="Check students' education and identity against their documents. Verified marks are what eligibility uses." />
+  {queue.available&&queue.enabled&&queue.permitted?<nav aria-label="Verification status" className="flex min-w-0 flex-wrap gap-2 border-b border-border pb-3">
+    {([["WAITING","Waiting"],["SENT_BACK","Sent back"],["VERIFIED","Verified"]] as const).map(([tab,label])=>
+      <Link key={tab} href={tpoVerificationHref({...query,tab,page:1})} aria-current={query.tab===tab?"page":undefined}
+        className={"inline-flex min-h-11 items-center rounded-[9px] border px-4 text-sm font-semibold md:min-h-9 "+
+          (query.tab===tab?"border-primary bg-primary text-on-primary":"border-border text-body hover:bg-primary-subtle")}>
+        {label} ({queue.counts?.[tab]??0})
+      </Link>)}
+   </nav>:null}
   <nav className="min-w-0" aria-label="Verification exports">
    <details className="border-b border-border pb-3"><summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Export verification records</summary>
    <div className="flex min-w-0 flex-wrap gap-2 py-2">
@@ -64,7 +71,10 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
    </div>
    </details>
   </nav>
-  <form method="get" action="/tpo/verification" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border py-4 sm:grid-cols-2 lg:grid-cols-4" aria-label="Filter verification">
+  <form method="get" action="/tpo/verification" className="min-w-0 border-b border-border pb-3" aria-label="Filter verification">
+   <details>
+    <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-primary-text md:min-h-9">Filter the queue</summary>
+    <div className="grid min-w-0 grid-cols-1 gap-3 pb-4 sm:grid-cols-2 lg:grid-cols-4">
    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
     <Select name="tab" defaultValue={query.tab} className="min-h-11 md:min-h-9">
      <option value="WAITING">Waiting</option><option value="SENT_BACK">Sent back</option><option value="VERIFIED">Verified</option>
@@ -117,6 +127,8 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
    </details>
    <Button type="submit" className="min-h-11 w-full md:min-h-9">Apply filters</Button>
    <Link href="/tpo/verification" className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-primary-text underline md:min-h-9">Reset filters</Link>
+    </div>
+   </details>
   </form>
   {queue.available&&queue.enabled&&queue.permitted&&queue.counts?
    <p role="status" className="text-sm text-body leading-[22px]">
@@ -126,7 +138,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
   {queue.available&&queue.enabled&&queue.permitted&&query.pageSize===1000&&
    (query.tab==="WAITING"?queue.counts?.WAITING:query.tab==="VERIFIED"?queue.counts?.VERIFIED:queue.counts?.SENT_BACK)!==undefined&&
    ((query.tab==="WAITING"?queue.counts?.WAITING:query.tab==="VERIFIED"?queue.counts?.VERIFIED:queue.counts?.SENT_BACK)??0)>1000?
-    <Alert tone="warning">Showing the first 1,000 students in this view. Narrow the filters to find more students.</Alert>:null}
+    <Alert tone="warning" role="alert">Showing the first 1,000 students in this view. Search, filters and counts below cover only these. Verify these first and the next students appear; older submissions are listed first.</Alert>:null}
   {!queue.available?<section className="space-y-3">
    <Alert tone="warning" role="alert">Could not load the queue. Please try again or contact your college admin.</Alert>
    <Link href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>

@@ -74,6 +74,9 @@ const activityFilterSchema = z
       .optional(),
     importantOnly: z.boolean().optional(),
     legacyCategory: z.enum(["important","setup","people","teaching","projects"]).optional(),
+    // Legacy page/size may be used by historical audit table bookmarks.
+    page:z.coerce.number().int().min(0).max(10000).optional(),
+    actionKey:z.string().trim().min(1).max(120).optional(),
     actorUserId:
       z.string().uuid().optional(),
     eventType: z
@@ -100,10 +103,9 @@ const activityFilterSchema = z
       .number()
       .int()
       .min(1)
-      // Project audit's 30-day view intentionally reads 200 events;
-      // still cap every caller to a fixed bounded page.
-      .max(200)
-      .default(40),
+      // Preserve the legacy maximum; all reads remain page-bounded.
+      .max(500)
+      .default(25),
   })
   .strict()
   .superRefine((value, ctx) => {
@@ -117,6 +119,9 @@ const activityFilterSchema = z
         message:
           "Pagination cursor requires both beforeOccurredAt and beforeId",
       });
+    }
+    if(value.page!==undefined && value.beforeOccurredAt){
+      ctx.addIssue({code:"custom",path:["page"],message:"Use a page number or a cursor, not both"});
     }
     if (
       value.from &&
@@ -593,6 +598,9 @@ export async function listActivityEvents(
       ),
     );
   }
+  if(input.actionKey){
+    conditions.push(sql`upper(${activityEvents.eventType}) = ${input.actionKey.toUpperCase()}`);
+  }
   if (input.eventType) {
     conditions.push(
       eq(
@@ -638,6 +646,8 @@ export async function listActivityEvents(
       ),
     );
   }
+  // Preserve the full filtered total before applying the pagination cursor.
+  const totalConditions=[...conditions];
   if (
     input.beforeOccurredAt &&
     input.beforeId
@@ -689,33 +699,48 @@ export async function listActivityEvents(
       desc(activityEvents.occurredAt),
       desc(activityEvents.id),
     )
-    .limit(input.limit + 1);
+    .limit(input.limit + 1)
+    .offset((input.page??0)*input.limit);
 
-  const hasMore =
-    rows.length > input.limit;
-  const items = hasMore
-    ? rows.slice(0, input.limit)
-    : rows;
-  const last =
-    items[items.length - 1];
-
-  const [remainingRow]=hasMore?await getDb().select({n:count()})
+  const hasMore=rows.length>input.limit;
+  // Deleted actors must not erase the identity of an historical audit entry.
+  const items=(hasMore?rows.slice(0,input.limit):rows).map(row=>({
+    ...row,
+    actor:row.actor?.id
+      ? {...row.actor,displayName:row.actor.displayName?.trim()||row.actor.email||"User "+row.actor.id}
+      : {id:row.event.actorUserId,displayName:row.event.actorUserId
+          ? "User "+row.event.actorUserId : "System",email:null},
+  }));
+  const last=items[items.length-1];
+  const [totalRow]=await getDb().select({n:count()})
+    .from(activityEvents).leftJoin(users,eq(users.id,activityEvents.actorUserId))
+    .where(totalConditions.length?and(...totalConditions):undefined);
+  const [windowRow]=hasMore?await getDb().select({n:count()})
     .from(activityEvents).leftJoin(users,eq(users.id,activityEvents.actorUserId))
     .where(conditions.length?and(...conditions):undefined):[{n:items.length}];
+  const consumed=(input.page??0)*input.limit+items.length;
+  const actorNames:Record<string,string>={};
+  const targetNames:Record<string,string>={};
+  for(const item of items){
+    if(item.event.actorUserId)
+      actorNames[item.event.actorUserId]=item.actor.displayName??"System";
+    targetNames[item.event.subjectId]=item.event.subjectLabel?.trim()||
+      item.event.subjectType+" #"+item.event.subjectId;
+  }
   return {
-    remainingCount:hasMore?Math.max(0,(remainingRow?.n??0)-items.length):0,
+    totalCount:totalRow?.n??0,
+    total:totalRow?.n??0,
+    page:input.page??0,
+    size:input.limit,
+    actorNames,
+    targetNames,
+    remainingCount:hasMore?Math.max(0,(windowRow?.n??0)-consumed):0,
     items,
-    groups:
-      groupActivityEvents(items),
-    nextCursor:
-      hasMore && last
-        ? {
-            beforeOccurredAt:
-              last.event.occurredAt,
-            beforeId:
-              last.event.id,
-          }
-        : null,
+    groups:groupActivityEvents(items),
+    nextCursor:hasMore&&last?{
+      beforeOccurredAt:last.event.occurredAt,
+      beforeId:last.event.id,
+    }:null,
   };
 }
 
@@ -747,8 +772,11 @@ export function groupActivityEvents<
       item.event.id;
     const previous =
       groups[groups.length - 1];
+    const sameIndiaDay=previous ?
+      new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(previous.latest.event.occurredAt)===
+      new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(item.event.occurredAt):false;
     const canGroup =
-      Boolean(
+      sameIndiaDay && Boolean(
         item.event.groupKey,
       ) &&
       previous?.key === key &&
