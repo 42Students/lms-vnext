@@ -15,7 +15,6 @@ import { listProjectActivity } from "@/modules/projects/activity-service";
 import { ProjectActivityFilteredList } from "@/components/projects/project-activity-filtered-list";
 import { ErrorState } from "@/components/ui/error-state";
 import {ProjectAdminNav} from "./project-admin-nav";
-import {ProjectsServiceError} from "@/modules/projects/errors";
 
 function workspaceRecoveryPanel({
  projectId,section,basePath,title,description,

@@ -10,7 +10,6 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Tabs } from "@/components/ui/tabs";
 import { Alert } from "@/components/ui/alert";
-import {isSuperAdmin} from "@/modules/identity/context";
 import {
   collegeElectiveQuerySchema,
   readCollegeStructureParams,
