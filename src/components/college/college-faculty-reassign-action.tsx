@@ -32,6 +32,21 @@ export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldM
   const [editYear,setEditYear]=useState(currentDelivery?.academicYear??"");
   const [editSemester,setEditSemester]=useState(currentDelivery?.semesterNumber==null?"":String(currentDelivery.semesterNumber));
   const selectedDelivery=deliveries.find(item=>item.id===editDelivery);
+  function editHasChanges(){
+    return editMember!==oldMembershipId||editDelivery!==deliveryId||editRole!==role||
+      !editActive||editYear!==(currentDelivery?.academicYear??"")||
+      editSemester!==(currentDelivery?.semesterNumber==null?"":String(currentDelivery.semesterNumber));
+  }
+  function closeEditor(){
+    if(pending)return;
+    if(editHasChanges()&&!window.confirm("Discard assignment changes?"))return;
+    setEditOpen(false);setError("");
+  }
+  function closeReassign(){
+    if(pending)return;
+    if(replacementMembershipId&&!window.confirm("Discard assignment changes?"))return;
+    setOpen(false);setReplacementMembershipId("");setError("");
+  }
   function openEditor(){
     setEditMember(oldMembershipId);setEditDelivery(deliveryId);setEditRole(role);
     setEditActive(true);setEditYear(currentDelivery?.academicYear??"");
@@ -88,16 +103,18 @@ export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldM
   }
   return <div className="min-w-0 space-y-[var(--lms-space-2)]">
     <Button variant="secondary" type="button" disabled={pending||candidates.length===0} onClick={()=>{setError("");setOpen(true);}}
+      aria-label={"Reassign "+facultyName+" · assignment "+assignmentId}
       className="min-h-11 w-full sm:w-auto md:min-h-9">
       Reassign
     </Button>
     <Button variant="secondary" type="button" disabled={pending}
-      onClick={openEditor} className="min-h-11 w-full sm:w-auto md:min-h-9">Edit</Button>
-    <Dialog open={editOpen} onOpenChange={value=>{if(!value&&!pending)setEditOpen(false);}}
+      onClick={openEditor} aria-label={"Edit assignment "+assignmentId+" for "+facultyName}
+      className="min-h-11 w-full sm:w-auto md:min-h-9">Edit</Button>
+    <Dialog open={editOpen} onOpenChange={value=>{if(!value)closeEditor();}}
       title={"Edit Faculty Assignment · "+facultyName} className="max-w-[500px]"
       dismissible={!pending} footer={<>
         <Button variant="secondary" type="button" disabled={pending}
-          onClick={()=>setEditOpen(false)}>Cancel</Button>
+          onClick={closeEditor}>Cancel</Button>
         <Button variant="primary" type="button" loading={pending} disabled={pending||!editMember||!editDelivery}
           onClick={()=>void submitEdit()}>{pending?"Saving…":"Save Changes"}</Button>
       </>}>
@@ -150,8 +167,8 @@ export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldM
         {error?<Alert tone="error">{error}</Alert>:null}
       </div>
     </Dialog>
-    <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)setOpen(false);}} title={"Reassign "+facultyName+" · "+role} dismissible={!pending} footer={<>
-<Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
+    <Dialog open={open} onOpenChange={next=>{if(!next)closeReassign();}} title={"Reassign "+facultyName+" · "+role} dismissible={!pending} footer={<>
+<Button variant="secondary" type="button" disabled={pending} onClick={closeReassign}
             className="min-h-11 w-full sm:w-auto md:min-h-9">Cancel</Button>
           <Button variant="primary" type="button" disabled={pending||!replacementMembershipId} onClick={submit}
             className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending}>

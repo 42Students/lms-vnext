@@ -14,7 +14,7 @@ import {friendlyApiError} from "@/lib/friendly-error";
 type VersionedCollegeProfile=CollegeOwnProfileInput&{profileDocumentVersion:number};
 const fieldStyle = "min-h-11 w-full md:min-h-9";
 type ProfileSection="personal"|"social"|"address"|"contacts";
-function Field({ label, value, onChange, type = "text", hint, disabled=false, maxLength=500, placeholder }: {
+function Field({ label, value, onChange, type = "text", hint, disabled=false, maxLength=150, placeholder }: {
   label: string; value: string; onChange: (value: string) => void;
   type?: string; hint?: string; disabled?:boolean; maxLength?:number; placeholder?:string;
 }) {
@@ -158,7 +158,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
             </label>
             <div className="min-w-0 md:col-span-2">
               <Field label="Profile photo (HTTPS link)" value={profile.photoUrl}
-                onChange={v => top("photoUrl", v)} disabled={editableSection!=="personal"} hint="Paste a secure image link. Direct photo upload requires the storage service." />
+                onChange={v => top("photoUrl", v)} disabled={editableSection!=="personal"} maxLength={500} hint="Paste a secure image link. Direct photo upload requires the storage service." />
             </div>
           </div>
         </section>
@@ -166,13 +166,13 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
         <section id="social" className="min-w-0 scroll-mt-24 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4 border-t border-border pt-6">
           {cardHeader("social","Social Profiles")}
           <div className="grid min-w-0 gap-4 md:grid-cols-2">
-            <Field label="LinkedIn" type="url" value={profile.social.linkedIn}
+            <Field label="LinkedIn" type="url" maxLength={500} value={profile.social.linkedIn}
               disabled={editableSection!=="social"} onChange={v => detail("social", "linkedIn", v)} />
-            <Field label="GitHub" type="url" value={profile.social.github}
+            <Field label="GitHub" type="url" maxLength={500} value={profile.social.github}
               disabled={editableSection!=="social"} onChange={v => detail("social", "github", v)} />
-            <Field label="Portfolio / Website" type="url" value={profile.social.website}
+            <Field label="Portfolio / Website" type="url" maxLength={500} value={profile.social.website}
               disabled={editableSection!=="social"} onChange={v => detail("social", "website", v)} />
-            <Field label="Instagram" type="url" value={profile.social.instagram}
+            <Field label="Instagram" type="url" maxLength={500} value={profile.social.instagram}
               disabled={editableSection!=="social"} onChange={v => detail("social", "instagram", v)} />
           </div>
           <p className="text-xs text-muted-foreground">Twitter/X is not stored by the current profile schema; no unpersisted value is collected.</p>
@@ -186,7 +186,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
               ["line1", "Current Address"], ["line2", "Permanent Address"],
               ["city", "City"], ["state", "State"], ["postalCode", "Pincode"], ["country", "Country"],
             ] as const).map(([key, label]) => (
-              <Field key={key} label={label} value={profile.address[key]}
+              <Field key={key} label={label} value={profile.address[key]} maxLength={key==="postalCode"?20:150}
                 onChange={v => detail("address", key, v)} disabled={editableSection!=="address"} />
             ))}
           </div>
@@ -198,9 +198,9 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
             <p className="break-words text-sm leading-6 text-body [overflow-wrap:anywhere]">Email: {email || "Not provided"} · Mobile: {phone || "Not provided"}</p>
           </div>
           <div className="grid min-w-0 gap-4 md:grid-cols-2">
-            <Field label="Additional email" type="email" value={profile.contacts.alternateEmail} disabled={editableSection!=="contacts"}
+            <Field label="Additional email" type="email" maxLength={254} value={profile.contacts.alternateEmail} disabled={editableSection!=="contacts"}
               onChange={v => detail("contacts", "alternateEmail", v)} />
-            <Field label="Additional phone" type="tel" maxLength={15} value={profile.contacts.alternatePhone} disabled={editableSection!=="contacts"}
+            <Field label="Additional phone" type="tel" maxLength={40} value={profile.contacts.alternatePhone} disabled={editableSection!=="contacts"}
               onChange={v => detail("contacts", "alternatePhone", v)} />
             <Field label="Contact person" value={profile.contacts.contactPerson} disabled={editableSection!=="contacts"}
               onChange={v => detail("contacts", "contactPerson", v)} />
