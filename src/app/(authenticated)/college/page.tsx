@@ -278,7 +278,7 @@ export default async function CollegeOverviewPage() {
             <span className="text-xs font-semibold text-primary-text">Review →</span>
           </Link>)}
         </div>
-        {setupGaps.every(item => item.count === 0) && <p role="status" className="text-sm text-muted-foreground">
+        {setupGaps.every(item => item.count === 0) && <p role="status" className="text-sm text-muted-foreground leading-[1.6]">
           No setup gaps found.
         </p>}
       </section>
