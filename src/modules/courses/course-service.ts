@@ -360,26 +360,35 @@ export async function createCourse(
         throw new CoursesServiceError("DEPARTMENT_NOT_FOUND");
       }
 
+      if(input.parentCourseId){
+        const parent=await loadCourseScope(input.parentCourseId);
+        if(parent.collegeId!==department.collegeId||
+           parent.organizationId!==department.organizationId)
+          throw new CoursesServiceError("COURSE_PARENT_NOT_FOUND");
+      }
       await assertCourseShortTitleUnique(
-        tx, input.departmentId, input.shortTitle ?? input.name.slice(0, 120),
+        tx, input.departmentId, input.shortTitle ?? input.name.slice(0, 64),
       );
       const [created] = await tx
         .insert(courses)
         .values({
           departmentId: input.departmentId,
+          parentCourseId:input.parentCourseId??null,
           name: input.name,
           code: input.code,
           // A generated immutable public slug is distinct from course code.
           // Imported legacy slugs retain their original value and identity.
           slug: `c-${randomUUID().replace(/-/g, "")}`,
           createdByOrganizationId: department.organizationId,
-          shortTitle:input.shortTitle??input.name.slice(0,120),
+          shortTitle:input.shortTitle??input.name.slice(0,64),
           officialCode:input.officialCode??null,
           cardColor:input.cardColor??null,
           takeaways:input.takeaways??null,
+          orderedTakeaways:input.takeaways?.split(/\\r?\\n/)
+           .map(value=>value.trim()).filter(Boolean)??null,
           introductionHeading:input.introductionHeading??"In this Course",
           enabled:input.enabled??true,
-          legacyAllowedForDisplay:input.enabled??true,
+          legacyAllowedForDisplay:(input.enabled??true)?1:0,
           description: input.description ?? null,
         })
         .returning();
@@ -438,9 +447,30 @@ export async function updateCourse(
       if (locked.updatedAt.getTime() !== new Date(input.expectedUpdatedAt).getTime()) {
         throw new CoursesServiceError("COURSE_STALE_VERSION");
       }
+      if(input.parentCourseId){
+        if(input.parentCourseId===courseId)
+          throw new CoursesServiceError("COURSE_PARENT_CYCLE");
+        const [parent]=await tx.select({
+          id:courses.id,collegeId:departments.collegeId,
+        }).from(courses).innerJoin(departments,eq(departments.id,courses.departmentId))
+         .where(and(eq(courses.id,input.parentCourseId),
+          eq(courses.status,"ACTIVE"))).for("share").limit(1);
+        if(!parent||parent.collegeId!==scope.collegeId)
+          throw new CoursesServiceError("COURSE_PARENT_NOT_FOUND");
+        const ancestry=await tx.execute(sql`with recursive ancestors as (
+          select id,parent_course_id,0 as depth from courses
+          where id=${input.parentCourseId}::uuid
+          union all
+          select c.id,c.parent_course_id,ancestors.depth+1
+          from courses c join ancestors on c.id=ancestors.parent_course_id
+          where ancestors.depth<64
+        ) select id from ancestors where id=${courseId}::uuid limit 1`);
+        if(ancestry.rows.length)
+          throw new CoursesServiceError("COURSE_PARENT_CYCLE");
+      }
       await assertCourseShortTitleUnique(
         tx, scope.departmentId,
-        input.shortTitle ?? locked.shortTitle ?? locked.name.slice(0, 120),
+        input.shortTitle ?? locked.shortTitle ?? locked.name.slice(0, 64),
         courseId,
       );
       const { expectedUpdatedAt, ...changes } = input;
@@ -448,6 +478,9 @@ export async function updateCourse(
       .update(courses)
       .set({
         ...changes,
+        ...(input.enabled===undefined?{}:{
+          legacyAllowedForDisplay:input.enabled?1:0,
+        }),
         version: sql<number>`${courses.version} + 1`,
         // The persisted token MUST advance even for two edits within one
         // millisecond (or across app/DB clocks). The browser sends this exact

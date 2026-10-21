@@ -49,6 +49,7 @@ function useLearningMutation() {
     task: () => Promise<unknown>,
     successTitle: string,
     onSuccess?: () => void,
+    onFailure?: (error: unknown) => void,
   ) {
     void guardedRun(async () => {
       try {
@@ -60,6 +61,7 @@ function useLearningMutation() {
         });
         router.refresh();
       } catch (error) {
+        onFailure?.(error);
         showToast({
           tone: "error",
           title: "Learning structure update failed",
@@ -477,162 +479,124 @@ export function LessonActions({
     updatedAt: Date | string;
   };
 }) {
-  const [editOpen, setEditOpen] =
-    useState(false);
-  const [archiveOpen, setArchiveOpen] =
-    useState(false);
-  const [name, setName] =
-    useState(lesson.name);
-  const [description, setDescription] =
-    useState(
-      lesson.description ?? "",
-    );
-  const [sequence, setSequence] =
-    useState(String(lesson.sequence));
-  const { pending, run } =
-    useLearningMutation();
-
+  const [editOpen, setEditOpen] = useState(false);
+  const [discardOpen, setDiscardOpen] = useState(false);
+  const [archiveOpen, setArchiveOpen] = useState(false);
+  const [typedArchiveName, setTypedArchiveName] = useState("");
+  const [name, setName] = useState(lesson.name);
+  const [description, setDescription] = useState(lesson.description ?? "");
+  const [editFailure, setEditFailure] = useState("");
+  const [archiveFailure, setArchiveFailure] = useState("");
+  const { pending, run } = useLearningMutation();
+  const dirty = name !== lesson.name || description !== (lesson.description ?? "");
+  const validName = name.trim().length > 0 && name.trim().length <= 255;
+  function dismissEdit(next: boolean) {
+    if (pending) return;
+    if (!next && dirty) { setDiscardOpen(true); return; }
+    setEditOpen(next);
+  }
+  function openEdit() {
+    if (pending) return;
+    setName(lesson.name);
+    setDescription(lesson.description ?? "");
+    setEditFailure("");
+    setDiscardOpen(false);
+    setEditOpen(true);
+  }
+  function openArchive() {
+    if (pending) return;
+    setTypedArchiveName("");
+    setArchiveFailure("");
+    setArchiveOpen(true);
+  }
   return (
     <>
       <div className="flex flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
-        <Button
-          size="sm"
-          variant="secondary"
-          onClick={() => {
-            setName(lesson.name);
-            setDescription(
-              lesson.description ?? "",
-            );
-            setSequence(
-              String(lesson.sequence),
-            );
-            setEditOpen(true);
-          }}
-        >
-          Edit
-        </Button>
-        <Dropdown trigger="More" label="Lesson actions" mobileSheet align="end" triggerClassName="md:!min-h-9"><Menu className="w-full min-w-0"><MenuItem onClick={() => setArchiveOpen(true)}>Archive</MenuItem></Menu></Dropdown>
+        <Button size="sm" variant="secondary" disabled={pending} onClick={openEdit}>Edit</Button>
+        <Dropdown trigger="More" label={"Lesson actions for " + lesson.name}
+          mobileSheet align="end" triggerClassName="md:!min-h-9">
+          <Menu className="w-full min-w-0">
+            <MenuItem disabled={pending} onClick={openArchive}>Archive</MenuItem>
+          </Menu>
+        </Dropdown>
       </div>
-
       <Dialog
         open={editOpen}
-        onOpenChange={next=>{if(!pending)setEditOpen(next);}}
+        onOpenChange={dismissEdit}
         dismissible={!pending}
         title="Edit Lesson"
-        footer={
-          <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
-            <Button
-              variant="secondary"
-              disabled={pending}
-              onClick={() =>
-                setEditOpen(false)
-              }
-            >
-              Cancel
-            </Button>
-            <Button
-              disabled={
-                pending ||
-                !name.trim() ||
-                !sequence.trim() || !Number.isInteger(Number(sequence)) || Number(sequence)<0 || Number(sequence)>10000
-              }
-              onClick={() =>
-                run(
-                  () =>
-                    requestJson(
-                      "/api/courses/lessons/" +
-                        lesson.id,
-                      "PATCH",
-                      {
-                        name,
-                        description:
-                          description.trim() ||
-                          null,
-                        sequence:
-                          Number(sequence),
-                        expectedUpdatedAt:new Date(lesson.updatedAt).toISOString(),
-                      },
-                    ),
-                  "Lesson updated",
-                  () => setEditOpen(false),
-                )
-              }
-            >
-              {pending
-                ? "Saving…"
-                : "Save"}
-            </Button>
-          </div>
-        }
+        description="Course membership is managed by the Learning Path. Use the Reorder tool to change lesson order and the Visibility control to show or hide the lesson."
+        footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
+          <Button variant="secondary" disabled={pending} onClick={() => dismissEdit(false)}>Cancel</Button>
+          <Button disabled={pending || !validName} onClick={() => {
+            setEditFailure("");
+            run(
+              () => requestJson("/api/courses/lessons/" + lesson.id, "PATCH", {
+                name: name.trim(),
+                description: description.trim() || null,
+                expectedUpdatedAt: new Date(lesson.updatedAt).toISOString(),
+              }),
+              "Updated lesson “" + name.trim() + "”.",
+              () => {setEditOpen(false);setEditFailure("");},
+              error => setEditFailure(error instanceof Error ? error.message : "Review your changes and retry."),
+            );
+          }}>{pending ? "Saving…" : "Save"}</Button>
+        </div>}
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)]">
           <label>
-            <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">
-              Name
-            </span>
-            <Input
-              value={name}
-              onChange={(event) =>
-                setName(event.target.value)
-              }
-              maxLength={255}
-            />
+            <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">Name</span>
+            <Input value={name} onChange={event=>setName(event.target.value)} maxLength={255}
+              aria-invalid={!validName} aria-describedby={!validName ? "lesson-name-error" : undefined}/>
+            {!validName?<span id="lesson-name-error" role="alert" className="mt-1 block text-xs text-error">
+              {name.trim() ? "Maximum 255 characters" : "Enter lesson name"}
+            </span>:null}
           </label>
           <label>
-            <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">
-              Description
-            </span>
-            <Textarea
-              value={description}
-              onChange={(event) =>
-                setDescription(
-                  event.target.value,
-                )
-              }
-              maxLength={5000}
-            />
+            <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">Description</span>
+            <Textarea value={description} onChange={event=>setDescription(event.target.value)} maxLength={5000}/>
           </label>
-          <label>
-            <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">
-              Order
-            </span>
-            <Input
-              type="number"
-              min={0}
-              max={10000}
-              value={sequence}
-              onChange={(event) =>
-                setSequence(
-                  event.target.value,
-                )
-              }
-            />
-          </label>
+          {editFailure?<div role="alert" className="space-y-2 rounded border border-danger p-3">
+            <p className="text-sm font-semibold text-error">Lesson changes were not saved</p>
+            <p className="text-sm text-body">{editFailure}</p>
+            <Button size="sm" variant="secondary" onClick={()=>setEditFailure("")}>Dismiss</Button>
+          </div>:null}
         </div>
       </Dialog>
-
-      <ConfirmDialog
-        open={archiveOpen}
-        onOpenChange={setArchiveOpen}
-        title={
-          "Archive " + lesson.name + "?"
-        }
-        description="The Lesson and its active learning items leave current Course surfaces. Historical records remain preserved."
+      <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
+        title={"Discard edits to “" + lesson.name + "”?"}
+        description="Unsaved changes will be lost." confirmLabel="Discard edits"
+        onConfirm={()=>{setDiscardOpen(false);setEditOpen(false);setEditFailure("");}}/>
+      <ConfirmDialog open={archiveOpen}
+        onOpenChange={next=>{if(!pending){setArchiveOpen(next);if(!next)setTypedArchiveName("");}}}
+        title="Archive lesson"
+        description="Students and teachers lose this lesson straight away. Uploaded files and historical progress are kept so the lesson can be restored. No files are deleted."
         confirmLabel="Archive Lesson"
         pending={pending}
-        onConfirm={() =>
+        confirmDisabled={typedArchiveName!==lesson.name}
+        onConfirm={()=>{
+          if (typedArchiveName!==lesson.name || pending) return;
+          setArchiveFailure("");
           run(
-            () =>
-              requestJson(
-                "/api/courses/lessons/" +
-                  lesson.id,
-                "DELETE",
-              ),
-            "Lesson archived",
-            () => setArchiveOpen(false),
-          )
-        }
-      />
+            () => requestJson("/api/courses/lessons/" + lesson.id, "DELETE"),
+            "Archived “" + lesson.name + "”. Its uploaded files and progress are kept for restoration.",
+            () => {setArchiveOpen(false);setTypedArchiveName("");},
+            error => setArchiveFailure(error instanceof Error ? error.message : "Archive failed; refresh and try again."),
+          );
+        }}>
+        <div className="space-y-2">
+          <label className="block text-sm font-semibold text-body">
+            Type the lesson name to confirm: <strong>{lesson.name}</strong>
+            <Input value={typedArchiveName} autoComplete="off" disabled={pending}
+              onChange={event=>setTypedArchiveName(event.target.value)}
+              aria-label="Type exact lesson name to archive"
+              className="mt-2" />
+          </label>
+          {archiveFailure?<p role="alert" className="text-sm text-error">
+            Lesson was not archived. {archiveFailure}
+          </p>:null}
+        </div>
+      </ConfirmDialog>
     </>
   );
 }
@@ -681,16 +645,16 @@ export function AdminQuizResultsActions({
               },
             ),
           resultsPublished
-            ? "Quiz results hidden"
-            : "Quiz results published",
+            ? "Results withheld from learners"
+            : "Results released to learners",
         )
       }
     >
       {pending
         ? "Saving…"
         : resultsPublished
-          ? "Hide results"
-          : "Publish results"}
+          ? "Withhold results"
+          : "Release results"}
     </Button>
   );
 }
