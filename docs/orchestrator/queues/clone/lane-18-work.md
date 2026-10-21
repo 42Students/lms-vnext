@@ -4,8 +4,8 @@ You own 67 work packets moved from slower lanes. Same rules as every wave-1 lane
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_app_api_placements_registration_route.ts.md` (edit src/app/api/placements/registration/route.ts; 1 findings; best P3)
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-workspace-access-model.ts.md` (edit src/modules/placements/tpo-workspace-access-model.ts; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_app_api_placements_registration_route.ts.md` (edit src/app/api/placements/registration/route.ts; 1 findings; best P3)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-workspace-access-model.ts.md` (edit src/modules/placements/tpo-workspace-access-model.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-round-apply-model.ts.md` (edit src/modules/placements/tpo-round-apply-model.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_company-curation-alias-model.ts.md` (edit src/modules/placements/company-curation-alias-model.ts; 2 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_learner-offer-action-error-model.ts.md` (edit src/modules/placements/learner-offer-action-error-model.ts; 3 findings; best P2)

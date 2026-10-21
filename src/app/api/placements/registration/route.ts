@@ -22,7 +22,7 @@ export async function POST(request:Request) {
     const context=await getCurrentRequestContext();
     await requireLearnerPlacementAccess(context);
     const result=await registerOwnPlacementChoice(context,await request.json());
-    return NextResponse.json({choice:result.choice,version:result.version},
+    return NextResponse.json({ok:true,choice:result.choice,version:result.version},
       {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {return registrationError(error);}
 }
