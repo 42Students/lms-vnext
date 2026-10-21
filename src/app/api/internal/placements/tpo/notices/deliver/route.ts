@@ -1,4 +1,6 @@
-import {timingSafeEqual} from "node:crypto";
+import {randomUUID,timingSafeEqual} from "node:crypto";
+import {executeScheduledJobWithLease} from "@/modules/operations/scheduled-job-runner";
+import {postgresScheduledJobLeaseStore} from "@/modules/operations/postgres-scheduled-job-lease-store";
 import {NextResponse} from "next/server";
 import {deliverDueTpoNotices} from "@/modules/announcements/tpo-notice-delivery-service";
 export const runtime="nodejs";
@@ -12,7 +14,13 @@ export async function POST(request:Request){
     !timingSafeEqual(expected,actual))
   return NextResponse.json({error:"FORBIDDEN"},{status:403});
  try{
-  const result=await deliverDueTpoNotices();
+  const result=await executeScheduledJobWithLease(
+   postgresScheduledJobLeaseStore,
+   {jobName:"tpo.deliverDueNotices",holderId:randomUUID(),ttlMs:50_000},
+   async fence=>{await fence.assertCurrent();return deliverDueTpoNotices();},
+  );
+  if(result.ran&&!result.result.ready)
+   return NextResponse.json({error:"DELIVERY_STORAGE_NOT_READY"},{status:503});
   return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
  }catch{
   return NextResponse.json({error:"DELIVERY_NOT_COMPLETED"},{status:503});

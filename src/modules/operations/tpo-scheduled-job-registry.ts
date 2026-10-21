@@ -20,7 +20,7 @@ export const TPO_SCHEDULED_JOBS = {
     description: "Shortlists due tomorrow",
   },
   "tpo.escalateWithdrawals": {
-    schedule: "*/15 * * * *", leaseMs: 12 * 60_000, wired: false,
+    schedule: "*/15 * * * *", leaseMs: 12 * 60_000, wired: true,
     description: "Undecided withdrawal escalations",
   },
   "tpo.finalizeExternalAcceptances": {
