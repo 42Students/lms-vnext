@@ -555,3 +555,40 @@ Acad program identity, duration terms, archived-name reuse and selected-college 
 - G2-2-010-020 | `src/components/attendance/admin-attendance-policy-editor.tsx` | Provide independent reset notice and semantics.
 
 Attendance policy read/update/reset semantics, override provenance and permission partition need the Attendance/Academics owner, and resetting defaults must not be represented as deleting one override. College Admin expanded mutation rights require owner approval. **14/14 handed off, not fixed**.
+
+## Super Admin hiring dashboard — lane-7 handoff (2026-10-21)
+
+- G2-15-030-001 | `src/modules/admin-ui/super-admin-hiring-report-service.ts` | Resolve lost org-scoped placement analytics.
+- G2-15-030-017 | `src/components/ui/data-table.tsx` | Add bounded pagination, avoid 5000-row DOM.
+- G2-15-030-034 | `src/modules/admin-ui/super-admin-hiring-report-export.ts` | Restore four report sections in export.
+- G2-15-030-038 | `src/modules/admin-ui/super-admin-hiring-report-service.ts` | Owner decision on org-wide reports.
+- G2-15-030-041 | `src/modules/admin-ui/super-admin-hiring-funnel-model.ts` | Document stage semantic change and reconcile historical results.
+- G2-15-030-063 | `src/components/ui/data-table.tsx` | Add server-side or bounded client pagination.
+- G2-15-030-073 | `src/app/(authenticated)/admin/placements/analytics/page.tsx` | Owner decide org-scoped reporting scope.
+- G2-15-030-074 | `src/modules/admin-ui/super-admin-hiring-report-export.ts` | Restore combined report or explicitly approve replacement.
+- G2-15-030-024 | `src/app/(authenticated)/admin/placements/analytics/page.tsx` | Show healthy panels despite partial failure.
+- G2-15-030-025 | `src/modules/admin-ui/super-admin-hiring-report-filters-service.ts` | Differentiate failed dropdown from no data.
+- G2-15-030-026 | `src/app/(authenticated)/admin/placements/analytics/page.tsx` | Restore same-scope stale-data warning and retry.
+- G2-15-030-028 | `src/app/(authenticated)/admin/placements/analytics/page.tsx` | Disable or explain export unavailable/partial.
+- G2-15-030-027 | `src/app/(authenticated)/admin/placements/analytics/page.tsx` | Match actionable error copy.
+- G2-15-030-029 | `src/app/(authenticated)/admin/placements/analytics/page.tsx` | Present refresh/pending status.
+
+Org-wide hiring analytics, multi-section export and paged table have scoped data permission/export contract implications; coordinate Admin UI/Placements owner rather than changing shared table globally. **14/14 handed off, not fixed**.
+
+## Admin assignment controller — lane-7 handoff (2026-10-21)
+
+- G2-2-007-009 | `src/modules/courses/admin-assignment-directory-service.ts` | Isolate per-assignment stats failures so one bad row does not blank directory.
+- G2-2-007-013 | `src/components/courses/college-assignment-create.tsx` | Add specific section picker constrained to selected course.
+- G2-2-007-017 | `src/modules/courses/college-assignment-directory-model.ts` | Add class/sectionId exact filtering across assignments and stats.
+- G2-2-007-032 | `src/modules/courses/admin-assignment-directory-service.ts` | Make counts best-effort per row or distinguish total query failure from row failure.
+- G2-2-007-038 | `src/modules/courses/admin-assignment-directory-service.ts` | Render Unavailable for broken per-row statistics instead of claiming zero.
+- G2-2-007-056 | `src/modules/courses/admin-assignment-directory-service.ts` | Provide partial stats fallback or explicit degraded mode with rows intact.
+- G2-2-007-063 | `src/modules/courses/college-assignment-directory-model.ts` | Implement exact class filter rather than treating presence as identity.
+- G2-2-007-022 | `src/modules/courses/admin-assignment-directory-service.ts` | Map college-vs-org denial safely and do not disclose other college data.
+- G2-2-007-023 | `src/app/(authenticated)/admin/assignments/page.tsx` | Keep full error details in logs and scoped retry UI; preserve consistent generic message.
+- G2-2-007-025 | `src/app/api/courses/assignments/publish/route.ts` | Align failures report and per-college cross-section semantics.
+- G2-2-007-021 | `src/app/(authenticated)/admin/assignments/page.tsx` | Keep accessible missing-scope state; document changed error body.
+- G2-2-007-024 | `src/app/(authenticated)/admin/assignments/page.tsx` | N/A toast for list retrieval; API contract changed.
+- G2-2-007-026 | `src/components/courses/college-assignment-list.tsx` | Restore exact toast copy.
+
+The Courses assignments directory's section targeting and stats are shared Courses/UI contracts; row-specific failure and exact classroom targeting must remain tenant scoped. Legacy hard-delete / publish-all messages cannot bypass current grant and audit protections. **13/13 handed off, not fixed**.
