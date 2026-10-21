@@ -1,9 +1,9 @@
 import "server-only";
-import { and, eq, gte, inArray, sql } from "drizzle-orm";
+import { and, eq, isNotNull, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   colleges, organizations, placementApplications, placementJobs,
-  placementOffers, placementCompanyRelationships, placementCollegeRules,
+  placementOffers, placementCompanyRelationships,
 } from "@/db/schema";
 import { placementPublicPageSettings as publicPlacementPageSettings } from "@/db/schema";
 import { publicPlacementTableReady } from "./readiness";
@@ -35,21 +35,22 @@ export async function getPublicPlacementStatistics(collegeId:string){
   const since = new Date(now);
   since.setUTCMonth(since.getUTCMonth() - 12);
   const db = getDb();
-  const [policy, totals] = await Promise.all([
-    db.select({ countsAsPlacedAt: placementCollegeRules.countsAsPlacedAt })
-      .from(placementCollegeRules)
-      .where(eq(placementCollegeRules.collegeId, collegeId)).limit(1),
-    db.select({
+  // Legacy public placements: accepted distinct learners and employers,
+  // but all *released or accepted* offer records for the offer total.
+  // Keep this separate from an institution's private "counts as placed" rule.
+  const totals = await db.select({
       offers: sql<number>`count(distinct ${placementOffers.id})::integer`,
       acceptedStudents: sql<number>`count(distinct case when ${placementOffers.status}='ACCEPTED'
         then ${placementApplications.membershipId} end)::integer`,
-      releasedStudents: sql<number>`count(distinct ${placementApplications.membershipId})::integer`,
-      employers: sql<number>`count(distinct ${placementCompanyRelationships.companyId})::integer`,
-      ctcStudentCount: sql<number>`count(distinct case when ${placementOffers.annualCtcInr} is not null
-        then ${placementApplications.membershipId} end)::integer`,
+      employers: sql<number>`count(distinct case when ${placementOffers.status}='ACCEPTED'
+        then ${placementCompanyRelationships.companyId} end)::integer`,
+      ctcStudentCount: sql<number>`count(distinct case when ${placementOffers.status}='ACCEPTED'
+        and ${placementOffers.annualCtcInr} is not null then ${placementApplications.membershipId} end)::integer`,
       medianCtc: sql<number | null>`percentile_cont(0.5) within group
-        (order by ${placementOffers.annualCtcInr})`,
-      highestCtc: sql<number | null>`max(${placementOffers.annualCtcInr})`,
+        (order by case when ${placementOffers.status}='ACCEPTED'
+          then ${placementOffers.annualCtcInr} end)`,
+      highestCtc: sql<number | null>`max(case when ${placementOffers.status}='ACCEPTED'
+        then ${placementOffers.annualCtcInr} end)`,
     }).from(placementOffers)
       .innerJoin(placementApplications,
         eq(placementApplications.id, placementOffers.applicationId))
@@ -60,19 +61,13 @@ export async function getPublicPlacementStatistics(collegeId:string){
       .where(and(
         eq(placementJobs.collegeId, collegeId),
         eq(placementCompanyRelationships.collegeId, collegeId),
-        gte(placementOffers.issuedAt, since),
-        inArray(placementOffers.status, ["ISSUED", "ACCEPTED"]),
-        inArray(placementJobs.status, ["PUBLISHED", "CLOSED"]),
+        sql`coalesce(${placementOffers.legacyCreatedAt},${placementOffers.issuedAt}) >= ${since}`,
+        or(eq(placementOffers.status,"ACCEPTED"),
+          and(eq(placementOffers.status,"ISSUED"),isNotNull(placementOffers.releasedAt))),
         eq(placementOffers.kind, "OFFER"),
-      )),
-  ]);
+      ));
   const actual = totals[0];
-  const placedAt = policy[0]?.countsAsPlacedAt ?? "OFFER_RELEASED";
-  // SELECTED requires a distinct upstream selection ledger; it is never
-  // silently equated to released or accepted offers.
-  const placedCount = placedAt === "SELECTED" ? null
-    : placedAt === "OFFER_ACCEPTED" ? actual?.acceptedStudents ?? 0
-    : actual?.releasedStudents ?? 0;
+  const placedCount = actual?.acceptedStudents ?? 0;
   const input={enabled:row.enabled,collegeActive:true,population:row.population};
   // Offers and hiring employers can exceed the number of unique students.
   // They still need an eligible published cohort of at least five and their
@@ -80,6 +75,9 @@ export async function getPublicPlacementStatistics(collegeId:string){
 
   return {
     publishedAt:row.publishedAt.toISOString(),
+    populationBasis:"PUBLISHED_ELIGIBLE_SNAPSHOT" as const,
+    placementBasis:"ACCEPTED_OFFERS" as const,
+    offerWindowMonths:12,
     placed:publicMetricRelease({...input,count:placedCount}),
     population:publicMetricRelease({...input,count:row.population}),
     offers:publicIndependentPlacementCount(actual?.offers ?? 0,row.population),
