@@ -3,9 +3,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Dialog } from "@/components/ui/dialog";
 
 import { Button } from "@/components/ui/button";
-import { useState, type FormEvent } from "react";
+import { useId, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { useGuardedAction } from "@/hooks/use-guarded-action";
@@ -15,6 +16,7 @@ import { collegeCompanyDraftPayload } from "@/modules/placements/college-company
  * college-specific relationship. Editing a shared global identity stays
  * platform-admin-only; a college may edit its private contact/notes relationship. */
 export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
+ const formId=useId();
  const router=useRouter();
  const {showToast}=useToast();
  const {pending,run}=useGuardedAction({busyLabel:"Adding company..."});
@@ -116,11 +118,25 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
  return <section className="min-w-0 space-y-[var(--lms-space-3)]">
   <Button variant="primary" type="button" disabled={pending} onClick={()=>open?requestClose():setOpen(true)}
     aria-expanded={open} className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
+    <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+      <path d="M8 2.5v11M2.5 8h11"/>
+    </svg>
     Add company
   </Button>
   {notice?<p role="status" className="text-sm text-body leading-[22px]">{notice}</p>:null}
-  {open?<form onSubmit={submit} className="grid min-w-0 max-w-[920px] gap-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] md:grid-cols-2">
-    <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)] md:col-span-2">Add company</h2>
+  <Dialog open={open} onOpenChange={value=>{if(!value)requestClose();else setOpen(true);}}
+    title="Add Company"
+    description="Link a canonical company identity with this college."
+    className="max-w-[560px] max-[767px]:!max-h-[100dvh] max-[767px]:!rounded-t-[var(--lms-canvas-radius)]"
+    footer={<>
+      <Button variant="secondary" type="button" disabled={pending} onClick={requestClose}>Cancel</Button>
+      <Button form={formId} variant="primary" type="submit" disabled={pending}>
+        {pending?"Adding…":"Save company"}
+      </Button>
+    </>}>
+   <form id={formId} onSubmit={submit}
+     className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)] sm:grid-cols-2">
+    <h3 className="font-semibold text-foreground sm:col-span-2">Identity</h3>
     <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Company name
       <Input required minLength={2} maxLength={150} placeholder="e.g. Infosys Limited" value={name}
         aria-invalid={Boolean(fieldErrors.name)}
@@ -159,6 +175,7 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
         className={field}/>
       {fieldErrors.contactPhone?<span role="alert" className="text-xs font-normal text-error">{fieldErrors.contactPhone}</span>:null}
     </label>
+    <h3 className="font-semibold text-foreground sm:col-span-2">Internal</h3>
     <div className="min-w-0 space-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-3 sm:col-span-2">
       <label className="grid min-w-0 gap-2 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
         Internal notes
@@ -177,14 +194,8 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
       <span><strong>Company was not saved.</strong> {error}</span>
       <Button type="button" variant="ghost" size="sm" onClick={()=>setError("")}>Dismiss</Button>
     </div>:null}
-    <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row md:col-span-2">
-      <Button variant="primary" type="submit" disabled={pending} className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
-        {pending?"Adding…":"Save company"}
-      </Button>
-      <Button variant="secondary" type="button" disabled={pending} onClick={requestClose}
-        className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">Cancel</Button>
-    </div>
-   </form>:null}
+   </form>
+  </Dialog>
   <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard}
    title="Discard unsaved changes?" description="Your company details have not been saved."
    cancelLabel="Keep editing" confirmLabel="Discard changes" confirmVariant="danger"
