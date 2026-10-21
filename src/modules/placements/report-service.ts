@@ -188,7 +188,7 @@ export async function getPlacementReportWorkspace(
    * Fetch the job selector independently of jobId, so changing the drive
    * filter does not remove other choices from the selector.
    */
-  const jobRows = await db
+  const jobRowsRaw = await db
     .select({
       id: placementJobs.id,
       title: placementJobs.title,
@@ -229,6 +229,12 @@ export async function getPlacementReportWorkspace(
       placementJobs.title,
       placementJobs.id,
     );
+  // Nullable placed answers are unverified legacy values; the pure model
+  // exposes undefined to retain the documented conservative fallback.
+  const jobRows = jobRowsRaw.map((row) => ({
+    ...row,
+    countsAsPlaced: row.countsAsPlaced ?? undefined,
+  }));
 
   if (
     query.jobId &&
@@ -786,7 +792,7 @@ export async function getPlacementReportDetails(
       companyId: row.companyId,
       companyName: row.companyName,
       employmentType: row.employmentType,
-      countsAsPlaced: row.countsAsPlaced,
+      countsAsPlaced: row.countsAsPlaced ?? undefined,
       status: row.status,
       kind: row.kind,
       annualCtcInr: row.annualCtcInr,
