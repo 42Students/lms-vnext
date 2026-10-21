@@ -26,6 +26,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
   const [result,setResult]=useState<string|null>(null);
   const [savedMemberId,setSavedMemberId]=useState<string|null>(null);
   const [error,setError]=useState("");
+  const [fieldErrors,setFieldErrors]=useState<Record<string,string>>({});
   const [programId,setProgramId]=useState("");
   const [cohortId,setCohortId]=useState("");
   const [sectionId,setSectionId]=useState("");
@@ -40,10 +41,21 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
   const [address,setAddress]=useState("");
   const field="min-h-11 min-w-0 md:min-h-9";
   async function submit(event:FormEvent<HTMLFormElement>) {
-    event.preventDefault();setError("");setResult(null);setSavedMemberId(null);
-    if(!indianMobileToE164(phoneE164)){setError("Mobile number must be 10 digits");return;}
-    if(!programId||!cohortId||!displayName.trim()||!phoneE164.trim()){
-      setError("Name, phone, program and batch are required.");return;
+    event.preventDefault();setError("");setFieldErrors({});setResult(null);setSavedMemberId(null);
+    const invalid:Record<string,string>={};
+    if(!firstName.trim())invalid.firstName="Enter the first name";
+    if(!lastName.trim())invalid.lastName="Enter the last name";
+    if(!rollNumber.trim())invalid.rollNumber="Enter the roll number";
+    if(!phoneE164.trim())invalid.mobile="Enter the mobile number";
+    else if(!indianMobileToE164(phoneE164))invalid.mobile="Mobile number must be 10 digits";
+    if(!programId)invalid.programId="Choose a program";
+    if(!cohortId)invalid.cohortId="Choose a batch";
+    // vNext keeps a mandatory program+batch enrollment while permitting
+    // assignment to a class later when none is available in that batch.
+    if(Object.keys(invalid).length){
+      setFieldErrors(invalid);
+      setError("Check the highlighted fields before registering.");
+      return;
     }
     if(!(await ask("Register this student and enroll them in the selected batch?")))return;
     void guardedRun(async()=>{
@@ -64,38 +76,49 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
           setFirstName("");setLastName("");setPhone("");setEmail("");setRoll("");setDob("");setAddress("");
           router.refresh();
         }
-      }catch(reason){setError(reason instanceof Error?reason.message:"Registration failed");}
+      }catch(reason){setError("Failed to register student: "+
+        (reason instanceof Error?reason.message:"Registration failed"));}
     });
   }
   return <>{confirmation}<form onSubmit={event=>{void submit(event);}} className="grid min-w-0 max-w-4xl gap-4 md:grid-cols-2">
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">First Name
-      <Input required maxLength={120} value={firstName} onChange={e=>setFirstName(e.target.value)} className={field}/>
+      <Input maxLength={120} value={firstName} onChange={e=>setFirstName(e.target.value)} className={field} aria-invalid={Boolean(fieldErrors.firstName)} aria-describedby={fieldErrors.firstName?"register-first-error":undefined}/>
+      {fieldErrors.firstName?<span id="register-first-error" role="alert" className="text-xs text-error">{fieldErrors.firstName}</span>:null}
     </label>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Last Name
-      <Input required maxLength={120} value={lastName} onChange={e=>setLastName(e.target.value)} className={field}/>
+      <Input maxLength={120} value={lastName} onChange={e=>setLastName(e.target.value)} className={field} aria-invalid={Boolean(fieldErrors.lastName)} aria-describedby={fieldErrors.lastName?"register-last-error":undefined}/>
+      {fieldErrors.lastName?<span id="register-last-error" role="alert" className="text-xs text-error">{fieldErrors.lastName}</span>:null}
     </label>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Mobile Number
       <span className="text-xs font-normal text-muted-foreground">Used for OTP login</span>
-      <Input required type="tel" placeholder="9876543210" value={phoneE164}
-        onChange={e=>setPhone(e.target.value)} className={field}/>
+      <Input type="tel" placeholder="9876543210" value={phoneE164}
+        onChange={e=>setPhone(e.target.value)} className={field}
+        aria-invalid={Boolean(fieldErrors.mobile)} aria-describedby={fieldErrors.mobile?"register-mobile-error":undefined}/>
+      {fieldErrors.mobile?<span id="register-mobile-error" role="alert" className="text-xs text-error">{fieldErrors.mobile}</span>:null}
     </label>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Email
       <Input type="email" maxLength={320} value={email} onChange={e=>setEmail(e.target.value)} className={field}/>
     </label>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Roll Number
-      <Input maxLength={128} value={rollNumber} onChange={e=>setRoll(e.target.value)} className={field}/>
+      <Input maxLength={128} value={rollNumber} onChange={e=>setRoll(e.target.value)} className={field}
+        aria-invalid={Boolean(fieldErrors.rollNumber)} aria-describedby={fieldErrors.rollNumber?"register-roll-error":undefined}/>
+      {fieldErrors.rollNumber?<span id="register-roll-error" role="alert" className="text-xs text-error">{fieldErrors.rollNumber}</span>:null}
     </label>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Program
-      <Select required value={programId} onChange={e=>{setProgramId(e.target.value);setCohortId("");setSectionId("");}} className={field}>
+      <Select value={programId} onChange={e=>{setProgramId(e.target.value);setCohortId("");setSectionId("");}} className={field}
+        aria-invalid={Boolean(fieldErrors.programId)} aria-describedby={fieldErrors.programId?"register-program-error":undefined}>
         <option value="">Choose program</option>
         {choices.programs.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}
       </Select>
+      {fieldErrors.programId?<span id="register-program-error" role="alert" className="text-xs text-error">{fieldErrors.programId}</span>:null}
     </label>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Batch
-      <Select required value={cohortId} onChange={e=>{setCohortId(e.target.value);setSectionId("");}} className={field}>
+      <Select value={cohortId} onChange={e=>{setCohortId(e.target.value);setSectionId("");}} className={field}
+        aria-invalid={Boolean(fieldErrors.cohortId)} aria-describedby={fieldErrors.cohortId?"register-batch-error":undefined}>
         <option value="">Choose batch</option>
         {choices.batches.filter(p=>p.programId===programId).map(p=><option key={p.id} value={p.id}>{p.name}</option>)}
       </Select>
+      {fieldErrors.cohortId?<span id="register-batch-error" role="alert" className="text-xs text-error">{fieldErrors.cohortId}</span>:null}
     </label>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Class/Section
       <Select value={sectionId} onChange={e=>setSectionId(e.target.value)} className={field}>
@@ -103,6 +126,9 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
         {choices.classes.filter(p=>p.cohortId===cohortId).map(p=>
           <option key={p.id} value={p.id}>{p.name} · {p.capacity??"Unlimited"} seats</option>)}
       </Select>
+      <span className="text-xs font-normal text-muted-foreground">
+        New batch-first enrollment: class placement is optional when no class is assigned yet.
+      </span>
     </label>
     <details className="group min-w-0 border-t border-border pt-4 md:col-span-2">
       <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-primary-text md:min-h-9">Gender · Date of Birth · Address</summary>
@@ -114,6 +140,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
     </label>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Date of Birth
       <Input type="date" value={dateOfBirth} onChange={e=>setDob(e.target.value)} className={field}/>
+      <span className="text-xs font-normal text-muted-foreground">Example: 2005-08-21. Optional.</span>
     </label>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2 text-[13px]">Address
       <Textarea maxLength={1000} rows={3} value={address} onChange={e=>setAddress(e.target.value)}
