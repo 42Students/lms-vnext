@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
@@ -17,10 +19,32 @@ import {learnerProfileMissingItems} from "@/modules/placements/learner-profile-m
 import {learnerVerificationNoticeCopy} from "@/modules/placements/learner-verification-notice-model";
 import {LearnerVerificationLiveRefresh} from "@/components/profile/learner-verification-live-refresh";
 
-export default async function LearnerProfilePage({
+type ProfileParams={section?:string|string[]};
+function ProfileLoading() {
+  return <div className="min-w-0 space-y-4" data-testid="learner.profile.page.loading"
+    aria-busy="true" aria-label="Loading profile">
+    <PageHeader title="Profile"/>
+    <div className="rounded-lg border border-border p-5" aria-hidden="true">
+      <div className="flex items-center gap-4">
+        <span className="h-16 w-16 shrink-0 animate-pulse rounded-full bg-muted"/>
+        <div className="w-full space-y-3">
+          <div className="h-5 w-1/3 animate-pulse rounded bg-muted"/>
+          <div className="h-4 w-1/2 animate-pulse rounded bg-muted"/>
+        </div>
+      </div>
+      <div className="mt-5 grid gap-3 sm:grid-cols-2">
+        {[1,2,3,4].map(key=><div key={key} className="h-16 animate-pulse rounded bg-muted"/>)}
+      </div>
+    </div>
+  </div>;
+}
+export default function LearnerProfilePage({searchParams}:{searchParams:Promise<ProfileParams>}) {
+  return <Suspense fallback={<ProfileLoading/>}><LearnerProfileContent searchParams={searchParams}/></Suspense>;
+}
+async function LearnerProfileContent({
   searchParams,
 }: {
-  searchParams: Promise<{ section?: string | string[] }>;
+  searchParams: Promise<ProfileParams>;
 }) {
   const query = await searchParams;
   const initialSection = learnerProfileResolveSection(query.section);
@@ -28,11 +52,23 @@ export default async function LearnerProfilePage({
   const context = await getCurrentRequestContext();
 
   await requireOwnLearnerProfileAccess(context);
-  const [{ person, profile }, academicOutcome] = await Promise.all([
+  const [profileOutcome, academicOutcome] = await Promise.allSettled([
     getOwnLearnerProfileWithRuntime(context),
-    Promise.allSettled([getOwnLearnerAcademicSummary(context)]).then(([result])=>learnerProfileAcademicRecovery(result)),
+    getOwnLearnerAcademicSummary(context),
   ]);
-  const academic=academicOutcome.summary;
+  if (profileOutcome.status === "rejected") {
+    if (profileOutcome.reason instanceof AuthorizationError) throw profileOutcome.reason;
+    return <div className="min-w-0 max-w-full space-y-4" data-testid="learner.profile.page.error">
+      <PageHeader title="Profile"/>
+      <section role="alert" className="rounded-lg border border-border px-5 py-10 text-center">
+        <p className="text-sm text-body">We couldn&apos;t load your profile. Please try again.</p>
+        <Link href="/learn/profile" className="mt-3 inline-flex min-h-11 items-center rounded-lg border border-border px-4 font-semibold text-primary-text underline md:min-h-9">Retry</Link>
+      </section>
+    </div>;
+  }
+  const {person,profile}=profileOutcome.value;
+  const academicRecovery=learnerProfileAcademicRecovery(academicOutcome);
+  const academic=academicRecovery.summary;
   const verificationOutcome=await Promise.allSettled([getOwnLearnerVerificationStatus(context)]);
   const verification=verificationOutcome[0]?.status==="fulfilled"?verificationOutcome[0].value:null;
   const missing=verification?learnerProfileMissingItems(verification):[];
@@ -43,6 +79,32 @@ export default async function LearnerProfilePage({
         title="Profile"
       />
       <LearnerVerificationLiveRefresh/>
+      <section aria-label="Profile verification summary" className="min-w-0 border-b border-border pb-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="font-semibold text-[var(--lms-heading)]">Profile verification</h2>
+          <Badge  tone="neutral">
+            {verification&&["VERIFIED","UPDATE_PENDING"].includes(verification.education.status)&&
+              ["VERIFIED","UPDATE_PENDING"].includes(verification.identity.status)
+              ?"Verified profile":"Not verified yet"}
+          </Badge>
+        </div>
+        {verification? <div className="mt-3 space-y-2 text-sm text-body">
+          {(["education","identity"] as const).map(section=>{
+            const row=verification[section];
+            return <p key={section}>
+              <strong>{section==="education"?"Education":"Identity"}:</strong>{" "}
+              {learnerVerificationNoticeCopy({status:row.status,reason:row.reason,
+                decidedByName:row.decidedByName,verifiedAt:row.verifiedAt,
+                heading:section})??(row.status==="NOT_SUBMITTED"?"Not verified yet":row.status)}
+            </p>;
+          })}
+          {verification.education.status==="UPDATE_PENDING"||verification.identity.status==="UPDATE_PENDING"?
+            <Banner tone="warning">
+              You changed this after it was verified. The verified details stay in use until you send the changes for review.
+            </Banner>:null}
+        </div>:<Banner tone="info" className="mt-2">Verification status is temporarily unavailable.</Banner>}
+        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Review verification status</Link>
+      </section>
       <LearnerProfileWorkspace
         initialSection={initialSection}
         displayName={person.user.displayName}
@@ -95,37 +157,11 @@ export default async function LearnerProfilePage({
           </Link>
         </nav>
       </section>
-      <section aria-label="Profile verification summary" className="min-w-0 border-b border-border pb-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-semibold text-[var(--lms-heading)]">Profile verification</h2>
-          <Badge  tone="neutral">
-            {verification&&["VERIFIED","UPDATE_PENDING"].includes(verification.education.status)&&
-              ["VERIFIED","UPDATE_PENDING"].includes(verification.identity.status)
-              ?"Verified profile":"Not verified yet"}
-          </Badge>
-        </div>
-        {verification? <div className="mt-3 space-y-2 text-sm text-body">
-          {(["education","identity"] as const).map(section=>{
-            const row=verification[section];
-            return <p key={section}>
-              <strong>{section==="education"?"Education":"Identity"}:</strong>{" "}
-              {learnerVerificationNoticeCopy({status:row.status,reason:row.reason,
-                decidedByName:row.decidedByName,verifiedAt:row.verifiedAt,
-                heading:section})??(row.status==="NOT_SUBMITTED"?"Not verified yet":row.status)}
-            </p>;
-          })}
-          {verification.education.status==="UPDATE_PENDING"||verification.identity.status==="UPDATE_PENDING"?
-            <Banner tone="warning">
-              You changed this after it was verified. The verified details stay in use until you send the changes for review.
-            </Banner>:null}
-        </div>:<Banner tone="info" className="mt-2">Verification status is temporarily unavailable.</Banner>}
-        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Review verification status</Link>
-      </section>
       {sectionNotice ? <Banner tone="warning">{sectionNotice}</Banner> : null}
       <section aria-label="Academic identity" className="min-w-0 border-b border-border pb-4">
         <h2 className="text-base font-semibold text-[var(--lms-heading)]">Academic identity</h2>
         <p className="mt-1 text-lg font-semibold text-foreground">{academic?.title??person.user.displayName??"Your profile"}</p>
-        {!academicOutcome.available ? <Banner tone="info" className="mt-3">
+        {!academicRecovery.available ? <Banner tone="info" className="mt-3">
           <p>Program couldn't load. Your saved profile remains available; no missing enrollment has been inferred.</p>
           <LearnerProfileAcademicRetry />
         </Banner> : academic?.enrollment ? (
