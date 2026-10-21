@@ -144,7 +144,7 @@ export function ProjectAdminWorkspaceList({
               <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text leading-[20px]">
                 {item.templateTitle ? "Template: " + item.templateTitle : "No template — attach one"}
               </p>
-              <h2 className="mt-2 line-clamp-2 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+              <h2 className="mt-2 line-clamp-2 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
                 <Link href={basePath+"/"+encodeURIComponent(item.id)}
                   className="inline-flex min-h-11 items-center break-words rounded-sm underline-offset-4 hover:text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                   {item.title}
