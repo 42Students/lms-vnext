@@ -27,7 +27,16 @@ export async function generateMetadata():Promise<Metadata> {
  // On the public root, the historic browser tab reads simply 42 LMS.
  // Scoped college sign-in retains its own college label, without doubling
  // the root title template.
- return {title:{absolute:brand?.collegeName?"Sign in · "+brand.collegeName:"42 LMS"}};
+ const title = brand?.collegeName ? "Sign in · " + brand.collegeName : "42 LMS";
+ return {
+   title: { absolute: title },
+   description: "Sign in securely to 42 LMS with the verification method enabled for your college.",
+   openGraph: {
+     title,
+     description: "42 LMS · Secure college learning and placement portal",
+     images: [{ url: "/assets/images/legacy-42lms-logo.svg", alt: "42 LMS" }],
+   },
+ };
 }
 
 async function isSignedIn() {
@@ -97,9 +106,11 @@ export default async function HomePage({
   const authValue = Array.isArray(params.auth)
     ? params.auth[0]
     : params.auth;
-  const message = authValue
-    ? messages[authValue] ?? null
-    : null;
+  const message = authValue ? messages[authValue] ?? {
+    title: "This sign-in link could not be verified",
+    description: "This link is not a supported secure sign-in request. Start a fresh sign-in from this page; never share old sign-in links.",
+    tone: "error" as const,
+  } : null;
 
   const requested = Array.isArray(params.returnTo) ? params.returnTo[0] : params.returnTo;
   const requestHeaders = await headers();
@@ -128,7 +139,14 @@ export default async function HomePage({
     tenant.kind === "college"
       ? await optionalPublicBranding(tenant.collegeId)
       : null;
-  const signin = await effectiveCollegeSignInCapabilities(tenant.kind==="college"?tenant.collegeId:null);
+  // Sign-in policy must fail closed on unexpected read failures.
+  const signin = await effectiveCollegeSignInCapabilities(
+    tenant.kind === "college" ? tenant.collegeId : null
+  ).catch(() => null);
+  const returnTo = safeReturnTo(requested);
+  const restartHref = returnTo
+    ? "/login?returnTo=" + encodeURIComponent(returnTo)
+    : "/login";
   const themeStyle = brandStyleVariables(
     branding?.primaryColor,
   ) as React.CSSProperties;
@@ -155,7 +173,9 @@ export default async function HomePage({
         <div className={styles.brandRow}>
           {/* The mark and letterforms are the original LMS SVG, not a CSS approximation. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/assets/images/legacy-42lms-logo.svg" alt="42LMS" className={styles.legacyLogo} />
+          <a href="/" aria-label="42 LMS home">
+            <img src="/assets/images/legacy-42lms-logo.svg" alt="42LMS" className={styles.legacyLogo} />
+          </a>
         </div>
         {branding?.collegeName ? (
           <div className={styles.collegeBrand}>
@@ -175,9 +195,13 @@ export default async function HomePage({
             <div role="alert" className={`${styles.status} ${message.tone === "error" ? styles.statusError : styles.statusWarning}`}>
               <p className={styles.statusTitle}>{message.title}</p>
               <p className={styles.statusMessage}>{message.description}</p>
+              <div className="mt-3 flex flex-wrap items-center gap-3">
+                <a className={styles.statusLink} href={restartHref}>Start a fresh sign-in</a>
+                <a className={styles.statusLink} href="/home">Back to home</a>
+              </div>
             </div>
           ) : null}
-          {tenant.kind === "college" && recruiterValue === "email" && !signin.email ? (
+          {tenant.kind === "college" && recruiterValue === "email" && signin && !signin.email ? (
             <div role="status" className={`${styles.status} ${styles.statusWarning}`}>
               <p className={styles.statusTitle}>Email sign-in is unavailable for this college</p>
               <p className={styles.statusMessage}>
@@ -200,6 +224,14 @@ export default async function HomePage({
                 Ask your administrator to add this college&apos;s address in 42LMS, or use the main sign-in page.
               </p>
               <a className={styles.statusLink} href="https://42lms.com/login">Use the main sign-in page (42lms.com)</a>
+            </div>
+          ) : !signin ? (
+            <div role="alert" className={`${styles.status} ${styles.statusWarning}`}>
+              <p className={styles.statusTitle}>Sign-in is temporarily unavailable</p>
+              <p className={styles.statusMessage}>
+                We could not confirm the sign-in methods for this college. Try again to reload the current policy.
+              </p>
+              <a className={styles.statusLink} href={restartHref}>Retry sign-in</a>
             </div>
           ) : (
             <LoginForm collegeName={branding?.collegeName ?? null}
