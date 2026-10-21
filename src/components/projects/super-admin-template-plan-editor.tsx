@@ -4,6 +4,9 @@ import { Banner } from "@/components/ui/banner";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {useToast} from "@/components/ui/toast";
+import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -33,12 +36,34 @@ const label = "block text-[var(--lms-font-sm)] font-semibold text-body";
 export function SuperAdminTemplatePlanEditor(props: Props) {
   const {askConfirm,dialog}=useConfirmFlow();
   const router = useRouter();
+  const {showToast}=useToast();
+  const [taskSearch,setTaskSearch]=useState("");
+  const [taskPage,setTaskPage]=useState(1);
   const [expanded, setExpanded] = useState(false);
   const [pending, setPending] = useState(false);
   const [draft, setDraft] = useState(props.blueprint);
   const [version, setVersion] = useState(props.currentVersion);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const dirty=JSON.stringify(draft)!==JSON.stringify(props.blueprint);
+  const reset=()=>{setDraft(props.blueprint);setVersion(props.currentVersion);
+    setExpanded(false);setError("");};
+  const guard=useProjectEditorDiscardGuard(expanded,dirty,pending,reset);
+  const filteredTasks=draft.tasks.map((task,index)=>({task,index}))
+    .filter(({task})=>(task.title+" "+task.key+" "+(task.sprintKey??"Backlog"))
+      .toLowerCase().includes(taskSearch.trim().toLowerCase()));
+  const taskPageCount=Math.max(1,Math.ceil(filteredTasks.length/25));
+  const visibleTasks=filteredTasks.slice((Math.min(taskPage,taskPageCount)-1)*25,
+    Math.min(taskPage,taskPageCount)*25);
+  function prepareTaskKeys(blueprint:ProjectTemplateBlueprint):ProjectTemplateBlueprint{
+    const taken=blueprint.tasks.map(task=>task.key).filter(Boolean);
+    return {...blueprint,tasks:blueprint.tasks.map(task=>{
+      if(task.key.trim())return task;
+      const key=nextTemplatePlanKey(taken,"task");
+      taken.push(key);
+      return {...task,key};
+    })};
+  }
 
   function updateSprint(index: number, patch: Partial<Sprint>) {
     setDraft(current => updateTemplateSprint(current, index, patch));
@@ -68,13 +93,12 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
   }
   function addTask() {
     setDraft(current => {
-      const sprintKey = current.sprints[0]?.key;
-      if (!sprintKey) return current;
+      const sprintKey = current.sprints[0]?.key??null;
       return {
         ...current,
         tasks: [...current.tasks, {
           key: nextTemplatePlanKey(current.tasks.map(row => row.key), "task"),
-          sprintKey, title: "New task", priority: "MEDIUM" as const,
+          sprintKey, title: "New task",taskType:"STORY" as const, priority: "MEDIUM" as const,
           sequence: Math.max(-1, ...current.tasks.filter(row => row.sprintKey === sprintKey)
             .map(row => row.sequence)) + 1,
         }],
@@ -90,7 +114,16 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (pending) return;
-    const normalized = normalizeTemplatePlan(draft);
+    if(!dirty){showToast({tone:"info",title:"No changes to save"});return;}
+    if(draft.tasks.length>500){
+      setError("Remove "+(draft.tasks.length-500)+" tasks. Maximum 500 items.");return;
+    }
+    const firstEmpty=props.section==="tasks"?draft.tasks.findIndex(row=>!row.title.trim()):
+      draft.sprints.findIndex(row=>!row.title.trim());
+    if(firstEmpty>=0){
+      setError("Item "+(firstEmpty+1)+": Title required");return;
+    }
+    const normalized = normalizeTemplatePlan(prepareTaskKeys(draft));
     const parsed = projectTemplateBlueprintSchema.safeParse(normalized);
     if (!parsed.success) {
       setError(parsed.error.issues[0]?.message ?? "Invalid template plan.");
@@ -112,6 +145,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
       setVersion(result.template.currentVersion);
       setExpanded(false);
       setMessage(props.section === "sprints" ? "Sprints saved" : "Tasks saved");
+      showToast({tone:"success",title:props.section==="sprints"?"Sprints saved":"Tasks saved"});
       router.refresh();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message :
@@ -133,10 +167,12 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
             : "The tasks every workspace created from this template starts with."}
         </p>
       </div>
-      <Button variant="secondary" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto" aria-expanded={expanded} disabled={pending} onClick={() => {
-        setDraft(props.blueprint); setVersion(props.currentVersion);
-        setError(""); setMessage(""); setExpanded(value => !value);
-      }}>{expanded ? "Cancel" : props.section === "sprints" ? "Edit sprints" : "Edit tasks"}</Button>
+      <Button variant="secondary" size="sm" className="min-h-11 w-full sm:min-h-9 sm:w-auto"
+        aria-expanded={expanded} disabled={pending} onClick={()=>{
+          if(expanded){guard.requestClose();return;}
+          setDraft(props.blueprint);setVersion(props.currentVersion);
+          setError("");setMessage("");setExpanded(true);
+        }}>{expanded?"Cancel":props.section==="sprints"?"Edit sprints":"Edit tasks"}</Button>
     </div>
     {message ? <Banner tone="success">{message}</Banner> : null}
     {expanded ? <form className="mt-4 grid min-w-0 gap-4" onSubmit={save}>
@@ -210,21 +246,31 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
         {!draft.sprints.length ? <p className="text-sm leading-[22px]">No sprints yet.</p> : null}
       </> : <>
         {!draft.sprints.length ? <p className="text-sm leading-[22px]">
-          No sprints saved yet. A task can only be linked to a sprint that already exists on this template.{" "}
+          No sprints saved yet. Tasks will remain in the backlog until assigned to a sprint.{" "}
           <Link className="font-semibold text-primary-text hover:underline focus-visible:underline"
-            href={"/admin/projects/templates/" + props.templateId + "/sprints"}>Add sprints first</Link>.
+            href={"/admin/projects/templates/" + props.templateId + "/sprints"}>Add sprints</Link>.
         </p> : null}
-        {draft.tasks.map((task, index) => <fieldset key={index}
+        {draft.tasks.length>12?<label className={label}>Find a task
+          <Input className={field} value={taskSearch} type="search"
+            placeholder="Search title, key or sprint"
+            onChange={event=>{setTaskSearch(event.target.value);setTaskPage(1);}}/>
+        </label>:null}
+        {visibleTasks.map(({task,index}) => <fieldset key={task.key+":"+index}
           className="grid min-w-0 gap-3 border-b border-border py-4">
           <legend className="px-1 text-[var(--lms-font-sm)] font-semibold text-foreground">Task {index + 1}</legend>
           <div className="grid gap-3 md:grid-cols-2">
             <label className={label}>Key (optional)
-              <Input className={field} required maxLength={64} disabled={pending}
-                value={task.key} onChange={event => updateTask(index, { key: event.target.value })}/>
+              <Input className={field} maxLength={64} disabled={pending}
+                value={task.key} placeholder="Auto-generated when saved"
+                onChange={event => updateTask(index, { key: event.target.value })}/>
+              {!task.key.trim()?<span className="mt-1 block text-xs font-normal text-body">
+                A unique task key will be generated on Save.
+              </span>:null}
             </label>
             <label className={label}>Sprint
-              <Select className={field} disabled={pending} required value={task.sprintKey}
-                onChange={event => updateTask(index, { sprintKey: event.target.value })}>
+              <Select className={field} disabled={pending} value={task.sprintKey??""}
+                onChange={event => updateTask(index, { sprintKey: event.target.value||null })}>
+                <option value="">Backlog (no sprint)</option>
                 {draft.sprints.map(sprint => <option key={sprint.key} value={sprint.key}>
                   {sprint.title}</option>)}
               </Select>
@@ -232,6 +278,18 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
             <label className={label}>Title
               <Input className={field} required maxLength={200} disabled={pending}
                 value={task.title} onChange={event => updateTask(index, { title: event.target.value })}/>
+            </label>
+            <label className={label}>Task type
+              <Select className={field} value={task.taskType??"STORY"} disabled={pending}
+                onChange={event=>updateTask(index,{taskType:event.target.value as Task["taskType"]})}>
+                <option value="STORY">Story</option><option value="BUG">Bug</option>
+                <option value="CHORE">Chore</option><option value="SPIKE">Spike</option>
+              </Select>
+            </label>
+            <label className={label}>Due label
+              <Input className={field} maxLength={160} disabled={pending}
+                placeholder="e.g. Week 2" value={task.dueLabel??""}
+                onChange={event=>updateTask(index,{dueLabel:event.target.value||undefined})}/>
             </label>
             <label className={label}>Priority
               <Select className={field} value={task.priority} disabled={pending}
@@ -253,6 +311,11 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
               value={task.description ?? ""} onChange={event =>
                 updateTask(index, { description: event.target.value || undefined })}/>
           </label>
+          <label className={label}>Approach
+            <Textarea className={field} maxLength={4000} disabled={pending}
+              value={task.approach??""}
+              onChange={event=>updateTask(index,{approach:event.target.value||undefined})}/>
+          </label>
           <label className={label}>What does done look like?
             <Textarea className={field} maxLength={4000} disabled={pending}
               value={task.acceptanceCriteria ?? ""} onChange={event =>
@@ -269,9 +332,21 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
               }))}>Remove</Button>
           </div>
         </fieldset>)}
+        {filteredTasks.length>25?<div className="flex flex-wrap items-center gap-3 text-sm">
+          <span>Showing page {Math.min(taskPage,taskPageCount)} of {taskPageCount}</span>
+          <Button type="button" size="sm" variant="secondary"
+            disabled={taskPage<=1}
+            onClick={()=>setTaskPage(n=>Math.max(1,n-1))}>Previous</Button>
+          <Button type="button" size="sm" variant="secondary"
+            disabled={taskPage>=taskPageCount}
+            onClick={()=>setTaskPage(n=>Math.min(taskPageCount,n+1))}>Next</Button>
+        </div>:null}
         <Button type="button" size="sm" variant="secondary"
-          disabled={pending || !draft.sprints.length || draft.tasks.length >= 2000}
+          disabled={pending || draft.tasks.length >= 500}
           onClick={addTask}>Add task</Button>
+        {draft.tasks.length>=500?<p className="text-xs text-body">
+          Maximum 500 tasks. Remove a task before adding another.
+        </p>:null}
         {!draft.tasks.length ? <p className="text-sm leading-[22px]">No tasks yet.</p> : null}
       </>}
       {error ? <Banner tone="error">{error}</Banner> : null}
@@ -285,5 +360,10 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
       </div>
     </form> : null}
     {dialog}
+    <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
+      title="Discard unsaved changes?"
+      description="You have unsaved changes. Leave without saving them?"
+      confirmLabel="Discard changes" pending={pending}
+      onConfirm={guard.confirmDiscard}/>
   </section>;
 }
