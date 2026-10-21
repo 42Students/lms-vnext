@@ -74,10 +74,10 @@ export function TpoDriveRequestActions({requestId,status}:{
         "This creates a draft. No students are told until you publish.":
         action==="SEND_BACK"?"Tell the recruiter what needs to change.":
         "Tell the recruiter why this request is not accepted."}</p>
-      <label className="block text-sm">Reason
+      <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason
         <Textarea value={reason} maxLength={1000} rows={3} disabled={busy||guardedPending}
           onChange={event=>setReason(event.target.value)}
-          className="mt-1 block w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2"/>
+          className="mt-1 block w-full border p-2"/>
       </label>
       <p className="text-xs text-body">The recruiter is notified in the app. Email delivery is not enabled.</p>
       <div className="flex flex-wrap gap-2">

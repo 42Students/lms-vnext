@@ -108,7 +108,7 @@ export function TpoDebarControl({
       {!unrelatedRestriction ? (
         <form onSubmit={submit} className="mt-5 space-y-4">
           {!debarred ? (
-            <label className="grid gap-2 text-sm font-semibold text-body">
+            <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
               Reason for Debar (required)
               <Input
                 type="text"

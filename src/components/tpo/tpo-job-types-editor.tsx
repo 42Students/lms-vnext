@@ -44,7 +44,7 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
    event.preventDefault();if(label.trim().length<2||countsAsPlaced===null||atLimit||busy)return;
    void send("/api/placements/tpo/settings/job-types","POST",{label:label.trim(),countsAsPlaced});
   }}>
-   <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm">New job type
+   <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New job type
     <Input className="min-h-11 w-full min-[768px]:min-h-9"
      maxLength={40} minLength={2} value={label} disabled={busy} onChange={event=>setLabel(event.target.value)}/>
    </label>
@@ -57,12 +57,12 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
   <p className="text-sm text-muted-foreground">Custom job types are college-local configuration only; drive forms and reports use their own registered employment types until the integration is completed.</p>
   <p className="text-sm text-muted-foreground">2-40 letters, digits or simple punctuation · {types.length} of 30 custom types</p>
   <div className="grid gap-3 min-[768px]:grid-cols-[minmax(0,1fr)_auto]">
-    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Find job type
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Find job type
       <Input type="search" value={search} maxLength={100} onChange={event=>setSearch(event.target.value)}
         className="min-h-11 min-[768px]:min-h-9 w-full"
         placeholder="Filter by name"/>
     </label>
-    <label className="grid gap-1 text-sm font-semibold text-body">Status
+    <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Status
       <Select value={status} onChange={event=>setStatus(event.target.value as TpoJobTypeStatusFilter)}
         className="min-h-11 min-[768px]:min-h-9">
         <option value="ALL">All types</option><option value="ACTIVE">Active</option>
