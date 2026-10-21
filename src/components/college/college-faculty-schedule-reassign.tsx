@@ -57,7 +57,7 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
    className="min-h-11 w-full md:min-h-9 md:w-auto">
    Reassign class schedules</Button>
   <Dialog open={open} onOpenChange={next=>{if(!next&&!busy)setOpen(false);}}
-   title="Reassign class schedules" dismissible={!busy} className="max-[767px]:w-full"
+   title="Reassign class schedules" dismissible={!busy}
    footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:items-center md:justify-end">
      <Button variant="secondary" type="button" disabled={busy} onClick={()=>setOpen(false)}
       className="min-h-11 w-full md:min-h-9 md:w-auto">Close</Button>
