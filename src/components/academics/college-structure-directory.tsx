@@ -18,7 +18,6 @@ import { CollegeClassScopeFilters } from "./college-class-scope-filters";
 import {
   classCapacityLabel,
   collegeStructureHref,
-  electiveSelectionLabel,
 } from "@/modules/academics/college-structure-directory-model";
 import type {
   listCollegeClasses,
@@ -467,7 +466,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
                 {key:"year",header:"Year",mobilePriority:"secondary",cell:item=>item.academicYear??"—"},
                 {key:"credits",header:"Credits",mobilePriority:"secondary",cell:item=>item.credits},
                 {key:"pick",header:"Pick",mobilePriority:"secondary",cell:item=>
-                  electiveSelectionLabel(item.minPick,item.maxPick)},
+                  item.minPick===item.maxPick ? String(item.minPick) : `${item.minPick}–${item.maxPick}`},
                 {key:"offerings",header:"Offerings",mobilePriority:"secondary",cell:item=>item.activeOfferings??0},
                 {key:"students",header:"Students",mobilePriority:"secondary",cell:item=>
                   <span title="Distinct actively assigned learners, not pending choices.">
