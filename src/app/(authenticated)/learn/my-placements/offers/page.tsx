@@ -152,7 +152,7 @@ export default async function LearnerOffersPage({
         </Link>
       ) : null}
       <details className="border-t border-border pt-2" open={order!=="priority" || kind!=="all" || joiningFilter!=="all" || dueOnly || expiry!=="all" || undefined}>
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">More offer filters {hasActiveFacets ? "(active)" : ""}</summary>
+        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">More offer filters {hasActiveFacets ? "(active)" : ""}</summary>
         <div className="space-y-3 pt-3">
       <form method="GET" action="/learn/my-placements/offers" role="search" aria-label="Offer sorting" className="flex flex-wrap items-end gap-3">
         {view!=="all"?<Input type="hidden" name="status" value={view}/>:null}
