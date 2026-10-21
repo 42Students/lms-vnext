@@ -7,18 +7,21 @@ import {inboundMailListQuerySchema} from "./message-model";
 import {z} from "zod";
 import {inboundMailMessagesStaged} from "./staged-schema";
 import {inboundMailStatusTransitionAllowed} from "./triage-transition-model";
-import {safeInboundPreview} from "./message-model";
+import {safeInboundPreview,type InboundMailRoutingStatus} from "./message-model";
 import {activityEvents} from "@/db/schema";
 
 export type InboundMailItem={
  id:string;receivedAt:Date;fromAddress:string;toAddress:string;
  subject:string;bodyPlain:string;status:string;version:number;
  bodyPreview?:string;
+ kind?:"REPLY"|"OTHER";routingStatus?:InboundMailRoutingStatus;
+ handledAt?:Date|null;
 };
 export type InboundMailPage={
  available:boolean;items:readonly InboundMailItem[];page:number;hasMore:boolean;total:number|null;toReadCount:number|null;
 };
-type InboundMailFilters={status:"ALL"|"NEW"|"TRIAGED"|"RESOLVED";q:string;page:number;recipient?:string};
+type InboundMailFilters={status:"ALL"|"NEW"|"TRIAGED"|"RESOLVED";q:string;page:number;recipient?:string;
+ kind?:"REPLY"|"OTHER";routingStatus?:InboundMailRoutingStatus;};
 export interface InboundMailAdminRepository {
  tableExists():Promise<boolean>;
  list(input:InboundMailFilters):Promise<readonly InboundMailItem[]>;
@@ -26,12 +29,25 @@ export interface InboundMailAdminRepository {
 }
 export const drizzleInboundMailAdminRepository:InboundMailAdminRepository={
  async tableExists(){
-  const result=await getDb().execute(sql<{found:boolean}>`SELECT to_regclass('public.inbound_mail_messages') IS NOT NULL AS found`);
+  // Do not select newly registered routing columns until the real 0150
+  // migration has reached this database. Never invent delivery outcomes.
+  const result=await getDb().execute(sql<{found:boolean}>`SELECT
+    to_regclass('public.inbound_mail_messages') IS NOT NULL AND
+    EXISTS (SELECT 1 FROM information_schema.columns
+      WHERE table_schema='public' AND table_name='inbound_mail_messages'
+      AND column_name='routing_status') AND
+    EXISTS (SELECT 1 FROM information_schema.columns
+      WHERE table_schema='public' AND table_name='inbound_mail_messages'
+      AND column_name='kind') AS found`);
   return result.rows[0]?.found===true;
  },
  async count(input){
   const t=inboundMailMessagesStaged,conditions:SQL[]=[];
   if(input.status!=="ALL")conditions.push(eq(t.status,input.status));
+  if(input.kind)conditions.push(eq(t.kind,input.kind));
+  if(input.routingStatus)conditions.push(eq(t.routingStatus,input.routingStatus));
+  if(input.kind)conditions.push(eq(t.kind,input.kind));
+  if(input.routingStatus)conditions.push(eq(t.routingStatus,input.routingStatus));
   if(input.recipient)conditions.push(sql`lower(${t.toAddress}) = ${input.recipient}::text`);
   if(input.q){
    const escaped=input.q.replace(/[\\%_]/g,"\\$&");
@@ -53,6 +69,7 @@ export const drizzleInboundMailAdminRepository:InboundMailAdminRepository={
   return getDb().select({
    id:t.id,receivedAt:t.receivedAt,fromAddress:t.fromAddress,toAddress:t.toAddress,
    subject:t.subject,bodyPlain:t.bodyPlain,status:t.status,version:t.version,
+   kind:t.kind,routingStatus:t.routingStatus,handledAt:t.handledAt,
   }).from(t).where(conditions.length?and(...conditions):undefined)
     .orderBy(desc(t.receivedAt),desc(t.id)).limit(51).offset((input.page-1)*50);
  },
@@ -133,7 +150,8 @@ export async function getInboundMailDetailForAdmin(
  const [row]=await getDb().select({
   id:t.id,receivedAt:t.receivedAt,fromAddress:t.fromAddress,
   toAddress:t.toAddress,subject:t.subject,bodyPlain:t.bodyPlain,
-  status:t.status,version:t.version,
+  status:t.status,version:t.version,kind:t.kind,routingStatus:t.routingStatus,
+  handledAt:t.handledAt,
  }).from(t).where(eq(t.id,id)).limit(1);
  return row??null;
 }
@@ -142,4 +160,4 @@ export async function getInboundMailDetailForAdmin(
  * original schema lacks routingStatus, kind, thread, handled actor and date.
  * Those fields require a verified migration, not inference from mail address
  * or the separate NEW/TRIAGED/RESOLVED manual triage state. */
-export const INBOUND_ROUTING_METADATA_READY=false;
+export const INBOUND_ROUTING_METADATA_READY=true;

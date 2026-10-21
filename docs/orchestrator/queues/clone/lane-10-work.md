@@ -88,7 +88,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-10/src_app_api_tracker_issues_publicId_route.ts.md` (edit src/app/api/tracker/issues/[publicId]/route.ts; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-10/src_app_api_tracker_live-logs_route.ts.md` (edit src/app/api/tracker/live-logs/route.ts; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-10/src_modules_operations_postgres-scheduled-job-lease-store.ts.md` (edit src/modules/operations/postgres-scheduled-job-lease-store.ts; 3 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-10/src_modules_inbound-mail_message-model.ts.md` (edit src/modules/inbound-mail/message-model.ts; 3 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-10/src_modules_inbound-mail_message-model.ts.md` (edit src/modules/inbound-mail/message-model.ts; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-10/src_app_universities_page.tsx.md` (edit src/app/universities/page.tsx; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-10/src_app_api_college_faculty_membershipId_lifecycle_route.ts.md` (edit src/app/api/college/faculty/[membershipId]/lifecycle/route.ts; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-10/NEW_docs_audit_gap2_lane-15_u007-college-admin-student-groups.md.md` (new; 2 findings; best P1)
