@@ -31,8 +31,11 @@ export async function PATCH(
       body,
     );
 
-    return NextResponse.json({ content });
+    return NextResponse.json({ content, status: "OK", reason: "OK" });
   } catch (error) {
     return apiErrorResponse(error);
   }
 }
+
+/** Legacy clients used PUT; share the same permission-checked update path. */
+export const PUT = PATCH;

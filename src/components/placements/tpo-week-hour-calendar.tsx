@@ -61,8 +61,14 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
  async function open(day:string,hour:number,trigger?:HTMLButtonElement){
   triggerRef.current=trigger??null;
   if(!canCreate)return;
+  const selected=day+"T"+String(hour).padStart(2,"0")+":00";
+  try{
+   if(new Date(calendarLocalIstToOffset(selected)).getTime()<=currentTimeMs()){
+    setMessage("Pick a future date and time");return;
+   }
+  }catch{setMessage("Invalid IST time.");return;}
   setMessage("");setLeadId("");setLeadQuery("");setNote("");
-  setSlot(day+"T"+String(hour).padStart(2,"0")+":00");
+  setSlot(selected);
   setLoadingLeads(true);
   try{
    const response=await fetch("/api/placements/tpo/leads?collegeId="+encodeURIComponent(collegeId),{
@@ -79,7 +85,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
   let dueAt:string;
   try{dueAt=calendarLocalIstToOffset(day+"T"+String(hour).padStart(2,"0")+":00");}
   catch{setMessage("The selected IST time is invalid.");return;}
-  if(new Date(dueAt).getTime()<=currentTimeMs()){setMessage("Choose a future time to reschedule.");return;}
+  if(new Date(dueAt).getTime()<=currentTimeMs()){setMessage("Pick a future date and time");return;}
   if(!confirmed){
    const prompts=[
     ...(blocked.has(day)?["This date is blocked in placement settings. Move the follow-up here anyway?"]:[]),
@@ -104,7 +110,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
   if(!slot||saving||!leadId)return;
   let dueAt:string;
   try{dueAt=calendarLocalIstToOffset(slot);}catch{setMessage("Invalid IST time.");return;}
-  if(new Date(dueAt).getTime()<=new Date().getTime()){setMessage("Follow-up must be in the future.");return;}
+  if(new Date(dueAt).getTime()<=new Date().getTime()){setMessage("Pick a future date and time");return;}
   if(!confirmed){
    const prompts=[
     ...(blocked.has(slot.slice(0,10))?["This date is blocked in placement settings. Add the follow-up anyway?"]:[]),
