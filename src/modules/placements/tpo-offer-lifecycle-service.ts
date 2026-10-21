@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, eq, inArray, isNull, lte, ne } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull, lte, ne, notExists } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   placementApplications,
@@ -301,6 +301,19 @@ export async function finalizeMaturedExternalTpoAcceptances(
       eq(placementOffers.acceptanceChannel, "EXTERNAL_IMPORT"),
       lte(placementOffers.acceptedDisputableUntil, now),
       isNull(placementOffers.cascadeId),
+      // Pending or approved disputes must not occupy the earliest due slots
+      // forever. The lock-scoped check below still protects against races.
+      notExists(
+        db.select({ id: placementLearnerGeneralRequests.id })
+          .from(placementLearnerGeneralRequests)
+          .where(and(
+            eq(placementLearnerGeneralRequests.collegeId, placementJobs.collegeId),
+            eq(placementLearnerGeneralRequests.membershipId, placementApplications.membershipId),
+            eq(placementLearnerGeneralRequests.kind, "OFFER_ACCEPTANCE_DISPUTE"),
+            eq(placementLearnerGeneralRequests.targetKey, placementOffers.id),
+            inArray(placementLearnerGeneralRequests.status, ["PENDING", "APPROVED"]),
+          )),
+      ),
       // Archiving a drive must not strand an already-recorded external
       // acceptance: maturity follows the offer, not the dashboard filter.
     ))
