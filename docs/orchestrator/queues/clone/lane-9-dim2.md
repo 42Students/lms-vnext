@@ -346,18 +346,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/components/shell/shell-nav-icons.tsx`
 - [x] `src/components/shell/sidebar-legacy.css`
 - [x] `src/components/shell/topbar/topbar.module.css`
-- [ ] `src/components/tpo/legacy-batch-eligibility.module.css`
-- [ ] `src/components/tpo/legacy-company-bar.module.css`
-- [ ] `src/components/tpo/legacy-company-year-chart.module.css`
-- [ ] `src/components/tpo/legacy-tpo-notification-feed.module.css`
-- [ ] `src/components/tpo/recruiter-board-theme.module.css`
-- [ ] `src/components/tpo/tpo-company-memory-workspace.tsx`
-- [ ] `src/components/tpo/tpo-conversation-bubble.module.css`
-- [ ] `src/components/ui/alert.tsx`
-- [ ] `src/components/ui/banner.tsx`
-- [ ] `src/components/ui/input.tsx`
-- [ ] `src/components/ui/legacy-overlays.css`
-- [ ] `src/components/ui/needs-doing-chips.tsx`
+- [x] `src/components/tpo/legacy-batch-eligibility.module.css`
+- [x] `src/components/tpo/legacy-company-bar.module.css`
+- [x] `src/components/tpo/legacy-company-year-chart.module.css`
+- [x] `src/components/tpo/legacy-tpo-notification-feed.module.css`
+- [x] `src/components/tpo/recruiter-board-theme.module.css`
+- [x] `src/components/tpo/tpo-company-memory-workspace.tsx`
+- [x] `src/components/tpo/tpo-conversation-bubble.module.css`
+- [x] `src/components/ui/alert.tsx`
+- [x] `src/components/ui/banner.tsx`
+- [x] `src/components/ui/input.tsx`
+- [x] `src/components/ui/legacy-overlays.css`
+- [x] `src/components/ui/needs-doing-chips.tsx`
 - [ ] `src/components/ui/textarea.tsx`
 - [ ] `src/styles/legacy-skin.css`
 - [ ] `src/styles/micro-details.css`

@@ -4,5 +4,5 @@
  * $light-cyan: #9ee4e8; $clrThird: #26bac7 in _variables.scss.
  */
 .branchBar > div {
-  background: linear-gradient(90deg, #9ee4e8, #26bac7) !important;
+  background: linear-gradient(90deg, var(--lms-primary-light), var(--lms-primary)) !important;
 }
