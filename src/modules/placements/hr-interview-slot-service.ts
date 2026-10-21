@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,gt,ne,inArray,isNull,sql} from "drizzle-orm";
+import {and,eq,gt,lt,ne,inArray,isNull,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {placementJobs,placementCompanies,placementCompanyRelationships,placementRecruiterProfiles,
@@ -104,22 +104,35 @@ export async function writeHrInterviewSlot(
      inArray(placementJobRounds.status,["PENDING","SCHEDULED"])))
     .limit(1);
    if(!round)throw new PlacementsServiceError("PLACEMENT_ROUND_NOT_FOUND");
+   // Serialize time-block creation across all drives owned by this recruiter,
+   // not just per-round rows. Do not infer candidate bookings from HR capacity:
+   // assigned learners live in the separate TPO candidate-slot ledger.
+   await tx.select({id:users.id}).from(users)
+    .where(eq(users.id,context.user.id)).for("update").limit(1);
    const existing=await tx.select({startAt:hrInterviewSlots.startAt,endAt:hrInterviewSlots.endAt})
     .from(hrInterviewSlots).where(and(eq(hrInterviewSlots.roundId,round.id),
       eq(hrInterviewSlots.collegeId,job.collegeId),ne(hrInterviewSlots.status,"CANCELLED"))).limit(101);
    if(existing.length>100||existing.some(row=>slotsOverlap(input,row)))
     throw new Error("SLOT_OVERLAP");
+   const [recruiterConflict]=await tx.select({id:hrInterviewSlots.id})
+    .from(hrInterviewSlots)
+    .where(and(eq(hrInterviewSlots.createdByUserId,context.user.id),
+      ne(hrInterviewSlots.status,"CANCELLED"),
+      lt(hrInterviewSlots.startAt,input.endAt),
+      gt(hrInterviewSlots.endAt,input.startAt)))
+    .limit(1);
+   if(recruiterConflict)throw new Error("RECRUITER_SLOT_OVERLAP");
    const [newSlot]=await tx.insert(hrInterviewSlots).values({
     collegeId:job.collegeId,jobId:job.id,roundId:round.id,startAt:input.startAt,endAt:input.endAt,
     timezone:input.timezone,mode:input.mode,meetingLocation:input.meetingLocation??null,
     panelLabel:input.panelLabel??null,capacity:input.capacity,createdByUserId:context.user.id,
-   }).returning({id:hrInterviewSlots.id});
+   }).returning({id:hrInterviewSlots.id,version:hrInterviewSlots.version});
    if(!newSlot)throw new Error("SLOT_CREATE_FAILED");
    await notifyTpoOfRecruiterAction(tx,context,{
     collegeId:job.collegeId,jobId:job.id,roundId:round.id,
     subjectId:newSlot.id,action:"SLOT_PROPOSED",
    });
-   return {id:newSlot.id,status:"PROPOSED" as const};
+   return {id:newSlot.id,status:"PROPOSED" as const,version:newSlot.version};
   }
   const input=hrInterviewSlotActionSchema.parse(data);
   const [slot]=await tx.select({
@@ -142,7 +155,7 @@ export async function writeHrInterviewSlot(
   const [updated]=await tx.update(hrInterviewSlots).set({
    status:next,bookedCount,version:slot.version+1,updatedAt:new Date(),
   }).where(and(eq(hrInterviewSlots.id,slot.id),eq(hrInterviewSlots.version,slot.version)))
-   .returning({id:hrInterviewSlots.id});
+   .returning({id:hrInterviewSlots.id,version:hrInterviewSlots.version});
   if(!updated)throw new Error("SLOT_STALE");
   // A local BOOK reservation does not mean that the placement cell
   // confirmed learner bookings; notify on OFFER and cancellation instead.
@@ -159,6 +172,6 @@ export async function writeHrInterviewSlot(
     summary:"Recruiter updated internal interview slot",metadata:{jobId:job.id,action:input.action},
    });
   }
-  return {id:updated.id,status:next};
+  return {id:updated.id,status:next,version:updated.version};
  });
 }
