@@ -223,3 +223,22 @@
 
 ## Packet 53 — OTP account identity/preuser isolation
 - `src_db_schema_identity-auth-attempts.ts.md` | G2-20-018-023/036: retained existing real user FK, HMAC-only OTP fingerprints, five-minute expiry and bounded attempts; documented proposed isolated pre-registration proof intent rather than legacy learnerId=0 bypass or fake users. Deliberately retire old plaintext code/roll-number data, do not import raw OTPs. | Public pre-registration challenge workflow requires auth owner review, HMAC keyed nonce, rate cap and verified binding before user provisioning; no auto-migration of secrets. No SQL changes/activation.
+
+
+## Packet 54 — placement registration season/cohort/consent
+- `src_db_schema_placement-registration.ts.md` | G2-15-023-008/051: documented legacy seasonId≠current academic cohortId, numeric learner→same-college membership, verified cohort enrollment, old consent source/time and stale consent quarantine. Existing typed source SELF/TPO/BACKFILL and conditional consent CHECK prevent inferring new legal consent. | No historical season→cohort mapping in greenfield; services must not auto-consent or silently move old registration into a new academic batch. Current vNext model intentionally batch-first; no data migration.
+
+## Packet 55 — course upload ownership and multi-file producer
+- `src_db_schema_course-upload-receipts-staged.ts.md` | G2-12-021-007/027: reviewed per-file receipt sequence, attestation, object scope and unique guards; documented old numeric owner_user_id/type→verified college membership/role mapping. Existing relation can represent multiple ordered files, but the live producer only uses index zero. | Staged schema intentionally NOT exported or registered due existing live assignment_submission_files overlap and incomplete scanner/storage authorization cutover. Implement multi-file selection/consumption at service/UI with per-file CLEAN attestation. No SQL migration, no project code executed.
+
+## Packet 56 — attendance correction hours DDL drift
+- `drizzle_0033_attendance_foundation.sql.md` | G2-14-009-082: registered original migration 0033 caps correctionWindowHours 1..168 while active TS schema allows 1..8760. Added registered additive migration 0170 to replace that CHECK with 1..8760, preserving older SQL immutability and existing default 24. | Policy service must verify permitted maximum is intentional per college and bounded correction grant; no database migration executed or tested.
+
+## Packet 57 — quiz question points cap mismatch
+- `drizzle_0007_courses_c4b_quizzes.sql.md` | G2-16-016-035: original 0007/active quizzes.ts and generic quiz-validation.ts allow 1..1000, but old QuizQuestionRequestDTO cap is 100 and faculty-quiz-authoring-model already imposes <=100. | Coordinated change REQUIRED: lowering only SQL/schema would let generic validator admit 101..1000 and cause DB rejects. Immutable 0007 unmodified; handoff to quiz validation owner to align model+API+schema in one release after checking stored questions. No history import required in greenfield; no SQL executed.
+
+## Packet 58 — semester curriculum credits
+- `drizzle_0050_db02_program_terms_curriculum.sql.md` | G2-17-002-086: legacy service and registered DB allow nullable or 0..30 credits; existing vNext college-term-mapping-model accepts only 1..10 for writes. Historical read-only values 0, 11..30 must survive if imported; no truncation or implicit correction. | Existing 0050 immutable, DB upper bound should remain 30 for legitimate past credits. Coordinate writer/API to permit approved 0..30 or explicitly keep legacy values read-only with a warning and block stale overwrites. No migration needed for greenfield and none executed.
+
+## Packet 59 — recruiter email state registered migration
+- `src_db_schema_recruiter-message-email.ts.md` | G2-20-010-053: confirmed BOTH email state and inbound hash-idempotency tables, relevant checks, indexes and delivery_channel are already registered in 0135_lanes_round_3.sql (not just proposed), and dispatch/inbound sources gate on enabled env, readiness tables, signed sender/provider, reply token expiry and HMAC. Updated schema documentation rather than duplicate migration. | Runtime enablement and trustworthy provider acceptance NOT verified, legacy raw-token/email records intentionally retired. Existing 0135 left unchanged; no new migration, no worker run.
