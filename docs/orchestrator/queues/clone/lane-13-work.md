@@ -11,8 +11,8 @@ For EACH packet below, in order (highest severity first), strictly one at a time
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/packets/lane-13/src_modules_storage_private-object-storage.ts.md` (edit src/modules/storage/private-object-storage.ts; 19 findings; best P0)
-- [ ] `docs/audit/gap-fix-work/packets/lane-13/NEW_docs_audit_gap2_lane-11_l19-u024-super-admin-announcement-controller.md.md` (new; 8 findings; best P0)
+- [x] `docs/audit/gap-fix-work/packets/lane-13/src_modules_storage_private-object-storage.ts.md` (edit src/modules/storage/private-object-storage.ts; 19 findings; best P0)
+- [x] `docs/audit/gap-fix-work/packets/lane-13/NEW_docs_audit_gap2_lane-11_l19-u024-super-admin-announcement-controller.md.md` (new; 8 findings; best P0)
 - [ ] `docs/audit/gap-fix-work/packets/lane-13/src_components_attendance_faculty-attendance-workspace.tsx.part1of3.md` (edit src/components/attendance/faculty-attendance-workspace.tsx; 20 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-13/src_components_attendance_faculty-attendance-workspace.tsx.part2of3.md` (edit src/components/attendance/faculty-attendance-workspace.tsx; 20 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-13/src_components_attendance_faculty-attendance-workspace.tsx.part3of3.md` (edit src/components/attendance/faculty-attendance-workspace.tsx; 15 findings; best P2)
