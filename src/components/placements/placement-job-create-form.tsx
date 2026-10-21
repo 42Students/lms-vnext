@@ -143,7 +143,7 @@ export function PlacementJobCreateForm({
   );
   const [companySearch,setCompanySearch]=useState("");
   const [roundPreset,setRoundPreset]=useState<TpoRoundPresetKey>("NONE");
-  const nextRowId=useRef(2);
+  const nextRowId=useRef(1000);
   const [importantDateRows,setImportantDateRows]=useState<ImportantDateRow[]>([{id:0,label:"",date:""}]);
   const [customRuleRows,setCustomRuleRows]=useState<CustomRuleRow[]>([{id:1,label:"",value:""}]);
   const [assessmentUrlLength,setAssessmentUrlLength]=useState(0);
@@ -792,10 +792,20 @@ export function PlacementJobCreateForm({
     >
       <p role="status" aria-live="polite" className="max-w-[75ch] break-words text-xs leading-5 text-body">
         {pending?"Saving changes…":lastLocalSaveAt?
-          "Local draft saved at "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",day:"2-digit",month:"short",year:"numeric"}).format(new Date(lastLocalSaveAt))+" IST — not yet submitted to the server.":
-          "Draft form changes are saved locally on this device. Create draft to save them to the server."}
+          "Changes not saved to the server · Browser backup at "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",day:"2-digit",month:"short",year:"numeric"}).format(new Date(lastLocalSaveAt))+" IST.":
+          "Not saved yet · Your changes are backed up locally until you create the draft."}
       </p>
-      <details className="group min-w-0 border-b border-border pb-[var(--lms-space-4)]">
+
+      {saveError?<div role="alert" className="rounded-lg border border-danger p-3 text-sm text-danger">
+        <strong>Changes not saved.</strong> {saveError}
+      </div>:null}
+      {existingDrive?<div role="alert" className="flex flex-wrap items-center gap-2 rounded-lg border border-warning p-3 text-sm">
+        <span>A drive for {selectedEmployer?.name} · {existingDrive.title} already exists ({tpoDriveStatusLabel(existingDrive.status)}).</span>
+        <Link href={basePath+"/jobs/"+encodeURIComponent(existingDrive.jobId)} className="font-semibold text-primary-text underline">Open it</Link>
+      </div>:null}
+      <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
+      <div className="min-w-0 space-y-4">
+      <details className="group min-w-0 border-b border-border pb-[var(--lms-space-4)] lg:hidden">
         <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-base font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 [&::-webkit-details-marker]:hidden">Setup review <span aria-hidden="true" className="text-body transition-transform group-open:rotate-180 motion-reduce:transition-none">⌄</span></summary>
         <nav aria-label="Drive setup review" className="min-w-0 pt-3">
         <ol className="grid gap-3 border-y border-border sm:grid-cols-2 lg:grid-cols-4">
@@ -817,7 +827,7 @@ export function PlacementJobCreateForm({
         </nav>
       </details>
       <details open={!activeSeason} className="min-w-0 border-b border-border pb-3">
-       <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Placement season</summary>
+       <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Start from · Placement season</summary>
       <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
         <p className="pb-[var(--lms-space-3)] text-sm text-body">
           Every drive belongs to the current operating season. Historical seasons remain read-only.
@@ -1576,7 +1586,7 @@ export function PlacementJobCreateForm({
           Round template
           <Select name="roundPreset" value={roundPreset}
             onChange={event=>{
-              if(isTpoRoundPresetKey(event.target.value)){setRoundPreset(event.target.value);markDirty();}
+              if(isTpoRoundPresetKey(event.target.value)){setRoundPreset(event.target.value);setRoundRows([]);markDirty();}
             }} className={inputClass}>
             {Object.entries(TPO_DRIVE_ROUND_PRESETS).map(([key,preset])=>
               <option key={key} value={key}>{preset.label}</option>)}
@@ -1635,6 +1645,27 @@ export function PlacementJobCreateForm({
       </section>
 
       </details>
+      </div>
+      <aside aria-label="Setup review" className="sticky top-24 hidden rounded-xl border border-border bg-background p-4 lg:block">
+        <h2 className="m-0 text-base font-semibold text-foreground">Setup review</h2>
+        <p className="mt-1 text-xs text-body">Your milestones remain visible as you build the opportunity.</p>
+        <ol className="mt-4 space-y-4 border-l-2 border-border pl-4 text-sm">
+          {["Company","The drive","Eligibility","Publish review"].map((label,index)=>(
+            <li key={label} className="relative">
+              <span className="absolute -left-[23px] top-1 h-3 w-3 rounded-full border-2 border-primary bg-background" aria-hidden="true"/>
+              <span className="block text-xs font-semibold text-primary-text">Step {index+1} of 4</span>
+              <span className="mt-1 block font-semibold text-foreground">{label}</span>
+            </li>
+          ))}
+        </ol>
+        <div className="mt-4 border-t border-border pt-3 text-xs text-body">
+          <p>No students are notified until you confirm publication.</p>
+          {plannedTpoRoundRows(roundPreset).length===0&&roundRows.length===0?<p className="mt-2">No interview rounds added yet</p>:null}
+          {!hasEnteredEligibilityRule&&eligibilityPreset==="OPEN"?
+            <p className="mt-2">Open eligibility · verify reach after saving.</p>:null}
+        </div>
+      </aside>
+      </div>
       {publishMissing.length>0?<div role="alert" className="rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm">
         <p className="font-semibold">Complete {publishMissing.length} item(s) before reviewing publication</p>
         <ul className="mt-2 list-disc pl-5">{publishMissing.map(label=><li key={label}>{label}</li>)}</ul>
