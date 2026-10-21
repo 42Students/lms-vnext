@@ -4,6 +4,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import {
   TenantDomainServiceError,
   createTenantDomain,
+  editTenantDomainHost,
   resolveTenantFromHost,
   setPrimaryTenantDomain,
   verifyTenantDomain,
@@ -101,11 +102,30 @@ function createRepository(): TenantDomainRepository {
       return domain;
     },
 
+    async editDomainHost(input) {
+      const current=domains.get(input.domainId);
+      if(!current)throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+      if(current.host!==input.expectedHost)
+        throw new TenantDomainServiceError("DOMAIN_HOST_STALE");
+      if([...domains.values()].some(row=>row.id!==current.id&&row.host===input.host))
+        throw new TenantDomainServiceError("HOST_CONFLICT");
+      const changed:TenantDomainView={
+        ...current,host:input.host,verificationToken:input.verificationToken,
+        isVerified:false,isPrimary:false,verifiedAt:null,lastCheckedAt:null,
+        lastCheckResult:null,updatedAt:now(),
+      };
+      domains.set(input.domainId,changed);
+      return changed;
+    },
+
     async recordVerificationResult(domainId, input) {
       const current = domains.get(domainId);
       if (!current) {
         throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
       }
+      if(current.host!==input.expectedHost||
+         current.verificationToken!==input.expectedToken)
+        throw new TenantDomainServiceError("DOMAIN_HOST_STALE");
       const hasPrimary = [...domains.values()].some(
         (domain) =>
           domain.collegeId === current.collegeId &&
@@ -331,6 +351,43 @@ describe("tenant-domain service", () => {
 
     expect(promoted.isPrimary).toBe(true);
     expect((await repository.loadDomain(first.id))?.isPrimary).toBe(false);
+  });
+
+  it("edits a custom hostname by rotating the DNS challenge and clearing verification", async () => {
+    const repository=createRepository();
+    const created=await createTenantDomain(superAdminContext,{
+      collegeId:"11111111-1111-4111-8111-111111111111",
+      host:"former.example.edu",
+    },repository,()=>"old-token");
+    const changed=await editTenantDomainHost(superAdminContext,created.id,{
+      expectedHost:"former.example.edu",host:"new.example.edu",
+    },repository,()=>"new-token");
+    expect(changed.host).toBe("new.example.edu");
+    expect(changed.isVerified).toBe(false);
+    expect(changed.isPrimary).toBe(false);
+    expect(changed.verificationToken).toBe("new-token");
+    await expect(resolveTenantFromHost("former.example.edu",repository)).resolves.toBeNull();
+    await expect(setPrimaryTenantDomain(superAdminContext,created.id,repository))
+      .rejects.toMatchObject({code:"DOMAIN_NOT_VERIFIED"});
+  });
+
+  it("rejects DNS verification obtained before a concurrent hostname edit", async () => {
+    const repository=createRepository();
+    const created=await createTenantDomain(superAdminContext,{
+      collegeId:"11111111-1111-4111-8111-111111111111",
+      host:"old.example.edu",
+    },repository,()=>"old-token");
+    await expect(verifyTenantDomain(superAdminContext,created.id,repository,{
+      async verify(){
+        await editTenantDomainHost(superAdminContext,created.id,{
+          expectedHost:"old.example.edu",host:"fresh.example.edu",
+        },repository,()=>"fresh-token");
+        return {verified:true,result:"VERIFIED"};
+      },
+    })).rejects.toMatchObject({code:"DOMAIN_HOST_STALE"});
+    const stored=await repository.loadDomain(created.id);
+    expect(stored?.isVerified).toBe(false);
+    expect(stored?.verificationToken).toBe("fresh-token");
   });
 
   it("requires verification before a domain can become primary", async () => {
