@@ -202,3 +202,13 @@ Source: legacy listing-page-header.scss, old-lms-shell-spec.md, globals.css and 
 - `src/app/(authenticated)/hr/profile/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
 - `src/app/(authenticated)/hr/round-results/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
 - `src/app/(authenticated)/hr/round-results/page.tsx` | instances H3/B0/T2/F0/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/learn/allAssignments/[assignmentId]/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/var(--lms-heading); mobile20px=20px; subtitle14px=14px | fixes: none
+- `src/app/(authenticated)/learn/allAssignments/[assignmentId]/page.tsx` | instances H2/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/var(--lms-heading); mobile20px=20px; subtitle14px=14px | fixes: none
+- `src/app/(authenticated)/learn/allAssignments/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/var(--lms-heading); mobile20px=20px; subtitle14px=14px | fixes: none
+- `src/app/(authenticated)/learn/allAssignments/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/var(--lms-heading); mobile20px=20px; subtitle14px=14px | fixes: none
+- `src/app/(authenticated)/learn/allQuizzes/[quizId]/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/var(--lms-heading); mobile20px=20px; subtitle14px=14px | fixes: none
+- `src/app/(authenticated)/learn/allQuizzes/[quizId]/page.tsx` | instances H2/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/var(--lms-heading); mobile20px=20px; subtitle14px=14px | fixes: none
+- `src/app/(authenticated)/learn/allQuizzes/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/var(--lms-heading); mobile20px=20px; subtitle14px=14px | fixes: none
+- `src/app/(authenticated)/learn/allQuizzes/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/var(--lms-heading); mobile20px=20px; subtitle14px=14px | fixes: none
+- `src/app/(authenticated)/learn/attendance/calendar/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/var(--lms-heading); mobile20px=20px; subtitle14px=14px | fixes: none
+- `src/app/(authenticated)/learn/attendance/calendar/page.tsx` | instances H2/B0/T0/F1/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/var(--lms-heading); mobile20px=20px; subtitle14px=14px | fixes: none
