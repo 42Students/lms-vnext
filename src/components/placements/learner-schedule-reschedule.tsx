@@ -29,8 +29,22 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
   if(!date){
    setError("Choose a future preferred time. You can add flexible windows as notes, but a proposed date is required for approval.");return;
   }
-  const when=new Date(date);
-  if(!Number.isFinite(when.getTime())||when.getTime()<=Date.now()){setError("Choose a future preferred time.");return;}
+  // A datetime-local input has no timezone. Interpret it in the college's
+  // IST timezone, not the learner browser's device timezone.
+  if(!/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$/.test(date)){
+   setError("Choose a valid future date and time in IST.");return;
+  }
+  const when=new Date(date+":00+05:30");
+  const parts=new Intl.DateTimeFormat("en-US",{
+   timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+   hour:"2-digit",minute:"2-digit",hourCycle:"h23",
+  }).formatToParts(when);
+  const part=(key:string)=>parts.find(entry=>entry.type===key)?.value??"";
+  const normalized=part("year")+"-"+part("month")+"-"+part("day")+"T"+
+   part("hour")+":"+part("minute");
+  if(!Number.isFinite(when.getTime())||normalized!==date||when.getTime()<=Date.now()){
+   setError("Choose a valid future date and time in IST.");return;
+  }
   setBusy(true);setError("");setSuccess("");
   try{
    await apiFetch("/api/placements/requests",{
