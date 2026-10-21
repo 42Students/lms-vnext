@@ -120,6 +120,11 @@ export function LearnerJobsBrowse({
   const historicSaved=savedHistory.filter(row=>
     ownSavedIds.has(row.jobId)&&!accessibleIds.has(row.jobId));
   const savedOnly=urlState.savedOnly||params.get("tab")==="saved";
+  const historicExpired=historicSaved.filter(row=>
+    row.status!=="PUBLISHED"||
+    (row.deadline!==null&&Number.isFinite(Date.parse(row.deadline))&&
+      Date.parse(row.deadline)<Date.parse(snapshotNowIso)));
+  const historicNotOpen=historicSaved.filter(row=>!historicExpired.includes(row));
   const filterSummary=[
     search.trim()?'"'+search.trim()+'"':null,
     filters.employmentType!=="all"?humanize(filters.employmentType):null,
@@ -159,6 +164,12 @@ export function LearnerJobsBrowse({
   const expiredRoleCards=savedOnly?[]:expiredAll;
   const savedOpen=savedOnly&&filters.availability!=="closed"?paged:[];
   const empty=learnerDrivesEmptyState(matchingItems.length,visible.length,filters);
+  const filteredEmpty=matchingItems.length>0&&visible.length===0;
+  // The source response is already tenant/eligibility scoped. Old global
+  // popular/select usage endpoints cannot be cloned as passive tracking:
+  // view analytics require a product-approved purpose, retention and a
+  // server-side scoped write, never an onClick mutation of client counts.
+  const hasPrimaryOpen=primary.length>0;
 
   const selectClass = "mt-1 min-h-[var(--lms-control-height)] max-md:min-h-11";
   const closeMobileFilters=()=>{setMobileOpen(false);mobileFilterButton.current?.focus();};
@@ -305,13 +316,30 @@ export function LearnerJobsBrowse({
         Their bookmarks remain until you remove them.
       </p>:null}
       {savedOnly && matchingItems.length===0&&historicSaved.length===0?<div className="flex min-h-44 min-w-0 flex-col items-center justify-center gap-3 border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center">
-        <h2 className="font-semibold text-foreground">No saved drives yet</h2>
-        <p className="text-sm text-body">Save drives from All Drives by tapping the heart. They will appear here.</p>
-        <Button variant="link" type="button" className="min-h-11 px-0"
+        <svg aria-hidden="true" width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--lms-neutral-400)]">
+          <path d="M16 12h32a3 3 0 0 1 3 3v40L32 43 13 55V15a3 3 0 0 1 3-3z"/>
+          <path d="M23 25h18M23 31h12"/>
+        </svg>
+        <h2 className="text-lg font-semibold text-foreground">No saved jobs</h2>
+        <p className="text-sm text-body">Save jobs from All drives to find them here later.</p>
+        <Button variant="primary" type="button" className="min-h-11"
           onClick={()=>updateQuery({saved:null})}>Browse all jobs</Button>
+        <Button variant="link" type="button" className="min-h-11"
+          onClick={()=>router.refresh()}>Retry saved jobs</Button>
       </div>:empty.kind==="NO_PUBLISHED"&&!savedOnly ? (
         <div className="space-y-3">
-          <EmptyState title={empty.title} description={empty.description} />
+          <div className="flex flex-col items-center gap-3 py-5">
+            <svg aria-hidden="true" width="70" height="70" viewBox="0 0 70 70" fill="none"
+              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              className="text-[var(--lms-neutral-400)]">
+              <rect x="13" y="13" width="44" height="44" rx="6"/>
+              <path d="M23 27h24M23 35h16M23 43h11"/>
+              <circle cx="52" cy="51" r="12" fill="var(--lms-surface)"/>
+              <path d="M46 51h12"/>
+            </svg>
+            <EmptyState title="No open jobs right now"
+              description="New opportunities are added regularly. Check back soon or contact your placement cell."/>
+          </div>
           <Link href="/learn/my-placements"
             className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:underline">
             Review placement dashboard →
@@ -321,40 +349,64 @@ export function LearnerJobsBrowse({
             Retry loading drives
           </Button>
         </div>
-      ) : empty.kind==="FILTERED_OUT"&&!savedOnly ? (
+      ) : filteredEmpty ? (
         <div className="flex min-h-44 flex-col items-center justify-center gap-3 border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center" role="status">
-          <p className="font-semibold text-foreground">{empty.title}</p>
-          <p className="mt-2 text-sm text-body">{empty.description}</p>
-          {empty.showReset ? <Button variant="link" type="button"
-            onClick={()=>{
-              resetFilters();
-            }}
-            className="mt-3 min-h-11 px-0">
-            Clear all filters
-          </Button>:null}
+          <svg aria-hidden="true" width="58" height="58" viewBox="0 0 58 58" fill="none" stroke="currentColor" strokeWidth="2" className="text-[var(--lms-neutral-400)]">
+            <circle cx="24" cy="24" r="15"/><path d="m35 35 14 14M15 24h18"/>
+          </svg>
+          <p className="text-lg font-semibold text-foreground">No jobs match {filterSummary}</p>
+          <p className="mt-2 text-sm text-body">Try a different search, type or location.</p>
+          <div className="mt-3 flex min-w-0 flex-wrap justify-center gap-3">
+            <Button variant="primary" type="button"
+              onClick={resetFilters} className="min-h-11">
+              Show all {savedOnly?new Set(savedJobIds).size:allDrives.drives} jobs
+            </Button>
+            <Button variant="secondary" type="button"
+              onClick={resetFilters} className="min-h-11">
+              Clear filters
+            </Button>
+          </div>
         </div>
       ) : (
         savedOnly?<div className="space-y-5">
           {savedOpen.length?<LearnerPlacementJobs items={savedOpen} snapshotNowIso={snapshotNowIso}
              returnQuery={params.toString()} savedJobIds={savedJobIds}/>:null}
-          {(savedExpired.length||historicSaved.length)?<section aria-label="Expired saved jobs" className="space-y-3">
-            <h2 className="text-lg font-semibold text-foreground">Expired saved jobs</h2>
-            <p className="text-sm text-body">Saved drives stay in your private history even after closure, without restoring application permission.</p>
+          {(savedExpired.length||historicExpired.length)?<Disclosure
+            title={"Expired ("+(savedExpired.length+historicExpired.length)+" saved)"}
+            defaultOpen ariaLabel="Expired saved jobs" className="border-t border-border py-3">
+            <p className="mb-3 text-sm text-body">Saved jobs remain listed after the deadline or closure. Applying is not available.</p>
             {savedExpired.length?<LearnerPlacementJobs items={savedExpired} snapshotNowIso={snapshotNowIso}
-             returnQuery={params.toString()} savedJobIds={savedJobIds}/>:null}
-            {historicSaved.length?<ul className="divide-y divide-border border-y border-border">
-             {historicSaved.map(saved=><li key={saved.jobId} className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
-              <div><strong className="block break-words">{saved.title?.trim()||"Untitled drive"}</strong>
-               <span className="text-xs text-body">{saved.status==="PUBLISHED"?"No longer visible to your current cohort":saved.status.replaceAll("_"," ")}
-                {saved.deadline&&Number.isFinite(Date.parse(saved.deadline))?" · Deadline "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(saved.deadline)):""}
-               </span>
-              </div>
-              <LearnerSaveDriveButton jobId={saved.jobId} jobTitle={saved.title??"Untitled drive"}
-               initialSaved surface="LIST"/>
-             </li>)}
+              returnQuery={params.toString()} savedJobIds={savedJobIds}/>:null}
+            {historicExpired.length?<ul className="divide-y divide-border border-y border-border">
+              {historicExpired.map(saved=><li key={saved.jobId} className="flex min-w-0 flex-wrap items-center justify-between gap-3 py-3">
+                <div className="min-w-0"><strong className="block break-words">{saved.title?.trim()||"Untitled drive"}</strong>
+                  <span className="text-xs text-body">{saved.status.replaceAll("_"," ")}
+                    {saved.deadline&&Number.isFinite(Date.parse(saved.deadline))?" · Deadline "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(saved.deadline)):""}
+                  </span>
+                </div>
+                <LearnerSaveDriveButton jobId={saved.jobId} jobTitle={saved.title?.trim()||"Untitled drive"} initialSaved surface="LIST"/>
+              </li>)}
             </ul>:null}
-          </section>:null}
+          </Disclosure>:null}
+          {(savedNotOpen.length||historicNotOpen.length)?<Disclosure
+            title={"Not open to you ("+(savedNotOpen.length+historicNotOpen.length)+" saved)"}
+            defaultOpen ariaLabel="Saved drives not open to you" className="border-t border-border py-3">
+            <p className="mb-3 text-sm text-body">These saved drives are not open to your current placement registration or cohort.</p>
+            {savedNotOpen.length?<LearnerPlacementJobs items={savedNotOpen}
+              snapshotNowIso={snapshotNowIso} returnQuery={params.toString()} savedJobIds={savedJobIds}/>:null}
+            {historicNotOpen.length?<ul className="divide-y divide-border border-y border-border">
+              {historicNotOpen.map(saved=><li key={saved.jobId} className="flex min-w-0 flex-wrap items-center justify-between gap-3 py-3">
+                <div className="min-w-0"><strong className="block break-words">{saved.title?.trim()||"Untitled drive"}</strong>
+                  <p className="text-xs text-body">No longer visible to your current cohort</p></div>
+                <LearnerSaveDriveButton jobId={saved.jobId} jobTitle={saved.title?.trim()||"Untitled drive"} initialSaved surface="LIST"/>
+              </li>)}
+            </ul>:null}
+          </Disclosure>:null}
         </div>:<div className="space-y-5">
+          {!hasPrimaryOpen&&(expiredRoleCards.length>0||notOpenRoleCards.length>0)
+            ?<p role="status" className="border-y border-border py-3 text-sm text-body">
+              No drive is open to you right now. Other published and expired jobs appear below.
+            </p>:null}
           {ordinaryRoleCards.length>0?<LearnerPlacementJobs items={ordinaryRoleCards}
             snapshotNowIso={snapshotNowIso} returnQuery={params.toString()} savedJobIds={savedJobIds}/>:null}
           {expiredRoleCards.length>0?<Disclosure title={"Expired ("+expiredRoleCards.length+" roles)"}
