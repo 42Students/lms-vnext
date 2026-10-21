@@ -34,6 +34,7 @@ export async function getCollegeCompanyHistory(
       id: placementCompanyRelationships.id,
       collegeId: placementCompanyRelationships.collegeId,
       companyName: placementCompanies.name,
+      relationshipStatus: placementCompanyRelationships.status,
       internalNotes: placementCompanyRelationships.internalNotes,
       contactName: placementCompanyRelationships.contactPersonName,
       contactEmail: placementCompanyRelationships.contactEmail,
@@ -133,6 +134,7 @@ export async function getCollegeCompanyHistory(
   return {
     company: {
       name: relationship.companyName,
+      relationshipStatus: relationship.relationshipStatus,
       contactName: relationship.contactName,
       contactEmail: relationship.contactEmail,
       contactPhone: relationship.contactPhone,
