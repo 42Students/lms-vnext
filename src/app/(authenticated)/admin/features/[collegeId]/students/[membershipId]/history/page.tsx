@@ -46,7 +46,7 @@ export default async function StudentModuleRuleHistory({params,searchParams}:{pa
   <Link href={studentRuleHistoryExportHref(collegeId,membershipId,
    cursor.data.beforeOccurredAt&&cursor.data.beforeId?{beforeOccurredAt:new Date(cursor.data.beforeOccurredAt),beforeId:cursor.data.beforeId}:null,
    cursor.data.module,cursor.data.actorName,cursor.data.from,cursor.data.to)}
-   className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] sm:w-auto md:min-h-9">Export this history page (CSV)</Link>
+   className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] sm:w-auto md:min-h-9">Export this history page (CSV)</Link>
   <p className="max-w-prose text-xs text-muted-foreground">Export contains at most 40 authorized changes from this page, not an unrestricted audit archive.</p>
   </div>
   {result.items.length===0?<p className="border-b border-border py-6 text-sm text-body">No module override changes have been recorded for this membership.</p>:
@@ -58,7 +58,7 @@ export default async function StudentModuleRuleHistory({params,searchParams}:{pa
     <p className="mt-2 break-words text-sm text-body">{item.change}</p>
     <p className="mt-2 break-words text-xs text-muted-foreground">{item.actorName}</p>
    </li>)}</ol>}
-  {result.nextCursor?<Link href={studentRuleHistoryHref(collegeId,membershipId,result.nextCursor,cursor.data.module,cursor.data.actorName,cursor.data.from,cursor.data.to)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] sm:w-auto md:min-h-9">Older changes →</Link>:null}
+  {result.nextCursor?<Link href={studentRuleHistoryHref(collegeId,membershipId,result.nextCursor,cursor.data.module,cursor.data.actorName,cursor.data.from,cursor.data.to)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] sm:w-auto md:min-h-9">Older changes →</Link>:null}
   <Link href={"/admin/audit?collegeId="+encodeURIComponent(collegeId)+"&subjectType=MEMBERSHIP&subjectId="+encodeURIComponent(membershipId)}
    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Open scoped Activity Log →</Link>
  </div>;
