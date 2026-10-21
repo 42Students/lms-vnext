@@ -283,23 +283,23 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-13.md: file, number of
 - [x] `src/components/tpo/tpo-audit-saved-views.tsx`
 - [x] `src/components/tpo/tpo-batch-eligibility-import.tsx`
 - [x] `src/components/tpo/tpo-batch-student-keyboard-actions.tsx`
-- [ ] `src/components/tpo/tpo-blocked-dates-editor.tsx`
-- [ ] `src/components/tpo/tpo-company-team-conversation.tsx`
-- [ ] `src/components/tpo/tpo-due-followup-workspace.tsx`
-- [ ] `src/components/tpo/tpo-outcome-labels-editor.tsx`
-- [ ] `src/components/tpo/tpo-spreadsheet-grid.tsx`
-- [ ] `src/components/tpo/tpo-student-quick-panel.tsx`
-- [ ] `src/components/tpo/tpo-team-ask-panel.tsx`
-- [ ] `src/components/tpo/tpo-timed-debar-control.tsx`
-- [ ] `src/components/tracker/independent-finding-actions.tsx`
-- [ ] `src/components/tracker/known-errors-workspace.tsx`
-- [ ] `src/components/tracker/tracker-issue-bulk-actions.tsx`
-- [ ] `src/components/tracker/tracker-live-logs-explorer.tsx`
-- [ ] `src/components/tracker/tracker-report-form.tsx`
-- [ ] `src/components/tracker/tracker-workflow-panel.tsx`
-- [ ] `src/components/ui/data-table.tsx`
-- [ ] `src/components/ui/date-input.tsx`
-- [ ] `src/components/ui/pagination.tsx`
-- [ ] `src/components/verification/SuperAdminVerificationPanel.tsx`
-- [ ] `src/components/verification/TpoVerificationPanel.tsx`
-- [ ] `src/styles/legacy-skin.css`
+- [x] `src/components/tpo/tpo-blocked-dates-editor.tsx`
+- [x] `src/components/tpo/tpo-company-team-conversation.tsx`
+- [x] `src/components/tpo/tpo-due-followup-workspace.tsx`
+- [x] `src/components/tpo/tpo-outcome-labels-editor.tsx`
+- [x] `src/components/tpo/tpo-spreadsheet-grid.tsx`
+- [x] `src/components/tpo/tpo-student-quick-panel.tsx`
+- [x] `src/components/tpo/tpo-team-ask-panel.tsx`
+- [x] `src/components/tpo/tpo-timed-debar-control.tsx`
+- [x] `src/components/tracker/independent-finding-actions.tsx`
+- [x] `src/components/tracker/known-errors-workspace.tsx`
+- [x] `src/components/tracker/tracker-issue-bulk-actions.tsx`
+- [x] `src/components/tracker/tracker-live-logs-explorer.tsx`
+- [x] `src/components/tracker/tracker-report-form.tsx`
+- [x] `src/components/tracker/tracker-workflow-panel.tsx`
+- [x] `src/components/ui/data-table.tsx`
+- [x] `src/components/ui/date-input.tsx`
+- [x] `src/components/ui/pagination.tsx`
+- [x] `src/components/verification/SuperAdminVerificationPanel.tsx`
+- [x] `src/components/verification/TpoVerificationPanel.tsx`
+- [x] `src/styles/legacy-skin.css`
