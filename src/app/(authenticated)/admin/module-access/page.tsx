@@ -39,7 +39,7 @@ export default async function SuperAdminModuleAccessPage({
   return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Module Access"
       description="Select a college to inspect the existing inherited module access rules."
-      actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-button-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Feature Controls</Link>}/>
+      actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Feature Controls</Link>}/>
     <section aria-label="Module Access overview" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
       <p className="text-sm font-semibold text-body">Effective access · {scopeLabel}</p>
       <h2 className="mt-[var(--lms-space-1)] text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Optional module access hierarchy</h2>
