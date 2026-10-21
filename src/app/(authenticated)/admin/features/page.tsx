@@ -1,4 +1,3 @@
-import { FilterBar } from "@/components/ui/filter-bar";
 import {Button} from "@/components/ui/button";
 import { Disclosure } from "@/components/ui/disclosure";
 import {Select} from "@/components/ui/select";
@@ -135,7 +134,7 @@ export default async function SuperAdminFeaturesPage({
         </dl>
       </section>
       <section className="border-t border-border pt-6">
-        <FilterBar title="Filters"><form
+        <form
           action="/admin/features"
           method="get"
           className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap sm:items-end"
@@ -203,7 +202,7 @@ export default async function SuperAdminFeaturesPage({
           >
             Clear
           </Link>
-        </form></FilterBar>
+        </form>
       </section>
 
       <section className="min-w-0 space-y-3">
