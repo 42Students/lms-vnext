@@ -8,21 +8,28 @@ import {PlacementsServiceError} from "@/modules/placements/errors";
 export const runtime="nodejs";
 export async function POST(request:Request,{params}:{params:Promise<{jobId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- const form=await request.formData().catch(()=>null);
- if(!form)return NextResponse.json({error:"INVALID_FORM"},{status:400});
  const {jobId}=await params;
- const action=form.get("action");
+ const json=request.headers.get("content-type")?.toLowerCase().includes("application/json")??false;
+ const data:unknown=json?await request.json().catch(()=>null):await request.formData().catch(()=>null);
+ if(!data)return NextResponse.json({error:"INVALID_FORM"},{status:400});
  try{
+  // Both the old recruiter JSON DTO and the in-page form resolve to the same
+  // validated write service. Datetime-local fields have an explicit IST
+  // conversion; offset-bearing JSON instants already identify their zone.
+  const field=(name:string):unknown=>data instanceof FormData?data.get(name):
+   typeof data==="object"&&data!==null&&name in data?
+    (data as Record<string,unknown>)[name]:undefined;
+  const action=z.enum(["CREATE","OFFER","BOOK","CANCEL"]).parse(field("action"));
   const input=action==="CREATE"?{
-   action,roundId:form.get("roundId"),
-   startAt:parseIstLocalSlot(form.get("startAt")),
-   endAt:parseIstLocalSlot(form.get("endAt")),
-   timezone:"Asia/Kolkata",mode:form.get("mode"),
-   panelLabel:form.get("panelLabel")||undefined,
-   meetingLocation:form.get("meetingLocation")||undefined,
-   capacity:form.get("capacity"),
+   action,roundId:field("roundId"),
+   startAt:json?field("startAt"):parseIstLocalSlot(field("startAt")),
+   endAt:json?field("endAt"):parseIstLocalSlot(field("endAt")),
+   timezone:"Asia/Kolkata" as const,mode:field("mode"),
+   panelLabel:field("panelLabel")||undefined,
+   meetingLocation:field("meetingLocation")||undefined,
+   capacity:field("capacity"),
   }:{
-   action,slotId:form.get("slotId"),expectedVersion:form.get("expectedVersion"),
+   action,slotId:field("slotId"),expectedVersion:field("expectedVersion"),
   };
   const result=await writeHrInterviewSlot(await getCurrentRequestContext(),jobId,input);
   // One slot is proposed per form submission (not a batch), so there are no per-row failures.
