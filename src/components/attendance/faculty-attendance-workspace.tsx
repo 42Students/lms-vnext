@@ -386,7 +386,8 @@ export function FacultyAttendanceWorkspace({
   }
 
   function requestAttendanceConfirmation() {
-    if (!selectedSession || markingWindow !== "OPEN" || submitting || submitLock.current) return;
+    if (!selectedSession) { setError("Please select a class."); return; }
+    if (markingWindow !== "OPEN" || submitting || submitLock.current) return;
     setError(null);
     if (selectedSession.attendanceStatus === "MARKED" && !facultyCorrectionReasonValid(correctionReason)) {
       setError("Explain this attendance correction in at least 8 characters."); return;
@@ -400,14 +401,8 @@ export function FacultyAttendanceWorkspace({
   }
 
   async function submitAttendance() {
-    if (
-      !selectedSession ||
-      markingWindow !== "OPEN" ||
-      submitting ||
-      submitLock.current
-    ) {
-      return;
-    }
+    if (!selectedSession) { setError("Please select a class."); return; }
+    if (markingWindow !== "OPEN" || submitting || submitLock.current) return;
 
     setError(null);
     if(selectedSession.attendanceStatus==="MARKED"&&!facultyCorrectionReasonValid(correctionReason)){
@@ -526,7 +521,7 @@ export function FacultyAttendanceWorkspace({
       router.refresh();
     } catch (caught) {
       setScheduleError(caught instanceof Error ? caught.message :
-        "Failed to schedule class. Check your connection and try again.");
+        "Failed to schedule class.");
     } finally {
       if(confirmed){scheduleLock.current=false;setScheduling(false);setConfirmScheduleOpen(false);}
     }
