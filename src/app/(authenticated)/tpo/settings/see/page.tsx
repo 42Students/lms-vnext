@@ -45,7 +45,7 @@ export default async function TpoWhatCompaniesSeePage() {
 
   return (
     <div className="min-w-0 space-y-6">
-      <PageHeader title="What Companies See" />
+      <PageHeader title="What companies see" />
       <TpoSettingsNav active="see" compact />
 
       <section className="space-y-2">

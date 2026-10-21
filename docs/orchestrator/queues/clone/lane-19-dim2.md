@@ -387,16 +387,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-19.md: file, number of
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/results/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/new/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/see/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/preparation-prep/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/[threadId]/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/everyone/page.tsx`
-- [ ] `src/components/academics/college-section-management.tsx`
-- [ ] `src/components/activity/activity-center.tsx`
-- [ ] `src/components/admin/college-branding-preview.tsx`
-- [ ] `src/components/admin/department-actions.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/page.tsx`
+- [x] `src/app/(authenticated)/tpo/recruiters/campaigns/new/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/see/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/preparation-prep/page.tsx`
+- [x] `src/app/(authenticated)/tpo/team/[threadId]/loading.tsx`
+- [x] `src/app/(authenticated)/tpo/team/everyone/page.tsx`
+- [x] `src/components/academics/college-section-management.tsx`
+- [x] `src/components/activity/activity-center.tsx`
+- [x] `src/components/admin/college-branding-preview.tsx`
+- [x] `src/components/admin/department-actions.tsx`
 - [ ] `src/components/admin/lecture-hall-manager.tsx`
 - [ ] `src/components/admin/organization-actions.tsx`
 - [ ] `src/components/admin/super-admin-attendance-settings-editor.tsx`
