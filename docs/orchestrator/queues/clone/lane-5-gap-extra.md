@@ -10,7 +10,7 @@ Order of work: finish the unit you are on in your main queue, then continue the 
 - [x] L12-U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/RecruiterPlanDriveController.java`
 - [x] L13-U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ApplicationScreening.java`
 - [x] L13-U031 (Cross-cutting area) `cross/13: Dashboards and reports: every metric, formula, date range, drill-down`
-- [ ] L14-U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/summary.js`
+- [x] L14-U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/summary.js`
 - [ ] L15-U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerRegistrationController.java`
 - [ ] L17-U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/GradeAuditLog.java`
 - [ ] L17-U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/TenantSettings.js`
