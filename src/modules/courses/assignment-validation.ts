@@ -132,13 +132,48 @@ const linkSubmissionSchema = z.object({
     ),
 });
 
+/** The existing single-file payload remains valid. Newer clients can
+ * submit ordered file receipts together with written work and typed links.
+ * File claims and asset persistence are guarded by the submission service. */
+const multipartFileSubmissionSchema = assignmentFileSubmissionSchema
+  .extend({
+    uploadReceiptId: z.string().uuid().optional(),
+    uploadReceiptIds: z.array(z.string().uuid()).min(1).max(20).optional(),
+    textContent: z.string().trim().min(1).max(50000).optional(),
+    links: z.array(z.object({
+      kind: z.enum(["REPOSITORY_LINK", "EXTERNAL_LINK"]),
+      url: z.string().trim().max(2048).url().refine(
+        value => new URL(value).protocol === "https:" &&
+          !new URL(value).username && !new URL(value).password,
+        "Only credential-free https submission links are allowed",
+      ),
+      caption: z.string().trim().max(255).default(""),
+    }).strict()).max(20).optional(),
+  })
+  .superRefine((input, ctx) => {
+    if (input.uploadReceiptId && input.uploadReceiptIds) {
+      ctx.addIssue({
+        code: "custom", path: ["uploadReceiptIds"],
+        message: "Choose one upload receipt format",
+      });
+    }
+    const ids = input.uploadReceiptIds ??
+      (input.uploadReceiptId ? [input.uploadReceiptId] : []);
+    if (ids.length === 0 || new Set(ids).size !== ids.length) {
+      ctx.addIssue({
+        code: "custom", path: ["uploadReceiptIds"],
+        message: "Each submitted file needs its own upload receipt",
+      });
+    }
+  });
+
 export const submitAssignmentInputSchema =
   z.discriminatedUnion(
     "submissionType",
     [
       textSubmissionSchema,
       linkSubmissionSchema,
-      assignmentFileSubmissionSchema,
+      multipartFileSubmissionSchema,
     ],
   );
 
