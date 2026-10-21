@@ -11,9 +11,19 @@ import { brandStyleVariables, deriveBrandTokens } from "@/modules/colleges/brand
 import { getPublicCollegeBranding } from "@/modules/colleges/branding-service";
 import {effectiveCollegeSignInCapabilities} from "@/modules/colleges/public-signin-policy-service";
 
+/** Branding is optional presentation data. A transient media/config failure
+ * must not disable otherwise verified and policy-authorized college sign-in. */
+async function optionalPublicBranding(collegeId: string) {
+  try {
+    return await getPublicCollegeBranding(collegeId);
+  } catch {
+    return null;
+  }
+}
+
 export async function generateMetadata():Promise<Metadata> {
  const tenant=await resolveRequestTenant((await headers()).get("host"));
- const brand=tenant.kind==="college"?await getPublicCollegeBranding(tenant.collegeId):null;
+ const brand=tenant.kind==="college"?await optionalPublicBranding(tenant.collegeId):null;
  return {title:"Sign in · "+(brand?.collegeName??"42LMS")};
 }
 
@@ -89,11 +99,22 @@ export default async function HomePage({
     : null;
 
   const requested = Array.isArray(params.returnTo) ? params.returnTo[0] : params.returnTo;
+  const requestHeaders = await headers();
+  const tenant = await resolveRequestTenant(requestHeaders.get("host"));
+  // Canonicalize only to an independently verified PRIMARY for the exact
+  // resolved college. Do not trust X-Forwarded-Host or raw destination strings.
+  // The router serves only root or its /login rewrite here; these are the only
+  // paths allowed to cross hosts. Browsers carry the current fragment forward
+  // on redirects that omit a replacement fragment.
+  if (tenant.kind === "college" && tenant.shouldRedirectToCanonicalHost && tenant.canonicalHost) {
+    const pagePath = requestHeaders.get("x-lms-path")?.split("?")[0] === "/login" ? "/login" : "/";
+    const destination = new URL(pagePath, "https://" + tenant.canonicalHost);
+    if (authValue) destination.searchParams.set("auth", authValue);
+    if (recruiterValue) destination.searchParams.set("recruiter", recruiterValue);
+    if (requested) destination.searchParams.set("returnTo", requested);
+    redirect(destination.toString());
+  }
   if (await isSignedIn()) redirect(safeReturnTo(requested) ?? "/dashboard");
-
-  const tenant = await resolveRequestTenant(
-    (await headers()).get("host"),
-  );
   // PUB-auth-public-39: platform visitors see the minimal public landing,
   // while college hosts and explicit sign-in links keep the OTP entry screen.
   // The proxy supplies the canonical path; do not use untrusted forwarded hosts.
@@ -102,7 +123,7 @@ export default async function HomePage({
       !authValue && !recruiterValue && !requested) redirect("/home");
   const branding =
     tenant.kind === "college"
-      ? await getPublicCollegeBranding(tenant.collegeId)
+      ? await optionalPublicBranding(tenant.collegeId)
       : null;
   const signin = await effectiveCollegeSignInCapabilities(tenant.kind==="college"?tenant.collegeId:null);
   const themeStyle = brandStyleVariables(
@@ -151,6 +172,14 @@ export default async function HomePage({
             <div role="alert" className={`${styles.status} ${message.tone === "error" ? styles.statusError : styles.statusWarning}`}>
               <p className={styles.statusTitle}>{message.title}</p>
               <p className={styles.statusMessage}>{message.description}</p>
+            </div>
+          ) : null}
+          {tenant.kind === "college" && recruiterValue === "email" && !signin.email ? (
+            <div role="status" className={`${styles.status} ${styles.statusWarning}`}>
+              <p className={styles.statusTitle}>Email sign-in is unavailable for this college</p>
+              <p className={styles.statusMessage}>
+                Use the sign-in method your college has enabled, or ask the placement cell for a new invitation link.
+              </p>
             </div>
           ) : null}
           {tenant.kind === "unavailable" ? (
