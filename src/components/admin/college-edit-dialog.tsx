@@ -60,6 +60,38 @@ export function CollegeEditDialog({
     window.addEventListener("beforeunload", guard);
     return () => window.removeEventListener("beforeunload", guard);
   }, [dirty, open]);
+  // Preserve unsaved edits on an in-app scope switch or sidebar navigation.
+  // beforeunload alone cannot protect Next client-side transitions.
+  useEffect(() => {
+    if (!open || !dirty) return;
+    const intercept = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey ||
+          event.ctrlKey || event.shiftKey || event.altKey) return;
+      if (!(event.target instanceof Element)) return;
+      const anchor = event.target.closest("a[href]");
+      if (!(anchor instanceof HTMLAnchorElement) || anchor.hasAttribute("download") ||
+          (anchor.target && anchor.target !== "_self")) return;
+      const target = new URL(anchor.href, window.location.href);
+      if (target.origin !== window.location.origin ||
+          (target.pathname === window.location.pathname &&
+           target.search === window.location.search)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      if (pending || inFlightRef.current) {
+        showToast({tone:"info",title:"Wait for the current college setup action to finish."});
+        return;
+      }
+      void askConfirm("Discard college changes? Keep editing to preserve your unsaved changes.")
+        .then(confirmed => {
+          if (confirmed && !inFlightRef.current) {
+            setOpen(false);
+            router.push(target.pathname + target.search + target.hash);
+          }
+        });
+    };
+    document.addEventListener("click", intercept, true);
+    return () => document.removeEventListener("click", intercept, true);
+  }, [dirty, open, pending, router, askConfirm, showToast]);
   function requestClose() {
     if (pending || inFlightRef.current) {
       showToast({ tone: "info", title: "Wait for the current college setup action to finish." });
@@ -97,17 +129,19 @@ export function CollegeEditDialog({
       const payload = await response.json().catch(() => null);
 
       if (!response.ok) {
+        const reason = payload?.error === "COLLEGE_NOT_FOUND"
+          ? "The college is no longer active or accessible."
+          : response.status === 409
+            ? "Another administrator changed this college. Reload before editing."
+            : response.status === 400
+              ? "Please check the entered college values."
+              : response.status === 403
+                ? "You no longer have permission to edit this college."
+                : "The college could not be updated.";
         showToast({
           tone: "error",
-          title: "Failed to update college",
-          description:
-            payload?.error === "COLLEGE_NOT_FOUND"
-              ? "The college is no longer active or accessible."
-              : response.status === 409
-                ? "Another administrator changed this college. Reload before editing."
-                : response.status === 400
-                  ? "Please check the entered college values."
-                  : "The college could not be updated.",
+          title: "Failed to update college: " + reason,
+          description: "Your unsaved changes are preserved.",
         });
         return;
       }
@@ -119,7 +153,7 @@ export function CollegeEditDialog({
       });
       router.refresh();
       } catch {
-        showToast({tone:"error",title:"Failed to update college",description:"The college could not be updated."});
+        showToast({tone:"error",title:"Failed to update college: The college could not be updated.",description:"Your unsaved changes are preserved."});
       } finally {
         inFlightRef.current=false;
       }
