@@ -93,7 +93,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
  const visible=attempts.filter(item=>!search||
   [item.learnerDisplayName??"",item.learnerRollNumber??"",item.learnerEmail??""]
     .some(value=>value.toLocaleLowerCase().includes(search)));
- return <div className="min-w-0 space-y-3" aria-label="Quiz submissions">
+ return <div role="region" className="min-w-0 space-y-3" aria-label="Quiz submissions">
   {options.length>1?<label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
    Section
    <Select value={chosen?.deliveryId??""} disabled={loading} onChange={event=>{

@@ -425,7 +425,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     The Order field below is the authored default order, not a Section-specific override.
    </p>:null}
    <p className="text-xs text-muted-foreground leading-5">{matching.length} matching content items on page {existingPage}{existingTruncated?" · more available":""}.</p>
-   <div className="flex flex-wrap items-center gap-2" aria-label="Existing content pagination">
+   <div role="group" className="flex flex-wrap items-center gap-2" aria-label="Existing content pagination">
     <Button type="button" variant="secondary" size="sm" disabled={existingPage<=1}
      onClick={()=>applyExistingFilters({existingPage:String(existingPage-1)})}>Previous page</Button>
     <span className="text-xs text-muted-foreground">Page {existingPage}</span>
