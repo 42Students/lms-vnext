@@ -225,7 +225,7 @@ export function LectureHallManager({
               cell: (hall) => (
                 <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] print:hidden sm:justify-end">
                   <Link href={`${availabilityBase}/${hall.id}`}
-                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
                     Availability
                   </Link>
                   <Dropdown label="Lecture hall actions" trigger="Actions" mobileSheet align="end" triggerClassName="md:!min-h-9">
