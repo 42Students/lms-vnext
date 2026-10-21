@@ -11,7 +11,7 @@ Order of work: finish the unit you are on in your main queue, then continue the 
 - [x] L11-U019 (FE page) `docs/legacy-source/frontend/src/pages/tpo/recruiters/[recruiterLeadId].js`
 - [x] L11-U022 (FE page) `docs/legacy-source/frontend/src/pages/tpo/reports/index.js`
 - [x] L11-U025 (FE page) `docs/legacy-source/frontend/src/pages/tpo/verification.js`
-- [ ] L11-U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/deleted.js`
+- [x] L11-U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/deleted.js`
 - [ ] L12-U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Classroom/classroom.js`
 - [ ] L12-U014 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/applications/JobApplicationSearchController.java`
 - [ ] L12-U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoAnnouncementController.java`
