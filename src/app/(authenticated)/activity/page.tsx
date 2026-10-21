@@ -109,7 +109,13 @@ export default async function ActivityPage({
   const today=istDay(new Date());
   const ago=(days:number)=>istDay(new Date(currentTimeMs()-days*86400000));
   const range=one(params.range);
-  const defaultFrom=!one(params.from)&&!one(params.to)&&range!=="ALL"?ago(29):one(params.from);
+  // Raw forensic lookups default to all-time, as in legacy Audit Logs.
+  // The Important activity feed still defaults to the last 30 IST days.
+  const forensicLookup=selectedPreset==="all" && Boolean(
+    one(params.actorUserId)||one(params.actorName)||one(params.eventType)||
+    one(params.subjectType)||one(params.subjectId)||one(params.q));
+  const defaultFrom=!one(params.from)&&!one(params.to)&&
+    range!=="ALL"&&!forensicLookup?ago(29):one(params.from);
   const quick=(from?:string,to?:string,view:PresetName=selectedPreset)=>{
    const q=new URLSearchParams({
     ...(from?{from}:{}),...(to?{to}:{}),
@@ -468,18 +474,49 @@ export default async function ActivityPage({
         </div>
       </form>
 
-      <ActivityCenter
+      {selectedPreset==="all" && isSuperAdmin(context) ? (
+        <section aria-labelledby="raw-audit-log" className="min-w-0 space-y-3">
+          <h2 id="raw-audit-log" className="text-lg font-semibold text-[var(--lms-heading)]">Audit Logs</h2>
+          <p className="text-sm text-muted-foreground">
+            Raw events in newest-first order. IP addresses are not retained in vNext;
+            the audit record uses privacy-safe provenance instead.
+          </p>
+          <div className="w-full min-w-0 overflow-x-auto rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)]">
+            <table className="w-full min-w-[740px] border-collapse text-left text-sm">
+              <thead className="bg-[var(--lms-neutral-100)] text-[var(--lms-heading)]">
+                <tr>{["Time","Who","What","Item","Action key","IP"].map(label=>(
+                  <th key={label} scope="col" className="px-3 py-3 font-semibold">{label}</th>
+                ))}</tr>
+              </thead>
+              <tbody>
+                {result.items.map(({event,actor})=>(
+                  <tr key={event.id} className="border-t border-[var(--lms-canvas-border)] align-top">
+                    <td className="whitespace-nowrap px-3 py-3">{new Intl.DateTimeFormat("en-IN",{
+                      timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+                    }).format(event.occurredAt)}</td>
+                    <td className="px-3 py-3">{actor?.displayName??"System"}</td>
+                    <td className="max-w-[320px] px-3 py-3">{event.summary}</td>
+                    <td className="max-w-[220px] break-words px-3 py-3">{event.subjectLabel??event.subjectId}</td>
+                    <td className="break-all px-3 py-3">{event.legacyActionKey??event.eventType}</td>
+                    <td className="px-3 py-3 text-muted-foreground">—</td>
+                  </tr>
+                ))}
+                {result.items.length===0?<tr><td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">No audit logs match these filters.</td></tr>:null}
+              </tbody>
+            </table>
+          </div>
+          {result.nextCursor ? <Link href={"/activity?"+nextParams.toString()}
+            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">
+            Load older events ({result.remainingCount} remaining)
+          </Link> : null}
+        </section>
+      ) : <ActivityCenter
         nextRemaining={result.remainingCount}
         groups={groups}
         todayKey={today}
         yesterdayKey={ago(1)}
-        nextHref={
-          result.nextCursor
-            ? "/activity?" +
-              nextParams.toString()
-            : null
-        }
-      />
+        nextHref={result.nextCursor ? "/activity?"+nextParams.toString() : null}
+      />}
     </div>
   );
 }
