@@ -893,3 +893,11 @@ Current TPO decision service inner-joins application+job and does not support nu
 - G2-17-021-050 | `src/modules/placements/learner-job-service.ts + public job DTO route` | Keep public projection narrowly safe and never reuse learner eligibility view on public URLs.
 
 Do not expose private eligibility/targeting in anonymous DTOs or assume legacy numeric job IDs equal current UUIDs. **4/4 handed off, not fixed.**
+
+## R2 private storage configuration — wave-1 handoff (2026-10-21)
+
+- G2-2-004-008 | `docs/architecture/file-and-video-apis.md + src/modules/storage/r2-config.ts` | Update provisioning/playbook and fail capability gracefully where unset.
+- G2-2-004-012 | `src/modules/storage/file-lifecycle.ts + route-level storage error mapping` | Guard runtime upload/download operations and return 503 rather than crashing routes.
+- G2-2-004-011 | `src/modules/storage/file-errors.ts + operator readiness diagnostics` | Map typed error to safe setup message and ops diagnostic.
+
+R2 must fail closed for missing credentials and unsafe bucket reuse. Unrelated routes should stay functional; localized 503 and safe setup messaging need Storage owner. **3/3 handed off, not fixed.**

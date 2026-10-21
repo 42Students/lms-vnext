@@ -5,7 +5,6 @@ import {getSuperAdminTodayBoard} from "@/modules/colleges/admin-today-attention-
 import {SuperAdminTodayBoard} from "@/components/admin/super-admin-today-board";
 import {
   CollegeAdminDashboardActions,
-  SuperAdminGlobalDashboardActions,
   SuperAdminCollegeDashboardActions,
 } from "@/components/admin/admin-dashboard-actions";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -40,6 +39,14 @@ import {
 import {
   listMyProjectInstances,
 } from "@/modules/projects/member-service";
+
+/** Four platform-level destinations from the old LMS; never show tenant counts without a selected college. */
+const PLATFORM_GLOBAL_LINKS = [
+  {label:"Tenant setup",href:"/admin/tenants",description:"Create and manage colleges, domains and tenant settings."},
+  {label:"Feature controls",href:"/admin/features",description:"Control platform capabilities and rollout state."},
+  {label:"Activity log",href:"/admin/audit",description:"Investigate important changes across the platform."},
+  {label:"Recruiter accounts",href:"/admin/recruiters",description:"Manage recruiter identities that can span colleges."},
+] as const;
 
 function MetricCard({
   label,
@@ -85,11 +92,37 @@ async function SuperAdminDashboard({
 }: {
   context: RequestContext;
 }) {
+  const collegeId = context.adminScope?.collegeId ?? null;
+  if (!collegeId) {
+    return <div className="min-w-0 max-w-full space-y-6">
+      <section aria-labelledby="platform-operations-title" className="space-y-3">
+        <p className="text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">Platform operations</p>
+        <h1 id="platform-operations-title" className="text-[var(--lms-font-xl)] font-semibold leading-7 text-[var(--lms-heading)] md:text-[var(--lms-font-2xl)]">
+          Choose the level you need to operate at.
+        </h1>
+        <p className="max-w-3xl text-sm leading-[22px] text-body">
+          Start with a platform-wide control below, or select a college in the header to switch this dashboard into that college&apos;s operational view.
+        </p>
+      </section>
+      <nav aria-label="Platform operations" className="grid min-w-0 gap-4 sm:grid-cols-2">
+        {PLATFORM_GLOBAL_LINKS.map(item=><Link key={item.href} href={item.href}
+          className="flex min-h-24 min-w-0 items-start justify-between gap-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          <span className="min-w-0 space-y-1">
+            <span className="block text-base font-semibold text-[var(--lms-heading)]">{item.label}</span>
+            <span className="block text-sm leading-[22px] text-body">{item.description}</span>
+          </span>
+          <span aria-hidden="true" className="shrink-0 font-semibold text-primary-text">→</span>
+        </Link>)}
+      </nav>
+      <p role="note" className="border-l-2 border-primary bg-primary-subtle px-4 py-3 text-sm leading-[22px] text-body">
+        Select a college in the header to see live college totals, issues needing attention, and college-scoped shortcuts.
+      </p>
+    </div>;
+  }
   const [organizations, colleges] = await Promise.all([
     listOrganizations(context),
     listColleges(context),
   ]);
-  const collegeId = context.adminScope?.collegeId ?? null;
   const [departments, people] = collegeId
     ? await Promise.all([
         listDepartments(context, collegeId),
@@ -161,7 +194,7 @@ async function SuperAdminDashboard({
           management remains available only when the scope is cleared.
         </p>
       </details>
-      {collegeId ? <SuperAdminCollegeDashboardActions /> : <SuperAdminGlobalDashboardActions />}
+      <SuperAdminCollegeDashboardActions />
     </div>
   );
 }
