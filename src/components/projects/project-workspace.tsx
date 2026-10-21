@@ -188,11 +188,12 @@ function formatWorkspaceTarget(value: string | null | undefined) {
 function WorkspaceHealthSnapshot({ workspace, templateHref }: { workspace: Workspace; templateHref: string }) {
   const tasks = workspace.readiness.execution.tasks;
   const sprints = workspace.readiness.execution.sprints;
-  const progress = tasks.total > 0
-    ? Math.round(100 * tasks.done / tasks.total)
-    : sprints.total > 0
-      ? Math.round(100 * sprints.completed / sprints.total)
-      : Math.max(0, Math.min(100, workspace.project.progressPercent ?? 0));
+  // Legacy overall progress weighs every task and sprint equally. Only use the
+  // editable fallback when the project has no plan items at all.
+  const totalPlanItems = tasks.total + sprints.total;
+  const progress = totalPlanItems > 0
+    ? Math.round(100 * (tasks.done + sprints.completed) / totalPlanItems)
+    : Math.max(0, Math.min(100, workspace.project.progressPercent ?? 0));
   const facts = [
     { label: "Team", value: workspace.members.length + " member" + (workspace.members.length === 1 ? "" : "s") },
     { label: "Tasks", value: tasks.total ? tasks.done + " / " + tasks.total + " done" : "No tasks yet" },
@@ -251,8 +252,9 @@ function WorkspaceReadinessSnapshot({ workspace }: { workspace: Workspace }) {
   const doneTasks = workspace.tasks.filter(task => task.status === "DONE");
   const withSubmission = doneTasks.filter(task => workspace.taskSubmissions.some(submission =>
     submission.taskId === task.id && Boolean(submission.submissionUrl))).length;
-  const progress = tasks.total > 0 ? Math.round(tasks.done * 100 / tasks.total)
-    : sprints.total > 0 ? Math.round(sprints.completed * 100 / sprints.total)
+  const totalPlanItems = tasks.total + sprints.total;
+  const progress = totalPlanItems > 0
+    ? Math.round(100 * (tasks.done + sprints.completed) / totalPlanItems)
     : Math.max(0, Math.min(100, workspace.project.progressPercent ?? 0));
   const override = readiness.readinessOverride;
   const overrideActive = override.state === "FORCE_UNLOCK" || override.state === "FORCE_BLOCK";
