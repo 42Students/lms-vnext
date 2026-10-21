@@ -18,7 +18,7 @@ const links = [
 ] as const;
 
 const moreLinks = [
-  ["Requests","/tpo/requests"],["Verification","/tpo/verification"],["Calendar","/tpo/calendar"],
+  ["More","/tpo/more"],["Requests","/tpo/requests"],["Verification","/tpo/verification"],["Calendar","/tpo/calendar"],
   ["Team","/tpo/team"],["Reports","/tpo/reports"],["Messages","/tpo/messages"],
   ["Announcements","/tpo/announcements"],["Notifications","/tpo/notifications"],
   ["Settings","/tpo/settings"],["Audit log","/tpo/audit"],
