@@ -265,6 +265,7 @@ export const createSectionScheduleEventInputSchema =
       facultyMembershipId:
         membershipIdSchema.nullable().optional(),
       deliveryId: z.string().uuid().nullable().optional(),
+      lectureHallId: z.string().uuid().nullable().optional(),
       title: academicNameSchema,
       description: z
         .string()
@@ -298,6 +299,7 @@ export const updateSectionScheduleEventInputSchema =
       facultyMembershipId:
         membershipIdSchema.nullable().optional(),
       deliveryId: z.string().uuid().nullable().optional(),
+      lectureHallId: z.string().uuid().nullable().optional(),
       title: academicNameSchema.optional(),
       description: z
         .string()
