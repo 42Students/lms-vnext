@@ -7,7 +7,7 @@ import {normalizeLegacyProjectBlueprint,projectTemplateBlueprintSchema,
  * not a substitute for current template permissions or publication actions.
  * The caller must supply a valid vNext actor and selected-college assignment.
  */
-const oldId=z.number().int().positive().safe();
+const oldId=z.number().int().positive().max(Number.MAX_SAFE_INTEGER);
 const oldDate=z.union([z.string().trim().max(40),z.null()]).optional();
 const template=z.object({
  id:oldId,
