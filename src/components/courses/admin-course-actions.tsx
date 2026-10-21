@@ -6,6 +6,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dropdown } from "@/components/ui/dropdown";
 import { Menu, MenuItem } from "@/components/ui/menu";
@@ -40,6 +41,8 @@ function useCourseMutation() {
     task: () => Promise<unknown>,
     successTitle: string,
     onSuccess?: () => void,
+    onFailure?: (error: unknown) => void,
+    failureTitle = "Course update failed",
   ) {
     void guardedRun(async () => {
       try {
@@ -51,9 +54,10 @@ function useCourseMutation() {
         });
         router.refresh();
       } catch (error) {
+        onFailure?.(error);
         showToast({
           tone: "error",
-          title: "Course update failed",
+          title: failureTitle,
           description:
             error instanceof FriendlyFetchError && error.code === "COURSE_STALE_VERSION"
               ? "This course was modified by someone else. Refresh and reapply your changes."
@@ -89,6 +93,9 @@ export function CourseActions({
   const [archiveOpen, setArchiveOpen] =
     useState(false);
   const [discardOpen,setDiscardOpen]=useState(false);
+  const [editFailure,setEditFailure]=useState("");
+  const [archiveFailure,setArchiveFailure]=useState("");
+  const [nameFieldError,setNameFieldError]=useState("");
   const [name, setName] =
     useState(course.name);
   const [code, setCode] =
@@ -112,6 +119,8 @@ export function CourseActions({
   }
 
   function openEdit() {
+    setEditFailure("");
+    setNameFieldError("");
     setName(course.name);
     setCode(course.code);
     setShortTitle(course.shortTitle??course.name.slice(0,120));
@@ -122,6 +131,29 @@ export function CourseActions({
       course.description ?? "",
     );
     setEditOpen(true);
+  }
+
+  function reportEditError(error: unknown) {
+    const apiError=error instanceof FriendlyFetchError ? error : null;
+    setNameFieldError(apiError?.code==="COURSE_NAME_CONFLICT"
+      ?"A course with this name already exists in this department."
+      :apiError?.fieldErrors.name??"");
+    setEditFailure(apiError?.code==="COURSE_STALE_VERSION"
+      ?"This course was modified by someone else. Refresh and reapply your changes."
+      :academicSetupErrorMessage(error,"Review your changes and retry."));
+  }
+
+  function archive() {
+    setArchiveFailure("");
+    run(
+      () => mutate("/api/courses/" + course.id,"DELETE"),
+      "Archived course “" + course.name + "”.",
+      () => setArchiveOpen(false),
+      (error) => setArchiveFailure(
+        academicSetupErrorMessage(error,"Course could not be archived. Refresh and retry."),
+      ),
+      "Course was not deleted",
+    );
   }
 
   return (
@@ -139,7 +171,7 @@ export function CourseActions({
         <Dropdown trigger="More" label="Course actions" mobileSheet align="end" triggerClassName="md:!min-h-9"><Menu>
           {duplicateHref ? <Link href={duplicateHref} role="menuitem"
             className="flex min-h-11 min-w-0 w-full items-center rounded-[var(--lms-control-radius)] px-[var(--lms-space-3)] py-[var(--lms-space-2)] text-left text-[14px] leading-5 text-body hover:bg-[var(--lms-neutral-50)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Duplicate</Link> : null}
-          <MenuItem disabled={pending} onClick={()=>setArchiveOpen(true)}>Archive</MenuItem>
+          <MenuItem disabled={pending} onClick={()=>{setArchiveFailure("");setArchiveOpen(true);}}>Archive</MenuItem>
         </Menu></Dropdown>
       </div>
 
@@ -183,7 +215,9 @@ export function CourseActions({
                       },
                     ),
                   "Updated course “"+name.trim()+"”.",
-                  () => setEditOpen(false),
+                  () => {setEditFailure("");setEditOpen(false);},
+                  reportEditError,
+                  "Course was not edited",
                 )
               }
             >
@@ -205,7 +239,13 @@ export function CourseActions({
                 setName(event.target.value)
               }
               maxLength={255}
+              aria-invalid={Boolean(nameFieldError)}
+              onBlur={() => {
+                if(!name.trim())setNameFieldError("Enter a course name");
+                else if(name.length>255)setNameFieldError("Maximum 255 characters");
+              }}
             />
+            {nameFieldError?<span role="alert" className="mt-1 block text-xs text-error">{nameFieldError}</span>:null}
           </label>
           {allowMetadata?<div className="grid gap-3">
             <label className="grid gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Short display name
@@ -249,6 +289,7 @@ export function CourseActions({
             />
           </label>
         </div>
+        {editFailure?<Alert tone="error" className="mt-3">Course was not edited. {editFailure}</Alert>:null}
       </Dialog>
 
       <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
@@ -264,19 +305,13 @@ export function CourseActions({
         confirmLabel="Archive Course"
         pending={pending}
         confirmDisabled={activeOfferingCount>0}
-        onConfirm={() =>
-          run(
-            () =>
-              mutate(
-                "/api/courses/" +
-                  course.id,
-                "DELETE",
-              ),
-            "Course archived",
-            () => setArchiveOpen(false),
-          )
-        }
+        onConfirm={archive}
       />
+      {archiveFailure?<div className="mt-2 space-y-2" role="alert">
+        <Alert tone="error">Course was not deleted. {archiveFailure}</Alert>
+        <Button type="button" variant="secondary" size="sm" disabled={pending||activeOfferingCount>0}
+          onClick={archive}>Retry archive</Button>
+      </div>:null}
     </>
   );
 }
