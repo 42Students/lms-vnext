@@ -149,14 +149,19 @@ export async function replaceProjectWorkspaceTemplate(
         })),
       ).returning({ id: projectSprints.id, key: projectSprints.templateKey });
       const sprintIds = new Map(newSprints.map(row => [row.key, row.id]));
-      await tx.insert(projectTasks).values(
-        [...blueprint.tasks].sort((a, b) => a.sequence - b.sequence).map(row => ({
-          projectId: project.id, sprintId: sprintIds.get(row.sprintKey)!,
-          templateKey: row.key, title: row.title, description: row.description ?? null,
-          acceptanceCriteria: row.acceptanceCriteria ?? null,
-          priority: row.priority, estimatePoints: row.estimatePoints ?? null,
-          sequence: row.sequence,
-        })),
+      if(blueprint.tasks.length)await tx.insert(projectTasks).values(
+        [...blueprint.tasks].sort((a, b) => a.sequence - b.sequence).map(row => {
+          const sprintId=row.sprintKey?sprintIds.get(row.sprintKey):null;
+          if(row.sprintKey&&!sprintId)throw new Error("Template task has unknown sprint");
+          return {
+            projectId:project.id,sprintId,templateKey:row.key,
+            legacyTaskKey:row.legacyKey??null,title:row.title,
+            description:row.description??null,
+            dueLabel:row.dueLabel??null,approach:row.approach??null,
+            taskType:row.taskType??null,acceptanceCriteria:row.acceptanceCriteria??null,
+            priority:row.priority,estimatePoints:row.estimatePoints??null,sequence:row.sequence,
+          };
+        }),
       );
       if (blueprint.resources.length) {
         await tx.insert(projectResources).values(
