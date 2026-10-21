@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 
 export default function CollegeContactsError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
   const [noticeVisible,setNoticeVisible]=useState(true);
+  // Route error notification is client-only: retry navigates an authorized GET
+  // and never enqueues email, SMS or other outbound delivery.
   useEffect(()=>{
     const timeout=window.setTimeout(()=>setNoticeVisible(false),5000);
     return ()=>window.clearTimeout(timeout);

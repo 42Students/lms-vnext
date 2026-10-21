@@ -288,11 +288,12 @@ export async function CollegeRoleDirectoryWorkspace({
               defaultValue={result.filter.status}
               
             >
-              <option value="ALL">Any status</option>
+              <option value="ALL">All</option>
               <option value="ACTIVE">Active</option>
               <option value="SUSPENDED">Suspended</option>
               <option value="ENDED">Ended</option>
             </Select>
+            <span className="text-xs font-normal text-muted-foreground">All, Active and Suspended match the legacy roster. Ended shows closed college memberships separately; statuses are scoped to this college, not the user account.</span>
           </label>
           {kind === "LEARNER" ? <label className="grid min-w-0 gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Active class / section

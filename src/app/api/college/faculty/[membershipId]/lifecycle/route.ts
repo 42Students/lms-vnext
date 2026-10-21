@@ -15,6 +15,8 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     const context = await getCurrentRequestContext();
     const { membershipId } = await params;
     const membership = await transitionCollegeFaculty(context, membershipId, await request.json());
+    // Faculty roster Actions renders CollegeFacultyLifecycleAction for each row,
+    // preserving the legacy Suspend/Reactivate entry point with tenant IDs.
     // Keep the membership-scoped identity model while exposing the legacy
     // row-refresh fields to all lifecycle callers.
     return NextResponse.json({

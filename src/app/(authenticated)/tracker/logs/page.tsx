@@ -127,34 +127,21 @@ export default async function TrackerLogsPage({
         <Alert tone="info">{newSinceLastVisit}{items.length === 40 ? "+" : ""} new tracked error {newSinceLastVisit === 1 ? "signature" : "signatures"} since your last review.</Alert>
       ) : null}
       <nav aria-label="Log tools" className="flex flex-wrap items-center gap-3 text-sm">
-        <a href="#known-errors-heading" className="font-semibold text-primary-text underline">Known errors</a>
+        <a href="#known-errors" className="font-semibold text-primary-text underline">Known errors</a>
         <a href="#telegram-alert-tools" className="font-semibold text-primary-text underline">Alert digest</a>
       </nav>
       <TrackerLiveLogsExplorer initialQuery={liveQuery} />
       {!pollingReady ? (
         <Alert tone="warning">Cloud Logging polling is not configured for this deployment. The live source may be unavailable; this is not a healthy-log result.</Alert>
       ) : null}
-      <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4" aria-labelledby="known-errors-heading">
-        <summary id="known-errors-heading" className="flex min-h-11 cursor-pointer items-center text-[18px] font-semibold text-[var(--lms-heading)]">
-          Known errors{items.length ? ` (${items.length}${items.length === 40 ? "+" : ""})` : ""}
-        </summary>
-        <div className="space-y-3 pt-3">
-        <p className="text-sm text-body">Durable signatures, recurrence, acknowledgements and triage are kept separate from the live log feed.</p>
-        {knownErrors ? (
-          <>
-            <KnownErrorsWorkspace items={items} lastViewedAt={lastViewedAt} />
-            {items.length === 40 ? (
-              <p className="text-xs leading-5 text-muted-foreground">
-                Showing the 40 most recent signatures. This list does not include complete historical results; use live-log pagination for older events.
-              </p>
-            ) : null}
-          </>
-        ) : (
-          <Alert tone="warning">Known errors persistence is not enabled or its migration replay has not been verified. This does not mean there are no errors. Live logging above remains available independently.</Alert>
-        )}
-        </div>
-      </details>
-      <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
+      <section className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4" aria-label="Known errors">
+         <p className="text-sm text-body">Durable signatures, recurrence, acknowledgements and triage are kept separate from the live log feed.</p>
+         {knownErrors ? <>
+           <KnownErrorsWorkspace items={items} lastViewedAt={lastViewedAt} backendStartedAt={backendStartedAt}/>
+           {items.length===40?<p className="text-xs leading-5 text-muted-foreground">Showing the 40 most recent signatures; live logs can contain more events.</p>:null}
+         </> : <Alert tone="warning">Known errors persistence is not enabled or its migration replay has not been verified. This does not mean there are no errors. Live logging above remains available independently.</Alert>}
+       </section>
+       <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
         <summary id="telegram-alert-tools" className="flex min-h-11 cursor-pointer items-center text-[16px] font-semibold text-[var(--lms-heading)] md:min-h-9">Telegram alert tools</summary>
         <div className="min-w-0 space-y-3 pt-3">
           {knownErrors ? (
