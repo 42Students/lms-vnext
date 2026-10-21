@@ -916,7 +916,7 @@ export async function PlacementCalendarWorkspace({
             aria-label="Previous calendar period"
             className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:text-[var(--lms-link-text)] md:min-h-9 md:w-auto md:px-4"
           >
-            ← Previous
+            Previous
           </Link>
           <Link
             href={calendarHref(
@@ -939,7 +939,7 @@ export async function PlacementCalendarWorkspace({
             aria-label="Next calendar period"
             className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:text-[var(--lms-link-text)] md:min-h-9 md:w-auto md:px-4"
           >
-            Next →
+            Next
           </Link>
           <span className="order-first col-span-3 min-w-0 break-words text-sm font-semibold text-foreground sm:order-none sm:ml-2">
             {state.view === "week"
@@ -1109,10 +1109,11 @@ export async function PlacementCalendarWorkspace({
        </p>:null}
       </nav>:null}
 
-      <section
-        aria-label="Next scheduled calendar event"
-        className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4"
-      >
+      <details aria-label="Next scheduled calendar event" className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface">
+        <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          Next scheduled <span className="text-muted-foreground">Show details ▾</span>
+        </summary>
+        <div className="border-t border-border px-4 pb-4 pt-2">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="m-0 text-base font-semibold text-foreground">
@@ -1146,7 +1147,8 @@ export async function PlacementCalendarWorkspace({
             </Link>
           ) : null}
         </div>
-      </section>
+        </div>
+      </details>
 
       {isTpo&&state.view==="week"&&blockedEvents.length>0?<section
         aria-label="All-day blocked dates" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
