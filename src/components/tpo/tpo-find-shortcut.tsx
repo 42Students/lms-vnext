@@ -95,7 +95,7 @@ export function TpoFindShortcut(){
     {showing.map((row,index)=><Button variant="ghost" type="button" key={row.href}
       id={"tpo-find-result-"+index} role="option" aria-selected={active===index}
       onMouseEnter={()=>setActive(index)} onClick={()=>select(row)}
-      className={"flex min-h-11 w-full min-w-0 flex-wrap items-start justify-between gap-x-3 gap-y-1 rounded-[var(--lms-control-radius)] px-3 py-2 text-left text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 "+
+      className={"flex min-h-11 w-full min-w-0 flex-wrap items-start justify-between gap-x-3 gap-y-1 rounded-[var(--lms-control-radius)] px-3 py-2 text-left text-sm focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 "+
        (active===index?"bg-primary-subtle":"hover:bg-muted")}>
       <span className="min-w-0 flex-1 break-words">{row.label}</span><span className="max-w-full shrink-0 break-words text-xs text-muted-foreground">{row.group}</span>
     </Button>)}
@@ -107,7 +107,7 @@ export function TpoFindShortcut(){
    <div className="mt-3 flex min-w-0 flex-col items-stretch gap-2 border-t border-border pt-3 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
     <span className="min-w-0 break-words">↑ ↓ Navigate · Enter Open · Esc Close</span>
     <Link href={"/tpo/find"+(query.trim()?"?q="+encodeURIComponent(query.trim()):"")}
-      className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9" onClick={()=>setOpen(false)}>Open full search</Link>
+      className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9" onClick={()=>setOpen(false)}>Open full search</Link>
    </div>
   </Dialog>
  </>;
