@@ -18,6 +18,9 @@ type Item={id:string;proposerParty:string;targetParty:string;mode:string;field:s
  createdAt:string;updatedAt:string;resolvedAt?:string|null;currentValue?:string|null;
  answerValue?:string|null;replyText?:string|null;
  decisionNote:string|null;messages:Array<{id:string;senderParty:string;body:string;sentAt:string}>};
+function actionsFor(item:Item):readonly ("ACCEPT"|"ANSWER"|"DECLINE")[] {
+ return item.mode==="ASK"?["ANSWER","DECLINE"]:["ACCEPT","DECLINE"];
+}
 const fields=[["ROLE_TITLE","Role title"],["DESCRIPTION","Description"],["LOCATION","Location"],
  ["JOB_TYPE","Job type"],["WORK_MODE","Mode"],["DEADLINE","Application deadline"],
  ["CTC","CTC"],["STIPEND","Stipend"],["MIN_CGPA","Minimum CGPA"],
@@ -155,8 +158,8 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
        <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={busy||!(notes[item.id]??"").trim()}
         onClick={()=>void send({action:"COMMENT",requestId:item.id,body:(notes[item.id]??"").trim()})}
         variant="secondary">Reply</Button>
-       {item.status==="OPEN"&&item.targetParty===party?(
-        (item.mode==="ASK"?["ANSWER","DECLINE"] as const:["ACCEPT","DECLINE"] as const).map(action=>
+       {item.status==="OPEN"&&item.targetParty===party?
+        actionsFor(item).map(action=>
          <Button key={action} type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
           disabled={busy||(action!=="ACCEPT"&&(notes[item.id]??"").trim().length<1)}
           onClick={()=>action==="ANSWER"?void send({action,requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(notes[item.id]??"").trim()}):
