@@ -15,7 +15,11 @@ export async function POST(request:Request,{params}:{
   try{
     const result=await commandFacultyAttendanceSchedule(
       await getCurrentRequestContext(),await params,await readFacultyAuthoringBody(request));
-    return NextResponse.json({result,message:"OK"});
+    // The old ClassSchedule route returned Response(status=OK,data=...).
+    // A UUID delivery is the authorized class/course mapping in vNext:
+    // numeric legacy course/class IDs must not bypass its teaching guard.
+    return NextResponse.json({result,data:result,status:"OK",message:"OK",
+      scheduleHref:"/teacher/courses/"+encodeURIComponent((await params).deliveryId)+"/attendance"});
   }catch(error){
     if(error instanceof FacultyAuthoringBodyError){
       const requestId=createRequestId();
