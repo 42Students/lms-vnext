@@ -13,6 +13,43 @@ import {learnerRoundConfirmationReady} from "./learner-round-confirmation-readin
 const inputSchema=z.strictObject({
  applicationId:z.uuid(),roundId:z.uuid(),confirmed:z.literal(true),
 });
+/** Legacy Interview stores booking/learner response/outcome in one status.
+ * In vNext these are distinct persisted facts; the projection never changes
+ * booking state as a side effect of learner confirmation. */
+export function projectLegacyInterviewLifecycle(status:unknown){
+ switch(status){
+  case "SCHEDULED":
+   return {slotStatus:"BOOKED",learnerConfirmed:false,rescheduleRequested:false,outcome:null} as const;
+  case "CONFIRMED":
+   return {slotStatus:"BOOKED",learnerConfirmed:true,rescheduleRequested:false,outcome:null} as const;
+  case "RESCHEDULE_REQUESTED":
+   return {slotStatus:"BOOKED",learnerConfirmed:false,rescheduleRequested:true,outcome:null} as const;
+  case "COMPLETED":
+   return {slotStatus:"BOOKED",learnerConfirmed:false,rescheduleRequested:false,outcome:"COMPLETED"} as const;
+  case "NO_SHOW":
+   return {slotStatus:"BOOKED",learnerConfirmed:false,rescheduleRequested:false,outcome:"NO_SHOW"} as const;
+  case "CANCELLED":
+   return {slotStatus:"CANCELLED",learnerConfirmed:false,rescheduleRequested:false,outcome:null} as const;
+  default:
+   return null;
+ }
+}
+
+/** Read-only operation crosswalk; each operation remains authorized by its
+ * own endpoint, after scoped reads and transactionally recorded activity.
+ * A learner acknowledgment is idempotent; staff mutations require CAS and
+ * a fresh appointment state; downstream notices should be after-commit. */
+export const legacyInterviewOperationCrosswalk = {
+ schedule: {service:"college-interview-action-service",action:"SCHEDULE",retry:"Fresh scoped create"},
+ update: {service:"college-interview-action-service",action:"EDIT",retry:"Compare stored version"},
+ cancel: {service:"college-interview-action-service",action:"CANCEL",retry:"Idempotent cancelled state"},
+ complete: {service:"college-interview-action-service",action:"COMPLETE",retry:"No duplicate outcome"},
+ feedback: {service:"interview-feedback/service",action:"REVIEW",retry:"Permission and round outcome recheck"},
+ learnerConfirm: {service:"learner-round-confirmation-service",action:"ACKNOWLEDGE",retry:"alreadyConfirmed=true"},
+ learnerReschedule: {service:"learner-placement-request-service",action:"RESCHEDULE_REQUEST",retry:"One live scoped request"},
+ learnerCancel: {service:"learner-placement-request-service",action:"CANCELLATION_REQUEST",retry:"One live scoped request"},
+} as const;
+
 /** LEARNER-placements-35: the persisted learner is derived only from session.
  * A booked upcoming round is mandatory; the acknowledgment is idempotent.
  */
