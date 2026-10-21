@@ -8,6 +8,7 @@ import {monthKey,parseMonth,shiftMonth} from "@/modules/attendance/learner-atten
 
 import {
   useMemo,
+  useTransition,
 } from "react";
 import {
   useRouter,
@@ -80,6 +81,9 @@ type Summary = {
 
 
 
+/** Only a persisted explicit PRESENT mark counts as present. Legacy nullable
+ * absence IDs and unmarked/late/medical/excused states must not be guessed
+ * into attendance on a historical migration. */
 function isPresent(
   status: RecordRow["status"],
 ) {
@@ -174,6 +178,7 @@ export function LearnerAttendanceWorkspace({
   defaultMonth: string;
 }) {
   const router = useRouter();
+  const [isUpdating,startTransition] = useTransition();
   const params = useSearchParams();
   const filters = resolveLearnerAttendanceFilters({
     deliveryId: params.get("deliveryId"), month: params.get("month"),
@@ -230,10 +235,12 @@ export function LearnerAttendanceWorkspace({
     next.set("month", monthKey(nextMonth));
     if (historyFilter !== "ALL") next.set("status", historyFilter);
     if (historyOrder !== "NEWEST") next.set("order",historyOrder);
-    router.replace(
-      `/learn/attendance?${next.toString()}`,
-      { scroll: false },
-    );
+    startTransition(() => {
+      router.replace(
+        `/learn/attendance?${next.toString()}`,
+        { scroll: false },
+      );
+    });
   }
 
   function changeCourse(
@@ -251,7 +258,7 @@ export function LearnerAttendanceWorkspace({
     next.set("month",filters.month);
     if (nextFilter !== "ALL") next.set("status",nextFilter);
     if (historyOrder !== "NEWEST") next.set("order",historyOrder);
-    router.replace(`/learn/attendance?${next.toString()}`,{scroll:false});
+    startTransition(() => {router.replace(`/learn/attendance?${next.toString()}`,{scroll:false});});
   }
 
   function changeHistoryOrder(nextOrder:LearnerAttendanceOrder) {
@@ -260,9 +267,12 @@ export function LearnerAttendanceWorkspace({
     next.set("month",filters.month);
     if(historyFilter!=="ALL")next.set("status",historyFilter);
     if(nextOrder!=="NEWEST")next.set("order",nextOrder);
-    router.replace(`/learn/attendance?${next.toString()}`,{scroll:false});
+    startTransition(() => {router.replace(`/learn/attendance?${next.toString()}`,{scroll:false});});
   }
 
+  // The parent server route only renders the workspace after a successful
+  // authorized fetch. Network/permission errors use its attendance error
+  // boundary with Retry, and must never masquerade as zero enrollments.
   if (courses.length === 0) {
     return (
       <EmptyState
@@ -275,6 +285,9 @@ export function LearnerAttendanceWorkspace({
   return (
     <div className="min-w-0 space-y-4 md:space-y-6">
       {urlNotice ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body leading-[22px]">{urlNotice}</p> : null}
+      {isUpdating ? <p role="status" aria-live="polite" className="border-b border-border py-2 text-sm text-body">
+        Updating attendance for {new Intl.DateTimeFormat("en-IN",{month:"long",year:"numeric",timeZone:"Asia/Kolkata"}).format(month)}…
+      </p> : null}
       <section className="min-w-0 border-b border-border pb-4 pt-4 md:pb-6 md:pt-6">
         <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-end md:justify-between md:gap-4">
           <label className="w-full max-w-sm font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
@@ -363,6 +376,76 @@ export function LearnerAttendanceWorkspace({
         ) : null}
       </section>
 
+      <div className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Session history</h2>
+          <p className="mt-1 text-xs text-muted-foreground leading-[20px]">Status filters affect only the session list, not attendance totals.</p>
+        </div>
+        <div className="grid min-w-0 w-full gap-3 sm:grid-cols-2 md:w-auto">
+        <label className="min-w-0 w-full font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Order
+          <Select className="mt-[6px] min-h-11 md:min-h-9 w-full" value={historyOrder}
+            onChange={event=>changeHistoryOrder(event.target.value as LearnerAttendanceOrder)}>
+            <option value="NEWEST">Newest first</option>
+            <option value="OLDEST">Oldest first</option>
+          </Select>
+        </label>
+        <label className="min-w-0 w-full font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Show
+          <Select className="mt-[6px] min-h-11 md:min-h-9 w-full" value={historyFilter}
+            onChange={event => changeHistoryFilter(event.target.value as LearnerAttendanceHistoryFilter)}>
+            {LEARNER_ATTENDANCE_HISTORY_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
+          </Select>
+        </label>
+        {(historyFilter !== "ALL" || historyOrder !== "NEWEST") ? (
+          <Button className="max-md:min-h-11" variant="secondary" type="button" onClick={() => startTransition(() => {router.replace(learnerAttendanceHistoryResetHref(deliveryId,filters.month),{scroll:false});})}
+            >
+            Reset history filters
+          </Button>
+        ) : null}
+        </div>
+      </div>
+      {historyRows.length > 0 ? (
+        <div className="flex min-w-0 flex-col items-start gap-2 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <span>{attendanceCsv.truncated ? "CSV includes the first 200 matching sessions; narrow the selection for remaining records." : "CSV includes the matching sessions shown for this month."}</span>
+          <a download="learner-attendance-history.csv"
+            href={"data:text/csv;charset=utf-8,"+encodeURIComponent(attendanceCsv.content)}
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+            Download attendance CSV
+          </a>
+        </div>
+      ) : null}
+      {historyRows.length === 0 ? (
+        <EmptyState
+          title={monthRows.length ? "No sessions match this status" : deliveryId ? "No attendance records" : "Select a course"}
+          description={monthRows.length ? "Select All statuses to see the recorded sessions for this month." : deliveryId ? "No classes scheduled for this month. Try selecting a different period." : "Choose a course from the dropdown above to view your attendance records."}
+        />
+      ) : (
+        <DataTable
+          caption="Attendance history"
+          rows={historyRows}
+          getRowKey={row=>row.id}
+          empty={<EmptyState title="No attendance records" description="No classes scheduled for this month. Try selecting a different period."/>}
+          columns={[
+            {key:"date",header:"Date",mobilePriority:"primary" as const,
+              cell:(row)=><span className="block min-w-0">
+                <strong className="block text-foreground">{dateLabel(row.startsAt)}</strong>
+                <span className="block text-xs text-muted-foreground">{timeLabel(row.startsAt)}</span>
+              </span>},
+            {key:"class",header:"Class Start Time",mobilePriority:"secondary" as const,
+              cell:(row)=><span className="block min-w-0">
+                <strong className="block text-foreground">{timeLabel(row.startsAt)}</strong>
+                <span className="block break-words text-xs text-muted-foreground">{row.title} · {row.courseCode}</span>
+              </span>},
+            {key:"status",header:"Status",mobilePriority:"secondary" as const,
+              cell:(row)=><StatusBadge tone={learnerAttendanceStatusTone(row.status)}>{statusLabel(row.status)}</StatusBadge>},
+            {key:"details",header:"Faculty / location",mobilePriority:"secondary" as const,
+              cell:(row)=>[row.courseName,row.facultyName,row.location].filter(Boolean).join(" · ")||"Not specified"},
+            {key:"day",header:"Day",mobilePriority:"secondary" as const,
+              cell:(row)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"long"}).format(new Date(row.startsAt))},
+          ]}
+        />
+      )}
+
+      <Disclosure title="Attendance details" className="border-b border-border" contentClassName="space-y-4 py-3">
       <Disclosure title="Attendance" className="border-b border-border" contentClassName="pb-4">
       <div className="grid min-w-0 gap-x-4 gap-y-2 md:grid-cols-2 xl:grid-cols-5">
         <Metric label="Total" value={monthRows.length}
@@ -490,75 +573,7 @@ export function LearnerAttendanceWorkspace({
         </div>
         </Disclosure>
       </section>
-
-      <div className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Session history</h2>
-          <p className="mt-1 text-xs text-muted-foreground leading-[20px]">Status filters affect only the session list, not attendance totals.</p>
-        </div>
-        <div className="grid min-w-0 w-full gap-3 sm:grid-cols-2 md:w-auto">
-        <label className="min-w-0 w-full font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Order
-          <Select className="mt-[6px] min-h-11 md:min-h-9 w-full" value={historyOrder}
-            onChange={event=>changeHistoryOrder(event.target.value as LearnerAttendanceOrder)}>
-            <option value="NEWEST">Newest first</option>
-            <option value="OLDEST">Oldest first</option>
-          </Select>
-        </label>
-        <label className="min-w-0 w-full font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Show
-          <Select className="mt-[6px] min-h-11 md:min-h-9 w-full" value={historyFilter}
-            onChange={event => changeHistoryFilter(event.target.value as LearnerAttendanceHistoryFilter)}>
-            {LEARNER_ATTENDANCE_HISTORY_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
-          </Select>
-        </label>
-        {(historyFilter !== "ALL" || historyOrder !== "NEWEST") ? (
-          <Button className="max-md:min-h-11" variant="secondary" type="button" onClick={() => router.replace(learnerAttendanceHistoryResetHref(deliveryId,filters.month),{scroll:false})}
-            >
-            Reset history filters
-          </Button>
-        ) : null}
-        </div>
-      </div>
-      {historyRows.length > 0 ? (
-        <div className="flex min-w-0 flex-col items-start gap-2 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <span>{attendanceCsv.truncated ? "CSV includes the first 200 matching sessions; narrow the selection for remaining records." : "CSV includes the matching sessions shown for this month."}</span>
-          <a download="learner-attendance-history.csv"
-            href={"data:text/csv;charset=utf-8,"+encodeURIComponent(attendanceCsv.content)}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
-            Download attendance CSV
-          </a>
-        </div>
-      ) : null}
-      {historyRows.length === 0 ? (
-        <EmptyState
-          title={monthRows.length ? "No sessions match this status" : deliveryId ? "No attendance records" : "Select a course"}
-          description={monthRows.length ? "Select All statuses to see the recorded sessions for this month." : deliveryId ? "No classes scheduled for this month. Try selecting a different period." : "Choose a course from the dropdown above to view your attendance records."}
-        />
-      ) : (
-        <DataTable
-          caption="Attendance history"
-          rows={historyRows}
-          getRowKey={row=>row.id}
-          empty={<EmptyState title="No attendance records" description="No classes scheduled for this month. Try selecting a different period."/>}
-          columns={[
-            {key:"date",header:"Date",mobilePriority:"primary" as const,
-              cell:(row)=><span className="block min-w-0">
-                <strong className="block text-foreground">{dateLabel(row.startsAt)}</strong>
-                <span className="block text-xs text-muted-foreground">{timeLabel(row.startsAt)}</span>
-              </span>},
-            {key:"class",header:"Class Start Time",mobilePriority:"secondary" as const,
-              cell:(row)=><span className="block min-w-0">
-                <strong className="block text-foreground">{timeLabel(row.startsAt)}</strong>
-                <span className="block break-words text-xs text-muted-foreground">{row.title} · {row.courseCode}</span>
-              </span>},
-            {key:"status",header:"Status",mobilePriority:"secondary" as const,
-              cell:(row)=><StatusBadge tone={learnerAttendanceStatusTone(row.status)}>{statusLabel(row.status)}</StatusBadge>},
-            {key:"details",header:"Faculty / location",mobilePriority:"secondary" as const,
-              cell:(row)=>[row.courseName,row.facultyName,row.location].filter(Boolean).join(" · ")||"Not specified"},
-            {key:"day",header:"Day",mobilePriority:"secondary" as const,
-              cell:(row)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"long"}).format(new Date(row.startsAt))},
-          ]}
-        />
-      )}
+      </Disclosure>
     </div>
   );
 }

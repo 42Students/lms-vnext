@@ -1,7 +1,8 @@
 import "server-only";
 import {and,asc,count,desc,eq,exists,gte,ilike,inArray,lt,not,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {collegeMemberships,membershipRoles,users} from "@/db/schema";
+import {collegeMemberships,membershipRoles,users,facultyProfiles,departments} from "@/db/schema";
+import {z} from "zod";
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
@@ -104,4 +105,107 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
 export async function getCollegeContactById(context:RequestContext,membershipId:string){
  const result=await listCollegeContacts(context,{membershipId,status:"ALL"});
  return result.items[0]??null;
+}
+
+/**
+ * Legacy staff lookup, deliberately separate from the College Admin directory.
+ * Staff may locate colleagues in their current college; learners, recruiters
+ * and faculty/learner dual-role records never gain a raw contact search path.
+ * Staff email is shared as in the legacy staff directory; phone stays masked.
+ * Student/program enumeration is not supported from this endpoint.
+ */
+const staffContactsFilter=z.strictObject({
+ q:z.string().trim().max(100).default(""),
+ departmentId:z.uuid().optional(),
+ limit:z.coerce.number().int().min(1).max(50).default(20),
+});
+export type CollegeStaffContactRow={
+ membershipId:string;name:string;email:string;phone:string;
+ roles:("FACULTY"|"TPO"|"COLLEGE_ADMIN")[];
+};
+export async function listCollegeStaffContacts(context:RequestContext,raw:unknown){
+ const filter=staffContactsFilter.parse(raw);
+ const claim=context.membership;
+ if(!claim||claim.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
+    claim.roles.includes("LEARNER")||
+    !claim.roles.some(role=>role==="FACULTY"||role==="TPO"||role==="COLLEGE_ADMIN"))
+  throw new AuthorizationError("college.read");
+ return getDb().transaction(async tx=>{
+  // The common permission helper alone allows learner college.read; always
+  // recheck staff-only roles against persisted membership rows under SHARE lock.
+  const checked=await assertPersistedPlatformPermission(tx,context,"college.read",{
+   organizationId:claim.organizationId,collegeId:claim.collegeId,
+  });
+  const actor=checked.membership;
+  if(!actor||actor.id!==claim.id||actor.collegeId!==claim.collegeId||
+     actor.roles.includes("LEARNER")||
+     !actor.roles.some(role=>role==="FACULTY"||role==="TPO"||role==="COLLEGE_ADMIN"))
+   throw new AuthorizationError("college.read");
+
+  const facultyOnly=actor.roles.includes("FACULTY")&&
+    !actor.roles.includes("COLLEGE_ADMIN")&&!actor.roles.includes("TPO");
+  let departmentId=filter.departmentId;
+  if(facultyOnly){
+   const [profile]=await tx.select({departmentId:facultyProfiles.primaryDepartmentId})
+    .from(facultyProfiles).where(eq(facultyProfiles.membershipId,actor.id)).limit(1);
+   // No verified academic department: fail closed, not an unscoped directory.
+   if(!profile?.departmentId || (departmentId&&departmentId!==profile.departmentId))
+    throw new AuthorizationError("department.read");
+   departmentId=profile.departmentId;
+  }
+  if(departmentId){
+   const [department]=await tx.select({id:departments.id}).from(departments)
+    .where(and(eq(departments.id,departmentId),
+      eq(departments.collegeId,claim.collegeId),sql`${departments.archivedAt} is null`)).limit(1);
+   if(!department)throw new AuthorizationError("department.read");
+  }
+
+  const hasRole=(role:"FACULTY"|"TPO"|"COLLEGE_ADMIN"|"LEARNER")=>exists(
+   tx.select({roleId:membershipRoles.id}).from(membershipRoles).where(and(
+    eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,role))));
+  const roleMatch=or(hasRole("FACULTY"),hasRole("TPO"),hasRole("COLLEGE_ADMIN"));
+  const learner=hasRole("LEARNER");
+  const pattern=filter.q?collegeContactLiteralPattern(filter.q):null;
+  const scoped=and(
+   eq(collegeMemberships.collegeId,claim.collegeId),
+   eq(collegeMemberships.status,"ACTIVE"),
+   eq(users.platformStatus,"ACTIVE"),
+   roleMatch,not(learner),
+   departmentId?exists(tx.select({id:facultyProfiles.membershipId}).from(facultyProfiles)
+    .innerJoin(departments,and(eq(departments.id,facultyProfiles.primaryDepartmentId),
+      eq(departments.collegeId,claim.collegeId)))
+    .where(and(eq(facultyProfiles.membershipId,collegeMemberships.id),
+      eq(departments.id,departmentId)))):undefined,
+   pattern?or(ilike(users.displayName,pattern),ilike(users.email,pattern)):undefined,
+  );
+  const rows=await tx.select({
+   membershipId:collegeMemberships.id,name:users.displayName,
+   email:users.email,phone:users.phoneE164,
+  }).from(collegeMemberships).innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .where(scoped).orderBy(asc(users.displayName),asc(collegeMemberships.id))
+   .limit(filter.limit);
+  const selectedRoles=rows.length?await tx.select({
+   membershipId:membershipRoles.membershipId,role:membershipRoles.role,
+  }).from(membershipRoles).where(and(
+   inArray(membershipRoles.membershipId,rows.map(row=>row.membershipId)),
+   inArray(membershipRoles.role,["FACULTY","TPO","COLLEGE_ADMIN"]))):[];
+  const map=new Map<string,CollegeStaffContactRow["roles"]>();
+  for(const row of selectedRoles){
+   const values=map.get(row.membershipId)??[];
+   values.push(row.role as CollegeStaffContactRow["roles"][number]);
+   map.set(row.membershipId,values);
+  }
+  const items:CollegeStaffContactRow[]=rows.map(row=>{
+   const visible=visibleContactDetails({
+    email:row.email,phone:row.phone,isLearner:false,
+   });
+   return {
+    membershipId:row.membershipId,
+    name:row.name?.trim()||"Unnamed person",
+    email:visible.email,phone:visible.phone,
+    roles:map.get(row.membershipId)??[],
+   };
+  });
+  return {items};
+ });
 }
