@@ -43,7 +43,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_modules_bug-tracker_report-service.ts.md` (edit src/modules/bug-tracker/report-service.ts; 8 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_authenticated_tpo_placements_jobs_jobId_edit_page.tsx.md` (edit src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/page.tsx; 8 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_authenticated_tpo_home_page.tsx.md` (edit src/app/(authenticated)/tpo/home/page.tsx; 8 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_authenticated_tpo_settings_job-types_page.tsx.md` (edit src/app/(authenticated)/tpo/settings/job-types/page.tsx; 8 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_authenticated_tpo_settings_job-types_page.tsx.md` (edit src/app/(authenticated)/tpo/settings/job-types/page.tsx; 8 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_authenticated_tpo_notifications_page.tsx.md` (edit src/app/(authenticated)/tpo/notifications/page.tsx; 8 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_authenticated_tpo_placements_jobs_jobId_rounds_roundId_results_page.tsx.md` (edit src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/results/page.tsx; 7 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_components_tpo_tpo-company-memory-drive-grid.tsx.md` (edit src/components/tpo/tpo-company-memory-drive-grid.tsx; 7 findings; best P2)
