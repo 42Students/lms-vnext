@@ -440,7 +440,7 @@ export function normalizeLegacyLectureHallUpdate(raw: unknown) {
 const legacyLookupSchema = z.object({
   collegeId: z.string().uuid(),
   query: z.string().trim().max(100).default(""),
-  deptId: z.string().uuid().optional(),
+  deptId: z.union([z.string().uuid(), z.literal("0"), z.literal(0)]).optional(),
   roomType: z.enum(ROOM_TYPES).optional(),
   limit: z.coerce.number().int().min(1).max(200).default(15),
 }).strict();
@@ -471,7 +471,7 @@ export async function searchLectureHallsForPicker(context: RequestContext, raw: 
   const query = legacyLookupSchema.parse(raw);
   const base = {
     collegeId: query.collegeId,
-    departmentId: query.deptId,
+    departmentId: query.deptId === "0" || query.deptId === 0 ? undefined : query.deptId,
     roomType: query.roomType,
     status: "ACTIVE" as const,
     limit: 200,
@@ -520,7 +520,7 @@ const legacyPageSchema = z.object({
   collegeId: z.string().uuid(),
   page: z.coerce.number().int().default(0).transform(value => Math.max(0, value)),
   size: z.coerce.number().int().default(20).transform(value => Math.max(1, Math.min(100, value))),
-  deptId: z.string().uuid().optional(),
+  deptId: z.union([z.string().uuid(), z.literal("0"), z.literal(0)]).optional(),
   query: z.string().trim().max(100).optional(),
 }).strict();
 
@@ -530,7 +530,7 @@ export async function listLectureHallsLegacyPage(context: RequestContext, raw: u
   const query = legacyPageSchema.parse(raw);
   const result = await listLectureHalls(context, {
     collegeId: query.collegeId,
-    departmentId: query.deptId,
+    departmentId: query.deptId === "0" || query.deptId === 0 ? undefined : query.deptId,
     q: query.query,
     limit: query.size,
     offset: query.page * query.size,
