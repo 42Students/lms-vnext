@@ -73,7 +73,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
     <section aria-label="Drive company and role" className={"min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] border-l-[3px] bg-surface p-[var(--lms-space-4)] "+(drive.status==="PUBLISHED"?"border-l-[#52c41a]":drive.status==="DRAFT"?"border-l-[#faad14]":"border-l-[#8c8c8c]")}>
       <div className="flex min-w-0 flex-wrap items-start gap-[var(--lms-space-4)]">
         <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle text-lg font-semibold text-[var(--lms-heading)]" aria-label={drive.companyName+" company logo"}>
-          {drive.companyLogoUrl?<img alt="" src={drive.companyLogoUrl} width={56} height={56} className="size-14 object-contain" />:
+          {drive.companyLogoUrl?<img alt="" src={drive.companyLogoUrl} referrerPolicy="no-referrer" width={56} height={56} className="size-14 object-contain" />:
           <span aria-hidden="true">{initials}</span>}
         </div>
         <div className="min-w-0 flex-1 space-y-1">
@@ -101,7 +101,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
       {drive.description?.trim()?<details className="group mt-3 max-w-[90ch] text-sm leading-[22px] text-body">
        <summary className="list-none cursor-pointer focus-visible:outline-2">
         <span className="block whitespace-pre-wrap break-words [overflow-wrap:anywhere] line-clamp-3 group-open:hidden">{drive.description}</span>
-        <span className="mt-2 inline-flex min-h-9 items-center font-semibold text-link underline">Show more</span>
+        <span className="mt-2 inline-flex min-h-9 items-center font-semibold text-link underline"><span className="group-open:hidden">Show more</span><span className="hidden group-open:inline">Show less</span></span>
        </summary>
        <p className="whitespace-pre-wrap break-words [overflow-wrap:anywhere]">{drive.description}</p>
       </details>:null}
