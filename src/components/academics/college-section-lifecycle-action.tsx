@@ -6,6 +6,7 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { apiFetch } from "@/lib/api-fetch";
+import {useToast} from "@/components/ui/toast";
 import { classLifecyclePrompt } from "@/modules/academics/college-section-lifecycle-model";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 
@@ -13,6 +14,7 @@ export function CollegeSectionLifecycleAction({ row }: {
   row: { id: string; name: string; status: "ACTIVE" | "ARCHIVED"; updatedAt: string };
 }) {
   const router = useRouter();
+  const {showToast}=useToast();
   const inFlight = useRef(false);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
@@ -31,6 +33,10 @@ export function CollegeSectionLifecycleAction({ row }: {
           body: JSON.stringify({ action, expectedUpdatedAt: row.updatedAt, confirm: true }),
         });
         setConfirming(false);
+        showToast({tone:"success",title:action==="ARCHIVE"
+         ?'Archived class “'+row.name+'”.':'Restored class “'+row.name+'”.',
+         description:action==="ARCHIVE"
+          ?"Historical class records remain available and this class can be restored.":undefined});
         router.refresh();
       } catch (reason) {
         setError(reason instanceof Error ? reason.message : "We couldn't update this class. Please retry.");

@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const COLLEGE_STRUCTURE_PAGE_SIZE = 25;
+/** Legacy Super Admin class list paginates 20 rows, other directories may still choose 10/25/50/100. */
 // Academic directory URL controls must accept decimal integers only.
 // Coercion permits exponents, hexadecimal, and whitespace in forged filters.
 const urlDecimalInt = (min: number, max: number) => z.union([
@@ -14,7 +15,7 @@ export const collegeStructureQuerySchema = z.object({
   programId: z.string().uuid().optional(),
   status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ACTIVE"),
   page: urlDecimalInt(1,1000).default(1),
-  pageSize: urlDecimalInt(10,100).refine(n => [10,25,50,100].includes(n)).default(COLLEGE_STRUCTURE_PAGE_SIZE),
+  pageSize: urlDecimalInt(10,100).refine(n => [10,20,25,50,100].includes(n)).default(10),
 }).strict();
 export type CollegeStructureQuery = z.infer<typeof collegeStructureQuerySchema>;
 export const collegeClassBaseQuerySchema = collegeStructureQuerySchema.extend({
