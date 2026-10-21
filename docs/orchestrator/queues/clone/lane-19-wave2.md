@@ -48,7 +48,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_src_modules_placements_public-page_content-model.ts.md` (edit src/modules/placements/public-page/content-model.ts; 6 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_src_proxy.ts.md` (edit src/proxy.ts; 6 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_src_components_tpo_tpo-student-quick-panel.tsx.md` (edit src/components/tpo/tpo-student-quick-panel.tsx; 6 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_src_components_courses_resource-progress-control.tsx.md` (edit src/components/courses/resource-progress-control.tsx; 6 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_src_components_courses_resource-progress-control.tsx.md` (edit src/components/courses/resource-progress-control.tsx; 6 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_src_app_api_college_batches_route.ts.md` (edit src/app/api/college/batches/route.ts; 6 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_src_modules_placements_tpo-followup-queue-service.ts.md` (edit src/modules/placements/tpo-followup-queue-service.ts; 5 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_src_components_academics_section-operations.tsx.md` (edit src/components/academics/section-operations.tsx; 5 findings; best P2)

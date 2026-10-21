@@ -361,6 +361,48 @@ async function completeManualContentOnce(
   });
 }
 
+/** Explicit manual rewatch reset. The previous firstCompletedAt remains
+ * immutable audit evidence, while latest completedAt is cleared. Avoid
+ * changing timed playback progress or an old attempt after a retake. */
+async function resetManualContentForRewatch(
+ context:RequestContext,content:ProgressContent,membershipId:string,
+){
+ if(TIMED_TYPES.has(content.contentType))
+  throw new CoursesServiceError("TIMED_CONTENT_MANUAL_COMPLETION_NOT_ALLOWED");
+ return getDb().transaction(async tx=>{
+  const [actor]=await tx.select({
+   userId:collegeMemberships.userId,collegeId:collegeMemberships.collegeId,
+   status:collegeMemberships.status,
+  }).from(collegeMemberships).where(eq(collegeMemberships.id,membershipId)).for("share");
+  const [account]=await tx.select({status:users.platformStatus}).from(users)
+   .where(eq(users.id,context.user.id)).for("share");
+  const [role]=await tx.select({id:membershipRoles.id}).from(membershipRoles)
+   .where(and(eq(membershipRoles.membershipId,membershipId),
+    eq(membershipRoles.role,"LEARNER"))).for("share");
+  if(!actor||actor.userId!==context.user.id||
+   actor.collegeId!==context.membership?.collegeId||actor.status!=="ACTIVE"||
+   !account||account.status!=="ACTIVE"||!role)
+   throw new AuthorizationError("courses.read");
+  const lockKey=membershipId+":"+content.id;
+  await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${lockKey}),72001)`);
+  const [latest]=await tx.select().from(learnerContentProgress)
+   .where(and(eq(learnerContentProgress.membershipId,membershipId),
+    eq(learnerContentProgress.lessonContentId,content.id)))
+   .orderBy(desc(learnerContentProgress.attempt)).limit(1);
+  if(!latest)return buildLearnerProgressView(content,null);
+  if(!latest.completedAt)return buildLearnerProgressView(content,latest);
+  const [updated]=await tx.update(learnerContentProgress).set({
+   completedAt:null,lastPositionSeconds:0,updatedAt:new Date(),
+  }).where(and(eq(learnerContentProgress.id,latest.id),
+   eq(learnerContentProgress.attempt,latest.attempt),
+   sql`${learnerContentProgress.attempt}=(select max(p.attempt)
+    from learner_content_progress p where p.membership_id=${membershipId}
+    and p.lesson_content_id=${content.id})`)).returning();
+  if(!updated)throw new CoursesServiceError("LEARNER_PROGRESS_STALE_ATTEMPT");
+  return buildLearnerProgressView(content,updated);
+ });
+}
+
 export async function saveLearnerContentProgress(
   context: RequestContext,
   contentIdInput: string,
@@ -382,6 +424,8 @@ export async function saveLearnerContentProgress(
       input.deliveryId,
     );
 
+  if(input.completed===false)
+   return resetManualContentForRewatch(context,content,membershipId);
   const settings=await readLearnerPlaybackSettings(context.membership?.collegeId);
   const isTimed = TIMED_TYPES.has(
     content.contentType,
