@@ -20,6 +20,8 @@ export async function getSuperAdminTodayBoard(ctx:RequestContext,rawCollegeId:st
   .where(and(eq(colleges.id,id),eq(colleges.status,"ACTIVE"))).limit(1);
  if(!college)throw new AuthorizationError("college.read");
  requirePermission(ctx,"college.read",{collegeId:id,organizationId:college.organizationId});
+ requirePermission(ctx,"academics.read",{collegeId:id,organizationId:college.organizationId});
+ requirePermission(ctx,"courses.read",{collegeId:id,organizationId:college.organizationId});
  const {from,to}=istDayBounds(now);
  // Seven *local calendar dates* including today, not a guessed UTC date range.
  const attendanceWindowFrom=new Date(from.getTime()-6*86400000);
@@ -55,10 +57,14 @@ export async function getSuperAdminTodayBoard(ctx:RequestContext,rawCollegeId:st
    .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
    .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
    .innerJoin(departments,eq(departments.id,courses.departmentId))
+   .innerJoin(sections,eq(sections.id,courseSectionDeliveries.sectionId))
+   .innerJoin(academicPeriods,eq(academicPeriods.id,courseOfferings.academicPeriodId))
    .leftJoin(courseTeachingAssignments,and(
     eq(courseTeachingAssignments.deliveryId,courseSectionDeliveries.id),
     eq(courseTeachingAssignments.role,"PRIMARY"),isNull(courseTeachingAssignments.endedAt)))
    .where(and(eq(departments.collegeId,id),eq(courseOfferings.status,"ACTIVE"),
+    eq(courses.status,"ACTIVE"),eq(sections.status,"ACTIVE"),
+    eq(academicPeriods.collegeId,id),eq(academicPeriods.status,"ACTIVE"),
     isNull(courseSectionDeliveries.endedAt),isNull(courseTeachingAssignments.id))),
   db.select({n:count()}).from(courseQuizzes)
    .innerJoin(courseLessons,eq(courseLessons.id,courseQuizzes.lessonId))
@@ -186,6 +192,7 @@ export async function getSuperAdminTodayBoard(ctx:RequestContext,rawCollegeId:st
     eq(courseTeachingAssignments.role,"PRIMARY"),
     isNull(courseTeachingAssignments.endedAt)))
    .where(and(eq(departments.collegeId,id),eq(courseOfferings.status,"ACTIVE"),
+    eq(courses.status,"ACTIVE"),eq(sections.status,"ACTIVE"),
     eq(academicPeriods.status,"ACTIVE"),eq(academicPeriods.collegeId,id),
     isNull(courseSectionDeliveries.endedAt),isNull(courseTeachingAssignments.id)))
    .orderBy(asc(courses.name),asc(sections.name)).limit(8),

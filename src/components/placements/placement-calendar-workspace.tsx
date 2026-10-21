@@ -9,7 +9,7 @@ import calendarStyles from "./legacy-calendar-theme.module.css";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import {CalendarCompanySelect} from "./calendar-company-select";
+import {CalendarCompanySelect,CalendarDateSelect,CalendarEventKindSelect} from "./calendar-company-select";
 import {collegeInterviewIcs} from "@/modules/placements/college-interview-calendar-model";
 import {TpoCalendarMoveFollowup} from "@/components/placements/tpo-calendar-followup-actions";
 import {TpoNewFollowupModal} from "@/components/tpo/tpo-new-followup-modal";
@@ -677,11 +677,12 @@ export async function PlacementCalendarWorkspace({
      Boolean(item.room&&item.room===other.room)||
      Boolean(item.interviewer&&item.interviewer===other.interviewer)))).length;
   const adminMetricKnown=Boolean(bookings&&(!bookings.failed||bookings.stale));
+  const bookMetric=(count:number):string|number=>bookings?.truncated?count+"+":count;
   const adminMetrics=[
-   ["Scheduled",bookedInterviews.length],
-   ["Today",bookedInterviews.filter(event=>placementCalendarDayKey(new Date(event.startsAt))===today).length],
-   ["Companies",new Set(bookedInterviews.map(event=>event.companyName)).size],
-   ["Conflicts",bookedConflictCount],
+   ["Scheduled",bookMetric(bookedInterviews.length)],
+   ["Today",bookMetric(bookedInterviews.filter(event=>placementCalendarDayKey(new Date(event.startsAt))===today).length)],
+   ["Companies",bookMetric(new Set(bookedInterviews.map(event=>event.companyName)).size)],
+   ["Conflicts",bookMetric(bookedConflictCount)],
   ] as const;
 
   const previous =
@@ -835,12 +836,13 @@ export async function PlacementCalendarWorkspace({
        <h2 className="text-base font-semibold">Needs doing</h2>
        <div className="grid min-w-0 gap-0 divide-y divide-border border-y border-border sm:grid-cols-3 sm:divide-y-0 sm:divide-x">
         {([
-          {focus:"OVERDUE" as const,label:"Follow-ups overdue (last 90 days)",value:needsKnown?overdue.length:null},
+          {focus:"OVERDUE" as const,label:"Follow-ups overdue",value:needsKnown?overdue.length:null},
           {focus:"BLOCKED" as const,label:"Rounds on a blocked date",value:needsKnown&&blockedDays?.ready?blockedRounds.length:null},
           {focus:"BUSY" as const,label:"Busy days (3 or more)",value:needsKnown?busyDays.length:null},
         ]).map(item=><Link key={item.focus}
           href={calendarHref(basePath,audience,state,{focus:state.focus===item.focus?null:item.focus})}
           aria-current={state.focus===item.focus?"true":undefined}
+          title={item.focus==="OVERDUE"?"Last 90 days":item.label}
           className="flex min-h-11 min-w-0 flex-col justify-center gap-1 p-3 text-sm text-[var(--lms-link-text)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           <strong className="block text-lg">{item.value===null?"Unavailable":item.value}</strong>
           {item.label}{state.focus===item.focus?" · Selected":""}
@@ -995,12 +997,9 @@ export async function PlacementCalendarWorkspace({
 
           <label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
             Date
-            <Input
-              type="date"
-              name="date"
-              defaultValue={state.anchor}
-              required
-              className="w-full"
+            <CalendarDateSelect
+              href={calendarHref(basePath,audience,state,{})}
+              value={state.anchor}
             />
           </label>
 
@@ -1031,20 +1030,11 @@ export async function PlacementCalendarWorkspace({
           {isTpo ? (
             <label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
               Event type
-              <Select
-                name="kind"
-                defaultValue={state.kind ?? ""}
-                className="w-full"
-              >
-                {EVENT_FILTERS.map((filter) => (
-                  <option
-                    key={filter.value}
-                    value={filter.value}
-                  >
-                    {filter.label}
-                  </option>
-                ))}
-              </Select>
+              <CalendarEventKindSelect
+                href={calendarHref(basePath,audience,state,{})}
+                selected={state.kind??""}
+                options={EVENT_FILTERS}
+              />
             </label>
           ) : (
             <details className="min-w-0 sm:col-span-2 lg:col-span-3" open={Boolean(state.job || state.jobId || (state.roundKind && state.roundKind!=="INTERVIEW"))}>
@@ -1106,8 +1096,7 @@ export async function PlacementCalendarWorkspace({
           <Link href={calendarHref(basePath,audience,state,{company:"",kind:undefined,kinds:[],focus:null})}
           className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">Show everything</Link>
         ) : null}
-      </section>
-
+        <div className="mt-4 border-t border-border pt-3">
       {isTpo?<nav aria-label="Filter calendar by event type" className="flex min-w-0 flex-wrap gap-2">
  <FilterChipLink href={calendarHref(basePath,audience,state,{kind:undefined,kinds:[]})}
    selected={!state.kind&&!state.kinds.length}>
@@ -1133,6 +1122,10 @@ export async function PlacementCalendarWorkspace({
         {eventTypeCounts.get("INTERVIEW_SLOT")} interview slot events are included in All events.
        </p>:null}
       </nav>:null}
+        </div>
+      </section>
+
+
 
       <details aria-label="Next scheduled calendar event" className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface">
         <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">

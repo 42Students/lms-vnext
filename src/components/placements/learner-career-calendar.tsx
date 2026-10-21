@@ -57,6 +57,8 @@ function prettyDay(dayKey: string) {
 }
 
 function hrefForEvent(event: CareerCalendarEvent) {
+  if(event.jobId && (event.eventType==="APPLICATION_DEADLINE"||event.eventType==="JOB_IMPORTANT_DATE"))
+    return "/learn/my-placements/jobs/"+encodeURIComponent(event.jobId);
   return "/learn/my-placements/applications?applicationId=" +
     encodeURIComponent(event.applicationId);
 }
@@ -99,10 +101,12 @@ export function LearnerCareerCalendar({
     if (view !== "month" && view !== "week") return [];
     const first = view === "month" ? anchor.slice(0, 7) + "-01" : period.start;
     const offset = view === "month"
-      ? (new Date(first + "T12:00:00Z").getUTCDay() + 6) % 7
+      ? (new Date(first + "T12:00:00Z").getUTCDay() + (surface==="schedule"?0:6)) % 7
       : 0;
     const start = shiftCareerCalendarDay(first, "day", -offset);
-    return Array.from({ length: view === "month" ? 42 : 7 }, (_, index) =>
+    const totalMonthDays = new Date(Date.UTC(Number(first.slice(0,4)),Number(first.slice(5,7)),0)).getUTCDate();
+    const cells = view==="month" ? (offset+totalMonthDays<=35?35:42) : 7;
+    return Array.from({ length:cells }, (_, index) =>
       shiftCareerCalendarDay(start, "day", index));
   })();
 
@@ -152,13 +156,15 @@ export function LearnerCareerCalendar({
     <div className="min-w-0 space-y-5" aria-label="Learner Career Calendar">
       <section className={styles.toolbar}>
         <div className={styles.header}>
-          <div className="min-w-0">
+          {surface==="schedule" ? <p className="text-sm text-body">
+            Select any date to see rounds, talks, application deadlines and college exam blocks.
+          </p> : <div className="min-w-0">
             <h2 className={styles.heading}>Career calendar</h2>
             <p className="mt-2 text-sm text-body">
               Scheduled employer assessments, interviews and other rounds for your applications.
               Approved reschedules replace the original slot.
             </p>
-          </div>
+          </div>}
           <Button className="min-h-11 w-full shrink-0 sm:w-auto md:min-h-9"
             type="button"
             onClick={downloadCalendar}
@@ -168,7 +174,7 @@ export function LearnerCareerCalendar({
             Export selected period .ics
           </Button>
         </div>
-        <div className={styles.views} role="group" aria-label="Calendar view">
+        {surface!=="schedule" ? <div className={styles.views} role="group" aria-label="Calendar view">
           {views.map((option) => (
             <Button type="button"
               key={option}
@@ -180,7 +186,7 @@ export function LearnerCareerCalendar({
               {option}
             </Button>
           ))}
-        </div>
+        </div> : null}
         <div className={styles.nav}>
           <Button variant="ghost" className={styles.navArrow}
             type="button"
@@ -202,7 +208,9 @@ export function LearnerCareerCalendar({
             
           >→</Button>
           <span className={styles.period}>
-            {view === "day" ? prettyDay(anchor) : `${prettyDay(period.start)} – ${prettyDay(period.end)}`}
+            {surface==="schedule"&&view==="month"
+              ? new Intl.DateTimeFormat("en-IN",{month:"long",year:"numeric",timeZone:"UTC"}).format(new Date(anchor.slice(0,7)+"-01T12:00:00.000Z"))
+              : view === "day" ? prettyDay(anchor) : `${prettyDay(period.start)} – ${prettyDay(period.end)}`}
           </span>
         </div>
         <label className="mt-3 block min-w-0 w-full max-w-xs text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -215,6 +223,18 @@ export function LearnerCareerCalendar({
             }}
             className="mt-1 min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
         </label>
+        {surface==="schedule" ? <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 border-b border-border py-3 text-xs text-body" aria-label="Calendar legend">
+          {([
+            ["Your tests and interviews","bg-[#e6f6f8]"],
+            ["Talks","bg-[#eef2ff]"],
+            ["Application deadlines","bg-[rgba(217,119,6,0.18)]"],
+            ["No drives (exams)","bg-[rgba(180,35,24,0.15)]"],
+          ] as const).map(([label,color])=>(
+            <span key={label} className="inline-flex items-center gap-2">
+              <span aria-hidden="true" className={"size-3 shrink-0 rounded-sm border border-border "+color}/>{label}
+            </span>
+          ))}
+        </div> : null}
         <div className={styles.legend} role="group" aria-label="Filter career events">
           {filters.map((option) => (
             <FilterChip
@@ -239,10 +259,10 @@ export function LearnerCareerCalendar({
       ) : null}
 
       {calendarDays.length ? (
-        <section className={"hidden p-3 min-[768px]:block "+styles.gridFrame} aria-label={view + " calendar grid"}>
-          <CalendarGrid variant="hairline" className={styles.grid}>
-            {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((label, index) => (
-              <p key={label} className={styles.weekday+" "+(index===6?calendarStyles.calendarSunday:"")}>
+        <section className={(surface==="schedule"?"p-2 sm:p-3 ":"hidden p-3 min-[768px]:block ")+styles.gridFrame} aria-label={view + " calendar grid"}>
+          <CalendarGrid variant="hairline" className={styles.grid+(surface==="schedule"?" "+styles.scheduleGrid:"")}>
+            {(surface==="schedule"?["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]:["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]).map((label) => (
+              <p key={label} className={styles.weekday+" "+(label==="Sun"?calendarStyles.calendarSunday:"")}>
                 {label}
               </p>
             ))}
@@ -251,26 +271,30 @@ export function LearnerCareerCalendar({
               const chips = learnerCareerDayChips(dayEvents);
               const outside = view === "month" && day.slice(0, 7) !== anchor.slice(0, 7);
               const isSunday = new Date(day+"T12:00:00Z").getUTCDay()===0;
+              const blocked = dayEvents.some(event=>event.eventType==="EXAM_BLOCK");
               return (
                 <Button variant="ghost"
                   type="button"
                   key={day}
-                  aria-label={`${prettyDay(day)}: ${dayEvents.length} events`}
+                  aria-label={`${prettyDay(day)}: ${dayEvents.length} events${blocked?", No drives (exams)":""}`}
+                  title={blocked?"The college has blocked this day. No drives run on it.":undefined}
                   aria-current={day===todayAnchor?"date":undefined}
                   onClick={() => { setSelectedKey(null);setSelectedDayKey(day); }}
-                  className={[styles.day,day===todayAnchor?styles.todayDay:"",outside?styles.outsideDay:""].filter(Boolean).join(" ")}
+                  className={[styles.day,day===todayAnchor?styles.todayDay:"",outside?styles.outsideDay:"",blocked?styles.blockedDay:""].filter(Boolean).join(" ")}
                 >
                   <span className={styles.dayNumber+" "+(isSunday?calendarStyles.calendarSunday:"")}>{day.slice(-2)}</span>
                   <span className="mt-2 block text-xs text-body">
                     {dayEvents.length ? `${dayEvents.length} event${dayEvents.length === 1 ? "" : "s"}` : "—"}
                   </span>
-                  {chips.visible.map((chip) => (
-                    <span key={chip.key} data-kind={chip.kind} className={styles.chip}
-                      title={chip.title + " · " + chip.kind}>
-                      {chip.kind === "ASSESSMENT" ? "Assessment" : chip.kind === "INTERVIEW" ? "Interview" : "Other"} · {chip.title}
+                  {(surface==="schedule"?dayEvents:chips.visible.map(chip=>({...chip,eventType:undefined as CareerCalendarEvent["eventType"]}))).map((chip) => (
+                    <span key={chip.key} data-kind={chip.kind}
+                      className={styles.chip+(chip.eventType==="EXAM_BLOCK"?" !border-error !bg-error-subtle":"")}
+                      title={chip.title + " · " + (chip.eventType==="EXAM_BLOCK"?"No drives (exams)":chip.kind)}>
+                      {chip.eventType==="EXAM_BLOCK"?"No drives (exams)":chip.eventType==="APPLICATION_DEADLINE"?"Application deadline":
+                        chip.eventType==="JOB_IMPORTANT_DATE"?"Talk":chip.kind === "ASSESSMENT" ? "Assessment" : chip.kind === "INTERVIEW" ? "Interview" : "Other"} · {chip.title}
                     </span>
                   ))}
-                  {chips.hidden > 0 ? <span className={styles.more}>+{chips.hidden} more</span> : null}
+                  {surface!=="schedule"&&chips.hidden > 0 ? <span className={styles.more}>+{chips.hidden} more</span> : null}
                 </Button>
               );
             })}
@@ -290,7 +314,7 @@ export function LearnerCareerCalendar({
       ) : null}
 
       {calendarDays.length ? (
-        <section className={styles.agenda+" md:hidden"} aria-label="Mobile career calendar agenda">
+        <section className={styles.agenda+(surface==="schedule"?" hidden":" md:hidden")} aria-label="Mobile career calendar agenda">
           <h3 className="text-base font-semibold text-foreground">Agenda by day (IST)</h3>
           {mobileDays.length===0 ? (
             <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
@@ -386,7 +410,7 @@ export function LearnerCareerCalendar({
           className="min-h-11 w-full sm:w-auto md:min-h-9"
           onClick={()=>setSelectedDayKey(null)}>Close</Button>}>
         {selectedDayEvents.length === 0
-          ? <p role="status" className="text-sm text-body">No scheduled placement rounds on this day.</p>
+          ? <p role="status" className="text-sm text-body">Nothing on this day.</p>
           : <ol className="space-y-4" aria-label="All rounds on this day">
               {selectedDayEvents.map((event)=>(
                 <li key={event.key}
@@ -398,6 +422,7 @@ export function LearnerCareerCalendar({
                   {event.venue?<p className="text-body">Venue: {event.venue}</p>:null}
                   {event.durationMinutes?<p className="text-body">Duration: {event.durationMinutes} minutes</p>:null}
                   {event.note?<p className="text-body">{event.note}</p>:null}
+                  {event.eventType==="EXAM_BLOCK"?<p role="alert" className="text-sm font-semibold text-error">The college has blocked this day. No drives run on it.</p>:null}
                   <div className="flex flex-wrap gap-3">
                     {(!event.eventType||event.eventType==="ROUND")?<>
                     <Link href={learnerCareerCalendarEventTarget(event)}
@@ -407,7 +432,10 @@ export function LearnerCareerCalendar({
                     <Link href="/learn/my-placements/schedule?view=coming"
                       className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
                       Check attendance or request reschedule
-                    </Link></>:null}
+                    </Link></>:event.jobId&&(event.eventType==="APPLICATION_DEADLINE"||event.eventType==="JOB_IMPORTANT_DATE")?
+                      <Link href={hrefForEvent(event)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+                        {event.eventType==="APPLICATION_DEADLINE"?"Open job before applications close":"View related job"}
+                      </Link>:null}
                   </div>
                 </li>
               ))}

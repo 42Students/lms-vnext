@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {reportAuthFailure} from "@/lib/report-client-error";
 import {FRIENDLY_MESSAGES} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {safeReturnTo} from "@/lib/return-to";
@@ -289,7 +290,8 @@ export function LoginForm({
       setSecondCode("");
       setEmailResends(0);
       setCooldown(RESEND_SECONDS);
-    } catch {
+    } catch (reason) {
+      reportAuthFailure(reason);
       setError("That took too long. Check your connection and try again.");
     } finally {
       window.clearTimeout(slowNotice);
@@ -327,6 +329,7 @@ export function LoginForm({
       const defaultLanding = safeReturnTo(result.data.next) ?? "/dashboard";
       window.location.assign(returnTo ?? defaultLanding);
     } catch (reason) {
+      reportAuthFailure(reason);
       setError(reason instanceof FriendlyFetchError ? reason.message : FRIENDLY_MESSAGES.unexpected);
     } finally {
       setBusy(false);
@@ -355,6 +358,7 @@ export function LoginForm({
         nextResendAt: Date.now() + RESEND_SECONDS * 1000,
       });
     } catch (reason) {
+      reportAuthFailure(reason);
       setError(reason instanceof FriendlyFetchError ? reason.message : FRIENDLY_MESSAGES.unexpected);
     } finally {
       setBusy(false);

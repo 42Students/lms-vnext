@@ -1,6 +1,14 @@
 import {z} from "zod";
 
-/** FAC-courses-14 and LEARNER-course-detail-07: canonical DB05 materials. */
+/** FAC-courses-14 and LEARNER-course-detail-07: canonical DB05 materials.
+ * This schema validates each LINK child. The RESOURCE parent is validated by
+ * createLessonContentInputSchema in validation.ts (required lesson UUID and
+ * nonblank title, plus notes, HTTPS URL or storage key); createLessonContent
+ * also accepts a verified set of materialLinks as the parent resource payload
+ * before inserting parent and children in one transaction. Faculty targeting
+ * stays the delivery-scoped permission check, while College Admin may author
+ * the shared offering (deliveryId=null). Do not require a class from admins.
+ */
 export const resourceMaterialIdSchema=z.string().uuid();
 export const resourceMaterialLinkSchema=z.object({
  title:z.string().trim().min(1).max(255),

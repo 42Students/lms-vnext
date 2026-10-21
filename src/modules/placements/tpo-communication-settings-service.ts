@@ -94,3 +94,86 @@ export async function updateTpoCommunicationSettings(context:RequestContext,raw:
   return {saved:true,version:updated.updatedAt.toISOString()};
  });
 }
+
+
+/**
+ * Shared delivery-time policy. Settings are mutable between enqueue and send,
+ * so callers must load current college settings and evaluate this again when
+ * claiming the outbox row. This pure function never sends a notification.
+ *
+ * The old LMS made only interview mail eligible for LEARNER recipients; other
+ * student events are app-only even if a legacy optional-email switch is on.
+ * Four fixed always-on SMS notices do not count against the optional SMS cap.
+ */
+export type TpoDispatchEvent =
+ "DRIVE_PUBLISHED"|"DRIVE_UPDATED"|"APPLICATION_STATUS_CHANGED"|
+ "NOW_INELIGIBLE"|"NUDGE"|"PREP_ASSIGNED"|"ROUND_SCHEDULED"|
+ "ROUND_REMINDER"|"OFFER_RELEASED"|"OFFER_EXPIRING"|
+ "DEADLINE_TODAY"|"DRIVE_CANCELLED";
+export type TpoDispatchChannel="APP"|"EMAIL"|"SMS";
+export type TpoDispatchRecipient="LEARNER"|"TPO"|"RECRUITER";
+export type TpoDeliveryPreferences={
+ notifyDriveOpenEmail:boolean;notifyResultApplied:boolean;
+ notifyNudges:boolean;notifyPrepAssigned:boolean;smsMonthlyCap:number;
+};
+export type TpoDispatchDecision=
+ {allowed:true;sendAfter:Date;countsAgainstOptionalSmsCap:boolean}|
+ {allowed:false;reason:"CHANNEL_NOT_ALLOWED"|"OPTION_DISABLED"};
+
+const SMS_ALWAYS_ON:ReadonlySet<TpoDispatchEvent>=new Set([
+ "ROUND_SCHEDULED","OFFER_RELEASED","OFFER_EXPIRING",
+ "DEADLINE_TODAY","DRIVE_CANCELLED",
+]);
+const EMAIL_INTERVIEW:ReadonlySet<TpoDispatchEvent>=new Set([
+ "ROUND_SCHEDULED","ROUND_REMINDER",
+]);
+const DIGEST_NOTICE:ReadonlySet<TpoDispatchEvent>=new Set([
+ "APPLICATION_STATUS_CHANGED","NUDGE","PREP_ASSIGNED","NOW_INELIGIBLE",
+]);
+
+/** Next 08:00 IST, expressed as a UTC Date even on a non-India app server. */
+export function nextTpoEmailDigestAt(now:Date):Date{
+ if(!Number.isFinite(now.getTime()))throw new Error("Invalid delivery clock");
+ const parts=new Intl.DateTimeFormat("en-GB",{
+  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  hour:"2-digit",minute:"2-digit",hourCycle:"h23",
+ }).formatToParts(now);
+ const value=(key:string)=>Number(parts.find(part=>part.type===key)?.value);
+ const next=new Date(Date.UTC(value("year"),value("month")-1,value("day"),2,30,0));
+ if(next.getTime()<=now.getTime())next.setUTCDate(next.getUTCDate()+1);
+ return next;
+}
+
+/** A dispatch policy decision is not a send grant: the worker must still
+ * confirm recipient status, tenant scope, dedupe and suppression at send time.
+ */
+export function tpoOutgoingDispatchDecision(input:{
+ event:TpoDispatchEvent;channel:TpoDispatchChannel;
+ recipient:TpoDispatchRecipient;settings:TpoDeliveryPreferences;
+ now:Date;
+}):TpoDispatchDecision{
+ const {event,channel,recipient,settings,now}=input;
+ if(!Number.isFinite(now.getTime()))throw new Error("Invalid delivery clock");
+ const switchOn=event==="DRIVE_PUBLISHED"||event==="DRIVE_UPDATED"
+  ?settings.notifyDriveOpenEmail
+  :event==="APPLICATION_STATUS_CHANGED"||event==="NOW_INELIGIBLE"
+   ?settings.notifyResultApplied
+   :event==="NUDGE"?settings.notifyNudges
+   :event==="PREP_ASSIGNED"?settings.notifyPrepAssigned:true;
+ if(channel==="EMAIL"){
+  if(recipient==="LEARNER"&&!EMAIL_INTERVIEW.has(event))
+   return {allowed:false,reason:"CHANNEL_NOT_ALLOWED"};
+  if(!switchOn)return {allowed:false,reason:"OPTION_DISABLED"};
+  return {allowed:true,sendAfter:DIGEST_NOTICE.has(event)?
+   nextTpoEmailDigestAt(now):now,countsAgainstOptionalSmsCap:false};
+ }
+ if(channel==="SMS"){
+  // All current student SMS events are fixed compulsory notices. Other
+  // event types may never use SMS through this interface.
+  if(!SMS_ALWAYS_ON.has(event))return {allowed:false,reason:"CHANNEL_NOT_ALLOWED"};
+  return {allowed:true,sendAfter:now,countsAgainstOptionalSmsCap:false};
+ }
+ // The preference check is for optional outgoing EMAIL only; turning that
+ // off must not suppress a learner's in-app placement notice.
+ return {allowed:true,sendAfter:now,countsAgainstOptionalSmsCap:false};
+}

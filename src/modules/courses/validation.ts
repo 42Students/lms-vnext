@@ -359,11 +359,12 @@ export const updateCourseLessonInputSchema =
     active:z.boolean().optional(),
     enabled:z.boolean().optional(),
     visibleToStudents:z.boolean().optional(),
+    targetLearningPathId:learningPathIdSchema.optional(),
     expectedUpdatedAt:z.iso.datetime({offset:true}),
     expectedVersion:z.number().int().nonnegative().optional(),
   }).strict().refine(value=>
     value.name!==undefined||value.description!==undefined||
-    value.sequence!==undefined||value.active!==undefined||
+    value.sequence!==undefined||value.targetLearningPathId!==undefined||value.active!==undefined||
     value.enabled!==undefined||value.visibleToStudents!==undefined,{
       message:"At least one lesson field is required",
     }).refine(value=>value.enabled===undefined||

@@ -1,7 +1,9 @@
 import {
   and,
   asc,
+  desc,
   eq,
+  isNotNull,
   isNull,
   sql,
 } from "drizzle-orm";
@@ -10,7 +12,10 @@ import { lockLiveLessonWriteAncestry } from "./lesson-write-ancestry";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { lessonMoveSchema, planLessonMove, collegeLessonBulkOrderSchema } from "./college-lesson-order-model";
-import { courseLessons,lessonContents } from "@/db/schema";
+import {
+ courseLessons,lessonContents,courseAssignments,courseQuizzes,
+ learnerContentProgress,courseDiscussionMessages,lessonVideoAssets,
+} from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
   can,
@@ -188,8 +193,8 @@ export async function updateCourseLesson(
     courseLessonIdSchema.parse(
       lessonIdInput,
     );
-  // The path is intentionally immutable: vNext lessons belong to an
-  // offering's learning path, not to a movable legacy course container.
+  // A Course move names a target Learning Path; its active tenant and child
+  // audience must be checked under the write transaction.
   const input =
     updateCourseLessonInputSchema.parse(
       rawInput,
@@ -205,11 +210,70 @@ export async function updateCourseLesson(
     organizationId: path.organizationId,
     collegeId: path.collegeId,
   });
+  const targetPath=input.targetLearningPathId&&input.targetLearningPathId!==path.id
+    ? await loadLearningPathScope(input.targetLearningPathId):null;
+  if(targetPath){
+    if(targetPath.collegeId!==path.collegeId||
+       targetPath.organizationId!==path.organizationId)
+      throw new CoursesServiceError("LESSON_NOT_FOUND");
+    requirePermission(context,"courses.manage",{
+      organizationId:targetPath.organizationId,collegeId:targetPath.collegeId,
+    });
+  }
 
   try {
     return await getDb().transaction(async (tx) => {
-      await lockLiveLessonWriteAncestry(tx, path);
-      const {expectedUpdatedAt,expectedVersion,active,enabled,visibleToStudents,sequence,...changes}=input;
+      // Lock both ancestral chains in UUID order, preventing reverse move
+      // deadlocks and concurrent archival of the destination Course.
+      const parents=targetPath?[path,targetPath].sort((a,b)=>a.id.localeCompare(b.id)):[path];
+      for(const parent of parents)await lockLiveLessonWriteAncestry(tx,parent);
+      const {expectedUpdatedAt,expectedVersion,active,enabled,visibleToStudents,
+        sequence,targetLearningPathId,...changes}=input;
+      // A competing publish/create holds a SHARE lesson lock. This exclusive
+      // lock stabilizes the child set until the move is safely committed.
+      const [locked]=await tx.select({id:courseLessons.id}).from(courseLessons)
+        .where(and(eq(courseLessons.id,lessonId),
+          eq(courseLessons.status,"ACTIVE"),
+          eq(courseLessons.learningPathId,current.learningPathId)))
+        .for("update").limit(1);
+      if(!locked)throw new CoursesServiceError("LESSON_STALE_VERSION");
+      let moveChanges:{learningPathId:string;sequence:number}|null=null;
+      if(targetPath){
+        if(targetPath.offeringId!==path.offeringId){
+          // Learner progress and Section-scoped descendants cannot migrate
+          // with a new offering. Untargeted, unattempted content follows the
+          // Lesson; otherwise fail closed rather than leave orphan audiences.
+          const [targeted,assignments,quizzes,progress,discussions,videos]=await Promise.all([
+            tx.select({id:lessonContents.id}).from(lessonContents)
+              .where(and(eq(lessonContents.lessonId,lessonId),
+                isNotNull(lessonContents.deliveryId))).limit(1),
+            tx.select({id:courseAssignments.id}).from(courseAssignments)
+              .where(eq(courseAssignments.lessonId,lessonId)).limit(1),
+            tx.select({id:courseQuizzes.id}).from(courseQuizzes)
+              .where(eq(courseQuizzes.lessonId,lessonId)).limit(1),
+            tx.select({id:learnerContentProgress.id}).from(learnerContentProgress)
+              .innerJoin(lessonContents,eq(lessonContents.id,learnerContentProgress.lessonContentId))
+              .where(eq(lessonContents.lessonId,lessonId)).limit(1),
+            tx.select({id:courseDiscussionMessages.id}).from(courseDiscussionMessages)
+              .innerJoin(lessonContents,eq(lessonContents.id,courseDiscussionMessages.lessonContentId))
+              .where(eq(lessonContents.lessonId,lessonId)).limit(1),
+            tx.select({id:lessonVideoAssets.id}).from(lessonVideoAssets)
+              .where(eq(lessonVideoAssets.lessonId,lessonId)).limit(1),
+          ]);
+          if(targeted.length||assignments.length||quizzes.length||
+             progress.length||discussions.length||videos.length)
+            throw new CoursesServiceError("CONTENT_DELIVERY_MISMATCH");
+        }
+        const [last]=await tx.select({sequence:courseLessons.sequence})
+          .from(courseLessons).where(and(
+            eq(courseLessons.learningPathId,targetPath.id),
+            eq(courseLessons.status,"ACTIVE"),
+            isNull(courseLessons.deletedAt)))
+          .orderBy(desc(courseLessons.sequence)).limit(1);
+        const next=(last?.sequence??-1)+1;
+        if(next>10000)throw new CoursesServiceError("LESSON_SEQUENCE_CONFLICT");
+        moveChanges={learningPathId:targetPath.id,sequence:next};
+      }
       // Legacy sequence=0 means keep the existing order on an update; only
       // positive values intentionally reorder. Creation already appends for 0.
       const orderChange=sequence!==undefined&&sequence>0?{sequence}:{};
@@ -227,6 +291,7 @@ export async function updateCourseLesson(
       .set({
         ...changes,
         ...orderChange,
+        ...(moveChanges??{}),
         ...(active===false?{status:"ARCHIVED" as const}:{}),
         ...((enabled??visibleToStudents)!==undefined?{visibleToStudents:enabled??visibleToStudents}:{}),
         version:sql`${courseLessons.version}+1`,
@@ -255,8 +320,10 @@ export async function updateCourseLesson(
         organizationId: path.organizationId,
         subjectType: "course_lesson", subjectId: updated.id,
         subjectLabel: updated.name, summary: "Updated lesson",
-        metadata: { learningPathId: path.id, previousSequence: current.sequence, sequence: updated.sequence,
-          legacyAuditAction:"LESSON_UPDATE",parentImmutable:true },
+        metadata: { learningPathId: updated.learningPathId, previousLearningPathId:path.id,
+          targetOfferingId:targetPath?.offeringId??path.offeringId,
+          previousSequence:current.sequence,sequence:updated.sequence,
+          legacyAuditAction:"LESSON_UPDATE",parentImmutable:!targetPath },
       });
       return updated;
     });

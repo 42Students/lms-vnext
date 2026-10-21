@@ -6,6 +6,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { AdminPlacementStudentSearch } from "@/components/placements/admin-placement-student-search";
+import { AdminPlacementStudentProfileEditor } from "@/components/placements/admin-placement-student-profile-editor";
 import { lookupCollegeStudentPlacement, getCollegeStudentPlacementDetails } from "@/modules/placements/college-placement-student-lookup-service";
 import { parseSuperAdminPlacementStudentSearch } from "@/modules/admin-ui/super-admin-placement-student-search-model";
 
@@ -130,20 +131,13 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
             : "No verified resume available. Upload and verification are managed in the learner’s profile."}</p>
           <Link href="/admin/students" className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Open student directory</Link>
         </details>
-        <details className="border-b border-border py-2">
-          <summary className="min-h-9 cursor-pointer text-sm font-semibold text-[var(--lms-heading)]">Skills</summary>
-          {selectedProfile?.skills.length ? <ul className="list-disc space-y-1 pl-5 pt-2 text-sm text-body">
-            {selectedProfile.skills.map((skill,index)=><li key={index}>{skill}</li>)}
-          </ul> : <p className="pt-2 text-xs text-muted-foreground">No skills recorded in the authorized learner profile.</p>}
-          <Link href="/admin/students" className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Open student directory</Link>
-        </details>
-        <details className="border-b border-border py-2">
-          <summary className="min-h-9 cursor-pointer text-sm font-semibold text-[var(--lms-heading)]">Job Preferences</summary>
-          {selectedProfile?.jobPreferences.length ? <ul className="list-disc space-y-1 pl-5 pt-2 text-sm text-body">
-            {selectedProfile.jobPreferences.map((preference,index)=><li key={index}>{preference}</li>)}
-          </ul> : <p className="pt-2 text-xs text-muted-foreground">No job preferences recorded in the authorized learner profile.</p>}
-          <Link href="/admin/students" className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Open student directory</Link>
-        </details>
+        <AdminPlacementStudentProfileEditor
+          membershipId={selectedStudent.membershipId}
+          skills={selectedProfile?.skills ?? []}
+          preferences={selectedProfile?.jobPreferences ?? null}
+          expectedVersion={selectedProfile?.profileDocumentVersion ?? 0}
+          readOnly={!selectedProfile}
+        />
       </div>
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
         <h2 className="m-0 text-sm font-semibold text-[var(--lms-heading)]">Placement history</h2>

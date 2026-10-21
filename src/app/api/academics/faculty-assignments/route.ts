@@ -1,4 +1,9 @@
 import { NextResponse } from "next/server";
+import { and, eq, isNull } from "drizzle-orm";
+import { z } from "zod";
+import { getDb } from "@/db/client";
+import { courseSectionDeliveries, courseOfferings, courses, departments } from "@/db/schema";
+import { resolveActingCollege } from "@/modules/permissions/acting-college";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
@@ -7,6 +12,7 @@ import {
   bulkCreateSectionFacultyAssignments,
   endSectionFacultyAssignment,
   listSectionFacultyAssignments,
+  listFacultyCourseAssociations,
 } from "@/modules/academics/faculty-assignment-service";
 
 import { createCourseTeachingAssignment, listCourseFacultyAcrossDeliveries } from "@/modules/courses/teaching-assignment-service";
@@ -27,6 +33,25 @@ export async function GET(request: Request) {
     const url = new URL(request.url);
     // Legacy courseSlug wins over courseId, but must resolve to one scoped
     // course; neither a section advisor nor a class ID grants teaching access.
+    // Legacy class+course+faculty directory: every supplied identifier is a
+    // scoped UUID, not a cast of a historic numeric ID.
+    if (!url.searchParams.has("courseSlug") &&
+      (url.searchParams.has("classId") || url.searchParams.has("facultyId"))) {
+      const selectors=z.strictObject({
+        classId:z.string().uuid().optional(),
+        facultyMembershipId:z.string().uuid().optional(),
+        courseId:z.string().uuid().optional(),
+      }).parse({
+        classId:url.searchParams.get("classId") ?? undefined,
+        facultyMembershipId:url.searchParams.get("facultyId") ?? undefined,
+        courseId:url.searchParams.get("courseId") ?? undefined,
+      });
+      const directory=await listFacultyCourseAssociations(context,{
+        ...selectors, includeEnded:url.searchParams.get("includeEnded")==="true",
+        limit:200,
+      });
+      return NextResponse.json({assignments:directory.rows,summary:directory.summary});
+    }
     const course = url.searchParams.get("courseSlug") || url.searchParams.get("courseId");
     if (course) {
       const assignments = await listCourseFacultyAcrossDeliveries(
@@ -63,6 +88,34 @@ export async function POST(request: Request) {
       const assignments = await bulkCreateSectionFacultyAssignments(context,
         Array.isArray(body) ? body : body.assignments);
       return NextResponse.json({ assignments, message: "Success" }, { status: 201 });
+    }
+    if (body && typeof body==="object" && !Array.isArray(body) &&
+      "facultyId" in body && "courseId" in body && "classId" in body) {
+      const legacy=z.strictObject({
+        facultyId:z.string().uuid(),courseId:z.string().uuid(),classId:z.string().uuid(),
+        role:z.enum(["PRIMARY","CO_TEACHER","TA"]).optional(),
+      }).parse(body);
+      const acting=await resolveActingCollege(context,"courses.manage");
+      const matches=await getDb().select({deliveryId:courseSectionDeliveries.id})
+        .from(courseSectionDeliveries)
+        .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
+        .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+        .innerJoin(departments,eq(departments.id,courses.departmentId))
+        .where(and(
+          eq(courseSectionDeliveries.sectionId,legacy.classId),
+          eq(courses.id,legacy.courseId),
+          eq(departments.collegeId,acting.collegeId),
+          isNull(courseSectionDeliveries.endedAt),
+        )).limit(2);
+      if(matches.length!==1)return NextResponse.json({
+        error:"SECTION_DELIVERY_NOT_FOUND",
+        message:"Select a class, course and semester for this teaching assignment.",
+      },{status:409});
+      const assignment=await createCourseTeachingAssignment(context,{
+        deliveryId:matches[0]!.deliveryId,membershipId:legacy.facultyId,
+        role:legacy.role??"PRIMARY",
+      });
+      return NextResponse.json({assignment,message:"Success"},{status:201});
     }
     if (body && typeof body === "object" && "deliveryId" in body) {
       // Course teaching assignments require an explicit live delivery; a

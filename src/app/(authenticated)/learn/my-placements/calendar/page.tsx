@@ -8,6 +8,16 @@ import { redirect } from "next/navigation";
  * The canonical Schedule calendar merges verified un-applied job deadlines
  * and scoped college exam blackout days with the learner's round events.
  */
-export default async function LearnerCalendarLegacyRedirect() {
-  redirect("/learn/my-placements/schedule?view=calendar");
+export default async function LearnerCalendarLegacyRedirect({searchParams}:{
+  searchParams:Promise<Record<string,string|string[]|undefined>>;
+}) {
+  // Preserve harmless original deep-link selectors when forwarding to the
+  // member-authorized Schedule workspace, without trusting a requested view.
+  const original=await searchParams;
+  const query=new URLSearchParams({view:"calendar"});
+  for (const key of ["date","roundId","jobId"] as const) {
+    const value=original[key];
+    if (typeof value==="string" && value.length<=100)query.set(key,value);
+  }
+  redirect("/learn/my-placements/schedule?"+query.toString());
 }

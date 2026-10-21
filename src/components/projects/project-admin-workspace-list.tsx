@@ -2,6 +2,7 @@ import { MetricBar } from "@/components/ui/metric-bar";
 import styles from "./project-workspace-readiness.module.css";
 import Link from "next/link";
 import { ProjectArchiveControl } from "@/components/projects/project-archive-control";
+import {ProjectAdminWorkspaceQuickView} from "./project-admin-workspace-quick-view";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
@@ -67,6 +68,8 @@ function workspaceSummaryHref(item:ProjectAdminWorkspaceListItem,basePath:string
 function WorkspaceActions({item,basePath}:{item:ProjectAdminWorkspaceListItem;basePath:string}){
  const root=basePath+"/"+encodeURIComponent(item.id);
  return <div className="flex flex-wrap items-center gap-2">
+  {basePath.startsWith("/admin/")?<ProjectAdminWorkspaceQuickView
+    item={item} href={workspaceSummaryHref(item,basePath)}/>:null}
   <Link href={workspaceSummaryHref(item,basePath)}
     className="inline-flex min-h-11 items-center gap-1 text-link underline md:min-h-9"
     aria-label={"Open summary for "+workspaceTitle(item)}>

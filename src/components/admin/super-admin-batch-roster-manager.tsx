@@ -69,7 +69,7 @@ export function SuperAdminBatchRosterManager({students,classes}:{students:readon
    empty={<EmptyState title="No matching students." description="Try clearing the roster search or class filter."
     action={<Button variant="secondary" onClick={()=>{setSearch("");setSource("ALL");}}>Clear filters</Button>}/>}
    columns={[
-    {key:"student",header:"Student",mobileLabel:"Student",mobilePriority:"primary",cell:row=><span className="break-words">{row.name??"Unnamed"}</span>},
+    {key:"student",header:"Name",mobileLabel:"Name",mobilePriority:"primary",cell:row=><span className="break-words">{row.name??"Unnamed"}</span>},
     {key:"roll",header:"Roll no.",mobileLabel:"Roll no.",mobilePriority:"secondary",cell:row=><span className="break-all">{row.roll??"—"}</span>},
     {key:"email",header:"Email",mobileLabel:"Email",mobilePriority:"secondary",cell:row=><span className="break-all">{row.email??"—"}</span>},
     {key:"class",header:"Current class",mobileLabel:"Current class",mobilePriority:"secondary",
@@ -88,6 +88,7 @@ export function SuperAdminBatchRosterManager({students,classes}:{students:readon
       </Select>
       <Button type="button" variant="secondary" className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto"
        disabled={Boolean(moving)||pendingRow!==null||!destinations[row.learnerEnrollmentId]||destinations[row.learnerEnrollmentId]===row.classId}
+       aria-label={"Move "+(row.name??row.roll??"student")+" to another class"}
        onClick={()=>{setError(null);setPendingRow(row);}}>{moving===row.learnerEnrollmentId?"Moving…":"Move"}</Button>
      </div>},
    ]}/>

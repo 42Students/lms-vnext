@@ -1,5 +1,4 @@
 import { AdminProjectSectionPage } from "@/components/projects/admin-project-section-page";
-import Link from "next/link";
 import {notFound} from "next/navigation";
 import {z} from "zod";
 
@@ -27,13 +26,6 @@ export default async function SuperAdminProjectSectionRoute({
       ? value : undefined;
   return (
     <div className="min-w-0 max-w-full space-y-3">
-    <nav aria-label="Project workspace breadcrumbs" className="flex min-w-0 flex-wrap items-center gap-2 text-sm text-muted-foreground">
-      <Link href="/admin/projects" className="font-semibold text-link underline">Projects</Link>
-      <span aria-hidden="true">/</span>
-      <Link href={"/admin/projects/"+encodeURIComponent(projectId)} className="font-semibold text-link underline">Workspace</Link>
-      <span aria-hidden="true">/</span>
-      <span aria-current="page">{section==="tasks"?"Tasks":section==="delivery"?"Delivery":section}</span>
-    </nav>
     <AdminProjectSectionPage
       projectId={projectId}
       section={section}

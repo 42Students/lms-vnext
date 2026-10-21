@@ -83,6 +83,12 @@ export function TemplateMetadataEditControl(props:Props){
   if(values.title.trim().length>200){
    setError("Title must be 200 characters or fewer");return;
   }
+  if(values.courseLabel.trim().length>160){
+   setError("Course label must be 160 characters or fewer");return;
+  }
+  if(values.phase.trim().length>80){
+   setError("Phase must be 80 characters or fewer");return;
+  }
   const base=props.blueprint.overview;
   const overview:ProjectTemplateBlueprint["overview"]={
    ...base,
@@ -154,7 +160,7 @@ export function TemplateMetadataEditControl(props:Props){
       <Input maxLength={160} disabled={pending} value={values.courseLabel}
        onChange={event=>edit("courseLabel",event.target.value)}/></label>
      <label className="grid gap-1 text-sm font-semibold text-body">Phase
-      <Input maxLength={120} disabled={pending} value={values.phase}
+      <Input maxLength={80} disabled={pending} value={values.phase}
        onChange={event=>edit("phase",event.target.value)}/></label>
     </div>
     <label className="grid gap-1 text-sm font-semibold text-body">Project goal

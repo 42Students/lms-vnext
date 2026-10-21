@@ -9,9 +9,10 @@ import {beginDriveMutation,endDriveMutation} from "@/modules/placements/drive-mu
 function suggestedDeadlineInput(deadline:string|null){
  const original=deadline?Date.parse(deadline):NaN;
  const current=Date.now();
- const future=Number.isFinite(original)&&original>current
-  ?original+86_400_000:current+7*86_400_000;
- return new Date(future+330*60_000).toISOString().slice(0,16);
+ // Legacy extends by seven days and suggests the END of that day in IST.
+ const base=Number.isFinite(original)&&original>current?original:current;
+ const local=new Date(base+7*86_400_000+330*60_000);
+ return local.toISOString().slice(0,10)+"T23:59";
 }
 export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:string|null}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");

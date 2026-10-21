@@ -315,7 +315,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   {saved?<p role="status" className="text-sm text-body">Save confirmed.
     {saved.notified>0?" "+saved.notified+" applicant(s) notified in-app.":" No applicant notices requested."}
    </p>:null}
-  <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+  <div id="drive-save-actions" className="flex min-w-0 scroll-mt-20 flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
    <Button variant="primary" type="submit" loading={pending} disabled={pending} className="min-h-11 w-full px-5 sm:w-auto md:min-h-9">{pending?"Saving…":"Save changes"}</Button>
    <Link className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text underline sm:w-auto md:min-h-9"
     href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)}>Open drive page</Link>

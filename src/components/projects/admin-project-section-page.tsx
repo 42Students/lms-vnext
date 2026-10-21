@@ -5,6 +5,7 @@ import {isSuperAdmin} from "@/modules/identity/context";
 import {ProjectsServiceError} from "@/modules/projects/errors";
 import {
   PROJECT_WORKSPACE_SECTIONS,
+  PROJECT_WORKSPACE_SECTION_LABELS,
   ProjectWorkspace,
   type ProjectWorkspaceSection,
 } from "@/components/projects/project-workspace";
@@ -14,7 +15,35 @@ import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope
 import { listProjectActivity } from "@/modules/projects/activity-service";
 import { ProjectActivityFilteredList } from "@/components/projects/project-activity-filtered-list";
 import { ErrorState } from "@/components/ui/error-state";
+import { Tabs } from "@/components/ui/tabs";
 import {ProjectAdminNav} from "./project-admin-nav";
+
+/** Keep workspace navigation available while a scoped section is recovering.
+ * Every tab still passes through the same college and permission checks. */
+function WorkspaceContextTabs({
+ projectId,section,basePath,
+}:{
+ projectId:string;section:string;basePath:string;
+}){
+ const prefix=basePath+"/"+encodeURIComponent(projectId);
+ return <div className="min-w-0 space-y-3">
+  <nav aria-label="Project workspace breadcrumbs"
+   className="flex min-w-0 flex-wrap items-center gap-2 text-sm text-muted-foreground">
+   <Link href={basePath} className="font-semibold text-link underline">Projects</Link>
+   <span aria-hidden="true">/</span>
+   <Link href={prefix+"/summary"} className="font-semibold text-link underline">Workspace</Link>
+   <span aria-hidden="true">/</span>
+   <span aria-current="page">{isProjectWorkspaceSection(section)?
+    PROJECT_WORKSPACE_SECTION_LABELS[section]:section}</span>
+  </nav>
+  <Tabs ariaLabel="Project workspace sections" renderPanel={false}
+   value={isProjectWorkspaceSection(section)?section:"summary"}
+   items={PROJECT_WORKSPACE_SECTIONS.map(tab=>({
+    value:tab,label:PROJECT_WORKSPACE_SECTION_LABELS[tab],
+    href:prefix+"/"+tab,
+   }))}/>
+ </div>;
+}
 
 function workspaceRecoveryPanel({
  projectId,section,basePath,title,description,
@@ -22,9 +51,11 @@ function workspaceRecoveryPanel({
  projectId:string;section:string;basePath:string;
  title:string;description:string;
 }){
- const retry=basePath+"/"+encodeURIComponent(projectId)+"/"+encodeURIComponent(section);
- return <section className="min-w-0 space-y-4" role="alert">
+ const retry=basePath+"/"+encodeURIComponent(projectId)+"/"+
+  encodeURIComponent(section)+"?retry=1";
+ return <section className="min-w-0 space-y-4" role="alert" aria-live="polite">
   <ProjectAdminNav basePath={basePath} active="workspaces"/>
+  <WorkspaceContextTabs projectId={projectId} section={section} basePath={basePath}/>
   <ErrorState title={title} description={description}
     action={<div className="flex flex-wrap gap-3">
       <Link href={retry} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
@@ -36,7 +67,6 @@ function workspaceRecoveryPanel({
     </div>}/>
  </section>;
 }
-
 
 function isProjectWorkspaceSection(
   value: string,
@@ -67,14 +97,11 @@ export async function AdminProjectSectionPage({
 
   const context = await getCurrentRequestContext();
   if (!getProjectAdminCollegeId(context)) {
-    return <section className="min-w-0 space-y-4">
-      <ProjectAdminNav basePath={basePath} active="workspaces"/>
-      <ErrorState title="Admin not assigned to a college"
-        description="You must be assigned to a college to view project workspaces. Select a college in the header to continue."
-        action={<Link href={basePath} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">
-          Back to workspaces
-        </Link>}/>
-    </section>;
+    return workspaceRecoveryPanel({
+      projectId,section,basePath,
+      title:"Admin not assigned to a college",
+      description:"You must be assigned to a college to view project workspaces. Select a college in the header to continue.",
+    });
   }
   // A soft-deleted workspace may be inspected and recovered from Summary only.
   // Every other section and all ordinary manage mutations remain inaccessible.
@@ -114,6 +141,8 @@ export async function AdminProjectSectionPage({
       activityUnavailable = true;
     }
     return <section className="min-w-0 space-y-4">
+      <ProjectAdminNav basePath={basePath} active="workspaces"/>
+      <WorkspaceContextTabs projectId={projectId} section={section} basePath={basePath}/>
       <div role="alert" className="border-l-[3px] border-warning-border bg-warning-subtle px-4 py-3 text-sm">
         <p className="font-semibold">Workspace summary could not be loaded</p>
         <p className="mt-1 text-body">

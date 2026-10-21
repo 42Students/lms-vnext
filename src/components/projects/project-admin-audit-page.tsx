@@ -140,8 +140,10 @@ export async function ProjectAdminAuditPage({
   const legacyLink=projectLegacyAuditLink(searchParams,new Date());
   const filters = parseProjectAdminAuditQuery(legacyLink.params);
   const { eventType, importance, subjectType, subjectId, from, to } = filters;
-  const allTime=!from&&!to;
-  const pageLimit=25;
+  const allTime = !from && !to;
+  // The old Projects audit shows a wider first page for bounded date ranges;
+  // unlimited history remains cursor-paged at 25 events to prevent huge reads.
+  const pageLimit = allTime ? 25 : 200;
 
   const activityRead =
     await listActivityEvents(
@@ -410,7 +412,7 @@ export async function ProjectAdminAuditPage({
       <p role="status" className="text-xs text-body">
         Displaying {coveredEvents} raw audit actions in {result.groups.length} grouped entries.
         {partialCoverage?" Counts are minimums for this page; older events are available below.":""}
-        {" Up to 25 actions are shown per page."}
+        {` Up to ${pageLimit} actions are shown per page${allTime ? " (All time)" : " (selected date range)"}.`}
       </p>
       <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div className="flex min-w-0 flex-wrap items-center gap-3">
@@ -431,15 +433,42 @@ export async function ProjectAdminAuditPage({
         className="min-w-0 space-y-3 border-y border-border py-4">
         <h2 className="text-base font-semibold text-foreground">Resource audit trail</h2>
         <p className="text-sm text-body">Resource changes are independent of the project activity filters above. Each event is scoped to the selected workspace and college.</p>
+        <p className="text-xs text-muted-foreground">This trail includes changes to resources even when the main audit action or date filters exclude them. Sensitive file URLs and private content are redacted.</p>
         {!resourceRead?.ok?<p role="alert" className="text-sm text-error">Resource audit unavailable. Retry this workspace filter.</p>:
           resourceRead.value.rows.length===0?<p className="text-sm text-body">No resource changes recorded for this workspace.</p>:
           <ol className="divide-y divide-border border-y border-border">
-            {resourceRead.value.rows.map(event=><li key={event.id} className="min-w-0 space-y-1 py-3 text-sm">
-              <p className="font-semibold">{projectActionLabel(event.eventType)}</p>
+            {resourceRead.value.rows.map(event=><li key={event.id} className="min-w-0 space-y-2 py-3 text-sm">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                <p className="font-semibold">{projectActionLabel(event.actionType)}</p>
+                <time dateTime={event.occurredAt} className="text-xs text-muted-foreground">
+                  {projectEventTime(new Date(event.occurredAt))}
+                </time>
+              </div>
               <p className="break-words text-body">{event.summary}</p>
-              <p className="text-xs text-muted-foreground">Resource {event.resourceId} · {new Intl.DateTimeFormat("en-IN",{
-                timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
-              }).format(new Date(event.occurredAt))} IST</p>
+              <p className="break-all text-xs text-muted-foreground">Resource {event.resourceKey} · Changed by {event.actorUserId ?? "System"}{event.actorRoleSnapshot ? ` (${event.actorRoleSnapshot})` : ""}</p>
+              {event.changedFields.length ? <p className="text-xs text-body">
+                Fields changed: {event.changedFields.join(", ")}
+              </p> : null}
+              {event.resourceOrder !== null ? <p className="text-xs text-body">
+                Resource order: {event.resourceOrder}
+              </p> : null}
+              {event.beforeJson || event.afterJson ? (
+                <details className="min-w-0 rounded-[var(--lms-control-radius)] border border-border px-3 py-2">
+                  <summary className="min-h-9 cursor-pointer font-semibold text-primary-text">
+                    View resource change details
+                  </summary>
+                  <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-2">
+                    <div className="min-w-0">
+                      <h3 className="mb-2 text-xs font-semibold text-muted-foreground">Before</h3>
+                      {auditDetailValue(event.beforeJson)}
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="mb-2 text-xs font-semibold text-muted-foreground">After</h3>
+                      {auditDetailValue(event.afterJson)}
+                    </div>
+                  </div>
+                </details>
+              ) : null}
             </li>)}
           </ol>}
         {resourceRead?.ok&&resourceRead.value.hasMore?<p className="text-xs text-warning">Showing the most recent 200 resource changes; older history requires a narrower export or audit search.</p>:null}
@@ -514,7 +543,7 @@ export async function ProjectAdminAuditPage({
       </Link>:null}
 
       <p className="text-xs text-muted-foreground leading-[20px]">
-        This view shows persisted Project activity events. Use a Project subject filter to view its independent resource audit trail, including historical destructive events recorded by the activity service. Events not emitted by legacy-only action producers cannot be inferred.
+        This view shows persisted Project activity events. Filter to a project workspace to inspect its independent resource change trail. Resource snapshots are redacted, and past actions can only be displayed if they were durably recorded.
       </p>
     </div>
   );

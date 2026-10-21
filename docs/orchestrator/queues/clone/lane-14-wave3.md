@@ -31,5 +31,5 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_src_modules_people_membership-domain.ts.md` (edit src/modules/people/membership-domain.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_NEW_docs_audit_gap2_lane-16_u015-job-eligibility.md.md` (new; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_src_db_schema_lesson-content-materials.ts.md` (edit src/db/schema/lesson-content-materials.ts; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_NEW_docs_audit_gap2_lane-20_learner-verification.md.md` (new; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_NEW_docs_audit_gap2_lane-20_learner-verification.md.md` (new; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_src_db_schema_placement-public-joins.ts.md` (edit src/db/schema/placement-public-joins.ts; 1 findings; best P1)

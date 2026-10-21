@@ -741,13 +741,6 @@ export default async function HrPlacementJobPage({
               }))}
             />
           </section>
-          {!driveOverview.readOnly ? <HrSelectionProposalComposer
-            jobTitle={workspace.job.title}
-            candidates={applicants.rows.filter(applicant => selectionReadyIds.has(applicant.id))
-              .map(applicant => ({ applicationId: applicant.id, name: applicant.name || "Candidate" }))}
-            minAnnualCtcInr={workspace.job.minimumAnnualCtcInr}
-            maxAnnualCtcInr={workspace.job.maximumAnnualCtcInr}
-          /> : null}
           <Tabs renderPanel={false} ariaLabel="Offer status" value={filters.offerState}
             items={HR_OFFER_STATES.map(status=>({value:status,
               label:status==="ALL"?"All statuses":status==="PENDING_VERIFICATION"?"Verified, awaiting release":

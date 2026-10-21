@@ -300,7 +300,7 @@ export async function getBugTrackerIssueForAdmin(
   // Gallery uses the historical attachment order (oldest first) within each
   // bounded page. The cursor stays on the last raw DESC row for stable paging.
   const attachments=attachmentRows.slice(0,50).reverse();
-  const lastAttachment=attachments.at(-1);
+  const lastAttachment=attachmentRows.slice(0,50).at(-1);
   const last=activities.at(-1);
   // Audit the *successful* account-based view, never raw IP, headers,
   // signed media links, engineering notes or private attachment keys.

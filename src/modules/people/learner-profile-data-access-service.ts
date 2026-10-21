@@ -1,5 +1,5 @@
 import "server-only";
-import {and,desc,eq,sql} from "drizzle-orm";
+import {and,desc,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementJobs,placementCompanyRelationships,placementCompanies} from "@/db/schema";
 import {placementCompanyShareSelections} from "@/db/schema/placement-company-share-selection";
@@ -13,15 +13,25 @@ import {requireOwnLearnerProfileAccess} from "./learner-profile-access-service";
  * college memberships; every share is tied to that application's exact job
  * and tenant before any company name or access event is returned.
  */
-export async function getOwnLearnerProfileDataActions(context:RequestContext){
+
+export const LEARNER_PROFILE_SHARE_PAGE_SIZE=25;
+
+/** Page share records (not raw activity rows) so one heavily accessed link
+ * cannot crowd other shares out of the learner's history. Access events are
+ * aggregated for the 25 authorized shares in one indexed query.
+ */
+export async function getOwnLearnerProfileSharePage(
+ context:RequestContext,pageInput=1,
+){
  await requireOwnLearnerProfileAccess(context);
- const rows=await getDb().select({
+ const page=Number.isSafeInteger(pageInput)&&pageInput>=1&&pageInput<=10000?pageInput:1;
+ const db=getDb();
+ const all=await db.selectDistinct({
   shareId:placementCompanyApplicantShares.id,
+  collegeId:placementCompanyApplicantShares.collegeId,
   companyName:placementCompanies.name,
   jobTitle:placementJobs.title,
   sharedAt:placementCompanyApplicantShares.createdAt,
-  accessAt:placementCompanyApplicantShareViews.occurredAt,
-  eventKind:placementCompanyApplicantShareViews.eventKind,
  }).from(placementCompanyShareSelections)
  .innerJoin(placementApplications,eq(placementApplications.id,placementCompanyShareSelections.applicationId))
  .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
@@ -38,23 +48,51 @@ export async function getOwnLearnerProfileDataActions(context:RequestContext){
   eq(placementCompanyRelationships.collegeId,placementJobs.collegeId),
  ))
  .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
- .leftJoin(placementCompanyApplicantShareViews,and(
-  eq(placementCompanyApplicantShareViews.shareId,placementCompanyApplicantShares.id),
-  eq(placementCompanyApplicantShareViews.collegeId,placementJobs.collegeId),
- ))
  .where(eq(collegeMemberships.userId,context.user.id))
- .orderBy(desc(sql`coalesce(${placementCompanyApplicantShareViews.occurredAt}, ${placementCompanyApplicantShares.createdAt})`),
-   desc(placementCompanyApplicantShares.id))
- .limit(50);
- return rows.map(row=>({
-  occurredAt:row.accessAt??row.sharedAt,
-  summary:row.eventKind==="CSV"
-    ? `A company share containing your application for ${row.jobTitle} at ${row.companyName} was exported. This does not prove your row was read.`
-    :row.eventKind==="VIEW"
-     ? `A company share containing your application for ${row.jobTitle} at ${row.companyName} was opened. Individual row access is not recorded.`
-     :row.eventKind==="LOCKED"
-      ? `An access attempt on a company share for ${row.jobTitle} at ${row.companyName} was blocked.`
-      :`Your application for ${row.jobTitle} was included in a company shortlist share for ${row.companyName}.`,
-  eventType:row.eventKind??"COMPANY_SHARE_CREATED",
- }));
+ .orderBy(desc(placementCompanyApplicantShares.createdAt),
+  desc(placementCompanyApplicantShares.id))
+ .limit(LEARNER_PROFILE_SHARE_PAGE_SIZE+1)
+ .offset((page-1)*LEARNER_PROFILE_SHARE_PAGE_SIZE);
+ const hasMore=all.length>LEARNER_PROFILE_SHARE_PAGE_SIZE;
+ const shares=all.slice(0,LEARNER_PROFILE_SHARE_PAGE_SIZE);
+ const access=shares.length?await db.select({
+   shareId:placementCompanyApplicantShareViews.shareId,
+   collegeId:placementCompanyApplicantShareViews.collegeId,
+   openedAt:sql<Date|null>`min(${placementCompanyApplicantShareViews.occurredAt}) filter (where ${placementCompanyApplicantShareViews.eventKind} = 'VIEW')`,
+   exportedAt:sql<Date|null>`min(${placementCompanyApplicantShareViews.occurredAt}) filter (where ${placementCompanyApplicantShareViews.eventKind} = 'CSV')`,
+   blockedAt:sql<Date|null>`min(${placementCompanyApplicantShareViews.occurredAt}) filter (where ${placementCompanyApplicantShareViews.eventKind} = 'LOCKED')`,
+  }).from(placementCompanyApplicantShareViews)
+  .where(inArray(placementCompanyApplicantShareViews.shareId,shares.map(row=>row.shareId)))
+  .groupBy(placementCompanyApplicantShareViews.shareId,placementCompanyApplicantShareViews.collegeId):[];
+ const events=new Map(access.map(row=>[row.shareId+":"+row.collegeId,row] as const));
+ const rows=shares.flatMap(share=>{
+  const record=events.get(share.shareId+":"+share.collegeId);
+  const label=share.jobTitle+" at "+share.companyName;
+  const activity=[
+   record?.openedAt?{occurredAt:record.openedAt,
+    summary:"A company share containing your application for "+label+" was opened. Individual row access is not recorded.",
+    eventType:"VIEW"}:null,
+   record?.exportedAt?{occurredAt:record.exportedAt,
+    summary:"A company share containing your application for "+label+" was exported. This does not prove your row was read.",
+    eventType:"CSV"}:null,
+   record?.blockedAt?{occurredAt:record.blockedAt,
+    summary:"An access attempt on a company share for "+label+" was blocked.",
+    eventType:"LOCKED"}:null,
+  ].filter((entry):entry is {occurredAt:Date;summary:string;eventType:string}=>entry!==null)
+    .sort((a,b)=>b.occurredAt.getTime()-a.occurredAt.getTime()||
+      a.eventType.localeCompare(b.eventType));
+  return [...activity,{
+   occurredAt:share.sharedAt,
+   summary:"Your application for "+share.jobTitle+
+    " was included in a company shortlist share for "+share.companyName+".",
+   eventType:"COMPANY_SHARE_CREATED",
+  }];
+ });
+ // This is a read-only history. Do not dispatch email or create notifications.
+ return {page,pageSize:LEARNER_PROFILE_SHARE_PAGE_SIZE,hasMore,rows};
+}
+
+/** Backwards-compatible first page for existing learner profile callers. */
+export async function getOwnLearnerProfileDataActions(context:RequestContext){
+ return (await getOwnLearnerProfileSharePage(context)).rows;
 }

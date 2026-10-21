@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Drawer } from "@/components/ui/drawer";
 import { useToast } from "@/components/ui/toast";
+import {reportApiFailure,reportVideoFailure,reportUploadFailure} from "@/lib/report-client-error";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { LoadingState } from "@/components/ui/loading-state";
@@ -67,7 +68,7 @@ export function FacultyLessonVideoManager({
     controllerRef.current=controller;
     async function load(){
       try{await list(controller.signal);}
-      catch(cause){if(!controller.signal.aborted)setError(cause instanceof Error?cause.message:"Could not load videos.");}
+      catch(cause){if(!controller.signal.aborted){reportVideoFailure(cause);setError(cause instanceof Error?cause.message:"Could not load videos.");}}
       finally{if(!controller.signal.aborted)setLoading(false);}
     }
     void load();
@@ -84,7 +85,11 @@ export function FacultyLessonVideoManager({
       try{await action(controller.signal);}
       catch(cause){
         if(!controller.signal.aborted){
+          if(failureTitle?.toLowerCase().includes("upload"))reportUploadFailure(cause);
+          else if(failureTitle?.toLowerCase().includes("video"))reportVideoFailure(cause);
+          else reportApiFailure(cause);
           const detail=cause instanceof Error?cause.message:"Could not update lesson video.";
+
           setError(detail);
           if(failureTitle)showToast({tone:"error",title:failureTitle,description:detail});
         }

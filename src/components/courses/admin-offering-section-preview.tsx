@@ -1,8 +1,11 @@
+"use client";
+import {useRef} from "react";
 import type {listOfferingSectionPreview} from "@/modules/courses/college-offering-section-preview-service";
 import { Select } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { StatusBadge } from "@/components/ui/status-badge";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 
 type Preview=Awaited<ReturnType<typeof listOfferingSectionPreview>>;
 function ItemList({items}:{items:readonly {
@@ -21,29 +24,46 @@ function ItemList({items}:{items:readonly {
  </li>)}</ul>;
 }
 export function AdminOfferingSectionPreview({data}:{data:Preview}){
+ const form=useRef<HTMLFormElement>(null);
+ const hasMultipleClasses=data.options.length>1||data.truncated;
  return <section id="section-content" className="min-w-0 scroll-mt-24 space-y-[var(--lms-space-4)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]"
   aria-label="Section course content">
-  <div className="space-y-1">
-   <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Section content</h2>
-   <p className="max-w-[75ch] text-sm leading-5 text-muted-foreground">Select a Section to see its authorized shared and Section-specific learning items. This is not an impersonated learner session.</p>
-  </div>
-  <form method="get" className="grid min-w-0 items-end gap-[var(--lms-space-3)] md:grid-cols-[minmax(0,1fr)_auto]">
-   <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
-    <Select className="min-h-11 md:min-h-9"
-     name="deliveryId" defaultValue={data.selected?.deliveryId??""}>
-     <option value="">Shared Learning Path overview (select a Section for its syllabus)</option>
+  <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+   <div className="space-y-1">
+    <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Lessons</h2>
+    <p className="max-w-[75ch] text-sm leading-5 text-muted-foreground">
+     {data.selected?"What the selected class can see, including shared lessons and section-specific items.":"All content in this course (every section)"}
+    </p>
+   </div>
+   {hasMultipleClasses?<form ref={form} method="get" className="min-w-0 max-w-full">
+    <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]" htmlFor="offering-class-filter">Class</label>
+    <Select id="offering-class-filter" className="mt-2 w-[220px] max-w-full min-h-11 md:min-h-9"
+     name="deliveryId" value={data.selected?.deliveryId??""}
+     onChange={()=>form.current?.requestSubmit()}>
+     <option value="">All content in this course (every section)</option>
      {data.options.map(item=><option value={item.deliveryId} key={item.deliveryId}>
-      {item.sectionName} ({item.sectionCode})
+      {item.sectionName}: what its students see
      </option>)}
     </Select>
-   </label>
-   <Button variant="primary" type="submit" className="min-h-11 w-full justify-center md:min-h-9 md:w-auto">View Section</Button>
-  </form>
-  {data.invalid?<Alert tone="error">The selected Section is unavailable for this Course Offering.</Alert>:null}
-  {data.truncated?<Alert tone="info">Only the first 200 active Sections are listed. A selected Section outside this list is verified independently; use Section management for the full directory.</Alert>:null}
-  {data.selected?<div className="space-y-3">
-   <p className="text-sm font-semibold">Viewing {data.selected.sectionName} ({data.selected.sectionCode})</p>
-   <Alert tone="info">The student-visible summary below is scoped to this Section and publication flags only. It does not represent a specific learner's enrollment, release conditions or progress, and does not expose private file, video or meeting URLs.</Alert>
+   </form>:null}
+  </div>
+  {data.invalid?<Alert tone="error">The selected Section is unavailable for this Course Offering. <a href="#section-content" className="font-semibold underline">Retry</a></Alert>:null}
+  {data.truncated?<Alert tone="info">
+    The class picker shows the first 200 active sections. To inspect a class outside this list, use its authorized delivery ID below.
+    <form method="get" className="mt-2 flex flex-wrap items-center gap-2">
+     <label htmlFor="additional-section-id" className="text-[13px] font-semibold">Section delivery ID</label>
+     <Input id="additional-section-id" name="deliveryId" type="text" pattern="[0-9a-fA-F-]{36}" maxLength={36}
+      placeholder="Delivery UUID" className="w-[240px] max-w-full"/>
+     <Button type="submit" >Find class</Button>
+    </form>
+   </Alert>:null}
+  {!data.invalid?<div className="space-y-3">
+   <p className="text-sm font-semibold">{data.selected
+    ? `Viewing ${data.selected.sectionName} (${data.selected.sectionCode})`
+    : "All content in this course (every section)"}</p>
+   <Alert tone="info">{data.selected
+    ? "The student-visible summary is scoped to this Section and publication flags only. It does not represent a specific learner's enrollment, release conditions or progress, and does not expose private file, video or meeting URLs."
+    : "All content is grouped by lesson. Section-specific items may be visible only to students in their assigned class; shared items are listed once."}</Alert>
    {data.lessons.map(lesson=><div key={lesson.id} className="space-y-3 border-b border-border py-4">
     <h3 className="flex min-w-0 flex-wrap items-center gap-2 font-semibold text-foreground">{lesson.name}
      <StatusBadge tone={lesson.visibleToStudents?"success":"neutral"}>{lesson.visibleToStudents?"Lesson visible":"Lesson hidden"}</StatusBadge>
@@ -62,6 +82,6 @@ export function AdminOfferingSectionPreview({data}:{data:Preview}){
      <ItemList items={lesson.quizzes}/></div>
    </div>)}
    {!data.lessons.length?<p className="text-sm text-muted-foreground">No Lessons have been created for this offering.</p>:null}
-  </div>:!data.invalid?<p className="text-xs text-muted-foreground">No Section selected. The shared Learning Path is shown in the overview; choose a Section above to inspect its combined shared and Section-specific content. An all-Section combined view is not available here.</p>:null}
+  </div>:null}
  </section>;
 }
