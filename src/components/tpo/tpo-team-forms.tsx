@@ -75,18 +75,18 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
  }
  return <form onSubmit={event=>void create(event)} className="mt-4 grid gap-3 border-t border-border pt-4">
   <h3 className="font-semibold text-foreground">Start a private placement team conversation</h3>
-  <label className="grid gap-1 text-sm text-body">Team member
+  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Team member
    <Select required value={recipient} onChange={event=>updateDraft(event.target.value,topic)} disabled={busy}
     className="min-h-11 md:min-h-9">
     <option value="">Choose an active placement team colleague</option>
     {members.map(member=><option key={member.membershipId} value={member.membershipId}>{member.displayName}</option>)}
    </Select>
   </label>
-  <label className="grid gap-1 text-sm text-body">Topic
+  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Topic
    <Input required value={topic} onChange={event=>updateDraft(recipient,event.target.value)} maxLength={200} disabled={busy}
     className="min-h-11 md:min-h-9" placeholder="Drive coordination"/>
   </label>
-  <label className="grid gap-1 text-sm text-body">First message (optional)
+  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First message (optional)
    <Textarea value={firstMessage} maxLength={4000} rows={3} disabled={busy}
     onChange={event=>updateDraft(recipient,topic,event.target.value)}
     className="w-full" placeholder="Tell the team what this is about"/>
@@ -143,7 +143,7 @@ export function TpoTeamReplyComposer({threadId,actorUserId}:{threadId:string;act
  return <form onSubmit={event=>{event.preventDefault();void send();}}
    className="space-y-3 border-b border-border py-4">
   <h2 className="font-semibold text-foreground">Reply privately</h2>
-  <label className="grid gap-1 text-sm text-body">Message
+  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
    <Textarea required value={body} maxLength={4000} rows={4} disabled={busy}
     onChange={event=>changeBody(event.target.value)}
     onKeyDown={event=>{
