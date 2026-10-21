@@ -856,3 +856,22 @@ This redirect currently drops original searchParams. Restoring selected, validat
 - G2-6-032-030 | `src/modules/storage/file-lifecycle.ts + client playback refresh` | Make URL refresh seamless near expiry and document 60-vs-120-minute default.
 
 4900 MiB single-PUT size cap and private scanned-file model are intentional vNext safeguards; do not promise 5120 MiB uploads or public URLs. **5/5 handed off, not fixed.**
+
+## TPO batch detail — lane-7 handoff (2026-10-21)
+
+- G2-14-029-011 | `src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx` | Make all filters operate over full cohort before paging.
+- G2-14-029-012 | `src/components/tpo/tpo-bulk-action-panel.tsx` | Expose full selection semantics and explicit per-page limits.
+- G2-14-029-022 | `src/app/(authenticated)/tpo/batches/[batchId]/page.tsx` | Partial readiness for optional sources rather than full failure.
+- G2-14-029-027 | `src/app/(authenticated)/tpo/batches/[batchId]/page.tsx` | Render partial/stale banners with retry controls.
+- G2-14-029-019 | `src/components/tpo/tpo-batch-reminder-prep.tsx` | Match literal success notices.
+
+Cohort-wide filtering and selection must not act on only current page under an all-visible label. **5/5 handed off, not fixed.**
+
+## R2 storage activation condition — lane-7 handoff (2026-10-21)
+
+- G2-2-002-007 | `src/modules/storage/r2-config.ts` | Align deployment readiness semantics; ensure missing secret/bucket fails closed with explicit setup instructions.
+- G2-2-002-010 | `src/modules/storage/file-lifecycle.ts` | Handle missing config at per-feature boundary with typed 503/configure message; ensure other unrelated routes remain functional.
+- G2-2-002-017 | `docs/architecture/file-and-video-apis.md + src/modules/storage/r2-config.ts` | Document new all-or-nothing readiness invariant and ensure all provisioning guides reflect it.
+- G2-2-002-019 | `src/modules/storage/file-lifecycle.ts` | Ensure consumers show unavailable capability rather than 500, and avoid loading dependent route before guard.
+
+Do not relax strict account/key/bucket guard to match legacy one-flag readiness; unavailable R2 should return a localized typed 503 instead of breaking unrelated pages. **4/4 handed off, not fixed.**

@@ -103,3 +103,7 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 - `NEW_docs_audit_gap2_lane-7_u009-college-admin-workspace-index.md.md` | 6/6 findings reviewed and routed by ID. 0 out-of-area source edits. Projects owner to preserve whitelisted query context, validate UUID and avoid unauthorized lookups; not fixed. Static only, no CI.
 
 - `NEW_docs_audit_gap2_lane-6_cross-06-files-uploads-media-storage.md.md` | 5/5 findings reviewed and routed by ID. 0 out-of-area source edits. Storage/Projects owner to preserve private signed downloads, upload caps, grant scope and user-visible errors; not fixed. Static only, no CI.
+
+- `NEW_docs_audit_gap2_lane-6_l14-u029-tpo-batch-detail.md.md` | 5/5 findings read and logged as cross-lane handoffs. 0 out-of-area edits. Full-cohort server filters, cross-page bulk controls, independent readiness panels belong to TPO; not fixed. No execution/CI.
+
+- `NEW_docs_audit_gap2_lane-2_r2-condition.md.md` | 4/4 findings read and logged as cross-lane handoffs. 0 out-of-area edits. Private R2 configuration intentionally requires all credentials and fails closed; contextual 503 and docs belong to Storage; not fixed. No execution/CI.
