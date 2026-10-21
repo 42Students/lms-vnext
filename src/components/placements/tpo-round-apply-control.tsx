@@ -40,15 +40,15 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
   }catch(e){setError(e instanceof Error?e.message:"Results could not be applied");}finally{setBusy(false);}
  }
  return <section className="space-y-3 border-b border-border pb-6">
-  <h2 className="font-semibold text-foreground">Apply results for the whole round</h2>
-  <p className="text-sm text-body">Preview who passes, is not cleared, is waitlisted or marked absent, then confirm the full round in one step. Applied results cannot be edited.</p>
+  <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Apply results for the whole round</h2>
+  <p className="text-sm text-body leading-[22px]">Preview who passes, is not cleared, is waitlisted or marked absent, then confirm the full round in one step. Applied results cannot be edited.</p>
   <Button variant="secondary" type="button" disabled={busy} onClick={()=>void load()}
    >
    {busy?"Working…":"Preview applying round results"}</Button>
   {preview?<div role="region" aria-label="Round application preview" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
    <h3 className="font-semibold">Consequence preview</h3>
-   <p className="text-sm">{preview.staged} staged results to apply; {preview.applied} already applied (unchanged).</p>
-   <dl className="grid grid-cols-1 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface text-sm sm:grid-cols-4">
+   <p className="text-sm leading-[22px]">{preview.staged} staged results to apply; {preview.applied} already applied (unchanged).</p>
+   <dl className="grid grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface text-sm sm:grid-cols-4">
     <div className="border-b border-border p-3 sm:border-r sm:border-b-0"><dt>Cleared → {preview.destinations.PASS}</dt><dd className="font-semibold">{preview.outcomes.PASS}</dd></div>
     <div className="border-b border-border p-3 sm:border-r sm:border-b-0"><dt>Not cleared</dt><dd className="font-semibold">{preview.outcomes.FAIL}</dd></div>
     <div className="border-b border-border p-3 sm:border-r sm:border-b-0"><dt>Waitlisted</dt><dd className="font-semibold">{preview.outcomes.HOLD}</dd></div>
@@ -59,7 +59,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
      <span>{r.student}</span><span>{r.outcome} → {r.destination} · {r.status}</span>
     </div>)}
    </div>
-   <p className="text-xs text-body">{preview.skippedUnrecordedNote}</p>
+   <p className="text-xs text-body leading-[20px]">{preview.skippedUnrecordedNote}</p>
    <Button variant="secondary" type="button" onClick={()=>downloadRoundCsv(
     roundApplyPreviewCsv(preview.rows),"round-"+roundId+"-apply-preview.csv")}
     >
