@@ -24,7 +24,7 @@ export async function updateProjectWorkspaceBrief(context:RequestContext,project
   // definitionOfDone. A strict edit of the five native fields must not
   // erase unrelated persisted JSON keys; a deliberate empty native field
   // still clears that native field. Only DB-sourced keys are carried.
-  if(project.status==="ACTIVE"){
+  if(scope.access==="ADMIN"||project.status==="ACTIVE"){
    const issue=publishedWorkspaceBriefError(input.brief);
    if(issue)throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
   }
@@ -33,7 +33,10 @@ export async function updateProjectWorkspaceBrief(context:RequestContext,project
     ?prior as Record<string,unknown>:{};
   // Preserve any historical 'definitionOfDone' key as unedited data, but
   // the native completionConditions is authoritative once explicitly edited.
-  const mergedBrief={...original,...input.brief};
+  const mergedBrief={
+    ...original,...input.brief,
+    definitionOfDone:input.brief.completionConditions,
+  };
   const [updated]=await tx.update(projectInstances).set({
     authoredBrief:mergedBrief,
     updatedAt:new Date(Math.max(Date.now(),project.updatedAt.getTime()+1)),

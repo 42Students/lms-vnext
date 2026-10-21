@@ -43,12 +43,12 @@ export async function AdminProjectSectionPage({
   }
 
   const context = await getCurrentRequestContext();
-  if(section==="delivery"&&!isSuperAdmin(context)&&!context.membership?.collegeId){
-    return <section className="space-y-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4" role="alert">
-      <h2 className="font-semibold">Admin not assigned to a college</h2>
-      <p>You must be assigned to a college to view project workspaces.</p>
-      <Link href={basePath} className="text-link underline">Projects</Link>
-    </section>;
+  if (!getProjectAdminCollegeId(context)) {
+    return <ErrorState title="Admin not assigned to a college"
+      description="You must be assigned to a college to view project workspaces. Choose a college in the header to continue."
+      action={<Link href={basePath} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">
+        Back to workspaces
+      </Link>} />;
   }
   // Read failures never disclose a foreign-college workspace; only in-scope
   // misses and unexpected load errors get the legacy recoverable inline state.
