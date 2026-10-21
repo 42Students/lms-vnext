@@ -18,6 +18,8 @@
 
 CREATE TABLE sms_delivery_attempts (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  -- Historic MySQL integer IDs are references only; never replace the UUID PK.
+  legacy_integer_id bigint UNIQUE NULL CHECK (legacy_integer_id > 0),
 
   -- Login OTP can be pre-membership/global. When a producer has tenant context,
   -- persist both and prove their relationship in the trigger below.
@@ -89,17 +91,17 @@ CREATE TABLE sms_delivery_attempts (
 );
 
 CREATE INDEX db31_sms_attempt_created_idx
-  ON sms_delivery_attempts (created_at DESC);
+  ON sms_delivery_attempts (created_at DESC, id DESC);
 
 CREATE INDEX db31_sms_attempt_suffix_purpose_idx
-  ON sms_delivery_attempts (recipient_suffix, purpose, created_at DESC);
+  ON sms_delivery_attempts (recipient_suffix, purpose, created_at DESC, id DESC);
 
 CREATE INDEX db31_sms_attempt_college_purpose_idx
-  ON sms_delivery_attempts (college_id, purpose, created_at DESC)
+  ON sms_delivery_attempts (college_id, purpose, created_at DESC, id DESC)
   WHERE college_id IS NOT NULL;
 
 CREATE INDEX db31_sms_attempt_source_event_idx
-  ON sms_delivery_attempts (source_event_id, created_at DESC)
+  ON sms_delivery_attempts (source_event_id, created_at DESC, id DESC)
   WHERE source_event_id IS NOT NULL;
 
 -- If tenant context is supplied, never accept a forged organization/college
@@ -145,7 +147,7 @@ FOR EACH ROW EXECUTE FUNCTION db31_block_sms_attempt_mutation();
 
 -- Source-status mapping for future writer cutover:
 --   legacy status='SENT'   -> outcome='PROVIDER_ACCEPTED',
---     provider_message_id + provider_accepted_at=now()
+--     provider_message_id + authentic provider acceptance timestamp when known
 --   legacy status='FAILED' -> outcome='FAILED',
 --     safe failure code/summary; never provider response body containing secrets.
 --
@@ -202,7 +204,7 @@ SET search_path=pg_catalog,public AS $$
     AND (p_recipient_suffix IS NULL OR p_recipient_suffix ~ '^[0-9]{1,4}$')
     AND (p_purpose IS NULL OR length(btrim(p_purpose)) BETWEEN 1 AND 64)
   ORDER BY a.created_at DESC, a.id DESC
-  LIMIT GREATEST(1,LEAST(COALESCE(p_limit,50),100));
+  LIMIT GREATEST(1,LEAST(COALESCE(p_limit,50),200));
 $$;
 
 -- PostgreSQL grants EXECUTE ON FUNCTION to PUBLIC by default. This helper
@@ -230,3 +232,70 @@ REVOKE ALL ON TABLE sms_delivery_attempts FROM PUBLIC;
 -- 4. Read API uses this function, no unscoped arbitrary tenant option.
 -- 5. Confirm index scans for suffix+purpose and descending recent view, and
 --    verify redaction and append-only behavior. No CI/runtime check here.
+
+-- Legacy support page contract: 0-based page, 50 default, maximum 200.
+-- Only a dedicated global support DB principal should be able to call this.
+-- The API layer must authorize that principal and never expose arbitrary
+-- college scope or the raw phone number to ordinary college administrators.
+-- Intentional distinction: provider attempts are SENT/FAILED in legacy,
+-- PROVIDER_ACCEPTED/FAILED here; QUEUED/SUPPRESSED belong to command receipts.
+CREATE OR REPLACE FUNCTION db31_sms_attempt_page_for_support(
+  p_recipient_suffix text DEFAULT NULL,
+  p_purpose text DEFAULT NULL,
+  p_page integer DEFAULT 0,
+  p_size integer DEFAULT 50
+) RETURNS jsonb
+LANGUAGE plpgsql STABLE SECURITY INVOKER
+SET search_path = pg_catalog,public AS $$
+DECLARE
+  suffix_digits text;
+  suffix_filter text;
+  purpose_filter text;
+  page_number integer := GREATEST(COALESCE(p_page,0),0);
+  page_size integer := GREATEST(1,LEAST(COALESCE(p_size,50),200));
+  count_rows bigint;
+  page_items jsonb;
+BEGIN
+  suffix_digits := regexp_replace(COALESCE(p_recipient_suffix,''),'[^0-9]','','g');
+  IF NULLIF(btrim(COALESCE(p_recipient_suffix,'')),'') IS NOT NULL AND suffix_digits = '' THEN
+    RAISE EXCEPTION 'recipientSuffix must include digits' USING ERRCODE = '22023';
+  END IF;
+  suffix_filter := NULLIF(right(suffix_digits,4),'');
+  purpose_filter := NULLIF(btrim(COALESCE(p_purpose,'')),'');
+  IF purpose_filter IS NOT NULL AND length(purpose_filter) > 64 THEN
+    RAISE EXCEPTION 'purpose is too long' USING ERRCODE = '22023';
+  END IF;
+  SELECT count(*) INTO count_rows FROM public.sms_delivery_attempts a
+  WHERE (suffix_filter IS NULL OR a.recipient_suffix = suffix_filter)
+    AND (purpose_filter IS NULL OR a.purpose = purpose_filter);
+
+  SELECT COALESCE(jsonb_agg(to_jsonb(page_row) ORDER BY page_row.created_at DESC,page_row.id DESC),'[]'::jsonb)
+    INTO page_items
+  FROM (
+    SELECT a.id,a.legacy_integer_id,a.purpose,a.recipient_suffix,a.provider,
+      a.outcome,a.safe_failure_code,a.safe_failure_summary,
+      a.created_at,a.provider_accepted_at
+    FROM public.sms_delivery_attempts a
+    WHERE (suffix_filter IS NULL OR a.recipient_suffix = suffix_filter)
+      AND (purpose_filter IS NULL OR a.purpose = purpose_filter)
+    ORDER BY a.created_at DESC,a.id DESC
+    LIMIT page_size OFFSET (page_number::bigint * page_size)
+  ) page_row;
+  RETURN jsonb_build_object(
+    'items',page_items,'page',page_number,'size',page_size,
+    'total',count_rows,'totalPages',CEIL(count_rows::numeric/page_size)::integer
+  );
+END;
+$$;
+
+REVOKE ALL ON FUNCTION db31_sms_attempt_page_for_support(text,text,integer,integer) FROM PUBLIC;
+
+-- For a future historic import, interpret source MySQL DATETIME(6) in its
+-- actual source timezone (IST only if the export is confirmed IST):
+--   (legacy_created_at::timestamp AT TIME ZONE 'Asia/Kolkata')
+-- Map legacy 'SENT' to PROVIDER_ACCEPTED without inventing receipt/handset
+-- delivery times. Keep legacy_integer_id for stable support citations and
+-- sanitized purpose values such as otp, job.update, attendance.absence.
+-- Retention is append-only; purge only via an approved retention migration.
+-- Admin-facing suffix and purpose controls, retries and empty states must
+-- consume the paginated support API once the schema lane registers this table.

@@ -7,7 +7,6 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useId, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { facultyLifecycleConfirmation } from "@/modules/people/college-faculty-lifecycle-model";
 
 export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
   membershipId: string; name: string; status: "ACTIVE" | "SUSPENDED" | "ENDED";
@@ -28,6 +27,7 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
   }
   if (status === "ENDED") return null;
   const action = status === "ACTIVE" ? "DEACTIVATE" : "REACTIVATE";
+  const actionLabel=action==="DEACTIVATE"?"Suspend Faculty":"Reactivate Faculty";
   function submit() {
     if (pendingRef.current || busy) return;
     if (action === "DEACTIVATE" && reason.trim().length < 3) {
@@ -50,8 +50,11 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
         if (!response.ok) {
           const raw: unknown = await response.json().catch(() => null);
           const detail = raw && typeof raw === "object" ? raw as Record<string,unknown> : {};
-          let guidance = response.status === 403
-            ? "You do not have permission to change this faculty membership."
+          let guidance = response.status === 401 ? "Sign in again to update faculty access."
+            : response.status === 403 ? "You do not have permission to change this faculty membership."
+            : response.status === 404 ? "Faculty membership was not found in this college."
+            : response.status === 409 ? "The faculty membership changed. Refresh the directory before retrying."
+            : response.status >= 500 ? "The service is unavailable. Try again."
             : "Refresh the faculty directory and try again.";
           if (detail.error === "FACULTY_HAS_ACTIVE_PROJECTS") {
             const count = detail.activeMentorProjects;
@@ -73,7 +76,7 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
         setSuccess(action==="DEACTIVATE"?"Faculty suspended":"Faculty reactivated");
         router.refresh();
       } catch (reasonError) {
-        setError(reasonError instanceof Error ? reasonError.message : "Failed to update faculty membership.");
+        setError(reasonError instanceof TypeError ? "Unable to reach the server. Check your connection and retry." : reasonError instanceof Error ? reasonError.message : "Failed to update faculty membership.");
       } finally {
         pendingRef.current = false;
       }
@@ -82,8 +85,12 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
   return <div className="mt-[var(--lms-space-3)] min-w-0 space-y-[var(--lms-space-3)]">
     <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:items-center">
       <Button variant="secondary" type="button" onClick={() => setOpen(true)} disabled={busy}
-        className="min-h-11 w-full sm:w-auto md:min-h-9">
-        {action === "DEACTIVATE" ? "Suspend Faculty" : "Reactivate Faculty"}
+        aria-label={actionLabel+" "+name} title={actionLabel+" "+name}
+        className="min-h-11 w-full sm:w-9 sm:px-2 md:min-h-9">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+          {action==="DEACTIVATE"?<><circle cx="12" cy="12" r="9"/><path d="M6 18 18 6"/></>:<><circle cx="12" cy="12" r="9"/><path d="m7 12 3 3 7-7"/></>}
+        </svg>
+        <span className="sr-only">{actionLabel}</span>
       </Button>
       <Link href={`/college/activity?subjectType=college_membership&subjectId=${encodeURIComponent(membershipId)}`}
         className="inline-flex min-h-11 w-full items-center justify-center text-xs font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">Audit history</Link>
@@ -91,10 +98,10 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
     {success?<Alert tone="success">{success}</Alert>:null}
     {!editing && error?<Alert tone="error">{error}</Alert>:null}
     <ConfirmDialog open={editing} onOpenChange={setOpen}
-      title={facultyLifecycleConfirmation(name,action)}
+      title={actionLabel}
       description={action==="DEACTIVATE"
-        ? "Suspension immediately blocks access through this college membership, but does not necessarily revoke sessions or block login through other active memberships. Data and history are preserved, and this action is reversible. Supply a reason before confirming."
-        : "Reactivation restores access through this college membership. It does not change another membership or override platform-wide login restrictions."}
+        ? "Faculty: "+name+". Suspension immediately blocks access through this college membership, but does not necessarily revoke sessions or block login through other active memberships. Data and history are preserved, and this action is reversible. Supply a reason before confirming."
+        : "Faculty: "+name+". Reactivation restores access through this college membership. It does not change another membership or override platform-wide login restrictions."}
       confirmLabel={action==="DEACTIVATE"?"Confirm suspension":"Confirm reactivation"}
       confirmVariant={action==="DEACTIVATE"?"danger":"primary"} pending={busy}
       confirmDisabled={action==="DEACTIVATE"&&reason.trim().length<3}
@@ -106,7 +113,7 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
             onChange={e=>{setReason(e.target.value);if(error)setError("");}} className="min-h-11 w-full md:min-h-9"/>
           <span id={`${reasonId}-hint`} className="text-xs font-normal leading-5 text-body">At least 3 characters are required.</span>
         </label>:null}
-        {error?<Alert tone="error">{error}</Alert>:null}
+        {error?<Alert tone="error">{error} {error.includes("Sign in again")?<Link href="/login" className="font-semibold underline">Sign in</Link>:null}</Alert>:null}
       </div> : null}
     </ConfirmDialog>
   </div>;
