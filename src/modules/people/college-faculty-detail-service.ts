@@ -78,7 +78,7 @@ export async function getCollegeFacultyDetail(
     startedAt: sql<Date>`${courseTeachingAssignments.startedAt}`.mapWith(courseTeachingAssignments.startedAt).as("assignment_started_at"),
     endedAt: sql<Date | null>`${courseTeachingAssignments.endedAt}`.mapWith(courseTeachingAssignments.endedAt).as("assignment_ended_at"),
     deliveryEndedAt: sql<Date | null>`${courseSectionDeliveries.endedAt}`.mapWith(courseSectionDeliveries.endedAt).as("delivery_ended_at"),
-    offeringId: sql<string>`case when ${authorizedAcademicContext} then ${courseOfferings.id} else '' end`.as("offering_id"),
+    offeringId: sql<string|null>`case when ${authorizedAcademicContext} then ${courseOfferings.id} else null end`.as("offering_id"),
     courseName: sql<string|null>`case when ${authorizedAcademicContext} then ${courses.name} else null end`.as("course_name"),
     courseId: sql<string|null>`case when ${authorizedAcademicContext} then ${courses.id} else null end`.as("course_id"),
     courseSlug: sql<string|null>`case when ${authorizedAcademicContext} then ${courses.slug} else null end`.as("course_slug"),
@@ -124,7 +124,9 @@ export async function getCollegeFacultyDetail(
     filter.status === "ACTIVE" ? and(isNull(base.endedAt),isNull(base.deliveryEndedAt)) :
     filter.status === "ENDED" ? or(isNotNull(base.endedAt),isNotNull(base.deliveryEndedAt)) : undefined,
   );
-  const [totals, filtered, rows] = await Promise.all([
+  // Clamp the requested page before fetching rows: old deep links may
+  // point beyond the last page after a teaching-assignment reassignment.
+  const [totals, filtered] = await Promise.all([
     db.select({
       total: count(),
       active: sql<number>`count(*) filter (where ${base.endedAt} is null and ${base.deliveryEndedAt} is null)`.mapWith(Number),
@@ -134,12 +136,13 @@ export async function getCollegeFacultyDetail(
       distinctPrograms: sql<number>`count(distinct ${base.programName})`.mapWith(Number),
     }).from(base),
     db.select({total:count()}).from(base).where(scopedFilters),
-    db.select().from(base).where(scopedFilters)
-      .orderBy(asc(base.courseName),asc(base.sectionName),asc(base.id))
-      .limit(paging.pageSize).offset((paging.page-1)*paging.pageSize),
   ]);
-  const totalFiltered=filtered[0]?.total??0;
-  const raw=rows;
+  const totalFiltered=Number(filtered[0]?.total??0);
+  const totalPages=Math.max(1,Math.ceil(totalFiltered/paging.pageSize));
+  const currentPage=Math.min(paging.page,totalPages);
+  const raw=await db.select().from(base).where(scopedFilters)
+    .orderBy(asc(base.courseName),asc(base.sectionName),asc(base.id))
+    .limit(paging.pageSize).offset((currentPage-1)*paging.pageSize);
   return {
     person: {
       id: person.id,
@@ -158,8 +161,7 @@ export async function getCollegeFacultyDetail(
       distinctPrograms:totals[0]?.distinctPrograms??0,
     },
     filter,
-    pagination:{page:paging.page,pageSize:paging.pageSize,total:totalFiltered,
-      totalPages:Math.ceil(totalFiltered/paging.pageSize)},
+    pagination:{page:currentPage,pageSize:paging.pageSize,total:totalFiltered,totalPages},
     assignments: raw.map(row => ({
       ...row,
       // Keep an orphaned assignment visible to admins with explicit degraded metadata.
@@ -171,6 +173,6 @@ export async function getCollegeFacultyDetail(
       metadataIncomplete: row.metadataIncomplete,
       status: facultyTeachingAssignmentState(row.endedAt, row.deliveryEndedAt),
     })),
-    truncated: paging.page*paging.pageSize < totalFiltered,
+    truncated: currentPage*paging.pageSize < totalFiltered,
   };
 }
