@@ -220,3 +220,6 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 
 - `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-activity-filtered-list.tsx.md` | Resource-audit view renders resource/action/actor/when table in legacy order, restores distinct empty states and load-more fallback. Full resource audit first-load API error handling remains separate. No CI.
 - `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_hr-conversation-inbox-service.ts.md` | Scoped recruiter inbox unread thread query and counts now exclude EVENT, require kind MESSAGE; existing college/recruiter/job scoped predicates preserved. No CI.
+
+- `docs/audit/gap-fix-work/packets/lane-13/src_app_api_people_student-import_route.ts.md` | Student CSV PREVIEW/IMPORT response now private no-store, documented that no cross-identity atomic undo exists. Five legacy operations including history/undo need durable ledger/migration; not falsely implemented. No CI.
+- `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_super-admin-hr-validation.ts.md` | Added pure legacy first/last recruiter display projection, preserved canonical profile. Global no-company create and nullable grants remain disallowed until verified company/college scope policy; other lifecycle crosswalk handed off. No CI.

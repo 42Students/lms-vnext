@@ -1015,3 +1015,6 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-4-029-024/-025 | `src/components/projects/project-activity-filtered-list.tsx + project audit loader` | Expose distinguishable initial resource-audit fetch failure with exact 'Failed to load resource audit history.' and retry, not only load-more.
 - G2-13-004-068 | `src/modules/placements/hr-conversation-inbox-service.ts + TPO message legacy importer` | Migrate EVENT/MESSAGE read statuses and UUID thread mapping; unread now excludes EVENT.
+
+- G2-5-027-002 / G2-7-036-038 | `src/modules/people/college-student-csv-service.ts + import run ledger` | Add exact bulk register/history and audited safe undo after identity/enrollment reconciliation, keep PREVIEW vs IMPORT contract.
+- G2-10-021-030/-053/-054/-103 | `src/modules/placements/super-admin-hr-service.ts + schema` | Plan global-without-college recruiter creation and legacy grant mapping without bypassing verified company relation, contact and expiry rules.
