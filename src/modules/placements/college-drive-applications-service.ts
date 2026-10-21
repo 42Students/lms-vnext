@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, desc, count, eq, exists, ilike, isNull, or, sql } from "drizzle-orm";
+import { and, asc, desc, count, eq, exists, gte, ilike, isNull, lt, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
@@ -31,6 +31,10 @@ export async function listCollegeDriveApplications(
 ) {
   const jobId = collegeDriveIdSchema.parse(jobIdInput);
   const query = driveApplicationsQuerySchema.parse(raw);
+  if(query.appliedFrom && query.appliedTo && query.appliedFrom>query.appliedTo)
+    throw new PlacementsServiceError("INVALID_APPLICATION_DATE_RANGE");
+  const appliedFrom=query.appliedFrom?new Date(`${query.appliedFrom}T00:00:00+05:30`):null;
+  const appliedTo=query.appliedTo?new Date(new Date(`${query.appliedTo}T00:00:00+05:30`).getTime()+86_400_000):null;
   const collegeId = await requireCollegePlacementAdmin(context);
   const db = getDb();
   const pageSize = options.pageSize === undefined ? DRIVE_APPLICATIONS_PAGE_SIZE
@@ -85,6 +89,8 @@ export async function listCollegeDriveApplications(
     .leftJoin(placementCollegeApplicationStages, and(eq(placementCollegeApplicationStages.applicationId, placementApplications.id),eq(placementCollegeApplicationStages.jobId,jobId)))
     .where(and(
       eq(placementApplications.jobId, jobId),
+      appliedFrom?gte(placementApplications.submittedAt,appliedFrom):undefined,
+      appliedTo?lt(placementApplications.submittedAt,appliedTo):undefined,
       query.status === "ALL" ? undefined : eq(placementApplications.status, query.status),
       query.source === "ALL" ? undefined : eq(placementApplications.channel,query.source),
       query.departmentId||query.programId||query.cohortId ? exists(

@@ -38,6 +38,31 @@ function normalizedFilters(raw:Record<string,unknown>){
   const parsed=trackerCloudLogQuerySchema.safeParse(next);
   return parsed.success?{query:parsed.data,size}:null;
 }
+type SafeLogFailure={status:number;code:string;message:string};
+/** Only known constant provider failure codes cross the privileged Logs API. */
+function safeLogFailure(cause:unknown):SafeLogFailure{
+ const code=cause instanceof Error?cause.message:"";
+ switch(code){
+  case "LOG_PROVIDER_CURSOR_EXPIRED":
+   return {status:410,code:"LOG_PAGE_EXPIRED",message:"This log page expired. Reset the filters and try again."};
+  case "INVALID_LOG_WINDOW":
+   return {status:400,code:"INVALID_LOG_WINDOW",message:"The selected log window is invalid. Change the time range."};
+  case "LOG_PROVIDER_AUTH_UNAVAILABLE":
+   return {status:503,code:"LOG_AUTH_UNAVAILABLE",message:"Cloud Logging credentials are unavailable. Contact a platform operator."};
+  case "INVALID_LOG_CONFIGURATION":
+   return {status:503,code:"LOG_CONFIGURATION_INVALID",message:"Cloud Logging configuration needs operator attention."};
+  case "LOG_PROVIDER_INVALID_RESPONSE":
+  case "LOG_PROVIDER_RESPONSE_TOO_LARGE":
+   return {status:502,code:"LOG_PROVIDER_RESPONSE_INVALID",message:"Cloud Logging returned an invalid response. Narrow the time window."};
+  default:
+   return {status:503,code:"LOG_PROVIDER_UNAVAILABLE",message:"Live logs could not be loaded. Try again."};
+ }
+}
+function logFailureResponse(cause:unknown){
+ const failure=safeLogFailure(cause);
+ return NextResponse.json({code:failure.code,message:failure.message},{status:failure.status,
+  headers:{"Cache-Control":"private, no-store",...(failure.status===503?{"Retry-After":"30"}:{})}});
+}
 function authorized(context:Awaited<ReturnType<typeof getCurrentRequestContext>>){
   return isSuperAdmin(context)&&context.user.platformStatus==="ACTIVE"&&
     !context.adminScope?.collegeId&&!context.adminScope?.organizationId;
@@ -56,8 +81,8 @@ async function execute(context:Awaited<ReturnType<typeof getCurrentRequestContex
     return NextResponse.json({...page,items:page.items.slice(0,parsed.size),
       environment:alertEnvironment(),size:parsed.size},
       {headers:{"Cache-Control":"private, no-store"}});
-  }catch{
-    return NextResponse.json({message:"Live logs could not be loaded. Try again."},{status:503});
+  }catch(cause){
+    return logFailureResponse(cause);
   }
 }
 export async function GET(request:Request){
@@ -122,7 +147,7 @@ export async function POST(request:Request){
         !complete?"Log samples were paginated; deployment health is unknown.":
         "Log sample comparison completed. Release health remains unverified without a deployment marker."},
       {headers:{"Cache-Control":"private, no-store"}});
-  }catch{
-    return NextResponse.json({message:"Deployment log comparison could not be loaded. Try again."},{status:503});
+  }catch(cause){
+    return logFailureResponse(cause);
   }
 }
