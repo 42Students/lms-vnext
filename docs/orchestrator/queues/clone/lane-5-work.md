@@ -34,7 +34,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-5/src_app_authenticated_admin_projects_templates_templateId_page.tsx.md` (edit src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx; 20 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-5/src_app_authenticated_admin_tenants_setup_page.tsx.md` (edit src/app/(authenticated)/admin/tenants/setup/page.tsx; 20 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-5/src_app_authenticated_admin_placements_jobs_jobId_settings_page.tsx.md` (edit src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx; 19 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-5/src_app_authenticated_admin_companies_page.tsx.md` (edit src/app/(authenticated)/admin/companies/page.tsx; 18 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-5/src_app_authenticated_admin_companies_page.tsx.md` (edit src/app/(authenticated)/admin/companies/page.tsx; 18 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-5/src_components_admin_tenant-settings-editor.tsx.md` (edit src/components/admin/tenant-settings-editor.tsx; 18 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-5/src_app_authenticated_admin_lessons_page.tsx.md` (edit src/app/(authenticated)/admin/lessons/page.tsx; 18 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-5/src_components_admin_super-admin-college-company-actions.tsx.md` (edit src/components/admin/super-admin-college-company-actions.tsx; 17 findings; best P1)
