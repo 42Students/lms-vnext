@@ -24,7 +24,7 @@ export function LearnerGeneralRequests({
  const [kind,setKind]=useState<Kind>(initialKind),[reason,setReason]=useState("");
  const [target,setTarget]=useState(initialKind==="OFFER_ACCEPTANCE_DISPUTE"?initialOfferId:initialApplicationId),[aux,setAux]=useState(initialRoundId),[proofUrl,setProofUrl]=useState("");
  const [consent,setConsent]=useState(false),[notice,setNotice]=useState(""),[error,setError]=useState("");
- const [discardOpen,setDiscardOpen]=useState(false);
+ const [discardOpen,setDiscardOpen]=useState(false),[afterDiscardKind,setAfterDiscardKind]=useState<Kind|null>(null);
  const reasonRef=useRef<HTMLTextAreaElement|null>(null);
  const dirty=reason.trim().length>0||target.trim().length>0||
   aux.trim().length>0||proofUrl.trim().length>0||consent;
@@ -83,7 +83,7 @@ export function LearnerGeneralRequests({
   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Request kind<Select className={box} disabled={pending} value={kind}
    onChange={e=>{
     if(pending)return;
-    if(dirty){setError("Discard this request before choosing a different kind.");setDiscardOpen(true);return;}
+    if(dirty){setAfterDiscardKind(e.target.value as Kind);setError("");setDiscardOpen(true);return;}
     setKind(e.target.value as Kind);resetDraft();
    }}>
    {kinds.map(([id,name])=><option key={id} value={id}>{name}</option>)}
@@ -136,10 +136,10 @@ export function LearnerGeneralRequests({
    <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={pending}
     onClick={cancelDraft}>Cancel</Button>
   </div>
-  <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen} title="Discard this request?"
+  <ConfirmDialog open={discardOpen} onOpenChange={open=>{setDiscardOpen(open);if(!open)setAfterDiscardKind(null);}} title="Discard this request?"
    description="Your unsent request details, any proof link and registration choice will be lost."
    confirmLabel="Discard request" confirmVariant="danger"
-   onConfirm={()=>{resetDraft();setDiscardOpen(false);}}>
+   onConfirm={()=>{resetDraft();if(afterDiscardKind)setKind(afterDiscardKind);setAfterDiscardKind(null);setDiscardOpen(false);}}>
    <p className="text-sm text-body">Changes to this request have not been sent to the placement cell.</p>
   </ConfirmDialog>
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
