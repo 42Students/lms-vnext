@@ -22,10 +22,13 @@ import { playbackGrantRefreshDelay, resumePositionForGrant } from "@/modules/cou
 export function LearnerVideoPlayer({
   lessonId, contentId, storageKey, deliveryId, initialPositionSeconds,
   authoredDurationSeconds, completed, readOnly = false, saveIntervalMs = 15000,
+  contentTitle,contentAddedAt,onEdit,onDelete,initialPercentComplete,
 }: {
   lessonId: string; contentId: string; storageKey: string | null; deliveryId: string;
   initialPositionSeconds: number; authoredDurationSeconds: number;
   completed: boolean; readOnly?: boolean; saveIntervalMs?:number;
+  contentTitle?:string|null;contentAddedAt?:string|Date|null;
+  onEdit?:()=>void;onDelete?:()=>void;initialPercentComplete?:number|null;
 }) {
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -42,6 +45,7 @@ export function LearnerVideoPlayer({
   const lastSaveAttemptMs=useRef(0);
   const completedRef = useRef(completed);
   const [savedSeconds, setSavedSeconds] = useState(initialPositionSeconds);
+  const [serverPercent,setServerPercent]=useState<number|null>(initialPercentComplete??null);
   const [isCompleted, setIsCompleted] = useState(completed);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [mediaError, setMediaError] = useState<string | null>(null);
@@ -61,7 +65,7 @@ export function LearnerVideoPlayer({
       const response = await fetch(`/api/courses/progress/${encodeURIComponent(contentId)}`, {
         method: "PUT", headers: { "Content-Type": "application/json" },
         credentials: "same-origin", body: JSON.stringify({
-          deliveryId, positionSeconds: Math.max(0, Math.floor(current)),
+          deliveryId, positionSeconds: Math.min(86400,Math.max(0, Math.floor(current))),
         }), keepalive,
       });
       if (!response.ok) {
@@ -69,10 +73,12 @@ export function LearnerVideoPlayer({
         return;
       }
       const payload = await response.json() as {
-        progress: { status: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED"; lastPositionSeconds: number };
+        progress: { status: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED"; lastPositionSeconds: number;percentComplete?:number|null };
       };
       lastSavedRef.current = payload.progress.lastPositionSeconds;
       setSavedSeconds(payload.progress.lastPositionSeconds);
+      if(typeof payload.progress.percentComplete==="number"&&Number.isFinite(payload.progress.percentComplete))
+        setServerPercent(Math.max(0,Math.min(100,payload.progress.percentComplete)));
       setSaveError(null);
       if (payload.progress.status === "COMPLETED") {
         completedRef.current = true; setIsCompleted(true); router.refresh();
@@ -205,9 +211,24 @@ export function LearnerVideoPlayer({
     };
   }, [persist, loadGrant]);
 
-  return <div className="mt-4 space-y-2">
+  const duration=authoredDurationSeconds>0?authoredDurationSeconds:observedDuration;
+  const watchedPercent=isCompleted?100:serverPercent!==null?Math.round(serverPercent):
+    duration>0?Math.round(100*Math.min(duration,Math.max(0,savedSeconds))/duration):0;
+  const progressAvailable=isCompleted||serverPercent!==null||savedSeconds>0;
+  return <div className="ln-syllabus-video-wrap mt-4 space-y-3">
+    <header className="mb-4 flex min-w-0 flex-wrap items-center justify-between gap-2 md:mb-6">
+     <div className="min-w-0">
+      <p className="text-xs font-semibold text-muted-foreground">Video</p>
+      <h3 className="break-words text-base font-semibold text-foreground">{contentTitle?.trim()||"Lesson video"}</h3>
+      {contentAddedAt?<p className="text-xs text-muted-foreground">Added {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(contentAddedAt))}</p>:null}
+     </div>
+     {onEdit||onDelete?<div className="flex flex-wrap items-center gap-2">
+      {onEdit?<Button type="button" variant="secondary" aria-label="Edit content" onClick={onEdit}>Edit</Button>:null}
+      {onDelete?<Button type="button" variant="secondary" aria-label="Delete content" onClick={onDelete}>Delete</Button>:null}
+     </div>:null}
+    </header>
     <video ref={videoRef} controls preload="metadata"
-      aria-label="Lesson video"
+      aria-label={contentTitle?.trim()||"Lesson video"}
       className="aspect-video w-full rounded-[var(--lms-control-radius)] border border-border bg-foreground">
       Your browser does not support HTML video.
     </video>
@@ -224,10 +245,23 @@ export function LearnerVideoPlayer({
           <option key={rate} value={rate}>{rate}x</option>)}
       </Select>
     </label>
+    {progressAvailable?<div className="space-y-2" role="status" aria-live="polite">
+     <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+      <span className={"inline-flex items-center gap-1 rounded-full border px-2 py-1 font-semibold "+(isCompleted?"border-success text-success":"border-border text-body")}>
+       <span aria-hidden="true">{isCompleted?"✓":watchedPercent>0?"◔":"○"}</span>
+       {isCompleted?"Watched":watchedPercent>0?"In progress":"Not started"}
+      </span>
+      <strong className="tabular-nums">{watchedPercent}% watched</strong>
+     </div>
+     <div role="progressbar" aria-label="Video watched progress" aria-valuemin={0} aria-valuemax={100}
+       aria-valuenow={watchedPercent} className="h-[3px] w-full overflow-hidden rounded-full bg-muted md:h-1">
+      <div className="h-full bg-primary" style={{width:watchedPercent+"%"}}/>
+     </div>
+    </div>:null}
     <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
       <span role="status" aria-live="polite">{loading ? "Loading video…" : mediaError ? "Video not available" :
-        readOnly ? "Past semester · progress is read only" : isCompleted ? "Completed" : "Progress saves automatically"}</span>
-      <span>Saved at {formatDuration(savedSeconds)} / {formatDuration(authoredDurationSeconds>0?authoredDurationSeconds:observedDuration)}</span>
+        readOnly ? "Past semester · progress is read only" : isCompleted ? "Watched" : "Progress saves automatically"}</span>
+      <span>Saved at {formatDuration(savedSeconds)} / {formatDuration(duration)}</span>
     </div>
     {mediaError ? <div className="space-y-2">
       <Alert tone="error">Video not available. {mediaError!=="Video not available"?mediaError:""}</Alert>

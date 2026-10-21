@@ -1,6 +1,6 @@
 import "server-only";
 
-import {and,asc,eq,inArray,isNull,or} from "drizzle-orm";
+import {and,asc,desc,eq,inArray,isNull,or,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {
@@ -13,6 +13,9 @@ import {
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 
+/** Legacy classId/courseId integer pairs cannot be confused with scoped UUID
+ * Section deliveries. Resolve imported IDs by the authorized import map, not
+ * by casting or letting the caller select a different college. */
 const selectionSchema=z.object({
  offeringId:z.string().uuid().optional(),
  deliveryId:z.string().uuid().optional(),
@@ -29,14 +32,22 @@ function collegeForReport(context:RequestContext){
  return member.collegeId;
 }
 
-/** Only tenant-scoped offerings with real active Section deliveries appear. */
+/** Class/course choices include historical deliveries with explicit past markers.
+ * Sources: legacy class+course -> Section + CourseOffering + delivery; progress
+ * counts only published content visible to the selected audience. No migrated
+ * numeric course IDs are assumed in a tenant without verified import mapping.
+ */
 export async function listCollegeLearnerProgressChoices(context:RequestContext){
  const collegeId=collegeForReport(context);
  return getDb().select({
   offeringId:courseOfferings.id,deliveryId:courseSectionDeliveries.id,
   sectionId:sections.id,courseCode:courses.code,courseName:courses.name,
   sectionName:sections.name,sectionCode:sections.code,
-  periodName:academicPeriods.name,
+  periodName:academicPeriods.name,periodStartDate:academicPeriods.startDate,
+  endedAt:courseSectionDeliveries.endedAt,
+  offeringStatus:courseOfferings.status,sectionStatus:sections.status,
+  legacyClassId:sections.legacyClassId,
+  legacyOfferingId:courseOfferings.legacySemesterCourseId,
  }).from(courseSectionDeliveries)
   .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
   .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
@@ -47,9 +58,13 @@ export async function listCollegeLearnerProgressChoices(context:RequestContext){
     eq(sections.academicPeriodId,courseOfferings.academicPeriodId)))
   .innerJoin(academicPeriods,and(eq(academicPeriods.id,sections.academicPeriodId),
     eq(academicPeriods.collegeId,collegeId)))
-  .where(and(isNull(courseSectionDeliveries.endedAt),
-    eq(courseOfferings.status,"ACTIVE"),eq(sections.status,"ACTIVE")))
-  .orderBy(asc(sections.name),asc(courses.code))
+  .where(and(
+    // An imported, deleted section is historical, not a cross-college scope.
+    eq(academicPeriods.collegeId,collegeId)))
+  .orderBy(sql`case when ${courseOfferings.status} = 'ACTIVE' and
+    ${sections.status} = 'ACTIVE' and ${courseSectionDeliveries.endedAt} is null
+    then 0 else 1 end`,desc(academicPeriods.startDate),
+    asc(sections.name),asc(courses.code))
   .limit(2001);
 }
 
@@ -69,6 +84,8 @@ export async function getCollegeLearnerProgressReport(
   selectionError:"The selected class and course do not match. Choose a current pair."};
  const db=getDb();
  const collegeId=collegeForReport(context);
+ const historical=chosen.endedAt!==null||chosen.offeringStatus!=="ACTIVE"||
+  chosen.sectionStatus!=="ACTIVE";
 
  // Include learners with zero activity: start from active Section enrollments.
  const learners=await db.select({
@@ -87,12 +104,15 @@ export async function getCollegeLearnerProgressReport(
   .innerJoin(users,eq(users.id,collegeMemberships.userId))
   .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
   .where(and(eq(sectionEnrollments.sectionId,chosen.sectionId),
-    eq(sectionEnrollments.status,"ACTIVE"),
-    eq(learnerProgramEnrollments.status,"ACTIVE"),
+    ...(historical?[]:[
+     eq(sectionEnrollments.status,"ACTIVE"),
+     eq(learnerProgramEnrollments.status,"ACTIVE"),
+    ]),
     eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))
   .orderBy(asc(users.displayName),asc(collegeMemberships.id))
   .limit(2001);
  const visible=learners.slice(0,2000);
+ const learnerListLimited=learners.length>2000;
  const [videoRows,assignmentRows,quizRows]=await Promise.all([
   db.select({id:lessonContents.id}).from(lessonContents)
    .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
@@ -175,7 +195,11 @@ export async function getCollegeLearnerProgressReport(
  return {choices,choicesTruncated,report:{
   chosen,rows:itemsMeasured?rows:[],totalVideos:videoIds.length,totalAssignments:assignmentIds.length,
   totalQuizzes:quizIds.length,itemsMeasured,students:rows.length,
-  truncated:learners.length>2000,
+  truncated:learnerListLimited,
+  completenessWarning:learnerListLimited
+   ?"Only the first 2,000 scoped learners are represented in the table and derived metrics. Export or narrow the section before relying on totals.":null,
+  denominatorNote:"Only currently published and visible videos, assignments and quizzes count; hidden, draft and audience-ineligible material is excluded.",
+  historical,legacyIdMapping:"Numeric course/class bookmarks require a verified tenant-scoped import map; UUID delivery and offering identifiers are authoritative.",
   choicesTruncated,
   enrolledStudents:visible.length,
   noMeasurableWork:itemsMeasured===0,
