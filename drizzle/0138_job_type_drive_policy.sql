@@ -58,7 +58,11 @@ LANGUAGE plpgsql AS $$
 DECLARE selected_college uuid;
 DECLARE active_options integer;
 BEGIN
- selected_college := COALESCE(NEW.college_id, OLD.college_id);
+ IF TG_OP = 'DELETE' THEN
+  selected_college := OLD.college_id;
+ ELSE
+  selected_college := NEW.college_id;
+ END IF;
  SELECT 5 - count(*) FILTER (WHERE is_builtin)
        + count(*) FILTER (WHERE active)
  INTO active_options
