@@ -8,6 +8,8 @@ import {DataTable} from "@/components/ui/data-table";
 import {Tabs} from "@/components/ui/tabs";
 import {Disclosure} from "@/components/ui/disclosure";
 import {EmptyState} from "@/components/ui/empty-state";
+import {ErrorState} from "@/components/ui/error-state";
+import {Alert} from "@/components/ui/alert";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { legacyAcademicStatus } from "@/modules/academics/legacy-academic-status";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -26,13 +28,13 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
   const raw = await searchParams;
   const selected = context.adminScope?.collegeId;
   const controls = collegeBatchDirectorySchema.safeParse({
-    q: raw.q, programId: raw.programId || undefined, status: raw.status, page: raw.page, pageSize: raw.pageSize,
+    q: raw.q, programId: raw.programId || undefined, status: raw.status, page: raw.page, pageSize: raw.pageSize ?? "25",
   });
   const data = selected && controls.success
-    ? await listCollegeBatches(context, controls.data)
+    ? await listCollegeBatches(context, controls.data).catch(()=>null)
     : null;
   const periodRows = selected && data
-    ? await listAcademicPeriods(context, selected)
+    ? await listAcademicPeriods(context, selected).catch(()=>[])
     : [];
   const periods = periodRows.filter(row => row.status !== "CLOSED")
     .map(row => ({ id: row.id, name: row.name, code: row.code, startDate:row.startDate, endDate:row.endDate }));
@@ -44,14 +46,20 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
   if(data?.query.status&&data.query.status!=="ALL")exportQuery.set("status",data.query.status);
   const exportHref="/api/admin/batches/export"+(exportQuery.size?"?"+exportQuery.toString():"");
   return <div className="min-w-0 space-y-4 md:space-y-6">
-    <PageHeader title="Batches"/>
+    <PageHeader title="Batches" description="Manage cohorts, their academic year and current semester before creating sections or promoting students."/>
       {data ? <AcademicSetupSteps step={5} /> : null}
-    {!selected ? <p role="status" className="text-sm text-body">Select a college to continue. Choose a college in the header above to see its batches.</p> : null}
+    {!selected ? <Alert tone="warning"><span className="font-semibold">Select a college to manage Batches</span><p>Batches belong to a specific college. Choose one in the header.</p></Alert> : null}
+    {selected&&!controls.success?<ErrorState title="Invalid batch filters" description="Choose a valid program, status, page and page size." action={<Link href="/admin/batches" className="font-semibold text-link underline">Clear filters</Link>}/>:null}
+    {selected&&controls.success&&!data?<ErrorState title="Could not load batches" description="The batch directory could not refresh. No records were changed." action={<Link href="/admin/batches" className="font-semibold text-link underline">Retry</Link>}/>:null}
     {data ? <>
-      <CollegeCohortCreateForm programs={data.programs.filter(row => row.status === "ACTIVE")} periods={periods} academicSetupHref="/admin/academics" />
       <Tabs ariaLabel="Batch lifecycle views" value={data.query.status} renderPanel={false} items={([
         ["ALL","All batches"],["ACTIVE","Active batches"],["INACTIVE","Show inactive"],["COMPLETED","Show completed"],
       ] as const).map(([value,label])=>({value,label,href:pageUrl({...data.query,status:value,page:1})}))}/>
+      <div className="grid min-w-0 items-start gap-[var(--lms-space-4)] min-[992px]:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
+       <div className="min-w-0">
+      <CollegeCohortCreateForm programs={data.programs.filter(row => row.status === "ACTIVE")} periods={periods} academicSetupHref="/admin/academics" />
+       </div>
+       <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <section aria-label="Filter managed batches" className="border-b border-border pb-4">
         <form action="/admin/batches" method="get" role="search" aria-label="Batch filters" className="grid min-w-0 items-end gap-[8px] min-[768px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
           <label className="grid min-w-0 w-full gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -65,6 +73,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
           <label className="grid min-w-0 w-full gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search batches
             <Input type="search" name="q" defaultValue={data.query.q}
+              placeholder="Search batch, year, program or status"
               className="min-h-11 md:min-h-9"/>
           </label>
           <Disclosure title="More filters" defaultOpen={data.query.status!=="ALL" || data.query.pageSize!==25}
@@ -90,7 +99,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
 
       <section aria-label="Manage batches" className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Manage batches</h2>
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Existing Batches</h2>
           <Link href={exportHref}
             className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
             Export batches.csv
@@ -102,19 +111,18 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
         </p>
         <p className="text-sm text-muted-foreground">Only planned batches without dependents can be edited or removed.</p>
         <DataTable<(typeof data.items)[number]> caption="Manage batches" rows={data.items} getRowKey={row=>row.id}
-          empty={<EmptyState title="No matching batches on this page." />}
+          empty={<EmptyState title={data.query.q||data.query.programId||data.query.status!=="ALL"?"No batches match the search or filters.":"No batches yet. Create a program first."} />}
           columns={[
             {key:"batch",header:"Batch",mobilePriority:"primary",cell:row=><div className="min-w-0">
               <span className="font-semibold">{row.name} ({row.code})</span>
               <Link href={`/admin/batches/${encodeURIComponent(row.id)}/students`} className="mt-1 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Manage students →</Link>
             </div>},
             {key:"program",header:"Program",mobilePriority:"secondary",cell:row=>row.programName},
-            {key:"start",header:"Start Date",mobilePriority:"secondary",cell:row=>row.startDate??"—"},
-            {key:"end",header:"End Date",mobilePriority:"secondary",cell:row=>row.endDate??"—"},
+            {key:"years",header:"Years",mobilePriority:"secondary",cell:row=>row.startDate||row.endDate?`${row.startDate?.slice(0,4)??"?"} – ${row.endDate?.slice(0,4)??"?"}`:"—"},
             {key:"academicYear",header:"Academic Year",mobilePriority:"secondary",cell:row=>row.academicYear??(row.currentAcademicYearStart?`${row.currentAcademicYearStart}–${row.currentAcademicYearStart+1}`:"Not recorded")},
-            {key:"semester",header:"Semester",mobilePriority:"secondary",cell:row=>row.currentTermNumber??"—"},
+            {key:"semester",header:"Current Semester",mobilePriority:"secondary",cell:row=><StatusBadge tone="info">Semester {row.currentTermNumber??1}</StatusBadge>},
             {key:"classes",header:"Classes",mobilePriority:"secondary",cell:row=>row.activeSections},
-            {key:"students",header:"Active students",mobilePriority:"secondary",cell:row=>row.activeEnrolledLearners},
+            {key:"students",header:"Students",mobilePriority:"secondary",cell:row=>row.activeEnrolledLearners},
             {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><>
               <StatusBadge tone={row.status==="ACTIVE"?"success":row.status==="PLANNED"?"info":"neutral"}>{legacyAcademicStatus(row.status,true)}</StatusBadge>
               {row.inactiveAt?<span className="block text-xs text-muted-foreground">Inactive since {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(row.inactiveAt))}</span>:null}
@@ -122,7 +130,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
             {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><CollegeCohortRowActions row={row} periods={periods}/>},
           ]} />
         <nav aria-label="Batch pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
-          <span role="status" aria-live="polite">{data.items.length} of {data.total.toLocaleString("en-IN")} results · Page {data.query.page} of {data.totalPages}</span>
+          <span role="status" aria-live="polite">{data.total===0?0:(data.query.page-1)*data.query.pageSize+1}-{Math.min(data.total,data.query.page*data.query.pageSize)} of {data.total.toLocaleString("en-IN")} · Page {data.query.page} of {data.totalPages}</span>
           <div className="flex flex-wrap gap-2">
             {data.query.page>1?<Link className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-[650] text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] text-sm" href={pageUrl({...data.query,page:data.query.page-1})}>Previous</Link>:null}
             {data.query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-[650] text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] text-sm" href={pageUrl({...data.query,page:data.query.page+1})}>Next</Link>:null}
@@ -132,6 +140,8 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
           Batch Promotion →
         </Link>
       </section>
+       </div>
+      </div>
     </> : null}
   </div>;
 }
