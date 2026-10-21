@@ -163,7 +163,7 @@ export default async function TpoLeadsReportPage({
        <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
         {workspace.selectedSeasonId?<Input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
         {workspace.selectedJobId?<Input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
-        <label className="grid min-w-0 w-full flex-1 gap-[6px] sm:w-auto text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
+        <label className="grid min-w-0 w-full flex-1 gap-2 sm:w-auto text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
          <Select name="companyId" defaultValue={selectedCompanyId??""} className="min-h-11 sm:min-h-9">
           <option value="">All companies</option>
           {companyEngagement.filter(row=>row.companyId).map(row=>

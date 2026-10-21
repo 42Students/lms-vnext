@@ -272,18 +272,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-2.md: file, number of 
 - [x] `src/app/(authenticated)/tpo/reports/by-company/page.tsx`
 - [x] `src/app/(authenticated)/tpo/reports/failure-reasons/page.tsx`
 - [x] `src/app/(authenticated)/tpo/reports/intelligence/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/joining-followups/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/joining-status/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/leads/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/offers-expiry/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/placed-branch/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/placement-summary/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/season-pipeline/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/unplaced/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/requests/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/branding/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/joining-followups/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/joining-status/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/leads/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/offers-expiry/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/placed-branch/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/placement-summary/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/season-pipeline/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/unplaced/page.tsx`
+- [x] `src/app/(authenticated)/tpo/requests/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/branding/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/rules/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/team/page.tsx`
