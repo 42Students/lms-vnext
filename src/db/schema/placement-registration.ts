@@ -18,6 +18,15 @@ import { users } from "./users";
  * DB08-B: registration is per academic batch, not placement season.
  * Caller and SQL scope guards must prove that membership+cohort belong to
  * the same college and that the learner is enrolled in the cohort.
+ * Legacy placement_registration.season_id is NOT the new cohort_id:
+ * a future approved import must resolve legacy season->academic cohort with
+ * explicit same-college learner enrollment evidence and a verified source
+ * season mapping. Ambiguous or stale consent is quarantined, not treated as
+ * new consent. Only source SELF/TPO/BACKFILL is persisted, from a trusted
+ * authenticated writer. The source's old numeric learner ID maps to active
+ * college membership UUID; nullable legacy consent never overrides the
+ * current check requiring version+timestamp for PLACEMENTS.
+ * No legacy registrations are imported in greenfield vNext.
  */
 export const placementBatchRegistrations = pgTable(
   "placement_batch_registrations",
