@@ -59,6 +59,20 @@ export async function CollegeDrivePipelineOverview({jobId,data,attention}:{
    category==="LOW_CONVERSION"?candidate.stage==="APPLIED":false);
  const warningCount=flags.reduce((total,flag)=>total+flag.count,0);
  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
+  <nav aria-label="Drive sections" role="tablist"
+    className="flex min-w-0 flex-wrap gap-4 border-b border-border">
+    {([
+      ["Overview",base],
+      ["Applications",base+"/applications"],
+      ["Schedule",base+"/interviews"],
+      ["Settings",base+"/settings"],
+    ] as const).map(([label,href])=><Link key={href} href={href} role="tab"
+      aria-selected={label==="Overview"} tabIndex={label==="Overview"?0:-1}
+      className={"inline-flex min-h-11 items-center border-b-[3px] px-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary "+
+       (label==="Overview"?"border-primary text-primary-text":"border-transparent text-body hover:text-primary-text")}>
+      {label}
+    </Link>)}
+  </nav>
   {flags.length>0?<section aria-label="Drive needs attention" role="alert" className="rounded-[var(--lms-control-radius)] border border-amber-300 bg-amber-50 px-4 py-3 text-amber-950">
     <h2 className="text-sm font-semibold">⚠ Needs attention ({warningCount})</h2>
     <ul className="mt-3 space-y-3">{flags.map(flag=>{
@@ -74,7 +88,7 @@ export async function CollegeDrivePipelineOverview({jobId,data,attention}:{
           <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs">{flag.count}</span>
         </div>
         {rows.length>0?<ul className="mt-1 space-y-1 pl-2">{rows.map(row=><li key={row.id}>
-          <Link className="inline-flex min-h-9 items-center text-sm underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-900"
+          <Link className="inline-flex min-h-11 items-center text-sm underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-900 md:min-h-9"
             href={base+"/applications?stage="+stage+"&applicationId="+encodeURIComponent(row.id)}>
             {row.name||"Applicant"} — Review application →
           </Link>
@@ -84,14 +98,13 @@ export async function CollegeDrivePipelineOverview({jobId,data,attention}:{
     })}</ul>
     <Disclosure title="Evidence note" className="mt-[var(--lms-space-3)]"><p className="max-w-[75ch] pt-2 text-xs leading-5">Only registered private offer-letter records are used when checking evidence.</p></Disclosure>
   </section>:null}
-  <nav className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]" aria-label="Drive quick actions">
-
-   <Link href={base+"/interviews"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 font-semibold text-primary-text hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Schedule</Link>
-   <Link href={base+"/shortlisted"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Shortlisted</Link>
-
-  </nav>
+  <div className="flex min-w-0 flex-wrap items-center gap-3 border-b border-border pb-3" aria-label="Additional drive actions">
+    <Link href={base+"/shortlisted"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+      View Shortlisted →
+    </Link>
+  </div>
   <section className="space-y-3" aria-label="College application pipeline">
-   <h2 className="text-lg font-semibold">Application pipeline</h2>
+   <h2 className="text-lg font-semibold">Pipeline</h2>
    <p className="text-xs text-muted-foreground leading-5">These are current registered College Admin application stages, not cumulative funnel conversions.</p>
    <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] md:grid-cols-3 xl:grid-cols-5">
     {stages.map(stage=><StatTile key={stage} href={base+"/applications?stage="+stage}
