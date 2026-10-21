@@ -1,0 +1,7 @@
+# Assignment material source crosswalk (lane 14)
+
+Legacy LessonContents.content_data may embed file_dto, links, uploaded certificates and Drive selections. The normalized assignment material retains title, sequence and link, or a private staged file with storageKey, originalName, mimeType, size, scan/upload proof, source DIRECT/DRIVE, and historical file_dto. Native assignment audience stays delivery-scoped; source class IDs must resolve through an authorized course offering and cannot authorize cross-college access.
+
+For kind LINK, accept only server-validated HTTPS URL and no storage key; kind FILE requires a private storage key and metadata but MUST NOT be served until uploadStatus READY with CLEAN scan, generation, verified size/type and attestation. A signed URL is never persisted in externalUrl or legacy_file_dto. Drive source denotes provenance only; actual Drive import must copy the file through approved storage and ACL, not treat Drive links as trusted binary files.
+
+Migration 0227 widens original LINK-only constraint, preserves existing link rows and defaults source DIRECT. Preflight legacy HTTP/invalid links before registering the stricter HTTPS check. The authoring UI and upload API must implement server-signed workflow, origin and tenant guards, maximum file count/size and private read URLs. Grade publication remains on course assignments/results, not inferred from materials. No migration or CI executed.
