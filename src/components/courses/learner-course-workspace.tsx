@@ -310,13 +310,13 @@ function ContentCard({
         <div className="mt-4 flex flex-wrap gap-2">
           <a
             href={`/api/courses/deliveries/${encodeURIComponent(deliveryId)}/contents/${encodeURIComponent(content.id)}/file`}
-            className="inline-flex min-h-11 w-full min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-text sm:w-auto"
+            className="inline-flex min-h-11 w-full min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-text md:w-auto"
           >
             Open resource ↗
           </a>
           <a
             href={`/api/courses/deliveries/${encodeURIComponent(deliveryId)}/contents/${encodeURIComponent(content.id)}/file?download=1`}
-            className="inline-flex min-h-11 w-full min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-text sm:w-auto"
+            className="inline-flex min-h-11 w-full min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-text md:w-auto"
           >
             Download
           </a>
