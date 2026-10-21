@@ -231,6 +231,9 @@ export const assignmentSubmissions = pgTable(
       table.assignmentId,
       table.membershipId,
     ),
+    uniqueIndex("assignment_submissions_grade_audit_parent_uq").on(
+      table.id,table.assignmentId,table.deliveryId,table.membershipId,
+    ),
     index(
       "assignment_submissions_assignment_delivery_idx",
     ).on(
