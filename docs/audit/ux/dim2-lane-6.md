@@ -388,3 +388,19 @@ Source-only checks; old-lms-shell.css and old-lms-shell-spec.md are the measured
 - [x] `src/components/projects/legacy-project-board.module.css` | dim3 | Instances none | Fixes 0: none.
 - [x] `src/components/projects/mentor-release-editor.tsx` | dim3 | Instances none | Fixes 0: none.
 - [x] `src/components/projects/project-final-delivery-controls.tsx` | dim3 | Instances 6: {"nav":0,"links":0,"anchors":0,"lists":4,"tabs":0,"menus":2,"table":0} | 1280/768/375 spec↔code: 44px mobile target↔min-h-11; #26bac7 hyperlink ink↔link-text; #e5e9f0 border↔border token | Fixes 0: none.
+- [x] `src/components/projects/project-workspace-readiness.module.css` | dim3 | Instances none | Fixes 0: none.
+- [x] `src/components/shell/legacy-mobile-footer.css` | dim3 | Instances 1: {"nav":0,"link":0,"a":0,"list":0,"tabs":0,"menu":0,"table":0,"css":1} | 1280/768/375 spec↔code: no local explicit matching values | Fixes 0: none.
+- [x] `src/components/tpo/recruiter-inline-owner.tsx` | dim3 | Instances none | Fixes 0: none.
+- [x] `src/components/tpo/tpo-company-memory-workspace.tsx` | dim3 | Instances 17: {"nav":1,"link":10,"a":0,"list":6,"tabs":0,"menu":0,"table":0,"css":0} | 1280/768/375 spec↔code: 44px mobile tap↔min-h-11; 36px desktop↔min-h-9; #26bac7 links↔link-text | Fixes 0: none.
+- [x] `src/components/tracker/tracker-quick-report-launcher.tsx` | dim3 | Instances none | Fixes 0: none.
+- [x] `src/components/ui/date-input.tsx` | dim3 | Instances none | Fixes 0: none.
+- [x] `src/components/ui/file-upload.tsx` | dim3 | Instances 2: {"nav":0,"link":0,"a":0,"list":2,"tabs":0,"menu":0,"table":0,"css":0} | 1280/768/375 spec↔code: 44px mobile tap↔min-h-11; #1a95a1 hovered ink↔primary-text; #e5e9f0 border↔border-token | Fixes 0: none.
+- [x] `src/components/ui/list-toolbar.tsx` | dim3 | Instances none | Fixes 0: none.
+- [x] `src/components/ui/select.tsx` | dim3 | Instances 1: {"nav":0,"links":0,"lists":0,"menus":0,"buttons":0,"inputs":1,"alerts":0} | 1280/768/375 spec↔code: 44px mobile↔min-h-11; 36px desktop↔control-height; #e5e9f0 divider↔canvas-border | Fixes 0: none.
+- [x] `src/components/ui/toast.tsx` | dim3 | Instances 2: {"nav":0,"links":0,"lists":0,"menus":0,"buttons":1,"inputs":0,"alerts":1} | 1280/768/375 spec↔code: 44px mobile↔min-h-11; 8px spacing↔space-2; 9px radius↔control-radius | Fixes 1: info border/dot→#26bac7.
+- [x] `src/components/profile/learner-skill-catalog-input.tsx` | dim3 | Instances 4: {"nav":0,"links":0,"lists":2,"menus":0,"buttons":1,"inputs":1,"alerts":0} | 1280/768/375 spec↔code: 44px mobile↔min-h-11; #e5e9f0 divider↔canvas-border; 8px spacing↔space-2 | Fixes 0: none.
+- [x] `src/components/projects/mentor-delivery-lock-control.tsx` | dim3 | Instances 3: {"nav":0,"links":0,"lists":0,"menus":0,"buttons":2,"inputs":0,"alerts":1} | 1280/768/375 spec↔code: 44px mobile↔min-h-11; 36px desktop↔control-height; #e5e9f0 divider↔canvas-border | Fixes 0: none.
+- [x] `src/components/projects/project-admin-nav.tsx` | dim3 | Instances none | Fixes 0: none.
+- [x] `src/components/projects/project-participant-list-controls.tsx` | dim3 | Instances 13: {"nav":0,"links":3,"lists":0,"menus":0,"buttons":1,"inputs":9,"alerts":0} | 1280/768/375 spec↔code: 44px mobile↔min-h-11; 36px desktop↔control-height; #e5e9f0 divider↔canvas-border | Fixes 0: none.
+- [x] `src/components/shell/account-actions.tsx` | dim3 | Instances 4: {"nav":0,"links":2,"lists":0,"menus":0,"buttons":1,"inputs":0,"alerts":1} | 1280/768/375 spec↔code: 44px mobile↔min-h-11; 36px desktop↔control-height; 8px spacing↔space-2 | Fixes 0: none.
+- [x] `src/components/tpo/recruiter-lead-csv-import.tsx` | dim3 | Instances 11: {"nav":0,"links":2,"lists":0,"menus":2,"buttons":6,"inputs":0,"alerts":1} | 1280/768/375 spec↔code: 44px mobile↔min-h-11; 36px desktop↔control-height; #26bac7 link↔link-text | Fixes 0: none.
