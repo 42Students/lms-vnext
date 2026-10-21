@@ -74,7 +74,7 @@ export async function exportSuperAdminLearningDirectory(request:Request,kind:Kin
     if(page>=data.totalPages)break;
    }
   }
-  const max=pageOnly?25:kind==="LESSONS"||kind==="PROGRESS"?2000:500;
+  const max=pageOnly?20:kind==="LESSONS"||kind==="PROGRESS"?2000:500;
   const items=rows.slice(0,max);
   if(!pageOnly&&total>max)items.push(["TRUNCATED: first "+max+" records","Narrow filters to export remaining records."]);
   const filename=pageOnly?
