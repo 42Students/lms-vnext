@@ -132,3 +132,6 @@
 
 - `src/components/shell/*` super-admin scope switcher and authenticated layout | G2-3-032-065/-073 | Compare displayed college/org selection against server-confirmed AdminScope using adminScopeOutOfSync and inspectAdminScopeCookie, alert on stale/malformed cookie and let authorized user reselect; no client-supplied scope may override server DB context.
 - Legacy role importer and account selection UI | G2-13-016-003/-025 | Use resolveLegacyAccountRole only after verifying source college/actor and role rows; generic 'user' and UNKNOWN are quarantine, not default learner; preserve one workspace per college x role.
+
+- Legacy Faculty importer / private profile storage owner | G2-1-003-044/-076 | If migration is later explicitly approved, implement tenant-safe Faculty source ID/arrays/orphan mapping and 15-section JSONB round-trip per docs/audit/gap-fix/faculty-profile-source-contract-lane-14.md. Existing 0067 migration cannot be edited and is not a live data import.
+- `src/modules/storage/*` and legacy upload receipt adapter | G2-10-027-085/-086 | Use 0241 alias rows only to resolve old receipt/file keys after tenant/member/asset-kind verification and privileged CLEAN receipt validation; never send raw R2 URLs, object keys or untrusted owner type to clients. Legacy aliases do not independently authorize signed downloads.

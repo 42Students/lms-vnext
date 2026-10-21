@@ -438,3 +438,44 @@ export const storageFileEvents = pgTable(
     check("storage_file_events_detail_ck", sql`jsonb_typeof(${t.detail}) = 'object'`),
   ],
 );
+
+/** Import-only key/receipt translation. A crosswalk is never a download grant:
+ * each native asset's owner, status and scan must be verified again on read.
+ */
+export const storageLegacyFileCrosswalks = pgTable(
+  "storage_legacy_file_crosswalks",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    collegeId: uuid("college_id").notNull()
+      .references(() => colleges.id, { onDelete: "restrict" }),
+    ownerMembershipId: uuid("owner_membership_id").notNull(),
+    nativeKind: varchar("native_kind", { length: 32 }).notNull(),
+    nativeAssetId: uuid("native_asset_id").notNull(),
+    legacyReceiptId: varchar("legacy_receipt_id", { length: 120 }),
+    legacyObjectKeyMac: varchar("legacy_object_key_mac", { length: 64 }),
+    legacyUploaderId: integer("legacy_uploader_id"),
+    legacyUserType: varchar("legacy_user_type", { length: 24 }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    foreignKey({
+      name: "storage_legacy_crosswalk_membership_college_fk",
+      columns: [t.ownerMembershipId, t.collegeId],
+      foreignColumns: [collegeMemberships.id, collegeMemberships.collegeId],
+    }).onDelete("restrict"),
+    uniqueIndex("storage_legacy_crosswalk_receipt_uq")
+      .on(t.collegeId, t.legacyReceiptId)
+      .where(sql`${t.legacyReceiptId} is not null`),
+    uniqueIndex("storage_legacy_crosswalk_key_uq")
+      .on(t.collegeId, t.legacyObjectKeyMac)
+      .where(sql`${t.legacyObjectKeyMac} is not null`),
+    index("storage_legacy_crosswalk_asset_idx")
+      .on(t.collegeId, t.nativeKind, t.nativeAssetId),
+    check("storage_legacy_crosswalk_kind_ck",
+      sql`${t.nativeKind} in ('ASSIGNMENT_SUBMISSION_FILE','PROJECT_RESOURCE_FILE','LESSON_VIDEO')`),
+    check("storage_legacy_crosswalk_source_ck",
+      sql`${t.legacyReceiptId} is not null or ${t.legacyObjectKeyMac} is not null`),
+    check("storage_legacy_crosswalk_key_mac_ck",
+      sql`${t.legacyObjectKeyMac} is null or ${t.legacyObjectKeyMac} ~ '^[a-f0-9]{64}$'`),
+  ],
+);
