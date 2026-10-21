@@ -33,10 +33,13 @@ export function buildRecruiterActionQueue(input:{
    href:"/recruiter/drives/"+encodeURIComponent(row.jobId)+"/interview-slots"}));
  const offers=(input.offerActions??[]).filter(row=>authorized.has(row.jobId)&&row.count>0)
   .map(row=>({key:"offers:"+row.jobId+":"+row.status,
-    tone:(row.status==="ISSUED"?"SOON":"FINE") as "URGENT"|"SOON"|"FINE",
+    tone:(["ISSUED","PENDING_VERIFICATION"].includes(row.status)?"SOON":"FINE") as "URGENT"|"SOON"|"FINE",
     at:null as Date|null,
     label:row.status==="ACCEPTED"?"Follow up joining · "+row.jobTitle:
       row.status==="DECLINED"?"Review declined offers · "+row.jobTitle:
+      row.status==="PENDING_VERIFICATION"?"Await selection verification · "+row.jobTitle:
+      row.status==="SELECTED"?"Selection recorded · "+row.jobTitle:
+      row.status==="RELEASED"?"Released selections · "+row.jobTitle:
       "Review offers · "+row.jobTitle,
     description:row.count+" "+row.status.toLowerCase()+" offers recorded for college-shared applicants.",
     href:"/recruiter/drives/"+encodeURIComponent(row.jobId)+"?tab=offers"}));
@@ -90,7 +93,7 @@ export function buildRecruiterActionQueue(input:{
    href:recruiterTodayHref({kind:"REVIEW_APPLICANTS",jobId:row.job.id})}));
  // A prelive review is actionable only when an invitation was persisted.
  const preliveIds=new Set(input.jobs.filter(row=>row.collegeId===input.collegeId&&
-   row.companyId===input.companyId&&row.job.archivedAt===null)
+   row.companyId===input.companyId&&row.job.archivedAt===null&&row.job.status==="DRAFT")
    .map(row=>row.job.id));
  const invited=(input.preliveReviewInvites??[])
    .filter(item=>preliveIds.has(item.jobId))
