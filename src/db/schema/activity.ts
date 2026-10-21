@@ -319,14 +319,22 @@ export function claimDueNotificationOutboxStatement(
   if (!Number.isSafeInteger(maxAttempts) || maxAttempts < 1 || maxAttempts > 20) {
     throw new Error("Invalid notification delivery retry budget");
   }
+  // A worker can crash after claiming a row. Use updated_at as the lease
+  // timestamp and reclaim only after it expires. Reclaim increments attempts,
+  // so a late prior worker cannot satisfy settle's expected-attempt CAS.
+  const leaseExpiredBefore = new Date(now.getTime() - 15 * 60_000);
   return sql`
     WITH due AS (
       SELECT id FROM notification_delivery_outbox
        WHERE deleted_at IS NULL
-         AND delivery_status IN ('SCHEDULED', 'FAILED')
-         AND scheduled_at <= ${now}
-         AND (next_retry_at IS NULL OR next_retry_at <= ${now})
          AND delivery_attempts < ${maxAttempts}
+         AND (
+           (delivery_status IN ('SCHEDULED', 'FAILED')
+             AND scheduled_at <= ${now}
+             AND (next_retry_at IS NULL OR next_retry_at <= ${now}))
+           OR (delivery_status = 'PROCESSING'
+             AND updated_at <= ${leaseExpiredBefore})
+         )
        ORDER BY scheduled_at, id
        FOR UPDATE SKIP LOCKED
        LIMIT 1
