@@ -28,6 +28,8 @@ export function FacultyContactsTable({items,showRoles,detailBaseHref,detailQuery
             {href?<Link href={href}
               className="inline-flex min-h-11 max-w-full items-center break-words text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{name}</Link>:name}
           </h2>
+          <p className="mt-1 text-sm leading-5 text-body">Email: Private</p>
+          <p className="mt-1 text-sm leading-5 text-body">Contact: Private</p>
           <p className="mt-1 text-sm leading-5 text-body">Department: {item.departmentName??"Not recorded"}</p>
           {showRoles||item.roles.length>0?<ul aria-label="Current college roles" className="mt-2 flex flex-wrap gap-2">
             {item.roles.map(role=><li key={role}><StatusBadge tone="info">{facultyContactRoleLabel(role)}</StatusBadge></li>)}
@@ -37,7 +39,7 @@ export function FacultyContactsTable({items,showRoles,detailBaseHref,detailQuery
     </div>
     <Table aria-label="Contacts directory" containerClassName="hidden sm:block">
       <thead><tr>
-        <th scope="col">Contact</th><th scope="col">Department</th><th scope="col">Current college roles</th>
+        <th scope="col">Name</th><th scope="col">Email</th><th scope="col">Contact</th><th scope="col">Role</th>
       </tr></thead>
       <tbody>{items.map(item=>{
         const name=item.displayName?.trim()||"Name not recorded";
@@ -45,8 +47,10 @@ export function FacultyContactsTable({items,showRoles,detailBaseHref,detailQuery
         return <tr key={item.membershipId}>
           <td className="min-w-40 font-semibold">
             {href?<Link href={href} className="inline-flex min-h-9 items-center break-words text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{name}</Link>:name}
+            <span className="block text-xs font-normal text-muted-foreground">{item.departmentName??"Department not recorded"}</span>
           </td>
-          <td className="min-w-32 break-words">{item.departmentName??"Not recorded"}</td>
+          <td className="min-w-32 text-muted-foreground">Private</td>
+          <td className="min-w-32 text-muted-foreground">Private</td>
           <td><ul aria-label="Current college roles" className="flex min-w-0 flex-wrap gap-2">
             {(showRoles||item.roles.length>0)&&item.roles.map(role=><li key={role}><StatusBadge tone="info">{facultyContactRoleLabel(role)}</StatusBadge></li>)}
           </ul></td>

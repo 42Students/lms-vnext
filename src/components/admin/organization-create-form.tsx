@@ -47,10 +47,13 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
         }
         setName("");clearDraft();router.refresh();
       } catch(cause) {
-        setError(cause instanceof FriendlyFetchError && cause.status===409
-          ? "Organization name already exists"
-          :cause instanceof Error ? cause.message
-          : "Could not create organization. Please try again.");
+        const message=cause instanceof FriendlyFetchError && cause.code==="ORGANIZATION_NAME_REQUIRED"
+          ? "Organization name is required"
+          :cause instanceof FriendlyFetchError && cause.status===409
+            ? "Organization name already exists"
+            :cause instanceof Error?cause.message:"Could not create organization. Please try again.";
+        setError(message);
+        showToast({tone:"error",title:"Failed to create organization: "+message});
       }
     });
   }
@@ -58,6 +61,7 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
   return (
     <form
       onSubmit={submit}
+      noValidate
       className="grid min-w-0 grid-cols-1 items-end gap-3 border-t border-border pt-4 md:grid-cols-[minmax(0,1fr)_auto] print:hidden"
     >
       <div className="min-w-0 flex-1">
@@ -72,15 +76,18 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
           value={name}
           onChange={(event) => { setName(event.target.value); setError(null); }}
           required
+          aria-invalid={Boolean(error && !name.trim())}
+          aria-describedby={error&&!name.trim()?"organization-name-error":undefined}
           maxLength={255}
           placeholder="e.g., ABC University"
         />
+        {error&&!name.trim()?<p id="organization-name-error" role="alert" className="mt-1 text-xs text-error">Please enter organization name</p>:null}
       </div>
-      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending || !name.trim()} loading={pending}>
+      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending} loading={pending}>
         {pending ? "Creating…" : "Create Organization"}
       </Button>
       {restored ? <p role="status" className="text-xs leading-5 text-muted-foreground md:col-span-2">Draft restored</p> : null}
-      {error ? (
+      {error&&name.trim() ? (
         <Alert tone="error" className="md:col-span-2">
           {error}
         </Alert>
