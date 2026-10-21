@@ -6,6 +6,8 @@ export const recruiterInviteOtpSchema=z.string().regex(/^[0-9]{6}$/);
 export const RECRUITER_OTP_TTL_MS=10*60_000;
 export const RECRUITER_OTP_MAX_FAILURES=5;
 export const RECRUITER_OTP_PER_LINK_HOUR=5;
+/** Monitoring threshold only; unlike the five-per-link limit, old LMS did
+ * not block one invite because unrelated recruiters used this college's SMSs. */
 export const RECRUITER_OTP_PER_COLLEGE_HOUR=300;
 
 export function recruiterOtpSendAllowed(
@@ -14,8 +16,7 @@ export function recruiterOtpSendAllowed(
  return Number.isSafeInteger(issuedForLinkLastHour) &&
   Number.isSafeInteger(issuedForCollegeLastHour) &&
   issuedForLinkLastHour>=0 && issuedForCollegeLastHour>=0 &&
-  issuedForLinkLastHour<RECRUITER_OTP_PER_LINK_HOUR &&
-  issuedForCollegeLastHour<RECRUITER_OTP_PER_COLLEGE_HOUR;
+  issuedForLinkLastHour<RECRUITER_OTP_PER_LINK_HOUR;
 }
 export function createRecruiterInviteOtp():string {
  return randomInt(0,1_000_000).toString().padStart(6,"0");

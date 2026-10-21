@@ -168,6 +168,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     listRecruiterTodayOfferActions(selectedId,collegeJobs.map(row=>row.job.id)),
   ]);
   const changeRequests=changeResult.status==="fulfilled"?changeResult.value:[];
+  const totalOpenChangeRequests=changeRequests[0]?.totalOpen??0;
   const roundsNeedingSlots=slotsResult.status==="fulfilled"?slotsResult.value:[];
   const offerActions=offersResult.status==="fulfilled"?offersResult.value:[];
   const actionQueue=buildRecruiterActionQueue({jobs,collegeId:selectedId,companyId:recruiter.companyId,now,
@@ -238,6 +239,12 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <div className="min-w-0 space-y-4">    <section aria-label="Next recruiter actions" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-6">
       <h2 className="text-[var(--lms-font-lg)] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-7">Needs you</h2>
       <p className="text-xs text-muted-foreground">Only active drives belonging to your selected college and company appear here.</p>
+      {changeResult.status==="fulfilled"&&totalOpenChangeRequests>0?
+        <p role="status" className="text-xs text-body">
+          {totalOpenChangeRequests} open change request{totalOpenChangeRequests===1?"":"s"} from the placement cell.
+          {totalOpenChangeRequests>changeRequests.length?
+            " Showing the most recent "+changeRequests.length+" here; open Drives for earlier requests.":""}
+        </p>:null}
       {actionQueue.length ? <ul className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
         {actionQueue.map(task => <li key={task.key}>
           <Link href={task.href} className="block min-h-11 min-w-0 py-4 hover:bg-primary-subtle min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">

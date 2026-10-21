@@ -12,7 +12,7 @@ import {projectMutation} from "@/components/projects/project-api";
 
 export function SuperAdminTemplateCreateForm(){
  const router=useRouter();
- const [values,setValues]=useState({slug:"",title:"",summary:"",goal:"",release:"Release 1",sprint:"Sprint 1",task:"",priority:"MEDIUM",acceptanceCriteria:"",releaseDescription:"",sprintDescription:"",taskDescription:"",overviewDescription:"",resourceTitle:"",resourceUrl:"",deliverables:"",definitionOfDone:"",personas:"",courseLabel:"",phase:"",submissionType:"LINK",submissionInstructions:""});
+ const [values,setValues]=useState({slug:"",title:"",summary:"",summaryOverrideReason:"",goal:"",release:"Release 1",sprint:"Sprint 1",task:"",priority:"MEDIUM",acceptanceCriteria:"",releaseDescription:"",sprintDescription:"",taskDescription:"",overviewDescription:"",resourceTitle:"",resourceUrl:"",deliverables:"",definitionOfDone:"",personas:"",courseLabel:"",phase:"",submissionType:"LINK",submissionInstructions:""});
  const [saving,setSaving]=useState(false);
  const [error,setError]=useState("");
  const edit=(key:keyof typeof values,value:string)=>setValues(old=>({...old,[key]:value}));
@@ -45,10 +45,16 @@ export function SuperAdminTemplateCreateForm(){
      className="w-full"/>
    </label>)}
   </div>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Summary (optional)
-   <Textarea maxLength={2000} disabled={saving} value={values.summary} onChange={event=>edit("summary",event.target.value)}
+  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Custom summary (optional)
+   <Textarea maxLength={160} disabled={saving} value={values.summary} onChange={event=>edit("summary",event.target.value)}
     className="w-full"/>
+   <span className="text-xs font-normal text-muted-foreground">Defaults to the first Goal line or title (160 characters).</span>
   </label>
+  {values.summary.trim()?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason for custom summary
+   <Input maxLength={300} disabled={saving} value={values.summaryOverrideReason}
+    onChange={event=>edit("summaryOverrideReason",event.target.value)}
+    placeholder="Why does this need a different summary?"/>
+  </label>:null}
   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Goal (optional)
    <Textarea maxLength={2000} disabled={saving} value={values.goal} onChange={event=>edit("goal",event.target.value)}
     className="w-full"/>
