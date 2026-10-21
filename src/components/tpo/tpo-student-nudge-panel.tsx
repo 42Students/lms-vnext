@@ -67,13 +67,13 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
   </ScrollCue>
   <p role="status" className="min-w-0 break-words text-xs text-muted-foreground">{validSelected.length} selected;
    {outside} not registered for placements (messages still deliver).</p>
-  <label className="grid min-w-0 gap-1 text-sm">Message template
+  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message template
    <Select className="w-full min-w-0" value={template} disabled={pending||guardedPending} 
     onChange={e=>setChoice(e.target.value as TpoStudentNudgeTemplate)}>
     {Object.entries(tpoStudentNudgeLabels).map(([key,label])=><option key={key} value={key}>{label}</option>)}
    </Select>
   </label>
-  <label className="grid gap-1 text-sm">Message
+  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
    <Textarea className="w-full min-w-0" rows={3} minLength={5} maxLength={1000} required
     
     disabled={pending||guardedPending} value={message} onChange={e=>{setMessage(e.target.value);setNotice("");}}/>

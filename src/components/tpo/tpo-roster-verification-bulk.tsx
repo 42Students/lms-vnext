@@ -75,7 +75,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
     <span className="min-w-0 break-words">{row.learnerName} · {row.section==="EDUCATION"?"Education":"Identity"}{row.missingMarksheet||row.missingIdentityProof?" · Missing document":""}</span>
    </label>;})}
   </div>
-  <label className="grid gap-1 text-sm print:hidden">Action
+  <label className="grid gap-[6px] text-[13px] print:hidden font-semibold leading-4 text-[var(--lms-neutral-400)]">Action
    <Select  disabled={busy} value={action}
     onChange={event=>{setAction(event.target.value as Action);invalidate();}}>
     <option value="VERIFY">Verify selected</option><option value="SEND_BACK">Send back for correction</option>
@@ -91,7 +91,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
       <Button variant="secondary" type="button" key={item} disabled={busy} onClick={()=>{setReason(item);invalidate();}}
        >{item}</Button>)}
    </div>
-   <label className="grid gap-1 text-sm print:hidden">Correction reason (shown to students)
+   <label className="grid gap-[6px] text-[13px] print:hidden font-semibold leading-4 text-[var(--lms-neutral-400)]">Correction reason (shown to students)
     <Textarea  rows={3} minLength={3} maxLength={500}
      value={reason} disabled={busy} onChange={event=>{setReason(event.target.value);invalidate();}}/>
    </label>
