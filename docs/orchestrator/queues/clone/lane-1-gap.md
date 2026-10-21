@@ -47,7 +47,7 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U006 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicMobileAuthController.java`
 - [x] U007 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SuperAdminUserAdminController.java`
 - [x] U008 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/UserController.java`
-- [ ] U009 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerPlacementProfileController.java`
+- [x] U009 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerPlacementProfileController.java`
 - [ ] U010 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/ProfileVerificationController.java`
 - [ ] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/profile/JobPreferencesDTO.java`
 - [ ] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/request/MobileAuthEmailFallbackSendRequest.java`
