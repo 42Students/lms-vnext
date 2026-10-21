@@ -263,56 +263,56 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-1.md: file, number of 
 - [x] `src/app/(authenticated)/learn/not-found.tsx`
 - [x] `src/app/(authenticated)/learn/notifications/error.tsx`
 - [x] `src/app/(authenticated)/learn/notifications/history/loading.tsx`
-- [ ] `src/app/(authenticated)/learn/notifications/history/page.tsx`
-- [ ] `src/app/(authenticated)/learn/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/academic-record/page.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/completeness/error.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/completeness/page.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/data-access/page.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/error.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/page.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/verification/error.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/verification/page.tsx`
-- [ ] `src/app/(authenticated)/learn/projects/[projectId]/error.tsx`
-- [ ] `src/app/(authenticated)/learn/projects/[projectId]/not-found.tsx`
-- [ ] `src/app/(authenticated)/learn/projects/[projectId]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/projects/error.tsx`
-- [ ] `src/app/(authenticated)/learn/projects/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/activity/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/activity/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/calendar/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/not-found.tsx`
-- [ ] `src/app/(authenticated)/mentor/notifications/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/notifications/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/error.tsx`
+- [x] `src/app/(authenticated)/learn/notifications/history/page.tsx`
+- [x] `src/app/(authenticated)/learn/notifications/page.tsx`
+- [x] `src/app/(authenticated)/learn/profile/academic-record/page.tsx`
+- [x] `src/app/(authenticated)/learn/profile/completeness/error.tsx`
+- [x] `src/app/(authenticated)/learn/profile/completeness/page.tsx`
+- [x] `src/app/(authenticated)/learn/profile/data-access/page.tsx`
+- [x] `src/app/(authenticated)/learn/profile/error.tsx`
+- [x] `src/app/(authenticated)/learn/profile/page.tsx`
+- [x] `src/app/(authenticated)/learn/profile/verification/error.tsx`
+- [x] `src/app/(authenticated)/learn/profile/verification/page.tsx`
+- [x] `src/app/(authenticated)/learn/projects/[projectId]/error.tsx`
+- [x] `src/app/(authenticated)/learn/projects/[projectId]/not-found.tsx`
+- [x] `src/app/(authenticated)/learn/projects/[projectId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/projects/error.tsx`
+- [x] `src/app/(authenticated)/learn/projects/page.tsx`
+- [x] `src/app/(authenticated)/mentor/activity/error.tsx`
+- [x] `src/app/(authenticated)/mentor/activity/page.tsx`
+- [x] `src/app/(authenticated)/mentor/calendar/error.tsx`
+- [x] `src/app/(authenticated)/mentor/calendar/page.tsx`
+- [x] `src/app/(authenticated)/mentor/not-found.tsx`
+- [x] `src/app/(authenticated)/mentor/notifications/error.tsx`
+- [x] `src/app/(authenticated)/mentor/notifications/loading.tsx`
+- [x] `src/app/(authenticated)/mentor/notifications/page.tsx`
+- [x] `src/app/(authenticated)/mentor/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/error.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/reports/error.tsx`

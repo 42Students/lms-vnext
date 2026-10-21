@@ -234,7 +234,7 @@ export function LearnerCourseOverview({
         className="sticky top-[68px] z-10 -mx-1 flex gap-2 overflow-x-auto border-b border-border bg-surface p-2 shadow-none md:hidden">
         {jumpLinks.map(item=>(
           <a key={item.id} href={"#"+item.id}
-            className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-xs font-semibold text-primary-text transition-colors duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none">
+            className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-xs font-semibold text-primary-text transition-colors duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-primary-subtle hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none">
             {item.label}
           </a>
         ))}
@@ -341,7 +341,7 @@ export function LearnerCourseOverview({
             </p>
           </div>
           <Link href={`/learn/courses/${deliveryId}/roadmap`}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover md:min-h-9">
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-text)] md:min-h-9">
             Full learning path →
           </Link>
         </div>
@@ -350,7 +350,7 @@ export function LearnerCourseOverview({
             {pathPreview.lessons.map((lesson)=>(
               <li key={lesson.id} className="rounded-lg border border-border p-3">
                 <Link href={`/learn/courses/${deliveryId}/roadmap?lesson=${encodeURIComponent(lesson.id)}`}
-                  className="flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover md:min-h-9">{lesson.name}</Link>
+                  className="flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-text)] md:min-h-9">{lesson.name}</Link>
                 <p className="mt-1 text-xs text-muted-foreground">
                   {lesson.progress===null?"No published trackable items"
                     : `${lesson.completed} of ${lesson.total} items completed · ${lesson.progress}%`}
@@ -415,7 +415,7 @@ export function LearnerCourseOverview({
       ) : null}
 
       <details className="scroll-mt-24 border-t border-border pt-3" id="course-overview-progress">
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Course progress breakdown</summary>
+        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Course progress breakdown</summary>
       <div aria-label="Course progress summary" className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4 md:grid-cols-2 xl:grid-cols-4">
         <StatTile
           label="Overall"
@@ -453,18 +453,18 @@ export function LearnerCourseOverview({
             </div>
             <Link
               href={`/learn/courses/${deliveryId}/roadmap`}
-              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover md:min-h-9"
+              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-text)] md:min-h-9"
             >
               Learning Path
             </Link>
           </div>
           <nav aria-label="Recent course update categories" className="mt-4 flex flex-wrap gap-2">
             <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter=assessments"}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none md:min-h-9">Assessments</Link>
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none md:min-h-9">Assessments</Link>
             <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/discussions"}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none md:min-h-9">Discussions</Link>
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none md:min-h-9">Discussions</Link>
             <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter=live-sessions"}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none md:min-h-9">Live Sessions</Link>
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none md:min-h-9">Live Sessions</Link>
           </nav>
           <div className="mt-4 divide-y divide-border">
             {unifiedUpdates.map((update) => (
@@ -477,7 +477,7 @@ export function LearnerCourseOverview({
                     <p className="mt-1 text-xs text-muted-foreground">{update.detail}</p>
                     {update.body ? <ExpandableCourseUpdate body={update.body} /> : null}
                   </div>
-                  <Link href={update.href} aria-label={`Open ${update.title}`} className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:min-w-9">
+                  <Link href={update.href} aria-label={`Open ${update.title}`} className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center text-primary-text hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:min-w-9">
                     →
                   </Link>
                 </div>

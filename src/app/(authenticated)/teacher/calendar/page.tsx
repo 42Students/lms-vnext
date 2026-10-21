@@ -49,7 +49,7 @@ export default async function FacultyCalendarPage({
   const selected=grid.query.deliveryId;
   return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Class Schedule" actions={<Link href="/teacher/live-classes"
-      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">
+      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">
       View live classes
     </Link>} />
     <section className="min-w-0">

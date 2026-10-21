@@ -97,7 +97,7 @@ export function PlacementBulkOfferWithdraw({
   return (
     <section className="space-y-4 border-b border-border pb-5" aria-label="Bulk offer withdrawal">
       <div>
-        <h3 className="text-base font-semibold text-foreground">
+        <h3 className="text-base font-semibold text-[var(--lms-heading)]">
           Bulk withdraw offers
         </h3>
         <p className="mt-1 text-sm leading-6 text-body">
@@ -106,7 +106,7 @@ export function PlacementBulkOfferWithdraw({
         </p>
       </div>
       {available.length === 0 ? (
-        <p className="text-sm text-body">
+        <p className="text-sm text-body leading-[22px]">
           No currently eligible issued or pending-joining accepted offers are shown.
         </p>
       ) : (
@@ -151,7 +151,7 @@ export function PlacementBulkOfferWithdraw({
           </div>
         </>
       )}
-      {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
+      {error ? <p role="alert" className="text-sm text-error leading-[22px]">{error}</p> : null}
       {results.length ? (
         <div aria-live="polite" className="space-y-2">
           <h4 className="font-semibold text-foreground">Per-offer results</h4>

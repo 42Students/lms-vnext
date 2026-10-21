@@ -272,29 +272,29 @@ export function HrDriveDraftForm({
       <section className="border-b border-border pb-5">
         <h2 className="font-semibold text-foreground">Role and work</h2>
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
-          <label className="grid min-w-0 gap-1 text-sm text-body md:col-span-2">
+          <label className="grid min-w-0 gap-1 text-[length:var(--lms-font-sm)] text-body md:col-span-2 leading-4 font-semibold">
             Role title
             <Input className="w-full" value={draft.title} maxLength={200}
               onChange={(event) => setDraft((current) => ({ ...current, title: event.target.value }))} />
           </label>
-          <label className="grid min-w-0 gap-1 text-sm text-body md:col-span-2">
+          <label className="grid min-w-0 gap-1 text-[length:var(--lms-font-sm)] text-body md:col-span-2 leading-4 font-semibold">
             Job description
             <Textarea className="min-h-28" rows={5} value={draft.description} maxLength={5000}
               onChange={(event) => setDraft((current) => ({ ...current, description: event.target.value }))} />
           </label>
-          <label className="grid min-w-0 gap-1 text-sm text-body">
+          <label className="grid min-w-0 gap-1 text-[length:var(--lms-font-sm)] text-body leading-4 font-semibold">
             Location
             <Input className="w-full" value={draft.location} maxLength={180}
               onChange={(event) => setDraft((current) => ({ ...current, location: event.target.value }))} />
           </label>
-          <label className="grid min-w-0 gap-1 text-sm text-body">
+          <label className="grid min-w-0 gap-1 text-[length:var(--lms-font-sm)] text-body leading-4 font-semibold">
             Employment type
             <Select className="w-full" value={draft.employmentType}
               onChange={(event) => setDraft((current) => ({ ...current, employmentType: event.target.value as HrDriveDraft["employmentType"] }))}>
               {selectOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
             </Select>
           </label>
-          <label className="grid min-w-0 gap-1 text-sm text-body">
+          <label className="grid min-w-0 gap-1 text-[length:var(--lms-font-sm)] text-body leading-4 font-semibold">
             Mode
             <Select className="w-full" value={draft.driveMode??"ON_CAMPUS"}
               onChange={event=>setDraft(current=>({...current,driveMode:event.target.value as "ON_CAMPUS"|"OFF_CAMPUS",
@@ -303,7 +303,7 @@ export function HrDriveDraftForm({
               <option value="OFF_CAMPUS">Off campus (students apply on your site)</option>
             </Select>
           </label>
-          {draft.driveMode==="OFF_CAMPUS"?<label className="grid min-w-0 gap-1 text-sm text-body md:col-span-2">
+          {draft.driveMode==="OFF_CAMPUS"?<label className="grid min-w-0 gap-1 text-[length:var(--lms-font-sm)] text-body md:col-span-2 leading-4 font-semibold">
             Application website (HTTPS)
             <Input className="w-full" type="url" inputMode="url" maxLength={2000}
               placeholder="https://example.com/apply" value={draft.externalApplicationUrl??""}
@@ -312,7 +312,7 @@ export function HrDriveDraftForm({
               The placement cell reviews the application website before publishing.
             </span>
           </label>:null}
-          <label className="grid min-w-0 gap-1 text-sm text-body">
+          <label className="grid min-w-0 gap-1 text-[length:var(--lms-font-sm)] text-body leading-4 font-semibold">
             Work mode
             <Select className="w-full" value={draft.workMode}
               onChange={(event) => setDraft((current) => ({ ...current, workMode: event.target.value as HrDriveDraft["workMode"] }))}>
@@ -328,23 +328,23 @@ export function HrDriveDraftForm({
       <section className="border-b border-border pb-5">
         <h2 className="font-semibold text-foreground">Compensation and eligibility</h2>
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-3">
-          <label className="grid min-w-0 gap-1 text-sm text-body">
+          <label className="grid min-w-0 gap-1 text-[length:var(--lms-font-sm)] text-body leading-4 font-semibold">
             CTC (LPA){draft.employmentType==="INTERNSHIP"?" after the internship (optional)":""}
             <Input className="w-full" inputMode="decimal" value={draft.ctcLpa??""}
               onChange={event=>setDraft(current=>({...current,ctcLpa:event.target.value}))}/>
           </label>
-          <label className="grid min-w-0 gap-1 text-sm text-body">
+          <label className="grid min-w-0 gap-1 text-[length:var(--lms-font-sm)] text-body leading-4 font-semibold">
             Fixed (optional, LPA)
             <Input className="w-full" inputMode="decimal" value={draft.fixedLpa??""}
               onChange={event=>setDraft(current=>({...current,fixedLpa:event.target.value}))}/>
           </label>
-          <label className="grid min-w-0 gap-1 text-sm text-body">
+          <label className="grid min-w-0 gap-1 text-[length:var(--lms-font-sm)] text-body leading-4 font-semibold">
             Variable (optional, LPA)
             <Input className="w-full" inputMode="decimal" value={draft.variableLpa??""}
               onChange={event=>setDraft(current=>({...current,variableLpa:event.target.value}))}/>
           </label>
           <p className="text-xs text-muted-foreground md:col-span-3">Fixed and variable LPA must add up to the total CTC if entered.</p>
-          {draft.employmentType!=="FULL_TIME"&&draft.employmentType!=="CONTRACT"?<label className="grid min-w-0 gap-1 text-sm text-body">
+          {draft.employmentType!=="FULL_TIME"&&draft.employmentType!=="CONTRACT"?<label className="grid min-w-0 gap-1 text-[length:var(--lms-font-sm)] text-body leading-4 font-semibold">
             Stipend per month (₹)
             <Input className="w-full" inputMode="numeric" value={draft.stipendMonthlyInr??""}
               onChange={event=>setDraft(current=>({...current,stipendMonthlyInr:event.target.value}))}/>
@@ -361,7 +361,7 @@ export function HrDriveDraftForm({
             ["minimumCgpa", "Minimum CGPA (0–10)"],
             ["maximumActiveBacklogs", "Maximum active backlogs"],
           ] as const).map(([field, label]) => (
-            <label key={field} className="grid min-w-0 gap-1 text-sm text-body">
+            <label key={field} className="grid min-w-0 gap-1 text-[length:var(--lms-font-sm)] text-body leading-4 font-semibold">
               {label}
               <Input className="w-full" inputMode="decimal" value={draft[field]}
                 onChange={(event) => setDraft((current) => ({ ...current, [field]: event.target.value }))} />
@@ -369,7 +369,7 @@ export function HrDriveDraftForm({
           ))}
         </div>
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
-          <label className="grid min-w-0 gap-1 text-sm text-body">
+          <label className="grid min-w-0 gap-1 text-[length:var(--lms-font-sm)] text-body leading-4 font-semibold">
             Branches
             <Input className="w-full" list="recruiter-eligible-branches"
               value={branchInput} placeholder="e.g. CSE, ECE, Mechanical"
@@ -381,7 +381,7 @@ export function HrDriveDraftForm({
             </datalist>
             <span className="text-xs text-muted-foreground">Separate multiple college branches with commas. The placement cell verifies the final eligibility.</span>
           </label>
-          <label className="grid min-w-0 gap-1 text-sm text-body">
+          <label className="grid min-w-0 gap-1 text-[length:var(--lms-font-sm)] text-body leading-4 font-semibold">
             Passing year
             <Input className="w-full" inputMode="numeric" maxLength={4}
               value={draft.passingYear??""} placeholder="YYYY"
@@ -415,7 +415,7 @@ export function HrDriveDraftForm({
         <div className="mt-4 min-w-0 space-y-3">
           {draft.rounds.map((round, index) => (
             <div key={index} className="grid min-w-0 gap-3 border-b border-border py-4 last:border-b-0 min-[768px]:grid-cols-2 min-[992px]:grid-cols-[10rem_minmax(0,1fr)_auto]">
-              <label className="grid min-w-0 gap-1 text-sm text-body">
+              <label className="grid min-w-0 gap-1 text-[length:var(--lms-font-sm)] text-body leading-4 font-semibold">
                 Kind
                 <Select className="w-full" value={round.kind}
                   onChange={(event) => setDraft((current) => ({
@@ -425,7 +425,7 @@ export function HrDriveDraftForm({
                   {roundKinds.map((kind) => <option key={kind} value={kind}>{kind.replaceAll("_", " ")}</option>)}
                 </Select>
               </label>
-              <label className="grid min-w-0 gap-1 text-sm text-body">
+              <label className="grid min-w-0 gap-1 text-[length:var(--lms-font-sm)] text-body leading-4 font-semibold">
                 Round name
                 <Input className="w-full" maxLength={120} value={round.name}
                   onChange={(event) => setDraft((current) => ({
@@ -506,7 +506,7 @@ export function HrDriveDraftForm({
             {draft.driveMode==="OFF_CAMPUS"?
               <p className="break-all">Application website: {result.success&&result.data.externalApplicationUrl
                 ? <a href={result.data.externalApplicationUrl} rel="noopener noreferrer" target="_blank"
-                  className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">{result.data.externalApplicationUrl}</a>
+                  className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">{result.data.externalApplicationUrl}</a>
                 : "Not specified"}</p>:null}
             <h4 className="font-semibold text-foreground">Planned hiring process</h4>
             <ol className="list-inside list-decimal space-y-1">

@@ -24,32 +24,32 @@ export default async function FacultyAssessmentResultsPage({
   const raw = await searchParams;
   const parsed = parseFacultyResultsSearchParams(raw);
   if (!parsed.success) {
-    return <div className="min-w-0 space-y-3"><PageHeader title="Assessment results"/><ErrorState title="Invalid assessment filters" description="Review the assessment search and filters." action={<Link href="/teacher/results" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>}/></div>;
+    return <div className="min-w-0 space-y-3"><PageHeader title="Assessment results"/><ErrorState title="Invalid assessment filters" description="Review the assessment search and filters." action={<Link href="/teacher/results" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>}/></div>;
   }
   const context = await getCurrentRequestContext();
   const data = await getFacultyAssessmentResults(context,parsed.data);
   const emptyState = facultyResultsEmptyState(data.query,data.sections.length);
-  return <div className="min-w-0 max-w-full space-y-5">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Assessment results"
       description="Section-specific recorded response counts and scores from your current teaching assignments."
       actions={<div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
         <Link href="/teacher/response-followups"
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
           Response follow-ups
         </Link>
         <Link href="/teacher/allAssignments"
-          className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+          className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
           All Assignments
         </Link>
       </div>} />
     <form method="get" action="/teacher/results"
       className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-end">
-      <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
+      <label className="grid w-full min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
         <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
           
           placeholder="Assessment, course code or Section" />
       </label>
-      <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
+      <label className="grid w-full min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
         <Select name="kind" defaultValue={data.query.kind} >
           <option value="ALL">All</option>
           <option value="ASSIGNMENT">Assignments</option>
@@ -57,7 +57,7 @@ export default async function FacultyAssessmentResultsPage({
         </Select>
       </label>
       <Disclosure title="More filters" defaultOpen={Boolean(data.query.deliveryId || data.query.status !== "ALL" || data.query.due !== "ALL" || data.query.sort !== "DUE_DESC" || data.query.pageSize !== 5)} className="min-w-0 sm:col-span-2 lg:col-span-4" contentClassName="grid min-w-0 gap-3 py-3 md:grid-cols-2 lg:grid-cols-3">
-      <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Teaching Section
+      <label className="grid w-full min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Teaching Section
         <Select name="deliveryId" aria-label="Teaching Section" defaultValue={data.query.deliveryId ?? ""} >
           <option value="">All teaching sections</option>
           {data.sections.map(section => (
@@ -67,13 +67,13 @@ export default async function FacultyAssessmentResultsPage({
           ))}
         </Select>
       </label>
-      <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+      <label className="grid w-full min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
         <Select name="status" defaultValue={data.query.status} >
           <option value="ALL">All</option>
           <option value="PUBLISHED">Published</option>
         </Select>
       </label>
-      <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Due date
+      <label className="grid w-full min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Due date
         <Select name="due" defaultValue={data.query.due} >
           <option value="ALL">All due dates</option>
           <option value="OVERDUE">Past due, published</option>
@@ -81,14 +81,14 @@ export default async function FacultyAssessmentResultsPage({
           <option value="UNDATED">No due date</option>
         </Select>
       </label>
-      <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
+      <label className="grid w-full min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
         <Select name="sort" defaultValue={data.query.sort} >
           <option value="DUE_DESC">Latest due date</option>
           <option value="DUE_ASC">Earliest due date</option>
           <option value="TITLE">Assessment title</option>
         </Select>
       </label>
-      <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Records per page
+      <label className="grid w-full min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Records per page
         <Select name="pageSize" defaultValue={data.query.pageSize} >
           <option value="5">5</option><option value="10">10</option>
         </Select>
@@ -97,19 +97,19 @@ export default async function FacultyAssessmentResultsPage({
       <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">
         Filter
       </Button>
-      <Link href="/teacher/results" className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-[var(--lms-teal-deep)] sm:w-auto focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      <Link href="/teacher/results" className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-[var(--lms-teal-deep)] sm:w-auto focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         Clear
       </Link>
     </form>
     <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <p className="text-sm text-body leading-[22px]" role="status" aria-live="polite">{data.total.toLocaleString("en-IN")} matching Section-assessment record{data.total === 1 ? "" : "s"}</p>
       <Link href={facultyResultsCsvHref({...data.query,page:data.page})}
-       className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+       className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
        Export this page CSV (no learner names)
       </Link>
     </div>
     {data.items.length === 0 ? <div className="space-y-3"><EmptyState title={emptyState.title}
-      description={emptyState.description} />{emptyState.clearFilters ? <Link href="/teacher/results" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Clear result filters</Link> : null}</div>
+      description={emptyState.description} />{emptyState.clearFilters ? <Link href="/teacher/results" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Clear result filters</Link> : null}</div>
       : <div className="divide-y divide-border border-y border-border">
         {data.items.map(item =>
           <article key={item.kind + ":" + item.deliveryId + ":" + item.id}
@@ -139,7 +139,7 @@ export default async function FacultyAssessmentResultsPage({
                 </div>)}
             </dl>
             <Link href={item.reportHref}
-              className="mt-3 inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              className="mt-3 inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
               Open Section report →
             </Link>
           </article>)}

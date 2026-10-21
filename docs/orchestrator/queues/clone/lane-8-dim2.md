@@ -213,46 +213,46 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-8.md: file, number of 
 - [x] `src/components/projects/mentor-task-details-edit.tsx`
 - [x] `src/components/projects/mentor-task-status-transition.tsx`
 - [x] `src/components/projects/project-admin-submission-review.tsx`
-- [ ] `src/components/projects/project-archive-control.tsx`
-- [ ] `src/components/projects/project-create-control.tsx`
-- [ ] `src/components/projects/project-delivery-reopen-control.tsx`
-- [ ] `src/components/projects/project-final-delivery-controls.tsx`
-- [ ] `src/components/projects/project-lifecycle-actions.tsx`
-- [ ] `src/components/projects/project-meeting-controls.tsx`
-- [ ] `src/components/projects/project-mentor-reassignment.tsx`
-- [ ] `src/components/projects/project-readiness-override-form.tsx`
-- [ ] `src/components/projects/project-resource-controls.tsx`
-- [ ] `src/components/projects/project-resource-files-panel.tsx`
-- [ ] `src/components/projects/project-task-submission-control.tsx`
-- [ ] `src/components/projects/project-team-controls.tsx`
-- [ ] `src/components/projects/project-template-controls.tsx`
-- [ ] `src/components/projects/project-workspace.tsx`
-- [ ] `src/components/projects/super-admin-template-college-bulk.tsx`
-- [ ] `src/components/projects/template-metadata-edit-control.tsx`
-- [ ] `src/components/shell/learner-notification-bell.tsx`
-- [ ] `src/components/shell/learner-topbar-tools.tsx`
-- [ ] `src/components/shell/mobile-navigation.tsx`
-- [ ] `src/components/shell/sidebar-legacy.css`
-- [ ] `src/components/shell/topbar/account-menu.tsx`
-- [ ] `src/components/shell/topbar/command-search.tsx`
-- [ ] `src/components/shell/topbar/organization-switcher.tsx`
-- [ ] `src/components/shell/topbar/topbar.module.css`
-- [ ] `src/components/shell/topbar/tpo-quick-create.tsx`
-- [ ] `src/components/tpo/grid/grid-workspace.tsx`
-- [ ] `src/components/tpo/recruiter-lead-csv-import.tsx`
-- [ ] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
-- [ ] `src/components/tpo/recruiter-leads-workspace.tsx`
-- [ ] `src/components/tpo/recruiter-roster-display-controls.tsx`
-- [ ] `src/components/tpo/tpo-academic-import-workspace.tsx`
-- [ ] `src/components/tpo/tpo-after-college-bulk-editor.tsx`
-- [ ] `src/components/tpo/tpo-after-college-editor.tsx`
-- [ ] `src/components/tpo/tpo-applications-spreadsheet.tsx`
-- [ ] `src/components/tpo/tpo-audit-saved-views.tsx`
-- [ ] `src/components/tpo/tpo-batch-class-decision.tsx`
-- [ ] `src/components/tpo/tpo-batch-eligibility-import.tsx`
-- [ ] `src/components/tpo/tpo-batch-inline-decision.tsx`
-- [ ] `src/components/tpo/tpo-batch-invitation-control.tsx`
-- [ ] `src/components/tpo/tpo-batch-rule-editor.tsx`
+- [x] `src/components/projects/project-archive-control.tsx`
+- [x] `src/components/projects/project-create-control.tsx`
+- [x] `src/components/projects/project-delivery-reopen-control.tsx`
+- [x] `src/components/projects/project-final-delivery-controls.tsx`
+- [x] `src/components/projects/project-lifecycle-actions.tsx`
+- [x] `src/components/projects/project-meeting-controls.tsx`
+- [x] `src/components/projects/project-mentor-reassignment.tsx`
+- [x] `src/components/projects/project-readiness-override-form.tsx`
+- [x] `src/components/projects/project-resource-controls.tsx`
+- [x] `src/components/projects/project-resource-files-panel.tsx`
+- [x] `src/components/projects/project-task-submission-control.tsx`
+- [x] `src/components/projects/project-team-controls.tsx`
+- [x] `src/components/projects/project-template-controls.tsx`
+- [x] `src/components/projects/project-workspace.tsx`
+- [x] `src/components/projects/super-admin-template-college-bulk.tsx`
+- [x] `src/components/projects/template-metadata-edit-control.tsx`
+- [x] `src/components/shell/learner-notification-bell.tsx`
+- [x] `src/components/shell/learner-topbar-tools.tsx`
+- [x] `src/components/shell/mobile-navigation.tsx`
+- [x] `src/components/shell/sidebar-legacy.css`
+- [x] `src/components/shell/topbar/account-menu.tsx`
+- [x] `src/components/shell/topbar/command-search.tsx`
+- [x] `src/components/shell/topbar/organization-switcher.tsx`
+- [x] `src/components/shell/topbar/topbar.module.css`
+- [x] `src/components/shell/topbar/tpo-quick-create.tsx`
+- [x] `src/components/tpo/grid/grid-workspace.tsx`
+- [x] `src/components/tpo/recruiter-lead-csv-import.tsx`
+- [x] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
+- [x] `src/components/tpo/recruiter-leads-workspace.tsx`
+- [x] `src/components/tpo/recruiter-roster-display-controls.tsx`
+- [x] `src/components/tpo/tpo-academic-import-workspace.tsx`
+- [x] `src/components/tpo/tpo-after-college-bulk-editor.tsx`
+- [x] `src/components/tpo/tpo-after-college-editor.tsx`
+- [x] `src/components/tpo/tpo-applications-spreadsheet.tsx`
+- [x] `src/components/tpo/tpo-audit-saved-views.tsx`
+- [x] `src/components/tpo/tpo-batch-class-decision.tsx`
+- [x] `src/components/tpo/tpo-batch-eligibility-import.tsx`
+- [x] `src/components/tpo/tpo-batch-inline-decision.tsx`
+- [x] `src/components/tpo/tpo-batch-invitation-control.tsx`
+- [x] `src/components/tpo/tpo-batch-rule-editor.tsx`
 - [ ] `src/components/tpo/tpo-batch-student-saved-views.tsx`
 - [ ] `src/components/tpo/tpo-bell-panel.tsx`
 - [ ] `src/components/tpo/tpo-bulk-action-panel.tsx`

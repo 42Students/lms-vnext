@@ -238,7 +238,7 @@ export default async function TpoAuditPage({
           action="/tpo/audit"
           className="mt-3 grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4"
         >
-          <div className="contents">          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <div className="contents">          <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             About
             <Select
               name="kind"
@@ -259,7 +259,7 @@ export default async function TpoAuditPage({
             </Select>
           </label>
 
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             From (IST)
             <DateInput mode="date"
               name="from"
@@ -268,7 +268,7 @@ export default async function TpoAuditPage({
             />
           </label>
 
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             To (IST)
             <DateInput mode="date"
               name="to"
@@ -277,7 +277,7 @@ export default async function TpoAuditPage({
             />
           </label>
 
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search
             <Input
               type="search"
@@ -292,7 +292,7 @@ export default async function TpoAuditPage({
           </div>
           <Disclosure title="Who · Rows per page" className="min-w-0 border-0 sm:col-span-2 lg:col-span-4" defaultOpen={Boolean(query.who || pageSize!==25)} contentClassName="pt-3">
             <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Who
+          <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Who
             <Input type="search" name="who" maxLength={100} defaultValue={query.who}
               placeholder="Actor name contains…" className="min-h-11 md:min-h-9"/>
           </label>
@@ -303,7 +303,7 @@ export default async function TpoAuditPage({
           <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:col-span-2 lg:col-span-4">
             <Button
               type="submit"
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-5 sm:w-auto text-sm font-semibold text-on-primary hover:bg-primary-hover  md:min-h-9"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-6 sm:w-auto text-sm font-semibold text-on-primary hover:bg-primary-hover  md:min-h-9"
             >
               Apply filters
             </Button>
