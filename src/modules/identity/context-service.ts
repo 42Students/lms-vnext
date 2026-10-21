@@ -22,6 +22,7 @@ import type {
   MembershipStatus,
   SystemRole,
 } from "@/modules/identity/constants";
+import {MEMBERSHIP_ROLE_DISPLAY_ORDER} from "@/modules/identity/constants";
 
 export type ContextResolutionErrorCode =
   | "USER_NOT_FOUND"
@@ -374,6 +375,24 @@ export async function listMembershipChoices(
 
   return rows.map((row) => ({
     ...row,
-    roles: rolesByMembership.get(row.id) ?? [],
-  }));
+    roles: MEMBERSHIP_ROLE_DISPLAY_ORDER.filter(role=>
+      (rolesByMembership.get(row.id)??[]).includes(role)),
+  })).sort((a,b)=>a.collegeName.localeCompare(b.collegeName)||
+    a.organizationName.localeCompare(b.organizationName)||a.id.localeCompare(b.id));
+}
+
+/** A recruiter choice is scoped to the currently selected college, never
+ * widened by a separate role or an unverified historical grant.
+ */
+export function recruiterGrantsForCollege(recruiter:RecruiterContext|null,collegeId:string|null){
+ if(!recruiter||!collegeId)return [];
+ return recruiter.grants.filter(grant=>grant.collegeId===collegeId);
+}
+export function contextRecoveryCopy(code:ContextResolutionErrorCode){
+ switch(code){
+  case "USER_DISABLED":return "Your account is inactive. Contact an administrator.";
+  case "MEMBERSHIP_NOT_ACTIVE":return "Your college access has ended. Choose another active college.";
+  case "MEMBERSHIP_NOT_FOUND":return "This college membership is no longer available.";
+  default:return "Your session is no longer available. Please sign in again.";
+ }
 }

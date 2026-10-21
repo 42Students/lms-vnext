@@ -18,6 +18,8 @@ function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number
       id: row.job.id,
       title: row.job.title,
       description: row.job.description,
+      jobTypeLabel:row.job.jobTypeLabel,
+      responsibilities:row.job.legacyPostingDetails?.responsibilities??"",
       employmentType: row.job.employmentType,
       workMode: row.job.workMode,
       locations: row.job.locations,
@@ -112,7 +114,11 @@ export default async function LearnerPlacementJobsPage() {
       ) : (
         <Suspense fallback={<PageLoading label="Loading drive filters" variant="form" count={2} />}>
           <LearnerJobsBrowse items={rows.map(toItem)} snapshotNowIso={snapshotNowIso}
-            savedJobIds={savedJobs.map(job=>job.jobId)} />
+            savedJobIds={savedJobs.map(job=>job.jobId)}
+            savedHistory={savedJobs.map(job=>({
+              jobId:job.jobId,title:job.title,status:job.jobStatus,
+              deadline:job.applicationDeadline?.toISOString()??null,
+            }))} />
         </Suspense>
       )}
     </div>

@@ -18,7 +18,7 @@ import {publicApplicantSearchSchema,escapeLiteralApplicantSearch,clampCompanySha
 const pageSchema=z.coerce.number().int().min(1).max(10000);
 export type PublicCompanyApplicantShare =
  | {kind:"UNAVAILABLE"}
- | {kind:"CODE_REQUIRED"}
+ | {kind:"CODE_REQUIRED";title:string;companyName:string;expiresAt:string}
  | {kind:"READY";title:string;companyName:string;collegeName:string;
     sharedAt:string;expiresAt:string;rows:ReturnType<typeof projectCompanyShareRows>;
     total:number;page:number;totalPages:number;truncated:boolean;search:string;
@@ -66,7 +66,7 @@ export async function getPublicCompanyApplicantShare(
   const signed=companyShareAccessProof(grant.shareId,grant.tokenHash,grant.codeHash);
   if(grant.lockedUntil&&grant.lockedUntil.getTime()>Date.now()||
     !validCompanyShareAccessProof(rawProof,signed))
-    return {kind:"CODE_REQUIRED" as const};
+    return {kind:"CODE_REQUIRED" as const,title:grant.title,companyName:grant.companyName,expiresAt:grant.expiresAt.toISOString()};
   const selectionReady=await placementTableExists("placement_company_share_selections");
   const selected=selectionReady?await tx.select({applicationId:selectedShares.applicationId})
     .from(selectedShares).where(eq(selectedShares.shareId,grant.shareId)):[];

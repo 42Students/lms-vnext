@@ -93,26 +93,20 @@ export default async function FacultyNotificationsPage({
   return (
     <div className="min-w-0 max-w-full space-y-6">
       <PageHeader title="Notifications" />
-      <nav aria-label="Notification audience" className="flex min-w-0 gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible">
-        {scopeTabs.map(value => (
-          <Link key={value}
-            href={FACULTY_INBOX + "?" + new URLSearchParams({
-              ...(value === "all" ? {} : { tab: value }),
-              ...(view === "unread" ? { view } : {}),
-            }).toString()}
-            aria-current={scopeTab === value ? "page" : undefined}
-            className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold capitalize text-primary-text aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary-subtle)]">
-            {value}
-          </Link>
-        ))}
-      </nav>
+      <NotificationToolbar view={view} unreadCount={unreadCount} baseHref={FACULTY_INBOX}
+        markAllEndpoint="/api/notifications/faculty/read-all" categoryParam="tab" selectedCategory={scopeTab}
+        categories={[
+         {id:"all",label:"All",unread:page.items.length+announcementRead.items.length},
+         {id:"college",label:"College",unread:announcementRead.items.filter(item=>item.receiverType.toLowerCase()==="college").length},
+         {id:"department",label:"Department",unread:announcementRead.items.filter(item=>item.receiverType.toLowerCase()==="department").length},
+         {id:"faculty",label:"Faculty",unread:announcementRead.items.filter(item=>item.receiverType.toLowerCase()==="faculty").length},
+         {id:"personal",label:"Personal",unread:page.items.length},
+        ]}/>
       {scopeTab === "all" || scopeTab === "personal" ? (
       <section aria-labelledby="faculty-personal-notifications" className="space-y-4">
         <h2 id="faculty-personal-notifications" className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">
           Personal notifications
         </h2>
-        <NotificationToolbar view={view} unreadCount={unreadCount} baseHref={FACULTY_INBOX}
-          markAllEndpoint="/api/notifications/faculty/read-all" />
         {invalid ? (
           <Alert tone="error">
             The notification filters or page link are invalid.{" "}

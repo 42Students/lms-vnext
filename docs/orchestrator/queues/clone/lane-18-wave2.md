@@ -21,7 +21,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_NEW_docs_audit_gap2_lane-7_u002-college-admin-projects-audit.md.md` (new; 36 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_NEW_docs_audit_gap2_lane-13_l18-u030-superadmin-departments.md.md` (new; 35 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_src_app_authenticated_admin_organizations_page.tsx.md` (edit src/app/(authenticated)/admin/organizations/page.tsx; 35 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_src_components_admin_department-directory.tsx.md` (edit src/components/admin/department-directory.tsx; 32 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_src_components_admin_department-directory.tsx.md` (edit src/components/admin/department-directory.tsx; 32 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_src_app_authenticated_admin_placements_student-lookup_page.tsx.md` (edit src/app/(authenticated)/admin/placements/student-lookup/page.tsx; 32 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_src_app_authenticated_tracker_logs_page.tsx.md` (edit src/app/(authenticated)/tracker/logs/page.tsx; 30 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_src_app_authenticated_learn_courses_deliveryId_...courseTab_page.tsx.md` (edit src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx; 29 findings; best P2)

@@ -24,13 +24,15 @@ export function CollegeAssignmentReview({
  const [bulkStatus,setBulkStatus]=useState("");
  const [retryAllowed,setRetryAllowed]=useState(false);
  const [failedIds,setFailedIds]=useState<string[]>([]);
+ const [failureDetails,setFailureDetails]=useState<{reason:string}[]>([]);
+ const [breakdown,setBreakdown]=useState<{published:number;skippedUngraded:number;alreadyPublished:number;failed:number}|null>(null);
  const [progress,setProgress]=useState("");
  const [retryScope,setRetryScope]=useState<string|null>(null);
  const [confirmBulk,setConfirmBulk]=useState<{deliveryId:string|null;retryOnly:string[]|null}|null>(null);
  const router=useRouter();
  async function publishAllGrades(selectedDeliveryId:string|null,retryOnly:readonly string[]|null=null){
   if(bulkBusy)return;
-  setBulkBusy(true);setBulkStatus("");setRetryAllowed(false);setFailedIds([]);
+  setBulkBusy(true);setBulkStatus("");setRetryAllowed(false);setFailedIds([]);setFailureDetails([]);setBreakdown(null);
   setProgress("Processing graded submissions on the server…");
   try{
    const response=await fetch(
@@ -46,29 +48,27 @@ export function CollegeAssignmentReview({
     "Grade publication failed. Reload and retry; completed grades remain published.");
    const receipt=result as {
     published?:unknown;failed?:unknown;remaining?:unknown;
-    failedIds?:unknown;receiptId?:unknown;processed?:unknown;batchLimit?:unknown;
-    complete?:unknown;
+    failedIds?:unknown;receiptId?:unknown;skippedUngraded?:unknown;
+    alreadyPublished?:unknown;failureDetails?:unknown;
    };
    if(typeof receipt.published!=="number"||typeof receipt.failed!=="number"||
       typeof receipt.remaining!=="number"||!Array.isArray(receipt.failedIds)||
+      typeof receipt.skippedUngraded!=="number"||typeof receipt.alreadyPublished!=="number"||
       typeof receipt.receiptId!=="string"){
     throw Error("Publication result could not be verified. Reload before retrying.");
    }
    const remaining=receipt.remaining;
    const failed=receipt.failedIds.filter((id):id is string=>typeof id==="string");
-   const processed=typeof receipt.processed==="number"?receipt.processed:receipt.published+receipt.failed;
-   const batchLimit=typeof receipt.batchLimit==="number"?receipt.batchLimit:200;
    setFailedIds(failed);
+   setBreakdown({published:receipt.published,failed:receipt.failed,
+    skippedUngraded:receipt.skippedUngraded,alreadyPublished:receipt.alreadyPublished});
+   const details=Array.isArray(receipt.failureDetails)?receipt.failureDetails:[];
+   setFailureDetails(details.filter((row):row is {reason:string}=>Boolean(row)&&typeof row==="object"&&
+    "reason" in row&&typeof row.reason==="string").map(row=>({reason:row.reason})));
    setRetryScope(selectedDeliveryId);
    setRetryAllowed(remaining>0);
-   // Never invent counts for ungraded or already-published records: the API
-   // only includes graded-unpublished rows in its bounded current batch.
-   setBulkStatus(receipt.published+" published · "+receipt.failed+" failed · "+
-    remaining+" graded submissions still awaiting publication. "+
-    (remaining>0?"Continue to publish the next batch or retry failed rows. ":
-      "Ungraded and already-published submissions were skipped. ")+
-    "Processed "+processed+" of up to "+batchLimit+" eligible records. "+
-    "Audit receipt: "+receipt.receiptId.slice(0,8)+".");
+   setBulkStatus((remaining>0?remaining+" grades remain. Continue or retry.":"All graded submissions in this scope are published.")+
+    " Audit receipt: "+receipt.receiptId.slice(0,8)+".");
    router.refresh();
   }catch(cause){
    setRetryScope(selectedDeliveryId);
@@ -108,19 +108,35 @@ export function CollegeAssignmentReview({
   </div>
   {status==="PUBLISHED"&&gradedLearners===0?<p role="status" className="text-xs text-muted-foreground">Nothing graded yet</p>:null}
   {bulkBusy?<Alert tone="info" role="status">Publishing graded submissions for this assignment. {progress}</Alert>:null}
+  {breakdown?<section aria-label="Grade publication results" className="rounded border border-border p-3">
+   <h3 className="text-sm font-semibold">Grade publication results</h3>
+   <dl className="mt-3 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+    {([["Published",breakdown.published],["Skipped (ungraded)",breakdown.skippedUngraded],
+      ["Already published",breakdown.alreadyPublished],["Failed",breakdown.failed]] as const).map(([label,value])=>
+      <div key={label}><dt className="text-xs text-muted-foreground">{label}</dt>
+       <dd className="text-lg font-semibold tabular-nums">{value}</dd></div>)}
+   </dl>
+   {failureDetails.length?<div className="mt-3 border-t border-border pt-3">
+    <h4 className="font-semibold">Could not publish</h4>
+    <ol className="mt-2 list-inside list-decimal space-y-1 text-sm text-body">
+     {failureDetails.map((item,index)=><li key={index}>Submission {index+1}: {item.reason}</li>)}
+    </ol>
+   </div>:null}
+  </section>:null}
   {bulkStatus?<Alert tone={retryAllowed?"warning":"success"} role="status">{bulkStatus}</Alert>:null}
   {retryAllowed&&status==="PUBLISHED"?<Button variant="secondary" type="button" disabled={bulkBusy}
    onClick={()=>setConfirmBulk({deliveryId:retryScope,retryOnly:failedIds.length?[...failedIds]:null})}
    className="min-h-11 md:min-h-9">
-   {failedIds.length?"Retry "+failedIds.length+" failed":"Continue publishing remaining grades"}
+   {failedIds.length?"Retry "+failedIds.length+" failed":"Retry failed"}
   </Button>:null}
   <ConfirmDialog open={confirmBulk!==null}
    onOpenChange={open=>{if(!open&&!bulkBusy)setConfirmBulk(null);}}
    title={confirmBulk?.retryOnly?"Retry publishing failed grades?":"Publish grades?"}
    description={confirmBulk?.retryOnly?
-    "Retry publication of "+confirmBulk.retryOnly.length+" failed grades? Previously published grades are not sent again.":
-    (confirmBulk?.deliveryId===null?"Publish graded submissions across every Section of this assignment?":"Publish graded submissions for this Section?")+
-    " Ungraded and already published submissions are skipped. Each server batch can be continued safely; published results become visible to learners."}
+    "Retry publication of "+confirmBulk.retryOnly.length+" failed grades?":
+    "Publish all graded submissions? "+(confirmBulk?.deliveryId===null?
+      "This includes every Section on this assignment.":"Only this selected Section is included.")+
+      " Students can then view their published grades."}
    confirmLabel={confirmBulk?.retryOnly?"Retry failed grades":"Publish grades"}
    confirmVariant="primary" pending={bulkBusy}
    onConfirm={()=>{

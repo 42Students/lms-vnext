@@ -193,8 +193,8 @@ export function LearnerCourseList({
         <Button type="button" size="sm" variant="secondary" onClick={()=>window.location.reload()} className="ml-2 min-h-11 md:min-h-9">Retry semesters</Button>
       </Alert>:null}
       {semesterFallbackApplied?<Alert tone="info">
-        The requested semester is unavailable. Showing your current authorized semester.
-        <Button type="button" size="sm" variant="secondary" onClick={()=>{
+        The requested semester was unavailable; showing your current semester instead.
+        {" "}<Button type="button" size="sm" variant="secondary" onClick={()=>{
           setRequestedSemesterId(null);setPeriodId(preferredPeriodId);
           const url=new URL(window.location.href);
           url.searchParams.delete("semesterId");url.searchParams.delete("academicPeriodId");
@@ -385,7 +385,7 @@ export function LearnerCourseList({
 
       {rows.some(row => row.unavailable) ? (
         <Alert tone="warning" role="alert" className="flex-row flex-wrap items-center justify-between gap-3">
-          <span className="min-w-0 flex-1">Some course records have incomplete or duplicate information. Unavailable cards cannot be opened.</span>
+          <span className="min-w-0 flex-1">Some course records have incomplete or duplicate information. Unavailable cards cannot be opened. Please contact your administrator.</span>
           <Button type="button" onClick={() => window.location.reload()} variant="secondary" className="min-h-[var(--lms-control-height)] max-md:min-h-11">Retry</Button>
         </Alert>
       ) : null}
@@ -429,17 +429,26 @@ export function LearnerCourseList({
                   ) : null}
                   <div className="min-w-0">
                     <Link
-                    href={`/learn/courses/${row.course.deliveryId}/home`}
+                    href={`/learn/courses/${encodeURIComponent(row.course.deliveryId)}/home`}
+                    aria-disabled={row.readOnly}
+                    tabIndex={row.readOnly?-1:undefined}
+                    onClick={event=>{if(row.readOnly)event.preventDefault();}}
                     className="group flex min-h-72 flex-col overflow-hidden rounded-xl border border-border bg-surface transition hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 min-h-11 text-sm"
                   >
-                    <div className="relative h-[140px] w-full overflow-hidden bg-primary-subtle">
-                      <LearnerCourseCardImage key={learnerCourseImageResetKey(row.course.deliveryId,row.thumbnailUrl)} thumbnailUrl={row.thumbnailUrl}/>
-                    </div>
-                    <div className="flex min-w-0 flex-wrap items-center justify-between gap-2 px-4 pt-3">
-                      <span className="text-xs font-bold uppercase tracking-[0.07em] text-primary-text">{row.course.courseCode}</span>
-                      <div className="flex flex-wrap gap-1">
-                       {row.readOnly?<StatusBadge tone="neutral">Past semester</StatusBadge>:null}
-                       {elective?<StatusBadge tone="info">Elective</StatusBadge>:null}
+                    <div className="relative flex min-h-24 items-end overflow-hidden bg-primary-subtle px-5 py-4">
+                      <LearnerCourseCardImage key={learnerCourseImageResetKey(row.course.deliveryId,row.thumbnailUrl)} thumbnailUrl={row.thumbnailUrl} />
+                      <div className="flex w-full items-end justify-between gap-3">
+                        <span className="text-xs font-bold uppercase tracking-[0.1em] text-primary-text">
+                          {row.course.courseCode}
+                        </span>
+                        <div className="flex items-center gap-2">
+                          {row.readOnly ? (
+                            <StatusBadge tone="neutral">Not your current semester</StatusBadge>
+                          ) : null}
+                          {elective ? (
+                            <StatusBadge tone="info">Elective</StatusBadge>
+                          ) : null}
+                        </div>
                       </div>
                     </div>
 
@@ -451,6 +460,9 @@ export function LearnerCourseList({
                         {row.course.courseDescription ??
                           "No course description provided."}
                       </p>
+                      {row.readOnly?<p role="status" className="mt-2 text-xs font-semibold text-warning">
+                       Not your current semester: shown for reference
+                      </p>:null}
                       <p className="mt-3 text-xs font-semibold text-muted-foreground leading-[20px]">
                         Instructor: {row.instructorNames.length > 0
                           ? row.instructorNames.join(", ")
@@ -501,7 +513,7 @@ export function LearnerCourseList({
                         </div>
                         <div className="mt-4 flex items-center justify-between gap-3">
                           <p className="m-0 line-clamp-1 text-sm font-semibold text-foreground leading-[22px]">
-                            {learnerCourseCardNextLabel(row)}
+                            {row.readOnly?"Course unavailable for this semester":learnerCourseCardNextLabel(row)}
                           </p>
                           <span
                             aria-hidden="true"
@@ -526,7 +538,7 @@ export function LearnerCourseList({
                         Open overdue assignment: {row.firstOverdue.title}
                       </Link>
                     ) : null}
-                    {learnerCourseNextItemHref(row) ? (
+                    {!row.readOnly&&learnerCourseNextItemHref(row) ? (
                       <Link href={learnerCourseNextItemHref(row)!}
                         className="mt-2 flex min-h-11 w-full items-center justify-center break-words rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 text-center text-sm font-[650] text-primary-text transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
                         Continue at next learning item →

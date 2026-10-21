@@ -74,6 +74,7 @@ export async function listCollegeAdminSessionTargets(ctx:RequestContext,rawColle
  * Authorization is renewed inside the read transaction, not just at entry. */
 export async function listCollegeAdminSessionTargetsPage(
  ctx:RequestContext,rawCollegeId:unknown,rawPage:unknown=1,
+ roleFilter:"ALL"|"COLLEGE_ADMIN"|"TPO"="ALL",
 ){
  const page=adminSessionHistoryPageSchema.parse(rawPage),pageSize=25;
  if(!isSuperAdmin(ctx))throw new AuthorizationError("college.manage");
@@ -85,7 +86,7 @@ export async function listCollegeAdminSessionTargetsPage(
    organizationId:college.organizationId,collegeId:college.id,
   });
   const roleCondition=and(eq(membershipRoles.membershipId,collegeMemberships.id),
-   inArray(membershipRoles.role,["COLLEGE_ADMIN","TPO"]));
+   inArray(membershipRoles.role,roleFilter==="ALL"?["COLLEGE_ADMIN","TPO"]:[roleFilter]));
   const scope=and(eq(collegeMemberships.collegeId,college.id),
    inArray(collegeMemberships.status,["ACTIVE","SUSPENDED"]));
   const [counts]=await tx.select({

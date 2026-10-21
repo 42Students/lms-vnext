@@ -1,6 +1,7 @@
 import {z} from "zod";
 
-const allowedPageSizes=[10,25,50,100] as const;
+export const ADMIN_DIRECTORY_PAGE_SIZES=[10,25,50,100] as const;
+const allowedPageSizes=ADMIN_DIRECTORY_PAGE_SIZES;
 // Explicit query strings use decimal digits only; Number coercion also accepts
 // hexadecimal, scientific notation and whitespace that have no URL page meaning.
 const decimalPage = z.union([
@@ -17,7 +18,7 @@ const decimalPageSize = z.union([
 export const adminDirectoryQuerySchema=z.strictObject({
   q:z.string().trim().max(100).default(""),
   page:decimalPage.default(1),
-  pageSize:decimalPageSize.refine(size=>allowedPageSizes.some(value=>value===size)).default(25),
+  pageSize:decimalPageSize.refine(size=>allowedPageSizes.some(value=>value===size)).default(10),
 });
 
 export function parseAdminDirectorySearchParams(raw:Record<string,string|string[]|undefined>){
@@ -37,5 +38,21 @@ export const legacyCollegeDirectorySearchSchema=z.strictObject({
  state:z.string().trim().max(80).optional(),
  city:z.string().trim().max(100).optional(),
  orgId:z.union([z.string().uuid(),z.string().regex(/^[0-9]+$/)]).optional(),
- limit:decimalPageSize.default(15),
+ limit:z.union([
+   z.number().int().min(1).max(15),
+   z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int().min(1).max(15)),
+ ]).default(15),
 });
+
+/** Keyboard selection for the capped historic college search dropdown.
+ * Empty results have no selectable row. */
+export function legacyCollegeDirectoryOptionIndex(
+ current:number,key:"ArrowDown"|"ArrowUp"|"Home"|"End",length:number,
+):number|null{
+ const count=Math.max(0,Math.min(15,Math.trunc(length)));
+ if(!count)return null;
+ if(key==="Home")return 0;
+ if(key==="End")return count-1;
+ if(key==="ArrowDown")return current<0?0:(current+1)%count;
+ return current<0?count-1:(current+count-1)%count;
+}

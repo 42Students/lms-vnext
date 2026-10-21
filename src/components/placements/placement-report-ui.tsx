@@ -22,11 +22,16 @@ export function reportNumber(value: number) {
 }
 
 export function reportPercent(value: number | null) {
-  return value === null ? "—" : `${value}%`;
+  return value === null ? "No placement rate yet (nobody has registered)" : `${value}%`;
 }
 
 export function reportCurrency(value: number | null) {
   return value === null ? "—" : `₹${integerFormat.format(value)}`;
+}
+/** Annual compensation in rupees, displayed in lakhs without double conversion. */
+export function reportLpa(annualCtcInr: number | null) {
+  if(annualCtcInr===null||!Number.isFinite(annualCtcInr)||annualCtcInr<=0)return "—";
+  return `₹${new Intl.NumberFormat("en-IN",{maximumFractionDigits:2}).format(annualCtcInr/100000)} LPA`;
 }
 
 export function reportHref(
@@ -59,7 +64,7 @@ export function ReportFilters({
   return (
     <section
       aria-label="Report filters"
-      className="grid min-w-0 gap-4 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 print:hidden"
+      className="grid min-w-0 gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:grid-cols-2 print:hidden"
     >
       <form action={path} method="get" className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
         <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -99,17 +104,17 @@ export function ReportFilters({
           />
         ) : null}
         <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          Drive
+          Job
           <Select
             name="jobId"
             className="mt-1.5 min-h-11 md:min-h-9"
             defaultValue={workspace.selectedJobId ?? ""}
             disabled={workspace.noSeason}
           >
-            <option value="">All drives in selected season</option>
+            <option value="">All jobs</option>
             {workspace.jobs.map((job) => (
               <option key={job.id} value={job.id}>
-                {job.companyName} · {job.title}
+                {job.title.slice(0,30)}{job.title.length>30?"…":""} - {job.companyName}
               </option>
             ))}
           </Select>
@@ -124,9 +129,11 @@ export function ReportFilters({
       </form>
       <div className="sm:col-span-2"><TpoReportSavedFilters path={path} collegeId={workspace.collegeId} userId={userId}/></div>
       <p className="text-xs leading-5 text-muted-foreground sm:col-span-2">
-        Changing the season clears the drive filter. Changing the drive
-        preserves the selected season. Reports are read-only and restricted
-        to your college.
+        Legacy snapshots used the full report default scope, while this report defaults
+        to the active or latest placement season and can filter to one job; these
+        denominators and results can therefore differ. Changing the season clears
+        the job filter. Changing the job preserves the selected season.
+        Reports are read-only and restricted to your college.
       </p>
     </section>
   );
@@ -219,7 +226,7 @@ export function ReportScopeNote({
   return (
     <section
       aria-label="Reporting methodology"
-      className="border-y border-border py-3 text-sm leading-6 text-body"
+      className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm leading-6 text-body"
     >
       <p className="font-semibold text-foreground">Reporting methodology</p>
       <p className="mt-1">{note}</p>

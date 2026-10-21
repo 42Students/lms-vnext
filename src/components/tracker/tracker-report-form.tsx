@@ -73,6 +73,12 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       section: value("section") || null, issueType: value("issueType"),
       severity: value("severity"), description: value("description"),
       evidenceLink: value("evidenceLink") || null,
+      // Use only origin+pathname. Never persist URLs with token, search or
+      // fragment secrets in a tracker diagnostic payload.
+      sourceUrl:window.location.origin+window.location.pathname,
+      sourcePath:window.location.pathname.slice(0,500),
+      browser:window.navigator.userAgent.slice(0,500),
+      viewport:(window.innerWidth+"x"+window.innerHeight).slice(0,64),
     });
     if (!parsed.success) {
       const errors:Record<string,string>={};
@@ -221,21 +227,20 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         </label>
       </div>
       <label className={label}>What went wrong?
-        <Textarea className={field + " min-h-36"} name="description" required maxLength={4000} rows={6}
+        <Textarea className={field + " min-h-36 max-h-80"} name="description" required maxLength={4000} rows={5}
           value={draft.description} onChange={event=>patch("description",event.target.value)}
           placeholder="Example: I opened Lesson 3 and the lesson content kept loading without showing anything." />
-        <span className="mt-1 block text-xs font-normal text-muted-foreground">Up to 4000 characters</span>
+        <span className="mt-1 block text-xs font-normal text-muted-foreground" aria-live="polite">{draft.description.length}/4000 characters</span>
         {fieldErrors.description?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.description}</span>:null}
       </label>
-      <details className="min-w-0 border-b border-border pb-4" open={Boolean(draft.evidenceLink)}>
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Optional evidence link</summary>
+      <section className="min-w-0 border-b border-border pb-4" aria-label="Optional evidence link">
         <label className={label + " mt-2"}>Evidence link
           <Input className={field} name="evidenceLink" type="url" maxLength={1000} placeholder="https://…" value={draft.evidenceLink} onChange={event=>patch("evidenceLink",event.target.value)}/>
           <span className="mt-1 block text-xs font-normal text-muted-foreground">
             Optional — add a shareable HTTP/HTTPS evidence link (HTTPS recommended). Do not share private screenshots through public URLs. Direct clipboard paste and unscanned attachments are not accepted.
           </span>
         </label>
-      </details>
+      </section>
       {canSearchSimilar ? <>
       <details aria-label="Similar issues" className="min-w-0 border-y border-border py-4" open={Boolean(similarQuery.trim())}>
         <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Similar issues</summary>

@@ -64,13 +64,13 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
   <section aria-label="Templates" className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
     <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Templates</h2>
   <form method="get" className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_auto_auto]">
-   <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Template title or slug
-    <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
-     placeholder="Search title or slug" className="min-h-11 w-full min-w-0 md:min-h-9"/>
+   <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Search title or slug
+    <Input type="search" name="q" placeholder="Search title or slug" maxLength={100} defaultValue={data.query.q}
+     className="min-h-11 w-full min-w-0 md:min-h-9"/>
    </label>
-   <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Status
-    <Select name="status" defaultValue={data.query.status} aria-label="Lifecycle status" className="min-h-11 w-full min-w-0 md:min-h-9">
-     {statuses.map(x=><option key={x} value={x}>{x==="ALL"?"Lifecycle status":x[0]+x.slice(1).toLowerCase()}</option>)}
+   <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Lifecycle status
+    <Select name="status" defaultValue={data.query.status} className="min-h-11 w-full min-w-0 md:min-h-9">
+     {statuses.map(x=><option key={x} value={x}>{x}</option>)}
     </Select>
    </label>
    <Button type="submit" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Filter</Button>
@@ -79,6 +79,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
     exportAction={<SuperAdminTemplatePageExport items={data.items}/>} />
   <p className="m-0 text-xs text-muted-foreground">Export CSV downloads project-templates.csv (Title, Version, Lifecycle, Summary) for the current permissioned page, not every filtered template.</p>
   <p className="m-0 break-words text-xs text-muted-foreground">Page {data.query.page} of {data.totalPages} · assignment counts: {data.assignmentScope.toLowerCase()} scope</p>
+  <div className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
   <DataTable<(typeof data.items)[number]>
     caption="Global project template catalogue"
     rows={data.items}
@@ -89,9 +90,8 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
           className="inline-flex items-center min-h-11 md:min-h-9 break-words font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">{item.title}</Link>
 
       </>},
-      {key:"version",header:"Version",mobilePriority:"secondary",cell:item=>item.currentVersion??"—"},
-      {key:"status",header:"Lifecycle",mobilePriority:"secondary",cell:item=>
-        <StatusBadge tone={tone(item.status)}>{item.status[0]+item.status.slice(1).toLowerCase()}</StatusBadge>},
+      {key:"status",header:"Lifecycle status",mobilePriority:"secondary",cell:item=>
+        <StatusBadge tone={tone(item.status)}>{item.status.charAt(0)+item.status.slice(1).toLowerCase()}</StatusBadge>},
       {key:"sections",header:"Sections",mobilePriority:"secondary",cell:item=>item.sectionCounts?
         <div className="flex min-w-0 flex-wrap gap-2">
           <Badge tone="info">Overview 1</Badge>
@@ -99,7 +99,8 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
           <Badge tone="info">Tasks {item.sectionCounts.tasks}</Badge>
           <Badge tone="info">Resources {item.sectionCounts.resources}</Badge>
         </div>:<span className="text-muted-foreground">Not configured</span>},
-
+      {key:"version",header:"Version",mobilePriority:"secondary",cell:item=>
+        <span className="text-xs text-body">Version {item.currentVersion} · published {item.publishedVersion??"Not yet"}</span>},
       {key:"assignments",header:"Assignments",mobilePriority:"secondary",cell:item=>
         <span className="tabular-nums text-sm text-body">{item.activeAssignments} active in scope</span>},
       {key:"action",header:"Action",mobilePriority:"action",cell:item=>
@@ -113,6 +114,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
     empty={<EmptyState title="No matching templates" description="No global template metadata matches these filters."
       action={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary w-full md:w-auto md:min-h-9">Clear filters</Link>}/>}
   />
+  </div>
   <Pagination page={data.query.page} pageCount={data.totalPages} hrefForPage={page=>templateDirectoryHref({...data.query,page})} label="Template pages" />
   </section>
  </div>;
