@@ -38,7 +38,7 @@ export function RecruiterResultReviewGrid({rows,scopeKey}:{
    mobilePrimaryKeys={["applicant","outcome","status","score"]}
    storageKey={"recruiter-result-review:"+scopeKey}
    rowActions={row=><Link href={row.editHref}
-    className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+    className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
     Review row
    </Link>}
  />;

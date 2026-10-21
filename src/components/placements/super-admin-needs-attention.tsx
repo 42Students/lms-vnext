@@ -25,7 +25,7 @@ export function SuperAdminNeedsAttention({items,basePath}:{items:readonly Attent
      <h3 className="text-sm font-semibold">{category.label} ({category.rows.length})</h3>
      {visible.map(item=><Link key={item.jobId} href={basePath+"/jobs/"+
       encodeURIComponent(item.jobId)+"/applications?stage="+category.tab}
-      className="block min-h-10 border-l-2 border-transparent px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle">
+      className="block min-h-10 border-l-2 border-transparent px-3 py-2 text-sm text-primary-text hover:border-primary hover:bg-primary-subtle active:border-primary active:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
        {item.companyName} · {item.jobTitle}
        <span className="ml-2 text-xs text-muted-foreground">{item.count} affected</span>
      </Link>)}
