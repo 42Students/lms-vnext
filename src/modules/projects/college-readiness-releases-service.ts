@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,eq,ilike,inArray,ne,sql} from "drizzle-orm";
+import {and,asc,eq,ilike,inArray,ne,isNull,or,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {projectInstances,projectReleases,projectSprints,projectTasks} from "@/db/schema";
@@ -24,8 +24,45 @@ export async function listCollegeReadinessWorkspaceChoices(context:RequestContex
    organizationId:college.organizationId,collegeId:college.id,
   });
   return tx.select({id:projectInstances.id,title:projectInstances.title,status:projectInstances.status})
-   .from(projectInstances).where(and(eq(projectInstances.collegeId,college.id),ne(projectInstances.status,"ARCHIVED"),...(search?[ilike(projectInstances.title,"%"+search+"%")]:[])))
+   .from(projectInstances).where(and(eq(projectInstances.collegeId,college.id),isNull(projectInstances.deletedAt),
+    ne(projectInstances.status,"ARCHIVED"),...(search?[ilike(projectInstances.title,"%"+search+"%")]:[])))
    .orderBy(asc(projectInstances.title),asc(projectInstances.id)).limit(pageSize).offset((page-1)*pageSize);
+ });
+}
+
+
+/** Recover historic ?projectId=slug and numeric project bookmarks inside the
+ * selected college only. Never resolve a foreign-college slug or leaked UUID.
+ * The returned UUID is a locator, not a mutation capability.
+ */
+export async function resolveCollegeReadinessWorkspaceId(
+ context:RequestContext,collegeIdInput:string,rawId:string,
+):Promise<string|null>{
+ const collegeId=z.string().uuid().parse(collegeIdInput);
+ if(getProjectAdminCollegeId(context)!==collegeId)
+  throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ const college=await loadProjectCollegeScope(collegeId);
+ requirePermission(context,"projects.manage",{
+  collegeId,organizationId:college.organizationId,
+ });
+ const value=rawId.trim();
+ if(value.length===0||value.length>160)return null;
+ const uuid=z.string().uuid().safeParse(value);
+ const legacy=/^[0-9]+$/.test(value)?Number(value):null;
+ if(!uuid.success&&!/^[a-z0-9_-]+$/i.test(value))return null;
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"projects.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
+  const locator=uuid.success?eq(projectInstances.id,uuid.data):
+   legacy!==null&&Number.isSafeInteger(legacy)&&legacy>0?
+    or(eq(projectInstances.slug,value),eq(projectInstances.legacyProjectId,legacy)):
+    eq(projectInstances.slug,value);
+  const [row]=await tx.select({id:projectInstances.id})
+   .from(projectInstances)
+   .where(and(eq(projectInstances.collegeId,collegeId),
+     isNull(projectInstances.deletedAt),locator)).limit(1);
+  return row?.id??null;
  });
 }
 

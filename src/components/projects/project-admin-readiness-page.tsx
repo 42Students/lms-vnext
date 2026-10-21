@@ -2,8 +2,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import {AdminReadinessWorkspacePicker} from "./admin-readiness-workspace-picker";
 import Link from "next/link";
 import { listCollegeActiveReadinessOverrides } from "@/modules/projects/admin-readiness-overrides-service";
-import {listCollegeReadinessWorkspaceChoices,listCollegeReadinessReleases} from "@/modules/projects/college-readiness-releases-service";
-import {z} from "zod";
+import {listCollegeReadinessWorkspaceChoices,listCollegeReadinessReleases,
+ resolveCollegeReadinessWorkspaceId} from "@/modules/projects/college-readiness-releases-service";
 import {requireProjectManageAccess} from "@/modules/projects/access";
 import {getProjectReadiness} from "@/modules/projects/readiness-service";
 import {effectiveProjectSubmissionReady} from "@/modules/projects/readiness-override-model";
@@ -109,11 +109,13 @@ export async function ProjectAdminReadinessPage({
       action={<Link href={basePath+"/readiness"} className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">Retry readiness</Link>} />
   </div>;
   const [result, activeOverrides, workspaceChoices] = read.value;
-  const chosenId=z.string().uuid().safeParse(one(searchParams.projectId) ?? one(searchParams.workspaceId)).data;
+  const requested=one(searchParams.projectId)??one(searchParams.workspaceId);
+  const chosenId=requested?await resolveCollegeReadinessWorkspaceId(
+    context,collegeId,requested).catch(()=>null):null;
   const selectedScope=chosenId?await requireProjectManageAccess(context,chosenId)
     .then(scope=>scope.collegeId===collegeId?scope:null).catch(()=>null):null;
   const selected=selectedScope?.project.id??null;
-  const outsideScope=Boolean(chosenId&&!selected);
+  const outsideScope=Boolean(requested&&!selected);
   const pickerChoices=selectedScope&&!workspaceChoices.some(item=>item.id===selected)
     ?[{id:selectedScope.project.id,title:selectedScope.project.title,
       status:selectedScope.project.status},...workspaceChoices]:workspaceChoices;
@@ -173,7 +175,13 @@ export async function ProjectAdminReadinessPage({
         </nav>:null}
       </Disclosure>
       <Disclosure title="Select workspace" className="border-b border-border pb-4" defaultOpen contentClassName="space-y-3 pt-3">
-        {outsideScope ? <Banner tone="warning" role="alert">This workspace belongs to a different college — switch colleges in the header and try again.</Banner> : null}
+        {outsideScope ? <Banner tone="warning" role="alert">
+          This workspace could not be found in the selected college. Check its
+          ID or slug, or switch colleges in the header and try again.
+        </Banner> : null}
+        {!selected?<Banner tone="info">Select a workspace to see current readiness,
+          its releases and any manual override. Choose a college workspace below.
+        </Banner>:null}
         <AdminReadinessWorkspacePicker key={selected??"no-selection"}
           items={pickerChoices} selected={selected} action={readinessPath}/>
         {selected ? <>
