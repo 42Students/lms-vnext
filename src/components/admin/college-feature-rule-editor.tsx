@@ -8,9 +8,12 @@ import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
+import {Disclosure} from "@/components/ui/disclosure";
+import {useToast} from "@/components/ui/toast";
 import {collegeRulePayload,isCollegeRuleDirty,collegeRuleReceipt,collegeRuleSelection,parseCollegeRuleRecheck,type CollegeModule,type CollegeChoice,type ObservedCollegeRule} from "@/modules/module-access/admin-college-rule-ui-model";
 export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked}:{collegeId:string;module:CollegeModule;stored:ObservedCollegeRule;ancestorLocked:boolean}){
  const router=useRouter();
+ const {showToast}=useToast();
  const [observed,setObserved]=useState<ObservedCollegeRule>(stored);
  const [choice,setChoice]=useState<CollegeChoice>(collegeRuleSelection(stored));
  const [locked,setLocked]=useState(stored?.locked??false);
@@ -19,12 +22,21 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
  const [feedback,setFeedback]=useState("");
  const [feedbackTone,setFeedbackTone]=useState<"success"|"error">("success");
  const [impact,setImpact]=useState<string|null>(null);
+ const [impactCounts,setImpactCounts]=useState<number[]|null>(null);
+ const [collegeName,setCollegeName]=useState("this college");
+ const [retryFailure,setRetryFailure]=useState(false);
+ const [ackUnknown,setAckUnknown]=useState(false);
  const [students,setStudents]=useState<number|null>(null);
  const [acknowledgedPopulation,setAcknowledgedPopulation]=useState(false);
  const [impactBusy,setImpactBusy]=useState(false);
  const lockChanged=observed!==null&&(choice==="INHERIT"?observed.locked:locked!==observed.locked);
  const endpoint="/api/admin/features/"+encodeURIComponent(collegeId)+"/rules";
- const disabled=busy||impactBusy||confirm||!isCollegeRuleDirty(choice,locked,observed)||(ancestorLocked&&choice!=="INHERIT");
+ const dirty=isCollegeRuleDirty(choice,locked,observed);
+ const disabled=busy||impactBusy||confirm||!dirty||(ancestorLocked&&choice!=="INHERIT");
+ const turningOff=choice==="OFF"&&(observed===null||observed.enabled);
+ const projectsOff=turningOff&&module==="projects",placementsOff=turningOff&&module==="placements";
+ const canSave=students!==null&&(students<100||acknowledgedPopulation)&&(impactCounts!==null||ackUnknown);
+ const moduleLabel=module==="projects"?"Projects":module==="placements"?"Placements":"Electives";
  async function recheck(){
   setBusy(true);setFeedback("");
   try{
@@ -38,36 +50,86 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
   finally{setBusy(false);}
  }
  async function reviewChange(){
-  if(busy||impactBusy||confirm||disabled)return;
-  setFeedback("");setImpactBusy(true);setImpact(null);setStudents(null);setAcknowledgedPopulation(false);
+  if(disabled)return;
+  setFeedback("");setRetryFailure(false);setImpactBusy(true);setImpact(null);
+  setImpactCounts(null);setStudents(null);setAckUnknown(false);setAcknowledgedPopulation(false);
   try{
+   // The immutable college name and stored rule must be rechecked for this scope.
+   const ruleResponse=await fetch(endpoint,{cache:"no-store"});
+   const ruleData:unknown=await ruleResponse.json().catch(()=>null);
+   const scoped=ruleData&&typeof ruleData==="object"&&"college" in ruleData?ruleData.college:null;
+   if(!ruleResponse.ok||!scoped||typeof scoped!=="object"||!("name" in scoped)||
+      typeof scoped.name!=="string"||!scoped.name.trim())
+    throw Error("Could not verify the selected college. Recheck before editing.");
+   const latest=parseCollegeRuleRecheck(ruleData,module);
+   if(latest===undefined||JSON.stringify(latest)!==JSON.stringify(observed))
+    throw Error("The stored rule changed. Recheck the latest rule before editing.");
+   setCollegeName(scoped.name.trim());
    const response=await fetch("/api/admin/features/"+encodeURIComponent(collegeId)+
      "/impact?module="+encodeURIComponent(module),{cache:"no-store"});
-   if(!response.ok)throw Error("impact not available");
-   const snapshot=await response.json() as {summary:string;students:number};
-   setImpact(snapshot.summary);
-   if(Number.isInteger(snapshot.students)&&snapshot.students>=0)setStudents(snapshot.students);
-  }catch{setImpact("Blast-radius counts are unavailable. This is not a safety check.");}
-  finally{setImpactBusy(false);setConfirm(true);}
+   const raw:unknown=response.ok?await response.json().catch(()=>null):null;
+   if(raw&&typeof raw==="object"&&"module" in raw&&raw.module===module&&
+      "counts" in raw&&Array.isArray(raw.counts)&&
+      raw.counts.length>=(module==="placements"?3:module==="projects"?1:0)&&
+      raw.counts.every((value:unknown)=>typeof value==="number"&&Number.isSafeInteger(value)&&value>=0)){
+    setImpactCounts(raw.counts as number[]);
+    if("summary" in raw&&typeof raw.summary==="string")setImpact(raw.summary);
+    if("students" in raw&&typeof raw.students==="number"&&Number.isSafeInteger(raw.students)&&raw.students>=0)
+     setStudents(raw.students);
+   }else setImpact("Impact data could not be loaded. This does not mean disabling access is safe.");
+   // The Placements impact route lacks learner population; use the scoped Projects
+   // impact read to preserve the 100-learner confirmation gate.
+   if(module==="placements"){
+    const populationResponse=await fetch("/api/admin/features/"+encodeURIComponent(collegeId)+
+      "/impact?module=projects",{cache:"no-store"});
+    const population:unknown=populationResponse.ok?await populationResponse.json().catch(()=>null):null;
+    if(population&&typeof population==="object"&&"module" in population&&population.module==="projects"&&
+       "students" in population&&typeof population.students==="number"&&
+       Number.isSafeInteger(population.students)&&population.students>=0)setStudents(population.students);
+   }
+   setConfirm(true);
+  }catch(error){
+   setFeedbackTone("error");
+   setFeedback(error instanceof Error?error.message:"Could not review impact for this college.");
+  }finally{setImpactBusy(false);}
  }
  async function save(){
-  if(students===null||(students>=100&&!acknowledgedPopulation))return;
-  setBusy(true);setFeedback("");
+  if(!canSave||busy||!dirty)return;
+  setBusy(true);setFeedback("");setRetryFailure(false);
   try{
-   const response=await fetch(endpoint,{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(collegeRulePayload(module,choice,locked,observed))});
+   const response=await fetch(endpoint,{method:"PUT",headers:{"content-type":"application/json"},
+    body:JSON.stringify(collegeRulePayload(module,choice,locked,observed))});
    const data:unknown=await response.json().catch(()=>null);
    if(!response.ok){
     const error=data&&typeof data==="object"&&"error" in data?String(data.error):"REQUEST_FAILED";
     setFeedbackTone("error");
-    setFeedback(error==="STALE_RULE"?"Policy changed in another session. Recheck before editing again.":error==="ANCESTOR_LOCKED"?"A higher-level lock now prevents this override.": "Change failed ("+error+").");
+    setFeedback(error==="STALE_RULE"?"Policy changed in another session. Recheck before editing."
+     :error==="ANCESTOR_LOCKED"?"A higher-level lock prevents this override. Open Module Access to resolve inherited locks."
+     :error==="LOCAL_LOCKED"?"This college rule is locked. Review Module Access to unlock it."
+     :"Change failed ("+error+"). Retry after reviewing the current module rule.");
+    setRetryFailure(error!=="STALE_RULE"&&error!=="ANCESTOR_LOCKED");
     return;
    }
-   if(!collegeRuleReceipt(data,module,choice,locked)){setFeedbackTone("error");setFeedback("The server did not confirm the stored state. Recheck before retrying.");return;}
-   setObserved(choice==="INHERIT"?null:{enabled:choice==="ON",locked});
-   setFeedbackTone("success");setFeedback("Saved. Effective policy is refreshing.");
+   if(!collegeRuleReceipt(data,module,choice,locked)){
+    setFeedbackTone("error");setFeedback("Server did not confirm the stored state. Recheck before retrying.");return;
+   }
+   const responseAfter=await fetch(endpoint,{cache:"no-store"});
+   const dataAfter:unknown=await responseAfter.json().catch(()=>null);
+   const current=responseAfter.ok?parseCollegeRuleRecheck(dataAfter,module):undefined;
+   const expected=choice==="INHERIT"?null:{enabled:choice==="ON",locked};
+   if(current===undefined||JSON.stringify(current)!==JSON.stringify(expected)){
+    setFeedbackTone("error");setFeedback("Write accepted but the latest stored rule was not verified. Recheck before editing again.");return;
+   }
+   setObserved(current);setChoice(collegeRuleSelection(current));setLocked(current?.locked??false);
+   showToast({tone:"success",title:lockChanged?(locked?"Locked ":"Unlocked ")+moduleLabel+" for "+collegeName
+    :moduleLabel+" updated for "+collegeName});
+   setFeedbackTone("success");setFeedback("Stored policy verified for "+collegeName+".");
    router.refresh();
-  }catch{setFeedbackTone("error");setFeedback("Connection failed. The change was not confirmed.");}
-  finally{setBusy(false);setConfirm(false);}
+  }catch{
+   setFeedbackTone("error");
+   setFeedback("Connection or verification failed. The change might have saved; recheck stored policy before retrying.");
+   setRetryFailure(true);
+  }finally{setBusy(false);setConfirm(false);}
  }
  return <section aria-label="College feature policy" aria-busy={busy||impactBusy} className="mt-3 min-w-0 space-y-3 border-t border-border pt-3 print:hidden">
   {ancestorLocked?<Alert tone="warning">Locked by a broader policy. Only Inherit is available for cleanup.</Alert>:null}
