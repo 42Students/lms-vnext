@@ -38,7 +38,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_components_public_graceful-error-boundary.tsx.md` (edit src/components/public/graceful-error-boundary.tsx; 13 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_components_projects_project-participant-list-controls.tsx.md` (edit src/components/projects/project-participant-list-controls.tsx; 12 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_components_shell_learner-faculty-mobile-footer.tsx.md` (edit src/components/shell/learner-faculty-mobile-footer.tsx; 12 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_NEW_docs_audit_gap2_lane-6_tpo-batches-controller.md.md` (new; 12 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_NEW_docs_audit_gap2_lane-6_tpo-batches-controller.md.md` (new; 12 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_components_projects_project-resource-controls.tsx.md` (edit src/components/projects/project-resource-controls.tsx; 11 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_app_authenticated_teacher_courses_deliveryId_students_page.tsx.md` (edit src/app/(authenticated)/teacher/courses/[deliveryId]/students/page.tsx; 10 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_modules_courses_faculty-assignment-submissions-model.ts.md` (edit src/modules/courses/faculty-assignment-submissions-model.ts; 10 findings; best P2)
