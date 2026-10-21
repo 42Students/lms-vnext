@@ -13,3 +13,9 @@
 - `tpo.escalateWithdrawals` now claims its 12-minute Postgres lease before running the existing 24-hour-window escalation, with a dev 15-minute trigger.
 - `tpo.deliverDueNotices` now claims a separate 50-second lease before its existing 30-second undo-hold publisher and returns HTTP 503 when storage is not ready; a dev one-minute trigger is staged.
 - Neither manifest has been applied; all other scheduled job gaps and runtime verification remain open.
+
+### Read-only operator lease inspection (partial)
+
+- `GET /api/internal/placements/tpo/scheduler-status` is protected by the TPO scheduler secret and returns each canonical job's cadence, handler-wired flag, active/expired/never-claimed lease and fence from PostgreSQL; DB outage returns 503. This is partial progress on G2-5-032-005/-007/-011/-027.
+- It deliberately reports `lastSuccessfulRunAt: null` and `outcomesTracked: false` because durable run/outcome history has not been implemented. A claimed lease is **not** evidence of successful dispatch.
+- New files: `src/modules/operations/tpo-scheduled-job-health.ts`, `src/app/api/internal/placements/tpo/scheduler-status/route.ts`.
