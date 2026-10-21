@@ -173,36 +173,36 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-5.md: file, number of 
 - [x] `src/app/(authenticated)/tracker/page.tsx`
 - [x] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
 - [x] `src/app/globals.css`
-- [ ] `src/app/layout.tsx`
-- [ ] `src/components/academics/academics-actions.tsx`
-- [ ] `src/components/academics/academics-create-panel.tsx`
-- [ ] `src/components/academics/college-archived-programs.tsx`
-- [ ] `src/components/academics/college-cohort-management.tsx`
-- [ ] `src/components/academics/college-hall-booking-action.tsx`
-- [ ] `src/components/academics/college-recurring-preview.tsx`
-- [ ] `src/components/academics/college-section-management.tsx`
-- [ ] `src/components/academics/college-semester-management.tsx`
-- [ ] `src/components/academics/college-term-mapping-manager.tsx`
-- [ ] `src/components/academics/learner-class-schedule.tsx`
-- [ ] `src/components/academics/section-operations.tsx`
-- [ ] `src/components/activity/learner-notifications-inbox.tsx`
-- [ ] `src/components/activity/notification-list.tsx`
-- [ ] `src/components/activity/notification-toolbar.tsx`
-- [ ] `src/components/admin/admin-program-directory.tsx`
-- [ ] `src/components/admin/college-admin-lifecycle-action.tsx`
-- [ ] `src/components/admin/college-archive-button.tsx`
-- [ ] `src/components/admin/college-at-glance-panel.tsx`
-- [ ] `src/components/admin/college-branding-form.tsx`
-- [ ] `src/components/admin/college-bulk-import.tsx`
-- [ ] `src/components/admin/college-create-form.tsx`
-- [ ] `src/components/admin/college-edit-dialog.tsx`
-- [ ] `src/components/admin/college-feature-rule-editor.tsx`
-- [ ] `src/components/admin/college-logo-uploader.tsx`
-- [ ] `src/components/admin/college-signin-method-form.tsx`
-- [ ] `src/components/admin/department-actions.tsx`
-- [ ] `src/components/admin/department-create-form.tsx`
-- [ ] `src/components/admin/lecture-hall-manager.tsx`
-- [ ] `src/components/admin/managed-college-subdomain.tsx`
+- [x] `src/app/layout.tsx`
+- [x] `src/components/academics/academics-actions.tsx`
+- [x] `src/components/academics/academics-create-panel.tsx`
+- [x] `src/components/academics/college-archived-programs.tsx`
+- [x] `src/components/academics/college-cohort-management.tsx`
+- [x] `src/components/academics/college-hall-booking-action.tsx`
+- [x] `src/components/academics/college-recurring-preview.tsx`
+- [x] `src/components/academics/college-section-management.tsx`
+- [x] `src/components/academics/college-semester-management.tsx`
+- [x] `src/components/academics/college-term-mapping-manager.tsx`
+- [x] `src/components/academics/learner-class-schedule.tsx`
+- [x] `src/components/academics/section-operations.tsx`
+- [x] `src/components/activity/learner-notifications-inbox.tsx`
+- [x] `src/components/activity/notification-list.tsx`
+- [x] `src/components/activity/notification-toolbar.tsx`
+- [x] `src/components/admin/admin-program-directory.tsx`
+- [x] `src/components/admin/college-admin-lifecycle-action.tsx`
+- [x] `src/components/admin/college-archive-button.tsx`
+- [x] `src/components/admin/college-at-glance-panel.tsx`
+- [x] `src/components/admin/college-branding-form.tsx`
+- [x] `src/components/admin/college-bulk-import.tsx`
+- [x] `src/components/admin/college-create-form.tsx`
+- [x] `src/components/admin/college-edit-dialog.tsx`
+- [x] `src/components/admin/college-feature-rule-editor.tsx`
+- [x] `src/components/admin/college-logo-uploader.tsx`
+- [x] `src/components/admin/college-signin-method-form.tsx`
+- [x] `src/components/admin/department-actions.tsx`
+- [x] `src/components/admin/department-create-form.tsx`
+- [x] `src/components/admin/lecture-hall-manager.tsx`
+- [x] `src/components/admin/managed-college-subdomain.tsx`
 - [ ] `src/components/admin/organization-actions.tsx`
 - [ ] `src/components/admin/organization-create-form.tsx`
 - [ ] `src/components/admin/person-membership-actions.tsx`

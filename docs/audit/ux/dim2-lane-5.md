@@ -174,3 +174,34 @@ Shared component corrections: `src/components/ui/alert.tsx`, `banner.tsx`, `metr
 - `src/app/(authenticated)/tracker/page.tsx` | 1 instance(s) [Banner; 0 live] | spec ↔ code: legacy warning #d97706 ↔ --lms-warning-text; notice radius 8px ↔ rounded-[8px]; x-pad 16px ↔ --lms-space-4 | fixes: none
 - `src/app/e2e/chat17-ui-kit/ui-harness.tsx` | 2 instance(s) [InlineNotice; 1 live] | spec ↔ code: legacy success #059669 ↔ --lms-success-text; font 14px ↔ text-[14px]; radius 8px ↔ rounded-[8px] | fixes: none
 - `src/app/globals.css` | 1 instance(s) [inline; 1 live] | spec ↔ code: legacy warning color #d97706 ↔ --lms-warning; 14px status copy ↔ text-sm; ink #54505d ↔ --lms-body-text | fixes: none
+- `src/app/layout.tsx` | 0 instance(s) (inline/live; live 0) | spec ↔ code: none | fixes: none
+- `src/components/academics/academics-actions.tsx` | 0 instance(s) (inline/live; live 0) | spec ↔ code: none | fixes: none
+- `src/components/academics/academics-create-panel.tsx` | 6 instance(s) (Alert; live 5) | spec ↔ code: error #ef4444 ↔ --lms-error; 14px body ↔ shared text-[14px]; radius 8px ↔ rounded-[8px] | fixes: none
+- `src/components/academics/college-archived-programs.tsx` | 1 instance(s) (Banner; live 0) | spec ↔ code: error #ef4444 ↔ --lms-error; 14px body ↔ shared text-[14px]; radius 8px ↔ rounded-[8px] | fixes: none
+- `src/components/academics/college-cohort-management.tsx` | 5 instance(s) (inline/live; live 5) | spec ↔ code: notice grey #54505d ↔ --lms-body-text; font 14px ↔ text-sm; toast layer 1000 ↔ z-[1000] | fixes: none
+- `src/components/academics/college-hall-booking-action.tsx` | 3 instance(s) (inline/live; live 3) | spec ↔ code: notice grey #54505d ↔ --lms-body-text; font 14px ↔ text-sm; toast layer 1000 ↔ z-[1000] | fixes: none
+- `src/components/academics/college-recurring-preview.tsx` | 6 instance(s) (Alert; live 0) | spec ↔ code: error #ef4444 ↔ --lms-error; 14px body ↔ shared text-[14px]; radius 8px ↔ rounded-[8px] | fixes: none
+- `src/components/academics/college-section-management.tsx` | 4 instance(s) (inline/live; live 4) | spec ↔ code: notice grey #54505d ↔ --lms-body-text; font 14px ↔ text-sm; toast layer 1000 ↔ z-[1000] | fixes: none
+- `src/components/academics/college-semester-management.tsx` | 3 instance(s) (inline/live; live 3) | spec ↔ code: notice grey #54505d ↔ --lms-body-text; font 14px ↔ text-sm; toast layer 1000 ↔ z-[1000] | fixes: none
+- `src/components/academics/college-term-mapping-manager.tsx` | 4 instance(s) (inline/live; live 4) | spec ↔ code: notice grey #54505d ↔ --lms-body-text; font 14px ↔ text-sm; toast layer 1000 ↔ z-[1000] | fixes: none
+Shared component correction: `InlineNotice` body/dismiss 13→14px and radius 6→8px; `Tooltip` content radius→8px, vertical pad→6px, min-height→27px, line-height→16px (`antddesign.scss:48-56`).
+- `src/components/academics/learner-class-schedule.tsx` | 1 instance(s) [inline; live 1] | spec ↔ code: info #26bac7 ↔ --lms-info; pale teal #eff8fa ↔ --lms-info-subtle; x inset 16px ↔ --lms-space-4 | fixes: none
+- `src/components/academics/section-operations.tsx` | 0 instance(s) [inline; live 0] | spec ↔ code: none | fixes: none
+- `src/components/activity/learner-notifications-inbox.tsx` | 5 instance(s) [inline; live 5] | spec ↔ code: feedback text #54505d ↔ --lms-body-text; 14px font ↔ text-sm; warning accent #d97706 ↔ --lms-warning | fixes: none
+- `src/components/activity/notification-list.tsx` | 0 instance(s) [inline; live 0] | spec ↔ code: none | fixes: none
+- `src/components/activity/notification-toolbar.tsx` | 0 instance(s) [inline; live 0] | spec ↔ code: none | fixes: none
+- `src/components/admin/admin-program-directory.tsx` | 4 instance(s) [inline; live 4] | spec ↔ code: feedback text #54505d ↔ --lms-body-text; 14px font ↔ text-sm; warning accent #d97706 ↔ --lms-warning | fixes: none
+- `src/components/admin/college-admin-lifecycle-action.tsx` | 2 instance(s) [Alert; live 0] | spec ↔ code: error hue #ef4444 ↔ --lms-error; 14px font ↔ shared text-[14px]; x padding 16px ↔ --lms-space-4 | fixes: none
+- `src/components/admin/college-archive-button.tsx` | 0 instance(s) [inline; live 0] | spec ↔ code: none | fixes: none
+- `src/components/admin/college-at-glance-panel.tsx` | 2 instance(s) [Alert; live 1] | spec ↔ code: error hue #ef4444 ↔ --lms-error; 14px font ↔ shared text-[14px]; x padding 16px ↔ --lms-space-4 | fixes: none
+- `src/components/admin/college-branding-form.tsx` | 4 instance(s) [Alert; live 0] | spec ↔ code: error hue #ef4444 ↔ --lms-error; 14px font ↔ shared text-[14px]; x padding 16px ↔ --lms-space-4 | fixes: none
+- `src/components/admin/college-bulk-import.tsx` | 5 instance(s) (Alert; 1 live) | spec ↔ code: legacy error #ef4444 ↔ --lms-error; radius 8px ↔ rounded-[8px]; font size 14px ↔ text-[14px] | fixes: none
+- `src/components/admin/college-create-form.tsx` | 2 instance(s) (Alert; 0 live) | spec ↔ code: legacy error #ef4444 ↔ --lms-error; radius 8px ↔ rounded-[8px]; font size 14px ↔ text-[14px] | fixes: none
+- `src/components/admin/college-edit-dialog.tsx` | 0 instance(s) (inline; 0 live) | spec ↔ code: none | fixes: none
+- `src/components/admin/college-feature-rule-editor.tsx` | 6 instance(s) (Alert; 1 live) | spec ↔ code: legacy warning #d97706 ↔ --lms-warning-text; x pad 16px ↔ --lms-space-4; notice radius 8px ↔ rounded-[8px] | fixes: none
+- `src/components/admin/college-logo-uploader.tsx` | 2 instance(s) (Alert; 0 live) | spec ↔ code: legacy info teal #26bac7 ↔ --lms-info; pale fill #eff8fa ↔ --lms-info-subtle; radius 8px ↔ rounded-[8px] | fixes: none
+- `src/components/admin/college-signin-method-form.tsx` | 3 instance(s) (Alert; 0 live) | spec ↔ code: legacy error #ef4444 ↔ --lms-error; radius 8px ↔ rounded-[8px]; font size 14px ↔ text-[14px] | fixes: none
+- `src/components/admin/department-actions.tsx` | 1 instance(s) (Alert; 0 live) | spec ↔ code: legacy error #ef4444 ↔ --lms-error; radius 8px ↔ rounded-[8px]; font size 14px ↔ text-[14px] | fixes: none
+- `src/components/admin/department-create-form.tsx` | 2 instance(s) (inline; 2 live) | spec ↔ code: legacy status grey #54505d ↔ --lms-body-text; copy size 14px ↔ text-sm; status warning #d97706 ↔ --lms-warning | fixes: none
+- `src/components/admin/lecture-hall-manager.tsx` | 1 instance(s) (Banner; 0 live) | spec ↔ code: legacy error #ef4444 ↔ --lms-error; radius 8px ↔ rounded-[8px]; font size 14px ↔ text-[14px] | fixes: none
+- `src/components/admin/managed-college-subdomain.tsx` | 3 instance(s) (Alert; 0 live) | spec ↔ code: legacy error #ef4444 ↔ --lms-error; radius 8px ↔ rounded-[8px]; font size 14px ↔ text-[14px] | fixes: none
