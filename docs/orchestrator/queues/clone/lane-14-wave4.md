@@ -24,7 +24,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_modules_projects_template-subview-model.ts.md` (edit src/modules/projects/template-subview-model.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-9/W3_src_modules_messaging_receipt-history-service.ts.md` (edit src/modules/messaging/receipt-history-service.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-2/W3_src_modules_placements_college-drive-applications-model.ts.md` (edit src/modules/placements/college-drive-applications-model.ts; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-11/W3_src_components_admin_super-admin-faculty-bulk-import.tsx.md` (edit src/components/admin/super-admin-faculty-bulk-import.tsx; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-11/W3_src_components_admin_super-admin-faculty-bulk-import.tsx.md` (edit src/components/admin/super-admin-faculty-bulk-import.tsx; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_drive-day-coordinator-policy.ts.md` (edit src/modules/placements/drive-day-coordinator-policy.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_components_tpo_tpo-notice-delete-confirm.tsx.md` (edit src/components/tpo/tpo-notice-delete-confirm.tsx; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_src_modules_academics_semester-mutation-service.ts.md` (edit src/modules/academics/semester-mutation-service.ts; 3 findings; best P1)
