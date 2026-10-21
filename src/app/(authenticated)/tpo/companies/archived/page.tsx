@@ -24,7 +24,7 @@ export default async function ArchivedCompanyRelationshipsPage() {
         actions={<Link href="/tpo/companies?directory=1" className={directoryLinkClasses}>← Companies directory</Link>}
       />
       {truncated ? (
-        <p role="status" className="min-w-0 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-6 text-body">
+        <p role="status" className="min-w-0 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-[22px] text-body">
           Showing only the first 100 archived relationships. This is not a complete list.
         </p>
       ) : null}
@@ -33,7 +33,7 @@ export default async function ArchivedCompanyRelationshipsPage() {
           action={<Link href="/tpo/companies?directory=1" className={directoryLinkClasses}>← Companies directory</Link>} />
       ) : (
         <section aria-label="Archived company relationships" className="min-w-0">
-          <p className="mb-2 text-sm leading-5 text-body">
+          <p className="mb-2 text-sm leading-[22px] text-body">
             {rows.length} archived {rows.length === 1 ? "relationship" : "relationships"} in this view
           </p>
           <ul className="min-w-0 divide-y divide-border border-y border-border bg-surface">

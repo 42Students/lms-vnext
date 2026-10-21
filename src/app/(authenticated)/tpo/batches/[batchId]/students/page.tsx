@@ -116,10 +116,10 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
    <Link href={batchStudentPageHref(batchId,1,{...view.data,decision:"NOT_DECIDED"})+"#batch-student-decisions"}
      className="lms-inline-link mt-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Show me</Link>
  </Alert>:null}
- <p className="text-xs text-muted-foreground">Search covers the full active batch roster; bulk changes apply only to selected learners on this page.
+ <p className="text-xs text-muted-foreground leading-5">Search covers the full active batch roster; bulk changes apply only to selected learners on this page.
   Clearing a direct override restores the recorded class or batch decision; it does not guarantee eligibility.
   Every change is confirmed and audited. Review skipped learners before retrying.</p>
- <p className="text-sm text-muted-foreground">Registration choices are separate from eligibility; missing choices do not imply consent.</p>
+ <p className="text-sm text-muted-foreground leading-[22px]">Registration choices are separate from eligibility; missing choices do not imply consent.</p>
  {!result.registrationAvailable?<Alert tone="warning">Registration records unavailable.</Alert>:null}
 
  {!result.registrationAvailable&&view.data.registration!=="ALL"?<Alert tone="warning">Registration filtering unavailable; no learners are classified without records.</Alert>:null}
@@ -132,12 +132,12 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
     className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export current page CSV (unfiltered)</a>
   </div>
  </Disclosure>
- <p className="text-xs text-muted-foreground">Name/roll-number search runs against the full active batch roster before pagination. Other evidence filters apply to this loaded page. {visible.length} of {result.students.length} loaded learners match.</p>
+ <p className="text-xs text-muted-foreground leading-5">Name/roll-number search runs against the full active batch roster before pagination. Other evidence filters apply to this loaded page. {visible.length} of {result.students.length} loaded learners match.</p>
  <SummaryStrip label="Loaded-page eligibility evidence" steps={[{label:"Loaded",value:pageSummary.assessed},{label:"Eligible",value:pageSummary.eligible},{label:"Ineligible",value:pageSummary.ineligible},{label:"Not decided",value:pageSummary.undecided},{label:"Needs review",value:pageSummary.needsReview},{label:"Direct overrides",value:pageSummary.directOverrides}]} />
- <p className="text-xs text-muted-foreground">These metrics cover the currently loaded 25-person slice before the filters above, not the full cohort.</p>
- <p className="text-sm text-muted-foreground">Active learners only. Eligibility decisions inherit from learner, class, then batch; ambiguous class enrollment requires review.</p>
+ <p className="text-xs text-muted-foreground leading-5">These metrics cover the currently loaded 25-person slice before the filters above, not the full cohort.</p>
+ <p className="text-sm text-muted-foreground leading-[22px]">Active learners only. Eligibility decisions inherit from learner, class, then batch; ambiguous class enrollment requires review.</p>
  <Disclosure title="Bulk changes · Import eligibility · Send a message · Add a note" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3">
- <p className="text-xs text-muted-foreground">CSV includes only this page (up to 25 students), with decision source and review flags.</p>
+ <p className="text-xs text-muted-foreground leading-5">CSV includes only this page (up to 25 students), with decision source and review flags.</p>
  <a href={tpoEligibilityImportScaffoldHref(batchId,result.page)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Download blank eligibility import CSV (this page)</a>
  {finished?<Alert tone="info">This batch is finished. Eligibility decisions and import actions are read-only.</Alert>:<TpoBatchEligibilityImport batchId={batchId}/>}
  {!finished?<TpoBulkActionPanel key={batchId+":"+result.page+":"+view.data.q+":"+view.data.decision}
@@ -162,9 +162,9 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
     {key:"student",header:"Student",mobilePriority:"primary" as const,cell:student=>
      <div className="min-w-0 space-y-1">
       <strong className="block break-words text-foreground">{student.name}</strong>
-      <p className="text-xs text-muted-foreground">Roll no.: {student.rollNumber??"Not recorded"}</p>
-      <p className="text-xs text-muted-foreground">Class: {student.ambiguous?"Multiple active classes":student.className??"Not assigned"}</p>
-      <p className="text-xs text-muted-foreground">Branch: {student.branch} · Program: {student.program}</p>
+      <p className="text-xs text-muted-foreground leading-5">Roll no.: {student.rollNumber??"Not recorded"}</p>
+      <p className="text-xs text-muted-foreground leading-5">Class: {student.ambiguous?"Multiple active classes":student.className??"Not assigned"}</p>
+      <p className="text-xs text-muted-foreground leading-5">Branch: {student.branch} · Program: {student.program}</p>
      </div>},
     {key:"decision",header:"Eligibility",mobilePriority:"secondary" as const,cell:student=>
      <Badge tone={student.ambiguous?"warning":
@@ -180,7 +180,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
     {key:"source",header:"Decision source",mobilePriority:"secondary" as const,cell:student=>
      <div className="text-sm text-body">
       {batchSourceLabel(student.source)}
-      {student.reason?<p className="mt-1 break-words text-xs text-muted-foreground">{student.reason}</p>:null}
+      {student.reason?<p className="mt-1 break-words text-xs text-muted-foreground leading-5">{student.reason}</p>:null}
      </div>},
     {key:"actions",header:"Actions",mobilePriority:"action" as const,cell:student=>
      <div className="min-w-0 space-y-2">
@@ -210,9 +210,9 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
    {journey.undecided!==null?<Badge tone="warning">Not decided: {journey.undecided}</Badge>:null}
    {journey.registrationGap!==null?<Badge tone="neutral">No choice recorded: {journey.registrationGap}</Badge>:null}
   </div>
-  {journey.sampled?<p className="text-xs text-muted-foreground">Eligibility covers a sample of {journey.sampleCount} learners; full-cohort eligibility and invited counts are not inferred.</p>:null}
-  {!registrationCounts.available?<p className="text-xs text-muted-foreground">Registration choice totals are unavailable.</p>:null}
-  <p className="text-xs text-muted-foreground">Invited is a lifecycle event, not a trustworthy per-student delivery count. Registered means a student recorded a placement registration choice, not merely that they were eligible or invited.</p>
+  {journey.sampled?<p className="text-xs text-muted-foreground leading-5">Eligibility covers a sample of {journey.sampleCount} learners; full-cohort eligibility and invited counts are not inferred.</p>:null}
+  {!registrationCounts.available?<p className="text-xs text-muted-foreground leading-5">Registration choice totals are unavailable.</p>:null}
+  <p className="text-xs text-muted-foreground leading-5">Invited is a lifecycle event, not a trustworthy per-student delivery count. Registered means a student recorded a placement registration choice, not merely that they were eligible or invited.</p>
  </section>
  </Disclosure>
 

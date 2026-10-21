@@ -40,10 +40,10 @@ export default async function LearnerPlacementPreparationPage({
     {(await placementTableExists("placement_tpo_prep_assignments"))?<LearnerPrepAssignmentCards/>:null}
     <section aria-label="Recorded preparation summary"
       className="border-b border-border pb-4">
-      <p className="text-sm font-semibold text-foreground">
+      <p className="text-sm font-semibold text-foreground leading-[22px]">
         {data.recorded} of {data.total} information categories recorded
       </p>
-      <p className="mt-2 max-w-3xl text-sm leading-6 text-body">
+      <p className="mt-2 max-w-3xl text-sm leading-[22px] text-body">
         This is not a placement eligibility decision, application approval,
         hiring-readiness score, or requirement imposed by your college.
         Missing entries are not treated as failures.
@@ -61,7 +61,7 @@ export default async function LearnerPlacementPreparationPage({
               <h2 className="min-w-0 break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{item.title}</h2>
               <StatusBadge tone={item.recorded?"success":"neutral"}>{item.recorded?"Recorded":"Not recorded"}</StatusBadge>
             </div>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-body">{item.description}</p>
+            <p className="mt-2 max-w-3xl text-sm leading-[22px] text-body">{item.description}</p>
             <Link href={item.href}
               className="mt-2 inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text underline-offset-2 hover:underline md:min-h-9">
               {item.recorded?"Review recorded information":"Review this section"} →
