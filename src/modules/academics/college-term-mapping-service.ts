@@ -165,6 +165,9 @@ export async function listCollegeTermMappings(context: RequestContext) {
 }
 
 export async function addCollegeTermMapping(context: RequestContext, raw: unknown) {
+  // Current program-term-course contract requires explicit CORE/ELECTIVE and
+  // credits 1..10. Legacy accepted isMandatory and 0..30, but it would be
+  // unsafe to infer historical type or silently coerce old credit values.
   const input = collegeTermCourseAddSchema.parse(raw);
   const membership = await ownCollege(context);
   try {
@@ -175,6 +178,9 @@ export async function addCollegeTermMapping(context: RequestContext, raw: unknow
           eq(departments.collegeId, membership.collegeId), isNull(departments.archivedAt)))
         .where(and(eq(courses.id, input.courseId), eq(courses.status, "ACTIVE")))
         .limit(1);
+      // Do not reveal whether a submitted UUID is foreign, inactive, or
+      // missing. The user-facing model maps all three to the actionable
+      // "unavailable in your college" message.
       if (!course) throw new CollegeTermMappingError("COURSE_NOT_FOUND");
       const rows = await tx.select({
         id: programTermCourses.id, courseId: programTermCourses.courseId,
@@ -232,6 +238,9 @@ export async function updateCollegeTermMapping(
         .for("update");
       const current = before.find(row => row.id === mappingId);
       if (!current) throw new CollegeTermMappingError("TERM_COURSE_NOT_FOUND");
+      // vNext reorders one scoped mapping by a 1-based position, not by
+      // replacing all mappingIds. A full-list legacy reorder adapter would
+      // need its own validated set-equality contract and endpoint.
       if (input.position > before.length)
         throw new CollegeTermMappingError("TERM_COURSE_POSITION_INVALID");
       const order = reorderTermCourseIds(before.map(row => row.id), mappingId, input.position);
@@ -339,11 +348,17 @@ export async function addCollegeTermMappings(context: RequestContext, raw: unkno
         .innerJoin(departments, and(eq(departments.id, courses.departmentId),
           eq(departments.collegeId, member.collegeId), isNull(departments.archivedAt)))
         .where(and(inArray(courses.id, courseIds), eq(courses.status, "ACTIVE")));
+      // Cross-college, inactive and missing IDs share the same error: never
+      // disclose the presence of another tenant's catalog entry. The whole
+      // bulk request fails, with no partial new mappings committed.
       if (available.length !== courseIds.length)
         throw new CollegeTermMappingError("COURSE_NOT_FOUND");
       const existing = await tx.select({ courseId: programTermCourses.courseId,
         displayOrder: programTermCourses.displayOrder }).from(programTermCourses)
         .where(eq(programTermCourses.programTermId, term.id)).for("update");
+      // The old backend silently skipped duplicates; vNext deliberately
+      // keeps the batch all-or-nothing so callers can retry a clean selection
+      // without assuming that every requested course was inserted.
       if (existing.some(row => courseIds.includes(row.courseId)))
         throw new CollegeTermMappingError("TERM_COURSE_DUPLICATE");
       let next = nextTermCourseOrder(existing.map(row => row.displayOrder));
