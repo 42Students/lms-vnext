@@ -149,7 +149,7 @@ export default async function SuperAdminTenantSetup({
      {label:"Web address",href:"/subdomain",description:"Configure and verify the college login domain."},
      {label:"Sign-in",href:"/signin",description:"Review login methods and account access."},
      {label:"Look and feel",href:"/branding",description:"Set visible college branding and identity."},
-    ].map(card=><Card key={card.label} as="article" className="min-w-0 hover:border-[var(--lms-primary)]">
+    ].map(card=><Card key={card.label} as="article" className="min-w-0 hover:border-[var(--lms-canvas-border)]">
      <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+card.href}
       className="block min-h-11 rounded-[var(--lms-control-radius)] font-semibold text-primary-text underline-offset-4 hover:underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
       <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{card.label}</h3>
