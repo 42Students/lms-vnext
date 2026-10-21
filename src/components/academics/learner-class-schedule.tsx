@@ -148,7 +148,7 @@ function EventNotes({description}: {description:string|null}) {
 /** A stable, semantic-token colour per course (never a random colour per render).
  * Course code remains visible so meaning is not conveyed through colour alone. */
 function learnerCourseTint(event:LearnerScheduleEvent){
-  const key=event.deliveryId??event.courseId??event.sectionId;
+  const key=event.courseId??event.courseName??event.sectionId;
   let hash=0;
   for(const char of key)hash=(Math.imul(hash,31)+char.charCodeAt(0))|0;
   return ["border-l-primary","border-l-success","border-l-warning","border-l-info"][Math.abs(hash%4)]!;
@@ -251,7 +251,7 @@ function EventCard({
         </span>
       </div>
       <p className="mt-2 text-sm font-semibold text-foreground">
-        {event.title}
+        {[event.title.trim() || "Scheduled Class", event.courseName ? event.courseName + " (" + event.sectionName + ")" : null].filter(Boolean).join(" · ")}
       </p>
       <p className="mt-1 text-xs leading-5 text-body">
         {[
@@ -605,7 +605,9 @@ export function LearnerClassSchedule({
               aria-label="Previous period"
               onClick={() => movePeriod(-1)}
             >
-              ←
+              <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" fill="none">
+                <path d="m14 5-7 7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </Button>
             <Button
               className={styles.today}
@@ -628,16 +630,17 @@ export function LearnerClassSchedule({
               aria-label="Next period"
               onClick={() => movePeriod(1)}
             >
-              →
+              <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" fill="none">
+                <path d="m10 5 7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </Button>
             <span className={styles.period+" break-words"}>
               {dateLabel(anchor, view)}
             </span>
           </div>
 
-          <label className={styles.actions+" text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"}>
-            View
-            <Select
+          <div className={styles.actions}>
+            <Select aria-label="Calendar view"
               value={view}
               onChange={(event) => {
                 const next = learnerScheduleAnchorForView(chosenDay,anchor);
@@ -658,7 +661,7 @@ export function LearnerClassSchedule({
                 Day
               </option>
             </Select>
-          </label>
+          </div>
         </div>
 
         {courseBasePath === "/learn/courses" ? (
