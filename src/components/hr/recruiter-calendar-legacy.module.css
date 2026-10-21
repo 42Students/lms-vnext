@@ -78,7 +78,7 @@
   border-color: #cdd5e0 !important;
 }
 .event:focus-visible {
-  outline: 2px solid #1a95a1;
+  outline: 2px solid var(--lms-button-primary);
   outline-offset: 3px;
 }
 .time {
