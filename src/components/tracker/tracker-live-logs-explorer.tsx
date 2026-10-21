@@ -206,17 +206,17 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
              >Copy permalink</Button>
             <Link href={"/tracker?context="+encodeURIComponent(
               [item.event,item.path,item.message,"Reference: "+(item.requestId??"none")].join("\n").slice(0,450))}
-              className="inline-flex min-h-11 w-full items-center font-semibold text-primary-text underline sm:w-auto md:min-h-9">Report this</Link>
+              className="inline-flex min-h-11 w-full items-center font-semibold text-primary-text underline sm:w-auto md:min-h-9 focus-visible:underline">Report this</Link>
             {item.knownErrorId?<>
               <Link href={"/tracker/logs#known-error-"+item.knownErrorId}
-                className="inline-flex min-h-11 w-full items-center font-semibold text-primary-text underline sm:w-auto md:min-h-9">Known error details</Link>
+                className="inline-flex min-h-11 w-full items-center font-semibold text-primary-text underline sm:w-auto md:min-h-9 focus-visible:underline">Known error details</Link>
               <Button variant="ghost" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={mutating}
                 onClick={()=>{setMuteReason("");setMuteTarget({id:item.knownErrorId!,muted:item.muted===true});}}
                >
                 {item.muted?"Unmute this error":"Mute this error"}
               </Button>
             </>:<Link href="/tracker/logs#known-errors"
-              className="inline-flex min-h-11 w-full items-center font-semibold text-primary-text underline sm:w-auto md:min-h-9">Open Known Errors</Link>}
+              className="inline-flex min-h-11 w-full items-center font-semibold text-primary-text underline sm:w-auto md:min-h-9 focus-visible:underline">Open Known Errors</Link>}
           </div>
         </Disclosure>
       </li>)}

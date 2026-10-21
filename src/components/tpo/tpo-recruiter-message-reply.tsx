@@ -71,7 +71,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
   <Disclosure title="Quick replies" className="min-w-0" contentClassName="pt-2">
   <div role="group" aria-label="Quick replies" className="flex min-w-0 flex-wrap gap-2">
     {TPO_QUICK_REPLIES.map(reply=><Button variant="secondary" key={reply} type="button" disabled={busy}
-      className="min-h-11 md:min-h-9 shrink-0 rounded-[var(--lms-control-radius)] px-3 text-sm font-medium"
+      className="min-h-11 md:min-h-9 shrink-0 rounded-[var(--lms-control-radius)] px-3 text-sm font-[650]"
       onClick={()=>persistDraft(body?body+" "+reply:reply)}>{reply}</Button>)}
    </div>
   </Disclosure>

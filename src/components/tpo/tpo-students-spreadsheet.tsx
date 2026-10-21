@@ -239,9 +239,9 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
       initial={afterCollege[row.membershipId]??{outcome:"NOT_DECIDED",expectedVersion:"none"}}
       available={afterCollegeAvailable} />
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}
-      aria-label={"Placement history for "+row.displayName} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Placement history</Link>
+      aria-label={"Placement history for "+row.displayName} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:underline">Placement history</Link>
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/participation"}
-      aria-label={"Change participation for "+row.displayName} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Change participation</Link>
+      aria-label={"Change participation for "+row.displayName} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:underline">Change participation</Link>
    </div>}/>
   </GridWorkspace>
   {active?<TpoStudentQuickPanel key={active.membershipId} student={active} rows={sortedRows}

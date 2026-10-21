@@ -217,7 +217,7 @@ export function CreateProjectControl({
         <EmptyState title="No assigned templates"
           description="Create an independent Project workspace from a published template assigned to this college."
           action={<Link href={basePath + "/templates"}
-            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Templates</Link>}
+            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:underline">Templates</Link>}
         />
       ) : (
         <Button size="sm" variant="secondary" disabled>No assigned templates</Button>

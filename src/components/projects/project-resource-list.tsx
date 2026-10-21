@@ -148,7 +148,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
       </label>
     </>:null}
     <Button variant="secondary" type="button" onClick={()=>{setSearch("");setType("ALL");setVisibility("ALL");setStatus("ACTIVE");setPinned(false);setSprint("");setTask("");}}
-      className="min-h-10 text-sm font-semibold text-link underline">Clear filters</Button>
+      className="min-h-10 text-sm font-[650] text-link underline">Clear filters</Button>
   </div>
   {mode!=="LEARNER"&&!readOnly?<p role="status" className="text-xs text-muted-foreground">
     {canReorder?"Drag resources to change their priority order, or use Move up and Move down.":
