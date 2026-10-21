@@ -101,7 +101,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
    {!query.success?<Alert tone="error">Choose a valid audience and target ID.</Alert>:null}
    {preview.failed?<Alert tone="error">
      Could not check the audience right now. Your selection is unchanged.
-     <Link href={retryPreviewHref} className="ml-2 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry audience preview</Link>
+     <Link href={retryPreviewHref} className="ml-2 font-semibold text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry audience preview</Link>
     </Alert>:null}
    {audience?<Alert tone="info">
      <p className="text-sm font-semibold text-foreground leading-[22px]">Current {query.success?query.data.audience.toLowerCase():"college"} visibility preview</p>
@@ -189,13 +189,13 @@ export default async function TpoAnnouncements({searchParams}:Props){
     <p className="mt-3 max-w-[72ch] whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
      {tpoNoticeTextParts(row.message).map((part,index)=>part.kind==="link"?
       <a key={index} href={part.value} rel="noopener noreferrer"
-       className="font-semibold text-primary-text underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{part.value}</a>:
+       className="font-semibold text-[var(--lms-link-text)] underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{part.value}</a>:
       <span key={index}>{part.value}</span>)}
     </p>
     {(row.buttonUrl?.startsWith("https://")&&row.buttonLabel)||tab.data==="from-42"?
      <div className="mt-4 flex min-w-0 flex-wrap items-center gap-2">
       {row.buttonUrl?.startsWith("https://")&&row.buttonLabel?<a href={row.buttonUrl} rel="noopener noreferrer"
-       className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 font-[650] text-primary-text min-[768px]:min-h-[var(--lms-control-height)] md:min-h-9 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+       className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-3 font-[650] text-[var(--lms-link-text)] min-[768px]:min-h-[var(--lms-control-height)] md:min-h-9 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] hover:underline">
        {row.buttonLabel} ↗
       </a>:null}
       {tab.data==="from-42"?<TpoPlacementCellReadAction id={row.id}/>:null}
@@ -294,9 +294,9 @@ export default async function TpoAnnouncements({searchParams}:Props){
    <span>Page {result.page}{result.hasMore?" · More announcements available":""}</span>
    <div className="flex w-full flex-wrap gap-2 sm:w-auto">
     {result.page>1?<Link href={"/tpo/announcements?tab="+tab.data+(showTeam?"&mine=0":"")+"&page="+(result.page-1)}
-      className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-primary-text hover:text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] sm:min-h-[var(--lms-control-height)] sm:flex-none md:min-h-9 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
+      className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-[var(--lms-link-text)] hover:text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] sm:min-h-[var(--lms-control-height)] sm:flex-none md:min-h-9 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] hover:underline">Previous</Link>:null}
     {result.hasMore?<Link href={"/tpo/announcements?tab="+tab.data+(showTeam?"&mine=0":"")+"&page="+(result.page+1)}
-      className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-primary-text hover:text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] sm:min-h-[var(--lms-control-height)] sm:flex-none md:min-h-9 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Show older</Link>:null}
+      className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-[var(--lms-link-text)] hover:text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] sm:min-h-[var(--lms-control-height)] sm:flex-none md:min-h-9 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] hover:underline">Show older</Link>:null}
    </div>
   </nav>:null}
  </div>;

@@ -133,10 +133,10 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     </span>
    </label>
    {!selectedLeadIds.length?<Link href={"/tpo/recruiters/campaigns/preview?segment="+segment}
-    className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline">
+    className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">
     Preview audience
    </Link>:<Link href="/tpo/recruiters"
-    className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline">
+    className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">
     Change selected recruiters in Engage
    </Link>}
    {!deliveryReady?<Alert tone="warning"><strong>Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.</strong> {CAMPAIGN_DELIVERY_UNAVAILABLE}</Alert>:<p role="status" className="text-sm text-body">Save a draft, then review eligible recipients before sending.</p>}

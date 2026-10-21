@@ -86,8 +86,8 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
      <h2 className="break-words font-medium">{row.learnerName}</h2>
      {row.rollNumber?<p className="text-xs text-muted-foreground">Roll no.: {row.rollNumber}</p>:null}
      <StatusBadge tone={row.status==="VERIFIED"?"success":row.status==="SENT_BACK"?"warning":"info"}>{verificationQueueCardPresentation(row.status).state}</StatusBadge>
-     {allowCollegeStudentLinks&&<Link href={collegeVerificationStudentHref(row.learnerMembershipId)} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">Open Student profile</Link>}
-     {allowCollegeContactLinks&&<Link href={collegeRoleContactHref(row.learnerMembershipId)} className="ml-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">View masked contact</Link>}
+     {allowCollegeStudentLinks&&<Link href={collegeVerificationStudentHref(row.learnerMembershipId)} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">Open Student profile</Link>}
+     {allowCollegeContactLinks&&<Link href={collegeRoleContactHref(row.learnerMembershipId)} className="ml-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">View masked contact</Link>}
      {onSelectionChange&&(row.status==="SUBMITTED"||row.status==="UPDATE_PENDING")&&
       <label className="mt-2 flex items-center gap-2 text-sm">
        <Checkbox disabled={selectionDisabled} aria-label={"Select "+row.learnerName+" "+row.section}
