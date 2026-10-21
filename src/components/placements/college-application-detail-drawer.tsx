@@ -1,6 +1,7 @@
 "use client";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
+import {useToast} from "@/components/ui/toast";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {Disclosure} from "@/components/ui/disclosure";
@@ -25,10 +26,12 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
  jobId:string;applicationId:string;onClose:()=>void;initialDetail?:CollegeApplicationDetail;
  basePath?: "/college/placements"|"/admin/placements";
 }){
+ const {showToast}=useToast();
  const [detail,setDetail]=useState<CollegeApplicationDetail|null>(initialDetail??null);
  const [loading,setLoading]=useState(false);
  const [error,setError]=useState("");
  const [note,setNote]=useState("");
+ const [noteError,setNoteError]=useState("");
  const [amendsNoteId,setAmendsNoteId]=useState<string|null>(null);
  const [letterInput,setLetterInput]=useState<Record<string,string>>({});
  const [saving,setSaving]=useState(false);
@@ -55,12 +58,16 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
  }
  async function save(){
   if(!note.trim()||saving)return;
-  setSaving(true);setError("");setSuccess("");
+  setSaving(true);setError("");setNoteError("");setSuccess("");
   try{
    await apiFetch(endpoint,{method:"POST",headers:{"content-type":"application/json"},
     body:JSON.stringify({body:note.trim(),...(amendsNoteId?{amendsNoteId}:{})})});
-   setNote("");setAmendsNoteId(null);await reload();setSuccess(amendsNoteId?"Notes updated":"Internal note saved to application history.");
-  }catch(reason){setError(reason instanceof Error?reason.message:"Note could not be saved");}
+   setNote("");setAmendsNoteId(null);await reload();setSuccess("Notes updated");
+   showToast({tone:"success",title:"Notes updated"});
+  }catch(reason){
+   const explanation=reason instanceof Error?reason.message:"Please retry.";
+   setNoteError("Notes were not saved. "+explanation);
+  }
   finally{setSaving(false);}
  }
  async function attachLetter(offerId:string){
@@ -154,7 +161,14 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
           <p key={r.id} className="text-sm"><a href={r.testUrl!} 
             rel="noreferrer noopener" className="font-semibold text-[var(--lms-teal-deep)] underline">{r.name} · Open assessment</a>
             <span className="mt-1 block break-all text-xs text-muted-foreground">{r.testUrl}</span>
-            <Button variant="secondary" type="button" onClick={async()=>{try{await navigator.clipboard.writeText(r.testUrl!);setLinkNotice("Assessment link copied.");}catch{setLinkNotice("Copy unavailable. Select and copy the link shown above.");}}}
+            <Button variant="secondary" type="button" onClick={async()=>{try{
+              await navigator.clipboard.writeText(r.testUrl!);
+              setLinkNotice("Assessment link copied to clipboard");
+              showToast({tone:"success",title:"Assessment link copied to clipboard"});
+             }catch{
+              setLinkNotice("Failed to copy");
+              showToast({tone:"error",title:"Failed to copy",description:"Select and copy the link shown above."});
+             }}}
              className="mt-1">Copy assessment link</Button></p>)}</div>
         :<p className="mt-2 text-sm text-body">Link shared soon</p>}
       </section>
@@ -204,6 +218,9 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        <label className="mt-3 grid gap-2 text-[13px] font-semibold text-body leading-4">{amendsNoteId?"Correct internal note":"Add internal notes (visible only to admins)"}
         <Textarea rows={3} maxLength={2000} value={note} onChange={e=>setNote(e.target.value)}
          className="w-full"/></label>
+       {noteError?<p role="alert" className="text-sm text-error">{
+        noteError
+       }</p>:null}
        {success?<p role="status" className="text-sm text-body">{success}</p>:null}
 <div className="mt-3 flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
        <Button variant="primary" type="button" disabled={saving||!note.trim()} onClick={()=>void save()}

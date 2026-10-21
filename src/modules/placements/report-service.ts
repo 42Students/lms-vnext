@@ -198,8 +198,8 @@ export async function getPlacementReportWorkspace(
       status: placementJobs.status,
       recruiterDriveMode: placementJobs.recruiterDriveMode,
       isDream: placementJobs.isDream,
-      // Type labels require the job_type_label migration; do not select a
-      // nonexistent Drizzle column or mislabel a custom drive as a built-in.
+      jobTypeLabel: placementJobs.jobTypeLabel,
+      // NULL is historical and unaudited; the policy model receives undefined.
       countsAsPlaced: placementJobs.countsAsPlaced,
     })
     .from(placementJobs)
@@ -289,7 +289,7 @@ export async function getPlacementReportWorkspace(
     "placement_batch_registrations",
   );
 
-  const [applicationRows, offerRows, registrationRows, branchRows] =
+  const [applicationRows, offerRows, registrationRows] =
     await Promise.all([
       db
         .select({
@@ -392,41 +392,40 @@ export async function getPlacementReportWorkspace(
           )
         : Promise.resolve([] as { membershipId: string }[]),
 
-      db
-        .select({
-          membershipId: learnerProgramEnrollments.membershipId,
-          departmentId: departments.id,
-          departmentName: departments.name,
-          enrollmentStatus: learnerProgramEnrollments.status,
-          admittedAt: learnerProgramEnrollments.admittedAt,
-        })
-        .from(learnerProgramEnrollments)
-        .innerJoin(
-          collegeMemberships,
-          and(
-            eq(
-              collegeMemberships.id,
-              learnerProgramEnrollments.membershipId,
-            ),
-            eq(collegeMemberships.collegeId, college.id),
-          ),
-        )
-        .innerJoin(
-          programs,
-          eq(
-            programs.id,
-            learnerProgramEnrollments.programId,
-          ),
-        )
-        .innerJoin(
-          departments,
-          and(
-            eq(departments.id, programs.departmentId),
-            eq(departments.collegeId, college.id),
-          ),
-        )
-        .orderBy(desc(learnerProgramEnrollments.admittedAt)),
+
     ]);
+
+  // Restrict the academic-branch lookup to the actual selected report pool.
+  // A per-college unfiltered enrollment scan becomes expensive as enrollment
+  // histories grow. The DB applies membership filtering before projecting rows.
+  const membershipIds = [...new Set([
+    ...applicationRows.map((row) => row.membershipId),
+    ...offerRows.map((row) => row.membershipId),
+    ...registrationRows.map((row) => row.membershipId),
+  ])];
+  const branchRows = membershipIds.length === 0 ? [] : await db
+    .select({
+      membershipId: learnerProgramEnrollments.membershipId,
+      departmentId: departments.id,
+      departmentName: departments.name,
+      enrollmentStatus: learnerProgramEnrollments.status,
+      admittedAt: learnerProgramEnrollments.admittedAt,
+    })
+    .from(learnerProgramEnrollments)
+    .innerJoin(
+      collegeMemberships,
+      and(
+        eq(collegeMemberships.id, learnerProgramEnrollments.membershipId),
+        eq(collegeMemberships.collegeId, college.id),
+      ),
+    )
+    .innerJoin(programs, eq(programs.id, learnerProgramEnrollments.programId))
+    .innerJoin(departments, and(
+      eq(departments.id, programs.departmentId),
+      eq(departments.collegeId, college.id),
+    ))
+    .where(inArray(learnerProgramEnrollments.membershipId, membershipIds))
+    .orderBy(desc(learnerProgramEnrollments.admittedAt));
 
   const applications: PlacementReportApplication[] =
     applicationRows.map((row) => ({

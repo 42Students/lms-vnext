@@ -1,9 +1,15 @@
 /**
  * DB-035 / DB06 SOURCE-ONLY staging.
  *
- * DO NOT export from src/db/schema/index.ts and do not assume these tables
- * exist until a later migration-integration task promotes the staged contract
- * and executes PostgreSQL acceptance.
+ * DO NOT export from src/db/schema/index.ts or register the candidate as a
+ * standalone migration. It requires the grading and attendance mutation
+ * producers to commit exact immutable events in the SAME release as deferred
+ * completeness triggers. The present producer only emits activityEvents, so
+ * promotion would break live grading and violate the DB06 cutover contract.
+ * A coordinated owner-approved cutover must check source grades for INTEGER
+ * overflow, map legacy LONG identifiers using verified UUID crosswalk, and
+ * interpret legacy naive LocalDateTime using a verified origin timezone.
+ * No historic data is imported in greenfield vNext.
  *
  * Source contracts:
  * - legacy grade_audit_log: immutable before/after grading audit, actor + action

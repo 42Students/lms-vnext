@@ -2,11 +2,12 @@ import "server-only";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
-import { collegeMemberships, learnerProfiles } from "@/db/schema";
+import { academicPeriods, cohorts, collegeMemberships, departments, learnerProfiles, programs, sections } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import { createLearnerProgramEnrollment } from "@/modules/academics/enrollment-service";
+import { AcademicsServiceError } from "@/modules/academics/errors";
 import { placeImportedLearnerInSection } from "./college-student-import-placement";
 import { learnerProfileDocumentSchema } from "./profile-validation";
 import { onboardPersonWithRuntime, upsertLearnerProfileWithRuntime } from "./runtime";
@@ -24,8 +25,18 @@ export const collegeStudentRegistrationSchema = z.object({
   address: z.string().trim().max(1000).default(""),
 }).strict();
 
-/** A partial receipt is essential: canonical identity provisioning and
- * academic enrollment are separate writers and cannot be rolled back together. */
+/**
+ * Legacy registration crosswalk: first_name + last_name -> displayName;
+ * contact_mobile/mail -> canonical E.164 phone and email; college_id ->
+ * authorized acting college; program_id -> programId; class_id -> sectionId
+ * under cohortId; roll_number -> learner profile rollNumber; gender/DOB/
+ * address -> profileDocument. A vNext learner is user + college membership +
+ * program/cohort enrollment + optional section enrollment, not a numeric row.
+ * Batch-first enrollment, optional roll/class and required verified sign-in
+ * phone are intentional vNext constraints; never invent historical numeric ID.
+ * A partial receipt is essential: identity provisioning and academic enrollment
+ * are separate writers and cannot be rolled back together or blindly retried.
+ */
 export async function registerCollegeStudent(context: RequestContext, raw: unknown) {
   const input = collegeStudentRegistrationSchema.parse(raw);
   const member = await resolveActingCollege(context,"people.manage");
@@ -35,6 +46,28 @@ export async function registerCollegeStudent(context: RequestContext, raw: unkno
   requirePermission(context, "academics.manage", {
     collegeId: member.collegeId, organizationId: member.organizationId,
   });
+  // All required academic choices must be checked before provisioning the
+  // canonical login identity. The enrollment/placement writers still repeat
+  // these checks under their own transaction to close races.
+  const [academic] = await getDb().select({
+    cohortStatus:cohorts.status, programStatus:programs.status,
+  }).from(cohorts)
+    .innerJoin(programs,eq(programs.id,cohorts.programId))
+    .innerJoin(departments,eq(departments.id,programs.departmentId))
+    .where(and(eq(cohorts.id,input.cohortId),eq(programs.id,input.programId),
+      eq(departments.collegeId,member.collegeId))).limit(1);
+  if(!academic || academic.programStatus!=="ACTIVE" ||
+    (academic.cohortStatus!=="PLANNED"&&academic.cohortStatus!=="ACTIVE"))
+    throw new AcademicsServiceError("COHORT_PROGRAM_MISMATCH");
+  if(input.sectionId){
+    const [section]=await getDb().select({id:sections.id})
+      .from(sections)
+      .innerJoin(academicPeriods,eq(academicPeriods.id,sections.academicPeriodId))
+      .where(and(eq(sections.id,input.sectionId),eq(sections.cohortId,input.cohortId),
+        eq(academicPeriods.collegeId,member.collegeId),
+        eq(sections.status,"ACTIVE"))).limit(1);
+    if(!section)throw new AcademicsServiceError("CLASS_BATCH_MISMATCH");
+  }
   const person = await onboardPersonWithRuntime(context, {
     collegeId: member.collegeId, displayName: input.displayName,
     phoneE164: input.phoneE164,

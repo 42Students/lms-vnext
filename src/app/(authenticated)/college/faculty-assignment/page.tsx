@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { FACULTY_ASSIGNMENT_COPY, FACULTY_ASSIGNMENT_ROLE_LABELS, facultyAssignmentRoleLabel } from "@/modules/courses/college-courses-copy";
-import { redirect } from "next/navigation";
+import { Alert } from "@/components/ui/alert";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import {
@@ -30,7 +30,12 @@ export default async function CollegeFacultyAssignmentPage({
   searchParams,
 }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) redirect("/dashboard");
+  if (!context.membership) return <div className="min-w-0 space-y-4">
+    <PageHeader title="Faculty Assignment"/>
+    <ErrorState title="Admin not assigned to a college"
+      description="Contact your administrator to assign your College Admin membership before editing faculty assignments."
+      action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>}/>
+  </div>;
   const raw = await searchParams;
   const parsed = facultyAssignmentQuerySchema.safeParse(
     Object.fromEntries(Object.entries({
@@ -56,6 +61,9 @@ export default async function CollegeFacultyAssignmentPage({
   const classChoices=Array.from(
     new Map(options.deliveries.map(item=>[item.sectionCode,{code:item.sectionCode,name:item.sectionName}])).values(),
   ).sort((a,b)=>a.name.localeCompare(b.name)||a.code.localeCompare(b.code));
+  // This optional list shows active courses only; historical assignments
+  // must not be assigned a fabricated semester from today's cohort state.
+  const currentDeliveryById=new Map(options.deliveries.map(item=>[item.id,item]));
   return (
     <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
       <PageHeader
@@ -86,12 +94,11 @@ export default async function CollegeFacultyAssignmentPage({
           </label>
           <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Class
-            <Select name="sectionCode" defaultValue={query.sectionCode ?? ""}>
-              <option value="">All classes</option>
-              {query.sectionCode&&!classChoices.some(item=>item.code===query.sectionCode)?
-                <option value={query.sectionCode}>Selected class ({query.sectionCode})</option>:null}
-              {classChoices.map(item=><option key={item.code} value={item.code}>{item.name} ({item.code})</option>)}
-            </Select>
+            <Input name="sectionCode" list="college-faculty-class-codes"
+              defaultValue={query.sectionCode??""} placeholder="All classes (enter exact class code)" maxLength={64}/>
+            <datalist id="college-faculty-class-codes">
+              {classChoices.map(item=><option key={item.code} value={item.code} label={item.name}/>)}
+            </datalist>
             {options.deliveriesTruncated?<span className="text-xs font-normal text-muted-foreground">
               First 200 active deliveries shown; a selected class outside this list is retained.
             </span>:null}
@@ -144,8 +151,14 @@ export default async function CollegeFacultyAssignmentPage({
                 </> },
               { key: "class", header: FACULTY_ASSIGNMENT_COPY.columns.class,
                 mobilePriority: "secondary", cell: item => item.cohortName + " · " + item.sectionName },
-              { key: "period", header: "Period", mobilePriority: "secondary",
-                cell: item => item.periodName },
+              { key: "semester", header: "Semester", mobilePriority: "secondary",
+                cell: item => {
+                  const current=currentDeliveryById.get(item.deliveryId);
+                  return current?.semesterNumber==null?"Not recorded":
+                    "Semester "+current.semesterNumber+" (current)";
+                } },
+              { key: "year", header: "Year", mobilePriority: "secondary",
+                cell: item => item.periodName||"Not recorded" },
               { key: "role", header: FACULTY_ASSIGNMENT_COPY.columns.role,
                 mobilePriority: "secondary", cell: item => facultyAssignmentRoleLabel(item.role) },
               { key: "active", header: FACULTY_ASSIGNMENT_COPY.columns.active,
@@ -181,6 +194,11 @@ export default async function CollegeFacultyAssignmentPage({
       <p className="text-xs text-muted-foreground">
         Assignment changes require confirmation and produce audit records. A second primary teacher
         or an already assigned faculty member cannot be added to the same live delivery.
+        Create supports several courses for one faculty; Reassign changes the faculty,
+        while End deactivates without deleting the audit history. Course, class, semester,
+        year and role changes require a new verified delivery or a separate authorized edit.
+        The Year column is the recorded academic-period name; the Semester display,
+        when available, is the current cohort term, not a historical assignment snapshot.
         Class scheduling and automatic reassignment remain offering-level workflows.
       </p>
     </div>

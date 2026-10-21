@@ -8,6 +8,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {
   useMemo,
   useState,
+  useTransition,
 } from "react";
 import { useRouter } from "next/navigation";
 import { Table } from "@/components/ui/table";
@@ -140,6 +141,7 @@ export function AdminAttendanceWorkspace({
   basePath: string;
 }) {
   const router = useRouter();
+  const [refreshing, startRefresh] = useTransition();
   const correctionGuard=useGuardedAction({busyLabel:"Correcting attendance..."});
   const [target, setTarget] =
     useState<CellTarget | null>(null);
@@ -148,6 +150,8 @@ export function AdminAttendanceWorkspace({
   const [error, setError] =
     useState<string | null>(null);
   const [notice,setNotice]=useState<string|null>(null);
+  const [absenceReason,setAbsenceReason]=useState<"ABSENT"|"EXCUSED"|"MEDICAL"|"LATE">("ABSENT");
+  const [correctionNote,setCorrectionNote]=useState("");
   const [sectionId, setSectionId] = useState(data.selectedSectionId ?? "");
   const [courseId, setCourseId] = useState(data.selectedCourseId ?? "");
   const [deliveryId,setDeliveryId]=useState(data.selectedDeliveryId??"");
@@ -228,11 +232,14 @@ export function AdminAttendanceWorkspace({
   );
 
   const markedSessions=heldSessions.filter(session=>session.attendanceStatus==="MARKED");
-  const markedIds=new Set(markedSessions.map(session=>session.id));
-  const absentMarks=(data.grid?.records??[]).filter(record=>
-    markedIds.has(record.scheduleEventId)&&record.status!=="PRESENT").length;
-  const totalMarks=markedSessions.length*(data.grid?.roster.length??0);
-  const presentMarks=Math.max(0,totalMarks-absentMarks);
+  // Count only authorized visible learners and their individually marked sessions.
+  const totalMarks=(data.grid?.roster??[]).reduce((sum,learner)=>sum+
+    markedSessions.filter(session=>adminAttendanceCellState(session,
+      recordMap.get(session.id+":"+learner.membershipId)).counted).length,0);
+  const presentMarks=(data.grid?.roster??[]).reduce((sum,learner)=>sum+
+    markedSessions.filter(session=>adminAttendanceCellState(session,
+      recordMap.get(session.id+":"+learner.membershipId)).present).length,0);
+  const absentMarks=totalMarks-presentMarks;
   const monthPercent=totalMarks>0?Math.round(100*presentMarks/totalMarks):null;
   const activeDays=new Set(heldSessions.map(session=>attendanceIndiaDay(session.startsAt))).size;
   const notMarkedCount=heldSessions.length-markedSessions.length;
@@ -252,6 +259,13 @@ export function AdminAttendanceWorkspace({
     return {counted:counted.length,attended:counted.length-absent};
   }
 
+  function openCorrectionTarget(next:CellTarget){
+    setTarget(next);
+    setAbsenceReason("ABSENT");
+    setCorrectionNote("");
+    setError(null);
+  }
+
   async function correct(
     status:
       | "PRESENT"
@@ -264,7 +278,8 @@ export function AdminAttendanceWorkspace({
     if (
       !target ||
       !data.selectedDeliveryId ||
-      correcting || new Date(target.session.startsAt).getTime()>loadedAt
+      correcting || new Date(target.session.startsAt).getTime()>loadedAt ||
+      status === (target.record?.status ?? "PRESENT")
     ) {
       return;
     }
@@ -281,6 +296,7 @@ export function AdminAttendanceWorkspace({
             deliveryId: data.selectedDeliveryId,
             membershipId: target.learner.membershipId,
             status,
+            ...(correctionNote.trim() ? { note: correctionNote.trim() } : {}),
           }),
         },
       );
@@ -331,6 +347,7 @@ export function AdminAttendanceWorkspace({
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-5)]">
       {notice?<Alert tone="info">{notice}</Alert>:null}
+      {refreshing?<p role="status" className="text-sm text-body">Refreshing attendance…</p>:null}
 
       <form
         onSubmit={(event) => {
@@ -380,7 +397,7 @@ export function AdminAttendanceWorkspace({
             </option>)}
           </Select>
         </label>:null}
-        <Button className="w-full self-end md:w-auto" type="submit" disabled={!sectionId || !courseId}>
+        <Button className="w-full self-end md:w-auto" type="submit" disabled={!sectionId || !courseId || refreshing}>
           View attendance
         </Button>
         <label className="flex items-center gap-2 text-sm text-body md:col-span-2 xl:col-span-3">
@@ -417,6 +434,11 @@ export function AdminAttendanceWorkspace({
             }} />
         </div>
       </form>
+      <div className="flex flex-wrap items-center justify-end gap-2">
+        <Button size="sm" variant="secondary" disabled={refreshing} onClick={()=>startRefresh(()=>router.refresh())}>
+          {refreshing?"Refreshing attendance…":"Refresh attendance"}
+        </Button>
+      </div>
 
       {data.deliveries.length === 0 ? (
         <EmptyState
@@ -549,7 +571,7 @@ export function AdminAttendanceWorkspace({
                                   : state.label + " — " + learnerName(learner) + " — " + formatDateTime(first.startsAt)}
                                 onClick={() => {
                                   if (multiple) setChooser({ learner, sessions });
-                                  else setTarget({ learner, session: first, record });
+                                  else openCorrectionTarget({ learner, session: first, record });
                                 }}
                                 title={!multiple && new Date(first.startsAt).getTime()>loadedAt ? "This class has not started. Attendance can be corrected after it begins." : undefined}
                                 className="min-h-11 border-transparent bg-transparent px-1 text-body disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
@@ -654,38 +676,17 @@ export function AdminAttendanceWorkspace({
         footer={
           target ? (
             <div className="grid w-full min-w-0 grid-cols-1 md:grid-cols-2 gap-[var(--lms-space-2)] [&>button]:min-h-11 [&>button:last-child]:col-span-2 sm:flex sm:flex-wrap sm:justify-end sm:[&>button:last-child]:col-span-1 sm:[&>button]:min-h-[var(--lms-control-height)]">
-              {(
-                [
-                  "PRESENT",
-                  "ABSENT",
-                  "EXCUSED",
-                  "MEDICAL",
-                  "LATE",
-                ] as const
-              ).map((status) => (
-                <Button
-                  key={status}
-                  size="sm"
-                  variant={
-                    status === "PRESENT"
-                      ? "primary"
-                      : status === "ABSENT"
-                        ? "danger"
-                        : "secondary"
-                  }
-                  disabled={correcting}
-                  onClick={() =>
-                    void correct(status)
-                  }
-                >
-                  {correcting
-                    ? "Saving…"
-                    : status.charAt(0) +
-                      status
-                        .slice(1)
-                        .toLowerCase()}
+              <Button size="sm" variant="secondary" disabled={correcting||refreshing}
+                onClick={()=>{setTarget(null);startRefresh(()=>router.refresh());}}>Refresh grid and reopen</Button>
+              {target.record && target.record.status !== "PRESENT" ? (
+                <Button size="sm" disabled={correcting||refreshing} onClick={()=>void correct("PRESENT")}>
+                  {correcting?"Saving…":"Mark present"}
                 </Button>
-              ))}
+              ) : (
+                <Button size="sm" variant="danger" disabled={correcting||refreshing} onClick={()=>void correct(absenceReason)}>
+                  {correcting?"Saving…":"Mark absent"}
+                </Button>
+              )}
             </div>
           ) : null
         }
@@ -705,6 +706,24 @@ export function AdminAttendanceWorkspace({
                 }
               </p>
             </div>
+            {!(target.record && target.record.status !== "PRESENT") ? (
+              <label className="grid gap-[6px] text-sm font-semibold text-body">
+                Reason for absence
+                <Select value={absenceReason} disabled={correcting||refreshing}
+                  onChange={event=>setAbsenceReason(event.target.value as typeof absenceReason)}>
+                  <option value="ABSENT">Absent</option>
+                  <option value="EXCUSED">Excused</option>
+                  <option value="MEDICAL">Medical</option>
+                  <option value="LATE">Late</option>
+                </Select>
+              </label>
+            ) : null}
+            <label className="grid gap-[6px] text-sm font-semibold text-body">
+              Correction note (optional)
+              <Input maxLength={500} value={correctionNote} disabled={correcting||refreshing}
+                onChange={event=>setCorrectionNote(event.target.value)} />
+            </label>
+            <p className="text-xs text-muted-foreground">This record was loaded with the grid. Choose Refresh grid and reopen before changing an older result; server authorization is checked again on save.</p>
             <p className="text-xs text-muted-foreground">
               The Faculty correction window is {data.policy.correctionWindowHours} hours. College Admin corrections are not limited by it. Present corrections remove the absence exception. This change is recorded.
             </p>
@@ -767,7 +786,7 @@ export function AdminAttendanceWorkspace({
                 title={new Date(session.startsAt).getTime()>loadedAt?"This class has not started. Attendance can be corrected after it begins.":undefined}
                 className="w-full min-w-0 justify-between gap-[var(--lms-space-2)] text-left whitespace-normal break-words"
                 onClick={() => {
-                  setTarget({ learner: chooser.learner, session, record });
+                  openCorrectionTarget({ learner: chooser.learner, session, record });
                   setChooser(null);
                 }}
               >

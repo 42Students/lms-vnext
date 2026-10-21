@@ -3,6 +3,7 @@ import {
   boolean,
   check,
   index,
+  bigint,
   integer,
   jsonb,
   pgTable,
@@ -10,6 +11,7 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
+  varchar,
 } from "drizzle-orm/pg-core";
 import {
   courseLessons,
@@ -35,6 +37,13 @@ export const courseQuizzes = pgTable(
       .references(() => courseSectionDeliveries.id, {
         onDelete: "restrict",
       }),
+    // Source keys remain import-only; native UUIDs and membership guards apply.
+    legacyQuizId: integer("legacy_quiz_id"),
+    legacyCourseId: integer("legacy_course_id"),
+    legacyClassId: integer("legacy_class_id"),
+    legacyFacultyId: integer("legacy_faculty_id"),
+    legacyActive: boolean("legacy_active"),
+    legacyEnabled: boolean("legacy_enabled"),
     title: text("title").notNull(),
     description: text("description"),
     dueAt: timestamp("due_at", {
@@ -147,6 +156,7 @@ export const quizQuestions = pgTable(
       .references(() => courseQuizzes.id, {
         onDelete: "restrict",
       }),
+    legacyQuestionId: integer("legacy_question_id"),
     questionType:
       quizQuestionTypeEnum(
         "question_type",
@@ -174,7 +184,7 @@ export const quizQuestions = pgTable(
     ),
     check(
       "quiz_questions_points_ck",
-      sql`${table.points} between 1 and 1000`,
+      sql`${table.points} between 1 and 100`,
     ),
     check(
       "quiz_questions_sequence_ck",
@@ -192,6 +202,7 @@ export const quizOptions = pgTable(
       .references(() => quizQuestions.id, {
         onDelete: "restrict",
       }),
+    legacyOptionId: integer("legacy_option_id"),
     optionText: text("option_text").notNull(),
     isCorrect: boolean("is_correct")
       .notNull()
@@ -236,6 +247,13 @@ export const quizAttempts = pgTable(
       .references(() => collegeMemberships.id, {
         onDelete: "restrict",
       }),
+    legacyAttemptId: integer("legacy_attempt_id"),
+    legacyLearnerId: integer("legacy_learner_id"),
+    legacyStatus: varchar("legacy_status", { length: 24 }),
+    legacyScore: bigint("legacy_score", { mode: "bigint" }),
+    legacyMaxScore: bigint("legacy_max_score", { mode: "bigint" }),
+    legacyDeleted: boolean("legacy_deleted"),
+    legacyUpdatedAt: timestamp("legacy_updated_at", { withTimezone: true }),
     attemptNumber: integer("attempt_number")
       .notNull(),
     score: integer("score").notNull(),
@@ -285,6 +303,10 @@ export const quizAttemptAnswers = pgTable(
       .references(() => quizAttempts.id, {
         onDelete: "restrict",
       }),
+    legacyAnswerId: integer("legacy_answer_id"),
+    legacyOptionIdsCsv: varchar("legacy_option_ids_csv", { length: 500 }),
+    legacyPointsAwarded: bigint("legacy_points_awarded", { mode: "bigint" }),
+    legacyDeleted: boolean("legacy_deleted"),
     questionId: uuid("question_id")
       .notNull()
       .references(() => quizQuestions.id, {

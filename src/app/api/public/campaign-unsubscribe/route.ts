@@ -7,6 +7,17 @@ import {verifyUnsubscribeToken} from "@/modules/messaging/unsubscribe-model";
 import {verifyTpoCampaignRecipientToken,resolveTpoCampaignRecipientSecret} from "@/modules/messaging/tpo-campaign-recipient-token";
 import {CampaignUnsubscribeInvalid,unsubscribeTpoCampaignRecipient} from "@/modules/messaging/tpo-campaign-unsubscribe-service";
 export const runtime="nodejs";
+function successResponse(request:Request,scope:"placement-cell"|null){
+ const wantsJson=(request.headers.get("accept")??"").toLowerCase().includes("application/json");
+ if(wantsJson)return NextResponse.json({status:"UNSUBSCRIBED"},{
+  status:200,headers:{"Cache-Control":"no-store"},
+ });
+ const url=new URL("/campaign-unsubscribe/confirmed",request.url);
+ if(scope==="placement-cell")url.searchParams.set("scope","placement-cell");
+ const response=NextResponse.redirect(url,303);
+ response.headers.set("Cache-Control","no-store");
+ return response;
+}
 export async function POST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  // A public POST must not parse an unbounded multipart or URL-encoded body.
@@ -26,7 +37,7 @@ export async function POST(request:Request){
  if(tpoClaim){
   try{
    await unsubscribeTpoCampaignRecipient(rawToken);
-   return NextResponse.redirect(new URL("/campaign-unsubscribe/confirmed?scope=placement-cell",request.url),303);
+   return successResponse(request,"placement-cell");
   }catch(e){
    if(e instanceof CampaignUnsubscribeInvalid)
     return NextResponse.json({error:"INVALID_OR_EXPIRED_LINK"},{status:400});
@@ -37,12 +48,12 @@ export async function POST(request:Request){
  if(!claim)return NextResponse.json({error:"INVALID_OR_EXPIRED_LINK"},{status:400});
  const db=getDb();
  const exists=await db.execute<{ready:boolean}>(sql`select to_regclass('public.outbound_global_email_suppressions') is not null as ready`);
- if(exists.rows[0]?.ready!==true)return NextResponse.json({error:"SUPPRESSIONS_NOT_READY"},{status:503});
+ if(exists.rows[0]?.ready!==true)return NextResponse.json({error:"SUPPRESSIONS_NOT_READY",message:"That didn\u0027t work. Please try again."},{status:503,headers:{"Cache-Control":"no-store"}});
  // The global HMAC is already signed in the token; never accept an email address from the request.
  await db.execute(sql`
   insert into outbound_global_email_suppressions (recipient_hash,reason)
   values (${claim.recipientKey}::varchar,'UNSUBSCRIBED')
   on conflict (recipient_hash) where cleared_at is null do nothing
  `);
- return NextResponse.redirect(new URL("/campaign-unsubscribe/confirmed",request.url),303);
+ return successResponse(request,null);
 }
