@@ -43,3 +43,10 @@
 
 - `src/modules/placements/tpo-crm-service.ts` / G2-11-019-031/035: No-answer follow-up due currently two days; legacy tomorrow 10 AM IST. Keep transaction and existing-open-follow-up protections when aligning.
 - `src/modules/placements/tpo-recruiter-invite-service.ts` / G2-11-019-047: Public acceptance requires linked company relationship; legacy Invite permitted an email-only lead. Offer scoped relationship association before issuing, not an unverifiable invite.
+
+- `src/modules/announcements/tpo-notice-read-receipts-service.ts` / G2-11-005-033/075/132/138: return TPO-authorized unread recipients as stable {id,name,rollNumber,branchName}, not only string names; join school profile/department only in authorized college and maintain 500 limit. Lane-12 notice Drawer accepts these fields without fabricating values.
+- `src/app/(authenticated)/activity/page.tsx` raw forensic logs / G2-9-027-005/015/031: retain privacy-safe provenance with authorized actor details; currently raw table is six columns and does not retain IP. Restore full forensic 8 columns only for real persisted values, with explicit empty/error states.
+
+- `/admin/placements/calendar` owner / G2-5-007-002/072: link new `/admin/placements/calendar/appointments` appointment list from calendar's main header/overview. Lane 12 added independently scoped candidate-level appointment listing, filters/status/type/mode, full-population conflict check up to 2,000, pagination and valid new-model applications links. The existing per-drive Applications route does not filter by applicationId yet; its owner should add an authorized per-app scroll/selection.
+
+- Messages TPO / G2-19-031-050: exact Recruiters/Team tabs, scoped Team talk company search, recoverable recruiter inbox/recruiter directory errors now exposed. Same-query last-success preservation across rejected React Server Component refresh requires persistent client shell; do not store recruiter bodies in browser storage or leak data across college switches.
