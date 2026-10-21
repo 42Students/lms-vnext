@@ -48,8 +48,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U007 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminAssignmentController.java`
 - [x] U008 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminAssignmentPublishController.java`
 - [x] U009 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminAttendanceController.java`
-- [ ] U010 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminAttendancePolicyController.java`
-- [ ] U011 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminClassScheduleController.java`
+- [x] U010 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminAttendancePolicyController.java`
+- [x] U011 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminClassScheduleController.java`
 - [ ] U012 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminCollegeDashboardController.java`
 - [ ] U013 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminCollegeSummaryController.java`
 - [ ] U014 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminCourseBulkController.java`
