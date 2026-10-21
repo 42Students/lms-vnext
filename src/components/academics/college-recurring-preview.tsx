@@ -17,7 +17,7 @@ type Option = { id: string; name: string };
 type ClassOption = Option & { cohortName: string; periodStart: string; periodEnd: string; updatedAt: string };
 type FacultyOption = { id: string; displayName: string | null };
 type DeliveryOption = { id: string; sectionId: string; name: string; code: string };
-type Result = { slots: Array<{ startsAt: string; endsAt: string; localDate: string; conflicts: string[]; eventType?:string }>;
+type Result = { slots: Array<{ startsAt: string; endsAt: string; localDate: string; conflicts: string[]; warnings?:string[]; eventType?:string }>;
   ready: number; blocked: number; notice: string };
 
 /** Recurring preview is always displayed in IST regardless of device timezone. */
@@ -285,6 +285,10 @@ export function CollegeRecurringPreview({
         <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Preview · {result.ready} clear, {result.blocked} blocked</h2>
         <p className="max-w-prose text-sm text-muted-foreground leading-[22px]">{result.notice}</p>
         {previewChanged ? <Alert tone="warning">Schedule fields changed since the preview. Preview this pattern again before saving.</Alert> : null}
+        {result.slots.some(slot=>slot.warnings?.length) ?
+          <Alert tone="warning">Some enrolled elective learners have an overlapping
+            session in another elective. These are warnings, not hall or faculty
+            booking conflicts. Review the affected dates before confirming.</Alert> : null}
         <Button type="button" loading={pending} className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending || previewChanged || !title.trim() || result.ready===0}
           onClick={execute}>{pending?"Creating…":"Confirm and create "+result.ready+" sessions"}</Button>
         {result.blocked>0 ? <Alert tone="warning">Conflicting dates will be skipped; clear dates may still be created. The final report lists every created and failed date.</Alert> : null}
@@ -299,7 +303,9 @@ export function CollegeRecurringPreview({
                 {key:"date",header:"Date (IST)",mobilePriority:"primary",cell:slot=>slot.localDate},
                 {key:"time",header:"Time (IST)",mobilePriority:"secondary",cell:recurringSlotTimeIst},
                  {key:"type",header:"Session type",mobilePriority:"secondary",cell:slot=>slot.eventType??"Class session"},
-                {key:"conflicts",header:"Conflicts",mobilePriority:"secondary",cell:slot=>
+                {key:"electiveWarning",header:"Elective overlap",mobilePriority:"secondary",
+                   cell:slot=>slot.warnings?.length ? "Learner overlap — review" : "—"},
+                 {key:"conflicts",header:"Conflicts",mobilePriority:"secondary",cell:slot=>
                   slot.conflicts.length ?
                     slot.conflicts.map(reason=>reason.replaceAll("_"," ")).join(", ") :
                     "None detected"},

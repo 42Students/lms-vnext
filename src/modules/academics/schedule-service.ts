@@ -5,6 +5,7 @@ import {
   eq,
   gte,
   gt,
+  inArray,
   isNull,
   lt,
   ne,
@@ -12,9 +13,13 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
 import {
   collegeMemberships,
+  electiveOfferings,
+  lmsGroupMembers,
+  departments,
   courseOfferings,
   courseSectionDeliveries,
   courses,
@@ -26,6 +31,7 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
+import { resolveActingCollege } from "@/modules/permissions/acting-college";
 import { loadCourseSectionDeliveryScope } from "@/modules/courses/scope";
 import { AcademicsServiceError } from "./errors";
 import {
@@ -77,6 +83,60 @@ function eventWindowInsidePeriod(
       "SCHEDULE_EVENT_OUTSIDE_PERIOD",
     );
   }
+}
+
+/**
+ * Warning-only future half-open overlaps for enrolled elective learners.
+ * Learner identities and group rosters never leave this server function.
+ * The selected college scope protects both candidate and other offerings.
+ */
+export async function listFutureElectiveLearnerOverlaps(
+  context: RequestContext, sectionId: string, from: Date, to: Date,
+): Promise<Array<{ startsAt: Date; endsAt: Date }>> {
+  const acting=await resolveActingCollege(context,"academics.manage");
+  const section=z.string().uuid().parse(sectionId);
+  if (!Number.isFinite(from.getTime()) || !Number.isFinite(to.getTime()) ||
+    from >= to) return [];
+  const db=getDb();
+  const candidateGroups=await db.select({groupId:electiveOfferings.groupId})
+    .from(electiveOfferings)
+    .innerJoin(courseSectionDeliveries,
+      eq(courseSectionDeliveries.id,electiveOfferings.backedDeliveryId))
+    .innerJoin(courses,eq(courses.id,electiveOfferings.courseId))
+    .innerJoin(departments,eq(departments.id,courses.departmentId))
+    .where(and(eq(courseSectionDeliveries.sectionId,section),
+      eq(departments.collegeId,acting.collegeId),
+      eq(electiveOfferings.status,"ACTIVE"),
+      isNull(electiveOfferings.deletedAt))).limit(200);
+  const groupIds=[...new Set(candidateGroups.map(row=>row.groupId))];
+  if (!groupIds.length) return [];
+  const source=alias(lmsGroupMembers,"candidate_elective_members");
+  const authorizedMembers=db.select({membershipId:source.membershipId})
+    .from(source).where(and(inArray(source.groupId,groupIds),
+      eq(source.state,"ACTIVE")));
+  return db.selectDistinct({
+    startsAt:sectionScheduleEvents.startsAt,
+    endsAt:sectionScheduleEvents.endsAt,
+  }).from(sectionScheduleEvents)
+    .innerJoin(sectionScheduleEventCourses,
+      eq(sectionScheduleEventCourses.scheduleEventId,sectionScheduleEvents.id))
+    .innerJoin(electiveOfferings,
+      eq(electiveOfferings.backedDeliveryId,sectionScheduleEventCourses.deliveryId))
+    .innerJoin(lmsGroupMembers,and(
+      eq(lmsGroupMembers.groupId,electiveOfferings.groupId),
+      eq(lmsGroupMembers.state,"ACTIVE")))
+    .innerJoin(courses,eq(courses.id,electiveOfferings.courseId))
+    .innerJoin(departments,eq(departments.id,courses.departmentId))
+    .where(and(eq(departments.collegeId,acting.collegeId),
+      eq(electiveOfferings.status,"ACTIVE"),isNull(electiveOfferings.deletedAt),
+      eq(sectionScheduleEvents.status,"SCHEDULED"),
+      ne(sectionScheduleEvents.sectionId,section),
+      inArray(lmsGroupMembers.membershipId,authorizedMembers),
+      lt(sectionScheduleEvents.startsAt,to),
+      gt(sectionScheduleEvents.endsAt,from),
+      gt(sectionScheduleEvents.endsAt,new Date()),
+    ))
+    .orderBy(asc(sectionScheduleEvents.startsAt)).limit(200);
 }
 
 type ScheduleTx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
