@@ -135,6 +135,7 @@ export default async function HomePage({
     const destination = new URL(pagePath, "https://" + tenant.canonicalHost);
     if (authValue && messages[authValue]) destination.searchParams.set("auth", authValue);
     if (recruiterValue === "email") destination.searchParams.set("recruiter", recruiterValue);
+    if (legacySuperAdmin) destination.searchParams.set("legacy", "superadmin");
     const safeNext = safeReturnTo(requested);
     if (safeNext) destination.searchParams.set("returnTo", safeNext);
     redirect(destination.toString());

@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,isNull,count} from "drizzle-orm";
+import {and,eq,isNull,count,asc} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {projectTemplates,projectTemplateVersions,projectInstances,
@@ -36,18 +36,22 @@ export async function previewProjectTemplateRollbackImpact(
   }).from(projectTemplates).where(eq(projectTemplates.id,templateId)).limit(1);
   if(!template)throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_FOUND");
   await assertPersistedPlatformPermission(tx,context,"project-template.manage");
-  const [assignmentTotals,instanceTotals]=await Promise.all([
+  const [assignmentTotals,instanceTotals,sampleWorkspaces]=await Promise.all([
    tx.select({total:count()}).from(projectTemplateCollegeAssignments).where(and(
     eq(projectTemplateCollegeAssignments.templateId,templateId),
     isNull(projectTemplateCollegeAssignments.revokedAt),
    )),
    tx.select({total:count()}).from(projectInstances)
     .where(eq(projectInstances.templateId,templateId)),
+   tx.select({id:projectInstances.id,title:projectInstances.title})
+    .from(projectInstances).where(eq(projectInstances.templateId,templateId))
+    .orderBy(asc(projectInstances.title),asc(projectInstances.id)).limit(5),
   ]);
   return {
    expectedTemplateVersion:template.currentVersion,
    assignedCollegeCount:Number(assignmentTotals[0]?.total??0),
    pinnedWorkspaceCount:Number(instanceTotals[0]?.total??0),
+   sampleWorkspaces,
    existingWorkspacesRewritten:0,
    publishedVersionUnchanged:template.publishedVersion,
    lifecycleUnchanged:template.status,
