@@ -7,6 +7,9 @@ import {
   inArray,
   isNull,
   lte,
+  gte,
+  or,
+  isNotNull,
   sql,
 } from "drizzle-orm";
 import {z} from "zod";
@@ -93,12 +96,15 @@ export async function listFacultyCourseDeliveries(
         courseOfferings.type,
       credits: courseOfferings.credits,
       courseId: courses.id,
-      courseName: courses.name,
+      courseName: sql<string>`coalesce(nullif(btrim(${courses.name}), ''), 'Unnamed Course')`,
       courseCode: courses.code,
       courseDescription:
         courses.description,
       sectionId: sections.id,
       sectionName: sections.name,
+      // Old LMS selector used a class name, then Class <numeric ID>.
+      // Keep the active section UUID separate from the display-only label.
+      legacyClassLabel: sql<string>`coalesce(nullif(btrim(${sections.name}), ''), 'Class ' || coalesce(${sections.legacyClassId}::text, ${sections.code}))`,
       sectionCode: sections.code,
       cohortName: cohorts.name,
       cohortCode: cohorts.code,
@@ -199,9 +205,23 @@ export async function listFacultyCourseDeliveries(
         isNull(
           courseTeachingAssignments.endedAt,
         ),
-        // A future scheduled teaching grant is not active yet. Ended grants
-        // stay excluded even if a migration encoded a future end timestamp.
-        lte(courseTeachingAssignments.startedAt,sql`now()`),
+        // Legacy SQL Date fields are inclusive calendar days in Asia/Kolkata,
+        // NOT UTC timestamp instants. Where a migrated legacy start date
+        // exists it takes precedence over the new timestamp grant start.
+        // A separately retired grant (endedAt) always remains inactive.
+        or(
+          and(isNotNull(courseTeachingAssignments.startDate),
+            lte(courseTeachingAssignments.startDate,
+              sql`(now() AT TIME ZONE 'Asia/Kolkata')::date`)),
+          and(isNull(courseTeachingAssignments.startDate),
+            lte(courseTeachingAssignments.startedAt,sql`now()`)),
+        ),
+        or(isNull(courseTeachingAssignments.endDate),
+          gte(courseTeachingAssignments.endDate,
+            sql`(now() AT TIME ZONE 'Asia/Kolkata')::date`)),
+        isNull(courseTeachingAssignments.deletedAt),
+        or(isNull(courseTeachingAssignments.legacyWasActive),
+          eq(courseTeachingAssignments.legacyWasActive,true)),
         isNull(
           courseSectionDeliveries.endedAt,
         ),
@@ -219,7 +239,9 @@ export async function listFacultyCourseDeliveries(
     .orderBy(
       desc(academicPeriods.startDate),
       asc(courses.name),
+      sql`${sections.legacyClassId} asc nulls last`,
       asc(sections.name),
+      asc(sections.id),
     );
 }
 
@@ -252,7 +274,19 @@ export async function listFacultyCourseAssignmentDiagnostics(
   .where(and(
    eq(courseTeachingAssignments.membershipId,membership.id),
    isNull(courseTeachingAssignments.endedAt),
-   lte(courseTeachingAssignments.startedAt,sql`now()`),
+   or(
+    and(isNotNull(courseTeachingAssignments.startDate),
+      lte(courseTeachingAssignments.startDate,
+        sql`(now() AT TIME ZONE 'Asia/Kolkata')::date`)),
+    and(isNull(courseTeachingAssignments.startDate),
+      lte(courseTeachingAssignments.startedAt,sql`now()`)),
+   ),
+   or(isNull(courseTeachingAssignments.endDate),
+     gte(courseTeachingAssignments.endDate,
+       sql`(now() AT TIME ZONE 'Asia/Kolkata')::date`)),
+   isNull(courseTeachingAssignments.deletedAt),
+   or(isNull(courseTeachingAssignments.legacyWasActive),
+     eq(courseTeachingAssignments.legacyWasActive,true)),
   )).limit(1000);
  const byId=new Map(assigned.map(item=>[item.teachingAssignmentId,item]));
  const counts=new Map<string,number>();

@@ -10,6 +10,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {
   createCourseQuiz,
   listCourseQuizzes,
+  listCourseQuizzesAcrossLessonsPage,
 } from "@/modules/courses/quiz-service";
 
 export const runtime = "nodejs";
@@ -50,6 +51,8 @@ export async function GET(request: Request) {
     const page=Number(pageRaw),size=Number(sizeRaw);
     const includeArchived=query.get("includeArchived")==="true";
     let quizzes: Awaited<ReturnType<typeof listCourseQuizzes>>;
+    let scopedTotal: number | null = null;
+    let alreadyPaged = false;
     if (lessonId) {
       quizzes=await listCourseQuizzes(context,lessonId,
         query.get("deliveryId"),includeArchived);
@@ -86,28 +89,25 @@ export async function GET(request: Request) {
         return NextResponse.json({error:"QUIZ_DISCOVERY_TOO_LARGE",
           message:"Choose a lesson to narrow your quiz search."},{status:413});
       }
-      quizzes=[];
-      for (const lesson of lessons) {
-        try {
-          const eligible=await listCourseQuizzes(context,lesson.id,
-            query.get("deliveryId"),includeArchived);
-          quizzes.push(...eligible);
-        } catch (error) {
-          if (error instanceof CoursesServiceError &&
-              ["LEARNING_ACCESS_DENIED","LESSON_NOT_FOUND","LEARNING_PATH_NOT_PUBLISHED"].includes(error.code)) {
-            continue;
-          }
-          throw error;
-        }
-      }
+      const requestIsPaged=query.has("page")||query.has("limit")||
+        query.has("size")||shape==="page"||(!shape);
+      const scoped=await listCourseQuizzesAcrossLessonsPage(
+        context,lessons.map(lesson=>lesson.id),{
+          deliveryId:query.get("deliveryId"),includeArchived,
+          ...(requestIsPaged?{page,pageSize:size}:{}),
+        });
+      quizzes=scoped.quizzes;
+      scopedTotal=scoped.total;
+      alreadyPaged=requestIsPaged;
     } else {
       return NextResponse.json({error:"QUIZ_SCOPE_REQUIRED",
         message:"Choose a lesson or course to view quizzes."},{status:400});
     }
-    const total=quizzes.length;
+    const total=scopedTotal??quizzes.length;
     const unpaged=!query.has("page")&&!query.has("limit")&&!query.has("size");
-    const selected=unpaged&&(shape==="array"||(Boolean(lessonId)&&!shape))
-      ?quizzes:quizzes.slice((page-1)*size,page*size);
+    const selected=alreadyPaged?quizzes:
+      unpaged&&(shape==="array"||(Boolean(lessonId)&&!shape))
+        ?quizzes:quizzes.slice((page-1)*size,page*size);
     const headers={"Cache-Control":"private, no-store"};
     if(shape==="array")return NextResponse.json(selected,{headers});
     if(shape==="page")return NextResponse.json({
