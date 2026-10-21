@@ -8,10 +8,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
 import { CollegeCohortRowActions } from "@/components/academics/college-cohort-management";
 import { CollegeSemesterCreateForm, CollegeSemesterRowActions } from "@/components/academics/college-semester-management";
-import {
-  academicDirectoryHref,
-  batchProgressLabel,
-} from "@/modules/academics/college-academic-directory-model";
+import { academicDirectoryHref } from "@/modules/academics/college-academic-directory-model";
 import type {
   listCollegeBatches,
   listCollegeSemesters,
@@ -280,16 +277,19 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
               getRowKey={item=>item.id}
               empty={<p>No semesters match these filters.</p>}
               columns={[
-                {key:"semester",header:"Semester",mobilePriority:"primary",cell:item=><>
-                  <p className="font-semibold text-foreground">{item.name}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">Semester {item.termNumber}</p>
-                </>},
-                {key:"program",header:"Program",mobilePriority:"secondary",cell:item=>
-                  <span>{item.programName} ({item.programCode})</span>},
-                {key:"credits",header:"Credits",mobilePriority:"secondary",cell:item=>item.mappedCredits??0},
-                {key:"courses",header:"Mapped courses",mobilePriority:"secondary",cell:item=>item.mappedCourses},
+                {key:"program",header:"Program",mobilePriority:"secondary",className:"whitespace-nowrap",cell:item=>
+                  <span>{item.programName || "Program name unavailable"}</span>},
+                {key:"number",header:"Semester #",mobilePriority:"secondary",cell:item=>
+                  <StatusBadge tone="info">Sem {item.termNumber}</StatusBadge>},
+                {key:"name",header:"Name",mobilePriority:"primary",cell:item=>
+                  <span className="font-semibold text-foreground">{item.name}</span>},
+                {key:"credits",header:"Credits",mobilePriority:"secondary",cell:item=>
+                  item.mappedCourses > 0 ? item.mappedCredits ?? 0 : "—"},
+                {key:"courses",header:"Courses",mobilePriority:"secondary",cell:item=>item.mappedCourses},
                 {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>
-                  item.isActive ? "Active" : "Inactive"},
+                  <StatusBadge tone={item.isActive ? "success" : "danger"}>
+                    {item.isActive ? "Active" : "Inactive"}
+                  </StatusBadge>},
                 {key:"actions",header:"Actions",mobilePriority:"action",cell:item=>
                   <CollegeSemesterRowActions row={item}/>},
               ]}
@@ -301,41 +301,31 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
               getRowKey={item=>item.id}
               empty={<p>No batches match these filters.</p>}
               columns={[
-                {key:"batch",header:"Batch",mobilePriority:"primary",cell:item=><>
-                  <p className="font-semibold text-foreground">{item.name}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">{item.code}</p>
-                </>},
+                {key:"batch",header:"Batch Name",mobilePriority:"primary",className:"whitespace-nowrap",cell:item=>
+                  <span className="font-semibold text-foreground">{item.name}</span>},
                 {key:"program",header:"Program",mobilePriority:"secondary",cell:item=>
-                  <span>{item.programName} ({item.programCode})</span>},
-                {key:"years",header:"Years",mobilePriority:"secondary",cell:item=><>
-                  <p>Start Date: {item.startDate}</p>
-                  <p>End Date: {item.endDate ?? "Not set"}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">{item.startPeriodName}</p>
-                </>},
-                {key:"year",header:"Academic Year",mobilePriority:"secondary",cell:item=>
-                  item.academicYear??(item.currentAcademicYearStart !== null
-                    ? String(item.currentAcademicYearStart)+"-"+String((item.currentAcademicYearStart+1)%100).padStart(2,"0")
-                    : "Not recorded")},
+                  <span>{item.programName || "Program name unavailable"}</span>},
+                {key:"years",header:"Years",mobilePriority:"secondary",cell:item=>
+                  item.startDate && item.endDate
+                    ? item.startDate.slice(0,4)+" – "+item.endDate.slice(0,4) : "—"},
                 {key:"semester",header:"Current Semester",mobilePriority:"secondary",cell:item=>
-                  batchProgressLabel(item.currentTermNumber === null ? null : {
-                    currentTermNumber:item.currentTermNumber,
-                    currentAcademicYearStart:item.currentAcademicYearStart,
-                  })},
-                {key:"population",header:"Active classes / learners",mobilePriority:"secondary",cell:item=>
-                  <span>{item.activeSections} classes / {item.activeEnrolledLearners} learners</span>},
-                {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>
-                  <StatusBadge tone={item.inactiveAt || item.status === "ARCHIVED" ? "neutral" : item.status === "ACTIVE" ? "success" : item.status === "PLANNED" ? "warning" : "info"}>
-                    {item.inactiveAt ? "Inactive" : item.status}
-                  </StatusBadge>},
+                  item.currentTermNumber === null ? "—" :
+                    <StatusBadge tone="info">Semester {item.currentTermNumber}</StatusBadge>},
+                {key:"year",header:"Academic Year",mobilePriority:"secondary",cell:item=>
+                  item.academicYear ?? (item.currentAcademicYearStart !== null
+                    ? String(item.currentAcademicYearStart)+"-"+String((item.currentAcademicYearStart+1)%100).padStart(2,"0")
+                    : "—")},
+                {key:"classes",header:"Classes",mobilePriority:"secondary",cell:item=>item.activeSections},
+                {key:"students",header:"Students",mobilePriority:"secondary",cell:item=>item.activeEnrolledLearners},
+                {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>{
+                  const caption = item.status === "ARCHIVED" ? "Archived" : item.inactiveAt ||
+                    item.status === "PLANNED" ? "Inactive" : item.status === "COMPLETED" ?
+                    "Completed" : "Active";
+                  return <StatusBadge tone={caption === "Active" ? "success" :
+                    caption === "Inactive" ? "warning" : "neutral"}>{caption}</StatusBadge>;
+                }},
                 {key:"actions",header:"Actions",mobilePriority:"action",cell:item=>
-                  <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
-                    <Link href={"/college/batches/"+encodeURIComponent(item.id)+"/students"}
-                      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 text-sm font-semibold text-[var(--lms-link-text)]"
-                      aria-label={"View student roster and move students between classes in " + item.name}>
-                      Students
-                    </Link>
-                    <CollegeCohortRowActions row={item} periods={batchPeriods}/>
-                  </div>},
+                  <CollegeCohortRowActions row={item} periods={batchPeriods}/>},
               ]}
             />
           )}</>
