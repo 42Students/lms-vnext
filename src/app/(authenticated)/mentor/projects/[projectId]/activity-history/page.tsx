@@ -122,6 +122,15 @@ export default async function MentorProjectActivityHistoryPage({
       <p className="text-sm text-body leading-[22px]">
         {data.total.toLocaleString("en-IN")} matching persisted event{data.total===1?"":"s"}
       </p>
+      {data.query.view!=="MEETINGS"?<p className="text-sm text-body">
+        Project lifecycle and audit events are separate from the authoritative
+        meeting-edit revisions. {" "}
+        <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
+         "/activity-history?view=MEETINGS"} className="font-semibold text-link underline">
+          View meeting change history
+        </Link>
+        {" "}for actor, changed fields and redacted before/after details.
+      </p>:null}
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+
           "/mentor-activity-export"+(data.query.importance==="ALL"&&data.query.view==="ALL"&&data.query.window==="ALL"&&data.query.order==="NEWEST"?"":"?"+
@@ -133,7 +142,12 @@ export default async function MentorProjectActivityHistoryPage({
           Export omits {data.total-200} additional matching events.
         </span>:null}
       </div>
-      {data.items.length===0 ? <EmptyState title="No recorded project activity"
+      {data.items.length===0&&data.query.view==="MEETINGS"
+        ? <p role="status" className="border-y border-border py-3 text-sm text-body">
+          No general meeting events are listed here. The typed meeting revision ledger below
+          is the authoritative source for changes, including imported edits.
+         </p>
+        : data.items.length===0 ? <EmptyState title="No recorded project activity"
         description="No registered activity events match this project and importance filter. Missing audit producers or pre-migration records cannot be inferred."
         action={filtered?<Link href={mentorProjectActivityHref({...data.query,importance:"ALL",view:"ALL",window:"ALL",order:"NEWEST",pageSize:20,page:1})} className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">Clear</Link>:undefined} />
         : <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(event=>
@@ -156,8 +170,10 @@ export default async function MentorProjectActivityHistoryPage({
           <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=meetings"}
             className="min-h-9 text-sm font-semibold text-link underline">Back to meetings</Link>
         </div>
-        <p className="text-sm text-body">Recorded meeting revisions, newest first. Details show only allowed fields
-          from this project&apos;s persisted history; legacy records may be incomplete.</p>
+        <p className="text-sm text-body">Recorded meeting revisions, newest first. Each revision is
+          scoped to this project and can be filtered by meeting key. Actor names and allowed
+          before/after fields are visible only to authorized mentors; private links, contact
+          details, credentials and object keys are withheld. Historical records may be incomplete.</p>
         <form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/activity-history"}
           className="flex min-w-0 flex-wrap items-end gap-2" role="search" aria-label="Filter meeting history">
           <input type="hidden" name="view" value="MEETINGS"/>
@@ -177,7 +193,7 @@ export default async function MentorProjectActivityHistoryPage({
             className="ml-2 font-semibold underline">Retry</Link>
         </p> : meetingHistory.items.length===0 ?
           <EmptyState title="No meeting changes recorded"
-            description="No persisted meeting revisions match this project and meeting key."/> :
+            description="No persisted typed meeting revisions match this project and meeting key. This does not mean no generic project activity occurred or that pre-migration edits never happened."/> :
           <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
             {meetingHistory.items.map(item=><article key={item.id} className="min-w-0 space-y-2 py-3 text-sm">
               <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">

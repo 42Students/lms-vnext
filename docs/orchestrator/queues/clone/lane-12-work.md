@@ -64,7 +64,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-12/src_modules_bug-tracker_independent-audit-findings-service.ts.md` (edit src/modules/bug-tracker/independent-audit-findings-service.ts; 5 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-12/NEW_docs_audit_gap2_lane-16_u001-tracker-audit-findings.md.md` (new; 5 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-12/src_modules_bug-tracker_reporter-service.ts.md` (edit src/modules/bug-tracker/reporter-service.ts; 5 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_mentor_projects_projectId_activity-history_page.tsx.md` (edit src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx; 5 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_mentor_projects_projectId_activity-history_page.tsx.md` (edit src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx; 5 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_superadmin_page.tsx.md` (edit src/app/(authenticated)/superadmin/page.tsx; 5 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_drive-day_roundId_page.tsx.md` (edit src/app/(authenticated)/tpo/drive-day/[roundId]/page.tsx; 4 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_components_tpo_tpo-academic-import-workspace.tsx.md` (edit src/components/tpo/tpo-academic-import-workspace.tsx; 4 findings; best P1)
