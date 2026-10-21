@@ -49,24 +49,24 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/hiring-dashboard.js`
 - [x] U009 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/inbound-mail.js`
 - [x] U010 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/index.js`
-- [ ] U011 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/[jobId]/applications.js`
-- [ ] U012 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/[jobId]/index.js`
-- [ ] U013 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/[jobId]/interviews.js`
-- [ ] U014 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/[jobId]/settings.js`
-- [ ] U015 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/[jobId]/shortlisted.js`
-- [ ] U016 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/all.js`
-- [ ] U017 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/index.js`
-- [ ] U018 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/lecture-halls.js`
-- [ ] U019 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/module-access.js`
-- [ ] U020 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/programs.js`
-- [ ] U021 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/recruiters.js`
-- [ ] U022 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/settings.js`
-- [ ] U023 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/tenants.js`
-- [ ] U024 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/verification.js`
-- [ ] U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/RecruiterSelfController.java`
-- [ ] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicCampaignUnsubscribeController.java`
-- [ ] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/FileUploadController.java`
-- [ ] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/index.js`
-- [ ] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/[templateId]/tasks.js`
-- [ ] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/JobForm.js`
-- [ ] U031 (Cross-cutting area) `cross/10: Search, filters, sorting, pagination conventions across all list pages`
+- [x] U011 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/[jobId]/applications.js`
+- [x] U012 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/[jobId]/index.js`
+- [x] U013 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/[jobId]/interviews.js`
+- [x] U014 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/[jobId]/settings.js`
+- [x] U015 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/[jobId]/shortlisted.js`
+- [x] U016 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/all.js`
+- [x] U017 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/index.js`
+- [x] U018 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/lecture-halls.js`
+- [x] U019 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/module-access.js`
+- [x] U020 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/programs.js`
+- [x] U021 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/recruiters.js`
+- [x] U022 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/settings.js`
+- [x] U023 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/tenants.js`
+- [x] U024 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/verification.js`
+- [x] U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/RecruiterSelfController.java`
+- [x] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicCampaignUnsubscribeController.java`
+- [x] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/FileUploadController.java`
+- [x] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/index.js`
+- [x] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/[templateId]/tasks.js`
+- [x] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/JobForm.js`
+- [x] U031 (Cross-cutting area) `cross/10: Search, filters, sorting, pagination conventions across all list pages`
