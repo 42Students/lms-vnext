@@ -124,9 +124,9 @@ export async function ProjectAdminReadinessPage({
     getProjectReadiness(context,selected),
     listCollegeReadinessReleases(context,collegeId,selected),
   ]):[null,null];
+  const selectedReadiness=readinessRead?.status==="fulfilled"?readinessRead.value:null;
   const selectedHasFinalSubmission=Boolean(selectedReadiness?.finalSubmission.latest &&
     selectedReadiness.finalSubmission.latest.status!=="DRAFT");
-  const selectedReadiness=readinessRead?.status==="fulfilled"?readinessRead.value:null;
   const releaseUnavailable=releasesRead?.status==="rejected";
   const releaseContext=releasesRead?.status==="fulfilled"?releasesRead.value:[];
   const readinessPath=basePath+"/readiness";
