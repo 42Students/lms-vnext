@@ -5,6 +5,13 @@ import {activityEvents,collegeMemberships,colleges,inAppNotifications} from "@/d
 import {placementCompanyApplicantShares as shares,placementCompanyApplicantShareViews as views} from "@/db/schema/placement-company-shares";
 import {companyShareTablesReady} from "./readiness";
 import {companyShareAccessProof,companyShareTokenSchema,hashCompanyShareToken,validCompanyShareAccessCode} from "./token-model";
+/** Company share access challenge delivery policy:
+ * The placement cell receives the one-time code on issue and delivers it via
+ * its existing authenticated channel. Anonymous visitors may not request a
+ * new code by email: that would permit enumeration and unaudited mail abuse.
+ * The old Spring "Email me a code" requires a separately configured sender
+ * and per-share durable rate limits before it can be enabled. */
+export const COMPANY_SHARE_CODE_DELIVERY="PLACEMENT_CELL_MANUAL" as const;
 /** PUB-auth-public-50/52: the code gate is serialized by the link row lock;
  * even parallel bad attempts cannot skip the ten-per-hour lockout. No bearer,
  * code, code hash, visitor address or applicant data enters the audit.
