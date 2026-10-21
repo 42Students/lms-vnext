@@ -140,3 +140,8 @@ Reference: docs/design/old-lms-shell-spec.md, old-lms-shell.css, legacy-styles, 
 - `src/app/(authenticated)/learn/projects/[projectId]/error.tsx` | 7 instances | space-y-4 16px vs legacy same; mt-2 8px vs legacy same; mt-4 16px vs legacy same | fixes: none | 1280/768/375 source.
 - `src/app/(authenticated)/learn/projects/[projectId]/not-found.tsx` | 6 instances | space-y-4 16px vs legacy same; py-6 24px vs legacy same; mt-2 8px vs legacy same | fixes: none | 1280/768/375 source.
 - `src/app/(authenticated)/learn/projects/[projectId]/page.tsx` | 7 instances | space-y-6 24px vs legacy same; control radius9px vs legacy9px; px-4 16px vs legacy same | fixes: none | 1280/768/375 source.
+- `src/app/(authenticated)/mentor/activity/page.tsx` | 29 instances | space-y-4: 16px ↔ legacy 16px; md:space-y-6: 24px ↔ legacy 24px; pb-4: 16px ↔ legacy 16px | fixes: none | 1280/768/375 source.
+- `src/app/(authenticated)/mentor/calendar/page.tsx` | 21 instances | space-y-3: 12px ↔ legacy 12px; space-y-6: 24px ↔ legacy 24px; pb-4: 16px ↔ legacy 16px | fixes: none | 1280/768/375 source.
+- `src/app/(authenticated)/mentor/not-found.tsx` | 3 instances | space-y-4: 16px ↔ legacy 16px; control radius 9px ↔ legacy 9px; px-4: 16px ↔ legacy 16px | fixes: none | 1280/768/375 source.
+- `src/app/(authenticated)/mentor/notifications/page.tsx` | 20 instances | space-y-3: 12px ↔ legacy 12px; space-y-4: 16px ↔ legacy 16px; md:space-y-6: 24px ↔ legacy 24px | fixes: none | 1280/768/375 source.
+- `src/app/(authenticated)/mentor/page.tsx` | 7 instances | space-y-4: 16px ↔ legacy 16px; md:space-y-6: 24px ↔ legacy 24px; gap-3: 12px ↔ legacy 12px | fixes: none | 1280/768/375 source.
