@@ -72,7 +72,12 @@ export function deriveProjectRiskReasons({
   // Only an ACTIVE project may accept delivery review. A restored or
   // not-yet-started PLANNED project can retain historical submissions but
   // must not advertise an operation the review state machine forbids.
-  if (projectStatus === "ACTIVE" && latestSubmissionStatus === "SUBMITTED") {
+  const currentReviewStatus = latestSubmissionStatus?.trim().toUpperCase().replace(/[ -]/g,"_");
+  if (projectStatus === "ACTIVE" && (
+    currentReviewStatus === "SUBMITTED" ||
+    currentReviewStatus === "UNDER_REVIEW" ||
+    currentReviewStatus === "IN_REVIEW"
+  )) {
     reasons.push("Pending review");
   }
 
