@@ -1,8 +1,8 @@
 import "server-only";
-import {and,eq,sql} from "drizzle-orm";
+import {and,eq,isNull,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {activityEvents,colleges} from "@/db/schema";
+import {activityEvents,colleges,placementJobs} from "@/db/schema";
 import {placementTpoJobTypes} from "@/db/schema/tpo-configuration";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
@@ -10,7 +10,17 @@ import {placementTableExists} from "./staged-tables";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {tpoJobTypeNameSchema} from "./tpo-configuration-model";
 import {TPO_BUILTIN_JOB_TYPES,isTpoBuiltinJobType} from "./tpo-builtin-job-types";
-const createSchema=z.object({label:tpoJobTypeNameSchema,countsAsPlaced:z.boolean()}).strict();
+// Match the old LMS validation message while preserving the vNext schema's
+// supported Unicode letters and punctuation. Never echo unescaped HTML.
+const legacyLabelSchema=z.string().transform((raw,ctx)=>{
+ const label=raw.trim().replace(/\s+/g," ");
+ if(!tpoJobTypeNameSchema.safeParse(label).success){
+  ctx.addIssue({code:"custom",message:'"'+label+'": a job type name is 2-40 letters, digits or simple punctuation'});
+  return z.NEVER;
+ }
+ return label;
+});
+const createSchema=z.object({label:legacyLabelSchema,countsAsPlaced:z.boolean()}).strict();
 export class TpoConfigError extends Error{
  constructor(public readonly code:"TPO_SETTINGS_PENDING"|"TPO_JOB_TYPE_EXISTS"|"TPO_SETTINGS_STALE"|"TPO_SETTINGS_NOT_FOUND"|"TPO_JOB_TYPE_LIMIT"|"TPO_JOB_TYPE_LAST_ACTIVE"|"TPO_JOB_TYPE_BUILTIN"|"TPO_JOB_TYPE_IN_USE"){
   super(code);this.name="TpoConfigError";
@@ -96,7 +106,7 @@ export async function setTpoJobTypeActive(context:RequestContext,raw:unknown){
  });
 }
 
-const renameSchema=z.object({jobTypeId:z.string().uuid(),label:tpoJobTypeNameSchema,
+const renameSchema=z.object({jobTypeId:z.string().uuid(),label:legacyLabelSchema,
  expectedVersion:z.iso.datetime({offset:true})}).strict();
 export async function renameTpoJobType(ctx:RequestContext,raw:unknown){
  const input=renameSchema.parse(raw),collegeId=await requireTpoBatchActor(ctx);
@@ -219,5 +229,55 @@ export async function setTpoJobTypeCountsAsPlaced(ctx:RequestContext,raw:unknown
    subjectId:current.id,summary:"TPO changed a custom job type placement rule",
    metadata:{oldValue:current.countsAsPlaced,newValue:input.countsAsPlaced}});
   return {changed:true,updatedAt:saved.updatedAt.toISOString()};
+ });
+}
+
+
+/**
+ * Delete a custom label only when there are no active college drives.
+ *
+ * The normalized vNext placement_jobs table has employment_type but no
+ * persisted custom job-type identity. Until a tenant-scoped linkage is added,
+ * deleting with any live drive would risk discarding an in-use label. This
+ * deliberately fails closed rather than pretending a custom type is unused.
+ */
+const deleteSchema=z.object({
+ jobTypeId:z.string().uuid(),expectedVersion:z.iso.datetime({offset:true}),
+}).strict();
+export async function deleteUnusedTpoJobType(ctx:RequestContext,raw:unknown){
+ const input=deleteSchema.parse(raw),collegeId=await requireTpoBatchActor(ctx);
+ if(!await placementTableExists("placement_tpo_job_types"))throw new TpoConfigError("TPO_SETTINGS_PENDING");
+ return getDb().transaction(async tx=>{
+  const [college]=await tx.select({organizationId:colleges.organizationId,status:colleges.status})
+   .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
+  if(!college||college.status!=="ACTIVE")throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+  await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
+  const [current]=await tx.select().from(placementTpoJobTypes)
+   .where(and(eq(placementTpoJobTypes.collegeId,collegeId),
+    eq(placementTpoJobTypes.id,input.jobTypeId))).for("update").limit(1);
+  if(!current)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+  if(current.isBuiltin||isTpoBuiltinJobType(current.label))throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
+  if(current.updatedAt.toISOString()!==input.expectedVersion)throw new TpoConfigError("TPO_SETTINGS_STALE");
+
+  const [inUse]=await tx.select({id:placementJobs.id}).from(placementJobs)
+   .where(and(eq(placementJobs.collegeId,collegeId),isNull(placementJobs.archivedAt)))
+   .limit(1);
+  if(inUse)throw new TpoConfigError("TPO_JOB_TYPE_IN_USE");
+  const [deleted]=await tx.delete(placementTpoJobTypes).where(and(
+   eq(placementTpoJobTypes.collegeId,collegeId),
+   eq(placementTpoJobTypes.id,current.id),
+   eq(placementTpoJobTypes.updatedAt,current.updatedAt),
+  )).returning({id:placementTpoJobTypes.id});
+  if(!deleted)throw new TpoConfigError("TPO_SETTINGS_STALE");
+  await tx.insert(activityEvents).values({
+   organizationId:college.organizationId,collegeId,actorUserId:ctx.user.id,
+   actorMembershipId:ctx.membership!.id,module:"PLACEMENTS",
+   eventType:"placements.tpo_job_type.deleted",subjectType:"JOB_TYPE",
+   subjectId:deleted.id,summary:"TPO deleted an unused custom job type",
+   metadata:{label:current.label},
+  });
+  return {deleted:true};
  });
 }
