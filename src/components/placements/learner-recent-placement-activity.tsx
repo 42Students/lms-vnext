@@ -22,7 +22,7 @@ export function LearnerRecentPlacementActivity({
       className="min-w-0 border-b border-border pb-5 pt-4 md:pb-6 md:pt-5"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 id="recent-placement-activity" className="m-0 text-base font-semibold text-foreground">
+        <h2 id="recent-placement-activity" className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
           Recent placement activity
         </h2>
         <Link href="/learn/my-placements/applications"
@@ -30,7 +30,7 @@ export function LearnerRecentPlacementActivity({
           My applications →
         </Link>
       </div>
-      <p className="mt-2 text-sm text-body">
+      <p className="mt-2 text-sm text-body leading-[22px]">
         Your recorded applications, final screening decisions and applied round outcomes.
         No unsent decisions or employer-only notes are displayed.
       </p>
@@ -48,11 +48,11 @@ export function LearnerRecentPlacementActivity({
                 <div className="flex min-w-0 flex-col gap-1 md:flex-row md:items-center md:justify-between md:gap-4">
                   <span className="break-words text-sm font-semibold text-foreground">{event.heading}</span>
                   <time dateTime={event.occurredAt.toISOString()}
-                    className="text-xs text-muted-foreground">
+                    className="text-xs text-muted-foreground leading-5">
                     {formatIst(event.occurredAt)}
                   </time>
                 </div>
-                <p className="mt-1 break-words text-sm text-body">{event.detail}</p>
+                <p className="mt-1 break-words text-sm text-body leading-[22px]">{event.detail}</p>
               </Link>
             </li>
           ))}

@@ -49,7 +49,7 @@ export function LearnerPlacementRegistration({registration}:Props) {
     } finally {setBusy(false);}
   }
   return <section id="registration" aria-label="Registration" className="scroll-mt-24 min-w-0 space-y-3 border-b border-border pb-6">
-    <h2 className="font-semibold">{LEARNER_REGISTRATION_COPY.title}</h2>
+    <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{LEARNER_REGISTRATION_COPY.title}</h2>
     <fieldset disabled={busy || registration.stage!=="OPEN"} className="space-y-2">
       <legend className="text-sm font-semibold">{LEARNER_REGISTRATION_COPY.choice}</legend>
       {learnerPlacementChoices.map(item=><label key={item.value} className="flex min-h-11 min-w-0 items-start gap-3 border-b border-border px-2 py-3 transition-colors duration-150 hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--lms-primary)] motion-reduce:transition-none">
@@ -64,14 +64,14 @@ export function LearnerPlacementRegistration({registration}:Props) {
       </label>:null}
     </fieldset>
     {registration.stage==="OPEN"?<>
-      {registration.deadline?<p className="text-sm">{LEARNER_REGISTRATION_COPY.deadline} {new Date(registration.deadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"})}.</p>:null}
+      {registration.deadline?<p className="text-sm leading-[22px]">{LEARNER_REGISTRATION_COPY.deadline} {new Date(registration.deadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"})}.</p>:null}
       <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={busy} onClick={()=>void submit()}>
         {busy?"Saving…":registration.choice?LEARNER_REGISTRATION_COPY.update:LEARNER_REGISTRATION_COPY.register}
       </Button>
-    </>:<p className="text-sm" role="status">{registration.stage==="NOT_INVITED"?
+    </>:<p className="text-sm leading-[22px]" role="status">{registration.stage==="NOT_INVITED"?
       LEARNER_REGISTRATION_COPY.notInvited:LEARNER_REGISTRATION_COPY.closed}</p>}
-    {registration.choice?<p className="text-sm">Your choice: {learnerPlacementChoices.find(item=>item.value===registration.choice)?.label}</p>:null}
-    {message?<p role="status" className="text-sm">{message}</p>:null}
-    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+    {registration.choice?<p className="text-sm leading-[22px]">Your choice: {learnerPlacementChoices.find(item=>item.value===registration.choice)?.label}</p>:null}
+    {message?<p role="status" className="text-sm leading-[22px]">{message}</p>:null}
+    {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
   </section>;
 }
