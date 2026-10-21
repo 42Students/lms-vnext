@@ -20,11 +20,11 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-4.md: surface | regres
 - [x] `src/app/(authenticated)/teach/error.tsx`
 - [x] `src/app/(authenticated)/admin/not-found.tsx`
 - [x] `src/components/placements/tpo-drive-clone-action.tsx`
-- [ ] `src/components/placements/tpo-trust-toggle.tsx`
-- [ ] `src/components/tpo/tpo-notice-undo-toast.tsx`
-- [ ] `src/app/(authenticated)/admin/hr/page.tsx`
-- [ ] `src/components/admin/organization-create-form.tsx`
-- [ ] `src/components/admin/tenant-settings-editor.tsx`
-- [ ] `src/components/tracker/audit-finding-status-action.tsx`
-- [ ] `src/components/admin/admin-revoke-sessions.tsx`
-- [ ] `src/components/admin/super-admin-batch-graduate-action.tsx`
+- [x] `src/components/placements/tpo-trust-toggle.tsx`
+- [x] `src/components/tpo/tpo-notice-undo-toast.tsx`
+- [x] `src/app/(authenticated)/admin/hr/page.tsx`
+- [x] `src/components/admin/organization-create-form.tsx`
+- [x] `src/components/admin/tenant-settings-editor.tsx`
+- [x] `src/components/tracker/audit-finding-status-action.tsx`
+- [x] `src/components/admin/admin-revoke-sessions.tsx`
+- [x] `src/components/admin/super-admin-batch-graduate-action.tsx`
