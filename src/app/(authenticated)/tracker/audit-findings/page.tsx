@@ -24,7 +24,6 @@ import {independentAuditGithubConfigured} from "@/modules/bug-tracker/independen
 import {AuditFindingFilterMemory} from "@/components/tracker/audit-finding-filter-memory";
 import {FINDING_STATUSES,FINDING_SEVERITIES,FINDING_KINDS,parseIndependentFindingFilters,independentFindingHref} from "@/modules/bug-tracker/independent-audit-findings-model";
 import {independentAuditFindingsReady,listIndependentAuditFindings,readIndependentFindingSyncState} from "@/modules/bug-tracker/independent-audit-findings-service";
-import {independentAuditImporterReady} from "@/modules/bug-tracker/independent-audit-inbox-importer";
 import {IndependentFindingSyncAction} from "@/components/tracker/independent-finding-sync-action";
 export const dynamic="force-dynamic";
 export const metadata={title:"Audit findings · 42 Tracker"};
