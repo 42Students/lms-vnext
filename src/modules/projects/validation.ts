@@ -998,3 +998,22 @@ export function normalizeLegacyProjectBlueprint(raw:unknown):unknown{
  });
  return {...input,sprints,tasks,resources};
 }
+
+/** Legacy AdminProjectCreateDTO fields stay distinct from canonical lifecycle.
+ * READY and BLOCKED are workflow labels; ARCHIVED must be a separate action.
+ */
+export function normalizeLegacyProjectCreationStatus(
+ status:"PLANNED"|"ACTIVE"|"IN_PROGRESS"|"READY"|"BLOCKED"|"ARCHIVED",
+ metadata:{phase?:string;blocker?:string},
+):{initialStatus:"PLANNED"|"ACTIVE";phase?:string;blocker?:string}|null{
+ if(status==="ARCHIVED")return null;
+ if(status==="PLANNED")return {initialStatus:"PLANNED",...metadata};
+ if(status==="READY")return {initialStatus:"ACTIVE",
+  phase:metadata.phase?.trim()||"Ready",blocker:metadata.blocker};
+ if(status==="BLOCKED")return {initialStatus:"ACTIVE",
+  phase:metadata.phase?.trim()||"Blocked",
+  blocker:metadata.blocker?.trim()||"Blocked (imported workspace)"};
+ return {initialStatus:"ACTIVE",
+  phase:metadata.phase?.trim()||(status==="IN_PROGRESS"?"In progress":undefined),
+  blocker:metadata.blocker};
+}

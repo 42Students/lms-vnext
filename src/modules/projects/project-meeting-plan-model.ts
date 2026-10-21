@@ -52,3 +52,27 @@ export function projectMeetingPlanFieldsChanged(before: {
     before.linkedSprintId !== next.linkedSprintId ||
     before.linkedTaskId !== next.linkedTaskId;
 }
+
+/** Imported full-section PUT: active draft rows and deleted draft rows share
+ * their stable key; the latter may be revived without replacing the UUID.
+ * Scheduled/completed meetings are never silently deleted by a draft editor.
+ */
+export const legacyMeetingSectionSaveSchema=z.strictObject({
+ expectedMeetingsToken:z.string().regex(/^[a-f0-9]{64}$/),
+ meetings:z.array(projectMeetingPlanRowSchema.extend({
+  id:z.uuid().optional(),
+ })).max(500),
+}).superRefine((input,ctx)=>{
+ const keys=new Set<string>(),ids=new Set<string>();
+ input.meetings.forEach((row,index)=>{
+  const key=row.key.toLowerCase();
+  if(keys.has(key))ctx.addIssue({code:"custom",path:["meetings",index,"key"],
+    message:"Item "+(index+1)+": Duplicate meeting key"});
+  keys.add(key);
+  if(row.id){
+   if(ids.has(row.id))ctx.addIssue({code:"custom",path:["meetings",index,"id"],
+    message:"Item "+(index+1)+": Duplicate meeting"});
+   ids.add(row.id);
+  }
+ });
+});

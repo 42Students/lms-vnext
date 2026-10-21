@@ -81,7 +81,8 @@ export async function deleteLearnerOwnTask(context:RequestContext,rawParams:unkn
   if(project?.status!=="ACTIVE")throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   await assertPersistedLearnerProjectMutation(tx,context,projectId,scope.collegeId);
   const [task]=await tx.select().from(projectTasks).where(and(eq(projectTasks.id,taskId),
-    eq(projectTasks.projectId,projectId))).for("update").limit(1);
+    eq(projectTasks.projectId,projectId),isNull(projectTasks.deletedAt)))
+    .for("update").limit(1);
   if(!task||!task.templateKey.startsWith("learner-"+membership.id.replaceAll("-","")+"-")||
     task.assigneeMembershipId!==membership.id||task.status!=="TODO")
     throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
@@ -110,11 +111,17 @@ export async function deleteLearnerOwnTask(context:RequestContext,rawParams:unkn
     metadata:{projectId,taskId:task.id,deleted:true,sprintId:task.sprintId,
       createdByMembershipId:membership.id,createdByUserId:context.user.id,
       createdByType:"LEARNER",assigneeMembershipId:membership.id,
-      assigneeRoleKind:"LEARNER"},
+      assigneeRoleKind:"LEARNER",deletionSource:"LEARNER_OWN",
+      deletedByWorkspace:true,templateKey:task.templateKey},
     groupKey:"project:"+projectId,
   });
-  await tx.delete(projectTasks).where(and(eq(projectTasks.projectId,projectId),
-    eq(projectTasks.id,taskId),eq(projectTasks.status,"TODO")));
+  const now=new Date(Math.max(Date.now(),task.updatedAt.getTime()+1));
+  const [deleted]=await tx.update(projectTasks).set({
+    deletedAt:now,deletedByWorkspace:true,updatedAt:now,
+  }).where(and(eq(projectTasks.projectId,projectId),
+    eq(projectTasks.id,taskId),eq(projectTasks.status,"TODO"),
+    isNull(projectTasks.deletedAt))).returning({id:projectTasks.id});
+  if(!deleted)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   await notifyActiveProjectMembers(tx,event.id,{projectId,collegeId:scope.collegeId,
    roles:["MENTOR"],exceptUserId:context.user.id,title:"Learner deleted a task",
    body:task.title,actionHref:"/mentor/projects/"+projectId+"?tab=board"});
