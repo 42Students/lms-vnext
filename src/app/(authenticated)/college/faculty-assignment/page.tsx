@@ -66,8 +66,10 @@ export default async function CollegeFacultyAssignmentPage({
    listCollegeFacultyAssignments(context,{...overviewQuery,status:"ACTIVE"}),
    listCollegeFacultyAssignments(context,{...overviewQuery,status:"ACTIVE",role:"PRIMARY"}),
   ]);
-  const metricValue=(index:number)=>metricReads[index]?.status==="fulfilled"
-   ?metricReads[index].value.total:null;
+  const metricValue=(index:number)=>{
+   const result=metricReads[index];
+   return result?.status==="fulfilled"?result.value.total:null;
+  };
   const currentVisibleClasses=new Set(items.filter(item=>item.state==="ACTIVE")
    .map(item=>item.cohortName+"|"+item.sectionName+"|"+item.periodName)).size;
   const classChoices=Array.from(
