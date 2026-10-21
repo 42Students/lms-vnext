@@ -714,6 +714,19 @@ export async function addProjectMember(
       // together with this project write. A pre-transaction eligibility
       // snapshot could be revoked immediately before assignment.
       await loadEligibleMembership(tx,input.membershipId,scope.collegeId,input.role);
+      const [already]=await tx.select().from(projectMembers).where(and(
+        eq(projectMembers.projectId,scope.project.id),
+        eq(projectMembers.membershipId,input.membershipId),
+        isNull(projectMembers.endedAt),
+      )).for("update").limit(1);
+      if(already){
+        const kind=input.roleKind??(input.role==="MENTOR"?"MENTOR":"LEARNER");
+        const canMutate=input.canMutate??!["OBSERVER","REVIEWER","QA"].includes(kind);
+        if(already.role===input.role&&already.roleKind===kind&&
+           already.canMutate===canMutate&&already.isPrimary===input.isPrimary&&
+           (already.roleLabel??null)===(input.roleLabel??null))return [already];
+        throw new ProjectsServiceError("PROJECT_MEMBER_CONFLICT");
+      }
       const [created]=await tx.insert(projectMembers).values({
         projectId: scope.project.id,
         membershipId: input.membershipId,
@@ -787,6 +800,14 @@ export async function updateProjectMember(
           isNull(projectMembers.endedAt),
         )).for("update").limit(1);
       if(!fresh)throw new ProjectsServiceError("PROJECT_MEMBER_NOT_FOUND");
+      const unchanged=(input.isPrimary===undefined||input.isPrimary===fresh.isPrimary)&&
+        (input.roleKind===undefined||input.roleKind===fresh.roleKind)&&
+        (input.canMutate===undefined||input.canMutate===fresh.canMutate)&&
+        (input.roleLabel===undefined||input.roleLabel===fresh.roleLabel);
+      if(unchanged)return [fresh];
+      if(input.expectedUpdatedAt!==undefined&&
+         Date.parse(input.expectedUpdatedAt)!==fresh.updatedAt.getTime())
+        throw new ProjectsServiceError("PROJECT_MEMBER_CONFLICT");
       if(input.isPrimary===false && !mayRemovePrimaryProjectMentor(project.status,fresh.role,fresh.isPrimary))
         throw new ProjectsServiceError("PROJECT_INVALID_STATE");
       if(input.isPrimary===true&&fresh.role!=="MENTOR")
@@ -804,7 +825,7 @@ export async function updateProjectMember(
         ...(input.roleLabel!==undefined?{roleLabel:input.roleLabel}:{}),
         ...(input.roleKind!==undefined?{roleKind:input.roleKind}:{}),
         ...(input.canMutate!==undefined?{canMutate:input.canMutate}:{}),
-        updatedAt:new Date(),
+        updatedAt:new Date(Math.max(Date.now(),fresh.updatedAt.getTime()+1)),
       }).where(and(eq(projectMembers.id,fresh.id),
         eq(projectMembers.projectId,scope.project.id),isNull(projectMembers.endedAt)))
         .returning();

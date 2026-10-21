@@ -403,6 +403,7 @@ export const addProjectMemberInputSchema = z
 
 export const updateProjectMemberInputSchema = z
   .object({
+    expectedUpdatedAt:z.iso.datetime({offset:true}).optional(),
     isPrimary: z.boolean().optional(),
     roleKind: z.enum(["LEARNER","MENTOR","CO_MENTOR","OBSERVER","REVIEWER","QA"]).optional(),
     canMutate: z.boolean().optional(),
