@@ -1957,7 +1957,19 @@ export function buildPlacementsPlan(
           updatedAt: ist(p.updated_at),
         },
         p,
-        { unmapped: { papInterest: p.pap_interest ?? null, examSlotPreference: str(p.exam_slot_preference) } },
+        {
+          // Preserve independent source values in the deterministic, hashed
+          // migration plan even though the vNext typed candidate preference
+          // row has no PAP/exam-slot columns. Do not infer enums or discard
+          // source values that future profile UI/import reconciliation needs.
+          legacyPreferenceSnapshotVersion: 1,
+          unmapped: {
+            papInterest: p.pap_interest ?? null,
+            examSlotPreference: p.exam_slot_preference ?? null,
+            sourceTable: "job_preferences",
+            sourceColumnNames: ["pap_interest", "exam_slot_preference"],
+          },
+        },
         lrn.data.membershipId,
       ),
     );
