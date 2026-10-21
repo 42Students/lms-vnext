@@ -223,16 +223,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-12.md: file, number of
 - [x] `src/components/placements/placement-bulk-offer-withdraw.tsx`
 - [x] `src/components/placements/placement-candidate-evidence-editor.tsx`
 - [x] `src/components/placements/placement-employer-relationships.tsx`
-- [ ] `src/components/placements/placement-recruiter-access.tsx`
-- [ ] `src/components/placements/placement-report-ui.tsx`
-- [ ] `src/components/placements/placement-request-queue.tsx`
-- [ ] `src/components/placements/recorded-outside-form.tsx`
-- [ ] `src/components/placements/report-interactive-table.tsx`
-- [ ] `src/components/placements/super-admin-drive-archive.tsx`
-- [ ] `src/components/placements/super-admin-drive-pipeline.tsx`
-- [ ] `src/components/placements/super-admin-drive-quick-search.tsx`
-- [ ] `src/components/placements/tpo-bulk-drive-reminder.tsx`
-- [ ] `src/components/placements/tpo-college-rules-control.tsx`
+- [x] `src/components/placements/placement-recruiter-access.tsx`
+- [x] `src/components/placements/placement-report-ui.tsx`
+- [x] `src/components/placements/placement-request-queue.tsx`
+- [x] `src/components/placements/recorded-outside-form.tsx`
+- [x] `src/components/placements/report-interactive-table.tsx`
+- [x] `src/components/placements/super-admin-drive-archive.tsx`
+- [x] `src/components/placements/super-admin-drive-pipeline.tsx`
+- [x] `src/components/placements/super-admin-drive-quick-search.tsx`
+- [x] `src/components/placements/tpo-bulk-drive-reminder.tsx`
+- [x] `src/components/placements/tpo-college-rules-control.tsx`
 - [ ] `src/components/placements/tpo-company-interaction-form.tsx`
 - [ ] `src/components/placements/tpo-drive-act-on-panel.tsx`
 - [ ] `src/components/placements/tpo-drive-cancel-form.tsx`

@@ -115,7 +115,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
      size="sm" className="min-h-11 md:min-h-9 print:hidden">Reset view</Button>
  </>);
  return <section className="space-y-3" aria-label={title}>
-  <h2 className="text-base font-semibold leading-6 text-foreground">{title}</h2>
+  <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">{title}</h2>
   {rows.length===0?<EmptyState title="No report rows" description={emptyDescription}/>:<>
    <div data-report-toolbar className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-3">
     <label className="grid min-w-0 w-full max-w-xl gap-1 text-[var(--lms-font-sm)] font-semibold">Search table
@@ -126,7 +126,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
       <div className="grid min-w-0 grid-cols-1 items-end gap-3 sm:grid-cols-2 xl:grid-cols-4">{advancedControls}</div>
     </Disclosure>
    </div>
-   <p role="status" aria-live="polite" className="text-xs text-muted-foreground">
+   <p role="status" aria-live="polite" className="text-xs text-muted-foreground leading-5">
     {showing.length} shown of {ordered.length} matching rows ({rows.length} total). Sort with a column heading or the mobile sort control.
    </p>
    <div data-report-toolbar className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-end gap-2 min-[768px]:hidden">

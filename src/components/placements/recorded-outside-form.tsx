@@ -34,7 +34,7 @@ export function RecordedOutsideForm({collegeId,choices}:{
   <Button variant="primary" type="submit" disabled={!choices.length} className="min-h-11 w-full justify-self-stretch md:col-span-2 md:min-h-9 md:w-auto md:justify-self-start">
    Record outside-platform drive
   </Button>
-  <p className="min-w-0 text-xs text-muted-foreground md:col-span-2">
+  <p className="min-w-0 text-xs text-muted-foreground md:col-span-2 leading-5">
    This is a historical staff record, not a published student job, application, offer, or invitation.
   </p>
  </form>;
