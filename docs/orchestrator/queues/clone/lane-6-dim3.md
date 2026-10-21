@@ -52,14 +52,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/components/courses/faculty-report-student-table.tsx`
 - [x] `src/components/groups/college-group-detail-writes.tsx`
 - [x] `src/components/placements/learner-jobs-browse.tsx`
-- [ ] `src/components/placements/tpo-drive-change-requests.tsx`
-- [ ] `src/components/placements/tpo-request-page-clipboard.tsx`
-- [ ] `src/components/projects/learner-board-interactive.tsx`
-- [ ] `src/components/projects/project-admin-audit-page.tsx`
-- [ ] `src/components/projects/project-resource-list.tsx`
-- [ ] `src/components/tpo/tpo-due-followup-workspace.tsx`
-- [ ] `src/components/ui/empty-state.tsx`
-- [ ] `src/components/tpo/tpo-recruiter-message-reply.tsx`
+- [x] `src/components/placements/tpo-drive-change-requests.tsx`
+- [x] `src/components/placements/tpo-request-page-clipboard.tsx`
+- [x] `src/components/projects/learner-board-interactive.tsx`
+- [x] `src/components/projects/project-admin-audit-page.tsx`
+- [x] `src/components/projects/project-resource-list.tsx`
+- [x] `src/components/tpo/tpo-due-followup-workspace.tsx`
+- [x] `src/components/ui/empty-state.tsx`
+- [x] `src/components/tpo/tpo-recruiter-message-reply.tsx`
 - [ ] `src/components/tpo/tpo-students-bulk-debar.tsx`
 - [ ] `src/components/tpo/tpo-team-handover.tsx`
 - [ ] `src/components/tracker/known-errors-workspace.tsx`
