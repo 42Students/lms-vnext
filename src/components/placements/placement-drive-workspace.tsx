@@ -266,12 +266,15 @@ export async function PlacementDriveWorkspace({
     recordedOutside:job.recordedOutside,
   });
 
-  const journey=isTpo?await getTpoDriveJourney(context,jobId).catch(()=>null):null;
-  const pendingSelections=isTpo&&job.status==="PUBLISHED"
-    ? await countUnreleasedTpoSelections(context,jobId).catch(()=>null) : 0;
-  const reminderPreview=isTpo&&job.status==="PUBLISHED"
-    ? await getTpoNonApplicantReminderPreview(context,jobId).catch(()=>null)
-    : null;
+  // These three projections have no dependencies on each other; loading
+  // them together avoids extending first paint through sequential reads.
+  const [journey,pendingSelections,reminderPreview]=await Promise.all([
+    isTpo?getTpoDriveJourney(context,jobId).catch(()=>null):Promise.resolve(null),
+    isTpo&&job.status==="PUBLISHED"
+      ?countUnreleasedTpoSelections(context,jobId).catch(()=>null):Promise.resolve(0),
+    isTpo&&job.status==="PUBLISHED"
+      ?getTpoNonApplicantReminderPreview(context,jobId).catch(()=>null):Promise.resolve(null),
+  ]);
 
   const appliedCount=journey?.stages.find(stage=>stage.name==="Applied")?.count??null;
   const notAppliedCount=reminderPreview?.count??null;
