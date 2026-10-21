@@ -94,10 +94,13 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         <p className="text-xs text-muted-foreground">Access granted: {detail.grantedAtLabel} (IST) · {detail.accessUntilLabel}</p>
         <p className="text-xs text-muted-foreground">Membership key: {rich?.memberKey??grant.id}</p>
         {rich?<div className="grid gap-2 text-sm sm:grid-cols-2">
-          <p><strong>Active learners:</strong> {rich.studentCount??"Unavailable"}</p>
+          <p><strong>Active learners (approx.):</strong> {rich.studentCount??"Suppressed (fewer than 10) or unavailable"}</p>
           <p><strong>Your drives:</strong> {rich.allDriveCount??"Unavailable"} {rich.liveDriveCount!==null?(" · "+rich.liveDriveCount+" live"):""}</p>
-          <div className="sm:col-span-2"><strong>Branches:</strong> {rich.branches===null?"Unavailable":rich.branches.length?
-            <span className="mt-1 flex flex-wrap gap-1">{rich.branches.map(branch=><span key={branch} className="rounded border border-border px-2 py-1 text-xs">{branch}</span>)}</span>:"No branches recorded"}</div>
+          <div className="sm:col-span-2"><strong>Branches:</strong> {rich.branchCounts===null?"Unavailable":rich.branchCounts.length?
+            <span className="mt-1 flex flex-wrap gap-1">{rich.branchCounts.map(branch=><span key={branch.branch} className="rounded border border-border px-2 py-1 text-xs">{branch.branch} · about {branch.roundedCount}</span>)}</span>:"No branch counts available for groups of at least 10"}</div>
+          <div className="sm:col-span-2"><strong>Verified CGPA groups:</strong> {rich.verifiedCgpaBands===null?"Unavailable":rich.verifiedCgpaBands.length?
+            <span className="mt-1 flex flex-wrap gap-1">{rich.verifiedCgpaBands.map(band=><span key={band.label} className="rounded border border-border px-2 py-1 text-xs">{band.label} · about {band.roundedCount}</span>)}</span>:"No verified CGPA bands meet the minimum group size"}</div>
+          <p className="sm:col-span-2 text-xs text-muted-foreground">For learner privacy, groups under 10 are hidden and counts are rounded to the nearest five. Only verified academic evidence is included in CGPA groups.</p>
           <p className="sm:col-span-2"><strong>TPO contact:</strong> {rich.tpoContact?
             <span>{rich.tpoContact.name}{rich.tpoContact.email?" · "+rich.tpoContact.email:""}</span>:"No TPO contact available"}</p>
         </div>:<Alert tone="warning">College details are temporarily unavailable. Missing information is not zero.</Alert>}
