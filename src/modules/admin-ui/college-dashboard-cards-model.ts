@@ -16,6 +16,14 @@ export const COLLEGE_DASHBOARD_CARD_DEFINITIONS = [
 
 /** Legacy AtAGlance.js: exactly four stats in this order under the heading below. */
 export const COLLEGE_AT_A_GLANCE_HEADING = "At a glance";
+/** Four old LMS card glyphs, drawn as inline SVG; no icon package. */
+export const COLLEGE_AT_A_GLANCE_ICONS:Readonly<Record<string,string>>={
+ students:"M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4 21a8 8 0 0 1 16 0",
+ faculty:"M7 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM1 21a6 6 0 0 1 12 0M17 5a4 4 0 0 1 0 8m-2 3a6 6 0 0 1 8 5",
+ "course-list":"M4 3h15v17H6a2 2 0 0 1-2-2V3Zm0 14c0-1 1-2 2-2h13M8 7h7M8 11h7",
+ jobs:"M4 7h16v14H4zM9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M4 13a22 22 0 0 0 16 0",
+};
+export const COLLEGE_AT_A_GLANCE_CARD_CLASS="h-full min-h-[100px] px-4 py-3";
 export const COLLEGE_AT_A_GLANCE_KEYS = ["students", "faculty", "course-list", "jobs"] as const;
 
 type DashboardCountKey = (typeof COLLEGE_DASHBOARD_CARD_DEFINITIONS)[number]["key"];
