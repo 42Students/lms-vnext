@@ -17,7 +17,7 @@ export function LearnerProjectBoardSearch({
   const activeCount=learnerBoardActiveFilterCount({search,priority,status,sprintId,releaseId,taskSort,mine});
   const form=(
       <form action={"/learn/projects/"+encodeURIComponent(projectId)}
-        method="get" className="grid gap-3 py-3 sm:grid-cols-2 xl:grid-cols-3">
+        method="get" className="grid gap-3 py-3 md:grid-cols-2 xl:grid-cols-3">
         <input type="hidden" name="tab" value="board" />
         <label className="flex-1 text-sm font-semibold text-foreground">
           Search tasks
@@ -77,7 +77,7 @@ export function LearnerProjectBoardSearch({
           </Select>
         </label>
         <Button type="submit" className="min-h-11 md:min-h-9">Apply</Button>
-        <Link href={base} className="inline-flex min-h-9 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body">Clear all</Link>
+        <Link href={base} className="inline-flex min-h-9 sm:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body max-[767px]:min-h-11">Clear all</Link>
       </form>
   );
   return (

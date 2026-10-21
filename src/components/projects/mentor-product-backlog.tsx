@@ -121,12 +121,12 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
           className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
       </label>
       </Disclosure>
-      <div className="flex min-w-0 flex-col gap-2 sm:flex-row min-[768px]:col-span-2"><Button variant="primary" type="submit"
+      <div className="flex min-w-0 flex-col gap-2 md:flex-row min-[768px]:col-span-2"><Button variant="primary" type="submit"
         disabled={busy||!title.trim()||(points!==""&&
           (!Number.isInteger(Number(points))||Number(points)<0||Number(points)>1000))}
-        className="min-h-11 w-full px-3 sm:w-auto">Add task</Button>
+        className="min-h-11 w-full px-3 md:w-auto">Add task</Button>
       <Button variant="secondary" type="button" onClick={guard.requestClose}
-        className="min-h-11 w-full px-3 sm:w-auto">Cancel</Button></div>
+        className="min-h-11 w-full px-3 md:w-auto">Cancel</Button></div>
     </form>:null}
   </section>:null}
   {error&&!moveRequest?<Alert tone="error">{error}</Alert>:null}
