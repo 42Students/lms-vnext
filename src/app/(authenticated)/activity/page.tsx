@@ -113,12 +113,12 @@ export default async function ActivityPage({
    return "/activity?"+q.toString();
   };
   const presetLinks=[
-   {name:"Important",href:quick(defaultFrom,one(params.to),"important")},
-   {name:"Academic setup",href:quick(defaultFrom,one(params.to),"setup")},
-   {name:"People & access",href:quick(defaultFrom,one(params.to),"people")},
-   {name:"Teaching",href:quick(defaultFrom,one(params.to),"teaching")},
-   {name:"Projects",href:quick(defaultFrom,one(params.to),"projects")},
-   {name:"Everything",href:quick(defaultFrom,one(params.to),"all")},
+   {id:"important" as const,name:"Important",href:quick(defaultFrom,one(params.to),"important")},
+   {id:"setup" as const,name:"Academic setup",href:quick(defaultFrom,one(params.to),"setup")},
+   {id:"people" as const,name:"People & access",href:quick(defaultFrom,one(params.to),"people")},
+   {id:"teaching" as const,name:"Teaching",href:quick(defaultFrom,one(params.to),"teaching")},
+   {id:"projects" as const,name:"Projects",href:quick(defaultFrom,one(params.to),"projects")},
+   {id:"all" as const,name:"Everything",href:quick(defaultFrom,one(params.to),"all")},
   ];
   const retryQuery=new URLSearchParams();
   for(const [key,value] of Object.entries(params)){
@@ -234,6 +234,7 @@ export default async function ActivityPage({
   // The current CSV export API has no HIGH-or-CRITICAL category contract.
   // Never mislabel a broader "everything" export as an Important-only export.
   exportParams.delete("view");
+  if(effectiveModule && !moduleValue)exportParams.set("module",effectiveModule);
   // An explicit all-time list must stay all-time when the user loads older events.
   // Keep this UI-only flag out of the strict CSV export query contract.
   if (range === "ALL" && !defaultFrom && !one(params.to)) nextParams.set("range", "ALL");
@@ -283,10 +284,10 @@ export default async function ActivityPage({
          :"Platform-wide activity."}
       </p>:null}
       {isSuperAdmin(context)?<nav aria-label="Activity Log category presets" className="min-w-0 space-y-3">
-       <details className="min-w-0 border-b border-border pb-3" open={Boolean(moduleValue||importanceValue)||undefined}>
+       <details className="min-w-0 border-b border-border pb-3" open>
        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Activity Log category presets</summary>
-       <div className="mt-2 flex min-w-0 flex-wrap gap-2">{presetLinks.map(link=><Link key={link.name} href={link.href}
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text underline hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] md:min-h-9">{link.name}</Link>)}</div>
+       <div className="mt-2 flex min-w-0 flex-wrap gap-2">{presetLinks.map(link=><Link key={link.name} href={link.href} aria-current={link.id===selectedPreset?"page":undefined}
+        className={"inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text underline hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] md:min-h-9 "+(link.id===selectedPreset?"bg-[var(--lms-primary-subtle)]":"bg-surface")}>{link.name}</Link>)}</div>
        <p className="mt-2 text-xs text-muted-foreground">Choose a preset, then narrow by college, actor or dates. Important includes high and critical events. The feed defaults to Important for the last 30 days.</p>
        </details>
        <div className="flex min-w-0 flex-wrap gap-2">{[
@@ -298,6 +299,7 @@ export default async function ActivityPage({
         className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-primary-text underline hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] font-[650] hover:border-[var(--lms-primary)] md:min-h-9">{link.label}</Link>)}</div>
       </nav>:null}
       <form aria-label="Filter activity log" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-y border-border py-4 md:grid-cols-2 xl:grid-cols-4">
+        <input type="hidden" name="view" value={selectedPreset} />
         {isSuperAdmin(context) && !selectedCollegeId ? (
           <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">College</span>
