@@ -96,6 +96,9 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
  const [feedbackRating,setFeedbackRating]=useState(3);
  const [feedbackRecommendation,setFeedbackRecommendation]=useState<"SELECT"|"HOLD"|"REJECT">("HOLD");
  const [feedbackComments,setFeedbackComments]=useState("");
+ const [feedbackDirty,setFeedbackDirty]=useState(false);
+ const [confirmFeedbackDiscard,setConfirmFeedbackDiscard]=useState(false);
+ const feedbackSavingLock=useRef(false);
  const [feedbackExisting,setFeedbackExisting]=useState<{
   rating:number;recommendation:string;comments:string;createdAt:string
  }|null>(null);
@@ -111,6 +114,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   if(busy||feedbackBusy)return;
   setFeedbackFor(row);setFeedbackRating(3);setFeedbackRecommendation("HOLD");
   setFeedbackComments("");setFeedbackExisting(null);setFeedbackError("");
+  setFeedbackDirty(false);setConfirmFeedbackDiscard(false);
   setFeedbackBusy(true);
   try{
    const response=await apiFetch<{feedback:typeof feedbackExisting}>(feedbackUrl(row.id),{cache:"no-store"});
@@ -121,7 +125,9 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   }finally{setFeedbackBusy(false);}
  }
  async function submitFeedback(){
-  if(!feedbackFor||feedbackBusy||feedbackComments.trim().length<3||feedbackExisting)return;
+  if(!feedbackFor||feedbackBusy||feedbackSavingLock.current||feedbackComments.trim().length<3||
+    feedbackComments.length>(feedbackRecommendation==="REJECT"?500:2000)||feedbackExisting)return;
+  feedbackSavingLock.current=true;
   setFeedbackBusy(true);setFeedbackError("");
   try{
    await apiFetch(feedbackUrl(feedbackFor.id),{
@@ -130,10 +136,15 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
      rating:feedbackRating,recommendation:feedbackRecommendation,comments:feedbackComments.trim()}),
    });
    showToast({tone:"success",title:"Feedback submitted successfully"});
-   setFeedbackFor(null);router.refresh();onCommitted?.();
+   setFeedbackDirty(false);setFeedbackFor(null);router.refresh();onCommitted?.();
   }catch(error){
    setFeedbackError(error instanceof Error?error.message:"Feedback could not be saved.");
-  }finally{setFeedbackBusy(false);}
+  }finally{setFeedbackBusy(false);feedbackSavingLock.current=false;}
+ }
+ function closeFeedback(){
+  if(feedbackBusy){showToast({tone:"info",title:"Wait for feedback submission to finish."});return;}
+  if(feedbackDirty&&!feedbackExisting){setConfirmFeedbackDiscard(true);return;}
+  setFeedbackFor(null);
  }
  const quoteCsv=(value:string)=>{
   // Prevent spreadsheet programs interpreting candidate-provided values as formulae.
@@ -501,20 +512,23 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
     </Banner>:null}
 
   </Dialog>
-  <Dialog open={feedbackFor!==null} onOpenChange={next=>{if(!next){
-   if(feedbackBusy)showToast({tone:"info",title:"Wait for feedback submission to finish."});
-   else setFeedbackFor(null);
-  }}} title="Interview feedback" description="Staff-only review. Rating and recommendation do not update selection results."
+  <Dialog open={feedbackFor!==null} onOpenChange={next=>{if(!next)closeFeedback();}} title="Interview feedback" description="Staff-only review. Rating and recommendation do not update selection results."
    dismissible={true}
    footer={<>
     {!feedbackExisting?<Button type="button" disabled={feedbackBusy||
-     feedbackError.startsWith("Unable to load")||feedbackComments.trim().length<3}
+     feedbackError.startsWith("Unable to load")||feedbackComments.trim().length<3||
+     feedbackComments.length>(feedbackRecommendation==="REJECT"?500:2000)}
      onClick={()=>void submitFeedback()}>{feedbackBusy?"Submitting…":"Submit feedback"}</Button>:null}
-    <Button type="button" variant="secondary" onClick={()=>{
-     if(feedbackBusy){showToast({tone:"info",title:"Wait for feedback submission to finish."});return;}
-     setFeedbackFor(null);
-    }}>Close</Button>
+    <Button type="button" variant="secondary" disabled={feedbackBusy} onClick={closeFeedback}>
+      {feedbackExisting?"Close":"Cancel"}
+    </Button>
    </>}>
+   {feedbackFor?<div className="rounded-[6px] border border-[#e8e8e8] bg-[#f6f8fa] px-[14px] py-[10px] text-sm">
+     <strong>{applicant(feedbackFor.applicationId)?.name??"Candidate"}</strong>
+     {jobTitle?<span className="text-muted-foreground"> · {jobTitle}</span>:null}
+     <span className="text-muted-foreground"> · {(feedbackFor.interviewType??"Interview").charAt(0)+
+      (feedbackFor.interviewType??"Interview").slice(1).toLowerCase()} round</span>
+    </div>:null}
    {feedbackBusy?<p role="status">Loading interview feedback…</p>:null}
    {feedbackExisting?<div className="space-y-2 text-sm">
     <p className="font-semibold">Feedback already submitted</p>
@@ -524,27 +538,44 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
     <p className="text-xs text-muted-foreground">Recorded on {display(feedbackExisting.createdAt)}</p>
    </div>:!feedbackBusy?<>
     <label className="grid gap-2 text-[13px] font-semibold">Rating (1–5)
-     <Select value={String(feedbackRating)} onChange={event=>setFeedbackRating(Number(event.target.value))}>
+     <Select value={String(feedbackRating)} disabled={feedbackBusy}
+      onChange={event=>{setFeedbackRating(Number(event.target.value));setFeedbackDirty(true);}}>
       {[1,2,3,4,5].map(value=><option key={value} value={value}>{value} / 5</option>)}
      </Select>
     </label>
     <label className="mt-3 grid gap-2 text-[13px] font-semibold">Recommendation
-     <Select value={feedbackRecommendation} onChange={event=>
-      setFeedbackRecommendation(event.target.value as typeof feedbackRecommendation)}>
+     <Select value={feedbackRecommendation} disabled={feedbackBusy} onChange={event=>{
+      setFeedbackRecommendation(event.target.value as typeof feedbackRecommendation);
+      setFeedbackDirty(true);
+     }}>
       <option value="SELECT">Recommend selecting</option>
       <option value="HOLD">Hold for review</option>
       <option value="REJECT">Recommend not selecting</option>
      </Select>
     </label>
-    <label className="mt-3 grid gap-2 text-[13px] font-semibold">Feedback comments
-     <Textarea value={feedbackComments} rows={4} maxLength={5000}
-      onChange={event=>setFeedbackComments(event.target.value)}/>
+    <label className="mt-3 grid gap-2 text-[13px] font-semibold">
+      Comments <span className="text-xs font-normal text-muted-foreground">
+        ({feedbackComments.length}/{feedbackRecommendation==="REJECT"?500:2000})
+      </span>
+     <Textarea value={feedbackComments} rows={4}
+      maxLength={feedbackRecommendation==="REJECT"?500:2000}
+      disabled={feedbackBusy} placeholder="Feedback notes (observations, strengths, areas for improvement, etc.)"
+      onChange={event=>{setFeedbackComments(event.target.value);setFeedbackDirty(true);}}/>
+     <span className="text-xs font-normal text-muted-foreground">
+       Staff-only feedback; these notes do not change placement selection results or notify the learner.
+       {feedbackRecommendation==="REJECT"?" Please keep rejection remarks within 500 characters.":""}
+     </span>
     </label>
    </>:null}
    {feedbackError?<Banner tone="error" action={<Button type="button" size="sm"
     variant="secondary" onClick={()=>feedbackFor&&void openFeedback(feedbackFor)}>
     Retry</Button>}>{feedbackError}</Banner>:null}
   </Dialog>
+  <ConfirmDialog open={confirmFeedbackDiscard} onOpenChange={setConfirmFeedbackDiscard}
+   title="Discard unsaved feedback?"
+   description="You have unsaved interview feedback. Discard these changes?"
+   confirmLabel="Discard" cancelLabel="Keep editing" confirmVariant="danger"
+   onConfirm={()=>{setConfirmFeedbackDiscard(false);setFeedbackDirty(false);setFeedbackFor(null);}}/>
   <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard}
    title="Discard interview setup?"
    description="There are unsaved interview changes."
