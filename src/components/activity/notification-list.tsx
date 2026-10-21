@@ -123,7 +123,7 @@ export function NotificationList({
                  <strong className="break-words">{item.title}</strong>
                  {!item.readAt?<Badge tone="info">New</Badge>:null}
                 </div>
-                <p className="mt-1 break-words text-sm text-body">{item.body}</p>
+                <p className="mt-1 break-words text-sm text-body leading-[22px]">{item.body}</p>
                 <time className="mt-2 block text-xs text-muted-foreground" dateTime={item.createdAt}>{formatWhen(item.createdAt)}</time>
                </div>{item.actionHref ? <span aria-hidden="true" className="shrink-0 text-primary-text">→</span> : null}
               </div>
@@ -142,7 +142,7 @@ export function NotificationList({
                     ) : null}
                     {!item.readAt && item.source !== "ANNOUNCEMENT" ? <StatusBadge tone="info">Unread</StatusBadge> : null}
                   </div>
-                  <h3 className="mt-2 break-words text-sm font-semibold leading-6 text-foreground min-[768px]:text-base">
+                  <h3 className="mt-2 break-words text-sm font-semibold leading-6 text-[var(--lms-heading)] min-[768px]:text-base">
                     {onSelect ? (
                       <Button
                         type="button"
@@ -154,7 +154,7 @@ export function NotificationList({
                       </Button>
                     ) : item.title}
                   </h3>
-                  {item.contextLine?<p className="mt-1 text-xs font-semibold text-muted-foreground">{item.contextLine}</p>:null}
+                  {item.contextLine?<p className="mt-1 text-xs font-semibold text-muted-foreground leading-5">{item.contextLine}</p>:null}
                   <p className={readEndpoint==="/api/learn/notifications"
                     ? "mt-2 line-clamp-2 text-[13px] min-[768px]:text-[14px] leading-[1.5] text-[var(--lms-neutral-500)]"
                     : "mt-1 text-sm leading-[1.5] text-body"}>{item.body}</p>

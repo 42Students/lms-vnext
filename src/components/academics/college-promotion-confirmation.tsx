@@ -67,7 +67,7 @@ export function CollegePromotionConfirmation({
     </Button>
     <ConfirmDialog open={open} onOpenChange={setOpen} title="Promote Batch" description={"Confirm promotion to term "+targetTerm} confirmLabel="Yes, Promote" pending={pending} onConfirm={submit}>
       <div aria-busy={pending} className="min-w-0 space-y-3">
-      <p className="m-0 max-w-prose break-words text-sm leading-6 text-body">
+      <p className="m-0 max-w-prose break-words text-sm leading-[22px] text-body">
         This changes the saved progression version and academic year for this batch.
         The server will reject any blockers or a stale preview.
         {promotionImpactMessage(learnerCount)}.

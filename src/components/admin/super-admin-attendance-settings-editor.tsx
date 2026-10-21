@@ -42,7 +42,7 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
   finally{setSaving(false);}
  }
  return <section aria-label="Attendance policy" className="min-w-0 space-y-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
-  <h2 className="font-semibold text-foreground">Attendance policy</h2>
+  <h2 className="font-semibold text-[var(--lms-heading)]">Attendance policy</h2>
   <div className="grid gap-4 md:grid-cols-2 print:hidden">
    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Late marking allowed for
     <Input type="number" min={1} max={maxCorrectionHours} step={1} value={hours}
@@ -59,14 +59,14 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
     <span id="minimum-attendance-help" className="max-w-prose text-xs font-normal leading-5 text-muted-foreground">Shown to students, and used here to flag students below it. It does not block anyone from exams. (%)</span>
    </label>
   </div>
-  <p className="hidden text-sm text-body print:block">Late marking: {correctionWindowHours} hours · Minimum attendance: {eligibilityThresholdPercent}%</p>
+  <p className="hidden text-sm text-body print:block leading-[22px]">Late marking: {correctionWindowHours} hours · Minimum attendance: {eligibilityThresholdPercent}%</p>
   <Button variant="primary" type="button" loading={saving} disabled={saving||!dirty} onClick={requestSave}
    className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden">{saving?"Saving…":"Save attendance policy"}</Button>
   {message?<Alert tone={failed?"error":"success"}>{message}</Alert>:null}
   <ConfirmDialog open={confirming} onOpenChange={setConfirming} title="Save attendance settings for this college?"
    description="Changes apply to the selected college." confirmVariant="primary" confirmLabel="Save settings"
    pending={saving} onConfirm={()=>void save()}>
-    <p className="text-sm text-body">Late marking: {hours} hours · Minimum attendance: {threshold}%</p>
+    <p className="text-sm text-body leading-[22px]">Late marking: {hours} hours · Minimum attendance: {threshold}%</p>
     {failed&&message?<Alert tone="error">{message}</Alert>:null}
   </ConfirmDialog>
  </section>;

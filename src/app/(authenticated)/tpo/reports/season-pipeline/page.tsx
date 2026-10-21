@@ -113,7 +113,7 @@ export default async function TpoSeasonPipelinePage({
             ])}
             emptyDescription="No persisted drives match this season and filter." compactControls />
           <Disclosure title="Reporting methodology" className="min-w-0" contentClassName="min-w-0 space-y-[var(--lms-space-3)]">
-            <p className="max-w-4xl pt-[var(--lms-space-2)] text-sm leading-6 text-body">
+            <p className="max-w-4xl pt-[var(--lms-space-2)] text-sm leading-[22px] text-body">
               Applied counts all recorded application IDs, including withdrawn; shortlisted counts
               current submitted applications with a SHORTLISTED screening. Offered and accepted
               count offer versions, not distinct learners. Joined requires a currently ACCEPTED offer

@@ -64,8 +64,8 @@ export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string
    <label className="flex min-h-11 min-[768px]:min-h-9 items-center gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"><Checkbox checked={locked} disabled={choice==="INHERIT"} onChange={e=>setLocked(e.target.checked)}/>Lock</label>
    <Button type="button" className="min-h-11 min-[768px]:min-h-9" disabled={busy} onClick={()=>void save()}>Save rule</Button>
   </>}
-  {message&&<p role="status" className="w-full text-sm text-body">{message}</p>}
-  {scopes.length>=500&&<p className="w-full text-sm text-warning-text">This page displays up to 500 academic scopes. Open the next hierarchy page to edit later scopes.</p>}
+  {message&&<p role="status" className="w-full text-sm text-body leading-[22px]">{message}</p>}
+  {scopes.length>=500&&<p className="w-full text-sm text-warning-text leading-[22px]">This page displays up to 500 academic scopes. Open the next hierarchy page to edit later scopes.</p>}
   {dialog}
  </div>;
 }

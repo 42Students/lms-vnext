@@ -32,7 +32,7 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
   <div className="flex flex-wrap gap-2"><StatusBadge tone={finding.severity==="CRITICAL"?"error":finding.severity==="HIGH"?"warning":"neutral"}>{finding.severity}</StatusBadge><StatusBadge tone={finding.status==="VERIFIED"||finding.status==="RELEASED_PROD"?"success":finding.status==="NEW"||finding.status==="NEEDS_INFO"?"warning":"info"}>{finding.status}</StatusBadge>
    <StatusBadge>{finding.assignee??"Unassigned"}</StatusBadge></div>
   {details.slice(0,1).map(([label,value])=><section key={label} className="min-w-0 border-b border-border pb-4">
-   <h2 className="font-semibold text-foreground">{label}</h2><p className="mt-2 max-w-3xl whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm leading-6 text-body">{value??"Not recorded"}</p>
+   <h2 className="font-semibold text-[var(--lms-heading)]">{label}</h2><p className="mt-2 max-w-3xl whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm leading-[22px] text-body">{value??"Not recorded"}</p>
   </section>)}
   <IndependentFindingActions externalId={finding.externalId} version={finding.version} status={finding.status} severity={finding.severity}
    candidates={candidates.items.filter(item=>item.id!==finding.id).map(item=>({id:item.id,externalId:item.externalId,title:item.title}))}/>
@@ -40,15 +40,15 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
     <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">More finding details</summary>
     <div className="min-w-0 space-y-4 pt-3">
   {details.slice(1).map(([label,value])=><section key={label} className="min-w-0 border-b border-border pb-4">
-   <h2 className="font-semibold text-foreground">{label}</h2><p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{value??"Not recorded"}</p>
+   <h2 className="font-semibold text-[var(--lms-heading)]">{label}</h2><p className="mt-2 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{value??"Not recorded"}</p>
   </section>)}
     </div>
   </details>
   <section aria-labelledby="section-source-and-affected-code" className="border-b border-border pb-4">
-   <h2 id="section-source-and-affected-code" className="font-semibold text-foreground">Source and affected code</h2>
-   <p className="max-w-3xl break-all text-sm text-body">Repository: {finding.sourceRepo} · Source: {finding.sourcePath??"Not recorded"}</p>
+   <h2 id="section-source-and-affected-code" className="font-semibold text-[var(--lms-heading)]">Source and affected code</h2>
+   <p className="max-w-3xl break-all text-sm text-body leading-[22px]">Repository: {finding.sourceRepo} · Source: {finding.sourcePath??"Not recorded"}</p>
    {([["Paths",finding.paths],["Pages",finding.pages],["Endpoints",finding.endpoints]] as const).map(([label,values])=>
-    <div key={label} className="mt-3"><h3 className="text-sm font-semibold text-foreground">{label}</h3>
+    <div key={label} className="mt-3"><h3 className="text-sm font-semibold text-[var(--lms-heading)]">{label}</h3>
      <ul className="list-disc pl-5 text-sm">{values.map(value=><li key={value} className="break-all [overflow-wrap:anywhere]">{value}</li>)}</ul></div>)}
   </section>
   <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
@@ -69,12 +69,12 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
    {events.length?<ol aria-label="audit findings entries" className="mt-3 divide-y divide-border border-y border-border text-sm">{events.map(event=><li key={event.id} className="py-3">
     {event.action} · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(event.createdAt)}
     {event.note?<p className="mt-1 whitespace-pre-wrap break-words">{event.note}</p>:null}
-   </li>)}</ol>:<p role="status" className="mt-3 border-y border-border py-5 text-sm text-muted-foreground">No audit events recorded.</p>}
+   </li>)}</ol>:<p role="status" className="mt-3 border-y border-border py-5 text-sm text-muted-foreground leading-[22px]">No audit events recorded.</p>}
   </details>
   <details aria-labelledby="section-fix-commits" className="border-b border-[var(--lms-canvas-border)] pb-4">
    <summary id="section-fix-commits" className="flex min-h-11 cursor-pointer items-center font-semibold text-foreground md:min-h-9">Fix commits</summary>
    {finding.fixCommits.length?<ul className="mt-2 divide-y divide-border border-y border-border">{finding.fixCommits.map(commit=><li key={commit.repo+":"+commit.sha}
-    className="break-all py-3 text-sm text-body">{commit.repo} · {commit.sha}</li>)}</ul>:<p role="status" className="mt-2 border-y border-border py-5 text-sm text-muted-foreground">No fix commits recorded.</p>}
+    className="break-all py-3 text-sm text-body">{commit.repo} · {commit.sha}</li>)}</ul>:<p role="status" className="mt-2 border-y border-border py-5 text-sm text-muted-foreground leading-[22px]">No fix commits recorded.</p>}
   </details>
  </div>;
 }

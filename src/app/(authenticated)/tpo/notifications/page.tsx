@@ -102,7 +102,7 @@ export default async function TpoNotificationsPage({
             <NotificationList
             variant="tpo"
             items={items}
-            emptyAction={emptyNavigation ? <p role="status" className="mt-4 text-sm text-body">Your unread inbox is clear.{" "} <Link href={emptyNavigation.href} className="font-semibold text-[var(--lms-teal-deep)] underline">{emptyNavigation.label}</Link></p> : null}
+            emptyAction={emptyNavigation ? <p role="status" className="mt-4 text-sm text-body leading-[22px]">Your unread inbox is clear.{" "} <Link href={emptyNavigation.href} className="font-semibold text-[var(--lms-teal-deep)] underline">{emptyNavigation.label}</Link></p> : null}
             readEndpoint="/api/tpo/notifications"
             emptyText={inbox.query.view === "unread" ? "No unread notifications" : "Nothing yet"}
           />
