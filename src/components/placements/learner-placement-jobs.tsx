@@ -659,12 +659,12 @@ function JobActions({
             <div><dt className="font-semibold text-muted-foreground">Resume</dt>
               <dd className="mt-1 text-foreground">Not attached</dd></div>
           </dl>
-          <Button type="button" variant="link" aria-expanded={showSharedDetails}
+          <Button type="button" variant="link" aria-expanded={showSharedDetails} aria-controls={"learner-shared-details-"+item.roleOption.id}
             onClick={()=>setShowSharedDetails(open=>!open)}
             className="max-md:min-h-11 font-[650] text-primary-text underline">
             {showSharedDetails?"Hide what gets shared":"What exactly gets shared?"}
           </Button>
-          {showSharedDetails?<ul className="list-disc space-y-2 pl-5 text-sm text-body">
+          {showSharedDetails?<ul id={"learner-shared-details-"+item.roleOption.id} className="list-disc space-y-2 pl-5 text-sm text-body">
             <li>Your contact details may be shared with the company by the placement cell. No resume is attached by this form.</li>
             <li>Your academic record is checked for eligibility; the record itself is not sent with this application.</li>
             <li>The placement cell can see your application and review your eligibility.</li>

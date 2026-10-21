@@ -153,7 +153,7 @@ export function LearnerCareerCalendar({
   }
 
   return (
-    <div className="min-w-0 space-y-5" aria-label="Learner Career Calendar">
+    <div role="region" className="min-w-0 space-y-5" aria-label="Learner career calendar">
       <section className={styles.toolbar}>
         <div className={styles.header}>
           {surface==="schedule" ? <p className="text-sm text-body">

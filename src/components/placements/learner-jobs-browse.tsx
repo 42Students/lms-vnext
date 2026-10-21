@@ -196,16 +196,16 @@ export function LearnerJobsBrowse({
           {allDrives.withApplications} {allDrives.withApplications===1?"drive has":"drives have"} your application.
         </p>
       </section>
-      <nav role="tablist" aria-label="Drive bookmarks" className="flex min-h-11 items-end gap-6 border-b border-border">
-        <button role="tab" type="button" aria-selected={!savedOnly} aria-controls="learner-drive-results"
+      <div role="group" aria-label="Drive bookmarks" className="flex min-h-11 items-end gap-6 border-b border-border">
+        <button type="button" aria-pressed={!savedOnly} aria-controls="learner-drive-results"
           className={"min-h-11 border-b-[3px] px-1 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 "+(!savedOnly?"border-[var(--lms-primary)] text-primary-text":"border-transparent text-body hover:text-foreground")}
           onClick={()=>updateQuery({saved:null})}>All drives</button>
-        <button role="tab" type="button" aria-selected={savedOnly} aria-controls="learner-drive-results"
+        <button type="button" aria-pressed={savedOnly} aria-controls="learner-drive-results"
           className={"flex min-h-11 items-center gap-2 border-b-[3px] px-1 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 "+(savedOnly?"border-[var(--lms-primary)] text-primary-text":"border-transparent text-body hover:text-foreground")}
           onClick={()=>updateQuery({saved:"1"})}>
           Saved <span aria-label={new Set(savedJobIds).size+" saved drives"} className="rounded-full bg-[var(--lms-primary-subtle)] px-2 py-0.5 text-xs font-semibold text-primary-text">{new Set(savedJobIds).size}</span>
         </button>
-      </nav>
+      </div>
       {navigating?<p role="status" className="text-xs text-body">Updating drives…</p>:null}
       <section className="pt-3" aria-label="Find placement drives">
         <div className="grid min-w-0 gap-3 md:grid-cols-[minmax(220px,2fr)_repeat(3,minmax(130px,1fr))] md:items-start">

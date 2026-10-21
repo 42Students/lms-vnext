@@ -30,17 +30,17 @@ export function LearnerInterviewWithdrawalRequest({target}:{target:LearnerInterv
     }catch(err){setError(err instanceof Error?err.message:"Unable to record request.");}
     finally{setPending(false);}
   }
-  return <section className="space-y-3 border-t border-border pt-4" aria-label="Application withdrawal request">
-    <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Ask the placement team to withdraw</h3>
+  return <section className="space-y-3 border-t border-border pt-4" aria-labelledby="learner-interview-withdrawal-title">
+    <h3 id="learner-interview-withdrawal-title" className="text-sm font-semibold text-[var(--lms-heading)]">Ask the placement team to withdraw</h3>
     <p className="text-sm leading-[22px] text-body">This requests withdrawal of the whole application, including its interview rounds. Your application and interview remain active until the placement team approves.</p>
     {target.pending||submitted ? <p role="status" className="text-sm text-body leading-[22px]">
       Withdrawal requested; awaiting the placement team&apos;s decision. <Link className="font-semibold text-primary-text underline focus-visible:underline" href="/learn/my-placements/support?status=PENDING&type=APPLICATION_WITHDRAWAL">Review request</Link>
     </p> : review ? <div className="space-y-3">
       <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">Reason for requesting withdrawal
-        <Textarea value={reason} maxLength={2000} rows={3} disabled={pending} onChange={event=>setReason(event.target.value)}
+        <Textarea value={reason} maxLength={2000} minLength={3} required rows={3} disabled={pending} aria-invalid={Boolean(error)} aria-describedby={error?"learner-interview-withdrawal-error":undefined} onChange={event=>setReason(event.target.value)}
           className="mt-2 w-full" />
       </label>
-      {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
+      {error?<p role="alert" id="learner-interview-withdrawal-error" className="text-sm text-error leading-[22px]">{error}</p>:null}
       <div className="flex flex-wrap gap-2">
         <Button className="min-h-11 md:min-h-9 w-full md:w-auto" disabled={pending||reason.trim().length<3} onClick={()=>void submit()}>{pending?"Submitting…":"Confirm withdrawal request"}</Button>
         <Button className="min-h-11 md:min-h-9 w-full md:w-auto" variant="secondary" disabled={pending} onClick={()=>{setReview(false);setError(null);}}>Keep application active</Button>

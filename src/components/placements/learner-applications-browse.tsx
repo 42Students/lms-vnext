@@ -235,9 +235,9 @@ export function LearnerApplicationsBrowse({
         </p>
       ) : null}
       {attention.rows.length>0 ? (
-        <section aria-label="Application screening updates" role="status"
+        <section aria-labelledby="learner-application-screening-title"
           className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3 md:py-4">
-          <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Application screening updates</h2>
+          <h2 id="learner-application-screening-title" className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Application screening updates</h2>
           <p className="mt-1 text-sm text-body">
             {attention.shortlistedCount} shortlisted · {attention.underReviewCount} under review.
             These are saved placement-team stages, not application deadlines.

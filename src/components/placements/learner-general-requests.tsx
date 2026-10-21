@@ -77,8 +77,8 @@ export function LearnerGeneralRequests({
    });
   }catch{setError("The request could not be sent. Your entered details are still here; please retry.");}
  }
- return <section aria-label="Other placement requests" className="min-w-0 space-y-4 border-b border-border pb-5">
-  <h2 className="text-lg font-semibold">Other placement requests</h2>
+ return <section aria-labelledby="learner-general-requests-title" className="min-w-0 space-y-4 border-b border-border pb-5">
+  <h2 id="learner-general-requests-title" className="text-lg font-semibold">Other placement requests</h2>
   <p className="text-sm">Tell your placement cell about an off-campus offer, registration change, disputed absence, record correction or a request to apply after placement.</p>
   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Request kind<Select className={box} disabled={pending} value={kind}
    onChange={e=>{
@@ -129,7 +129,7 @@ export function LearnerGeneralRequests({
   </p>:null}
  </div>:null}
   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Why are you requesting this?
-   <Textarea ref={reasonRef} className={box} rows={3} maxLength={999} value={reason} onChange={e=>{setReason(e.target.value);setError("");}} aria-invalid={error==="Please explain"}/>
+   <Textarea ref={reasonRef} className={box} rows={3} maxLength={999} value={reason} onChange={e=>{setReason(e.target.value);setError("");}} aria-invalid={error==="Please explain"} aria-describedby={error==="Please explain"?"learner-general-requests-error":undefined}/>
   </label>
   <div className="flex min-w-0 flex-wrap items-center gap-3">
    <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={pending} onClick={()=>void submit()}>{pending?"Sending…":"Send request"}</Button>
@@ -143,8 +143,8 @@ export function LearnerGeneralRequests({
    <p className="text-sm text-body">Changes to this request have not been sent to the placement cell.</p>
   </ConfirmDialog>
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  <h3 className="font-semibold">Request history</h3>
+  {error?<p role="alert" id="learner-general-requests-error" className="text-sm text-error">{error}</p>:null}
+  <h3 id="learner-general-requests-history" className="font-semibold">Request history</h3>
   {!rows.length?<p role="status" className="text-sm">No other placement requests recorded yet.</p>:
    <ul className="divide-y divide-border">{rows.map(row=><li key={row.id} className="min-w-0 border-b border-border py-3 text-sm last:border-b-0">
     <strong>{row.kind.replaceAll("_"," ")}</strong> · {row.status.replaceAll("_"," ")}
