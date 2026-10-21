@@ -6,14 +6,14 @@ Differences: each item is tagged L<origin lane>-U<unit>. Write docs/audit/gap2/l
 
 Order of work: finish the unit you are on in your main queue, then continue the main queue to the end, then do this extra queue top to bottom. Strictly one unit at a time.
 
-- [ ] L12-U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Semester.java`
-- [ ] L12-U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/RecruiterPlanDriveController.java`
-- [ ] L13-U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ApplicationScreening.java`
-- [ ] L13-U031 (Cross-cutting area) `cross/13: Dashboards and reports: every metric, formula, date range, drill-down`
-- [ ] L14-U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/summary.js`
-- [ ] L15-U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerRegistrationController.java`
-- [ ] L17-U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/GradeAuditLog.java`
-- [ ] L17-U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/TenantSettings.js`
-- [ ] L18-U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/FacultyVerification.java`
-- [ ] L18-U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/SemesterManagement.js`
-- [ ] L19-U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicTenantController.java`
+- [x] L12-U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Semester.java`
+- [x] L12-U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/RecruiterPlanDriveController.java`
+- [x] L13-U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ApplicationScreening.java`
+- [x] L13-U031 (Cross-cutting area) `cross/13: Dashboards and reports: every metric, formula, date range, drill-down`
+- [x] L14-U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/summary.js`
+- [x] L15-U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerRegistrationController.java`
+- [x] L17-U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/GradeAuditLog.java`
+- [x] L17-U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/TenantSettings.js`
+- [x] L18-U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/FacultyVerification.java`
+- [x] L18-U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/SemesterManagement.js`
+- [x] L19-U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicTenantController.java`

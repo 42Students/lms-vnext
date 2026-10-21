@@ -49,25 +49,25 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/classes.js`
 - [x] U009 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Attendance.js`
 - [x] U010 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Classes.js`
-- [ ] U011 (FE page) `docs/legacy-source/frontend/src/pages/teacher/calendar.js`
-- [ ] U012 (FE page) `docs/legacy-source/frontend/src/pages/tpo/calendar.js`
-- [ ] U013 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/AdminJobService.java`
-- [ ] U014 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/classes/ClassSearchController.java`
-- [ ] U015 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/JobApplicationStatusHistoryRepository.java`
-- [ ] U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/SkillSynonym.java`
-- [ ] U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectTemplateVersion.java`
-- [ ] U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectActivityEvent.java`
-- [ ] U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Learner.java`
-- [ ] U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Discussions.java`
-- [ ] U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Batch.java`
-- [ ] U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoStudentController.java`
-- [ ] U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoChangeRequestController.java`
-- [ ] U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/TenantAdminController.java`
-- [ ] U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SemesterController.java`
-- [ ] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicInboundEmailController.java`
-- [ ] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LearnerController.java`
-- [ ] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Projects.js`
-- [ ] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/new.js`
-- [ ] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/ManageCollegeDrawer.js`
-- [ ] U031 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/AdminUsers.js`
-- [ ] U032 (Cross-cutting area) `cross/05: Scheduled jobs and background processing: every cron, retry, idempotency, time zones`
+- [x] U011 (FE page) `docs/legacy-source/frontend/src/pages/teacher/calendar.js`
+- [x] U012 (FE page) `docs/legacy-source/frontend/src/pages/tpo/calendar.js`
+- [x] U013 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/AdminJobService.java`
+- [x] U014 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/classes/ClassSearchController.java`
+- [x] U015 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/JobApplicationStatusHistoryRepository.java`
+- [x] U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/SkillSynonym.java`
+- [x] U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectTemplateVersion.java`
+- [x] U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectActivityEvent.java`
+- [x] U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Learner.java`
+- [x] U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Discussions.java`
+- [x] U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Batch.java`
+- [x] U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoStudentController.java`
+- [x] U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoChangeRequestController.java`
+- [x] U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/TenantAdminController.java`
+- [x] U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SemesterController.java`
+- [x] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicInboundEmailController.java`
+- [x] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LearnerController.java`
+- [x] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Projects.js`
+- [x] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/new.js`
+- [x] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/ManageCollegeDrawer.js`
+- [x] U031 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/AdminUsers.js`
+- [x] U032 (Cross-cutting area) `cross/05: Scheduled jobs and background processing: every cron, retry, idempotency, time zones`
