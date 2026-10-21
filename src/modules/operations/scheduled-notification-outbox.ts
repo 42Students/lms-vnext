@@ -1,6 +1,7 @@
 import "server-only";
 import { sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { safeNotificationActionHref } from "@/modules/activity/notification-action";
 import { scheduledRecipientIdempotencyKey } from "./scheduled-job-runner";
 
 /**
@@ -18,6 +19,9 @@ export async function queueScheduledRecipientNotification(input: {
   kind: string;
   windowKey: string;
   scheduledAt: Date;
+  title: string;
+  body: string;
+  actionHref?: string | null;
 }): Promise<"QUEUED" | "ALREADY_QUEUED"> {
   if (process.env.DB10_NOTIFICATION_OUTBOX_READY !== "DB10_VERIFIED") {
     throw new Error("SCHEDULED_NOTIFICATION_OUTBOX_NOT_READY");
@@ -25,6 +29,13 @@ export async function queueScheduledRecipientNotification(input: {
   if (!(input.scheduledAt instanceof Date) ||
       !Number.isFinite(input.scheduledAt.getTime())) {
     throw new Error("INVALID_SCHEDULED_NOTIFICATION_DATE");
+  }
+  const title = input.title.trim();
+  const body = input.body.trim();
+  if (!title || title.length > 240 || !body || body.length > 2000 ||
+      (input.actionHref != null &&
+       safeNotificationActionHref(input.actionHref) !== input.actionHref)) {
+    throw new Error("INVALID_SCHEDULED_NOTIFICATION_CONTENT");
   }
   const dedupeKey = scheduledRecipientIdempotencyKey(input,
     process.env.DB10_NOTIFICATION_DEDUPE_KEY_BASE64 ?? "");
@@ -38,7 +49,7 @@ export async function queueScheduledRecipientNotification(input: {
     )
     select
       e.id, c.id, c.organization_id, ${input.authoredByUserId}::uuid,
-      ${JSON.stringify({ type: "EXPLICIT_USER", userId: input.recipientUserId })}::jsonb,
+      ${JSON.stringify({ type: "EXPLICIT_USER", userId: input.recipientUserId, title, body, actionHref: input.actionHref ?? null })}::jsonb,
       ${input.scheduledAt}, ${dedupeKey}
     from activity_events e
     join colleges c on c.id = e.college_id
