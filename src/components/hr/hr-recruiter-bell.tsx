@@ -29,11 +29,15 @@ export function HrRecruiterBell(){
  const [mobile,setMobile]=useState(false);
  const load=useCallback(async()=>{
   const request=loadGate.current.begin();
+  let authorizationLost=false;
   try{
    const res=await fetch("/api/placements/recruiter/bell",{
     cache:"no-store",credentials:"same-origin",redirect:"error",
    });
-   if(!res.ok)throw Error("Unable to load");
+   if(!res.ok){
+    authorizationLost=res.status===401||res.status===403;
+    throw Error("Unable to load");
+   }
    const payload:unknown=await res.json();
    const data=parseHrBellResponse(payload);
    if(!data)throw Error("INVALID_BELL_RESPONSE");
@@ -41,8 +45,12 @@ export function HrRecruiterBell(){
    setState(data);setError("");
   }catch{
    if(!loadGate.current.isCurrent(request))return;
-   // A revoked/expired session cannot keep an old private feed on screen.
-   setState(null);setError("Couldn't refresh your notifications");
+   // Retain last-good data on a transient error; never retain private feed
+   // after the API explicitly reports revoked/no authorized access.
+   if(authorizationLost)setState(null);
+   setError(authorizationLost
+    ? "Your notification access has changed. Sign in again."
+    : "Couldn't refresh your notifications");
   }finally{if(loadGate.current.isCurrent(request))setNow(Date.now());}
  },[]);
  useEffect(()=>{
@@ -83,7 +91,9 @@ export function HrRecruiterBell(){
    const receipt:unknown=await res.json().catch(()=>null);
    if(!isHrBellReadReceipt(receipt))throw Error("Could not confirm read status");
    await load();
-  }catch{setState(null);setSaveError("Read status could not be confirmed. Reload notifications before retrying.");}
+  }catch{
+   setSaveError("Notifications loaded, but read status could not be saved");
+  }
   finally{markAllGate.current.end();setLoading(false);}
  }
 
@@ -93,9 +103,20 @@ export function HrRecruiterBell(){
     {unread>0?<Button type="button" disabled={loading} loading={loading} onClick={()=>void markAll()}
       variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">{loading?"Saving…":"Mark all read"}</Button>:null}
    </div>
-   {saveError?<Alert tone="error" className="mt-2">{saveError}</Alert>:null}</>;
+   {saveError?<Alert tone="warning" className="mt-2">
+    {saveError} <Button type="button" variant="secondary" disabled={loading}
+      onClick={()=>void markAll()}>Retry</Button>
+   </Alert>:null}</>;
  const panelBody=<>
-   {error?<ErrorState title="Notifications unavailable" description={state?error:"Couldn't load your notifications"}/>:null}
+   {error ? state ? <Alert tone="warning" className="mt-2">
+    Showing the last notifications we loaded. <Button type="button" variant="secondary"
+      onClick={()=>void load()}>Retry</Button>
+   </Alert> : <ErrorState title="Notifications unavailable" description={error}/> : null}
+   {state?.status==="READY"&&state.hiddenUnread>0?
+    <Alert tone="info" className="mt-2">
+      {state.hiddenUnread} older unread {state.hiddenUnread===1?"notification is":"notifications are"} not shown here.
+      See all notifications before marking everything as read.
+    </Alert>:null}
    {!state&&!error?<Skeleton label="Loading notifications" variant="row" count={3} className="mt-3"/>:
     state?.status!=="READY"?<p className="mt-3 text-sm text-body leading-[22px]">{error?"Couldn't load your notifications":"Choose a college to view your notifications."}</p>:
     state.items.length===0?<EmptyState title={HR_BELL_EMPTY} description={HR_BELL_EMPTY_HELP}/>:
