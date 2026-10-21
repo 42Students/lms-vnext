@@ -11,7 +11,8 @@ import { classLifecyclePrompt } from "@/modules/academics/college-section-lifecy
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 
 export function CollegeSectionLifecycleAction({ row }: {
-  row: { id: string; name: string; status: "ACTIVE" | "ARCHIVED"; updatedAt: string; canDelete?: boolean };
+  row: { id: string; name: string; status: "ACTIVE" | "ARCHIVED"; updatedAt: string; canDelete?: boolean;
+    deleteDisabledReason?: string; activeEnrollmentCount?: number; scheduleCount?: number };
 }) {
   const router = useRouter();
   const {showToast}=useToast();
@@ -21,6 +22,11 @@ export function CollegeSectionLifecycleAction({ row }: {
   const [confirming, setConfirming] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const action = row.status === "ACTIVE" ? "ARCHIVE" : "RESTORE";
+  const deleteBlocked=row.canDelete===false;
+  const deleteReason=row.deleteDisabledReason || (deleteBlocked
+    ? "Delete is unavailable: this class has learner, faculty, timetable or course-delivery history. Archive it to retain records."
+    : "Delete is permitted only if no learner enrollment, faculty, scheduled event or delivery history exists.");
+
 
   function change() {
     if (inFlight.current || pending) return;
@@ -60,7 +66,7 @@ export function CollegeSectionLifecycleAction({ row }: {
           body:JSON.stringify({expectedUpdatedAt:row.updatedAt,confirm:true}),
         });
         setDeleting(false);
-        showToast({tone:"success",title:"Class deleted successfully"});
+        showToast({tone:"success",title:`Class “${row.name}” deleted successfully.`});
         router.refresh();
       }catch(reason){
         setError(reason instanceof Error?reason.message:"Could not delete this class. Check enrollment, schedule and course dependencies.");
@@ -69,17 +75,23 @@ export function CollegeSectionLifecycleAction({ row }: {
   }
 
   return <div className="flex min-w-0 flex-wrap gap-2">
-    <Button variant="secondary" type="button" disabled={pending}
+    <Button variant={action==="ARCHIVE"?"secondary":"secondary"} type="button" disabled={pending}
+      title={action==="ARCHIVE"
+        ?"Archive class records without deleting learner and teaching history"
+        :"Restore a previously archived class, subject to valid batch and academic period"}
       className="min-h-11 w-full sm:w-auto md:min-h-9"
       aria-label={(action === "ARCHIVE" ? "Archive" : "Restore")+" class "+row.name}
       onClick={() => { setError(""); setConfirming(true); }}>
       {pending ? "Saving…" : action === "ARCHIVE" ? "Archive" : "Restore"}
     </Button>
-    <Button variant="danger" type="button" disabled={pending}
-      title="Delete is available only when no enrollment, faculty, schedule or course history exists"
+    <Button variant="danger" type="button" disabled={pending||deleteBlocked}
+      aria-label={`Delete class ${row.name}`}
+      title={deleteReason}
       onClick={()=>{setError("");setDeleting(true);}}>{pending?"Saving…":"Delete"}</Button>
+    {deleteBlocked?<span role="status" title={deleteReason}
+      className="self-center text-xs text-muted-foreground">{deleteReason}</span>:null}
     <ConfirmDialog open={confirming} onOpenChange={setConfirming}
-      title={action === "ARCHIVE" ? "Archive class" : "Restore class"}
+      title={action === "ARCHIVE" ? `Archive “${row.name}”?` : `Restore “${row.name}”?`}
       description={classLifecyclePrompt(row.name, action)}
       confirmLabel={action === "ARCHIVE" ? "Archive class" : "Restore class"}
       confirmVariant={action === "ARCHIVE" ? "danger" : "primary"}
@@ -92,7 +104,7 @@ export function CollegeSectionLifecycleAction({ row }: {
       {error ? <Alert tone="error" title="Class could not be updated" className="mt-3">{error}</Alert> : null}
     </ConfirmDialog>
     <ConfirmDialog open={deleting} onOpenChange={setDeleting}
-      title="Delete this class?" confirmLabel="Delete class"
+      title={`Delete class “${row.name}” permanently?`} confirmLabel="Delete class"
       confirmVariant="danger" pending={pending} onConfirm={remove}>
       <p className="text-sm text-body">Delete “{row.name}” permanently? Only allowed before any enrollment, faculty assignment, schedule or course delivery exists. Otherwise retain or archive the class.</p>
       {error?<Alert tone="error" className="mt-3">{error}</Alert>:null}
