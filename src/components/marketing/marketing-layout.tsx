@@ -25,7 +25,7 @@ export function MarketingLayout({children}:{children:ReactNode}){
   <footer className="border-t border-border bg-surface">
    <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-8 text-sm text-muted-foreground">
     <span>42 LMS · Talent and workforce development</span>
-    <div className="flex flex-wrap gap-x-5 gap-y-1"><Link href="/privacy-policy" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] text-primary-text underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Privacy</Link>
+    <div className="flex flex-wrap gap-x-6 gap-y-1"><Link href="/privacy-policy" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] text-primary-text underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Privacy</Link>
       <Link href="/assets/static/terms-and-conditions-view.html" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] text-primary-text underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Terms</Link>
       <a href="mailto:hello@42lms.com" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] text-primary-text underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Contact</a></div>
    </div>
@@ -38,8 +38,8 @@ export function MarketingHero({eyebrow,title,description,showExploreLink=true}:{
    <h1 id="marketing-hero-heading" className="max-w-4xl break-words text-[30px] font-semibold leading-10 tracking-tight text-foreground">{title}</h1>
    <p className="max-w-3xl break-words text-base leading-7 text-body md:text-lg md:leading-8">{description}</p>
    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
-    <Link href="/request-demo" className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-5 py-2 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Request a demo</Link>
-    {showExploreLink ? <Link href="/platform" className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-5 py-2 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Explore the platform</Link> : null}
+    <Link href="/request-demo" className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-6 py-2 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Request a demo</Link>
+    {showExploreLink ? <Link href="/platform" className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-6 py-2 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Explore the platform</Link> : null}
    </div>
  </section>;
 }
