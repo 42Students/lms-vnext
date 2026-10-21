@@ -39,8 +39,8 @@ Facets (all mandatory):
 - F23 Anything in vNext that does NOT exist in the legacy unit (EXTRA) and anything in legacy that vNext dropped on purpose (document the reason if known)
 
 One unit at a time: finish the unit file completely before opening the next. Tick [x] the unit here in the same push as its file. Push to chatgpt/chat-2-b with [chat-2] after every 2 units (git fetch and rebase right before). Units:
-- [ ] U001 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/auditfindings/SuperAdminAuditFindingsController.java`
-- [ ] U002 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/config/R2Condition.java`
+- [x] U001 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/auditfindings/SuperAdminAuditFindingsController.java`
+- [x] U002 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/config/R2Condition.java`
 - [ ] U003 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/config/ZeptoMailTemplateIdResolver.java`
 - [ ] U004 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/configuration/R2Config.java`
 - [ ] U005 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/configuration/TemporarySmsOutageRecovery.java`
