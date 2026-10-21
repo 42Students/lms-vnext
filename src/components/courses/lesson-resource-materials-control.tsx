@@ -30,7 +30,7 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
   // An old Section or acting-college may have been visible on this mounted
   // component. Never show those private materials while the new scope loads.
   setPrevUri(uri);setLoading(true);setError(null);setNotice(null);
-  setMaterials([]);setDraft(blank);setEditing(null);setBusy(false);
+  setMaterials([]);setDraft(blank);setEditing(null);setBusy(false);setOpeningMaterialId(null);
  }
  useEffect(()=>{
   const controller=new AbortController();
