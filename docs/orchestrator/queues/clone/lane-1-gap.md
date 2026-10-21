@@ -61,8 +61,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/RefreshTokenBlocklist.java`
 - [x] U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/User.java`
 - [x] U022 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/UserSession.java`
-- [ ] U023 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/EmailVerificationTokenRepository.java`
-- [ ] U024 (FE page) `docs/legacy-source/frontend/src/pages/auth/handoff.js`
+- [x] U023 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/EmailVerificationTokenRepository.java`
+- [x] U024 (FE page) `docs/legacy-source/frontend/src/pages/auth/handoff.js`
 - [ ] U025 (FE page) `docs/legacy-source/frontend/src/pages/campaign-unsubscribe/[token].js`
 - [ ] U026 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/profile.js`
 - [ ] U027 (FE page) `docs/legacy-source/frontend/src/pages/college-join/[token].js`
