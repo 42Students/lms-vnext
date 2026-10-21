@@ -35,11 +35,16 @@ export function TrackerTelegramManualPanel({items,configured,deploy}:{
         method:"POST",headers:{"content-type":"application/json"},
         body:JSON.stringify({kind}),
       });
-      setNotice(result.message);setOpen(false);setConfirm(null);
+      setNotice(result.message||"Alert sent to Telegram.");setOpen(false);setConfirm(null);
     }catch(caught){
       setError(true);
-      setNotice(caught instanceof FriendlyFetchError?caught.message:
-        "Could not send the alert. Try again later.");
+      if(caught instanceof FriendlyFetchError){
+        setNotice(caught.status===403?"Not authorized.":
+          caught.status===429?"A manual alert was sent recently. Try again in 10 minutes.":
+          !configured?"Telegram alerts are not configured.":
+          caught.status===503?"Telegram could not confirm delivery. Try again later.":
+          caught.message||"Could not send the alert. Try again later.");
+      }else setNotice("Could not send the alert. Try again later.");
     }finally{setPending(false);}
   }
   const regressions=items.filter(item=>item.regressedAt).length;
