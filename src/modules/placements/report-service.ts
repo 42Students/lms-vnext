@@ -60,7 +60,25 @@ export const placementReportQuerySchema = z
     mode: z.enum(["ON_CAMPUS", "POOL", "OFF_CAMPUS"]).optional(),
     category: z.enum(["REGULAR", "DREAM", "SUPER_DREAM"]).optional(),
   })
-  .strict();
+  .strict()
+  .superRefine((filters, ctx) => {
+    // Legacy POOL and SUPER_DREAM are not independently persisted. Returning
+    // zero rows for either would fabricate a valid empty result.
+    if (filters.mode === "POOL") {
+      ctx.addIssue({
+        code: "custom",
+        path: ["mode"],
+        message: "Pool-drive reporting needs a persisted pool classification; this filter is not available yet.",
+      });
+    }
+    if (filters.category === "SUPER_DREAM") {
+      ctx.addIssue({
+        code: "custom",
+        path: ["category"],
+        message: "Super-dream reporting needs a persisted category; this filter is not available yet.",
+      });
+    }
+  });
 
 export type PlacementReportQuery = z.input<
   typeof placementReportQuerySchema
@@ -170,15 +188,18 @@ export async function getPlacementReportWorkspace(
    * Fetch the job selector independently of jobId, so changing the drive
    * filter does not remove other choices from the selector.
    */
-  const jobRows = await db
+  const jobRowsRaw = await db
     .select({
       id: placementJobs.id,
       title: placementJobs.title,
       companyId: placementCompanies.id,
       companyName: placementCompanies.name,
       employmentType: placementJobs.employmentType,
-      status:placementJobs.status,
-      jobTypeLabel:placementJobs.jobTypeLabel,
+      status: placementJobs.status,
+      recruiterDriveMode: placementJobs.recruiterDriveMode,
+      isDream: placementJobs.isDream,
+      // Type labels require the job_type_label migration; do not select a
+      // nonexistent Drizzle column or mislabel a custom drive as a built-in.
       countsAsPlaced: placementJobs.countsAsPlaced,
     })
     .from(placementJobs)
@@ -208,6 +229,12 @@ export async function getPlacementReportWorkspace(
       placementJobs.title,
       placementJobs.id,
     );
+  // Nullable placed answers are unverified legacy values; the pure model
+  // exposes undefined to retain the documented conservative fallback.
+  const jobRows = jobRowsRaw.map((row) => ({
+    ...row,
+    countsAsPlaced: row.countsAsPlaced ?? undefined,
+  }));
 
   if (
     query.jobId &&
@@ -765,7 +792,7 @@ export async function getPlacementReportDetails(
       companyId: row.companyId,
       companyName: row.companyName,
       employmentType: row.employmentType,
-      countsAsPlaced: row.countsAsPlaced,
+      countsAsPlaced: row.countsAsPlaced ?? undefined,
       status: row.status,
       kind: row.kind,
       annualCtcInr: row.annualCtcInr,
