@@ -5,7 +5,7 @@
  *
  * Source: legacy DB07 16-table/358-field ledger (2026-10-10).
  */
-import { sql } from "drizzle-orm";
+import { desc, sql } from "drizzle-orm";
 import {
   check, foreignKey, index, integer, jsonb, pgTable, text, timestamp, uuid, varchar,
 } from "drizzle-orm/pg-core";
@@ -39,6 +39,7 @@ export const projectMeetingAuditHistoryStaged = pgTable("project_meeting_history
     foreignColumns:[projectMeetings.projectId,projectMeetings.id]}).onDelete("restrict"),
   index("project_meeting_history_project_time_idx").on(t.projectId,t.createdAt),
   index("project_meeting_history_meeting_idx").on(t.meetingId,t.createdAt),
+  index("project_meeting_history_project_key_time_id_idx").on(t.projectId,t.meetingKey,desc(t.createdAt),desc(t.id)),
   check("project_meeting_history_updated_after_created_ck",sql`${t.updatedAt} >= ${t.createdAt}`),
   check("project_meeting_history_deleted_after_created_ck",sql`${t.deletedAt} is null or ${t.deletedAt} >= ${t.createdAt}`),
   check("project_meeting_history_action_nonempty_ck",sql`length(trim(${t.actionType})) > 0`),

@@ -30,6 +30,9 @@ CREATE TABLE project_meeting_history(
 );
 CREATE INDEX project_meeting_history_project_time_idx ON project_meeting_history(project_id,created_at);
 CREATE INDEX project_meeting_history_meeting_idx ON project_meeting_history(project_meeting_id,created_at);
+-- Meeting edit-history pagination by project + stable source meeting key.
+CREATE INDEX project_meeting_history_project_key_time_id_idx
+  ON project_meeting_history(project_id, meeting_key, created_at DESC, id DESC);
 
 CREATE TABLE project_resource_audit(
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),

@@ -11,6 +11,7 @@ import {
   lt,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {z} from "zod";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { notifyActiveProjectMembers } from "./project-notification-service";
@@ -38,6 +39,38 @@ import {
   requestProjectMeetingInputSchema,
   scheduleProjectMeetingInputSchema,
 } from "./validation";
+
+/** The old RepeatingItemEditor submitted up to 500 meetings in a single
+ * section PUT with a meetingsToken. vNext uses item-level CAS per meeting.
+ * This preflight is intentionally side-effect free: malformed batches return
+ * row-indexed errors; no mutation can be made without first verifying the
+ * original section token under the same project lock and applying every row
+ * in one transaction. Never loop scheduleProjectMeeting (each call commits). */
+const legacyMeetingBatchSchema=z.strictObject({
+ expectedMeetingsToken:z.string().trim().min(1).max(256),
+ meetings:z.array(z.strictObject({
+  meetingId:projectMeetingIdSchema.nullable(),
+  input:z.unknown(),
+ })).max(500),
+});
+export function inspectLegacyMeetingBatch(raw:unknown){
+ const parsed=legacyMeetingBatchSchema.safeParse(raw);
+ if(!parsed.success)return {valid:false as const,issues:parsed.error.issues.map(issue=>({
+  path:issue.path.join("."),message:issue.message,
+ }))};
+ const issues:Array<{path:string;message:string}>=[];
+ for(const [index,row] of parsed.data.meetings.entries()){
+  const meeting=scheduleProjectMeetingInputSchema.safeParse(row.input);
+  if(!meeting.success)for(const issue of meeting.error.issues){
+   issues.push({path:"meetings."+index+".input"+
+    (issue.path.length?"."+issue.path.join("."):""),message:issue.message});
+  }
+ }
+ return issues.length?{valid:false as const,issues}:{
+  valid:true as const,count:parsed.data.meetings.length,
+  expectedMeetingsToken:parsed.data.expectedMeetingsToken,
+ };
+}
 
 function ensureMeetingProjectMutable(
   status: string,
