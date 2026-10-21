@@ -18,11 +18,21 @@ import { parseTpoAcademicImportCsv,parseTpoLegacyAcademicImportCsv,
   type TpoLegacyAcademicStagingRow } from "@/modules/placements/tpo-academic-preview-import-model";
 
 type AcademicRow = ReturnType<typeof parseTpoAcademicImportCsv>[number];
-type PreviewRow = AcademicRow & {
+type AcademicWriteRow={
+  studentCode:string;cgpa?:number;activeBacklogs?:number;pastBacklogs?:number;
+  tenthPercentage?:number;twelfthPercentage?:number;diplomaPercentage?:number;
+  undergraduatePercentage?:number;postgraduatePercentage?:number;
+  gapYears?:number;isLateralEntry?:boolean;passingYear?:number;
+  legacyOrigin?:{rowNumber:number;rollNumber:string;batch:string|null;gender:string|null};
+};
+type PreviewRow = Partial<Omit<AcademicRow,"studentCode">> & {
+  studentCode:string;
   match: "WILL_UPDATE" | "CANT_MATCH";
   name: string | null;
   oldCgpa: number | null;
   oldBacklogs: number | null;
+  importRow?:AcademicWriteRow|null;
+  issue?:string|null;
 };
 
 export function TpoAcademicImportWorkspace() {
@@ -61,7 +71,7 @@ export function TpoAcademicImportWorkspace() {
     }catch(error){setError(error instanceof Error?error.message:"Invalid Excel or CSV file.");}
   }
 
-  async function send(action: "PREVIEW" | "IMPORT", rows: AcademicRow[]) {
+  async function send(action: "PREVIEW" | "IMPORT", rows: AcademicWriteRow[]) {
     return apiFetch<{preview?:{rows:PreviewRow[]};result?:{updated:number;skipped:number}}>(
       "/api/placements/tpo/students/academic-import", {
         method:"POST",headers:{"content-type":"application/json"},
@@ -112,8 +122,10 @@ export function TpoAcademicImportWorkspace() {
     if (!matched.length) { setError("Select at least one matched academic record."); return; }
     setBusy(true); setError("");
     try {
-      const result = await send("IMPORT", matched.map(row => ({
-        studentCode: row.studentCode, cgpa: row.cgpa, activeBacklogs: row.activeBacklogs,
+      const result = await send("IMPORT", matched.map(row => row.importRow ?? ({
+        studentCode: row.studentCode,
+        ...(row.cgpa!==undefined&&row.cgpa!==null?{cgpa:row.cgpa}:{}),
+        ...(row.activeBacklogs!==undefined&&row.activeBacklogs!==null?{activeBacklogs:row.activeBacklogs}:{}),
       })));
       if(typeof result.result?.updated!=="number" || typeof result.result?.skipped!=="number")throw Error("Could not confirm the import results. Please check the records before retrying.");
       const receipt = result.result as { updated: number; skipped: number };
@@ -145,15 +157,15 @@ export function TpoAcademicImportWorkspace() {
       dismissible={!busy&&!guardedPending} title="Import academic details"
       description="Preview matched academic details before saving any changes."
       className="!max-w-[820px]" bodyClassName="max-h-[75dvh] space-y-3 overflow-y-auto">
-      <p className="text-sm text-body">Match learners using their college roll numbers before importing CGPA, marks, backlogs, gaps or passing-year values. Only CGPA and backlogs are currently writable; other fields stay visible in the preview.</p>
+      <p className="text-sm text-body">Match learners using their college roll numbers before importing CGPA, marks, backlogs, gaps or passing-year values. Verified corrections may include CGPA, marks, backlogs, gap years and passing year. Only selected matched learners are updated.</p>
       <details className="border-b border-border pb-3 text-sm text-muted-foreground">
         <summary className="cursor-pointer py-2 text-[13px] font-semibold max-[767px]:flex max-[767px]:min-h-11 max-[767px]:items-center">Academic CSV requirements</summary><p>
         Upload up to 5,000 rows of .xlsx or CSV for a scoped preview.
         Roll numbers are matched to active learners in this college, and
         ambiguous or duplicate rolls stay in Can't match. Verified imports
-        are committed in batches of at most 200 rows. Fields beyond CGPA
-        and active backlogs are preserved in preview, but cannot yet be
-        saved by this limited writer. Nothing is silently discarded.
+        are committed in batches of at most 200 rows. All supported numeric academic columns are preserved through
+        preview and confirmation, with legacy batch and roll provenance.
+        Nothing is silently discarded.
       </p></details>
       <p aria-label="Import with preview steps" className="text-xs text-muted-foreground print:hidden leading-[20px]">
         Choose file or paste rows → Preview matched and unmatched records → Confirm selected import.
@@ -197,8 +209,8 @@ export function TpoAcademicImportWorkspace() {
                   ?current.filter(id=>id!==row.studentCode):[...current,row.studentCode])}/>},
             {key:"id",header:"Student ID",mobilePriority:"primary",cell:row=><span className="break-all font-mono text-xs">{row.studentCode}</span>},
             {key:"name",header:"Student",mobilePriority:"secondary",cell:row=>row.name??"—"},
-            {key:"cgpa",header:"CGPA",mobilePriority:"secondary",cell:row=><span>{row.oldCgpa??"—"} → {row.cgpa}</span>},
-            {key:"backlogs",header:"Backlogs",mobilePriority:"secondary",cell:row=><span>{row.oldBacklogs??"—"} → {row.activeBacklogs}</span>},
+            {key:"cgpa",header:"CGPA",mobilePriority:"secondary",cell:row=><span>{row.oldCgpa??"—"} → {row.cgpa??"unchanged"}</span>},
+            {key:"backlogs",header:"Backlogs",mobilePriority:"secondary",cell:row=><span>{row.oldBacklogs??"—"} → {row.activeBacklogs??"unchanged"}</span>},
             {key:"result",header:"Result",mobilePriority:"secondary",cell:row=><span>
               <StatusBadge tone={row.match==="WILL_UPDATE"?"success":"warning"}>{row.match==="WILL_UPDATE"?"Will update":"Can't match"}</StatusBadge>
               {"issue" in row && typeof row.issue==="string"?<span className="block text-xs text-error">{row.issue}</span>:null}
@@ -224,10 +236,10 @@ export function TpoAcademicImportWorkspace() {
       </div>}
       <Dialog open={confirmOpen} onOpenChange={value=>{if(!busy&&!guardedPending)setConfirmOpen(value);}}
         title="Import verified academic details"
-        description={"Import "+(preview?.filter(row=>row.match==="WILL_UPDATE"&&!excluded.includes(row.studentCode)).length??0)+" selected academic records? This updates their recorded CGPA and active backlogs."}
+        description={"Import "+(preview?.filter(row=>row.match==="WILL_UPDATE"&&!excluded.includes(row.studentCode)).length??0)+" selected academic records? Only supplied academic fields change; missing values are preserved."}
         footer={<div className="flex w-full flex-col-reverse gap-2 md:flex-row md:justify-end"><Button variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={busy||guardedPending} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
           <Button className="min-h-11 w-full md:min-h-9 md:w-auto" loading={busy||guardedPending} disabled={busy||guardedPending} onClick={()=>void runGuarded(async()=>{setConfirmOpen(false);await commit();})}>Confirm import</Button></div>}>
-        <p className="text-sm leading-[22px]">Your academic import choices are kept below if the import cannot be completed.</p>
+        <p className="text-sm leading-[22px]">Your verified academic values and import choices are kept below if the import cannot be completed.</p>
       </Dialog>
       {error && <p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-error leading-[22px]">{error}</p>}
       {notice && <p role="status" className="text-sm text-body leading-[22px]">{notice}</p>}
