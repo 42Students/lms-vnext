@@ -243,16 +243,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-13.md: file, number of
 - [x] `src/components/placements/learner-jobs-browse.tsx`
 - [x] `src/components/placements/learner-placement-job-detail.tsx`
 - [x] `src/components/placements/learner-placement-jobs.tsx`
-- [ ] `src/components/placements/learner-placement-journey.tsx`
-- [ ] `src/components/placements/learner-placement-offers.tsx`
-- [ ] `src/components/placements/learner-placement-requests.tsx`
-- [ ] `src/components/placements/learner-placements-dashboard.tsx`
-- [ ] `src/components/placements/placement-bulk-add-applicants.tsx`
-- [ ] `src/components/placements/placement-calendar-workspace.tsx`
-- [ ] `src/components/placements/placement-draft-edit-form.tsx`
-- [ ] `src/components/placements/placement-drive-controls.tsx`
-- [ ] `src/components/placements/placement-drive-workspace.tsx`
-- [ ] `src/components/placements/placement-job-create-form.tsx`
+- [x] `src/components/placements/learner-placement-journey.tsx`
+- [x] `src/components/placements/learner-placement-offers.tsx`
+- [x] `src/components/placements/learner-placement-requests.tsx`
+- [x] `src/components/placements/learner-placements-dashboard.tsx`
+- [x] `src/components/placements/placement-bulk-add-applicants.tsx`
+- [x] `src/components/placements/placement-calendar-workspace.tsx`
+- [x] `src/components/placements/placement-draft-edit-form.tsx`
+- [x] `src/components/placements/placement-drive-controls.tsx`
+- [x] `src/components/placements/placement-drive-workspace.tsx`
+- [x] `src/components/placements/placement-job-create-form.tsx`
 - [ ] `src/components/placements/placement-report-ui.tsx`
 - [ ] `src/components/placements/recruiter-placement-portfolio.tsx`
 - [ ] `src/components/placements/recruiter-result-controls.tsx`

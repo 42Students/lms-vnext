@@ -511,7 +511,7 @@ export async function PlacementDriveWorkspace({
                     <div><dt className="font-semibold">Results</dt><dd>{applied} applied · {staged} awaiting apply · {Math.max(0,round.participants.length-applied-staged)} not recorded</dd></div>
                     <div><dt className="font-semibold">Reschedule requests</dt><dd>{rescheduleRequests}
                       {rescheduleRequests>0?<Link href="#drive-request-actions"
-                        className="ml-2 font-semibold text-[var(--lms-link-text)] underline">Review pending →</Link>:null}
+                        className="ml-2 font-semibold text-[var(--lms-link-text)] underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Review pending →</Link>:null}
                     </dd></div>
                     <div><dt className="font-semibold">Results expected</dt><dd>{round.resultsDueAt
                       ? new Intl.DateTimeFormat("en-IN", {timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(round.resultsDueAt)+" IST"
