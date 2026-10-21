@@ -24,6 +24,24 @@ export const facultyProfileInputSchema = z.object({
 const textValue = (max: number) =>
   z.string().trim().max(max).default("");
 
+// Compatibility is applied only at the schema boundary. Remote is a distinct
+// preference and must never be silently rewritten to a day or night shift.
+export function canonicalProfileWorkShift(value: unknown): unknown {
+  if (typeof value !== "string") return value;
+  const label = value.trim().toLowerCase();
+  const legacy: Record<string, string> = {
+    "day shift": "DAY", day: "DAY", "night shift": "NIGHT", night: "NIGHT",
+    "rotational shift": "ROTATIONAL", rotational: "ROTATIONAL",
+    flexible: "FLEXIBLE", "flexible shift": "FLEXIBLE",
+    remote: "REMOTE", "remote work": "REMOTE",
+  };
+  return legacy[label] ?? value;
+}
+function legacyProfileBoolean(value: unknown): unknown {
+  return value === "true" || value === "1" ? true :
+    value === "false" || value === "0" ? false : value;
+}
+
 const urlValue = z
   .string()
   .trim()
@@ -293,10 +311,10 @@ const educationSchema = z
     program: textValue(200),
     specialization: textValue(200),
     institution: textValue(300),
-    isCurrentlyPursuing: z.boolean().default(false),
+    isCurrentlyPursuing: z.preprocess(legacyProfileBoolean, z.boolean().default(false)),
     // Legacy application qualification marks one primary/recent education.
     // Generic optional profile education may have none.
-    isRecentEducation: z.boolean().default(false),
+    isRecentEducation: z.preprocess(legacyProfileBoolean, z.boolean().default(false)),
     startYear: z
       .string()
       .trim()
@@ -311,6 +329,7 @@ const educationSchema = z
       .enum([
         "",
         "CGPA",
+        "GPA",
         "Percentage",
         "Grade",
       ])
@@ -318,6 +337,7 @@ const educationSchema = z
     gradeObtained: textValue(64),
     maxGrade: textValue(64),
     qualifyingExam: textValue(120),
+    examRank: textValue(120),
     examDetails: z
       .record(
         z.string().max(120),
@@ -330,6 +350,9 @@ const educationSchema = z
       .default({}),
   })
   .strict();
+// Application qualification editors retain the legacy 20-entry limit;
+ // learner career profiles are allowed the broader 30-entry collection.
+export const learnerApplicationQualificationWriteSchema = z.array(educationSchema).max(20);
 export const learnerProfileEducationWriteSchema=z.array(educationSchema).max(30).superRefine((items,ctx)=>{
  let recentCount=0;
  for(const [index,entry] of items.entries()){
@@ -469,7 +492,7 @@ const metadataEntrySchema = z
 export const learnerProfileDocumentSchema = z
   .object({
     headline: textValue(240),
-    bio: textValue(3000),
+    bio: textValue(10000),
     contacts: contactsSchema,
     socialProfiles: socialProfilesSchema,
     address: addressSchema,
@@ -519,8 +542,14 @@ export const learnerProfileDocumentSchema = z
       .array(extracurricularSchema)
       .max(50)
       .default([]),
-    hobbies: z
-      .array(z.string().trim().min(1).max(120))
+    hobbies: z.preprocess((value) =>
+      Array.isArray(value) ? value.map((hobby: unknown) =>
+        typeof hobby === "string" ? hobby :
+        hobby && typeof hobby === "object" && !Array.isArray(hobby)
+          ? String((hobby as Record<string, unknown>).name ??
+              (hobby as Record<string, unknown>).hobby ?? "")
+          : hobby) : value,
+      z.array(z.string().trim().min(1).max(120))
       .max(50)
       .transform((values) => {
         const seen = new Set<string>();
@@ -531,16 +560,24 @@ export const learnerProfileDocumentSchema = z
           return true;
         });
       })
-      .default([]),
+      .default([])),
     // LEARNER-profile-misc-R02: explicit learner-owned placement preferences.
-    jobPreferences: z.object({
-      rolePreferences:z.array(z.string().trim().min(1).max(100)).max(20).default([]),
+    jobPreferences: z.preprocess(value => {
+      if (!value || typeof value !== "object" || Array.isArray(value)) return value;
+      const fields = value as Record<string, unknown>;
+      if (Array.isArray(fields.rolePreferences)) return value;
+      const singular = typeof fields.rolePreference === "string"
+        ? fields.rolePreference.trim() : "";
+      return {...fields, rolePreferences: singular ? [singular] : []};
+    }, z.object({
+      rolePreferences:z.array(z.string().trim().min(1).max(500)).max(20).default([]),
       specificRolePreference:z.string().trim().max(200).default(""),
-      workShiftPreference:z.enum(["","DAY","NIGHT","ROTATIONAL","FLEXIBLE"]).default(""),
+      workShiftPreference:z.preprocess(canonicalProfileWorkShift,
+        z.enum(["","DAY","NIGHT","ROTATIONAL","FLEXIBLE","REMOTE"]).default("")),
       preferredEmploymentCity:z.string().trim().max(120).default(""),
       // Retain the six legacy DTO properties without replacing the current
       // vNext multi-role preference list. Only explicit user opt-out is false.
-      rolePreference:z.string().trim().max(200).default(""),
+      rolePreference:z.string().trim().max(500).default(""),
       examSlotPreference:z.enum(["","Morning","Afternoon","Evening"]).default(""),
       jobNotificationsEnabled:z.boolean().default(true),
       papInterest:z.enum(["","Yes","No","Need more info"]).default(""),
@@ -548,7 +585,7 @@ export const learnerProfileDocumentSchema = z
       rolePreferences:[],specificRolePreference:"",workShiftPreference:"",
       preferredEmploymentCity:"",rolePreference:"",examSlotPreference:"",
       jobNotificationsEnabled:true,papInterest:"",
-    }),
+    })),
     metadata: z
       .array(metadataEntrySchema)
       .max(50)
