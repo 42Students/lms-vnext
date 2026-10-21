@@ -48,9 +48,12 @@ function editDistanceAtMostTwo(first:string,second:string):number {
 
 const columns = {
   id: db10Skills.id,
+  legacySkillId: db10Skills.legacySkillId,
   name: db10Skills.name,
   displayName: db10Skills.displayName,
   category: db10Skills.category,
+  usageCount: db10Skills.usageCount,
+  isPopular: sql<boolean>`${db10Skills.usageCount} > 100`.mapWith(Boolean),
 };
 
 /**
@@ -68,13 +71,14 @@ export async function readSkillCatalog(input: SkillCatalogQuery) {
       .from(db10Skills)
       .where(and(base, sql`${db10Skills.category} is not null`))
       .orderBy(asc(db10Skills.category));
-    return { categories: categories.flatMap(row => row.category ? [row.category] : []),
-      message: "Categories retrieved successfully" };
+    return { categories: categories.flatMap(row => row.category ? [row.category] : [])
+        .sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:"base"})),
+      message: "Categories retrieved" };
   }
 
   if (input.mode === "category") {
     const items = await db.select(columns).from(db10Skills)
-      .where(and(base, eq(db10Skills.category, input.category!)))
+      .where(and(base, sql<boolean>`lower(${db10Skills.category})=lower(${input.category!})`))
       .orderBy(asc(db10Skills.displayName), asc(db10Skills.id))
       .limit(input.limit);
     return { items };
@@ -82,6 +86,16 @@ export async function readSkillCatalog(input: SkillCatalogQuery) {
 
   const q = normalizeSkillSearchQuery(input.query);
   if (input.mode === "popular" || !q) {
+    const fallbackOrder = [
+      "java","python","javascript","react","node.js","typescript",
+      "sql","html","css","spring boot","angular","aws","docker","git",
+    ];
+    // Legacy SkillsCache included a fixed fallback after tracked selections,
+    // then filled remaining places alphabetically. The two counters remain
+    // independent and scoped to this catalog; no full-table cache is required.
+    const fallbackPosition = sql<number>`case lower(${db10Skills.name})
+      ${sql.join(fallbackOrder.map((name,index)=>sql`when ${name} then ${index}`),sql` `)}
+      else 1000 end`;
     // Both legacy usage systems stay independent in storage; the separate
     // skill_usage table's popularity is the v2 primary signal. Catalog count
     // is a tie-breaker/fallback. Never increment one because the other moved.
@@ -95,11 +109,12 @@ export async function readSkillCatalog(input: SkillCatalogQuery) {
       .orderBy(
         desc(sql`coalesce(${db10SkillUsage.usageCount}, 0)`),
         desc(db10Skills.usageCount),
+        asc(fallbackPosition),
         asc(db10Skills.displayName),
         asc(db10Skills.id),
       )
       .limit(input.limit);
-    return { items, message:"Popular skills retrieved successfully" };
+    return { items, message:"Popular skills retrieved" };
   }
 
   const searchTerm=LEGACY_SKILL_ALIASES[q]??q;
@@ -107,6 +122,7 @@ export async function readSkillCatalog(input: SkillCatalogQuery) {
   const display = sql`lower(${db10Skills.displayName})`;
   const namePrefix = sql<boolean>`left(${normalized}, length(${searchTerm})) = ${searchTerm}`;
   const displayPrefix = sql<boolean>`left(${display}, length(${searchTerm})) = ${searchTerm}`;
+  const nameWordPrefix = sql<boolean>`position(' ' || ${searchTerm} in ${normalized}) > 0`;
   const nameContains = sql<boolean>`position(${searchTerm} in ${normalized}) > 0`;
   const displayContains = sql<boolean>`position(${searchTerm} in ${display}) > 0`;
   const synonymPrefix = sql<boolean>`exists (
@@ -122,11 +138,14 @@ export async function readSkillCatalog(input: SkillCatalogQuery) {
   const score = sql<number>`(
     case
       when ${normalized} = ${searchTerm} then 100
+      when ${display} = ${searchTerm} then 95
       when ${namePrefix} then 80
-      when ${displayPrefix} then 70
-      when ${synonymPrefix} then 60
+      when ${displayPrefix} then 75
+      when ${nameWordPrefix} then 60
+      when ${synonymPrefix} then 55
       when ${nameContains} then 40
-      when ${displayContains} then 30
+      when ${displayContains} then 35
+      when ${synonymContains} then 30
       else 20 end
     + least(floor(${db10Skills.usageCount} / 10.0), 50)
     + ${db10Skills.searchPriority}
@@ -136,7 +155,7 @@ export async function readSkillCatalog(input: SkillCatalogQuery) {
     .where(and(
       base,
       sql<boolean>`(
-        ${namePrefix} or ${displayPrefix} or
+        ${namePrefix} or ${displayPrefix} or ${nameWordPrefix} or
         ${nameContains} or ${displayContains} or
         ${synonymPrefix} or ${synonymContains}
       )`,
