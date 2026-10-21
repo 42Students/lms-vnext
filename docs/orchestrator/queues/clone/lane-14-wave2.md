@@ -114,5 +114,5 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-14/W2_src_db_schema_placement-debarments.ts.md` (edit src/db/schema/placement-debarments.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-14/W2_src_modules_activity_college-activity-model.ts.md` (edit src/modules/activity/college-activity-model.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-14/W2_src_db_schema_academic-progression.ts.md` (edit src/db/schema/academic-progression.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-14/W2_src_components_ui_filter-bar.tsx.md` (edit src/components/ui/filter-bar.tsx; 1 findings; best P3)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-14/W2_drizzle_0021_placements_p5_application_history.sql.md` (edit drizzle/0021_placements_p5_application_history.sql; 1 findings; best P3)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-14/W2_src_components_ui_filter-bar.tsx.md` (edit src/components/ui/filter-bar.tsx; 1 findings; best P3)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-14/W2_drizzle_0021_placements_p5_application_history.sql.md` (edit drizzle/0021_placements_p5_application_history.sql; 1 findings; best P3)
