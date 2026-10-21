@@ -61,10 +61,10 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/College.java`
 - [x] U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/AdminAuditLog.java`
 - [x] U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoPublicLinkController.java`
-- [ ] U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerPlacementController.java`
-- [ ] U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SuperAdminCompanyController.java`
-- [ ] U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/RecruiterChangeRequestController.java`
-- [ ] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/OrganizationController.java`
+- [x] U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerPlacementController.java`
+- [x] U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SuperAdminCompanyController.java`
+- [x] U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/RecruiterChangeRequestController.java`
+- [x] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/OrganizationController.java`
 - [ ] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/FacultyClassScheduleController.java`
 - [ ] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/resources.js`
 - [ ] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/TenantsHub.js`
