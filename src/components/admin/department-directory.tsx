@@ -3,6 +3,7 @@
 import { Select } from "@/components/ui/select";
 import { DEPARTMENT_COPY } from "@/modules/admin-ui/department-copy";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Disclosure } from "@/components/ui/disclosure";
 import { DepartmentActions } from "@/components/admin/department-actions";
 import { Button } from "@/components/ui/button";
@@ -32,13 +33,14 @@ const columns: DataTableColumn<DepartmentDirectoryRow>[] = [
     header: "Contents",
     mobilePriority: "secondary",
     cell: (row) => (
-      <span
-        className="text-xs text-body"
-        title={row.usage ? "Active linked records; archive requires all three counts to be zero." : "Usage counts unavailable; archive may be blocked."}
-      >
-        {countText(row.usage?.programs)} programs ·{" "}
-        {countText(row.usage?.courses)} courses ·{" "}
-        {countText(row.usage?.faculty)} faculty
+      <span className="flex flex-wrap gap-1.5" title={row.usage?
+       "Active linked records; resolve all dependencies before deleting this department.":
+       "Usage counts unavailable; delete remains blocked until dependencies can be checked."}>
+        {([["Programs",row.usage?.programs],["Courses",row.usage?.courses],
+          ["Faculty",row.usage?.faculty]] as const).map(([label,count])=>
+          <span key={label} className="inline-flex rounded border border-info bg-info-subtle px-2 py-0.5 text-xs font-medium text-info-text">
+            {countText(count)} {label}
+          </span>)}
       </span>
     ),
   },
@@ -56,6 +58,7 @@ export function DepartmentDirectory({
 }: {
   rows: readonly DepartmentDirectoryRow[];
 }) {
+  const router=useRouter();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -80,7 +83,13 @@ export function DepartmentDirectory({
         </div>
         {search.trim() ? <Button size="sm" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
           onClick={() => { setSearch(""); setPage(1); }}>Clear search</Button> : null}
-        <Disclosure title="View options" className="min-w-0 sm:self-end sm:col-start-2"
+        <div className="flex flex-wrap gap-2 sm:col-span-2">
+          {filtered.length ? <a href={exportHref} download="departments.csv"
+            className="inline-flex min-h-11 items-center rounded border border-border bg-surface px-3 text-sm font-semibold text-link md:min-h-9">Export CSV</a>:
+            <Button variant="secondary" disabled>Export CSV</Button>}
+          <Button type="button" variant="secondary" onClick={()=>router.refresh()} className="min-h-11 md:min-h-9">Refresh</Button>
+        </div>
+        <Disclosure title="View options" className="min-w-0 sm:col-span-2"
           contentClassName="flex min-w-0 flex-col gap-3 pb-3 pt-2 sm:min-w-48">
           <label htmlFor="department-directory-page-size"
             className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">

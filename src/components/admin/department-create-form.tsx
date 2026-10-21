@@ -81,7 +81,7 @@ export function DepartmentCreateForm({collegeId}:{collegeId:string}) {
         {fieldError?<p id="department-name-error" className="mt-1 text-xs text-error">{fieldError}</p>:null}
       </div>
       <Button type="submit" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9" disabled={pending}>
-        {pending?"Creating…":DEPARTMENT_COPY.createButton}
+        {pending?"Creating…":<><span aria-hidden="true" className="mr-1">＋</span>{DEPARTMENT_COPY.createButton}</>}
       </Button>
       {notice?<p role="status" className="m-0 w-full min-w-0 break-words text-sm leading-[22px] text-success-text sm:col-span-2">{notice}</p>:null}
       {error?<div role="alert" className="relative w-full min-w-0 space-y-1 border-l-2 border-error bg-error-subtle p-3 pr-10 text-sm text-error sm:col-span-2">
