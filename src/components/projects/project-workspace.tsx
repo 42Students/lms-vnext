@@ -257,7 +257,7 @@ function WorkspaceReadinessSnapshot({ workspace }: { workspace: Workspace }) {
       readiness.readinessOverride.state,hasFinalSubmission);
   const tasks = readiness.execution.tasks;
   const sprints = readiness.execution.sprints;
-  const doneTasks = workspace.tasks.filter(task => task.status === "DONE");
+  const doneTasks = workspace.tasks.filter(task => task.status === "DONE"&&!task.deletedAt);
   const withSubmission = doneTasks.filter(task => workspace.taskSubmissions.some(submission =>
     submission.taskId === task.id && Boolean(submission.submissionUrl))).length;
   const totalPlanItems = tasks.total + sprints.total;
@@ -412,20 +412,26 @@ function AdminDeliveryOverview({workspace}:{workspace:Workspace}){
 }
 
 /** The same project title, mentor subtitle and status badge above every mentor detail tab. */
-export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel}: {
+export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel,section}: {
   workspace: Workspace;
   mode: "LEARNER" | "MENTOR" | "ADMIN";
   backHref?: string;
   backLabel?: string;
+  section?:ProjectWorkspaceSection;
 }) {
   return (
     <PageHeader
-            title={workspace.project.title}
+            title={workspace.project.title?.trim()||"Workspace"}
             description={mode==="MENTOR"
-              ? [workspace.project.courseLabel??"Course not linked",
-                 "Mentor: "+(workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName
-                   ?? workspace.members.find(member=>member.role==="MENTOR")?.displayName??"Not assigned")].join(" · ")
-              : (workspace.project.summary ?? undefined)}
+              ? [workspace.project.courseLabel?.trim()||null,
+                 workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName??
+                 workspace.members.find(member=>member.role==="MENTOR")?.displayName??null]
+                .filter(Boolean).join(" · ")||"Project workspace"
+              : mode==="ADMIN"&&section==="readiness"?
+                "Understand submission readiness, proof coverage and any manual override at a glance.":
+                mode==="ADMIN"&&section==="summary"?
+                  "Health, setup and operating details for this workspace.":
+                  workspace.project.summary??undefined}
             actions={
               <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto">
                 {mode==="ADMIN"&&backHref?<PageBackLink href={backHref} label={backLabel??"Back to projects"}/>:null}
@@ -590,11 +596,12 @@ export function ProjectWorkspace({
       {mode!=="ADMIN"?<PageBackLink href={backHref} label={backLabel === "Projects" ? "Back to projects" : backLabel} />:null}
       {polishAdminSection && mode==="ADMIN"?<PageBackLink href={backHref} label={backLabel} />:null}
 
-      {!hidePageHeader ? <ProjectWorkspaceHeader workspace={workspace} mode={mode} backHref={mode==="ADMIN"&&!polishAdminSection?backHref:undefined} backLabel={backLabel} /> : null}
+      {!hidePageHeader ? <ProjectWorkspaceHeader workspace={workspace} mode={mode} section={activeSection}
+          backHref={mode==="ADMIN"&&!polishAdminSection?backHref:undefined} backLabel={backLabel} /> : null}
       {mode === "ADMIN" ? (
         <Breadcrumbs items={[
           { label: "Projects", href: backHref },
-          { label: workspace.project.title },
+          { label: workspace.project.title?.trim()||"Workspace" },
         ]} />
       ) : null}
       {sectionBaseHref ? (
@@ -608,6 +615,11 @@ export function ProjectWorkspace({
       {mode === "ADMIN" && riskReason ? (
         <section role="status" className="border-y border-warning-border bg-warning-subtle px-4 py-3 text-sm">
           Opened from At-risk projects · {riskReason === "STALLED" ? "Stalled" : riskReason === "BLOCKER" ? "Active blocker" : "Pending review"}
+          {riskReason==="BLOCKER"&&!workspace.project.blocker?.trim()&&
+            !workspace.tasks.some(task=>task.status==="BLOCKED")?
+            " · The recorded blocker has cleared. Refresh the risk report for current counts.":null}
+          {riskReason==="REVIEW"&&!workspace.taskSubmissions.some(item=>item.status==="SUBMITTED")?
+            " · No task submissions currently await review. Refresh the risk report.":null}
         </section>
       ) : null}
 
@@ -624,10 +636,18 @@ export function ProjectWorkspace({
           className="border-y border-border bg-[var(--lms-neutral-50)] px-4 py-3"
         >
           <p className="m-0 text-sm font-semibold text-foreground">
-            {archived && mode==="LEARNER"?"This workspace is archived, so it is read-only.":archived?"Archived workspace · read only":workspace.project.status==="COMPLETED"?"Completed project · read only":"Read-only project access"}
+            {archived?"Archived workspace":
+              workspace.project.status==="COMPLETED"?"Completed project · read only":
+              "Read-only project access"}
           </p>
           <p className="mt-1 text-sm leading-6 text-body">
-            {archived && mode==="MENTOR"?"This workspace is archived. You can read everything here, but tasks, resources, meetings and the submission can no longer be changed.":workspace.project.status==="COMPLETED"?"This project is complete. Existing work and meetings remain available to read; editing is disabled.":"Team, execution, delivery, resources, meetings and activity remain available for review. Mutations are disabled."}
+            {archived&&mode==="MENTOR"?
+              "This workspace is archived. You can review historical tasks, resources, meetings and submissions, but cannot change them.":
+              workspace.project.status==="COMPLETED"?
+                "This project is complete. Existing work and meetings remain available to read; editing is disabled.":
+                mode==="MENTOR"?
+                  "Your Project Mentor membership is read-only. Ask the College Admin to restore editing access or assign a writable Mentor role.":
+                  "Team, execution, delivery, resources, meetings and activity remain available for review. Mutations are disabled."}
           </p>
         </section>
       ) : null}
@@ -1090,13 +1110,18 @@ export function ProjectWorkspace({
       {show("sprints") || show("tasks") ? <section className="space-y-3">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
-            {mode==="ADMIN"?"Execution":"Releases and Sprints"}
+            {mode==="ADMIN"?(activeSection==="tasks"?"Task plan":activeSection==="sprints"?
+              "Sprint plan":"Execution"):"Releases and Sprints"}
           </h2>
           {mentorReviewHref && !show("overview") ? <Link href={mentorReviewHref}
             className="mt-2 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-link">
             Review submission
           </Link> : null}
-          {mode==="ADMIN"?<p className="mt-1 text-sm text-body">Release and sprint execution records.</p>:null}
+          {mode==="ADMIN"?<p className="mt-1 text-sm text-body">
+            {activeSection==="tasks"?
+              "Break the work into clear tasks and review learner submissions below.":
+              "Delivery cadence · Plan work in clear, release-bound increments."}
+          </p>:null}
           {mode==="ADMIN"&&show("sprints")?<section aria-label="Sprint plan summary"
             className="mt-4 space-y-3 border-y border-[var(--lms-canvas-border)] py-4">
             <p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">Delivery cadence</p>
@@ -1144,9 +1169,13 @@ export function ProjectWorkspace({
           ) : null}
           {mode!=="MENTOR"&&!workspace.releasesLoadError&&workspace.releases.length===0?
             <EmptyState title={mode==="ADMIN"?"No releases on this project yet":"No sprints yet"}
-              description={mode==="ADMIN"
-                ?"A sprint must belong to a release. Create or seed a project release before adding a new sprint."
-                :"Add the sprints this project should be measured against."}/>:null}
+              description={mode==="ADMIN"?
+                "No sprints yet. Add the first sprint when a release is ready.":
+                "Add the sprints this project should be measured against."}/>:null}
+          {mode==="ADMIN"&&!workspace.releasesLoadError&&workspace.releases.length>0&&
+            workspace.sprints.length===0?<p role="status" className="border-y border-border py-3 text-sm text-body">
+              No sprints yet. Add the first sprint when a release is ready.
+            </p>:null}
         </div>
         {mode==="LEARNER"?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
           {(()=>{
@@ -1171,23 +1200,25 @@ export function ProjectWorkspace({
           </nav>:null}
         {mode==="ADMIN"&&show("tasks")?(()=>{
           const liveTasks=workspace.tasks.filter(task=>!task.deletedAt);
+          const liveTaskIds=new Set(liveTasks.map(task=>task.id));
+          const activeSubmissions=workspace.taskSubmissions.filter(item=>
+            liveTaskIds.has(item.taskId));
           const latest=new Map<string,(typeof workspace.taskSubmissions)[number]>();
-          for(const item of workspace.taskSubmissions){
+          for(const item of activeSubmissions){
             const prior=latest.get(item.taskId);
             if(!prior||item.version>prior.version)latest.set(item.taskId,item);
           }
           const submitted=[...latest.values()].filter(item=>item.status==="SUBMITTED").length;
           const done=liveTasks.filter(task=>task.status==="DONE").length;
-          const active=liveTasks.filter(task=>task.status==="IN_PROGRESS").length;
-          const needsReview=liveTasks.filter(task=>task.status==="IN_REVIEW").length;
+          const active=liveTasks.filter(task=>["IN_PROGRESS","IN_REVIEW"].includes(task.status)).length;
           return <div className="space-y-4">
             <section aria-label="Task plan metrics" className="space-y-2">
              <h3 className="text-base font-semibold text-foreground">Task plan</h3>
              <p className="text-sm text-body">Only this workspace’s task plan is updated when you save.</p>
              <dl className="grid grid-cols-2 border-y border-border sm:grid-cols-4">
               {([
-               ["Total tasks",liveTasks.length],["Completed",done],
-               ["In progress",active],["Awaiting review",needsReview],
+               ["Tasks",liveTasks.length],["In progress",active],
+               ["Done",done],["Submissions",activeSubmissions.length],
               ] as const).map(([name,count])=><div key={name} className="border-b border-border p-3">
                <dt className="text-xs text-body">{name}</dt>
                <dd className="text-xl font-semibold tabular-nums">{count}</dd>
@@ -1196,12 +1227,12 @@ export function ProjectWorkspace({
             </section>
             <ProjectTaskSubmissionOverview
               metrics={[
-                {label:"Total submissions",value:String(workspace.taskSubmissions.length)},
+                {label:"Total submissions",value:String(activeSubmissions.length)},
                 {label:"Submitted",value:String(submitted)},
-                {label:"Approved",value:String(workspace.taskSubmissions.filter(item=>item.status==="APPROVED").length)},
-                {label:"Changes requested",value:String(workspace.taskSubmissions.filter(item=>item.status==="CHANGES_REQUESTED").length)},
+                {label:"Approved",value:String(activeSubmissions.filter(item=>item.status==="APPROVED").length)},
+                {label:"Changes requested",value:String(activeSubmissions.filter(item=>item.status==="CHANGES_REQUESTED").length)},
               ]}
-              rows={workspace.taskSubmissions.map(item=>({
+              rows={activeSubmissions.map(item=>({
                 id:item.id,
                 taskTitle:workspace.tasks.find(task=>task.id===item.taskId)?.title??"Recorded task",
                 submitter:workspace.members.find(member=>
@@ -1527,7 +1558,7 @@ export function ProjectWorkspace({
                               </div> : null}
                               {latestAttempt?.submissionUrl && safeHttpHref(latestAttempt.submissionUrl) ?
                                 <div className="sm:col-span-2"><dt className="font-semibold">Submission</dt>
-                                  <dd><a target="_blank" rel="noreferrer"
+                                  <dd><a target="_blank" rel="noopener noreferrer"
                                     href={safeHttpHref(latestAttempt.submissionUrl)!}
                                     className="text-link underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Open submission</a></dd>
                                 </div> : null}
@@ -1771,7 +1802,7 @@ export function ProjectWorkspace({
                           <a
                             href={source}
                             target="_blank"
-                            rel="noreferrer"
+                            rel="noopener noreferrer"
                             className="text-link hover:text-[var(--lms-primary-text)]"
                           >
                             Open source ↗
@@ -1781,7 +1812,7 @@ export function ProjectWorkspace({
                           <a
                             href={demo}
                             target="_blank"
-                            rel="noreferrer"
+                            rel="noopener noreferrer"
                             className="text-link hover:text-[var(--lms-primary-text)]"
                           >
                             Open demo ↗
@@ -1889,9 +1920,14 @@ export function ProjectWorkspace({
         {show("resources") ? <section className="space-y-3">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
+              {mode==="ADMIN"?<p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">
+                Project references</p>:null}
               <h2 className="m-0 text-lg font-semibold text-foreground">
-                Resources
+                {mode==="ADMIN"?"Resource library":"Resources"}
               </h2>
+              {mode==="ADMIN"?<p className="mt-1 text-sm text-body">
+                Curate the references, files and access guidance this workspace team needs.
+              </p>:null}
               {mode==="LEARNER"?<p aria-label="Resource counts" className="mt-1 text-sm text-body">
                 {workspace.resources.filter(resource=>resource.status!=="ARCHIVED").length} active resources ·
                 {" "}{workspace.resources.filter(resource=>resource.required&&resource.status!=="ARCHIVED").length} required
@@ -1914,6 +1950,9 @@ export function ProjectWorkspace({
             mode={mode} readOnly={readOnly}
             sprints={workspace.sprints.map(item=>({id:item.id,label:item.title}))}
             tasks={workspace.tasks.map(item=>({id:item.id,label:item.title}))}/>
+          {mode==="ADMIN"?<p className="text-xs text-body">
+            Resources are shared with the workspace team.
+          </p>:null}
           <ProjectResourceFilesSection
             projectId={workspace.project.id}
             resources={workspace.resources.filter(item=>item.status==="ACTIVE")
@@ -1936,11 +1975,14 @@ export function ProjectWorkspace({
           </div>:null}
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
+              {mode==="ADMIN"?<p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">
+                Team cadence</p>:null}
               <h2 className="m-0 text-lg font-semibold text-foreground">
-                Meetings
+                {mode==="ADMIN"?"Meeting plan":"Meetings"}
               </h2>
               <p className="mt-1 text-sm text-body">
-                {mode==="LEARNER"?"Upcoming meetings and recent history.":"Requested, scheduled and completed Project conversations."}
+                {mode==="LEARNER"?"Upcoming meetings and recent history.":
+                  "Keep project conversations attached to the work they move forward."}
               </p>
             </div>
             {!readOnly && mode === "LEARNER" ? (
@@ -1986,6 +2028,9 @@ export function ProjectWorkspace({
                 id: task.id, title: task.title, sprintId: task.sprintId,
               }))} />
           ) : null}
+          {mode==="ADMIN"?<p className="border-b border-border pb-3 text-xs text-body">
+            Calendar sync and follow-up state remain system-managed.
+          </p>:null}
           {mode==="MENTOR" && workspace.meetings.length ? (() => {
             const upcoming=workspace.meetings.filter(m=>(m.status==="SCHEDULED"||m.status==="RESCHEDULED")&&new Date(m.endsAt)>renderTime)
               .sort((a,b)=>new Date(a.startsAt).getTime()-new Date(b.startsAt).getTime());
@@ -2095,7 +2140,7 @@ export function ProjectWorkspace({
                       <a
                         href={href}
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                         className="mt-3 inline-flex text-sm font-semibold text-link hover:text-[var(--lms-primary-text)]"
                       >
                         Join meeting ↗
@@ -2147,22 +2192,37 @@ export function ProjectWorkspace({
       {show("audit") ? (
         <section className="space-y-3">
           <div>
+            {mode==="ADMIN"?<p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">
+              Resource activity</p>:null}
             <h2 className="m-0 text-lg font-semibold text-foreground">
-              Activity
+              {mode==="ADMIN"?"See who changed project resources and when":"Activity"}
             </h2>
             <p className="mt-1 text-sm text-body">
-              Task moves, sprint updates and resource changes from your project.
+              {mode==="ADMIN"?
+                "Trace resource changes here, or open the full project audit trail for broader events.":
+                "Task moves, sprint updates and resource changes from your project."}
             </p>
           </div>
 
-          {mode === "ADMIN" ? <Link href={(backHref.startsWith("/college/") ? "/college/projects/audit" : "/admin/projects/audit") + "?projectId=" + encodeURIComponent(workspace.project.id)}
-            className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">View full project audit</Link> : null}
-          {mode === "ADMIN" ? <ProjectResourceAuditList events={workspace.activity.map(event => ({
+          {mode === "ADMIN" ? <Link href={(backHref.startsWith("/college/") ? "/college/projects/audit" : "/admin/projects/audit") + "?entityId=" + encodeURIComponent(workspace.project.id) + "&range=all"}
+            className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">View audit trail</Link> : null}
+          {mode==="ADMIN"&&workspace.activityLoadError?
+            <div role="alert" className="border-l-[3px] border-warning-border bg-warning-subtle p-3 text-sm">
+              <p className="font-semibold">Resource audit could not be loaded.</p>
+              <p className="mt-1 text-body">The workspace remains available. Retry the audit without losing the project context.</p>
+              <Link href="?retry=1" className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+                Retry workspace audit
+              </Link>
+            </div>:null}
+          {mode==="ADMIN"&&!workspace.activityLoadError?
+            <ProjectResourceAuditList events={workspace.activity.map(event => ({
             id: event.id, eventType: event.eventType, summary: event.summary,
             subjectLabel: event.subjectLabel, actorDisplayName: event.actorDisplayName,
             occurredAt: event.occurredAt.toISOString(),
           }))} /> : null}
-          <ProjectActivityFilteredList projectId={workspace.project.id} events={workspace.activity} now={new Date().toISOString()} />
+          {!workspace.activityLoadError?<ProjectActivityFilteredList
+            projectId={workspace.project.id} events={workspace.activity}
+            now={new Date().toISOString()} />:null}
 
 
         </section>

@@ -47,7 +47,7 @@ export async function getProjectWorkspaceView(
     finalDelivery,
     taskSubmissions,
     evaluation,
-    activity,
+    activityRead,
   ] = await Promise.all([
     getProjectInstanceWorkspace(
       context,
@@ -68,11 +68,12 @@ export async function getProjectWorkspaceView(
       context,
       projectId,
     ),
-    listProjectActivity(
-      context,
-      projectId,
-    ),
+    listProjectActivity(context,projectId)
+      .then(items=>({items,failed:false as const}))
+      .catch(()=>({items:[] as Awaited<ReturnType<typeof listProjectActivity>>,
+        failed:true as const})),
   ]);
+  const activity=activityRead.items;
 
   const meetings=meetingsRead.items;
   // MEN-projects-meetings-25: historical roster is mentor-only. Learners
@@ -243,6 +244,7 @@ export async function getProjectWorkspaceView(
     taskSubmissions,
     evaluation,
     activity,
+    activityLoadError:activityRead.failed,
     mentorEvidence: buildMentorWorkspaceEvidence({
       tasks: workspace.tasks,
       members,
