@@ -9,6 +9,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
+import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {
   projectApiError,
   projectMutation,
@@ -64,6 +65,11 @@ export function AddProjectMemberControl({
   const searchRequest = useRef(0);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const dirty=Boolean(query.trim()||roleLabel.trim()||isPrimary||
+    role!=="LEARNER"||membershipId);
+  const guard=useProjectEditorDiscardGuard(open,dirty,pending,()=>{
+    setOpen(false);setError(null);
+  });
 
   async function search(
     nextRole: ProjectMemberRole = role,
@@ -163,7 +169,7 @@ export function AddProjectMemberControl({
       </Button>
       <Dialog
         open={open}
-        onOpenChange={next=>{if(!pending)setOpen(next);}}
+        onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}}
         title="Add Project teammate"
         description="Only active memberships from this college with the selected Learner or Mentor role are eligible."
       >
@@ -289,7 +295,7 @@ export function AddProjectMemberControl({
               variant="secondary"
               className="w-full sm:w-auto"
               disabled={pending}
-              onClick={() => setOpen(false)}
+              onClick={guard.requestClose}
             >
               Cancel
             </Button>
@@ -304,6 +310,12 @@ export function AddProjectMemberControl({
           </div>
         </form>
       </Dialog>
+      <ConfirmDialog open={guard.discardOpen}
+        onOpenChange={guard.setDiscardOpen}
+        title="Discard unsaved changes?"
+        description="Your teammate selection has not been saved. Leave it?"
+        confirmLabel="Discard changes" pending={pending}
+        onConfirm={guard.confirmDiscard}/>
     </>
   );
 }
