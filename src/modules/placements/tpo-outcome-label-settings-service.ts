@@ -117,13 +117,24 @@ export async function readTpoOutcomeChoiceCatalog(
  context:RequestContext,mode:"UNIVERSAL"|"SCOPED",
 ){
  const base=fixedTpoOutcomeCatalog(context);
+ const fixed=base.fixed.map((item,index)=>({
+   id:item.value,value:item.value,label:item.label,source:"FIXED" as const,
+   order:index,outcome:item.value,
+ }));
  if(mode==="UNIVERSAL"){
-  return {...base,scope:"UNIVERSAL" as const,version:null};
+  return {...base,scope:"UNIVERSAL" as const,version:null,
+    choices:fixed,collegeId:null};
  }
  const college=await readTpoOutcomeLabels(context);
+ const custom=college.labels.map((row,index)=>({
+   id:row.id??"",value:row.id??"",label:row.label,
+   source:"COLLEGE" as const,order:fixed.length+index,
+   outcome:row.outcome,
+ }));
  return {fixed:base.fixed,labels:college.labels,
   ready:base.ready&&college.ready,version:college.version,
-  scope:"SCOPED" as const};
+  scope:"SCOPED" as const,collegeId:context.membership?.collegeId??null,
+  choices:[...fixed,...custom]};
 }
 
 /** Immutable source-to-canonical ID crosswalk used only for an explicitly
