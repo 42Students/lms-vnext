@@ -26,14 +26,14 @@ export default async function MyTrackerReportsPage(){
   </div>;}
   return <section className="min-w-0 max-w-full space-y-5">
     <PageHeader title="My reports" description="See the issues you have reported."
-      actions={<Link href="/tracker" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-primary)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">Report an issue</Link>}/>
+      actions={<Link href="/tracker" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-primary)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9 w-full md:w-auto">Report an issue</Link>}/>
     {!reports.length?<EmptyState title="No reports yet" description="You have not reported any issues yet." action={<Link href="/tracker" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9">Report an issue</Link>}/>:
       <ul className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{reports.map(item=><li key={item.publicId}
         className="min-w-0 py-[var(--lms-space-3)]">
         <Link href={"/tracker/mine/"+encodeURIComponent(item.publicId)}
           className="inline-flex min-h-11 min-w-0 items-center break-all font-semibold text-primary-text underline md:min-h-9">{item.publicId}</Link>
         <div className="mt-1 flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] text-sm text-body"><span className="break-words">{item.issueType}</span><StatusBadge>{item.status}</StatusBadge></div>
-        <p className="mt-1 max-w-3xl break-words [overflow-wrap:anywhere] text-sm leading-[22px] text-body">{item.description}</p>
+        <p className="mt-1 max-w-3xl break-words [overflow-wrap:anywhere] text-sm leading-6 text-body">{item.description}</p>
       </li>)}</ul>}
   </section>;
 }
