@@ -49,7 +49,7 @@ type Field = {
 
 const collectionLabels: Record<CollectionKey, string> = {
   experiences: "Experience",
-  education: "Education/Qualification",
+  education: "Qualifications",
   skills: "Skills",
   projects: "Projects",
   certifications: "Certifications",
@@ -77,7 +77,7 @@ const fields: Record<CollectionKey, Field[]> = {
     { key: "institution", label: "Institution" },
     { key: "startYear", label: "Start year" },
     { key: "endYear", label: "End year" },
-    { key: "gradingType", label: "Grading type", type: "select", options: ["", "CGPA", "Percentage", "Grade"] },
+    { key: "gradingType", label: "Grading type", type: "select", options: ["", "CGPA", "GPA", "Percentage", "Grade"] },
     { key: "gradeObtained", label: "Grade obtained" },
     { key: "maxGrade", label: "Maximum grade" },
     { key: "qualifyingExam", label: "Qualifying exam" },
@@ -464,7 +464,7 @@ export function LearnerProfileWorkspace(props: {
     section: "education" | "skills" | "projects",
     items: LearnerProfileDocument[typeof section],
     onDone?: () => void,
-    successTitle: "Added" | "Saved" | "Removed" = "Saved",
+    successTitle: "Added successfully" | "Updated successfully" | "Deleted successfully" = "Updated successfully",
   ) {
     void guardedRun(async () => {
       try {
@@ -525,7 +525,7 @@ export function LearnerProfileWorkspace(props: {
     const finished = () => { setCollection(null); setEditingId(null); setItemDraft({}); };
     if (collection === "education" || collection === "skills" || collection === "projects") {
       saveOwnedSection(collection, nextItems as LearnerProfileDocument[typeof collection], finished,
-        editingId ? "Saved" : "Added");
+        editingId ? "Updated successfully" : "Added successfully");
     } else {
       saveDocument({ ...document, [collection]: nextItems } as LearnerProfileDocument,
         finished, document, editingId ? "Updated successfully" : "Added successfully");
@@ -540,7 +540,7 @@ export function LearnerProfileWorkspace(props: {
     if(!confirmation || !(await askConfirm(confirmation)))return;
     const items = current.filter((item) => String(item.id) !== id);
     if (section === "education" || section === "skills" || section === "projects") {
-      saveOwnedSection(section, items as LearnerProfileDocument[typeof section], undefined, "Removed");
+      saveOwnedSection(section, items as LearnerProfileDocument[typeof section], undefined, "Deleted successfully");
     } else {
       saveDocument({ ...document, [section]: items } as LearnerProfileDocument,
         undefined, document, "Deleted successfully");
@@ -701,7 +701,7 @@ export function LearnerProfileWorkspace(props: {
             <Value label="Work Shift Preference" value={document.jobPreferences.workShiftPreference}/>
             <Value label="Preferred Employment City" value={document.jobPreferences.preferredEmploymentCity}/>
             <Value label="Exam Slot Preference" value={document.jobPreferences.examSlotPreference || "No preference"}/>
-            <Value label="Job Notifications Enabled" value={document.jobPreferences.jobNotificationsEnabled ? "Enabled" : "Disabled"}/>
+            <Value label="Job Notifications Enabled" value={document.jobPreferences.jobNotificationsEnabled ? "On" : "Off"}/>
           </div>
         </Card>
         <Card id="social-profiles" title="Social profiles"
@@ -776,12 +776,16 @@ export function LearnerProfileWorkspace(props: {
         const items = (section === "metadata"
           ? document.metadata.filter(item=>!isLearnerShowcaseKey(item.key))
           : document[section]) as Array<Record<string, unknown>>;
+        const displayItems = section === "education" ? [...items].sort((left,right) =>
+          Number(Boolean(right.isRecentEducation)) - Number(Boolean(left.isRecentEducation)) ||
+          (Number(right.startYear) || 0) - (Number(left.startYear) || 0) ||
+          (Number(right.endYear) || 0) - (Number(left.endYear) || 0)) : items;
         return (
           <Card key={section} id={section} title={collectionLabels[section]} action={<Button className="min-h-11 md:min-h-9" size="sm" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
             onClick={() => openCollection(section)}>Add</Button>}>
-            {items.length ? (
+            {displayItems.length ? (
               <div className="space-y-2">
-                {items.map((item) => {
+                {displayItems.map((item) => {
                   const summary = itemTitle(section, item);
                   return (
                     <div key={String(item.id)} className="flex min-w-0 flex-col items-start gap-2 border-t border-border py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
@@ -1016,7 +1020,9 @@ export function LearnerProfileWorkspace(props: {
         open={collection !== null}
         onOpenChange={(open) => {if(!open)closeCollection();}}
         title={collection ? (editingId ? "Edit " : "Add ") + collectionLabels[collection] : "Edit profile entry"}
-        footer={<><Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending} onClick={closeCollection}>Cancel</Button><Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={saveCollection}>{pending ? "Saving…" : "Save"}</Button></>}
+        footer={<><Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending} onClick={closeCollection}>Cancel</Button><Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending || (collection==="education" &&
+              (!String(itemDraft.educationType??"").trim() || !String(itemDraft.institution??"").trim()))}
+              onClick={saveCollection}>{pending ? "Saving…" : editingId ? "Save" : "Add"}</Button></>}
       >
         {collection ? (
           <div className="grid gap-4 md:grid-cols-2">
@@ -1029,11 +1035,33 @@ export function LearnerProfileWorkspace(props: {
                   onChange={name=>setItemDraft(current=>({...current,name}))}/>;
               if(collection==="education"&&field.key==="educationType")
                 return <label key={field.key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">{field.label}
-                  <Select className="mt-[6px] min-h-11 md:min-h-9" value={value}
-                    onChange={event=>{setEducationError(null);setItemDraft({...itemDraft,[field.key]:event.target.value});}}>
+                  <Select className="mt-[6px] min-h-11 md:min-h-9" required aria-required="true" value={value}
+                    onChange={event=>{setEducationError(null);setItemDraft({...itemDraft,
+                      educationType:event.target.value,program:"",specialization:"",qualifyingExam:"",examDetails:{}});}}>
                     <option value="">Choose education type</option>
                     {LEARNER_EDUCATION_TYPES.map(option=><option key={option} value={option}>{option}</option>)}
                   </Select>
+                </label>;
+              if(collection==="education"&&field.key==="program")
+                return <label key={field.key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">{field.label}
+                  <Input className="mt-[6px] min-h-11 md:min-h-9 w-full"
+                    value={value} maxLength={200} list="learner-program-suggestions"
+                    onChange={event=>setItemDraft(current=>({...current,program:event.target.value,specialization:""}))}/>
+                  <datalist id="learner-program-suggestions">
+                    {[...new Set(document.education.filter(item=>item.educationType===itemDraft.educationType)
+                      .map(item=>item.program).filter(Boolean))].map(option=><option key={option} value={option}/>)}
+                  </datalist>
+                </label>;
+              if(collection==="education"&&field.key==="institution")
+                return <label key={field.key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">{field.label}
+                  <Input className="mt-[6px] min-h-11 md:min-h-9 w-full" required aria-required="true"
+                    list="learner-institution-suggestions" value={value} maxLength={300}
+                    onChange={event=>{setEducationError(null);setItemDraft(current=>({...current,institution:event.target.value}));}}/>
+                  <datalist id="learner-institution-suggestions">
+                    {[...new Set(document.education.map(item=>item.institution).filter(Boolean))]
+                      .map(option=><option key={option} value={option}/>)}
+                  </datalist>
+                  <span className="mt-1 block text-xs font-normal text-muted-foreground">Start typing to reuse a saved institution, or enter another institution.</span>
                 </label>;
               if(collection==="education"&&field.key==="qualifyingExam")
                 return <label key={field.key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">{field.label}
