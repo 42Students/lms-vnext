@@ -188,7 +188,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-3 font-[650] text-[var(--lms-link-text)] min-[768px]:min-h-[var(--lms-control-height)] md:min-h-9 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] hover:underline">
        {row.buttonLabel} ↗
       </a>:null}
-      {tab.data==="from-42"?<TpoPlacementCellReadAction id={row.id}/>:null}
+      {tab.data==="from-42"?<TpoPlacementCellReadAction id={row.id} autoMarkRead={result.readStateReady&&!row.readAt}/>:null}
      </div>:null}
     {tab.data!=="from-42"?<div className="mt-4 flex min-w-0 flex-wrap items-center gap-2">
     {tab.data==="yours" ?
