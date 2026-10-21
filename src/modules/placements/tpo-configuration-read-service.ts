@@ -1,7 +1,7 @@
 import "server-only";
 import { asc, and, eq, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { colleges, courses, departments, placementJobs } from "@/db/schema";
+import { colleges, courses, departments, collegeMemberships, users, membershipRoles, programs, learnerProgramEnrollments, placementCandidateAcademicEvidence, placementJobs } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireTpoBatchActor } from "./tpo-batch-workspace-read-service";
 import { placementTableExists } from "./staged-tables";
@@ -161,22 +161,53 @@ export async function listPlacementJobTypeChoices(ctx:RequestContext,collegeId:s
  });
 }
 
-/** Legacy ChoicesController branch options, rebuilt from currently visible
- * college departments. The selected college is re-authorized on each call;
- * requests without a college cannot be mistaken for an empty catalog.
- */
-export async function listTpoCollegeBranchOptions(ctx:RequestContext,collegeId:string|null){
- if(!collegeId)return {state:"NO_COLLEGE" as const,branches:[] as string[]};
+/** Historic ChoicesController shape, now based on active students in the selected
+ * college and stored academic evidence. Neither draft data nor other tenants
+ * can contribute to an option, and all options are sorted deterministically. */
+export async function listTpoLearnerChoices(ctx:RequestContext,collegeId:string|null){
+ if(!collegeId)return {state:"NO_COLLEGE" as const,
+  branches:[] as {value:string;label:string}[],
+  passingYears:[] as {value:string;label:string}[]};
  return getDb().transaction(async tx=>{
   const [college]=await tx.select({organizationId:colleges.organizationId,status:colleges.status})
    .from(colleges).where(eq(colleges.id,collegeId)).for("share").limit(1);
   if(!college||college.status!=="ACTIVE")throw new AuthorizationError("placements.read");
   await assertPersistedPlatformPermission(tx,ctx,"placements.read",{collegeId,organizationId:college.organizationId});
-  const names=await tx.selectDistinct({name:sql<string>`btrim(${departments.name})`})
-   .from(departments)
-   .where(and(eq(departments.collegeId,collegeId),isNull(departments.archivedAt),
-    sql`btrim(${departments.name}) <> ''`))
-   .orderBy(sql`btrim(${departments.name})`);
-  return {state:"READY" as const,branches:names.map(row=>row.name)};
+  const active=and(eq(collegeMemberships.collegeId,collegeId),
+   eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
+   eq(membershipRoles.role,"LEARNER"));
+  const [branchRows,yearRows]=await Promise.all([
+   tx.selectDistinct({name:sql<string>`btrim(${departments.name})`})
+    .from(learnerProgramEnrollments)
+    .innerJoin(collegeMemberships,eq(collegeMemberships.id,learnerProgramEnrollments.membershipId))
+    .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .innerJoin(membershipRoles,eq(membershipRoles.membershipId,collegeMemberships.id))
+    .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
+    .innerJoin(departments,eq(departments.id,programs.departmentId))
+    .where(and(active,eq(learnerProgramEnrollments.status,"ACTIVE"),
+     eq(departments.collegeId,collegeId),isNull(departments.archivedAt),
+     sql`btrim(${departments.name}) <> ''`))
+    .orderBy(sql`btrim(${departments.name})`),
+   tx.selectDistinct({year:placementCandidateAcademicEvidence.passingYear})
+    .from(placementCandidateAcademicEvidence)
+    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementCandidateAcademicEvidence.membershipId))
+    .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .innerJoin(membershipRoles,eq(membershipRoles.membershipId,collegeMemberships.id))
+    .where(and(active,sql`${placementCandidateAcademicEvidence.passingYear} between 1950 and 2200`))
+    .orderBy(placementCandidateAcademicEvidence.passingYear),
+  ]);
+  return {state:"READY" as const,
+   branches:branchRows.map(row=>({value:row.name,label:row.name})),
+   passingYears:yearRows.flatMap(row=>row.year===null?[]:[{
+    value:String(row.year),label:String(row.year)}])};
  });
+}
+/** Legacy consumers previously asked only for branch strings. */
+export async function listTpoCollegeBranchOptions(ctx:RequestContext,collegeId:string|null){
+ const options=await listTpoLearnerChoices(ctx,collegeId);
+ return {state:options.state,branches:options.branches.map(row=>row.value)};
+}
+export async function listTpoCollegePassingYearOptions(ctx:RequestContext,collegeId:string|null){
+ const options=await listTpoLearnerChoices(ctx,collegeId);
+ return {state:options.state,passingYears:options.passingYears};
 }
