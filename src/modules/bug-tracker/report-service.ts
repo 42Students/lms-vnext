@@ -31,12 +31,17 @@ export async function createBugTrackerIssueForAdmin(
   // Public IDs do not reveal a sequential DB row. A caller-supplied stable
   // retry key gets a stable public ID for the same authenticated reporter.
   // Without a key, preserve the existing cryptographically random behavior.
-  const publicId = "LMS-" + (idempotencyKey
+  const db=getDb();
+  // Retry only a collision on the public-id unique index, using a fresh
+  // transaction. PostgreSQL aborts a transaction after a unique violation.
+  for(let attempt=0;attempt<3;attempt++){
+   const publicId="LMS-"+(idempotencyKey
     ? createHash("sha256").update("tracker:v1:").update(context.user.id)
       .update(":").update(idempotencyKey).digest().readBigUInt64BE()
-    : randomBytes(8).readBigUInt64BE()).toString().padStart(4, "0");
-  const db = getDb();
-  return db.transaction(async (tx) => {
+    : randomBytes(8).readBigUInt64BE()).toString().padStart(4,"0");
+   if(publicId.length>24)throw new TrackerAdminError("INVALID_INPUT");
+   try{
+    return await db.transaction(async (tx) => {
     const [actor] = await tx.select({
       displayName: users.displayName,
       platformStatus: users.platformStatus,
@@ -76,7 +81,11 @@ export async function createBugTrackerIssueForAdmin(
           reporterAccess: "ACCOUNT_ONLY" as const };
       }
     }
-    const reporterName = actor.displayName.trim() || "Authenticated reporter";
+    const reporterName=actor.displayName.trim();
+    // Names can collide. The immutable user ID is the sole identity key,
+    // and only the signed-in user may submit their own selected reporter name.
+    if(!reporterName||input.reporterName.trim().toLocaleLowerCase("en-IN")!==reporterName.toLocaleLowerCase("en-IN"))
+      throw new TrackerAdminError("INVALID_INPUT");
     // Historic bug tracker allowed selecting an active named reporter, but
     // names are not identities and may collide. User IDs are authoritative.
     // Existing rows are re-used so reporting does not create a new disabled
@@ -124,7 +133,12 @@ export async function createBugTrackerIssueForAdmin(
       description: input.description,
       severity: input.severity,
       evidenceLink: input.evidenceLink || null,
-      sourceUrl: input.sourceUrl || null,
+      sourceUrl:input.sourceUrl?(()=>{
+        // Browser URLs may contain auth tokens or private query parameters.
+        const safe=new URL(input.sourceUrl);
+        safe.username="";safe.password="";safe.search="";safe.hash="";
+        return safe.toString();
+      })():null,
       sourcePath: input.sourcePath || null,
       browser: input.browser || null,
       viewport: input.viewport || null,
@@ -140,4 +154,12 @@ export async function createBugTrackerIssueForAdmin(
     return { publicId: report.publicId, status: "NEW" as const,
       reporterAccess: "ACCOUNT_ONLY" as const };
   });
+   }catch(error){
+    const candidate=error as {code?:string;constraint?:string;cause?:{code?:string;constraint?:string}};
+    const code=candidate.code??candidate.cause?.code;
+    const constraint=candidate.constraint??candidate.cause?.constraint;
+    if(idempotencyKey||code!=="23505"||constraint!=="db10_bug_reports_public_id_uq")throw error;
+   }
+  }
+  throw new TrackerAdminError("INVALID_INPUT");
 }

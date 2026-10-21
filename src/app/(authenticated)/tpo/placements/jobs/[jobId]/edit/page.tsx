@@ -4,6 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {PageBackLink} from "@/components/ui/page-back-link";
 import {Alert} from "@/components/ui/alert";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {ErrorState} from "@/components/ui/error-state";
 import {TpoDriveEditForm} from "@/components/placements/tpo-drive-edit-form";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -26,14 +27,32 @@ export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:s
   </div>;
  }
  return <div className="min-w-0 space-y-4">
-  <PageHeader eyebrow="TPO · Drives" title="Edit drive" description={"Update "+job.title+" carefully. Save changes before returning to the drive."}
-    actions={<PageBackLink href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)} label="Drive workspace" />}/>
-  {job.editable?<TpoDriveEditForm job={job}/>:<Alert tone="warning" aria-label="Drive edit unavailable">
-   <p>{job.status==="CLOSED"||job.status==="CANCELLED"
-    ?"This drive is closed: nothing here can be changed. To run it again, open Create drive and pick it under Clone a past drive."
-    :"This drive is not editable. The saved details are preserved. Open the drive workspace to review them."}</p>
-   <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">Create drive</Link>
-  </Alert>}
+  <PageHeader title={"Edit drive · "+job.title}
+    description={"Saved "+new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(job.updatedAt))+" IST"}
+    actions={<div className="flex flex-wrap items-center gap-2">
+      <StatusBadge tone={job.editable?"info":"neutral"}>{job.status==="DRAFT"?"Draft":job.status==="PUBLISHED"?"Live":job.status}</StatusBadge>
+      <PageBackLink href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)} label="Open drive page"/>
+      {job.editable?<a href="#drive-save-actions" className="inline-flex min-h-11 items-center rounded border border-primary bg-primary px-3 text-sm font-semibold text-on-primary md:min-h-9">Save changes</a>:null}
+      {job.status==="DRAFT"?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"?publish=1#drive-lifecycle-publish"} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-link md:min-h-9">Review &amp; publish</Link>:null}
+    </div>}/>
+  {job.editable?<TpoDriveEditForm job={job}/>:<section aria-label="Read-only drive history" className="space-y-4">
+    <Alert tone="warning" aria-label="Drive edit unavailable">This drive is {job.status.toLowerCase()} and cannot be edited. All saved details are shown below for reference.</Alert>
+    <dl className="grid min-w-0 gap-4 rounded-[12px] border border-border bg-surface p-4 sm:grid-cols-2">
+      {([
+        ["Role",job.title],["Status",job.status],["Job type",job.jobTypeLabel??job.employmentType],
+        ["Description",job.description],["Location",job.locations.join(", ")||"Not recorded"],
+        ["Openings",job.openings===null?"Not recorded":String(job.openings)],
+        ["Minimum CTC",job.minimumAnnualCtcInr===null?"Not recorded":"₹"+job.minimumAnnualCtcInr],
+        ["Maximum CTC",job.maximumAnnualCtcInr===null?"Not recorded":"₹"+job.maximumAnnualCtcInr],
+        ["Application deadline",job.applicationDeadline??"Not recorded"],
+        ["Eligible batches",job.allowedCohortIds.length?job.allowedCohortIds.length+" selected":"All batches"],
+      ] as const).map(([label,value])=><div key={label} className="min-w-0 border-b border-border pb-2">
+         <dt className="text-xs font-semibold text-muted-foreground">{label}</dt>
+         <dd className="mt-1 break-words text-sm text-body">{value}</dd>
+        </div>)}
+    </dl>
+    <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Create drive</Link>
+   </section>}
   <section aria-label="Other drive settings" className="space-y-2 border-t border-border pt-4">
    <h2 className="text-base font-semibold text-foreground">Company, eligibility and rounds</h2>
    <p className="text-sm text-muted-foreground">
