@@ -23,7 +23,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
   if (!query) return <div className="space-y-4">
     <PageHeader title="Drives" />
     <ErrorState title="Invalid drive filters" description="Search, status, season, company or page is invalid."
-      action={<Link href="/college/placements/drives" className="hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
+      action={<Link href="/college/placements/drives" className="hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>} />
   </div>;
   const data = await listCollegeDrives(context, query);
   const formatter = new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
@@ -31,7 +31,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
     {key:"drive",header:"Drive",mobilePriority:"primary",cell:item=><div className="min-w-0">
       <p className="break-words font-semibold">{item.title}</p>
       <Link href={`/college/placements/jobs/${item.id}/overview`}
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open drive</Link>
+        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open drive</Link>
     </div>},
     {key:"company",header:"Company",cell:item=>item.companyName},
     {key:"type",header:"Type",cell:item=>item.type.replaceAll("_"," ")},
@@ -42,9 +42,9 @@ export default async function CollegeDrivesPage({ searchParams }: {
     {key:"status",header:"Status",cell:item=>item.status==="PUBLISHED"?"Live":item.status==="DRAFT"?"Draft":item.status==="CLOSED"?"Closed":item.status==="ARCHIVED"?"Archived":item.status},
     {key:"actions",header:"Actions",mobilePriority:"action",cell:item=><div className="flex min-w-0 flex-wrap items-center gap-2">
       <Link href={`/college/placements/jobs/${item.id}/applications`}
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View applications</Link>
+        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View applications</Link>
       <Link href={`/college/placements/jobs/${item.id}/settings`}
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Edit</Link>
+        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Edit</Link>
       <CollegeDriveRowLifecycleAction jobId={item.id} title={item.title} status={item.status}/>
       {item.status==="PUBLISHED"?<CollegeDriveDeadlineAction jobId={item.id}
         title={item.title} currentDeadline={item.applicationDeadline?.toISOString()??null}/>:null}
@@ -54,7 +54,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
   return <div className="space-y-6">
     <PageHeader title="Drives"
       description="College-owned placement drives. This list is independent of cross-college recruiter access."
-      actions={<Link href="/college/placements" className="text-link underline min-h-11 md:min-h-[var(--lms-control-height)] inline-flex items-center lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Operations workspace</Link>} />
+      actions={<Link href="/college/placements" className="text-link underline min-h-11 md:min-h-[var(--lms-control-height)] inline-flex items-center lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Operations workspace</Link>} />
     <form method="get" role="search" aria-label="Drive filters" className="grid md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 min-w-0 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:grid-cols-1">
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title or company
         <Input type="search" name="q" defaultValue={query.q} maxLength={100}
@@ -80,7 +80,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
       </label>
       <details className="min-w-0 border-t border-border pt-2 md:col-span-2 lg:col-span-4 xl:col-span-6"
         open={Boolean(query.deadlineAfter||query.deadlineBefore||query.minimumApplicants||query.sort!=="TITLE")||undefined}>
-        <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Advanced filters</summary>
+        <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Advanced filters</summary>
         <div className="grid min-w-0 gap-[var(--lms-space-3)] pt-3 md:grid-cols-2 lg:grid-cols-4">
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline from
         <DateInput mode="date" name="deadlineAfter" defaultValue={query.deadlineAfter??""}
@@ -118,8 +118,8 @@ export default async function CollegeDrivesPage({ searchParams }: {
     </section>
     <nav aria-label="Drive pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
       <span>Page {data.query.page} of {data.totalPages}</span><div className="flex flex-wrap gap-3">
-        {query.page>1?<Link className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] md:min-h-[var(--lms-control-height)] hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={driveListHref({...query,page:query.page-1})}>Previous</Link>:null}
-        {query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] md:min-h-[var(--lms-control-height)] hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={driveListHref({...query,page:query.page+1})}>Next</Link>:null}
+        {query.page>1?<Link className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-link-text)] md:min-h-[var(--lms-control-height)] hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={driveListHref({...query,page:query.page-1})}>Previous</Link>:null}
+        {query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-link-text)] md:min-h-[var(--lms-control-height)] hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={driveListHref({...query,page:query.page+1})}>Next</Link>:null}
       </div>
     </nav>
   </div>;
