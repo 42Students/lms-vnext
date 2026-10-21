@@ -18,7 +18,7 @@ export function TpoSelectedReviewQueue({jobId,rows}:{jobId:string;rows:readonly 
    <p className="break-words text-sm">{current.label}</p>
    <p className="text-xs text-muted-foreground">Open the applicant&apos;s authorized detail to make a decision. Return to this tab to continue through the selected queue.</p>
    <Link href={tpoReviewOneByOneHref(jobId,current.id)} target="_blank" rel="noopener noreferrer"
-    className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+    className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-on-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
     Open selected applicant
    </Link>
    <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap">

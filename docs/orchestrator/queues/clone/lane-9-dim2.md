@@ -265,18 +265,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/components/tpo/tpo-drive-request-actions.tsx`
 - [x] `src/components/tpo/tpo-due-followup-workspace.tsx`
 - [x] `src/components/tpo/tpo-grid-column-chooser.tsx`
-- [ ] `src/components/tpo/tpo-new-followup-modal.tsx`
-- [ ] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
-- [ ] `src/components/tpo/tpo-notice-delete-confirm.tsx`
-- [ ] `src/components/tpo/tpo-outcome-labels-editor.tsx`
-- [ ] `src/components/tpo/tpo-participation-decision-form.tsx`
-- [ ] `src/components/tpo/tpo-public-join-link-card.tsx`
-- [ ] `src/components/tpo/tpo-recruiter-message-reply.tsx`
-- [ ] `src/components/tpo/tpo-roster-verification-bulk.tsx`
-- [ ] `src/components/tpo/tpo-selected-review-queue.tsx`
-- [ ] `src/components/tpo/tpo-spreadsheet-grid.tsx`
-- [ ] `src/components/tpo/tpo-student-clipboard-actions.tsx`
-- [ ] `src/components/tpo/tpo-student-nudge-panel.tsx`
+- [x] `src/components/tpo/tpo-new-followup-modal.tsx`
+- [x] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
+- [x] `src/components/tpo/tpo-notice-delete-confirm.tsx`
+- [x] `src/components/tpo/tpo-outcome-labels-editor.tsx`
+- [x] `src/components/tpo/tpo-participation-decision-form.tsx`
+- [x] `src/components/tpo/tpo-public-join-link-card.tsx`
+- [x] `src/components/tpo/tpo-recruiter-message-reply.tsx`
+- [x] `src/components/tpo/tpo-roster-verification-bulk.tsx`
+- [x] `src/components/tpo/tpo-selected-review-queue.tsx`
+- [x] `src/components/tpo/tpo-spreadsheet-grid.tsx`
+- [x] `src/components/tpo/tpo-student-clipboard-actions.tsx`
+- [x] `src/components/tpo/tpo-student-nudge-panel.tsx`
 - [ ] `src/components/tpo/tpo-student-quick-panel.tsx`
 - [ ] `src/components/tpo/tpo-student-saved-views.tsx`
 - [ ] `src/components/tpo/tpo-students-assign-prep.tsx`
