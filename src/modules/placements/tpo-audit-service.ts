@@ -21,6 +21,7 @@ import {
 import {
   TPO_AUDIT_KINDS,
   tpoAuditAboutCategory,
+  formatTpoAuditEventType,
   summarizeTpoAuditKinds,
   tpoAuditActorLabel,
   type TpoAuditKind,
@@ -454,17 +455,33 @@ function auditDateFilters(
     when ${aboutText} like '%STUDENT%' or ${aboutText} like '%LEARNER%' then 'STUDENT'
     when record.kind in ('OFFER', 'JOINING') or ${aboutText} like '%OFFER%' then 'OFFER'
     when record.kind in ('ROUND', 'RESULT') or ${aboutText} like '%ROUND%' or ${aboutText} like '%RESULT%' then 'ROUND'
+    when record.kind in ('APPLICATION', 'SCREENING') then 'STUDENT'
     when ${aboutText} like '%DRIVE%' or ${aboutText} like '%JOB%' or ${aboutText} like '%APPLICATION%' then 'DRIVE'
     else 'GENERAL' end`;
   if (query.f_about.length) {
     conditions.push(sql`${about} in (${sql.join(query.f_about.map((value) => sql`${value.toUpperCase()}`), sql`, `)})`);
   }
   if (query.f_event.length) {
-    const actions = query.f_event.map((value) => sql`(
-      lower(record.event_type) = ${value.toLowerCase()}
-      or lower(replace(replace(record.event_type, '_', ' '), '.', ' ')) = ${value.toLowerCase()}
-      or lower(record.detail) = ${value.toLowerCase()}
-    )`);
+    // Old "What happened" facets use human action labels, not action codes.
+    const legacyCodes = [
+      "BULK_RUN", "BULK_UNDONE", "SETTINGS_UPDATED",
+      "REGISTERED_BY_TPO", "REGISTRATION_RESTORED",
+      "ROUND_RESULTS_APPLIED", "APPLICANTS_MOVED",
+      "APPLICANTS_NOT_SELECTED", "APPLICANTS_MOVE_UNDONE",
+      "RECRUITER_LEADS_CREATED", "RECRUITER_LEADS_IMPORTED",
+      "RECRUITER_LEADS_STAGE_SET", "RECRUITER_LEADS_OWNER_SET",
+      "NUDGE_SENT", "PREP_ASSIGNED",
+    ] as const;
+    const actions = query.f_event.map((value) => {
+      const matching = legacyCodes.filter((code) =>
+        formatTpoAuditEventType(code).toLowerCase() === value.toLowerCase());
+      return sql`(
+        lower(record.event_type) = ${value.toLowerCase()}
+        or lower(replace(replace(record.event_type, '_', ' '), '.', ' ')) = ${value.toLowerCase()}
+        or lower(record.detail) = ${value.toLowerCase()}
+        ${matching.length ? sql`or record.event_type in (${sql.join(matching.map((code) => sql`${code}`), sql`, `)})` : sql``}
+      )`;
+    });
     conditions.push(sql`(${sql.join(actions, sql` or `)})`);
   }
   if (query.f_who.length) {
@@ -678,8 +695,13 @@ export async function getTpoAuditLog(
       actorType: row.actorIdPresent ? "USER" : "SYSTEM",
       actorId: null,
       action: row.eventType,
-      entityType: tpoAuditAboutCategory(row.eventType, row.subjectType),
-      entityId: row.subjectType === "placement_job" ? row.subjectId : row.jobId,
+      entityType: row.kind === "SHARE" ? "SHARE"
+        : row.kind === "OFFER" || row.kind === "JOINING" ? "OFFER"
+        : row.kind === "ROUND" || row.kind === "RESULT" ? "ROUND"
+        : row.kind === "APPLICATION" || row.kind === "SCREENING" ? "STUDENT"
+        : tpoAuditAboutCategory(row.eventType, row.subjectType),
+      // Do not substitute a job UUID as a learner/offer ID.
+      entityId: row.subjectType === "placement_job" ? row.subjectId : null,
       createdAt: row.occurredAt instanceof Date
         ? row.occurredAt.toISOString() : new Date(row.occurredAt).toISOString(),
       sourceKind: row.kind,
