@@ -72,6 +72,7 @@ export function CollegeBrandingForm({
   const [fetching,setFetching]=useState(false);
   const [previewMode,setPreviewMode]=useState<"desktop"|"mobile">("desktop");
   const [latestLogoUrl,setLatestLogoUrl]=useState<string|null>(uploadedLogoUrl??null);
+  useEffect(()=>{setLatestLogoUrl(uploadedLogoUrl??null);},[uploadedLogoUrl]);
   const lastCollegeRef=useRef(collegeId);
   const requestSequence=useRef(0);
   const [leaveHref,setLeaveHref]=useState<string|null>(null);
@@ -144,7 +145,7 @@ export function CollegeBrandingForm({
   const previewHeight=previewDesktop?191:302;
 
   async function reloadBranding(force=false){
-    if(!collegeId||savingRef.current||fetching)return;
+    if(!collegeId||(savingRef.current&&!force)||fetching)return;
     if(dirty&&!force){
       setLeaveHref("__reload__");
       return;
@@ -250,7 +251,7 @@ export function CollegeBrandingForm({
     <ConfirmDialog open={leaveHref !== null}
       title="Discard unsaved branding changes?"
       description="You have unsaved branding changes. Reloading, leaving or switching colleges discards them."
-      confirmLabel="Leave without saving" confirmVariant="danger"
+      confirmLabel={leaveHref==="__reload__"?"Discard changes and reload":"Leave without saving"} confirmVariant="danger"
       onOpenChange={next => {if (!next) setLeaveHref(null);}}
       onConfirm={() => {
         if (!leaveHref || savingRef.current) return;
