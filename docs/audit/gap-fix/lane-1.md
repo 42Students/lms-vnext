@@ -1,0 +1,14 @@
+# Gap fix proof — lane chat-1 (wave 1)
+
+Status: **in progress**. All 151 queue packets remain unticked until every applicable finding in each packet is resolved, safely skipped under the queue rules, or handed off to an owner. No tests, execution, lint, or CI were run.
+
+- `src_components_projects_project-workspace.tsx.part1of3.md` | **PARTIAL** | Implemented read-first workspace health, status/phase/template presence, team/task/sprint/target facts and progress derived from tasks then sprints with saved fallback (G2-14-028-005, -011, -064); college-admin Manage override scope path (G2-7-012-003); readiness hero and active/empty override details (G2-7-012-005, -006); dedicated resource-event summary and shared DataTable (G2-4-029-066, partial because per-resource filtering is not complete). G2-14-028-012 is partial: the summary editor still exposes manual progress while tasks exist. Pending: bulk sprint/task/meeting plan saves, persisted sprint reorder, section task token and schema parity, backlog linking, template replacement/search/deletion and their server contracts. G2-13-028-036 needs isolated-mutation verification before being marked already fixed. G2-3-029-031 needs intentional vNext expansion sign-off. **Do not tick.**
+- `src_components_projects_project-workspace.tsx.part2of3.md` | **PARTIAL** | Added server-override-aware submission verdict, precise Completed-task proof-coverage metric, missing-snapshot warning, and shared readiness renderer for all workspace roles (G2-7-012-008, -013, -036, -040, -064; partial where service failure occurs before page render). The college-admin override route is scoped (G2-7-012-032). Pending: real independent readiness failure/retry behavior, bulk sprint form/undo/reorder, mentor membership policy decision, per-member task metrics and 20-row searchable/paged roster. **Do not tick.**
+- `src_components_projects_project-workspace.tsx.part3of3.md` | **PARTIAL** | Restored persistent override notice/empty copy (G2-7-012-026), final-delivery empty task-submission guidance (G2-3-029-026), and missing mentor review text (G2-3-029-027). Pending: independent audit error and missing-college states, template-attached toast after a real backend operation, and guarded roster reconciliation result feedback. **Do not tick.**
+
+Pushed source commits:
+- `9fbcbbb4a3cd95ce108e8592379fb11867bb8781` — health/readiness/resource audit
+- `a0547b4c755ad5c7e1602a2ea1131354a41a08da` — readiness role coverage, delivery copy
+- `a588ed0a5a18a93dce5baa55696870a03392f9c4` — shared DataTable
+
+Next target: **finish `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-workspace.tsx.part1of3.md`** before ticking the queue or moving to the next packet. Source was manually reread around imports, new renderer components, summary/readiness placement, delivery states and audit table; compilation and runtime behavior are unverified.
