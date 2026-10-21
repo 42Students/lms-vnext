@@ -45,3 +45,5 @@ Both packets deliberately remain unticked: the queue requires all findings for a
 - **Branch reconciliation:** main advanced while work was in flight; combined upstream main with lane edits in a lease-checked two-parent commit `6af59655b189d99483500aad4488a81fba5db24b`, preserving newer main files and concurrent lane edits. A later source edit remains on the same lane branch.
 
 **Still not a completion proof.** All unticked documents, including U010, must remain unchecked until remaining P1/P2/P3 gaps are genuinely resolved and deployment/browser/schema verification can be performed. No project execution or CI was run.
+
+- Follow-up within the first packet: `36576f9` introduces `listPlacementOperationsJobPage` with strict filter parsing, literal-escaped case-insensitive search, SQL filtered/page-bounded queries, independent total, and submitted-application counts for returned jobs. The consuming Super Admin directory route remains outside this packet and is handed off; first packet still [ ].
