@@ -15,7 +15,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-11/W2_src_components_admin_inbound-mail-list.tsx.md` (edit src/components/admin/inbound-mail-list.tsx; 28 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-11/W2_src_components_admin_learner-module-access-drawer.tsx.md` (edit src/components/admin/learner-module-access-drawer.tsx; 26 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-11/W2_src_components_admin_managed-college-subdomain.tsx.md` (edit src/components/admin/managed-college-subdomain.tsx; 26 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-11/W2_src_components_admin_college-signin-method-form.tsx.md` (edit src/components/admin/college-signin-method-form.tsx; 23 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-11/W2_src_components_admin_college-signin-method-form.tsx.md` (edit src/components/admin/college-signin-method-form.tsx; 23 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-11/W2_src_components_admin_super-admin-today-board.tsx.md` (edit src/components/admin/super-admin-today-board.tsx; 22 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-11/W2_src_components_admin_tenant-settings-other-keys.tsx.md` (edit src/components/admin/tenant-settings-other-keys.tsx; 21 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-11/W2_src_components_shell_topbar_command-search.tsx.md` (edit src/components/shell/topbar/command-search.tsx; 21 findings; best P2)
