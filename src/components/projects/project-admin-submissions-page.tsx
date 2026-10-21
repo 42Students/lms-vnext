@@ -61,7 +61,7 @@ export async function ProjectAdminSubmissionsPage({
   const context = await getCurrentRequestContext();
   const allowLock = mayRecordCollegeAdminDeliveryLock(context,collegeId,
     context.adminScope?.organizationId ?? context.membership?.organizationId ?? "");
-  const parsed = parseProjectAdminSubmissionsQuery(searchParams);
+  const parsed = parseProjectAdminSubmissionsQuery(searchParams,{superAdmin:basePath.startsWith("/admin/projects")});
   if (!parsed.success) {
     return <div className="min-w-0 space-y-4">
       <PageHeader title="Submissions dashboard"
@@ -250,6 +250,7 @@ export async function ProjectAdminSubmissionsPage({
                 }</dd></div>
                 <div><dt className="font-semibold">Revisions</dt>
                   <dd>{Math.max(0, submission.version - 1)}</dd></div>
+                <div><dt className="font-semibold">Mentor</dt><dd>{submission.mentorMembershipId?"Assigned":"Unassigned"}</dd></div>
                 <div><dt className="font-semibold">Reviewed by</dt>
                   <dd>{submission.reviewedBy ?? "—"}</dd></div>
               </dl>
