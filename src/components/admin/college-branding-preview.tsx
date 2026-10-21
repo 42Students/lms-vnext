@@ -103,7 +103,7 @@ function ColorSwatch({
   overridden: boolean;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-[var(--lms-control-radius)] border border-border p-3">
+    <div className="min-w-0 flex items-center gap-3 rounded-[var(--lms-control-radius)] border border-border p-3">
       <span
         className="h-11 w-11 shrink-0 rounded-[var(--lms-control-radius)] border border-border"
         style={{ backgroundColor: color }}
@@ -129,7 +129,7 @@ export function CollegeBrandingPreview({
   const suppressed = Object.values(branding.suppressed).filter(Boolean).length;
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <section aria-label="Stored branding preview" className="flex min-w-0 flex-wrap items-start justify-between gap-3 border-b border-border pb-4">
         <div className="min-w-0 flex-1">
           <h2 className="m-0 text-lg font-semibold leading-6 text-foreground">{branding.college.name} · Branding preview</h2>
