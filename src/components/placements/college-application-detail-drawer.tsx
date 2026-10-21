@@ -247,6 +247,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
   /^\/api\/(college|admin|tpo)\/verification\//.test(detail.resume.url??"")
    ? detail.resume.url : null;
  const canMoveToAssessment=Boolean(detail?.application.status==="SUBMITTED"&&
+  detail.application.source!=="EXTERNAL"&&
   (detail.stage==="SHORTLISTED"||(!detail.stage&&detail.screening?.status==="SHORTLISTED")));
  const sections=[
   {label:"Pipeline history",rows:detail?.stageHistory??[],
