@@ -204,16 +204,16 @@ export function CourseActions({
             />
           </label>
           {allowMetadata?<div className="grid gap-3">
-            <label className="grid gap-1 text-xs font-semibold text-body">Short display name
+            <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Short display name
               <Input value={shortTitle} onChange={event=>setShortTitle(event.target.value)} maxLength={120}/>
             </label>
-            <label className="grid gap-1 text-xs font-semibold text-body">Official course code (optional)
+            <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Official course code (optional)
               <Input value={officialCode} onChange={event=>setOfficialCode(event.target.value)} maxLength={64}/>
             </label>
-            <label className="grid gap-1 text-xs font-semibold text-body">Course takeaways (optional)
+            <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Course takeaways (optional)
               <Textarea value={takeaways} onChange={event=>setTakeaways(event.target.value)} maxLength={2000}/>
             </label>
-            <label className="grid gap-1 text-xs font-semibold text-body">Card colour
+            <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Card colour
               <Input value={cardColor} onChange={event=>setCardColor(event.target.value)}
                 maxLength={7} pattern="#[0-9A-Fa-f]{6}"/>
             </label>

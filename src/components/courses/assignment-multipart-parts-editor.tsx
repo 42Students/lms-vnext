@@ -14,7 +14,7 @@ export function AssignmentMultipartPartsEditor({text,onTextChange,links,onLinksC
   <h4 className="text-sm font-semibold text-foreground">Written response and links (optional)</h4>
   <LearnerRichResponseEditor value={text} onChange={onTextChange} disabled={disabled}/>
   {links.map((link,index)=><div key={index} className="grid gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
-   <label className="grid gap-1 text-xs font-semibold text-body">Link type
+   <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Link type
     <Select value={link.kind} disabled={disabled}
      className="min-h-11 md:min-h-9"
      onChange={e=>onLinksChange(links.map((item,i)=>i===index?{...item,kind:e.target.value as AssignmentLinkPart["kind"]}:item))}>
@@ -22,12 +22,12 @@ export function AssignmentMultipartPartsEditor({text,onTextChange,links,onLinksC
      <option value="EXTERNAL_LINK">Website / External Link</option>
     </Select>
    </label>
-   <label className="grid gap-1 text-xs font-semibold text-body">HTTPS link
+   <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">HTTPS link
     <Input type="url" maxLength={2048} value={link.url} disabled={disabled}
      className="min-h-11 md:min-h-9"
      onChange={e=>onLinksChange(links.map((item,i)=>i===index?{...item,url:e.target.value}:item))}/>
    </label>
-   <label className="grid gap-1 text-xs font-semibold text-body">Caption
+   <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Caption
     <Input maxLength={255} value={link.caption} disabled={disabled}
      className="min-h-11 md:min-h-9"
      onChange={e=>onLinksChange(links.map((item,i)=>i===index?{...item,caption:e.target.value}:item))}/>

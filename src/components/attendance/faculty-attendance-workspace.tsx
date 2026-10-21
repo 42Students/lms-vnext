@@ -551,7 +551,7 @@ export function FacultyAttendanceWorkspace({
                 >
                   ←
                 </Button>
-                <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-body">
+                <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   Jump to month
                   <Input
                     className="w-full"
@@ -807,12 +807,12 @@ export function FacultyAttendanceWorkspace({
             <section className="border-b border-border pb-5">
               <div className="grid min-w-0 gap-[var(--lms-space-4)] lg:grid-cols-[minmax(16rem,24rem)_1fr]">
                 <div>
-                  <label className="block text-[13px] font-semibold leading-4 text-body">
+                  <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                     Date
-                    <Input type="date" className="mt-1.5" value={selectedDate}
+                    <Input type="date" className="mt-[6px]" value={selectedDate}
                       onChange={event=>chooseDate(event.target.value)}/>
                   </label>
-                  <label htmlFor={sessionSelectId} className="mt-3 block text-[13px] font-semibold leading-4 text-body">
+                  <label htmlFor={sessionSelectId} className="mt-3 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                     Class session
                   </label>
                   <Select
@@ -1006,10 +1006,10 @@ export function FacultyAttendanceWorkspace({
               </div>
 
               {selectedSession?.attendanceStatus==="MARKED"?(
-                <label className="mt-4 block space-y-2 text-sm font-semibold text-body">
+                <label className="mt-4 block space-y-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
                   Correction explanation (required)
                   <Textarea value={correctionReason} maxLength={500} rows={3}
-                    className="w-full text-sm font-normal"
+                    className="w-full text-[var(--lms-font-base)] font-normal"
                     placeholder="What changed in the recorded attendance?"
                     onChange={event=>setCorrectionReason(event.target.value)}/>
                   <span className="block text-xs font-normal text-muted-foreground">
@@ -1211,7 +1211,7 @@ export function FacultyAttendanceWorkspace({
           onSubmit={createSession}
           className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2"
         >
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body md:col-span-2">
+          <label className="grid min-w-0 gap-[6px] font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Class title
             <Input
               className="w-full"
@@ -1226,7 +1226,7 @@ export function FacultyAttendanceWorkspace({
               placeholder="Lecture, Lab, Tutorial…"
             />
           </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body">
+          <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Starts at (IST)
             <Input
               className="w-full"
@@ -1238,7 +1238,7 @@ export function FacultyAttendanceWorkspace({
               required
             />
           </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body">
+          <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Ends at (IST)
             <Input
               className="w-full"
@@ -1250,7 +1250,7 @@ export function FacultyAttendanceWorkspace({
               required
             />
           </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body md:col-span-2">
+          <label className="grid min-w-0 gap-[6px] font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Location
             <Input
               className="w-full"

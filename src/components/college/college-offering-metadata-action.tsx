@@ -58,15 +58,15 @@ export function CollegeOfferingMetadataAction({offering}:{
             {pending?"Saving…":"Confirm edit"}</Button>
         </div>}>
         <div className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body md:col-span-2">Offering type
+        <label className="grid min-w-0 gap-[6px] font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">Offering type
           <Select value={type} disabled={pending} onChange={e=>setType(e.target.value as "CORE"|"ELECTIVE")}>
             <option value="CORE">Core</option><option value="ELECTIVE">Elective</option>
           </Select></label>
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body">Credits (optional)
+        <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Credits (optional)
           <Input type="number" min={1} max={30} value={credits} disabled={pending}
             onChange={e=>setCredits(e.target.value)}/>
         </label>
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body">Display order
+        <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Display order
           <Input type="number" min={0} max={10000} required value={displayOrder} disabled={pending}
             onChange={e=>setDisplayOrder(e.target.value)}/>
         </label>

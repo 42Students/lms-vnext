@@ -82,30 +82,30 @@ export function CollegeContactProfileForm({ initial }: {
 
   return <><form onSubmit={submit} onChangeCapture={() => { setError(null); setSuccess(null); }}
     className="grid min-w-0 max-w-[920px] gap-[var(--lms-space-4)] md:grid-cols-2">
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body md:col-span-2">
+    <label className="grid min-w-0 gap-[6px] font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
       Public college display name
       <Input required disabled={pending} maxLength={160} className={inputClass} value={name}
         onChange={event => setName(event.target.value)} />
     </label>
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body">
+    <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
       Support email
       <Input type="email" disabled={pending} maxLength={320} className={inputClass}
         value={email} onChange={event => setEmail(event.target.value)}
         placeholder="help@example.edu" />
     </label>
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body">
+    <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
       Support phone
       <Input type="tel" disabled={pending} maxLength={32} className={inputClass}
         value={phone} onChange={event => setPhone(event.target.value)}
         placeholder="+91 98765 43210" />
     </label>
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body">
+    <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
       Terms of use URL (HTTPS)
       <Input type="url" pattern="https://.*" disabled={pending} maxLength={2048} className={inputClass}
         value={terms} onChange={event => setTerms(event.target.value)}
         placeholder="https://college.example.edu/terms" />
     </label>
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold text-body">
+    <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
       Privacy policy URL (HTTPS)
       <Input type="url" pattern="https://.*" disabled={pending} maxLength={2048} className={inputClass}
         value={privacy} onChange={event => setPrivacy(event.target.value)}

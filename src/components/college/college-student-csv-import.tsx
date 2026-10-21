@@ -73,7 +73,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         Download CSV template
       </a>
       <div className="mt-4 grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2 print:hidden">
-        <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
+        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Program
           <Select required value={programId}
             onChange={event=>{setProgramId(event.target.value);setCohortId("");setSectionId("");setReport(null);}}
             className="min-h-11 md:min-h-9">
@@ -81,7 +81,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
             {choices.programs.map(option=><option key={option.id} value={option.id}>{option.name}</option>)}
           </Select>
         </label>
-        <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
+        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Batch
           <Select required value={cohortId}
             onChange={event=>{setCohortId(event.target.value);setSectionId("");setReport(null);}}
             className="min-h-11 md:min-h-9">
@@ -90,7 +90,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
               <option key={option.id} value={option.id}>{option.name}</option>)}
           </Select>
         </label>
-        <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class/Section
+        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Class/Section
           <Select value={sectionId}
             onChange={event=>{setSectionId(event.target.value);setReport(null);}}
             className="min-h-11 md:min-h-9">
@@ -107,7 +107,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
             if (file.size > 1000000) { setError("File exceeds 1 MB"); return; }
             setCsv(await file.text()); setReport(null); setConfirm(false); setError(null);
           }} />
-      <label className="mt-4 grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">
+      <label className="mt-4 grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden text-[13px]">
         CSV contents
         <Textarea value={csv} onChange={event => {
           setCsv(event.target.value); setReport(null); setConfirm(false);
