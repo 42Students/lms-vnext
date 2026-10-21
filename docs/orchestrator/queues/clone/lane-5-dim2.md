@@ -488,7 +488,7 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-5.md: file, number of 
 - [x] `src/components/tpo/grid/tpo-grid.tsx`
 - [x] `src/components/tpo/recruiter-bulk-invite-controls.tsx`
 - [x] `src/components/tpo/recruiter-bulk-owner-controls.tsx`
-- [ ] `src/components/tpo/recruiter-bulk-stage-controls.tsx`
+- [x] `src/components/tpo/recruiter-bulk-stage-controls.tsx`
 - [ ] `src/components/tpo/recruiter-invite-landing.tsx`
 - [ ] `src/components/tpo/recruiter-lead-csv-import.tsx`
 - [ ] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
