@@ -374,10 +374,39 @@ export async function updatePlacementJob(
       );
     }
 
+    // A historical hidden label may remain unchanged on this draft, but a new
+    // label must still be one of the college's active choices.
+    let nextTypeLabel: string | undefined;
+    let nextCountsAsPlaced: boolean | undefined;
+    if (input.jobTypeLabel !== undefined) {
+      const requested = input.jobTypeLabel.trim().replace(/\s+/g, " ");
+      if (current.jobTypeLabel?.toLowerCase() === requested.toLowerCase()) {
+        nextTypeLabel = current.jobTypeLabel;
+        nextCountsAsPlaced = current.countsAsPlaced;
+      } else {
+        const builtin = TPO_BUILTIN_JOB_TYPES.find(
+          type => type.label.toLowerCase() === requested.toLowerCase(),
+        );
+        const [configured] = await tx.select({
+          label:placementTpoJobTypes.label,
+          active:placementTpoJobTypes.active,
+          countsAsPlaced:placementTpoJobTypes.countsAsPlaced,
+        }).from(placementTpoJobTypes).where(and(
+          eq(placementTpoJobTypes.collegeId,current.collegeId),
+          sql`lower(${placementTpoJobTypes.label}) = lower(${requested}::text)`,
+        )).limit(1);
+        if ((!builtin && !configured) || configured?.active === false)
+          throw new PlacementsServiceError("PLACEMENT_JOB_TYPE_INVALID");
+        nextTypeLabel = builtin?.label ?? configured!.label;
+        nextCountsAsPlaced = builtin?.countsAsPlaced ?? configured?.countsAsPlaced ?? true;
+      }
+    }
     const [updated] = await tx
       .update(placementJobs)
       .set({
         ...input,
+        jobTypeLabel:nextTypeLabel,
+        countsAsPlaced:nextCountsAsPlaced,
         fixedCtcLpa:input.fixedCtcLpa===undefined?undefined:
           input.fixedCtcLpa===null?null:input.fixedCtcLpa.toFixed(2),
         variableCtcLpa:input.variableCtcLpa===undefined?undefined:
