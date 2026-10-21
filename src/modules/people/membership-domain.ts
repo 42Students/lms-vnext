@@ -28,6 +28,8 @@ export function removeMembershipRoleFromSet(
   return roles.filter((current) => current !== role);
 }
 
+/** SUSPEND keeps the first suspendedAt even when reason changes; identical
+ * retries return null and must not emit a second lifecycle audit event. */
 export function getMembershipLifecyclePatch(
   state: MembershipLifecycleState,
   input: MembershipLifecycleInput,
@@ -107,4 +109,14 @@ export function membershipDeletionDecision(value: MembershipDeletionAssessment) 
   }
   return { action: "REVIEW_FOR_ERASURE" as const,
     reason: "Verify legal retention, private object deletion and audit before executing" };
+}
+
+export function membershipLifecycleActionResult(
+  before: MembershipLifecycleState,input:MembershipLifecycleInput,now:Date,
+): {changed:boolean;message:string;patch:MembershipLifecyclePatch|null} {
+  const patch=getMembershipLifecyclePatch(before,input,now);
+  return {changed:patch!==null,patch,message:patch===null
+    ? "No change — this membership is already in the requested state."
+    : input.action==="SUSPEND" ? "Membership suspended."
+    : input.action==="REACTIVATE" ? "Membership reactivated." : "Membership ended."};
 }

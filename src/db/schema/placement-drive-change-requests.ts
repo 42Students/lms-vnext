@@ -1,5 +1,5 @@
 import {sql} from "drizzle-orm";
-import {bigint,check,index,pgTable,text,timestamp,uniqueIndex,uuid,varchar,integer} from "drizzle-orm/pg-core";
+import {bigint,boolean,check,index,pgTable,text,timestamp,uniqueIndex,uuid,varchar,integer} from "drizzle-orm/pg-core";
 import {placementJobs} from "./placements";
 import {users} from "./users";
 
@@ -24,6 +24,9 @@ export const placementDriveChangeRequests=pgTable("placement_drive_change_reques
  legacyField:varchar("legacy_field",{length:32}),
  legacyKind:varchar("legacy_kind",{length:16}),
  legacyDirection:varchar("legacy_direction",{length:20}),
+ // External relationship discussion remains readable after request closure.
+ canonicalThreadId:uuid("canonical_thread_id"),
+ legacyWasReplied:boolean("legacy_was_replied"),
  reason:text("reason").notNull(),
  status:varchar("status",{length:16}).notNull().default("OPEN"),
  decisionNote:text("decision_note"),
@@ -35,6 +38,7 @@ export const placementDriveChangeRequests=pgTable("placement_drive_change_reques
 },t=>[
  index("placement_drive_changes_job_status_idx").on(t.jobId,t.status,t.createdAt),
  index("placement_drive_changes_target_open_idx").on(t.jobId,t.targetParty,t.status,t.field),
+ index("placement_drive_changes_thread_idx").on(t.canonicalThreadId),
  uniqueIndex("placement_drive_changes_one_open_field_uq")
    .on(t.jobId,t.field,t.proposerParty,t.targetParty).where(sql`${t.status} = 'OPEN' and ${t.field} <> 'OTHER'`),
  check("placement_drive_changes_parties_ck",sql`${t.proposerParty} in ('TPO','COMPANY') and ${t.targetParty} in ('TPO','COMPANY') and ${t.proposerParty} <> ${t.targetParty}`),
@@ -56,3 +60,11 @@ export const placementDriveChangeRequestMessages=pgTable("placement_drive_change
  check("placement_drive_change_messages_party_ck",sql`${t.senderParty} in ('TPO','COMPANY')`),
  check("placement_drive_change_messages_body_ck",sql`length(trim(${t.body})) between 1 and 2000`),
 ]);
+
+/** Source REPLIED is a final declined decision, not a live OPEN request. */
+export function normalizeLegacyDriveChangeStatus(raw:string):
+  "OPEN"|"ACCEPTED"|"ANSWERED"|"DECLINED"|"WITHDRAWN"|null {
+ const key=raw.trim().toUpperCase();
+ if(key==="REPLIED")return "DECLINED";
+ return key==="OPEN"||key==="ACCEPTED"||key==="ANSWERED"||key==="DECLINED"||key==="WITHDRAWN"?key:null;
+}
