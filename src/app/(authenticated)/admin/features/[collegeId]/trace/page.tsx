@@ -310,7 +310,7 @@ export default async function SuperAdminLearnerAccessTracePage({
 
       {selected ? (
         <section
-          className="min-w-0 space-y-5 scroll-mt-24"
+          className="min-w-0 space-y-6 scroll-mt-24"
           aria-label="Selected learner module access"
         >
           <div className="border-b border-border pb-6">
@@ -395,7 +395,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           {selected.modules.map((module) => (
             <article
               key={module.module}
-              className="min-w-0 space-y-3 border-t border-border pt-5"
+              className="min-w-0 space-y-3 border-t border-border pt-6"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
