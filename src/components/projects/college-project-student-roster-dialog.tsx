@@ -74,6 +74,7 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
  const additions=effectiveIds.filter(id=>!initial.includes(id));
  const capExceeded=effectiveIds.length>500;
  const changed=additions.length>0||removedIds.length>0;
+ const existingSelected=selected.filter(id=>initial.includes(id)).length;
  const removedNames=removedIds.map(id=>options.find(row=>row.membershipId===id)?.displayName??
    options.find(row=>row.membershipId===id)?.email??id);
  const visibleOptions=options.filter(option=>
@@ -104,7 +105,11 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
  }
 
  return <>
-  <Button type="button" size="sm" variant="secondary" onClick={()=>{setOpen(true);void load();}}>✎ Manage students…</Button>
+  <Button type="button" size="sm" variant="secondary" onClick={()=>{setOpen(true);void load();}}>
+   <svg aria-hidden="true" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M16 3l5 5-12 12-5 1 1-5L16 3z"/>
+   </svg>Manage students…
+  </Button>
   <Dialog open={open} onOpenChange={value=>{if(!busy){setOpen(value);if(!value)requestSequence.current++;}}}
    title="Manage students…"
    description="Add learners to this workspace, or explicitly choose to replace existing students. All changes are saved together.">
@@ -132,6 +137,16 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
       Replace existing roster
      </label>
     </fieldset>
+    {loaded?<div role="status" className="min-w-0 space-y-1 text-sm text-body">
+      <p>Already in this workspace: {initial.length} learner{initial.length===1?"":"s"}.
+        {existingSelected>0?" "+existingSelected+" already selected.":""}
+      </p>
+      {mode==="REPLACE"?<p className="text-warning-text">
+        Replace will remove access for unchecked learners, but their earlier work is preserved.
+        {removedIds.length>0?" "+removedIds.length+" learner(s) will be removed.":""}
+      </p>:<p>New learners will be appended to the existing roster.</p>}
+      <p>Maximum 500 learners per workspace.</p>
+    </div>:null}
     {loaded?<fieldset disabled={busy} tabIndex={0} className="max-h-64 min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)] px-[var(--lms-space-2)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">
      <legend className="px-[var(--lms-space-2)] text-[13px] font-semibold leading-5">Learners ({effectiveIds.length} total after save; {selected.length} selected in this editor)</legend>
      {visibleOptions.slice((currentPage-1)*50,currentPage*50).map(option=><label key={option.membershipId} className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-2)] py-[var(--lms-space-2)] text-[13px] leading-5">
