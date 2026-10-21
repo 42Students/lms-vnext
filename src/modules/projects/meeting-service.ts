@@ -97,6 +97,7 @@ async function loadMeeting(
       and(
         eq(projectMeetings.id, meetingId),
         eq(projectMeetings.projectId, projectId),
+        isNull(projectMeetings.deletedAt),
       ),
     )
     .limit(1);
@@ -108,6 +109,39 @@ async function loadMeeting(
   }
 
   return meeting;
+}
+
+/** Translation for legacy meeting DTOs whose cross-links were persisted as
+ * template keys rather than UUIDs. The caller remains in the same project
+ * access boundary: never resolve a key globally or borrow a task from another
+ * workspace. New vNext clients should continue submitting linked UUIDs.
+ */
+export async function resolveLegacyMeetingLinksByKey(
+ context:RequestContext,projectIdInput:string,
+ keys:{sprintKey?:string|null;taskKey?:string|null},
+){
+ const scope=await requireProjectReadAccess(context,projectIdInput);
+ const sprintKey=keys.sprintKey?.trim()||null;
+ const taskKey=keys.taskKey?.trim()||null;
+ if((sprintKey&&sprintKey.length>120)||(taskKey&&taskKey.length>120))
+  throw new ProjectsServiceError("PROJECT_MEETING_LINK_INVALID");
+ const [sprintMatches,taskMatches]=await Promise.all([
+  sprintKey?getDb().select({id:projectSprints.id}).from(projectSprints)
+   .where(and(eq(projectSprints.projectId,scope.project.id),
+    or(eq(projectSprints.templateKey,sprintKey),eq(projectSprints.legacySprintKey,sprintKey))))
+   .limit(2):Promise.resolve([]),
+  taskKey?getDb().select({id:projectTasks.id,sprintId:projectTasks.sprintId}).from(projectTasks)
+   .where(and(eq(projectTasks.projectId,scope.project.id),
+    or(eq(projectTasks.templateKey,taskKey),eq(projectTasks.legacyTaskKey,taskKey))))
+   .limit(2):Promise.resolve([]),
+ ]);
+ if((sprintKey&&sprintMatches.length!==1)||(taskKey&&taskMatches.length!==1))
+  throw new ProjectsServiceError("PROJECT_MEETING_LINK_INVALID");
+ const linkedSprintId=sprintMatches[0]?.id??null;
+ const linkedTaskId=taskMatches[0]?.id??null;
+ if(linkedSprintId&&linkedTaskId&&taskMatches[0]?.sprintId!==linkedSprintId)
+  throw new ProjectsServiceError("PROJECT_MEETING_LINK_INVALID");
+ return {linkedSprintId,linkedTaskId};
 }
 
 async function validateMeetingLinks(
