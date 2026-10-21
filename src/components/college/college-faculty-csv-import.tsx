@@ -71,7 +71,7 @@ export function CollegeFacultyCsvImport(){
       <div className="flex min-w-0 flex-col items-stretch gap-2 md:flex-row md:items-center md:justify-between print:hidden">
         <Button variant="primary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" loading={pending} disabled={pending||!csv.trim()} onClick={()=>run("PREVIEW")}>{pending?"Validating…":"Validate CSV"}</Button>
         <a download="faculty-template.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(header+"\n")}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">Download CSV template</a>
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">Download CSV template</a>
       </div>
       <details className="min-w-0 border-t border-border pt-3 print:hidden">
         <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">CSV contents</summary>
@@ -93,7 +93,7 @@ export function CollegeFacultyCsvImport(){
       {report.structuralErrors.length>0&&<Alert tone="error">{report.structuralErrors.join(", ")}</Alert>}
       <a download="faculty-import-report.csv"
         href={"data:text/csv;charset=utf-8,"+encodeURIComponent("row,status,detail,membershipId\r\n"+csvResult)}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
         Download row report
       </a>
       {report.preview&&report.valid>0&&report.structuralErrors.length===0&&

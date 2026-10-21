@@ -69,7 +69,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
       <p className="mt-2 break-all font-mono text-xs text-muted-foreground">{TEMPLATE}</p>
       <a download="student-import-template.csv"
         href={"data:text/csv;charset=utf-8,"+encodeURIComponent(TEMPLATE+"\n")}
-        className="mt-2 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
+        className="mt-2 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
         Download CSV template
       </a>
       <div className="mt-4 grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2 print:hidden">
@@ -136,7 +136,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         {report.structuralErrors.join(", ")}
       </Alert> : null}
       {csvDownload ? <a href={csvDownload} download="student-import-result.csv"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
         Export neutralized result CSV
       </a> : null}
       <DataTable<StudentCsvResult> caption="Student CSV validation and import results"
