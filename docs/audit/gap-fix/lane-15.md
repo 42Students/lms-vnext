@@ -329,3 +329,6 @@
 
 - work2 #49 `learner-course-card-search-model.ts` | G2-3-014-012: added bounded weighted ranking (exact 100/prefix 80/substring 60/edit distance <=2 40) with optional authorized usage boost and deterministic tie breaker for local course autocomplete. Full global synonym dictionary and cross-module usage unavailable; handoff for scoped source.
 - work2 #50 `api/courses/quiz-attempts/route.ts` | G2-3-001-049: explicit nextPage and deliveryId to permit reliable iteration across all section-scoped attempt pages, without truncating results silently or allowing unbounded cross-college query. Legacy college-wide consolidation remains authenticated consumer responsibility.
+
+- work2 #51 `learner-placement-job-detail.tsx` | G2-18-023-005/020: shows primary persisted application denial before generic availability, supplies REGISTER and RULES destinations derived from existing blockers; no eligibility-only OPEN assertion added. Need typed actionCode from apply service for exact parity.
+- work2 #52 `admin-readiness-overrides-service.ts` | G2-7-004-043/G2-7-032-078: includes archived projects in existing active override audit listing (chooser remains separate); exports active/clear, value, note, actor and timestamp event mapping; CLEAR remains excluded from active list.
