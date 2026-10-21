@@ -1,4 +1,7 @@
+import { sql } from "drizzle-orm";
 import {
+  check,
+  integer,
   index,
   pgTable,
   text,
@@ -27,6 +30,8 @@ export const collegeMemberships = pgTable(
     status: membershipStatusEnum("status").notNull().default("ACTIVE"),
     suspendedAt: timestamp("suspended_at", { withTimezone: true }),
     suspensionReason: text("suspension_reason"),
+    /** Membership-scoped write CAS; do not substitute for auth device revocation. */
+    version: integer("version").notNull().default(1),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
@@ -46,6 +51,7 @@ export const collegeMemberships = pgTable(
       table.status,
     ),
     index("college_memberships_user_status_idx").on(table.userId, table.status),
+    check("college_memberships_version_ck", sql`${table.version} > 0`),
   ],
 );
 
@@ -57,6 +63,10 @@ export const membershipRoles = pgTable(
       .notNull()
       .references(() => collegeMemberships.id),
     role: membershipRoleEnum("role").notNull(),
+    /** Imported role authority and audit are separate from the protected role enum. */
+    assignedByUserId: uuid("assigned_by_user_id").references(
+      () => users.id, { onDelete: "restrict" },
+    ),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [

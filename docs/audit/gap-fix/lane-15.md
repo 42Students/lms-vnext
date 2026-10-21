@@ -96,3 +96,13 @@
 
 ## Packet 21 — placements part 14/15
 - `src_db_schema_placements.ts.part14of15.md` | Verified already fixed G2-9-004-085, G2-9-015-100/101, G2-9-013-021/097/098/099/100 (job version, status/provenance), G2-17-023-009/010/038/059/061 (offer lineage, normalized joining). Existing grant lifecycle preserves proper REVOKED attribution and reason. | Pending invite UI/accept/decline API G2-13-025-002/006/012/023/044 and job/source DTO service G2-9-013-063, G2-9-013-099, G2-18-013-054 delegated. No new migration necessary beyond common source archive 0154.
+
+## Packet 22 — placements part 15/15
+- `src_db_schema_placements.ts.part15of15.md` | Verified name-global uniqueness removed in packet1 G2-9-033-013/052/053 and G2-9-034-012/047/053/097, domain-based identity and per-college contacts retained. Immutable company/ATS publicRef generated and indexed; job CAS/recruiter grants already present. | G2-12-019-028/030/031, G2-18-011-025, G2-20-011-013/014, G2-3-013-016, G2-13-019-015/016/017, G2-13-025-016/017/018 handed to validation, applicant, recruiter-invites and editor services. No schema duplication introduced.
+
+## Packet 23 — memberships part 1/2
+- `src_db_schema_memberships.ts.part1of2.md` | Added collegeMemberships.version positive CAS and membershipRoles.assignedByUserId attribution (0155). Canonical user→college membership→role model preserved. | G2-1-001-046, G2-13-016-019/043/044, G2-18-031-050/052/079/081/082, G2-19-001-087, G2-2-036-060, G2-3-032-041/069, G2-4-020-009/012/013/039/041/064/065 handed off as auth, legacy ordinal/department/identity crosswalk. No legacy tokenVersion duplicated; platform device sessions must revoke tokens immediately on status change. 0155 NOT EXECUTED.
+
+### Membership/role authority boundary
+- Legacy single Learner/Faculty integer row→global user UUID plus one college membership UUID per college; protected STAFF role classes (ADMIN/TPO/MENTOR) must be trusted, explicitly assigned as membershipRoles, never inferred from historical facultyType ordinal without verified mapping.
+- Global SYSTEM role does not grant automatic college actor identity. Membership suspension is college scoped, platform suspension all-college, ENDED retains audit rather than hard delete. Before mutating staff roles verify college scope and department FK belongs to that college; revoke active device/session scopes after suspension.
