@@ -17,22 +17,8 @@ export function SuperAdminTemplateCreateForm(){
  const [error,setError]=useState("");
  const edit=(key:keyof typeof values,value:string)=>setValues(old=>({...old,[key]:value}));
  async function submit(event:FormEvent<HTMLFormElement>){
-  event.preventDefault();
-  if(pendingRef.current)return;
-  setError("");
-  if(!values.title.trim()){setError("Title is required");return;}
-  if(values.title.trim().length>200){setError("Title must be 200 characters or fewer");return;}
-  if(!values.slug.trim()){setError("Template slug is required");return;}
-  if(values.slug.length>80){setError("Slug must be 80 characters or fewer");return;}
-  if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(values.slug)){
-   setError("Use lowercase letters, numbers, and hyphens only (e.g. project-template).");return;
-  }
-  if(!lines(values.deliverables).length){setError("Add at least one deliverable.");return;}
-  if(releases.some(x=>!x.title.trim())||sprints.some(x=>!x.title.trim())||
-     tasks.some(x=>!x.title.trim())||resources.some(x=>!x.title.trim())){
-    setError("Every added release, sprint, task and resource needs a title.");return;
-  }
-  pendingRef.current=true;setSaving(true);
+  event.preventDefault();if(saving)return;
+  setError("");setSaving(true);
   try{
    const payload=initialSuperAdminTemplateDraft(values);
    const result=await projectMutation("/api/projects/templates","POST",payload) as {template:{id:string}};
@@ -42,60 +28,21 @@ export function SuperAdminTemplateCreateForm(){
    setError(caught instanceof Error?caught.message:"Template creation failed.");
   }finally{setSaving(false);}
  }
- return <form onSubmit={event=>void submit(event)}
-  className="grid min-w-0 gap-5" noValidate>
-  <p className="text-sm text-body">Create a versioned template with editable
-   sprints, tasks and resources. Review it before publishing.</p>
-  <div className="grid gap-4 md:grid-cols-2">
-   <label className={label}>Template title
-    <Input className={field} required maxLength={200} disabled={saving}
-     value={values.title} onChange={event=>edit("title",event.target.value)}/>
-   </label>
-   <label className={label}>Slug
-    <Input className={field} required maxLength={80} disabled={saving}
-     value={values.slug} onChange={event=>edit("slug",event.target.value.toLowerCase())}/>
-    <span className="mt-1 block text-xs font-normal text-body">
-     Use lowercase letters, numbers, and hyphens only (e.g. project-template).
-    </span>
-   </label>
-  </div>
-  <div className="grid gap-3 md:grid-cols-2">
-   <label className={label}>Template lifecycle
-    <Select className={field} value={requestedLifecycle} disabled={saving}
-     onChange={e=>setRequestedLifecycle(e.target.value)}>
-     <option value="DRAFT">Draft</option>
-     <option value="PUBLISHED" disabled>Published — review draft then publish</option>
-     <option value="ARCHIVED" disabled>Archived — unavailable at creation</option>
-    </Select>
-   </label>
-   <label className={label}>Initial workspace status
-    <Select className={field} value={initialWorkspaceStatus} disabled={saving}
-     onChange={e=>setInitialWorkspaceStatus(e.target.value)}>
-     <option value="ACTIVE">Active</option>
-     <option value="PLANNED">In progress (planned)</option>
-    </Select>
-    <span className="mt-1 block text-xs font-normal text-body">
-     Set again when assigning the published template to a workspace.
-    </span>
-   </label>
-  </div>
-  <label className={label}>Summary (auto-derived if blank)
-   <Textarea className={field} maxLength={2000} disabled={saving}
-    value={values.summary} onChange={e=>edit("summary",e.target.value)}/>
-  </label>
-  <section className="space-y-3 border-t border-border pt-4" aria-label="Content">
-   <h2 className="text-base font-semibold">Content</h2>
-   <label className={label}>Goal
-    <Textarea className={field} rows={3} maxLength={2000} disabled={saving}
-     value={values.goal} onChange={e=>edit("goal",e.target.value)}/>
-   </label>
-   {([
-     ["deliverables","Deliverables · one per line (required)"],
-     ["definitionOfDone","Definition of done · one per line"],
-     ["personas","Personas · one per line"],
-   ] as const).map(([key,title])=><label key={key} className={label}>{title}
-    <Textarea className={field} rows={3} maxLength={4000} disabled={saving}
-     value={values[key]} onChange={e=>edit(key,e.target.value)}/>
+ const fields=[
+  {key:"title",label:"Template title",limit:200,required:true},
+  {key:"slug",label:"Slug",limit:64,required:true},
+  {key:"release",label:"First release",limit:200,required:true},
+  {key:"sprint",label:"First sprint",limit:200,required:true},
+  {key:"task",label:"First task",limit:200,required:true},
+ ] as const;
+ return <form onSubmit={event=>void submit(event)} className="grid min-w-0 gap-4">
+  <p className="m-0 text-sm text-body">The draft starts with one release, one sprint and one task. Review and publish after creation.</p>
+  <div className="grid min-w-0 gap-4 md:grid-cols-2">
+   {fields.map(field=><label key={field.key} className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    {field.label}<Input required={field.required} maxLength={field.limit} disabled={saving}
+     value={values[field.key]} onChange={event=>edit(field.key,field.key==="slug"?event.target.value.toLowerCase():event.target.value)}
+     pattern={field.key==="slug"?"[a-z0-9]+(?:-[a-z0-9]+)*":undefined}
+     className="w-full"/>
    </label>)}
   </div>
   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Summary (optional)

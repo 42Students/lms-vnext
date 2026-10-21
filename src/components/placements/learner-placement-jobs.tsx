@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ShieldCheck, AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -27,9 +26,6 @@ export type LearnerPlacementJobItem = {
     id: string;
     title: string;
     description: string;
-    responsibilities?: string | null;
-    targetDepartmentName?: string | null;
-    targetProgramName?: string | null;
     employmentType: string;
     jobTypeLabel?: string | null;
     workMode: string;
@@ -392,11 +388,9 @@ function JobActions({
           </StatusBadge>
           <div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-3 py-3 text-sm">
             <p className="font-semibold text-foreground">You're in — application sent</p>
-            <p className="mt-1 break-all text-body">Reference: APP-{receipt.id}</p>
-            <p className="mt-1 text-body">Submitted: {formatApplicationReceiptTime(receipt.submittedAt)}</p>
-            <p className="mt-1 text-body">Resume sent: No — a resume was not attached by this application</p>
-            {receipt.channel==="EXTERNAL"?
-              <p className="mt-1 text-body">Self-declared external submission, not an employer-verified receipt.</p>:null}
+            <p className="mt-1 break-all text-body">Receipt: {receipt.id}</p>
+            <p className="mt-1 text-body">Recorded: {formatApplicationReceiptTime(receipt.submittedAt)}</p>
+            <p className="mt-1 text-body">Resume: Not attached by this application</p>
             <Link href="/learn/my-placements/applications"
               className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
               View applications →
@@ -416,8 +410,7 @@ function JobActions({
           onOpenChange={(open) => {
             if (!open && pendingAction === null) setConfirmation(null);
           }}
-          title="Withdraw application"
-          role="alertdialog" dismissible={pendingAction===null} className="!max-w-[440px]"
+          title="Withdraw Application"
           description={`Request to withdraw ${roleOption.title} at this employer. The placement team must review your request.`}
           footer={
             <>
@@ -425,7 +418,7 @@ function JobActions({
                 onClick={() => setConfirmation(null)}>
                 Keep application
               </Button>
-              <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="danger"
+              <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
                 disabled={!validWithdrawalReason || pendingAction !== null}
                 onClick={() => void requestWithdrawal()}
               >
@@ -434,10 +427,6 @@ function JobActions({
             </>
           }
         >
-          <div className="mb-3 flex items-center gap-2 text-sm text-error">
-            <AlertTriangle size={18} aria-hidden="true"/>
-            <span>A withdrawal request must be reviewed by your placement team.</span>
-          </div>
           <label htmlFor={`withdraw-reason-${roleOption.id}`}
             className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
             Reason for withdrawal
@@ -485,20 +474,18 @@ function JobActions({
   }
 
   if (item.deadlinePassed) {
-    return <div className="space-y-2" role="status">
-      <Button type="button" disabled aria-describedby={"apply-reason-"+roleOption.id}>Applications closed</Button>
-      <p id={"apply-reason-"+roleOption.id} className="text-xs text-muted-foreground">The application deadline has passed.</p>
-    </div>;
+    return (
+      <StatusBadge tone="neutral">
+        Applications closed
+      </StatusBadge>
+    );
   }
 
   if (!item.canApply) {
     const missing=item.eligibility.checks.filter(check=>check.status==="MISSING");
     const failed=item.eligibility.checks.filter(check=>check.status==="FAIL");
     return <div role="status" className="min-w-0 space-y-2 border-t border-border pt-3 text-sm">
-      <Button type="button" disabled aria-describedby={"apply-reason-"+roleOption.id}>
-        {item.eligibility.status==="INELIGIBLE"?"Not eligible to apply":"Can't confirm application status"}
-      </Button>
-      <p id={"apply-reason-"+roleOption.id} className="font-semibold text-foreground">You can’t apply to this drive</p>
+      <p className="font-semibold text-foreground">You can’t apply to this drive</p>
       <p className="text-body">{item.eligibility.status==="NEEDS_DATA"
         ?"Some academic evidence is missing."
         :failed.length?"One or more college eligibility rules are not met.":"The placement cell has not cleared this application."}</p>
@@ -578,7 +565,6 @@ function JobActions({
         open={confirmation === "INTERNAL"}
         onOpenChange={(open) => {if(!open && pendingAction===null)setConfirmation(null);}}
         title="Ready to apply?"
-        className="!max-w-[440px]" dismissible={pendingAction===null}
         description="We'll send your profile to the recruiter. You can withdraw later from Applications."
         footer={<>
           <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pendingAction!==null} onClick={()=>setConfirmation(null)}>Not yet</Button>
@@ -588,10 +574,6 @@ function JobActions({
         </>}
       >
         <div className="space-y-4">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <ShieldCheck size={18} aria-hidden="true" className="text-success"/>
-            Your details stay within the authorized placement workflow.
-          </div>
           <dl className="grid min-w-0 grid-cols-1 gap-x-4 gap-y-3 border-y border-border py-3 text-sm md:grid-cols-3 [&_dd]:min-w-0 [&_dd]:break-words">
             <div><dt className="font-semibold text-muted-foreground">Role</dt>
               <dd className="mt-1 text-foreground">{roleOption.title}</dd></div>

@@ -21,30 +21,3 @@ export const assignmentSubmissionLinks=pgTable("assignment_submission_links",{
   sql`${table.legacyAssetIndex} is null or ${table.legacyAssetIndex} >= 0`),
  check("assignment_submission_links_kind_ck",sql`${table.kind} in ('REPOSITORY_LINK','EXTERNAL_LINK')`),
 ]);
-
-/** Legacy multipart links are treated as untrusted external input. */
-export function normalizeLegacySubmissionLinks(source:readonly string[]):{
- links:{sequence:number;kind:"REPOSITORY_LINK"|"EXTERNAL_LINK";url:string}[];
- unresolved:{index:number;value:string}[];
-} {
- const links:{sequence:number;kind:"REPOSITORY_LINK"|"EXTERNAL_LINK";url:string}[]=[];
- const unresolved:{index:number;value:string}[]=[];
- source.forEach((raw,index)=>{
-  try {
-   const url=new URL(raw);
-   if(index>=20||!["https:","http:"].includes(url.protocol)||url.username||url.password||
-      raw!==raw.trim()||raw.length>2048)throw Error("unsafe");
-   const host=url.hostname.toLowerCase();
-   links.push({sequence:index,kind:host==="github.com"||host==="gitlab.com"||
-     host==="bitbucket.org"?"REPOSITORY_LINK":"EXTERNAL_LINK",url:url.href});
-  }catch {unresolved.push({index,value:raw});}
- });
- return {links,unresolved};
-}
-/** Rich HTML never becomes a trusted React child by being imported. */
-export function legacySubmissionHtmlAsText(value:string):string {
- return value.replace(/<br\\s*\\/?\\s*>/gi,"\\n")
-  .replace(/<\\/p\\s*>/gi,"\\n").replace(/<[^>]*>/g,"")
-  .replace(/&nbsp;/gi," ").replace(/&lt;/gi,"<")
-  .replace(/&gt;/gi,">").replace(/&amp;/gi,"&");
-}
