@@ -126,7 +126,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   setProposal({
    confirmed:true,expectedUpdatedAt:version,
    applicationDeadline:deadline,minCgpaHundredths:cgpa===null?null:Math.round(cgpa*100),
-   allowedCohortIds:fields.getAll("allowedCohortIds").map(String),
+   ...(job.availableBatches.length?{allowedCohortIds:fields.getAll("allowedCohortIds").map(String)}:{}),
    allowedPassingYears:years,...marks,
    verifiedMarksOnly:fields.get("verifiedMarksOnly")==="on",
    jobTypeLabel:jobTypeLabel||null,
@@ -181,7 +181,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   </div>
   <div className="min-w-20 text-right" role="status" aria-label="Setup progress">
    <strong className="block text-2xl font-bold tabular-nums text-[var(--lms-heading)]">{completeChecklist}/4</strong>
-   <span className="text-xs text-muted-foreground">steps ready</span>
+   <span className="text-xs text-muted-foreground">steps ready · rounds reviewed separately</span>
   </div>
  </header>
  <div className="grid min-w-0 items-start gap-[18px] lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
@@ -242,7 +242,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   </label>
   <fieldset className="min-w-0 space-y-2 border-y border-border py-3">
    <legend className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">Eligible batches</legend>
-   <p className="text-xs leading-5 text-body">Choose batches allowed to apply. No selection means all batches, subject to the other eligibility rules.</p>
+   <p className="text-xs leading-5 text-body">Choose batches allowed to apply. No selection means all batches, subject to the other eligibility rules. A live update does not change role options or scheduled rounds.</p>
    {job.availableBatches.length?<div className="grid max-h-52 gap-2 overflow-y-auto sm:grid-cols-2">
     {job.availableBatches.map(batch=><label key={batch.id}
       className="flex min-h-10 min-w-0 items-start gap-2 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm text-body">
