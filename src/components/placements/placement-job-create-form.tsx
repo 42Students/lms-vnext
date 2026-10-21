@@ -21,7 +21,6 @@ import {driveDeadlineIstToIso,driveDeadlineIstEndOfDay} from "@/modules/placemen
 import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
 import {tpoDriveStatusLabel} from "@/modules/placements/tpo-drive-lifecycle-list-model";
 import {TPO_DRIVE_ROUND_PRESETS,isTpoRoundPresetKey,plannedTpoRoundRows,type TpoRoundPresetKey} from "@/modules/placements/tpo-drive-round-presets";
-import {parseLegacyPairs} from "@/modules/placements/placement-legacy-posting-model";
 import {driveEligibilityPresetValue,type DriveEligibilityPreset} from "@/modules/placements/tpo-drive-eligibility-presets";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 
@@ -64,6 +63,8 @@ export type PlacementCompanyChoice = {
 
 const inputClass = "min-h-11 w-full min-w-0 md:min-h-9";
 const textareaClass = "min-h-28 w-full min-w-0";
+type ImportantDateRow = {id:number;label:string;date:string};
+type CustomRuleRow = {id:number;label:string;value:string};
 
 function splitList(value: string) {
   return value
@@ -142,6 +143,12 @@ export function PlacementJobCreateForm({
   );
   const [companySearch,setCompanySearch]=useState("");
   const [roundPreset,setRoundPreset]=useState<TpoRoundPresetKey>("NONE");
+  const nextRowId=useRef(2);
+  const [importantDateRows,setImportantDateRows]=useState<ImportantDateRow[]>([{id:0,label:"",date:""}]);
+  const [customRuleRows,setCustomRuleRows]=useState<CustomRuleRow[]>([{id:1,label:"",value:""}]);
+  const [assessmentUrlLength,setAssessmentUrlLength]=useState(0);
+  const [saveError,setSaveError]=useState<string|null>(null);
+  const [roundRows,setRoundRows]=useState<Array<{id:number;kind:string;name:string}>>([]);
   const [enteredDriveTitle,setEnteredDriveTitle]=useState("");
   const selectedEmployer=companies.find(company=>company.relationshipId===companyRelationshipId);
   // TPO-drives-25: recent-role highlights must not cap duplicate-drive checks.
@@ -217,10 +224,12 @@ export function PlacementJobCreateForm({
         }else values[field.name]=field.value;
       }
       localStorage.setItem(backupKey,JSON.stringify({values,checked,
-        companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,selectedSectionIds,eligibilityPreset,partialDraft:createdJobRef.current}));
+        companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,selectedSectionIds,
+        eligibilityPreset,importantDateRows,customRuleRows,roundRows,partialDraft:createdJobRef.current}));
       setLastLocalSaveAt(Date.now());
     }catch{/* Storage may be unavailable in private mode; form still works. */}
-  },[backupKey,companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,selectedSectionIds,eligibilityPreset]);
+  },[backupKey,companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,
+    selectedSectionIds,eligibilityPreset,importantDateRows,customRuleRows,roundRows]);
   useEffect(()=>{
     // Defer restoration until the uncontrolled form fields have mounted.
     const task=window.setTimeout(()=>{
@@ -231,6 +240,8 @@ export function PlacementJobCreateForm({
           companyMode?:"EXISTING"|"NEW";companyRelationshipId?:string;
           selectedProgramIds?:string[];selectedCohortIds?:string[];selectedSectionIds?:string[];
           departmentFilter?:string;eligibilityPreset?:DriveEligibilityPreset;
+          importantDateRows?:ImportantDateRow[];customRuleRows?:CustomRuleRow[];
+          roundRows?:Array<{id:number;kind:string;name:string}>;
           partialDraft?:{jobId:string;relationshipId:string;fingerprint:string}};
         if(!saved||!saved.values||typeof saved.values!=="object")return;
         // TPO-drives-43: recover a saved partial draft before allowing another POST.
@@ -252,9 +263,27 @@ export function PlacementJobCreateForm({
         if(["OPEN","CGPA_6","CGPA_7","PCT_60","PCT_70"].includes(saved.eligibilityPreset??""))
           setEligibilityPreset(saved.eligibilityPreset!);
         if(isTpoRoundPresetKey(saved.values.roundPreset))setRoundPreset(saved.values.roundPreset);
+        if(Array.isArray(saved.importantDateRows)&&saved.importantDateRows.length<=20){
+          const dates=saved.importantDateRows.filter(row=>row&&typeof row.id==="number"&&
+            typeof row.label==="string"&&typeof row.date==="string");
+          if(dates.length)setImportantDateRows(dates);
+        }
+        if(Array.isArray(saved.customRuleRows)&&saved.customRuleRows.length<=20){
+          const rules=saved.customRuleRows.filter(row=>row&&typeof row.id==="number"&&
+            typeof row.label==="string"&&typeof row.value==="string");
+          if(rules.length)setCustomRuleRows(rules);
+        }
+        if(Array.isArray(saved.roundRows)&&saved.roundRows.length<=20){
+          setRoundRows(saved.roundRows.filter(row=>row&&typeof row.id==="number"&&
+            typeof row.kind==="string"&&typeof row.name==="string"));
+        }
+        const restoredIds=[...(saved.importantDateRows??[]),...(saved.customRuleRows??[]),...(saved.roundRows??[])]
+          .map(row=>row.id).filter(id=>Number.isInteger(id)&&id>=0);
+        nextRowId.current=Math.max(nextRowId.current,...restoredIds.map(id=>id+1));
         setEnteredDriveTitle(String(saved.values.title??""));
         setNewEmployerName(String(saved.values.companyName??""));
         setNewEmployerDomain(String(saved.values.companyDomain??""));
+        setAssessmentUrlLength(String(saved.values.assessmentUrl??"").length);
         for(const field of Array.from(formRef.current.querySelectorAll<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>("input[name],textarea[name],select[name]"))){
           if(field instanceof HTMLInputElement&&field.type==="checkbox")field.checked=(saved.checked??[]).includes(field.name);
           else if(saved.values[field.name]!==undefined)field.value=saved.values[field.name];
@@ -303,6 +332,7 @@ export function PlacementJobCreateForm({
     const reviewPublish = submitter?.getAttribute("value") === "review-publish";
     await run(async()=>{
     try {
+      setSaveError(null);
       if (!activeSeason) {
         throw new Error(
           "Start an active placement season before creating an opportunity",
@@ -321,6 +351,7 @@ export function PlacementJobCreateForm({
       // TPO-drives-45: datetime-local is IST regardless of browser timezone.
       const deadlineRaw=String(data.get("applicationDeadline")??"").trim();
       const deadlineIso=deadlineRaw?driveDeadlineIstToIso(deadlineRaw):null;
+      if (!title) throw new Error("Please enter a job title.");
       if (title.length < 3) throw new Error("Job title: At least 3 characters.");
       if (title.length > 100) throw new Error("Job title must be no longer than 100 characters.");
       const minimumLpa = nullableDecimal(String(data.get("minimumLpa") ?? ""));
@@ -418,13 +449,38 @@ export function PlacementJobCreateForm({
         throw new Error("Check the host college and travel instructions.");
       const reportingRaw=String(data.get("poolReportingTime")??"").trim();
       const reportingTime=reportingRaw?driveDeadlineIstToIso(reportingRaw):null;
-      const importantDates=parseLegacyPairs(String(data.get("importantDates")??""),"date")
-       .map(entry=>({label:entry.label,at:driveDeadlineIstToIso(entry.value)}));
-      const customEligibilityRules=parseLegacyPairs(String(data.get("customEligibilityRules")??""),"rule");
+      const importantDates=importantDateRows.filter(row=>row.label.trim()||row.date.trim())
+        .map(row=>{
+          const label=row.label.trim();
+          if(!label)throw new Error("Label required when date is set");
+          if(!row.date)throw new Error("Date required when label is set");
+          if(label.toLowerCase()==="application deadline")
+            throw new Error("This label is reserved — use the Application deadline field above");
+          if(label.length>100)throw new Error("Important date labels must be at most 100 characters.");
+          return {label,at:driveDeadlineIstToIso(row.date+"T23:59")};
+        });
+      if(new Set(importantDates.map(row=>row.label.toLowerCase())).size!==importantDates.length)
+        throw new Error("Important date labels must be unique.");
+      const customEligibilityRules=customRuleRows.filter(row=>row.label.trim()||row.value.trim())
+        .map(row=>{
+          const label=row.label.trim(),value=row.value.trim();
+          if(!label||!value)throw new Error("Rule label and rule value are both required.");
+          if(label.length>160||value.length>200)
+            throw new Error("Rules must have labels at most 160 characters and values at most 200 characters.");
+          return {label,value};
+        });
+      const assessmentUrl=String(data.get("assessmentUrl")??"").trim();
+      if(assessmentUrl.length>2048)throw new Error("Assessment URL cannot exceed 2048 characters.");
+      if(assessmentUrl&&!/^https?:\/\//i.test(assessmentUrl))
+        throw new Error("Assessment URL must begin with http:// or https://.");
+      if(deadlineIso&&Date.parse(deadlineIso)<Date.now())
+        throw new Error("Application deadline cannot be in the past.");
       const assessmentRaw=String(data.get("assessmentDeadline")??"").trim();
       const assessmentDeadline=assessmentRaw?driveDeadlineIstToIso(assessmentRaw):null;
-      if(assessmentDeadline&&(!deadlineIso||Date.parse(assessmentDeadline)<=Date.parse(deadlineIso)))
-       throw new Error("Assessment deadline must be after application deadline.");
+      if(assessmentDeadline&&Date.parse(assessmentDeadline)<Date.now())
+        throw new Error("Assessment deadline cannot be in the past.");
+      if(assessmentDeadline&&deadlineIso&&Date.parse(assessmentDeadline)<=Date.parse(deadlineIso))
+        throw new Error("Assessment deadline must be after application deadline.");
       const graduationYearRaw=String(data.get("preferredGraduationYear")??"").trim();
       const gpaRaw=String(data.get("preferredMinimumGpa")??"").trim();
       const years = splitList(String(data.get("passingYears") ?? ""));
@@ -450,7 +506,7 @@ export function PlacementJobCreateForm({
         selectedProgramIds:[...effectiveProgramIds].sort(),
         selectedCohortIds:[...effectiveCohortIds].sort(),
         selectedSectionIds:[...effectiveSectionIds].sort(),
-        companyMode,companyRelationshipId,roundPreset,
+        companyMode,companyRelationshipId,roundPreset,importantDateRows,customRuleRows,roundRows,
       });
       if(createdJobRef.current&&createdJobRef.current.fingerprint!==fingerprint)
         throw new Error("A draft has already been created. Open the existing draft to edit your latest changes.");
@@ -528,7 +584,7 @@ export function PlacementJobCreateForm({
               url:studentsRegisterSeparately?portalUrl:""},
             skillsWanted,
             responsibilities:String(data.get("responsibilities")??"").trim(),
-            assessmentUrl:String(data.get("assessmentUrl")??"").trim()||null,
+            assessmentUrl:assessmentUrl||null,
             assessmentDeadline,importantDates,customEligibilityRules,
             candidatePreferences:{
               preferredDegree:String(data.get("preferredDegree")??"").trim(),
@@ -670,7 +726,11 @@ export function PlacementJobCreateForm({
 
       // TPO-drives-39 / TPO-drives-43: read server rounds before retrying
       // individual creates; a lost POST response must not duplicate a round.
-      const planned=plannedTpoRoundRows(roundPreset);
+      const planned=roundRows.length?roundRows.map((row,index)=>({
+        sequence:index+1,kind:row.kind,name:row.name.trim()
+      })):plannedTpoRoundRows(roundPreset);
+      if(planned.some(row=>!row.name||row.name.length>160))
+        throw new Error("Each interview round requires a name of at most 160 characters.");
       if(planned.length){
         const saved=await apiFetch<{rounds:Array<{kind:string;name:string}>}>(
           `/api/placements/jobs/${encodeURIComponent(jobId)}/rounds`,
@@ -702,6 +762,7 @@ export function PlacementJobCreateForm({
       setPartialJobId(null);
       router.refresh();
     } catch (error) {
+      setSaveError(tpoDriveFormErrorMessage(error));
       showToast({
         tone: "error",
         title: "Could not create opportunity",
