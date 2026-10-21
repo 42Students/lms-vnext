@@ -8,7 +8,7 @@
  * The API phase must re-check user, membership, domain verification and
  * target host on atomic consumption; an FK alone is insufficient.
  */
-import { sql } from "drizzle-orm";
+import { sql, type SQL } from "drizzle-orm";
 import {
   check,
   foreignKey,
@@ -22,7 +22,7 @@ import {
 import { users } from "./users";
 import { colleges } from "./colleges";
 import { collegeMemberships } from "./memberships";
-import { tenantDomains } from "./tenant-domains";
+import { tenantDomains, canonicalTenantHost } from "./tenant-domains";
 
 export const identityAuthHandoffsStaged = pgTable(
   "identity_auth_handoffs",
@@ -101,4 +101,48 @@ export const HANDOFF_MAC_CLEANUP_RETENTION_DAYS = 7;
 export function authHandoffCleanupCutoff(now: Date, retentionDays = HANDOFF_MAC_CLEANUP_RETENTION_DAYS): Date {
   const days = Number.isSafeInteger(retentionDays) && retentionDays >= 1 ? retentionDays : HANDOFF_MAC_CLEANUP_RETENTION_DAYS;
   return new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+}
+
+/** Staged one-statement claim: the verified host comes from the trusted request
+ * host resolver, never the body. Database checks and row locks must complete
+ * before a new target-origin session is issued. This SQL remains dormant until
+ * DB01 handoff migration and concurrent-consumption negatives are certified. */
+export function authHandoffAtomicConsumeStatement(
+  codeMac: string,
+  trustedTargetHost: string,
+): SQL {
+  if (!/^[0-9a-f]{64}$/.test(codeMac))
+    throw new Error("Invalid handoff code fingerprint");
+  const host = canonicalTenantHost(trustedTargetHost);
+  return sql`
+    WITH eligible AS MATERIALIZED (
+      SELECT h.id
+        FROM identity_auth_handoffs h
+        JOIN users u ON u.id = h.user_id
+        JOIN college_memberships m ON m.id = h.target_membership_id
+          AND m.user_id = h.user_id AND m.college_id = h.college_id
+        JOIN colleges c ON c.id = h.college_id
+        JOIN organizations o ON o.id = c.organization_id
+        JOIN tenant_domains d ON d.id = h.target_domain_id
+          AND d.college_id = h.college_id
+       WHERE h.code_mac = ${codeMac}
+         AND h.target_host = ${host}
+         AND lower(d.host) = ${host}
+         AND d.is_verified = true AND d.deleted_at IS NULL
+         AND u.platform_status = 'ACTIVE'
+         AND m.status = 'ACTIVE'
+         AND c.status = 'ACTIVE' AND o.status = 'ACTIVE'
+         AND h.consumed_at IS NULL AND h.expires_at > clock_timestamp()
+         FOR UPDATE OF h
+         FOR SHARE OF u, m, c, o, d
+    ), claimed AS (
+      UPDATE identity_auth_handoffs h
+         SET consumed_at = clock_timestamp()
+        FROM eligible e
+       WHERE h.id = e.id
+         AND h.consumed_at IS NULL AND h.expires_at > clock_timestamp()
+      RETURNING h.user_id, h.college_id, h.target_membership_id, h.target_domain_id
+    )
+    SELECT * FROM claimed
+  `;
 }

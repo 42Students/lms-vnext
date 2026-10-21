@@ -156,3 +156,12 @@
 
 - Placement auto screening importer and TPO/HR ranking service | G2-13-021-049 | 0246 stores source auto screening rows independent of manual decisions; resolve legacy IDs via authorized application/college, preserve floating score and JSON source skills/exclusions, quarantine bad values and avoid leaking internal metadata into recruiter/learner views. Original 0022 stays unchanged.
 - TPO rules mutation and database replay owner | G2-6-022-045 | Preflight placement_college_rules out-of-bound rows before 0247, preserve CAS and verify simultaneous API/DB limits for held offers 1..5, uplift 0..200, response 12..168; journal registration owned separately.
+
+- Wave3 P0 placements service owner: G2-16-025-052 — ACCEPT in `src/modules/placements/tpo-drive-change-request-service.ts` must apply a validated job field atomically with version-CAS, exact role mapping, and `appliedAt/appliedByUserId/appliedJobVersion` receipt; unsupported values must not report success.
+- Wave3 P0 courses/API owner: G2-5-020-049, G2-19-031-129, G2-5-020-002 — promote isolated lesson-content discussion route and permissioned read/write only after DB05 registration, content/delivery enrollment, scoped author and tenant-negative tests; never conflate delivery chat.
+- Wave3 P0 lane 15/skills owner: G2-5-016-048 — certify 0236 skills migration, journal and catalog activation; maintain independent usage counters and nonunique synonym semantics, including duplicate pairs.
+- Wave3 college/auth owners: G2-15-020-016/-044/-073 — fetch verified college branding loginMethods at host-bound auth entry; protect EMAIL_ONLY/PHONE_ONLY per tenant without changing globally shared student login.
+
+- Wave3 P1 auth owner: G2-1-014-016 — staged `authHandoffAtomicConsumeStatement` now locks/revalidates active user, membership, college, organization, verified host and unspent MAC in a single claim; wire through authorized cross-host endpoint only after DB01 registration, host-origin verification and race/expiry tests.
+- Wave3 P1 course resource owner: G2-17-008-020 — `lessonMaterialFileInputError` codifies 20 file / 50 MB / allowlisted extension preflight; integrate into authoring UI and GCS attestation, do not treat metadata as verified file.
+- Wave3 P1 people/admin UI and identity owners: G2-18-031-085 — display `MEMBERSHIP_ADMIN_ACTION_EXPLANATIONS` in admin controls; audited membership END is not global deletion, separate approved import rollback, erasure review, and OTP unlock service remain required.

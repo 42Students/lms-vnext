@@ -19,6 +19,8 @@ export type TpoDriveNextStepInput = {
   deadlinePassed?: boolean;
   pendingSelections?: number;
   pendingRequests: number;
+  /** REQUEST is a recruiter request, not a created placement job. */
+  recruiterRequestId?: string;
   nonApplicantCount?: number;
   canRemindNonApplicants?: boolean;
   deadlineMissing?: boolean;
@@ -32,7 +34,24 @@ export function projectTpoDriveNextStep(input: TpoDriveNextStepInput): {
 } {
   const root = "/tpo/placements/jobs/" + encodeURIComponent(input.jobId);
   const actions: TpoDriveAction[] = [];
-  if (input.status === "DRAFT") {
+  if (input.status === "REQUEST" || input.status === "SENT_BACK") {
+    // The request has no job identity until explicit approval. Link to its
+    // college-scoped decision view; never send it to the job publish route.
+    const requestsHref = "/tpo/placements/lifecycle?view=REQUESTS";
+    actions.push({
+      label: "Approve for later",
+      description: "Approve the recruiter request as a draft; no students are told until publishing.",
+      href: requestsHref,
+    }, {
+      label: "Request a change",
+      description: "Tell the recruiter what needs to change before approval.",
+      href: requestsHref,
+    }, {
+      label: "Decline this request",
+      description: "Record a reason and notify the recruiter in the app.",
+      href: requestsHref,
+    });
+  } else if (input.status === "DRAFT") {
     actions.push(input.publishAllowed ? {
       label: "Publish",
       description: "Review the eligibility and announcement before publishing.",

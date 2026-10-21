@@ -116,3 +116,13 @@ export function parseLegacyPublicJoinSlug(raw:unknown):string|null {
  const slug=raw.trim().toLowerCase();
  return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)?slug:null;
 }
+
+/** A historical Job.job_slug is a nonsecret public alias, never a join
+ * challenge token. Its nullable, case-insensitive unique index already lives
+ * on placementJobs.legacySlug (placements.ts); resolve it only together with
+ * verified college and job visibility before generating a redirect. */
+export function parseLegacyPlacementJobSlug(raw: unknown): string | null {
+  if (typeof raw !== "string") return null;
+  const slug = raw.trim().toLowerCase();
+  return slug.length <= 32 && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) ? slug : null;
+}
