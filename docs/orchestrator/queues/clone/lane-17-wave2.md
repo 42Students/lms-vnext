@@ -11,9 +11,9 @@ This is wave 2 of the fix job. Work every packet below, in order, one at a time,
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-17/W2_src_app_authenticated_hr_home_page.tsx.part1of2.md` (edit src/app/(authenticated)/hr/home/page.tsx; 40 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-17/W2_src_app_authenticated_hr_home_page.tsx.part2of2.md` (edit src/app/(authenticated)/hr/home/page.tsx; 8 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-17/W2_src_app_authenticated_admin_tenants_setup_page.tsx.md` (edit src/app/(authenticated)/admin/tenants/setup/page.tsx; 31 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-17/W2_src_app_authenticated_hr_home_page.tsx.part1of2.md` (edit src/app/(authenticated)/hr/home/page.tsx; 40 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-17/W2_src_app_authenticated_hr_home_page.tsx.part2of2.md` (edit src/app/(authenticated)/hr/home/page.tsx; 8 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-17/W2_src_app_authenticated_admin_tenants_setup_page.tsx.md` (edit src/app/(authenticated)/admin/tenants/setup/page.tsx; 31 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-17/W2_NEW_docs_audit_gap2_lane-5_u007-superadmin-calendar.md.md` (new; 30 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-17/W2_src_app_authenticated_learn_my-placements_schedule_page.tsx.md` (edit src/app/(authenticated)/learn/my-placements/schedule/page.tsx; 29 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-17/W2_src_app_authenticated_admin_colleges_collegeId_page.tsx.md` (edit src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx; 26 findings; best P2)
