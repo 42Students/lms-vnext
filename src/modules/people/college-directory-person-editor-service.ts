@@ -17,7 +17,14 @@ const inputSchema=z.strictObject({
   kind:role,address:z.string().trim().max(1000),bio:z.string().trim().max(3000),
   gender:z.enum(["","Male","Female","Other","Prefer not to say"]),
   dateOfBirth:z.union([z.iso.date(),z.literal("")]),
-  contactEmail:z.union([z.email(),z.literal("")]),
+  contactEmail:z.union([z.email().max(255),z.literal("")]),
+  // Legacy FacultyDTO accepted separate names with 255-character caps.
+  firstName:z.string().trim().min(1).max(255).optional(),
+  lastName:z.string().trim().max(255).optional(),
+  websiteUrl:z.union([
+    z.literal(""),z.url().max(500).refine(value=>/^https?:\/\//i.test(value),
+      {message:"Website must use HTTP or HTTPS"}),
+  ]).optional(),
   contactPhone:z.string().trim().max(32),
   primaryDepartmentId:uuid.nullable().optional(),
   // Per-profile CAS; older clients can omit it, new editors must send it.
@@ -32,6 +39,21 @@ async function scope(context:RequestContext){
   // acting-college resolver; never invent a College Admin membership.
   return resolveActingCollege(context,"people.manage");
 }
+/** Deprecated numeric facultyId is a lookup alias ONLY, never the mutation
+ * identity: all current routes and optimistic updates use membership UUIDs. */
+export async function findCollegeFacultyLegacyDeepLink(context:RequestContext,rawId:unknown){
+ const legacyId=z.coerce.number().int().min(1).parse(rawId);
+ const own=await scope(context);
+ const [row]=await getDb().select({membershipId:facultyProfiles.membershipId})
+  .from(facultyProfiles)
+  .innerJoin(collegeMemberships,eq(collegeMemberships.id,facultyProfiles.membershipId))
+  .where(and(eq(facultyProfiles.legacyFacultyId,legacyId),
+   eq(collegeMemberships.collegeId,own.collegeId))).limit(1);
+ if(!row)return null;
+ return {membershipId:row.membershipId,
+  href:"/college/people/manage?membershipId="+encodeURIComponent(row.membershipId)};
+}
+
 export async function getCollegePersonEditor(context:RequestContext,rawId:unknown,kind:"FACULTY"|"LEARNER"){
   const own=await scope(context),id=uuid.parse(rawId);
   const [row]=await getDb().select({
@@ -51,7 +73,11 @@ export async function getCollegePersonEditor(context:RequestContext,rawId:unknow
   if(!row)throw Error("PERSON_NOT_FOUND");
   const faculty=kind==="FACULTY"?facultyProfileDocumentSchema.parse(row.faculty??{}):null;
   const learner=kind==="LEARNER"?learnerProfileDocumentSchema.parse(row.learner??{}):null;
-  return {id,kind,name:row.name??"",canonicalPhone:row.phone??"",canonicalEmail:row.email??"",
+  const parts=(row.name??"").trim().split(/\s+/);
+  return {id,kind,name:row.name??"",firstName:parts[0]??"",
+    lastName:parts.slice(1).join(" "),
+    websiteUrl:faculty?.socialProfiles.portfolio??"",
+    canonicalPhone:row.phone??"",canonicalEmail:row.email??"",
     gender:faculty?.personalDetails.gender??learner?.personalDetails.gender??"",
     dateOfBirth:faculty?.personalDetails.dateOfBirth??learner?.personalDetails.dateOfBirth??"",
     address:faculty?.address.currentAddress??learner?.address.currentAddress??"",
@@ -64,6 +90,8 @@ export async function getCollegePersonEditor(context:RequestContext,rawId:unknow
 }
 export async function saveCollegePersonEditor(context:RequestContext,rawId:unknown,raw:unknown){
   const own=await scope(context),id=uuid.parse(rawId),input=inputSchema.parse(raw);
+  if(input.firstName!==undefined&&input.firstName.trim().length===0)
+    throw Error("FIRST_NAME_REQUIRED");
   return getDb().transaction(async tx=>{
     const [member]=await tx.select({id:collegeMemberships.id,status:collegeMemberships.status})
       .from(collegeMemberships).innerJoin(membershipRoles,and(
@@ -94,7 +122,10 @@ export async function saveCollegePersonEditor(context:RequestContext,rawId:unkno
         about:{...original.about,description:input.bio},
         personalDetails:{...original.personalDetails,gender:input.gender,dateOfBirth:input.dateOfBirth},
         address:{...original.address,currentAddress:input.address},
-        contact:{...original.contact,contactMobile:input.contactPhone,contactMail:input.contactEmail}});
+        contact:{...original.contact,contactMobile:input.contactPhone,contactMail:input.contactEmail},
+        socialProfiles:input.websiteUrl!==undefined?{
+          ...original.socialProfiles,portfolio:input.websiteUrl,
+        }:original.socialProfiles});
       if (JSON.stringify(original.contact)!==JSON.stringify(doc.contact))
         facultyContactEditSchema.parse(doc.contact);
       await tx.insert(facultyProfiles).values({membershipId:id,profileDocument:doc,
@@ -123,7 +154,10 @@ export async function saveCollegePersonEditor(context:RequestContext,rawId:unkno
       collegeId:own.collegeId,organizationId:own.organizationId,
       subjectType:"college_membership",subjectId:id,
       summary:input.kind==="FACULTY"?"Faculty profile updated":"Student profile updated",
-      metadata:{role:input.kind}});
+      metadata:{role:input.kind,action:"UPDATE",
+        legacyAuditCategory:input.kind==="FACULTY"?"FACULTY_EDIT":"LEARNER_EDIT",
+        actorScopeCollegeId:own.collegeId,
+        fields:["bio","gender","dateOfBirth","address","contact","website"]}});
     return {id,updated:true,
       message:input.kind==="FACULTY"?"Faculty updated successfully!":"Student updated successfully!"};
   });

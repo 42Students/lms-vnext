@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, isNull, sql } from "drizzle-orm";
+import { and, asc, desc, eq, isNull, lt, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
@@ -34,7 +34,8 @@ export const groupListQuerySchema = z.object({
   kind: z.string().trim().min(1).max(40).optional(),
   status: z.enum(GROUP_STATUSES).optional(),
   limit: z.coerce.number().int().min(1).max(100).default(50),
-  offset: z.coerce.number().int().min(0).default(0),
+  // The old list endpoint treated invalid/negative offsets as the first page.
+  offset: z.coerce.number().int().transform(n=>Math.max(0,n)).default(0),
 });
 
 export type GroupListRow = {
@@ -91,7 +92,7 @@ export async function listCollegeGroups(
   ];
 
   const db = getDb();
-  const [rows, totals, kinds] = await Promise.all([
+  const [rows, totals, kinds, statuses] = await Promise.all([
     db
       .select({
         id: lmsGroups.id,
@@ -139,12 +140,20 @@ export async function listCollegeGroups(
         ),
       )
       .orderBy(asc(lmsGroups.kind)),
+    db.select({status:lmsGroups.status,total:sql<number>`count(*)::int`})
+      .from(lmsGroups).where(and(
+       eq(lmsGroups.collegeId,college.id),
+       eq(lmsGroups.ownerScope,"COLLEGE"),isNull(lmsGroups.deletedAt),
+       ...(query.kind?[eq(lmsGroups.kind,query.kind)]:[]),
+      )).groupBy(lmsGroups.status),
   ]);
 
   return {
     collegeName: college.name,
     items: rows as GroupListRow[],
     kinds: kinds.map((row) => row.kind),
+    statusCounts:Object.fromEntries(statuses.map(row=>[row.status,row.total])),
+    activeTotal:statuses.find(row=>row.status==="ACTIVE")?.total??0,
     pagination: {
       limit: query.limit,
       offset: query.offset,
@@ -153,10 +162,21 @@ export async function listCollegeGroups(
   };
 }
 
+const groupDetailPageSchema=z.strictObject({
+  memberState:z.enum(["ACTIVE","WAITLISTED","REQUESTED","REMOVED"]).optional(),
+  memberOffset:z.coerce.number().int().min(0).max(1000000).default(0),
+  eventBefore:z.iso.datetime({offset:true}).optional(),
+  eventBeforeId:z.string().uuid().optional(),
+}).refine(v=>Boolean(v.eventBefore)===Boolean(v.eventBeforeId),{
+  message:"Event cursor must include both timestamp and ID",
+});
+
 export async function getCollegeGroupDetail(
   context: RequestContext,
   groupIdInput: string,
+  rawPage:unknown={},
 ) {
+  const page=groupDetailPageSchema.parse(rawPage);
   const groupId = z.string().uuid().parse(groupIdInput);
   const db = getDb();
 
@@ -175,7 +195,8 @@ export async function getCollegeGroupDetail(
     collegeId: college.id,
   });
 
-  const [members, events, rule] = await Promise.all([
+  const eventCursor=page.eventBefore?new Date(page.eventBefore):null;
+  const [membersPage, eventsPage, rule, stateCounts] = await Promise.all([
     db
       .select({
         membershipId: lmsGroupMembers.membershipId,
@@ -194,7 +215,8 @@ export async function getCollegeGroupDetail(
         eq(collegeMemberships.id, lmsGroupMembers.membershipId),
       )
       .innerJoin(users, eq(users.id, collegeMemberships.userId))
-      .where(eq(lmsGroupMembers.groupId, group.id))
+      .where(and(eq(lmsGroupMembers.groupId, group.id),
+        ...(page.memberState?[eq(lmsGroupMembers.state,page.memberState)]:[])))
       .orderBy(
         asc(
           sql`case ${lmsGroupMembers.state}
@@ -202,9 +224,10 @@ export async function getCollegeGroupDetail(
             when 'REQUESTED' then 2 else 3 end`,
         ),
         asc(lmsGroupMembers.waitlistPosition),
-        asc(users.displayName),
+        asc(users.displayName),asc(lmsGroupMembers.id),
       )
-      .limit(500),
+      .offset(page.memberOffset)
+      .limit(501),
     db
       .select({
         id: lmsGroupMemberEvents.id,
@@ -222,9 +245,14 @@ export async function getCollegeGroupDetail(
         eq(collegeMemberships.id, lmsGroupMemberEvents.membershipId),
       )
       .innerJoin(users, eq(users.id, collegeMemberships.userId))
-      .where(eq(lmsGroupMemberEvents.groupId, group.id))
-      .orderBy(desc(lmsGroupMemberEvents.createdAt))
-      .limit(25),
+      .where(and(eq(lmsGroupMemberEvents.groupId, group.id),
+        eventCursor?or(
+          lt(lmsGroupMemberEvents.createdAt,eventCursor),
+          and(eq(lmsGroupMemberEvents.createdAt,eventCursor),
+              lt(lmsGroupMemberEvents.id,page.eventBeforeId!)),
+        ):undefined))
+      .orderBy(desc(lmsGroupMemberEvents.createdAt),desc(lmsGroupMemberEvents.id))
+      .limit(26),
     db
       .select({
         criteriaJson: lmsGroupRules.criteriaJson,
@@ -235,10 +263,19 @@ export async function getCollegeGroupDetail(
       .from(lmsGroupRules)
       .where(eq(lmsGroupRules.groupId, group.id))
       .limit(1),
+    db.select({state:lmsGroupMembers.state,total:sql<number>`count(*)::int`})
+      .from(lmsGroupMembers).where(eq(lmsGroupMembers.groupId,group.id))
+      .groupBy(lmsGroupMembers.state),
   ]);
 
+  const members=membersPage.slice(0,500);
+  const events=eventsPage.slice(0,25);
+  const lastEvent=events.at(-1);
+  const memberHasMore=membersPage.length>500;
+  const eventHasMore=eventsPage.length>25;
+  // Count the ENTIRE persisted group, not the first 500 visible members.
   const count = (state: string) =>
-    members.filter((member) => member.state === state).length;
+    stateCounts.find(row=>row.state===state)?.total??0;
 
   return {
     collegeName: college.name,
@@ -264,7 +301,14 @@ export async function getCollegeGroupDetail(
       removed: count("REMOVED"),
     },
     members,
+    memberPage:{offset:page.memberOffset,limit:500,hasMore:memberHasMore,
+      nextOffset:memberHasMore?page.memberOffset+500:null,
+      filterState:page.memberState??null},
     events,
+    eventPage:{limit:25,hasMore:eventHasMore,
+      nextCursor:eventHasMore&&lastEvent?{
+        eventBefore:lastEvent.createdAt.toISOString(),eventBeforeId:lastEvent.id,
+      }:null},
     rule: rule[0] ?? null,
   };
 }
