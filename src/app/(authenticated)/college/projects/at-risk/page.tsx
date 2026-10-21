@@ -18,7 +18,7 @@ export default async function CollegeProjectAtRiskRoute({
     getProjectAdminCollegeId(context);
 
   if (!collegeId) {
-    return <ProjectAdminMissingCollege/>;
+    return <ProjectAdminMissingCollege variant="at-risk"/>;
   }
 
   return (

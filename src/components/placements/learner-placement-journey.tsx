@@ -76,13 +76,25 @@ function statusTone(
   return "neutral";
 }
 
+/** Legacy application rows use D MMM; dispute/opt-out deadlines include time. */
 function formatWhen(value: Date | null) {
   if (!value) return null;
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric", month: "short", timeZone: "Asia/Kolkata",
   }).format(value);
+}
+
+function formatOptOutDeadline(value: Date) {
+  const timeZone = "Asia/Kolkata";
+  const weekday = new Intl.DateTimeFormat("en-GB", { timeZone, weekday: "short" }).format(value);
+  const date = formatWhen(value);
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone, hour: "numeric", minute: "2-digit", hour12: true,
+  }).formatToParts(value);
+  const part = (kind: Intl.DateTimeFormatPartTypes) =>
+    parts.find(item => item.type === kind)?.value ?? "";
+  return weekday + " " + date + ", " + part("hour") + ":" +
+    part("minute") + " " + part("dayPeriod").toUpperCase();
 }
 
 /** A status summary derived from persisted application/screening/round facts only. */
@@ -228,9 +240,7 @@ export function LearnerPlacementJourney({
               <aside role="status" className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
                 <p className="font-semibold text-foreground">The placement cell applied for you</p>
                 <p className="mt-1 text-sm text-body">
-                  If you don&apos;t want this one, withdraw before {new Intl.DateTimeFormat("en-IN",{
-                    timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true,
-                  }).format(item.staffOptOutUntil??new Date(item.submittedAt.getTime()+48*60*60*1000))}.
+                  If you don&apos;t want this one, withdraw before {formatOptOutDeadline(item.staffOptOutUntil??new Date(item.submittedAt.getTime()+48*60*60*1000))}.
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">The placement cell applied on your behalf. The 48-hour opt-out window starts when the application was recorded. Outside that window, contact the placement team about withdrawal.</p>
                 <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
