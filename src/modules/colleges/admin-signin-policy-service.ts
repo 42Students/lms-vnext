@@ -78,3 +78,18 @@ export async function saveAdminCollegeSignInPolicy(context:RequestContext,raw:un
   return {method:saved.method,version:saved.version};
  });
 }
+
+/** Legacy college_branding.login_methods (from prod-2026) is not the
+ * current policy writer source. Use this one-way mapping ONLY in a reviewed
+ * backfill of colleges with no existing policy row; never overwrite later
+ * versioned/admin-authored policy changes. */
+export function translateLegacyBrandingLoginMethods(raw:string|null|undefined):
+ "EMAIL_AND_PHONE"|"PHONE_AND_EMAIL"|"EMAIL_ONLY"|"PHONE_ONLY"|null {
+ switch(raw?.trim().toUpperCase()){
+  case "EMAIL_PHONE":return "EMAIL_AND_PHONE";
+  case "PHONE_EMAIL":return "PHONE_AND_EMAIL";
+  case "EMAIL_ONLY":return "EMAIL_ONLY";
+  case "PHONE_ONLY":return "PHONE_ONLY";
+  default:return null;
+ }
+}
