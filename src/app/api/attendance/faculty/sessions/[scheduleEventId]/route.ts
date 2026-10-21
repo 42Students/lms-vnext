@@ -35,3 +35,11 @@ export async function PATCH(
     return apiErrorResponse(error);
   }
 }
+
+/** A modern POST alias for clients that retain the legacy bulk verb but use
+ * the scoped UUID session path and current all-roster payload. Existing PATCH
+ * callers are unchanged. Old numeric IDs cannot authorize an LMS membership.
+ */
+export async function POST(request:Request,context:RouteContext){
+  return PATCH(request,context);
+}
