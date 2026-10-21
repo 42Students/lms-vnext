@@ -21,17 +21,32 @@ type CandidateInterviews={
 export type CollegeApplicationDetail={
  application:{id:string;name:string|null;email:string|null;phone:string|null;
   rollNumber:string|null;role:string;source:string;status:string;submittedAt:string;
-  withdrawnAt:string|null;eligibilityStatus:string;eligibilitySnapshot:unknown};
+  withdrawnAt:string|null;statusBeforeWithdrawal?:string|null;
+  statusUpdatedAt?:string|null;statusUpdatedByName?:string|null;
+  statusUpdatedByUserId?:string|null;papRequested?:boolean|null;
+  sourceProvider?:string|null;rejectionReason?:string|null;
+  version?:number;eligibilityStatus:string;eligibilitySnapshot:unknown};
  screening:{status:string;candidateMessage:string|null;internalReason:string|null;
   decidedAt:string|null}|null;
  stage:string|null;stageHistory:Event[];screeningHistory:Event[];history:Event[];
  notes:{id:string;body:string;createdAt:string}[];
  rounds:{id:string;name:string;testUrl:string|null;scheduledAt:string|null}[];
  offers:{id:string;status:string;issuedAt:string;offerLetterUrl:string|null;offerLetterAttachedAt:string|null}[];
- scoring:{available:boolean;reason:string};resume:{available:boolean;reason:string;url:string|null};
+ scoring:{available:boolean;reason:string;score?:number|null;partial?:boolean|null};
+ historyPagination?:{page:number;pageSize:number;hasMore:boolean;nextPage:number|null};
+ stageHistoryHasMore?:boolean;screeningHistoryHasMore?:boolean;
+ historyTruncated?:boolean;notesHasMore?:boolean;
+ internalNotes?:string|null;internalNoteVersion?:string|null;
+ resume:{available:boolean;reason:string;url:string|null};
 };
-const when=(v:string)=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
- timeZone:"Asia/Kolkata"}).format(new Date(v));
+const when=(v:string|null|undefined)=>{
+ if(!v)return "—";
+ const parsed=new Date(v);
+ return Number.isFinite(parsed.getTime())
+  ?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
+    timeZone:"Asia/Kolkata"}).format(parsed)+" IST"
+  :"—";
+};
 export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,initialDetail,basePath="/college/placements"}:{
  jobId:string;applicationId:string;onClose:()=>void;initialDetail?:CollegeApplicationDetail;
  basePath?: "/college/placements"|"/admin/placements";
@@ -60,6 +75,10 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
  const [interviewError,setInterviewError]=useState("");
  const [interviewData,setInterviewData]=useState<CandidateInterviews|null>(null);
  const interviewFetchRef=useRef(false);
+ const detailReadRef=useRef(0);
+ const [noteModalOpen,setNoteModalOpen]=useState(false);
+ const [confirmNoteDiscard,setConfirmNoteDiscard]=useState(false);
+ const [historyError,setHistoryError]=useState<Record<string,string>>({});
  const errorRef=useRef<HTMLParagraphElement>(null);
  useEffect(()=>{if(error)errorRef.current?.focus();},[error]);
  const letterDirty=Object.entries(letterInput).some(([id,url])=>
@@ -79,14 +98,29 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
  const endpoint="/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/applications/"+
    encodeURIComponent(applicationId);
  async function reload(){
+  const requestId=++detailReadRef.current;
   setLoading(true);setError("");
   try{
    const body=await apiFetch<CollegeApplicationDetail>(endpoint,{cache:"no-store"});
    if(!body?.application)throw Error("Could not load this application. Please try again.");
-   setDetail(body);
-  }catch(reason){setError(reason instanceof Error?reason.message:"Unable to load application");}
-  finally{setLoading(false);}
+   if(requestId===detailReadRef.current){
+    setDetail(body);setHistoryError({});
+   }
+  }catch(reason){
+   if(requestId===detailReadRef.current)
+    setError(reason instanceof Error?reason.message:"Unable to load application");
+  }finally{if(requestId===detailReadRef.current)setLoading(false);}
  }
+ useEffect(()=>{
+  setDetail(initialDetail??null);setError("");setNote("");setAmendsNoteId(null);
+  setSuccess("");setLinkNotice("");setHistoryError({});
+  setRescreenResult(null);setInterviewData(null);setInterviewError("");
+  setInterviewOpen(false);setNoteModalOpen(false);setResumePreviewOpen(false);
+  if(!initialDetail)void reload();
+  return ()=>{detailReadRef.current++;};
+  // Route selection, not a re-render of the same route, owns the detail lifetime.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+ },[jobId,applicationId]);
  async function save(){
   if(!note.trim()||saving)return;
   setSaving(true);setError("");setNoteError("");setSuccess("");
@@ -174,7 +208,9 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
   {label:"Application history",rows:detail?.history??[]},
  ];
  return <>
-  <Dialog open={!interviewOpen} onOpenChange={open=>{if(!open)requestClose();}} title="Application Details">
+  <Dialog open={!interviewOpen} onOpenChange={open=>{if(!open)requestClose();}}
+   title="Application Details" description="Application details and status history"
+   className="max-w-[50rem]" bodyClassName="!px-4 sm:!px-6">
     <div className="flex min-w-0 items-center justify-end gap-3">
        <Button variant="secondary" type="button" onClick={()=>void reload()} disabled={loading}
         className="min-h-11 w-full sm:w-auto md:min-h-9">Refresh</Button>
