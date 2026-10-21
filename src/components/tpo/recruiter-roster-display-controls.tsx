@@ -22,7 +22,7 @@ export function RecruiterRosterDisplayControls({
       aria-label="Recruiter table display"
       className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border py-3 sm:grid-cols-[minmax(0,15rem)_auto_auto] sm:justify-start"
     >
-      <label className="block min-w-0 text-sm font-semibold text-body">
+      <label className="block min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
         Sort by
         <Select
           className="mt-1 block min-h-11 w-full min-w-0 md:min-h-9"

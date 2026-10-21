@@ -50,15 +50,15 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
  ];
  return <section aria-label="Audit history grid" className="min-w-0 space-y-3">
   <div className="grid min-w-0 grid-cols-1 gap-3 border-y border-[var(--lms-canvas-border)] py-3 sm:grid-cols-2 lg:grid-cols-3">
-   <label className="min-w-0 flex-1 text-sm md:flex-none">What happened
+   <label className="min-w-0 flex-1 text-[13px] md:flex-none">What happened
     <Input value={what} onChange={event=>setWhat(event.target.value)} type="search"
      maxLength={120} className="mt-1 block w-full min-w-0" />
    </label>
-   <label className="min-w-0 flex-1 text-sm md:flex-none">Who
+   <label className="min-w-0 flex-1 text-[13px] md:flex-none">Who
     <Input value={who} onChange={event=>setWho(event.target.value)} type="search"
      maxLength={120} className="mt-1 block w-full min-w-0" />
    </label>
-   <label className="min-w-0 flex-1 text-sm md:flex-none">When
+   <label className="min-w-0 flex-1 text-[13px] md:flex-none">When
     <Select value={oldestFirst?"oldest":"newest"}
      onChange={e=>setOldestFirst(e.target.value==="oldest")}
      className="mt-1 block w-full min-w-0">
