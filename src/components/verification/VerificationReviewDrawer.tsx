@@ -2,6 +2,7 @@
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useEffect,useState} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
+import {useToast} from "@/components/ui/toast";
 import type {SafeSnapshot} from "@/modules/profile-verification/domain";
 import {verificationSnapshotComparison} from "@/modules/verification/snapshot-comparison";
 import { verificationEducationRows } from "@/modules/verification/education-rows";
@@ -25,6 +26,7 @@ type Detail={review:{submittedSnapshot:SafeSnapshot;verifiedSnapshot:SafeSnapsho
 export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/college/verification",collegeId,sequenceProgress,onNext,onFinish}:{
  row:VerificationQueueCard;onClose:()=>void;onSaved:(action?:"VERIFY"|"SEND_BACK")=>void;apiBase?:string;collegeId?:string;sequenceProgress?:string;onNext?:()=>void;onFinish?:()=>void;
 }){
+ const {showToast}=useToast();
  const [detail,setDetail]=useState<Detail|null>(null);
  const [error,setError]=useState("");
  const [loading,setLoading]=useState(true);
@@ -40,7 +42,11 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
  useEffect(()=>{
   let active=true;
   apiFetch<Detail>(url,{cache:"no-store"}).then(data=>{if(active)setDetail(data);})
-   .catch(e=>{if(active)setError(isTpo?"Could not open this student":e instanceof Error?e.message:"Could not load review. Please try again.");})
+   .catch(()=>{if(active){
+    setError("Could not open this student");
+    showToast({tone:"error",title:"Could not open this student"});
+    onClose();
+   }})
     .finally(()=>{if(active)setLoading(false);});
   return ()=>{active=false;};
  },[url,retryKey]);
@@ -51,7 +57,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
  async function decide(action:"VERIFY"|"SEND_BACK"){
   if(!detail||saving||guardedPending||pendingAction!==action)return;
   if(action==="SEND_BACK"&&[reason,additional.trim()].filter(Boolean).join(": ").trim().length<3){
-   setError("Write what needs to change before sending this back.");return;
+   setError("Say what needs to change");return;
   }
   setSaving(true);setError("");
   try{
@@ -66,7 +72,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
    if(e instanceof FriendlyFetchError&&e.status===409){
      setDetail(null);setPendingAction(null);
      setError("This changed while you were working. Refresh the details and re-apply your decision.");
-   }else setError((action==="VERIFY"?"Could not verify":"Could not send it back")+". Please try again.");
+   }else setError(action==="VERIFY"?"Could not verify":"Could not send it back");
   }
   finally{setSaving(false);}
  }
@@ -83,7 +89,16 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
     {canRetryVerificationReview(error,loading)&&<Button variant="secondary" type="button" onClick={retryReview}
      className="min-h-11 w-full sm:min-h-[var(--lms-control-height)] sm:w-auto">Retry loading review</Button>}</div>:null}
    {detail?<div className="min-w-0 space-y-5 py-4">
-    {row.section==="IDENTITY"?<p className="text-sm text-muted-foreground">Numbers show only the last four digits; compare them with the document.</p>:null}
+    {row.section==="IDENTITY"?<section className="space-y-1 text-sm">
+      <p className="text-muted-foreground">Numbers show only the last four digits; compare them with the document.</p>
+      {(["aadhaarNumber","panNumber"] as const).map(field=>{
+        const value=detail.review.submittedSnapshot[field];
+        const digits=typeof value==="string"?value.replace(/[^0-9A-Za-z]/g,""):"";
+        const lastFour=digits.length>=4?digits.slice(-4):null;
+        return <p key={field}><strong>{field==="aadhaarNumber"?"Aadhaar":"PAN"}:</strong>
+          {" "}{lastFour?"•••• "+lastFour:"Not given"}</p>;
+      })}
+    </section>:null}
     <section><h3 className="font-semibold">Submitted versus previously verified</h3>
      <dl className="mt-3 min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{verificationSnapshotComparison(detail.review.submittedSnapshot,detail.review.verifiedSnapshot)
       .map(item=><div key={item.key} className="min-w-0 space-y-1 py-3">

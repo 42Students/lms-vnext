@@ -238,8 +238,10 @@ export async function getSuperAdminPlatformSettings(
         ],
         note:
           "The threshold applies to VIDEO and YOUTUBE progress. " +
-          "Other legacy watched, in-progress, polling and save-interval " +
-          "settings are not represented as configurable platform values.",
+          "Legacy watched and in-progress thresholds are stored overrides with " +
+          "reader verification required. Classroom polling (3000–600000ms) and " +
+          "video progress saves (5000–600000ms) remain STORED_ONLY until a " +
+          "runtime consumer is verified. Saving them does not change live timers.",
       },
       {
         id: "attendance",
@@ -267,8 +269,8 @@ export async function getSuperAdminPlatformSettings(
         note:
           "A policy row is optional. Without one, the existing " +
           "attendance source defaults apply. This inventory does " +
-          "not claim that a separate legacy schedule-grace setting " +
-          "exists in the current attendance policy table.",
+          "not claim that the stored schedule.pastBookingGraceMinutes " +
+          "(0–1440) takes effect; it has no verified scheduling consumer.",
       },
       {
         id: "placements",
@@ -473,4 +475,42 @@ export async function getSuperAdminPlatformSettings(
       },
     ],
   };
+}
+
+/** Actual runtime-wiring status of saved legacy overrides. This is intentionally
+ * separate from a persisted value: a successful PATCH must never claim that
+ * authentication, Exotel, scheduling or browser timers have changed.
+ */
+export const PLATFORM_OVERRIDE_RUNTIME_CONSUMERS = {
+  "course.watchedThresholdPercent": {
+    state:"READER_VERIFICATION_REQUIRED",reader:"Learner playback/progress threshold",
+  },
+  "course.minInProgressPercent": {
+    state:"READER_VERIFICATION_REQUIRED",reader:"Learner course progress categorization",
+  },
+  "ui.chatPollIntervalMs": {
+    state:"STORED_ONLY",reader:"Classroom chat client has no proven override read",
+  },
+  "ui.progressSaveIntervalMs": {
+    state:"STORED_ONLY",reader:"Learner video progress save client has no proven override read",
+  },
+  "schedule.pastBookingGraceMinutes": {
+    state:"STORED_ONLY",reader:"Scheduling policy uses separate source and membership guards",
+  },
+  "sms.senderId": {
+    state:"DEPLOYMENT_REQUIRED",reader:"Exotel sender registration and deployment configuration",
+  },
+  "sms.attendanceAbsenceTemplate": {
+    state:"PROVIDER_TEMPLATE_MATCH_REQUIRED",reader:"Parent SMS via approved Exotel/DLT body",
+  },
+  "sms.attendanceCorrectionTemplate": {
+    state:"PROVIDER_TEMPLATE_MATCH_REQUIRED",reader:"Corrected attendance SMS via approved Exotel/DLT body",
+  },
+  "sms.traiJobUpdateTemplate": {
+    state:"PROVIDER_TEMPLATE_MATCH_REQUIRED",reader:"Job-update SMS via registered Exotel/DLT body",
+  },
+} as const;
+export function describePlatformOverrideConsumer(key:string) {
+  return PLATFORM_OVERRIDE_RUNTIME_CONSUMERS[key as keyof typeof PLATFORM_OVERRIDE_RUNTIME_CONSUMERS] ??
+    {state:"READER_VERIFICATION_REQUIRED" as const,reader:"Operational consumer must be verified before activation"};
 }
