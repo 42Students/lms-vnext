@@ -28,6 +28,9 @@ export const collegeMemberships = pgTable(
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
     status: membershipStatusEnum("status").notNull().default("ACTIVE"),
+    /** Mapping source account to one scoped membership; not an auth key. */
+    legacyMembershipId: integer("legacy_membership_id"),
+    legacyRemovedAt: timestamp("legacy_removed_at",{withTimezone:true}),
     suspendedAt: timestamp("suspended_at", { withTimezone: true }),
     suspensionReason: text("suspension_reason"),
     /** Membership-scoped write CAS; do not substitute for auth device revocation. */
@@ -36,6 +39,11 @@ export const collegeMemberships = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
+    uniqueIndex("college_memberships_legacy_college_id_uq")
+      .on(table.collegeId,table.legacyMembershipId)
+      .where(sql`${table.legacyMembershipId} is not null`),
+    check("college_memberships_legacy_removed_ck",sql`
+      ${table.legacyRemovedAt} is null or ${table.status} <> 'ACTIVE'`),
     uniqueIndex("college_memberships_user_college_uq").on(
       table.userId,
       table.collegeId,
@@ -63,6 +71,7 @@ export const membershipRoles = pgTable(
       .notNull()
       .references(() => collegeMemberships.id),
     role: membershipRoleEnum("role").notNull(),
+    legacyRoleId: integer("legacy_role_id"),
     /** Imported role authority and audit are separate from the protected role enum. */
     assignedByUserId: uuid("assigned_by_user_id").references(
       () => users.id, { onDelete: "restrict" },
@@ -75,6 +84,8 @@ export const membershipRoles = pgTable(
       table.role,
     ),
     index("membership_roles_role_idx").on(table.role),
+    index("membership_roles_source_lookup_idx").on(table.legacyRoleId,table.membershipId)
+      .where(sql`${table.legacyRoleId} is not null`),
   ],
 );
 

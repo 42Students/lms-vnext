@@ -541,3 +541,126 @@
 - G2-9-003-087 — src/modules/academics/cohort-service.ts / batch UI: Create field mapping and account for original status values.
 - G2-9-029-067 — src/modules/academics/class-service.ts / section and group-backed selectors: Restore legacy input/display year while keeping stored valid value
 - G2-9-023-067 — src/modules/academics/class-service.ts / section and group-backed selectors: Restore legacy input/display year while keeping stored valid value
+
+## Wave2 bug report legacy identity and reporter provenance
+- G2-19-020-007 — src/modules/tracker report, search and activity services; report UI: Map numeric reporter_access_id to UUID for legacy issue history.
+- G2-19-020-009 — src/modules/tracker report, search and activity services; report UI: Convert timezone meaning on migration.
+- G2-19-020-011 — src/modules/tracker report, search and activity services; report UI: Add validated display-name search query/index or prohibit impersonating lookup.
+- G2-19-020-024 — src/modules/tracker report, search and activity services; report UI: Document inactive-on-intake behavior and activation workflow.
+- G2-19-020-035 — src/modules/tracker report, search and activity services; report UI: Provide case-insensitive name/active index if enrollment used.
+- G2-19-020-038 — src/modules/tracker report, search and activity services; report UI: Normalize UTC/IST on imports.
+- G2-19-020-042 — src/modules/tracker report, search and activity services; report UI: Resolve name lookup/index strategy.
+- G2-16-002-087 — src/modules/tracker report, search and activity services; report UI: Either support optional captured source metadata in API/quick report or document retained read-only fields.
+- G2-16-003-079 — src/modules/tracker report, search and activity services; report UI: Confirm historical report reference migration or approved no-migration, and reflect source metadata.
+- G2-16-004-078 — src/modules/tracker report, search and activity services; report UI: Maintain old publicID lookup compatibility if historical data imported; owner says no migration might waive.
+- G2-20-020-004 — src/modules/tracker report, search and activity services; report UI: Map IDs
+- G2-20-020-022 — src/modules/tracker report, search and activity services; report UI: Migration crosswalk
+- G2-3-021-007 — src/modules/tracker report, search and activity services; report UI: Legacy BIGINT event and issue IDs, timestamp DATETIME(6) unzoned; vNext UUID IDs, timestamptz, restrictive issue FK. Specify import identity/timezone mapping.
+- G2-3-021-035 — src/modules/tracker report, search and activity services; report UI: Legacy index issue+createdAt ASC and full fetch; VNext same index but cursor ORDER BY createdAt/id DESC, no compound tie-breaker index. Add index for stable keyset paging.
+- G2-3-021-043 — src/modules/tracker report, search and activity services; report UI: Legacy actor_name may be set without user FK, vNext actorUserId or accessId XOR constraint requires resolving historical Engineering/reporter event authors. Supply migration system actor.
+- G2-4-021-002 — src/modules/tracker report, search and activity services; report UI: Preserve historical public IDs and old route links with safe resolver.
+- G2-4-021-004 — src/modules/tracker report, search and activity services; report UI: Reconstruct detail sections and activity timeline with exact labels/order.
+- G2-4-021-007 — src/modules/tracker report, search and activity services; report UI: Capture safe browser,viewport and source context from authenticated application.
+- G2-4-021-014 — src/modules/tracker report, search and activity services; report UI: Wire remaining context fields with safe allowlist.
+- G2-4-021-032 — src/modules/tracker report, search and activity services; report UI: Verify upload UI, provisional grants and screenshot display in report form.
+- G2-4-021-056 — src/modules/tracker report, search and activity services; report UI: Use index to implement scoped efficient environment count.
+- G2-4-021-058 — src/modules/tracker report, search and activity services; report UI: Handle public ID collision retries and format historical ids.
+- G2-4-021-063 — src/modules/tracker report, search and activity services; report UI: Define IST/source zone on migration to prevent wrong incident chronology.
+- G2-4-021-065 — src/modules/tracker report, search and activity services; report UI: Backfill missing/duplicate legacy IDs with logged reconciliation.
+- G2-8-031-068 — src/modules/tracker report, search and activity services; report UI: Document legacy bug status/attachment field mapping and migration consequences; no data migration expected but functional parity required.
+
+## Wave2 project admin collection control dependent query/status behavior
+- G2-10-031-014 — src/modules/projects/admin workspace list query/parser and caller pages: Match each list's status model and clear URL defaults.
+- G2-10-031-015 — src/modules/projects/admin workspace list query/parser and caller pages: Adopt debounced search with robust deep links.
+- G2-10-028-019 — src/modules/projects/admin workspace list query/parser and caller pages: Restore immediate debounced search.
+- G2-10-028-021 — src/modules/projects/admin workspace list query/parser and caller pages: Match pagination position/counter wording.
+- G2-10-028-023 — src/modules/projects/admin workspace list query/parser and caller pages: Restore clearable one-click controls.
+- G2-10-028-024 — src/modules/projects/admin workspace list query/parser and caller pages: Apply page size immediately.
+- G2-10-028-045 — src/modules/projects/admin workspace list query/parser and caller pages: Verify/mobile match table scroll and controls at 320/375/768px.
+- G2-11-028-016 — src/modules/projects/admin workspace list query/parser and caller pages: Legacy dedicated deleted list has no status/search filters, only page/size; vNext user must choose ARCHIVED from Workspace status filter.
+- G2-11-028-017 — src/modules/projects/admin workspace list query/parser and caller pages: Legacy page sizes 10,20,50,100 and total string N-M of N deleted workspaces; vNext directory supports 10/20/50/100 but generic pagination copy.
+- G2-7-001-058 — src/modules/projects/admin workspace list query/parser and caller pages: Restore exact section title and search copy.
+- G2-7-019-011 — src/modules/projects/admin workspace list query/parser and caller pages: Match inline search and clearable select interaction without Apply/Clear requirement.
+- G2-7-019-026 — src/modules/projects/admin workspace list query/parser and caller pages: Restore exact placeholder and live 350ms search.
+- G2-7-019-032 — src/modules/projects/admin workspace list query/parser and caller pages: Support immediate clear; filter applied without extra submit.
+- G2-7-019-034 — src/modules/projects/admin workspace list query/parser and caller pages: Apply page-size changes without separate confirmation.
+- G2-7-019-075 — src/modules/projects/admin workspace list query/parser and caller pages: Restore both placeholders and avoid different field labels.
+- G2-7-019-080 — src/modules/projects/admin workspace list query/parser and caller pages: Restore debounce with request cancelation for live text searching.
+- G2-10-031-008 — src/modules/projects/admin workspace list query/parser and caller pages: Match per-resource labels, avoid one-size-fits-all statuses.
+- G2-10-028-049 — src/modules/projects/admin workspace list query/parser and caller pages: Restore export wording.
+- G2-7-019-029 — src/modules/projects/admin workspace list query/parser and caller pages: Render row range plus total with exact legacy suffix.
+- G2-7-019-033 — src/modules/projects/admin workspace list query/parser and caller pages: Match status picker clear button and placeholder `Status`.
+- G2-7-019-070 — src/modules/projects/admin workspace list query/parser and caller pages: Compare search width and toolbar wrapping at 375,768,1280; match legacy compact layout.
+
+## Wave2 assessments cross-file service and UI mapping
+- G2-2-026-015 — src/modules/assessments grade and submission services/UI: Map display names and assignment snapshots; assess downstream expectations of renamed fields.
+- G2-2-026-020 — src/modules/assessments grade and submission services/UI: Specify datetime presentation in IST and overflow/precision conversion for legacy long grade values.
+- G2-2-026-095 — src/modules/assessments grade and submission services/UI: Maintain explicit identity translation for reports/legacy imports, no integer-to-UUID casting.
+- G2-2-026-098 — src/modules/assessments grade and submission services/UI: Define archived/deleted submission visibility and remove/restore parity under permission scope.
+- G2-2-026-100 — src/modules/assessments grade and submission services/UI: Clarify historical snapshot policy for renamed learners/edited max scores.
+- G2-3-016-001 — src/modules/assessments grade and submission services/UI: Legacy student_assignment rows keyed to lesson_content_id and learner numeric student_id, vNext assignment_submissions keyed assignment UUID, delivery UUID, membership UUID. Map learner assignment route and archived content references.
+- G2-3-016-003 — src/modules/assessments grade and submission services/UI: Legacy one flat entity holds learner names, assignment name, content, type, points and grading; vNext normalized submission with joins to assignment/users/files. Ensure frontend section field/order parity.
+- G2-3-016-005 — src/modules/assessments grade and submission services/UI: Legacy stored student first/last names, gradingDate string and graded 0/1; vNext derives learnerDisplayName and gradedAt timestamp/gradingStatus enum. Match full name display and empty placeholder.
+- G2-3-016-008 — src/modules/assessments grade and submission services/UI: Legacy gradingDate string, HTML answer, submissionLink, submissionAssets JSON list; vNext timestamp gradedAt, textContent, submissionUrl and normalized link/file children. Map rich HTML and multi-part assets.
+- G2-3-016-009 — src/modules/assessments grade and submission services/UI: Legacy points and pointsObtained long (64bit), vNext pointsAwarded int and assignment maxPoints parent; enforce max range and preserve large historic marks conversion.
+- G2-3-016-018 — src/modules/assessments grade and submission services/UI: Legacy written response uses rich HTML string and submission types uppercase names; vNext TEXT uses plain text and LINK URL. Preserve sanitization and rendering of rich student content.
+- G2-3-016-035 — src/modules/assessments grade and submission services/UI: Legacy grade max bound is stored StudentAssignment.points, vNext compares to parent maxPoints; if changed after submission, old grade could become invalid. Snapshot maximum points at submission.
+- G2-3-016-046 — src/modules/assessments grade and submission services/UI: Legacy long points and previousPoints zero defaults, vNext nullable int previousPoints and pointsAwarded. Normalize old 0 ungraded to null and avoid overflow.
+- G2-3-016-051 — src/modules/assessments grade and submission services/UI: Legacy @Version and semester attempt semantics vs vNext unique assignmentId/membershipId, ATTEMPT >=1 and 2-state grading check; update relational constraints for historic/regrade parity.
+- G2-4-004-095 — src/modules/assessments grade and submission services/UI: Maintain field mapping for status/scope/grade/version, inspect migration constraints and historical data behavior.
+- G2-4-010-095 — src/modules/assessments grade and submission services/UI: Maintain field mapping for status/scope/grade/version, inspect migration constraints and historical data behavior.
+- G2-4-012-015 — src/modules/assessments grade and submission services/UI: Specify canonical legacy date parsing/transfer with timezone.
+- G2-4-012-087 — src/modules/assessments grade and submission services/UI: Define foreign-key and due/point history migration rules.
+- G2-4-012-013 — src/modules/assessments grade and submission services/UI: Fallback to Untitled for historical blank title.
+
+## Wave2 memberships cross-file service and UI mapping
+- G2-1-001-007 — src/modules/people membership lifecycle and role-service UI: Show counts based on membership-scoped state while matching visible Active/Suspended counters and document cross-college distinction.
+- G2-1-001-048 — src/modules/people membership lifecycle and role-service UI: Use membership version or timestamp CAS consistently for all generic lifecycle mutations if stale-client conflict matters.
+- G2-1-008-086 — src/modules/people membership lifecycle and role-service UI: Crosswalk dual-role de-duplication and statuses, tenant uniqueness and name.
+- G2-1-021-050 — src/modules/people membership lifecycle and role-service UI: Document role name/id migration with college scope and prevent unauthorized ADMIN grants.
+- G2-13-016-001 — src/modules/people membership lifecycle and role-service UI: Document intentionally noneditable role catalog and map old role IDs/names to scoped enums during import
+- G2-13-016-007 — src/modules/people membership lifecycle and role-service UI: Retain original descriptions in a migration map if needed for audit/help text; don't invent user-editable free-text roles
+- G2-13-016-008 — src/modules/people membership lifecycle and role-service UI: Create old role-ID mapping; document removed updatedAt/isDeleted semantics and derive revocation from row deletion/audit
+- G2-13-016-013 — src/modules/people membership lifecycle and role-service UI: Represent role removal with explicit revoke event instead of allowing soft-deleted role definition
+- G2-13-016-038 — src/modules/people membership lifecycle and role-service UI: Map role IDs to names first, normalize case and reject duplicate/missing seed roles
+- G2-13-016-041 — src/modules/people membership lifecycle and role-service UI: Write migration/connector dependency map for old USER_ROLES join references and role ID mapping
+- G2-4-020-001 — src/modules/people membership lifecycle and role-service UI: Map all legacy faculty account lookup routes and authority boundaries to membership-scoped data.
+- G2-4-020-042 — src/modules/people membership lifecycle and role-service UI: Define deleted-vs-ended retention and restore semantics for foreign keys.
+- G2-4-020-057 — src/modules/people membership lifecycle and role-service UI: Avoid N+1 joins and JSON decode across large faculty directory pages.
+- G2-5-019-033 — src/modules/people membership lifecycle and role-service UI: Rebuild active blast-radius counters using persisted status.
+- G2-6-004-070 — src/modules/people membership lifecycle and role-service UI: Define duplicate handling and labels for multi-role users across All/Teachers/Students
+- G2-8-001-048 — src/modules/people membership lifecycle and role-service UI: Add explicit DTO mapping/source for legacy contactPhone and image if required, avoid duplicating PII tables
+- G2-8-003-045 — src/modules/people membership lifecycle and role-service UI: Provide read-model mapping for role image/secondary phone or explicit approved omission; migration is not required
+- G2-8-002-047 — src/modules/people membership lifecycle and role-service UI: Record legacy-to-new mapping for identifiers, role duplicates, contact and profile fields in migration reference; no data migration requested
+
+## Wave2 profiles cross-file service and UI mapping
+- G2-1-004-010 — src/modules/people learner/faculty profile read and storage services: Map legacy IDs, program/college names and profile image to visible header.
+- G2-20-030-029 — src/modules/people learner/faculty profile read and storage services: Preserve section completeness and independent partial-data status when switching storage
+- G2-4-020-001 — src/modules/people learner/faculty profile read and storage services: Map all legacy faculty account lookup routes and authority boundaries to membership-scoped data.
+- G2-4-020-004 — src/modules/people learner/faculty profile read and storage services: Reproduce original About/card ordering, and profile section navigation.
+- G2-4-020-057 — src/modules/people learner/faculty profile read and storage services: Avoid N+1 joins and JSON decode across large faculty directory pages.
+- G2-4-020-066 — src/modules/people learner/faculty profile read and storage services: Map optimistic token between entity and profile JSON mutation, avoid lost updates.
+- G2-5-019-029 — src/modules/people learner/faculty profile read and storage services: Map to signed storage receipt and timestamp.
+- G2-5-019-031 — src/modules/people learner/faculty profile read and storage services: Map to private verified resume receipt.
+- G2-5-019-054 — src/modules/people learner/faculty profile read and storage services: Implement signed receipt-based access/migration.
+- G2-5-019-059 — src/modules/people learner/faculty profile read and storage services: Compare exact labels, keys and fallback text.
+- G2-5-019-066 — src/modules/people learner/faculty profile read and storage services: Plan private storage migration and authorized download.
+- G2-6-019-007 — src/modules/people learner/faculty profile read and storage services: Keep 1:1 scoped mapping from legacy learner to active membership; resolve transfers/duplicates.
+- G2-8-001-048 — src/modules/people learner/faculty profile read and storage services: Add explicit DTO mapping/source for legacy contactPhone and image if required, avoid duplicating PII tables
+- G2-8-003-045 — src/modules/people learner/faculty profile read and storage services: Provide read-model mapping for role image/secondary phone or explicit approved omission; migration is not required
+
+## Wave2 workspace section-specific loading and compatibility
+- G2-17-004-036 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Instrument tab-switch request count and avoid redundant full workspace aggregation when changing filter/query.
+- G2-3-029-018 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Legacy review fields are on resolvedDelivery; vNext getProjectWorkspaceView assembles separate finalDelivery.reviews and evaluations. Join latest proper review metadata.
+- G2-3-029-030 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Legacy fetches one college-scoped workspace through admin API on client; vNext parallel server fetch of workspace/members/readiness/reviews/activity, with different failure cascade.
+- G2-3-029-036 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Legacy data fetch starts loading true to avoid first render not-found; vNext server-rendered page needs route loading.tsx parity for equivalent skeleton.
+- G2-3-029-050 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Legacy retrieves one workspace JSON in one call, vNext launches 8 parallel subqueries, increasing query/connection pressure.
+- G2-3-029-055 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Legacy AdminService.getProjectWorkspaceById resolves college-scope payload; vNext typed workspace-view DB aggregator has different failure and loading telemetry.
+- G2-4-029-056 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Query resource-only rows newest first with server page/count.
+- G2-4-029-061 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Use discrete admin resource-audit service, avoid whole workspace dependencies.
+- G2-7-011-040 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Use section-specific projection/cache while preserving tenant enforcement and error states.
+- G2-7-012-030 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Optimize section projection and preserve error isolation
+- G2-7-012-053 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Readiness-only projections for large workspaces
+- G2-7-013-039 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Project normalized resource DTO onto legacy field identities
+- G2-7-015-045 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Avoid unrelated fetch blocking Summary load
+- G2-7-027-088 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Map every action request and notification into new typed API route/service

@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  bigint,
   boolean,
   check,
   index,
@@ -27,6 +28,8 @@ export const courseAssignments = pgTable(
   "course_assignments",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    /** Original lesson content identity is import-only; do not cast to UUID. */
+    legacyLessonContentId: integer("legacy_lesson_content_id"),
     lessonId: uuid("lesson_id")
       .notNull()
       .references(() => courseLessons.id, {
@@ -107,6 +110,8 @@ export const courseAssignments = pgTable(
       .where(
         sql`${table.deliveryId} is not null and ${table.status} <> 'ARCHIVED'`,
       ),
+    uniqueIndex("course_assignments_legacy_content_uq").on(table.legacyLessonContentId)
+      .where(sql`${table.legacyLessonContentId} is not null`),
     index(
       "course_assignments_lesson_status_idx",
     ).on(table.lessonId, table.status),
@@ -132,6 +137,8 @@ export const assignmentSubmissions = pgTable(
   "assignment_submissions",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    legacyStudentAssignmentId: bigint("legacy_student_assignment_id",{mode:"bigint"}),
+    legacyLearnerId: integer("legacy_learner_id"),
     assignmentId: uuid("assignment_id")
       .notNull()
       .references(() => courseAssignments.id, {
@@ -159,6 +166,11 @@ export const assignmentSubmissions = pgTable(
       .notNull()
       .defaultNow(),
     pointsAwarded: integer("points_awarded"),
+    /** Immutable grade ceiling from when the learner submitted, if known. */
+    maxPointsAtSubmission: integer("max_points_at_submission"),
+    /** Exact source BIGINT grade before safe normalization to integer. */
+    legacyPointsAwarded: bigint("legacy_points_awarded",{mode:"bigint"}),
+    deletedAt: timestamp("deleted_at",{withTimezone:true}),
     // Legacy fidelity (migration 0098): resubmission counter and prior grade.
     attemptNumber: integer("attempt_number").notNull().default(1),
     /** Legacy semester snapshot; use the existing row as the active attempt aggregate. */
@@ -201,6 +213,12 @@ export const assignmentSubmissions = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("assignment_submissions_legacy_source_uq").on(table.legacyStudentAssignmentId)
+      .where(sql`${table.legacyStudentAssignmentId} is not null`),
+    index("assignment_submissions_live_lookup_idx").on(table.assignmentId,table.deletedAt,table.submittedAt),
+    check("assignment_submissions_max_snapshot_ck",sql`
+      ${table.maxPointsAtSubmission} is null or
+      ${table.maxPointsAtSubmission} between 0 and 10000`),
     uniqueIndex(
       "assignment_submissions_assignment_membership_uq",
     ).on(

@@ -36,6 +36,9 @@ export async function getProjectWorkspaceView(
   context: RequestContext,
   projectId: string,
 ) {
+  // Authorize before launching any parallel data reads, to avoid costly
+  // unauthorized side queries and uniformly isolate tenant failures.
+  const access = await requireProjectReadAccess(context,projectId);
   const [
     workspace,
     members,
@@ -70,7 +73,6 @@ export async function getProjectWorkspaceView(
 
   // MEN-projects-meetings-25: historical roster is mentor-only. Learners
   // retain the active roster and never receive former members' profile data.
-  const access = await requireProjectReadAccess(context, projectId);
   const mentorRoster = access.access === "MENTOR"
     ? await getDb().select({
         id:projectMembers.id,
@@ -227,4 +229,32 @@ export async function getProjectResourceAuditPage(
     hasMore:page.hasMore,
     nextCursor:last&&page.hasMore?{beforeTime:last.cursorOccurredAt,beforeId:last.id}:null,
   };
+}
+
+/**
+ * Section-scoped view for pages that do not require the complete workspace.
+ * Each branch performs one authenticated scope resolution and only the
+ * queries needed for that tab; detail callers can retain the full aggregator.
+ */
+export async function getProjectWorkspaceSectionView(
+ context:RequestContext, projectId:string,
+ section:"READINESS"|"DELIVERY"|"RESOURCES"|"ACTIVITY",
+) {
+ const access=await requireProjectReadAccess(context,projectId);
+ if(section==="READINESS")return {
+  section,readiness:await getProjectReadiness(context,projectId),
+ };
+ if(section==="DELIVERY"){
+  const [finalDelivery,evaluation]=await Promise.all([
+   listProjectSubmissions(context,projectId),
+   listProjectEvaluations(context,projectId),
+  ]);
+  return {section,finalDelivery,evaluation};
+ }
+ if(section==="RESOURCES"){
+  if(access.access!=="ADMIN"&&access.access!=="MENTOR")
+   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  return {section,resourceAudit:await getProjectResourceAuditPage(context,projectId)};
+ }
+ return {section,activity:await getProjectActivityPage(context,projectId,{})};
 }

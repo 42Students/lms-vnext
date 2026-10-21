@@ -1,5 +1,7 @@
+"use client";
+import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Pagination } from "@/components/ui/pagination";
@@ -75,10 +77,27 @@ export function ProjectAdminFilters({
   legacyWorkspaces?: boolean;
   filterView?: "NOT_SUBMITTED";
 }) {
+  const router=useRouter();
+  const [searchText,setSearchText]=useState(query.q??"");
+  const updateUrl=useCallback((key:string,value:string)=>{
+    const current=new URLSearchParams(window.location.search);
+    if(value.trim())current.set(key,value.trim());
+    else current.delete(key);
+    current.delete("page");
+    const qs=current.toString();
+    router.replace(window.location.pathname+(qs?"?"+qs:""),{scroll:false});
+  },[router]);
+  useEffect(()=>{setSearchText(query.q??"");},[query.q]);
+  useEffect(()=>{
+    if(searchText===(query.q??""))return;
+    const timer=window.setTimeout(()=>updateUrl(legacyWorkspaces?"search":"q",searchText),350);
+    return ()=>window.clearTimeout(timer);
+  },[searchText,query.q,legacyWorkspaces,updateUrl]);
   return (
-    <form
-      method="get"
-      className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-2 min-[992px]:grid-cols-4"
+    <form method="get" onSubmit={event=>{event.preventDefault();
+      updateUrl(legacyWorkspaces?"search":"q",searchText);}}
+      role="search"
+      className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]"
     >
       <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
         Search
@@ -88,6 +107,8 @@ export function ProjectAdminFilters({
           defaultValue={query.q ?? ""}
           placeholder={legacyWorkspaces ? "Search title or slug" : "Workspace title or slug"}
           className="w-full min-w-0"
+          value={searchText}
+          onChange={event=>setSearchText(event.target.value)}
         />
       </label>
       <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
@@ -95,9 +116,10 @@ export function ProjectAdminFilters({
         <Select
           name="status"
           defaultValue={query.status ?? ""}
+          onChange={event=>updateUrl("status",event.target.value)}
           className="w-full"
         >
-          <option value="">All statuses</option>
+          <option value="">Status</option>
           {PROJECT_STATUSES.map((status) => (
             <option key={status} value={status}>
               {label(status)}
@@ -117,6 +139,7 @@ export function ProjectAdminFilters({
         <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
           Sort by
           <Select name="riskSort" defaultValue={query.riskSort??"INACTIVE"}
+            onChange={event=>updateUrl("riskSort",event.target.value)}
             className="w-full">
             <option value="INACTIVE">Inactive</option>
             <option value="SEVERITY">Severity</option>
@@ -129,9 +152,8 @@ export function ProjectAdminFilters({
           Submission status
           <Select
             name="submissionStatus"
-            defaultValue={
-              query.submissionStatus ?? ""
-            }
+            defaultValue={query.submissionStatus ?? ""}
+            onChange={event=>updateUrl("submissionStatus",event.target.value)}
             className="w-full"
           >
             <option value="">All submissions</option>
@@ -147,9 +169,8 @@ export function ProjectAdminFilters({
         Rows
         <Select
           name="pageSize"
-          defaultValue={String(
-            query.pageSize ?? (legacyWorkspaces ? 20 : 25),
-          )}
+          defaultValue={String(query.pageSize ?? (legacyWorkspaces ? 20 : 25))}
+          onChange={event=>updateUrl("pageSize",event.target.value)}
           className="w-full"
         >
           {[10, 20, 25, 50, 100].filter((size) => !legacyWorkspaces || size !== 25).map((size) => (
@@ -159,15 +180,9 @@ export function ProjectAdminFilters({
           ))}
         </Select>
       </label>
-      <Button
-        type="submit"
-        className="min-h-11 w-full md:min-h-9"
-      >
-        Apply
-      </Button>
       <Link
         href={filterView?"?view=NOT_SUBMITTED":"?"}
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+        className="inline-flex min-h-11 w-auto items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
       >
         Clear
       </Link>
@@ -222,7 +237,7 @@ export function ProjectAdminPagination({
   return (
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm text-body">
       <p className="m-0 tabular-nums">
-        {total} result{total === 1 ? "" : "s"} · Page {page} of {totalPages}
+        {total===0?0:(page-1)*(query.pageSize??(basePath==="/admin/projects"?20:25))+1}–{Math.min(total,page*(query.pageSize??(basePath==="/admin/projects"?20:25)))} of {total} {query.status==="ARCHIVED"?"deleted workspaces":"workspaces"}
       </p>
       <Pagination page={page} pageCount={totalPages} hrefForPage={href}
         label="Project workspaces pages" />
