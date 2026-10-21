@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { listPrograms } from "@/modules/academics/program-service";
+import { scopedProgramPopularity } from "@/modules/academics/legacy-program-popularity";
 import {parseLegacyProgramPage,legacyProgramPage} from "@/modules/admin-ui/legacy-program-page-model";
 import {
   CollegeProgramMutationError,
@@ -26,8 +27,8 @@ const legacySearchSchema = z.object({
  * accepted in request-time queries. */
 function legacyProgramSearch<T extends {
   id: string;name: string;code: string;departmentId: string;
-  departmentName: string;durationTerms: number;
-}>(rows: readonly T[], parameters: URLSearchParams) {
+  departmentName: string;durationTerms: number;legacyProgramId?: number | null;
+}>(rows: readonly T[], parameters: URLSearchParams, collegeId: string) {
   const parsed = legacySearchSchema.parse({
     mode: parameters.get("mode") ?? undefined,
     query: parameters.get("query") ?? parameters.get("q") ?? "",
@@ -55,21 +56,23 @@ function legacyProgramSearch<T extends {
         name.split(/\s+/).some(word => word.startsWith(query)) ? 60 :
         name.includes(query) ? 40 : 0;
     };
-    return score(b)-score(a) || a.name.localeCompare(b.name) || a.id.localeCompare(b.id);
+    return (parsed.mode === "popular"
+      ? scopedProgramPopularity(collegeId,b.id) - scopedProgramPopularity(collegeId,a.id) : 0) ||
+      score(b)-score(a) || a.name.localeCompare(b.name) || a.id.localeCompare(b.id);
   });
   const mode = parsed.mode ?? "search";
   if (mode === "categories") return { status:"success",message:"Categories retrieved",
     data:[...new Set(rows.map(row => row.departmentName))].sort((a,b)=>a.localeCompare(b)) };
   if (mode === "stats") return { status:"success",message:"Program stats retrieved",
-    data:{total:rows.length,departmentCount:new Set(rows.map(row=>row.departmentId)).size} };
+    data:{totalPrograms:rows.length,departments:new Set(rows.map(row=>row.departmentId)).size} };
   if (mode === "exists") return { status:"success",message:"Program existence checked",
-    data:{exists: rows.some(row=>row.name.toLocaleLowerCase("en") ===
-      (parsed.name ?? parsed.query).trim().toLocaleLowerCase("en"))} };
+    data: rows.some(row=>row.name.toLocaleLowerCase("en") ===
+      (parsed.name ?? parsed.query).trim().toLocaleLowerCase("en")) };
   const limit = parsed.limit ?? (mode === "department" || mode === "category" ? 50 :
     mode === "popular" ? 10 : 15);
   return {status:"success",message:"Programs retrieved",
     data:sorted.slice(0,limit).map(row=>({
-      id:row.id, name:row.name,deptId:row.departmentId,deptName:row.departmentName,
+      id:row.id, legacyId:row.legacyProgramId??null, name:row.name,deptId:row.departmentId,deptName:row.departmentName,
       code:row.code,durationYears:row.durationTerms/2,scope:"COLLEGE",
     })),total:sorted.length,limit};
 }
@@ -124,8 +127,8 @@ export async function GET(request: Request) {
       url.searchParams.get("collegeId") ?? "",
       departmentId,
     );
-    if (mode || url.searchParams.has("query")) {
-      const legacy=legacyProgramSearch(programs,url.searchParams);
+    if (mode || url.searchParams.has("query") || url.searchParams.has("q")) {
+      const legacy=legacyProgramSearch(programs,url.searchParams,url.searchParams.get("collegeId") ?? "");
       return NextResponse.json(legacy,{headers:{"Cache-Control":"private, no-store"}});
     }
     // Explicit zero-based pagination preserves the historical page contract
