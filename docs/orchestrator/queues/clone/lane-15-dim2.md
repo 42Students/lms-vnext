@@ -163,16 +163,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-15.md: file, number of
 - [x] `src/components/courses/learner-live-class-link.tsx`
 - [x] `src/components/courses/learner-quiz-attempt.tsx`
 - [x] `src/components/courses/super-admin-course-bulk-visibility.tsx`
-- [ ] `src/components/courses/super-admin-lesson-bulk-visibility.tsx`
-- [ ] `src/components/electives/college-elective-offering-manager.tsx`
-- [ ] `src/components/electives/college-slot-manager.tsx`
-- [ ] `src/components/hr/hr-drive-draft-form.tsx`
-- [ ] `src/components/hr/hr-recruiter-bell.tsx`
-- [ ] `src/components/hr/recruiter-designation-editor.tsx`
-- [ ] `src/components/hr/recruiter-display-name-editor.tsx`
-- [ ] `src/components/hr/recruiter-profile-details-editor.tsx`
-- [ ] `src/components/people/faculty-profile-metadata.tsx`
-- [ ] `src/components/people/faculty-profile-repeatable.tsx`
+- [x] `src/components/courses/super-admin-lesson-bulk-visibility.tsx`
+- [x] `src/components/electives/college-elective-offering-manager.tsx`
+- [x] `src/components/electives/college-slot-manager.tsx`
+- [x] `src/components/hr/hr-drive-draft-form.tsx`
+- [x] `src/components/hr/hr-recruiter-bell.tsx`
+- [x] `src/components/hr/recruiter-designation-editor.tsx`
+- [x] `src/components/hr/recruiter-display-name-editor.tsx`
+- [x] `src/components/hr/recruiter-profile-details-editor.tsx`
+- [x] `src/components/people/faculty-profile-metadata.tsx`
+- [x] `src/components/people/faculty-profile-repeatable.tsx`
 - [ ] `src/components/people/faculty-profile-skills.tsx`
 - [ ] `src/components/placements/college-application-detail-drawer.tsx`
 - [ ] `src/components/placements/college-application-pipeline-controls.tsx`
