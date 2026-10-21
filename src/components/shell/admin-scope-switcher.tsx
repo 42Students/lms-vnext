@@ -82,7 +82,7 @@ export function AdminScopeSwitcher({
         Super Admin scope
       </label>
       <details className="group min-w-0">
-        <summary className="flex min-h-9 cursor-pointer items-center text-sm font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Search colleges</summary>
+        <summary className="flex min-h-9 cursor-pointer items-center text-sm font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] max-[767px]:min-h-11">Search colleges</summary>
         <label htmlFor="admin-college-search" className="sr-only">Search colleges</label>
         <Input id="admin-college-search" type="search" value={search} onChange={event=>setSearch(event.target.value)}
           placeholder="Search colleges" aria-label="Search colleges" className="mt-[var(--lms-space-2)] w-full"/>

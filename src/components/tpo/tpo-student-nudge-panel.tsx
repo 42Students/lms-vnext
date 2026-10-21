@@ -82,9 +82,9 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
    onClick={()=>setConfirmOpen(true)}>{"Send to "+validSelected.length+" selected"}</Button>
   <Dialog open={confirmOpen} onOpenChange={value=>{if(!pending&&!guardedPending)setConfirmOpen(value);}}
    title="Send a message" description={"Send an in-app message to "+validSelected.length+" learner(s)? The message will be audited."}
-   footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-     <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending||guardedPending} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
-     <Button className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending||guardedPending} disabled={!validSelected.length||message.trim().length<5} onClick={()=>void runGuarded(send)}>
+   footer={<div className="flex w-full flex-col-reverse gap-2 md:flex-row md:justify-end">
+     <Button variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={pending||guardedPending} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
+     <Button className="min-h-11 w-full md:w-auto md:min-h-9" loading={pending||guardedPending} disabled={!validSelected.length||message.trim().length<5} onClick={()=>void runGuarded(send)}>
       {pending||guardedPending?"Sending…":"Confirm send"}
      </Button>
    </div>}>

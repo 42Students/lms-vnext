@@ -94,10 +94,10 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-13.md: file, number of
 - [x] `src/components/tpo/recruiter-lead-csv-import.tsx`
 - [x] `src/components/tracker/tracker-report-form.tsx`
 - [x] `src/components/placements/tpo-offer-lifecycle-panel.tsx`
-- [ ] `src/components/projects/college-project-mentor-dialog.tsx`
-- [ ] `src/components/projects/mentor-task-create.tsx`
-- [ ] `src/components/shell/admin-scope-switcher.tsx`
-- [ ] `src/components/tpo/tpo-academic-import-workspace.tsx`
-- [ ] `src/components/tpo/tpo-company-visibility-editor.tsx`
-- [ ] `src/components/tpo/tpo-student-nudge-panel.tsx`
-- [ ] `src/components/verification/VerificationFilterPanel.tsx`
+- [x] `src/components/projects/college-project-mentor-dialog.tsx`
+- [x] `src/components/projects/mentor-task-create.tsx`
+- [x] `src/components/shell/admin-scope-switcher.tsx`
+- [x] `src/components/tpo/tpo-academic-import-workspace.tsx`
+- [x] `src/components/tpo/tpo-company-visibility-editor.tsx`
+- [x] `src/components/tpo/tpo-student-nudge-panel.tsx`
+- [x] `src/components/verification/VerificationFilterPanel.tsx`
