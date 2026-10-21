@@ -26,7 +26,7 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
   <PageHeader eyebrow="TPO · Export applicants" title={result.job.title+" · Applications"}
    description="Read-only college-scoped export preview without internal screening notes."
    actions={<div className="flex w-full flex-col items-stretch gap-2 min-[768px]:w-auto min-[768px]:flex-row min-[768px]:items-center">
-    <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline?"+query} className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">← Applicants</Link>
+    <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline?"+query} className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 w-full md:w-auto">← Applicants</Link>
     <a href={"/api/placements/tpo/jobs/"+jobId+"/applications/export?"+query} download
      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Download all matching CSV</a>
    </div>}/>
@@ -82,7 +82,7 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
      <p className="break-words text-sm text-body">{row.roleTitle} · {row.status} · {row.screeningStatus??"Screening unavailable"}</p>
      <p className="mt-1 break-words text-xs text-body">Channel: {row.channel} · Submitted {new Date(row.submittedAt).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})} IST</p>
      <details className="group mt-3 min-w-0"><summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-xs font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">Academic evidence <span aria-hidden="true" className="ml-2">⌄</span></summary>
-     <dl className="grid min-w-0 grid-cols-2 gap-3 text-xs text-body min-[768px]:grid-cols-4">
+     <dl className="grid min-w-0 grid-cols-1 md:grid-cols-2 gap-3 text-xs text-body min-[768px]:grid-cols-4">
       <div><dt>Roll number</dt><dd className="font-semibold text-foreground">{row.rollNumber??"Not recorded"}</dd></div>
       <div><dt>Batch</dt><dd className="font-semibold text-foreground">{row.batchName??"Not recorded"}</dd></div>
       <div><dt>Branch</dt><dd className="font-semibold text-foreground">{row.branchName??"Not recorded"}</dd></div>

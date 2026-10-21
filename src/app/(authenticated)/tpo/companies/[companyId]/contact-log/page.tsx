@@ -61,7 +61,7 @@ export default async function TpoCompanyContactLogPage({
         title={log.companyName + " · Contact log"}
         description="Read-only CRM interaction history for contacts explicitly linked to this college-company relationship."
         actions={<Link href={"/tpo/companies/" + encodeURIComponent(companyId)}
-          className="lms-inline-link inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← Company details</Link>}
+          className="lms-inline-link inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 w-full md:w-auto">← Company details</Link>}
       />
       {!log.available ? (
         <Alert tone="warning">
@@ -107,7 +107,7 @@ export default async function TpoCompanyContactLogPage({
               Filter
             </Button>
           </form>
-          <p className="text-sm text-body leading-[22px]">
+          <p className="text-sm text-body">
             {log.total} recorded interaction(s). Most recent first; 25 per page.
           </p>
           <DataTable
