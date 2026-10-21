@@ -2,10 +2,28 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
-import {mutateIndependentAuditFinding} from "@/modules/bug-tracker/independent-audit-findings-service";
+import {getIndependentAuditFinding,listIndependentAuditFindingEvents,listIndependentAuditFindings,mutateIndependentAuditFinding} from "@/modules/bug-tracker/independent-audit-findings-service";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 type Params={params:Promise<{publicId:string}>};
+export async function GET(_request:Request,{params}:Params){
+ try{
+  const ctx=await getCurrentRequestContext();
+  const {publicId}=await params;
+  const finding=await getIndependentAuditFinding(ctx,publicId);
+  if(!finding)return NextResponse.json({error:"NOT_FOUND"},{status:404,headers:{"Cache-Control":"private, no-store"}});
+  const [events,matches]=await Promise.all([
+   listIndependentAuditFindingEvents(ctx,finding.id),
+   listIndependentAuditFindings(ctx,{q:"",view:"ALL",statuses:[],severities:[],kinds:[],area:finding.area,page:1}),
+  ]);
+  const tokens=new Set(finding.title.toLowerCase().split(/[^a-z0-9]+/).filter(token=>token.length>2));
+  const similar=matches.items.filter(item=>item.id!==finding.id).map(item=>({
+    id:item.id,externalId:item.externalId,title:item.title,status:item.status,
+    score:item.title.toLowerCase().split(/[^a-z0-9]+/).filter(token=>tokens.has(token)).length,
+  })).filter(item=>item.score>0).sort((a,b)=>b.score-a.score).slice(0,5);
+  return NextResponse.json({finding,events,similar},{headers:{"Cache-Control":"private, no-store"}});
+ }catch(error){return apiErrorResponse(error);}
+}
 export async function PATCH(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{

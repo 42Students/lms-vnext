@@ -12,14 +12,13 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {PageHeader} from "@/components/ui/page-header";
 import {Pagination} from "@/components/ui/pagination";
 import {StatusBadge} from "@/components/ui/status-badge";
+import {IndependentAuditFindingsBoard} from "@/components/tracker/independent-audit-findings-board";
 import {Tabs} from "@/components/ui/tabs";
 import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {ErrorState} from "@/components/ui/error-state";
 import {TrackerAdminNav} from "@/components/tracker/tracker-admin-nav";
 import {AuditFindingFilterMemory} from "@/components/tracker/audit-finding-filter-memory";
-import {IndependentFindingsSyncControl} from "@/components/tracker/independent-findings-sync-control";
-import {independentAuditImporterReady} from "@/modules/bug-tracker/independent-audit-inbox-importer";
 import {FINDING_STATUSES,FINDING_SEVERITIES,FINDING_KINDS,parseIndependentFindingFilters,independentFindingHref} from "@/modules/bug-tracker/independent-audit-findings-model";
 import {independentAuditFindingsReady,listIndependentAuditFindings,readIndependentFindingSyncState} from "@/modules/bug-tracker/independent-audit-findings-service";
 export const dynamic="force-dynamic";
@@ -62,22 +61,15 @@ export default async function IndependentFindingsPage({searchParams}:{
  const sync=syncResult.status==="fulfilled"?syncResult.value:null;
 
  const refusedColumns:DataTableColumn<NonNullable<typeof sync>["refusedFiles"][number]>[]=[
-  {key:"path",header:"Source file",mobilePriority:"primary",cell:item=>
+  {key:"path",header:"File",mobilePriority:"primary",cell:item=>
     <span className="block min-w-0 break-all font-mono text-xs">{item.path||"Unknown file"}</span>},
+  {key:"result",header:"Result",mobilePriority:"secondary",cell:item=>
+    <StatusBadge tone={item.result==="REFUSED"?"warning":"error"}>{item.result}</StatusBadge>},
   {key:"reason",header:"Why",mobilePriority:"secondary",cell:item=>
     <span className="break-words">{item.reason||"Reason not recorded"}</span>},
- ];
- const findingColumns:DataTableColumn<(typeof data.items)[number]>[]=[
-  {key:"finding",header:"Finding",mobilePriority:"primary",cell:item=><div className="min-w-0">
-    <Link href={"/tracker/audit-findings/"+encodeURIComponent(item.externalId)}
-      className="inline-flex min-h-11 items-center md:min-h-9 break-all font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{item.externalId}</Link>
-    <p className="mt-1 max-w-md break-words [overflow-wrap:anywhere] text-sm leading-5 text-body">{item.title}</p>
-   </div>},
-  {key:"area",header:"Area / Kind",mobilePriority:"secondary",cell:item=><span>{item.area} · {item.kind}</span>},
-  {key:"severity",header:"Severity",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.severity==="CRITICAL"?"error":item.severity==="HIGH"?"warning":"neutral"}>{item.severity}</StatusBadge>},
-  {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status==="VERIFIED"||item.status==="RELEASED_PROD"?"success":item.status==="NEW"||item.status==="NEEDS_INFO"?"warning":"info"}>{item.status.replaceAll("_"," ")}</StatusBadge>},
-  {key:"assigned",header:"Assigned",mobilePriority:"secondary",cell:item=>item.assignee??"Unassigned"},
-  {key:"reported",header:"Reported",mobilePriority:"secondary",cell:item=><span>{item.foundBy??"Unknown"} · {item.foundAt?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(item.foundAt):"Date not recorded"}</span>},
+  {key:"checked",header:"Checked",mobilePriority:"secondary",cell:item=>
+    item.checkedAt?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
+     dateStyle:"medium",timeStyle:"short"}).format(item.checkedAt)+" IST":"Not given"},
  ];
  return <div className="min-w-0 space-y-5">{header}
   <div className="space-y-2 border-b border-[var(--lms-canvas-border)] pb-3 text-sm">
@@ -88,17 +80,15 @@ export default async function IndependentFindingsPage({searchParams}:{
     {" · "}Result: {sync?.lastResult??"NOT CONFIGURED"}.
    </p>
    <p className="text-xs text-muted-foreground">The shared legacy tracker password was retired. This page requires an active unscoped Super Admin session and platform permission.</p>
-   <IndependentFindingsSyncControl ready={independentAuditImporterReady()}/>
-   {!independentAuditImporterReady()?<Banner tone="warning">
-    Sync is disabled until the privileged repository credentials and the durable
-    per-file ledger have been deployed and verified. Viewing this page does not import files.
-   </Banner>:null}
+   <Banner tone="warning">
+    Sync now is unavailable because an authenticated, credential-verified repository importer and durable job receipt have not been configured. No import is performed when this page loads.
+   </Banner>
    {syncResult.status==="rejected" ? <Banner tone="warning">
     Import history could not be refreshed. Findings remain available.
     {" "}<Link href={independentFindingHref(parsed)} className="font-semibold underline underline-offset-4">Retry import status</Link>
    </Banner> : null}
    {sync?.lastResult==="FAILED" ? <Banner tone="warning">
-    The last recorded repository import failed. Check server importer logs and repository credential configuration before retrying the deployment job; no sync was started here.
+    The last recorded repository import failed. {sync.lastError??"Check importer credentials and logs."} No sync was started here.
    </Banner> : null}
    {sync?.lastResult==="PARTIAL" ? <Banner tone="warning">
     The last import was partial. Review the recorded refused files below; an import success count must not include refused files.
@@ -107,22 +97,28 @@ export default async function IndependentFindingsPage({searchParams}:{
   <Tabs renderPanel={false} ariaLabel="Finding views" value={parsed.view}
    items={([
      {value:"OPEN",label:"Open"},
-     {value:"RELEASE",label:"Release (critical & high)"},
+     {value:"RELEASE",label:"Release blockers"},
      {value:"ALL",label:"All"},
    ] as const).map(item=>({...item,
     href:independentFindingHref({...parsed,view:item.value,page:1})}))}/>
-  <NeedsDoingChips label={"Critical open: "+data.criticalOpen}
-   items={FINDING_STATUSES.map(status=>({
+  <NeedsDoingChips label="Open findings by severity"
+   items={FINDING_SEVERITIES.map(severity=>({
+    key:severity,label:severity[0]+severity.slice(1).toLowerCase()+" open",
+    count:data.severityOpenCounts[severity]??0,
+    href:independentFindingHref({...parsed,view:"OPEN",severities:[severity],page:1}),
+   }))}/>
+  <NeedsDoingChips label="Finding status"
+   items={FINDING_STATUSES.filter(status=>(data.statusCounts[status]??0)>0).map(status=>({
     key:status,label:status.replaceAll("_"," "),
     count:data.statusCounts[status]??0,
-    href:independentFindingHref({...parsed,statuses:[status],page:1}),
+    href:independentFindingHref({...parsed,view:"ALL",statuses:[status],page:1}),
    }))}/>
-  <form role="search" aria-label="tracker audit findings filters" method="get" className="grid min-w-0 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-[minmax(0,1fr)_auto]">
+  <form data-audit-findings-filters="true" role="search" aria-label="tracker audit findings filters" method="get" className="grid min-w-0 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-[minmax(0,1fr)_auto]">
    <Input type="hidden" name="view" value={parsed.view}/>
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
     <Input name="q" defaultValue={parsed.q} maxLength={120} placeholder="Search title, summary, id, file"/></label>
    <div className="flex min-w-0 items-center gap-3 max-[767px]:[&>button]:flex-1">
-    <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Apply filters</Button>
+    <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Search</Button>
     <Link href="/tracker/audit-findings?view=OPEN" className="inline-flex min-h-11 items-center font-semibold text-link md:min-h-9">Clear</Link>
    </div>
    <details open={Boolean(parsed.area || parsed.statuses.length || parsed.severities.length || parsed.kinds.length)}
@@ -130,7 +126,14 @@ export default async function IndependentFindingsPage({searchParams}:{
     <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">More filters</summary>
     <div className="mt-2 grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-3">
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Area
-    <Input name="area" defaultValue={parsed.area} maxLength={80} placeholder="All areas (comma separated)"/></label>
+    <Input name="area" list="audit-finding-areas" defaultValue={parsed.area} maxLength={80}
+     placeholder="Choose an area (or comma separated)"/>
+    <datalist id="audit-finding-areas">{[
+      "login","course","lesson-content","quiz","assignment","attendance","classroom",
+      "notifications","calendar","projects","placements-tpo","recruiter",
+      "student-placements","college-admin","super-admin","groups-electives",
+      "people-accounts","reports","tracker","mobile","platform","security","other",
+    ].map(area=><option key={area} value={area}/>)}</datalist></label>
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status (multiple)
     <Select name="status" multiple size={4} defaultValue={parsed.statuses}>
      {FINDING_STATUSES.map(v=><option key={v} value={v}>{v.replaceAll("_"," ")}</option>)}
@@ -147,11 +150,9 @@ export default async function IndependentFindingsPage({searchParams}:{
    </details>
   </form>
   <p role="status" className="text-sm text-body leading-[1.6]">
-   {data.total.toLocaleString("en-IN")} matching independent findings · page {data.page} of {data.pages} · 50 per page.
+   {data.total.toLocaleString("en-IN")} finding{data.total===1?"":"s"} · page {data.page} of {data.pages}
   </p>
-  <DataTable columns={findingColumns} rows={data.items} getRowKey={item=>item.id}
-   caption="Independent audit findings"
-   empty={<EmptyState title="No matching audit findings" description="No independent audit findings match these filters." action={<Link href="/tracker/audit-findings?view=OPEN" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear</Link>}/>}/>
+  <IndependentAuditFindingsBoard rows={data.items} view={parsed.view}/>
   <Pagination label="Audit findings pages" page={data.page} pageCount={data.pages} hrefForPage={page=>independentFindingHref(parsed,page)}/>
   <details aria-label="Findings import status" className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3 text-sm">
    <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] md:min-h-9">Findings import status</summary>
@@ -163,10 +164,7 @@ export default async function IndependentFindingsPage({searchParams}:{
    </p>
    {sync?.lastSyncedAt?<p className="mt-1 text-body">Last recorded sync: {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(sync.lastSyncedAt)} IST · {sync.importedCount} imported · {sync.refusedCount} refused.</p>:
     <p role="status" className="mt-1 text-body">No verified import has been recorded. Independent findings already stored here remain available; automatic GitHub sync is not configured.</p>}
-   <p className="mt-1 text-xs text-muted-foreground">
-    Only a verified Super Admin may trigger a manual sync. The scheduled worker uses a separate
-    bearer credential and keeps an immutable file ledger. Viewing this page never triggers import.
-   </p>
+   <p className="mt-1 text-xs text-muted-foreground">Manual sync is intentionally deferred pending a verified importer, repository credentials, same-origin Super Admin POST and durable job receipt. Viewing this page never triggers a sync.</p>
    {sync?.refusedCount ? <section aria-label="Files the importer refused or flagged" className="mt-4 space-y-2">
     <h3 className="font-semibold">Files the importer refused or flagged ({sync.refusedCount})</h3>
     <DataTable columns={refusedColumns} rows={sync.refusedFiles}
