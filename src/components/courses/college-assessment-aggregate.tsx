@@ -301,7 +301,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">
-          Page {data.page} of {data.totalPages} · {data.total} records · 25/page
+          Page {data.page} of {data.totalPages} · {data.total} records · {data.pageSize}/page
         </p>
         <Pagination page={data.page} pageCount={data.totalPages}
           hrefForPage={page=>collegeAssessmentHref(data.kind,{...data.query,page})}
