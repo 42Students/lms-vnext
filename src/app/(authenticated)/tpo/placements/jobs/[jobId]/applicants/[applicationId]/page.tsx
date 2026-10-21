@@ -29,10 +29,12 @@ export default async function TpoApplicantDetailPage({params}:Params){
      ["Screening decided",data.application.screeningDecidedAt?
       new Date(data.application.screeningDecidedAt).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})+" IST":"Not recorded"]];
  return <div className="min-w-0 space-y-6">
+  <div id="applicant-detail" tabIndex={-1} className="scroll-mt-24 rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">
   <PageHeader eyebrow="TPO · Applicant detail"
    title={data.application.student??"Name not recorded"}
    description={data.job.title+" · "+data.application.roleTitle}
    actions={<Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-[var(--lms-control-height)] min-[768px]:w-auto">← Applicant pipeline</Link>}/>
+  </div>
   <section className="border-b border-border pb-6">
    <h2 className="font-semibold text-foreground">Application and screening</h2>
    <dl className="mt-3 grid min-w-0 grid-cols-1 gap-x-6 min-[768px]:grid-cols-2">
