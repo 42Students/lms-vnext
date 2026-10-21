@@ -1,8 +1,20 @@
 import { sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import type { JobLease } from "./scheduled-job-lease";
-import type { ScheduledJobLeaseStore } from "./scheduled-job-runner";
+import { scheduledJobWorkerIdentity, type ScheduledJobLeaseStore } from "./scheduled-job-runner";
 
+/** V135 scheduled_job_lock is replaced by migration 0133's PostgreSQL
+ * scheduled_job_leases; never create a parallel table or re-import old
+ * integer IDs. Equality with DB clock means the preceding lease has ended,
+ * so <= clock_timestamp() takeover is intentional (legacy used strict <).
+ */
+export const SCHEDULED_JOB_LEASE_TABLE="scheduled_job_leases" as const;
+/** Stable inside a process for acquire, check, and renew; a fresh process
+ * gets a distinct random suffix and must not impersonate a prior worker.
+ */
+export function postgresJobLeaseIdentity(jobName:string,hostname?:string){
+ return {jobName:safeJobName(jobName),holderId:scheduledJobWorkerIdentity(hostname).holderId};
+}
 type LeaseRow = {
   job_name: string;
   locked_until: Date;
