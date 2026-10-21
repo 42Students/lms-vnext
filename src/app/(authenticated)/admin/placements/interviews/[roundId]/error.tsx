@@ -1,4 +1,4 @@
 "use client";import {Button} from "@/components/ui/button";import {ErrorState} from "@/components/ui/error-state";
 export default function Error({reset}:{error:Error&{digest?:string};reset:()=>void}){
- return <ErrorState title="Interview detail unavailable" description="The selected college interview could not be loaded." action={<Button onClick={reset}>Retry</Button>}/>;
+ return <ErrorState title="Interview detail unavailable" description="The selected college interview could not be loaded." action={<Button onClick={reset} className="w-full md:w-auto">Retry</Button>}/>;
 }

@@ -1,2 +1,2 @@
 "use client";import {Button} from "@/components/ui/button";import {ErrorState} from "@/components/ui/error-state";
-export default function ErrorPage({reset}:{error:Error & {digest?:string};reset:()=>void}){return <ErrorState title="Could not load interviews" description="Interview-round data could not be read in this college." action={<Button onClick={reset}>Retry</Button>}/>;}
+export default function ErrorPage({reset}:{error:Error & {digest?:string};reset:()=>void}){return <ErrorState title="Could not load interviews" description="Interview-round data could not be read in this college." action={<Button onClick={reset} className="w-full md:w-auto">Retry</Button>}/>;}

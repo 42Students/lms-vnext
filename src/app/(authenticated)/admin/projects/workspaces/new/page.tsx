@@ -30,7 +30,7 @@ export default async function AdminClassProjectWorkspacePage({searchParams}:{
         description={denied
           ? "Your selected college cannot be used to create workspaces. Select an authorized college and try again."
           : "The college and template catalogue could not be loaded. No workspace was created."}
-        action={<Link href="/admin/projects/workspaces/new" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-[var(--lms-control-height)] hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry opening workspace creator</Link>}/>
+        action={<Link href="/admin/projects/workspaces/new" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-[var(--lms-control-height)] hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto md:min-h-9">Retry opening workspace creator</Link>}/>
     </div>;
   }
   const requested=(await searchParams).templateId;
@@ -40,7 +40,7 @@ export default async function AdminClassProjectWorkspacePage({searchParams}:{
     <PageHeader title="Create project workspace"
       description="Every workspace starts from a template — pick one below." />
     {templates.length === 0 ? <EmptyState title="No assigned templates" description="Assign a published Project template to this college first."
-      action={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Project templates</Link>}/> :
+      action={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary w-full md:w-auto md:min-h-9">Project templates</Link>}/> :
       <ClassTeamWorkspaceCreator collegeId={collegeId} basePath="/admin/projects" initialTemplateId={selected} templates={templates.map(t => ({templateId:t.templateId,title:t.title,version:t.version,summary:t.summary}))}/>}
   </div>;
 }

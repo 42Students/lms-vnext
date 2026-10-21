@@ -42,16 +42,16 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
   </div>
   {invalid?<ErrorState title="Invalid student search"
    description="Enter 3 to 150 characters in a single search to find students in the selected college."
-   action={<Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">Clear search</Link>}/>:null}
+   action={<Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4 w-full md:w-auto">Clear search</Link>}/>:null}
   {lookup&&!lookup.ok?<ErrorState title="Student placement lookup unavailable"
    description="The selected college's student placement records could not be loaded. Your search was kept."
    action={<Link href={"/admin/placements/student-lookup?q="+encodeURIComponent(q)}
-     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">Retry student search</Link>}/>:null}
+     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4 w-full md:w-auto">Retry student search</Link>}/>:null}
   {!ctx.adminScope?.collegeId?<div id="placement-student-scope-hint" role="status">
    <EmptyState title="Select a college to continue" description="Choose a college in the header above to look up student placements."/>
   </div>:null}
   {data&&!data.students.length?<EmptyState title="No matching students" description="No students in the selected college match this name, roll number or email."
-   action={<Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">Clear search</Link>} />:null}
+   action={<Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4 w-full md:w-auto">Clear search</Link>} />:null}
   {data?.truncated?<p className="text-xs text-muted-foreground">Showing first 15 matching students; narrow the search.</p>:null}
   {data?.students.map(person=><section key={person.membershipId} className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border py-[var(--lms-space-4)] last:border-0">
    <div className="grid min-w-0 gap-[var(--lms-space-2)] sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-[var(--lms-space-4)]">
