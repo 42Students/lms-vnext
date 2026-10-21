@@ -1,8 +1,8 @@
 import "server-only";
-import {and,asc,eq,ilike,or} from "drizzle-orm";
+import {and,asc,desc,eq,ilike,or,isNull,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {collegeMemberships,membershipRoles,users} from "@/db/schema";
+import {collegeMemberships,membershipRoles,users,facultyProfiles,courseTeachingAssignments} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
 import {loadAcademicCollegeScope} from "@/modules/academics/scope";
@@ -41,6 +41,8 @@ export async function listCollegeFacultyPicker(context:RequestContext,collegeId:
 const facultySuggestionSchema=z.strictObject({
  q:z.string().trim().max(80).default(""),
  limit:z.coerce.number().int().min(1).max(50).default(15),
+ departmentId:z.uuid().optional(),
+ employmentType:z.string().trim().max(128).optional(),
 });
 export async function searchCollegeFacultySuggestions(
  context:RequestContext,collegeId:string,raw:unknown,
@@ -58,8 +60,11 @@ export async function searchCollegeFacultySuggestions(
   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
    eq(membershipRoles.role,"FACULTY")))
   .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
+  .leftJoin(facultyProfiles,eq(facultyProfiles.membershipId,collegeMemberships.id))
   .where(and(eq(collegeMemberships.collegeId,college.id),
    eq(collegeMemberships.status,"ACTIVE"),
+   input.departmentId?eq(facultyProfiles.primaryDepartmentId,input.departmentId):undefined,
+   input.employmentType?eq(facultyProfiles.employmentType,input.employmentType):undefined,
    input.q?or(ilike(users.displayName,pattern),ilike(users.email,pattern)):undefined))
   .orderBy(asc(users.displayName),asc(collegeMemberships.id))
   .limit(input.limit+1);
@@ -70,4 +75,39 @@ export async function searchCollegeFacultySuggestions(
   })),
   truncated:rows.length>input.limit,
  };
+}
+
+/** Legacy /popular equivalent for the selected college only. There is no
+ * arbitrary cross-tenant faculty cache or keystroke-based usage mutation.
+ * Rank by actual active teaching assignments (a defensible usage proxy);
+ * fall back to stable name order when there are no assignments.
+ */
+export async function listPopularCollegeFaculty(
+ context:RequestContext,collegeId:string,rawLimit:unknown=10,
+){
+ const limit=z.coerce.number().int().min(1).max(50).parse(rawLimit);
+ const college=await loadAcademicCollegeScope(collegeId);
+ requirePermission(context,"courses.manage",{
+  collegeId:college.id,organizationId:college.organizationId,
+ });
+ const assignments=sql<number>`count(distinct ${courseTeachingAssignments.id})::int`;
+ const rows=await getDb().select({
+  membershipId:collegeMemberships.id,
+  displayName:users.displayName,email:users.email,
+  activeTeachingAssignments:assignments,
+ }).from(collegeMemberships)
+  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+   eq(membershipRoles.role,"FACULTY")))
+  .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
+  .leftJoin(courseTeachingAssignments,and(
+   eq(courseTeachingAssignments.membershipId,collegeMemberships.id),
+   isNull(courseTeachingAssignments.endedAt),isNull(courseTeachingAssignments.deletedAt)))
+  .where(and(eq(collegeMemberships.collegeId,college.id),eq(collegeMemberships.status,"ACTIVE")))
+  .groupBy(collegeMemberships.id,users.displayName,users.email)
+  .orderBy(desc(assignments),asc(users.displayName),asc(collegeMemberships.id))
+  .limit(limit+1);
+ return {faculty:rows.slice(0,limit).map(item=>({
+  membershipId:item.membershipId,displayName:item.displayName??item.email??"Unnamed Faculty",
+  email:item.email,activeTeachingAssignments:item.activeTeachingAssignments,
+ })),truncated:rows.length>limit};
 }
