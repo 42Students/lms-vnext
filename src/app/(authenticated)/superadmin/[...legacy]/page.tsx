@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { and, eq, isNull, sql } from "drizzle-orm";
 import { notFound, redirect } from "next/navigation";
 import { ErrorState } from "@/components/ui/error-state";
@@ -14,19 +15,37 @@ import { legacySuperAdminDestination } from "@/modules/admin-ui/legacy-superadmi
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const NUMERIC_LEGACY_ID = /^[1-9][0-9]{0,9}$/;
 
+/** The NSRIT import uses stable UUIDv5 keys for historic template IDs.
+ * Only accept the derived UUID when the corresponding persisted template
+ * exists; never reinterpret a numeric bookmark as a row number or slug.
+ * Keep the namespace in sync with scripts/migrate/nsrit/common.ts.
+ */
+function importedLegacyTemplateUuid(legacyId: string): string {
+  const namespace = Buffer.from("6f1c2a524e0b5c539a710d5b7a3e91c4", "hex");
+  const digest = createHash("sha1").update(namespace)
+    .update(Buffer.from(`project_templates:project_template:${legacyId}`, "utf8"))
+    .digest();
+  const bytes = Buffer.from(digest.subarray(0, 16));
+  bytes[6] = (bytes[6] & 0x0f) | 0x50;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const hex = bytes.toString("hex");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
 /**
- * Template slugs and UUIDs are unambiguous in vNext. Legacy numeric IDs are
- * NOT template IDs: without a migration crosswalk, a number must never be
- * guessed into a different template's UUID.
+ * Template slugs and UUIDs are unambiguous in vNext. Imported numeric IDs
+ * resolve only through the deterministic NSRIT migration crosswalk, followed
+ * by a database existence check. Unmigrated IDs remain unmapped.
  */
 async function resolveTemplateBookmark(context: RequestContext, token: string) {
   requirePermission(context, "project-template.read");
-  if (token.length > 96 || !token || token === "." || token === ".." ||
-      NUMERIC_LEGACY_ID.test(token)) return null;
+  if (token.length > 96 || !token || token === "." || token === "..") return null;
   if (!UUID.test(token) && !/^[a-z0-9-]+$/i.test(token)) return null;
   const match = UUID.test(token)
     ? eq(projectTemplates.id, token)
-    : eq(sql<string>`lower(${projectTemplates.slug})`, token.toLowerCase());
+    : NUMERIC_LEGACY_ID.test(token)
+      ? eq(projectTemplates.id, importedLegacyTemplateUuid(token))
+      : eq(sql<string>`lower(${projectTemplates.slug})`, token.toLowerCase());
   const matches = await getDb()
     .select({ id: projectTemplates.id })
     .from(projectTemplates)
@@ -112,8 +131,8 @@ export default async function LegacySuperAdminRedirect({
   const destination = await nestedProjectDestination(context, legacy) ??
     legacySuperAdminDestination(legacy, type);
   if (!destination) {
-    // This installation has no trusted numeric legacy-template ID -> UUID
-    // mapping. A helpful link is safer than inventing an unrelated template.
+    // An unmigrated numeric template has no matching deterministic ID.
+    // A directory link is safer than routing to an unrelated template.
     if (legacy[0]?.toLowerCase() === "projects" &&
         legacy[1]?.toLowerCase() === "templates" &&
         legacy[2] && NUMERIC_LEGACY_ID.test(legacy[2]) &&
