@@ -41,6 +41,27 @@ function likePattern(text: string): string {
   return "%" + text.replace(/[\\%_]/g, "\\$&") + "%";
 }
 
+/** Bounded Levenshtein fallback for the legacy typo-tolerant picker.
+ * Only runs after a college-scoped read; it never searches across tenants. */
+function withinTwoEdits(a: string, b: string) {
+  const left=a.toLocaleLowerCase("en-IN").trim().slice(0,100);
+  const right=b.toLocaleLowerCase("en-IN").trim().slice(0,100);
+  if (Math.abs(left.length-right.length)>2) return false;
+  let previous=Array.from({length:right.length+1},(_,index)=>index);
+  for(let i=1;i<=left.length;i++){
+    const row=[i];
+    let rowMin=i;
+    for(let j=1;j<=right.length;j++){
+      const cost=left[i-1]===right[j-1]?0:1;
+      const value=Math.min(row[j-1]!+1,previous[j]!+1,previous[j-1]!+cost);
+      row.push(value);rowMin=Math.min(rowMin,value);
+    }
+    if(rowMin>2)return false;
+    previous=row;
+  }
+  return previous[right.length]!<=2;
+}
+
 function availablePrograms(collegeId: string) {
   return getDb().select({
     id: programs.id,
@@ -103,6 +124,7 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
       ) : undefined,
     )).as("college_semester_directory");
 
+  // Stable program / semester-number ordering matches the legacy structure view.
   const [totalRead,itemsRead,programsRead] = await Promise.allSettled([
     db.select({ total: count() }).from(source),
     db.select().from(source)
@@ -116,6 +138,22 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
   if(programsRead.status==="rejected")throw new Error("PROGRAMS_UNAVAILABLE");
   const totalRows=totalRead.value,rawItems=itemsRead.value,programChoices=programsRead.value;
   const ids = rawItems.map((item) => item.id);
+  const mappedCourseSummaries = ids.length ? await db.select({
+    termId: programTermCourses.programTermId,
+    courseId: courses.id, courseName: courses.name, courseCode: courses.code,
+    credits: programTermCourses.credits,
+    type: programTermCourses.type,
+    displayOrder: programTermCourses.displayOrder,
+  }).from(programTermCourses)
+    .innerJoin(courses,eq(courses.id,programTermCourses.courseId))
+    .innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,collegeId)))
+    .where(inArray(programTermCourses.programTermId,ids))
+    .orderBy(asc(programTermCourses.displayOrder),asc(programTermCourses.id)) : [];
+  const mappedByTerm=new Map<string,typeof mappedCourseSummaries>();
+  for(const row of mappedCourseSummaries){
+    const mapped=mappedByTerm.get(row.termId)??[];
+    mapped.push(row);mappedByTerm.set(row.termId,mapped);
+  }
   const courseCounts = ids.length
     ? await db.select({
       id: programTermCourses.programTermId,
@@ -136,6 +174,7 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
     ...item,
     mappedCourses: countMap.get(item.id) ?? 0,
     mappedCredits: countMap.has(item.id)?creditMap.get(item.id)??0:null,
+    mappedCourseSummaries: mappedByTerm.get(item.id)??[],
   }));
   const total = totalRows[0]?.total ?? 0;
   return {
@@ -146,6 +185,79 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
     total,
     totalPages: academicDirectoryPageCount(total, query.pageSize),
   };
+}
+
+
+/** Authoritative per-program semester structure including embedded course
+ * summaries. Unlike the management directory this remains unpaged, and is
+ * available only after validating the program belongs to the acting college.
+ */
+export async function listCollegeProgramSemesterStructure(
+  context: RequestContext, rawProgramId: unknown,
+) {
+  const programId=z.uuid().parse(rawProgramId);
+  const collegeId=await requireAdminCollege(context);
+  const db=getDb();
+  const [scope]=await db.select({id:programs.id,name:programs.name})
+    .from(programs).innerJoin(departments,and(
+      eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId),
+    )).where(eq(programs.id,programId)).limit(1);
+  if(!scope)throw new Error("PROGRAM_NOT_FOUND");
+  const terms=await db.select({
+    id:programTerms.id,legacySemesterId:programTerms.legacySemesterId,
+    programId:programTerms.programId,name:programTerms.name,
+    semesterNumber:programTerms.termNumber,isActive:programTerms.isActive,
+    totalCredits:programTerms.totalCredits,
+  }).from(programTerms).where(eq(programTerms.programId,programId))
+    .orderBy(asc(programTerms.termNumber),asc(programTerms.id));
+  const ids=terms.map(term=>term.id);
+  const mapped=ids.length?await db.select({
+    termId:programTermCourses.programTermId,id:programTermCourses.id,
+    courseId:courses.id,courseName:courses.name,courseCode:courses.code,
+    credits:programTermCourses.credits,type:programTermCourses.type,
+    displayOrder:programTermCourses.displayOrder,
+  }).from(programTermCourses).innerJoin(courses,eq(courses.id,programTermCourses.courseId))
+    .innerJoin(departments,and(eq(departments.id,courses.departmentId),
+      eq(departments.collegeId,collegeId)))
+    .where(inArray(programTermCourses.programTermId,ids))
+    .orderBy(asc(programTermCourses.displayOrder),asc(programTermCourses.id)): [];
+  return {program:scope,semesters:terms.map(term=>({
+    ...term,courses:mapped.filter(row=>row.termId===term.id),
+  }))};
+}
+
+/** Old name-exists check, against a selected college and optional program. */
+export async function collegeSemesterNameExists(
+  context: RequestContext, rawName: unknown, rawProgramId?: unknown,
+) {
+  const name=z.string().trim().min(1).max(255).parse(rawName);
+  const programId=rawProgramId===undefined?undefined:z.uuid().parse(rawProgramId);
+  const collegeId=await requireAdminCollege(context);
+  const rows=await getDb().select({id:programTerms.id})
+    .from(programTerms).innerJoin(programs,eq(programs.id,programTerms.programId))
+    .innerJoin(departments,and(eq(departments.id,programs.departmentId),
+      eq(departments.collegeId,collegeId)))
+    .where(and(programId?eq(programTerms.programId,programId):undefined,
+      sql<boolean>`lower(trim(${programTerms.name})) = ${name.toLocaleLowerCase("en-IN")}`))
+    .limit(1);
+  return {exists:rows.length>0};
+}
+
+/** Same-college exact batch-name presence check without disclosing an ID. */
+export async function collegeBatchNameExists(
+  context:RequestContext,rawName:unknown,rawProgramId?:unknown,
+) {
+  const name=z.string().trim().min(1).max(255).parse(rawName);
+  const programId=rawProgramId===undefined?undefined:z.uuid().parse(rawProgramId);
+  const collegeId=await requireAdminCollege(context);
+  const rows=await getDb().select({id:cohorts.id})
+    .from(cohorts).innerJoin(programs,eq(programs.id,cohorts.programId))
+    .innerJoin(departments,and(eq(departments.id,programs.departmentId),
+      eq(departments.collegeId,collegeId)))
+    .where(and(programId?eq(cohorts.programId,programId):undefined,
+      sql<boolean>`lower(trim(${cohorts.name})) = ${name.toLocaleLowerCase("en-IN")}`))
+    .limit(1);
+  return {exists:rows.length>0};
 }
 
 /** Registered cohorts, DB-0051 progression, and active membership-scoped learner counts. */
@@ -334,24 +446,39 @@ export async function searchCollegeSemesterAutocomplete(
 ) {
   const collegeId = await requireAdminCollege(context);
   const q = search.trim().slice(0, 100);
+  const program = programId ? z.uuid().parse(programId) : undefined;
   const bounded = Math.max(1, Math.min(Math.trunc(limit) || 20, 50));
-  return getDb().select({
+  const db=getDb();
+  const fields={
     id: programTerms.id, name: programTerms.name,
     semesterNumber: programTerms.termNumber,
     programId: programs.id, programName: programs.name,
     collegeId: departments.collegeId,
     isActive: programTerms.isActive,
-  }).from(programTerms)
-    .innerJoin(programs, eq(programs.id, programTerms.programId))
-    .innerJoin(departments, and(eq(departments.id, programs.departmentId),
-      eq(departments.collegeId, collegeId)))
-    .where(and(
-      programId ? eq(programTerms.programId, programId) : undefined,
-      q ? or(ilike(programTerms.name, likePattern(q)),
-        ilike(programs.name, likePattern(q)),
-        sql<boolean>`${programTerms.termNumber}::text ilike ${likePattern(q)}`) : undefined,
-    ))
-    .orderBy(asc(programs.name), asc(programTerms.termNumber)).limit(bounded);
+  };
+  const base=()=>db.select(fields).from(programTerms)
+    .innerJoin(programs,eq(programs.id,programTerms.programId))
+    .innerJoin(departments,and(eq(departments.id,programs.departmentId),
+      eq(departments.collegeId,collegeId)));
+  const matches=await base().where(and(
+    program?eq(programTerms.programId,program):undefined,
+    q?or(ilike(programTerms.name,likePattern(q)),
+      ilike(programs.name,likePattern(q)),
+      sql<boolean>`${programTerms.termNumber}::text ilike ${likePattern(q)}`):undefined,
+  )).orderBy(asc(programs.name),asc(programTerms.termNumber))
+    .limit(bounded);
+  if(q.length<3||matches.length>=bounded)return matches;
+  // Legacy search tolerates up to two typos. Bound the fallback to 500
+  // authorized rows, rank exact/substring results before typo matches, and
+  // never rank candidates outside the chosen program/college.
+  const candidates=await base().where(
+    program?eq(programTerms.programId,program):undefined,
+  ).orderBy(asc(programs.name),asc(programTerms.termNumber)).limit(500);
+  const seen=new Set(matches.map(row=>row.id));
+  const fuzzy=candidates.filter(row=>!seen.has(row.id)&&(
+    withinTwoEdits(q,row.name)||withinTwoEdits(q,row.programName)
+  ));
+  return [...matches,...fuzzy].slice(0,bounded);
 }
 
 /**
