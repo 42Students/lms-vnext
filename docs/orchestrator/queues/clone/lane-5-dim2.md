@@ -497,19 +497,19 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-5.md: file, number of 
 - [ ] `src/components/tpo/tpo-academic-import-workspace.tsx`
 - [x] `src/components/tpo/tpo-after-college-editor.tsx`
 - [ ] `src/components/tpo/tpo-audit-grid.tsx`
-- [ ] `src/components/tpo/tpo-batch-decision-control.tsx`
+- [x] `src/components/tpo/tpo-batch-decision-control.tsx`
 - [ ] `src/components/tpo/tpo-batch-eligibility-import.tsx`
 - [ ] `src/components/tpo/tpo-batch-inline-decision.tsx`
-- [ ] `src/components/tpo/tpo-batch-lifecycle-control.tsx`
+- [x] `src/components/tpo/tpo-batch-lifecycle-control.tsx`
 - [ ] `src/components/tpo/tpo-batch-rule-editor.tsx`
 - [ ] `src/components/tpo/tpo-batch-student-saved-views.tsx`
-- [ ] `src/components/tpo/tpo-batch-undo-control.tsx`
+- [x] `src/components/tpo/tpo-batch-undo-control.tsx`
 - [ ] `src/components/tpo/tpo-blocked-dates-editor.tsx`
 - [ ] `src/components/tpo/tpo-builtin-job-types-editor.tsx`
 - [ ] `src/components/tpo/tpo-bulk-action-panel.tsx`
 - [ ] `src/components/tpo/tpo-campaign-compose.tsx`
-- [ ] `src/components/tpo/tpo-campaign-send-control.tsx`
-- [ ] `src/components/tpo/tpo-communication-settings-editors.tsx`
+- [x] `src/components/tpo/tpo-campaign-send-control.tsx`
+- [x] `src/components/tpo/tpo-communication-settings-editors.tsx`
 - [ ] `src/components/tpo/tpo-company-team-composer.tsx`
 - [ ] `src/components/tpo/tpo-company-team-conversation.tsx`
 - [ ] `src/components/tpo/tpo-company-visibility-editor.tsx`
