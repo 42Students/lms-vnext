@@ -1,0 +1,9 @@
+# Gap-fix handoffs — lane chat-5 (wave 1)
+
+- `src/components/placements/placement-job-create-workspace.tsx` / `src/components/placements/placement-job-create-form.tsx` — G2-17-030-022: shared placements owner decide/create 800px dialog with full validated form and duplicate-prefill; admin landing retained safe new-drive route and existing duplicate-as-draft action.
+- `src/components/placements/super-admin-drive-deadline.tsx` and `src/app/api/placements/college/jobs/[jobId]/extend-deadline/route.ts` — G2-10-017-033, G2-10-017-048: existing deadline form needs legacy +7d end-of-day IST default and explicit optimistic token/audit verification; landing now reuses it.
+- `src/modules/placements/job-service.ts` and corresponding job routes — G2-15-026-035: verify placement-feature toggle + active-tenant lock on every job read/write endpoint; do not silently bypass authorization.
+- `src/modules/placements/job-service.ts` / `src/modules/placements/tpo-operations-service.ts` — G2-15-026-001, G2-15-026-037, G2-15-026-065: explicit product/security decision and authorized org/global aggregate READ only. Current selected-college enforcement retained; never enable cross-college mutations.
+- `src/modules/academics/lecture-hall-service.ts` / `src/db/schema/lecture-halls.ts` — G2-10-018-027, G2-19-018-027/035, G2-4-027-028/073, G2-6-030-033: decide archived name reuse, archival vs physical deletion, historical schedule references and booking conflicts; UI retains audited archive/restore behavior.
+- `src/modules/academics/lecture-hall-service.ts` — G2-10-018-031, G2-9-017-034: UI imposes legacy 1000-seat cap but backend still validates to 5000; reconcile product constraint before server change.
+- `src/app/(authenticated)/admin/lecture-halls/page.tsx` plus lecture hall authorization service — G2-6-030-022/G2-19-018-067: legacy unscoped Super Admin picker/global list requires deliberate scope design. Current college selection is required.
