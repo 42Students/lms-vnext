@@ -91,12 +91,12 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-16.md: file, number of
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/error.tsx`
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/page.tsx`
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/reports/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/review-history/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/reviews/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/loading.tsx`
+- [x] `src/app/(authenticated)/mentor/reports/error.tsx`
+- [x] `src/app/(authenticated)/mentor/review-history/error.tsx`
+- [x] `src/app/(authenticated)/mentor/reviews/error.tsx`
 - [ ] `src/app/(authenticated)/mentor/sprint-progress/error.tsx`
 - [ ] `src/app/(authenticated)/mentor/task-review-history/error.tsx`
 - [ ] `src/app/(authenticated)/mentor/task-reviews/error.tsx`
