@@ -27,7 +27,7 @@ export async function GET(_request:Request,{params}:Params){
  }catch(error){return apiErrorResponse(error);}
 }
 export async function PATCH(request:Request,{params}:Params){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+ if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:{"Cache-Control":"private, no-store"}});
  try{
   const {publicId}=await params;
   const result=await mutateIndependentAuditFinding(await getCurrentRequestContext(),publicId,await request.json());

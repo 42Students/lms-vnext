@@ -232,15 +232,18 @@ function KnownErrorCard({ item }: { item: KnownError }) {
 export function KnownErrorsWorkspace({
   items,
   lastViewedAt,
+  backendStartedAt,
 }: {
   items: readonly KnownError[];
   lastViewedAt: Date | null;
+  backendStartedAt?:string|null;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
   const { run, pending } = useGuardedAction({ timeoutMs: 20_000 });
   const viewedOnce = useRef(false);
   const [dismissed, setDismissed] = useState(false);
+  const [drawerOpen,setDrawerOpen]=useState(false);
   const unseenCount = items.filter((item) =>
     new Date(item.lastSeenAt).getTime() > (lastViewedAt?.getTime() ?? 0)).length;
 
@@ -276,7 +279,16 @@ export function KnownErrorsWorkspace({
   }
 
   return (
-    <div id="known-errors" className="space-y-5">
+    <div id="known-errors" className="space-y-3">
+      <Button type="button" variant="secondary" onClick={()=>setDrawerOpen(true)}
+        aria-label={"Open Known errors drawer"+(unseenCount>0?" · "+unseenCount+" new or updated":"")}
+        className="min-h-11 w-full md:min-h-9 md:w-auto">Known errors ({items.length}{items.length===40?"+":""})
+        {unseenCount>0?" · "+unseenCount+" new":""}
+      </Button>
+      <Dialog open={drawerOpen} onOpenChange={setDrawerOpen} title="Known errors"
+        description="Stored signatures, acknowledgements and triage controls, separate from live logs."
+        className="!max-w-[1120px]" bodyClassName="space-y-5">
+      {backendStartedAt?<p className="m-0 text-xs text-muted-foreground">Backend started {backendStartedAt} IST</p>:null}
       {unseenCount > 0 && !dismissed ? <div role="status"
         className="flex flex-wrap items-center justify-between gap-3 border border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] px-4 py-3 text-sm text-body">
         <p>{unseenCount} new or updated error {unseenCount === 1 ? "group" : "groups"} since your last visit.</p>
@@ -297,6 +309,7 @@ export function KnownErrorsWorkspace({
           {items.map((item) => <KnownErrorCard key={item.id} item={item} />)}
         </div>
       )}
+      </Dialog>
     </div>
   );
 }
