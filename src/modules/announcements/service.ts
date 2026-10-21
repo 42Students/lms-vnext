@@ -2,7 +2,7 @@ import {
   and, desc, eq, gt, isNotNull, isNull, lt, lte, or, sql, type SQL,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { db10Announcements } from "@/db/schema/db10-announcements";
+import { db10Announcements,announcementBroadcastGroups } from "@/db/schema/db10-announcements";
 import { activityEvents } from "@/db/schema/activity";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { colleges } from "@/db/schema/colleges";
@@ -280,6 +280,51 @@ export async function updateAnnouncement(
   });
   if (current.deletedAt) throw new AnnouncementError("ANNOUNCEMENT_DELETED");
 
+  // Imported platform announcements are physical college copies of one
+  // broadcast. Editing a shared field must update the whole logical notice,
+  // or an audience would see contradictory copies. Audience membership is
+  // immutable here: a retarget requires the dedicated broadcast workflow.
+  if(current.broadcastGroupId){
+    if(input.receiverType!==undefined||input.receiverId!==undefined)
+      throw new AnnouncementError("STALE_AUDIENCE");
+    return getDb().transaction(async tx=>{
+      const [group]=await tx.select({id:announcementBroadcastGroups.id,
+        organizationId:announcementBroadcastGroups.organizationId})
+        .from(announcementBroadcastGroups)
+        .where(eq(announcementBroadcastGroups.id,current.broadcastGroupId!))
+        .for("update").limit(1);
+      if(!group||group.organizationId!==current.organizationId)
+        throw new AnnouncementError("TARGET_NOT_FOUND");
+      const copies=await tx.select().from(db10Announcements)
+        .where(eq(db10Announcements.broadcastGroupId,group.id))
+        .for("update");
+      if(!copies.length||!copies.some(copy=>copy.id===id))
+        throw new AnnouncementError("ANNOUNCEMENT_NOT_FOUND");
+      for(const copy of copies){
+        requireManage(context,{collegeId:copy.collegeId,organizationId:copy.organizationId});
+        if(copy.version!==input.expectedVersion||copy.deletedAt)
+          throw new AnnouncementError("STALE_VERSION");
+        assertSchedule(input.scheduledAt!==undefined?input.scheduledAt:copy.scheduledAt,
+          input.expiresAt!==undefined?input.expiresAt:copy.expiresAt);
+      }
+      const now=new Date();
+      const updated=await tx.update(db10Announcements).set({
+        ...(input.title!==undefined?{title:input.title}:{}),
+        ...(input.message!==undefined?{message:input.message}:{}),
+        ...(input.scheduledAt!==undefined?{scheduledAt:input.scheduledAt}:{}),
+        ...(input.expiresAt!==undefined?{expiresAt:input.expiresAt}:{}),
+        ...(input.isPinned!==undefined?{isPinned:input.isPinned}:{}),
+        version:input.expectedVersion+1,updatedAt:now,
+      }).where(and(eq(db10Announcements.broadcastGroupId,group.id),
+        eq(db10Announcements.version,input.expectedVersion),
+        isNull(db10Announcements.deletedAt))).returning();
+      if(updated.length!==copies.length)throw new AnnouncementError("STALE_VERSION");
+      await tx.update(announcementBroadcastGroups).set({updatedAt:now})
+        .where(eq(announcementBroadcastGroups.id,group.id));
+      return updated.find(row=>row.id===id)!;
+    });
+  }
+
   const target = input.receiverType && input.receiverId
     ? await resolveTarget(input.receiverType, input.receiverId)
     : { organizationId: current.organizationId, collegeId: current.collegeId };
@@ -325,8 +370,42 @@ export async function deleteAnnouncement(
   const { expectedVersion } = announcementVersionSchema.parse(raw);
   const current = await loadAnnouncement(id);
   requireManage(context, current);
-  requireCurrentAnnouncementVersion(current.version, expectedVersion);
+  // An already withdrawn notice is an idempotent DELETE, even when the
+  // caller still holds the version from the original successful deletion.
   if (current.deletedAt) return current;
+  requireCurrentAnnouncementVersion(current.version, expectedVersion);
+  if(current.broadcastGroupId){
+    return getDb().transaction(async tx=>{
+      const [group]=await tx.select({id:announcementBroadcastGroups.id,
+        organizationId:announcementBroadcastGroups.organizationId})
+        .from(announcementBroadcastGroups)
+        .where(eq(announcementBroadcastGroups.id,current.broadcastGroupId!))
+        .for("update").limit(1);
+      if(!group||group.organizationId!==current.organizationId)
+        throw new AnnouncementError("TARGET_NOT_FOUND");
+      const copies=await tx.select().from(db10Announcements)
+        .where(eq(db10Announcements.broadcastGroupId,group.id))
+        .for("update");
+      if(!copies.length||!copies.some(copy=>copy.id===id))
+        throw new AnnouncementError("ANNOUNCEMENT_NOT_FOUND");
+      for(const copy of copies){
+        requireManage(context,{collegeId:copy.collegeId,organizationId:copy.organizationId});
+        if(copy.version!==expectedVersion||copy.deletedAt)
+          throw new AnnouncementError("STALE_VERSION");
+      }
+      const now=new Date();
+      const deleted=await tx.update(db10Announcements).set({
+        deletedAt:now,deletedByUserId:context.user.id,
+        version:expectedVersion+1,updatedAt:now,
+      }).where(and(eq(db10Announcements.broadcastGroupId,group.id),
+        eq(db10Announcements.version,expectedVersion),
+        isNull(db10Announcements.deletedAt))).returning();
+      if(deleted.length!==copies.length)throw new AnnouncementError("STALE_VERSION");
+      await tx.update(announcementBroadcastGroups).set({updatedAt:now})
+        .where(eq(announcementBroadcastGroups.id,group.id));
+      return deleted.find(row=>row.id===id)!;
+    });
+  }
   const now = new Date();
   const [deleted] = await getDb()
     .update(db10Announcements)
