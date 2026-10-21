@@ -297,7 +297,7 @@ export function DateInput({
                   <Button type="button" variant="ghost" size="icon-sm"
                     aria-label={mode === "month" ? "Previous year" : "Previous month"}
                     onClick={() => monthDelta(mode === "month" ? -12 : -1)}>‹</Button>
-                  <span aria-live="polite" className="text-[14px] font-semibold text-[var(--lms-neutral-900)]">
+                  <span aria-live="polite" className="text-[14px] font-semibold leading-[22px] text-[var(--lms-neutral-900)]">
                     {mode === "month" ? viewMonth.getFullYear() : monthYear}
                   </span>
                   <Button type="button" variant="ghost" size="icon-sm"
@@ -306,7 +306,7 @@ export function DateInput({
                 </div> : null}
             {mode === "time"
               ? <div className="grid grid-cols-2 gap-2" role="group" aria-label="Hours and minutes">
-                  <div className="min-w-0"><p className="mb-2 text-center text-[13px] font-semibold text-[var(--lms-body-text)]">Hour</p><div aria-label="Hour" className="max-h-56 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                  <div className="min-w-0"><p className="mb-2 text-center text-[13px] font-semibold leading-[22px] text-[var(--lms-body-text)]">Hour</p><div aria-label="Hour" className="max-h-56 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                     {Array.from({ length: 24 }, (_, hour) => {
                       const available = Array.from({ length: 60 }, (_, minute) => timeAllowed(hour, minute)).some(Boolean);
                       return <Button key={hour} data-picker-hour={hour} variant="ghost" type="button" size="sm" disabled={!available}
@@ -317,7 +317,7 @@ export function DateInput({
                       </Button>;
                     })}
                   </div></div>
-                  <div className="min-w-0"><p className="mb-2 text-center text-[13px] font-semibold text-[var(--lms-body-text)]">Minute</p><div aria-label="Minute" className="max-h-56 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                  <div className="min-w-0"><p className="mb-2 text-center text-[13px] font-semibold leading-[22px] text-[var(--lms-body-text)]">Minute</p><div aria-label="Minute" className="max-h-56 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                     {Array.from({ length: 60 }, (_, minute) => (
                       <Button key={minute} data-picker-minute={minute} variant="ghost" type="button" size="sm"
                         disabled={!timeAllowed(draftHour, minute)}
@@ -348,7 +348,7 @@ export function DateInput({
                   </div>
                 : <CalendarGrid variant="spaced" role="group" aria-label={monthYear} aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Home End" className="min-w-0 text-center max-[767px]:gap-[2px] max-[767px]:[grid-template-columns:repeat(7,minmax(44px,1fr))]">
               {weekdayLabels.map(day => <span key={day} aria-hidden="true"
-                className={cx("py-1 text-[12px] font-semibold",
+                className={cx("py-1 text-[12px] font-semibold leading-[20px]",
                   day === "Su" ? "text-[var(--lms-calendar-sunday)]" : "text-[var(--lms-muted-text)]")}>
                 {day}
               </span>)}
