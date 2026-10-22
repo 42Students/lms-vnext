@@ -31,7 +31,11 @@ function dbMock(){
   .mockImplementationOnce(()=>({from:()=>({innerJoin:()=>({
    where:()=>({orderBy:()=>({limit:()=>({offset})})}),
   })})}));
- const tx={select:vi.fn()};
+ const tx={select:vi.fn(()=>({
+   from:()=>({where:()=>({for:()=>({limit:async()=>[{
+     organizationId:org,status:"ACTIVE",
+   }]})})}),
+ }))};
  const db={select,transaction:vi.fn(async(cb:(x:typeof tx)=>Promise<unknown>)=>cb(tx))};
  vi.mocked(getDb).mockReturnValue(db as unknown as ReturnType<typeof getDb>);
  return {db,tx,countWhere,filteredWhere,offset};

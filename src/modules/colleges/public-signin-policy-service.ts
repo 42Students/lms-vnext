@@ -23,9 +23,9 @@ async function readStoredCollegeSignInMethod(collegeId:string|null){
  // never persist a guessed translation into an active tenant policy.
  const legacy=legacyCollegeSignInMethodSchema.safeParse(row.method);
  if(legacy.success)return {method:normalizeCollegeSignInMethod(legacy.data),requiresAdminReview:false,source:"LEGACY" as const};
- // Keep the legacy public fallback for unknown imported values, but surface
- // the repair condition to admin readers without disclosing the raw value.
- return {method:fallback,requiresAdminReview:true,source:"INVALID_LEGACY_VALUE" as const};
+ // A malformed persisted policy is not an unconfigured tenant:
+ // enabling every sign-in channel would undermine an existing college policy.
+ throw new Error("INVALID_COLLEGE_SIGNIN_POLICY");
 }
 export async function effectiveCollegeSignInMethod(collegeId:string|null){
  return (await readStoredCollegeSignInMethod(collegeId)).method;

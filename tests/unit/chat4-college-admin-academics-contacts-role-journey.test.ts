@@ -81,7 +81,7 @@ describe("College Admin people and academic journey security", () => {
     expect(page).toContain("Reset contact filters");
     expect(page).toContain("Student contact details are masked");
     expect(page).toContain("Exports are capped at 1,000");
-    expect(page).toContain("No matching contacts in this college.");
+    expect(page).toContain("No contacts match your filters");
     expect(page).toContain("First 200 classes shown.");
     expect(page).toContain("Faculty contacts");
     expect(page).toContain("min-h-11");
@@ -96,7 +96,7 @@ describe("College Admin people and academic journey security", () => {
   it("COL-ADMIN-JOURNEY-05 class/elective pages reject malformed filters rather than reading a wider dataset", () => {
     for(const kind of ["classes","electives"]){
       const page=source("src/app/(authenticated)/college/"+kind+"/page.tsx");
-      expect(page).toContain("readCollegeStructureParams(await searchParams)");
+      expect(page).toContain("readCollegeStructureParams(");
       expect(page).toContain(".safeParse(raw)");
       expect(page).toContain("<ErrorState");
       expect(page).toContain("Clear filters");

@@ -25,18 +25,18 @@ describe("Super Admin root-page platform-role defense",()=>{
   const source=read("src/app/(authenticated)/admin/people/page.tsx");
   expect(source).toContain('import { isSuperAdmin } from "@/modules/identity/context";');
   const check=source.indexOf('if (!isSuperAdmin(context)) redirect("/dashboard");');
-  const people=source.indexOf("const people = await listCollegePeopleWithRuntime(");
+  const people=source.indexOf("listCollegePeopleWithRuntime(context,{");
   expect(check).toBeGreaterThan(0);
   expect(people).toBeGreaterThan(check);
  });
  it("SA-PEOPLE-ROOT-02 verifies all People views and Faculty assignment list assert Super Admin before reading records",()=>{
   const checks=[
    ["src/app/(authenticated)/admin/people/directory/page.tsx",
-    "const data=await listSuperAdminUsers("],
+    "const loaded=await listSuperAdminUsers("],
    ["src/app/(authenticated)/admin/people/unassigned/page.tsx",
-    "const data = await listSuperAdminUnassignedUsers("],
+    "listSuperAdminUnassignedUsers("],
    ["src/app/(authenticated)/admin/faculty-assignment/page.tsx",
-    "const [classes,workspace]=await Promise.all(["],
+    "const [classesResult,workspaceResult]=await Promise.allSettled(["],
   ] as const;
   for(const [path,lookup] of checks){
    const page=read(path);

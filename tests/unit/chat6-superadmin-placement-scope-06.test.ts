@@ -22,8 +22,8 @@ describe("SA-admin-middle-placement-scope-06 private Super Admin screen entrypoi
  }
  it("bounded hiring analytics explicitly warns that a truncated sample cannot represent total KPIs",()=>{
   const code=get("/analytics");
-  expect(code).toContain("data.truncated?<p role=\"alert\"");
-  expect(code).toContain("headline metrics, funnel, company totals and CSV may be incomplete");
-  expect(code).toContain("Narrow the filters");
+  expect(code).toContain('data.truncated?<Banner tone="warning">');
+  expect(code).toContain("Headline metrics and funnel totals are calculated on the server");
+  expect(code).toContain("Narrow filters for a complete per-company breakdown");
  });
 });

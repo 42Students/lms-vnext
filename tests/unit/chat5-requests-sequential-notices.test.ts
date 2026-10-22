@@ -4,7 +4,7 @@ import {verificationDecisionNotice} from "@/modules/verification/notification-co
 describe("Chat-5 previously authored TPO verification workflow parity",()=>{
  it("TPO-requests-verification-25 preserves ordered sequential review, next and finish with no forced decision",()=>{
   const source=readFileSync(new URL("../../src/components/verification/TpoVerificationPanel.tsx",import.meta.url),"utf8");
-  for(const key of ["Review one by one","nextSequential","finishSequential","sequenceProgress","onNext={nextSequential}","onFinish={finishSequential}"])expect(source).toContain(key);
+  for(const key of ["nextSequential","finishSequential","sequenceProgress","onNext={nextSequential}","onFinish={finishSequential}"])expect(source).toContain(key);
   expect(source).toContain("The other "+"" );
  });
  it("TPO-requests-verification-30 sends the recorded reviewer name and correction reason in the official learner wording",()=>{

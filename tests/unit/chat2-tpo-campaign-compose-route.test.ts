@@ -10,7 +10,8 @@ describe("TPO-campaigns-public-01 campaign composer and POST",()=>{
  });
  it("never claims delivery from draft save",()=>{
   const ui=readFileSync("src/components/tpo/tpo-campaign-compose.tsx","utf8");
-  expect(ui).toContain("No message is sent");
+  expect(ui).toContain("Nothing is sent from this form.");
+  expect(ui).toContain("No email was sent.");
   expect(ui).toContain("CAMPAIGN_DELIVERY_UNAVAILABLE");
  });
 });

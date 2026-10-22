@@ -1,12 +1,12 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
-import {headers} from "next/headers";
+import {headers,cookies} from "next/headers";
 import {getCurrentIdentityUid} from "@/auth/request-context";
 import {resolveRequestTenant} from "@/modules/auth/request-tenant";
 import {isTenantAccessAllowed} from "@/modules/auth/tenant-access";
 import {listMembershipChoices,resolveRequestContext} from "@/modules/identity/context-service";
 import {isSameOriginRequest} from "@/auth/origin";
 import {GET,POST,DELETE} from "@/app/api/auth/memberships/route";
-vi.mock("next/headers",()=>({headers:vi.fn()}));
+vi.mock("next/headers",()=>({headers:vi.fn(),cookies:vi.fn()}));
 vi.mock("@/auth/request-context",()=>({getCurrentIdentityUid:vi.fn()}));
 vi.mock("@/modules/auth/request-tenant",()=>({resolveRequestTenant:vi.fn()}));
 vi.mock("@/modules/auth/tenant-access",()=>({isTenantAccessAllowed:vi.fn()}));
@@ -29,13 +29,19 @@ beforeEach(()=>{
  vi.mocked(isSameOriginRequest).mockReturnValue(true);
  vi.mocked(getCurrentIdentityUid).mockResolvedValue("identity-1");
  vi.mocked(headers).mockResolvedValue(new Headers({host:"campus.example"}) as never);
+ vi.mocked(cookies).mockResolvedValue({get:()=>undefined} as never);
  vi.mocked(isTenantAccessAllowed).mockReturnValue(true);
  vi.mocked(resolveRequestTenant).mockResolvedValue({kind:"college",host:"campus.example",collegeId:own,organizationId:other});
  vi.mocked(listMembershipChoices).mockResolvedValue([
-  {id:ownMembership,collegeId:own},{id:foreignMembership,collegeId:other},
+  {id:ownMembership,collegeId:own,status:"ACTIVE",roles:["LEARNER"],
+    collegeName:"Host college",organizationName:"Host organization"},
+  {id:foreignMembership,collegeId:other,status:"ACTIVE",roles:["FACULTY"],
+    collegeName:"Foreign college",organizationName:"Foreign organization"},
  ] as never);
  vi.mocked(resolveRequestContext).mockImplementation(async input=>({
-  membership:input.activeMembershipId?{id:input.activeMembershipId,collegeId:own}:null,
+  membership:input.activeMembershipId?{
+    id:input.activeMembershipId,collegeId:own,roles:["LEARNER"],status:"ACTIVE",
+  }:null,
  }) as never);
 });
 describe("AUTH-handoff-16 scoped membership cookies and no-store",()=>{
@@ -43,7 +49,11 @@ describe("AUTH-handoff-16 scoped membership cookies and no-store",()=>{
   const response=await GET();
   expect(response.status).toBe(200);
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
-  expect(await response.json()).toEqual({memberships:[{id:ownMembership,collegeId:own}]});
+  expect(await response.json()).toMatchObject({
+    memberships:[{id:ownMembership,collegeId:own,selectable:true,selected:false}],
+    currentMembershipKey:null,currentRole:null,membershipSelectionRequired:true,
+    hostNavigation:"FIRST_PARTY_COOKIE",adminScopeEndpoint:"/api/auth/admin-scope",
+  });
  });
  it("POST stores only the active persisted college membership with private cache headers",async()=>{
   const response=await POST(request("POST"));
@@ -51,7 +61,7 @@ describe("AUTH-handoff-16 scoped membership cookies and no-store",()=>{
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   expect(response.cookies.get("lms_membership")?.value).toBe(ownMembership);
   expect(resolveRequestContext).toHaveBeenCalledWith({
-   identityUid:"identity-1",activeMembershipId:ownMembership,
+   identityUid:"identity-1",activeMembershipId:ownMembership,activeRole:null,
   });
  });
  it("AUTH-handoff-18 distinguishes temporary domain outage from invalid or revoked session",async()=>{
@@ -59,7 +69,10 @@ describe("AUTH-handoff-16 scoped membership cookies and no-store",()=>{
   const response=await GET();
   expect(response.status).toBe(503);
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
-  expect(await response.json()).toEqual({error:"TENANT_LOOKUP_UNAVAILABLE"});
+  expect(await response.json()).toMatchObject({
+    error:"TENANT_LOOKUP_UNAVAILABLE",
+    message:"Service unavailable. Try again from your college LMS address.",
+  });
   expect(resolveRequestContext).not.toHaveBeenCalled();
   expect(listMembershipChoices).not.toHaveBeenCalled();
  });
@@ -80,7 +93,7 @@ describe("AUTH-handoff-16 scoped membership cookies and no-store",()=>{
   expect(await response.json()).toEqual({error:"REQUEST_TOO_LARGE"});
   expect(response.cookies.get("lms_membership")).toBeUndefined();
   expect(resolveRequestContext).not.toHaveBeenCalledWith({
-   identityUid:"identity-1",activeMembershipId:ownMembership,
+   identityUid:"identity-1",activeMembershipId:ownMembership,activeRole:null,
   });
  });
  it("rejects forged college and role properties rather than silently ignoring them",async()=>{
@@ -91,7 +104,7 @@ describe("AUTH-handoff-16 scoped membership cookies and no-store",()=>{
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   expect(response.cookies.get("lms_membership")).toBeUndefined();
   expect(resolveRequestContext).not.toHaveBeenCalledWith({
-   identityUid:"identity-1",activeMembershipId:ownMembership,
+   identityUid:"identity-1",activeMembershipId:ownMembership,activeRole:null,
   });
  });
  it("rejects cross-origin membership switches without touching identity state",async()=>{

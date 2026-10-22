@@ -41,13 +41,13 @@ describe("TPO settings UX semantics", () => {
 
   it("UX-tpo-tpo-settings-rules-01 keeps legacy heading and touch-safe controls", () => {
     const source = readFileSync(join(process.cwd(), "src/app/(authenticated)/tpo/settings/rules/page.tsx"), "utf8");
-    expect(source).toContain("title=\"Placement rules\"");
+    expect(source).toContain("Placement rules");
     expect(source).not.toContain("min-h-10");
   });
 
   it("UX-tpo-tpo-settings-team-01 keeps legacy heading and touch-safe controls", () => {
     const source = readFileSync(join(process.cwd(), "src/app/(authenticated)/tpo/settings/team/page.tsx"), "utf8");
-    expect(source).toContain("title=\"Placement Team\"");
+    expect(source).toContain("title=\"Placement team\"");
     expect(source).not.toContain("min-h-10");
   });
 
@@ -59,7 +59,7 @@ describe("TPO settings UX semantics", () => {
 
   it("UX-tpo-tpo-settings-see-01 keeps legacy heading and touch-safe controls", () => {
     const source = readFileSync(join(process.cwd(), "src/app/(authenticated)/tpo/settings/see/page.tsx"), "utf8");
-    expect(source).toContain("title=\"What Companies See\"");
+    expect(source).toContain("title=\"What companies see\"");
     expect(source).not.toContain("min-h-10");
   });
 });

@@ -15,7 +15,7 @@ describe("LEARNER-home-courses-18 scoped attendance month",()=>{
   const service=source("src/modules/attendance/learner-service.ts");
   const page=source("src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx");
   const view=source("src/components/courses/learner-course-attendance.tsx");
-  expect(service).toContain("authorizedDeliveries=options.deliveryId");
+  expect(service).toContain("const authorizedDeliveries=deliveries.filter(");
   expect(service).toContain('throw new AuthorizationError("courses.read")');
   expect(service).toContain("options.window.from");
   expect(service).toContain("options.window.to");

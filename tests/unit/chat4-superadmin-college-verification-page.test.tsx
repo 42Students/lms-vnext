@@ -8,6 +8,7 @@ const mocks=vi.hoisted(()=>({
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:mocks.context}));
 vi.mock("@/modules/verification/super-admin-scope",()=>({
  requireSuperAdminVerificationCollege:mocks.guard,
+ VerificationAccessCheckError:class VerificationAccessCheckError extends Error {},
 }));
 vi.mock("@/modules/colleges/admin-tenant-lifecycle-service",()=>({
  getSuperAdminTenantLifecycleDetail:mocks.tenant,
