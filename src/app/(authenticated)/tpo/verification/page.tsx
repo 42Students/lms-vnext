@@ -147,7 +147,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
    <Alert tone="warning">{!queue.enabled
     ?"Your college admin has not allowed the placement cell to verify profiles"
      :"Your verification access has been removed. Ask your college admin."}</Alert>
-  </section>:<><TpoVerificationPanel rows={queue.rows} counts={queue.counts} serverTab={query.tab} serverKind={query.kind}/>
+  </section>:<><TpoVerificationPanel rows={queue.rows} {...(queue.counts !== undefined ? {counts:queue.counts} : {})} serverTab={query.tab} serverKind={query.kind}/>
   <nav aria-label="Verification pages" className="flex min-w-0 flex-wrap items-center gap-3 text-sm">
    {query.page>1?<Link href={tpoVerificationHref({...query,page:query.page-1})} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Previous page</Link>:null}
    <span>Page {query.page}; up to {query.pageSize} records per page.</span>
