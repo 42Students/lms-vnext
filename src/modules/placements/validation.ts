@@ -1682,9 +1682,10 @@ export const legacyInterviewFeedbackInputSchema=z.strictObject({
 }).superRefine((input,ctx)=>{
  if(input.recommendAction==="REJECT"&&!input.comments?.trim())
   ctx.addIssue({code:"custom",path:["comments"],
-   message:"Add an internal reason for the rejection. The candidate receives a separate generic notification."});
- if(input.recommendAction==="REJECT"&&input.comments&&input.comments.length>500)
-  ctx.addIssue({code:"custom",path:["comments"],message:"Rejection feedback must not exceed 500 characters"});
+   message:"Add a rejection reason. Only the generic decision is shared with the candidate."});
+  if(input.recommendAction==="REJECT" && (input.comments?.length??0)>500)
+   ctx.addIssue({code:"custom",path:["comments"],
+    message:"Rejection feedback must not exceed 500 characters."});
 });
 export const LEGACY_INTERVIEW_RECOMMENDATION_TRANSITION={
  PROCEED_NEXT_ROUND:"ROUND_ADVANCE_REVIEW_REQUIRED",
