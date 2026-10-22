@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { driveInterviewsParams, driveInterviewsQuerySchema, driveInterviewsHref, driveRoundTime } from "@/modules/placements/college-drive-interviews-model";
 describe("College drive interview filters",()=>{
   it("rejects forged college, invalid round status, and duplicate query params",()=>{
-    expect(driveInterviewsQuerySchema.parse({})).toEqual({kind:"ALL",status:"ALL",page:1});
+    expect(driveInterviewsQuerySchema.parse({})).toMatchObject({kind:"ALL",status:"ALL",page:1,appointmentPage:1,appointmentPageSize:20,appointmentSort:"DATE_ASC",candidatePage:1,candidatePageSize:1000});
     for(const bad of [{collegeId:"foreign"},{kind:"TEST"},{status:"UNKNOWN"},{page:1001}]){
       expect(driveInterviewsQuerySchema.safeParse(bad).success).toBe(false);
     }

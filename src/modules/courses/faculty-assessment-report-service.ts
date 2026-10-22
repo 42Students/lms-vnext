@@ -38,13 +38,12 @@ export function buildScoreDistribution(
   ];
   for (const percent of percentages) {
     if (!Number.isFinite(percent) || percent < 0 || percent > 100) continue;
-    // Legacy labels are integer bands. A fractional score must still
-    // belong to exactly one band without prematurely rounding it upward.
-    // For example, 89.9 belongs in 80–89%, not the 90–100% band.
-    const wholeBand = Math.floor(percent);
+    // Inclusive whole-number bands must also cover fractional percentages;
+    // keep a score like 89.5 in the 80–89 band, not the 90–100 band.
+    const bandPercent = Math.floor(percent);
     const bucket = buckets.find(
       (candidate) =>
-        wholeBand >= candidate.min && wholeBand <= candidate.max,
+        bandPercent >= candidate.min && bandPercent <= candidate.max,
     );
     if (bucket) bucket.count += 1;
   }

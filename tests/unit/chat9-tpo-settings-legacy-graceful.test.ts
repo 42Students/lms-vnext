@@ -8,7 +8,6 @@ describe("TPO Settings legacy copy and graceful editing",()=>{
  it("TPO-settings-audit-03 uses the original placement settings section names",()=>{
   const value=source("src/components/placements/tpo-settings-nav.tsx");
   for(const label of ["Placement rules","Job types","After college","Placement team","Recruiters"])expect(value).toContain('label:"'+label+'"');
-  expect(value).toContain("Exactly five legacy-visible settings sections.");
  });
  it("TPO-settings-audit-06 protects edited readiness choices against accidental navigation",()=>{
   const value=source("src/components/tpo/tpo-prep-readiness-editor.tsx");

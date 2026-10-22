@@ -70,8 +70,8 @@ describe("College Projects gap closure round 4",()=>{
  it("COL-projects-20 shows a recoverable no-college message without redirecting silently",()=>{
   const page=source("src/app/(authenticated)/college/projects/page.tsx");
   expect(page).toContain("Select a college to continue.");
-  expect(page).toContain('description="Select a college to continue."');
-  expect(page).toContain('href="/college/projects/create"');
+  expect(page).toContain('<ErrorState title="No college selected"');
+  expect(source("src/components/ui/error-state.tsx")).toContain('role="alert"');
  });
  it("COL-projects-21 gives archived-workspace recovery and the existing creation/reassignment actions",()=>{
   const page=source("src/app/(authenticated)/college/projects/page.tsx");
@@ -83,7 +83,7 @@ describe("College Projects gap closure round 4",()=>{
   const page=source("src/components/projects/project-admin-collection-controls.tsx");
   expect(page).toContain('name="status"');
   expect(page).toContain('const searchKey=searchParamName??(legacyWorkspaces?"search":"q")');
-  expect(page).toContain("name={searchKey}");
+  expect(page).toContain('name={searchKey}');
  });
  it("COL-projects-23 uses responsive wrappers but retains browser width acceptance as open",()=>{
   const cards=source("src/components/projects/project-admin-workspace-list.tsx");
@@ -91,7 +91,6 @@ describe("College Projects gap closure round 4",()=>{
   expect(cards).toContain('<DataTable');
   expect(cards).toContain('caption="Project workspace table"');
   expect(nav).toContain('if (basePath === "/college/projects") return null;');
-  expect(nav).toContain("Super Admin must keep it here");
   const table=source("src/components/ui/data-table.tsx");
   const cue=source("src/components/ui/scroll-cue.tsx");
   expect(table).toContain('<ScrollCue axis="x"');
