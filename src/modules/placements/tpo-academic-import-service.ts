@@ -182,15 +182,33 @@ export async function commitTpoAcademicImport(context: RequestContext, raw: unkn
       // record. This is important when a TPO corrects only one marks field.
       // A single persisted VERIFIED source wins over SELF evidence during
       // placement eligibility, and source provenance remains auditable.
+      const incomingVerifiedFields=Object.keys(row).filter(
+        key=>key!=="studentCode"&&key!=="legacyOrigin",
+      );
+      const previousMetadata=before?.source==="VERIFIED"&&before.sourceMetadata&&
+        !Array.isArray(before.sourceMetadata)&&typeof before.sourceMetadata==="object"
+        ?before.sourceMetadata:{};
+      // A one-field verified correction does not de-verify unrelated marks,
+      // or erase where the original spreadsheet evidence came from.
+      const previousFields=Array.isArray(previousMetadata.verifiedFields)
+        ?previousMetadata.verifiedFields.filter(
+          (field):field is string=>typeof field==="string",
+        ):[];
+      const verifiedFields=input.mode==="SINGLE"
+        ?[...new Set([...previousFields,...incomingVerifiedFields])]
+        :incomingVerifiedFields;
       const evidence = {
         ...nextFields,
         source: "VERIFIED" as const,
-        // Direct correction is not an import batch, even if later reached
-        // from a single-row form. Imported rows have a traceable timestamp.
+        // Direct correction retains the previous import's provenance, while
+        // new imports receive their own immutable event and timestamp.
         importedAt: input.mode==="SINGLE"?before?.importedAt??null:now,
-        sourceMetadata:{mode:input.mode,
-         verifiedFields:Object.keys(row).filter(key=>key!=="studentCode"&&key!=="legacyOrigin"),
-         ...(row.legacyOrigin?{legacyOrigin:row.legacyOrigin}:{})},
+        sourceMetadata:{
+          ...(input.mode==="SINGLE"?previousMetadata:{}),
+          mode:input.mode,verifiedFields,
+          ...(input.mode==="SINGLE"?{lastCorrectionAt:now.toISOString()}:{}),
+          ...(row.legacyOrigin?{legacyOrigin:row.legacyOrigin}:{}),
+        },
         verifiedAt: now,
         verifiedByUserId: context.user.id,
         updatedAt: now,
