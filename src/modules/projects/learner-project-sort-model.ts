@@ -9,7 +9,7 @@ export function compareNumberedTeamProjects(left:string,right:string):number {
  const series=(title:string)=>{
   const match=/^(.*?)(?:\s*[-—:]?\s*)\bteam\s+(\d+)\b(.*)$/i.exec(title.trim());
   return match ? {key:(match[1]??"").trim().toLowerCase()+"|"+(match[3]??"").trim().toLowerCase(),
-   number:Number(match[2])} : null;
+   number:Number(match[2] ?? "")} : null;
  };
  const l=series(left),r=series(right);
  return l&&r&&l.key===r.key&&Number.isFinite(l.number)&&Number.isFinite(r.number)
