@@ -366,7 +366,10 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
           description:"Created "+result.created.length+" workspace(s) for the class roster."});
       }
       if(mode==="INDIVIDUAL" && result.created.length < result.requested-result.alreadyCovered){
-        setNotice("Some workspaces were not created. Review the learner outcome report before retrying.");
+        const missing=Math.max(0,result.requested-result.alreadyCovered-result.created.length);
+        const message=missing+" learner workspace(s) were not created. Review the learner outcome report and check existing workspaces before retrying to avoid duplicates.";
+        setNotice(message);
+        showToast({tone:"info",title:"Partial cohort creation",description:message});
       }
       if(mode!=="INDIVIDUAL"){
         if(result.created.length===1)router.push(basePath+"/"+encodeURIComponent(result.created[0].projectId)+"/summary");
