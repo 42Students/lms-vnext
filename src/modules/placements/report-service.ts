@@ -75,6 +75,39 @@ export type PlacementReportQuery = z.input<
   typeof placementReportQuerySchema
 >;
 
+/** Legacy TpoHub getReport("placement-summary") response compatibility.
+ * The values remain college-and-season-scoped UUID facts, never numeric
+ * legacy organization IDs. Counters are NOT interchangeable:
+ * placedUnique follows the selected college counts-as-placed policy,
+ * acceptedUnique counts people with eligible accepted offers.
+ */
+export function legacyPlacementSummaryProjection(summary:{
+ metrics:{registered:number;studentsPlaced:number;studentsAccepted:number;
+  offers:number;acceptedOffers:number;applications:number};
+}){
+ return {stats:{
+  registered:summary.metrics.registered,
+  placedUnique:summary.metrics.studentsPlaced,
+  acceptedUnique:summary.metrics.studentsAccepted,
+  offers:summary.metrics.offers,
+ },diagnostics:{
+  applications:summary.metrics.applications,
+  acceptedOffers:summary.metrics.acceptedOffers,
+  definition:"Selected college and season, current verified offer policy",
+ }};
+}
+/** The old report gallery used one GET. vNext detail/report pages can reuse
+ * this projection from an already authorised report workspace read rather
+ * than execute a second unscoped aggregation for the same visible metrics. */
+export async function getLegacyPlacementSummary(
+ context:RequestContext,rawQuery:unknown,
+){
+ const workspace=await getPlacementReportWorkspace(context,rawQuery);
+ return {report:"placement-summary",...legacyPlacementSummaryProjection(workspace.report),
+  seasonId:workspace.selectedSeasonId,collegeId:workspace.collegeId};
+}
+
+
 function reportFilterKey(query: PlacementReportQuery): string {
   return JSON.stringify([
     query.batchId ?? null,

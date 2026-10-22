@@ -24,6 +24,25 @@ export function canTransitionLegacyRecruiterRequest(
   return (legacyRecruiterRequestTransitions[from] as readonly string[]).includes(to);
 }
 
+export const TPO_DRIVE_CANONICAL_TRANSITIONS={
+ DRAFT:["PUBLISHED"],
+ PUBLISHED:["CLOSED"],
+ CLOSED:[],
+ CANCELLED:[],
+ ARCHIVED:[],
+} as const;
+export type CanonicalTpoDriveStatus=keyof typeof TPO_DRIVE_CANONICAL_TRANSITIONS;
+export function canTransitionTpoDrive(
+ from:CanonicalTpoDriveStatus,to:CanonicalTpoDriveStatus,
+):boolean{
+ return (TPO_DRIVE_CANONICAL_TRANSITIONS[from] as readonly string[]).includes(to);
+}
+/** A request's initial REQUEST status never belongs in the live job table.
+ * Historical DRAFT/ACTIVE flags project from one stored enum status. */
+export function legacyTpoDriveFlags(status:string){
+ return {isDraft:status==="DRAFT",isActive:status==="PUBLISHED",
+  activeLabel:legacyTpoDriveLifecycleLabels[status as keyof typeof legacyTpoDriveLifecycleLabels]??"Unknown"};
+}
 export const tpoDriveLifecycleSchema = z.object({
   action: z.enum(["PUBLISH", "CLOSE", "REOPEN"]),
   expectedStatus: z.enum(["DRAFT", "PUBLISHED", "CLOSED"]),
@@ -68,6 +87,10 @@ export function evaluateTpoDriveLifecycle(
     action === "CLOSE" ? "PUBLISHED" : "CLOSED";
   const blockers: string[] = [];
   if (facts.jobStatus !== expectedStatus) blockers.push("STALE_JOB_STATUS");
+  else if(!canTransitionTpoDrive(
+    facts.jobStatus as CanonicalTpoDriveStatus,
+    action==="CLOSE"?"CLOSED":"PUBLISHED",
+  )) blockers.push(action==="REOPEN"?"CLOSED_DRIVE_TERMINAL":"STALE_JOB_STATUS");
   // Closeout must remain possible after a season ends; only publishing or
   // reopening a drive requires an active season.
   if (action !== "CLOSE" && !facts.seasonActive) blockers.push("SEASON_NOT_ACTIVE");
@@ -82,10 +105,10 @@ export function evaluateTpoDriveLifecycle(
     if (!facts.deadlineValid) blockers.push("APPLICATION_DEADLINE_PASSED");
   }
   if (action === "REOPEN") {
-    // Legacy CLOSED is terminal. Retain vNext's explicit REOPEN preflight,
-    // but do not silently reopen a finalised legacy drive. A reopened drive
-    // needs a separately authorised owner decision and migration-safe policy.
-    blockers.push("CLOSED_DRIVE_TERMINAL");
+    // Legacy CLOSED is terminal. Prevent it from reopening in the canonical
+    // enum graph, retaining the readable preflight explanation exactly once.
+    if(!blockers.includes("CLOSED_DRIVE_TERMINAL"))
+      blockers.push("CLOSED_DRIVE_TERMINAL");
     if (facts.appliedResultCount > 0) blockers.push("APPLIED_RESULTS_EXIST");
     if (facts.acceptedOfferCount > 0) blockers.push("ACCEPTED_OFFERS_EXIST");
   }
@@ -106,6 +129,7 @@ export function tpoDriveReadinessMessage(code: string): string {
     PACKAGE_MISSING: "Record the role package or stipend before publishing.",
     EXTERNAL_APPLICATION_LINK_MISSING: "Provide the employer application link before publishing an external drive.",
     APPLICATION_DEADLINE_PASSED: "Set an application deadline in the future.",
+    IMPORTANT_DATES_INVALID: "Review important date labels and make sure the assessment is after the application deadline.",
     APPLIED_RESULTS_EXIST: "This drive already has applied round results and cannot be reopened.",
     ACCEPTED_OFFERS_EXIST: "Accepted offers prevent reopening this drive.",
   };

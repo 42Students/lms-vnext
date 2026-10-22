@@ -13,12 +13,21 @@ export type PlacementDashboardRound = {
   roleTitle: string;
   scheduledAt: Date | null;
   exception: { scheduledAt: Date } | null;
+  /** Known confirmed/expected bookings; omitted when the source lacks it. */
+  bookingState?:"BOOKED"|"EXPECTED"|"CANCELLED"|null;
+  /** Optional completed outcome suppresses already-finished notices. */
+  roundStatus?:string|null;
+  venue?:string|null;
+  mode?:string|null;
+  whatToBring?:string|null;
 };
 
 export type PlacementDashboardJob = {
   jobId: string;
   deadlinePassed: boolean;
   canApply: boolean;
+  /** Authoritative deadline, not a local-machine inferred closing date. */
+  applicationDeadline?:Date|string|null;
 };
 
 export type PlacementDashboardApplication = {
@@ -42,6 +51,10 @@ export type PlacementDashboardEvent = {
   when: Date;
   rescheduled: boolean;
   href: string;
+  bookingState?:"BOOKED"|"EXPECTED"|"CANCELLED"|null;
+  venue?:string|null;
+  mode?:string|null;
+  whatToBring?:string|null;
 };
 
 export function learnerPlacementDashboard(
@@ -69,10 +82,26 @@ export function learnerPlacementDashboard(
     roleAccessByJob.set(row.jobId,(roleAccessByJob.get(row.jobId)??false)||row.canApply);
   }
   const appliedIds = new Set(input.applications.map((row) => row.applicationId));
+  const dayMs=86400000,istOffset=330*60000;
+  const todayIndex=Math.floor((nowMs+istOffset)/dayMs);
+  const closingSoonJobs=input.jobs.filter(job=>{
+    if(job.deadlinePassed||!job.canApply||!job.applicationDeadline)return false;
+    const deadline=job.applicationDeadline instanceof Date?
+      job.applicationDeadline.getTime():Date.parse(job.applicationDeadline);
+    if(!Number.isFinite(deadline)||deadline<nowMs)return false;
+    const days=Math.floor((deadline+istOffset)/dayMs)-todayIndex;
+    return days>=0&&days<=3;
+  }).sort((a,b)=>{
+    const date=(job:PlacementDashboardJob)=>job.applicationDeadline instanceof Date?
+      job.applicationDeadline.getTime():Date.parse(String(job.applicationDeadline));
+    return date(a)-date(b)||a.jobId.localeCompare(b.jobId);
+  });
   const events: PlacementDashboardEvent[] = input.rounds.flatMap((row) => {
     const effective = row.exception?.scheduledAt ?? row.scheduledAt;
     const whenMs = effective?.getTime() ?? Number.NaN;
-    if (!Number.isFinite(whenMs) || whenMs < nowMs) return [];
+    if (!Number.isFinite(whenMs) || whenMs < nowMs ||
+        row.roundStatus==="COMPLETED"||row.roundStatus==="CANCELLED"||
+        row.bookingState==="CANCELLED") return [];
     const kind: PlacementDashboardEvent["kind"] = isCareerRoundVisible("ASSESSMENT", row.roundKind)
       ? "ASSESSMENT"
       : isCareerRoundVisible("INTERVIEW", row.roundKind) ? "INTERVIEW" : "OTHER";
@@ -94,6 +123,10 @@ export function learnerPlacementDashboard(
       when: new Date(whenMs),
       rescheduled: row.exception !== null,
       href,
+      bookingState:row.bookingState??null,
+      venue:row.venue??null,
+      mode:row.mode??null,
+      whatToBring:row.whatToBring??null,
     }];
   }).sort((a, b) => a.when.getTime() - b.when.getTime() ||
     a.applicationId.localeCompare(b.applicationId) ||
@@ -139,16 +172,28 @@ export function learnerPlacementDashboard(
         href:"/learn/my-placements/placement",
         when:null,
       }
-    : priority
+    : priority && (priority.when.getTime()-nowMs)<=7*dayMs
     ? {
         label: priority.kind === "ASSESSMENT"
           ? "Assessment coming up"
           : priority.kind === "INTERVIEW"
             ? "Interview coming up" : "Next scheduled event",
         title: priority.roundName,
-        detail: `${priority.companyName} · ${priority.roleTitle}`,
+        detail: [priority.companyName,priority.roleTitle,
+          priority.bookingState==="BOOKED"?"Confirmed":priority.bookingState==="EXPECTED"?"Expected, not booked":null,
+          priority.venue||priority.mode||null,priority.whatToBring?"Bring: "+priority.whatToBring:null]
+          .filter(Boolean).join(" · "),
         href: priority.href,
         when: priority.when,
+      }
+    : closingSoonJobs.length>0
+    ? {
+        label:"Closes soon",
+        title:closingSoonJobs.length===1?"A placement application closes soon":
+          closingSoonJobs.length+" placement applications close soon",
+        detail:"These eligible drives close within three IST calendar days. Review them before the deadline.",
+        href:"/learn/my-placements/jobs?soon=1",
+        when:null,
       }
     : input.placed
     ? {
@@ -203,6 +248,8 @@ export function learnerPlacementDashboard(
     ).size,
     firstRun: appliedIds.size === 0,
     nextAction,
+    closingSoonCount:closingSoonJobs.length,
+    closingSoonJobIds:closingSoonJobs.map(job=>job.jobId),
     needsAttention:attentionEvents.slice(0,3),
     urgentAssessment:attentionEvents.find(event=>event.kind==="ASSESSMENT")??null,
     urgentInterview:attentionEvents.find(event=>event.kind==="INTERVIEW")??null,

@@ -23,6 +23,25 @@ function pattern(value: string) {
   return "%" + value.replace(/[\\%_]/g, "\\$&") + "%";
 }
 
+/** One college's totals follow the legacy dashboard's two distinct concepts:
+ * active published drives and all retained non-deleted drives. Archived rows
+ * are visible only in the explicit history filter, never counted as active. */
+export async function getCollegeDriveStatusTotals(context:RequestContext){
+ const collegeId=await requireCollegePlacementAdmin(context);
+ const [row]=await getDb().select({
+  all:sql<number>`count(*) filter (where ${placementJobs.archivedAt} is null)::integer`,
+  active:sql<number>`count(*) filter (where ${placementJobs.status}='PUBLISHED' and ${placementJobs.archivedAt} is null)::integer`,
+  inactive:sql<number>`count(*) filter (where ${placementJobs.status}!='PUBLISHED' and ${placementJobs.archivedAt} is null)::integer`,
+  archived:sql<number>`count(*) filter (where ${placementJobs.archivedAt} is not null)::integer`,
+ }).from(placementJobs).where(eq(placementJobs.collegeId,collegeId));
+ return {total:row?.all??0,active:row?.active??0,
+  inactive:row?.inactive??0,archived:row?.archived??0,
+  labels:{active:"Active jobs",inactive:"Closed / draft",archived:"Archived"}};
+}
+/** Legacy repository compatibility: retrieve only the selected college's
+ * nondeleted jobs, newest first, with a bounded page rather than JSON-heavy
+ * all-row loads. Numeric legacy IDs must first resolve through a trusted
+ * migration crosswalk and are never accepted here as a tenant override. */
 export async function listCollegeDrives(context: RequestContext, raw: unknown) {
   const query = collegeDriveListQuerySchema.parse(raw);
   const collegeId = await requireCollegePlacementAdmin(context);
@@ -87,9 +106,9 @@ export async function listCollegeDrives(context: RequestContext, raw: unknown) {
   const [totals, items, seasons, companies] = await Promise.all([
     db.select({ total: count() }).from(source).where(applicantsFilter),
     db.select().from(source).where(applicantsFilter).orderBy(query.sort==="DEADLINE"?asc(source.applicationDeadline):
-        query.sort==="NEWEST"?desc(sql`coalesce(${source.publishedAt}, ${source.createdAt})`):
+        query.sort==="NEWEST"?desc(source.createdAt):
         query.sort==="APPLICANTS"?desc(source.applicants):asc(source.title),asc(source.id))
-      .limit(query.pageSize).offset((query.page - 1) * query.pageSize),
+      .limit(Math.min(100,query.pageSize)).offset((query.page - 1) * query.pageSize),
     db.select({ id: placementSeasons.id, name: placementSeasons.name }).from(placementSeasons)
       .where(eq(placementSeasons.collegeId, collegeId)).orderBy(asc(placementSeasons.name)),
     db.select({ id: placementCompanyRelationships.id, name: placementCompanies.name })
@@ -100,5 +119,9 @@ export async function listCollegeDrives(context: RequestContext, raw: unknown) {
   ]);
   const total = totals[0]?.total ?? 0;
   return { query, items, seasons, companies, total,
-    totalPages: Math.max(1, Math.ceil(total / query.pageSize)) };
+    totalPages: Math.max(1, Math.ceil(total / query.pageSize)),
+    // Admin "All" excludes archived records. The archived filter preserves
+    // historical item access but never licenses modification.
+    label:query.status==="ARCHIVED"?"Archived jobs":
+      query.status==="PUBLISHED"?"Active jobs":"All drives" };
 }

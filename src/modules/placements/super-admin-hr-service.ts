@@ -271,6 +271,7 @@ async function loadAccountGrants(
     )
     .orderBy(
       asc(colleges.name),
+      asc(placementRecruiterCollegeGrants.createdAt),
       asc(placementRecruiterCollegeGrants.id),
     );
 }
@@ -399,6 +400,14 @@ export async function listSuperAdminHrAccounts(
   );
 
   const manageable=await hrAccountManageability(context,rows.map(item=>item.userId));
+  // One batch read for all page-visible recruiter grants. Map once instead
+  // of rescanning the full history for each account as the college scales.
+  const grantsByUser=new Map<string,typeof grants>();
+  for(const grant of grants){
+    const current=grantsByUser.get(grant.recruiterUserId)??[];
+    current.push(grant);
+    grantsByUser.set(grant.recruiterUserId,current);
+  }
   const total = Number(
     totalRows[0]?.value ?? 0,
   );
@@ -407,10 +416,8 @@ export async function listSuperAdminHrAccounts(
     items: rows.map((row) => ({
       ...toAccount(row),
       accountManageable:manageable.get(row.userId)??false,
-      grants: grants.filter(
-        (grant) =>
-          grant.recruiterUserId === row.userId &&
-          grant.companyId === row.companyId,
+      grants: (grantsByUser.get(row.userId)??[]).filter(
+        (grant) => grant.companyId === row.companyId,
       ),
     })),
     total,
@@ -466,10 +473,11 @@ export async function getSuperAdminHrAccount(
     );
   }
 
-  const [grants,grantHistory] = await Promise.all([
-    loadAccountGrants(context,[userId]),
-    loadAccountGrants(context,[userId],true),
-  ]);
+  // Read once: current grants are a projection of the same scoped
+  // historical ledger. Preserve REVOKED and expired items in history while
+  // omitting non-ACTIVE grants from the current access table.
+  const grantHistory=await loadAccountGrants(context,[userId],true);
+  const grants=grantHistory.filter(grant=>grant.status==="ACTIVE");
 
   return {
     ...toAccount(row),
@@ -1044,6 +1052,9 @@ export async function updateSuperAdminHrAccount(
     throw error;
   }
 
+  // Identity and profile mutation is one scoped transaction. Suspensions
+  // revoke all canonical device sessions across memberships, not only the
+  // selected college; no invitation or email is implicitly dispatched.
   // A suspension signs out existing sessions without deleting the college grants.
   // The revocation helper also writes the session-audit event.
   if(input.status==="ARCHIVED" || phoneChanged) {
@@ -1321,6 +1332,8 @@ export async function revokeSuperAdminHrCollegeAccess(
     );
 
     if (current.grant.status === "REVOKED") {
+      // Keep old grant/audit rows intact for the college access history.
+      // A new grant requires an explicit admin action, not implicit restore.
       return current.grant;
     }
 

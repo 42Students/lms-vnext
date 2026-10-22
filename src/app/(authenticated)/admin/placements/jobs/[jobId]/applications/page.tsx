@@ -1,3 +1,4 @@
+import {CollegeDriveApplicationsSizeControl} from "@/components/placements/college-drive-applications-size-control";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getPlacementJobLegacyDetail } from "@/modules/placements/job-service";
@@ -114,6 +115,9 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
         <Link href="/admin/placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Back to Jobs</Link>
         <Link href={retryHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">↻ Refresh</Link>
       </div>} />
+    <CollegeDriveApplicationsSizeControl
+      action={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"}
+      query={query}/>
     <nav aria-label="Drive workspace" className="flex min-w-0 flex-wrap gap-2 border-b border-border pb-2">
       {navItems.map(item=><Link key={item.label} href={item.href} aria-current={item.label==="Applications"?"page":undefined}
         className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-4 text-sm font-semibold md:min-h-9 "+

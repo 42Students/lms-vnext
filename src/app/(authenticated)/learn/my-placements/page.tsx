@@ -201,6 +201,7 @@ export default async function LearnerPlacementsPage({
       jobId: row.job.id,
       deadlinePassed: row.deadlinePassed,
       canApply: row.canApply,
+      applicationDeadline: row.job.applicationDeadline,
     })),
     applications: journeyRows.map((row) => ({
       applicationId: row.applicationId,

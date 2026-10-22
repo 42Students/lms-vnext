@@ -92,6 +92,9 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
           eq(placementRecruiterCollegeGrants.status, "ACTIVE"),
         )).limit(1);
       if (existing) {
+        // No silent reinstatement of expired or revoked historic grants.
+        // A new GRANT appends a distinct scoped row; the source actor and
+        // immutable revocation event remain visible in audit history.
         // An old ACTIVE row without an expiry or verification is NOT usable.
         const [valid] = await tx.select({
           ok: sql<boolean>`${placementRecruiterCollegeGrants.validUntil} > clock_timestamp()
@@ -129,7 +132,16 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
         eq(placementCompanyRelationships.collegeId, collegeId),
       )).for("update").limit(1);
     if (!record || record.collegeId !== collegeId) throw new TpoRecruiterGrantConflict();
-    if(record.grant.status==="REVOKED")throw new TpoRecruiterGrantConflict("REVOKED");
+    if(record.grant.status==="REVOKED"){
+      // Replayed revoke on the SAME scoped historical grant is idempotent:
+      // it cannot reopen access and must not emit another audit event.
+      // EXTEND still fails, with an explicit invitation path.
+      if(input.action==="REVOKE")return {outcome:"revoked" as const,
+        grantId:record.grant.id,alreadyRevoked:true as const};
+      throw new TpoRecruiterGrantConflict("REVOKED");
+    }
+    // Browser CAS token is ISO milliseconds (Postgres stores sub-ms).
+    // Do not use an obsolete tab revision to extend or revoke an ACTIVE row.
     if (record.grant.status !== "ACTIVE" ||
       isRecruiterGrantStale(record.grant.updatedAt, input.expectedUpdatedAt)) {
       throw new TpoRecruiterGrantConflict();

@@ -63,8 +63,24 @@ export async function getOwnLearnerPlacementRulesView(
   const policy=basePolicy?effectiveTpoBatchRuleFields(basePolicy,batch?.rulesOverride):null;
   const ownHeldOffers=policy?await loadPlacementHeldOfferFacts(membership.collegeId,membership.id):[];
   const policyView=policy?learnerCollegePlacementRulePoints(policy,ownHeldOffers):null;
+  // The old learner Rules response includes both the exact TPO rule sentence
+  // and a personal note. The policy helper composes those from only the
+  // student's actual college/batch rules and own already-issued offers.
+  const legacyRulesCopy=policyView?{
+    summary:policyView.summary,
+    personalNote:policyView.personal,
+    points:[...policyView.points],
+    countsAsPlacedAt:policy!.countsAsPlacedAt,
+    maxHeldOffers:policy!.maxHeldOffers,
+    upliftPct:policy!.upliftPct,
+    minResponseHours:policy!.minResponseHours,
+  }:null;
   return {
-    back,policyView,
+    back,policyView,legacyRulesCopy,
+    legacyAliasHref:"/learn/my-placements/placement#rules",
+    // Old bookmark /rules redirects at the route boundary before these DB
+    // reads (when no explicit in-app "from" link is supplied). The hash
+    // represents the canonical rules section and is not part of authorization.
     effectivePolicySource:hasOverride?"BATCH_OVERRIDE":"COLLEGE",
     effectivePolicyUpdatedAt:hasOverride?batch?.updatedAt.toISOString()??null:null,
     evidence,
