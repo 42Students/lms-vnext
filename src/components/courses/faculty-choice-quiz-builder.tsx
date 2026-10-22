@@ -328,7 +328,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
      onClick={()=>updateQuestion(i,old=>({...old,options:facultyInsertQuizOptionAfter(old.options,j,{clientKey:draftOptionKey(),text:"",correct:false,sequence:j+1})}))}
      aria-label={"Insert answer after "+(j+1)+" in question "+(i+1)} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-xs">Insert below</Button>
     <Button variant="secondary" type="button" disabled={q.options.length>=20}
-     onClick={()=>updateQuestion(i,old=>({...old,options:facultyDuplicateQuizOption(old.options,j).map((o,k)=>k===j+1?{...o,id:undefined,clientKey:draftOptionKey()}:o)}))}
+     onClick={()=>updateQuestion(i,old=>({...old,options:facultyDuplicateQuizOption(old.options,j).map((o,k)=>k===j+1?{text:o.text,correct:o.correct,sequence:o.sequence,clientKey:draftOptionKey()}:o)}))}
      aria-label={"Duplicate answer "+(j+1)+" in question "+(i+1)} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-xs">Duplicate</Button>
     <Button variant="secondary" type="button" disabled={q.options.length<=2}
      onClick={()=>{if(facultyQuizOptionRemovalNeedsConfirmation(q.options,j)){
@@ -358,7 +358,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyInsertQuizQuestionAfter(old,i,{...fresh(),sequence:i+1}));}}
     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm" aria-label={"Insert question after "+(i+1)}>Insert below</Button>
    <Button variant="secondary" type="button" disabled={questions.length>=100}
-    onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyDuplicateQuizQuestion(old,i).map((question,k)=>k===i+1?{...question,options:question.options.map(option=>({...option,id:undefined,clientKey:draftOptionKey()}))}:question));}}
+    onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyDuplicateQuizQuestion(old,i).map((question,k)=>k===i+1?{...question,options:question.options.map(option=>({text:option.text,correct:option.correct,sequence:option.sequence,clientKey:draftOptionKey()}))}:question));}}
     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm" aria-label={"Duplicate question "+(i+1)}>Duplicate question</Button>
    <Button variant="secondary" type="button" disabled={questions.length<=1}
     onClick={()=>askConfirm(facultyQuizQuestionRemovalPrompt(i,q.prompt),()=>{
