@@ -1,4 +1,4 @@
-import { legacyGridExportFilename } from "@/modules/placements/grid-export-filename";
+import { legacyGridExportFilename,legacySavedViewExportFilename } from "@/modules/placements/grid-export-filename";
 import {tpoStudentExportViewName} from "@/modules/placements/tpo-students-url-guard";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
@@ -32,7 +32,8 @@ export async function GET(request:Request){
   const bytes=exportTpoStudentsXlsx(subset,cols,viewName);
   return new Response(new Uint8Array(bytes),{headers:{
    "Content-Type":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-   "Content-Disposition":'attachment; filename="' + legacyGridExportFilename(downloadName, "xlsx") + '"',
+   "Content-Disposition":'attachment; filename="' + (raw.view===undefined?legacyGridExportFilename(downloadName, "xlsx"):
+    legacySavedViewExportFilename(viewName, "xlsx")) + '"',
    "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff","Vary":"Cookie",
   }});
  }catch(error){return apiErrorResponse(error);}

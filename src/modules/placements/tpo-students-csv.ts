@@ -31,8 +31,8 @@ export function tpoStudentCsvCell(
 
 const STUDENT_CSV_HEADERS = [
   // Old GridWorkspace exports the current student view's leading columns first.
-  "Student","Roll number","Batch","Branch","Stage","After college",
-  "Profile verification","Best so far","Applications","Offers",
+  "Student","Roll no.","Batch","Class","Branch","Stage","After college",
+  "Profile","Best so far","Applications","Offers",
   "Registration number","Email","Program","Placement registration",
   "Participation","Readiness evidence","CGPA","10th %","12th %",
   "Diploma %","UG %","Passing year","Gap years","Marks verified",
@@ -50,6 +50,7 @@ const STUDENT_CSV_HEADERS = [
 export function exportTpoStudentsCsv(
   rows: readonly TpoStudentRow[],
   afterCollege:Readonly<Record<string,string>> = {},
+  classNames:Readonly<Record<string,string>> = {},
 ): string {
   const header = STUDENT_CSV_HEADERS
     .map(tpoStudentCsvCell)
@@ -59,7 +60,8 @@ export function exportTpoStudentsCsv(
     [
       row.displayName,
       row.rollNumber,
-      row.cohortName,
+      [row.programName,row.cohortName].filter(Boolean).join(" · "),
+      row.classIds.map(id=>classNames[id]).filter(Boolean).join(", ")||"Not assigned",
       row.branchName,
       tpoStudentDisplayLabel(row.journeyState),
       afterCollege[row.membershipId]??"",

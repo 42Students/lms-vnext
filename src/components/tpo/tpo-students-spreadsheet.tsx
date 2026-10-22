@@ -13,7 +13,7 @@ import {TpoStudentOutcomePill} from "./tpo-student-outcome-pill";
 import {TpoStudentClipboardActions} from "./tpo-student-clipboard-actions";
 import {tpoStudentClipboardTsv} from "@/modules/placements/tpo-student-clipboard-model";
 import {exportTpoStudentsCsv} from "@/modules/placements/tpo-students-csv";
-import {legacyGridExportFilename} from "@/modules/placements/grid-export-filename";
+import {legacyGridExportFilename,legacySavedViewExportFilename} from "@/modules/placements/grid-export-filename";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {TpoStudentQuickPanel} from "./tpo-student-quick-panel";
 import {tpoStudentNeedsAttention,TPO_STUDENT_JOURNEY_STATES,type TpoStudentRow} from "@/modules/placements/tpo-students-model";
@@ -106,7 +106,8 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
  const setNoteSelection=shared?.setSelected??setLocalSelection;
  const [downloadError,setDownloadError]=useState("");
  const [clipboardNotice,setClipboardNotice]=useState("");
- const viewName=params.get("view")?.trim()||"Students";
+ const savedViewName=params.get("view")?.trim()||null;
+  const viewName=savedViewName??"Students";
  const [pageSort,setPageSort]=useState<"NAME"|"APPLICATIONS_DESC"|"APPLICATIONS_ASC"|"OFFERS_DESC"|"OFFERS_ASC">("NAME");
  const sortedRows=[...rows].sort((a,b)=>{
   const diff=pageSort.startsWith("APPLICATIONS")?a.applicationCount-b.applicationCount:
@@ -136,7 +137,8 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   if(!allSelected&&selectedScoped.length>200)return null;
   query.set("ids",allSelected?"ALL":selectedScoped.join(","));
   // The selected saved view names the export; a filter value is not a view.
-  query.set("view",viewName);
+  if(savedViewName)query.set("view",savedViewName);
+   else query.delete("view");
   return "/api/placements/tpo/students/export-xlsx?"+query.toString();
  })();
  function downloadSelection(){
@@ -147,11 +149,13 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   try{
    const csv=exportTpoStudentsCsv(chosen,Object.fromEntries(chosen.map(row=>[
      row.membershipId,afterCollegeDisplay(afterCollege[row.membershipId]?.outcome),
-   ])));
+   ])),Object.fromEntries(classes.map(item=>[item.id,item.name])));
    const url=URL.createObjectURL(new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}));
    try{
     const anchor=document.createElement("a");
-    anchor.href=url;anchor.download=legacyGridExportFilename(viewName,"csv");document.body.appendChild(anchor);
+    anchor.href=url;anchor.download=savedViewName?
+      legacySavedViewExportFilename(savedViewName,"csv"):legacyGridExportFilename("Students","csv");
+     document.body.appendChild(anchor);
     anchor.click();anchor.remove();
    }finally{URL.revokeObjectURL(url);}
   }catch{setDownloadError("Could not prepare the selected CSV. Please try again.");}
