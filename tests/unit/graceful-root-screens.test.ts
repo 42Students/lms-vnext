@@ -27,7 +27,11 @@ describe("graceful route screens", () => {
       expect(screen).toContain('<PageHeader title="Page not found"');
       expect(screen).toMatch(/<Link\b|<PageBackLink\b/);
     }
-    expect(source("src/app/not-found.tsx")).toContain('homeHref="/"');
+    const fallback=source("src/app/not-found.tsx");
+    expect(fallback).toContain('let homeHref = "/dashboard"');
+    expect(fallback).toContain('homeHref={homeHref}');
+    expect(fallback).toContain('getShellNavigation(context)[0]?.href');
+    expect(fallback).toContain('!landing.startsWith("//")');
   });
   it("GR-14 provides an accessible forbidden page with a role-safe home link", () => {
     expect(source("src/app/forbidden/page.tsx")).toContain("You do not have access to this page");

@@ -16,7 +16,7 @@ describe("UX-UNOWNED-TABLE-07/08 Super Admin import surfaces",()=>{
     expect(text).toContain("onClick={() => setOpen(true)}");
     for(const title of ["When","Students","Created","Failed"])
       expect(text).toContain('header:"'+title+'"');
-    expect(text).toContain("No import history found.");
+    expect(text).toContain("No bulk imports on file for this college.");
     expect(text).not.toMatch(/<\s*table\b/i);
   });
 

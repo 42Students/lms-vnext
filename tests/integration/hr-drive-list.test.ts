@@ -17,13 +17,16 @@ const tpo: RequestContext = {user: {id: SEED_IDS.facultyUser, identityUid:"hr-li
  membership:{id:SEED_IDS.facultyCollegeAMembership,collegeId:SEED_IDS.collegeA,organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["TPO"]}};
 describe.skipIf(!enabled)("HR drive list scope (isolated PG)", () => {
  afterAll(async () => {await closeDatabaseConnection();}); // Append-only audit references: retain created fixtures.
- it("publishes only a ready job and denies recruiter ownership of a TPO-authored drive", async () => {
+ it("distinguishes an approved recruiter request from an unlinked TPO-authored drive", async () => {
    const nonce=randomUUID().slice(0,8);
    const own=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Drive Own "+nonce,primaryDomain:"own-"+nonce+".example"});
    const another=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Drive Foreign "+nonce,primaryDomain:"other-"+nonce+".example"});
    const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:own.relationship.id,
      title:"Recruiter Job "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
    await publishPreparedPlacementJob(tpo,job.id,{round:{kind:"TEST",name:"Aptitude screening"}});
+   const unlinked=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:own.relationship.id,
+     title:"Unlinked TPO Job "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
+   await publishPreparedPlacementJob(tpo,unlinked.id,{round:{kind:"TEST",name:"Unlinked aptitude screening"}});
    const identityUid="hr-drive-"+nonce;
    const recruiter=await createPersistedJobRecruiter({companyId:own.company.id,companyRelationshipId:own.relationship.id,
      collegeId:SEED_IDS.collegeA,jobId:job.id,grantedByUserId:tpo.user.id,identityUid});
@@ -32,7 +35,8 @@ describe.skipIf(!enabled)("HR drive list scope (isolated PG)", () => {
      organizationId:SEED_IDS.organization,companyRelationshipId:relationshipId});
    const rows=await listOwnRecruiterPlacementJobs(context(own.company.id,own.relationship.id,SEED_IDS.collegeA));
    expect(filterRecruiterDrives(rows,recruiterDriveListQuerySchema.parse({collegeId:SEED_IDS.collegeA}))
-      .some(row=>row.job.id===job.id)).toBe(false); // TPO-authored jobs are not recruiter-owned.
+      .some(row=>row.job.id===job.id)).toBe(true); // Approved request makes the linked drive recruiter-owned.
+   expect(rows.some(row=>row.job.id===unlinked.id)).toBe(false); // The company grant alone never confers job ownership.
    const foreign=await listOwnRecruiterPlacementJobs(context(another.company.id,another.relationship.id,SEED_IDS.collegeA));
    expect(foreign.some(row=>row.job.id===job.id)).toBe(false);
    const foreignCollege=await listOwnRecruiterPlacementJobs(context(own.company.id,own.relationship.id,SEED_IDS.collegeB));

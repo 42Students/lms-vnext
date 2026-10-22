@@ -401,6 +401,7 @@ describe("Projects P7A resources and readiness", () => {
       mentor,
       project.id,
       created.id,
+      { expectedUpdatedAt: updated.updatedAt.toISOString() },
     );
     visible = await listProjectResources(
       learner,
@@ -540,6 +541,7 @@ describe("Projects P7A resources and readiness", () => {
         {
           description: null,
           url: null,
+          expectedUpdatedAt: resource.updatedAt.toISOString(),
         },
       ),
     ).rejects.toMatchObject({

@@ -131,8 +131,9 @@ describe("chat-19 college UX cross-audit", () => {
     expect(nestedText(output)).toContain("Workspaces are still listed");
     expect(nestedText(output)).not.toContain("optional template service is offline");
     expect(models.snapshots).toHaveBeenCalledWith(context,"college-a",
-      expect.objectContaining({view:"table",page:1,pageSize:20}));
+      expect.objectContaining({page:1,pageSize:20}));
     expect(models.templates).toHaveBeenCalledWith(context,"college-a");
+    expect(models.snapshots.mock.calls[0]?.[2]).not.toHaveProperty("view");
   });
 
   it("COL-XA-07 exposes roster fields and class-move controls in mobile cards", () => {
