@@ -8,7 +8,11 @@ describe("learner course recovery and missing class state",()=>{
   expect(code).toContain('lessonReadFailed?"Lesson content could not be loaded":"Could not load course"');
   expect(code).toContain('<LearnerCourseStateRetry label="Retry" />');
   expect(code).toContain("Your progress has not been changed");
-  expect(code).toContain('className="ml-2 inline-flex min-h-11');
+  const retry=readFileSync(join(process.cwd(),"src/components/courses/learner-course-state-retry.tsx"),"utf8");
+  expect(retry).toContain('type="button"');
+  expect(retry).toContain('className="mt-3 min-h-11 md:min-h-9"');
+  expect(retry).toContain('disabled={pending}');
+  expect(retry).toContain('router.refresh()');
  });
  it("shows an accessible book illustration and class assignment guidance",()=>{
   const code=readFileSync(join(process.cwd(),"src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx"),"utf8");
