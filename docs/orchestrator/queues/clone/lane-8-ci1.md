@@ -8,4 +8,4 @@ TOP PRIORITY: do these BEFORE anything else (pause verify2). CI runs on every pu
 - [x] `docs/audit/gap-fix-work/ci1/packets/CI1_lane8_4.md` (1 errors; edit src/components/hr/recruiter-conversation-reply-form.tsx)
 - [x] `docs/audit/gap-fix-work/ci1/packets/CI1_lane8_5.md` (1 errors; edit src/modules/academics/schedule-service.ts)
 - [x] `docs/audit/gap-fix-work/ci1/packets/CI1_lane8_6.md` (1 errors; edit src/modules/departments/college-department-mutation-service.ts)
-- [ ] `docs/audit/gap-fix-work/ci1/packets/CI1_lane8_7.md` (9 errors; edit src/modules/people/faculty-admin-document-service.ts)
+- [x] `docs/audit/gap-fix-work/ci1/packets/CI1_lane8_7.md` (9 errors; edit src/modules/people/faculty-admin-document-service.ts)

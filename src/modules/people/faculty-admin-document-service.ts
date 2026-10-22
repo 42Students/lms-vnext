@@ -353,7 +353,7 @@ export async function completeFacultyAdminDocumentUpload(
   await tx.insert(activityEvents).values({
    collegeId:target.collegeId,organizationId:target.organizationId,
    actorUserId:context.user.id,
-   actorMembershipId:context.membership?.collegeId===target.collegeId?
+   actorMembershipId:context.membership && context.membership.collegeId===target.collegeId?
     context.membership.id:null,
    module:"IDENTITY",eventType:"people.faculty_admin_attachment.updated",
    subjectType:"faculty_profile",subjectId:membershipId,
@@ -410,7 +410,7 @@ export async function revokeFacultyAdminDocumentAttachment(
   await tx.insert(activityEvents).values({
    collegeId:scope.target.collegeId,organizationId:scope.target.organizationId,
    actorUserId:context.user.id,
-   actorMembershipId:context.membership?.collegeId===scope.target.collegeId?
+   actorMembershipId:context.membership && context.membership.collegeId===scope.target.collegeId?
     context.membership.id:null,
    module:"IDENTITY",eventType:"people.faculty_admin_attachment.revoked",
    subjectType:"faculty_profile",subjectId:membershipId,
