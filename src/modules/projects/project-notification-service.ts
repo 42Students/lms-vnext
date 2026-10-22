@@ -1,6 +1,5 @@
 import "server-only";
 import { and, eq, inArray, isNull } from "drizzle-orm";
-import { getDb } from "@/db/client";
 import { collegeMemberships, projectMembers, users } from "@/db/schema";
 import { deliverInAppNotificationInTransaction } from "@/modules/activity/notification-service";
 
