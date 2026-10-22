@@ -82,16 +82,23 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
     return {...blueprint,sprints,tasks};
   }
 
+  function clearRowError(section:"releases"|"sprints"|"tasks",index:number){
+    setRowErrors(previous=>{
+      const key=section+":"+index;
+      if(!previous[key])return previous;
+      const next={...previous};delete next[key];return next;
+    });
+  }
   function updateSprint(index: number, patch: Partial<Sprint>) {
     setDraft(current => updateTemplateSprint(current, index, patch));
-    setError("");setRowErrors({});
+    setError("");clearRowError("sprints",index);
   }
   function updateTask(index: number, patch: Partial<Task>) {
     setDraft(current => ({
       ...current,
       tasks: current.tasks.map((row, at) => at === index ? { ...row, ...patch } : row),
     }));
-    setError("");setRowErrors({});
+    setError("");clearRowError("tasks",index);
   }
   function addSprint() {
     setDraft(current => {
@@ -244,7 +251,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
           <Input className={field} maxLength={200} required disabled={pending}
             aria-invalid={Boolean(rowErrors["releases:"+index])}
             value={release.title} onChange={event => {
-              setRowErrors({});setDraft(current => ({
+              clearRowError("releases",index);setDraft(current => ({
                 ...current, releases: current.releases.map((row, at) =>
                   index === at ? { ...row, title: event.target.value } : row),
               }));
