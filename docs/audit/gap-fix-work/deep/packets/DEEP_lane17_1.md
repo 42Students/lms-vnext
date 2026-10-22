@@ -11,7 +11,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-4-015-001  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [x] G2-4-020-016  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [ ] G2-4-020-035  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
-- [ ] G2-4-020-059  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
+- [x] G2-4-020-059  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [x] G2-4-024-028  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [x] G2-4-024-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [ ] G2-4-033-016  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
@@ -26,3 +26,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - G2-4-024-028: OK — `src/modules/groups/service.ts:784-860` validates learner IDs (UUID or legacy integer), college-bound rollNumbers, fromClassId and optional audit note, resolves membership within the requested group college; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/electives/ElectiveRequests.java:38-45` and `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/electives/ElectiveService.java:479-508`.
 - G2-4-024-045: FIXED — commit `10db09655bb68044cc0eb1d069d2c3b05c7ee2d3`, `src/modules/groups/service.ts:828-876`: unmatched roll numbers are returned as per-row FAILED entries rather than silently dropped; per-learner transactions and failure results already existed. Compared with `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/electives/ElectiveService.java:469-545`.
+- G2-4-020-059: OK — `src/modules/people/faculty-profile-self.staged.ts:136-207` locks the faculty row, compares expectedVersion, and CAS-updates profile_document_version; `src/modules/people/faculty-admin-document-service.ts:64-95` uses the same profile_document_version under FOR UPDATE and increments it on admin mutation, so stale self/admin edits conflict across devices. This preserves optimistic whole-record collision detection from `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Faculty.java:63-69` (@Version Long) for the vNext faculty profile document.
