@@ -142,9 +142,9 @@ export async function deliverRecordedLearnerPlacementEvent(
   status:applicationStatus,statusUpdatedAt:applicationStatusUpdatedAt,
   assessmentUrl:input.applicationId?input.approvedAssessmentUrl:undefined,
  });
- const delivered=await deliverInAppNotificationInTransaction(tx,input.eventId,[row.userId],{
-  title:message.title,body:message.body,actionHref:message.actionHref,
- });
+ // The strict delivery schema accepts only these three fields (no copy metadata).
+ const message={title:rendered.title,body:rendered.body,actionHref:rendered.actionHref};
+ const delivered=await deliverInAppNotificationInTransaction(tx,input.eventId,[row.userId],message);
  return {delivered:delivered.delivered>0,skipped:null};
 }
 
