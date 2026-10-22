@@ -7,8 +7,12 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [ ] `tests/unit/chat2-UX-tpo-overlay-coverage.test.ts` (1 failing)
 - [ ] `tests/unit/chat6-application-score-precision.test.ts` (1 failing)
 - [ ] `tests/unit/chat8-verify2-mapping-stale.test.ts` (1 failing)
-- [ ] `tests/unit/learner-contact-edit.test.ts` (1 failing)
+- [x] `tests/unit/learner-contact-edit.test.ts` (1 failing)
 - [ ] `tests/unit/ux-admin-chat9-batch-04.test.ts` (1 failing)
+
+## Repair results
+
+- `tests/unit/learner-contact-edit.test.ts`: test corrected in `be26efbdf19602ca80c5c3f01ecc3149b7782f2a` to use persisted digits-only alternate phone representation (`919876543210`), and additionally assert formatted input (`+91 9876543210`) is rejected. Existing strict `src/modules/people/learner-contact-model.ts` checks and service-side comparison stay unchanged; not executed locally.
 
 ## Failures (from CI log)
 
