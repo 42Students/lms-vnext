@@ -23,7 +23,7 @@ export function sanitizeTelegramLine(line: string): string {
 let notedAbsentConfiguration = false;
 
 export function telegramAlertsConfigured(): boolean {
-  const configured = Boolean(process.env.TELEGRAM_ALERT_BOT_TOKEN && process.env.TELEGRAM_ALERT_CHAT_ID);
+  const configured = Boolean(process.env["TELEGRAM_ALERT_BOT_TOKEN"] && process.env["TELEGRAM_ALERT_CHAT_ID"]);
   if (!configured && !notedAbsentConfiguration) {
     notedAbsentConfiguration = true;
     process.stderr.write("[log-alerts] Telegram alerts are not configured\n");
@@ -43,8 +43,8 @@ export async function sendTelegramAlert(
   text: string,
   options: TelegramAlertOptions = {},
 ): Promise<boolean> {
-  const token = process.env.TELEGRAM_ALERT_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_ALERT_CHAT_ID;
+  const token = process.env["TELEGRAM_ALERT_BOT_TOKEN"];
+  const chatId = process.env["TELEGRAM_ALERT_CHAT_ID"];
   if (!token || !chatId) {
     if (!notedAbsentConfiguration) {
       notedAbsentConfiguration = true;
@@ -52,7 +52,7 @@ export async function sendTelegramAlert(
     }
     return false;
   }
-  const production = process.env.APP_ENV === "production";
+  const production = process.env["APP_ENV"] === "production";
   const tag = production ? "" : "[vnext dev] ";
   // Never send a raw stack or untrusted text. Lines are individually redacted.
   const safe = text.split(/\r?\n/).map(sanitizeTelegramLine).filter(Boolean).join("\n");
