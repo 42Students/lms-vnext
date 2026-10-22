@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and,asc,count,eq,ilike,inArray,isNull,isNotNull,ne,or,sql,type Column } from "drizzle-orm";
+import { and,asc,count,eq,inArray,isNull,isNotNull,ne,or,sql,type Column } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
 import { z } from "zod";
@@ -31,7 +31,7 @@ export async function listSuperAdminContentDirectory(context:RequestContext,rawK
  const collegeId=context.adminScope?.collegeId;
  if(!isSuperAdmin(context)||!collegeId)throw new AuthorizationError("courses.read");
  requirePermission(context,"courses.read",{
-  collegeId,organizationId:context.adminScope?.organizationId,
+  collegeId,...(context.adminScope?.organizationId !== undefined ? { organizationId: context.adminScope.organizationId } : {}),
  });
  const pattern="%"+query.q.replace(/[\\%_]/g,"\\$&")+"%";
  const db=getDb();
@@ -165,7 +165,7 @@ export async function listSuperAdminContentDirectory(context:RequestContext,rawK
 export async function listSuperAdminContentSectionOptions(context:RequestContext){
  const collegeId=context.adminScope?.collegeId;
  if(!isSuperAdmin(context)||!collegeId)throw new AuthorizationError("courses.read");
- requirePermission(context,"courses.read",{collegeId,organizationId:context.adminScope?.organizationId});
+ requirePermission(context,"courses.read",{collegeId,...(context.adminScope?.organizationId !== undefined ? { organizationId: context.adminScope.organizationId } : {})});
  return getDb().select({
   id:courseSectionDeliveries.id,
   offeringId:courseSectionDeliveries.offeringId,
@@ -202,7 +202,7 @@ export async function listSuperAdminSectionSyllabus(
  const collegeId=context.adminScope?.collegeId;
  if(!isSuperAdmin(context)||!collegeId)throw new AuthorizationError("courses.read");
  requirePermission(context,"courses.read",{
-  collegeId,organizationId:context.adminScope?.organizationId,
+  collegeId,...(context.adminScope?.organizationId !== undefined ? { organizationId: context.adminScope.organizationId } : {}),
  });
  if(deliveryId){
   const delivery=await loadCourseSectionDeliveryScope(deliveryId,true);
