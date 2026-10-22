@@ -233,6 +233,17 @@ export async function createPlacementRound(
           mode: round.mode,
         },
       });
+    if (scheduled) {
+      // Creation with an initial schedule is one atomic transition but must
+      // remain distinguishable from a never-scheduled draft in the audit log.
+      await tx.insert(placementJobRoundEvents).values({
+        roundId:round.id,eventType:"SCHEDULED",actorUserId:context.user.id,
+        metadata:{scheduledAt:round.scheduledAt?.toISOString()??null,
+          timezone:round.timezone,mode:round.mode,venue:round.venue,
+          meetingUrl:round.meetingUrl,
+          resultsDueAt:round.resultsDueAt?.toISOString()??null},
+      });
+    }
 
     return round;
   });

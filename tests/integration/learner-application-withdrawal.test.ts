@@ -62,6 +62,13 @@ describe("Learner application withdrawal on fresh PostgreSQL fixtures", () => {
 
   it("withdraws its own submitted application and atomically records reason + audit exactly once", async () => {
     const { context, ids } = owned();
+    // The shared positive fixture starts SHORTLISTED for the interview tests.
+    // This test exercises the pre-screening self-withdrawal stage instead;
+    // a published job round alone is not a candidate-specific booking.
+    await pool.query(
+      "UPDATE placement_application_screenings SET status='PENDING',decided_at=NULL,decided_by_user_id=NULL WHERE application_id=$1",
+      [ids.application],
+    );
     const first = await withdrawPlacementApplication(context, ids.application, reason);
     expect(first).toMatchObject({ id: ids.application, status: "WITHDRAWN" });
     expect(first.withdrawnAt).not.toBeNull();
@@ -119,6 +126,20 @@ describe("Learner application withdrawal on fresh PostgreSQL fixtures", () => {
     expect(eventCount.rows[0]?.total).toBe("1");
     expect(historyCount.rows[0]?.total).toBe("1");
   }, 30_000);
+
+  it("requires placement-cell review once the learner is shortlisted, even before candidate booking", async () => {
+    const {context,ids}=owned();
+    // Fixture screening is SHORTLISTED but it has no booked candidate slot;
+    // don't let that historical stage be erased by self withdrawal.
+    await expect(withdrawPlacementApplication(context,ids.application,reason))
+      .rejects.toMatchObject({code:"PLACEMENT_APPLICATION_INELIGIBLE"});
+    const application=await pool.query<{status:string;withdrawn_at:Date|null}>(
+      "SELECT status,withdrawn_at FROM placement_applications WHERE id=$1",[ids.application]);
+    expect(application.rows[0]).toMatchObject({status:"SUBMITTED",withdrawn_at:null});
+    const audit=await pool.query<{n:string}>(
+      "SELECT count(*)::text AS n FROM placement_application_status_history WHERE application_id=$1",[ids.application]);
+    expect(audit.rows[0]?.n).toBe("0");
+  });
 
   it("denies forged college, suspended membership and wrong-role contexts without DB mutation", async () => {
     const { context, ids } = owned();
