@@ -68,7 +68,17 @@ export function legacyAssignmentContentCrosswalk(
     !Number.isSafeInteger(source.sequence)||source.sequence<0||
     !Number.isFinite(source.points)||source.points<0||
     !source.contentTitle.trim())return null;
- const due=source.deadline?new Date(source.deadline):null;
+ // Legacy LocalDateTime is an Asia/Kolkata wall clock, not UTC or the
+ // importing server's local timezone. Explicitly offset naive ISO values.
+ const legacyLocal = source.deadline?.trim();
+ const naiveDateTime = legacyLocal?.match(
+   /^(\\d{4}-\\d{2}-\\d{2})[ T](\\d{2}:\\d{2}(?::\\d{2}(?:\\.\\d{1,9})?)?)$/,
+ );
+ const due = legacyLocal
+   ? new Date(naiveDateTime
+       ? `${naiveDateTime[1]}T${naiveDateTime[2]}+05:30`
+       : legacyLocal)
+   : null;
  if(due&& !Number.isFinite(due.getTime()))return null;
  return {
   historicalContentId:source.lessonContentId,

@@ -5,7 +5,7 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 - [ ] G2-16-005-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-16-027-031  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-17-010-005  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
-- [ ] G2-19-002-095  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
+- [x] G2-19-002-095  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-19-010-067  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-19-010-068  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-19-018-062  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
@@ -21,7 +21,7 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 - [ ] G2-4-017-017  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-017-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-017-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
-- [ ] G2-4-017-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+- [x] G2-4-017-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-017-070  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-018-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-018-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
@@ -36,3 +36,5 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 
 ## Results
 
+- G2-19-002-095: FIXED — `src/modules/courses/assignment-service.ts:71-84` now interprets legacy naive `LocalDateTime` deadlines as Asia/Kolkata rather than server-local/UTC; `src/db/schema/courses.ts:493-494` retains the unzoned original deadline. Legacy: `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LessonContents.java` (`deadline`, `IndiaLocalDateTimeSerializer`). Import retains deadline instants for publication cutoff. Commit b9e8c84.
+- G2-4-017-049: OK — `src/db/schema/projects.ts:231-232,259-263` preserves `legacyRecoverableContent` independently of `deletedAt` and the archive lifecycle; it is source data, not an automatic restoration authorization. Legacy: `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectWorkspace.java` (`recoverableContent = false`).
