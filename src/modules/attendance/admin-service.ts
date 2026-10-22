@@ -761,7 +761,7 @@ export async function correctAdminAttendance(
         collegeId:college.id,
         actorUserId:context.user.id,
         actorMembershipId:context.membership?.collegeId===college.id
-          ?context.membership.id:null,
+          ?context.membership?.id??null:null,
         module:"COURSES",
         eventType:input.status==="PRESENT"?"ADMIN_ATTENDANCE_MARK_PRESENT":"ADMIN_ATTENDANCE_MARK_ABSENT",
         subjectType:"attendance_session",

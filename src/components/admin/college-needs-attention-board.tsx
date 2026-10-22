@@ -162,7 +162,7 @@ export function CollegeNeedsAttentionBoard({ collegeId, data, generatedAt }: {
         href="/college/courses" empty="No quizzes due in the next 7 days."
         shown={quizzes?.items.length??0} pending={pending}>
         <AttentionList rows={quizzes?.items.map(row=>({
-          key:row.id,title:row.title,detail:row.course+" · "+row.className+" · "+new Date(row.dueAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}),
+          key:row.id,title:row.title,detail:row.course+" · "+row.className+" · "+row.dueAt ? new Date(row.dueAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}) : "No due date",
         }))??[]}/>
       </AttentionCard>
     </div>

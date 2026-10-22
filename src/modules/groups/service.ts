@@ -2,7 +2,7 @@ import { and, asc, count, eq, inArray, isNull, max, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
-  collegeMemberships, electiveOfferings, electiveSlots,
+  collegeMemberships, cohorts, programs, departments, electiveOfferings, electiveSlots,
   learnerProfiles, learnerProgramEnrollments, sectionEnrollments, sections,
   lmsGroupMemberEvents, lmsGroupMembers, lmsGroups, membershipRoles, users,
   projectInstances, projectMembers,
@@ -842,8 +842,11 @@ export async function allocateGroupMembersFromLegacySelection(
    .innerJoin(learnerProgramEnrollments,eq(
     learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId))
    .innerJoin(sections,eq(sections.id,sectionEnrollments.sectionId))
+   .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
+   .innerJoin(programs,eq(programs.id,cohorts.programId))
+   .innerJoin(departments,eq(departments.id,programs.departmentId))
    .where(and(eq(sectionEnrollments.sectionId,selection.fromClassId),
-    eq(sections.collegeId,group.collegeId),
+    eq(departments.collegeId,group.collegeId),
     eq(sectionEnrollments.status,"ACTIVE"),
     eq(learnerProgramEnrollments.status,"ACTIVE"))).limit(501);
   for(const row of found)all.add(row.membershipId);

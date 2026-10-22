@@ -540,12 +540,12 @@ export async function listFacultyAssignedClassLearners(
     context.membership?.status !== "ACTIVE" ||
     !hasMembershipRole(context, "FACULTY")
   ) {
-    throw new AuthorizationError("people.read");
+    throw new AuthorizationError("courses.read");
   }
   const deliveries = await listFacultyCourseDeliveries(context);
   const delivery = deliveries.find(row => row.deliveryId === input.deliveryId);
   if (!delivery || !context.membership) {
-    throw new AuthorizationError("people.read");
+    throw new AuthorizationError("courses.read");
   }
   const roster = await listActiveDeliveryLearners({
     deliveryId: delivery.deliveryId,

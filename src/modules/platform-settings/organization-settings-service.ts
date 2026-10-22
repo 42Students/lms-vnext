@@ -53,7 +53,7 @@ export async function listOrganizationTenantSettings(ctx:RequestContext,rawId:st
   where organization_id=${organizationId}::uuid order by key`);
  return {ready:true,scope:"ORG" as const,scopeId:organizationId,
   operationalReader:false,entries:rows.rows.map(row=>({
-   ...row,value:prohibited.test(row.key)?"[redacted]":row.value,
+   ...row,value:typeof row.key==="string" && prohibited.test(row.key)?"[redacted]":row.value,
   })),note:"Organization settings are stored for review; no runtime service inherits these values automatically."};
 }
 export async function saveOrganizationTenantSettings(ctx:RequestContext,raw:unknown){

@@ -49,7 +49,7 @@ export async function recordVerifiedAttendanceParentContact(ctx:RequestContext,r
   }});
   await tx.insert(activityEvents).values({
    organizationId:college.organizationId,collegeId:college.id,
-   actorUserId:ctx.user.id,actorMembershipId:ctx.membership?.collegeId===college.id?ctx.membership.id:null,
+   actorUserId:ctx.user.id,actorMembershipId:ctx.membership?.collegeId===college.id?ctx.membership?.id??null:null,
    module:"COURSES",eventType:"ATTENDANCE_PARENT_SMS_CONSENT_UPDATED",
    subjectType:"learner_membership",subjectId:input.membershipId,
    summary:"College Admin recorded verified guardian attendance messaging consent",
@@ -78,7 +78,7 @@ export async function revokeAttendanceParentContact(ctx:RequestContext,raw:unkno
    eq(attendanceParentSmsOutbox.status,"QUEUED")));
   await tx.insert(activityEvents).values({
    organizationId:college.organizationId,collegeId:college.id,
-   actorUserId:ctx.user.id,actorMembershipId:ctx.membership?.collegeId===college.id?ctx.membership.id:null,
+   actorUserId:ctx.user.id,actorMembershipId:ctx.membership?.collegeId===college.id?ctx.membership?.id??null:null,
    module:"COURSES",eventType:"ATTENDANCE_PARENT_SMS_CONSENT_REVOKED",
    subjectType:"learner_membership",subjectId:input.membershipId,
    summary:"College Admin disabled guardian attendance SMS",

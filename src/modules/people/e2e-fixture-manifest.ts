@@ -100,9 +100,19 @@ export function buildE2EFixtureManifest(namespace="e2e-dev"){
   seen.add(key);
  }
  const ids=Object.fromEntries(nodes.map(node=>[node.key,node.id])) as Record<E2EFixtureKey,string>;
+ // Only isolated test environments may use these synthetic contacts.
+ // Namespaces must not reuse each other's phone/identity UID; otherwise
+ // parallel demo graphs would share a user while claiming separate rosters.
+ const testPhone=(role:E2EFixtureKey)=>{
+  const hex=createHash("sha256")
+   .update(E2E_FIXTURE_SCHEMA_VERSION+":"+namespace+":phone:"+role).digest("hex");
+  const number=Number.parseInt(hex.slice(0,12),16)%100_000_000;
+  return "+9190"+String(number).padStart(8,"0");
+ };
  const testPhones={
-  facultyA:"+919000000001",facultyB:"+919000000002",adminA:"+919000000003",
-  learnerA:"+919000000011",learnerB:"+919000000012",
+  facultyA:testPhone("facultyA"),facultyB:testPhone("facultyB"),
+  adminA:testPhone("adminA"),learnerA:testPhone("learnerA"),
+  learnerB:testPhone("learnerB"),
  } as const;
  return {schemaVersion:E2E_FIXTURE_SCHEMA_VERSION,namespace,ids,nodes,
   projectWorkspaceASlug:"e2e-project-a-"+namespace,
