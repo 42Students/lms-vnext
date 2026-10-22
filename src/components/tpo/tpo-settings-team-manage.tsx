@@ -43,7 +43,7 @@ export function TpoSettingsTeamManage({candidates,activeIds,available}:{
     Add a team member
    </Button>
   </div>
-  {!available?<InlineNotice tone="warning" message="Faculty team assignments are unavailable. Adding and removing team members is disabled until the table is registered."/>:null}
+  {!available?<InlineNotice tone="info" message="Faculty team assignments are unavailable. Adding and removing team members is disabled until the table is registered."/>:null}
   {success?<InlineNotice tone="success" message={success}/>:null}
   {open?<div role="dialog" aria-modal="true" aria-label="Add a team member"
     className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4">

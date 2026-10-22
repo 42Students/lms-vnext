@@ -109,7 +109,7 @@ export async function SuperAdminTemplateSubviewPage({
     if(section==="versions"){
       try{
         const history=await getSuperAdminTemplateVersionHistory(context,templateId,historyQuery);
-        detail=history.detail;
+        detail={...detail,...history.detail};
         historyPaging=history.paging;
       }catch{
         historyLoadFailed=true;

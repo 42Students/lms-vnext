@@ -74,7 +74,7 @@ export async function getTpoNonApplicantReminderPreview(context:RequestContext,r
   .where(and(eq(activityEvents.subjectType,"placement_job"),
    eq(activityEvents.subjectId,job.id),
    eq(activityEvents.eventType,"PLACEMENTS_TPO_REMIND_NOT_APPLIED"),
-   gt(activityEvents.createdAt,placementReminderCooldownCutoff(now)))).limit(1);
+   gt(activityEvents.occurredAt,placementReminderCooldownCutoff(now)))).limit(1);
  const allowed=job.status==="PUBLISHED"&&(!job.applicationDeadline||job.applicationDeadline>now);
  if(!allowed)return {jobId:job.id,day,count:0,allowed:false,alreadySent:Boolean(past),
   previewToken:null,canRemind:false,
@@ -106,7 +106,7 @@ export async function remindTpoNonApplicants(context:RequestContext,rawJobId:unk
    .where(and(eq(activityEvents.subjectType,"placement_job"),
     eq(activityEvents.subjectId,job.id),
     eq(activityEvents.eventType,"PLACEMENTS_TPO_REMIND_NOT_APPLIED"),
-    gt(activityEvents.createdAt,placementReminderCooldownCutoff(now)))).limit(1);
+    gt(activityEvents.occurredAt,placementReminderCooldownCutoff(now)))).limit(1);
   if(recent)return {reminded:0,alreadySent:true,reason:"This drive was reminded within the past 20 hours."};
   const recipients=await candidateAudience(tx,context,job);
   if(placementReminderPreviewToken(job.id,day,recipients)!==input.expectedPreviewToken)

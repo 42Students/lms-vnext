@@ -50,6 +50,8 @@ import {
   type PlacementRequestActionInput,
 } from "./validation";
 
+type PlacementRequestTransaction = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
+
 type PlacementRequestWriter = Pick<
   ReturnType<typeof getDb>,
   "select" | "insert" | "update"
@@ -75,7 +77,7 @@ type OfferExtensionEffect = {
  */
 export function legacyRescheduleRequestDisplay(
   payload:unknown,
-  status:"PENDING"|"APPROVED"|"REJECTED"|"CANCELLED",
+  status:string,
   decisionNote:string|null,
 ) {
   const fields = payload && typeof payload==="object" && !Array.isArray(payload)
@@ -88,8 +90,8 @@ export function legacyRescheduleRequestDisplay(
   const reply = (decisionNote ?? previousReply)?.trim().slice(0,500) || null;
   const stateLabel = status==="PENDING" ? "Waiting for the placement cell"
     : status==="APPROVED" ? "Approved"
-    : status==="REJECTED" ? "Not approved" : "Cancelled";
-  return {preferredTimes:text,reply,stateLabel,decisionMade:status!=="PENDING"};
+    : status==="REJECTED" ? "Not approved" : status==="CANCELLED" ? "Cancelled" : "Unknown status";
+  return {preferredTimes:text,reply,stateLabel,decisionMade:["APPROVED","REJECTED","CANCELLED"].includes(status)};
 }
 
 function requireLearner(context: RequestContext) {
@@ -685,7 +687,7 @@ function parseOfferExtensionEffect(
 }
 
 async function applyApprovedEffect(
-  db: PlacementRequestWriter,
+  db: PlacementRequestTransaction,
   context: RequestContext,
   request: typeof placementLearnerRequests.$inferSelect,
   job: typeof placementJobs.$inferSelect,

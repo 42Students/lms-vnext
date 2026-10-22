@@ -91,7 +91,7 @@ export function recruiterDraftFromLegacyForm(raw:unknown):
  }catch{/* Malformed legacy role-options were treated as missing. */}
  const pay=(value:unknown)=>typeof value==="number"&&Number.isFinite(value)?String(value):
   typeof value==="string"?value.trim():"";
- const unmapped=["companyName","companyId","companyLogo","jdUrl","hostCollegeName",
+ const unmappedFields=["companyName","companyId","companyLogo","jdUrl","hostCollegeName",
   "reportingAt","travelNote","requiresExternalRegistration","externalPortalName",
   "externalPortalUrl","wantedSkills","category","categoryOverrideReason",
   "eligibility","applicationDeadline","seasonId","recordedOutside","notifyApplicants"]
@@ -127,7 +127,7 @@ export function recruiterDraftFromLegacyForm(raw:unknown):
  const parsed=hrDriveDraftSchema.safeParse(candidate);
  if(!parsed.success)return {ok:false,reason:"Legacy drive terms need review before requesting a drive.",
   unmappedFields};
- if(unmapped.length)return {ok:false,reason:"Legacy company, eligibility or schedule fields need an authorized migration.",
+ if(unmappedFields.length)return {ok:false,reason:"Legacy company, eligibility or schedule fields need an authorized migration.",
   unmappedFields};
  return {ok:true,draft:parsed.data,unmappedFields};
 }
