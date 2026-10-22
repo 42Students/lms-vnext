@@ -9,7 +9,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import { safeLearnerPlacementUrl } from "@/modules/placements/learner-job-detail-model";
-import { learnerDriveApplyGate, learnerDriveApplySelectionSchema } from "@/modules/placements/learner-drive-apply-model";
+import { learnerDriveApplyGate, learnerDriveApplySelectionSchema, withdrawnPlacementReapplyGuidance } from "@/modules/placements/learner-drive-apply-model";
 import {learnerDriveDeadlineUrgency} from "@/modules/placements/learner-drive-deadline-urgency-model";
 import {learnerJobDetailFromDrivesHref} from "@/modules/placements/learner-drives-return-model";
 import {LearnerSaveDriveButton} from "@/components/placements/learner-save-drive-button";
@@ -558,9 +558,16 @@ function JobActions({
   }
   if (receipt?.status === "WITHDRAWN") {
     return (
-      <StatusBadge tone="neutral">
-        Withdrawn
-      </StatusBadge>
+      <div className="min-w-0 space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm" role="status">
+        <StatusBadge tone="neutral">Withdrawn</StatusBadge>
+        <p className="text-body">{withdrawnPlacementReapplyGuidance}</p>
+        <div className="flex flex-wrap gap-3">
+          <Link href="/learn/my-placements/applications"
+            className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Review application history</Link>
+          <Link href="/learn/my-placements/placement#requests"
+            className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Contact placement team</Link>
+        </div>
+      </div>
     );
   }
 
