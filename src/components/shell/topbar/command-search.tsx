@@ -31,6 +31,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
   const [open, setOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const input = useRef<HTMLInputElement>(null);
+  const selectionWriteRef=useRef(false);
   const root = useRef<HTMLDivElement>(null);
   // Recent history is session-only and is always intersected with authorized courses.
   useEffect(()=>{
@@ -53,11 +54,14 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
     }catch{/* Storage is optional. */}
     // Send the selected authorized delivery to the scoped usage ledger.
     // Navigation is never blocked by a failed optional popularity write.
+    if(selectionWriteRef.current)return;
+    selectionWriteRef.current = true;
     void fetch("/api/courses/search/selection",{
       method:"POST",credentials:"same-origin",keepalive:true,
       headers:{"content-type":"application/json"},
       body:JSON.stringify({deliveryId:id}),
-    }).catch(()=>{/* Private recent selections remain available. */});
+    }).catch(()=>{/* Private recent selections remain available. */})
+      .finally(()=>{selectionWriteRef.current = false;});
   }
   // Preserve the old learner header's authorized course lookup when moving
   // its search box into the common command bar.

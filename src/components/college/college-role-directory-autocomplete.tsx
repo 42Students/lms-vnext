@@ -22,6 +22,7 @@ export function CollegeRoleDirectoryAutocomplete({
   const [notice,setNotice]=useState("");
   const inputRef=useRef<HTMLInputElement>(null);
   const requestNo=useRef(0);
+  const popularityWriteRef=useRef(false);
   const storageKey="lms:college-directory-recent:"+collegeId+":"+kind;
   useEffect(()=>{
     try{
@@ -78,6 +79,8 @@ export function CollegeRoleDirectoryAutocomplete({
     // Persist popularity only for a real, same-college Faculty option.
     // A recent free-text term has no membership and cannot grant access.
     if(kind==="FACULTY"&&/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(row.membershipId)){
+      if(popularityWriteRef.current)return;
+      popularityWriteRef.current = true;
       try{
         await fetch("/api/college/roles/suggest/popular",{
           method:"POST",credentials:"same-origin",
@@ -85,6 +88,7 @@ export function CollegeRoleDirectoryAutocomplete({
           body:JSON.stringify({facultyMembershipId:row.membershipId}),
         });
       }catch{/* Search remains usable when auxiliary popularity is offline. */}
+      finally{popularityWriteRef.current = false;}
     }
     if(inputRef.current){
       inputRef.current.value=value;inputRef.current.form?.requestSubmit();

@@ -84,7 +84,8 @@ export function LearnerSkillCatalogMultiInput({
     const skill = draft.trim();
     if (!skill || disabled) return;
     add({ skill });
-    if (skill.length > 200 || selectionWriteRef.current) return;
+    if (skill.length > 200) return;
+    if(selectionWriteRef.current)return;
     selectionWriteRef.current = true;
     void fetch("/api/skills/selection", {
       method: "POST",
