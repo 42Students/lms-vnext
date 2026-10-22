@@ -93,7 +93,7 @@ describe("SA-tenants-modules-READY-01: persisted readiness does not imply launch
  it("branding and module access read the selected tenant without a URL-supplied scope override",()=>{
   const branding=source("src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx");
   const modules=source("src/app/(authenticated)/admin/module-access/page.tsx");
-  expect(branding).toContain("getSuperAdminCollegeBrandingPreview(context, collegeId)");
+  expect(branding).toMatch(/getSuperAdminCollegeBrandingPreview\(context,\s*collegeId\)/);
   expect(branding).toContain("getSuperAdminTenantLifecycleDetail(context,collegeId)");
   expect(branding).toContain('can(context,"college.manage",{collegeId,organizationId:tenant.organizationId})');
   expect(modules).toContain('requirePermission(context,"admin-scope.select")');

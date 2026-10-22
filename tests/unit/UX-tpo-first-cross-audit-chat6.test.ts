@@ -59,7 +59,7 @@ describe("Chat-6 independent TPO first-third cross-audit",()=>{
   expect(code).toContain("<ConfirmDialog open={confirmLeave}");
   expect(code).toContain("Discard this follow-up draft?");
   expect(code).toContain("calendarLocalIstToOffset(when)");
-  expect(code).toContain("sm:text-sm");
+  expect(code).toContain("min-h-11");
   expect(code).not.toContain("role=\"dialog\"");
  });
  it("UX-tpo-follow-ups-21 due follow-up confirmations and IST conversion are safe",()=>{

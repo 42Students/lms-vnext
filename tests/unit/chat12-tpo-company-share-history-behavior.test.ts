@@ -54,6 +54,6 @@ describe("TPO-companies-11 historical applicant sharing is scoped, bounded and h
   expect(source).toContain("latestCompanyShareRows(chunks.flat())");
   expect(source).toContain("where sel.share_id = ");
   expect(source).toContain(".limit(100)");
-  expect(source).toContain("orderBy(desc(placementCompanyApplicantShares.createdAt))");
+  expect(source).toMatch(/\.orderBy\(desc\(placementCompanyApplicantShares\.createdAt\),\s*desc\(placementCompanyApplicantShares\.id\)\)/);
  });
 });

@@ -33,7 +33,7 @@ function textTree(node:unknown):string[]{
   if(Array.isArray(node))return node.flatMap(textTree);
   if(!isValidElement(node))return [];
   const props=node.props as Record<string,unknown>;
-  return ["children","title","description","href","action","eyebrow"].flatMap(k=>textTree(props[k]));
+  return ["children","title","description","href","action","eyebrow","empty"].flatMap(k=>textTree(props[k]));
 }
 function render(query:Record<string,string|string[]|undefined>={}){
   return TemplateCollegeAvailabilityPage({

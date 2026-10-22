@@ -14,7 +14,7 @@ describe("chat-11 college academic page parity round five",()=>{
   expect(list).toContain("availableSuperAdminProgramCode(name,departmentId,programs)");
   const edit=read("src/components/academics/academics-actions.tsx");
   expect(edit).toContain("setDepartmentId");
-  expect(edit).toContain("durationTerms: displayDurationYears ? Number(durationTerms)*2");
+  expect(edit).toContain("durationTerms: displayDurationYears ? Number(durationTerms)*2 : Number(durationTerms)");
  });
  it("COL-academic-setup-29 disables dependent batch removal with explicit student and class counts",()=>{
   const code=read("src/components/academics/college-cohort-management.tsx");
