@@ -319,7 +319,8 @@ export async function ProjectAdminSubmissionsPage({
             {key:"actions",header:"Actions",mobilePriority:"action",
               className:"md:sticky md:right-0 md:z-10 md:bg-surface",
               cell:row=><div className="flex min-w-0 flex-col gap-1">
-                {row.isCurrentVersion?<ProjectAdminSubmissionReview
+                {row.submittedAt?<ProjectAdminSubmissionReview
+                  historical={!row.isCurrentVersion}
                   projectId={row.projectId} submissionId={row.id}
                   workspaceTitle={row.projectTitle} status={row.status}
                   locked={!!row.lockedAt} projectStatus={row.projectStatus}

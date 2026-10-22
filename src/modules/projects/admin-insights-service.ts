@@ -968,12 +968,12 @@ export async function listProjectAdminSubmissionQueue(
             order by pm.created_at limit 1)`,
           version: projectSubmissions.version,
           revisionCount:projectSubmissions.legacyRevisionCount,
-          submittedBy:sql<string|null>`(
+          submittedBy:sql<string|null>`coalesce((
             select u.display_name from college_memberships cm
               join users u on u.id=cm.user_id
             where cm.id=${projectSubmissions.submittedByMembershipId}
               and cm.college_id=${college.id} limit 1
-          )`,
+          ), ${projectSubmissions.legacySubmittedByName})`,  
           isCurrentVersion:sql<boolean>`not exists (
             select 1 from project_submissions newer
             where newer.project_id=${projectSubmissions.projectId}

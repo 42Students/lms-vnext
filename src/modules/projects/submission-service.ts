@@ -273,16 +273,13 @@ export async function updateProjectSubmissionDraft(
       (input.notes===undefined||submission.notes===input.notes)&&
       (input.attachments===undefined||
         JSON.stringify(submission.attachments)===JSON.stringify(input.attachments));
-    // Browser retries of an already-acknowledged draft are read-only; do not
-    // emit spurious revision/audit events or erase sibling attachment edits.
-    if(unchanged)return submission;
-
-    // The submission row is held FOR UPDATE, so a second device observes the
-    // first writer's revision before applying a stale edit. Millisecond
-    // precision matches the browser's ISO token and Drizzle Date values.
+    // Even an apparent no-op from an old browser tab must not acknowledge
+    // a stale revision: never let a retry bypass the optimistic token.
     if (!projectDraftRevisionMatches(submission.updatedAt,input.expectedUpdatedAt)) {
       throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
     }
+    // Genuine current-revision no-ops do not emit synthetic audit events.
+    if(unchanged)return submission;
 
     // A FILE reference must belong to this project and be READY. Never let
       // a learner attach a foreign or mentor-only resource by guessing its UUID.
