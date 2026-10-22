@@ -11,6 +11,7 @@ import { useToast } from "@/components/ui/toast";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import { groupNotificationsByDate } from "@/modules/activity/notification-groups";
+import {safeExternalAssessmentUrl,safeNotificationActionHref} from "@/modules/activity/notification-action";
 
 export type NotificationListItem = {
   id: string;
@@ -30,14 +31,10 @@ export type NotificationListItem = {
 };
 
 function safeInternalAction(href:string|null):string|null {
-  if(!href||!href.startsWith("/")||href.startsWith("//")||/[\\\r\n]/.test(href))return null;
-  return href;
+  return safeNotificationActionHref(href);
 }
 function safeExternalAction(href:string):string|null{
-  try{
-    const url=new URL(href);
-    return url.protocol==="https:"&&Boolean(url.hostname)&&!url.username&&!url.password?url.toString():null;
-  }catch{return null;}
+  return safeExternalAssessmentUrl(href);
 }
 function legacyActionLabel(item:NotificationListItem):string{
   if(item.actionLabel)return item.actionLabel;
