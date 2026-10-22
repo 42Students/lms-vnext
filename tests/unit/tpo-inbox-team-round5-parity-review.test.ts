@@ -7,7 +7,7 @@ describe("TPO inbox/team outstanding legacy contracts",()=>{
   expect(team).toContain("const thread = first(params.c) ?? first(params.thread) ?? first(params.conversationId)");
   expect(team).toContain('redirect("/tpo/messages?" + target.toString())');
   expect(team).toContain('tab === "people" || tab === "members"');
-  expect(team).toContain('redirect("/tpo/settings/team")');
+  expect(team).toContain('redirect("/tpo/settings?tab=team")');
   expect(team).toContain('hasPlacementTeamMembership(context)');
  });
  it("TPO-inbox-team-37 hides temporary coordinator assignments from permanent team roles",()=>{
