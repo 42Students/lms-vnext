@@ -55,7 +55,8 @@ export function IndependentFindingActions({externalId,version,status,severity,cu
     setError("Say why it is being reopened");return;
   }
   if(action==="FIX_COMMIT"&&!/^[0-9a-f]{7,40}$/.test(sha.trim())){setError("That isn't a commit hash");return;}
-  if(!confirmed){setError(null);setConfirmOpen(true);return;}
+  setError(null);
+  if(!confirmed){setConfirmOpen(true);return;}
   lock.current=true;setPending(true);setError(null);
   try{
    const result=await apiFetch<{ok:boolean;version:number}>("/api/tracker/audit-findings/"+encodeURIComponent(externalId),{
@@ -73,11 +74,13 @@ export function IndependentFindingActions({externalId,version,status,severity,cu
      SEVERITY_UNCHANGED:"It is already "+nextSeverity,
      ASSIGNEE_UNCHANGED:"The assignee has not changed",
      INVALID_DUPLICATE:"Choose the finding this repeats",
+     DUPLICATE_TARGET_NOT_FOUND:"That finding doesn\'t exist",
      DUPLICATE_COMMIT:"This commit is already recorded.",
      NOT_FOUND:"Finding not found",
      NOT_READY:"Audit findings storage is not verified.",
     };
-    setError(messages[reason.code??""]??reason.fieldErrors.note??reason.fieldErrors.assignee??reason.message);
+    setError(messages[reason.code??""]??reason.fieldErrors.reason??reason.fieldErrors.note??
+      reason.fieldErrors.duplicateOf??reason.fieldErrors.assignee??reason.fieldErrors.sha??reason.fieldErrors.repo??reason.message);
    }else setError(reason instanceof Error?reason.message:friendlyApiError({}));
   }
   finally{lock.current=false;setPending(false);}
