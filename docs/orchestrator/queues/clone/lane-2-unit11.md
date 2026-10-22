@@ -194,4 +194,4 @@ AssertionError: expected 'import { Disclosure } from "@/compone…' to contain '
 
 ## Deep row handoff (2026-10-23)
 - [x] G2-4-017-018 — archived workspace recoverability semantics clarified in schema; recorded FIXED in `DEEP_agent2_4.md` (`162a5b84`, `c574650f`). Static only.
-- [ ] G2-16-027-031 — class-targeted scheduled notices still require implementation; do not mark verified based only on activity-event logging.
+- [x] G2-16-027-031 — added post-commit section-scoped learner notifications with legacy schedule text and failure isolation (`e80e32c5`, `0a7f92ad`). Static only; CI not run.
