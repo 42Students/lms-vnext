@@ -48,7 +48,7 @@ export const dnsTenantDomainVerifier:TenantDomainVerifier={
  async verify(host,token){
   const names=[verificationDnsName(host),"_42lms-verify."+host,host];
   const primary=await inspectTxt(names,token,dnsResolver());
-  if(primary.verified||process.env.TENANT_DNS_PUBLIC_FALLBACK!=="true")return primary;
+  if(primary.verified||process.env["TENANT_DNS_PUBLIC_FALLBACK"]!=="true")return primary;
   // The legacy service used Google/Cloudflare public DNS as bounded backup.
   // A mismatch from the local resolver still requires an exact token match
   // from backup; public resolvers can never force a false verification.
