@@ -20,7 +20,7 @@ export async function POST(request: Request, { params }: RouteContext) {
   try {
     const body = await request.json().catch(() => ({}));
     if(body.sendEmail===true &&
-       process.env.TPO_RECRUITER_INVITE_EMAIL_READY!=="VERIFIED")
+       process.env["TPO_RECRUITER_INVITE_EMAIL_READY"]!=="VERIFIED")
       return NextResponse.json({error:"TPO_RECRUITER_INVITE_DELIVERY_PENDING"},{status:503});
     const context = await getCurrentRequestContext();
     const { leadId } = await params;
