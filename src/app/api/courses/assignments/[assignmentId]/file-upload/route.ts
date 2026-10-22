@@ -109,16 +109,16 @@ export async function POST(
     // The old /api/v1/upload/presign accepted arbitrary folder strings.
     // vNext deliberately accepts only assignment-submission files bound to
     // this authenticated assignment and delivery; no user-selected R2 key.
-    if(data.folder!==undefined && data.folder!=="assignment-submission"&&data.folder!=="assignments")
+    if(data["folder"]!==undefined && data["folder"]!=="assignment-submission"&&data["folder"]!=="assignments")
       return NextResponse.json({
         error:"UNSUPPORTED_UPLOAD_FOLDER",
         message:"This folder requires its own authenticated upload grant.",
       },{status:400});
     const grant=await createAssignmentFileUploadGrant(context,assignmentId,{
-      deliveryId:data.deliveryId as string,
-      originalName:(data.originalName??data.fileName??data.filename) as string,
-      contentType:(data.contentType??data.mimeType??data["content-type"]??data.type) as string,
-      sizeBytes:Number(data.sizeBytes??data.fileSize??data["content-length"]),
+      deliveryId:data["deliveryId"] as string,
+      originalName:(data["originalName"]??data["fileName"]??data["filename"]) as string,
+      contentType:(data["contentType"]??data["mimeType"]??data["content-type"]??data["type"]) as string,
+      sizeBytes:Number(data["sizeBytes"]??data["fileSize"]??data["content-length"]),
     });
     return NextResponse.json({
       grant,receiptId:grant.receiptId,method:grant.method,
