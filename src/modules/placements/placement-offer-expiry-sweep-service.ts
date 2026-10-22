@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, eq, gt, isNotNull, isNull, lte, lt, notExists, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gt, isNotNull, isNull, lte, lt, notExists, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
  activityEvents,colleges,placementApplications,placementJobs,
@@ -7,6 +7,7 @@ import {
 } from "@/db/schema";
 import {deliverRecordedLearnerPlacementEvent} from "./learner-placement-event-delivery";
 import { isIssuedPlacementOfferDue } from "./placement-offer-sweep-policy";
+import {offerExpiryWriteDecision} from "./tpo-drive-offer-register-model";
 import {placementJobExpiryAuditKey} from "./application-deadline-policy";
 
 /**
@@ -39,6 +40,7 @@ export async function sweepExpiredPlacementOffers(
     const candidates = await tx.select({
       id: placementOffers.id,
       status: placementOffers.status,
+      respondedAt:placementOffers.respondedAt,
       expiresAt: placementOffers.expiresAt,
       roleTitle:placementOffers.roleTitle,
       membershipId:placementApplications.membershipId,
@@ -55,9 +57,6 @@ export async function sweepExpiredPlacementOffers(
       .innerJoin(colleges,eq(colleges.id,placementJobs.collegeId))
       .where(and(
       eq(placementOffers.status, "ISSUED"),
-      // Imported ISSUED rows with an answered timestamp must be manually
-      // reconciled, never automatically converted to EXPIRED.
-      isNull(placementOffers.respondedAt),
       isNotNull(placementOffers.expiresAt),
       lte(placementOffers.expiresAt, now),
     )).orderBy(asc(placementOffers.expiresAt), asc(placementOffers.id))
@@ -65,7 +64,34 @@ export async function sweepExpiredPlacementOffers(
 
     let expired = 0;
     for (const row of candidates) {
-      if (!isIssuedPlacementOfferDue(row, now)) continue;
+      // Resolve the last persisted response first. An imported ISSUED row may
+      // already have an ACCEPTED/DECLINED outcome in immutable status history;
+      // merely deriving an EXPIRED badge would overwrite that real decision.
+      // Locking the offer above prevents an active learner response racing this
+      // correction. Reissues end in ISSUED and correctly supersede old answers.
+      const [lastHistory]=await tx.select({toStatus:placementOfferStatusHistory.toStatus})
+        .from(placementOfferStatusHistory)
+        .where(eq(placementOfferStatusHistory.offerId,row.id))
+        .orderBy(desc(placementOfferStatusHistory.createdAt),desc(placementOfferStatusHistory.id))
+        .limit(1);
+      const decision=offerExpiryWriteDecision({
+        offerStatus:row.status,respondedAt:row.respondedAt,
+        respondBy:row.expiresAt,now,
+        applicationDecision:lastHistory?.toStatus==="ACCEPTED"?"ACCEPTED":
+          lastHistory?.toStatus==="DECLINED"?"DECLINED":null,
+      });
+      if(decision==="RECONCILE_ACCEPTED"||decision==="RECONCILE_DECLINED"){
+        // Existing terminal history is the audit proof; do not append a
+        // fictitious new learner response or re-notify anyone on reconciliation.
+        await tx.update(placementOffers).set({
+          status:decision==="RECONCILE_ACCEPTED"?"ACCEPTED":"DECLINED",
+          updatedAt:now,
+        }).where(and(eq(placementOffers.id,row.id),eq(placementOffers.status,"ISSUED")));
+        continue;
+      }
+      // A recorded response with missing historical evidence must be
+      // investigated, not automatically expired. Only unanswered rows expire.
+      if(decision!=="MARK_EXPIRED"||!isIssuedPlacementOfferDue(row, now))continue;
       const [updated] = await tx.update(placementOffers).set({
         status: "EXPIRED",
         updatedAt: now,

@@ -226,9 +226,10 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
       eq(placementApplicationScreenings.applicationId,placementApplications.id))
     .where(and(scope,input.stage==="ALL"?undefined:input.stage==="SUBMITTED"?
      eq(placementApplications.status,"SUBMITTED"):sql`${stage} = ${input.stage}::text`))
-    .orderBy(input.sort==="OLDEST"?asc(placementApplications.submittedAt):
+    .orderBy(input.sort==="SCORE_DESC"?sql`${screeningScore} desc nulls last`:
+      input.sort==="OLDEST"?asc(placementApplications.submittedAt):
       input.sort==="LEARNER_NAME"?asc(users.displayName):desc(placementApplications.submittedAt),
-      placementApplications.id)
+      desc(placementApplications.submittedAt),placementApplications.id)
     .limit(pagination.pageSize).offset(pagination.offset);
    const allFiltered=totalMatching>0&&totalMatching<=5000?await tx.select({
     id:placementApplications.id,student:users.displayName,role:placementJobRoleOptions.title,

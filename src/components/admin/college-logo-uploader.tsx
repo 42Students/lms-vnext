@@ -23,8 +23,40 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
  const [stagedBlob,setStagedBlob]=useState<Blob|null>(null);
  const [stagedRemoval,setStagedRemoval]=useState(false);
  const [retryAfterBrandingSave,setRetryAfterBrandingSave]=useState(false);
+ const [leaveHref,setLeaveHref]=useState<string|null>(null);
  const committingRef=useRef(false);
+ const hasUnsavedLogo=canEdit&&Boolean(file||stagedBlob||stagedRemoval);
  useEffect(()=>()=>{if(preview)URL.revokeObjectURL(preview);},[preview]);
+ useEffect(()=>{
+  if(!hasUnsavedLogo&&!busy)return;
+  const beforeUnload=(event:BeforeUnloadEvent)=>{
+   event.preventDefault();event.returnValue="";
+  };
+  const interceptLink=(event:MouseEvent)=>{
+   if(event.defaultPrevented||event.button!==0||event.ctrlKey||event.altKey||
+      event.metaKey||event.shiftKey||!(event.target instanceof Element))return;
+   const anchor=event.target.closest("a[href]");
+   if(!(anchor instanceof HTMLAnchorElement)||anchor.hasAttribute("download")||
+      (anchor.target&&anchor.target!=="_self"))return;
+   const target=new URL(anchor.href,window.location.href);
+   if(target.origin!==window.location.origin||
+      (target.pathname===window.location.pathname&&target.search===window.location.search&&
+       target.hash===window.location.hash))return;
+   event.preventDefault();event.stopPropagation();
+   if(busy){
+    setMessageTone("error");
+    setMessage("Finish preparing or saving the logo before leaving this page.");
+    return;
+   }
+   setLeaveHref(target.pathname+target.search+target.hash);
+  };
+  window.addEventListener("beforeunload",beforeUnload);
+  document.addEventListener("click",interceptLink,true);
+  return ()=>{
+   window.removeEventListener("beforeunload",beforeUnload);
+   document.removeEventListener("click",interceptLink,true);
+  };
+ },[hasUnsavedLogo,busy]);
  function select(value:File|null){
   if (!value && fileInputRef.current) fileInputRef.current.value="";
   if (value && !["image/png","image/jpeg","image/webp"].includes(value.type)) {
@@ -155,6 +187,15 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
       Remove uploaded logo
     </Button>
   </Disclosure>:null}
+  <ConfirmDialog open={leaveHref!==null}
+   onOpenChange={open=>{if(!open)setLeaveHref(null);}}
+   title="Leave without saving the college logo?"
+   description="Your selected image, crop or staged removal will be discarded. The current saved logo will remain unchanged."
+   confirmLabel="Leave without saving" confirmVariant="danger" pending={busy}
+   onConfirm={()=>{
+    if(!leaveHref||busy)return;
+    const target=leaveHref;setLeaveHref(null);router.push(target);
+   }}/>
   <ConfirmDialog open={confirmRemove} onOpenChange={setConfirmRemove} title="Remove this college's uploaded logo?" description="Removal will be staged and applied only after you save the branding form." confirmLabel="Stage logo removal" confirmVariant="danger" pending={busy} onConfirm={remove}/>
   {message?<Alert tone={messageTone}>{message}</Alert>:null}
  </section>;

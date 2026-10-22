@@ -1,4 +1,7 @@
 import "server-only";
+import {and,eq,isNotNull,isNull} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {tenantDomains,verifiedCollegeEmailHost} from "@/db/schema/tenant-domains";
 import {outboundFetch} from "@/lib/outbound";
 import {canContactRecipientAtRuntime} from "@/modules/messaging/runtime-safety";
 import {normalizeRecipient} from "@/modules/messaging/model";
@@ -92,6 +95,31 @@ export function recruiterDigestWorkspaceUrl(
   return url.toString();
  }catch{return null;}
 }
+/** A digest's college comes from the scoped dispatch worker, never a public
+ * merge request. Resolve the latest verified primary tenant domain at send
+ * time; retired and unverified hostnames cannot enter email links.
+ * The platform allowlisted URL below remains an explicit safe fallback.
+ */
+export async function verifiedRecruiterWorkspaceUrl(collegeId:string|undefined):Promise<string|null>{
+ if(!collegeId||!/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(collegeId))
+  return null;
+ try {
+  const [primary]=await getDb().select({
+   collegeId:tenantDomains.collegeId,host:tenantDomains.host,
+   isVerified:tenantDomains.isVerified,isPrimary:tenantDomains.isPrimary,
+   verifiedAt:tenantDomains.verifiedAt,
+  }).from(tenantDomains).where(and(
+   eq(tenantDomains.collegeId,collegeId),eq(tenantDomains.isVerified,true),
+   eq(tenantDomains.isPrimary,true),isNotNull(tenantDomains.verifiedAt),
+   isNull(tenantDomains.deletedAt),
+  )).limit(1);
+  const host=primary?verifiedCollegeEmailHost(collegeId,[primary]):null;
+  if(!host)return null;
+  const url=new URL("/recruiter/messages","https://"+host);
+  url.searchParams.set("collegeId",collegeId);
+  return url.toString();
+ }catch{return null;}
+}
 /** REC-calendar-messages-profile-R01. No sending without a dedicated provisioned
  * non-OTP ZeptoMail template, Reply-To domain, and the global recipient allowlist.
  * A digest failure is not an acknowledgement of a placement-cell message.
@@ -138,7 +166,8 @@ export async function sendRecruiterMessageDigest(
    ?Math.min(digest.earlierMessageCount,1_000_000):0;
  const earlierSummary=earlierCount>0?
   earlierCount+" earlier "+(earlierCount===1?"message":"messages")+" omitted":"";
- const workspaceUrl=recruiterDigestWorkspaceUrl(env,digest.collegeId);
+ const workspaceUrl=(await verifiedRecruiterWorkspaceUrl(digest.collegeId))??
+  recruiterDigestWorkspaceUrl(env,digest.collegeId);
  try{
   const excerpts=safeRecruiterDigestMessages(digest.messages);
   // Keep excerpt date labels aligned with the same last-three slice.

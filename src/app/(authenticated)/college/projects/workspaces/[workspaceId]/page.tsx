@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { legacyWorkspaceSummaryQuery } from "@/modules/projects/legacy-workspace-summary-query";
 
 /** Existing bookmarks, including deep-linked template prompts, remain usable. */
 export default async function LegacyCollegeWorkspaceRedirect({
@@ -9,14 +10,7 @@ export default async function LegacyCollegeWorkspaceRedirect({
 }) {
   const {workspaceId}=await params;
   const query=await searchParams;
-  const suffix=new URLSearchParams();
-  for(const name of ["from","reason","openTemplate","q","filter","status","sort","page"] as const){
-    const value=query[name];
-    if(typeof value==="string"&&value.length<=240&&!/[<>\x00-\x1f]/.test(value)){
-      if(name==="openTemplate"&&value!=="1")continue;
-      suffix.set(name,value);
-    }
-  }
+  const suffix=legacyWorkspaceSummaryQuery(query);
   const next="/college/projects/"+encodeURIComponent(workspaceId)+"/summary";
-  redirect(next+(suffix.size?"?"+suffix.toString():""));
+  redirect(next+(suffix?"?"+suffix:""));
 }
