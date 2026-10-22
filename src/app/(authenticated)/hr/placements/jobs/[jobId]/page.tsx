@@ -578,7 +578,7 @@ export default async function HrPlacementJobPage({
               className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               Export shared applicants CSV
             </Link>
-            {applicants.rows.some(row=>row.resumeShared)?<RecruiterResumesZipDownload jobId={workspace.job.id}/>:null}
+            <RecruiterResumesZipDownload jobId={workspace.job.id}/>
           </div>
           <p className="text-sm text-body">Only placement-cell-shortlisted applicants are visible to this employer. Private pending, held and rejected candidates are excluded. Counts include all authorized shared applications, while the list loads 25 per page.</p>
           <p className="text-sm text-body">Open each applicant in turn and choose Shortlist, Waitlist or Reject. The placement cell applies your decisions.</p>
