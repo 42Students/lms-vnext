@@ -236,13 +236,13 @@ export async function getCourseAssignmentForAdmin(context:RequestContext,assignm
  const [submissions]=await getDb().select({total:sql<number>`count(*)::integer`})
   .from(assignmentSubmissions).where(eq(assignmentSubmissions.assignmentId,assignmentId));
  const submissionCount=Number(submissions?.total??0);
- // Once submissions exist, freeze points, deadline, instructions and methods.
- // Title and display order remain editable without changing learner work.
- const editableFields=submissionCount>0?["title","sequence"] as const:
+ // The legacy submitted assessment is title-only; sequence belongs to
+ // separate lesson ordering, not this assignment editor.
+ const editableFields=submissionCount>0?["title"] as const:
    ["title","description","dueAt","maxPoints","allowedMethods","sequence"] as const;
  return {...row,hasSubmissions:submissionCount>0,submissionCount,
    editableFields,lockedReason:submissionCount>0
-     ?"Submissions received. Points, deadline, instructions and submission methods cannot be changed."
+     ?"Submissions received. Only the assignment title can be changed."
      :null};
 }
 
@@ -349,9 +349,11 @@ export async function updateCourseAssignment(
       if(!locked||locked.status==="ARCHIVED")throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
       const [submission]=await tx.select({id:assignmentSubmissions.id})
         .from(assignmentSubmissions).where(eq(assignmentSubmissions.assignmentId,assignmentId)).limit(1);
-      // Existing learner submissions lock assessment terms, not harmless metadata.
+      // Submitted work locks every assignment field except its title.
+      // Sequence belongs to the separately authorized lesson-order workflow.
       if(submission&&(input.description!==undefined||input.dueAt!==undefined||
-        input.maxPoints!==undefined||input.allowedMethods!==undefined))
+        input.maxPoints!==undefined||input.allowedMethods!==undefined||
+        input.sequence!==undefined))
         throw new CoursesServiceError("ASSIGNMENT_HAS_SUBMISSIONS");
       if(input.expectedUpdatedAt!==undefined&&new Date(input.expectedUpdatedAt).getTime()!==locked.updatedAt.getTime())
         throw new CoursesServiceError("FACULTY_ASSIGNMENT_STALE_VERSION");
@@ -470,6 +472,21 @@ export async function transitionCourseAssignment(
 
   const db = getDb();
   return db.transaction(async (tx) => {
+    // Match the faculty/legacy rule: a submitted assignment cannot be archived.
+    const [locked] = await tx.select({
+      id:courseAssignments.id,updatedAt:courseAssignments.updatedAt,
+    }).from(courseAssignments)
+      .where(eq(courseAssignments.id,assignmentId)).for("update").limit(1);
+    if(!locked)throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
+    if(input.expectedUpdatedAt!==undefined &&
+      locked.updatedAt.getTime()!==new Date(input.expectedUpdatedAt).getTime())
+      throw new CoursesServiceError("FACULTY_ASSIGNMENT_STALE_VERSION");
+    if(input.action==="ARCHIVE"){
+      const [submission]=await tx.select({id:assignmentSubmissions.id})
+       .from(assignmentSubmissions)
+       .where(eq(assignmentSubmissions.assignmentId,assignmentId)).limit(1);
+      if(submission)throw new CoursesServiceError("ASSIGNMENT_HAS_SUBMISSIONS");
+    }
     const [updated] = await tx
       .update(courseAssignments)
       .set({
