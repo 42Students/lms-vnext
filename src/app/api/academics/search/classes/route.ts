@@ -22,7 +22,7 @@ export async function GET(request: Request) {
   if (!parsed.success) return NextResponse.json({ error: "INVALID_FILTERS" }, { status: 400 });
   try {
     const context = await getCurrentRequestContext();
-    const classes = await searchSections(context, parsed.data);
+    const classes = await searchSections(context, { q: parsed.data.q, ...(parsed.data.programId !== undefined ? { programId: parsed.data.programId } : {}), ...(parsed.data.limit !== undefined ? { limit: parsed.data.limit } : {}) });
     return NextResponse.json({ classes });
   } catch (error) { return apiErrorResponse(error); }
 }
