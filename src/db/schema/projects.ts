@@ -247,13 +247,14 @@ export const projectInstances = pgTable(
       .references(() => colleges.id, {
         onDelete: "restrict",
       }),
+    // Legacy manually created workspaces have no template or pinned version.
+    // A null pair represents that original provenance; new UI creation still
+    // requires an assigned, published template and pins its exact version.
     templateId: uuid("template_id")
-      .notNull()
       .references(() => projectTemplates.id, {
         onDelete: "restrict",
       }),
     templateVersionId: uuid("template_version_id")
-      .notNull()
       .references(() => projectTemplateVersions.id, {
         onDelete: "restrict",
       }),
