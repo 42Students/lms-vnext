@@ -129,37 +129,35 @@ const learner: RequestContext = {
 
 async function cleanupUI2A() {
   await releaseSeedLearnerPlacementEnrollment(pool);
-  // This suite writes immutable attendance audit rows which otherwise outlive
-  // its disposable class sessions; remove only events belonging to this fixture.
-  await pool.query(`delete from activity_events
-    where event_type = 'courses.attendance.marked'
+  // Remove only events from this disposable course/section fixture. A real
+  // notification or scheduled delivery may reference each event with a
+  // RESTRICT foreign key, so remove those dependents before the audit row.
+  const fixtureEvents=await pool.query<{id:string}>(`select id from activity_events
+    where (
+      event_type in ('courses.attendance.marked', 'courses.class.scheduled')
       and subject_type = 'attendance_session'
       and subject_id in (
         select e.id::text from section_schedule_events e
-        join sections s on s.id = e.section_id
-        join cohorts c on c.id = s.cohort_id
-        join programs p on p.id = c.program_id
+        join sections s on s.id=e.section_id
+        join cohorts c on c.id=s.cohort_id
+        join programs p on p.id=c.program_id
         where p.code like 'FUI2A-%'
-      )`);
-  // Remove fixture-owned immutable events before their target rows disappear.
-  await pool.query(`delete from activity_events
-    where event_type in ('courses.attendance.marked', 'courses.class.scheduled')
-      and subject_type = 'attendance_session'
-      and subject_id in (
-        select e.id::text from section_schedule_events e
-        join sections s on s.id = e.section_id
-        join cohorts c on c.id = s.cohort_id
-        join programs p on p.id = c.program_id
-        where p.code like 'FUI2A-%'
-      )`);
-  await pool.query(`delete from activity_events
-    where event_type like 'courses.discussion.%'
+      )
+    ) or (
+      event_type like 'courses.discussion.%'
       and metadata->>'deliveryId' in (
         select d.id::text from course_section_deliveries d
         join course_offerings co on co.id=d.offering_id
         join courses c on c.id=co.course_id
         where c.code like 'FUI2A-%'
-      )`);
+      )
+    )`);
+  const eventIds=fixtureEvents.rows.map(row=>row.id);
+  if(eventIds.length>0){
+    await pool.query("delete from in_app_notifications where event_id = any($1::uuid[])",[eventIds]);
+    await pool.query("delete from notification_delivery_outbox where event_id = any($1::uuid[])",[eventIds]);
+    await pool.query("delete from activity_events where id = any($1::uuid[])",[eventIds]);
+  }
   // Schedule link FKs must go before the Section and delivery fixtures.
   await pool.query(`delete from section_schedule_event_courses
    where schedule_event_id in (
