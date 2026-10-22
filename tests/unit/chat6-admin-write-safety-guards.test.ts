@@ -6,7 +6,7 @@ describe("GR-31 + GR-09 Super Admin write safety",()=>{
  it("SA-tenants-branding-01 prevents rapid duplicate writes and retains unsaved branding after network failure",()=>{
   const code=source("src/components/admin/college-branding-form.tsx");
   expect(code).toContain("const savingRef = useRef(false)");
-  expect(code).toContain("if (!canEdit || savingRef.current) return");
+  expect(code).toContain("if (!canEdit || !collegeId || fetching || loadError || savingRef.current) return");
   expect(code).toContain("savingRef.current = true");
   expect(code).toContain("savingRef.current = false");
   expect(code).toContain("} catch {");

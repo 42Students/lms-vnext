@@ -267,7 +267,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    filters={filters} rollOf={row=>[row.rollNumber??"",row.registrationNumber??""]}
    filterTitle="Filter students" exportName={viewName} xlsxHref={xlsxHref}
    savedViews={canManageViews?<TpoStudentSavedViews embedded/>:undefined}>
-  <TpoGrid integratedWorkspace mobileActionsCollapsible defaultVisibleKeys={legacyVisibleColumns} mobilePrimaryKeys={["student","number","stage","profile","offers"]} storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
+  <TpoGrid integratedWorkspace defaultVisibleKeys={legacyVisibleColumns} mobilePrimaryKeys={["student","number","stage","profile","offers"]} storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),
      ariaLabel:row=>"Open student panel for "+row.displayName}}
    rowActions={row=><div className="flex flex-col items-start gap-1">

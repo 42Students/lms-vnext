@@ -36,7 +36,7 @@ const actor={
  user:{id:"super-admin",identityUid:"sa",platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
  membership:null,adminScope:{collegeId,organizationId:org},
 };
-const params={params:Promise.resolve({collegeId})};
+const params={params:Promise.resolve({collegeId}),searchParams:Promise.resolve({})};
 beforeEach(()=>{
  mocks.context.mockReset();mocks.targets.mockReset();
  mocks.context.mockResolvedValue(actor);

@@ -7,7 +7,7 @@ describe("chat-16 recruiter messaging double-action and draft recovery",()=>{
  it("UX-chat16-recruiter-message-reply-01 blocks same-tick duplicate POSTs even before React rerenders",()=>{
   const source=read("src/components/hr/recruiter-conversation-reply-form.tsx");
   expect(source).toContain("const submitPendingRef=useRef(false)");
-  expect(source).toContain("if(sending||submitPendingRef.current)return;");
+  expect(source).toContain("if(sending||submitPendingRef.current||!historyAvailable)return;");
   expect(source).toContain("submitPendingRef.current=true;");
   expect(source).toContain("}finally{submitPendingRef.current=false;setSending(false);}");
   expect(source).toContain("useGuardedAction({timeoutMs:15000})");
@@ -17,7 +17,7 @@ describe("chat-16 recruiter messaging double-action and draft recovery",()=>{
   const source=read("src/components/hr/recruiter-conversation-reply-form.tsx");
   expect(source).toContain("if(confirmed){");
   expect(source).toContain('setBody("");');
-  expect(source).toContain('else setNotice("Could not send. "+feedback)');
+  expect(source).toContain('else setNotice("Message was not sent. Could not send. "+feedback)');
   expect(source).toContain("The message was not confirmed as sent. Check the thread before retrying.");
   expect(source).toContain("Discard this unsent message?");
   expect(source).toContain("Your draft reply will be lost.");
@@ -29,6 +29,7 @@ describe("chat-16 recruiter messaging double-action and draft recovery",()=>{
   expect(source).toContain("if(acknowledgePending.current)return;");
   expect(source).toContain("}finally{acknowledgePending.current=false;setBusy(false);}");
   expect(source).toContain('method:"POST",credentials:"same-origin"');
-  expect(source).toContain('role="status"');
+  expect(source).toContain('<Alert tone={notice==="Read status updated."?"success":"error"}');
+  expect(read("src/components/ui/alert.tsx")).toContain('role={tone === "error" ? "alert"');
  });
 });

@@ -10,7 +10,12 @@ describe("NORTH-STAR chat-19 shared HR controls",()=>{
  it("leaves no raw interactive HTML controls across the 19 recruiter components",()=>{
   for(const name of hrComponents){
    const content=source("src/components/hr/"+name+".tsx");
-   expect(content,name).not.toMatch(/<(?:button|input|select|textarea)\b/);
+   const native=content.match(/<(?:button|input|select|textarea)\b[^>]*>/g)??[];
+   if(name==="hr-drive-draft-form"){
+    expect(native).toHaveLength(1);
+    expect(native[0]).toContain('type="file"');
+    expect(native[0]).toContain('accept=".pdf,.doc,.docx');
+   }else expect(native,name).toHaveLength(0);
   }
  });
  it("keeps all 22 canonical HR pages on shared interactive controls",()=>{

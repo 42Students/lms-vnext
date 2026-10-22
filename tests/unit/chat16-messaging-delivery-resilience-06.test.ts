@@ -42,10 +42,11 @@ describe("chat-16 messaging delivery: per-channel failures, dedupe, authorizatio
     ctx.send.mockRejectedValueOnce(new Error("provider-secret user@hidden.example"))
       .mockResolvedValueOnce(true);
     const results = await ctx.deliver([email("a@example.org"), email("b@example.org")]);
-    expect(results.map(x => x.status)).toEqual(["FAILED", "SENT"]);
+    expect(results.map(x => x.status)).toEqual(["QUEUED", "SENT"]);
+    expect(results[0].reason).toBe("provider-result-unknown");
     expect(ctx.inserted.map(x => x.status)).toEqual(["QUEUED", "QUEUED"]);
-    expect(ctx.updated.map(x => x.status)).toEqual(["FAILED", "SENT"]);
-    expect(ctx.audits).toEqual([{ batchId: "campaign-2026-10-18", sent: 1, failed: 1, suppressed: 0 }]);
+    expect(ctx.updated.map(x => x.status)).toEqual(["QUEUED", "SENT"]);
+    expect(ctx.audits).toEqual([{ batchId: "campaign-2026-10-18", sent: 1, failed: 0, suppressed: 0 }]);
     expect(JSON.stringify([...ctx.updated, ...ctx.audits])).not.toContain("provider-secret");
     expect(JSON.stringify([...ctx.updated, ...ctx.audits])).not.toContain("a@example.org");
     expect(ctx.send).toHaveBeenCalledTimes(2);

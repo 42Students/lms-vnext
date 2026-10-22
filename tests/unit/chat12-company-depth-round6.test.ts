@@ -16,8 +16,9 @@ describe("Chat12 company depth and URL filters",()=>{
  it("TPO-students-51 keeps roster actions always visible on phone",()=>{
   const sheet=s("components/tpo/tpo-students-spreadsheet.tsx");
   const grid=s("components/tpo/tpo-spreadsheet-grid.tsx");
-  expect(sheet).toContain("<TpoSpreadsheetGrid mobilePrimaryKeys=");
-  expect(sheet).not.toContain("<TpoSpreadsheetGrid mobileActionsCollapsible");
+  expect(sheet).toContain("<TpoGrid integratedWorkspace");
+  expect(sheet).toContain('mobilePrimaryKeys={["student","number","stage","profile","offers"]}');
+  expect(sheet).not.toContain("<TpoGrid integratedWorkspace mobileActionsCollapsible");
   expect(sheet).toContain("rowActions={row=><div");
   expect(grid).toContain("mobileActionsCollapsible=false");
   expect(grid).toContain('<div aria-label="Row actions" className="border-t border-border pt-3">{rowActions(row)}</div>');

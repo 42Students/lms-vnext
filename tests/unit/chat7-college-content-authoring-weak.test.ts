@@ -11,7 +11,7 @@ vi.mock("@/modules/identity/context",()=>({
  hasMembershipRole:(ctx:{membership?:{roles?:string[]}},role:string)=>Boolean(ctx.membership?.roles?.includes(role)),
  isSuperAdmin:(ctx:{user?:{isSuperAdmin?:boolean}})=>Boolean(ctx.user?.isSuperAdmin),
 }));
-vi.mock("@/db/client",()=>({getDb:()=>({select:state.select})}));
+vi.mock("@/db/client",()=>({getDb:()=>({select:state.select,selectDistinct:state.select})}));
 import {getCollegeContentAuthoringOptions,getCollegeLessonAuthoringOptions} from "@/modules/courses/college-content-authoring-service";
 const active={
  user:{platformStatus:"ACTIVE",isSuperAdmin:false},

@@ -15,7 +15,7 @@ export function tpoJobTypeCompareKey(value:string){
 export const tpoJobTypeNameSchema=z.string()
  .transform(canonicalTpoJobTypeName)
  .pipe(z.string().min(2).max(40)
-  .regex(/^[\p{L}\p{N} +&\/().,\u0027-]+$/u,"2-40 letters, digits or simple punctuation"));
+  .regex(/^[\p{L}\p{M}\p{N} +&\/().,\u0027-]+$/u,"2-40 letters, digits or simple punctuation"));
 export const tpoBlockedDaySchema=z.iso.date();
 
 export const tpoPrepConfigSchema=z.object({

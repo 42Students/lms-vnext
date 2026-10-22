@@ -6,8 +6,9 @@ describe("Chat5 next batch states",()=>{
  it("TPO-batches-17 renders accessible batch card skeleton and retry without falsely reporting changed decisions",()=>{
   const loading=src("src/app/(authenticated)/tpo/batches/loading.tsx");
   const failure=src("src/app/(authenticated)/tpo/batches/error.tsx");
-  expect(loading).toContain('aria-busy="true"');
-  expect(loading).toContain("animate-pulse");
+  expect(loading).toContain("<GracefulPageLoading");
+  expect(src("src/components/ui/graceful-page-loading.tsx")).toContain("aria-busy={true}");
+  expect(src("src/components/ui/graceful-page-loading.tsx")).toContain("animate-pulse");
   expect(failure).toContain("Couldn&apos;t refresh batches");
   expect(failure).toContain("No eligibility decisions were changed.");
   expect(failure).toContain('onClick={reset}>Retry');

@@ -407,7 +407,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
             disabled={savingLetter||
              (letterInput[o.id]??o.offerLetterUrl??"").trim()===(o.offerLetterUrl??"")} onClick={()=>void attachLetter(o.id)}
            >
-           {savingLetter?"Saving…":o.offerLetterUrl?"Update link":"Attach offer letter link"}</Button>
+           {savingLetter?"Saving…":o.offerLetterUrl?"Update Offer Letter":"Attach Offer Letter"}</Button>
          </div>:null}
         </li>)}</ul>:
         <p className="mt-2 text-sm text-body">No issued offers.</p>}

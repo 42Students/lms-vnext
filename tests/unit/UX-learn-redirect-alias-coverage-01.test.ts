@@ -19,8 +19,8 @@ describe("UX-learn-redirect-alias-coverage-01 canonical learner entrypoints",()=
  }
  it("UX-learn-course-alias /learn/courses/[deliveryId] percent-encodes the requested course and redirects to scoped /home",()=>{
   const src=read("learn/courses/[deliveryId]");
-  expect(src).toContain("params: Promise<{ deliveryId: string }>");
-  expect(src).toContain("const { deliveryId } = await params");
+  expect(src).toContain("params:Promise<{deliveryId:string}>");
+  expect(src).toContain("const [{deliveryId},query]=await Promise.all([params,searchParams]);");
   expect(src).toContain("encodeURIComponent(deliveryId)");
   expect(src).toContain("/home");
   expect(src).toContain("redirect(");

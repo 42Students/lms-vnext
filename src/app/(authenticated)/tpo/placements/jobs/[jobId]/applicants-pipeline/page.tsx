@@ -58,7 +58,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
    actions={<Link href={{pathname:"/tpo/placements/jobs/"+jobId+"/applications-export",query:{stage:data.stage,search:data.search,channel:data.channel,eligibility:data.eligibility,sort:data.sort,submittedWithin:data.submittedWithin}}}
     className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 min-[768px]:w-auto">Review and export all matching applicants</Link>}/>
   <nav aria-label="Applicants sub-sections" className="flex min-w-0 flex-wrap gap-2 border-b border-border pb-3 text-sm font-semibold">
-   <span aria-current="page" className="inline-flex min-h-11 items-center border-b-2 border-primary px-3 text-primary-text md:min-h-9">Applicants</span>
+   <span aria-current="page" className="inline-flex min-h-11 items-center border-b-2 border-primary px-3 text-[var(--lms-primary-text)] md:min-h-9">Applicants</span>
    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/not-applied"}
     className="inline-flex min-h-11 items-center border-b-2 border-transparent px-3 text-link hover:border-border md:min-h-9">Registered, not applied</Link>
    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"#drive-registered-not-applied"}

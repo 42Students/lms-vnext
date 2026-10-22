@@ -14,7 +14,8 @@ describe("Super Admin needs attention and application offer letters",()=>{
   expect(ui).toContain("slice(0,3)");
   expect(ui).toContain("No drives currently flagged in this view.");
   expect(ui).toContain("Show less");
-  expect(ui).toContain("/applications?stage=");
+  expect(ui).toContain('params.set("stage",category.tab)');
+  expect(ui).toContain('"/applications?"+params.toString()');
  });
  it("SA-placements-projects-21 attaches offer letters through a scoped mutating request",()=>{
   const svc=read("src/modules/placements/college-application-detail-service.ts");

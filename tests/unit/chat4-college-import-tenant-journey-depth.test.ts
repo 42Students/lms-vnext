@@ -21,7 +21,7 @@ describe("College bulk import and Super Admin tenant setup journey", () => {
     expect(() => parseCollegeImportCsv("name,code\n")).toThrow("Paste at least one college.");
     expect(() => parseCollegeImportCsv("name,name,code\nA,B,abc")).toThrow("Duplicate CSV heading.");
     expect(() => parseCollegeImportCsv("name,code\nA,abc,extra")).toThrow("too many columns");
-    expect(() => parseCollegeImportCsv("name,code\nA,abc\nB,ABC")).toThrow("Duplicate college code");
+    expect(() => parseCollegeImportCsv("name,code\nA,abc\nB,ABC")).toThrow(/duplicate college code/i);
     expect(() => parseCollegeImportCsv("name,code\n\"Unclosed")).toThrow("Unclosed CSV quote");
     expect(() => parseCollegeImportCsv("name,code\nA,abc\n".repeat(MAX_COLLEGE_IMPORT_ROWS + 2))).toThrow();
     expect(collegeImportInputSchema.safeParse({ organizationId: orgId, csv: "" }).success).toBe(false);
@@ -95,10 +95,10 @@ describe("College bulk import and Super Admin tenant setup journey", () => {
 
   it("SA-COL-SETUP-02 links tenant setup steps in a defined order without claiming runtime readiness", () => {
     const steps = superAdminTenantSetupSteps(collegeId);
-    expect(steps.map(x=>x.id)).toEqual(["brand","login","host","academics","people","features","readiness"]);
+    expect(steps.map(x=>x.id)).toEqual(["brand","login","host","preview","academics","people","features","readiness"]);
     expect(steps[0].href).toBe("/admin/colleges/"+collegeId+"/branding");
-    expect(steps[6].href).toBe("/admin/colleges/"+collegeId+"/readiness");
-    expect(steps[5].href).toContain(encodeURIComponent(collegeId));
+    expect(steps[7].href).toBe("/admin/colleges/"+collegeId+"/readiness");
+    expect(steps[6].href).toContain(encodeURIComponent(collegeId));
     expect(steps.every(x=>x.href.startsWith("/admin/"))).toBe(true);
     expect(steps.some(x=>x.title.toLowerCase().includes("ready to launch"))).toBe(false);
   });

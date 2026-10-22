@@ -34,7 +34,7 @@ describe("SA-placements-projects-56 truthful per-student creation results",()=>{
  it("SA-placements-projects-56 exposes a per-learner table and exports all confirmed results",()=>{
   const ui=read("src/components/projects/class-team-workspace-creator.tsx");
   expect(ui).toContain("Per-learner creation results");
-  expect(ui).toContain("rows={outcome.individualResults}");
+  expect(ui).toContain("rows={outcome.individualResults.slice(");
   expect(ui).toContain("getRowKey={row=>row.membershipId}");
   expect(ui).toContain("classTeamCreationOutcomeCsv(outcome.individualResults,names)");
   const exportModel=read("src/modules/projects/class-team-creation-outcome-export.ts");
@@ -49,7 +49,8 @@ describe("SA-placements-projects-56 version-bound preflight",()=>{
   const ui=read("src/components/projects/class-team-workspace-creator.tsx");
   expect(ui).toContain('preflight?.scopeKey===preflightScopeKey?preflight:null');
   expect(ui).toContain('collegeId+":"+classId+":"+templateId+":"+(roster?.revision??"")');
-  expect(ui).toContain("if(!currentPreflight)return;");
+  expect(ui).toContain('if(mode==="INDIVIDUAL"&&!currentPreflight)');
+  expect(ui).toContain("Refresh the class preflight before creating workspaces.");
   expect(ui).toContain("setPreflight({...data,scopeKey:preflightScopeKey})");
  });
 });

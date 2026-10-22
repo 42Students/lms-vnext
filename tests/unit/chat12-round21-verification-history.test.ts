@@ -10,7 +10,7 @@ it("TPO-requests-verification-29 returns the latest 50 named audit events and fu
  expect(drawer).toContain("Showing the latest 50 history events.");
  expect(drawer).toContain('item.actorName??item.actorKind');
  expect(drawer).toContain('timeZone:"Asia/Kolkata"');
- expect(drawer).toContain("Roll no.: {row.rollNumber}");
+ expect(drawer).toContain('row.learnerName+(row.rollNumber?" · "+row.rollNumber:"")');
  expect(drawer).toContain("verificationEducationRows(detail.review.submittedSnapshot.education)");
  expect(drawer).toContain('caption="Submitted education records"');
  expect(drawer).toContain('header:"Marksheet"');

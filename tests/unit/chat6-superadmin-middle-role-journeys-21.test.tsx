@@ -36,7 +36,7 @@ describe("SA-admin-middle-role-journeys-21 private placement pages",()=>{
  it("calendar recovers without an exact college, even for a valid global administrator",async()=>{
   vi.mocked(getCurrentRequestContext).mockResolvedValue(context("SUPER_ADMIN",false) as never);
   const html=renderToStaticMarkup(await SuperAdminPlacementInterviewCalendarPage({searchParams:Promise.resolve({})}));
-  expect(html).toContain("Select a college scope");
+  expect(html).toContain("Choose a college");
   expect(html).not.toContain("Scoped interview calendar");
  });
  it("calendar passes the exact selected college and platform audience after authorization",async()=>{
@@ -48,18 +48,18 @@ describe("SA-admin-middle-role-journeys-21 private placement pages",()=>{
  });
  it("retention report denies forged learner scope before loading any applicant names",async()=>{
   vi.mocked(getCurrentRequestContext).mockResolvedValue(context("LEARNER") as never);
-  await expect(SuperAdminRetentionPage()).rejects.toThrow();
+  await expect(SuperAdminRetentionPage({searchParams:Promise.resolve({})})).rejects.toThrow();
   expect(getSuperAdminPlacementRetentionReport).not.toHaveBeenCalled();
  });
  it("retention report displays recovery without a college and makes no private query",async()=>{
   vi.mocked(getCurrentRequestContext).mockResolvedValue(context("SUPER_ADMIN",false) as never);
-  const html=renderToStaticMarkup(await SuperAdminRetentionPage());
+  const html=renderToStaticMarkup(await SuperAdminRetentionPage({searchParams:Promise.resolve({})}));
   expect(html).toContain("Select a college");
   expect(getSuperAdminPlacementRetentionReport).not.toHaveBeenCalled();
  });
  it("expired session aborts both role journeys without a private report read",async()=>{
   vi.mocked(getCurrentRequestContext).mockRejectedValue(new Error("Revoked session"));
-  await expect(SuperAdminRetentionPage()).rejects.toThrow("Revoked session");
+  await expect(SuperAdminRetentionPage({searchParams:Promise.resolve({})})).rejects.toThrow("Revoked session");
   await expect(SuperAdminPlacementInterviewCalendarPage({searchParams:Promise.resolve({})})).rejects.toThrow("Revoked session");
   expect(getSuperAdminPlacementRetentionReport).not.toHaveBeenCalled();
  });

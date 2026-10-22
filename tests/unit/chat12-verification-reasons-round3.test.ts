@@ -14,14 +14,15 @@ describe("chat-12 Verification legacy send-back reason selector",()=>{
   ]);
  });
  it("TPO-requests-verification-27 permits a custom-only reason but prevents an empty send-back",()=>{
-  expect(d()).toContain('<option value="">Or write what needs to change</option>');
-  expect(d()).toContain('onChange={e=>setReason(e.target.value)}');
-  expect(d()).toContain('setError("Write what needs to change before sending this back.")');
+  expect(d()).toContain('>Write my own reason</Button>');
+  expect(d()).toContain('placeholder="Or write what needs to change"');
+  expect(d()).toContain('onClick={()=>setReason("")}');
+  expect(d()).toContain('setError("Say what needs to change")');
   expect(d()).toContain("The student sees your reason and fixes it on their profile.");
   expect(d()).toContain('?"Send "+(row.section==="EDUCATION"?"Education":"Identity")+" back"');
-  expect(d()).toContain('[reason,additional.trim()].filter(Boolean).join(": ").trim().length<3');
+  expect(d()).toContain('const message=[reason,additional.trim()].filter(Boolean).join(": ").trim()');
  });
  it("GR-33 validates a free-text send-back reason before calling the server",()=>{
-  expect(d()).toContain('trim().length<3');
+  expect(d()).toContain("if(message.length<3)");
  });
 });
