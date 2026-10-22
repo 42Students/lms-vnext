@@ -9,6 +9,13 @@ describe("G2-3-022-026 legacy TPO group conversation mentions",()=>{
   expect(send).toContain("addMentionedMembers:input.addMentionedMembers");
   expect(send).not.toContain("const authorized=new Set(");
  });
+ it("accepts the bounded group kind and member list when starting a new conversation",()=>{
+  expect(send).toContain('kind:z.enum(["DIRECT","TOPIC","DRIVE","COMPANY"]).default("DIRECT")');
+  expect(send).toContain("participantMembershipIds:z.array(z.string().uuid()).max(20).default([])");
+  expect(send).toContain("participantMembershipIds:input.participantMembershipIds");
+  expect(send).toContain("kind:input.kind,contextId:input.contextId");
+  expect(send).toContain('input.kind!=="DIRECT"||input.contextId||input.participantMembershipIds.length');
+ });
  it("checks persisted active college membership and group roster before notification",()=>{
   expect(writer).toContain("new Set(active.map(member=>member.id)).size!==memberIds.length");
   expect(writer).toContain("requestedMentions.some(id=>!mentionNames.has(id))");

@@ -30,6 +30,9 @@ const legacyTeamSendSchema=z.strictObject({
  threadId:z.string().uuid().optional(),
  recipientMembershipId:z.string().uuid().optional(),
  topic:z.string().trim().min(1).max(200).optional(),
+ kind:z.enum(["DIRECT","TOPIC","DRIVE","COMPANY"]).default("DIRECT"),
+ contextId:z.string().uuid().optional(),
+ participantMembershipIds:z.array(z.string().uuid()).max(20).default([]),
  body:z.string().trim().min(1).max(4000),
  mentionMembershipIds:z.array(z.string().uuid()).max(20).default([]),
  addMentionedMembers:z.boolean().default(false),
@@ -45,7 +48,8 @@ const legacyTeamSendSchema=z.strictObject({
  if(!input.threadId&&(!input.recipientMembershipId||!input.topic))ctx.addIssue({
   code:"custom",path:["threadId"],message:"Choose an existing thread or a recipient and topic",
  });
- if(input.threadId&&(input.recipientMembershipId||input.topic))ctx.addIssue({
+ if(input.threadId&&(input.recipientMembershipId||input.topic||
+   input.kind!=="DIRECT"||input.contextId||input.participantMembershipIds.length))ctx.addIssue({
   code:"custom",path:["threadId"],message:"Do not change recipients through Send",
  });
  if(new Set(input.mentionMembershipIds).size!==input.mentionMembershipIds.length)
@@ -68,6 +72,8 @@ export async function sendLegacyTpoTeamConversation(context:RequestContext,raw:u
  const threadId=input.threadId??(await createTpoInternalThread(context,
   internalThreadSchema.parse({
    recipientMembershipId:input.recipientMembershipId,
+   kind:input.kind,contextId:input.contextId,
+   participantMembershipIds:input.participantMembershipIds,
    topic:input.topic,firstMessage:undefined,
    idempotencyKey:input.idempotencyKey,
   }))).id;
