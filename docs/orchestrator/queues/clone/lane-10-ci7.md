@@ -6,5 +6,5 @@ Do these right after your ci6 queue (ci7 REPLACES ci4 and ci5: those lists are s
 - [x] `docs/audit/gap-fix-work/ci7/packets/CI7U_lane10_2.md` (4 test files)
 - [x] `docs/audit/gap-fix-work/ci7/packets/CI7U_lane10_3.md` (4 test files)
 - [x] `docs/audit/gap-fix-work/ci7/packets/CI7U_lane10_4.md` (4 test files)
-- [ ] `docs/audit/gap-fix-work/ci7/packets/CI7U_lane10_5.md` (2 test files)
+- [x] `docs/audit/gap-fix-work/ci7/packets/CI7U_lane10_5.md` (2 test files)
 - [ ] `docs/audit/gap-fix-work/ci7/packets/CI7dbU_lane10_1.md` (integration, needs PostgreSQL semantics; read the test and the service carefully)
