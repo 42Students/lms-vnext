@@ -92,19 +92,19 @@ export default async function ActivityPage({
     }
   }
   const moduleValue = one(
-    params.module,
+    params["module"],
   );
   const importanceValue = one(
-    params.importance,
+    params["importance"],
   );
-  const preset = one(params.view);
+  const preset = one(params["view"]);
   const presetNames = ["important","setup","people","teaching","projects","all"] as const;
   type PresetName = typeof presetNames[number];
   const validPreset = presetNames.find(name=>name===preset);
   const explicitFilter = Boolean(moduleValue || importanceValue ||
-    one(params.eventType) || one(params.subjectType) ||
-    one(params.subjectId) || one(params.actorUserId) ||
-    one(params.actorName) || one(params.q));
+    one(params["eventType"]) || one(params["subjectType"]) ||
+    one(params["subjectId"]) || one(params["actorUserId"]) ||
+    one(params["actorName"]) || one(params["q"]));
   const selectedPreset:PresetName = validPreset ??
     (explicitFilter ? "all" : "important");
   // The Important tab is an OR over HIGH + CRITICAL, not HIGH alone.
@@ -133,20 +133,21 @@ export default async function ActivityPage({
   }).format(date);
   const today=istDay(new Date());
   const ago=(days:number)=>istDay(new Date(currentTimeMs()-days*86400000));
-  const range=one(params.range);
-  const rawMode=one(params.mode)==="raw" && isSuperAdmin(context);
-  const rawSize=one(params.size);
+  const range=one(params["range"]);
+  const rawMode=one(params["mode"])==="raw" && isSuperAdmin(context);
+  const rawSize=one(params["size"]);
   const pageSize=rawMode && (rawSize==="50"||rawSize==="100")?Number(rawSize):25;
   const selectedRange=range==="today"||range==="7d"||range==="30d"?range:
     range==="ALL"?"all":"30d";
   // Raw forensic lookups default to all-time, as in legacy Audit Logs.
   // The Important activity feed still defaults to the last 30 IST days.
   const forensicLookup=selectedPreset==="all" && Boolean(
-    one(params.actorUserId)||one(params.actorName)||one(params.eventType)||
-    one(params.subjectType)||one(params.subjectId)||one(params.q));
-  const defaultFrom=one(params.from)??(!one(params.to)&&!forensicLookup?
+    one(params["actorUserId"])||one(params["actorName"])||one(params["eventType"])||
+    one(params["subjectType"])||one(params["subjectId"])||one(params["q"]));
+  const defaultFrom=one(params["from"])??(!one(params["to"])&&!forensicLookup?
     range==="ALL"?undefined:
     range==="today"?today:range==="7d"?ago(6):ago(29):undefined);
+  const requestedCollegeId = one(params["collegeId"]);
   const quick=(from?:string,to?:string,view:PresetName=selectedPreset,
     rangeKey:string|undefined=range)=>{
    const q=new URLSearchParams({
@@ -154,17 +155,17 @@ export default async function ActivityPage({
     ...(!from&&!to?{range:"ALL"}:rangeKey?{range:rangeKey}:{}),
     view,
     ...(rawMode?{mode:"raw"}:{}),
-    ...(selectedCollegeId?{}:one(params.collegeId)?{collegeId:one(params.collegeId)!}:{})
+    ...(selectedCollegeId || !requestedCollegeId ? {} : {collegeId: requestedCollegeId})
    });
    return "/activity?"+q.toString();
   };
   const presetLinks=[
-   {id:"important" as const,name:"Important",href:quick(defaultFrom,one(params.to),"important",range)},
-   {id:"setup" as const,name:"Academic setup",href:quick(defaultFrom,one(params.to),"setup",range)},
-   {id:"people" as const,name:"People & access",href:quick(defaultFrom,one(params.to),"people",range)},
-   {id:"teaching" as const,name:"Teaching",href:quick(defaultFrom,one(params.to),"teaching",range)},
-   {id:"projects" as const,name:"Projects",href:quick(defaultFrom,one(params.to),"projects",range)},
-   {id:"all" as const,name:"Everything",href:quick(defaultFrom,one(params.to),"all",range)},
+   {id:"important" as const,name:"Important",href:quick(defaultFrom,one(params["to"]),"important",range)},
+   {id:"setup" as const,name:"Academic setup",href:quick(defaultFrom,one(params["to"]),"setup",range)},
+   {id:"people" as const,name:"People & access",href:quick(defaultFrom,one(params["to"]),"people",range)},
+   {id:"teaching" as const,name:"Teaching",href:quick(defaultFrom,one(params["to"]),"teaching",range)},
+   {id:"projects" as const,name:"Projects",href:quick(defaultFrom,one(params["to"]),"projects",range)},
+   {id:"all" as const,name:"Everything",href:quick(defaultFrom,one(params["to"]),"all",range)},
   ];
   const retryQuery=new URLSearchParams();
   for(const [key,value] of Object.entries(params)){
@@ -184,18 +185,18 @@ export default async function ActivityPage({
           | undefined,
         importantOnly,
         legacyCategory:selectedPreset==="all"?undefined:selectedPreset,
-        collegeId: selectedCollegeId??one(params.collegeId),
+        collegeId: selectedCollegeId??one(params["collegeId"]),
         organizationId: selectedCollegeId?undefined:selectedOrganizationId??undefined,
-        actorUserId: one(params.actorUserId),
-        eventType: one(params.eventType),
-        subjectType: one(params.subjectType),
-        subjectId: one(params.subjectId),
-        actorName: isSuperAdmin(context) ? one(params.actorName)?.trim() || undefined : undefined,
-        q: isSuperAdmin(context) ? one(params.q)?.trim() || undefined : undefined,
+        actorUserId: one(params["actorUserId"]),
+        eventType: one(params["eventType"]),
+        subjectType: one(params["subjectType"]),
+        subjectId: one(params["subjectId"]),
+        actorName: isSuperAdmin(context) ? one(params["actorName"])?.trim() || undefined : undefined,
+        q: isSuperAdmin(context) ? one(params["q"])?.trim() || undefined : undefined,
         from: defaultFrom,
-        to: one(params.to),
-        beforeOccurredAt: one(params.beforeOccurredAt),
-        beforeId: one(params.beforeId),
+        to: one(params["to"]),
+        beforeOccurredAt: one(params["beforeOccurredAt"]),
+        beforeId: one(params["beforeId"]),
         limit: pageSize,
       },
     );
@@ -288,7 +289,7 @@ export default async function ActivityPage({
   if(effectiveModule && !moduleValue)exportParams.set("module",effectiveModule);
   // An explicit all-time list must stay all-time when the user loads older events.
   // Keep this UI-only flag out of the strict CSV export query contract.
-  if (range === "ALL" && !defaultFrom && !one(params.to)) nextParams.set("range", "ALL");
+  if (range === "ALL" && !defaultFrom && !one(params["to"])) nextParams.set("range", "ALL");
   // Unlike the all-matching export endpoint, this matches the legacy Audit
   // Logs page export exactly: only the currently loaded, authorized rows.
   const pageCsv = [
@@ -357,9 +358,9 @@ export default async function ActivityPage({
         className="flex min-w-0 gap-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-primary-subtle)] p-3 text-sm text-body">
         <span aria-hidden="true" className="shrink-0 font-bold text-primary-text">ⓘ</span>
         <div className="space-y-1">
-          <p className="font-semibold">{selectedCollegeId||one(params.collegeId)?"Showing this college":
+          <p className="font-semibold">{selectedCollegeId||one(params["collegeId"])?"Showing this college":
             selectedOrganizationId?"Showing this organization":"Platform-wide activity"}</p>
-          <p>{selectedCollegeId||one(params.collegeId)?
+          <p>{selectedCollegeId||one(params["collegeId"])?
             "Activity is pinned to the selected college. Change the header scope to inspect another college, or clear it for platform-wide activity.":
             selectedOrganizationId?
             "Activity is pinned to the selected organization. Choose a college for a narrower operational view, or clear scope for platform-wide activity.":
@@ -403,7 +404,7 @@ export default async function ActivityPage({
             aria-current={rawMode?"page":undefined} className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Raw Audit Logs</Link>
         </div>
       </nav>:null}
-      <details className="min-w-0 border-b border-border pb-3" open={explicitFilter||Boolean(one(params.collegeId))||rawMode}>
+      <details className="min-w-0 border-b border-border pb-3" open={explicitFilter||Boolean(one(params["collegeId"]))||rawMode}>
         <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-link underline md:min-h-9">
           {rawMode?"Audit Logs — advanced search":"More filters"}
         </summary>
@@ -415,13 +416,13 @@ export default async function ActivityPage({
             <option value="25">25</option><option value="50">50</option><option value="100">100</option>
           </Select>
         </label>:null}
-        {collegeOptionsFailed && one(params.collegeId) ? (
-          <input type="hidden" name="collegeId" value={one(params.collegeId)} />
+        {collegeOptionsFailed && one(params["collegeId"]) ? (
+          <input type="hidden" name="collegeId" value={one(params["collegeId"])} />
         ) : null}
         {isSuperAdmin(context) && !selectedCollegeId && !collegeOptionsFailed ? (
           <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">College</span>
-            <Select name="collegeId" defaultValue={one(params.collegeId) ?? ""} className={inputClass}>
+            <Select name="collegeId" defaultValue={one(params["collegeId"]) ?? ""} className={inputClass}>
               <option value="">Current admin safety scope</option>
               {collegeOptions.map(college => <option key={college.id} value={college.id}>
                 {college.name} ({college.code})
@@ -498,10 +499,10 @@ export default async function ActivityPage({
           <DateInput mode="date"
             className={inputClass}
             name="to"
-            defaultValue={one(params.to)}
+            defaultValue={one(params["to"])}
           />
         </label>
-        <details open={Boolean(one(params.eventType)||one(params.subjectType)||one(params.subjectId)||one(params.actorName)||one(params.q)||one(params.actorUserId)) || undefined}
+        <details open={Boolean(one(params["eventType"])||one(params["subjectType"])||one(params["subjectId"])||one(params["actorName"])||one(params["q"])||one(params["actorUserId"])) || undefined}
           className="group min-w-0 border-t border-[var(--lms-canvas-border)] md:col-span-2 xl:col-span-4">
           <summary className="flex min-h-11 cursor-pointer items-center justify-between text-sm font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">More filters<span aria-hidden="true">⌄</span></summary>
           <div className="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-4">
@@ -513,7 +514,7 @@ export default async function ActivityPage({
             className={inputClass}
             name="eventType"
             defaultValue={one(
-              params.eventType,
+              params["eventType"],
             )}
             placeholder="placements.offer.issued"
           />
@@ -526,7 +527,7 @@ export default async function ActivityPage({
             className={inputClass}
             name="subjectType"
             defaultValue={one(
-              params.subjectType,
+              params["subjectType"],
             )}
             placeholder="placement_offer"
           />
@@ -534,15 +535,15 @@ export default async function ActivityPage({
         <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">Subject / entity ID</span>
           <Input className={inputClass} name="subjectId" maxLength={500}
-            defaultValue={one(params.subjectId)} placeholder="Exact entity ID" />
+            defaultValue={one(params["subjectId"])} placeholder="Exact entity ID" />
         </label>
         {isSuperAdmin(context) ? <>
           <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"><span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">Actor name</span>
             <Input type="search" className={inputClass} name="actorName" maxLength={100}
-              defaultValue={one(params.actorName)} placeholder="Name contains…" /></label>
+              defaultValue={one(params["actorName"])} placeholder="Name contains…" /></label>
           <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"><span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">Event / entity search</span>
             <Input type="search" className={inputClass} name="q" maxLength={100}
-              defaultValue={one(params.q)} placeholder="Summary, event or entity contains…" /></label>
+              defaultValue={one(params["q"])} placeholder="Summary, event or entity contains…" /></label>
         </> : null}
         <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
@@ -552,7 +553,7 @@ export default async function ActivityPage({
             className={inputClass}
             name="actorUserId"
             defaultValue={one(
-              params.actorUserId,
+              params["actorUserId"],
             )}
             placeholder="Optional UUID"
           />
