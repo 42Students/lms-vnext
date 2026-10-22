@@ -1,6 +1,5 @@
 import {
   and,
-  asc,
   desc,
   eq,
   inArray,
@@ -85,7 +84,7 @@ export function resolveRecruiterLeadRelationship(
  if(!key)return null;
  const matches=new Set(jobs.filter(row=>tpoCompanyKey(row.companyName)===key)
    .map(row=>row.relationshipId));
- return matches.size===1?[...matches][0]:null;
+ return matches.size===1?([...matches][0] ?? null):null;
 }
 
 /** Strictly college-scoped facts only; relationship association is checked first. */
