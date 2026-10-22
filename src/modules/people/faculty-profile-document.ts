@@ -503,7 +503,7 @@ export function importLegacyFacultyProfileDocument(raw: unknown): {
   }
   const canonical = {
     about: { description: source["about"] && typeof source["about"] === "object"
-      ? string(object(source["about"]).description) : string(source["description"] ?? source["about"]) },
+      ? string(object(source["about"])["description"]) : string(source["description"] ?? source["about"]) },
     personalDetails: {
       gender: sourcePersonal["gender"] ?? source["gender"] ?? "",
       dateOfBirth: date(sourcePersonal["dateOfBirth"] ?? sourcePersonal["dob"] ?? source["dateOfBirth"] ?? source["dob"]),
