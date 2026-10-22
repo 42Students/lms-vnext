@@ -4,4 +4,4 @@ The last open verification-round-2 packets, spread evenly over all 20 lanes (22 
 
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-3/W1_lane3_7.md` (25 rows)
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-19/W1_lane19_11.md` (20 rows)
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-8/W1_lane8_13.md` (15 rows)
+- [x] `docs/audit/gap-fix-work/verify2/packets/lane-8/W1_lane8_13.md` (15 rows)
