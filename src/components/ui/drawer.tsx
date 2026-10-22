@@ -109,7 +109,7 @@ export function ResponsiveFilterDrawer({
   }, [launcher, onOpenChange, open]);
 
   return <Drawer id={id} open={open} onOpenChange={onOpenChange}
-    inlineDesktop title={title} description={undefined}
+    inlineDesktop title={title}
     className="lms-responsive-filter-drawer"
     bodyClassName="md:!p-0">
     {children}
