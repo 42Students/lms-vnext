@@ -51,7 +51,8 @@ describe("SA-tenants-modules-SEC-01: never render admin filter recovery before a
    const source=readFileSync(file,"utf8");
    const auth=source.includes('if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))')
      ?source.indexOf('if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))')
-     :source.indexOf('requirePermission(context,"admin-scope.select")');
+     :Math.max(source.indexOf('requirePermission(context,"admin-scope.select")'),
+       source.indexOf('requirePermission(context, "admin-scope.select")'));
    const invalid=source.indexOf("if (!filters)");
    const invalidNoSpace=source.indexOf("if(!parsed");
    const whitespace=source.indexOf("if (!parsed");
