@@ -40,7 +40,7 @@ describe("chat-16 inbound recruiter mail POST guard",()=>{
   const body='{"from":"person@example.org","text":"नमस्ते"}';
   const res=await POST(request(body,"sha256signature"));
   expect(res.status).toBe(200);
-  expect(await res.json()).toEqual({accepted:true,replayed:false});
+  expect(await res.json()).toEqual({accepted:true,replayed:false,outcome:"NOT_OURS"});
   expect(acceptAuthenticatedRecruiterEmailReply)
    .toHaveBeenCalledWith(body,"sha256signature");
   expect(acceptAuthenticatedRecruiterEmailReply).toHaveBeenCalledTimes(1);
