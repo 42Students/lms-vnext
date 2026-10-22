@@ -201,6 +201,10 @@ export async function submitProjectTask(
         })
         .returning();
 
+      if (!submission) {
+        throw new ProjectsServiceError("PROJECT_TASK_SUBMISSION_INVALID_STATE");
+      }
+
       await recordActivityEventInTransaction(
         tx,
         context,
