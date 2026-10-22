@@ -118,6 +118,8 @@ export async function appendSmsDeliveryAttempt(input: SmsAttemptInput): Promise<
   if (!pairIsPresent || !validIds || !validResult) return "FAILED";
   try {
     const db = getDb();
+    // Drizzle 0162 registers this table; the retired DB-031 staging layout is
+    // never a readiness signal. OTP without college membership is valid here.
     const readyResult = await db.execute(sql<{ready:boolean}>`select to_regclass('public.messaging_sms_delivery_attempts') is not null as ready`);
     if (!readyResult.rows[0]?.ready) {
       writeStructuredLog("WARNING", "sms.delivery_attempt_ledger_unavailable",
@@ -148,7 +150,8 @@ async function bestEffortOtpAttempt(
 
 /** Support reads are restricted to active platform super-administrators.
  * No tenant membership or browser query can grant unscoped SMS-log access.
- * The read endpoint/UI still needs to be wired by its own owning lane. */
+ * The existing /api/admin/sms-log POST endpoint projects this result without
+ * accepting unredacted recipients in URLs or widening tenant access. */
 export async function listSmsDeliveryAttemptsForSupport(context: RequestContext, raw: unknown) {
   if (!isSuperAdmin(context) || context.user.platformStatus !== "ACTIVE")
     throw new AuthorizationError("admin-scope.select");
@@ -169,11 +172,13 @@ export async function listSmsDeliveryAttemptsForSupport(context: RequestContext,
     ...(query.purpose ? [sql`purpose = ${query.purpose}`] : []),
     ...(query.outcome ? [sql`outcome = ${query.outcome}`] : []),
   ],sql` and `);
-  const ready=await getDb().execute(sql<{ready:boolean}>`select to_regclass('public.sms_delivery_attempts') is not null as ready`);
+  // Both the writer and privileged reader inspect the same numbered schema
+  // migration table. A missing table returns an explicit retryable state.
+  const ready=await getDb().execute(sql<{ready:boolean}>`select to_regclass('public.messaging_sms_delivery_attempts') is not null as ready`);
   if (!ready.rows[0]?.ready) return {ready:false,entries:[],content:[],totalElements:0,totalPages:0,
     page:query.page,number:query.page-1,size:query.size,retryable:true,
     readError:"SMS_LEDGER_UNAVAILABLE",note:SMS_PROVIDER_ACCEPTANCE_NOTE};
-  const [{total}] = (await getDb().execute(sql<{total:number}>`
+  const [{total = 0} = {}] = (await getDb().execute(sql<{total:number}>`
     select count(*)::int as total from messaging_sms_delivery_attempts where ${predicate}`)).rows;
   const offset=(query.page-1)*query.size;
   const records=await getDb().execute(sql<{

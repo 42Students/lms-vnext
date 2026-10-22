@@ -25,7 +25,7 @@ import {recruiterInviteAcceptanceBodySchema} from "./recruiter-invite-otp-accept
  * plus its latest DELIVERED OTP. Never accept claimed user, email, company or college IDs.
  */
 export async function acceptPublicTpoRecruiterInviteOtp(rawToken:unknown,rawCode:unknown,rawDetails:unknown={}):
- Promise<{accepted:true;outcome:"JOINED"|"PENDING_CONSENT";signInEmail:string}> {
+ Promise<{accepted:true;ok:true;outcome:"JOINED"|"PENDING_CONSENT";status:"JOINED"|"PENDING_HR";collegeName:string;signInEmail:string}> {
  const invalid=()=>new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_FOUND");
  const secret=process.env.TPO_RECRUITER_OTP_HMAC_SECRET??"";
  if(process.env.TPO_RECRUITER_OTP_READY!=="VERIFIED"||
@@ -131,7 +131,37 @@ export async function acceptPublicTpoRecruiterInviteOtp(rawToken:unknown,rawCode
    eq(placementTpoLeads.inviteTokenHash,hash),
    isNull(placementTpoLeads.recruiterUserId))).returning({id:placementTpoLeads.id});
   if(!accepted)throw invalid();
-  if(!pendingConsent){
+  if(pendingConsent){
+    // Existing accounts must explicitly consent; keep the legacy placement
+    // cell notification and the pending lead activity in the same transaction.
+    await tx.insert(placementTpoLeadActivities).values({
+      collegeId:lead.collegeId,leadId:lead.id,type:"SYSTEM",isSystem:true,
+      note:"Recruiter invite awaiting signed-in consent",createdAt:now,
+    });
+    const [pendingEvent]=await tx.insert(activityEvents).values({
+      organizationId:relationship.organizationId,collegeId:lead.collegeId,
+      module:"PLACEMENTS",eventType:"PLACEMENTS_RECRUITER_INVITE_PENDING",
+      subjectType:"placement_tpo_lead",subjectId:lead.id,
+      summary:"Existing recruiter invited; waiting for them to accept",
+      subjectLabel:updatedName,metadata:{recruiterUserId:user.id,
+        companyRelationshipId:lead.companyRelationshipId},
+    }).returning({id:activityEvents.id});
+    if(!pendingEvent)throw invalid();
+    const officers=await tx.selectDistinct({userId:collegeMemberships.userId})
+      .from(collegeMemberships)
+      .innerJoin(membershipRoles,eq(membershipRoles.membershipId,collegeMemberships.id))
+      .innerJoin(users,eq(users.id,collegeMemberships.userId))
+      .where(and(eq(collegeMemberships.collegeId,lead.collegeId),
+        eq(collegeMemberships.status,"ACTIVE"),eq(membershipRoles.role,"TPO"),
+        eq(users.platformStatus,"ACTIVE")));
+    const first=updatedName.trim().split(/\\s+/)[0]||"Recruiter";
+    if(officers.length)await tx.insert(inAppNotifications).values(officers.map(officer=>({
+      eventId:pendingEvent.id,userId:officer.userId,
+      title:first+" already has a 42LMS account",
+      body:"They need to sign in and accept your invitation.",
+      actionHref:"/tpo/recruiters/"+lead.id,
+    }))).onConflictDoNothing();
+  }else{
   await tx.insert(placementTpoLeadActivities).values({
    collegeId:lead.collegeId,leadId:lead.id,type:"SYSTEM",isSystem:true,
    note:"Joined as a recruiter",createdAt:now,
@@ -157,11 +187,30 @@ export async function acceptPublicTpoRecruiterInviteOtp(rawToken:unknown,rawCode
   if(officers.length)await tx.insert(inAppNotifications).values(officers.map(officer=>({
     eventId:event.id,userId:officer.userId,...notification,
   }))).onConflictDoNothing();
+  if(!previousIdentity){
+    // Durable post-commit intent, exactly once with the consumed OTP. Legacy
+    // sends recruiter-welcome only for a newly created identity. A dedicated
+    // outbox worker must bind a registered college "recruiter-welcome" template,
+    // retry transient failures idempotently and record final provider receipt;
+    // NEVER send provider mail inside this identity/grant transaction.
+    await tx.insert(activityEvents).values({
+      organizationId:relationship.organizationId,collegeId:lead.collegeId,
+      module:"PLACEMENTS",eventType:"PLACEMENTS_RECRUITER_WELCOME_INTENT",
+      subjectType:"placement_tpo_lead",subjectId:lead.id,
+      summary:"Recruiter welcome email awaiting delivery",
+      subjectLabel:updatedName,metadata:{recruiterUserId:user.id,
+        templateKey:"recruiter-welcome",deliveryStatus:"AWAITING_TEMPLATE_OUTBOX",
+        companyRelationshipId:lead.companyRelationshipId},
+    });
   }
-  return {result:pendingConsent?"PENDING_CONSENT" as const:"JOINED" as const,email};
+  }
+  return {result:pendingConsent?"PENDING_CONSENT" as const:"JOINED" as const,
+    email,collegeName:relationship.collegeName};
  });
  if(decision.result==="DENIED")throw invalid();
- return {accepted:true,outcome:decision.result,signInEmail:decision.email};
+ return {accepted:true,ok:true,outcome:decision.result,
+   status:decision.result==="JOINED"?"JOINED":"PENDING_HR",
+   collegeName:decision.collegeName,signInEmail:decision.email};
 }
 
 /** Pending grants are explicitly outside the active recruiter authorization scope.
@@ -190,7 +239,7 @@ export async function listSignedInRecruiterPendingInvites(context:RequestContext
 
 export async function resolveSignedInRecruiterPendingInvite(
  context:RequestContext,rawCollegeId:string,action:"accept"|"decline",
-):Promise<{ok:true}>{
+):Promise<{ok:true;refreshRequired:true}>{
  const invalid=()=>new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_FOUND");
  if(context.user.platformStatus!=="ACTIVE"||
   !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawCollegeId))throw invalid();
@@ -268,7 +317,7 @@ export async function resolveSignedInRecruiterPendingInvite(
   return true;
  });
  if(!done)throw invalid();
- return {ok:true};
+ return {ok:true,refreshRequired:true};
 }
 
 const CONSENT_ACTIVITY_NOTES=[
