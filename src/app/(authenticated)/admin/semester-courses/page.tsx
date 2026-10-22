@@ -62,7 +62,7 @@ export default async function SuperAdminSemesterCourseMappingPage({searchParams}
    {curriculum?<div aria-label="Manage semester course mappings" className="grid min-w-0 gap-4 border-b border-[var(--lms-canvas-border)] pb-5 lg:grid-cols-[minmax(0,10fr)_minmax(240px,4fr)]">
     <section className="min-w-0 space-y-3">
       <h2 className="text-base font-semibold text-[var(--lms-heading)]">Manage semester course mappings</h2>
-      <CollegeTermMappingManager data={curriculum}/>
+      <CollegeTermMappingManager key={context.adminScope.collegeId} data={curriculum}/>
     </section>
     <aside className="min-w-0 space-y-3 border-t border-border pt-4 text-sm text-body lg:border-l lg:border-t-0 lg:pl-4 lg:pt-0">
       <h3 className="font-semibold text-[var(--lms-heading)]">Mapping guide</h3>
