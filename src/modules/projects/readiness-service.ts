@@ -133,8 +133,41 @@ export async function getProjectReadiness(
     latestSubmission?.status === "APPROVED";
   const deliveryReopened=latestSubmission?.status==="APPROVED" && Boolean(latestSubmission.reopenedAt);
   const readinessOverride=await readProjectReadinessOverride(db,projectId,scope.collegeId);
+  const priorFinalSubmission=Boolean(latestSubmission&&latestSubmission.status!=="DRAFT");
+  const readyForSubmission=scope.project.status!=="ARCHIVED"&&
+    effectiveProjectSubmissionReady(executionComplete,readinessOverride.state,priorFinalSubmission);
+  const proofCovered=Math.min(doneTasks,Number(proofRows[0]?.covered??0));
+  // Legacy flat DTO is an explicit compatibility projection only: the vNext
+  // nested execution model stays authoritative. Proof is informational, not
+  // secretly a prerequisite; releases do not gate submission.
+  const legacyReadiness={
+    readyForSubmission,
+    readinessState:readyForSubmission?"READY" as const:"NOT_READY" as const,
+    reason:priorFinalSubmission?"A final submission has already been recorded.":
+      scope.project.status==="ARCHIVED"?"Archived workspaces cannot submit.":
+      readinessOverride.state==="FORCE_BLOCK"?"Submission blocked by an administrator.":
+      readinessOverride.state==="FORCE_UNLOCK"?"Submission unlocked by an administrator.":
+      !sprints.length?"Add a sprint before submitting.":
+      !tasks.length?"Add tasks before submitting.":
+      !executionComplete?"Complete all tasks and sprints before submitting.":null,
+    totalSprints:sprints.length,completedSprints,
+    totalTasks:tasks.length,completedTasks:doneTasks,
+    totalReleases:releases.length,shippedReleases,
+    proofCoverage:{covered:proofCovered,completedTasks:doneTasks,
+      unknown:doneTasks>proofCovered},
+    submissionExists:latestSubmission!==null,
+    submissionStatus:latestSubmission?.status??null,
+    overrideActive:readinessOverride.state==="FORCE_UNLOCK"||
+      readinessOverride.state==="FORCE_BLOCK",
+    overrideValue:readinessOverride.state==="FORCE_UNLOCK"?true:
+      readinessOverride.state==="FORCE_BLOCK"?false:null,
+    overrideNote:readinessOverride.note,
+    overrideByName:readinessOverride.overriddenBy,
+    overrideAt:readinessOverride.occurredAt?.toISOString()??null,
+  };
 
   return {
+    legacyReadiness,
     projectId,
     projectStatus: scope.project.status,
     readinessOverride,
