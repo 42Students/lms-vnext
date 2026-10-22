@@ -364,8 +364,7 @@ export function LearnerApplicationsBrowse({
         <div className="space-y-3">
           <LearnerPlacementJourney items={[]} />
           <div className="border-t border-border py-4">
-            <p className="text-sm text-body">No applications have been recorded for this learner yet.
-              Browse your published college drives and check eligibility before applying.</p>
+            <p className="text-sm text-body">You haven't applied to a drive yet. Browse drives open to you.</p>
             <Link href="/learn/my-placements/jobs"
               className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:underline">
               Browse available drives →
@@ -374,7 +373,9 @@ export function LearnerApplicationsBrowse({
         </div>
       ) : emptyKind==="FILTERED_OUT" ? (
         <div className="flex min-h-44 flex-col items-center justify-center gap-3 rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center">
-          <p className="font-semibold text-foreground">No applications match these filters.</p>
+          <p className="font-semibold text-foreground">{search.trim()?"No applications match your search.":view==="progress"?
+             "No applications are in progress right now.":view==="completed"?
+             "No finished applications yet.":"No applications match these filters."}</p>
           <Button variant="ghost" type="button" onClick={() => {setSearch("");router.push(pathname,{scroll:false});}}
             className="mt-3 min-h-[var(--lms-control-height)] max-[767px]:min-h-11">
             View all applications
@@ -440,7 +441,7 @@ export function LearnerApplicationsBrowse({
                 setWithdrawNotice(null);
               }}
             >
-              {selectedWithdrawMode==="REQUEST"?"Ask to withdraw":"Withdraw application"}
+              {selectedWithdrawMode==="REQUEST"?"Ask to withdraw":"Withdraw"}
             </Button>
           ) : null}
           <Link href={selectedAssessment?.href??"/learn/my-placements/assessments"}
@@ -456,7 +457,9 @@ export function LearnerApplicationsBrowse({
           <div className="space-y-5">
             {selected.driveStatus==="CANCELLED"?<div role="alert" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body">
               <p className="font-semibold text-foreground">This drive was cancelled</p>
-              <p>{(selected as WithdrawalGrantItem).cancelledReason ?? "Review placement cell notices for any published reason. Your saved application history remains available."}</p>
+              <p>{(selected as WithdrawalGrantItem).cancelledReason
+                 ?"The placement cell said: "+(selected as WithdrawalGrantItem).cancelledReason
+                 :"Review placement cell notices for any published reason. Your saved application history remains available."}</p>
               <Link href="/learn/my-placements/announcements" className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-primary-text underline focus-visible:underline">College notices</Link>
             </div>:selected.driveStatus==="CLOSED"?<p role="status" className="border-b border-[var(--lms-canvas-border)] py-3 text-sm text-body">This drive has closed. Previously recorded results remain visible.</p>:null}
             {selected.mayStaffOptOut && selected.staffOptOutUntil &&
@@ -524,7 +527,8 @@ export function LearnerApplicationsBrowse({
                 Only events with recorded timestamps are shown. This is a summary, not the full audit history.
               </p>
             </section>
-            {selected.screening.candidateMessage ? (
+            {selected.screening.candidateMessage&&
+               !(selected.offerStatus==="DECLINED"&&selected.screening.candidateMessage.startsWith("Offer declined by candidate")) ? (
               <section className="min-w-0 border-t border-border pt-4 text-sm text-body">
                 <h3 className="font-semibold text-foreground">Placement team feedback</h3>
                 <p className="mt-2 whitespace-pre-wrap">{selected.screening.candidateMessage}</p>
@@ -555,7 +559,8 @@ export function LearnerApplicationsBrowse({
         ) : null}
       </section> : null}
 
-      <Dialog open={companyPreviewId!==null} title="What the company sees"
+      <Dialog open={companyPreviewId!==null}
+        title={companyPreviewId?"What "+(items.find(item=>item.applicationId===companyPreviewId)?.companyName??"the company")+" sees":"What the company sees"}
         description="Your authorized preview of the information shared with the company."
         onOpenChange={open=>{if(!open)setCompanyPreviewId(null);}}
         footer={<div className="flex flex-wrap items-center justify-end gap-2">
@@ -586,18 +591,18 @@ export function LearnerApplicationsBrowse({
             setWithdrawError(null);
           }
         }}
-        title={withdrawMode==="REQUEST"?"Ask to withdraw":"Confirm application withdrawal"}
+        title={withdrawTarget?(withdrawMode==="REQUEST"?"Ask to withdraw from ":"Withdraw from ")+withdrawTarget.companyName:"Withdraw application"}
         description={withdrawMode==="REQUEST"
           ?"Your request goes to the placement cell; it does not immediately withdraw your application."
-          :"This changes the official status of your submitted application. This action cannot be undone here."}
+          :"You leave this role for good. You cannot undo withdrawing this application."}
         footer={
           <div className="flex min-w-0 w-full flex-col-reverse items-stretch gap-2 sm:flex-row sm:justify-end [&_button]:min-h-11 [&_button]:w-full sm:[&_button]:w-auto md:[&_button]:min-h-9">
             <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={withdrawPending}
               onClick={() => { setWithdrawTarget(null); setWithdrawError(null); }}>
               Keep application
             </Button>
-            <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
-              disabled={withdrawPending || !withdrawMode ||
+            <Button variant={withdrawMode==="REQUEST"?"primary":"danger"} className="min-h-11 w-full sm:w-auto md:min-h-9"
+               disabled={withdrawPending || !withdrawMode ||
                 (withdrawMode==="REQUEST" &&
                   !learnerWithdrawalReasonSchema.safeParse(withdrawReason).success) ||
                 !learnerApplicationWithdrawalSchema.safeParse({
@@ -605,7 +610,7 @@ export function LearnerApplicationsBrowse({
                 }).success}
               onClick={() => { void confirmWithdrawal(); }}
             >
-              {withdrawPending ? "Withdrawing…" : "Confirm withdrawal"}
+              {withdrawPending?(withdrawMode==="REQUEST"?"Sending…":"Withdrawing…"):(withdrawMode==="REQUEST"?"Send to placement cell":"Withdraw")}
             </Button>
           </div>
         }

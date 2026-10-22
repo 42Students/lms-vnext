@@ -23,7 +23,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_tpo-round-drive-day-read-only.tsx.md` (edit src/components/placements/tpo-round-drive-day-read-only.tsx; 29 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_learner-placements-dashboard.tsx.md` (edit src/components/placements/learner-placements-dashboard.tsx; 27 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_eligibility-service.ts.md` (edit src/modules/placements/eligibility-service.ts; 25 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_learner-applications-browse.tsx.md` (edit src/components/placements/learner-applications-browse.tsx; 22 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_learner-applications-browse.tsx.md` (edit src/components/placements/learner-applications-browse.tsx; 22 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_tpo-public-join-link-service.ts.md` (edit src/modules/placements/tpo-public-join-link-service.ts; 21 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_public-recruit-from-us.tsx.md` (edit src/components/placements/public-recruit-from-us.tsx; 20 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_learner-general-requests.tsx.md` (edit src/components/placements/learner-general-requests.tsx; 20 findings; best P2)
