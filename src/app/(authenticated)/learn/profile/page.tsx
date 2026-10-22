@@ -8,6 +8,7 @@ import {learnerSavedCodingProfiles} from "@/modules/placements/learner-saved-cod
 import {requireOwnLearnerProfileAccess} from "@/modules/people/learner-profile-access-service";
 import {learnerProfileAcademicRecovery} from "@/modules/people/learner-profile-recovery-model";
 import {LearnerProfileAcademicRetry} from "@/components/profile/learner-profile-academic-retry";
+import {LearnerProfileLastGood} from "@/components/profile/learner-profile-last-good";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerProfileWorkspace } from "@/components/profile/learner-profile-workspace";
 import { PageHeader } from "@/components/ui/page-header";
@@ -54,19 +55,24 @@ async function LearnerProfileContent({
   const context = await getCurrentRequestContext();
 
   await requireOwnLearnerProfileAccess(context);
+  // A mounted client snapshot is bounded by the verified user AND membership.
+  // A switch in acting college cannot reuse another learner's last-good view.
+  const profileScopeKey=context.user.id+":"+(context.membership?.id??"none");
   const [profileOutcome, academicOutcome] = await Promise.allSettled([
     getOwnLearnerProfileWithRuntime(context),
     getOwnLearnerAcademicSummary(context),
   ]);
   if (profileOutcome.status === "rejected") {
     if (profileOutcome.reason instanceof AuthorizationError) throw profileOutcome.reason;
-    return <div className="min-w-0 max-w-full space-y-4" data-testid="learner.profile.page.error">
+    return <LearnerProfileLastGood failed scopeKey={profileScopeKey}>
+    <div className="min-w-0 max-w-full space-y-4" data-testid="learner.profile.page.error">
       <PageHeader title="Profile"/>
       <section role="alert" className="rounded-lg border border-border px-5 py-10 text-center">
         <p className="text-sm text-body">We couldn&apos;t load your profile. Please try again.</p>
         <Link href="/learn/profile" className="mt-3 inline-flex min-h-11 items-center rounded-lg border border-border px-4 font-semibold text-primary-text underline md:min-h-9">Retry</Link>
       </section>
-    </div>;
+    </div>
+    </LearnerProfileLastGood>;
   }
   const {person,profile}=profileOutcome.value;
   const academicRecovery=learnerProfileAcademicRecovery(academicOutcome);
@@ -77,6 +83,7 @@ async function LearnerProfileContent({
   const missing=verification?learnerProfileMissingItems(verification):[];
 
   return (
+    <LearnerProfileLastGood failed={false} scopeKey={profileScopeKey}>
     <div className="min-w-0 max-w-full space-y-4">
       <PageHeader
         title="Profile"
@@ -247,5 +254,6 @@ async function LearnerProfileContent({
         </div>
       </section>
     </div>
+    </LearnerProfileLastGood>
   );
 }
