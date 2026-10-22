@@ -39,7 +39,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
   return null;
  });
  if(!data)return <div className="min-w-0 space-y-4"><PageHeader title="Interviews"/>
-  <ErrorState title="Couldn&apos;t load interviews" description="The interview calendar could not be refreshed. Retry the same college view."
+  <ErrorState title="Couldn\'t load interviews" description="The interview calendar could not be refreshed. Retry the same college view."
    action={<Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry</Link>}/>
  </div>;
  const build=(page:number,format:"html"|"ics"|"csv"="html")=>{
