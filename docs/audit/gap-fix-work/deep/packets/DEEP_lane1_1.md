@@ -7,7 +7,7 @@ These rows were marked DEFERRED without being checked. Each row must now end as 
 DEFERRED is NOT allowed. For each row: read its full text in the source packet named next to it, find the old behaviour in docs/legacy-source, find the vNext code, decide, and fix if needed.
 Keep tests passing and TypeScript valid; never silence errors. Write one result line per row under Results, push, then tick this packet in your queue.
 
-- [ ] G2-13-031-089  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
+- [x] G2-13-031-089  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [ ] G2-4-016-002  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [x] G2-4-016-015  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [x] G2-4-016-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
@@ -27,3 +27,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - OK G2-4-026-045 — src/app/api/public/recruit-from-us/send-code/route.ts:7-25 and src/modules/placements/public-enquiry/send-service.ts:33-43 gate on resolved college, enabled published page, and eligibility; matches docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicPlacementsPageController.java:58-63.
 - OK G2-4-016-048 — src/modules/notifications/exotel-sms.ts:100-110,235-250 records FAILED configuration attempts with safe reason; matches docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/ExotelSmsServiceImpl.java:95-101,148-153.
+
+- OK G2-13-031-089 — src/modules/placements/report-model.ts:1093-1117 keys company joining outcomes by membershipId, then counts one offer per learner, exposed through src/app/(authenticated)/tpo/reports/joining-status/page.tsx:37-80; matches distinct-per-company learner semantics in docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/TpoInsightsService.java:638-644.
