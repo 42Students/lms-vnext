@@ -134,6 +134,14 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
             readiness.finalSubmission.latest.status||"—":"Not submitted"}</dd>
         </div>
       </dl>
+      {readiness.legacyReadiness.advisoryWarnings.length>0?
+        <aside role="note" aria-label="Nonblocking readiness advisories"
+          className="border-l-[3px] border-warning bg-[var(--lms-warning-subtle)] px-3 py-2 text-sm text-body">
+          <strong>Additional evidence to review (does not block submission)</strong>
+          <ul className="mt-1 list-disc pl-5">
+            {readiness.legacyReadiness.advisoryWarnings.map(note=><li key={note}>{note}</li>)}
+          </ul>
+        </aside>:null}
       <section className="overflow-x-auto" aria-label="Readiness detail">
         <table className="w-full min-w-[420px] border-collapse text-left text-sm">
           <caption className="pb-2 text-left font-semibold text-[var(--lms-heading)]">Readiness details</caption>
