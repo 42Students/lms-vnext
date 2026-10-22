@@ -43,3 +43,42 @@ export async function getSuperAdminScreeningDetail(context:RequestContext,rawId:
    {label:"Excluded attributes",value:"Protected attributes are not used to compute a score"},
    {label:"Privacy",value:"Applicant name, personal contact data, internal review notes and other sensitive attributes are excluded"}]};
 }
+
+
+/** Historical automated screening is an archived read-only artifact; vNext
+ * deliberately has no automatic hiring/AI scoring producer. An archived
+ * score must never be merged into a live manual selection/rejection decision.
+ * Only a separately authorized, privacy-reviewed migration may call this.
+ */
+export function legacyScreeningArchiveProjection(input:{
+ score:number|null;algorithmVersion:string|null;
+ matchedSkills:readonly string[];missingSkills:readonly string[];
+ sourceCreatedAt:string;sourceApplicationId:number;
+ collegeId:string;applicationCollegeId:string;
+}){
+ if(input.collegeId!==input.applicationCollegeId||
+    !Number.isSafeInteger(input.sourceApplicationId)||input.sourceApplicationId<1)
+  throw new Error("Source screening is not in the selected college");
+ if(input.score!==null&&(!Number.isFinite(input.score)||
+    input.score<0||input.score>1))
+  throw new Error("Historic screening score must be 0–1");
+ if(!/(?:Z|[+-]\d{2}:\d{2})$/.test(input.sourceCreatedAt)||
+    !Number.isFinite(Date.parse(input.sourceCreatedAt)))
+  throw new Error("Screening instant requires source-timezone verification");
+ const safeSkills=(source:readonly string[])=>{
+  if(source.length>100)throw new Error("Too many source skills");
+  return [...new Set(source.map(v=>v.trim()).filter(Boolean))].map(v=>{
+   if(v.length>120||/[<>\u0000-\u001f]/.test(v))
+    throw new Error("Invalid historic skill value");
+   return v;
+  });
+ };
+ return {archived:true as const,automaticDecisionsEnabled:false as const,
+  score:input.score,
+  matchedSkills:safeSkills(input.matchedSkills),
+  missingSkills:safeSkills(input.missingSkills),
+  algorithmVersion:input.algorithmVersion?.trim().slice(0,120)??null,
+  occurredAt:new Date(input.sourceCreatedAt),
+  sourceApplicationId:input.sourceApplicationId,
+  excludedFromLiveCandidateRanking:true as const};
+}

@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import {
   createCollege,
   listColleges,
+  resolveCollegeUsage,
   listAuthorizedCollegeSearchOptions,
   listAuthorizedOrganizationCollegePicker,
 } from "@/modules/colleges/service";
@@ -177,6 +179,18 @@ export async function POST(request: Request) {
       );
     }
 
+    if(new URL(request.url).searchParams.get("mode")==="usage"){
+      const parsed=z.strictObject({collegeId:z.string().uuid()}).safeParse(body);
+      if(!parsed.success)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+      // Re-use persisted college listing authorization. An arbitrary UUID
+      // cannot request another organization's headcount or tenant metrics.
+      const authorized=await listColleges(context);
+      const college=authorized.find(row=>row.id===parsed.data.collegeId);
+      if(!college)return NextResponse.json({error:"COLLEGE_NOT_FOUND"},{status:404});
+      const usage=await resolveCollegeUsage(college.id);
+      return NextResponse.json({status:"OK",collegeId:college.id,data:usage},
+        {headers:{"Cache-Control":"private, no-store"}});
+    }
     const college = await createCollege(
       context,
       body as {

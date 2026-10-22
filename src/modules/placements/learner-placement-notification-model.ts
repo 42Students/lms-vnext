@@ -47,6 +47,6 @@ export function mergeLegacyPlacementNotificationPatch(
  const patch=learnerPlacementNotificationLegacyPatchSchema.parse(raw);
  return {
   notifyMatchingJobs:patch.notifyMatchingJobs??patch.jobNotificationsEnabled??current.notifyMatchingJobs,
-  notifyApplicationUpdates:patch.notifyApplicationUpdates??current.notifyApplicationUpdates,
+  notifyApplicationUpdates:patch.notifyApplicationUpdates??patch.jobNotificationsEnabled??current.notifyApplicationUpdates,
  };
 }

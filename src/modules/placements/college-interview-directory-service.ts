@@ -8,6 +8,19 @@ import {collegeMemberships,departments,placementApplications,
 import {placementRoundCandidateSlots as interviews} from "@/db/schema/placement-round-candidate-slots";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
+/** Exact legacy interview states and subtype captions. The underlying slot
+ * status remains a separate scheduling/booking authority; historic completed
+ * or cancelled appointments are read from their persisted outcome. */
+export const LEGACY_COLLEGE_INTERVIEW_STATUS_LABELS={
+ SCHEDULED:"Scheduled",CONFIRMED:"Confirmed",
+ RESCHEDULE_REQUESTED:"Reschedule requested",
+ COMPLETED:"Completed",NO_SHOW:"No Show",CANCELLED:"Cancelled",
+} as const;
+export const LEGACY_COLLEGE_INTERVIEW_TYPE_LABELS={
+ INTERVIEW:"Interview",GD:"Group discussion",SCREENING:"Screening",
+ TECHNICAL:"Technical interview",HR:"HR interview",
+ MANAGERIAL:"Managerial interview",FINAL:"Final interview",
+} as const;
 export const collegeInterviewFilters=z.object({
  q:z.string().trim().max(100).default(""),
  status:z.enum(["ALL","ACTIVE","SCHEDULED","CONFIRMED","RESCHEDULE_REQUESTED","COMPLETED","NO_SHOW","CANCELLED"]).default("ALL"),
@@ -173,12 +186,12 @@ export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unkno
  return {ready:true,filters,total,limited,pageCount:Math.max(1,Math.ceil(total/filters.pageSize)),
   pageSize:filters.pageSize,
   rows:selected.map(row=>({...row,
-    statusLabel:row.status==="NO_SHOW"?"No Show":
-      row.status==="RESCHEDULE_REQUESTED"?"Reschedule":
-      row.status.toLowerCase().replace(/^./,letter=>letter.toUpperCase()),
-    typeLabel:row.legacyInterviewType?
-      row.legacyInterviewType.toLowerCase().replace(/^./,letter=>letter.toUpperCase()):
-      row.kind==="GD"?"Group discussion":"Interview",
+    statusLabel:LEGACY_COLLEGE_INTERVIEW_STATUS_LABELS[
+      row.status as keyof typeof LEGACY_COLLEGE_INTERVIEW_STATUS_LABELS
+    ]??"Scheduled",
+    typeLabel:LEGACY_COLLEGE_INTERVIEW_TYPE_LABELS[
+      (row.legacyInterviewType??row.kind) as keyof typeof LEGACY_COLLEGE_INTERVIEW_TYPE_LABELS
+    ]??"Interview",
     conflict:conflicts.has(row.id),conflictKind:conflicts.get(row.id)??null})),
   companies,departments:departmentChoices,
   summary:{scheduled:totals.scheduled,today:totals.today,
