@@ -512,7 +512,7 @@ describe("Placement P8 offers and joining", () => {
     const reference=new Date("2099-10-24T00:00:00.000Z");
     await pool.query(`
       update placement_job_rounds set status='SCHEDULED',scheduled_at=$2,
-        timezone='Asia/Kolkata',mode='VIRTUAL',meeting_url='https://meet.example/escalation'
+        timezone='Asia/Kolkata',mode='VIRTUAL',meeting_url='https://meet.example/escalation',completed_at=null
       where id=$1`,[round.id,new Date(reference.getTime()+6*3600_000)]);
     const saved=await pool.query<{id:string}>(`
       insert into placement_learner_requests(
@@ -1181,8 +1181,11 @@ describe("Placement P8 offers and joining", () => {
     const audit=await pool.query<{metadata:Record<string,unknown>}>(
       `select metadata from activity_events where subject_id=$1 and event_type='placements.offer.responded'
        order by occurred_at desc limit 1`,[issued.id]);
+    // The TPO's record and the scheduler's finalization are distinct
+    // audited actions; the scheduler owns the cascade after the 48h window.
     expect(audit.rows[0]?.metadata).toMatchObject({
-      actorRole:"TPO",cascadeId,withdrawnApplicationCount:1,
+      action:"EXTERNAL_ACCEPTANCE_FINALIZED",
+      cascadeId,originalRecorderUserId:SEED_IDS.facultyUser,
     });
   });
 
