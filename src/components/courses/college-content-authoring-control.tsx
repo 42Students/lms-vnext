@@ -79,6 +79,11 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  const [resourceLinks,setResourceLinks]=useState<Array<{title:string;externalUrl:string;notes:string}>>([]);
  const [materialDraft,setMaterialDraft]=useState({title:"",externalUrl:"",notes:""});
  const [addFileAfterCreate,setAddFileAfterCreate]=useState(false);
+ const [resourceFiles,setResourceFiles]=useState<File[]>([]);
+ const [resourceUploadStatus,setResourceUploadStatus]=useState("");
+ const [resourceProgress,setResourceProgress]=useState(0);
+ const resourceXhr=useRef<XMLHttpRequest|null>(null);
+ useEffect(()=>()=>resourceXhr.current?.abort(),[]);
  const [allKindsForReorder,setAllKindsForReorder]=useState(
   existingFilters?.allKindsForReorder??false);
  const [remoteExisting,setRemoteExisting]=useState<{
@@ -147,7 +152,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   router.replace(window.location.pathname+(params.size?"?"+params.toString():""),{scroll:false});
  }
  const text=kind==="YOUTUBE"?"Add a video":kind==="RESOURCE"?"Add Resource":"Schedule a live class";
- const draft=JSON.stringify({lessonId,title,url,notes,duration,start,end,deliveryId,timeZone,removeLink,visibleToStudents,resourceLinks,materialDraft,addFileAfterCreate});
+ const draft=JSON.stringify({lessonId,title,url,notes,duration,start,end,deliveryId,timeZone,removeLink,visibleToStudents,resourceLinks,materialDraft,addFileAfterCreate,resourceFiles:resourceFiles.map(file=>file.name+":"+file.size)});
  function closeEditor(){
   if(busy)return;
   if(draft!==initialDraft){setDiscardOpen(true);return;}
@@ -172,6 +177,58 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   setInitialDraft(JSON.stringify({lessonId,title:"",url:"",notes:"",duration:"",start:times.start,end:times.end,
    deliveryId:"",timeZone:"Asia/Kolkata",removeLink:false,visibleToStudents:true,resourceLinks:[],materialDraft:{title:"",externalUrl:"",notes:""},addFileAfterCreate:false}));
  }
+ async function uploadResourceFiles(id:string,audience:string|null){
+  const root="/api/courses/lesson-contents/"+encodeURIComponent(id)+"/materials/files";
+  const mimes:Record<string,string>={pdf:"application/pdf",doc:"application/msword",
+   docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",ppt:"application/vnd.ms-powerpoint",
+   pptx:"application/vnd.openxmlformats-officedocument.presentationml.presentation",xls:"application/vnd.ms-excel",
+   xlsx:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",txt:"text/plain",csv:"text/csv",
+   png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg",gif:"image/gif",webp:"image/webp",zip:"application/zip"};
+  for(const [index,file] of resourceFiles.entries()){
+   const ext=file.name.split(".").at(-1)?.toLowerCase()??"";
+   if(!mimes[ext]||file.size<1||file.size>50*1024*1024)
+    throw Error("Choose an approved Resource file up to 50 MB.");
+   setResourceUploadStatus("Uploading "+(index+1)+" of "+resourceFiles.length+": "+file.name);
+   setResourceProgress(0);
+   const grantResponse=await fetch(root,{method:"POST",credentials:"same-origin",cache:"no-store",
+    headers:{"Content-Type":"application/json"},body:JSON.stringify({deliveryId:audience,
+     originalName:file.name,sizeBytes:file.size,contentType:file.type||mimes[ext],
+     title:file.name.replace(/\.[^.]+$/,"").slice(0,255),notes:null})});
+   if(!grantResponse.ok)throw Error("Resource saved; could not request a file upload.");
+   const payload:unknown=await grantResponse.json();
+   if(!payload||typeof payload!=="object"||!("grant" in payload)||!("material" in payload))
+    throw Error("Private upload grant was invalid.");
+   const {grant,material}=payload as {grant:{uploadUrl:string;method:string;requiredHeaders:Record<string,string>};material:{id:string}};
+   if(grant?.method!=="PUT"||!material?.id||typeof grant.uploadUrl!=="string"||
+      !grant.requiredHeaders||typeof grant.requiredHeaders!=="object")throw Error("Invalid upload grant.");
+   const signed=new URL(grant.uploadUrl);
+   if(signed.protocol!=="https:"||signed.username||signed.password)throw Error("Invalid upload URL.");
+   let uploaded=false;
+   try{
+    await new Promise<void>((resolve,reject)=>{
+     const xhr=new XMLHttpRequest();resourceXhr.current=xhr;
+     xhr.open("PUT",signed.href,true);
+     for(const [key,value] of Object.entries(grant.requiredHeaders))xhr.setRequestHeader(key,value);
+     xhr.upload.onprogress=e=>{if(e.lengthComputable&&e.total>0)setResourceProgress(Math.round(100*e.loaded/e.total));};
+     xhr.onload=()=>xhr.status>=200&&xhr.status<300?resolve():reject(Error("File rejected by private storage."));
+     xhr.onerror=()=>reject(Error("File upload network error."));
+     xhr.onabort=()=>reject(Error("File upload cancelled."));
+     xhr.send(file);
+    });uploaded=true;
+    const confirmation=await fetch(root+"/"+encodeURIComponent(material.id),{method:"POST",
+     credentials:"same-origin",headers:{"Content-Type":"application/json"},
+     body:JSON.stringify({deliveryId:audience})});
+    if(!confirmation.ok)throw Error("File transferred; verify it from the Resource materials list.");
+   }catch(cause){
+    if(!uploaded)try{await fetch(root+"/"+encodeURIComponent(material.id),{method:"DELETE",
+     credentials:"same-origin",headers:{"Content-Type":"application/json"},
+     body:JSON.stringify({deliveryId:audience})});}catch{/* Unverified private file remains inaccessible. */}
+    throw cause;
+   }finally{resourceXhr.current=null;}
+  }
+  setResourceUploadStatus("Files transferred; security verification may still be pending.");
+  setResourceProgress(100);
+ }
  async function save(confirmed=false){
   if(busy)return;
   if(!confirmed){setSaveConfirmOpen(true);return;}
@@ -182,7 +239,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   }
   if(kind==="LIVE_CLASS"&&!editing&&!url.trim()){setError("Enter a Meeting Link.");return;}
   if(kind==="YOUTUBE"&&!editing&&!url.trim()){setError("Enter a YouTube URL.");return;}
-  if(kind==="RESOURCE"&&!editing&&!url.trim()&&!notes.trim()&&!resourceLinks.length&&!addFileAfterCreate){
+  if(kind==="RESOURCE"&&!editing&&!url.trim()&&!notes.trim()&&!resourceLinks.length&&!addFileAfterCreate&&!resourceFiles.length){
    setError("Add a file, HTTPS link, or notes before saving.");return;
   }
   if(kind==="RESOURCE"&&editing&&removeLink&&!notes.trim()){setError("Add resource notes before removing the last link.");return;}
@@ -233,7 +290,16 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    if(!editing&&kind==="RESOURCE"&&materialsEnabled){
     const payload=await res.json().catch(()=>null);
     const id=payload?.content?.id;
-    if(typeof id==="string")setNewResourceId(id);
+    if(typeof id==="string"){
+     setNewResourceId(id);
+     if(resourceFiles.length)try{
+      await uploadResourceFiles(id,deliveryId||null);
+      setResourceFiles([]);
+     }catch(cause){
+      setResourceUploadStatus("Resource created. Use the materials editor below to retry any failed files.");
+      setError(cause instanceof Error?cause.message:"Resource file upload failed.");
+     }
+    }
    }
    setResourceLinks([]);
    setMessage(kind==="RESOURCE"?(editing?"Resource updated":"Resource created"):
@@ -389,6 +455,29 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
      onChange={e=>setVisibleToStudents(e.target.checked)}/>
     Visible to students
    </label>
+   {kind==="RESOURCE"&&!editing&&materialsEnabled?<div className="space-y-2 md:col-span-2">
+    <label className="grid gap-2 text-sm font-semibold">Upload files
+     <input type="file" multiple disabled={busy} accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.csv,.png,.jpg,.jpeg,.gif,.webp,.zip"
+      className="block w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm"
+      onChange={event=>{
+       const files=Array.from(event.currentTarget.files??[]);event.currentTarget.value="";
+       const allowed=["pdf","doc","docx","ppt","pptx","xls","xlsx","txt","csv","png","jpg","jpeg","gif","webp","zip"];
+       if(files.some(file=>!allowed.includes(file.name.split(".").at(-1)?.toLowerCase()??"")||file.size<1||file.size>50*1024*1024)){
+        setError("Choose approved Resource files no larger than 50 MB.");return;}
+       if(files.length+resourceFiles.length+resourceLinks.length>20){
+        setError("Resources support no more than 20 files and links.");return;}
+       setResourceFiles(old=>[...old,...files]);setError("");
+      }}/>
+    </label>
+    {resourceFiles.map((file,index)=><div key={index} className="flex items-center justify-between gap-2 text-xs">
+     <span className="truncate">{file.name} · {Math.ceil(file.size/1024)} KB</span>
+     <Button type="button" size="sm" variant="ghost" disabled={busy}
+      onClick={()=>setResourceFiles(old=>old.filter((_,at)=>at!==index))}>Remove</Button>
+    </div>)}
+    {resourceUploadStatus?<p role="status" className="text-xs text-muted-foreground">{resourceUploadStatus}</p>:null}
+    {busy&&resourceUploadStatus?<progress value={resourceProgress} max={100} className="w-full"/>:null}
+    <p className="text-xs text-muted-foreground">After saving the Resource, selected files upload via verified private grants. Scanner-pending files remain unavailable to learners.</p>
+   </div>:null}
    {kind==="RESOURCE"&&!editing&&materialsEnabled?<label className="flex items-start gap-2 text-sm md:col-span-2">
     <Checkbox checked={addFileAfterCreate} disabled={busy}
      onChange={event=>setAddFileAfterCreate(event.target.checked)}/>
