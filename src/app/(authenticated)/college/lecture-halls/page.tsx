@@ -7,6 +7,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { LectureHallManager } from "@/components/admin/lecture-hall-manager";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Pagination } from "@/components/ui/pagination";
 import {
   collegeLectureHallHref,
@@ -95,12 +96,9 @@ export default async function CollegeLectureHallsPage({
   }
   if (hallsResult.status==="rejected") return <div className="min-w-0 space-y-4">
     <PageHeader title="Lecture Halls" />
-    <Alert tone="error" title="Could not load lecture halls">
-      The hall directory could not be refreshed. Your filters and existing room records were not changed.
-    </Alert>
-    <ErrorState title="Lecture halls unavailable"
-      description="Retry the same college-scoped room search or clear filters."
-      action={<Link href={collegeLectureHallHref(query)} className="font-semibold text-link underline underline-offset-4">Retry lecture halls</Link>} />
+    <ErrorState title="Could not load lecture halls"
+      description="The hall directory could not be refreshed. Your filters and existing room records were not changed."
+      retryHref={collegeLectureHallHref(query)} retryLabel="Retry lecture halls"/>
   </div>;
   const result=hallsResult.value;
   const departments=departmentsResult.status==="fulfilled"?departmentsResult.value:[];
@@ -155,8 +153,8 @@ export default async function CollegeLectureHallsPage({
         />
       </section>
 
-      <details open={filtered || undefined} className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
-        <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text md:min-h-9">Advanced lecture hall filters</summary>
+      <Disclosure title="Advanced lecture hall filters" defaultOpen={filtered}
+        className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
       <section aria-label="Lecture hall filters" className="min-w-0 pt-3">
         <form action="/college/lecture-halls" method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-2 min-[992px]:grid-cols-4">
           <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -242,7 +240,7 @@ export default async function CollegeLectureHallsPage({
           </Link>
         </form>
       </section>
-      </details>
+      </Disclosure>
 
       <nav aria-label="Lecture hall pages" className="flex min-w-0 flex-col items-stretch gap-3 text-sm md:flex-row md:items-center md:justify-between">
         <span className="text-muted-foreground">

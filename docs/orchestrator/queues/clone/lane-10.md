@@ -15,14 +15,14 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [x] `src/app/(authenticated)/admin/placements/new/page.tsx`
 - [x] `src/app/(authenticated)/admin/recruiters/page.tsx`
 - [ ] `src/app/(authenticated)/college/faculty/page.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/page.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/page.tsx`
 - [x] `src/app/(authenticated)/college/programs/page.tsx`
 - [x] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/page.tsx`
 - [ ] `src/app/(authenticated)/college/quizzes/page.tsx`
-- [ ] `src/app/(authenticated)/college/verification/page.tsx`
+- [x] `src/app/(authenticated)/college/verification/page.tsx`
 - [x] `src/app/(authenticated)/hr/messages/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/page.tsx`
 - [x] `src/app/(authenticated)/recruiter/calendar/page.tsx`
 - [x] `src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx`
 - [x] `src/app/(authenticated)/recruiter/messages/page.tsx`

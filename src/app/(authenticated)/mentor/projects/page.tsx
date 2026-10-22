@@ -17,6 +17,7 @@ import {
 } from "@/components/projects/project-participant-list-controls";
 import { ProjectList } from "@/components/projects/project-list";
 import { PageHeader } from "@/components/ui/page-header";
+import { LoadingState } from "@/components/ui/loading-state";
 import { Disclosure } from "@/components/ui/disclosure";
 import { ErrorState } from "@/components/ui/error-state";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -29,11 +30,7 @@ import {canPageMentorProjectList} from "@/modules/projects/mentor-paged-project-
 function MentorProjectsLoading() {
   return <div className="min-w-0 space-y-4" aria-busy="true" aria-label="Checking Projects access">
     <PageHeader title="Projects" description="Checking Projects access…"/>
-    <div aria-hidden="true" className="space-y-4">{[1,2,3].map(id=><div key={id} className="rounded-lg border border-border p-5">
-      <span className="block h-4 w-1/3 animate-pulse rounded bg-muted"/>
-      <span className="mt-3 block h-5 w-1/2 animate-pulse rounded bg-muted"/>
-      <span className="mt-3 block h-4 w-4/5 animate-pulse rounded bg-muted"/>
-    </div>)}</div>
+    <LoadingState label="Checking Projects access"/>
   </div>;
 }
 type MentorProjectParams=Record<string,string|string[]|undefined>;
@@ -81,7 +78,7 @@ async function MentorProjectsContent({
     return <div className="min-w-0 space-y-6">
       <PageHeader title="Projects" />
       <ErrorState title="Invalid Project filters" description="Review the project search, attention, status and page filters."
-        action={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>}/>
+        retryHref="/mentor/projects" retryLabel="Clear filters"/>
     </div>;
   }
   const query = parsed.data;
