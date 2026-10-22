@@ -19,7 +19,6 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
-import { batchAcademicYearWithStartMonth } from "./college-cohort-mutation-model";
 import {
   AcademicsServiceError,
   postgresConstraintName,
@@ -306,16 +305,30 @@ export async function createCohort(
       .returning();
 
     if(!created)throw new Error("Unable to persist cohort mutation.");
-    const yearLabel=legacy.academicYear??
-      batchAcademicYearWithStartMonth(periodWindow.start.startDate,7);
-    // DB02 inserts the version-0 progression row via its cohort INSERT trigger.
+    // DB0051's AFTER INSERT cohort trigger initializes the canonical
+    // progression row. Inserting it again causes a duplicate primary key
+    // failure and would bypass the trigger's July-boundary year rule.
+    const [initialProgression]=await tx.select({
+      currentTermNumber:cohortProgressionState.currentTermNumber,
+      currentAcademicYearStart:cohortProgressionState.currentAcademicYearStart,
+      currentPeriodId:cohortProgressionState.currentPeriodId,
+      version:cohortProgressionState.version,
+    }).from(cohortProgressionState)
+      .where(eq(cohortProgressionState.cohortId,created.id)).limit(1);
+    if(!initialProgression||initialProgression.currentTermNumber!==1||
+       initialProgression.currentPeriodId!==input.startPeriodId||
+       initialProgression.version!==0){
+      throw new Error("Cohort progression initialization failed its persisted invariant");
+    }
     await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_COHORT_CREATED,
       organizationId:program.organizationId,collegeId:program.collegeId,
       subjectType:"cohort",subjectId:created.id,subjectLabel:created.name,
       summary:"Cohort created",
       metadata:{code:created.code,status:created.status,
-        initialTerm:1,currentAcademicYearStart:Number(yearLabel.slice(0,4)),
+        initialTerm:initialProgression.currentTermNumber,
+        currentAcademicYearStart:initialProgression.currentAcademicYearStart,
+        legacyAcademicYear:legacy.academicYear??null,
         legacyBatchId:created.legacyBatchId,academicPeriodId:input.startPeriodId},
     });
     return created;

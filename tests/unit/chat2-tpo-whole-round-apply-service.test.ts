@@ -5,11 +5,15 @@ const state=vi.hoisted(()=>({
 }));
 vi.mock("server-only",()=>({}));
 vi.mock("@/db/client",()=>({getDb:state.getDb}));
-vi.mock("@/modules/placements/tpo-job-write-base",()=>({
- requireTpoJobCollege:state.college,
-}));
 vi.mock("@/modules/placements/result-service",()=>({
  applyPlacementRoundResult:state.apply,
+}));
+vi.mock("@/modules/placements/tpo-job-write-base",()=>({
+ requireTpoJobCollege:state.college,
+ requireTpoJobActor:vi.fn(async()=>({id:"tpo-membership"})),
+}));
+vi.mock("@/modules/activity/service",()=>({
+ recordActivityEventInTransaction:vi.fn(async()=>undefined),
 }));
 import {getTpoRoundApplyPreview,applyTpoWholeRound}
  from "@/modules/placements/tpo-round-apply-service";
@@ -21,7 +25,8 @@ const actor:RequestContext={
  membership:{id:"tpo-membership",collegeId:id(9),organizationId:"org-a",status:"ACTIVE",roles:["TPO"]},
 };
 const scope={roundId,roundName:"Technical interview",roundStatus:"COMPLETED",
- roundKind:"INTERVIEW",jobStatus:"PUBLISHED",jobTitle:"Engineering"};
+ roundKind:"INTERVIEW",roundUpdatedAt:new Date("2026-10-18T09:00:00Z"),
+ jobStatus:"PUBLISHED",jobTitle:"Engineering"};
 const rows=[
  {resultId:first,applicationId:id(10),student:"Ada",outcome:"PASS",status:"STAGED",version:1},
  {resultId:second,applicationId:id(11),student:"Bob",outcome:"FAIL",status:"STAGED",version:2},
@@ -33,7 +38,7 @@ function fixture(override:Partial<typeof scope>={}){
 }
 function query(result:unknown[]){
  return {
-  from(){return this;},innerJoin(){return this;},where(){return this;},
+  from(){return this;},innerJoin(){return this;},leftJoin(){return this;},where(){return this;},
   limit:async()=>result,orderBy:async()=>result,
  };
 }
@@ -41,7 +46,17 @@ beforeEach(()=>{
  vi.clearAllMocks();
  fixture();
  state.college.mockResolvedValue(id(9));
- state.getDb.mockReturnValue({select:()=>query(state.rows.shift()??[])});
+ state.getDb.mockReturnValue({
+  select:()=>query(state.rows.shift()??[]),
+  transaction:async <T>(callback:(tx:{
+   update:()=>{set:()=>unknown;where:()=>unknown;returning:()=>Promise<{id:string}[]>};
+  })=>Promise<T>)=>{
+   const builder={
+    set(){return this;},where(){return this;},returning:async()=>[{id:roundId}],
+   };
+   return callback({update:()=>builder});
+  },
+ });
  state.apply.mockResolvedValue({status:"APPLIED"});
 });
 
@@ -97,8 +112,8 @@ describe("TPO-drive-workspace-42 whole-round preview/apply authorization and par
    confirmed:true,expectedPreviewToken:preview.previewToken,
   });
   expect(state.apply).toHaveBeenCalledTimes(2);
-  expect(state.apply).toHaveBeenCalledWith(actor,first);
-  expect(state.apply).toHaveBeenCalledWith(actor,second);
+  expect(state.apply).toHaveBeenCalledWith(actor,first,1);
+  expect(state.apply).toHaveBeenCalledWith(actor,second,2);
   expect(result).toMatchObject({total:3,previouslyApplied:1,applied:1,skipped:1,unchanged:1});
   expect(result.results.find(item=>item.resultId===second)).toMatchObject({
    status:"skipped",reason:"Result was not applied. Refresh this round and try again.",

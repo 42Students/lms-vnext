@@ -114,14 +114,14 @@ describe("PROJ-HARNESS-PLACEMENTS canonical real PostgreSQL fixtures", () => {
         status:string;verification_status:string;company_id:string;college_id:string;
         valid:boolean;membership_count:number;
       }>(`
-        select grant.status,grant.verification_status,profile.company_id,
-          rel.college_id,grant.valid_until>now() as valid,
+        select recruiter_grant.status,recruiter_grant.verification_status,profile.company_id,
+          rel.college_id,recruiter_grant.valid_until>now() as valid,
           (select count(*)::int from college_memberships cm where cm.user_id=profile.user_id)
             as membership_count
-        from placement_recruiter_college_grants grant
-        join placement_recruiter_profiles profile on profile.user_id=grant.recruiter_user_id
-        join placement_company_relationships rel on rel.id=grant.company_relationship_id
-        where grant.id=$1`,[recruiter.grantId]);
+        from placement_recruiter_college_grants recruiter_grant
+        join placement_recruiter_profiles profile on profile.user_id=recruiter_grant.recruiter_user_id
+        join placement_company_relationships rel on rel.id=recruiter_grant.company_relationship_id
+        where recruiter_grant.id=$1`,[recruiter.grantId]);
       expect(rows).toMatchObject([{
         status:"ACTIVE",verification_status:"VERIFIED",
         company_id:drive.companyId,college_id:tenant.collegeId,

@@ -44,7 +44,9 @@ describe("Scoped Team ownership handover",()=>{
   expect(route).toContain("isSameOriginRequest(request)");
   expect(route).toContain("tpoTeamHandoverSchema.safeParse");
   expect(ui).toContain("Who takes over?");
-  expect(ui).toContain("window.confirm");
+  expect(ui).toContain("const {askConfirm,dialog}=useConfirmFlow()");
+  expect(ui).toContain('await askConfirm("Hand over "');
+  expect(ui).toContain("{dialog}");
   expect(ui).toContain("This does not remove team access or transfer private asks.");
   expect(ui).toContain("timeoutMs:12000");
   expect(page).toContain("<TpoTeamHandover");

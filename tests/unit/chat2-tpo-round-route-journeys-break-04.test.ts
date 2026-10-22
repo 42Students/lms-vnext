@@ -37,7 +37,7 @@ beforeEach(()=>{
   message:"Refresh the page and retry."},{status:409}));
  state.reschedule.mockResolvedValue({id:roundId});
  state.confirm.mockResolvedValue({id:"result-id"});
- state.bulk.mockResolvedValue({staged:1,skipped:0});
+ state.bulk.mockResolvedValue({counts:{staged:1,ineligible:0},results:[]});
 });
 afterEach(()=>vi.unstubAllEnvs());
 
@@ -47,7 +47,10 @@ describe("TPO-BREAK-round-route-04 actual handlers: hostile origins, spoofed ide
    state.origin.mockReturnValueOnce(false);
    const response=await spec.handler(req({collegeId:"other-college",userId:"attacker"}),ctx);
    expect(response.status).toBe(403);
-   expect(await response.json()).toEqual({error:"INVALID_ORIGIN"});
+   const payload=await response.json();
+   if(spec.name==="interview reschedule")
+    expect(payload).toEqual({message:"Your session could not be verified. Refresh the page and try again."});
+   else expect(payload).toEqual({error:"INVALID_ORIGIN"});
    expect(state.context).not.toHaveBeenCalled();
    expect(spec.service).not.toHaveBeenCalled();
   });

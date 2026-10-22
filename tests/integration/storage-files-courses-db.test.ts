@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { facultyAssessmentFixtureToken } from "../support/faculty-assessment-token";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { Pool } from "pg";
@@ -78,7 +79,12 @@ const ctx = (userId: string, membershipId: string, collegeId: string, roles: Mem
 });
 const collegeAdmin = ctx(SEED_IDS.collegeAdminUser, SEED_IDS.collegeAdminMembership, SEED_IDS.collegeA, ["COLLEGE_ADMIN"]);
 const faculty = ctx(SEED_IDS.facultyUser, SEED_IDS.facultyCollegeAMembership, SEED_IDS.collegeA, ["FACULTY", "MENTOR"]);
-const learner = ctx(SEED_IDS.learnerUser, SEED_IDS.learnerCollegeAMembership, SEED_IDS.collegeA, ["LEARNER"]);
+// Seed data already enrolls its learner in another live program. Use a
+// dedicated, persisted college membership rather than bypassing the
+// one-active-program-per-learner constraint for these storage tests.
+const fileLearnerUserId = randomUUID();
+const fileLearnerMembershipId = randomUUID();
+const learner = ctx(fileLearnerUserId, fileLearnerMembershipId, SEED_IDS.collegeA, ["LEARNER"]);
 const outsider = ctx(SEED_IDS.facultyUser, SEED_IDS.facultyCollegeBMembership, SEED_IDS.collegeB, ["FACULTY"]);
 
 const PREFIX = "SFV-";
@@ -231,7 +237,15 @@ async function stagedReadyFile(
   return { done, grant };
 }
 
-beforeAll(() => {
+beforeAll(async () => {
+  await pool.query("INSERT INTO users(id,identity_uid,platform_status) VALUES($1,$2,'ACTIVE')",
+    [fileLearnerUserId,"storage-file-learner-"+fileLearnerUserId]);
+  await pool.query("INSERT INTO college_memberships(id,user_id,college_id,status) VALUES($1,$2,$3,'ACTIVE')",
+    [fileLearnerMembershipId,fileLearnerUserId,SEED_IDS.collegeA]);
+  await pool.query("INSERT INTO membership_roles(membership_id,role,assigned_by_user_id) VALUES($1,'LEARNER',$2)",
+    [fileLearnerMembershipId,SEED_IDS.collegeAdminUser]);
+  // This is a disposable database. Activity events may retain references
+  // to this fixture identity, so do not forge deletes of immutable audit rows.
   process.env.APP_ENV = "test";
   process.env.R2_ACCOUNT_ID = "test-account";
   process.env.R2_ACCESS_KEY = "TESTACCESSKEYID";

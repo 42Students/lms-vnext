@@ -29,13 +29,15 @@ describe("Super Admin Placement operations remaining source parity",()=>{
   expect(action).toContain("Issued offers to withdraw");
   expect(action).toContain("Accepted offers");
   expect(action).toContain("Preview delete impact");
-  expect(action).toContain("Confirm delete (archive)");
+  expect(action).toContain("Confirming archives this drive");
+  expect(action).toContain("Delete (archive)");
  });
  it("SA-placements-projects-13 allows guarded changes to a published drive with recorded reason",()=>{
   const setting=code("src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx");
   const edit=code("src/components/placements/super-admin-published-drive-edit.tsx");
   expect(setting).toContain("<SuperAdminPublishedDriveEdit");
-  expect(edit).toContain("Edit published drive");
+  expect(edit).toContain('{"Edit "+job.status.toLowerCase()+" drive"}');
+  expect(edit).toContain('title="Save published drive changes?"');
   expect(edit).toContain("expectedUpdatedAt:job.updatedAt");
   expect(edit).toContain("Reason for edit");
   expect(edit).toContain("/edit-published");

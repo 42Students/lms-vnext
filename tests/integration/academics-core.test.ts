@@ -317,13 +317,15 @@ describe("academics A1 against PostgreSQL", () => {
       { action: "ARCHIVE" },
     );
 
+    // Archiving a batch does not erase its history. The parent program
+    // cannot be archived while that batch still exists.
     await expect(
       archiveProgram(
         collegeAdmin,
         program.id,
       ),
-    ).resolves.toMatchObject({
-      status: "ARCHIVED",
+    ).rejects.toMatchObject({
+      code: "PROGRAM_HAS_COHORTS",
     });
   });
 

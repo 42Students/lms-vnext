@@ -65,8 +65,8 @@ describe("COURSES-LEARNER-DISCUSSIONS-02 learner discussion draft and scoped res
  it("rejects empty, oversized or double-submitted drafts regardless of click/keyboard origin",()=>{
   expect(learnerDiscussionDraftValid(" Hi ")).toBe(true);
   expect(learnerDiscussionDraftValid(" ".repeat(20))).toBe(false);
-  expect(learnerDiscussionDraftValid("x".repeat(3900))).toBe(true);
-  expect(learnerDiscussionDraftValid("x".repeat(3901))).toBe(false);
+  expect(learnerDiscussionDraftValid("x".repeat(4000))).toBe(true);
+  expect(learnerDiscussionDraftValid("x".repeat(4001))).toBe(false);
   expect(learnerDiscussionMayPost("hello",true,false)).toBe(true);
   expect(learnerDiscussionMayPost("hello",false,false)).toBe(false);
   expect(learnerDiscussionMayPost("hello",true,true)).toBe(false);

@@ -194,9 +194,9 @@ export function FacultyCourseRoster({
           </Button>
           </div>
         </div>
-        {search.trim()?<p className="mt-3 text-xs text-muted-foreground" aria-live="polite">
-          Showing {filtered.length} of {learners.length}
-        </p>:null}
+        <p className="mt-3 text-xs text-muted-foreground" role="status" aria-live="polite">
+          Showing {filtered.length} of {learners.length} students
+        </p>
       </section>
 
       {filtered.length === 0 ? (

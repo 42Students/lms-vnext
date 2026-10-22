@@ -8,9 +8,11 @@ describe("REC-calendar-messages-profile-21 Round 3 notification polling",()=>{
  it("REC-calendar-messages-profile-21 refreshes relative time after failed as well as successful network polls",()=>{
   const bell=read("src/components/hr/hr-recruiter-bell.tsx");
   const scopedLoad=bell.slice(bell.indexOf("const load=useCallback("),bell.indexOf(" async function markAll()"));
-  expect(scopedLoad).toContain('}catch{setError("Couldn\'t refresh your notifications");}');
-  expect(scopedLoad).toContain("finally{setNow(Date.now());}");
-  expect(scopedLoad).toContain("setInterval(()=>{void load();},30000)");
+  expect(scopedLoad).toContain('if(!loadGate.current.isCurrent(request))return;');
+  expect(scopedLoad).toContain(': "Couldn\'t refresh your notifications"');
+  expect(scopedLoad).toContain("finally{if(loadGate.current.isCurrent(request))setNow(Date.now());}");
+  expect(bell).toContain("window.setInterval(tick,30000)");
+  expect(bell).toContain('document.visibilityState==="visible"');
   expect(relativeHrBellTime("2026-10-18T00:00:00.000Z",Date.parse("2026-10-18T00:30:00.000Z"))).toBe("30m ago");
  });
  it("REC-calendar-messages-profile-21 retains caller-scoped notification marking under the current college grant",()=>{

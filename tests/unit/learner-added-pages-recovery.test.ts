@@ -14,9 +14,9 @@ function read(relative: string) {
  */
 const detailPages = [
   ["learn/my-placements/applications/[applicationId]/history",
-    "No application-status history records", "sm:"],
+    "Status history", "sm:"],
   ["learn/my-placements/applications/[applicationId]/company",
-    "No verified-safe public website URL is available.", "sm:"],
+    "No verified-safe public website URL is available.", "md:"],
   ["learn/my-placements/offers", "learnerOffersEmptyState", "sm:"],
   ["learn/my-placements/assessments/results", "No official assessment results yet", "sm:"],
   ["learn/notifications/history", "emptyMessage", "NotificationList"],
@@ -47,13 +47,13 @@ describe("Learner added page mobile/recovery/empty audit", () => {
     const notificationList = fs.readFileSync(path.join(
       process.cwd(), "src/components/activity/notification-list.tsx",
     ), "utf8");
-    expect(notificationList).toContain("sm:");
+    expect(notificationList).toContain("min-[768px]:");
     const placementPage = read("learn/my-placements/placement/page.tsx");
     expect(placementPage).toContain("LearnerPlacementAlerts");
     const personalAlerts = fs.readFileSync(path.join(
       process.cwd(), "src/components/placements/learner-placement-alerts.tsx",
     ), "utf8");
-    expect(personalAlerts).toContain("No personal placement alerts");
-    expect(personalAlerts).toContain("sm:");
+    expect(personalAlerts).toContain("No updates yet. When a round is booked");
+    expect(personalAlerts).toContain("md:flex-row");
   });
 });

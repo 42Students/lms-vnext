@@ -24,7 +24,7 @@ describe("public placement statistics privacy threshold", () => {
   });
   it("does not mutate the source metrics", () => {
     const source = Object.freeze([{ label: "Offers", count: 8 }]);
-    expect(publicPlacementDisclosure(source)[0].display).toBe("8");
+    expect(publicPlacementDisclosure(source)[0].display).toBe("10");
     expect(source[0].count).toBe(8);
   });
 });

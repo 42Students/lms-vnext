@@ -8,8 +8,9 @@ describe("TPO empty applicant grid recovery",()=>{
   expect(page).toContain("TpoApplicationsSpreadsheet");
   expect(page).toContain("Loading applicant grid");
   expect(page).toContain("Clear applicant filters");
-  expect(grid).toContain("TpoGridFilterPanel");
-  expect(grid).toContain("TpoSpreadsheetGrid");
+  expect(grid).toContain("<GridWorkspace rows={rows} columns={columns}");
+  expect(grid).toContain("filters={filters}");
+  expect(grid).toContain("<TpoGrid integratedWorkspace");
  });
  it("offers reset for genuine filter misses but not an unfiltered empty drive",()=>{
   const defaults={stage:"ALL",search:"",channel:"ALL",eligibility:"ALL",submittedWithin:"ALL"};

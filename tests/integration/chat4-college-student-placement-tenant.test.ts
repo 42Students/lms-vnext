@@ -40,14 +40,14 @@ describe.skipIf(!enabled)("College Admin class placement tenant and actor guard 
    await pool.query("insert into college_memberships(id,user_id,college_id) values($1,$2,$3)",[m,u,c]);
    await pool.query("insert into membership_roles(membership_id,role) values($1,$2)",[m,role]);
   }
-  await pool.query("insert into academic_periods(id,college_id,name,code,start_date,end_date,status) values($1,$2,$3,$3,'2026-07-01','2027-06-30','ACTIVE')",
-   [ids.period,SEED_IDS.collegeA,tag]);
-  await pool.query("insert into programs(id,department_id,name,code,duration_terms,status) values($1,$2,$3,$3,8,'ACTIVE')",
-   [ids.program,SEED_IDS.departmentA,tag]);
-  await pool.query("insert into cohorts(id,program_id,name,code,start_period_id,status) values($1,$2,$3,$3,$4,'ACTIVE')",
-   [ids.cohort,ids.program,tag,ids.period]);
-  await pool.query("insert into sections(id,cohort_id,academic_period_id,name,code,status) values($1,$2,$3,$4,$4,'ACTIVE')",
-   [ids.section,ids.cohort,ids.period,tag]);
+  await pool.query("insert into academic_periods(id,college_id,name,code,start_date,end_date,status) values($1,$2,$3,$4,'2026-07-01','2027-06-30','ACTIVE')",
+   [ids.period,SEED_IDS.collegeA,tag,tag]);
+  await pool.query("insert into programs(id,department_id,name,code,duration_terms,status) values($1,$2,$3,$4,8,'ACTIVE')",
+   [ids.program,SEED_IDS.departmentA,tag,tag]);
+  await pool.query("insert into cohorts(id,program_id,name,code,start_period_id,status) values($1,$2,$3,$4,$5,'ACTIVE')",
+   [ids.cohort,ids.program,tag,tag,ids.period]);
+  await pool.query("insert into sections(id,cohort_id,academic_period_id,name,code,status) values($1,$2,$3,$4,$5,'ACTIVE')",
+   [ids.section,ids.cohort,ids.period,tag,tag]);
   for(const [enrollment,member] of [
    [ids.ownEnrollment,ids.ownMembership],[ids.foreignEnrollment,ids.foreignMembership],
   ])await pool.query("insert into learner_program_enrollments(id,membership_id,program_id,cohort_id,status) values($1,$2,$3,$4,'ACTIVE')",

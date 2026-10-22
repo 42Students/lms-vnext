@@ -18,7 +18,9 @@ describe("TPO Team opens as read without GET mutations",()=>{
   const page=src("src/app/(authenticated)/tpo/team/[threadId]/page.tsx");
   const action=src("src/components/tpo/tpo-team-open-read.tsx");
   expect(page).toContain("Mark this conversation&apos;s alerts as read");
-  expect(action).toContain("Use the button below to retry.");
-  expect(action).toContain('role="alert"');
+  expect(action).toContain("Could not mark this conversation as read.");
+  expect(action).toContain('<Alert tone="error"');
+  expect(action).toContain("setRetryAttempt(count=>count+1)");
+  expect(action).toContain('<Button variant="secondary" type="button"');
  });
 });

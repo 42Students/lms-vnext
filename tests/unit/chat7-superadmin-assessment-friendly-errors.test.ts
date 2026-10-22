@@ -10,7 +10,7 @@ describe("Super Admin assignment and quiz authoring recoverable errors",()=>{
   expect(source).not.toContain('typeof data?.error==="string"?data.error');
   expect(source).not.toContain('throw Error(\n        data?.error');
   expect(source).toContain("setBusy(false)");
-  expect(source).toContain("Another author edited the assignment.");
+  expect(source).toContain("This assignment changed while you were editing. Reopen it to avoid overwriting someone else's changes.");
  });
  it("SA-academics-people-65 renders friendly failure text for quiz updates and submissions without leaking internal errors",()=>{
   const edit=read("src/components/courses/college-quiz-actions.tsx");

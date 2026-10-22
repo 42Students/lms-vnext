@@ -16,6 +16,7 @@ vi.mock("next/navigation",()=>({
 }));
 import TenantDetail from "@/app/(authenticated)/admin/colleges/[collegeId]/page";
 import {CollegeServiceError} from "@/modules/colleges/service";
+import {AuthorizationError} from "@/modules/permissions/policy";
 
 const collegeId="11111111-1111-4111-8111-111111111111";
 const org="aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
@@ -40,7 +41,7 @@ describe("SA-colleges-detail-01 tenant detail status and privacy",()=>{
  it("renders the selected active tenant with concrete setup links but no restore action",async()=>{
   const html=renderToStaticMarkup(await TenantDetail(props));
   for(const label of ["IIT Dharwad","Partner organization","College code",
-    "Readiness","Branding","Admins","Sign-in Methods","Web address","Tenant directory",
+    "Readiness","Branding","Admins","Sign-in Methods","Web address","Close manage panel",
     "Set up this college"]){
    expect(html).toContain(label);
   }
@@ -66,11 +67,15 @@ describe("SA-colleges-detail-01 tenant detail status and privacy",()=>{
  });
  it("does not render foreign, missing or invalid selected college data",async()=>{
   mocks.detail.mockRejectedValueOnce(new CollegeServiceError("COLLEGE_NOT_FOUND"));
-  await expect(TenantDetail(props)).rejects.toThrow("NEXT_NOT_FOUND");
-  expect(mocks.notFound).toHaveBeenCalledOnce();
+  const html=renderToStaticMarkup(await TenantDetail(props));
+  expect(html).toContain("Missing collegeId");
+  expect(html).toContain("Refresh Colleges list");
+  expect(html).not.toContain("Set up this college");
+  expect(mocks.notFound).not.toHaveBeenCalled();
  });
  it("propagates revoked Super Admin errors without emitting a partial tenant detail",async()=>{
-  mocks.detail.mockRejectedValueOnce(new Error("REVOKED"));
-  await expect(TenantDetail(props)).rejects.toThrow("REVOKED");
+  mocks.detail.mockRejectedValueOnce(new AuthorizationError("placements.manage"));
+  await expect(TenantDetail(props)).rejects.toBeInstanceOf(AuthorizationError);
+  expect(mocks.notFound).not.toHaveBeenCalled();
  });
 });

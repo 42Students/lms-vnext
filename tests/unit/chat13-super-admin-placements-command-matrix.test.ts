@@ -10,6 +10,10 @@ const timestamp="2026-10-18T09:12:34.123Z";
 const sample={
  confirmed:true,expectedUpdatedAt:timestamp,reason:"Authorized after compliance review",
  title:"Software Engineer",description:"Approved role description",locations:["Hyderabad","Remote"],
+ companyRelationshipId:a,assessmentUrl:"",assessmentDeadline:null,
+ importantDates:[],customEligibilityRules:[],
+ candidatePreferences:{preferredDegree:"",specialization:"",graduationYear:null,minGpa:null,city:""},
+ jobTypeLabel:"Full-time",employmentType:"FULL_TIME",workMode:"ONSITE",responsibilities:"",
  applicationDeadline:"2026-11-30T18:30:00+05:30",openings:10,
  minimumAnnualCtcInr:1000000,maximumAnnualCtcInr:2000000,
 };

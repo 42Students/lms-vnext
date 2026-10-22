@@ -12,6 +12,6 @@ describe("chat-9 final sprint",()=>{
   expect(page).toContain("item.sent");
   expect(page).toContain("item.skipped");
   expect(page).toContain("item.failed");
-  expect(page).toContain("Provider acceptance does not prove recipient delivery.");
+  expect(page).toContain("Sent counts mean provider acceptance, not confirmed delivery.");
  });
 });

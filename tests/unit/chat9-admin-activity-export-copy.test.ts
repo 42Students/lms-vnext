@@ -6,7 +6,10 @@ describe("legacy Super Admin and College Admin Activity Log export button",()=>{
   const s=readFileSync(join(process.cwd(),"src/app/(authenticated)/activity/page.tsx"),"utf8").split("\r").join("");
   expect(s).toContain('"/api/activity/admin-export"');
   expect(s).toContain('"/api/activity/college-export"');
-  expect(s).toContain("            Export\n          </a>");
+  expect(s).toContain("Export current page (8 columns)");
+  expect(s).toContain("Export all matching CSV");
+  expect(s).toContain("importantOnly ?");
+  expect(s).toContain("All-matching Important-only export requires the category-aware export API.");
   expect(s).not.toContain("Export filtered CSV (max 1,000)");
  });
 });

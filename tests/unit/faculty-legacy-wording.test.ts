@@ -34,7 +34,8 @@ describe("Faculty legacy wording (lists.js, CoursesContent, QuizzesContent, Assi
   it("page headings are My Courses / My Quizzes / My Assignments", () => {
     expect(page("courses/page.tsx")).toContain('title="My Courses"');
     expect(page("allQuizzes/page.tsx")).toContain('title="My Quizzes"');
-    expect(page("allAssignments/page.tsx")).toContain('title="My Assignments"');
+    expect(page("allAssignments/page.tsx")).toContain("<RetainedFacultyAssignments");
+    expect(readFileSync("src/components/courses/faculty-assessment-overview.tsx", "utf8")).toContain('title="My Assignments"');
   });
 
   it("Contacts heading follows the selected tab", () => {

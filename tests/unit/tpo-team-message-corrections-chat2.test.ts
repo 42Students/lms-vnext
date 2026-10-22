@@ -22,7 +22,7 @@ describe("TPO Team message edit and removal",()=>{
   expect(service).toContain("expectedBodyHash");
   expect(service).toContain("TEAM_STALE_MESSAGE");
   expect(service).toContain('.for("update")');
-  expect(service).toContain('metadata:{messageId:message.id}');
+  expect(service).toContain('metadata:{messageId:message.id,addedMembershipIds:');
   const route=src("src/app/api/placements/tpo/team/threads/[threadId]/messages/[messageId]/change/route.ts");
   expect(route).toContain("isSameOriginRequest(request)");
   expect(route).toContain("status:409");

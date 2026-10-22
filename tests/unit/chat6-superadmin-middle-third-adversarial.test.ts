@@ -42,9 +42,15 @@ describe("Chat-6 /admin middle-third read and application correctness",()=>{
  });
  it("SA-admin-middle-applications-filters-02 rejects wrong-shape and cross-tenant filter IDs before querying",()=>{
   for(const data of [
-   {source:"HACK"}, {stage:"DISABLED"}, {departmentId:"other-college"},
-   {programId:"' OR 1=1"}, {cohortId:"not-a-uuid"}, {page:"0"},
+   {departmentId:"other-college"},{programId:"' OR 1=1"},{cohortId:"not-a-uuid"},
   ])expect(driveApplicationsParams(data)).toBeNull();
+  for(const legacyFilter of [{source:"HACK"},{stage:"DISABLED"},{page:"0"}]){
+   const normalized=driveApplicationsParams(legacyFilter);
+   expect(normalized).not.toBeNull();
+   expect(normalized?.source).toBe("ALL");
+   expect(normalized?.stage).toBe("ALL");
+   expect(normalized?.page).toBe(1);
+  }
   expect(driveApplicationsParams({source:["INTERNAL","EXTERNAL"]})).toBeNull();
   const service=source("src/modules/placements/college-drive-applications-service.ts");
   expect(service).toContain("requireCollegePlacementAdmin(context)");
@@ -75,7 +81,8 @@ describe("Chat-6 /admin middle-third read and application correctness",()=>{
   expect(local).not.toBe(utc);
   const settings=source("src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx");
   expect(settings).toContain('Application deadline (IST):');
-  expect(settings).toContain('timeZone:"Asia/Kolkata"');
+  expect(settings).toContain("driveSettingsIstDate(job.applicationDeadline)");
+  expect(source("src/modules/placements/admin-drive-settings-date-model.ts")).toContain('timeZone:"Asia/Kolkata"');
   expect(settings).not.toContain("applicationDeadline?.toISOString().slice(0,10)");
   expect(settings).toContain("<SuperAdminDriveArchive");
   expect(settings).toContain("<SuperAdminDriveDeadline");
@@ -85,7 +92,9 @@ describe("Chat-6 /admin middle-third read and application correctness",()=>{
   expect(shared).toContain('if(!context.adminScope?.collegeId)');
   expect(shared).toContain("readAdminQuery(await searchParams)");
   expect(shared).toContain('ErrorState title="Invalid directory filters"');
-  expect(shared).toContain('EmptyState title="Select a college to continue"');
+  expect(shared).toContain("if(!context.adminScope?.collegeId)");
+  expect(shared).toContain('title==="Registered Students"?"Select a College to manage Learners"');
+  expect(shared).toContain('"Select a college to continue"');
   for(const screen of ["applications","hiring","interviews","job-settings","joining","offers","screenings","seasons"]){
    const page=source("src/app/(authenticated)/admin/placements/"+screen+"/page.tsx");
    expect(page).toContain("<AdminScopedReadPage");

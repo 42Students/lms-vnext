@@ -30,6 +30,8 @@ describe("Independent Super Admin audit findings",()=>{
   expect(service).toContain('["CRITICAL","HIGH"]');
   expect(service).toContain("INDEPENDENT_AUDIT_PAGE_SIZE");
   const page=source("src/app/(authenticated)/tracker/audit-findings/page.tsx");
-  for(const phrase of ['name="status" multiple','name="severity" multiple','name="kind" multiple','Finding views','Assigned','Reported'])expect(page).toContain(phrase);
+  const board=source("src/components/tracker/independent-audit-findings-board.tsx");
+  for(const phrase of ['name="status" multiple','name="severity" multiple','name="kind" multiple','Finding views'])expect(page).toContain(phrase);
+  for(const phrase of ['header:"Assigned"','header:"Reported"'])expect(board).toContain(phrase);
  });
 });

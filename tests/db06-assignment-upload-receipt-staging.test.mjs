@@ -276,13 +276,18 @@ test("DB053 receipt and immutable file evidence reject destructive mutation", ()
 
 test("DB053 explicitly records current producer/read cutover gaps instead of enabling runtime", () => {
   const fileInsert = submissionService.indexOf(
-    ".insert(\n            assignmentSubmissionFiles",
+    ".insert(assignmentSubmissionFiles)",
   );
   const receiptUpdate = submissionService.indexOf(
     ".update(courseUploadReceipts)",
   );
   assert.ok(fileInsert >= 0);
-  assert.ok(receiptUpdate > fileInsert);
+  // The receipt claim is conditional and precedes its immutable file evidence
+  // in the same transaction. A failed claim cannot create a file row.
+  assert.ok(receiptUpdate >= 0);
+  assert.ok(fileInsert > receiptUpdate);
+  assert.match(submissionService.slice(receiptUpdate,fileInsert),
+    /if \(!claimed\)[\s\S]*ASSIGNMENT_UPLOAD_RECEIPT_INVALID/);
 
   assert.doesNotMatch(
     privateStorage,

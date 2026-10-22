@@ -17,9 +17,9 @@ import {listLearnerCourseDeliveries,listLearnerCourseInstructors} from "@/module
 const context={user:{platformStatus:"ACTIVE"},membership:{
  id:"11111111-1111-4111-8111-111111111111",collegeId:"22222222-2222-4222-8222-222222222222",
  status:"ACTIVE",roles:["LEARNER"]}} as unknown as RequestContext;
-const a={deliveryId:"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",courseName:"Core"};
-const b={deliveryId:"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",courseName:"Elective"};
-const c={deliveryId:"cccccccc-cccc-4ccc-8ccc-cccccccccccc",courseName:"Learner group"};
+const a={deliveryId:"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",courseId:"course-core",academicPeriodId:"period-1",courseName:"Core"};
+const b={deliveryId:"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",courseId:"course-elective",academicPeriodId:"period-1",courseName:"Elective"};
+const c={deliveryId:"cccccccc-cccc-4ccc-8ccc-cccccccccccc",courseId:"course-group",academicPeriodId:"period-1",courseName:"Learner group"};
 beforeEach(()=>{
  state.select.mockReset();state.activeIds.mockReset();state.boundIds.mockReset();
  let call=0;

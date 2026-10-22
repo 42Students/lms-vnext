@@ -10,14 +10,14 @@ type Tx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
  * not block. Distinct workspace IDs avoid overcounting role aliases.
  */
 export async function activeMentorProjectCount(tx:Tx,membershipId:string){
- const rows=await tx.selectDistinct({id:projectInstances.id})
+ const rows=await tx.select({id:projectInstances.id})
   .from(projectMembers)
   .innerJoin(projectInstances,eq(projectInstances.id,projectMembers.projectId))
   .where(and(eq(projectMembers.membershipId,membershipId),
    eq(projectMembers.role,"MENTOR"),isNull(projectMembers.endedAt),
    ne(projectInstances.status,"ARCHIVED")))
   .for("share",{of:projectMembers});
- return rows.length;
+ return new Set(rows.map(row=>row.id)).size;
 }
 
 export function mentorSuspensionMessage(n:number){

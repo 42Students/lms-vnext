@@ -38,7 +38,8 @@ describe("TPO announcement targeting",()=>{
   const picker=src("src/components/tpo/tpo-notice-audience-picker.tsx");
   const page=src("src/app/(authenticated)/tpo/announcements/page.tsx");
   const route=src("src/app/api/placements/tpo/announcements/route.ts");
-  expect(picker).toContain('multiple value={targets}');
+  expect(picker).toContain('multiple required value={targets}');
+  expect(picker).toContain("previous.filter(id=>!visibleIds.has(id))");
   expect(picker).toContain('name="targetIds"');
   expect(picker).toContain("Ctrl or Cmd to choose more.");
   expect(page).toContain("initialTargets={query.success?query.data.targetIds??[]:[]}");

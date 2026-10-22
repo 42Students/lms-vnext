@@ -10,6 +10,7 @@ describe("Independent audit finding action workflow",()=>{
   expect(independentFindingActionSchema.safeParse({action:"FIX_COMMIT",expectedVersion:1,repo:"evil/xyz",sha:"1a2b3c4"}).success).toBe(false);
   const svc=src("src/modules/bug-tracker/independent-audit-findings-service.ts");
   for(const s of ["assertPersistedPlatformPermission","input.expectedVersion","eq(db10AuditFindings.version,row.version)","db10AuditFindingEvents","actorUserId:context.user.id","INVALID_DUPLICATE"])expect(svc).toContain(s);
+  expect(svc.indexOf("await tx.insert(db10AuditFindingEvents)")).toBeGreaterThan(svc.indexOf("if(!saved)return {ok:false as const,reason:\"STALE_VERSION\"}"));
   const route=src("src/app/api/tracker/audit-findings/[publicId]/route.ts");
   expect(route).toContain("isSameOriginRequest(request)");
   const detail=src("src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx");

@@ -26,14 +26,14 @@ describe("chat-7 learner course Discussion capability and concurrency",()=>{
   expect(lock.isBusy()).toBe(false);
   expect(lock.begin()).toBe(true);
  });
- it("UX-learn-discussion-limit-03 bounds persisted text at 3900 characters, rejecting whitespace-only input",()=>{
-  expect(LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH).toBe(3900);
+ it("UX-learn-discussion-limit-03 bounds persisted text at 4000 characters, rejecting whitespace-only input",()=>{
+  expect(LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH).toBe(4000);
   expect(learnerDiscussionDraftValid("  Good question  ")).toBe(true);
   expect(learnerDiscussionDraftValid("")).toBe(false);
   expect(learnerDiscussionDraftValid("   ")).toBe(false);
-  expect(learnerDiscussionDraftValid("x".repeat(3900))).toBe(true);
-  expect(learnerDiscussionDraftValid("x".repeat(3901))).toBe(false);
-  expect(learnerDiscussionDraftValid(" "+ "x".repeat(3900)+" ")).toBe(true);
+  expect(learnerDiscussionDraftValid("x".repeat(4000))).toBe(true);
+  expect(learnerDiscussionDraftValid("x".repeat(4001))).toBe(false);
+  expect(learnerDiscussionDraftValid(" "+ "x".repeat(4000)+" ")).toBe(true);
  });
  it("UX-learn-discussion-race-04 only accepts the latest positive safe refresh token",()=>{
   expect(learnerDiscussionRefreshIsCurrent(4,4)).toBe(true);

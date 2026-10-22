@@ -360,7 +360,7 @@ export function LearnerCourseAttendance({
         </div>
       </section>
 
-      <section aria-label="Student attendance summary"
+      <section aria-label="Attendance this month"
         className={"rounded-[var(--lms-canvas-radius)] border p-4 md:p-5 "+
           (summary.percentage===null?"border-border bg-surface":
            summary.percentage>=threshold?"border-[var(--lms-success)] bg-[var(--lms-success-subtle)]":
@@ -369,7 +369,7 @@ export function LearnerCourseAttendance({
           <div><h3 className="text-sm font-semibold text-foreground">Attendance this month</h3>
             <p className="mt-2 text-3xl font-semibold text-foreground">{summary.percentage===null?"—":summary.percentage+"%"}</p>
           </div>
-          <div><h3 className="text-sm font-semibold text-foreground">Requirement</h3>
+          <div><h3 className="text-sm font-semibold text-foreground">Attendance threshold</h3>
             <p className="mt-2 text-3xl font-semibold text-foreground">{threshold}%</p>
           </div>
         </div>

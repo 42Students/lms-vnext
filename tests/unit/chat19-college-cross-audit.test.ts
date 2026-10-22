@@ -46,7 +46,7 @@ describe("chat-19 college UX cross-audit", () => {
     const defaults = parseCollegeProjectsQuery({});
     expect(defaults.success).toBe(true);
     if (defaults.success) {
-      expect(defaults.data).toEqual({ view: "cards", page: 1, pageSize: 25 });
+      expect(defaults.data).toEqual({ view: "table", page: 1, pageSize: 20 });
     }
     const filtered = parseCollegeProjectsQuery({
       q: " Team  ", status: "ARCHIVED", view: "table",
@@ -78,13 +78,21 @@ describe("chat-19 college UX cross-audit", () => {
     { page: "NaN" },
     { page: "1.5" },
     { page: "999999999" },
-    { pageSize: "20000" },
-    { pageSize: "-1" },
-    { status: "OTHER_COLLEGE" },
     { view: "javascript:alert(1)" },
     { q: "x".repeat(121) },
   ])("COL-XA-08 rejects malformed or hostile project list filters: %j", input => {
     expect(parseCollegeProjectsQuery(input).success).toBe(false);
+  });
+
+  it.each([
+    { pageSize:"20000" }, { pageSize:"-1" }, { status:"OTHER_COLLEGE" },
+  ])("COL-XA-08 safely ignores obsolete bookmark facets: %j", input => {
+    const parsed=parseCollegeProjectsQuery(input);
+    expect(parsed.success).toBe(true);
+    if(parsed.success){
+      expect(parsed.data.pageSize).toBe(20);
+      expect(parsed.data.status).toBeUndefined();
+    }
   });
 
   it("COL-XA-08 returns recovery UI instead of rendering invalid pagination", () => {
@@ -99,7 +107,7 @@ describe("chat-19 college UX cross-audit", () => {
     const page = read("src/app/(authenticated)/college/projects/page.tsx");
     expect(page).toContain("const collegeId = getProjectAdminCollegeId(context)");
     expect(page).toContain("if (!collegeId)");
-    expect(page).toContain("listProjectAdminSnapshots(context, collegeId, query)");
+    expect(page).toContain("listProjectAdminSnapshots(context, collegeId, serviceQuery)");
     expect(page).toContain("listAssignedProjectTemplates(context, collegeId)");
     expect(page).toMatch(/\.catch\(\(\) => \(\{ ok: false as const \}\)\)/);
     expect(page).toContain("Workspaces are still listed");
@@ -114,7 +122,7 @@ describe("chat-19 college UX cross-audit", () => {
       mentorName:"Mentor",memberCount:3,progressPercent:25,riskReasons:[]};
     models.context.mockResolvedValue(context);
     models.college.mockReturnValue("college-a");
-    models.snapshots.mockResolvedValue({items:[project],total:1,page:1,pageSize:25,totalPages:1});
+    models.snapshots.mockResolvedValue({items:[project],total:1,page:1,pageSize:20,totalPages:1});
     models.templates.mockRejectedValue(new Error("optional template service is offline"));
     const output=await CollegeProjectsPage({searchParams:Promise.resolve({})});
     const visible=listedItems(output);
@@ -123,7 +131,7 @@ describe("chat-19 college UX cross-audit", () => {
     expect(nestedText(output)).toContain("Workspaces are still listed");
     expect(nestedText(output)).not.toContain("optional template service is offline");
     expect(models.snapshots).toHaveBeenCalledWith(context,"college-a",
-      expect.objectContaining({view:"cards",page:1,pageSize:25}));
+      expect.objectContaining({view:"table",page:1,pageSize:20}));
     expect(models.templates).toHaveBeenCalledWith(context,"college-a");
   });
 
@@ -131,7 +139,7 @@ describe("chat-19 college UX cross-audit", () => {
     const page = read("src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx");
     expect(page).toContain("<DataTable");
     expect(page).toContain('caption="Students in this batch"');
-    expect(page).toContain('empty={<p className="text-sm text-muted-foreground">No matching students.</p>}');
+    expect(page).toContain('empty={<EmptyState title="No matching students"');
     for (const column of ["Name", "Roll Number", "Email", "Current class", "Action"]) {
       expect(page).toContain(`header: "${column}"`);
     }
@@ -139,7 +147,7 @@ describe("chat-19 college UX cross-audit", () => {
     expect(page).toContain("<StudentClassMoveAction");
     expect(page).not.toContain("<table");
     const table = read("src/components/ui/data-table.tsx");
-    expect(table).toContain('sm:hidden');
+    expect(table).toContain('md:hidden');
     expect(table).toContain('const visibleOnPhone');
     expect(table).toContain('<ScrollCue axis="x"');
   });
@@ -159,7 +167,7 @@ describe("chat-19 college UX cross-audit", () => {
     expect(page).toContain('mobilePriority: "primary"');
     expect(page).toContain('mobilePriority: "secondary"');
     expect(page).toContain('name="membershipId"');
-    expect(page).toContain('empty={<p');
+    expect(page).toContain('empty={<EmptyState title="No eligible learners"');
     expect(page).not.toContain("<table");
     expect(page).toContain('<ScrollCue axis="y"');
     expect(page).toContain('viewportClassName="max-h-80"');
@@ -181,7 +189,7 @@ describe("chat-19 college UX cross-audit", () => {
     const source = read("src/app/(authenticated)/college/faculty-assignment/page.tsx");
     expect(source).toContain('caption="Teaching assignment roster"');
     expect(source).toContain("<DataTable");
-    for (const key of ["faculty", "course", "class", "period", "role", "active", "actions"]) {
+    for (const key of ["faculty", "course", "class", "semester", "year", "role", "active", "actions"]) {
       expect(source).toContain(`key: "${key}"`);
     }
     expect(source).toContain('<CollegeFacultyAssignmentEnd');
@@ -209,7 +217,7 @@ describe("chat-19 college UX cross-audit", () => {
       expect(source).toContain(`key: "${key}"`);
     }
     expect(source).toContain('name="confirm"');
-    expect(source).toContain('required /> Confirm removal');
+    expect(source).toContain('aria-label={"Confirm removal of "+(member.displayName??"this student")} /> Confirm removal');
     expect(source).toContain('disabled={faculty.length === 0}');
     expect(source).toContain('Archived offerings are read-only.');
     expect(source).not.toContain("<table");
@@ -224,7 +232,8 @@ describe("chat-19 college UX cross-audit", () => {
     const tryPosition = source.indexOf("    try {", source.indexOf("async function mutate("));
     expect(parseMembership).toBeGreaterThan(tryPosition);
     expect(source).toContain("Could not update this student. Check eligibility and capacity, then try again.");
-    expect(source).toContain('eq(electiveSlots.collegeId, context.membership.collegeId)');
+    expect(source).toContain('requirePermission(context, "academics.manage"');
+    expect(source).toContain('collegeId: row.slot.collegeId');
   });
 
   it("UX-college-scroll-motion-01 responsive rosters offer an actual shared scroll cue instead of a hidden scrollbar", () => {

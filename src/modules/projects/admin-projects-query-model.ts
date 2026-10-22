@@ -24,7 +24,7 @@ const schema = z.strictObject({
   status: z.enum(["PLANNED","ACTIVE","IN_PROGRESS","READY","BLOCKED","COMPLETED","ARCHIVED"]).optional(),
   view: z.enum(["cards", "table"]).default("table"),
   page: positiveDecimal(1, 100000, 1),
-  pageSize: positiveDecimal(10, 100, 10),
+  pageSize: positiveDecimal(10, 100, 20),
 });
 
 function first(value: string | string[] | undefined) {

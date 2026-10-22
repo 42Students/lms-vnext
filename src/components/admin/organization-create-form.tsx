@@ -85,7 +85,7 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
         />
         {nameError?<p id="organization-name-error" role="alert" className="mt-1 text-xs text-error">{error??"Please enter organization name"}</p>:null}
       </div>
-      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-fit" disabled={pending} loading={pending}>
+      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-fit" disabled={pending || !name.trim()} loading={pending}>
         <span aria-hidden="true" className="mr-2">＋</span>{pending ? "Creating…" : "Create Organization"}
       </Button>
       {restored ? <p role="status" className="text-xs leading-5 text-muted-foreground md:col-span-2">Draft restored</p> : null}

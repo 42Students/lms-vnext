@@ -17,7 +17,7 @@ describe("COL-academics-directory-FILTER-01 strict college semester/batch URL fi
    minimumCredits:0,maximumCredits:24,status:"ACTIVE",
   });
   expect(collegeSemesterDirectorySchema.parse({})).toMatchObject({
-   page:1,pageSize:10,status:"ALL",
+   page:1,pageSize:25,status:"ALL",
   });
  });
  it("denies unknown, array-valued and forged URL fields instead of broadening results",()=>{

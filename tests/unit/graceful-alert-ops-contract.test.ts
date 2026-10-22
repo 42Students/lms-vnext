@@ -16,8 +16,9 @@ describe("independent Telegram health monitoring", () => {
     expect(manifest).toContain("--max-time 150");
     expect(manifest).toContain('concurrencyPolicy: Forbid');
     expect(scheduler).toContain("180_000");
-    expect(scheduler).toContain("let limit = 12");
-    expect(scheduler).toContain("page < 1 && limit > 0");
+    expect(scheduler).toContain("let limit = 24");
+    expect(scheduler).toContain("const pageBudget = 2");
+    expect(scheduler).toContain("page < pageBudget && limit > 0");
     expect(scheduler).toContain("if (result.errors.length > limit) return;");
     expect(scheduler).toContain("pollPageToken: nextPageToken");
   });

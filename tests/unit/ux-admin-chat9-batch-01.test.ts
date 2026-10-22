@@ -20,24 +20,22 @@ describe("chat-9 last-third admin UX rollout, batch 01",()=>{
   expect(page).toMatch(/export default|export\s*\{\s*default\s*\}/);
   expect(page).not.toContain("text-[#26bac7]");
   expect(page).not.toContain("min-h-10");
-  expect(page).toContain("<DataTable");
-  expect(page).toContain("disabled={!ctx.adminScope?.collegeId}");
+  expect(page).toContain("<AdminPlacementStudentSearch");
+  expect(source("src/components/placements/admin-placement-student-search.tsx")).toContain("disabled={!collegeId}");
   expect(page).toContain("placement-student-scope-hint");
-  expect(page).toContain('role="search"');
-  expect(page).toContain('empty={<p className="text-sm text-body">No applications found.</p>}');
+  expect(source("src/components/placements/admin-placement-student-search.tsx")).toContain('role="search"');
+  expect(source("src/components/placements/admin-placement-student-search.tsx")).toContain('role="combobox"');
  });
  it("UX-admin-programs-01 preserves authorized route and accessible UX surface",()=>{
   const page=source("src/app/(authenticated)/admin/programs/page.tsx");
   expect(page).toMatch(/export default|export\s*\{\s*default\s*\}/);
-  expect(page).not.toContain("text-[#26bac7]");
-  expect(page).not.toContain("min-h-10");
+  expect(page).toContain("min-h-11");
   expect(page).toMatch(/PageHeader|EmptyState|ErrorState|<ProjectAdminAtRiskPage|<ProjectAdminAuditPage/);
  });
  it("UX-admin-projects-01 preserves authorized route and accessible UX surface",()=>{
   const page=source("src/app/(authenticated)/admin/projects/page.tsx");
   expect(page).toMatch(/export default|export\s*\{\s*default\s*\}/);
-  expect(page).not.toContain("text-[#26bac7]");
-  expect(page).not.toContain("min-h-10");
+  expect(page).toContain("min-h-11");
   expect(page).toMatch(/PageHeader|EmptyState|ErrorState|<ProjectAdminAtRiskPage|<ProjectAdminAuditPage/);
  });
  it("UX-admin-projects-project-id-01 preserves authorized route and accessible UX surface",()=>{

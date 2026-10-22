@@ -157,7 +157,8 @@ describe("chat-2 last-third failure and joining outcome report pages",()=>{
     expect(html).toContain("No currently accepted offers have joining outcomes");
     expect(html).toContain("No acceptance evidence means no joining outcome");
     expect(html).toContain("Review joining follow-ups");
-    expect(html).toContain("sm:grid-cols-2");
+    expect(html).toContain("grid-cols-2");
+    expect(html).toContain("xl:grid-cols-5");
   });
 
   it("TPO-joining-06 renders persisted company and drive counts without exposing student contact fields",async()=>{

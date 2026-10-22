@@ -50,7 +50,12 @@ test("DB044 preserves vNext one-submission uniqueness", () => {
   // Migration 0098 registered attempt_number/previous_points (legacy fidelity)
   // as non-key columns; the one-submission unique index above is unchanged.
   assert.match(schema, /attemptNumber:\s*integer\("attempt_number"\)\.notNull\(\)\.default\(1\)/);
-  assert.doesNotMatch(schema, /semesterNumber|semester_number/);
+  // The historical semester snapshot may be persisted, but never joins the
+  // one-row-per-assignment-and-learner identity key.
+  assert.match(schema, /semesterNumber:\s*integer\("semester_number"\)/);
+  const uniqueness = schema.slice(schema.indexOf('"assignment_submissions_assignment_membership_uq"'),
+    schema.indexOf('"assignment_submissions_id_assignment_member_uq"'));
+  assert.doesNotMatch(uniqueness, /semesterNumber|semester_number/);
 
   assert.match(
     service,

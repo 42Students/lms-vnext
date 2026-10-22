@@ -75,7 +75,7 @@ describe("optional module access resolution", () => {
     });
   });
 
-  it("resolves Placements through the same specificity and lock chain as other modules", () => {
+  it("keeps Placements at college or broader scope even when a membership rule is locked", () => {
     const result = resolveModuleAccessFromRules(chain, [
       {
         scopeType: "MEMBERSHIP",
@@ -95,8 +95,8 @@ describe("optional module access resolution", () => {
 
     expect(result.placements).toMatchObject({
       enabled: true,
-      level: "MEMBERSHIP",
-      locked: true,
+      level: "COLLEGE",
+      locked: false,
     });
   });
 });

@@ -5,6 +5,13 @@ import {runCollegeFacultyCsv,FACULTY_CSV_COLUMNS} from "@/modules/people/college
 const {onboard,profile}=vi.hoisted(()=>({
  onboard:vi.fn(),profile:vi.fn(),
 }));
+// Scoped department ownership is verified before any faculty provisioning.
+// The unit-test DB boundary returns only the active college department.
+vi.mock("@/db/client",()=>({
+ getDb:()=>({select:()=>({from:()=>({where:()=>({limit:async()=>[{
+  id:"77777777-7777-4777-8777-777777777777",
+ }]})})})}),
+}));
 vi.mock("@/modules/people/runtime",()=>({
  onboardPersonWithRuntime:onboard,
  upsertFacultyProfileWithRuntime:profile,
@@ -18,7 +25,8 @@ const ctx:RequestContext={
 };
 const header=FACULTY_CSV_COLUMNS.join(",");
 const csv=(...rows:string[])=>header+"\n"+rows.join("\n");
-const valid="Ada,Lovelace,9876543210,ada@example.com,professor";
+const department="77777777-7777-4777-8777-777777777777";
+const valid="Ada,Lovelace,9876543210,ada@example.com,professor,"+department;
 afterEach(()=>{onboard.mockReset();profile.mockReset();});
 
 describe("College faculty CSV preview, duplicate and partial-failure behavioural coverage",()=>{
@@ -36,18 +44,18 @@ describe("College faculty CSV preview, duplicate and partial-failure behavioural
   const quoted=await runCollegeFacultyCsv(ctx,{action:"PREVIEW",csv:header+"\n\"unterminated"});
   expect(quoted).toMatchObject({preview:true,structuralErrors:["INVALID_CSV_FORMAT"],results:[]});
   const many=await runCollegeFacultyCsv(ctx,{action:"PREVIEW",
-   csv:csv(...Array.from({length:501},(_,i)=>"Name,Person"+i+",9876543210,,Professor"))});
+   csv:csv(...Array.from({length:501},(_,i)=>"Name,Person"+i+",9876543210,,Professor,"+department))});
   expect(many).toMatchObject({preview:true,structuralErrors:["ROW_LIMIT_EXCEEDED"],results:[]});
   expect(onboard).not.toHaveBeenCalled();
  });
 
  it("COL-faculty-CSV-03 rejects duplicate contacts, invalid role type, bad cell count and invalid phone",async()=>{
   const report=await runCollegeFacultyCsv(ctx,{action:"PREVIEW",csv:csv(
-   "Ada,Lovelace,9876543210,ada@example.com,Professor",
-   "Grace,Hopper,+919876543210,grace@example.com,Lecturer",
-   "Unknown,Type,9988776655,,Executive",
-   "Missing,Number,,,Professor",
-   "Extra,Column,9988776611,x@example.com,Professor,unexpected",
+   "Ada,Lovelace,9876543210,ada@example.com,Professor,"+department,
+   "Grace,Hopper,+919876543210,grace@example.com,Lecturer,"+department,
+   "Unknown,Type,9988776655,,Executive,"+department,
+   "Missing,Number,,,Professor,"+department,
+   "Extra,Column,9988776611,x@example.com,Professor,"+department+",unexpected",
   )});
   expect(report.preview).toBe(true);
   expect(report.valid).toBe(1);
@@ -81,7 +89,7 @@ describe("College faculty CSV preview, duplicate and partial-failure behavioural
    collegeId:college,displayName:"Ada Lovelace",
    phoneE164:"+919876543210",roles:["FACULTY"],
   }));
-  expect(profile).toHaveBeenCalledWith(ctx,id,expect.objectContaining({employmentType:"Professor"}));
+  expect(profile).toHaveBeenCalledWith(ctx,id,expect.objectContaining({employmentType:"Professor",primaryDepartmentId:department}));
  });
 
  it("COL-faculty-CSV-06 dependency failures never display raw identity exceptions or hide partial onboarding",async()=>{

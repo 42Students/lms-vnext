@@ -19,18 +19,18 @@ const links: MoreLink[] = TPO_MORE_GROUPS.flatMap(
 describe("TPO profile role formatting", () => {
   it("preserves the TPO acronym", () => {
     expect(formatTpoProfileRole("TPO")).toBe(
-      "TPO",
+      "Placement officer",
     );
   });
 
   it("formats other stored membership roles", () => {
     expect(
       formatTpoProfileRole("FACULTY"),
-    ).toBe("Faculty");
+    ).toBe("Placement team");
 
     expect(
       formatTpoProfileRole("COLLEGE_ADMIN"),
-    ).toBe("College Admin");
+    ).toBe("College admin (acts as placement officer)");
   });
 });
 
@@ -41,14 +41,10 @@ describe("TPO More navigation", () => {
     );
 
     expect(destinations).toEqual([
-      "/tpo/students",
-      "/tpo/requests",
-      "/tpo/calendar",
-      "/tpo/reports",
-      "/tpo/notifications",
-      "/tpo/audit",
-      "/tpo/recruiters?view=companies",
-      "/tpo/profile",
+      "/tpo/batches", "/tpo/requests", "/tpo/calendar",
+      "/tpo/announcements", "/tpo/messages",
+      "/tpo/settings?tab=team", "/tpo/reports", "/tpo/notifications",
+      "/tpo/settings", "/tpo/audit", "/tpo/profile",
     ]);
   });
 
@@ -86,31 +82,16 @@ describe("TPO More navigation", () => {
     }
   });
 
-  it("uses the working companies view rather than a name-dependent redirect", () => {
-    const companies = links.find(
-      (link) => link.label === "Companies",
-    );
-
-    expect(companies?.href).toBe(
-      "/tpo/recruiters?view=companies",
-    );
-    expect(companies?.href).not.toBe(
-      "/tpo/companies",
-    );
+  it("keeps placement team management inside the working TPO settings workspace", () => {
+    const team = links.find((link) => link.label === "Placement team");
+    expect(team?.href).toBe("/tpo/settings?tab=team");
+    expect(links.some(link => link.label === "Companies")).toBe(false);
   });
 
-  it("does not link unimplemented utilities", () => {
-    const destinations = links.map(
-      (link) => link.href,
-    );
-
-    for (const unavailable of [
-      "/tpo/messages",
-      "/tpo/settings",
-    ]) {
-      expect(destinations).not.toContain(
-        unavailable,
-      );
-    }
+  it("links messaging and settings only through existing TPO workspaces", () => {
+    const destinations = links.map((link) => link.href);
+    expect(destinations).toContain("/tpo/messages");
+    expect(destinations).toContain("/tpo/settings");
+    expect(destinations).toContain("/tpo/settings?tab=team");
   });
 });

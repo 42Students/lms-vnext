@@ -127,7 +127,7 @@ describe("placement report aggregations", () => {
     expect(report.metrics.acceptedOffers).toBe(3);
     expect(report.metrics.studentsPlaced).toBe(1);
     expect(report.metrics.studentsAccepted).toBe(1);
-    expect(report.metrics.placementRatePercent).toBe(33);
+    expect(report.metrics.placementRatePercent).toBe(33.3);
   });
 
   it("attributes the same learner's applications to the correct branches", () => {
@@ -260,7 +260,7 @@ describe("placement report aggregations", () => {
       applications: 0,
       offers: 0,
       studentsPlaced: 0,
-      placementRatePercent: null,
+      placementRatePercent: 0,
       averagePackageInr: null,
       highestPackageInr: null,
     });

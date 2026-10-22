@@ -6,10 +6,12 @@ describe("chat-5 final sprint faculty course list and core lesson contracts",()=
  it("FAC-courses-02 keeps an accessible non-upload initial fallback while real thumbnail persistence remains unavailable",()=>{
   const list=src("src/components/courses/faculty-course-list.tsx");
   const card=src("src/components/courses/learner-course-card-image.tsx");
-  expect(list).toContain('import Image from "next/image"');
-  expect(list).toContain('src="/assets/images/common/course.svg"');
-  expect(list).toContain('alt="" width={64} height={64}');
-  expect(list).toContain('aria-hidden="true"');
+  const cover=src("src/components/courses/faculty-course-cover.tsx");
+  expect(list).toContain("FacultyCourseCover");
+  expect(cover).toContain('import Image from "next/image"');
+  expect(cover).toContain('src="/assets/images/common/course.svg"');
+  expect(cover).toContain('width={100} height={100}');
+  expect(cover).toContain('alt="" aria-hidden="true"');
   expect(list).not.toContain('course.courseName.trim().slice(0,2).toUpperCase()');
   expect(card).toContain("learnerCourseCardMediaAfterError(thumbnailUrl,failed)");
   expect(card).toContain('alt=""');
@@ -20,7 +22,7 @@ describe("chat-5 final sprint faculty course list and core lesson contracts",()=
   const list=src("src/components/courses/faculty-course-list.tsx");
   const auto=src("src/components/courses/faculty-course-filter-auto-submit.tsx");
   expect(list).toContain("FacultyCourseFilterAutoSubmit");
-  expect(list).toContain('placeholder="Course, code, Section or academic period"');
+  expect(list).toContain('placeholder="Search Courses..."');
   expect(list).toContain('action="/teacher/courses" method="get"');
   expect(auto).toContain('target.name==="q"?350:0');
   expect(auto).toContain('router.replace("/teacher/courses"+(query?"?"+query:""),{scroll:false})');
@@ -33,8 +35,8 @@ describe("chat-5 final sprint faculty course list and core lesson contracts",()=
   const course=src("src/components/courses/faculty-course-workspace.tsx");
   expect(course).toContain("<details");
   expect(course).toContain("<summary");
-  expect(course).toContain('open={selectedLessonId?true:lessonIndex===0?true:undefined}');
-  expect(course).toContain('Expand or collapse lesson');
+  expect(course).toContain('defaultOpen={Boolean(selectedLessonId || lessonIndex === 0)}');
+  expect(course).toContain("Expand lesson");
  });
  it("FAC-courses-17 enforces a real 12-hour IST picker and 15-minute schedule rules",()=>{
   const editor=src("src/components/courses/faculty-live-class-editor.tsx");
@@ -52,10 +54,10 @@ describe("chat-5 final sprint faculty course list and core lesson contracts",()=
   expect(roster).toContain('const contacts = learners.filter(');
   expect(roster).toContain("sortFacultyRosterByRollThenName");
   expect(roster).toContain("facultyRosterMetrics");
-  expect(roster).toContain('aria-label={"Preview avatar for "+nameOf(learner)}');
+  expect(roster).toContain('aria-label={"View "+nameOf(learner)+" profile photo"}');
   expect(roster).toContain("facultyRosterPhotoPreview(preview.photoDownloadUrl)");
-  expect(roster).toContain('description="Only photos provided through an authorized course roster can be displayed."');
-  expect(roster).toContain("No photo is available for this student.");
+  expect(roster).toContain('alt={"Profile photograph of "+nameOf(preview)}');
+  expect(roster).toContain("initials(nameOf(preview))");
   expect(src("docs/audit/pages/faculty/courses-review.md")).toContain("WRONG (partly)");
  });
 });

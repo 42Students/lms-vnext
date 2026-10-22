@@ -289,7 +289,8 @@ export function TpoDriveEditForm({job}:{job:Draft}){
  <div className="grid min-w-0 items-start gap-[18px] lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
  <form onSubmit={submit} onChange={event=>{
   markDirty();setSaved(null);
-  const field=event.target as HTMLInputElement;
+  const field=event.target;
+  if(!(field instanceof HTMLInputElement))return;
   if(field.name==="title")setReviewTitle(field.value);
   if(field.name==="applicationDeadline")setReviewDeadline(field.value);
  }} className="min-w-0 space-y-4 border-b border-border pb-5 [overflow-wrap:anywhere]">
@@ -633,7 +634,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
          " – ₹"+role.maximumAnnualCtcInr.toLocaleString("en-IN"):""}</dd></div>
        <div><dt className="inline font-semibold">Monthly stipend: </dt><dd className="inline">
         {role.stipendPerMonthInr===null||role.stipendPerMonthInr===undefined?
-         "—":"₹"+role.stipendPerMonthInr.toLocaleString("en-IN")}</dd></div>
+         "—":"₹"+Number(role.stipendPerMonthInr).toLocaleString("en-IN")}</dd></div>
       </dl>
      </li>)}</ul>:
      <p className="text-sm text-muted-foreground">No role packages recorded.</p>}

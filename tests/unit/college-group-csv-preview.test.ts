@@ -15,13 +15,13 @@ describe("Student Group email import dry-run", () => {
   it("rejects missing header, oversize files and malformed quoting", () => {
     expect(() => parseMemberEmailCsv("not_email\na@example.com")).toThrow("CSV_HEADER_EMAIL_REQUIRED");
     expect(() => parseMemberEmailCsv('email\n"unterminated')).toThrow("UNTERMINATED_CSV_QUOTE");
-    expect(() => parseMemberEmailCsv("email\n" + "a@example.com\n".repeat(501)))
+    expect(() => parseMemberEmailCsv("email\n" + "a@example.com\n".repeat(2001)))
       .toThrow("CSV_ROW_LIMIT");
     expect(collegeGroupCsvPreviewSchema.safeParse({
       groupId: "10000000-0000-4000-8000-000000000001", csv: "email\n", collegeId: "forged",
     }).success).toBe(false);
     expect(collegeGroupCsvPreviewSchema.safeParse({
-      groupId: "10000000-0000-4000-8000-000000000001", csv: "a".repeat(131073),
+      groupId: "10000000-0000-4000-8000-000000000001", csv: "a".repeat(524289),
     }).success).toBe(false);
   });
   it("neutralizes formulas and escapes CSV quotations in the error export", () => {

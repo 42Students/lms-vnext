@@ -51,7 +51,7 @@ export default async function SuperAdminBatchPromotionPage({
   const pageCount=Math.max(1,Math.ceil(options.totalCohorts/pageSize));
   const currentPage=Math.min(requestedPage,pageCount);
   const shownCohorts=visibleCohorts;
-  const filters=input.data;
+  const filters = input.data;
   function pageHref(page:number,size=pageSize){
     const query=new URLSearchParams();
     if(filters.programId)query.set("programId",filters.programId);

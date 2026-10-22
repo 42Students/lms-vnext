@@ -23,7 +23,7 @@ export default async function CollegeVideosPage({
   if (!parsed.success) {
     return (
       <div className="min-w-0 space-y-6">
-        <PageHeader eyebrow="College Admin · Courses & Content" title="Videos" />
+        <PageHeader eyebrow="College Admin · Courses & Content" title="Video" />
         <ErrorState title="Invalid video filters"
           description="The title, status or page filter is invalid. No content was loaded."
           action={<Link href="/college/videos" className="min-h-11 md:min-h-9 inline-flex min-h-[var(--lms-control-height)] items-center font-semibold text-link underline lms-inline-link hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
@@ -46,7 +46,7 @@ export default async function CollegeVideosPage({
           (tab.label==="Videos"?"border-[var(--lms-teal-deep)] text-[var(--lms-teal-deep)]":
            "border-transparent text-body hover:border-border hover:text-link")}>{tab.label}</Link>)}
     </nav>
-    <PageHeader title="Videos" description="Upload a video or link a YouTube video to a lesson." eyebrow="College Admin · Courses & Content"
+    <PageHeader title="Video" description="Upload a video or link a YouTube video to a lesson." eyebrow="College Admin · Courses & Content"
       actions={<Link href="/college/lessons" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Lessons</Link>} />
     <div className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] lg:grid-cols-2">
       <section aria-label="Create a video" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">

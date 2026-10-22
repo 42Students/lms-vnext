@@ -11,7 +11,7 @@ describe("chat-11 college academic page parity round five",()=>{
   for(const invalid of ["0","0.5","11","3.5",""])expect(validLegacyProgramYears(invalid)).toBe(false);
   const list=read("src/components/admin/admin-program-directory.tsx");
   expect(list).toContain("Program code (optional)");
-  expect(list).toContain("deriveSuperAdminProgramCode(name)");
+  expect(list).toContain("availableSuperAdminProgramCode(name,departmentId,programs)");
   const edit=read("src/components/academics/academics-actions.tsx");
   expect(edit).toContain("setDepartmentId");
   expect(edit).toContain("durationTerms: displayDurationYears ? Number(durationTerms)*2");
@@ -19,7 +19,7 @@ describe("chat-11 college academic page parity round five",()=>{
  it("COL-academic-setup-29 disables dependent batch removal with explicit student and class counts",()=>{
   const code=read("src/components/academics/college-cohort-management.tsx");
   expect(code).toContain("row.activeSections>0 || row.activeEnrolledLearners>0");
-  expect(code).toContain("Move or remove its ${row.activeSections} classes and ${row.activeEnrolledLearners} students before deleting.");
+  expect(code).toContain("Cannot archive while ${row.activeSections} classes and ${row.activeEnrolledLearners} students are linked.");
   expect(read("src/components/academics/college-academic-directory.tsx")).toContain("Clear filters");
  });
  it("COL-academic-setup-32 launches a selected class schedule from its list row",()=>{
@@ -31,11 +31,14 @@ describe("chat-11 college academic page parity round five",()=>{
   expect(preview).toContain('useState(chosen?.periodEnd ?? "")');
  });
  it("COL-academic-setup-39 uses Export CSV labels and keeps intentional capped server export",()=>{
-  for(const name of ["classes","batches","semesters","lecture-halls"]){
+  for(const name of ["classes","batches","semesters"]){
    const code=read(`src/app/(authenticated)/college/${name}/page.tsx`);
    expect(code).toContain("Export CSV");
    expect(code).not.toContain("Export filtered ");
   }
+  const halls=read("src/app/(authenticated)/college/lecture-halls/page.tsx");
+  expect(halls).toContain("Export all matching halls (CSV)");
+  expect(halls).toContain("lectureHallsCsvHref(query)");
   expect(read("src/modules/academics/college-academic-export-model.ts")).toContain("ACADEMIC_EXPORT_CAP=1000");
  });
 });

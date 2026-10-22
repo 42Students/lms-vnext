@@ -29,18 +29,20 @@ describe("chat-11 faculty attendance gap closure verification",()=>{
  it("FAC-attendance-grades-07 validates end after start, 12-hour bound and successful scheduling",()=>{
    const model=file("src/modules/attendance/faculty-schedule-editor-model.ts");
    expect(model).toContain("End time must be after start time");
-   expect(model).toContain("A class can be at most 12 hours. Check AM/PM.");
+   expect(model).toContain("A single class session cannot exceed 12 hours");
    expect(ui()).toContain('setSavedNotice("Class scheduled successfully.")');
    expect(typeof facultyScheduleInstants).toBe("function");
  });
  it("FAC-attendance-grades-08 shows legacy monthly attendance legend and Active days",()=>{
-   const code=ui();expect(code).toContain("P = Present · A = Absent");
+   const code=ui();expect(code).toContain("<StatusBadge tone=\"success\">P = Present</StatusBadge>");
+   expect(code).toContain("<StatusBadge tone=\"error\">A = Absent</StatusBadge>");
    expect(code).toContain("✖ = No class");
-   expect(code).toContain('["Active days", monthDays.filter(day=>day.sessions.length>0).length]');
+   expect(code).toContain("Active days</span>");
+   expect(code).toContain("new Set(heldMonthSessions.map(session => indiaAttendanceDayKey(session.startsAt))).size");
  });
  it("FAC-attendance-grades-09 shows marked and unmarked session counts with monthly report tiles",()=>{
    const code=ui();expect(code).toContain("present marks across");
-   expect(code).toContain("session(s) not yet marked");
+   expect(code).toContain('session${monthSummary.unmarkedSessions === 1 ? "" : "s"} not yet marked');
    for(const label of ['["Students",','["Sessions",','["Absences",','["Not marked",'])expect(code).toContain(label);
  });
  it("FAC-attendance-grades-11 searches the roster with the legacy student-name label",()=>{
@@ -59,7 +61,7 @@ describe("chat-11 faculty attendance gap closure verification",()=>{
  it("FAC-attendance-grades-17 shows Download Report and safe PDF error feedback",()=>{
    const code=file("src/components/courses/faculty-report-download.tsx");
    expect(code).toContain('?"Download Report":"Download PDF"');
-   expect(code).toContain("Couldn\\'t generate the attendance report. Please try again.");
+   expect(code).toContain("Couldn't generate the attendance report. Please try again.");
    expect(ui()).toContain('kind="attendance"');
  });
 });

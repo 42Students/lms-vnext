@@ -10,6 +10,7 @@ describe("LEARNER-placements-47 notice origin and scope",()=>{
   const base={id:"n",title:"Notice",message:"Text",createdAt:new Date("2099-01-01"),
    updatedAt:new Date("2099-01-02"),isPinned:false,senderType:"TPO",receiverType:"COLLEGE"};
   expect(learnerPlacementNoticeFeed([{...base,version:2}])[0]?.updatedAt).toBe("2099-01-02T00:00:00.000Z");
-  expect(learnerPlacementNoticeFeed([{...base,version:1}])[0]?.updatedAt).toBeNull();
+  expect(learnerPlacementNoticeFeed([{...base,version:1}])[0]?.updatedAt).toBe("2099-01-02T00:00:00.000Z");
+  expect(learnerPlacementNoticeFeed([{...base,version:1,updatedAt:base.createdAt}])[0]?.updatedAt).toBeNull();
  });
 });

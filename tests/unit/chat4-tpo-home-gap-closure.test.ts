@@ -44,10 +44,10 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
  it("TPO-home-R06 avoids invented fallback copy or fabricated null counts",()=>{
   const unknown=rows({batch:{name:"Batch",eligible:null,registered:null,placed:null,invited:false}});
   expect(unknown[0].status).toBe("Batch");
-  expect(unknown[2].status).toBe("");
-  expect(unknown[3].status).toBe("");
-  expect(unknown[4].status).toBe("");
-  expect(unknown[5].status).toBe("");
+  expect(unknown[2].status).toBe("Registration data unavailable");
+  expect(unknown[3].status).toBe("Recruiter data unavailable");
+  expect(unknown[4].status).toBe("Requests unavailable · Messages unavailable");
+  expect(unknown[5].status).toBe("Team updates unavailable");
   const known=rows({recruiterLeads:3,followUps:2,recruiterAccess:1});
   expect(known[3].status).toBe("3 recruiters · 2 follow-ups today · 1 new account to approve");
   for(const row of unknown)expect(row.status).not.toMatch(/Open student roster|Open recruiter relationships|Follow-ups unavailable|Open requests and messages|Open team|Registration summary unavailable/);
@@ -114,11 +114,12 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
   const src=source("src/components/tpo/tpo-bell-panel.tsx");
   expect(src).toContain("item.createdAt");
   expect(src).toContain('className="sr-only"> New notification.');
-  expect(source("src/app/(authenticated)/tpo/layout.tsx")).toContain("slice(0,20)");
+  expect(src).toContain("displayedItems.slice(0,20)");
  });
  it("TPO-home-39 uses the accessible notification Drawer instead of an absolute region",()=>{
   const src=source("src/components/tpo/tpo-bell-panel.tsx");
-  expect(src).toContain('<Drawer open={open} onOpenChange={changeOpen} title="Notifications"');
+  expect(src).toContain('<Drawer id="tpo-notification-drawer" open={open} onOpenChange={changeOpen}');
+  expect(src).toContain('<PopoverPanel id="tpo-notification-popover"');
   expect(src).toContain("aria-expanded={open}");
   const drawer=source("src/components/ui/drawer.tsx");
   expect(drawer).toContain("modal.showModal()");
@@ -144,13 +145,14 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
  });
  it("TPO-home-18 verified legacy and graceful behavior",()=>{
   const s=source("src/app/(authenticated)/tpo/home/page.tsx");
-  expect(s).toContain("lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]");
+  expect(s).toContain("min-[992px]:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]");
 
  });
  it("TPO-home-20 verified legacy and graceful behavior",()=>{
   const s=source("src/app/(authenticated)/tpo/home/loading.tsx");
   expect(s).toContain("Loading placement home");
-  expect(s).toContain('<PageLoading label="Loading placement home…" variant="kpi" count={4} />');
+  expect(s).toContain('<Skeleton variant="card" count={1} label="Loading Next up" />');
+  expect(s).toContain('<Skeleton variant="row" count={7} label="Loading placement work" />');
   const skeleton=source("src/components/ui/skeleton.tsx");
   expect(skeleton).toContain("lms-skeleton-shimmer");
   expect(skeleton).toContain("motion-reduce:animate-none");
@@ -210,7 +212,7 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
  it("TPO-home-38 verified legacy and graceful behavior",()=>{
   const s=source("src/components/tpo/tpo-bell-panel.tsx");
   expect(s).toContain("/api/tpo/notifications/read-all");
-  expect(s).toContain("unread>0?<button");
+  expect(s).toContain('unread>0?<Button variant="secondary"');
   expect(s).toContain("Mark all read");
   expect(s).not.toContain("window.confirm");
  });
@@ -247,10 +249,11 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
   const trigger=source("src/components/tpo/tpo-find-shortcut.tsx");
   const api=source("src/app/api/tpo/find-suggestions/route.ts");
   expect(trigger).toContain("<Dialog");
+  expect(trigger).toContain('<PopoverListbox id="tpo-find-results" label="Matching records"');
   expect(trigger).toContain("isTpoFindShortcut");
   expect(trigger).toContain("},200)");
   for(const phrase of ["ArrowDown","ArrowUp","Enter","Escape","Recently opened",
-    "role=\"listbox\"","aria-activedescendant"])
+    "role=\"option\"","aria-activedescendant"])
    expect(trigger).toContain(phrase);
   expect(api).toContain("termSchema=z.string().trim().min(2).max(100)");
   expect(api).toContain("hasTpoTooling(context)");

@@ -20,7 +20,8 @@ describe("Learner placement dashboard route wiring", () => {
 
   it("shows separate scheduled/attention and empty/error loading states", () => {
     const dash = source("src/components/placements/learner-placements-dashboard.tsx");
-    expect(dash).toContain("Placement snapshot");
+    expect(dash).toContain('aria-label="Placement dashboard"');
+    expect(dash).toContain("Waiting on you");
     expect(dash).toContain("Needs attention");
     expect(dash).toContain("Next 7 days");
     expect(dash).toContain("Browse drives");

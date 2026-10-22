@@ -8,7 +8,7 @@ describe("TPO batch finished access and honest state",()=>{
   const groupWrite=source("src/modules/placements/batch-participation-service.ts");
   const cohortWrite=source("src/app/api/placements/tpo/batches/[batchId]/decisions/route.ts");
   expect(students).toContain("const finished=Boolean(batchScope.lifecycle?.finishedAt)");
-  expect(students).toContain("!finished&&!s.ambiguous");
+  expect(students).toContain("!finished&&!student.ambiguous");
   expect(students).toContain("Eligibility decisions and import actions are read-only.");
   expect(learnerWrite).toContain("if (batchLifecycle?.finishedAt) throw new TpoParticipationConflictError()");
   expect(groupWrite).toContain('throw new PlacementBatchError("DB08_BATCH_FINISHED")');

@@ -607,7 +607,7 @@ export function HrDriveDraftForm({
                 <label className="grid min-w-0 gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
                   {LEGACY_HR_DRIVE_FORM_LABELS.duration}
                   <Input type="number" min={1} max={120} step={1}
-                    value={typeof item.internshipMonths==="number"||typeof item.internshipMonths==="string"?item.internshipMonths:""}
+                    value={typeof item.internshipMonths==="string"||typeof item.internshipMonths==="number"?item.internshipMonths:""}
                     onChange={event=>setDraft(current=>({
                       ...current,payPackages:(current.payPackages??[]).map((row,i)=>
                         i===index?{...row,internshipMonths:event.target.value?

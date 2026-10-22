@@ -23,10 +23,14 @@ describe("chat-14 mentor and HR UX critical page contracts",()=>{
   expect(src).toContain("<RecruiterApplicantReviewDrawer");
   expect(src).toContain("<RecruiterPrivateRatingEditor");
   expect(src).toContain("ThirdPartyLink");
-  expect(src).toContain('caption="Placement-cell selection history"');
-  expect(src).toContain('rows={selectionRows}');
-  expect(src).toContain('caption="Offers for shared applicants at this college"');
-  expect(src).toContain('mobilePriority: "primary"');
+  expect(src).toContain('aria-label="Placement-cell selection history"');
+  expect(src).toContain("<HrJobSelectionGrid");
+  expect(src).toContain("rows={selectionRows.map(item=>");
+  const selectionGrid=read("src/components/hr/hr-job-selection-grid.tsx");
+  expect(selectionGrid).toContain("<TpoGrid");
+  expect(selectionGrid).toContain('storageKey={"hr-selection:"+scopeKey}');
+  expect(src).toContain("offerSummary");
+  expect(src).toContain("offersPage");
   const table=read("src/components/ui/data-table.tsx");
   const cue=read("src/components/ui/scroll-cue.tsx");
   expect(table).toContain('<ScrollCue axis="x"');
@@ -53,9 +57,12 @@ describe("chat-14 mentor and HR UX critical page contracts",()=>{
  });
  it("UX-hr-company-reports-02 preserves phone cards and accessible desktop data reports",()=>{
   const src=read("src/app/(authenticated)/hr/company/reports/page.tsx");
-  expect(src).toContain("<DataTable");
-  expect(src).toContain('caption="Company Reports table"');
-  expect(src).toContain('mobilePriority:"primary"');
+  expect(src).toContain("<HrCompanyReportsGrid");
+  const reportsGrid=read("src/components/hr/hr-company-reports-grid.tsx");
+  expect(reportsGrid).toContain("aria-label=\"Company hiring report\"");
+  expect(reportsGrid).toContain("<TpoGrid");
+  expect(reportsGrid).toContain("mobilePrimaryKeys=");
+  expect(reportsGrid).toContain('storageKey={"hr-company-report:"+scopeKey}');
   expect(src).toContain("recruiterCompanyReportsQuerySchema.safeParse");
   expect(src).toContain("EmptyState");
   expect(src).toContain("PageHeader");

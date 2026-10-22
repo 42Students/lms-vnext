@@ -32,11 +32,11 @@ describe("chat-14 UNCONFIRMED recruiter owner decisions",()=>{
   const join=source("src/modules/placements/public-join/join-service.ts");
   expect(join).toContain("matchesPublicJoinCode");
   expect(join).toContain('verificationStatus: "VERIFIED"');
-  expect(join).toContain("if (grant && grant.status === \"REVOKED\")");
+  expect(join).toContain('if(grant && (grant.status==="REVOKED"||grant.revokedAt||grant.revokedByUserId))');
  });
  it("REC-calendar-messages-profile-46 reuses verified existing-account join and never silently auto-accepts",()=>{
   const join=source("src/modules/placements/public-join/join-service.ts");
-  expect(join).toContain('outcome = "ALREADY_JOINED"');
+  expect(join).toContain('outcome="ALREADY_JOINED"');
   expect(join).toContain("const [user] = await tx.select().from(users)");
   expect(join).toContain("if(challenge.expiresAt.getTime()<=now.getTime())");
   expect(join).toContain("recruiterGrantEffectiveAt(grant, now, \"DRIVES\")");

@@ -8,9 +8,14 @@ const edit=()=>src("src/modules/announcements/tpo-placement-edit-service.ts");
 const receipt=()=>src("src/modules/announcements/tpo-notice-read-receipts-service.ts");
 describe("TPO placement announcement round-4 evidence",()=>{
  it("TPO-inbox-team-45 shows the audience count and guards zero recipients during compose",()=>{
-  expect(page()).toContain("<TpoNoticeScheduleControls minDateTime={formMinDateTime} count={audience?.potentiallyVisibleMemberships??null}");
-  expect(page()).toContain("audience.potentiallyVisibleMemberships>0");
-  expect(page()).toContain("retryPreviewHref");
+  expect(page()).toContain("<TpoNoticeLiveAudienceProvider formId=\"tpo-notice-create\">");
+  expect(page()).toContain("<TpoNoticeLiveReach targetedReady={targetedReady}/>");
+  expect(page()).toContain("<TpoNoticeLiveSubmitControls minDateTime={formMinDateTime}");
+  const preview=src("src/components/tpo/tpo-notice-live-preview.tsx");
+  expect(preview).toContain("potentiallyVisibleMemberships");
+  expect(preview).toContain("preview.count>0");
+  expect(preview).toContain("canPublishTpoNoticeWithCurrentStorage(preview.audience,targetedReady)");
+  expect(preview).toContain('role="status"');
  });
  it("TPO-inbox-team-46 never claims an undelivered notice was actually delivered",()=>{
   expect(receipt()).toContain("notDelivered:Number(counts[0]?.delivered??0)===0");
@@ -40,8 +45,10 @@ describe("TPO placement announcement round-4 evidence",()=>{
   const dialog=src("src/components/ui/dialog.tsx");
   expect(c).toContain("<Dialog open={open}");
   expect(dialog).toContain("<dialog");
-  expect(dialog).toContain("modal.showModal()");
-  expect(dialog).toContain("opener.current?.focus()");
+  const lifecycle=src("src/components/ui/use-overlay-exit.ts");
+  expect(dialog).toContain("useOverlayExit(ref, opener, open,");
+  expect(lifecycle).toContain("dialog.showModal()");
+  expect(dialog).toContain("if (opener.current?.isConnected) opener.current.focus()");
   expect(dialog).toContain("onCancel={event =>");
   expect(page()).toContain("Button (optional)");
   expect(page()).toContain("maxLength={60}");
@@ -77,7 +84,8 @@ describe("TPO placement announcement round-4 evidence",()=>{
  it("TPO-inbox-team-55 never echoes raw validation codes into the form",()=>{
   const errors=src("src/modules/announcements/tpo-notice-form-error-model.ts");
   expect(errors).toContain("The link has to start with https://");
-  expect(page()).toContain('role="alert"');
+  expect(page()).toContain('<InlineNotice tone="error" message={noticeError}');
+  expect(page()).toContain('<Alert tone="error">');
   expect(create()).toContain("buttonUrl");
   expect(edit()).toContain("buttonUrl");
  });
@@ -89,7 +97,7 @@ describe("TPO placement announcement round-4 evidence",()=>{
  it("TPO-inbox-team-58 enforces title 200 and message 8000 on create and edit",()=>{
   for(const c of [create(),edit()]){
    expect(c).toContain("max(200)");
-   expect(c).toContain("max(8000)");
+   expect(c).toMatch(/\.max\(8000(?:,|\))/);
   }
  });
  it("TPO-inbox-team-R03 accepts old From 42 and students tab links",()=>{

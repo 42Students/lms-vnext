@@ -15,8 +15,8 @@ beforeEach(async()=>{
   fixture=newLearnerCareerCalendarFixture();await seedLearnerCareerCalendarFixture(pool,fixture);
   id=randomUUID();
   await pool.query(
-    "INSERT INTO placement_learner_requests(id,application_id,request_type,scope_key,reason,requested_by_user_id) VALUES($1,$2,'APPLICATION_WITHDRAWAL',$3,$4,$5)",
-    [id,fixture.applicationId,"APPLICATION_WITHDRAWAL:"+fixture.applicationId,"Please review this request",fixture.drive.learner.ids.user],
+    "INSERT INTO placement_learner_requests(id,application_id,request_type,scope_key,reason,requested_by_user_id,learner_membership_id) VALUES($1,$2,'APPLICATION_WITHDRAWAL',$3,$4,$5,$6)",
+    [id,fixture.applicationId,"APPLICATION_WITHDRAWAL:"+fixture.applicationId,"Please review this request",fixture.drive.learner.ids.user,fixture.drive.learner.ids.membership],
   );
 },45000);
 afterEach(async()=>{

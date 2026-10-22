@@ -1,4 +1,5 @@
 import { publishableJobTerms } from "../support/publishable-job-terms";
+import {upsertJobEligibilityPolicy} from "@/modules/placements/eligibility-service";
 import {
   afterAll,
   beforeEach,
@@ -115,6 +116,9 @@ async function cleanup() {
     "delete from placement_application_status_history",
   );
   await pool.query(
+    "delete from placement_college_application_stages",
+  );
+  await pool.query(
     "delete from placement_applications",
   );
   await pool.query(
@@ -172,6 +176,7 @@ async function createDrive(roundKinds: Array<
     );
   }
 
+  await upsertJobEligibilityPolicy(tpo,job.id,{});
   await publishPlacementJob(tpo, job.id);
   const application = await applyToPlacementJob(
     learner,

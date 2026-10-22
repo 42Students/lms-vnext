@@ -85,7 +85,7 @@ export function FacultySubmissionFileReview({ submissionId }: { submissionId: st
       link.click();
       link.remove();
     } catch (cause) {
-      if (!controller.signal.aborted) setError("Unable to load this file");
+      if (!controller.signal.aborted) setError("Unable to load this submitted file");
     } finally {
       grantRef.current = null;
       setWorkingId(null);

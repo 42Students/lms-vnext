@@ -59,7 +59,7 @@ describe("Faculty report contact minimization", () => {
 
 describe("Faculty PDF report name privacy", () => {
   it("uses only a public display name and a neutral missing-name label", () => {
-    expect(facultyReportLearnerName(null)).toBe("Learner (name unavailable)");
+    expect(facultyReportLearnerName(null)).toBe("Unknown student");
     expect(facultyReportLearnerName("  Asha  ")).toBe("Asha");
     expect(facultyReportLearnerName("   ")).not.toContain("@");
   });

@@ -106,7 +106,7 @@ export default async function TpoMessagesPage({
       <div className="min-w-0 space-y-6">
         <PageHeader
           title="Messages"
-          description="Conversations with recruiters, one for each drive and a general one. Inside a drive, the same conversation is its Discussion tab."
+          description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."
         />
         <TpoMessagesTabs selected="recruiters"/>
         <ErrorState
@@ -138,7 +138,7 @@ export default async function TpoMessagesPage({
   if (!result) return <TpoInboxRefreshBoundary key={inboxScope}
     scopeKey={inboxScope} failed retryHref={retryHref}>
     <div className="min-w-0 space-y-4">
-    <PageHeader title="Messages" description="Conversations with recruiters, one for each drive and a general one. Inside a drive, the same conversation is its Discussion tab."/>
+    <PageHeader title="Messages" description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."/>
     <TpoMessagesTabs selected="recruiters"/>
     <ErrorState title="Could not load conversations" description="This refresh failed. The recruiter inbox could not be verified; no existing messages have been changed."
       action={<Link href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
@@ -169,7 +169,7 @@ export default async function TpoMessagesPage({
   // when the recruiter-thread tables are not available.
   if(!isRecruiterInbox)return <div className="min-w-0 space-y-6">
    <PageHeader title="Messages"
-    description="Conversations with recruiters, one for each drive and a general one. Inside a drive, the same conversation is its Discussion tab."/>
+    description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."/>
    <TpoMessagesTabs selected="recruiters"/>
    <ErrorState title="Could not load conversations"
     description="Recruiter conversations are unavailable. Placement notifications remain separate and this does not mean your conversations were deleted."
@@ -217,7 +217,7 @@ export default async function TpoMessagesPage({
   return <TpoInboxRefreshBoundary key={inboxScope}
     scopeKey={inboxScope} failed={false} retryHref={retryHref}>
     <div className="min-w-0 space-y-4">
-    <PageHeader title="Messages" description="Conversations with recruiters, one for each drive and a general one. Inside a drive, the same conversation is its Discussion tab."/>
+    <PageHeader title="Messages" description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."/>
     <section className="min-w-0 rounded-xl border border-border bg-surface p-4 md:p-6">
       <TpoMessagesTabs selected="recruiters"/>
       <TpoLiveRefresh intervalMs={4000} pulseHref="/api/placements/tpo/messages/pulse"/>

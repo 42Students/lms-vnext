@@ -6,7 +6,10 @@ const read=(p:string)=>readFileSync(new URL("../../"+p,import.meta.url),"utf8");
 describe("chat-7 mentor versioned workflow and legacy link parsing",()=>{
  it("MEN-projects-meetings-R06 has a zero-release recovery state",()=>{
   const s=read("src/components/projects/project-workspace.tsx");
-  expect(s).toContain("workspace.releases.length===0");expect(s).toContain("No sprints yet. Add the sprints");
+  expect(s).toContain("workspace.releases.length===0");
+  expect(s).toContain('<EmptyState title="No sprints yet"');
+  expect(s).toContain("Add the sprints this project should be measured against.");
+  expect(s).toContain('href="#mentor-project-add-release"');
  });
  it("MEN-projects-meetings-R07 rejects stale mentor meeting schedules",()=>{
   const s=read("src/modules/projects/meeting-service.ts");
@@ -15,7 +18,8 @@ describe("chat-7 mentor versioned workflow and legacy link parsing",()=>{
  });
  it("MEN-projects-meetings-R08 keeps live mentor search controls",()=>{
   const s=read("src/components/projects/project-participant-list-controls.tsx");
-  expect(s).toContain("onInput={mentor?liveRefresh:undefined}");
+  expect(s).toContain("onChange={mentor?liveRefresh:undefined}");
+  expect(s).toContain("if(!mentor)return;");
   expect(s).toContain("setTimeout(()=>liveForm.current?.requestSubmit(),350)");
  });
  it("MEN-projects-meetings-R09 persists unit-specific estimate scales and labels",()=>{

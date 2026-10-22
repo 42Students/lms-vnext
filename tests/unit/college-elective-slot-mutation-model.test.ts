@@ -40,7 +40,9 @@ describe("college elective slot mutation model", () => {
     };
     expect(editCollegeElectiveSlotSchema.safeParse(edit).success).toBe(true);
     expect(editCollegeElectiveSlotSchema.safeParse({ ...edit, expectedVersion: -1 }).success).toBe(false);
-    expect(editCollegeElectiveSlotSchema.safeParse({ ...edit, programId: create.programId }).success).toBe(false);
+    expect(editCollegeElectiveSlotSchema.safeParse({ ...edit, programId: create.programId }).success).toBe(true);
+    expect(editCollegeElectiveSlotSchema.safeParse({ ...edit, programId: "foreign-college" }).success).toBe(false);
+    expect(editCollegeElectiveSlotSchema.safeParse({ ...edit, collegeId: create.programId }).success).toBe(false);
   });
 
   it("normalizes years and detects actual enrollment-impacting edits", () => {

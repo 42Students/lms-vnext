@@ -11,7 +11,7 @@ describe("TPO learner override parity",()=>{
   expect(source).toContain('title="Mark learner ineligible"');
   expect(source).toContain('role="group" aria-label="Common ineligibility reasons"');
   expect(source).toContain('autoFocus aria-label="Reason for ineligibility"');
-  expect(source).toContain('>Other</button>');
+  expect(source).toContain('>Other</FilterChip>');
   expect(source).toContain("reason.trim().length>=3");
   expect(source).toContain("!reviewed");
   expect(source).toContain("TpoBatchUndoControl");

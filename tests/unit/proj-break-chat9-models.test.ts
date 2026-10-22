@@ -123,7 +123,7 @@ describe("IIT Dharwad Projects adversarial admin/college models",()=>{
   const csv=projectTemplateCatalogueCsv([{templateId:uuid(10),title:'Q, "test"\nsecond line',version:1,
     sections:{overview:1,releases:1,sprints:0,tasks:0,resources:0}}]);
   expect(csv).toContain('"Q, ""test""\nsecond line"');
-  expect(csv.startsWith("\uFEFF\"Template\",\"Version\",")).toBe(true);
+  expect(csv.startsWith("\uFEFF\"Title\",\"Version\",")).toBe(true);
  });
  it("PROJ-BREAK-exports-03 class roster export protects roll numbers and team names from formulas",()=>{
   const csv=exportClassTeamsCsv([{name:"\u200B=SUM(1,1)",membershipIds:[uuid(1)]}],new Map([[uuid(1),"@eval"]]));

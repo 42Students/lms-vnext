@@ -184,6 +184,7 @@ export default async function TpoUnplacedReportPage({
       <Disclosure title="Report filters and information" className="min-w-0" contentClassName="min-w-0 space-y-[var(--lms-space-4)] pt-[var(--lms-space-2)]">
         <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports/unplaced" />
       <p className="text-xs text-muted-foreground">The download uses the selected season, drive, batch and branch. Changing the season/drive control below may reset the batch/branch filter; reapply it before downloading if needed.</p>
+      <p className="text-xs text-muted-foreground">Academic marks and resume verification require authoritative evidence; missing evidence is never treated as verified.</p>
       <p className="text-xs text-muted-foreground">Applications and last-applied dates use the selected season and drive. Academic marks use authorized college evidence. Resume Uploaded/Missing reflects the learner profile record; Not confirmed means no authoritative resume status is available.</p>
 
 
