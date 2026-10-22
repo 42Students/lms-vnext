@@ -1,9 +1,11 @@
 import "server-only";
 
-import {eq,sql} from "drizzle-orm";
+import {and,eq,isNull,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {colleges,collegeMemberships,membershipRoles} from "@/db/schema";
+import {activityEvents,colleges,collegeMemberships,membershipRoles} from "@/db/schema";
+import {profilePrivateDocumentReceipts} from "@/db/schema/profile-verification";
+import {createPrivateReadGrant} from "@/modules/storage/private-object-storage";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission,type PermissionTransaction} from "@/modules/permissions/persisted-actor";
@@ -92,4 +94,78 @@ export async function patchFacultyDocumentForAdmin(
   return {document:facultyProfileDocumentSchema.parse(next.profile_document),
    version:next.profile_document_version};
  });
+}
+
+/** Staff-read private Faculty evidence is a separate permission boundary from
+ * self-profile editing. A known receipt UUID never authorizes its own read;
+ * the current Faculty document must still reference that same receipt. */
+const evidenceRead=z.strictObject({
+ receiptId:z.uuid(),
+ purpose:z.enum(["AADHAAR","PAN","EDUCATION_CERTIFICATE","CERTIFICATION",
+   "EXPERIENCE_CERTIFICATE","OFFER_LETTER"]),
+ entryId:z.uuid().optional(),
+});
+export async function openFacultyDocumentForAdmin(
+ context:RequestContext,membershipIdRaw:unknown,inputRaw:unknown,
+){
+ const membershipId=targetSchema.parse(membershipIdRaw);
+ const input=evidenceRead.parse(inputRaw);
+ const proof=await getDb().transaction(async tx=>{
+  const {target}=await requireFacultyTarget(tx,context,membershipId);
+  if(!await facultyProfileDocumentStorageReady(tx))
+   throw new PeopleServiceError("PRIVATE_IDENTITY_STORAGE_NOT_READY");
+  const profileRows=await tx.execute<DocumentRow>(sql`
+   select profile_document,profile_document_version from faculty_profiles
+   where membership_id=${membershipId} for share
+  `);
+  const profile=profileRows.rows[0];
+  const document=facultyProfileDocumentSchema.parse(profile?.profile_document??emptyFacultyProfileDocument);
+  let currentId:string|null=null;
+  switch(input.purpose){
+   case "AADHAAR": currentId=document.identitySummary.aadhaarDocumentId;break;
+   case "PAN": currentId=document.identitySummary.panDocumentId;break;
+   case "EDUCATION_CERTIFICATE":
+    currentId=document.education.find(row=>row.id===input.entryId)?.certificateDocumentId??null;
+    break;
+   case "CERTIFICATION":
+    currentId=document.certifications.find(row=>row.id===input.entryId)?.certificateDocumentId??null;
+    break;
+   case "EXPERIENCE_CERTIFICATE":
+    currentId=document.experiences.find(row=>row.id===input.entryId)?.experienceCertificateDocumentId??null;
+    break;
+   case "OFFER_LETTER":
+    currentId=document.experiences.find(row=>row.id===input.entryId)?.offerLetterDocumentId??null;
+    break;
+  }
+  if(currentId!==input.receiptId)throw new AuthorizationError("people.manage");
+  const [receipt]=await tx.select().from(profilePrivateDocumentReceipts).where(and(
+    eq(profilePrivateDocumentReceipts.id,input.receiptId),
+    eq(profilePrivateDocumentReceipts.owningMembershipId,membershipId),
+    eq(profilePrivateDocumentReceipts.purpose,input.purpose),
+    ...(input.entryId?[eq(profilePrivateDocumentReceipts.relatedEntryId,input.entryId)]:[
+      isNull(profilePrivateDocumentReceipts.relatedEntryId),
+    ]),
+    eq(profilePrivateDocumentReceipts.scanStatus,"CLEAN"),
+    isNull(profilePrivateDocumentReceipts.revokedAt),
+  )).limit(1);
+  if(!receipt||receipt.retentionUntil&&receipt.retentionUntil<=new Date())
+   throw new AuthorizationError("people.manage");
+  await tx.insert(activityEvents).values({
+   module:"IDENTITY",eventType:"identity.faculty_private_document.opened",
+   collegeId:target.collegeId,organizationId:target.organizationId,
+   actorUserId:context.user.id,
+   actorMembershipId:context.membership&&context.membership.collegeId===target.collegeId?
+    context.membership.id:null,
+   subjectType:"faculty_profile",subjectId:membershipId,
+   summary:"Administrator requested a signed Faculty document",
+   metadata:{purpose:input.purpose,receiptId:receipt.id},
+  });
+  return {receipt,scope:target};
+ });
+ const grant=await createPrivateReadGrant({
+  objectKey:proof.receipt.privateObjectKey,
+  collegeId:proof.scope.collegeId,
+  ownerMembershipId:membershipId,expiresInMs:5*60*1000,
+ });
+ return {readUrl:grant.readUrl,expiresAt:grant.expiresAt,purpose:input.purpose};
 }

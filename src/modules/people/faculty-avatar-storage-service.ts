@@ -77,7 +77,7 @@ export async function confirmOwnFacultyAvatar(context:RequestContext,raw:unknown
   await tx.insert(activityEvents).values({
     organizationId:member.organizationId,collegeId:member.collegeId,
     actorUserId:context.user.id,actorMembershipId:member.id,
-    module:"PEOPLE",eventType:"people.faculty_avatar.updated",
+    module:"IDENTITY",eventType:"people.faculty_avatar.updated",
     subjectType:"faculty_profile",subjectId:member.id,
     summary:"Faculty profile image updated",
     metadata:{replaced:Boolean(previous),cleanupQueued:privateOld},
