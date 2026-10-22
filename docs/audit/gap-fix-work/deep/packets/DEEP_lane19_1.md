@@ -7,11 +7,11 @@ These rows were marked DEFERRED without being checked. Each row must now end as 
 DEFERRED is NOT allowed. For each row: read its full text in the source packet named next to it, find the old behaviour in docs/legacy-source, find the vNext code, decide, and fix if needed.
 Keep tests passing and TypeScript valid; never silence errors. Write one result line per row under Results, push, then tick this packet in your queue.
 
-- [ ] G2-5-001-040  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
-- [ ] G2-5-001-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-5-001-040  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-5-001-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
 - [ ] G2-5-005-020  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
 - [ ] G2-5-006-024  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
-- [ ] G2-5-006-025  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-5-006-025  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
 - [ ] G2-5-007-042  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
 - [ ] G2-5-009-040  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
 - [ ] G2-5-009-042  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
