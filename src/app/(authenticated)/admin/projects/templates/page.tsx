@@ -28,8 +28,6 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
 }){
  const raw=await searchParams;
  const query=parseSuperAdminTemplateDirectoryQuery(raw);
- const recoveryQ=typeof raw.q==="string"&&raw.q.length<=100?raw.q.trim():"";
- const recoveryHref="/admin/projects/templates"+(recoveryQ?"?q="+encodeURIComponent(recoveryQ):"");
  if(!query.success)return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Project templates" />
   <ErrorState title="Invalid template filters" description="Check search, status and page."
