@@ -20,7 +20,7 @@ import {listSuperAdminElectives} from "@/modules/electives/admin-directory-servi
 import {AuthorizationError} from "@/modules/permissions/policy";
 
 export const dynamic="force-dynamic";
-const PAGE_SIZE=20;
+// Server-side listing defaults to 20 rows per page.
 
 /** Only a selected college shows the old Academic Setup strip. The explicit
  * UUID in the signed admin scope, never a query-string collegeId, controls
@@ -35,6 +35,7 @@ export default async function SuperAdminElectivesPage({
  const parsed=valid?adminElectiveQuerySchema.safeParse({
   q:params.q,status:params.status,
   programId:params.programId||undefined,semesterNumber:params.semesterNumber||undefined,
+   page:params.page||undefined,
  }):null;
  const pageText=params.page??"1";
  const pageValid=typeof pageText==="string"&&/^[1-9][0-9]{0,3}$/.test(pageText);
@@ -74,6 +75,10 @@ export default async function SuperAdminElectivesPage({
   <Link href="/admin/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry slots</Link>
  </div>;
  const data=dataResult.value;
+ if(data.state==="CHOOSE_COLLEGE")return <div className="min-w-0 space-y-4">
+  <PageHeader title="Electives"/>
+  <Alert tone="warning">Select an active college in the header before viewing its elective slots.</Alert>
+ </div>;
  const options=optionResult.ok?optionResult.value:null;
  // Old React key={selectedCollegeId} reset all filters on switch. A bookmark
  // with a program outside the new college must not keep a stale selection.
@@ -85,10 +90,10 @@ export default async function SuperAdminElectivesPage({
   <Link href="/admin/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear previous college filters</Link>
  </div>;
  const all=data.items;
- const requested=Number(pageText);
- const totalPages=Math.max(1,Math.ceil(all.length/PAGE_SIZE));
- const current=Math.min(requested,totalPages);
- const shown=all.slice((current-1)*PAGE_SIZE,current*PAGE_SIZE);
+ // The directory already applies server-side LIMIT/OFFSET and total count.
+ const totalPages=data.totalPages;
+ const current=data.page;
+ const shown=all;
  const filterParams=new URLSearchParams({
   ...(data.query.q?{q:data.query.q}:{}),
   status:data.query.status,
@@ -149,8 +154,7 @@ export default async function SuperAdminElectivesPage({
    Create one slot per program and semester, then manage the offerings and allocation.
   </Alert>
   <p role="status" className="text-xs text-muted-foreground">
-   {data.total} returned slots · {data.active} active · {data.archived} archived
-   {data.truncated?" · More than 200 match. Narrow filters to see other records.":""}
+   {data.total} matching slots · {data.active} active and {data.archived} archived on this page
   </p>
   <section aria-label="Existing elective slots" className="min-w-0">
    {all.length?<Table scrollLabel="Elective slots" className="w-full min-w-[760px]">
@@ -180,9 +184,9 @@ export default async function SuperAdminElectivesPage({
     <Alert tone="info">{noFilter?
      "No elective slots yet. Create one per program × semester, e.g. Professional Elective 1.":
      "No elective slots match the selected filters. Try another program, status or search term."}</Alert>}
-   {all.length?<nav aria-label="Elective slot pages" className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm">
+   {data.total>0?<nav aria-label="Elective slot pages" className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm">
     {current>1?<Link href={link(current-1)} className="min-h-11 font-semibold text-link underline md:min-h-9">← Previous</Link>:<span/>}
-    <span>Showing {(current-1)*PAGE_SIZE+1}–{Math.min(current*PAGE_SIZE,all.length)} of {all.length}{data.truncated?" returned":""} slots · Page {current} of {totalPages}</span>
+    <span>Showing {all.length?(current-1)*data.pageSize+1:0}–{Math.min(current*data.pageSize,data.total)} of {data.total} matching slots · Page {current} of {totalPages}</span>
     {current<totalPages?<Link href={link(current+1)} className="min-h-11 font-semibold text-link underline md:min-h-9">Next →</Link>:<span/>}
    </nav>:null}
   </section>
@@ -203,6 +207,8 @@ export default async function SuperAdminElectivesPage({
     <Disclosure title="Edit slot" contentClassName="py-3">
      <CollegeSlotManager options={options} row={{
       id:selected.id,name:selected.name,description:selected.description??null,version:selected.version,
+      programId:selected.programId,semesterNumber:selected.semesterNumber,
+      academicYear:selected.academicYear,hasEnrollmentHistory:selected.hasEnrollmentHistory,
       credits:selected.credits,minPick:selected.minPick,maxPick:selected.maxPick,status:selected.status,
      }}/>
     </Disclosure>
