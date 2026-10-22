@@ -84,7 +84,8 @@ describe("College cross-audit fixes (independent chat-19)",()=>{
   const confirm=readFileSync(join(process.cwd(),"src/components/ui/confirm-dialog.tsx"),"utf8");
   expect(dialog).toContain("modal.showModal()");
   expect(dialog).toContain("onCancel=");
-  expect(dialog).toContain("opener.current?.focus()");
+  expect(dialog).toContain("opener.current.focus()");
+  expect(exit).toContain("if (opener?.isConnected) opener.focus()");
   expect(dialog).toContain("safe-area-inset-bottom");
   expect(confirm).toContain("dismissible={!pending}");
  });
