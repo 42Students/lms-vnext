@@ -40,17 +40,17 @@ export default async function CollegeElectivesPage({
 
   const params=await searchParams;
   const normalized={...params};
-  if(params.includeArchived!==undefined){
-    if(params.status!==undefined||Array.isArray(params.includeArchived))
-      normalized.status="INVALID";
-    else normalized.status=params.includeArchived==="true"?"ALL":
-      params.includeArchived==="false"?"ACTIVE":"INVALID";
-    delete normalized.includeArchived;
+  if(params["includeArchived"]!==undefined){
+    if(params["status"]!==undefined||Array.isArray(params["includeArchived"]))
+      normalized["status"]="INVALID";
+    else normalized["status"]=params["includeArchived"]==="true"?"ALL":
+      params["includeArchived"]==="false"?"ACTIVE":"INVALID";
+    delete normalized["includeArchived"];
   }
-  if(params.semester!==undefined){
-    if(params.semesterNumber!==undefined)normalized.semesterNumber="INVALID";
-    else normalized.semesterNumber=params.semester;
-    delete normalized.semester;
+  if(params["semester"]!==undefined){
+    if(params["semester"]Number!==undefined)normalized["semester"]Number="INVALID";
+    else normalized["semester"]Number=params["semester"];
+    delete normalized["semester"];
   }
   const raw = readCollegeStructureParams(normalized);
   const parsed = collegeElectiveQuerySchema.safeParse(raw);
@@ -81,7 +81,7 @@ export default async function CollegeElectivesPage({
       {value:"/college/semesters",label:"Semesters",href:"/college/semesters"},
       {value:"/college/electives",label:"Electives",href:"/college/electives"},
      ]}/>
-   <CollegeStructureDirectory data={data} electiveOptions={options}
+   <CollegeStructureDirectory data={data} {...(options!==undefined?{electiveOptions:options}:{})}
     prepend={<div className="min-w-0 space-y-[var(--lms-space-3)]">
       <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] sm:flex-row sm:flex-wrap sm:items-center">
         {!options?<ErrorState title="Couldn't load elective slot options"
