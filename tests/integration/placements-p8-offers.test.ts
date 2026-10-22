@@ -35,7 +35,7 @@ import {
 import { decidePlacementScreening } from "@/modules/placements/screening-service";
 import { recordTpoDriveSelections,verifyAndReleaseTpoSelections } from "@/modules/placements/tpo-drive-selection-service";
 import {getTpoDriveClosePreview,closeTpoDriveWithPreview} from "@/modules/placements/tpo-drive-close-preview-service";
-import {recordTpoOfferLifecycle} from "@/modules/placements/tpo-offer-lifecycle-service";
+import {recordTpoOfferLifecycle,finalizeMaturedExternalTpoAcceptances} from "@/modules/placements/tpo-offer-lifecycle-service";
 import {getTpoJoiningTracker} from "@/modules/placements/tpo-joining-tracker-service";
 import {isoDateInIndia} from "@/modules/placements/tpo-offer-expiry-model";
 import {getTpoDriveOfferRegister,getTpoDriveOfferRegisterCsv} from "@/modules/placements/tpo-drive-offer-register-service";
@@ -270,6 +270,18 @@ async function preparePassedApplication() {
   };
 }
 
+// External TPO acceptance is provisional for 48 hours. Only the scheduler's
+// maturity step may cascade a disputed/recorded acceptance into placement.
+async function matureRecordedAcceptance(offerId:string) {
+  await pool.query(
+    "update placement_offers set accepted_disputable_until=now()-interval '1 minute' where id=$1 and status='ACCEPTED' and acceptance_channel='EXTERNAL_IMPORT'",
+    [offerId],
+  );
+  const sweep=await finalizeMaturedExternalTpoAcceptances(SEED_IDS.facultyUser,new Date(),10);
+  expect(sweep.finalized).toBe(1);
+  expect(sweep.failed).toBe(0);
+}
+
 beforeEach(async () => {
   await cleanup();
   await enableSeedLearnerPlacementAccess(pool);
@@ -476,9 +488,10 @@ describe("Placement P8 offers and joining", () => {
       roleTitle: "Authorized software engineer",
       annualCtcInr: 800_000,
     });
+    // Cross-role offer responses mask existence instead of disclosing IDs.
     await expect(
       actOnPlacementOffer(tpo, issued.id, {action: "ACCEPT"}),
-    ).rejects.toBeInstanceOf(AuthorizationError);
+    ).rejects.toMatchObject({code:"PLACEMENT_OFFER_NOT_FOUND"});
     await expect(
       recordPlacementJoiningOutcome(learner, issued.id, {
         status: "JOINED", joiningDate: "2099-05-21",
@@ -498,7 +511,8 @@ describe("Placement P8 offers and joining", () => {
     const {job,application,round}=await preparePassedApplication();
     const reference=new Date("2099-10-24T00:00:00.000Z");
     await pool.query(`
-      update placement_job_rounds set status='SCHEDULED',scheduled_at=$2
+      update placement_job_rounds set status='SCHEDULED',scheduled_at=$2,
+        timezone='Asia/Kolkata',mode='VIRTUAL',meeting_url='https://meet.example/escalation'
       where id=$1`,[round.id,new Date(reference.getTime()+6*3600_000)]);
     const saved=await pool.query<{id:string}>(`
       insert into placement_learner_requests(
@@ -627,6 +641,12 @@ describe("Placement P8 offers and joining", () => {
       offerId:offer.id,joiningStatus:"PENDING",hasRecordedOutcome:false,joiningDate:null,
     });
     const joiningDay=isoDateInIndia(new Date());
+    await expect(recordTpoOfferLifecycle(tpo,job.id,{
+      action:"RECORD_JOINED",confirmed:true,offerIds:[offer.id],
+      expectedStatus:"ACCEPTED",joiningDate:joiningDay,
+      reason:"Offer is still inside the learner dispute window",
+    })).rejects.toMatchObject({code:"PLACEMENT_JOINING_NOT_READY"});
+    await matureRecordedAcceptance(offer.id);
     await recordTpoOfferLifecycle(tpo,job.id,{
       action:"RECORD_JOINED",confirmed:true,offerIds:[offer.id],
       expectedStatus:"ACCEPTED",joiningDate:joiningDay,
@@ -673,6 +693,7 @@ describe("Placement P8 offers and joining", () => {
     }).formatToParts(new Date());
     const fields=Object.fromEntries(dayParts.map(part=>[part.type,part.value]));
     const actualDay=fields.year+"-"+fields.month+"-"+fields.day;
+    await matureRecordedAcceptance(issued.id);
     const completed=await recordTpoOfferLifecycle(tpo,job.id,{
       action:"RECORD_JOINED",confirmed:true,offerIds:[issued.id],
       expectedStatus:"ACCEPTED",joiningDate:actualDay,
@@ -717,7 +738,8 @@ describe("Placement P8 offers and joining", () => {
 
     const foreignTpo:RequestContext={...tpo,membership:{...tpo.membership!,
       id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB}};
-    await expect(recordTpoDriveSelections(foreignTpo,job.id,request)).rejects.toBeInstanceOf(AuthorizationError);
+    // Tenant-scoped job lookups deliberately conceal foreign job existence.
+    await expect(recordTpoDriveSelections(foreignTpo,job.id,request)).rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_FOUND"});
     await expect(recordTpoDriveSelections(learner,job.id,request)).rejects.toBeInstanceOf(AuthorizationError);
     const stillOne=await pool.query<{count:number}>(
       "select count(*)::integer as count from placement_drive_selections where job_id = $1",[job.id]);
@@ -750,7 +772,7 @@ describe("Placement P8 offers and joining", () => {
   it("PLACEMENTS-WAIT-RACE-06 DB never releases two offers for concurrent identical waitlist previews",async()=>{
     const {job,application,round}=await preparePassedApplication();
     await pool.query(
-      "update placement_round_results set outcome='HOLD',waitlist_rank=1 where application_id=$1 and round_id=$2",
+      "update placement_round_results set outcome='HOLD',waitlist_rank=1,candidate_message='Waitlisted for next available placement seat' where application_id=$1 and round_id=$2",
       [application.id,round.id],
     );
     const preview=await getTpoWaitlistPreview(tpo,job.id);
@@ -797,7 +819,7 @@ describe("Placement P8 offers and joining", () => {
   it("PLACEMENTS-WAIT-SEASON-05 DB denies waitlist promotion and seat creation after season closure",async()=>{
     const {job,application,round}=await preparePassedApplication();
     await pool.query(
-      "update placement_round_results set outcome='HOLD',waitlist_rank=1 where application_id=$1 and round_id=$2",
+      "update placement_round_results set outcome='HOLD',waitlist_rank=1,candidate_message='Waitlisted for next available placement seat' where application_id=$1 and round_id=$2",
       [application.id,round.id],
     );
     const closed=await pool.query<{id:string}>(`
@@ -1139,9 +1161,13 @@ describe("Placement P8 offers and joining", () => {
     const acceptedHistory=await pool.query<{reason:string|null;cascade_id:string|null}>(
       `select reason,cascade_id from placement_offer_status_history
        where offer_id=$1 and to_status='ACCEPTED' order by created_at desc limit 1`,[issued.id]);
-    const cascadeId=acceptedHistory.rows[0]?.cascade_id;
+    expect(acceptedHistory.rows[0]?.cascade_id).toBeNull();
+    expect(acceptedHistory.rows[0]?.reason).toContain("48h dispute window");
+    await matureRecordedAcceptance(issued.id);
+    const matured=await pool.query<{cascade_id:string|null}>(
+      "select cascade_id from placement_offers where id=$1",[issued.id]);
+    const cascadeId=matured.rows[0]?.cascade_id;
     expect(cascadeId).toMatch(/^[0-9a-f-]{36}$/);
-    expect(acceptedHistory.rows[0]?.reason).toBe("cascade:"+cascadeId);
     const siblingState=await pool.query<{status:string}>(
       "select status from placement_applications where id=$1",[sibling.rows[0]!.id]);
     expect(siblingState.rows).toEqual([{status:"WITHDRAWN"}]);
