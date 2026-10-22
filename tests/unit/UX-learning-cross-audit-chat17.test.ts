@@ -109,11 +109,11 @@ describe("chat-17 confirmed BLOCKER/MAJOR learning cross-audit fixes", () => {
     const p = readComponent("ui/third-party-link.tsx");
     expect(p).toContain('url.protocol === "https:"');
     expect(p).toContain("!url.username && !url.password");
-    expect(p).toContain('aria-label={ariaLabel ? `${ariaLabel} (opens in a new tab)` : undefined}');
+    expect(p).toContain('aria-label={ariaLabel ? `${ariaLabel} (external website)` : undefined}');
     expect(p).toContain('rel="noopener noreferrer"');
     expect(p).toContain("Copy link");
     expect(p).toContain("Copy the destination below to try another browser.");
-    expect(p).toContain('target="_blank"');
+    expect(p).not.toContain('target="_blank"');
     expect(p).toContain("showFallback");
     expect(p).toContain("focus-visible:outline-2");
   });
