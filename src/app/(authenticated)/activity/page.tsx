@@ -48,6 +48,13 @@ function one(
 
 const inputClass = "w-full min-w-0";
 
+/** Export only authorized displayed rows and neutralize spreadsheet formulas. */
+function activityPageCsvCell(input: string | null | undefined) {
+  const value = input ?? "";
+  const safe = /^\s*[=+@-]/.test(value) ? "'" + value : value;
+  return '"' + safe.replaceAll('"', '""') + '"';
+}
+
 export default async function ActivityPage({
   searchParams,
 }: {
@@ -265,6 +272,25 @@ export default async function ActivityPage({
   // An explicit all-time list must stay all-time when the user loads older events.
   // Keep this UI-only flag out of the strict CSV export query contract.
   if (range === "ALL" && !defaultFrom && !one(params.to)) nextParams.set("range", "ALL");
+  // Unlike the all-matching export endpoint, this matches the legacy Audit
+  // Logs page export exactly: only the currently loaded, authorized rows.
+  const pageCsv = [
+    RAW_AUDIT_FORENSIC_HEADERS.map(value => activityPageCsvCell(value)).join(","),
+    ...result.items.map(({event, actor}) => [
+      new Intl.DateTimeFormat("en-IN", {
+        timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
+      }).format(event.occurredAt),
+      event.eventType,
+      event.subjectType + " · " + (event.subjectLabel ?? event.subjectId),
+      event.organizationId ?? "—",
+      event.collegeId ?? "—",
+      actor?.displayName ?? actor?.email ?? "System",
+      RAW_AUDIT_MISSING_TRANSPORT,
+      RAW_AUDIT_MISSING_TRANSPORT,
+    ].map(activityPageCsvCell).join(",")),
+  ].join("\r\n");
+  const pageCsvHref = "data:text/csv;charset=utf-8," + encodeURIComponent("\uFEFF" + pageCsv);
+
   if (result.nextCursor) {
     nextParams.set(
       "beforeOccurredAt",
@@ -285,13 +311,19 @@ export default async function ActivityPage({
           <div className="flex w-full min-w-0 flex-col items-stretch gap-2 md:w-auto md:flex-row md:flex-wrap md:items-center md:justify-end">
           {result.items.length===0?<span aria-disabled="true" className="inline-flex min-h-11 items-center text-sm text-muted-foreground md:min-h-9">
             Export unavailable (no matching activity)
-          </span>:importantOnly ? <span className="flex min-h-11 items-center text-xs text-muted-foreground md:min-h-9">
-            Important-only CSV export requires the category-aware export API.
-          </span> : <a href={(isSuperAdmin(context) ? "/api/activity/admin-export" : "/api/activity/college-export") +
-            (exportParams.size ? "?" + exportParams.toString() : "")}
-            className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm font-semibold text-primary-text underline underline-offset-4 hover:bg-[rgba(38,186,199,0.07)] md:w-auto hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)]">
-            Export CSV
-          </a>}
+          </span>:<>
+            <a href={pageCsvHref} download="activity-current-page.csv"
+              className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm font-semibold text-primary-text underline underline-offset-4 md:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+              Export current page (8 columns)
+            </a>
+            {importantOnly ? <span className="flex min-h-11 items-center text-xs text-muted-foreground md:min-h-9">
+              All-matching Important-only export requires the category-aware export API.
+            </span> : <a href={(isSuperAdmin(context) ? "/api/activity/admin-export" : "/api/activity/college-export") +
+              (exportParams.size ? "?" + exportParams.toString() : "")}
+              className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm font-semibold text-primary-text underline underline-offset-4 hover:bg-[rgba(38,186,199,0.07)] md:w-auto hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)]">
+              Export all matching CSV
+            </a>}
+          </>}
           <a href={retryHref}
             className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             Refresh
