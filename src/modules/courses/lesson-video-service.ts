@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, desc, eq, isNull, ne, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, isNotNull, isNull, ne, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { learnerContentProgress, lessonContents, lessonVideoAssets, collegeMemberships } from "@/db/schema";
@@ -555,7 +555,7 @@ export async function retryDeletedLessonVideoObjectCleanup(
 ){
  const id=idSchema.parse(videoIdInput);
  const [row]=await getDb().select().from(lessonVideoAssets)
-  .where(and(eq(lessonVideoAssets.id,id),ne(lessonVideoAssets.deletedAt,null)))
+  .where(and(eq(lessonVideoAssets.id,id),isNotNull(lessonVideoAssets.deletedAt)))
   .limit(1);
  if(!row||!row.deletedAt)throw new StorageFileError("STORAGE_NOT_FOUND");
  const lesson=await authorizeOrNotFound(()=>loadCourseLessonScope(row.lessonId,true));
