@@ -16,16 +16,16 @@ export async function GET(request:Request){
   if(!ctx.membership||!hasMembershipRole(ctx,"TPO"))throw new AuthorizationError("placements.manage");
   const url=new URL(request.url);
   const raw=Object.fromEntries(url.searchParams.entries());
-  const ids=raw.ids;
+  const ids=raw["ids"];
   if(url.searchParams.getAll("view").length>1)return Response.json({error:"Repeated view names are not allowed"},{status:400});
-  const viewName=raw.view===undefined?"Filtered placement students":tpoStudentExportViewName(raw.view);
+  const viewName=raw["view"]===undefined?"Filtered placement students":tpoStudentExportViewName(raw["view"]);
   if(!viewName)return Response.json({error:"Invalid saved view name"},{status:400});
-  const savedViewRequested=raw.view!==undefined;
+  const savedViewRequested=raw["view"]!==undefined;
   const downloadName=savedViewRequested?viewName:"students";
-  const cols=raw.columns?.split(",")??[];
-  delete raw.ids;delete raw.columns;delete raw.selected;delete raw.view;
-  delete raw.student;delete raw.page;delete raw.pageSize;
-  if(raw.q!==undefined){if(raw.search!==undefined)return Response.json({error:"Ambiguous search"},{status:400});raw.search=raw.q;delete raw.q;}
+  const cols=raw["columns"]?.split(",")??[];
+  delete raw["ids"];delete raw["columns"];delete raw["selected"];delete raw["view"];
+  delete raw["student"];delete raw["page"];delete raw["pageSize"];
+  if(raw["q"]!==undefined){if(raw["search"]!==undefined)return Response.json({error:"Ambiguous search"},{status:400});raw["search"]=raw["q"];delete raw["q"];}
   const filters=tpoStudentsQueryObjectSchema.omit({collegeId:true,page:true,pageSize:true}).superRefine(tpoStudentsRangeRefinement).parse(raw);
   const result=await getTpoStudentsIntelligence(ctx,{...filters,collegeId:ctx.membership.collegeId,page:1,pageSize:25},{includeExportRows:true});
   const matched=result.exportRows??[];
