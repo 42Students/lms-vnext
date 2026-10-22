@@ -25,5 +25,8 @@ export function tpoGeneralRequestReviewFacts(kind:string,payload:Record<string,u
   }catch{/* Unsupported or invalid user-supplied proof is never linked. */}
  }
  return {facts:facts.filter(item=>item.value!==""),
-  requiresProof,proofUrl:requiresProof?proofUrl:null};
+  requiresProof,proofUrl:requiresProof?proofUrl:null,
+  // Never turn an invalid submitted link into "No proof attached" or expose it.
+  proofIssue:!requiresProof||proofUrl?null:raw?"Submitted proof is not a web link":"No proof attached",
+ };
 }
