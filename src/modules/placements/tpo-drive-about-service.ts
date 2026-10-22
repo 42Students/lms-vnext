@@ -138,7 +138,7 @@ export async function getTpoDriveAbout(context:RequestContext,rawJobId:unknown){
   previousRequests:historicalRequests.map(request=>({
    id:request.id,status:request.status,decisionNote:request.decisionNote,
    createdAt:request.createdAt.toISOString(),
-   proposedTitle:typeof request.draft["title"]==="string"?request.draft.title:null,
+   proposedTitle:typeof request.draft["title"]==="string"?request.draft["title"]:null,
   })),
   closeSummary:{applications:applications.length,offers:accepted.length},
   feed:feed.map(r=>({...r,occurredAt:r.occurredAt.toISOString()})),
