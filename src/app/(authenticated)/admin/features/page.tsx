@@ -219,7 +219,7 @@ export default async function SuperAdminFeaturesPage({
             College module matrix
           </h2>
           <Link href={adminFeatureExportHref({
-            q:result.q,page:result.page,pageSize:result.pageSize,sort:result.sort,module:result.moduleFilter??undefined,
+            q:result.q,page:result.page,pageSize:result.pageSize,sort:result.sort,...(result.moduleFilter !== null && result.moduleFilter !== undefined ? {module: result.moduleFilter} : {}),
             storedState:result.stateFilter,locks:result.lockFilter,presence:result.presenceFilter,
             recent:result.recentFilter,searchField:result.searchField,
           })} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">
@@ -289,7 +289,7 @@ export default async function SuperAdminFeaturesPage({
                 href={adminFeaturesHref({
                   q: result.q,
                   sort: result.sort,
-                  module: result.moduleFilter ?? undefined,
+                  ...(result.moduleFilter !== null && result.moduleFilter !== undefined ? {module: result.moduleFilter} : {}),
                   storedState: result.stateFilter,
                   locks: result.lockFilter,
                   presence: result.presenceFilter,
@@ -308,7 +308,7 @@ export default async function SuperAdminFeaturesPage({
                 href={adminFeaturesHref({
                   q: result.q,
                   sort: result.sort,
-                  module: result.moduleFilter ?? undefined,
+                  ...(result.moduleFilter !== null && result.moduleFilter !== undefined ? {module: result.moduleFilter} : {}),
                   storedState: result.stateFilter,
                   locks: result.lockFilter,
                   presence: result.presenceFilter,
