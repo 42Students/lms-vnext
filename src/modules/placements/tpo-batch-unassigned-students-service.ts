@@ -3,7 +3,7 @@ import { and, countDistinct, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   cohorts, programs, departments, learnerProgramEnrollments,
-  collegeMemberships, users, membershipRoles, sectionEnrollments, sections,
+  collegeMemberships, users, membershipRoles,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireTpoBatchActor } from "./tpo-batch-workspace-read-service";
