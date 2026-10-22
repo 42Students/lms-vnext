@@ -126,3 +126,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/components/placements/college-company-create.tsx
 - Legacy: Dirty cancel nested Discard unsaved changes?/Keep editing (`docs/legacy-source/frontend/src/pages/superadmin/sections/Companies.js:451-466`)
 - Expected fix: Add dirty change confirmation.
+
+## Lane-3 verification triage
+
+Fast triage (2026-10-22): OK: G2-8-5-001, G2-8-5-037 (legacy rules bookmark redirects to /learn/my-placements/placement#rules). DEFERRED: remaining 23 rows require deeper persistence, migration, permission, or UI verification; no implementation parity claimed.
