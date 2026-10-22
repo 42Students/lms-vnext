@@ -37,12 +37,15 @@ function fail(code: string, status: number): never { throw new CourseImageError(
 function receipt(raw: unknown): Receipt | null {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
   const row = raw as Record<string, unknown>;
-  if (typeof row.id !== "string" || typeof row.key !== "string" ||
+  if (typeof row.id !== "string" || !/^[a-f0-9-]{36}$/i.test(row.id) ||
+      typeof row.key !== "string" ||
       !IMAGE_PATH.test(row.key) || typeof row.ownerMembershipId !== "string" ||
       typeof row.tokenHash !== "string" || !/^[a-f0-9]{64}$/.test(row.tokenHash) ||
       typeof row.contentType !== "string" || !IMAGE_MIMES.has(row.contentType) ||
       typeof row.sizeBytes !== "number" || row.sizeBytes < 1 ||
       row.sizeBytes > MAX_IMAGE_BYTES || typeof row.expiresAt !== "string" ||
+      !Number.isFinite(Date.parse(row.expiresAt)) ||
+      !row.key.includes("/" + row.ownerMembershipId + "/") ||
       !["UPLOADING", "VERIFYING", "READY"].includes(String(row.status))) return null;
   return row as unknown as Receipt;
 }
@@ -106,6 +109,9 @@ export async function grantCourseImage(context: RequestContext, rawId: string, r
   const ownerMembershipId = uploader(context, scope.collegeId);
   const declaration = raw && typeof raw === "object" && !Array.isArray(raw)
     ? raw as Record<string, unknown> : {};
+  if (Object.keys(declaration).some(key =>
+    !["originalName", "contentType", "sizeBytes"].includes(key)))
+    fail("INVALID_REQUEST", 400);
   if (typeof declaration.originalName !== "string" ||
       typeof declaration.contentType !== "string" ||
       typeof declaration.sizeBytes !== "number") fail("INVALID_REQUEST", 400);
