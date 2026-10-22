@@ -95,7 +95,12 @@ export async function searchOrganizationPlacementApplications(context:RequestCon
   input.status==="ALL"?undefined:eq(legacyStage,input.status),
   input.search?or(ilike(users.displayName,pattern),ilike(placementJobs.title,pattern),
    ilike(placementCompanies.name,pattern),ilike(legacyStage,pattern),
-   ilike(placementJobRoleOptions.title,pattern),ilike(users.email,pattern)):undefined);
+   ilike(placementJobRoleOptions.title,pattern),ilike(users.email,pattern),
+   // Legacy app-search matched the concatenation, including queries which
+   // cross learner, role, company and status boundaries.
+   ilike(sql<string>`concat_ws(' ', coalesce(${users.displayName},''),
+    coalesce(${placementJobs.title},''), coalesce(${placementCompanies.name},''),
+    coalesce(${legacyStage},''))`,pattern)):undefined);
  const db=getDb();
  const {totalRow,countRows,records}=await db.transaction(async tx=>{
  const [totalRow]=await tx.select({totalApplications:sql<number>`count(*)::int`})

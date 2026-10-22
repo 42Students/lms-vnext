@@ -19,7 +19,7 @@ function listingUrl(params:{search:string;status:string;sort:string;pageSize:num
  return "/admin/placements/organization-applications?"+values.toString();
 }
 const statusOptions=["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW",
- "OFFERED","REJECTED","HIRED","WITHDRAWN"] as const;
+ "WAITLISTED","OFFERED","REJECTED","HIRED","WITHDRAWN"] as const;
 const fmt=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"});
 
 export default async function OrganizationApplicationsPage({searchParams}:{
