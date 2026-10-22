@@ -20,5 +20,5 @@ const MESSAGES:Record<string,string>={
 
 };
 export function tpoNoticeFormErrorMessage(value:string|undefined|null):string|null{
- return value&&Object.prototype.hasOwnProperty.call(MESSAGES,value)?MESSAGES[value]:null;
+ return value&&Object.prototype.hasOwnProperty.call(MESSAGES,value)?(MESSAGES[value]??null):null;
 }
