@@ -86,7 +86,7 @@ export async function publishAssignmentGradeBatch(
   }
   const [after]=await db.select({total:count()}).from(assignmentSubmissions).where(pendingScope);
   const remaining=after?.total??0;
-  const receipt=await recordActivityEvent(context,{
+  const receipt=published>0?await recordActivityEvent(context,{
     eventType:ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_GRADE_PUBLISHED,
     collegeId:scope.collegeId,organizationId:scope.organizationId,
     subjectType:"course_assignment",subjectId:assignmentId,
@@ -102,13 +102,13 @@ export async function publishAssignmentGradeBatch(
     },
     groupKey:"course-assignment:"+assignmentId+":grading",
     dedupeKey:"course-assignment:"+assignmentId+":bulk-grades:"+input.requestId,
-  });
+  }):null;
   return {
     published,failed:failedIds.length,failedIds,
     failureDetails:failedRows,remaining,
     skippedUngraded:classification?.skippedUngraded??0,
     alreadyPublished:classification?.alreadyPublished??0,
     processed:rows.length,batchLimit:MAX_BATCH,
-    complete:remaining===0,receiptId:receipt.id,
+    complete:remaining===0,receiptId:receipt?.id??null,
   };
 }

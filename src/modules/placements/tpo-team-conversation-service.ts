@@ -30,8 +30,12 @@ const legacyTeamSendSchema=z.strictObject({
  threadId:z.string().uuid().optional(),
  recipientMembershipId:z.string().uuid().optional(),
  topic:z.string().trim().min(1).max(200).optional(),
+ kind:z.enum(["DIRECT","TOPIC","DRIVE","COMPANY"]).default("DIRECT"),
+ contextId:z.string().uuid().optional(),
+ participantMembershipIds:z.array(z.string().uuid()).max(20).default([]),
  body:z.string().trim().min(1).max(4000),
  mentionMembershipIds:z.array(z.string().uuid()).max(20).default([]),
+ addMentionedMembers:z.boolean().default(false),
  markDecision:z.boolean().default(false),
  idempotencyKey:z.string().uuid().optional(),
  ask:z.object({
@@ -44,7 +48,8 @@ const legacyTeamSendSchema=z.strictObject({
  if(!input.threadId&&(!input.recipientMembershipId||!input.topic))ctx.addIssue({
   code:"custom",path:["threadId"],message:"Choose an existing thread or a recipient and topic",
  });
- if(input.threadId&&(input.recipientMembershipId||input.topic))ctx.addIssue({
+ if(input.threadId&&(input.recipientMembershipId||input.topic||
+   input.kind!=="DIRECT"||input.contextId||input.participantMembershipIds.length))ctx.addIssue({
   code:"custom",path:["threadId"],message:"Do not change recipients through Send",
  });
  if(new Set(input.mentionMembershipIds).size!==input.mentionMembershipIds.length)
@@ -61,24 +66,21 @@ export async function sendLegacyTpoTeamConversation(context:RequestContext,raw:u
  const existing=input.threadId?await readTpoInternalConversation(context,input.threadId,1):null;
  if(existing&&existing.status!=="READY")
   return {status:existing.status,threadId:input.threadId??null};
- if(existing?.status==="READY"&&input.mentionMembershipIds.length){
-  const authorized=new Set([
-   existing.thread.startedByMembershipId,existing.thread.invitedMembershipId,
-  ]);
-  // For a group, notifications already fan out to active participants in the
-  // persisted message writer; IDs outside the direct pair require a group
-  // participant membership service rather than an unscoped mention.
-  if(input.mentionMembershipIds.some(id=>!authorized.has(id)))
-   throw new AuthorizationError("placements.manage");
- }
+ // The transactional writer checks every mention against this college,
+ // the persisted active thread roster and Add people consent. Do not
+ // incorrectly restrict group mentions to the original direct pair.
  const threadId=input.threadId??(await createTpoInternalThread(context,
   internalThreadSchema.parse({
    recipientMembershipId:input.recipientMembershipId,
+   kind:input.kind,contextId:input.contextId,
+   participantMembershipIds:input.participantMembershipIds,
    topic:input.topic,firstMessage:undefined,
    idempotencyKey:input.idempotencyKey,
   }))).id;
  const message=await postTpoInternalMessage(context,{
   threadId,body:input.body,markDecision:input.markDecision,
+  mentionMembershipIds:input.mentionMembershipIds,
+  addMentionedMembers:input.addMentionedMembers,
   idempotencyKey:input.idempotencyKey,
  });
  if(!input.ask)return {status:"READY" as const,threadId,messageId:message.id,
