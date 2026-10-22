@@ -16,6 +16,8 @@ const strictDecimal=(min:number,max:number,fallback:number)=>z.union([
 ]).default(fallback);
 export const superAdminReadQuerySchema = z.strictObject({
  q: z.string().trim().max(100).default(""),
+ sortBy: z.enum(["name","roll"]).default("name"),
+ sortOrder: z.enum(["asc","desc"]).default("asc"),
  status: z.enum(["ALL","ACTIVE","INACTIVE","PLANNED","COMPLETED","ARCHIVED","ENDED","SUSPENDED","SUBMITTED","WITHDRAWN","PENDING","SCHEDULED","CANCELLED","HOLD","SHORTLISTED","REJECTED","ISSUED","ACCEPTED","DECLINED","JOINED","DID_NOT_JOIN","DEFERRED","CLOSED","DRAFT","PUBLISHED"]).default("ALL"),
  page: strictDecimal(1,1000,1),
  pageSize: strictDecimal(10,200,25).refine(n=>[10,25,50,100,200].includes(n)),
@@ -50,6 +52,8 @@ export function superAdminReadPages(total:number,pageSize=SUPER_ADMIN_READ_PAGE_
 export function superAdminReadHref(path:string,query:SuperAdminReadQuery) {
  const params=new URLSearchParams();
  if(query.q)params.set("q",query.q);
+ if(query.sortBy!=="name")params.set("sortBy",query.sortBy);
+ if(query.sortOrder!=="asc")params.set("sortOrder",query.sortOrder);
  if(query.jobId)params.set("jobId",query.jobId);
  if(query.pipelineStage!=="ALL")params.set("pipelineStage",query.pipelineStage);
  if(query.source!=="ALL")params.set("source",query.source);
@@ -64,12 +68,12 @@ export function readAdminQuery(raw:Record<string,string|string[]|undefined>) {
  // Unknown URL keys and repeated values are ambiguous. An old or forged
  // query must render the page's invalid-filters recovery, not silently
  // discard the attempted scope or pick the first value.
- const allowed=["q","status","page","pageSize","jobId","pipelineStage",
+ const allowed=["q","sortBy","sortOrder","status","page","pageSize","jobId","pipelineStage",
   "source","channel","departmentId","programId","cohortId","sectionId","employmentType"];
  if(Object.keys(raw).some(key=>!allowed.includes(key)) ||
     Object.values(raw).some(Array.isArray))
   return superAdminReadQuerySchema.safeParse(null);
- return superAdminReadQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page,pageSize:raw.pageSize,jobId:raw.jobId,pipelineStage:raw.pipelineStage,source:raw.source,channel:raw.channel,departmentId:raw.departmentId,programId:raw.programId,cohortId:raw.cohortId,sectionId:raw.sectionId,employmentType:raw.employmentType});
+ return superAdminReadQuerySchema.safeParse({q:raw.q,sortBy:raw.sortBy,sortOrder:raw.sortOrder,status:raw.status,page:raw.page,pageSize:raw.pageSize,jobId:raw.jobId,pipelineStage:raw.pipelineStage,source:raw.source,channel:raw.channel,departmentId:raw.departmentId,programId:raw.programId,cohortId:raw.cohortId,sectionId:raw.sectionId,employmentType:raw.employmentType});
 }
 export function scopedSearchLike(q:string) {
  return "%"+q.replace(/[\\%_]/g,"\\$&")+"%";
