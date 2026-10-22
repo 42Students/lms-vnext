@@ -22,7 +22,7 @@ function parseQuery(q:Query):{page:number;pageSize:10|20|25|50|100}|null{
  if(rawSize!==undefined&&!["10","20","25","50","100"].includes(rawSize))return null;
  const page=rawPage?Number(rawPage):1;
  if(!Number.isSafeInteger(page)||page>100000)return null;
- return {page,pageSize:Number(rawSize??25) as 10|20|25|50|100};
+ return {page,pageSize:Number(rawSize??20) as 10|20|25|50|100};
 }
 function deletedHref(page:number,size:number):string{
  const query=new URLSearchParams();
