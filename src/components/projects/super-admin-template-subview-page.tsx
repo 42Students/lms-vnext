@@ -27,7 +27,6 @@ import {
 import {
   countTemplateBlueprintItems,
   templateVersionLabels,
-  TEMPLATE_SUBVIEW_TABS,
   type TemplateSubview,
 } from "@/modules/projects/template-subview-model";
 import { templateVersionComparisonHref } from "@/modules/projects/template-version-comparison-model";
@@ -159,11 +158,6 @@ export async function SuperAdminTemplateSubviewPage({
         .limit(100)
     : [];
 
-  const sectionTitle =
-    TEMPLATE_SUBVIEW_TABS.find(
-      (tab) => tab.id === section,
-    )?.label ?? "Template";
-
   const currentVersion =
     detail.currentVersion;
 
@@ -235,11 +229,11 @@ export async function SuperAdminTemplateSubviewPage({
       <SuperAdminTemplateTabs
         templateId={detail.template.id}
         active={section}
-        counts={blueprint ? {
+        {...(blueprint ? {counts: {
           sprints:sprints.length,
           tasks:tasks.length,
           resources:resources.length,
-        } : undefined}
+        }} : {})}
       />
 
       {blueprint && (section === "sprints" || section === "tasks") &&
