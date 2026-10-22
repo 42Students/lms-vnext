@@ -190,7 +190,8 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       }
       const result=outcome as Record<string,unknown>;
       if(result.accepted!==true ||
-         (result.outcome!=="JOINED" && result.outcome!=="PENDING_HR") ||
+         (result.outcome!=="JOINED" && result.outcome!=="PENDING_CONSENT") ||
+         result.status!==(result.outcome==="PENDING_CONSENT"?"PENDING_HR":"JOINED") ||
          typeof result.signInEmail!=="string" || !result.signInEmail.trim() ||
          result.signInEmail.trim().toLowerCase()!==invite?.contactEmail?.trim().toLowerCase()){
         // An accepted response must affirm the SAME email that received OTP.
@@ -199,7 +200,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         return;
       }
       setJoinedEmail(result.signInEmail);
-      setState(result.outcome==="PENDING_HR"?"pending":"joined");
+      setState(result.outcome==="PENDING_CONSENT"?"pending":"joined");
     }catch(error){
       showError(error,"Something went wrong. Please try again.");
     }
