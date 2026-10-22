@@ -9,6 +9,10 @@ describe("Unread learner placement notifications",()=>{
   expect(s).toContain("count(*)::int");
   expect(s).toContain("isNull(inAppNotifications.readAt)");
   expect(s).toContain("eq(activityEvents.collegeId,membership.collegeId)");
+  const unreadCount=s.slice(s.indexOf("export async function getUnreadOwnLearnerPlacementAlertCount"));
+  expect(unreadCount).toContain('ne(activityEvents.subjectType,"announcement")');
+  expect(unreadCount).toContain('ne(activityEvents.eventType,"PLACEMENT_ANNOUNCEMENT")');
+  expect(unreadCount).toContain("isNull(inAppNotifications.readAt)");
   expect(layout).toContain("getUnreadOwnLearnerPlacementAlertCount(context)");
   expect(tabs).toContain('unreadPersonalAlerts: _unreadPersonalAlerts=null');
   expect(tabs).toContain('count: tab.label==="Notices" && unreadCollegeAnnouncements!==null');
