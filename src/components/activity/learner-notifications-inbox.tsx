@@ -302,7 +302,9 @@ export function LearnerNotificationsInbox({
         <NotificationList items={visible.map(item=>({
             ...item,
             actionHref:learnerNotificationPlacementAction(item.actionHref)?.href??null,
-            actionLabel:learnerNotificationPlacementAction(item.actionHref)?.label,
+            ...(learnerNotificationPlacementAction(item.actionHref)?.label !== undefined
+              ? { actionLabel: learnerNotificationPlacementAction(item.actionHref)?.label }
+              : {}),
           }))}
           onSelect={setSelected} readEndpoint="/api/learn/notifications" />
       )}

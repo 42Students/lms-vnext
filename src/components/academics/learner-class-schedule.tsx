@@ -185,28 +185,28 @@ function LearnerHourlyGrid({days,eventsForDay,courseBasePath,onSelectDay}:{
 }){
   const columns=days.map(day=>({day,rows:eventsForDay(day)}));
   const hours=learnerHourlySlots(columns.flatMap(col=>col.rows));
-  return <div role="region" className={styles.hourFrame} aria-label="Hourly class schedule">
-    <div className={styles.hourGrid+" "+(days.length===1?"grid-cols-[55px_minmax(17.5rem,1fr)] sm:grid-cols-[70px_minmax(17.5rem,1fr)] lg:grid-cols-[90px_minmax(17.5rem,1fr)]":"grid-cols-[55px_repeat(7,minmax(9.375rem,1fr))] sm:grid-cols-[70px_repeat(7,minmax(9.375rem,1fr))] lg:grid-cols-[90px_repeat(7,minmax(9.375rem,1fr))]")}>
-      <div className={styles.hourHeader}>ALL DAY</div>
+  return <div role="region" className={styles["hourFrame"]} aria-label="Hourly class schedule">
+    <div className={styles["hourGrid"]+" "+(days.length===1?"grid-cols-[55px_minmax(17.5rem,1fr)] sm:grid-cols-[70px_minmax(17.5rem,1fr)] lg:grid-cols-[90px_minmax(17.5rem,1fr)]":"grid-cols-[55px_repeat(7,minmax(9.375rem,1fr))] sm:grid-cols-[70px_repeat(7,minmax(9.375rem,1fr))] lg:grid-cols-[90px_repeat(7,minmax(9.375rem,1fr))]")}>
+      <div className={styles["hourHeader"]}>ALL DAY</div>
       {columns.map(col=><div key={localDayKey(col.day)}
-        className={styles.hourDayHeader}>
+        className={styles["hourDayHeader"]}>
         {dayHeading(col.day)}
       </div>)}
       {hours.map(hour=><Fragment key={hour}>
-        <div className={styles.hourHeader+" text-right"}>
+        <div className={styles["hourHeader"]+" text-right"}>
           {learnerHourLabel(hour)}
         </div>
         {columns.map(col=>{
           const starts=col.rows.filter(event=>learnerEventStartHour(event)===hour);
           return <div key={localDayKey(col.day)+":"+hour}
-            className={styles.hourCell}>
+            className={styles["hourCell"]}>
             {starts.length?<div className="space-y-1">
               {starts.map(event=><EventCard key={event.id} event={event}
                 courseBasePath={courseBasePath} compact/>)}
             </div>:<Button variant="secondary" type="button"
               onClick={()=>onSelectDay(col.day)}
               aria-label={"See "+dayHeading(col.day)+" at "+learnerHourLabel(hour)}
-              className={styles.emptyHour}>
+              className={styles["emptyHour"]}>
               <span className="sr-only">No class scheduled. Open this day.</span>
             </Button>}
           </div>;
@@ -230,8 +230,8 @@ function EventCard({
       title={scheduleEventTooltip(event)}
       className={
         (compact
-          ? styles.eventCard+" px-3 py-2 "
-          : styles.eventCard+" p-3 ") +
+          ? styles["eventCard"]+" px-3 py-2 "
+          : styles["eventCard"]+" p-3 ") +
         "border-l-4 " + learnerCourseTint(event)
       }
     >
@@ -492,7 +492,7 @@ export function LearnerClassSchedule({
   }
 
   return (
-    <div data-learner-schedule={courseBasePath === "/learn/courses" ? "true" : undefined} className={"min-w-0 space-y-4 md:space-y-6 "+styles.root}>
+    <div data-learner-schedule={courseBasePath === "/learn/courses" ? "true" : undefined} className={"min-w-0 space-y-4 md:space-y-6 "+styles["root"]}>
       <Dialog open={metricDialog !== null}
         onOpenChange={open => { if (!open) { setMetricDialog(null); setSelectedEvent(null); } }}
         title={metricDialog === "TODAY" ? "Today's Classes" :
@@ -547,7 +547,7 @@ export function LearnerClassSchedule({
         </Alert>
       ) : null}
       {filteredMetrics.length > 0 ? (
-        <div role="group" className={styles.summary + " flex flex-wrap items-center gap-2"} aria-label="Class schedule overview">
+        <div role="group" className={styles["summary"] + " flex flex-wrap items-center gap-2"} aria-label="Class schedule overview">
           <Metric label="Today" value={todayEvents.length + " today"}
             expanded={metricDialog === "TODAY"}
             onClick={() => { setSelectedEvent(null); setMetricDialog("TODAY"); }} />
@@ -565,7 +565,7 @@ export function LearnerClassSchedule({
             <h2 className="text-sm font-semibold text-foreground">Next classes</h2>
             <span className="text-xs font-semibold text-muted-foreground">Next 3 upcoming</span>
           </div>
-          <div className={styles.upcomingList}>
+          <div className={styles["upcomingList"]}>
             {upcoming.map(event => (
               <Button key={event.id} type="button" variant="ghost"
                 aria-label={"View next class: " + (event.courseName || event.title || "Scheduled Class")}
@@ -591,15 +591,15 @@ export function LearnerClassSchedule({
         </section>
       ) : null}
 
-      <section className={styles.calendarCard}>
+      <section className={styles["calendarCard"]}>
         {navigationPending || waitingForMonth ? <p role="status" aria-live="polite"
           className="border-b border-border px-4 py-2 text-sm text-muted-foreground">
           Loading the selected schedule period…
         </p> : null}
-        <div className={styles.toolbar}>
-          <div className={styles.nav}>
+        <div className={styles["toolbar"]}>
+          <div className={styles["nav"]}>
             <Button
-              className={styles.arrow}
+              className={styles["arrow"]}
               size="sm"
               variant="secondary"
               aria-label="Previous period"
@@ -610,7 +610,7 @@ export function LearnerClassSchedule({
               </svg>
             </Button>
             <Button
-              className={styles.today}
+              className={styles["today"]}
               size="sm"
               variant="secondary"
               onClick={() => {
@@ -624,7 +624,7 @@ export function LearnerClassSchedule({
               Today
             </Button>
             <Button
-              className={styles.arrow}
+              className={styles["arrow"]}
               size="sm"
               variant="secondary"
               aria-label="Next period"
@@ -634,12 +634,12 @@ export function LearnerClassSchedule({
                 <path d="m10 5 7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </Button>
-            <span className={styles.period+" break-words"}>
+            <span className={styles["period"]+" break-words"}>
               {dateLabel(anchor, view)}
             </span>
           </div>
 
-          <div className={styles.actions}>
+          <div className={styles["actions"]}>
             <Select aria-label="Calendar view"
               value={view}
               onChange={(event) => {
@@ -649,7 +649,7 @@ export function LearnerClassSchedule({
                 setView(nextView);
                 navigateCalendarWindow(next,nextView);
               }}
-              className={styles.viewSelect}
+              className={styles["viewSelect"]}
             >
               <option value="month">
                 Month
@@ -666,7 +666,7 @@ export function LearnerClassSchedule({
 
         {courseBasePath === "/learn/courses" ? (
           <Disclosure title="Filters" defaultOpen={Boolean(sessionSearch || sessionKind !== "ALL" || upcomingOnly)} className="border-b border-border" contentClassName="pb-2">
-          <div className={styles.filters+" min-w-0"}>
+          <div className={styles["filters"]+" min-w-0"}>
             <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find sessions
               <Input type="search" value={sessionSearch} maxLength={100}
                 onChange={event=>setSessionSearch(event.target.value)}
@@ -716,7 +716,7 @@ export function LearnerClassSchedule({
           </label>
         ) : null}
         {courses.length > 1 ? (
-          <div className={styles.courseFilter+" min-w-0"}>
+          <div className={styles["courseFilter"]+" min-w-0"}>
             <div className="flex min-w-0 flex-wrap items-center gap-2">
               <span className="mr-1 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                 Courses
@@ -753,11 +753,11 @@ export function LearnerClassSchedule({
         ) : (
           <>
             {view === "month" ? (
-              <div role="region" className={styles.month} aria-label="Monthly class schedule">
-                <CalendarGrid variant="hairline" className={styles.monthGrid}
+              <div role="region" className={styles["month"]} aria-label="Monthly class schedule">
+                <CalendarGrid variant="hairline" className={styles["month"]Grid}
                   role="group" aria-label="42 day month grid">
                   {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((day,index)=>(
-                    <span key={day} className={styles.weekday+" "+(index===0?calendarStyles.calendarSunday:"")}>
+                    <span key={day} className={styles["weekday"]+" "+(index===0?calendarStyles.calendarSunday:"")}>
                       {day}
                     </span>
                   ))}
@@ -785,7 +785,7 @@ export function LearnerClassSchedule({
                           });
                         }
                       }}
-                      className={styles.monthDay+" !block !w-full [min-height:4rem] md:[min-height:6rem] !justify-start"}>
+                      className={styles["month"]Day+" !block !w-full [min-height:4rem] md:[min-height:6rem] !justify-start"}>
                       <span className="block text-xs font-semibold">{Number(day.slice(8))}</span>
                       {dayItems.length ? <span aria-hidden="true" className="mt-1 flex flex-wrap gap-0.5">
                         {dayItems.slice(0,3).map(event=><span key={event.id} className={"size-1.5 rounded-[50%] bg-primary " +
@@ -802,7 +802,7 @@ export function LearnerClassSchedule({
                     </Button>;
                   })}
                 </CalendarGrid>
-                <section id="learner-selected-day-agenda" className={styles.selectedAgenda} aria-label="Selected day agenda">
+                <section id="learner-selected-day-agenda" className={styles["selectedAgenda"]} aria-label="Selected day agenda">
                   <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <h3 className="text-sm font-semibold text-foreground">
                       {chosenDay} · {agenda.length} {agenda.length===1?"class":"classes"}
@@ -935,7 +935,7 @@ export function LearnerClassSchedule({
                 .map(({ day, events: dayEvents }) => (
                   <section
                     key={localDayKey(day)}
-                    className={styles.agendaDay}
+                    className={styles["agendaDay"]}
                   >
                     <h3 className="m-0 text-sm font-semibold text-foreground">
                       {dayHeading(day)}
