@@ -115,6 +115,8 @@ async function cleanup() {
   await pool.query(
     "delete from placement_offers",
   );
+  await pool.query("delete from placement_tpo_application_stages");
+  await pool.query("delete from placement_round_candidate_slots");
   await pool.query(
     "delete from placement_round_results",
   );
