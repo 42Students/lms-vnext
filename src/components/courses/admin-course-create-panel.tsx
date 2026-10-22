@@ -145,7 +145,15 @@ export function AdminCourseCreatePanel({
   const [createdImageCourseId,setCreatedImageCourseId]=useState<string|null>(null);
   const uploadRef=useRef<AbortController|null>(null);
   const tenantSignature=departments.map(row=>row.id).sort().join("|");
-  useEffect(()=>()=>{uploadRef.current?.abort();uploadRef.current=null;},[tenantSignature]);
+  const priorTenantSignature=useRef(tenantSignature);
+  useEffect(()=>{
+    if(priorTenantSignature.current!==tenantSignature){
+      priorTenantSignature.current=tenantSignature;
+      setImageBusy(false);setImageFile(null);setImageReceipt(null);
+      setCreatedImageCourseId(null);setImageError("");
+    }
+    return ()=>{uploadRef.current?.abort();uploadRef.current=null;};
+  },[tenantSignature]);
   function cancelImageUpload(){
     uploadRef.current?.abort();uploadRef.current=null;setImageBusy(false);
     setImageError("Upload cancelled. The saved course remains unchanged and unverified images stay private.");
@@ -292,6 +300,7 @@ export function AdminCourseCreatePanel({
           method:"POST",headers:{"Content-Type":"application/json"},
           body:JSON.stringify({originalName:file.name,contentType:file.type,sizeBytes:file.size}),signal:controller.signal,
         });
+      if(controller.signal.aborted)return;
       setImageReceipt(result.grant.receiptId);
       const sent=await fetch(result.grant.uploadUrl,{
         method:"PUT",body:file,headers:result.grant.requiredHeaders,
