@@ -7,6 +7,7 @@ import {companyShareTablesReady} from "./readiness";
 import {companyShareAccessProof,companyShareTokenSchema,hashCompanyShareToken,validCompanyShareAccessCode,issueCompanyShareAccessCode} from "./token-model";
 import {sendZeptoMailTemplate,resolveZeptoMailTemplateId} from "@/modules/notifications/zeptomail-email";
 import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
+import {COMPANY_SHARE_EMAILS_PER_HOUR,companyShareEmailThrottle} from "./email-code-throttle-model";
 /** Anonymous visitors never choose the delivery address. The recipient must
  * be an authenticated, live recruiter with the share's persisted company grant.
  * A separate configured template and durable per-share throttle guard sending.
@@ -111,10 +112,10 @@ export async function emailAuthorizedCompanyShareCode(
     eq(activityEvents.subjectId,share.id),
     eq(activityEvents.eventType,COMPANY_SHARE_EMAIL_KIND),
     gte(activityEvents.occurredAt,new Date(now.getTime()-COMPANY_SHARE_EMAIL_WINDOW_MS))))
-   .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(3);
-  if(sent.length>=3)return "LIMITED" as const;
-  if(sent[0] && now.getTime()-sent[0].occurredAt.getTime()<60000)
-   return "TOO_SOON" as const;
+   .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id))
+   .limit(COMPANY_SHARE_EMAILS_PER_HOUR);
+  const throttle=companyShareEmailThrottle(sent.map(row=>row.occurredAt),now);
+  if(throttle)return throttle;
   const challenge=issueCompanyShareAccessCode();
   // The provider call is inside the locked transaction so a rejected mail
   // cannot silently invalidate the manual code. Do not retry ambiguous sends.
