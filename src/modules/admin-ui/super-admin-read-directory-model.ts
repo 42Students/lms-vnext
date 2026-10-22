@@ -51,17 +51,17 @@ export function superAdminReadPages(total:number,pageSize=SUPER_ADMIN_READ_PAGE_
 }
 export function superAdminReadHref(path:string,query:Omit<SuperAdminReadQuery,"sortBy"|"sortOrder"> & Partial<Pick<SuperAdminReadQuery,"sortBy"|"sortOrder">>) {
  const params=new URLSearchParams();
- if(query.q)params.set("q",query.q);
- if(query.sortBy&&query.sortBy!=="name")params.set("sortBy",query.sortBy);
- if(query.sortOrder&&query.sortOrder!=="asc")params.set("sortOrder",query.sortOrder);
- if(query.jobId)params.set("jobId",query.jobId);
- if(query.pipelineStage!=="ALL")params.set("pipelineStage",query.pipelineStage);
- if(query.source!=="ALL")params.set("source",query.source);
- if(query.channel!=="ALL")params.set("channel",query.channel);
+ if(query["q"])params.set("q",query["q"]);
+ if(query["sortBy"]&&query["sortBy"]!=="name")params.set("sortBy",query["sortBy"]);
+ if(query["sortOrder"]&&query["sortOrder"]!=="asc")params.set("sortOrder",query["sortOrder"]);
+ if(query["jobId"])params.set("jobId",query["jobId"]);
+ if(query["pipelineStage"]!=="ALL")params.set("pipelineStage",query["pipelineStage"]);
+ if(query["source"]!=="ALL")params.set("source",query["source"]);
+ if(query["channel"]!=="ALL")params.set("channel",query["channel"]);
  for(const key of ["departmentId","programId","cohortId","sectionId","employmentType"] as const){if(query[key])params.set(key,query[key]);}
- if(query.status!=="ALL")params.set("status",query.status);
- if(query.page>1)params.set("page",String(query.page));
- if(query.pageSize!==25)params.set("pageSize",String(query.pageSize));
+ if(query["status"]!=="ALL")params.set("status",query["status"]);
+ if(query["page"]>1)params.set("page",String(query["page"]));
+ if(query["pageSize"]!==25)params.set("pageSize",String(query["pageSize"]));
  return path+(params.size?"?"+params:"");
 }
 export function readAdminQuery(raw:Record<string,string|string[]|undefined>) {
@@ -73,7 +73,7 @@ export function readAdminQuery(raw:Record<string,string|string[]|undefined>) {
  if(Object.keys(raw).some(key=>!allowed.includes(key)) ||
     Object.values(raw).some(Array.isArray))
   return superAdminReadQuerySchema.safeParse(null);
- return superAdminReadQuerySchema.safeParse({q:raw.q,sortBy:raw.sortBy,sortOrder:raw.sortOrder,status:raw.status,page:raw.page,pageSize:raw.pageSize,jobId:raw.jobId,pipelineStage:raw.pipelineStage,source:raw.source,channel:raw.channel,departmentId:raw.departmentId,programId:raw.programId,cohortId:raw.cohortId,sectionId:raw.sectionId,employmentType:raw.employmentType});
+ return superAdminReadQuerySchema.safeParse({q:raw["q"],sortBy:raw["sortBy"],sortOrder:raw["sortOrder"],status:raw["status"],page:raw["page"],pageSize:raw["pageSize"],jobId:raw["jobId"],pipelineStage:raw["pipelineStage"],source:raw["source"],channel:raw["channel"],departmentId:raw["departmentId"],programId:raw["programId"],cohortId:raw["cohortId"],sectionId:raw["sectionId"],employmentType:raw["employmentType"]});
 }
 export function scopedSearchLike(q:string) {
  return "%"+q.replace(/[\\%_]/g,"\\$&")+"%";
