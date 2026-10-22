@@ -34,8 +34,17 @@ export async function POST(request:Request){
  }catch(error){
   if(error instanceof PublicEnquiryError)return NextResponse.json({
    error:error.code==="NOT_READY"?"RECRUITER_ENQUIRIES_UNAVAILABLE":
-    error.code==="LIMIT"?"TOO_MANY_TRIES":error.code==="INVALID"?"INVALID_CODE_OR_EXPIRED":"COULD_NOT_SEND_ENQUIRY",
-   message:error.code==="INVALID"?"The code is incorrect, expired or locked. Request a new code if needed.":
+    error.code==="LIMIT"?"TOO_MANY_TRIES":
+    error.code==="CODE_EXPIRED"?"CODE_EXPIRED":
+    error.code==="CODE_LOCKED"?"CODE_LOCKED":
+    error.code==="WRONG_CODE"?"WRONG_CODE":
+    error.code==="NAME_REQUIRED"?"NAME_REQUIRED":
+    error.code==="INVALID"?"INVALID_CODE_OR_EXPIRED":"COULD_NOT_SEND_ENQUIRY",
+   message:error.code==="CODE_EXPIRED"?"This code has expired. Request a new code.":
+    error.code==="CODE_LOCKED"?"Too many incorrect attempts. Request a new code.":
+    error.code==="WRONG_CODE"?"The code is incorrect. Please try again.":
+    error.code==="NAME_REQUIRED"?"Enter your name.":
+    error.code==="INVALID"?"The code is incorrect, expired or locked. Request a new code if needed.":
     error.code==="LIMIT"?"Too many attempts. Try again later.":
     error.code==="NOT_READY"?"Recruitment enquiries are temporarily unavailable.":
     "Could not send your enquiry. Review the details and try again.",
