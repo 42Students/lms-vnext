@@ -185,7 +185,7 @@ export async function commitTpoAcademicImport(context: RequestContext, raw: unkn
       const incomingVerifiedFields=Object.keys(row).filter(
         key=>key!=="studentCode"&&key!=="legacyOrigin",
       );
-      const previousMetadata=before?.source==="VERIFIED"&&before.sourceMetadata&&
+      const previousMetadata:Record<string,unknown>=before?.source==="VERIFIED"&&before.sourceMetadata&&
         !Array.isArray(before.sourceMetadata)&&typeof before.sourceMetadata==="object"
         ?before.sourceMetadata:{};
       // A one-field verified correction does not de-verify unrelated marks,

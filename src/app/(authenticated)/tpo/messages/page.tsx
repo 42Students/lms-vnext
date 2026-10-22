@@ -5,6 +5,7 @@ import {getTpoRecruiterThreadDetail} from "@/modules/placements/tpo-recruiter-th
 import bubbleStyles from "@/components/tpo/tpo-conversation-bubble.module.css";
 import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
 import {TpoMessagesTabs} from "@/components/tpo/tpo-messages-tabs";
+import {TpoInboxRefreshBoundary} from "@/components/tpo/tpo-inbox-refresh-boundary";
 import { redirect } from "next/navigation";
 import { AuthorizationError } from "@/modules/permissions/policy";
 
@@ -124,6 +125,9 @@ export default async function TpoMessagesPage({
     );
   }
 
+  const inboxScope=[context.user.id,context.membership.id,
+    JSON.stringify(parsed.data),first(raw.thread)??""].join(":");
+  const retryHref=tpoMessagesHref(parsed.data);
   const result = await getTpoMessagesInbox(
     context,
     parsed.data,
@@ -131,12 +135,15 @@ export default async function TpoMessagesPage({
     if(error instanceof AuthorizationError)throw error;
     return null;
   });
-  if (!result) return <div className="min-w-0 space-y-4">
+  if (!result) return <TpoInboxRefreshBoundary key={inboxScope}
+    scopeKey={inboxScope} failed retryHref={retryHref}>
+    <div className="min-w-0 space-y-4">
     <PageHeader title="Messages" description="Conversations with recruiters, one for each drive and a general one. Inside a drive, the same conversation is its Discussion tab."/>
     <TpoMessagesTabs selected="recruiters"/>
     <ErrorState title="Could not load conversations" description="This refresh failed. The recruiter inbox could not be verified; no existing messages have been changed."
-      action={<Link href="/tpo/messages" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
-  </div>;
+      action={<Link href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+    </div>
+  </TpoInboxRefreshBoundary>;
 
   const {
     query,
@@ -207,7 +214,9 @@ export default async function TpoMessagesPage({
   };
   const searching=Boolean(query.q.trim());
   const narrowing=Boolean(searching||query.from||query.to||query.status!=="ALL");
-  return <div className="min-w-0 space-y-4">
+  return <TpoInboxRefreshBoundary key={inboxScope}
+    scopeKey={inboxScope} failed={false} retryHref={retryHref}>
+    <div className="min-w-0 space-y-4">
     <PageHeader title="Messages" description="Conversations with recruiters, one for each drive and a general one. Inside a drive, the same conversation is its Discussion tab."/>
     <section className="min-w-0 rounded-xl border border-border bg-surface p-4 md:p-6">
       <TpoMessagesTabs selected="recruiters"/>
@@ -309,5 +318,6 @@ export default async function TpoMessagesPage({
       </div>
       <p className="mt-3 text-xs text-muted-foreground">Recruiter conversations are separate from placement notifications. {sourceLabel}: {rangeStart}–{rangeEnd} of {total} records.</p>
     </section>
-  </div>;
+    </div>
+  </TpoInboxRefreshBoundary>;
 }
