@@ -309,7 +309,7 @@ export function SuperAdminTemplateCreateForm(){
      </label>
      <label className="text-sm font-semibold">Task type
       <Select value={row.taskType??"STORY"} onChange={e=>patchTask(index,{
-       taskType:e.target.value as TemplateCreateTask["taskType"]})}>
+       taskType:e.target.value as NonNullable<TemplateCreateTask["taskType"]>})}>
        <option value="STORY">Story</option><option value="BUG">Bug</option>
        <option value="CHORE">Chore</option><option value="SPIKE">Spike</option>
       </Select>
@@ -356,7 +356,7 @@ export function SuperAdminTemplateCreateForm(){
     </label>
     <label className="block text-sm font-semibold">Resource type
      <Select value={row.type??"LINK"} onChange={e=>patchResource(index,{
-      type:e.target.value as TemplateCreateResource["type"]})}>
+      type:e.target.value as NonNullable<TemplateCreateResource["type"]>})}>
       <option value="LINK">Link</option><option value="PDF">PDF</option>
       <option value="DOCUMENT">Document</option><option value="SLIDES">Slides</option>
       <option value="VIDEO">Video</option><option value="FILE">File</option>
