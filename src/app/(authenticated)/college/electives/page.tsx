@@ -48,8 +48,8 @@ export default async function CollegeElectivesPage({
     delete normalized["includeArchived"];
   }
   if(params["semester"]!==undefined){
-    if(params["semester"]Number!==undefined)normalized["semester"]Number="INVALID";
-    else normalized["semester"]Number=params["semester"];
+    if(params["semesterNumber"]!==undefined)normalized["semesterNumber"]="INVALID";
+    else normalized["semesterNumber"]=params["semester"];
     delete normalized["semester"];
   }
   const raw = readCollegeStructureParams(normalized);
