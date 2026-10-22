@@ -175,7 +175,7 @@ export function LearnerYouTubePlayer({
   const missingResource=!videoUrl;
   // Legacy lessonContentId -> UUID contentId; WATCHED -> COMPLETED.
   // Teacher authoring lives in the faculty workspace, not in learner progress.
-  const saveThrottleMs=Math.max(5000,Math.min(120000,saveIntervalMs));
+  const saveThrottleMs=Math.max(5000,Math.min(600000,saveIntervalMs));
 
   useEffect(() => {
     mountedRef.current = true;
