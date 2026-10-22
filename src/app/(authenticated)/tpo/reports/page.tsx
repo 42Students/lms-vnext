@@ -196,7 +196,7 @@ export default async function TpoReportsPage({
    ...group,
    eyebrow:["Placement health","Student outcomes","Relationships and compliance"][index],
    cards:[
-    ...legacyReportOrder[index].flatMap(path=>indexedCards.filter(card=>card.path===path)),
+    ...(legacyReportOrder[index] ?? []).flatMap(path=>indexedCards.filter(card=>card.path===path)),
     ...group.cards.filter(card=>!legacyPaths.has(card.path)),
    ].map(card=>{
     const legacyAlias=card.path==="/tpo/reports/recruiter-leads"?"/tpo/reports/leads":

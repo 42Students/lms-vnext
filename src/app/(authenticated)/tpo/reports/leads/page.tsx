@@ -108,7 +108,7 @@ export default async function TpoLeadsReportPage({
       <PageHeader
         eyebrow="TPO · Reports"
         title="Recruiter engagement"
-        description={TPO_LEGACY_REPORT_COPY["/tpo/reports/leads"].description}
+        description={TPO_LEGACY_REPORT_COPY["/tpo/reports/leads"]?.description ?? "Recruiter engagement"}
         actions={
           <ReportCsvLink
             workspace={workspace}

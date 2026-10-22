@@ -52,7 +52,7 @@ export default async function TpoByBranchReportPage({
       <PageHeader
         eyebrow="TPO · Reports"
         title="By branch"
-        description={TPO_LEGACY_REPORT_COPY["/tpo/reports/by-branch"].description}
+        description={TPO_LEGACY_REPORT_COPY["/tpo/reports/by-branch"]?.description ?? "By branch"}
         actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
           <Link href="/tpo/reports/branch-season" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto md:min-h-9">View applicant and accepted-offer evidence by season →</Link>
           <ReportCsvLink workspace={workspace} kind="by-branch" />
