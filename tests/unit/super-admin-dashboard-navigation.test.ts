@@ -5,7 +5,7 @@ describe("Super Admin dashboard global vs college navigation", () => {
     expect(SUPER_ADMIN_GLOBAL_LINKS.every(link => link.href.startsWith("/admin/"))).toBe(true);
     expect(new Set(SUPER_ADMIN_GLOBAL_LINKS.map(link=>link.href)).size).toBe(4);
     expect(SUPER_ADMIN_GLOBAL_LINKS.map(link => link.label)).toEqual([
-      "Tenant Setup", "Recruiter accounts", "Feature Controls", "Activity Log",
+      "Tenant Setup", "Feature Controls", "Activity Log", "Recruiter accounts",
     ]);
   });
   it("exposes only known college-scoped destinations, no writes embedded in links", () => {

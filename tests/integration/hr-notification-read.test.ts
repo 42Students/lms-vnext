@@ -3,7 +3,7 @@ import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
 import {and,eq} from "drizzle-orm";
 import {getDb,closeDatabaseConnection} from "@/db/client";
-import {users,activityEvents,inAppNotifications} from "@/db/schema";
+import {users,activityEvents,inAppNotifications,placementJobs} from "@/db/schema";
 import {createPlacementCompany} from "@/modules/placements/company-service";
 import {createPlacementJob} from "@/modules/placements/job-service";
 import {publishPreparedPlacementJob} from "../support/publishable-job-fixture";
@@ -28,6 +28,12 @@ describe.skipIf(!enabled)("HR notification acknowledgement PG",()=>{
    const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:relationshipId,
     title:"Ack Job "+randomUUID(),description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
    await publishPreparedPlacementJob(tpo,job.id);
+   // Notifications require a genuinely owned drive; employer-company grants
+   // alone must not reveal another author\u0027s drive to a recruiter.
+   if(relationshipId===own.relationship.id){
+    await getDb().update(placementJobs).set({createdByUserId:person.id})
+     .where(eq(placementJobs.id,job.id));
+   }
    const [event]=await getDb().select({id:activityEvents.id}).from(activityEvents)
     .where(and(eq(activityEvents.subjectId,job.id),eq(activityEvents.eventType,"placements.job.published"))).limit(1);
    const [notice]=await getDb().insert(inAppNotifications).values({
