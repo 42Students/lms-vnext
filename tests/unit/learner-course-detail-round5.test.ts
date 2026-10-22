@@ -16,7 +16,8 @@ describe("chat-11 Learner Course Detail legacy parity",()=>{
  });
  it("LEARNER-course-detail-14 displays content kind, progress and due labels on learning items",()=>{
   const row=code("src/components/courses/learner-roadmap-item-dialog.tsx");
-  expect(row).toContain("caption ?? kind");
+  expect(row).toContain("caption??kind");
+  expect(row).toContain('progress.replaceAll("_"," ").toLowerCase()');
   expect(row).toContain("Due ");
   const page=code("src/components/courses/learner-course-workspace.tsx");
   expect(page).toContain('caption="Assignment"');
