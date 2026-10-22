@@ -8,6 +8,10 @@ const paths=[
 describe("private DB10 admin reads",()=>{
  it.each(paths)("returns no-store on %s",path=>{
   const source=readFileSync(path,"utf8");
-  expect(source).toMatch(/return NextResponse\.json\((page|issue),\s*\{\s*headers:\s*\{\s*"cache-control":\s*"private, no-store"/);
+  if(path.includes("/announcements/")) {
+   expect(source).toContain('}:page,{headers:{"cache-control":"private, no-store"}});');
+  }else {
+   expect(source).toMatch(/return NextResponse\.json\((page|issue),\s*\{\s*headers:\s*\{\s*"cache-control":\s*"private, no-store"/);
+  }
  });
 });

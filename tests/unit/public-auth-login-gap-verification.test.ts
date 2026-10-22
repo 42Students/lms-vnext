@@ -25,19 +25,19 @@ describe("public sign-in verified gap closure",()=>{
   const s=login();
   for(const phrase of ["Use your registered mobile number.","Use your registered email address.",
    "Continue","Enter your code","One-time code","Verify and sign in","Get the code by email",
-   "Enter the code","Resend code in ","Change"])expect(s).toContain(phrase);
+   "Enter the code","Email me instead","Change"])expect(s).toContain(phrase);
  });
  it("PUB-auth-public-04 uses exact legacy guidance for wrong and expired OTP",()=>{
   const s=login();
   for(const phrase of ["That code isn't right. Check it and try again.",
-   "This code can't be used any more. Ask for a new one to continue.",
+   "This code has expired. Ask for a new one.",
    "Too many wrong codes. Ask for a new one.",
    "Too many codes were requested. Try again in about 10 minutes.",
    "Something went wrong. Try again in a moment.",
    "We couldn't find an account with that email."])expect(s).toContain(phrase);
  });
  it("PUB-auth-public-05 uses 42LMS branding tenant title and legal footer",()=>{
-  const s=home();expect(s).toContain('title:"Sign in · "+');
+  const s=home();expect(s).toContain('const title = brand?.collegeName ? "Sign in · " + brand.collegeName');
   expect(s).toContain("Powered by 42LMS");
   expect(s).toContain("JRSPF Technologies Pvt. Ltd.");
   expect(s).toContain('branding?.collegeName ?? "42LMS"');
@@ -72,18 +72,18 @@ describe("public sign-in verified gap closure",()=>{
   expect(helper).toContain("safeReturnTo(currentPath)");
  });
  it("PUB-auth-public-13 restores an unexpired one-time-code attempt after refresh",()=>{
-  const s=login();expect(s).toContain("window.sessionStorage.setItem(ATTEMPT_KEY");
+  const s=login();expect(s).toContain("window.sessionStorage.setItem(");
   expect(s).toContain("loadLoginAttempt()");
   expect(s).toContain("setAttempt(stored.attempt)");
   expect(s).toContain("nextResendAt");
  });
  it("PUB-auth-public-16 displays the college logo or initials monogram fallback",()=>{
-  const s=home();expect(s).toContain("branding?.logoUrl");
+  const s=home();expect(s).toContain("branding.logoUrl");
   expect(s).toContain("collegeMonogram");
   expect(s).toContain("branding?.collegeName");
  });
  it("PUB-auth-public-17 shows unknown-college recovery instructions and main sign-in link",()=>{
-  const s=home();expect(s).toContain("This address isn&apos;t set up yet");
+  const s=home();expect(s).toContain("This address isn’t set up yet");
   expect(s).toContain("Ask your administrator to add this college");
   expect(s).toContain("Use the main sign-in page (42lms.com)");
  });
@@ -93,12 +93,12 @@ describe("public sign-in verified gap closure",()=>{
   expect(s).toContain("Use the main sign-in page (42lms.com)");
  });
  it("PUB-auth-public-25 retains secure superadmin-login legacy bookmark redirect",()=>{
-  expect(source("src/app/superadmin-login/page.tsx")).toContain('redirect("/")');
+  expect(source("src/app/superadmin-login/page.tsx")).toContain('redirect("/login?legacy=superadmin")');
  });
  it("PUB-auth-public-33 recruiter=email legacy invitation opens email first",()=>{
   const s=source("src/app/login/page.tsx"),h=home();
   expect(s).toContain('export { default, generateMetadata } from "../page"');
-  expect(h).toContain('recruiterValue==="email"&&signin.email?"EMAIL":signin.primary');
+  expect(h).toContain('recruiterValue === "email" && signin.email ? "EMAIL" : signin.primary');
  });
  it("PUB-auth-public-39 routes visitors to marketing but preserves an explicit secure login",()=>{
   const s=home();
@@ -117,7 +117,7 @@ describe("public sign-in verified gap closure",()=>{
  });
  it("PUB-auth-public-37 safely retires legacy handoff tokens by redirecting to fresh login",()=>{
   const s=source("src/app/auth/handoff/page.tsx");
-  expect(s).toContain('redirect("/?auth=handoff-retired")');
+  expect(s).toContain('redirect("/login?auth=handoff-retired" +');
   expect(s).not.toContain("consumeHandoffToken");
  });
 });

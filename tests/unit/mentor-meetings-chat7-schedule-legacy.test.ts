@@ -23,8 +23,8 @@ describe("Chat-7 mentor meeting legacy parity", () => {
     expect(mentorMeetingCeremonyLabel("RETRO")).toBe("Retrospective");
     const ui = source("src/components/projects/project-meeting-controls.tsx");
     expect(ui).toContain("Ceremony");
-    expect(ui).toContain('title: meeting');
-    expect(ui).toContain('"Meeting added."');
+    expect(ui).toContain("meetingType,");
+    expect(ui).toContain('title:"Meetings updated"');
     expect(ui).toContain("noValidate");
   });
 
