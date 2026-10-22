@@ -42,7 +42,7 @@ export default async function TpoTeamLegacyRedirect({
   }
   if (tab === "recruiters" || tab === "recruiter") {
     const target = new URLSearchParams({ tab: "recruiters" });
-    for (const key of ["q", "status", "from", "to", "page", "pageSize", "thread"]) {
+    for (const key of ["q", "status", "from", "to", "page", "pageSize", "thread", "c", "m"]) {
       const value = first(params[key]);
       if (value && value.length <= 120 && !/[\u0000-\u001f\u007f]/.test(value)) {
         target.set(key, value);
