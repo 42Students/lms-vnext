@@ -4,7 +4,7 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 
 - [x] `tests/unit/PROJ-BREAK-chat9-readiness-override-atomic-read.test.ts` (1 failing) — fixed TDZ initialization in [chat-11] 3b568dab; CI not rerun
 - [x] `tests/unit/chat12-verify2-log-explorer-access-audit.test.ts` (1 failing) — preserves active-status and scope assertion, reconciles stale string check in [chat-11] 52226699; CI not rerun
-- [ ] `tests/unit/chat2-team-member-and-alert-parity.test.ts` (2 failing)
+- [x] `tests/unit/chat2-team-member-and-alert-parity.test.ts` (2 failing) — updated obsolete default people redirect expectations to assert scoped People bookmark and canonical Messages routing; [chat-11] 05f28919; CI not rerun
 - [ ] `tests/unit/chat6-superadmin-middle-drive-ist-date.test.ts` (1 failing)
 - [ ] `tests/unit/chat9-super-admin-tenant-hub-copy.test.ts` (1 failing)
 - [ ] `tests/unit/legacy-lesson-atomic-parity.test.ts` (1 failing)
