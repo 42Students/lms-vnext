@@ -66,7 +66,10 @@ export default async function SuperAdminAttendancePage({
     .catch(error=>({ok:false as const,classLookupFailed:
       error instanceof AdminAttendanceOptionsLookupError &&
       error.kind==="class_courses"}));
-  if(!optionsResult.ok)return <div className="min-w-0 space-y-4">
+  if(!optionsResult.ok){
+   const retryParams=new URLSearchParams(Object.entries(query)
+     .filter((entry):entry is [string,string]=>typeof entry[1]==="string"));
+   return <div className="min-w-0 space-y-4">
     <PageHeader title="Attendance"
       description="Review monthly attendance by class and course, correct recent records and check the minimum attendance policy."/>
     <ErrorState title={optionsResult.classLookupFailed
@@ -75,8 +78,9 @@ export default async function SuperAdminAttendancePage({
      description={optionsResult.classLookupFailed
        ?"Course assignments are unavailable; retry class courses rather than treating the list as empty."
        :"Class and course choices are temporarily unavailable. No attendance has been changed."}
-     action={<Link href="/admin/attendance" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry class courses</Link>}/>
+     action={<Link href={"/admin/attendance?"+retryParams.toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">{optionsResult.classLookupFailed?"Retry class courses":"Retry"}</Link>}/>
    </div>;
+  }
   const options=optionsResult.value;
   const requestedDelivery = options.deliveries.find(
     (entry) => entry.deliveryId === query.deliveryId,
@@ -99,6 +103,8 @@ export default async function SuperAdminAttendancePage({
        .catch(()=>({ok:false as const}))
     :null;
   const grid=gridResult?.ok?gridResult.value:null;
+  const retryGridParams=new URLSearchParams(Object.entries(query)
+    .filter((entry):entry is [string,string]=>typeof entry[1]==="string"));
 
   const data: AdminAttendanceWorkspaceData = {
     collegeId,
@@ -161,7 +167,7 @@ export default async function SuperAdminAttendancePage({
       </section>
       {gridResult&&!gridResult.ok?<ErrorState title="Could not load attendance"
         description="The class and course choices remain available. Retry loading this month's records."
-        action={<Link href="/admin/attendance" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry class courses</Link>}/>:null}
+        action={<Link href={"/admin/attendance?"+retryGridParams.toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry attendance</Link>}/>:null}
       <AdminAttendanceWorkspace data={data} basePath="/admin/attendance"/>
     </div>
   );
