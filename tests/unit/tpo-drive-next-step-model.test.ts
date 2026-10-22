@@ -43,6 +43,14 @@ describe("TPO-drive-workspace-02 next step", () => {
     expect(result.primary).toMatchObject({label:"Set deadline",href:"#drive-deadline-actions"});
     expect(result.more[0]?.label).toBe("Applicants");
   });
+  it("does not offer non-applicant reminders for outside or expired drives", () => {
+    const reminded={...base,status:"PUBLISHED",canRemindNonApplicants:true,nonApplicantCount:9};
+    expect(projectTpoDriveNextStep(reminded).primary.label).toBe("Remind all");
+    for(const excluded of [{recordedOutside:true},{deadlinePassed:true}]){
+      const result=projectTpoDriveNextStep({...reminded,...excluded});
+      expect([result.primary,...result.more].some(item=>item.label==="Remind all")).toBe(false);
+    }
+  });
   it("never suggests a lifecycle change on a cancelled or closed drive", () => {
     for (const status of ["CLOSED", "CANCELLED", "ARCHIVED"]) {
       const view = projectTpoDriveNextStep({...base,status,closeAllowed:true});

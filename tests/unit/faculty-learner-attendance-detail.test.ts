@@ -72,6 +72,23 @@ describe("Faculty monthly class-health report", () => {
     expect(health.learners.find((row) => row.membershipId === "B")?.percentage).toBe(100);
   });
 
+  it("keeps future pre-marked rows outside held session and active day totals", () => {
+    const sessions = [
+      session("held", "2026-10-12T03:00:00Z", "MARKED"),
+      session("scheduled", "2026-10-15T03:00:00Z", "MARKED"),
+      session("unknown", "2026-10-13T03:00:00Z", null),
+    ];
+    const result = facultyAttendanceMonthSummary(["A"], sessions, [
+      { scheduleEventId: "held", membershipId: "A", status: "PRESENT",
+        markedAt: "2026-10-12T05:00:00Z", note: null },
+    ], NOW);
+    expect(result).toMatchObject({
+      sessionCount: 1, markedSessions: 1, unmarkedSessions: 1,
+      upcomingSessions: 1, presentMarks: 1, absentMarks: 0,
+      upcomingMarks: 1,
+    });
+  });
+
   it("does not claim attendance when no sessions have been marked", () => {
     expect(facultyAttendanceMonthSummary(["A"],
       [session("held", "2026-10-11T03:00:00Z", null)], [], NOW,
