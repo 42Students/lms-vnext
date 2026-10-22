@@ -14,6 +14,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Pagination } from "@/components/ui/pagination";
 import { listCollegeCourseProgress } from "@/modules/courses/college-learning-directory-service";
+import {getSuperAdminStudentCourseProgress} from "@/modules/courses/super-admin-student-course-progress";
 import { adminLearningHref, adminProgressStats } from "@/modules/courses/admin-learning-read-model";
 import {parseSuperAdminCourseProgressParams} from "@/modules/courses/super-admin-course-progress-query";
 import {requirePermission} from "@/modules/permissions/policy";
@@ -53,6 +54,14 @@ export default async function SuperAdminCourseProgressPage({
     batch:filters.cohorts.find(item=>item.code===data.query.cohortCode)?.name??data.query.cohortCode,
   };
   const uniqueLearnerCount=data.items.reduce((value,item)=>value+item.learnersWithRecords,0);
+  // A single selected college offering may show its real learner report here.
+  // Distinct classes cannot be aggregated into a fictitious learner count.
+  const inlineOffering=selected&&data.total===1&&data.items.length===1
+    ?data.items[0]:null;
+  const inlineStudents=inlineOffering
+    ?await getSuperAdminStudentCourseProgress(context,{
+      offeringId:inlineOffering.offeringId,page:1,pageSize:10,sort:"percent-asc",
+    }):null;
   // Offering counts are not per-student completion percentages. The existing
   // authorized offering detail route remains the source of measured reports.
   const exportHref="/api/admin/course-progress/export?"+new URLSearchParams({
@@ -118,7 +127,42 @@ export default async function SuperAdminCourseProgressPage({
         </div>)}
       </dl>
       <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Per student</h2>
-      <p className="text-sm text-body">Open the authorized offering report to see the learners furthest behind. Retakes count only the current enrolled attempt.</p>
+      {inlineStudents ? <section aria-label="Per student progress preview"
+        className="min-w-0 overflow-x-auto rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
+        <table className="min-w-[600px] w-full text-left text-sm">
+          <caption className="px-3 pt-3 text-left text-xs text-muted-foreground">
+            First {inlineStudents.rows.length} of {inlineStudents.totalRows} learners, sorted furthest behind first
+          </caption>
+          <thead className="border-b border-border bg-muted text-xs">
+            <tr><th scope="col" className="p-3">Student</th>
+              <th scope="col" className="p-3">Roll number</th>
+              <th scope="col" className="p-3">Videos</th>
+              <th scope="col" className="p-3">Assignments</th>
+              <th scope="col" className="p-3">Quizzes</th>
+              <th scope="col" className="p-3">Progress</th></tr>
+          </thead>
+          <tbody>{inlineStudents.rows.map(learner=><tr key={learner.membershipId}
+             className="border-b border-border last:border-b-0">
+            <th scope="row" className="p-3 font-medium">{learner.studentName}</th>
+            <td className="p-3">{learner.rollNumber}</td>
+            <td className="p-3 tabular-nums">{learner.videos}/{learner.totalVideos}</td>
+            <td className="p-3 tabular-nums">{learner.assignments}/{learner.totalAssignments}</td>
+            <td className="p-3 tabular-nums">{learner.quizzes}/{learner.totalQuizzes}</td>
+            <td className="p-3 tabular-nums">
+              {learner.totalVideos+learner.totalAssignments+learner.totalQuizzes>0
+                ?learner.percent+"%":"Not measured"}
+            </td>
+          </tr>)}</tbody>
+        </table>
+        <Link href={"/admin/course-progress/students?offeringId="+encodeURIComponent(inlineStudents.offeringId)}
+          className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-primary-text underline">
+          View all students and filter by class
+        </Link>
+      </section> : <p className="text-sm text-body">
+        {selected&&data.total>1
+          ?"Choose one offering below to view its students. Progress from different classes is not combined."
+          :"Open the authorized offering report to see the learners furthest behind. Retakes count only the current enrolled attempt."}
+      </p>}
     </div>:<EmptyState title="Pick a class, then one of its courses." description="Choose a batch and a taught course to see recorded activity. No learner report has been requested."/>}
     <p role="status" className="text-sm text-muted-foreground">
       {data.total.toLocaleString("en-IN")} matching offerings · on this page: {summary.contentRecords} recorded content progress rows,
