@@ -126,3 +126,30 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/db/schema/projects.ts, src/modules/projects/learner-own-task-service.ts
 - Legacy: `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectTask.java:68-75` assigneeId+assigneeType allow learner/faculty separate ID namespaces
 - Expected fix: Map faculty/nonlearner assignment records with explicit owner decision; avoid accidental learner conversion
+
+## Lane chat-4 rapid verification triage (22 Oct 2026)
+- G2-12-017-015: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
+- G2-12-017-021: OK — comment write checks active project membership, not mentor/assignee only.
+- G2-12-017-030: OK — immutable task activity events are merged into comment timeline with status snapshots.
+- G2-12-017-058: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
+- G2-12-017-060: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
+- G2-12-002-051: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
+- G2-12-002-076: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
+- G2-13-014-061: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
+- G2-17-23-077: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
+- G2-18-019-006: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
+- G2-18-026-026: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
+- G2-19-029-022: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
+- G2-13-013-054: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
+- G2-13-018-008: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
+- G2-13-018-014: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
+- G2-13-018-031: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
+- G2-13-018-055: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
+- G2-13-017-001: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
+- G2-13-017-007: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
+- G2-13-017-010: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
+- G2-13-017-015: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
+- G2-13-017-016: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
+- G2-13-017-019: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
+- G2-13-017-031: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
+- G2-13-017-035: DEFERRED — needs end-to-end source, authorization, data-migration or runtime parity verification; not asserted fixed.
