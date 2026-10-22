@@ -109,7 +109,7 @@ export function CollegeArchiveButton({
       setOpen(false);
       showToast({
         tone: "success",
-        title: "College deleted successfully",
+        title: "College archived successfully",
         description:
           `${name} was soft-archived. Historical records are retained for authorized restoration.`,
       });
@@ -129,21 +129,21 @@ export function CollegeArchiveButton({
         variant="danger"
         size="sm"
         className="min-h-11 w-full sm:w-auto md:min-h-9 print:hidden"
-        aria-label={"Delete college "+name}
+        aria-label={"Archive college "+name}
         disabled={pending}
         onClick={() => {setArchiveError("");setOpen(true);}}
       >
         <svg aria-hidden="true" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
           <path d="M4 7h16m-12 0V4h8v3m-9 0 1 13h8l1-13M10 11v6m4-6v6"/>
-        </svg> Delete
+        </svg> Archive
       </Button>
       <Dialog
         open={open}
         onOpenChange={next=>{if(!pending)setOpen(next);}}
         dismissible={!pending}
         className="max-w-[380px]"
-        title={"Delete College · "+name+"?"}
-        description={`Delete ${name}? This performs a reversible soft archive; existing academic, student, project, placement and domain dependencies must be resolved first.`}
+        title={"Archive college · "+name+"?"}
+        description={`Archive ${name}? This does not physically delete the tenant. Existing academic, student, project, placement and domain dependencies must be resolved first. Its historical record remains retained for authorized restoration.`}
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
@@ -163,7 +163,7 @@ export function CollegeArchiveButton({
             >
               {pending
                 ? "Archiving…"
-                : "Yes, Delete"}
+                : "Yes, Archive"}
             </Button>
           </div>
         }
