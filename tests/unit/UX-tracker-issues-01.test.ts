@@ -8,9 +8,11 @@ describe("UX-tracker-issues-01",()=>{
   expect(code).toContain("listBugTrackerIssuesForAdmin");
   expect(code).toContain("parseTrackerIssuesPageParams");
   expect(code).toContain("<EmptyState");
-  expect(code).toContain("<Card as=\"article\"");
+  expect(code).toContain('role="list" aria-label="Reported issues"');
+  expect(code).toContain('<article key={issue.id} role="listitem"');
   expect(code).toContain("<ErrorState");
-  expect(code).toContain("<Button type=\"submit\"");
+  expect(code).toContain("<TrackerIssuesFilterBar");
+  expect(source("src/components/tracker/tracker-issues-filter-bar.tsx")).toContain('<Button type="submit"');
   expect(code).toContain("No matching issues.");
   expect(code).toContain("TrackerIssueSavedViews");
   expect(code).toContain("TrackerIssueBulkActions");

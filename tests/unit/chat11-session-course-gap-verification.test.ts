@@ -6,7 +6,8 @@ const source=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
 describe("chat-11 session and attendance parity",()=>{
  it("FAC-attendance-grades-10 offers the legacy class selector on the attendance tab",()=>{
   const code=source("src/components/courses/faculty-course-tab-navigation.tsx");
-  expect(code).toContain('activeTab==="attendanceDetail"?"Select class to view attendance"');
+  expect(code).toContain('(activeTab==="students"||activeTab==="attendanceDetail")');
+  expect(code).toContain('aria-label={activeTab==="students"?"Select class to view its roster":"Select class to view attendance"}');
   expect(code).toContain("teachingSections.map");
   expect(code).toContain("router.push(facultyCourseTabHref(event.target.value, activeTab))");
  });

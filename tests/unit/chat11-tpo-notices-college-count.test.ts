@@ -15,7 +15,7 @@ describe("TPO-settings-audit-NOTICES-04 college notice settings counts",()=>{
    announcementsReady:false,noticeCount:100,prepReady:true,hasMore:true,
   }).publishedSummary).toBe("College notices unavailable");
   expect(tpoStudentNoticesOverview({announcementsReady:true,noticeCount:-5,prepReady:true}).publishedSummary)
-   .toBe("0 recorded college notices");
+   .toBe("College notices unavailable");
  });
  it("reads college-targeted notices rather than only the signed-in TPO's authored rows",()=>{
   const page=readFileSync("src/app/(authenticated)/tpo/settings/notices/page.tsx","utf8");
