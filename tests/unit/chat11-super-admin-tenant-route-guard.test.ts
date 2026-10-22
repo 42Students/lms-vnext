@@ -59,11 +59,15 @@ describe("SA-tenants-modules-SEC-01: never render admin filter recovery before a
    expect(auth,file).toBeGreaterThan(-1);
    // Module Access delegates URL validation to the college hierarchy page;
    // its own selection and authorization are checked before that handoff.
-   const delegate=file.endsWith("/module-access/page.tsx") &&
+   const delegate=(file.endsWith("/module-access/page.tsx") &&
      source.includes("SuperAdminCollegeModuleAccessPage params=") &&
-     source.includes("searchParams={searchParams}");
+     source.includes("searchParams={searchParams}")) ||
+     (file.endsWith("/tenants/page.tsx") &&
+     source.includes("TenantDirectory searchParams={Promise.resolve(raw)}") &&
+     source.includes("SuperAdminTenantSetup searchParams={Promise.resolve(raw)}"));
    expect(recovery.length>0||delegate,file).toBe(true);
    if(recovery.length>0)expect(auth,file).toBeLessThan(Math.min(...recovery));
+   else if(file.endsWith("/tenants/page.tsx")) expect(auth,file).toBeLessThan(source.indexOf("const raw = await searchParams"));
    else expect(auth,file).toBeLessThan(source.indexOf("SuperAdminCollegeModuleAccessPage params="));
    expect(source,file).toContain("getCurrentRequestContext()");
   }
