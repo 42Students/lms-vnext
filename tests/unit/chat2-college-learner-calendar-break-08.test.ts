@@ -12,7 +12,7 @@ const begin="2026-10-20T04:00:00.000Z";
 
 describe("TPO-BREAK-calendar-08 query access, ICS injection, scheduled dates and private learner data",()=>{
  it("college interview filter rejects array ambiguity, invalid UUIDs and page overflow",()=>{
-  expect(DRIVE_INTERVIEW_PAGE_SIZE).toBe(25);
+  expect(DRIVE_INTERVIEW_PAGE_SIZE).toBe(20);
   expect(driveInterviewsParams({})).toEqual({kind:"ALL",status:"ALL",page:1});
   expect(driveInterviewsParams({kind:"INTERVIEW",status:"SCHEDULED",page:"3",applicationId:a}))
    .toEqual({kind:"INTERVIEW",status:"SCHEDULED",page:3,applicationId:a});
@@ -29,7 +29,8 @@ describe("TPO-BREAK-calendar-08 query access, ICS injection, scheduled dates and
  });
  it("college appointment actions need a secure location, deliberate confirmation and CAS",()=>{
   const appointment={roundId:a,applicationId:b,scheduledAt:begin,durationMinutes:30,
-   mode:"ON_CAMPUS",venue:"Main hall",meetingUrl:null,interviewer:"Faculty"};
+   mode:"ON_CAMPUS",venue:"Main hall",meetingUrl:null,interviewer:"Faculty",
+   interviewType:"TECHNICAL",roundDescription:"Technical evaluation"};
   expect(collegeInterviewActionSchema.safeParse({action:"SCHEDULE",confirmed:true,appointment}).success).toBe(true);
   expect(collegeInterviewActionSchema.safeParse({action:"SCHEDULE",confirmed:false,appointment}).success).toBe(false);
   expect(collegeInterviewActionSchema.safeParse({action:"SCHEDULE",confirmed:true,appointment:{...appointment,venue:""}}).success).toBe(false);
