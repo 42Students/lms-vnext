@@ -22,6 +22,6 @@ describe("G2-13-027-042: legacy cross-kind curriculum",()=>{
   expect(page).toContain('kind:"ASSIGNMENT" as const');
   expect(page).toContain('kind:"QUIZ" as const');
   expect(page).toContain("eq(courseAssignments.deliveryId,selected.deliveryId)");
-  expect(page).toContain("eq(lessonContents.deliveryId,selected.deliveryId)");
+  expect(page).toContain("audience(lessonContents.deliveryId)");
  });
 });
