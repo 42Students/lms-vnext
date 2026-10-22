@@ -38,6 +38,9 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
  const router=useRouter(),pathname=usePathname();const {showToast}=useToast();
  const appRoot=(pathname?.startsWith("/admin/")?"/admin":"/college")+
   "/placements/jobs/"+encodeURIComponent(jobId)+"/applications";
+ const available=rounds.filter(round=>round.kind==="INTERVIEW"&&
+  ["SCHEDULED","PENDING"].includes(round.status));
+ const firstSchedulableRoundId=available[0]?.id??"";
  const applicant=(id:string)=>candidates.find(item=>item.applicationId===id);
  const applicationHref=(id:string)=>{
   const person=applicant(id);
@@ -76,7 +79,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
  const [editing,setEditing]=useState<Appointment|null>(null);
  const [clonedFrom,setClonedFrom]=useState<string|null>(null);
  const [dirty,setDirty]=useState(false);const [confirmDiscard,setConfirmDiscard]=useState(false);
- const [show,setShow]=useState(false);const [roundId,setRoundId]=useState(rounds[0]?.id??"");
+ const [show,setShow]=useState(false);const [roundId,setRoundId]=useState(firstSchedulableRoundId);
  const [applicationId,setApplicationId]=useState(candidates.find(c=>c.applicationId===preferredApplicationId)?.applicationId??candidates[0]?.applicationId??"");
  const [date,setDate]=useState(""),[time,setTime]=useState("");
  const start=date&&time?date+"T"+time:"";
@@ -163,7 +166,8 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
  ].join("\r\n");
  function open(row?:Appointment){
   setClonedFrom(null);
-  setEditing(row??null);setRoundId(row?.roundId??rounds[0]?.id??"");
+  setEditing(row??null);
+  setRoundId(row&&row.status!=="CANCELLED"?row.roundId:firstSchedulableRoundId);
   setApplicationId(row?.applicationId??candidates.find(c=>c.applicationId===preferredApplicationId)?.applicationId??candidates[0]?.applicationId??"");
   const prefill=row?toLocal(row.scheduledAt):"";
   setDate(prefill.slice(0,10));setTime(prefill.slice(11,16));
@@ -174,7 +178,9 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   const type=row?.interviewType;
   setInterviewType(type==="SCREENING"||type==="TECHNICAL"||type==="HR"||
    type==="MANAGERIAL"||type==="FINAL"?type:"SCREENING");
-  setRoundDescription(row?.roundDescription??rounds.find(r=>r.id===(row?.roundId??rounds[0]?.id))?.name??"");
+  setRoundDescription(row?.roundDescription??
+   rounds.find(r=>r.id===(row?.status==="CANCELLED"?firstSchedulableRoundId:
+     row?.roundId??firstSchedulableRoundId))?.name??"");
   setDirty(false);setConfirmDiscard(false);
   setError("");setSuccess("");setFieldErrors({});setShow(true);
  }
@@ -257,7 +263,6 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
    expectedVersion:decision.row.version,reason:decisionReason.trim()});
   if(updated)setDecision(null);
  }
- const available=rounds.filter(r=>["SCHEDULED","PENDING"].includes(r.status));
  const interviewerNames=[...new Set(appointments.map(row=>row.interviewer?.trim()).filter(
   (name):name is string=>Boolean(name)))].sort((a,b)=>a.localeCompare(b));
  const nearInterviewer=interviewer.trim()&&interviewerNames.find(name=>
