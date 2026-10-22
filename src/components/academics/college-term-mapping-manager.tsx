@@ -485,7 +485,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
               setFieldErrors(current => ({ ...current, credits: undefined }));
               setEditing({ ...editing, credits: event.target.value });
             }}
-            className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 md:min-h-[var(--lms-control-height)]" />
+            className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 sm:max-w-[50%] md:min-h-[var(--lms-control-height)]" />
           {fieldErrors.credits ? <span role="alert" className="text-xs text-[var(--lms-error)]">{fieldErrors.credits}</span> : null}
         </label>
         <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Course Type
@@ -508,7 +508,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
           <Input type="number" min={1} max={orderedPeers(editingRow).length} step={1} required
             value={editing.position}
             onChange={event => setEditing({ ...editing, position: event.target.value })}
-            className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 md:min-h-[var(--lms-control-height)]" />
+            className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 sm:max-w-[50%] md:min-h-[var(--lms-control-height)]" />
         </label>
         {error ? <p role="alert" className="text-sm text-[var(--lms-error)]">Course mapping was not updated. {error}</p> : null}
         <div className="flex min-w-0 flex-col-reverse gap-2 sm:flex-row sm:justify-end">
