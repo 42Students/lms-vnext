@@ -34,8 +34,14 @@ describe("chat-16 campaign suppression, cross-college and tamper hardening",()=>
   expect(()=>assertCampaignRecipientCap(501)).toThrow();
   expect(()=>assertCampaignRecipientCap(-1)).toThrow();
   expect(()=>assertCampaignRecipientCap(1.2)).toThrow();
+  // Legacy selection limit counts chosen contacts, including suppressed ones.
   const many=Array.from({length:550},(_,i)=>({...eligible,id:"s"+i,unsubscribedAt:new Date("2099-01-01")}));
-  expect(planTpoCampaignRecipients([...many,eligible]).recipientIds).toEqual(["lead-1"]);
+  expect(()=>planTpoCampaignRecipients([...many,eligible])).toThrow("TPO_CAMPAIGN_RECIPIENT_LIMIT");
+  const bounded=many.slice(0,499);
+  const planned=planTpoCampaignRecipients([...bounded,eligible]);
+  expect(planned.recipientIds).toEqual(["lead-1"]);
+  expect(planned.selectedCount).toBe(500);
+  expect(planned.suppressed.UNSUBSCRIBED).toBe(499);
   expect(()=>planTpoCampaignRecipients(Array.from({length:501},(_,i)=>({...eligible,id:"id-"+i,emailNorm:"lead"+i+"@example.org"})))).toThrow();
  });
  it("campaign-signed-token-01 rejects tampering, weaker HMAC secrets and wrong purpose",()=>{

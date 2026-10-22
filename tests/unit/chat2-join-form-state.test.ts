@@ -11,6 +11,7 @@ describe("TPO-campaigns-public-R03 TPO-campaigns-public-R06 join states",()=>{
   expect(s).toContain('autoComplete="name"');
   expect(s).toContain("onSubmit={event=>");
   expect(s).toContain("One more step");
-  expect(s).toContain("You already have an account. Sign in on ");
+  expect(s).toContain("Sign in with your work email, ");
+  expect(s).toContain('href="/login"');
  });
 });

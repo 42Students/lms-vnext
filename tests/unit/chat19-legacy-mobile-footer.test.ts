@@ -13,7 +13,7 @@ describe("chat-19 legacy learner/faculty mobile footer", () => {
     expect(legacy()).toContain("height: calc(64px + env(safe-area-inset-bottom, 0px))");
     expect(styles()).toContain("height:calc(64px + env(safe-area-inset-bottom,0px))");
     expect(styles()).toContain("bottom:0");
-    expect(styles()).toContain("border-top:1px solid #f1f4f9");
+    expect(styles()).toContain("border-top:1px solid var(--lms-neutral-100)");
     expect(styles()).toContain("padding-bottom:env(safe-area-inset-bottom,0px)");
     expect(styles()).toContain("box-shadow:0 -2px 8px rgba(0,0,0,.04)");
   });
@@ -31,7 +31,7 @@ describe("chat-19 legacy learner/faculty mobile footer", () => {
     expect(styles()).toContain("position:relative;");
     expect(styles()).toContain("transform:translate(50%,-50%)");
     for (const value of ["min-width:14px;", "height:14px;", "font-size:12px;",
-      "line-height:14px;", "background:#ff4d4f;", "box-shadow:0 0 0 1px #fff;"]) {
+      "line-height:14px;", "background:#ff4d4f;", "box-shadow:0 0 0 1px var(--lms-white);"]) {
       expect(styles(), value).toContain(value);
     }
     // The counter is visual decoration; the link names its count for screen readers.
@@ -64,7 +64,7 @@ describe("chat-19 legacy learner/faculty mobile footer", () => {
     expect(content).toContain('href:"/hr/conversations"');
     expect(content).toContain('href:"/college/placements"');
     expect(content).toContain("items.some(item=>item.href===link.href)");
-    expect(content).toContain("if (!learner && !faculty && !recruiter && !college && !mentor) return null");
+    expect(content).toContain("if (!learner && !faculty && !recruiter && !college && !mentor && !tpo) return null");
     const imagePaths = [...content.matchAll(/icon:\s*"(\/assets\/images\/[^"]+)"/g)];
     for (const match of imagePaths) expect(existsSync("public" + match[1]), match[1]).toBe(true);
   });
