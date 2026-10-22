@@ -80,13 +80,13 @@ export function filterDriveCandidateAppointments<T extends {
   });
 }
 export function driveInterviewFilterError(raw: Record<string, string | string[] | undefined>) {
-  if (raw.applicationId && typeof raw.applicationId === "string" &&
-      !z.string().uuid().safeParse(raw.applicationId).success)
+  if (raw["applicationId"] && typeof raw["applicationId"] === "string" &&
+      !z.string().uuid().safeParse(raw["applicationId"]).success)
     return "name is required and must be a valid value";
-  if (raw.page !== undefined && !z.coerce.number().int().min(1).max(1000).safeParse(raw.page).success)
+  if (raw["page"] !== undefined && !z.coerce.number().int().min(1).max(1000).safeParse(raw["page"]).success)
     return "Page must be a valid number";
-  if (raw.appointmentPage !== undefined &&
-      !z.coerce.number().int().min(1).max(1000).safeParse(raw.appointmentPage).success)
+  if (raw["appointmentPage"] !== undefined &&
+      !z.coerce.number().int().min(1).max(1000).safeParse(raw["appointmentPage"]).success)
     return "Appointment page must be a valid number";
   return "Invalid interview filters";
 }
