@@ -1,6 +1,6 @@
 import "server-only";
 import {randomUUID} from "node:crypto";
-import {and,eq} from "drizzle-orm";
+import {and,eq,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {placementTpoEmailCampaigns,placementTpoEmailCampaignRecipients,placementTpoLeads,placementTpoLeadActivities,placementTpoCompanyCommunication} from "@/db/schema";
@@ -19,6 +19,7 @@ import {previewTpoCampaignText} from "./tpo-campaign-draft-model";
 import {isCampaignTemplateKey} from "./template-boundary-model";
 import {canContactRecipientAtRuntime} from "./runtime-safety";
 import {verifiedTpoCampaignPublicOrigin} from "./tpo-campaign-legacy-compat";
+import {deriveGlobalEmailSuppressionHashForAddress} from "@/modules/operations/outbound-delivery-envelope";
 
 export class TpoCampaignDispatchError extends Error{
  constructor(readonly code:"NOT_READY"|"ALREADY_STARTED"|"NOT_FOUND"){super(code);}
@@ -28,13 +29,18 @@ function configuration(){
  const mail=readZeptoMailConfig();
  const key=resolveTpoCampaignRecipientSecret(process.env);
  const origin=verifiedTpoCampaignPublicOrigin(process.env.APP_PUBLIC_URL??"");
+ const globalKey=process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64??"";
+ // A missing global opt-out key must disable transport before claiming a
+ // campaign: otherwise an EMAIL send could bypass a cross-college opt-out.
+ try {deriveGlobalEmailSuppressionHashForAddress("readiness@example.org",globalKey);}
+ catch {throw new TpoCampaignDispatchError("NOT_READY");}
  if(!origin)throw new TpoCampaignDispatchError("NOT_READY");
  if(process.env.TPO_CAMPAIGNS_READY!=="VERIFIED"||
    !isCampaignTemplateKey(provider)||provider===mail.otpTemplateKey||
    !mail.token.trim()||!isSecureMailProviderEndpoint(mail.apiUrl)||
    Buffer.byteLength(key,"utf8")<32)
    throw new TpoCampaignDispatchError("NOT_READY");
- return {provider,key,origin};
+ return {provider,key,origin,globalKey};
 }
 /** Import-only translation. Historical campaigns are never replayed to send again. */
 export function translateLegacyCampaignRecipientStatus(status:string):{
@@ -83,6 +89,11 @@ export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
  const draft=await getTpoCampaignDraft(context,id);
  if(!draft)throw new TpoCampaignDispatchError("NOT_FOUND");
  const db=getDb();
+ // Fail before taking the one-way DRAFT -> SENDING lock when the global
+ // suppression migration is unavailable. No send may ignore this table.
+ const storage=await db.execute<{ready:boolean}>(sql`select
+  to_regclass('public.outbound_global_email_suppressions') is not null as ready`);
+ if(storage.rows[0]?.ready!==true)throw new TpoCampaignDispatchError("NOT_READY");
  const claimed=await db.transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    collegeId:college.id,organizationId:college.organizationId,
@@ -176,6 +187,27 @@ export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
     .where(and(eq(placementTpoEmailCampaignRecipients.id,row.id),
      eq(placementTpoEmailCampaignRecipients.campaignId,id),
      eq(placementTpoEmailCampaignRecipients.collegeId,college.id),
+     eq(placementTpoEmailCampaignRecipients.status,"QUEUED")));
+   totals.skipped++;
+   continue;
+  }
+  // This check is immediately adjacent to the external provider handoff.
+  // A draft snapshot and college-local lead opt-out are not sufficient:
+  // global EMAIL suppressions cover every college, including later campaigns.
+  const globalHash=deriveGlobalEmailSuppressionHashForAddress(liveFact!.emailNorm!,config.globalKey);
+  const [suppression]=await db.execute<{suppressed:boolean}>(sql`
+    select exists (
+      select 1 from outbound_global_email_suppressions
+      where recipient_hash = ${globalHash}
+        and cleared_at is null
+    ) as suppressed
+  `).then(result=>result.rows);
+  if(!suppression || suppression.suppressed!==false){
+   await db.update(placementTpoEmailCampaignRecipients)
+    .set({status:"SKIPPED_UNSUBSCRIBED"})
+    .where(and(eq(placementTpoEmailCampaignRecipients.id,row.id),
+     eq(placementTpoEmailCampaignRecipients.collegeId,college.id),
+     eq(placementTpoEmailCampaignRecipients.campaignId,id),
      eq(placementTpoEmailCampaignRecipients.status,"QUEUED")));
    totals.skipped++;
    continue;
