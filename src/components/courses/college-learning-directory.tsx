@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Pagination } from "@/components/ui/pagination";
 import {CollegeArchivedLessonRestore} from "./college-archived-lesson-restore";
 import {LessonActions} from "./admin-learning-structure-actions";
+import {CollegeDirectoryLessonMove} from "./college-directory-lesson-move";
 import {CollegeLessonVisibilityControl,CollegeLessonBulkVisibility} from "./college-lesson-visibility-controls";
 import { COLLEGE_COURSE_TAB_COPY, collegeLessonVisibilityLabel } from "@/modules/courses/college-course-tabs-copy";
 import { PageHeader } from "@/components/ui/page-header";
@@ -620,11 +621,18 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
                           sequence:item.sequence,updatedAt:item.updatedAt,
                           visibleToStudents:item.visibleToStudents,
                         }}/>
+                        <CollegeDirectoryLessonMove
+                          lesson={{id:item.id,name:item.name,learningPathId:item.learningPathId,
+                            updatedAt:item.updatedAt.toISOString()}}
+                          destinations={[...new Map(data.items.map(row=>[row.learningPathId,{
+                            learningPathId:row.learningPathId,
+                            label:row.courseName+" ("+row.courseCode+") · "+row.cohortName+" · "+row.periodName,
+                          }])).values()]}
+                        />
                         <p className="text-xs leading-5 text-muted-foreground">
-                          Moving a lesson to another course requires an eligible destination
-                          learning path and verified absence of learner-bound content.
-                          Rename and visibility changes are available in Edit; changing
-                          the parent course is not an implicit rename.
+                          Only destinations currently visible in this directory page are offered.
+                          Change filters to include another course. The server blocks moves that
+                          would strand delivered learner content or cross a college boundary.
                         </p>
                       </div>},
               ]}
