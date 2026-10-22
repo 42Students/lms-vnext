@@ -99,8 +99,7 @@ export function buildE2EFixtureManifest(namespace="e2e-dev"){
    externalBinaryRequired:Boolean(externalBinaryRequired)});
   seen.add(key);
  }
- const ids=Object.fromEntries(nodes.map(node=>[node.key,node.id]))
-  as Record<E2EFixtureKey,string>;
+ const ids=Object.fromEntries(nodes.map(node=>[node.key,node.id])) as Record<E2EFixtureKey,string>;
  const testPhones={
   facultyA:"+919000000001",facultyB:"+919000000002",adminA:"+919000000003",
   learnerA:"+919000000011",learnerB:"+919000000012",
