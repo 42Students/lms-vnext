@@ -25,8 +25,8 @@ export default async function FacultyProfilePage({searchParams}:{searchParams:Pr
   const params=await searchParams;
   const section=Array.isArray(params.section)?params.section[0]:params.section;
   if(section==="connect-accounts")redirect("/teacher/profile#social-profiles");
-  if(section&&section!=="about"&&section!=="contacts")redirect("/teacher/profile#contacts");
-  if(section==="contacts")redirect("/teacher/profile#contacts");
+  if(section&&section!=="about"&&section!=="contacts")redirect("/teacher/profile#faculty-about");
+  if(section==="contacts")redirect("/teacher/profile#faculty-contact");
   // Refresh errors must not be misreported as an empty profile, nor should a
   // stale academic/identity record be submitted for editing. The client-side
   // Refresh control retains the previous verified RSC tree until a new response.
