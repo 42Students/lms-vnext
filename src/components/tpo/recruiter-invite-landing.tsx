@@ -52,9 +52,8 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   const [actionError, setActionError] = useState("");
   const [fieldErrors,setFieldErrors] = useState<Partial<Record<Field,string>>>({});
   const [joinedEmail,setJoinedEmail] = useState("");
-  // Only a server-attested outcome can display JOINED or PENDING_HR.
-  // The current backend returns JOINED; retain the legacy pending result
-  // presentation for an explicitly verified future consent handoff.
+  // Only a server-attested JOINED or PENDING_CONSENT outcome can display
+  // success. An existing account still requires signed-in consent.
   const errorFor=(field:Field)=>fieldErrors[field];
   const clearField=(field:Field)=>setFieldErrors(previous=>({...previous,[field]:undefined}));
   const showError=(error:unknown,fallback:string)=>{
@@ -165,10 +164,9 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     if(digits && digits.length!==10 && !(digits.length===12&&digits.startsWith("91"))){
       problems.mobile="Enter a valid 10-digit mobile number, or leave it blank.";
     }
-    if(!invite?.contactEmail?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(invite.contactEmail)){
-      // Current server binds the invite to a TPO-verified mailbox; accepting a
-      // typed replacement would silently fail its email-ownership contract.
-      problems.email="Ask the placement cell to add your work email to the invitation.";
+    const verifiedRecipient=codeSentTo.trim();
+    if(!codeSent || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(verifiedRecipient)){
+      problems.email="Send a code to your work email before joining.";
     }
     if(Object.keys(problems).length){
       setFieldErrors(problems);
@@ -193,7 +191,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
          (result.outcome!=="JOINED" && result.outcome!=="PENDING_CONSENT") ||
          result.status!==(result.outcome==="PENDING_CONSENT"?"PENDING_HR":"JOINED") ||
          typeof result.signInEmail!=="string" || !result.signInEmail.trim() ||
-         result.signInEmail.trim().toLowerCase()!==invite?.contactEmail?.trim().toLowerCase()){
+         result.signInEmail.trim().toLowerCase()!==verifiedRecipient.toLowerCase()){
         // An accepted response must affirm the SAME email that received OTP.
         // An unrelated mailbox is not proof of an authorized college grant.
         setActionError(UNCONFIRMED);
@@ -211,23 +209,27 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     busyRef.current=true;
     setBusy(true);setActionError("");
     try{
-      if(!invite?.contactEmail?.trim() ||
-         !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(invite.contactEmail)){
-        setFieldErrors({email:"Ask the placement cell to verify your work email before a code can be sent."});
+      const email=invite?.contactEmail?.trim()||requestedEmail.trim();
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+        setFieldErrors({email:"Enter a valid company work email."});
         return;
       }
       const delivery=await apiFetch<unknown>("/api/public/recruiter-invite/"+encodeURIComponent(token)+"/send-code",{
         method:"POST",credentials:"same-origin",
+        ...(!invite?.contactEmail ? {
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({email}),
+        } : {}),
       });
       if(!delivery || typeof delivery!=="object" || Array.isArray(delivery) ||
          (delivery as Record<string,unknown>).sent!==true){
         setActionError("We couldn't confirm that the code was sent. Please retry.");
         return;
       }
-      // The endpoint does not echo a mailbox; it only delivers to the
-      // persisted, verified invite email. Never present arbitrary client
-      // input as the confirmed recipient.
-      setCodeSentTo(invite.contactEmail.trim());
+      // The server accepted a code delivery to this persisted or newly
+      // company-domain-bound recipient. The email is not taken from the
+      // anonymous response; acceptance must attest the same address.
+      setCodeSentTo(email);
       setCodeSent(true);
       setCode("");
       setFieldErrors({});
@@ -333,7 +335,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
             className="mt-[6px] min-h-11 w-full md:min-h-9"/>
           <span className="mt-1 block text-xs font-normal text-muted-foreground">
             {invite.contactEmail?"From your invitation. You'll sign in with it.":
-             "Enter your work email, then ask the placement cell to verify it on this invitation before requesting a code."}
+             "Enter your company work email. We will check it against the linked employer and send a verification code."}
           </span>
           {errorFor("email")?<span id="invite-email-error" role="alert" className="mt-1 block text-xs font-normal text-[var(--lms-error)]">{errorFor("email")}</span>:null}
         </label>
