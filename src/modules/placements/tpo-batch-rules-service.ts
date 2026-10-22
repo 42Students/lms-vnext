@@ -15,5 +15,6 @@ export async function saveTpoBatchRuleOverrides(ctx:RequestContext,batchId:strin
   collegeId,cohortId:batchId,registrationDeadline:lifecycle?.registrationDeadline??null,
   rulesOverride:cleaned,expectedVersion:input.expectedVersion,
  });
+ if(!result)throw new PlacementBatchError("DB08_ACTION_INVALID");
  return {rulesOverride:result.rulesOverride??null,version:result.updatedAt.toISOString()};
 }

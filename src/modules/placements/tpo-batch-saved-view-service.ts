@@ -15,11 +15,11 @@ type Saved={query:TpoBatchSavedFilter;pinned:boolean;lastUsedAt?:string;updatedA
 function parseStored(value:unknown,batchId:string):Saved|null{
  if(!value||typeof value!=="object")return null;
  const row=value as Record<string,unknown>;
- const parsed=tpoBatchSavedFilterSchema.safeParse(row.query);
+ const parsed=tpoBatchSavedFilterSchema.safeParse(row["query"]);
  if(!parsed.success||parsed.data.batchId!==batchId)return null;
- return {query:parsed.data,pinned:row.pinned===true,
-  lastUsedAt:typeof row.lastUsedAt==="string"?row.lastUsedAt:undefined,
-  updatedAt:typeof row.updatedAt==="string"?row.updatedAt:undefined};
+ return {query:parsed.data,pinned:row["pinned"]===true,
+  ...(typeof row["lastUsedAt"]==="string"?{lastUsedAt:row["lastUsedAt"]}:{}),
+  ...(typeof row["updatedAt"]==="string"?{updatedAt:row["updatedAt"]}:{})};
 }
 async function requireScope(ctx:RequestContext,batchId:string){
  const batch=await getTpoBatch(ctx,batchId);
@@ -78,7 +78,7 @@ export async function mutateTpoBatchSavedView(ctx:RequestContext,rawBatchId:unkn
   const pins=other.filter(item=>item.stored.pinned).length;
   if(input.pinned&&pins>=5)throw new Error("Only five batch views may be pinned.");
   const data:Saved={query:input.filters,pinned:input.pinned,updatedAt:now,
-   lastUsedAt:existing?.stored.lastUsedAt};
+   ...(existing?.stored.lastUsedAt!==undefined?{lastUsedAt:existing.stored.lastUsedAt}:{})};
   const [saved]=input.action==="CREATE"
    ?await tx.insert(placementTpoSavedViews).values({
     collegeId:college.id,userId:ctx.user.id,scope:"BATCH_STUDENTS",
