@@ -122,6 +122,48 @@ export const updateLectureHallSchema = z
   .strict()
   .refine((value) => Object.keys(value).length > 0, "Nothing to update");
 
+/**
+ * Read-only organization directory for a selected-organization SUPER_ADMIN.
+ * Unlike mutation/listLectureHalls, it never interprets a missing college as
+ * permission to search everywhere: an explicit authorized organization is
+ * required and results are bounded before any rendering.
+ */
+export async function listSuperAdminOrganizationLectureHalls(
+ context:RequestContext,
+ raw:{organizationId:string;q?:string;limit?:number;offset?:number},
+){
+ const query=z.object({
+  organizationId:z.string().uuid(),
+  q:z.string().trim().max(100).optional(),
+  limit:z.number().int().min(1).max(100).default(20),
+  offset:z.number().int().min(0).default(0),
+ }).parse(raw);
+ if(!isSuperAdmin(context) || context.adminScope?.collegeId ||
+   context.adminScope?.organizationId!==query.organizationId)
+  throw new AuthorizationError("academics.read");
+ requirePermission(context,"academics.read",{organizationId:query.organizationId});
+ const condition=and(eq(colleges.organizationId,query.organizationId),
+  eq(colleges.status,"ACTIVE"),
+  query.q?or(
+   ilike(lectureHalls.name,"%"+query.q.replace(/[\\%_]/g,"\\// Missing college scope is a validation error, never a signal to query other")+"%"),
+   ilike(lectureHalls.description,"%"+query.q.replace(/[\\%_]/g,"\\// Missing college scope is a validation error, never a signal to query other")+"%"),
+  ):undefined);
+ const [items,[total]]=await Promise.all([
+  getDb().select({id:lectureHalls.id,collegeId:colleges.id,
+   collegeName:colleges.name,name:lectureHalls.name,
+   capacity:lectureHalls.capacity,status:lectureHalls.status,
+   description:lectureHalls.description})
+   .from(lectureHalls).innerJoin(colleges,eq(colleges.id,lectureHalls.collegeId))
+   .where(condition).orderBy(asc(colleges.name),asc(lectureHalls.name),asc(lectureHalls.id))
+   .limit(query.limit).offset(query.offset),
+  getDb().select({n:sql<number>`count(*)::int`})
+   .from(lectureHalls).innerJoin(colleges,eq(colleges.id,lectureHalls.collegeId))
+   .where(condition),
+ ]);
+ return {items,total:Number(total?.n??0),limit:query.limit,offset:query.offset,
+  readOnly:true as const};
+}
+
 // Missing college scope is a validation error, never a signal to query other
 // colleges. Global SA / organization-wide discovery would need an approved
 // read-only endpoint and explicit role gate outside this mutation service.
