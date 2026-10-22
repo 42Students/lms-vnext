@@ -64,6 +64,7 @@ export async function POST(request: Request) {
           return input;
         })())
       : await createAnnouncement(context,body);
+    if (!announcement) throw new Error("Announcement write returned no record");
     // Preserve legacy HTTP 200/status OK while retaining the vNext document.
     return NextResponse.json({ status:"OK",announcement,
       data:{...announcement,announcementId:announcement.id}},
