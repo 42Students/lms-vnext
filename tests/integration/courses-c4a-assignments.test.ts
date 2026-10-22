@@ -511,6 +511,7 @@ describe("courses C4A assignments against PostgreSQL", () => {
         {
           lessonId: structure.lesson.id,
           title: "C4A Submission Task",
+           allowedMethods: ["WRITTEN_RESPONSE","EXTERNAL_LINK"],
           dueAt:
             "2027-12-01T12:00:00.000Z",
           maxPoints: 10,
@@ -668,6 +669,7 @@ describe("courses C4A assignments against PostgreSQL", () => {
           deliveryId:
             structure.deliveryA.id,
           title: "C4A Graded Task",
+           allowedMethods: ["WRITTEN_RESPONSE"],
           dueAt:
             "2027-12-01T12:00:00.000Z",
           maxPoints: 10,
@@ -871,6 +873,7 @@ describe("courses C4A assignments against PostgreSQL", () => {
         {
           lessonId: structure.lesson.id,
           title: "C4A Constraint Task",
+           allowedMethods: ["WRITTEN_RESPONSE"],
           dueAt:
             "2027-12-01T12:00:00.000Z",
           maxPoints: 10,
@@ -914,13 +917,13 @@ describe("courses C4A assignments against PostgreSQL", () => {
           (assignment_id, delivery_id, membership_id, submission_type, text_content)
          values ($1, $2, $3, 'LINK', 'invalid-shape')`,
         [
-          assignment.id,
+          randomUUID(),
           structure.deliveryA.id,
           SEED_IDS.facultyCollegeAMembership,
         ],
       ),
     ).rejects.toMatchObject({
-      code: "23514",
+      code: "23503",
     });
 
     await expect(
@@ -942,6 +945,7 @@ describe("courses C4A assignments against PostgreSQL", () => {
     const assignment = await createCourseAssignment(collegeAdmin, {
       lessonId: structure.lesson.id,
       title: "C4A Archive Race Task",
+           allowedMethods: ["WRITTEN_RESPONSE"],
       dueAt: "2027-12-01T12:00:00.000Z",
       maxPoints: 10,
       sequence: 0,
