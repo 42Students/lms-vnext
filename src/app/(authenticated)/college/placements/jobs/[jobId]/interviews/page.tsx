@@ -109,9 +109,9 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       </div>}/>
     <div className="grid min-w-0 grid-cols-2 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 text-sm sm:grid-cols-4"
       aria-label="Interview schedule summary">
-      {([{label:"Scheduled",value:scheduled.length},{label:"Today",value:interviewToday},
-        {label:"Companies",value:appointments.appointmentTotal?1:0},
-        {label:"Conflicts",value:conflicts}] as const).map(metric=>
+      {([{label:"Scheduled (page)",value:scheduled.length},{label:"Today (page)",value:interviewToday},
+        {label:"Companies (drive)",value:appointments.appointmentTotal?1:0},
+        {label:"Conflicts (page)",value:conflicts}] as const).map(metric=>
         <div key={metric.label} className="min-w-0 border-r border-border px-2 last:border-r-0">
           <div className="text-2xl font-semibold text-[var(--lms-heading)]">{metric.value}</div>
           <div className="text-xs text-muted-foreground">{metric.label}</div>

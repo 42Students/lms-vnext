@@ -1027,3 +1027,19 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-5-027-037 | `src/components/college/student-class-move-action.tsx` | On verified successful PATCH, show studentSectionMoveSuccessMessage and refreshed source/destination, do not show preemptively.
 - G2-13-011-024 / G2-18-010-036 | `src/modules/messaging/providers.ts + dev provisioning docs` | Migrate DEV_MAIL_ALLOW exact addresses to AUTH_TEST_EMAILS and classify suppression; domain wildcards require explicit owner approval and remain disabled in nonprod.
+
+
+## W1 round-2 verification progress — 22 October 2026 (partial, queue still open)
+
+Latest legacy-source cross-checks against `docs/audit/gap-fix-work/verify2/packets/lane-7/`:
+
+- **FIXED** G2-9-016-067, G2-9-016-068: College override takes precedence over inherited GLOBAL placement alert policy; rendered stale-days label reflects the effective setting, not a hardcoded week.
+- **FIXED** G2-9-016-058, G2-9-016-065, G2-9-011-041: Missing offer-letter evidence checks both `offer_letter_url` and the secure `offer_letter_object_path`; linked CLEAN grants remain separately authorized by storage service.
+- **FIXED** G2-9-016-026, G2-9-016-066, G2-9-016-100, G2-9-011-019: Full category counts no longer masquerade as bounded learner samples. LOW_CONVERSION is a one-drive signal rather than one learner; omitted names are disclosed with a count and scoped register link.
+- **FIXED** G2-9-008-048: Cohort > program > department filtering matches legacy narrowest-specificity selection; reports still explicitly rely on current vNext program enrollment rather than fictitious historic class membership.
+- **FIXED** G2-9-013-077 and **PARTIAL** G2-9-013-078: Archive preview acknowledges the already-persisted in-app applicant notices and audited action; the legacy automatic cancellation of scheduled interviews remains unimplemented and is not claimed as delivered.
+- **FIXED** G2-13-004-014, G2-13-004-070: Recruiter full-text inbox search now only matches MESSAGE kind, consistent with unread tally filtering.
+- **OK** G2-9-016-057, G2-9-016-069, G2-9-016-099: Separate exact college all/active count from bounded drive-card preview; archived jobs excluded from active metrics.
+- **OK** G2-13-025-005, G2-13-025-021, G2-13-025-025: Signed-in pending recruiter projection and consent route function without a pre-existing active college grant, with only the approved invitation identity fields.
+
+**Not yet verified/closed:** G2-9-013-026 (legacy free-text company association conflicts with verified vNext relationship contract); G2-9-013-056/G2-9-013-078 (post-close archived drive scheduled interview cascade/notice parity); other W1 files still require source-by-source verification and accepted migration decisions. Do not tick W1_8 or W1_9 until all their rows are checked; do not widen grants or invent persisted histories to close them.
