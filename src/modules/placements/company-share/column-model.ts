@@ -80,8 +80,12 @@ export function projectCompanyShareRows(source:readonly Candidate[],rawColumns:u
    TENTH:educationPercentage(row.profileDocument,"TENTH"),
    TWELFTH:educationPercentage(row.profileDocument,"TWELFTH"),
    EMAIL:row.email,PHONE:row.phone,
+   // The producer mints a CLEAN-scanned, share-token/PIN-audited one-minute
+   // grant. Never render an arbitrary long-lived HTTPS URL as a resume.
    RESUME:row.resumeSignedUrl && row.resumeExpiresAt &&
-     Date.parse(row.resumeExpiresAt)>Date.now()+5000
+     Number.isFinite(Date.parse(row.resumeExpiresAt)) &&
+     Date.parse(row.resumeExpiresAt)>Date.now()+5000 &&
+     Date.parse(row.resumeExpiresAt)<=Date.now()+15*60_000
       ?safeHttpsUrl(row.resumeSignedUrl):"Link not shown",
    GITHUB:safeHttpsUrl(profile?.socialProfiles.githubUrl),
    PORTFOLIO:safeHttpsUrl(profile?.socialProfiles.portfolioUrl),
