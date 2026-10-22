@@ -33,7 +33,7 @@ export function FacultyCourseItemViewer({title,kind,notes,externalHref,youtubeEm
      className="aspect-video w-full rounded-[var(--lms-control-radius)] border border-border"
      referrerPolicy="strict-origin-when-cross-origin" loading="lazy"
      allow="encrypted-media; picture-in-picture" allowFullScreen/>:null}
-   {externalHref?<a href={externalHref} target="_blank" rel="noopener noreferrer"
+   {externalHref?<a href={externalHref} rel="noopener noreferrer"
      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
      {kind==="LIVE_CLASS"?"Join meeting":"Open content"}
    </a>:null}

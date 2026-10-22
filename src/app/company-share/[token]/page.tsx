@@ -23,12 +23,12 @@ export default async function CompanySharePage({
  const {page,q,access}=await searchParams;
  const proof=(await cookies()).get("company_share_access")?.value??null;
  const result=await getPublicCompanyApplicantShare(token,page??1,"VIEW",q??"",proof).catch(()=>null);
- if(result===null)return <main className={`${authStyles.page} mx-auto min-h-dvh max-w-[1000px] px-4 py-12`}>
+ if(result===null)return <main className={`${authStyles.page} mx-auto max-w-[1000px] px-4 py-12`}>
   <section aria-label="Shared applicants unavailable" className="mx-auto mt-12 max-w-[480px] rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-5">
    <ErrorState title="We couldn't load this share" description="We could not load this share. Please retry." action={<Link href={"/company-share/"+encodeURIComponent(token)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-primary-text md:min-h-9">Retry</Link>}/>
   </section>
  </main>;
- if(result.kind==="CODE_REQUIRED")return <main className={`${authStyles.page} mx-auto min-h-dvh max-w-[1000px] px-4 py-12`}>
+ if(result.kind==="CODE_REQUIRED")return <main className={`${authStyles.page} mx-auto max-w-[1000px] px-4 py-12`}>
   <section className="mx-auto mt-12 min-w-0 max-w-[480px] rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-5 md:p-6">
    <h1 className="mb-4 break-words text-xl font-semibold leading-7 text-[var(--lms-heading)]">Applicants for {result.title}</h1>
    <p className="mb-4 break-words text-sm leading-[22px] text-body">Shared with {result.companyName}. Enter the one-time code the placement cell sent you.</p>
@@ -41,7 +41,7 @@ export default async function CompanySharePage({
    <p className="mt-3 break-words text-xs leading-[20px] text-muted-foreground">The link works until {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.expiresAt))}. Everything you open is logged.</p>
   </section>
  </main>;
- if(result.kind!=="READY")return <main className={`${authStyles.page} mx-auto min-h-dvh max-w-[1000px] px-4 py-12`}>
+ if(result.kind!=="READY")return <main className={`${authStyles.page} mx-auto max-w-[1000px] px-4 py-12`}>
   <section aria-label="Restricted applicant share" className="mx-auto mt-12 max-w-[480px] space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-5 md:p-6">
    <PageHeader title="This link is not valid any more." />
    <p className="text-sm text-body leading-[22px]">It may have expired or been withdrawn. Please ask the placement cell for a new one.</p>
@@ -62,7 +62,7 @@ export default async function CompanySharePage({
    if(key==="RESUME"||key==="GITHUB"||key==="PORTFOLIO"){
     try{
      const url=new URL(value);
-     if(url.protocol==="https:"&&!url.username&&!url.password)return <a href={url.href} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary-text underline underline-offset-2 hover:text-[var(--lms-link-text)]">Open</a>;
+     if(url.protocol==="https:"&&!url.username&&!url.password)return <a href={url.href} rel="noopener noreferrer" className="font-semibold text-primary-text underline underline-offset-2 hover:text-[var(--lms-link-text)]">Open</a>;
     }catch{}
     return value==="Link not shown"?value:"-";
    }
