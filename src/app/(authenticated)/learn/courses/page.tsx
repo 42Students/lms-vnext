@@ -109,6 +109,7 @@ export default async function LearnerCoursesPage({
         courseCode: course.courseCode,
         courseSlug: course.courseSlug,
         legacyCourseId: course.legacyCourseId,
+        legacyClassId: course.legacyClassId,
         electiveSlotName: course.electiveSlotName,
         isMandatory: !course.isElective,
         courseDescription: course.courseDescription,
