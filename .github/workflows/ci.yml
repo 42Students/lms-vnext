@@ -10,9 +10,11 @@ permissions:
   contents: read
 
 # Nine independent required jobs: failing lint must not suppress DB acceptance.
+# One run per branch: a newer push cancels the superseded run so frequent merges
+# to main do not starve the shared runner pool.
 concurrency:
-  group: lms-vnext-ci-${{ github.sha }}
-  cancel-in-progress: false
+  group: lms-vnext-ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint:
