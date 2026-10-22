@@ -35,7 +35,7 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
    <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Apply</Button>
   </form>
   <section aria-label="Interview readiness counts" className="grid grid-cols-1 gap-3 min-[768px]:grid-cols-3">
-   {Object.entries(data.counts).map(([key,n])=><StatTile key={key} className={tpoTileStyles.tile}
+   {Object.entries(data.counts).map(([key,n])=><StatTile key={key} {...(tpoTileStyles["tile"] !== undefined ? {className:tpoTileStyles["tile"]} : {})}
     label={key.replaceAll(/([A-Z])/g," $1")} value={n} />)}
   </section>
   <p role="status" className="text-sm text-body leading-[1.6]">Interview rounds page {data.page}: {data.rows.length} actionable results. Pages are drawn from the persisted round book.</p>
