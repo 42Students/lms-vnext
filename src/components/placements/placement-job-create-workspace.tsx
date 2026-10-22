@@ -112,7 +112,7 @@ export async function PlacementJobCreateWorkspace({
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <PageHeader
-        eyebrow={eyebrow}
+        {...(eyebrow !== undefined ? {eyebrow} : {})}
         title="Create drive"
         description="Start from a completed drive or build a new opportunity for students."
         actions={<PageBackLink href={basePath} label="Back to Drives" />}
