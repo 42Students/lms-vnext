@@ -46,7 +46,7 @@ export function parseLegacySkillSource(format:"CSV"|"RTF",source:string){
  const seen=new Set<string>();
  let duplicates=0,headers=false;
  for(let n=0;n<lines.length;n++){
-  const line=lines[n].trim();
+  const line=lines[n]?.trim() ?? "";
   if(!line)continue;
   if(n>20000)throw new Error("Source contains too many rows");
   const cols=format==="CSV"?csvCells(line):[line];
