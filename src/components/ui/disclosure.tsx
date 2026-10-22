@@ -25,6 +25,7 @@ export function Disclosure({
     className={cx("group min-w-0 border-t border-[var(--lms-canvas-border)]", className)}>
     <summary aria-label={summaryAriaLabel} title={summaryTitle} style={{ minHeight: 44 }}
       className={cx(
+        "min-h-11",
         preserveSummary
           ? "cursor-pointer list-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] focus-visible:outline-offset-[3px] focus-visible:shadow-[0_0_0_4px_rgba(26,149,161,0.12)]"
           : "flex cursor-pointer list-none items-center justify-between gap-[var(--lms-space-2)] rounded-[var(--lms-control-radius)] px-[var(--lms-space-2)] py-[var(--lms-space-2)] text-[13px] font-semibold leading-5 text-[var(--lms-body-text)] hover:text-[var(--lms-primary-text)] group-open:text-[var(--lms-primary-text)] transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] focus-visible:outline-offset-[3px] focus-visible:shadow-[0_0_0_4px_rgba(26,149,161,0.12)] motion-reduce:transition-none",
