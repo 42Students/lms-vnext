@@ -6,7 +6,7 @@ import {Button} from "@/components/ui/button";
 import {tpoStudentMarksVerificationLabel} from "@/modules/placements/tpo-student-marks-label";
 import Link from "next/link";
 import {tpoStudentDisplayLabel} from "@/modules/placements/tpo-student-display-label";
-import {useState} from "react";
+import {useId,useState} from "react";
 import {useTpoStudentsSelection} from "./tpo-students-selection";
 import {TpoStudentNoteEditor} from "./tpo-student-note-editor";
 import {TpoStudentOutcomePill} from "./tpo-student-outcome-pill";
@@ -97,6 +97,7 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
 ];
 export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,afterCollegeAvailable,canManageViews=false}:{rows:readonly TpoStudentRow[];programs:readonly {id:string;name:string}[];classes:readonly {id:string;name:string}[];canManageViews?:boolean;
  afterCollege:Record<string,{outcome:AfterCollegeOutcome;expectedVersion:string}>;afterCollegeAvailable:boolean}){
+ const keyboardHintId=useId();
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const selected=params.get("student");
  const [localSelection,setLocalSelection]=useState<string[]>([]);
@@ -191,7 +192,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    {value:"SENT_BACK",label:"Sent back"},{value:"NOT_VERIFIED",label:"Not verified"},
   ]},
  ];
- return <div className="space-y-3" role="region" aria-label="Students spreadsheet keyboard actions" aria-keyshortcuts="Control+A Control+C Meta+A Meta+C Enter" tabIndex={0}
+ return <div className="space-y-3" role="region" aria-label="Students spreadsheet keyboard actions" aria-describedby={keyboardHintId} aria-keyshortcuts="Control+A Control+C Meta+A Meta+C Enter" tabIndex={0}
   onKeyDown={event=>{
    const target=event.target;
    // Enter opens a single selected student's panel only when the sheet
@@ -226,6 +227,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
       });
    }
   }}>
+  <p id={keyboardHintId} className="sr-only">Focus this spreadsheet region. Control or Command plus A selects rows, Control or Command plus C copies visible rows, and Enter opens a single selected student.</p>
   <TpoAfterCollegeBulkEditor rows={rows} current={afterCollege} available={afterCollegeAvailable} />
   <TpoStudentClipboardActions rows={rows} selected={noteSelection} onSelect={setNoteSelection}/>
   {clipboardNotice?<p role="status" aria-live="polite" className="text-sm text-success">{clipboardNotice}</p>:null}
