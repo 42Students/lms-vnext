@@ -1,7 +1,7 @@
 import "server-only";
 import {and,desc,eq,inArray,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {activityEvents,collegeMemberships,departments,learnerProgramEnrollments,membershipRoles,
+import {activityEvents,collegeMemberships,departments,learnerProgramEnrollments,
  placementApplications,placementBatchRegistrations,placementCandidatePreferences,
  placementCompanies,placementCompanyRelationships,placementJobs,placementRecruiterCollegeGrants,
  placementJobRoleOptions,placementOffers,placementRecruiterDriveRequests,placementSeasons,programs,cohorts,users} from "@/db/schema";
@@ -11,7 +11,6 @@ import {placementJobIdSchema} from "./validation";
 import {PlacementsServiceError} from "./errors";
 import {getJobEligibilityPolicy} from "./eligibility-service";
 import {previewEligiblePublishedDrive} from "./tpo-drive-publish-effects";
-import {getTpoDriveClosePreview} from "./tpo-drive-close-preview-service";
 
 export async function getTpoDriveAbout(context:RequestContext,rawJobId:unknown){
  const collegeId=await requireTpoJobCollege(context),jobId=placementJobIdSchema.parse(rawJobId);
@@ -139,7 +138,7 @@ export async function getTpoDriveAbout(context:RequestContext,rawJobId:unknown){
   previousRequests:historicalRequests.map(request=>({
    id:request.id,status:request.status,decisionNote:request.decisionNote,
    createdAt:request.createdAt.toISOString(),
-   proposedTitle:typeof request.draft.title==="string"?request.draft.title:null,
+   proposedTitle:typeof request.draft["title"]==="string"?request.draft.title:null,
   })),
   closeSummary:{applications:applications.length,offers:accepted.length},
   feed:feed.map(r=>({...r,occurredAt:r.occurredAt.toISOString()})),
