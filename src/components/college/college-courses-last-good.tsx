@@ -31,7 +31,7 @@ export function CollegeCoursesLastGood({workspace,catalogueData,catalogueQuery,d
     </div>:null}
     {current?<AdminCourseOverview workspace={current.workspace}
       catalogueQuery={catalogueQuery} catalogueData={current.catalogue}
-      duplicateCourseId={workspace&&catalogueData?duplicateCourseId:undefined}
+      {...(workspace && catalogueData && duplicateCourseId !== undefined ? {duplicateCourseId} : {})}
       offeringBasePath="/college/courses/offerings" allowOfferingLifecycle/>:null}
   </section>;
 }
