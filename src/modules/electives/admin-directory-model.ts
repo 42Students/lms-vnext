@@ -27,7 +27,7 @@ export function adminElectiveFromLegacyFilters(raw: unknown) {
 
 export type AdminElectiveRow = {
   id: string; name: string; programId: string; programName: string; semesterNumber: number;
-  academicYear: string | null; hasEnrollmentHistory?:boolean; credits: number; minPick: number;
+  academicYear: string | null; description: string | null; version: number; hasEnrollmentHistory?:boolean; credits: number; minPick: number;
   maxPick: number; status: string; offerings?: number; students?: number;
 };
 export function summarizeAdminElectives(rows: readonly AdminElectiveRow[]) {
