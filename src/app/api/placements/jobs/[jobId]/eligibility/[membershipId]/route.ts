@@ -93,9 +93,13 @@ async function updateOverride(request:Request,{params}:RouteContext){
  }catch(error){return apiErrorResponse(error);}
 }
 export async function PUT(request:Request,route:RouteContext){
+ if(!isSameOriginRequest(request))
+  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  return updateOverride(request,route);
 }
 export async function POST(request:Request,route:RouteContext){
+ if(!isSameOriginRequest(request))
+  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  return updateOverride(request,route);
 }
 

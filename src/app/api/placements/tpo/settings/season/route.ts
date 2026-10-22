@@ -57,6 +57,12 @@ async function writeSeason(request:Request,action:"POST"|"PUT"){
   }
 }
 /** vNext create/edit form, retained for existing callers. */
-export async function POST(request:Request){return writeSeason(request,"POST");}
+export async function POST(request:Request){
+ if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+ return writeSeason(request,"POST");
+}
 /** Legacy edit verb; body must include explicit seasonId and revision token. */
-export async function PUT(request:Request){return writeSeason(request,"PUT");}
+export async function PUT(request:Request){
+ if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+ return writeSeason(request,"PUT");
+}
