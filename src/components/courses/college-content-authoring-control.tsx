@@ -93,6 +93,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  const [existingBusy,setExistingBusy]=useState(false);
  const [existingError,setExistingError]=useState("");
  const scopedRequest=useRef<AbortController|null>(null);
+ const previousRequestScope=useRef<string|null>(null);
  useEffect(()=>()=>scopedRequest.current?.abort(),[]);
  useEffect(()=>setRemoteExisting(null),[existing,existingPage,existingTruncated,kind]);
  const listRows=remoteExisting?.items??existing;
@@ -103,6 +104,11 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   const controller=new AbortController();scopedRequest.current=controller;
   setExistingBusy(true);setExistingError("");
   const url=new URLSearchParams(params);url.set("kind",kind);
+  const requestScope=url.toString();
+  if(previousRequestScope.current!==requestScope){
+   previousRequestScope.current=requestScope;
+   setRemoteExisting({items:[],existingPage:1,existingTruncated:false});
+  }
   void fetch("/api/courses/college-content-authoring?"+url.toString(),{
    credentials:"same-origin",cache:"no-store",signal:controller.signal,
   }).then(async response=>{
@@ -184,7 +190,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",ppt:"application/vnd.ms-powerpoint",
    pptx:"application/vnd.openxmlformats-officedocument.presentationml.presentation",xls:"application/vnd.ms-excel",
    xlsx:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",txt:"text/plain",csv:"text/csv",
-   png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg",gif:"image/gif",webp:"image/webp",zip:"application/zip"};
+   png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg",webp:"image/webp"};
   for(const [index,file] of resourceFiles.entries()){
    const ext=file.name.split(".").at(-1)?.toLowerCase()??"";
    if(!mimes[ext]||file.size<1||file.size>50*1024*1024)
@@ -459,11 +465,11 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    </label>
    {kind==="RESOURCE"&&!editing&&materialsEnabled?<div className="space-y-2 md:col-span-2">
     <label className="grid gap-2 text-sm font-semibold">Upload files
-     <input type="file" multiple disabled={busy} accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.csv,.png,.jpg,.jpeg,.gif,.webp,.zip"
+     <input type="file" multiple disabled={busy} accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.csv,.png,.jpg,.jpeg,.webp"
       className="block w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm"
       onChange={event=>{
        const files=Array.from(event.currentTarget.files??[]);event.currentTarget.value="";
-       const allowed=["pdf","doc","docx","ppt","pptx","xls","xlsx","txt","csv","png","jpg","jpeg","gif","webp","zip"];
+       const allowed=["pdf","doc","docx","ppt","pptx","xls","xlsx","txt","csv","png","jpg","jpeg","webp"];
        if(files.some(file=>!allowed.includes(file.name.split(".").at(-1)?.toLowerCase()??"")||file.size<1||file.size>50*1024*1024)){
         setError("Choose approved Resource files no larger than 50 MB.");return;}
        if(files.length+resourceFiles.length+resourceLinks.length>20){
@@ -517,8 +523,13 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
       className="max-w-[700px]" dismissible={!busy}>
       {editorFields}
     </Dialog>:
+    editing ? <Dialog open={open} onOpenChange={value=>{if(!value)closeEditor();}}
+      title={"Edit Content: "+title} description="Edit lesson content details."
+      className="max-w-[600px]" dismissible={!busy}>
+      {editorFields}
+    </Dialog> :
     <section aria-label="Add Content" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
-      <h3 className="mb-3 font-semibold">{editing?"Edit Content: "+title:"Add Content"}</h3>
+      <h3 className="mb-3 font-semibold">Add Content</h3>
       {editorFields}
     </section>:null}
   <ConfirmDialog open={saveConfirmOpen} onOpenChange={setSaveConfirmOpen}
