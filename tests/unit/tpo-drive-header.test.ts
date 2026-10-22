@@ -11,9 +11,11 @@ describe("TPO-drive-workspace-03 header facts",()=>{
   expect(projectTpoDriveHeader(drive).deadline).toContain("10:00");
  });
  it("distinguishes request, published, closed, cancelled and declined",()=>{
-  for(const [status,label] of [["REQUEST","Needs your review"],["PUBLISHED","Published"],
+  for(const [status,label] of [["REQUEST","Needs your review"],["PUBLISHED","Open"],
    ["CLOSED","Closed"],["CANCELLED","Cancelled"],["REJECTED","Declined"]] as const)
-    expect(projectTpoDriveHeader({...drive,status}).status).toBe(label);
+    expect(projectTpoDriveHeader({...drive,status},new Date("2026-10-15T00:00:00Z")).status).toBe(label);
+  expect(projectTpoDriveHeader({...drive,status:"PUBLISHED"},
+   new Date("2026-10-22T00:00:00Z")).status).toBe("Open · Expired");
  });
  it("does not label ordinary external application as recorded outside",()=>{
   expect(projectTpoDriveHeader({...drive,applicationMode:"EXTERNAL_ONLY"}).recordedOutside).toBe(false);

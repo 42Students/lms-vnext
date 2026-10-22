@@ -5,19 +5,22 @@ const base={membershipId:"a",name:"Akhil",rollNumber:"R101",programme:"BTech",
 describe("TPO-calendar-reports-33 NAAC student evidence",()=>{
  it("emits one row per placed student, best accepted CTC and offer count",()=>{
   const rows=buildAccreditationStudentRows([
-   {...base,offerId:"1",status:"ACCEPTED",annualCtcInr:900000},
-   {...base,offerId:"2",status:"ACCEPTED",annualCtcInr:1100000,company:"BigCo",joining:"JOINED"},
+   {...base,offerId:"1",status:"ACCEPTED",countsAsPlaced:true,annualCtcInr:900000},
+   {...base,offerId:"2",status:"ACCEPTED",countsAsPlaced:true,annualCtcInr:1100000,company:"BigCo",joining:"JOINED"},
    {...base,offerId:"3",status:"ISSUED",annualCtcInr:1500000},
    {...base,membershipId:"b",offerId:"4",status:"ISSUED",annualCtcInr:2000000},
   ]);
   expect(rows).toHaveLength(1);
+  expect(buildAccreditationStudentRows([
+   {...base,offerId:"unverified",status:"ACCEPTED",annualCtcInr:900000},
+  ])).toEqual([]);
   expect(rows[0]).toMatchObject({employer:"BigCo",packageInr:1100000,offersHeld:3,joining:"JOINED"});
   expect(rows[0].employerContact).toBeNull();
  });
  it("never exports duplicate accepted offers or spreadsheet formulas unsafely",()=>{
   const rows=buildAccreditationStudentRows([
-   {...base,offerId:"1",name:"=IMPORTXML()",status:"ACCEPTED",annualCtcInr:null},
-   {...base,offerId:"1",name:"=IMPORTXML()",status:"ACCEPTED",annualCtcInr:null},
+   {...base,offerId:"1",name:"=IMPORTXML()",status:"ACCEPTED",countsAsPlaced:true,annualCtcInr:null},
+   {...base,offerId:"1",name:"=IMPORTXML()",status:"ACCEPTED",countsAsPlaced:true,annualCtcInr:null},
   ]);
   expect(rows[0].offersHeld).toBe(1);
   const csv=accreditationStudentCsv(rows);

@@ -4,15 +4,19 @@ const src=(p:string)=>readFileSync(p,"utf8");
 describe("TPO inbox/team outstanding legacy contracts",()=>{
  it("TPO-inbox-team-30 routes the authenticated legacy c/m deep link and members alias",()=>{
   const team=src("src/app/(authenticated)/tpo/team/page.tsx");
-  expect(team).toContain('z.string().uuid().safeParse(threadId)');
-  expect(team).toContain('redirect("/tpo/team/"+encodeURIComponent(threadId)+target)');
-  expect(team).toContain('tabInput==="members"?"people":tabInput');
+  expect(team).toContain("const thread = first(params.c) ?? first(params.thread) ?? first(params.conversationId)");
+  expect(team).toContain('redirect("/tpo/messages?" + target.toString())');
+  expect(team).toContain('tab === "people" || tab === "members"');
+  expect(team).toContain('redirect("/tpo/settings/team")');
+  expect(team).toContain('hasPlacementTeamMembership(context)');
  });
  it("TPO-inbox-team-37 hides temporary coordinator assignments from permanent team roles",()=>{
-  const team=src("src/app/(authenticated)/tpo/team/page.tsx");
-  expect(team).toContain('const activeTeam=team.members.filter(member=>member.roles.includes("TPO")');
+  const team=src("src/app/(authenticated)/tpo/settings/team/page.tsx");
   expect(team).toContain('member.roles.includes("TPO_ADMIN")');
-  expect(team).toContain("Everyone in it can do everything in placements.");
+  expect(team).toContain('member.roles.includes("FACULTY_COORDINATOR")');
+  expect(team).toContain('permanentRole={member.roles.includes("TPO") || member.roles.includes("COLLEGE_ADMIN")}');
+  expect(team).toContain("permanent membership role.");
+  expect(team).toContain("Student coordinator");
  });
  it("TPO-inbox-team-44 keeps explicit college-scoped audience picker empty states",()=>{
   const picker=src("src/components/tpo/tpo-notice-audience-picker.tsx");
