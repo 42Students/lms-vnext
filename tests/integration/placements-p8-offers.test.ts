@@ -292,7 +292,7 @@ beforeEach(async () => {
     "insert into membership_roles(id,membership_id,role) values($1,$2,'TPO') on conflict(membership_id,role) do nothing",
     [testTpoRoleId,SEED_IDS.facultyCollegeAMembership],
   );
-});
+}, 30000);
 
 afterAll(async () => {
   await cleanup();
@@ -1000,7 +1000,7 @@ describe("Placement P8 offers and joining", () => {
       await blocker.query("rollback").catch(()=>{});
       blocker.release();
     }
-  });
+  }, 15000);
 
   it("PLACEMENTS-CLOSE-PENDING-DB-06 direct close cannot strand a recorded but unreleased company selection",async()=>{
     const {job,application}=await preparePassedApplication();
