@@ -12,8 +12,8 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-5-011-005  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [x] G2-5-026-021  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [ ] G2-5-027-002  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
-- [ ] G2-5-027-012  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
-- [ ] G2-5-027-040  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
+- [x] G2-5-027-012  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
+- [x] G2-5-027-040  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [x] G2-5-027-060  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [ ] G2-5-031-032  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [x] G2-5-032-009  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
@@ -26,3 +26,6 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-5-007-025: FIXED — `da92924bca235694f2d863d6a801bb562b9066c3`, `src/components/admin/super-admin-interview-operations.tsx` (legacy five interview types, Online/In-person mode options; reference `docs/legacy-source/frontend/src/components/InterviewCalendar/InterviewCalendarContent.js:51-56,78-87,264-272`).
 
 - G2-5-032-009: FIXED — `113af455b6c494093a15e8e80d14d583d5714d6a`, `src/modules/operations/scheduled-job-runner.ts` (`processFencedNotificationBatch` now takes an optional durable audit writer with processed/succeeded/failed/remaining counts and sanitized failed-entry IDs, checked under current lease). Legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/NotificationSchedulerService.java:107-154` reports release outcome counts and failures. Deployment callers must provide the persistent writer for durable records.
+
+- G2-5-027-012: OK — `src/components/college/college-student-csv-import.tsx:112-120,240-257` explicitly warns that bulk import creates real identities, requires a confirmation checkbox, shows row counts, and directs recovery to history rather than offering destructive Undo. `src/app/(authenticated)/admin/students/page.tsx:95-100` displays history and individual correction/suspension. The **current legacy implementation**, `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java` (`undoBulkImport`), explicitly throws “Bulk import undo is disabled to protect learner work”; the obsolete controller mapping at `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LearnerController.java:449-465` does not make undo functional.
+- G2-5-027-040: OK — `src/components/college/college-student-csv-import.tsx:112-120,256-257` and `src/app/(authenticated)/admin/students/page.tsx:95-100` show import history, clearly prevent unsupported destructive undo, and provide manual account recovery. The legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/LearnerServiceImpl.java` `undoBulkImport` rejects all batch deletes to avoid orphaned assignments/attendance/projects. Adding an “Undo” modal that falsely promises removed identities would regress current legacy behavior; no destructive mutation is introduced.
