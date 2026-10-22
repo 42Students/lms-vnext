@@ -1,5 +1,6 @@
 import { Banner } from "@/components/ui/banner";
 import { CoursesServiceError } from "@/modules/courses/errors";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { ZodError } from "zod";
 import { LEARNER_BACK_TO_COURSES } from "@/modules/courses/learner-course-copy-model";
 import type { ReactNode } from "react";
@@ -98,14 +99,17 @@ export default async function LearnerCourseTabPage({
   ]);
   if(workspaceResult.status==="rejected"){
     const reason:unknown=workspaceResult.reason;
+    if(reason instanceof AuthorizationError)throw reason;
     if(reason instanceof CoursesServiceError || reason instanceof ZodError)notFound();
   }
   if(deliveriesResult.status==="rejected"){
     const reason:unknown=deliveriesResult.reason;
+    if(reason instanceof AuthorizationError)throw reason;
     if(reason instanceof CoursesServiceError || reason instanceof ZodError)notFound();
   }
   if(instructorsResult.status==="rejected"){
     const reason:unknown=instructorsResult.reason;
+    if(reason instanceof AuthorizationError)throw reason;
     if(reason instanceof CoursesServiceError || reason instanceof ZodError)notFound();
   }
   if(workspaceResult.status!=="fulfilled" || deliveriesResult.status!=="fulfilled" ||
