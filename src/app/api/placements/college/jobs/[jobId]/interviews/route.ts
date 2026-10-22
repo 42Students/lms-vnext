@@ -13,12 +13,12 @@ export async function GET(request:Request,{params}:Props){
   return NextResponse.json(await getCollegeRoundSlotAppointments(
    await getCurrentRequestContext(),jobId,{
      appointmentPage:query.appointmentPage,
-     appointmentStatus:query.appointmentStatus,
-     appointmentMode:query.appointmentMode,
+     ...(query.appointmentStatus !== undefined ? {appointmentStatus:query.appointmentStatus} : {}),
+     ...(query.appointmentMode !== undefined ? {appointmentMode:query.appointmentMode} : {}),
      appointmentSearch:query.appointmentSearch,
      appointmentPageSize:query.appointmentPageSize,
      appointmentSort:query.appointmentSort,
-     preferredApplicationId:query.applicationId,
+     ...(query.applicationId !== undefined ? {preferredApplicationId:query.applicationId} : {}),
      candidatePage:query.candidatePage,
      candidatePageSize:query.candidatePageSize,
      candidateSearch:query.candidateSearch,
