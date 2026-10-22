@@ -33,14 +33,14 @@ const appointment=z.object({
  roundDescription:z.string().trim().min(10,"Please add at least a short description (min 10 characters)")
   .max(500).optional(),
  mode:z.enum(["ON_CAMPUS","VIRTUAL"]),venue:z.string().trim().max(500).nullable(),
- meetingUrl:z.url().max(500).nullable(),interviewer:z.string().trim().max(255).nullable(),
+ meetingUrl:z.url("Please enter a valid meeting link starting with https://").max(500).nullable(),interviewer:z.string().trim().max(255).nullable(),
 }).strict().superRefine((x,c)=>{
  if(x.mode==="ON_CAMPUS"&&(!x.venue||x.venue.length<2))
   c.addIssue({code:"custom",path:["venue"],message:"Enter the interview location."});
  if(x.mode==="VIRTUAL"&&!x.meetingUrl)
   c.addIssue({code:"custom",path:["meetingUrl"],message:"Please enter the meeting link"});
  else if(x.mode==="VIRTUAL"&&!isSafeInterviewMeetingUrl(x.meetingUrl))
-  c.addIssue({code:"custom",path:["meetingUrl"],message:"Meeting link must be a valid https:// URL with a public hostname"});
+  c.addIssue({code:"custom",path:["meetingUrl"],message:"Please enter a valid meeting link starting with https://"});
 });
 /** New schedules require the legacy interview type and meaningful description.
  * Editing imported appointments is compatible with missing historic fields.

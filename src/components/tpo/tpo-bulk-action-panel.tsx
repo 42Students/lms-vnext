@@ -28,7 +28,7 @@ import {selectTpoBulkPage,toggleTpoBulkRow,canSelectTpoBulkRow,isTpoBulkPageSele
 
 type Action="ELIGIBLE"|"INELIGIBLE"|"CLEAR_OVERRIDE"|"SHORTLISTED"|"REJECTED"|"ADD_NOTE"|"SEND_MESSAGE"|"MOVE_TEST"|"MOVE_INTERVIEW";
 type PreviewPlan={
- target:"STUDENTS"|"APPLICATIONS";jobId?:string;action:Action;note:string;ids:string[];
+ target:"STUDENTS"|"APPLICATIONS";jobId?:string;action:Action;note:string;internalReason?:string;ids:string[];
 };
 type PreviewResponse={rows:BulkPreviewRow[];previewToken:string;counts:{ready:number;skipped:number}};
 export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.length}:{target:"STUDENTS"|"APPLICATIONS";
@@ -40,6 +40,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  const setSelected=shared?.setSelected??setLocalSelection;
  const [action,setAction]=useState<Action>(target==="STUDENTS"?"ELIGIBLE":"SHORTLISTED");
  const [note,setNote]=useState("");
+ const [internalReason,setInternalReason]=useState("");
  const [pastedRolls,setPastedRolls]=useState("");
  const [rollFeedback,setRollFeedback]=useState("");
  const [copyFeedback,setCopyFeedback]=useState("");
@@ -84,7 +85,9 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   }
   const next:PreviewPlan={
     target,...(target==="APPLICATIONS"?{jobId}:{}),
-    action:choice,note:target==="APPLICATIONS"||choice==="INELIGIBLE"?note.trim():"",ids:safeSelected.slice(0,TPO_BULK_UI_LIMIT),
+    action:choice,note:target==="APPLICATIONS"||choice==="INELIGIBLE"?note.trim():"",
+    ...(target==="APPLICATIONS"&&choice==="REJECTED"&&internalReason.trim()?{internalReason:internalReason.trim()}:{}),
+    ids:safeSelected.slice(0,TPO_BULK_UI_LIMIT),
   };
   actionInFlightRef.current=true;setBusy(true);invalidate();
   try{
@@ -104,7 +107,9 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    const checks=await Promise.all(options.filter(option=>option.value!=="INELIGIBLE"||note.trim().length>=3).map(async option=>{
     const result=await post("preview",{
      target,...(target==="APPLICATIONS"?{jobId}:{}),
-     action:option.value,note:target==="APPLICATIONS"||option.value==="INELIGIBLE"?note.trim():"",ids:safeSelected,
+     action:option.value,note:target==="APPLICATIONS"||option.value==="INELIGIBLE"?note.trim():"",
+     ...(target==="APPLICATIONS"&&option.value==="REJECTED"&&internalReason.trim()?{internalReason:internalReason.trim()}:{}),
+     ids:safeSelected,
     }) as PreviewResponse;
     if(!Array.isArray(result.rows)||!result.previewToken)throw new Error("Could not verify action counts.");
     return {action:option.value,label:option.label,ready:result.counts.ready,
@@ -268,6 +273,12 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     <Textarea className="mt-[6px] w-full min-w-0" value={note} disabled={busy} maxLength={target==="STUDENTS"?200:1000} rows={2}
       onChange={e=>{setNote(e.target.value);invalidate();}}
       />
+   </label>:null}
+   {target==="APPLICATIONS"&&action==="REJECTED"?<label className="min-w-0 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Internal rejection reason (optional, never shown to candidates)
+    <Textarea className="mt-[6px] w-full min-w-0" value={internalReason} disabled={busy} maxLength={500} rows={2}
+      onChange={e=>{setInternalReason(e.target.value);invalidate();}}
+      />
+    <span className="mt-1 block text-xs font-normal text-muted-foreground">The message above is sent to each rejected candidate; keep confidential employer notes in this private field only.</span>
    </label>:null}
   </div>
   {target==="APPLICATIONS"?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-2 text-xs text-warning-text">

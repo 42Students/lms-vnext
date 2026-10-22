@@ -27,7 +27,7 @@ import {TpoBatchStudentBulkNotes} from "@/components/tpo/tpo-batch-student-bulk-
 import {TpoBatchStudentSavedViews} from "@/components/tpo/tpo-batch-student-saved-views";
 import {TpoBatchStudentKeyboardActions} from "@/components/tpo/tpo-batch-student-keyboard-actions";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import {getTpoBatchStudentRegistrations} from "@/modules/placements/tpo-batch-student-registration-service";
+import {getTpoBatchStudentRegistrationView} from "@/modules/placements/tpo-batch-student-registration-service";
 import {getTpoBatch} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { z } from "zod";
 import {parseBatchStudentSearchParams,batchStudentPageHref} from "@/modules/placements/tpo-batch-student-view-model";
@@ -41,7 +41,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  if(!view.success)return <div className="min-w-0 space-y-4"><PageHeader title="Batch students"/><ErrorState title="Invalid student search" description="Check the roster filters and search values." action={<Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={"/tpo/batches/"+batchId+"/students"}>Reset filters</Link>}/></div>;
  const ctx=await getCurrentRequestContext();
  const [result,batchScope,eligibility,registrationCounts]=await Promise.all([
-  getTpoBatchStudentRegistrations(ctx,batchId,parsed.data,view.data.q,view.data.source==="LEARNER"),getTpoBatch(ctx,batchId),
+  getTpoBatchStudentRegistrationView(ctx,batchId,parsed.data,view.data),getTpoBatch(ctx,batchId),
   getTpoBatchEligibilitySummary(ctx,batchId),getTpoBatchRegistrationSummary(ctx,batchId),
  ]);
  const finished=Boolean(batchScope.lifecycle?.finishedAt);
@@ -56,13 +56,13 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  <TpoBatchWorkspaceTabs batchId={batchId} active="students" students={registrationCounts.activeLearners}/>
  <form role="search" aria-label="students filters" action={"/tpo/batches/"+encodeURIComponent(batchId)+"/students"} method="get"
   className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] py-4 sm:grid-cols-2 xl:grid-cols-3">
-  <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class (on this page)
+  <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
    <Select name="classId" defaultValue={view.data.classId??""}
     className="block min-h-11 w-full mt-[6px]">
     <option value="">All classes</option>
-    {[...new Map(result.students.filter(student=>student.classId)
+    {(result.classOptions??[...new Map(result.students.filter(student=>student.classId)
       .map(student=>[student.classId!,student.className??"Unnamed class"])).entries()]
-     .map(([id,name])=><option key={id} value={id}>{name}</option>)}
+     .map(([id,name])=>({id,name}))).map(option=><option key={option.id} value={option.id}>{option.name}</option>)}
    </Select>
   </label>
   <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search names or roll numbers across the batch
@@ -78,7 +78,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
     <option value="NEEDS_REVIEW">Ambiguous / needs review</option>
    </Select>
   </label>
-  <Disclosure title="Decision source · Registration choice · Sort this page" defaultOpen={Boolean(view.data.source!=="ALL"||view.data.registration!=="ALL"||view.data.order!=="NAME_ASC")} className="min-w-0 border-0 sm:col-span-2 xl:col-span-3" contentClassName="pt-3"><div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+  <Disclosure title="Decision source · Registration choice · Sort" defaultOpen={Boolean(view.data.source!=="ALL"||view.data.registration!=="ALL"||view.data.order!=="NAME_ASC")} className="min-w-0 border-0 sm:col-span-2 xl:col-span-3" contentClassName="pt-3"><div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
   <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Decision source
    <Select name="source" defaultValue={view.data.source} className="min-h-11 w-full mt-[6px] block">
     <option value="ALL">Any source</option>
@@ -95,7 +95,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
     <option value="UNRECORDED">No choice recorded</option>
    </Select>
   </label>
-  <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort this page
+  <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
    <Select name="order" defaultValue={view.data.order} className="min-h-11 w-full mt-[6px] block">
     <option value="NAME_ASC">Name A–Z</option>
     <option value="NAME_DESC">Name Z–A</option>
@@ -132,7 +132,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
     className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Export current page CSV (unfiltered)</a>
   </div>
  </Disclosure>
- <p className="text-xs text-muted-foreground leading-5">Name/roll-number search runs against the full active batch roster before pagination. Other evidence filters apply to this loaded page. {visible.length} of {result.students.length} loaded learners match.</p>
+ <p className="text-xs text-muted-foreground leading-5">Search, class, decision, source, registration and sort run against the full active batch roster before pagination.{result.matching!==null?" "+result.matching+" learners match these filters.":""}{result.rosterTruncated?" The roster is larger than the 2000-learner filter limit; narrow the search to see every match.":""}</p>
  <SummaryStrip label="Loaded-page eligibility evidence" steps={[{label:"Loaded",value:pageSummary.assessed},{label:"Eligible",value:pageSummary.eligible},{label:"Ineligible",value:pageSummary.ineligible},{label:"Not decided",value:pageSummary.undecided},{label:"Needs review",value:pageSummary.needsReview},{label:"Direct overrides",value:pageSummary.directOverrides}]} />
  <p className="text-xs text-muted-foreground leading-5">These metrics cover the currently loaded 25-person slice before the filters above, not the full cohort.</p>
  <p className="text-sm text-muted-foreground leading-[22px]">Active learners only. Eligibility decisions inherit from learner, class, then batch; ambiguous class enrollment requires review.</p>
