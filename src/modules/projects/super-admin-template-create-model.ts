@@ -33,6 +33,10 @@ export function initialSuperAdminTemplateDraft(input:{
  const tasks:readonly TemplateCreateTask[]=input.tasks??[{key:"task-1",sprintKey:"sprint-1",title:input.task??"",
   description:input.taskDescription??"",acceptanceCriteria:input.acceptanceCriteria??"",
   priority:(input.priority??"MEDIUM") as TemplateCreateTask["priority"]}];
+ // The one-row quick-create form cannot create a title-only placeholder link.
+ // File resources created from the advanced editor have their own contract.
+ if(input.resources===undefined&&Boolean(input.resourceTitle?.trim())!==Boolean(input.resourceUrl?.trim()))
+  throw new Error("Resource title and URL must both be provided.");
  const resources:readonly TemplateCreateResource[]=input.resources??(input.resourceTitle?.trim()||input.resourceUrl?.trim()
   ?[{key:"resource-1",title:input.resourceTitle??"",url:input.resourceUrl??"",description:""}]
   :[]);
