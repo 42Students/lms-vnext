@@ -263,7 +263,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
        {item.status==="OPEN"&&item.targetParty===party?
         actionsFor(item).map(action=>
          <Button key={action} type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
-          disabled={busy||(action!=="ACCEPT"&&(notes[item.id]??"").trim().length<1)}
+          disabled={busy||(action==="ANSWER"&&(notes[item.id]??"").trim().length<1)}
           onClick={()=>setConfirmation({action,requestId:item.id,expectedUpdatedAt:item.updatedAt,field:item.legacyField??item.field,note:(item.legacyField??item.field)==="DEADLINE"&&action==="ANSWER"?istDateTimeToUtc(notes[item.id]??""):(notes[item.id]??"").trim()})}
           variant={action==="DECLINE"?"danger":"secondary"}>
           {action==="ACCEPT"?"Accept":action==="ANSWER"?"Answer":"Decline"}</Button>):null}
@@ -279,6 +279,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
    title={confirmation?.action==="ACCEPT"?"Accept":confirmation?.action==="ANSWER"?"Answer":confirmation?.action==="DECLINE"?"Decline":"Withdraw"}
    confirmLabel={confirmation?.action==="ACCEPT"?"Accept":confirmation?.action==="ANSWER"?"Answer":confirmation?.action==="DECLINE"?"Decline":"Withdraw"}
    confirmVariant={confirmation?.action==="ACCEPT"||confirmation?.action==="ANSWER"?"primary":"danger"} pending={busy}
+   confirmDisabled={(confirmation?.action==="DECLINE"||confirmation?.action==="ANSWER")&&!confirmation.note.trim()}
    onConfirm={()=>{if(confirmation)void send({action:confirmation.action,requestId:confirmation.requestId,
      expectedUpdatedAt:confirmation.expectedUpdatedAt,note:confirmation.note});}}>
    <p className="text-sm text-body leading-[22px]">{confirmation?.action==="ACCEPT"?"Accepting immediately applies this change to the drive.":"This decision is recorded in the drive discussion. Answering a named field updates the drive; declining or withdrawing does not."}</p>
