@@ -70,6 +70,7 @@ export default async function LearnerPlacementApplicationsPage() {
     channel: row.channel,
     staffOptOutUntil:row.staffOptOutUntil,
     mayStaffOptOut:row.mayStaffOptOut,
+    withdraw:row.withdrawalMode==="NONE"?null:row.withdrawalMode,
     submittedAt: row.submittedAt,
     withdrawnAt: row.withdrawnAt,
     screening: row.screening,

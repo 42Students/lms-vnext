@@ -199,8 +199,14 @@ export function legacyAttendanceMarkSummary(input:{
  * current editable note has a 1,000-character cap. */
 export function legacyAttendanceAbsence(input:{
   legacyAttendId:number;sourceReason:string|null;markedAt:Date;
+  /** Legacy attend.attendance_status: NULL is a plain unexplained absence;
+   * EXCUSED, MEDICAL and LATE are explicit codes that must be preserved. */
+  sourceStatus?:string|null;
 }){
-  return {legacyAttendId:input.legacyAttendId,status:"ABSENT" as const,
+  const code=input.sourceStatus?.trim().toUpperCase()??"";
+  const status=code==="EXCUSED"||code==="MEDICAL"||code==="LATE"
+    ?code:"ABSENT" as const;
+  return {legacyAttendId:input.legacyAttendId,status,
     legacyAbsenceReason:input.sourceReason,note:input.sourceReason?.slice(0,1000)??null,
     markedAt:input.markedAt};
 }

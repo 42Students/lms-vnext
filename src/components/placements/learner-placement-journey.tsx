@@ -15,6 +15,8 @@ export type LearnerPlacementJourneyItem = {
   channel: string;
   staffOptOutUntil?:Date|null;
   mayStaffOptOut?:boolean;
+  /** Server-authorised withdrawal mode; the client never derives it. */
+  withdraw?:"SELF"|"REQUEST"|null;
   submittedAt: Date;
   withdrawnAt: Date | null;
   screening: {
