@@ -1,6 +1,9 @@
 import {z} from "zod";
 export const tpoDriveEditSchema=z.object({
  confirmed:z.literal(true),
+ wantedSkills:z.array(z.string().trim().min(1).max(50)).max(30).refine(
+  rows=>new Set(rows.map(v=>v.toLocaleLowerCase("en-IN"))).size===rows.length,
+  "Choose each wanted skill once.").optional(),
  notifyApplicants:z.boolean().default(false),
  applicationDeadline:z.iso.datetime({offset:true}).nullable().optional(),
  minCgpaHundredths:z.number().int().min(0).max(1000).nullable().optional(),

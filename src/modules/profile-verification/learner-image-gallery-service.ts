@@ -1,13 +1,16 @@
 import "server-only";
 
 import { and, asc, eq, isNull } from "drizzle-orm";
+import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships, membershipRoles, profilePrivateDocumentReceipts, users,
 } from "@/db/schema";
 import { learnerProfileImages } from "@/db/schema/db04-profile-education-images.staged";
-import { createPrivateReadGrant, readPrivateObjectAttestation } from "@/modules/storage/private-object-storage";
+import {
+  createPrivateReadGrant, createPrivateUploadGrant, readPrivateObjectAttestation,
+} from "@/modules/storage/private-object-storage";
 import { hasMembershipRole, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import {
   learnerGalleryUploadSchema, MAX_LEARNER_PROFILE_IMAGES,
@@ -70,6 +73,97 @@ function summary(row: typeof learnerProfileImages.$inferSelect) {
     createdAt: row.createdAt.toISOString(),
   };
 }
+const MAX_GALLERY_UPLOAD_BYTES = 5 * 1024 * 1024;
+const galleryFileSchema = z.strictObject({
+  originalName: z.string().trim().min(5).max(255),
+  contentType: z.enum(["image/jpeg", "image/png"]),
+  sizeBytes: z.number().int().min(1).max(MAX_GALLERY_UPLOAD_BYTES),
+});
+const galleryKeySchema = z.string().regex(
+  /^private\/[0-9a-f-]{36}\/[0-9a-f-]{36}\/profile-verification\/[0-9a-f-]{36}$/i,
+);
+
+/** Gallery photos may only be initiated and published by the actual learner.
+ * Staff may review and deactivate but cannot place identity evidence in a
+ * learner's public-facing photo set without the learner's own choice. */
+async function requireOwnGalleryUpload(context: RequestContext) {
+  if (!context.membership || !hasMembershipRole(context, "LEARNER") ||
+      context.user.platformStatus !== "ACTIVE" ||
+      context.membership.status !== "ACTIVE")
+    throw new LearnerGalleryError("GALLERY_FORBIDDEN");
+  const access = await galleryAccess(context, context.membership.id);
+  if (!access.canEdit || access.membershipId !== context.membership.id)
+    throw new LearnerGalleryError("GALLERY_FORBIDDEN");
+  return access;
+}
+
+export async function initiateOwnLearnerGalleryUpload(
+  context: RequestContext, raw: unknown,
+) {
+  const input = galleryFileSchema.parse(raw);
+  const suffix = input.originalName.toLowerCase().split(".").at(-1);
+  if (/[\/\\\x00-\x1f\x7f]/.test(input.originalName) ||
+      (input.contentType === "image/jpeg" && suffix !== "jpg" && suffix !== "jpeg") ||
+      (input.contentType === "image/png" && suffix !== "png"))
+    throw new LearnerGalleryError("GALLERY_RECEIPT_INVALID");
+  const access = await requireOwnGalleryUpload(context);
+  const grant = await createPrivateUploadGrant({
+    collegeId: access.collegeId,
+    ownerMembershipId: access.membershipId,
+    namespace: "profile-verification",
+    contentType: input.contentType,
+    expectedSizeBytes: input.sizeBytes,
+    maxSizeBytes: MAX_GALLERY_UPLOAD_BYTES,
+    originalName: input.originalName,
+  });
+  return { objectKey: grant.objectKey, uploadUrl: grant.uploadUrl,
+    requiredHeaders: grant.requiredHeaders, expiresAt: grant.expiresAt.toISOString() };
+}
+
+/** Publish only a scanner-attested, owner-scoped image. Repeating the confirm
+ * is idempotent by storage generation; no raw public URL is persisted. A
+ * scanner still processing the PUT must produce a retryable 409, never READY. */
+export async function confirmOwnLearnerGalleryUpload(
+  context: RequestContext, raw: unknown,
+) {
+  const input = z.strictObject({ objectKey: galleryKeySchema }).parse(raw);
+  const access = await requireOwnGalleryUpload(context);
+  const segments = input.objectKey.split("/");
+  if (segments[1] !== access.collegeId || segments[2] !== access.membershipId)
+    throw new LearnerGalleryError("GALLERY_FORBIDDEN");
+  const attestation = await readPrivateObjectAttestation(input.objectKey, {
+    collegeId: access.collegeId, ownerMembershipId: access.membershipId,
+  });
+  if (!["image/jpeg", "image/png"].includes(attestation.contentType) ||
+      attestation.sizeBytes > MAX_GALLERY_UPLOAD_BYTES)
+    throw new LearnerGalleryError("GALLERY_RECEIPT_INVALID");
+  const [inserted] = await getDb().insert(profilePrivateDocumentReceipts).values({
+    owningMembershipId: access.membershipId,
+    purpose: "PROFILE_IMAGE",
+    privateObjectKey: attestation.objectKey,
+    objectGeneration: attestation.generation,
+    sha256Hex: attestation.sha256Hex,
+    mimeType: attestation.contentType,
+    sizeBytes: attestation.sizeBytes,
+    scanStatus: "CLEAN",
+    uploadedByUserId: context.user.id,
+  }).onConflictDoNothing().returning({ id: profilePrivateDocumentReceipts.id });
+  const receipt = inserted ?? (await getDb().select({
+    id: profilePrivateDocumentReceipts.id,
+    purpose: profilePrivateDocumentReceipts.purpose,
+    owningMembershipId: profilePrivateDocumentReceipts.owningMembershipId,
+  }).from(profilePrivateDocumentReceipts).where(and(
+    eq(profilePrivateDocumentReceipts.privateObjectKey, attestation.objectKey),
+    eq(profilePrivateDocumentReceipts.objectGeneration, attestation.generation),
+  )).limit(1))[0];
+  if (!receipt || ("purpose" in receipt && receipt.purpose !== "PROFILE_IMAGE") ||
+      ("owningMembershipId" in receipt && receipt.owningMembershipId !== access.membershipId))
+    throw new LearnerGalleryError("GALLERY_RECEIPT_INVALID");
+  return appendLearnerGalleryImage(context, {
+    receiptId: receipt.id, idempotencyKey: randomUUID(),
+  }, access.membershipId);
+}
+
 export async function listLearnerGallery(context: RequestContext, membershipId?: string) {
   const access = await galleryAccess(context, membershipId);
   const rows = await getDb().select().from(learnerProfileImages)

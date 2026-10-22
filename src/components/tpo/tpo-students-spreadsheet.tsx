@@ -123,6 +123,10 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    row.rollNumber===selected||row.registrationNumber===selected):[];
  const active=matches.length===1?matches[0]!:null;
  const selectedScoped=noteSelection.filter(id=>shared?.allIds?.includes(id)??rows.some(row=>row.membershipId===id));
+ // Bulk notes operate only on this page, even if spreadsheet selection spans
+ // other pages. A single bulk note never sends more than 100 learner IDs.
+ const noteEligibleIds=rows.filter(row=>noteSelection.includes(row.membershipId))
+  .slice(0,100).map(row=>row.membershipId);
  const allSelected=Boolean(shared?.allIds?.length&&selectedScoped.length===shared.allIds.length);
  const xlsxHref=(()=>{
   const query=new URLSearchParams(params.toString());
@@ -194,7 +198,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    if(event.key==="Enter"&&target===event.currentTarget&&selectedScoped.length===1){
     event.preventDefault();open(selectedScoped[0]??null);return;
    }
-   if(target instanceof HTMLElement&&target.closest("input,textarea,select,button,a,[contenteditable=true]"))return;
+   if(target instanceof HTMLElement&&target.closest("input,textarea,select,button,a,[contenteditable]"))return;
    if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="a"){
     event.preventDefault();setNoteSelection([...(shared?.allIds??rows.map(row=>row.membershipId))]);
    }
@@ -203,6 +207,12 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
     event.preventDefault();const chosen=sortedRows.filter(row=>!noteSelection.length||noteSelection.includes(row.membershipId));
     setDownloadError("");
     setClipboardNotice("");
+    if(!chosen.length){
+      setDownloadError(noteSelection.length?
+        "Selected students are not on this page. Change page or select visible rows.":
+        "No students on this page to copy.");
+      return;
+    }
     if(!navigator.clipboard?.writeText){
       setDownloadError("Clipboard access is unavailable. Use Export selected CSV instead.");
       return;
@@ -235,12 +245,12 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    <div className="my-3 grid max-h-44 min-w-0 grid-cols-1 gap-2 overflow-y-auto overscroll-contain md:grid-cols-2 xl:grid-cols-3">
     {rows.map(row=><label className="flex min-h-11 min-w-0 items-center gap-2 break-words text-sm" key={row.membershipId}>
      <Checkbox  checked={noteSelection.includes(row.membershipId)}
-       disabled={!noteSelection.includes(row.membershipId)&&noteSelection.length>=100}
+       disabled={!noteSelection.includes(row.membershipId)&&noteEligibleIds.length>=100}
        onChange={e=>setNoteSelection(ids=>e.target.checked?[...ids,row.membershipId]:ids.filter(id=>id!==row.membershipId))}/>
      {row.displayName}</label>)}
    </div>
-   <p className="text-sm leading-[22px]">{noteSelection.length} selected</p>
-   <TpoStudentNoteEditor membershipIds={noteSelection} afterSave={()=>setNoteSelection([])}/>
+   <p className="text-sm leading-[22px]">{noteEligibleIds.length} selected on this page (maximum 100)</p>
+   <TpoStudentNoteEditor membershipIds={noteEligibleIds} afterSave={()=>setNoteSelection([])}/>
   </Disclosure>
   <label className="flex min-h-11 min-w-0 flex-wrap items-center gap-3 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort visible roster page
    <Select value={pageSort} onChange={e=>setPageSort(e.target.value as typeof pageSort)}

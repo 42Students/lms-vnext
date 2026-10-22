@@ -11,10 +11,10 @@ This is wave 3 of the fix job. Work every packet below, in order, one at a time,
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_src_db_schema_db05-lesson-discussions.staged.ts.md` (edit src/db/schema/db05-lesson-discussions.staged.ts; 3 findings; best P0)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_src_db_schema_db05-lesson-discussions.staged.ts.md` (edit src/db/schema/db05-lesson-discussions.staged.ts; 3 findings; best P0)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_src_db_schema_placement-drive-change-requests.ts.md` (edit src/db/schema/placement-drive-change-requests.ts; 1 findings; best P0)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_src_db_schema_db10-skills-catalog.draft.ts.md` (edit src/db/schema/db10-skills-catalog.draft.ts; 1 findings; best P0)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_src_db_schema_db04-profile-education-images.staged.ts.md` (edit src/db/schema/db04-profile-education-images.staged.ts; 15 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_src_db_schema_db04-profile-education-images.staged.ts.md` (edit src/db/schema/db04-profile-education-images.staged.ts; 15 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_src_db_schema_tpo-collaboration.ts.md` (edit src/db/schema/tpo-collaboration.ts; 6 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_src_db_schema_projects.ts.md` (edit src/db/schema/projects.ts; 6 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_src_modules_auth_login-service.ts.md` (edit src/modules/auth/login-service.ts; 5 findings; best P1)

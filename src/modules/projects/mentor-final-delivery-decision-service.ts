@@ -5,7 +5,6 @@ import {projectInstances,projectSubmissions,projectSubmissionReviews,projectDeli
 import {type RequestContext,hasActiveMembership,hasMembershipRole} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
-import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {requireProjectLifecycleMutationAccess} from "./access";
 import {assertPersistedProjectMutationActor} from "./persisted-mentor-mutation";
 import {ProjectsServiceError} from "./errors";
@@ -65,14 +64,17 @@ export async function decideMentorFinalDelivery(context:RequestContext,projectId
    feedback:input.feedback??null,reviewedByUserId:context.user.id,
    reviewedByMembershipId:membership.id,
   }).returning();
+  // Review events belong to the same immutable, project-scoped activity stream
+  // as submissions and locks, with exact decision and review ID preserved.
+  const activity=projectDeliveryActivity({
+   action:"REVIEWED",collegeId:scope.collegeId,organizationId:scope.organizationId,
+   projectId:scope.project.id,submissionId:submission.id,version:submission.version,
+   decision:input.decision,
+  });
   const reviewedEvent = await recordActivityEventInTransaction(tx,context,{
-   eventType:ACTIVITY_EVENT_TYPES.PROJECTS_DELIVERY_REVIEWED,
-   collegeId:scope.collegeId,organizationId:scope.organizationId,
-   subjectType:"project_submission",subjectId:submission.id,
+   ...activity,
    summary:input.decision==="APPROVED"?"Project delivery approved":"Project delivery changes requested",
-   metadata:{projectId:scope.project.id,version:submission.version,decision:input.decision,
-    reviewId:review!.id},
-   groupKey:"project:"+scope.project.id+":final-review",
+   metadata:{...activity.metadata,reviewId:review!.id},
   });
   // LEARNER-projects-R01: project reviews reach active learners through the same transaction.
   const notice=learnerProjectDeliveryReviewNotice(scope.project.id,input.decision);

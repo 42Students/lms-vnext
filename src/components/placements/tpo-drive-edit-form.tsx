@@ -20,6 +20,8 @@ import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-erro
 type Draft={id:string;title:string;description:string;updatedAt:string;status:string;
  recruiterOwned:boolean;recruiterOwnershipSource:string;
  applicantCount:number;applicationDeadline:string|null;minCgpaHundredths:number|null;
+ wantedSkills:string[];lastSavedBy:string|null;lastSavedAt:string|null;
+ companyHistory:Array<{id:string;title:string;status:string;updatedAt:string}>;
  jobDescriptionObjectPath:string|null;
  locations:string[];openings:number|null;minimumAnnualCtcInr:number|null;maximumAnnualCtcInr:number|null;
  fixedCtcLpa:string|null;variableCtcLpa:string|null;stipendPerMonthInr:number|null;isDream:boolean;
@@ -28,6 +30,7 @@ type Draft={id:string;title:string;description:string;updatedAt:string;status:st
   minimumAnnualCtcInr?:number|null;maximumAnnualCtcInr?:number|null;
   stipendPerMonthInr?:number|null}>;
  companyRelationshipId?:string;
+ companyName:string|null;companyReady:boolean;
  employmentType:string;
  workMode:string;recruiterDriveMode:string;
  jobTypeLabel:string|null;
@@ -46,6 +49,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
  const {dirty,markDirty,clearDirty,guardDialog}=useUnsavedDriveGuard();
  const {showToast}=useToast();
  const [version,setVersion]=useState(job.updatedAt);
+ const [lastSavedBy,setLastSavedBy]=useState(job.lastSavedBy);
  const [saved,setSaved]=useState<{at:string;notified:number}|null>(null);
  const [error,setError]=useState<string|null>(null);
  const [confirmOpen,setConfirmOpen]=useState(false);
@@ -173,6 +177,12 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    new Set(locations.map(x=>x.toLowerCase())).size!==locations.length){
    setError("Enter no more than 20 distinct locations, each at most 120 characters.");return;
   }
+  const wantedSkills=String(fields.get("wantedSkills")??"").split(",")
+   .map(value=>value.trim()).filter(Boolean);
+  if(wantedSkills.length>30||wantedSkills.some(value=>value.length>50)||
+    new Set(wantedSkills.map(value=>value.toLocaleLowerCase("en-IN"))).size!==wantedSkills.length){
+   setError("Enter no more than 30 distinct wanted skills of 50 characters each.");return;
+  }
   const reason=String(fields.get("reason")??"").trim();
   if(reason.length<10){setError("Explain the edit in at least 10 characters.");return;}
   let deadline:string|null;
@@ -244,7 +254,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    employmentType:String(fields.get("employmentType")??job.employmentType),
    workMode:String(fields.get("workMode")??job.workMode),
    recruiterDriveMode:String(fields.get("recruiterDriveMode")??job.recruiterDriveMode),
-   reason,title,description,locations,
+   reason,title,description,locations,wantedSkills,
    openings:optionalNumber(fields.get("openings")),
    minimumAnnualCtcInr:minimum,maximumAnnualCtcInr:maximum,
    fixedCtcLpa:optionalNumber(fields.get("fixedCtcLpa")),
@@ -258,7 +268,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   if(!proposal||pending)return;
   try{
    await run(async()=>{
-    const result=await apiFetch<{id:string;status:string;updatedAt:string;notified:number}>(
+    const result=await apiFetch<{id:string;status:string;updatedAt:string;notified:number;lastSavedBy?:string|null}>(
      "/api/placements/tpo/jobs/"+encodeURIComponent(job.id)+"/edit",{
       method:"PATCH",credentials:"same-origin",headers:{"content-type":"application/json"},
       body:JSON.stringify({...proposal,notifyApplicants}),
@@ -266,6 +276,9 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     if(result.id!==job.id||!Number.isFinite(new Date(result.updatedAt).getTime()))
      throw new Error("The save response could not be verified. Check the drive before trying again.");
     setVersion(result.updatedAt);
+    if(result.lastSavedBy)setLastSavedBy(result.lastSavedBy);
+    // Fetch the committed saved-rule reach, not an unsaved browser estimate.
+    setReach(null);setReachRequest(count=>count+1);
     setSaved({at:result.updatedAt,notified:result.notified});
     setProposal(null);
     setError(null);
@@ -316,8 +329,9 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Role<Input required name="title" defaultValue={job.title} minLength={3} maxLength={100} placeholder="e.g. Systems Engineer" className={cls}/></label>
   <section aria-label="Employer relationship" className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 py-3">
    <h3 className="text-sm font-semibold text-foreground">Company</h3>
+   <p className="mt-1 text-base font-semibold text-foreground">{job.companyName??"Add the company"}</p>
    <p className="mt-1 text-xs leading-5 text-body">
-    The verified employer relationship on this saved drive is read-only here.
+    The selected employer relationship for this saved drive is read-only here.
     Changing the company requires its separately authorized reassignment workflow;
     saving job terms cannot silently transfer company or recruiter access.
    </p>
@@ -326,7 +340,18 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     View linked company and role details
    </Link>
   </section>
+  <section aria-label="Company history" className="space-y-1 border-b border-border pb-3 text-xs text-body">
+   <h3 className="font-semibold text-foreground">Previous drives for this company</h3>
+   {job.companyHistory.filter(item=>item.id!==job.id).slice(0,5).map(item=>
+    <p key={item.id}>{item.title} · {item.status} · {new Intl.DateTimeFormat("en-IN",{
+     dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(item.updatedAt))}</p>)}
+   {job.companyHistory.every(item=>item.id===job.id)?<p>No earlier company drives.</p>:null}
+  </section>
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Description<Textarea required name="description" defaultValue={job.description} maxLength={20000} rows={3} className={cls}/></label>
+  <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Wanted skills (comma-separated)
+   <Input name="wantedSkills" defaultValue={job.wantedSkills.join(", ")} maxLength={1550} className={cls}/>
+   <span className="mt-1 block text-xs font-normal text-body">Up to 30 distinct skills. Saved separately from enforced eligibility rules.</span>
+  </label>
   <section aria-label="Job description attachment" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
    <h3 className="text-sm font-semibold text-foreground">Job description (PDF or Word)</h3>
    <p className="text-xs leading-5 text-body">Optional PDF, DOC or DOCX, up to 5 MB.
@@ -509,7 +534,8 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    <p role="status" className="inline-flex items-center gap-2 text-body">
     <span aria-hidden="true" className={dirty?"h-2 w-2 rounded-full bg-warning":"h-2 w-2 rounded-full bg-success"}/>
     {dirty?"Unsaved changes — leave this page only after saving.":
-     "Last server save: "+new Intl.DateTimeFormat("en-IN",{
+     "Last server save"+(lastSavedBy?" by "+lastSavedBy:"")+": "+
+     new Intl.DateTimeFormat("en-IN",{
       dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
      }).format(new Date(saved?.at??version))+" IST"}
    </p>

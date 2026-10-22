@@ -6,7 +6,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 
 export const runtime="nodejs";
 
-/** Read-only selected-college export with the legacy summary, funnel,
+/** Read-only selected-college or organization export with the legacy summary, funnel,
  * company/job rows and company totals as separate CSV sections. */
 export async function GET(request:Request){
  try{
@@ -21,28 +21,20 @@ export async function GET(request:Request){
   const groups=hiringCompanyRollups(data.rows);
   const stages=["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const;
   const funnelStages=["applied","shortlisted","assessment","interview","offered","hired"] as const;
+  // Headline totals cover every eligible filtered drive, independently of
+  // the bounded per-job CSV. Never silently undercount a large college.
   const summary:(string|number)[][]=[
-   ["Total Applications",data.rows.reduce((sum,row)=>sum+row.totalApplications,0)],
+   ["Total Applications",data.fullTotals.totalApplications],
    ...stages.slice(1).map(stage=>[
     stage.charAt(0).toUpperCase()+stage.slice(1),
-    data.rows.reduce((sum,row)=>sum+row[stage],0),
+    data.fullTotals[stage],
    ]),
   ];
-  const measured=data.funnelRows.filter(row=>
-   typeof row.averageHoursToFirstShortlist==="number"&&
-   Number.isFinite(row.averageHoursToFirstShortlist)&&
-   row.firstShortlistObservationCount>0);
-  const observed=measured.reduce((sum,row)=>sum+row.firstShortlistObservationCount,0);
-  // Only persist an average when historical first-shortlist observations exist.
-  // A missing measurement is not zero latency and must not bias the denominator.
-  const observedHours=measured.reduce((sum,row)=>
-   sum+(row.averageHoursToFirstShortlist??0)*row.firstShortlistObservationCount,0);
-  if(observed>0)summary.push([
-   "Avg. time to shortlist (hrs)",Math.round(observedHours/observed),
-  ]);
+  if(data.fullShortlistMeanHours!==null)
+   summary.push(["Avg. time to shortlist (hrs)",data.fullShortlistMeanHours]);
   const funnel:(string|number)[][]=funnelStages.map(stage=>[
    stage.charAt(0).toUpperCase()+stage.slice(1),
-   data.funnelRows.reduce((sum,row)=>sum+row[stage],0),
+   data.fullFunnelTotals[stage],
   ]);
   const visibleStages=["applied","shortlisted","assessment","interview","offered","hired","rejected"] as const;
   const companyRows:(string|number)[][]=data.rows.map(row=>[
@@ -62,7 +54,7 @@ export async function GET(request:Request){
    section("Company-wise Report (per-job rows only; see Company Totals section below for rollups)",
     placementReportCsv(jobColumns,companyRows)),
    ...(companyTotals.length?[section("Company Totals",placementReportCsv(totalColumns,companyTotals))]:[]),
-   ...(data.truncated?[placementReportCsv(["Report Note"],[["TRUNCATED: report limited to 5000 drives"]])]:[]),
+   ...(data.truncated?[placementReportCsv(["Report Note"],[["PARTIAL JOB BREAKDOWN: company/job rows limited to 5000 drives; headline and funnel totals include all matching drives"]])]:[]),
   ].join("\r\n\r\n");
   const date=new Date().toISOString().slice(0,10);
   return new Response("\uFEFF"+csv,{

@@ -30,7 +30,7 @@ export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:s
  }
  // Named non-primary packages are editable through the existing authorized
  // DRAFT-only role-option service. Live drives retain read-only packages.
- const roles=job.status==="DRAFT"?await listPlacementRoleOptions(context,job.id):[];
+ const roles=job.status==="DRAFT"&&job.editable?await listPlacementRoleOptions(context,job.id):[];
  return <div className="min-w-0 space-y-4">
   <PageHeader title={"Edit drive · "+job.title}
     description={"Saved "+new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(job.updatedAt))+" IST"}
@@ -41,7 +41,7 @@ export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:s
       {job.status==="DRAFT"?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"?publish=1#drive-lifecycle-publish"} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-link md:min-h-9">Review &amp; publish</Link>:null}
     </div>}/>
   {job.editable?<TpoDriveEditForm job={job}/>:<section aria-label="Read-only drive history" className="space-y-4">
-    <Alert tone="warning" aria-label="Drive edit unavailable">This drive is {job.status.toLowerCase()} and cannot be edited. All saved details are shown below for reference.</Alert>
+    <Alert tone="warning" aria-label="Drive edit unavailable">{job.editingBlockedReason??("This drive is "+job.status.toLowerCase()+" and cannot be edited.")} All saved details remain available for reference.</Alert>
     <dl className="grid min-w-0 gap-4 rounded-[12px] border border-border bg-surface p-4 sm:grid-cols-2">
       {([
         ["Role",job.title],["Status",job.status],["Job type",job.jobTypeLabel??job.employmentType],
@@ -58,7 +58,7 @@ export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:s
     </dl>
     <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Create drive</Link>
    </section>}
-  {job.status==="DRAFT"?<section aria-label="Named pay packages" className="space-y-3 border-t border-border pt-4">
+  {job.status==="DRAFT"&&job.editable?<section aria-label="Named pay packages" className="space-y-3 border-t border-border pt-4">
    <h2 className="text-base font-semibold text-foreground">Pay packages</h2>
    <p className="text-sm text-body">Add, edit or remove separately named role packages before publishing.
     The primary role remains linked to the job form above.</p>
