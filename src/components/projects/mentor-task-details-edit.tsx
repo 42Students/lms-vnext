@@ -16,6 +16,8 @@ import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 
 type Props={
   projectId:string;taskId:string;title:string;description:string|null;
+  /** Old admin-style repeating rows edit inline; detail pages keep the dialog. */
+  inlineEdit?:boolean;
   approach:string|null;
   acceptanceCriteria:string|null;priority:string;updatedAt:string;
   taskType:string|null;estimatePoints:number|null;dueDate:string|null;blockerReason:string|null;
@@ -92,10 +94,7 @@ export function MentorTaskDetailsEdit(props:Props) {
       showToast({tone:"error",title:"Task update failed",description:message});
     } finally {setPending(false);}
   }
-  return <>
-    <Button size="sm" variant="secondary" onClick={begin}>Edit task</Button>
-    <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Edit task details"
-      description="Change registered task details. Status, assignee and sprint remain unchanged.">
+  const editor=(
       <form onSubmit={review} className="grid gap-4">
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
           <Input required maxLength={200} value={title}
@@ -153,7 +152,23 @@ export function MentorTaskDetailsEdit(props:Props) {
           </Button>
         </div>
       </form>
-    </Dialog>
+  );
+  return <>
+    {(!props.inlineEdit||!open)?
+      <Button size="sm" variant="secondary" onClick={begin}
+        aria-expanded={props.inlineEdit?open:undefined}>
+        {props.inlineEdit?"Edit row":"Edit task"}
+      </Button>:null}
+    {props.inlineEdit
+      ? open?<section aria-label={"Edit task "+props.title}
+          className="mt-2 min-w-0 rounded border border-border bg-surface p-3">
+          <h3 className="mb-3 text-sm font-semibold">Edit task · {props.title}</h3>
+          {editor}
+        </section>:null
+      : <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Edit task details"
+      description="Change registered task details. Status, assignee and sprint remain unchanged.">
+      {editor}
+    </Dialog>}
     <ConfirmDialog open={confirmOpen} onOpenChange={next=>{setConfirmOpen(next);if(!next&&!pending)setOpen(true);}}
       title="Confirm task changes?"
       description="Updated details will be visible to the assigned project team."
