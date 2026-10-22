@@ -5,6 +5,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { createPlacementCompany } from "@/modules/placements/company-service";
 import { createPlacementJob, publishPlacementJob } from "@/modules/placements/job-service";
+import {upsertJobEligibilityPolicy} from "@/modules/placements/eligibility-service";
 import { createPlacementRound, actOnPlacementRound } from "@/modules/placements/round-service";
 import { applyToPlacementJob } from "@/modules/placements/application-service";
 import { decidePlacementScreening } from "@/modules/placements/screening-service";
@@ -115,6 +116,7 @@ async function setup() {
   const tomorrowRound = await createPlacementRound(tpo, job.id, {
     kind: "INTERVIEW", name: "Tomorrow Interview", durationMinutes: 60,
   });
+  await upsertJobEligibilityPolicy(tpo,job.id,{missingEvidencePolicy:"ALLOW_WITH_FLAG"});
   await publishPlacementJob(tpo, job.id);
   const application = await applyToPlacementJob(applicant, job.id, {});
   await decidePlacementScreening(tpo, application.id, {
