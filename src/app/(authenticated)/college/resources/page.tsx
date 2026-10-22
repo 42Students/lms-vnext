@@ -51,7 +51,7 @@ export default async function CollegeResourcesPage({
     {authoring?<CollegeContentAuthoringControl kind="RESOURCE" lessons={authoring.lessons}
       deliveries={authoring.deliveries} existing={authoring.existing}
       existingTruncated={authoring.existingTruncated} existingPage={authoring.existingPage}
-      existingFilters={authoring.existingFilters} materialsEnabled={resourceMaterialsRuntimeEnabled()}/>:
+      existingFilters={authoring.existingFilters} dependencyErrors={authoring.dependencyErrors} materialsEnabled={resourceMaterialsRuntimeEnabled()}/>:
       <div className="space-y-2">
         <ErrorState title="Could not load courses"
           description="Course selections for resources are unavailable; the existing list can still be viewed."

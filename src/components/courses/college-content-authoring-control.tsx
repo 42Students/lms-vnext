@@ -51,10 +51,10 @@ function initialLiveSchedule(){
  const end=new Date(start.getTime()+60*60_000);
  return {start:dateInput(start.toISOString()),end:dateInput(end.toISOString())};
 }
-export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing,existingTruncated=false,existingPage=1,existingFilters,materialsEnabled=false}:{
+export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing,existingTruncated=false,existingPage=1,existingFilters,materialsEnabled=false,dependencyErrors=[]}:{
  kind:Kind;lessons:Lesson[];deliveries:Delivery[];existing:Existing[];existingTruncated?:boolean;
  existingPage?:number;existingFilters?:{courseId:string;lessonId:string;sectionId:string;search:string;allKindsForReorder?:boolean};
- materialsEnabled?:boolean;
+ materialsEnabled?:boolean;dependencyErrors?:readonly string[];
 }){
  const router=useRouter(),[editing,setEditing]=useState<string|null>(null),[open,setOpen]=useState(kind!=="RESOURCE"&&lessons.length>0);
  const [lessonId,setLessonId]=useState(lessons[0]?.id??""),[title,setTitle]=useState(""),
@@ -483,7 +483,13 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
       onClick={()=>setResourceFiles(old=>old.filter((_,at)=>at!==index))}>Remove</Button>
     </div>)}
     {resourceUploadStatus?<p role="status" className="text-xs text-muted-foreground">{resourceUploadStatus}</p>:null}
-    {busy&&resourceUploadStatus?<progress value={resourceProgress} max={100} className="w-full"/>:null}
+    {busy&&resourceUploadStatus?<div className="flex items-center gap-3">
+     <progress aria-label="Resource file upload progress" value={resourceProgress} max={100} className="min-w-0 flex-1"/>
+     {resourceXhr.current?<Button type="button" size="sm" variant="secondary"
+      onClick={()=>{resourceXhr.current?.abort();setResourceUploadStatus("Upload cancelled; the Resource remains saved.");}}>
+      Cancel upload
+     </Button>:null}
+    </div>:null}
     <p className="text-xs text-muted-foreground">After saving the Resource, selected files upload via verified private grants. Scanner-pending files remain unavailable to learners.</p>
    </div>:null}
    {kind==="RESOURCE"&&!editing&&materialsEnabled?<label className="flex items-start gap-2 text-sm md:col-span-2">
@@ -505,6 +511,11 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   </div>
  );
  return <section className="min-w-0 space-y-3 md:flex-none">
+  {dependencyErrors.length>0?<div role="alert" className="rounded border border-warning p-3 text-sm">
+   <p className="font-semibold">Some authoring options are unavailable</p>
+   <ul className="list-disc pl-5">{dependencyErrors.map(item=><li key={item}>{item} unavailable</li>)}</ul>
+   <button type="button" className="mt-2 font-semibold text-link underline" onClick={()=>router.refresh()}>Retry missing options</button>
+  </div>:null}
   <div className="flex flex-wrap items-center gap-3">
    <h2 className={kind==="LIVE_CLASS"||kind==="RESOURCE"?"sr-only":"font-semibold"}>{kind==="YOUTUBE"?"Videos":kind==="RESOURCE"?"Resources":"Live Classes"}</h2>
    <Button type="button" variant="secondary" size="sm" disabled={!lessons.length}

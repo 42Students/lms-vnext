@@ -40,7 +40,11 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
  const organizationId=acting?.organizationId??membership!.organizationId;
  requirePermission(ctx,"courses.manage",{collegeId,organizationId});
  const db=getDb();
- const lessons=await db.select({
+ const dependencyErrors:string[]=[];
+ async function readDependency<T>(label:string,query:PromiseLike<T>,fallback:T):Promise<T>{
+  try{return await query;}catch{dependencyErrors.push(label);return fallback;}
+ }
+ const lessons=await readDependency("Lessons",db.select({
   id:courseLessons.id,name:courseLessons.name,course:courses.name,
   courseCode:courses.code,offeringId:courseOfferings.id,
  }).from(courseLessons)
@@ -51,8 +55,8 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
   eq(departments.collegeId,collegeId)))
  .where(and(eq(courseLessons.status,"ACTIVE"),eq(courses.status,"ACTIVE"),
    eq(courseOfferings.status,"ACTIVE"),ne(courseLearningPaths.status,"ARCHIVED")))
- .orderBy(asc(courses.name),asc(courseLessons.name));
- const deliveries=await db.select({deliveryId:courseSectionDeliveries.id,offeringId:courseOfferings.id,
+ .orderBy(asc(courses.name),asc(courseLessons.name)),[]);
+ const deliveries=await readDependency("Sections",db.select({deliveryId:courseSectionDeliveries.id,offeringId:courseOfferings.id,
   sectionName:sections.name,sectionCode:sections.code}).from(courseSectionDeliveries)
   .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
   .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
@@ -60,8 +64,8 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
   .innerJoin(sections,and(eq(sections.id,courseSectionDeliveries.sectionId),eq(sections.cohortId,courseOfferings.cohortId),eq(sections.academicPeriodId,courseOfferings.academicPeriodId)))
   .where(and(eq(sections.status,"ACTIVE"),eq(courseOfferings.status,"ACTIVE"),
    eq(courses.status,"ACTIVE"),isNull(courseSectionDeliveries.endedAt)))
-  .orderBy(asc(sections.name),asc(courseSectionDeliveries.id));
- const faculty=await db.selectDistinct({
+  .orderBy(asc(sections.name),asc(courseSectionDeliveries.id)),[]);
+ const faculty=await readDependency("Faculty",db.selectDistinct({
   membershipId:collegeMemberships.id,offeringId:courseOfferings.id,
   displayName:users.displayName,
  }).from(courseTeachingAssignments)
@@ -80,7 +84,7 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
   .where(and(isNull(courseTeachingAssignments.endedAt),
     isNull(courseTeachingAssignments.deletedAt),
     eq(courseOfferings.status,"ACTIVE")))
-  .orderBy(asc(users.displayName),asc(collegeMemberships.id));
+  .orderBy(asc(users.displayName),asc(collegeMemberships.id)),[]);
  const page=filters.page??1;
  if(!Number.isSafeInteger(page)||page<1||page>10000)throw new Error("INVALID_EXISTING_CONTENT_PAGE");
  const search=(filters.search??"").trim();
@@ -106,7 +110,7 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
    ilike(courses.code,pattern))!);
  }
  const pageSize=kind==="RESOURCE"?15:10;
- const existing=await db.select({
+ const existing=await readDependency("Content",db.select({
   id:lessonContents.id,lessonId:lessonContents.lessonId,title:lessonContents.title,
   contentType:lessonContents.contentType,
   offeringId:courseOfferings.id,lessonName:courseLessons.name,courseCode:courses.code,
@@ -125,12 +129,12 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
   eq(departments.collegeId,collegeId)))
  .where(and(...where))
  .orderBy(asc(courseLessons.name),asc(lessonContents.sequence),asc(lessonContents.title),asc(lessonContents.id))
- .limit(pageSize+1).offset((page-1)*pageSize);
+ .limit(pageSize+1).offset((page-1)*pageSize),[]);
  const positions=lessons.length?await db.select({lessonId:lessonContents.lessonId,highest:max(lessonContents.sequence)})
   .from(lessonContents).where(inArray(lessonContents.lessonId,lessons.map(row=>row.id)))
   .groupBy(lessonContents.lessonId):[];
  const nextByLesson=new Map(positions.map(row=>[row.lessonId,(row.highest??-1)+1]));
- return {deliveries,faculty,lessons:lessons.map(row=>({...row,nextSequence:nextByLesson.get(row.id)??0})),existingTruncated:existing.length>pageSize,existingPage:page,
+ return {dependencyErrors,deliveries,faculty,lessons:lessons.map(row=>({...row,nextSequence:nextByLesson.get(row.id)??0})),existingTruncated:existing.length>pageSize,existingPage:page,
   existingPageSize:pageSize,
  existingFilters:{courseId:filters.courseId??"",lessonId:filters.lessonId??"",
   sectionId:filters.sectionId??"",search,

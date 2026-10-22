@@ -35,8 +35,8 @@ const mimeForExtension:Record<string,readonly string[]>={
  xls:["application/vnd.ms-excel"],
  xlsx:["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"],
  txt:["text/plain"],csv:["text/csv","application/csv"],
- png:["image/png"],jpg:["image/jpeg"],jpeg:["image/jpeg"],gif:["image/gif"],
- webp:["image/webp"],zip:["application/zip","application/x-zip-compressed"],
+ png:["image/png"],jpg:["image/jpeg"],jpeg:["image/jpeg"],
+ webp:["image/webp"],
 };
 function fileNotReady(){
  if(!resourceMaterialsWriteReady())throw new StorageFileError("STORAGE_NOT_CONFIGURED");

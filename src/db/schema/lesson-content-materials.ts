@@ -61,7 +61,7 @@ export const LESSON_MATERIAL_FILE_LIMIT_BYTES = 50 * 1024 * 1024;
 export const LESSON_MATERIAL_MAX_ITEMS = 20;
 export const LESSON_MATERIAL_ALLOWED_EXTENSIONS = [
   "pdf","doc","docx","ppt","pptx","xls","xlsx","txt","csv",
-  "png","jpg","jpeg","gif","webp","zip",
+  "png","jpg","jpeg","webp",
 ] as const;
 
 export function lessonMaterialFileInputError(
