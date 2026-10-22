@@ -112,12 +112,13 @@ describe("TPO-drive-workspace-42 whole-round preview/apply authorization and par
    confirmed:true,expectedPreviewToken:preview.previewToken,
   });
   expect(state.apply).toHaveBeenCalledTimes(2);
-  expect(state.apply).toHaveBeenCalledWith(actor,first,1);
-  expect(state.apply).toHaveBeenCalledWith(actor,second,2);
+  expect(state.apply).toHaveBeenCalledWith(actor,first,1,true);
+  expect(state.apply).toHaveBeenCalledWith(actor,second,2,true);
   expect(result).toMatchObject({total:3,previouslyApplied:1,applied:1,skipped:1,unchanged:1});
   expect(result.results.find(item=>item.resultId===second)).toMatchObject({
    status:"skipped",reason:"Result was not applied. Refresh this round and try again.",
   });
+  expect(result.notifyLearners).toBe(true);
   expect(JSON.stringify(result)).not.toMatch(/password|private postgres/);
  });
 });
