@@ -239,7 +239,7 @@ export async function listProgramsPage(
       throw new AcademicsServiceError("DEPARTMENT_NOT_FOUND");
   }
   const page = Math.max(1, Math.min(10000, Math.trunc(raw.page ?? 1) || 1));
-  const pageSize = Math.max(1, Math.min(100, Math.trunc(raw.pageSize ?? 20) || 20));
+  const pageSize = Math.max(1, Math.min(100, Math.trunc(raw.pageSize ?? 25) || 25));
   const conditions = and(
     eq(departments.collegeId, collegeId),
     departmentId ? eq(programs.departmentId, departmentId) : undefined,
@@ -476,6 +476,22 @@ export async function updateProgram(
         ]);
         if (durationTerms < Math.max(term?.number ?? 0,progression?.number ?? 0))
           throw new AcademicsServiceError("PROGRAM_HAS_COHORTS");
+        // Imported learners may be actively enrolled in a cohort whose
+        // progression row was never migrated. A missing term is not evidence
+        // that those students can safely fit inside a shorter program.
+        const [unmappedEnrollment]=await tx.select({id:learnerProgramEnrollments.id})
+          .from(learnerProgramEnrollments)
+          .innerJoin(cohorts,and(
+            eq(cohorts.id,learnerProgramEnrollments.cohortId),
+            eq(cohorts.programId,programId)))
+          .leftJoin(cohortProgressionState,
+            eq(cohortProgressionState.cohortId,cohorts.id))
+          .where(and(
+            eq(learnerProgramEnrollments.programId,programId),
+            eq(learnerProgramEnrollments.status,"ACTIVE"),
+            isNull(cohortProgressionState.cohortId)))
+          .limit(1);
+        if(unmappedEnrollment)throw new AcademicsServiceError("PROGRAM_HAS_COHORTS");
       }
       const [updated] = await tx.update(programs).set({
         ...scalarInput,
