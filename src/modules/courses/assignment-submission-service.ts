@@ -1,6 +1,5 @@
 import {
   and,
-  asc,
   desc,
   eq,
   inArray,
@@ -316,7 +315,7 @@ export async function submitCourseAssignment(
             })
           : allowedAssignmentSubmissionPart(policy.methods, {
               kind: input.submissionType,
-              linkKind: input.submissionType === "LINK" ? input.linkKind : undefined,
+              ...(input.submissionType === "LINK" && input.linkKind !== undefined ? { linkKind: input.linkKind } : {}),
             }));
         if (!methodAllowed) {
           throw new CoursesServiceError("ASSIGNMENT_METHOD_NOT_ALLOWED");
@@ -839,7 +838,7 @@ export async function listAssignmentSubmissionGradeActivity(
     events: rows.map(row => ({
       id: row.id, eventType: row.eventType, actorUserId: row.actorUserId,
       occurredAt: row.occurredAt,
-      version: typeof row.metadata.version === "number" ? row.metadata.version : null,
+      version: typeof row.metadata["version"] === "number" ? row.metadata.version : null,
     })),
   };
 }
@@ -999,7 +998,12 @@ export async function gradeAssignmentSubmission(
   if(current.assignmentStatus!=="PUBLISHED") {
     throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
   }
-  const gradeChanged=facultyGradeHasChanges(current,input);
+  const gradeChanged=facultyGradeHasChanges(current,{
+    pointsAwarded: input.pointsAwarded,
+    expectedVersion: input.expectedVersion,
+    ...(input.feedback !== undefined ? { feedback: input.feedback } : {}),
+    ...(input.hidePublished !== undefined ? { hidePublished: input.hidePublished } : {}),
+  });
   const hideOnly=input.hidePublished===true && current.gradePublished && !gradeChanged;
   if(!gradeChanged&&!hideOnly)
     throw new CoursesServiceError("ASSIGNMENT_GRADE_NO_CHANGE");
