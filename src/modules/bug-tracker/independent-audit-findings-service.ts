@@ -221,7 +221,8 @@ export async function listIndependentAuditFindingEvents(context:RequestContext,f
  return getDb().select({id:db10AuditFindingEvents.id,action:db10AuditFindingEvents.action,
   note:db10AuditFindingEvents.note,createdAt:db10AuditFindingEvents.createdAt,
   actorUserId:db10AuditFindingEvents.actorUserId,
-  fromStatus:db10AuditFindingEvents.fromStatus,toStatus:db10AuditFindingEvents.toStatus})
+  fromStatus:db10AuditFindingEvents.fromStatus,toStatus:db10AuditFindingEvents.toStatus,
+  fromValue:db10AuditFindingEvents.fromValue,toValue:db10AuditFindingEvents.toValue})
   .from(db10AuditFindingEvents).where(eq(db10AuditFindingEvents.findingId,findingId))
   .orderBy(desc(db10AuditFindingEvents.createdAt)).limit(100);
 }
