@@ -10,12 +10,12 @@ export function LearnerProjectGoals({overview}: {overview:LearnerProjectGoalSumm
       ) : (
         <div className="mt-3 space-y-3">
           {overview.goal ? <div><h3 className="text-sm font-semibold text-[var(--lms-heading)]">Project goal</h3>
-            <p className={"mt-1 whitespace-pre-wrap "+styles.richText}>{overview.goal}</p></div> : null}
-          {overview.description ? <p className={"whitespace-pre-wrap "+styles.richText}>{overview.description}</p> : null}
+            <p className={"mt-1 whitespace-pre-wrap "+styles["richText"]}>{overview.goal}</p></div> : null}
+          {overview.description ? <p className={"whitespace-pre-wrap "+styles["richText"]}>{overview.description}</p> : null}
           {overview.deliverables.length > 0 ? (
             <div><h3 className="text-sm font-semibold text-[var(--lms-heading)]">Deliverables</h3>
-              <ul className={"mt-2 "+styles.deliverables}>
-                {overview.deliverables.map((item,index)=><li key={index} className={styles.deliverableItem}>{item}</li>)}
+              <ul className={"mt-2 "+styles["deliverables"]}>
+                {overview.deliverables.map((item,index)=><li key={index} className={styles["deliverableItem"]}>{item}</li>)}
               </ul>
             </div>
           ) : <p className="text-sm text-muted-foreground leading-[22px]">No deliverables have been added yet.</p>}
