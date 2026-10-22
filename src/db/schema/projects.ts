@@ -283,7 +283,9 @@ export const projectInstances = pgTable(
     nextAction: text("next_action"),
     startDate: date("start_date"),
     endDate: date("end_date"),
-    sprintLengthWeeks: integer("sprint_length_weeks"),
+    // Preserve legacy four-week default for newly created workspaces; imported rows
+    // can explicitly retain NULL when historical source data is missing.
+    sprintLengthWeeks: integer("sprint_length_weeks").default(4),
     estimationUnit: varchar("estimation_unit", { length: 32 }).default("POINTS"),
     authoredBrief: jsonb("authored_brief").notNull().default(sql`'{"goal":"","description":"","deliverables":[],"completionConditions":[],"personas":[]}'::jsonb`),
     createdByUserId: uuid("created_by_user_id")
