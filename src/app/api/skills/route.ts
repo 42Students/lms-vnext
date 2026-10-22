@@ -151,7 +151,8 @@ export async function GET(request: Request) {
     return NextResponse.json(
       {
         error: "DB10_SKILLS_MIGRATIONS_PENDING",
-        message: "Skill catalog temporarily unavailable. You can save the entered skill name.",
+        message: "Failed to search skills. Please try again or contact support. You can still save the entered skill name.",
+        retryable: true,
       },
       { status: 503, headers: { "Cache-Control": "private, no-store" } },
     );
