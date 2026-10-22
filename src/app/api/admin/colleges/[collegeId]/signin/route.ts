@@ -22,8 +22,11 @@ export async function GET(_request:Request,{params}:{params:Promise<{collegeId:s
    :state.policy.method==="PHONE_AND_EMAIL"?"PHONE_EMAIL"
    :state.policy.method??"EMAIL_PHONE";
   const branding={loginMethods:legacyMethod};
+  // The editor reloads through this GET and needs the same optimistic token
+  // as the initial server-rendered form. A missing first row has version 0.
+  const version=state.version??0;
   return NextResponse.json({
-   branding,data:{branding},policy:state.policy,
+   branding,data:{branding},policy:{...state.policy,version},version,
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
