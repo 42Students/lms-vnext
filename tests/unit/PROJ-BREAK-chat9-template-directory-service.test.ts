@@ -3,6 +3,7 @@ import { PgDialect } from "drizzle-orm/pg-core";
 import type { SQL } from "drizzle-orm";
 import type { RequestContext } from "@/modules/identity/context";
 import { listSuperAdminTemplateDirectory } from "@/modules/projects/super-admin-template-directory-service";
+import { TEMPLATE_DIRECTORY_PAGE_SIZE } from "@/modules/projects/super-admin-template-directory-model";
 
 vi.mock("server-only", () => ({}));
 
@@ -113,9 +114,9 @@ describe("IIT Dharwad: Super Admin template catalogue role and tenant behavior",
     state.items = [];
     const result = await listSuperAdminTemplateDirectory(superAdmin(), { page: 2 });
     expect(result.items).toEqual([]);
-    expect(result.totalPages).toBe(3);
-    expect(state.limit).toBe(20);
-    expect(state.offset).toBe(20);
+    expect(result.totalPages).toBe(Math.ceil(41/TEMPLATE_DIRECTORY_PAGE_SIZE));
+    expect(state.limit).toBe(TEMPLATE_DIRECTORY_PAGE_SIZE);
+    expect(state.offset).toBe(TEMPLATE_DIRECTORY_PAGE_SIZE);
     expect(state.queries).toBe(2);
   });
 
