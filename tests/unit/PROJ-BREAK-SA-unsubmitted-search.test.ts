@@ -43,7 +43,8 @@ describe("Super Admin not-submitted Projects directory abuse",()=>{
   expect(s).toContain('eq(projectInstances.collegeId,college.id)');
   expect(s).toContain('ne(projectInstances.status,"ARCHIVED")');
   expect(s).toContain("notExists(");
-  expect(s).toContain("eq(projectSubmissions.projectId,projectInstances.id)");
+  expect(s).toContain('const parentProjectId=sql.raw(\'"project_instances"."id"\')');
+  expect(s).toContain("eq(projectSubmissions.projectId,parentProjectId)");
   expect(s).toContain("adminUnsubmittedLiteralSearchPattern(q.q??\"\")");
   expect(s).toContain(".limit(q.pageSize).offset((q.page-1)*q.pageSize)");
  });

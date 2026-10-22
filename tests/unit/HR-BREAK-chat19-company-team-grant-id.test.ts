@@ -42,7 +42,7 @@ describe("HR-BREAK-TEAM-GRANT-14: stale grant ID cannot be rescued by another ac
    "eq(placementCompanyRelationships.collegeId, scope.grant.collegeId)",
    "eq(placementCompanyRelationships.companyId, recruiter.companyId)",
   ])expect(query).toContain(scope);
-  expect(end).toBeLessThan(source.indexOf("const team = await db"));
+  expect(end).toBeLessThan(source.indexOf("const team = includeTeam ? await db"));
  });
  it("never accepts another college ID or a borrowed recruiter identity before any database query",()=>{
   expect(()=>resolveRecruiterCompanyScope(actor,"55555555-5555-4555-8555-555555555555"))

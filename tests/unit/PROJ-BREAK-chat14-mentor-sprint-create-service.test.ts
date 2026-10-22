@@ -57,6 +57,8 @@ vi.mock("@/db/client",()=>({
     select:()=>({
      from:(table:unknown)=>({
       where:()=>({
+       // The live-key lookup awaits .where() without a .limit() chain.
+       then:(resolve:(rows:unknown[])=>void)=>resolve([]),
        for:()=>({
         limit:async()=>{
          if(table && typeof table==="object" && "collegeId" in table){

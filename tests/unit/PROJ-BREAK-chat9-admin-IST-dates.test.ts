@@ -14,11 +14,9 @@ describe("IIT Dharwad Projects Admin IST date-boundary integrity",()=>{
       title:"IIT Dharwad",mentorName:"Mentor",status:"ACTIVE",
       progressPercent:50,memberCount:3,updatedAt:lateUtc,
     }]);
-    const istDate=new Intl.DateTimeFormat("en-IN",{
-      dateStyle:"short",timeZone:"Asia/Kolkata",
-    }).format(lateUtc);
+    const istDate=formatProjectAdminUpdatedDateIst(lateUtc);
     const utcDate=new Intl.DateTimeFormat("en-IN",{
-      dateStyle:"short",timeZone:"UTC",
+      dateStyle:"medium",timeZone:"UTC",
     }).format(lateUtc);
     expect(istDate).not.toBe(utcDate);
     expect(csv).toContain('"' + istDate + '"');
@@ -26,10 +24,12 @@ describe("IIT Dharwad Projects Admin IST date-boundary integrity",()=>{
   });
   it("PROJ-BREAK-admin-exports-35 Super Admin export uses the same visible status and timezone as cards",()=>{
     const source=readFileSync("src/components/projects/project-workspace-page-export.tsx","utf8");
-    expect(source).toContain("collegeWorkspaceStatusLabel(r.status,r.riskReasons)");
-    expect(source).toContain("formatProjectAdminUpdatedDateIst(r.updatedAt)");
-    expect(source).toContain("Updated at (IST)");
-    expect(source).toContain("projectAdminCsv([columns,...body])");
+    expect(source).toContain("projectWorkspacePageCsv(items)");
+    const model=readFileSync("src/modules/projects/admin-workspace-page-export-model.ts","utf8");
+    expect(model).toContain("collegeWorkspaceStatusLabel(item.status,item.riskReasons)");
+    expect(model).toContain("formatProjectAdminUpdatedDateIst(item.updatedAt)");
+    expect(model).toContain("Updated at (IST)");
+    expect(model).toContain("projectAdminCsv([headings,...rows])");
     const page=readFileSync("src/app/(authenticated)/admin/projects/page.tsx","utf8");
     expect(page).toContain("riskReasons:item.riskReasons");
     expect(formatProjectAdminUpdatedDateIst(new Date("2099-06-01T21:00:00.000Z"))).toContain("2 Jun 2099");
