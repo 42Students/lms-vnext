@@ -55,7 +55,7 @@ export default async function SuperAdminTenantSetup({
  const directoryFilters=parseTenantLifecycleSearchParams(Object.fromEntries(
   Object.entries(raw).filter(([key])=>key==="q"||key==="page")));
  if(!parsed.success||!directoryFilters)return <div className="min-w-0 space-y-4 md:space-y-6">
-  <PageHeader title="Tenant Setup" actions={<PageBackLink href="/admin/tenants" label="Tenant directory"/>}/>
+  <PageHeader title="Tenant Setup" actions={<PageBackLink href="/admin/tenants/directory" label="Tenant directory"/>}/>
   <ErrorState title="Invalid tenant setup filters"
    description="Select a valid setup step, search of at most 100 characters and page number."
    action={<Link href="/admin/tenants/setup"
@@ -110,7 +110,7 @@ export default async function SuperAdminTenantSetup({
  }
  if(organizationFailed||collegesFailed||readinessFailed)
   return <div className="min-w-0 space-y-4 md:space-y-6">
-   <PageHeader title="Tenant Setup" actions={<PageBackLink href="/admin/tenants" label="Tenant directory"/>}/>
+   <PageHeader title="Tenant Setup" actions={<PageBackLink href="/admin/tenants/directory" label="Tenant directory"/>}/>
    <ErrorState title="Tenant setup unavailable"
     description="The authorized tenant directory or selected college readiness could not be verified. No tenant changes have been made."
     action={<Link href={tabLink(tab)}
@@ -142,7 +142,7 @@ export default async function SuperAdminTenantSetup({
  const summary=summarizeTenantSetupReadiness(readiness?.evaluation??null);
  const retry=<Link href={tabLink(tab)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>;
  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
-  <PageBackLink href="/admin/tenants" label="Tenant directory" />
+  <PageBackLink href="/admin/tenants/directory" label="Tenant directory" />
   <PageHeader eyebrow="Tenant lifecycle" title="Create the customer, then make one college launch-ready"
    description="Tenant Setup · Create a customer, set up its colleges, and get the selected college ready for launch." />
   <section aria-label="Tenant setup overview" className="min-w-0 border-b border-border pb-4">
