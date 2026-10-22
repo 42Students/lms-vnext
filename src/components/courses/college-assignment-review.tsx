@@ -5,7 +5,7 @@ import {Alert} from "@/components/ui/alert";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Dialog} from "@/components/ui/dialog";
 
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {FacultyAssignmentReview} from "./faculty-assignment-review";
 
@@ -24,6 +24,7 @@ export function CollegeAssignmentReview({
  const [deliveryId,setDeliveryId]=useState(options[0]?.deliveryId??"");
  const [reviewOpen,setReviewOpen]=useState(false);
  const [bulkBusy,setBulkBusy]=useState(false);
+ const publicationRef=useRef(false);
  const [bulkStatus,setBulkStatus]=useState("");
  const [retryAllowed,setRetryAllowed]=useState(false);
  const [failedIds,setFailedIds]=useState<string[]>([]);
@@ -34,7 +35,9 @@ export function CollegeAssignmentReview({
  const [confirmBulk,setConfirmBulk]=useState<{deliveryId:string|null;retryOnly:string[]|null}|null>(null);
  const router=useRouter();
  async function publishAllGrades(selectedDeliveryId:string|null,retryOnly:readonly string[]|null=null){
-  if(bulkBusy)return;
+  if(publicationRef.current||bulkBusy)return;
+  if(publicationRef.current)return;
+  publicationRef.current = true;
   setBulkBusy(true);setBulkStatus("");setRetryAllowed(false);setFailedIds([]);setFailureDetails([]);setBreakdown(null);
   setProgress("Processing graded submissions on the server…");
   try{
@@ -77,7 +80,7 @@ export function CollegeAssignmentReview({
    setRetryScope(selectedDeliveryId);
    setRetryAllowed(true);
    setBulkStatus(cause instanceof Error?cause.message:"Unable to publish grades. Reload before retrying.");
-  }finally{setBulkBusy(false);setProgress("");}
+  }finally{publicationRef.current = false;setBulkBusy(false);setProgress("");}
  }
  if(!["PUBLISHED","DRAFT"].includes(status))return null;
  if(!options.length)return <p className="text-xs text-muted-foreground">

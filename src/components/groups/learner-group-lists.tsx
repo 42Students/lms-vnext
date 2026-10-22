@@ -1,5 +1,5 @@
 "use client";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
@@ -9,10 +9,14 @@ export function LearnerGroupLists({mine,open}:{mine:LearnerGroupListItem[];open:
  const router=useRouter();
  const [states,setStates]=useState<Record<string,string|null>>({});
  const [busy,setBusy]=useState<string|null>(null);
+ const mutationRef=useRef(false);
  const [error,setError]=useState<string|null>(null);
  const stateOf=(group:LearnerGroupListItem)=>Object.hasOwn(states,group.id)?states[group.id]:group.memberState;
  async function change(group:LearnerGroupListItem,action:"JOIN"|"LEAVE"){
-  if(busy)return;setBusy(group.id);setError(null);
+  if(mutationRef.current||busy)return;
+  if(mutationRef.current)return;
+  mutationRef.current = true;
+  setBusy(group.id);setError(null);
   try{
    const response=await fetch("/api/learn/groups/"+encodeURIComponent(group.id)+"/membership",{
     method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
@@ -31,7 +35,7 @@ export function LearnerGroupLists({mine,open}:{mine:LearnerGroupListItem[];open:
    setStates(previous=>({...previous,[group.id]:membership}));
    router.refresh();
   }catch(reason){setError(reason instanceof Error?reason.message:"Could not update the group.");}
-  finally{setBusy(null);}
+  finally{mutationRef.current = false;setBusy(null);}
  }
  const render=(group:LearnerGroupListItem)=>(
   <li key={group.id} className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-border py-3">

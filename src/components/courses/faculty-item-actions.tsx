@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -37,6 +37,7 @@ export function FacultyItemActions({
   const [error, setError] =
     useState<string | null>(null);
   const [confirmAction, setConfirmAction] = useState<Action | null>(null);
+  const mutationRef=useRef(false);
   const warning = contentType==="RESOURCE"
     ? "Remove this Resource? The lesson entry will be hidden; stored files are retained."
     : contentType==="VIDEO" ? "Delete the video"
@@ -45,6 +46,8 @@ export function FacultyItemActions({
     : "Archive this item? Historical records will be retained.";
 
   async function run(action: Action) {
+    if(mutationRef.current)return;
+    mutationRef.current = true;
     setError(null);
     setActive(action);
 
@@ -73,6 +76,7 @@ export function FacultyItemActions({
         "Could not update this Course item. Check your connection and try again.",
       );
     } finally {
+      mutationRef.current = false;
       setActive(null);
       setConfirmAction(null);
     }
