@@ -167,8 +167,8 @@ export async function listCollegeDriveApplications(
   // Age is elapsed days: newest stage updates are youngest and sort first ASC.
   const order=requestedSort==="AGE_ASC"?[desc(source.lastStatusUpdatedAt),asc(source.id)]:
     requestedSort==="AGE_DESC"?[asc(source.lastStatusUpdatedAt),asc(source.id)]:
-    requestedSort==="SCORE_ASC"?[sql`${source.screeningScore} asc nulls first`,asc(source.id)]:
-    requestedSort==="SCORE_DESC"?[sql`${source.screeningScore} desc nulls last`,asc(source.id)]:
+    requestedSort==="SCORE_ASC"?[sql`${source.screeningScore} asc nulls first`,desc(source.submittedAt),asc(source.id)]:
+    requestedSort==="SCORE_DESC"?[sql`${source.screeningScore} desc nulls last`,desc(source.submittedAt),asc(source.id)]:
     [desc(source.submittedAt),asc(source.id)];
   const [totalRows, items, stageCountRows] = await Promise.all([
     db.select({ total: count() }).from(source),

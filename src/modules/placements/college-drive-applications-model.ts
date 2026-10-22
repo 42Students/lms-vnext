@@ -17,7 +17,7 @@ export const driveApplicationsQuerySchema = z.object({
   // Scoped attention deep links must filter the actual affected candidates,
   // not just show every application in the broad pipeline stage.
   attention:z.enum(["ALL","STALE_APPLICATIONS","INTERVIEW_UNSCHEDULED","OFFERED_NO_LETTER"]).default("ALL"),
-  sort:z.enum(["AGE_ASC","AGE_DESC","SCORE_ASC","SCORE_DESC","SUBMITTED_DESC"]).default("AGE_ASC"),
+  sort:z.enum(["AGE_ASC","AGE_DESC","SCORE_ASC","SCORE_DESC","SUBMITTED_DESC"]).default("SCORE_DESC"),
   page: z.coerce.number().int().min(1).max(1000).default(1),
   size:z.coerce.number().int().refine(value=>[10,20,50,100].includes(value),{
     message:"Choose 10, 20, 50 or 100 applications per page",

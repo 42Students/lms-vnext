@@ -6,7 +6,7 @@ export const tpoApplicantPipelineParams = z.object({
   channel:z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),
   eligibility:z.enum(["ALL","ELIGIBLE","ELIGIBLE_WITH_MISSING_EVIDENCE"]).default("ALL"),
   flag:z.enum(["ALL","WITHDRAWAL_REQUESTED","NO_SHOW","PLACED_ELSEWHERE","ADDED_BY_COLLEGE"]).default("ALL"),
-  sort:z.enum(["NEWEST","OLDEST","LEARNER_NAME"]).default("NEWEST"),
+  sort:z.enum(["SCORE_DESC","NEWEST","OLDEST","LEARNER_NAME"]).default("SCORE_DESC"),
   submittedWithin:z.enum(["ALL","LAST_7_DAYS","LAST_30_DAYS"]).default("ALL"),
   page:z.coerce.number().int().min(1).max(100000).default(1),
 }).strict();
