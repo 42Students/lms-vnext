@@ -11,9 +11,9 @@ describe("learner notification inbox filters",()=>{
     expect(filterLearnerInbox(items,{category:"general",unread:"unread"})).toEqual([]);
     expect(filterLearnerInbox(items,{q:"grade"}).map(x=>x.title)).toEqual(["Quiz"]);
   });
-  it("opens only validated external assessment URLs in a protected new tab",()=>{
+  it("opens only validated external assessment URLs in the same tab",()=>{
     expect(learnerExternalAssessmentLaunch("https://assessment.example.com/start"))
-      .toEqual({href:"https://assessment.example.com/start",target:"_blank",rel:"noopener noreferrer"});
+      .toEqual({href:"https://assessment.example.com/start"});
     for(const unsafe of ["javascript:alert(1)","https://user:pass@assessment.example.com/",
       "https://assessment.example.com/\\n", "//evil.example.com"]){
       expect(learnerExternalAssessmentLaunch(unsafe)).toBeNull();
