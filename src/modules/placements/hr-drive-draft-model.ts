@@ -37,6 +37,9 @@ export const hrDriveDraftSchema = z.strictObject({
   jdUrl: z.string().trim().max(2000).refine(value=>
     !value || safeRecruiterExternalLink(value)!==null,
     "Enter a public HTTPS job description link").optional(),
+  /** Verified private JD object; signed GET links are never stored in drafts. */
+  jdObjectKey: z.string().regex(/^private\/[0-9a-f-]{36}\/[0-9a-f-]{36}\/placement-document\/[0-9a-f-]{36}$/i,
+    "Upload the job description again").optional(),
   location: z.string().trim().max(180)
    .refine(value=>!/[\x00-\x1f\x7f]/.test(value),{message:"Invalid location"}),
   employmentType: z.enum(["FULL_TIME", "INTERNSHIP", "INTERNSHIP_FULL_TIME", "CONTRACT"]),

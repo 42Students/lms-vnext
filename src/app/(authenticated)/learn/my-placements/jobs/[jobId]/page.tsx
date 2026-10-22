@@ -5,6 +5,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import type { LearnerPlacementJobItem } from "@/components/placements/learner-placement-jobs";
 import { LearnerPlacementJobDetail } from "@/components/placements/learner-placement-job-detail";
+import {LearnerJobDescriptionLink} from "@/components/placements/learner-job-description-link";
 import {LearnerOwnDriveJourney} from "@/components/placements/learner-own-drive-journey";
 import {getOwnLearnerDriveJourney} from "@/modules/placements/learner-historical-drive-service";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
@@ -118,6 +119,8 @@ export default async function LearnerPlacementJobDetailPage({
     <PageHeader title="Placement drive history" description="Your recorded application journey remains available."
       actions={<Link href={back} className="inline-flex min-h-11 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9">← Back to drives</Link>} />
    ) : null}
+   {rows.length>0 && rows.some(row => Boolean(row.job.jobDescriptionObjectPath)) ?
+     <LearnerJobDescriptionLink jobId={jobId}/> : null}
    {rows.length>0?<LearnerPlacementJobDetail items={rows.map(toItem)}
     returnHref={back} initialSaved={savedJobs.some(row=>row.jobId===jobId)}
     journey={journey?<LearnerOwnDriveJourney journey={journey}/>:null}/>:null}
