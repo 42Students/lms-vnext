@@ -16,6 +16,8 @@ import {placementBatchLifecycles} from "@/db/schema/placement-batches";
 import {effectiveTpoBatchRuleFields} from "./tpo-batch-rules-model";
 import {
   learnerProgramEnrollments,
+  programs,
+  departments,
   sectionEnrollments,
   sections,
   placementApplications,
@@ -237,6 +239,30 @@ export async function listLearnerPlacementJobs(
       ))
     : [];
   const policyByJobId = new Map(policies.map((policy) => [policy.jobId, policy]));
+  // Resolve named academic targets in bounded college-scoped batches for
+  // legacy eight-field job search. Never show a program belonging to another
+  // college, even if malformed historical policies mention its UUID.
+  const programTargetIds=[...new Set(policies.flatMap(row=>row.allowedProgramIds))];
+  const targetProgramLabels=new Map<string,{name:string;departmentName:string}>();
+  for(let offset=0;offset<programTargetIds.length;offset+=500){
+    const scoped=await getDb().select({
+      id:programs.id,name:programs.name,departmentName:departments.name,
+    }).from(programs).innerJoin(departments,eq(departments.id,programs.departmentId))
+      .where(and(inArray(programs.id,programTargetIds.slice(offset,offset+500)),
+        eq(departments.collegeId,membership.collegeId)));
+    for(const row of scoped)targetProgramLabels.set(row.id,{
+      name:row.name,departmentName:row.departmentName,
+    });
+  }
+  const namedTargets=new Map(policies.map(policy=>{
+    const labels=policy.allowedProgramIds.map(id=>targetProgramLabels.get(id))
+      .filter((item):item is {name:string;departmentName:string}=>item!==undefined);
+    return [policy.jobId,{
+      targetProgramName:[...new Set(labels.map(row=>row.name))].join(", ")||null,
+      targetDepartmentName:[...new Set(labels.map(row=>row.departmentName))].join(", ")||null,
+    }] as const;
+  }));
+
   const targetedRows = rows.filter((row) =>
     isPlacementJobTargetCohort(
       policyByJobId.get(row.job.id),
@@ -338,7 +364,7 @@ export async function listLearnerPlacementJobs(
         heldOfferEligible,
       };
       return {
-        job: row.job,
+        job: {...row.job,...namedTargets.get(row.job.id)},
         roleOption: row.roleOption,
         company: row.company,
         application,

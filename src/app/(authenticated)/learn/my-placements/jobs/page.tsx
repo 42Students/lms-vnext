@@ -19,6 +19,8 @@ function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number
       description: row.job.description,
       jobTypeLabel:row.job.jobTypeLabel,
       responsibilities:row.job.legacyPostingDetails?.responsibilities??"",
+      targetProgramName:row.job.targetProgramName??null,
+      targetDepartmentName:row.job.targetDepartmentName??null,
       employmentType: row.job.employmentType,
       workMode: row.job.workMode,
       locations: row.job.locations,
