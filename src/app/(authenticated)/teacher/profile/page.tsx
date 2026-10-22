@@ -1,4 +1,6 @@
 import Link from "next/link";
+import {AuthorizationError} from "@/modules/permissions/policy";
+import {ErrorState} from "@/components/ui/error-state";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { notFound, redirect } from "next/navigation";
 import {FacultyProfileRefresh} from "@/components/people/faculty-profile-refresh";
@@ -25,7 +27,22 @@ export default async function FacultyProfilePage({searchParams}:{searchParams:Pr
   if(section==="connect-accounts")redirect("/teacher/profile#social-profiles");
   if(section&&section!=="about"&&section!=="contacts")redirect("/teacher/profile#contacts");
   if(section==="contacts")redirect("/teacher/profile#contacts");
-  const { person, profile } = await getOwnFacultyProfileWithRuntime(context);
+  // Refresh errors must not be misreported as an empty profile, nor should a
+  // stale academic/identity record be submitted for editing. The client-side
+  // Refresh control retains the previous verified RSC tree until a new response.
+  const profileRead=await getOwnFacultyProfileWithRuntime(context)
+    .then(value=>({ok:true as const,value}))
+    .catch(error=>({ok:false as const,error}));
+  if(!profileRead.ok){
+    if(profileRead.error instanceof AuthorizationError)throw profileRead.error;
+    return <div className="min-w-0 max-w-full space-y-4">
+      <PageHeader title="Profile"/>
+      <ErrorState title="Couldn't refresh profile"
+        description="We couldn't load your profile. Please try again. Previously saved details have not been changed."
+        action={<Link href="/teacher/profile" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry profile</Link>}/>
+    </div>;
+  }
+  const {person,profile}=profileRead.value;
   const documentReady = await facultyProfileDocumentStorageReady();
   const selfDocument = documentReady
     ? await loadOwnFacultyProfileDocumentStaged(context)
