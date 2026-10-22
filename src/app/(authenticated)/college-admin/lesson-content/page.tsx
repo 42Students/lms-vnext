@@ -7,7 +7,7 @@ export default async function LegacyCollegeLessonContentPage({
   searchParams:Promise<Record<string,string|string[]|undefined>>;
 }) {
   const params=await searchParams;
-  const type=Array.isArray(params.type)?params.type[0]:params.type;
+  const type=Array.isArray(params["type"])?params["type"][0]:params["type"];
   const path=type==="resources"?"/college/resources":
     type==="live-classes"?"/college/live-classes":"/college/videos";
   const query=new URLSearchParams();
