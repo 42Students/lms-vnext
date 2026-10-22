@@ -1,6 +1,7 @@
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ClassTeamWorkspaceCreator } from "@/components/projects/class-team-workspace-creator";
+import { CreateProjectControl } from "@/components/projects/project-create-control";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Banner } from "@/components/ui/banner";
@@ -11,7 +12,7 @@ import { listAssignedProjectTemplates } from "@/modules/projects/template-servic
 import { requireTeamCreationAuthority } from "@/modules/projects/class-team-roster-service";
 
 export default async function AdminClassProjectWorkspacePage({searchParams}:{
- searchParams:Promise<{templateId?:string|string[]}>;
+ searchParams:Promise<{templateId?:string|string[];mode?:string|string[]}>;
 }) {
   const context = await getCurrentRequestContext();
   const collegeId = context.adminScope?.collegeId;
@@ -34,7 +35,9 @@ export default async function AdminClassProjectWorkspacePage({searchParams}:{
         action={<Link href="/admin/projects/workspaces/new" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-[var(--lms-control-height)] hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto md:min-h-9">Retry opening workspace creator</Link>}/>
     </div>;
   }
-  const requested=(await searchParams).templateId;
+  const selectedQuery = await searchParams;
+  const requested=selectedQuery.templateId;
+  const mode = selectedQuery.mode === "teams" ? "teams" : "single";
   // An old numeric template identifier is not a grant. Only a template that
   // is assigned to the currently selected admin college can be preselected.
   const selected=typeof requested==="string"&&templates.some(t=>t.templateId===requested)?requested:null;
@@ -47,8 +50,21 @@ export default async function AdminClassProjectWorkspacePage({searchParams}:{
       The linked template is not assigned to the selected college or is an old template identifier.
       Choose an available template below; no workspace has been created.
     </Banner>:null}
+    <nav aria-label="Workspace creation mode" className="flex flex-wrap gap-2 border-b border-border pb-3">
+      <Link href={"/admin/projects/workspaces/new"+(selected?"?templateId="+encodeURIComponent(selected):"")}
+        aria-current={mode==="single"?"page":undefined}
+        className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-4 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary "+(mode==="single"?"border-primary bg-primary-subtle text-primary-text":"border-border text-body")}>
+        Single workspace
+      </Link>
+      <Link href={"/admin/projects/workspaces/new?mode=teams"+(selected?"&templateId="+encodeURIComponent(selected):"")}
+        aria-current={mode==="teams"?"page":undefined}
+        className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-4 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary "+(mode==="teams"?"border-primary bg-primary-subtle text-primary-text":"border-border text-body")}>
+        Class / team workspaces
+      </Link>
+    </nav>
     {templates.length === 0 ? <EmptyState title="No assigned templates" description="Assign a published Project template to this college first."
       action={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary w-full md:w-auto md:min-h-9">Project templates</Link>}/> :
+      mode==="single" ? <CreateProjectControl key={context.user.id+":"+collegeId+":single"} standalone collegeId={collegeId} basePath="/admin/projects" templates={templates.map(t=>({templateId:t.templateId,title:t.title,version:t.version,summary:t.summary}))}/> :
       <ClassTeamWorkspaceCreator key={context.user.id+":"+collegeId+":"+(context.adminScope?.organizationId??"")} collegeId={collegeId} userId={context.user.id} basePath="/admin/projects" initialTemplateId={selected} templates={templates.map(t => ({templateId:t.templateId,title:t.title,version:t.version,summary:t.summary}))}/>}
   </div>;
 }

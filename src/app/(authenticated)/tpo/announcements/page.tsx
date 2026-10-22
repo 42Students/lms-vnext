@@ -16,6 +16,7 @@ import {listTpoNoticeTargetOptions} from "@/modules/announcements/tpo-notice-tar
 import {tpoNoticeFormErrorMessage} from "@/modules/announcements/tpo-notice-form-error-model";
 import {canUndoTpoAnnouncementSend} from "@/modules/announcements/tpo-notice-undo-model";
 import {TpoNoticeReadProgress} from "@/components/tpo/tpo-notice-read-progress";
+import {TpoNoticeDeliveryRetry} from "@/components/tpo/tpo-notice-delivery-retry";
 import {TpoNoticeUndoToast} from "@/components/tpo/tpo-notice-undo-toast";
 import {TpoNoticeDraftGuard} from "@/components/tpo/tpo-notice-draft-guard";
 import {redirect} from "next/navigation";
@@ -287,7 +288,8 @@ export default async function TpoAnnouncements({searchParams}:Props){
       </Button>
      </form>:null}
     </div>:null}
-    {tab.data==="yours"?<TpoNoticeReadProgress id={row.id}
+    {tab.data==="yours"?<TpoNoticeDeliveryRetry noticeId={row.id}/>:null}
+     {tab.data==="yours"?<TpoNoticeReadProgress id={row.id}
       status={row.scheduledAt&&new Date(row.scheduledAt)>new Date()?"SCHEDULED":
        row.expiresAt&&new Date(row.expiresAt)<=new Date()?"ENDED":"SENT"}/>:null}
    </li>)}

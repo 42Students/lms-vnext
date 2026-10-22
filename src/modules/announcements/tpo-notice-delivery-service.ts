@@ -45,7 +45,23 @@ export const TPO_NOTICE_DELIVERY_JOBS=[
  * A 30-second hold permits author Undo before any notification is enqueued.
  * Existing (user,event) uniqueness makes delivery idempotent on retries.
  */
-export async function deliverDueTpoNotices(now=new Date()){
+async function recordTpoNoticeReleaseFailure(
+ notice:{id:string;collegeId:string;organizationId:string},
+ now:Date,code:"AUDIENCE_UNAVAILABLE"|"DELIVERY_FAILED",
+){
+ // One durable operator-visible failure per notice/five-minute bucket, not
+ // one notification to every learner for each scheduler retry.
+ await getDb().insert(activityEvents).values({
+  organizationId:notice.organizationId,collegeId:notice.collegeId,
+  module:"PLACEMENTS",eventType:"placements.tpo_notice.delivery_failed",
+  importance:"HIGH",subjectType:"announcement",subjectId:notice.id,
+  summary:"Placement announcement delivery failed",
+  dedupeKey:"tpo-notice-failed:"+notice.id+":"+Math.floor(now.getTime()/300_000),
+  metadata:{deliveryStatus:"FAILED",deliveryError:code,retryable:true},
+ }).onConflictDoNothing();
+}
+
+export async function deliverDueTpoNotices(now=new Date(),onlyAnnouncementId?:string){
  if(!await placementTableExists("announcements")||
     !await placementTableExists("placement_tpo_notice_audiences")||
     !await placementTableExists("placement_tpo_notice_recipients"))
@@ -54,10 +70,12 @@ export async function deliverDueTpoNotices(now=new Date()){
  const db=getDb(),cutoff=new Date(now.getTime()-TPO_NOTICE_DELIVERY_HOLD_MS);
  const due=await db.select({
   id:db10Announcements.id,collegeId:db10Announcements.collegeId,
+  organizationId:db10Announcements.organizationId,
   title:db10Announcements.title,message:db10Announcements.message,
  }).from(db10Announcements).where(and(
   eq(db10Announcements.senderType,"TPO"),
   eq(db10Announcements.receiverType,"COLLEGE"),
+  onlyAnnouncementId?eq(db10Announcements.id,onlyAnnouncementId):undefined,
   isNull(db10Announcements.deletedAt),
   lte(db10Announcements.createdAt,cutoff),
   // Undo lasts for 30 seconds after the actual scheduled release,
@@ -144,9 +162,25 @@ export async function deliverDueTpoNotices(now=new Date()){
    // Do not disclose raw database messages or claim FAILED was persisted:
    // DB10 has no durable per-release failure column yet.
    failures.push({announcementId:notice.id,status:"FAILED",retryable:true});
+   await recordTpoNoticeReleaseFailure(notice,now,"DELIVERY_FAILED").catch(()=>undefined);
    continue;
   }
-  if(result<0){failures.push({announcementId:notice.id,status:"FAILED",retryable:true});continue;}
+  if(result<0){
+   failures.push({announcementId:notice.id,status:"FAILED",retryable:true});
+   await recordTpoNoticeReleaseFailure(notice,now,"AUDIENCE_UNAVAILABLE").catch(()=>undefined);
+   continue;
+  }
+  if(result>0){
+   // Success resolves an earlier alert without deleting its audit history.
+   await db.insert(activityEvents).values({
+    organizationId:notice.organizationId,collegeId:notice.collegeId,
+    module:"PLACEMENTS",eventType:"placements.tpo_notice.delivery_succeeded",
+    subjectType:"announcement",subjectId:notice.id,
+    summary:"Placement announcement delivered",
+    dedupeKey:"tpo-notice-delivered:"+notice.id,
+    metadata:{deliveryStatus:"SENT",recipientCount:result},
+   }).onConflictDoNothing().catch(()=>undefined);
+  }
   delivered+=result;
  }
  return {ready:true as const,scanned,delivered,failed:failures.length,failures};
