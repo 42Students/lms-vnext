@@ -30,7 +30,8 @@ describe("chat-6 source-evidence gaps",()=>{
     expect(launcher).toContain("window.innerWidth");
     expect(launcher).toContain("window.innerHeight");
     const drawer=src("src/components/ui/drawer.tsx");
-    expect(drawer).toContain("modal.showModal()");
+    expect(drawer).toContain("useOverlayExit(ref, opener, open");
+    expect(src("src/components/ui/use-overlay-exit.ts")).toContain("dialog.showModal()");
     expect(drawer).toContain("onCancel={event =>");
     expect(drawer).toContain("onOpenChange(false)");
     expect(drawer).toContain('aria-labelledby={titleId}');

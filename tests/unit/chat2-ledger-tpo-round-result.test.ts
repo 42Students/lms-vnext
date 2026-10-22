@@ -14,10 +14,10 @@ const rows=[
 describe("TPO-drive-workspace-37/40/42 placement round lifecycle ledger",()=>{
  it("locks reordering for finished drives and every round with execution artifacts",()=>{
   expect(roundReorderLockMessage({jobStatus:"CLOSED",roundStatuses:["PENDING","PENDING"],hasExecutionArtifacts:false})).toContain("ended");
-  expect(roundReorderLockMessage({jobStatus:"OPEN",roundStatuses:["PENDING"],hasExecutionArtifacts:false})).toContain("two rounds");
-  expect(roundReorderLockMessage({jobStatus:"OPEN",roundStatuses:["PENDING","COMPLETED"],hasExecutionArtifacts:false})).toContain("locked");
-  expect(roundReorderLockMessage({jobStatus:"OPEN",roundStatuses:["PENDING","PENDING"],hasExecutionArtifacts:true})).toContain("locked");
-  expect(roundReorderLockMessage({jobStatus:"OPEN",roundStatuses:["PENDING","PENDING"],hasExecutionArtifacts:false})).toBeNull();
+  expect(roundReorderLockMessage({jobStatus:"PUBLISHED",roundStatuses:["PENDING"],hasExecutionArtifacts:false})).toContain("two rounds");
+  expect(roundReorderLockMessage({jobStatus:"PUBLISHED",roundStatuses:["PENDING","COMPLETED"],hasExecutionArtifacts:false})).toContain("locked");
+  expect(roundReorderLockMessage({jobStatus:"PUBLISHED",roundStatuses:["PENDING","PENDING"],hasExecutionArtifacts:true})).toContain("locked");
+  expect(roundReorderLockMessage({jobStatus:"PUBLISHED",roundStatuses:["PENDING","PENDING"],hasExecutionArtifacts:false})).toBeNull();
  });
  it("reorders only known rounds and does not mutate the caller's list",()=>{
   const original=["a","b","c"];

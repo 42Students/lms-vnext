@@ -22,7 +22,8 @@ describe("chat-4 College Verification and Misc verification",()=>{
    expect(s).toContain("query.section === \"contacts\"");
    expect(s).toContain("query.section === \"connect-accounts\"");
    expect(s).toContain("Profile unavailable");
-   expect(s).toContain("Retry");
+   expect(s).toContain("<CollegeProfileRetained");
+   expect(read("src/components/college/college-profile-retained.tsx")).toContain(">Retry</Link>");
   }
   {const s=read("src/components/college/college-admin-profile-editor.tsx");
    expect(s).toContain("Profile photo (HTTPS link)");

@@ -1,6 +1,9 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {renderToStaticMarkup} from "react-dom/server";
 vi.mock("next/navigation",()=>({useRouter:()=>({refresh:()=>{},push:()=>{},replace:()=>{}})}));
+vi.mock("@/components/admin/organization-directory-refresh",()=>({
+ OrganizationDirectoryRefresh:()=>null,
+}));
 import type {ReactNode} from "react";
 
 const mocks=vi.hoisted(()=>({context:vi.fn(),list:vi.fn(),archived:vi.fn()}));
