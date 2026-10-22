@@ -9,7 +9,7 @@ describe("TPO calendar and reports verified source contracts",()=>{
   const events=["one","two"].map((id)=>({id,title:id,companyName:"Company",kind:"ROUND" as const,roundKind:"INTERVIEW",status:"SCHEDULED",jobId:null,roundId:null,followupId:null,startsAt:"2099-05-01T10:30:00+05:30",endsAt:"2099-05-01T11:30:00+05:30",href:null}));const shown=positionWeekEvents(events);expect(shown.map(e=>e.columns)).toEqual([2,2]);expect(new Set(shown.map(e=>e.column)).size).toBe(2);
  });
  it("TPO-calendar-reports-04 opens a prefilled-hour modal from the week calendar grid",()=>{
-  const source=load("src/components/placements/tpo-week-hour-calendar.tsx");expect(source).toContain('aria-label={"Add follow-up on "');expect(source).toContain('role="dialog"');expect(source).toContain('setSlot(day+"T"');
+  const source=load("src/components/placements/tpo-week-hour-calendar.tsx");expect(source).toContain('aria-label={"Add follow-up on "');expect(source).toContain('<Dialog open={Boolean(slot)}');expect(source).toContain('setSlot(selected)');
  });
  it("TPO-calendar-reports-07 supports explicit drag and drop rescheduling of follow-ups",()=>{
   const source=load("src/components/placements/tpo-week-hour-calendar.tsx");expect(source).toContain("onDrop={event=>");expect(source).toContain("onDragStart={dragEvent=>");expect(source).toContain("draggable={canCreate");
@@ -18,7 +18,7 @@ describe("TPO calendar and reports verified source contracts",()=>{
   const source=load("src/components/placements/placement-calendar-workspace.tsx");expect(source).toContain('aria-label="Today and next 7 days"');expect(source).toContain("Nothing scheduled today");expect(source).toContain("Next 7 days");
  });
  it("TPO-calendar-reports-12 provides Show everything while calendar filters are active",()=>{
-  const source=load("src/components/placements/placement-calendar-workspace.tsx");expect(source).toContain(">Show everything</Link>");expect(source).toContain("href={basePath}");
+  const source=load("src/components/placements/placement-calendar-workspace.tsx");expect(source).toContain(">Show everything</Link>");expect(source).toContain('href={calendarHref(basePath,audience,state,{company:"",kind:undefined,kinds:[],focus:null})}');
  });
  it("TPO-calendar-reports-39 renders the placement journey linking students, placements and offers",()=>{
   const source=load("src/app/(authenticated)/tpo/reports/page.tsx");expect(source).toContain('aria-label="Placement journey"');expect(source).toContain("Looking for a job");expect(source).toContain("Placed");expect(source).toContain("Accepted");
@@ -33,7 +33,7 @@ describe("TPO calendar and reports verified source contracts",()=>{
   const common=load("src/components/placements/placement-report-ui.tsx");const ctc=load("src/app/(authenticated)/tpo/reports/ctc/page.tsx");expect(common).toContain("For the filters below:");expect(common).toContain("students placed");expect(ctc).toContain("<ReportNavigation");
  });
  it("TPO-calendar-reports-47 calculates and labels answered-offer acceptance rate per company",()=>{
-  const source=load("src/app/(authenticated)/tpo/reports/offers-acceptance/page.tsx");expect(source).toContain("Acceptance rate by company");expect(source).toContain("accepted / (accepted + declined)");expect(source).toContain('"Acceptance rate"');
+  const source=load("src/app/(authenticated)/tpo/reports/offers-acceptance/page.tsx");expect(source).toContain("Acceptance rate by company");expect(source).toContain("accepted / (accepted + declined + expired outstanding)");expect(source).toContain("const resolved=accepted+declined+expired;");expect(source).toContain('"Acceptance rate"');
  });
  it("TPO-calendar-reports-50 saves at most twelve report-specific named filter presets",()=>{
   const source=load("src/components/placements/tpo-report-saved-filters.tsx");expect(source).toContain("views.length>=12");expect(source).toContain('Saved filters (');expect(source).toContain("localStorage.setItem");expect(source).toContain("Delete");
