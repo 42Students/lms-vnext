@@ -122,7 +122,7 @@ export async function lookupCollegeStudentPlacement(ctx:RequestContext,raw:unkno
     const offerStatus=offer?.status??null,joining=offer?.joining??null;
     return {...row,offerStatus,joining,
       legacyStage:row.applicationStatus==="WITHDRAWN"?"WITHDRAWN":
-       joining==="JOINED"?"HIRED":offerStatus==="ISSUED"||offerStatus==="ACCEPTED"?
+       offerStatus==="ACCEPTED"&&joining==="JOINED"?"HIRED":offerStatus==="ISSUED"||offerStatus==="ACCEPTED"?
         "OFFERED":row.recordedStage??row.screeningStatus??"APPLIED",
       rejectionReason:row.screeningStatus==="REJECTED"?row.candidateRejectionReason:null,
       appliedDateLabel:formatCollegePlacementAppliedDate(row.submittedAt),
@@ -253,7 +253,7 @@ export async function getCollegeStudentPlacementDetails(ctx:RequestContext,raw:u
   applications:rows.map(row=>{
     const offer=latestOffers.get(row.applicationId),interview=nextInterviewByApplication.get(row.applicationId);
     const stage=row.applicationStatus==="WITHDRAWN"?"WITHDRAWN":
-     offer?.joining==="JOINED"?"HIRED":
+     offer?.status==="ACCEPTED"&&offer.joining==="JOINED"?"HIRED":
      offer&&(offer.status==="ISSUED"||offer.status==="ACCEPTED")?"OFFERED":
      row.recordedStage??(row.screeningStatus==="SHORTLISTED"?"SHORTLISTED":
       row.screeningStatus==="REJECTED"?"REJECTED":"APPLIED");
