@@ -69,6 +69,32 @@ function scopedAuditHref(href:string):string{
  if(["/tpo/audit","/tpo/students","/tpo/recruiters","/tpo/placements"].includes(href))return href;
  return "/tpo/audit";
 }
+/** A partial refresh must never replace a known-good, college-scoped snapshot. */
+function isAuditRow(item: unknown): item is TpoAuditRow {
+  if (!item || typeof item !== "object" || Array.isArray(item)) return false;
+  const row = item as Record<string, unknown>;
+  return typeof row.id === "string" &&
+    typeof row.kind === "string" &&
+    Object.prototype.hasOwnProperty.call(TPO_AUDIT_KIND_LABELS, row.kind) &&
+    typeof row.sourceKind === "string" &&
+    Object.prototype.hasOwnProperty.call(TPO_AUDIT_KIND_LABELS, row.sourceKind) &&
+    typeof row.eventType === "string" &&
+    typeof row.title === "string" &&
+    typeof row.detail === "string" &&
+    typeof row.actorName === "string" &&
+    (row.actorType === "SYSTEM" || row.actorType === "USER") &&
+    row.actorId === null &&
+    typeof row.action === "string" &&
+    typeof row.entityType === "string" &&
+    typeof row.sourceId === "string" &&
+    typeof row.createdAt === "string" &&
+    typeof row.occurredAt === "string" &&
+    Number.isFinite(Date.parse(row.occurredAt)) &&
+    (row.jobId === null || typeof row.jobId === "string") &&
+    (row.entityHref === undefined || row.entityHref === null || typeof row.entityHref === "string") &&
+    (row.entityId === null || typeof row.entityId === "string");
+}
+
 export function TpoAuditGrid({rows,refreshHref}:{rows:readonly TpoAuditRow[];refreshHref?:string}){
  // Retain only this mounted, membership+filters-keyed page's data in memory.
  // No localStorage/sessionStorage copies of college audit records, and the
@@ -91,9 +117,7 @@ export function TpoAuditGrid({rows,refreshHref}:{rows:readonly TpoAuditRow[];ref
    const payload:unknown=await response.json();
    if(!payload||typeof payload!=="object"||!("items" in payload)||
       !Array.isArray(payload.items)||payload.items.length>100||
-      payload.items.some(row=>!row||typeof row!=="object"||
-       typeof row.id!=="string"||typeof row.eventType!=="string"||
-       typeof row.actorName!=="string"))
+      payload.items.some(row=>!isAuditRow(row)))
     throw new Error("Invalid audit refresh");
    setSnapshotRows(payload.items as TpoAuditRow[]);
    setStale(false);
