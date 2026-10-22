@@ -24,9 +24,17 @@ describe("TPO general requests review evidence",()=>{
    expect(result.requiresProof).toBe(true);
    expect(result.facts.map(fact=>fact.label)).toEqual(["Section","Field","Requested value"]);
   }
+  const missing=tpoGeneralRequestReviewFacts("OFF_CAMPUS_OFFER",{proofUrl:""});
+  expect(missing.proofIssue).toBe("No proof attached");
+  for(const unsafe of ["javascript:alert(1)","http://example.org","https://u:p@example.org/"]){
+   const bad=tpoGeneralRequestReviewFacts("OFF_CAMPUS_OFFER",{proofUrl:unsafe});
+   expect(bad.proofUrl).toBeNull();
+   expect(bad.proofIssue).toBe("Submitted proof is not a web link");
+   expect(JSON.stringify(bad)).not.toContain(unsafe);
+  }
   const ui=src("src/components/placements/tpo-general-requests-panel.tsx");
   expect(ui).toContain("<TpoGeneralRequestFacts kind={row.kind} payload={row.payload}/>");
-  expect(ui).toContain('<InlineNotice tone="error" message="No proof attached"');
+  expect(ui).toContain('message={detail.proofIssue??"No proof attached"}');
   const notice=src("src/components/ui/inline-notice.tsx");
   expect(notice).toContain('role={tone === "error" ? "alert" : "status"}');
  });
