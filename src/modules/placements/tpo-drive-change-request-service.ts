@@ -11,7 +11,7 @@ import {PlacementsServiceError} from "./errors";
 import {requireTpoJobCollege} from "./tpo-job-write-base";
 import {getRecruiterPlacementWorkspace} from "./recruiter-workspace-service";
 import {placementJobIdSchema} from "./validation";
-import {parseLegacyDriveChangeCommand} from "./tpo-drive-change-request-model";
+import {parseLegacyDriveChangeCommand,LEGACY_DRIVE_CHANGE_FIELD_LABELS} from "./tpo-drive-change-request-model";
 
 type Party="TPO"|"COMPANY";
 /** Preserve the legacy duplicate-open guidance without exposing SQL failures. */
@@ -107,10 +107,7 @@ async function announce(tx:Parameters<Parameters<ReturnType<typeof getDb>["trans
   }
  }
 }
-const FIELD_LABELS:Record<string,string>={DEADLINE:"Application deadline",PAY:"Pay / package",
- ELIGIBILITY:"Eligibility",LOCATION:"Location",ROUNDS:"Interview rounds",OTHER:"Other",
- ROLE_TITLE:"Role title",DESCRIPTION:"Description",JOB_TYPE:"Job type",WORK_MODE:"Mode",
- CTC:"CTC",STIPEND:"Stipend",MIN_CGPA:"Minimum CGPA",BRANCHES:"Branches"};
+
 /** Apply a field-specific answer/acceptance while the job and request are locked.
  * Legacy answers change the drive too; the request must never say ACCEPTED
  * without a committed job version and an applied receipt.
@@ -228,8 +225,8 @@ export async function getDriveChangeRequestDiscussionContext(
   eq(placementDriveChangeRequests.jobId,job.id),
  )).limit(1);
  if(!request)return null;
- return {id:request.id,fieldLabel:FIELD_LABELS[request.legacyField??request.field]??
-   FIELD_LABELS[request.field]??"Other",
+ return {id:request.id,fieldLabel:LEGACY_DRIVE_CHANGE_FIELD_LABELS[request.legacyField??request.field]??
+   LEGACY_DRIVE_CHANGE_FIELD_LABELS[request.field]??"Other",
   proposedValue:request.proposedValue,reason:request.reason};
 }
 
@@ -278,7 +275,7 @@ export async function getDriveChangeRequests(context:RequestContext,jobId:unknow
    decidedAt:r.decidedAt?.toISOString()??null,
    resolvedAt:(r.resolvedAt??r.decidedAt)?.toISOString()??null,
    createdByName:names.get(r.createdByUserId)??null,
-   fieldLabel:FIELD_LABELS[r.legacyField??r.field]??FIELD_LABELS[r.field]??"Other",
+   fieldLabel:LEGACY_DRIVE_CHANGE_FIELD_LABELS[r.legacyField??r.field]??LEGACY_DRIVE_CHANGE_FIELD_LABELS[r.field]??"Other",
    kind:r.mode==="SUGGEST"?"PROPOSE":"ASK",
    direction:r.proposerParty==="TPO"?"COLLEGE_TO_COMPANY":"COMPANY_TO_COLLEGE",
    answerValue:r.answerValue??(r.status==="ANSWERED"?r.decisionNote:null),
