@@ -162,8 +162,8 @@ export default async function TpoAuditPage({
 
   const paginationFilters = {
     kind: query.kind,
-    from: query.from,
-    to: query.to,
+    ...(query.from===undefined?{}:{from:query.from}),
+    ...(query.to===undefined?{}:{to:query.to}),
     q: query.q,
     who:query.who,
     pageSize,
@@ -279,7 +279,7 @@ export default async function TpoAuditPage({
             count: recentActors,
           },
         ].map((metric) => (
-          <StatTile className={tpoTileStyles.tile} key={metric.label} label={metric.label} value={metric.count} />
+          <StatTile {...(tpoTileStyles["tile"]===undefined?{}:{className:tpoTileStyles["tile"]})} key={metric.label} label={metric.label} value={metric.count} />
         ))}
       </section>
 
@@ -289,7 +289,7 @@ export default async function TpoAuditPage({
       </p>:null}
       <p className="text-xs text-muted-foreground leading-5">About and What happened: use the category tabs. Who and When: use the actor/entity view and date filters. The actor view contains additional scoped audit filters.</p>
       <TpoAuditSavedViews
-       filters={{kind:query.kind,from:query.from,to:query.to,q:query.q,who:query.who}}/>
+       filters={{kind:query.kind,...(query.from===undefined?{}:{from:query.from}),...(query.to===undefined?{}:{to:query.to}),q:query.q,who:query.who}}/>
       <section className="min-w-0 overflow-hidden rounded-[14px] border border-[var(--lms-canvas-border)] bg-white shadow-[0_5px_20px_rgba(26,45,72,0.05)]">
        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] px-[13px] py-3 md:px-[18px] md:py-[17px]">
         <div className="min-w-0">
@@ -307,7 +307,7 @@ export default async function TpoAuditPage({
         </nav>
        </div>
        <div className="min-w-0 px-3 py-4 md:px-[18px] md:pb-5">
-      <Tabs ariaLabel="Filter audit by category" renderPanel={false} value={query.kind} items={[{kind:"ALL" as const,label:"All",count:query.kind==="ALL"?summary.total:null},...TPO_AUDIT_KINDS.map(kind=>({kind,label:TPO_AUDIT_KIND_LABELS[kind],count:query.kind==="ALL"?summary.byKind[kind]:null}))].map(item=>({value:item.kind,label:item.label,count:item.count??undefined,href:tpoAuditHref({...paginationFilters,kind:item.kind,page:1})}))}/>
+      <Tabs ariaLabel="Filter audit by category" renderPanel={false} value={query.kind} items={[{kind:"ALL" as const,label:"All",count:query.kind==="ALL"?summary.total:null},...TPO_AUDIT_KINDS.map(kind=>({kind,label:TPO_AUDIT_KIND_LABELS[kind],count:query.kind==="ALL"?summary.byKind[kind]:null}))].map(item=>({value:item.kind,label:item.label,...(item.count==null?{}:{count:item.count}),href:tpoAuditHref({...paginationFilters,kind:item.kind,page:1})}))}/>
       <section aria-labelledby="section-audit-filters" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
         <h2 id="section-audit-filters" className="m-0 text-base font-semibold text-foreground">
           Filter the audit log

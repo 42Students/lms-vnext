@@ -14,7 +14,7 @@ export async function POST(request:Request){
  const body=await readPublicRecruitEnquiryBody(request);
  if(body.kind!=="OK")return NextResponse.json({error:body.kind==="TOO_LARGE"?"REQUEST_TOO_LARGE":"COULD_NOT_SEND_CODE"},
   {status:body.kind==="TOO_LARGE"?413:400,headers:{"Cache-Control":"no-store"}});
- const ip=process.env.PUBLIC_JOIN_TRUSTED_PROXY_READY==="VERIFIED"
+ const ip=process.env["PUBLIC_JOIN_TRUSTED_PROXY_READY"]==="VERIFIED"
   ?request.headers.get("x-public-verified-client-ip"):null;
  try{
   const result=await sendPublicEnquiryCode(tenant.collegeId,body.value,ip);

@@ -142,5 +142,5 @@ export async function courseApiError(
     return errorLabels[body.error];
   }
 
-  return friendlyApiError({status:response.status,code:body.error});
+  return friendlyApiError({status:response.status,...(body.error !== undefined ? {code:body.error} : {})});
 }

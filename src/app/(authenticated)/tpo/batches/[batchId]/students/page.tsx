@@ -39,9 +39,11 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  if(!parsed.success)return <div className="min-w-0 space-y-4"><PageHeader title="Batch students"/><ErrorState title="Invalid page number" description="Choose a valid roster page." action={<Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={"/tpo/batches/"+batchId+"/students"}>Start again</Link>}/></div>;
  const view=parseBatchStudentSearchParams(raw);
  if(!view.success)return <div className="min-w-0 space-y-4"><PageHeader title="Batch students"/><ErrorState title="Invalid student search" description="Check the roster filters and search values." action={<Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={"/tpo/batches/"+batchId+"/students"}>Reset filters</Link>}/></div>;
+ const {classId: selectedClassId,...otherFilters}=view.data;
+ const filters={...otherFilters,...(selectedClassId===undefined?{}:{classId:selectedClassId})};
  const ctx=await getCurrentRequestContext();
  const [result,batchScope,eligibility,registrationCounts]=await Promise.all([
-  getTpoBatchStudentRegistrationView(ctx,batchId,parsed.data,view.data),getTpoBatch(ctx,batchId),
+  getTpoBatchStudentRegistrationView(ctx,batchId,parsed.data,filters),getTpoBatch(ctx,batchId),
   getTpoBatchEligibilitySummary(ctx,batchId),getTpoBatchRegistrationSummary(ctx,batchId),
  ]);
  const finished=Boolean(batchScope.lifecycle?.finishedAt);
@@ -49,15 +51,15 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   undecided:eligibility.summary.undecided,assessed:eligibility.summary.assessed,
   complete:eligibility.summary.complete,registered:registrationCounts.registered,
   registrationAvailable:registrationCounts.available});
- const visible=selectTpoBatchStudentView(result.students,view.data,result.registrationAvailable);
+ const visible=selectTpoBatchStudentView(result.students,filters,result.registrationAvailable);
  const pageSummary=summarizeBatchStudentEvidence(result.students);
- const href=(page:number)=>batchStudentPageHref(batchId,page,view.data);
+ const href=(page:number)=>batchStudentPageHref(batchId,page,filters);
  return <div className="min-w-0 space-y-4"><PageHeader title={result.batch.name+" — Students"} description="Eligibility, registration and student evidence."/>
  <TpoBatchWorkspaceTabs batchId={batchId} active="students" students={registrationCounts.activeLearners}/>
  <form role="search" aria-label="students filters" action={"/tpo/batches/"+encodeURIComponent(batchId)+"/students"} method="get"
   className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] py-4 sm:grid-cols-2 xl:grid-cols-3">
   <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
-   <Select name="classId" defaultValue={view.data.classId??""}
+   <Select name="classId" defaultValue={filters.classId??""}
     className="block min-h-11 w-full mt-[6px]">
     <option value="">All classes</option>
     {(result.classOptions??[...new Map(result.students.filter(student=>student.classId)
@@ -66,11 +68,11 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
    </Select>
   </label>
   <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search names or roll numbers across the batch
-   <Input type="search" name="q" defaultValue={view.data.q} maxLength={100}
+   <Input type="search" name="q" defaultValue={filters.q} maxLength={100}
     className="min-h-11 w-full mt-[6px] block"/>
   </label>
   <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Eligibility decision
-   <Select name="decision" defaultValue={view.data.decision} className="min-h-11 w-full mt-[6px] block">
+   <Select name="decision" defaultValue={filters.decision} className="min-h-11 w-full mt-[6px] block">
     <option value="ALL">All decisions</option>
     <option value="ELIGIBLE">Eligible</option>
     <option value="INELIGIBLE">Ineligible</option>
@@ -78,9 +80,9 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
     <option value="NEEDS_REVIEW">Ambiguous / needs review</option>
    </Select>
   </label>
-  <Disclosure title="Decision source · Registration choice · Sort" defaultOpen={Boolean(view.data.source!=="ALL"||view.data.registration!=="ALL"||view.data.order!=="NAME_ASC")} className="min-w-0 border-0 sm:col-span-2 xl:col-span-3" contentClassName="pt-3"><div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+  <Disclosure title="Decision source · Registration choice · Sort" defaultOpen={Boolean(filters.source!=="ALL"||filters.registration!=="ALL"||filters.order!=="NAME_ASC")} className="min-w-0 border-0 sm:col-span-2 xl:col-span-3" contentClassName="pt-3"><div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
   <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Decision source
-   <Select name="source" defaultValue={view.data.source} className="min-h-11 w-full mt-[6px] block">
+   <Select name="source" defaultValue={filters.source} className="min-h-11 w-full mt-[6px] block">
     <option value="ALL">Any source</option>
     <option value="LEARNER">Learner override</option>
     <option value="CLASS">Class</option>
@@ -89,14 +91,14 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
    </Select>
   </label>
   <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Registration choice
-   <Select name="registration" defaultValue={view.data.registration} className="min-h-11 w-full mt-[6px] block">
+   <Select name="registration" defaultValue={filters.registration} className="min-h-11 w-full mt-[6px] block">
     <option value="ALL">Any evidence</option>
     <option value="RECORDED">Choice recorded</option>
     <option value="UNRECORDED">No choice recorded</option>
    </Select>
   </label>
   <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
-   <Select name="order" defaultValue={view.data.order} className="min-h-11 w-full mt-[6px] block">
+   <Select name="order" defaultValue={filters.order} className="min-h-11 w-full mt-[6px] block">
     <option value="NAME_ASC">Name A–Z</option>
     <option value="NAME_DESC">Name Z–A</option>
     <option value="REVIEW_FIRST">Needs review first</option>
@@ -113,7 +115,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  <Alert tone="warning" title="Suggested placement action">
    <strong>Suggested: make them eligible</strong>
    <p className="mt-1 text-body">{journey.undecided} learners still need a placement eligibility decision. Review each learner before changing their status.</p>
-   <Link href={batchStudentPageHref(batchId,1,{...view.data,decision:"NOT_DECIDED"})+"#batch-student-decisions"}
+   <Link href={batchStudentPageHref(batchId,1,{...filters,decision:"NOT_DECIDED"})+"#batch-student-decisions"}
      className="lms-inline-link mt-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Show me</Link>
  </Alert>:null}
  <p className="text-xs text-muted-foreground leading-5">Search covers the full active batch roster; bulk changes apply only to selected learners on this page.
@@ -122,11 +124,11 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  <p className="text-sm text-muted-foreground leading-[22px]">Registration choices are separate from eligibility; missing choices do not imply consent.</p>
  {!result.registrationAvailable?<Alert tone="warning">Registration records unavailable.</Alert>:null}
 
- {!result.registrationAvailable&&view.data.registration!=="ALL"?<Alert tone="warning">Registration filtering unavailable; no learners are classified without records.</Alert>:null}
+ {!result.registrationAvailable&&filters.registration!=="ALL"?<Alert tone="warning">Registration filtering unavailable; no learners are classified without records.</Alert>:null}
  <Disclosure title="Export" ariaLabel="Batch student exports"
    className="border-b border-border py-3 [&>summary]:min-h-11 [&>summary]:text-link">
   <div className="flex flex-wrap items-center gap-2 py-2">
-   <a href={batchStudentViewExportHref(batchId,result.page,view.data)}
+   <a href={batchStudentViewExportHref(batchId,result.page,filters)}
     className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Export filtered current page CSV</a>
    <a href={"/api/placements/tpo/batches/"+encodeURIComponent(batchId)+"/students/export?page="+result.page}
     className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Export current page CSV (unfiltered)</a>
@@ -152,7 +154,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  </section>
  </Disclosure>
 <div id="batch-student-bulk-actions" data-testid="batch.act" className="min-w-0 border-b border-border py-3">
- {!finished?<TpoBulkActionPanel key={batchId+":"+result.page+":"+view.data.q+":"+view.data.decision}
+ {!finished?<TpoBulkActionPanel key={batchId+":"+result.page+":"+filters.q+":"+filters.decision}
    target="STUDENTS" rows={visible.map(student=>({
     id:student.membershipId,label:student.name+" · "+(student.rollNumber??student.membershipId),rollNumber:student.rollNumber,
    }))} />:null}

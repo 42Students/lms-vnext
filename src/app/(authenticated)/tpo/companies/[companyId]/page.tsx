@@ -169,7 +169,7 @@ export default async function TpoCompanyDetailPage({
           ["Accepted offers", company.acceptedOffers],
           ["Confirmed joined learners", company.confirmedJoinedLearners],
         ] as const).map(([label, value]) => (
-          <StatTile key={label} label={label} value={value} className={tpoTileStyles.tile} />
+          <StatTile key={label} label={label} value={value} {...(tpoTileStyles["tile"]===undefined?{}:{className:tpoTileStyles["tile"]})} />
         ))}
       </section>
 
@@ -250,11 +250,11 @@ export default async function TpoCompanyDetailPage({
             ?<EmptyState title="No dated, confirmed joins have been recorded for this college-company relationship."/>
             :<ol className="mt-3 space-y-2" aria-label="Confirmed joined learners per year">
               {hiringPulse.hiredPerYear.map(row=><li key={row.year}
-                className={yearStyles.yearRow}>
-                <span className={yearStyles.year}>{row.year}</span>
-                <MetricBar role="img" className={yearStyles.track} label={row.year+": "+row.joinedLearners+" confirmed joined learners"}
+                className={yearStyles["yearRow"]??""}>
+                <span className={yearStyles["year"]??""}>{row.year}</span>
+                <MetricBar role="img" {...(yearStyles["track"]===undefined?{}:{className:yearStyles["track"]})} label={row.year+": "+row.joinedLearners+" confirmed joined learners"}
                   value={row.joinedLearners} maximum={maxYearlyHires} unit="learners" />
-                <strong className={yearStyles.count}>{row.joinedLearners}</strong>
+                <strong className={yearStyles["count"]??""}>{row.joinedLearners}</strong>
               </li>)}
             </ol>}
         </div>
