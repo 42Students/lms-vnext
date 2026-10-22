@@ -115,6 +115,9 @@ export function LearnerNotificationsInbox({
     personalReady:true,
   });
   const defaults=learnerNotificationInboxQuerySchema.parse(initialFilters ?? {});
+  const contextFilters={
+    classId:defaults.classId,courseId:defaults.courseId,courseSlug:defaults.courseSlug,
+  };
   const [active, setActive] = useState<LearnerNotificationCategory>(defaults.category);
   const [unread,setUnread] = useState<"all"|"unread">(defaults.unread);
   const [search,setSearch] = useState(defaults.q);
@@ -177,19 +180,19 @@ export function LearnerNotificationsInbox({
   }
   const filtered=active!=="all" || unread!=="all" || search.trim()!=="";
   function applySearch(){
-    router.push(learnerNotificationInboxHref({category:active,unread,q:search}));
+    router.push(learnerNotificationInboxHref({...contextFilters,category:active,unread,q:search}));
   }
   function selectCategory(category:LearnerNotificationCategory){
     setActive(category);
-    router.replace(learnerNotificationInboxHref({category,unread,q:search}));
+    router.replace(learnerNotificationInboxHref({...contextFilters,category,unread,q:search}));
   }
   function selectUnread(value:"all"|"unread"){
     setUnread(value);
-    router.replace(learnerNotificationInboxHref({category:active,unread:value,q:search}));
+    router.replace(learnerNotificationInboxHref({...contextFilters,category:active,unread:value,q:search}));
   }
   function resetFilters(){
     setActive("all");setUnread("all");setSearch("");
-    router.replace("/learn/notifications");
+    router.replace(learnerNotificationInboxHref(contextFilters));
   }
 
   return (

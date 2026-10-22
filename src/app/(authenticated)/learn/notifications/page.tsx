@@ -1,4 +1,7 @@
 import { Suspense } from "react";
+import {and,eq,sql} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {courses,departments} from "@/db/schema";
 import { z } from "zod";
 import Link from "next/link";
 import { Alert } from "@/components/ui/alert";
@@ -29,6 +32,7 @@ function NotificationsLoading() {
 type LearnerNotificationParams={
  category?:string|string[];tab?:string|string[];
  unread?:string|string[];q?:string|string[];
+ classId?:string|string[];courseId?:string|string[];courseSlug?:string|string[];
  beforeCreatedAt?:string|string[];beforeId?:string|string[];
 };
 
@@ -68,8 +72,21 @@ async function LearnerNotificationsContent({searchParams}:{searchParams:Promise<
   const membership = await requirePersistedLearnerNotificationMembership(context);
   // Authorize the selected learner membership before redirecting an old link.
   if (tab !== undefined) redirect(learnerNotificationInboxHref(query.data));
+  // Match legacy courseSlug precedence only within this learner's college.
+  // These selectors never change recipient identity or membership scope.
+  let selectedCourseId=query.data.courseId;
+  if(query.data.courseSlug){
+    const [course]=await getDb().select({id:courses.id}).from(courses)
+      .innerJoin(departments,eq(departments.id,courses.departmentId))
+      .where(and(eq(departments.collegeId,membership.collegeId),
+        sql`lower(${courses.slug})=${query.data.courseSlug.toLowerCase()}`))
+      .limit(1);
+    if(!course)notFound();
+    selectedCourseId=course.id;
+  }
+  const scopedInbox=Boolean(query.data.classId||selectedCourseId);
   const announcementsEnabled =
-    announcementsRuntimeEnabled();
+    announcementsRuntimeEnabled()&&!scopedInbox;
   // Personal notifications are required. A failed announcement source must
   // not turn a healthy personal inbox into an empty state or hard error.
   let personalLoadFailed=false;
@@ -77,6 +94,7 @@ async function LearnerNotificationsContent({searchParams}:{searchParams:Promise<
   try {
     personalPage = await listOwnNotificationPage(context,{
       limit:60,collegeId:membership.collegeId,
+      classId:query.data.classId,courseId:selectedCourseId,
       ...(cursorDate?.success&&cursorId?.success?{
         beforeCreatedAt:new Date(cursorDate.data),beforeId:cursorId.data,
       }:{}),
