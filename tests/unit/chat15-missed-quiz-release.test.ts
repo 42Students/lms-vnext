@@ -16,8 +16,8 @@ describe("chat-15 learner missed quiz, release, and progress parity",()=>{
   const policy=read("src/modules/courses/learner-quiz-result-release-policy.ts");
   const svc=read("src/modules/courses/quiz-service.ts");
   expect(svc).toContain("learnerQuizResultsReleased");
-  expect(policy).toContain('quiz.status==="CLOSED"');
-  expect(policy).toContain("quiz.resultsPublished === true");
+  expect(policy).toContain('quiz.status==="PUBLISHED"||quiz.status==="CLOSED"');
+  expect(policy).toContain("quiz.resultsPublished===true");
   expect(policy).toContain("quiz.dueAt.getTime()<=nowMs");
   const ui=read("src/components/courses/quiz-attempt-control.tsx");
   expect(ui).toContain("You didn&apos;t attempt this quiz.");
@@ -32,7 +32,8 @@ describe("chat-15 learner missed quiz, release, and progress parity",()=>{
  it("LEARNER-learning-misc-28 quiz attempt has desktop progress and mobile Questions drawer",()=>{
   const ui=read("src/components/courses/quiz-attempt-control.tsx");
   expect(ui).toContain('aria-label="Quiz question progress"');
-  expect(ui).toContain('<summary className="cursor-pointer text-sm text-primary-text">Questions</summary>');
+  expect(ui).toContain('<Disclosure title="Questions"');
+  expect(ui).toContain('aria-label="Quiz question progress"');
   expect(ui).toContain('id={"quiz-question-"+question.id}');
   expect(ui).toContain('{question.points} pts');
  });
