@@ -14,13 +14,14 @@ export const driveApplicationsQuerySchema = z.object({
   maxScore:z.coerce.number().int().min(0).max(100).optional(),
   skills:z.string().trim().max(100).default(""),
   screening: z.enum(["ALL","PENDING","HOLD","SHORTLISTED","REJECTED","UNRECORDED"]).default("ALL"),
+  sort:z.enum(["AGE_ASC","AGE_DESC","SCORE_ASC","SCORE_DESC","SUBMITTED_DESC"]).default("AGE_ASC"),
   page: z.coerce.number().int().min(1).max(1000).default(1),
   size:z.coerce.number().int().refine(value=>[10,20,50,100].includes(value),{
     message:"Choose 10, 20, 50 or 100 applications per page",
   }).default(20),
 }).strict();
 // Programmatic legacy links may omit page size. Parsed URLs always fill it.
-export type DriveApplicationsQuery = Omit<z.infer<typeof driveApplicationsQuerySchema>,"size"> & {size?:number};
+export type DriveApplicationsQuery = Omit<z.infer<typeof driveApplicationsQuerySchema>,"size"|"sort"> & {size?:number;sort?:z.infer<typeof driveApplicationsQuerySchema>["sort"]};
 /** Legacy admin table used 10 rows; the drive register defaults to 20
  * with an explicit 10/20/50/100 choice. Export/bulk caps are independent. */
 export const DRIVE_APPLICATIONS_PAGE_SIZE = 20;
@@ -30,7 +31,7 @@ export const DRIVE_APPLICATION_BULK_CAP = 3000;
 
 export function driveApplicationsParams(raw: Record<string,string|string[]|undefined>) {
   const input: Record<string,string> = {};
-  for (const key of ["q","status","stage","source","departmentId","programId","cohortId","screening","appliedFrom","appliedTo","minScore","maxScore","skills","page","size"] as const) {
+  for (const key of ["q","status","stage","source","departmentId","programId","cohortId","screening","appliedFrom","appliedTo","minScore","maxScore","skills","page","size","sort"] as const) {
     const value = raw[key];
     // The legacy page tolerates malformed optional filters, but identifiers
     // must fail closed rather than silently broadening an academic scope.
@@ -45,8 +46,9 @@ export function driveApplicationsParams(raw: Record<string,string|string[]|undef
     source:["ALL","INTERNAL","EXTERNAL"],
     stage:["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"],
     screening:["ALL","PENDING","HOLD","SHORTLISTED","REJECTED","UNRECORDED"],
+    sort:["AGE_ASC","AGE_DESC","SCORE_ASC","SCORE_DESC","SUBMITTED_DESC"],
   };
-  for (const key of ["status","stage","source","screening"] as const) {
+  for (const key of ["status","stage","source","screening","sort"] as const) {
     if (input[key] && !allowed[key].includes(input[key])) delete input[key];
   }
   if (input.page && !/^[1-9]\d{0,3}$/.test(input.page)) delete input.page;
@@ -93,6 +95,7 @@ export function driveApplicationsHref(jobId: string, query: DriveApplicationsQue
   if(query.maxScore!==undefined)params.set("maxScore",String(query.maxScore));
   if(query.skills)params.set("skills",query.skills);
   if (query.screening !== "ALL") params.set("screening",query.screening);
+  if(query.sort&&query.sort!=="AGE_ASC")params.set("sort",query.sort);
   if (!exportCsv && query.page > 1) params.set("page",String(query.page));
   if(!exportCsv&&query.size!==undefined&&query.size!==DRIVE_APPLICATIONS_PAGE_SIZE)
     params.set("size",String(query.size));

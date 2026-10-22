@@ -146,10 +146,12 @@ export async function listCollegeDriveApplications(
 
   // Every order ends in a stable application UUID to prevent rows changing
   // positions between pages when score or status age ties.
-  const order=options.sort==="AGE_ASC"?[asc(source.lastStatusUpdatedAt),asc(source.id)]:
-    options.sort==="AGE_DESC"?[desc(source.lastStatusUpdatedAt),asc(source.id)]:
-    options.sort==="SCORE_ASC"?[sql`${source.screeningScore} asc nulls first`,asc(source.id)]:
-    options.sort==="SCORE_DESC"?[sql`${source.screeningScore} desc nulls last`,asc(source.id)]:
+  const requestedSort=options.sort??query.sort;
+  // Age is elapsed days: newest stage updates are youngest and sort first ASC.
+  const order=requestedSort==="AGE_ASC"?[desc(source.lastStatusUpdatedAt),asc(source.id)]:
+    requestedSort==="AGE_DESC"?[asc(source.lastStatusUpdatedAt),asc(source.id)]:
+    requestedSort==="SCORE_ASC"?[sql`${source.screeningScore} asc nulls first`,asc(source.id)]:
+    requestedSort==="SCORE_DESC"?[sql`${source.screeningScore} desc nulls last`,asc(source.id)]:
     [desc(source.submittedAt),asc(source.id)];
   const [totalRows, items, stageCountRows] = await Promise.all([
     db.select({ total: count() }).from(source),
