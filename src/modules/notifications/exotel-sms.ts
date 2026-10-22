@@ -113,25 +113,24 @@ export async function appendSmsDeliveryAttempt(input: SmsAttemptInput): Promise<
     (!input.organizationId || smsUuid.test(input.organizationId)) &&
     (!input.sourceEventId || smsUuid.test(input.sourceEventId));
   const validResult = input.outcome === "PROVIDER_ACCEPTED"
-    ? Boolean(sid && /^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$/.test(sid) && !code)
+    ? Boolean(sid && /^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$/.test(sid) && !code)
     : Boolean(code && /^[A-Z0-9_.:-]{1,40}$/.test(code) && !sid);
   if (!pairIsPresent || !validIds || !validResult) return "FAILED";
   try {
     const db = getDb();
-    const readyResult = await db.execute(sql<{ready:boolean}>`select to_regclass('public.sms_delivery_attempts') is not null as ready`);
+    const readyResult = await db.execute(sql<{ready:boolean}>`select to_regclass('public.messaging_sms_delivery_attempts') is not null as ready`);
     if (!readyResult.rows[0]?.ready) {
       writeStructuredLog("WARNING", "sms.delivery_attempt_ledger_unavailable",
         { purpose: input.purpose, reason: "DB31_NOT_REGISTERED" });
       return "STORAGE_PENDING";
     }
     await db.execute(sql`
-      insert into sms_delivery_attempts
-        (organization_id, college_id, purpose, provider, recipient_suffix, outcome,
-         provider_message_id, safe_failure_code, source_event_id, provider_accepted_at)
+      insert into messaging_sms_delivery_attempts
+        (organization_id, college_id, purpose, recipient_suffix, outcome,
+         provider_message_id, error_code, command_id, attempted_at)
       values (${input.organizationId ?? null}, ${input.collegeId ?? null},
-        ${input.purpose}, 'EXOTEL', ${suffix}, ${input.outcome}, ${sid}, ${code},
-        ${input.sourceEventId ?? null},
-        ${input.outcome === "PROVIDER_ACCEPTED" ? new Date() : null})
+        ${input.purpose}, ${suffix}, ${input.outcome}, ${sid}, ${code},
+        ${input.sourceEventId ?? null}, clock_timestamp())
     `);
     return "RECORDED";
   } catch {
@@ -175,17 +174,18 @@ export async function listSmsDeliveryAttemptsForSupport(context: RequestContext,
     page:query.page,number:query.page-1,size:query.size,retryable:true,
     readError:"SMS_LEDGER_UNAVAILABLE",note:SMS_PROVIDER_ACCEPTANCE_NOTE};
   const [{total}] = (await getDb().execute(sql<{total:number}>`
-    select count(*)::int as total from sms_delivery_attempts where ${predicate}`)).rows;
+    select count(*)::int as total from messaging_sms_delivery_attempts where ${predicate}`)).rows;
   const offset=(query.page-1)*query.size;
   const records=await getDb().execute(sql<{
     id:string;purpose:string;provider:string;recipientSuffix:string|null;collegeId:string|null;
     outcome:string;providerMessageId:string|null;safeFailureCode:string|null;createdAt:Date;
   }>`
-    select id,purpose,provider,recipient_suffix as "recipientSuffix",college_id as "collegeId",
+    select id,purpose,'EXOTEL'::text as provider,
+      recipient_suffix as "recipientSuffix",college_id as "collegeId",
       outcome,provider_message_id as "providerMessageId",
-      safe_failure_code as "safeFailureCode",created_at as "createdAt"
-    from sms_delivery_attempts where ${predicate}
-    order by created_at desc,id desc limit ${query.size} offset ${offset}
+      error_code as "safeFailureCode",attempted_at as "createdAt"
+    from messaging_sms_delivery_attempts where ${predicate}
+    order by attempted_at desc,id desc limit ${query.size} offset ${offset}
   `);
   const content=records.rows.map(row=>({
     ...row, statusLabel:row.outcome==="PROVIDER_ACCEPTED"?"Provider accepted":"Failed",
