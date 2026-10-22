@@ -10,33 +10,32 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 - [ ] G2-19-010-068  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-19-018-062  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-2-006-014  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
-- [x] G2-2-006-062  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
+- [ ] G2-2-006-062  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-2-010-025  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-2-013-009  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-2-014-032  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-2-015-092  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-2-016-134  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-2-017-052  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
-- [ ] G2-2-017-057  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
+- [x] G2-2-017-057  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-4-017-017  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-017-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
-- [x] G2-4-017-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+- [ ] G2-4-017-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-017-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-017-070  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-018-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
-- [ ] G2-4-018-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+- [x] G2-4-018-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-018-067  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
-- [x] G2-4-018-072  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+- [ ] G2-4-018-072  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-018-074  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-025-075  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-025-082  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-028-012  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-12-016-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
-- [ ] G2-13-031-098  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+- [x] G2-13-031-098  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
 
 ## Results
 
-- G2-2-013-009 — OK (static scope mapping): `src/db/schema/memberships.ts:148-171` resolves primary learner college from direct college or home-class college, rejects conflicts and requires role verification. Legacy: `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/LearnerRepository.java` (`findLearnersByCollegeIdIncludingViaClass`). This is scope mapping verification, not evidence of a completed historic data import.
-- G2-4-025-075 — OK (schema and registration only): `src/db/schema/db10-skills-catalog.draft.ts:37-66` maps legacy integer Skill.id to nullable `legacy_skill_id` with unique partial index and canonical UUID; retains name/category/display/active/usage/priority/timestamps and corresponding indexes. `drizzle/meta/_journal.json` registers 0195. Legacy: `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Skill.java:10-51`. Database replay and actual data import remain unverified; schema explicitly fails closed pending migration-owner verification.
+- G2-2-017-057 — OK: `drizzle/0212_learner_content_progress_attempts.sql:3-9` drops the obsolete membership/content unique index, creates a membership/content/attempt unique index, and adds the descending latest-attempt index; `src/db/schema/courses.ts:594,608-621` matches the attempt default and indexes. Legacy comparison: `docs/legacy-source/backend/src/main/resources/db/migration/V132__learner_content_progress_attempt.sql:19-32` (learner ID becomes scoped membership ID). Migration 0212 is registered in `drizzle/meta/_journal.json`. The earlier `0098` only introduced the attempt column and is correctly followed by 0212.
 
-- G2-4-017-046 — OK: `src/db/schema/projects.ts:225-228,281-284,293-295` explicitly separates imported legacy `IN_PROGRESS` → `ACTIVE`, preserved historical 0–100 progress, and intentional new-workspace `PLANNED` lifecycle. `src/modules/projects/validation.ts` (`createProjectInstanceInputSchema`, `initialStatus`) defaults new workspaces to PLANNED, requires a mentor for ACTIVE, and `src/modules/projects/instance-service.ts` (`createProjectInstance`) persists that validated status instead of accidentally deriving ACTIVE from source metadata. Legacy: `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectWorkspace.java:31-56` (IN_PROGRESS, progress=0, sprintLengthWeeks=4, estimationUnit=POINTS). The legacy sprint four-week value is a historical import value; new schema leaves optional project sprint length unset until configured.
+- G2-4-018-046 — OK: `src/db/schema/projects.ts:1019-1045` defines `planLegacyDeliveryRevisionImport`, retaining the legacy `revisionCount` and optimistic version independently while importing the current snapshot as submission version 1. It requires independent, chronological historical evidence rather than inventing previous revisions from the counter. Source: `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectDelivery.java:63-64,123-129`.
