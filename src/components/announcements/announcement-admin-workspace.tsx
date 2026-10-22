@@ -363,7 +363,7 @@ export function AnnouncementAdminWorkspace({
       <section className="min-w-0 space-y-[var(--lms-space-3)]">
         <h2 className="m-0 text-lg font-semibold text-foreground">Announcements</h2>
         {items.length === 0 ? (
-          <EmptyState title={emptyMessage==="No announcements in this view."?"Nothing sent yet":emptyMessage} description={emptyMessage==="No announcements in this view."?undefined:emptyMessage}/>
+          <EmptyState title={emptyMessage==="No announcements in this view."?"Nothing sent yet":emptyMessage} {...(emptyMessage==="No announcements in this view."?{}:{description:emptyMessage})}/>
         ) : (
           items.map((item) => {
             const targetLabel = targetLabels.get(`${item.receiverType}:${item.receiverId}`) ?? item.receiverId;
