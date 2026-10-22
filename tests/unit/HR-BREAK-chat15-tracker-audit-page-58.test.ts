@@ -14,6 +14,7 @@ vi.mock("@/modules/bug-tracker/independent-audit-findings-service",()=>({
 }));
 vi.mock("next/navigation",()=>({redirect:mocks.redirect}));
 import FindingsPage from "@/app/(authenticated)/tracker/audit-findings/page";
+import {IndependentAuditFindingsBoard} from "@/components/tracker/independent-audit-findings-board";
 
 const admin:RequestContext={
  user:{id:"root",identityUid:"root",platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
@@ -96,10 +97,10 @@ describe("HR-TRACKER-PAGE-58: admin-only findings route resilient states",()=>{
    view:"OPEN",page:1,statuses:[],kinds:[],severities:[],
   }));
   expect(mocks.sync).toHaveBeenCalledWith(admin);
-  const tables=allNodes(result).filter(n=>
-   (n.props as {caption?:string}).caption==="Independent audit findings");
-  expect(tables).toHaveLength(1);
-  expect((tables[0]!.props as {rows:unknown[]}).rows).toEqual([]);
+  const boards=allNodes(result).filter(n=>n.type===IndependentAuditFindingsBoard);
+  expect(boards).toHaveLength(1);
+  expect((boards[0]!.props as {rows:unknown[];view:string}).rows).toEqual([]);
+  expect((boards[0]!.props as {view:string}).view).toBe("OPEN");
  });
  it("preserves the persisted finding's id and authorized detail link",async()=>{
   const item={id:"db-id",externalId:"AUD-0042",title:"Partial import",area:"Placement",
@@ -107,9 +108,9 @@ describe("HR-TRACKER-PAGE-58: admin-only findings route resilient states",()=>{
   mocks.list.mockResolvedValue({items:[item],total:1,page:1,pages:1,
    criticalOpen:0,statusCounts:{NEW:1},severityOpenCounts:{}});
   const result=await page();
-  const tables=allNodes(result).filter(n=>
-   (n.props as {caption?:string}).caption==="Independent audit findings");
-  expect((tables[0]!.props as {rows:unknown[]}).rows).toEqual([item]);
+  const boards=allNodes(result).filter(n=>n.type===IndependentAuditFindingsBoard);
+  expect(boards).toHaveLength(1);
+  expect((boards[0]!.props as {rows:unknown[]}).rows).toEqual([item]);
   expect(mocks.list).toHaveBeenCalledTimes(1);
  });
 });

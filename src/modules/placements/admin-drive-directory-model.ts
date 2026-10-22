@@ -121,10 +121,10 @@ export function parseLegacyAdminDriveDirectoryQuery(raw:Record<string,unknown>){
  });
 }
 
-/** Legacy Ant moment comparison expires only when the deadline minute passes. */
+/** A drive expires at its stored deadline instant, including equality. */
 export function adminDriveIsExpired(deadline:Date|null|undefined,now=new Date()):boolean {
  return Boolean(deadline&&Number.isFinite(deadline.getTime())&&
-  Math.floor(deadline.getTime()/60_000)<Math.floor(now.getTime()/60_000));
+  deadline.getTime()<=now.getTime());
 }
 export function adminDriveStatus(job:Drive["job"],now=new Date()){
  if(job.status==="PUBLISHED")return adminDriveIsExpired(adminDriveEffectiveDeadline(job),now)?"Expired":"Open";

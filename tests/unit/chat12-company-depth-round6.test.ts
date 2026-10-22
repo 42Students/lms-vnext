@@ -22,7 +22,8 @@ describe("Chat12 company depth and URL filters",()=>{
   expect(sheet).toContain("rowActions={row=><div");
   expect(grid).toContain("mobileActionsCollapsible=false");
   expect(grid).toContain('<div aria-label="Row actions" className="border-t border-border pt-3">{rowActions(row)}</div>');
-  expect(sheet).toContain("<TpoGridFilterPanel fields={filters} mobileSheet/>");
+  expect(sheet).toContain('filters={filters} rollOf=');
+  expect(s("components/tpo/grid/grid-workspace.tsx")).toContain('<TpoGridFilterPanel fields={filters} title={filterTitle} mobileSheet autoOpenMobile');
  });
  it("TPO-students-53 preserves offers waiting independently of interviewed companies",()=>{expect(s("modules/placements/tpo-students-model.ts")).toContain("offersAwaitingAnswer");});
  it("TPO-students-54 preserves last recorded outcome labels",()=>{expect(s("components/tpo/tpo-student-outcome-pill.tsx")).toContain("AFTER_COLLEGE_LABELS[recorded]");});

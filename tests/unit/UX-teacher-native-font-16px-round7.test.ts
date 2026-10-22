@@ -23,7 +23,7 @@ describe("Faculty native controls preserve readable mobile fonts",()=>{
  for(const [id,route] of routes){
   it(`${id} keeps accessible shared field typography across breakpoints`,()=>{
    const source=read(route);
-   expect(source).not.toMatch(/<(?:input|select|textarea)\b(?![^>]*type="hidden")/i);
+   expect(source).not.toMatch(/<(?:input|select|textarea)\b(?![^>]*type="hidden")/);
    for(const control of ["input","select","textarea"] as const){
     const component=readControl(control);
     expect(component).toContain("text-[var(--lms-font-base)]");

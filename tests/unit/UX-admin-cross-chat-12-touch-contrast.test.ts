@@ -6,8 +6,11 @@ describe("UX-admin first third delegated touch and contrast audits",()=>{
   const s=readFileSync(path,"utf8");
   // Phone controls must be 44px; 36px desktop overrides remain valid.
   if(touch){
-   expect(s).toContain("min-h-11");
-   expect(s).not.toMatch(/(?:^|[\s"'])min-h-(?:8|9|10)\b/);
+   const controlSource=path==="src/components/academics/academics-section-page.tsx"
+    ?readFileSync("src/components/ui/page-back-link.tsx","utf8"):s;
+   if(controlSource!==s)expect(s).toContain("<PageBackLink");
+   expect(controlSource).toContain("min-h-11");
+   expect(controlSource).not.toMatch(/(?:^|[\s"'])min-h-(?:8|9|10)\b/);
   }
   if(ink)expect(s).not.toContain("text-[#26bac7]");
  });

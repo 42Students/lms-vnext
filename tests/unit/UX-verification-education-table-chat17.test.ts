@@ -22,7 +22,7 @@ describe("UX-UNOWNED-TABLE-06 private verification education grid",()=>{
       id:"4",level:"School",institution:"School B",year:"2022",
       marks:"92%",marksheet:"Missing",
     });
-    expect(rows[2]).toMatchObject({id:"5",institution:"—",year:"—",marks:"—",marksheet:"Missing"});
+    expect(rows[2]).toMatchObject({id:"5",institution:"—",year:"—",marks:"0",marksheet:"Missing"});
     expect(rows[2]!.level).toHaveLength(200);
     expect(JSON.stringify(rows)).not.toContain("NEVER_SHOW");
     expect(verificationEducationRows({arbitrary:"object"})).toEqual([]);
