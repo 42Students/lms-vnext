@@ -3,7 +3,7 @@ import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
 import {and,eq} from "drizzle-orm";
 import {getDb,closeDatabaseConnection} from "@/db/client";
-import {users,activityEvents,inAppNotifications,placementJobs} from "@/db/schema";
+import {users,activityEvents,inAppNotifications,placementJobs,placementRecruiterCollegeGrants} from "@/db/schema";
 import {createPlacementCompany} from "@/modules/placements/company-service";
 import {createPlacementJob} from "@/modules/placements/job-service";
 import {publishPreparedPlacementJob} from "../support/publishable-job-fixture";
@@ -24,6 +24,11 @@ describe.skipIf(!enabled)("HR notification acknowledgement PG",()=>{
   const own=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"Ack Own "+nonce,primaryDomain:"ackown-"+nonce+".example"});
   const foreign=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"Ack Foreign "+nonce,primaryDomain:"ackforeign-"+nonce+".example"});
   const grant=await grantPlacementRecruiter(tpo,{companyRelationshipId:own.relationship.id,email,title:"HR"});
+  // A fresh grant defaults to PENDING. Test visibility only after persisted
+  // verification, never by weakening the recruiter authorization predicate.
+  await getDb().update(placementRecruiterCollegeGrants)
+   .set({verificationStatus:"VERIFIED"})
+   .where(eq(placementRecruiterCollegeGrants.id,grant.grant.id));
   async function publish(relationshipId:string){
    const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:relationshipId,
     title:"Ack Job "+randomUUID(),description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
