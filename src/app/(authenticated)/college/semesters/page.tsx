@@ -35,7 +35,18 @@ export default async function CollegeSemestersPage({
         action={<Link href="/college/semesters" className="lms-inline-link inline-flex min-h-11 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
     </div>;
   }
-  const directory=await listCollegeSemesters(context,parsed.data)
+  const { programId, termNumber, minimumCredits, maximumCredits, creditState, programStatus, mappingState, ...requiredFilters } = parsed.data;
+  const filters = {
+    ...requiredFilters,
+    ...(programId !== undefined ? { programId } : {}),
+    ...(termNumber !== undefined ? { termNumber } : {}),
+    ...(minimumCredits !== undefined ? { minimumCredits } : {}),
+    ...(maximumCredits !== undefined ? { maximumCredits } : {}),
+    ...(creditState !== undefined ? { creditState } : {}),
+    ...(programStatus !== undefined ? { programStatus } : {}),
+    ...(mappingState !== undefined ? { mappingState } : {}),
+  };
+  const directory=await listCollegeSemesters(context,filters)
     .then(data=>({ok:true as const,data})).catch(()=>({ok:false as const}));
   const currentFilters=new URLSearchParams();
   for(const [key,value] of Object.entries(raw)){
@@ -63,7 +74,7 @@ export default async function CollegeSemestersPage({
        <Link href={refreshHref} prefetch={false}
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9">
         Refresh</Link>
-       <Link prefetch={false} download href={academicExportHref("SEMESTERS",parsed.data)}
+       <Link prefetch={false} download href={academicExportHref("SEMESTERS",filters)}
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-[14px] font-[650] text-[var(--lms-link-text)] min-[768px]:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         Export CSV
       </Link></div>}
