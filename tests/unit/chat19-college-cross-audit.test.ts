@@ -166,13 +166,13 @@ describe("chat-19 college UX cross-audit", () => {
 
   it("COL-XA-11 uses mobile cards with labelled elective allocation checkboxes", () => {
     const page = read("src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx");
-    const selection = read("src/components/academics/elective-eligible-selection.tsx");
     expect(page).toContain("<ElectiveEligibleSelection");
+    const selection=read("src/components/academics/elective-eligible-selection.tsx");
     expect(selection).toContain("<DataTable");
     expect(selection).toContain('caption="Eligible students for allocation"');
-    expect(selection).toContain('mobilePriority: "action"');
-    expect(selection).toContain('mobilePriority: "primary"');
-    expect(selection).toContain('mobilePriority: "secondary"');
+    expect(selection).toMatch(/mobilePriority:\\s*"action"/);
+    expect(selection).toMatch(/mobilePriority:\\s*"primary"/);
+    expect(selection).toMatch(/mobilePriority:\\s*"secondary"/);
     expect(selection).toContain('name="membershipId"');
     expect(selection).toContain('empty={<EmptyState title="No eligible learners"');
     expect(selection).not.toContain("<table");
