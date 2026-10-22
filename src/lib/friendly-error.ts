@@ -72,7 +72,7 @@ export function friendlyApiError({ status, code, network = false }: FriendlyErro
   if (status === 401 || (code && sessionCodes.has(code))) return FRIENDLY_MESSAGES.session;
   if (status === 403 || code === "FORBIDDEN") return FRIENDLY_MESSAGES.forbidden;
   if (code && Object.prototype.hasOwnProperty.call(domainMessages, code)) {
-    return domainMessages[code];
+    return domainMessages[code] ?? FRIENDLY_MESSAGES.unexpected;
   }
   if (status === 404) return FRIENDLY_MESSAGES.missing;
   if (status === 409 || (code && conflictCodes.has(code))) return FRIENDLY_MESSAGES.conflict;

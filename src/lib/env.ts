@@ -132,14 +132,14 @@ export function getServerEnv(): ServerEnv {
   }
 
   cachedEnv = parseServerEnv({
-    DATABASE_URL: process.env.DATABASE_URL,
-    DB_USER: process.env.DB_USER,
-    DB_PASSWORD: process.env.DB_PASSWORD,
-    DB_NAME: process.env.DB_NAME,
-    INSTANCE_UNIX_SOCKET: process.env.INSTANCE_UNIX_SOCKET,
-    DB_POOL_MAX: process.env.DB_POOL_MAX,
-    GOOGLE_CLOUD_PROJECT: process.env.GOOGLE_CLOUD_PROJECT,
-    GCP_REGION: process.env.GCP_REGION,
+    DATABASE_URL: process.env["DATABASE_URL"],
+    DB_USER: process.env["DB_USER"],
+    DB_PASSWORD: process.env["DB_PASSWORD"],
+    DB_NAME: process.env["DB_NAME"],
+    INSTANCE_UNIX_SOCKET: process.env["INSTANCE_UNIX_SOCKET"],
+    DB_POOL_MAX: process.env["DB_POOL_MAX"],
+    GOOGLE_CLOUD_PROJECT: process.env["GOOGLE_CLOUD_PROJECT"],
+    GCP_REGION: process.env["GCP_REGION"],
   });
 
   return cachedEnv;
