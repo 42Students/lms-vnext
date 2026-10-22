@@ -53,6 +53,8 @@ export function legacyWorkspaceProjection(input:{
   nextAction:p.status==="ARCHIVED"||p.archivedAt||p.legacyStatus?.toUpperCase()==="ARCHIVED"
     ?null:p.nextAction??null,dueLabel:p.dueLabel??null,
   startDate:ts(p.startDate),endDate:ts(p.endDate),
+  // Preserve null for an unassigned legacy mentor or unscheduled milestone.
+  mentorName:p.mentorName??null,nextDueAt:ts(p.nextDueAt),
   archivedAt:ts(p.archivedAt),deletedAt:ts(p.deletedAt),
   authoredBrief:p.authoredBrief??null,
   releases:releases.map(x=>({
@@ -85,5 +87,34 @@ export function legacyWorkspaceProjection(input:{
   // continue to require authoritative per-section revision tokens.
   sectionPreviewTokens:{details:ts(p.updatedAt),releases:token(releases),
    sprints:token(sprints),tasks:token(tasks),resources:token(resources)},
+ };
+}
+
+/** Read-only crosswalk from legacy learner project cards to scoped vNext
+ * workspace summaries. Missing values stay null; never synthesize progress
+ * or claim a mentor was assigned when no membership exists.
+ */
+export type LegacyLearnerProjectCardInput={
+ id:string;title:string;courseLabel?:string|null;mentorName?:string|null;
+ phase?:string|null;nextDueAt?:Date|string|null;progressPercent?:number|null;
+ status?:string|null;nextAction?:string|null;archivedAt?:Date|string|null;
+};
+export function legacyLearnerProjectCard(source:LegacyLearnerProjectCardInput){
+ const progress=source.progressPercent;
+ const valid=typeof progress==="number"&&Number.isFinite(progress)&&
+   progress>=0&&progress<=100;
+ const status=(source.status??"UNKNOWN").toUpperCase();
+ const normalizedStatus=status==="DONE"||status==="COMPLETED"?"COMPLETED":
+   status==="ARCHIVED"?"ARCHIVED":status==="DRAFT"?"DRAFT":
+   status==="ACTIVE"||status==="IN_PROGRESS"?"ACTIVE":"UNKNOWN";
+ return {
+  projectId:source.id,title:source.title,course:source.courseLabel??null,
+  mentor:source.mentorName??null,phase:source.phase??null,
+  nextDue:source.nextDueAt instanceof Date?
+    (Number.isFinite(source.nextDueAt.getTime())?source.nextDueAt.toISOString():null):
+    source.nextDueAt??null,
+  progress:valid?progress:null,status:normalizedStatus,
+  legacyStatus:source.status??null,
+  nextAction:normalizedStatus==="ARCHIVED"||source.archivedAt?null:source.nextAction??null,
  };
 }

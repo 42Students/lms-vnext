@@ -24,3 +24,25 @@ export function learnerDriveApplyGate(input:{
   if(input.channel==="EXTERNAL" && input.applicationMode==="INTERNAL")return "CHANNEL_NOT_ALLOWED" as const;
   return "READY" as const;
 }
+/** Historical statuses are display aliases, not mutation credentials.
+ * Only an early withdrawn application on the same channel, with no
+ * screening/round/offer progress, may be resubmitted by the write service.
+ */
+export const LEGACY_APPLICATION_STATUS_CROSSWALK={
+ APPLIED:"SUBMITTED",PENDING:"SUBMITTED",WITHDRAWN:"WITHDRAWN",
+ SHORTLISTED:"SUBMITTED",SELECTED:"SUBMITTED",REJECTED:"SUBMITTED",
+} as const;
+export function legacyApplicationReapplyPolicy(input:{
+ legacyStatus:string;vNextStatus:string;hasScreening:boolean;
+ hasRoundProgress:boolean;hasOffer:boolean;sameChannel:boolean;
+}){
+ const known=Object.prototype.hasOwnProperty.call(
+   LEGACY_APPLICATION_STATUS_CROSSWALK,input.legacyStatus.toUpperCase());
+ const earlyWithdrawn=known&&input.legacyStatus.toUpperCase()==="WITHDRAWN"&&
+   input.vNextStatus==="WITHDRAWN"&&input.sameChannel&&
+   !input.hasScreening&&!input.hasRoundProgress&&!input.hasOffer;
+ return {canReapply:earlyWithdrawn,requiresServerRecheck:true,
+  explanation:earlyWithdrawn?
+   "Early withdrawn applications may be restored after checking current eligibility and deadline.":
+   "This application cannot be reapplied automatically. Ask your placement team for help."};
+}

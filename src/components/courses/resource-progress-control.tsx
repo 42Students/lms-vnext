@@ -103,7 +103,7 @@ export function ResourceProgressControl({
         {" "}Only mark complete when you have reviewed the lesson.
       </p>
       {!verified?<div role="status" className="text-xs text-warning-text">
-        {progressUnavailable?"Progress unavailable — retry to check the lesson state before changing completion.":"Checking saved progress…"}
+        {progressUnavailable?"Lesson completion state could not be fully verified. Retry before changing completion.":"Checking saved progress…"}
         {progressUnavailable?<Button type="button" variant="secondary" size="sm"
           onClick={()=>setReloadKey(key=>key+1)}>Retry progress</Button>:null}
       </div>:null}
