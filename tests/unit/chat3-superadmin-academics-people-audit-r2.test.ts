@@ -21,7 +21,8 @@ describe("Chat-3 second-eye Super Admin academics and people audit",()=>{
   expect(s).toContain("adminUsersQuerySchema.safeParse");
   expect(s).toContain("listSuperAdminUsers(context,query.data)");
   expect(s).toContain('data.contactVisible?row.email??"—":"Email masked"');
-  expect(s).toContain("page=>adminUsersHref({...data.query,page})");
+  expect(s).toContain("const base=new URL(adminUsersHref({...data.query,page:1})");
+  expect(s).toContain("hrefForPage={page=>href(page)}");
   expect(s).toContain('title="No matching users"');
  });
  it("SA3-PEOPLE-05 membership detail masks contacts and limits platform block to unscoped Super Admin",()=>{
