@@ -19,11 +19,12 @@ describe("Chat-7 schedule parity",()=>{
   expect(s).toContain("row.testUrl");
   expect(s).toContain("Open test");
   const link=read("src/components/ui/third-party-link.tsx");
-  // Validated HTTPS links may open a new tab when noopener/noreferrer are set.
+  // Validated HTTPS destinations remain in the same tab, without opener access.
   // Copy fallback is retained for clients that cannot launch a browser.
   expect(s).toContain("<ThirdPartyLink href={row.testUrl}");
   expect(link).toContain('url.protocol === "https:" && !url.username && !url.password');
-  expect(link).toContain('target="_blank" rel="noopener noreferrer"');
+  expect(link).toContain('rel="noopener noreferrer"');
+  expect(link).not.toContain('target="_blank"');
   expect(link).toContain("Show link to copy");
   expect(s).toContain("not an attendance confirmation or final outcome");
  });
