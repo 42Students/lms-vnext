@@ -57,8 +57,8 @@ export async function provisionPlatformIdentity(
   }).parse(rawInput);
   const identity = await resolveOrCreateIdentity(
     {
-      phoneE164: input.phoneE164,
-      email: input.email,
+      ...(input.phoneE164 !== undefined ? {phoneE164: input.phoneE164} : {}),
+      ...(input.email !== undefined ? {email: input.email} : {}),
       displayName: input.displayName,
     },
     dependencies.identityDirectory,
@@ -69,14 +69,10 @@ export async function provisionPlatformIdentity(
   // canonical identity alone must never grant an active college session.
   const persisted=await dependencies.repository.persistResolvedIdentity({
     identityUid: identity.uid,
-    phoneE164:
-      identity.phoneNumber ??
-      input.phoneE164 ??
-      undefined,
-    email:
-      identity.email ??
-      input.email ??
-      undefined,
+    ...((identity.phoneNumber ?? input.phoneE164) !== undefined && (identity.phoneNumber ?? input.phoneE164) !== null
+      ? {phoneE164: identity.phoneNumber ?? input.phoneE164} : {}),
+    ...((identity.email ?? input.email) !== undefined && (identity.email ?? input.email) !== null
+      ? {email: identity.email ?? input.email} : {}),
     displayName: input.displayName,
   });
   // Persisting a user neither sends an invitation nor establishes that the
