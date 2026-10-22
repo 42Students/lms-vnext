@@ -104,7 +104,8 @@ describe("College cross-audit fixes (independent chat-19)",()=>{
   expect(exit).toContain("dialog.showModal()");
   expect(exit).toContain("restoreFocus");
   expect(dialog).toContain("onCancel=");
-  expect(dialog).toContain("opener.current?.focus()");
+  expect(dialog).toContain("opener.current.focus()");
+  expect(exit).toContain("if (opener?.isConnected) opener.focus()");
   expect(dialog).toContain("safe-area-inset-bottom");
   expect(confirm).toContain("dismissible={!pending}");
  });
