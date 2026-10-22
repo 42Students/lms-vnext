@@ -56,7 +56,7 @@ export function SuperAdminDriveQuickSearch({jobs,basePath}:{
     <p role="status" aria-live="polite" className="text-xs text-muted-foreground leading-5">
       Showing {Math.min(matching.length,60)} of {matching.length} matching drives in this {jobs.length}-drive sampled list. Use View all drives for the complete directory.
     </p>
-    {matching.length?<div className="grid min-w-0 gap-[var(--lms-space-4)] sm:grid-cols-2 min-[992px]:grid-cols-3">
+    {matching.length?<div className="grid min-w-0 gap-[var(--lms-space-4)] sm:grid-cols-2 min-[992px]:grid-cols-3 min-[1280px]:grid-cols-4">
       {matching.slice(0,60).map(job=>{
         const logoFallback=job.companyName.trim().split(/\s+/).slice(0,2)
          .map(part=>part.charAt(0).toUpperCase()).join("")||"CO";
