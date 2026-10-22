@@ -5,7 +5,7 @@ describe("Chat-12 Add to Drive notifications and confirmation",()=>{
  it("TPO-students-14 replaces window.confirm with an accessible named dialog and keeps ineligible skips",()=>{
   const c=src("src/components/tpo/tpo-students-bulk-add.tsx");
   expect(c).toContain('title="Add selected students to a drive"');
-  expect(c).toContain('onClick={()=>void runGuarded(submit)}');
+  expect(c).toContain('onClick={()=>void submit()}');
   expect(c).toContain("useGuardedAction()");
   expect(c).toContain("Ineligible learners will not be added.");
   expect(c).toContain("Existing applications are preserved.");

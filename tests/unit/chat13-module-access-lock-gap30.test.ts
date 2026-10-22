@@ -6,7 +6,7 @@ describe("SA-tenants-modules-30 descendant lock and orphan correction",()=>{
   const editor=read("src/components/admin/descendant-feature-rule-editor.tsx");
   const model=read("src/modules/module-access/admin-descendant-rule-model.ts");
   const service=read("src/modules/module-access/admin-descendant-rule-write.ts");
-  expect(editor).toContain('type="checkbox" checked={locked}');
+  expect(editor).toContain('<Checkbox checked={locked}');
   expect(editor).toContain('action:"SET",enabled:choice==="ON",locked');
   for(const level of ["DEPARTMENT","PROGRAM","COHORT","SECTION"])
    expect(model).toContain(level);

@@ -15,7 +15,7 @@ describe("Chat-12 Students claimed-main gaps — verified source contracts",()=>
   expect(source).toContain("reason.trim().length<3");
  });
  it("TPO-students-11 gives roster and per-student private notes a persisted editor",()=>{
-  expect(roster()).toContain("<TpoStudentNoteEditor membershipIds={noteSelection}");
+  expect(roster()).toContain("<TpoStudentNoteEditor membershipIds={noteEligibleIds}");
   expect(panel()).toContain("<TpoStudentNoteEditor membershipIds={[student.membershipId]}");
   expect(read("src/components/tpo/tpo-student-note-editor.tsx")).toContain('"/api/placements/tpo/students/notes"');
  });
@@ -38,7 +38,7 @@ describe("Chat-12 Students claimed-main gaps — verified source contracts",()=>
  it("TPO-students-38 can select pasted roll numbers",()=>{
   const source=read("src/components/tpo/tpo-student-clipboard-actions.tsx");
   expect(source).toContain("matchTpoStudentRolls");
-  expect(source).toContain("<textarea");
+  expect(source).toContain("<Textarea");
  });
  it("TPO-students-40 offers sorting by application and offer counts",()=>{
   expect(roster()).toContain("APPLICATIONS_DESC");

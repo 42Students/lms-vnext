@@ -14,8 +14,9 @@ it("TPO-students-R03 makes table and mobile row checkboxes use the same selectio
 });
 it("TPO-students-17 keeps grid selection limited to visible page rows and drops hidden IDs on header clear",()=>{
  const grid=src("src/components/tpo/tpo-spreadsheet-grid.tsx");
- expect(grid).toContain("const visibleRowIds=rows.map(rowKey)");
- expect(grid).toContain("const selectAllIds=selection?.allIds??visibleRowIds");
+ expect(grid).toContain("const visibleRowIds=orderedRows.map(rowKey)");
+ expect(grid).toContain("const allowedIds=selection?.allIds??visibleRowIds");
  expect(grid).toContain("selection.selected.filter(id=>!selectAllIds.includes(id))");
- expect(grid).toContain("selection.selected.filter(key=>!range.includes(key))");
+ expect(grid).toContain("visibleRowIds.filter(id=>allowedIds.includes(id))");
+ expect(grid).toContain("selectedGridIdsWithin(selection.selected,allowedIds)");
 });
