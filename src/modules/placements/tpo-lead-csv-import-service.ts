@@ -204,10 +204,10 @@ export async function previewTpoLeadImportCollisions(
     ));
     matched.push(...rows);
   }
-  const emailOwners = new Map(matched.filter(row => row.emailNorm)
-    .map(row => [row.emailNorm!, row]));
-  const phoneOwners = new Map(matched.filter(row => row.phoneNorm)
-    .map(row => [row.phoneNorm!, row]));
+  const emailOwners = new Map(matched.flatMap(row =>
+    row.emailNorm === null ? [] : [[row.emailNorm, row] as const]));
+  const phoneOwners = new Map(matched.flatMap(row =>
+    row.phoneNorm === null ? [] : [[row.phoneNorm, row] as const]));
   return {
     collisions: preview.rows.flatMap(item => {
       if (!item.lead) return [];
