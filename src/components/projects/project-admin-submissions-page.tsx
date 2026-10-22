@@ -79,6 +79,8 @@ export async function ProjectAdminSubmissionsPage({
   const query = safeQuery satisfies Parameters<typeof projectAdminSubmissionHref>[1];
   const sort=query.sort??"SUBMITTED_DESC";
   const focus=query.focusedProjectId;
+  const withoutFocus = { ...query };
+  delete withoutFocus.focusedProjectId;
   // An unsubmitted tab must not depend on unrelated final-delivery reads:
   // one optional summary failure cannot hide a separate valid workspace list.
   const all = view==="ALL"?await Promise.allSettled([
@@ -125,7 +127,7 @@ export async function ProjectAdminSubmissionsPage({
         title="Submissions dashboard"
         description="Final project deliverables across all workspaces."
         needsDoingLabel="Review status:"
-        selectedNeedKey={query.submissionStatus}
+        {...(query.submissionStatus === undefined ? {} : { selectedNeedKey: query.submissionStatus })}
         needsDoingItems={[
           {key:"UNDER_REVIEW",label:"Under Review",href:projectAdminSubmissionHref(queuePath,query,"UNDER_REVIEW"),tone:"warning"},
           {key:"LOCKED",label:"Locked",href:projectAdminSubmissionHref(queuePath,query,"LOCKED"),tone:"neutral"},
@@ -136,8 +138,8 @@ export async function ProjectAdminSubmissionsPage({
       {focus?<div role="status" className="flex flex-wrap items-center gap-3 border-b border-border py-2 text-sm">
         <span>Showing workspace {focus}</span>
         <Link href={view==="NOT_SUBMITTED"?
-          projectAdminUnsubmittedHref(queuePath,{...query,focusedProjectId:undefined}):
-          projectAdminSubmissionHref(queuePath,{...query,focusedProjectId:undefined},
+          projectAdminUnsubmittedHref(queuePath,withoutFocus):
+          projectAdminSubmissionHref(queuePath,withoutFocus,
             query.submissionStatus&&query.submissionStatus!=="DRAFT"?query.submissionStatus:undefined)}
           className="font-semibold text-link underline">Clear workspace focus</Link>
       </div>:null}
@@ -146,8 +148,8 @@ export async function ProjectAdminSubmissionsPage({
         renderPanel={false}
         value={view}
         items={[
-          {value:"ALL",label:"Submitted",href:projectAdminSubmissionHref(queuePath,query),count:result?.total},
-          {value:"NOT_SUBMITTED",label:"Not submitted",href:projectAdminUnsubmittedHref(queuePath,query),count:unsubmitted?.total},
+          {value:"ALL",label:"Submitted",href:projectAdminSubmissionHref(queuePath,query),...(result === null ? {} : { count: result.total })},
+          {value:"NOT_SUBMITTED",label:"Not submitted",href:projectAdminUnsubmittedHref(queuePath,query),...(unsubmitted === null ? {} : { count: unsubmitted.total })},
         ]}
       />
       {view==="NOT_SUBMITTED"&&!unsubmitted?<ErrorState
