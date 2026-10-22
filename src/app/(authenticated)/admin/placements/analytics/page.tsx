@@ -4,7 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import {getSuperAdminCompanyHiringReport} from "@/modules/admin-ui/super-admin-hiring-report-service";
 import {getSuperAdminHiringReportFilters} from "@/modules/admin-ui/super-admin-hiring-report-filters-service";
-import {superAdminHiringReportQuery,hiringCompanyRollups,COMPANY_HIRING_COLUMNS} from "@/modules/admin-ui/super-admin-hiring-report-model";
+import {superAdminHiringReportQuery,hiringCompanyRollups,hiringCompanyPageRows,COMPANY_HIRING_COLUMNS,type SuperAdminHiringRow} from "@/modules/admin-ui/super-admin-hiring-report-model";
 import {PageHeader} from "@/components/ui/page-header";
 import {Input} from "@/components/ui/input";
 import {DateInput} from "@/components/ui/date-input";
@@ -84,10 +84,8 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
  const funnel=hiringFunnel(funnelTotals);
  const meanShortlistHours=data.fullShortlistMeanHours;
  const metricKeys=["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const;
- const visibleRows=[...reportRows,...groups.map(group=>({
-  ...group,companyId:"",jobId:"total:"+group.companyName,jobTitle:"Company total",
- }))];
- type Row=(typeof data.rows)[number];
+ const visibleRows=hiringCompanyPageRows(data.rows,reportRows);
+ type Row=SuperAdminHiringRow;
  const columns:DataTableColumn<Row>[]=[
   {key:"company",header:COMPANY_HIRING_COLUMNS[0]??"Company",mobilePriority:"primary",cell:row=>row.jobId.startsWith("total:")?<strong>{row.companyName} total</strong>:row.companyName},
   {key:"drive",header:COMPANY_HIRING_COLUMNS[1]??"Job",mobilePriority:"secondary",cell:row=>row.jobId.startsWith("total:")?<strong>Company total</strong>:

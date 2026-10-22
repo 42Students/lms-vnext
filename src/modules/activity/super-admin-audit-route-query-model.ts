@@ -68,6 +68,12 @@ export function validateSuperAdminAuditRouteQuery(
     if(mapped.view!==undefined&&mapped.view!==legacyCategory)return null;
     mapped.view=legacyCategory;
     delete mapped.category;
+    // Legacy audit.searchByCategory ignored the other raw action and entity
+    // fields, even when old bookmarks included them. Do not accidentally
+    // narrow a category view to zero rows by remapping those stale aliases.
+    delete mapped.actionKey;
+    delete mapped.entityType;
+    delete mapped.entityId;
   }
   for(const [alias,target] of [
     ["actionKey","eventType"],["entityType","subjectType"],["entityId","subjectId"],
