@@ -291,6 +291,7 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
       const offer=await issuePlacementOffer(context,selection.applicationId,{
         kind:"OFFER",roleTitle:selection.roleTitle,annualCtcInr:selection.annualCtcInr,
       });
+      if (!offer) throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
       await getDb().transaction(async tx=>{
         await requireTpoJobActor(tx,context);
         await requireActiveTpoSelectionSeason(tx,job.id,context.membership!.collegeId);
