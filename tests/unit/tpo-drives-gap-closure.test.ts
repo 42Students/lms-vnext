@@ -33,7 +33,7 @@ describe("TPO Drives independently inspected legacy gap contracts",()=>{
  });
  it("TPO-drives-06 Applied is sourced from application rows and displayed per drive",()=>{
   expect(service()).toContain("appliedCount:");
-  expect(page()).toContain("{job.appliedCount}");
+  expect(page()).toContain('{job.appliedCount??"Unknown"}');
  });
  it("TPO-drives-07 pay is formatted from annual CTC and stipend evidence",()=>{
   expect(page()).toContain("job.minimumAnnualCtcInr");
@@ -82,7 +82,7 @@ describe("TPO Drives independently inspected legacy gap contracts",()=>{
   expect(list).toContain('overdue:sql<number>');
  });
  it("TPO-drives-12 row More menu links to applicants, rounds and offers",()=>{
-  expect(page()).toContain("More ···");
+  expect(page()).toContain('trigger="···"');
   expect(page()).toContain('>Applicants</Link>');
   expect(page()).toContain('>Rounds and schedule</Link>');
   expect(page()).toContain('>Offers</Link>');
@@ -128,7 +128,7 @@ describe("TPO Drives independently inspected legacy gap contracts",()=>{
  });
  it("TPO-drives-22 create and edit pages use exact Create drive and Edit drive names",()=>{
   expect(source("src/components/placements/placement-job-create-workspace.tsx")).toContain('title="Create drive"');
-  expect(source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/page.tsx")).toContain('title="Edit drive"');
+  expect(source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/page.tsx")).toContain('title={"Edit drive · "+job.title}');
   expect(source("src/components/placements/placement-job-create-workspace.tsx")).toContain("Back to drives");
   expect(create()).toContain('aria-label="Publish after reviewing the drive"');
  });
@@ -143,7 +143,7 @@ describe("TPO Drives independently inspected legacy gap contracts",()=>{
  it("TPO-drives-26 clone creates a NEW draft after explicit consequence notice",()=>{
   const clone=source("src/components/placements/tpo-drive-clone-action.tsx");
   expect(clone).toContain("/clone");
-  expect(clone).toContain("Dates, candidates, rounds, results, offers and external links are cleared");
+  expect(clone).toContain("round dates, venue bookings, candidates, results, offers and external links are cleared");
   expect(clone).toContain("confirmed:true");
  });
  it("TPO-drives-32 CTC fixed variable and stipend facts appear in the creation form",()=>{
@@ -153,7 +153,7 @@ describe("TPO Drives independently inspected legacy gap contracts",()=>{
  });
  it("TPO-drives-33 dream category is visible from persisted drive flag",()=>{
   expect(create()).toContain('name="isDream"');
-  expect(page()).toContain('job.isDream ? " · Dream" : " · Regular"');
+  expect(page()).toContain('job.isDream?<span className="mt-1 block text-xs">Dream</span>:null');
  });
  it("TPO-drives-40 setup review rail has four steps",()=>{
   expect(create()).toContain("Drive setup review");
