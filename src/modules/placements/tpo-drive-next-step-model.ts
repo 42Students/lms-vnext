@@ -137,14 +137,16 @@ export function projectTpoDriveNextStep(input: TpoDriveNextStepInput): {
   if(input.status==="PUBLISHED"){
     const score=(action:TpoDriveAction)=>{
       const name=action.label;
-      if(name.startsWith("Review and apply"))return 0;
-      if(name.startsWith("Review ")&&name.includes("request"))return 1;
-      if(name.startsWith("Verify and release"))return 2;
-      if(name==="Set deadline")return 3;
-      if(name.startsWith("Share"))return 4;
-      if(name.startsWith("Add students"))return 5;
-      if(name.startsWith("Remind"))return 6;
-      return name==="Close drive"?8:7;
+      if(name.startsWith("Share ") && input.deadlinePassed && !input.recordedOutside && (input.applicantCount ?? 0) > 0)return 0;
+      if(name.startsWith("Add students") && input.recordedOutside && input.applicantCount === 0)return 0;
+      if(name.startsWith("Review and apply"))return 1;
+      if(name.startsWith("Review ")&&name.includes("request"))return 2;
+      if(name.startsWith("Verify and release"))return 3;
+      if(name==="Set deadline")return 4;
+      if(name.startsWith("Share"))return 5;
+      if(name.startsWith("Add students"))return 6;
+      if(name.startsWith("Remind"))return 7;
+      return name==="Close drive"?9:8;
     };
     actions.sort((a,b)=>score(a)-score(b));
     const noAttention=actions.every(action=>
