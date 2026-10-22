@@ -67,8 +67,8 @@ describe("Super Admin last-third Project detail role and route guard",()=>{
     }));
     expect(atRisk).toMatchObject({
       mode:"ADMIN",backHref:"/admin/projects/at-risk",
-      backLabel:"Back to at-risk projects",riskReason:"BLOCKER",
-      sectionQuerySuffix:"?from=at-risk&reason=BLOCKER",activeSection:"delivery",
+      backLabel:"Back to at-risk projects",riskReason:"blocker",
+      sectionQuerySuffix:"?from=at-risk&reason=blocker",activeSection:"delivery",
     });
     const bad=props(await AdminProjectSectionPage({
       projectId,section:"summary",basePath:"/admin/projects",

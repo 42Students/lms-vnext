@@ -65,7 +65,7 @@ describe("UX-admin-courses-content-audit-01 Super Admin scoped courses and conte
    expect(src).toContain("if (!context.adminScope?.collegeId)");
    expect(src).toContain("isSuperAdmin(context)");
    expect(src).toContain("<ErrorState");
-   expect(src).toContain(`listCollegeAssessmentAggregate(context, "${kind}"`);
+   expect(src).toMatch(new RegExp(`listCollegeAssessmentAggregate\\(context,\\s*"${kind}"`));
    expect(src).toContain("AdminAssessmentDirectory");
   }
   const ui=read("src/components/courses/admin-assessment-read-directory.tsx");
@@ -81,10 +81,10 @@ describe("UX-admin-courses-content-audit-01 Super Admin scoped courses and conte
   expect(overview).toContain("Select a college to view course progress");
   expect(overview).toContain("a learner completion percentage is available only");
   expect(students).toContain("studentCourseCompletion");
-  expect(students).toContain("No completion percentage is inferred");
-  expect(students).toContain("<DataTable");
-  expect(students).toContain('mobilePriority:"primary"');
-  expect(students).toContain("No students are enrolled");
-  expect(students).toContain("Showing the first 500 students");
+  expect(students).toContain("No completion percentage is available until work is assigned.");
+  expect(students).toContain('aria-label="Per student progress table"');
+  expect(students).toContain('className="w-full min-w-[860px] border-collapse text-left text-sm tabular-nums"');
+  expect(students).toContain("No students in this section.");
+  expect(students).toContain('aria-label="Student course progress pages"');
  });
 });
