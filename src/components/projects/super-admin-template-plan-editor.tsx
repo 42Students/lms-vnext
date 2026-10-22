@@ -39,6 +39,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
   const {showToast}=useToast();
   const [taskSearch,setTaskSearch]=useState("");
   const [taskPage,setTaskPage]=useState(1);
+  const [collapsedTaskIds,setCollapsedTaskIds]=useState<string[]>([]);
   const [expanded, setExpanded] = useState(true);
   const [removedTask,setRemovedTask]=useState<{task:Task;index:number}|null>(null);
   const [pending, setPending] = useState(false);
@@ -259,7 +260,19 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
         </label>:null}
         {visibleTasks.map(({task,index}) => <fieldset key={task.key+":"+index}
           className="grid min-w-0 gap-3 border-b border-border py-4">
-          <legend className="px-1 text-[var(--lms-font-sm)] font-semibold text-foreground">Task {index + 1}</legend>
+          <legend className="px-1 text-[var(--lms-font-sm)] font-semibold text-foreground">
+            Task {index+1} · {task.title||"Untitled task"}
+          </legend>
+          <Button type="button" size="sm" variant="secondary"
+            aria-expanded={!collapsedTaskIds.includes(task.key)}
+            aria-controls={"template-task-fields-"+index}
+            disabled={pending}
+            onClick={()=>setCollapsedTaskIds(current=>current.includes(task.key)?
+              current.filter(key=>key!==task.key):[...current,task.key])}>
+            {collapsedTaskIds.includes(task.key)?"Expand task":"Collapse task"}
+          </Button>
+          {!collapsedTaskIds.includes(task.key)?<div id={"template-task-fields-"+index}
+            className="grid min-w-0 gap-3">
           <div className="grid gap-3 md:grid-cols-2">
             <label className={label}>Key (optional)
               <Input className={field} maxLength={64} disabled={pending}
@@ -279,6 +292,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
             </label>
             <label className={label}>Title
               <Input className={field} required maxLength={200} disabled={pending}
+                aria-invalid={!task.title.trim()}
                 value={task.title} placeholder="e.g. Draft submission checklist"
                 onChange={event => updateTask(index, { title: event.target.value })}/>
             </label>
@@ -340,6 +354,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
                 }));
               }}>Remove</Button>
           </div>
+          </div>:null}
         </fieldset>)}
         {filteredTasks.length>25?<div className="flex flex-wrap items-center gap-3 text-sm">
           <span>Showing page {Math.min(taskPage,taskPageCount)} of {taskPageCount}</span>
