@@ -330,6 +330,13 @@ export const drizzleLoginRepository: LoginRepository = {
             now() + make_interval(secs => ${session.maxAgeSeconds})
           )
         `);
+        // Successful login is the sole source of this historical timestamp.
+        // Keep it in the OTP-consume/session transaction: an uncommitted or
+        // failed session must never advance the recruiter last-login field.
+        await tx.execute(sql`
+          UPDATE users SET last_login_at = clock_timestamp()
+          WHERE id = ${userId}
+        `);
       }
       return true;
     });
