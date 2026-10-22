@@ -49,7 +49,9 @@ describe("IIT Dharwad College Admin Projects role journeys", () => {
       if(legacySize.success)expect(legacySize.data.pageSize).toBe(20);
     }
     expect(parseCollegeProjectsQuery({page: "100001"}).success).toBe(false);
-    expect(parseCollegeProjectsQuery({pageSize: "9"}).success).toBe(false);
+    const staleSize=parseCollegeProjectsQuery({pageSize: "9"});
+    expect(staleSize.success).toBe(true);
+    if(staleSize.success)expect(staleSize.data.pageSize).toBe(20);
     for (const valid of [{page:"1",pageSize:"10"},{page:"0002",pageSize:"20"},{page:"100000",pageSize:"100"}]) {
       const parsed=parseCollegeProjectsQuery(valid);
       expect(parsed.success,JSON.stringify(valid)).toBe(true);
