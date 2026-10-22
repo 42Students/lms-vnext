@@ -270,6 +270,7 @@ export default async function HomePage({
         <nav className={styles.footerLinks} aria-label="Sign-in footer">
           {branding?.supportEmail ? <a href={`mailto:${branding.supportEmail}`}>{branding.supportEmail}</a> : null}
           {branding?.supportPhone ? <a href={`tel:${branding.supportPhone.replace(/[^+0-9]/g, "")}`}>{branding.supportPhone}</a> : null}
+          {!legacySuperAdmin?<Link href="/tracker/issues/public">Public issue updates</Link>:null}
           <a href={legacySuperAdmin?"/assets/static/privacy-policy-view.html":branding?.privacyUrl ?? "/privacy-policy"} rel="noopener noreferrer">{legacySuperAdmin?"Privacy Policy":"Privacy"}</a>
           <a href={legacySuperAdmin?"/assets/static/terms-and-conditions-view.html":branding?.termsUrl ?? "/assets/static/terms-and-conditions-view.html"} rel="noopener noreferrer">{legacySuperAdmin?"Terms & Conditions":"Terms"}</a>
         </nav>

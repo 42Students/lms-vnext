@@ -41,7 +41,8 @@ export default async function TrackerIssuesPage({
           title="Issues"
           description="Migration 0076 registers the tracker tables. This environment has not enabled their verified runtime flag."
         />
-        <TrackerAdminNav />
+        <div className="flex min-h-11 items-center"><Link href="/tracker/issues/public" className="text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">View public issue summaries</Link></div>
+  <TrackerAdminNav />
         <Banner tone="warning">
           <strong>Tracker database is not enabled.</strong>
           Apply and verify migration 0076, then explicitly set DB10_TRACKER_READY=DB10_VERIFIED before enabling these issue reads.
