@@ -152,9 +152,10 @@ export default async function TpoRecruiterAccessPage({
       <TpoSettingsNav active="recruiters" compact />
 
       <Alert tone="info">
-        Recruiter access lasts six months by default unless changed below. Legacy
-        recruiter approval and AFTER_REVIEW visibility settings have not been
-        migrated as a combined policy; verify individual grants before sharing details.
+        New recruiter grants use the college's configured access duration ({communication.recruiterAccessMonths} months).
+        Existing grants retain their recorded expiry dates. The legacy drive-approval,
+        applicant visibility, and trusted-domain policies are not yet available as
+        one configurable policy; verify each request and grant before sharing details.
       </Alert>
       <Disclosure title="Recruiter access rules" defaultOpen
        className="min-w-0 border-t border-border pt-3"
