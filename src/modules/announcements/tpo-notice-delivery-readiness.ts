@@ -6,7 +6,7 @@ import "server-only";
  * No request handler or page render starts a scheduler.
  */
 export function tpoNoticeDeliveryVerified():boolean{
- const secret=process.env.TPO_NOTICE_SCHEDULER_SECRET??"";
- return process.env.TPO_NOTICE_DELIVERY_VERIFIED==="VERIFIED"&&
+ const secret=process.env["TPO_NOTICE_SCHEDULER_SECRET"]??"";
+ return process.env["TPO_NOTICE_DELIVERY_VERIFIED"]==="VERIFIED"&&
   Buffer.byteLength(secret,"utf8")>=32;
 }
