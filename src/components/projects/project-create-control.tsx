@@ -70,8 +70,8 @@ export function CreateProjectControl({
   const [rosterRetry,setRosterRetry]=useState(0);
   const [learnerMembershipIds,setLearnerMembershipIds]=useState<string[]>([]);
   const [rosterSearch,setRosterSearch]=useState("");
-  const [initialStatus,setInitialStatus]=useState<"PLANNED"|"ACTIVE">("PLANNED");
-  const [displayStatus,setDisplayStatus]=useState<"PLANNED"|"ACTIVE"|"IN_PROGRESS"|"READY"|"BLOCKED">("PLANNED");
+  const [initialStatus,setInitialStatus]=useState<"PLANNED"|"ACTIVE">(standalone?"ACTIVE":"PLANNED");
+  const [displayStatus,setDisplayStatus]=useState<"PLANNED"|"ACTIVE"|"IN_PROGRESS"|"READY"|"BLOCKED">(standalone?"ACTIVE":"PLANNED");
   const titleRef = useRef<HTMLInputElement|null>(null);
   const templateRef = useRef<HTMLSelectElement|null>(null);
   const submitLock = useRef(false);
@@ -97,7 +97,7 @@ export function CreateProjectControl({
     setMentorMembershipId("");
     setMentorQuery("");setRosterSearch("");setClassQuery("");setShowClassSelector(false);
     setSectionId("");setRoster([]);setLearnerMembershipIds([]);
-    setInitialStatus("PLANNED");setDisplayStatus("PLANNED");
+    setInitialStatus(standalone?"ACTIVE":"PLANNED");setDisplayStatus(standalone?"ACTIVE":"PLANNED");
     setLoadedRosterSectionId(null);setRosterError(false);setClassesError(false);
     setMentorsError(null);
     setMentorsLoading(true);
@@ -278,8 +278,8 @@ export function CreateProjectControl({
   }
 
   const dirty = Boolean(templateId || title || slug || summary || mentorMembershipId ||
-    templateQuery || slugEdited || displayStatus !== "PLANNED" ||
-    sectionId || learnerMembershipIds.length || showClassSelector || initialStatus !== "PLANNED" ||
+    templateQuery || slugEdited || displayStatus !== (standalone?"ACTIVE":"PLANNED") ||
+    sectionId || learnerMembershipIds.length || showClassSelector || initialStatus !== (standalone?"ACTIVE":"PLANNED") ||
     phase !== "Planning" || progressPercent !== 0 || dueLabel || blocker || nextAction);
   const discard = useProjectEditorDiscardGuard(open, dirty, pending, () => {
     setOpen(false);
