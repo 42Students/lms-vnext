@@ -127,7 +127,7 @@ export async function POST(request:Request){
    await getCurrentRequestContext(),normalizeBroadcastComposer(raw));
   return NextResponse.json({status:"CREATED",result,
    broadcastGroupId:result.broadcastGroupId,
-   // A multi-college send is one immutable group, not a per-college PUT/DELETE.
+   // A multi-college send is one reviewed audience; mutations require its persisted group ID.
    actionScope:"COLLEGE_BROADCAST",count:result.count,
   },{status:201,headers:{"cache-control":"private, no-store"}});
  }catch(error){return announcementApiError(error);}
@@ -195,9 +195,9 @@ export async function GET(request:Request){
     ?{beforeCreatedAt:history.nextCursor.beforeCreatedAt.toISOString(),
       beforeId:history.nextCursor.beforeId}:null,
    countsArePageLimited:true,
-   // Until the persisted group lifecycle is wired, no endpoint may pretend
-   // a per-recipient PATCH/DELETE updates the reviewed broadcast audience.
-   mutations:"USE_AUDITED_GROUP_WRITER",
+   // Group PATCH/PUT/DELETE perform scoped atomic CAS only for persisted groups.
+   // Legacy/unlinked single-college rows deliberately remain non-editable here.
+   mutations:"PERSISTED_GROUP_CAS_ONLY",
   },{headers:{"cache-control":"private, no-store"}});
  }catch(error){return announcementApiError(error);}
 }

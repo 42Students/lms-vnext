@@ -93,7 +93,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-11/W2_src_app_api_admin_verification_bulk-review_route.ts.md` (edit src/app/api/admin/verification/bulk-review/route.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-11/W2_src_app_authenticated_admin_placements_new_page.tsx.md` (edit src/app/(authenticated)/admin/placements/new/page.tsx; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-11/W2_src_app_authenticated_admin_placements_loading.tsx.md` (edit src/app/(authenticated)/admin/placements/loading.tsx; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-11/W2_src_app_api_admin_announcements_broadcast_route.ts.md` (edit src/app/api/admin/announcements/broadcast/route.ts; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-11/W2_src_app_api_admin_announcements_broadcast_route.ts.md` (edit src/app/api/admin/announcements/broadcast/route.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-11/W2_src_app_authenticated_admin_semester-courses_loading.tsx.md` (edit src/app/(authenticated)/admin/semester-courses/loading.tsx; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-11/W2_NEW_docs_audit_gap2_lane-15_u003-superadmin-lessons.md.md` (new; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-11/W2_src_app_authenticated_admin_videos_page.tsx.md` (edit src/app/(authenticated)/admin/videos/page.tsx; 1 findings; best P2)
