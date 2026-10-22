@@ -24,6 +24,10 @@ import {
   type TenantDomainView,
 } from "./service";
 
+/** Host resolution is deliberately verified-only in deployed vNext.
+ * Readiness consumes this exact resolver contract, not a separate env guess. */
+export const TENANT_RESOLVER_REQUIRES_VERIFIED_DOMAIN=true;
+
 /** Legacy DNS debugging recorded up to 500 raw TXT characters. Never do
  * that for vNext: TXT often embeds ownership secrets. Persist only one
  * allowlisted outcome and give operators bounded safe diagnostic guidance.
@@ -518,7 +522,8 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
       .where(
         and(
           sql<boolean>`lower(${tenantDomains.host}) = ${host}`,
-          eq(tenantDomains.isVerified, true),
+          ...(TENANT_RESOLVER_REQUIRES_VERIFIED_DOMAIN
+            ?[eq(tenantDomains.isVerified,true)]:[]),
           isNull(tenantDomains.deletedAt),
           eq(colleges.status, "ACTIVE"),
           eq(organizations.status, "ACTIVE"),

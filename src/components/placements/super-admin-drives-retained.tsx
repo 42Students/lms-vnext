@@ -13,18 +13,25 @@ export function SuperAdminDrivesRetained({children,failed}:{
  children:ReactNode;failed:boolean;
 }){
  const [lastGood,setLastGood]=useState<ReactNode>(failed?null:children);
- const router=useRouter();
- const [pending,startRefresh]=useTransition();
  useEffect(()=>{if(!failed)setLastGood(children);},[children,failed]);
  if(!failed)return <>{children}</>;
  if(!lastGood)return <>{children}</>;
  return <div className="min-w-0 space-y-3">
   <Alert tone="warning" title="This refresh failed. Showing the last successful load.">
    <p>The drive list may be out of date. Actions are unavailable until the college-scoped refresh succeeds.</p>
-   <Button type="button" variant="secondary" size="sm" loading={pending} disabled={pending}
-    className="mt-2 min-h-11 md:min-h-9"
-    onClick={()=>startRefresh(()=>router.refresh())}>Retry</Button>
+   <SuperAdminDrivesRetryButton/>
   </Alert>
   <div inert aria-label="Previous drive list, read-only until refresh" className="opacity-75">{lastGood}</div>
  </div>;
+}
+
+/** Only mount the App Router hook when the retained-data recovery UI
+ * exists. The authorized server list also renders in isolation for SSR
+ * snapshots and does not require a client router context. */
+function SuperAdminDrivesRetryButton(){
+ const router=useRouter();
+ const [pending,startRefresh]=useTransition();
+ return <Button type="button" variant="secondary" size="sm" loading={pending} disabled={pending}
+  className="mt-2 min-h-11 md:min-h-9"
+  onClick={()=>startRefresh(()=>router.refresh())}>Retry</Button>;
 }
