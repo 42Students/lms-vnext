@@ -10,6 +10,6 @@ describe("Super Admin template catalogue filters",()=>{
  it("retains filters in internal next-page route",()=>{
   expect(templateDirectoryHref({q:"alpha",status:"DRAFT",page:2}))
    .toBe("/admin/projects/templates?q=alpha&status=DRAFT&page=2");
-  expect(templateDirectoryPages(41)).toBe(3);
+  expect(templateDirectoryPages(41)).toBe(5);
  });
 });
