@@ -47,7 +47,7 @@ export async function GET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
     const url = new URL(request.url);
-    const collegeId = url.searchParams.get("collegeId") ?? context.membership?.collegeId ?? "";
+    const collegeId = url.searchParams.get("collegeId") ?? context.adminScope?.collegeId ?? context.membership?.collegeId ?? "";
     if(!collegeId)return NextResponse.json({
       error:"COLLEGE_CONTEXT_REQUIRED",
       message:"Organization context required for job search. Provide learnerId or ensure authentication.",

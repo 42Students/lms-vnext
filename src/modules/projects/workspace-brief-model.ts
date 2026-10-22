@@ -11,6 +11,11 @@ export const updateWorkspaceBriefSchema=z.strictObject({
  expectedUpdatedAt:z.iso.datetime({offset:true}),
 });
 export type WorkspaceBrief=z.infer<typeof workspaceBriefSchema>;
+/** Drafts may be incomplete. Published, editable workspaces cannot lose all deliverables.
+ * Validate by lifecycle state, not by the role of the person editing the brief. */
+export function workspaceBriefRequiresDeliverables(status:string):boolean {
+ return status==="ACTIVE";
+}
 export const emptyWorkspaceBrief:WorkspaceBrief={
  goal:"",description:"",deliverables:[],completionConditions:[],personas:[],
 };

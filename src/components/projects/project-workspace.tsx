@@ -16,7 +16,7 @@ import { ProjectAdminSubmissionReview } from "./project-admin-submission-review"
 import {CollegeProjectSummaryEditorFull} from "./college-project-summary-editor-full";
 import {MentorProjectAboutEditor} from "./mentor-project-about-editor";
 import {WorkspaceBriefEditor} from "./workspace-brief-editor";
-import {parseWorkspaceBrief} from "@/modules/projects/workspace-brief-model";
+import {parseWorkspaceBrief,workspaceBriefRequiresDeliverables} from "@/modules/projects/workspace-brief-model";
 import { mentorAuthoredBrief, mentorReviewSubmissionHref } from "@/modules/projects/mentor-overview-presenter";
 import { ProjectResourceFilesSection } from "./project-resource-files-section";
 import { ProjectDeliveryEvidenceDownload } from "./project-delivery-evidence-download";
@@ -864,7 +864,7 @@ export function ProjectWorkspace({
             </Link> : null}
           </div>
           {(mode==="ADMIN"||mode==="MENTOR")&&!readOnly?<WorkspaceBriefEditor
-            requireDeliverables={mode==="ADMIN"}
+            requireDeliverables={workspaceBriefRequiresDeliverables(workspace.project.status)}
             projectId={workspace.project.id} initial={authoredBrief}
             updatedAt={workspace.project.updatedAt}/>:null}
           {mode==="MENTOR"&&!readOnly?<MentorProjectAboutEditor project={workspace.project}/>:null}
