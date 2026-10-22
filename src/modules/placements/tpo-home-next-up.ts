@@ -39,9 +39,10 @@ export function buildTpoLegacyNextUp(input:{
    "That is the only thing waiting.",
   action:ACTION[top.type]??"Open",href:top.link};
  const steps=input.checklist.filter(step=>!step.done);
- if(steps.length)return {title:steps[0].label,
+ const firstStep=steps[0];
+ if(firstStep)return {title:firstStep.label,
   text:`Setting up placements: ${count(steps.length,"step")} left.`,
-  action:"Start",href:steps[0].link??"/tpo/batches"};
+  action:"Start",href:firstStep.link??"/tpo/batches"};
  return null;
 }
 /** Map existing persisted operational queues without inventing a needs-you
@@ -67,13 +68,14 @@ export function operationalHomeNeeds(queues:readonly {
   DRIVE_NOT_SCHEDULED:q=>`Schedule ${q.count} ${q.count===1?"round":"rounds"} for ${q.companyName} · ${q.jobTitle}`,
   EVALUATION_PLAN_MISSING:q=>`Add an evaluation plan for ${q.companyName} · ${q.jobTitle}`,
  };
- return queues.filter(q=>q.count>0&&!!kind[q.code]&&!!titles[q.code]).map(q=>({
-  type:kind[q.code],priority:kind[q.code]==="RESULTS_READY"?1:
-    kind[q.code]==="SCREENING_PENDING"?1:
-    kind[q.code]==="JOINING_OUTCOME_PENDING"?1:
-    kind[q.code]==="OFFERS_AWAITING_RESPONSE"?1:
-    q.priority==="HIGH"?1:q.priority==="MEDIUM"?2:3,
-  title:titles[q.code](q),count:q.count,
-  link:"/tpo/placements/jobs/"+encodeURIComponent(q.jobId),
- }));
+ return queues.flatMap(q=>{
+  const type=kind[q.code],titleFor=titles[q.code];
+  if(q.count<=0||!type||!titleFor)return [];
+  return [{
+   type,priority:["RESULTS_READY","SCREENING_PENDING","JOINING_OUTCOME_PENDING","OFFERS_AWAITING_RESPONSE"].includes(type)?1:
+     q.priority==="HIGH"?1:q.priority==="MEDIUM"?2:3,
+   title:titleFor(q),count:q.count,
+   link:"/tpo/placements/jobs/"+encodeURIComponent(q.jobId),
+  }];
+ });
 }
