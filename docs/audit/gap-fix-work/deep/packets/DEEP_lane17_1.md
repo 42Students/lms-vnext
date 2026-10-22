@@ -9,7 +9,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - [x] G2-4-014-048  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [ ] G2-4-015-001  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
-- [ ] G2-4-020-016  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
+- [x] G2-4-020-016  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [ ] G2-4-020-035  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [ ] G2-4-020-059  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [ ] G2-4-024-028  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
@@ -21,3 +21,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 ## Results
 
 - G2-4-014-048: FIXED — 861c231b57bc7d393627f62433453e643cec1548; `src/app/(authenticated)/admin/colleges/page.tsx` (bounded activity bonus applies to ranked text/fuzzy matches), legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/core/GenericSearchCache.java:310-352`.
+
+- G2-4-020-016: OK — `src/modules/people/faculty-profile-document.ts:48-72,509-511` retains distinct contactMobile (primary), contactPhone (alternate), and contactMail (email) fields, including legacy import mapping; `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Faculty.java:88-96` declares the three separate strings. The edit schema prevents replacing primary with unverified alternate data.
