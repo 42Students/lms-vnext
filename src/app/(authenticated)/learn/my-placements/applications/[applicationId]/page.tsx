@@ -31,7 +31,7 @@ export default async function LearnerApplicationDetailPage({params}:{
       <ErrorState title="Could not load application details"
         description="Your recorded application status is unavailable. No changes were made."
         action={<Link href={"/learn/my-placements/applications/"+encodeURIComponent(applicationId)}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry application details</Link>} />
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Retry application details</Link>} />
     </div>;
   }
   if(!record)notFound();
@@ -44,7 +44,7 @@ export default async function LearnerApplicationDetailPage({params}:{
       description={record.companyName+" · Own application status and timeline"}
       actions={<StatusBadge tone={applicationStatusTone(record.currentStatus)}>{record.currentStatus.replaceAll("_"," ")}</StatusBadge>}/>
     <Link href="/learn/my-placements/applications"
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text md:min-h-9">← Applications</Link>
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← Applications</Link>
 
     {!scheduled.available ? <Banner tone="warning" role="status">
       Round bookings could not be checked. Withdrawal is temporarily restricted to a placement-cell review for your safety.
@@ -61,7 +61,7 @@ export default async function LearnerApplicationDetailPage({params}:{
         {requiresRequest?"A booked round requires the placement cell to review your withdrawal request. Your application stays active until approved.":"Withdrawing requires a reason and confirmation. Only a successful response updates your status."}
       </p>
       <Link href={"/learn/my-placements/applications/"+encodeURIComponent(record.applicationId)+"/company"}
-        className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text md:min-h-9">
+        className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
         View recorded company details →
       </Link>
     </section>
