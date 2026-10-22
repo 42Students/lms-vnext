@@ -35,7 +35,7 @@ export const dynamic = "force-dynamic";
 type Params = { proof?:string|string[];branchId?:string|string[];
  registration?:string|string[];afterCollege?:string|string[];urgentOnly?:string|string[]; jobId?:string|string[]; age?:string|string[]; sort?:string|string[]; requestType?:string|string[]; status?: string | string[]; search?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
-function href(input: { status: string; age:string; sort:string; requestType:string; search: string; page: number; pageSize: number; urgentOnly?:boolean;jobId?:string;proof?:string;branchId?:string;registration?:string;afterCollege?:string }) {
+function href(input: { status: string; age:string; sort:string; requestType:string; search: string; page: number; pageSize: number; urgentOnly?:boolean | undefined;jobId?:string | undefined;proof?:string | undefined;branchId?:string | undefined;registration?:string | undefined;afterCollege?:string | undefined }) {
   const p = new URLSearchParams();
   p.set("status", input.status);if(input.age!=="ALL")p.set("age",input.age);p.set("sort",input.sort);if(input.requestType!=="ALL")p.set("requestType",input.requestType); if (input.search) p.set("search", input.search);if(input.urgentOnly)p.set("urgentOnly","true");if(input.jobId)p.set("jobId",input.jobId);
   if(input.proof&&input.proof!=="ALL")p.set("proof",input.proof);
@@ -200,7 +200,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
     <p className="text-sm text-body">Showing {data.requests.length} of {data.total.toLocaleString("en-IN")} matching {data.query.status.toLowerCase()} requests. {data.summary.pending} pending across this college.</p>
     {data.requests.length===0?<EmptyState
       title={data.total>0?"This page is past the available request results.":data.query.status==="PENDING"?"Nothing is waiting for you":"No requests in this period"}
-      description={data.total===0?"Withdrawals, off-campus offers, registration changes and disputes from students show up here.":undefined}
+      {...(data.total===0?{description:"Withdrawals, off-campus offers, registration changes and disputes from students show up here."}:{})}
       action={<Link href={data.total>0?globalTpoRequestFirstPageHref(data.query):tpoRequestClearAdvancedHref(data.query.status)}
         className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
         {data.total>0?"First matching page":"Reset filters"}

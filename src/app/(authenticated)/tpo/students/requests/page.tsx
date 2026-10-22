@@ -46,12 +46,12 @@ function first(value: string | string[] | undefined) {
 }
 
 function requestsHref(input: {
-  status?: string;
-  search?: string;
-  page?: number;
-  pageSize?: number;
-  includeDecided?:boolean;
-  decidedDays?:number|"ALL";
+  status?: string | undefined;
+  search?: string | undefined;
+  page?: number | undefined;
+  pageSize?: number | undefined;
+  includeDecided?:boolean | undefined;
+  decidedDays?:number|"ALL"|undefined;
 }) {
   const params = new URLSearchParams();
 
