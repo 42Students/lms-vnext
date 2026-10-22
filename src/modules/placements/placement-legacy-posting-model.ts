@@ -17,8 +17,14 @@ export const placementLegacyPostingDetailsSchema=z.strictObject({
  }).prefault({}),
  skillsWanted:z.array(z.string().trim().min(1).max(50)).max(30).default([]),
 
- assessmentUrl:z.union([z.url().refine(v=>/^https?:\/\//i.test(v),"Use HTTP or HTTPS"),z.literal("")])
-  .nullable().optional().default(null).transform(v=>v||null),
+ assessmentUrl:z.union([z.url().max(2048).refine(value=>{
+  try {
+   const url=new URL(value);
+   return (url.protocol==="http:"||url.protocol==="https:")&&
+    Boolean(url.hostname)&&!url.username&&!url.password;
+  }catch{return false;}
+ },"Use HTTP or HTTPS without embedded credentials"),z.literal("")])
+  .nullable().optional().default(null).transform(value=>value||null),
  assessmentDeadline:z.iso.datetime({offset:true}).nullable().optional().default(null),
  importantDates:z.array(z.strictObject({
   label:z.string().trim().min(1).max(120),
