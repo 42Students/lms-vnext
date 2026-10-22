@@ -12,8 +12,8 @@ describe("Public login and session round-three verified closure",()=>{
  });
  it("PUB-auth-public-14 leaves unusable OTP screen open with immediate resend",()=>{
   const source=file("src/components/auth/login-form.tsx");
-  expect(source).toContain("This code can't be used any more. Ask for a new one to continue.");
-  expect(source).toContain('setCooldown(0);');
+  expect(source).toContain("This code has expired. Ask for a new one.");
+  expect(source).toContain('setCooldown(safeRetry ?? 0);');
   expect(source).toContain('Boolean(errorCode && RESTART_ERRORS.has(errorCode))');
   expect(source).toContain('if(attempt&&!contact.trim()){reset();');
  });
@@ -25,7 +25,7 @@ describe("Public login and session round-three verified closure",()=>{
  it("PUB-auth-public-18 never caches domain lookup outages as unknown tenants",()=>{
   const resolver=file("src/modules/auth/request-tenant.ts");
   expect(resolver).toContain('return {kind:"unavailable",host};');
-  expect(file("src/app/page.tsx")).toContain("We couldn&apos;t confirm this college right now");
+  expect(file("src/app/page.tsx")).toContain("We couldn’t confirm this college right now");
   expect(file("src/app/page.tsx")).toContain("its settings didn&apos;t load");
  });
  it("PUB-auth-public-27 maintains legacy 404 text on graceful recovery",()=>{
