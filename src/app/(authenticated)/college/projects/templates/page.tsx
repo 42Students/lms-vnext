@@ -75,14 +75,14 @@ export default async function CollegeProjectTemplatesPage({
   sections:projectTemplateSectionCounts(template.blueprint),
  }));
  return <div className="min-w-0 space-y-5">
-  <ProjectAdminNav basePath="/college/projects" active="templates"/>
   <PageHeader title="Project templates"
    description="Pick a template to start a new project workspace."/>
+  <ProjectAdminNav basePath="/college/projects" active="templates"/>
   <p role="status" className="border-l-[3px] border-info-border bg-info-subtle px-3 py-2 text-sm text-body">
    Published project templates are assigned to this college by a Super Admin.
    Pick a template to create a workspace for your learners.
   </p>
-  <section aria-label="Templates" className="min-w-0 space-y-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
+  <section aria-label="Templates" className="min-w-0 space-y-3">
    <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
     <h2 className="text-lg font-semibold text-foreground">Templates</h2>
     <div className="flex min-w-0 w-full flex-wrap items-center gap-2 sm:w-auto">

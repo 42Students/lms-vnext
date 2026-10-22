@@ -78,18 +78,18 @@ export default async function SuperAdminStudentsPage({searchParams}:{
   {choicesUnavailable?<Alert tone="warning">Registration and bulk-import academic choices could not be loaded. Those actions are disabled until the selected college's options can be verified. <Link href="/admin/students" className="font-semibold underline">Retry registration options</Link></Alert>:null}
   {historyUnavailable?<Alert tone="warning">Recent bulk import history is unavailable; no empty import history is implied. <Link href="/admin/students" className="font-semibold underline">Retry import history</Link></Alert>:null}
   <AdminScopedReadPage headingMode="section" intro={choices?
-   <details id="register-student" className="group min-w-0 scroll-mt-24 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface">
+   <details id="register-student" className="group min-w-0 scroll-mt-24 border-y border-[var(--lms-canvas-border)]">
     <summary className="flex min-h-11 cursor-pointer items-center gap-2 px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-sm font-semibold text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] [&::-webkit-details-marker]:hidden">
      <span aria-hidden="true" className="inline-flex size-6 shrink-0 items-center justify-center rounded-full border border-border text-lg leading-none">＋</span>
      Register students (one at a time or bulk CSV)
      <span aria-hidden="true" className="ml-auto text-muted-foreground group-open:rotate-180">⌄</span>
     </summary>
     <div className="grid min-w-0 gap-[var(--lms-space-4)] border-t border-[var(--lms-canvas-border)] p-[var(--lms-space-4)] lg:grid-cols-2">
-     <section aria-labelledby="register-student-heading" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
+     <section aria-labelledby="register-student-heading" className="min-w-0 space-y-3 border-b border-border pb-4 lg:border-b-0 lg:border-r lg:pr-4">
       <h2 id="register-student-heading" className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Register New Student</h2>
       <CollegeStudentRegisterForm choices={choices}/>
      </section>
-     <section aria-labelledby="bulk-register-students-heading" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
+     <section aria-labelledby="bulk-register-students-heading" className="min-w-0 space-y-3 pb-4">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
        <h2 id="bulk-register-students-heading" className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Bulk Register Students</h2>
        {historyUnavailable?<StatusBadge tone="warning">History unavailable</StatusBadge>:<SuperAdminStudentImportHistory runs={importRuns}/>}

@@ -382,7 +382,7 @@ export default async function TpoAuditPage({
       {result.unavailableSources.length > 0 ? (
         <section
           role="status"
-          className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-4 text-sm leading-6 text-body"
+          className="border-l-[3px] border-border bg-surface-subtle px-3 py-2 text-sm leading-6 text-body"
         >
           Some sharing activity could not be loaded. The totals shown may be incomplete. Try again later.
         </section>

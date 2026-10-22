@@ -135,7 +135,7 @@ export default async function SuperAdminTenantSetup({
   <PageBackLink href="/admin/tenants" label="Tenant directory" />
   <PageHeader eyebrow="Tenant lifecycle" title="Create the customer, then make one college launch-ready"
    description="Tenant Setup · Create a customer, set up its colleges, and get the selected college ready for launch." />
-  <section aria-label="Tenant setup overview" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+  <section aria-label="Tenant setup overview" className="min-w-0 border-b border-border pb-4">
    <div className="mb-3 flex flex-wrap items-center gap-2">
     <strong className="text-sm">Tenant lifecycle</strong>
     <Badge tone="neutral">{id?(college?"College: "+college.name:"College-scoped"):context.adminScope?.organizationId?"Organization-scoped":"Platform view"}</Badge>
@@ -157,7 +157,7 @@ export default async function SuperAdminTenantSetup({
    </article>
    </div>
   </section>
-  <div className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+  <div className="min-w-0 space-y-4">
   <Tabs ariaLabel="Tenant Setup steps" renderPanel={false} value={tab}
     items={[
       {value:"STRUCTURE",label:"1. Tenant structure",href:tabLink("STRUCTURE")},
@@ -255,13 +255,13 @@ export default async function SuperAdminTenantSetup({
    </nav>
    <section id="college-identity" aria-label="College identity editors" className="min-w-0 space-y-4">
     <div className="grid min-w-0 items-start gap-6 2xl:grid-cols-2">
-     <div className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border p-4">
+     <div className="min-w-0 space-y-3 border-b border-border pb-4">
       {managed?<ManagedCollegeSubdomain collegeId={college.id} initial={managed}/>:
        <Banner tone={managedFailed?"error":"warning"} action={<Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/subdomain"} className="font-semibold underline">Open web address settings</Link>}>
         {managedFailed?"Couldn't load the web address. Retry the scoped editor.":"Web address controls require selected-college management permission."}
        </Banner>}
      </div>
-     <div className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border p-4">
+     <div className="min-w-0 space-y-3 border-b border-border pb-4">
       {signin?<CollegeSigninMethodForm collegeId={college.id}
        method={signin.policy.kind==="CONFIGURED"?signin.policy.method:"EMAIL_AND_PHONE"}
        version={signin.version??0}
@@ -271,7 +271,7 @@ export default async function SuperAdminTenantSetup({
        </Banner>}
      </div>
     </div>
-    <section id="college-branding" aria-label="Look and feel" className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border p-4">
+    <section id="college-branding" aria-label="Look and feel" className="min-w-0 space-y-4 border-t border-border pt-4">
      <h3 className="text-lg font-semibold text-[var(--lms-heading)]">Look and feel</h3>
      {branding?<>
       <CollegeLogoUploader collegeId={college.id} currentUrl={branding.uploadedLogoUrl} canEdit/>
