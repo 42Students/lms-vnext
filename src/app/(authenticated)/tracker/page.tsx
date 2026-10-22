@@ -41,6 +41,6 @@ export default async function TrackerReportPage({
       <span>Try again soon. Your report has not been submitted.</span>
     </Banner> : <section aria-label="Report Issue" className="min-w-0 max-w-4xl rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6">
       <TrackerReportForm contextPrefill={contextPrefill} canSearchSimilar={isSuperAdmin(context)}
-      knownErrorId={isSuperAdmin(context)?knownErrorId:undefined}/></section>}
+      {...(isSuperAdmin(context) && knownErrorId !== undefined ? {knownErrorId} : {})}/></section>}
   </div>;
 }
