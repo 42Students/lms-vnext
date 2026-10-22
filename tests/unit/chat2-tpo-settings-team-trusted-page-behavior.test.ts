@@ -66,7 +66,7 @@ describe("UX-tpo-LAST-THIRD-01 settings people page server states",()=>{
   expect(state.trusted).toHaveBeenCalledWith(expect.objectContaining({
    membership:expect.objectContaining({collegeId:college}),
   }),college);
-  const content=JSON.stringify(page);
+  const content=JSON.stringify(page,(key,value)=>key==="type"&&typeof value!=="string"?undefined:value);
   expect(content).toContain("Trusted-domain allowlist unavailable");
   expect(content).toContain("No active placement company relationships");
   expect(content).toContain("Unavailable");

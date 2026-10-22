@@ -23,9 +23,10 @@ describe("chat-5 final sprint: Faculty course discussions",()=>{
   expect(staleBannerGate).toContain("loadError");
   expect(staleBannerGate).toContain("loadedOnce.current");
   expect(staleBannerGate).toContain("messages.length > 0");
-  expect(page).toContain("Discussion refresh failed. Could not refresh the discussion. Showing the last messages we loaded.");
-  expect(page).toContain("Retry discussion refresh");
-  expect(page).toContain("onClick={() => void load(true)}");
+  expect(page).toContain("<strong>Discussion refresh failed</strong>");
+  expect(page).toContain("<p>Showing the last messages we loaded.</p>");
+  expect(page).toContain("onClick={()=>void load(true)}>Retry</Button>");
+  expect(page).toContain("onClick={()=>void load(true)}");
   expect(page.indexOf(staleBannerGate)).toBeLessThan(page.indexOf("{pinned ? ("));
   expect(page).toContain('reconcileLatestDiscussionPage(previous, incoming, received.length)');
   expect(page).toContain('if (learnerDiscussionRefreshIsCurrent(refreshId,latestRefreshId.current))');

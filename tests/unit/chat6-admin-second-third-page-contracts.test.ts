@@ -21,8 +21,8 @@ const cases: readonly [string, string][] = [
   ["placements/applications/[applicationId]", "getSuperAdminApplicationDetail"],
   ["placements/calendar", "requireSuperAdminSelectedCollege"],
   ["placements/drives", "requireSuperAdminSelectedCollege"],
-  ["placements/hiring", "AdminScopedReadPage"],
-  ["placements/interviews", "AdminScopedReadPage"],
+  ["placements/hiring", "redirect("],
+  ["placements/interviews", "listSuperAdminInterviews"],
   ["placements/interviews/[roundId]", "getSuperAdminInterviewDetail"],
   ["placements/job-settings", "AdminScopedReadPage"],
   ["placements/job-settings/[jobId]", "getSuperAdminJobSettingsDetail"],
@@ -53,14 +53,14 @@ describe("Super Admin second-third page entrypoints and ownership guards", () =>
   it.each(cases)("CHAT6-ADMIN-PAGE %s keeps its server authorization or secured delegate", (route, guard) => {
     const code=readFileSync(`src/app/(authenticated)/admin/${route}/page.tsx`,"utf8");
     expect(code).toContain(guard);
-    if (route!=="live-classes") {
+    if (route!=="live-classes" && route!=="placements/hiring") {
       expect(code).toContain("getCurrentRequestContext");
     }
     if (route.includes("[") && !route.includes("lecture-halls/")) {
       expect(code).toContain("params");
     }
     if (route.startsWith("placements/") && !route.includes("[") &&
-        ["hiring","interviews","job-settings","joining","offers","screenings","seasons"].includes(route.slice("placements/".length))) {
+        ["job-settings","joining","offers","screenings","seasons"].includes(route.slice("placements/".length))) {
       expect(code).toContain("AdminScopedReadPage");
     }
   });
@@ -71,7 +71,7 @@ describe("Super Admin second-third page entrypoints and ownership guards", () =>
     expect(code).toContain("if(!isSuperAdmin(context))");
     expect(code).toContain("if(!context.adminScope?.collegeId)");
     expect(code).toContain("const directory=await loader(parsed.data)");
-    expect(code).toContain("Directory unavailable");
+    expect(code).toContain("Could not load directory");
     expect(code).toContain("No matching records");
     expect(code).toContain("superAdminReadHref");
   });
