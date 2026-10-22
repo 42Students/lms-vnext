@@ -8,7 +8,7 @@ DEFERRED is NOT allowed. For each row: read its full text in the source packet n
 Keep tests passing and TypeScript valid; never silence errors. Write one result line per row under Results, push, then tick this packet in your queue.
 
 - [x] G2-19-001-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
-- [ ] G2-19-001-059  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
+- [x] G2-19-001-059  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [x] G2-19-010-002  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [x] G2-19-010-004  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [x] G2-19-010-021  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
@@ -25,3 +25,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-19-010-021 FIXED — [chat-11] f3135b97 `src/components/tpo/tpo-campaign-send-control.tsx` retains the legacy singular/plural confirmation count. `src/components/tpo/tpo-campaign-compose.tsx:56-70` validates the draft and `src/components/tpo/tpo-campaign-send-control.tsx:61-66` gates actual send behind an explicit confirm; legacy direct send `docs/legacy-source/frontend/src/components/tpo/engage/Campaigns.jsx:22-29`.
 
 - G2-19-001-018 FIXED — [chat-11] 892971f5, af6a5ff5, 6b62c65d: `src/modules/admin-ui/super-admin-read-directory-model.ts` preserves validated sortBy/sortOrder in URL and pagination; `src/components/admin/admin-scoped-read-page.tsx` provides accessible Name/Roll No. sort controls; `src/modules/admin-ui/super-admin-scoped-people-service.ts` orders before LIMIT/OFFSET with numeric-aware roll key. Legacy: `docs/legacy-source/frontend/src/pages/superadmin/sections/Students.js:930-936`.
+
+- G2-19-001-059 FIXED — [chat-11] e107792f, `src/modules/identity/context-service.ts:263-290` now rejects a membership carrying `suspendedAt` even if its status is stale ACTIVE. The scoped roster already shows suspension from `src/modules/admin-ui/super-admin-scoped-people-service.ts:184-189`, while platform blocks are checked in `src/modules/identity/context-service.ts:236-238`. Legacy `docs/legacy-source/frontend/src/pages/superadmin/sections/Students.js:949-956,1028-1050` treats suspendedAt as both the status discriminator and a login/session block.
