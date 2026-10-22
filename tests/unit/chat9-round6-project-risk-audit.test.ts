@@ -5,7 +5,10 @@ const src=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 describe("College Projects risk and activity acceptance",()=>{
  it("COL-projects-18 enables admin resource change/search without overriding mentor Activity feed",()=>{
   const a=src("src/components/projects/project-activity-filtered-list.tsx");
-  for(const s of ["mentorActivityRelativeTime","Search activity","Resource change","All resource changes","projectResourceAuditMatches"])expect(a).toContain(s);
+  for(const s of ["mentorActivityRelativeTime","Search activity","Resource change","projectResourceAuditMatches"])expect(a).toContain(s);
+  const resourceAudit=src("src/components/projects/project-resource-audit-list.tsx");
+  expect(resourceAudit).toContain('aria-label="Resource activity"');
+  expect(resourceAudit).toContain('aria-label="Search resource audit"');
   expect(src("src/components/projects/project-workspace.tsx")).toContain('resourceAudit={mode==="ADMIN"}');
  });
  it("COL-projects-23 ensures ten-tab workspace navigation is keyboard-scrollable at narrow widths",()=>{
