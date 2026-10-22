@@ -28,6 +28,8 @@ export async function getOwnLearnerPlacementAlerts(context: RequestContext,raw:u
     actionHref: inAppNotifications.actionHref,
     createdAt: inAppNotifications.createdAt,
     readAt: inAppNotifications.readAt,
+    eventType:activityEvents.eventType,
+    subjectType:activityEvents.subjectType,
   }).from(inAppNotifications)
     .innerJoin(activityEvents, eq(activityEvents.id, inAppNotifications.eventId))
     .where(and(
