@@ -207,7 +207,7 @@ describe("auth config", () => {
     // Tenant resolution must keep working (and failing closed) where sign-in
     // is not configured, e.g. the browser E2E job.
     expect(() => readAuthConfig({})).toThrow();
-    expect([...getPlatformHosts({})].sort()).toEqual(["127.0.0.1", "localhost"]);
+    expect([...getPlatformHosts({})].sort()).toEqual(["127.0.0.1", "[::1]", "localhost"]);
     expect(
       [...getPlatformHosts({ PLATFORM_HOSTS: " A.example.com ,b.example.com " })].sort(),
     ).toEqual(["a.example.com", "b.example.com"]);
