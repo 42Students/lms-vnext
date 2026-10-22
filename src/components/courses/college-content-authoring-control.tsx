@@ -66,7 +66,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   const times=kind==="LIVE_CLASS"?initialLiveSchedule():{start:"",end:""};
   return JSON.stringify({lessonId:lessons[0]?.id??"",title:"",url:"",notes:"",duration:"",
    start:times.start,end:times.end,deliveryId:"",timeZone:"Asia/Kolkata",
-   removeLink:false,visibleToStudents:true});
+   removeLink:false,visibleToStudents:true,resourceLinks:[]});
  });
  const [pendingArchive,setPendingArchive]=useState<Existing|null>(null);
  const [pendingPublish,setPendingPublish]=useState<Existing|null>(null);
@@ -76,7 +76,8 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  const [newResourceId,setNewResourceId]=useState<string|null>(null);
  const [videoMode,setVideoMode]=useState<"UPLOAD"|"YOUTUBE">("UPLOAD");
  const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
- const [orderDraft,setOrderDraft]=useState<Record<string,string>>({});
+ const [resourceLinks,setResourceLinks]=useState<Array<{title:string;externalUrl:string;notes:string}>>([]);
+ const [materialDraft,setMaterialDraft]=useState({title:"",externalUrl:"",notes:""});
  const [allKindsForReorder,setAllKindsForReorder]=useState(
   existingFilters?.allKindsForReorder??false);
  const [remoteExisting,setRemoteExisting]=useState<{
@@ -145,30 +146,30 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   router.replace(window.location.pathname+(params.size?"?"+params.toString():""),{scroll:false});
  }
  const text=kind==="YOUTUBE"?"Add a video":kind==="RESOURCE"?"Add Resource":"Schedule a live class";
- const draft=JSON.stringify({lessonId,title,url,notes,duration,start,end,deliveryId,timeZone,removeLink,visibleToStudents});
+ const draft=JSON.stringify({lessonId,title,url,notes,duration,start,end,deliveryId,timeZone,removeLink,visibleToStudents,resourceLinks});
  function closeEditor(){
   if(busy)return;
   if(draft!==initialDraft){setDiscardOpen(true);return;}
   setOpen(false);
  }
  function select(item:Existing){
-  setEditing(item.id);setOpen(true);setLessonId(item.lessonId);setTitle(item.title);
+  setEditing(item.id);setOpen(true);if(kind==="YOUTUBE")setVideoMode("YOUTUBE");setLessonId(item.lessonId);setTitle(item.title);
   setUrl("");setNotes(item.notes??"");setDuration(item.durationSeconds===null?"":String(item.durationSeconds));
   setTimeZone("Asia/Kolkata");setStart(dateInput(item.startsAt));setEnd(dateInput(item.endsAt));setDeliveryId(item.deliveryId??"");setRemoveLink(false);
-  setVisibleToStudents(item.visibleToStudents);setDiscardOpen(false);setError("");setMessage("");
+  setVisibleToStudents(item.visibleToStudents);setResourceLinks([]);setMaterialDraft({title:"",externalUrl:"",notes:""});setDiscardOpen(false);setError("");setMessage("");
   setInitialDraft(JSON.stringify({lessonId:item.lessonId,title:item.title,url:"",notes:item.notes??"",
    duration:item.durationSeconds===null?"":String(item.durationSeconds),
    start:dateInput(item.startsAt),end:dateInput(item.endsAt),deliveryId:item.deliveryId??"",
-   timeZone:"Asia/Kolkata",removeLink:false,visibleToStudents:item.visibleToStudents}));
+   timeZone:"Asia/Kolkata",removeLink:false,visibleToStudents:item.visibleToStudents,resourceLinks:[]}));
  }
  function fresh(){
   const times=kind==="LIVE_CLASS"?initialLiveSchedule():{start:"",end:""};
-  setEditing(null);setOpen(true);setTitle("");setUrl("");setNotes("");setDuration("");
+  setEditing(null);setOpen(true);if(kind==="YOUTUBE")setVideoMode("YOUTUBE");setTitle("");setUrl("");setNotes("");setDuration("");
   setStart(times.start);setEnd(times.end);setTimeZone("Asia/Kolkata");setDeliveryId("");
-  setError("");setMessage("");setRemoveLink(false);setVisibleToStudents(true);
+  setError("");setMessage("");setRemoveLink(false);setVisibleToStudents(true);setResourceLinks([]);setMaterialDraft({title:"",externalUrl:"",notes:""});
   setDiscardOpen(false);
   setInitialDraft(JSON.stringify({lessonId,title:"",url:"",notes:"",duration:"",start:times.start,end:times.end,
-   deliveryId:"",timeZone:"Asia/Kolkata",removeLink:false,visibleToStudents:true}));
+   deliveryId:"",timeZone:"Asia/Kolkata",removeLink:false,visibleToStudents:true,resourceLinks:[]}));
  }
  async function save(confirmed=false){
   if(busy)return;
@@ -180,7 +181,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   }
   if(kind==="LIVE_CLASS"&&!editing&&!url.trim()){setError("Enter a Meeting Link.");return;}
   if(kind==="YOUTUBE"&&!editing&&!url.trim()){setError("Enter a YouTube URL.");return;}
-  if(kind==="RESOURCE"&&!editing&&!url.trim()&&!notes.trim()){
+  if(kind==="RESOURCE"&&!editing&&!url.trim()&&!notes.trim()&&!resourceLinks.length){
    setError("Add a file, HTTPS link, or notes before saving.");return;
   }
   if(kind==="RESOURCE"&&editing&&removeLink&&!notes.trim()){setError("Add resource notes before removing the last link.");return;}
@@ -221,7 +222,10 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
      headers:{"Content-Type":"application/json"},body:JSON.stringify(editing?
       {title:title.trim(),visibleToStudents,...(kind==="RESOURCE"?(removeLink?{externalUrl:null}:(url.trim()?{externalUrl:url.trim()}:{})):(url.trim()?{externalUrl:url.trim()}:{})),...extra}:
       {lessonId,deliveryId:deliveryId||null,title:title.trim(),visibleToStudents,contentType:kind,externalUrl:url.trim()||null,
-       sequence:nextOverride[lessonId]??lessons.find(row=>row.id===lessonId)?.nextSequence??0,...extra})});
+       sequence:nextOverride[lessonId]??lessons.find(row=>row.id===lessonId)?.nextSequence??0,...extra,
+       ...(kind==="RESOURCE"&&materialsEnabled&&resourceLinks.length?
+        {resourceMaterials:resourceLinks.map(item=>({kind:"LINK",title:item.title.trim(),
+         externalUrl:item.externalUrl.trim(),notes:item.notes.trim()||null}))}:{})})});
    if(!res.ok){const problem=await res.json().catch(()=>({error:"Unable to save content"}));
     throw Error(problem.error??"Unable to save content");}
    if(!editing)setNextOverride(old=>({...old,[lessonId]:(nextOverride[lessonId]??lessons.find(row=>row.id===lessonId)?.nextSequence??0)+1}));
@@ -230,29 +234,13 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     const id=payload?.content?.id;
     if(typeof id==="string")setNewResourceId(id);
    }
+   setResourceLinks([]);
    setMessage(kind==="RESOURCE"?(editing?"Resource updated":"Resource created"):
     editing?"Lesson content updated successfully!":"Content created.");
    setOpen(false);
    loadExisting(new URLSearchParams(window.location.search));router.refresh();
   }catch(cause){setError((editing?"Failed to update content: ":"Failed to create content: ")+
    (cause instanceof Error?cause.message:"Unable to save content"));}
-  finally{setBusy(false);}
- }
- async function saveOrder(item:Existing){
-  if(busy)return;
-  const entered=Number(orderDraft[item.id]??item.sequence+1);
-  if(!Number.isInteger(entered)||entered<1||entered>10001){setError("Enter a valid Order.");return;}
-  setBusy(true);setError("");setMessage("");
-  try{
-   const response=await fetch("/api/courses/lesson-contents/"+encodeURIComponent(item.id),{
-    method:"PATCH",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({sequence:entered-1}),
-   });
-   if(!response.ok){const result=await response.json().catch(()=>null);
-    throw Error(result?.error??"Unable to save Order.");}
-   setMessage("Order saved.");
-   loadExisting(new URLSearchParams(window.location.search));router.refresh();
-  }catch(cause){setError(cause instanceof Error?cause.message:"Unable to save Order.");}
   finally{setBusy(false);}
  }
  async function transition(item:Existing,action:"PUBLISH"|"ARCHIVE",confirmed=false){
@@ -318,6 +306,45 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{kind==="YOUTUBE"?"YouTube URL":kind==="RESOURCE"?"HTTPS resource link (optional with notes)":"Meeting Link"}
     <Input type="url" maxLength={2048} required={kind!=="RESOURCE"&&!editing} className="mt-[6px]"
      value={url} onChange={e=>setUrl(e.target.value)} placeholder={editing?"Leave blank to keep saved link":"https://"}/></label>
+   {kind==="RESOURCE"&&!editing&&materialsEnabled?<fieldset className="space-y-2 rounded-[var(--lms-control-radius)] border border-border p-3 md:col-span-2">
+    <legend className="px-2 text-sm font-semibold">Resource materials ({resourceLinks.length}/20)</legend>
+    <p className="text-xs text-muted-foreground">Add multiple HTTPS links with individual titles and notes. All links are saved together with the new Resource.</p>
+    {resourceLinks.length?<ol className="space-y-1 text-sm">
+     {resourceLinks.map((item,index)=><li key={index} className="flex min-w-0 items-center justify-between gap-2 border-b border-border py-1">
+      <span className="min-w-0 truncate">{index+1}. {item.title} — {item.externalUrl}</span>
+      <Button type="button" variant="ghost" size="sm" disabled={busy}
+       onClick={()=>setResourceLinks(rows=>rows.filter((_,at)=>at!==index))}>Remove</Button>
+     </li>)}
+    </ol>:null}
+    <div className="grid gap-2 sm:grid-cols-2">
+     <label className="text-xs font-semibold">Link title
+      <Input maxLength={255} value={materialDraft.title}
+       onChange={event=>setMaterialDraft(old=>({...old,title:event.target.value}))}/></label>
+     <label className="text-xs font-semibold">HTTPS link
+      <Input type="url" maxLength={2048} value={materialDraft.externalUrl}
+       onChange={event=>setMaterialDraft(old=>({...old,externalUrl:event.target.value}))}/></label>
+     <label className="text-xs font-semibold sm:col-span-2">Link notes (optional)
+      <Textarea rows={2} maxLength={2000} value={materialDraft.notes}
+       onChange={event=>setMaterialDraft(old=>({...old,notes:event.target.value}))}/></label>
+    </div>
+    <Button type="button" variant="secondary" size="sm" disabled={busy||resourceLinks.length>=20}
+     onClick={()=>{
+      const entry={title:materialDraft.title.trim(),externalUrl:materialDraft.externalUrl.trim(),notes:materialDraft.notes.trim()};
+      if(!entry.title){setError("Enter a material title.");return;}
+      try{
+       const link=new URL(entry.externalUrl);
+       const host=link.hostname.toLowerCase();
+       if(link.protocol!=="https:"||link.username||link.password||link.hash||!host||
+          host==="localhost"||host.endsWith(".localhost")||host==="0.0.0.0"||
+          host==="[::1]"||host==="[::]"||/^127\\.|^10\\.|^192\\.168\\.|^169\\.254\\.|^172\\.(?:1[6-9]|2\\d|3[01])\\./.test(host))
+        throw Error("Invalid link");
+      }catch{setError("Enter a valid public HTTPS link for this material.");return;}
+      if(resourceLinks.some(item=>item.externalUrl.toLowerCase()===entry.externalUrl.toLowerCase())){
+       setError("This link is already in the Resource.");return;
+      }
+      setResourceLinks(rows=>[...rows,entry]);setMaterialDraft({title:"",externalUrl:"",notes:""});setError("");
+     }}>Add link to Resource</Button>
+   </fieldset>:null}
    {kind==="RESOURCE"?<label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Notes
      <Textarea rows={3} maxLength={5000} value={notes} onChange={e=>setNotes(e.target.value)}
        className="mt-1"/>
@@ -384,7 +411,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     <Link href="/college/courses" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Go to Courses</Link>
     <button type="button" onClick={()=>router.refresh()} className="ml-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry course and lesson options</button>
   </div>}
-  {open ? kind==="RESOURCE"?
+  {open&&(kind!=="YOUTUBE"||videoMode==="YOUTUBE") ? kind==="RESOURCE"?
     <Dialog open={open} onOpenChange={value=>{if(!value)closeEditor();}}
       title={editing?"Edit Content: "+title:"Add Resource"}
       description="Select a Course and Lesson to manage the resource."
@@ -420,7 +447,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     <legend className="mb-2 text-[13px] font-semibold text-body">Video type</legend>
     <label className="inline-flex min-h-9 items-center gap-2 text-sm">
      <input type="radio" name="college-content-video-type" value="UPLOAD"
-      checked={videoMode==="UPLOAD"} onChange={()=>setVideoMode("UPLOAD")}/>
+      checked={videoMode==="UPLOAD"} onChange={()=>{setVideoMode("UPLOAD");setOpen(false);}}/>
      Video (Upload)
     </label>
     <label className="inline-flex min-h-9 items-center gap-2 text-sm">
@@ -530,17 +557,15 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
      columns={[
       {key:"title",header:"Title",mobilePriority:"primary",cell:item=>item.title},
       {key:"type",header:"Type",cell:item=>item.contentType==="YOUTUBE"?"YouTube":item.contentType==="RESOURCE"?"Resource":item.contentType==="VIDEO"?"Video":item.contentType==="LIVE_CLASS"?"Live class":item.contentType},
-      {key:"order",header:"Order",cell:item=>{
-       return <div className="flex items-center gap-1">
-        <Input type="number" aria-describedby="content-order-help"
-         aria-label={"Order for "+item.title} min={1} max={10001}
-         value={orderDraft[item.id]??String(item.sequence+1)}
-         onChange={e=>setOrderDraft(old=>({...old,[item.id]:e.target.value}))}
-         className="w-16"/>
-        <Button type="button" size="sm" variant="ghost" disabled={busy}
-         onClick={()=>void saveOrder(item)}>Save order</Button>
-       </div>;
-      }},
+      {key:"order",header:"Order",cell:item=>
+       <div className="flex items-center gap-2">
+        <span className="text-sm tabular-nums">{item.sequence+1}</span>
+        <Link className="text-xs font-semibold text-primary-text underline"
+         href={"/college/content-order"+(listSectionId?
+          "?offeringId="+encodeURIComponent(item.offeringId)+"&deliveryId="+encodeURIComponent(listSectionId):"")}>
+         Arrange Section
+        </Link>
+       </div>},
       {key:"students",header:"Students",cell:item=>item.visibleToStudents?"Visible":"Hidden"},
       {key:"content",header:"Content",cell:item=>item.externalUrl?
        <a className="text-link underline" href={item.externalUrl} target="_blank" rel="noopener noreferrer">
