@@ -3,9 +3,9 @@ import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
 import {closeDatabaseConnection} from "@/db/client";
 import {createPlacementCompany} from "@/modules/placements/company-service";
-import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
+import {createPlacementJob} from "@/modules/placements/job-service";
+import {publishPreparedPlacementJob} from "../support/publishable-job-fixture";
 import {createPlacementRound} from "@/modules/placements/round-service";
-import {upsertJobEligibilityPolicy} from "@/modules/placements/eligibility-service";
 import {createPersistedJobRecruiter,persistedRecruiterContext} from "../support/persisted-job-recruiter-fixture";
 import {getHrJobRead} from "@/modules/placements/hr-job-read-service";
 import {buildHrDriveOverview} from "@/modules/placements/hr-drive-overview-model";
@@ -24,10 +24,10 @@ describe.skipIf(!enabled)("HR Drive Overview PG guard",()=>{
   const b=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"Overview HR B "+nonce,primaryDomain:"hrob-"+nonce+".example"});
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:a.relationship.id,
    title:"Overview Job "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
-  // Publish requires both a real interview plan and an eligibility policy.
+  // Reuse the same idempotent eligibility and evaluative-round setup as other
+  // passing recruiter read fixtures; publish via the production service.
   await createPlacementRound(tpo,job.id,{kind:"INTERVIEW",name:"HR overview screening"});
-  await upsertJobEligibilityPolicy(tpo,job.id,{});
-  await publishPlacementJob(tpo,job.id);
+  await publishPreparedPlacementJob(tpo,job.id);
   const identityUid="hr-overview-"+nonce;
   const recruiter=await createPersistedJobRecruiter({
     companyId:a.company.id,companyRelationshipId:a.relationship.id,
