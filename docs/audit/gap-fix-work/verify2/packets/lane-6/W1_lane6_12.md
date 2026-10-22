@@ -126,3 +126,31 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/app/api/placements/tpo/settings/job-types/route.ts
 - Legacy: docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoHubController.java:410-411 PUT save job-types collection
 - Expected fix: Check bulk edit/reorder/disabled state equivalent
+
+## Lane 9 verification disposition (2026-10-22)
+
+- DEFERRED — G2-2-016-027: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-016-067: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-016-074: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-016-084: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-016-087: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-016-095: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-016-104: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-016-106: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-016-108: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-016-111: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-016-137: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-016-149: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-016-156: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-016-159: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-016-166: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-020-005: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-020-038: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-020-046: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-021-004: Not independently verified against all cited behavior; implementation and regression check remain open.
+- OK — G2-2-021-020: Target source contains the specified validation or expected-set CAS contract.
+- OK — G2-2-021-034: Target source contains the specified validation or expected-set CAS contract.
+- OK — G2-2-021-062: Target source contains the specified validation or expected-set CAS contract.
+- DEFERRED — G2-15-030-041: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-19-022-076: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-19-022-089: Not independently verified against all cited behavior; implementation and regression check remain open.
