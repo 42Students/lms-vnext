@@ -104,24 +104,24 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
   </Button>:null}
   <p className="text-xs text-muted-foreground sm:hidden leading-[20px]">Scroll sideways to see all Board lanes.</p>
   <div role="region" aria-label="Project Board lanes, scroll horizontally to see more"
-    tabIndex={0} data-dragging={dragging} className={styles.scrollRegion+" focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]"}>
-   <div className={styles.track}>{lanes.map(lane=>
+    tabIndex={0} data-dragging={dragging} className={styles["scrollRegion"]+" focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]"}>
+   <div className={styles["track"]}>{lanes.map(lane=>
     <BoardColumn key={lane.id} label={lane.label} width="compact"
-       className={[styles.lane, lane.id==="BACKLOG"?styles.backlogLane:"",lanes.length===1?styles.singleLane:""].filter(Boolean).join(" ")}
+       className={[styles["lane"], lane.id==="BACKLOG"?styles["backlogLane"]:"",lanes.length===1?styles["singleLane"]:""].filter(Boolean).join(" ")}
        data-can-drop={!readOnly&&!busy&&statuses.includes(lane.id as EditableStatus)}
       onDragOver={event=>{if(statuses.includes(lane.id as EditableStatus))event.preventDefault()}}
       onDrop={event=>drop(event,lane.id)}
       >
-     <h2 className={styles.header}>
+     <h2 className={styles["header"]}>
       <span>{lane.label}</span><Badge tone="neutral">{lane.tasks.length}</Badge>
      </h2>
-     <ul className={styles.body}>{lane.tasks.map(task=>{
+     <ul className={styles["body"]}>{lane.tasks.map(task=>{
       const own=membershipId!==null&&task.assigneeMembershipId===membershipId;
       const editable=!readOnly&&own&&Boolean(task.sprintId)&&sprintState.get(task.sprintId!)==="ACTIVE"&&statuses.includes(task.status as EditableStatus);
       return <li key={task.id} draggable={editable&&!busy}
        onDragStart={event=>{if(editable){event.dataTransfer.setData("text/plain",task.id);setDragging(true);}}}
         onDragEnd={()=>setDragging(false)}
-       className={"border p-3 text-sm "+styles.card}>
+       className={"border p-3 text-sm "+styles["card"]}>
         <Link href={learnerBoardTaskHref(projectId,filters,task.id)}
          className="block break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">{task.title}</Link>
         <p className="mt-2 text-xs text-muted-foreground leading-[20px]">{task.priority}</p>
