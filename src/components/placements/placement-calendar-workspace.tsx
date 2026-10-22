@@ -848,7 +848,7 @@ export async function PlacementCalendarWorkspace({
           {item.label}{state.focus===item.focus?" · Selected":""}
         </Link>)}
        </div>
-       {state.focus ? <div className="border-b border-border py-3" aria-label="Needs doing details">
+       {state.focus ? <div role="region" className="border-b border-border py-3" aria-label="Needs doing details">
          <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="text-sm font-semibold">
            {state.focus==="OVERDUE"?"Overdue follow-ups":state.focus==="BLOCKED"?"Rounds on blocked dates":"Busy day events"}

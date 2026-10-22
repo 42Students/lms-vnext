@@ -280,7 +280,7 @@ export function PublicRecruiterJoinForm({
                   </div>
                 </>
               )}
-              {error ? <div ref={errorSummaryRef} tabIndex={-1} role="alert" aria-live="assertive" className="focus:outline-none"><InlineNotice tone="error" message={error} /></div> : null}
+              {error ? <div ref={errorSummaryRef} tabIndex={-1} role="alert" className="focus:outline-none"><InlineNotice tone="error" message={error} /></div> : null}
             </form>
           </>
         )}

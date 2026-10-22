@@ -78,27 +78,27 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
   }catch(cause){setError(cause instanceof Error?cause.message:PUBLIC_RECRUIT_COPY.errorSubmit);}
   finally{savingRef.current=false;setBusy(false);}
  }
- return <section className="mt-8 border-t border-border pt-6" aria-label="Recruit from us">
-  <h2 className="text-xl font-semibold text-foreground">{PUBLIC_RECRUIT_COPY.heading}</h2>
+ return <section className="mt-8 border-t border-border pt-6" aria-labelledby="public-recruit-from-us-title">
+  <h2 id="public-recruit-from-us-title" className="text-xl font-semibold text-foreground">{PUBLIC_RECRUIT_COPY.heading}</h2>
   {done?<div role="status" className="mt-4 space-y-2">
     <span aria-hidden="true" className="inline-flex size-10 items-center justify-center rounded-full border border-success text-2xl text-success">✓</span>
     <h3 className="font-semibold">{PUBLIC_RECRUIT_COPY.thankYou}</h3>
     <p className="text-sm text-body">{publicRecruitThanks(collegeName)}</p>
    </div>:!enabled||unavailable?<p role="alert" className="mt-3 text-sm text-body">
      {PUBLIC_RECRUIT_COPY.unavailable}
-   </p>:<form className="mt-4 max-w-2xl space-y-4" onSubmit={e=>{
+   </p>:<form aria-busy={busy} className="mt-4 max-w-2xl space-y-4" onSubmit={e=>{
     e.preventDefault();void submit(sent?"recruit":"send-code");
    }} noValidate>
     <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">{PUBLIC_RECRUIT_COPY.workEmail}
      <Input className={control+" mt-1"} required type="email" maxLength={150} autoComplete="email"
-      disabled={Boolean(sent)} value={email} onChange={e=>{setEmail(e.target.value);clearFieldError("email");}}/>
+      disabled={Boolean(sent)} aria-invalid={Boolean(fieldErrors.email)} aria-describedby={fieldErrors.email?"public-recruit-email-error":undefined} value={email} onChange={e=>{setEmail(e.target.value);clearFieldError("email");}}/>
      <span className="block mt-1 text-xs font-normal">Your company email. We send a code to it.</span>
-     {fieldErrors.email?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.email}</span>:null}
+     {fieldErrors.email?<span role="alert" id="public-recruit-email-error" className="mt-1 block text-xs text-error">{fieldErrors.email}</span>:null}
     </label>
     <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">{PUBLIC_RECRUIT_COPY.name}
      <Input className={control+" mt-1"} required maxLength={120} autoComplete="name"
-      value={name} onChange={e=>{setName(e.target.value);clearFieldError("name");}}/>
-     {fieldErrors.name?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.name}</span>:null}
+      aria-invalid={Boolean(fieldErrors.name)} aria-describedby={fieldErrors.name?"public-recruit-name-error":undefined} value={name} onChange={e=>{setName(e.target.value);clearFieldError("name");}}/>
+     {fieldErrors.name?<span role="alert" id="public-recruit-name-error" className="mt-1 block text-xs text-error">{fieldErrors.name}</span>:null}
     </label>
     {sent ? <div className="grid min-w-0 gap-4 sm:grid-cols-2">
     <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">{PUBLIC_RECRUIT_COPY.company}
@@ -116,9 +116,9 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
     </div> : null}
     {sent?<label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Code sent to {sent}
       <Input className={control+" mt-1"} inputMode="numeric" pattern="[0-9]{6}"
-       required maxLength={6} autoComplete="one-time-code" value={code}
+       required maxLength={6} autoComplete="one-time-code" aria-invalid={Boolean(fieldErrors.code)} aria-describedby={fieldErrors.code?"public-recruit-code-error":undefined} value={code}
        onChange={e=>{setCode(e.target.value);clearFieldError("code");}}/>
-      {fieldErrors.code?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.code}</span>:null}
+      {fieldErrors.code?<span role="alert" id="public-recruit-code-error" className="mt-1 block text-xs text-error">{fieldErrors.code}</span>:null}
       <span className="block mt-1 text-xs font-normal">{PUBLIC_RECRUIT_COPY.code} Enter the six-digit code received by email; it may autofill on supported devices.</span>
      </label>:null}
     {error?<p role="alert" className="text-sm text-body">{error}</p>:null}

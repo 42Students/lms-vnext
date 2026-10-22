@@ -132,7 +132,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
         className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">Cancel</Button>
       </div>
     </div>:null}
-    {result?<div role="status" className="space-y-2 text-sm">
+    {result?<div role="region" aria-label="Bulk drive action results" className="space-y-2 text-sm">
       <p>{result.updated} updated, {result.skipped} failed. Retry will target only failed drives.</p>
       {result.results.filter(x=>x.status==="SKIPPED").map(x=>
         <p key={x.jobId}>{drives.find(d=>d.id===x.jobId)?.title??"Drive"}: {x.reason}</p>)}

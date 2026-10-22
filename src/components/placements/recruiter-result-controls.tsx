@@ -355,7 +355,7 @@ export function RecruiterResultControls({
   }
 
   return (
-    <div className="min-w-0 space-y-4" tabIndex={0} role="region" aria-label="Recruiter results editor" aria-keyshortcuts="S W H R A Z"
+    <div className="min-w-0 space-y-4" tabIndex={0} role="region" aria-label="Recruiter results editor" aria-keyshortcuts="S W H R A Z" aria-describedby="recruiter-result-keyboard-hint"
       onKeyDown={event=>{
         if(event.defaultPrevented||event.ctrlKey||event.altKey||event.metaKey||pendingKey!==null||bulkPending!==null)return;
         const target=event.target as HTMLElement;
@@ -406,7 +406,7 @@ export function RecruiterResultControls({
                     )}
                   </StatusBadge>
                 </div>
-                {canStage?<div className="mt-3 min-w-0 space-y-2 text-xs text-body"><div className="flex min-w-0 flex-col items-start gap-2 md:flex-row md:items-center">                  <span aria-live="polite" aria-atomic="true">{(selected[round.id]??[]).length} selected for results</span>                  <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" loading={bulkPending===round.id} disabled={bulkPending!==null||pendingKey!==null||(selected[round.id]??[]).length===0}
+                {canStage?<div className="mt-3 min-w-0 space-y-2 text-xs text-body"><div className="flex min-w-0 flex-col items-start gap-2 md:flex-row md:items-center">                  <span role="status" aria-live="polite" aria-atomic="true">{(selected[round.id]??[]).length} selected for results</span>                  <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" loading={bulkPending===round.id} disabled={bulkPending!==null||pendingKey!==null||(selected[round.id]??[]).length===0}
                     
                     onClick={()=>void stageSelected(round)}>
                     {bulkPending===round.id?"Sending results…":
