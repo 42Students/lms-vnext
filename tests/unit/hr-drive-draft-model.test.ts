@@ -39,6 +39,32 @@ describe("HR recruiter Request Drive draft preview", () => {
     expect(repeated.rounds[12]?.name).toBe("Round 13");
   });
 
+  it("does not silently drop scoped eligibility branches or hiring rounds when copying legacy drives", () => {
+    const source = {
+      title: "Engineer", description: "Authorized job copy",
+      locations: ["Hyderabad"], employmentType: "FULL_TIME",
+      workMode: "HYBRID", minimumAnnualCtcInr: 500000,
+      maximumAnnualCtcInr: 750000,
+    };
+    const branches = Array.from({ length: 31 }, (_, index) => "Branch " + (index + 1));
+    const copiedBranches = hrDraftFromAuthorizedJob({ ...source, eligibleBranches: branches }, []);
+    expect(copiedBranches.branches).toEqual(branches);
+    expect(hrDriveDraftSchema.safeParse(copiedBranches).success).toBe(false);
+
+    const years = hrDraftFromAuthorizedJob({
+      ...source, eligiblePassingYears: [2027, 1900, 2028],
+    }, []);
+    expect(years.passingYears).toEqual([2027, 1900, 2028]);
+    expect(hrDriveDraftSchema.safeParse(years).success).toBe(false);
+
+    const rounds = Array.from({ length: 101 }, (_, index) =>
+      ({ kind: "INTERVIEW", name: "Round " + (index + 1) }));
+    const copiedRounds = hrDraftFromAuthorizedJob(source, rounds);
+    expect(copiedRounds.rounds).toHaveLength(101);
+    expect(copiedRounds.rounds[100]).toEqual({ kind: "INTERVIEW", name: "Round 101" });
+    expect(hrDriveDraftSchema.safeParse(copiedRounds).success).toBe(false);
+  });
+
   it("requires valid input and rejects inverted CTC", () => {
     const draft = emptyHrDriveDraft();
     expect(hrDriveDraftSchema.safeParse(draft).success).toBe(false);
