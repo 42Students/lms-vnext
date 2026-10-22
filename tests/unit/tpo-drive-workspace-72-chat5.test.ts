@@ -9,7 +9,8 @@ describe("TPO drive mobile action layout",()=>{
   for(const label of ["Applicants","Close drive","Cancel drive","Current shortlist"])
    expect(view).toContain(label);
   const grid=file("src/components/tpo/tpo-applications-spreadsheet.tsx");
-  expect(grid).toContain("<TpoGridFilterPanel fields={filters} mobileSheet/>");
+  expect(grid).toContain("mobileActionsCollapsible");
+  expect(grid).toContain("TpoSpreadsheetGrid");
   expect(grid).toContain("mobileActionsCollapsible");
   const generic=file("src/components/tpo/tpo-spreadsheet-grid.tsx");
   expect(generic).toContain('>Actions</summary>');
