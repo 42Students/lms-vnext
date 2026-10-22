@@ -145,7 +145,8 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold">Appointment status
         <Select name="appointmentStatus" defaultValue={query.appointmentStatus??"ALL"}>
           <option value="ALL">All statuses</option>
-          <option value="UPCOMING">Active</option>
+          <option value="ACTIVE">Active</option>
+          <option value="UPCOMING">Upcoming</option>
           <option value="COMPLETED">Completed</option>
           <option value="CANCELLED">Cancelled</option>
         </Select>
