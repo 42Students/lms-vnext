@@ -40,3 +40,12 @@ export function canAcceptPlacementApplications(
 export function wasPublishedDriveExpiredForLegacySweep(status:string,deadline:Date|null,now:Date):boolean{
  return status==="PUBLISHED"&&deadline instanceof Date&&deadline.getTime()<now.getTime();
 }
+
+// A deadline may be extended and later expire again. Deduplicate an audit
+// against the precise job + deadline pair rather than suppressing all future
+// expiries of that job forever.
+export function placementJobExpiryAuditKey(jobId:string,deadline:Date):string{
+ if(!jobId||!Number.isFinite(deadline.getTime()))
+  throw new Error("Invalid job deadline audit key");
+ return "placement-job-deadline-expired:"+jobId+":"+deadline.getTime();
+}
