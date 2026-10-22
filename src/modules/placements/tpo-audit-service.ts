@@ -46,6 +46,25 @@ const auditFacetSchema = z.preprocess((raw) => {
   }).filter(Boolean);
 }, z.array(z.string().trim().min(1).max(120)).max(40).default([]));
 
+/**
+ * V165 legacy audit column disposition (no migration of unused LMS data):
+ * college_id -> each underlying event's tenant college_id (checked in every
+ * source arm); actor_type / actor_id -> nullable actor_user_id plus a scoped
+ * user display-name lookup, never expose internal ID or infer historical role;
+ * action -> event_type; entity_type / entity_id -> source subject metadata;
+ * detail -> allowlisted non-sensitive summary, capped at 1000 characters;
+ * created_at -> occurred_at (UTC instant, presented in IST).
+ * Legacy college/created_at and college/entity lookup indexes are served by
+ * the separate domain-history source indexes, not a fabricated tpo_audit_log.
+ * The read model alone cannot prove every mutation has a matching writer.
+ */
+const LEGACY_AUDIT_SINGULAR_DETAIL =
+  /(?<![\\d.])1 (student|recruiter|row|selection|slot|drive|application|offer|request|course|test|batch|class)e?s\\b/gi;
+
+function normalizeAuditDetail(detail: string): string {
+  return detail.replace(LEGACY_AUDIT_SINGULAR_DETAIL, "1 $1").slice(0, 1000);
+}
+
 /** Legacy TPO entity to vNext recorded-source crosswalk.
  * DRIVE / RECRUITER_LEAD / SETTINGS / BULK => activity_events.
  * STUDENT => application and screening histories.
@@ -679,7 +698,7 @@ export async function getTpoAuditLog(
       kind: row.kind,
       eventType: row.eventType,
       title: row.title,
-      detail: row.detail.replace(/\b1 students\b/gi,"1 student").slice(0,1000),
+      detail: normalizeAuditDetail(row.detail),
       occurredAt:
         row.occurredAt instanceof Date
           ? row.occurredAt.toISOString()
