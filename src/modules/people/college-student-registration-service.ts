@@ -68,7 +68,12 @@ export async function registerCollegeStudent(context: RequestContext, raw: unkno
       .where(and(eq(sections.id,input.sectionId),eq(sections.cohortId,input.cohortId),
         eq(academicPeriods.collegeId,member.collegeId),
         eq(sections.status,"ACTIVE"))).limit(1);
-    if(!section)throw new AcademicsServiceError("CLASS_BATCH_MISMATCH");
+    if (!section) {
+      throw new AcademicsServiceError(
+        "CLASS_BATCH_MISMATCH",
+        "Learner class must belong to the selected program",
+      );
+    }
   }
   const person = await onboardPersonWithRuntime(context, {
     collegeId: member.collegeId, displayName: input.displayName,
