@@ -137,7 +137,7 @@ export function SuperAdminTemplateCreateForm(){
     placeholder="Why does this need a different summary?"/>
   </label>:null}
   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Goal (optional)
-   <Textarea maxLength={2000} disabled={saving} value={values.goal} onChange={event=>edit("goal",event.target.value)}
+   <Textarea rows={3} maxLength={2000} disabled={saving} value={values.goal} onChange={event=>edit("goal",event.target.value)}
     className="w-full"/>
   </label>
   <details className="min-w-0 border-y border-border py-3">
@@ -155,7 +155,7 @@ export function SuperAdminTemplateCreateForm(){
        {key:"submissionInstructions",label:"Submission instructions"}] as const).map(item=>
       <label key={item.key} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
        {item.label}
-       <Textarea value={values[item.key]} onChange={e=>edit(item.key,e.target.value)}
+       <Textarea rows={3} value={values[item.key]} onChange={e=>edit(item.key,e.target.value)}
         maxLength={4000} disabled={saving}
         className="w-full"/>
       </label>)}
@@ -255,6 +255,10 @@ export function SuperAdminTemplateCreateForm(){
     <label className="block text-sm font-semibold">Due label
      <Input value={row.dueLabel} maxLength={160} onChange={e=>patchSprint(index,{dueLabel:e.target.value})}/>
     </label>
+    <label className="block text-sm font-semibold">Sprint goal
+     <Textarea value={row.goal} maxLength={1000}
+      onChange={e=>patchSprint(index,{goal:e.target.value})}/>
+    </label>
     <label className="block text-sm font-semibold">Description
      <Textarea value={row.description} maxLength={4000} onChange={e=>patchSprint(index,{description:e.target.value})}/>
     </label>
@@ -299,6 +303,17 @@ export function SuperAdminTemplateCreateForm(){
        <option value="HIGH">High</option><option value="CRITICAL">Critical</option>
       </Select>
      </label>
+     <label className="text-sm font-semibold">Task type
+      <Select value={row.taskType??"STORY"} onChange={e=>patchTask(index,{
+       taskType:e.target.value as TemplateCreateTask["taskType"]})}>
+       <option value="STORY">Story</option><option value="BUG">Bug</option>
+       <option value="CHORE">Chore</option><option value="SPIKE">Spike</option>
+      </Select>
+     </label>
+     <label className="text-sm font-semibold">Due label
+      <Input value={row.dueLabel??""} maxLength={160}
+       onChange={e=>patchTask(index,{dueLabel:e.target.value})}/>
+     </label>
     </div>
     <label className="block text-sm font-semibold">Description
      <Textarea value={row.description} maxLength={4000} onChange={e=>patchTask(index,{description:e.target.value})}/>
@@ -306,6 +321,10 @@ export function SuperAdminTemplateCreateForm(){
     <label className="block text-sm font-semibold">Acceptance criteria
      <Textarea value={row.acceptanceCriteria} maxLength={4000}
       onChange={e=>patchTask(index,{acceptanceCriteria:e.target.value})}/>
+    </label>
+    <label className="block text-sm font-semibold">Approach
+     <Textarea value={row.approach??""} maxLength={4000}
+      onChange={e=>patchTask(index,{approach:e.target.value})}/>
     </label>
     <p className="text-xs text-body">Key: {row.key}</p>
     <div className="flex flex-wrap gap-2">
@@ -331,6 +350,14 @@ export function SuperAdminTemplateCreateForm(){
     <label className="block text-sm font-semibold">Title
      <Input value={row.title} maxLength={200} onChange={e=>patchResource(index,{title:e.target.value})}/>
     </label>
+    <label className="block text-sm font-semibold">Resource type
+     <Select value={row.type??"LINK"} onChange={e=>patchResource(index,{
+      type:e.target.value as TemplateCreateResource["type"]})}>
+      <option value="LINK">Link</option><option value="PDF">PDF</option>
+      <option value="DOCUMENT">Document</option><option value="SLIDES">Slides</option>
+      <option value="VIDEO">Video</option><option value="FILE">File</option>
+     </Select>
+    </label>
     <label className="block text-sm font-semibold">URL
      <Input type="url" value={row.url} maxLength={2048} onChange={e=>patchResource(index,{url:e.target.value})}/>
     </label>
@@ -349,7 +376,7 @@ export function SuperAdminTemplateCreateForm(){
    </fieldset>)}
    <Button type="button" size="sm" variant="secondary" disabled={saving||allResources.length>=200}
     onClick={()=>setResources(v=>[...v,{
-      key:nextKey(allResources,"resource"),title:"",url:"",description:"",
+      key:nextKey(allResources,"resource"),title:"",url:"",description:"",type:"LINK",
     }])}>Add resource</Button>
   </section>
   {error?<Banner tone="error">{error}</Banner>:null}
