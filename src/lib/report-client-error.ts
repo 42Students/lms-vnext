@@ -107,8 +107,18 @@ export function installClientErrorReporting(options: { captureConsoleErrors?: bo
  const onUnhandledRejection = (event: PromiseRejectionEvent) => {
   if (!intentionalAbort(event.reason)) submit("unhandled_rejection", event.reason, "global");
  };
+ // The shared API client publishes a categorical status, not a URL/body.
+ // Avoid capturing arbitrary detail from CustomEvent or echoing provider data.
+ const onApiFailure = (event: Event) => {
+  const detail=(event as CustomEvent<{status?:unknown}>).detail;
+  const status=detail?.status;
+  if(typeof status!=="number"||!Number.isInteger(status)||
+    status<0||status>599)return;
+  submit("api",new Error(status===0?"Network request failed":"API request failed ("+status+")"),"global");
+ };
  window.addEventListener("error", onWindowError, true);
  window.addEventListener("unhandledrejection", onUnhandledRejection);
+ window.addEventListener("lms:api-failure", onApiFailure);
 
  const originalConsoleError = options.captureConsoleErrors ? console.error : null;
  const wrappedConsoleError: typeof console.error | null = originalConsoleError
@@ -122,6 +132,7 @@ export function installClientErrorReporting(options: { captureConsoleErrors?: bo
  const cleanup = () => {
   window.removeEventListener("error", onWindowError, true);
   window.removeEventListener("unhandledrejection", onUnhandledRejection);
+  window.removeEventListener("lms:api-failure", onApiFailure);
   if (originalConsoleError && wrappedConsoleError && console.error === wrappedConsoleError)
    console.error = originalConsoleError;
   installedCleanup = null;
