@@ -37,7 +37,9 @@ describe("Final sprint recruiter threads and profile — group C",()=>{
  });
  it("REC-calendar-messages-profile-30 keeps explicit confirmed college-specific self-revocation rather than silent access changes",()=>{
   const access=read("src/components/hr/recruiter-profile-access.tsx");
-  expect(access).toContain("window.confirm(");
+  expect(access).toContain('<ConfirmActionDialog open={confirmGrant!==null}');
+  expect(access).toContain('onClick={() => setConfirmGrant(grant)}');
+  expect(access).toContain('onConfirm={()=>{if(confirmGrant)void leave(confirmGrant);}}');
   expect(access).toContain("immediately lose recruiter access to this college");
   expect(access).toContain('method: "DELETE"');
   expect(access).toContain("encodeURIComponent(grant.id)");
