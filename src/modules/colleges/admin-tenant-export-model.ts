@@ -43,7 +43,7 @@ export function readTenantDirectoryExportParams(params: URLSearchParams) {
   const input: Record<string, string | string[]> = {};
   for (const key of params.keys()) {
     const values = params.getAll(key);
-    input[key] = values.length === 1 ? values[0] : values;
+    input[key] = values.length === 1 ? (values[0] ?? "") : values;
   }
   return tenantDirectoryExportQuerySchema.parse(input);
 }
