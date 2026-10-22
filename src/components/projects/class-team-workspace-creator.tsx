@@ -558,7 +558,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
       </nav>:null}
       <p className="text-xs text-muted-foreground leading-[20px]">The server will recheck class enrollment, duplicates and existing workspaces before it creates anything. Already covered learners are skipped.</p>
     </section>:null}
-    {groups.length>0?<div className="grid min-w-0 grid-cols-1 gap-3 xl:grid-cols-2" aria-label="Adjustable team preview">
+    {groups.length>0?<div role="region" className="grid min-w-0 grid-cols-1 gap-3 xl:grid-cols-2" aria-label="Adjustable team preview">
       {groups.map((team,index)=><section key={index} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3">
         <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{team.name} · {team.membershipIds.length}</h2>
         <ul className="mt-2 space-y-2">{team.membershipIds.slice(0,

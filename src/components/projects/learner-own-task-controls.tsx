@@ -40,14 +40,14 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not create task");}
   finally{setBusy(false);}
  }
- return <section className="space-y-3">
-  <Button type="button" onClick={()=>setOpen(x=>!x)}
+ return <section aria-label="My project task creation" className="space-y-3">
+  <Button type="button" aria-expanded={open} aria-controls="learner-own-task-form" onClick={()=>setOpen(x=>!x)}
    className="min-h-11 md:min-h-9">
    Add my task
   </Button>
   {!available.length?<p className="text-sm text-muted-foreground">
     No sprint is active. You can add your task to the product backlog.</p>:null}
-  {open?<form onSubmit={e=>void save(e)}
+  {open?<form id="learner-own-task-form" onSubmit={e=>void save(e)}
    className="grid gap-3 border-t border-border py-4 sm:grid-cols-2">
    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Task title
     <Input required maxLength={200} value={title} onChange={e=>setTitle(e.target.value)}

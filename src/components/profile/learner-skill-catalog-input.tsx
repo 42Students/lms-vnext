@@ -120,7 +120,7 @@ export function LearnerSkillCatalogInput({value,onChange,disabled=false,showPopu
      }else if(event.key==="Escape"){event.preventDefault();event.stopPropagation();setPopupOpen(false);setActiveIndex(-1);}
    }}
    placeholder={placeholder}
-   role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded={popupOpen&&resultsReady&&visibleItems.length>0}
+   role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded={popupOpen&&resultsReady&&visibleItems.length>0} aria-busy={popupOpen&&status==="loading"}
    aria-controls={popupOpen&&resultsReady&&visibleItems.length>0?id+"-choices":undefined}
    aria-activedescendant={popupOpen&&resultsReady&&activeIndex>=0&&activeIndex<visibleItems.length?`${id}-choice-${activeIndex}`:undefined}
    className="mt-[6px] w-full"/>

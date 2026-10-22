@@ -218,16 +218,16 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-15.md: file, number of 
 - [x] `src/components/placements/tpo-round-apply-control.tsx`
 - [x] `src/components/placements/tpo-round-results-import.tsx`
 - [x] `src/components/placements/tpo-selection-import.tsx`
-- [ ] `src/components/profile/learner-profile-workspace.tsx`
-- [ ] `src/components/profile/learner-skill-catalog-input.tsx`
-- [ ] `src/components/profile/learner-verification-withdraw.tsx`
-- [ ] `src/components/projects/class-team-workspace-creator.tsx`
-- [ ] `src/components/projects/learner-board-interactive.tsx`
-- [ ] `src/components/projects/learner-own-task-controls.tsx`
-- [ ] `src/components/projects/learner-project-activity.tsx`
-- [ ] `src/components/projects/learner-task-status-actions.tsx`
-- [ ] `src/components/projects/legacy-project-tabs.module.css`
-- [ ] `src/components/projects/mentor-delivery-lock-control.tsx`
+- [x] `src/components/profile/learner-profile-workspace.tsx`
+- [x] `src/components/profile/learner-skill-catalog-input.tsx`
+- [x] `src/components/profile/learner-verification-withdraw.tsx`
+- [x] `src/components/projects/class-team-workspace-creator.tsx`
+- [x] `src/components/projects/learner-board-interactive.tsx`
+- [x] `src/components/projects/learner-own-task-controls.tsx`
+- [x] `src/components/projects/learner-project-activity.tsx`
+- [x] `src/components/projects/learner-task-status-actions.tsx`
+- [x] `src/components/projects/legacy-project-tabs.module.css`
+- [x] `src/components/projects/mentor-delivery-lock-control.tsx`
 - [ ] `src/components/projects/mentor-lane-board.tsx`
 - [ ] `src/components/projects/mentor-meeting-notes-editor.tsx`
 - [ ] `src/components/projects/mentor-meeting-reschedule.tsx`

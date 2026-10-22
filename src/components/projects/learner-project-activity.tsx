@@ -34,8 +34,8 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
   const lastEvent=learnerProjectActivityLastFetched(events);
   const csv=learnerProjectActivityCsv(shown);
   const route = "/learn/projects/" + encodeURIComponent(projectId);
-  return <section aria-label="Project Activity" className="space-y-4">
-    <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Activity</h2>
+  return <section aria-labelledby="learner-project-activity-heading" className="space-y-4">
+    <h2 id="learner-project-activity-heading" className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Activity</h2>
     <details className="border-b border-border" defaultOpen={Boolean(parsed.success &&
       (category !== "ALL" || parsed.data.from || parsed.data.to))}>
       <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
