@@ -16,11 +16,11 @@ export function SuperAdminTemplateTabs({
   active: TemplateSubview;
   counts?: Partial<Record<TemplateSubview, number>>;
 }) {
-  return <Tabs className={styles.legacy} ariaLabel="Project template sections" value={active} renderPanel={false}
+  return <Tabs className={styles["legacy"]} ariaLabel="Project template sections" value={active} renderPanel={false}
     items={TEMPLATE_SUBVIEW_TABS.map(tab=>({
       value:tab.id,
       label:tab.label,
       href:templateSubviewHref(templateId,tab.id),
-      count:counts?.[tab.id],
+      ...(counts?.[tab.id] !== undefined ? {count:counts[tab.id]} : {}),
     }))}/>;
 }
