@@ -15350,7 +15350,7 @@
         },
         "placement_round_results_source_ck": {
           "name": "placement_round_results_source_ck",
-          "value": "\"placement_round_results\".\"source\" in ('TPO', 'HR', 'IMPORT')"
+          "value": "\"placement_round_results\".\"source\" in ('TPO', 'HR', 'IMPORT', 'FACULTY')"
         },
         "placement_round_results_status_ck": {
           "name": "placement_round_results_status_ck",
