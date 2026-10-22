@@ -27,7 +27,7 @@ export async function POST(request:Request){
   return NextResponse.json({status:"ERROR",error:"E2E_SEED_DISABLED"},
    {status:503,headers});
  }
- const secret=process.env.E2E_SEED_OPERATOR_SECRET??"";
+ const secret=process.env["E2E_SEED_OPERATOR_SECRET"]??"";
  const supplied=request.headers.get("x-e2e-seed-key")??"";
  if(Buffer.byteLength(secret,"utf8")<32)
   return NextResponse.json({status:"ERROR",error:"E2E_SEED_NOT_CONFIGURED"},
