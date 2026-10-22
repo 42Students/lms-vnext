@@ -150,7 +150,7 @@ export async function ProjectAdminAtRiskPage({
       <ListToolbar label="At-risk workspaces" viewCount={result.total}
         exportAction={<ProjectAtRiskPageExport collegeId={collegeId}
           rows={result.items.map(project=>({
-            id:project.id,title:project.title,status:project.status,
+            id:project.id,title:project.title,status:project.displayStatus,
             severity:project.riskSeverity,mentorName:project.mentorName,
             inactiveDays:project.inactiveDays,riskReasons:project.riskReasons,
             blockerReason:project.blockerReason,
@@ -176,9 +176,9 @@ export async function ProjectAdminAtRiskPage({
           {key:"mentor",header:"Mentor",mobilePriority:"secondary",
            cell:project=>project.mentorName?.trim()||"—"},
           {key:"status",header:"Status",mobilePriority:"secondary",
-           cell:project=><StatusBadge tone={project.status==="ACTIVE"||project.status==="COMPLETED"?"success":
-             project.status==="BLOCKED"?"warning":"neutral"}>
-             {project.status.toLowerCase().replaceAll("_"," ").replace(/\b\w/g,letter=>letter.toUpperCase())}</StatusBadge>},
+           cell:project=><StatusBadge tone={project.displayStatus==="ACTIVE"||project.displayStatus==="COMPLETED"?"success":
+             project.displayStatus==="BLOCKED"?"warning":"neutral"}>
+             {project.displayStatus.toLowerCase().replaceAll("_"," ").replace(/\b\w/g,letter=>letter.toUpperCase())}</StatusBadge>},
           {key:"severity",header:"Severity",mobilePriority:"secondary",
            cell:project=><StatusBadge
              tone={project.riskSeverity==="HIGH_RISK"?"error":
