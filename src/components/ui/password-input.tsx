@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type ComponentPropsWithRef } from "react";
+import { useEffect, useId, useImperativeHandle, useRef, useState, type ComponentPropsWithRef } from "react";
 import { Input } from "./input";
 import { Button } from "./button";
 import { cx } from "@/lib/class-names";
@@ -19,18 +19,19 @@ export function PasswordInput({ error = false, className, ...props }: PasswordIn
   // A disabled password must never remain in a previously revealed text state.
   useEffect(() => { if (props.disabled) setVisible(false); }, [props.disabled]);
   const fieldRef = useRef<HTMLInputElement | null>(null);
-  function bindField(node: HTMLInputElement | null) {
-    fieldRef.current = node;
-    const forwardedRef = props.ref;
-    if (typeof forwardedRef === "function") forwardedRef(node);
-    else if (forwardedRef) forwardedRef.current = node;
-  }
+  // React owns callback/object-ref assignment. Expose the mounted native input
+  // through its imperative ref hook rather than mutating a caller's ref.
+  useImperativeHandle(props.ref, () => {
+    const node = fieldRef.current;
+    if (!node) throw new Error("Password input is not mounted");
+    return node;
+  }, []);
   const effectiveVisible = visible && !props.disabled;
   const generatedId = useId();
   const inputId = props.id ?? generatedId;
   return (
     <div data-slot="password-input" className="flex w-full min-w-0 items-stretch gap-[var(--lms-space-2)]">
-      <Input {...props} id={inputId} ref={bindField} type={effectiveVisible ? "text" : "password"}
+      <Input {...props} id={inputId} ref={fieldRef} type={effectiveVisible ? "text" : "password"}
         error={error} className={cx("min-w-0 flex-1", className)} />
       <Button type="button" variant="secondary" disabled={props.disabled}
         aria-controls={inputId}

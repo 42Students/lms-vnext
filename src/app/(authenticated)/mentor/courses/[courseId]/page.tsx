@@ -1,6 +1,6 @@
 import {redirect} from "next/navigation";
 
-/** Keep old mentor course bookmarks working without exposing retired courses. */
-export default function MentorLegacyCourseRedirect(){
+/** MEN-projects-meetings-74: legacy mentor bookmark compatibility. */
+export default function MentorLegacyRedirect(){
   redirect("/mentor/projects");
 }
