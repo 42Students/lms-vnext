@@ -46,7 +46,7 @@ describe("Super Admin Courses and Content gap closure",()=>{
   const overview=readFileSync("src/components/courses/admin-course-overview.tsx","utf8");
   const create=readFileSync("src/components/courses/admin-course-create-panel.tsx","utf8");
   expect(page).toContain('courseBasePath="/admin/courses"');
-  expect(page).toContain("duplicateCourseId={duplicateCourseId}");
+  expect(page).toContain("{...(duplicateCourseId!==undefined?{duplicateCourseId}:{})}");
   expect(overview).toContain('duplicateHref={courseBasePath+"?duplicate="+encodeURIComponent(course.id)}');
   expect(overview).toContain("courseBasePath={courseBasePath}");
   expect(create).toContain("collegeCourseDuplicatePrefill(courses,duplicateCourseId)");
