@@ -2,11 +2,11 @@
 
 CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER your deep packets 1-2 in lane-16-deep.md. For each file: read the failure below, read the test and the code it tests, decide which side is wrong against the old LMS (docs/legacy-source) and fix THAT side (fix the product code if it regressed; update the test only if the test asserts outdated/wrong behaviour). Never delete tests, never .skip, never weaken assertions to pass. Push after every file and tick it here.
 
-- [ ] `tests/unit/UX-college-roster-data-tables-01.test.ts` (1 failing)
-- [ ] `tests/unit/chat15-learner-playback-settings.test.ts` (1 failing)
+- [x] `tests/unit/UX-college-roster-data-tables-01.test.ts` (source-level repair committed on chat-16 branch; CI not rerun) (1 failing)
+- [x] `tests/unit/chat15-learner-playback-settings.test.ts` (source-level repair committed on chat-16 branch; CI not rerun) (1 failing)
 - [x] `tests/unit/chat3-course-visibility-independent.test.ts` (FIXED on chat-16 branch: independent display flag) (1 failing)
-- [ ] `tests/unit/chat7-application-rate-limit-verify2b.test.ts` (1 failing)
-- [ ] `tests/unit/college-courses-content-gap-closure.test.ts` (1 failing)
+- [x] `tests/unit/chat7-application-rate-limit-verify2b.test.ts` (source-level repair committed on chat-16 branch; CI not rerun) (1 failing)
+- [x] `tests/unit/college-courses-content-gap-closure.test.ts` (source-level repair committed on chat-16 branch; CI not rerun) (1 failing)
 - [x] `tests/unit/recruiter-chat14-message-email-bridge-contract.test.ts` (FIXED on chat-16 branch: HMAC rotation contract) (1 failing)
 
 ## Failures (from CI log)
