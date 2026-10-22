@@ -15,8 +15,8 @@ export function parseFacultyInboxQuery(raw: unknown) {
     return { view: "all" as const, cursor: null, invalid: true };
   }
   const cursor = parseNotificationCursor({
-    beforeCreatedAt: parsed.data.beforeCreatedAt,
-    beforeId: parsed.data.beforeId,
+    ...(parsed.data.beforeCreatedAt !== undefined ? { beforeCreatedAt: parsed.data.beforeCreatedAt } : {}),
+    ...(parsed.data.beforeId !== undefined ? { beforeId: parsed.data.beforeId } : {}),
   });
   return {
     view: parsed.data.view ?? "all",
