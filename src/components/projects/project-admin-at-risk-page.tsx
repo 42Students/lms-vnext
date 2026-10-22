@@ -160,14 +160,16 @@ export async function ProjectAdminAtRiskPage({
 
       <DataTable caption="At-risk project workspaces" rows={result.items}
         mobileMode="scroll"
-        sortHref={column=>riskHref(basePath,{
-          ...query,riskSort:column==="workspace"?"WORKSPACE":
-            query.riskSort==="INACTIVE"?"INACTIVE_DESC":"INACTIVE",
+        sortHref={(column,next)=>riskHref(basePath,{
+          ...query,riskSort:column==="workspace"
+            ?next==="descending"?"WORKSPACE_DESC":"WORKSPACE"
+            :next==="descending"?"INACTIVE":"INACTIVE_DESC",
         },query.riskBucket??null)}
         getRowKey={project=>project.id}
         columns={[
           {key:"workspace",header:"Workspace",mobilePriority:"primary",sortable:true,
-           sortDirection:query.riskSort==="WORKSPACE"?"ascending":"none",
+           sortDirection:query.riskSort==="WORKSPACE"?"ascending":
+             query.riskSort==="WORKSPACE_DESC"?"descending":"none",
            cell:project=><Link href={workspaceHref(project)}
              className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
              {project.title}</Link>},
@@ -189,8 +191,8 @@ export async function ProjectAdminAtRiskPage({
              {!project.riskReasons.length?<span>—</span>:null}
            </div>},
           {key:"inactive",header:"Inactive",mobilePriority:"secondary",sortable:true,
-           sortDirection:query.riskSort==="INACTIVE"?"ascending":
-             query.riskSort==="INACTIVE_DESC"?"descending":"none",
+           sortDirection:query.riskSort==="INACTIVE"?"descending":
+             query.riskSort==="INACTIVE_DESC"?"ascending":"none",
            cell:project=><span title={"Last activity "+formatDate(project.lastActivityAt)}>
              {!project.riskReasons.includes("Stalled")?"—":project.inactiveDays===0?"Today":project.inactiveDays+"d"}</span>},
           {key:"blocker",header:"Blocker",mobilePriority:"secondary",
