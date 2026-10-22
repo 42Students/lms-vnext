@@ -8,7 +8,9 @@ describe("PUB-auth-public-41 REC-calendar-messages-profile-38 invitation send-co
  });
  it("limits code requests per token and college",()=>{
   expect(recruiterOtpSendAllowed(5,0)).toBe(false);
-  expect(recruiterOtpSendAllowed(0,300)).toBe(false);
+  // The college-wide counter is monitoring-only; other recruiter invites
+  // must not lock this user's valid link (the per-link cap is enforced).
+  expect(recruiterOtpSendAllowed(0,300)).toBe(true);
   expect(recruiterOtpSendAllowed(4,299)).toBe(true);
  });
 });
