@@ -286,7 +286,9 @@ describe("Super Admin UX first-third rollout",()=>{
    const page=read("src/app/(authenticated)/admin/batch-promotion/page.tsx");
    expect(page).toContain('<DataTable<(typeof visibleCohorts)[number]>');
    expect(page).toContain('mobilePriority:"action"');
-   expect(page).toContain('No batches match the selected program and status.');
+   expect(page).toContain('No active batches.');
+   expect(page).toContain('No batches found.');
+   expect(page).toContain('options.cohorts.length&&!showCompleted');
    expect(page).toContain('cohortId:batch.id');
    expect(page).not.toContain('min-w-[44rem]');
  });
@@ -305,7 +307,9 @@ describe("Super Admin UX first-third rollout",()=>{
   expect(page).toContain('overridesModule:query.overridesModule');
   const table=read("src/components/ui/data-table.tsx");
   const cue=read("src/components/ui/scroll-cue.tsx");
-  expect(table).toContain("sm:first:sticky sm:first:left-0");
+  expect(table).toContain("md:first:sticky md:first:left-0");
+  expect(table).toContain("md:table-cell");
+  expect(table).toContain("mobilePriority");
   expect(table).toContain('<ScrollCue axis="x"');
   expect(cue).toContain("tabIndex={edges.scrollable ? 0 : -1}");
   expect(page).toContain('mobilePriority:"action"');
