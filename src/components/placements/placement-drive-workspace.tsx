@@ -7,7 +7,6 @@ import { PageHeader } from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { Banner } from "@/components/ui/banner";
 import { Alert } from "@/components/ui/alert";
 import { listCohorts } from "@/modules/academics/cohort-service";
 import {listSections} from "@/modules/academics/section-service";
@@ -298,7 +297,7 @@ export async function PlacementDriveWorkspace({
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <PageHeader
-        eyebrow={eyebrow}
+        {...(eyebrow !== undefined ? {eyebrow} : {})}
         title={job.title}
         description={job.companyName+" · "+headerFacts.status+(job.applicationDeadline?" · Deadline "+formatDriveIst(job.applicationDeadline):"")}
         actions={
@@ -458,9 +457,9 @@ export async function PlacementDriveWorkspace({
       ) : null}
       {isTpo?<nav aria-label="Drive sections" className="flex min-w-0 flex-wrap gap-2 border-b border-border pb-3 text-sm">
         {tpoDriveLegacyInnerTabs(jobId,{
-          applicants:screening?.length,rounds:driveDay.rounds.length,
-          offers:offerCandidates?.filter(item=>item.offer?.status==="ISSUED"||
-            item.offer?.status==="ACCEPTED").length,
+          ...(screening !== undefined && screening !== null ? {applicants:screening.length} : {}),rounds:driveDay.rounds.length,
+          ...(offerCandidates !== undefined && offerCandidates !== null ? {offers:offerCandidates.filter(item=>item.offer?.status==="ISSUED"||
+            item.offer?.status==="ACCEPTED").length} : {}),
         }).filter(tab=>tab.label!=="Drive day"||driveDay.rounds.some(round=>
           round.mode===null||round.mode==="ON_CAMPUS"
         )).map(tab=><Link key={tab.href} href={tab.href}
@@ -878,7 +877,7 @@ export async function PlacementDriveWorkspace({
       <section id="drive-round-actions" className="min-w-0">
       {controlData?<PlacementDriveControls
         data={controlData}
-        scheduleWarnings={scheduleWarnings}
+        {...(scheduleWarnings !== undefined ? {scheduleWarnings} : {})}
       />:<Alert tone="warning">Evaluation or screening data could not be loaded. Editing rounds and candidate screening is unavailable.</Alert>}
       </section>
       {offerCandidates?<div className="min-w-0"><PlacementOfferControls
