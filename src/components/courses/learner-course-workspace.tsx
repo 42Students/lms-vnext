@@ -1146,7 +1146,12 @@ export function LearnerCourseWorkspace({
                           >
                             <AssignmentCard assignment={assignment} deliveryId={deliveryId} readOnly={readOnly} />
                           </LearnerSyllabusItem>
-                        ) : null;
+                        ) : (
+                          <div key={item.id} role="alert" className="rounded-lg border border-warning p-3 text-sm text-warning">
+                            This assignment could not be loaded. Retry to restore the lesson item.
+                            <LearnerCourseStateRetry label="Retry" />
+                          </div>
+                        );
                       }
 
                       const quiz = lesson.quizzes.find(
@@ -1173,7 +1178,12 @@ export function LearnerCourseWorkspace({
                         >
                           <QuizCard quiz={quiz} deliveryId={deliveryId} readOnly={readOnly} />
                         </LearnerSyllabusItem>
-                      ) : null;
+                      ) : (
+                        <div key={item.id} role="alert" className="rounded-lg border border-warning p-3 text-sm text-warning">
+                          This quiz could not be loaded. Retry to restore the lesson item.
+                          <LearnerCourseStateRetry label="Retry" />
+                        </div>
+                      );
                     })}
                   </div>
                 )}
