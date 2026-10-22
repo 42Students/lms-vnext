@@ -287,7 +287,8 @@ export async function getSuperAdminCompanyIdentityByName(
   eq(placementCompanies.status,"ACTIVE"),
   sql`lower(btrim(${placementCompanies.name})) = lower(${name})`,
  )).orderBy(asc(placementCompanies.id)).limit(2);
- if(rows.length===0)return {status:"NOT_FOUND",company:null};
+ const match=rows[0];
+ if(!match)return {status:"NOT_FOUND",company:null};
  if(rows.length>1)return {status:"AMBIGUOUS",company:null};
  return {status:"FOUND",company:{id:match.id,name:match.name,
   verified:match.verifiedAt!==null}};
