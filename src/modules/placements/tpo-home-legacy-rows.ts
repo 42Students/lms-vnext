@@ -59,8 +59,8 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
   (detail?" · "+detail:"");
  const requests=d.pendingRequests,messages=d.messages;
  const inboxParts=[
-  requests===null?"Requests unavailable":requests?plural(requests,"request"):null,
-  messages===null?"Messages unavailable":messages?plural(messages,"message")+" to answer":null,
+  requests==null?"Requests unavailable":requests?plural(requests,"request"):null,
+  messages==null?"Messages unavailable":messages?plural(messages,"message")+" to answer":null,
  ].filter(Boolean);
  const inboxStatus=inboxParts.length?inboxParts.join(" · "):"No requests or messages waiting";
  const next=d.upcoming[0];
@@ -93,7 +93,7 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
   {key:"team",title:"Team",status:(d.teamAsks??0)>0?plural(d.teamAsks!,"ask")+" for you":
    (d.teamMentions??0)>0?plural(d.teamMentions!,"mention"):
    (d.teamUnread??0)>0?plural(d.teamUnread!,"new message"):
-   d.teamAsks===null||d.teamMentions===null||d.teamUnread===null?"Team updates unavailable":"Nothing waiting on you",
+   d.teamAsks==null||d.teamMentions==null||d.teamUnread==null?"Team updates unavailable":"Nothing waiting on you",
    href:(d.teamAsks??0)+(d.teamMentions??0)>0?"/tpo/team?filter=me":"/tpo/team",
    needsAttention:(d.teamAsks??0)+(d.teamMentions??0)>0},
   {key:"week",title:"This week",status:next?showWhen(next.startsAt)+" · "+next.title+
