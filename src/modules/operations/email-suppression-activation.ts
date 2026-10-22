@@ -10,9 +10,9 @@ import {outboundQueueRuntimeEnabled,outboundDispatchRuntimeEnabled} from "./outb
 export function globalEmailSuppressionActivationState(){
  const queueReady=outboundQueueRuntimeEnabled();
  const dispatcherReady=outboundDispatchRuntimeEnabled();
- const senderVerified=process.env.DB10_EMAIL_SENDER_VERIFIED==="DB10_VERIFIED";
- const migrationVerified=process.env.DB10_GLOBAL_SUPPRESSION_VERIFIED==="DB10_VERIFIED";
- const keyConfigured=Boolean(process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64);
+ const senderVerified=process.env["DB10_EMAIL_SENDER_VERIFIED"]==="DB10_VERIFIED";
+ const migrationVerified=process.env["DB10_GLOBAL_SUPPRESSION_VERIFIED"]==="DB10_VERIFIED";
+ const keyConfigured=Boolean(process.env["DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64"]);
  return {
   active:queueReady&&dispatcherReady&&senderVerified&&migrationVerified&&keyConfigured,
   queueReady,dispatcherReady,senderVerified,migrationVerified,keyConfigured,
