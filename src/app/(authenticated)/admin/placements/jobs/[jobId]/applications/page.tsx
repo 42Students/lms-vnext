@@ -1,4 +1,3 @@
-import {AdminDriveApplicationsRetained} from "@/components/admin/admin-drive-applications-retained";
 import {CollegeDriveApplicationsSizeControl} from "@/components/placements/college-drive-applications-size-control";
 import {LastKnownGoodApplications} from "@/components/placements/last-known-good-applications";
 import Link from "next/link";
@@ -45,14 +44,14 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
   const query = driveApplicationsParams(rawQuery);
   // A legacy return path is only used for navigation, never tenant scope or
   // database filtering. Do not allow absolute or protocol-relative targets.
-  const requestedReturn=typeof rawQuery.returnTo==="string"?rawQuery.returnTo:"";
+  const requestedReturn=typeof rawQuery["returnTo"]==="string"?rawQuery["returnTo"]:"";
   const returnTo=requestedReturn.startsWith("/admin/placements")&&
     !requestedReturn.startsWith("//")&&!requestedReturn.includes("\\")&&
     requestedReturn.length<512?requestedReturn:"/admin/placements/drives";
-  const shortlisted=rawQuery.shortlisted==="true";
+  const shortlisted=rawQuery["shortlisted"]==="true";
   const preserved=returnTo==="/admin/placements/drives"?"":"?returnTo="+encodeURIComponent(returnTo);
-  const validView=(rawQuery.shortlisted===undefined||rawQuery.shortlisted==="true")&&
-    (rawQuery.returnTo===undefined||typeof rawQuery.returnTo==="string");
+  const validView=(rawQuery["shortlisted"]===undefined||rawQuery["shortlisted"]==="true")&&
+    (rawQuery["returnTo"]===undefined||typeof rawQuery["returnTo"]==="string");
   const resetHref="/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications";
   const retryHref=resetHref+"?"+new URLSearchParams(
    Object.entries(rawQuery).filter((entry):entry is [string,string]=>
