@@ -1927,7 +1927,6 @@ export function ProjectWorkspace({
                         {source ? (
                           <a
                             href={source}
-                            target="_blank"
                             rel="noopener noreferrer"
                             className="text-link hover:text-[var(--lms-primary-text)]"
                           >
@@ -1937,7 +1936,6 @@ export function ProjectWorkspace({
                         {demo ? (
                           <a
                             href={demo}
-                            target="_blank"
                             rel="noopener noreferrer"
                             className="text-link hover:text-[var(--lms-primary-text)]"
                           >
@@ -2332,7 +2330,6 @@ export function ProjectWorkspace({
                     {href && meeting.status!=="CANCELLED" && meeting.status!=="COMPLETED" && mentorMeetingDisplayStatus(meeting.status,meeting.endsAt,renderTime)!=="MISSED" ? (
                       <a
                         href={href}
-                        target="_blank"
                         rel="noopener noreferrer"
                         className="mt-3 inline-flex text-sm font-semibold text-link hover:text-[var(--lms-primary-text)]"
                       >

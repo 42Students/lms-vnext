@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import {Button} from "@/components/ui/button";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import type {FacultyProfileDocument} from "@/modules/people/faculty-profile-document";
 type Purpose="EDUCATION_CERTIFICATE"|"CERTIFICATION"|"EXPERIENCE_CERTIFICATE"|"OFFER_LETTER";
 type Item={purpose:Purpose;entryId:string;label:string;receiptId:string|null};
@@ -16,6 +17,7 @@ export function FacultyProfileAttachments({document,version,pending,onChanged}:{
  const [link,setLink]=useState<{key:string;url:string;expiresAt:number}|null>(null);
  const [status,setStatus]=useState("");
  const [error,setError]=useState("");
+ const [revokeItem,setRevokeItem]=useState<Item|null>(null);
  const locked=pending||busy;
  const items:Item[]=[
   ...document.education.map(row=>({purpose:"EDUCATION_CERTIFICATE" as const,
@@ -96,9 +98,8 @@ export function FacultyProfileAttachments({document,version,pending,onChanged}:{
   finally{setBusy(false);setStage("IDLE");}
  }
  async function revoke(item:Item){
-  if(locked||!item.receiptId||
-     !window.confirm("Remove this private attachment? Records and audit history remain."))
-   return;
+  if(locked||!item.receiptId)return;
+  setRevokeItem(null);
   setBusy(true);setError("");setLink(null);
   try{
    const response=await fetch(ENDPOINT,{
@@ -143,10 +144,10 @@ export function FacultyProfileAttachments({document,version,pending,onChanged}:{
       <Button type="button" variant="secondary" disabled={locked}
        onClick={()=>void open(item)}>Request private link</Button>
       <Button type="button" variant="danger" disabled={locked}
-       onClick={()=>void revoke(item)}>Remove</Button>
+       onClick={()=>setRevokeItem(item)}>Remove</Button>
      </div>:null}
     {link?.key===item.purpose+":"+item.entryId&&link.expiresAt>Date.now()?
-     <a href={link.url} target="_blank" rel="noopener noreferrer"
+     <a href={link.url} rel="noopener noreferrer"
       className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
       Open verified attachment (expires soon)
      </a>:null}
@@ -159,5 +160,11 @@ export function FacultyProfileAttachments({document,version,pending,onChanged}:{
    </p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {status?<p role="status" className="text-xs text-muted-foreground">{status}</p>:null}
+  <ConfirmDialog open={revokeItem!==null}
+   onOpenChange={open=>{if(!open)setRevokeItem(null);}}
+   title="Remove private attachment?"
+   description="Remove this private attachment? Records and audit history remain."
+   confirmLabel="Remove" pending={busy}
+   onConfirm={()=>{if(revokeItem)void revoke(revokeItem);}}/>
  </section>;
 }
