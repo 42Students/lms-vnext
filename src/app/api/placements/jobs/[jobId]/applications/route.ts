@@ -68,7 +68,7 @@ export async function POST(
     const application = await applyToPlacementJob(
       context,
       jobId,
-      createPlacementApplicationInputSchema.parse(input),
+      createPlacementApplicationInputSchema.parse(input) as Parameters<typeof applyToPlacementJob>[2],
     );
     return NextResponse.json(
       { application,
