@@ -7,10 +7,11 @@ describe("Learner profile academic and access record",()=>{
   const page=source("src/app/(authenticated)/learn/profile/data-access/page.tsx");
   const profile=source("src/app/(authenticated)/learn/profile/page.tsx");
   expect(svc).toContain("requireOwnLearnerProfileAccess(context)");
-  expect(svc).toContain("eq(activityEvents.organizationId,member.organizationId)");
-  expect(svc).toContain("eq(activityEvents.collegeId,member.collegeId)");
-  expect(svc).toContain("eq(activityEvents.subjectId,member.id)");
-  expect(svc).toContain(".limit(20)");
+  expect(svc).toContain("eq(collegeMemberships.userId,context.user.id)");
+  expect(svc).toContain("eq(placementJobs.collegeId,placementCompanyApplicantShares.collegeId)");
+  expect(svc).toContain("eq(placementJobs.collegeId,collegeMemberships.collegeId)");
+  expect(svc).toContain(".limit(LEARNER_PROFILE_SHARE_PAGE_SIZE+1)");
+  expect(svc).toContain("Individual row access is not recorded.");
   expect(page).toContain("Who has my data");
   expect(page).toContain("getOwnLearnerAcademicSummary(context)");
   expect(page).toContain("A complete record of profile views is not available");
