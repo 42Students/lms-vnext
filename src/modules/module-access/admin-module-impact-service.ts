@@ -1,7 +1,7 @@
 import "server-only";
 import {moduleDisableImpactSummary} from "./admin-module-impact-model";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
-import {and,count,countDistinct,eq,gt,isNull} from "drizzle-orm";
+import {and,count,countDistinct,eq,gt,isNull,notInArray,or} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {colleges,collegeMemberships,membershipRoles,users,projectInstances,projectMembers,placementJobs,placementApplications,placementOffers,placementRoundCandidateSlots} from "@/db/schema";
@@ -48,20 +48,35 @@ export async function readModuleDisableImpact(ctx:RequestContext,collegeRaw:stri
   return {module:moduleName,students,counts,summary:moduleDisableImpactSummary(moduleName,counts,college.name)};
  }
  if(moduleName==="placements"){
+  // Legacy impact counts in-progress applications for actual college
+  // learners, not only applications still in the initial SUBMITTED stage.
+  // Include later screening/offered stages while excluding deleted/final
+  // rejected, withdrawn or hired applications. BOOKED interviews likewise
+  // require a real application in this college, not merely a job locator.
   const [drives,applications,offers,interviews]=await Promise.all([
    db.select({total:count()}).from(placementJobs)
     .where(and(eq(placementJobs.collegeId,collegeId),eq(placementJobs.status,"PUBLISHED"))),
-   db.select({total:count()}).from(placementApplications)
+   db.select({total:countDistinct(placementApplications.id)}).from(placementApplications)
     .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
-    .where(and(eq(placementJobs.collegeId,collegeId),eq(placementApplications.status,"SUBMITTED"))),
+    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
+    .where(and(
+      eq(placementJobs.collegeId,collegeId),
+      eq(collegeMemberships.collegeId,collegeId),
+      notInArray(placementApplications.status,["HIRED","REJECTED","WITHDRAWN"]),
+      or(isNull(placementApplications.legacyWasDeleted),
+        eq(placementApplications.legacyWasDeleted,false)),
+    )),
    db.select({total:count()}).from(placementOffers)
     .innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
     .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
     .where(and(eq(placementJobs.collegeId,collegeId),eq(placementOffers.status,"ISSUED"))),
-   db.select({total:count()}).from(placementRoundCandidateSlots)
+   db.select({total:countDistinct(placementRoundCandidateSlots.id)}).from(placementRoundCandidateSlots)
     .innerJoin(placementJobs,eq(placementJobs.id,placementRoundCandidateSlots.jobId))
+    .innerJoin(placementApplications,eq(placementApplications.id,placementRoundCandidateSlots.applicationId))
+    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
     .where(and(
       eq(placementJobs.collegeId,collegeId),
+      eq(collegeMemberships.collegeId,collegeId),
       eq(placementRoundCandidateSlots.status,"BOOKED"),
       gt(placementRoundCandidateSlots.startsAt,new Date()),
     )),

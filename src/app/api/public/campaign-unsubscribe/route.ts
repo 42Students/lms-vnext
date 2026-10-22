@@ -7,6 +7,15 @@ import {verifyUnsubscribeToken} from "@/modules/messaging/unsubscribe-model";
 import {verifyTpoCampaignRecipientToken,resolveTpoCampaignRecipientSecret} from "@/modules/messaging/tpo-campaign-recipient-token";
 import {CampaignUnsubscribeInvalid,unsubscribeTpoCampaignRecipient} from "@/modules/messaging/tpo-campaign-unsubscribe-service";
 export const runtime="nodejs";
+/** Do not acknowledge a signed opt-out when its recipient table has not
+ * been deployed. Public callers get a generic retryable state, never a
+ * recipient-lookup oracle or a false "unsubscribed" confirmation. */
+function recipientStorageUnavailable(error:unknown):NextResponse|null {
+ if(!(error instanceof Error)||error.message!=="TPO_CAMPAIGNS_NOT_REGISTERED")return null;
+ return NextResponse.json({error:"SUPPRESSIONS_NOT_READY",message:"That didn't work. Please try again."},{
+  status:503,headers:{"Cache-Control":"no-store"},
+ });
+}
 function successResponse(request:Request,scope:"placement-cell"|null){
  // Legacy inline confirm pages can request JSON and keep their current URL.
  // Existing native-form integrations retain the confirmed-page 303 fallback.
@@ -44,6 +53,8 @@ export async function POST(request:Request){
   }catch(e){
    if(e instanceof CampaignUnsubscribeInvalid)
     return successResponse(request,"placement-cell");
+   const unavailable=recipientStorageUnavailable(e);
+   if(unavailable)return unavailable;
    throw e;
   }
  }
@@ -58,6 +69,8 @@ export async function POST(request:Request){
   }catch(e){
    if(e instanceof CampaignUnsubscribeInvalid)
     return successResponse(request,"placement-cell");
+   const unavailable=recipientStorageUnavailable(e);
+   if(unavailable)return unavailable;
    throw e;
   }
  }

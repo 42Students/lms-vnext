@@ -261,7 +261,7 @@ export function deriveGlobalEmailSuppressionHashForAddress(
   rawAddress:string,globalEmailHmacKeyBase64:string,
 ):string {
   const address=rawAddress.trim().toLowerCase();
-  if(address.length>320||!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(address))
+  if(address.length>320||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address))
     throw new OutboundDeliveryError("INVALID_OUTBOUND_INTENT");
   const {digestKey}=keyMaterial(globalEmailHmacKeyBase64);
   return digest(digestKey,"global-email-suppression-v1",address);
