@@ -47,8 +47,8 @@ export default async function SuperAdminOrganizationJobsPage({searchParams}:{
  if(scoped||organizationId){
   try{
    result=await searchOrganizationPlacementJobs(context,{
-    ...params,...(organizationId?{organizationId}:{}),
-    pageSize:50,
+    q:params.q,status:params.status,sort:params.sort,page:params.page,
+    ...(organizationId?{organizationId}:{}),pageSize:50,
    });
   }catch{loadError=true;}
  }
