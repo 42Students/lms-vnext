@@ -13,8 +13,8 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
   if (!isSuperAdmin(context)) throw new AuthorizationError("placements.read");
   const selected = context.adminScope;
   requirePermission(context, "placements.read", {
-    organizationId: selected?.organizationId,
-    collegeId: selected?.collegeId,
+    ...(selected?.organizationId != null ? { organizationId: selected.organizationId } : {}),
+    ...(selected?.collegeId != null ? { collegeId: selected.collegeId } : {}),
   });
   const filters: SQL[] = [];
   const dbPlaceholderDomain=(pattern:string)=>getDb().select({id:placementCompanyDomains.id})
