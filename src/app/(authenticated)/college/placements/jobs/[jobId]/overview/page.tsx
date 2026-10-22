@@ -9,7 +9,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { getCollegeDriveOverview } from "@/modules/placements/college-drive-overview-service";
 import {getCollegeHiringFunnel} from "@/modules/placements/college-hiring-funnel-service";
 import {getCollegeDriveAttention} from "@/modules/placements/college-drive-attention-service";
-import {CollegeDrivePipelineOverview} from "@/components/placements/college-drive-pipeline-overview";
+import {CollegeDrivePipelineOverview,CollegeDriveAttentionBanner} from "@/components/placements/college-drive-pipeline-overview";
 import {CollegeDriveDuplicateAction} from "@/components/placements/college-drive-duplicate-action";
 
 export default async function CollegeDriveOverviewPage({ params }: {
@@ -70,6 +70,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
       <span aria-hidden="true">/</span><span aria-current="page">Overview</span>
     </nav>
     <PageHeader title="Drive overview" description={drive.companyName+" · "+drive.seasonName}/>
+    {attention?<CollegeDriveAttentionBanner jobId={jobId} attention={attention}/>:null}
     <section aria-label="Drive company and role" className={"min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] border-l-[3px] bg-surface p-[var(--lms-space-4)] "+(drive.status==="PUBLISHED"?"border-l-[#52c41a]":drive.status==="DRAFT"?"border-l-[#faad14]":"border-l-[#8c8c8c]")}>
       <div className="flex min-w-0 flex-wrap items-start gap-[var(--lms-space-4)]">
         <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle text-lg font-semibold text-[var(--lms-heading)]" aria-label={drive.companyName+" company logo"}>
@@ -132,7 +133,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
       <p className="text-xs text-muted-foreground">Observed stage counts for this drive; transitions are never inferred from downstream offers. {counts.selected===null?"Selection count unavailable.":counts.selected+" recorded selected applicants."} {counts.offered===null?"Offer count unavailable.":counts.offered+" distinct applicants received offers."}</p>
     </section>
     {!attention?<Alert tone="info">Drive attention could not be checked. The primary drive record remains available.</Alert>:null}
-    {funnel&&attention?<CollegeDrivePipelineOverview jobId={jobId} data={funnel} attention={attention}/>:null}
+    {funnel?<CollegeDrivePipelineOverview jobId={jobId} data={funnel}/>:null}
 
     <p className="text-xs text-muted-foreground leading-5">These are persisted operational counts, not a sequential funnel. No missing selection data is inferred.</p>
   </div>;

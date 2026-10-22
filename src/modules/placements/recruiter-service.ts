@@ -536,8 +536,10 @@ export async function listOwnRecruiterPlacementJobs(
       eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
       eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
       eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
-      // T-S1-01: null or expired grants are never effective, even if ACTIVE.
-      gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
+      // Legacy NULL valid_until is a verified indefinite grant; expired
+      // non-null grants are rejected at query time, not by session age.
+      or(isNull(placementRecruiterCollegeGrants.validUntil),
+        gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`)),
       sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`,
     ))
     .innerJoin(placementRecruiterProfiles,and(
