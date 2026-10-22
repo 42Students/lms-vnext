@@ -7,4 +7,5 @@ it("shows an accessible empty state before mapping rounds",()=>{
  expect(page).toContain('<EmptyState title="No hiring rounds"');
  const empty=readFileSync("src/components/ui/empty-state.tsx","utf8");
  expect(empty).toContain('role="status"');
+ expect(empty).toContain('aria-live="polite"');
 });
