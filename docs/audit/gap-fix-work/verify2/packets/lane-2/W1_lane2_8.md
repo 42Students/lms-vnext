@@ -126,3 +126,8 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: (none, new feature)
 - Legacy: LFE/components/admin/projects/RepeatingItemEditor.jsx:250-276: max500 rows exact error, missing title `Item N: Title required`
 - Expected fix: Expose equivalent row limit/errors with new per-row semantics
+
+## Lane-2 verification evidence (partial)
+- OK G2-6-011-024, G2-6-011-042: `saveTpoJobTypes` retains original label mappings and updates linked placement jobs in one transaction; `setTpoJobTypeCountsAsPlaced` updates linked drives under college-row locking.
+- OK G2-11-017-029: `TPO_MORE_GROUPS` exposes eleven destinations, including team and settings; each rendered as a same-tab Next.js Link by `TpoMoreNavigation`.
+- Remaining rows: not verified; packet intentionally remains unticked pending source-by-source review.
