@@ -4,7 +4,18 @@ import type {CollegeContactRow} from "./college-contacts-service";
 export const CONTACT_EXPORT_LIMIT=1000;
 export const collegeContactsExportSchema=collegeContactsQuerySchema.omit({page:true,pageSize:true});
 export function assertCollegeContactExportFilters(filter:z.infer<typeof collegeContactsExportSchema>):void {
- if(!contactDateWindowValid(filter)||!contactAcademicFiltersCompatible(filter)||!contactRoleAudienceCompatible(filter))
+ const dates = {
+  ...(filter.joinedFrom !== undefined ? {joinedFrom:filter.joinedFrom} : {}),
+  ...(filter.joinedThrough !== undefined ? {joinedThrough:filter.joinedThrough} : {}),
+ };
+ const academic = {
+  teaching:filter.teaching,teachingRole:filter.teachingRole,enrollment:filter.enrollment,
+  ...(filter.cohortId !== undefined ? {cohortId:filter.cohortId} : {}),
+  ...(filter.programId !== undefined ? {programId:filter.programId} : {}),
+  ...(filter.sectionId !== undefined ? {sectionId:filter.sectionId} : {}),
+  classPresence:filter.classPresence,
+ };
+ if(!contactDateWindowValid(dates)||!contactAcademicFiltersCompatible(academic)||!contactRoleAudienceCompatible(filter))
   throw new Error("INVALID_CONTACT_EXPORT");
 }
 export function parseCollegeContactsExportParams(params:URLSearchParams){
