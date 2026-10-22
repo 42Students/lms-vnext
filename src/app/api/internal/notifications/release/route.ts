@@ -11,7 +11,7 @@ export const runtime = "nodejs";
  * closed and cannot be bypassed by a same-origin browser request.
  */
 export async function POST(request: Request) {
-  const secret = process.env.NOTIFICATION_RELEASE_TOKEN;
+  const secret = process.env["NOTIFICATION_RELEASE_TOKEN"];
   const authorization = request.headers.get("authorization");
   const incoming = authorization?.startsWith("Bearer ")
     ? authorization.slice("Bearer ".length) : null;
