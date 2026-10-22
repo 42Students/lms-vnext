@@ -7,7 +7,8 @@ it("TPO-students-47 distinguishes filtered emptiness from no eligible students w
  expect(page).toContain("Nobody is in placements yet.");
  expect(page).toContain("Clear search and filters");
  expect(page).toContain("Open Placement eligibility");
- expect(src("src/components/tpo/tpo-grid-filter-panel.tsx")).toContain(">Filter students</h2>");
+ expect(src("src/components/tpo/tpo-grid-filter-panel.tsx")).toContain('title="Filter students"');
+ expect(src("src/components/tpo/tpo-grid-filter-panel.tsx")).toContain('<BottomSheet open={sheetOpen}');
 });
 it("TPO-students-24 does not reset the roster as if it has no matching placement pool",()=>{
  const page=src("src/app/(authenticated)/tpo/students/page.tsx");

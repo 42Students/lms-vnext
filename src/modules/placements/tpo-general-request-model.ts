@@ -26,7 +26,7 @@ export const legacyLearnerRequestChoices=[
 
 export const tpoGeneralRequestInputSchema=z.discriminatedUnion("kind",[
  z.object({kind:z.literal("OFF_CAMPUS_OFFER"),reason,
-  companyName:z.string().trim().min(1,"Which company?").max(200),
+  companyName:z.string().trim().min(1,"Which company?").max(150),
   // Match the verified outside-offer workflow: compensation may be unknown.
   ctcLpa:z.string().regex(/^(?:0|[1-9][0-9]{0,7})(?:\.[0-9]{1,2})?$/)
    .nullable().optional(),

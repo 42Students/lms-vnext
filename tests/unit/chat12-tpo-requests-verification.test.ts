@@ -13,7 +13,7 @@ describe("Chat-12 TPO Requests gap closure",()=>{
   expect(source).toContain("useGuardedAction()");
   expect(source).toContain("Approved. The student has been told.");
   expect(source).toContain("useToast()");
-  expect(source).toContain('role="alert"');
+  expect(source).toContain('<InlineNotice tone="error" message={error}/>');
  });
  it("TPO-requests-verification-03 rejects only with a reason and exact legacy feedback",()=>{
   const source=read("src/components/placements/tpo-request-decision-control.tsx");
@@ -43,11 +43,13 @@ describe("Chat-12 TPO Requests gap closure",()=>{
   expect(source).toContain("request.rollNumber");
   expect(source).toContain("request.branchName");
   expect(source).toContain("afterCollegeDisplay(outcomeResult.entries[request.membershipId]?.outcome)");
-  expect(source).toContain("Already placed");
+  // A request alone is not proof of placement; show only scoped recorded outcomes.
+  expect(source).toContain('After college: {afterCollegeDisplay(');
+  expect(source).toContain('{request.status}');
  });
  it("TPO-requests-verification-10 shows the decision actor, time and reason",()=>{
   const source=read("src/app/(authenticated)/tpo/requests/page.tsx");
-  for(const str of ["Decided by:","Decided on:","Why:","request.decisionNote"])expect(source).toContain(str);
+  for(const str of ["Decided by</th>","Decided on</th>","Why</th>","request.decidedBy","request.decidedAt","request.decisionNote"])expect(source).toContain(str);
  });
  it("TPO-requests-verification-14 can send an audited message to requesting students",()=>{
   const page=read("src/app/(authenticated)/tpo/requests/page.tsx");
@@ -61,6 +63,6 @@ describe("Chat-12 TPO Requests gap closure",()=>{
   expect(TPO_REQUESTS_LEGACY_DESCRIPTION).toContain("Urgent ones come first.");
   expect(source).toContain(TPO_REQUESTS_LEGACY_DESCRIPTION);
   expect(source).toContain("Nothing is waiting for you.");
-  expect(source).toContain("No requests in this period.");
+  expect(source).toContain('"No requests in this period"');
  });
 });

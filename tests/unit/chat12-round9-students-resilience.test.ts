@@ -24,7 +24,9 @@ describe("chat-12 Students S2/S3 audited gap guardrails",()=>{
  it("TPO-students-14 requires confirmed and rechecked Add selected to drive, keeping partial results",()=>{
   const control=src("src/components/tpo/tpo-students-bulk-add.tsx");
   expect(control).toContain('title="Add selected students to a drive"');
-  expect(control).toContain("runGuarded(submit)");
+  expect(control).toContain("await runGuarded(async()=>{");
+  expect(control).toContain("setConfirmOpen(false)");
+  expect(control).toContain('method:"POST"');
   expect(control).toContain("formatTpoStudentsBulkOutcome(result)");
  });
  it("TPO-students-15 persists a learner notice on newly created bulk-drive applications",()=>{
