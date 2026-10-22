@@ -25,7 +25,9 @@ describe("chat-13 Super Admin /admin first-third route source audit", () => {
       }
       // Desktop may use md:min-h-9; touch targets cannot default below 44px.
       expect(source).not.toMatch(/(?<![\w:-])min-h-(?:7|8|9|10)(?!\d)/);
-      expect(source).not.toMatch(/target=(?:\"|')_blank(?:\"|')/);
+      const opened=source.match(/target=(?:\"|')_blank(?:\"|')/g)??[];
+      const protectedOpen=source.match(/target=(?:\"|')_blank(?:\"|')\s+rel=(?:\"|')noopener noreferrer(?:\"|')/g)??[];
+      expect(protectedOpen).toHaveLength(opened.length);
     });
   }
 
@@ -48,7 +50,10 @@ describe("chat-13 Super Admin /admin first-third route source audit", () => {
     const page=read("src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx");
     const service=read("src/modules/colleges/admin-tenant-lifecycle-service.ts");
     expect(page).toContain("getSuperAdminTenantLifecycleDetail(context,collegeId)");
-    expect(page).toContain("error.code===\"COLLEGE_NOT_FOUND\") notFound()");
+    expect(page).toContain('error.code==="COLLEGE_NOT_FOUND"');
+    expect(page).toContain('title="Missing collegeId"');
+    expect(page).toContain("The college record is no longer available.");
+    expect(page).toContain("if(error instanceof AuthorizationError) throw error;");
     expect(page).toContain("Restore the parent organization before restoring this college.");
     expect(service).toContain("if (scope?.collegeId) where.push(eq(colleges.id, scope.collegeId))");
     expect(service).toContain("if (scope?.organizationId) where.push(eq(colleges.organizationId, scope.organizationId))");
@@ -58,7 +63,9 @@ describe("chat-13 Super Admin /admin first-third route source audit", () => {
   it("SA-ADMIN-FIRST-04 fails closed on malformed employer searches and impossible selected-college filters", () => {
     const page=read("src/app/(authenticated)/admin/companies/page.tsx");
     const service=read("src/modules/placements/admin-company-directory-service.ts");
-    expect(page).toContain("adminCompaniesQuerySchema.safeParse(");
+    expect(page).toContain("parseAdminCompanyDirectoryParams(params)");
+    expect(read("src/modules/placements/admin-company-directory-model.ts")).toContain("return adminCompaniesQuerySchema.safeParse(");
+    expect(page.indexOf("if (!parsed.success)")).toBeLessThan(page.indexOf("listSuperAdminCompanyDirectory(context,parsed.data)"));
     expect(page).toContain('title="Invalid company search"');
     expect(page).toContain("listSuperAdminCompanyDirectory(context, parsed.data)");
     expect(service).toContain("if (query.collegeId && query.collegeId !== selected.collegeId)");

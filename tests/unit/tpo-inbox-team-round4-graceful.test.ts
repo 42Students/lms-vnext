@@ -93,7 +93,7 @@ describe("TPO Inbox and Team round-4 failure recovery",()=>{
   const c=source("src/app/(authenticated)/tpo/team/everyone/page.tsx");
   expect(c).toContain('status:"FAILED"');
   expect(c).toContain('<Alert tone="error">');
-  expect(source("src/components/ui/alert.tsx")).toContain('role={role ?? (tone === "error" ? "alert" : "status")}');
+  expect(source("src/components/ui/alert.tsx")).toContain('role={tone === "error" ? "alert" : role ?? "status"}');
   expect(c).toContain("Retry Everyone");
  });
  it("GR-71 distinguishes unavailable and empty Everyone history without a blank page",()=>{

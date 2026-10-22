@@ -90,7 +90,7 @@ describe("Chat-3 graceful-operation coverage for touched pages",()=>{
  });
  it("GR-90 no raw error code in corrected attendance alert and course load error summary",()=>{
   expect(attendance()).toContain('<Alert tone="warning"');
-  expect(load("src/components/ui/alert.tsx")).toContain('role={role ?? (tone === "error" ? "alert" : "status")}');
+  expect(load("src/components/ui/alert.tsx")).toContain('role={tone === "error" ? "alert" : role ?? "status"}');
   expect(attendance()).toContain('apiFetch<void>(');
   expect(courseError()).toContain("<ErrorState");
   expect(load("src/components/ui/error-state.tsx")).toContain('role="alert"');

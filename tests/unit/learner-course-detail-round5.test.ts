@@ -20,8 +20,11 @@ describe("chat-11 Learner Course Detail legacy parity",()=>{
   expect(row).toContain('progress.replaceAll("_"," ").toLowerCase()');
   expect(row).toContain("Due ");
   const page=code("src/components/courses/learner-course-workspace.tsx");
-  expect(page).toContain('caption="Assignment"');
-  expect(page).toContain('caption="Quiz"');
+  expect(page).toContain('caption={"Assignment"+(!assignment.submissionId&&');
+  expect(page).toContain('?" · Not submitted":"")}');
+  expect(page).toContain('caption={!quiz.dueAt&&quiz.attemptsUsed===0');
+  expect(page).toContain('"Quiz · Unavailable · deadline missing"');
+  expect(page).toContain('"Quiz · Missed":"Quiz"');
   expect(page).toContain('"Live session"');
  });
  it("LEARNER-course-detail-15 defaults to next unfinished lesson and shows legacy status and numbering",()=>{
