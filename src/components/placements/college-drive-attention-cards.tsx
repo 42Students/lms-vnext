@@ -37,6 +37,11 @@ function deadlineShort(value:Date|null){
 
 export function CollegeDriveAttentionCards({data}:{data:Attention}){
  const categories=Object.keys(labels) as (keyof typeof labels)[];
+ const categoryLabels={
+  ...labels,
+  STALE_APPLIED:"Applications with no action in "+
+    data.lookbackDays+" day"+(data.lookbackDays===1?"":"s"),
+ };
  const [expanded,setExpanded]=useState<Partial<Record<keyof typeof labels,boolean>>>({});
  const [search,setSearch]=useState("");
  const searchTerm=search.trim().toLocaleLowerCase("en-IN");
@@ -54,10 +59,10 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
     const rows=data.categories.filter(item=>item.category===category);
     if(!rows.length)return null;
     const shown=expanded[category]?rows:rows.slice(0,3);
-    return <section key={category} aria-label={labels[category]}
+    return <section key={category} aria-label={categoryLabels[category]}
       className="min-w-0 rounded-[8px] border border-[#fff1b8] border-l-4 border-l-[#faad14] bg-[#fffbe6] p-3">
       <h3 className="flex items-center gap-2 text-sm font-semibold text-[#8d6300]">
-       <AttentionGlyph/>{labels[category]} ({rows.length})
+       <AttentionGlyph/>{categoryLabels[category]} ({rows.length})
       </h3>
       <ul className="mt-3 divide-y divide-[#e6c35c]">
        {shown.map(row=><li key={row.jobId}
