@@ -10,6 +10,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
@@ -72,6 +73,18 @@ function createdRecordId(result:unknown,kind:"course"|"offering"|"delivery"){
  const id=(value as Record<string,unknown>).id;
  return typeof id==="string"&&/^[a-f0-9-]{36}$/i.test(id)?id:null;
 }
+function safeCourseCoverHref(input:string):string|null{
+  if(!input.trim())return null;
+  try{
+    const target=new URL(input.trim()),host=target.hostname.toLowerCase();
+    if(target.protocol!=="https:"||target.username||target.password||target.hash||
+      !host||host==="localhost"||host.endsWith(".localhost")||
+      host==="0.0.0.0"||host==="[::1]"||host==="[::]")return null;
+    const privateHost=/^(?:127|10|192\.168|169\.254|172\.(?:1[6-9]|2\d|3[01]))\./;
+    if(privateHost.test(host))return null;
+    return target.href;
+  }catch{return null;}
+}
 function FieldLabel({ htmlFor, children }: { htmlFor: string; children: React.ReactNode }) {
   return <label htmlFor={htmlFor} className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{children}</label>;
 }
@@ -122,6 +135,7 @@ export function AdminCourseCreatePanel({
   const [officialCode,setOfficialCode]=useState((duplicated?.officialCode??"").slice(0,40));
   const [cardColor,setCardColor]=useState(duplicated?.cardColor??"");
   const [coverUrl,setCoverUrl]=useState(duplicated?.thumbnailUrl??"");
+  const [coverPreviewBroken,setCoverPreviewBroken]=useState(false);
   const [takeaways,setTakeaways]=useState(duplicated?.takeaways??"");
   const takeawayItems=takeaways.split(/\r?\n/).filter(item=>item.trim().length>0);
   function updateTakeaway(index:number,value:string){
@@ -241,8 +255,7 @@ export function AdminCourseCreatePanel({
       issues.description = "Enter course description";
     if (cardColor.trim() && !/^#[0-9a-fA-F]{6}$/.test(cardColor.trim()))
       issues.cardColor = "Enter a valid card colour (#RRGGBB).";
-    if(coverUrl.trim()&&(!/^https:\/\/[^\s/@]+(?:\/[^\s]*)?$/i.test(coverUrl.trim())||
-       /https:\/\/(?:localhost|127\.|0\.0\.0\.0)/i.test(coverUrl.trim())))
+    if(coverUrl.trim()&&!safeCourseCoverHref(coverUrl))
       issues.coverUrl="Enter a valid HTTPS course cover URL.";
     setCreateErrors(issues);
     if (Object.keys(issues).length > 0) {
@@ -271,7 +284,7 @@ export function AdminCourseCreatePanel({
       }),
       `Created course “${courseName.trim()}”.`,
       (result) => { const id=createdRecordId(result,"course");if(id){setOfferingCourseId(id);setNextSetupStep("OFFERING");}
-        setCourseName("");setCourseCode("");setCourseDescription("");setShortTitle("");setOfficialCode("");setTakeaways("");setIntroductionHeading("In this Course");setCoverUrl("");setVisibleToStudents(true);setCreateErrors({});if(copy)router.replace(courseBasePath); },
+        setCourseName("");setCourseCode("");setCourseDescription("");setShortTitle("");setOfficialCode("");setTakeaways("");setIntroductionHeading("In this Course");setCoverUrl("");setCoverPreviewBroken(false);setVisibleToStudents(true);setCreateErrors({});if(copy)router.replace(courseBasePath); },
       COLLEGE_COURSES_COPY.createFailed,
     );
   }
@@ -430,20 +443,31 @@ export function AdminCourseCreatePanel({
             {createErrors.code ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.code}</p> : null}
           </div>:null}
           <div className="md:col-span-2">
-            <FieldLabel htmlFor="course-cover-url">Course cover image (HTTPS)</FieldLabel>
+            <FieldLabel htmlFor="course-cover-url">Course image (optional)</FieldLabel>
             <Input id="course-cover-url" type="url" value={coverUrl} maxLength={2048}
               aria-invalid={Boolean(createErrors.coverUrl)}
-              onChange={event=>{setCoverUrl(event.currentTarget.value);setCreateErrors(old=>({...old,coverUrl:undefined}));}}
+              onChange={event=>{setCoverUrl(event.currentTarget.value);setCoverPreviewBroken(false);setCreateErrors(old=>({...old,coverUrl:undefined}));}}
               placeholder="https://example.edu/course-cover.jpg" />
             <p className="mt-1 text-xs text-muted-foreground">
-              This image is shown on the course catalogue card. Use a publicly approved HTTPS asset.
-              Private file uploads must use verified storage before publication.
+              Choose an approved public HTTPS course image. Private uploaded images require a verified signed-asset grant
+              before they can be published; do not paste temporary storage URLs.
             </p>
-            {coverUrl.trim()&&!createErrors.coverUrl&&/^https:\/\//i.test(coverUrl.trim())?
-              <a href={coverUrl.trim()} target="_blank" rel="noopener noreferrer"
-                className="mt-2 inline-flex text-sm font-semibold text-link underline">
-                Preview course cover
-              </a>:null}
+            {safeCourseCoverHref(coverUrl)&&!coverPreviewBroken?
+              <div className="mt-3 space-y-2">
+                <p className="text-xs font-semibold text-body">Preview Image</p>
+                <Image src={safeCourseCoverHref(coverUrl)!} alt={"Course cover preview for "+(courseName.trim()||"new course")}
+                  width={180} height={100} unoptimized
+                  onError={()=>setCoverPreviewBroken(true)}
+                  className="h-[100px] w-[180px] rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle object-cover"/>
+                <div className="flex flex-wrap gap-2">
+                  <a href={safeCourseCoverHref(coverUrl)!} target="_blank" rel="noopener noreferrer"
+                    className="inline-flex min-h-9 items-center text-xs font-semibold text-link underline">View full image</a>
+                  <Button type="button" size="sm" variant="secondary" onClick={()=>{
+                    setCoverUrl("");setCoverPreviewBroken(false);setCreateErrors(old=>({...old,coverUrl:undefined}));
+                  }}>Remove image</Button>
+                </div>
+              </div>:null}
+            {coverPreviewBroken?<p role="alert" className="mt-2 text-xs text-warning">Could not preview this image. Check the URL before saving.</p>:null}
             {createErrors.coverUrl?<p role="alert" className="mt-1 text-xs text-danger">{createErrors.coverUrl}</p>:null}
           </div>
           <div className="md:col-span-2">
