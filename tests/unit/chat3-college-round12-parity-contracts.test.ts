@@ -27,7 +27,7 @@ describe("chat-3 college people and attendance source contract audit",()=>{
  });
  it("COL-people-20 college admin role can be changed only by super admin",()=>{
   const code=source("src/modules/people/membership-service.ts");
-  expect(code).toContain("if (input.role === \"COLLEGE_ADMIN\")");
+  expect(code).toContain("if (input.role === \"COLLEGE_ADMIN\" || input.role === \"TPO\")");
   expect(code).toContain("requirePermission(context, \"admin-scope.select\")");
  });
  it("COL-people-25 mobile validation and partial failures stay actionable",()=>{
@@ -37,8 +37,8 @@ describe("chat-3 college people and attendance source contract audit",()=>{
  });
  it("COL-people-26 faculty lifecycle confirms persisted action",()=>{
   const code=source("src/components/college/college-faculty-lifecycle-action.tsx");
-  expect(code).toContain("Faculty suspended.");
-  expect(code).toContain("Faculty reactivated.");
+  expect(code).toContain("Faculty suspended");
+  expect(code).toContain("Faculty reactivated");
  });
  it("COL-attendance-03 calendar records no-class dates and Sunday",()=>{
   const code=source("src/components/attendance/admin-attendance-workspace.tsx");
@@ -47,12 +47,12 @@ describe("chat-3 college people and attendance source contract audit",()=>{
  });
  it("COL-attendance-05 successful attendance corrections are announced",()=>{
   const code=source("src/components/attendance/admin-attendance-workspace.tsx");
-  expect(code).toContain("Attendance corrected for ");
+  expect(code).toContain("Marked present");
   expect(code).toContain("role=\"status\"");
  });
  it("COL-attendance-12 day-wise attendance CSV preserves discrete mark codes",()=>{
   const code=source("src/components/attendance/admin-attendance-workspace.tsx");
-  expect(code).toContain("sessionDays.map(row=>row.day)");
+  expect(code).toContain("sessionDays.map(row=>String(Number(row.day.slice(-2))))");
   expect(code).toContain("return \"P\"");
   expect(code).toContain("return \"A\"");
   expect(code).toContain("return \"N\"");

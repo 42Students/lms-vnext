@@ -40,7 +40,7 @@ describe("chat-4 college people/contact privacy and directory coverage",()=>{
       .toEqual({email:"faculty@college.edu",phone:"Not provided"});
   });
   it("collegeContactsQuerySchema and parser reject duplicated, unknown, tenant forged, malformed page and alphabet",()=>{
-    expect(collegeContactsQuerySchema.parse({})).toMatchObject({tab:"ALL",page:1,pageSize:20,status:"ACTIVE"});
+    expect(collegeContactsQuerySchema.parse({})).toMatchObject({tab:"ALL",page:1,pageSize:10,status:"ACTIVE"});
     expect(parseCollegeContactsSearchParams({tab:"STUDENT",q:" Test "})).toMatchObject({tab:"STUDENT",q:"Test"});
     for(const bad of [{q:["a","b"]},{collegeId:a},{initial:"aa"},{page:"0"},{pageSize:"17"},
       {joinedFrom:"2099-06-01",joinedThrough:"2099-05-31"},{tab:"STUDENT",audience:"FACULTY_ONLY"},

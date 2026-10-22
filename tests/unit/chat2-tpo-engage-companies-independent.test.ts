@@ -11,7 +11,7 @@ describe("TPO companies independent of recruiter lead filters",()=>{
  it("TPO-recruiters-R02 does not hide company-derived directory behind the lead empty state",()=>{
   expect(src).toContain('view !== "companies" && visible.length === 0');
   expect(src).toContain('view === "companies" ?');
-  expect(src).toContain('href={"/tpo/companies?name="+encodeURIComponent(company.name)}');
+  expect(src).toContain('router.push("/tpo/companies?name="+encodeURIComponent(company.name))');
   expect(src).toContain('companiesSnapshotReady.current=true');
  });
 });

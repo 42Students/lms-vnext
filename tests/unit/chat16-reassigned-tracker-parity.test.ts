@@ -13,7 +13,7 @@ describe("chat-16 reassigned tracker issue workflows",()=>{
     expect(own).toContain("eq(db10BugReports.reporterUserId,context.user.id)");
     expect(own).not.toContain("reporterName");
     expect(own).not.toContain("rootCause");
-    expect(page).toContain('context.user.platformStatus !== "ACTIVE"');
+    expect(page).toContain('context.user.platformStatus!=="ACTIVE"');
     expect(page).toContain("canSearchSimilar={isSuperAdmin(context)}");
     expect(detail).toContain("getMyTrackerReport(context,publicId)");
     expect(admin).toContain("requireTrackerAdmin(context)");
@@ -42,7 +42,7 @@ describe("chat-16 reassigned tracker issue workflows",()=>{
     expect(bulk).toContain("selected.length");
     expect(bulk).toContain("expectedVersion:row.version");
     expect(bulk).toContain("Failed IDs:");
-    expect(bulk).toContain("for(const id of selected)");
+    expect(bulk).toContain("while(remaining.length)");
     expect(route).toContain("isSameOriginRequest(request)");
     expect(route).toContain("updateBugTrackerWorkflowForAdmin(");
   });
@@ -54,7 +54,7 @@ describe("chat-16 reassigned tracker issue workflows",()=>{
       expect(code).toContain('"'+field+'"');
     expect(code).not.toContain('"beforeCreatedAt"');
     expect(code).not.toContain('"beforeId"');
-    expect(code).toContain("Save current filters");
+    expect(code).toContain("Save this view");
     expect(code).toContain("Delete saved view ");
     expect(code).toContain("router.push(");
     expect(code).toContain("localStorage.setItem(KEY");

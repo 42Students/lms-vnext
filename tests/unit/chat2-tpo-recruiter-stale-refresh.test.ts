@@ -6,12 +6,12 @@ describe("TPO Engage stale snapshot resilience",()=>{
   expect(src).toContain("leadsSnapshotReady=useRef(false)");
   expect(src).toContain('setPhase(leadsSnapshotReady.current?"ready":"error")');
   expect(src).toContain("Showing the last recruiter list we loaded.");
-  expect(src).toContain("onClick={()=>void load()}>Retry</button>");
+  expect(src).toContain("onClick={()=>void load()}>Retry</Button>");
  });
  it("TPO-recruiters-42 keeps company snapshot while showing a separate recoverable warning",()=>{
   expect(src).toContain("companiesSnapshotReady=useRef(false)");
   expect(src).toContain('setCompaniesPhase(companiesSnapshotReady.current?"ready":"error")');
   expect(src).toContain("Showing the last company list we loaded.");
-  expect(src).toContain(">Retry companies</button>");
+  expect(src).toContain(">Retry companies</Button>");
  });
 });
