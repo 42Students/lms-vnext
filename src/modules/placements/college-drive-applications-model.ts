@@ -107,7 +107,16 @@ export function driveApplicationsExportParams(search: URLSearchParams):
     raw[key]=value;
   }
   const query=driveApplicationsParams(raw);
-  return query?{ok:true,query}:{ok:false,status:400,message:"Invalid export filters"};
+  if(!query)return {ok:false,status:400,message:"Invalid export filters"};
+  // The interactive directory tolerates old malformed optional filters, but
+  // exports must not turn an invalid supplied stage into an unrestricted CSV.
+  for(const key of ["status","source","stage","screening","attention","sort"] as const){
+    if(raw[key]!==undefined&&raw[key]!==query[key])
+      return {ok:false,status:400,message:"Invalid export filters"};
+  }
+  if(raw.page!==undefined&&String(query.page)!==raw.page)
+    return {ok:false,status:400,message:"Invalid export filters"};
+  return {ok:true,query};
 }
 
 export function driveApplicationsHref(jobId: string, query: DriveApplicationsQuery, exportCsv = false) {
