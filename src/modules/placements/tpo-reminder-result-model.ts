@@ -15,7 +15,7 @@ function record(value:unknown):value is Record<string,unknown>{
 export function parseTpoReminderPreview(value:unknown):TpoReminderPreview|null{
  if(!record(value)||!Number.isSafeInteger(value.count)||typeof value.count!=="number"||
   value.count<0||typeof value.day!=="string"||
-  !/^\\d{4}-\\d{2}-\\d{2}$/.test(value.day)||
+  !/^\d{4}-\d{2}-\d{2}$/.test(value.day)||
   typeof value.allowed!=="boolean"||typeof value.alreadySent!=="boolean"||
   (value.reason!==null&&typeof value.reason!=="string")||
   (value.previewToken!==null&&typeof value.previewToken!=="string"))return null;
