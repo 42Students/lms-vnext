@@ -5,6 +5,7 @@ import {closeDatabaseConnection} from "@/db/client";
 import {createPlacementCompany} from "@/modules/placements/company-service";
 import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
 import {createPlacementRound} from "@/modules/placements/round-service";
+import {upsertJobEligibilityPolicy} from "@/modules/placements/eligibility-service";
 import {getHrJobRead} from "@/modules/placements/hr-job-read-service";
 import {projectRecruiterRoundResults} from "@/modules/placements/recruiter-round-results-read-model";
 import type {RequestContext} from "@/modules/identity/context";
