@@ -12,11 +12,12 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-4-010-097  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-011-080  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-011-082  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
-- [ ] G2-4-016-017  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+- [x] G2-4-016-017  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-017-006  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-017-008  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-017-017  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-017-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 
 ## Results
+- G2-4-016-017: OK — `src/modules/messaging/receipt-history-service.ts:105-123` passes both sanitized recipient suffix and purpose to the provider; `src/modules/notifications/exotel-sms.ts:158-176` combines suffix and purpose as `AND` conditions in the append-only ledger query; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/SmsDeliveryLogRepository.java:17-24` and `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminSmsLogController.java:53-71`.
 
