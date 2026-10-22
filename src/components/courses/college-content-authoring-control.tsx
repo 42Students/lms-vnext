@@ -184,7 +184,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",ppt:"application/vnd.ms-powerpoint",
    pptx:"application/vnd.openxmlformats-officedocument.presentationml.presentation",xls:"application/vnd.ms-excel",
    xlsx:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",txt:"text/plain",csv:"text/csv",
-   png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg",gif:"image/gif",webp:"image/webp",zip:"application/zip"};
+   png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg",webp:"image/webp"};
   for(const [index,file] of resourceFiles.entries()){
    const ext=file.name.split(".").at(-1)?.toLowerCase()??"";
    if(!mimes[ext]||file.size<1||file.size>50*1024*1024)
@@ -459,11 +459,11 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    </label>
    {kind==="RESOURCE"&&!editing&&materialsEnabled?<div className="space-y-2 md:col-span-2">
     <label className="grid gap-2 text-sm font-semibold">Upload files
-     <input type="file" multiple disabled={busy} accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.csv,.png,.jpg,.jpeg,.gif,.webp,.zip"
+     <input type="file" multiple disabled={busy} accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.csv,.png,.jpg,.jpeg,.webp"
       className="block w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border p-2 text-sm"
       onChange={event=>{
        const files=Array.from(event.currentTarget.files??[]);event.currentTarget.value="";
-       const allowed=["pdf","doc","docx","ppt","pptx","xls","xlsx","txt","csv","png","jpg","jpeg","gif","webp","zip"];
+       const allowed=["pdf","doc","docx","ppt","pptx","xls","xlsx","txt","csv","png","jpg","jpeg","webp"];
        if(files.some(file=>!allowed.includes(file.name.split(".").at(-1)?.toLowerCase()??"")||file.size<1||file.size>50*1024*1024)){
         setError("Choose approved Resource files no larger than 50 MB.");return;}
        if(files.length+resourceFiles.length+resourceLinks.length>20){
