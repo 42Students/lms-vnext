@@ -16,7 +16,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-5-027-040  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [x] G2-5-027-060  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [ ] G2-5-031-032  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
-- [ ] G2-5-032-009  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
+- [x] G2-5-032-009  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 
 ## Results
 - G2-5-009-030: FIXED — `908238ad03d6d45dce21d48eaf99799a1a703fcd`, `src/components/attendance/admin-attendance-workspace.tsx` (failed record-detail reads now have a direct Retry record action and correction remains disabled until a verified record is available; legacy `docs/legacy-source/frontend/src/pages/superadmin/sections/Attendance.js:52-71,258-266`).
@@ -25,3 +25,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-5-011-005: OK — `src/app/(authenticated)/teacher/calendar/page.tsx:69-103` renders one Class Schedule heading, Next classes, and a single primary calendar; optional second month grid is behind a disclosure at `:104-174`. Matches `docs/legacy-source/frontend/src/components/CalendarComp/ClassScheduleContent.jsx:357-436`.
 - G2-5-007-025: FIXED — `da92924bca235694f2d863d6a801bb562b9066c3`, `src/components/admin/super-admin-interview-operations.tsx` (legacy five interview types, Online/In-person mode options; reference `docs/legacy-source/frontend/src/components/InterviewCalendar/InterviewCalendarContent.js:51-56,78-87,264-272`).
 
+- G2-5-032-009: FIXED — `113af455b6c494093a15e8e80d14d583d5714d6a`, `src/modules/operations/scheduled-job-runner.ts` (`processFencedNotificationBatch` now takes an optional durable audit writer with processed/succeeded/failed/remaining counts and sanitized failed-entry IDs, checked under current lease). Legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/NotificationSchedulerService.java:107-154` reports release outcome counts and failures. Deployment callers must provide the persistent writer for durable records.
