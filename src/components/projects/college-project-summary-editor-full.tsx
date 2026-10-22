@@ -8,6 +8,7 @@ import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { useProjectEditorDiscardGuard } from "./project-editor-discard-guard";
+import { projectSummaryRefreshDecision } from "@/modules/projects/project-summary-refresh-model";
 import {useEffect,useRef,useState} from "react";
 import {usePathname,useRouter} from "next/navigation";
 import Link from "next/link";
@@ -44,13 +45,23 @@ export function CollegeProjectSummaryEditorFull({
  const [form,setForm]=useState(sourceForm);
  const [stale,setStale]=useState(false);
  const baselineRef=useRef({projectId:p.id,version:new Date(p.updatedAt).toISOString(),form:sourceForm});
+ const ownSavedRevision=useRef<{projectId:string;version:string}|null>(null);
  const dirty=JSON.stringify(form)!==JSON.stringify(baselineRef.current.form);
  useEffect(()=>{
   const incoming=new Date(p.updatedAt).toISOString();
-  if(p.id===baselineRef.current.projectId&&incoming===baselineRef.current.version)return;
-  const wasDirty=p.id===baselineRef.current.projectId&&
-    JSON.stringify(form)!==JSON.stringify(baselineRef.current.form);
-  if(wasDirty){setStale(true);return;}
+  const decision=projectSummaryRefreshDecision({
+   incomingProjectId:p.id,incomingVersion:incoming,
+   baselineProjectId:baselineRef.current.projectId,
+   baselineVersion:baselineRef.current.version,
+   dirty:JSON.stringify(form)!==JSON.stringify(baselineRef.current.form),
+   selfSavedProjectId:ownSavedRevision.current?.projectId??null,
+   selfSavedVersion:ownSavedRevision.current?.version??null,
+  });
+  if(decision==="UNCHANGED")return;
+  if(decision==="KEEP_DIRTY"){setStale(true);return;}
+  // An acknowledged save is not a concurrent conflict. The server snapshot
+  // is authoritative, including any normalization performed on the patch.
+  ownSavedRevision.current=null;
   baselineRef.current={projectId:p.id,version:incoming,form:sourceForm};
   setForm(sourceForm);setStale(false);setError("");
  },[p.id,p.updatedAt]);
@@ -139,6 +150,16 @@ export function CollegeProjectSummaryEditorFull({
    });
    if(!res.ok){const detail=await res.json().catch(()=>({error:"Save failed"}));
     throw new Error(detail.error||"Save failed");}
+   const receipt:unknown=await res.json().catch(()=>null);
+   const row=receipt&&typeof receipt==="object"&&"project" in receipt
+     ?receipt.project:null;
+   const updatedAt=row&&typeof row==="object"&&"updatedAt" in row
+     ?row.updatedAt:null;
+   // Treat only the exact acknowledged revision as our own save. A later
+   // concurrent edit must still preserve and warn about an unsaved draft.
+   ownSavedRevision.current=typeof updatedAt==="string"&&
+     Number.isFinite(Date.parse(updatedAt))
+       ?{projectId:p.id,version:new Date(updatedAt).toISOString()}:null;
    showToast({tone:"success",title:"Workspace updated"});
    setOpen(false);router.refresh();
   }catch(e){

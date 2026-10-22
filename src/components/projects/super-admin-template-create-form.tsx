@@ -9,6 +9,7 @@ import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useToast} from "@/components/ui/toast";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
+import {legacyUntitledTemplateRowError} from "@/modules/projects/template-row-validation-model";
 import {initialSuperAdminTemplateDraft,type TemplateCreateRelease,
  type TemplateCreateSprint,type TemplateCreateTask,type TemplateCreateResource
 } from "@/modules/projects/super-admin-template-create-model";
@@ -82,10 +83,13 @@ export function SuperAdminTemplateCreateForm(){
   if(!values.deliverables.split("\n").some(line=>line.trim())){
    setError("Add at least one deliverable.");return;
   }
-  if([...allReleases,...allSprints,...allTasks,...allResources]
-    .some(row=>!row.title.trim())){
-    setError("Every added release, sprint, task and resource needs a title.");return;
+  if(allTasks.length>500||allResources.length>500){
+    setError("Maximum 500 items. Remove an item before saving.");return;
   }
+  const rowError=legacyUntitledTemplateRowError([
+    allReleases,allSprints,allTasks,allResources,
+  ]);
+  if(rowError){setError(rowError);return;}
   for(const rows of [allReleases,allSprints,allTasks,allResources]){
     if(new Set(rows.map(row=>row.key.toLowerCase())).size!==rows.length){
       setError("Keys within each section must be unique.");return;
