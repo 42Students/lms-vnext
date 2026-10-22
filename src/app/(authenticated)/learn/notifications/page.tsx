@@ -37,7 +37,10 @@ export default function NotificationsPage({searchParams}:{
 
 async function LearnerNotificationsContent({searchParams}:{searchParams:Promise<LearnerNotificationParams>}) {
   const { tab, ...filters } = await searchParams;
-  const oldTab=Array.isArray(tab)?tab[0]:tab;
+  // Do not silently let a legacy tab overwrite a canonical category, and do
+  // not accept duplicated tab selectors that could mean different categories.
+  if (tab !== undefined && (filters.category !== undefined || Array.isArray(tab))) notFound();
+  const oldTab=typeof tab==="string"?tab:undefined;
   // Legacy bad ?tab values returned to All rather than aborting the inbox.
   const allowed=new Set(["all","course","project","general","job"]);
   const legacyCategory=oldTab&&allowed.has(oldTab)?oldTab:"all";

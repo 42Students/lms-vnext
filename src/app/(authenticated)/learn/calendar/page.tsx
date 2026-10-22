@@ -43,6 +43,13 @@ export default async function LearnerCalendarPage({searchParams}:{
   const metrics = await Promise.allSettled(
     learnerCalendarMetricWindows(now).map(range => getLearnerClassSchedule(context,range)),
   );
+  // A revoked membership or cross-college scope must not be masked as a
+  // transient schedule warning while partial metrics are still displayed.
+  for (const result of metrics) {
+    if (result.status === "rejected" && result.reason instanceof AuthorizationError) {
+      throw result.reason;
+    }
+  }
   const metricsWarning = metrics.some(result => result.status === "rejected")
     ? "Unable to load the complete upcoming class schedule. Please try again." : null;
   const metricRows = metrics.flatMap(result =>
