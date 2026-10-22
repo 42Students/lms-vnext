@@ -38,5 +38,10 @@ describe("legacy TPO scheduled reminder source parity", () => {
       { ...source, reminderSentOnIstDays: ["2026-10-22"] },
       { ...source, revokedAt: new Date("2026-10-21T00:00:00Z") },
     ], now)).toEqual([]);
+    expect(generateShortlistDueTomorrowCandidates([
+      { ...source, recipientEmail: "not-an-email" },
+      { ...source, recipientEmail: "missing-domain@" },
+      { ...source, recipientEmail: null },
+    ], now)).toEqual([]);
   });
 });
