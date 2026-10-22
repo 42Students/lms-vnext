@@ -30,6 +30,9 @@ export function AdminPlacementStudentProfileEditor({membershipId,skills:initialS
  const router=useRouter(),{showToast}=useToast();
  const [skills,setSkills]=useState<Skill[]>([...initialSkills]);
  const [preferences,setPreferences]=useState<Preferences>(initialPreferences??defaults);
+ // A successful PATCH replaces the draft baseline. Cancel must not restore
+ // pre-save server props and accidentally overwrite an already saved change.
+ const [savedPreferences,setSavedPreferences]=useState<Preferences>(initialPreferences??defaults);
  const [version,setVersion]=useState(expectedVersion);
  const [editing,setEditing]=useState<number|null>(null);
  const [name,setName]=useState("");
@@ -51,6 +54,7 @@ export function AdminPlacementStudentProfileEditor({membershipId,skills:initialS
     body:JSON.stringify({action,expectedVersion:version,confirmed:true,...values}),
    });
    setVersion(saved.version);setSkills(saved.skills);setPreferences(saved.jobPreferences);
+   setSavedPreferences(saved.jobPreferences);
    setRoles(saved.jobPreferences.rolePreferences.join(", "));
    clearSkill();setRemoveIndex(null);setEditingPreferences(false);
    showToast({tone:"success",title:action==="DELETE_SKILL"?"Skill removed":"Learner profile saved"});
@@ -164,7 +168,7 @@ export function AdminPlacementStudentProfileEditor({membershipId,skills:initialS
     {!readOnly?<div className="flex flex-wrap gap-2">
      {editingPreferences?<><Button disabled={pending} onClick={savePreferences}>Save preferences</Button>
       <Button variant="secondary" disabled={pending} onClick={()=>{
-       setPreferences(initialPreferences??defaults);setRoles((initialPreferences?.rolePreferences??[]).join(", "));setEditingPreferences(false);
+       setPreferences(savedPreferences);setRoles(savedPreferences.rolePreferences.join(", "));setEditingPreferences(false);
       }}>Cancel</Button></>:<Button variant="secondary" disabled={pending}
        onClick={()=>setEditingPreferences(true)}>Edit job preferences</Button>}
     </div>:null}
