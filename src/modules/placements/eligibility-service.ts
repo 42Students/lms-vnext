@@ -168,6 +168,31 @@ export type PlacementEligibilityCheck = {
   detail: string;
 };
 
+/** Legacy learner/TPO presentation adapter, separate from the canonical
+ * eligibility state. MISSING remains visible and never becomes a pass. */
+export type LegacyPlacementEligibilityCheck={
+ rule:string;pass:boolean;detail:string;missing:boolean;status:CheckStatus;
+};
+export type LegacyPlacementEligibilityView={
+ eligible:boolean;isOverride:boolean;overrideDecision:"INCLUDE"|"EXCLUDE"|null;
+ overrideReason:string|null;checks:LegacyPlacementEligibilityCheck[];
+};
+export function placementEligibilityLegacyView(result:PlacementEligibilityResult):LegacyPlacementEligibilityView{
+ const activeOverride=result.checks.some(row=>row.criterion==="Eligibility override")&&
+   result.override!==null;
+ return {
+  eligible:result.status==="ELIGIBLE"||result.status==="ELIGIBLE_WITH_MISSING_EVIDENCE",
+  isOverride:activeOverride,
+  overrideDecision:activeOverride?result.override!.decision:null,
+  overrideReason:activeOverride?result.override!.reason:null,
+  checks:result.checks.map(row=>({
+   rule:row.criterion==="Eligibility override"?"Added by college":row.criterion,
+   pass:row.status==="PASS",status:row.status,missing:row.status==="MISSING",
+   detail:row.status==="MISSING"?
+    (row.detail==="Not provided"?"Not provided":row.detail):row.detail,
+  })),
+ };
+}
 export type PlacementEligibilityResult = {
   status:
     | "ELIGIBLE"
@@ -688,7 +713,7 @@ export async function upsertJobEligibilityPolicy(
 
 async function recordEligibilityOverrideAudit(
  tx:Tx,context:RequestContext,collegeId:string,jobId:string,membershipId:string,
- overrideId:string,action:"SET"|"CLEARED",reason:string,
+ overrideId:string,action:"SET"|"CLEARED",reason:string,decision?:"INCLUDE"|"EXCLUDE",
 ){
  const [college]=await tx.select({organizationId:colleges.organizationId}).from(colleges)
   .where(eq(colleges.id,collegeId)).limit(1);
@@ -699,8 +724,10 @@ async function recordEligibilityOverrideAudit(
   actorMembershipId:context.membership?.collegeId===collegeId?context.membership.id:null,
   module:"PLACEMENTS",eventType:action==="SET"?"PLACEMENT_OVERRIDE_SET":"PLACEMENT_OVERRIDE_CLEARED",
   subjectType:"placement_eligibility_override",subjectId:overrideId,
-  summary:action==="SET"?"Drive eligibility override saved":"Drive eligibility override cleared",
-  metadata:{jobId,membershipId,reason},
+  summary:action==="SET"?"Drive eligibility override saved (ELIGIBILITY_"+(decision??"INCLUDE")+")":
+    "Drive eligibility override cleared",
+  metadata:{jobId,membershipId,reason,decision:decision??null,
+   contextHint:decision==="INCLUDE"?"Company agreed":null},
  });
 }
 
@@ -774,7 +801,7 @@ export async function setEligibilityOverride(
       })
       .returning();
     await recordEligibilityOverrideAudit(tx,context,liveJob.collegeId,jobId,membershipId,
-      row.id,"SET",input.reason);
+      row.id,"SET",input.reason,input.decision);
     return row;
   });
 }
@@ -855,7 +882,9 @@ function numericCheck(
     status: pass ? "PASS" : "FAIL",
     actual: actual / displayScale,
     required: required / displayScale,
-    detail: pass ? "Requirement met" : "Requirement not met",
+    detail: (operator==="MIN"?"Min ":"Max ")+(required/displayScale).toFixed(displayScale===100?2:0)+
+      "; actual "+(actual/displayScale).toFixed(displayScale===100?2:0)+
+      (pass?" (passed)":" (failed)"),
   });
 }
 
@@ -1433,7 +1462,7 @@ export async function evaluatePlacementEligibilityBatch(
   const job = await loadJob(jobId, db);
   requirePermission(context, "placements.manage", {collegeId: job.collegeId});
   const ids = [...new Set(membershipIds)];
-  if (ids.length > 1000) throw new RangeError("Eligibility preview is limited to 1,000 learners");
+  if (ids.length > 10000) throw new RangeError("Eligibility preview is limited to 10,000 learners");
   const result = new Map<string, PlacementEligibilityResult>();
   if (!ids.length) return result;
   const rows = await db.select().from(placementEligibilityOverrides).where(and(
@@ -1452,3 +1481,49 @@ export async function evaluatePlacementEligibilityBatch(
   }
   return result;
 }
+
+export type PlacementEligibilityPreviewCandidate={
+ membershipId:string;branch:string;displayName:string;
+};
+export type PlacementEligibilityPreviewSummary={
+ total:number;eligible:number;excluded:number;needsData:number;
+ eligibleByBranch:{branch:string;count:number}[];
+ excludedStudents:{membershipId:string;displayName:string;branch:string;reason:string}[];
+ excludedRemaining:number;
+};
+/** Stable legacy-style preview: aggregate every evaluated membership, expose
+ * at most 200 excluded names, and keep branch counts naturally sorted. */
+export function summarizePlacementEligibilityPreview(
+ candidates:readonly PlacementEligibilityPreviewCandidate[],
+ results:ReadonlyMap<string,PlacementEligibilityResult>,
+):PlacementEligibilityPreviewSummary{
+ const seen=new Set<string>();
+ const byBranch=new Map<string,number>();
+ const excludedStudents:PlacementEligibilityPreviewSummary["excludedStudents"]=[];
+ let eligible=0,excluded=0,needsData=0,total=0;
+ for(const candidate of candidates){
+  if(seen.has(candidate.membershipId))continue;
+  seen.add(candidate.membershipId);
+  const value=results.get(candidate.membershipId);
+  if(!value)continue;
+  total++;
+  const allowed=value.status==="ELIGIBLE"||value.status==="ELIGIBLE_WITH_MISSING_EVIDENCE";
+  if(allowed){
+   eligible++;const branch=candidate.branch.trim()||"Unassigned";
+   byBranch.set(branch,(byBranch.get(branch)??0)+1);
+  }else{
+   excluded++;
+   if(value.status==="NEEDS_DATA")needsData++;
+   if(excludedStudents.length<200)excludedStudents.push({
+    membershipId:candidate.membershipId,displayName:candidate.displayName,
+    branch:candidate.branch.trim()||"Unassigned",
+    reason:value.checks.find(row=>row.status==="FAIL"||row.status==="MISSING")?.detail
+      ??value.override?.reason??"Not eligible",
+   });
+  }
+ }
+ return {total,eligible,excluded,needsData,
+  eligibleByBranch:[...byBranch].sort(([a],[b])=>a.localeCompare(b)).map(([branch,count])=>({branch,count})),
+  excludedStudents,excludedRemaining:excluded-excludedStudents.length};
+}
+
