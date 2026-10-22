@@ -99,3 +99,44 @@ export function legacyTermCourseIdCrosswalk(raw: unknown, resolved: ReadonlyMap<
 export function legacyTermCourseDisplayOrder(value: number | null, sourceIndex: number): number {
   return value != null && Number.isSafeInteger(value) && value > 0 ? value : sourceIndex + 1;
 }
+
+/**
+ * Lossless semester import planning (legacy Semester -> program_terms).
+ * Resolve numeric program IDs before insert and retain the numeric semester ID
+ * as a crosswalk. Null legacy names/flags are normalized explicitly rather than
+ * accidentally violating NOT NULL constraints or treating null as inactive.
+ * The existing UUID and updatedAt remain the concurrency identity/token.
+ */
+export function planLegacySemesterImport(
+  source: {
+    id: number;
+    programId: number;
+    semesterNumber: number;
+    name: string | null;
+    isActive: boolean | null;
+    totalCredits: number | null;
+  },
+  resolvedProgramIds: ReadonlyMap<number, string>,
+): {
+  programId: string;
+  termNumber: number;
+  name: string;
+  legacySemesterId: number;
+  isActive: boolean;
+  totalCredits: number | null;
+} | null {
+  if (!Number.isSafeInteger(source.id) || source.id <= 0 ||
+      !Number.isSafeInteger(source.semesterNumber) || source.semesterNumber <= 0) return null;
+  const programId = resolvedProgramIds.get(source.programId);
+  if (!programId) return null;
+  const credits = source.totalCredits;
+  if (credits !== null && (!Number.isSafeInteger(credits) || credits < 0)) return null;
+  return {
+    programId,
+    termNumber: source.semesterNumber,
+    name: source.name?.trim() || `Semester ${source.semesterNumber}`,
+    legacySemesterId: source.id,
+    isActive: source.isActive ?? true,
+    totalCredits: credits,
+  };
+}
