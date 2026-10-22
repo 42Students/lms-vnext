@@ -62,7 +62,7 @@ describe("chat-4 learner Home and Courses gap closure",()=>{
  it("LEARNER-home-courses-13 learner header retains Course workspace and separate read-only status",()=>{
   const s=source("src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx");
   expect(s).toContain('description={activeTab === "roadmap" ? courseTitle : "Course workspace"}');
-  expect(s).toContain('title={workspace.course.name}');
+  expect(s).toContain('title={activeTab === \"roadmap\" ? \"Learning Path\" : courseTitle}');
   expect(s).toContain("Past semester course · Read only");
  });
  it("LEARNER-home-courses-R01 one course failure does not crash other cards",async()=>{
