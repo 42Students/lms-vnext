@@ -167,6 +167,7 @@ export async function createCollegeProgram(context: RequestContext, raw: unknown
       await lockedDepartment(tx, input.departmentId, member.collegeId);
       await ensureUnique(tx, input.departmentId, input.name, input.code);
       const [created] = await tx.insert(programs).values(input).returning();
+      if (!created) throw new CollegeProgramMutationError("PROGRAM_NOT_FOUND");
       await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_PROGRAM_CREATED,
         organizationId: member.organizationId,

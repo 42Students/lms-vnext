@@ -83,9 +83,9 @@ export function parseFacultyFollowUpSearchParams(raw:Record<string,string|string
  if(Object.entries(raw).some(([key,value])=>!allowed.has(key)||Array.isArray(value)))
   return facultyResponseFollowUpQuerySchema.safeParse({kind:"INVALID"});
  return facultyResponseFollowUpQuerySchema.safeParse({
-  kind:raw.kind||undefined,search:raw.search??undefined,page:raw.page,
-  deliveryId:raw.deliveryId||undefined,sort:raw.sort||undefined,
-  pageSize:raw.pageSize,
+  kind:raw["kind"]||undefined,search:raw["search"]??undefined,page:raw["page"],
+  deliveryId:raw["deliveryId"]||undefined,sort:raw["sort"]||undefined,
+  pageSize:raw["pageSize"],
  });
 }
 
