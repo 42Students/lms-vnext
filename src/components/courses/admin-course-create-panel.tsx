@@ -6,6 +6,7 @@ import {
   type FormEvent,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
@@ -142,6 +143,13 @@ export function AdminCourseCreatePanel({
   const [imageError,setImageError]=useState("");
   const [imageReceipt,setImageReceipt]=useState<string|null>(null);
   const [createdImageCourseId,setCreatedImageCourseId]=useState<string|null>(null);
+  const uploadRef=useRef<AbortController|null>(null);
+  const tenantSignature=departments.map(row=>row.id).sort().join("|");
+  useEffect(()=>()=>{uploadRef.current?.abort();uploadRef.current=null;},[tenantSignature]);
+  function cancelImageUpload(){
+    uploadRef.current?.abort();uploadRef.current=null;setImageBusy(false);
+    setImageError("Upload cancelled. The saved course remains unchanged and unverified images stay private.");
+  }
   useEffect(()=>{
     if(!imageFile){setImagePreviewUrl("");return;}
     const preview=URL.createObjectURL(imageFile);
@@ -249,12 +257,13 @@ export function AdminCourseCreatePanel({
     });
   }
 
-  async function finishCourseImage(courseId:string,receiptId:string) {
+  async function finishCourseImage(courseId:string,receiptId:string,signal?:AbortSignal) {
     const completed=await apiFetch<{image:{status:"READY"|"VERIFYING";imageUrl:string|null}}>(
       "/api/courses/"+encodeURIComponent(courseId)+"/image/complete",{
         method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({receiptId}),
+        body:JSON.stringify({receiptId}),signal,
       });
+    if(signal?.aborted)return;
     if(completed.image.status==="READY"){
       setImageReceipt(null);setCreatedImageCourseId(null);setImageFile(null);setImageError("");
       showToast({tone:"success",title:"Course image verified",
@@ -268,6 +277,8 @@ export function AdminCourseCreatePanel({
 
   async function uploadCourseImage(courseId:string,file:File) {
     if(imageBusy)return;
+    const controller=new AbortController();
+    uploadRef.current?.abort();uploadRef.current=controller;
     setImageBusy(true);setImageError("");
     try{
       if(!["image/jpeg","image/png","image/webp"].includes(file.type)||
@@ -279,18 +290,21 @@ export function AdminCourseCreatePanel({
       }}>(
         "/api/courses/"+encodeURIComponent(courseId)+"/image",{
           method:"POST",headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({originalName:file.name,contentType:file.type,sizeBytes:file.size}),
+          body:JSON.stringify({originalName:file.name,contentType:file.type,sizeBytes:file.size}),signal:controller.signal,
         });
       setImageReceipt(result.grant.receiptId);
       const sent=await fetch(result.grant.uploadUrl,{
         method:"PUT",body:file,headers:result.grant.requiredHeaders,
-        credentials:"omit",cache:"no-store",
+        credentials:"omit",cache:"no-store",signal:controller.signal,
       });
       if(!sent.ok)throw new Error("Upload failed. Your course was saved; retry its image below.");
-      await finishCourseImage(courseId,result.grant.receiptId);
+      await finishCourseImage(courseId,result.grant.receiptId,controller.signal);
     }catch(cause){
-      setImageError(cause instanceof Error?cause.message:"Image upload failed. Retry after saving the course.");
-    }finally{setImageBusy(false);}
+      if(!controller.signal.aborted)
+        setImageError(cause instanceof Error?cause.message:"Image upload failed. Retry after saving the course.");
+    }finally{
+      if(uploadRef.current===controller){uploadRef.current=null;setImageBusy(false);}
+    }
   }
 
   function createCourse(event: FormEvent<HTMLFormElement>) {
@@ -549,7 +563,10 @@ export function AdminCourseCreatePanel({
               {!createdImageCourseId?<Button type="button" size="sm" variant="secondary"
                 disabled={pending||imageBusy} onClick={()=>setImageFile(null)}>Remove selected image</Button>:null}
             </div>:null}
-            {imageBusy?<p role="status" className="mt-2 text-xs text-muted-foreground">Uploading or verifying the course image…</p>:null}
+            {imageBusy?<div role="status" className="mt-2 flex flex-wrap items-center gap-2">
+              <p className="text-xs text-muted-foreground">Uploading or verifying the course image…</p>
+              <Button type="button" variant="secondary" size="sm" onClick={cancelImageUpload}>Cancel upload</Button>
+            </div>:null}
             {imageError?<p role="alert" className="mt-2 text-xs text-error">{imageError}</p>:null}
             {createdImageCourseId&&imageFile?<div className="mt-2 flex flex-wrap gap-2">
               <Button type="button" size="sm" variant="secondary" loading={imageBusy} disabled={imageBusy}
