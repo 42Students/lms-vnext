@@ -389,7 +389,7 @@ function AdminDeliveryOverview({workspace}:{workspace:Workspace}){
      })}
      {source?<a href={source} target="_blank" rel="noopener noreferrer"
       className="font-semibold text-link underline">Open source link</a>:null}
-     {safeHttpHref(delivery.demoUrl)?<a href={safeHttpHref(delivery.demoUrl)!}
+     {safeHttpHref(delivery.demoUrl)?<a href={safeHttpHref(delivery.demoUrl) ?? undefined}
       target="_blank" rel="noopener noreferrer" className="font-semibold text-link underline">
       Open demo</a>:null}
      {!source&&!latest?.attachments.some(item=>Boolean(item&&typeof item==="object"&&
