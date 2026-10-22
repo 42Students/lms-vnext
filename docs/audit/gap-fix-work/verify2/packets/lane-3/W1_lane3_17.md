@@ -52,7 +52,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Support unambiguous legacy links; retain strict cross-section scope for shared reports.
 
 ## G2-4-013-046 [P1] GAP facet F11
-- [x] Verified: no delivery deep link resolves only if exactly one authorized assessment matches; ambiguous shared assignment fails with ASSIGNMENT_DELIVERY_MISMATCH.
+- [ ] Partial: ambiguous shared assessments fail closed; legacy Section chooser is not yet implemented.
 - Files: src/modules/courses/faculty-assessment-report-service.ts
 - Legacy: Legacy report may be reached by faculty from Blueprint without deliveryId. (`docs/legacy-source/frontend/src/components/Report/AssignmentReportContent.jsx:29-33`)
 - Expected fix: Provide safe Section chooser on ambiguous deep links.
@@ -85,7 +85,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Specify migration of attempt count, points, graded visibility and identity.
 
 ## G2-4-013-090 [P1] GAP facet F22
-- [x] Verified: dueAt is nullable, historical submissions remain reportable, and missing roster does not produce false missing/eligible totals.
+- [ ] Partial: nullable dueAt and roster-loss behavior exist; historical period roster snapshot is not established.
 - Files: src/modules/courses/faculty-assessment-report-service.ts
 - Legacy: Legacy due and points values nested in lesson content DTO, can lack roster. (`docs/legacy-source/frontend/src/utils/assignmentReport.js:37-43`; `docs/legacy-source/frontend/src/utils/assignmentReport.js:100-115`)
 - Expected fix: Define nullable due and roster-loss behavior, historical period roster snapshot.
