@@ -12,6 +12,7 @@ import { Disclosure } from "@/components/ui/disclosure";
 import {
   getAdminAttendanceGrid,
   getAdminAttendanceOptions,
+  AdminAttendanceOptionsLookupError,
 } from "@/modules/attendance/admin-service";
 
 function currentMonth() {
@@ -62,12 +63,18 @@ export default async function SuperAdminAttendancePage({
   }
   const optionsResult=await getAdminAttendanceOptions(context,collegeId)
     .then(value=>({ok:true as const,value}))
-    .catch(()=>({ok:false as const}));
+    .catch(error=>({ok:false as const,classLookupFailed:
+      error instanceof AdminAttendanceOptionsLookupError &&
+      error.kind==="class_courses"}));
   if(!optionsResult.ok)return <div className="min-w-0 space-y-4">
     <PageHeader title="Attendance"
       description="Review monthly attendance by class and course, correct recent records and check the minimum attendance policy."/>
-    <ErrorState title="Could not load attendance options"
-     description="Class and course choices are temporarily unavailable. No attendance has been changed."
+    <ErrorState title={optionsResult.classLookupFailed
+       ?"Couldn't verify which courses are taught to this class"
+       :"Could not load attendance options"}
+     description={optionsResult.classLookupFailed
+       ?"Course assignments are unavailable; retry class courses rather than treating the list as empty."
+       :"Class and course choices are temporarily unavailable. No attendance has been changed."}
      action={<Link href="/admin/attendance" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry class courses</Link>}/>
    </div>;
   const options=optionsResult.value;
