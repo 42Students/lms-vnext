@@ -120,10 +120,9 @@ export async function issueTpoRecruiterInvite(
         "TPO_RECRUITER_INVITE_NOT_FOUND",
       );
     }
-    // Issuing a link without a work email or college-linked company creates a
-    // dead-end invitation. Enforce both persisted requirements before rotating
-    // the credential; OTP verification still checks mailbox ownership.
-    if(!lead.emailNorm||!lead.companyRelationshipId){
+    // Legacy permits invitations before a company relationship has been linked.
+    // A verified email is still required for recruiter OTP onboarding.
+    if(!lead.emailNorm){
       throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_ALLOWED");
     }
 
