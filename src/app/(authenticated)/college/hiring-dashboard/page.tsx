@@ -45,11 +45,20 @@ export default async function CollegeHiringDashboardPage({
   });
   // Use independent reads when season is explicit; otherwise preserve the
   // workspace's selected season instead of changing report scope.
+  const cleanFunnelFilters={
+    ...(query.data.seasonId!==undefined?{seasonId:query.data.seasonId}:{}),
+    ...(query.data.jobId!==undefined?{jobId:query.data.jobId}:{}),
+    ...(query.data.departmentId!==undefined?{departmentId:query.data.departmentId}:{}),
+    ...(query.data.programId!==undefined?{programId:query.data.programId}:{}),
+    ...(query.data.cohortId!==undefined?{cohortId:query.data.cohortId}:{}),
+    ...(query.data.from!==undefined?{from:query.data.from}:{}),
+    ...(query.data.to!==undefined?{to:query.data.to}:{}),
+  };
   const funnelRequest=query.data.seasonId
-    ?getCollegeHiringFunnel(context,query.data)
+    ?getCollegeHiringFunnel(context,cleanFunnelFilters)
     :workspaceRequest.then(workspace=>getCollegeHiringFunnel(context,{
-      ...query.data,seasonId:workspace.selectedSeasonId??undefined,
-    }),()=>getCollegeHiringFunnel(context,query.data));
+      ...cleanFunnelFilters,...(workspace.selectedSeasonId!==null?{seasonId:workspace.selectedSeasonId}:{}),
+    }),()=>getCollegeHiringFunnel(context,cleanFunnelFilters));
   // An unavailable headline report cannot cancel the independently scoped
   // funnel/company read. Without a verified selected season, the fallback
   // explicitly requests the unfiltered college overview rather than treating
