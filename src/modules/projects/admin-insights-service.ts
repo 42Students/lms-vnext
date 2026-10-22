@@ -128,7 +128,10 @@ export async function listProjectAdminSnapshots(
       )
     : undefined;
   const workflowStatus = query.status==="READY"?
-    or(ilike(projectInstances.phase,"Ready"),eq(projectInstances.legacyStatus,"READY")):
+    and(eq(projectInstances.status,"ACTIVE"),
+      or(ilike(projectInstances.phase,"Ready"),eq(projectInstances.legacyStatus,"READY")),
+      sql`coalesce(${projectInstances.legacyStatus},'') <> 'BLOCKED'`,
+      sql`nullif(trim(${projectInstances.blocker}), '') is null`):
     query.status==="BLOCKED"?
       or(
         sql`nullif(trim(${projectInstances.blocker}), '') is not null`,
@@ -578,7 +581,7 @@ export async function listProjectAdminRiskQueue(
         and blocked.status = 'BLOCKED'
         and nullif(trim(blocked.blocker_reason), '') is not null
     )
-    or ${projectInstances.legacyStatus} = 'BLOCKED'
+    or coalesce(${projectInstances.legacyStatus} = 'BLOCKED', false)
   )`;
   const blockerSummary = sql<string | null>`coalesce(nullif(trim(${instanceBlocker}), ''), (
     select nullif(trim(blocked.blocker_reason), '')
@@ -611,7 +614,8 @@ export async function listProjectAdminRiskQueue(
   // vNext lifecycle enum. Resolve them against both imported snapshots and
   // current phase/task evidence instead of silently returning zero rows.
   const riskWorkflowStatus=query.status==="READY"
-    ? or(ilike(projectInstances.phase,"Ready"),eq(projectInstances.legacyStatus,"READY"))
+    ? and(or(ilike(projectInstances.phase,"Ready"),eq(projectInstances.legacyStatus,"READY")),
+      sql`not (${blockedTask})`)
     :query.status==="BLOCKED"?blockedTask
     :query.status==="IN_PROGRESS"
       ? and(eq(projectInstances.status,"ACTIVE"),

@@ -13,6 +13,7 @@ import { getDb } from "@/db/client";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {
   attendancePolicies,
+  collegeBranding,
   cohorts,
   collegeMemberships,
   colleges,
@@ -44,6 +45,7 @@ import {
   evaluateCollegeReadiness,
   type CollegeReadinessFacts,
 } from "./readiness-model";
+import {evaluateLegacyDomainLoginReadiness} from "./legacy-domain-login-readiness";
 
 function isMissingRelation(
   error: unknown,
@@ -444,39 +446,27 @@ export async function getSuperAdminCollegeReadiness(
       eq(tenantDomains.collegeId,college.id),isNull(tenantDomains.deletedAt),
       eq(tenantDomains.isPrimary,true)))),
   ]);
-  const legacyBlockers:string[]=[];
-  const legacyWarnings:string[]=[];
-  const legacyActions:string[]=[];
-  if(domainTotal!==null&&domainVerified!==null&&domainPrimary!==null){
-    if(domainTotal===0){
-      legacyBlockers.push("NO_DOMAIN");
-      legacyActions.push("Add at least one domain under Superadmin → Tenant Domains.");
-    }
-    if(domainTotal>0&&domainPrimary===0){
-      legacyBlockers.push("NO_PRIMARY_DOMAIN");
-      legacyActions.push("Mark exactly one domain as Primary for this college.");
-    }
-    if(domainPrimary>1){
-      legacyBlockers.push("MULTIPLE_PRIMARY_DOMAINS");
-      legacyActions.push("Ensure only one domain is Primary (others must be non-primary).");
-    }
-    // vNext's primary_verified database constraint and tenant resolver always
-    // demand a verified primary, even when imported historic hosts exist.
-    if(domainTotal>0&&verifiedPrimaryDomains===0){
-      legacyBlockers.push("NO_VERIFIED_PRIMARY_DOMAIN");
-      legacyActions.push("Verify the Primary domain (TXT verification) before real logins.");
-      if(domainVerified===0)legacyWarnings.push("NO_VERIFIED_DOMAIN");
-      else if(domainPrimary>0)legacyWarnings.push("PRIMARY_DOMAIN_NOT_VERIFIED");
-    }
+  // Branding remains advisory. If the optional relation is not registered,
+  // do not mistake absence of evidence for an absent logo.
+  let brandingLogo:string|null|undefined;
+  try {
+    const [branding]=await db.select({logoUrl:collegeBranding.logoUrl})
+      .from(collegeBranding).where(eq(collegeBranding.collegeId,college.id)).limit(1);
+    brandingLogo=branding?.logoUrl??null;
+  } catch(error){
+    if(!isMissingRelation(error))throw error;
+    brandingLogo=undefined;
   }
-  if(!college.logoObjectPath&&!college.legacyLogoUrl){
-    legacyWarnings.push("MISSING_LOGO");
-    legacyActions.push("Add a logo (college logo or branding logo).");
-  }
-  if([activeDepartments,facultyMemberships,enrolledLearners].some(value=>value===0)){
-    legacyWarnings.push("EMPTY_COLLEGE_NO_ACADEMIC_DATA");
-    legacyActions.push("Add departments, faculty, and students — this college is missing at least one.");
-  }
+  // The current vNext tenant resolver requires verified hosts; pass that same
+  // policy explicitly rather than reading a divergent "strict" env default.
+  // The pure adapter also supports historic lenient readiness for test/crosswalk.
+  const requireVerifiedDomains=true;
+  const domainPolicy=evaluateLegacyDomainLoginReadiness({
+    requireVerifiedDomains,domainTotal,domainVerified,domainPrimary,verifiedPrimaryDomains,
+    hasLogo:college.logoObjectPath?.trim()||college.legacyLogoUrl?.trim()?true:
+      brandingLogo===undefined?null:Boolean(brandingLogo?.trim()),
+    departments:activeDepartments,facultyMemberships,enrolledLearners,
+  });
 
   const facts: CollegeReadinessFacts = {
     collegeStatus: college.status,
@@ -506,9 +496,8 @@ export async function getSuperAdminCollegeReadiness(
   });
   facts.collegeStatus=currentCollege.status;
   const evaluation=evaluateCollegeReadiness(facts);
-  const domainLoginReady=domainTotal===null||domainPrimary===null||
-    verifiedPrimaryDomains===null?null:
-      currentCollege.status==="ACTIVE"&&legacyBlockers.length===0;
+  const domainLoginReady=domainPolicy.readyForDomainLogin===null?null:
+    currentCollege.status==="ACTIVE"&&domainPolicy.readyForDomainLogin;
   const tenantSetupComplete=evaluation.overall==="INCOMPLETE"?null:
     evaluation.overall==="READY";
   return {
@@ -520,16 +509,16 @@ export async function getSuperAdminCollegeReadiness(
     readinessGates:{domainLoginReady,tenantSetupComplete},
     legacyDomainReadiness:{
       readyForDomainLogin:domainLoginReady,
-      blockers:legacyBlockers,
-      warnings:legacyWarnings,
-      recommendedActions:legacyActions,
+      blockers:domainPolicy.blockers,
+      warnings:domainPolicy.warnings,
+      recommendedActions:domainPolicy.recommendedActions,
       meta:{
         collegeId:college.id,
         collegeName:college.name,
         organizationId:college.organizationId,
         uniqueId:college.legacyUniqueId??college.code,
         domainTotal,domainVerified,domainPrimary,
-        requireVerifiedDomains:true,
+        requireVerifiedDomains,
       },
     },
     supplemental: {
