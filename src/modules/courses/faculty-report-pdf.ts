@@ -122,6 +122,17 @@ export function buildFacultyReportPdf(input:FacultyReportPdfInput):string{
  const date=generatedDate(input.generatedAt??new Date());
  textAt("Generated "+date,MARGIN,y-4,1,9,MUTED);
  y-=34;
+ // A missing class roster is not an empty submission list. Place an unmistakable
+ // warning ahead of the tables, including in printed copies of the report.
+ if(input.summary.some(value=>/roster unavailable|incomplete data|report is incomplete/i.test(value))){
+  ensure(52);
+  rectangle(MARGIN,y-40,TEXT_WIDTH,44,"0.997 0.924 0.900");
+  rectangle(MARGIN,y-40,4,44,"0.725 0.176 0.157");
+  textAt("INCOMPLETE DATA",MARGIN+14,y-17,2,12,"0.725 0.176 0.157");
+  textAt("Class roster could not be verified; counts may be incomplete.",
+    MARGIN+14,y-32,1,9,INK);
+  y-=54;
+ }
  if(input.summary.length){
   ensure(28);textAt("Summary",MARGIN,y,2,12,INK);y-=16;
   for(let i=0;i<input.summary.length;i+=3){
@@ -150,8 +161,16 @@ export function buildFacultyReportPdf(input:FacultyReportPdfInput):string{
    textAt("No records",MARGIN+12,y-18,1,10,MUTED);y-=36;
    continue;
   }
+  const missingTable=section.title.trim().toLowerCase()==="not submitted";
+  if(missingTable){
+   ensure(31);
+   rectangle(MARGIN,y-29,TEXT_WIDTH,29,"0.909 0.947 0.963");
+   textAt("No.",MARGIN+12,y-18,2,9,INK);
+   textAt("Student",MARGIN+60,y-18,2,9,INK);
+   y-=29;
+  }
   for(let i=0;i<section.rows.length;i++){
-   const wrapped=wrap(section.rows[i]!,90);
+   const wrapped=wrap(section.rows[i]!,missingTable?75:90);
    for(let at=0;at<wrapped.length;){
     const available=Math.max(1,Math.floor((y-76-12)/13));
     if(available<1){nextPage();continue;}
@@ -159,7 +178,8 @@ export function buildFacultyReportPdf(input:FacultyReportPdfInput):string{
     const height=Math.max(26,lines.length*13+10);
     ensure(height);
     if(i%2===0)rectangle(MARGIN,y-height,TEXT_WIDTH,height,"0.977 0.985 0.991");
-    lines.forEach((part,line)=>textAt(part,MARGIN+12,y-17-line*13,1,9,INK));
+    if(missingTable&&at===0)textAt(String(i+1),MARGIN+12,y-17,1,9,MUTED);
+    lines.forEach((part,line)=>textAt(part,MARGIN+(missingTable?60:12),y-17-line*13,1,9,INK));
     y-=height;
     lineAt(y);
     at+=lines.length;
