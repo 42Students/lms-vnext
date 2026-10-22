@@ -126,3 +126,8 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/components/placements/tpo-drive-lifecycle-controls.tsx
 - Legacy: Old publish modal allows app+email with clear no-undo warning. `docs/legacy-source/frontend/src/pages/tpo/drives/[jobId].js:501`
 - Expected fix: Preserve blocking/notification clarity; change email only after delivery integration.
+
+
+## Fast verification observations (chat-4)
+- OK (source-inspected): G2-11-001-068, G2-11-001-071 (typed public error and synchronous savingRef); G2-11-003-015, G2-11-003-017, G2-11-003-019, G2-11-003-025, G2-11-003-064, G2-11-003-076, G2-11-003-081 (recruiter action/status/hint/accessible title link).
+- DEFERRED (requires deeper server/legacy comparison; **not claimed fixed**): G2-11-001-050, G2-11-003-056, G2-11-003-062, G2-11-003-067, G2-11-005-137, G2-11-012-024, G2-11-012-041, G2-11-012-046, G2-11-012-064, G2-11-012-098, G2-11-010-036, G2-11-010-048, G2-11-010-061, G2-11-010-078, G2-11-010-101, G2-11-010-108. Server pagination/permissions and publish/notification contracts need independent validation.
