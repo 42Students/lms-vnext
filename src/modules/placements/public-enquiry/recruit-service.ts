@@ -2,6 +2,7 @@ import "server-only";
 import { and,desc,eq,gt,isNull,sql } from "drizzle-orm";
 import { z } from "zod";
 import {publicRecruitEnquirySchema,publicRecruitLeadActivityNote} from "./recruit-input-model";
+export {publicRecruitEnquirySchema,publicRecruitLeadActivityNote} from "./recruit-input-model";
 import { getDb } from "@/db/client";
 import {
  activityEvents,collegeMemberships,colleges,inAppNotifications,membershipRoles,

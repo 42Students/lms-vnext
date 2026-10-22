@@ -2,7 +2,7 @@ import {describe,expect,it} from "vitest";
 import {publicRecruitEnquirySchema,publicRecruitLeadActivityNote} from "@/modules/placements/public-enquiry/recruit-input-model";
 
 describe("G2-4-026-029 public recruiter enquiry legacy input",()=>{
-  const base={email:"recruiter@acme-corp.example",code:"123456",name:"<b>Asha</b> Sharma"};
+  const base={email:"recruiter@acme-corp.com",code:"123456",name:"<b>Asha</b> Sharma"};
 
   it("accepts legacy optional company, phone, and message",()=>{
     const result=publicRecruitEnquirySchema.parse(base);
