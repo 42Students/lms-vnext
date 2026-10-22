@@ -25,7 +25,10 @@ describe("TPO-settings-audit-OUTCOME-CAS-01 custom outcome label retries",()=>{
   ])expect(tpoOutcomeLabelsAlreadyApplied(saved,other)).toBe(false);
  });
  it("checks live actor permissions before the locked read and all CAS/audit writes",()=>{
-  const service=readFileSync("src/modules/placements/tpo-outcome-label-settings-service.ts","utf8");
+  const source=readFileSync("src/modules/placements/tpo-outcome-label-settings-service.ts","utf8");
+  // Read-only catalog has an earlier permission check; inspect the save
+  // transaction itself for the locking and CAS ordering.
+  const service=source.slice(source.indexOf("export async function saveTpoOutcomeLabels("));
   const lock=service.indexOf('.for("update")');
   const persisted=service.indexOf('assertPersistedPlatformPermission(tx,context,"placements.manage"');
   const same=service.indexOf("tpoOutcomeLabelsAlreadyApplied(stored.data,input.labels)");
