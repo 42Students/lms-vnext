@@ -625,6 +625,7 @@ export async function listProjectAdminRiskQueue(
     stalled: sql<number>`count(*) filter (where ${stalledSignal})`.mapWith(Number),
     blocker: sql<number>`count(*) filter (where ${blockedTask})`.mapWith(Number),
     review: sql<number>`count(*) filter (where ${pendingReview})`.mapWith(Number),
+    candidates: sql<number>`count(*) filter (where ${stalledSignal} or ${blockedTask} or ${pendingReview})`.mapWith(Number),
   }).from(projectInstances).where(and(
     eq(projectInstances.collegeId, college.id),
     isNull(projectInstances.deletedAt),
@@ -688,6 +689,7 @@ export async function listProjectAdminRiskQueue(
         Math.ceil(total / query.pageSize),
       ),
       blockerSignalSupported: true,
+      candidatesTotal:bucketTotals?.candidates??0,
       buckets,
     };
   }
@@ -772,6 +774,7 @@ export async function listProjectAdminRiskQueue(
       Math.ceil(total / query.pageSize),
     ),
     blockerSignalSupported: true,
+    candidatesTotal:bucketTotals?.candidates??0,
     buckets,
   };
   });
