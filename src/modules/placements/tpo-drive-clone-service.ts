@@ -61,9 +61,9 @@ export async function cloneTpoDrive(context:RequestContext,rawJobId:unknown,raw:
     allowedCohortIds:oldPolicy.allowedCohortIds??[],
     allowedPassingYears:oldPolicy.allowedPassingYears??[],
   },new Date().getUTCFullYear()):null;
-  if(oldPolicy)await tx.insert(placementJobEligibilityPolicies).values({
+  if(oldPolicy&&audience)await tx.insert(placementJobEligibilityPolicies).values({
     jobId:draft.id,allowedProgramIds:oldPolicy.allowedProgramIds,
-    allowedCohortIds:audience!.allowedCohortIds,allowedSectionIds:oldPolicy.allowedSectionIds,
+    allowedCohortIds:audience.allowedCohortIds,allowedSectionIds:oldPolicy.allowedSectionIds,
     minCgpaHundredths:oldPolicy.minCgpaHundredths,
     maxActiveBacklogs:oldPolicy.maxActiveBacklogs,maxPastBacklogs:oldPolicy.maxPastBacklogs,
     minTenthPctBasisPoints:oldPolicy.minTenthPctBasisPoints,
@@ -71,7 +71,7 @@ export async function cloneTpoDrive(context:RequestContext,rawJobId:unknown,raw:
     minDiplomaPctBasisPoints:oldPolicy.minDiplomaPctBasisPoints,
     minUndergraduatePctBasisPoints:oldPolicy.minUndergraduatePctBasisPoints,
     minPctThroughoutBasisPoints:oldPolicy.minPctThroughoutBasisPoints,
-    maxGapYears:oldPolicy.maxGapYears,allowedPassingYears:audience!.allowedPassingYears,
+    maxGapYears:oldPolicy.maxGapYears,allowedPassingYears:audience.allowedPassingYears,
     requireVerifiedEvidence:oldPolicy.requireVerifiedEvidence,
     missingEvidencePolicy:oldPolicy.missingEvidencePolicy,updatedByUserId:context.user.id,
   });
