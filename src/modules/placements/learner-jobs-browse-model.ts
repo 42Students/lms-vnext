@@ -128,12 +128,21 @@ const synonyms:Readonly<Record<string,readonly string[]>>={
  "remote":["wfh","work from home"],"intern":["internship","trainee"],
  "internship":["intern","trainee"],"hybrid":["partly remote","hybrid work"],
 };
+const legacyDisplayJobTypes:Readonly<Record<string,string>>={
+ "full-time":"Full-time","part-time":"Part-time",
+ "internship":"Internship","contract":"Contract",
+ "freelance":"Freelance","remote":"Remote",
+};
+function normalizedJobType(value:string){
+ return value.trim().toLocaleLowerCase("en-IN").replace(/[ _]+/g,"-");
+}
 function visibleJobType(row:BrowseJobShape){
- return row.job.jobTypeLabel?.trim()||row.roleOption.employmentType;
+ const raw=row.job.jobTypeLabel?.trim()||row.roleOption.employmentType;
+ return legacyDisplayJobTypes[normalizedJobType(raw)]??raw.trim();
 }
 const legacyTypeOrder=["full-time","part-time","internship","contract","freelance","remote"];
 function legacyTypeRank(value:string){
- const normalized=value.toLocaleLowerCase("en-IN").replace(/[ _]+/g,"-");
+ const normalized=normalizedJobType(value);
  const found=legacyTypeOrder.indexOf(normalized);
  return found>=0?found:legacyTypeOrder.length;
 }
@@ -148,7 +157,7 @@ function searchCompensation(row:BrowseJobShape){
 export function availableLearnerJobFacets<T extends BrowseJobShape>(items: readonly T[]) {
   return {
     types: [...new Map(items.map(visibleJobType).filter(Boolean)
-      .map(value=>[value.toLocaleLowerCase("en-IN"),value] as const)).values()]
+      .map(value=>[normalizedJobType(value),value] as const)).values()]
       .sort((a,b) => legacyTypeRank(a)-legacyTypeRank(b)||
         a.localeCompare(b,"en-IN",{sensitivity:"base"})),
     locations: [...new Map(items.flatMap(row=>row.roleOption.locations)
@@ -173,7 +182,9 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
   items: readonly T[], filters: LearnerJobBrowseFilters,
   snapshotNowMs: number = Number.NaN,
 ): T[] {
-  const search=filters.search.trim().toLocaleLowerCase();
+  // Browse intentionally trims whitespace, unlike the old cache endpoint.
+  // Substring matching and legacy synonyms run only on authorized job rows.
+  const search=filters.search.slice(0,150).trim().toLocaleLowerCase("en-IN");
   // Legacy search combines eight posting fields, but a query can contain
   // words from different fields. Match each word (with recognized legacy
   // synonyms) without requiring them to be adjacent in a single column.
@@ -187,8 +198,8 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
     if(filters.eligibleOnly && !(row.visibleToLearner ?? row.canApply))return false;
     if(filters.departmentId && row.job.targetDepartmentId!==filters.departmentId)return false;
     if(filters.programId && row.job.targetProgramId!==filters.programId)return false;
-    if(filters.jobType && visibleJobType(row).toLocaleLowerCase("en-IN")!==
-       filters.jobType.toLocaleLowerCase("en-IN"))return false;
+    if(filters.jobType && normalizedJobType(visibleJobType(row))!==
+       normalizedJobType(filters.jobType))return false;
     if (filters.closingSoon) {
       const deadline = row.job.applicationDeadline
         ? Date.parse(row.job.applicationDeadline) : Number.NaN;
@@ -199,8 +210,8 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
       }
     }
     if (filters.employmentType !== "all" &&
-        visibleJobType(row).toLocaleLowerCase("en-IN") !==
-          filters.employmentType.toLocaleLowerCase("en-IN")) return false;
+        normalizedJobType(visibleJobType(row)) !==
+          normalizedJobType(filters.employmentType)) return false;
     if(filters.location!=="all"&&!(row.roleOption.locations??[]).some(place=>
       place.trim().toLocaleLowerCase()===filters.location.trim().toLocaleLowerCase()))return false;
     if (!search) return true;
@@ -260,4 +271,29 @@ export function searchLegacyScopedLearnerJobs<T extends BrowseJobShape>(
   departmentId:input.departmentId,programId:input.programId,jobType:input.jobType,
   sort:"title",
  }).slice(0,input.limit);
+}
+
+
+/** Legacy /exists is an exact title lookup inside a verified college feed,
+ * never a public lookup oracle for unpublished cross-tenant jobs. */
+export function existsScopedLearnerJobTitle(
+ authorizedJobs:readonly BrowseJobShape[],rawTitle:string,
+):boolean{
+ const title=rawTitle.trim().slice(0,150).toLocaleLowerCase("en-IN");
+ return title.length>0&&authorizedJobs.some(row=>
+  row.job.title.trim().toLocaleLowerCase("en-IN")===title);
+}
+
+/** The legacy /popular cache returned its first results without a reliable
+ * engagement signal. Use a bounded deterministic recency fallback instead
+ * of inventing a popularity score or sharing another learner's bookmarks. */
+export function legacyPopularLearnerJobsFallback<T extends BrowseJobShape>(
+ authorizedJobs:readonly T[],rawLimit:number=10,
+):T[]{
+ const limit=Number.isFinite(rawLimit)
+  ?Math.max(0,Math.min(100,Math.trunc(rawLimit))):10;
+ if(limit===0)return [];
+ return filterLearnerPlacementJobs(authorizedJobs,{
+  ...DEFAULT_LEARNER_JOB_FILTERS,sort:"newest",
+ }).slice(0,limit);
 }
