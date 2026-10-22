@@ -3,7 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
-import { driveInterviewsHref, driveInterviewsParams, driveRoundTime, filterDriveCandidateAppointments, driveInterviewFilterError } from "@/modules/placements/college-drive-interviews-model";
+import { driveInterviewDateIst, driveInterviewsHref, driveInterviewsParams, driveRoundTime, filterDriveCandidateAppointments, driveInterviewFilterError } from "@/modules/placements/college-drive-interviews-model";
 import { listCollegeDriveInterviews } from "@/modules/placements/college-drive-interviews-service";
 import { getCollegeRoundSlotAppointments } from "@/modules/placements/college-round-slot-action-service";
 import { CollegeInterviewAppointments } from "@/components/placements/college-interview-appointments";
@@ -183,7 +183,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
         <strong>This learner already has other scheduled interviews.</strong>
         <ul className="mt-2 list-disc pl-5">
           {appointments.candidateConflicts.slice(0,5).map(conflict=><li key={conflict.id}>
-            {conflict.jobTitle} · {driveRoundTime(new Date(conflict.startsAt),"Asia/Kolkata")}
+            {conflict.jobTitle} · {driveInterviewDateIst(new Date(conflict.startsAt))}
           </li>)}
         </ul>
         {appointments.candidateConflictsHasMore||appointments.candidateConflicts.length>5?
