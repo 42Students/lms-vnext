@@ -7,16 +7,16 @@ These rows were marked DEFERRED without being checked. Each row must now end as 
 DEFERRED is NOT allowed. For each row: read its full text in the source packet named next to it, find the old behaviour in docs/legacy-source, find the vNext code, decide, and fix if needed.
 Keep tests passing and TypeScript valid; never silence errors. Write one result line per row under Results, push, then tick this packet in your queue.
 
-- [ ] G2-4-015-020  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
-- [ ] G2-4-015-034  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
-- [ ] G2-4-015-062  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
-- [ ] G2-4-028-011  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
-- [ ] G2-5-001-012  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
-- [ ] G2-5-001-019  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
-- [ ] G2-5-001-024  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
-- [ ] G2-5-001-030  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
-- [ ] G2-5-001-032  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
-- [ ] G2-5-001-036  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-4-015-020  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-4-015-034  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-4-015-062  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-4-028-011  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-5-001-012  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-5-001-019  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-5-001-024  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-5-001-030  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-5-001-032  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
+- [x] G2-5-001-036  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_13.md)
 
 ## Results
 
