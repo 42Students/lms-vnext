@@ -356,7 +356,17 @@ export async function updateBugTrackerWorkflowForAdmin(
     try {
       transition = applyBugWorkflowUpdate(
         snapshot(loaded.report),
-        input,
+        {expectedVersion:input.expectedVersion,
+          ...(input.status!==undefined?{status:input.status}:{}),
+          ...(input.resolution!==undefined?{resolution:input.resolution}:{}),
+          ...(input.affectedLayer!==undefined?{affectedLayer:input.affectedLayer}:{}),
+          ...(input.rootCause!==undefined?{rootCause:input.rootCause}:{}),
+          ...(input.fixNotes!==undefined?{fixNotes:input.fixNotes}:{}),
+          ...(input.frontendCommitSha!==undefined?{frontendCommitSha:input.frontendCommitSha}:{}),
+          ...(input.backendCommitSha!==undefined?{backendCommitSha:input.backendCommitSha}:{}),
+          ...(input.regressionTestStatus!==undefined?{regressionTestStatus:input.regressionTestStatus}:{}),
+          ...(input.productionVerified!==undefined?{productionVerified:input.productionVerified}:{}),
+        },
         { id: context.user.id, active: true, role: "SUPER_ADMIN" },
         now,
       );
@@ -428,7 +438,9 @@ export async function retestBugTrackerIssueForAdmin(
     try {
       transition = applyBugWorkflowRetest(
         snapshot(loaded.report),
-        input,
+        {expectedVersion:input.expectedVersion,result:input.result,
+          ...(input.note!==undefined?{note:input.note}:{}),
+        },
         { id: context.user.id, active: true, role: "SUPER_ADMIN" },
         now,
       );
