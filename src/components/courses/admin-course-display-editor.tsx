@@ -73,8 +73,9 @@ export function AdminCourseDisplayEditor({
       const payload:unknown=await response.json();
       if(!payload||typeof payload!=="object"||!("image" in payload))return;
       const state=(payload as {image?:{pending?:{receiptId:string;status:string}|null}}).image;
-      if(!controller.signal.aborted&&state?.pending)
-        setImagePending({receiptId:state.pending.receiptId,status:state.pending.status});
+      if(!controller.signal.aborted)
+        setImagePending(state?.pending
+          ?{receiptId:state.pending.receiptId,status:state.pending.status}:null);
     }).catch(()=>{/* A missing status route never enables an unverified image. */});
     return ()=>controller.abort();
   },[courseImageUrl,enabled]);
