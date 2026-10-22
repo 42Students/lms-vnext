@@ -39,9 +39,9 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [x] `src/app/(authenticated)/admin/hr/page.tsx`
 - [x] `src/app/(authenticated)/admin/inbound-mail/page.tsx`
 - [x] `src/app/(authenticated)/admin/lecture-halls/[hallId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/lecture-halls/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/unassigned/page.tsx`
+- [x] `src/app/(authenticated)/admin/lecture-halls/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/unassigned/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/analytics/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/applications/[applicationId]/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/applications/page.tsx`

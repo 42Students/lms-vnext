@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { adminUnassignedUsersHref, adminUnassignedUsersQuerySchema, unassignedIdentityScopeAllowed } from "@/modules/people/admin-unassigned-user-model";
 import { listSuperAdminUnassignedUsers } from "@/modules/people/admin-unassigned-user-service";
 export default async function UnassignedIdentityDirectory({ searchParams }: {
@@ -54,6 +55,19 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
   const data = loaded.value;
   const statuses = ["ALL", "ACTIVE", "DISABLED"] as const;
   const roles = ["ALL", "SUPER_ADMIN", "NONE"] as const;
+  const date = new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" });
+  const columns: DataTableColumn<(typeof data.items)[number]>[] = [
+    { key: "user", header: "User", mobilePriority: "primary",
+      cell: row => <span className="font-semibold text-[var(--lms-heading)]">{row.displayName ?? "Unnamed user"}</span> },
+    { key: "status", header: "Platform status", mobilePriority: "secondary",
+      cell: row => <StatusBadge tone={row.platformStatus === "ACTIVE" ? "success" : "neutral"}>{row.platformStatus}</StatusBadge> },
+    { key: "role", header: "System role", mobilePriority: "secondary",
+      cell: row => <span className="flex flex-wrap gap-2">{row.roles.length ? row.roles.map(role => <StatusBadge key={role}>{role}</StatusBadge>) : <StatusBadge>No system role</StatusBadge>}</span> },
+    { key: "created", header: "Created", mobilePriority: "secondary",
+      cell: row => <time dateTime={row.createdAt.toISOString()}>{date.format(row.createdAt)} IST</time> },
+    { key: "updated", header: "Updated", mobilePriority: "secondary",
+      cell: row => <time dateTime={row.updatedAt.toISOString()}>{date.format(row.updatedAt)} IST</time> },
+  ];
   return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Users without college memberships"
       description="Read-only identities with no college membership. Users with active, suspended or ended memberships are excluded. Personal contact and session information are excluded." actions={<Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)]">← Users & Roles</Link>} />
@@ -68,14 +82,9 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
       <Button type="submit" variant="primary" className="min-h-11 w-full self-end sm:col-span-2 lg:col-span-1 lg:min-h-9 lg:w-auto">Filter</Button>
     </form>
     <p role="status" className="text-xs text-muted-foreground">{data.total.toLocaleString("en-IN")} matching users · page {data.page} of {data.totalPages} · 30 per page</p>
-    {data.items.length ? <div className="min-w-0 divide-y divide-border border-y border-border">{data.items.map(row => <article key={row.id}
-      className="min-w-0 py-[var(--lms-space-4)] first:pt-0">
-      <h2 className="break-words text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">{row.displayName ?? "Unnamed user"}</h2>
-      <div className="mt-[var(--lms-space-2)] flex min-w-0 flex-wrap gap-[var(--lms-space-2)]"><StatusBadge tone={row.platformStatus === "ACTIVE" ? "success" : "neutral"}>{row.platformStatus}</StatusBadge>
-        {row.roles.length ? row.roles.map(role => <StatusBadge key={role}>{role}</StatusBadge>) : <StatusBadge>No system role</StatusBadge>}</div>
-      <p className="mt-3 text-xs text-muted-foreground">Created {new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(row.createdAt)} IST</p>
-      <p className="text-xs text-muted-foreground">Updated {new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(row.updatedAt)} IST</p>
-    </article>)}</div> : <EmptyState title="No matching users" description="No users without college memberships match these filters." />}
+    <DataTable caption="Users without college memberships" columns={columns}
+      rows={data.items} getRowKey={row=>row.id} mobileMode="scroll"
+      empty={<EmptyState title="No matching users" description="No users without college memberships match these filters."/>}/>
     <div className="border-t border-border pt-[var(--lms-space-3)]"><Pagination page={data.page} pageCount={data.totalPages}
       hrefForPage={page=>adminUnassignedUsersHref({...data.query,page})} label="Unassigned user pages"/></div>
   </div>;
