@@ -9,7 +9,8 @@ export function LearnerImageGallery({ membershipId }: { membershipId?: string })
   const [images, setImages] = useState<Image[]>([]);
   const [loading, setLoading] = useState(true);
   const [canEdit, setCanEdit] = useState(false);
-  const [receipt, setReceipt] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [pendingObjectKey, setPendingObjectKey] = useState<string | null>(null);
   const [preview, setPreview] = useState<{ id: string; url: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -43,20 +44,53 @@ export function LearnerImageGallery({ membershipId }: { membershipId?: string })
       setPreview({ id: imageId, url: result.url });
     } catch { setError("Image is unavailable."); }
   }
+  async function confirmUpload(objectKey: string) {
+    const response = await fetch("/api/profile/learner-gallery/upload", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "CONFIRM", objectKey }),
+    });
+    if (!response.ok) throw new Error("The image is awaiting its private security scan. Retry verification.");
+    setPendingObjectKey(null);
+    setSelectedFile(null);
+    await load();
+  }
+  async function verifyUpload() {
+    if (!pendingObjectKey || busy) return;
+    setBusy(true); setError(null);
+    try { await confirmUpload(pendingObjectKey); }
+    catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Image verification is pending.");
+    } finally { setBusy(false); }
+  }
   async function add() {
-    if (!receipt.trim() || busy) return;
+    if (!selectedFile || busy) return;
+    const file = selectedFile;
+    if (!["image/jpeg", "image/png"].includes(file.type) ||
+        file.size < 1 || file.size > 5 * 1024 * 1024 ||
+        !/\\.(?:jpe?g|png)$/i.test(file.name)) {
+      setError("Choose a JPEG or PNG image no larger than 5 MB.");
+      return;
+    }
     setBusy(true); setError(null);
     try {
-      const response = await fetch("/api/profile/learner-gallery" + suffix, {
+      const response = await fetch("/api/profile/learner-gallery/upload", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ receiptId: receipt.trim(),
-          idempotencyKey: crypto.randomUUID() }),
+        body: JSON.stringify({ action: "INITIATE", originalName: file.name,
+          contentType: file.type, sizeBytes: file.size }),
       });
-      if (!response.ok) throw new Error("Could not add image.");
-      setReceipt("");
-      await load();
-    } catch { setError("This must be a verified private profile-image upload for your account."); }
-    finally { setBusy(false); }
+      if (!response.ok) throw new Error("Private photo upload is unavailable.");
+      const grant: { objectKey: string; uploadUrl: string;
+        requiredHeaders: Record<string, string> } = await response.json();
+      const upload = await fetch(grant.uploadUrl, {
+        method: "PUT", credentials: "omit", redirect: "error", body: file,
+        headers: grant.requiredHeaders,
+      });
+      if (!upload.ok) throw new Error("The image transfer failed.");
+      setPendingObjectKey(grant.objectKey);
+      await confirmUpload(grant.objectKey);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not upload image.");
+    } finally { setBusy(false); }
   }
   async function deactivate(imageId: string) {
     if (busy || !confirm("Remove this image from your gallery?")) return;
@@ -91,17 +125,28 @@ export function LearnerImageGallery({ membershipId }: { membershipId?: string })
         </li>)}
       </ul>}
     {canEdit ? <div className="max-w-lg space-y-2 rounded-xl border border-border bg-surface p-3">
-      <label htmlFor="gallery-receipt" className="block text-sm font-medium">
-        Verified profile image receipt ID
+      <label htmlFor="gallery-upload" className="block text-sm font-medium">
+        Add a profile photo
       </label>
-      <Input id="gallery-receipt" value={receipt} onChange={event => setReceipt(event.target.value)}
-        placeholder="Private image receipt UUID"
-        className="w-full" />
-      <Button type="button" disabled={busy || !receipt.trim()} onClick={() => void add()}
-        >
-        {busy ? "Saving…" : "Add image"}
+      <Input id="gallery-upload" type="file" accept="image/jpeg,image/png"
+        disabled={busy} onChange={event => {
+          setSelectedFile(event.currentTarget.files?.[0] ?? null);
+          setPendingObjectKey(null); setError(null);
+        }} className="w-full" />
+      <Button type="button" disabled={busy || !selectedFile || Boolean(pendingObjectKey)}
+        onClick={() => void add()}>
+        {busy ? "Uploading…" : "Upload photo"}
       </Button>
-      <p className="text-xs text-muted-foreground">At most ten images. No public image links are accepted.</p>
+      {pendingObjectKey ? <div className="space-y-2">
+        <p role="status" className="text-xs text-muted-foreground">
+          Transfer complete. The image is awaiting its private security scan.
+        </p>
+        <Button type="button" variant="secondary" disabled={busy}
+          onClick={() => void verifyUpload()}>Retry verification</Button>
+      </div> : null}
+      <p className="text-xs text-muted-foreground">
+        Up to ten images. JPEG or PNG, maximum 5 MB each. No public image links.
+      </p>
     </div> : null}
     {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
   </section>;
