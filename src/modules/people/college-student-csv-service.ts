@@ -309,7 +309,8 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
    metadata:{count:results.length,created:results.filter(x=>x.status==="IMPORTED").length,
     partial:results.filter(x=>x.status==="PARTIAL").length,
     failed:results.filter(x=>["INVALID","FAILED"].includes(x.status)).length,
-    runId,bulkImportBatchId:runId,learnerCount:results.length,
+    runId,bulkImportBatchId:runId,
+    learnerCount:results.filter(item=>item.membershipId !== undefined).length,
     createdMembershipIds:receipts.filter(x=>x.membershipId).map(x=>x.membershipId),
     actorRole:isSuperAdmin(context)?"SUPER_ADMIN":"COLLEGE_ADMIN",
     selectedCollegeId:member.collegeId,sourceFingerprint, receipts,
@@ -319,7 +320,8 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
     reversible:false},
   });
   return { preview: false, structuralErrors: [], results, valid: valid.length, invalid,
-    runId,bulkImportBatchId:runId,learnerCount:results.length,
+    runId,bulkImportBatchId:runId,
+    learnerCount:results.filter(item=>item.membershipId !== undefined).length,
     reversible:false, recoveryRequired:results.some(item=>item.status==="PARTIAL") };
 }
 
