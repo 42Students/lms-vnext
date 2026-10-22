@@ -128,7 +128,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
     method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),
    });
    if(!facultyAssignmentCommandReceipt(receipt,{action,deliveryId,
-      assignmentId:existing?.id,title,maxPoints}))throw new Error("Assignment save status is uncertain. Reload the Section before retrying.");
+      ...(existing ? {assignmentId:existing.id} : {}),title,maxPoints}))throw new Error("Assignment save status is uncertain. Reload the Section before retrying.");
    setConfirmed(false);setMethodsDirty(false);
    if(action==="CREATE" && publishNow){
      const created=(receipt as {assignment?:{id?:unknown;updatedAt?:unknown}}).assignment;
