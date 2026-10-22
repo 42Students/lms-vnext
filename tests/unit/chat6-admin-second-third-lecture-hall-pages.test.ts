@@ -5,13 +5,14 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 const fakes = vi.hoisted(() => ({
   context: vi.fn(),
   listHalls: vi.fn(),
+  listOrganizationHalls: vi.fn(),
   departments: vi.fn(),
   availability: vi.fn(),
   notFound: vi.fn(),
 }));
 vi.mock("server-only", () => ({}));
 vi.mock("@/auth/request-context", () => ({ getCurrentRequestContext: fakes.context }));
-vi.mock("@/modules/academics/lecture-hall-service", () => ({ listLectureHalls: fakes.listHalls }));
+vi.mock("@/modules/academics/lecture-hall-service", () => ({ listLectureHalls: fakes.listHalls, listSuperAdminOrganizationLectureHalls: fakes.listOrganizationHalls }));
 vi.mock("@/modules/departments/service", () => ({ listDepartments: fakes.departments }));
 vi.mock("@/modules/academics/college-hall-availability-service", () => ({
   CollegeHallAvailabilityNotFoundError: class CollegeHallAvailabilityNotFoundError extends Error {},
@@ -38,6 +39,7 @@ const base={
 beforeEach(()=>{
   vi.clearAllMocks();
   fakes.context.mockResolvedValue(base);
+  fakes.listOrganizationHalls.mockResolvedValue(null);
   fakes.listHalls.mockResolvedValue({collegeName:"IIT Dharwad",pagination:{total:2},items:[]});
   fakes.departments.mockResolvedValue([]);
   fakes.notFound.mockImplementation(()=>{throw new Error("NOT_FOUND");});
@@ -49,6 +51,10 @@ describe("Super Admin second third: actual Lecture Halls server-page states",()=
     const html=renderToStaticMarkup(await LectureHallsPage({searchParams:Promise.resolve({})}));
     expect(html).toContain("Select a college to continue");
     expect(html).toContain("Choose a college");
+    expect(fakes.listOrganizationHalls).toHaveBeenCalledWith(
+      expect.objectContaining({adminScope:{collegeId:null,organizationId:null}}),
+      expect.objectContaining({limit:20,offset:0}),
+    );
     expect(fakes.listHalls).not.toHaveBeenCalled();
     expect(fakes.departments).not.toHaveBeenCalled();
   });
