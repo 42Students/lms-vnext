@@ -6,6 +6,7 @@ import {getRecruiterCompanyReports} from "@/modules/placements/recruiter-company
 import {buildRecruiterCompanyReportRows} from "@/modules/placements/recruiter-company-reports-model";
 import type {RequestContext} from "@/modules/identity/context";
 import {SEED_IDS} from "../../scripts/db-seed-data";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
 const enabled=Boolean(process.env.TEST_DATABASE_URL)&&process.env.DB03_ISOLATED_TEST_DATABASE==="1";
 if(enabled) assertDb018DisposableTarget(process.env,{serviceBound:true});
@@ -16,9 +17,12 @@ describe.skipIf(!enabled)("HR report result privacy",()=>{
  it("never returns report data for wrong role or a recruiter without company grants",async()=>{
   const nonce=randomUUID().slice(0,8);
   await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Reports "+nonce,primaryDomain:"hrrep-"+nonce+".example"});
-  const noGrant:RequestContext={user:{id:randomUUID(),identityUid:"no-grant-"+nonce,platformStatus:"ACTIVE",systemRoles:[]},
-   membership:null,recruiter:{userId:randomUUID(),companyId:randomUUID(),companyName:"Fixture",status:"ACTIVE",title:null,grants:[]}};
+  const userId=randomUUID();
+  const noGrant:RequestContext={user:{id:userId,identityUid:"no-grant-"+nonce,platformStatus:"ACTIVE",systemRoles:[]},
+   membership:null,recruiter:{userId,companyId:randomUUID(),companyName:"Fixture",status:"ACTIVE",title:null,grants:[]}};
   expect((await getRecruiterCompanyReports(noGrant,{})).status).toBe("NO_ACCESS");
+  const forged={...noGrant,recruiter:{...noGrant.recruiter!,userId:randomUUID()}};
+  await expect(getRecruiterCompanyReports(forged,{})).rejects.toBeInstanceOf(AuthorizationError);
   await expect(getRecruiterCompanyReports(tpo,{})).rejects.toBeDefined();
   expect(buildRecruiterCompanyReportRows([],[])).toEqual([]);
  });
