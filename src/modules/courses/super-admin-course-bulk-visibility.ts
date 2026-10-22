@@ -43,18 +43,23 @@ export async function bulkSuperAdminCourseVisibility(context:RequestContext,raw:
    eq(academicPeriods.collegeId,acting.collegeId),
    eq(courses.status,"ACTIVE"),eq(courseOfferings.status,"ACTIVE"),
    eq(courseLearningPaths.status,"PUBLISHED"),eq(courseLessons.status,"ACTIVE")))
-  .limit(501);
- if(lessons.length>500)throw new CoursesServiceError("COURSE_VISIBILITY_BULK_TOO_LARGE");
+  ;
+ // Course visibility is limited by selected course count, never a blanket
+ // 500-lesson ceiling. Descendant writes below remain scoped and batched.
  const ids=[...new Set(lessons.map(row=>row.id))];
  const lessonCourseIds=new Map(lessons.map(row=>[row.id,row.courseId]));
  const failedCourses=new Set<string>();
  const failures:{id:string;reason:string}[]=[];
- const [{total:matchedContents}]=await getDb().select({
-  total:sql<number>`count(*)::int`,
- }).from(lessonContents).where(and(
-  inArray(lessonContents.lessonId,ids),
-  eq(lessonContents.status,"PUBLISHED"),
- ));
+ let matchedContents=0;
+ // Count every published descendant without producing an unbounded SQL IN list.
+ for(let offset=0;offset<ids.length;offset+=100){
+  const [row]=await getDb().select({total:sql<number>`count(*)::int`})
+   .from(lessonContents).where(and(
+    inArray(lessonContents.lessonId,ids.slice(offset,offset+100)),
+    eq(lessonContents.status,"PUBLISHED"),
+   ));
+  matchedContents+=row?.total??0;
+ }
  let changed=0,unchanged=0,changedCourses=0;
  // Persist the course-level gate as well as lesson visibility. Hiding comes
  // first (fail closed); showing comes last, only after the descendant batch

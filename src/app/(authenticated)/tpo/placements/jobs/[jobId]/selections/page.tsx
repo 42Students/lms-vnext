@@ -62,7 +62,9 @@ export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:
   </section>:null}
   <nav aria-label="Selection related pages" className="flex min-w-0 flex-wrap items-center gap-3 text-sm font-semibold leading-5">
    <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href={root+"/rounds"}>Review completed rounds</Link>
-
+   <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] md:min-h-9" href={root+"/waitlist"}>Waitlist</Link>
+   <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] md:min-h-9" href={root+"/share-preview"}>Share with company</Link>
+   <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] md:min-h-9" href={root+"/share-audit"}>Access history</Link>
   </nav>
   {!data.storageReady?<Alert tone="warning">
     <strong>Selections are not available yet.</strong> {data.pendingMessage}

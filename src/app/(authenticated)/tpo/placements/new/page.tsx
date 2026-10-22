@@ -10,7 +10,7 @@ export default async function TpoNewPlacementPage({searchParams}:{
 }) {
   const raw=await searchParams;
   const invalidCompany=Array.isArray(raw.company)||typeof raw.company==="string"&&raw.company.length>150;
-  const company=invalidCompany?"":raw.company;
+  const company=typeof raw.company==="string"&&!invalidCompany?raw.company:"";
   const context = await getCurrentRequestContext();
   if (
     !context.membership ||

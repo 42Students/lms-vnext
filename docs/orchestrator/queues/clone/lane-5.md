@@ -47,13 +47,13 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/results/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/slots/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/selections/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/waitlist/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/new/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/overview/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/recorded-outside/[recordId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/recorded-outside/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/selections/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/waitlist/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/new/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/overview/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/recorded-outside/[recordId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/recorded-outside/page.tsx`

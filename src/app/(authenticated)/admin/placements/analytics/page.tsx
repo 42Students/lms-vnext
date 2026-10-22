@@ -74,28 +74,12 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   if(page>1)next.set("reportPage",String(page));
   return "/admin/placements/analytics"+(next.size?"?"+next.toString():"");
  };
- const totals=groups.reduce((out,row)=>({
-  totalApplications:out.totalApplications+row.totalApplications,
-  applied:out.applied+row.applied,shortlisted:out.shortlisted+row.shortlisted,
-  assessment:out.assessment+row.assessment,interview:out.interview+row.interview,
-  offered:out.offered+row.offered,hired:out.hired+row.hired,rejected:out.rejected+row.rejected,
-  withdrawn:out.withdrawn+row.withdrawn,waitlisted:out.waitlisted+row.waitlisted,
- }),{totalApplications:0,applied:0,shortlisted:0,assessment:0,interview:0,offered:0,hired:0,rejected:0,withdrawn:0,waitlisted:0});
- const funnelTotals=data.funnelRows.reduce((out,row)=>({
-  applied:out.applied+row.applied,shortlisted:out.shortlisted+row.shortlisted,
-  assessment:out.assessment+row.assessment,interview:out.interview+row.interview,
-  offered:out.offered+row.offered,hired:out.hired+row.hired,
- }),{applied:0,shortlisted:0,assessment:0,interview:0,offered:0,hired:0});
+ // The table is capped, but these filtered totals are calculated from
+ // every matching drive on the server, not from the displayed rows.
+ const totals=data.fullTotals;
+ const funnelTotals=historicalHiringTotals([data.fullFunnelTotals]);
  const funnel=hiringFunnel(funnelTotals);
- const shortlistObservations=data.funnelRows.filter(row=>
-  typeof row.averageHoursToFirstShortlist==="number"&&
-  Number.isFinite(row.averageHoursToFirstShortlist)&&
-  row.averageHoursToFirstShortlist>=0&&row.firstShortlistObservationCount>0);
- const shortlistCount=shortlistObservations.reduce((sum,row)=>sum+row.firstShortlistObservationCount,0);
- // Application-weighted mean prevents a tiny drive skewing the legacy metric.
- const meanShortlistHours=shortlistCount>0
-  ?Math.round(shortlistObservations.reduce((sum,row)=>
-     sum+row.averageHoursToFirstShortlist!*row.firstShortlistObservationCount,0)/shortlistCount):null;
+ const meanShortlistHours=data.fullShortlistMeanHours;
  const metricKeys=["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const;
  const visibleRows=[...reportRows,...groups.map(group=>({
   ...group,companyId:"",jobId:"total:"+group.companyName,jobTitle:"Company total",
@@ -168,9 +152,9 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    })}
    <Link href="/admin/placements/analytics" className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Clear all</Link>
   </div>:null}
-  <p role="status" className="text-sm text-body">{data.rows.length} matching drives across {groups.length} companies{data.truncated?" · Capped at 5,000 drives":""}</p>
+  <p role="status" className="text-sm text-body">{data.matchingJobCount} matching drives · showing {data.rows.length} across {groups.length} displayed companies{data.truncated?" (row/CSV cap: 5,000 drives)":""}</p>
   {data.truncated?<Banner tone="warning">
-    This report reached its 5,000-drive safety limit. The headline metrics, funnel, company totals and CSV may be incomplete. Narrow the filters before using these figures for decisions.
+    This report reached its 5,000-drive row and CSV limit. Headline metrics and funnel totals are calculated on the server across all {data.matchingJobCount.toLocaleString("en-IN")} filtered drives. Company subtotals and the CSV cover only the displayed 5,000 rows. Narrow filters for a complete per-company breakdown and export.
   </Banner>:null}
   <section aria-label="Hiring metrics" className="min-w-0">
    <h2 className="sr-only">Hiring metrics</h2>

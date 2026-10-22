@@ -163,7 +163,9 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
        }))}/>
     <Link href="/tpo/placements/lifecycle?view=ALL" aria-current={data.view==="ALL"?"page":undefined}
       className="inline-flex min-h-9 items-center font-semibold text-link underline">All jobs · {data.statusCounts.all}</Link>
-    <section aria-label="Active drive status pane" className="min-w-0 space-y-4 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-3 sm:p-4">
+    <section aria-label="Active drive status pane" className="min-w-0 space-y-4 border-t border-[var(--lms-canvas-border)] pt-4">
+    {/* The authenticated shell already supplies the one legacy white canvas:
+        filters, table, and status tabs share this continuous surface. */}
     <form role="search" aria-label="placements lifecycle filters" action="/tpo/placements/lifecycle" method="get"
       className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
       <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">

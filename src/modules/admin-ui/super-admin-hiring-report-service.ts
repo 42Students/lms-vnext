@@ -148,13 +148,46 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
     pattern?or(ilike(placementJobs.title,pattern),ilike(placementCompanies.name,pattern)):undefined,
   ))
   .groupBy(placementJobs.id,placementJobs.title,placementCompanies.id,placementCompanies.name)
-  .orderBy(asc(placementCompanies.name),asc(placementJobs.id))
-  .limit(SUPER_ADMIN_HIRING_EXPORT_CAP+1);
+  .orderBy(asc(placementCompanies.name),asc(placementJobs.id));
+ // Keep the display/CSV safety cap, not a cap on aggregate truth. The
+ // database already performs company/job grouping; accumulate all matching
+ // grouped rows on the server before returning only the first capped page.
  const bounded=result.slice(0,SUPER_ADMIN_HIRING_EXPORT_CAP);
+ const fullTotals={
+  totalApplications:0,applied:0,shortlisted:0,assessment:0,interview:0,
+  offered:0,hired:0,rejected:0,withdrawn:0,waitlisted:0,
+ };
+ const fullFunnelTotals={
+  applied:0,shortlisted:0,assessment:0,interview:0,offered:0,hired:0,
+ };
+ let shortlistWeightedHours=0,shortlistObservationCount=0;
+ for(const row of result){
+  for(const key of ["totalApplications","applied","shortlisted","assessment",
+   "interview","offered","hired","rejected","withdrawn","waitlisted"] as const)
+   fullTotals[key]+=row[key];
+  for(const key of ["applied","shortlisted","assessment","interview","offered","hired"] as const){
+   const field=("funnel"+key[0]!.toUpperCase()+key.slice(1)) as
+    "funnelApplied"|"funnelShortlisted"|"funnelAssessment"|"funnelInterview"|"funnelOffered"|"funnelHired";
+   fullFunnelTotals[key]+=row[field];
+  }
+  if(typeof row.firstShortlistHours==="number"&&
+     Number.isFinite(row.firstShortlistHours)&&row.firstShortlistHours>=0&&
+     row.firstShortlistCount>0){
+   shortlistWeightedHours+=row.firstShortlistHours*row.firstShortlistCount;
+   shortlistObservationCount+=row.firstShortlistCount;
+  }
+ }
+ const fullShortlistMeanHours=shortlistObservationCount>0?
+  Math.round(shortlistWeightedHours/shortlistObservationCount):null;
  return {
   query,
   // These rows preserve the mutually exclusive current-status snapshot.
   rows:bounded as SuperAdminHiringRow[],
+  matchingJobCount:result.length,
+  // All filters were applied by the same selected-college SQL joins as the
+  // displayed job rows. These aggregates cover *all* matching jobs, even
+  // when the CSV and company rows are capped for response size.
+  fullTotals,fullFunnelTotals,fullShortlistMeanHours,
   // Do NOT derive the funnel from rows.applied/shortlisted: an applicant who
   // later moved stages still contributes to earlier stages in this view.
   funnelRows:bounded.map(row=>({
