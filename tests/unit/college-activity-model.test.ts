@@ -20,8 +20,8 @@ describe("College activity model", () => {
       activitySearchParams({ subjectType: ["A", "B"] }),
     ).success).toBe(false);
     expect(activitySearchParams({actorUserId:"",from:"",subjectType:""})).toMatchObject({
-      from:expect.stringMatching(/^\\d{4}-\\d{2}-\\d{2}$/),
-      to:expect.stringMatching(/^\\d{4}-\\d{2}-\\d{2}$/),
+      from:expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
+      to:expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
     });
   });
   it("constructs exact IST calendar shortcuts and preserves non-date filters without cursor", () => {
