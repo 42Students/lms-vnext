@@ -15,6 +15,6 @@ describe("Faculty attendance draft protection and scheduling",()=>{
   expect(source).toContain("const timing = facultyScheduleInstants(startsAt, endsAt)");
   expect(source).toContain("if(!confirmed){setConfirmScheduleOpen(true);return;}");
   expect(source).toContain("onConfirm={()=>void createSession(null,true)}");
-  expect(source).toContain("if(confirmed){setScheduling(false);setConfirmScheduleOpen(false);}");
+  expect(source).toContain("if(confirmed){scheduleLock.current=false;setScheduling(false);setConfirmScheduleOpen(false);}");
  });
 });

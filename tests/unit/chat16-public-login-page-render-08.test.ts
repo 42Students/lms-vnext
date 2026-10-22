@@ -14,7 +14,7 @@ vi.mock("next/navigation", () => ({ redirect: vi.fn() }));
 vi.mock("@/auth/request-context", () => ({ getCurrentRequestContext: vi.fn() }));
 vi.mock("@/modules/auth/request-tenant", () => ({ resolveRequestTenant: vi.fn() }));
 vi.mock("@/modules/colleges/branding-service", () => ({ getPublicCollegeBranding: vi.fn() }));
-vi.mock("@/modules/colleges/branding", () => ({ brandStyleVariables: vi.fn(() => ({})) }));
+vi.mock("@/modules/colleges/branding", () => ({ brandStyleVariables: vi.fn(() => ({})), publicLoginStyleVariables: vi.fn(() => ({})) }));
 vi.mock("@/modules/colleges/public-signin-policy-service", () => ({
   effectiveCollegeSignInCapabilities: vi.fn(),
 }));
@@ -106,7 +106,7 @@ describe("chat-16 direct public sign-in page render and tenant/OTP journeys", ()
     vi.mocked(getPublicCollegeBranding).mockResolvedValue({
       collegeName: "IIT Dharwad",
     } as never);
-    expect(await generateMetadata()).toMatchObject({ title: "Sign in · IIT Dharwad" });
+    expect(await generateMetadata(params())).toMatchObject({ title: "Sign in · IIT Dharwad" });
     expect(await html()).toContain('data-college="IIT Dharwad"');
   });
 });

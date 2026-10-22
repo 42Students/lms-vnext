@@ -7,8 +7,9 @@ describe("UX-project-workspaces-41/42 accessible workspace cards",()=>{
   it("UX-project-workspaces-41 primary navigation retains minimum 44px target",()=>{
     const source=readFileSync(join(process.cwd(),
       "src/components/projects/project-admin-workspace-list.tsx"),"utf8");
-    expect(source).toContain("Open workspace");
-    expect(source).not.toContain("min-h-9");
+    expect(source).toContain('aria-label={"Open summary for "');
+    expect(source).toContain("}>Open");
+    expect(source).toContain("md:min-h-9");
     expect(source).toContain("min-h-11");
   });
   it("UX-project-workspaces-42 non-finite or outside 0..100 progress is unavailable, not a fake 100%",()=>{
@@ -21,7 +22,8 @@ describe("UX-project-workspaces-41/42 accessible workspace cards",()=>{
     const source=readFileSync(join(process.cwd(),
       "src/components/projects/project-admin-workspace-list.tsx"),"utf8");
     expect(source).toContain("Progress unavailable");
-    expect(source).toContain("aria-valuenow={progress}");
+    expect(source).toContain('<MetricBar role="progressbar"');
+    expect(source).toContain("value={progress} maximum={100}");
     expect(source).not.toContain("aria-valuenow={item.progressPercent}");
   });
 });

@@ -4,8 +4,8 @@ const source=readFileSync("src/components/attendance/admin-attendance-workspace.
 describe("Super Admin attendance correction accessibility",()=>{
  it("SA-academics-people-R05 uses in-app correction actions, not native confirm",()=>{
   expect(source).not.toContain("window.confirm(");
-  expect(source).toContain("<Drawer");
-  expect(source).toContain('title="Choose attendance session"');
+  expect(source).toContain("<Modal");
+  expect(source).toContain('title={');
   expect(source).toContain("void correct(status)");
   expect(source).toContain('useGuardedAction({busyLabel:');
   expect(source).toContain('disabled={correcting}');

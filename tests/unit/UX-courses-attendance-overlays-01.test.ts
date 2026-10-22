@@ -8,9 +8,11 @@ const confirmation=read("src/components/ui/confirm-dialog.tsx");
 
 describe("UX-courses-attendance-overlay-foundation-01",()=>{
  it("shared modal enforces Escape/backdrop policy, focus restoration, scroll cues and accessible title",()=>{
+  const exit=read("src/components/ui/use-overlay-exit.ts");
+  expect(exit).toContain("dialog.showModal()");
+  expect(exit).toContain("if (opener?.isConnected) opener.focus()");
   for(const source of [dialog,drawer]){
-   expect(source).toContain("showModal()");
-   expect(source).toContain("opener.current?.focus()");
+   expect(source).toContain("useOverlayExit(ref, opener, open,");
    expect(source).toContain("aria-labelledby={titleId}");
    expect(source).toContain("onCancel={event");
    expect(source).toContain("event.preventDefault()");
@@ -32,17 +34,17 @@ describe("UX-courses-attendance-overlay-foundation-01",()=>{
   ["courses","admin-learning-structure-actions","Dialog",["ConfirmDialog","LearningPathActions","onOpenChange"]],
   ["courses","assignment-submission-control","Dialog",["Discard this submission?","submissionType","onOpenChange"]],
   ["courses","college-archived-lesson-restore","ConfirmDialog",["Restore Lesson","onConfirm"]],
-  ["courses","college-content-preview","Dialog",["Content preview","aria-haspopup","Scoped metadata preview only","Close preview"]],
+  ["courses","college-content-preview","Dialog",["Content preview","aria-haspopup",'description="Content preview"',"Close preview"]],
   ["courses","college-lesson-reorder-actions","ConfirmDialog",["Lesson order controls","onConfirm={confirm}"]],
-  ["courses","faculty-assessment-create","Drawer",["Select course and class","Select lesson","closeDrawer"]],
+  ["courses","faculty-assessment-create","Drawer",["Select course and class","Select lesson","requestClose"]],
   ["courses","faculty-assessment-editor","Drawer",["Confirm title correction?","onOpenChange"]],
-  ["courses","faculty-assignment-review","Drawer",["Submission grading filters","Submission student navigation","Assignment submissions"]],
+  ["courses","faculty-assignment-review","Dialog",["Submission grading filters","Submission student navigation","Assignment submissions"]],
   ["courses","faculty-content-editor","Drawer",["Discard unsaved changes to this lesson content?","onOpenChange"]],
   ["courses","faculty-lesson-authoring","ConfirmDialog",["Discard this content draft?","Any unsaved changes in this content form will be lost."]],
   ["courses","faculty-quiz-question-editor","Drawer",["Confirm replacement of this draft quiz question bank?","onOpenChange"]],
-  ["courses","faculty-quiz-review","Drawer",["assessment list","onOpenChange"]],
+  ["courses","faculty-quiz-review","Dialog",["assessment list","onOpenChange"]],
   ["courses","faculty-report-download","ConfirmDialog",["This report is incomplete","onConfirm"]],
-  ["courses","learner-roadmap-item-dialog","Dialog",["aria-haspopup","min-h-14","onOpenChange","Close"]],
+  ["courses","learner-roadmap-item-dialog","Dialog",["aria-haspopup","min-h-14","onOpenChange","change(openNow:boolean)"]],
   ["courses","resource-progress-control","ConfirmDialog",["Mark as complete","onConfirm"]],
  ] as const;
  for(const [area,name,primitive,required] of cases){

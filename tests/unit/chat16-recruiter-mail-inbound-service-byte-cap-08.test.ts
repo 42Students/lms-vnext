@@ -18,23 +18,23 @@ const envelope=JSON.stringify({
 });
 
 describe("chat-16 signed recruiter email internal service byte guard",()=>{
- it("HR-MAIL-INBOUND-BYTES-08 denies a valid signed JSON envelope padded past 20KB before DB",async()=>{
+ it("HR-MAIL-INBOUND-BYTES-08 denies a signed JSON envelope exceeding the private service 300KB cap before DB",async()=>{
   vi.clearAllMocks();
-  const body=envelope+" ".repeat(20_001-Buffer.byteLength(envelope));
-  expect(Buffer.byteLength(body)).toBe(20_001);
+  const body=envelope+" ".repeat(300_001-Buffer.byteLength(envelope));
+  expect(Buffer.byteLength(body)).toBe(300_001);
   const signature=recruiterMailBridgeSignature(secret,body);
   await expect(acceptAuthenticatedRecruiterEmailReply(body,signature,env))
-   .resolves.toEqual({accepted:false,replayed:false});
+   .resolves.toEqual({accepted:false,replayed:false,outcome:"FAILED"});
   expect(getDb).not.toHaveBeenCalled();
  });
  it("HR-MAIL-INBOUND-BYTES-09 counts UTF-8 bytes rather than code units",async()=>{
   vi.clearAllMocks();
-  const padCount=10_100;
+  const padCount=150_100;
   const body=envelope+"é".repeat(padCount);
-  expect(body.length).toBeLessThan(20_000);
-  expect(Buffer.byteLength(body)).toBeGreaterThan(20_000);
+  expect(body.length).toBeLessThan(300_000);
+  expect(Buffer.byteLength(body)).toBeGreaterThan(300_000);
   await expect(acceptAuthenticatedRecruiterEmailReply(body,recruiterMailBridgeSignature(secret,body),env))
-   .resolves.toEqual({accepted:false,replayed:false});
+   .resolves.toEqual({accepted:false,replayed:false,outcome:"FAILED"});
   expect(getDb).not.toHaveBeenCalled();
  });
  it("HR-MAIL-INBOUND-BYTES-10 preserves the existing disabled-gateway refusal",async()=>{

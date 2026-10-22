@@ -170,13 +170,14 @@ function RecruiterCalendarEventCard({event}:{event:PlacementCalendarEvent}){
    <div className="min-w-0 flex-1">
      <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-primary-text">
        <time dateTime={event.startsAt.toISOString()}>{eventTime(event.startsAt)} IST</time>
+       {event.endsAt?<span>– <time dateTime={event.endsAt.toISOString()}>{eventTime(event.endsAt)} IST</time></span>:null}
        <StatusBadge tone={event.kind==="APPLICATION_DEADLINE"?"warning":event.kind==="INTERVIEW_SLOT"?"success":"info"}>{eventKindLabel(event)}</StatusBadge>
      </div>
      <h3 className="mt-1 break-words text-sm font-semibold text-[var(--lms-heading)]">{event.title}</h3>
      <p className="mt-1 break-words text-xs text-muted-foreground">
        {[event.jobTitle,event.venue,event.note].filter(Boolean).join(" · ")||event.companyName}
      </p>
-     {event.collegeName?<p className="mt-1 text-xs text-muted-foreground">{event.companyName} · {event.collegeName}</p>:null}
+     {event.collegeName?<p className="mt-1 text-xs text-muted-foreground">{event.companyName} · College: {event.collegeName}</p>:null}
    </div>
    <div className="shrink-0 text-right">
      {event.status==="PROPOSED"&&event.kind==="INTERVIEW_SLOT"?
