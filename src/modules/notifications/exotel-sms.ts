@@ -51,14 +51,14 @@ export function readExotelConfig(
   env: Record<string, string | undefined> = process.env,
 ): ExotelConfig {
   return {
-    apiKey: env.EXOTEL_API_KEY ?? "",
-    apiToken: env.EXOTEL_API_TOKEN ?? "",
-    accountSid: env.EXOTEL_ACCOUNT_SID ?? "42students1",
-    dltEntityId: env.EXOTEL_DLT_ENTITY_ID ?? "1001650442971323333",
-    otpSenderId: env.EXOTEL_OTP_SENDER_ID ?? "FLERNR",
+    apiKey: env["EXOTEL_API_KEY"] ?? "",
+    apiToken: env["EXOTEL_API_TOKEN"] ?? "",
+    accountSid: env["EXOTEL_ACCOUNT_SID"] ?? "42students1",
+    dltEntityId: env["EXOTEL_DLT_ENTITY_ID"] ?? "1001650442971323333",
+    otpSenderId: env["EXOTEL_OTP_SENDER_ID"] ?? "FLERNR",
     otpDltTemplateId:
-      env.EXOTEL_OTP_DLT_TEMPLATE_ID ?? "1707176554481180936",
-    smsType: env.EXOTEL_OTP_SMS_TYPE ?? "transactional_opt_in",
+      env["EXOTEL_OTP_DLT_TEMPLATE_ID"] ?? "1707176554481180936",
+    smsType: env["EXOTEL_OTP_SMS_TYPE"] ?? "transactional_opt_in",
   };
 }
 
@@ -121,7 +121,7 @@ export async function appendSmsDeliveryAttempt(input: SmsAttemptInput): Promise<
     // Drizzle 0162 registers this table; the retired DB-031 staging layout is
     // never a readiness signal. OTP without college membership is valid here.
     const readyResult = await db.execute(sql<{ready:boolean}>`select to_regclass('public.messaging_sms_delivery_attempts') is not null as ready`);
-    if (!readyResult.rows[0]?.ready) {
+    if (!readyResult.rows[0]?.["ready"]) {
       writeStructuredLog("WARNING", "sms.delivery_attempt_ledger_unavailable",
         { purpose: input.purpose, reason: "DB31_NOT_REGISTERED" });
       return "STORAGE_PENDING";
@@ -178,11 +178,11 @@ export async function listSmsDeliveryAttemptsForSupport(context: RequestContext,
   // Both the writer and privileged reader inspect the same numbered schema
   // migration table. A missing table returns an explicit retryable state.
   const ready=await getDb().execute(sql<{ready:boolean}>`select to_regclass('public.messaging_sms_delivery_attempts') is not null as ready`);
-  if (!ready.rows[0]?.ready) return {ready:false,entries:[],content:[],totalElements:0,totalPages:0,
+  if (!ready.rows[0]?.["ready"]) return {ready:false,entries:[],content:[],totalElements:0,totalPages:0,
     page:query.page,number:query.page-1,size:query.size,retryable:true,
     readError:"SMS_LEDGER_UNAVAILABLE",note:SMS_PROVIDER_ACCEPTANCE_NOTE};
   const total=Number((await getDb().execute(sql<{total:number}>`
-    select count(*)::int as total from messaging_sms_delivery_attempts where ${predicate}`)).rows[0]?.total ?? 0);
+    select count(*)::int as total from messaging_sms_delivery_attempts where ${predicate}`)).rows[0]?.["total"] ?? 0);
   const offset=(query.page-1)*query.size;
   const records=await getDb().execute(sql<{
     id:string;purpose:string;provider:string;recipientSuffix:string|null;collegeId:string|null;
