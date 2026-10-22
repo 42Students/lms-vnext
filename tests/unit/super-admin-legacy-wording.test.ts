@@ -49,7 +49,10 @@ describe("Super Admin legacy label fixes that do not orphan pages (superAdminNav
 
   it("page headings use the legacy titles", () => {
     expect(src("dashboard/page.tsx")).toContain('title="Dashboard"');
-    expect(src("admin/tenants/page.tsx")).toContain('title="Tenant Setup"');
+    // The public route delegates to the canonical two-step setup workspace;
+    // test the rendered page rather than expecting duplicate headings in the redirect wrapper.
+    expect(src("admin/tenants/page.tsx")).toContain("return <SuperAdminTenantSetup");
+    expect(src("admin/tenants/setup/page.tsx")).toContain('title="Tenant Setup"');
     expect(src("admin/settings/page.tsx")).toContain('title="Tenant Settings"');
     expect(src("admin/inbound-mail/page.tsx")).toContain('title="Inbound mail"');
     expect(src("admin/verification/page.tsx")).toContain('title="Profile verification"');
