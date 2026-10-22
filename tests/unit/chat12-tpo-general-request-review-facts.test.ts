@@ -26,7 +26,9 @@ describe("TPO general requests review evidence",()=>{
   }
   const ui=src("src/components/placements/tpo-general-requests-panel.tsx");
   expect(ui).toContain("<TpoGeneralRequestFacts kind={row.kind} payload={row.payload}/>");
-  expect(ui).toContain('role="alert" className="text-warning-text">No proof attached');
+  expect(ui).toContain('<InlineNotice tone="error" message="No proof attached"');
+  const notice=src("src/components/ui/inline-notice.tsx");
+  expect(notice).toContain('role={tone === "error" ? "alert" : "status"}');
  });
  it("TPO-requests-verification-01 includes request-specific dispute, registration and post-placement facts",()=>{
   expect(tpoGeneralRequestReviewFacts("ABSENCE_DISPUTE",{applicationId:"app",roundId:"round"}).facts.length).toBe(2);

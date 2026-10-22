@@ -20,8 +20,9 @@ describe("chat-12 Students responsive grid and column preference",()=>{
   const sheet=src("src/components/tpo/tpo-students-spreadsheet.tsx");
   expect(grid).toContain("mobileActionsCollapsible?");
   expect(grid).toContain("<summary");
-  expect(sheet).toContain("<TpoSpreadsheetGrid mobilePrimaryKeys=");
-  expect(sheet).not.toContain("<TpoSpreadsheetGrid mobileActionsCollapsible");
+  expect(sheet).toContain('<TpoGrid integratedWorkspace mobileActionsCollapsible defaultVisibleKeys=');
+  expect(sheet).toContain("mobilePrimaryKeys=");
+  expect(sheet).not.toContain("<TpoGrid mobileActionsCollapsible");
   expect(sheet).toContain("rowActions={row=><div");
   expect(sheet).toContain("<TpoGridFilterPanel fields={filters} mobileSheet/>");
   expect(sheet).toContain('storageKey="tpo-students-columns-v1"');

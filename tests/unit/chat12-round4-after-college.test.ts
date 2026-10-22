@@ -16,9 +16,11 @@ describe("chat-12 after-college graceful outcomes",()=>{
   expect(source).toContain('title={confirmation?.reversing?"Restore previous outcome":"Save after-college outcome"}');
  });
  it("GR-90 uses an announced role alert for failed requests",()=>{
-  expect(source).toContain('role="alert"');
+  expect(source).toContain('<InlineNotice tone="error" message={error}');
+  const notice=readFileSync(new URL("../../src/components/ui/inline-notice.tsx",import.meta.url),"utf8");
+  expect(notice).toContain('role={tone === "error" ? "alert" : "status"}');
   expect(source).toContain("cause instanceof FriendlyFetchError && cause.status===409");
-  expect(source).toContain("Your outcome selection is kept below");
+  expect(source).toContain("Your selected outcome is kept if saving does not complete.");
   expect(source).toContain("Could not save outcome. Please try again.");
  });
 });

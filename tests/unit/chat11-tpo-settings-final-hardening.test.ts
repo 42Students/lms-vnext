@@ -32,7 +32,7 @@ describe("TPO settings final-sprint hardening (chat-11)", () => {
     expect(ui).toContain('value="OFFER_RELEASED"');
     expect(ui).toContain('value="OFFER_ACCEPTED"');
     expect(ui).toContain("inFlight.current = true");
-    expect(ui).toContain("if (inFlight.current) return");
+    expect(ui).toContain("if (inFlight.current||!dirty) return;");
     expect(ui).toContain("min-h-11");
   });
 
@@ -95,11 +95,13 @@ describe("TPO settings final-sprint hardening (chat-11)", () => {
   it("TPO-settings-audit-80 guards repeat saves, handles session expiry and never renders arbitrary API error text", () => {
     const ui = readFileSync("src/components/tpo/tpo-my-notification-preferences-editor.tsx", "utf8");
     expect(ui).toContain("saving.current=true");
-    expect(ui).toContain("if((!dirty&&version!==null)||saving.current)return");
+    expect(ui).toContain("if((!dirty&&currentVersion!==null)||saving.current)return");
     expect(ui).toContain("Your session expired. Sign in again.");
     expect(ui).toContain("Preferences changed elsewhere. Refresh and try again.");
     expect(ui).not.toContain("result.error??");
     expect(ui).not.toContain("result?.error??");
-    expect(ui).toContain('role="alert"');
+    expect(ui).toContain('<InlineNotice tone="error" message={error}');
+    const notice=readFileSync("src/components/ui/inline-notice.tsx","utf8");
+    expect(notice).toContain('role={tone === "error" ? "alert" : "status"}');
   });
 });
