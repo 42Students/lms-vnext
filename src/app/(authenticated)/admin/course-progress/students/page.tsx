@@ -49,7 +49,9 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
  }
  catch(error){
   // Do not expose SQL, stack traces or another tenant's identifiers in the error surface.
-  const detail=error instanceof Error&&error.name==="AuthorizationError"
+  const detail=error instanceof Error&&error.message==="COURSE_NOT_TAUGHT_IN_CLASS"
+    ?"This course is not taught in the selected class. Choose a class that has a teaching assignment for this course."
+    :error instanceof Error&&error.name==="AuthorizationError"
     ?"The selected course offering is not accessible in your current college scope."
     :error instanceof Error&&error.name==="ZodError"
       ?"The selected course offering ID is invalid."
@@ -58,7 +60,9 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
   <PageHeader title="Course Progress"/>
   <ErrorState title="Could not load course progress" description={detail+" Check your selected college, class and taught course, then retry."} action={
     <div className="flex flex-wrap gap-3">
-      <Link href={"/admin/course-progress/students?offeringId="+encodeURIComponent(offeringId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry course progress</Link>
+      <Link href={"/admin/course-progress/students?"+new URLSearchParams({offeringId,
+       ...(requestedDelivery?{deliveryId:requestedDelivery}:{})}).toString()}
+       className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry course progress</Link>
       {back}
     </div>
   }/>
