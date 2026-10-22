@@ -390,7 +390,7 @@ export const groupBackedClassOfferings = pgTable(
     check("group_backed_offerings_legacy_deleted_ck",sql`${t.legacyWasDeleted} is distinct from true or ${t.status} = 'ARCHIVED'`),
     uniqueIndex("group_backed_offerings_period_group_uq").on(
       t.academicPeriodId, t.rosterGroupId,
-    ),
+    ).where(sql`${t.status} = 'ACTIVE'`),
     // Composite target for elective group-backed class identity; no cross-roster attachment.
     uniqueIndex("group_backed_offerings_id_group_uq").on(t.id, t.rosterGroupId),
     index("group_backed_offerings_group_status_idx").on(t.rosterGroupId, t.status),
