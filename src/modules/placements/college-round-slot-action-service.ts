@@ -83,10 +83,10 @@ export async function getCollegeRoundSlotAppointments(
  const {collegeId,job}=await scope(ctx,raw);
  const db=getDb();
  const now=new Date();
- const done=sql`exists(select 1 from ${activityEvents} ev where ev.subject_id=${slots.id}
+ const done=sql`exists(select 1 from ${activityEvents} ev where ev.subject_id=${slots.id}::text
     and ev.subject_type='placement_round_candidate_slot'
     and ev.event_type='PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED')`;
- const noShow=sql`exists(select 1 from ${activityEvents} ev where ev.subject_id=${slots.id}
+ const noShow=sql`exists(select 1 from ${activityEvents} ev where ev.subject_id=${slots.id}::text
     and ev.subject_type='placement_round_candidate_slot'
     and ev.event_type='PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW')`;
  const status=filters.appointmentStatus;
