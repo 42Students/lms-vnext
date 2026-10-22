@@ -87,8 +87,9 @@ async function loadCurrent(tx: Parameters<Parameters<ReturnType<typeof getDb>["t
       eq(sectionEnrollments.learnerEnrollmentId, enrollment.id),
       eq(sectionEnrollments.status, "ACTIVE"),
     )).for("update");
-  if (placements.length !== 1) throw new CollegeStudentSectionMoveError("CURRENT_CLASS_REQUIRED");
-  return { enrollment, placement: placements[0] };
+  const placement = placements[0];
+  if (placements.length !== 1 || !placement) throw new CollegeStudentSectionMoveError("CURRENT_CLASS_REQUIRED");
+  return { enrollment, placement };
 }
 
 export async function collegeStudentSectionOptions(context: RequestContext, rawMembershipId: unknown) {
@@ -163,6 +164,7 @@ export async function moveCollegeStudentSection(
       sectionId: target.id,
       academicPeriodId: target.periodId,
     }).returning();
+    if (!created) throw new CollegeStudentSectionMoveError("CLASS_PLACEMENT_CHANGED");
     await recordActivityEventInTransaction(tx, context, {
       eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_LEARNER_ENROLLED,
       organizationId: own.organizationId, collegeId: own.collegeId,
