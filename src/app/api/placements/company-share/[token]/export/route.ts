@@ -108,8 +108,9 @@ export async function GET(request:Request,{params}:{params:Promise<{token:string
   "This export is not a complete applicant history.",
  ].join("\n")+"\n";
  entries.push({name:"manifest.txt",bytes:new TextEncoder().encode(manifest)});
+ // Uint8Array(...) copies into an owned ArrayBuffer (never SharedArrayBuffer).
  const archive=new Uint8Array(makeStoredZip(entries));
- return new Response(archive.buffer,{
+ return new Response(archive.buffer as ArrayBuffer,{
   status:200,headers:{...privateHeaders,
    "Content-Type":"application/zip",
    "Content-Disposition":'attachment; filename="company-shortlisted-resumes.zip"',
