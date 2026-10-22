@@ -47,7 +47,7 @@ describe("IIT Dharwad Projects admin exports: spreadsheet injection resilience",
     expect(csv).toContain('"Overview","Releases","Sprints","Tasks","Resources"');
     expect(csv.match(/\uFEFF/g)).toHaveLength(1);
     expect(readFileSync("src/modules/projects/project-template-catalogue-model.ts","utf8"))
-      .toContain("return projectAdminCsv(lines)");
+      .toContain("return projectAdminCsv([");
   });
 
   it("PROJ-BREAK-exports-11 escapes multiline, quotes and comma fields without adding columns", () => {
@@ -72,11 +72,14 @@ describe("IIT Dharwad Projects admin exports: spreadsheet injection resilience",
     ]) {
       const source = readFileSync("src/components/projects/" + file, "utf8");
       expect(source.startsWith('"use client";'), file).toBe(true);
-      expect(source, file).toContain('from "@/modules/projects/project-admin-csv-model"');
+      if(file!=="project-workspace-page-export.tsx")
+        expect(source, file).toContain('from "@/modules/projects/project-admin-csv-model"');
+      else expect(source).toContain('from "@/modules/projects/admin-workspace-page-export-model"');
       // The template export builds a named, already scoped row collection;
       // all other client exports build the collection inline. Both must pass
       // those rows through the same formula-safe CSV serializer.
-      expect(source, file).toContain(file === "super-admin-template-page-export.tsx"
+      expect(source,file).toContain(file==="project-workspace-page-export.tsx"
+        ? "projectWorkspacePageCsv(items)" :file==="super-admin-template-page-export.tsx"
         ? "projectAdminCsv(rows)" : "projectAdminCsv([");
       expect(source, file).not.toContain("function csvField(");
       expect(source, file).not.toContain("function escape(");
@@ -85,7 +88,9 @@ describe("IIT Dharwad Projects admin exports: spreadsheet injection resilience",
     const model = readFileSync("src/modules/projects/admin-workspace-page-export-model.ts", "utf8");
     expect(client).toContain("projectWorkspacePageCsv(items)");
     expect(model).toContain("projectAdminCsv([headings,...rows])");
-    expect(model).toContain("projectAdminCsvCell(value)");
+    expect(model).toContain("return projectAdminCsv([headings,...rows])");
+    expect(readFileSync("src/modules/projects/project-admin-csv-model.ts","utf8"))
+      .toContain("projectAdminCsvCell");
     const protectedCsv = projectWorkspacePageCsv([{
       title: "\u2066=HYPERLINK(1)",
       mentorName: null,
