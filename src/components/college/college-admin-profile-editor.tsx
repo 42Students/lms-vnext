@@ -27,8 +27,8 @@ function Field({ label, value, onChange, type = "text", hint, disabled=false, ma
   </label>;
 }
 
-export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
-  initial: VersionedCollegeProfile; email: string | null; phone: string | null; college: string | null;
+export function CollegeAdminProfileEditor({ initial, email, phone, college, readOnly = false }: {
+  initial: VersionedCollegeProfile; email: string | null; phone: string | null; college: string | null; readOnly?: boolean;
 }) {
   const router = useRouter();
   const [profile, setProfile] = useState<VersionedCollegeProfile>(initial);
@@ -39,34 +39,45 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
   const [discardOpen,setDiscardOpen]=useState(false);
   const [editableSection,setEditableSection]=useState<ProfileSection|null>(null);
   const dirty=JSON.stringify(profile)!==JSON.stringify(savedSnapshot.current);
+  // A successful background refresh updates the baseline only while this
+  // editor is clean. Never overwrite unsaved edits or trust a failed read.
   useEffect(()=>{
-    if(!dirty)return;
+    if(readOnly||dirty)return;
+    if(JSON.stringify(initial)===JSON.stringify(savedSnapshot.current))return;
+    savedSnapshot.current=initial;
+    setProfile(initial);
+    setEditableSection(null);
+    setError("");
+    setSaved(false);
+  },[initial,readOnly,dirty]);
+  useEffect(()=>{
+    if(!dirty||readOnly)return;
     const onBeforeUnload=(event:BeforeUnloadEvent)=>{
       event.preventDefault();
       event.returnValue="";
     };
     window.addEventListener("beforeunload",onBeforeUnload);
     return ()=>window.removeEventListener("beforeunload",onBeforeUnload);
-  },[dirty]);
+  },[dirty,readOnly]);
   function cancel(){
-    if(saving)return;
+    if(saving||readOnly)return;
     if(dirty){setDiscardOpen(true);return;}
     setError("");setSaved(false);
   }
   function discard(){
-    if(saving)return;
+    if(saving||readOnly)return;
     setProfile(savedSnapshot.current);
     setDiscardOpen(false);setError("");setSaved(false);setEditableSection(null);
   }
   function editSection(section:ProfileSection){
-    if(saving)return;
+    if(saving||readOnly)return;
     // Changing the edited card never discards unsaved changes in another card.
     setEditableSection(current=>current===section?null:section);
   }
   function cardHeader(section:ProfileSection,title:string){
     return <header className="-mx-4 -mt-4 mb-4 flex flex-wrap items-center justify-between gap-2 rounded-t-[var(--lms-canvas-radius)] border-b border-[#b8dce9] bg-[#e8f5fd] px-4 py-3">
       <h2 className="font-semibold text-[var(--lms-heading)]">{title}</h2>
-      <Button variant="secondary" type="button" disabled={saving}
+      <Button variant="secondary" type="button" disabled={saving||readOnly}
         onClick={()=>editSection(section)}
         aria-label={(editableSection===section?"Finish editing ":"Edit ")+title}
         className="min-h-11 gap-2 md:min-h-9">
@@ -88,7 +99,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
   }
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if(saving)return;
+    if(saving||readOnly)return;
     const phoneValue=profile.contacts.alternatePhone.trim();
     if(phoneValue&&(!/^\+?[0-9() -]+$/.test(phoneValue)||
       phoneValue.replace(/\D/g,"").length<10||
@@ -167,15 +178,15 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
           {cardHeader("personal","Personal Details")}
           <p className="text-xs text-muted-foreground">Gender, date of birth and blood group require an authorized persisted personal-details schema; they are not editable in this vNext profile form yet.</p>
           <div className="grid min-w-0 gap-4 md:grid-cols-2">
-            <Field label="Name" value={profile.displayName} onChange={v => top("displayName", v)} disabled={editableSection!=="personal"} />
-            <Field label="Role / Title" value={profile.roleTitle} onChange={v => top("roleTitle", v)} disabled={editableSection!=="personal"} />
+            <Field label="Name" value={profile.displayName} onChange={v => top("displayName", v)} disabled={readOnly||editableSection!=="personal"} />
+            <Field label="Role / Title" value={profile.roleTitle} onChange={v => top("roleTitle", v)} disabled={readOnly||editableSection!=="personal"} />
             <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">About
               <Textarea rows={3} maxLength={1000} className={fieldStyle}
-                value={profile.about} disabled={editableSection!=="personal"} onChange={e => top("about", e.target.value)} />
+                value={profile.about} disabled={readOnly||editableSection!=="personal"} onChange={e => top("about", e.target.value)} />
             </label>
             <div className="min-w-0 md:col-span-2">
               <Field label="Profile photo (HTTPS link)" value={profile.photoUrl}
-                onChange={v => top("photoUrl", v)} disabled={editableSection!=="personal"} maxLength={500} hint="Paste a secure image link. Direct photo upload requires the storage service." />
+                onChange={v => top("photoUrl", v)} disabled={readOnly||editableSection!=="personal"} maxLength={500} hint="Paste a secure image link. Direct photo upload requires the storage service." />
             </div>
           </div>
         </section>
@@ -184,13 +195,13 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
           {cardHeader("social","Social Profiles")}
           <div className="grid min-w-0 gap-4 md:grid-cols-2">
             <Field label="LinkedIn" type="url" maxLength={500} value={profile.social.linkedIn}
-              disabled={editableSection!=="social"} onChange={v => detail("social", "linkedIn", v)} />
+              disabled={readOnly||editableSection!=="social"} onChange={v => detail("social", "linkedIn", v)} />
             <Field label="GitHub" type="url" maxLength={500} value={profile.social.github}
-              disabled={editableSection!=="social"} onChange={v => detail("social", "github", v)} />
+              disabled={readOnly||editableSection!=="social"} onChange={v => detail("social", "github", v)} />
             <Field label="Portfolio / Website" type="url" maxLength={500} value={profile.social.website}
-              disabled={editableSection!=="social"} onChange={v => detail("social", "website", v)} />
+              disabled={readOnly||editableSection!=="social"} onChange={v => detail("social", "website", v)} />
             <Field label="Instagram" type="url" maxLength={500} value={profile.social.instagram}
-              disabled={editableSection!=="social"} onChange={v => detail("social", "instagram", v)} />
+              disabled={readOnly||editableSection!=="social"} onChange={v => detail("social", "instagram", v)} />
           </div>
           <p className="text-xs text-muted-foreground">Twitter/X is not stored by the current profile schema; no unpersisted value is collected.</p>
         </section>
@@ -204,7 +215,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
               ["city", "City"], ["state", "State"], ["postalCode", "Pincode"], ["country", "Country"],
             ] as const).map(([key, label]) => (
               <Field key={key} label={label} value={profile.address[key]} maxLength={key==="postalCode"?20:150}
-                onChange={v => detail("address", key, v)} disabled={editableSection!=="address"} />
+                onChange={v => detail("address", key, v)} disabled={readOnly||editableSection!=="address"} />
             ))}
           </div>
         </section>
@@ -215,11 +226,11 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
             <p className="break-words text-sm leading-6 text-body [overflow-wrap:anywhere]">Email: {email || "Not provided"} · Mobile: {phone || "Not provided"}</p>
           </div>
           <div className="grid min-w-0 gap-4 md:grid-cols-2">
-            <Field label="Additional email" type="email" maxLength={254} value={profile.contacts.alternateEmail} disabled={editableSection!=="contacts"}
+            <Field label="Additional email" type="email" maxLength={254} value={profile.contacts.alternateEmail} disabled={readOnly||editableSection!=="contacts"}
               onChange={v => detail("contacts", "alternateEmail", v)} />
-            <Field label="Additional phone" type="tel" maxLength={40} value={profile.contacts.alternatePhone} disabled={editableSection!=="contacts"}
+            <Field label="Additional phone" type="tel" maxLength={40} value={profile.contacts.alternatePhone} disabled={readOnly||editableSection!=="contacts"}
               onChange={v => detail("contacts", "alternatePhone", v)} />
-            <Field label="Contact person" value={profile.contacts.contactPerson} disabled={editableSection!=="contacts"}
+            <Field label="Contact person" value={profile.contacts.contactPerson} disabled={readOnly||editableSection!=="contacts"}
               onChange={v => detail("contacts", "contactPerson", v)} />
           </div>
         </section>
@@ -233,11 +244,11 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
             {saved && <Alert tone="success">Profile updated successfully.</Alert>}
           </div>
         ) : null}
-        <Button variant="secondary" type="button" disabled={saving||!dirty}
+        <Button variant="secondary" type="button" disabled={readOnly||saving||!dirty}
           onClick={cancel} className="min-h-11 w-full md:w-auto md:min-h-9">
           Cancel
         </Button>
-        <Button variant="primary" type="submit" disabled={saving||!dirty} loading={saving}
+        <Button variant="primary" type="submit" disabled={readOnly||saving||!dirty} loading={saving}
           className="min-h-11 w-full md:min-h-9 md:w-auto md:shrink-0">
           {saving ? "Saving…" : "Save profile"}
         </Button>
