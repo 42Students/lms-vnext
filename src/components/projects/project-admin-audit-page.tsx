@@ -145,7 +145,11 @@ export async function ProjectAdminAuditPage({
   // college scope. The activity service itself enforces platform permissions.
   const globalTemplateAudit = mayReadGlobalProjectAudit(context);
 
-  const legacyLink=projectLegacyAuditLink(searchParams,new Date());
+  // Resource-history paging belongs to its independent trail, not to
+  // the project activity filter parser or cursor.
+  const activitySearchParams={...searchParams};
+  delete activitySearchParams.resourcePage;
+  const legacyLink=projectLegacyAuditLink(activitySearchParams,new Date());
   const filters = parseProjectAdminAuditQuery(legacyLink.params);
   const { eventType, importance, subjectType, subjectId, from, to } = filters;
   const allTime = !from && !to;
@@ -185,11 +189,24 @@ export async function ProjectAdminAuditPage({
   // conflate a filtered project-activity page with its resource event trail.
   const resourceWorkspaceId=(subjectType==="project"||subjectType==="project_instance")&&
     subjectId&&z.string().uuid().safeParse(subjectId).success?subjectId:null;
+  const rawResourcePage=searchParams.resourcePage;
+  const resourcePage=typeof rawResourcePage==="string" &&
+    /^[1-9]\d{0,3}$/.test(rawResourcePage)?Number(rawResourcePage):1;
   const resourceRead=resourceWorkspaceId
-    ?await getProjectResourceHistory(context,resourceWorkspaceId)
-      .then(value=>({ok:true as const,value}))
+    ?await getProjectResourceHistory(context,resourceWorkspaceId,{
+      page:resourcePage,pageSize:50,
+    }).then(value=>({ok:true as const,value}))
       .catch(()=>({ok:false as const,value:null}))
     :null;
+  const resourcePageHref=(page:number)=>{
+    const params=new URLSearchParams();
+    for(const [key,value] of Object.entries(searchParams)){
+      if(key!=="resourcePage"&&typeof value==="string")params.set(key,value);
+    }
+    if(page>1)params.set("resourcePage",String(page));
+    const search=params.toString();
+    return basePath+"/audit"+(search?"?"+search:"");
+  };
   const rawEvents=result.items;
   const coveredEvents=rawEvents.length;
   const peopleCount=new Set(rawEvents.map(item=>item.actor.id)
@@ -481,7 +498,25 @@ export async function ProjectAdminAuditPage({
               ) : null}
             </li>)}
           </ol>}
-        {resourceRead?.ok&&resourceRead.value.hasMore?<p className="text-xs text-warning">Showing the most recent 200 resource changes; older history requires a narrower export or audit search.</p>:null}
+        {resourceRead?.ok&&resourceRead.value.total>0?<nav aria-label="Resource audit pages"
+          className="flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3 text-sm">
+          <span role="status" className="text-xs tabular-nums text-muted-foreground">
+            Page {resourceRead.value.page} of {resourceRead.value.pageCount}
+            {" · "}{resourceRead.value.total} resource changes
+          </span>
+          <div className="flex flex-wrap gap-2">
+            {resourceRead.value.page>1?<Link
+              href={resourcePageHref(resourceRead.value.page-1)}
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text underline md:min-h-9">
+              Previous resource changes
+            </Link>:null}
+            {resourceRead.value.hasMore?<Link
+              href={resourcePageHref(resourceRead.value.page+1)}
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text underline md:min-h-9">
+              Next resource changes
+            </Link>:null}
+          </div>
+        </nav>:null}
       </section>:null}
       <section aria-label="Change log" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
