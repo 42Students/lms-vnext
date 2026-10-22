@@ -130,3 +130,5 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 ## Results
 - FIXED G2-9-033-077 — `src/modules/placements/validation.ts:69-78`; commit `3e9a14bd69580d46fefbacdc7a65676ab04dd074`; legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java:138-147`.
 - OK G2-9-033-079 — `src/modules/placements/validation.ts:40-59` enforces HTTPS website and logo; legacy `docs/legacy-source/frontend/src/pages/superadmin/sections/Companies.js:484-489`.
+- OK G2-9-034-015 — `src/modules/placements/admin-company-directory-service.ts:151-266` pages canonical company IDs at 50 rows, independently of college relationships; `src/modules/placements/admin-company-directory-model.ts:3-5`; legacy `docs/legacy-source/frontend/src/pages/superadmin/sections/CompanyCuration.js:34-41,93-95`.
+- OK G2-9-034-068 — `src/modules/placements/admin-company-directory-service.ts:198-266` counts and pages distinct `placementCompanies` rows; `src/modules/placements/admin-company-directory-model.ts:4`; legacy `docs/legacy-source/frontend/src/pages/superadmin/sections/CompanyCuration.js:34-43,94-95`.
