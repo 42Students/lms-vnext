@@ -20,13 +20,13 @@ export function parseSuperAdminCourseProgressParams(raw:Record<string,string|str
  const allowed=["q","status","page","courseCode","cohortCode"] as const;
  if(Object.keys(raw).some(key=>!allowed.includes(key as typeof allowed[number])))return null;
  if(Object.values(raw).some(Array.isArray))return null;
- if(raw.page!==undefined&&(typeof raw.page!=="string"||(!/^[1-9][0-9]*$/.test(raw.page)||Number(raw.page)>1000)))
+ if(raw["page"]!==undefined&&(typeof raw["page"]!=="string"||(!/^[1-9][0-9]*$/.test(raw["page"])||Number(raw["page"])>1000)))
   return null;
  // Changing a class invalidates a stale course and result page.
- const cohortCode=raw.cohortCode||undefined;
- const courseCode=cohortCode?(raw.courseCode||undefined):undefined;
+ const cohortCode=raw["cohortCode"]||undefined;
+ const courseCode=cohortCode?(raw["courseCode"]||undefined):undefined;
  const parsed=adminLearningQuerySchema.safeParse({
-  q:raw.q,status:raw.status,page:cohortCode&&courseCode?raw.page:undefined,
+  q:raw["q"],status:raw["status"],page:cohortCode&&courseCode?raw["page"]:undefined,
   courseCode,cohortCode,
  });
  return parsed.success?parsed.data:null;
@@ -35,8 +35,8 @@ export function parseSuperAdminCourseProgressParams(raw:Record<string,string|str
 /** Student progress detail requires one exact offering UUID. Suppress hostile
  * scope keys, malformed UUIDs and duplicate offering IDs before DB access. */
 export function parseSuperAdminStudentProgressParams(raw:Record<string,string|string[]|undefined>){
- if(Object.keys(raw).length!==1||typeof raw.offeringId!=="string")return null;
- const parsed=z.string().uuid().safeParse(raw.offeringId);
+ if(Object.keys(raw).length!==1||typeof raw["offeringId"]!=="string")return null;
+ const parsed=z.string().uuid().safeParse(raw["offeringId"]);
  return parsed.success?parsed.data:null;
 }
 
