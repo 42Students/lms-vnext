@@ -18,7 +18,9 @@ it("LEARNER-placements-13 retains the reviewed learner journey behavior",()=>{
 const value=source("src/components/placements/learner-save-drive-button.tsx");
 expect(value).toContain("apiFetch");
 expect(value).toContain("lock.current");
-expect(value).toContain("learnerSavedDriveCopy(false).toast");
+expect(value).toContain('title:next?"Saved for later":"Removed from saved jobs"');
+expect(value).toContain('if(surface==="DETAIL")showToast');
+expect(value).toContain('setSaved(previous)');
 });
 it("LEARNER-placements-37 retains the reviewed learner journey behavior",()=>{
 const value=source("src/app/(authenticated)/learn/my-placements/schedule/page.tsx");
@@ -43,7 +45,9 @@ expect(value).toContain("Not approved");
 });
 it("LEARNER-placements-55 retains the reviewed learner journey behavior",()=>{
 const value=source("src/app/(authenticated)/learn/my-placements/placement/page.tsx");
-expect(value).toContain("id=\"registration\"");
+const registration=source("src/components/placements/learner-placement-registration.tsx");
+expect(registration).toContain('id="registration"');
+expect(value).toContain('["Registration","#registration"]');
 expect(value).toContain("id=\"requests\"");
 expect(value).toContain("id=\"rules\"");
 });
