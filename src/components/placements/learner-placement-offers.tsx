@@ -315,7 +315,7 @@ export function LearnerPlacementOffers({
   }
 
   return (
-    <section id="my-offers" className="scroll-mt-24 space-y-3">
+    <section id="my-offers" aria-label="My placement offers" className="scroll-mt-24 space-y-3">
       <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <p className="min-w-0 text-sm text-body">Review each offer, its reply deadline and joining terms before responding.</p>
         <Button className="min-h-11 w-full shrink-0 sm:w-auto md:min-h-9" type="button" variant="secondary" onClick={downloadOwnOffers}>
@@ -336,9 +336,9 @@ export function LearnerPlacementOffers({
           >
             <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div className="flex min-w-0 flex-1 items-start gap-3">
-                <span className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-primary-subtle text-base font-bold text-primary-text" aria-label={item.companyName+" avatar"}>
+                <span className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-primary-subtle text-base font-bold text-primary-text" aria-hidden="true">
                   {safePublicOfferLogo(item.companyLogoUrl) ? (
-                    <img alt={item.companyName+" logo"} src={safePublicOfferLogo(item.companyLogoUrl)!}
+                    <img alt="" src={safePublicOfferLogo(item.companyLogoUrl)!}
                       width={44} height={44} loading="lazy" className="size-11 object-contain"/>
                   ) : <span aria-hidden="true">{item.companyName.trim().slice(0,2).toUpperCase()||"CO"}</span>}
                 </span>
@@ -443,7 +443,7 @@ export function LearnerPlacementOffers({
             </dl>
 
             {item.status==="ACCEPTED" && item.acceptanceChannel==="EXTERNAL_IMPORT" ? (
-              <aside role="status" className="mt-4 rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-4 text-sm text-body">
+              <aside aria-label="Externally reported offer acceptance" className="mt-4 rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-4 text-sm text-body">
                 <p>The company told us you accepted this offer. If that is wrong, tell the placement cell
                   {item.acceptedDisputableUntil ? " before "+(formatWhen(item.acceptedDisputableUntil)??"the recorded deadline")+" IST." : "."}
                 </p>

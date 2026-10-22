@@ -70,10 +70,10 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
   finally{setBusy(false);}
  }
  return <div className="mt-3 space-y-2">
-  <Button variant="link" type="button" aria-expanded={open} onClick={()=>setOpen(x=>!x)}
+  <Button variant="link" type="button" aria-expanded={open} aria-controls={"learner-reschedule-details-"+roundId} onClick={()=>setOpen(x=>!x)}
     className="max-md:min-h-11 font-semibold text-primary-text underline">{open?"Cancel":"Can't make it? Ask to reschedule"}</Button>
   {success?<p role="status" className="text-sm text-success">{success}</p>:null}
-  {open?<div className="grid gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
+  {open?<div id={"learner-reschedule-details-"+roundId} role="region" aria-label="Reschedule request details" className="grid gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
    <h4 className="font-semibold">Ask to reschedule</h4>
    <p className="text-sm text-body">The placement cell must approve your suggested time. You can add flexible times as notes, but the current approval process also needs an exact future date and a contact location or meeting link.</p>
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason (3–900 characters)

@@ -101,9 +101,9 @@ export function PlacementBulkAddApplicants({
   }
 
   return (
-    <section className="space-y-4 border-b border-border pb-6">
+    <section aria-labelledby="bulk-applicants-heading" className="space-y-4 border-b border-border pb-6">
       <div>
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Applicants · Bulk Add-to-Drive</h2>
+        <h2 id="bulk-applicants-heading" className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Applicants · Bulk Add-to-Drive</h2>
         <p className="mt-1 text-sm leading-6 text-body">
           Select up to 200 learners across these roster pages, choose the drive role
           and confirm. Eligibility, placement access and current application status
@@ -233,7 +233,7 @@ export function PlacementBulkAddApplicants({
       {error ? <p role="alert" className="text-sm text-error leading-[22px]">{error}</p> : null}
 
       {results.length > 0 ? (
-        <div aria-live="polite" className="space-y-2">
+        <div aria-label="Per-learner bulk add results" className="space-y-2">
           <h3 className="font-semibold text-[var(--lms-heading)]">Results for each selected learner</h3>
           <ul className="divide-y divide-border rounded-[var(--lms-control-radius)] border border-border">
             {results.map((row) => (

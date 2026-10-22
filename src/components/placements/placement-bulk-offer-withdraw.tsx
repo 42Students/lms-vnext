@@ -95,9 +95,9 @@ export function PlacementBulkOfferWithdraw({
 
   if (choices.length === 0) return null;
   return (
-    <section className="space-y-4 border-b border-border pb-6" aria-label="Bulk offer withdrawal">
+    <section className="space-y-4 border-b border-border pb-6" aria-labelledby="bulk-offer-withdraw-heading">
       <div>
-        <h3 className="text-base font-semibold text-[var(--lms-heading)]">
+        <h3 id="bulk-offer-withdraw-heading" className="text-base font-semibold text-[var(--lms-heading)]">
           Bulk withdraw offers
         </h3>
         <p className="mt-1 text-sm leading-6 text-body">
@@ -153,7 +153,7 @@ export function PlacementBulkOfferWithdraw({
       )}
       {error ? <p role="alert" className="text-sm text-error leading-[22px]">{error}</p> : null}
       {results.length ? (
-        <div aria-live="polite" className="space-y-2">
+        <div aria-label="Per-offer withdrawal results" className="space-y-2">
           <h4 className="font-semibold text-foreground">Per-offer results</h4>
           <ul className="divide-y divide-border rounded-[var(--lms-control-radius)] border border-border text-sm">
             {results.map((item) => (

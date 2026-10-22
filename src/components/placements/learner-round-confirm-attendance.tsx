@@ -18,9 +18,9 @@ export function LearnerRoundConfirmAttendance({applicationId,roundId,confirmed}:
   * is not a screening/assessment pass decision; reschedule requests are
   * handled by the distinct learner-schedule-reschedule component. */
  if(isConfirmed)return <span role="status" className="text-xs font-semibold text-success">Confirmed</span>;
- return <div className="flex flex-wrap items-center gap-2">
+ return <div aria-busy={pending} className="flex flex-wrap items-center gap-2">
   <span className="text-xs font-semibold text-warning">Please confirm</span>
-  <Button className="max-md:min-h-11" type="button" disabled={pending} onClick={()=>void run(async()=>{
+  <Button className="max-md:min-h-11" type="button" disabled={pending} aria-describedby={error?"learner-round-confirm-error-"+roundId:undefined} onClick={()=>void run(async()=>{
    setError("");
    try{
     await apiFetch("/api/placements/learner/rounds/confirm",{
@@ -34,6 +34,6 @@ export function LearnerRoundConfirmAttendance({applicationId,roundId,confirmed}:
   })} >
    {pending?"Confirming…":"Confirm I'll attend"}
   </Button>
-  {error?<p role="alert" className="w-full text-xs text-error">{error}</p>:null}
+  {error?<p role="alert" id={"learner-round-confirm-error-"+roundId} className="w-full text-xs text-error">{error}</p>:null}
  </div>;
 }

@@ -116,9 +116,9 @@ export function LearnerPlacementsDashboard({
         </p>
       )}
 
-      <section aria-label="Waiting on you" className="border-b border-border pb-5">
+      <section aria-labelledby="learner-dashboard-waiting-heading" className="border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h3 className="text-lg font-semibold text-foreground">Waiting on you</h3>
+          <h3 id="learner-dashboard-waiting-heading" className="text-lg font-semibold text-foreground">Waiting on you</h3>
           <span className="text-xs font-semibold text-muted-foreground">{waitingOnYou.length} to-do item{waitingOnYou.length===1?"":"s"}</span>
         </div>
         {waitingOnYou.length?<ul className="mt-3 divide-y divide-border border-y border-border">{waitingOnYou.map(item=><li key={item.key}
@@ -151,9 +151,9 @@ export function LearnerPlacementsDashboard({
         </section>
       ) : null}
 
-      <section aria-label="Application screening breakdown" className="border-b border-border pb-5">
+      <section aria-labelledby="learner-dashboard-stages-heading" className="border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h3 className="text-base font-semibold text-foreground">Application stages</h3>
+          <h3 id="learner-dashboard-stages-heading" className="text-base font-semibold text-foreground">Application stages</h3>
           <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">See all applications →</Link>
         </div>
         {display.applications===0 ? <p role="status" className="mt-2 text-sm text-body">
