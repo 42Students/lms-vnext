@@ -9,7 +9,7 @@ describe("COL-placements-10 needs attention",()=>{
   }
   expect(source).toContain('tab:"APPLIED"');
   expect(source).toContain('tab:"INTERVIEW"');
-  expect(source).toContain('tab:"OFFERED"');
+  expect(source).toContain('tab:"ALL"');
   expect(source).toContain('encodeURIComponent(item.jobId)+"/applications?stage="+category.tab');
  });
  it("COL-placements-10 keeps an explicit no-attention state without manufacturing flagged drives",()=>{

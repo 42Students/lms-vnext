@@ -14,7 +14,8 @@ vi.mock("next/link",()=>({
   React.createElement("a",{href},children),
 }));
 vi.mock("@/components/ui/page-header",()=>({
- PageHeader:({title}:{title:string})=>React.createElement("h1",null,title),
+ PageHeader:({title,description,actions}:{title:string;description?:string;actions?:React.ReactNode})=>
+  React.createElement("header",null,React.createElement("h1",null,title),description,actions),
 }));
 vi.mock("@/components/placements/recorded-outside-form",()=>({
  RecordedOutsideForm:({collegeId}:{collegeId:string})=>
