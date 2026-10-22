@@ -93,7 +93,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
     {canRetryVerificationReview(error,loading)&&<Button variant="secondary" type="button" onClick={retryReview}
      className="min-h-11 w-full sm:min-h-[var(--lms-control-height)] sm:w-auto">Retry loading review</Button>}</div>:null}
    {detail?<div className="min-w-0 space-y-5 py-4">
-    {row.section==="IDENTITY"?<section className="space-y-1 text-sm">
+    {row.section==="IDENTITY"?<section aria-label="Masked identity numbers" className="space-y-1 text-sm">
       <p className="text-muted-foreground">Numbers show only the last four digits; compare them with the document.</p>
       {(["aadhaarNumber","panNumber"] as const).map(field=>{
         const value=detail.review.submittedSnapshot[field];

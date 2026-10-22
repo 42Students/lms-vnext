@@ -298,8 +298,8 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-15.md: file, number of 
 - [x] `src/components/ui/searchable-select.tsx`
 - [x] `src/components/ui/tabs.tsx`
 - [x] `src/components/ui/third-party-link.tsx`
-- [ ] `src/components/verification/TpoVerificationSwitch.tsx`
-- [ ] `src/components/verification/VerificationReviewDrawer.tsx`
-- [ ] `src/components/verification/VerificationWorkspace.tsx`
-- [ ] `src/styles/legacy-skin.css`
-- [ ] `src/styles/micro-details.css`
+- [x] `src/components/verification/TpoVerificationSwitch.tsx`
+- [x] `src/components/verification/VerificationReviewDrawer.tsx`
+- [x] `src/components/verification/VerificationWorkspace.tsx`
+- [x] `src/styles/legacy-skin.css`
+- [x] `src/styles/micro-details.css`
