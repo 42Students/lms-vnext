@@ -13,7 +13,7 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
  if(!id.success)return NextResponse.json({error:"NOT_FOUND"},{status:404});
  try{
   const context=await getCurrentRequestContext();
-  if(!hasActiveRecruiter(context))
+  if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)
    return NextResponse.json({error:"FORBIDDEN"},{status:403});
   const receipt=await acknowledgeRecruiterThread(context,id.data);
   // Native form submissions retain their 303. Fetch clients request a

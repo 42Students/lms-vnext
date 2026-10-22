@@ -8,7 +8,10 @@ describe("Super Admin workspace brief isolation and malformed persisted JSON", (
   const first = parseWorkspaceBrief(null);
   const second = parseWorkspaceBrief({goal: "tampered", deliverables: ["x"], rogue: true});
   expect(first).toEqual(emptyWorkspaceBrief);
-  expect(second).toEqual(emptyWorkspaceBrief);
+  // Legacy persisted briefs may contain opaque overview keys. They must be
+  // ignored, not interpreted as cross-workspace authority or editable fields.
+  expect(second).toEqual({goal:"tampered",description:"",deliverables:["x"],
+   completionConditions:[],personas:[]});
   expect(first).not.toBe(second);
   expect(first).not.toBe(emptyWorkspaceBrief);
   expect(first.deliverables).not.toBe(second.deliverables);
@@ -42,8 +45,18 @@ describe("Super Admin workspace brief isolation and malformed persisted JSON", (
    {...original, description:"x".repeat(4001)},
   ]) {
    expect(workspaceBriefSchema.safeParse(bad).success).toBe(false);
-   expect(parseWorkspaceBrief(bad)).toEqual(emptyWorkspaceBrief);
+   const normalized=parseWorkspaceBrief(bad);
+   // The strict editor schema rejects these payloads, while the read adapter
+   // safely bounds historical persisted values instead of losing authored text.
+   expect(workspaceBriefSchema.safeParse(normalized).success).toBe(true);
+   expect(Object.keys(normalized).sort()).toEqual(Object.keys(emptyWorkspaceBrief).sort());
+   expect(normalized.goal.length).toBeLessThanOrEqual(2000);
+   expect(normalized.description.length).toBeLessThanOrEqual(4000);
+   expect(normalized.deliverables.length).toBeLessThanOrEqual(50);
+   expect(normalized.personas.every(item=>item.length>0&&item.length<=500)).toBe(true);
   }
+  expect(parseWorkspaceBrief({...original,collegeId:"other-tenant"}))
+   .toEqual(emptyWorkspaceBrief);
   expect(updateWorkspaceBriefSchema.safeParse({
    brief:original,expectedUpdatedAt:"2026-10-18T12:00:00+05:30",
   }).success).toBe(true);
