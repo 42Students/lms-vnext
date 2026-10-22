@@ -176,10 +176,6 @@ export default async function CollegeAttendancePage({
         hasCollegeOverride={policyRead.ok?policyRead.hasOverride:null}
         retryHref="/college/attendance"
         settingsHref="/college/attendance/settings"/>
-      {gridFailed ? <ErrorState title="Unable to load monthly attendance"
-        description="The attendance grid could not be refreshed. Retry with the same filters."
-        action={<Link href={"/college/attendance?" + new URLSearchParams(Object.entries(query).filter((entry): entry is [string,string] => typeof entry[1] === "string")).toString()}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>} /> : null}
       <AdminAttendanceWorkspace
         data={data}
         basePath="/college/attendance"
