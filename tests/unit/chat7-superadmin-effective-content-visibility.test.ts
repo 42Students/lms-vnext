@@ -23,6 +23,7 @@ describe("SA-academics-people-62 effective student content visibility",()=>{
   expect(service).toContain('courseStatus:aliased(courses.status,"admin_course_status")');
   expect(service).toContain("eq(departments.collegeId,collegeId)");
   expect(page).toContain("effectiveCourseContentVisibleToStudents(item)");
-  expect(page).toContain("Students {studentContentVisible(item)?\"Visible\":\"Hidden\"}");
+  expect(page).toContain('<StatusBadge tone={studentContentVisible(item)?"success":"neutral"}>');
+  expect(page).toContain('{studentContentVisible(item)?"Visible":"Hidden"}');
  });
 });
