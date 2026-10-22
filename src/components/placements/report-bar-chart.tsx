@@ -10,14 +10,14 @@ export function ReportBarChart({title,rows,units="items",limit=20}:{
   .sort((a,b)=>b.value-a.value||a.label.localeCompare(b.label));
  const shown=normalized.slice(0,limit);
  const maximum=Math.max(1,...shown.map(row=>row.value));
- return <figure className={"space-y-3 border-b pb-5 "+styles.figure}>
-  <figcaption className={styles.title}>{title}</figcaption>
+ return <figure className={"space-y-3 border-b pb-5 "+styles["figure"]}>
+  <figcaption className={styles["title"]}>{title}</figcaption>
   {shown.length?<ol className="space-y-2">{shown.map((row,index)=><li key={row.label+index}>
-   <div className={styles.chartRow}>
-    <span className={styles.label} title={row.label}>{row.label}</span>
+   <div className={styles["chartRow"]}>
+    <span className={styles["label"]} title={row.label}>{row.label}</span>
     <MetricBar label={row.label} value={row.value} maximum={maximum} unit={units}
-      className={styles.track}/>
-    <span className={styles.value} title={row.value.toLocaleString("en-IN")+" "+units}>
+      className={styles["track"]}/>
+    <span className={styles["value"]} title={row.value.toLocaleString("en-IN")+" "+units}>
       {row.value.toLocaleString("en-IN")} {units}
     </span>
    </div>
