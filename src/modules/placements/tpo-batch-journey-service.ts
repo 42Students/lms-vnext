@@ -36,7 +36,7 @@ export async function listTpoBatchJourneyCounts(context:RequestContext,batchIds:
   eq(activityEvents.eventType,"BATCH_INVITED"),
   eq(activityEvents.subjectType,"COHORT"),
   inArray(activityEvents.subjectId,ids),
- )).orderBy(desc(activityEvents.createdAt)).limit(500);
+ )).orderBy(desc(activityEvents.occurredAt)).limit(500);
  const invited=new Map<string,number>();
  for(const event of inviteEvents){
   const count=event.metadata?.appRecipients;

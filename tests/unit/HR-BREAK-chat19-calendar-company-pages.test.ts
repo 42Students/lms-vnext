@@ -50,7 +50,7 @@ describe("HR-BREAK-chat19-calendar-company: account-deny and stable navigation",
   expect(m.calendar).toHaveBeenCalledWith(actor,expect.objectContaining({
    from:expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
    to:expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
-  }));
+  }),college);
  });
  it.each([
   {date:["2026-10-18","2026-10-19"]},
@@ -58,7 +58,7 @@ describe("HR-BREAK-chat19-calendar-company: account-deny and stable navigation",
   {category:["ALL","PRIVATE"]},
  ])("refuses repeated calendar filters %j without reading authorized events",async raw=>{
   const rendered=await calendar(raw);
-  expect(readText(rendered)).toContain("Invalid calendar filters.");
+  expect(readText(rendered)).toContain("Invalid calendar filters");
   expect(m.calendar).not.toHaveBeenCalled();
  });
  it("calendar blocks a stale recruiter identity before even reading event aggregates",async()=>{
@@ -101,7 +101,7 @@ describe("HR-BREAK-chat19-calendar-company: account-deny and stable navigation",
  });
  it("no grants provides clear company access recovery without roster/drive reads",async()=>{
   const result=await company();
-  expect(readText(result)).toContain("No active college access");
+  expect(readText(result)).toContain("no active college session");
   expect(m.team).toHaveBeenCalledWith(actor,null);
   expect(m.jobs).not.toHaveBeenCalled();
   expect(m.counts).not.toHaveBeenCalled();

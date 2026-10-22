@@ -43,7 +43,7 @@ function visible(node:unknown):string[]{
   if(Array.isArray(node))return node.flatMap(visible);
   if(!isValidElement(node))return [];
   const props=node.props as Record<string,unknown>;
-  return ["children","title","description","href","action","eyebrow"].flatMap(key=>visible(props[key]));
+  return ["children","title","description","href","action","eyebrow","label"].flatMap(key=>visible(props[key]));
 }
 const render=(query:Record<string,string|string[]|undefined>={})=>
   SuperAdminSettingsPage({searchParams:Promise.resolve(query)});
@@ -82,7 +82,7 @@ describe("Super Admin last-third Tenant Settings: safe scope and dependency fail
     state.failure="editor";
     const page=visible(await render()).join(" ");
     expect(page).toContain("Tenant Settings");
-    expect(page).toContain("Tenant settings editor is temporarily unavailable.");
+    expect(page).toContain("Settings could not be loaded or saved safely. Existing settings were not changed.");
     expect(page).not.toContain("Tenant settings unavailable");
     expect(page).not.toContain("PRIVATE_SETTINGS_DB_PASSWORD");
     expect(state.platformReads).toBe(1);

@@ -79,6 +79,7 @@ export function TpoGrid<Row>({
  const queryColumns=params.get("columns")??"";
  const selectedKeys=parseTpoGridColumns(queryColumns,permitted);
  const defaultKeys=defaultVisibleKeys?.filter(key=>permitted.includes(key))??permitted;
+ const defaultKeysCsv=defaultKeys.join(",");
  const activeKeys=selectedKeys.length?selectedKeys:defaultKeys;
  const display=chosenTpoGridColumns(columns,activeKeys);
  const layoutKey=storageKey?storageKey+GRID_LAYOUT_SUFFIX:null;
@@ -117,7 +118,7 @@ export function TpoGrid<Row>({
    }catch{/* Optional local preference. */}
   }
   router.replace(pathname+(next.size?"?"+next.toString():""),{scroll:false});
- },[params,pathname,router,permittedCsv,storageKey,defaultKeys.join(",")]);
+ },[params,pathname,router,permittedCsv,storageKey,defaultKeysCsv]);
  // Restore only widths/pinning for columns in the current authorized schema.
  useEffect(()=>{
   const current=api.current;

@@ -24,8 +24,8 @@ function contents(node:ReactNode):string{
  if(Array.isArray(node))return node.map(contents).join(" ");
  if(typeof node==="string"||typeof node==="number")return String(node);
  if(!isValidElement(node))return "";
- const p=node.props as {children?:ReactNode;title?:string;description?:string};
- return [p.title??"",p.description??"",contents(p.children)].join(" ");
+ const p=node.props as {children?:ReactNode;title?:string;description?:string;message?:string};
+ return [p.title??"",p.description??"",p.message??"",contents(p.children)].join(" ");
 }
 const reports=(filters:Record<string,unknown>={})=>CompanyReportsPage({
  searchParams:Promise.resolve(filters) as never,

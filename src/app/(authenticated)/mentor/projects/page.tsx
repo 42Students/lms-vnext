@@ -39,7 +39,7 @@ export default function MentorProjectsPage({searchParams}:{searchParams:Promise<
     <MentorProjectsContent searchParams={searchParams}/>
   </Suspense>;
 }
-async function MentorProjectsContent({
+export async function MentorProjectsContent({
   searchParams,
 }: {
   searchParams: Promise<

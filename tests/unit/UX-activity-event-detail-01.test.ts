@@ -12,7 +12,7 @@ describe("UX-activity-event-detail-01",()=>{
  });
  it("uses shared cards, IST machine timestamps and a contained metadata panel",()=>{
   const page=read("src/app/(authenticated)/activity/[eventId]/page.tsx");
-  expect(page).toContain('<Card as="section"');
+  expect(page).toContain('<section className="min-w-0 space-y-4 border-b border-border pb-5">');
   expect(page).toContain('<time dateTime={event.occurredAt.toISOString()}>');
   expect(page).toContain("Asia/Kolkata");
   expect(page).toContain("max-w-full overflow-auto");

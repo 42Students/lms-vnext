@@ -605,7 +605,7 @@ db
     code: string; job_id: string; job_title: string; company_name: string;
     affected: number; category_jobs: number; category_affected: number;
   };
-  const attentionRead = await db.execute(sql<AttentionRow>`
+  const attentionRead = await db.execute<AttentionRow>(sql`
     with scoped_jobs as (
       select j.id, j.title, j.status, j.application_deadline, j.openings,
              c.name as company_name

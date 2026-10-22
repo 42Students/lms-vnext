@@ -44,7 +44,7 @@ describe("PROJ-BREAK-LEARNER-96/97 board filter and mobile navigation resilience
   expect(workspace).toBeGreaterThan(reject);
   for(const validation of [
    "!learnerBoardPrioritySchema.safeParse(priorityInput).success",
-   "!learnerBoardStatusSchema.safeParse(taskStatusInput).success",
+   "!learnerBoardStatusSchema.safeParse(effectiveTaskStatus).success",
    "!learnerBoardSortSchema.safeParse(taskSortInput).success",
    "!learnerBoardSprintSchema.safeParse(sprintInput).success",
    "!learnerBoardReleaseSchema.safeParse(releaseInput).success",
@@ -55,7 +55,10 @@ describe("PROJ-BREAK-LEARNER-96/97 board filter and mobile navigation resilience
   const board=read("src/components/projects/learner-board-interactive.tsx");
   expect(board).toContain('aria-label="Project Board lanes, scroll horizontally to see more"');
   expect(board).toContain('tabIndex={0}');
-  expect(board).toContain('overscroll-x-contain');
+  const boardStyles=read("src/components/projects/legacy-project-board.module.css");
+  expect(board).toContain('className={styles.scrollRegion}');
+  expect(boardStyles).toMatch(/\.scrollRegion\s*\{[^}]*overflow-x:\s*auto;/);
+  expect(boardStyles).toMatch(/\.scrollRegion\s*\{[^}]*overscroll-behavior-x:\s*contain;/);
   expect(board).toContain('Scroll sideways to see all Board lanes.');
   expect(board).toContain('focus-visible:outline-2');
   expect(board).toContain('min-h-11');

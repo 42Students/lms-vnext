@@ -16,14 +16,15 @@ describe("UX-college-csv-tables-01 responsive row reports",()=>{
       expect(page).toContain('getRowKey=');
       expect(page).toContain('mobilePriority:"primary"');
       expect(page).toContain('mobilePriority:"secondary"');
-      expect(page).toContain('empty={<p');
+      expect(page).toContain('empty={<EmptyState');
+      expect(page).toContain(name==="college-student-import-history"?"No bulk import history":"No row results");
       expect(page).not.toContain("<table");
       expect(page).not.toContain("overflow-x-auto");
     });
   }
   it("history handles rejected responses without exposing provider details",()=>{
     const page=source("college-student-import-history");
-    expect(page).toContain('if(!response.ok||!body?.items)throw Error("Import history unavailable.");');
+    expect(page).toContain('if(!response.ok||!Array.isArray(body?.items))throw Error("Import history unavailable.");');
     expect(page).toContain('aria-label="Import history pages"');
     expect(page).toContain('timeZone:"Asia/Kolkata"');
   });

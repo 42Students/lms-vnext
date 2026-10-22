@@ -50,7 +50,7 @@ function walk(node:unknown):unknown[]{
  if(Array.isArray(node))return node.flatMap(walk);
  if(!isValidElement(node))return [node];
  const props=node.props as Record<string,unknown>;
- return [node,...["children","title","description","action","href"].flatMap(k=>walk(props[k]))];
+ return [node,...["children","title","description","action","actions","href","intro"].flatMap(k=>walk(props[k]))];
 }
 const strings=(nodes:unknown[])=>nodes.filter((x):x is string=>typeof x==="string").join(" ");
 const render=()=>SuperAdminStudentsPage({searchParams:Promise.resolve({})});
@@ -62,12 +62,15 @@ describe("Super Admin last-third student registration and bulk import states",()
   for(const failure of ["filters","options","history"]){
    state.fail=failure;
    const nodes=walk(await render());
-   expect(strings(nodes)).toContain("Student register unavailable");
-   expect(strings(nodes)).toContain("Retry student register");
+   const message={filters:"Academic filter choices could not be loaded.",
+    options:"Registration and bulk-import academic choices could not be loaded.",
+    history:"Recent bulk import history is unavailable;"}[failure];
+   expect(strings(nodes)).toContain(message);
+   const registrationEnabled=failure!=="options";
    expect(nodes.some(x=>isValidElement(x)&&typeof x.type==="function"&&
-      x.type.name==="CollegeStudentRegisterForm")).toBe(false);
+      x.type.name==="CollegeStudentRegisterForm")).toBe(registrationEnabled);
    expect(nodes.some(x=>isValidElement(x)&&typeof x.type==="function"&&
-      x.type.name==="CollegeStudentCsvImport")).toBe(false);
+      x.type.name==="CollegeStudentCsvImport")).toBe(registrationEnabled);
    expect(strings(nodes)).not.toContain("INTERNAL_");
   }
   expect(state.filterCalls).toBe(3);

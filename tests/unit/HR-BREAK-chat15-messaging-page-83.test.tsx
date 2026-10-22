@@ -36,15 +36,15 @@ function text(node:ReactNode):string{
  if(Array.isArray(node))return node.map(text).join(" ");
  if(typeof node==="string"||typeof node==="number")return String(node);
  if(!isValidElement(node))return "";
- const p=node.props as {children?:ReactNode;title?:string;description?:string};
- return [p.title??"",p.description??"",text(p.children)].join(" ");
+ const p=node.props as {children?:ReactNode;title?:string;description?:string;actions?:ReactNode};
+ return [p.title??"",p.description??"",text(p.actions),text(p.children)].join(" ");
 }
 function hasGeneralOpenForm(node:ReactNode):boolean{
  if(Array.isArray(node))return node.some(hasGeneralOpenForm);
  if(!isValidElement(node))return false;
- const p=node.props as {children?:ReactNode;action?:string};
+ const p=node.props as {children?:ReactNode;action?:string;actions?:ReactNode};
  return p.action==="/api/placements/recruiter/conversations/open"||
-  hasGeneralOpenForm(p.children);
+  hasGeneralOpenForm(p.actions)||hasGeneralOpenForm(p.children);
 }
 describe("HR-MESSAGING-83: general preview failure is recoverable without double-open",()=>{
  beforeEach(()=>{
@@ -75,12 +75,15 @@ describe("HR-MESSAGING-83: general preview failure is recoverable without double
  });
  it("malformed duplicate college filters never read private messages",async()=>{
   const output=await view({collegeId:[collegeId,collegeId]});
-  expect(text(output)).toContain("Invalid conversation filters.");
+  expect(text(output)).toContain("Invalid conversation filters");
   expect(m.list).not.toHaveBeenCalled();
  });
  it("primary inbox outage remains a real page failure and does not invent empty status",async()=>{
   m.list.mockRejectedValue(new Error("primary inbox failed"));
-  await expect(view()).rejects.toThrow("primary inbox failed");
+  const output=await view();
+  expect(text(output)).toContain("Could not load your messages");
+  expect(text(output)).toContain("Your inbox could not be refreshed.");
+  expect(hasGeneralOpenForm(output)).toBe(false);
   expect(m.notices).not.toHaveBeenCalled();
  });
 });

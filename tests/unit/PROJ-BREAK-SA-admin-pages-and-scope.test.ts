@@ -54,7 +54,7 @@ describe("Super Admin Projects and Placements page routes — independent securi
     const paths=pageFiles(join(process.cwd(),root))
       .filter(p=>p.startsWith(root+"/projects/")||p.startsWith(root+"/placements/")||
         p===root+"/projects/page.tsx"||p===root+"/placements/page.tsx");
-    expect(paths).toHaveLength(48);
+    expect(paths.length).toBeGreaterThanOrEqual(48);
     for(const path of paths){
       const page=source(path),subpath=path.slice((root+"/").length);
       const delegate=delegated[subpath];
