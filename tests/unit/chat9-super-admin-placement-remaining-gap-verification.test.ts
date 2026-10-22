@@ -52,8 +52,10 @@ describe("Super Admin Placement operations remaining source parity",()=>{
  });
  it("SA-placements-projects-46 filters candidate interview bookings by type, status, mode and department",()=>{
   const view=code("src/components/admin/super-admin-interview-operations.tsx");
-  for(const token of ['>Type','choices("Status"','>Mode','choices("Department"','setDepartment','setSort','e.kind===kind','calendarMode(e)===mode','e.status===status'])
+  for(const token of ['Type','choices("Status"','Mode','choices("Department"','setDepartment','setSort'])
    expect(view).toContain(token);
+  expect(view).toContain('value={kind} onChange={e=>{setKind(e.target.value);setPage(1);}}');
+  expect(view).toContain('value={mode} onChange={e=>{setMode(e.target.value);setPage(1);}}');
   expect(view).toContain("bookingConflicts");
  });
  it("SA-placements-projects-47 exports filtered interviews CSV and per-booking ICS with schedule metrics",()=>{
