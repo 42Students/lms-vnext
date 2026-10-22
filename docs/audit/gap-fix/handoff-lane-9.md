@@ -74,6 +74,9 @@
 
 - src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx | G2-10-013-053 | P1 verification: server error branch explicitly refuses to show last-known-good appointment rows; owner should keep a client-held, tenant/scope-keyed last-success snapshot with stale warning and Retry, clearing it on college/role change or revoked access.
 
-- src/app/(authenticated)/admin/students/page.tsx + privileged auth limiter service | G2-14-002-093 | P1 verification: Super Admin student support page has no audited reset of learner OTP limiter prefixes; require explicit role/college scope and log actor/target without revealing OTP or bypassing sign-in controls.
 
 - src/app/(authenticated)/college/placements/drives/page.tsx + placement job type model | G2-9-015-023 | P1 verification: Type column prints raw enum with underscores replaced, not the legacy dynamic college job type badge/label; owner should use authorized tenant type display mapping rather than inventing fixed type names.
+
+- Super Admin college-admin lifecycle owner | G2-5-031-003 | P1 verification: the College Admin/TPO accounts table exposes Sessions and History but permanent Delete remains intentionally disabled. Implement narrowly authorized, actor-audited permanent deletion only after proving no active faculty/mentor/placement references or retained audit dependencies; do not equate revocation with hard deletion.
+- Project task editor navigation owner | G2-7-016-023 | P1 verification: useProjectEditorDiscardGuard protects link-based Back, tabs and beforeunload, but browser history popstate and programmatic router transitions are not intercepted. Add a safe discard-confirmation path that handles native Back without trapping users or preserving stale task edits after a scope switch.
+- Scheduled learner reminder operations owner | G2-4-032-033, G2-4-032-043 | The pure model computes tomorrow's uncancelled interviews at the 19:00 IST clock, but it delegates dispatch to an external callback. Verify a scheduled authenticated caller persists notice.key idempotently before delivery; do not claim notifications were sent merely because the projection exists.
