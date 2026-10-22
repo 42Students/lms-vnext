@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import { courseApiError } from "./learner-course-api";
-import { facultyMoveContentId, facultyContentOrderDirty, facultyResetContentOrder, facultyContentOrderValid, facultyContentOrderReceiptMatches } from "@/modules/courses/faculty-content-order-ui-model";
+import { facultyMoveContentId, facultyContentOrderDirty, facultyContentOrderValid, facultyContentOrderReceiptMatches } from "@/modules/courses/faculty-content-order-ui-model";
 
 type Item = {
   id: string;
