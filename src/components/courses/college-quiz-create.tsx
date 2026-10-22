@@ -54,6 +54,30 @@ export function CollegeQuizCreate({lessons,deliveries}:{
   window.addEventListener("beforeunload",warn);
   return()=>window.removeEventListener("beforeunload",warn);
  },[opened,dirty]);
+ useEffect(()=>{
+  if(!opened||!dirty)return;
+  // Next.js client-side Link navigation does not fire beforeunload. Capture
+  // in-app anchor clicks before the router can discard an authored quiz draft.
+  function guardNavigation(event:MouseEvent){
+   if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||
+      event.altKey||event.shiftKey||!(event.target instanceof Element))return;
+   const link=event.target.closest("a[href]");
+   if(!link||link.hasAttribute("download")||link.getAttribute("target")==="_blank")return;
+   const href=link.getAttribute("href");
+   if(!href||href.startsWith("#"))return;
+   let destination:URL;
+   try{destination=new URL(href,window.location.href);}catch{return;}
+   if(destination.origin!==window.location.origin)return;
+   if(destination.pathname===window.location.pathname&&
+      destination.search===window.location.search)return;
+   if(!window.confirm("Discard unsaved quiz changes?")){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+   }
+  }
+  document.addEventListener("click",guardNavigation,true);
+  return()=>document.removeEventListener("click",guardNavigation,true);
+ },[opened,dirty]);
  async function close(){
   if(busy)return;
   if(dirty&&!(await askConfirm("Your unsaved changes will be lost.")))return;
