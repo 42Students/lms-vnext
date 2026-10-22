@@ -32,7 +32,7 @@ export function tpoStudentProfileFacts(raw:unknown):TpoStudentProfileFacts{
   const level=String((item as Record<string,unknown>)["educationType"]??"").toUpperCase();
   return ["PG","POST_GRADUATE","POSTGRADUATE","MASTERS","MASTER"].some(kind=>level.includes(kind));
  }) as Record<string,unknown>|undefined;
- const percentValue=postgraduate["percentage"]??postgraduate["percentageMarks"];
+ const percentValue=postgraduate?.["percentage"]??postgraduate?.["percentageMarks"];
  const parsedPercentage=typeof percentValue==="number"?percentValue:
   typeof percentValue==="string"&&/^(?:100(?:\.0{1,2})?|\d{1,2}(?:\.\d{1,2})?)$/.test(percentValue.trim())?
    Number(percentValue.trim()):NaN;
