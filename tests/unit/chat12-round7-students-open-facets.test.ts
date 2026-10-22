@@ -16,7 +16,8 @@ describe("chat-12 reopened Students URL facets and UI contracts",()=>{
  });
  it("TPO-students-24 preserves debarred and attention filters through URL validation",()=>{
   expect(tpoStudentUrlError({debarred:"YES",needsAttention:"YES"})).toBeNull();
-  expect(grid()).toContain("<TpoGridFilterPanel fields={filters} mobileSheet/>");
+  expect(grid()).toContain("<GridWorkspace rows={sortedRows}");
+  expect(grid()).toContain("filters={filters}");
  });
  it("TPO-students-25 recognizes q and student deep links, but refuses duplicate search selectors",()=>{
   const id="123e4567-e89b-42d3-a456-426614174000";
@@ -60,10 +61,11 @@ describe("chat-12 reopened Students URL facets and UI contracts",()=>{
  it("TPO-students-51 keeps mobile row actions visible without hiding filters",()=>{
   const sheet=grid();
   const shared=src("src/components/tpo/tpo-spreadsheet-grid.tsx");
-  expect(sheet).toContain("<TpoSpreadsheetGrid mobilePrimaryKeys=");
-  expect(sheet).not.toContain("<TpoSpreadsheetGrid mobileActionsCollapsible");
+  expect(sheet).toContain("<TpoGrid integratedWorkspace");
+  expect(sheet).toContain('mobilePrimaryKeys={["student","number","stage","profile","offers"]}');
   expect(sheet).toContain("rowActions={row=><div");
-  expect(sheet).toContain("<TpoGridFilterPanel fields={filters} mobileSheet/>");
+  expect(sheet).toContain("rowActions={row=><div");
+  expect(sheet).toContain("filters={filters}");
   expect(sheet).toContain('storageKey="tpo-students-columns-v1"');
   expect(shared).toContain("<summary");
   expect(shared).toContain("mobileActionsCollapsible=false");

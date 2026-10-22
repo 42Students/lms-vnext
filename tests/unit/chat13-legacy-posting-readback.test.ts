@@ -5,7 +5,9 @@ describe("Super Admin supplemental draft terms",()=>{
  it("SA-placements-projects-14 shows persisted responsibilities assessment dates and custom rules",()=>{
   for(const label of ["legacyPostingDetails","Responsibilities","Assessment URL","Assessment deadline (IST)",
    "Important dates","Custom eligibility rules (informational)"])expect(page).toContain(label);
-  expect(page).toContain("timeZone:\"Asia/Kolkata\"");
+  expect(page).toContain("driveSettingsIstDate(job.legacyPostingDetails.assessmentDeadline)");
+  const dates=readFileSync("src/modules/placements/admin-drive-settings-date-model.ts","utf8");
+  expect(dates).toContain('timeZone:"Asia/Kolkata"');
   expect(page).toContain("enforceable learner eligibility remains in the drive policy");
  });
 });

@@ -10,7 +10,7 @@ describe("chat-12 legacy requests history and search scopes",()=>{
  });
  it("TPO-requests-verification-11 lets TPO search by student number and select a drive or recent period",()=>{
   const page=src("src/app/(authenticated)/tpo/requests/page.tsx");
-  expect(page).toContain("Search student number, student, job or company");
+  expect(page).toContain("Search student, roll, drive or request type");
   expect(page).toContain('name="jobId"');
   expect(page).toContain('name="urgentOnly"');
  });

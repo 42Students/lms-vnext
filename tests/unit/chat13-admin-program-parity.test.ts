@@ -21,7 +21,8 @@ describe("Super Admin program input and copy",()=>{
   expect(deriveSuperAdminProgramCode("Civil")).toBe("CIVIL");
   expect(deriveSuperAdminProgramCode("")).toBe("");
   const source=read("src/components/admin/admin-program-directory.tsx");
-  expect(source).toContain("code:code.trim() || deriveSuperAdminProgramCode(name)");
+  expect(source).toContain("code.trim()||availableSuperAdminProgramCode(name,departmentId,programs)");
+  expect(source).toContain("code:resolvedCode");
   expect(source).toContain("Program code (optional)");
   expect(source).not.toContain('id="admin-program-code" value={code} maxLength={64} required');
  });
