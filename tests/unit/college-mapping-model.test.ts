@@ -29,7 +29,7 @@ describe("College Admin semester offering and faculty assignment models", () => 
 
   it("validates teaching lifecycle filters and rejects unrecognised fields", () => {
     expect(facultyAssignmentQuerySchema.parse({}))
-      .toEqual({ q: "", status: "ACTIVE", role: "ALL", page: 1 });
+      .toEqual({ q: "", status: "ALL", role: "ALL", page: 1 });
     expect(facultyAssignmentQuerySchema.parse({ status: "ENDED", page: "3" }))
       .toEqual({ q: "", status: "ENDED", role: "ALL", page: 3 });
     expect(facultyAssignmentQuerySchema.safeParse({ status: "INACTIVE" }).success).toBe(false);

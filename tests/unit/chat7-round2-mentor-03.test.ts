@@ -29,7 +29,8 @@ expect(content).toContain("Final submission");
 it("MEN-projects-meetings-24 team card with explainer and count",()=>{
 const content=workspace();
 expect(content).toContain("Project team");
-expect(content).toContain("See who is assigned, what role they play");
-expect(content).toContain("member(s)");
+expect(content).toContain("Manage mentor ownership, student membership and workload");
+expect(content).toContain("Current recorded roster:");
+expect(content).toContain("workspace.mentorEvidence.team");
 });
 });

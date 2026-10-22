@@ -5,6 +5,7 @@ export type AccreditationStudentOffer={
  membershipId:string;offerId:string;name:string|null;rollNumber:string|null;
  programme:string;branch:string;batch:string;company:string;
  status:string;annualCtcInr:number|null;joining:string|null;kind?:string;
+ releasedAt?:Date|null;
  /** A source NULL/omitted placed answer is not proof of placement. */
  countsAsPlaced?:boolean|null;
  selectedOutcome?:boolean;employerContact?:string|null;
@@ -35,7 +36,7 @@ export function buildAccreditationStudentRows(offers:readonly AccreditationStude
  for(const [membershipId,group] of members){
   const accepted=group.filter(x=>countsAsPlacedByCollegeRule({
    employmentType:"FULL_TIME",offerStatus:x.status,offerKind:x.kind,
-   countsAsPlaced:x.countsAsPlaced===true,
+   countsAsPlaced:x.countsAsPlaced===true,releasedAt:x.releasedAt,
    countsAsPlacedAt,selectedOutcome:x.selectedOutcome,
   }));
   if(accepted.length===0)continue;
