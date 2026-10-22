@@ -1,5 +1,5 @@
 "use client";
-import {LEARNER_EDUCATION_TYPES,learnerQualifyingExamSuggestions,LEARNER_QUALIFYING_EXAM_DETAILS,learnerEducationValidationProblem} from "@/modules/people/learner-education-picker-model";
+import {LEARNER_QUALIFYING_EXAM_DETAILS,learnerEducationValidationProblem,learnerEducationChoices,type LearnerEducationCatalog} from "@/modules/people/learner-education-picker-model";
 import {LearnerSkillCatalogInput} from "@/components/profile/learner-skill-catalog-input";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {useRouter} from "next/navigation";
@@ -204,6 +204,9 @@ export function LearnerProfileWorkspace(props: {
   const [itemDraft, setItemDraft] = useState<Record<string, unknown>>({});
   const [itemBaseline,setItemBaseline]=useState<Record<string,unknown>>({});
   const [educationError,setEducationError] = useState<string|null>(null);
+  const [educationCatalog,setEducationCatalog]=useState<LearnerEducationCatalog|null>(null);
+  const [institutionSuggestions,setInstitutionSuggestions]=useState<string[]>([]);
+  const [catalogUnavailable,setCatalogUnavailable]=useState(false);
   const [refreshError,setRefreshError] = useState(false);
   const [showcaseDraft,setShowcaseDraft]=useState<(LearnerShowcaseDetails & {id: string | null;kind:LearnerShowcaseKind})|null>(null);
   const [showcaseError,setShowcaseError]=useState<string|null>(null);
@@ -212,6 +215,27 @@ export function LearnerProfileWorkspace(props: {
   const [jobPrefsDraft,setJobPrefsDraft]=useState(props.initialDocument.jobPreferences);
   const [rolePrefsInput,setRolePrefsInput]=useState(props.initialDocument.jobPreferences.rolePreferences.join("\n"));
   const {pending,run:guardedRun}=useGuardedAction();
+
+  const institutionSearch=typeof itemDraft.institution==="string"?
+    itemDraft.institution.trim():"";
+  useEffect(()=>{
+    if(collection!=="education")return;
+    const controller=new AbortController();
+    void fetch("/api/profile/me/education-config?q="+encodeURIComponent(institutionSearch),{
+      credentials:"same-origin",cache:"no-store",signal:controller.signal,
+    }).then(async response=>{
+      if(!response.ok)throw new Error("Education catalog unavailable");
+      return response.json() as Promise<{catalog:LearnerEducationCatalog;institutions:string[]}>;
+    }).then(data=>{
+      if(controller.signal.aborted)return;
+      setEducationCatalog(data.catalog);
+      setInstitutionSuggestions(Array.isArray(data.institutions)?data.institutions:[]);
+      setCatalogUnavailable(false);
+    }).catch(()=>{
+      if(!controller.signal.aborted)setCatalogUnavailable(true);
+    });
+    return ()=>controller.abort();
+  },[collection,institutionSearch]);
 
   const checklist = useMemo(
     () => learnerProfileChecklist(document),
@@ -1046,6 +1070,8 @@ export function LearnerProfileWorkspace(props: {
               if(collection==="education"&&field.key==="endYear"&&itemDraft.isCurrentlyPursuing)return null;
               const raw = itemDraft[field.key];
               const value = field.key === "skills" && Array.isArray(raw) ? raw.join(", ") : String(raw || "");
+              const choices=learnerEducationChoices(educationCatalog,
+                String(itemDraft.educationType??""),String(itemDraft.program??""));
               if(collection==="skills"&&field.key==="name")
                 return <LearnerSkillCatalogInput key={field.key} value={value}
                   onChange={name=>setItemDraft(current=>({...current,name}))}/>;
@@ -1055,7 +1081,9 @@ export function LearnerProfileWorkspace(props: {
                     onChange={event=>{setEducationError(null);setItemDraft({...itemDraft,
                       educationType:event.target.value,program:"",specialization:"",qualifyingExam:"",examDetails:{}});}}>
                     <option value="">Choose education type</option>
-                    {LEARNER_EDUCATION_TYPES.map(option=><option key={option} value={option}>{option}</option>)}
+                    {value&&!choices.educationTypes.includes(value)?
+                      <option value={value}>{value} (saved)</option>:null}
+                    {choices.educationTypes.map(option=><option key={option} value={option}>{option}</option>)}
                   </Select>
                 </label>;
               if(collection==="education"&&field.key==="program")
@@ -1064,8 +1092,8 @@ export function LearnerProfileWorkspace(props: {
                     value={value} maxLength={200} list="learner-program-suggestions"
                     onChange={event=>setItemDraft(current=>({...current,program:event.target.value,specialization:""}))}/>
                   <datalist id="learner-program-suggestions">
-                    {[...new Set(document.education.filter(item=>item.educationType===itemDraft.educationType)
-                      .map(item=>item.program).filter(Boolean))].map(option=><option key={option} value={option}/>)}
+                    {[...new Set([...choices.programs,...document.education.filter(item=>item.educationType===itemDraft.educationType)
+                      .map(item=>item.program).filter(Boolean)])].map(option=><option key={option} value={option}/>)}
                   </datalist>
                 </label>;
               if(collection==="education"&&field.key==="institution")
@@ -1074,7 +1102,7 @@ export function LearnerProfileWorkspace(props: {
                     list="learner-institution-suggestions" value={value} maxLength={300}
                     onChange={event=>{setEducationError(null);setItemDraft(current=>({...current,institution:event.target.value}));}}/>
                   <datalist id="learner-institution-suggestions">
-                    {[...new Set(document.education.map(item=>item.institution).filter(Boolean))]
+                    {[...new Set([...institutionSuggestions,...document.education.map(item=>item.institution).filter(Boolean)])]
                       .map(option=><option key={option} value={option}/>)}
                   </datalist>
                   <span className="mt-1 block text-xs font-normal text-muted-foreground">Start typing to reuse a saved institution, or enter another institution.</span>
@@ -1085,8 +1113,16 @@ export function LearnerProfileWorkspace(props: {
                     list="learner-qualifying-exams" value={value} maxLength={120}
                     onChange={event=>setItemDraft({...itemDraft,[field.key]:event.target.value})}/>
                   <datalist id="learner-qualifying-exams">
-                    {learnerQualifyingExamSuggestions(String(itemDraft.educationType??"")).map(option=><option key={option} value={option}/>)}
+                    {choices.exams.map(option=><option key={option} value={option}/>)}
                   </datalist>
+                </label>;
+              if(collection==="education"&&field.key==="gradingType")
+                return <label key={field.key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">{field.label}
+                  <Select className="mt-[6px] min-h-11 md:min-h-9" value={value}
+                    onChange={event=>setItemDraft(current=>({...current,gradingType:event.target.value}))}>
+                    <option value="">Not specified</option>
+                    {choices.gradingTypes.map(option=><option key={option} value={option}>{option}</option>)}
+                  </Select>
                 </label>;
               if (field.type === "textarea") return <label key={field.key} className="font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">{field.label}<Textarea className="mt-[6px]" maxLength={LEARNER_PROFILE_FIELD_LIMITS[field.key]} value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;
               if (field.type === "select") return <label key={field.key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">{field.label}<Select className="mt-[6px] min-h-11 md:min-h-9" value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })}>{field.options?.map((option) => <option key={option || "none"} value={option}>{option || "Not specified"}</option>)}</Select></label>;
@@ -1132,6 +1168,7 @@ export function LearnerProfileWorkspace(props: {
                   </label>;
                 })}
               </fieldset>:null}
+            {collection==="education"&&catalogUnavailable?<p role="status" className="md:col-span-2 text-xs text-muted-foreground">College and exam suggestions are temporarily unavailable. You can still type the institution, program and exam names.</p>:null}
             {collection==="education"&&educationError?<p role="alert" className="md:col-span-2 text-sm text-error">{educationError}</p>:null}
             {collection === "experiences" ? <label className="flex items-center gap-2 text-sm text-body md:col-span-2"><Checkbox checked={Boolean(itemDraft.currentlyWorking)} onChange={(event) => setItemDraft({ ...itemDraft, currentlyWorking: event.target.checked, ...(event.target.checked ? { endDate: "" } : {}) })} />I currently work here</label> : null}
           </div>

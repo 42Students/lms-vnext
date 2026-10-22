@@ -616,3 +616,25 @@ export type FacultyProfileInput = z.infer<
 export type LearnerProfileDocument = z.infer<
   typeof learnerProfileDocumentSchema
 >;
+
+/** Legacy profile PATCH semantics for reviewed imports: a missing or null
+ * field means "keep the existing value", whereas an explicitly empty string
+ * means "clear the field". Do not use a default-filled full document parser
+ * for that differential update or it will reset an opt-out/other fields.
+ * Pass only the approved writable DTO keys for the legacy source. */
+export function applyLegacyNullableLearnerProfilePatch(
+ current:Readonly<Record<string,string>>,raw:unknown,allowedFields:readonly string[],
+):Record<string,string>{
+ if(raw===null||typeof raw!=="object"||Array.isArray(raw))
+  throw new Error("Invalid legacy profile patch");
+ const patch=raw as Record<string,unknown>;
+ const next={...current};
+ for(const field of allowedFields){
+  if(!Object.prototype.hasOwnProperty.call(patch,field)||patch[field]===null)
+   continue;
+  const value=patch[field];
+  if(typeof value!=="string")throw new Error("Invalid legacy profile text field: "+field);
+  next[field]=value.trim();
+ }
+ return next;
+}
