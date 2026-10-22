@@ -167,7 +167,7 @@ export default async function ActivityPage({
           | undefined,
         importantOnly,
         legacyCategory:selectedPreset==="all"?undefined:selectedPreset,
-        collegeId: selectedCollegeId??one(params.collegeId),
+        collegeId: selectedCollegeId??one(params["collegeId"]),
         organizationId: selectedCollegeId?undefined:selectedOrganizationId??undefined,
         actorUserId: one(params.actorUserId),
         eventType: one(params.eventType),
