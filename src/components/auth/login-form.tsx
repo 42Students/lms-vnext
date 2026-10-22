@@ -691,7 +691,7 @@ export function LoginForm({
                 {attempt.maskedContact}
               </strong>
               . It expires in {Math.round(attempt.expiresInSeconds / 60)}{" "}
-              minutes.
+              minutes. Enter the code below to continue.
             </p>
           )}
 
