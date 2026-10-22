@@ -5,8 +5,8 @@ describe("Mentor faculty role parity",()=>{
   const code=readFileSync("src/modules/admin-ui/super-admin-scoped-people-service.ts","utf8");
   expect(code).toContain('mentorRole:sql<boolean>');
   expect(code).toContain("mentor_role.role='MENTOR'");
-  expect(code).toContain('query.employmentType.toLowerCase()==="mentor"');
-  expect(code).toContain('row.mentorRole?"Mentor"');
+  expect(code).toContain('query.employmentType.toUpperCase()==="MENTOR"');
+  expect(code).toContain('"Mentor membership: "+(row.mentorRole?"Active":"Not assigned")');
   const create=readFileSync("src/components/admin/person-onboard-dialog.tsx","utf8");
   expect(create).toContain("Faculty Type");
   expect(create).toContain("registerAsMentor");

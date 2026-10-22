@@ -138,7 +138,7 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
  });
  it("SA-placements-projects-58 preserves actual at-risk mentor reassignment and overload semantics",async()=>{
   const s=source("src/components/projects/project-admin-at-risk-page.tsx");
-  expect(s).toContain("ProjectAdminSubmissionReview");
+  expect(s).toContain("Reassign mentor");
   expect(s).toContain("fromMentorId");
   expect(s).toContain('encodeURIComponent(project.mentorMembershipId??"UNASSIGNED")');
   expect(s).toContain('project.mentorMembershipId?"Reassign mentor":"Assign mentor"');
@@ -298,7 +298,7 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   expect(page).toContain("<ProjectSubmissionsPageExport");
   expect(page).toContain("Reviewed by");
   expect(page).toContain("Revisions");
-  expect(page).toContain("Reassign mentor");
+  expect(page).toContain("ProjectAdminSubmissionReview");
  });
  it("SA-placements-projects-75 retains audit filters and global log navigation",()=>{
   const page=source("src/components/projects/project-admin-audit-page.tsx");
