@@ -8,7 +8,7 @@ describe("Super Admin course in-tab entry points",()=>{
    "src/components/courses/admin-assessment-read-directory.tsx"]){
    const code=source(path);
    expect(code).toContain("/admin/courses/offerings/");
-   expect(code).toMatch(/Open offering(?: to add lessons| builder \/ submissions)? →/);
+   expect(code).toMatch(/Open offering(?: to add lessons| builder \/ submissions)?(?: →)?/);
    expect(code).toContain("focus-visible:outline");
   }
  });

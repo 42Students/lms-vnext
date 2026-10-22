@@ -97,7 +97,7 @@ describe("TPO second-third — offer letters never invent proof",()=>{
    'requirePermission(context, "placements.manage", { collegeId })',
    "requirePlacementManageScope(context, collegeId)","listPlacementJobOffers(context, parsed.data)",
    "letter document, delivery or acknowledgement","Bulk letter-status changes are disabled",
-   'empty={<p role="status"','mobilePriority:"primary"'])
+   'empty={<EmptyState title="No persisted offers exist for this drive."','mobilePriority:"primary"'])
    expect(code).toContain(must);
  });
 });
