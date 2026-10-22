@@ -92,12 +92,12 @@ export default async function TpoRecruiterConversationPage({params}:{
    {data.messages.length===0?<EmptyState title="No messages yet." description="Write the first message to begin this conversation."/>:data.messages.map((item,index)=>
     <div key={item.id} className="space-y-2">
      {index===0||new Intl.DateTimeFormat("en-IN",{dateStyle:"full",timeZone:"Asia/Kolkata"})
-       .format(data.messages[index-1].createdAt)!==
+       .format((data.messages[index-1]?.createdAt??item.createdAt))!==
       new Intl.DateTimeFormat("en-IN",{dateStyle:"full",timeZone:"Asia/Kolkata"}).format(item.createdAt)?
       <p className="py-2 text-center text-xs font-semibold text-muted-foreground leading-5">
        {new Intl.DateTimeFormat("en-IN",{dateStyle:"full",timeZone:"Asia/Kolkata"}).format(item.createdAt)}
       </p>:null}
-    <article className={bubbleStyles.bubble+" "+(item.senderType==="TPO"?bubbleStyles.mine:"")}>
+    <article className={bubbleStyles["bubble"]+" "+(item.senderType==="TPO"?bubbleStyles["mine"]:"")}>
      <p className="text-xs font-semibold text-muted-foreground leading-5">
       {item.senderType==="RECRUITER"?(item.senderName??data.thread.participantName):
        item.senderId===context.user.id?"You":(item.senderName??"Placement team")} ·
