@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { and, asc, eq, isNotNull } from "drizzle-orm";
+import { and, asc, eq, isNotNull, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getDb } from "@/db/client";
@@ -9,6 +9,7 @@ import {
   courseLearningPaths, courseOfferings, courses,
 } from "@/db/schema";
 import { apiErrorResponse } from "@/lib/api-error";
+import { db10Announcements } from "@/db/schema/db10-announcements";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
@@ -162,13 +163,27 @@ export async function GET(request: Request) {
               eq(courseQuizzes.status,"ARCHIVED")))
             .orderBy(asc(courseQuizzes.title),asc(courseQuizzes.id)).limit(limit);
           break;
-        case "NOTIFICATION":
-          // Recipient tombstones are not authored notification campaigns.
-          // Do not expose recipients or claim an individual read receipt can
-          // be restored as a shared announcement. That needs a typed campaign
-          // restore workflow rather than a generic recipient mutation.
-          warning = "Archived authored notifications have no safe restore source in this workspace.";
+        case "NOTIFICATION": {
+          // Read the authored announcement tombstone only. A recipient's
+          // dismissed in-app notification is not an authored campaign and
+          // must never be exposed through this administrative recycle bin.
+          const ready = await db.execute(sql<{present:boolean}>`
+            select to_regclass('public.announcements') is not null as present
+          `);
+          if (ready.rows[0]?.present !== true) {
+            warning = "Deleted announcements are unavailable until announcement storage is ready.";
+            break;
+          }
+          rows = await db.select({
+            id:db10Announcements.id,name:db10Announcements.title,
+            subtitle:db10Announcements.receiverType,
+          }).from(db10Announcements)
+            .where(and(eq(db10Announcements.collegeId,acting.collegeId),
+              isNotNull(db10Announcements.deletedAt)))
+            .orderBy(asc(db10Announcements.title),asc(db10Announcements.id))
+            .limit(limit);
           break;
+        }
       }
     }
     return NextResponse.json({
