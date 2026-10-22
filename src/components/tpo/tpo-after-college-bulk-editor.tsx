@@ -120,11 +120,11 @@ export function TpoAfterCollegeBulkEditor({
         </Select>
       </label>
       <Button variant="primary" type="button" disabled={!available || busy || !ids.length}
-        onClick={() => setConfirmation("SAVE")}
+        aria-haspopup="dialog" aria-expanded={confirmation==="SAVE"} onClick={() => setConfirmation("SAVE")}
         className="min-h-11 w-full md:min-h-9 sm:w-auto">
         Update {ids.length} student(s)
       </Button>
-      {undo?.length ? <Button variant="secondary" type="button" disabled={busy} onClick={() => setConfirmation("UNDO")}
+      {undo?.length ? <Button variant="secondary" type="button" disabled={busy} aria-haspopup="dialog" aria-expanded={confirmation==="UNDO"} onClick={() => setConfirmation("UNDO")}
         className="min-h-11 w-full md:min-h-9 sm:w-auto">Undo last bulk update</Button> : null}
     </div>
     <Dialog open={confirmation!==null} onOpenChange={value=>{if(!value&&!busy&&!guardedPending)setConfirmation(null);}}

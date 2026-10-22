@@ -3,7 +3,7 @@ import {Radio} from "@/components/ui/radio";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import {useRef,useState} from "react";
+import {useId,useRef,useState} from "react";
 import {useRouter,useSearchParams} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {tpoBatchViewUrl,type TpoBatchSavedFilter} from "@/modules/placements/tpo-batch-saved-view-model";
@@ -60,12 +60,13 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
   setOpen(true);setBusy(true);setError("");
   void load().catch(()=>setError("Could not load saved batch views.")).finally(()=>setBusy(false));
  }
+ const panelId=useId();
  const selectedView=views.find(view=>view.id===selected);
  const pinnedViews=views.filter(view=>view.pinned);
  return <section aria-label="BATCH_STUDENTS saved views" className="min-w-0 space-y-2">
-  <Button variant="secondary" type="button" aria-expanded={open} onClick={toggle}
+  <Button variant="secondary" type="button" aria-expanded={open} aria-controls={panelId} onClick={toggle}
    className="min-h-11 w-full sm:w-auto md:min-h-9">Saved batch views</Button>
-  {open?<div className="min-w-0 space-y-3 border-y border-border py-4">
+  {open?<div id={panelId} role="region" aria-label="Saved batch view editor" className="min-w-0 space-y-3 border-y border-border py-4">
    <h3 className="font-semibold">Saved views</h3>
    {busy&&!views.length?<p role="status" className="text-sm text-muted-foreground">Loading saved batch views…</p>:null}
    <p className="text-xs text-body">These filters are private to your account and this batch. Pin up to five views.</p>

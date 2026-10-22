@@ -3,7 +3,7 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Checkbox} from "@/components/ui/checkbox";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useId, useState } from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {
@@ -33,6 +33,7 @@ const errors: Record<string, string> = {
 };
 export function TpoBatchInvitationControl(props: Props) {
   const router = useRouter();
+  const deadlineId=useId(),invitationId=useId();
   const [date, setDate] = useState(props.deadline?.slice(0, 10) ?? "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -117,8 +118,8 @@ export function TpoBatchInvitationControl(props: Props) {
     const sameDeadline = date === (props.deadline?.slice(0,10) ?? "");
     return <section aria-label="Registration deadline" className="min-w-0 space-y-3 border-y border-border py-4">
       <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{deadlinePassed ? "Registration closed" : "Registration is open"}</h2>
-      <label htmlFor="batch-move-date" className="block text-sm font-semibold text-body">Register by</label>
-      <Input className="min-h-11 w-full sm:max-w-xs md:min-h-9" id="batch-move-date" aria-label="Registration deadline" type="date"
+      <label htmlFor={deadlineId} className="block text-sm font-semibold text-body">Register by</label>
+      <Input className="min-h-11 w-full sm:max-w-xs md:min-h-9" id={deadlineId} aria-label="Registration deadline" type="date"
         value={date} min={props.minDate} onChange={event => setDate(event.target.value)}
         />
       <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
@@ -159,8 +160,8 @@ export function TpoBatchInvitationControl(props: Props) {
   }
   return <section className="min-w-0 space-y-3 border-y border-border py-4" aria-label="Invite batch">
     <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Invite {props.eligible} eligible {props.eligible === 1 ? "student" : "students"} to register</h2>
-    <label className="block text-sm font-semibold text-body" htmlFor="batch-register-by">{TPO_INVITATION_COPY.dateLabel}</label>
-    <Input className="min-h-11 w-full sm:max-w-xs md:min-h-9" id="batch-register-by" aria-label="Registration deadline" type="date" value={date} min={props.minDate}
+    <label className="block text-sm font-semibold text-body" htmlFor={invitationId}>{TPO_INVITATION_COPY.dateLabel}</label>
+    <Input className="min-h-11 w-full sm:max-w-xs md:min-h-9" id={invitationId} aria-label="Registration deadline" type="date" value={date} min={props.minDate}
       onChange={event => setDate(event.target.value)}
        />
     <Button variant="primary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={() => void invite()}

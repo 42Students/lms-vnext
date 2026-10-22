@@ -94,7 +94,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
  }
  return <section className="min-w-0 space-y-3 border-t border-border pt-4">
   <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between"><h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Import eligibility</h2>
-  <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9 print:hidden" disabled={busy} onClick={()=>setImportOpen(true)}>Import eligibility decisions</Button></div>
+  <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9 print:hidden" disabled={busy} aria-haspopup="dialog" aria-expanded={importOpen} onClick={()=>setImportOpen(true)}>Import eligibility decisions</Button></div>
   <Drawer open={importOpen} onOpenChange={setImportOpen} title="Import eligibility decisions"
     dismissible={!busy}
     footer={<Button variant="primary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9 print:hidden"
