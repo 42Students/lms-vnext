@@ -11,3 +11,7 @@ All still-open verification-round-2 packets were redistributed evenly over the 2
 - [ ] `docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md` (25 rows)
 - [ ] `docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md` (25 rows)
 - [ ] `docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md` (25 rows)
+
+## Chat-18 review status (2026-10-22)
+
+Five remaining packets have row-by-row triage notes committed on this branch. Nine rows received source-level evidence for an initial OK determination; 116 remain DEFERRED pending actual cross-file/runtime verification and fixes. Queue boxes intentionally remain open because triage is not parity completion. No application code was modified or executed in this pass.
