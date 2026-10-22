@@ -53,7 +53,7 @@ export async function getSuperAdminTodayBoard(ctx:RequestContext,rawCollegeId:st
      eq(markedSessions.status,"MARKED")))
    .where(and(eq(departments.collegeId,id),eq(sectionScheduleEvents.status,"SCHEDULED"),
      gte(sectionScheduleEvents.startsAt,attendanceWindowFrom),
-     lte(sectionScheduleEvents.endsAt,now),isNull(markedSessions.id))),
+     lte(sectionScheduleEvents.endsAt,now),isNull(markedSessions.scheduleEventId))),
   db.select({n:count()}).from(courseSectionDeliveries)
    .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
    .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
@@ -138,7 +138,7 @@ export async function getSuperAdminTodayBoard(ctx:RequestContext,rawCollegeId:st
  const pendingFilter=and(eq(departments.collegeId,id),
   eq(sectionScheduleEvents.status,"SCHEDULED"),
   gte(sectionScheduleEvents.startsAt,attendanceWindowFrom),
-  lte(sectionScheduleEvents.endsAt,now),isNull(markedSessions.id));
+  lte(sectionScheduleEvents.endsAt,now),isNull(markedSessions.scheduleEventId));
  const [riskTotals,riskPreview,pendingPreview,gradingTotals,gradingPreview,
   staffingPreview,setupBatch,setupSection,setupLearners,setupCourses,quizPreview]=await Promise.all([
   db.select({n:count()}).from(attendanceRiskSource),

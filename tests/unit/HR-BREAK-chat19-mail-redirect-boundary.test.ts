@@ -7,6 +7,8 @@ import {sendRecruiterMessageDigest} from "@/modules/placements/recruiter-message
 
 const config={
  APP_ENV:"production",
+ // Production requires explicit confirmation that the leaked legacy provider key is revoked.
+ ZEPTOMAIL_LEGACY_KEY_REVOKED:"confirmed",
  RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED:"true",
  RECRUITER_MESSAGE_DIGEST_TEMPLATE_KEY:"recruiter-digest-v1",
  RECRUITER_MESSAGE_REPLY_DOMAIN:"reply.example.com",
@@ -32,7 +34,8 @@ describe("HR-BREAK-MAIL-REDIRECT-13: recruiter digest must reject provider redir
   });
   const body=JSON.parse(options.body);
   expect(body.template_key).toBe(config.RECRUITER_MESSAGE_DIGEST_TEMPLATE_KEY);
-  expect(body.reply_to).toEqual([{address:digest.replyTo}]);
+  expect(body.reply_to).toMatchObject([{address:digest.replyTo}]);
+  expect(body.reply_to[0].name).toBeTruthy();
   expect(body.merge_info.message1).toContain("&lt;script&gt;");
   expect(body.merge_info.message1).not.toContain("<script>");
  });

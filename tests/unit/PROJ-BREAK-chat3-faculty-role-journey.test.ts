@@ -75,11 +75,14 @@ describe("PROJ-BREAK-chat3-FACULTY-01 project role boundary and access journeys"
   const faculty=actor(["FACULTY"]);
   for(const access of [
    requireProjectReadAccess,requireProjectManageAccess,
-   requireProjectLifecycleAccess,requireProjectLifecycleMutationAccess,
+   requireProjectLifecycleAccess,
   ]){
    await expect(access(faculty,projectId))
     .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
   }
+  // Mutation preflight denies before project lookup with a distinct safe code.
+  await expect(requireProjectLifecycleMutationAccess(faculty,projectId))
+   .rejects.toMatchObject({code:"PROJECT_LIFECYCLE_ACCESS_DENIED"});
   expect(stubs.queries).toBe(0);
   expect(stubs.college).not.toHaveBeenCalled();
   expect(stubs.member).not.toHaveBeenCalled();

@@ -134,14 +134,14 @@ describe("PROJ-BREAK-FACULTY-06 meeting revisions, duplicate submits and notific
   await expect(decide(newer)).rejects.toMatchObject({code:"PROJECT_MEETING_INVALID_STATE"});
   expect(state).toMatchObject({writes:0,events:0,notifications:0});
  });
- it("PROJ-BREAK-FACULTY-06-07 cancelling an unsent draft cannot notify learners or create false meeting announcements",async()=>{
+ it("PROJ-BREAK-FACULTY-06-07 cancelling an unsent draft audits the mutation without learner announcements",async()=>{
   state.status="DRAFT";state.outcome="";
   const result=await decide(newer,"CANCEL");
   expect(result.status).toBe("CANCELLED");
-  expect(state).toMatchObject({writes:1,events:0,notifications:0});
+  expect(state).toMatchObject({writes:1,events:1,notifications:0});
   await expect(decide(newer,"CANCEL")).rejects
    .toMatchObject({code:"PROJECT_MEETING_STALE_VERSION"});
-  expect(state).toMatchObject({writes:1,events:0,notifications:0});
+  expect(state).toMatchObject({writes:1,events:1,notifications:0});
  });
  it("PROJ-BREAK-FACULTY-06-08 invalid, revoked and disabled actors cannot decide meetings",async()=>{
   for(const mutate of [

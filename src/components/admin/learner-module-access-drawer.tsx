@@ -111,7 +111,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
    const rules=refreshed.ok&&snapshot&&typeof snapshot==="object"&&"rules" in snapshot&&
     Array.isArray(snapshot.rules)?snapshot.rules as unknown[]:[];
    if(token!==seq.current)return; // College/member changed during the recheck.
-   const current=rules.find(row=>Boolean(row)&&typeof row==="object"&&
+   const current=rules.find(row=>row!==null&&typeof row==="object"&&
     "module" in row&&row.module===target.module);
    if(!current||typeof current!=="object"||!("enabled" in current)||
     !("locked" in current)||current.enabled!==null||current.locked!==true){
@@ -128,7 +128,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
    const verified:unknown=await check.json().catch(()=>null);
    const rows=check.ok&&verified&&typeof verified==="object"&&"rules" in verified&&
     Array.isArray(verified.rules)?verified.rules as unknown[]:[];
-   const after=rows.find(row=>Boolean(row)&&typeof row==="object"&&
+   const after=rows.find(row=>row!==null&&typeof row==="object"&&
     "module" in row&&row.module===target.module);
    if(!after||typeof after!=="object"||!("enabled" in after)||!("locked" in after)||
     after.enabled!==null||after.locked!==false){
