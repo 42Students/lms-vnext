@@ -68,7 +68,7 @@ export default async function RecruiterRequestDrivePage({
     edit: raw.edit,
     copy: raw.copy,
   });
-  if (!parsed.success) return <DriveSourceUnavailable />;
+  if (!parsed.success) return DriveSourceUnavailable({});
   const query = parsed.data;
   const grants = context.recruiter.grants;
 
@@ -78,7 +78,7 @@ export default async function RecruiterRequestDrivePage({
       fromJob = await getRecruiterPlacementWorkspace(context, query.from);
     } catch(error) {
       if(error instanceof PlacementsServiceError||error instanceof z.ZodError)
-       return <DriveSourceUnavailable collegeId={typeof raw.collegeId==="string"?raw.collegeId:null}/>;
+       return DriveSourceUnavailable({collegeId:typeof raw.collegeId==="string"?raw.collegeId:null});
       return <div className="min-w-0 space-y-4">
        <PageHeader title="Request a drive"/>
        <ErrorState title="We couldn't load that drive"
@@ -88,13 +88,13 @@ export default async function RecruiterRequestDrivePage({
       </div>;
     }
     if (query.collegeId && fromJob.college.id !== query.collegeId)
-      return <DriveSourceUnavailable collegeId={query.collegeId} />;
+      return DriveSourceUnavailable({collegeId:query.collegeId});
   }
 
   const collegeId = query.collegeId ?? fromJob?.college.id ??
     (grants.length === 1 ? grants[0]!.collegeId : null);
   if (collegeId && !grants.some((grant) => grant.collegeId === collegeId))
-    return <DriveSourceUnavailable />;
+    return DriveSourceUnavailable({});
 
   if (!collegeId) {
     return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
@@ -146,10 +146,10 @@ export default async function RecruiterRequestDrivePage({
     (query.fix?request.status!=="SENT_BACK":
      query.edit?request.status!=="REQUEST":
       !["REJECTED","CANCELLED"].includes(request.status))))
-    return <DriveSourceUnavailable collegeId={collegeId} />;
+    return DriveSourceUnavailable({collegeId});
   const originalDraft=request?hrDriveDraftSchema.safeParse(request.draft):null;
   if(originalDraft&&!originalDraft.success)
-    return <DriveSourceUnavailable collegeId={collegeId} />;
+    return DriveSourceUnavailable({collegeId});
   const initial = originalDraft?.success?originalDraft.data:fromJob
     ? hrDraftFromAuthorizedJob(fromJob.job, fromJob.rounds)
     : emptyHrDriveDraft();

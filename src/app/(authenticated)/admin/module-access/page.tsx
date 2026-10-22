@@ -40,11 +40,12 @@ export default async function SuperAdminModuleAccessPage({
     <section aria-label="Module Access selected-college summary" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
       <PageHeader eyebrow="Module Access" title="Optional module access hierarchy"
        description="Use this page for inherited Projects/Placements access below the college level. Review which rules are stored, inherited and locked." />
-      <div className="mt-3 flex flex-wrap gap-5 text-sm text-body">
-        <p><strong>8</strong> hierarchy scopes: Global · Organization · College · Department · Program · Batch · Class · Learner</p>
+      <h2 className="mt-3 text-sm font-semibold text-[var(--lms-heading)]">Effective access</h2>
+      <div className="flex flex-wrap gap-5 text-sm text-body">
+        <p><span className="font-semibold">Hierarchy scopes: </span><strong>8</strong> · Global · Organization · College · Department · Program · Batch · Class · Learner</p>
         {metrics.available ? <>
-          <p><strong>{metrics.value.largestLearnerScope}</strong> active learners in this college</p>
-          <p><strong>{metrics.value.studentOverrides}</strong> stored learner membership rules</p>
+          <p><span className="font-semibold">Students in largest scope: </span><strong>{metrics.value.largestLearnerScope}</strong> active learners in this college</p>
+          <p><span className="font-semibold">Student overrides: </span><strong>{metrics.value.studentOverrides}</strong> stored learner membership rules</p>
         </> : <p role="status">Hierarchy overview counts are temporarily unavailable.</p>}
       </div>
       {metrics.available&&metrics.value.studentOverrides>0?<Banner tone="warning">

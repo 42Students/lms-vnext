@@ -4,8 +4,8 @@ import {describe,expect,it} from "vitest";
 
 describe("UX-UNOWNED-GRID-11 responsive College Admin academic directories",()=>{
  const files=[
-  ["college-academic-directory.tsx",["Semester","Batch","Mapped courses","Status","Actions"]],
-  ["college-structure-directory.tsx",["Class","Program / batch","Academic period","Elective","Manage"]],
+  ["college-academic-directory.tsx",["Semester","Batch","Courses","Status","Actions"]],
+  ["college-structure-directory.tsx",["Class","Program","Batch","Academic period","Elective","Actions"]],
  ] as const;
  it.each(files)("%s preserves editing and filter actions with scroll cues", (name,words)=>{
   const source=readFileSync(join(process.cwd(),"src/components/academics",name),"utf8");
