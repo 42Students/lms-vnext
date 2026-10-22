@@ -114,7 +114,6 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     <Link href="/hr/profile" className="inline-flex min-h-11 items-center text-sm text-primary-text hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Your profile</Link>
   </div>;
   }
-  const grant = grants.find(item => item.collegeId === selectedId)!;
   // eslint-disable-next-line react-hooks/purity -- request-time server dashboard needs a current clock for deadlines.
   const now = new Date();
   const week = recruiterTodayWeek(now);
