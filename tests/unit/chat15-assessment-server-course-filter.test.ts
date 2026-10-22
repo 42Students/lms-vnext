@@ -6,7 +6,7 @@ describe("LEARNER-learning-misc-15 authenticated server-side course filtering",(
  it("LEARNER-learning-misc-15 narrows SQL to authorized delivery IDs before assignment and quiz scans",()=>{
   const service=read("src/modules/courses/learner-assessment-service.ts");
   expect(service).toContain("learnerAssessmentAuthorizedCourse(options.courseId,deliveries)");
-  expect(service).toContain("deliveries.filter(row=>row.courseId===selectedCourseId)");
+  expect(service).toContain("(!selectedCourseId||row.courseId===selectedCourseId)");
   expect(service).toContain("listOwnLearnerAssessmentRows(scopedDeliveries");
   const query=read("src/modules/courses/learner-assessment-flat-query.ts");
   expect(query).toContain("inArray(courseSectionDeliveries.id,ids)");
@@ -19,7 +19,7 @@ describe("LEARNER-learning-misc-15 authenticated server-side course filtering",(
   ]){
    const page=read(path);
    expect(page).toContain("searchParams");
-   expect(page).toContain("courseId:query.course");
+   expect(page).toMatch(/courseId:\s*query\.course/);
    expect(page).toContain("initialCourseId={overview.selectedCourseId");
   }
   const ui=read("src/components/courses/learner-assessment-overview.tsx");

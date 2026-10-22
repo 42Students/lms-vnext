@@ -6,5 +6,5 @@ it("UX-teacher-response-followups-01 /teacher/response-followups keeps report sc
  expect(s).toContain("getCurrentRequestContext");
  expect(s).toContain("<PageHeader eyebrow=\"Faculty · Assessments\" title=\"Response follow-ups\"");
  expect(s).toContain("role=\"alert\"");
- expect(s).toContain("aria-label=\"Assessment follow-up pages\"");
+ expect(s).toContain("<Pagination label=\"Assessment follow-up pages\"");
 });

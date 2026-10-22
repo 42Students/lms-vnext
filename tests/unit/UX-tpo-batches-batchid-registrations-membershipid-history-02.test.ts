@@ -5,6 +5,6 @@ describe("UX-tpo-batches-batchid-registrations-membershipid-history-02",()=>{
  it("uses the audited shared PageHeader and keeps existing actions",()=>{
   expect(source).toContain("<PageHeader");
   expect(source).toContain("<Select");
-  expect(source).toContain('<Button type="submit">Apply</Button>');
+  expect(source).toContain('<Button type="submit" className="min-h-11 w-full lg:w-auto">Apply</Button>');
  });
 });
