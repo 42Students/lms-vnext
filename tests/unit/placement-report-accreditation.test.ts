@@ -14,8 +14,8 @@ const period = {
 
 const facts: AccreditationFacts = {
   jobs: [
-    { id: "j1", title: "Engineer", companyId: "c1", companyName: "=FORMULA()", employmentType: "FULL_TIME" },
-    { id: "j2", title: "Analyst", companyId: "c2", companyName: "Normal Company", employmentType: "INTERNSHIP" },
+    { id: "j1", title: "Engineer", companyId: "c1", companyName: "=FORMULA()", employmentType: "FULL_TIME", countsAsPlaced: true },
+    { id: "j2", title: "Analyst", companyId: "c2", companyName: "Normal Company", employmentType: "INTERNSHIP", countsAsPlaced: false },
   ],
   applications: [
     { id: "a1", jobId: "j1", membershipId: "m1", status: "SUBMITTED", screeningStatus: null },
@@ -39,6 +39,7 @@ describe("accreditation evidence CSV", () => {
     expect(overall?.[8]).toBe(2);
     expect(overall?.[9]).toBe(2);
     expect(overall?.[10]).toBe(1);
+    expect(result.report.metrics.studentsPlaced).toBe(1);
     expect(result.report.metrics.applicants).toBe(2);
   });
 
