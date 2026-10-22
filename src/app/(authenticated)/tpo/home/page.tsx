@@ -52,7 +52,7 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
  if(!hasTpoTooling(ctx)) return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Home" description="Your college has no TPO account on this sign-in, so placement work is run from the college placements area."/>
   <ul className="divide-y divide-border rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
-   {[["Drives","/college/placements/drives"],["Calendar","/college/placements/calendar"],["Placements","/college/placements"]].map(([label,href])=><li key={href} className="p-4"><Link href={href} className="inline-flex min-h-11 items-center text-[14px] font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{label}</Link></li>)}
+   {([["Drives","/college/placements/drives"],["Calendar","/college/placements/calendar"],["Placements","/college/placements"]] as const).map(([label,href])=><li key={href} className="p-4"><Link href={href} className="inline-flex min-h-11 items-center text-[14px] font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{label}</Link></li>)}
   </ul>
  </div>;
  const moduleAccess=await resolveOptionalModuleAccess(ctx);
