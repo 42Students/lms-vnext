@@ -318,6 +318,14 @@ export function FacultyAttendanceWorkspace({
   );
   const unsavedMarks=facultyAttendanceMarksDirty(workspace.roster,
     initialAbsencesForSession(workspace.roster,workspace.records,selectedSessionId),absent);
+  // Server-rendered class picker lives above this workspace. Broadcast dirty
+  // state so its client-side navigation can ask before discarding unsaved marks.
+  useEffect(()=>{
+    const dirty=unsavedMarks||(scheduleOpen&&scheduleDirty);
+    window.dispatchEvent(new CustomEvent("lms:attendance-dirty",{detail:dirty}));
+    return ()=>window.dispatchEvent(new CustomEvent("lms:attendance-dirty",{detail:false}));
+  },[unsavedMarks,scheduleOpen,scheduleDirty]);
+
   useEffect(()=>{
     if(!unsavedMarks && !(scheduleOpen && scheduleDirty))return;
     const warn=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};

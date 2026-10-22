@@ -604,3 +604,29 @@ export type SaveLearnerContentProgressInput =
   z.infer<
     typeof saveLearnerContentProgressInputSchema
   >;
+
+/** Legacy course active/enabled/isDeleted are independent source flags.
+ * A disabled course is not silently archived; a deleted one is retained for
+ * audit but cannot appear to students. Publication of descendant lessons
+ * and learning paths remains a separate read-time visibility requirement. */
+export function legacyCourseVisibilityProjection(input:{
+ active:boolean;enabled:boolean;isDeleted:boolean;
+}):{status:"ACTIVE"|"ARCHIVED";enabled:boolean;visibleToStudents:boolean}{
+ return {
+  status:input.active&&!input.isDeleted?"ACTIVE":"ARCHIVED",
+  enabled:input.enabled,
+  visibleToStudents:input.active&&input.enabled&&!input.isDeleted,
+ };
+}
+/** The old course overview carried a heading and *ordered* takeaways, not
+ * just the single legacy comma-separated takeaways string. */
+export function normalizeLegacyCourseTakeaways(raw:unknown){
+ if(!Array.isArray(raw)||raw.length>30)
+  throw new Error("Historic course takeaways require manual review");
+ const out=raw.map(value=>{
+  if(typeof value!=="string"||value.trim().length===0||value.trim().length>500)
+   throw new Error("Historic takeaway entry is invalid");
+  return value.trim();
+ });
+ return out;
+}
