@@ -126,3 +126,31 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/modules/placements/public-join/send-code-service.ts
 - Legacy: `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/company/CompanyDomainService.java:94-102` normalizes to registrable domain before resolver.lookup
 - Expected fix: Resolve canonical registrable domain for domain gate, or document domain-specific subdomain proof requirement
+
+### Lane-5 fast verification triage (2026-10-22)
+
+- **G2-12-020-002 — DEFERRED**: Present source does not establish full legacy behavior; needs focused functional verification.
+- **G2-12-020-018 — DEFERRED**: Present source does not establish full legacy behavior; needs focused functional verification.
+- **G2-12-020-034 — DEFERRED**: Present source does not establish full legacy behavior; needs focused functional verification.
+- **G2-12-020-035 — DEFERRED**: Present source does not establish full legacy behavior; needs focused functional verification.
+- **G2-12-020-055 — DEFERRED**: Present source does not establish full legacy behavior; needs focused functional verification.
+- **G2-12-006-004 — DEFERRED**: Present source does not establish full legacy behavior; needs focused functional verification.
+- **G2-12-006-007 — DEFERRED**: Present source does not establish full legacy behavior; needs focused functional verification.
+- **G2-12-006-010 — DEFERRED**: Present source does not establish full legacy behavior; needs focused functional verification.
+- **G2-12-006-020 — DEFERRED**: Present source does not establish full legacy behavior; needs focused functional verification.
+- **G2-12-006-021 — DEFERRED**: Cross-service/security/data-flow behavior needs end-to-end verification.
+- **G2-12-006-022 — DEFERRED**: Present source does not establish full legacy behavior; needs focused functional verification.
+- **G2-12-006-028 — DEFERRED**: Present source does not establish full legacy behavior; needs focused functional verification.
+- **G2-12-006-038 — DEFERRED**: Present source does not establish full legacy behavior; needs focused functional verification.
+- **G2-12-006-040 — DEFERRED**: Cross-service/security/data-flow behavior needs end-to-end verification.
+- **G2-12-005-011 — DEFERRED**: Cross-service/security/data-flow behavior needs end-to-end verification.
+- **G2-12-005-028 — DEFERRED**: Cross-service/security/data-flow behavior needs end-to-end verification.
+- **G2-12-005-039 — DEFERRED**: Present source does not establish full legacy behavior; needs focused functional verification.
+- **G2-12-005-048 — DEFERRED**: Present source does not establish full legacy behavior; needs focused functional verification.
+- **G2-12-005-057 — DEFERRED**: Cross-service/security/data-flow behavior needs end-to-end verification.
+- **G2-12-005-080 — DEFERRED**: Cross-service/security/data-flow behavior needs end-to-end verification.
+- **G2-12-005-089 — DEFERRED**: Cross-service/security/data-flow behavior needs end-to-end verification.
+- **G2-13-012-001 — DEFERRED**: Cross-service/security/data-flow behavior needs end-to-end verification.
+- **G2-13-012-002 — DEFERRED**: Cross-service/security/data-flow behavior needs end-to-end verification.
+- **G2-13-012-006 — DEFERRED**: Cross-service/security/data-flow behavior needs end-to-end verification.
+- **G2-13-012-007 — DEFERRED**: Present source does not establish full legacy behavior; needs focused functional verification.

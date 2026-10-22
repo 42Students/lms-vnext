@@ -126,3 +126,30 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/components/courses/college-assessment-aggregate.tsx
 - Legacy: Legacy per-assignment submission counts include totalSubmitted,totalStudents,totalGraded,notGraded. (`docs/legacy-source/frontend/src/pages/superadmin/sections/Assignments.js:350-358; docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminAssignmentController.java:129-131`)
 - Expected fix: Reconcile denominator/cohort filtering and expose notGraded count to match legacy stats semantics.
+
+### Lane-5 fast verification triage (2026-10-22)
+- **G2-3-025-040 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-3-025-061 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-3-025-071 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-3-005-008 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-3-005-032 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-3-005-036 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-3-005-038 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-3-005-055 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-3-004-028 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-3-004-030 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-3-004-031 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-3-004-047 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-4-004-010 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-4-004-011 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-4-004-022 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-4-004-072 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-4-005-014 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-4-032-034 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-4-032-052 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-4-019-019 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-4-019-040 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-4-007-010 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-4-010-010 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-4-010-011 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
+- **G2-4-010-022 — DEFERRED**: Source checked for presence; requested parity needs cross-component and runtime validation; not certified OK.
