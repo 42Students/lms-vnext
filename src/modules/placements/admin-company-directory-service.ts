@@ -5,7 +5,7 @@ import { colleges, placementCompanies, placementCompanyRelationships, placementC
 import type { RequestContext } from "@/modules/identity/context";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
-import { adminCompaniesQuerySchema, projectAdminCompanies } from "./admin-company-directory-model";
+import { adminCompaniesQuerySchema, projectAdminCompanies, GLOBAL_COMPANY_PAGE_SIZE, COLLEGE_COMPANY_PAGE_SIZE } from "./admin-company-directory-model";
 
 /** Super Admin only, scoped by the selected organization/college. No CRM/private notes. */
 export async function listSuperAdminCompanyDirectory(context: RequestContext, raw: unknown) {
@@ -137,13 +137,13 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
              asc(placementCompanies.name),asc(placementCompanyRelationships.id)]
           : [query.sort==="NAME_DESC"?desc(placementCompanies.name):asc(placementCompanies.name),
              asc(colleges.name),asc(placementCompanyRelationships.id)]))
-    .limit(10).offset((query.page-1)*10),
+    .limit(COLLEGE_COMPANY_PAGE_SIZE).offset((query.page-1)*COLLEGE_COMPANY_PAGE_SIZE),
   ]);
   const total=totalRows[0]?.total ?? 0;
   return {
     query, scope: { collegeId: selected?.collegeId ?? null, organizationId: selected?.organizationId ?? null },
-    ...projectAdminCompanies(results), truncated: query.page * 10 < total, cap: 10,
-    total, totalPages: Math.max(1,Math.ceil(total/10)),
+    ...projectAdminCompanies(results), truncated: query.page * COLLEGE_COMPANY_PAGE_SIZE < total, cap: COLLEGE_COMPANY_PAGE_SIZE,
+    total, totalPages: Math.max(1,Math.ceil(total/COLLEGE_COMPANY_PAGE_SIZE)),
   };
 }
 
@@ -250,12 +250,12 @@ export async function listSuperAdminGlobalCompanyCatalogue(
        asc(placementCompanies.id)]
     :[query.sort==="NAME_DESC"?desc(placementCompanies.name):asc(placementCompanies.name),
       asc(placementCompanies.id)]))
-   .limit(10).offset((query.page-1)*10),
+   .limit(GLOBAL_COMPANY_PAGE_SIZE).offset((query.page-1)*GLOBAL_COMPANY_PAGE_SIZE),
  ]);
  const total=Number(totals[0]?.total??0);
  return {query,scope:{collegeId:null,organizationId:null},rows:companies,
-  total,cap:10,totalPages:Math.max(1,Math.ceil(total/10)),
-  truncated:query.page*10<total};
+  total,cap:GLOBAL_COMPANY_PAGE_SIZE,totalPages:Math.max(1,Math.ceil(total/GLOBAL_COMPANY_PAGE_SIZE)),
+  truncated:query.page*GLOBAL_COMPANY_PAGE_SIZE<total};
 }
 
 /** Exact canonical-name lookup is intentionally separate from LIKE search.
