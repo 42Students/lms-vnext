@@ -18,7 +18,8 @@ describe("chat-11 public session resilience",()=>{
   expect(fetcher).toContain("rawRetry <= 3600");
   const form=src("src/components/auth/login-form.tsx");
   expect(form).toContain("reason.retryAfterSeconds");
-  expect(form).toContain("safeRetry < 120");
+  expect(form).toContain("retryAfterSeconds <= 3600");
+  expect(form).toContain("loginRetryWindowIst(new Date(),safeRetry)");
   expect(form).toContain("setCooldown(Math.max(cooldown,safeRetry))");
   expect(form).toContain("Too many codes were requested.");
  });
