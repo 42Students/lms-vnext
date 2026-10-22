@@ -67,7 +67,9 @@ export default async function CollegeProjectsPage({
   // The strict service schema accepts database filters only, not the
   // presentational view toggle. Keep cards/table navigation in the UI.
   const serviceQuery = {
-    q: query.q, status: query.status, page: query.page, pageSize: query.pageSize,
+    ...(query.q !== undefined ? {q: query.q} : {}),
+    ...(query.status !== undefined ? {status: query.status} : {}),
+    page: query.page, pageSize: query.pageSize,
   };
   // Optional labels may fail independently, but an essential workspace read
   // must show a true retry state rather than throw or display a false empty list.

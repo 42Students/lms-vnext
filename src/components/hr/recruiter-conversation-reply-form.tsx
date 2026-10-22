@@ -13,7 +13,9 @@ export function RecruiterConversationReplyForm({threadId,quoteId,quoteLabel,hist
  threadId:string;quoteId?:string|null;quoteLabel?:string|null;historyAvailable?:boolean;
 }){
  return <RecruiterConversationReplyFormState key={threadId+":"+(quoteId??"")} threadId={threadId}
-   quoteId={quoteId} quoteLabel={quoteLabel} historyAvailable={historyAvailable}/>;
+   {...(quoteId !== undefined ? {quoteId} : {})}
+   {...(quoteLabel !== undefined ? {quoteLabel} : {})}
+   historyAvailable={historyAvailable}/>;
 }
 function RecruiterConversationReplyFormState({threadId,quoteId,quoteLabel,historyAvailable}:{
  threadId:string;quoteId?:string|null;quoteLabel?:string|null;historyAvailable:boolean;

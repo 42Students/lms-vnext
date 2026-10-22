@@ -20,7 +20,9 @@ describe("IIT Dharwad Projects: strict snapshot filter contract preserves cards 
   it.each(["admin","college"] as const)("PROJ-BREAK-ux-22 %s page projects away view before service but preserves user-selected tabs",role=>{
     const page=readPage(role);
     expect(page).toContain("const serviceQuery = {");
-    expect(page).toContain("q: query.q, status: query.status, page: query.page, pageSize: query.pageSize");
+    expect(page).toContain("...(query.q !== undefined ? {q:");
+    expect(page).toContain("...(query.status !== undefined ? {status:");
+    expect(page).toMatch(/page:\s*query\.page,\s*pageSize:\s*query\.pageSize/);
     expect(page).toContain("listProjectAdminSnapshots(context, collegeId, serviceQuery)");
     expect(page).not.toContain("listProjectAdminSnapshots(context, collegeId, query)");
     expect(page).toContain('viewHref("cards")');
