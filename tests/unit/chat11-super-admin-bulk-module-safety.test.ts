@@ -28,6 +28,7 @@ const raw={membershipIds:[membershipId],module:"projects",action:"ENABLE",confir
 function chain(rows:readonly unknown[]){
  const query={
   from:()=>query,
+  innerJoin:()=>query,
   where:()=>query,
   orderBy:()=>query,
   for:()=>query,
