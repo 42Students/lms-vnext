@@ -132,10 +132,10 @@ export function parseSuperAdminHrPageParams(raw:Record<string,string|string[]|un
  if(Object.keys(raw).some(key=>!["q","status","page","pageSize"].includes(key)))return null;
  if(Object.values(raw).some(Array.isArray))return null;
  const normalized={
-  q:typeof raw.q==="string"&&raw.q.trim()?raw.q:undefined,
-  status:raw.status===""?undefined:raw.status,
-  page:raw.page===""?undefined:raw.page,
-  pageSize:raw.pageSize===""?undefined:raw.pageSize,
+  q:typeof raw["q"]==="string"&&raw["q"].trim()?raw["q"]:undefined,
+  status:raw["status"]===""?undefined:raw["status"],
+  page:raw["page"]===""?undefined:raw["page"],
+  pageSize:raw["page"]Size===""?undefined:raw["page"]Size,
  };
  const result=superAdminHrListQuerySchema.safeParse(normalized);
  return result.success?result.data:null;
