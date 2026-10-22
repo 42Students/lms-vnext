@@ -29,7 +29,8 @@ const sms:OutboundSendRequest={
  channel:"SMS",recipient:"+919876543210",templateKey:"campaign.sms",
  purpose:"placement-campaign",variables:{body:"Invitation"},
 };
-const production={APP_ENV:"production"};
+// Production dispatch requires verified revocation of the exposed legacy key.
+const production={APP_ENV:"production",ZEPTOMAIL_LEGACY_KEY_REVOKED:"confirmed"};
 const emailFetch=()=>vi.fn(async()=>new Response("",{status:202}));
 
 describe("chat-16 isolated outbound provider adapters",()=>{
