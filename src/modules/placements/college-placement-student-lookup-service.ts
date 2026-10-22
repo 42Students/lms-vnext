@@ -124,7 +124,7 @@ export async function lookupCollegeStudentPlacement(ctx:RequestContext,raw:unkno
       legacyStage:row.applicationStatus==="WITHDRAWN"?"WITHDRAWN":
        offerStatus==="ACCEPTED"&&joining==="JOINED"?"HIRED":offerStatus==="ISSUED"||offerStatus==="ACCEPTED"?
         "OFFERED":row.recordedStage??row.screeningStatus??"APPLIED",
-      rejectionReason:row.screeningStatus==="REJECTED"?row.candidateRejectionReason:null,
+      rejectionReason:row.screeningStatus==="REJECTED"&&row.candidateRejectionReason?.trim()?row.candidateRejectionReason.trim():null,
       appliedDateLabel:formatCollegePlacementAppliedDate(row.submittedAt),
     };
    }),
@@ -258,7 +258,7 @@ export async function getCollegeStudentPlacementDetails(ctx:RequestContext,raw:u
      row.recordedStage??(row.screeningStatus==="SHORTLISTED"?"SHORTLISTED":
       row.screeningStatus==="REJECTED"?"REJECTED":"APPLIED");
     return {...row,legacyStage:stage,
-     rejectionReason:stage==="REJECTED"?row.rejectionReason:null,
+     rejectionReason:row.screeningStatus==="REJECTED"&&row.rejectionReason?.trim()?row.rejectionReason.trim():null,
      offerStatus:offer?.status??null,joining:offer?.joining??null,
      nextInterview:interview?{roundName:interview.roundName,
       startsAt:interview.startsAt.toISOString(),room:interview.room}:null};
