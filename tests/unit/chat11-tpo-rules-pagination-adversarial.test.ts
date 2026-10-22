@@ -25,10 +25,12 @@ describe("TPO-settings-audit-RULES-PAGE-01 placement rules URL parsing",()=>{
   const parsed=page.indexOf("parseTpoRulesPageParams(params)");
   const denied=page.indexOf("if (selectedPage === null)");
   const read=page.indexOf("getTpoPlacementRulesSettings(context,{page:selectedPage})");
-  const version=page.indexOf("await getCollegePlacementRules(context,context.membership.collegeId)");
+  const version=page.indexOf("getCollegePlacementRules(context,context.membership.collegeId)");
+  const verifiedAccess=page.indexOf("if(!canEdit)return");
   expect(parsed).toBeGreaterThan(0);
   expect(denied).toBeGreaterThan(parsed);
-  expect(read).toBeGreaterThan(denied);
+  expect(verifiedAccess).toBeGreaterThan(denied);
+  expect(read).toBeGreaterThan(verifiedAccess);
   expect(version).toBeGreaterThan(read);
   expect(page).toContain("Invalid placement rules filters");
   expect(page).toContain("Clear filters");
