@@ -126,3 +126,31 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/app/(authenticated)/tpo/reports/page.tsx
 - Legacy: `docs/legacy-source/frontend/src/pages/tpo/reports/index.js:63-72`
 - Expected fix: Legacy `placedUnique` uses uniqueness and Not accepted yet=placedUnique−acceptedUnique; vNext uses placed students and offers−acceptedOffers, a different gap.
+
+## Lane 9 verification disposition (2026-10-22)
+
+- DEFERRED — G2-19-001-012: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-19-001-018: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-19-001-059: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-19-010-002: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-19-010-004: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-19-010-021: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-2-006-004: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-2-006-058: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-2-010-012: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-2-012-049: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-2-014-028: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-2-019-001: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-2-002-019: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-2-001-067: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-20-004-049: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-20-028-010: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-20-008-040: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-3-021-010: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-3-021-044: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-11-019-029: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-11-019-047: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-11-019-059: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-11-019-077: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-11-019-079: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-11-022-020: implementation and regression checks not independently completed; no parity claim.

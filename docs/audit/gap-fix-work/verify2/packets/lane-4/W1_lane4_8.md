@@ -126,3 +126,31 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/components/placements/placement-calendar-workspace.tsx, src/app/(authenticated)/college/placements/interviews/page.tsx
 - Legacy: One Interviews page with header, Refresh, four metrics, toolbar, desktop table/mobile cards. (docs/legacy-source/frontend/src/components/InterviewCalendar/InterviewCalendarContent.js:750-777; docs/legacy-source/frontend/src/components/InterviewCalendar/InterviewCalendarContent.js:779-1049)
 - Expected fix: Unify legacy list elements on obvious Interviews route, preserve optional new calendar tab.
+
+## Lane 9 verification disposition (2026-10-22)
+
+- DEFERRED — G2-2-001-028: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-003-027: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-20-012-024: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-20-010-008: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-20-010-015: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-20-010-019: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-20-010-034: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-20-010-052: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-20-010-055: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-3-001-038: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-3-019-012: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-3-019-044: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-4-004-068: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-13-030-001: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-4-026-016: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-4-026-017: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-4-026-018: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-4-026-021: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-4-026-025: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-4-026-054: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-4-026-089: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-4-013-001: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-4-028-060: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-5-002-002: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-5-002-004: Not independently verified against all cited behavior; implementation and regression check remain open.

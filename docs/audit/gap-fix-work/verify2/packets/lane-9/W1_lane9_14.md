@@ -56,3 +56,17 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/app/(authenticated)/admin/batches/page.tsx
 - Legacy: batches.csv export filtered rows with key fields `docs/legacy-source/frontend/src/pages/superadmin/sections/Batches.js:538-548`
 - Expected fix: Reinstate CSV export with legacy headers, code-injection safety
+
+## Lane 9 verification disposition (2026-10-22)
+
+- DEFERRED — G2-8-022-002: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-9-001-074: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-9-007-049: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-9-015-056: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-9-012-010: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-9-013-054: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-9-014-048: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-9-020-019: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-9-020-060: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-15-027-041: implementation and regression checks not independently completed; no parity claim.
+- DEFERRED — G2-9-029-055: implementation and regression checks not independently completed; no parity claim.

@@ -126,3 +126,31 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/modules/academics/schedule-service.ts
 - Legacy: ClassScheduleDTO.java:11-31 snake_case IDs and startTime/endTime strings.
 - Expected fix: Define ID/time conversion for every legacy session and API consumer.
+
+## Lane 9 verification disposition (2026-10-22)
+
+- DEFERRED — G2-18-006-032: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-18-006-036: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-18-006-040: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-18-006-041: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-18-006-046: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-18-006-059: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-18-006-061: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-18-006-069: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-19-003-011: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-19-018-002: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-19-018-037: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-19-018-038: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-19-018-041: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-19-001-037: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-006-052: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-009-038: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-012-011: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-014-019: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-017-006: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-029-016: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-029-059: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-029-065: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-029-102: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-031-016: Not independently verified against all cited behavior; implementation and regression check remain open.
+- DEFERRED — G2-2-032-022: Not independently verified against all cited behavior; implementation and regression check remain open.
