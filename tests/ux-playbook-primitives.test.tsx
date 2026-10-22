@@ -74,7 +74,8 @@ describe("UX playbook shared behaviour", () => {
       ]}/>);
     expect(html).not.toContain("More details");
     expect(html).toContain("Only on roster");
-    expect(html).toContain('class="hidden');
+    expect(html).toMatch(/class="[^"]*\bhidden(?:\s|")/);
+    expect(html).not.toContain("Fields on detail page");
   });
   it("RV-05 B-02 requires positive per-row detail authority to hide a field",()=>{
     const rows=[{id:"one",secret:"Visible without authority"}];
