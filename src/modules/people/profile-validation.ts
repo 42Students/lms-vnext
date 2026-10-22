@@ -338,6 +338,13 @@ const educationSchema = z
     maxGrade: textValue(64),
     qualifyingExam: textValue(120),
     examRank: textValue(120).optional(),
+    // Historical education description fields are preserved on roundtrips.
+    // Never persist a legacy public certificateUpload URL as a read grant.
+    degree: textValue(200).optional(),
+    field: textValue(200).optional(),
+    score: textValue(120).optional(),
+    description: textValue(5000).optional(),
+    certificateReceiptId: z.string().uuid().nullable().optional(),
     examDetails: z
       .record(
         z.string().max(120),
