@@ -26,14 +26,16 @@ export async function countHrRecruiterBellUnread(ctx:RequestContext){
   unread:0,firstVisit:true};
  // Legacy bell also lists threads with unread TPO messages and a last
  // message within 30 days; they count toward the unread badge.
- const unreadThreads=(await listRecentUnreadRecruiterThreads(ctx,grants[0])).length;
- const jobs=(await listOwnRecruiterPlacementJobs(ctx,grants[0]))
-  .filter(row=>row.collegeId===grants[0]&&row.companyId===ctx.recruiter!.companyId);
+ const collegeId=grants[0];
+ if(!collegeId)return {status:"NO_ACCESS" as const,unread:0,firstVisit:true};
+ const unreadThreads=(await listRecentUnreadRecruiterThreads(ctx,collegeId)).length;
+ const jobs=(await listOwnRecruiterPlacementJobs(ctx,collegeId))
+  .filter(row=>row.collegeId===collegeId&&row.companyId===ctx.recruiter!.companyId);
  const ids=[...new Set(jobs.map(row=>row.job.id))];
  if(ids.length===0)return {status:"READY" as const,unread:unreadThreads,firstVisit:true};
  const scope=and(eq(inAppNotifications.userId,ctx.user.id),
   eq(activityEvents.module,"PLACEMENTS"),eq(activityEvents.subjectType,"placement_job"),
-  eq(activityEvents.collegeId,grants[0]),inArray(activityEvents.subjectId,ids),
+  eq(activityEvents.collegeId,collegeId),inArray(activityEvents.subjectId,ids),
   inArray(activityEvents.eventType,[...HR_NOTIFICATION_EVENTS]),
   sql`${inAppNotifications.createdAt} >= now() - interval '30 days'`);
  const [stats]=await getDb().select({
