@@ -126,3 +126,9 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/app/api/placements/tpo/team/threads/route.ts, src/modules/placements/tpo-team-asks-service.ts
 - Legacy: `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoTeamThreadController.java:174-178`
 - Expected fix: Legacy `ADD_PEOPLE` 409 names the people missing from a private conversation, with explicit add-and-retry UX; vNext does not expose that conflict shape in cited routes. Add safe action-needed 409 with existing membership IDs, not a silent send failure.
+
+## Lane-13 verification notes (22 Oct 2026)
+
+- **OK G2-20-004-025, G2-20-004-026, G2-20-004-029:** Enterprises page has canonical, OG/Twitter, and escaped Organization/WebSite/WebPage/BreadcrumbList JSON-LD. Current claims avoid unbuilt AI features; SEO snapshot execution was not performed.
+- **OK (implementation inspected) G2-20-010-002, G2-20-010-027:** Recruiter digest provider resolves a verified, active primary tenant domain, with safe allowlisted public-origin fallback; worker/template end-to-end behavior still requires verification.
+- **DEFERRED G2-2-001-040, G2-20-012-002/011/015/026/040, G2-20-010-004/040, G2-3-007-001, G2-3-013-018/022, G2-3-015-022/042, G2-13-019-031, G2-3-023-007/022/032/046/047, G2-3-022-014:** Cross-ledger placement, permissions, legacy identifiers, notification fan-out and action-path tests need deeper verification; no false OK or unreviewed code changes asserted.
