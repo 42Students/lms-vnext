@@ -106,3 +106,36 @@ export function mapLegacyCollegeLeadership(input:{
  return {collegeId:input.resolvedCollegeId,organizationId:input.resolvedOrganizationId,
   sourceCode:code,chairMembershipId,viceChairMembershipId};
 }
+
+
+/** Strict one-way CollegeDTO field disposition. Source numeric keys and
+ * historical chair IDs cannot act as current account/permission identifiers,
+ * and old file URLs must be reuploaded before being made public. */
+export const LEGACY_COLLEGE_DTO_MAP={
+ id:"legacyCollegeId",
+ organizationId:"legacyOrganizationId",
+ name:"name",
+ uniqueId:"legacyUniqueId",
+ collegeCode:"code",
+ logo:"legacyLogoUrl (import-only; never returned as signed URL)",
+ address:"addressLine1",
+ address2:"addressLine2",
+ landmark:"landmark",
+ city:"city",
+ state:"state",
+ country:"country",
+ pinCode:"postalCode",
+ chairId:"legacyChairId -> chairMembershipId after verified faculty membership",
+ viceChairId:"legacyViceChairId -> viceChairMembershipId after verified faculty membership",
+ isDeleted:"status = ARCHIVED",
+ createdAt:"createdAt (source timezone reviewed)",
+ updatedAt:"updatedAt (source timezone reviewed)",
+} as const;
+export function canonicalLegacyCollegePostalCode(input:string|null):string|null{
+ if(input===null)return null;
+ const trimmed=input.trim();
+ if(!trimmed)return null;
+ if(trimmed.length>32||/[^\p{L}\p{N} -]/u.test(trimmed))
+  throw new Error("Invalid imported college postal code");
+ return trimmed;
+}
