@@ -31,7 +31,7 @@ describe("Chat-5 UX CROSS AUDIT: /tpo LAST THIRD (routes 85–126)",()=>{
    expect(page).toContain("<DataTable");
    expect(page).toMatch(/empty={<(?:p|EmptyState)\b/);
    expect(page).toContain('mobilePriority:"primary"');
-   expect((page.match(/mobilePriority:"secondary"/g)??[])).toHaveLength(columns.length-(route.endsWith("/recruiters")?2:1));
+   expect((page.match(/mobilePriority:"secondary"/g)??[])).toHaveLength(route.endsWith("/settings/team")?4:columns.length-(route.endsWith("/recruiters")?2:1));
    if(route.endsWith("/recruiters"))expect(page).toContain('mobilePriority:"action"');
    for(const title of columns) expect(page).toContain('header:"'+title+'"');
    expect(page).not.toMatch(/<table\b/);
@@ -89,7 +89,7 @@ describe("Chat-5 UX CROSS AUDIT: /tpo LAST THIRD (routes 85–126)",()=>{
   const control=source("src/components/placements/tpo-recruiter-grant-controls.tsx");
   expect(control).not.toContain("window.confirm");
   expect((control.match(/<ConfirmDialog/g)??[])).toHaveLength(3);
-  expect((control.match(/role="alert" className="text-sm text-foreground"/g)??[])).toHaveLength(3);
+  expect((control.match(/error\?<InlineNotice tone="error"/g)??[])).toHaveLength(3);
   expect(control).toContain("Grant the existing user recruiter access to this college/company?");
   expect(control).toContain('expectedUpdatedAt');
   expect(control).toContain('action: "REVOKE"');
