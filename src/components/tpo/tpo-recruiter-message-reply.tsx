@@ -80,7 +80,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnde
   <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Reply</h2>
   <Disclosure title="Quick replies" className="min-w-0" contentClassName="pt-2">
   <div role="group" aria-label="Quick replies" className="flex min-w-0 flex-wrap gap-2">
-    {TPO_QUICK_REPLIES.map(reply=><Button variant="secondary" key={reply} type="button" disabled={busy}
+    {TPO_QUICK_REPLIES.map(reply=><Button variant="secondary" key={reply} type="button" disabled={busy||accessEnded}
       className="min-h-11 md:min-h-9 shrink-0 rounded-[var(--lms-control-radius)] px-3 text-sm font-[650]"
       onClick={()=>addQuickReply(reply)}>{reply}</Button>)}
    </div>
@@ -90,14 +90,14 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnde
     <Textarea className="mt-1 min-h-28 w-full"
       maxLength={4000} required disabled={accessEnded} aria-label="Message" placeholder="Write a message" value={body}
       onFocus={restoreDraft} onChange={e=>persistDraft(e.target.value)}
-      onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.nativeEvent.isComposing){
-       e.preventDefault();if(body.trim()&&!busy)void post("messages");}}}/>
+      onKeyDown={e=>{if(e.key==="Enter"&&(e.ctrlKey||e.metaKey)&&!e.nativeEvent.isComposing){
+       e.preventDefault();if(body.trim()&&!busy&&!accessEnded)void post("messages");}}}/>
    </label>
-   <p className="text-xs text-muted-foreground leading-[20px]" aria-live="polite">Enter to send · Shift + Enter for a new line · {body.length}/4000</p>
+   <p className="text-xs text-muted-foreground leading-[20px]" aria-live="polite">Ctrl/Cmd + Enter to send · Enter for a new line · {body.length}/4000</p>
    <div className="flex min-w-0 flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:items-center">
     <Button variant="secondary" type="button" disabled={busy||accessEnded||!body.trim()} onClick={discardDraft}
      className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">Discard draft</Button>
-    <Button variant="primary" type="submit" disabled={busy||!body.trim()}
+    <Button variant="primary" type="submit" disabled={busy||accessEnded||!body.trim()}
      className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
       Send message
     </Button>

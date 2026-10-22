@@ -30,8 +30,12 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
  const {run,pending}=useGuardedAction({timeoutMs:120000});
  const picked=tpoDriveVisibilitySelection(selection?.selected??[],learners,200);
  const valid=tpoDriveVisibilityValid({jobId,decision,reason,count:picked.length});
+ const selectedDrive=drives.find(drive=>drive.id===jobId);
  async function submit(){
-  if(!valid||pending)return;
+  if(pending)return;
+  if(!picked.length){setError("Pick at least one student");return;}
+  if(!jobId){setError("Choose the drive");return;}
+  if(!valid){setError("Enter a reason for this visibility change.");return;}
   setError("");setResults([]);setUndoFeedback("");
   try{
    await run(async()=>{
@@ -117,6 +121,8 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
   <p className="text-sm text-body">Apply an individual include or exclude decision with a reason. The eligibility rules still protect college and cohort targeting. Existing applications are preserved. Each selected override is version-checked so another officer’s newer decision is not overwritten. Undo restores the previous explicit Include/Exclude state if your change is still current; history is retained.</p>
   <p role="status" className="break-words text-sm text-body">{picked.length} selected from the current filtered roster (up to 200 per review).</p>
   {drives.length===0?<p role="status" className="text-sm text-body">No draft or published drives can be changed here.</p>:null}
+  {!picked.length?<p role="status" className="text-sm text-warning-text">Pick at least one student</p>:null}
+  {picked.length>0&&!jobId?<p role="status" className="text-sm text-body">Choose the drive</p>:null}
   <div className="grid min-w-0 gap-3 md:grid-cols-2">
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drive
     <Select className="min-h-11 w-full min-w-0 md:min-h-9" value={jobId} disabled={pending} onChange={e=>{setJobId(e.target.value);setResults([]);}}
@@ -145,13 +151,15 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
   </Button>
   <Dialog open={confirm} onOpenChange={open=>{if(!pending)setConfirm(open);}}
    title="Confirm drive eligibility overrides?"
-   description={"This "+decision.toLowerCase()+" action is applied separately to "+picked.length+" selected learners. The server rechecks each college and learner."}
+   description={"Review "+picked.length+" students for "+(selectedDrive?.name??"the selected drive")+". This "+decision.toLowerCase()+" action is applied separately. The server rechecks each college and learner."}
    footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
     <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={()=>setConfirm(false)}>Cancel</Button>
     <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending||!valid} onClick={()=>void submit()}>{pending?"Saving…":"Confirm changes"}</Button>
    </div>}>
    <div className="min-w-0 space-y-2">
+    <p className="break-words text-sm font-semibold text-body">{decision==="INCLUDE"?"Show / Include":decision==="EXCLUDE"?"Hide / Exclude":"Clear active override"} · {selectedDrive?.name??"Drive"} · {picked.length} students</p>
     <p className="break-words text-sm text-body">Reason: {reason.trim()}</p>
+    <p className="text-sm text-warning-text">Existing applications are preserved. Undo never overwrites a newer officer decision.</p>
     <ScrollCue axis="y" label="Learners in visibility override" viewportClassName="max-h-52">
      <ul className="min-w-0 divide-y divide-border text-sm">{picked.map(row=><li key={row.id} className="min-w-0 break-words py-2">{row.name}</li>)}</ul>
     </ScrollCue>
