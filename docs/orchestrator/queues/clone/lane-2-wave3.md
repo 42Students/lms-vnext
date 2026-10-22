@@ -11,9 +11,9 @@ This is wave 3 of the fix job. Work every packet below, in order, one at a time,
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-2/W3_src_modules_placements_super-admin-drive-pipeline-service.ts.md` (edit src/modules/placements/super-admin-drive-pipeline-service.ts; 3 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-2/W3_src_app_authenticated_college_placements_jobs_jobId_shortlisted_page.tsx.md` (edit src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx; 3 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-2/W3_src_components_placements_super-admin-drive-pipeline.tsx.md` (edit src/components/placements/super-admin-drive-pipeline.tsx; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-2/W3_src_modules_placements_super-admin-drive-pipeline-service.ts.md` (edit src/modules/placements/super-admin-drive-pipeline-service.ts; 3 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-2/W3_src_app_authenticated_college_placements_jobs_jobId_shortlisted_page.tsx.md` (edit src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx; 3 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-2/W3_src_components_placements_super-admin-drive-pipeline.tsx.md` (edit src/components/placements/super-admin-drive-pipeline.tsx; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-2/W3_src_modules_placements_learner-career-calendar-model.ts.md` (edit src/modules/placements/learner-career-calendar-model.ts; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-2/W3_src_modules_placements_placement-offer-expiry-sweep-service.ts.md` (edit src/modules/placements/placement-offer-expiry-sweep-service.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-2/W3_src_modules_placements_college-drive-applications-model.ts.md` (edit src/modules/placements/college-drive-applications-model.ts; 1 findings; best P1)

@@ -8,6 +8,7 @@ import {getPlacementJob} from "./job-service";
 
 export type SuperAdminDriveAttention={
  label:string;stage:"APPLIED"|"INTERVIEW"|"OFFERED"|null;
+ filter:"STALE_APPLICATIONS"|"INTERVIEW_UNSCHEDULED"|"OFFERED_NO_LETTER"|null;
  count:number;details:string;
 };
 
@@ -54,17 +55,17 @@ export async function getSuperAdminDriveAttention(
   .where(and(eq(placementApplications.jobId,job.id),
    eq(placementApplications.status,"SUBMITTED")));
  const result:SuperAdminDriveAttention[]=[];
- if((row?.stale??0)>0)result.push({label:"No action in a week",stage:"APPLIED",
+ if((row?.stale??0)>0)result.push({label:"No action in a week",stage:"APPLIED",filter:"STALE_APPLICATIONS",
   count:row!.stale,details:"Applications awaiting their first review"});
  if((row?.unscheduled??0)>0)result.push({label:"Marked Interview, nothing scheduled",
-  stage:"INTERVIEW",count:row!.unscheduled,details:"Candidates without a booked interview slot"});
+  stage:"INTERVIEW",filter:"INTERVIEW_UNSCHEDULED",count:row!.unscheduled,details:"Candidates without a booked interview slot"});
  if((row?.withoutLetter??0)>0)result.push({label:"Offered, no offer letter attached",
-  stage:"OFFERED",count:row!.withoutLetter,details:"Issued or accepted offers missing a letter"});
+  stage:"OFFERED",filter:"OFFERED_NO_LETTER",count:row!.withoutLetter,details:"Issued or accepted offers missing a letter"});
  const deadline=job.applicationDeadline;
  if(job.status==="PUBLISHED"&&deadline&&
     deadline.getTime()>Date.now()&&deadline.getTime()-Date.now()<=7*86400000&&
     (row?.total??0)>=5&&(row?.progressed??0)/(row?.total??1)<0.2){
-  result.push({label:"Closing soon",stage:null,
+  result.push({label:"Closing soon",stage:null,filter:null,
    count:row!.total-row!.progressed,details:"Low conversion so far"});
  }
  return result;

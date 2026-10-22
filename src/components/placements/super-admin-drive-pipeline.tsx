@@ -29,7 +29,10 @@ export function SuperAdminDrivePipeline({rows,attention=[],jobId}: {
      <p className="mt-1">{item.details}</p>
      <Link className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline"
       href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"+
-        (item.stage?"?stage="+encodeURIComponent(item.stage):"")}>
+        (item.stage||item.filter?"?"+new URLSearchParams({
+          ...(item.stage?{stage:item.stage}:{}),
+          ...(item.filter?{attention:item.filter}:{}),
+        }).toString():"")}>
       Review applications →
      </Link>
     </li>)}
