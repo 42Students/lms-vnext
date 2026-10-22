@@ -23,10 +23,8 @@ export function FacultyIdentityEvidenceEditor({
  const blocked=busy||pending;
  async function begin(kind:Purpose,file:File){
   if(mutationRef.current)return;
-  if(blocked)return;
-  mutationRef.current = true;
-  mutationRef.current = true;
-  setBusy(true);setError("");setMessage("");setReadLink(null);
+  if(blocked)return;  mutationRef.current = true;
+setBusy(true);setError("");setMessage("");setReadLink(null);
   try{
    if(!["application/pdf","image/png","image/jpeg","image/webp"].includes(file.type)||
       file.size<1||file.size>10*1024*1024)
@@ -49,6 +47,7 @@ export function FacultyIdentityEvidenceEditor({
  async function finish(){
   if(mutationRef.current)return;
   if(blocked||!checking)return;
+  mutationRef.current = true;
   setBusy(true);setError("");setMessage("");
   try{
    const response=await fetch("/api/people/faculty-self-document/identity",{
@@ -88,6 +87,7 @@ export function FacultyIdentityEvidenceEditor({
  async function revoke(kind:Purpose){
   if(mutationRef.current)return;
   if(blocked)return;
+  mutationRef.current = true;
   setBusy(true);setError("");setReadLink(null);
   try{
    const response=await fetch("/api/people/faculty-self-document/identity",{
