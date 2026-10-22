@@ -123,7 +123,7 @@ async function scope(ctx:RequestContext,scopeType:"GLOBAL"|"COLLEGE",rawCollegeI
 export async function listAdminTenantSettings(ctx:RequestContext,kind:"GLOBAL"|"COLLEGE",collegeId?:string){
  const selected=await scope(ctx,kind,collegeId);
  const present=await getDb().execute(sql<{ready:boolean}>`select to_regclass('public.platform_setting_overrides') is not null as ready`);
- if(!present.rows[0]?.ready)return {ready:false,scope:kind,scopeId:selected.scopeId,entries:[],
+ if(!present.rows[0]?.["ready"])return {ready:false,scope:kind,scopeId:selected.scopeId,entries:[],
   reason:"SETTINGS_STORAGE_PENDING" as const,unsupportedScopes:LEGACY_TENANT_SCOPES_READ_ONLY,
   legacyScopePolicy:RETIRED_LEGACY_SCOPE_POLICY,maxChangesPerRequest:TENANT_SETTING_MAX_CHANGES};
  const rows=await getDb().select({key:platformSettingOverrides.key,value:platformSettingOverrides.value,
@@ -160,7 +160,7 @@ export async function saveAdminTenantSettings(ctx:RequestContext,raw:unknown){
  const seen=new Set<string>();
  const updates:{key:string;status:"SAVED"|"DELETED"|"FAILED";message:string;version?:number}[]=[];
  const present=await getDb().execute(sql<{ready:boolean}>`select to_regclass('public.platform_setting_overrides') is not null as ready`);
- if(!present.rows[0]?.ready)throw new TenantSettingEditorError("SETTINGS_STORAGE_PENDING");
+ if(!present.rows[0]?.["ready"])throw new TenantSettingEditorError("SETTINGS_STORAGE_PENDING");
  for(const change of parsed.changes){
   try{
    const spec=LEGACY_TENANT_SETTING_MAP.get(change.key);
@@ -316,7 +316,7 @@ export async function getAdminTenantSettingState(
 ):Promise<{state:"UNAVAILABLE"|"UNSET"|"OVERRIDDEN";value?:string;version?:number;activationMessage?:string}> {
  const selected=await scope(context,kind,collegeId);
  const present=await getDb().execute(sql<{ready:boolean}>`select to_regclass('public.platform_setting_overrides') is not null as ready`);
- if(!present.rows[0]?.ready)return {state:"UNAVAILABLE"};
+ if(!present.rows[0]?.["ready"])return {state:"UNAVAILABLE"};
  const [entry]=await getDb().select({value:platformSettingOverrides.value,version:platformSettingOverrides.version})
   .from(platformSettingOverrides).where(and(
    eq(platformSettingOverrides.scopeType,kind),eq(platformSettingOverrides.scopeId,selected.scopeId),
