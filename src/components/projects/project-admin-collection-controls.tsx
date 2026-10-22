@@ -77,7 +77,6 @@ export function ProjectAdminFilters({
   legacyWorkspaces = false,
   atRiskHref = "/admin/projects/at-risk",
   searchParamName,
-  searchPlaceholder,
   filterView,
 }: {
   query: ProjectAdminCollectionQuery;
