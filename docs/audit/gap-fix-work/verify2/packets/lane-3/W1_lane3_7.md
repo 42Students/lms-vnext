@@ -42,12 +42,12 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Legacy: docs/legacy-source/frontend/src/pages/Dashboard/course/syllabus/resource.js:76-91 — If popup blocked, current page navigates; on failure popup closes.
 - Expected fix: Implement popup-block fallback and cleanup.
 
-## G2-17-016-017 [P1] GAP facet F07
+## G2-17-016-017 [OK — MULTIPLE_CHOICE requires at least one correct; all-correct allowed] GAP facet F07
 - Files: src/modules/courses/quiz-validation.ts
 - Legacy: docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/QuizServiceImpl.java:881-882 — Legacy multiple choice requires >=1 correct (all-correct permitted).
 - Expected fix: Document intentional all-correct restriction or restore legacy rule.
 
-## G2-17-003-008 [P1] MISSING facet F03
+## G2-17-003-008 [OK — global video policy shown without college selection] MISSING facet F03
 - Files: src/components/courses/super-admin-content-directory-page.tsx
 - Legacy: docs/legacy-source/frontend/src/pages/superadmin/lesson-content.js:38-65 no-college displays warning and optionally Video policy card for type=video.
 - Expected fix: Render platform-global watched-threshold policy even when college is unselected on Videos route.
@@ -77,7 +77,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Legacy: docs/legacy-source/frontend/src/pages/superadmin/lesson-content.js:70-74 switches rendered components by query; docs/legacy-source/frontend/src/pages/superadmin/sections/LessonContent.js:532-669 then calls createLessonContent/getLessonContents and R2 presign.
 - Expected fix: Build old VIDEO upload plus content linking and server-side scoped authoring, retain schema compatibility.
 
-## G2-17-003-032 [P1] GAP facet F11
+## G2-17-003-032 [OK — GLOBAL policy link restricted to Super Admin] GAP facet F11
 - Files: src/components/courses/super-admin-content-directory-page.tsx, src/modules/platform-settings/legacy-setting-specs.ts
 - Legacy: docs/legacy-source/frontend/src/pages/superadmin/lesson-content.js:48-61 platform-wide video policy editable with no college selected, scopeType='GLOBAL'.
 - Expected fix: Offer global policy on no-college screen and restrict edits to privileged Super Admin.
