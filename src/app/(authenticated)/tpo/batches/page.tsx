@@ -27,7 +27,7 @@ import { tpoBatchDeadlineFilterSchema, filterTpoBatchDeadline } from "@/modules/
 import { tpoBatchDepartmentSchema, filterTpoBatchDepartment, listTpoBatchDepartments } from "@/modules/placements/tpo-batch-department-model";
 import { tpoBatchProgramSchema, filterTpoBatchProgram, listTpoBatchPrograms } from "@/modules/placements/tpo-batch-program-model";
 import { tpoBatchSortSchema, sortTpoBatchNames } from "@/modules/placements/tpo-batch-sort-model";
-import { batchDirectoryFilterSchema, filterTpoBatchDirectory, batchDirectoryState } from "@/modules/placements/tpo-batch-directory-filter-model";
+import { batchDirectoryFilterSchema, filterTpoBatchDirectory } from "@/modules/placements/tpo-batch-directory-filter-model";
 import {tpoBatchPlacementState,tpoBatchMatchesPlacementState} from "@/modules/placements/tpo-batch-state-label-model";
 import {visibleTpoBatchWorkingSet} from "@/modules/placements/tpo-batch-working-set-model";
 import {sortTpoBatchWorkingPriority} from "@/modules/placements/tpo-batch-priority-sort-model";
