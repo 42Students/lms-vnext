@@ -27,7 +27,7 @@ export default async function MentorProjectPage({
   if (available?.projects.enabled !== true) return <MentorProjectsUnavailable loadFailed={available===null} />;
   const { projectId } = await params;
   const { tab } = await searchParams;
-  const selectedTab = tab === "tasks" ? "board" : tab === "meetings" ? "team" : tab;
+  const selectedTab = (tab === "tasks" ? "board" : tab === "meetings" ? "team" : tab) ?? "overview";
   const subtitles:Record<string,string> = {
     overview:"Current status, scope, and project summary.",
     team:"People, roles, and scheduled meetings.",
