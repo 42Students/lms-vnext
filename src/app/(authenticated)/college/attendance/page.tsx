@@ -62,6 +62,8 @@ export default async function CollegeAttendancePage({
   const month = query.month ?? currentMonth();
   const optionsResult = await Promise.allSettled([getAdminAttendanceOptions(context, collegeId)]);
   if (optionsResult[0].status === "rejected") {
+    const classLookupFailed=optionsResult[0].reason instanceof AdminAttendanceOptionsLookupError &&
+      optionsResult[0].reason.kind==="class_courses";
     // Keep the surrounding page and its navigation available even when the
     // college-scoped class/course options fail. No stale cross-tenant options
     // are rendered; retry preserves the user's selected filters.
@@ -77,10 +79,10 @@ export default async function CollegeAttendancePage({
           { value: "/college/attendance/settings", label: "Attendance policy", href: "/college/attendance/settings" },
         ]}/>
       <Banner tone="warning" role="alert">
-        <strong>{query.sectionId?"Couldn't verify which courses are taught to this class":"Couldn't load classes/courses for this college"}</strong>
-        <p className="mt-1">{query.sectionId?"Class courses could not be verified. Your selected class and month are preserved.":"Attendance options are unavailable. Your chosen month and filters are preserved."}</p>
+        <strong>{classLookupFailed?"Couldn't verify which courses are taught to this class":"Couldn't load classes/courses for this college"}</strong>
+        <p className="mt-1">{classLookupFailed?"Class courses could not be verified. Your selected class and month are preserved.":"Attendance options are unavailable. Your chosen month and filters are preserved."}</p>
         <Link href={"/college/attendance?" + new URLSearchParams(Object.entries(query).filter((entry): entry is [string,string] => typeof entry[1] === "string")).toString()}
-          className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">{query.sectionId?"Retry class courses":"Retry"}</Link>
+          className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">{classLookupFailed?"Retry class courses":"Retry"}</Link>
       </Banner>
     </div>;
   }

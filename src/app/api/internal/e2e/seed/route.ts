@@ -45,10 +45,13 @@ export async function POST(request:Request){
    return NextResponse.json({status:"ERROR",error:"E2E_SEED_FORBIDDEN"},
     {status:403,headers});
   const result=await seedIsolatedE2EAcademicGraph(context);
-  // No "OK" or complete claim: missing video, project and placement
-  // domain writers must be visibly reported as unseeded.
-  return NextResponse.json({status:"PARTIAL",message:"E2E scaffold seeded",data:result},
-   {headers});
+  // Report the persisted ledger, never prospective IDs as proof of rows.
+  const complete=result.status==="COMPLETE";
+  return NextResponse.json({
+   status:complete?"OK":"PARTIAL",
+   message:complete?"E2E fixture seeded":"E2E scaffold partially seeded",
+   data:result,
+  },{headers});
  }catch{
   return NextResponse.json({status:"ERROR",error:"E2E_SEED_FAILED"},
    {status:503,headers});
