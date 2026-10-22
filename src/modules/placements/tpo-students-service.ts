@@ -29,6 +29,7 @@ import {
   placementApplicationScreenings,
   placementCandidateAcademicEvidence,
   placementCandidatePreferences,
+  placementCollegeRules,
   placementCompanies,
   placementCompanyRelationships,
   placementJobRounds,
@@ -265,6 +266,12 @@ export async function getTpoStudentsIntelligence(
   await requireLiveTpoStudentActor(context,input.collegeId);
 
   const db = getDb();
+
+  const [collegePlacementRule] = await db.select({
+    countsAsPlacedAt:placementCollegeRules.countsAsPlacedAt,
+  }).from(placementCollegeRules).where(eq(placementCollegeRules.collegeId,college.id)).limit(1);
+  const countsAsPlacedAt=(collegePlacementRule?.countsAsPlacedAt??"OFFER_RELEASED") as
+    "SELECTED"|"OFFER_RELEASED"|"OFFER_ACCEPTED";
 
   const [activeSeason] = await db
     .select({
@@ -630,6 +637,10 @@ export async function getTpoStudentsIntelligence(
             membershipId:
               placementApplications.membershipId,
             status: placementOffers.status,
+            kind:placementOffers.kind,
+            releasedAt:placementOffers.releasedAt,
+            employmentType:placementJobs.employmentType,
+            countsAsPlaced:placementJobs.countsAsPlaced,
             joiningStatus:
               placementJoiningOutcomes.status,
           })
@@ -842,6 +853,10 @@ export async function getTpoStudentsIntelligence(
       offer.membershipId,
       {
         status: offer.status,
+        kind:offer.kind,
+        releasedAt:offer.releasedAt,
+        employmentType:offer.employmentType,
+        countsAsPlaced:offer.countsAsPlaced,
         joiningStatus: offer.joiningStatus,
       },
     );
@@ -998,7 +1013,7 @@ export async function getTpoStudentsIntelligence(
       ambiguousSection,
     };
 
-    const derived=deriveTpoStudent(source, now);
+    const derived=deriveTpoStudent(source, now,countsAsPlacedAt);
     // Legacy numeric learner ID and unique ID are import provenance only.
     // Never use either instead of the college-scoped membership UUID.
     // Contact details and private object keys require separate need-to-know
@@ -1094,6 +1109,7 @@ export async function getTpoStudentsIntelligence(
       externalOffersAvailable,
       registrationScope: "ACTIVE_COHORT",
       applicationScope: "ACTIVE_SEASON",
+      countsAsPlacedAt,
       readinessVerified: false,
       prepCourseEvidenceAvailable:prep.available,
       placedVerified: false,
