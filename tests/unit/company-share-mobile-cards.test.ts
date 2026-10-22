@@ -51,11 +51,12 @@ it("discloses only the selected fields on either viewport", () => {
   expect(JSON.stringify(row!.cells)).not.toContain("+919999999999");
 });
 
-it("opens authorized external applicant links in a protected new tab with an accessible target", () => {
+it("opens authorized external applicant links in the same tab with an accessible label", () => {
   const page = read("src/app/company-share/[token]/page.tsx");
   expect(page).toContain('if(url.protocol==="https:"&&!url.username&&!url.password)');
-  expect(page).toContain('target="_blank" rel="noopener noreferrer"');
-  expect(page).toContain('aria-label={"Open "+COMPANY_SHARE_COLUMNS[key]+" for "+(row.displayName??row.applicationId)+" in a new tab"}');
+  expect(page).toContain('href={url.href} rel="noopener noreferrer"');
+  expect(page).not.toContain('target="_blank"');
+  expect(page).toContain('aria-label={"Open "+COMPANY_SHARE_COLUMNS[key]+" for "+(row.displayName??row.applicationId)+" (external website)"}');
   expect(page).toContain('className="inline-flex min-h-11 items-center');
   expect(page).toContain("focus-visible:outline-2");
 });
