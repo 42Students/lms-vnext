@@ -96,20 +96,9 @@ export default async function SuperAdminLectureHallsPage({
        {value:"/admin/electives",label:"Electives",href:"/admin/electives"},
        {value:"/admin/lecture-halls",label:"Lecture Halls",href:"/admin/lecture-halls"},
       ]}/>
-    <section aria-label="Create and review lecture halls" className="min-w-0">
-      <LectureHallManager key={collegeId} collegeId={collegeId}
-        availabilityBase="/admin/lecture-halls"
-        halls={halls.items} departments={departments.map(d => ({ id: d.id, name: d.name }))}
-        emptyState={total > 0 ? {
-          title: "No halls on this page", description: "Go to an earlier page to see matching rooms.",
-        } : {
-          title: "No lecture halls found.", description: "Clear filters or add a lecture hall.",
-        }} />
-    </section>
-    <details className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] p-3 sm:p-4"
-      open={Boolean(query.q||query.status!=="ALL"||query.roomType!=="ALL"||query.departmentId||query.minimumCapacity||query.maximumCapacity||query.upcoming!=="ALL"||query.pageSize!==10)||undefined}>
+    <details open className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] p-3 sm:p-4">
       <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">
-        Advanced filters and export of matching halls
+        Search, filters and export
       </summary>
       <p className="text-xs text-muted-foreground">Search by room name, type or description across the selected college. Export includes up to 1,000 matching rows; large results are marked as truncated.</p>
     <section aria-label="Lecture hall filters" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
@@ -173,6 +162,16 @@ export default async function SuperAdminLectureHallsPage({
       </div>
     </section>
     </details>
+    <section aria-label="Create and review lecture halls" className="min-w-0">
+      <LectureHallManager key={collegeId} collegeId={collegeId}
+        availabilityBase="/admin/lecture-halls"
+        halls={halls.items} departments={departments.map(d => ({ id: d.id, name: d.name }))}
+        emptyState={total > 0 ? {
+          title: "No halls on this page", description: "Go to an earlier page to see matching rooms.",
+        } : {
+          title: "No lecture halls found.", description: "Clear filters or add a lecture hall.",
+        }} />
+    </section>
     <section aria-label="Lecture hall results" className="min-w-0 space-y-[var(--lms-space-3)]">
       {departmentResult.status==="rejected"?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm">
         Departments could not be loaded. Rooms remain visible. Department filter choices are unavailable.{" "}
