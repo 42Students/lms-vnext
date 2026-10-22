@@ -456,6 +456,21 @@ export async function updateSection(
 
   try {
     return await db.transaction(async (tx)=>{
+    // Coordinate capacity edits with learner placement in the Section:
+    // an edit must not silently remove capacity already occupied.
+    const [lockedSection]=await tx.select({id:sections.id})
+      .from(sections).where(and(eq(sections.id,sectionId),eq(sections.status,"ACTIVE")))
+      .for("update").limit(1);
+    if(!lockedSection)throw new AcademicsServiceError("SECTION_NOT_FOUND");
+    if(input.capacity!==undefined&&input.capacity!==null){
+      const [occupancy]=await tx.select({n:sql<number>`count(*)::int`})
+        .from(sectionEnrollments).where(and(
+          eq(sectionEnrollments.sectionId,sectionId),
+          eq(sectionEnrollments.status,"ACTIVE"),
+        ));
+      if(input.capacity<Number(occupancy?.n??0))
+        throw new AcademicsServiceError("SECTION_CAPACITY_REACHED");
+    }
     const [updated] = await tx
       .update(sections)
       .set({
