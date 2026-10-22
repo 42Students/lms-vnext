@@ -127,7 +127,7 @@ export default async function FacultyAssessmentResultsPage({
                 ["Responded", item.responded],
                 ["No recorded response", item.pending],
                 ["Response rate", (() => {
-                  const rate = facultyRecordedResponseRate(item.eligible, item.responded);
+                  const rate = item.eligible === null ? null : facultyRecordedResponseRate(item.eligible, item.responded);
                   return rate === null ? "Unknown" : rate + "%";
                 })()],
                 ["Average graded score", item.averagePercent === null
