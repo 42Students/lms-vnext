@@ -143,3 +143,5 @@ AssertionError: expected -1 to be greater than 6784
 
 ```
 
+
+Deep-row static verification: [chat-11] ba8b1474, results in DEEP_agent2_4.md; migration replay and runtime tests not claimed.
