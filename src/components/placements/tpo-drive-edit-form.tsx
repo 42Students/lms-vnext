@@ -27,6 +27,8 @@ type Draft={id:string;title:string;description:string;updatedAt:string;status:st
  roleOptions:Array<{id:string;title:string;employmentType?:string;workMode?:string;
   minimumAnnualCtcInr?:number|null;maximumAnnualCtcInr?:number|null;
   stipendPerMonthInr?:number|null}>;
+ rounds:Array<{id:string;name:string;kind:string;status:string;sequence:number;scheduledAt:string|null}>;
+ roundsComplete:boolean;
  companyRelationshipId?:string;
  companyName:string|null;companyReady:boolean;
  employmentType:string;
@@ -329,6 +331,27 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    </Link>
   </section>
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Description<Textarea required name="description" defaultValue={job.description} maxLength={20000} rows={3} className={cls}/></label>
+  <section aria-label="Selection rounds preview" className="min-w-0 space-y-2 border-b border-border pb-3">
+   <h3 className="font-semibold text-sm text-foreground">Selection rounds</h3>
+   {job.rounds.length===0?<p className="text-xs text-body">No selection rounds configured.</p>:
+    <ol className="space-y-1 text-xs text-body">{job.rounds.map(round=>
+     <li key={round.id} className="break-words">
+      <span className="font-semibold">{round.sequence}. {round.name}</span>
+      {" · "}{round.kind.replaceAll("_"," ")}{" · "}{round.status}
+      {round.scheduledAt?" · "+new Intl.DateTimeFormat("en-IN",{
+       timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+      }).format(new Date(round.scheduledAt))+" IST":""}
+     </li>)}</ol>}
+   {!job.roundsComplete?<p role="status" className="text-xs text-warning">
+    Showing the first 100 rounds. Visit the rounds workspace for the full list.</p>:null}
+   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/rounds"}
+    className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline md:min-h-9">
+    Manage selection rounds
+   </Link>
+   <p className="text-xs text-muted-foreground">
+    Company identity, recruiter ownership, role packages and round schedules require
+    their separate authorized editing workflows.</p>
+  </section>
   <section aria-label="Job description attachment" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
    <h3 className="text-sm font-semibold text-foreground">Job description (PDF or Word)</h3>
    <p className="text-xs leading-5 text-body">Optional PDF, DOC or DOCX, up to 5 MB.
