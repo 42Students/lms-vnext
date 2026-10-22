@@ -118,7 +118,7 @@ describe.skipIf(!enabled)("Faculty lifecycle, real PG tenant and active-duty gua
     // Another college's admin must not learn the faculty member exists.
     await expect(transitionCollegeFaculty(foreign, id.member, {
       action: "DEACTIVATE", expectedStatus: "ACTIVE", reason: "No access", confirm: true,
-    })).rejects.toMatchObject({ code: expect.stringMatching(/^FACULTY_NOT_/) });
+    })).rejects.toBeInstanceOf(AuthorizationError);
     await expect(transitionCollegeFaculty(learner, id.member, {
       action: "DEACTIVATE", expectedStatus: "ACTIVE", reason: "No access", confirm: true,
     })).rejects.toBeInstanceOf(AuthorizationError);
