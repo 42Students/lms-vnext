@@ -30,7 +30,9 @@ export const HR_LEGACY_DRIVE_ACTION_COVERAGE = {
  results: { legacy: "POST /drives/{jobId}/rounds/{roundId}/results", vNext: null, state: "not-verified" },
  slotRead: { legacy: "GET /drives/{jobId}/rounds/{roundId}/slots", vNext: "hr-interview-slot-service", state: "verify-round-projection" },
  slotPropose: { legacy: "POST /drives/{jobId}/rounds/{roundId}/slots", vNext: "POST /api/placements/recruiter/drives/{jobId}/interview-slots", state: "single-slot-adapter" },
- selections: { legacy: "POST /drives/{jobId}/selections", vNext: null, state: "not-verified" },
+ selections: { legacy: "POST /drives/{jobId}/selections",
+   vNext: "POST /api/placements/recruiter/drives/{jobId}/selections",
+   state: "adapted-with-audited-proposal-and-independent-TPO-verification" },
 } as const;
 
 /** Recruiter round edits intentionally map destructive legacy removal to
