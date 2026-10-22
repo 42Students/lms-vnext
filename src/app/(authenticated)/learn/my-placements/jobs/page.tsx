@@ -1,4 +1,7 @@
 import { Banner } from "@/components/ui/banner";
+import {ErrorState} from "@/components/ui/error-state";
+import {AuthorizationError} from "@/modules/permissions/policy";
+import {PlacementsServiceError} from "@/modules/placements/errors";
 import { PageLoading } from "@/components/ui/page-loading";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -64,10 +67,27 @@ function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number
 
 export default async function LearnerPlacementJobsPage() {
   const context = await getCurrentRequestContext();
-  const [{ rows, snapshotNowIso },savedRead] = await Promise.all([
-    getOwnLearnerDriveBrowse(context),
-    readOptionalLearnerPlacementSource(() => listOwnPlacementSavedJobs(context)),
-  ]);
+  const browseRead=await getOwnLearnerDriveBrowse(context)
+    .then(value=>({ok:true as const,value}))
+    .catch((error:unknown)=>{
+      // A denied, blocked or stale session must keep its existing error
+      // boundary; never turn an authorization failure into a public Retry.
+      if(error instanceof AuthorizationError||error instanceof PlacementsServiceError)
+        throw error;
+      return {ok:false as const};
+    });
+  if(!browseRead.ok)return <div className="min-w-0 space-y-5">
+    <h2 className="text-[18px] font-semibold text-[var(--lms-heading)]">Drives</h2>
+    <ErrorState title="Placement drives unavailable"
+      description="Your placement drives could not be loaded. This is not an empty jobs list. Try again."
+      action={<Link href="/learn/my-placements/jobs"
+        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+        Retry loading drives
+      </Link>}/>
+  </div>;
+  const {rows,snapshotNowIso}=browseRead.value;
+  const savedRead=await readOptionalLearnerPlacementSource(
+    ()=>listOwnPlacementSavedJobs(context));
   const savedJobs=savedRead.value??[];
 
   return (
