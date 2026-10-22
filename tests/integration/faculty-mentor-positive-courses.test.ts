@@ -131,6 +131,14 @@ async function cleanup() {
     join course_learning_paths lp on lp.id=l.learning_path_id
     join course_offerings co on co.id=lp.offering_id join courses c on c.id=co.course_id
     where c.code like $1)`, [codePattern]);
+  // Remove only the disposable C4POS fixture's restricted grade events.
+  await pool.query(`delete from assignment_grade_events where assignment_submission_id in (
+    select s.id from assignment_submissions s
+    join course_assignments a on a.id=s.assignment_id
+    join course_lessons l on l.id=a.lesson_id
+    join course_learning_paths lp on lp.id=l.learning_path_id
+    join course_offerings o on o.id=lp.offering_id
+    join courses c on c.id=o.course_id where c.code like $1)`,[codePattern]);
   await pool.query(`delete from assignment_submissions where assignment_id in (
     select a.id from course_assignments a join course_lessons l on l.id=a.lesson_id
     join course_learning_paths lp on lp.id=l.learning_path_id
