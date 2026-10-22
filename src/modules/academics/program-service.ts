@@ -244,7 +244,7 @@ export async function listProgramsPage(
   const pageSize = Math.max(1, Math.min(100, Math.trunc(raw.pageSize ?? 20) || 20));
   const q = (raw.q ?? "").trim();
   if (q.length > 100) throw new Error("Invalid program search");
-  const escaped = q.replace(/[\\%_]/g, "\\  const pageSize = Math.max(1, Math.min(100, Math.trunc(raw.pageSize ?? 20) || 20));
+  const escaped = q.replace(/[\\%_]/g, "\\$&");
   const conditions = and(");
   const searchPattern = `%${escaped}%`;
   const conditions = and(
