@@ -14,7 +14,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-10/W3_src_modules_operations_scheduled-job-runner.ts.md` (edit src/modules/operations/scheduled-job-runner.ts; 17 findings; best P0)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-10/W3_src_modules_operations_postgres-scheduled-job-lease-store.ts.md` (edit src/modules/operations/postgres-scheduled-job-lease-store.ts; 2 findings; best P0)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-10/W3_NEW_docs_audit_gap2_lane-5_u032-cross05-scheduled-jobs.md.md` (new; 1 findings; best P0)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-10/W3_src_components_college_college-role-directory-workspace.tsx.md` (edit src/components/college/college-role-directory-workspace.tsx; 9 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-10/W3_src_components_college_college-role-directory-workspace.tsx.md` (edit src/components/college/college-role-directory-workspace.tsx; 9 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-10/W3_src_components_tracker_tracker-report-form.tsx.md` (edit src/components/tracker/tracker-report-form.tsx; 5 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-10/W3_src_components_tracker_tracker-live-logs-explorer.tsx.md` (edit src/components/tracker/tracker-live-logs-explorer.tsx; 4 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-10/W3_src_modules_operations_scheduled-job-lease.ts.md` (edit src/modules/operations/scheduled-job-lease.ts; 3 findings; best P1)
