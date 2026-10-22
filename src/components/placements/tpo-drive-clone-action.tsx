@@ -55,7 +55,7 @@ export function TpoDriveCloneAction({jobId,label="Run it again"}:{jobId:string;l
    {error?<InlineNotice tone="error" message={error}/>:null}
   </div>
   <ConfirmDialog open={open} onOpenChange={next=>{if(!pending)setOpen(next);}} title="Run this drive again as a new draft?"
-   description="Dates, candidates, rounds, results, offers and external links are cleared. Package details and eligibility rules are copied; review old batches and passing years before publishing."
+   description="Round names, types and settings are copied, but round dates, venue bookings, candidates, results, offers and external links are cleared. Review old batches and passing years before publishing."
    confirmVariant="primary" confirmLabel="Create draft" pending={pending} onConfirm={()=>void clone()}/>
  </>;
 }
