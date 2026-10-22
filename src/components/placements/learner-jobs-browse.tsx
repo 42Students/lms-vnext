@@ -180,8 +180,9 @@ export function LearnerJobsBrowse({
   const closeMobileFilters=()=>{setMobileOpen(false);mobileFilterButton.current?.focus();};
   const resetFilters=()=>{
     setSearch("");
+    // Keep the active saved/all tab and current sort when clearing facets.
     updateQuery({q:null,type:null,loc:null,eligible:null,soon:null,
-      availability:null,sort:null});
+      availability:null,departmentId:null,programId:null,jobType:null,page:null});
     setMobileOpen(false);
   };
   return (
