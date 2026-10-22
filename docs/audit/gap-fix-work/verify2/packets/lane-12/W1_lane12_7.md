@@ -126,3 +126,10 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx
 - Legacy: `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/shortlisted.js:20-31` — No-college assignment warning describes how to contact administrator.
 - Expected fix: Display explicit unassigned college recovery message.
+
+## Lane-12 fast verification triage (2026-10-22)
+
+Confirmed via cited vNext code (OK, limited to described behavior): G2-7-019-049, G2-9-002-020.
+
+DEFERRED — deeper implementation/API/migration review required; these are NOT verified or fixed: G2-7-013-080, G2-7-015-014, G2-7-016-011, G2-7-017-019, G2-7-018-008, G2-7-035-005, G2-8-031-021, G2-8-031-037, G2-8-031-051, G2-11-024-014, G2-11-030-026, G2-11-030-049, G2-15-026-010, G2-15-026-011, G2-15-026-015, G2-8-003-021, G2-8-025-037, G2-8-024-042, G2-8-022-009, G2-9-007-068, G2-9-015-097, G2-9-012-047, G2-9-014-004.
+This packet has been triaged, not certified parity-complete; no unverified row is claimed OK.
