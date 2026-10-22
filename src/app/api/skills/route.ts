@@ -79,7 +79,7 @@ export async function POST(request:Request) {
     const selected=selectionInput.parse(payload);
     await recordSkillSelection(context,{
       name:selected.name,source:selected.action==="SELECT_V1"?"v1":"v2",
-      skillId:selected.action==="SELECT_V1"?selected.skillId:undefined,
+      ...(selected.action==="SELECT_V1"?{skillId:selected.skillId}:{}),
     });
     return NextResponse.json({recorded:true},{
       headers:{"Cache-Control":"private, no-store"}});
@@ -316,7 +316,7 @@ async function recordSelectedSkillIds(
       if(!receipt.length){
         const [previous]=await tx.select({metadata:activityEvents.metadata})
           .from(activityEvents).where(eq(activityEvents.dedupeKey,dedupeKey)).limit(1);
-        const previousIds=previous?.metadata?.skillIds;
+        const previousIds=previous?.metadata?.["skillIds"];
         if(!Array.isArray(previousIds)||JSON.stringify(previousIds)!==JSON.stringify(ids))
           return "IDEMPOTENCY_CONFLICT" as const;
         return "ALREADY_RECORDED" as const;

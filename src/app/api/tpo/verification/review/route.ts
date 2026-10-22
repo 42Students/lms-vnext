@@ -20,7 +20,7 @@ export async function POST(request:Request){
   // UUID membership, section, action and expectedVersion are now one
   // validated JSON body, with the reviewer derived from the TPO session.
   const input=verificationReviewInput.parse(await request.json());
-  const record=await reviewProfileVerification(context,input,
+  const record=await reviewProfileVerification(context,{learnerMembershipId:input.learnerMembershipId,section:input.section,expectedVersion:input.expectedVersion,action:input.action,...(input.reason===undefined?{}:{reason:input.reason})},
    createProfileVerificationRepository(verifyPrivateDocumentReceipt));
   // The locked writer persists an immutable activity event AND an in-app notification
   // in the decision transaction. TODO(messaging): queue email/SMS intent via the

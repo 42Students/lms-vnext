@@ -60,7 +60,7 @@ export async function POST(request: Request) {
       const [existing] = await tx.select({ metadata: activityEvents.metadata })
         .from(activityEvents).where(eq(activityEvents.dedupeKey, dedupeKey)).limit(1);
       if (existing) {
-        return { outcome: existing.metadata.fingerprint === signature ? "duplicate" : "conflict" } as const;
+        return { outcome: existing.metadata["fingerprint"] === signature ? "duplicate" : "conflict" } as const;
       }
       const [rate] = await tx.select({ total: sql<number>`count(*)::integer` })
         .from(activityEvents).where(and(
