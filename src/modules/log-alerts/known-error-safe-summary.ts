@@ -5,7 +5,7 @@ export type KnownErrorSafeSummaryInput={
   environment:string;
   fixStatus:string;
   occurrences:string;
-  affectedAccounts:number;
+  affectedAccounts:number|null;
   firstSeen:string;
   lastSeen:string;
   issuePublicId:string|null;
@@ -20,7 +20,7 @@ export function knownErrorSafeSummary(input:KnownErrorSafeSummaryInput):string {
   "Environment: "+safe(input.environment,32),
   "State: "+safe(input.fixStatus,32),
   "Occurrences: "+count,
-  "Affected accounts (count only): "+Math.max(0,Math.floor(input.affectedAccounts)),
+  "Affected accounts (count only): "+(input.affectedAccounts===null?"unknown":Math.max(0,Math.floor(input.affectedAccounts))),
   "First seen (IST): "+safe(input.firstSeen),
   "Last seen (IST): "+safe(input.lastSeen),
   "Linked issue: "+(input.issuePublicId?safe(input.issuePublicId,32):"none"),

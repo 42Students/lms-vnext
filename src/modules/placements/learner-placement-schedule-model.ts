@@ -25,19 +25,19 @@ export function learnerRoundLastActiveInstant(start:Date,durationMinutes:number|
   Math.min(durationMinutes,24*60):60;
  return startMs+duration*60*1000;
 }
-export function partitionLearnerPlacementSchedule(
-  rows: readonly PlacementScheduleRow[], now: Date,
-): { ahead: PlacementScheduleRow[]; past: PlacementScheduleRow[]; undated: PlacementScheduleRow[] } {
-  const ahead: PlacementScheduleRow[] = [];
-  const past: PlacementScheduleRow[] = [];
-  const undated: PlacementScheduleRow[] = [];
+export function partitionLearnerPlacementSchedule<T extends PlacementScheduleRow>(
+  rows: readonly T[], now: Date,
+): { ahead: T[]; past: T[]; undated: T[] } {
+  const ahead: T[] = [];
+  const past: T[] = [];
+  const undated: T[] = [];
   for (const row of rows) {
     const date = row.exception?.scheduledAt ?? row.scheduledAt;
     if (!date || !Number.isFinite(date.getTime())) undated.push(row);
     else if (learnerRoundLastActiveInstant(date,row.durationMinutes)>now.getTime()) ahead.push(row);
     else past.push(row);
   }
-  const byDate=(a:PlacementScheduleRow,b:PlacementScheduleRow)=>
+  const byDate=(a:T,b:T)=>
     (a.exception?.scheduledAt??a.scheduledAt)!.getTime()-
     (b.exception?.scheduledAt??b.scheduledAt)!.getTime();
   ahead.sort(byDate);

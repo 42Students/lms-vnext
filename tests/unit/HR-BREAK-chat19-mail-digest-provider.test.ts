@@ -14,7 +14,7 @@ vi.mock("@/modules/notifications/zeptomail-email",()=>({
 vi.mock("@/modules/messaging/template-boundary-model",()=>({
  isCampaignTemplateKey:deps.template,
 }));
-import {sendRecruiterMessageDigest} from "@/modules/placements/recruiter-message-email-provider";
+import {sendRecruiterMessageDigest,safeRecruiterHeaderName} from "@/modules/placements/recruiter-message-email-provider";
 
 const replyDomain="reply.42lms.com";
 const replyTo="r-"+"a".repeat(32)+"@"+replyDomain;
@@ -90,7 +90,8 @@ describe("HR-BREAK-MAIL-DIGEST-15: provider boundary, recipient privacy and non-
   const parsed=JSON.parse(request.body);
   expect(parsed.template_key).toBe("digest-template");
   expect(parsed.template_key).not.toBe(settings.otpTemplateKey);
-  expect(parsed.reply_to).toEqual([{address:replyTo}]);
+  expect(parsed.reply_to).toEqual([{address:replyTo,
+   name:safeRecruiterHeaderName(input.collegeName+" Campus Recruitment")}]);
   expect(parsed.to[0].email_address.address).toBe(input.recipient);
   expect(parsed.to[0].email_address.name).toBe("Recruiter <Alice>");
   expect(parsed.merge_info.message1).toContain("&lt;img&gt;");

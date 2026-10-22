@@ -28,7 +28,7 @@ const context={user:{id:"recruiter"},recruiter:{
 
 const builder=(rows:unknown[])=>({
  from(){return this;},innerJoin(){return this;},where(){return this;},
- orderBy(){return this;},groupBy(){return Promise.resolve(rows);},
+ orderBy(){return this;},having(){return this;},groupBy(){return Promise.resolve(rows);},
  limit(){return Promise.resolve(rows);},
  then(ok:(x:unknown[])=>unknown,fail?:(error:unknown)=>unknown){
   return Promise.resolve(rows).then(ok,fail);
@@ -46,16 +46,21 @@ describe("HR-BREAK-weak-services-01: actual service branches with mocked persist
   mock.requests.mockResolvedValue([]);
  });
  it("branches service denies all lookup for wrong college or revoked central policy",async()=>{
-  expect(await listRecruiterCollegeBranches(context as never,otherCollege)).toEqual([]);
+  await expect(listRecruiterCollegeBranches(context as never,otherCollege))
+   .rejects.toThrow("placements.recruiter.read");
   expect(mock.getDb).not.toHaveBeenCalled();
-  mock.can.mockReturnValue(false);
-  expect(await listRecruiterCollegeBranches(context as never,college)).toEqual([]);
+  mock.requirePermission.mockImplementationOnce(()=>{throw new Error("placements.recruiter.read");});
+  await expect(listRecruiterCollegeBranches(context as never,college))
+   .rejects.toThrow("placements.recruiter.read");
   expect(mock.getDb).not.toHaveBeenCalled();
-  mock.can.mockReturnValue(true);
-  mock.rows=[[{name:"Computer Science"},{name:"Electronics"}]];
+  // The demographics reader suppresses low-count groups in SQL before
+  // projecting names. Only authorized aggregate groups reach the branch list.
+  mock.rows=[[{total:25}],
+   [{branch:"Computer Science",roundedCount:15},{branch:"Electronics",roundedCount:10}],
+   []];
   expect(await listRecruiterCollegeBranches(context as never,college))
    .toEqual(["Computer Science","Electronics"]);
-  expect(mock.can).toHaveBeenCalledWith(context,"placements.recruiter.read",{
+  expect(mock.requirePermission).toHaveBeenCalledWith(context,"placements.recruiter.read",{
    collegeId:college,placementCompanyRelationshipId:"rel-a",
   });
  });

@@ -7,7 +7,7 @@ import {inboundMailListQuerySchema} from "./message-model";
 import {z} from "zod";
 import {inboundMailMessagesStaged} from "./staged-schema";
 import {inboundMailStatusTransitionAllowed} from "./triage-transition-model";
-import {safeInboundPreview,type InboundMailRoutingStatus} from "./message-model";
+import {safeInboundPreview,inboundMailRoutingStatuses,type InboundMailRoutingStatus} from "./message-model";
 import {activityEvents} from "@/db/schema";
 
 export type InboundMailItem={
@@ -66,7 +66,7 @@ export const drizzleInboundMailAdminRepository:InboundMailAdminRepository={
    const pattern="%"+escaped+"%";
    conditions.push(or(ilike(t.fromAddress,pattern),ilike(t.subject,pattern),ilike(t.bodyPlain,pattern))!);
   }
-  return getDb().select({
+  const rows=await getDb().select({
    id:t.id,receivedAt:t.receivedAt,fromAddress:t.fromAddress,toAddress:t.toAddress,
    // List rows have a bounded preview. Fetch the entire body ONLY through
    // getInboundMailDetailForAdmin after global Super Admin authorization.
@@ -77,6 +77,10 @@ export const drizzleInboundMailAdminRepository:InboundMailAdminRepository={
     // ReceivedAt is the delivery order; ID is the stable tie-breaker when
     // messages arrive in the same millisecond or a worker is delayed.
     .orderBy(desc(t.receivedAt),desc(t.id)).limit(51).offset((input.page-1)*50);
+  return rows.map(row=>({...row,
+   kind:row.kind==="REPLY"?"REPLY" as const:"OTHER" as const,
+   routingStatus:inboundMailRoutingStatuses.find(status=>status===row.routingStatus)??"STORED",
+  }));
  },
 };
 export async function listInboundMailForAdmin(
@@ -178,7 +182,10 @@ export async function getInboundMailDetailForAdmin(
   status:t.status,version:t.version,kind:t.kind,routingStatus:t.routingStatus,
   handledAt:t.handledAt,
  }).from(t).where(eq(t.id,id)).limit(1);
- return row??null;
+ return row?{...row,
+  kind:row.kind==="REPLY"?"REPLY" as const:"OTHER" as const,
+  routingStatus:inboundMailRoutingStatuses.find(status=>status===row.routingStatus)??"STORED",
+ }:null;
 }
 
 /** List previews never imply successful automatic recruiter posting. The

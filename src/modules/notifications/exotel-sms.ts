@@ -181,8 +181,8 @@ export async function listSmsDeliveryAttemptsForSupport(context: RequestContext,
   if (!ready.rows[0]?.ready) return {ready:false,entries:[],content:[],totalElements:0,totalPages:0,
     page:query.page,number:query.page-1,size:query.size,retryable:true,
     readError:"SMS_LEDGER_UNAVAILABLE",note:SMS_PROVIDER_ACCEPTANCE_NOTE};
-  const [{total = 0} = {}] = (await getDb().execute(sql<{total:number}>`
-    select count(*)::int as total from messaging_sms_delivery_attempts where ${predicate}`)).rows;
+  const total=Number((await getDb().execute(sql<{total:number}>`
+    select count(*)::int as total from messaging_sms_delivery_attempts where ${predicate}`)).rows[0]?.total ?? 0);
   const offset=(query.page-1)*query.size;
   const records=await getDb().execute(sql<{
     id:string;purpose:string;provider:string;recipientSuffix:string|null;collegeId:string|null;
@@ -197,10 +197,11 @@ export async function listSmsDeliveryAttemptsForSupport(context: RequestContext,
   `);
   const content=records.rows.map(row=>({
     ...row, statusLabel:row.outcome==="PROVIDER_ACCEPTED"?"Provider accepted":"Failed",
-    failureSummary:row.safeFailureCode?SMS_FAILURE_LABELS[row.safeFailureCode]??"SMS attempt failed.":null,
+    failureSummary:typeof row.safeFailureCode==="string" && row.safeFailureCode
+      ?SMS_FAILURE_LABELS[row.safeFailureCode]??"SMS attempt failed.":null,
   }));
-  return {ready:true,entries:content,content,totalElements:total??0,
-    totalPages:Math.ceil((total??0)/query.size),page:query.page,
+  return {ready:true,entries:content,content,totalElements:total,
+    totalPages:Math.ceil(total/query.size),page:query.page,
     number:query.page-1,size:query.size,retryable:false,readError:null,
     note:SMS_PROVIDER_ACCEPTANCE_NOTE};
 }

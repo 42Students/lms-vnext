@@ -63,7 +63,7 @@ export function recruiterDigestReadiness(
  if(endpoint.protocol!=="https:"||endpoint.username||endpoint.password||!config.token.trim())
   return {configured:false,reason:"PROVIDER_NOT_CONFIGURED"};
  const key=(env.RECRUITER_MESSAGE_DIGEST_TEMPLATE_KEY??"").trim();
- if(!isCampaignTemplateKey(key)||key===config.otpTemplateKey)
+ if(!key||!isCampaignTemplateKey(key)||key===config.otpTemplateKey)
   return {configured:false,reason:"TEMPLATE_NOT_CONFIGURED"};
  if(!isRecruiterReplyAddress("r-"+"a".repeat(32)+"@"+(env.RECRUITER_MESSAGE_REPLY_DOMAIN??""),
   env.RECRUITER_MESSAGE_REPLY_DOMAIN??""))
@@ -112,7 +112,7 @@ export async function sendRecruiterMessageDigest(
  let endpoint:URL;
  try{endpoint=new URL(config.apiUrl);}catch{return false;}
  if(endpoint.protocol!=="https:"||endpoint.username||endpoint.password)return false;
- if(!config.token.trim()||!isCampaignTemplateKey(key)||key===config.otpTemplateKey ||
+ if(!config.token.trim()||!key||!isCampaignTemplateKey(key)||key===config.otpTemplateKey ||
     !isRecruiterReplyAddress(digest.replyTo,env.RECRUITER_MESSAGE_REPLY_DOMAIN??"")||
     digest.messages.length===0)return false;
  // A display name is allowed to vary; a From address never varies unless

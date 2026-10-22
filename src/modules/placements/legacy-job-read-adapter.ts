@@ -29,7 +29,7 @@ export function summarizeLegacyLearnerJobs(rows: readonly Row[]) {
       jobDescription: first.job.description ?? "",
       jobType: first.job.employmentType,
       location: first.job.locations?.join(", ") || "Not specified",
-      candidatePreferences: first.job.candidatePreferences ?? null,
+      candidatePreferences: first.job.legacyCandidatePreferences ?? null,
       isVisible: true,
       visibilityReason: null,
       canApply,
