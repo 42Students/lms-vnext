@@ -74,8 +74,11 @@ export async function previewCollegeRecurringSchedule(context: RequestContext, r
   }
   const slots = expandIstSessions(input);
   if (!slots.length) return { slots: [], ready: 0, blocked: 0, notice: "No matching weekdays in this date range" };
-  const first = new Date(slots[0].startsAt);
-  const last = new Date(slots[slots.length - 1].endsAt);
+  const firstSlot = slots[0];
+  const lastSlot = slots[slots.length - 1];
+  if (!firstSlot || !lastSlot) throw new RecurringPreviewNotFoundError();
+  const first = new Date(firstSlot.startsAt);
+  const last = new Date(lastSlot.endsAt);
   const existing = await db.select({
     sectionId: sectionScheduleEvents.sectionId,
     facultyMembershipId: sectionScheduleEvents.facultyMembershipId,
