@@ -945,9 +945,17 @@ export type ProjectMeetingTransitionInput = z.infer<
 export function normalizeLegacyProjectBlueprint(raw:unknown):unknown{
  if(!raw||typeof raw!=="object"||Array.isArray(raw))return raw;
  const input=raw as Record<string,unknown>;
- const normalizeRows=(value:unknown)=>Array.isArray(value)
-   ?value.filter((item):item is Record<string,unknown>=>Boolean(item)&&
-      typeof item==="object"&&!Array.isArray(item)):[];
+ // Never drop malformed source rows: that would silently change release,
+ // sprint, task or resource ordering and could rewrite task references.
+ const normalizeRows=(value:unknown,section:string):Record<string,unknown>[]=>{
+   if(value===null||value===undefined)return [];
+   if(!Array.isArray(value))throw new Error("Legacy "+section+" must be a list");
+   return value.map((item,index)=>{
+     if(!item||typeof item!=="object"||Array.isArray(item))
+       throw new Error("Legacy "+section+" row "+(index+1)+" is invalid");
+     return item as Record<string,unknown>;
+   });
+ };
  const slug=(value:string)=>value.normalize("NFKD").toLowerCase()
    .replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-")
    .replace(/^-|-$/g,"").slice(0,55).replace(/-$/g,"")||"item";
@@ -967,16 +975,16 @@ export function normalizeLegacyProjectBlueprint(raw:unknown):unknown{
    seen.add(next);return next;
  };
  const sprintSeen=new Set<string>(),taskSeen=new Set<string>(),resourceSeen=new Set<string>();
- const sprints=normalizeRows(input.sprints).map(row=>{
+ const sprints=normalizeRows(input.sprints,"sprints").map(row=>{
    const legacy=typeof row.key==="string"?row.key:
      typeof row.sprintKey==="string"?row.sprintKey:"sprint";
    return {...row,key:unique(legacy,sprintSeen)};
  });
- const originalSprints=normalizeRows(input.sprints);
+ const originalSprints=normalizeRows(input.sprints,"sprints");
  const sprintMap=new Map(originalSprints.map((row,i)=>[
    String(row.key??row.sprintKey??""),String(sprints[i]?.key??""),
  ]));
- const tasks=normalizeRows(input.tasks).map(row=>{
+ const tasks=normalizeRows(input.tasks,"tasks").map(row=>{
    const original=String(row.key??row.taskKey??row.title??"task");
    // Retain invalid original keys for field-specific Zod errors, rather than
    // throwing during conversion or truncating a historical identifier.
@@ -993,7 +1001,7 @@ export function normalizeLegacyProjectBlueprint(raw:unknown):unknown{
    link:"LINK",pdf:"PDF",doc:"DOCUMENT",document:"DOCUMENT",
    ppt:"SLIDES",slides:"SLIDES",video:"VIDEO",file:"FILE",
  };
- const resources=normalizeRows(input.resources).map(row=>{
+ const resources=normalizeRows(input.resources,"resources").map(row=>{
    const original=String(row.key??row.title??"resource");
    const legacyType=String(row.type??row.resourceType??"LINK").toLowerCase();
    const {isPinned:_,isRequired:__,resourceType:___,...rest}=row;
