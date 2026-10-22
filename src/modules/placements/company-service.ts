@@ -362,6 +362,7 @@ export async function createPlacementCompany(
         name:input.name,websiteUrl:input.websiteUrl??null,
         primaryDomain:domain,industry:input.industry??null,about:input.about??null,
         createdByUserId:context.user.id,
+        logoPublicUrl:input.logoPublicUrl??null,
       }).onConflictDoNothing().returning();
       company=created??null;
       if(!company){

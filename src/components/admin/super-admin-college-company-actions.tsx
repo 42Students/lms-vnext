@@ -19,12 +19,13 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
  const [error,setError]=useState(""),[notice,setNotice]=useState("");
  const [name,setName]=useState(""),[primaryDomain,setPrimaryDomain]=useState("");
  const [websiteUrl,setWebsiteUrl]=useState(""),[industry,setIndustry]=useState("");
+ const [logoPublicUrl,setLogoPublicUrl]=useState("");
  const [about,setAbout]=useState(""),[contactName,setContactName]=useState("");
  const [contactEmail,setContactEmail]=useState(""),[contactPhone,setContactPhone]=useState("");
  const [notes,setNotes]=useState("");
- const dirty=Boolean([name,primaryDomain,websiteUrl,industry,about,contactName,contactEmail,contactPhone,notes].some(v=>v.trim()));
+ const dirty=Boolean([name,primaryDomain,websiteUrl,logoPublicUrl,industry,about,contactName,contactEmail,contactPhone,notes].some(v=>v.trim()));
  function clear(){
-  setName("");setPrimaryDomain("");setWebsiteUrl("");setIndustry("");setAbout("");
+  setName("");setPrimaryDomain("");setWebsiteUrl("");setLogoPublicUrl("");setIndustry("");setAbout("");
   setContactName("");setContactEmail("");setContactPhone("");setNotes("");setError("");
  }
  function requestClose(){
@@ -46,6 +47,11 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
    if(url.protocol!=="https:"||url.username||url.password)
     throw new Error("INVALID_URL");
   }catch{setError("Company website must be a valid https link");return;}}
+  if(logoPublicUrl.trim()){
+   try{const url=new URL(logoPublicUrl.trim());
+    if(url.protocol!=="https:"||url.username||url.password)throw new Error("INVALID_URL");
+   }catch{setError("Company logo must be a valid HTTPS link");return;}
+  }
   if(industry.trim().length>100||about.trim().length>2000||notes.trim().length>2000){
    setError("Industry is limited to 100 characters; description and notes to 2,000.");return;
   }
@@ -63,7 +69,7 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
      method:"POST",headers:{"content-type":"application/json"},
      body:JSON.stringify({collegeId,name:companyName,primaryDomain:domain||undefined,
       websiteUrl:website||undefined,industry:industry.trim()||undefined,
-      about:about.trim()||undefined,
+      about:about.trim()||undefined,logoPublicUrl:logoPublicUrl.trim()||undefined,
       ...(contactName.trim()?{contactPersonName:contactName.trim()}:{}),
       ...(email?{contactEmail:email}:{}),
       ...(phone?{contactPhone:phone}:{}),
@@ -119,9 +125,11 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
      <label className={labelClass}>Website (HTTPS)
       <Input type="url" maxLength={500} placeholder="https://example.com" value={websiteUrl} onChange={e=>setWebsiteUrl(e.target.value)} className={fieldClass}/>
      </label>
-     <div className={labelClass}>Company logo
-      <p className="text-xs font-normal leading-5 text-muted-foreground">Logo belongs to the shared company identity. Create this college relationship first, then ask a platform administrator to edit its logo from the global company catalogue. A college-only logo cannot override other colleges&apos; records.</p>
-     </div>
+     <label className={labelClass}>Company logo (HTTPS)
+      <Input type="url" maxLength={500} placeholder="https://example.com/logo.png"
+       value={logoPublicUrl} onChange={e=>setLogoPublicUrl(e.target.value)} className={fieldClass}/>
+      <span className="text-xs font-normal leading-5 text-muted-foreground">Saved on a new company identity only. An existing shared company keeps its verified logo.</span>
+     </label>
     </fieldset>
     <fieldset className="min-w-0 space-y-3 border-t border-border pt-3" disabled={pending}>
      <legend className="font-semibold text-[var(--lms-heading)]">Contact</legend>

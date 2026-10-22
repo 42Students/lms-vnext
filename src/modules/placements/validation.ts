@@ -52,6 +52,10 @@ export const createPlacementCompanyInputSchema = z
     primaryDomain: placementCompanyDomainSchema.optional(),
     industry: z.string().trim().max(100).optional(),
     about: z.string().trim().max(2000).optional(),
+    logoPublicUrl: z.string().trim().url().max(500).refine(
+      value=>{try{const u=new URL(value);return u.protocol==="https:"&&!u.username&&!u.password;}catch{return false;}},
+      "Company logo must be a valid HTTPS link",
+    ).optional(),
     // College-private CRM fields are committed atomically with the link.
     contactPersonName: z.string().trim().max(150).nullable().optional(),
     contactEmail: z.string().trim().max(150).email().nullable().optional(),
