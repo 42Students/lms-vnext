@@ -15,7 +15,7 @@ describe("UX-UNOWNED-TABLE-06 private verification education grid",()=>{
     ]);
     expect(rows).toHaveLength(3);
     expect(rows[0]).toEqual({
-      id:"3",level:"B.Tech",institution:"",year:"2026",
+      id:"3",level:"B.Tech",institution:"Institute A",year:"2026",
       marks:"9.1",marksheet:"Submitted",
     });
     expect(rows[1]).toEqual({
@@ -37,7 +37,7 @@ describe("UX-UNOWNED-TABLE-06 private verification education grid",()=>{
     expect(source).toContain('verificationEducationRows(detail.review.submittedSnapshot.education)');
     for(const col of ["Level","Institution","Year","Marks","Marksheet"])
       expect(source).toContain('header:"'+col+'"');
-    expect(source).toContain('Open {doc.purpose.toLowerCase()} (private signed link)');
+    expect(source).toContain('Open {doc.purpose==="RESUME"?"resume":doc.purpose==="MARKSHEET"?"marksheet":"document"} (private signed link)');
     expect(source).not.toMatch(/<\s*table\b/i);
     expect(source).not.toMatch(/<\s*(thead|tbody|tr|td)\b/i);
   });

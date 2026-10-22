@@ -5,12 +5,12 @@ const source=(name:string)=>read("src/components/"+name+".tsx");
 describe("Chat-6 independent TPO first-third cross-audit",()=>{
  it("UX-tpo-audit-21 audit grid uses mobile cards and retains selection and copy",()=>{
   const code=source("tpo/tpo-audit-grid");
-  expect(code).toContain("<DataTable");
-  expect(code).toContain("mobilePriority:\"primary\"");
-  expect(code).toContain("mobilePriority:\"action\"");
-  expect(code).toContain("Select all visible rows");
+  expect(code).toContain("<TpoAuditQuartz");
+  expect(code).toContain('mobilePrimaryKeys={["event","when"]}');
+  expect(code).toContain("mobileActionsCollapsible");
+  expect(code).toContain("allIds:visible.map");
   expect(code).toContain("Copy rows");
-  expect(code).toContain("No matching audit records on this page.");
+  expect(code).toContain("Showing {visible.length} of {snapshotRows.length}");
   expect(code).not.toContain("<table");
  });
  it("UX-tpo-batches-batchid-students-21 saved views use accessible destructive dialog and pending lock",()=>{
@@ -57,7 +57,7 @@ describe("Chat-6 independent TPO first-third cross-audit",()=>{
   const code=source("tpo/tpo-new-followup-modal");
   expect(code).toContain("<Dialog open={open}");
   expect(code).toContain("<ConfirmDialog open={confirmLeave}");
-  expect(code).toContain("Discard this unfinished follow-up?");
+  expect(code).toContain("Discard this follow-up draft?");
   expect(code).toContain("calendarLocalIstToOffset(when)");
   expect(code).toContain("sm:text-sm");
   expect(code).not.toContain("role=\"dialog\"");
