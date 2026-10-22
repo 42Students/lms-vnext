@@ -17,6 +17,7 @@ import {Input} from "@/components/ui/input";
 import {CollegeDriveScheduleRefresh} from "@/components/placements/college-drive-schedule-refresh";
 import {collegeInterviewConflictIds} from "@/modules/placements/college-interview-conflicts-model";
 import {AuthorizationError} from "@/modules/permissions/policy";
+import {CollegeInterviewsCapture,CollegeInterviewsStaleFallback} from "@/components/placements/college-interviews-last-good";
 
 export default async function CollegeDriveInterviewsPage({params,searchParams}:{
   params:Promise<{jobId:string}>;
@@ -70,9 +71,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     <Alert tone="warning" title="Could not refresh interviews">
       Your saved interview appointments have not been changed. The latest schedule could not be loaded; retry before making changes.
     </Alert>
-    <ErrorState title="Interview schedule unavailable"
-      description="The latest interview rounds or candidate appointments could not be loaded."
-      action={<Link href={driveInterviewsHref(jobId,query)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry interviews</Link>}/>
+    <CollegeInterviewsStaleFallback retryHref={driveInterviewsHref(jobId,query)}/>
   </div>;
   const data=results[0].value;
   const appointments=results[1].value;
@@ -104,7 +103,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     {key:"mode",header:"Mode",cell:item=>item.mode??"Not recorded"},
     {key:"status",header:"Round status",cell:item=><StatusBadge tone={item.status==="COMPLETED"?"success":item.status==="CANCELLED"?"error":"info"}>{item.status==="PENDING"?"Pending":item.status==="SCHEDULED"?"Scheduled":item.status==="COMPLETED"?"Completed":"Cancelled"}</StatusBadge>},
   ];
-  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
+  return <CollegeInterviewsCapture><div className="min-w-0 space-y-[var(--lms-space-4)]">
     <CollegeDriveScheduleRefresh scopeKey={String(context.membership.id)+":"+jobId}/>
     <nav aria-label="Drive sections" className="flex min-w-0 flex-wrap border-b border-[var(--lms-canvas-border)] text-sm font-semibold">
       {([{name:"Overview",suffix:"overview"},{name:"Applications",suffix:"applications"},
@@ -267,5 +266,5 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     <p className="text-xs text-muted-foreground leading-5">
       Interview appointments use the registered candidate-slot schedule. Confirmed outcomes are stored as immutable audit events.
     </p>
-  </div>;
+  </div></CollegeInterviewsCapture>;
 }
