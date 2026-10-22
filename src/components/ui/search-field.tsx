@@ -18,7 +18,7 @@ export function SearchField({onSearch,buttonLabel="Search",wrapperClassName,clas
   }
   function submit(event:FormEvent<HTMLFormElement>) {event.preventDefault();if(props.disabled)return;onSearch(inputRef.current?.value??"");}
   return <form data-slot="search-field" role="search" onSubmit={submit} className={cx("flex min-w-0 flex-wrap items-stretch gap-2 max-[767px]:flex-col",wrapperClassName)}>
-    <Input {...props} ref={bindInput} type="search" aria-label={props["aria-label"] ?? props.placeholder ?? buttonLabel} className={cx("min-w-0 !min-h-11 !rounded-[8px] !border-[var(--lms-neutral-100)] !px-[15px] !py-[11px] hover:!border-[var(--lms-field-hover-border)] focus-visible:!border-[var(--lms-primary)] w-[220px] appearance-none [&::-webkit-search-cancel-button]:hidden max-[767px]:w-full", className)} />
+    <Input {...props} ref={bindInput} type="search" aria-label={props["aria-label"] ?? props.placeholder ?? buttonLabel} style={{ ...props.style, minHeight: "44px" }} className={cx("min-w-0 !rounded-[8px] !border-[var(--lms-neutral-100)] !px-[15px] !py-[11px] hover:!border-[var(--lms-field-hover-border)] focus-visible:!border-[var(--lms-primary)] w-[220px] appearance-none [&::-webkit-search-cancel-button]:hidden max-[767px]:w-full", className)} />
     <Button type="submit" variant="secondary" disabled={props.disabled} className="max-[767px]:min-h-11 focus-visible:!outline-offset-[3px] focus-visible:!outline-[var(--lms-primary-text)]">{buttonLabel}</Button>
   </form>;
 }
