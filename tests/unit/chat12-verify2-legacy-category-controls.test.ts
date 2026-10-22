@@ -34,7 +34,8 @@ describe("chat-12 verification round 2: legacy filter and accessible controls", 
     const service = source("src/modules/placements/tpo-avatar-service.ts");
     expect(avatar).toContain('className="absolute -bottom-1 -right-1 flex h-11 w-11');
     expect(avatar).toContain('className="block min-h-11 md:min-h-9');
-    expect(avatar).toContain('max(5*1024*1024)');
+    expect(avatar).toContain("const limit=5*1024*1024");
+    expect(service).toContain("max(5*1024*1024)");
     expect(avatar).toContain("Confirm photo after scan");
     expect(service).toContain("readPrivateObjectAttestation(");
     expect(service).toContain("profileDocumentVersion");
