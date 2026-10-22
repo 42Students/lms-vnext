@@ -529,6 +529,12 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
      {nearInterviewer?<span role="status" className="text-xs text-warning">Existing name uses “{nearInterviewer}”. Select the existing spelling.</span>:null}
      </label>
     <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-1">
+     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Duration (minutes)
+      <Select value={String(duration)} disabled={busy} onChange={e=>{setDuration(Number(e.target.value));setDirty(true);}} className="w-full">
+        {!INTERVIEW_DURATIONS.includes(duration as typeof INTERVIEW_DURATIONS[number])?<option value={duration}>{duration} minutes (existing)</option>:null}
+        {INTERVIEW_DURATIONS.map(value=><option key={value} value={value}>{value} minutes</option>)}
+      </Select></label>
+     <p className="text-xs text-muted-foreground">Times shown in your local timezone (Asia/Kolkata, IST).</p>
      <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
       Date (IST)
       <Input type="date" required disabled={busy} value={date}
@@ -540,11 +546,6 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
        onChange={e=>{setTime(e.target.value);setDirty(true);setFieldErrors({});}} className="w-full"/>
       {time&&!validFiveMinuteSlot?<span role="alert" className="text-xs text-error">Choose a time in 5-minute increments.</span>:null}
      </label>
-     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Duration (minutes)
-      <Select value={String(duration)} disabled={busy} onChange={e=>{setDuration(Number(e.target.value));setDirty(true);}} className="w-full">
-        {!INTERVIEW_DURATIONS.includes(duration as typeof INTERVIEW_DURATIONS[number])?<option value={duration}>{duration} minutes (existing)</option>:null}
-        {INTERVIEW_DURATIONS.map(value=><option key={value} value={value}>{value} minutes</option>)}
-      </Select></label>
     </div>
     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Mode<Select value={mode} disabled={busy} onChange={e=>{setMode(e.target.value as "ON_CAMPUS"|"VIRTUAL");setVenue("");setMeetingUrl("");setFieldErrors({});setDirty(true);}}
      className="w-full">
