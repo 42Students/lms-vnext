@@ -55,17 +55,17 @@ export const legacyProjectAuditActions:Readonly<Record<string,string>> = {
  * fetching each intervening page, so callers must surface its legacyPage hint.
  */
 export function projectLegacyAuditLink(params:ProjectAdminAuditSearchParams,now:Date) {
- const range=params.range;
- const entityId=params.entityId;
- const page=params.page;
+ const range=params["range"];
+ const entityId=params["entityId"];
+ const page=params["page"];
  const validRange=typeof range==="string"&&["today","7d","30d","all"].includes(range);
  const validEntity=typeof entityId==="string"&&entityId.trim().length>0&&entityId.length<=500;
  const validPage=typeof page==="string"&&/^(0|[1-9]\d{0,4})$/.test(page);
  const translated:ProjectAdminAuditSearchParams={...params};
- delete translated.range;
- delete translated.entityId;
- delete translated.page;
- if(validEntity&&!translated.subjectId)translated.subjectId=entityId.trim();
+ delete translated["range"];
+ delete translated["entityId"];
+ delete translated["page"];
+ if(validEntity&&!translated["subjectId"])translated["subjectId"]=entityId.trim();
  if(validRange&&range!=="all"&&Number.isFinite(now.getTime())){
   // Date-only project audit filters are interpreted in the college's IST
   // calendar, not the UTC date (which is still yesterday before 05:30 IST).
@@ -77,7 +77,7 @@ export function projectLegacyAuditLink(params:ProjectAdminAuditSearchParams,now:
    Number(indiaDate("year")),Number(indiaDate("month"))-1,Number(indiaDate("day")),
   ));
   if(range!=="today")start.setUTCDate(start.getUTCDate()-(range==="7d"?6:29));
-  if(!translated.from)translated.from=start.toISOString().slice(0,10);
+  if(!translated["from"])translated["from"]=start.toISOString().slice(0,10);
  }
  const legacyPage=validPage?Number(page):0;
  return {params:translated,legacyPage,
