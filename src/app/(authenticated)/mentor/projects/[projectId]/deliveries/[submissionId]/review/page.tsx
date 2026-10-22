@@ -81,14 +81,14 @@ export default async function MentorDeliveryVersionPage({params}:{
       <div className="min-w-0 space-y-2">
       {!attachments.length?<p className="mt-2 text-sm text-muted-foreground leading-[22px]">No extra attachments recorded.</p>:null}
       <ul className="mt-3 divide-y divide-[var(--lms-canvas-border)] border-y border-border">{attachments.map((entry,index)=>{
-        const name=typeof entry.name==="string"?entry.name:"Attachment "+(index+1);
-        const kind=entry.kind==="FILE"?"File":entry.kind==="LINK"?"Link":"Attachment";
-        const href=typeof entry.url==="string"?safeProjectExternalHref(entry.url):null;
+        const name=typeof entry["name"]==="string"?entry["name"]:"Attachment "+(index+1);
+        const kind=entry["kind"]==="FILE"?"File":entry["kind"]==="LINK"?"Link":"Attachment";
+        const href=typeof entry["url"]==="string"?safeProjectExternalHref(entry["url"]):null;
         return <li key={index} className="py-[var(--lms-space-3)] text-sm">
           <span className="break-words font-semibold">{name}</span> · {kind}
           {href?<a href={href} target="_blank" rel="noopener noreferrer"
             className="ml-2 inline-flex min-h-11 max-w-full items-center break-all text-link underline min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">Open link ↗</a>:null}
-          {kind==="File"&&typeof entry.fileId==="string"?
+          {kind==="File"&&typeof entry["fileId"]==="string"?
             <span className="ml-2 text-muted-foreground">Uploaded file recorded</span>:null}
         </li>;
       })}</ul>
