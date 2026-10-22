@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,gt,inArray,isNull,sql} from "drizzle-orm";
+import {and,eq,gt,inArray,isNotNull,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementApplicationScreenings,placementOffers,placementJobs,placementCompanyRelationships,placementCompanies,placementRecruiterCollegeGrants,placementRecruiterProfiles,colleges,organizations,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
@@ -122,7 +122,8 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
    // Offer release is an explicit employer-visible event, even if the
    // application later advances beyond SHORTLISTED or is withdrawn.
-   .where(and(baseScope,inArray(placementOffers.status,["ISSUED","ACCEPTED"])))
+   .where(and(baseScope,inArray(placementOffers.status,["ISSUED","ACCEPTED"]),
+    eq(placementOffers.kind,"OFFER"),isNotNull(placementOffers.releasedAt)))
    .groupBy(placementApplications.jobId),
  ]);
  const counts:Record<string,{sharedApplicants:number;offers:number}>={};
