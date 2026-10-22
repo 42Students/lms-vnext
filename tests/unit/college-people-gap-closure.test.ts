@@ -71,8 +71,8 @@ describe("College People legacy audited page contracts",()=>{
   expect(directory()).toContain("<CollegeStudentLifecycleAction");
   expect(faculty).toContain("Suspend Faculty");
   expect(faculty).toContain("Reactivate Faculty");
-  expect(student).toContain('"Suspend"');
-  expect(student).toContain('"Reactivate"');
+  expect(student).toContain('"Suspend Student"');
+  expect(student).toContain('"Reactivate Student"');
  });
  it("COL-people-10 membership Audit trail records reviewer identity and immutable event chronology",()=>{
   const modal=src("src/components/college/college-person-audit-modal.tsx");
@@ -89,8 +89,11 @@ describe("College People legacy audited page contracts",()=>{
   expect(widget).toContain("SKIPPED");
  });
  it("COL-people-13 directory can render membership context and pending status without guessing",()=>{
-  expect(directory()).toContain("Teaching assignments");
-  expect(directory()).toContain("Program · Batch · Class");
+  const facultyDetail=src("src/app/(authenticated)/college/faculty/[membershipId]/page.tsx");
+  expect(facultyDetail).toContain("teaching assignments");
+  expect(directory()).toContain("Active class / section");
+  expect(directory()).toContain("Active program");
+  expect(directory()).toContain("Active batch");
   expect(directory()).toContain("Membership status");
  });
  it("COL-people-14 Faculty Type enum has legacy labels including Guest and Adjunct",()=>{
@@ -110,8 +113,9 @@ describe("College People legacy audited page contracts",()=>{
     expect(page).toContain(field);
   expect(page).toContain("Advanced filters");
   expect(page).toContain("collegeRoleDirectoryHasActiveFilters(kind,result.filter)");
-  expect(page.indexOf("Active class / section")).toBeLessThan(page.indexOf("<summary"));
-  expect(page.indexOf("Department")).toBeLessThan(page.indexOf("<summary"));
+  const advanced=page.indexOf('<Disclosure title="Advanced filters"');
+  expect(page.indexOf("Active class / section")).toBeLessThan(advanced);
+  expect(page.indexOf("Membership status")).toBeLessThan(advanced);
   expect(page).toContain('name="accountStatus"');
  });
  it("COL-people-16 visible CSV neutralizes spreadsheet formula injection",()=>{
@@ -122,8 +126,8 @@ describe("College People legacy audited page contracts",()=>{
  it("COL-people-17 Contacts separate from member management with role tabs and page-size",()=>{
   const contacts=src("src/app/(authenticated)/college/contacts/page.tsx");
   expect(contacts).toContain("All contacts");
-  expect(contacts).toContain("Faculty contacts");
-  expect(contacts).toContain("Student contacts");
+  expect(contacts).toContain('label:"Faculty"');
+  expect(contacts).toContain('label:"Students"');
   expect(contacts).toContain("Student accounts");
   expect(src("src/app/(authenticated)/college/people/page.tsx")).toContain('redirect("/college/contacts")');
  });
@@ -131,17 +135,18 @@ describe("College People legacy audited page contracts",()=>{
   const contacts=src("src/app/(authenticated)/college/contacts/page.tsx");
   const model=src("src/modules/people/college-contacts-privacy.ts");
   expect(contacts).toContain("Student contact details are masked");
-  expect(model).toContain("input.isLearner?maskedEmail(input.email)");
-  expect(model).toContain("phone:maskedPhone(input.phone)");
+  expect(model).toContain("input.isLearner&&!disclose?maskedEmail(input.email)");
+  expect(model).toContain("phone:disclose?input.phone");
+  expect(model).toContain("maskedPhone(input.phone)");
   expect(model).toContain("a separate need-to-know workflow");
  });
  it("COL-people-19 contact directory presents legacy search and tabs before advanced filters",()=>{
   const page=src("src/app/(authenticated)/college/contacts/page.tsx");
-  for(const label of ["All contacts","Faculty contacts","Student contacts","Name or email","Search contacts","Advanced filters"])
+  for(const label of ["All contacts",'label:"Faculty"','label:"Students"',"Search contacts","Advanced filters"])
    expect(page).toContain(label);
-  expect(page.indexOf("Name or email")).toBeLessThan(page.indexOf("<summary"));
-  expect(page).toContain("open={activeCollegeContactFilterCount(filter)>0}");
-  expect(page).toContain('name="q"');
+  expect(page.indexOf('ariaLabel="Contacts categories"')).toBeLessThan(page.indexOf('<Disclosure title="Advanced filters"'));
+  expect(page).toContain('defaultOpen={activeCollegeContactFilterCount(filter)>0}');
+  expect(page).toContain('name="facultyTitleQ"');
   expect(page).toContain('name="tab" value={filter.tab}');
   expect(page).toContain("Student contact details are masked");
  });
@@ -160,8 +165,8 @@ describe("College People legacy audited page contracts",()=>{
  it("COL-people-26 faculty suspension is a 2-stage in-page confirmation and feedback",()=>{
   const component=src("src/components/college/college-faculty-lifecycle-action.tsx");
   expect(component).toContain("Confirm");
-  expect(component).toContain("Faculty suspended.");
-  expect(component).toContain("Faculty reactivated.");
+  expect(component).toContain('"Faculty suspended"');
+  expect(component).toContain('"Faculty reactivated"');
   expect(component).not.toContain("window.confirm");
  });
  it("COL-people-03 import preview/import use the guarded request helper without echoing API codes",()=>{
@@ -190,7 +195,8 @@ describe("College People legacy audited page contracts",()=>{
  it("COL-people-27 Faculty and Learner use responsive cards and bounded desktop table",()=>{
   const page=directory();
   expect(page).toContain("md:hidden");
-  expect(page).toContain("md:table");
+  expect(page).toContain('className="hidden md:block"');
+  expect(page).toContain("<DataTable");
   expect(page).toContain('<ScrollCue axis="x" label={title + " scrollable results columns"}>');
   expect(page).toContain("min-w-0");
   expect(page).toContain("Advanced filters");
@@ -212,7 +218,7 @@ describe("College People legacy audited page contracts",()=>{
   expect(reassignment).toContain("<ConfirmDialog");
   expect(reassignment).not.toContain("window.confirm");
   expect(reassignment).not.toContain("{failure.code}");
-  expect(page).toContain("Move selected non-archived project workspaces to a new primary mentor.");
+  expect(page).toContain("Move multiple active workspaces to a new mentor at once.");
   expect(page).toContain("Back to workspaces");
  });
  it("COL-people-09 is an approved non-destructive membership lifecycle instead of permanent delete",()=>{
@@ -220,8 +226,8 @@ describe("College People legacy audited page contracts",()=>{
   const learner=src("src/components/college/college-student-lifecycle-action.tsx");
   expect(faculty).toContain("Suspend Faculty");
   expect(faculty).toContain("Reactivate Faculty");
-  expect(learner).toContain('"Suspend"');
-  expect(learner).toContain('"Reactivate"');
+  expect(learner).toContain('"Suspend Student"');
+  expect(learner).toContain('"Reactivate Student"');
   expect(faculty).not.toContain("Delete Faculty");
   expect(learner).not.toContain("Delete Student");
  });

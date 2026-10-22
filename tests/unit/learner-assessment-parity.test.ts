@@ -75,7 +75,8 @@ describe("learner assessment parity pages", () => {
     expect(attempt).toContain("unanswered question");
     // Route-scoped safe return replaces stale router.back() behavior; a guarded
     // confirmation retains unanswered draft and an explicit return destination.
-    expect(attempt).toContain('router.replace("/learn/allQuizzes")');
+    expect(attempt).toContain('router.replace(returnTo)');
+    expect(attempt).toContain('/^\\/learn\\//.test(returnToRaw)');
     expect(attempt).toContain("<ConfirmDialog open={leaveOpen}");
     expect(attempt).toContain("setLeaveOpen(true)");
     expect(attempt).toContain("setTimeout");

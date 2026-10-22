@@ -359,8 +359,8 @@ export function AdminAttendanceWorkspace({
           }),
         },
       );
-      setNotice(status==="PRESENT"?"Marked present":status==="ABSENT"?
-        "Marked absent":"Marked "+status.toLowerCase());
+      setNotice("Attendance corrected for "+learnerName(target.learner)+" · "+
+        (status==="PRESENT"?"Present":status==="ABSENT"?"Absent":status.toLowerCase()));
       recordRequest.current+=1;
       setVerifiedRecord(null);
       setTarget(null);
@@ -408,7 +408,7 @@ export function AdminAttendanceWorkspace({
 
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-5)]">
-      {notice?<Alert tone="info">{notice}</Alert>:null}
+      {notice?<div role="status"><Alert tone="info">{notice}</Alert></div>:null}
       {refreshing?<p role="status" className="text-sm text-body">Refreshing attendance…</p>:null}
       {data.gridLookupFailed&&viewGrid?<Alert tone="warning">The monthly attendance refresh failed. Displaying only the last verified grid for this same college, class, course and month. <Button type="button" variant="secondary" size="sm" disabled={refreshing} onClick={()=>startRefresh(()=>router.refresh())}>Retry attendance</Button></Alert>:null}
 
@@ -570,9 +570,10 @@ export function AdminAttendanceWorkspace({
                   of {heldSessions.length} held sessions marked
                 </p>
                 <p className="mt-2 text-3xl font-semibold tabular-nums text-foreground" aria-label="Monthly attendance percentage">{monthPercent===null?"—":monthPercent+"%"}</p>
-                <dl className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-3 gap-[var(--lms-space-3)] text-xs text-body">
+                <dl className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-2 sm:grid-cols-4 gap-[var(--lms-space-3)] text-xs text-body">
                   <div><dt>Students</dt><dd className="text-lg font-semibold">{viewGrid.roster.length}</dd></div>
                   <div><dt>Sessions held</dt><dd className="text-lg font-semibold">{heldSessions.length}</dd></div>
+                  <div><dt>Active days</dt><dd className="text-lg font-semibold">{activeDays}</dd></div>
                   <div><dt>Absences</dt><dd className="text-lg font-semibold">{absentMarks}</dd></div>
                   {notMarkedCount>0?<div><dt>Not marked</dt><dd className="text-base font-semibold">{notMarkedCount}</dd></div>:null}
                 </dl>

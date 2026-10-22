@@ -29,7 +29,7 @@ describe("College Attendance legacy and graceful-state gaps",()=>{
   const content=workspace();
   for(const label of ["Monthly attendance","Students","Sessions held","Absences","Not marked","Active days"])
    expect(content).toContain(label);
-  expect(content).toContain("present marks across");
+  expect(content).toContain("present records across");
  });
  it("COL-attendance-05 successful correction is announced by role status, not silent refresh",()=>{
   expect(workspace()).toContain("Attendance corrected for ");
@@ -39,7 +39,7 @@ describe("College Attendance legacy and graceful-state gaps",()=>{
  it("COL-attendance-06 record drawer performs one guarded save without native confirmation",()=>{
   const s=workspace();
   expect(s).not.toContain("window.confirm");
-  expect(s).toContain('disabled={correcting}');
+  expect(s).toContain('disabled={correcting||refreshing||verifyingRecord');
   expect(s).toContain("Current status");
   expect(s).toContain("This change is recorded."); 
  });
@@ -75,15 +75,15 @@ describe("College Attendance legacy and graceful-state gaps",()=>{
   const src=page();
   expect(src).toContain("safeParse(await searchParams)");
   expect(src).toContain("Reset attendance filters");
-  expect(src).toContain("Choose a college to view attendance");
+  expect(src).toContain("Admin not assigned to a college");
   expect(source("src/app/(authenticated)/college/attendance/error.tsx")).toContain("Retry");
  });
  it("COL-attendance-12 monthly CSV exports one calendar-day column with P A or N codes, never formula injection",()=>{
   const s=workspace();
-  expect(s).toContain('sessionDays.map(row=>row.day)');
-  expect(s).toContain('return "P"');
-  expect(s).toContain('return "A"');
-  expect(s).toContain('return "N"');
+  expect(s).toContain('sessionDays.map(row=>String(Number(row.day.slice(-2))))');
+  expect(s).toContain('state.code==="P"?"P"');
+  expect(s).toContain('["A","E","M","L"].includes(state.code)?"A":"N"');
+  expect(s).toContain('row.map(attendanceCsvCell)');
   expect(attendanceCsvCell("=1+1")).toBe('"\'=1+1"');
  });
  it("COL-attendance-13 month navigator prints MMMM YYYY without losing URL filters",()=>{
