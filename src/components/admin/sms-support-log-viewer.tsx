@@ -11,7 +11,7 @@ import {Select} from "@/components/ui/select";
  * template substitutions or credentials can leave the server. */
 type SupportRow={
  id:string;purpose:string;recipientSuffix:string|null;
- status:"SENT"|"FAILED";providerMessageId:string|null;
+ status:"ACCEPTED"|"FAILED"|"UNKNOWN";providerMessageId:string|null;
  errorSummary:string|null;collegeId:string|null;createdAt:string;
  provider:string;providerStatus:string;
 };
@@ -19,7 +19,7 @@ type SupportPage={
  ready:boolean;content:SupportRow[];number:number;page:number;size:number;
  totalElements:number;totalPages:number;error:string|null;retryable:boolean;note:string;
 };
-const NOTICE="SENT means the operator accepted the message. Handset delivery is not reported by the provider.";
+const NOTICE="Accepted means the SMS provider accepted an attempt; it does not prove delivery to the handset. Failed means the attempt was rejected or failed; Unknown means the provider outcome is not verified.";
 export function SmsSupportLogViewer(){
  const [suffix,setSuffix]=useState("");
  const [purpose,setPurpose]=useState("");
@@ -96,7 +96,11 @@ export function SmsSupportLogViewer(){
     {key:"time",header:"Attempted",mobilePriority:"primary" as const,
      cell:row=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(row.createdAt))+" IST"},
     {key:"status",header:"Status",mobilePriority:"secondary" as const,
-     cell:row=><StatusBadge tone={row.status==="SENT"?"success":"warning"}>{row.status}</StatusBadge>},
+     cell:row=><StatusBadge tone={row.status==="ACCEPTED"?"success":
+       row.status==="FAILED"?"error":"warning"}>{
+       row.status==="ACCEPTED"?"Accepted by provider":
+       row.status==="FAILED"?"Failed":"Unknown"
+      }</StatusBadge>},
     {key:"recipient",header:"Recipient",mobilePriority:"secondary" as const,
      cell:row=>row.recipientSuffix?"••••"+row.recipientSuffix:"Not stored"},
     {key:"purpose",header:"Purpose",mobilePriority:"secondary" as const,cell:row=>row.purpose},
