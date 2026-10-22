@@ -14,6 +14,7 @@ import { InlineNotice } from "@/components/ui/inline-notice";
 import {Textarea} from "@/components/ui/textarea";
 import {Dialog} from "@/components/ui/dialog";
 import {Select} from "@/components/ui/select";
+import {useToast} from "@/components/ui/toast";
 
 type Readiness = Awaited<ReturnType<typeof getTpoDriveLifecycleReadiness>>;
 type Action = "PUBLISH" | "CLOSE" | "REOPEN";
@@ -29,6 +30,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false, r
  requestStatus?:"REQUEST"|"SENT_BACK"|null;
 }) {
   const router = useRouter();
+  const {showToast}=useToast();
   const {run}=useGuardedAction({timeoutMs:35000});
   const [action, setAction] = useState<Action | null>(initialPublish ? "PUBLISH" : null);
   const [reason, setReason] = useState("");
@@ -39,6 +41,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false, r
   const [notifyByEmail,setNotifyByEmail]=useState(false);
   const [acknowledged,setAcknowledged]=useState(false);
   const [success,setSuccess]=useState("");
+  const [announcementReady,setAnnouncementReady]=useState(false);
   const [error, setError] = useState<string | null>(null);
   const available = [
     { action: "PUBLISH" as const, decision: readiness.publish },
@@ -71,6 +74,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false, r
       );
 
       setSuccess(selected.action==="PUBLISH"?"Published":"Reopened");
+      if(selected.action==="PUBLISH")setAnnouncementReady(true);
       // The legacy app+email default is NOT delivered by this adapter;
       // keep any notification counts separate from the success claim.
       if(selected.action==="PUBLISH"&&result.emailSent===true)
@@ -80,16 +84,29 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false, r
       setAcknowledged(false);
       router.refresh();
     } catch (failure) {
-      setError(failure instanceof FriendlyFetchError && failure.code==="EMAIL_DELIVERY_UNAVAILABLE"?
+      const text=failure instanceof FriendlyFetchError && failure.code==="EMAIL_DELIVERY_UNAVAILABLE"?
         "Email delivery is not configured. Choose app notifications only.":
+        failure instanceof FriendlyFetchError && failure.status===409?
+        "The drive changed or no longer meets eligibility/deadline rules. Refresh the checklist, resolve blockers and retry.":
         failure instanceof Error?failure.message:
-          selected.action==="PUBLISH"?"Publish failed":"Reopen failed");
+        selected.action==="PUBLISH"?"Publish failed. Refresh and retry.":"Reopen failed. Refresh and retry.";
+      setError(text);
     } finally {
       setPending(false);
     }
     });
   }
 
+  async function copyAnnouncement(){
+    if(!announcementReady)return;
+    const url=window.location.origin+"/learn/my-placements/jobs/"+encodeURIComponent(readiness.jobId);
+    try{
+      await navigator.clipboard.writeText("A placement drive is now live. Sign in to your college workspace to review eligibility, details and how to apply: "+url);
+      showToast({tone:"success",title:"Announcement copied"});
+    }catch{
+      setError("Copy was blocked by your browser. Use your browser's sharing controls.");
+    }
+  }
   async function declineRecruiterRequest(){
     if(!canDecline||!requestId||!requestStatus||
        !DECLINE_REQUEST_REASONS.includes(declineReason as typeof DECLINE_REQUEST_REASONS[number])||
@@ -128,6 +145,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false, r
         </Button>
       </div> : null}
       <div className="mt-4">
+        <p className="mb-2 text-xs text-muted-foreground">Close stops further applications. Cancel is a separate irreversible workflow, not the same action.</p>
         {readiness.close.allowed ? (
           <Link href={"/tpo/placements/jobs/" + encodeURIComponent(readiness.jobId) + "/close-preview"}
             className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-[650] text-primary-text">
@@ -159,8 +177,22 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false, r
       ))}
       {!readiness.publish.allowed&&readiness.publish.blockers.length===0 ?
         <p role="alert" className="mt-3 text-sm text-error">Could not verify eligibility and rounds. Retry before publishing.</p> : null}
-      {selected?.decision.allowed ? (
+      <Dialog open={Boolean(selected?.decision.allowed)}
+        title={selected?.action==="PUBLISH"?"Publish drive":selected?.action==="REOPEN"?"Reopen drive":"Drive lifecycle"}
+        description={selected?.action==="PUBLISH"?
+          "Review the readiness checklist, eligible student count and delivery before publishing.":
+          "Confirm the drive can be safely reopened."}
+        onOpenChange={open=>{if(!open&&!pending){setAction(null);setReason("");setAcknowledged(false);}}}>
+       {selected?.decision.allowed ? (
         <div className="mt-4 space-y-3">
+          <div className="space-y-2 rounded border border-border bg-surface p-3 text-sm">
+            <strong>Readiness checklist</strong>
+            {selected.decision.blockers.length>0?
+              <ul className="list-disc pl-4">{selected.decision.blockers.map((block,index)=>
+                <li key={index} className="text-error">{tpoDriveReadinessMessage(block)}</li>)}</ul>:
+              <p role="status" className="text-success">All required checks passed.</p>}
+            {selected.action==="PUBLISH"?<p>{readiness.reach.eligible} eligible · {readiness.reach.excluded} excluded</p>:null}
+          </div>
           <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Reason for {selected.action.toLowerCase()} (required)
             <Textarea
@@ -170,6 +202,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false, r
               rows={2}
               disabled={pending}
               className="mt-2 block w-full"
+              placeholder="Tell them why"
             />
           </label>
           {selected.action==="PUBLISH"?<Alert tone="info">
@@ -195,7 +228,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false, r
           <div className="flex gap-3">
             <Button
               type="button"
-              disabled={pending || reason.trim().length < 10 || !acknowledged}
+              disabled={pending || !selected.decision.allowed || reason.trim().length < 10 || !acknowledged}
               onClick={() => void submit()}
               
             >
@@ -212,6 +245,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false, r
           </div>
         </div>
       ) : null}
+      </Dialog>
       <Dialog open={declineOpen} title="Decline this request"
         description="The recruiter sees this reason. For anything they can fix, request a change instead: the drive stays in review."
         onOpenChange={open=>{if(!open&&!pending)setDeclineOpen(false);}}
@@ -235,6 +269,12 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false, r
         </label>
       </Dialog>
       {success?<InlineNotice tone="success" message={success}/>:null}
+      {announcementReady?<div className="mt-2">
+        <Button type="button" variant="secondary" onClick={()=>void copyAnnouncement()}>
+          Copy announcement
+        </Button>
+        <p className="mt-1 text-xs text-muted-foreground">Manual copy only. No additional email is sent.</p>
+      </div>:null}
       {error ? <InlineNotice tone="error" message={error}/> : null}
     </section>
   );
