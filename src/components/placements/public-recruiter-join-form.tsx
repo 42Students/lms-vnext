@@ -13,24 +13,15 @@ import type { PublicJoinPreview } from "@/modules/placements/public-join/preview
 import { publicJoinErrorCopy,validatePublicJoinClient } from "@/modules/placements/public-join/client-error-model";
 import { publicJoinFormSchema } from "@/modules/placements/public-join/form-model";
 import { publicRecruiterWorkEmailSchema } from "@/modules/placements/public-college-join-model";
-import { JOIN_ERROR_COPY,joinErrorMessage } from "@/modules/placements/public-join/error-copy";
+import { JOIN_ERROR_COPY,joinErrorMessage,joinFieldForCode,publicJoinResponseMessage,type JoinErrorField } from "@/modules/placements/public-join/error-copy";
 
-type JoinField="email"|"name"|"phone"|"companyName"|"code";
+type JoinField=JoinErrorField;
 function joinFieldForError(message:string):JoinField|null{
  if(message.startsWith("Enter your company name"))return "companyName";
  if(message.startsWith("Enter your name"))return "name";
  if(message.includes("mobile")||message.includes("phone"))return "phone";
  if(message.includes("code")||message.includes("Code"))return "code";
  if(message.includes("email")||message.includes("domain"))return "email";
- return null;
-}
-function joinFieldForCode(code:unknown):JoinField|null{
- if(typeof code!=="string")return null;
- if(["WRONG_CODE","CODE_EXPIRED","CODE_LOCKED","CODE_REQUIRED"].includes(code))return "code";
- if(["EMAIL_NO_MX","EMAIL_MX_UNAVAILABLE","OTHER_COMPANY_EMAIL"].includes(code))return "email";
- if(["INVALID_MOBILE","PHONE_STORAGE_NOT_READY"].includes(code))return "phone";
- if(["INVALID_NAME","NAME_REQUIRED"].includes(code))return "name";
- if(["INVALID_COMPANY_NAME","COMPANY_REQUIRED"].includes(code))return "companyName";
  return null;
 }
 function knownJoinError(code:unknown):boolean{
@@ -131,7 +122,7 @@ export function PublicRecruiterJoinForm({
       if(!response.ok){
         const body:unknown=await response.json().catch(()=>null);
         const code=body&&typeof body==="object"&&"error" in body?(body as {error:unknown}).error:null;
-        showError(knownJoinError(code)?joinErrorMessage(code,"SEND"):publicJoinErrorCopy("SEND",response.status,String(code??"COULD_NOT_SEND_CODE"),scope,company),joinFieldForCode(code));return;
+        showError(publicJoinResponseMessage(body,response.status,knownJoinError(code)?joinErrorMessage(code,"SEND"):publicJoinErrorCopy("SEND",response.status,String(code??"COULD_NOT_SEND_CODE"),scope,company)),joinFieldForCode(code));return;
       }
       const responseData=await response.json().catch(()=>null) as {companyName?:string|null}|null;
       setKnownCompany(responseData?.companyName??null);
@@ -176,7 +167,7 @@ export function PublicRecruiterJoinForm({
       if(!response.ok){
         const body:unknown=await response.json().catch(()=>null);
         const code=body&&typeof body==="object"&&"error" in body?(body as {error:unknown}).error:null;
-        showError(knownJoinError(code)?joinErrorMessage(code):publicJoinErrorCopy("JOIN",response.status,String(code??"COULD_NOT_JOIN"),scope,company),joinFieldForCode(code));return;
+        showError(publicJoinResponseMessage(body,response.status,knownJoinError(code)?joinErrorMessage(code):publicJoinErrorCopy("JOIN",response.status,String(code??"COULD_NOT_JOIN"),scope,company)),joinFieldForCode(code));return;
       }
       const result=await response.json() as {
         outcome?:"JOINED"|"ALREADY_JOINED";status?:"JOINED"|"ALREADY_JOINED";
