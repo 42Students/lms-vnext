@@ -8,6 +8,14 @@ import {POST as inboundPOST} from "@/app/api/internal/placements/recruiter-messa
 import {POST as remindersPOST} from "@/app/api/internal/placements/recruiter-message-reminders/route";
 
 vi.mock("@/auth/origin",()=>({isSameOriginRequest:vi.fn()}));
+// Isolate the authenticated worker from PostgreSQL while exercising its
+// fenced dispatch callback and preserving the real startup-grace guard.
+vi.mock("@/modules/operations/scheduled-job-runner",()=>({
+ executeScheduledJobWithLease:vi.fn(async (_store:unknown,_lease:unknown,
+  dispatch:(fence:{assertCurrent:()=>Promise<void>})=>Promise<unknown>)=>({
+   ran:true,result:await dispatch({assertCurrent:async()=>{}}),
+  })),
+}));
 vi.mock("@/modules/placements/recruiter-message-email-inbound-service",()=>({
  acceptAuthenticatedRecruiterEmailReply:vi.fn(),
 }));
@@ -29,6 +37,7 @@ beforeEach(()=>{
  process.env.RECRUITER_MESSAGE_WORKER_SECRET=secret;
 });
 afterEach(()=>{
+ vi.restoreAllMocks();
  if(original===undefined)delete process.env.RECRUITER_MESSAGE_WORKER_SECRET;
  else process.env.RECRUITER_MESSAGE_WORKER_SECRET=original;
 });
@@ -44,7 +53,10 @@ describe("chat-16 authenticated recruiter email inbound/worker HTTP boundaries",
  it("REC-INBOUND-HTTP-02 bounds raw webhook bytes before any HMAC verification",async()=>{
   const response=await inboundPOST(request("inbound","x".repeat(20_001)));
   expect(response.status).toBe(413);
-  expect(await response.json()).toEqual({error:"INVALID_BODY"});
+  expect(await response.json()).toEqual({
+   error:"INVALID_BODY",outcome:"STORED",
+   action:"QUARANTINE_AND_NOTIFY_OPERATIONS",retryable:false,
+  });
   expect(acceptAuthenticatedRecruiterEmailReply).not.toHaveBeenCalled();
  });
  it("REC-INBOUND-HTTP-03 forwards exact raw signed bytes and never trusts caller From alone",async()=>{
@@ -67,7 +79,7 @@ describe("chat-16 authenticated recruiter email inbound/worker HTTP boundaries",
   }));
   expect(response.status).toBe(200);
   expect(response.headers.get("Cache-Control")).toBe("no-store");
-  expect(await response.json()).toEqual({accepted:true,replayed:true});
+  expect(await response.json()).toEqual({accepted:true,replayed:true,outcome:"DUPLICATE"});
  });
  it("REC-INBOUND-HTTP-05 hides webhook, database and provider exceptions from callers",async()=>{
   vi.mocked(acceptAuthenticatedRecruiterEmailReply).mockRejectedValue(
@@ -87,6 +99,7 @@ describe("chat-16 authenticated recruiter email inbound/worker HTTP boundaries",
   expect(dispatchRecruiterUnreadMessageDigests).not.toHaveBeenCalled();
  });
  it("REC-WORKER-HTTP-07 schedules only after a valid worker secret and denies false send receipts",async()=>{
+  vi.spyOn(process,"uptime").mockReturnValue(120);
   vi.mocked(dispatchRecruiterUnreadMessageDigests).mockResolvedValue({
    examined:2,sent:0,enabled:true,
   });
@@ -97,6 +110,7 @@ describe("chat-16 authenticated recruiter email inbound/worker HTTP boundaries",
   expect(dispatchRecruiterUnreadMessageDigests).toHaveBeenCalledOnce();
  });
  it("REC-WORKER-HTTP-08 avoids provider secret leakage if the authorized worker fails",async()=>{
+  vi.spyOn(process,"uptime").mockReturnValue(120);
   vi.mocked(dispatchRecruiterUnreadMessageDigests).mockRejectedValue(
    new Error("private mail tokens and database failure"),
   );
