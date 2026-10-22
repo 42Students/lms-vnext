@@ -2660,3 +2660,55 @@ export function legacyCompanyCanonicalization(input:{
  return {...input,requiresRelationshipGrant:true as const,
    reuseCanonicalCompany:true as const};
 }
+
+
+/** Lossless projection rules for an old Job entity. Request-state records
+ * remain recruiter requests, not an invented published placement_job row.
+ * A historic organization-wide drive needs explicit host-college fanout
+ * approval; we never infer a campus from its first application.
+ */
+export function legacyPlacementJobLifecycleImport(input:{
+  legacyJobId:number;
+  sourceStatus:"REQUEST"|"SENT_BACK"|"REJECTED"|"DRAFT"|"PUBLISHED"|"CLOSED"|"CANCELLED";
+  isDraft:boolean;isActive:boolean;isDeleted:boolean;
+  organizationId:string;collegeId:string|null;seasonId:string|null;
+  sourceVersion:number;
+}){
+ if(!Number.isSafeInteger(input.legacyJobId)||input.legacyJobId<1||
+    !Number.isSafeInteger(input.sourceVersion)||input.sourceVersion<0)
+  throw new Error("Invalid source job identity or version");
+ if(!input.organizationId||!input.seasonId)
+  throw new Error("Source job needs a verified organization and season crosswalk");
+ const request=["REQUEST","SENT_BACK","REJECTED"].includes(input.sourceStatus);
+ if(request)return {
+   destination:"RECRUITER_DRIVE_REQUEST" as const,
+   sourceId:input.legacyJobId,status:input.sourceStatus,
+   sourceVersion:input.sourceVersion,
+ };
+ if(!input.collegeId)return {
+   destination:"REQUIRES_ORGANIZATION_WIDE_APPROVAL" as const,
+   sourceId:input.legacyJobId,sourceVersion:input.sourceVersion,
+ };
+ const status=input.isDeleted?"ARCHIVED":
+   input.sourceStatus==="CANCELLED"?"CANCELLED":
+   input.sourceStatus==="CLOSED"||!input.isActive?"CLOSED":
+   input.isDraft?"DRAFT":"PUBLISHED";
+ return {destination:"COLLEGE_JOB" as const,legacyJobId:input.legacyJobId,
+   collegeId:input.collegeId,seasonId:input.seasonId,
+   organizationId:input.organizationId,status,sourceVersion:input.sourceVersion,
+   legacyWasDeleted:input.isDeleted,
+   /** Include archived source rows in audit/history, not the active drive list. */
+   visibleToLearners:status==="PUBLISHED",
+ };
+}
+
+/** Never include write-only evaluation config or raw assessment credentials
+ * in the public job DTO, even when an importer archived original JSON. */
+export function redactLegacyPlacementJobDetails<T extends Record<string,unknown>>(
+ source:T,
+):Omit<T,"evaluationConfig"|"assessmentUrl"|"legacyTargeting">{
+ const {evaluationConfig: _evaluationConfig,
+  assessmentUrl: _assessmentUrl,
+  legacyTargeting: _legacyTargeting,...safe}=source;
+ return safe;
+}

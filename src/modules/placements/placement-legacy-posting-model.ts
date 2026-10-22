@@ -146,3 +146,33 @@ export function legacyJobTargetImportPlan(source:LegacyJobTargetScope,approved:{
    source.importantDates),
  };
 }
+
+
+/** Historic posting imports may have one global job with multiple role
+ * packages. Only a verified same-college relationship/season and a
+ * per-role primary package can be published. Eligibility JSON is mapped
+ * to the distinct policy service, never entrusted to display metadata. */
+export function legacyJobRelationalParts(input:{
+  roleOptions:readonly {legacyRoleId:number;title:string;ctcLpa:string|null}[];
+  previousRequestId:number|null;eligibility:unknown;
+  resolvedRequestId:string|null;hasVerifiedEligibilityPolicy:boolean;
+}){
+ if(!input.hasVerifiedEligibilityPolicy)
+  throw new Error("Legacy eligibility requires approved policy mapping");
+ if(input.previousRequestId!==null&&!input.resolvedRequestId)
+  throw new Error("Prior recruiter request must be mapped before publication");
+ const roles=input.roleOptions.map((role,i)=>{
+  if(!Number.isSafeInteger(role.legacyRoleId)||role.legacyRoleId<1||
+     !role.title.trim()||role.title.length>100)
+   throw new Error("Unmapped role package");
+  const pay=role.ctcLpa===null?null:Number(role.ctcLpa);
+  if(pay!==null&&(!Number.isFinite(pay)||pay<0||pay>10000))
+   throw new Error("Invalid historic role package pay");
+  return {sourceRoleId:role.legacyRoleId,position:i,
+    title:role.title.trim(),ctcLpa:role.ctcLpa,
+    isPrimary:i===0};
+ });
+ if(!roles.length)throw new Error("At least one primary role is required");
+ return {roles,previousRequestId:input.resolvedRequestId,
+   eligibilityMapping:"REQUIRES_SCOPED_POLICY_REPLAY" as const};
+}
