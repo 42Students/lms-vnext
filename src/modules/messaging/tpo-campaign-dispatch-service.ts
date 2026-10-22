@@ -25,17 +25,17 @@ export class TpoCampaignDispatchError extends Error{
  constructor(readonly code:"NOT_READY"|"ALREADY_STARTED"|"NOT_FOUND"){super(code);}
 }
 function configuration(){
- const provider=process.env.TPO_CAMPAIGN_ZEPTO_TEMPLATE_KEY??"";
+ const provider=process.env["TPO_CAMPAIGN_ZEPTO_TEMPLATE_KEY"]??"";
  const mail=readZeptoMailConfig();
  const key=resolveTpoCampaignRecipientSecret(process.env);
- const origin=verifiedTpoCampaignPublicOrigin(process.env.APP_PUBLIC_URL??"");
- const globalKey=process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64??"";
+ const origin=verifiedTpoCampaignPublicOrigin(process.env["APP_PUBLIC_URL"]??"");
+ const globalKey=process.env["DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64"]??"";
  // A missing global opt-out key must disable transport before claiming a
  // campaign: otherwise an EMAIL send could bypass a cross-college opt-out.
  try {deriveGlobalEmailSuppressionHashForAddress("readiness@example.org",globalKey);}
  catch {throw new TpoCampaignDispatchError("NOT_READY");}
  if(!origin)throw new TpoCampaignDispatchError("NOT_READY");
- if(process.env.TPO_CAMPAIGNS_READY!=="VERIFIED"||
+ if(process.env["TPO_CAMPAIGNS_READY"]!=="VERIFIED"||
    !isCampaignTemplateKey(provider)||provider===mail.otpTemplateKey||
    !mail.token.trim()||!isSecureMailProviderEndpoint(mail.apiUrl)||
    Buffer.byteLength(key,"utf8")<32)
