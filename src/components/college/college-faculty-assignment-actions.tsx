@@ -224,9 +224,9 @@ export function CollegeFacultyAssignmentCreate({
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{FACULTY_ASSIGNMENT_COPY.roleLabel}
         <Select className={fieldClass} value={role}
           onChange={event => setRole(event.target.value as CourseTeachingRole)}>
-          <option value="PRIMARY">{FACULTY_ASSIGNMENT_ROLE_LABELS.PRIMARY}</option>
-          <option value="CO_TEACHER">{FACULTY_ASSIGNMENT_ROLE_LABELS.CO_TEACHER}</option>
-          <option value="TA">{FACULTY_ASSIGNMENT_ROLE_LABELS.TA}</option>
+          <option value="PRIMARY">{FACULTY_ASSIGNMENT_ROLE_LABELS["PRIMARY"]}</option>
+          <option value="CO_TEACHER">{FACULTY_ASSIGNMENT_ROLE_LABELS["CO_TEACHER"]}</option>
+          <option value="TA">{FACULTY_ASSIGNMENT_ROLE_LABELS["TA"]}</option>
         </Select>
       </label>
       <fieldset className="min-w-0 space-y-[var(--lms-space-3)] md:col-span-2 xl:col-span-4">
