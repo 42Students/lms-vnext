@@ -36,7 +36,7 @@ const pool = new Pool({
 
 const superAdmin: RequestContext = {
   user: {
-    id: "integration-superadmin",
+    id: SEED_IDS.superAdminUser,
     identityUid: "integration-superadmin-identity",
     platformStatus: "ACTIVE",
     systemRoles: ["SUPER_ADMIN"],
