@@ -49,10 +49,8 @@ describe("SA-tenants-modules-SEC-01: never render admin filter recovery before a
  it("authenticates every route before handling hostile and repeated query parameters",()=>{
   for(const file of pages){
    const source=readFileSync(file,"utf8");
-   const auth=source.includes('if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))')
-     ?source.indexOf('if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))')
-     :Math.max(source.indexOf('requirePermission(context,"admin-scope.select")'),
-       source.indexOf('requirePermission(context, "admin-scope.select")'));
+   const authMatch = /(?:requirePermission\s*\(\s*context\s*,\s*["']admin-scope\.select["']\s*\)|if\s*\(\s*!isSuperAdmin\(context\)\s*\|\|\s*!can\(context\s*,\s*["']admin-scope\.select["']\)\s*\))/.exec(source);
+   const auth = authMatch?.index ?? -1;
    const invalid=source.indexOf("if (!filters)");
    const invalidNoSpace=source.indexOf("if(!parsed");
    const whitespace=source.indexOf("if (!parsed");
