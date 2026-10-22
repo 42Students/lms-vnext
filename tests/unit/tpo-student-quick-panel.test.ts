@@ -31,7 +31,10 @@ describe("TPO-students-02 roster student deep link and drawer",()=>{
   expect(modal).toContain("<Drawer open={true}");
   expect(drawer).toContain("<dialog");
   expect(drawer).toContain("aria-labelledby={titleId}");
-  expect(drawer).toContain("modal.showModal()");
+  expect(drawer).toContain("useOverlayExit(ref, opener, open, 200)");
+  const exit=readFileSync("src/components/ui/use-overlay-exit.ts","utf8");
+  expect(exit).toContain("dialog.showModal()");
+  expect(exit).toContain("restoreFocus()");
   expect(drawer).toContain("opener.current?.focus()");
   expect(modal).toContain("No attention flags derived");
  });

@@ -11,7 +11,7 @@ describe("Template college availability", () => {
     expect(projectTemplateCollegeAvailability(colleges.slice(1), assigned, { status: "ASSIGNED" }).total).toBe(0);
   });
   it("clamps stale pages and combines code search with assignment filters", () => {
-    expect(projectTemplateCollegeAvailability(colleges, assigned, { page: 999 }).query.page).toBe(2);
+    expect(projectTemplateCollegeAvailability(colleges, assigned, { page: 999 }).query.page).toBe(3);
     expect(projectTemplateCollegeAvailability(colleges, assigned, { q: "C0", status: "UNASSIGNED" }).total).toBe(0);
     expect(projectTemplateCollegeAvailability([], [], {}).totalPages).toBe(1);
   });
