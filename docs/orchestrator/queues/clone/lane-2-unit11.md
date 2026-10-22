@@ -191,3 +191,7 @@ AssertionError: expected 'import { Disclosure } from "@/compone…' to contain '
 ## Current-main recheck (2026-10-23)
 - [x] Lane-2 unit11: all seven listed test files were already ticked on current `main`; prior repairs are recorded above (static review only; CI not rerun).
 - [x] Overflow scan: lane-3 and lane-4 unit11 were already fully ticked on current `main`; moved to lane-5's next unticked `chat7-superadmin-learning-export-service-behavior.test.ts` (two historical failures). Current export service passes `{...params.data,page}` as the third argument to `listCollegeAssessmentAggregate` in both quiz and assignment branches, and retains filters for each page; historical `query.page` undefined error is not supported by this current source. Static inspection only; no claim of a passing CI run.
+
+## Deep row handoff (2026-10-23)
+- [x] G2-4-017-018 — archived workspace recoverability semantics clarified in schema; recorded FIXED in `DEEP_agent2_4.md` (`162a5b84`, `c574650f`). Static only.
+- [ ] G2-16-027-031 — class-targeted scheduled notices still require implementation; do not mark verified based only on activity-event logging.
