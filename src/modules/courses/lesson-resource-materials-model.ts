@@ -46,5 +46,5 @@ export const resourceMaterialCommandSchema=z.discriminatedUnion("action",[
  z.object({action:z.literal("REMOVE"),materialId:resourceMaterialIdSchema}).strict(),
 ]);
 export function resourceMaterialsWriteReady(env:NodeJS.ProcessEnv=process.env){
- return env.DB05_RESOURCE_MATERIALS_READY==="DB05_VERIFIED";
+ return env["DB05_RESOURCE_MATERIALS_READY"]==="DB05_VERIFIED";
 }
