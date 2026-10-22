@@ -55,8 +55,10 @@ export default async function LearnerCourseTabPage({
     for(const [key,value] of Object.entries(query)){
       if(!["filter","lesson","content","month","cls","ref",
        "semesterId","academicPeriodId"].includes(key))continue;
-      const firstValue=Array.isArray(value)?value[0]:value;
-      if(firstValue&&firstValue.length<=100)safeQuery.set(key,firstValue);
+      // Preserve repeated legacy filters and hints during numeric-ID rewrite.
+      for(const item of Array.isArray(value)?value:[value]){
+        if(typeof item==="string"&&item.length<=100)safeQuery.append(key,item);
+      }
     }
     const suffix=safeQuery.toString();
     redirect("/learn/courses/"+encodeURIComponent(authorizedDeliveryId)+"/"+
@@ -70,8 +72,9 @@ export default async function LearnerCourseTabPage({
     const safeQuery=new URLSearchParams();
     for(const [key,value] of Object.entries(query).slice(0,20)){
       if(key.length>100)continue;
-      const one=Array.isArray(value)?value[0]:value;
-      if(typeof one==="string"&&one.length<=500)safeQuery.set(key,one);
+      for(const item of Array.isArray(value)?value:[value]){
+        if(typeof item==="string"&&item.length<=500)safeQuery.append(key,item);
+      }
     }
     const suffix=safeQuery.toString();
     redirect("/learn/courses/"+encodeURIComponent(deliveryId)+"/home"+(suffix?"?"+suffix:""));
@@ -84,8 +87,9 @@ export default async function LearnerCourseTabPage({
     const safeQuery = new URLSearchParams();
     for (const [key, value] of Object.entries(query).slice(0, 20)) {
       if (key.length > 100) continue;
-      const one = Array.isArray(value) ? value[0] : value;
-      if (typeof one === "string" && one.length <= 500) safeQuery.set(key, one);
+      for (const item of Array.isArray(value) ? value : [value]) {
+        if (typeof item === "string" && item.length <= 500) safeQuery.append(key, item);
+      }
     }
     const suffix = safeQuery.toString();
     redirect("/learn/courses/" + encodeURIComponent(deliveryId) + "/" +
