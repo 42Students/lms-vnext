@@ -139,7 +139,7 @@ export function SuperAdminLessonBulkVisibility({
      {" "}{report.changed} lesson visibility setting(s) changed · {report.unchanged} already matched · {report.failures.length} failed.
     </p>
     {report.failures.length?<p className="text-sm">
-     Only the failed lessons remain selected for retry; successful updates will not be repeated.
+     ${report.updatedCount} of ${report.selectedLessons} updated. Retry will target only the failed lessons.
     </p>:null}
     <p className="text-xs">
      Lesson active status, published content records and private files were not changed.
