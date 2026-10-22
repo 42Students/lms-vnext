@@ -11,6 +11,6 @@ describe("chat-15 reassigned learner assessment legacy copy",()=>{
  it("LEARNER-learning-misc-29 shows quiz and Submitted pills with the submitted quiz names",()=>{
   expect(code()).toContain('aria-label="Quiz summary"');
   expect(code()).toContain('submittedQuizzes.map(item');
-  expect(code()).toContain('Submitted</summary>');
+  expect(code()).toContain('<Disclosure title={`${submittedQuizzes.length} Submitted`}');
  });
 });
