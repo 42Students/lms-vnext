@@ -27,20 +27,20 @@ export default async function SuperAdminUserDirectory({searchParams}:{
  if(!isSuperAdmin(context))redirect("/dashboard");
  const raw=await searchParams;
  const validKeys=new Set(["tab","view","q","role","membershipStatus","platformStatus","page","pageSize"]);
- const requestedPage=typeof raw.page==="string"&&/^[1-9][0-9]{0,4}$/.test(raw.page)?Number(raw.page):1;
- const size=typeof raw.pageSize==="string"&&["10","20","50"].includes(raw.pageSize)
-  ?Number(raw.pageSize):10;
+ const requestedPage=typeof raw["page"]==="string"&&/^[1-9][0-9]{0,4}$/.test(raw["page"])?Number(raw["page"]):1;
+ const size=typeof raw["pageSize"]==="string"&&["10","20","50"].includes(raw["pageSize"])
+  ?Number(raw["pageSize"]):10;
  const firstOffset=(requestedPage-1)*size;
  const firstBackendPage=Math.floor(firstOffset/30)+1;
- const rawTab=typeof raw.tab==="string"?raw.tab:
-  raw.view==="faculty"?"FACULTY":raw.view==="students"?"STUDENT":"ALL";
+ const rawTab=typeof raw["tab"]==="string"?raw["tab"]:
+  raw["view"]==="faculty"?"FACULTY":raw["view"]==="students"?"STUDENT":"ALL";
  const validShape=Object.keys(raw).every(key=>validKeys.has(key))&&
   Object.values(raw).every(value=>!Array.isArray(value))&&
-  (raw.page===undefined||typeof raw.page==="string"&&/^[1-9][0-9]{0,4}$/.test(raw.page))&&
-  (raw.pageSize===undefined||typeof raw.pageSize==="string"&&["10","20","50"].includes(raw.pageSize));
+  (raw["page"]===undefined||typeof raw["page"]==="string"&&/^[1-9][0-9]{0,4}$/.test(raw["page"]))&&
+  (raw["pageSize"]===undefined||typeof raw["pageSize"]==="string"&&["10","20","50"].includes(raw["pageSize"]));
  const query=adminUsersQuerySchema.safeParse(validShape?{
-  tab:rawTab,q:raw.q,role:raw.role,membershipStatus:raw.membershipStatus,
-  platformStatus:raw.platformStatus,page:firstBackendPage,
+  tab:rawTab,q:raw["q"],role:raw["role"],membershipStatus:raw["membershipStatus"],
+  platformStatus:raw["platformStatus"],page:firstBackendPage,
  }:{invalid:true});
  if(!query?.success) return <div className="space-y-4"><PageHeader title="People Directory"/>
   <ErrorState title="Invalid directory filters" description="Review search, roles, statuses, or page."
