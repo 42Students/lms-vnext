@@ -21,10 +21,12 @@ export default async function SuperAdminTenantLanding({searchParams}:{
   ["q","status","organizationId","page"].includes(key)) ||
   raw["tab"]==="directory";
  return <div className="min-w-0 space-y-4">
-  <nav aria-label="Tenant management related pages" className="flex flex-wrap gap-4 text-sm">
+  <nav aria-label="Tenant management related pages">
+   <div className="flex flex-wrap gap-4 text-sm">
    <Link href="/admin/tenants/setup">Tenant setup</Link>
    <Link href="/admin/tenants/directory">Tenant directory</Link>
    <Link href="/admin/domains">Domains</Link>
+   </div>
   </nav>
   {directoryRequest
    ? <TenantDirectory searchParams={Promise.resolve(raw)}/>
