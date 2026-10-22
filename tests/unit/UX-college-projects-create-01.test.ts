@@ -21,12 +21,13 @@ describe("UX-college-projects-create-01 /college/projects/create",()=>{
   it("renders accessible recovery for missing membership and preserves a real creation form",()=>{
     const page=read(route);
     const control=read("src/components/projects/project-create-control.tsx");
-    expect(page).toContain("Select a college to continue.");
-    expect(page).toContain('role="alert"');
+    expect(page).toContain("Admin not assigned to a college.");
+    expect(page).toContain('<Banner tone="warning">');
     expect(page).toContain('href="/college/projects"');
-    expect(page).toContain('title="Create workspace"');
+    expect(page).toContain('title="Create project workspace"');
     expect(page).toContain("<CreateProjectControl standalone");
-    expect(page).toContain("templates={templates.map(");
+    expect(page).toContain("const options=templates.map(");
+    expect(page).toContain("templates={options}");
     expect(control).toContain('import { Dialog } from "@/components/ui/dialog"');
     expect(control).toContain('import { Button } from "@/components/ui/button"');
     expect(control).toContain("submitLock.current");
