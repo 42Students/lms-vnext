@@ -30,6 +30,7 @@ describe("Super Admin per-drive pipeline", () => {
     const page=readFileSync("src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx","utf8");
     expect(service).toContain("await getPlacementJob(context, jobId)");
     expect(service).toContain('eq(placementApplications.status, "SUBMITTED")');
-    expect(page).toContain("<SuperAdminDrivePipeline rows={pipeline} />");
+    expect(page).toContain("<SuperAdminDrivePipeline rows={pipeline} attention={attention} jobId={jobId}/>");
+    expect(page).toContain("getSuperAdminDrivePipeline");
   });
 });
