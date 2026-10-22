@@ -252,7 +252,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         </p>:null}
       {actionQueue.length ? <ul className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
         {actionQueue.map(task => <li key={task.key}>
-          <Link href={task.href} className="block min-h-11 min-w-0 py-4 hover:bg-primary-subtle min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          <div className="block min-h-11 min-w-0 py-4 min-[768px]:min-h-9">
             <span className="inline-flex items-center gap-2 text-xs font-semibold text-body">
               <span aria-label={task.tone==="URGENT"?"Urgent":task.tone==="SOON"?"Soon":"When you can"}
                 className={"inline-block size-2 rounded-full "+(task.tone==="URGENT"?"bg-error":task.tone==="SOON"?"bg-warning":"bg-info")}/>
@@ -265,10 +265,13 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
             {task.at?<span className="mt-1 block text-xs text-muted-foreground">
               {task.key.startsWith("due:")||task.key.startsWith("deadline:") ? task.tone==="URGENT"?"Overdue since ":"Due " : "Recorded for "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(task.at)}
             </span>:null}
-            <span className="mt-3 block text-sm font-semibold text-primary-text">
+            {task.href?<Link href={task.href}
+              className="mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               {task.tone==="URGENT"?"Review now →":task.key.startsWith("due:")?"Open results →":"Open →"}
-            </span>
-          </Link>
+            </Link>:<span className="mt-3 block text-xs text-muted-foreground">
+              Waiting for the applicant or placement cell; no action is available yet.
+            </span>}
+          </div>
         </li>)}
       </ul> : !recentJobCapReached && collegeJobs.length===0 && requestCount===0 ? (
         <div className="min-w-0 py-4">
