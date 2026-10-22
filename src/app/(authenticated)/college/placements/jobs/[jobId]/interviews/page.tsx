@@ -15,6 +15,7 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {CollegeDriveScheduleRefresh} from "@/components/placements/college-drive-schedule-refresh";
+import {collegeInterviewConflictIds} from "@/modules/placements/college-interview-conflicts-model";
 
 export default async function CollegeDriveInterviewsPage({params,searchParams}:{
   params:Promise<{jobId:string}>;
@@ -68,17 +69,10 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
   });
   const scheduled=appointments.interviews.filter(item=>
     ["SCHEDULED","CONFIRMED","RESCHEDULE_REQUESTED"].includes(item.status));
+  const conflictIds=collegeInterviewConflictIds(appointments.interviews);
   const todayIst=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
   const dateIst=(iso:string)=>new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(iso));
   const interviewToday=scheduled.filter(item=>dateIst(item.scheduledAt)===todayIst).length;
-  const conflictIds=new Set(scheduled.filter(item=>{
-    const start=Date.parse(item.scheduledAt),end=start+item.durationMinutes*60000;
-    return scheduled.some(other=>other.id!==item.id&&Date.parse(other.scheduledAt)<end+15*60000&&
-      Date.parse(other.scheduledAt)+other.durationMinutes*60000>start-15*60000&&
-      (other.applicationId===item.applicationId||
-       (Boolean(item.venue??item.meetingUrl)&&(item.venue??item.meetingUrl)===(other.venue??other.meetingUrl))||
-       (Boolean(item.interviewer)&&item.interviewer===other.interviewer)));
-  }).map(item=>item.id));
   const conflicts=conflictIds.size;
   const visibleAppointments=conflictOnly?appointmentRows.filter(item=>conflictIds.has(item.id)):appointmentRows;
   const baseConflictHref=driveInterviewsHref(jobId,query);
