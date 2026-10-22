@@ -179,7 +179,7 @@ function SubmissionGradeCard({
       if (!response.ok) {
         setNeedsRefresh(facultyManualGradeNeedsRefresh(response.status));
         setError(
-          await courseApiError(response),
+          (await courseApiError(response)) ?? "Could not update this grade.",
         );
         return;
       }
@@ -236,7 +236,7 @@ function SubmissionGradeCard({
         });
       if(!changed.ok){
         setNeedsRefresh(facultyManualGradeNeedsRefresh(changed.status));
-        setError(await courseApiError(changed));return;
+        setError((await courseApiError(changed)) ?? "Could not save this grade.");return;
       }
       const saved=facultyManualGradeReceipt(await changed.json(),submission,"GRADE",maxPoints,{
         points:parsed,feedback:feedback.trim()||null,
@@ -299,7 +299,7 @@ function SubmissionGradeCard({
       if (!response.ok) {
         setNeedsRefresh(facultyManualGradeNeedsRefresh(response.status));
         setError(
-          await courseApiError(response),
+          (await courseApiError(response)) ?? "Could not update this grade.",
         );
         return;
       }
@@ -344,7 +344,7 @@ function SubmissionGradeCard({
         });
       if(!response.ok){
         setNeedsRefresh(facultyManualGradeNeedsRefresh(response.status));
-        setError(await courseApiError(response));return;
+        setError((await courseApiError(response)) ?? "Could not update grade visibility.");return;
       }
       const saved=facultyManualGradeReceipt(
         await response.json(),submission,"GRADE",maxPoints,{
