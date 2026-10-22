@@ -67,14 +67,15 @@ const tpoB: RequestContext = {
 };
 
 async function cleanup() {
-  await pool.query(
-    "delete from placement_job_eligibility_policies",
-  );
-  await pool.query("delete from placement_jobs");
-  await pool.query(
-    "delete from placement_company_relationships",
-  );
-  await pool.query("delete from placement_companies");
+  // Never delete other tests' seeded jobs or applicants. Only this fixture's
+  // private company, relationship, policy and draft may be removed.
+  const companyScope="select id from placement_companies where primary_domain='draft-edit.example'";
+  const relationshipScope="select id from placement_company_relationships where company_id in ("+companyScope+")";
+  const draftScope="select id from placement_jobs where title='Draft Engineer' and company_relationship_id in ("+relationshipScope+")";
+  await pool.query("delete from placement_job_eligibility_policies where job_id in ("+draftScope+")");
+  await pool.query("delete from placement_jobs where id in ("+draftScope+")");
+  await pool.query("delete from placement_company_relationships where id in ("+relationshipScope+")");
+  await pool.query("delete from placement_companies where id in ("+companyScope+")");
 }
 
 async function createDraft() {

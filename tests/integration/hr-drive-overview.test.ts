@@ -4,6 +4,8 @@ import {afterAll,describe,expect,it} from "vitest";
 import {closeDatabaseConnection} from "@/db/client";
 import {createPlacementCompany} from "@/modules/placements/company-service";
 import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
+import {createPlacementRound} from "@/modules/placements/round-service";
+import {upsertJobEligibilityPolicy} from "@/modules/placements/eligibility-service";
 import {getHrJobRead} from "@/modules/placements/hr-job-read-service";
 import {buildHrDriveOverview} from "@/modules/placements/hr-drive-overview-model";
 import type {RequestContext} from "@/modules/identity/context";
@@ -21,6 +23,8 @@ describe.skipIf(!enabled)("HR Drive Overview PG guard",()=>{
   const b=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"Overview HR B "+nonce,primaryDomain:"hrob-"+nonce+".example"});
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:a.relationship.id,
    title:"Overview Job "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
+  await createPlacementRound(tpo,job.id,{kind:"TEST",name:"Screening",durationMinutes:60});
+  await upsertJobEligibilityPolicy(tpo,job.id,{missingEvidencePolicy:"ALLOW_WITH_FLAG"});
   await publishPlacementJob(tpo,job.id);
   const uid=randomUUID();
   const hr=(companyId:string,rel:string,collegeId:string):RequestContext=>({
