@@ -258,6 +258,7 @@ export async function applyTpoLegacyBulkStatuses(
  const allowed=new Map(scoped.map(row=>[row.id,row]));
  const results:{
   applicationId:string;status:TpoLegacyBulkStatus;success:boolean;error:string|null;
+  pendingRoundApply:boolean;unchanged:boolean;
  }[]=[];
  for(const item of items){
   try{
@@ -309,7 +310,8 @@ export async function applyTpoLegacyBulkStatuses(
    }else{
     throw new RangeError("Issue or verify the offer and joining outcome in Offers first.");
    }
-   results.push({applicationId:item.applicationId,status:item.status,success:true,error:null});
+   results.push({applicationId:item.applicationId,status:item.status,success:true,error:null,
+    pendingRoundApply:item.status==="WAITLISTED",unchanged:item.status==="APPLIED"});
   }catch(error){
    // Authorization and database failures stop the operation. Validation,
    // version, and state failures remain visible beside the affected row.
@@ -321,13 +323,18 @@ export async function applyTpoLegacyBulkStatuses(
     error instanceof PlacementsServiceError&&error.code==="PLACEMENT_SCREENING_STALE"
      ?"Applicant status changed. Refresh and try again.":
     "The applicant cannot move to this status. Check screening and round requirements.";
-   results.push({applicationId:item.applicationId,status:item.status,success:false,error:message});
+   results.push({applicationId:item.applicationId,status:item.status,success:false,error:message,
+    pendingRoundApply:false,unchanged:false});
   }
  }
  const succeeded=results.filter(row=>row.success).length,failed=results.length-succeeded;
- return {requested:items.length,succeeded,failed,
-  summary:failed?"Bulk status update completed with "+failed+" failure(s)"
-   :"Bulk status update completed",results};
+ const stagedWaitlist=results.filter(row=>row.pendingRoundApply).length;
+ const unchangedApplied=results.filter(row=>row.unchanged).length;
+ return {requested:items.length,succeeded,failed,stagedWaitlist,unchangedApplied,
+  summary:(failed?"Bulk status update completed with "+failed+" failure(s)"
+   :"Bulk status update completed")+
+   (stagedWaitlist?". "+stagedWaitlist+" waitlist result(s) staged; apply the completed round to publish the outcome.":""),
+  results};
 }
 
 /** Legacy chronological status history projection. Screening decisions have a
