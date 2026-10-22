@@ -9,7 +9,8 @@ describe("UX /college/programs loading, error and retry",()=>{
   expect(file("loading.tsx")).toContain("GracefulPageLoading");
  });
  it("UX-college-programs-loading-02 announces the exact route loading label",()=>{
-  expect(file("loading.tsx")).toContain("Loading college programs");
+  expect(file("loading.tsx")).toContain('label="Loading program form"');
+  expect(file("loading.tsx")).toContain('label="Loading program rows"');
  });
  it("UX-college-programs-error-01 preserves a shared error state",()=>{
   expect(file("error.tsx")).toContain("ErrorState");

@@ -27,12 +27,54 @@ const ALLOWED: Record<string, string> = {
     "scheduler endpoint; authenticated by the x-tpo-scheduler-key secret (timing-safe), no cookie",
 };
 
+/** Compatibility aliases are allowed only when their verified delegate
+ * performs the same-origin check before every mutation. The scan below reads
+ * each delegate, so removing its security guard breaks this test. */
+const DELEGATED_ORIGIN: Record<string,{call:string;owner:string;guard:RegExp}> = {
+  "src/app/api/admin/colleges/[collegeId]/subdomain/route.ts POST":{
+    call:"mutate(request,params)",owner:"src/app/api/admin/colleges/[collegeId]/subdomain/route.ts",
+    guard:/async function mutate[\s\S]*?isSameOriginRequest\(request\)/,
+  },
+  "src/app/api/admin/colleges/[collegeId]/subdomain/route.ts PUT":{
+    call:'mutate(request,params,"PUT")',owner:"src/app/api/admin/colleges/[collegeId]/subdomain/route.ts",
+    guard:/async function mutate[\s\S]*?isSameOriginRequest\(request\)/,
+  },
+  "src/app/api/admin/colleges/[collegeId]/subdomain/route.ts DELETE":{
+    call:'mutate(request,params,"DELETE")',owner:"src/app/api/admin/colleges/[collegeId]/subdomain/route.ts",
+    guard:/async function mutate[\s\S]*?isSameOriginRequest\(request\)/,
+  },
+  "src/app/api/attendance/faculty/sessions/[scheduleEventId]/route.ts POST":{
+    call:"PATCH(request,context)",owner:"src/app/api/attendance/faculty/sessions/[scheduleEventId]/route.ts",
+    guard:/export async function PATCH[\s\S]*?isSameOriginRequest\(request\)/,
+  },
+  "src/app/api/auth/legacy/otp/start/route.ts POST":{
+    call:"startScopedLogin(adapted)",owner:"src/app/api/auth/login/start/route.ts",
+    guard:/export async function POST[\s\S]*?guardLoginRequest\(\s*request/,
+  },
+  "src/app/api/auth/session/route.ts POST":{
+    call:"DELETE(request)",owner:"src/app/api/auth/session/route.ts",
+    guard:/export async function DELETE[\s\S]*?isSameOriginRequest\(request\)/,
+  },
+  "src/app/api/college/batches/[cohortId]/route.ts PUT":{
+    call:"PATCH(request,route)",owner:"src/app/api/college/batches/[cohortId]/route.ts",
+    guard:/export async function PATCH[\s\S]*?isSameOriginRequest\(request\)/,
+  },
+};
+
 /** GET handlers whose names look mutating but only read. Each needs a reason. */
 const ALLOWED_GET: Record<string, string> = {
   "src/app/api/courses/assignment-submissions/[submissionId]/file/route.ts GET":
     "createAssignmentFileReadGrant issues a short-lived read grant; no state change",
   "src/app/api/courses/deliveries/[deliveryId]/contents/[contentId]/file/route.ts GET":
     "file.createReadStream streams bytes; no state change",
+  "src/app/api/courses/deliveries/[deliveryId]/assignments/[assignmentId]/resources/[resourceId]/url/route.ts GET":
+    "createLearnerAssignmentResourceReadGrant signs a scoped private read URL; no mutation",
+  "src/app/api/notifications/stream/route.ts GET":
+    "stream teardown deletes only an in-memory connection counter, not persisted data",
+  "src/app/api/placements/jobs/[jobId]/eligibility/[membershipId]/route.ts GET":
+    "helper updateOverride follows the GET handler but is called only by POST and PUT",
+  "src/app/api/placements/learner/jobs/[jobId]/job-description/route.ts GET":
+    "createPrivateReadGrant issues a bounded private download URL with no persisted write",
 };
 
 const GUARD = /isSameOriginRequest|guardLoginRequest/;
@@ -97,7 +139,10 @@ describe("state-changing API routes", () => {
       for (const { method, body } of handlers(source)) {
         if (method === "GET") continue;
         const id = `${path.relative(process.cwd(), file).replace(/\\/g, "/")} ${method}`;
-        if (!GUARD.test(body) && !ALLOWED[id]) unguarded.push(id);
+        const delegated=DELEGATED_ORIGIN[id];
+        const secureDelegate=delegated && body.includes(delegated.call) &&
+          delegated.guard.test(fs.readFileSync(path.join(process.cwd(),delegated.owner),"utf8"));
+        if (!GUARD.test(body) && !secureDelegate && !ALLOWED[id]) unguarded.push(id);
       }
     }
 

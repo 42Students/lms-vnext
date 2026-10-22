@@ -15,7 +15,7 @@ describe("Faculty assignment authoring UX",()=>{
   const page=source();
   expect(page).toContain('setConfirmation({kind:"ARCHIVE"})');
   expect(page).toContain("facultyAssignmentArchiveWarning(existing.title)");
-  expect(page).toContain('confirmVariant={confirmation?.kind==="ARCHIVE"?"danger":"primary"}');
+  expect(page).toContain('confirmVariant={confirmation?.kind==="ARCHIVE"||confirmation?.kind==="SWITCH"?"danger":"primary"}');
   expect(page).toContain('submit("ARCHIVE",true)');
   expect(page).toContain('mutationLock.current=true');
  });
