@@ -23,7 +23,10 @@ type Draft={id:string;title:string;description:string;updatedAt:string;status:st
  locations:string[];openings:number|null;minimumAnnualCtcInr:number|null;maximumAnnualCtcInr:number|null;
  fixedCtcLpa:string|null;variableCtcLpa:string|null;stipendPerMonthInr:number|null;isDream:boolean;
  allowedCohortIds:string[];availableBatches:Array<{id:string;name:string;code:string;status:string;program:string}>;
- roleOptions:Array<{id:string;title:string}>;
+ roleOptions:Array<{id:string;title:string;employmentType?:string;workMode?:string;
+  minimumAnnualCtcInr?:number|null;maximumAnnualCtcInr?:number|null;
+  stipendPerMonthInr?:number|null}>;
+ companyRelationshipId?:string;
  employmentType:string;
  workMode:string;recruiterDriveMode:string;
  jobTypeLabel:string|null;
@@ -204,6 +207,18 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   if(field.name==="applicationDeadline")setReviewDeadline(field.value);
  }} className="min-w-0 space-y-4 border-b border-border pb-5 [overflow-wrap:anywhere]">
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Role<Input required name="title" defaultValue={job.title} minLength={3} maxLength={100} placeholder="e.g. Systems Engineer" className={cls}/></label>
+  <section aria-label="Employer relationship" className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 py-3">
+   <h3 className="text-sm font-semibold text-foreground">Company</h3>
+   <p className="mt-1 text-xs leading-5 text-body">
+    The verified employer relationship on this saved drive is read-only here.
+    Changing the company requires its separately authorized reassignment workflow;
+    saving job terms cannot silently transfer company or recruiter access.
+   </p>
+   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/about"}
+    className="mt-2 inline-flex min-h-9 items-center text-sm font-semibold text-link underline">
+    View linked company and role details
+   </Link>
+  </section>
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Description<Textarea required name="description" defaultValue={job.description} maxLength={20000} rows={3} className={cls}/></label>
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Location (comma-separated)<Input name="locations" defaultValue={job.locations.join(", ")} className={cls}/></label>
   <section aria-label="Drive job details" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
@@ -290,7 +305,21 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     <Input name="allowedPassingYears" defaultValue={job.allowedPassingYears.join(", ")}
      placeholder="e.g. 2026, 2027" className={cls}/>
    </label>
-   <p className="text-xs leading-5 text-muted-foreground">Separate years with commas. Leave blank for no passing-year restriction. Other program and academic targeting is managed from the drive workspace.</p>
+   <p className="text-xs leading-5 text-muted-foreground">Separate years with commas. Leave blank for no passing-year restriction.</p>
+   <div className="border-t border-border pt-3 text-sm">
+    <p className="font-semibold text-foreground">Departments and branches</p>
+    <p className="mt-1 text-body">{job.allowedProgramIds.length?
+      job.allowedProgramIds.length+" program / branch targets are recorded on this drive.":
+      "No explicit program or branch restriction is recorded."}</p>
+    <p className="mt-1 text-xs text-muted-foreground">
+     Program, section and backlog restrictions must use the server-validated eligibility policy.
+     Changing visible marks alone does not replace those safeguards.
+    </p>
+    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/about"}
+     className="mt-2 inline-flex min-h-9 items-center text-link underline">
+     Review full saved eligibility and role policy
+    </Link>
+   </div>
   </section>
   <div className="grid min-w-0 gap-4 sm:grid-cols-2">
    <label className="block text-[length:var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Application deadline (IST)
@@ -372,14 +401,44 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   <section className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
    <h2 className="mb-2 font-semibold text-foreground">Who this reaches</h2>
    <p className="text-sm text-body"><strong className="tabular-nums">{job.applicantCount}</strong> existing applicants</p>
-   <p className="mt-2 text-xs leading-5 text-muted-foreground">Changes are audited. Applicant notices are sent only after you choose to notify on save.</p>
+    <p role="status" className="mt-2 text-sm text-warning">
+     Eligible learner reach and branch breakdown have not been verified for the edited rules.
+     The existing applicant count above is not an eligibility estimate.
+    </p>
+    <div className="mt-2 flex flex-wrap items-center gap-3 text-xs">
+     <Link href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/about"}
+      className="inline-flex min-h-9 items-center font-semibold text-link underline">
+      Verify live audience before publishing
+     </Link>
+     <Button type="button" variant="secondary" className="min-h-9"
+      onClick={()=>router.refresh()} disabled={dirty||pending}>Retry saved reach data</Button>
+    </div>
+    <p className="mt-2 text-xs leading-5 text-muted-foreground">Changes are audited. Applicant notices are sent only after you choose to notify on save.</p>
   </section>
   <section className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
    <h2 className="mb-2 font-semibold text-foreground">Saved packages</h2>
-   {job.roleOptions.length?<ul className="space-y-1 text-sm text-body">{job.roleOptions.map(role=><li key={role.id}>{role.title}</li>)}</ul>:
-    <p className="text-sm text-muted-foreground">No role packages recorded.</p>}
+    {job.roleOptions.length?<ul className="space-y-3 text-sm text-body">{job.roleOptions.map(role=>
+     <li key={role.id} className="min-w-0 border-b border-border pb-2">
+      <strong className="break-words text-foreground">{role.title}</strong>
+      <dl className="mt-1 grid gap-x-4 gap-y-1 text-xs sm:grid-cols-2">
+       <div><dt className="inline font-semibold">Type: </dt><dd className="inline">{role.employmentType??"—"}</dd></div>
+       <div><dt className="inline font-semibold">Work mode: </dt><dd className="inline">{role.workMode??"—"}</dd></div>
+       <div><dt className="inline font-semibold">CTC: </dt><dd className="inline">
+        {role.minimumAnnualCtcInr===null||role.minimumAnnualCtcInr===undefined?
+         "—":"₹"+role.minimumAnnualCtcInr.toLocaleString("en-IN")}
+        {role.maximumAnnualCtcInr!==null&&role.maximumAnnualCtcInr!==undefined?
+         " – ₹"+role.maximumAnnualCtcInr.toLocaleString("en-IN"):""}</dd></div>
+       <div><dt className="inline font-semibold">Monthly stipend: </dt><dd className="inline">
+        {role.stipendPerMonthInr===null||role.stipendPerMonthInr===undefined?
+         "—":"₹"+role.stipendPerMonthInr.toLocaleString("en-IN")}</dd></div>
+      </dl>
+     </li>)}</ul>:
+     <p className="text-sm text-muted-foreground">No role packages recorded.</p>}
    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/about"}
-    className="mt-2 inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Open package details</Link>
+     className="mt-2 inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Review and edit role packages</Link>
+    <p className="mt-1 text-xs text-muted-foreground">
+     Additional role packages use the authorized role-option editor and are saved separately from this job-level form.
+    </p>
   </section>
  </aside>
  </div>
