@@ -177,7 +177,8 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    });
    const saved=facultyQuizSavedFromCommand(result);
    if(!saved){router.refresh();throw new Error("Quiz write succeeded, but its new version could not be loaded. Refresh before another action.");}
-   const savedQuiz:Quiz={...saved,...(saved.shuffleQuestions!==undefined?{shuffleQuestions:saved.shuffleQuestions}:{}),...(saved.shuffleOptions!==undefined?{shuffleOptions:saved.shuffleOptions}:{})};
+   const {shuffleQuestions:savedShuffleQuestions,shuffleOptions:savedShuffleOptions,...savedBase}=saved;
+   const savedQuiz:Quiz={...savedBase,...(savedShuffleQuestions!==undefined?{shuffleQuestions:savedShuffleQuestions}:{}),...(savedShuffleOptions!==undefined?{shuffleOptions:savedShuffleOptions}:{})};
    setLocalQuizzes(previous=>facultyQuizReconcileRows(previous,savedQuiz));
    if(action==="CREATE")setSelected(saved.id);
    setConfirmed(false);setDirtyDraft(false);
@@ -189,7 +190,8 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
            expectedUpdatedAt:saved.updatedAt,confirmed:true}),
        }));
        if(!published||published.status!=="PUBLISHED")throw new Error("The quiz was saved, but publishing could not be confirmed.");
-       const publishedQuiz:Quiz={...published,...(published.shuffleQuestions!==undefined?{shuffleQuestions:published.shuffleQuestions}:{}),...(published.shuffleOptions!==undefined?{shuffleOptions:published.shuffleOptions}:{})};
+       const {shuffleQuestions:publishedShuffleQuestions,shuffleOptions:publishedShuffleOptions,...publishedBase}=published;
+       const publishedQuiz:Quiz={...publishedBase,...(publishedShuffleQuestions!==undefined?{shuffleQuestions:publishedShuffleQuestions}:{}),...(publishedShuffleOptions!==undefined?{shuffleOptions:publishedShuffleOptions}:{})};
        setLocalQuizzes(previous=>facultyQuizReconcileRows(previous,publishedQuiz));
        setSuccess("Quiz created and published. Learners can attempt it until the due date.");
      }catch(reason){
