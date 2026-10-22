@@ -66,15 +66,17 @@ const tpoB: RequestContext = {
   },
 };
 
+// Tests own their disposable rows; never delete other integration tests'
+// published jobs, rounds, companies or immutable audit actors.
+const createdDrafts:{jobId:string;relationshipId:string;companyId:string}[]=[];
 async function cleanup() {
-  await pool.query(
-    "delete from placement_job_eligibility_policies",
-  );
-  await pool.query("delete from placement_jobs");
-  await pool.query(
-    "delete from placement_company_relationships",
-  );
-  await pool.query("delete from placement_companies");
+  for(const draft of createdDrafts.splice(0).reverse()){
+    await pool.query("delete from placement_job_eligibility_policies where job_id=$1",[draft.jobId]);
+    await pool.query("delete from placement_job_role_options where job_id=$1",[draft.jobId]);
+    await pool.query("delete from placement_jobs where id=$1",[draft.jobId]);
+    await pool.query("delete from placement_company_relationships where id=$1",[draft.relationshipId]);
+    await pool.query("delete from placement_companies where id=$1",[draft.companyId]);
+  }
 }
 
 async function createDraft() {
@@ -87,7 +89,7 @@ async function createDraft() {
     },
   );
 
-  return createPlacementJob(tpoA, {
+  const job=await createPlacementJob(tpoA, {
     collegeId: SEED_IDS.collegeA,
     companyRelationshipId:
       company.relationship.id,
@@ -98,6 +100,8 @@ async function createDraft() {
     workMode: "HYBRID",
     applicationMode: "INTERNAL",
   });
+  createdDrafts.push({jobId:job.id,relationshipId:company.relationship.id,companyId:company.company.id});
+  return job;
 }
 
 beforeEach(async () => {

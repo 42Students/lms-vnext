@@ -563,9 +563,9 @@ describe("Projects adversarial isolation", () => {
         {
           title: "Outgoing mentor meeting",
           startsAt:
-            "2026-10-20T10:00:00+05:30",
+            "2099-10-20T10:00:00+05:30",
           endsAt:
-            "2026-10-20T10:30:00+05:30",
+            "2099-10-20T10:30:00+05:30",
           timeZone: "Asia/Kolkata",
           meetingUrl:
             "https://meet.example.com/reassign",
@@ -708,9 +708,9 @@ describe("Projects adversarial isolation", () => {
         {
           title: "Cross-project task injection",
           startsAt:
-            "2026-10-20T10:00:00+05:30",
+            "2099-10-20T10:00:00+05:30",
           endsAt:
-            "2026-10-20T10:30:00+05:30",
+            "2099-10-20T10:30:00+05:30",
           timeZone: "Asia/Kolkata",
           meetingUrl:
             "https://meet.example.com/adversarial",
@@ -1298,9 +1298,9 @@ describe("Projects adversarial isolation", () => {
       {
         title: "Recent planning touchpoint",
         startsAt:
-          "2026-11-01T10:00:00+05:30",
+          "2099-11-01T10:00:00+05:30",
         endsAt:
-          "2026-11-01T10:30:00+05:30",
+          "2099-11-01T10:30:00+05:30",
         timeZone: "Asia/Kolkata",
         meetingUrl:
           "https://meet.example.com/recent-activity",
