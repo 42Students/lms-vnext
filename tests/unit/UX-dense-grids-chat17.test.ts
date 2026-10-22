@@ -33,7 +33,7 @@ describe("UX-UNOWNED-DENSE-GRID-05 semantic grid exceptions",()=>{
     expect(text).toContain('className="sticky left-0 z-10 bg-surface px-4 py-3"');
     expect(text).toContain('aria-label="No class scheduled"');
     expect(text).toContain("Multiple sessions on a day open a session chooser");
-    expect(text).toContain("<Drawer");
+    expect(text).toContain("<Modal");
     expect(text).toContain("College Admin may correct sessions");
     const table=source("src/components/ui/table.tsx");
     expect(table).toContain('<ScrollCue axis="x" label={scrollLabel');

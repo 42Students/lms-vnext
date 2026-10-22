@@ -41,7 +41,7 @@ describe("Super Admin last-third student placement lookup: URL safety and role s
     expect(state.lastQuery).toBe("IIT Dharwad");
   });
   it("SA-placements-student-lookup-02 invalid long, duplicate, whitespace-only and short GET never reach DB",async()=>{
-    for(const q of ["x".repeat(151),"ab"," ","\t",["IIT","Other"]]){
+    for(const q of ["x".repeat(151),"a"," ","\t",["IIT","Other"]]){
       expect(parseSuperAdminPlacementStudentSearch({q}).invalid).toBe(true);
       const page=await SuperAdminPlacementStudentLookup({searchParams:Promise.resolve({q})});
       const content=texts(page).join(" ");

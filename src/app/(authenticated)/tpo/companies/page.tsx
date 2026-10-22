@@ -67,7 +67,7 @@ function invalidCompanyFilters(){
   <p className="mt-2 text-sm text-body leading-[22px]">
    The requested search or pagination values are invalid. No company data was loaded.
   </p>
-  <Link href="/tpo/companies?directory=1" className="lms-inline-link mt-4 inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+  <Link href="/tpo/companies?directory=1" className="lms-inline-link mt-4 inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-11">
    Clear filters
   </Link>
  </section>;
@@ -125,13 +125,13 @@ export default async function TpoCompanyMemoryPage({
        <span className="text-sm text-muted-foreground">{item.linkedToCollege?
         "Linked to your college":"Not linked to your college"}</span>
        {item.linkedToCollege?<Link href={"/tpo/companies?name="+encodeURIComponent(item.name)}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-11">
         Open company details
        </Link>:<span className="text-xs text-body">Use Add other above to link this employer.</span>}
       </div>
      </li>)}
     </ul>:q?<EmptyState title="No matching companies" description="Try another name or verified domain."/>:null}
-    <Link href="/tpo/companies?directory=1" className="inline-flex min-h-11 items-center text-link underline md:min-h-9">
+    <Link href="/tpo/companies?directory=1" className="inline-flex min-h-11 items-center text-link underline md:min-h-11">
      Back to college companies
     </Link>
    </div>;
@@ -173,10 +173,10 @@ export default async function TpoCompanyMemoryPage({
         actions={
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-end">
             <TpoCompanyCreateForm />
-            <Link href="/tpo/companies?discover=1" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Find or link company</Link>
-            <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Create drive</Link>
+            <Link href="/tpo/companies?discover=1" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-11">Find or link company</Link>
+            <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-11">Create drive</Link>
             <details className="group min-w-0 sm:relative">
-              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link marker:hidden focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 [&::-webkit-details-marker]:hidden">
+              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link marker:hidden focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-11 [&::-webkit-details-marker]:hidden">
                 Company links
               </summary>
               <nav aria-label="Other company destinations" className="mt-2 flex min-w-0 flex-col gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:absolute sm:right-0 sm:z-20 sm:w-52 sm:shadow-sm">
@@ -237,14 +237,14 @@ export default async function TpoCompanyMemoryPage({
               maxLength={150}
               defaultValue={query.search ?? ""}
               placeholder="Company name or website"
-              className="min-h-11 md:min-h-9"
+              className="min-h-11 md:min-h-11"
             />
           </label>
 
           <label className="flex flex-col gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Sort by
             <Select name="sort" defaultValue={query.sort}
-              className="min-h-11 md:min-h-9">
+              className="min-h-11 md:min-h-11">
               <option value="NAME">Company name</option>
               <option value="CONTACTS">Most contacts</option>
               <option value="DRIVES">Most drives</option>
@@ -256,7 +256,7 @@ export default async function TpoCompanyMemoryPage({
             <Select
               name="pageSize"
               defaultValue={String(query.pageSize)}
-              className="min-h-11 md:min-h-9"
+              className="min-h-11 md:min-h-11"
             >
               <option value="25">25</option>
               <option value="50">50</option>
@@ -266,7 +266,7 @@ export default async function TpoCompanyMemoryPage({
 
           <Button
             type="submit"
-            className="inline-flex min-h-11 w-full items-center justify-center self-end rounded-[var(--lms-control-radius)] bg-primary px-6 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-primary-hover md:min-h-9 xl:w-auto"
+            className="inline-flex min-h-11 w-full items-center justify-center self-end rounded-[var(--lms-control-radius)] bg-primary px-6 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-primary-hover md:min-h-11 xl:w-auto"
           >
             Search
           </Button>
@@ -277,7 +277,7 @@ export default async function TpoCompanyMemoryPage({
             href={"/api/placements/tpo/companies/export?"+new URLSearchParams({
               ...(query.search?{search:query.search}:{}),sort:query.sort,
             }).toString()}
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">
+            className="inline-flex min-h-11 md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">
             Export companies CSV ({page.total})
           </Link>:<p role="status" className="text-xs text-muted-foreground leading-5">
             Narrow your search to 2,000 companies to export all matching rows.
@@ -307,7 +307,7 @@ export default async function TpoCompanyMemoryPage({
                   search: query.search,
                   pageSize: query.pageSize,
                   sort: query.sort,
-                })} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                })} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-11">
                   First page
                 </Link>
               }
@@ -333,7 +333,7 @@ export default async function TpoCompanyMemoryPage({
                 sort: query.sort,
                   page: page.page - 1,
                 })}
-                className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]"
+                className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-11 hover:bg-[rgba(38,186,199,0.07)]"
               >
                 Previous
               </Link>
@@ -347,7 +347,7 @@ export default async function TpoCompanyMemoryPage({
                 sort: query.sort,
                   page: page.page + 1,
                 })}
-                className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]"
+                className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-11 hover:bg-[rgba(38,186,199,0.07)]"
               >
                 Next
               </Link>
@@ -356,7 +356,7 @@ export default async function TpoCompanyMemoryPage({
         </nav> : null}
 
         <details className="border-t border-border pt-3 text-xs leading-5 text-muted-foreground">
-          <summary className="min-h-11 cursor-pointer font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">About company counts</summary>
+          <summary className="min-h-11 cursor-pointer font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-11">About company counts</summary>
           <p className="max-w-3xl pb-2 leading-5">
           Offer counts represent persisted offer records, including
           historical declined and withdrawn statuses. Confirmed joins

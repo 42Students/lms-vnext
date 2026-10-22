@@ -27,13 +27,13 @@ function rendered(node:ReactNode):string{
  if(typeof node==="string"||typeof node==="number")return String(node);
  if(!isValidElement(node))return "";
  const props=node.props as {children?:ReactNode;title?:string;description?:string};
- return [props.title??"",props.description??"",rendered(props.children)].join(" ");
+ return [props.title??"",props.description??"",rendered((props as typeof props & {action?:ReactNode;actions?:ReactNode}).action),rendered((props as typeof props & {actions?:ReactNode}).actions),rendered(props.children)].join(" ");
 }
 function hrefs(node:ReactNode):string[]{
  if(Array.isArray(node))return node.flatMap(hrefs);
  if(!isValidElement(node))return [];
- const props=node.props as {children?:ReactNode;href?:unknown;items?:readonly {href?:string}[]};
- return [...(typeof props.href==="string"?[props.href]:[]),...(props.items??[]).flatMap(item=>item.href?[item.href]:[]),...hrefs(props.children)];
+ const props=node.props as {children?:ReactNode;actions?:ReactNode;action?:ReactNode;href?:unknown;items?:readonly {href?:string}[]};
+ return [...(typeof props.href==="string"?[props.href]:[]),...(props.items??[]).flatMap(item=>item.href?[item.href]:[]),...hrefs(props.actions),...hrefs(props.action),...hrefs(props.children)];
 }
 
 describe("HR-BREAK-request-drive-page-01: no-grant, wrong college and stale draft",()=>{

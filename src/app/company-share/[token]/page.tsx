@@ -114,7 +114,7 @@ export default async function CompanySharePage({
     </a>
    </div>
    <p role="note" className="max-w-3xl text-xs text-muted-foreground leading-[20px]">
-    Download all resumes (ZIP) was retired for this protected share: a bulk archive cannot preserve per-file clean-scan, access-grant expiry and individual download audit guarantees. When RESUME is a selected column, each authorized CLEAN resume may be opened using its own short-lived signed link. Ask the placement cell for any additional document permissions.
+    Bulk resume archives were retired for this protected share: a bulk archive cannot preserve per-file clean-scan, access-grant expiry and individual download audit guarantees. When RESUME is a selected column, each authorized CLEAN resume may be opened using its own short-lived signed link. Ask the placement cell for any additional document permissions.
    </p>
   </section>
   </div>
