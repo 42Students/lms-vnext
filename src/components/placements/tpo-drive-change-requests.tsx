@@ -2,7 +2,7 @@
 import Link from "next/link";
 import {useRef,useState} from "react";
 import {Input} from "@/components/ui/input";
-import {driveChangeCommandSchema,LEGACY_DRIVE_CHANGE_FIELD_LABELS} from "@/modules/placements/tpo-drive-change-request-model";
+import {driveChangeCommandSchema,DRIVE_CHANGE_EDITOR_OPTIONS,LEGACY_DRIVE_CHANGE_FIELD_LABELS} from "@/modules/placements/tpo-drive-change-request-model";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
@@ -135,10 +135,10 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
    <div className="grid gap-3 min-[768px]:grid-cols-2">
     {field&&field!=="OTHER"?<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">How
      <Select value={mode}
-      onChange={e=>setMode(e.target.value as "SUGGEST"|"ASK")}
+      onChange={e=>{setMode(e.target.value as "SUGGEST"|"ASK");setValue("");setFieldError("");}}
       className="min-h-11 min-[768px]:min-h-9"><option value="SUGGEST">Propose</option><option value="ASK">Ask</option></Select></label>:null}
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">What should change
-     <Select value={field} onChange={e=>setField(e.target.value as typeof field)}
+     <Select value={field} onChange={e=>{setField(e.target.value as typeof field);setValue("");setFieldError("");}}
       className="min-h-11 min-[768px]:min-h-9">
       <option value="">Choose a field</option>{fields.map(([id,label])=><option key={id} value={id}>{label}</option>)}</Select></label>
    </div>
@@ -156,13 +156,9 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
       <Select value={value} onChange={e=>setValue(e.target.value)}
        className="min-h-11 min-[768px]:min-h-9">
        <option value="">Choose an option</option>
-       {(field==="WORK_MODE"?[
-         {value:"ONSITE",label:"On campus"},{value:"HYBRID",label:"Hybrid"},
-         {value:"REMOTE",label:"Remote"},
-        ]:[
-         {value:"FULL_TIME",label:"Full-time"},{value:"INTERNSHIP",label:"Internship"},
-         {value:"CONTRACT",label:"Contract"},
-        ]).map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
+       {(field==="WORK_MODE"?DRIVE_CHANGE_EDITOR_OPTIONS.WORK_MODE:
+         DRIVE_CHANGE_EDITOR_OPTIONS.JOB_TYPE).map(option=>
+          <option key={option.value} value={option.value}>{option.label}</option>)}
       </Select>:
       <Textarea value={value} onChange={e=>{setValue(e.target.value);setFieldError("");}} minLength={2}
        maxLength={field==="ROLE_TITLE"||field==="LOCATION"?255:2000}
@@ -250,13 +246,9 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
          onChange={e=>setNotes(p=>({...p,[item.id]:e.target.value}))}
          className="min-h-11 min-[768px]:min-h-9">
          <option value="">Choose an answer</option>
-         {((item.legacyField??item.field)==="JOB_TYPE"?[
-           {value:"FULL_TIME",label:"Full-time"},{value:"INTERNSHIP",label:"Internship"},
-           {value:"CONTRACT",label:"Contract"},
-          ]:[
-           {value:"ONSITE",label:"On campus"},{value:"HYBRID",label:"Hybrid"},
-           {value:"REMOTE",label:"Remote"},
-          ]).map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
+         {((item.legacyField??item.field)==="JOB_TYPE"?
+           DRIVE_CHANGE_EDITOR_OPTIONS.JOB_TYPE:DRIVE_CHANGE_EDITOR_OPTIONS.WORK_MODE)
+           .map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
         </Select>:
         <Textarea maxLength={2000} value={notes[item.id]??""}
          onChange={e=>setNotes(p=>({...p,[item.id]:e.target.value}))}
