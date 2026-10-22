@@ -199,7 +199,7 @@ export async function getObjectStream(
   const response = await fetch(url, {
     method: "GET",
     cache: "no-store",
-    headers: range ? { range: `bytes=${range.start}-${range.end}` } : undefined,
+    ...(range ? { headers: { range: `bytes=${range.start}-${range.end}` } } : {}),
   });
   if (response.status === 404) return null;
   if (!response.ok || !response.body) {
