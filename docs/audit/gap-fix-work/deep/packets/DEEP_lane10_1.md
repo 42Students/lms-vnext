@@ -9,7 +9,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - [x] G2-6-018-041  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 - [x] G2-6-019-039  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
-- [ ] G2-6-031-038  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
+- [x] G2-6-031-038  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 - [x] G2-11-019-029  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [ ] G2-11-019-047  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [x] G2-11-019-059  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
@@ -28,3 +28,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - OK G2-19-001-012 — `src/modules/admin-ui/super-admin-scoped-people-service.ts:115-127,204-216` projects learner `contactMail`/`contactMobile` from `learnerProfiles.profileDocument` before canonical account fallback and limits selection to the authorized college; matches `docs/legacy-source/frontend/src/pages/superadmin/sections/Students.js:937-938`.
 - FIXED G2-6-018-041 — `54d58315e2c2b6b9fee62740a44200d8d55477e6` — `src/modules/organizations/service.ts`: organization archival rejects ACTIVE child colleges but permits archived child colleges, matching `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/OrganizationServiceImpl.java:76-85` (legacy ignores `isDeleted=true` children).
 - OK G2-6-019-039 — `src/components/profile/learner-profile-workspace.tsx:1044-1055` exposes the Job Notifications Enabled checkbox and direct link to separate placement notifications in the Edit Job Preferences dialog; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/JobPreferencesDTO.java:9-16`.
+- OK G2-6-031-038 — `src/components/auth/login-form.tsx:214,349,754-765` initializes affirmative consent unchecked and refuses Super Admin OTP verification until checked, matching `docs/legacy-source/frontend/src/loginPages/SuperAdminLogin.js:28,189-210`.
