@@ -17,6 +17,7 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   collegeTermCourseAddSchema, collegeTermCourseIdSchema,
   collegeTermCourseUnmapSchema, collegeTermCourseUpdateSchema, reorderTermCourseIds, nextTermCourseOrder,
+  termCourseEditFields,
 } from "./college-term-mapping-model";
 
 const courseDepartment = alias(departments, "college_term_course_department");
@@ -360,15 +361,11 @@ export async function updateCollegeTermMapping(
       // vNext reorders one scoped mapping by a 1-based position, not by
       // replacing all mappingIds. A full-list legacy reorder adapter would
       // need its own validated set-equality contract and endpoint.
-      const position = input.position ?? current.displayOrder;
+      // Imported display orders may contain gaps; editing credits or a flag
+      // without moving the row must use its actual position in this term.
+      const position = input.position ?? before.findIndex(row => row.id === mappingId) + 1;
       const credits = input.credits ?? current.credits;
-      // Imported mandatory-flag and CORE/ELECTIVE are distinct persisted
-      // values. Only an explicit legacy edit changes both together.
-      const type = input.isMandatory !== undefined
-        ? input.isMandatory ? "CORE" : "ELECTIVE"
-        : input.type ?? current.type;
-      const isMandatory = input.isMandatory !== undefined
-        ? input.isMandatory : current.legacyIsMandatory;
+      const { type, isMandatory } = termCourseEditFields(current, input);
       if (position > before.length)
         throw new CollegeTermMappingError("TERM_COURSE_POSITION_INVALID");
       const order = reorderTermCourseIds(before.map(row => row.id), mappingId, position);

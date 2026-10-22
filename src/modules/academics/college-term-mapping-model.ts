@@ -53,6 +53,20 @@ export const collegeTermCourseAddSchema = z.object({
   type: z.enum(["CORE", "ELECTIVE"]),
   credits: newTermCourseCreditsSchema,
 }).strict();
+/** Preserve the imported mandatory flag independently of the curriculum type.
+ * A CORE course may be optional; editing only its mandatory checkbox must
+ * never reclassify it as an ELECTIVE or overwrite a nullable legacy flag. */
+export function termCourseEditFields(
+  current: { type: "CORE" | "ELECTIVE"; legacyIsMandatory: boolean | null },
+  changes: { type?: "CORE" | "ELECTIVE"; isMandatory?: boolean },
+) {
+  return {
+    type: changes.type ?? current.type,
+    isMandatory: changes.isMandatory === undefined
+      ? current.legacyIsMandatory : changes.isMandatory,
+  };
+}
+
 export const collegeTermCourseUpdateSchema = z.object({
   credits: termCourseCreditsSchema.optional(),
   position: z.number().int().min(1).max(100000).optional(),
