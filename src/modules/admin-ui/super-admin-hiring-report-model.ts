@@ -14,13 +14,14 @@ export type SuperAdminHiringReportQuery=z.infer<typeof superAdminHiringReportQue
 export const SUPER_ADMIN_HIRING_EXPORT_CAP=5000;
 /** Stage count provenance: current-state snapshot counts and cumulative
  * ever-reached funnel steps have different denominators. Only verified
- * selected-college membership's application rows enter each aggregate.
+ * selected-college or selected-organization membership's application rows
+ * enter each aggregate, always through the owning drive's college.
  * Withdrawn is application status; hired requires accepted offer plus
  * persisted JOINED; stage history preserves cumulative earlier steps.
  * Historical numeric legacy IDs are never inferred from UUIDs.
  */
 export const SUPER_ADMIN_HIRING_STAGE_PROVENANCE={
- scope:"SELECTED_COLLEGE_APPLICATIONS",
+ scope:"SELECTED_COLLEGE_OR_ORGANIZATION_APPLICATIONS",
  snapshot:"CURRENT_STAGE_OR_SCREENING_FALLBACK",
  withdrawn:"PERSISTED_APPLICATION_STATUS",
  hired:"ACCEPTED_OFFER_AND_RECORDED_JOINED",

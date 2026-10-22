@@ -8,8 +8,8 @@ import {
  placementOffers,placementJoiningOutcomes,
 } from "@/db/schema";
 import {placementCollegeApplicationStages,placementCollegeApplicationStageHistory} from "@/db/schema/placement-college-application-stages";
-import type {RequestContext} from "@/modules/identity/context";
-import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
+import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
+import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {superAdminHiringReportQuery,SUPER_ADMIN_HIRING_EXPORT_CAP,type SuperAdminHiringRow} from "./super-admin-hiring-report-model";
 /**
  * Legacy Dayjs boundaries denote IST calendar days. Use the next midnight as
@@ -31,12 +31,30 @@ function istStartOfNextDay(value:string):Date {
  */
 export async function getSuperAdminCompanyHiringReport(context:RequestContext,raw:unknown){
  const query=superAdminHiringReportQuery.parse(raw);
- const selected=requireSuperAdminSelectedCollege(context,"placements.read"),db=getDb();
+ // A verified organization scope may span several colleges. Do not require
+ // an arbitrary selected college for its read-only hiring summary.
+ if(!isSuperAdmin(context))throw new AuthorizationError("placements.read");
+ const selected={
+  collegeId:context.adminScope?.collegeId??null,
+  organizationId:context.adminScope?.organizationId??null,
+ };
+ if(!selected.collegeId&&!selected.organizationId)
+  throw new AuthorizationError("placements.read");
+ requirePermission(context,"placements.read",{
+  collegeId:selected.collegeId??undefined,
+  organizationId:selected.organizationId??undefined,
+ });
+ // Academic facet IDs are meaningful only inside a selected college; they
+ // must not leak into organization-wide aggregates through an old URL.
+ if(!selected.collegeId && (query.departmentId||query.programId||query.cohortId))
+  throw new AuthorizationError("placements.read");
+ const db=getDb();
  const pattern=query.q?"%"+query.q.replace(/[\\%_]/g,"\\$&")+"%":null;
  const matchingAcademic= query.departmentId||query.programId||query.cohortId
   ?exists(db.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
     .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
-    .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,selected.collegeId)))
+    .innerJoin(departments,and(eq(departments.id,programs.departmentId),
+      selected.collegeId?eq(departments.collegeId,selected.collegeId):undefined))
     .innerJoin(cohorts,and(eq(cohorts.id,learnerProgramEnrollments.cohortId),
       eq(cohorts.programId,learnerProgramEnrollments.programId)))
     .where(and(eq(learnerProgramEnrollments.membershipId,placementApplications.membershipId),
@@ -121,10 +139,10 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
  }).from(placementJobs)
   .innerJoin(placementCompanyRelationships,and(
     eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
-    eq(placementCompanyRelationships.collegeId,selected.collegeId)))
+    eq(placementCompanyRelationships.collegeId,placementJobs.collegeId)))
   .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
   .innerJoin(colleges,and(eq(colleges.id,placementJobs.collegeId),
-    eq(colleges.id,selected.collegeId),
+    selected.collegeId?eq(colleges.id,selected.collegeId):undefined,
     selected.organizationId?eq(colleges.organizationId,selected.organizationId):undefined))
   // A legacy free-text-only company is normalized to a required per-college
   // relationship on import. This join must NOT invent a cross-college job.
@@ -137,7 +155,7 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
     applicationFilters,
     exists(db.select({id:collegeMemberships.id}).from(collegeMemberships)
       .where(and(eq(collegeMemberships.id,placementApplications.membershipId),
-        eq(collegeMemberships.collegeId,selected.collegeId)))),
+        eq(collegeMemberships.collegeId,placementJobs.collegeId)))),
   ))
   .leftJoin(placementCollegeApplicationStages,and(
     eq(placementCollegeApplicationStages.applicationId,placementApplications.id),
@@ -208,7 +226,8 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
    applicationClock:"FIRST_APPLIED_AT_OR_SUBMITTED_AT" as const,
    hiredEvidence:"ACCEPTED_OFFER_AND_JOINED_OUTCOME" as const,
    firstShortlistLatency:"FIRST_VALID_SHORTLIST_TRANSITION" as const,
-   sharedJobs:"SELECTED_COLLEGE_ONLY" as const,
+   sharedJobs:selected.collegeId?"SELECTED_COLLEGE_ONLY" as const:
+     "SELECTED_ORGANIZATION_COLLEGES" as const,
    companyReportJobFilter:"EXPLICIT_JOB_SCOPE_EXTENSION" as const,
    // Snapshot stages count only submitted applications. Withdrawn rows
    // remain in totalApplications and in a distinct withdrawn bucket;
