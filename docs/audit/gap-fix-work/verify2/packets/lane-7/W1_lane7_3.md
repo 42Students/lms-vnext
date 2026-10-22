@@ -92,6 +92,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Map rejection reason/assessment URL and notification policy.
 
 ## G2-17-012-022 [P1] GAP facet F07
+- [x] Verified: job creation pins legacyScreeningVersion to 1 and the update schema has no screening-version write; job editing is DRAFT-only while applications require publication. Later decisions cannot rewrite the screening algorithm version.
 - Files: src/modules/placements/screening-service.ts
 - Legacy: docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/PlacementJobServiceImpl.java:485-494 — Changing screeningVersion after first application is rejected.
 - Expected fix: Preserve screening schema version freeze after applications.
