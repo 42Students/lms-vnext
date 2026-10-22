@@ -183,7 +183,7 @@ export default async function FacultyAssignmentReportPage({
           {([["On time",metrics.onTime],["Late",metrics.late],["Not submitted",metrics.missing]] as const)
            .map(([label,value])=><div key={label} className="min-w-0 py-3">
              <dt className="text-xs font-semibold text-muted-foreground">{label}</dt>
-             <dd className="mt-1 text-xl font-semibold tabular-nums text-[var(--lms-heading)]">{value}</dd>
+             <dd className="mt-1 text-xl font-semibold tabular-nums text-[var(--lms-heading)]">{value===null?"Unknown":value}</dd>
            </div>)}
         </dl>
 <div aria-labelledby="section-not-submitted" className="mt-4 border-t border-[var(--lms-canvas-border)] pt-3">
