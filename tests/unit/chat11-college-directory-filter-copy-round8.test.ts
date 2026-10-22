@@ -12,7 +12,8 @@ describe("College Academic Setup filter labels", () => {
       expect(code).toContain('name="q"');
       expect(code).toContain('name="programId"');
       expect(code).toContain('name="status"');
-      expect(code).toContain("<summary");
+      expect(code).toContain("<Disclosure");
+      expect(code).toContain('title={"More filters"}');
       expect(code).toContain("More filters");
       for (const legacyAuditJargon of [
         "Batch active learner evidence", "Class parent program lifecycle",

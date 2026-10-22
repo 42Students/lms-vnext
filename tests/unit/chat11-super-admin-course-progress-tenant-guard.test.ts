@@ -48,7 +48,7 @@ describe("SA-tenants-modules-COURSE-PROGRESS-07 authoritative scope and strict U
  it("authenticates Super Admin before offering query fallback and student data retrieval",()=>{
   const source=readFileSync("src/app/(authenticated)/admin/course-progress/students/page.tsx","utf8");
   const auth=source.indexOf('requirePermission(context,"admin-scope.select")');
-  const parse=source.indexOf("parseSuperAdminStudentProgressParams(await searchParams)");
+  const parse=source.indexOf("parseSuperAdminStudentProgressParams({offeringId:raw.offeringId})");
   const read=source.indexOf("getSuperAdminStudentCourseProgress(context,{offeringId})");
   expect(auth).toBeGreaterThan(-1);
   expect(auth).toBeLessThan(parse);

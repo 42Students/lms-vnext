@@ -6,6 +6,8 @@ describe("UX-tpo-batches-batchid-registrations-02",()=>{
   expect(source).toContain("<PageHeader");
   expect(source).toContain("<Input");
   expect(source).toContain("<Select");
-  expect(source).toContain('<Button type="submit">Filter</Button>');
+  expect(source).toContain('<Button type="submit"');
+  expect(source).toContain('>Filter</Button>');
+  expect(source).toContain('action={"/tpo/batches/"+batchId+"/registrations"}');
  });
 });

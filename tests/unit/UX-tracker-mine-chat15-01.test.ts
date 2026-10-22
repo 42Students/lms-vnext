@@ -7,7 +7,7 @@ describe("UX-tracker-mine-chat15-01",()=>{
  it("UX-tracker-mine-01 redirects disabled users and renders unavailable, error and empty states",()=>{
   const s=page("page.tsx");
   for(const part of ['context.user.platformStatus!=="ACTIVE"', 'redirect("/dashboard")',
-    "trackerAdminRuntimeEnabled()", 'role="status"', 'role="alert"',
+    "trackerAdminRuntimeEnabled()", '<Banner tone="warning">', '<ErrorState title="Could not load reports"',
     "Reports are temporarily unavailable. Try again soon.",
     "We could not load your reports.", "You have not reported any issues yet.",
     "encodeURIComponent(item.publicId)", 'href="/tracker"', "<PageHeader",
@@ -17,9 +17,9 @@ describe("UX-tracker-mine-chat15-01",()=>{
  it("UX-tracker-mine-publicId-01 validates the ID and scopes loading to signed-in reporter",()=>{
   const s=page("[publicId]/page.tsx");
   for(const part of ['context.user.platformStatus!=="ACTIVE"',
-    "trackerPublicIdSchema.safeParse(publicId).success", "notFound()",
+    "trackerPublicIdSchema.safeParse(canonical).success", "notFound()",
     "getMyTrackerReport(context,publicId)", "trackerAdminRuntimeEnabled()",
-    'role="status"', 'href="/tracker/mine"',"timeZone:\"Asia/Kolkata\"",
+    '<Banner tone="warning">', 'href="/tracker/mine"',"timeZone:\"Asia/Kolkata\"",
     "<PageHeader"])expect(s).toContain(part);
   expect(s).not.toMatch(/error\.(message|stack)/);
  });
