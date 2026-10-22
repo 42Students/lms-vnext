@@ -90,13 +90,16 @@ async function setup() {
     (id,college_id,template_id,template_version_id,slug,title,created_by_user_id)
     values($1,$2,$3,$4,$5,'Chat7 own project',$6)`,
     [ids.project,ids.college,ids.template,ids.version,"chat7-own-"+suffix,SEED_IDS.superAdminUser]);
+  // vNext access is role_kind + can_mutate, not just the old role label.
+  // Explicitly seed a writable learner and mentor instead of depending on
+  // migration defaults that can resolve to read-only OBSERVER access.
   await pool.query(`insert into project_members
-    (id,project_id,membership_id,role,created_by_user_id)
-    values($1,$2,$3,'LEARNER',$4)`,
+    (id,project_id,membership_id,role,role_kind,can_mutate,created_by_user_id)
+    values($1,$2,$3,'LEARNER','LEARNER',true,$4)`,
     [ids.projectMember,ids.project,ids.membership,SEED_IDS.superAdminUser]);
   await pool.query(`insert into project_members
-    (id,project_id,membership_id,role,is_primary,created_by_user_id)
-    values($1,$2,$3,'MENTOR',true,$4)`,
+    (id,project_id,membership_id,role,role_kind,can_mutate,is_primary,created_by_user_id)
+    values($1,$2,$3,'MENTOR','MENTOR',true,true,$4)`,
     [ids.mentorProjectMember,ids.project,ids.mentorMembership,SEED_IDS.superAdminUser]);
 }
 async function cleanup() {

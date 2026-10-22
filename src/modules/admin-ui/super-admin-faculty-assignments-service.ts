@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,desc,count,eq,ilike,or,isNull,isNotNull} from "drizzle-orm";
+import {and,asc,desc,count,eq,ilike,or,isNull,isNotNull,sql} from "drizzle-orm";
 import {alias} from "drizzle-orm/pg-core";
 import {getDb} from "@/db/client";
 import {aliasedColumn} from "@/db/aliased-column";
@@ -104,8 +104,39 @@ export async function listAdminFacultyAssignments(context:RequestContext,raw:unk
  // A removed teaching grant can invalidate a bookmarked deep link. Return
  // the last real page instead of an empty page with an impossible label.
  const page=Math.min(query.page,totalPages);
- const rows=await db.select().from(source)
-  .orderBy(desc(source.id))
+ // Drizzle's automatic subquery projection can emit multiple bare "id"
+ // column names for joined entities, yielding 42702 in PostgreSQL. Bind every
+ // aliased identity to its explicit, scoped subquery alias instead.
+ const rows=await db.select({
+   id:sql<string>`"admin_faculty_assignment_directory"."admin_teacher_assignment_id"`,
+   membershipId:source.membershipId,
+   courseId:sql<string>`"admin_faculty_assignment_directory"."admin_teacher_course_id"`,
+   cohortId:sql<string>`"admin_faculty_assignment_directory"."admin_teacher_cohort_id"`,
+   role:source.role,
+   startedAt:source.startedAt,
+   legacyActive:source.legacyActive,
+   deletedAt:source.deletedAt,
+   startDate:source.startDate,
+   endDate:source.endDate,
+   importedAcademicYear:source.importedAcademicYear,
+   updatedAt:source.updatedAt,
+   teachingEnded:sql<Date | null>`"admin_faculty_assignment_directory"."admin_teacher_assignment_ended_at"`,
+   deliveryEnded:sql<Date | null>`"admin_faculty_assignment_directory"."admin_teacher_delivery_ended_at"`,
+   teacherName:sql<string>`"admin_faculty_assignment_directory"."admin_teacher_name"`,
+   courseName:sql<string>`"admin_faculty_assignment_directory"."admin_teacher_course_name"`,
+   courseCode:source.courseCode,
+   courseImageUrl:source.courseImageUrl,
+   sectionName:sql<string>`"admin_faculty_assignment_directory"."admin_teacher_section_name"`,
+   sectionId:sql<string>`"admin_faculty_assignment_directory"."admin_teacher_section_id"`,
+   periodName:sql<string>`"admin_faculty_assignment_directory"."admin_teacher_period_name"`,
+   periodCode:sql<string>`"admin_faculty_assignment_directory"."admin_teacher_period_code"`,
+   legacyAcademicYear:source.legacyAcademicYear,
+   cohortName:sql<string>`"admin_faculty_assignment_directory"."admin_teacher_cohort_name"`,
+   cohortAcademicYear:source.cohortAcademicYear,
+   cohortLegacyYear:source.cohortLegacyYear,
+   deliveryId:sql<string>`"admin_faculty_assignment_directory"."admin_teacher_delivery_id"`,
+ }).from(source)
+  .orderBy(desc(sql<string>`"admin_faculty_assignment_directory"."admin_teacher_assignment_id"`))
   .limit(query.pageSize).offset((page-1)*query.pageSize);
  const format=(value:Date)=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(value)+" IST";
  return {query:{...query,page},total,totalPages,
