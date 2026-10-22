@@ -27,7 +27,9 @@ describe("chat-15 learner missed quiz, release, and progress parity",()=>{
   const svc=read("src/modules/courses/quiz-service.ts");
   expect(svc).toContain('const dueIsPast=locked.dueAt!==null');
   expect(svc).toContain('input.published');
-  expect(svc).toContain('dueIsPast &&');
+  expect(svc).toContain('dueIsPast&&locked.status==="PUBLISHED"');
+  const policy=read("src/modules/courses/learner-quiz-result-release-policy.ts");
+  expect(policy).toContain('quiz.dueAt.getTime()<=nowMs');
  });
  it("LEARNER-learning-misc-28 quiz attempt has desktop progress and mobile Questions drawer",()=>{
   const ui=read("src/components/courses/quiz-attempt-control.tsx");
