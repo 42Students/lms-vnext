@@ -83,6 +83,13 @@ export async function listLearnerCourseDeliveries(
 ) {
   const membership =
     requireLearnerMembership(context);
+  // Legacy learner course bookmarks identified courses by integer ID or slug.
+  // vNext instead resolves course -> cohort/academic-period offering -> section
+  // delivery, scoped to the authenticated learner's enrollment. The legacy
+  // course ID, semester-course ID and class ID are retained as crosswalk fields
+  // for display/audit, not accepted as authorization or UUID route aliases.
+  // With no legacy-data migration, old numeric/slug bookmarks cannot be mapped
+  // automatically to a delivery; users must select the enrolled course again.
   // Active cards follow the old published/enabled/allowed-for-display gate.
   // Historical semester cards may remain visible for reference, while their
   // workspace actions are governed by the scoped delivery/learner read guard.
