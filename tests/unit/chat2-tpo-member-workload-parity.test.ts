@@ -21,7 +21,8 @@ describe("TPO Team People persisted workloads",()=>{
   expect(service).toContain("eq(placementCompanyRelationships.collegeId,college.id)");
   expect(service).toContain("eq(placementTpoFollowups.collegeId,college.id)");
   expect(service).toContain('eq(placementTpoTeamAsks.status,"OPEN")');
-  expect(legacy).toContain('redirect("/tpo/settings/team")');
+  expect(legacy).toContain('redirect("/tpo/settings?tab=team")');
+  expect(legacy).toContain('tab === "people" || tab === "members" || tab === "roster"');
   expect(page).toContain("getTpoPlacementTeam(context,context.membership.collegeId)");
   expect(page).toContain('hasMembershipRole(context, "TPO")');
   for(const label of ["TPO memberships","Faculty Coordinators","Student Coordinators"])
