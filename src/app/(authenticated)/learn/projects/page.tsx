@@ -71,8 +71,8 @@ export default async function LearnerProjectsPage({
     (params["work"]!==undefined&&!workSchema.safeParse(one(params["work"])).success) ||
     (params["sort"]!==undefined&&!sortSchema.safeParse(one(params["sort"])).success) ||
     (params["page"]!==undefined&&!z.coerce.number().int().min(0).max(100000).safeParse(one(params["page"])).success) ||
-    (params["page"]Size!==undefined&&!z.coerce.number().int().safeParse(one(params["page"]Size)).success) ||
-    (params["page"]Size!==undefined&&![10,25,50].includes(Number(one(params["page"]Size))));
+    (params["pageSize"]!==undefined&&!z.coerce.number().int().safeParse(one(params["pageSize"])).success) ||
+    (params["pageSize"]!==undefined&&![10,25,50].includes(Number(one(params["pageSize"]))));
   const status = one(params["status"]);
   const attention = one(params["attention"]);
   const work = one(params["work"]);
@@ -83,7 +83,7 @@ export default async function LearnerProjectsPage({
     work: workSchema.safeParse(work).data,
     sort: sortSchema.safeParse(one(params["sort"])).data,
     page: parsePage(one(params["page"])),
-    pageSize: parsePageSize(one(params["page"]Size)),
+    pageSize: parsePageSize(one(params["pageSize"])),
   };
 
   const directory = await listMyLearnerProjectPage(context,query);
