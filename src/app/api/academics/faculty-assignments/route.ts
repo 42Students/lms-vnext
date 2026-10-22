@@ -47,7 +47,10 @@ export async function GET(request: Request) {
         courseId:url.searchParams.get("courseId") ?? undefined,
       });
       const directory=await listFacultyCourseAssociations(context,{
-        ...selectors, includeEnded:url.searchParams.get("includeEnded")==="true",
+        ...(selectors.classId !== undefined ? {classId:selectors.classId} : {}),
+        ...(selectors.facultyMembershipId !== undefined ? {facultyMembershipId:selectors.facultyMembershipId} : {}),
+        ...(selectors.courseId !== undefined ? {courseId:selectors.courseId} : {}),
+        includeEnded:url.searchParams.get("includeEnded")==="true",
         limit:200,
       });
       return NextResponse.json({assignments:directory.rows,summary:directory.summary});
