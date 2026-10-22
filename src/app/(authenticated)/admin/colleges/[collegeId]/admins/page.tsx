@@ -89,10 +89,9 @@ export default async function CollegeAdministratorsPage({params,searchParams}:{
       {key:"name",header:"Name",mobilePriority:"primary",cell:item=><strong>{item.name}</strong>},
       {key:"roles",header:"Role",mobilePriority:"secondary",cell:item=>
        item.roles.map(role=>role==="COLLEGE_ADMIN"?"College Admin":role==="TPO"?"TPO":role).join(", ")},
-      {key:"mobile",header:"Mobile",mobilePriority:"secondary",cell:()=>
-        <span className="text-xs text-muted-foreground" title="Phone is not provided by the tenant-scoped admin directory service">
-          Unavailable
-        </span>},
+      {key:"mobile",header:"Mobile",mobilePriority:"secondary",cell:item=>
+        item.mobile?<span className="break-all">{item.mobile}</span>:
+        <span className="text-xs text-muted-foreground">Not recorded</span>},
       {key:"email",header:"Email",mobilePriority:"secondary",cell:item=><span className="break-all">{item.email??"Not recorded"}</span>},
       {key:"org",header:"Org",cell:()=>data.college.organizationId},
       {key:"college",header:"College",cell:()=>data.college.name},

@@ -113,7 +113,9 @@ export default async function SuperAdminInterviewsPage({searchParams}:{
       item.status==="CONFIRMED"?"success":
       item.status==="RESCHEDULE_REQUESTED"?"warning":
       item.status==="CANCELLED"||item.status==="NO_SHOW"?"error":"neutral"}>
-    {item.status==="RESCHEDULE_REQUESTED"?"Reschedule":
+    {item.status==="SCHEDULED"?"Scheduled":item.status==="CONFIRMED"?"Confirmed":
+      item.status==="RESCHEDULE_REQUESTED"?"Reschedule":item.status==="COMPLETED"?"Completed":
+      item.status==="CANCELLED"?"Cancelled":
       item.status==="NO_SHOW"?"No Show":item.status.replaceAll("_"," ")}</StatusBadge>},
   {key:"date",header:"Date & Time",cell:item=><span className="whitespace-nowrap">{detail(item,"Date & Time")}</span>},
   {key:"interviewer",header:"Interviewer",cell:item=>detail(item,"Interviewer")},

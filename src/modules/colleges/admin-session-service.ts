@@ -31,7 +31,7 @@ async function authorizedTarget(ctx:RequestContext,collegeIdInput:unknown,userId
 }
 
 /** Only administrators associated with this college may be selected. */
-type AdminSessionTarget={userId:string;membershipId:string;status:string;name:string|null;email:string|null;roles:string[]};
+type AdminSessionTarget={userId:string;membershipId:string;status:string;name:string|null;email:string|null;mobile?:string|null;roles:string[]};
 /** Historical Faculty.adminType names were scoped roles, not distinct
  * canonical users. Never resolve legacy numeric faculty IDs as UUIDs. */
 export function legacyFacultyAdminRole(role:string):"COLLEGE_ADMIN"|"TPO"|null{
@@ -113,7 +113,7 @@ export async function listCollegeAdminSessionTargetsPage(
    .innerJoin(membershipRoles,roleCondition).where(scope);
   const total=Number(counts?.total??0),pageCount=Math.max(1,Math.ceil(total/pageSize));
   const pageRows=await tx.select({
-   userId:users.id,name:users.displayName,email:users.email,
+   userId:users.id,name:users.displayName,email:users.email,mobile:users.phoneE164,
    membershipId:collegeMemberships.id,status:collegeMemberships.status,
   }).from(collegeMemberships)
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
