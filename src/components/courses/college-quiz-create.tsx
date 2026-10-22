@@ -90,7 +90,10 @@ export function CollegeQuizCreate({lessons,deliveries}:{
    const next=index+delta;
    if(next<0||next>=rows.length)return rows;
    const copy=[...rows];
-   [copy[index],copy[next]]=[copy[next],copy[index]];
+   const current=copy[index],neighbor=copy[next];
+   if(!current||!neighbor)return rows;
+   copy[index]=neighbor;
+   copy[next]=current;
    return copy;
   });
  }
@@ -108,7 +111,9 @@ export function CollegeQuizCreate({lessons,deliveries}:{
   if(!Number.isInteger(attempts)||attempts<1||attempts>20)return "Attempts must be 1–20.";
   if(questions.length<1||questions.length>100)return "Add 1–100 questions.";
   for(let i=0;i<questions.length;i++){
-   const q=questions[i],texts=q.options.map(x=>x.text.trim());
+   const q=questions[i];
+   if(!q)return "Complete all question prompts, points and unique options.";
+   const texts=q.options.map(x=>x.text.trim());
    if(!q.prompt.trim()||q.prompt.length>5000||!Number.isInteger(q.points)||q.points<1||q.points>100||
       texts.some(x=>!x||x.length>2000)||new Set(texts.map(x=>x.toLocaleLowerCase())).size!==texts.length||
       texts.length<2||texts.length>20)return "Complete all question prompts, points and unique options.";
