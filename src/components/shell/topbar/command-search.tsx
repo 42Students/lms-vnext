@@ -179,7 +179,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
   }
   function courseResult(course:LearnerCourse){
     return <Link key={course.deliveryId} role="option" aria-selected={false}
-      href={"/learn/courses/"+encodeURIComponent(course.deliveryId)+"/home"} className={style.suggestion}
+      href={"/learn/courses/"+encodeURIComponent(course.deliveryId)+"/home"} className={style["suggestion"]}
       onClick={()=>{rememberCourse(course.deliveryId);setQuery("");setOpen(false);setMobileOpen(false);}}>
       <SearchIcon/> <span className="min-w-0"><span className="block truncate">{course.shortTitle||course.courseName}</span>
         <span className="block truncate text-[length:var(--lms-topbar-caption-size,11px)] text-muted-foreground">{course.departmentName||course.sectionName} · {course.courseCode}</span>
@@ -188,9 +188,9 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
   }
 
   return <div ref={root}
-    className={mobileOpen ? style.searchOpen+" min-w-0" : "min-w-0"}>
-    <div className={style.search}>
-      <div className={style.searchBox}>
+    className={mobileOpen ? style["searchOpen"]+" min-w-0" : "min-w-0"}>
+    <div className={style["search"]}>
+      <div className={style["searchBox"]}>
         <Button variant="ghost" size="sm" type="button" aria-label="Open command search"
           onClick={() => {
             setOpen(true);
@@ -204,7 +204,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
         <Input id="lms-topbar-command-search" ref={input} type="search" value={query} maxLength={200}
           autoComplete="off" role="combobox" aria-haspopup="listbox" aria-keyshortcuts="Control+K Meta+K"
           aria-controls={open ? "lms-topbar-command-results" : undefined} aria-expanded={open} aria-describedby="lms-topbar-command-key-help"
-          placeholder={config.placeholder} className={style.searchInput}
+          placeholder={config.placeholder} className={style["searchInput"]}
           onFocus={() => { setOpen(true); setMobileOpen(true); }}
           onChange={event => {
             if (event.target.value.length>200) {
@@ -224,9 +224,9 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
             }
             if (event.key === "Escape") { event.preventDefault(); setOpen(false); setMobileOpen(false); }
           }}/>
-        <kbd id="lms-topbar-command-key-help" className={style.searchHint}>Ctrl K</kbd>
+        <kbd id="lms-topbar-command-key-help" className={style["searchHint"]}>Ctrl K</kbd>
       </div>
-      {open ? <PopoverListbox id="lms-topbar-command-results" label="Workspace commands" className={style.dropdown}
+      {open ? <PopoverListbox id="lms-topbar-command-results" label="Workspace commands" className={style["dropdown"]}
         onDismiss={() => {setOpen(false);setMobileOpen(false);input.current?.focus();}}
         onKeyDown={event => {
           if (event.defaultPrevented || event.nativeEvent.isComposing) return;
@@ -284,13 +284,13 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
         {destinations.length > 0 ? <p className="border-t border-[var(--lms-canvas-border)] px-2 pt-2 text-[length:var(--lms-topbar-caption-size,11px)] font-semibold uppercase tracking-wide text-muted-foreground">Search within</p> : null}
         {destinations.map(destination => <Link key={destination.href}
           role="option" aria-selected={false} href={destination.href}
-          className={style.suggestion}
+          className={style["suggestion"]}
           onClick={() => { setQuery(""); setOpen(false); setMobileOpen(false); }}>
           <SearchIcon/> {destination.label}
         </Link>)}
         {matches.length > 0 ? <p className="border-t border-[var(--lms-canvas-border)] px-2 pt-2 text-[length:var(--lms-topbar-caption-size,11px)] font-semibold uppercase tracking-[.08em] text-muted-foreground">Go to</p> : null}
         {matches.map(command => <Link role="option" aria-selected={false}
-          key={command.href} href={command.href} className={style.suggestion}
+          key={command.href} href={command.href} className={style["suggestion"]}
           onClick={() => { setQuery(""); setOpen(false); setMobileOpen(false); }}>
           <SearchIcon /> {command.label}
         </Link>)}
