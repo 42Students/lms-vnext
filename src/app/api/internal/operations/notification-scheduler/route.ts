@@ -32,7 +32,7 @@ export async function POST(request: Request) {
   // Scheduled/service callbacks have no browser Origin. Reject a foreign Origin when one is supplied.
   if (request.headers.has("origin") && !isSameOriginRequest(request))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
-  const secret = process.env.DB10_NOTIFICATION_SCHEDULER_SECRET ?? "";
+  const secret = process.env["DB10_NOTIFICATION_SCHEDULER_SECRET"] ?? "";
   const supplied = request.headers.get("x-notification-scheduler-key") ?? "";
   if (Buffer.byteLength(secret, "utf8") < 32) {
     return NextResponse.json({ error: "SCHEDULER_NOT_CONFIGURED" },
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
   if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) {
     return NextResponse.json({ error: "FORBIDDEN" }, { status: 403, headers });
   }
-  if (process.env.DB10_NOTIFICATION_SCHEDULER_READY !== "DB10_VERIFIED") {
+  if (process.env["DB10_NOTIFICATION_SCHEDULER_READY"] !== "DB10_VERIFIED") {
     return NextResponse.json({ error: "SCHEDULER_NOT_READY" },
       { status: 503, headers });
   }
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
   // outbox is unverified: that would silently drop delayed notifications.
   // The 0214 migration and producer dedupe index are a release prerequisite.
   if (jobName === "notification.release" &&
-      process.env.DB10_NOTIFICATION_OUTBOX_READY !== "DB10_VERIFIED") {
+      process.env["DB10_NOTIFICATION_OUTBOX_READY"] !== "DB10_VERIFIED") {
     return NextResponse.json({ error: "NOTIFICATION_OUTBOX_NOT_READY" },
       { status: 503, headers });
   }
