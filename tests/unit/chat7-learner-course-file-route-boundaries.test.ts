@@ -5,6 +5,7 @@ const state=vi.hoisted(()=>({
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:state.context}));
 vi.mock("@/modules/courses/learner-course-file-reference-service",()=>({
  getLearnerCourseFileReference:state.file,
+ validCourseResourceStorageKey:vi.fn(()=>true),
 }));
 vi.mock("@/modules/storage/r2-config",()=>({getPrivateR2Config:state.config}));
 vi.mock("@/modules/storage/s3-client",()=>({headObject:state.head,presignUrl:state.sign}));
