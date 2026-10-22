@@ -323,7 +323,7 @@ export function FacultyAttendanceWorkspace({
   useEffect(()=>{
     const dirty=unsavedMarks||(scheduleOpen&&scheduleDirty);
     window.dispatchEvent(new CustomEvent("lms:attendance-dirty",{detail:dirty}));
-    return ()=>window.dispatchEvent(new CustomEvent("lms:attendance-dirty",{detail:false}));
+    return ()=>{window.dispatchEvent(new CustomEvent("lms:attendance-dirty",{detail:false}));};
   },[unsavedMarks,scheduleOpen,scheduleDirty]);
 
   useEffect(()=>{
