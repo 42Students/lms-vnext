@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, desc, eq, isNull, or, sql } from "drizzle-orm";
+import { and, desc, eq, isNull, ne, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { activityEvents, inAppNotifications } from "@/db/schema";
@@ -34,6 +34,9 @@ export async function getOwnLearnerPlacementAlerts(context: RequestContext,raw:u
       eq(inAppNotifications.userId, context.user.id),
       eq(activityEvents.collegeId, membership.collegeId),
       eq(activityEvents.module, "PLACEMENTS"),
+      // Announcements also generate bell events; their independent receipt
+      // feed is the sole source of notice read state, even with no action href.
+      ne(activityEvents.subjectType,"announcement"),
       isNull(inAppNotifications.deletedAt),
       sql`coalesce(${inAppNotifications.deliveryStatus},'SENT')='SENT'`,
       or(isNull(inAppNotifications.scheduledAt),sql`${inAppNotifications.deliveredAt} is not null`),
@@ -63,6 +66,7 @@ export async function getUnreadOwnLearnerPlacementAlertCount(context:RequestCont
    eq(inAppNotifications.userId,context.user.id),
    eq(activityEvents.collegeId,membership.collegeId),
    eq(activityEvents.module,"PLACEMENTS"),
+   ne(activityEvents.subjectType,"announcement"),
    isNull(inAppNotifications.deletedAt),
    sql`coalesce(${inAppNotifications.deliveryStatus},'SENT')='SENT'`,
    or(isNull(inAppNotifications.scheduledAt),sql`${inAppNotifications.deliveredAt} is not null`),
