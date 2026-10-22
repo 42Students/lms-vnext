@@ -127,8 +127,13 @@ describe("placement offer kind (letter of intent)", () => {
     await expect(issuePlacementOffer(tpo, application.id, input)).rejects.toMatchObject({ code: "PLACEMENT_OFFER_ACTIVE_EXISTS" });
     const own = await listOwnPlacementOffers(learner);
     expect(own.map((row) => row.offer.kind)).toEqual(["LOI"]);
-    const notice = await pool.query<{ title: string }>("select title from in_app_notifications where user_id=$1", [SEED_IDS.learnerUser]);
-    expect(notice.rows[0]?.title).toBe("Letter of intent received");
+    const notice = await pool.query<{ title: string }>(
+      "select title from in_app_notifications where user_id=$1 and title=$2",
+      [SEED_IDS.learnerUser, "Letter of intent received"],
+    );
+    // Offer issuance can coexist with earlier application-status notices.
+    // Verify this exact learner received the LOI without relying on unordered rows.
+    expect(notice.rows).toEqual([{title: "Letter of intent received"}]);
     const audit = await pool.query<{ summary: string; kind: string }>(
       "select summary, metadata->>'kind' as kind from activity_events where dedupe_key=$1",
       ["placement-offer:" + loi.id + ":issued"],
