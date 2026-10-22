@@ -11,7 +11,7 @@ describe("chat-15 learner company disclosures",()=>{
   expect(service).toContain("gt(placementCompanyApplicantShares.expiresAt,new Date())");
   expect(service).toContain('application.applicationStatus==="SUBMITTED"');
   expect(service).toContain('screening?.status==="SHORTLISTED"');
-  expect(service).toContain('limited.length===0||limited.includes(application.applicationId)');
+  expect(service).toContain('return limited.includes(application.applicationId);');
   expect(service).toContain('fields:["Applicant reference","Learner","Email"] as const');
   expect(service).not.toContain("tokenHash:");
   const page=source("src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/page.tsx");
