@@ -5,10 +5,10 @@ type Row={id:string;action:string;summary:string;entity:string;importance:string
  actorName?:string|null;entityType?:string|null;entityId?:string|null};
 export function ProjectAuditPageExport({rows}:{rows:Row[]}){
  function save(){
-  const header=["Action","Entity type","Entity ID","Actor","When"];
+  const header=["Event ID","Action","Entity type","Entity ID","Actor","Summary","Importance","When"];
   // Rows are the ungrouped authorized event set supplied by the audit page;
   // never replace an unknown actor or entity ID with an unrelated event UUID.
-  const data=rows.map(r=>[r.action,r.entityType??"",r.entityId??"",r.actorName??"",r.occurredAt]);
+  const data=rows.map(r=>[r.id,r.action,r.entityType??"",r.entityId??"",r.actorName??"",r.summary,r.importance,r.occurredAt]);
   const contents=projectAdminCsv([header,...data]);
   const file=new Blob([contents],{type:"text/csv;charset=utf-8"});
   const link=document.createElement("a"),url=URL.createObjectURL(file);

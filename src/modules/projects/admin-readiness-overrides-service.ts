@@ -65,3 +65,51 @@ export async function listCollegeActiveReadinessOverrides(context: RequestContex
     }));
   });
 }
+
+
+/** College-scoped immutable readiness override history. The active rollup
+ * above retains the latest event only; a clear operation remains visible
+ * here, including the actor, note and exact timestamp. */
+export async function listCollegeReadinessOverrideHistory(
+ context:RequestContext,collegeIdRaw:unknown,
+ options:{projectId?:string;limit?:number}={},
+){
+ const collegeId=z.string().uuid().parse(collegeIdRaw);
+ const parsed=z.strictObject({
+  projectId:z.string().uuid().optional(),
+  limit:z.number().int().min(1).max(200).default(100),
+ }).parse(options);
+ if(getProjectAdminCollegeId(context)!==collegeId)
+  throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ const college=await loadProjectCollegeScope(collegeId);
+ requirePermission(context,"projects.manage",{
+  collegeId,organizationId:college.organizationId,
+ });
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"projects.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
+  const rows=await tx.select({
+   id:activityEvents.id,projectId:activityEvents.subjectId,
+   actorId:activityEvents.actorUserId,by:users.displayName,
+   metadata:activityEvents.metadata,at:activityEvents.occurredAt,
+  }).from(activityEvents).leftJoin(users,eq(users.id,activityEvents.actorUserId))
+   .where(and(
+    eq(activityEvents.collegeId,collegeId),
+    eq(activityEvents.subjectType,"project_instance"),
+    eq(activityEvents.eventType,ACTIVITY_EVENT_TYPES.PROJECTS_READINESS_OVERRIDDEN),
+    parsed.projectId?eq(activityEvents.subjectId,parsed.projectId):undefined,
+   )).orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id))
+    .limit(parsed.limit);
+  return rows.map(row=>({
+   id:row.id,projectId:row.projectId,actorUserId:row.actorId,
+   ...readinessOverrideAuditProjection({
+    state:row.metadata.state,note:row.metadata.note,
+    by:row.by,at:row.at,
+   }),
+   action:row.metadata.state==="CLEAR"?"Cleared":
+     row.metadata.state==="FORCE_UNLOCK"?"Overridden: Ready":
+     row.metadata.state==="FORCE_BLOCK"?"Overridden: Not ready":"Changed",
+  }));
+ });
+}
