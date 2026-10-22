@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect,useRef,useState } from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useFormDraft} from "@/hooks/use-form-draft";
 import { useRouter } from "next/navigation";
@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Alert } from "@/components/ui/alert";
 import { Disclosure } from "@/components/ui/disclosure";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {tenantCreationScopeRequest} from "@/modules/colleges/admin-tenant-create-handoff";
 
@@ -52,6 +53,41 @@ export function CollegeCreateForm({
     "organizationId" | "name" | "code", string
   >>>({});
   const {pending,run:guardedRun}=useGuardedAction({busyLabel:"Creating..."});
+  // Draft persistence is useful, but should not make a partial tenant create
+  // silently abandonable. Warn on browser and client-side navigation.
+  const dirty=(Object.keys(initialForm) as (keyof typeof initialForm)[])
+    .some(key=>draft[key]!==initialForm[key]);
+  const [leaveHref,setLeaveHref]=useState<string|null>(null);
+  const approvedLeaveRef=useRef(false);
+  useEffect(()=>{
+    if(!dirty&&!pending)return;
+    const before=(event:BeforeUnloadEvent)=>{
+      if(approvedLeaveRef.current)return;
+      event.preventDefault();
+      event.returnValue="";
+    };
+    const captureLink=(event:MouseEvent)=>{
+      if(approvedLeaveRef.current||event.defaultPrevented||event.button!==0||
+         event.metaKey||event.ctrlKey||event.shiftKey||event.altKey||
+         !(event.target instanceof Element))return;
+      const anchor=event.target.closest("a[href]");
+      if(!(anchor instanceof HTMLAnchorElement)||anchor.hasAttribute("download")||
+         (anchor.target&&anchor.target!=="_self"))return;
+      const target=new URL(anchor.href,window.location.href);
+      if(target.pathname===window.location.pathname&&
+         target.search===window.location.search&&
+         target.hash===window.location.hash&&target.origin===window.location.origin)return;
+      event.preventDefault();event.stopPropagation();
+      setLeaveHref(target.href);
+    };
+    window.addEventListener("beforeunload",before);
+    document.addEventListener("click",captureLink,true);
+    return ()=>{
+      window.removeEventListener("beforeunload",before);
+      document.removeEventListener("click",captureLink,true);
+    };
+  },[dirty,pending]);
+
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -108,6 +144,7 @@ export function CollegeCreateForm({
   }
 
   return (
+    <>
     <form
       onSubmit={submit}
       noValidate
@@ -222,5 +259,18 @@ export function CollegeCreateForm({
         </Alert>
       ) : null}
     </form>
+    <ConfirmDialog open={leaveHref!==null}
+      onOpenChange={open=>{if(!open)setLeaveHref(null);}}
+      title={pending?"Leave while college creation is in progress?":"Discard unsaved college details?"}
+      description={pending?"The create request may still finish. Leaving can make its outcome uncertain.":
+        "Your draft is saved in this browser, but leaving this page now will discard the current editing context."}
+      confirmLabel="Leave this page" confirmVariant="danger"
+      confirmDisabled={pending}
+      onConfirm={()=>{
+        if(!leaveHref||pending)return;
+        approvedLeaveRef.current=true;
+        window.location.assign(leaveHref);
+      }}/>
+    </>
   );
 }
