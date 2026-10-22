@@ -4,15 +4,27 @@ import {createHash} from "node:crypto";
 import {and,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
- academicPeriods,activityEvents,assignmentSubmissions,collegeMemberships,
- colleges,cohorts,courseAssignments,courseLearningPaths,courseLessons,
+ academicPeriods,activityEvents,assignmentSubmissions,attendanceRecords,
+ attendanceSessions,collegeMemberships,
+ colleges,cohorts,courseAssignments,courseDiscussionMessages,
+ courseLearningPaths,courseLessons,
  courseOfferings,courseSectionDeliveries,courseTeachingAssignments,courses,
- departments,inAppNotifications,learnerProgramEnrollments,lessonContents,
- membershipRoles,organizations,programs,sectionEnrollments,sections,
+ db10Announcements,db10Skills,db10SkillSynonyms,departments,
+ inAppNotifications,learnerContentProgress,learnerProfiles,
+ learnerProgramEnrollments,lectureHalls,lessonContents,
+ membershipRoles,organizations,placementApplications,
+ placementCollegeApplicationStages,placementCollegeApplicationStageHistory,
+ placementCompanies,placementCompanyRelationships,placementJobRoleOptions,
+ placementJobRounds,placementJobs,placementRoundCandidateSlots,
+ placementSeasons,programs,projectInstances,projectMembers,
+ projectTemplates,projectTemplateVersions,sectionEnrollments,sections,
+ sectionScheduleEvents,
  systemRoles,users,
 } from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {isSuperAdmin} from "@/modules/identity/context";
+import {projectTemplateBlueprintSchema} from "@/modules/projects/validation";
+import {learnerProfileDocumentSchema} from "@/modules/people/profile-validation";
 import {
  buildE2EFixtureManifest,type E2EFixtureKey,
 } from "./e2e-fixture-manifest";
@@ -282,6 +294,210 @@ export async function seedIsolatedE2EAcademicGraph(
    deliveryStatus:"SENT",deliveredAt:new Date(),
   }).onConflictDoNothing();
   seeded.add("notificationA");
+  // Course-linked discussion exists in vNext as a delivery-scoped message,
+  // not the historic globally addressed course_discussion_posts table.
+  await tx.insert(courseDiscussionMessages).values({
+   id:d.discussionA,deliveryId:lessonDeliveries.A,
+   senderMembershipId:d.learnerA,lessonContentId:d.lectureA,
+   senderRole:"LEARNER",senderNameSnapshot:"E2E Learner A",
+   messageText:"E2E discussion: How does Java compile?",
+  }).onConflictDoNothing();
+  seeded.add("discussionA");
+
+  await tx.insert(lectureHalls).values({
+   id:d.hallA,collegeId:d.collegeA,departmentId:d.deptA,
+   name:"E2E Hall "+namespace,capacity:70,roomType:"LECTURE_HALL",
+  }).onConflictDoNothing();
+  seeded.add("hallA");
+  const sessionAt=new Date("2027-01-15T09:00:00Z");
+  await tx.insert(sectionScheduleEvents).values({
+   id:d.classScheduleA,sectionId:d.classA,facultyMembershipId:d.facultyA,
+   lectureHallId:d.hallA,title:"E2E Java session",
+   startsAt:sessionAt,endsAt:new Date("2027-01-15T10:00:00Z"),
+   location:"E2E Hall "+namespace,
+  }).onConflictDoNothing();
+  seeded.add("classScheduleA");
+  await tx.insert(attendanceSessions).values({
+   scheduleEventId:d.classScheduleA,status:"MARKED",
+   markedByUserId:manifestUsers.facultyA,markedAt:sessionAt,
+  }).onConflictDoNothing();
+  await tx.insert(attendanceRecords).values({
+   id:d.attendanceA,scheduleEventId:d.classScheduleA,
+   membershipId:d.learnerA,status:"PRESENT",
+   markedByUserId:manifestUsers.facultyA,markedAt:sessionAt,
+  }).onConflictDoNothing();
+  seeded.add("attendanceA");
+
+  await tx.insert(db10Announcements).values({
+   id:d.announcementA,organizationId:d.orgColleges,collegeId:d.collegeA,
+   receiverType:"COLLEGE",receiverId:d.collegeA,
+   title:"E2E College A announcement",
+   message:"E2E isolated demo notice. This seed does not send external messages.",
+   senderUserId:manifestUsers.adminA,senderType:"COLLEGE_ADMIN",
+  }).onConflictDoNothing();
+  seeded.add("announcementA");
+
+  // Skills are globally searchable; namespace the canonical search key to
+  // avoid taking over a real "java" catalog entry. Synonyms are permitted to
+  // overlap other skills, so their deterministic UUIDs are the rerun key.
+  await tx.insert(db10Skills).values({
+   id:d.skillJava,name:"java-e2e-"+namespace.toLowerCase(),
+   displayName:"Java (E2E "+namespace+")",category:"PROGRAMMING",
+  }).onConflictDoNothing();
+  seeded.add("skillJava");
+  for(const row of [
+   {id:d.skillSynonymJdk,skillId:d.skillJava,synonym:"jdk"},
+   {id:d.skillSynonymLanguage,skillId:d.skillJava,synonym:"java language"},
+  ])await tx.insert(db10SkillSynonyms).values(row).onConflictDoNothing();
+  seeded.add("skillSynonymJdk");seeded.add("skillSynonymLanguage");
+
+  await tx.insert(learnerContentProgress).values({
+   id:d.youtubeProgressA,membershipId:d.learnerA,
+   lessonContentId:d.youtubeA,lastPositionSeconds:30,
+   durationSeconds:120,attempt:1,
+  }).onConflictDoNothing();
+  seeded.add("youtubeProgressA");
+
+  // One published placement drive with an applied learner, current pipeline
+  // stage and booked interview. The job is deliberately not a real recruiter
+  // invitation, offer, or externally deliverable notification.
+  const companyId=auxId(namespace,"company");
+  const relationId=auxId(namespace,"company-relation");
+  const seasonId=auxId(namespace,"placement-season");
+  const optionId=auxId(namespace,"placement-role-option");
+  const roundId=auxId(namespace,"placement-round");
+  const stageId=auxId(namespace,"placement-application-stage");
+  const interviewAt=new Date("2027-02-10T04:30:00Z");
+  await tx.insert(placementCompanies).values({
+   id:companyId,name:"E2E Demo Company "+namespace,
+   createdByUserId:manifestUsers.adminA,
+  }).onConflictDoNothing();
+  await tx.insert(placementCompanyRelationships).values({
+   id:relationId,collegeId:d.collegeA,companyId,
+   createdByUserId:manifestUsers.adminA,
+  }).onConflictDoNothing();
+  await tx.insert(placementSeasons).values({
+   id:seasonId,collegeId:d.collegeA,name:"E2E placements "+namespace,
+   code:code("PL"),startDate:"2026-01-01",endDate:"2027-12-31",
+   createdByUserId:manifestUsers.adminA,
+  }).onConflictDoNothing();
+  await tx.insert(placementJobs).values({
+   id:d.jobA,collegeId:d.collegeA,seasonId,
+   companyRelationshipId:relationId,
+   title:"E2E Graduate Software Engineer",
+   description:"Isolated E2E placement drive only.",
+   employmentType:"FULL_TIME",workMode:"ONSITE",
+   locations:["E2E Campus"],applicationMode:"INTERNAL",
+   status:"PUBLISHED",publishedAt:new Date("2026-10-01T08:00:00Z"),
+   applicationDeadline:new Date("2027-01-31T12:00:00Z"),
+   createdByUserId:manifestUsers.adminA,
+  }).onConflictDoNothing();
+  seeded.add("jobA");
+  await tx.insert(placementJobRoleOptions).values({
+   id:optionId,jobId:d.jobA,title:"Software Engineer",
+   position:0,employmentType:"FULL_TIME",workMode:"ONSITE",
+   locations:["E2E Campus"],isPrimary:true,
+  }).onConflictDoNothing();
+  await tx.insert(placementJobRounds).values({
+   id:roundId,jobId:d.jobA,sequence:1,kind:"INTERVIEW",
+   name:"E2E Interview Round",mode:"ON_CAMPUS",
+   scheduledAt:interviewAt,timezone:"Asia/Kolkata",
+   venue:"E2E Hall "+namespace,status:"SCHEDULED",
+   createdByUserId:manifestUsers.adminA,
+  }).onConflictDoNothing();
+  await tx.insert(placementApplications).values({
+   id:d.jobApplicationA,jobId:d.jobA,
+   roleOptionId:optionId,membershipId:d.learnerA,
+   channel:"INTERNAL",eligibilityStatus:"ELIGIBLE",
+   eligibilitySnapshot:{source:"ISOLATED_E2E_FIXTURE",sourceVersion:1},
+   status:"SUBMITTED",currentRoundId:roundId,
+   submittedByUserId:manifestUsers.learnerA,
+  }).onConflictDoNothing();
+  seeded.add("jobApplicationA");
+  await tx.insert(placementCollegeApplicationStages).values({
+   id:stageId,jobId:d.jobA,applicationId:d.jobApplicationA,
+   stage:"INTERVIEW",previousStage:"APPLIED",
+   reason:"E2E sample interview",movedByUserId:manifestUsers.adminA,
+  }).onConflictDoNothing();
+  await tx.insert(placementCollegeApplicationStageHistory).values({
+   id:d.jobHistoryA,stageId,fromStage:"APPLIED",
+   toStage:"INTERVIEW",reason:"E2E sample interview",
+   actorUserId:manifestUsers.adminA,
+  }).onConflictDoNothing();
+  seeded.add("jobHistoryA");
+  await tx.insert(placementRoundCandidateSlots).values({
+   id:d.interviewA,jobId:d.jobA,roundId,
+   applicationId:d.jobApplicationA,
+   startsAt:interviewAt,endsAt:new Date("2027-02-10T05:00:00Z"),
+   room:"E2E Hall "+namespace,status:"BOOKED",source:"TPO",
+   confirmedAt:new Date("2027-01-31T12:00:00Z"),
+   changedByUserId:manifestUsers.adminA,
+  }).onConflictDoNothing();
+  seeded.add("interviewA");
+
+  // A project is a planned vNext project instance with a real draft
+  // template/version and scoped learner+mentor memberships; old serialized
+  // project_workspaces JSON is not the authoritative vNext collaboration row.
+  const templateId=auxId(namespace,"project-template");
+  const templateVersionId=auxId(namespace,"project-template-version");
+  const blueprint=projectTemplateBlueprintSchema.parse({});
+  await tx.insert(projectTemplates).values({
+   id:templateId,slug:"e2e-template-"+marker.toLowerCase(),
+   title:"E2E Demo Project "+namespace,status:"DRAFT",
+   createdByUserId:manifestUsers.adminA,
+  }).onConflictDoNothing();
+  await tx.insert(projectTemplateVersions).values({
+   id:templateVersionId,templateId,version:1,
+   title:"E2E Demo Project "+namespace,blueprint,
+   createdByUserId:manifestUsers.adminA,
+  }).onConflictDoNothing();
+  await tx.insert(membershipRoles).values({
+   membershipId:d.facultyA,role:"MENTOR",
+   assignedByUserId:actor.user.id,
+  }).onConflictDoNothing();
+  await tx.insert(projectInstances).values({
+   id:d.projectWorkspaceA,collegeId:d.collegeA,
+   templateId,templateVersionId,
+   slug:manifest.projectWorkspaceASlug,
+   title:"E2E College A Project",summary:"Isolated E2E planned workspace",
+   status:"PLANNED",sectionId:d.classA,
+   createdByUserId:manifestUsers.adminA,
+  }).onConflictDoNothing();
+  await tx.insert(projectMembers).values({
+   id:auxId(namespace,"project-mentor"),projectId:d.projectWorkspaceA,
+   membershipId:d.facultyA,role:"MENTOR",roleKind:"MENTOR",
+   canMutate:true,isPrimary:true,createdByUserId:manifestUsers.adminA,
+  }).onConflictDoNothing();
+  await tx.insert(projectMembers).values({
+   id:auxId(namespace,"project-learner"),projectId:d.projectWorkspaceA,
+   membershipId:d.learnerA,role:"LEARNER",roleKind:"LEARNER",
+   canMutate:false,isPrimary:false,createdByUserId:manifestUsers.adminA,
+  }).onConflictDoNothing();
+  seeded.add("projectWorkspaceA");
+
+  // Legacy qualification IDs are nested profile education-entry UUIDs in
+  // vNext; learner_profiles itself is membership-keyed. Its embedded entry
+  // retains the exact manifest UUID, without fake identity-documents or PII.
+  await tx.insert(learnerProfiles).values({
+   membershipId:d.learnerA,rollNumber:code("L1"),
+   profileDocument:learnerProfileDocumentSchema.parse({
+    education:[{
+     id:d.qualificationA,educationType:"Undergraduate",
+     program:"Bachelor of Technology",specialization:"Computer Science",
+     institution:"E2E College A "+namespace,startYear:"2026",
+     isCurrentlyPursuing:true,isRecentEducation:true,gradingType:"CGPA",
+     gradeObtained:"8.5",maxGrade:"10",
+    }],
+    skills:[{id:auxId(namespace,"learner-skill"),
+     name:"Java",proficiency:"Intermediate"}],
+   }),
+  }).onConflictDoNothing();
+  await tx.insert(learnerProfiles).values({
+   membershipId:d.learnerB,rollNumber:code("L2"),
+   profileDocument:learnerProfileDocumentSchema.parse({}),
+  }).onConflictDoNothing();
+  seeded.add("qualificationA");
+
   const missing=manifest.nodes
    .filter(node=>!seeded.has(node.key))
    .map(node=>({key:node.key,requires:node.requires,
