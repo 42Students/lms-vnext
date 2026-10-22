@@ -4,7 +4,7 @@ const source=(path:string)=>readFileSync(new URL("../../"+path,import.meta.url),
 describe("learner drive fact parity",()=>{
  it("LEARNER-placements-16 preserves published facts and application stage on role cards",()=>{
   const cards=source("src/components/placements/learner-placement-jobs.tsx");
-  expect(cards).toContain("postedAtLabel(item.job.publishedAt)");
+  expect(cards).toContain("postedAtLabel(item.job.publishedAt,snapshotNowIso)");
   expect(cards).toContain("Posted date not specified");
   expect(cards).toContain('className="mt-2 line-clamp-3');
   expect(cards).toContain("item.application.status");
@@ -18,6 +18,6 @@ describe("learner drive fact parity",()=>{
    expect(detail).toContain(field);
   expect(mapping).toContain("publishedAt: row.job.publishedAt?.toISOString()");
   expect(detail).toContain("LearnerSaveDriveButton");
-  expect(detail).toContain("Number.isFinite(Date.parse(item.job.publishedAt))");
+  expect(detail).toContain("relativePostedDate(item.job.publishedAt)");
  });
 });

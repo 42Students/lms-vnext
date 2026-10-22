@@ -19,17 +19,17 @@ describe("REC-home-drives-21 recruiter formal request contract",()=>{
   expect(recruiterDriveRequestInputSchema.safeParse({...input,submissionId:"bad"}).success).toBe(false);
  });
  it("maps every request status without silently hiding declined or cancelled work",()=>{
-  for(const s of ["REQUEST","SENT_BACK"] as const){
-   expect(recruiterRequestStage(s)).toBe("WAITING");
-   expect(recruiterRequestLegacyLabel(s)).toBe("Sent for review");
-  }
+  expect(recruiterRequestStage("REQUEST")).toBe("WAITING");
+  expect(recruiterRequestLegacyLabel("REQUEST")).toBe("Sent for review");
+  expect(recruiterRequestStage("SENT_BACK")).toBe("WAITING");
+  expect(recruiterRequestLegacyLabel("SENT_BACK")).toBe("Needs changes");
   // An approved DRAFT is not still pending review and has not been published.
   expect(recruiterRequestStage("DRAFT")).toBe("WAITING");
-  expect(recruiterRequestLegacyLabel("DRAFT")).toBe("Approved — awaiting publication");
-  for(const s of ["REJECTED","CANCELLED"] as const){
-   expect(recruiterRequestStage(s)).toBe("CLOSED");
-   expect(recruiterRequestLegacyLabel(s)).toBe("Cancelled");
-  }
+  expect(recruiterRequestLegacyLabel("DRAFT")).toBe("Approved awaiting publication");
+  expect(recruiterRequestStage("REJECTED")).toBe("CLOSED");
+  expect(recruiterRequestLegacyLabel("REJECTED")).toBe("Rejected");
+  expect(recruiterRequestStage("CANCELLED")).toBe("CLOSED");
+  expect(recruiterRequestLegacyLabel("CANCELLED")).toBe("Cancelled");
   expect(canRecruiterResubmit("SENT_BACK")).toBe(true);
   expect(canRecruiterResubmit("REJECTED")).toBe(false);
  });
