@@ -11,7 +11,7 @@ describe("PROJ-BREAK-COLLEGE-04 College Admin projects route journey", () => {
     expect(page).toContain("getProjectAdminCollegeId(context)");
     expect(page).toContain("if (!collegeId)");
     expect(page.indexOf("if (!collegeId)")).toBeLessThan(page.indexOf("parseCollegeProjectsQuery("));
-    expect(page).toContain("listProjectAdminSnapshots(context, collegeId, query)");
+    expect(page).toContain("listProjectAdminSnapshots(context, collegeId, serviceQuery)");
   });
 
   it("PROJ-BREAK-COLLEGE-04-12 invalid filters recover without a SQL read or a leaked error code", () => {
@@ -30,7 +30,8 @@ describe("PROJ-BREAK-COLLEGE-04 College Admin projects route journey", () => {
     expect(page).toContain("Template names are unavailable right now.");
     expect(page).toContain("<ProjectAdminWorkspaceList");
     expect(page).toContain("<ProjectAdminPagination");
-    expect(page).toContain("Archived workspaces");
+    expect(page).toContain("Deleted workspaces");
+    expect(page).toContain("Project workspaces directory");
   });
 
   it("PROJ-BREAK-COLLEGE-04-14 project section detail authorizes the persisted college before returning a workspace", () => {

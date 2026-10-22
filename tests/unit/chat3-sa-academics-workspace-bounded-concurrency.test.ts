@@ -11,6 +11,7 @@ describe("SA-ACADEMICS-SPACE-01 bounded academic workspace fanout",()=>{
    active++;
    maxActive=Math.max(maxActive,active);
    // Different microtask depths simulate nonidentical academic query latency.
+   await Promise.resolve();
    for(let i=0;i<(8-value)%3;i++)await Promise.resolve();
    active--;
    return value*10;

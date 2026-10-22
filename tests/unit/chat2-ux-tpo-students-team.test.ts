@@ -54,7 +54,8 @@ describe("TPO student and team UX contracts", () => {
 
   it("UX-tpo-tpo-team-01 preserves page semantics and responsive action targets", () => {
     const source = readFileSync(join(process.cwd(), "src/app/(authenticated)/tpo/team/page.tsx"), "utf8");
-    expect(source).toContain("<PageHeader");
+    expect(source).toContain('hasPlacementTeamMembership(context)');
+    expect(source).toContain('redirect("/tpo/messages?"');
     expect(source).not.toContain("min-h-10");
   });
 
