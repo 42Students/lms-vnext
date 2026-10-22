@@ -23,6 +23,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Scope and render stage-specific actions.
 
 ## G2-10-018-005 [P1] GAP facet F02
+- [x] Verified: LectureHallManager uses desktop lg grid 5fr/7fr (10/24 and 14/24), with stacked mobile create/list cards.
 - Files: src/app/(authenticated)/admin/lecture-halls/page.tsx
 - Legacy: docs/legacy-source/frontend/src/pages/superadmin/sections/LectureHalls.js:301-307 — Inline Create card left 10/24, Existing table card right 14/24.
 - Expected fix: Restore desktop side-by-side create/list layout.
