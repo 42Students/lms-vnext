@@ -57,7 +57,11 @@ function mapConflict(error: unknown): never {
   throw error;
 }
 
+/** Initial directory is a bounded preview. A college exceeding 5,000
+ * terms/courses/mappings must use the selected-term reader instead of
+ * silently editing a truncated and therefore unsafe roster. */
 export async function listCollegeTermMappings(context: RequestContext) {
+  const maxDirectoryRows=5000;
   const membership = await ownCollege(context);
   const db = getDb();
   const [termsResult,courseChoicesResult,mappedResult] = await Promise.allSettled([
@@ -75,12 +79,14 @@ export async function listCollegeTermMappings(context: RequestContext) {
       .innerJoin(programs, eq(programs.id, programTerms.programId))
       .innerJoin(departments, and(eq(departments.id, programs.departmentId),
         eq(departments.collegeId, membership.collegeId)))
-      .orderBy(asc(programs.name), asc(programTerms.termNumber)),
+      .orderBy(asc(programs.name), asc(programTerms.termNumber),asc(programTerms.id))
+      .limit(maxDirectoryRows+1),
     db.select({ id: courses.id, name: courses.name, code: courses.code, departmentId: courses.departmentId })
       .from(courses)
       .innerJoin(departments, and(eq(departments.id, courses.departmentId),
         eq(departments.collegeId, membership.collegeId)))
-      .where(eq(courses.status, "ACTIVE")).orderBy(asc(courses.name)),
+      .where(eq(courses.status, "ACTIVE")).orderBy(asc(courses.name),asc(courses.id))
+      .limit(maxDirectoryRows+1),
     db.select({
       id: programTermCourses.id, termId: programTerms.id,
       courseId: programTermCourses.courseId,
@@ -106,9 +112,13 @@ export async function listCollegeTermMappings(context: RequestContext) {
         eq(courseDepartment.id, courses.departmentId),
         eq(courseDepartment.collegeId, membership.collegeId),
       ))
-      .orderBy(asc(programs.name), asc(programTerms.termNumber), asc(programTermCourses.displayOrder)),
+      .orderBy(asc(programs.name), asc(programTerms.termNumber), asc(programTermCourses.displayOrder),
+        asc(programTermCourses.id)).limit(maxDirectoryRows+1),
   ]);
+  const oversized=[termsResult,courseChoicesResult,mappedResult].some(result=>
+    result.status==="fulfilled"&&result.value.length>maxDirectoryRows);
   const lookupFailures = [
+    ...(oversized?["More than 5,000 curriculum records; use a selected-semester view"]:[]),
     ...(termsResult.status==="rejected" ? ["semester terms"] : []),
     ...(courseChoicesResult.status==="rejected" ? ["course choices"] : []),
     ...(mappedResult.status==="rejected" ? ["saved mappings"] : []),

@@ -36,10 +36,10 @@ export default async function LearnerPlacementInterviewsPage({ searchParams }: {
   let workspace:Awaited<ReturnType<typeof getLearnerPlacementRequestWorkspace>>;
   let withdrawalTargets:Awaited<ReturnType<typeof getOwnInterviewWithdrawalTargets>>;
   try {
-    [workspace,withdrawalTargets]=await Promise.all([
-      getLearnerPlacementRequestWorkspace(context),
-      getOwnInterviewWithdrawalTargets(context),
-    ]);
+    workspace=await getLearnerPlacementRequestWorkspace(context);
+    // Reuse the verified learner snapshot for the independent withdrawal
+    // projection. A second workspace read could disagree on pending requests.
+    withdrawalTargets=await getOwnInterviewWithdrawalTargets(context,workspace);
   } catch(error) {
     if(error instanceof AuthorizationError)throw error;
     return <div className="min-w-0 space-y-4">
