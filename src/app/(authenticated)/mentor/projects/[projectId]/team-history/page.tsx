@@ -43,7 +43,7 @@ export default async function MentorTeamHistoryPage({
   const context = await getCurrentRequestContext();
   const data = await getMentorTeamHistory(context, parsed.data);
   const back = "/mentor/projects/" + encodeURIComponent(projectId) + "?tab=team";
-  const filtered=data.query.view!=="ALL"||data.query.role!=="ALL"||data.query.primary!=="ALL"||data.query.order!=="OLDEST";
+  const filtered=data.enabled && (data.query.view!=="ALL"||data.query.role!=="ALL"||data.query.primary!=="ALL"||data.query.order!=="OLDEST");
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title="Team membership history"
       description={data.enabled?data.title + " · Registered team join/end records":"Projects access is disabled. Team history cannot be displayed."}
