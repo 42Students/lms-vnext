@@ -57,8 +57,10 @@ describe("UX-tpo-LAST-THIRD-01 account authorization journey across 42 inherited
   const source=readFileSync("src/app/(authenticated)/tpo/layout.tsx","utf8");
   const guard=source.indexOf("if (!canOpenTpoWorkspace(context)) redirect(deniedPortalHome(context))");
   expect(guard).toBeGreaterThan(-1);
-  expect(guard).toBeLessThan(source.indexOf("getTpoPersonalInbox(context,"));
-  expect(guard).toBeLessThan(source.indexOf("countTpoUnreadRecruiterMessages(context)"));
+  expect(guard).toBeLessThan(source.indexOf("<TpoKeyboardShortcuts"));
+  expect(guard).toBeLessThan(source.indexOf("<TpoMobileFooter"));
+  expect(source).not.toContain("getTpoPersonalInbox(context,");
+  expect(source).not.toContain("countTpoUnreadRecruiterMessages(context)");
   expect(source).toContain("if (!hasTpoTooling(context))");
  });
 });
