@@ -20,7 +20,8 @@ describe("legacy course visibility is independent from enabled and archive lifec
   expect(ui).toContain("Course display allowed, but this Course remains disabled.");
   expect(service).toContain("const { expectedUpdatedAt, visibleToStudents, ...changes } = input");
   expect(service).toContain("legacyAllowedForDisplay:visibleToStudents?1:0");
-  expect(service).toContain("input.enabled===undefined");
+  expect(service).not.toContain("legacyAllowedForDisplay:input.enabled?1:0");
+  expect(service).toContain("visibleToStudents!==undefined");
   expect(service).toContain('eq(courses.status, "ACTIVE")');
  });
 });
