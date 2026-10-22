@@ -10,7 +10,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-19-023-026  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [ ] G2-19-023-058  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [ ] G2-3-014-001  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
-- [ ] G2-3-014-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
+- [x] G2-3-014-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [ ] G2-3-014-025  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [ ] G2-3-014-029  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [ ] G2-3-014-055  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
@@ -19,6 +19,8 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-4-028-007  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 
 ## Results
+
+- G2-3-014-018: OK — `src/components/shell/topbar/command-search.tsx:47-65,154-162,175-178` records authorized course selections from both Enter and result clicks; `src/app/api/courses/search/selection/route.ts:11-16,35-74` validates the selected delivery UUID, checks same-origin, reloads scoped learner deliveries and writes the selection event after active-member validation. This is the vNext delivery-ID equivalent of `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/courses/CourseSearchController.java:269-303`, which checks principal/course access before recording a course selection.
 
 - G2-4-014-022: OK — `src/app/(authenticated)/admin/colleges/page.tsx:178-180,210-241` loads the authorized full college directory, narrows by organization, city and state, scores and filters the search across that full scoped set, then applies page slicing only after matching. This preserves potential query matches rather than pre-limiting the organization subset, addressing the legacy organization-search behavior in `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/colleges/CollegeSearchController.java:140-151` (`getByOrganization` then query filter). No code change required.
 
