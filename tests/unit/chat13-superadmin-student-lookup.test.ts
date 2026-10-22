@@ -26,7 +26,7 @@ describe("Super Admin placement lookup",()=>{
   expect(page).toContain("initialQuery={q}");
   const search=read("src/components/placements/admin-placement-student-search.tsx");
   expect(search).toContain('name="q"');
-  expect(search).toContain("value={value}");
+  expect(search).toContain("value={text}");
  });
  it("GR-76 lookup validates search length and explains no matches",()=>{
   const page=read("src/app/(authenticated)/admin/placements/student-lookup/page.tsx");
