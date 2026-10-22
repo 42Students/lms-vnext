@@ -1,5 +1,5 @@
 import "server-only";
-import { and,desc,eq,gt,isNull,sql } from "drizzle-orm";
+import { and,desc,eq,isNull,sql } from "drizzle-orm";
 import { z } from "zod";
 import {publicRecruitEnquirySchema,publicRecruitLeadActivityNote} from "./recruit-input-model";
 export {publicRecruitEnquirySchema,publicRecruitLeadActivityNote} from "./recruit-input-model";
@@ -20,9 +20,9 @@ export async function submitPublicRecruitEnquiry(collegeId:string,raw:unknown,ve
    throw new PublicEnquiryError("NAME_REQUIRED");
   throw new PublicEnquiryError("INVALID");
  }
- if(process.env.DB09_TPO_API_READY!=="DB09_VERIFIED"||!await publicEnquiryTablesReady())
+ if(process.env["DB09_TPO_API_READY"]!=="DB09_VERIFIED"||!await publicEnquiryTablesReady())
   throw new PublicEnquiryError("NOT_READY");
- const secret=process.env.TPO_RECRUITER_OTP_HMAC_SECRET??"";
+ const secret=process.env["TPO_RECRUITER_OTP_HMAC_SECRET"]??"";
  const ipTag=publicEnquiryNetworkTag(verifiedIp,secret);
  const ready=await getDb().execute<{ready:boolean}>(sql`select to_regclass('public.placement_public_enquiry_rate_events') is not null as ready`);
  if(ready.rows[0]?.ready!==true)throw new PublicEnquiryError("NOT_READY");
