@@ -34,7 +34,7 @@ type Options = {
 };
 
 const fieldClass = "min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground";
-function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+function Field({ label, error, children }: { label: string; error?: string | undefined; children: React.ReactNode }) {
   return <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}{children}
     {error ? <span role="alert" className="text-xs text-error">{error}</span> : null}
   </label>;
@@ -116,30 +116,30 @@ export function CollegeSlotManager({ options, row }: {
     event.preventDefault();
     if (pending) return;
     const fields: Record<string, string> = {};
-    if (!row && !programId) fields.programId = "Select a program";
-    if ((!row || knownIdentity) && (!term || !Number.isInteger(Number(term)) || Number(term) < 1)) fields.term = "Semester is required";
-    else if ((!row || knownIdentity) && Number(term) > Math.min(12, limit)) fields.term = `This program has only ${limit} semesters`;
-    if (!name.trim()) fields.name = "Name is required";
-    else if (name.trim().length > 150) fields.name = "Name cannot exceed 150 characters";
+    if (!row && !programId) fields["programId"] = "Select a program";
+    if ((!row || knownIdentity) && (!term || !Number.isInteger(Number(term)) || Number(term) < 1)) fields["term"] = "Semester is required";
+    else if ((!row || knownIdentity) && Number(term) > Math.min(12, limit)) fields["term"] = `This program has only ${limit} semesters`;
+    if (!name.trim()) fields["name"] = "Name is required";
+    else if (name.trim().length > 150) fields["name"] = "Name cannot exceed 150 characters";
     if (year.trim() && !/^\d{4}-\d{2}$/.test(year.trim())) {
-      fields.year = "Academic year must use YYYY-YY format, e.g. 2026-27";
+      fields["year"] = "Academic year must use YYYY-YY format, e.g. 2026-27";
     } else if (year.trim()) {
       const start = Number(year.slice(0, 4));
       if (Number(year.slice(5)) !== (start + 1) % 100) {
-        fields.year = "Academic year must use YYYY-YY format, e.g. 2026-27";
+        fields["year"] = "Academic year must use YYYY-YY format, e.g. 2026-27";
       }
     }
     if (!Number.isInteger(Number(credits)) || Number(credits) < 0 || Number(credits) > 30) {
-      fields.credits = "Credits must be a whole number from 0 to 30";
+      fields["credits"] = "Credits must be a whole number from 0 to 30";
     }
     if (!Number.isInteger(Number(minPick)) || Number(minPick) < 0 || Number(minPick) > 10) {
-      fields.minPick = "Minimum choices must be from 0 to 10";
+      fields["minPick"] = "Minimum choices must be from 0 to 10";
     }
     if (!Number.isInteger(Number(maxPick)) || Number(maxPick) < 1 ||
         (Number(maxPick) > 10 && (!row || Number(maxPick) !== row.maxPick))) {
-      fields.maxPick = "Maximum choices must be from 1 to 10";
+      fields["maxPick"] = "Maximum choices must be from 1 to 10";
     }
-    if (Number(minPick) > Number(maxPick)) fields.maxPick = "Pick range is invalid";
+    if (Number(minPick) > Number(maxPick)) fields["maxPick"] = "Pick range is invalid";
     setFieldErrors(fields);
     if (Object.keys(fields).length > 0) {
       setError("Please correct the highlighted fields.");
@@ -218,7 +218,7 @@ export function CollegeSlotManager({ options, row }: {
           : "Before students make selections you can correct program, semester, academic year, credits and choice limits."}
       </p> : null}
       {knownIdentity ? <>
-        <Field label="Program" error={fieldErrors.programId}><Select required name="programId" aria-invalid={Boolean(fieldErrors.programId)} disabled={locked} className={fieldClass} value={programId}
+        <Field label="Program" error={fieldErrors["programId"]}><Select required name="programId" aria-invalid={Boolean(fieldErrors["programId"])} disabled={locked} className={fieldClass} value={programId}
           onChange={event => setProgramId(event.target.value)}>
           <option value="">Select program</option>
           {options.programs.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
@@ -228,22 +228,22 @@ export function CollegeSlotManager({ options, row }: {
           <option value="">No period linked</option>
           {options.periods.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
         </Select></Field>
-        <Field label="Semester number" error={fieldErrors.term}><Input name="term" aria-invalid={Boolean(fieldErrors.term)} disabled={locked} type="number" min={1} max={Math.min(12, limit)}
+        <Field label="Semester number" error={fieldErrors["term"]}><Input name="term" aria-invalid={Boolean(fieldErrors["term"])} disabled={locked} type="number" min={1} max={Math.min(12, limit)}
           className={fieldClass} value={term} onChange={event => setTerm(event.target.value)} /></Field>
-        <Field label="Academic year (optional, YYYY-YY)" error={fieldErrors.year}><Input name="year" aria-invalid={Boolean(fieldErrors.year)} disabled={locked} maxLength={7}
+        <Field label="Academic year (optional, YYYY-YY)" error={fieldErrors["year"]}><Input name="year" aria-invalid={Boolean(fieldErrors["year"])} disabled={locked} maxLength={7}
           placeholder="2026-27" className={fieldClass} value={year}
           onChange={event => setYear(event.target.value)} /></Field>
       </> : null}
-      <Field label="Slot name" error={fieldErrors.name}><Input name="name" maxLength={150} error={Boolean(fieldErrors.name)} className={fieldClass}
+      <Field label="Slot name" error={fieldErrors["name"]}><Input name="name" maxLength={150} error={Boolean(fieldErrors["name"])} className={fieldClass}
         value={name} onChange={event => setName(event.target.value)} /></Field>
       <Field label="Description"><Textarea name="description" rows={2} maxLength={1000}
          placeholder="Enter slot description (optional)" className={fieldClass}
          value={description} onChange={event => setDescription(event.target.value)} /></Field>
-      <Field label="Credits" error={fieldErrors.credits}><Input name="credits" aria-invalid={Boolean(fieldErrors.credits)} disabled={locked} type="number" min={0} max={30}
+      <Field label="Credits" error={fieldErrors["credits"]}><Input name="credits" aria-invalid={Boolean(fieldErrors["credits"])} disabled={locked} type="number" min={0} max={30}
         className={fieldClass} value={credits} onChange={event => setCredits(event.target.value)} /></Field>
-      <Field label="Minimum choices" error={fieldErrors.minPick}><Input name="minPick" aria-invalid={Boolean(fieldErrors.minPick)} disabled={locked} type="number" min={0} max={10}
+      <Field label="Minimum choices" error={fieldErrors["minPick"]}><Input name="minPick" aria-invalid={Boolean(fieldErrors["minPick"])} disabled={locked} type="number" min={0} max={10}
         className={fieldClass} value={minPick} onChange={event => setMinPick(event.target.value)} /></Field>
-      <Field label="Maximum choices" error={fieldErrors.maxPick}><Input name="maxPick" aria-invalid={Boolean(fieldErrors.maxPick)} disabled={locked} type="number" min={1} max={10} title="You can select up to 10 electives"
+      <Field label="Maximum choices" error={fieldErrors["maxPick"]}><Input name="maxPick" aria-invalid={Boolean(fieldErrors["maxPick"])} disabled={locked} type="number" min={1} max={10} title="You can select up to 10 electives"
         className={fieldClass} value={maxPick} onChange={event => setMaxPick(event.target.value)} /></Field>
       {error ? <p role="alert" className="md:col-span-2 text-sm text-error">{error}</p> : null}
       <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row md:col-span-2 [&>button]:min-h-11 [&>button]:w-full sm:[&>button]:w-auto md:[&>button]:min-h-9">
