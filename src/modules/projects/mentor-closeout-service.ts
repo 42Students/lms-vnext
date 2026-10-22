@@ -30,16 +30,32 @@ async function scopeMentor(context:RequestContext,projectId:string){
   })) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   return scope;
 }
+// Keep both the read-only preview and the locked closeout mutation on the
+// same live-row predicates. Workspace-deleted tasks, sprints and releases
+// remain auditable but must not block a project closeout.
+function openTaskPredicate(projectId:string){
+  return and(eq(projectTasks.projectId,projectId),
+    isNull(projectTasks.deletedAt),ne(projectTasks.status,"DONE"));
+}
+function openSprintPredicate(projectId:string){
+  return and(eq(projectSprints.projectId,projectId),
+    isNull(projectSprints.deletedAt),ne(projectSprints.status,"COMPLETED"));
+}
+function openReleasePredicate(projectId:string){
+  return and(eq(projectReleases.projectId,projectId),
+    isNull(projectReleases.deletedAt),ne(projectReleases.status,"SHIPPED"));
+}
+
 async function facts(db:ReturnType<typeof getDb>,projectId:string,projectStatus:string){
   const [latest]=await db.select({status:projectSubmissions.status})
     .from(projectSubmissions).where(eq(projectSubmissions.projectId,projectId))
     .orderBy(desc(projectSubmissions.version)).limit(1);
   const [tasks]=await db.select({n:count()}).from(projectTasks)
-    .where(and(eq(projectTasks.projectId,projectId),isNull(projectTasks.deletedAt),ne(projectTasks.status,"DONE")));
+    .where(openTaskPredicate(projectId));
   const [sprints]=await db.select({n:count()}).from(projectSprints)
-    .where(and(eq(projectSprints.projectId,projectId),isNull(projectSprints.deletedAt),ne(projectSprints.status,"COMPLETED")));
+    .where(openSprintPredicate(projectId));
   const [releases]=await db.select({n:count()}).from(projectReleases)
-    .where(and(eq(projectReleases.projectId,projectId),isNull(projectReleases.deletedAt),ne(projectReleases.status,"SHIPPED")));
+    .where(openReleasePredicate(projectId));
   return closeoutChecklist({
     projectStatus,approved:latest?.status==="APPROVED",
     openTasks:Number(tasks?.n??0),openSprints:Number(sprints?.n??0),
@@ -67,6 +83,7 @@ export async function completeMentorProject(
   return getDb().transaction(async tx=>{
     const [locked]=await tx.select().from(projectInstances).where(and(
       eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId),
+      isNull(projectInstances.deletedAt),
     )).for("update").limit(1);
     if(!locked||locked.status!=="ACTIVE"||
       locked.updatedAt.getTime()!==new Date(input.expectedUpdatedAt).getTime())
@@ -78,11 +95,11 @@ export async function completeMentorProject(
       .from(projectSubmissions).where(eq(projectSubmissions.projectId,locked.id))
       .orderBy(desc(projectSubmissions.version)).limit(1);
     const [tasks]=await tx.select({n:count()}).from(projectTasks)
-      .where(and(eq(projectTasks.projectId,locked.id),isNull(projectTasks.deletedAt),ne(projectTasks.status,"DONE")));
+      .where(openTaskPredicate(locked.id));
     const [sprints]=await tx.select({n:count()}).from(projectSprints)
-      .where(and(eq(projectSprints.projectId,locked.id),isNull(projectSprints.deletedAt),ne(projectSprints.status,"COMPLETED")));
+      .where(openSprintPredicate(locked.id));
     const [releases]=await tx.select({n:count()}).from(projectReleases)
-      .where(and(eq(projectReleases.projectId,locked.id),isNull(projectReleases.deletedAt),ne(projectReleases.status,"SHIPPED")));
+      .where(openReleasePredicate(locked.id));
     const checklist=closeoutChecklist({
       projectStatus:locked.status,approved:latest?.status==="APPROVED",
       openTasks:Number(tasks?.n??0),openSprints:Number(sprints?.n??0),
@@ -94,6 +111,7 @@ export async function completeMentorProject(
       status:"COMPLETED",updatedAt:now,
     }).where(and(eq(projectInstances.id,locked.id),
       eq(projectInstances.collegeId,scope.collegeId),
+      isNull(projectInstances.deletedAt),
       eq(projectInstances.status,"ACTIVE"))).returning();
     if(!completed) throw new ProjectsServiceError("PROJECT_INVALID_STATE");
     await recordActivityEventInTransaction(tx,context,{
