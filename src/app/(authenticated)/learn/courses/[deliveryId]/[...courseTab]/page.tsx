@@ -18,7 +18,6 @@ import { LearnerCourseTabs, learnerCourseTabs } from "@/components/courses/learn
 import { LearnerCourseWorkspace } from "@/components/courses/learner-course-workspace";
 import { LearnerCourseStateRetry } from "@/components/courses/learner-course-state-retry";
 import { PageHeader } from "@/components/ui/page-header";
-import { EmptyState } from "@/components/ui/empty-state";
 import { learnerCourseAttendanceIstMonth,learnerCourseAttendanceIstWindow } from "@/modules/attendance/learner-course-attendance-ist-model";
 import { getLearnerAttendanceWorkspace } from "@/modules/attendance/learner-service";
 import { learnerDiscussionScopeKey } from "@/modules/courses/learner-discussion-scope-key-model";
