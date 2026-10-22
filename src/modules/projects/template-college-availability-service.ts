@@ -3,7 +3,7 @@ import { and, asc, eq, ilike, isNull } from "drizzle-orm";
 import { colleges, organizations, legacyIdMap, projectTemplates,
   projectTemplateCollegeAssignments, projectTemplateVersions } from "@/db/schema";
 import { ProjectsServiceError } from "./errors";
-import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
+import type {RequestContext} from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { getSuperAdminTemplateSubview } from "./template-subview-service";
@@ -12,7 +12,7 @@ import { projectTemplateCollegeAvailability, templateCollegeAvailabilityQuerySch
  * split between scoped reads and persisted mutation services. Missing
  * assignment storage is UNKNOWN, never "not assigned". */
 export const legacyTemplateCollegeAvailabilityContract={
- reads:["listColleges","getSuperAdminTemplateSubview"],
+ reads:["allActiveColleges","getSuperAdminTemplateSubview","allActiveTemplateAssignments"],
  writes:["assign","unassign","bulkSet"],
  knownOnlyAfter:["template","collegeDirectory","assignmentRows"],
  draftAssignment:"Requires published template and authorized college scope",
@@ -53,7 +53,6 @@ export async function listSuperAdminTemplateCollegeAvailability(context: Request
   // even when a Super Admin has an acting college selected for other pages.
   // Ordinary listColleges(context) would silently truncate this to one college.
   requirePermission(context,"admin-scope.select");
-  if(!isSuperAdmin(context))throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
   const query = templateCollegeAvailabilityQuerySchema.parse(rawQuery);
   const canonicalId=await resolveTemplateCollegeLegacyId(context,templateId);
   let detail: Awaited<ReturnType<typeof getSuperAdminTemplateSubview>>;
