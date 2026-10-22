@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { createSectionScheduleEventInputSchema } from "@/modules/academics/validation";
 import {
   createSectionScheduleEvent,
   listSectionScheduleEvents,
@@ -55,7 +56,7 @@ export async function POST(request: Request) {
     const event =
       await createSectionScheduleEvent(
         context,
-        body,
+        createSectionScheduleEventInputSchema.parse(body),
       );
 
     // Keep the vNext event and provide the historic OK acknowledgment.
