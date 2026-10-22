@@ -612,9 +612,9 @@ export const learnerProfileDocumentSchema = z
     jobPreferences: z.preprocess(value => {
       if (!value || typeof value !== "object" || Array.isArray(value)) return value;
       const fields = value as Record<string, unknown>;
-      if (Array.isArray(fields.rolePreferences)) return value;
-      const singular = typeof fields.rolePreference === "string"
-        ? fields.rolePreference.trim() : "";
+      if (Array.isArray(fields["rolePreferences"])) return value;
+      const singular = typeof fields["rolePreference"] === "string"
+        ? fields["rolePreference"].trim() : "";
       return {...fields, rolePreferences: singular ? [singular] : []};
     }, z.object({
       rolePreferences:z.array(z.string().trim().min(1).max(500)).max(20).default([]),

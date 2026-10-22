@@ -52,7 +52,7 @@ const DRIVE_FIELD_LABELS: Readonly<Record<string,string>> = {
 /** TPO-drives-44: translate known server codes without exposing machine details. */
 export function tpoDriveFormErrorMessage(reason:unknown):string{
   if(reason instanceof FriendlyFetchError){
-    if(reason.code&&DRIVE_ERRORS[reason.code])return DRIVE_ERRORS[reason.code];
+    if(reason.code&&DRIVE_ERRORS[reason.code])return DRIVE_ERRORS[reason.code] ?? FALLBACK;
     if(reason.code==="PLACEMENT_ELIGIBILITY_EVIDENCE_MISSING"||reason.code==="PLACEMENT_VERIFIED_MARKS_REQUIRED")
       return "Verified marks only — college-verified academic marks are required before the applicant can be considered eligible.";
     if(reason.code==="INVALID_REQUEST"||reason.status===400){

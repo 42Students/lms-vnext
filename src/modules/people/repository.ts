@@ -314,6 +314,10 @@ export const drizzlePeopleRepository:
           }
         }
 
+        if (!user) {
+          throw new PeopleServiceError("IDENTITY_COLLISION");
+        }
+
         let [membership] = await tx
           .select({
             id: collegeMemberships.id,

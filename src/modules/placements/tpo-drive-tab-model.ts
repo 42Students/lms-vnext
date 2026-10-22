@@ -7,9 +7,9 @@ const labelWithCount=(label:string,count:number|undefined)=>
 export function tpoDriveTabs(jobId:string,counts:TpoDriveTabCounts={}):TpoDriveTab[]{
  const root="/tpo/placements/jobs/"+encodeURIComponent(jobId);
  return [
-  {label:labelWithCount("Applicants",counts.applicants),href:root+"/applicants-pipeline",count:counts.applicants},
-  {label:labelWithCount("Rounds",counts.rounds),href:root+"/rounds",count:counts.rounds},
-  {label:labelWithCount("Offers",counts.offers),href:root+"/offers",count:counts.offers},
+  {label:labelWithCount("Applicants",counts.applicants),href:root+"/applicants-pipeline",...(counts.applicants !== undefined ? {count:counts.applicants} : {})},
+  {label:labelWithCount("Rounds",counts.rounds),href:root+"/rounds",...(counts.rounds !== undefined ? {count:counts.rounds} : {})},
+  {label:labelWithCount("Offers",counts.offers),href:root+"/offers",...(counts.offers !== undefined ? {count:counts.offers} : {})},
   {label:"Drive day",href:root+"/drive-day"},
   {label:"Discussion",href:root+"/discussion"},
   {label:"About this drive",href:root+"/about"},

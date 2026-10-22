@@ -12,7 +12,7 @@ export const offerRegisterQueryObject=z.object({jobId:z.string().uuid(),status:z
 }).strict();
 // Zod 4 does not permit .omit() on refined schemas. Both variants share
 // the same range validation after their request-specific shape is selected.
-const packageRangeValid=(input:{minCtcLpa?:number;maxCtcLpa?:number})=>
+const packageRangeValid=(input:{minCtcLpa?:number|undefined;maxCtcLpa?:number|undefined})=>
  input.minCtcLpa===undefined||input.maxCtcLpa===undefined||input.maxCtcLpa>=input.minCtcLpa;
 export const offerRegisterQuery=offerRegisterQueryObject.superRefine((input,ctx)=>{
  if(!packageRangeValid(input))ctx.addIssue({code:"custom",path:["maxCtcLpa"],message:"Maximum package must be at least the minimum package"});

@@ -16,7 +16,7 @@ export function parseTpoEligibilityCsv(text:string){
  const rows=body.map((line,index)=>{
   if(line.includes('"')||line.split(",").length!==3)throw Error("Invalid CSV format at row "+(index+1));
   const [studentCode,decision,reason]=line.split(",");
-  return eligibilityImportRowSchema.parse({studentCode:studentCode.trim(),decision:decision.trim(),reason:reason.trim()});
+  return eligibilityImportRowSchema.parse({studentCode:(studentCode??"").trim(),decision:(decision??"").trim(),reason:(reason??"").trim()});
  });
  return eligibilityImportInputSchema.parse({rows}).rows;
 }

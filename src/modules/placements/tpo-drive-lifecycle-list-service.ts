@@ -190,8 +190,8 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     )).orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(2500):[];
     const revisionByRequest=new Map<string,{previousDraft:unknown;currentDraft:unknown}>();
     for(const item of revisions){
-     if(revisionByRequest.has(item.id)||!item.metadata.previousDraft||!item.metadata.currentDraft)continue;
-     revisionByRequest.set(item.id,{previousDraft:item.metadata.previousDraft,currentDraft:item.metadata.currentDraft});
+     if(revisionByRequest.has(item.id)||!item.metadata["previousDraft"]||!item.metadata["currentDraft"])continue;
+     revisionByRequest.set(item.id,{previousDraft:item.metadata["previousDraft"],currentDraft:item.metadata["currentDraft"]});
     }
     const grants=requestRecords.length?await db.select({
       userId:placementRecruiterCollegeGrants.recruiterUserId,
@@ -212,7 +212,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       id:row.id,status:row.status,
       legacyStatus:["REQUEST","SENT_BACK","REJECTED","CANCELLED","DRAFT"].includes(row.status)?row.status:"UNKNOWN",
       reviewRequired:row.status==="REQUEST"||row.status==="SENT_BACK",
-      title:typeof row.draft.title==="string"?row.draft.title:"Untitled drive request",
+      title:typeof row.draft["title"]==="string"?row.draft["title"]:"Untitled drive request",
       company:row.company,createdAt:row.createdAt.toISOString(),
       approvedJobId:row.approvedJobId,
       recruiterEmail:row.recruiterEmail,recruiterPhone:row.recruiterPhone,

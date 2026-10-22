@@ -27,7 +27,7 @@ export function verificationWaitingStateValid(filter:{tab:string;waitingState:st
 }
 
 /** No enrollment cannot coexist with a specific CURRENT academic placement. */
-export function verificationEnrollmentFiltersValid(filter:{enrollment:string;programId?:string;batchId?:string;branchId?:string;sectionId?:string}):boolean{
+export function verificationEnrollmentFiltersValid(filter:{enrollment:string;programId?:string|undefined;batchId?:string|undefined;branchId?:string|undefined;sectionId?:string|undefined}):boolean{
  return filter.enrollment!=="NONE"||!(filter.programId||filter.batchId||filter.branchId||filter.sectionId);
 }
 
@@ -36,7 +36,7 @@ export function verificationAgeBandValid(filter:{tab:string;ageBand:string}):boo
 }
 
 /** Marksheets are Education evidence only; never silently show an empty Identity queue. */
-export function verificationSectionEvidenceFiltersValid(filter:{kind?:string;marksheets:string;attention:string}):boolean{
+export function verificationSectionEvidenceFiltersValid(filter:{kind?:string|undefined;marksheets:string;attention:string}):boolean{
  return filter.kind!=="IDENTITY"||filter.marksheets==="ANY"&&filter.attention!=="MISSING_MARKSHEET";
 }
 

@@ -194,6 +194,11 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
     const [selection]=await getDb().select().from(placementDriveSelections)
       .where(and(eq(placementDriveSelections.id,id),eq(placementDriveSelections.jobId,job.id))).limit(1);
     if(!selection){results.push({selectionId:id,applicationId:"",status:"skipped",reason:"Selection is no longer available"});continue;}
+    const expectedRecordedAt = input.expectedRecordedAt[id];
+    if (expectedRecordedAt === undefined) {
+      results.push({selectionId:id,applicationId:selection.applicationId,status:"skipped",reason:"Selection changed. Refresh before releasing."});
+      continue;
+    }
     if(selection.status==="CANCELLED"){
       results.push({selectionId:id,applicationId:selection.applicationId,
         status:"skipped",reason:"This selection was cancelled with the drive and cannot be released."});
@@ -202,7 +207,7 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
     if(selection.status==="RELEASED"&&selection.releasedOfferId){
       results.push({selectionId:id,applicationId:selection.applicationId,status:"released",offerId:selection.releasedOfferId});continue;
     }
-    if(!matchesTpoSelectionReleaseRevision(selection,selection,input.expectedRecordedAt[id])){
+    if(!matchesTpoSelectionReleaseRevision(selection,selection,expectedRecordedAt)){
       results.push({selectionId:id,applicationId:selection.applicationId,status:"skipped",reason:"Selection changed. Refresh before releasing."});continue;
     }
     const candidate=candidateMap.get(selection.applicationId);
@@ -226,7 +231,7 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
           const [locked]=await tx.select().from(placementDriveSelections)
             .where(and(eq(placementDriveSelections.id,id),eq(placementDriveSelections.jobId,job.id)))
             .for("update").limit(1);
-          if(!locked||!matchesTpoSelectionReleaseRevision(locked,selection,input.expectedRecordedAt[id]))
+          if(!locked||!matchesTpoSelectionReleaseRevision(locked,selection,expectedRecordedAt))
             throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
           if(locked.status==="RELEASED"&&locked.releasedOfferId===offerId)return;
           if(locked.status!=="VERIFIED")throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
@@ -272,7 +277,7 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
         const [locked]=await tx.select().from(placementDriveSelections)
           .where(and(eq(placementDriveSelections.id,id),eq(placementDriveSelections.jobId,job.id)))
           .for("update").limit(1);
-        if(!locked||!matchesTpoSelectionReleaseRevision(locked,selection,input.expectedRecordedAt[id])||
+        if(!locked||!matchesTpoSelectionReleaseRevision(locked,selection,expectedRecordedAt)||
           !["SELECTED","VERIFIED"].includes(locked.status))throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
         if(locked.status==="SELECTED"){
           await tx.update(placementDriveSelections).set({
@@ -286,13 +291,14 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
       const offer=await issuePlacementOffer(context,selection.applicationId,{
         kind:"OFFER",roleTitle:selection.roleTitle,annualCtcInr:selection.annualCtcInr,
       });
+      if (!offer) throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
       await getDb().transaction(async tx=>{
         await requireTpoJobActor(tx,context);
         await requireActiveTpoSelectionSeason(tx,job.id,context.membership!.collegeId);
         const [locked]=await tx.select().from(placementDriveSelections)
           .where(and(eq(placementDriveSelections.id,id),eq(placementDriveSelections.jobId,job.id)))
           .for("update").limit(1);
-        if(!locked||!matchesTpoSelectionReleaseRevision(locked,selection,input.expectedRecordedAt[id]))
+        if(!locked||!matchesTpoSelectionReleaseRevision(locked,selection,expectedRecordedAt))
           throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
         if(locked.status==="RELEASED"&&locked.releasedOfferId===offer.id)return;
         if(locked.status!=="VERIFIED")throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");

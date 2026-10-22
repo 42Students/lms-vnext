@@ -7,9 +7,9 @@ function isUuid(value:JsonValue|undefined):value is string {
 export function verificationDocumentManifest(snapshot:SafeSnapshot):VerificationDocumentReference[]{
  const result:VerificationDocumentReference[]=[];
  const add=(purpose:VerificationDocumentReference["purpose"],value:JsonValue|undefined)=>{if(isUuid(value))result.push({purpose,receiptId:value});};
- add("AADHAAR",snapshot.aadhaarDocumentId);add("PAN",snapshot.panDocumentId);add("RESUME",snapshot.resumeDocumentId);
- if(Array.isArray(snapshot.education))for(const row of snapshot.education){
-  if(row&&typeof row==="object"&&!Array.isArray(row))add("MARKSHEET",row.marksheetDocumentId);
+ add("AADHAAR",snapshot["aadhaarDocumentId"]);add("PAN",snapshot["panDocumentId"]);add("RESUME",snapshot["resumeDocumentId"]);
+ if(Array.isArray(snapshot["education"]))for(const row of snapshot["education"]){
+  if(row&&typeof row==="object"&&!Array.isArray(row))add("MARKSHEET",row["marksheetDocumentId"]);
  }
  return result;
 }
