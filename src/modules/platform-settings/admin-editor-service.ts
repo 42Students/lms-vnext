@@ -10,6 +10,7 @@ import {AuthorizationError,requirePermission} from "@/modules/permissions/policy
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {LEGACY_TENANT_SETTING_MAP,LEGACY_TENANT_SETTING_SPECS} from "./legacy-setting-specs";
 import {PLACEMENT_POLICY_FIELDS,placementPolicyValidate} from "@/modules/placements/platform-placement-policy-model";
+import {listOrganizationTenantSettings,removeOrganizationTenantSetting} from "./organization-settings-service";
 
 /** Historical TEXT settings above the storage limit require explicit archival; never truncate. */
 export const TENANT_SETTING_STORAGE_MAX_CHARS=4096;
@@ -30,9 +31,18 @@ export const LEGACY_TENANT_SCOPES_READ_ONLY=["ORGANIZATION","DEPARTMENT","PROGRA
  * Historical cleanup requires a separately authorized migration/archive review;
  * this editor deliberately issues no writes to historic app_setting rows. */
 export const RETIRED_LEGACY_SCOPE_POLICY={
- alias:"ORG",normalized:"ORGANIZATION",mode:"ARCHIVE_REVIEW_ONLY",
- warning:"Legacy organization and lower-level overrides are read-only historical scopes; no operational values are silently inherited.",
+ alias:"ORG",normalized:"ORGANIZATION",mode:"READ_ONLY_CLEANUP",
+ warning:"Legacy organization settings are available only for authorized historical inspection and versioned deletion. They are never activated or inherited.",
 } as const;
+/** Historical ORG inventory is scoped by the organization cleanup service.
+ * Never coerce historical values into operational GLOBAL or COLLEGE policy. */
+export async function readHistoricalOrganizationTenantSettings(ctx:RequestContext,organizationId:string){
+ return listOrganizationTenantSettings(ctx,organizationId);
+}
+/** Only versioned deletion is supported, not creation or editing. */
+export async function cleanHistoricalOrganizationTenantSetting(ctx:RequestContext,raw:unknown){
+ return removeOrganizationTenantSetting(ctx,raw);
+}
 export function normalizeLegacySettingScope(input:string|null|undefined){
  const scope=(input??"GLOBAL").trim().toUpperCase();
  return scope==="ORG"?"ORGANIZATION":scope||"GLOBAL";
