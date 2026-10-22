@@ -143,20 +143,18 @@ export async function onboardPerson(
   const identity = await resolveOrCreateIdentity(
     {
       phoneE164: input.phoneE164,
-      email: input.email,
+      ...(input.email !== undefined ? { email: input.email } : {}),
       displayName: input.displayName,
     },
     dependencies.identityDirectory,
   );
 
+  const resolvedEmail = input.email ?? identity.email;
   return dependencies.repository.persistPersonMembership(
     {
       identityUid: identity.uid,
       phoneE164: input.phoneE164,
-      email:
-        input.email ??
-        identity.email ??
-        undefined,
+      ...(resolvedEmail != null ? { email: resolvedEmail } : {}),
       displayName: input.displayName,
       collegeId: college.id,
       roles: input.roles,

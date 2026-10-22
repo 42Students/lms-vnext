@@ -39,11 +39,11 @@ type Drive={job:{id:string;title:string;status:string;applicationDeadline:Date|n
  company?:{name:string}};
 export function filterAdminDriveDirectory<T extends Drive>(rows:readonly T[],
  query:z.infer<typeof adminDriveDirectoryQuerySchema>){
- const term=query.q.toLocaleLowerCase("en-IN");
- const all=rows.filter(row=>(query.status==="ALL"||
-  (query.status==="ACTIVE"&&row.job.status==="PUBLISHED")||
-  (query.status==="DRAFT"&&row.job.status==="DRAFT")||
-  (query.status==="CLOSED"&&["CLOSED","CANCELLED"].includes(row.job.status)))&&
+ const term=query["q"].toLocaleLowerCase("en-IN");
+ const all=rows.filter(row=>(query["status"]==="ALL"||
+  (query["status"]==="ACTIVE"&&row.job.status==="PUBLISHED")||
+  (query["status"]==="DRAFT"&&row.job.status==="DRAFT")||
+  (query["status"]==="CLOSED"&&["CLOSED","CANCELLED"].includes(row.job.status)))&&
   (!term||(row.job.title+" "+(row.company?.name??"")).toLocaleLowerCase("en-IN").includes(term)))
   .sort((a,b)=>{
    // Legacy jobs listing places most recently posted drives first. A stable
@@ -52,17 +52,17 @@ export function filterAdminDriveDirectory<T extends Drive>(rows:readonly T[],
     row.job.legacyPostedAt?.getTime()??row.job.createdAt?.getTime()??0;
    return posted(b)-posted(a)||a.job.id.localeCompare(b.job.id);
   });
- const totalPages=Math.max(1,Math.ceil(all.length/query.pageSize));
- const page=Math.min(query.page,totalPages);
- return {items:all.slice((page-1)*query.pageSize,page*query.pageSize),
+ const totalPages=Math.max(1,Math.ceil(all.length/query["pageSize"]));
+ const page=Math.min(query["page"],totalPages);
+ return {items:all.slice((page-1)*query["pageSize"],page*query["pageSize"]),
   total:all.length,page,totalPages};
 }
 export function adminDriveDirectoryHref(query:z.infer<typeof adminDriveDirectoryQuerySchema>){
  const url=new URLSearchParams();
- if(query.q)url.set("q",query.q);
- if(query.status!=="ALL")url.set("status",query.status);
- if(query.page>1)url.set("page",String(query.page));
- if(query.pageSize!==20)url.set("size",String(query.pageSize));
+ if(query["q"])url.set("q",query["q"]);
+ if(query["status"]!=="ALL")url.set("status",query["status"]);
+ if(query["page"]>1)url.set("page",String(query["page"]));
+ if(query["pageSize"]!==20)url.set("size",String(query["pageSize"]));
  const encoded=url.toString();
  return "/admin/placements/drives"+(encoded?"?"+encoded:"");
 }

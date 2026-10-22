@@ -13,8 +13,8 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
   if (!isSuperAdmin(context)) throw new AuthorizationError("placements.read");
   const selected = context.adminScope;
   requirePermission(context, "placements.read", {
-    organizationId: selected?.organizationId,
-    collegeId: selected?.collegeId,
+    ...(selected?.organizationId != null ? { organizationId: selected.organizationId } : {}),
+    ...(selected?.collegeId != null ? { collegeId: selected.collegeId } : {}),
   });
   const filters: SQL[] = [];
   const dbPlaceholderDomain=(pattern:string)=>getDb().select({id:placementCompanyDomains.id})
@@ -287,8 +287,9 @@ export async function getSuperAdminCompanyIdentityByName(
   eq(placementCompanies.status,"ACTIVE"),
   sql`lower(btrim(${placementCompanies.name})) = lower(${name})`,
  )).orderBy(asc(placementCompanies.id)).limit(2);
- if(rows.length===0)return {status:"NOT_FOUND",company:null};
+ const match=rows[0];
+ if(!match)return {status:"NOT_FOUND",company:null};
  if(rows.length>1)return {status:"AMBIGUOUS",company:null};
- return {status:"FOUND",company:{id:rows[0].id,name:rows[0].name,
-  verified:rows[0].verifiedAt!==null}};
+ return {status:"FOUND",company:{id:match.id,name:match.name,
+  verified:match.verifiedAt!==null}};
 }
