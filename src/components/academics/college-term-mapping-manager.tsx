@@ -166,7 +166,7 @@ export function CollegeTermMappingManager({ data, readOnly = false }: { data: Ma
     (course.name + " " + course.code).toLowerCase().includes(courseQuery.toLowerCase()));
   function toggleCourse(courseId: string, checked: boolean) {
     if (readOnly || mappingStale || refreshing || inFlight.current) return;
-    setFieldErrors(current => ({ ...current, courses: undefined }));
+    setFieldErrors(current => { const next = { ...current }; delete next.courses; return next; });
     setError(null);
     setDraftByTerm(current => ({
       ...current,
@@ -180,8 +180,8 @@ export function CollegeTermMappingManager({ data, readOnly = false }: { data: Ma
     event.preventDefault();
     if (readOnly) return;
     if (!programId || !termId) {
-      setFieldErrors({ program: !programId ? "Select a program" : undefined,
-        term: !termId ? "Select a semester" : undefined });
+      setFieldErrors({ ...(!programId ? { program: "Select a program" } : {}),
+        ...(!termId ? { term: "Select a semester" } : {}) });
       return;
     }
     if (!editableTerm || error || mappingStale || refreshing) {
@@ -502,7 +502,7 @@ export function CollegeTermMappingManager({ data, readOnly = false }: { data: Ma
     </section>
     </div>
     <Dialog open={editing !== null} onOpenChange={open => { if (!open && !pending) cancelEditing(); }}
-      title={"Edit Course Mapping: "+(editingRow?.courseName||"Course")} description={editingRow ? editingRow.courseCode : undefined}
+      title={"Edit Course Mapping: "+(editingRow?.courseName||"Course")} {...(editingRow ? { description: editingRow.courseCode } : {})}
       dismissible={false}>
       {editing && editingRow ? <form aria-label={"Edit mapping for " + editingRow.courseName}
         className="grid min-w-0 gap-4" onSubmit={event => {
@@ -514,7 +514,7 @@ export function CollegeTermMappingManager({ data, readOnly = false }: { data: Ma
           <Input type="number" min={0} max={30} step={1} required
             value={editing.credits}
             onChange={event => {
-              setFieldErrors(current => ({ ...current, credits: undefined }));
+              setFieldErrors(current => { const next = { ...current }; delete next.credits; return next; });
               setEditing({ ...editing, credits: event.target.value });
             }}
             className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 sm:max-w-[50%] md:min-h-[var(--lms-control-height)]" />
