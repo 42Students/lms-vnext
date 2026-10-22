@@ -287,11 +287,11 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-15.md: file, number of 
 - [x] `src/components/tpo/tpo-students-drive-visibility.tsx`
 - [x] `src/components/tpo/tpo-students-spreadsheet.tsx`
 - [x] `src/components/tracker/known-errors-workspace.tsx`
-- [ ] `src/components/ui/date-input.tsx`
-- [ ] `src/components/ui/date-range-picker.tsx`
-- [ ] `src/components/ui/dropdown.tsx`
-- [ ] `src/components/ui/file-dropzone.tsx`
-- [ ] `src/components/ui/file-upload.tsx`
+- [x] `src/components/ui/date-input.tsx`
+- [x] `src/components/ui/date-range-picker.tsx`
+- [x] `src/components/ui/dropdown.tsx`
+- [x] `src/components/ui/file-dropzone.tsx`
+- [x] `src/components/ui/file-upload.tsx`
 - [ ] `src/components/ui/legacy-overlays.css`
 - [ ] `src/components/ui/menu.tsx`
 - [ ] `src/components/ui/popover.tsx`
