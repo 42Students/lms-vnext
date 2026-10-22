@@ -6,7 +6,7 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [x] `tests/unit/chat10-campaign-unsubscribe-legacy-path.test.ts` (1 failing)
 - [ ] `tests/unit/chat19-tpo-mobile-footer.test.ts` (3 failing)
 - [ ] `tests/unit/chat5-final-faculty-courses-a.test.ts` (1 failing)
-- [ ] `tests/unit/chat7-superadmin-learning-export-service-behavior.test.ts` (2 failing)
+- [x] `tests/unit/chat7-superadmin-learning-export-service-behavior.test.ts` (2 failing) — already corrected on current main: assessment reader receives `(context,kind,{...params.data,page})`, carrying page and filters through pagination; static verification only (no CI run).
 - [ ] `tests/unit/learner-coding-profile-link.test.ts` (1 failing)
 - [x] `tests/unit/tpo-team-person-context-chat2.test.ts` (1 failing)
 
