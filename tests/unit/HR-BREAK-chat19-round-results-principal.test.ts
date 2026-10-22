@@ -1,5 +1,8 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
 import {isValidElement, type ReactNode} from "react";
+import {readFileSync} from "node:fs";
+import {Tabs} from "@/components/ui/tabs";
+import {HrRoundResultsGrid,type HrRoundResultSheetRow} from "@/components/hr/hr-round-results-grid";
 
 const deps=vi.hoisted(()=>({
   context:vi.fn(),jobs:vi.fn(),workspace:vi.fn(),redirect:vi.fn(),notFound:vi.fn(),
@@ -20,21 +23,29 @@ const principal={
     companyName:"Employer A",title:null,grants:[]},
 };
 type Action={href:string;className:string};
-function collect(node:ReactNode,words:string[],actions:Action[]):void{
-  if(Array.isArray(node)){for(const child of node)collect(child,words,actions);return;}
+function collect(node:ReactNode,words:string[],actions:Action[],tabHrefs:string[],gridRows:HrRoundResultSheetRow[]):void{
+  if(Array.isArray(node)){for(const child of node)collect(child,words,actions,tabHrefs,gridRows);return;}
   if(typeof node==="string"||typeof node==="number"){words.push(String(node));return;}
   if(!isValidElement(node))return;
   const p=node.props as {children?:ReactNode;title?:ReactNode;description?:ReactNode;
     action?:ReactNode;href?:unknown;className?:unknown};
+  if(node.type===Tabs){
+    const tabs=node.props as {items:readonly {href?:string}[]};
+    tabHrefs.push(...tabs.items.flatMap(item=>item.href?[item.href]:[]));
+  }
+  if(node.type===HrRoundResultsGrid){
+    const sheet=node.props as {rows:readonly HrRoundResultSheetRow[]};
+    gridRows.push(...sheet.rows);
+  }
   if(typeof p.href==="string"&&typeof p.className==="string")
     actions.push({href:p.href,className:p.className});
   for(const child of [p.title,p.description,p.action,p.children])
-    collect(child,words,actions);
+    collect(child,words,actions,tabHrefs,gridRows);
 }
 function inspect(node:ReactNode){
-  const words:string[]=[],actions:Action[]=[];
-  collect(node,words,actions);
-  return {text:words.join(" "),actions};
+  const words:string[]=[],actions:Action[]=[],tabHrefs:string[]=[],gridRows:HrRoundResultSheetRow[]=[];
+  collect(node,words,actions,tabHrefs,gridRows);
+  return {text:words.join(" "),actions,tabHrefs,gridRows};
 }
 
 describe("HR-BREAK-ROUND-PRINCIPAL-26 and UX-hr-round-results-02 page journey",()=>{
@@ -94,14 +105,17 @@ describe("HR-BREAK-ROUND-PRINCIPAL-26 and UX-hr-round-results-02 page journey",(
     const output=inspect(await HrRoundResultsPage({
       searchParams:Promise.resolve({jobId,roundId,outcome:"PASS"}),
     }));
-    expect(output.text).toContain("Shared candidate");
-    expect(output.text).toContain("Score: ");
+    expect(output.gridRows).toEqual([expect.objectContaining({name:"Shared candidate",scorePercent:88,outcome:"PASS"})]);
     expect(deps.workspace).toHaveBeenCalledWith(principal,jobId);
     const targets=output.actions.filter(action=>
       action.href.startsWith("/hr/round-results?") ||
       action.href.includes("?tab=rounds") ||
       action.href==="/hr/round-results");
-    expect(targets.length).toBeGreaterThanOrEqual(10);
+    expect(targets.length).toBeGreaterThanOrEqual(2);
+    expect(output.tabHrefs.filter(href=>href.startsWith("/hr/round-results?"))).toHaveLength(8);
+    const tabSource=readFileSync("src/components/ui/tabs.tsx","utf8");
+    expect(tabSource).toContain("inline-flex min-h-11");
+    expect(tabSource).toContain("focus-visible:outline-2");
     for(const action of targets){
       expect(action.className).toContain("min-h-11");
       expect(action.className).toContain("focus-visible:outline-2");

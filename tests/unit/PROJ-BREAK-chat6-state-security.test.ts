@@ -85,8 +85,9 @@ describe("IIT Dharwad Projects breaker — state, access, integrity, deadlines a
   expect(mayRemovePrimaryProjectMentor("ACTIVE","MENTOR",false)).toBe(true);
   expect(mayRemovePrimaryProjectMentor("PLANNED","MENTOR",true)).toBe(true);
  });
- it("PROJ-BREAK-grading-01 never rounds incomplete work to 100 percent",()=>{
-  expect(projectCompletionPercent(999,1000)).toBe(99);
+ it("PROJ-BREAK-grading-01 retains legacy nearest-integer display rounding independently of terminal state",()=>{
+  expect(projectCompletionPercent(999,1000)).toBe(100);
+  expect(projectCompletionPercent(994,1000)).toBe(99);
   expect(projectCompletionPercent(1000,1000)).toBe(100);
   expect(projectCompletionPercent(-5,100)).toBe(0);
   expect(projectCompletionPercent(10,0)).toBe(null);

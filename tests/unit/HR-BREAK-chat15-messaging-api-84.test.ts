@@ -65,7 +65,7 @@ describe("HR-MESSAGING-84: recruiter open/reply HTTP role matrix and safe retrie
   expect(m.open).toHaveBeenCalledWith(actor,expect.objectContaining({collegeId:college}));
   const sentResponse=await reply(" Confirmed ");
   expect(sentResponse.status).toBe(303);
-  expect(m.reply).toHaveBeenCalledWith(actor,thread,"Confirmed");
+  expect(m.reply).toHaveBeenCalledWith(actor,thread,"Confirmed",undefined);
  });
  it("downstream failures do not claim a message was sent",async()=>{
   m.reply.mockRejectedValue(new Error("database offline"));

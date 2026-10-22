@@ -7,9 +7,9 @@ const valid={status:"READY",unread:1,items:[{id,label:"Drive updated",unread:tru
  at:"2026-10-18T10:00:00.000Z",href:"/hr/placements/jobs/"+id}]};
 describe("HR-BREAK-BELL-PAYLOAD-35 verified HR notification shell response",()=>{
  it("retains authorized job links and unread counts without losing ordinary copy",()=>{
-  expect(parseHrBellResponse(valid)).toEqual(valid);
+  expect(parseHrBellResponse(valid)).toEqual({...valid,hiddenUnread:0});
   expect(parseHrBellResponse({status:"NO_ACCESS",unread:0,items:[]})).toEqual({
-   status:"NO_ACCESS",unread:0,items:[],
+   status:"NO_ACCESS",unread:0,hiddenUnread:0,items:[],
   });
  });
  it.each([
@@ -29,6 +29,7 @@ describe("HR-BREAK-BELL-PAYLOAD-35 verified HR notification shell response",()=>
   const source=readFileSync("src/components/hr/hr-recruiter-bell.tsx","utf8");
   expect(source).toContain("const data=parseHrBellResponse(payload)");
   expect(source).toContain('if(!data)throw Error("INVALID_BELL_RESPONSE")');
-  expect(source).toContain("setState(null);setError(");
+  expect(source).toContain("if(authorizationLost){setState(null);setBadgeUnread(null);}");
+  expect(source).toContain("setError(authorizationLost");
  });
 });
