@@ -4,10 +4,14 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 
 - [ ] `tests/unit/UX-college-college-electives-slot-id-allocate-01.test.ts` (1 failing)
 - [ ] `tests/unit/chat13-final-sprint-learner-24.test.ts` (1 failing)
-- [ ] `tests/unit/chat2-tpo-member-workload-parity.test.ts` (1 failing)
+- [x] `tests/unit/chat2-tpo-member-workload-parity.test.ts` (1 failing)
 - [ ] `tests/unit/chat6-superadmin-people-round3.test.ts` (1 failing)
 - [ ] `tests/unit/chat9-verify2-admin-course-dependency-pages.test.ts` (1 failing)
 - [ ] `tests/unit/pub-auth-public-42-rollback.test.ts` (1 failing)
+
+## Repair results
+
+- FIXED `tests/unit/chat2-tpo-member-workload-parity.test.ts` — commit `ec44cc5c6f50b41217a1f44d6b5bb0d244d3b3c1`: correct outdated expectation to canonical `/tpo/settings?tab=team` link used by the current People-tab redirect; retain and strengthen People/Members/Roster deep-link routing assertion. Product route: `src/app/(authenticated)/tpo/team/page.tsx:24-35`.
 
 ## Failures (from CI log)
 
