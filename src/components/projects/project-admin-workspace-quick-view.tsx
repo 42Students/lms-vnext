@@ -67,8 +67,8 @@ export function ProjectAdminWorkspaceQuickView({item,href}:{
   ["Progress",Number.isFinite(detail?.progressPercent??item.progressPercent)
    ?String(Math.max(0,Math.min(100,detail?.progressPercent??item.progressPercent)))+"%":"—"],
   ["Due",detail?.endDate||detail?.dueLabel||item.dueLabel||"Not set"],
-  ["Blocker",detail?.blocker||"None recorded"],
-  ["Next Action",detail?.nextAction||"Not set"],
+  ["Blocker",(detail?.status??item.status)==="ARCHIVED"?"Archived · view only":detail?.blocker||"None recorded"],
+  ["Next Action",(detail?.status??item.status)==="ARCHIVED"?"Archived · view only":detail?.nextAction||"Not set"],
  ] as const;
  return <>
   <Button type="button" variant="secondary" size="sm"

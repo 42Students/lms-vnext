@@ -224,13 +224,16 @@ export function LectureHallManager({
       });
 
       if (!response.ok) {
+        const failure = await response.json().catch(() => null);
         showToast({
           tone: "error",
           title: status === "ARCHIVED" ? "Archive blocked" : "Restore failed",
-          description: errorText(await response.json().catch(() => null),
-            status === "ARCHIVED"
-              ? "Could not archive the room. Try again."
-              : "Could not restore the room. Try again."),
+          description: failure?.error === "HALL_NAME_TAKEN"
+            ? `A lecture hall named "${hall.name}" already exists in this college`
+            : errorText(failure,
+                status === "ARCHIVED"
+                  ? "Could not archive the room. Try again."
+                  : "Could not restore the room. Try again."),
         });
         setArchiving(null);
         return;
