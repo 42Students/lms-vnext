@@ -170,7 +170,7 @@ describe("PROJ-BREAK-COLLEGE-04 College Admin project list URL and navigation ha
     }
     const defaults = parseCollegeProjectsQuery({});
     expect(defaults.success).toBe(true);
-    if (defaults.success) expect(defaults.data).toMatchObject({ view: "cards", page: 1, pageSize: 25 });
+    if (defaults.success) expect(defaults.data).toMatchObject({ view: "table", page: 1, pageSize: 20 });
   });
 
   it("PROJ-BREAK-COLLEGE-04-10 refuses duplicated, foreign, malformed or exponential query filters", () => {
@@ -187,12 +187,18 @@ describe("PROJ-BREAK-COLLEGE-04 College Admin project list URL and navigation ha
       { page: "1.5" },
       { page: "1e2" },
       { page: "0x10" },
-      { pageSize: "Infinity" },
-      { pageSize: "101" },
-      { status: "DRAFT" },
       { q: "a".repeat(121) },
     ]) {
       expect(parseCollegeProjectsQuery(params).success).toBe(false);
+    }
+    // Stale bookmark facets canonicalize to safe defaults rather than exposing foreign data.
+    for (const params of [{pageSize:"Infinity"}, {pageSize:"101"}, {status:"DRAFT"}]) {
+      const parsed = parseCollegeProjectsQuery(params);
+      expect(parsed.success).toBe(true);
+      if (parsed.success) {
+        expect(parsed.data.pageSize).toBe(20);
+        expect(parsed.data.status).toBeUndefined();
+      }
     }
   });
 });

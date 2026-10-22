@@ -6,6 +6,5 @@ export function projectMentorWorkloadAverage(activeCounts: readonly number[]): n
 }
 export function isProjectMentorOverloaded(activeCount: number, activeCounts: readonly number[]): boolean {
   const average = projectMentorWorkloadAverage(activeCounts);
-  const threshold=Math.floor(Math.max(average*1.5,average+3));
-  return average > 0 && activeCount >= threshold;
+  return average > 0 && activeCount > average * 1.5 && activeCount >= average + 3;
 }

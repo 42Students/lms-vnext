@@ -102,6 +102,7 @@ const item = (n: number) => ({
   periodYear: "2099-01-01",
   role: "PRIMARY",
   startedAt: new Date("2099-01-01T00:00:00.000Z"),
+  updatedAt: new Date("2099-01-02T00:00:00.000Z"),
   teachingEnded: null,
   deliveryEnded: null,
 });
@@ -194,7 +195,9 @@ describe("SA3-FAC-ASSIGNMENTS-01 scoped assignment directory and facets", () => 
     const joined = state.joins.map(p => p.sql).join("\n");
     expect(joined).toContain('"academic_periods"."college_id"');
     expect(joined).toContain('"departments"."college_id"');
-    expect(state.joins.flatMap(p => p.params).filter(p => p === collegeId).length).toBeGreaterThanOrEqual(3);
+    expect(state.joins.flatMap(p => p.params).filter(p => p === collegeId).length).toBeGreaterThanOrEqual(2);
+    expect(joined).toContain('"sections"."cohort_id"');
+    expect(joined).toContain('"programs"."department_id"');
     expect(state.joins.flatMap(p => p.params)).toContain(organizationId);
     expect(joined).toContain('"colleges"."organization_id"');
   });

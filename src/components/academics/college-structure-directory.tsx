@@ -427,6 +427,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
                   item.programName ?? `Name unavailable (ID ${item.linkedProgramId ?? "unknown"})`},
                 {key:"batch",header:"Batch",mobilePriority:"secondary",cell:item=>
                   item.cohortName ?? `Name unavailable (ID ${item.cohortId})`},
+                {key:"period",header:"Semester / Period",mobilePriority:"secondary",cell:item=>item.periodName??"—"},
                 {key:"capacity",header:"Max Students",mobilePriority:"secondary",cell:item=>classCapacityLabel(item.capacity)},
                 {key:"description",header:"Description",mobilePriority:"secondary",cell:item=>
                   <span title={item.description ?? ""} className="block max-w-[180px] truncate">{item.description || "—"}</span>},

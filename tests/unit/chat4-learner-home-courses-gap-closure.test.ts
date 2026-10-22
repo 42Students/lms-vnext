@@ -61,7 +61,7 @@ describe("chat-4 learner Home and Courses gap closure",()=>{
  });
  it("LEARNER-home-courses-13 learner header retains Course workspace and separate read-only status",()=>{
   const s=source("src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx");
-  expect(s).toContain('description="Course workspace"');
+  expect(s).toContain('description={activeTab === "roadmap" ? courseTitle : "Course workspace"}');
   expect(s).toContain('title={workspace.course.name}');
   expect(s).toContain("Past semester course · Read only");
  });
@@ -86,7 +86,7 @@ describe("chat-4 learner Home and Courses gap closure",()=>{
   const progress=source("src/modules/courses/progress-service.ts");
   expect(progress).toContain("lastPositionSeconds: positionSeconds,");
   expect(source("src/components/courses/learner-video-player.tsx")).toContain("completed ? 0 : initialPositionSeconds");
-  expect(source("src/components/courses/learner-youtube-player.tsx")).toContain("completed ? 0 : initialPositionSeconds");
+  expect(source("src/components/courses/learner-youtube-player.tsx")).toContain("completed || initialPositionSeconds<=5 ? 0 : initialPositionSeconds");
  });
  it("LEARNER-course-detail-R03 lets learners join and copy future live class meetings",()=>{
   expect(source("src/modules/courses/learner-course-service.ts")).toContain('row.contentType === "LIVE_CLASS"');
@@ -104,7 +104,8 @@ describe("chat-4 learner Home and Courses gap closure",()=>{
 
  it("LEARNER-home-courses-23 omits empty course About content",()=>{
   const s=source("src/components/courses/learner-course-overview.tsx");
-  expect(s).toContain("aboutSource.hasDescription||meta.credits!==null||meta.instructors.length>0");
+  expect(s).toContain("aboutSource.hasDescription||meta.introductionText?.trim()||learningTakeaways.length>0||");
+  expect(s).toContain("meta.credits!==null||meta.instructors.length>0");
  });
 
  it("LEARNER-home-courses-10 gives Course unavailable navigation instead of a raw 404",()=>{
@@ -135,8 +136,10 @@ describe("chat-4 learner Home and Courses gap closure",()=>{
   expect(confirm).toContain("<Dialog open={open}");
   expect(confirm).toContain("disabled={pending || confirmDisabled}");
   const dialog=source("src/components/ui/dialog.tsx");
-  expect(dialog).toContain("modal.showModal()");
-  expect(dialog).toContain("modal.close()");
+  expect(dialog).toContain("useOverlayExit(ref, opener, open, 180)");
+  const overlayExit=source("src/components/ui/use-overlay-exit.ts");
+  expect(overlayExit).toContain("dialog.showModal()");
+  expect(overlayExit).toContain("dialog.close()");
   expect(dialog).toContain('aria-labelledby={titleId}');
   expect(s).toContain("This cannot be undone.");
   expect(s).toContain("setDeleteTarget");
@@ -160,7 +163,8 @@ describe("chat-4 learner Home and Courses gap closure",()=>{
  });
  it("LEARNER-home-courses-20 shows who pinned a discussion and number of pinned messages",()=>{
    const s=source("src/components/courses/learner-course-discussion.tsx");
-   expect(s).toContain('Pinned by {pinned.senderName??"Unknown"} · 1 of {pinnedMessages.length||1}');
+   expect(s).toContain('Pinned by {pinned.senderName??"User"}');
+   expect(s).toContain("pinnedMessages.length>1");
    expect(s).toContain('moderate || row.item.isMine');
  });
 });

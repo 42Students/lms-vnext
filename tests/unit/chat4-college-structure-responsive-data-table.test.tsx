@@ -1,5 +1,6 @@
 import {describe,expect,it,vi} from "vitest";
 import {renderToStaticMarkup} from "react-dom/server";
+vi.mock("next/navigation",()=>({useRouter:()=>({refresh:()=>{},push:()=>{},replace:()=>{}})}));
 import {readFileSync} from "node:fs";
 
 vi.mock("@/components/academics/college-section-management",async()=>{
@@ -49,8 +50,9 @@ describe("COL-UX-STRUCTURE-TABLE-02 responsive Classes and Electives directories
   expect(html).toContain('data-class="'+uuid+'"');
   expect(html).toContain('data-lifecycle="'+uuid+'"');
   expect(html).toContain('data-slot="data-table"');
-  expect(html).toContain("More details");
+  expect(html).not.toContain("More details");
   expect(html).toContain("Class directory scrollable columns");
+  expect(html).toContain("Semester / Period");
  });
  it("retains academic choices, confirmed learners and elective actions on a phone-readable table",()=>{
   const data={...base,kind:"ELECTIVES",query,
@@ -63,7 +65,7 @@ describe("COL-UX-STRUCTURE-TABLE-02 responsive Classes and Electives directories
   expect(html).toContain("Elective slot directory");
   expect(html).toContain("Open Elective 2099");
   expect(html).toContain("84");
-  expect(html).toContain("Eligible students");
+  expect(html).toContain("Distinct actively assigned learners");
   expect(html).toContain('data-slot-manager="'+uuid+'"');
   expect(html).toContain('data-offerings="'+uuid+'"');
   expect(html).toContain('data-slot-lifecycle="'+uuid+'"');
