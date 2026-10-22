@@ -8,6 +8,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {getRecruiterPlacementWorkspace} from "./recruiter-workspace-service";
 import {verifyPrivateDocumentReceipt} from "@/modules/profile-verification/private-receipts";
 import {createPrivateReadGrant} from "@/modules/storage/private-object-storage";
+import {learnerProfiles} from "@/db/schema";
 
 export class RecruiterResumeUnavailable extends Error{
  constructor(){super("RECRUITER_RESUME_NOT_AVAILABLE");}
@@ -49,10 +50,15 @@ export async function grantRecruiterSharedResume(
     eq(users.platformStatus,"ACTIVE"))).limit(1);
  if(!applicant)throw new RecruiterResumeUnavailable();
  const now=new Date();
+ // Respect the learner\'s selected default resume. A revoked or invalid
+ // selection fails closed; it must not silently expose a different document.
+ const [profile]=await db.select({objectPath:learnerProfiles.resumeObjectPath})
+  .from(learnerProfiles).where(eq(learnerProfiles.membershipId,applicant.membershipId)).limit(1);
  const [receipt]=await db.select().from(profilePrivateDocumentReceipts)
   .where(and(eq(profilePrivateDocumentReceipts.owningMembershipId,applicant.membershipId),
     eq(profilePrivateDocumentReceipts.purpose,"RESUME"),
     eq(profilePrivateDocumentReceipts.scanStatus,"CLEAN"),
+    profile?.objectPath?eq(profilePrivateDocumentReceipts.privateObjectKey,profile.objectPath):undefined,
     isNull(profilePrivateDocumentReceipts.revokedAt),
     or(isNull(profilePrivateDocumentReceipts.retentionUntil),
       gt(profilePrivateDocumentReceipts.retentionUntil,now))))
