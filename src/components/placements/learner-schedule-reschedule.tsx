@@ -78,6 +78,7 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
    <div className="grid gap-3">
    <p className="text-sm text-body">The placement cell must approve your suggested time. You can add flexible times as notes, but the current approval process also needs an exact future date and a contact location or meeting link.</p>
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Why can't you make it?
+    <span className="ml-2 text-xs font-normal text-muted-foreground">Reason (3–900 characters)</span>
     <Textarea value={reason} onChange={e=>setReason(e.target.value)} minLength={3} maxLength={900} rows={3}
       className="mt-1 min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-[rgba(38,186,199,0.15)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"/></label>
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Times that work for you (optional)
