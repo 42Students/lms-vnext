@@ -24,15 +24,15 @@ const page=(q:Record<string,string|string[]|undefined>={})=>
 function allNodes(node:ReactNode):ReactElement[]{
  if(Array.isArray(node))return node.flatMap(allNodes);
  if(!isValidElement(node))return [];
- const p=node.props as {children?:ReactNode};
- return [node,...allNodes(p.children)];
+ const p=node.props as {children?:ReactNode;action?:ReactNode};
+ return [node,...allNodes(p.children),...allNodes(p.action)];
 }
 function visibleText(node:ReactNode):string{
  if(typeof node==="string"||typeof node==="number")return String(node);
  if(Array.isArray(node))return node.map(visibleText).join(" ");
  if(!isValidElement(node))return "";
- const p=node.props as {children?:ReactNode;title?:string;description?:string};
- return [p.title??"",p.description??"",visibleText(p.children)].join(" ");
+ const p=node.props as {children?:ReactNode;title?:string;description?:string;action?:ReactNode};
+ return [p.title??"",p.description??"",visibleText(p.children),visibleText(p.action)].join(" ");
 }
 
 describe("HR-TRACKER-PAGE-58: admin-only findings route resilient states",()=>{
@@ -42,7 +42,7 @@ describe("HR-TRACKER-PAGE-58: admin-only findings route resilient states",()=>{
   mocks.ready.mockReturnValue(true);
   mocks.sync.mockResolvedValue(null);
   mocks.list.mockResolvedValue({items:[],total:0,page:1,pages:0,
-   criticalOpen:0,statusCounts:{}});
+   criticalOpen:0,statusCounts:{},severityOpenCounts:{}});
   mocks.redirect.mockImplementation(()=>{throw new Error("REDIRECT");});
  });
  it("denies non-admin and disabled accounts before permission or database calls",async()=>{
@@ -105,7 +105,7 @@ describe("HR-TRACKER-PAGE-58: admin-only findings route resilient states",()=>{
   const item={id:"db-id",externalId:"AUD-0042",title:"Partial import",area:"Placement",
    kind:"BUG",severity:"HIGH",status:"NEW",assignee:null,foundBy:null,foundAt:null};
   mocks.list.mockResolvedValue({items:[item],total:1,page:1,pages:1,
-   criticalOpen:0,statusCounts:{NEW:1}});
+   criticalOpen:0,statusCounts:{NEW:1},severityOpenCounts:{}});
   const result=await page();
   const tables=allNodes(result).filter(n=>
    (n.props as {caption?:string}).caption==="Independent audit findings");
