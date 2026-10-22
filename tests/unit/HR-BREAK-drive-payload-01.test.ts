@@ -34,6 +34,28 @@ describe("HR-BREAK-drive-payload-01: TPO review-safe recruiter job drafts",()=>{
   expect(copied.externalApplicationUrl).toBe("");
   expect(hrDriveDraftSchema.safeParse(copied).success).toBe(false);
  });
+ it("preserves a legacy off-campus classification and its reviewed application URL on Hire Again",()=>{
+  const copied=hrDraftFromAuthorizedJob({...job,
+   legacyDriveMode:"OFF_CAMPUS",
+   externalApplicationUrl:"https://careers.example/apply"},[]);
+  expect(copied.driveMode).toBe("OFF_CAMPUS");
+  expect(copied.externalApplicationUrl).toBe("https://careers.example/apply");
+  expect(hrDriveDraftSchema.safeParse(copied).success).toBe(true);
+
+  const explicitlyCampus=hrDraftFromAuthorizedJob({...job,
+   legacyDriveMode:"ON_CAMPUS",recruiterDriveMode:"OFF_CAMPUS",
+   externalApplicationUrl:"https://careers.example/apply"},[]);
+  expect(explicitlyCampus.driveMode).toBe("ON_CAMPUS");
+  expect(explicitlyCampus.externalApplicationUrl).toBe("");
+  expect(hrDriveDraftSchema.safeParse(explicitlyCampus).success).toBe(true);
+
+  const unsafe=hrDraftFromAuthorizedJob({...job,
+   legacyDriveMode:"OFF_CAMPUS",
+   externalApplicationUrl:"javascript:alert(1)"},[]);
+  expect(unsafe.driveMode).toBe("OFF_CAMPUS");
+  expect(unsafe.externalApplicationUrl).toBe("");
+  expect(hrDriveDraftSchema.safeParse(unsafe).success).toBe(false);
+ });
  it("internships need stated stipend and full-time compensation cannot silently mismatch its parts",()=>{
   expect(hrDriveDraftSchema.safeParse({...base(),employmentType:"INTERNSHIP",stipendMonthlyInr:""}).success).toBe(false);
   expect(hrDriveDraftSchema.safeParse({...base(),employmentType:"INTERNSHIP",stipendMonthlyInr:"25000"}).success).toBe(true);
