@@ -29,9 +29,10 @@ describe("SA-tenants-modules-48 persisted board filter states",()=>{
   expect(service).toContain("criticalOpen");
   expect(service).toContain(".groupBy(db10AuditFindings.status,db10AuditFindings.severity)");
   expect(service).toContain("requireIndependentFindingAccess(context)");
-  expect(page).toContain("Critical open: {data.criticalOpen}");
-  expect(page).toContain("Finding status counts");
-  expect(page).toContain("data.statusCounts[status]");
-  expect(page).toContain("independentFindingHref({...parsed,statuses:[status],page:1})");
+  expect(page).toContain('label="Open findings by severity"');
+  expect(page).toContain('data.severityOpenCounts[severity]??0');
+  expect(page).toContain('label="Finding status"');
+  expect(page).toContain('data.statusCounts[status]??0');
+  expect(page).toContain('independentFindingHref({...parsed,view:"ALL",statuses:[status],page:1})');
  });
 });
