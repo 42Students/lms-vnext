@@ -29,6 +29,21 @@ import { listOwnAppliedPlacementResults } from "./result-service";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import {learnerStaffApplicationOptOut} from "./learner-staff-application-optout-model";
 
+/** Display labels are legacy learner phrasing; raw codes remain available for
+ * staff workflows and exact API state transitions. */
+function learnerScreeningLabel(status:string):string{
+ switch(status){
+  case "SHORTLISTED":return "In the test stage";
+  case "REJECTED":return "Not selected";
+  case "UNDER_REVIEW":case "PENDING":return "Under review";
+  default:return "Application under review";
+ }
+}
+/** Imported Java null strings are not valid on-campus rooms or join links. */
+function learnerScheduleRoom(value:string|null):string|null{
+ const normalized=value?.trim()??"";
+ return normalized && normalized.toLowerCase()!=="null" ? normalized : null;
+}
 function requireLearner(context: RequestContext) {
   if (
     !context.membership ||
@@ -292,6 +307,7 @@ export async function getLearnerPlacementJourney(
         ? {...row.job.legacyPostingDetails,assessmentUrl:null}:null},
       company: row.company,
       screening: {
+        statusLabel:learnerScreeningLabel(terminal?row.screening.status:"UNDER_REVIEW"),
         status: terminal
           ? row.screening.status
           : "UNDER_REVIEW",
@@ -315,7 +331,7 @@ export async function getLearnerPlacementJourney(
         roundId:booking.roundId,roundName:booking.roundName,
         sequence:booking.roundSequence,
         startsAt:booking.startsAt,endsAt:booking.endsAt,
-        room:booking.room,panel:booking.panel,
+        room:learnerScheduleRoom(booking.room),panel:booking.panel,
         confirmed:booking.appointmentStatus==="BOOKED",
         learnerConfirmedAt:booking.learnerConfirmedAt,
       })),
