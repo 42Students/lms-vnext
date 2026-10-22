@@ -53,8 +53,11 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
  const [dialog,setDialog]=useState(false);
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
+ type MoveOutcome={applicationId:string;status:string;reason?:string;
+  undoEventId?:string;undoUntil?:string;stageVersion?:number};
  const [outcome,setOutcome]=useState<{moved:number;skipped:number;
-  results:Array<{applicationId:string;status:string;reason?:string}>}|null>(null);
+  results:MoveOutcome[]}|null>(null);
+ const [undoBusyId,setUndoBusyId]=useState<string|null>(null);
  useEffect(()=>{
   scopeEpoch.current+=1;
   setSelected([]);setAllMatching(false);setDetailId(null);setDetailPayload(null);
@@ -119,7 +122,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   const epoch=scopeEpoch.current;
   setBusy(true);setError("");setOutcome(null);
   try{
-   const payload=await apiFetch<{moved?:number;skipped?:number;results?:Array<{applicationId:string;status:string;reason?:string}>}>("/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/pipeline",{
+   const payload=await apiFetch<{moved?:number;skipped?:number;results?:MoveOutcome[]}>("/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/pipeline",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({action,applicationIds:allMatching?[]:selected,
       matchingFilter:allMatching?query:undefined,stage:action==="MOVE"?target:undefined,
@@ -134,15 +137,46 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
    setOutcome({moved,skipped,results:payload.results??[]});
    setAllMatching(false);
    setSelected(payload.results?.filter(r=>r.status==="skipped").map(r=>r.applicationId).slice(0,100)??[]);
+   const held=payload.results?.filter(item=>item.undoEventId).length??0;
    showToast({tone:skipped?"info":"success",
     title:skipped?moved+" updated, "+skipped+" skipped":"Application status updated",
-    description:skipped?"Review skipped applicants and retry after refreshing.":"Candidates were notified in-app."});
+    description:held?held+" learner notifications are held for 30 seconds for safe undo. Other updates are notified in-app.":
+     skipped?"Review skipped applicants and retry after refreshing.":"Candidates were notified in-app."});
    router.refresh();
   }catch(e){
    if(scopeEpoch.current!==epoch)return;
    setError(e instanceof Error?e.message:friendlyApiError({}));
   }finally{
    if(scopeEpoch.current===epoch)setBusy(false);
+  }
+ }
+ async function undoMove(item:MoveOutcome){
+  if(!item.undoEventId||!item.undoUntil||!item.stageVersion||undoBusyId||busy)return;
+  if(Date.now()>=Date.parse(item.undoUntil)){
+   setError("Too late to undo: the students have already been told");return;
+  }
+  const epoch=scopeEpoch.current;
+  setUndoBusyId(item.applicationId);setError("");
+  try{
+   await apiFetch<{undone:boolean;stage:string}>(
+    "/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/pipeline/undo",{
+     method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
+     body:JSON.stringify({applicationId:item.applicationId,undoEventId:item.undoEventId,
+      expectedStageVersion:item.stageVersion,confirmed:true}),
+    });
+   if(scopeEpoch.current!==epoch)return;
+   setOutcome(old=>old?{...old,moved:Math.max(0,old.moved-1),
+    results:old.results.map(row=>row.applicationId===item.applicationId?{
+     ...row,status:"undone",undoEventId:undefined,undoUntil:undefined,
+    }:row)}:null);
+   showToast({tone:"success",title:"Stage change undone",
+    description:"The delayed learner notification was cancelled before delivery."});
+   router.refresh();
+  }catch(cause){
+   if(scopeEpoch.current!==epoch)return;
+   setError(cause instanceof Error?cause.message:"Could not undo stage change.");
+  }finally{
+   if(scopeEpoch.current===epoch)setUndoBusyId(null);
   }
  }
  const filtered=Boolean(query.q||query.status!=="ALL"||query.source!=="ALL"||
@@ -316,6 +350,17 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
      className="max-h-36 overflow-y-auto overscroll-contain rounded border border-border p-3 pb-5 text-sm [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1rem),transparent_100%)]">
      <p className="font-semibold">{outcome.moved} updated, {outcome.skipped} skipped.</p>
      {outcome.results.filter(r=>r.status==="skipped").map(r=><p key={r.applicationId}>{rowMap.get(r.applicationId)?.name??r.applicationId}: {r.reason}</p>)}
+     {outcome.results.filter(r=>r.status==="undone").map(r=><p key={r.applicationId}
+      className="text-success">{rowMap.get(r.applicationId)?.name??r.applicationId}: Change undone before notification.</p>)}
+     {outcome.results.filter(r=>r.undoEventId&&r.undoUntil&&r.stageVersion)
+      .map(r=><div key={r.applicationId} className="flex flex-wrap items-center gap-3 border-b border-border py-2">
+       <span className="min-w-0 flex-1">{rowMap.get(r.applicationId)?.name??r.applicationId}:
+        Stage updated. Undo before the notification is delivered.</span>
+       <Button type="button" variant="secondary" disabled={busy||Boolean(undoBusyId)}
+        onClick={()=>void undoMove(r)}>
+        {undoBusyId===r.applicationId?"Undoing…":"Undo stage change"}
+       </Button>
+      </div>)}
     </div>:null}
   </Dialog>
  </section>;
