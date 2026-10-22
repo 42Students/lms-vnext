@@ -8,7 +8,7 @@ export function compareNumberedTeamProjects(left:string,right:string):number {
  // "Project A Team 10" must not reorder "Project B Team 2".
  const series=(title:string)=>{
   const match=/^(.*?)(?:\s*[-—:]?\s*)\bteam\s+(\d+)\b(.*)$/i.exec(title.trim());
-  return match ? {key:match[1].trim().toLowerCase()+"|"+match[3].trim().toLowerCase(),
+  return match ? {key:(match[1]??"").trim().toLowerCase()+"|"+(match[3]??"").trim().toLowerCase(),
    number:Number(match[2])} : null;
  };
  const l=series(left),r=series(right);
