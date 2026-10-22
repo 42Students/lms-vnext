@@ -11,6 +11,12 @@ import {
 
 export const runtime = "nodejs";
 
+/** Legacy /api/v1/jobs/{jobId}/apply/{learnerId} maps to this POST.
+ * Caller identity comes from authenticated membership, not the request.
+ * Job reads: /api/placements/jobs/me; applications: /applications/me;
+ * bookmarks: /learner/saved-jobs; offers: /offers/{id}/actions.
+ */
+
 type RouteContext = {
   params: Promise<{ jobId: string }>;
 };
@@ -51,10 +57,18 @@ export async function POST(
       return NextResponse.json({error:"INVALID_REQUEST",
         message:"This drive link is invalid. Open the drive from your college placements page."},
         {status:400,headers:{"Cache-Control":"private, no-store"}});
+    let input: unknown;
+    try {
+      input = await request.json();
+    } catch {
+      return NextResponse.json({ error: "INVALID_REQUEST",
+        message: "Provide a valid JSON application body." },
+        { status: 400, headers: { "Cache-Control": "private, no-store" } });
+    }
     const application = await applyToPlacementJob(
       context,
       jobId,
-      await request.json(),
+      input,
     );
     return NextResponse.json(
       { application,
