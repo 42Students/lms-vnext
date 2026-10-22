@@ -64,7 +64,7 @@ export default async function TpoCalendarPage({
         context={context}
         collegeId={context.membership.collegeId}
         audience="TPO"
-        searchParams={{...parsed.data,kinds:first(raw.kinds)}}
+        searchParams={{...parsed.data,...(first(raw.kinds) === undefined ? {} : { kinds: first(raw.kinds) })}}
       />
     </div>
   );
