@@ -373,6 +373,32 @@ export async function saveTpoJobTypes(ctx:RequestContext,raw:unknown){
    await tx.delete(placementTpoJobTypes).where(and(
     eq(placementTpoJobTypes.id,old.id),eq(placementTpoJobTypes.collegeId,collegeId)));
   }
+  // Name uniqueness is immediate in PostgreSQL. First free EVERY changing
+  // label before assigning final names, so a valid A <-> B swap cannot violate
+  // the college's non-deferrable unique index halfway through the transaction.
+  // Temporary labels obey the column's 40-character length/check constraints.
+  const reservedLabels=new Set([
+   ...existing.map(row=>row.label.toLocaleLowerCase("en-IN")),
+   ...input.map(row=>row.label.toLocaleLowerCase("en-IN")),
+  ]);
+  for(const item of input){
+   if(item.isBuiltin||!item.id)continue;
+   const old=byId.get(item.id);
+   if(!old||old.label===item.label)continue;
+   let nonce=0;
+   let temporary="Swap "+old.id.replaceAll("-","");
+   while(reservedLabels.has(temporary.toLocaleLowerCase("en-IN"))){
+    nonce++;
+    if(nonce>9999)throw new TpoConfigError("TPO_JOB_TYPE_EXISTS");
+    temporary="Swap "+old.id.replaceAll("-","").slice(0,28)+" "+nonce;
+   }
+   reservedLabels.add(temporary.toLocaleLowerCase("en-IN"));
+   await tx.update(placementTpoJobTypes).set({
+    label:temporary,
+    updatedAt:sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementTpoJobTypes.updatedAt}) + interval '1 millisecond')`,
+   }).where(and(eq(placementTpoJobTypes.id,old.id),
+    eq(placementTpoJobTypes.collegeId,collegeId)));
+  }
   for(let index=0;index<input.length;index++){
    const item=input[index];
    if(item.isBuiltin){
