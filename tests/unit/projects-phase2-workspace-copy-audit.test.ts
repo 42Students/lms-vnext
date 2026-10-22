@@ -10,16 +10,19 @@ const mentor=read("src/app/(authenticated)/mentor/projects/[projectId]/page.tsx"
 const learner=read("src/app/(authenticated)/learn/projects/[projectId]/page.tsx");
 describe("Phase 2 exact old-LMS Projects headings and empty states",()=>{
   it("uses legacy Team and Resources copy, not implementation language",()=>{
-    const words=[
-      "Project people","No resources yet. Share the first link or file with your team.",
-      "No resources yet. Add the briefs, templates and reference links your team will need.",
-      "Back to projects","Not submitted",
-    ];
-    for(const value of words){
+    for(const value of ["Project people","Back to projects","Not submitted"]){
       expect(legacyA).toContain(value);
-      // The empty-state copy was moved into the resource directory component.
-      // Assert where it renders rather than reintroducing duplicate UI.
-      expect(value.startsWith("No resources yet.")?resourceList:workspace).toContain(value);
+      expect(workspace).toContain(value);
+    }
+    // The reusable resource directory renders the old-LMS title and
+    // role-specific descriptions as separate JSX props.
+    expect(resourceList).toContain('title="No resources yet"');
+    for(const detail of [
+      "Share the first link or file with your team.",
+      "Add the briefs, templates and reference links your team will need.",
+    ]){
+      expect(legacyA).toContain("No resources yet. "+detail);
+      expect(resourceList).toContain(detail);
     }
     for(const stale of ["Canonical college memberships","Template and runtime links available","No active resources."])
       expect(workspace).not.toContain(stale);

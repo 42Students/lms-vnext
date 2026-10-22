@@ -11,7 +11,7 @@ describe("GR-31 + GR-09 Super Admin write safety",()=>{
   expect(code).toContain("savingRef.current = false");
   expect(code).toContain("} catch {");
   expect(code).toContain('showToast({title:"Couldn\'t save branding",description:"Check your connection and try again.",tone:"error"})');
-  expect(code).toContain("disabled={saving}");
+  expect(code).toContain("disabled={saving||fetching||Boolean(loadError)||!collegeId}");
   expect(code).toContain("JSON.stringify({...clean(values),expectedVersion:version})");
   expect(code).toContain("setVersion(data.branding.version)");
   expect(code).toContain("Your edits are preserved. Refresh before saving again.");

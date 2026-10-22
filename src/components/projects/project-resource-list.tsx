@@ -193,7 +193,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
   {reorderError?<p role="alert" className="text-sm text-error leading-[22px]">{reorderError}</p>:null}
   {rows.length===0?<EmptyState title="No resources yet" description={mode==="LEARNER"
     ?"Share the first link or file with your team."
-    :"Add only the references the team will actually use."}
+    :"Add the briefs, templates and reference links your team will need."}
   />:filtered.length===0?<EmptyState title="No matching resources"
     description="No resources match these filters. Clear filters to see all resources." />:<div className="space-y-3">{[...filtered].sort((a,b)=>
       Number(Boolean(b.pinned))-Number(Boolean(a.pinned))||currentOrder(a)-currentOrder(b)).map(resource=>{
