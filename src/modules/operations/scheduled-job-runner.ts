@@ -217,6 +217,9 @@ export async function processFencedNotificationBatch<T>(
       failed += 1;
     }
     processed += 1;
+    // A large batch can outlive the original TTL. Renewal compares holder
+    // and fence against the DB clock; loss aborts before the next side effect.
+    if (processed % 25 === 0) await fence.renew();
   }
   return { processed, failed, remaining: Math.max(0, due.length - processed) };
 }
