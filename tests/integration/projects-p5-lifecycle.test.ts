@@ -487,6 +487,7 @@ describe("Projects P5 lifecycle", () => {
         mentor,
         project.id,
         release.id,
+        {expectedUpdatedAt:release.updatedAt.toISOString()},
       ),
     ).rejects.toMatchObject({
       code: "PROJECT_RELEASE_HAS_OPEN_SPRINTS",
@@ -519,11 +520,14 @@ describe("Projects P5 lifecycle", () => {
       );
     }
 
+    const afterSprints=await getProjectInstanceWorkspace(mentor,project.id);
+    const currentRelease=afterSprints.releases.find(row=>row.id===release.id)!;
     await expect(
       shipProjectRelease(
         mentor,
         project.id,
         release.id,
+        {expectedUpdatedAt:currentRelease.updatedAt.toISOString()},
       ),
     ).resolves.toMatchObject({
       status: "SHIPPED",
@@ -571,10 +575,13 @@ describe("Projects P5 lifecycle", () => {
       );
     }
 
-    await shipProjectRelease(
+    const ready=await getProjectInstanceWorkspace(mentor,project.id);
+    const currentRelease=ready.releases.find(row=>row.id===release.id)!;
+    const shipped=await shipProjectRelease(
       mentor,
       project.id,
       release.id,
+      {expectedUpdatedAt:currentRelease.updatedAt.toISOString()},
     );
 
     await expect(
@@ -587,13 +594,13 @@ describe("Projects P5 lifecycle", () => {
       code: "PROJECT_SPRINT_INVALID_STATE",
     });
 
-    await expect(
-      unshipProjectRelease(
-        mentor,
-        project.id,
-        release.id,
-      ),
-    ).resolves.toMatchObject({
+    const unshipped=await unshipProjectRelease(
+      mentor,
+      project.id,
+      release.id,
+      {expectedUpdatedAt:shipped.updatedAt.toISOString()},
+    );
+    expect(unshipped).toMatchObject({
       status: "IN_PROGRESS",
     });
 
@@ -618,6 +625,7 @@ describe("Projects P5 lifecycle", () => {
         mentor,
         project.id,
         release.id,
+        {expectedUpdatedAt:unshipped.updatedAt.toISOString()},
       ),
     ).rejects.toMatchObject({
       code: "PROJECT_RELEASE_HAS_OPEN_SPRINTS",
