@@ -4,8 +4,10 @@ import {partitionLearnerPlacementSchedule} from "@/modules/placements/learner-pl
 describe("LEARNER-placements-37 schedule details",()=>{
  it("LEARNER-placements-37 exposes persisted join and test URLs only after HTTPS checks",()=>{
   const source=readFileSync(new URL("../../src/app/(authenticated)/learn/my-placements/schedule/page.tsx",import.meta.url),"utf8");
-  expect(source).toContain("Join online round");
-  expect(source).toContain("Take online assessment");
+  expect(source).toContain('label="Join online round"');
+  expect(source).toContain('/^https:\\/\\//i.test(join)');
+  expect(source).toContain('ariaLabel="Open test · Take online assessment"');
+  expect(source).toContain('/^https:\\/\\//i.test(row.testUrl)');
   expect(source).toContain("Venue to be told");
   expect(source).toContain("Duration to be told");
  });

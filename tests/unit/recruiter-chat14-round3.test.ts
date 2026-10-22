@@ -6,7 +6,7 @@ describe("chat-14 recruiter reassigned batch 3",()=>{
  it("REC-home-drives-34 retains scoped returnTo and job title, status and applicant-count framing",()=>{
   const code=job();
   expect(code).toContain("safeDriveReturnTo(");
-  expect(code).toContain('← Back to Drives');
+  expect(code).toContain('← All drives');
   expect(code).toContain("title={workspace.job.title}");
   expect(code).toContain('"Sent for review"');
   expect(code).toContain("applicants.counts.all+");
@@ -18,17 +18,21 @@ describe("chat-14 recruiter reassigned batch 3",()=>{
   expect(code).toContain("Scheduled");
   expect(code).toContain("Completed");
   expect(code).toContain("Added by you");
-  expect(code).toContain("Date to be decided");
+  expect(code).toContain("No schedule");
   expect(code).toContain("Change or remove");
   expect(code).toContain("Venue not set");
  });
  it("REC-home-drives-50 uses readable, scoped offer columns and employment outcomes",()=>{
   const code=job();
-  for(const label of ["Candidate","Type","CTC (LPA)","Status","Reply by","Joining",
-    "Letter of intent","Joined","Deferred","Did not join"])expect(code).toContain(label);
+  const grid=read("src/components/hr/hr-job-offers-grid.tsx");
+  for(const label of ["Candidate","Type","CTC (LPA)","Status","Reply by","Joining status"])
+    expect(grid).toContain('label:"'+label+'"');
+  for(const label of ["Letter of intent","Joined","Deferred","Did not join"])
+    expect(code).toContain(label);
+  expect(code).toContain("<HrJobOffersGrid");
   expect(code).toContain("recruiterOfferStatusLabel(offer.status)");
-  expect(code).toContain("(offer.annualCtcInr / 100000)");
-  expect(code).toContain('toLocaleString("en-IN", { maximumFractionDigits: 2 })');
+  expect(code).toContain("(offer.annualCtcInr/100000)");
+  expect(code).toContain('toLocaleString("en-IN",{maximumFractionDigits:2})');
  });
  it("REC-home-drives-53 refreshes a stale recruiter drive after tab focus without hiding data errors",()=>{
   const component=read("src/components/hr/recruiter-drive-focus-refresh.tsx");
@@ -76,7 +80,7 @@ describe("chat-14 recruiter reassigned batch 3",()=>{
  });
  it("REC-home-drives-45 gives an honest empty state when the placement cell has not shared applicants",()=>{
   const code=job();
-  expect(code).toContain("The placement cell has not shared the applicants yet");
+  expect(code).toContain("The placement cell has not shared applicants with your employer.");
   expect(code).toContain("No shared applicants match this stage.");
  });
  it("REC-calendar-messages-profile-23 never acknowledges all colleges when the bell shows one college",()=>{

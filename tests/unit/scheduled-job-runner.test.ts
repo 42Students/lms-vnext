@@ -62,7 +62,7 @@ describe("DB10 worker executor with existing fenced lease", () => {
       },
     );
     expect(result).toEqual({ ran: true, result: 42 });
-    expect(calls).toEqual(["acquire", "check", "work", "renew", "check"]);
+    expect(calls).toEqual(["acquire", "check", "work", "renew", "check", "check"]);
   });
 
   it("skips a tick when another replica owns the lease", async () => {
