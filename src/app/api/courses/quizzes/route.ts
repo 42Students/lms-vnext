@@ -144,10 +144,11 @@ export async function POST(request: Request) {
     // Create + publish is one DB transaction; never claim a successful
     // release when an authoring validation failed halfway through.
     const quiz=await createCourseQuiz(context,{...rest,publishNow});
+     if(!quiz)throw new Error("Quiz creation returned no quiz");
     return NextResponse.json({
       quiz,status:"OK",message:"OK",data:quiz,
-      published:quiz?.status==="PUBLISHED",
-      draft:quiz?.status==="DRAFT",
+      published:quiz.status==="PUBLISHED",
+      draft:quiz.status==="DRAFT",
     },{status:201,headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
