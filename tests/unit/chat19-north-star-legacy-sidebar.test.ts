@@ -179,9 +179,9 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(css).not.toContain("padding-left:256px");
   expect(css).toContain("width .15s cubic-bezier(.2,0,0,1)");
   expect(css).toContain(".lms-desktop-sidebar:is(:hover,:focus-within)");
-  expect(css).toContain("background:#eff8fa");
-  expect(css).toContain("box-shadow:inset 3px 0 #26bac7");
-  expect(css).toContain("color:#1a95a1");
+  expect(css).toContain("background:var(--lms-primary-subtle)");
+  expect(css).toContain("box-shadow:inset 3px 0 var(--lms-primary)");
+  expect(css).toContain("color:var(--lms-primary-text)");
   expect(css).toContain("background:rgba(38,186,199,.07)");
   expect(css).toContain("font-size:15px");
   expect(css).toContain("scrollbar-width:none");
@@ -199,7 +199,7 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
    "margin-left:5px","transform:scale(.72)","outline-offset:-2px"]) {
    expect(css,value).toContain(value);
   }
-  expect(css).toContain("border-right:1px solid #f1f4f9");
+  expect(css).toContain("border-right:1px solid var(--lms-neutral-100)");
   expect(css).toContain("outline:2px solid rgba(38,186,199,.45)");
   expect(shell).toContain("<ShellLogoMark />");
   expect(mobile).toContain("<ShellLogoMark />");
@@ -223,7 +223,7 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(css).toContain("width:4px;");
   expect(css).toContain("scrollbar-color:rgba(107,114,128,.28) transparent;");
   expect(css).toContain("line-height:1;");
-  expect(css).toContain(".lms-sidebar-item-icon svg {display:block;width:20px;height:20px;}");
+  expect(css).toContain(".lms-sidebar-nav .lms-sidebar-item-icon svg {display:block;width:20px;height:20px;flex-shrink:0;}");
  });
  it("hides expanded headings and labels in collapsed desktop mode, keeps mobile labels",()=>{
   const css=source("src/components/shell/sidebar-legacy.css");
@@ -234,7 +234,8 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(css).toContain("visibility:visible");
   expect(css).toContain("@media (min-width:768px)");
   const nav=source("src/components/shell/sidebar-nav.tsx");
-  expect(nav).toContain("scopedShellNavigation(items,pathname)");
+  expect(nav).toContain("scopedShellNavigation(items,route)");
+  expect(nav).toContain("const route=canonicalShellPath(pathname)");
   expect(nav).toContain('aria-label={badge&&count!==null?');
   expect(nav).toContain('${item.label}, ${count} pending');
   expect(nav).toContain("ShellNavGlyph");
@@ -250,7 +251,7 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(icon).toContain("viewBox=\"0 0 41 38\"");
   const app=source("src/components/shell/app-shell.tsx");
   expect(app).toContain('data-slot="legacy-sidebar"');
-  expect(app).toContain('className="lms-shell-page min-h-dvh"');
+  expect(app).toContain('className="lms-shell-page min-h-dvh min-w-0 flex-1 overflow-x-clip"');
   expect(app).toContain("<ShellLogoMark />");
   const mobile=source("src/components/shell/mobile-navigation.tsx");
   const css=source("src/components/shell/sidebar-legacy.css");

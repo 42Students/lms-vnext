@@ -72,7 +72,7 @@ describe("chat-2 college and recruiter interview service zero-read denials",()=>
 
   it("COL-interviews-security-02 directory schema rejects tenant override, bad paging, unknown modes ahead of auth and DB",async()=>{
     expect(collegeInterviewFilters.parse({})).toMatchObject({
-      status:"ALL",mode:"ALL",type:"ALL",sort:"UPCOMING",page:1,
+      status:"ALL",mode:"ALL",type:"ALL",sort:"EARLIEST",page:1,
     });
     for(const raw of [
       {collegeId:job},

@@ -53,8 +53,8 @@ describe("TPO-drive-workspace-37/40/42 placement round lifecycle ledger",()=>{
   expect(report).toContain('"\'=bad"');
  });
  it("preserves legacy outcome semantics and blocks premature application",()=>{
-  expect(TPO_RESULT_LABELS.PASS).toBe("Shortlisted for next round");
-  expect(TPO_RESULT_LABELS.HOLD).toBe("On hold / waitlisted");
+  expect(TPO_RESULT_LABELS.PASS).toBe("Pass");
+  expect(TPO_RESULT_LABELS.HOLD).toBe("Waitlist");
   expect(canEditTpoRoundResult({kind:"INTERVIEW",status:"SCHEDULED"},{resultStatus:null})).toBe(true);
   expect(canEditTpoRoundResult({kind:"TALK",status:"COMPLETED"},{resultStatus:"STAGED"})).toBe(false);
   expect(canEditTpoRoundResult({kind:"INTERVIEW",status:"COMPLETED"},{resultStatus:"APPLIED"})).toBe(false);
