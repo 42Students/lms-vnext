@@ -19,7 +19,7 @@ describe("chat-14 final sprint",()=>{
   const banner=read("src/components/auth/connection-failure-notice.tsx");
   expect(banner).toContain('<InlineNotice tone="error"');
   expect(read("src/components/ui/inline-notice.tsx")).toContain('role={tone === "error" ? "alert" : "status"}');
-  expect(read("src/app/(authenticated)/layout.tsx")).toContain("<ConnectionFailureNotice/>");
+  expect(read("src/app/(authenticated)/layout.tsx")).toContain("<ConnectionFailureNotice />");
   const shell=read("src/components/shell/shell-connectivity-notice.tsx");
   expect(shell).toContain("offline");
   expect(shell).toContain("online");
