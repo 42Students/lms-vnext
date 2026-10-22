@@ -5,6 +5,7 @@ import {getCollegeAssignmentAuthoringCatalog} from "@/modules/courses/college-as
 import Link from "next/link";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import {CurrentPageRetry} from "@/components/ui/current-page-retry";
 import { Alert } from "@/components/ui/alert";
 import { collegeAssessmentHref, collegeAssessmentListQuerySchema, parseCollegeAssessmentQuery } from "@/modules/courses/college-assessment-aggregate-model";
 import { listCollegeAssessmentAggregate } from "@/modules/courses/college-assessment-aggregate-service";
@@ -49,10 +50,7 @@ export default async function CollegeAssignmentsPage({
     <PageHeader title="Assignments"/>
     <ErrorState title="Assignments could not be loaded"
       description="Assignments could not be loaded. Your filters have not changed; retry to load the list."
-      action={<Link href={collegeAssessmentHref("ASSIGNMENT",query)}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
-        Retry
-      </Link>}/>
+      action={<CurrentPageRetry />}/>
   </div>;
   const data=dataResult.value;
   return <div className="min-w-0 overflow-x-clip space-y-4">
@@ -66,10 +64,7 @@ export default async function CollegeAssignmentsPage({
         <Alert tone="warning" role="status">
           <strong>Course list unavailable</strong>
           <p>Assignment creation options could not be loaded. Existing assignments remain visible.</p>
-          <Link href={collegeAssessmentHref("ASSIGNMENT",query)}
-            className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline">
-            Retry courses
-          </Link>
+          <CurrentPageRetry label="Retry courses" />
         </Alert>}/>
   </div>;
 }
