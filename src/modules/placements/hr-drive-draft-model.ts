@@ -231,3 +231,58 @@ export function parseHrDraftLegacyBranchTags(raw:string):string[]{
   throw new Error("Enter at most 30 branches with names up to 120 characters.");
  return tags;
 }
+
+
+/** Persist exact per-package historical CTC. The relational role-option
+ * stores a four-decimal LPA string; old integer-INR minimum/maximum columns
+ * cannot reconstruct package detail or distinguish blank from zero.
+ * Converting LPA to whole INR uses half-up rounding (non-negative values),
+ * not binary floating point, with explicit int32 overflow protection. */
+export function normalizedLegacyHrPackagePay(input:{
+ ctcLpa:string|null;stipendMonthlyInr:string|null;internshipMonths:number|null;
+}){
+ const ctc=input.ctcLpa?.trim()??"";
+ if(ctc&&!/^(?:0|[1-9]\d{0,4})(?:\.\d{1,4})?$/.test(ctc))
+  throw new Error("CTC must be a non-negative LPA value with at most four decimals");
+ let ctcInr:number|null=null;
+ if(ctc){
+  const [whole,fraction=""]=ctc.split(".");
+  const units=BigInt(whole)*10_000n+BigInt(fraction.padEnd(4,"0"));
+  const rupees=(units*100000n+5000n)/10000n;
+  if(rupees>2147483647n)throw new Error("CTC exceeds storage capacity");
+  ctcInr=Number(rupees);
+ }
+ const stipend=input.stipendMonthlyInr?.trim()??"";
+ if(stipend&&!/^(?:0|[1-9]\d{0,9})(?:\.\d{1,2})?$/.test(stipend))
+  throw new Error("Monthly stipend needs at most two decimals");
+ if(input.internshipMonths!==null&&(
+    !Number.isSafeInteger(input.internshipMonths)||
+    input.internshipMonths<1||input.internshipMonths>120))
+  throw new Error("Internship duration must be 1–120 months");
+ if(stipend&&!input.internshipMonths)
+  throw new Error("Stipend package requires an explicit duration");
+ if(!ctc&&!stipend)throw new Error("Pay package needs CTC or monthly stipend");
+ return {ctcLpa:ctc||null,ctcInr,
+  stipendPerMonthInr:stipend||null,stipendMonths:input.internshipMonths,
+  /** A source blank stays NULL, while a literal zero remains zero. */
+  blankCtc:!ctc,blankStipend:!stipend};
+}
+/** Importer must store every package in its original zero-based ordinal and
+ * select exactly one ACTIVE primary package before allowing publication. */
+export function legacyHrPackagesWithPrimary<T extends {
+ name:string;ctcLpa:string|null;stipendMonthlyInr:string|null;
+ internshipMonths:number|null;
+}>(source:readonly T[]){
+ if(source.length<1||source.length>25)
+  throw new Error("A drive must have 1–25 pay packages");
+ const names=new Set<string>();
+ return source.map((item,index)=>{
+  const name=item.name.trim();
+  if(!name||name.length>100)throw new Error("Package name is required");
+  const key=name.normalize("NFKC").toLocaleLowerCase("en-IN");
+  if(names.has(key))throw new Error("Duplicate package name");
+  names.add(key);
+  return {...item,name,position:index,isPrimary:index===0,
+   ...normalizedLegacyHrPackagePay(item)};
+ });
+}
