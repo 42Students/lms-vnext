@@ -129,7 +129,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
       <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
         <h3 className="font-semibold">Contact details</h3>
         <p className="mt-1 text-xs text-muted-foreground">Contact stays masked until intentionally revealed by the placement officer. Phone is only available as last four digits here.</p>
-        {!contactRevealed?<Button type="button" variant="secondary" aria-expanded={false} aria-controls={contactPanelId} onClick={()=>setContactRevealed(true)} className="mt-2 min-h-11 md:min-h-9">Reveal email</Button>:
+        {!contactRevealed?<Button type="button" variant="secondary" onClick={()=>setContactRevealed(true)} className="mt-2 min-h-11 md:min-h-9">Reveal email</Button>:
           <div id={contactPanelId} role="group" aria-label="Revealed student email" className="mt-2 flex flex-wrap items-center gap-2">
             <span className="break-all text-sm">{student.email??"No email on record"}</span>
             {student.email?<><Button variant="secondary" type="button" onClick={()=>{
