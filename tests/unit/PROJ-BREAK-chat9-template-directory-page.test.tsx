@@ -40,7 +40,7 @@ function visibleProps(node: unknown): string[] {
   if (!isValidElement(node)) return [];
   const props = node.props as Record<string, unknown>;
   return Object.entries(props).flatMap(([key, value]) =>
-    ["children", "title", "description", "href", "action", "eyebrow"].includes(key)
+    ["children", "title", "description", "href", "action", "eyebrow", "label"].includes(key)
       ? visibleProps(value)
       : [],
   );
@@ -69,7 +69,7 @@ describe("Super Admin Projects template directory graceful page states", () => {
       searchParams: Promise.resolve({ q: "IIT Dharwad", status: "PUBLISHED", page: "2" }),
     });
     const content = visibleProps(tree).join(" ");
-    expect(content).toContain("Project templates unavailable");
+    expect(content).toContain("Templates could not be loaded");
     expect(content).toContain("Retry loading templates");
     expect(content).toContain("search and status filters are unchanged");
     expect(content).toContain("/admin/projects/templates?q=IIT+Dharwad&status=PUBLISHED&page=2");
@@ -104,8 +104,8 @@ describe("Super Admin Projects template directory graceful page states", () => {
   it("PROJ-BREAK-ux-33 valid empty catalogue uses the correct empty state", async () => {
     const tree = await SuperAdminProjectTemplatesPage({ searchParams: Promise.resolve({}) });
     const content = visibleProps(tree).join(" ");
-    expect(content).toContain("No matching templates");
-    expect(content).not.toContain("Project templates unavailable");
+    expect(content).toContain("No templates match your filters");
+    expect(content).not.toContain("Templates could not be loaded");
     expect(state.directoryCalls).toBe(1);
   });
 });

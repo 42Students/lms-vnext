@@ -5,7 +5,7 @@ import {parseProjectAdminReassignMentorQuery} from "@/modules/projects/admin-rea
 describe("IIT Dharwad Projects: admin mentor reassignment deep link hostility",()=>{
   it("PROJ-BREAK-mentor-83 valid selected mentor and workspace survive strict parsing",()=>{
     expect(parseProjectAdminReassignMentorQuery({})).toMatchObject({
-      success:true,data:{page:1,pageSize:25,mentorSearch:""},
+      success:true,data:{page:1,pageSize:10,mentorSearch:""},
     });
     const selected={
       fromMentorId:"11111111-1111-4111-8111-111111111111",
@@ -34,14 +34,17 @@ describe("IIT Dharwad Projects: admin mentor reassignment deep link hostility",(
   });
   it("PROJ-BREAK-mentor-85 invalid links display a recovery before request context and private services",()=>{
     const page=readFileSync("src/components/projects/project-admin-reassign-mentor-page.tsx","utf8");
-    const parser=page.indexOf("parseProjectAdminReassignMentorQuery(searchParams)");
-    const guard=page.indexOf("if(!parsed.success)");
     const context=page.indexOf("getCurrentRequestContext()");
+    const recovery=page.indexOf("resolveLegacyReassignMentorBookmark(searchParams");
+    const parser=page.indexOf("parseProjectAdminReassignMentorQuery(recovered.params)");
+    const guard=page.indexOf("if(!parsed.success)");
     const firstRead=page.indexOf("listCollegeReassignmentWorkspaces(");
-    expect(parser).toBeGreaterThan(-1);
+    // A legacy numeric ID first requires the selected-college actor for a
+    // scoped identity crosswalk. Private directories remain behind both guards.
+    expect(recovery).toBeGreaterThan(context);
+    expect(parser).toBeGreaterThan(recovery);
     expect(guard).toBeGreaterThan(parser);
-    expect(context).toBeGreaterThan(guard);
-    expect(firstRead).toBeGreaterThan(context);
+    expect(firstRead).toBeGreaterThan(guard);
     expect(page).toContain('title="Invalid mentor reassignment filters"');
     expect(page).toContain("Clear filters");
   });

@@ -7,7 +7,7 @@ it("UX-college-college-batches-cohort-id-students-01 provides keyboard-scrolling
  const scroll=readFileSync(join(process.cwd(),"src/components/ui/scroll-cue.tsx"),"utf8");
  expect(source).toContain("<DataTable");
  expect(table).toContain('<ScrollCue axis="x"');
- expect(table).toContain("sm:first:sticky sm:first:left-0");
+ expect(table).toContain("md:first:sticky md:first:left-0");
  expect(scroll).toContain("tabIndex={edges.scrollable ? 0 : -1}");
  expect(scroll).toContain("role={edges.scrollable");
  expect(scroll).toContain('focus-visible:outline-[var(--lms-teal-deep)]');
