@@ -13,3 +13,15 @@ export function tpoDriveVisibilityValid(input:{
  return input.jobId.length>0&&input.count>0&&input.count<=200&&
   input.reason.trim().length>=3&&input.reason.trim().length<=500;
 }
+
+/** Explicit legacy Boolean override import: true includes, false excludes and
+ * null clears the active override. Missing/nonboolean data is invalid, never
+ * treated as an accidental exclusion or as a silent clear. Caller must use
+ * the normal authenticated, audited PUT/DELETE override service with CAS. */
+export function mapLegacyEligibilityOverride(input:unknown):
+ {decision:"INCLUDE"|"EXCLUDE"|"CLEAR"}|null {
+ if(input===true)return {decision:"INCLUDE"};
+ if(input===false)return {decision:"EXCLUDE"};
+ if(input===null)return {decision:"CLEAR"};
+ return null;
+}
