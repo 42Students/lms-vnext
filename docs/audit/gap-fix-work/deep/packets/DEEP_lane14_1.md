@@ -9,7 +9,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - [ ] G2-20-009-057  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
 - [ ] G2-20-023-002  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
-- [ ] G2-20-028-020  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
+- [x] G2-20-028-020  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
 - [ ] G2-20-030-006  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
 - [ ] G2-20-030-017  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
 - [ ] G2-20-030-038  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
@@ -20,3 +20,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 ## Results
 
+- G2-20-028-020 — OK: `src/app/(authenticated)/admin/projects/[projectId]/page.tsx:70-80` explicitly allowlists `from` and `reason`, rejects arrays, invalid values and values over 120 characters before forwarding to the authorized canonical summary. This is the safe subset of the legacy query forwarding from `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/index.js:15-22`; unrecognized params are intentionally excluded per row's expected fix.
