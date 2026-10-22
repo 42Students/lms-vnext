@@ -314,7 +314,7 @@ describe("Placement P6B rounds", () => {
     ]);
   });
 
-  it("retains cancelled history without consuming the active sequence", async () => {
+  it("retains cancelled history without recycling an audited sequence", async () => {
     const job = await createJob();
     const cancelled =
       await createPlacementRound(
@@ -344,7 +344,8 @@ describe("Placement P6B rounds", () => {
           name: "Aptitude test",
         },
       );
-    expect(replacement.sequence).toBe(1);
+    expect(cancelled.sequence).toBe(1);
+     expect(replacement.sequence).toBe(2);
 
     const rounds = await listPlacementRounds(
       tpo,
