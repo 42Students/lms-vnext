@@ -6,7 +6,7 @@ import {
 
 describe("College classes safe CSV export", () => {
   it("validates filters and excludes client-selected tenant and paging", () => {
-    expect(CLASSES_EXPORT_CAP).toBe(1000);
+    expect(CLASSES_EXPORT_CAP).toBe(Number.MAX_SAFE_INTEGER);
     expect(collegeClassesExportSchema.parse({q:" science "})).toMatchObject({q:"science"});
     expect(collegeClassesExportSchema.safeParse({collegeId:"fake"}).success).toBe(false);
     expect(collegeClassesExportSchema.safeParse({page:7}).success).toBe(false);
@@ -23,17 +23,22 @@ describe("College classes safe CSV export", () => {
     const href = classesExportHref({q:"Math & Science",status:"ARCHIVED"});
     expect(new URL(href,"http://local").searchParams.get("q")).toBe("Math & Science");
   });
-  it("neutralizes formulas, quotes cells, BOM-prefixes and flags truncation", () => {
-    const csv=renderCollegeClassesCsv([{
-      name:"=1+1",code:" +formula",programName:"Program, \"A\"",
-      cohortName:"2026",periodName:"Oct",capacity:null,activeLearners:0,status:"ACTIVE",
-    }],true);
+  it("exports every filtered class with the current columns and safe CSV escaping", () => {
+    const row = {
+      id: "class-1", name: "=1+1", linkedProgramId: "prog-1",
+      cohortId: "batch-1", periodStart: "2026-10-01",
+      periodEnd: "2026-12-31", minSize: 10, capacity: 50,
+    };
+    const csv = renderCollegeClassesCsv([row, { ...row, id: "class-2", name: 'Lab, "B"' }], true);
     expect(csv.startsWith("\ufeff")).toBe(true);
-    expect(csv).toContain("\"'=1+1\"");
-    expect(csv).toContain("\"' +formula\"");
-    expect(csv).toContain("\"Program, \"\"A\"\"\"");
-    expect(csv).toContain("EXPORT TRUNCATED");
-    expect(csv).toContain("Only first 1,000");
+    expect(csv).toContain('"Class/Section Name"');
+    expect(csv).toContain('"\'=1+1"');
+    expect(csv).toContain('"Lab, ""B"""');
+    expect(csv).toContain('"prog-1"');
+    expect(csv).toContain('"batch-1"');
+    expect(csv).toContain('"50"');
+    expect(csv.split("\r\n")).toHaveLength(3);
+    expect(csv).not.toContain("EXPORT TRUNCATED");
   });
  it("cohortStatus is applied to classes CSV",()=>{
   expect(collegeClassesExportSchema.safeParse({cohortStatus:"INVALID"}).success).toBe(false);
