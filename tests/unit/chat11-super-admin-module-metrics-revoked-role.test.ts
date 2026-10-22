@@ -43,7 +43,7 @@ describe("SA-tenants-modules-R01 persisted role and selected tenant authorizatio
   expect(aggregate).toBeGreaterThan(scope);
   expect(result).toBeGreaterThan(aggregate);
   expect(service).not.toContain("db.select(");
-  expect(service).toContain("tx.select({total:countDistinct(moduleAccessRules.id)})");
+  expect(service).toContain("tx.select({total:countDistinct(moduleAccessRules.scopeId)})");
   expect(service).toContain('eq(users.platformStatus,"ACTIVE")');
  });
 });
