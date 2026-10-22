@@ -21,7 +21,13 @@ export const projectTaskPlanSchema = z.strictObject({
   tasks: z.array(projectTaskPlanRowSchema).min(1).max(100),
 }).superRefine((input, ctx) => {
   const seen = new Set<string>();
+  const keys=new Set<string>();
   input.tasks.forEach((row, index) => {
+    const normalizedKey=row.key.toLocaleLowerCase("en");
+    if(keys.has(normalizedKey))ctx.addIssue({
+      code:"custom",path:["tasks",index,"key"],message:"Duplicate task key",
+    });
+    keys.add(normalizedKey);
     if (seen.has(row.id)) {
       ctx.addIssue({ code: "custom", path: ["tasks", index, "id"], message: "Duplicate task" });
     }
