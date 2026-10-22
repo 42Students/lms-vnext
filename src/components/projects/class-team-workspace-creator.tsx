@@ -768,15 +768,17 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
         <p>The full list is below this form. The roster is checked again before anything is created.</p>
         {(createConfirmation?.rows.length??0)>0?
           <div className="max-h-64 overflow-auto rounded-[var(--lms-control-radius)] border border-border">
-            <table className="w-full min-w-[320px] text-left text-xs">
-              <thead><tr className="border-b border-border">
-                <th scope="col" className="p-2">Learner</th>
-                <th scope="col" className="p-2">Learner ID</th>
-              </tr></thead>
-              <tbody>{createConfirmation?.rows.map(row=><tr key={row.membershipId} className="border-b border-border last:border-0">
-                <td className="p-2">{row.name}</td><td className="break-all p-2">{row.membershipId}</td>
-              </tr>)}</tbody>
-            </table>
+            <DataTable rows={createConfirmation?.rows??[]}
+              caption="Learners included in the confirmation"
+              getRowKey={row=>row.membershipId}
+              empty={<EmptyState title="No new learner workspace is required."/>}
+              mobileMode="cards"
+              columns={[
+                {key:"learner",header:"Learner",mobileLabel:"Learner",mobilePriority:"primary",
+                  cell:row=>row.name},
+                {key:"membershipId",header:"Learner ID",mobileLabel:"Learner ID",mobilePriority:"secondary",
+                  cell:row=><span className="break-all">{row.membershipId}</span>},
+              ]}/>
           </div>:<p>No new learner workspace is required.</p>}
       </div>
     </ConfirmDialog>

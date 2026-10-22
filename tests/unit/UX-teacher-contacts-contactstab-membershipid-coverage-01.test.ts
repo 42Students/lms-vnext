@@ -6,6 +6,9 @@ describe("Faculty UX route /teacher/contacts/[contactsTab]/[membershipId]",()=>{
  it("UX-teacher-contacts-contactstab-membershipid-01: retains routing, access and learner-facing states",()=>{
  const source=readFileSync(join(process.cwd(),pathname),"utf8");
  expect(source).toContain("getCurrentRequestContext");
- expect(source).toContain("<EmptyState title=\"No active roles recorded\"");
+ expect(source).toContain("getFacultyContactDetail(context,parsed.data)");
+ expect(source).toContain("facultyContactDetailHidden(error)");
+ expect(source).toContain("No active roles recorded");
+ expect(source).toContain('role="status"');
  });
 });
