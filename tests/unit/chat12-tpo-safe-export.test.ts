@@ -14,7 +14,9 @@ describe("chat-12 TPO export failure protection",()=>{
   const s=read("src/components/tpo/tpo-safe-csv-download.tsx");
   expect(s).toContain('<InlineNotice tone="error" message={error}/>');
   expect(s).toContain('setError(');
-  expect(s).toContain('focus-visible:ring-2');
+  expect(s).toContain('focus-visible:outline-2');
+  expect(s).toContain('focus-visible:outline-offset-2');
+  expect(s).toContain('min-h-11');
   expect(s).toContain("if(inFlight.current)return");
   expect(s).toContain("disabled={pending}");
  });
