@@ -29,10 +29,10 @@ export async function POST(request:Request,{params}:RouteContext) {
     const {jobId}=await params;
     const body=await request.json() as unknown;
     if(!body||typeof body!=="object"||Array.isArray(body)) return NextResponse.json({error:"INVALID_INPUT"},{status:400});
-    const expiresInDays=(body as Record<string,unknown>).expiresInDays;
-    const selectedApplicationIds=(body as Record<string,unknown>).selectedApplicationIds;
-    const selectedColumns=(body as Record<string,unknown>).selectedColumns;
-    const shortlistBy=(body as Record<string,unknown>).shortlistBy;
+    const expiresInDays=(body as Record<string,unknown>)["expiresInDays"];
+    const selectedApplicationIds=(body as Record<string,unknown>)["selectedApplicationIds"];
+    const selectedColumns=(body as Record<string,unknown>)["selectedColumns"];
+    const shortlistBy=(body as Record<string,unknown>)["shortlistBy"];
     const result=await issueTpoCompanyApplicantShare(await getCurrentRequestContext(),{jobId,expiresInDays,
       ...(selectedApplicationIds!==undefined?{selectedApplicationIds}:{}),
       ...(selectedColumns!==undefined?{selectedColumns}:{}),
