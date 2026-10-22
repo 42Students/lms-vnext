@@ -73,7 +73,7 @@ describe("calendar URL filters over persisted own rounds",()=>{
     const workspace=await getLearnerPlacementRequestWorkspace(fixture.drive.learner.context);
     const rows=workspace.rounds.map(x=>({...x,scheduledAt:x.scheduledAt?.toISOString()??null,exception:x.exception?{scheduledAt:x.exception.scheduledAt.toISOString()}:null}));
     const counts=learnerCareerKindCounts(learnerCalendarSelectedEvents(rows,{date:"2026-10-17",view:"month",kind:"ALL"}));
-    expect(counts).toEqual({total:1,assessments:0,interviews:1,other:0});
+    expect(counts).toEqual({total:1,assessments:0,interviews:1,talks:0,other:0});
     const foreign:RequestContext={...fixture.drive.learner.context,membership:{...fixture.drive.learner.context.membership!,collegeId:SEED_IDS.collegeB}};
     await expect(getLearnerPlacementRequestWorkspace(foreign)).rejects.toBeDefined();
   },30000);

@@ -44,6 +44,10 @@ const tracked:{projects:string[];templates:string[]}={projects:[],templates:[]};
 async function cleanup(){
   // Immutable activity_events are intentionally retained: no deletion from append-only audit tables.
   if(tracked.projects.length){
+    // This disposable fixture owns the meeting and its database-captured history.
+    // Delete the fixture's history before deleting the FK-restricted meeting;
+    // production mutation paths must never purge the audit trail.
+    await pool.query("delete from project_meeting_history where project_id=any($1::uuid[])",[tracked.projects]);
     for(const table of [
       "project_task_submissions","project_submission_reviews","project_submissions",
       "project_meetings","project_members","project_resources",
