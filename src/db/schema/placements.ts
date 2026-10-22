@@ -2712,3 +2712,71 @@ export function redactLegacyPlacementJobDetails<T extends Record<string,unknown>
   legacyTargeting: _legacyTargeting,...safe}=source;
  return safe;
 }
+
+
+/** Old industry-company merges used numeric identity and could leave
+ * historical job references to the source company. The new canonical merge
+ * retains every source through immutable placement_company_merge_history,
+ * rather than deleting or reparenting audited applications. */
+export function legacyCompanyMergeMigrationPlan(rows:readonly {
+  legacySourceId:number;legacyTargetId:number;
+  sourceCompanyUuid:string;targetCompanyUuid:string;
+  mergedByUserId:string;reason:string|null;mergedAt:string;
+}[]){
+ const id=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ const edges=new Map<number,number>();
+ for(const row of rows){
+  if(!Number.isSafeInteger(row.legacySourceId)||row.legacySourceId<1||
+    !Number.isSafeInteger(row.legacyTargetId)||row.legacyTargetId<1||
+    row.legacySourceId===row.legacyTargetId||
+    !id.test(row.sourceCompanyUuid)||!id.test(row.targetCompanyUuid)||
+    row.sourceCompanyUuid===row.targetCompanyUuid||
+    !id.test(row.mergedByUserId)||
+    !Number.isFinite(Date.parse(row.mergedAt))||
+    !/(?:Z|[+-]\d{2}:\d{2})$/.test(row.mergedAt))
+   throw new Error("Invalid legacy company merge crosswalk");
+  if(edges.has(row.legacySourceId))
+   throw new Error("Duplicate legacy company merge source");
+  edges.set(row.legacySourceId,row.legacyTargetId);
+ }
+ for(const source of edges.keys()){
+  const traversed=new Set<number>();
+  let next:number|undefined=source;
+  while(next!==undefined){
+   if(traversed.has(next))throw new Error("Cyclic historic company merges");
+   traversed.add(next);
+   next=edges.get(next);
+  }
+ }
+ return rows.map(row=>({
+  sourceCompanyId:row.sourceCompanyUuid,targetCompanyId:row.targetCompanyUuid,
+  mergedByUserId:row.mergedByUserId,reason:row.reason?.trim().slice(0,2000)??null,
+  mergedAt:new Date(row.mergedAt),
+  preserveHistoricalJobRelationships:true as const,
+ }));
+}
+
+/** No AI screening is activated. A historic interviewer's 1–5 feedback
+ * and old source action are retained as staff-audited evidence, never
+ * recomputed into a candidate ranking. Terminal transitions remain in
+ * separate application/offer status histories. */
+export function legacyInterviewFeedbackImport(input:{
+ legacyFeedbackId:number;collegeId:string;applicationId:string;roundId:string;
+ rating:number|null;remarks:string|null;
+ action:string;submittedAt:string;revisedFromId:number|null;
+}){
+ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ if(!Number.isSafeInteger(input.legacyFeedbackId)||input.legacyFeedbackId<1||
+    !uuid.test(input.collegeId)||!uuid.test(input.applicationId)||!uuid.test(input.roundId)||
+    input.rating!==null&&(!Number.isSafeInteger(input.rating)||input.rating<1||input.rating>5)||
+    input.remarks!==null&&input.remarks.length>2000||
+    !/^(SUBMIT|REVISE|FINALIZE)$/.test(input.action)||
+    input.revisedFromId!==null&&(
+      !Number.isSafeInteger(input.revisedFromId)||input.revisedFromId<1||
+      input.revisedFromId===input.legacyFeedbackId)||
+    !/(?:Z|[+-]\d{2}:\d{2})$/.test(input.submittedAt)||
+    !Number.isFinite(Date.parse(input.submittedAt)))
+  throw new Error("Invalid historic interview feedback");
+ return {...input,submittedAt:new Date(input.submittedAt),
+  staffOnly:true as const,affectsCurrentTerminalStatus:false as const};
+}

@@ -171,3 +171,27 @@ export const messagingSmsDeliveryAttempts = pgTable(
     ),
   ],
 );
+
+
+/** Legacy SMS "SENT" meant Exotel accepted the provider request, not
+ * delivered to a handset. Source attempts may exist before login/college
+ * selection: never manufacture an organization or recipient identity to
+ * satisfy a receipt foreign key. */
+export function legacySmsAttemptDisposition(input:{
+ sourceStatus:"SENT"|"FAILED"|"REJECTED"|"PENDING";
+ recipientLastDigits:string|null;providerId:string|null;
+ sourceCollegeId:string|null;resolvedCollegeId:string|null;
+}){
+ const suffix=input.recipientLastDigits?.trim()??null;
+ if(suffix!==null&&!/^\d{1,4}$/.test(suffix))
+  throw new Error("Invalid legacy SMS suffix");
+ if(input.sourceCollegeId!==null&&!input.resolvedCollegeId)
+  throw new Error("Historic SMS college requires verified mapping");
+ const outcome=input.sourceStatus==="SENT"?"PROVIDER_ACCEPTED":
+   input.sourceStatus==="FAILED"||input.sourceStatus==="REJECTED"
+   ?"FAILED":"NOT_CONFIGURED";
+ return {outcome,recipientSuffix:suffix,
+  providerMessageId:input.providerId?.trim().slice(0,64)??null,
+  resolvedCollegeId:input.resolvedCollegeId,
+  deliveryConfirmed:false as const};
+}
