@@ -24,6 +24,7 @@ import type {
   getAdminCourseWorkspace,
 } from "@/modules/courses/admin-course-workspace";
 import { AdminCourseCreatePanel } from "./admin-course-create-panel";
+import {CourseDepartmentMoveAction} from "./course-department-move-action";
 import { SuperAdminCourseBulkVisibility } from "./super-admin-course-bulk-visibility";
 import {AdminCourseVisibilityControl} from "./admin-course-visibility-control";
 import {CollegeCourseBulkVisibility,CollegeCourseBulkVisibilityCheckbox} from "./college-course-bulk-visibility";
@@ -201,6 +202,7 @@ export function AdminCourseOverview({
       ),
       className: "text-right",
       cell: (course) => (
+        <div className="flex flex-wrap justify-end gap-2">
         <CourseActions
           allowMetadata
           allowCode={!courseBasePath.startsWith("/admin/")}
@@ -221,6 +223,12 @@ export function AdminCourseOverview({
               course.description,
           }}
         />
+        <CourseDepartmentMoveAction
+          course={{id:course.id,name:course.name,departmentId:course.departmentId,
+            updatedAt:course.updatedAt.toISOString()}}
+          departments={workspace.departments.map(item=>({id:item.id,name:item.name}))}
+          activeOfferingCount={activeOfferingCountByCourse.get(course.id)??0}/>
+        </div>
       ),
     },
   ];

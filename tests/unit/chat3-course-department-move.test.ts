@@ -23,4 +23,14 @@ describe("same-college course move",()=>{
   expect(service).toContain("requireCourseWrite(context,scope.organizationId,scope.collegeId)");
   expect(service).toContain('throw new CoursesServiceError("COURSE_HAS_ACTIVE_OFFERINGS")');
  });
+  it("offers a labelled and guarded in-college department picker",()=>{
+    const ui=readFileSync("src/components/courses/course-department-move-action.tsx","utf8");
+    const overview=readFileSync("src/components/courses/admin-course-overview.tsx","utf8");
+    expect(ui).toContain("Move department");
+    expect(ui).toContain("departmentId:target,expectedUpdatedAt:course.updatedAt");
+    expect(ui).toContain("if(busyRef.current||!target||target===course.departmentId||activeOfferingCount>0)return");
+    expect(ui).toContain('role="alert"');
+    expect(overview).toContain("activeOfferingCount={activeOfferingCountByCourse.get(course.id)??0}");
+    expect(overview).toContain("<CourseDepartmentMoveAction");
+  });
 });
