@@ -434,9 +434,10 @@ export function PlacementJobCreateForm({
         setSelectedSectionIds((saved.selectedSectionIds??[]).filter(id=>academicOptions.sections.some(c=>c.id===id)));
         if(saved.departmentFilter==="ALL"||departments.includes(saved.departmentFilter??""))
           setDepartmentFilter(saved.departmentFilter??"ALL");
-        if(["OPEN","CGPA_6","CGPA_7","PCT_60","PCT_70"].includes(saved.eligibilityPreset??""))
-          setEligibilityPreset(saved.eligibilityPreset!);
-        if(isTpoRoundPresetKey(saved.values.roundPreset))setRoundPreset(saved.values.roundPreset);
+        const restoredPreset=saved.eligibilityPreset;
+        if(restoredPreset!==undefined&&["OPEN","CGPA_6","CGPA_7","PCT_60","PCT_70"].includes(restoredPreset))
+          setEligibilityPreset(restoredPreset);
+        if(isTpoRoundPresetKey(saved.values["roundPreset"]))setRoundPreset(saved.values["roundPreset"]);
         if(Array.isArray(saved.importantDateRows)&&saved.importantDateRows.length<=20){
           const dates=saved.importantDateRows.filter(row=>row&&typeof row.id==="number"&&
             typeof row.label==="string"&&typeof row.date==="string");
@@ -464,19 +465,19 @@ export function PlacementJobCreateForm({
         const restoredIds=[...(saved.importantDateRows??[]),...(saved.customRuleRows??[]),...(saved.roundRows??[]),...(saved.extraPackages??[])]
           .map(row=>row.id).filter(id=>Number.isInteger(id)&&id>=0);
         nextRowId.current=Math.max(nextRowId.current,...restoredIds.map(id=>id+1));
-        setEnteredDriveTitle(String(saved.values.title??""));
-        setNewEmployerName(String(saved.values.companyName??""));
-        setNewEmployerDomain(String(saved.values.companyDomain??""));
-        setAssessmentUrlLength(String(saved.values.assessmentUrl??"").length);
+        setEnteredDriveTitle(String(saved.values["title"]??""));
+        setNewEmployerName(String(saved.values["companyName"]??""));
+        setNewEmployerDomain(String(saved.values["companyDomain"]??""));
+        setAssessmentUrlLength(String(saved.values["assessmentUrl"]??"").length);
         if(Array.isArray(saved.wantedSkills)){
           setWantedSkills(saved.wantedSkills.filter(skill=>typeof skill==="string"&&skill.length<=50).slice(0,30));
-        }else setWantedSkills(splitList(String(saved.values.skillsWanted??"")).slice(0,30));
+        }else setWantedSkills(splitList(String(saved.values["skillsWanted"]??"")).slice(0,30));
         for(const field of Array.from(formRef.current.querySelectorAll<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>("input[name],textarea[name],select[name]"))){
           if(field instanceof HTMLInputElement&&field.type==="checkbox")field.checked=(saved.checked??[]).includes(field.name);
           else if(saved.values[field.name]!==undefined)field.value=saved.values[field.name];
         }
         // TPO-drives-45: restoring a draft must never overwrite its chosen time.
-        if(typeof saved.values.applicationDeadline==="string"&&saved.values.applicationDeadline.trim()){
+        if(typeof saved.values["applicationDeadline"]==="string"&&saved.values["applicationDeadline"].trim()){
           deadlineTimeChosen.current=true;
         }
         markDirty();
