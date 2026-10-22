@@ -32,21 +32,37 @@ const learner:RequestContext={user:{id:SEED_IDS.learnerUser,identityUid:"learner
   status:"ACTIVE",roles:["LEARNER"]}};
 const tracked:{projects:string[];templates:string[]}={projects:[],templates:[]};
 async function cleanup(){
-  // Immutable activity events and the identities they reference remain untouched.
+  // Resource history is append-only and its project FK is RESTRICT. Keep the
+  // complete audited fixture (including its template) in this disposable test
+  // database rather than deleting history or orphaning the audited project.
+  let removableProjects=tracked.projects;
   if(tracked.projects.length){
+    const audited=await pool.query<{project_id:string}>(`
+      select distinct project_id from project_resource_audit
+      where project_id=any($1::uuid[])`,[tracked.projects]);
+    const preserved=new Set(audited.rows.map(row=>row.project_id));
+    removableProjects=tracked.projects.filter(id=>!preserved.has(id));
+  }
+  if(removableProjects.length){
     for(const table of ["project_task_submissions","project_submission_reviews","project_submissions",
       "project_meeting_history","project_meetings","project_members","project_resources","project_tasks",
       "project_sprints","project_releases"]){
-      await pool.query("delete from "+table+" where project_id=any($1::uuid[])",[tracked.projects]);
+      await pool.query("delete from "+table+" where project_id=any($1::uuid[])",[removableProjects]);
     }
-    // Resource DELETE triggers a final audit event, so remove these rows last.
-    await pool.query("delete from project_resource_audit where project_id=any($1::uuid[])",[tracked.projects]);
-    await pool.query("delete from project_instances where id=any($1::uuid[])",[tracked.projects]);
+    await pool.query("delete from project_instances where id=any($1::uuid[])",[removableProjects]);
   }
   if(tracked.templates.length){
-    for(const table of ["project_template_college_assignments","project_template_versions"])
-      await pool.query("delete from "+table+" where template_id=any($1::uuid[])",[tracked.templates]);
-    await pool.query("delete from project_templates where id=any($1::uuid[])",[tracked.templates]);
+    // Templates referenced by retained projects must remain as well.
+    const orphaned=await pool.query<{id:string}>(`
+      select t.id from project_templates t where t.id=any($1::uuid[])
+      and not exists (select 1 from project_instances p where p.template_id=t.id)`,
+      [tracked.templates]);
+    const removableTemplates=orphaned.rows.map(row=>row.id);
+    if(removableTemplates.length){
+      for(const table of ["project_template_college_assignments","project_template_versions"])
+        await pool.query("delete from "+table+" where template_id=any($1::uuid[])",[removableTemplates]);
+      await pool.query("delete from project_templates where id=any($1::uuid[])",[removableTemplates]);
+    }
   }
   tracked.projects=[];tracked.templates=[];
 }
