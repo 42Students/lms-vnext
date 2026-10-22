@@ -29,7 +29,7 @@ export function recurringSlotTimeIst(slot: Pick<Result["slots"][number], "starts
 }
 
 export function CollegeRecurringPreview({
-  classes, halls, faculty, deliveries, errors, defaultSectionId = "", onCancel,
+  classes, halls, faculty, deliveries, errors, defaultSectionId = "",
 }: { classes: ClassOption[]; halls: Option[]; faculty: FacultyOption[]; deliveries: DeliveryOption[];
   defaultSectionId?: string; onCancel?:()=>void;
   errors?: { classes:boolean; halls:boolean; faculty:boolean; deliveries:boolean } }) {
