@@ -11,7 +11,6 @@ import type {RequestContext} from "@/modules/identity/context";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {requirePermission,AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
-import {CoursesServiceError} from "./errors";
 
 const base=z.strictObject({offeringId:z.uuid(),membershipId:z.uuid()});
 const command=base.extend({
