@@ -208,7 +208,7 @@ describe("UX /admin middle third route and shared archetype contracts",()=>{
  });
  it("UX-admin-placements-shared-02 keeps mobile directory states and no duplicate Source field",()=>{
   const page=read("src/components/admin/admin-scoped-read-page.tsx");
-  expect(page).toContain("sm:grid-cols-2 lg:grid-cols-4");
+  expect(page).toContain("sm:grid-cols-2 lg:grid-cols-3");
   expect(page).toContain("No matching records");
   expect(page).toContain('name="channel"');
   expect(page.match(/<Select name="source"/g)?.length).toBe(1);
