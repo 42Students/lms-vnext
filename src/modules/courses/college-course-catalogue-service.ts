@@ -193,6 +193,47 @@ export async function getCollegeCourseSearchMetadata(context:RequestContext){
   categories,categoriesTotal:categories.length,
   responseStatus:"Categories retrieved" as const};
 }
+/** Legacy global search statistics and category lists. An ordinary college
+ * admin remains in exactly one verified college; a Super Admin may ask for
+ * selected-organization or global totals through central permission policy.
+ * There is no process-local refresh cache: every invocation reads committed,
+ * tenant-scoped SQL state. */
+export async function getAuthorizedCourseSearchMetadata(context:RequestContext){
+ if(!isSuperAdmin(context))return getCollegeCourseSearchMetadata(context);
+ if(context.user.platformStatus!=="ACTIVE")throw new AuthorizationError("courses.read");
+ const collegeId=context.adminScope?.collegeId??null;
+ const organizationId=context.adminScope?.organizationId??null;
+ requirePermission(context,"courses.read",{
+  ...(collegeId?{collegeId}:{}),
+  ...(organizationId?{organizationId}:{}),
+ });
+ const scope=and(
+  collegeId?eq(departments.collegeId,collegeId):undefined,
+  organizationId?eq(colleges.organizationId,organizationId):undefined,
+  eq(colleges.status,"ACTIVE"),
+  isNull(departments.archivedAt),
+ );
+ const [totals,categories]=await Promise.all([
+  getDb().select({
+    totalCourses:count(),
+    departmentCount:sql<number>`count(distinct ${courses.departmentId})::int`,
+  }).from(courses)
+    .innerJoin(departments,eq(departments.id,courses.departmentId))
+    .innerJoin(colleges,eq(colleges.id,departments.collegeId))
+    .where(and(scope,eq(courses.status,"ACTIVE"))),
+  getDb().select({id:departments.id,name:departments.name,
+    collegeId:departments.collegeId}).from(departments)
+    .innerJoin(colleges,eq(colleges.id,departments.collegeId))
+    .where(scope)
+    .orderBy(sql`lower(${departments.name})`,asc(departments.id))
+    .limit(100),
+ ]);
+ return {totalCourses:totals[0]?.totalCourses??0,
+   departments:totals[0]?.departmentCount??0,
+   categories,categoriesTotal:categories.length,
+   responseStatus:"Categories retrieved" as const,
+   scope:collegeId?"COLLEGE" as const:organizationId?"ORGANIZATION" as const:"PLATFORM" as const};
+}
 export async function collegeCourseNameExists(context:RequestContext,rawName:string){
  const college=await authorizedCollege(context);
  const name=z.string().trim().min(1).max(200).parse(rawName);
