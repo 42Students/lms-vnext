@@ -317,7 +317,7 @@ export function ScheduleProjectMeetingControl({
   meeting?: Meeting | null;
   sprints: readonly LinkChoice[];
   tasks: readonly (LinkChoice & {
-    sprintId: string;
+    sprintId: string | null;
   })[];
 }) {
   const router = useRouter();
@@ -446,7 +446,7 @@ export function ScheduleProjectMeetingControl({
         (item) => item.id === linkedTaskId,
       );
       if (
-        task &&
+        task && linkedSprintId &&
         task.sprintId !== linkedSprintId
       ) {
         setError(

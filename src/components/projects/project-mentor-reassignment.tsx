@@ -53,6 +53,8 @@ export function ProjectMentorReassignment({
   const [roleLabel, setRoleLabel] =
     useState("Project Mentor");
   const [search, setSearch] = useState("");
+  const [workspacePage,setWorkspacePage]=useState(1);
+  const [targetAttempted,setTargetAttempted]=useState(false);
   const [pending, setPending] =
     useState(false);
   const sendingRef=useRef(false);
@@ -81,6 +83,11 @@ export function ProjectMentorReassignment({
       normalizedRole(previous?.roleLabel)===normalizedRole(roleLabel);
   });
   const actionableSelection = selected.filter(projectId => !skippedSelection.includes(projectId));
+  const workspacePageCount=Math.max(1,Math.ceil(workspaces.length/10));
+  const currentWorkspacePage=Math.min(workspacePage,workspacePageCount);
+  const visibleWorkspaces=workspaces.slice((currentWorkspacePage-1)*10,currentWorkspacePage*10);
+  const allPageSelected=Boolean(visibleWorkspaces.length)&&
+    visibleWorkspaces.every(row=>selected.includes(row.id));
   useEffect(()=>{
     const sequence=++mentorRequest.current;
     const controller=new AbortController();
@@ -91,7 +98,7 @@ export function ProjectMentorReassignment({
     }
     setMentorLoading(true);setMentorError("");
     const params=new URLSearchParams({collegeId,q:query,limit:"100"});
-    void fetch("/api/projects/mentor-candidates?"+params.toString(),{
+    const timer=window.setTimeout(()=>{void fetch("/api/projects/mentor-candidates?"+params.toString(),{
       credentials:"same-origin",cache:"no-store",signal:controller.signal,
     }).then(async response=>{
       if(!response.ok)throw new Error("Failed to search mentors. Try again.");
@@ -105,8 +112,8 @@ export function ProjectMentorReassignment({
       setRemoteMentors([]);
     }).finally(()=>{
       if(sequence===mentorRequest.current&&!controller.signal.aborted)setMentorLoading(false);
-    });
-    return()=>controller.abort();
+    });},250);
+    return()=>{window.clearTimeout(timer);controller.abort();};
   },[collegeId,search]);
   const visibleMentors=useMemo(()=>{
     const pool=search.trim()?remoteMentors:mentors;
@@ -134,6 +141,7 @@ export function ProjectMentorReassignment({
       showToast({tone:"error",title:"Select at least one workspace to reassign."});
       return;
     }
+    setTargetAttempted(true);
     if(!mentorMembershipId||pending)return;
     if (!actionableSelection.length) {
       showToast({tone:"info",title:"No workspaces needed changes — they already have this mentor."});
@@ -236,52 +244,81 @@ export function ProjectMentorReassignment({
             narrow the filters to include the remaining workspaces.
           </p>:null}
         </div>
-        {!workspaces.length ? (
-          <p className="mb-0 mt-3 text-sm text-muted-foreground">
-            No non-archived workspaces are available.
+        {!workspaces.length?(
+          <p className="mb-0 mt-3 text-sm text-body">
+            No active workspaces match this filter.
           </p>
-        ) : (
-          <div role="group" aria-label="Workspaces to reassign" className="mt-[var(--lms-space-3)] max-h-[22rem] min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)]">
-            {workspaces.map((workspace) => (
-              <label
-                key={workspace.id}
-                className="flex min-h-11 min-w-0 cursor-pointer flex-wrap items-center gap-[var(--lms-space-3)] px-[var(--lms-space-2)] py-[var(--lms-space-3)] motion-safe:transition-colors motion-reduce:transition-none hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
-              >
-                <Checkbox
-                  disabled={pending}
-                  checked={selected.includes(
-                    workspace.id,
-                  )}
-                  onChange={() =>
-                    toggle(workspace.id)
-                  }
-                />
-                <span className="min-w-0 flex-1">
-                  <span className="block break-words text-sm font-semibold text-foreground">
-                    {workspace.title}
-                  </span>
-                  <span className="block text-xs text-muted-foreground">
-                    Current mentor:{" "}
-                    {workspace.mentorName ??
-                      "Unassigned"}
-                  </span>
-                </span>
-                {mentorMembershipId&&workspace.mentorMembershipId===mentorMembershipId&&
-                  normalizedRole(workspace.roleLabel)===normalizedRole(roleLabel) ?
-                  <StatusBadge tone="warning">Already this mentor — will skip</StatusBadge> : null}
-                <StatusBadge tone="neutral">
-                  {workspace.status}
-                </StatusBadge>
-              </label>
-            ))}
+        ):(
+          <div className="mt-3 min-w-0 space-y-2">
+            <div className="min-w-0 overflow-x-auto border-y border-border">
+              <table className="w-full min-w-[620px] border-collapse text-left text-sm">
+                <caption className="sr-only">Select workspaces for mentor reassignment</caption>
+                <thead><tr className="border-b border-border bg-muted/20">
+                  <th scope="col" className="w-12 px-3 py-2">
+                    <Checkbox aria-label="Select all workspaces on this page"
+                      disabled={pending} checked={allPageSelected}
+                      onChange={event=>setSelected(old=>{
+                        const ids=visibleWorkspaces.map(row=>row.id);
+                        return event.target.checked?[...new Set([...old,...ids])]:
+                          old.filter(id=>!ids.includes(id));
+                      })}/>
+                  </th>
+                  <th scope="col" className="px-3 py-2 font-semibold">Workspace</th>
+                  <th scope="col" className="px-3 py-2 font-semibold">Current mentor</th>
+                  <th scope="col" className="px-3 py-2 font-semibold">Status</th>
+                </tr></thead>
+                <tbody>
+                  {visibleWorkspaces.map(workspace=><tr key={workspace.id}
+                    className="border-b border-border last:border-0">
+                    <td className="px-3 py-2">
+                      <Checkbox disabled={pending}
+                        aria-label={"Select "+workspace.title}
+                        checked={selected.includes(workspace.id)}
+                        onChange={()=>toggle(workspace.id)}/>
+                    </td>
+                    <th scope="row" className="px-3 py-2 font-semibold">{workspace.title}</th>
+                    <td className="px-3 py-2">
+                      {workspace.mentorName??"—"}
+                      {mentorMembershipId&&workspace.mentorMembershipId===mentorMembershipId&&
+                        normalizedRole(workspace.roleLabel)===normalizedRole(roleLabel)?
+                        <span className="ml-2"><StatusBadge tone="warning">
+                          Already this mentor — will skip</StatusBadge></span>:null}
+                    </td>
+                    <td className="px-3 py-2">
+                      <StatusBadge tone={workspace.status==="ACTIVE"?"success":
+                         workspace.status==="COMPLETED"?"neutral":"warning"}>
+                        {workspace.status.replaceAll("_"," ").toLowerCase()
+                          .replace(/^./,letter=>letter.toUpperCase())}
+                      </StatusBadge>
+                    </td>
+                  </tr>)}
+                </tbody>
+              </table>
+            </div>
+            {workspacePageCount>1?<nav aria-label="Workspace selection pages"
+              className="flex flex-wrap items-center gap-2 text-sm">
+              <span>Page {currentWorkspacePage} of {workspacePageCount}</span>
+              <Button type="button" size="sm" variant="secondary"
+                disabled={currentWorkspacePage===1}
+                onClick={()=>setWorkspacePage(n=>Math.max(1,n-1))}>Previous</Button>
+              <Button type="button" size="sm" variant="secondary"
+                disabled={currentWorkspacePage===workspacePageCount}
+                onClick={()=>setWorkspacePage(n=>Math.min(workspacePageCount,n+1))}>Next</Button>
+            </nav>:null}
           </div>
         )}
       </section>
 
       <section className="border-b border-border pb-5">
         <h2 className="m-0 text-base font-semibold text-foreground">
-          Reassign to mentor
+          Reassign to new mentor
         </h2>
+        <p className="mt-2 text-sm leading-6 text-body">
+          The previous primary mentor is replaced for the selected workspaces.
+          Existing co-mentors and reviewers remain, tasks assigned to the outgoing mentor
+          become unassigned, and meetings scheduled by the outgoing mentor are cancelled.
+          Both mentor teams and learners receive project notifications.
+        </p>
         <div className="mt-[var(--lms-space-4)] grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
           <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search mentors
@@ -298,8 +335,9 @@ export function ProjectMentorReassignment({
             />
           </label>
           <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            New primary mentor
+            New mentor
             <Select
+              aria-invalid={targetAttempted&&!mentorMembershipId}
               disabled={pending}
               value={mentorMembershipId}
               onChange={(event) =>
@@ -321,6 +359,8 @@ export function ProjectMentorReassignment({
               ))}
             </Select>
           </label>
+          {targetAttempted&&!mentorMembershipId?<p role="alert"
+            className="text-sm text-error md:col-span-2">Select a mentor</p>:null}
           {mentorLoading?<p role="status" className="text-xs text-body md:col-span-2">
             Searching eligible mentors across the college…</p>:null}
           {mentorError?<p role="alert" className="text-sm text-error md:col-span-2">
@@ -334,6 +374,8 @@ export function ProjectMentorReassignment({
               disabled={pending}
               value={roleLabel}
               maxLength={80}
+              placeholder="Project Mentor"
+              title="The new primary mentor's role label in team rosters. Leave blank for Project Mentor."
               onChange={(event) =>
                 setRoleLabel(event.target.value)
               }
@@ -346,19 +388,7 @@ export function ProjectMentorReassignment({
           </label>
         </div>
 
-        <details className="mt-[var(--lms-space-4)] min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-2)]">
-         <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Reassignment impact</summary>
-        <p className="mt-[var(--lms-space-2)] text-sm leading-6 text-body">
-          The previous primary mentor is removed from
-          each changed workspace. Existing co-mentors
-          remain. Scheduled meetings owned by the
-          outgoing mentor are cancelled.
-        </p>
-        <p className="mt-2 text-sm leading-6 text-body">
-          Tasks assigned to the outgoing mentor will become unassigned. Both mentors
-          and project learners receive a project notification.
-        </p>
-        </details>
+
 
         {selected.length > 0 && mentorMembershipId ?
           <p className="mt-3 text-sm text-body">
@@ -375,11 +405,7 @@ export function ProjectMentorReassignment({
             }
             onClick={submit}
           >
-            {pending
-              ? "Reassigning…"
-              : "Reassign " +
-                actionableSelection.length +
-                " workspace(s)"}
+            {pending?"Reassigning…":"Reassign selected"}
           </Button>
         </div>
       </section>
@@ -417,7 +443,7 @@ export function ProjectMentorReassignment({
       <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
         title={"Reassign "+actionableSelection.length+" of "+selected.length+" selected workspace(s) to "+selectedMentorName+"?"}
         description="The previous primary mentor is removed from the selected workspaces; existing co-mentors stay. Confirm the new mentor before updating projects."
-        confirmLabel="Reassign workspaces" pending={pending}
+        confirmLabel="Reassign" pending={pending}
         onConfirm={()=>void executeReassignment()}/>
       <Dialog open={failureOpen} onOpenChange={setFailureOpen}
         title={(result?.failures.length??0)+" reassignment(s) failed"}

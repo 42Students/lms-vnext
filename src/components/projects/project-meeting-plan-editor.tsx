@@ -57,9 +57,10 @@ export function ProjectMeetingPlanEditor({ projectId, meetingsToken, meetings, s
   const router = useRouter();
   const { showToast } = useToast();
   const saving = useRef(false);
-  const [open, setOpen] = useState(false);
-  const [pending, setPending] = useState(false);
   const sourceDrafts = meetings.filter(row => row.status === "DRAFT");
+  // The legacy Meetings page opens its repeating form without an extra click.
+  const [open, setOpen] = useState(sourceDrafts.length > 0);
+  const [pending, setPending] = useState(false);
   const baseline = sourceDrafts.map(toDraft);
   const [draft, setDraft] = useState<Draft[]>(() => baseline);
   const changed = draft.filter(row => {

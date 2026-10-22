@@ -447,7 +447,11 @@ export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel,sectio
                  workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName??
                  workspace.members.find(member=>member.role==="MENTOR")?.displayName??null]
                 .filter(Boolean).join(" · ")||"Project workspace"
-              : mode==="ADMIN"&&section==="sprints"?
+              : mode==="ADMIN"&&section==="meetings"?
+                "Plan project touchpoints and connect conversations to the work they support.":
+                mode==="ADMIN"&&section==="overview"?
+                "Shape the project brief mentors and students use to understand the work.":
+                mode==="ADMIN"&&section==="sprints"?
                 "Plan sprint outcomes, release alignment and delivery cadence for this workspace.":
                 mode==="ADMIN"&&section==="tasks"?
                 "Shape the work breakdown and review learner submission activity for this workspace.":
@@ -645,7 +649,8 @@ export function ProjectWorkspace({
           backHref={mode==="ADMIN"&&!polishAdminSection?backHref:undefined} backLabel={backLabel} /> : null}
       {mode === "ADMIN" ? (
         <Breadcrumbs items={[
-          { label: "Projects", href: backHref },
+          { label: "Projects", href: sectionBaseHref ? sectionBaseHref.replace(/\/[^/]+$/, "") : backHref },
+          ...(sectionBaseHref ? [{label:"Workspaces",href:backHref}] : []),
           { label: workspace.project.title?.trim()||"Workspace",
             href: sectionBaseHref ? sectionBaseHref+"/summary"+sectionQuerySuffix : undefined },
           ...(activeSection ? [{label: PROJECT_WORKSPACE_SECTION_LABELS[activeSection]}] : []),
@@ -961,7 +966,9 @@ export function ProjectWorkspace({
                 ) : <p>No deliverables have been recorded yet.</p>}
               </div>
             </div>
-          ) : <p className="mt-2 text-sm text-body">No authored project brief is available.</p>}
+          ) : mode==="ADMIN"&&!readOnly
+            ? <p className="mt-2 text-sm text-body">Start by describing the project goal, deliverables and completion conditions in the editor above.</p>
+            : <p className="mt-2 text-sm text-body">No authored project brief is available.</p>}
           {mode === "LEARNER" ? (
             <div className="mt-3 space-y-2 text-sm text-body">
               {workspace.project.phase ? <p>Phase: <strong>{workspace.project.phase}</strong></p> : null}
@@ -2087,7 +2094,8 @@ export function ProjectWorkspace({
                 {mode==="ADMIN"?"Meeting plan":"Meetings"}
               </h2>
               <p className="mt-1 text-sm text-body">
-                {mode==="LEARNER"?"Upcoming meetings and recent history.":
+                {mode==="ADMIN"?"Plan project touchpoints and connect conversations to the work they support.":
+                  mode==="LEARNER"?"Upcoming meetings and recent history.":
                   "Keep project conversations attached to the work they move forward."}
               </p>
             </div>
@@ -2105,13 +2113,11 @@ export function ProjectWorkspace({
                     label: sprint.title,
                   }),
                 )}
-                tasks={workspace.tasks.flatMap(
-                  (task) => task.sprintId ? [{
-                    id: task.id,
-                    label: task.title,
-                    sprintId: task.sprintId,
-                  }] : [],
-                )}
+                tasks={workspace.tasks.filter(task=>!task.deletedAt).map(task=>({
+                  id: task.id,
+                  label: task.title,
+                  sprintId: task.sprintId,
+                }))}
               />
             ) : null}
           </div>
@@ -2167,7 +2173,10 @@ export function ProjectWorkspace({
           </h3>:null}
           <div className="space-y-3">
             {workspace.meetings.length === 0 && !workspace.meetingsLoadError ? (
-              <EmptyState title="No meetings yet." description="No project meetings have been recorded." />
+              <EmptyState title="No meetings yet."
+                description={mode==="ADMIN"?
+                  "No meetings yet. Add one when the team needs a planned touchpoint.":
+                  "No project meetings have been recorded."} />
             ) : (
               workspace.meetings.map((meeting) => {
                 const href = safeHttpHref(

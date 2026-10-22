@@ -1,5 +1,5 @@
 "use client";
-import {useEffect,useState} from "react";
+import {useEffect,useId,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
@@ -18,6 +18,18 @@ function fromBrief(value:WorkspaceBrief):Draft{
   personas:value.personas.join("\n")};
 }
 const list=(value:string)=>value.split(/\r?\n/).map(line=>line.trim()).filter(Boolean);
+// Ant Design's legacy autoSize constraints: keep a practical minimum without
+// letting a long project brief push the Save action arbitrarily far below the fold.
+function resizeToLegacyRows(element:HTMLTextAreaElement,minRows:number,maxRows:number){
+ const css=window.getComputedStyle(element);
+ const lineHeight=Number.parseFloat(css.lineHeight)||22;
+ const padding=Number.parseFloat(css.paddingTop)+Number.parseFloat(css.paddingBottom);
+ const border=Number.parseFloat(css.borderTopWidth)+Number.parseFloat(css.borderBottomWidth);
+ element.style.height="auto";
+ element.style.height=Math.max(minRows*lineHeight+padding+border,
+  Math.min(maxRows*lineHeight+padding+border,element.scrollHeight))+"px";
+ element.style.overflowY=element.scrollHeight>maxRows*lineHeight+padding+border?"auto":"hidden";
+}
 
 /** This is a section-scoped form, not a template editor: unrecognized
  * historical overview JSON keys survive in the service-side merge.
@@ -29,7 +41,13 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
  const router=useRouter(),{showToast}=useToast();
  const currentVersion=new Date(updatedAt).toISOString();
  const [version,setVersion]=useState(currentVersion);
- const [open,setOpen]=useState(false);
+ const [open,setOpen]=useState(true);
+ const headingId=useId();
+ const deliverablesRef=useRef<HTMLTextAreaElement|null>(null);
+ const goalRef=useRef<HTMLTextAreaElement|null>(null);
+ const conditionsRef=useRef<HTMLTextAreaElement|null>(null);
+ const personasRef=useRef<HTMLTextAreaElement|null>(null);
+ const justSaved=useRef<string|null>(null);
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
  const [draft,setDraft]=useState<Draft>(()=>fromBrief(initial));
@@ -44,7 +62,13 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
  useEffect(()=>{
   if(currentVersion===version)return;
   if(open&&dirty){
-   // Never replace a draft merely because another user saved a new version.
+   // Reconcile our own successful PATCH after router.refresh without showing a false conflict.
+   if(justSaved.current===JSON.stringify(fromBrief(initial))){
+    justSaved.current=null;
+    setDraft(fromBrief(initial));setVersion(currentVersion);
+    setError("");setStale(false);return;
+   }
+   // Another writer changed the project while there are unsaved local edits.
    setStale(true);return;
   }
   setDraft(fromBrief(initial));setVersion(currentVersion);
@@ -59,13 +83,24 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
    setError("This workspace changed while you were editing. Reload the overview before saving.");
    return;
   }
+  if(requireDeliverables&&!list(draft.deliverables).length){
+   setError("Add at least one deliverable.");
+   deliverablesRef.current?.focus();
+   return;
+  }
   const parsed=workspaceBriefSchema.safeParse({
    goal:draft.goal,description:draft.description,
    deliverables:list(draft.deliverables),
    completionConditions:list(draft.conditions),personas:list(draft.personas),
   });
   if(!parsed.success){
-   setError(parsed.error.issues[0]?.message??"Check the project brief fields.");return;
+   const first=parsed.error.issues[0];
+   setError(first?.message??"Check the project brief fields.");
+   if(first?.path[0]==="deliverables")deliverablesRef.current?.focus();
+   else if(first?.path[0]==="completionConditions")conditionsRef.current?.focus();
+   else if(first?.path[0]==="personas")personasRef.current?.focus();
+   else goalRef.current?.focus();
+   return;
   }
   if(requireDeliverables){
    const validation=publishedWorkspaceBriefError(parsed.data);
@@ -76,22 +111,28 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
    await projectMutation("/api/projects/"+encodeURIComponent(projectId)+"/brief","PATCH",{
     brief:parsed.data,expectedUpdatedAt:version,
    });
-   setOpen(false);
+   justSaved.current=JSON.stringify(fromBrief(parsed.data));
+   // Legacy Overview keeps the editor expanded after a save. The next server
+   // snapshot remounts the version token without discarding in-progress edits.
    showToast({tone:"success",title:requireDeliverables?"Overview updated":"Project brief updated"});
    router.refresh();
   }catch(caught){
-   setError("Failed to update overview. "+(caught instanceof Error?caught.message:
-    "This workspace may have changed. Reload the overview and retry."));
+   const reason=caught instanceof Error?caught.message:"The overview could not be saved.";
+   const conflict=/409|CONFLICT|stale|version/i.test(reason);
+   setStale(conflict);
+   setError(conflict?
+     "This project has changed since the brief was loaded. Review the latest version before retrying.":
+     "Failed to update overview. "+reason);
    showToast({tone:"error",title:"Failed to update overview",
-    description:"Review your saved edits or reload the latest project brief."});
+    description:"Your unsaved brief remains in the form. Reload to compare against the latest version."});
   }finally{setBusy(false);}
  }
  const textClass="mt-1 w-full";
- return <section aria-label="Project brief" className="min-w-0 space-y-4 border-b border-border pb-5">
+ return <section aria-label="Project brief" className="min-w-0 space-y-4 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 sm:p-5">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div>
-    <p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">Learner & mentor view</p>
-    <h2 className="mt-1 text-lg font-semibold text-foreground">Project brief</h2>
+    <h2 className="text-lg font-semibold text-foreground">Project brief</h2>
+    <p className="mt-3 text-xs font-semibold uppercase tracking-[0.08em] text-body">Learner & mentor view</p>
     <h3 className="mt-1 text-base font-semibold text-foreground">
      Make the project understandable before anyone opens the board.
     </h3>
@@ -107,15 +148,17 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
     }}}>{open?"Close brief editor":"Edit project brief"}</Button>
   </div>
   {open?<div className="space-y-5">
-   <section className="space-y-2 border-t border-border pt-4">
-    <h4 className="text-sm font-semibold text-foreground">Goal</h4>
+   <section className="space-y-2 border-t border-border pt-4" aria-labelledby={headingId+"-goal"}>
+    <h4 id={headingId+"-goal"} className="text-sm font-semibold text-foreground">Goal</h4>
     <p className="text-xs text-body">Why the project exists, who it serves and what success should look like.</p>
     <label className="block text-xs font-semibold text-body">
      Project goal / description
-     <Textarea className={textClass} rows={4} maxLength={2000} value={draft.goal}
+     <Textarea ref={goalRef} className={textClass} rows={4} maxLength={2000} value={draft.goal}
+      aria-describedby={headingId+"-goal-help"}
       placeholder="Describe the problem, expected outcome and what a successful project should achieve."
+      onInput={event=>resizeToLegacyRows(event.currentTarget,4,9)}
       onChange={event=>update("goal",event.target.value)}/>
-     <span className="mt-1 block text-xs font-normal text-body">
+     <span id={headingId+"-goal-help"} className="mt-1 block text-xs font-normal text-body">
       Shown as “About this project” on the learner and mentor Overview tab.
      </span>
     </label>
@@ -125,27 +168,31 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
     </label>
    </section>
    <div className="grid min-w-0 gap-5 lg:grid-cols-2">
-    <section className="min-w-0 space-y-2 border-t border-border pt-4">
-     <h4 className="text-sm font-semibold text-foreground">Deliverables</h4>
+    <section className="min-w-0 space-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4" aria-labelledby={headingId+"-deliverables"}>
+     <h4 id={headingId+"-deliverables"} className="text-sm font-semibold text-foreground">Deliverables</h4>
      <p className="text-xs text-body">The concrete outputs the team is expected to produce.</p>
-     <label className="block text-xs font-semibold text-body">Deliverables · one per line
-      <Textarea className={textClass} rows={7} value={draft.deliverables}
+     <label className="block text-xs font-semibold text-body">Deliverables
+      <Textarea ref={deliverablesRef} className={textClass} rows={7}
+       aria-invalid={requireDeliverables&&!list(draft.deliverables).length}
+       aria-describedby={headingId+"-deliverables-help"} value={draft.deliverables}
+       onInput={event=>resizeToLegacyRows(event.currentTarget,7,12)}
        placeholder={"Wireframes for all core screens\nWorking prototype\nFinal presentation deck"}
        onChange={event=>update("deliverables",event.target.value)}/>
-      <span className="mt-1 block text-xs font-normal text-body">
+      <span id={headingId+"-deliverables-help"} className="mt-1 block text-xs font-normal text-body">
        One per line. These appear as a checklist for mentors and students.
       </span>
       {requireDeliverables&&!list(draft.deliverables).length?
        <span role="alert" className="mt-1 block text-xs text-error">Add at least one deliverable.</span>:null}
      </label>
     </section>
-    <section className="min-w-0 space-y-2 border-t border-border pt-4">
-     <h4 className="text-sm font-semibold text-foreground">Definition of done</h4>
+    <section className="min-w-0 space-y-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4" aria-labelledby={headingId+"-dod"}>
+     <h4 id={headingId+"-dod"} className="text-sm font-semibold text-foreground">Definition of done</h4>
      <p className="text-xs text-body">
       The project-level conditions that mean the work is genuinely complete.
      </p>
-     <label className="block text-xs font-semibold text-body">Completion conditions · one per line
-      <Textarea className={textClass} rows={7} value={draft.conditions}
+     <label className="block text-xs font-semibold text-body">Completion conditions
+      <Textarea ref={conditionsRef} className={textClass} rows={7} value={draft.conditions}
+       onInput={event=>resizeToLegacyRows(event.currentTarget,7,12)}
        placeholder={"All acceptance criteria pass\nDeployed to a public URL\nMentor sign-off recorded"}
        onChange={event=>update("conditions",event.target.value)}/>
       <span className="mt-1 block text-xs font-normal text-body">
@@ -154,11 +201,12 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
      </label>
     </section>
    </div>
-   <section className="space-y-2 border-t border-border pt-4">
-    <h4 className="text-sm font-semibold text-foreground">Personas & ownership</h4>
+   <section className="space-y-2 border-t border-border pt-4" aria-labelledby={headingId+"-personas"}>
+    <h4 id={headingId+"-personas"} className="text-sm font-semibold text-foreground">Personas & ownership</h4>
     <p className="text-xs text-body">Explain the working roles students can take and what each one owns.</p>
-    <label className="block text-xs font-semibold text-body">Personas · one per line
-     <Textarea className={textClass} rows={4} value={draft.personas}
+    <label className="block text-xs font-semibold text-body">Personas
+     <Textarea ref={personasRef} className={textClass} rows={4} value={draft.personas}
+      onInput={event=>resizeToLegacyRows(event.currentTarget,4,10)}
       placeholder={"Frontend lead — owns the board UI and component structure\nBackend lead — owns the API and data model"}
       onChange={event=>update("personas",event.target.value)}/>
      <span className="mt-1 block text-xs font-normal text-body">
@@ -166,6 +214,11 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
      </span>
     </label>
    </section>
+   <p className="text-xs text-body">
+    This form uses the loaded workspace version as its optimistic edit token. Updates
+    to other project sections may require reloading; your draft is not overwritten.
+    Clearing a field removes that field's current value without deleting historical project metadata.
+   </p>
    {stale?<p role="alert" className="text-sm text-warning-text">
     The workspace changed while this form was open. Reload before saving to avoid overwriting another edit.
    </p>:null}
