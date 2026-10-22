@@ -107,6 +107,10 @@ describe("TPO drive workspace verified S1 gaps",()=>{
    expect(driveChangeCommandSchema.safeParse({action:"CREATE",mode:"SUGGEST",field,
     proposedValue:"5",reason:""}).success).toBe(true);
   }
+  expect(driveChangeCommandSchema.safeParse({action:"CREATE",mode:"SUGGEST",
+   field:"ROLE_TITLE",proposedValue:"5",reason:""}).success).toBe(false);
+  expect(driveChangeCommandSchema.safeParse({action:"CREATE",mode:"SUGGEST",
+   field:"MIN_CGPA",proposedValue:"x",reason:""}).success).toBe(false);
  });
  it("G2-5-023-004/021 deep links preserve scoped request context and typed answer confirmation",()=>{
   const service=readFileSync("src/modules/placements/tpo-drive-change-request-service.ts","utf8");
