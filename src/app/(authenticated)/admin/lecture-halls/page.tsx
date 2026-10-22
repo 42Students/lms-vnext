@@ -86,7 +86,7 @@ export default async function SuperAdminLectureHallsPage({
            className="underline">Next</Link>:null}
       </nav>
     </>:<Alert tone="warning" title="Select a college to continue">
-      Choose a college or organization in the header above to see its lecture halls.
+      Choose a college in the header above to see its lecture halls.
     </Alert>}
   </div>;
   }
