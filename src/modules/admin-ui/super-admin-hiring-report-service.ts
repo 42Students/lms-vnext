@@ -8,8 +8,9 @@ import {
  placementOffers,placementJoiningOutcomes,
 } from "@/db/schema";
 import {placementCollegeApplicationStages,placementCollegeApplicationStageHistory} from "@/db/schema/placement-college-application-stages";
-import type {RequestContext} from "@/modules/identity/context";
-import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
+import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
+import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
+
 import {superAdminHiringReportQuery,SUPER_ADMIN_HIRING_EXPORT_CAP,type SuperAdminHiringRow} from "./super-admin-hiring-report-model";
 /**
  * Legacy Dayjs boundaries denote IST calendar days. Use the next midnight as
@@ -31,12 +32,22 @@ function istStartOfNextDay(value:string):Date {
  */
 export async function getSuperAdminCompanyHiringReport(context:RequestContext,raw:unknown){
  const query=superAdminHiringReportQuery.parse(raw);
- const selected=requireSuperAdminSelectedCollege(context,"placements.read"),db=getDb();
+ // A reviewed organization selection is also a legitimate legacy scope.
+ // An unselected global scope is not: never issue an unrestricted report.
+ if(!isSuperAdmin(context)||(!context.adminScope?.collegeId&&!context.adminScope?.organizationId))
+  throw new AuthorizationError("placements.read");
+ const selected={collegeId:context.adminScope?.collegeId??null,
+  organizationId:context.adminScope?.organizationId??null};
+ requirePermission(context,"placements.read",{
+  ...(selected.collegeId?{collegeId:selected.collegeId}:{}),
+  ...(selected.organizationId?{organizationId:selected.organizationId}:{}),
+ });
+ const db=getDb();
  const pattern=query.q?"%"+query.q.replace(/[\\%_]/g,"\\$&")+"%":null;
  const matchingAcademic= query.departmentId||query.programId||query.cohortId
   ?exists(db.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
     .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
-    .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,selected.collegeId)))
+    .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,placementJobs.collegeId)))
     .innerJoin(cohorts,and(eq(cohorts.id,learnerProgramEnrollments.cohortId),
       eq(cohorts.programId,learnerProgramEnrollments.programId)))
     .where(and(eq(learnerProgramEnrollments.membershipId,placementApplications.membershipId),
@@ -70,15 +81,15 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
   query.appliedTo?lt(appliedAt,istStartOfNextDay(query.appliedTo)):undefined,
   matchingAcademic,
  );
- const result=await db.select({
+ const perJob=db.select({
   companyId:placementCompanies.id,companyName:placementCompanies.name,
   jobId:placementJobs.id,jobTitle:placementJobs.title,
-  totalApplications:sql<number>`count(distinct ${placementApplications.id})::integer`.mapWith(Number),
-  applied:tally("APPLIED"),
-  withdrawn:sql<number>`count(distinct ${placementApplications.id}) filter (where ${placementApplications.status} = 'WITHDRAWN')::integer`.mapWith(Number),
-  waitlisted:tally("WAITLISTED"),
-  shortlisted:tally("SHORTLISTED"),assessment:tally("ASSESSMENT"),interview:tally("INTERVIEW"),
-  offered:tally("OFFERED"),
+  totalApplications:sql<number>`count(distinct ${placementApplications.id})::integer`.mapWith(Number).as("total_applications"),
+  applied:tally("APPLIED").as("applied"),
+  withdrawn:sql<number>`count(distinct ${placementApplications.id}) filter (where ${placementApplications.status} = 'WITHDRAWN')::integer`.mapWith(Number).as("withdrawn"),
+  waitlisted:tally("WAITLISTED").as("waitlisted"),
+  shortlisted:tally("SHORTLISTED").as("shortlisted"),assessment:tally("ASSESSMENT").as("assessment"),interview:tally("INTERVIEW").as("interview"),
+  offered:tally("OFFERED").as("offered"),
   // A mutable pipeline stage alone cannot prove that a learner joined.
   // Use the accepted offer + persisted JOINED outcome, consistent with
   // the selected-college employer-history tally. EXISTS prevents multiple
@@ -86,15 +97,15 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
   hired:sql<number>`count(distinct ${placementApplications.id}) filter (
     where ${placementApplications.status} = 'SUBMITTED'
     and ${verifiedJoined}
-  )::integer`.mapWith(Number),
-  rejected:tally("REJECTED"),
+  )::integer`.mapWith(Number).as("hired"),
+  rejected:tally("REJECTED").as("rejected"),
   // Cumulative funnel distinct from mutually exclusive snapshot metrics:
   // all applications begin APPLIED, including later withdrawals.
-  funnelApplied:sql<number>`count(distinct ${placementApplications.id})::integer`.mapWith(Number),
-  funnelShortlisted:reached("SHORTLISTED"),
-  funnelAssessment:reached("ASSESSMENT"),
-  funnelInterview:reached("INTERVIEW"),
-  funnelOffered:reached("OFFERED"),
+  funnelApplied:sql<number>`count(distinct ${placementApplications.id})::integer`.mapWith(Number).as("funnel_applied"),
+  funnelShortlisted:reached("SHORTLISTED").as("funnel_shortlisted"),
+  funnelAssessment:reached("ASSESSMENT").as("funnel_assessment"),
+  funnelInterview:reached("INTERVIEW").as("funnel_interview"),
+  funnelOffered:reached("OFFERED").as("funnel_offered"),
   // A joined placement is not always accompanied by a synthetic HIRED
   // college stage. Use the real offer+joining evidence as a second route.
   funnelHired:sql<number>`count(distinct ${placementApplications.id}) filter (
@@ -105,26 +116,27 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
           and h.to_stage = 'HIRED'
       )
     )
-  )::integer`.mapWith(Number),
+  )::integer`.mapWith(Number).as("funnel_hired"),
   firstShortlistCount:sql<number>`count((
     select min(h.moved_at) from ${placementCollegeApplicationStageHistory} h
     where h.stage_id = ${placementCollegeApplicationStages.id}
       and h.to_stage = 'SHORTLISTED' and h.moved_at >= ${appliedAt}
-  ))::integer`.mapWith(Number),
+  ))::integer`.mapWith(Number).as("first_shortlist_count"),
   firstShortlistHours:sql<number|null>`avg((
     select extract(epoch from (min(h.moved_at)-${appliedAt}))/3600
     from ${placementCollegeApplicationStageHistory} h
     where h.stage_id = ${placementCollegeApplicationStages.id}
       and h.to_stage = 'SHORTLISTED'
       and h.moved_at >= ${appliedAt}
-  ))`.mapWith(Number),
+  ))`.mapWith(Number).as("first_shortlist_hours"),
  }).from(placementJobs)
   .innerJoin(placementCompanyRelationships,and(
     eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
-    eq(placementCompanyRelationships.collegeId,selected.collegeId)))
+    eq(placementCompanyRelationships.collegeId,placementJobs.collegeId),
+    selected.collegeId?eq(placementCompanyRelationships.collegeId,selected.collegeId):undefined)))
   .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
   .innerJoin(colleges,and(eq(colleges.id,placementJobs.collegeId),
-    eq(colleges.id,selected.collegeId),
+    selected.collegeId?eq(colleges.id,selected.collegeId):undefined,
     selected.organizationId?eq(colleges.organizationId,selected.organizationId):undefined))
   // A legacy free-text-only company is normalized to a required per-college
   // relationship on import. This join must NOT invent a cross-college job.
@@ -137,7 +149,7 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
     applicationFilters,
     exists(db.select({id:collegeMemberships.id}).from(collegeMemberships)
       .where(and(eq(collegeMemberships.id,placementApplications.membershipId),
-        eq(collegeMemberships.collegeId,selected.collegeId)))),
+        eq(collegeMemberships.collegeId,placementJobs.collegeId)))),
   ))
   .leftJoin(placementCollegeApplicationStages,and(
     eq(placementCollegeApplicationStages.applicationId,placementApplications.id),
@@ -148,10 +160,53 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
     pattern?or(ilike(placementJobs.title,pattern),ilike(placementCompanies.name,pattern)):undefined,
   ))
   .groupBy(placementJobs.id,placementJobs.title,placementCompanies.id,placementCompanies.name)
-  .orderBy(asc(placementCompanies.name),asc(placementJobs.id))
-  .limit(SUPER_ADMIN_HIRING_EXPORT_CAP+1);
+  .as("hiring_per_job");
+ // Aggregate the whole authorized, filtered set IN PostgreSQL. Only the
+ // rendered job table/CSV is capped; a 5000-row cap must never turn a
+ // dashboard's headline counts into plausible but incorrect totals.
+ const [result,totalsRows]=await Promise.all([
+  db.select().from(perJob)
+   .orderBy(asc(perJob.companyName),asc(perJob.jobId))
+   .limit(SUPER_ADMIN_HIRING_EXPORT_CAP+1),
+  db.select({
+   matchingJobCount:sql<number>`count(*)::integer`.mapWith(Number),
+   totalApplications:sql<number>`coalesce(sum(${perJob.totalApplications}),0)::integer`.mapWith(Number),
+   applied:sql<number>`coalesce(sum(${perJob.applied}),0)::integer`.mapWith(Number),
+   shortlisted:sql<number>`coalesce(sum(${perJob.shortlisted}),0)::integer`.mapWith(Number),
+   assessment:sql<number>`coalesce(sum(${perJob.assessment}),0)::integer`.mapWith(Number),
+   interview:sql<number>`coalesce(sum(${perJob.interview}),0)::integer`.mapWith(Number),
+   offered:sql<number>`coalesce(sum(${perJob.offered}),0)::integer`.mapWith(Number),
+   hired:sql<number>`coalesce(sum(${perJob.hired}),0)::integer`.mapWith(Number),
+   rejected:sql<number>`coalesce(sum(${perJob.rejected}),0)::integer`.mapWith(Number),
+   withdrawn:sql<number>`coalesce(sum(${perJob.withdrawn}),0)::integer`.mapWith(Number),
+   waitlisted:sql<number>`coalesce(sum(${perJob.waitlisted}),0)::integer`.mapWith(Number),
+   funnelApplied:sql<number>`coalesce(sum(${perJob.funnelApplied}),0)::integer`.mapWith(Number),
+   funnelShortlisted:sql<number>`coalesce(sum(${perJob.funnelShortlisted}),0)::integer`.mapWith(Number),
+   funnelAssessment:sql<number>`coalesce(sum(${perJob.funnelAssessment}),0)::integer`.mapWith(Number),
+   funnelInterview:sql<number>`coalesce(sum(${perJob.funnelInterview}),0)::integer`.mapWith(Number),
+   funnelOffered:sql<number>`coalesce(sum(${perJob.funnelOffered}),0)::integer`.mapWith(Number),
+   funnelHired:sql<number>`coalesce(sum(${perJob.funnelHired}),0)::integer`.mapWith(Number),
+   shortlistCount:sql<number>`coalesce(sum(${perJob.firstShortlistCount}),0)::integer`.mapWith(Number),
+   shortlistWeightedHours:sql<number>`coalesce(sum(${perJob.firstShortlistHours} * ${perJob.firstShortlistCount}),0)::double precision`.mapWith(Number),
+  }).from(perJob),
+ ]);
  const bounded=result.slice(0,SUPER_ADMIN_HIRING_EXPORT_CAP);
+ const total=totalsRows[0]!;
  return {
+  matchingJobCount:total.matchingJobCount,
+  fullTotals:{
+   totalApplications:total.totalApplications,applied:total.applied,
+   shortlisted:total.shortlisted,assessment:total.assessment,
+   interview:total.interview,offered:total.offered,hired:total.hired,
+   rejected:total.rejected,withdrawn:total.withdrawn,waitlisted:total.waitlisted,
+  },
+  fullFunnelTotals:{
+   applied:total.funnelApplied,shortlisted:total.funnelShortlisted,
+   assessment:total.funnelAssessment,interview:total.funnelInterview,
+   offered:total.funnelOffered,hired:total.funnelHired,
+  },
+  fullShortlistMeanHours:total.shortlistCount>0
+   ?Math.round(total.shortlistWeightedHours/total.shortlistCount):null,
   query,
   // These rows preserve the mutually exclusive current-status snapshot.
   rows:bounded as SuperAdminHiringRow[],
@@ -175,7 +230,7 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
    applicationClock:"FIRST_APPLIED_AT_OR_SUBMITTED_AT" as const,
    hiredEvidence:"ACCEPTED_OFFER_AND_JOINED_OUTCOME" as const,
    firstShortlistLatency:"FIRST_VALID_SHORTLIST_TRANSITION" as const,
-   sharedJobs:"SELECTED_COLLEGE_ONLY" as const,
+   sharedJobs:selected.collegeId?"SELECTED_COLLEGE_ONLY" as const:"AUTHORIZED_ORGANIZATION_ONLY" as const,
    companyReportJobFilter:"EXPLICIT_JOB_SCOPE_EXTENSION" as const,
    // Snapshot stages count only submitted applications. Withdrawn rows
    // remain in totalApplications and in a distinct withdrawn bucket;
