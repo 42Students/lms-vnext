@@ -13,10 +13,12 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-2-014-019  (source: docs/audit/gap-fix-work/verify2/packets/lane-8/W1_lane8_5.md)
 - [ ] G2-2-017-006  (source: docs/audit/gap-fix-work/verify2/packets/lane-8/W1_lane8_5.md)
 - [ ] G2-2-029-016  (source: docs/audit/gap-fix-work/verify2/packets/lane-8/W1_lane8_5.md)
-- [ ] G2-2-029-059  (source: docs/audit/gap-fix-work/verify2/packets/lane-8/W1_lane8_5.md)
+- [x] G2-2-029-059  (source: docs/audit/gap-fix-work/verify2/packets/lane-8/W1_lane8_5.md)
 - [ ] G2-2-029-065  (source: docs/audit/gap-fix-work/verify2/packets/lane-8/W1_lane8_5.md)
 - [ ] G2-2-029-102  (source: docs/audit/gap-fix-work/verify2/packets/lane-8/W1_lane8_5.md)
 - [ ] G2-2-031-016  (source: docs/audit/gap-fix-work/verify2/packets/lane-8/W1_lane8_5.md)
 
 ## Results
+
+- G2-2-029-059: OK — vNext `src/modules/academics/college-batch-retire-service.ts:33-44` resolves acting-college Super Admin with `academics.manage` and scopes the batch lookup to the resolved college through department and program; legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/BatchController.java:308-321` permits scoped Super Admin actions. The separate delete-versus-archive retention difference remains explicitly documented in the same vNext service at lines 12-20; this verification covers the scoped SA authorization requirement, not hard-delete parity.
 
