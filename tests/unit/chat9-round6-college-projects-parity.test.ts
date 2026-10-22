@@ -5,7 +5,7 @@ const source=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
 describe("College Admin Projects round 6",()=>{
  it("COL-projects-16 provides template search section counts details and a scoped CSV export",()=>{
   const s=source("src/app/(authenticated)/college/projects/templates/page.tsx");
-  for(const text of ["visible.map","ProjectTemplateCatalogueSearch","Sections","ProjectTemplateCatalogueExport","projectTemplateSectionCounts","View template"])expect(s).toContain(text);
+  for(const text of ["visible.map","ProjectTemplateCatalogueSearch","Sections","ProjectTemplateCatalogueExport","projectTemplateSectionCounts","View &amp; use"])expect(s).toContain(text);
   expect(source("src/components/projects/project-template-catalogue-search.tsx")).toContain("Search title or slug");
   expect(source("src/modules/projects/project-template-catalogue-model.ts")).toContain("projectTemplateCatalogueCsv");
  });

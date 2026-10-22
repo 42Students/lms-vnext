@@ -20,10 +20,9 @@ export function learnerOfferActionErrorMessage(
    return "This offer can no longer be responded to. Refresh the page to review its current status.";
   return "This offer may have changed or expired. Refresh the page and review its current status.";
  }
- if(status===404 && code==="PLACEMENT_OFFER_NOT_FOUND")
-  return "Offer not found. Refresh the page to see your current offers.";
  if(status===401)return "Your session expired. Sign in again, then return to My offers.";
- if(status===403)return "Only learners can respond to their own offers. Switch to your learner workspace.";
- if(status===404)return "Offer not found. Return to My offers and refresh the list.";
+ // The role, tenant and unknown-offer denial is deliberately indistinguishable.
+ if(status===403||status===404)
+  return "This offer is not available to your current account. Switch to your learner workspace and refresh My offers.";
  return "Could not record the offer response. No change is confirmed; please retry.";
 }
