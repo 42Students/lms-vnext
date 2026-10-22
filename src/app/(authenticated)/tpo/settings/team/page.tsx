@@ -1,4 +1,6 @@
 import { Disclosure } from "@/components/ui/disclosure";
+import {TpoTeamAwayForm} from "@/components/tpo/tpo-team-away-form";
+import {listTpoTeamAway} from "@/modules/placements/tpo-team-away-service";
 import { TpoSettingsTeamManage, TpoSettingsTeamRemove } from "@/components/tpo/tpo-settings-team-manage";
 import { listTpoTeamAssignableStaff } from "@/modules/placements/tpo-settings-team-actions-service";
 import {readTpoTeamAskWorkload} from "@/modules/placements/tpo-team-workload-service";
@@ -60,6 +62,9 @@ export default async function TpoPlacementTeamPage({searchParams}: {
   const { members, summary, sources } = data;
   const workload=await readTpoTeamAskWorkload(context).catch(()=>({ready:false as const,items:[]}));
   const workloadByMember=new Map(workload.items.map(item=>[item.membershipId,item]));
+  // Show only persisted, scoped intervals; an unavailable table is not an all-present roster.
+  const awayState=await listTpoTeamAway(context).catch(()=>({ready:false as const,items:[]}));
+  const awayByMember=new Map(awayState.items.map(item=>[item.membershipId,item.awayUntil]));
   const sortedMembers=sortTpoPeople(members.map(member=>({
     ...member,
     openAsks:workloadByMember.get(member.membershipId)?.openAsks??0,
@@ -85,6 +90,21 @@ export default async function TpoPlacementTeamPage({searchParams}: {
         }
       />
       <TpoSettingsNav active="team" compact />
+
+      {awayState.ready ? <section aria-label="Team availability" className="min-w-0 space-y-3 border-b border-border pb-4">
+        <h2 className="text-base font-semibold text-foreground">Who is away</h2>
+        <p className="text-sm text-body">Only verified away intervals for this placement team are shown.</p>
+        {awayState.items.length ? <ul className="space-y-2 text-sm text-body">
+          {sortedMembers.filter(member=>awayByMember.has(member.membershipId)).map(member=>{
+            const until=awayByMember.get(member.membershipId);
+            return until ? <li key={member.membershipId} className="min-w-0 break-words">
+              <span className="font-semibold">{member.displayName}</span>{" is away until "}
+              <time dateTime={until.toISOString()}>{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(until)} IST</time>
+            </li> : null;
+          })}
+        </ul> : <p role="status" className="text-sm text-muted-foreground">No active away intervals are recorded.</p>}
+        {context.membership && awayState.ready ? <TpoTeamAwayForm until={awayByMember.get(context.membership.id)?.toISOString()??null}/> : null}
+      </section> : <Alert tone="warning" role="alert">Team away intervals are unavailable. Presence is not inferred from missing records.</Alert>}
 
       {!sources.teamAssignmentsAvailable ? (
         <Alert tone="warning">
