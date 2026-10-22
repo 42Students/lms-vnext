@@ -18,8 +18,8 @@ export async function sendManualTelegramAlertForAdmin(
   if(kind==="DIGEST"){
     const hours=Number.isFinite(requestedHours)?Math.max(1,Math.min(336,Math.trunc(requestedHours))):24;
     const windowStart=now.getTime()-hours*60*60*1000;
-    const environment=process.env.APP_ENV==="production"?"PRODUCTION":
-      process.env.APP_ENV==="uat"?"UAT":"DEVELOPMENT";
+    const environment=process.env["APP_ENV"]==="production"?"PRODUCTION":
+      process.env["APP_ENV"]==="uat"?"UAT":"DEVELOPMENT";
     const latest=await listKnownErrorsForAdmin(context,{environment,limit:100});
     message=[
       "42 Tracker manual error digest ("+hours+"h window; latest 100 signatures)",
