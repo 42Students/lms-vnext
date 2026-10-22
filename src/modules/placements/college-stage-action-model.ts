@@ -13,14 +13,19 @@ export const collegeStageCommandSchema=z.object({
  matchingFilter:driveApplicationsQuerySchema.optional(),
  stage:z.preprocess(value=>typeof value==="string"?value.trim().toUpperCase():value,
   z.enum(COLLEGE_APPLICATION_STAGES)).optional(),
- reason:z.string().trim().min(3).max(1000),
+ // Freeform reasons are optional for ordinary legacy transitions;
+  // the persistence layer records a transparent audit fallback.
+  reason:z.string().trim().max(1000).default(""),
  notifyByEmail:z.boolean().default(false),
  // Legacy notifyStudent is distinct from optional email delivery. A false
  // value suppresses the transactional in-app notice, not the audit event.
  notifyLearnerInApp:z.boolean().default(true),
  // Only a deliberate Move to Assessment may attach a real HTTPS link.
  assessmentUrl:z.string().trim().url().max(2048)
-  .refine(url=>url.startsWith("https://"),"Enter a secure HTTPS assessment URL.")
+  .refine(url=>{
+    try{const parsed=new URL(url);return (parsed.protocol==="http:"||parsed.protocol==="https:")&&
+      Boolean(parsed.hostname)&&!parsed.username&&!parsed.password;}catch{return false;}
+   },"Must be a valid URL starting with http:// or https://")
   .optional(),
  saveAssessmentUrlToJob:z.boolean().default(false),
  confirmed:z.literal(true),
@@ -28,7 +33,9 @@ export const collegeStageCommandSchema=z.object({
  if((v.matchingFilter && v.applicationIds.length) || (!v.matchingFilter && v.applicationIds.length===0))
   ctx.addIssue({code:"custom",path:["applicationIds"],message:"Select page applicants or all matching applicants, not both"});
  if(v.action!=="REINSTATE"&&!v.stage)ctx.addIssue({code:"custom",path:["stage"],message:"Choose a new application stage"});
- if(v.action==="CORRECT"&&v.reason.trim().length<10)
+ if(v.stage==="REJECTED"&&v.reason.length>500)
+   ctx.addIssue({code:"custom",path:["reason"],message:"Reason must be 500 characters or fewer"});
+  if(v.action==="CORRECT"&&v.reason.trim().length<10)
   ctx.addIssue({code:"custom",path:["reason"],message:"Explain the exceptional correction in at least 10 characters"});
  if(v.action==="REINSTATE"&&v.stage)ctx.addIssue({code:"custom",path:["stage"],message:"Reinstate uses the previous stage"});
  if((v.assessmentUrl!==undefined||v.saveAssessmentUrlToJob) &&

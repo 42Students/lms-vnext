@@ -54,6 +54,7 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
  const acting=await resolveActingCollege(context,"placements.manage");
  const collegeId=await requireCollegePlacementAdmin(context),jobId=collegeDriveIdSchema.parse(rawJobId);
  const input=collegeStageCommandSchema.parse(raw);
+  const recordedReason=input.reason||"No reason provided for routine stage transition";
  if(input.notifyByEmail)throw Error("Email delivery is not registered for College Admin pipeline moves. Choose in-app notifications.");
  let applicationIds=input.applicationIds;
  if(input.matchingFilter){
@@ -201,20 +202,20 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
       eq(placementApplicationScreenings.status,"REJECTED")));
      await tx.insert(placementApplicationScreeningHistory).values({
       applicationId,fromStatus:"REJECTED",toStatus:"PENDING",
-      internalReason:input.reason,candidateMessage:null,actorUserId:context.user.id,
+      internalReason:recordedReason,candidateMessage:null,actorUserId:context.user.id,
      });
      screeningStatus="PENDING";
      if(next!=="APPLIED"){
       // Interview/assessment/waitlist states still require a valid shortlisted
       // screening decision after restoration, never a lingering REJECTED flag.
       await tx.update(placementApplicationScreenings).set({
-       status:"SHORTLISTED",candidateMessage:null,internalReason:input.reason,
+       status:"SHORTLISTED",candidateMessage:null,internalReason:recordedReason,
        decidedByUserId:context.user.id,decidedAt:new Date(),updatedAt:new Date(),
       }).where(and(eq(placementApplicationScreenings.applicationId,applicationId),
        eq(placementApplicationScreenings.status,"PENDING")));
       await tx.insert(placementApplicationScreeningHistory).values({
        applicationId,fromStatus:"PENDING",toStatus:"SHORTLISTED",
-       internalReason:input.reason,candidateMessage:null,actorUserId:context.user.id,
+       internalReason:recordedReason,candidateMessage:null,actorUserId:context.user.id,
       });
       screeningStatus="SHORTLISTED";
      }
@@ -232,24 +233,24 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
       status:target,decidedAt:new Date(),decidedByUserId:context.user.id,
       // Internal staff reason is never disclosed to a learner.
       candidateMessage:target==="REJECTED"?"Your application was not selected.":null,
-      internalReason:input.reason,
+      internalReason:recordedReason,
       updatedAt:new Date(),
      }).where(eq(placementApplicationScreenings.applicationId,applicationId));
      await tx.insert(placementApplicationScreeningHistory).values({
       applicationId,fromStatus:screeningStatus,toStatus:target,
       candidateMessage:target==="REJECTED"?"Your application was not selected.":null,
-      internalReason:input.reason,actorUserId:context.user.id,
+      internalReason:recordedReason,actorUserId:context.user.id,
      });
     }
     const [saved]=old?await tx.update(placementCollegeApplicationStages).set({
      stage:next,previousStage:from,version:old.version+1,
-     reason:input.reason,movedByUserId:context.user.id,
+     reason:recordedReason,movedByUserId:context.user.id,
      movedAt:new Date(),updatedAt:new Date(),
     }).where(and(eq(placementCollegeApplicationStages.id,old.id),
       eq(placementCollegeApplicationStages.version,old.version)))
      .returning({id:placementCollegeApplicationStages.id}):
      await tx.insert(placementCollegeApplicationStages).values({
-      jobId,applicationId,stage:next,previousStage:from,reason:input.reason,
+      jobId,applicationId,stage:next,previousStage:from,reason:recordedReason,
       movedByUserId:context.user.id,
      }).returning({id:placementCollegeApplicationStages.id});
     if(!saved)throw Error("Application stage changed. Reload the pipeline and try again.");
@@ -272,7 +273,7 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      }
     }
     await tx.insert(placementCollegeApplicationStageHistory).values({
-     stageId:saved.id,fromStage:from,toStage:next,reason:input.reason,
+     stageId:saved.id,fromStage:from,toStage:next,reason:recordedReason,
      actorUserId:context.user.id,
     });
     const humanStage=next.replaceAll("_"," ").toLowerCase();
@@ -285,7 +286,7 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      summary:input.action==="CORRECT"?"College Admin corrected application stage to "+readableStage:
       input.action==="REINSTATE"?"College Admin reinstated application to "+readableStage:
       "College Admin moved application to "+readableStage,
-     metadata:{jobId,from,to:next,reason:input.reason,
+     metadata:{jobId,from,to:next,reason:recordedReason,
       exceptionalCorrection:input.action==="CORRECT",
       cancelledInterviewCount,
       assessmentLinkAttached:next==="ASSESSMENT"&&Boolean(input.assessmentUrl),

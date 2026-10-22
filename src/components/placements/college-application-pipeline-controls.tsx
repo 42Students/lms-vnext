@@ -112,15 +112,15 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   setOutcome(null);setError("");setDialog(true);
  }
  async function save(){
-  if(!selectedCount||reason.trim().length<(action==="CORRECT"?10:3)||busy)return;
+  if(!selectedCount||(action==="CORRECT"&&reason.trim().length<10)||busy)return;
   const assessment=assessmentUrl.trim();
   if(action==="MOVE"&&target==="ASSESSMENT"&&assessment){
    try{
     const url=new URL(assessment);
-    if(url.protocol!=="https:"||!url.hostname||url.username||url.password||assessment.length>2048)
+    if(!["http:","https:"].includes(url.protocol)||!url.hostname||url.username||url.password||assessment.length>2048)
      throw Error("Invalid assessment URL");
    }catch{
-    setError("Enter an HTTPS assessment URL, or leave it blank.");return;
+    setError("Must be a valid URL starting with http:// or https://");return;
    }
   }
   const epoch=scopeEpoch.current;
@@ -331,21 +331,25 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   <Dialog open={dialog} onOpenChange={next=>{if(!next&&!busy)setDialog(false);}} title={dialogTitle} dismissible={!busy} footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:min-h-11 [&>button]:w-full md:[&>button]:min-h-9 md:[&>button]:w-auto">
     <Button type="button" disabled={busy} variant="secondary" onClick={()=>{setDialog(false);setError("");setOutcome(null);}}>Close</Button>
     <Button type="button" variant={target==="REJECTED"?"danger":"primary"}
-      disabled={busy||reason.trim().length<(action==="CORRECT"?10:3)||!selectedCount}
+      disabled={busy||(action==="CORRECT"&&reason.trim().length<10)||!selectedCount}
       onClick={()=>void save()}>{busy?"Updating…":action==="REINSTATE"?"Reinstate "+selectedCount+" application(s)":
        target==="REJECTED"?"Reject "+selectedCount+" application(s)":"Confirm "+selectedCount+" application(s)"}</Button>
    </div>}>
     <p className="text-base font-semibold">{dialogTitle}</p>
-    <p className="text-sm text-body leading-[22px]">{selectedCount} application(s) chosen. {action==="REINSTATE"?"Reinstate restores the previous stage while preserving recorded rejection history.":target==="REJECTED"?"Reject requires a recorded reason and is reversible only through Reinstate.":"Outcomes requiring real offers and joining confirmations cannot be fabricated from a pipeline change."}
+    <p className="text-sm text-body leading-[22px]">{selectedCount} application(s) chosen. {action==="REINSTATE"?"Reinstate restores the previous stage while preserving recorded rejection history.":target==="REJECTED"?"Reject may include an optional reason and is reversible only through Reinstate.":"Outcomes requiring real offers and joining confirmations cannot be fabricated from a pipeline change."}
       Learner in-app notification is optional. Every change is audited, and changes that violate screening rules are reported as skipped.</p>
     {selected.length>5?<p id="pipeline-selected-scroll-cue" className="text-xs text-muted-foreground leading-5">More selected learners below ↓</p>:null}
    <ul tabIndex={0} role="region" aria-label="Selected applications" aria-describedby={selected.length>5?"pipeline-selected-scroll-cue":undefined}
     className="max-h-28 overflow-y-auto overscroll-contain pb-4 text-sm [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1rem),transparent_100%)]">{selected.slice(0,8).map(id=>
       <li key={id}>{rowMap.get(id)?.name??id}</li>)}
      {selected.length>8?<li>and {selected.length-8} more</li>:null}</ul>
-    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Reason
-     <Textarea rows={3} required minLength={action==="CORRECT"?10:3} maxLength={1000} value={reason} onChange={e=>setReason(e.target.value)}
-      className="w-full text-base sm:text-sm"/></label>
+    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+      {action==="CORRECT"?"Reason (required for correction)":"Reason (optional)"}
+      <Textarea rows={3} required={action==="CORRECT"} minLength={action==="CORRECT"?10:undefined}
+       maxLength={target==="REJECTED"?500:1000}
+       placeholder={target==="REJECTED"?"e.g. Does not meet requirements":"Optional details for the audit history"}
+       value={reason} onChange={e=>setReason(e.target.value)}
+       className="w-full text-base sm:text-sm"/></label>
     {action==="MOVE"&&target==="ASSESSMENT"?<div className="space-y-2">
       <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
        Assessment URL (optional)
