@@ -438,7 +438,8 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
                     <Link href={"/college/classes/recurring-preview?classId="+encodeURIComponent(item.id)}
                       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text"
                       title={"Schedule sessions for "+item.name} aria-label={"Schedule recurring sessions for "+item.name}>Schedule</Link>
-                    <CollegeClassRowActions row={item} cohorts={classOptions?.cohorts} periods={classOptions?.periods}/>
+                    <CollegeClassRowActions row={item}
+                      {...(classOptions ? { cohorts: classOptions.cohorts, periods: classOptions.periods } : {})}/>
                     <CollegeSectionLifecycleAction row={{
                       id:item.id,name:item.name,status:item.status,canDelete:item.canDelete,
                       updatedAt:item.updatedAt.toISOString(),
