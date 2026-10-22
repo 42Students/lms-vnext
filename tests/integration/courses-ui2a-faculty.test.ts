@@ -6,6 +6,7 @@ import {
   it,
 } from "vitest";
 import { Pool } from "pg";
+import { randomUUID } from "node:crypto";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { createProgram } from "@/modules/academics/program-service";
@@ -102,15 +103,21 @@ const faculty: RequestContext = {
   },
 };
 
+// Do not reuse the seeded learner: it already owns one active program enrollment.
+// The real membership uniqueness constraint must remain enforced.
+const facultyFixtureLearnerUserId=randomUUID();
+const facultyFixtureLearnerMembershipId=randomUUID();
+const facultyFixtureLearnerRoleId=randomUUID();
+
 const learner: RequestContext = {
   user: {
-    id: SEED_IDS.learnerUser,
+    id: facultyFixtureLearnerUserId,
     identityUid: "seed-learner",
     platformStatus: "ACTIVE",
     systemRoles: [],
   },
   membership: {
-    id: SEED_IDS.learnerCollegeAMembership,
+    id: facultyFixtureLearnerMembershipId,
     collegeId: SEED_IDS.collegeA,
     organizationId: SEED_IDS.organization,
     status: "ACTIVE",
@@ -401,7 +408,7 @@ async function createStructure() {
       collegeAdmin,
       {
         membershipId:
-          SEED_IDS.learnerCollegeAMembership,
+          facultyFixtureLearnerMembershipId,
         programId: program.id,
         cohortId: cohort.id,
       },
@@ -524,10 +531,26 @@ async function createStructure() {
 
 beforeEach(async () => {
   await cleanupUI2A();
+  // Seed only this suite\u0027s learner; preserve unique active membership/program invariants.
+  await pool.query("INSERT INTO users(id,identity_uid,display_name) VALUES($1,$2,$3) ON CONFLICT(id) DO NOTHING",
+    [facultyFixtureLearnerUserId,"faculty-ui2a-"+facultyFixtureLearnerUserId,"Faculty UI2A learner"]);
+  await pool.query("INSERT INTO college_memberships(id,user_id,college_id) VALUES($1,$2,$3) ON CONFLICT(id) DO NOTHING",
+    [facultyFixtureLearnerMembershipId,facultyFixtureLearnerUserId,SEED_IDS.collegeA]);
+  await pool.query("INSERT INTO membership_roles(id,membership_id,role) VALUES($1,$2,\u0027LEARNER\u0027) ON CONFLICT(id) DO NOTHING",
+    [facultyFixtureLearnerRoleId,facultyFixtureLearnerMembershipId]);
 });
 
 afterAll(async () => {
   await cleanupUI2A();
+  // Keep the actor shell if an immutable audit references it. Never delete audit evidence.
+  const audit=await pool.query<{used:boolean}>(
+    "SELECT EXISTS(SELECT 1 FROM activity_events WHERE actor_user_id=$1 OR actor_membership_id=$2) AS used",
+    [facultyFixtureLearnerUserId,facultyFixtureLearnerMembershipId]);
+  if(!audit.rows[0]?.used){
+    await pool.query("DELETE FROM membership_roles WHERE id=$1",[facultyFixtureLearnerRoleId]);
+    await pool.query("DELETE FROM college_memberships WHERE id=$1",[facultyFixtureLearnerMembershipId]);
+    await pool.query("DELETE FROM users WHERE id=$1",[facultyFixtureLearnerUserId]);
+  }
   await pool.end();
   await closeDatabaseConnection();
 });
@@ -727,7 +750,7 @@ describe("courses UI2A faculty read model", () => {
         (row) => row.membershipId,
       ),
     ).toEqual([
-      SEED_IDS.learnerCollegeAMembership,
+      facultyFixtureLearnerMembershipId,
     ]);
     expect(initial.sessions).toEqual([
       expect.objectContaining({
@@ -759,7 +782,7 @@ describe("courses UI2A faculty read model", () => {
           deliveryId:
             structure.deliveryA.id,
           absentMembershipIds: [
-            SEED_IDS.learnerCollegeAMembership,
+            facultyFixtureLearnerMembershipId,
           ],
           presentMembershipIds: [],
         },
@@ -799,7 +822,7 @@ describe("courses UI2A faculty read model", () => {
             structure.deliveryA.id,
           absentMembershipIds: [],
           presentMembershipIds: [
-            SEED_IDS.learnerCollegeAMembership,
+            facultyFixtureLearnerMembershipId,
           ],
           expectedMarkedAt: new Date(markedAt!).toISOString(),
           correctionReason: "Marked absent by mistake",
@@ -872,7 +895,7 @@ describe("courses UI2A faculty read model", () => {
       row.actor_user_id === faculty.user.id &&
       row.college_id === SEED_IDS.collegeA
     )).toBe(true);
-    expect(JSON.stringify(audits.rows)).not.toContain(SEED_IDS.learnerCollegeAMembership);
+    expect(JSON.stringify(audits.rows)).not.toContain(facultyFixtureLearnerMembershipId);
 
     const future = await createFacultyAttendanceSession(faculty, {
       deliveryId: structure.deliveryA.id,
@@ -882,7 +905,7 @@ describe("courses UI2A faculty read model", () => {
     });
     await expect(markFacultyAttendance(faculty, future.id, {
       deliveryId: structure.deliveryA.id,
-      absentMembershipIds: [SEED_IDS.learnerCollegeAMembership],
+      absentMembershipIds: [facultyFixtureLearnerMembershipId],
       presentMembershipIds: [],
     })).rejects.toMatchObject({ code: "ATTENDANCE_NOT_STARTED" });
 
@@ -900,7 +923,7 @@ describe("courses UI2A faculty read model", () => {
     );
     await expect(markFacultyAttendance(faculty, expired.id, {
       deliveryId: structure.deliveryA.id,
-      absentMembershipIds: [SEED_IDS.learnerCollegeAMembership],
+      absentMembershipIds: [facultyFixtureLearnerMembershipId],
       presentMembershipIds: [],
     })).rejects.toMatchObject({ code: "ATTENDANCE_CORRECTION_WINDOW_EXPIRED" });
 
@@ -976,7 +999,7 @@ describe("courses UI2A faculty read model", () => {
         (row) => row.membershipId,
       ),
     ).toEqual([
-      SEED_IDS.learnerCollegeAMembership,
+      facultyFixtureLearnerMembershipId,
     ]);
 
     const quizReport =
@@ -996,7 +1019,7 @@ describe("courses UI2A faculty read model", () => {
         (row) => row.membershipId,
       ),
     ).toEqual([
-      SEED_IDS.learnerCollegeAMembership,
+      facultyFixtureLearnerMembershipId,
     ]);
   });
 
@@ -1013,7 +1036,7 @@ describe("courses UI2A faculty read model", () => {
         (row) => row.membershipId,
       ),
     ).toEqual([
-      SEED_IDS.learnerCollegeAMembership,
+      facultyFixtureLearnerMembershipId,
     ]);
     await expect(
       getFacultyDeliveryRoster(
@@ -1243,7 +1266,7 @@ describe("courses UI2A faculty read model", () => {
     expect(learners.items).toEqual(expect.arrayContaining([
       expect.objectContaining({
         membershipId:
-          SEED_IDS.learnerCollegeAMembership,
+          facultyFixtureLearnerMembershipId,
         departmentName: null,
         roles: expect.arrayContaining([
           "LEARNER",
@@ -1276,7 +1299,7 @@ describe("courses UI2A faculty read model", () => {
     });
     expect(allCollegeA.pageSize).toBe(10);
     expect(allCollegeA.items.map((item) => item.membershipId))
-      .toContain(SEED_IDS.learnerCollegeAMembership);
+      .toContain(facultyFixtureLearnerMembershipId);
     expect(allCollegeA.items.map((item) => item.membershipId))
       .not.toContain(SEED_IDS.facultyCollegeBMembership);
     const facultyInCollegeB = {
@@ -1293,7 +1316,7 @@ describe("courses UI2A faculty read model", () => {
     expect(allCollegeB.items.map((item) => item.membershipId))
       .toContain(SEED_IDS.facultyCollegeBMembership);
     expect(allCollegeB.items.map((item) => item.membershipId))
-      .not.toContain(SEED_IDS.learnerCollegeAMembership);
+      .not.toContain(facultyFixtureLearnerMembershipId);
 
     const stalePage = await listFacultyContacts(faculty, {
       tab: "ALL", page: 99999, pageSize: 10,
@@ -1379,7 +1402,7 @@ describe("courses UI2A faculty read model", () => {
         (row) => row.membershipId,
       ),
     ).toEqual([
-      SEED_IDS.learnerCollegeAMembership,
+      facultyFixtureLearnerMembershipId,
     ]);
     expect(initial.sessions).toEqual([
       expect.objectContaining({
@@ -1396,7 +1419,7 @@ describe("courses UI2A faculty read model", () => {
         deliveryId:
           structure.deliveryA.id,
         membershipId:
-          SEED_IDS.learnerCollegeAMembership,
+          facultyFixtureLearnerMembershipId,
         status: "EXCUSED",
       },
     );
@@ -1414,7 +1437,7 @@ describe("courses UI2A faculty read model", () => {
     expect(excused.records).toEqual([
       expect.objectContaining({
         membershipId:
-          SEED_IDS.learnerCollegeAMembership,
+          facultyFixtureLearnerMembershipId,
         status: "EXCUSED",
         markedByUserId:
           SEED_IDS.collegeAdminUser,
@@ -1434,7 +1457,7 @@ describe("courses UI2A faculty read model", () => {
         deliveryId:
           structure.deliveryA.id,
         membershipId:
-          SEED_IDS.learnerCollegeAMembership,
+          facultyFixtureLearnerMembershipId,
         status: "PRESENT",
       },
     );
