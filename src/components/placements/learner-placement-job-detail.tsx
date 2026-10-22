@@ -79,14 +79,12 @@ export function LearnerPlacementJobDetail({
   const item = items[0]!;
   const website = safeLearnerPlacementUrl(item.company.websiteUrl);
   const urgency=learnerDriveDeadlineUrgency(item.job.applicationDeadline,item.deadlinePassed,new Date().toISOString());
-  const deadlineDate=item.job.applicationDeadline?new Date(item.job.applicationDeadline):null;
-  const urgencyCopy=urgency.kind==="today"?"Closes today":
-    urgency.kind==="soon"&&deadlineDate?Math.max(1,Math.ceil((deadlineDate.getTime()-Date.now())/86_400_000))+
-      " day"+(Math.ceil((deadlineDate.getTime()-Date.now())/86_400_000)===1?"":"s")+" left":urgency.label;
+  // Use the shared IST calendar-day label: tomorrow must not read "Closes today".
+  const urgencyCopy=urgency.label;
   const availability=learnerJobAvailabilityBanner(items);
   const applied=items.filter(row=>row.application?.status==="SUBMITTED"&&row.application.id);
   const evidencePreviewUnavailable=items.length>0&&items.every(row=>
-    row.eligibility.checks.length===0&&!row.application);
+    row.eligibility.checks.length===0&&!row.application&&!row.canApply);
   const failed = items.filter((row) => row.eligibility.status === "INELIGIBLE");
   const requirements=learnerDriveEvidenceRequirements(items);
   // A positive eligibility score is not an application authorization.
