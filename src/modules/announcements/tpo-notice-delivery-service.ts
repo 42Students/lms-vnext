@@ -25,6 +25,13 @@ export function parseLegacyTpoNoticeSchedule(raw:unknown):{
   iso.test(value)?new Date(value):null;
  if(!parsed||!Number.isFinite(parsed.getTime()))
   return {ok:false,message:"Choose a valid schedule date and time."};
+ // Java LocalDateTime rejected impossible days; JavaScript Date otherwise
+ // normalizes 31 February or minute 60 into a different scheduled instant.
+ if(local){
+  const normalized=new Date(parsed.getTime()+330*60_000).toISOString().slice(0,19);
+  if(normalized!==local[1]+"T"+local[2]+":"+(local[3]??"00"))
+   return {ok:false,message:"Choose a valid schedule date and time."};
+ }
  return {ok:true,scheduledAt:parsed};
 }
 
@@ -107,14 +114,16 @@ export async function deliverDueTpoNotices(now=new Date()){
     .where(and(
      eq(collegeMemberships.collegeId,notice.collegeId),
      eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
-     // Legacy TPO placement announcements address learners, not college
-     // staff. A person who is also Faculty needs a verified LEARNER role
-     // to receive this notice; a generic COLLEGE row is not an all-users fanout.
-     learners,
-     ...(audienceKind!=="COLLEGE"?[inArray(collegeMemberships.id,
-      tx.select({id:placementTpoNoticeRecipients.membershipId})
-       .from(placementTpoNoticeRecipients)
-       .where(eq(placementTpoNoticeRecipients.announcementId,notice.id)))]:[]),
+     // A COLLEGE audience is a college-wide notice: faculty and admins
+     // must not be silently excluded. Targeted placement audiences retain
+     // their explicit enrolled-learner role and membership allowlist.
+     ...(audienceKind==="COLLEGE"?[]:[
+      learners,
+      inArray(collegeMemberships.id,
+       tx.select({id:placementTpoNoticeRecipients.membershipId})
+        .from(placementTpoNoticeRecipients)
+        .where(eq(placementTpoNoticeRecipients.announcementId,notice.id))),
+     ]),
     )).limit(20001);
    // One college can have 10,000 learners. A too-large audience cannot be
    // silently partially notified: return a detectable retryable failure.
