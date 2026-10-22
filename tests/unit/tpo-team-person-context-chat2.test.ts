@@ -12,9 +12,10 @@ describe("TPO team conversation and person context",()=>{
   expect(page).toContain('result.thread.counterpartName');
  });
  it("TPO-inbox-team-31 shows You only for the active roster membership",()=>{
-  const page=src("src/app/(authenticated)/tpo/team/page.tsx");
-  expect(page).toContain("member.membershipId===context.membership?.id");
-  expect(page).toContain(">You</span>");
+  const page=src("src/app/(authenticated)/tpo/settings/team/page.tsx");
+  expect(page).toContain("const actorMembershipId = context.membership.id");
+  expect(page).toContain("isSelf={member.membershipId===actorMembershipId}");
+  expect(src("src/app/(authenticated)/tpo/team/page.tsx")).toContain('redirect("/tpo/settings/team")');
  });
  it("TPO-inbox-team-42 and TPO-inbox-team-R07 offer a keyboard-native All conversations back link",()=>{
   const page=src("src/app/(authenticated)/tpo/team/[threadId]/page.tsx");
