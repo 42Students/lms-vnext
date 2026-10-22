@@ -8,7 +8,7 @@ const pages=[
     "route": "/mentor",
     "file": "src/app/(authenticated)/mentor/page.tsx",
     "service": "resolveOptionalModuleAccess",
-    "state": "Projects could not be loaded"
+    "state": "Could not verify Projects access"
   },
   {
     "route": "/mentor/activity",
@@ -116,7 +116,7 @@ const pages=[
     "route": "/mentor/projects/[projectId]/timeline",
     "file": "src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx",
     "service": "getMentorProjectTimeline",
-    "state": "No matching registered Releases"
+    "state": "No matching registered releases"
   },
   {
     "route": "/mentor/reports",
@@ -169,7 +169,11 @@ describe("UX-mentor-all-pages-scope-02 mentor page-state and scope coverage",()=
       expect(src).toContain("getCurrentRequestContext");
       expect(src).toContain(page.service);
       expect(src).toContain(page.state);
-      expect(src).toContain("PageHeader");
+      if(page.route==="/mentor"){
+        expect(src).toContain("<h1");
+        expect(src).toContain("Retry access check");
+        expect(src).toContain('hasMembershipRole(context,"MENTOR")');
+      }else expect(src).toContain("PageHeader");
       expect(src).toMatch(/@\/components\/(?:ui|projects|activity)/);
       expect(src).not.toContain("dangerouslySetInnerHTML");
     });
