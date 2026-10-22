@@ -26,6 +26,8 @@ export const collegeOwnProfileSchema = z.object({
   social: z.object({
     linkedIn: httpsLink, github: httpsLink,
     website: httpsLink, instagram: httpsLink,
+    // Optional to preserve saved vNext profiles written before Twitter editing.
+    twitter: httpsLink.optional(),
   }),
   personalDetails: z.object({
     gender: short, dateOfBirth: z.union([z.literal(""),z.iso.date()]),
@@ -53,9 +55,12 @@ export const collegeOwnProfileSchema = z.object({
 export type CollegeOwnProfileInput = z.infer<typeof collegeOwnProfileSchema>;
 const emptyProfile: Omit<CollegeOwnProfileInput, "displayName"> = {
   roleTitle: "", about: "", photoUrl: "",
-  social: { linkedIn: "", github: "", website: "", instagram: "" },
-  address: { line1: "", line2: "", city: "", state: "", postalCode: "", country: "" },
-  contacts: { alternateEmail: "", alternatePhone: "", contactPerson: "" },
+  social: { linkedIn: "", github: "", website: "", instagram: "", twitter: "" },
+  personalDetails: { gender: "", dateOfBirth: "", bloodGroup: "" },
+  address: { line1: "", line2: "", city: "", state: "", postalCode: "", country: "",
+    currentAddress: "", permanentAddress: "" },
+  contacts: { alternateEmail: "", alternatePhone: "", contactPerson: "",
+    contactMobile: "", contactPhone: "", contactMail: "" },
 };
 
 /** A legacy profile had independent personal, contacts, address and social
@@ -144,6 +149,19 @@ export async function updateCollegeOwnProfile(context: RequestContext, raw: unkn
   const input = collegeOwnProfileSchema.parse(raw);
   const submitted = raw && typeof raw === "object" && !Array.isArray(raw)
     ? raw as Record<string, unknown> : {};
+  // The profile contact number is not an authentication credential. Never
+  // change users.phoneE164 without its separate verified account flow.
+  // Persisted contact numbers still follow the legacy 10/10–15 digit rules.
+  const primaryContact = input.contacts.contactMobile?.trim() ?? "";
+  const alternateContact = (input.contacts.contactPhone || input.contacts.alternatePhone).trim();
+  if (primaryContact && !/^\d{10}$/.test(primaryContact))
+    throw new Error("Primary contact mobile must contain exactly 10 digits.");
+  if (alternateContact && (!/^\+?[\d ()-]+$/.test(alternateContact) ||
+    alternateContact.replace(/\D/g,"").length < 10 ||
+    alternateContact.replace(/\D/g,"").length > 15))
+    throw new Error("Additional phone must contain 10–15 digits.");
+  if (primaryContact && primaryContact === alternateContact.replace(/\D/g,""))
+    throw new Error("Additional phone must differ from the primary contact mobile.");
   const version = z.number().int().nonnegative()
     .safeParse(submitted.profileDocumentVersion);
   if (!version.success) throw new CollegeProfileVersionRequired();

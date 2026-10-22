@@ -31,6 +31,34 @@ describe("chat-4 College Verification and Misc verification",()=>{
    expect(s).toContain("Contact person");
   }
  });
+ it("G2-1-026-012 retains the last college profile with a warning and safe retry",()=>{
+  const retained=read("src/components/college/college-profile-retained.tsx");
+  const editor=read("src/components/college/college-admin-profile-editor.tsx");
+  const legacy=read("docs/legacy-source/frontend/src/pages/college-admin/profile.js");
+  expect(legacy).toContain("message=\"Couldn't refresh profile\"");
+  expect(retained).toContain('tone="warning" role="alert" title="Couldn\'t refresh profile"');
+  expect(retained).toContain("Showing the last profile we loaded.");
+  expect(retained).toContain('failed&&!snapshot?<ErrorState title="Failed to load profile."');
+  expect(retained).toContain("readOnly={failed}");
+  expect(retained).toContain(">Retry</Link>");
+  expect(editor).toContain("if(saving||readOnly)return;");
+  expect(editor).toContain("disabled={readOnly||saving||!dirty}");
+  expect(editor).toContain("if(readOnly||dirty)return;");
+  expect(editor).toContain("savedSnapshot.current=initial;");
+ });
+ it("G2-1-031-026 preserves legacy learner error and accessible last-good recovery",()=>{
+  const page=read("src/app/(authenticated)/learn/profile/page.tsx");
+  const stale=read("src/components/profile/learner-profile-last-good.tsx");
+  const legacy=read("docs/legacy-source/frontend/src/pages/learn/profile.js");
+  expect(legacy).toContain("description=\"Showing the last profile we loaded.\"");
+  expect(page).toContain("We couldn&apos;t load your profile. Please try again.");
+  expect(page).toContain("<LearnerProfileLastGood failed scopeKey={profileScopeKey}>");
+  expect(stale).toContain("Couldn&apos;t refresh profile".replace("'", "&apos;"));
+  expect(stale).toContain("Showing the last profile we loaded.");
+  expect(stale).toContain('role="alert"');
+  expect(stale).toContain('href="/learn/profile"');
+  expect(stale).toContain("<div inert");
+ });
  it("COL-verification-misc-03 retains source-backed legacy behavior",()=>{
   {const s=read("src/components/verification/CollegeVerificationPanel.tsx");
    expect(s).toContain("Review one by one");

@@ -42,7 +42,8 @@ const learner:RequestContext={
 };
 type Fixture={programId:string;periodId:string;cohortId:string;sectionId:string;
  courseId:string;offeringId:string;deliveryId:string;enrollmentId:string;
- learnerUserId:string;learnerMembershipId:string};
+ learnerUserId:string;learnerMembershipId:string;
+ attendanceFacultyUserId?:string;attendanceFacultyMembershipId?:string};
 let active:Fixture|null=null;
 
 async function cleanup(){
@@ -83,6 +84,23 @@ async function cleanup(){
   // Recipient inbox rows for this fixture-only learner block the user delete.
   await pool.query("delete from in_app_notifications where user_id=$1",[f.learnerUserId]);
   await pool.query("delete from users where id=$1",[f.learnerUserId]);
+ }
+ // The attendance-specific teacher becomes an append-only audit actor. Retain
+ // that principal when referenced; otherwise remove only our test membership.
+ if(f.attendanceFacultyUserId&&f.attendanceFacultyMembershipId){
+  const teacherAudit=await pool.query(
+   "select 1 from activity_events where actor_user_id=$1::uuid or actor_membership_id=$2::uuid limit 1",
+   [f.attendanceFacultyUserId,f.attendanceFacultyMembershipId],
+  );
+  const teacherNotices=await pool.query(
+   "select 1 from in_app_notifications where user_id=$1::uuid limit 1",
+   [f.attendanceFacultyUserId],
+  );
+  if(!teacherAudit.rowCount&&!teacherNotices.rowCount){
+   await pool.query("delete from membership_roles where membership_id=$1",[f.attendanceFacultyMembershipId]);
+   await pool.query("delete from college_memberships where id=$1",[f.attendanceFacultyMembershipId]);
+   await pool.query("delete from users where id=$1",[f.attendanceFacultyUserId]);
+  }
  }
  active=null;
 }
@@ -226,47 +244,74 @@ describe("Faculty registered report/history positive and scope denials",()=>{
 
  it("marks attendance, requires a reason for corrections, rejects stale tokens and retains audit history",async()=>{
   const f=await fixture();
+  // CI runs attendance suites concurrently. Sharing the seeded Faculty actor
+  // creates overlapping sessions in PostgreSQL's faculty exclusion constraint.
+  // Give this registered attendance journey an isolated, persisted teacher.
+  const attendanceFacultyUserId=randomUUID(),attendanceFacultyMembershipId=randomUUID();
+  const sessionFaculty:RequestContext={
+   user:{...faculty.user,id:attendanceFacultyUserId,
+    identityUid:"c4rh-attendance-"+attendanceFacultyUserId},
+   membership:{...faculty.membership!,id:attendanceFacultyMembershipId},
+  };
+  await pool.query(
+   "insert into users (id,identity_uid,email,display_name,platform_status) values ($1,$2,$3,$4,'ACTIVE')",
+   [attendanceFacultyUserId,sessionFaculty.user.identityUid,
+    "c4rh-attendance-"+attendanceFacultyUserId+"@example.invalid","C4 Report Attendance Faculty"],
+  );
+  await pool.query(
+   "insert into college_memberships (id,user_id,college_id,status) values ($1,$2,$3,'ACTIVE')",
+   [attendanceFacultyMembershipId,attendanceFacultyUserId,SEED_IDS.collegeA],
+  );
+  f.attendanceFacultyUserId=attendanceFacultyUserId;
+  f.attendanceFacultyMembershipId=attendanceFacultyMembershipId;
+  await pool.query(
+   "insert into membership_roles (id,membership_id,role) values ($1,$2,'FACULTY')",
+   [randomUUID(),attendanceFacultyMembershipId],
+  );
+  await createCourseTeachingAssignment(admin,{
+   deliveryId:f.deliveryId,membershipId:attendanceFacultyMembershipId,role:"CO_TEACHER",
+  });
   const now=Date.now();
-  const event=await createFacultyAttendanceSession(faculty,{
+  const event=await createFacultyAttendanceSession(sessionFaculty,{
    deliveryId:f.deliveryId,title:"Faculty C4 Attendance acceptance",
    description:"Real Section roll call",location:"Lab C4",
    startsAt:new Date(now-3*60_000).toISOString(),
    endsAt:new Date(now+20*60_000).toISOString(),
   });
-  const initial=await getFacultyAttendanceWorkspace(faculty,f.deliveryId);
+  const initial=await getFacultyAttendanceWorkspace(sessionFaculty,f.deliveryId);
   expect(initial.roster.map(row=>row.membershipId)).toContain(f.learnerMembershipId);
   expect(initial.sessions.find(row=>row.id===event.id)?.attendanceStatus).toBeNull();
-  const first=await markFacultyAttendance(faculty,event.id,{
+  const first=await markFacultyAttendance(sessionFaculty,event.id,{
    deliveryId:f.deliveryId,absentMembershipIds:[],
    presentMembershipIds:[f.learnerMembershipId],
   });
   expect(first.markedPresent).toBe(1);
   expect(first.markedAbsent).toBe(0);
-  expect((await getFacultyAttendanceWorkspace(faculty,f.deliveryId)).sessions
+  expect((await getFacultyAttendanceWorkspace(sessionFaculty,f.deliveryId)).sessions
     .find(row=>row.id===event.id)?.attendanceStatus).toBe("MARKED");
   const correction={
    deliveryId:f.deliveryId,absentMembershipIds:[f.learnerMembershipId],
    presentMembershipIds:[],expectedMarkedAt:first.markedAt.toISOString(),
    correctionReason:"Learner was absent at roll call",
   };
-  await expect(markFacultyAttendance(faculty,event.id,{
+  await expect(markFacultyAttendance(sessionFaculty,event.id,{
    ...correction,correctionReason:"short",
   })).rejects.toBeDefined();
-  const second=await markFacultyAttendance(faculty,event.id,correction);
+  const second=await markFacultyAttendance(sessionFaculty,event.id,correction);
   expect(second.markedAbsent).toBe(1);
   expect(second.markedAt.getTime()).toBeGreaterThan(first.markedAt.getTime());
-  const persisted=await getFacultyAttendanceWorkspace(faculty,f.deliveryId);
+  const persisted=await getFacultyAttendanceWorkspace(sessionFaculty,f.deliveryId);
   expect(persisted.records.filter(row=>row.scheduleEventId===event.id))
    .toEqual([expect.objectContaining({
     membershipId:f.learnerMembershipId,status:"ABSENT",
    })]);
-  await expect(markFacultyAttendance(faculty,event.id,correction)).rejects.toBeDefined();
-  await expect(markFacultyAttendance(faculty,event.id,{
+  await expect(markFacultyAttendance(sessionFaculty,event.id,correction)).rejects.toBeDefined();
+  await expect(markFacultyAttendance(sessionFaculty,event.id,{
    ...correction,expectedMarkedAt:second.markedAt.toISOString(),
   })).rejects.toBeDefined();
   await expect(markFacultyAttendance(learner,event.id,correction)).rejects.toBeDefined();
-  await expect(markFacultyAttendance(faculty,SEED_IDS.collegeB,correction)).rejects.toBeDefined();
-  await expect(markFacultyAttendance(faculty,event.id,{
+  await expect(markFacultyAttendance(sessionFaculty,SEED_IDS.collegeB,correction)).rejects.toBeDefined();
+  await expect(markFacultyAttendance(sessionFaculty,event.id,{
    ...correction,expectedMarkedAt:second.markedAt.toISOString(),
    collegeId:SEED_IDS.collegeB,
   })).rejects.toBeDefined();

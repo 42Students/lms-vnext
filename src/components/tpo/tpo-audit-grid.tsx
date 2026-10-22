@@ -102,9 +102,10 @@ export function TpoAuditGrid({rows,refreshHref}:{rows:readonly TpoAuditRow[];ref
  const [snapshotRows,setSnapshotRows]=useState<readonly TpoAuditRow[]>(rows);
  const [refreshing,setRefreshing]=useState(false);
  const [stale,setStale]=useState(false);
+ const [staleDismissed,setStaleDismissed]=useState(false);
  const [lastRefreshAt,setLastRefreshAt]=useState<string|null>(null);
  const refreshInFlight=useRef(false);
- useEffect(()=>{setSnapshotRows(rows);setStale(false);},[rows]);
+ useEffect(()=>{setSnapshotRows(rows);setStale(false);setStaleDismissed(false);},[rows]);
  async function refreshGrid(){
   if(!refreshHref||refreshInFlight.current)return;
   refreshInFlight.current=true;setRefreshing(true);
@@ -121,12 +122,14 @@ export function TpoAuditGrid({rows,refreshHref}:{rows:readonly TpoAuditRow[];ref
     throw new Error("Invalid audit refresh");
    setSnapshotRows(payload.items as TpoAuditRow[]);
    setStale(false);
+   setStaleDismissed(false);
    setSelected([]);
    setLastRefreshAt(new Date().toISOString());
   }catch{
    // Keep the original trusted rows; never replace an outage with a false
    // empty list or display an unverified cross-tenant cached snapshot.
    setStale(true);
+   setStaleDismissed(false);
   }finally{refreshInFlight.current=false;setRefreshing(false);}
  }
  const [showAbout,setShowAbout]=useState(false),[showDetail,setShowDetail]=useState(false);
@@ -180,10 +183,12 @@ export function TpoAuditGrid({rows,refreshHref}:{rows:readonly TpoAuditRow[];ref
     loading={refreshing} disabled={refreshing}
     onClick={()=>void refreshGrid()}>{stale?"Retry audit refresh":"Refresh audit rows"}</Button>:null}
   </div>
-  {stale?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-2 text-sm text-body">
-   This refresh failed. Showing the last successfully loaded audit rows on this page.
-   Changes and totals cannot be verified until Retry succeeds.
-  </p>:null}
+  {stale && !staleDismissed?<div role="alert" className="flex flex-wrap items-center justify-between gap-3 border-l-2 border-warning bg-warning-subtle px-3 py-2 text-sm text-body">
+   <p>This refresh failed. Showing the last successfully loaded audit rows on this page.
+     Changes and totals cannot be verified until Retry succeeds.</p>
+   <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-9"
+     aria-label="Dismiss stale audit warning" onClick={()=>setStaleDismissed(true)}>Dismiss</Button>
+  </div>:null}
   <div className="grid min-w-0 grid-cols-1 gap-3 border-y border-[var(--lms-canvas-border)] px-3 py-[13px] sm:grid-cols-2 lg:grid-cols-3">
    <label className="min-w-0 flex-1 text-[13px] md:flex-none">What happened
     <Input value={what} onChange={event=>setWhat(event.target.value)} type="search"

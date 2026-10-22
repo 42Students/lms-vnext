@@ -18,8 +18,10 @@ export function LearnerProfileLastGood({failed,scopeKey,children}:{
  return <div className="min-w-0 space-y-4">
   <section role="alert" className="flex min-w-0 flex-wrap items-center gap-3 rounded-lg border border-warning-border bg-warning-subtle px-4 py-3 text-sm">
    <span aria-hidden="true">⚠</span>
-   <p className="min-w-0 flex-1 text-body">We couldn&apos;t refresh your profile.
-    The last successfully loaded view is shown read-only; it may be out of date.</p>
+   <div className="min-w-0 flex-1 text-body"><strong className="block font-semibold">Couldn&apos;t refresh profile</strong>
+    <p>Showing the last profile we loaded.</p>
+    <p className="text-xs">This saved view may be out of date and cannot be edited until refresh succeeds.</p>
+   </div>
    <Link href="/learn/profile" className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-3 font-semibold text-link underline md:min-h-9">Retry</Link>
   </section>
   <div inert aria-label="Last successfully loaded profile (read-only)">

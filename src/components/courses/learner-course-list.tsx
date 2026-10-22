@@ -18,6 +18,7 @@ import { learnerCourseCardDueLabel } from "@/modules/courses/learner-course-card
 import { learnerCourseCreditSummary } from "@/modules/courses/learner-course-credit-summary-model";
 import { learnerCourseCardProgress } from "@/modules/courses/learner-course-card-progress-model";
 import { learnerCourseCardDate } from "@/modules/courses/learner-course-card-date-model";
+import { learnerCourseUnavailableReason } from "@/modules/courses/learner-course-availability-model";
 import { Fragment, useMemo, useState, useEffect, useTransition } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -41,6 +42,26 @@ import {learnerCourseCardNextLabel} from "@/modules/courses/learner-course-card-
 
 const PAGE_SIZE = 48;
 const MAX_COURSE_SEARCH_CHARS = 200;
+
+function LearnerCourseCardSurface({
+  href, blockedReason, children,
+}: {
+  href: string;
+  blockedReason: string | null;
+  children: ReactNode;
+}) {
+  const baseClass = "group flex min-h-72 flex-col overflow-hidden rounded-xl border border-border bg-surface text-sm";
+  if (blockedReason) {
+    return <div role="group" aria-disabled="true" aria-label={"Course unavailable: " + blockedReason}
+      title={blockedReason} className={baseClass + " cursor-not-allowed"}>
+      {children}
+    </div>;
+  }
+  return <Link href={href}
+    className={baseClass + " transition hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"}>
+    {children}
+  </Link>;
+}
 
 /** Compact keyboard-openable, anchored legacy metric pills. */
 function LearnerMetricPopover({title,children}:{title:string;children:ReactNode}){
@@ -430,8 +451,8 @@ export function LearnerCourseList({
             {visibleRows.slice(0, visibleLimit).map((row, index, renderedRows) => {
               const elective =
                 String(row.course.offeringType).toUpperCase() === "ELECTIVE";
-              const blocked=row.readOnly||row.course.courseEnabled===false||
-                row.course.courseAllowedForDisplay===0;
+              const blockedReason = learnerCourseUnavailableReason(row);
+              const blocked = blockedReason !== null;
               const previousElective =
                 index > 0 &&
                 String(renderedRows[index - 1]?.course.offeringType).toUpperCase() === "ELECTIVE";
@@ -458,13 +479,10 @@ export function LearnerCourseList({
                     </h2>
                   ) : null}
                   <div className="min-w-0">
-                    <Link
-                    href={`/learn/courses/${encodeURIComponent(row.course.deliveryId)}/home`}
-                    aria-disabled={blocked}
-                    tabIndex={blocked?-1:undefined}
-                    onClick={event=>{if(blocked)event.preventDefault();}}
-                    className="group flex min-h-72 flex-col overflow-hidden rounded-xl border border-border bg-surface transition hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 min-h-11 text-sm"
-                  >
+                    <LearnerCourseCardSurface
+                      href={`/learn/courses/${encodeURIComponent(row.course.deliveryId)}/home`}
+                      blockedReason={blockedReason}
+                    >
                     <div className="relative flex min-h-24 items-end overflow-hidden bg-primary-subtle px-5 py-4">
                       <LearnerCourseCardImage key={learnerCourseImageResetKey(row.course.deliveryId,row.thumbnailUrl)} thumbnailUrl={row.thumbnailUrl} />
                       <div className="flex w-full items-end justify-between gap-3">
@@ -472,7 +490,7 @@ export function LearnerCourseList({
                           {row.course.courseCode}
                         </span>
                         <div className="flex items-center gap-2">
-                          {row.readOnly ? (
+                          {blocked ? (
                             <StatusBadge tone="neutral">
                              {row.course.courseEnabled===false||row.course.courseAllowedForDisplay===0
                               ?"Locked":row.course.courseStatus&&row.course.courseStatus!=="ACTIVE"
@@ -494,12 +512,8 @@ export function LearnerCourseList({
                         {row.course.courseDescription ??
                           "No course description provided."}
                       </p>
-                      {row.readOnly?<p role="status" className="mt-2 text-xs font-semibold text-warning">
-                       {row.course.courseEnabled===false||row.course.courseAllowedForDisplay===0
-                        ?"Content locked: not visible to students":
-                        row.course.courseStatus&&row.course.courseStatus!=="ACTIVE"
-                         ?"Course inactive: shown for reference":
-                        "Not your current semester: shown for reference"}
+                      {blockedReason?<p role="status" className="mt-2 text-xs font-semibold text-warning">
+                       {blockedReason}
                       </p>:null}
                       <p className="mt-3 text-xs font-semibold text-muted-foreground leading-[20px]">
                         Instructor: {row.instructorNames.length > 0
@@ -551,7 +565,7 @@ export function LearnerCourseList({
                         </div>
                         <div className="mt-4 flex items-center justify-between gap-3">
                           <p className="m-0 line-clamp-1 text-sm font-semibold text-foreground leading-[22px]">
-                            {row.readOnly?"Course unavailable":learnerCourseCardNextLabel(row)}
+                            {blocked?"Course unavailable":learnerCourseCardNextLabel(row)}
                           </p>
                           <span
                             aria-hidden="true"
@@ -562,8 +576,8 @@ export function LearnerCourseList({
                         </div>
                       </div>
                     </div>
-                    </Link>
-                    {!row.readOnly && row.firstOverdue && learnerCourseNextItemHref({
+                    </LearnerCourseCardSurface>
+                    {!blocked && row.firstOverdue && learnerCourseNextItemHref({
                       readOnly:row.readOnly,learningPathReady:row.learningPathReady,course:row.course,
                       nextItem:{kind:"ASSIGNMENT",lessonId:row.firstOverdue.lessonId,itemId:row.firstOverdue.itemId}
                     }) ? (
@@ -576,7 +590,7 @@ export function LearnerCourseList({
                         Open overdue assignment: {row.firstOverdue.title}
                       </Link>
                     ) : null}
-                    {!row.readOnly&&learnerCourseNextItemHref(row) ? (
+                    {!blocked&&learnerCourseNextItemHref(row) ? (
                       <Link href={learnerCourseNextItemHref(row)!}
                         className="mt-2 flex min-h-11 w-full items-center justify-center break-words rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 text-center text-sm font-[650] text-primary-text transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
                         Continue at next learning item →

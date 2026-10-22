@@ -5,6 +5,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {
   createCourse,
   listCourses,
+  listCoursesPage,
 } from "@/modules/courses/course-service";
 
 export const runtime = "nodejs";
@@ -29,29 +30,31 @@ export async function GET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
     const url = new URL(request.url);
-    const courses = await listCourses(
-      context,
-      url.searchParams.get("collegeId") ?? "",
-      url.searchParams.get("departmentId"),
-      url.searchParams.get("includeArchived") === "true" ||
-        url.searchParams.get("onlyArchived") === "true",
-      undefined,
-      url.searchParams.get("onlyArchived") === "true",
-    );
-
+    const collegeId=url.searchParams.get("collegeId") ?? "";
+    const departmentId=url.searchParams.get("departmentId");
+    const includeArchived=url.searchParams.get("includeArchived") === "true" ||
+      url.searchParams.get("onlyArchived") === "true";
+    const onlyArchived=url.searchParams.get("onlyArchived") === "true";
     const rawPage=url.searchParams.get("page");
     const rawSize=url.searchParams.get("size");
     if(rawPage!==null||rawSize!==null){
+      // The legacy unpaged reader is intentionally separate. A requested
+      // page must use scoped SQL LIMIT/OFFSET and a DB COUNT instead of
+      // loading every course into memory before slicing.
       const page=rawPage===null?1:Number(rawPage);
       const size=rawSize===null?25:Number(rawSize);
       if(!Number.isSafeInteger(page)||page<1||page>100000||
          !Number.isSafeInteger(size)||size<1||size>100)
         return NextResponse.json({error:"INVALID_PAGINATION"},{status:400});
-      const start=(page-1)*size;
-      return NextResponse.json({courses:courses.slice(start,start+size),
-        page,size,totalElements:courses.length,
-        totalPages:Math.ceil(courses.length/size)});
+      const listing=await listCoursesPage(context,collegeId,{
+        limit:size,offset:(page-1)*size,
+      },departmentId,includeArchived,onlyArchived);
+      return NextResponse.json({courses:listing.courses,
+        page,size,totalElements:listing.total,
+        totalPages:Math.ceil(listing.total/size)});
     }
+    const courses=await listCourses(context,collegeId,departmentId,
+      includeArchived,undefined,onlyArchived);
     return NextResponse.json({ courses });
   } catch (error) {
     return apiErrorResponse(error);

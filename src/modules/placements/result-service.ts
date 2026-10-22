@@ -643,6 +643,7 @@ export async function applyPlacementRoundResult(
   context: RequestContext,
   resultIdInput: string,
   expectedVersion?: number,
+  notifyLearner = true,
 ) {
   const resultId =
     placementResultIdSchema.parse(resultIdInput);
@@ -903,6 +904,7 @@ export async function applyPlacementRoundResult(
           outcome: applied.outcome,
           learnerStage:nextLearnerStage,
           stageChanged:beforeStage?.stage!==nextLearnerStage,
+          learnerNoticeSuppressed:!notifyLearner,
         },
         groupKey:
           `placement-job:${current.job.id}:results`,
@@ -911,7 +913,7 @@ export async function applyPlacementRoundResult(
       },
     );
 
-    if(beforeStage?.stage!==nextLearnerStage){
+    if(notifyLearner && beforeStage?.stage!==nextLearnerStage){
       await deliverRecordedLearnerPlacementEvent(tx,{
         eventId:learnerResultEvent.id,collegeId:current.job.collegeId,
         membershipId:current.application.membershipId,

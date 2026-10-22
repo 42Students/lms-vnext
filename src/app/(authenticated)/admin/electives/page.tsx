@@ -157,12 +157,13 @@ export default async function SuperAdminElectivesPage({
    {data.total} matching slots · {data.active} active and {data.archived} archived on this page
   </p>
   <section aria-label="Existing elective slots" className="min-w-0">
-   {all.length?<Table scrollLabel="Elective slots" className="w-full min-w-[760px]">
+   {all.length?<Table scrollLabel="Elective slots" className="w-full min-w-[1080px]">
     <caption className="sr-only">Active and archived elective slots for the selected college</caption>
     <thead><tr>
-     <th scope="col">Slot</th><th scope="col">Program</th><th scope="col">Semester</th>
-     <th scope="col">Credits</th><th scope="col">Pick</th><th scope="col">Status</th>
-     <th scope="col">Actions</th>
+     <th scope="col">Slot</th><th scope="col">Program</th><th scope="col">Sem</th>
+     <th scope="col">Year</th><th scope="col">Credits</th><th scope="col">Pick</th>
+     <th scope="col">Offerings</th><th scope="col">Students</th><th scope="col">Status</th>
+     <th scope="col"><span className="sr-only">Actions</span></th>
     </tr></thead>
     <tbody>{shown.map(item=><tr key={item.id}>
      <td className="min-w-40">
@@ -170,8 +171,11 @@ export default async function SuperAdminElectivesPage({
        className="font-semibold text-link underline">{item.name}</Link>
       {item.description?<p className="mt-1 max-w-xs text-xs text-muted-foreground">{item.description}</p>:null}
      </td>
-     <td>{item.programName}</td><td>Sem {item.semesterNumber}</td><td>{item.credits}</td>
+     <td>{item.programName}</td><td>{item.semesterNumber}</td>
+     <td>{item.academicYear??"—"}</td><td>{item.credits}</td>
      <td>{item.minPick===item.maxPick?String(item.minPick):item.minPick+"–"+item.maxPick}</td>
+     <td className="tabular-nums">{item.offerings??0}</td>
+     <td className="tabular-nums">{item.students??0}</td>
      <td><StatusBadge tone={item.status==="ACTIVE"?"success":"neutral"}>{legacyAcademicStatus(item.status)}</StatusBadge></td>
      <td><div className="flex flex-wrap gap-3 text-sm font-semibold">
       <Link href={link(current,item.id)} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Open</Link>

@@ -688,7 +688,7 @@ export async function restoreCourse(
       // conflict with a new active name or code in the same department.
       await assertCourseShortTitleUnique(
         tx, scope.departmentId,
-        locked.shortTitle ?? locked.name.slice(0, 120),
+        locked.shortTitle ?? locked.name.slice(0, 64),
         courseId,
       );
       const [restored] = await tx

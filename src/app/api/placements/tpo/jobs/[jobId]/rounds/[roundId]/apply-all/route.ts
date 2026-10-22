@@ -26,16 +26,11 @@ export async function POST(request:Request,{params}:Params){
    return NextResponse.json({error:"INVALID_NOTIFY_FLAG",
     message:"Use notify=true or notify=false."},
     {status:400,headers:{"Cache-Control":"private, no-store"}});
-  // The result-service currently records a learner in-app notification in
-  // the same transaction as each applied result. Refuse unsupported opt-out
-  // before any partial mutation instead of quietly notifying despite false.
-  if(notify==="false")return NextResponse.json({
-   error:"NOTIFICATION_SUPPRESSION_UNAVAILABLE",
-   message:"This action currently notifies learners when results are applied. Notification-free apply is not available.",
-  },{status:422,headers:{"Cache-Control":"private, no-store"}});
+  // Legacy apply?notify=false: outcomes still advance atomically; only the
+  // learner notice is suppressed. Unspecified notify defaults to true.
   const {jobId,roundId}=await params;
-  const result=await applyTpoWholeRound(await getCurrentRequestContext(),jobId,roundId,await request.json());
-  return NextResponse.json({...result,notify:true,notificationChannel:"IN_APP",
+  const result=await applyTpoWholeRound(await getCurrentRequestContext(),jobId,roundId,await request.json(),notify!=="false");
+  return NextResponse.json({...result,notify:notify!=="false",notificationChannel:notify==="false"?"SUPPRESSED":"IN_APP",
     contract:"PENDING_RESULTS_ONLY",requiresReload:true,
     message:"Pending round results applied. Refresh to review any remaining decisions."},
    {headers:{"Cache-Control":"private, no-store"}});

@@ -1,4 +1,5 @@
 import { FilterBar } from "@/components/ui/filter-bar";
+import {courseThumbnailUrlSchema} from "@/modules/courses/validation";
 import { StatTile } from "@/components/ui/stat-tile";
 import { Alert } from "@/components/ui/alert";
 import { Disclosure } from "@/components/ui/disclosure";
@@ -99,12 +100,15 @@ export function AdminCourseOverview({
     {
       key: "cover",
       header: "Image",
-      cell:course=>(<div className="h-[35px] w-[50px] overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle">
-        {course.thumbnailUrl?.startsWith("https://")?
-          <a href={course.thumbnailUrl}
+      cell:course=>{
+       const parsed=courseThumbnailUrlSchema.safeParse(course.thumbnailUrl);
+       const safeCover=parsed.success?parsed.data:null;
+       return <div className="h-[35px] w-[50px] overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle">
+        {safeCover?
+          <a href={safeCover}
             aria-label={"Preview "+(course.name?.trim()||"Untitled course")+" cover"}
             className="block h-full w-full focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)]">
-            <img src={course.thumbnailUrl} alt={(course.name?.trim()||"Untitled course")+" cover"}
+            <img src={safeCover} alt={(course.name?.trim()||"Untitled course")+" cover"}
               width={50} height={35} loading="lazy" className="h-full w-full object-cover"/>
           </a>:
           <span role="img" aria-label="Course preview unavailable"
@@ -115,7 +119,8 @@ export function AdminCourseOverview({
               <circle cx="8" cy="8" r="1.5"/><path d="m3 17 5-5 4 4 3-3 6 5"/>
             </svg>
           </span>}
-      </div>),
+      </div>;
+      },
     },
     {
       key: "course",

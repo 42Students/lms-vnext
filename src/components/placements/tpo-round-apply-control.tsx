@@ -8,6 +8,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {roundApplyReportCsv} from "@/modules/placements/tpo-round-apply-csv-model";
 import {Input} from "@/components/ui/input";
+import {Checkbox} from "@/components/ui/checkbox";
 type Preview={ready:boolean;roundName?:string;staged:number;applied:number;
  outcomes:{PASS:number;FAIL:number;HOLD:number;ABSENT:number};destinations:{PASS:string;FAIL:string;HOLD:string;ABSENT:string};previewToken:string;
  rows:Array<{resultId:string;student:string;outcome:string;status:string;destination:string;rollNumber?:string|null;enteredBy?:string|null;reason?:string|null}>;
@@ -36,6 +37,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
  const [report,setReport]=useState<ApplyReport|null>(null);const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");const [showSkipped,setShowSkipped]=useState(false);
  const [previewSearch,setPreviewSearch]=useState("");
+ const [notifyLearners,setNotifyLearners]=useState(true);
  const url="/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(roundId)+"/apply-all";
  async function load(){
   setBusy(true);setError("");setReport(null);
@@ -51,13 +53,13 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
  async function apply(){
   if(!preview||!preview.ready||!preview.staged||busy)return;
   setBusy(true);setError("");
-  try{const res=await fetch(url,{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
+  try{const res=await fetch(url+"?notify="+String(notifyLearners),{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
    body:JSON.stringify({confirmed:true,expectedPreviewToken:preview.previewToken})});
    const value=await res.json() as ApplyReport&{error?:string};
    if(!res.ok)throw Error("Results could not be applied");
    setReport(value);setPreview(null);
    if(value.skipped>0)setShowSkipped(true);
-   else showToast({tone:"success",title:"Results applied and students notified"});
+   else showToast({tone:"success",title:notifyLearners?"Results applied and students notified":"Results applied without student notifications"});
    if(value.unchanged>0)showToast({tone:"info",
     title:value.unchanged+" student"+(value.unchanged===1?"":"s")+" kept their stage",
     description:"Already applied results do not change a student\u0027s current stage."});
@@ -72,7 +74,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
    {busy?"Working…":"Review and apply round results"}</Button>
   {preview?<Dialog open={true} onOpenChange={open=>{if(!open&&!busy)setPreview(null);}}
     title={"Apply "+(preview.roundName??"round")+" results"}
-    description="Review results before notifying learners." className="!max-w-[900px]">
+    description="Review the results and choose whether to notify learners." className="!max-w-[900px]">
    <div role="region" aria-label="Round application preview" className="space-y-3">
    <h3 className="font-semibold">Consequence preview</h3>
    <p className="text-sm leading-[22px]">{preview.staged} staged results to apply; {preview.applied} already applied (unchanged).</p>
@@ -110,12 +112,18 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
     >
     Export consequence preview (CSV)
    </Button>
+   <label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm text-body">
+    <Checkbox checked={notifyLearners} disabled={busy} onChange={event=>setNotifyLearners(event.target.checked)}
+     aria-label="Notify learners when round results are applied" />
+    Notify students when results are applied
+   </label>
+   {!notifyLearners?<Alert tone="warning">Students will not receive an in-app notification about these applied results. Their application stages will still change.</Alert>:null}
    <p className="text-sm font-semibold text-warning-text">This is not an undo. Applied results cannot be edited.</p>
    {!preview.ready?<Alert tone="warning">Complete this evaluation round before applying results.</Alert>:null}
    <div className="flex flex-wrap gap-3">
     <Button variant="primary" type="button" disabled={busy||!preview.ready||!preview.staged} onClick={()=>void apply()}
      className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] disabled:opacity-50 text-primary-foreground">
-     Apply and notify ({preview.staged})</Button>
+     {notifyLearners?"Apply and notify":"Apply without notifying"} ({preview.staged})</Button>
     <Button variant="secondary" type="button" disabled={busy} onClick={()=>setPreview(null)}
      >Cancel</Button>
    </div>

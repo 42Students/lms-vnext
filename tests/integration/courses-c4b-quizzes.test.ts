@@ -38,6 +38,7 @@ import {
 import {
   getMyQuizAttempts,
   listQuizAttempts,
+  previewCourseQuizQuestions,
   submitCourseQuiz,
 } from "@/modules/courses/quiz-attempt-service";
 import {commandFacultyQuiz} from "@/modules/courses/faculty-quiz-authoring-service";
@@ -456,27 +457,26 @@ async function answerKey(
   quizId: string,
   deliveryId: string,
 ) {
-  const view = await getCourseQuiz(
-    faculty,
-    quizId,
-    deliveryId,
+  // The display DTO can hide answers; build fixtures exclusively from
+  // the permissioned faculty preview, which is also used for grading.
+  const [view, questions] = await Promise.all([
+    getCourseQuiz(faculty, quizId, deliveryId),
+    previewCourseQuizQuestions(faculty, quizId, deliveryId),
+  ]);
+  expect(questions).toHaveLength(2);
+  expect(view.questions.map(question => question.id)).toEqual(
+    questions.map(question => question.id),
   );
-
-  return {
-    view,
-    answers: view.questions.map(
-      (question) => ({
-        questionId: question.id,
-        selectedOptionIds:
-          question.options
-            .filter(
-              (option) =>
-                option.correct === true,
-            )
-            .map((option) => option.id),
-      }),
-    ),
-  };
+  const answers = questions.map(question => ({
+    questionId: question.id,
+    selectedOptionIds: question.options
+      .filter(option => option.correct)
+      .map(option => option.id),
+  }));
+  for (const answer of answers) {
+    expect(answer.selectedOptionIds.length).toBeGreaterThan(0);
+  }
+  return { view, questions, answers };
 }
 
 beforeAll(async () => {
@@ -649,8 +649,8 @@ describe("courses C4B quizzes against PostgreSQL", () => {
 
     // Every authored question requires an answer. Choose an incorrect
     // option for the second question to verify partial scoring (4/10).
-    const incorrectOption = key.view.questions[1]?.options.find(
-      (option) => option.correct !== true,
+    const incorrectOption = key.questions[1]?.options.find(
+      (option) => !option.correct,
     );
     expect(incorrectOption).toBeDefined();
     const firstAnswers = key.answers.map(
@@ -993,12 +993,15 @@ describe("courses C4B quizzes against PostgreSQL", () => {
         deliveryId: structure.deliveryA.id,
         answers: key.answers,
       });
+      // Install the rejection handler before unlocking the writer, so a
+      // legitimate fast failure is not reported as an unhandled rejection.
+      const rejected = expect(submission).rejects.toMatchObject({
+        code: "QUIZ_NOT_PUBLISHED",
+      });
       await new Promise((resolve) => setTimeout(resolve, 100));
       await holder.query("commit");
       began = false;
-      await expect(submission).rejects.toMatchObject({
-        code: "QUIZ_NOT_PUBLISHED",
-      });
+      await rejected;
       const result = await pool.query(
         "select count(*)::int as n from quiz_attempts where quiz_id=$1",
         [quiz.id],

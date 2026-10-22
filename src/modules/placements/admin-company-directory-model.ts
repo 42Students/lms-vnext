@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+/** Legacy global curation pages 50 canonical companies; college relationship pages 10. */
+export const GLOBAL_COMPANY_PAGE_SIZE = 50;
+export const COLLEGE_COMPANY_PAGE_SIZE = 10;
+
 /** Do not interpret hexadecimal, exponent or array URL values as page numbers. */
 const strictCompanyPage = z.union([
   z.number().int().min(1).max(10000),

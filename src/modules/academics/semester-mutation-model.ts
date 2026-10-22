@@ -88,3 +88,54 @@ export function canEditHistoricalSemesterStatus(
 ) {
   return storedStatus !== "COMPLETED" || !nextIsActive;
 }
+
+/** Translate a validated legacy structure into the UUID-first semester contract.
+ * Callers must supply mappings obtained from the selected college's authorized
+ * import context. Never guess a UUID, drop an unmapped course, or collapse the
+ * source's COMPLETED status or date strings into the new active flag.
+ *
+ * The returned course IDs are a separate import step after the semester exists;
+ * they are deliberately not fed to the semester-only create endpoint.
+ */
+export function adaptLegacyProgramStructureCreate(
+  raw: unknown,
+  mapping: {
+    legacyProgramId: number;
+    programId: string;
+    termNumber: number;
+    courseIdsByLegacyId: ReadonlyMap<number, string>;
+  },
+) {
+  const source = legacyProgramStructureSourceSchema.parse(raw);
+  if (source.programId !== mapping.legacyProgramId) {
+    throw new Error("LEGACY_PROGRAM_ID_UNMAPPED");
+  }
+  const sourceCourseIds = source.courseIds ?? [];
+  if (new Set(sourceCourseIds).size !== sourceCourseIds.length) {
+    throw new Error("LEGACY_COURSE_ID_DUPLICATE");
+  }
+  const courseIds = sourceCourseIds.map(legacyId => {
+    const mapped = mapping.courseIdsByLegacyId.get(legacyId);
+    if (!mapped) throw new Error("LEGACY_COURSE_ID_UNMAPPED");
+    return z.string().uuid().parse(mapped);
+  });
+  if (new Set(courseIds).size !== courseIds.length) {
+    throw new Error("LEGACY_COURSE_ID_DUPLICATE");
+  }
+  const semester = createCollegeSemesterSchema.parse({
+    programId: mapping.programId,
+    termNumber: mapping.termNumber,
+    name: source.name,
+    ...(source.status ? { isActive: source.status === "ACTIVE" } : {}),
+  });
+  return {
+    semester,
+    courseIds,
+    source: {
+      legacyProgramId: source.programId,
+      status: source.status ?? null,
+      startDate: source.startDate ?? null,
+      endDate: source.endDate ?? null,
+    },
+  };
+}
