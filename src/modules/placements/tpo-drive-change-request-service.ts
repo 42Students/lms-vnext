@@ -345,6 +345,11 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
       eq(placementDriveChangeRequests.jobId,job.id),
       eq(placementDriveChangeRequests.proposerParty,party),
       eq(placementDriveChangeRequests.field,canonicalField),
+      // PAY/ELIGIBILITY/OTHER group distinct legacy fields; only the
+      // *same* field is a duplicate (CTC and stipend can coexist).
+      or(eq(placementDriveChangeRequests.legacyField,input.field),
+        and(sql`${placementDriveChangeRequests.legacyField} is null`,
+          eq(placementDriveChangeRequests.field,input.field))),
       eq(placementDriveChangeRequests.status,"OPEN"))).limit(1);
     if(duplicate)throw new OpenDriveChangeConflict(
       legacyChangeFieldLabel(input.field,canonicalField));
