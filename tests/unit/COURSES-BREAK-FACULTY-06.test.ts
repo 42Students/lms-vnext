@@ -1,4 +1,5 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
+import {readFileSync} from "node:fs";
 import {facultyReportCurrentRosterRows,getFacultyQuizReport,
  getFacultyAssignmentReport} from "@/modules/courses/faculty-assessment-report-service";
 import {CoursesServiceError} from "@/modules/courses/errors";
@@ -54,6 +55,14 @@ const actor:RequestContext={
 };
 const questionId="77777777-7777-4777-8777-777777777777";
 describe("COURSES-BREAK-FACULTY-06 current-roster report anti-IDOR and consistency",()=>{
+ it("enforces tenant membership and delivery scope before reporting historical submissions",()=>{
+  const quizSource=readFileSync(new URL("../../src/modules/courses/quiz-attempt-service.ts",import.meta.url),"utf8");
+  const assignmentSource=readFileSync(new URL("../../src/modules/courses/assignment-submission-service.ts",import.meta.url),"utf8");
+  expect(quizSource).toContain("eq(collegeMemberships.collegeId,quiz.collegeId)");
+  expect(quizSource).toContain("eq(quizAttempts.deliveryId,");
+  expect(assignmentSource).toContain("eq(assignmentSubmissions.deliveryId,");
+  expect(assignmentSource).toContain("requireDeliveryContentMutation(");
+ });
  beforeEach(()=>{
   state.overviews=0;state.attemptReads=0;state.submissionReads=0;
   state.rosterReads=0;state.quizReads=0;state.rosterFailure=false;
