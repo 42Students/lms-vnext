@@ -147,6 +147,7 @@ export async function createCollegeCohort(context: RequestContext, raw: unknown)
        status:start.status==="ACTIVE"?"ACTIVE":"PLANNED",
        academicYear:input.academicYear??batchAcademicYearFromDates(resolvedStart,resolvedEnd),
       }).returning();
+      if (!created) throw new Error("Cohort insert returned no row");
       // Registered DB-0051 trigger initializes the cohort progression row.
       await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_BATCH_CREATED,

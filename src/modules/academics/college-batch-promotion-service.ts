@@ -145,7 +145,10 @@ export async function listSuperAdminBatchDirectory(
   if (!isSuperAdmin(context)) throw new AuthorizationError("academics.read");
   const organizationId = raw.organizationId ? z.uuid().parse(raw.organizationId) : undefined;
   const collegeId = raw.collegeId ? z.uuid().parse(raw.collegeId) : undefined;
-  requirePermission(context, "academics.read", { organizationId, collegeId });
+  requirePermission(context, "academics.read", {
+    ...(organizationId !== undefined ? { organizationId } : {}),
+    ...(collegeId !== undefined ? { collegeId } : {}),
+  });
   const page = Math.max(1, Math.min(10000, Math.trunc(raw.page ?? 1) || 1));
   const pageSize = Math.max(1, Math.min(100, Math.trunc(raw.pageSize ?? 10) || 10));
   const where = and(
@@ -330,7 +333,7 @@ export async function previewCollegeBatchPromotionInTransaction(
     nextTermConfigured: availableTerm.length > 0,
     nextTermHasCourses: mappedTargetCourses.length > 0,
     currentYearStart: batch.currentAcademicYearStart,
-    overrideYearStart: query.yearStart,
+    ...(query.yearStart !== undefined ? { overrideYearStart: query.yearStart } : {}),
     currentPeriodConfigured: batch.currentPeriodId !== null,
     currentPeriodOwned: matchingPeriod[0]?.collegeId === member.collegeId,
   });

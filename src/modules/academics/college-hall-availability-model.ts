@@ -46,11 +46,15 @@ export function collegeHallAvailabilityProjection(
     a.startsAt.getTime() - b.startsAt.getTime() || a.id.localeCompare(b.id));
   const overlaps = new Set<string>();
   for (let i = 0; i < sorted.length; i++) {
+    const current = sorted[i];
+    if (!current) continue;
     for (let j = i + 1; j < sorted.length; j++) {
-      if (sorted[j].startsAt.getTime() >= sorted[i].endsAt.getTime()) break;
-      if (sorted[i].startsAt.getTime() < sorted[j].endsAt.getTime()) {
-        overlaps.add(sorted[i].id);
-        overlaps.add(sorted[j].id);
+      const candidate = sorted[j];
+      if (!candidate) continue;
+      if (candidate.startsAt.getTime() >= current.endsAt.getTime()) break;
+      if (current.startsAt.getTime() < candidate.endsAt.getTime()) {
+        overlaps.add(current.id);
+        overlaps.add(candidate.id);
       }
     }
   }
