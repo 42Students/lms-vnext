@@ -562,7 +562,7 @@ export async function listCollegeContentClassRecipients(
      eq(lmsGroupMembers.state,"ACTIVE")));
   return {kind,classId,membershipIds:learners.map(row=>row.id)};
  }
- const [section]=await db.select({id:sections.id})
+ const [section]=await db.select({id:sections.id,academicPeriodId:sections.academicPeriodId})
   .from(sections)
   .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
   .innerJoin(programs,eq(programs.id,cohorts.programId))
@@ -583,7 +583,7 @@ export async function listCollegeContentClassRecipients(
     eq(collegeMemberships.collegeId,collegeId),
     eq(collegeMemberships.status,"ACTIVE")))
   .where(and(eq(sectionEnrollments.sectionId,classId),
-    eq(sectionEnrollments.academicPeriodId,sections.academicPeriodId),
+    eq(sectionEnrollments.academicPeriodId,section.academicPeriodId),
     eq(sectionEnrollments.status,"ACTIVE"),
     isNull(sectionEnrollments.endedAt)));
  return {kind,classId,membershipIds:learners.map(row=>row.id)};
