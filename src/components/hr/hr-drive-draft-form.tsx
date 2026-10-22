@@ -85,7 +85,14 @@ export function HrDriveDraftForm({
   const attempted = useRef<{signature:string;submissionId:string}|null>(null);
   const submittedRef=useRef(false);
   const submittingRef=useRef(false);
-  const result = hrDriveDraftSchema.safeParse(draft);
+  const result=hrDriveDraftSchema.safeParse(draft);
+  // Never submit the last valid array while an invalid longer comma-tag
+  // input is visible to the employer.
+  const branchDraftReady=(()=>{
+    try{return JSON.stringify(parseHrDraftLegacyBranchTags(branchInput))===
+      JSON.stringify(draft.branches??[]);}
+    catch{return false;}
+  })();
   const selectOptions = [
     ["FULL_TIME", "Full-time"], ["INTERNSHIP", "Internship"], ["INTERNSHIP_FULL_TIME", "Internship + full-time"], ["CONTRACT", "Contract"],
   ] as const;
@@ -283,6 +290,11 @@ export function HrDriveDraftForm({
 
   async function sendFormalDriveRequest(){
     if(submitting||jdUploading||jdPendingKey||submittingRef.current||submittedRef.current)return;
+    if(!branchDraftReady){
+      rememberFieldErrors({branches:"Fix the visible branch list: max 30 names under 120 characters."});
+      setNotice("No branches were silently omitted. Review the list before sending.");
+      return;
+    }
     const valid=hrDriveDraftSchema.safeParse(draft);
     if(!valid.success){
       const fields: Record<string, string> = {};
@@ -706,7 +718,7 @@ export function HrDriveDraftForm({
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Branches
-            <Input className="w-full" list="recruiter-eligible-branches"
+            <Input className="w-full" data-draft-field="branches" aria-invalid={!branchDraftReady} list="recruiter-eligible-branches"
               value={branchInput} placeholder="All branches"
               onChange={event=>{setBranchInput(event.target.value);
                 const parsed=event.target.value;
@@ -726,7 +738,7 @@ export function HrDriveDraftForm({
             <span className="text-xs text-muted-foreground">
               Separate branches with commas (maximum {HR_DRIVE_BRANCH_LIMIT}); the placement cell verifies eligibility.
             </span>
-            {branchInput.split(",").filter(v=>v.trim()).length>HR_DRIVE_BRANCH_LIMIT?
+            {!branchDraftReady?
               <span role="alert" className="text-xs text-error">
                 Enter at most {HR_DRIVE_BRANCH_LIMIT} branches without dropping any selection.
               </span>:null}
@@ -763,6 +775,11 @@ export function HrDriveDraftForm({
         <div className="mt-4 flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:flex-wrap min-[768px]:items-center">
           <Button type="button" variant="secondary"
             onClick={() => {
+              if(!branchDraftReady){
+                rememberFieldErrors({branches:"Review all branches before previewing."});
+                setNotice("No branches were dropped. Fix the visible list.");
+                return;
+              }
               setShowPreview(true);
               setNotice("");
               if (!result.success) {
@@ -774,7 +791,7 @@ export function HrDriveDraftForm({
                 rememberFieldErrors(fields);
               } else setFieldErrors({});
             }}>Preview and validate</Button>
-          <Button type="button" disabled={!result.success||submitting||jdUploading||Boolean(jdPendingKey)}
+          <Button type="button" disabled={!result.success||!branchDraftReady||submitting||jdUploading||Boolean(jdPendingKey)}
             loading={submitting} aria-busy={submitting}
             onClick={() => void sendFormalDriveRequest()}>
             {submitting?"Sending request...":fixRequestId?(editMode==="EDIT"?"Save changes":"Fix and Resend"):"Send for review"}
@@ -868,7 +885,7 @@ export function HrDriveDraftForm({
       </aside>
       </div>
       <div className="flex justify-stretch border-t border-border pt-4 lg:hidden">
-        <Button type="button" className="w-full" disabled={!result.success || submitting || jdUploading || Boolean(jdPendingKey)}
+        <Button type="button" className="w-full" disabled={!result.success || !branchDraftReady || submitting || jdUploading || Boolean(jdPendingKey)}
           loading={submitting} aria-busy={submitting}
           onClick={() => void sendFormalDriveRequest()}>
           {fixRequestId ? editMode === "EDIT" ? "Save changes" : "Fix and Resend" : "Send for review"}
