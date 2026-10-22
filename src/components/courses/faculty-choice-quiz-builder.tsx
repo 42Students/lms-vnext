@@ -90,7 +90,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    const fetched=facultyAuthoringQuestionsFromResponse(response);
    const loadIssue=facultyQuizLoadedBankIssue(q.status,fetched.length);
    if(loadIssue)throw new Error(loadIssue);
-   setQuestions(fetched);
+   setQuestions(fetched.map(question=>({...question,options:question.options.map(option=>({...(option.id!==undefined?{id:option.id}:{}),text:option.text,correct:option.correct,sequence:option.sequence}))})));
   }catch(e){if(token===choiceRequest.current){setError(facultyQuizReadErrorMessage(e));setQuestions([]);setDetailsFailed(true);}}
   finally{if(token===choiceRequest.current)setPending(false);}
  }
@@ -177,7 +177,8 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    });
    const saved=facultyQuizSavedFromCommand(result);
    if(!saved){router.refresh();throw new Error("Quiz write succeeded, but its new version could not be loaded. Refresh before another action.");}
-   setLocalQuizzes(previous=>facultyQuizReconcileRows(previous,saved));
+   const savedQuiz:Quiz={...saved,...(saved.shuffleQuestions!==undefined?{shuffleQuestions:saved.shuffleQuestions}:{}),...(saved.shuffleOptions!==undefined?{shuffleOptions:saved.shuffleOptions}:{})};
+   setLocalQuizzes(previous=>facultyQuizReconcileRows(previous,savedQuiz));
    if(action==="CREATE")setSelected(saved.id);
    setConfirmed(false);setDirtyDraft(false);
    if(action==="CREATE" && publishNow){
@@ -188,7 +189,8 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
            expectedUpdatedAt:saved.updatedAt,confirmed:true}),
        }));
        if(!published||published.status!=="PUBLISHED")throw new Error("The quiz was saved, but publishing could not be confirmed.");
-       setLocalQuizzes(previous=>facultyQuizReconcileRows(previous,published));
+       const publishedQuiz:Quiz={...published,...(published.shuffleQuestions!==undefined?{shuffleQuestions:published.shuffleQuestions}:{}),...(published.shuffleOptions!==undefined?{shuffleOptions:published.shuffleOptions}:{})};
+       setLocalQuizzes(previous=>facultyQuizReconcileRows(previous,publishedQuiz));
        setSuccess("Quiz created and published. Learners can attempt it until the due date.");
      }catch(reason){
        setSuccess("Quiz created as a draft. Publish it when it is ready for learners.");
