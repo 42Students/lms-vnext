@@ -3,8 +3,9 @@ import type {RequestContext} from "@/modules/identity/context";
 import {isValidElement,type ReactNode} from "react";
 
 const m=vi.hoisted(()=>({ctx:vi.fn(),redirect:vi.fn(),issues:vi.fn(),
- logs:vi.fn(),known:vi.fn()}));
+ logs:vi.fn(),known:vi.fn(),audit:vi.fn()}));
 vi.mock("server-only",()=>({}));
+vi.mock("@/db/client",()=>({getDb:()=>({insert:()=>({values:m.audit})})}));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:m.ctx}));
 vi.mock("next/navigation",()=>({redirect:m.redirect}));
 vi.mock("@/modules/bug-tracker/admin-service",()=>({
@@ -34,6 +35,7 @@ describe("SA-TRACKER-AUDIT-67 global issues and error logs stay outside acting t
  beforeEach(()=>{
   vi.clearAllMocks();m.ctx.mockResolvedValue(root);
   m.redirect.mockImplementation(()=>{throw new Error("REDIRECT");});
+  m.audit.mockResolvedValue(undefined);
  });
  it.each([
   ["college",{collegeId:"11111111-1111-4111-8111-111111111111",organizationId:null}],
@@ -48,6 +50,7 @@ describe("SA-TRACKER-AUDIT-67 global issues and error logs stay outside acting t
   expect(m.issues).not.toHaveBeenCalled();
   expect(m.known).not.toHaveBeenCalled();
   expect(m.logs).not.toHaveBeenCalled();
+  expect(m.audit).toHaveBeenCalledTimes(1);
  });
  it("a disabled Super Admin must be refused before privileged reads",async()=>{
   m.ctx.mockResolvedValue({...root,user:{...root.user,platformStatus:"DISABLED"}});
@@ -57,6 +60,7 @@ describe("SA-TRACKER-AUDIT-67 global issues and error logs stay outside acting t
   expect(textOf(denied)).toContain("Sign in to view logs");
   expect(m.issues).not.toHaveBeenCalled();
   expect(m.known).not.toHaveBeenCalled();
+  expect(m.audit).toHaveBeenCalledTimes(1);
  });
  it("a recruiter company grant is not a global issue or error-log permission",async()=>{
   m.ctx.mockResolvedValue({...root,user:{...root.user,systemRoles:[]},
