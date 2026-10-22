@@ -68,18 +68,16 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
 
   async function save() {
     const delivery = data?.deliveries.find(row => row.id === deliveryId);
-    const number = Number(capacity);
-    if (!capacity.trim()) {
-      setError(editing?.capacity === null
-        ? "This offering has unlimited seats. Enter a seat limit to change it; keeping unlimited requires the college capacity policy to be enabled."
-        : "Enter a capacity from 1 to 100000. Unlimited seats are not yet supported when saving.");
+    // A blank value is the legacy unlimited-seat policy, not zero seats.
+    // The backend accepts positive integers or null; never impose a UI-only
+    // ceiling which rejects a valid college-approved capacity.
+    const capacityValue=capacity.trim()===""?null:Number(capacity);
+    if (!delivery || (capacityValue!==null &&
+      (!Number.isSafeInteger(capacityValue) || capacityValue < 1))) {
+      setError("Select an eligible course and enter a positive whole-number seat limit, or leave blank for unlimited.");
       return;
     }
-    if (!delivery || !Number.isInteger(number) || number < 1 || number > 100000) {
-      setError("Select an eligible course and enter a capacity from 1 to 100000.");
-      return;
-    }
-    if (editing && number < editing.activeMembers) {
+    if (editing && capacityValue!==null && capacityValue < editing.activeMembers) {
       setError("Capacity cannot be lower than enrolled students.");
       return;
     }
@@ -92,12 +90,12 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
         method: editing ? "PATCH" : "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          courseId: delivery.courseId, backedDeliveryId: delivery.id, capacity: number,
+          courseId: delivery.courseId, backedDeliveryId: delivery.id, capacity: capacityValue,
           ...(editing ? { expectedVersion: editing.version } : { groupId: groupId || undefined }),
         }),
       });
       const message = editing
-        ? editing.capacity !== number && editing.backedDeliveryId === delivery.id
+        ? editing.capacity !== capacityValue && editing.backedDeliveryId === delivery.id
           ? "Capacity updated" : "Offering updated"
         : "Offering added";
       setMessage(message);
@@ -203,12 +201,12 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
             </Select>
           </label>}
           <label className="mt-2 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Capacity
-            <Input type="number" min="1" max="100000" required
+            <Input type="number" min="1" step="1"
               value={capacity} onChange={event => {setCapacity(event.target.value);setDirty(true);}}
-              placeholder={editing?.capacity===null?"Unlimited (existing)": "Enter seat limit"}
+              placeholder="Leave blank for unlimited"
               className="mt-[var(--lms-space-2)] min-h-11 w-full md:min-h-9" />
             {editing?.capacity===null && capacity==="" ? <span role="status" className="mt-1 block text-xs text-muted-foreground">
-              Existing capacity is unlimited. A seat limit is required for changes in this editor; do not save to retain unlimited.
+              Existing capacity is unlimited. Leave the field blank to keep unlimited seats.
             </span> : null}
           </label>
           {selectable.length === 0 && <p role="status" className="mt-2 text-sm leading-[22px]">
