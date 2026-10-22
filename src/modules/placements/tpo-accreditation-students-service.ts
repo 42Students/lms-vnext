@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,eq,isNotNull,isNull} from "drizzle-orm";
+import {and,asc,eq,inArray,isNotNull,isNull} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {cohorts,collegeMemberships,departments,learnerProfiles,learnerProgramEnrollments,
@@ -35,6 +35,7 @@ export async function getTpoAccreditationStudentExport(context:RequestContext,ra
   rollNumber:learnerProfiles.rollNumber,programme:programs.name,branch:departments.name,
   batch:cohorts.name,company:placementCompanies.name,companyRelationshipId:placementCompanyRelationships.id,
   status:placementOffers.status,kind:placementOffers.kind,
+  countsAsPlaced:placementJobs.countsAsPlaced,
   annualCtcInr:placementOffers.annualCtcInr,joining:placementJoiningOutcomes.status,
  }).from(placementOffers)
   .innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
@@ -58,13 +59,14 @@ export async function getTpoAccreditationStudentExport(context:RequestContext,ra
   .leftJoin(placementJoiningOutcomes,eq(placementJoiningOutcomes.offerId,placementOffers.id))
   .where(and(eq(placementJobs.collegeId,collegeId),
    eq(placementJobs.seasonId,report.selectedSeasonId),
-   eq(placementJobs.employmentType,"FULL_TIME"),isNull(placementJobs.archivedAt),
+   eq(placementJobs.countsAsPlaced,true),isNull(placementJobs.archivedAt),
    query.jobId?eq(placementJobs.id,query.jobId):undefined));
  const selectionRows=countsAsPlacedAt==="SELECTED"?await getDb().select({
   membershipId:collegeMemberships.id,selectionId:placementDriveSelections.id,name:users.displayName,
   rollNumber:learnerProfiles.rollNumber,programme:programs.name,branch:departments.name,
   batch:cohorts.name,company:placementCompanies.name,companyRelationshipId:placementCompanyRelationships.id,
   annualCtcInr:placementDriveSelections.annualCtcInr,
+  countsAsPlaced:placementJobs.countsAsPlaced,
  }).from(placementDriveSelections)
   .innerJoin(placementApplications,eq(placementApplications.id,placementDriveSelections.applicationId))
   .innerJoin(placementJobs,and(eq(placementJobs.id,placementDriveSelections.jobId),
@@ -86,7 +88,9 @@ export async function getTpoAccreditationStudentExport(context:RequestContext,ra
   .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
   .where(and(eq(placementJobs.collegeId,collegeId),
    eq(placementJobs.seasonId,report.selectedSeasonId),
-   eq(placementJobs.employmentType,"FULL_TIME"),isNull(placementJobs.archivedAt),
+   eq(placementJobs.countsAsPlaced,true),
+   inArray(placementDriveSelections.status,["SELECTED","VERIFIED","RELEASED"]),
+   isNull(placementJobs.archivedAt),
    query.jobId?eq(placementJobs.id,query.jobId):undefined)):[];
 
  const contactRows=await tpoCrmTablesReady()?await getDb().select({

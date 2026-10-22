@@ -64,15 +64,26 @@ function plainMailText(text:string|undefined,html:string|undefined){
     String.fromCodePoint(code):entity;
   }).trim();
 }
-/** Only upstream-verified DMARC, or SPF/DKIM when DMARC did not fail,
- * may post as a recruiter. Gateway HMAC prevents untrusted callers
- * from fabricating this provider evidence.
+/** Upstream mail authentication must align with the account's From
+ * domain. A PASS for an unrelated envelope sender or DKIM signing domain is
+ * not authority to impersonate a recruiter. This header is trusted only
+ * after the provider-verified worker and gateway HMAC boundary.
  */
-function senderVerified(auth:string|undefined){
+function senderVerified(auth:string|undefined,fromAddress:string){
  const lower=auth?.toLowerCase()??"";
- if(/\bdmarc\s*=\s*fail\b/.test(lower))return false;
- return /\bdmarc\s*=\s*pass\b/.test(lower)||
-  /\b(?:spf|dkim)\s*=\s*pass\b/.test(lower);
+ const senderDomain=fromAddress.toLowerCase().split("@")[1]??"";
+ if(!senderDomain||!/^([a-z0-9-]+\.)+[a-z]{2,63}$/.test(senderDomain)||
+    /\bdmarc\s*=\s*fail\b/.test(lower))return false;
+ if(/\bdmarc\s*=\s*pass\b/.test(lower))return true;
+ // If no DMARC PASS is available, only a domain explicitly paired with
+ // its own passing SPF/DKIM result may be accepted. Unknown or unaligned
+ // header values remain safely stored for manual triage.
+ const aligned=(domain:string)=>domain===senderDomain||
+   senderDomain.endsWith("."+domain);
+ const dkim=[...lower.matchAll(/\bdkim\s*=\s*pass\b[^;\n]*\bheader\.d\s*=\s*([a-z0-9.-]+)/g)];
+ const spf=[...lower.matchAll(/\bspf\s*=\s*pass\b[^;\n]*\bsmtp\.mailfrom\s*=\s*([a-z0-9._%+-]+@)?([a-z0-9.-]+)/g)];
+ return dkim.some(match=>aligned(match[1]))||
+   spf.some(match=>aligned(match[2]));
 }
 /** Only a gateway that verifies the upstream mail provider may sign a payload.
  * A sender's From/Reply-To header alone never confers access. No email
@@ -164,7 +175,7 @@ export async function acceptAuthenticatedRecruiterEmailReply(
    input.headerFrom||input.from).trim().toLowerCase();
   if(declaredFrom!==input.from)
    return auditResult("WRONG_SENDER");
-  if(!senderVerified(input.auth))
+  if(!senderVerified(input.auth,input.from))
    return auditResult("NOT_VERIFIED");
   // Legacy +r-20hex and +rdev-20hex addresses are retained in Inbox for
   // triage; they cannot authenticate against vNext's 32hex persisted tokens.
