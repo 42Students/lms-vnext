@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import {z} from "zod";
-import {projectTemplateBlueprintSchema,reviseProjectTemplateInputSchema} from "@/modules/projects/validation";
+import {projectTemplateBlueprintSchema,reviseProjectTemplateInputSchema,type ReviseProjectTemplateInput} from "@/modules/projects/validation";
 import {requirePermission} from "@/modules/permissions/policy";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -109,7 +109,9 @@ export async function PATCH(
     const result = await reviseProjectTemplate(
       context,
       templateId,
-      reviseProjectTemplateInputSchema.parse(body),
+      // The strict Zod parser validates the full payload before the service
+      // accepts it; keep its inferred shape explicit for the writer boundary.
+      reviseProjectTemplateInputSchema.parse(body) as ReviseProjectTemplateInput,
     );
 
     return NextResponse.json({...result,message:"Project template updated"});

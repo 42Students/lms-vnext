@@ -50,7 +50,9 @@ describe("Super Admin placements remaining service entrypoint checks",()=>{
   expect(s).toContain('assertPersistedPlatformPermission(tx,context,"admin-scope.select")');
   expect(s).toContain('current.status!=="ACTIVE"');
   expect(s).toContain("current.updatedAt.toISOString()!==input.expectedUpdatedAt");
-  expect(s).toContain("lower(");
+  // Canonical employer identity is the UUID/domain, not a display-name uniqueness rule.
+  expect(s).toContain("verified domains and canonical UUIDs");
+  expect(s).toContain("eq(placementCompanies.version,current.version)");
   expect(s).toContain("date_trunc('milliseconds'");
   expect(s).toContain("recordActivityEventInTransaction(tx,context");
  });
@@ -58,7 +60,7 @@ describe("Super Admin placements remaining service entrypoint checks",()=>{
   const s=read("src/modules/placements/super-admin-company-identities-service.ts");
   expect(s).toContain("if(!isSuperAdmin(context))");
   expect(s).toContain('requirePermission(context,"admin-scope.select")');
-  expect((s.match(/assertPersistedPlatformPermission\(tx,context,"admin-scope.select"\)/g)??[]).length).toBe(2);
+  expect((s.match(/assertPersistedPlatformPermission\(tx,context,"admin-scope.select"\)/g)??[]).length).toBe(3);
   expect(s).toContain("eq(placementCompanyDomains.companyId,company.id)");
   expect(s).toContain("Domain belongs to another company.");
   expect(s).toContain("Other name is already registered to another company.");
