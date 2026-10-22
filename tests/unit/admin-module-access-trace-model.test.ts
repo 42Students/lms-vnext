@@ -232,7 +232,7 @@ describe("Super Admin learner module access trace", () => {
     ).toEqual(["GLOBAL"]);
   });
 
-  it("lets a locked lower-level placement rule win like any other module", () => {
+  it("ignores membership placement overrides under the college-scoped eligibility policy", () => {
     const placements = explainLearnerModuleAccess(
       chain,
       [
@@ -255,20 +255,13 @@ describe("Super Admin learner module access trace", () => {
     )!;
 
     expect(placements).toMatchObject({
-      enabled: false,
-      winnerLevel: "MEMBERSHIP",
+      enabled: true,
+      winnerLevel: "COLLEGE",
     });
-
-    expect(
-      placements.steps.find(
-        (step) => step.level === "MEMBERSHIP",
-      ),
-    ).toMatchObject({
-      source: "PERSISTED",
-      ignored: false,
-      winner: true,
-      locked: true,
-    });
+    expect(placements.steps.find(step=>step.level==="MEMBERSHIP"))
+      .toMatchObject({source:"PERSISTED",ignored:true,winner:false,locked:true});
+    expect(placements.steps.find(step=>step.level==="COLLEGE"))
+      .toMatchObject({source:"PERSISTED",ignored:false,winner:true,value:true});
   });
 
   it("keeps absent current academic scopes visible without inventing a rule", () => {
