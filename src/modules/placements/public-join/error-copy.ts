@@ -31,6 +31,29 @@ export function joinErrorMessage(code:unknown,defaultKind:"JOIN"|"SEND"="JOIN"){
 }
 
 
+/** Map legacy Form.Item field codes to accessible labelled controls. */
+export type JoinErrorField="email"|"name"|"phone"|"companyName"|"code";
+export function joinFieldForCode(code:unknown):JoinErrorField|null {
+ if(typeof code!=="string")return null;
+ if(["WRONG_CODE","CODE_EXPIRED","CODE_LOCKED","CODE_REQUIRED"].includes(code))return "code";
+ if(["EMAIL_NO_MX","EMAIL_MX_UNAVAILABLE","OTHER_COMPANY_EMAIL","COMPANY_EMAIL_REQUIRED",
+   "EMAIL_REQUIRED","EMAIL_INVALID","EMAIL_PERSONAL","EMAIL_DISPOSABLE","EMAIL_ACADEMIC",
+   "EMAIL_IP_ADDRESS"].includes(code))return "email";
+ if(["INVALID_MOBILE","PHONE_STORAGE_NOT_READY"].includes(code))return "phone";
+ if(["INVALID_NAME","NAME_REQUIRED","FIRST_NAME_REQUIRED"].includes(code))return "name";
+ if(["INVALID_COMPANY_NAME","COMPANY_REQUIRED","COMPANY_NAME_REQUIRED","COMPANY_EXISTS"].includes(code))return "companyName";
+ return null;
+}
+
+/** Preserve an explicit public field error message, without rendering raw
+ * infrastructure failures, objects or excessively long provider responses. */
+export function publicJoinResponseMessage(body:unknown,status:number,fallback:string):string {
+ if(status<400||status>=500||!body||typeof body!=="object"||!("message" in body))return fallback;
+ const message=(body as {message:unknown}).message;
+ return typeof message==="string"&&message.trim().length>0&&message.length<=300
+  ?message.trim():fallback;
+}
+
 /** Field-level hints do not expose recruiter account or company existence. */
 export function joinFieldError(code:unknown):{
  field:"email"|"company"|null;message:string;retryable:boolean;
