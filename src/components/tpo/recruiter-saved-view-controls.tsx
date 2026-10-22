@@ -27,7 +27,7 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
  }
  useEffect(()=>{
   let live=true;
-  void Promise.resolve().then(()=>{if(live)void refresh();});
+  void Promise.resolve().then(()=>{if(live){void refresh();} return;});
   return ()=>{live=false;};
  },[]);
  function currentQuery(){
