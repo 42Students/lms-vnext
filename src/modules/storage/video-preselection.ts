@@ -1,6 +1,7 @@
 import {
  MAX_VIDEO_BYTES,
  acceptAttributeFor,
+ guessContentTypeFromName,
  validateStorageDeclaration,
 } from "./file-policy";
 
@@ -18,11 +19,20 @@ export function lessonVideoPreselection(input:{
   return {ok:false,message:LESSON_VIDEO_SINGLE_PUT_LIMIT_TEXT};
  const checked=validateStorageDeclaration("lesson-video",{
   originalName:input.name,
-  contentType:input.type,
+  contentType:input.type || guessContentTypeFromName("lesson-video",input.name) || "",
   sizeBytes:input.size,
  });
- if(!checked.ok)return {ok:false,message:
-  checked.code==="STORAGE_SIZE_INVALID"?"Choose a video with a valid file size.":
-  "Choose an MP4, WebM, MOV, AVI, or M4V video."};
+ if(!checked.ok){
+  const messages={
+   STORAGE_NAME_INVALID:"Rename the video to a valid file name and try again.",
+   STORAGE_TYPE_NOT_ALLOWED:"Choose an MP4, WebM, MOV, AVI, or M4V video.",
+   STORAGE_EXTENSION_MISMATCH:"The video extension does not match its file type.",
+   STORAGE_SIZE_INVALID:input.size===0
+    ?"The video file is empty. Choose a nonempty video."
+    :"Choose a video with a valid file size.",
+   STORAGE_FILE_TOO_LARGE:LESSON_VIDEO_SINGLE_PUT_LIMIT_TEXT,
+  } as const;
+  return {ok:false,message:messages[checked.code]};
+ }
  return {ok:true,maxBytes:MAX_VIDEO_BYTES};
 }
