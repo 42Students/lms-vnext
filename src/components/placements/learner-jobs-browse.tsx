@@ -13,6 +13,7 @@ import {
   filterLearnerPlacementJobs,
   learnerJobEmploymentTypeCounts,
   closingSoonIstDayEndMs,
+  learnerDriveAvailability,
   type LearnerJobBrowseFilters,
 } from "@/modules/placements/learner-jobs-browse-model";
 import { readLearnerDriveUrl, learnerDriveQueryWithChanges } from "@/modules/placements/learner-drive-url-model";
@@ -147,19 +148,19 @@ export function LearnerJobsBrowse({
     filters.departmentId,filters.programId,filters.jobType]);
   const parsedPage=urlState.page;
   const isNotOpen=(item:LearnerPlacementJobItem)=>
-    !item.deadlinePassed&&!item.canApply;
-  // The old LMS paginates its open/current cards separately. Closed saved
-  // records and ineligible cards stay in their own sections, without
-  // consuming the 20 slots available on the primary open page.
+    learnerDriveAvailability(item)==="not-open";
+  // Keep the primary, not-open and expired sections aligned with the same
+  // availability rules used by the filter and counts. A closed drive without
+  // a deadline is still closed, not a currently ineligible open drive.
   const notOpenAll=visible.filter(isNotOpen);
-  const expiredAll=visible.filter(item=>item.deadlinePassed);
+  const expiredAll=visible.filter(item=>learnerDriveAvailability(item)==="closed");
   const savedExpired=savedOnly?expiredAll:[];
   const savedNotOpen=savedOnly?notOpenAll:[];
   const primary=savedOnly
     ?filters.availability==="closed"||filters.availability==="not-open"
-      ?[]:visible.filter(item=>!item.deadlinePassed&&!isNotOpen(item))
+      ?[]:visible.filter(item=>learnerDriveAvailability(item)==="open")
     :filters.availability==="not-open"||filters.availability==="closed"?[]:
-      visible.filter(item=>!isNotOpen(item)&&!item.deadlinePassed);
+      visible.filter(item=>learnerDriveAvailability(item)==="open");
   const pagination=learnerDrivePageState(primary.length,parsedPage,PAGE_SIZE);
   const {page,totalPages}=pagination;
   const paged=primary.slice(pagination.startIndex,pagination.endIndex);
