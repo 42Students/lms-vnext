@@ -122,7 +122,10 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
       const created: {projectId:string;teamGroupId:string;title:string;memberCount:number;learnerMembershipId:string}[]=[];
       for (let index=0;index<plans.length;index++) {
         const plan=plans[index],group=groups[index];
-        if(input.cohortMode && covered.has(group.membershipIds[0]))continue;
+        if (!plan || !group) throw new ProjectsServiceError("PROJECT_TEAM_PREVIEW_INVALID");
+        const learnerMembershipId=group.membershipIds[0];
+        if (!learnerMembershipId) throw new ProjectsServiceError("PROJECT_TEAM_PREVIEW_INVALID");
+        if(input.cohortMode && covered.has(learnerMembershipId))continue;
         const [team]=await tx.insert(lmsGroups).values({
           kind:"PROJECT_TEAM",ownerScope:"COLLEGE",collegeId:scope.id,
           name:(input.baseTitle.slice(0,20)+" · "+group.name),status:"ACTIVE",
@@ -183,7 +186,7 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
           groupKey:"project:"+project.id,dedupeKey:"project:"+project.id+":created",
         });
         created.push({projectId:project.id,teamGroupId:team.id,title:project.title,
-          memberCount:group.membershipIds.length,learnerMembershipId:group.membershipIds[0]});
+          memberCount:group.membershipIds.length,learnerMembershipId});
       }
       const individualResults=input.cohortMode?
         cohortCreationResultRows(groups,created,covered):[];
