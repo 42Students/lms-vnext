@@ -11,7 +11,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-3-024-021  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
 - [x] G2-3-024-029  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
 - [x] G2-3-024-047  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
-- [ ] G2-15-031-062  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
+- [x] G2-15-031-062  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [ ] G2-19-023-025  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [ ] G2-19-023-031  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [x] G2-3-010-004  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
@@ -28,3 +28,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - G2-3-010-004: OK — `src/modules/storage/private-object-storage.ts:21-46,129-145` records the explicit legacy-folder crosswalk and generates tenant/owner/namespace-scoped opaque keys without trusting old `private-doc:` references. The legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/utils/PrivateDocStorage.java:24-31,59-70` stored `private-doc:<key>` references. No legacy data migration is required for this new deployment; a future import must rehost, scan and rewrite owner-authorized records, never interpret old refs as current read grants.
 - G2-3-010-005: OK — `src/modules/storage/private-object-storage.ts:21-46,105-125` documents the required rehosting path, while read grants require scoped keys instead of silently removing leading slashes. The old `docs/legacy-source/backend/src/main/java/com/_42students/lms/utils/PrivateDocStorage.java:63-70` stripped leading slashes from refs. The incompatible legacy reference is intentionally rejected, not granted access; there are no old records to remap in vNext.
+
+- G2-15-031-062: OK — `src/modules/attendance/faculty-service.ts:373-400,405-510` documents and enforces the explicit legacy `classScheduleId`→scoped UUID schedule-event crosswalk, maps learner IDs to active delivery memberships, persists absent-only records, and requires a correction token/reason with activity audit. Legacy source `docs/legacy-source/frontend/src/pages/Dashboard/course/Attendance/TakeAttendance.js:112-146` reconstructs per-learner `isAbsent` from schedule IDs. The persistence shape differs intentionally while retaining absent/present meaning and stronger correction traceability.
