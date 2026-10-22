@@ -8,6 +8,12 @@ it("MEN-projects-meetings-08 retains the reviewed mentor legacy and resilience c
 it("MEN-projects-meetings-18 retains the reviewed mentor legacy and resilience contract",()=>{const s=read("src/components/projects/project-workspace.tsx");for(const phrase of ["mode!==\"ADMIN\"?<div","Definition of done","Who’s who"])expect(s).toContain(phrase);});
 it("MEN-projects-meetings-23 retains the reviewed mentor legacy and resilience contract",()=>{const s=read("src/components/projects/project-workspace.tsx");for(const phrase of ["About this project","Deliverables","aria-label=\"Final submission\""])expect(s).toContain(phrase);});
 it("MEN-projects-meetings-37 retains the reviewed mentor legacy and resilience contract",()=>{const s=read("src/components/projects/project-lifecycle-actions.tsx");for(const phrase of ["Ship this release?","Complete every linked sprint","ConfirmDialog"])expect(s).toContain(phrase);});
-it("MEN-projects-meetings-38 retains the reviewed mentor legacy and resilience contract",()=>{const s=read("src/components/projects/project-workspace.tsx");for(const phrase of ["Tasks: {facts.done}/{facts.total} done","No tasks yet","mode===\"ADMIN\"?(mode===\"ADMIN\"&&section===\"sprints\"?",\"Sprint plan\":\"Execution\"):\"Releases and Sprints\""])expect(s).toContain(phrase);});
+it("MEN-projects-meetings-38 retains the reviewed mentor legacy and resilience contract",()=>{
+ const s=read("src/components/projects/project-workspace.tsx");
+ for(const phrase of ["Tasks: {facts.done}/{facts.total} done","No tasks yet",
+  'mode==="ADMIN"?(activeSection==="tasks"?"Task plan":activeSection==="sprints"?',
+  '"Sprint plan":"Execution"):"Releases and Sprints"'])
+  expect(s).toContain(phrase);
+});
 it("MEN-projects-meetings-R03 retains the reviewed mentor legacy and resilience contract",()=>{const s=read("src/modules/projects/validation.ts");for(const phrase of [".transform(() => \"Asia/Kolkata\" as const)"])expect(s).toContain(phrase);});
 });
