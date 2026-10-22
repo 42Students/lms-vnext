@@ -59,19 +59,25 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
     else setTermId(value);
   }
 
+  function hasDirtyEdit() {
+    if (!editing) return false;
+    const original = data.mapped.find(item => item.id === editing.id);
+    if (!original) return true;
+    const originalPosition = orderedPeers(original).findIndex(item => item.id === original.id) + 1;
+    return editing.credits !== String(original.credits ?? 3) ||
+      editing.position !== String(originalPosition) ||
+      editing.type !== original.type ||
+      editing.isMandatory !== (original.isMandatory ?? original.type === "CORE");
+  }
+
   function requestScopeChange(kind: "program" | "term", value: string) {
-    if (selectedIds.length) setSwitchDraft({ kind, value });
+    if (selectedIds.length || hasDirtyEdit()) setSwitchDraft({ kind, value });
     else applyScopeChange(kind, value);
   }
 
   function cancelEditing() {
     if (!editing) return;
-    const original = data.mapped.find(item => item.id === editing.id);
-    const originalPosition = original
-      ? orderedPeers(original).findIndex(item => item.id === original.id) + 1 : 0;
-    if (original && (editing.credits !== String(original.credits ?? 3) ||
-      editing.position !== String(originalPosition) ||
-      editing.type !== original.type || editing.isMandatory !== (original.isMandatory ?? original.type === "CORE"))) {
+    if (hasDirtyEdit()) {
       setDiscardEdit(true);
       return;
     }
@@ -336,7 +342,8 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
       </label>
       {availableCourses.length===0?<p className="text-sm text-muted-foreground">No unmapped courses available for this semester.</p>:null}
       <div className="flex items-end sm:justify-end">
-        <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="submit" disabled={pending || !editableTerm || !termId}>
+        <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="submit"
+          disabled={pending || refreshing || !!error || draggedId !== null || !editableTerm || !termId}>
           <span aria-hidden="true">＋</span> {TERM_MAPPING_COPY.addButton}
         </Button>
       </div>
@@ -513,7 +520,9 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
     <ConfirmDialog open={switchDraft !== null} onOpenChange={open => { if (!open) setSwitchDraft(null); }}
       title={switchDraft?.kind === "program"
         ? "Switch programs with unsaved course choices?" : "Switch semesters with unsaved course choices?"}
-      description={`${selectedIds.length} unsaved course choice(s) will be retained for this semester.`}
+      description={hasDirtyEdit()
+         ? "Your unsaved mapping changes will be discarded. Any selected new courses remain saved as a draft for this semester."
+         : `${selectedIds.length} unsaved course choice(s) will be retained for this semester.`}
       confirmLabel={switchDraft?.kind === "program" ? "Switch program" : "Switch semester"}
       onConfirm={() => {
         if (switchDraft) applyScopeChange(switchDraft.kind, switchDraft.value);
