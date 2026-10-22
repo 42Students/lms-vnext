@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 /** WebView-safe external navigation with a user-selectable, copyable fallback.
  * Clipboard failures never hide the original validated HTTPS URL. */
 export function ThirdPartyLink({ href, label, ariaLabel }: { href: string; label: string; ariaLabel?: string }) {
   const [showFallback, setShowFallback] = useState(false);
+  const fallbackId = useId();
   const [copyStatus, setCopyStatus] = useState("");
   let safeHref: string | null = null;
   try {
@@ -36,7 +37,7 @@ export function ThirdPartyLink({ href, label, ariaLabel }: { href: string; label
       <span role="alert" className="text-[13px] leading-[22px] text-[var(--lms-body-text)]">This link is unavailable.</span>}
     {safeHref ? <span className="flex flex-wrap gap-3">
       <Button variant="link" size="sm" type="button" onClick={() => { setCopyStatus("");setShowFallback(value=>!value); }}
-        aria-expanded={showFallback}
+        aria-expanded={showFallback} aria-controls={showFallback ? fallbackId : undefined}
         className="min-h-11 md:min-h-[var(--lms-control-height)] px-2 text-[14px] font-[650] underline! hover:underline! focus-visible:underline! underline-offset-2 hover:bg-[var(--lms-primary-subtle)] aria-expanded:bg-[var(--lms-primary-subtle)] aria-expanded:text-[var(--lms-primary-text)]">
         {showFallback ? "Hide link" : "Show link to copy"}
       </Button>
@@ -45,7 +46,7 @@ export function ThirdPartyLink({ href, label, ariaLabel }: { href: string; label
         Copy link
       </Button>
     </span> : null}
-    {showFallback && safeHref ? <span role="status" className="min-w-0 space-y-[var(--lms-space-2)] text-[13px] leading-[22px] text-[var(--lms-body-text)]">
+    {showFallback && safeHref ? <span id={fallbackId} role="status" className="min-w-0 space-y-[var(--lms-space-2)] text-[13px] leading-[22px] text-[var(--lms-body-text)]">
       <span className="block">The link could not be opened. Copy the destination below to try another browser.</span>
       <span className="block select-text break-all">{safeHref}</span>
       {copyStatus ? <span className="block" aria-live="polite">{copyStatus}</span> : null}
