@@ -13,7 +13,7 @@ const vars=[
  "TPO_CAMPAIGNS_READY","TPO_CAMPAIGN_ZEPTO_TEMPLATE_KEY",
  "TPO_CAMPAIGN_RECIPIENT_TOKEN_SECRET","TPO_CAMPAIGN_RECIPIENT_HMAC_SECRET",
  "ZEPTOMAIL_TOKEN","ZEPTOMAIL_API_URL","ZEPTOMAIL_OTP_TEMPLATE_KEY",
- "APP_PUBLIC_URL",
+ "APP_PUBLIC_URL","DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64",
 ] as const;
 const originals=Object.fromEntries(vars.map(k=>[k,process.env[k]])) as Record<string,string|undefined>;
 const officer:RequestContext={
@@ -31,6 +31,7 @@ beforeEach(()=>{
   ZEPTOMAIL_API_URL:"https://api.zeptomail.in/v1.1/email/template",
   ZEPTOMAIL_OTP_TEMPLATE_KEY:"auth.otp",
   APP_PUBLIC_URL:"https://42lms.com",
+  DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64:Buffer.alloc(32,71).toString("base64"),
  });
  vi.mocked(tpoCampaignDraftStorageReady).mockResolvedValue(true);
 });
@@ -74,6 +75,13 @@ describe("chat-16 TPO campaign dispatch readiness and fail-closed tenant gate",(
    await expect(tpoCampaignDispatchReady(),origin).resolves.toBe(false);
   }
   expect(tpoCampaignDraftStorageReady).not.toHaveBeenCalled();
+ });
+ it("W1-1 never enables campaigns when the cross-college EMAIL suppression key is unavailable",async()=>{
+  delete process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64;
+  await expect(tpoCampaignDispatchReady()).resolves.toBe(false);
+  expect(tpoCampaignDraftStorageReady).not.toHaveBeenCalled();
+  process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64="not-a-base64-key";
+  await expect(tpoCampaignDispatchReady()).resolves.toBe(false);
  });
  it("tpo-dispatch-readiness-19 rejects an invalid campaign ID or unauthorized recruiter before a provider claim",async()=>{
   await expect(dispatchTpoCampaign(officer,"forged")).rejects.toThrow();

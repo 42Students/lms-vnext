@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   deriveGlobalEmailSuppressionHash,
+  deriveGlobalEmailSuppressionHashForAddress,
   sealOutboundDelivery,
 } from "@/modules/operations/outbound-delivery-envelope";
 import { OutboundDeliveryError } from "@/modules/operations/outbound-delivery-contract";
@@ -45,6 +46,20 @@ describe("DB-050 legacy global EMAIL opt-out parity", () => {
     expect(globalA).not.toBe(localB.recipientHash);
     expect(JSON.stringify(localA)).not.toContain(globalA!);
     expect(JSON.stringify(localB)).not.toContain(globalB!);
+  });
+
+  it("uses the exact same global digest for the TPO campaign provider as the durable invitation outbox", () => {
+    const recipient = "Contact@Employer.Example";
+    expect(deriveGlobalEmailSuppressionHashForAddress(recipient,key)).toBe(
+      deriveGlobalEmailSuppressionHash(intent(),key),
+    );
+    expect(deriveGlobalEmailSuppressionHashForAddress("  contact@employer.example  ",key)).toBe(
+      deriveGlobalEmailSuppressionHash(intent(),key),
+    );
+    expect(()=>deriveGlobalEmailSuppressionHashForAddress("not an email",key))
+      .toThrowError("INVALID_OUTBOUND_INTENT");
+    expect(()=>deriveGlobalEmailSuppressionHashForAddress(recipient,""))
+      .toThrowError("OUTBOUND_KEY_UNAVAILABLE");
   });
 
   it("normalizes email case/outer whitespace before suppression identity derivation", () => {
