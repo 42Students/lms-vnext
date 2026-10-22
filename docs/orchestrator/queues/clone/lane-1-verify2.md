@@ -9,4 +9,4 @@ Second verification round over the remaining P1 rows (W1_* packets). Do these af
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-1/W1_lane1_5.md` (25 rows)
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-1/W1_lane1_6.md` (25 rows)
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-1/W1_lane1_7.md` (25 rows)
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-1/W1_lane1_8.md` (15 rows)
+- [x] `docs/audit/gap-fix-work/verify2/packets/lane-1/W1_lane1_8.md` (15 rows)
