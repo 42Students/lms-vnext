@@ -127,10 +127,10 @@ export default async function LearnerCourseTabPage({
       instructorsResult.status!=="fulfilled"){
     const lessonReadFailed=activeTab==="roadmap"&&workspaceResult.status==="rejected";
     return <div className="min-w-0 space-y-4">
-      <PageHeader title={lessonReadFailed?"Could not load course lessons":"Could not load course"} />
+      <PageHeader title={lessonReadFailed?"Lesson content could not be loaded":"Could not load course"} />
       <Banner tone="warning" role="alert">
         {lessonReadFailed
-         ?"Could not load course lessons. Your progress has not been changed; retry to load the latest lesson and completion state."
+         ?"Lesson content could not be loaded. Your progress has not been changed; retry to load the latest lessons and completion state."
          :"Could not load course. Content and completion counts may be incomplete."}
         <LearnerCourseStateRetry label="Retry" />
       </Banner>
