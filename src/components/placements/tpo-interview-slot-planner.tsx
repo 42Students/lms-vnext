@@ -33,7 +33,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
   setBusy(true);setError("");setMessage("");
   try{const response=await fetch(url,{method:"POST",credentials:"same-origin",
     headers:{"content-type":"application/json"},body:JSON.stringify({...body,confirmed:true})});
-   const result=await response.json() as Record<string,unknown>&{error?:string;issues?:Array<{message:string}>};
+   await response.json();
    if(!response.ok)throw Error("Could not update interview slots. Refresh and review the schedule.");
    setMessage("Schedule updated.");
    router.refresh();
@@ -186,7 +186,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     onOpenChange={next=>{if(!next&&!busy)setConfirmRequest(null);}}
     pending={busy}
     title={confirmRequest?.title??"Confirm schedule change"}
-    description={confirmRequest?.description}
+    {...(confirmRequest?.description !== undefined ? {description:confirmRequest.description} : {})}
     confirmLabel="Confirm"
     onConfirm={()=>{if(confirmRequest){const body=confirmRequest.body;setConfirmRequest(null);void action(body);}}}/>
  </section>;
