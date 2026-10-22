@@ -13,6 +13,8 @@ import { getAdminCourseWorkspace } from "@/modules/courses/admin-course-workspac
 import {parseSuperAdminCourseQuery} from "@/modules/admin-ui/super-admin-course-query-model";
 import { ErrorState } from "@/components/ui/error-state";
 import {getSuperAdminCourseDependencyCounts} from "@/modules/admin-ui/super-admin-course-dependencies-service";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 
 export default async function SuperAdminCoursesPage({searchParams}:{searchParams:Promise<{duplicate?:string|string[];q?:string|string[];sort?:string|string[];page?:string|string[];pageSize?:string|string[];create?:string|string[]}>}) {
   const context =
@@ -92,10 +94,10 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
           <form action="/admin/courses" method="get" className="flex flex-wrap gap-2">
             <label className="min-w-0 flex-1 text-xs font-semibold text-body">
               Find course or code
-              <input type="search" name="q" defaultValue={rawQ} maxLength={100}
-                className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm"/>
+              <Input type="search" name="q" defaultValue={rawQ} maxLength={100}
+                className="mt-1 w-full"/>
             </label>
-            <button type="submit" className="min-h-11 self-end rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Search</button>
+            <Button variant="secondary" type="submit" className="self-end">Search</Button>
           </form>
           {!valid?<ErrorState title="Invalid course filters"
             description="Use up to 100 search characters and a positive page number."
