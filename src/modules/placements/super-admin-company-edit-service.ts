@@ -24,10 +24,9 @@ export async function editGlobalCompany(context:RequestContext,raw:unknown){
   if(!current||current.status!=="ACTIVE")throw new Error("This company is no longer active.");
   if(current.updatedAt.toISOString()!==input.expectedUpdatedAt)
    throw new Error("Company details changed. Refresh before saving.");
-  const [duplicate]=await tx.select({id:placementCompanies.id}).from(placementCompanies)
-   .where(and(sql`lower(${placementCompanies.name}) = lower(${input.name})`,
-    sql`${placementCompanies.id} <> ${current.id}`)).limit(1);
-  if(duplicate)throw new Error("Another company already uses this name.");
+  // Names are presentation text, not employer identity. Two independent
+  // companies may share a display name; verified domains and canonical UUIDs
+  // enforce identity. The database's unique domain constraint remains strict.
   const [saved]=await tx.update(placementCompanies).set({
    name:input.name, websiteUrl:input.website, industry:input.industry,
    about:input.about, logoPublicUrl:input.logoPublicUrl,
