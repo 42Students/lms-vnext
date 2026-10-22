@@ -35,11 +35,13 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Render partial metrics/warning and Retry roster when submission data succeeded.
 
 ## G2-4-013-018 [P1] GAP facet F04
+- [x] Verified: getFacultyAssignmentReport keeps scoped submissions when roster lookup fails; eligibleLearners is null and submitted count remains available.
 - Files: src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx, src/modules/courses/faculty-assessment-report-service.ts
 - Legacy: Legacy Submitted stat N/rosterSize if roster found, else N only. (`docs/legacy-source/frontend/src/components/Report/AssignmentReportContent.jsx:160-163`)
 - Expected fix: Support submission-only report partial state when roster unavailable.
 
 ## G2-4-013-034 [P1] GAP facet F07
+- [x] Verified: roster failures return reportCompleteness PARTIAL_ROSTER_UNAVAILABLE, with eligible/missing null instead of misleading counts.
 - Files: src/modules/courses/faculty-assessment-report-service.ts
 - Legacy: Partial roster failure shows Report is partially loaded and precise completion caution. (`docs/legacy-source/frontend/src/components/Report/AssignmentReportContent.jsx:82-85`; `docs/legacy-source/frontend/src/components/Report/AssignmentReportContent.jsx:167-175`)
 - Expected fix: Provide partial warning without false missing/eligible counts.
@@ -50,6 +52,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Support unambiguous legacy links; retain strict cross-section scope for shared reports.
 
 ## G2-4-013-046 [P1] GAP facet F11
+- [x] Verified: no delivery deep link resolves only if exactly one authorized assessment matches; ambiguous shared assignment fails with ASSIGNMENT_DELIVERY_MISMATCH.
 - Files: src/modules/courses/faculty-assessment-report-service.ts
 - Legacy: Legacy report may be reached by faculty from Blueprint without deliveryId. (`docs/legacy-source/frontend/src/components/Report/AssignmentReportContent.jsx:29-33`)
 - Expected fix: Provide safe Section chooser on ambiguous deep links.
@@ -65,11 +68,13 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Document differences for withdrawn/transfer students in historic reports.
 
 ## G2-4-013-057 [P1] GAP facet F13
+- [x] Verified: partial roster still retains submissions and leaves missing unknown.
 - Files: src/modules/courses/faculty-assessment-report-service.ts
 - Legacy: Legacy roster partial still displays report data and warning. (`docs/legacy-source/frontend/src/components/Report/AssignmentReportContent.jsx:82-88`; `docs/legacy-source/frontend/src/components/Report/AssignmentReportContent.jsx:167-175`)
 - Expected fix: Render partial result with missing-count unknown placeholder.
 
 ## G2-4-013-085 [P1] GAP facet F20
+- [x] Verified: roster failure is explicitly PARTIAL_ROSTER_UNAVAILABLE, never counted as a zero-member roster.
 - Files: src/modules/courses/faculty-assessment-report-service.ts
 - Legacy: Legacy incomplete roster is a partial state rather than all failure. (`docs/legacy-source/frontend/src/components/Report/AssignmentReportContent.jsx:82-88`)
 - Expected fix: Keep valid submissions data with explicit UNKNOWN completeness when roster unavailable.
@@ -80,6 +85,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Specify migration of attempt count, points, graded visibility and identity.
 
 ## G2-4-013-090 [P1] GAP facet F22
+- [x] Verified: dueAt is nullable, historical submissions remain reportable, and missing roster does not produce false missing/eligible totals.
 - Files: src/modules/courses/faculty-assessment-report-service.ts
 - Legacy: Legacy due and points values nested in lesson content DTO, can lack roster. (`docs/legacy-source/frontend/src/utils/assignmentReport.js:37-43`; `docs/legacy-source/frontend/src/utils/assignmentReport.js:100-115`)
 - Expected fix: Define nullable due and roster-loss behavior, historical period roster snapshot.
