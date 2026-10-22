@@ -175,6 +175,10 @@ export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:u
    .where(and(eq(placementJobRoleOptions.jobId,jobId),eq(placementJobRoleOptions.isPrimary,false),
     eq(placementJobRoleOptions.status,"ACTIVE"),eq(placementJobRoleOptions.title,input.title))).limit(1);
   if(duplicate)throw new PlacementsServiceError("PLACEMENT_ROLE_OPTION_DUPLICATE");
+  // Existing historical portal data cannot be invented for a native
+  // imported record. Reject a portal edit when its storage shape is absent.
+  if(input.portal!==undefined&&!job.legacyPostingDetails)
+   throw new PlacementsServiceError("PLACEMENT_JOB_NOT_EDITABLE");
   const policyChanged=input.minCgpaHundredths!==undefined||
    input.allowedCohortIds!==undefined||input.allowedProgramIds!==undefined||
    input.allowedPassingYears!==undefined||input.verifiedMarksOnly!==undefined||
@@ -192,6 +196,7 @@ export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:u
   }:null);
   const updatedDetails=base?{
    ...base,
+   ...(input.portal!==undefined?{portal:input.portal}:{}),
    ...(input.wantedSkills!==undefined?{skillsWanted:input.wantedSkills}:{}),
    ...(policyChanged?{customEligibilityRules:[]}:{}),
    importantDates:input.applicationDeadline!==undefined?[
@@ -208,7 +213,8 @@ export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:u
    ...(input.applicationDeadline!==undefined?{
     applicationDeadline:input.applicationDeadline?new Date(input.applicationDeadline):null,
    }:{}),
-   ...(input.applicationDeadline!==undefined||input.wantedSkills!==undefined||policyChanged?
+   ...(input.applicationDeadline!==undefined||input.portal!==undefined||
+     input.wantedSkills!==undefined||policyChanged?
     {legacyPostingDetails:updatedDetails}:{}),
    minimumAnnualCtcInr:input.minimumAnnualCtcInr,
    maximumAnnualCtcInr:input.maximumAnnualCtcInr,
@@ -310,7 +316,9 @@ export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:u
     ...(input.applicationDeadline!==undefined?["applicationDeadline","importantDates"]:[]),
     ...(input.allowedPassingYears!==undefined?["allowedPassingYears"]:[]),
     ...(input.wantedSkills!==undefined?["wantedSkills"]:[]),
-    ...(policyChanged?["obsoleteLegacyEligibilityRulesCleared"]:[])],
+    ...(policyChanged?["obsoleteLegacyEligibilityRulesCleared"]:[]),
+    ...(input.allowedProgramIds!==undefined?["allowedProgramIds"]:[]),
+    ...(input.portal!==undefined?["portal"]:[])],
   });
   let notified=0;
   if(job.status==="PUBLISHED"&&input.notifyApplicants){
