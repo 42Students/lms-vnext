@@ -185,13 +185,13 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
                   row.joining === "JOINED" ? " · Joined" :
                   row.offerStatus === "ACCEPTED" ? " · Offer accepted" : ""}
               </p>
-              {row.rejectionReason ? <p className="text-xs text-error">Rejection reason: {row.rejectionReason}</p> : null}
               {row.nextInterview ? <p className="text-xs text-body">
                 Next interview: {row.nextInterview.roundName} · {new Intl.DateTimeFormat("en-IN",{
                   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
                 }).format(new Date(row.nextInterview.startsAt))} IST
                 {row.nextInterview.room?" · "+row.nextInterview.room:""}
               </p> : null}
+              {row.rejectionReason ? <p className="text-xs text-error">Rejection reason: {row.rejectionReason}</p> : null}
             </li>;
           })}
         </ul>}
