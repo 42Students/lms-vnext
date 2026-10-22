@@ -225,7 +225,7 @@ export function FacultyAttendanceWorkspace({
   function setScheduleWallTimes(date: string, startTime: string, endTime: string) {
     const beginning = date && startTime ? date + "T" + startTime : "";
     const minutes = (time: string) => {
-      const [hour, minute] = time.split(":").map(Number);
+      const [hour = 0, minute = 0] = time.split(":").map(Number);
       return hour * 60 + minute;
     };
     let endDate = date;
