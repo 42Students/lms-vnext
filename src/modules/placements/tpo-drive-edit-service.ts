@@ -207,11 +207,11 @@ export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:u
    ...(input.recruiterDriveMode!==undefined?{recruiterDriveMode:input.recruiterDriveMode}:{}),
    ...(input.applicationDeadline!==undefined?{
     applicationDeadline:input.applicationDeadline?new Date(input.applicationDeadline):null,
- 
    }:{}),
    ...(input.applicationDeadline!==undefined||input.wantedSkills!==undefined||policyChanged?
     {legacyPostingDetails:updatedDetails}:{}),
-   minimumAnnualCtcInr:input.minimumAnnualCtcInr,maximumAnnualCtcInr:
+   minimumAnnualCtcInr:input.minimumAnnualCtcInr,
+   maximumAnnualCtcInr:input.maximumAnnualCtcInr,
    fixedCtcLpa:input.fixedCtcLpa===null?null:input.fixedCtcLpa.toFixed(2),
    variableCtcLpa:input.variableCtcLpa===null?null:input.variableCtcLpa.toFixed(2),
    stipendPerMonthInr:input.stipendPerMonthInr,isDream:input.isDream,
