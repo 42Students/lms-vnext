@@ -10,7 +10,7 @@ import {PlacementsServiceError} from "./errors";
 import {placementTableExists} from "./staged-tables";
 import {requireTpoJobCollege,requireTpoJobActor,type TpoJobTx} from "./tpo-job-write-base";
 import {placementJobIdSchema,placementRoundIdSchema} from "./validation";
-import {overlapsInterviewRoom,planInterviewDay,sameInterviewRoom,tpoInterviewSlotActionSchema} from "./tpo-interview-slot-model";
+import {candidateInterviewBufferedBounds,overlapsInterviewRoom,planInterviewDay,sameInterviewRoom,tpoInterviewSlotActionSchema} from "./tpo-interview-slot-model";
 import {actOnPlacementRequest} from "./request-service";
 
 /** Legacy /api/v1/interviews endpoint operations mapped to canonical vNext
@@ -180,6 +180,9 @@ async function assertLearnerTimeAvailable(tx:TpoJobTx,collegeId:string,
  const [lockedUser]=await tx.select({id:users.id}).from(users)
   .where(eq(users.id,application.userId)).for("update").limit(1);
  if(!lockedUser)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
+ // Preserve the legacy 15-minute transfer window for the same person across
+ // all their college memberships, jobs and interview rounds.
+ const window=candidateInterviewBufferedBounds(startsAt,endsAt);
  const [conflict]=await tx.select({id:placementRoundCandidateSlots.id})
   .from(placementRoundCandidateSlots)
   .innerJoin(placementApplications,
@@ -189,8 +192,8 @@ async function assertLearnerTimeAvailable(tx:TpoJobTx,collegeId:string,
    eq(collegeMemberships.userId,application.userId),
    eq(placementRoundCandidateSlots.status,"BOOKED"),
    ignoreSlotId?ne(placementRoundCandidateSlots.id,ignoreSlotId):undefined,
-   lt(placementRoundCandidateSlots.startsAt,endsAt),
-   gt(placementRoundCandidateSlots.endsAt,startsAt),
+   lt(placementRoundCandidateSlots.startsAt,window.latestConflictStart),
+   gt(placementRoundCandidateSlots.endsAt,window.earliestConflictEnd),
   )).limit(1);
  if(conflict)throw Error("This learner already has an interview at that time. "+
   "Choose another slot; the existing booking has been preserved.");
