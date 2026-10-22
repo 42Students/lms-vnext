@@ -52,11 +52,15 @@ export function AdminPlacementStudentSearch({ collegeId, initialQuery, choices, 
     if (lastRouteQuery.current === initialQuery) return;
     const previousRoute = lastRouteQuery.current;
     lastRouteQuery.current = initialQuery;
-    setText(input => input.trim() === previousRoute.trim() ? initialQuery : input);
-    setOpen(false);
+    // Keep the suggestion list open when this is the response to a query
+    // currently being typed. Only close it for a genuine history navigation.
+    if (text.trim() === previousRoute.trim()) {
+      setText(initialQuery);
+      setOpen(false);
+    }
     setActive(-1);
     selectedRef.current = false;
-  }, [initialQuery]);
+  }, [initialQuery, text]);
 
   useEffect(() => {
     if (!collegeId || selectedRef.current) return;
