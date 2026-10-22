@@ -126,3 +126,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/modules/placements/admin-company-directory-service.ts
 - Legacy: Default list is 50 distinct company IDs with page0 and 50 rows fixed `docs/legacy-source/frontend/src/pages/superadmin/sections/CompanyCuration.js:34-43,94-95`
 - Expected fix: Page companies before relationship enrichment; never count multiple colleges as rows.
+
+## Results
+- FIXED G2-9-033-077 — `src/modules/placements/validation.ts:69-78`; commit `3e9a14bd69580d46fefbacdc7a65676ab04dd074`; legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/CompanyServiceImpl.java:138-147`.
+- OK G2-9-033-079 — `src/modules/placements/validation.ts:40-59` enforces HTTPS website and logo; legacy `docs/legacy-source/frontend/src/pages/superadmin/sections/Companies.js:484-489`.
