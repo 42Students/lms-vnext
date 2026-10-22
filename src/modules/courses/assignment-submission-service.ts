@@ -66,6 +66,8 @@ import {
   prepareAssignmentFileReceipt,
 } from "./assignment-file-service";
 
+type SubmissionLink = { kind: "REPOSITORY_LINK" | "EXTERNAL_LINK"; url: string; caption: string };
+
 function assignmentAudienceMatches(
   assignment: Awaited<
     ReturnType<
@@ -217,11 +219,11 @@ export async function submitCourseAssignment(
   // Prepare every file against the persisted learner/college scope before
   // taking row locks. The transaction rechecks each receipt and consumes it
   // exactly once; no object metadata is trusted from the submitted JSON.
-  const fileReceiptIds = input.submissionType === "FILE"
+  const fileReceiptIds: string[] = input.submissionType === "FILE"
     ? input.uploadReceiptIds ?? (input.uploadReceiptId ? [input.uploadReceiptId] : [])
     : [];
   const preparedFiles = input.submissionType === "FILE"
-    ? await Promise.all(fileReceiptIds.map(receiptId =>
+    ? await Promise.all(fileReceiptIds.map((receiptId: string) =>
         prepareAssignmentFileReceipt(context, assignmentId, input.deliveryId, receiptId)))
     : [];
 
@@ -256,7 +258,7 @@ export async function submitCourseAssignment(
         const methodAllowed = policy && (input.submissionType === "FILE"
           ? allowedAssignmentMixedParts(policy.methods, {
               hasWrittenResponse: Boolean(input.textContent),
-              links: (input.links ?? []).map(link => ({ kind: link.kind })),
+              links: (input.links ?? []).map((link: SubmissionLink) => ({ kind: link.kind })),
               fileMimeTypes: preparedFiles.map(file => file.attestation.contentType),
             })
           : allowedAssignmentSubmissionPart(policy.methods, {
@@ -382,7 +384,7 @@ export async function submitCourseAssignment(
 
       if (input.submissionType === "FILE" && input.links?.length) {
         await tx.insert(assignmentSubmissionLinks).values(
-          input.links.map((link, sequence) => ({
+          input.links.map((link: SubmissionLink, sequence: number) => ({
             submissionId: created!.id,
             sequence,
             kind: link.kind,

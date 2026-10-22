@@ -60,10 +60,13 @@ export function mentorMeetingDisplayStatus(
 }
 
 export function safeMentorMeetingJoinUrl(item: MentorMeetingCalendarItem, now?: Date): string | null {
-  // Legacy Join remains available for every non-cancelled meeting with a safe URL.
-  // REQUESTED and COMPLETED remain read-only in this view.
-  if (item.status==="CANCELLED" || !item.meetingUrl) return null;
-  void now;
+  // Only scheduled meetings may be joined; outstanding requests, completed
+  // sessions and meetings past their end are read-only calendar records.
+  if ((item.status!=="SCHEDULED" && item.status!=="RESCHEDULED") || !item.meetingUrl) return null;
+  if (now) {
+    const end = Date.parse(item.endsAt ?? item.startsAt);
+    if (!Number.isFinite(now.getTime()) || !Number.isFinite(end) || end < now.getTime()) return null;
+  }
   try {
     const url = new URL(item.meetingUrl);
     return (url.protocol === "https:" || url.protocol === "http:") &&

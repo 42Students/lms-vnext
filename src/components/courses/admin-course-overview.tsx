@@ -36,6 +36,7 @@ import {
 type Workspace = Awaited<
   ReturnType<typeof getAdminCourseWorkspace>
 >;
+type CourseRow = Workspace["courses"][number] | Awaited<ReturnType<typeof listCollegeCourseCatalogue>>["items"][number];
 
 export function AdminCourseOverview({
   workspace,
@@ -88,15 +89,13 @@ export function AdminCourseOverview({
       (activeOfferingCountByCourse.get(item.courseId)??0)+1);
   }
 
-  const courseColumns: DataTableColumn<
-    Workspace["courses"][number]
-  >[] = [
+  const courseColumns: DataTableColumn<CourseRow>[] = [
     ...(!courseBasePath.startsWith("/admin/")?[{
       key:"select",header:"Select",
-      cell:(course:Workspace["courses"][number])=><CollegeCourseBulkVisibilityCheckbox
+      cell:(course:CourseRow)=><CollegeCourseBulkVisibilityCheckbox
        collegeId={workspace.collegeId}
        course={{id:course.id,name:course.name,enabled:course.enabled,updatedAt:course.updatedAt.toISOString()}}/>,
-    } satisfies DataTableColumn<Workspace["courses"][number]>]:[]),
+    } satisfies DataTableColumn<CourseRow>]:[]),
     {
       key: "cover",
       header: "Image",

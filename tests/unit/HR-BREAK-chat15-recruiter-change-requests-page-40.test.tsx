@@ -6,6 +6,9 @@ const mocks=vi.hoisted(()=>({
  ctx:vi.fn(),read:vi.fn(),notFound:vi.fn(),
 }));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:mocks.ctx}));
+vi.mock("@/modules/placements/recruiter-workspace-service",()=>({
+ getRecruiterPlacementWorkspace:vi.fn(async()=>({college:{name:"College A"}})),
+}));
 vi.mock("@/modules/placements/tpo-drive-change-request-service",()=>({
  getDriveChangeRequests:mocks.read,
 }));
