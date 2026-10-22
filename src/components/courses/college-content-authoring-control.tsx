@@ -93,6 +93,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  const [existingBusy,setExistingBusy]=useState(false);
  const [existingError,setExistingError]=useState("");
  const scopedRequest=useRef<AbortController|null>(null);
+ const previousRequestScope=useRef<string|null>(null);
  useEffect(()=>()=>scopedRequest.current?.abort(),[]);
  useEffect(()=>setRemoteExisting(null),[existing,existingPage,existingTruncated,kind]);
  const listRows=remoteExisting?.items??existing;
@@ -103,6 +104,11 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   const controller=new AbortController();scopedRequest.current=controller;
   setExistingBusy(true);setExistingError("");
   const url=new URLSearchParams(params);url.set("kind",kind);
+  const requestScope=url.toString();
+  if(previousRequestScope.current!==requestScope){
+   previousRequestScope.current=requestScope;
+   setRemoteExisting({items:[],existingPage:1,existingTruncated:false});
+  }
   void fetch("/api/courses/college-content-authoring?"+url.toString(),{
    credentials:"same-origin",cache:"no-store",signal:controller.signal,
   }).then(async response=>{
