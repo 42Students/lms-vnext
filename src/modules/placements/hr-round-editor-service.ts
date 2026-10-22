@@ -23,16 +23,22 @@ export const HR_LEGACY_DRIVE_ACTION_COVERAGE = {
  rounds: { legacy: "GET /drives/{jobId}/rounds", vNext: "GET /api/placements/recruiter/drives/{jobId}/rounds", state: "adapted" },
  applicants: { legacy: "GET /drives/{jobId}/applicants", vNext: "GET /api/placements/recruiter/jobs/{jobId}/applicants", state: "adapted" },
  pipeline: { legacy: "GET /drives/{jobId}/pipeline", vNext: "hr-job-read-service", state: "verify-output-shape" },
- resumesZip: { legacy: "POST /drives/{jobId}/resumes", vNext: null, state: "not-verified" },
+ resumesZip: { legacy: "POST /drives/{jobId}/resumes", vNext: "GET /api/placements/recruiter/jobs/{jobId}/applicants/resumes/export", state: "adapted-to-bounded-authorized-first-20" },
  roundCreate: { legacy: "POST /drives/{jobId}/rounds", vNext: "POST /api/placements/recruiter/drives/{jobId}/rounds", state: "adapted" },
  roundUpdate: { legacy: "PUT /drives/{jobId}/rounds/{roundId}", vNext: "POST /api/placements/recruiter/drives/{jobId}/rounds", state: "adapted-with-CAS" },
  roundDelete: { legacy: "DELETE /drives/{jobId}/rounds/{roundId}", vNext: "POST /api/placements/recruiter/drives/{jobId}/rounds", state: "cancelled-with-CAS" },
- results: { legacy: "POST /drives/{jobId}/rounds/{roundId}/results", vNext: null, state: "not-verified" },
+ results: { legacy: "POST /drives/{jobId}/rounds/{roundId}/results", vNext: "POST /api/placements/rounds/{roundId}/results", state: "adapted-to-staged-TPO-verification" },
  slotRead: { legacy: "GET /drives/{jobId}/rounds/{roundId}/slots", vNext: "hr-interview-slot-service", state: "verify-round-projection" },
  slotPropose: { legacy: "POST /drives/{jobId}/rounds/{roundId}/slots", vNext: "POST /api/placements/recruiter/drives/{jobId}/interview-slots", state: "single-slot-adapter" },
- selections: { legacy: "POST /drives/{jobId}/selections", vNext: null, state: "not-verified" },
+ selections: { legacy: "POST /drives/{jobId}/selections", vNext: "POST /api/placements/recruiter/drives/{jobId}/selections", state: "adapted-to-staged-TPO-verification" },
 } as const;
 
+/** Unlike the legacy raw ZIP POST, the vNext ZIP is a GET of at most 20 independently
+ * authorized and scanned resumés; it never accepts caller-selected URLs. Recruiter
+ * round results and selection lists are proposals staged for TPO verification,
+ * not automatically published decisions or offers. The mapping above documents
+ * those intentional security and workflow differences instead of claiming parity.
+ */
 /** Recruiter round edits intentionally map destructive legacy removal to
  * CANCELLED + durable event history. PENDING and owner-only CAS prevents
  * rewriting a published or attended round, and a terminated drive is not
