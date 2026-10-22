@@ -590,6 +590,9 @@ export const projectTasks = pgTable(
       table.sequence,
     ),
     index("project_tasks_source_order_idx").on(table.projectId,table.sprintId,table.legacySortOrder,table.id),
+    index("project_tasks_legacy_assignee_lookup_idx")
+      .on(table.projectId,table.legacyAssigneeType,table.legacyAssigneeId)
+      .where(sql`${table.legacyAssigneeId} is not null`),
     index("project_tasks_backlog_project_idx")
       .on(table.projectId, table.sequence)
       .where(sql`${table.sprintId} is null`),
