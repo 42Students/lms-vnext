@@ -7,7 +7,8 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import {CurrentPageRetry} from "@/components/ui/current-page-retry";
 import { Alert } from "@/components/ui/alert";
-import { collegeAssessmentHref, collegeAssessmentListQuerySchema, parseCollegeAssessmentQuery } from "@/modules/courses/college-assessment-aggregate-model";
+import { AuthorizationError } from "@/modules/permissions/policy";
+import { collegeAssessmentListQuerySchema, parseCollegeAssessmentQuery } from "@/modules/courses/college-assessment-aggregate-model";
 import { listCollegeAssessmentAggregate } from "@/modules/courses/college-assessment-aggregate-service";
 
 type SearchParams = Record<string, string | string[] | undefined>;
@@ -46,12 +47,17 @@ export default async function CollegeAssignmentsPage({
     listCollegeAssessmentAggregate(context,"ASSIGNMENT",query),
     getCollegeAssignmentAuthoringCatalog(context),
   ]);
-  if(dataResult.status==="rejected")return <div className="min-w-0 space-y-4">
+  if(dataResult.status==="rejected"){
+    if(dataResult.reason instanceof AuthorizationError)throw dataResult.reason;
+    return <div className="min-w-0 space-y-4">
     <PageHeader title="Assignments"/>
     <ErrorState title="Assignments could not be loaded"
       description="Assignments could not be loaded. Your filters have not changed; retry to load the list."
       action={<CurrentPageRetry />}/>
   </div>;
+  }
+  if(lessonsResult.status==="rejected" && lessonsResult.reason instanceof AuthorizationError)
+    throw lessonsResult.reason;
   const data=dataResult.value;
   return <div className="min-w-0 overflow-x-clip space-y-4">
     <nav aria-label="Courses & Content" className="flex items-center gap-2 text-sm text-body">
