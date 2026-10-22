@@ -26,8 +26,8 @@ describe("Learner syllabus soft-delete and audience isolation", () => {
     expect(lessonQuery).toContain("eq(lessonContents.visibleToStudents,true)");
     expect(lessonQuery).toContain("isNull(lessonContents.deletedAt)");
     expect(lessonQuery).toContain("eq(lessonContents.deletedWithLesson,false)");
-    expect(lessonQuery).toContain("eq(lessonContents.deliveryId,");
-    expect(lessonQuery).toContain("deliveryId,");
+    expect(lessonQuery).toMatch(/eq\(\s*lessonContents\.deliveryId,\s*deliveryId,\s*\)/);
+    expect(lessonQuery).toMatch(/isNull\(lessonContents\.deliveryId\)/);
     expect(lessonQuery).toContain("eq(courseLessons.learningPathId,");
   });
 });
