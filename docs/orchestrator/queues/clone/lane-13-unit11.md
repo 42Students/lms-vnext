@@ -3,13 +3,15 @@
 CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER your deep packets 1-2 in lane-13-deep.md. For each file: read the failure below, read the test and the code it tests, decide which side is wrong against the old LMS (docs/legacy-source) and fix THAT side (fix the product code if it regressed; update the test only if the test asserts outdated/wrong behaviour). Never delete tests, never .skip, never weaken assertions to pass. Push after every file and tick it here.
 
 - [ ] `tests/unit/UX-college-college-electives-slot-id-allocate-01.test.ts` (1 failing)
-- [ ] `tests/unit/chat13-final-sprint-learner-24.test.ts` (1 failing)
+- [x] `tests/unit/chat13-final-sprint-learner-24.test.ts` (1 failing)
 - [x] `tests/unit/chat2-tpo-member-workload-parity.test.ts` (1 failing)
 - [ ] `tests/unit/chat6-superadmin-people-round3.test.ts` (1 failing)
 - [x] `tests/unit/chat9-verify2-admin-course-dependency-pages.test.ts` (1 failing)
 - [ ] `tests/unit/pub-auth-public-42-rollback.test.ts` (1 failing)
 
 ## Repair results
+
+- FIXED `tests/unit/chat13-final-sprint-learner-24.test.ts` — commit `178846d8455b3cf7178ced723fabaa1a49f05377`: preserved the exact `Job unavailable` text requirement while permitting JSX newline between element and `title` in `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/page.tsx`.
 
 - FIXED `tests/unit/chat9-verify2-admin-course-dependency-pages.test.ts` — commit `272a92b481bd87b544dc27f47b4912355444cf99`, `src/app/(authenticated)/admin/courses/page.tsx`: dependency lookup now receives only visible page IDs from `paginateCollegeCourses(workspace?.courses??[],catalogueQuery).items`, bounded by the validated page size, rather than the wrong first 100 unfiltered courses.
 
