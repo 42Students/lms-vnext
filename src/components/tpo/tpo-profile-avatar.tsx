@@ -21,7 +21,7 @@ export function TpoProfileAvatar({name,initials}:{name:string;initials:string}){
  const [notice,setNotice]=useState("");
  const [error,setError]=useState("");
  async function refresh(signal?:AbortSignal){
-  const response=await fetch(endpoint,{cache:"no-store",credentials:"same-origin",signal});
+  const response=await fetch(endpoint,{cache:"no-store",credentials:"same-origin",...(signal === undefined ? {} : { signal })});
   if(!response.ok)throw new Error("Could not load the current photo");
   const snapshot=await response.json() as AvatarSnapshot;
   if(!signal?.aborted){setPreview(snapshot.preview);setVersion(snapshot.version);}

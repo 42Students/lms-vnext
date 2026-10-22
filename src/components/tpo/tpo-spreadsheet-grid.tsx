@@ -126,9 +126,9 @@ export function TpoSpreadsheetGrid<Row>({
     for(const [key,value] of Object.entries(stored)){
      if(!permitted.includes(key)||!value||typeof value!=="object")continue;
      const row=value as Record<string,unknown>;
-     if(typeof row.width==="number"&&Number.isFinite(row.width)&&
-       row.width>=100&&row.width<=500&&typeof row.pinned==="boolean")
-      next[key]={width:row.width,pinned:row.pinned};
+     if(typeof row["width"]==="number"&&Number.isFinite(row["width"])&&
+       row["width"]>=100&&row["width"]<=500&&typeof row["pinned"]==="boolean")
+      next[key]={width:row["width"],pinned:row["pinned"]};
     }
     setColumnView(next);
    }catch{/* Corrupt or disabled local preferences cannot break this authorized grid. */}

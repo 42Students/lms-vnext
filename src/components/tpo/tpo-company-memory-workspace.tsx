@@ -132,7 +132,7 @@ export function TpoCompanyMemoryWorkspace({
           encodeURIComponent(collegeId) +
           "&name=" +
           encodeURIComponent(companyName),
-        { credentials: "same-origin", cache: "no-store", signal },
+        { credentials: "same-origin", cache: "no-store", ...(signal === undefined ? {} : { signal }) },
       );
       const payload = await response.json() as {
         company?: CompanyMemory;
@@ -335,7 +335,7 @@ export function TpoCompanyMemoryWorkspace({
             {company.hiredPerYear.map(item=>(
               <li key={item.year} className="grid min-w-0 grid-cols-[3.5rem_minmax(0,1fr)_3rem] items-center gap-2 text-sm sm:grid-cols-[4rem_minmax(0,1fr)_3rem] sm:gap-3">
                 <span>{item.year}</span>
-                <MetricBar size="default" role="img" className={chartStyles.branchBar} label={item.hired+" joined learners in "+item.year}
+                <MetricBar size="default" role="img" {...(chartStyles["branchBar"] === undefined ? {} : { className: chartStyles["branchBar"] })} label={item.hired+" joined learners in "+item.year}
                   value={item.hired} maximum={Math.max(1,...company.hiredPerYear.map(row=>row.hired))} />
                 <strong className="text-right tabular-nums">{item.hired}</strong>
               </li>

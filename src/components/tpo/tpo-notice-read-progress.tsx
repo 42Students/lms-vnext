@@ -56,7 +56,7 @@ export function TpoNoticeReadProgress({id,status="SENT"}:{id:string;status?:"SEN
    disabled={busy||!isSent} onClick={()=>void load()}>{busy?"Loading…":data?"Refresh read status":"Retry read status"}</Button>
   {data?<div className="mt-2 min-w-0 space-y-2 text-sm">
    <p>{data.notDelivered?"Awaiting notification delivery":data.read+" of "+data.delivered+" read · "+Math.round(data.read/Math.max(1,data.delivered)*100)+"%"}</p>
-   {data.delivered>0?<MetricBar role="progressbar" label="Notices read" maximum={data.delivered} value={data.read} unit="people" className={barStyles.track+" w-full"}/>:null}
+   {data.delivered>0?<MetricBar role="progressbar" label="Notices read" maximum={data.delivered} value={data.read} unit="people" className={barStyles["track"]+" w-full"}/>:null}
    {isSent&&data.delivered>data.read&&data.unread.length?<Button variant="secondary" type="button" disabled={busy}
     className="min-h-11 min-[768px]:min-h-9"
     onClick={()=>void remind()}>{busy?"Sending…":"Remind them"}</Button>:null}
