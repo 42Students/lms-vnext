@@ -121,6 +121,9 @@ export async function acceptAuthenticatedRecruiterEmailReply(
  const replyBody=extractRecruiterEmailReply(fullText)??"";
  const match=/^r-([a-f0-9]{32})@(.+)$/.exec(input.to);
  const isReply=Boolean(match&&match[2]===domain);
+  // This receiver is exclusively for the reply alias. General verified mail
+  // is ingested through /api/internal/inbound-mail, never by guessing a thread.
+  if(!isReply)return {accepted:false,replayed:false};
  const tokenHash=isReply&&match?createHash("sha256").update(match[1]).digest("hex"):null;
  // Inbox and reply posting are one atomic intake: no mail is acknowledged without
  // durable storage, including unknown mail, expired replies, and failed auth.
