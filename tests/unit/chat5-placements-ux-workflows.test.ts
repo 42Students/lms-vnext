@@ -71,7 +71,9 @@ describe("chat-5 placement selection accessibility and recovery",()=>{
   expect(page).toContain("getTpoOfferEvidence(context,parsed.data)");
   expect(page).toContain("No persisted status or joining history events");
   expect(page).toContain("This page does not verify letter delivery");
-  expect(page).toContain("inline-flex min-h-11 w-full items-center");
+  expect(page).toContain("inline-flex min-h-11 items-center w-full justify-center");
+  expect(page).toContain("No persisted status or joining history events");
+  expect(page).toContain("This page does not verify letter delivery");
  });
  it("PLACEMENTS-JOINING-CONFIRM-01 does not mutate before confirmation, and retains corrected draft",()=>{
   const form=source("src/components/placements/tpo-joining-update-form.tsx");
@@ -81,7 +83,8 @@ describe("chat-5 placement selection accessibility and recovery",()=>{
   expect(mutation).toBeGreaterThan(gate);
   expect(form).toContain("setConfirmOpen(true)");
   expect(form).toContain("onConfirm={()=>void save(true)}");
-  expect(form).toContain("onOpenChange={setConfirmOpen}");
+  expect(form).toContain("onOpenChange={next=>{if(!busy)setConfirmOpen(next);}}");
+  expect(form).toContain("pending={busy}");
   expect(form).toContain("correctionReason: corrected ? correctionReason.trim() : null");
   expect(form).toContain('method: "PUT"');
   expect(form).toContain("if (busy) return");

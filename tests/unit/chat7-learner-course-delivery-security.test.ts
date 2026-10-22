@@ -74,7 +74,7 @@ describe("LEARNER-courses-roster-01 active course and elective ownership matrix"
    "eq(courseOfferings.cohortId,learnerProgramEnrollments.cohortId)",
    "eq(courseOfferings.academicPeriodId,sectionEnrollments.academicPeriodId)",
    "eq(courseOfferings.academicPeriodId,sections.academicPeriodId)",
-   "eq(sections.cohortId,courseOfferings.cohortId)",
+   "eq(sections.cohortId, courseOfferings.cohortId)",
    'eq(collegeMemberships.status,"ACTIVE")',
    'eq(users.platformStatus,"ACTIVE")',
    'eq(membershipRoles.role,"FACULTY")',

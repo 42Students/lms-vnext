@@ -21,7 +21,7 @@ describe("Chat 6 friendly fetch adoption",()=>{
  });
  it("GR-90 chat-6 inline fetch failures have alert semantics",()=>{
   expect(source("src/components/college/college-person-edit-action.tsx")).toContain('<Alert tone="error"');
-  expect(source("src/components/ui/alert.tsx")).toContain('role={role ?? (tone === "error" ? "alert" : "status")}');
+  expect(source("src/components/ui/alert.tsx")).toContain('role={tone === "error" ? "alert" : role ?? "status"}');
   expect(source("src/components/placements/college-drive-archive-action.tsx")).toContain('role="alert"');
  });
 });

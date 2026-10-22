@@ -24,7 +24,10 @@ describe("chat-11 college academic page parity round five",()=>{
  });
  it("COL-academic-setup-32 launches a selected class schedule from its list row",()=>{
   expect(read("src/components/academics/college-structure-directory.tsx")).toContain('"/college/classes/recurring-preview?classId="');
-  expect(read("src/app/(authenticated)/college/classes/recurring-preview/page.tsx")).toContain("defaultSectionId={classId}");
+  const route=read("src/app/(authenticated)/college/classes/recurring-preview/page.tsx");
+  expect(route).toContain("defaultSectionId:classId");
+  expect(route).toContain("<CollegeRecurringRouteModal");
+  expect(route).toContain("options.classes.some(row => row.id === query.classId)");
   const preview=read("src/components/academics/college-recurring-preview.tsx");
   expect(preview).toContain('useState(chosen?.id ?? "")');
   expect(preview).toContain('useState(chosen?.periodStart ?? "")');
