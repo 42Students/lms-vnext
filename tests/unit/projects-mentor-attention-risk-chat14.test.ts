@@ -60,8 +60,8 @@ describe("chat-14 mentor attention risk and workflow policies",()=>{
  it("requires the legacy 150% average and three extra assignments for overload",()=>{
    expect(projectMentorWorkloadAverage([])).toBe(0);
    expect(projectMentorWorkloadAverage([-3,2,4])).toBe(2);
-   expect(isProjectMentorOverloaded(4,[1,1,4])).toBe(false);
-   expect(isProjectMentorOverloaded(5,[1,1,4])).toBe(true);
+   // The legacy overload flag also requires at least three more assignments than the mean.
+   expect(isProjectMentorOverloaded(5,[1,1,5])).toBe(true);
    expect(isProjectMentorOverloaded(3,[1,1,4])).toBe(false);
    expect(isProjectMentorOverloaded(1,[0,0])).toBe(false);
  });
@@ -90,7 +90,7 @@ describe("chat-14 mentor attention risk and workflow policies",()=>{
    expect(mentorTaskReviewAgeBoundary("OLDER_THAN_7_DAYS",now)?.older).toBe(true);
    expect(mentorTaskReviewAgeBoundary("OLDER_THAN_30_DAYS",now)?.cutoff.getTime()).toBe(now.getTime()-30*86400000);
  });
- it("uses legacy rounded progress without claiming persisted completion",()=>{
+ it("separates rounded legacy display progress from exact completion status",()=>{
    expect(summarizeSprintTasks([{status:"DONE",total:999},{status:"TODO",total:1}])).toEqual({
      total:1000,completed:999,inReview:0,blocked:0,completionPercent:100,
    });

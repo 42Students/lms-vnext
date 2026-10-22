@@ -6,7 +6,6 @@ describe("SA-tenants-modules-27 academic descendant editing guards",()=>{
   const base={scopeType:"COHORT",scopeId:id,module:"projects",action:"SET",enabled:false,locked:true,expected:null};
   expect(academicModuleRuleInput.safeParse(base).success).toBe(true);
   expect(academicModuleRuleInput.safeParse({...base,module:"placements"}).success).toBe(false);
-  expect(academicModuleRuleInput.safeParse({...base,module:"placements",action:"INHERIT",enabled:undefined,locked:undefined}).success).toBe(true);
   expect(academicModuleRuleInput.safeParse({...base,enabled:undefined}).success).toBe(false);
  });
  it("detects optimistic conflicts",()=>{

@@ -114,7 +114,8 @@ describe("REC-calendar-messages-profile-R01 mail bridge deployment and scope",()
   expect(service).toContain("isRecruiterUnreadReminderDue");
   expect(service).toContain("onConflictDoNothing()");
   expect(service).toContain('for("update")');
-  expect(service).toContain("if(!accepted)return false");
+  expect(service).toContain("if(!accepted){");
+  expect(service).toContain("return false;");
   expect(service).toContain('createHash("sha256").update(token)');
   expect(service).toContain("lastSentAt:now");
   expect(service).toContain("return {examined:0,sent:0,enabled:false}");

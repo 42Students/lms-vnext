@@ -26,6 +26,7 @@ export default async function TpoSettingsIndex({searchParams}:{
       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-white md:min-h-9">
      Open Placement Rules
     </Link>
+    <Link href="/tpo/settings/public-page" className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 md:min-h-9">Public placements settings</Link>
     <p className="border-t border-border pt-3 text-xs text-muted-foreground">
      The left navigation stays available while you choose a settings category. Unsaved values on the current section are never changed by opening this overview.
     </p>
