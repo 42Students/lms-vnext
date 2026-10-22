@@ -27,7 +27,7 @@ export async function POST(request: Request) {
       return NextResponse.json({error:"ACADEMIC_CORRECTION_REQUIRES_ONE_STUDENT",
         message:"Choose exactly one learner to correct.",
       },{status:422,headers:{"Cache-Control":"private, no-store"}});
-    const input = {rows:body.rows,mode,skipUnmatched:body.action==="CORRECT"?false:body.skipUnmatched??false};
+    const input = {rows:body.rows,mode,skipUnmatched:mode==="SINGLE"?false:body.skipUnmatched??false};
     if(body.action==="LEGACY_PREVIEW")
       return NextResponse.json({
         preview:await previewTpoLegacyAcademicImport(context,body.rows),
