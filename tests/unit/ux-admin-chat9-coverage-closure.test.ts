@@ -20,8 +20,9 @@ describe("chat-9 route coverage and native DataTable closure",()=>{
   expect(source).toContain('caption="Student Course Progress"');
   expect(source).toContain('mobilePriority:"primary"');
   expect(source).toContain("studentCourseCompletion");
-  expect(source).toContain("No students are enrolled in this course offering.");
-  expect(source).toContain("Showing the first 500 students.");
+  expect(source).toContain("No students in this section.");
+  expect(source).toContain("report.totalRows");
+  expect(source).toContain("[20,50,100]");
   expect(source).not.toContain("<main");
   expect(source).not.toMatch(/<table\b/);
  });
