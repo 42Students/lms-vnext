@@ -64,11 +64,17 @@ export async function canOwnLearnerReceiveClassNotice(
   .innerJoin(departments,eq(departments.id,programs.departmentId))
   .where(and(
     eq(sectionEnrollments.sectionId,sectionId),
+    // A legacy classId is never enough to establish current enrollment.
+    // The learner enrollment, section and academic period must agree.
+    eq(sectionEnrollments.academicPeriodId,sections.academicPeriodId),
     eq(sectionEnrollments.status,"ACTIVE"),
     isNull(sectionEnrollments.endedAt),
     eq(learnerProgramEnrollments.membershipId,member.id),
     eq(learnerProgramEnrollments.status,"ACTIVE"),
     eq(sections.status,"ACTIVE"),
+    eq(cohorts.status,"ACTIVE"),
+    eq(programs.status,"ACTIVE"),
+    eq(departments.status,"ACTIVE"),
     eq(departments.collegeId,member.collegeId),
   )).limit(1);
  return Boolean(row);

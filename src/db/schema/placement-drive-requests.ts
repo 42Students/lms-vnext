@@ -93,7 +93,12 @@ export function groupOwnRecruiterDriveRequests<T extends {
   const title=typeof rawTitle==="string" ?rawTitle.trim().slice(0,200):"Drive request";
   if(existing){
    existing.requests.push(item);
-   if(item.createdAt>existing.createdAt)existing.createdAt=item.createdAt;
+   // A resubmitted plan carries the current title. The first copy from a
+   // different college or an older version must never become the label.
+   if(item.createdAt>existing.createdAt){
+    existing.createdAt=item.createdAt;
+    existing.roleTitle=title||"Drive request";
+   }
   }else groups.set(item.submissionId,{
    submissionId:item.submissionId,collegeId:item.collegeId,
    createdAt:item.createdAt,roleTitle:title||"Drive request",requests:[item],
