@@ -14,8 +14,8 @@ export const dynamic="force-dynamic";
 type Params=Record<string,string|string[]|undefined>;
 function first(value:string|string[]|undefined){return Array.isArray(value)?value[0]:value;}
 function listingUrl(params:{search:string;status:string;sort:string;pageSize:number},page:number){
- const values=new URLSearchParams({search:params["search"],status:params["status"],sort:params["sort"],
-  pageSize:String(params["page"]Size),page:String(page)});
+ const values=new URLSearchParams({search:params.search,status:params.status,sort:params.sort,
+  pageSize:String(params.pageSize),page:String(page)});
  return "/admin/placements/organization-applications?"+values.toString();
 }
 const statusOptions=["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW",
@@ -34,8 +34,8 @@ export default async function OrganizationApplicationsPage({searchParams}:{
  let result:Awaited<ReturnType<typeof searchOrganizationPlacementApplications>>;
  try{
   result=await searchOrganizationPlacementApplications(ctx,{
-   search:first(params["search"]),status:first(params["status"]),sort:first(params["sort"]),
-   page:first(params["page"]),pageSize:first(params["page"]Size),
+   search:first(params.search),status:first(params.status),sort:first(params.sort),
+   page:first(params.page),pageSize:first(params.pageSize),
   });
  }catch(problem){
   if(!(problem instanceof ZodError))throw problem;

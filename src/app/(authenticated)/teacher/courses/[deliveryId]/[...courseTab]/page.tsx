@@ -17,14 +17,14 @@ export default async function FacultyCourseTabPage({
 }) {
   const { deliveryId, courseTab } = await params;
   const query=await searchParams;
-  const requestedFilter=typeof query["filter"]==="string"?query["filter"].toUpperCase():"";
+  const requestedFilter=typeof query.filter==="string"?query.filter.toUpperCase():"";
   const normalizedFilter=requestedFilter==="LIVE-SESSIONS"?"LIVE":requestedFilter;
   const filter=(["ALL","LECTURES","RESOURCES","ASSESSMENTS","LIVE"].includes(normalizedFilter)?
     normalizedFilter:"ALL") as "ALL"|"LECTURES"|"RESOURCES"|"ASSESSMENTS"|"LIVE";
   const context = await getCurrentRequestContext();
   // Resolve legacy slug/class deep links against persisted, authorized Faculty
   // assignments only. A class hint is never accepted as an authorization grant.
-  const legacyClass=typeof query["cls"]==="string"?query["cls"]:null;
+  const legacyClass=typeof query.cls==="string"?query.cls:null;
   if(!z.string().uuid().safeParse(deliveryId).success || legacyClass){
     const canonical=await resolveFacultyCourseDeliveryForLink(context,deliveryId,legacyClass);
     if(!canonical)notFound();
@@ -42,17 +42,17 @@ export default async function FacultyCourseTabPage({
     }
   }
   const workspace = await getFacultyCourseWorkspace(context, deliveryId);
-  const requestedLesson=typeof query["lesson"]==="string"?query["lesson"]:null;
-  const requestedContent=typeof query["content"]==="string"?query["content"]:null;
+  const requestedLesson=typeof query.lesson==="string"?query.lesson:null;
+  const requestedContent=typeof query.content==="string"?query.content:null;
   if(requestedLesson&&!z.string().uuid().safeParse(requestedLesson).success)notFound();
   if(requestedContent&&!z.string().uuid().safeParse(requestedContent).success)notFound();
-  const owningLesson=requestedContent?workspace["lesson"]s.find(lesson=>
-    lesson["content"]s.some(content=>content.id===requestedContent)||
+  const owningLesson=requestedContent?workspace.lessons.find(lesson=>
+    lesson.contents.some(content=>content.id===requestedContent)||
     lesson.assignments.some(item=>item.id===requestedContent)||
     lesson.quizzes.some(item=>item.id===requestedContent)):null;
   if(requestedContent&&!owningLesson)notFound();
   const lessonId=requestedLesson??owningLesson?.id??null;
-  if(lessonId&&!workspace["lesson"]s.some(lesson=>lesson.id===lessonId))notFound();
+  if(lessonId&&!workspace.lessons.some(lesson=>lesson.id===lessonId))notFound();
   if(requestedLesson&&owningLesson&&requestedLesson!==owningLesson.id)notFound();
   const segment=courseTab.length===1?courseTab[0]!.toLowerCase():"";
   const aliases:Record<string,string>={

@@ -29,7 +29,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
   const params = await searchParams;
   // A historical lesson bookmark may identify a course by UUID. Resolve it
   // within this membership's college; never guess a legacy numeric ID.
-  const legacyCourseId = first(params["courseId"]);
+  const legacyCourseId = first(params.courseId);
   let verifiedCourseCode: string | undefined;
   if (legacyCourseId !== undefined) {
     if (!/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(legacyCourseId)) {
@@ -39,9 +39,8 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
           action={<Link href="/college/lessons">Choose a course</Link>} /></div>;
     }
     const course = await loadCourseScope(legacyCourseId).catch(() => null);
-    const requestedCourseCode = first(params["courseCode"]);
     if (!course || course.collegeId !== context.membership.collegeId ||
-        (requestedCourseCode && requestedCourseCode.toLowerCase() !== course.code.toLowerCase())) {
+        (first(params.courseCode) && first(params.courseCode)!.toLowerCase() !== course.code.toLowerCase())) {
       return <div className="min-w-0 max-w-full overflow-x-clip space-y-4"><PageHeader title="Lessons" />
         <ErrorState title="Course not available"
           description="The course is not available in your selected college."
@@ -51,36 +50,36 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
   }
   const parsed = collegeLessonQuerySchema.safeParse(
     Object.fromEntries(Object.entries({
-      q: first(params["q"]), status: first(params["status"]),
-      offeringStatus: first(params["offeringStatus"]), pathStatus:first(params["pathStatus"]),
-      offeringType:first(params["offeringType"]),departmentName:first(params["departmentName"])||undefined,
-      contentPresence:first(params["contentPresence"]),publishedContent:first(params["publishedContent"]),flaggedVisibility:first(params["flaggedVisibility"]),assignmentPresence:first(params["assignmentPresence"]),quizPresence:first(params["q"]uizPresence),
-      courseCode: verifiedCourseCode ?? first(params["courseCode"]) ?? undefined,
-      programCode:first(params["programCode"])||undefined,
-      cohortCode:first(params["cohortCode"])||undefined,
-      periodCode:first(params["periodCode"])||undefined,
-      programStatus:first(params["programStatus"]),
-      cohortStatus:first(params["cohortStatus"]),
-      periodStatus:first(params["periodStatus"]),
-      courseStatus:first(params["courseStatus"]),
-      departmentCode:first(params["departmentCode"])||undefined,
-      contentType: first(params["contentType"]),
-      contentLifecycle: first(params["contentLifecycle"]),
-      sequenceFrom: first(params["sequenceFrom"]) || undefined,
-      sequenceThrough: first(params["sequenceThrough"]) || undefined,
-      lessonName: first(params["lessonName"]) || undefined,
-      contentAudience:first(params["contentAudience"]),
-      hiddenPublished:first(params["hiddenPublished"]),
-      videoEvidence:first(params["videoEvidence"]),
-      resourceEvidence:first(params["resourceEvidence"]),
-      liveEvidence:first(params["liveEvidence"]),
-      lessonId:first(params["lessonId"])||undefined,
-      offeringId:first(params["offeringId"])||undefined,
-      pathId:first(params["pathId"])||undefined,
-      minContentCount:first(params["minContentCount"])||undefined,
-      maxContentCount:first(params["maxContentCount"])!==undefined && first(params["maxContentCount"])!==""?first(params["maxContentCount"]):undefined,
-      page: first(params["page"]),
-      pageSize:first(params["page"]Size),
+      q: first(params.q), status: first(params.status),
+      offeringStatus: first(params.offeringStatus), pathStatus:first(params.pathStatus),
+      offeringType:first(params.offeringType),departmentName:first(params.departmentName)||undefined,
+      contentPresence:first(params.contentPresence),publishedContent:first(params.publishedContent),flaggedVisibility:first(params.flaggedVisibility),assignmentPresence:first(params.assignmentPresence),quizPresence:first(params.quizPresence),
+      courseCode: verifiedCourseCode ?? first(params.courseCode) ?? undefined,
+      programCode:first(params.programCode)||undefined,
+      cohortCode:first(params.cohortCode)||undefined,
+      periodCode:first(params.periodCode)||undefined,
+      programStatus:first(params.programStatus),
+      cohortStatus:first(params.cohortStatus),
+      periodStatus:first(params.periodStatus),
+      courseStatus:first(params.courseStatus),
+      departmentCode:first(params.departmentCode)||undefined,
+      contentType: first(params.contentType),
+      contentLifecycle: first(params.contentLifecycle),
+      sequenceFrom: first(params.sequenceFrom) || undefined,
+      sequenceThrough: first(params.sequenceThrough) || undefined,
+      lessonName: first(params.lessonName) || undefined,
+      contentAudience:first(params.contentAudience),
+      hiddenPublished:first(params.hiddenPublished),
+      videoEvidence:first(params.videoEvidence),
+      resourceEvidence:first(params.resourceEvidence),
+      liveEvidence:first(params.liveEvidence),
+      lessonId:first(params.lessonId)||undefined,
+      offeringId:first(params.offeringId)||undefined,
+      pathId:first(params.pathId)||undefined,
+      minContentCount:first(params.minContentCount)||undefined,
+      maxContentCount:first(params.maxContentCount)!==undefined && first(params.maxContentCount)!==""?first(params.maxContentCount):undefined,
+      page: first(params.page),
+      pageSize:first(params.pageSize),
     }).filter(([, value]) => value !== undefined)),
   );
   if (!parsed.success) return (

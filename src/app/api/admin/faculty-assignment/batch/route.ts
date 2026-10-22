@@ -20,7 +20,7 @@ export async function POST(request:Request){
   catch{return NextResponse.json({error:"INVALID_REQUEST"},{status:400});}
   if(body&&typeof body==="object"&&!Array.isArray(body)){
     const fields=body as Record<string,unknown>;
-    if(fields["courseId"]!==undefined||fields["courseId"]s!==undefined)
+    if(fields.courseId!==undefined||fields.courseIds!==undefined)
       return NextResponse.json({error:"DELIVERY_IDS_REQUIRED",
         message:"Select a Section and its course deliveries before assigning faculty."},
         {status:400});

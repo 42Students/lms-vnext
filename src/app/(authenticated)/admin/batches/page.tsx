@@ -28,7 +28,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
   const raw = await searchParams;
   const selected = context.adminScope?.collegeId;
   const controls = collegeBatchDirectorySchema.safeParse({
-    q: raw["q"], programId: raw["programId"] || undefined, status: raw["status"], page: raw["page"], pageSize: raw["page"]Size ?? "25",
+    q: raw.q, programId: raw.programId || undefined, status: raw.status, page: raw.page, pageSize: raw.pageSize ?? "25",
   });
   const data = selected && controls.success
     ? await listCollegeBatches(context, controls.data).catch(()=>null)
