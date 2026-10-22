@@ -12,9 +12,13 @@ import { friendlyApiError } from "@/lib/friendly-error";
 type Lesson = {
  id:string;name:string;courseName:string;contentCount:number;
  publishedContentCount:number;publishedAndVisibleFlagCount:number;
+ visibleToStudents:boolean;
 };
 type Failure = {id:string;lessonId:string;reason:string};
-type Report = {selectedLessons:number;matchedContents:number;changed:number;unchanged:number;failures:Failure[]};
+type Report = {requested:number;updatedCount:number;selectedLessons:number;
+ changed:number;unchanged:number;failures:Failure[];
+ operation:"LESSON_STATUS_UPDATE";
+};
 type PlannedAction = {show:boolean;ids:string[]};
 
 export function SuperAdminLessonBulkVisibility({
@@ -52,6 +56,13 @@ export function SuperAdminLessonBulkVisibility({
     method:"POST",headers:{"content-type":"application/json"},
     body:JSON.stringify({lessonIds:ids,visibleToStudents:action.show,confirmed:true}),
    });
+   // A successful HTTP response must describe lesson-row changes, not the
+   // separate course-level published-content bulk API.
+   if(data.operation!=="LESSON_STATUS_UPDATE" ||
+      !Array.isArray(data.failures) ||
+      !Number.isSafeInteger(data.updatedCount) ||
+      data.updatedCount<0 || data.updatedCount>ids.length)
+    throw new Error("Unable to verify the lesson bulk result. Refresh and retry.");
    const failed=new Set(data.failures.map(item=>item.lessonId));
    setSelected(ids.filter(id=>failed.has(id)));
    setReport(data);
@@ -63,19 +74,19 @@ export function SuperAdminLessonBulkVisibility({
    inFlight.current=false;setPending(false);
   }
  }
- return <section aria-label="Lesson bulk published content visibility"
+ return <section aria-label="Lesson bulk visibility"
   className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
-  <h3 className="mb-2 text-sm font-semibold text-body">Bulk published content visibility</h3>
+  <h3 className="mb-2 text-sm font-semibold text-body">Bulk lesson visibility</h3>
   <div className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
    <p role="status" className="text-sm text-muted-foreground">
     {selectedInScope.length} selected · {lessons.length} lessons on this page
    </p>
    <p className="text-sm text-body leading-[22px]">
-    Show or hide currently published lesson content for students. This operation
-    does not change a lesson&apos;s own active status, or unpublished and future content.
-    It does not delete any files.
+    Show or hide lessons for students. This updates each lesson&apos;s own
+    Visible to students setting; it does not publish, archive or delete
+    individual content items or files.
    </p>
-   <p className="text-xs text-muted-foreground">Selection applies to this filtered page only, not lessons on other pages. Change search or course to start a new selection. This bulk control changes published content visibility, not the lesson&apos;s own “Visible to students” setting.</p>
+   <p className="text-xs text-muted-foreground">Selection applies to this filtered page only, not lessons on other pages. Change search or course to start a new selection. Lesson active status and content publication are unchanged.</p>
    {listIncomplete?<Alert tone="warning">The lesson list is incomplete. Refresh it before changing visibility.</Alert>:null}
    <label className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold md:min-h-10">
     <Checkbox checked={lessons.length>0&&selectedInScope.length===lessons.length}
@@ -94,7 +105,7 @@ export function SuperAdminLessonBulkVisibility({
       <span className="min-w-0">
        <span className="block truncate font-semibold">{lesson.name}</span>
        <span className="text-xs text-muted-foreground">
-        {lesson.courseName} · {lesson.publishedAndVisibleFlagCount}/{lesson.publishedContentCount} published records visible
+        {lesson.courseName} · {lesson.visibleToStudents?"Visible to students":"Hidden from students"} · {lesson.publishedContentCount} published items
        </span>
       </span>
      </label>)}
@@ -119,20 +130,19 @@ export function SuperAdminLessonBulkVisibility({
     <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
      <strong>{report.failures.length
       ? (lastAction?"Show to students":"Hide from students")+" was only partially completed"
-      : "Selected lesson content visibility updated"}</strong>
+      : "Lesson visibility updated"}</strong>
      <Button type="button" variant="secondary" onClick={()=>setReport(null)}
       aria-label="Dismiss bulk update results" className="min-h-9">Dismiss</Button>
     </div>
     <p>
-     {report.selectedLessons-failedLessonIds.length} of {report.selectedLessons} lesson(s) processed without reported errors.
-     {" "}{report.changed} published content item(s) changed · {report.unchanged} unchanged · {report.failures.length} failed.
+     {report.updatedCount} of {report.selectedLessons} lesson(s) processed.
+     {" "}{report.changed} lesson visibility setting(s) changed · {report.unchanged} already matched · {report.failures.length} failed.
     </p>
     {report.failures.length?<p className="text-sm">
-     {report.selectedLessons-failedLessonIds.length} of {report.selectedLessons} processed.
-     Retry will target only the failed lessons.
+     Only the failed lessons remain selected for retry; successful updates will not be repeated.
     </p>:null}
     <p className="text-xs">
-     Content scope: {report.matchedContents} published records; lesson status and files were not changed.
+     Lesson active status, published content records and private files were not changed.
     </p>
     {report.failures.length?<ul className="list-disc pl-5">
      {report.failures.slice(0,5).map(row=><li key={row.id}>
@@ -148,14 +158,14 @@ export function SuperAdminLessonBulkVisibility({
    </Alert>:null}
   </div>
   <ConfirmDialog open={planned!==null} onOpenChange={open=>{if(!open&&!pending)setPlanned(null);}}
-   title={planned?.show?"Show published lesson content?":"Hide published lesson content?"}
-   description="Selected lessons across the current list will be updated. No files are deleted by this action."
+   title={planned?.show?"Show lessons to students?":"Hide lessons from students?"}
+   description="Selected lessons will have their visibility setting updated. No lesson or content files are deleted."
    confirmLabel={planned?.show?"Show to students":"Hide from students"}
    confirmVariant={planned?.show?"primary":"danger"} pending={pending}
    confirmDisabled={!planned||listIncomplete}
    onConfirm={()=>{if(planned)void mutate(planned);}}>
    <div className="space-y-2 text-sm">
-    <p>{planned?.ids.length??0} selected lesson(s); this updates their published content only. Lesson active status and draft content stay unchanged.</p>
+    <p>{planned?.ids.length??0} selected lesson(s); this changes lesson visibility only. Active status and content publication stay unchanged.</p>
     {planned?.ids.length?<ul className="list-disc pl-5">
      {planned.ids.slice(0,5).map(id=><li key={id}>{lessons.find(item=>item.id===id)?.name??("Lesson "+id)}</li>)}
      {planned.ids.length>5?<li>and {planned.ids.length-5} more</li>:null}
