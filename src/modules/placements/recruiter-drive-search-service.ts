@@ -1,6 +1,6 @@
 import "server-only";
 
-import {and,asc,desc,eq,gte,ilike,inArray,isNull,lt,lte,sql} from "drizzle-orm";
+import {and,asc,desc,eq,gte,inArray,isNull,lt,lte,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {colleges,placementCompanies,placementCompanyRelationships,placementJobs} from "@/db/schema";
 import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
@@ -15,10 +15,18 @@ export async function searchOwnRecruiterDrives(
  context:RequestContext,collegeId:string,query:RecruiterDriveListQuery,now:Date,
  options:{pageSize?:number;descendingDeadline?:boolean;previewOnly?:boolean}={},
 ){
- if(!hasActiveRecruiter(context)||!context.recruiter)
+ if(!hasActiveRecruiter(context)||!context.recruiter||
+    context.recruiter.userId!==context.user.id)
   throw new AuthorizationError("placements.recruiter.read");
  const grants=context.recruiter.grants.filter(grant=>grant.collegeId===collegeId);
  if(!grants.length)throw new AuthorizationError("placements.recruiter.read");
+ // Validate every selected employer grant before counting rows. The count
+ // query must never become an oracle for a revoked or stale relationship.
+ for(const grant of grants){
+  requirePermission(context,"placements.recruiter.read",{
+   collegeId,placementCompanyRelationshipId:grant.companyRelationshipId,
+  });
+ }
  const relationshipIds=[...new Set(grants.map(grant=>grant.companyRelationshipId))];
  const pageSize=Math.max(1,Math.min(201,Math.trunc(options.pageSize??HR_DRIVE_PAGE_SIZE)));
 
