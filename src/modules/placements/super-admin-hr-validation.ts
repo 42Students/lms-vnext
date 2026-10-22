@@ -135,7 +135,7 @@ export function parseSuperAdminHrPageParams(raw:Record<string,string|string[]|un
   q:typeof raw["q"]==="string"&&raw["q"].trim()?raw["q"]:undefined,
   status:raw["status"]===""?undefined:raw["status"],
   page:raw["page"]===""?undefined:raw["page"],
-  pageSize:raw["page"]Size===""?undefined:raw["page"]Size,
+  pageSize:raw["pageSize"]===""?undefined:raw["pageSize"],
  };
  const result=superAdminHrListQuerySchema.safeParse(normalized);
  return result.success?result.data:null;
