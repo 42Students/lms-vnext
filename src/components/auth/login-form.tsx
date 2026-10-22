@@ -241,7 +241,7 @@ export function LoginForm({
       setNotice("You have a code from an interrupted sign-in. Use the code already sent, or request another when the resend timer ends.");
     });
     return () => { live = false; };
-  }, [skipStoredAttempt]);
+  }, [skipStoredAttempt,tenantKey]);
 
   useEffect(() => {
     if (cooldown <= 0) return;
