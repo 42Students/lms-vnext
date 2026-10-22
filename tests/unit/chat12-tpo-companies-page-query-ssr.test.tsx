@@ -75,7 +75,7 @@ describe("UX-tpo-companies-duplicate-filters-01 SSR invalid, denied and legacy l
  });
  it("renders the scoped first-class companies directory without fabricating rows",async()=>{
   const html=renderToStaticMarkup(await page());
-  expect(html).toContain("No matching companies");
+  expect(html).toContain("No companies match these filters.");
   expect(mocked.view).toHaveBeenCalledWith(ctx,expect.objectContaining({collegeId:college}));
  });
 });
