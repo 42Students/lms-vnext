@@ -67,7 +67,7 @@ describe("chat-13 Super Admin /admin first-third route source audit", () => {
     expect(read("src/modules/placements/admin-company-directory-model.ts")).toContain("return adminCompaniesQuerySchema.safeParse(");
     expect(page.indexOf("if (!parsed.success)")).toBeLessThan(page.indexOf("listSuperAdminCompanyDirectory(context,parsed.data)"));
     expect(page).toContain('title="Invalid company search"');
-    expect(page).toContain("listSuperAdminCompanyDirectory(context, parsed.data)");
+    expect(page).toMatch(/listSuperAdminCompanyDirectory\(context,\s*parsed\.data\)/);
     expect(service).toContain("if (query.collegeId && query.collegeId !== selected.collegeId)");
     expect(service).toContain("eq(colleges.organizationId, selected.organizationId)");
   });
