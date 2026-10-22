@@ -39,14 +39,14 @@ function readDetails(entry: MetadataEntry): LearnerShowcaseDetails {
     if (!data || typeof data !== "object" || Array.isArray(data)) return {...blank, title: entry.value};
     const fields = data as Record<string, unknown>;
     return {
-      title: typeof fields.title === "string" ? fields.title : "",
-      organization: typeof fields.organization === "string" ? fields.organization : "",
-      date: typeof fields.date === "string" ? fields.date : "",
-      url: typeof fields.url === "string" && (()=>{try{
-        const u=new URL(fields.url);
+      title: typeof fields["title"] === "string" ? fields["title"] : "",
+      organization: typeof fields["organization"] === "string" ? fields["organization"] : "",
+      date: typeof fields["date"] === "string" ? fields["date"] : "",
+      url: typeof fields["url"] === "string" && (()=>{try{
+        const u=new URL(fields["url"]);
         return u.protocol==="https:"||u.protocol==="http:";
-      }catch{return false;}})() ? fields.url : "",
-      description: typeof fields.description === "string" ? fields.description : "",
+      }catch{return false;}})() ? fields["url"] : "",
+      description: typeof fields["description"] === "string" ? fields["description"] : "",
     };
   } catch {
     return {...blank, title: entry.value};
