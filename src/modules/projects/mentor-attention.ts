@@ -11,7 +11,7 @@ export type MentorProjectAttentionSource = {
   blocker?:string|null;
   submission:{
     id:string;status:string;submittedAt:Date|null;reviewedAt?:Date|null;
-    version?:number;reopenedAt?:Date|null;
+    version?:number;reopenedAt?:Date|null;submittedByName?:string|null;
   } | null;
   meetings: readonly {
     id: string; status: string;title: string; startsAt: Date;
@@ -47,8 +47,10 @@ export function deriveMentorProjectAttention(
         projectId:project.projectId,
         key:"review:"+submission.id,kind:"REVIEW",
         title:project.projectTitle+" — submission waiting for your review",
-        description:"A team member submitted work for this project.",
-        href:href+"?tab=overview",
+        description:submission.submittedByName?.trim()?
+          "Submitted by "+submission.submittedByName.trim():
+          "A team member submitted work for this project.",
+        href:href+"?tab=delivery",
         occurredAt:submission.submittedAt.toISOString(),
       });
     }
@@ -57,7 +59,7 @@ export function deriveMentorProjectAttention(
     // Prefer recorded events; use last project update when none exist.
     const last=project.lastActivityAt;
     const lastMillis=last?.getTime()??NaN;
-    const stalled=["PLANNED","ACTIVE"].includes(project.projectStatus) &&
+    const stalled=["PLANNED","ACTIVE","IN_PROGRESS"].includes(project.projectStatus) &&
       !project.blocker?.trim() &&
       Number.isFinite(lastMillis) && timestamp-lastMillis>=7*24*60*60*1000;
     if (stalled) alerts.push({
@@ -78,11 +80,14 @@ export function deriveMentorProjectAttention(
         });
       } else if ((meeting.status==="SCHEDULED"||meeting.status==="RESCHEDULED")) {
         const delta=meeting.startsAt.getTime()-timestamp;
-        if (delta>=0 && delta<=48*60*60*1000) alerts.push({
+        if (delta>0 && delta<=48*60*60*1000) alerts.push({
           projectId:project.projectId,
         key:"soon:"+meeting.id,kind:"MEETING_SOON",
-          title:"Upcoming project meeting",
-          description:project.projectTitle+": "+meeting.title,
+          title:meeting.title+" — "+project.projectTitle,
+          description:"Scheduled "+new Intl.DateTimeFormat("en-US",{
+            timeZone:"Asia/Kolkata",weekday:"short",month:"short",day:"numeric",
+            hour:"numeric",minute:"2-digit",hour12:true,
+          }).format(meeting.startsAt)+" IST",
           href:href+"?tab=team",occurredAt:meeting.startsAt.toISOString(),
         });
       }
