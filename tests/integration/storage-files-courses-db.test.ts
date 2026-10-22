@@ -194,7 +194,7 @@ async function createStructure() {
     role: "PRIMARY",
   });
   const enrollment = await createLearnerProgramEnrollment(collegeAdmin, {
-    membershipId: SEED_IDS.learnerCollegeAMembership,
+    membershipId: fileLearnerMembershipId,
     programId: program.id,
     cohortId: cohort.id,
   });
