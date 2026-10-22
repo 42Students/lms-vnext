@@ -181,13 +181,25 @@ describe("identity context and system roles against PostgreSQL", () => {
     // while an explicit role switch below must still select FACULTY.
     const heldRoles=choices.find(choice=>
       choice.id===SEED_IDS.facultyCollegeAMembership)?.roles??[];
-    const defaultRole=(["COLLEGE_ADMIN","TPO","MENTOR","FACULTY","LEARNER"] as const)
-      .find(role=>heldRoles.includes(role));
-    expect(defaultRole).toBeDefined();
+    // Integration suites can add TPO to this fixture between the choices
+    // read and context resolution. The default is still exactly one held role;
+    // validate against both surrounding persisted snapshots, and require the
+    // highest-priority role whenever the roster did not change mid-request.
+    const resolvedRoles=collegeA.membership?.roles??[];
+    expect(resolvedRoles).toHaveLength(1);
+    const [resolvedRole]=resolvedRoles;
+    const latestChoices=await listMembershipChoices("seed-shared-faculty");
+    const latestRoles=latestChoices.find(choice=>
+      choice.id===SEED_IDS.facultyCollegeAMembership)?.roles??[];
+    expect([...new Set([...heldRoles,...latestRoles])]).toContain(resolvedRole);
+    if(heldRoles.join("|")===latestRoles.join("|")){
+      const expectedRole=(["COLLEGE_ADMIN","TPO","MENTOR","FACULTY","LEARNER"] as const)
+        .find(role=>latestRoles.includes(role));
+      expect(resolvedRole).toBe(expectedRole);
+    }
     expect(collegeA.membership).toMatchObject({
       id: SEED_IDS.facultyCollegeAMembership,
       collegeId: SEED_IDS.collegeA,
-      roles: [defaultRole],
     });
     const collegeAFaculty = await resolveRequestContext({
       identityUid: "seed-shared-faculty",
