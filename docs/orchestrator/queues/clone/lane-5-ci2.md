@@ -12,6 +12,6 @@ Do these right after your ci1 queue. CI checks every push to main. Push after ev
 - [x] `docs/audit/gap-fix-work/ci2/packets/CI2U_lane5_8.md` (6 test files)
 - [x] `docs/audit/gap-fix-work/ci2/packets/CI2U_lane5_9.md` (6 test files)
 - [x] `docs/audit/gap-fix-work/ci2/packets/CI2U_lane5_10.md` (6 test files)
-- [ ] `docs/audit/gap-fix-work/ci2/packets/CI2U_lane5_11.md` (6 test files)
+- [x] `docs/audit/gap-fix-work/ci2/packets/CI2U_lane5_11.md` (6 test files)
 - [ ] `docs/audit/gap-fix-work/ci2/packets/CI2U_lane5_12.md` (6 test files)
 - [ ] `docs/audit/gap-fix-work/ci2/packets/CI2U_lane5_13.md` (6 test files)
