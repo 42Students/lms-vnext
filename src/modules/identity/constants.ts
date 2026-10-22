@@ -38,9 +38,16 @@ export type LegacyAccountRoleResolution =
 export function resolveLegacyAccountRole(
   rawRole: string | null | undefined,
   rawFacultyType?: string | null,
+  legacyPersonId?: number | string | null,
 ): LegacyAccountRoleResolution {
   const role = rawRole?.trim().toUpperCase();
   const facultyType = rawFacultyType?.trim().toUpperCase();
+  // Legacy frontend resolveRole interpreted FACULTY id=0 as Super Admin
+  // *before* applying facultyType. This is import evidence only: neither
+  // this numeric ID nor the legacy client claim is a runtime role grant.
+  if (role === "FACULTY" && legacyPersonId != null &&
+      String(legacyPersonId) === "0")
+    return { kind: "SYSTEM", role: "SUPER_ADMIN" };
   if (role === "SUPER_ADMIN") return { kind: "SYSTEM", role: "SUPER_ADMIN" };
   if (role === "ADMIN" || (role === "FACULTY" && facultyType === "ADMIN")) {
     return { kind: "MEMBERSHIP", role: "COLLEGE_ADMIN" };
@@ -48,11 +55,40 @@ export function resolveLegacyAccountRole(
   if (role === "TPO" || (role === "FACULTY" && facultyType === "TPO")) {
     return { kind: "MEMBERSHIP", role: "TPO" };
   }
-  if (role === "MENTOR") return { kind: "MEMBERSHIP", role: "MENTOR" };
+  if (role === "MENTOR" || (role === "FACULTY" && facultyType === "MENTOR"))
+    return { kind: "MEMBERSHIP", role: "MENTOR" };
   if (role === "FACULTY") return { kind: "MEMBERSHIP", role: "FACULTY" };
   if (role === "LEARNER") return { kind: "MEMBERSHIP", role: "LEARNER" };
   if (role === "RECRUITER") return { kind: "RECRUITER_PROFILE", role: "RECRUITER" };
   return { kind: "UNMAPPED" };
+}
+
+/**
+ * Compare trusted legacy actor facts with the claims that shaped the old
+ * portal. A mismatch is an import exception, not permission to choose the
+ * more privileged role. Caller must still reconcile source identities to an
+ * actual college before writing persisted membership/system role rows.
+ */
+export function reconcileLegacyAccountRoleEvidence(input: {
+  userType: string | null;
+  facultyType?: string | null;
+  legacyPersonId?: number | string | null;
+  claimedUserType?: string | null;
+  claimedFacultyType?: string | null;
+  claimedSubjectId?: number | string | null;
+}): LegacyAccountRoleResolution {
+  const resolved=resolveLegacyAccountRole(
+    input.userType,input.facultyType,input.legacyPersonId,
+  );
+  if(!input.claimedUserType)return resolved;
+  const claimed=resolveLegacyAccountRole(
+    input.claimedUserType,input.claimedFacultyType,input.claimedSubjectId,
+  );
+  if(resolved.kind==="UNMAPPED"||claimed.kind!==resolved.kind)
+    return {kind:"UNMAPPED"};
+  if(resolved.kind==="SYSTEM"||resolved.kind==="MEMBERSHIP")
+    return claimed.role===resolved.role?resolved:{kind:"UNMAPPED"};
+  return claimed.kind==="RECRUITER_PROFILE"?resolved:{kind:"UNMAPPED"};
 }
 
 /** UI labels are intentionally distinct from storage enum names.
