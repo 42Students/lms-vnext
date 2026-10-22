@@ -250,17 +250,17 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-15.md: file, number of 
 - [x] `src/components/projects/project-workspace.tsx`
 - [x] `src/components/shell/admin-scope-switcher.tsx`
 - [x] `src/components/shell/learner-notification-bell.tsx`
-- [ ] `src/components/shell/learner-topbar-tools.tsx`
-- [ ] `src/components/shell/topbar/account-menu.tsx`
-- [ ] `src/components/shell/topbar/command-search.tsx`
-- [ ] `src/components/shell/topbar/topbar.module.css`
-- [ ] `src/components/shell/topbar/tpo-find-suggestions.tsx`
-- [ ] `src/components/tpo/grid/grid-workspace.tsx`
-- [ ] `src/components/tpo/recruiter-bulk-invite-controls.tsx`
-- [ ] `src/components/tpo/recruiter-bulk-owner-controls.tsx`
-- [ ] `src/components/tpo/recruiter-bulk-stage-controls.tsx`
-- [ ] `src/components/tpo/recruiter-inline-owner.tsx`
-- [ ] `src/components/tpo/recruiter-inline-stage.tsx`
+- [x] `src/components/shell/learner-topbar-tools.tsx`
+- [x] `src/components/shell/topbar/account-menu.tsx`
+- [x] `src/components/shell/topbar/command-search.tsx`
+- [x] `src/components/shell/topbar/topbar.module.css`
+- [x] `src/components/shell/topbar/tpo-find-suggestions.tsx`
+- [x] `src/components/tpo/grid/grid-workspace.tsx`
+- [x] `src/components/tpo/recruiter-bulk-invite-controls.tsx`
+- [x] `src/components/tpo/recruiter-bulk-owner-controls.tsx`
+- [x] `src/components/tpo/recruiter-bulk-stage-controls.tsx`
+- [x] `src/components/tpo/recruiter-inline-owner.tsx`
+- [x] `src/components/tpo/recruiter-inline-stage.tsx`
 - [ ] `src/components/tpo/recruiter-lead-csv-import.tsx`
 - [ ] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
 - [ ] `src/components/tpo/recruiter-leads-workspace.tsx`

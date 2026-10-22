@@ -53,12 +53,13 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
  const failed=results.filter(row=>!row.url&&!row.emailed);
  const retryableFailed=failed.filter(item=>rows.some(row=>row.id===item.id&&!bulkInviteDisposition(row)));
  const linkLines=results.filter(row=>row.url).map(row=>row.name+" ("+row.email+")\t"+row.url).join("\n");
- return <section className="min-w-0 space-y-3 border-y border-border py-4 print:hidden" aria-label="Invite selected recruiters">
-  <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" 
+ return <section id={"tpo-bulk-invites-"+collegeId} className="min-w-0 space-y-3 border-y border-border py-4 print:hidden" aria-label="Invite selected recruiters">
+  <Button variant="secondary" type="button" className="min-h-11 md:min-h-9"
+   aria-expanded={open} aria-controls={"tpo-bulk-invite-panel-"+collegeId}
    disabled={busy||rows.length===0} onClick={()=>{setReviewSnapshot(null);setNotice("");setOpen(value=>!value);}}>
    Invite selected recruiters ({rows.length})
   </Button>
-  {open?<div className="mt-3 space-y-3">
+  {open?<div id={"tpo-bulk-invite-panel-"+collegeId} className="mt-3 space-y-3">
    <p className="text-sm text-body">Review recipients before issuing new invites. Email sending requires the approved delivery configuration and is restricted to allowlisted addresses outside production.</p>
    <p className="text-xs text-muted-foreground">
     The configured email provider does not currently confirm delivery of recruiter invitations.

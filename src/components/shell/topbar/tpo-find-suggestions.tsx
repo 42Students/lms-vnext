@@ -54,7 +54,7 @@ export function TpoFindSuggestions({
         onClick={() => setRetryToken(value => value + 1)}>Retry</Button>
     </div> : null}
     {ready && !state.error && state.results.map(result =>
-      <Button type="button" variant="ghost" role="option" aria-selected={false}
+      <Button type="button" variant="ghost" role="option" aria-selected={false} aria-label={result.label+" — "+result.group}
         data-tpo-result="" key={result.href} className={style.suggestion+" min-w-0 max-w-full"}
         onClick={() => onOpen(result.href)}>
         <SearchIcon/>
