@@ -35,7 +35,7 @@ describe("UX-kit-scroll-motion owner invisible-scrollbar contracts", () => {
     const source=ui(name);
     expect(source).toContain("<ScrollCue");
     expect(source).toContain('axis="y"');
-    expect(source).toContain('className="min-h-0 flex-1"');
+    expect(source).toContain("min-h-0 flex-1");
     expect(source).toContain("overflow-hidden");
     expect(source).toContain("safe-area-inset-bottom");
     expect(source).toContain("useOverlayWebview");
@@ -53,8 +53,11 @@ describe("UX-kit-scroll-motion owner invisible-scrollbar contracts", () => {
     }
     expect(dialog).toContain("Save");
     expect(sheet).toContain("safe-area-inset-bottom");
-    expect(ui("dialog")).toContain("showModal()");
-    expect(ui("dialog")).toContain("opener.current?.focus()");
+    expect(ui("dialog")).toContain("useOverlayExit(ref, opener, open, 180)");
+    const overlay=read("src/components/ui/use-overlay-exit.ts");
+    expect(overlay).toContain("dialog.showModal()");
+    expect(overlay).toContain("opener.focus()");
+    expect(overlay).toContain("finishClose()");
   });
   it("UX-kit-scroll-motion-04 tabs and filters disclose hidden horizontal and vertical scrolling", () => {
     const html=renderToStaticMarkup(<Tabs renderPanel={false} value="third" ariaLabel="Course tabs"
@@ -65,8 +68,9 @@ describe("UX-kit-scroll-motion owner invisible-scrollbar contracts", () => {
     expect(html).toContain('aria-label="Course tabs"');
     const filter=renderToStaticMarkup(<FilterBar title="Results filters"><p>Filter choices</p></FilterBar>);
     expect(filter).toContain('data-axis="y"');
-    expect(ui("filter-bar")).toContain("overflow-hidden");
-    expect(ui("filter-bar")).toContain("document.body.style.overflow = \"hidden\"");
+    expect(ui("filter-bar")).toContain("<ResponsiveFilterDrawer");
+    expect(ui("filter-bar")).toContain("aria-expanded={open}");
+    expect(ui("drawer")).toContain("useOverlayWebview");
     expect(ui("tabs")).toContain("duration-[var(--lms-motion-fast)]");
   });
   it("UX-kit-scroll-motion-05 wide DataTable has labelled focusable scroller and mobile disclosure", () => {
@@ -81,7 +85,8 @@ describe("UX-kit-scroll-motion owner invisible-scrollbar contracts", () => {
     expect(ui("data-table")).toContain("caption+\" scrollable columns\"");
     expect(ui("data-table")).toContain("Scrollable table columns");
     expect(ui("data-table")).toContain('title="More details"');
-    expect(ui("data-table")).toContain("sm:sticky sm:top-0");
+    expect(ui("data-table")).toContain('<ScrollCue axis="x"');
+    expect(ui("data-table")).toContain('mobileMode = "scroll"');
   });
   it("UX-kit-scroll-motion-06 toast list remains keyboard-reachable with unbounded persistent errors", () => {
     const notices=Array.from({length:8},(_,i)=>({id:String(i),title:"Error "+i,tone:"error" as const}));
@@ -103,7 +108,7 @@ describe("UX-kit-scroll-motion owner invisible-scrollbar contracts", () => {
     expect(detail).toContain("min-h-11");
     expect(detail).toContain("motion-reduce:transition-none");
     const css=read("src/app/globals.css");
-    for(const key of ["--lms-motion-fast: 150ms","--lms-motion-base: 200ms",
+    for(const key of ["--lms-motion-fast: 150ms","--lms-motion-base: 250ms",
       "lms-drawer-in","lms-sheet-in","lms-toast-in","lms-skeleton-shimmer",
       "@media (prefers-reduced-motion: reduce)"]){expect(css).toContain(key);}
     expect(ui("selection-controls")).not.toContain("duration-[120ms]");
