@@ -29,7 +29,7 @@ export const tpoGeneralRequestInputSchema=z.discriminatedUnion("kind",[
   companyName:z.string().trim().min(1,"Which company?").max(200),
   // Match the verified outside-offer workflow: compensation may be unknown.
   ctcLpa:z.string().regex(/^(?:0|[1-9][0-9]{0,7})(?:\.[0-9]{1,2})?$/)
-   .nullable().optional(),
+   .nullable().optional().refine(value=>value==null||Number(value)>0,{message:"Compensation must be greater than zero"}),
   proofUrl}),
  z.object({kind:z.literal("REGISTRATION_CHANGE"),reason,cohortId:uuid,
   choice:z.enum(["PLACEMENTS","HIGHER_STUDIES","NOT_INTERESTED","ENTREPRENEURSHIP","COMPETITIVE_EXAMS"]),
