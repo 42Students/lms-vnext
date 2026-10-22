@@ -5,7 +5,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
-import { getCollegeLessonSearchStats, searchCollegeLessons } from "@/modules/courses/college-learning-directory-service";
+import { getCollegeLessonSearchStats, getGlobalLessonSearchStats, searchCollegeLessons } from "@/modules/courses/college-learning-directory-service";
 import {
   createCourseLesson,
   listCourseLessons,
@@ -61,7 +61,13 @@ export async function GET(request: Request) {
       }, { headers: noStore });
     }
     if (view === "stats") {
-      const stats = await getCollegeLessonSearchStats(context);
+      // Legacy /stats is GLOBAL Super Admin only; a selected college or
+      // organization scope never enumerates other tenants.
+      const globalScope = isSuperAdmin(context) &&
+        !context.adminScope?.collegeId && !context.adminScope?.organizationId;
+      const stats = globalScope
+        ? await getGlobalLessonSearchStats(context)
+        : await getCollegeLessonSearchStats(context);
       return NextResponse.json({
         status: "success", message: "Stats retrieved", data: stats,
       }, { headers: noStore });

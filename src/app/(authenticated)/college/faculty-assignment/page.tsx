@@ -73,7 +73,8 @@ export default async function CollegeFacultyAssignmentPage({
   const currentVisibleClasses=new Set(items.filter(item=>item.state==="ACTIVE")
    .map(item=>item.cohortName+"|"+item.sectionName+"|"+item.periodName)).size;
   const classChoices=Array.from(
-    new Map(options.deliveries.map(item=>[item.sectionCode,{code:item.sectionCode,name:item.sectionName}])).values(),
+    new Map([...options.classes,...options.deliveries.map(item=>({code:item.sectionCode,name:item.sectionName}))]
+      .map(item=>[item.code,{code:item.code,name:item.name}] as const)).values(),
   ).sort((a,b)=>a.name.localeCompare(b.name)||a.code.localeCompare(b.code));
   // This optional list shows active courses only; historical assignments
   // must not be assigned a fabricated semester from today's cohort state.

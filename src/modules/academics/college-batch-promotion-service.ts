@@ -1,11 +1,11 @@
 import "server-only";
 
-import { and, asc, count, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, count, eq, inArray, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   academicPeriods, cohortProgressionState, cohorts, collegeMemberships, colleges,
-  departments, learnerProgramEnrollments, membershipRoles, programs,
+  courseOfferings, courseSectionDeliveries, courseTeachingAssignments, departments, learnerProgramEnrollments, membershipRoles, programs,
   programTermCourses, programTerms, sectionEnrollments, sections, users,
 } from "@/db/schema";
 import { hasMembershipRole, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
@@ -295,6 +295,34 @@ export async function previewCollegeBatchPromotionInTransaction(
       ))
     : [];
   const withClass = new Set(sectionsByEnrollment.map(row => row.id));
+  // Legacy confirmation modal (BatchPromotion.js) shows class count and the
+  // number of active faculty assignments the promotion will deactivate.
+  const [classCountRow] = await db.select({ total: count() }).from(sections)
+    .where(and(eq(sections.cohortId, batch.id), eq(sections.status, "ACTIVE")));
+  const termCourseIds = async (termNumber: number) => (await db
+    .select({ courseId: programTermCourses.courseId }).from(programTermCourses)
+    .innerJoin(programTerms, eq(programTerms.id, programTermCourses.programTermId))
+    .where(and(eq(programTerms.programId, batch.programId),
+      eq(programTerms.termNumber, termNumber)))).map(row => row.courseId);
+  let endingFacultyAssignments = 0;
+  if (batch.currentTermNumber !== null && nextTerm !== null) {
+    const targetSet = new Set(await termCourseIds(nextTerm));
+    const oldOnly = (await termCourseIds(batch.currentTermNumber))
+      .filter(courseId => !targetSet.has(courseId));
+    if (oldOnly.length > 0) {
+      const [endingRow] = await db.select({ total: count() })
+        .from(courseTeachingAssignments)
+        .innerJoin(courseSectionDeliveries,
+          eq(courseSectionDeliveries.id, courseTeachingAssignments.deliveryId))
+        .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+        .where(and(eq(courseOfferings.cohortId, batch.id),
+          inArray(courseOfferings.courseId, oldOnly),
+          eq(courseOfferings.status, "ACTIVE"),
+          isNull(courseSectionDeliveries.endedAt),
+          isNull(courseTeachingAssignments.endedAt)));
+      endingFacultyAssignments = Number(endingRow?.total ?? 0);
+    }
+  }
   const plan = batchPromotionPlan({
     cohortStatus: batch.status,
     currentTermNumber: batch.currentTermNumber,
@@ -326,6 +354,8 @@ export async function previewCollegeBatchPromotionInTransaction(
     batch, plan, blockers,
     learners, completePreview: !tooMany,
     checkedLearners: learners.length,
+    activeClasses: Number(classCountRow?.total ?? 0),
+    endingFacultyAssignments,
     blockedLearners: learners.filter(row => row.blockers.length > 0).length,
     canProceed: false as const,
     // Intentionally never actionable: a separate guarded promotion mutation is needed.

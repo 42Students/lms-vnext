@@ -9,7 +9,7 @@ import type { LearnerPlacementJobItem } from "@/components/placements/learner-pl
 import { LearnerJobsBrowse } from "@/components/placements/learner-jobs-browse";
 import { Suspense } from "react";
 import { getOwnLearnerDriveBrowse } from "@/modules/placements/learner-closing-drives-service";
-import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
+import { getOwnLearnerJobEnrollmentState, listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 import {listOwnPlacementSavedJobs} from "@/modules/placements/saved-job-service";
 import {readOptionalLearnerPlacementSource} from "@/modules/placements/learner-optional-placement-source";
 import {learnerJobDetailFromDrivesHref} from "@/modules/placements/learner-drives-return-model";
@@ -86,6 +86,21 @@ export default async function LearnerPlacementJobsPage() {
       </Link>}/>
   </div>;
   const {rows,snapshotNowIso}=browseRead.value;
+  // An empty feed caused by a missing or ambiguous academic enrollment is not
+  // the same as "no open jobs"; say so with an actionable explanation.
+  const enrollmentState=rows.length===0
+    ?await getOwnLearnerJobEnrollmentState(context).catch(()=>"OK" as const):"OK" as const;
+  if(enrollmentState!=="OK")return <div className="min-w-0 space-y-5">
+    <h2 className="text-[18px] font-semibold text-[var(--lms-heading)]">Drives</h2>
+    <ErrorState title="No placement drives can be shown yet"
+      description={enrollmentState==="NO_ACTIVE_ENROLLMENT"
+        ?"You do not have an active program and batch enrollment, so no placement drives are available to you. Contact your placement cell or college administrator."
+        :"More than one active program enrollment was found for you, so drives cannot be matched safely. Contact your college administrator to fix your enrollment."}
+      action={<Link href="/learn/my-placements"
+        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+        Back to placement dashboard
+      </Link>}/>
+  </div>;
   const savedRead=await readOptionalLearnerPlacementSource(
     ()=>listOwnPlacementSavedJobs(context));
   const savedJobs=savedRead.value??[];

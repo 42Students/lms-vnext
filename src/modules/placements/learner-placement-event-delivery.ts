@@ -19,16 +19,51 @@ export const PLACEMENT_NOTICE_DELIVERY_POLICY = {
  inAppBatchSize:250,sourceReads:"EVENT_TRANSACTION_CURRENT",
 } as const;
 
-/** Operator-visible requirements, not proof of external dispatch. */
-export function placementNoticeExternalChannelPlan(kind:LearnerPlacementEventKind){
- const email=["ROUND_SCHEDULED","ROUND_REMINDER","RESCHEDULE_DECIDED",
-  "OFFER_RELEASED","OFFER_EXPIRING","OFFER_EXPIRED"].includes(kind);
- const sms=["APPLICATION_STATUS_CHANGED","ROUND_SCHEDULED","ROUND_REMINDER",
-  "OFFER_RELEASED","OFFER_EXPIRING","OFFER_ACCEPTED_REPORTED",
-  "MARKED_ABSENT","DRIVE_REMIND_NOT_APPLIED"].includes(kind);
+/** Producer, dispatcher, worker and idempotency closure for every learner
+ * placement notice. Each producer calls the deliver functions below from the
+ * transaction that writes its source activity event, so a status transition
+ * and its in-app notice commit together (legacy JobNotificationHelper ran
+ * after commit). External channels are never sent from these transactions. */
+export const PLACEMENT_NOTICE_PRODUCER_CLOSURE = {
+ producers:{
+  applicationSubmittedResubmittedWithdrawn:"application-service.ts",
+  collegePipelineMoves:"college-application-stage-service.ts",
+  roundResultsAndAbsence:"result-service.ts",
+  rescheduleRequests:"request-service.ts",
+  offerReleaseAcceptReverse:"offer-service.ts",
+  offerExpiry:"placement-offer-expiry-sweep-service.ts",
+  driveDayAbsent:"tpo-drive-day-checkin-service.ts",
+  driveBroadcasts:"job-service.ts",
+ },
+ dispatcher:"deliverInAppNotificationInTransaction",
+ externalWorker:"operations/outbound-delivery-queue.ts (disabled unless DB10_OUTBOUND_READY)",
+ idempotency:"EVENT_ID_AND_RECIPIENT",
+ failurePolicy:"IN_APP_FAILURE_DOES_NOT_ROLL_BACK_MUTATION",
+} as const;
+
+const EXTERNAL_EMAIL_KINDS:readonly LearnerPlacementEventKind[]=
+ ["ROUND_SCHEDULED","ROUND_REMINDER"];
+const EXTERNAL_SMS_KINDS:readonly LearnerPlacementEventKind[]=
+ ["APPLICATION_STATUS_CHANGED","ROUND_SCHEDULED","ROUND_REMINDER"];
+/** Legacy TRAI SMS covered application confirmation, shortlisted, rejected,
+ * interview scheduled/reminder/confirmed; other statuses were in-app only. */
+const EXTERNAL_SMS_APPLICATION_STATUSES=["APPLIED","SHORTLISTED","REJECTED"];
+
+/** Operator-visible requirements, not proof of external dispatch.
+ * Narrowed urgent-email policy (NotificationEventRegistry.EMAIL_EVENTS:
+ * interview scheduled/reminder/confirmed only) and the legacy SMS set
+ * (TRAI_SMS_EVENTS). Everything else is deliberately in-app only; the
+ * reason is returned so an operator can read why no external send exists. */
+export function placementNoticeExternalChannelPlan(
+ kind:LearnerPlacementEventKind,status?:string,
+){
+ const email=EXTERNAL_EMAIL_KINDS.includes(kind);
+ const sms=EXTERNAL_SMS_KINDS.includes(kind)&&(kind!=="APPLICATION_STATUS_CHANGED"||
+  (status!==undefined&&EXTERNAL_SMS_APPLICATION_STATUSES.includes(status.toUpperCase())));
  return {
   email:email?"REQUIRES_APPROVED_OUTBOX_AND_CONSENT":"NOT_REQUIRED",
   sms:sms?"REQUIRES_DLT_TEMPLATE_AND_CONSENT":"NOT_REQUIRED",
+  skippedReason:email||sms?null:"IN_APP_ONLY_BY_POLICY",
   dispatched:false,
  } as const;
 }
@@ -56,9 +91,31 @@ export async function latestBookedPlacementInterviewInTransaction(
  return row??null;
 }
 
+/** Legacy JobNotificationHelper.isOptedOut: a learner who switched job
+ * notifications off (profile jobNotificationsEnabled=false) or the granular
+ * application-update preference gets no status notice. Used by direct
+ * in-transaction writers (college pipeline moves) that do not go through
+ * deliverRecordedLearnerPlacementEvent. No saved preference means notified. */
+export async function learnerAcceptsPlacementApplicationNotices(
+ tx:Tx,input:{collegeId:string;userId:string},
+):Promise<boolean>{
+ const [row]=await tx.select({
+  applications:placementCandidatePreferences.notifyApplicationUpdates,
+  profileEnabled:sql<boolean>`coalesce(${learnerProfiles.profileDocument}->'jobPreferences'->>'jobNotificationsEnabled','true') <> 'false'`,
+ }).from(collegeMemberships)
+  .leftJoin(placementCandidatePreferences,eq(placementCandidatePreferences.membershipId,collegeMemberships.id))
+  .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
+  .where(and(eq(collegeMemberships.userId,input.userId),
+   eq(collegeMemberships.collegeId,input.collegeId),eq(collegeMemberships.status,"ACTIVE")))
+  .limit(1);
+ if(!row)return true;
+ return row.profileEnabled!==false&&row.applications!==false;
+}
+
 export type LearnerPlacementDeliverySkip =
  "NO_ACTIVE_LEARNER"|"MEMBERSHIP_NOT_FOUND"|"ACCOUNT_INACTIVE"|
- "LEARNER_ROLE_REVOKED"|"JOB_NOT_FOUND_OR_OUTSIDE_COLLEGE"|"PREFERENCE_OFF";
+ "LEARNER_ROLE_REVOKED"|"JOB_NOT_FOUND_OR_OUTSIDE_COLLEGE"|"PREFERENCE_OFF"|
+ "DELIVERY_FAILED";
 
 /** LEARNER-placements-R04: call only from the original event transaction.
  * Revalidates active learner, college and user, honors the applicable saved
@@ -144,8 +201,16 @@ export async function deliverRecordedLearnerPlacementEvent(
  });
  // The strict delivery schema accepts only these three fields (no copy metadata).
  const message={title:rendered.title,body:rendered.body,actionHref:rendered.actionHref};
- const delivered=await deliverInAppNotificationInTransaction(tx,input.eventId,[row.userId],message);
- return {delivered:delivered.delivered>0,skipped:null};
+ // Legacy exceptions were logged and swallowed so a notice could never block
+ // the status transition. A savepoint keeps that guarantee inside the shared
+ // transaction: a failed notice write is undone alone and reported.
+ try{
+  const delivered=await tx.transaction(inner=>
+   deliverInAppNotificationInTransaction(inner,input.eventId,[row.userId],message));
+  return {delivered:delivered.delivered>0,skipped:null};
+ }catch{
+  return {delivered:false,skipped:"DELIVERY_FAILED"};
+ }
 }
 
 /** Notify saved participating learners for one drive, without a global
@@ -184,11 +249,15 @@ export async function deliverRecordedJobApplicantsPlacementEvent(tx:Tx,input:{
  });
  let delivered=0;
  for(let start=0;start<usersToNotify.length;start+=PLACEMENT_NOTICE_DELIVERY_POLICY.inAppBatchSize){
-  const result=await deliverInAppNotificationInTransaction(tx,input.eventId,
-   usersToNotify.slice(start,start+PLACEMENT_NOTICE_DELIVERY_POLICY.inAppBatchSize),{
-    title:notice.title,body:notice.body,actionHref:notice.actionHref,
-   });
-  delivered+=result.delivered;
+  try{
+   const result=await tx.transaction(inner=>deliverInAppNotificationInTransaction(inner,input.eventId,
+    usersToNotify.slice(start,start+PLACEMENT_NOTICE_DELIVERY_POLICY.inAppBatchSize),{
+     title:notice.title,body:notice.body,actionHref:notice.actionHref,
+    }));
+   delivered+=result.delivered;
+  }catch{
+   // Best effort per batch: a failed notice batch never rolls back the publish.
+  }
  }
  return delivered;
 }

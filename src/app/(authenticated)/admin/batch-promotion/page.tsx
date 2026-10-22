@@ -222,7 +222,10 @@ export default async function SuperAdminBatchPromotionPage({
               targetTerm={preview.plan.targetTermNumber}
               deactivatedFacultyAssignments={teachingForecast?.ending}
               learnerCount={preview.checkedLearners}
-              academicYearStart={preview.plan.academicYearStart} />
+              academicYearStart={preview.plan.academicYearStart}
+              activeClasses={preview.activeClasses}
+              deactivatedFacultyAssignments={preview.endingFacultyAssignments}
+              maxSemester={preview.batch.durationTerms} />
           ) : null}
       </section>
       <section className="border-b border-border pb-5">

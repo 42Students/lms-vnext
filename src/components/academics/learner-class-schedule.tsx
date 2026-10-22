@@ -448,7 +448,10 @@ export function LearnerClassSchedule({
   function navigateCalendarWindow(next: Date, nextView: LearnerScheduleView = view) {
     if (courseBasePath !== "/learn/courses") return;
     const nextMonth = localDayKey(next).slice(0, 7);
-    if (nextMonth === loadedMonth || nextMonth < "2000-01" || nextMonth > "2199-12") return;
+    // Returning to the already loaded month while a different month is still
+    // loading must supersede that pending navigation (latest request wins),
+    // otherwise the stale month would replace the user's latest choice.
+    if ((nextMonth === loadedMonth && !navigationPending) || nextMonth < "2000-01" || nextMonth > "2199-12") return;
     const search = new URLSearchParams(window.location.search);
     search.set("month", nextMonth);
     search.set("view", nextView);

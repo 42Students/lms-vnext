@@ -22,6 +22,7 @@ import { AuthorizationError, can, requirePermission } from "@/modules/permission
 
 const programDepartment = alias(departments, "college_assign_program_department");
 const MAX_CHOICES = 200;
+const CLASS_FILTER_CHOICES = 1000;
 
 /** Selector data is fenced by the same college on EVERY relevant parent. */
 export async function listCollegeTeachingOptions(context: RequestContext) {
@@ -39,7 +40,7 @@ export async function listCollegeTeachingOptions(context: RequestContext) {
   });
   const collegeId = member.collegeId;
   const db = getDb();
-  const [deliveries, faculty] = await Promise.all([
+  const [deliveries, faculty, classRows] = await Promise.all([
     db.select({
       id: courseSectionDeliveries.id,
       courseName: courses.name,
@@ -107,6 +108,19 @@ export async function listCollegeTeachingOptions(context: RequestContext) {
       ))
       .orderBy(asc(users.displayName), asc(collegeMemberships.id))
       .limit(MAX_CHOICES + 1),
+    // Legacy class filter listed every class of the college. Current and
+    // historical sections of this college are offered, independent of which
+    // classes currently have an active delivery (fenced by program department).
+    db.select({ code: sections.code, name: sections.name })
+      .from(sections)
+      .innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
+      .innerJoin(programs, eq(programs.id, cohorts.programId))
+      .innerJoin(programDepartment, and(
+        eq(programDepartment.id, programs.departmentId),
+        eq(programDepartment.collegeId, collegeId),
+      ))
+      .orderBy(asc(sections.name), asc(sections.code))
+      .limit(CLASS_FILTER_CHOICES),
   ]);
   return {
     deliveries: deliveries.slice(0, MAX_CHOICES).map(item => ({
@@ -123,6 +137,7 @@ export async function listCollegeTeachingOptions(context: RequestContext) {
       id: item.id,
       label: item.displayName?.trim() || item.email?.trim() || "Unnamed faculty",
     })),
+    classes: classRows,
     deliveriesTruncated: deliveries.length > MAX_CHOICES,
     facultyTruncated: faculty.length > MAX_CHOICES,
   };

@@ -70,6 +70,22 @@ function requireLearner(context: RequestContext) {
   return context.membership;
 }
 
+/** listLearnerPlacementJobs deliberately returns no drives for a learner without
+ * exactly one ACTIVE program enrollment. The Drives page uses this state to
+ * explain that case instead of presenting it as "no open jobs". */
+export async function getOwnLearnerJobEnrollmentState(
+  context: RequestContext,
+): Promise<"OK" | "NO_ACTIVE_ENROLLMENT" | "AMBIGUOUS_ENROLLMENT"> {
+  const membership = requireLearner(context);
+  const rows = await getDb().select({ id: learnerProgramEnrollments.id })
+    .from(learnerProgramEnrollments).where(and(
+      eq(learnerProgramEnrollments.membershipId, membership.id),
+      eq(learnerProgramEnrollments.status, "ACTIVE"),
+    )).limit(2);
+  return rows.length === 1 ? "OK"
+    : rows.length === 0 ? "NO_ACTIVE_ENROLLMENT" : "AMBIGUOUS_ENROLLMENT";
+}
+
 export async function listLearnerPlacementJobs(
   context: RequestContext,
   now: Date = new Date(),
@@ -248,7 +264,10 @@ export async function listLearnerPlacementJobs(
     const scoped=await getDb().select({
       id:programs.id,name:programs.name,departmentName:departments.name,
     }).from(programs).innerJoin(departments,eq(departments.id,programs.departmentId))
+      // Legacy programCache excluded deleted NewProgram rows; only an ACTIVE
+      // program (deleted/archived ones are not ACTIVE) contributes a name.
       .where(and(inArray(programs.id,programTargetIds.slice(offset,offset+500)),
+        eq(programs.status,"ACTIVE"),
         eq(departments.collegeId,membership.collegeId)));
     for(const row of scoped)targetProgramLabels.set(row.id,{
       name:row.name,departmentName:row.departmentName,

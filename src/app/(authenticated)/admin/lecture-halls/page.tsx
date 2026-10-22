@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
+import { isSuperAdmin } from "@/modules/identity/context";
 import { listLectureHalls, listSuperAdminOrganizationLectureHalls } from "@/modules/academics/lecture-hall-service";
 import { listDepartments } from "@/modules/departments/service";
 import { lectureHallsCsvHref } from "@/modules/academics/college-lecture-halls-export-model";
@@ -32,8 +33,10 @@ export default async function SuperAdminLectureHallsPage({
     const q=typeof raw.q==="string"?raw.q.slice(0,100):"";
     const pageRaw=typeof raw.page==="string"?Number(raw.page):1;
     const page=Number.isSafeInteger(pageRaw)&&pageRaw>0?Math.min(pageRaw,10000):1;
-    const organizationDirectory=orgId?await listSuperAdminOrganizationLectureHalls(
-      context,{organizationId:orgId,q,limit:20,offset:(page-1)*20},
+    // Organization-scoped and global Super Admins both get the legacy
+    // read-only directory; college scope is required only for mutations.
+    const organizationDirectory=isSuperAdmin(context)?await listSuperAdminOrganizationLectureHalls(
+      context,{organizationId:orgId??undefined,q,limit:20,offset:(page-1)*20},
     ):null;
     return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Lecture Halls" description="Lecture halls in the selected college" />

@@ -16,6 +16,7 @@ import {DRIVE_APPLICATION_BULK_CAP} from "./college-drive-applications-model";
 import {collegeDriveIdSchema} from "./college-drive-read-model";
 import {collegeStageCommandSchema,COLLEGE_APPLICATION_TRANSITIONS,COLLEGE_APPLICATION_CORRECTIONS} from "./college-stage-action-model";
 import {PlacementsServiceError} from "./errors";
+import {learnerAcceptsPlacementApplicationNotices} from "./learner-placement-event-delivery";
 
 export async function getCollegeApplicationPipeline(context:RequestContext,rawJobId:unknown,raw:unknown){
  const collegeId=await requireCollegePlacementAdmin(context),jobId=collegeDriveIdSchema.parse(rawJobId);
@@ -301,7 +302,10 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
     // Undo is offered ONLY if the registered, separately fenced scheduler
     // can delay delivery and the status change has no other persisted
     // screening, job URL, offer or interview side effects.
-    const reversible=input.notifyLearnerInApp&&
+    // Legacy JobNotificationHelper skipped learners who opted out of job notices.
+    const noticeAllowed=input.notifyLearnerInApp&&
+     await learnerAcceptsPlacementApplicationNotices(tx,{collegeId,userId:application.userId});
+    const reversible=noticeAllowed&&
      process.env.DB10_NOTIFICATION_OUTBOX_READY==="DB10_VERIFIED"&&
      input.action==="MOVE"&&
      ([["SHORTLISTED","ASSESSMENT"],["ASSESSMENT","INTERVIEW"],
@@ -335,7 +339,7 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
       returning id
      `);
      if(!queued.rows[0])throw new Error("Learner notification could not be scheduled.");
-    }else if(input.notifyLearnerInApp){
+    }else if(noticeAllowed){
      await tx.insert(inAppNotifications).values({
       userId:application.userId,eventId:audit.id,title,body,
       actionHref:"/learn/my-placements/applications",

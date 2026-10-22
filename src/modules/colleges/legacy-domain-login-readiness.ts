@@ -97,3 +97,15 @@ export function validateLegacyDomainLoginReadinessResponse(value:unknown){
    throw new Error("Unexpected readiness response");
  return result.data;
 }
+
+/** Legacy ReadinessGate.js verdict: READY, READY_WITH_WARNINGS or BLOCKED,
+ * derived only from readyForDomainLogin and the warnings list. UNKNOWN is the
+ * vNext state for unavailable domain evidence (readyForDomainLogin === null);
+ * it is distinct from warnings and from the broader go-live checklist verdict. */
+export function legacyDomainLoginVerdict(result:{
+ readyForDomainLogin:boolean|null;warnings:readonly string[];
+}):"READY"|"READY_WITH_WARNINGS"|"BLOCKED"|"UNKNOWN"{
+ if(result.readyForDomainLogin===null)return "UNKNOWN";
+ if(!result.readyForDomainLogin)return "BLOCKED";
+ return result.warnings.length>0?"READY_WITH_WARNINGS":"READY";
+}

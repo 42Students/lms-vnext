@@ -6,10 +6,11 @@ describe("super admin lecture halls scope and legacy browse",()=>{
  const page=readFileSync("src/app/(authenticated)/admin/lecture-halls/page.tsx","utf8");
  it("never widens mutation scope when browsing an organization",()=>{
   expect(service).toContain("listSuperAdminOrganizationLectureHalls(");
-  expect(service).toContain('context.adminScope?.organizationId!==query.organizationId');
+  expect(service).toContain('(context.adminScope?.organizationId??undefined)!==query.organizationId');
   expect(service).toContain('context.adminScope?.collegeId');
-  expect(service).toContain('requirePermission(context,"academics.read",{organizationId:query.organizationId})');
-  expect(service).toContain('eq(colleges.organizationId,query.organizationId)');
+  expect(service).toContain('requirePermission(context,"academics.read",');
+  expect(service).toContain('query.organizationId?{organizationId:query.organizationId}:{}');
+  expect(service).toContain('query.organizationId?eq(colleges.organizationId,query.organizationId):undefined');
   expect(service).toContain('eq(colleges.status,"ACTIVE")');
   expect(service).toContain('eq(lectureHalls.collegeId, college.id)');
  });
