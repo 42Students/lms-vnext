@@ -17,6 +17,23 @@ export function facultyNotificationActionHref(raw: string | null): string | null
   }
 }
 
+/** A legacy course notification may omit a course name. Resolve its
+ * canonical delivery UUID only from the CURRENT authorized teaching roster,
+ * not the untrusted activity href or an unrestricted catalogue lookup.
+ * The caller may use this projection as its activity context line. */
+export function facultyNotificationCourseContext(
+ href:string|null,
+ authorizedCourses:readonly {deliveryId:string;courseName:string;sectionName?:string}[],
+):string|null{
+ const safe=facultyNotificationActionHref(href);
+ if(!safe)return null;
+ const parsed=new URL(safe,"https://faculty.invalid");
+ const match=/^\/(?:teacher|teach)\/courses\/([0-9a-f-]{36})(?:\/|$)/i.exec(parsed.pathname);
+ if(!match)return null;
+ const row=authorizedCourses.find(item=>item.deliveryId===match[1]);
+ if(!row||!row.courseName.trim())return null;
+ return row.courseName.trim()+(row.sectionName?.trim()?" · "+row.sectionName.trim():"");
+}
 export type FacultyNotificationTarget="COURSE"|"INTERVIEW"|"ASSESSMENT"|"OTHER";
 /** Optional mentor route grants must come from an authorized role switch,
  * never from a notification payload. */
