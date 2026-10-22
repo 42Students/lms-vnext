@@ -4,11 +4,16 @@ import {createHash} from "node:crypto";
 import {and,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
- academicPeriods,activityEvents,assignmentSubmissions,collegeMemberships,
- colleges,cohorts,courseAssignments,courseLearningPaths,courseLessons,
+ academicPeriods,activityEvents,assignmentSubmissions,attendanceRecords,
+ attendanceSessions,collegeMemberships,
+ colleges,cohorts,courseAssignments,courseDiscussionMessages,
+ courseLearningPaths,courseLessons,
  courseOfferings,courseSectionDeliveries,courseTeachingAssignments,courses,
- departments,inAppNotifications,learnerProgramEnrollments,lessonContents,
+ db10Announcements,db10Skills,db10SkillSynonyms,departments,
+ inAppNotifications,learnerContentProgress,learnerProgramEnrollments,
+ lectureHalls,lessonContents,
  membershipRoles,organizations,programs,sectionEnrollments,sections,
+ sectionScheduleEvents,
  systemRoles,users,
 } from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
@@ -282,6 +287,70 @@ export async function seedIsolatedE2EAcademicGraph(
    deliveryStatus:"SENT",deliveredAt:new Date(),
   }).onConflictDoNothing();
   seeded.add("notificationA");
+  // Course-linked discussion exists in vNext as a delivery-scoped message,
+  // not the historic globally addressed course_discussion_posts table.
+  await tx.insert(courseDiscussionMessages).values({
+   id:d.discussionA,deliveryId:lessonDeliveries.A,
+   senderMembershipId:d.learnerA,lessonContentId:d.lectureA,
+   senderRole:"LEARNER",senderNameSnapshot:"E2E Learner A",
+   messageText:"E2E discussion: How does Java compile?",
+  }).onConflictDoNothing();
+  seeded.add("discussionA");
+
+  await tx.insert(lectureHalls).values({
+   id:d.hallA,collegeId:d.collegeA,departmentId:d.deptA,
+   name:"E2E Hall "+namespace,capacity:70,roomType:"LECTURE_HALL",
+  }).onConflictDoNothing();
+  seeded.add("hallA");
+  const sessionAt=new Date("2027-01-15T09:00:00Z");
+  await tx.insert(sectionScheduleEvents).values({
+   id:d.classScheduleA,sectionId:d.classA,facultyMembershipId:d.facultyA,
+   lectureHallId:d.hallA,title:"E2E Java session",
+   startsAt:sessionAt,endsAt:new Date("2027-01-15T10:00:00Z"),
+   location:"E2E Hall "+namespace,
+  }).onConflictDoNothing();
+  seeded.add("classScheduleA");
+  await tx.insert(attendanceSessions).values({
+   scheduleEventId:d.classScheduleA,status:"MARKED",
+   markedByUserId:manifestUsers.facultyA,markedAt:sessionAt,
+  }).onConflictDoNothing();
+  await tx.insert(attendanceRecords).values({
+   id:d.attendanceA,scheduleEventId:d.classScheduleA,
+   membershipId:d.learnerA,status:"PRESENT",
+   markedByUserId:manifestUsers.facultyA,markedAt:sessionAt,
+  }).onConflictDoNothing();
+  seeded.add("attendanceA");
+
+  await tx.insert(db10Announcements).values({
+   id:d.announcementA,organizationId:d.orgColleges,collegeId:d.collegeA,
+   receiverType:"COLLEGE",receiverId:d.collegeA,
+   title:"E2E College A announcement",
+   message:"E2E isolated demo notice. This seed does not send external messages.",
+   senderUserId:manifestUsers.adminA,senderType:"COLLEGE_ADMIN",
+  }).onConflictDoNothing();
+  seeded.add("announcementA");
+
+  // Skills are globally searchable; namespace the canonical search key to
+  // avoid taking over a real "java" catalog entry. Synonyms are permitted to
+  // overlap other skills, so their deterministic UUIDs are the rerun key.
+  await tx.insert(db10Skills).values({
+   id:d.skillJava,name:"java-e2e-"+namespace.toLowerCase(),
+   displayName:"Java (E2E "+namespace+")",category:"PROGRAMMING",
+  }).onConflictDoNothing();
+  seeded.add("skillJava");
+  for(const row of [
+   {id:d.skillSynonymJdk,skillId:d.skillJava,synonym:"jdk"},
+   {id:d.skillSynonymLanguage,skillId:d.skillJava,synonym:"java language"},
+  ])await tx.insert(db10SkillSynonyms).values(row).onConflictDoNothing();
+  seeded.add("skillSynonymJdk");seeded.add("skillSynonymLanguage");
+
+  await tx.insert(learnerContentProgress).values({
+   id:d.youtubeProgressA,membershipId:d.learnerA,
+   lessonContentId:d.youtubeA,lastPositionSeconds:30,
+   durationSeconds:120,attempt:1,
+  }).onConflictDoNothing();
+  seeded.add("youtubeProgressA");
+
   const missing=manifest.nodes
    .filter(node=>!seeded.has(node.key))
    .map(node=>({key:node.key,requires:node.requires,
