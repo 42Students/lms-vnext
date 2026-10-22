@@ -17,6 +17,7 @@ export function learnerCourseAttendanceSameIstMonth(value:Date,month:string):boo
 export function learnerCourseAttendanceIstWindow(raw:string):{from:Date;to:Date}|null{
  if(!/^(20|21)\d{2}-(0[1-9]|1[0-2])$/.test(raw))return null;
  const [year,month]=raw.split("-").map(Number);
+ if(year===undefined||month===undefined)return null;
  const start=new Date(Date.UTC(year,month-1,1,0,0)-330*60*1000);
  const end=new Date(Date.UTC(year,month,1,0,0)-330*60*1000);
  return {from:start,to:end};
