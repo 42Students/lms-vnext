@@ -101,7 +101,7 @@ export async function createMentorBacklogTask(context: RequestContext, projectId
       approach:input.approach,
       acceptanceCriteria:input.acceptanceCriteria,priority:input.priority,status:"TODO",
       estimatePoints:input.estimatePoints,
-      taskType:input.taskType,dueDate:input.dueDate,blockerReason:input.blockerReason,
+      taskType:input.taskType??"STORY",dueDate:input.dueDate,blockerReason:input.blockerReason,
     }).returning();
     if(!task)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     await recordActivityEventInTransaction(tx,context,{

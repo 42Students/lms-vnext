@@ -45,8 +45,12 @@ export const learnerProjectActivityFilterSchema = z.object({
   // Old /activity/feed supported bounded page/size and exact event type.
   // New cursor clients continue to default to page 1 / 100 events.
   eventType:z.string().trim().max(120).regex(/^[a-z0-9_.-]+$/i).optional(),
-  page:z.coerce.number().int().min(1).max(1000).default(1),
-  size:z.coerce.number().int().min(1).max(100).default(100),
+  // Only decimal query values are accepted. Number coercion would admit
+  // hex/exponent formats that were not valid old-LMS page/size parameters.
+  page:z.union([z.number().int(),z.string().regex(/^[0-9]+$/).transform(Number)])
+    .pipe(z.number().int().min(1).max(1000)).default(1),
+  size:z.union([z.number().int(),z.string().regex(/^[0-9]+$/).transform(Number)])
+    .pipe(z.number().int().min(1).max(100)).default(100),
 }).strict().refine(value => Boolean(value.beforeTime) === Boolean(value.beforeId), {
   message: "Activity cursor requires both timestamp and event ID", path: ["beforeId"],
 }).refine(value => !value.from || !value.to || value.from <= value.to, {
@@ -71,7 +75,8 @@ export function parseLearnerProjectActivityFilters(input: {
     from: (input.fromDate || input.from) || undefined,
     to: (input.toDate || input.to) || undefined,
     beforeTime: input.beforeTime,beforeId:input.beforeId,
-    eventType:input.eventType||undefined,page:input.page||undefined,
+    eventType:input.eventType||undefined,
+    page:input.page==="0"||input.page===0?1:input.page||undefined,
     sourceTab:input.sourceTab||undefined,search:input.search||undefined,
     size:input.size||undefined,
   });
