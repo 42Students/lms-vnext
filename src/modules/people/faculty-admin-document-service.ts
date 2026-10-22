@@ -114,10 +114,11 @@ export async function openFacultyDocumentForAdmin(
   const {target}=await requireFacultyTarget(tx,context,membershipId);
   if(!await facultyProfileDocumentStorageReady(tx))
    throw new PeopleServiceError("PRIVATE_IDENTITY_STORAGE_NOT_READY");
-  const [profile]=await tx.execute<DocumentRow>(sql`
+  const profileRows=await tx.execute<DocumentRow>(sql`
    select profile_document,profile_document_version from faculty_profiles
    where membership_id=${membershipId} for share
-  `).then(result=>result.rows);
+  `);
+  const profile=profileRows.rows[0];
   const document=facultyProfileDocumentSchema.parse(profile?.profile_document??emptyFacultyProfileDocument);
   let currentId:string|null=null;
   switch(input.purpose){
@@ -153,7 +154,7 @@ export async function openFacultyDocumentForAdmin(
    module:"IDENTITY",eventType:"identity.faculty_private_document.opened",
    collegeId:target.collegeId,organizationId:target.organizationId,
    actorUserId:context.user.id,
-   actorMembershipId:context.membership?.collegeId===target.collegeId?
+   actorMembershipId:context.membership&&context.membership.collegeId===target.collegeId?
     context.membership.id:null,
    subjectType:"faculty_profile",subjectId:membershipId,
    summary:"Administrator requested a signed Faculty document",
