@@ -20,7 +20,7 @@ export async function POST(request:Request){
   // Scheduled/service callbacks have no browser Origin. Reject a foreign Origin when one is supplied.
   if (request.headers.has("origin") && !isSameOriginRequest(request))
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- const secret=process.env.TPO_REMINDER_SCHEDULER_SECRET??"";
+ const secret=process.env["TPO_REMINDER_SCHEDULER_SECRET"]??"";
  const incoming=request.headers.get("x-tpo-reminder-key")??"";
  if(Buffer.byteLength(secret,"utf8")<32)
   return NextResponse.json({error:"SCHEDULER_NOT_CONFIGURED"},
@@ -28,9 +28,9 @@ export async function POST(request:Request){
  const expected=Buffer.from(secret,"utf8"),supplied=Buffer.from(incoming,"utf8");
  if(expected.length!==supplied.length||!timingSafeEqual(expected,supplied))
   return NextResponse.json({error:"FORBIDDEN"},{status:403,headers:noStore});
- if(process.env.DB10_NOTIFICATION_SCHEDULER_READY!=="DB10_VERIFIED"||
-    process.env.TPO_INTERVIEW_EMAIL_READY!=="VERIFIED"||
-    process.env.ZEPTOMAIL_LEGACY_KEY_REVOKED!=="confirmed")
+ if(process.env["DB10_NOTIFICATION_SCHEDULER_READY"]!=="DB10_VERIFIED"||
+    process.env["TPO_INTERVIEW_EMAIL_READY"]!=="VERIFIED"||
+    process.env["ZEPTOMAIL_LEGACY_KEY_REVOKED"]!=="confirmed")
   return NextResponse.json({error:"INTERVIEW_EMAIL_UNPROVISIONED"},
    {status:503,headers:noStore});
  const localHour=new Date(Date.now()+330*60_000).getUTCHours();
