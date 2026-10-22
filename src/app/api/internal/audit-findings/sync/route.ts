@@ -7,7 +7,7 @@ export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":"private, no-store"} as const;
 function authorized(request:Request){
- const secret=process.env.AUDIT_FINDINGS_CRON_SECRET?.trim();
+ const secret=process.env["AUDIT_FINDINGS_CRON_SECRET"]?.trim();
  const raw=request.headers.get("authorization");
  if(!secret||!raw?.startsWith("Bearer "))return false;
  const supplied=Buffer.from(raw.slice(7),"utf8");
