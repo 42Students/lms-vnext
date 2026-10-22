@@ -3,6 +3,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import {
   TenantDomainServiceError,
+  tenantDomainDnsInstructions,
   createTenantDomain,
   editTenantDomainHost,
   resolveTenantFromHost,
@@ -11,6 +12,22 @@ import {
   type TenantDomainRepository,
   type TenantDomainView,
 } from "@/modules/tenant-domains/service";
+
+describe("legacy DNS ownership transition", () => {
+  it("documents both historical TXT locations and token encodings without confusing them with the vNext challenge", () => {
+    const instructions = tenantDomainDnsInstructions("lms.example.edu", "challenge123");
+    expect(instructions.current).toEqual({
+      name: "_lms-vnext.lms.example.edu",
+      value: "lms-vnext-verification=challenge123",
+    });
+    expect(instructions.historicalAlternatives).toEqual({
+      names: ["_42lms-verify.lms.example.edu", "lms.example.edu"],
+      values: ["42lms-verification=challenge123", "challenge123"],
+    });
+    expect(instructions.guidance).toContain("do not prove ownership");
+    expect(instructions.guidance).toContain("Preserve the old DNS records");
+  });
+});
 
 const adminContext: RequestContext = {
   user: {
