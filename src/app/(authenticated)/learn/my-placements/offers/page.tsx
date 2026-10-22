@@ -21,6 +21,7 @@ import {learnerOfferExpirySchema,filterOwnOffersByExpiry} from "@/modules/placem
 import { ownOffersDueWithinWeek } from "@/modules/placements/learner-offers-due-model";
 import { learnerOffersExpiringSoon } from "@/modules/placements/learner-offers-expiring-soon-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { getOwnLearnerPlacementRulesView } from "@/modules/placements/learner-placement-rules-service";
 import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
 import {learnerOfferCountsAsPlaced,safeLearnerOfferLetterHref} from "@/modules/placements/learner-offer-letter-model";
@@ -74,7 +75,10 @@ export default async function LearnerOffersPage({
   const conflictingDeadlines=expiry!=="all"&&query.due==="1";
   const context = await getCurrentRequestContext();
   const [offers,requestRead,rulesRead] = await Promise.all([
-    getOwnLearnerOfferBrowse(context,view).catch(() => null),
+    getOwnLearnerOfferBrowse(context,view).catch((error:unknown) => {
+      if (error instanceof AuthorizationError) throw error;
+      return null;
+    }),
     readOptionalLearnerAlertSource(()=>listOwnPlacementRequests(context)),
     getOwnLearnerPlacementRulesView(context,{from:"offers"})
       .then(value=>({available:true as const,value}))
