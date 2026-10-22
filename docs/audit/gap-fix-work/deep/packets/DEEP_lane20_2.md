@@ -10,7 +10,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-9-008-047  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 - [ ] G2-9-010-050  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 - [ ] G2-9-010-051  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
-- [ ] G2-9-010-080  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
+- [x] G2-9-010-080  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 - [ ] G2-9-011-037  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 - [ ] G2-9-014-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 - [x] G2-9-014-079  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
@@ -19,6 +19,8 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-9-025-068  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 
 ## Results
+
+- G2-9-010-080: OK — `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx:48-64,72-94,128-132,157-162` independently loads application pipeline, filter choices, and job via `Promise.allSettled`; job header remains present on failed register reads, while selector failures preserve the applicant register with an explicit retry alert. Matches the independently retained job read and application fetch in `docs/legacy-source/frontend/src/pages/superadmin/sections/JobApplications.js:619-655`. Authorization failures remain fail-closed.
 
 - G2-9-018-054: OK — `src/modules/admin-ui/program-directory.ts:1-9,16-25,58-69` exports legacy `id,name,durationYears,departmentId,semesters,batches,classes` CSV, converting term counts to years. Matches `docs/legacy-source/frontend/src/pages/superadmin/sections/Programs.js:292-298`.
 
