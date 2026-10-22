@@ -29,7 +29,7 @@ export function normalizeTpoTrustedDomainInput(input:string):string{
 export function validTpoTrustedHost(host:string):boolean {
  if(host.length<4||host.length>253)return false;
  const labels=host.split(".");
- if(labels.length<2 || !/^[a-z]{2,63}$/.test(labels[labels.length-1]??""))return false;
+ if(labels.length<2 || !/^(?:[a-z]{2,63}|xn--[a-z0-9-]{2,59})$/.test(labels[labels.length-1]??""))return false;
  // .local and .localhost are special-use/internal hosts, never public
  // recruiter company mail domains.
  if(["local","localhost","internal"].includes(labels[labels.length-1]??""))return false;
