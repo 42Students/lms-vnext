@@ -30,7 +30,19 @@ export default async function TpoDriveDiscussion({params}:{
    <ul className="min-w-0 divide-y divide-border border-y border-border">{data.threads.map(thread=><li key={thread.id} className="flex min-w-0 flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
     <div className="min-w-0 flex-1 space-y-1">
      <h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{thread.recruiterName?.trim()||"Recruiter"}</h2>
-     {thread.lastPreview?<p className="break-words text-sm leading-[22px] text-body">{thread.lastPreview}</p>:null}
+     {thread.recentMessages.length>0?
+      <div className="mt-2 max-h-80 space-y-2 overflow-y-auto border-l-[3px] border-border pl-3" aria-label={"Recent messages with "+(thread.recruiterName||"recruiter")}>
+       {thread.recentMessages.map(message=><blockquote key={message.id}
+         className="min-w-0 rounded-[var(--lms-control-radius)] bg-surface-subtle p-3 text-sm">
+         <p className="mb-1 text-xs font-semibold text-body">
+          {message.senderType==="RECRUITER"?(thread.recruiterName||"Recruiter"):"Placement team"}
+          {" · "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(message.createdAt))} IST
+         </p>
+         {message.event?<p className="text-xs text-muted-foreground">{message.event.replaceAll("_"," ")}</p>:null}
+         <p className="whitespace-pre-wrap break-words">{message.body.length>500?message.body.slice(0,500)+"…":message.body}</p>
+         {message.body.length>500?<p className="mt-1 text-xs text-body">Open the conversation for the full quoted message.</p>:null}
+        </blockquote>)}
+      </div>:thread.lastPreview?<p className="break-words text-sm leading-[22px] text-body">{thread.lastPreview}</p>:null}
      <p className="break-words text-sm leading-[22px] text-body">{thread.count} recorded message(s) · {thread.unread} unread recruiter message(s)</p>
      <p className="break-words text-xs leading-5 text-muted-foreground">{thread.latestAt?
       new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(thread.latestAt)+" IST":
@@ -42,7 +54,7 @@ export default async function TpoDriveDiscussion({params}:{
       <details className="border-t border-border pt-2">
         <summary className="cursor-pointer text-sm font-semibold text-link">Reply in this drive discussion</summary>
         <TpoRecruiterMessageReply threadId={thread.id} actorUserId={context.user.id} unread={thread.unread>0}/>
-        <p className="mt-1 text-xs text-muted-foreground">For earlier messages and quotes, open the full conversation.</p>
+        <p className="mt-1 text-xs text-muted-foreground">Showing the latest three messages here. Open the full conversation to review earlier messages and quote context.</p>
       </details>
     </div>
    </li>)}</ul>
