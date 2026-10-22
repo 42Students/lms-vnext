@@ -13,6 +13,7 @@ import { applyPlacementRoundResult, stagePlacementRoundResult } from "@/modules/
 import { decidePlacementScreening } from "@/modules/placements/screening-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
+import { deletePlacementRowTrees } from "../support/placement-job-tree-cleanup";
 
 const databaseUrl = process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL;
 if (!databaseUrl) throw new Error("TEST_DATABASE_URL or DATABASE_URL is required for DB integration tests");
@@ -68,7 +69,12 @@ const TABLES = [
 ];
 
 async function cleanup() {
-  for (const table of TABLES) await pool.query("delete from " + table);
+  // New college stage/history dependencies are included by the live FK graph,
+  // so test cleanup cannot delete applications before their child rows.
+  await pool.query("delete from in_app_notifications");
+  await pool.query("delete from activity_events");
+  await deletePlacementRowTrees(pool);
+  for (const table of TABLES.slice(2)) await pool.query("delete from " + table);
 }
 
 async function passedApplication() {

@@ -26,7 +26,7 @@ describe("College Admin drive UI and graceful failure",()=>{
   expect(drives).toContain('mobilePriority:"action"');
   expect(drives).toContain("CollegeDriveRowLifecycleAction");
   const shared=source("src/components/ui/data-table.tsx");
-  expect(shared).toContain('sm:table-row');
+  expect(shared).toContain('md:table-row');
   expect(shared).toContain('More details');
  });
  it("GR-04 College Admin pipeline response failures do not display raw error bodies",()=>{
