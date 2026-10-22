@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import {AdminScopedCsvControl} from "@/components/admin/admin-scoped-csv-control";
 import {AdminScopedLiveSearch} from "@/components/admin/admin-scoped-live-search";
 import {AdminScopedRowsPerPage} from "@/components/admin/admin-scoped-rows-per-page";
+import {AdminPeopleAcademicCascade} from "@/components/admin/admin-people-academic-cascade";
 import {superAdminScopedCsvHref} from "@/modules/admin-ui/super-admin-scoped-csv-model";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Alert } from "@/components/ui/alert";
@@ -27,7 +28,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  renderBulkActions?:(rows:readonly SuperAdminReadRow[])=>ReactNode;
  classOptions?:readonly {id:string;name:string}[];
  applicationFilters?:{jobs:readonly {id:string;name:string}[];departments:readonly {id:string;name:string}[];programs:readonly {id:string;name:string}[];batches:readonly {id:string;name:string}[]};
- peopleFilters?:{kind:"FACULTY"|"LEARNER";departments:readonly {id:string;name:string}[];programs:readonly {id:string;name:string}[];batches:readonly {id:string;name:string}[];classes:readonly {id:string;name:string}[]};
+ peopleFilters?:{kind:"FACULTY"|"LEARNER";departments:readonly {id:string;name:string}[];programs:readonly {id:string;name:string;departmentId?:string}[];batches:readonly {id:string;name:string;programId?:string}[];classes:readonly {id:string;name:string;cohortId?:string}[]};
 }) {
  // Student registration owns the page h1; the directory then has a section
  // heading. Other callers retain the original PageHeader by default.
@@ -240,29 +241,26 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
    {peopleFilters ? <details className="min-w-0 sm:col-span-2 lg:col-span-3" open={Boolean(directoryKind||data.query.departmentId||data.query.programId||data.query.cohortId||data.query.sectionId||data.query.employmentType)}>
     <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lg:min-h-9">Filters</summary>
     <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 xl:grid-cols-3">
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
-     <Select name="departmentId" defaultValue={data.query.departmentId??""} className="w-full">
-      <option value="">All departments</option>{peopleFilters.departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
-     </Select>
-    </label>
-    {peopleFilters.kind==="FACULTY"?<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty type
+    {peopleFilters.kind==="FACULTY"?<>
+     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
+      <Select name="departmentId" defaultValue={data.query.departmentId??""} className="w-full">
+       <option value="">All departments</option>
+       {peopleFilters.departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
+      </Select>
+     </label>
+     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty type
       <Select name="employmentType" aria-label="Filter by faculty type" defaultValue={data.query.employmentType??""} className="min-h-11 w-full md:min-h-9">
        <option value="">All types</option>
        {facultyTypes.map(([value,label])=><option key={value} value={value}>{label}</option>)}
        {data.query.employmentType&&!facultyTypes.some(([code])=>code===data.query.employmentType)?
         <option value={data.query.employmentType}>{facultyTypeLabel(data.query.employmentType)}</option>:null}
       </Select>
-     </label>:<>
-      {(["programId","cohortId","sectionId"] as const).map((key)=>{
-        const values=key==="programId"?peopleFilters.programs:key==="cohortId"?peopleFilters.batches:peopleFilters.classes;
-        const label=key==="programId"?"Program":key==="cohortId"?"Batch":"Class";
-        return <label key={key} className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
-         <Select name={key} defaultValue={data.query[key]??""} className="w-full">
-          <option value="">All {label.toLowerCase()}s</option>{values.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
-         </Select>
-        </label>;
-      })}
-     </>}
+     </label>
+    </>:<AdminPeopleAcademicCascade
+     departments={peopleFilters.departments} programs={peopleFilters.programs}
+     batches={peopleFilters.batches} classes={peopleFilters.classes}
+     initial={{departmentId:data.query.departmentId??undefined,programId:data.query.programId??undefined,
+      cohortId:data.query.cohortId??undefined,sectionId:data.query.sectionId??undefined}}/>}
     </div>
    </details>:null}
    {classOptions?<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Filter by class
