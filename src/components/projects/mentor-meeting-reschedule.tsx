@@ -51,7 +51,7 @@ export function MentorMeetingReschedule(props:{
       showToast({tone:"error",title:"Meeting not rescheduled",description:message});
     }finally{setPending(false);}
   }
-  return <div className={styles.legacy+" "+styles.contents}>
+  return <div className={styles["legacy"]+" "+styles["contents"]}>
     <Button variant="secondary" aria-haspopup="dialog" aria-expanded={open||confirm}
       className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>{
       setStart(toIstLocalInput(props.startsAt));
