@@ -451,11 +451,12 @@ export function LoginForm({
     const nextIndex=event.key==="Home"?0:event.key==="End"?available.length-1:
       (index+(event.key==="ArrowLeft"||event.key==="ArrowUp"?-1:1)+available.length)%available.length;
     const next=available[nextIndex];
+    if (!next) return;
     setSelectedAccountKey(next.key);
     const buttons=event.currentTarget.closest('[role="radiogroup"]')
       ?.querySelectorAll<HTMLButtonElement>('[role="radio"]');
     for(const button of buttons??[]){
-      if(button.dataset.accountKey===next.key){button.focus();break;}
+      if(button.dataset["accountKey"]===next.key){button.focus();break;}
     }
   }
 
@@ -616,6 +617,7 @@ export function LoginForm({
                   const next = event.key === "Home" ? channels[0] :
                     event.key === "End" ? channels[channels.length - 1] :
                     channels[(currentIndex + (event.key === "ArrowLeft" ? channels.length - 1 : 1)) % channels.length];
+                  if (!next) return;
                   setChannel(next);
                   setContact("");
                   setContactError(null);
