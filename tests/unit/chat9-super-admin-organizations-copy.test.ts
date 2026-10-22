@@ -14,6 +14,8 @@ describe("Super Admin Organizations exact dev-legacy copy",()=>{
   expect(form).toContain("Organization name");
   expect(form).toContain('placeholder="e.g., ABC University"');
   expect(form).toContain('pending ? "Creating…" : "Create Organization"');
-  expect(form).toContain("disabled={pending || !name.trim()}");
+  expect(form).toContain("disabled={pending}");
+  expect(form).toContain("required");
+  expect(form).toContain("const cleanName=name.trim()");
  });
 });
