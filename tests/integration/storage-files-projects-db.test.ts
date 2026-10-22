@@ -67,6 +67,7 @@ async function cleanup() {
   await pool.query(`delete from storage_file_events where subject_id in (select id from project_resource_files)`);
   await pool.query(`delete from project_resource_files where project_id in (${projects})`);
   await pool.query(`delete from project_members where project_id in (${projects})`);
+  await pool.query(`delete from project_resource_audit where project_id in (${projects})`);
   await pool.query(`delete from project_resources where project_id in (${projects})`);
   await pool.query(`delete from project_tasks where project_id in (${projects})`);
   await pool.query(`delete from project_sprints where project_id in (${projects})`);

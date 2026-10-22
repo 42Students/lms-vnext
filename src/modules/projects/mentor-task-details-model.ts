@@ -21,6 +21,11 @@ export function taskDetailsChangedFields(
   old:{title:string;description:string|null;approach?:string|null;acceptanceCriteria:string|null;priority:string;blockerReason?:string|null;dueDate?:string|null;estimatePoints?:number|null;taskType?:string|null},
   next:MentorTaskDetailsFields,
 ) {
+  // An omitted optional field is unchanged, not an instruction to clear it.
+  // Otherwise activity events falsely claim a change that the SQL writer skipped.
+  const optional=new Set<keyof MentorTaskDetailsFields>(
+    ["approach","blockerReason","dueDate","estimatePoints","taskType"]);
   return (["title","description","approach","acceptanceCriteria","priority","blockerReason","dueDate","estimatePoints","taskType"] as const)
-    .filter(key=>(old[key]??null)!==(next[key]??null));
+    .filter(key=>(!optional.has(key)||next[key]!==undefined)&&
+      (old[key]??null)!==(next[key]??null));
 }
