@@ -6,6 +6,28 @@ export type ImportedJobImportantDate={
  id:string;jobId:string;index:number;label:string;eventType:"JOB_IMPORTANT_DATE";
  originalType:string|null;at:Date;applicationDeadline:boolean;
 };
+/** Matches legacy PlacementDateTimeUtils.parseUtcDateTime. Bare date-time
+ * values are already UTC wall-clock; bare dates preserve their civil date
+ * at 00:00 UTC. Only offset-bearing strings are converted from their offset.
+ * Calendar grouping later converts the resulting instant to Asia/Kolkata.
+ */
+export function parseImportedImportantDateUtc(raw:unknown):Date|null{
+ if(typeof raw!=="string")return null;
+ const value=raw.trim().replace(" ","T");
+ if(/^\d{4}-\d{2}-\d{2}$/.test(value)){
+  const date=new Date(value+"T00:00:00.000Z");
+  return Number.isFinite(date.getTime())&&date.toISOString().slice(0,10)===value
+    ?date:null;
+ }
+ if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,9})?)?(?:Z|[+-]\d{2}:?\d{2})?$/i.test(value))
+  return null;
+ const hasOffset=/(?:Z|[+-]\d{2}:?\d{2})$/i.test(value);
+ const parsed=new Date(hasOffset?value:value+"Z");
+ if(!Number.isFinite(parsed.getTime()))return null;
+ if(!hasOffset&&parsed.toISOString().slice(0,10)!==value.slice(0,10))return null;
+ return parsed;
+}
+
 export function importedJobImportantDates(jobId:string,details:unknown):ImportedJobImportantDate[]{
  if(!details||typeof details!=="object")return [];
  const dates=(details as {importantDates?:unknown}).importantDates;
@@ -19,12 +41,8 @@ export function importedJobImportantDates(jobId:string,details:unknown):Imported
   const raw=typeof row.at==="string"?row.at:
     typeof row.date==="string"?row.date:null;
   if(!label&&!originalType||!raw)return [];
-  // For date-only historical entries, a college-local midnight is explicit.
-  // Do not interpret a local timestamp without timezone as server-local UTC.
-  const source=/^\d{4}-\d{2}-\d{2}$/.test(raw)?raw+"T00:00:00+05:30":raw;
-  if(!/^\d{4}-\d{2}-\d{2}T.*(?:Z|[+-]\d{2}:?\d{2})$/.test(source))return [];
-  const time=new Date(source);
-  if(!Number.isFinite(time.getTime()))return [];
+  const time=parseImportedImportantDateUtc(raw);
+  if(!time)return [];
   const title=label||originalType||"Important date";
   const applicationDeadline=/^application\s*deadline$/i.test(title)||
     /^application\s*deadline$/i.test(originalType??"");
