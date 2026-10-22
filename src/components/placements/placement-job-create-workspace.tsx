@@ -56,7 +56,8 @@ export async function PlacementJobCreateWorkspace({
   // Legacy also showed published and draft jobs in its copy list; they remain
   // visible in the full directory, but cannot be used as a clone source because
   // that would duplicate a currently recruiting cohort without a review.
-  const pastDrives=hasMembershipRole(context,"TPO")
+  const canClone=hasMembershipRole(context,"TPO")||hasMembershipRole(context,"COLLEGE_ADMIN");
+  const pastDrives=canClone
     ?await getDb().select({
       id:placementJobs.id,title:placementJobs.title,status:placementJobs.status,
       createdAt:placementJobs.createdAt,
@@ -121,10 +122,10 @@ export async function PlacementJobCreateWorkspace({
         <Link href={basePath+"/new"} className="font-semibold text-primary-text underline">Retry setup data</Link>
       </p> : null}
       {preFormActions ? <div className="min-w-0">{preFormActions}</div> : null}
-      {hasMembershipRole(context,"TPO")?<Disclosure title="Clone a past drive" defaultOpen={pastDrives.length>0}
+      {canClone?<Disclosure title="Clone a past drive" defaultOpen={pastDrives.length>0}
         className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]"
         contentClassName="min-w-0 pt-3">
-        {pastDrives.length>0?<TpoDriveClonePicker drives={pastDrives.map(job=>({
+        {pastDrives.length>0?<TpoDriveClonePicker collegeAdmin={!hasMembershipRole(context,"TPO")} drives={pastDrives.map(job=>({
           id:job.id,title:job.title,status:job.status,
           createdAt:job.createdAt.toISOString(),
         }))}/>:<p className="text-sm text-muted-foreground">

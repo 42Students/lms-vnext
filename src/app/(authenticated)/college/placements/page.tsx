@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {CollegeRetentionInlinePreview} from "@/components/placements/college-retention-inline-preview";
 import { redirect } from "next/navigation";
 import {EmptyState} from "@/components/ui/empty-state";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -8,7 +9,6 @@ import {getCollegeDriveAttention} from "@/modules/placements/college-drive-atten
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
-import { Disclosure } from "@/components/ui/disclosure";
 import { StatTile } from "@/components/ui/stat-tile";
 import { DataTable } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -169,18 +169,7 @@ export default async function CollegePlacementsPage({searchParams}:{
       <Link href="/college/placements/drives" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link sm:w-auto md:min-h-[var(--lms-control-height)] hover:bg-[rgba(38,186,199,0.07)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">All drives ({draft&&closed?draft.total+closed.total:"—"} closed / draft)</Link>
       </nav>
 
-      <Disclosure title="Data retention report" className="min-w-0">
-        <div className="min-w-0 space-y-2 py-3">
-          <Alert tone="info">
-            A verified 180-day college-scoped retention report has not been enabled.
-            No stale-drive counts or 200-row samples are inferred from creation dates.
-          </Alert>
-          <Link href="/college/placements/drives"
-            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
-            Review all drives
-          </Link>
-        </div>
-      </Disclosure>
+      <CollegeRetentionInlinePreview/>
       <p className="border-b border-[var(--lms-canvas-border)] pb-3 text-sm">
         <Link href="/college/students" className="font-semibold text-link underline">Student directory</Link>
         <span className="ml-2 text-xs text-muted-foreground">Student placement history lookup is not yet available; no outcome is inferred.</span>

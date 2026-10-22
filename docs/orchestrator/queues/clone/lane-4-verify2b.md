@@ -2,8 +2,8 @@
 
 All still-open verification-round-2 packets were redistributed evenly over the 20 lanes so no lane sits idle. This file REPLACES lane-4-verify2.md (do not edit the old file). A packet path may name another lane: that is fine, you own it now. Do your lane-4-ci10.md first if anything is unticked there. Tick [x] here as you go and push after every packet.
 
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-4/W1_lane4_2.md` (25 rows)
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-2/W1_lane2_10.md` (25 rows)
+- [x] `docs/audit/gap-fix-work/verify2/packets/lane-4/W1_lane4_2.md` (25 rows)
+- [x] `docs/audit/gap-fix-work/verify2/packets/lane-2/W1_lane2_10.md` (25 rows)
 - [ ] `docs/audit/gap-fix-work/verify2/packets/lane-4/W1_lane4_3.md` (25 rows)
 - [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_7.md` (25 rows)
 - [ ] `docs/audit/gap-fix-work/verify2/packets/lane-7/W1_lane7_7.md` (25 rows)
