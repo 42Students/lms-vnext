@@ -20,7 +20,7 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
   throw new Error("Invalid roster sort");
  if(input.sortOrder!==undefined&&input.sortOrder!=="asc"&&input.sortOrder!=="desc")
   throw new Error("Invalid roster sort direction");
- delete input.sortBy;delete input.sortOrder;delete input.departmentName;
+ delete input.departmentName;
  if(input.query!==undefined&&input.q===undefined)input.q=input.query;
  delete input.query;
  if(input.facultyType!==undefined&&input.employmentType===undefined)
