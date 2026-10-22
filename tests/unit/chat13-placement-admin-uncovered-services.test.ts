@@ -62,7 +62,9 @@ describe("Super Admin placements remaining service entrypoint checks",()=>{
   expect(s).toContain('requirePermission(context,"admin-scope.select")');
   expect((s.match(/assertPersistedPlatformPermission\(tx,context,"admin-scope.select"\)/g)??[]).length).toBe(3);
   expect(s).toContain("eq(placementCompanyDomains.companyId,company.id)");
-  expect(s).toContain("Domain belongs to another company.");
+  expect(s).toContain("if(primaryOwner)");
+  expect(s).toContain("if(taken&&taken.companyId!==company.id)");
+  expect(s.split("already belongs to another company. Merge them instead.").length-1).toBe(2);
   expect(s).toContain("Other name is already registered to another company.");
   expect(s).toContain("canonicalCompanyAlias(company.name)");
   expect(s).toContain("recordActivityEventInTransaction(tx,context");

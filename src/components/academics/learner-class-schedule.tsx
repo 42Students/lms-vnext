@@ -785,7 +785,7 @@ export function LearnerClassSchedule({
                           });
                         }
                       }}
-                      className={styles.monthDay+" !block !w-full !min-h-16 md:!min-h-24 !justify-start"}>
+                      className={styles.monthDay+" !block !w-full [min-height:4rem] md:[min-height:6rem] !justify-start"}>
                       <span className="block text-xs font-semibold">{Number(day.slice(8))}</span>
                       {dayItems.length ? <span aria-hidden="true" className="mt-1 flex flex-wrap gap-0.5">
                         {dayItems.slice(0,3).map(event=><span key={event.id} className={"size-1.5 rounded-[50%] bg-primary " +

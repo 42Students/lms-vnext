@@ -193,7 +193,11 @@ describe("chat-13 TPO second-third cross-audit repairs",()=>{
   const s=read("src/components/tpo/recruiter-leads-workspace.tsx");
   expect(s).toContain('<EngageCompanyTpoGrid rows={visibleCompanies}');
   expect(s).toContain('<RecruiterTpoGrid rows={sortedVisible}');
-  expect(s).toContain('mobilePriority:"action"');
+  // The spreadsheet owns responsive action columns; caller passes stable keys.
+  const grid=read("src/components/tpo/grid/tpo-grid.tsx");
+  expect(grid).toContain("rowHeight:44");
+  expect(grid).toContain("mobilePrimaryKeys");
+  expect(s).toContain('<RecruiterTpoGrid rows={sortedVisible}');
   expect(s).toContain('selection={{');
   expect(s).toContain('RecruiterRosterDisplayControls');
   expect(s).toContain('columnKeys.includes(column.key)');

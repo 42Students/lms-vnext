@@ -15,8 +15,8 @@ vi.mock("@/components/academics/college-section-lifecycle-action",async()=>{
 });
 vi.mock("@/components/electives/college-slot-manager",async()=>{
  const {createElement}=await import("react");
- return {CollegeSlotManager:(props:{row:{id:string}})=>
-  createElement("button",{type:"button","data-slot-manager":props.row.id},"Configure slot")};
+ return {CollegeSlotManager:(props:{row?:{id:string}})=>
+  createElement("button",{type:"button",...(props.row?{"data-slot-manager":props.row.id}:{})},"Configure slot")};
 });
 vi.mock("@/components/electives/college-elective-offering-manager",async()=>{
  const {createElement}=await import("react");
@@ -51,7 +51,8 @@ describe("COL-UX-STRUCTURE-TABLE-02 responsive Classes and Electives directories
   expect(html).toContain('data-lifecycle="'+uuid+'"');
   expect(html).toContain('data-slot="data-table"');
   expect(html).not.toContain("More details");
-  expect(html).toContain("Class directory scrollable columns");
+  expect(html).toContain('data-slot="scroll-cue"');
+  expect(readFileSync("src/components/ui/data-table.tsx","utf8")).toContain('caption+" scrollable columns"');
   expect(html).toContain("Semester / Period");
  });
  it("retains academic choices, confirmed learners and elective actions on a phone-readable table",()=>{
@@ -69,7 +70,8 @@ describe("COL-UX-STRUCTURE-TABLE-02 responsive Classes and Electives directories
   expect(html).toContain('data-slot-manager="'+uuid+'"');
   expect(html).toContain('data-offerings="'+uuid+'"');
   expect(html).toContain('data-slot-lifecycle="'+uuid+'"');
-  expect(html).toContain("More details");
+  expect(html).toContain('data-slot="scroll-cue"');
+  expect(html).toContain('data-slot="data-table"');
  });
  it("removes duplicate raw desktop tables in favour of one responsive DataTable per view",()=>{
   const source=readFileSync("src/components/academics/college-structure-directory.tsx","utf8");

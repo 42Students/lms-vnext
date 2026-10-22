@@ -31,7 +31,7 @@ export async function editSuperAdminPublishedDrive(context:RequestContext,rawJob
    .where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,acting.collegeId)))
    .for("update").limit(1);
   if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
-  if(!["PUBLISHED","CLOSED","CANCELLED","ARCHIVED"].includes(job.status))
+  if(job.status!=="PUBLISHED")
    throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
   if(job.updatedAt.getTime()!==Date.parse(cmd.expectedUpdatedAt))
    throw new PlacementsServiceError("PLACEMENT_JOB_STALE");

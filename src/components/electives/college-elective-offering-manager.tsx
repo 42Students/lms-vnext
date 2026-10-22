@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Dialog } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
@@ -31,6 +32,8 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
   const [capacity, setCapacity] = useState("30");
   const [busy, setBusy] = useState(false);
   const [dirty,setDirty]=useState(false);
+  const [confirmation,setConfirmation]=useState<"CLOSE"|"CANCEL_EDIT"|"SAVE"|"ARCHIVE"|null>(null);
+  const [archiveTarget,setArchiveTarget]=useState<Offering|null>(null);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const api = "/api/academics/elective-slots/" + encodeURIComponent(slotId) + "/offerings";
@@ -52,10 +55,17 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
     await load();
   }
 
-  function close(){
+  function close(confirmed=false){
     if(busy)return;
-    if(dirty&&!window.confirm("Discard these elective changes?"))return;
+    if(dirty&&!confirmed){setConfirmation("CLOSE");return;}
     setDirty(false);setEditing(null);setOpened(false);
+  }
+
+  function cancelEdit(confirmed=false){
+    if(busy)return;
+    if(dirty&&!confirmed){setConfirmation("CANCEL_EDIT");return;}
+    setEditing(null);setDirty(false);
+    setDeliveryId(data?.deliveries.find(row=>!offered.has(row.courseId))?.id??"");
   }
 
   function startEdit(offering: Offering) {
@@ -66,7 +76,7 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
     setError(""); setMessage("");
   }
 
-  async function save() {
+  async function save(confirmed=false) {
     const delivery = data?.deliveries.find(row => row.id === deliveryId);
     // A blank value is the legacy unlimited-seat policy, not zero seats.
     // The backend accepts positive integers or null; never impose a UI-only
@@ -81,8 +91,7 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
       setError("Capacity cannot be lower than enrolled students.");
       return;
     }
-    if (!window.confirm(editing ? "Save changes to this elective offering?" : "Add this course to the elective slot?"))
-      return;
+    if (!confirmed){setConfirmation("SAVE");return;}
     setBusy(true); setError(""); setMessage("");
     const url = editing ? api + "/" + encodeURIComponent(editing.offeringId) : api;
     try {
@@ -107,8 +116,8 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
     } finally { setBusy(false); }
   }
 
-  async function archive(offering: Offering) {
-    if (!window.confirm("Archive this elective offering? Existing members are retained read-only.")) return;
+  async function archive(offering: Offering,confirmed=false) {
+    if(!confirmed){setArchiveTarget(offering);setConfirmation("ARCHIVE");return;}
     setBusy(true); setError(""); setMessage("");
     try {
       await apiFetch(api + "/" + encodeURIComponent(offering.offeringId), {
@@ -126,7 +135,7 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
   const offered = new Set(data?.offerings.filter(row => row.status === "ACTIVE").map(row => row.courseId) ?? []);
   const selectable = (data?.deliveries ?? []).filter(row =>
     (editing && row.courseId === editing.courseId) || !offered.has(row.courseId));
-  return <div className="min-w-0">
+  return <><div className="min-w-0">
     <Button variant="secondary" type="button" onClick={() => void open()}
       >
       Manage offerings
@@ -216,11 +225,7 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
               onClick={() => void save()} >
               {busy ? "Saving…" : editing ? "Save offering" : "Add offering"}
             </Button>
-            {editing && <Button variant="secondary" type="button" disabled={busy} onClick={() => {
-              if(dirty&&!window.confirm("Discard these elective changes?"))return;
-              setEditing(null);setDirty(false);
-              setDeliveryId(data.deliveries.find(row => !offered.has(row.courseId))?.id ?? "");
-            }} >Cancel edit</Button>}
+            {editing && <Button variant="secondary" type="button" disabled={busy} onClick={() => cancelEdit()} >Cancel edit</Button>}
           </div>
         </div>
       </>}
@@ -231,5 +236,32 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
       {message && <p role="status" className="text-sm leading-[22px]">{message}</p>}
     </section>
     </Dialog>
-  </div>;
+  </div>
+  <ConfirmDialog
+    open={confirmation!==null}
+    onOpenChange={next=>{if(!next&&!busy){setConfirmation(null);setArchiveTarget(null);}}}
+    title={confirmation==="CLOSE"||confirmation==="CANCEL_EDIT"
+      ?"Discard these elective changes?"
+      :confirmation==="SAVE"
+        ?editing?"Save changes to this elective offering?":"Add this course to the elective slot?"
+        :"Archive this elective offering?"}
+    description={confirmation==="ARCHIVE"
+      ?"Existing members are retained read-only."
+      :confirmation==="CLOSE"||confirmation==="CANCEL_EDIT"
+        ?"Unsaved offering changes will be discarded."
+        :"Review the selected course, capacity and group before proceeding."}
+    confirmVariant={confirmation==="CLOSE"||confirmation==="CANCEL_EDIT"||confirmation==="ARCHIVE"?"danger":"primary"}
+    confirmLabel={confirmation==="SAVE"?(editing?"Save offering":"Add offering")
+      :confirmation==="ARCHIVE"?"Archive offering":"Discard changes"}
+    pending={busy}
+    onConfirm={()=>{
+      const action=confirmation;
+      setConfirmation(null);
+      if(action==="CLOSE")close(true);
+      if(action==="CANCEL_EDIT")cancelEdit(true);
+      if(action==="SAVE")void save(true);
+      if(action==="ARCHIVE"&&archiveTarget){void archive(archiveTarget,true);setArchiveTarget(null);}
+    }}
+  />
+  </>;
 }

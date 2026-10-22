@@ -71,7 +71,8 @@ describe("Faculty monthly Attendance PDF", () => {
     });
     expect(pdf.startsWith("%PDF-1.4\n")).toBe(true);
     expect(pdf).toContain("FACULTY ATTENDANCE REPORT");
-    expect(pdf).toContain("Unmarked: 3 excluded from percentage");
+    expect(pdf).toContain("Unmarked: 3 excluded from");
+    expect(pdf).toContain("(percentage)");
     expect(pdf).toContain("Learner A | P 2 | A 1 | 67%");
   });
 });

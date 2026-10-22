@@ -66,8 +66,8 @@ describe("Super Admin courses and content page-level scope, recovery and mobile 
    expect(page).toContain(word);
   }
   for(const word of ["getSuperAdminStudentCourseProgress",
-   "Unable to read course progress","studentCourseCompletion(row)",
-   "row.totalVideos","Export CSV","Showing the first 500 students"]){
+   "Could not load course progress","studentCourseCompletion(row)",
+   "row.totalVideos","Export CSV","<DataTable caption=\"Student Course Progress\"" ]){
    expect(students).toContain(word);
   }
   expect(students).not.toContain("report.totals");

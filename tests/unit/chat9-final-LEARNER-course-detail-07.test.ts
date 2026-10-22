@@ -11,7 +11,8 @@ describe("chat-9 final sprint",()=>{
  const route=read("src/app/api/courses/lesson-contents/[contentId]/materials/route.ts");
  expect(page).toContain("<LessonResourceMaterialsControl");
  expect(page).toContain("resourceMaterialsRuntimeEnabled()");
- expect(control).toContain("Materials ({materials.length}/20)");
+ expect(control).toContain("Materials ({activeMaterials.length}/20)");
+ expect(control).toContain("activeMaterials=materials.filter");
  expect(control).toContain("material.title");
  expect(control).toContain("material.notes");
  expect(control).toContain('material.kind==="LINK"');

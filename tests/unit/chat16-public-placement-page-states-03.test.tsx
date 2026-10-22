@@ -78,7 +78,8 @@ describe("chat-16 public placement page privacy and partial availability",()=>{
   expect(html).toContain("Individual records are never displayed here.");
   expect(html).toContain("College placements overview");
   expect(html).toContain("Students placed");
-  expect(html).toContain("Recruiting employers");
+  expect(html).toContain("Companies that hired");
+   expect(html).not.toContain("Recruiting employers");
   expect(html).toContain('aria-label="Public placements statistics"');
   expect(html).toContain('data-public-recruit-enabled="false"');
   expect(html).not.toContain("private-student-email@example.org");

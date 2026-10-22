@@ -13,7 +13,8 @@ it("renders equivalent three-field mobile cards and desktop tables", () => {
   // one shared renderer; both views must use the SAME approved column/cell map.
   expect(page).toContain("columns.map((key,index)=>");
   expect(page).toContain("mobileLabel: COMPANY_SHARE_COLUMNS[key]");
-  expect(page).toContain('cell: row=>row.cells[key]??"Not recorded"');
+  expect(page).toContain('cell: row=>{');
+  expect(page).toContain('key==="APPLICATION_ID"?row.applicationId:row.cells[key]');
   expect(page).toContain("<DataTable columns={tableColumns} rows={result.rows}");
   expect(page).toContain("getRowKey={row=>row.applicationId}");
   expect(table).toContain("columns.map(col=>");
@@ -41,8 +42,8 @@ it("discloses only the selected fields on either viewport", () => {
   };
   const [row] = projectCompanyShareRows([applicant], ["NAME", "ROLL_NUMBER", "STAGE"]);
   expect(row).toBeDefined();
-  expect(Object.keys(row!.cells)).toEqual(["NAME", "ROLL_NUMBER", "STAGE"]);
-  expect(row!.cells).toEqual({ NAME: "Learner", ROLL_NUMBER: "R123", STAGE: "SHORTLISTED" });
+  expect(Object.keys(row!.cells)).toEqual(["APPLICATION_ID","NAME", "ROLL_NUMBER", "STAGE"]);
+  expect(row!.cells).toEqual({APPLICATION_ID:"application-1",NAME: "Learner", ROLL_NUMBER: "R123", STAGE: "Shortlisted" });
   expect(JSON.stringify(row!.cells)).not.toContain("private@example.com");
   expect(JSON.stringify(row!.cells)).not.toContain("+919999999999");
 });

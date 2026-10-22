@@ -20,8 +20,8 @@ type SubmissionRow = {
 
 export function ProjectSubmissionsPageExport({ rows,view="ALL" }: { rows: readonly SubmissionRow[]; view?:"ALL"|"NOT_SUBMITTED" }) {
   function exportPage() {
-    const headings=view==="NOT_SUBMITTED"?["Workspace","Status","Progress"]:["Workspace","Submission type","Review status","Submitted at"];
-    const data=rows.map(row=>view==="NOT_SUBMITTED"?[row.workspace,row.status,String(row.pendingDays??0)+"%"]:[row.workspace,row.submissionType,row.status,row.submittedAt]);
+    const headings=view==="NOT_SUBMITTED"?["Workspace","Status","Progress"]:["Workspace","Submission type","Review status","Submitted at","Revisions","Reviewed by"];
+    const data=rows.map(row=>view==="NOT_SUBMITTED"?[row.workspace,row.status,String(row.pendingDays??0)+"%"]:[row.workspace,row.submissionType,row.status,row.submittedAt,row.revisions??"",row.reviewedBy??""]);
     const csv = projectAdminCsv([headings,...data]);
     const objectUrl = URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
     const anchor = document.createElement("a");

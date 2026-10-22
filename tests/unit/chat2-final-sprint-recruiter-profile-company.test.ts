@@ -30,7 +30,9 @@ describe("Final sprint recruiter profile/company verification",()=>{
   expect(page).toContain('rel="noopener noreferrer"');
   expect(page).toContain("Primary domain");
   expect(page).toContain("Industry not set");
-  expect(page).toContain("One company for everyone at it.");
+  expect(page).toContain("Colleges see this profile.");
+  expect(page).toContain("To change the name or logo, ask the placement cell.");
+  expect(page).toContain("result.grant.collegeName");
  });
  it("REC-calendar-messages-profile-33 keeps a college-private trust classification from appearing as a recruiter permission",()=>{
   const page=company();

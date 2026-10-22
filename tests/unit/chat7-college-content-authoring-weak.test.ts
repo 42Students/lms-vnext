@@ -29,7 +29,7 @@ beforeEach(()=>{
  state.select.mockImplementation(()=>({
   from(){return this;},innerJoin(){return this;},leftJoin(){return this;},
   where(){return this;},orderBy(){return this;},
-  limit(){return Promise.resolve(state.results.shift()??[]);},
+  limit(){return this;},offset(){return this;},
   groupBy(){return Promise.resolve(state.results.shift()??[]);},
   then(resolve:(rows:unknown[])=>unknown,reject:(reason:unknown)=>unknown){
    return Promise.resolve(state.results.shift()??[]).then(resolve,reject);
@@ -63,6 +63,7 @@ describe("COURSES-WEAK-CONTENT-AUTHORING-01 tenant, stage and private link bound
   state.results=[
    [lesson],
    [{deliveryId:"delivery",offeringId:"offering",sectionName:"A",sectionCode:"A"}],
+   [], // Faculty teaching assignments are fetched before existing lesson content.
    [{...drafted},{...drafted,id:"content2",status:"PUBLISHED",
      startsAt:new Date("2026-10-18T04:35:00Z"),endsAt:new Date("2026-10-18T05:35:00Z")}],
    [{lessonId:"lesson",highest:3}],
@@ -77,10 +78,11 @@ describe("COURSES-WEAK-CONTENT-AUTHORING-01 tenant, stage and private link bound
    collegeId:"college",organizationId:"org",
   });
  });
- it("honestly flags truncated content list at 250 and never includes >250 records",async()=>{
-  state.results=[[],[],Array.from({length:251},(_,i)=>({...drafted,id:"c"+i})),[]];
+ it("honestly flags the paginated resource list without leaking entries past the page limit",async()=>{
+  state.results=[[],[],[],Array.from({length:16},(_,i)=>({...drafted,id:"c"+i}))];
   const result=await getCollegeContentAuthoringOptions(context(active),"RESOURCE");
-  expect(result.existing).toHaveLength(250);
+  expect(result.existing).toHaveLength(15);
+  expect(result.existingPageSize).toBe(15);
   expect(result.existingTruncated).toBe(true);
  });
  it("lesson creation includes empty offerings and derives next sequence only from existing active lesson rows",async()=>{

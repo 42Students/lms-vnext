@@ -81,7 +81,7 @@ describe("TPO placement announcement round-4 evidence",()=>{
   const errors=src("src/modules/announcements/tpo-notice-form-error-model.ts");
   expect(errors).toContain("The link has to start with https://");
   expect(page()).toContain('<Alert tone="error">');
-  expect(src("src/components/ui/alert.tsx")).toContain('role={role ?? (tone === "error" ? "alert" : "status")}');
+  expect(src("src/components/ui/alert.tsx")).toContain('role={tone === "error" ? "alert" : role ?? "status"}');
   expect(create()).toContain("buttonUrl");
   expect(edit()).toContain("buttonUrl");
  });

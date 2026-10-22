@@ -37,7 +37,8 @@ describe("SA-FACULTY-CSV-17 prevent stale bulk onboarding after replacement file
    expect(view).toContain("if(submissionInProgress.current)return");
    expect(view).toContain("submissionInProgress.current=true");
    expect(view).toContain("submissionInProgress.current=false");
-   expect(view).toContain("||!allowed())return");
+   expect(view).toContain("!allowed()||previewVersion!==version||rowIssues.length>0||");
+   expect(view).toContain("if(submissionInProgress.current)return;");
    expect(view).toContain("body:JSON.stringify({collegeId,csv:inputCsv,confirmed:true})");
    expect(view).toContain("Boolean(issue||error)||!filename");
  });

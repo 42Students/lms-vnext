@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const file = (name: string) => readFileSync("src/components/tpo/" + name + ".tsx", "utf8");
-const ui = (name: string) => readFileSync("src/components/ui/" + name + ".tsx", "utf8");
+const ui = (name: string) => readFileSync("src/components/ui/" + name + (name === "use-overlay-exit" ? ".ts" : ".tsx"), "utf8");
 
 describe("UX-tpo-overlay: focus-safe mobile and desktop workflows", () => {
   it("UX-tpo-overlay-01 student panel uses Drawer focus isolation and sticky next/previous actions", () => {
@@ -49,7 +49,7 @@ describe("UX-tpo-overlay: focus-safe mobile and desktop workflows", () => {
     expect(source).toContain('role="alert"');
   });
   it("UX-tpo-overlay primitive contracts share focus restoration, top-layer dismissal and reduced-motion exit", () => {
-    const lifecycle = ui("use-overlay-exit").replaceAll("dialogRef.current", "dialog");
+    const lifecycle = ui("use-overlay-exit");
     expect(lifecycle).toContain("dialog.showModal()");
     expect(lifecycle).toContain("dialog.close()");
     expect(lifecycle).toContain("opener?.isConnected");

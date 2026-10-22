@@ -21,7 +21,7 @@ describe("Learner Applications list and detail route", () => {
     expect(browse).toContain("popstate");
     expect(browse).toContain("PAGE_SIZE = 20");
     expect(browse).toContain("browseLearnerApplications(items, filters)");
-    expect(browse).toContain("item.applicationId === url.applicationId");
+    expect(browse).toContain("item.applicationId===url.applicationId");
     expect(browse).toContain("readLearnerApplicationUrl(params.toString())");
     expect(browse).toContain("router.push");
     expect(browse).toContain("learnerApplicationMobileSummary(filters)");

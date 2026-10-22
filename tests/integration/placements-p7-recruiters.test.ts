@@ -115,6 +115,11 @@ async function cleanup() {
   await pool.query(
     "delete from placement_application_status_history",
   );
+  // The college-stage projection references application IDs after the
+  // round/result ledger rows are deleted; remove that child first.
+  await pool.query(
+    "delete from placement_college_application_stages",
+  );
   await pool.query(
     "delete from placement_applications",
   );

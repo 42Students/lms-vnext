@@ -34,7 +34,7 @@ describe("AUTH-sessions-05 logout is truthful and clears shared-device credentia
   expect(revokeSessionByToken).toHaveBeenCalledOnce();
   expect(revokeSessionByToken).toHaveBeenCalledWith("opaque-token");
   expect(result.status).toBe(200);
-  expect(await result.json()).toEqual({ok:true});
+  expect(await result.json()).toMatchObject({ok:true,reloginRequired:true,message:"Logged out"});
   expect(result.headers.get("Cache-Control")).toBe("no-store");
   expect(result.headers.get("Clear-Site-Data")).toBe('"storage"');
   for(const name of ["lms_session","lms_membership","lms_admin_scope"]){
@@ -47,7 +47,7 @@ describe("AUTH-sessions-05 logout is truthful and clears shared-device credentia
   vi.mocked(revokeSessionByToken).mockRejectedValueOnce(new Error("postgres-secret-internal"));
   const result=await logout(request());
   expect(result.status).toBe(503);
-  expect(await result.json()).toEqual({ok:false,error:"LOGOUT_REVOKE_FAILED"});
+  expect(await result.json()).toMatchObject({ok:false,error:"LOGOUT_REVOKE_FAILED",reloginRequired:true,message:"Could not complete sign-out. Please retry."});
   expect(result.headers.get("Cache-Control")).toBe("no-store");
   expect(result.headers.get("Clear-Site-Data")).toBe('"storage"');
   for(const name of ["lms_session","lms_membership","lms_admin_scope"]){
@@ -60,7 +60,7 @@ describe("AUTH-sessions-05 logout is truthful and clears shared-device credentia
   vi.mocked(cookies).mockResolvedValue({get:()=>undefined} as never);
   const result=await logout(request());
   expect(result.status).toBe(200);
-  expect(await result.json()).toEqual({ok:true});
+  expect(await result.json()).toMatchObject({ok:true,reloginRequired:true,message:"Logged out"});
   expect(revokeSessionByToken).not.toHaveBeenCalled();
  });
 });

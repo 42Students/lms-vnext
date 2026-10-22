@@ -43,7 +43,7 @@ describe("Super Admin last-third: verification entry security and scope",()=>{
   });
   it("UX-admin-verification-20 a global operator must select a college rather than inheriting a guessed default",async()=>{
     const page=visible(await AdminVerificationEntry()).join(" ");
-    expect(page).toContain("Choose a college first");
+    expect(page).toContain("Choose a college at the top to see its students waiting for verification.");
     expect(page).toContain("Profile verification");
   });
   it("UX-admin-verification-21 a scoped operator navigates only to the selected college",async()=>{

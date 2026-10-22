@@ -15,7 +15,7 @@ describe("SA-tenants-modules-COURSE-STUDENTS-10 private learner names survive re
   const source=readFileSync("src/modules/courses/super-admin-student-course-progress.ts","utf8");
   const sqlRead=source.indexOf("const result=await getDb().execute(sql");
   const checked=source.lastIndexOf("assertPersistedPlatformPermission(tx,context,");
-  const response=source.indexOf("  return {\n   offeringId,deliveryId,collegeId,rows,page,pageSize,");
+  const response=source.indexOf(" return {\n  offeringId,deliveryId,collegeId,rows,page,pageSize,");
   expect(sqlRead).toBeGreaterThan(-1);
   expect(checked).toBeGreaterThan(sqlRead);
   expect(response).toBeGreaterThan(checked);

@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {useEffect,useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {facultyContentExternalHref} from "@/modules/courses/faculty-content-preview-model";
 import {LessonResourceFileUploader} from "./lesson-resource-file-uploader";
 
@@ -22,6 +23,7 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
  const [notice,setNotice]=useState<string|null>(null);
  const [loading,setLoading]=useState(true);
  const [openingMaterialId,setOpeningMaterialId]=useState<string|null>(null);
+ const [removeId,setRemoveId]=useState<string|null>(null);
  const openingRef=useRef<string|null>(null);
  const uri="/api/courses/lesson-contents/"+encodeURIComponent(contentId)+"/materials"+
   (deliveryId?"?deliveryId="+encodeURIComponent(deliveryId):"");
@@ -32,7 +34,7 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
   // An old Section or acting-college may have been visible on this mounted
   // component. Never show those private materials while the new scope loads.
   setPrevUri(uri);setLoading(true);setError(null);setNotice(null);
-  setMaterials([]);setDraft(blank);setEditing(null);setBusy(false);setOpeningMaterialId(null);
+  setMaterials([]);setDraft(blank);setEditing(null);setBusy(false);setOpeningMaterialId(null);setRemoveId(null);
  }
  useEffect(()=>{
   const controller=new AbortController();
@@ -52,10 +54,8 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
   if(openingRef.current)return;
   openingRef.current=materialId;
   setOpeningMaterialId(materialId);setError(null);
-  // Reserve the destination synchronously, while the user gesture exists.
-  // No object keys or signed URLs are stored in component state.
-  const popup=window.open("about:blank","_blank");
-  if(popup)popup.opener=null;
+  // Do not expose storage keys or retain signed URLs in component state.
+  // Navigate in this tab after obtaining the authorized short-lived URL.
   const controller=new AbortController();
   const timeout=window.setTimeout(()=>controller.abort(),12000);
   try{
@@ -72,11 +72,9 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
    const target=new URL(signed);
    if(target.protocol!=="https:"||target.username||target.password)
     throw new Error("Resource file is unavailable. Contact your instructor.");
-   if(currentUriRef.current!==uri){popup?.close();return;}
-   if(popup&&!popup.closed)popup.location.replace(target.href);
-   else window.location.assign(target.href); // Popup-blocked fallback
+   if(currentUriRef.current!==uri)return;
+   window.location.assign(target.href);
   }catch{
-   popup?.close();
    if(currentUriRef.current===uri)
     setError("Resource file is unavailable. Contact your instructor.");
   }finally{
@@ -93,7 +91,6 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
  }
  async function submit(action:"ADD_LINK"|"EDIT_LINK"|"REMOVE",id?:string){
   if(busy)return;
-  if(action==="REMOVE"&&!window.confirm("Remove this material? Students will no longer see it."))return;
   const trimmed={title:draft.title.trim(),notes:draft.notes.trim()||null,externalUrl:draft.externalUrl.trim()};
   if(action!=="REMOVE"&&!trimmed.title){setError("Enter a material title.");return;}
   if(action!=="REMOVE"&&!facultyContentExternalHref("RESOURCE",trimmed.externalUrl)){
@@ -153,7 +150,7 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
       Edit
      </Button>
      <Button size="sm" type="button" variant="danger" className="min-h-11 md:min-h-9" disabled={busy}
-      onClick={()=>void submit("REMOVE",material.id)}>Remove</Button>
+      onClick={()=>setRemoveId(material.id)}>Remove</Button>
     </div>:null}
    </li>)}
   </ul>
@@ -181,6 +178,9 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
   </div>:null}
   {editable?<LessonResourceFileUploader key={uri} contentId={contentId} deliveryId={deliveryId}
    materials={activeMaterials} onChanged={reload}/>:null}
+  <ConfirmDialog open={removeId!==null} onOpenChange={open=>{if(!open&&!busy)setRemoveId(null);}}
+   title="Remove this material?" description="Students will no longer see it."
+   confirmLabel="Remove" pending={busy} onConfirm={()=>{const id=removeId;setRemoveId(null);if(id)void submit("REMOVE",id);}}/>
   {error?<Alert tone="error">{error}</Alert>:null}
   {notice?<Alert tone="success">{notice}</Alert>:null}
  </section>;

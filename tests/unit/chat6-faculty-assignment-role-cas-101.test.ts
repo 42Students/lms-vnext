@@ -58,7 +58,8 @@ describe("SA-academics-people-101 teaching role concurrency",()=>{
   expect(page).toContain("role&&row.revision&&workspace&&assign.assignmentMembershipId&&assign.assignmentDeliveryId?");
   expect(page).toContain("revision={row.revision}");
   expect(ui).toContain("useGuardedAction");
-  expect(ui).toContain("body:JSON.stringify({role,expectedUpdatedAt:revision})");
+  expect(ui).toContain("body:JSON.stringify({role,membershipId,deliveryId,expectedUpdatedAt:revision})");
+  expect(ui).toContain("method:\"PATCH\"");
   expect(ui).toContain("This teaching assignment changed in another tab. Refresh before editing again.");
  });
 });

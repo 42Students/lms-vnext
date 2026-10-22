@@ -50,7 +50,7 @@ describe("Super Admin colleges/organizations/tenants adversarial audit", () => {
     expect(selected).toBeGreaterThan(-1);
     expect(selected).toBeLessThan(unrestricted);
     const scoped = branch.slice(selected, unrestricted);
-    expect(scoped).toContain("eq(colleges.id, selected.collegeId)");
+    expect(scoped).toContain("eq(colleges.id,selected.collegeId)");
     expect(scoped).toContain("eq(colleges.organizationId,organizations.id)");
     expect(scoped).toContain('eq(colleges.status,"ACTIVE")');
     expect(scoped).toContain("selectedOrganizationId?eq(organizations.id,selectedOrganizationId)");

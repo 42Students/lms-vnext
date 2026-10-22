@@ -43,8 +43,8 @@ describe("chat-15 reassigned learner course and placement parity",()=>{
  it("LEARNER-placements-03 placement tabs render content without extra PageHeader",()=>{
   for(const sub of ["applications","jobs","placement"]){
    const page=read("src/app/(authenticated)/learn/my-placements/"+sub+"/page.tsx");
-   expect(page).toContain("<PageHeader");
-   expect(page).toContain("title=");
+   expect(page).not.toContain("<PageHeader");
+   expect(page).toContain('className="min-w-0');
   }
  });
  it("LEARNER-placements-05 recorded offer and registration decisions determine hero",()=>{

@@ -6,6 +6,7 @@ describe("TPO company directory create contract", () => {
     expect(tpoCreateCompanySchema.parse({
       confirmed: true,
       name: "  Recruiter Company  ",
+      primaryDomain: "recruiter-company.example",
     })).toMatchObject({
       confirmed: true,
       name: "Recruiter Company",

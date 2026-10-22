@@ -410,9 +410,19 @@ describe("core platform pre-browser acceptance flow", () => {
       ),
     ).resolves.toEqual(["FACULTY", "MENTOR"]);
 
+    // A college operator cannot grant a privileged placement role via the
+    // generic editor. The Super Admin is the authorized issuer.
     await expect(
       addMembershipRole(
         collegeAdmin,
+        faculty.membership.id,
+        { role: "TPO" },
+        drizzlePeopleRepository,
+      ),
+    ).rejects.toThrow(AuthorizationError);
+    await expect(
+      addMembershipRole(
+        superAdmin,
         faculty.membership.id,
         { role: "TPO" },
         drizzlePeopleRepository,

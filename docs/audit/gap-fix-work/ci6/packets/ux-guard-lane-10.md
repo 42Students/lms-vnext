@@ -4,9 +4,9 @@ The CI lint job runs `npm run ux:guard` (scripts/check-ux-anti-drift.mjs). Fix t
 
 Rules: unsafe-target = target=_blank needs rel="noopener noreferrer" (or drop target); small-touch-target / unverified-touch-class = interactive control needs the shared >=44px touch class the guard recognises; white-on-teal = white text on #26bac7 fails contrast, use the approved darker token; native-popup = replace window.confirm/alert/prompt with the shared dialog component.
 
-- [ ] src/app/(authenticated)/tpo/settings/page.tsx:26: white-on-teal
-- [ ] src/components/auth/login-form.tsx:804: unsafe-target
-- [ ] src/components/people/faculty-identity-evidence-editor.tsx:80: native-popup
-- [ ] src/components/people/faculty-identity-evidence-editor.tsx:124: unsafe-target
-- [ ] src/components/projects/project-task-submission-overview.tsx:64: unsafe-target
-- [ ] src/components/ui/otp-input.tsx:36: unverified-touch-class
+- [x] src/app/(authenticated)/tpo/settings/page.tsx:26: white-on-teal
+- [x] src/components/auth/login-form.tsx:804: unsafe-target
+- [x] src/components/people/faculty-identity-evidence-editor.tsx:80: native-popup
+- [x] src/components/people/faculty-identity-evidence-editor.tsx:124: unsafe-target
+- [x] src/components/projects/project-task-submission-overview.tsx:64: unsafe-target
+- [x] src/components/ui/otp-input.tsx:36: unverified-touch-class

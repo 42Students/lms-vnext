@@ -59,9 +59,9 @@ describe("COL-projects-15 atomic College Admin roster workflow",()=>{
   const members=await listProjectMembers(collegeAdmin,project.id);
   expect(members.filter(m=>m.role==="LEARNER").map(m=>m.membershipId)).toEqual([SEED_IDS.learnerCollegeAMembership]);
   const removed=await replaceCollegeProjectLearners(collegeAdmin,project.id,{
-   learnerMembershipIds:[],expectedUpdatedAt:saved.updatedAt,
+   learnerMembershipIds:[],mode:"REPLACE",confirmRemoval:true,expectedUpdatedAt:saved.updatedAt,
   });
-  expect(removed.removed).toBe(1);
+  expect(removed).toMatchObject({added:0,removed:1});
   expect((await listProjectMembers(collegeAdmin,project.id)).filter(m=>m.role==="LEARNER")).toEqual([]);
  });
  it("COL-projects-15 rejects stale and non-learner roster targets without partial membership changes",async()=>{

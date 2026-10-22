@@ -138,7 +138,7 @@ export function ProjectReadinessOverrideForm({
                 className="peer sr-only"/>
               <span className={"inline-flex min-h-11 cursor-pointer items-center rounded-lg border px-4 text-sm font-semibold md:min-h-9 "+
                 "peer-focus-visible:outline-2 peer-focus-visible:outline-offset-[3px] peer-focus-visible:outline-[var(--lms-primary)] "+
-                (state===option.value?"border-primary bg-primary text-white":"border-border bg-surface text-body hover:border-primary hover:bg-primary-subtle")}>
+                (state===option.value?"border-primary bg-primary text-[var(--lms-on-primary)]":"border-border bg-surface text-body hover:border-primary hover:bg-primary-subtle")}>
                 {option.label}
               </span>
             </label>)}

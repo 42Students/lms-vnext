@@ -9,7 +9,7 @@ describe("legacy learner assignment detail — ViewAssignmentModal.jsx dev",()=>
   expect(src).not.toContain('eyebrow="Learner · Assignment"');
  });
  it("preserves exact Your submission and Due with safe submission state",()=>{
-  for(const literal of ["Your submission","Due","Submitted {formatDate(item.submittedAt)}"]){
+  for(const literal of ["Your submission","Due",'<StatusBadge tone="success">Submitted</StatusBadge>{formatDate(item.submittedAt)}']){
     expect(src).toContain(literal);
   }
   expect(src).toContain("item.gradePublished");
