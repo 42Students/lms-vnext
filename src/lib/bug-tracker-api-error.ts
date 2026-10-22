@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { apiErrorResponse } from "@/lib/api-error";
+import { PrivateObjectStorageError } from "@/modules/storage/storage-errors";
 import { TrackerAdminError } from "@/modules/bug-tracker/admin-errors";
 import { BugWorkflowError } from "@/modules/bug-tracker/workflow";
 
 export function bugTrackerApiError(error: unknown) {
+  if (error instanceof PrivateObjectStorageError) {
+    return NextResponse.json({error:"SCREENSHOT_STORAGE_UNAVAILABLE",message:"Screenshot storage is unavailable"},
+      {status:503,headers:{"Retry-After":"60"}});
+  }
   if (error instanceof ZodError) {
     return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 });
   }
