@@ -28,7 +28,7 @@ export function RecruiterPendingInvitations({invitations,total,hasMore}:{
  const [error,setError]=useState("");
  const [success,setSuccess]=useState("");
  const visible=invitations.filter(item=>!completed.includes(item.collegeId));
- if(!visible.length)return null;
+ if(!visible.length)return success?<p role="status" className="text-sm text-success">{success}</p>:null;
  async function respond(){
   if(!decision||busy)return;
   setBusy(true);setError("");setSuccess("");
