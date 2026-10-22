@@ -6,7 +6,7 @@ describe("chat-6 faculty assessments round 2",()=>{
  it("FAC-assessments-24 submissions drawer shows quiz title count and legacy empty copy",()=>{
   const modal=read("src/components/courses/faculty-quiz-review.tsx");
   const overview=read("src/components/courses/faculty-assessment-overview.tsx");
-  expect(modal).toContain('title={quizTitle??"Submissions"}');
+  expect(modal).toContain('title={quizTitle?`${quizTitle} — Submissions`:"Submissions"}');
   expect(modal).toContain("No submissions yet");
   expect(modal).toContain("submission(s)");
   expect(modal).toContain("learnerLabel(attempt)");

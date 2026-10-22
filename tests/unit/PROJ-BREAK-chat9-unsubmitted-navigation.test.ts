@@ -42,6 +42,9 @@ describe("IIT Dharwad Projects: unsubmitted page never loses its filters",()=>{
     expect(source).toContain('view==="ALL"?await Promise.allSettled([');
     expect(source).toContain('const unsubmittedResult=view==="NOT_SUBMITTED"');
     expect(source).toContain('? await listProjectAdminUnsubmitted(context,collegeId,{');
+    expect(source).toContain('const summaryRead=all?.[1]');
+    expect(source).toContain('const result=submissionsRead?.status==="fulfilled"');
+    expect(source).toContain('const unsubmitted=unsubmittedResult?.ok?');
     expect(source).toContain('status:query.status');
     expect(source).toContain('filterView="NOT_SUBMITTED"');
     expect(source).toContain('hrefForPage={page=>projectAdminUnsubmittedHref(queuePath,query,page)}');

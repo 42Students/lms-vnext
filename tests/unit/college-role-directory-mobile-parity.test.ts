@@ -5,7 +5,8 @@ describe("Mobile Faculty and Learner roster parity",()=>{
  it("uses a card list on small screens and retains a real table on desktop",()=>{
   const code=readFileSync("src/components/college/college-role-directory-workspace.tsx","utf8");
   expect(code).toMatch(/mobile records[^\n]+md:hidden/);
-  expect(code).toMatch(/<table[^>]*md:table/);
+  expect(code).toContain('<div className="hidden md:block">');
+  expect(code).toContain("<DataTable");
   expect(code).toContain("StudentClassMoveAction");
   expect(code).toContain("CollegeFacultyLifecycleAction");
   expect(code).toContain("collegeLearnerVerificationHref");
