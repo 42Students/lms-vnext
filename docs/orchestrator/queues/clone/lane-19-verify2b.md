@@ -2,6 +2,8 @@
 
 All still-open verification-round-2 packets were redistributed evenly over the 20 lanes so no lane sits idle. This file REPLACES lane-19-verify2.md (do not edit the old file). A packet path may name another lane: that is fine, you own it now. Do your lane-19-ci10.md first if anything is unticked there. Tick [x] here as you go and push after every packet.
 
+**Lane-19 handoff (triage only):** All six packets have been annotated, but 143 rows are explicitly DEFERRED, not verified or fixed. The checked packet boxes record triage processing only; do not interpret them as feature parity or verification completion. Seven rows carried pre-existing OK statements. Reopen deferred rows for actual source review and implementation.
+
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-19/W1_lane19_7.md` (25 rows)
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-3/W1_lane3_16.md` (25 rows)
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_2.md` (25 rows)
