@@ -38,7 +38,7 @@ export default async function SuperAdminLectureHallAvailability({
   const { hallId } = await params;
   const raw = await searchParams;
   const parsed = collegeHallAvailabilitySchema.safeParse({
-    hallId, from: raw.from, to: raw.to,
+    hallId, from: raw["from"], to: raw["to"],
   });
   let result: Awaited<ReturnType<typeof getCollegeHallAvailability>> | null = null;
   if (parsed.success) {
@@ -57,16 +57,16 @@ export default async function SuperAdminLectureHallAvailability({
 
     <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] md:gap-[var(--lms-space-4)]">
       <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">From (IST)
-        <DateInput mode="date" name="from" required defaultValue={typeof raw.from === "string" ? raw.from : ""} className="w-full" />
+        <DateInput mode="date" name="from" required defaultValue={typeof raw["from"] === "string" ? raw["from"] : ""} className="w-full" />
       </label>
       <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">To (IST)
-        <DateInput mode="date" name="to" required defaultValue={typeof raw.to === "string" ? raw.to : ""} className="w-full" />
+        <DateInput mode="date" name="to" required defaultValue={typeof raw["to"] === "string" ? raw["to"] : ""} className="w-full" />
       </label>
       <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">View schedule</Button>
     </form>
 
     {!parsed.success
-      ? raw.from !== undefined || raw.to !== undefined
+      ? raw["from"] !== undefined || raw["to"] !== undefined
         ? <ErrorState title="Invalid date range" description="Select valid IST dates (up to 31 consecutive days)." />
         : <p role="status" className="text-sm text-[var(--lms-muted-text)]">Choose an IST date range to view scheduled classes.</p>
       : <section aria-label="Hall scheduled sessions" className="min-w-0 space-y-[var(--lms-space-4)]">
