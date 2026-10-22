@@ -487,6 +487,21 @@ export async function updateProgram(
             .where(eq(cohorts.programId,programId))
             .orderBy(desc(cohortProgressionState.currentTermNumber)).limit(1),
         ]);
+        // Imported active enrollments can predate cohort progression tracking.
+        // Without term provenance a smaller duration cannot be verified safe.
+        const [unmappedEnrollment] = await tx
+          .select({id:learnerProgramEnrollments.id})
+          .from(learnerProgramEnrollments)
+          .leftJoin(cohortProgressionState,eq(
+            cohortProgressionState.cohortId,learnerProgramEnrollments.cohortId,
+          ))
+          .where(and(
+            eq(learnerProgramEnrollments.programId,programId),
+            eq(learnerProgramEnrollments.status,"ACTIVE"),
+            isNull(cohortProgressionState.cohortId),
+          ))
+          .limit(1);
+        if(unmappedEnrollment)throw new AcademicsServiceError("PROGRAM_HAS_COHORTS");
         if (durationTerms < Math.max(term?.number ?? 0,progression?.number ?? 0))
           throw new AcademicsServiceError("PROGRAM_HAS_COHORTS");
       }
