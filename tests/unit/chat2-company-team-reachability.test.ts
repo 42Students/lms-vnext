@@ -5,9 +5,9 @@ describe("Company-scoped Team discussion navigation",()=>{
   const detail=readFileSync("src/app/(authenticated)/tpo/companies/[companyId]/page.tsx","utf8");
   const memory=readFileSync("src/components/tpo/tpo-company-memory-workspace.tsx","utf8");
   expect(detail).toContain('href={"/tpo/companies/"+encodeURIComponent(route.companyId)+"/team"}');
-  expect(memory).toContain('company.canonicalCompanyId?<Link');
-  expect(memory).toContain('"/team"}');
-  expect(memory).toContain("Open in Team");
+  expect(memory).toContain("company.canonicalCompanyId?<TpoCompanyTeamConversation");
+  expect(memory).toContain("companyId={company.canonicalCompanyId}");
+  expect(memory).toContain('aria-label="Company Team conversation"');
   expect(memory).not.toContain('href={"/tpo/team?about=COMPANY:"+company.name}');
  });
  it("TPO-inbox-team-16 keeps private company messages separate from recruiter conversations",()=>{

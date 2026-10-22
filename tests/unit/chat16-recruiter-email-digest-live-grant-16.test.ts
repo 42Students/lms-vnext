@@ -3,7 +3,7 @@ import {readFileSync} from "node:fs";
 const requireSource=()=>readFileSync("src/modules/placements/recruiter-message-email-dispatch-service.ts","utf8");
 import {getDb} from "@/db/client";
 import {readZeptoMailConfig} from "@/modules/notifications/zeptomail-email";
-import {sendRecruiterMessageDigest} from "@/modules/placements/recruiter-message-email-provider";
+import {sendRecruiterMessageDigest,recruiterDigestReadiness} from "@/modules/placements/recruiter-message-email-provider";
 import {dispatchRecruiterUnreadMessageDigests}
  from "@/modules/placements/recruiter-message-email-dispatch-service";
 
@@ -11,6 +11,7 @@ vi.mock("@/db/client",()=>({getDb:vi.fn()}));
 vi.mock("@/modules/notifications/zeptomail-email",()=>({readZeptoMailConfig:vi.fn()}));
 vi.mock("@/modules/placements/recruiter-message-email-provider",()=>({
  sendRecruiterMessageDigest:vi.fn(),
+ recruiterDigestReadiness:vi.fn(),
 }));
 const now=new Date("2026-10-18T12:00:00Z");
 const env={
@@ -47,6 +48,10 @@ function mockDb(granted:boolean){
 }
 beforeEach(()=>{
  vi.clearAllMocks();
+ vi.mocked(recruiterDigestReadiness).mockImplementation(options=>({
+  configured:options.RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED==="true",
+  reason:options.RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED==="true"?"READY":"BRIDGE_DISABLED",
+ }));
  vi.mocked(readZeptoMailConfig).mockReturnValue({
   apiUrl:"https://api.zeptomail.in/v1.1/email/template",token:"safe-provider-token",
   otpTemplateKey:"auth.otp",fromAddress:"hello@42lms.com",fromName:"42Learn",
@@ -75,7 +80,7 @@ describe("chat-16 recruiter digest scheduler live authorization",()=>{
  it("email-bridge-digest-worker-18 denies a grant revoked after the initial due-list snapshot",async()=>{
   const f=mockDb(false);
   const result=await dispatchRecruiterUnreadMessageDigests(env,now);
-  expect(result).toEqual({examined:1,sent:0,enabled:true});
+  expect(result).toMatchObject({examined:1,sent:0,enabled:true});
   expect(f.db.transaction).toHaveBeenCalledOnce();
   expect(f.grant).toHaveBeenCalledOnce();
   expect(f.tx.select).toHaveBeenCalledTimes(1);

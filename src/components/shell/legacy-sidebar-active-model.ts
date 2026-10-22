@@ -41,7 +41,7 @@ export function legacySidebarItemActive(
   "/recruiter/company":"/hr/company",
  };
  const recruiterAlias=Object.entries(recruiterAliasOwners).some(([alias,owner])=>
-   href===owner&&(pathname===alias||pathname.startsWith(alias+"/")));
+   href===owner&&(pathname===alias||(alias!=="/recruiter"&&pathname.startsWith(alias+"/"))));
  const descendant=href!=="/dashboard"&&href!=="/college"&&
    pathname.startsWith(href+"/")&&!(href==="/admin/features"&&featureDetail);
  return exact||descendant||utilityOwner||recruiterDriveArea||recruiterMessagesArea||recruiterAlias||

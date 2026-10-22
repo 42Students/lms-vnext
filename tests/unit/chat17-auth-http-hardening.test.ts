@@ -73,7 +73,8 @@ describe("WEAK-auth HTTP: guard ordering, errors and no PII logs",()=>{
     const limited=loginErrorResponse(new LoginError("TOO_MANY_REQUESTS",37));
     expect(limited.status).toBe(429);
     expect(limited.headers.get("Retry-After")).toBe("37");
-    expect(await limited.json()).toEqual({error:"TOO_MANY_REQUESTS",retryAfterSeconds:37});
+    expect(await limited.json()).toEqual({error:"TOO_MANY_REQUESTS",
+      message:"Too many OTP requests. Please try again later.",retryAfterSeconds:37});
     const config=loginErrorResponse(new AuthConfigError("private configuration detail"));
     expect(config.status).toBe(503);
     expect(await config.json()).toEqual({error:"AUTH_NOT_CONFIGURED"});
