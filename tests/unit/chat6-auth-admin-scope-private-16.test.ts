@@ -5,6 +5,10 @@ import {listAdminScopeChoices,resolveAdminScopeSelection} from "@/modules/admin-
 import {GET,POST,DELETE} from "@/app/api/auth/admin-scope/route";
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:vi.fn()}));
 vi.mock("@/auth/origin",()=>({isSameOriginRequest:vi.fn()}));
+vi.mock("@/db/client",()=>({getDb:()=>({transaction:(fn:(tx:object)=>Promise<unknown>)=>fn({})})}));
+vi.mock("@/modules/permissions/persisted-actor",()=>({
+ assertPersistedPlatformPermission:vi.fn(async()=>undefined),
+}));
 vi.mock("@/modules/admin-scope/service",()=>({
  listAdminScopeChoices:vi.fn(),resolveAdminScopeSelection:vi.fn(),
  AdminScopeServiceError:class AdminScopeServiceError extends Error {constructor(public readonly code:string){super(code);}},
@@ -29,7 +33,11 @@ describe("AUTH-handoff-16 account scope response cache safety",()=>{
   const response=await GET();
   expect(response.status).toBe(200);
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
-  expect(await response.json()).toEqual({scope,choices:[]});
+  expect(await response.json()).toEqual({
+   scope,choices:[],
+   navigation:{memberships:"/api/auth/memberships",adminScope:"/api/auth/admin-scope",clearMethod:"DELETE"},
+   restoredFrom:"VERIFIED_SERVER_SCOPE",
+  });
   expect(listAdminScopeChoices).toHaveBeenCalledWith(context);
  });
  it("POST returns a private response and only server-resolved scope as a secure cookie",async()=>{

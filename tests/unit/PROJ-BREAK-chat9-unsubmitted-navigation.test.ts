@@ -51,6 +51,7 @@ describe("IIT Dharwad Projects: unsubmitted page never loses its filters",()=>{
     expect(source).toContain('label="Unsubmitted workspace pages"');
     const form=readFileSync("src/components/projects/project-admin-collection-controls.tsx","utf8");
     expect(form).toContain('name="view" value={filterView}');
-    expect(form).toContain('filterView?"?view=NOT_SUBMITTED":"?"');
+    expect(form).toContain('if(filterView)params.set("view",filterView)');
+    expect(form).toContain('else if(query.view)params.set("view",query.view)');
   });
 });
