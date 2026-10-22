@@ -17,7 +17,7 @@ describe("chat-2 Team membership, context and event notifications",()=>{
   expect(create).toContain('assertPersistedPlatformPermission(tx,context,"placements.manage"');
   expect(create).toContain('eq(collegeMemberships.collegeId,college.id)');
   expect(reply).toContain('eq(placementTpoInternalThreads.collegeId,college.id)');
-  expect(reply).toContain('new Set(active.map(member=>member.id)).size!==memberIds.length');
+  expect(reply).toContain('new Set(teammates.map(row=>row.id)).size!==others.length');
  });
  it("TPO-inbox-team-29 includes real actor and preview in reply and decision notifications",()=>{
   const reply=source("src/modules/placements/tpo-team-internal-reply-service.ts");

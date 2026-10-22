@@ -689,9 +689,9 @@ describe("courses C4A assignments against PostgreSQL", () => {
         {
           deliveryId:
             structure.deliveryA.id,
-          submissionType: "LINK",
-          submissionUrl:
-            "https://example.com/submission",
+          submissionType: "TEXT",
+          textContent:
+            "Grading workflow submission",
         },
       );
 
