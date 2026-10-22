@@ -36,8 +36,8 @@ export function legacyFacultyCourseRouteIntent(
 ):{course:string;classHint:string|null;preferCourse:boolean}|null{
  const course=rawCourse.trim();
  if(!course||course.length>160||!/^[A-Za-z0-9_-]+$/.test(course))return null;
- const ref=typeof query.ref==="string"?query.ref:null;
- const classHint=typeof query.cls==="string"?query.cls:null;
+ const ref=typeof query["ref"]==="string"?query["ref"]:null;
+ const classHint=typeof query["cls"]==="string"?query["cls"]:null;
  if(classHint&&(!/^[A-Za-z0-9_-]+$/.test(classHint)||classHint.length>160))return null;
  return {course,classHint,preferCourse:ref==="course"};
 }
