@@ -663,9 +663,9 @@ export async function listProjectAdminRiskQueue(
         .where(where)
         .orderBy(
           query.riskSort==="WORKSPACE"?asc(projectInstances.title):
-          query.riskSort==="INACTIVE"?asc(lastActivityAt):
+          query.riskSort==="SEVERITY"?sql`${reasonCount} desc`:
           query.riskSort==="INACTIVE_DESC"?desc(lastActivityAt):
-            sql`${reasonCount} desc`,
+            asc(lastActivityAt),
           asc(projectInstances.title),
           asc(projectInstances.id),
         )
