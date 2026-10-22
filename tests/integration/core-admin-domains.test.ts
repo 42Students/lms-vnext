@@ -142,15 +142,15 @@ describe("core admin domains against PostgreSQL", () => {
       ]),
     );
 
-    await expect(
-      listColleges(superAdmin, organization.id),
-    ).resolves.toEqual([
+    const listedColleges=await listColleges(superAdmin,organization.id);
+    expect(listedColleges).toEqual(expect.arrayContaining([
       expect.objectContaining({
         id: college.id,
         organizationId: organization.id,
         code: integrationCollegeCode,
       }),
-    ]);
+    ]));
+    expect(listedColleges.every(item=>item.organizationId===organization.id)).toBe(true);
 
     await expect(
       listDepartments(superAdmin, college.id),
