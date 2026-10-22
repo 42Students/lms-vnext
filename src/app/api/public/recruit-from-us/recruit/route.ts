@@ -22,11 +22,11 @@ export async function POST(request:Request){
  if(!body.value||typeof body.value!=="object"||Array.isArray(body.value))
   return NextResponse.json({error:"BODY_REQUIRED",message:"Details are required"},{status:400,headers:{"Cache-Control":"no-store"}});
  const input=body.value as Record<string,unknown>;
- if(typeof input.code!=="string"||!input.code.trim())
+ if(typeof input["code"]!=="string"||!input["code"].trim())
   return NextResponse.json({error:"CODE_REQUIRED",message:"Enter the code"},{status:400,headers:{"Cache-Control":"no-store"}});
- if(!/^[0-9]{6}$/.test(input.code))
+ if(!/^[0-9]{6}$/.test(input["code"]))
   return NextResponse.json({error:"WRONG_CODE",message:"Enter the 6-digit code we sent to your work email."},{status:400,headers:{"Cache-Control":"no-store"}});
- const ip=process.env.PUBLIC_JOIN_TRUSTED_PROXY_READY==="VERIFIED"
+ const ip=process.env["PUBLIC_JOIN_TRUSTED_PROXY_READY"]==="VERIFIED"
   ?request.headers.get("x-public-verified-client-ip"):null;
  try{
   const result=await submitPublicRecruitEnquiry(tenant.collegeId,body.value,ip);
