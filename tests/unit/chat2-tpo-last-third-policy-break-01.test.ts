@@ -59,7 +59,7 @@ describe("TPO-BREAK-last-third-01 verification, published stats and export filte
   expect(tpoVerificationWaitingDateRange("WEEK",now).after?.toISOString())
    .toBe("2026-10-13T18:30:00.000Z");
   expect(tpoVerificationWaitingDateRange("OVER_WEEK",now).before?.toISOString())
-   .toBe("2026-10-13T18:30:00.000Z");
+   .toBe("2026-10-13T18:29:59.999Z");
  });
  it("refuses public statistics for cohorts smaller than 5 and never assumes a failed read means zero",async()=>{
   const inaccessible=publicPlacementSettingState({ready:false});

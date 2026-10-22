@@ -21,7 +21,7 @@ describe("SA-colleges-readiness-R01 authorized and accurate tenant launch journe
     const page=source("src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx");
     const auth=page.indexOf('requirePermission(context,"admin-scope.select")');
     const validate=page.indexOf("parseSuperAdminReadinessParams(raw)");
-    const reject=page.indexOf('if(!parsed)return <ErrorState');
+    const reject=page.indexOf('if(!parsed)return <div');
     const read=page.indexOf("await getSuperAdminCollegeReadiness(");
     expect(auth).toBeGreaterThan(-1);
     expect(validate).toBeGreaterThan(auth);

@@ -9,7 +9,7 @@ export default function RouteError({reset}:{
 }){
  const pathname=usePathname();
  const search=useSearchParams();
- const routeKey=pathname+"?"+search.toString();
+ const routeKey=(pathname??"/quiz")+"?"+(search?.toString()??"");
  const previous=useRef(routeKey);
  // Quiz, review and embedded destinations cannot retain a previous quiz error.
  useEffect(()=>{
