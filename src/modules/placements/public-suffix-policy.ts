@@ -22,7 +22,7 @@ export function registrableCompanyHost(rawHost:string):string{
  if(host.length<4||host.length>253)return "";
  const hostnameLabels=host.split(".");
  if(hostnameLabels.length<2||
-   !/^[a-z]{2,63}$/.test(hostnameLabels[hostnameLabels.length-1]??"")||
+   !/^(?:[a-z]{2,63}|xn--[a-z0-9-]{2,59})$/.test(hostnameLabels[hostnameLabels.length-1]??"")||
    !hostnameLabels.every(label=>label.length>0&&label.length<=63&&
      /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(label)))return "";
  const labels=host.split(".");
