@@ -57,7 +57,14 @@ export function evaluateLegacyDomainLoginReadiness(f:LegacyDomainLoginFacts){
   recommendedActions.push("Add departments, faculty, and students — this college is missing at least one.");
  }
  return {readyForDomainLogin:known?blockers.length===0:null,
-  blockers,warnings,recommendedActions};
+  blockers,warnings,recommendedActions,
+  meta:{requireVerifiedDomains:f.requireVerifiedDomains,
+    domainTotal:f.domainTotal,domainVerified:f.domainVerified,
+    domainPrimary:f.domainPrimary,verifiedPrimaryDomains:f.verifiedPrimaryDomains,
+    hasLogo:f.hasLogo,departments:f.departments,
+    facultyMemberships:f.facultyMemberships,enrolledLearners:f.enrolledLearners,
+    domainFactsKnown:known},
+ };
 }
 
 
@@ -70,6 +77,16 @@ const legacyDomainReadinessResponse=z.strictObject({
  blockers:z.array(z.string().trim().min(1).max(120)).max(64),
  warnings:z.array(z.string().trim().min(1).max(120)).max(64),
  recommendedActions:z.array(z.string().trim().min(1).max(500)).max(64),
+ meta:z.strictObject({
+   requireVerifiedDomains:z.boolean(),domainTotal:z.number().int().nonnegative().nullable(),
+   domainVerified:z.number().int().nonnegative().nullable(),
+   domainPrimary:z.number().int().nonnegative().nullable(),
+   verifiedPrimaryDomains:z.number().int().nonnegative().nullable(),
+   hasLogo:z.boolean().nullable(),departments:z.number().int().nonnegative().nullable(),
+   facultyMemberships:z.number().int().nonnegative().nullable(),
+   enrolledLearners:z.number().int().nonnegative().nullable(),
+   domainFactsKnown:z.boolean(),
+ }).optional(),
 });
 export function validateLegacyDomainLoginReadinessResponse(value:unknown){
  const result=legacyDomainReadinessResponse.safeParse(value);
