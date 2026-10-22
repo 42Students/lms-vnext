@@ -12,15 +12,16 @@ import {projectMutation} from "./project-api";
  * step back when restoring the last row of a non-first page.
  */
 export function ProjectDeletedRowRestore({projectId,title,expectedUpdatedAt,
- mentorName,page,pageSize,total}:{projectId:string;title:string;
- expectedUpdatedAt:string;mentorName:string|null;page:number;pageSize:number;total:number}){
+ mentorName,page,pageSize,total,returnPath="/college/projects/deleted"}:{projectId:string;title:string;
+ expectedUpdatedAt:string;mentorName:string|null;page:number;pageSize:number;total:number;
+ returnPath?:string}){
  const router=useRouter();
  const {showToast}=useToast();
  const [open,setOpen]=useState(false);
  const [pending,setPending]=useState(false);
  const inFlight=useRef(false);
  const missingMentor=!mentorName||mentorName==="—";
- const previousPageHref="/college/projects/deleted?"+new URLSearchParams({
+ const previousPageHref=returnPath+"?"+new URLSearchParams({
   page:String(page-1),pageSize:String(pageSize),
  }).toString();
  async function restore(){
