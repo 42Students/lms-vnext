@@ -69,13 +69,16 @@ describe("chat-4 Super Admin Tenants and Modules verified source contracts",()=>
   const s=source("src/modules/announcements/super-admin-college-broadcast-model.ts");
   expect(s).toContain(".max(200,{error:");
   expect(s).toContain(".max(8000,{error:");
-  expect(s).toContain(".max(60)");
-  expect(s).toContain(".max(500)");
+  expect(s).toContain(".max(60,{error:");
+  expect(s).toContain(".max(500,{error:");
   const values={audienceMode:"ALL_COLLEGES",collegeIds:[],title:"T",message:"M",
    scheduledAt:null,expiresAt:null,isPinned:false,publishConsent:true};
   expect(superAdminCollegeBroadcastSchema.safeParse(values).success).toBe(true);
   expect(superAdminCollegeBroadcastSchema.safeParse({...values,title:"T".repeat(201)}).success).toBe(false);
   expect(superAdminCollegeBroadcastSchema.safeParse({...values,message:"M".repeat(8001)}).success).toBe(false);
+  expect(superAdminCollegeBroadcastSchema.safeParse({...values,buttonLabel:"L".repeat(61),buttonUrl:"https://example.org"}).success).toBe(false);
+  expect(superAdminCollegeBroadcastSchema.safeParse({...values,buttonLabel:"Open",buttonUrl:"https://example.org/"+"x".repeat(501)}).success).toBe(false);
+  expect(superAdminCollegeBroadcastSchema.safeParse({...values,buttonLabel:"Open",buttonUrl:"https://example.org"}).success).toBe(true);
  });
  it("SA-tenants-modules-62 preserves the audited admin workflow",()=>{
   const s=source("src/modules/announcements/super-admin-college-broadcast-service.ts");
