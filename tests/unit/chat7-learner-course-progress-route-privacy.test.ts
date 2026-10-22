@@ -30,7 +30,7 @@ beforeEach(()=>{
 });
 describe("COURSES7-09 learner roster and progress HTTP privacy",()=>{
  it("COURSES7-09 course roster GET uses current authenticated actor, no writes, and is not cached",async()=>{
-  const response=await listCoursesRoute();
+  const response=await listCoursesRoute(new Request("https://campus.invalid/api/courses/learner"));
   expect(response.status).toBe(200);
   expect(response.headers.get("Cache-Control")).toContain("no-store");
   expect(state.courses).toHaveBeenCalledTimes(1);
