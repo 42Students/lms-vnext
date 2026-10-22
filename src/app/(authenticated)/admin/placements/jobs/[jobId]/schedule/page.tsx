@@ -38,7 +38,9 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
   // Validate the platform actor and selected tenant before reading private rounds.
   requireSuperAdminSelectedCollege(context,"placements.manage");
   const {jobId}=await params;
-  const query=driveInterviewsParams(await searchParams);
+  const rawSearchParams=await searchParams;
+  const conflictsOnly=rawSearchParams.conflictsOnly==="1";
+  const query=driveInterviewsParams(rawSearchParams);
   if(!query) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Interviews" description="Schedule candidate interviews and review interview rounds."/>
     <ErrorState title="Invalid interview filters"
@@ -131,7 +133,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
   const completedCount=candidateRows.filter(row=>row.status==="COMPLETED").length;
   const cancelledCount=candidateRows.filter(row=>
     row.status==="CANCELLED"||row.status==="NO_SHOW").length;
-  const activeCandidateFilters=Boolean(query.appointmentSearch||
+  const activeCandidateFilters=Boolean(conflictsOnly||query.appointmentSearch||
     (query.appointmentMode&&query.appointmentMode!=="ALL")||
     (query.appointmentStatus&&query.appointmentStatus!=="ALL"));
   const navItems=[
@@ -194,6 +196,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     <form method="get" aria-label="Filter interviews"
       className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       <input type="hidden" name="appointmentPage" value="1"/>
+      {conflictsOnly?<input type="hidden" name="conflictsOnly" value="1"/>:null}
       <input type="hidden" name="page" value="1"/>
       <label className="grid min-w-0 gap-2 text-sm font-semibold text-muted-foreground">
         Search
@@ -252,10 +255,19 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
         className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
         Clear filters
       </Link>
-      <Link href={refreshHref}
+      <Link href={addConflictParam(refreshHref)}
         className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
         Refresh interviews
       </Link>
+      <Link href={conflictHref}
+        aria-current={conflictsOnly?"page":undefined}
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+        {conflictsOnly?"Show all appointments":"Show possible overlaps (this page)"}
+      </Link>
+      <a href={exportHref} download="drive-interviews.csv"
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+        Export visible appointments (CSV)
+      </a>
     </div>
     <section aria-label="Candidate interviews" className="min-w-0 space-y-3">
       <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Candidate interviews</h2>
@@ -267,13 +279,13 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
           Showing {appointments.candidates.length} of {appointments.candidateTotal} shortlisted candidates (page {appointments.candidatePage} of {appointments.candidatePages}). Deep-link from the application detail to include an individual learner.
         </Banner>:null}
         <nav aria-label="Eligible candidate picker pages" className="flex flex-wrap items-center gap-3 text-sm">
-          {appointments.candidatePage>1?<Link href={adminInterviewsHref(jobId,{...query,candidatePage:appointments.candidatePage-1})}
+          {appointments.candidatePage>1?<Link href={addConflictParam(adminInterviewsHref(jobId,{...query,candidatePage:appointments.candidatePage-1}))}
             className="inline-flex min-h-11 items-center font-semibold text-link underline">Previous candidates</Link>:null}
-          {appointments.candidatePage<appointments.candidatePages?<Link href={adminInterviewsHref(jobId,{...query,candidatePage:appointments.candidatePage+1})}
+          {appointments.candidatePage<appointments.candidatePages?<Link href={addConflictParam(adminInterviewsHref(jobId,{...query,candidatePage:appointments.candidatePage+1}))}
             className="inline-flex min-h-11 items-center font-semibold text-link underline">Next candidates</Link>:null}
         </nav>
         <p role="status" className="text-sm text-body">{appointments.appointmentTotal} matching candidate appointments · page {appointments.appointmentPage} of {appointments.appointmentPages}
-          · {appointments.appointmentPageSize} per page</p>
+          · {appointments.appointmentPageSize} per page{conflictsOnly?" · "+visibleCandidateRows.length+" possible overlaps on this page":""}</p>
         {query.applicationId&&appointments.candidateConflicts.length>0?
           <Banner tone="warning">
             <strong>This learner already has scheduled interviews in this college.</strong>
@@ -288,11 +300,11 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
           </Banner>:null}
         <CollegeInterviewAppointments jobId={jobId}
           rounds={appointments.rounds} candidates={appointments.candidates}
-          appointments={appointments.interviews} preferredApplicationId={query.applicationId}/>
+          appointments={visibleCandidateRows} preferredApplicationId={query.applicationId}/>
         <nav aria-label="Candidate interview appointment pages" className="flex flex-wrap items-center gap-4 border-t border-border pt-3 text-sm">
-          {appointments.appointmentPage>1?<Link href={adminInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage-1})}
+          {appointments.appointmentPage>1?<Link href={addConflictParam(adminInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage-1}))}
             className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Previous appointments</Link>:null}
-          {appointments.appointmentPage<appointments.appointmentPages?<Link href={adminInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage+1})}
+          {appointments.appointmentPage<appointments.appointmentPages?<Link href={addConflictParam(adminInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage+1}))}
             className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Next appointments</Link>:null}
         </nav>
       </> :

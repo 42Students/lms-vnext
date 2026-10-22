@@ -10,16 +10,16 @@ Fix every listed deviation using the shared components in src/components/ui and 
 For each page: page head via PageHeader (title, subtitle, actions exactly as the old LMS), canvas card (white, radius 12, border #e5e9f0, padding 24), tabs, filter row, tables/grids/cards, chips and badges, banners and inline notices, every modal and drawer the page opens, buttons and forms, empty/loading/error states, toasts, spacing and typography values, and responsive at 1280, 768 and 375 widths. Read the page and the components it renders, fix every deviation you find, not only the listed ones.
 
 - [x] `src/app/(authenticated)/admin/placements/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx`
 - [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx`
 - [x] `src/app/(authenticated)/admin/placements/new/page.tsx`
 - [x] `src/app/(authenticated)/admin/recruiters/page.tsx`
-- [ ] `src/app/(authenticated)/college/faculty/page.tsx`
+- [x] `src/app/(authenticated)/college/faculty/page.tsx`
 - [x] `src/app/(authenticated)/college/lecture-halls/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/page.tsx`
 - [x] `src/app/(authenticated)/college/programs/page.tsx`
 - [x] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/page.tsx`
-- [ ] `src/app/(authenticated)/college/quizzes/page.tsx`
+- [x] `src/app/(authenticated)/college/quizzes/page.tsx`
 - [x] `src/app/(authenticated)/college/verification/page.tsx`
 - [x] `src/app/(authenticated)/hr/messages/page.tsx`
 - [x] `src/app/(authenticated)/mentor/projects/page.tsx`
