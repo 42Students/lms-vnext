@@ -710,14 +710,18 @@ export function PlacementEmployerRelationships({
                     <Button type="button" variant="secondary" disabled={historySaving}
                       className="min-h-11 md:min-h-9"
                       onClick={() => {
-                        setHistoryEditing(false);
-                        setHistorySaveError(null);
-                        setHistoryDraft({
-                          contactPersonName: historyData.company.contactName ?? "",
-                          contactEmail: historyData.company.contactEmail ?? "",
-                          contactPhone: historyData.company.contactPhone ?? "",
-                          internalNotes: historyData.company.internalNotes ?? "",
-                        });
+                        const saved = historyData.company;
+                        if (
+                          historyDraft.contactPersonName !== (saved.contactName ?? "") ||
+                          historyDraft.contactEmail !== (saved.contactEmail ?? "") ||
+                          historyDraft.contactPhone !== (saved.contactPhone ?? "") ||
+                          historyDraft.internalNotes !== (saved.internalNotes ?? "")
+                        ) {
+                          setHistoryDiscardConfirm(true);
+                        } else {
+                          setHistoryEditing(false);
+                          setHistorySaveError(null);
+                        }
                       }}>
                       Cancel
                     </Button>
