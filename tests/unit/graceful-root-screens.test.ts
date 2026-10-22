@@ -23,7 +23,9 @@ describe("graceful route screens", () => {
   it("GR-13 includes not-found paths for each role and public links", () => {
     for (const role of ["learn", "teach", "teacher", "mentor", "college", "college-admin",
       "tpo", "recruiter", "admin", "superadmin", "hr"]) {
-      expect(source(`src/app/(authenticated)/${role}/not-found.tsx`)).toContain("GracefulScreen");
+      const screen=source(`src/app/(authenticated)/${role}/not-found.tsx`);
+      expect(screen).toContain('<PageHeader title="Page not found"');
+      expect(screen).toMatch(/<Link\b|<PageBackLink\b/);
     }
     expect(source("src/app/not-found.tsx")).toContain('homeHref="/"');
   });

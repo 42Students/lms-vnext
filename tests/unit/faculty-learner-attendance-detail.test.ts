@@ -46,7 +46,7 @@ describe("Faculty attendance learner detail (read-only)", () => {
       NOW,
     );
     expect(result).toMatchObject({ present: 1, absent: 0, marked: 1, attendedPercent: 100 });
-    expect(result.rows[0]).toMatchObject({ code: "P", note: "medical" });
+    expect(result.rows[0]).toMatchObject({ code: "P", label: "Present", note: "medical" });
   });
 });
 

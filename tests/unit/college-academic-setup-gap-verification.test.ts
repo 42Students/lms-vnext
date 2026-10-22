@@ -16,15 +16,15 @@ describe("College Academic Setup source acceptance",()=>{
  });
  it("COL-academic-setup-04 verified academic workflow",()=>{
   const code=source("src/components/electives/college-elective-offering-manager.tsx");
-  expect(code).toContain("Waitlist:");
-  expect(code).toContain("Seats:");
+  expect(code).toContain('["Course","Seats","Waitlist","Faculty","Actions"]');
+  expect(code).toContain('role="columnheader"');
   expect(code).toContain("archive(offering)");
  });
  it("COL-academic-setup-05 verified academic workflow",()=>{
   const code=source("src/components/academics/college-structure-directory.tsx");
   expect(code).toContain("item.confirmedStudents");
-  expect(code).toContain("Pick:");
-  expect(code).toContain("Open</Link>");
+  expect(code).toContain('header:"Pick"');
+  expect(code).toContain("Eligible students");
  });
  it("COL-academic-setup-06 verified academic workflow",()=>{
   const code=source("src/components/academics/college-term-mapping-manager.tsx");
@@ -35,7 +35,7 @@ describe("College Academic Setup source acceptance",()=>{
  it("COL-academic-setup-07 verified academic workflow",()=>{
   const code=source("src/components/academics/college-term-mapping-manager.tsx");
   expect(code).toContain("updateMapping(");
-  expect(code).toContain("Semester course mapping updated.");
+  expect(code).toContain("Updated mapping for");
   expect(code).toContain("PATCH");
  });
  it("COL-academic-setup-08 verified academic workflow",()=>{
@@ -57,7 +57,7 @@ describe("College Academic Setup source acceptance",()=>{
  });
  it("COL-academic-setup-13 verified academic workflow",()=>{
   const code=source("src/components/college/college-legacy-group-tabs.tsx");
-  expect(code).toContain("Academic setup · Step");
+  expect(code).toContain("<StepIndicator current={step.index} total={step.total} title={step.title}");
   expect(code).toContain("Previous:");
   expect(code).toContain("Next:");
  });
@@ -115,7 +115,7 @@ describe("College Academic Setup source acceptance",()=>{
  });
  it("COL-academic-setup-38 verified academic workflow",()=>{
   const code=source("src/components/admin/lecture-hall-manager.tsx");
-  expect(code).toContain("title=\"Archive lecture hall\"");
-  expect(code).toContain("upcoming classes");
+  expect(code).toContain("title=\"Archive this room?\"");
+  expect(code).toContain("scheduled class sessions");
  });
 });
