@@ -776,7 +776,7 @@ export function PlacementDraftEditForm({
          </div>
         </details>
 
-        <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3>
+        <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
           <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Eligibility rules — enforced</summary>
           <div className="min-w-0 pb-4">
           <p className="mt-1 text-xs leading-5 text-body">
