@@ -47,13 +47,14 @@ export default async function FacultyProfilePage({searchParams}:{searchParams:Pr
   const selfDocument = documentReady
     ? await loadOwnFacultyProfileDocumentStaged(context)
     : null;
-  const initials = person.user.displayName.trim().split(/\s+/)
+  const displayName = person.user.displayName?.trim() || person.user.email?.split("@")[0] || "Faculty";
+  const initials = displayName.split(/\s+/)
     .slice(0, 2).map(part => part.slice(0, 1).toUpperCase()).join("");
   const document=selfDocument?.document??null;
   const birthday=document?.personalDetails.dateOfBirth??"";
   const dob=/^\d{4}-\d{2}-\d{2}$/.test(birthday)?birthday.split("-").reverse().join("-"):"Not specified";
   const completeness=[
-   Boolean(person.user.displayName.trim()),Boolean(profile?.academicTitle),Boolean(profile?.employmentType),
+   Boolean(person.user.displayName?.trim()),Boolean(profile?.academicTitle),Boolean(profile?.employmentType),
    Boolean(document?.about.description),Boolean(document?.personalDetails.gender),
    Boolean(document?.personalDetails.dateOfBirth),Boolean(document?.contact.contactMail),
    Boolean(document?.contact.contactMobile),Boolean(document?.education.length),
