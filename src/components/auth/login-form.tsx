@@ -354,6 +354,7 @@ export function LoginForm({
         {
           attemptId: attempt.attemptId,
           code: code.trim(),
+          ...(recruiterEntry&&attempt.channel==="EMAIL"?{recruiterFlow:true}:{}),
           ...(attempt.requiresSecondFactor
             ? { secondCode: secondCode.trim() }
             : {}),
