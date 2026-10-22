@@ -18,5 +18,9 @@ describe("chat-12 legacy course progress scope", () => {
     expect(service).toContain("attempt.submitted_at is not null");
     expect(service).toContain('pageSize=20,sort="percent-asc"');
     expect(service).toContain("assertPersistedPlatformPermission");
+    expect(service).toContain("se.status='COMPLETED'");
+    expect(service).toContain("e.status='COMPLETED'");
+    expect(service).toContain("m.status='ACTIVE'");
+    expect(service).toContain("s.cohort_id=o.cohort_id and s.academic_period_id=o.academic_period_id");
   });
 });

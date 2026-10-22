@@ -67,12 +67,17 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
    coalesce(nullif(btrim(u.display_name),''),'Student #'||coalesce(m.legacy_membership_id::text,left(m.id::text,8))) as student_name
   from course_section_deliveries d
    join course_offerings o on o.id=d.offering_id
-   join sections s on s.id=d.section_id and s.status='ACTIVE'
+   join sections s on s.id=d.section_id
+    and (${deliveryId}::uuid is not null or s.status='ACTIVE')
     and s.cohort_id=o.cohort_id and s.academic_period_id=o.academic_period_id
    join section_enrollments se on se.section_id=s.id
-    and se.academic_period_id=o.academic_period_id and se.status='ACTIVE'
+    and se.academic_period_id=o.academic_period_id
+    and (se.status='ACTIVE' or
+      (${deliveryId}::uuid is not null and se.status='COMPLETED'))
    join learner_program_enrollments e on e.id=se.learner_enrollment_id
-    and e.cohort_id=o.cohort_id and e.status='ACTIVE'
+    and e.cohort_id=o.cohort_id
+    and (e.status='ACTIVE' or
+      (${deliveryId}::uuid is not null and e.status='COMPLETED'))
    join college_memberships m on m.id=e.membership_id and m.status='ACTIVE'
    join membership_roles role on role.membership_id=m.id and role.role='LEARNER'
    join users u on u.id=m.user_id and u.platform_status='ACTIVE'
