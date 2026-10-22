@@ -161,6 +161,11 @@ export const LEGACY_NOTIFICATION_JOB_SCHEDULES = {
   assignmentReminder: { jobName: "notification.assignmentReminders", cron: "0 0 9 * * *", timeZone: "Asia/Kolkata", ttlMs: 60 * 60_000 },
   deadlineToday: { jobName: "tpo.deadlineToday", cron: "0 0 8 * * *", timeZone: "Asia/Kolkata", ttlMs: 30 * 60_000 },
   offersExpiringSoon: { jobName: "tpo.offersExpiringSoon", fixedDelayMs: 60 * 60_000, ttlMs: 50 * 60_000 },
+  // Legacy 08:00 IST daily, 30-minute lease; consume only the next local-day
+  // half-open window from tomorrowInIndiaUtcWindow(now), never the current day.
+  // This declares the schedule; a deployment worker must still bind delivery.
+  shortlistDueTomorrow: { jobName: "tpo.shortlistDueTomorrow", cron: "0 0 8 * * *",
+    timeZone: "Asia/Kolkata", ttlMs: 30 * 60_000, wired: false },
 } as const;
 
 /** India has a fixed UTC+05:30 offset; return next local day as a half-open
