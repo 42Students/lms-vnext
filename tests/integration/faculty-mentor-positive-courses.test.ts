@@ -710,10 +710,12 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
   });
   it("scopes the old Quiz results endpoint to the owning Section Faculty and Admin, with audit",async()=>{
     const {delivery,quiz}=await fixture();
-    await transitionCourseQuiz(faculty,quiz.id,{...await facultyAssessmentFixtureToken(pool,"QUIZ",quiz.id), action:"CLOSE"});
-    // Releasing results before the deadline would reveal protected answers.
+    // A still-open PUBLISHED quiz must not reveal answers before its due time.
+    // Closing a quiz ends attempts and independently permits results release;
+    // the legacy results API deliberately treats CLOSED as release-ready.
     await expect(setCourseQuizResults(admin,quiz.id,{published:true}))
       .rejects.toMatchObject({code:"INVALID_QUIZ_TRANSITION"});
+    await transitionCourseQuiz(faculty,quiz.id,{...await facultyAssessmentFixtureToken(pool,"QUIZ",quiz.id), action:"CLOSE"});
     await pool.query("update course_quizzes set due_at=now()-interval '1 hour' where id=$1",[quiz.id]);
     await expect(setCourseQuizResults(learner,quiz.id,{published:true}))
       .rejects.toBeDefined();
