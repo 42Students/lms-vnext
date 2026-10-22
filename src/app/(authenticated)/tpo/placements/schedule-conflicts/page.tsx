@@ -78,7 +78,7 @@ export default async function TpoScheduleConflictsPage({
       </form>
       <section aria-label="Schedule assessment" className="grid min-w-0 grid-cols-2 gap-3 lg:grid-cols-4">
         {summaryTiles.map(([name, value]) => (
-          <StatTile key={name} label={String(name)} value={value} className={tpoTileStyles["tile"]} />
+          <StatTile key={name} label={String(name)} value={value} {...(tpoTileStyles["tile"]===undefined?{}:{className:tpoTileStyles["tile"]})} />
         ))}
       </section>
       {data.limited ? (
