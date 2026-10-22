@@ -6,23 +6,25 @@ export async function GET(request: Request, {params}: {params:Promise<{jobId:str
   const context = await getCurrentRequestContext();
   const {jobId}=await params;
   const search=new URL(request.url).searchParams;
-  const query=driveApplicationsParams({
-    q:search.get("q") ?? undefined,
-    status:search.get("status") ?? undefined,
-    screening:search.get("screening") ?? undefined,
-    source:search.get("source") ?? undefined,
-    stage:search.get("stage") ?? undefined,
-    departmentId:search.get("departmentId") ?? undefined,
-    programId:search.get("programId") ?? undefined,
-    cohortId:search.get("cohortId") ?? undefined,
-    appliedFrom:search.get("appliedFrom") ?? undefined,
-    appliedTo:search.get("appliedTo") ?? undefined,
-  });
-  if (!query) return new Response("Invalid export filters",{status:400});
-  // A nonexistent automated screening score must never be silently used for filtering.
+  // Keep the export query aligned with the visible applications registry.
+  // A repeated or unknown filter must not widen a sensitive CSV export.
+  const allowed=new Set([
+    "q","status","screening","source","stage","departmentId","programId",
+    "cohortId","appliedFrom","appliedTo","appliedAfter","appliedBefore",
+    "skills","attention","sort","page","size","pageSize","limit",
+  ]);
+  const raw:Record<string,string|string[]|undefined>={};
+  for(const [key,value] of search){
+    if(!allowed.has(key)||raw[key]!==undefined)
+      return new Response("Invalid export filters",{status:400});
+    raw[key]=value;
+  }
+  // A nonexistent automated score cannot be silently used for filtering.
   if(["minScore","maxScore","scoreFrom","scoreTo"].some(key=>search.has(key)))
     return new Response("Score filtering is not available for this drive.",
       {status:422,headers:{"Cache-Control":"no-store"}});
+  const query=driveApplicationsParams(raw);
+  if (!query) return new Response("Invalid export filters",{status:400});
   const safeJobId=jobId.replace(/[^a-zA-Z0-9-]/g,"").slice(0,80)||"unknown";
   try {
     const result=await exportCollegeDriveApplicationsCsv(context,jobId,query);
