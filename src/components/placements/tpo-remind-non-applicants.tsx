@@ -4,17 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
 import {InlineNotice} from "@/components/ui/inline-notice";
-type Preview={count:number;day:string;alreadySent:boolean;allowed:boolean;reason:string|null;previewToken:string|null};
+import {parseTpoReminderPreview,tpoReminderReceiptMessage,type TpoReminderPreview} from "@/modules/placements/tpo-reminder-result-model";
+
 export function TpoRemindNonApplicants({jobId}:{jobId:string}){
- const [open,setOpen]=useState(false);const [preview,setPreview]=useState<Preview|null>(null);
+ const [open,setOpen]=useState(false);const [preview,setPreview]=useState<TpoReminderPreview|null>(null);
  const [busy,setBusy]=useState(false);const [error,setError]=useState("");
  const [outcome,setOutcome]=useState("");const [confirmed,setConfirmed]=useState(false);
  const href="/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/remind-not-applied";
  async function previewReminder(){
   setBusy(true);setError("");setOutcome("");setConfirmed(false);
   try{const response=await fetch(href,{credentials:"same-origin",cache:"no-store"});
-   const data=await response.json() as Preview&{error?:string};
-   if(!response.ok)throw Error(data.error??"Could not preview reminders");
+   const payload:unknown=await response.json();
+   if(!response.ok)throw Error("Could not preview reminders");
+   const data=parseTpoReminderPreview(payload);
+   if(!data)throw Error("Reminder preview could not be verified. Retry.");
    setPreview(data);setOpen(true);
   }catch(e){setError(e instanceof Error?e.message:"Preview failed");}
   finally{setBusy(false);}
@@ -26,10 +29,11 @@ export function TpoRemindNonApplicants({jobId}:{jobId:string}){
    headers:{"content-type":"application/json"},body:JSON.stringify({
     action:"REMIND",confirmed:true,expectedPreviewToken:preview.previewToken,
    })});
-   const data=await response.json() as {error?:string;reminded?:number;alreadySent?:boolean;reason?:string|null};
-   if(!response.ok)throw Error(data.error??"Reminder could not be sent");
-   setOutcome(data.alreadySent?"Already reminded today":
-    data.reminded+" eligible registered students were reminded in-app.");
+   const payload:unknown=await response.json();
+   if(!response.ok)throw Error("Reminder could not be sent");
+   const summary=tpoReminderReceiptMessage(payload,preview.count);
+   if(!summary)throw Error("Reminder result could not be verified. Refresh the preview.");
+   setOutcome(summary);
    setOpen(false);setPreview(null);
   }catch(e){setError(e instanceof Error?e.message:"Reminder failed. Refresh the preview.");}
   finally{setBusy(false);}
