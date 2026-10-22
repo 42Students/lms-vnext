@@ -2,7 +2,10 @@ import {safeNotificationActionHref,safeExternalAssessmentUrl} from "./notificati
 
 /** Legacy course/drive/assessment labels projected onto the membership-scoped inbox. */
 type Context={module:string;metadata?:unknown;actionHref?:string|null};
-const field=(m:Record<string,unknown>,key:string)=>typeof m[key]==="string"?(m[key] as string).trim():"";
+const field=(m:Record<string,unknown>,key:string)=>{
+ const value=m[key];
+ return typeof value==="string"?value.trim():"";
+};
 export function notificationContextPresentation(row:Context){
  const metadata=row.metadata!==null&&typeof row.metadata==="object"&&!Array.isArray(row.metadata)
   ?row.metadata as Record<string,unknown>:{};
