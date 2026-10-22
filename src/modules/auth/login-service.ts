@@ -327,15 +327,14 @@ async function assertCanSignInHere(
     throw new LoginError("NO_ACCOUNT_FOR_DOMAIN");
   }
 
-  const here = memberships.find(
+  // A person may have multiple roles at the same college. A suspended
+  // secondary role cannot shadow a separate, active membership.
+  const here = memberships.filter(
     (membership) => membership.collegeId === tenantCollegeId,
   );
-
-  if (here) {
-    if (here.status === "SUSPENDED") {
-      throw new LoginError("ACCOUNT_SUSPENDED");
-    }
-    if (here.status === "ACTIVE") return;
+  if (here.some((membership) => membership.status === "ACTIVE")) return;
+  if (here.some((membership) => membership.status === "SUSPENDED")) {
+    throw new LoginError("ACCOUNT_SUSPENDED");
   }
 
   if (
@@ -363,11 +362,21 @@ async function assertCanSignInHere(
 async function assertRecruiterOnlyWorkEmail(
   deps: LoginDependencies,
   user: LoginUser,
+  tenantCollegeId: string | null,
 ) {
   const memberships = await deps.repository.listMemberships(user.id);
-  if (memberships.some(membership => membership.status === "ACTIVE")) return;
+  // A learner at college A can also be a recruiter at college B. Only
+  // memberships at the selected host exempt its recruiter-grant login from
+  // work-email policy; unrelated memberships must not bypass it.
+  if (memberships.some(membership =>
+    membership.status === "ACTIVE" &&
+    (tenantCollegeId === null || membership.collegeId === tenantCollegeId)
+  )) return;
   if (await deps.repository.isSuperAdmin(user.id)) return;
-  if (!(await deps.repository.hasAnyRecruiterGrant(user.id))) return;
+  const recruiterGrant = tenantCollegeId === null
+    ? await deps.repository.hasAnyRecruiterGrant(user.id)
+    : await deps.repository.hasRecruiterGrantAtCollege(user.id, tenantCollegeId);
+  if (!recruiterGrant) return;
   if (!user.email || publicWorkEmailIssue(user.email) !== null) {
     throw new LoginError("NO_ACCOUNT_FOR_DOMAIN");
   }
@@ -391,7 +400,7 @@ export async function startLogin(
   if (!user) throw new LoginError("NOT_REGISTERED");
 
   await assertCanSignInHere(deps, user, input.tenantCollegeId);
-  await assertRecruiterOnlyWorkEmail(deps, user);
+  await assertRecruiterOnlyWorkEmail(deps, user, input.tenantCollegeId);
 
   const fingerprint = contactFingerprint(
     deps.config.secret,
@@ -514,7 +523,7 @@ export async function sendEmailFallback(
     throw new LoginError("ACCOUNT_DISABLED");
   }
   if (!user.email) throw new LoginError("EMAIL_NOT_AVAILABLE");
-  await assertRecruiterOnlyWorkEmail(deps, user);
+  await assertRecruiterOnlyWorkEmail(deps, user, input.tenantCollegeId);
 
   const isTestContact = deps.config.testEmails.has(
     user.email.toLowerCase(),
@@ -680,7 +689,7 @@ export async function verifyLogin(
   const user = await deps.repository.findUserById(attempt.userId);
   if (!user) throw new LoginError("INVALID_ATTEMPT");
   await assertCanSignInHere(deps, user, input.tenantCollegeId);
-  await assertRecruiterOnlyWorkEmail(deps, user);
+  await assertRecruiterOnlyWorkEmail(deps, user, input.tenantCollegeId);
 
   let issued: { token: string; maxAgeSeconds: number } | null = null;
   let sessionIssue: SessionIssue | undefined;
