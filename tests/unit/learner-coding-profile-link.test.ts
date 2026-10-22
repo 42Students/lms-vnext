@@ -1,1 +1,9 @@
-import {it,expect} from "vitest";import {learnerCodingProfileLink as f} from "@/modules/placements/learner-coding-profile-link";it("only accepts named HTTPS coding platforms",()=>{expect(f("GITHUB","https://github.com/learner")).toBe("https://github.com/learner");expect(f("GITHUB","http://github.com/learner")).toBeNull();expect(f("GITHUB","https://github.com.evil.test/x")).toBeNull();expect(f("FORGED","https://github.com/x")).toBeNull();});
+import {it,expect} from "vitest";
+import {learnerCodingProfileLink as f} from "@/modules/placements/learner-coding-profile-link";
+
+it("accepts known coding platforms and canonicalizes legacy HTTP input to HTTPS",()=>{
+ expect(f("GITHUB","https://github.com/learner")).toBe("https://github.com/learner");
+ expect(f("GITHUB","http://github.com/learner")).toBe("https://github.com/learner");
+ expect(f("GITHUB","https://github.com.evil.test/x")).toBeNull();
+ expect(f("FORGED","https://github.com/x")).toBeNull();
+});
