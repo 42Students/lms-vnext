@@ -62,20 +62,22 @@ type SavedAttempt = {
   nextResendAt: number;
   /** Exact requesting host including development port. Never resume elsewhere. */
   host: string;
+  /** Current login portal context: no code from another tenant is replayed. */
+  tenantKey: string;
 };
-function saveLoginAttempt(value: Omit<SavedAttempt, "host"> | null) {
+function saveLoginAttempt(value: Omit<SavedAttempt, "host"|"tenantKey"> | null, tenantKey: string) {
   try {
     if (value) {
       window.sessionStorage.setItem(
         ATTEMPT_KEY,
-        JSON.stringify({ ...value, host: window.location.host.toLowerCase() }),
+        JSON.stringify({ ...value, host: window.location.host.toLowerCase(), tenantKey }),
       );
     } else {
       window.sessionStorage.removeItem(ATTEMPT_KEY);
     }
   } catch { /* Private browsing can disable session storage. */ }
 }
-function loadLoginAttempt(): SavedAttempt | null {
+function loadLoginAttempt(tenantKey: string): SavedAttempt | null {
   try {
     const raw = window.sessionStorage.getItem(ATTEMPT_KEY);
     if (!raw) return null;
@@ -85,11 +87,12 @@ function loadLoginAttempt(): SavedAttempt | null {
     const record = data as SavedAttempt;
     if (typeof record.host !== "string" ||
         record.host !== window.location.host.toLowerCase() ||
+        record.tenantKey !== tenantKey ||
         typeof record.expiresAt !== "number" || record.expiresAt <= Date.now() ||
         typeof record.nextResendAt !== "number" || !record.attempt ||
         !/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(record.attempt.attemptId) ||
         !["PHONE","EMAIL"].includes(record.attempt.channel)) {
-      saveLoginAttempt(null); return null;
+      saveLoginAttempt(null, tenantKey); return null;
     }
     return record;
   } catch { return null; }
@@ -189,6 +192,7 @@ export function LoginForm({
   legacySuperAdmin?: boolean;
   skipStoredAttempt?: boolean;
 }) {
+  const tenantKey=(legacySuperAdmin?"platform":collegeName?.trim().toLocaleLowerCase("en-IN")||"global");
   const [channel, setChannel] = useState<Channel>(defaultChannel);
   const [recruiterEntry, setRecruiterEntry] = useState(false);
   const [retiredHandoff, setRetiredHandoff] = useState(false);
@@ -228,8 +232,8 @@ export function LoginForm({
     let live = true;
     void Promise.resolve().then(() => {
       if (!live) return;
-      if (skipStoredAttempt) { saveLoginAttempt(null); return; }
-      const stored = loadLoginAttempt();
+      if (skipStoredAttempt) { saveLoginAttempt(null, tenantKey); return; }
+      const stored = loadLoginAttempt(tenantKey);
       if (!stored) return;
       setAttempt(stored.attempt);
       setChannel(stored.attempt.channel);
@@ -278,7 +282,7 @@ export function LoginForm({
       setCode("");
       setSecondCode("");
       setAttempt(null);
-      saveLoginAttempt(null);
+      saveLoginAttempt(null, tenantKey);
     }
   }
 
@@ -326,7 +330,7 @@ export function LoginForm({
         attempt: result.data,
         expiresAt: Date.now() + Math.min(300, Math.max(1,result.data.expiresInSeconds)) * 1000,
         nextResendAt: Date.now() + RESEND_SECONDS * 1000,
-      });
+      }, tenantKey);
       setCode("");
       setSecondCode("");
       setEmailResends(0);
@@ -366,7 +370,7 @@ export function LoginForm({
       ));
       if (!result) return;
       if (!result.ok) return fail(result.data.error,result.data.retryAfterSeconds);
-      saveLoginAttempt(null);
+      saveLoginAttempt(null, tenantKey);
       const returnTo = safeReturnTo(new URLSearchParams(window.location.search).get("returnTo"));
       const defaultLanding = safeReturnTo(result.data.next) ?? "/dashboard";
       const landing=returnTo??defaultLanding;
@@ -475,7 +479,7 @@ export function LoginForm({
         attempt,
         expiresAt: Date.now() + Math.min(300, Math.max(1,attempt.expiresInSeconds)) * 1000,
         nextResendAt: Date.now() + RESEND_SECONDS * 1000,
-      });
+      }, tenantKey);
     } catch (reason) {
       reportAuthFailure(reason);
       setError(reason instanceof FriendlyFetchError ? reason.message : FRIENDLY_MESSAGES.unexpected);
@@ -486,7 +490,7 @@ export function LoginForm({
 
   function reset() {
     setAcceptedTerms(false);
-    saveLoginAttempt(null);
+    saveLoginAttempt(null, tenantKey);
     setAttempt(null);
     setCode("");
     setSecondCode("");
