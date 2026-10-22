@@ -50,6 +50,7 @@ import type {TpoPrepCourseOutcome} from "./tpo-prep-readiness-derivation";
 import { placementBatchRegistrations } from "@/db/schema/placement-registration";
 import {placementBatchLifecycles} from "@/db/schema/placement-batches";
 import {placementDebarments} from "@/db/schema/placement-debarments";
+import {placementDriveSelections} from "@/db/schema/placement-drive-selections";
 import {isDebarmentActive} from "./batch-registration-policy";
 import {placementCollegeDateInIndia} from "./placement-debarment-gate";
 import { placementExternalOffers } from "@/db/schema/placement-external";
@@ -764,6 +765,23 @@ export async function getTpoStudentsIntelligence(
       : Promise.resolve([]),
   ]);
 
+  // SELECTED policy counts a verified selection (not a draft selection),
+  // independently of whether an offer was released yet.
+  const verifiedSelections=activeSeason?await db.select({
+   membershipId:placementApplications.membershipId,
+   employmentType:placementJobs.employmentType,
+   countsAsPlaced:placementJobs.countsAsPlaced,
+  }).from(placementDriveSelections)
+   .innerJoin(placementApplications,eq(placementApplications.id,placementDriveSelections.applicationId))
+   .innerJoin(placementJobs,and(eq(placementJobs.id,placementDriveSelections.jobId),
+    eq(placementJobs.id,placementApplications.jobId)))
+   .where(and(eq(placementJobs.collegeId,college.id),
+    eq(placementJobs.seasonId,activeSeason.id),
+    inArray(placementDriveSelections.status,["VERIFIED","RELEASED"]),
+    isNotNull(placementDriveSelections.verifiedAt))):[];
+  const selectedAndPlacedIds=new Set(verifiedSelections.filter(row=>
+    row.countsAsPlaced??row.employmentType==="FULL_TIME").map(row=>row.membershipId));
+
   const sectionsByEnrollment = new Map<
     string,
     string[]
@@ -1010,6 +1028,7 @@ export async function getTpoStudentsIntelligence(
         externalOffersByMember.get(
           learner.membershipId,
         ) ?? 0,
+      selectedOutcomeVerified:selectedAndPlacedIds.has(learner.membershipId),
       ambiguousSection,
     };
 

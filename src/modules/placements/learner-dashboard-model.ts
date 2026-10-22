@@ -172,7 +172,7 @@ export function learnerPlacementDashboard(
         href:"/learn/my-placements/placement",
         when:null,
       }
-    : priority && (priority.when.getTime()-nowMs)<=7*dayMs
+    : priority
     ? {
         label: priority.kind === "ASSESSMENT"
           ? "Assessment coming up"
@@ -186,6 +186,14 @@ export function learnerPlacementDashboard(
         href: priority.href,
         when: priority.when,
       }
+    : input.placed
+    ? {
+        label:"Placed",
+        title:"Your placement is recorded",
+        detail:"Review your official offer and joining details.",
+        href:"/learn/my-placements/offers",
+        when:null,
+      }
     : closingSoonJobs.length>0
     ? {
         label:"Closes soon",
@@ -193,14 +201,6 @@ export function learnerPlacementDashboard(
           closingSoonJobs.length+" placement applications close soon",
         detail:"These eligible drives close within three IST calendar days. Review them before the deadline.",
         href:"/learn/my-placements/jobs?soon=1",
-        when:null,
-      }
-    : input.placed
-    ? {
-        label:"Placed",
-        title:"Your placement is recorded",
-        detail:"Review your official offer and joining details.",
-        href:"/learn/my-placements/offers",
         when:null,
       }
     : openJobIds.size>0
