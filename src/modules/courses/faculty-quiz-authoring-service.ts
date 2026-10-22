@@ -210,6 +210,7 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
       quizId:result.id,questionType:question.type,prompt:question.prompt,
       points:question.points,sequence:question.sequence,
      }).returning();
+     if(!q)throw new CoursesServiceError("QUIZ_QUESTION_INVALID");
      await tx.insert(quizOptions).values(question.options.map(option=>({
       questionId:q.id,optionText:option.text,isCorrect:option.correct,sequence:option.sequence,
      })));
