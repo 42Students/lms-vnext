@@ -3,7 +3,7 @@ import { learnerContactEditSchema } from "@/modules/people/learner-contact-model
 
 describe("Learner contact-only edit validation", () => {
   const valid = { confirmed: true as const, contacts: {
-    alternatePhone: "+91 9876543210", contactEmail: "learner@example.test",
+    alternatePhone: "919876543210", contactEmail: "learner@example.test",
   } };
   it("permits confirmed, properly formatted alternate contact fields", () => {
     expect(learnerContactEditSchema.parse(valid)).toEqual(valid);
@@ -16,6 +16,7 @@ describe("Learner contact-only edit validation", () => {
       { ...valid, confirmed: false },
       { contacts: valid.contacts },
       { ...valid, contacts: { alternatePhone: "1", contactEmail: "email" } },
+      { ...valid, contacts: { ...valid.contacts, alternatePhone: "+91 9876543210" } },
       { ...valid, contacts: { ...valid.contacts, accountEmail: "other@example.test" } },
       { ...valid, userId: "forged" },
       { ...valid, membershipId: "forged" },
