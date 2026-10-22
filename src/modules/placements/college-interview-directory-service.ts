@@ -17,7 +17,10 @@ export const collegeInterviewFilters=z.object({
  /** A scoped single-interview ICS export retains the same college authorization. */
  interviewId:z.uuid().optional(),
  departmentId:z.uuid().optional(),
- sort:z.enum(["UPCOMING","RECENT","STUDENT"]).default("UPCOMING"),
+ // Retain URL compatibility with newer sort labels and offer legacy choices.
+ sort:z.enum(["UPCOMING","RECENT","STUDENT","EARLIEST","LATEST","JOB","STATUS"]).default("EARLIEST"),
+ pageSize:z.coerce.number().int().refine(value=>[10,20,50,100].includes(value),
+  "Choose 10, 20, 50 or 100 rows per page").default(20),
  page:z.coerce.number().int().min(1).max(1000).default(1),
 }).strict();
 export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unknown,options:{exportAll?:boolean}={}){
@@ -115,10 +118,13 @@ export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unkno
    companies:sql<number>`count(distinct ${filtered.companyId})::int`.mapWith(Number),
   }).from(filtered),
   db.select().from(filtered).orderBy(
-   filters.sort==="RECENT"?desc(filtered.start):
-    filters.sort==="STUDENT"?asc(filtered.student):asc(filtered.start),
-   asc(filtered.id),
-  ).limit(options.exportAll?10000:25).offset(options.exportAll?0:(filters.page-1)*25),
+   filters.sort==="RECENT"||filters.sort==="LATEST"?desc(filtered.start):
+    filters.sort==="STUDENT"?asc(filtered.student):
+    filters.sort==="JOB"?asc(filtered.job):
+    filters.sort==="STATUS"?asc(filtered.status):asc(filtered.start),
+   asc(filtered.start),asc(filtered.id),
+  ).limit(options.exportAll?10000:filters.pageSize)
+   .offset(options.exportAll?0:(filters.page-1)*filters.pageSize),
  ]);
  const totals=summaries[0]??{total:0,scheduled:0,today:0,companies:0};
  const total=totals.total;
@@ -164,7 +170,8 @@ export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unkno
   if(candidate||interviewer)
    conflicts.set(row.id,candidate&&interviewer?"BOTH":candidate?"CANDIDATE":"INTERVIEWER");
  }
- return {ready:true,filters,total,limited,pageCount:Math.max(1,Math.ceil(total/25)),
+ return {ready:true,filters,total,limited,pageCount:Math.max(1,Math.ceil(total/filters.pageSize)),
+  pageSize:filters.pageSize,
   rows:selected.map(row=>({...row,
     statusLabel:row.status==="NO_SHOW"?"No Show":
       row.status==="RESCHEDULE_REQUESTED"?"Reschedule":
