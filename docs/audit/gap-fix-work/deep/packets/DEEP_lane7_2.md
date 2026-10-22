@@ -10,8 +10,8 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-12-016-008  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [x] G2-12-016-009  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [x] G2-4-010-097  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
-- [ ] G2-4-011-080  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
-- [ ] G2-4-011-082  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+- [x] G2-4-011-080  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+- [x] G2-4-011-082  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [x] G2-4-016-017  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [x] G2-4-017-006  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [x] G2-4-017-008  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
@@ -27,3 +27,6 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - G2-12-016-009: OK — `src/db/schema/academic-terms.ts:11-14,23-24,40` makes current term names non-null/nonblank and active state non-null; `docs/audit/gap-fix/academic-term-crosswalk-lane-14.md:8-10,31-39` explicitly quarantines null/empty legacy names and nullable source active values for reviewed backfill, forbidding invented names, automatic false status or silent import. This is an import contract, not a claim that legacy data was imported. Matches nullable fields in `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Semester.java:32-39`.
 - G2-4-017-008: OK — `src/db/schema/projects.ts:209-220,247-269,335-336` explicitly crosswalks historic `IN_PROGRESS` to canonical `ACTIVE` while preserving the exact legacy token in `legacyStatus`, records historical progress independently, and restricts canonical lifecycle to PLANNED/ACTIVE/COMPLETED/ARCHIVED; matching source default and free-text width in `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectWorkspace.java:31-32`. New vNext projects intentionally default PLANNED; historical source rows use the documented import mapping, not that default. No historical import execution claimed.
+
+- G2-4-011-080: OK — `src/db/schema/courses.ts:279-317` maps legacy faculty/course/class/batch/semester/year through membership plus delivery (with raw course/class IDs, semester/year provenance), role, nullable legacy active, and date-only start/end while retaining separate current started/ended timestamps; `src/modules/admin-ui/super-admin-faculty-assignments-service.ts:47-70,117-169` projects historical year/date/active independently from the effective active assignment. This is schema/reading parity, not an assertion of executed historical import. Matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java:22-53`.
+- G2-4-011-082: OK — `src/components/admin/super-admin-faculty-assignment-create.tsx:212-215,237-279,345-355` exposes an editable Active checkbox; deactivation terminates the association without deleting its history, while `src/db/schema/courses.ts:297-312` retains the original legacy active value and current endedAt separately. Matches `docs/legacy-source/frontend/src/pages/superadmin/sections/FacultyAssignment.js:588-590` and `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java:46-53`.
