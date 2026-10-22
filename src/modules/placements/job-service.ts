@@ -97,16 +97,17 @@ export type PlacementJobListOptions={
  applicationMode?:"ALL"|"INTERNAL"|"HYBRID"|"EXTERNAL_ONLY";
 };
 /** The original separate draft/active/deleted flags are views over the
- * canonical vNext lifecycle. A lapsed deadline does not mutate job status. */
+ * canonical vNext lifecycle. A lapsed deadline ends effective activity and
+ * application eligibility without rewriting the historical job status. */
 export function projectLegacyPlacementJobStatus(job:{
  status:string;archivedAt:Date|null;publishedAt:Date|null;createdAt:Date;
  applicationDeadline:Date|null;
 },now=new Date()){
  const archived=job.status==="ARCHIVED"||job.archivedAt!==null;
  const expired=job.applicationDeadline!==null&&job.applicationDeadline<=now;
- const active=job.status==="PUBLISHED"&&!archived;
+ const active=job.status==="PUBLISHED"&&!archived&&!expired;
  return {isDraft:job.status==="DRAFT",isActive:active,isDeleted:archived,
-  isOpenForApplications:active&&!expired,expired,
+  isOpenForApplications:active,expired,
   postedDate:job.publishedAt??job.createdAt,
   applicationDeadline:job.applicationDeadline};
 }
