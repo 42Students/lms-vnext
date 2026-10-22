@@ -52,6 +52,9 @@ export async function moveMentorBacklogTask(context: RequestContext, projectIdIn
         .where(and(eq(projectReleases.id,sprint.releaseId),eq(projectReleases.projectId,scope.project.id))).limit(1);
       if(!release || release.status === "SHIPPED")throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     }
+    // A project row lock serializes tail allocation. Legacy sortOrder is
+    // preserved as provenance; sequence is the live sprint-local order.
+    // updatedAt carries an exact millisecond CAS token (legacy used @Version).
     const [last] = await tx.select({sequence:projectTasks.sequence}).from(projectTasks)
       .where(and(eq(projectTasks.projectId,scope.project.id),
         input.targetSprintId ? eq(projectTasks.sprintId,input.targetSprintId) : isNull(projectTasks.sprintId)))
@@ -111,4 +114,27 @@ export async function createMentorBacklogTask(context: RequestContext, projectId
     });
     return task;
   });
+}
+
+/** Deterministic import mapping for legacy global sortOrder. Each sprint
+ * and product backlog receives dense zero-based sequence numbers. Repeated
+ * positions sort by stable IDs; a missing position comes last. This is for
+ * importer use only, never to renumber an actively edited sprint. */
+export function planImportedProjectTaskSequences<T extends {
+ id:string;projectId:string;sprintId:string|null;legacySortOrder:number|null;
+}>(rows:readonly T[]):Array<{id:string;projectId:string;sprintId:string|null;sequence:number}>{
+ const groups=new Map<string,T[]>();
+ for(const row of rows){
+  const key=row.projectId+":"+(row.sprintId??"backlog");
+  const group=groups.get(key)??[];
+  group.push(row);groups.set(key,group);
+ }
+ const result:Array<{id:string;projectId:string;sprintId:string|null;sequence:number}>=[];
+ for(const group of groups.values()){
+  group.sort((a,b)=>(a.legacySortOrder??Number.MAX_SAFE_INTEGER)-
+   (b.legacySortOrder??Number.MAX_SAFE_INTEGER)||a.id.localeCompare(b.id));
+  for(const [sequence,row] of group.entries())result.push({id:row.id,
+   projectId:row.projectId,sprintId:row.sprintId,sequence});
+ }
+ return result;
 }

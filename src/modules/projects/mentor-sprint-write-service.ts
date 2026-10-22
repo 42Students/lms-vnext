@@ -61,7 +61,7 @@ export async function createMentorProjectSprint(
       const [release]=await tx.select({id:projectReleases.id,status:projectReleases.status})
         .from(projectReleases)
         .where(and(eq(projectReleases.id,input.releaseId),
-          eq(projectReleases.projectId,scope.project.id)))
+          eq(projectReleases.projectId,scope.project.id),isNull(projectReleases.deletedAt)))
         .for("update").limit(1);
       if(!release || release.status==="SHIPPED") {
         throw new ProjectsServiceError("PROJECT_RELEASE_INVALID_STATE");
