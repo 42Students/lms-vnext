@@ -22,6 +22,8 @@ describe("Owner-approved improvements over obsolete legacy workflows",()=>{
   expect(archive).toContain("Restore this workspace?");
   expect(archive).toContain("Archived members, meetings and workspace content become accessible again.");
   expect(archive).toContain("vNext preserves previously saved task, sprint and resource edits");
-  expect(list).toContain('href="/college/projects?status=ARCHIVED"');
+  expect(list).toContain('href="/college/projects/deleted"');
+  expect(source("src/app/(authenticated)/college/projects/deleted/page.tsx"))
+    .toContain("ProjectAdmin");
  });
 });

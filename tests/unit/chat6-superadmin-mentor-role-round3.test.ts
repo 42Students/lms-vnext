@@ -12,6 +12,8 @@ describe("Mentor faculty role parity",()=>{
   expect(create).toContain("registerAsMentor");
   expect(create).toContain('["FACULTY","MENTOR"]');
   expect(readFileSync("src/components/admin/admin-scoped-read-page.tsx","utf8"))
-    .toContain('placeholder="Professor, Mentor…"');
+    .toContain('aria-label="Filter by faculty type"');
+  expect(readFileSync("src/components/admin/admin-scoped-read-page.tsx","utf8"))
+    .toContain('["MENTOR","Mentor"]');
  });
 });
