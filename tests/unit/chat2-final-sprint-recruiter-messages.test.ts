@@ -33,7 +33,8 @@ describe("Final sprint recruiter conversations verification",()=>{
   expect(detail()).toContain("<RecruiterConversationLiveRefresh");
   expect(refresh).toContain("window.setInterval(()=>{void update();},4000)");
   expect(refresh).toContain('document.visibilityState!=="visible"');
-  expect(refresh).toContain('window.addEventListener("focus",update)');
+  expect(refresh).toContain('window.addEventListener("focus",refresh.current)');
+  expect(refresh).toContain('window.removeEventListener("focus",refresh.current)');
   expect(refresh).not.toContain("fetch(");
  });
  it("REC-calendar-messages-profile-14 acknowledges incoming thread read state by explicit client POST on open",()=>{
