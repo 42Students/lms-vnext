@@ -135,6 +135,8 @@ async function fixture(){
 describe("Mentor final delivery reviewed with immutable audit",()=>{
  it("accepts default now() token once and denies stale/foreign/wrong-role",async()=>{
   const {project,mentor,foreign,learner}=await fixture();
+  // Reviews require an active project, not an unlaunched fixture draft.
+  await pool.query("update project_instances set status='ACTIVE' where id=$1",[project.id]);
   const id=randomUUID();
   const inserted=await pool.query<{updated_at:Date}>(`insert into project_submissions
    (id,project_id,version,status,summary,source_url,created_by_membership_id,
@@ -159,7 +161,11 @@ describe("Mentor final delivery reviewed with immutable audit",()=>{
 describe("Mentor meeting audited optimistic decisions on disposable PostgreSQL",()=>{
  it("completes a SQL-backed meeting and denies replay/foreign/wrong-role",async()=>{
   const {project,mentor,foreign,learner}=await fixture();
+  // Mentor-created meetings require an optimistic token for the containing project.
+  const projectVersion=await pool.query<{updated_at:Date}>(
+    "select updated_at from project_instances where id=$1",[project.id]);
   const meeting=await scheduleProjectMeeting(mentor,project.id,null,{
+   expectedProjectUpdatedAt:projectVersion.rows[0]!.updated_at.toISOString(),
    title:"Mentor session",startsAt:"2026-11-02T09:00:00.000Z",
    endsAt:"2026-11-02T10:00:00.000Z",timeZone:"Asia/Kolkata",
    meetingUrl:"https://example.invalid/mentor-session",

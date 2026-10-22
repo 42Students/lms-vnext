@@ -296,8 +296,10 @@ describe("PROJ-HARNESS real PostgreSQL schema group examples", () => {
         values ($1,$2,$3)`,[f.owner.collegeId,drive.companyId,f.author.userId]),"23505");
       await db.expectSqlState(()=>db.query(`
         update placement_jobs set openings=0 where id=$1`,[drive.jobId]),"23514");
+      // The fixture is already published. Writing PUBLISHED again is valid;
+      // reverting to DRAFT while retaining published_at violates lifecycle.
       await db.expectSqlState(()=>db.query(`
-        update placement_jobs set status='PUBLISHED' where id=$1`,[drive.jobId]),"23514");
+        update placement_jobs set status='DRAFT' where id=$1`,[drive.jobId]),"23514");
       await db.expectSqlState(()=>db.query(`
         insert into placement_job_rounds(job_id,sequence,kind,name,created_by_user_id)
         values ($1,1,'TEST','Duplicate round',$2)`,[drive.jobId,f.author.userId]),"23505");

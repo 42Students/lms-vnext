@@ -88,6 +88,9 @@ async function cleanup() {
   await pool.query(
     "delete from placement_application_status_history",
   );
+  // Persisted college application stages reference these applications.
+  // Child stage history must be removed before the parent application rows.
+  await pool.query("delete from placement_college_application_stages");
   await pool.query(
     "delete from placement_applications",
   );
