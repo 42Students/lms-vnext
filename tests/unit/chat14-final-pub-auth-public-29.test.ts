@@ -18,6 +18,8 @@ describe("chat-14 final sprint",()=>{
   expect(interceptor).toContain('new CustomEvent("lms:access-denied"');
   expect(notice).toContain('role="alert"');
   expect(notice).toContain('search.get("access")==="denied"');
-  expect(root).toContain("<PortalAccessNotice/>");
+  expect(root).toContain("<PortalAccessNotice />");
+  expect(root).toContain("<Suspense fallback={null}>");
+  expect(root).toContain("<ConnectionFailureNotice />");
  });
 });
