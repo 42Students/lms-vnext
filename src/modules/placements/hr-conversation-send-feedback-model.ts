@@ -17,6 +17,6 @@ export function isVerifiedHrReplyReceipt(raw:unknown,threadId:string):boolean{
  if(!raw||typeof raw!=="object"||Array.isArray(raw))return false;
  const result=raw as Record<string,unknown>;
  const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
- return result.sent===true&&result.threadId===threadId&&
-  typeof result.id==="string"&&uuid.test(result.id);
+ return result["sent"]===true&&result["threadId"]===threadId&&
+  typeof result["id"]==="string"&&uuid.test(result["id"]);
 }

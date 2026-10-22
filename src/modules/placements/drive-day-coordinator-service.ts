@@ -57,7 +57,7 @@ export function dateInIndia(
       part.value,
     ]),
   );
-  return `${value.year}-${value.month}-${value.day}`;
+  return `${value["year"]}-${value["month"]}-${value["day"]}`;
 }
 
 async function loadJob(jobId: string) {

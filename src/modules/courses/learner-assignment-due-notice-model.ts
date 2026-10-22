@@ -43,6 +43,7 @@ function istClock(now:Date){
 }
 function nextIstDay(day:string){
  const [year,month,date]=day.split("-").map(Number);
+ if(year===undefined||month===undefined||date===undefined)throw new Error("INVALID_IST_DAY");
  const value=new Date(Date.UTC(year,month-1,date+1));
  return value.toISOString().slice(0,10);
 }

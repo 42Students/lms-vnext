@@ -15,7 +15,7 @@ import { facultySubmissionReviewResponse } from "./faculty-submission-review-mod
 
 export async function getFacultySubmissionReviewPage(context: RequestContext, raw: unknown) {
   const query = facultySubmissionListQuerySchema.parse(raw);
-  requirePermission(context,"courses.read",{collegeId:context.membership?.collegeId,
+  requirePermission(context,"courses.read",{...(context.membership?.collegeId !== undefined ? {collegeId:context.membership.collegeId} : {}),
     organizationId:context.membership?.organizationId});
   const deliveries = await listFacultyCourseDeliveries(context);
   const delivery = deliveries.find(item=>item.deliveryId===query.deliveryId);
@@ -72,8 +72,8 @@ export async function getFacultyAssignmentSubmissionStatsBulk(
 ) {
  const input=facultyStatsRequest.parse(raw);
  requirePermission(context,"courses.read",{
-  collegeId:context.membership?.collegeId,
-  organizationId:context.membership?.organizationId,
+  ...(context.membership?.collegeId !== undefined ? {collegeId:context.membership.collegeId} : {}),
+  ...(context.membership?.organizationId !== undefined ? {organizationId:context.membership.organizationId} : {}),
  });
  const teaching=await listFacultyCourseDeliveries(context);
  const delivery=teaching.find(item=>item.deliveryId===input.deliveryId);
@@ -91,7 +91,8 @@ export async function getFacultyAssignmentSubmissionStatsBulk(
  if(!ids.length)return {};
  const section=await db.select({sectionId:courseSectionDeliveries.sectionId})
   .from(courseSectionDeliveries).where(eq(courseSectionDeliveries.id,input.deliveryId)).limit(1);
- if(!section.length)throw new CoursesServiceError("ASSIGNMENT_SUBMISSION_NOT_FOUND");
+ const selectedSection=section[0];
+ if(!selectedSection)throw new CoursesServiceError("ASSIGNMENT_SUBMISSION_NOT_FOUND");
  const roster=await db.selectDistinct({membershipId:collegeMemberships.id})
   .from(sectionEnrollments)
   .innerJoin(learnerProgramEnrollments,eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId))
@@ -99,7 +100,7 @@ export async function getFacultyAssignmentSubmissionStatsBulk(
   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
     eq(membershipRoles.role,"LEARNER")))
   .innerJoin(users,eq(users.id,collegeMemberships.userId))
-  .where(and(eq(sectionEnrollments.sectionId,section[0].sectionId),
+  .where(and(eq(sectionEnrollments.sectionId,selectedSection.sectionId),
     eq(sectionEnrollments.status,"ACTIVE"),
     eq(learnerProgramEnrollments.status,"ACTIVE"),
     eq(collegeMemberships.status,"ACTIVE"),

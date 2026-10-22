@@ -19,7 +19,7 @@ const uuid=z.string().uuid();
 export async function assignmentMaterialTableReady():Promise<boolean>{
  const result=await getDb().execute(sql`select to_regclass('public.course_assignment_materials') is not null as ready`);
  const records=Array.isArray(result)?result:((result as {rows?:unknown[]}).rows??[]);
- return (records[0] as {ready?:boolean}|undefined)?.ready===true;
+ return (records[0] as {ready?:boolean}|undefined)?.["ready"]===true;
 }
 export async function listOwnLearnerAssignmentMaterialLinks(context:RequestContext,
  assignmentIdInput:string,deliveryIdInput:string){
@@ -177,7 +177,7 @@ export async function createLearnerAssignmentResourceReadGrant(
  if(!item||!item.objectKey||(item.kind!=="FILE"&&item.kind!=="PDF"))
   throw new CoursesServiceError("ASSIGNMENT_FILE_NOT_READY");
  const parts=item.objectKey.split("/");
- if(parts.length!==5||parts[0]!=="private"||
+ if(parts.length!==5||!parts[2]||parts[0]!=="private"||
    parts[1]!==assignment.collegeId||parts[3]!=="course-resource"||
    !uuid.safeParse(parts[2]).success||!uuid.safeParse(parts[4]).success)
   throw new CoursesServiceError("ASSIGNMENT_FILE_NOT_READY");

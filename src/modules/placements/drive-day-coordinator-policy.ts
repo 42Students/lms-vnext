@@ -33,5 +33,5 @@ export function coordinatorRoundOnDutyDate(input: {
     day: "2-digit",
   }).formatToParts(input.scheduledAt);
   const date = Object.fromEntries(parts.map(part => [part.type, part.value]));
-  return [date.year, date.month, date.day].join("-") === input.dutyDate;
+  return [date["year"], date["month"], date["day"]].join("-") === input.dutyDate;
 }

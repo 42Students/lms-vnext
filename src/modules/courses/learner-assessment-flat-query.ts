@@ -2,7 +2,7 @@ import "server-only";
 import {learnerQuizResultsReleased} from "./learner-quiz-result-release-policy";
 import {and,eq,inArray,isNull,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {assignmentSubmissions,courseAssignments,courseLearningPaths,courseLessons,courseQuizzes,courseSectionDeliveries,quizAttempts} from "@/db/schema";
+import {assignmentSubmissions,courseAssignments,courseLearningPaths,courseLessons,courseQuizzes,courseSectionDeliveries} from "@/db/schema";
 
 type Delivery={deliveryId:string;offeringId:string;courseId:string;courseName:string;courseCode:string};
 /** One set of tenant-rostered, published assessment joins, no per-course workspace graph. */
