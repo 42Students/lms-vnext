@@ -60,6 +60,7 @@ export async function createRecruiterApprovedDraftJob(
    minimumAnnualCtcInr:inr(draft.minimumAnnualCtcInr)??legacyAnnualCtc,
    maximumAnnualCtcInr:inr(draft.maximumAnnualCtcInr)??(!draft.minimumAnnualCtcInr?legacyAnnualCtc:null),
    createdByUserId:actorUserId,status:"DRAFT",
+   jobDescriptionObjectPath:draft.jdObjectKey??null,
    applicationMode:draft.driveMode==="OFF_CAMPUS"?"EXTERNAL_ONLY":"INTERNAL",
    externalApplicationUrl:draft.driveMode==="OFF_CAMPUS"?draft.externalApplicationUrl:null,
   }).returning({id:placementJobs.id});
