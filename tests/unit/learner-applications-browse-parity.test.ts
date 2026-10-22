@@ -25,7 +25,12 @@ describe("Learner Applications list and detail route", () => {
     expect(browse).toContain("readLearnerApplicationUrl(params.toString())");
     expect(browse).toContain("router.push");
     expect(browse).toContain("learnerApplicationMobileSummary(filters)");
-    expect(browse).toContain("<Drawer open={selected!==null}");
+    // The clone uses an inline, deep-linkable details section instead of a drawer.
+    // Its collapse control must clear the URL selection and expose ARIA state.
+    expect(browse).toContain('{selected ? <section id={"application-details-"+selected.applicationId}');
+    expect(browse).toContain('aria-label={"Application details for "+selected.companyName}');
+    expect(browse).toContain('aria-controls={"application-details-"+selected.applicationId}');
+    expect(browse).toContain("updateQuery({applicationId:null})");
     expect(browse).toContain("Round history");
     expect(browse).toContain("learnerApplicationAttention(items)");
     expect(browse).toContain("Application screening updates");
