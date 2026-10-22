@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 const mocks=vi.hoisted(()=>({context:vi.fn(),targets:vi.fn()}));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:mocks.context}));
 vi.mock("@/modules/colleges/admin-session-service",()=>({
- listCollegeAdminSessionTargets:mocks.targets,
+ listCollegeAdminSessionTargetsPage:mocks.targets,
 }));
 vi.mock("@/components/admin/person-onboard-dialog",async()=>{
  const {createElement}=await import("react");
@@ -40,7 +40,7 @@ const params={params:Promise.resolve({collegeId}),searchParams:Promise.resolve({
 beforeEach(()=>{
  mocks.context.mockReset();mocks.targets.mockReset();
  mocks.context.mockResolvedValue(actor);
- mocks.targets.mockResolvedValue({college:{name:"IIT Dharwad"},items:[],truncated:false});
+ mocks.targets.mockResolvedValue({college:{name:"IIT Dharwad",organizationId:org},items:[],total:0,page:1,pageCount:1,pageSize:25,truncated:false});
 });
 describe("SA-colleges-admins-list-01 tenant administrator roster page",()=>{
  it("renders the empty/permission-safe scoped directory without invented admins",async()=>{
@@ -50,14 +50,14 @@ describe("SA-colleges-admins-list-01 tenant administrator roster page",()=>{
   expect(html).toContain('data-role="COLLEGE_ADMIN"');
   expect(html).toContain('data-role="TPO"');
   expect(html).not.toContain("fake@example.edu");
-  expect(mocks.targets).toHaveBeenCalledWith(actor,collegeId);
+  expect(mocks.targets).toHaveBeenCalledWith(actor,collegeId,1,"ALL");
  });
  it("renders real role/status and authorized nested device and history URLs",async()=>{
   mocks.targets.mockResolvedValue({
-   college:{name:"IIT Dharwad"},
+   college:{name:"IIT Dharwad",organizationId:org},
    items:[{userId,membershipId:"member-id",name:"Admin A",email:"admin@example.edu",
     roles:["COLLEGE_ADMIN"],status:"SUSPENDED"}],
-   truncated:false,
+   total:1,page:1,pageCount:1,pageSize:25,truncated:false,
   });
   const html=renderToStaticMarkup(await CollegeAdministratorsPage(params));
   expect(html).toContain("Admin A");
@@ -65,17 +65,21 @@ describe("SA-colleges-admins-list-01 tenant administrator roster page",()=>{
   expect(html).toContain("Suspended");
   expect(html).toContain('data-lifecycle="SUSPENDED"');
   expect(html).toContain("View active devices");
-  expect(html).toContain("View history");
+  expect(html).toContain("View administrator history");
   expect(html).toContain("/admins/"+userId);
   expect(html).toContain("/admins/"+userId+"/history");
  });
- it("discloses a 500-record cap rather than presenting incomplete rosters as exhaustive",async()=>{
-  mocks.targets.mockResolvedValue({college:{name:"IIT Dharwad"},items:[],truncated:true});
+ it("discloses bounded server-side pagination rather than implying a complete roster",async()=>{
+  mocks.targets.mockResolvedValue({college:{name:"IIT Dharwad",organizationId:org},items:[],total:26,page:1,pageCount:2,pageSize:25,truncated:false});
   const html=renderToStaticMarkup(await CollegeAdministratorsPage(params));
-  expect(html).toContain("Showing the first 500 role records");
+  expect(html).toContain("0 of 26 college administrators");
+  expect(html).toContain("Page 1 of 2");
  });
- it("does not render administrator details when the scoped service denies the actor",async()=>{
+ it("does not render administrator details or expose errors when the scoped service denies the actor",async()=>{
   mocks.targets.mockRejectedValue(new Error("REVOKED"));
-  await expect(CollegeAdministratorsPage(params)).rejects.toThrow("REVOKED");
+  const html=renderToStaticMarkup(await CollegeAdministratorsPage(params));
+  expect(html).toContain("Could not load administrator accounts");
+  expect(html).not.toContain("REVOKED");
+  expect(html).not.toContain("admin@example.edu");
  });
 });

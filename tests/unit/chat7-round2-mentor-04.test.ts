@@ -3,7 +3,8 @@ import {readFileSync} from "node:fs";
 describe("chat-7 mentor meetings and release contracts",()=>{
 it("MEN-projects-meetings-26 bounded historic meetings with reveal control",()=>{
 const source=readFileSync("src/components/projects/mentor-meeting-history.tsx","utf8");
-expect(source).toContain("Past meetings / Meeting history");
+expect(source).toContain("Past meetings (");
+expect(source).toContain('aria-label="Meeting edit history"');
 expect(source).toContain("Show fewer");
 expect(source).toContain("View all ");
 });
@@ -29,6 +30,6 @@ it("MEN-projects-meetings-34 release-first sprint scheduling and definition of d
 const source=readFileSync("src/components/projects/mentor-sprint-write.tsx","utf8");
 expect(source).toContain("Sprint goal");
 expect(source).toContain("What does done look like?");
-expect(source).toContain("Ships in release");
+expect(source).toContain("Pick the release this sprint ships in");
 });
 });
