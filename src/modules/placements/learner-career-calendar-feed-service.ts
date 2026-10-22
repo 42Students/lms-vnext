@@ -1,7 +1,11 @@
 import "server-only";
 import type { RequestContext } from "@/modules/identity/context";
+import {and,desc,eq} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {placementApplications,placementJobs,placementCompanyRelationships,placementCompanies} from "@/db/schema";
 import { listLearnerPlacementJobs } from "./learner-job-service";
-import { careerDayKey, type CareerCalendarSupplement } from "./learner-career-calendar-model";
+import { careerDayKey,legacyJobImportantDatesToSupplements,
+ type CareerCalendarSupplement } from "./learner-career-calendar-model";
 
 /** Deadline feed comes from the cohort- and section-scoped learner job reader,
  * never a global scan of unpublished or cross-college drives. College exam
@@ -38,6 +42,56 @@ export async function loadLearnerCareerCalendarSupplements(
       warnings.push("Showing the first 500 upcoming job deadlines. View Jobs for the full list.");
       break;
     }
+  }
+  // Applied-job history is owned by this learner, not by the current cohort's
+  // published/targeted job discovery. An older applied drive may be closed or
+  // archived and must still contribute its historic interview/application
+  // milestones. Do not grant fresh job visibility from this history query.
+  const member=context.membership;
+  if(member){
+   const past=await getDb().select({
+    applicationId:placementApplications.id,
+    submittedAt:placementApplications.submittedAt,
+    jobId:placementJobs.id,jobTitle:placementJobs.title,
+    deadline:placementJobs.applicationDeadline,
+    posting:placementJobs.legacyPostingDetails,
+    companyName:placementCompanies.name,
+   }).from(placementApplications)
+    .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+    .innerJoin(placementCompanyRelationships,
+      eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId))
+    .innerJoin(placementCompanies,
+      eq(placementCompanies.id,placementCompanyRelationships.companyId))
+    .where(and(eq(placementApplications.membershipId,member.id),
+      eq(placementJobs.collegeId,member.collegeId),
+      eq(placementCompanyRelationships.collegeId,member.collegeId)))
+    .orderBy(desc(placementApplications.submittedAt),desc(placementApplications.id))
+    .limit(501);
+   if(past.length>500)warnings.push(
+    "Showing calendar history for the 500 most recent applications. Open Applications for older records.");
+   const seenHistory=new Set<string>();
+   for(const row of past.slice(0,500)){
+    if(seenHistory.has(row.jobId))continue;
+    seenHistory.add(row.jobId);
+    const details=row.posting?.importantDates;
+    if(Array.isArray(details)){
+     supplements.push(...legacyJobImportantDatesToSupplements({
+      jobId:row.jobId,companyName:row.companyName,roleTitle:row.jobTitle,
+      importantDates:details,
+     }));
+    }
+    // Keep the historical application deadline even if the job is no longer
+    // discoverable or the learner applied before that date.
+    if(row.deadline){
+     supplements.push({
+      key:row.jobId+":own-past-deadline",jobId:row.jobId,
+      kind:"JOB_IMPORTANT_DATE",day:careerDayKey(row.deadline),
+      title:"Application deadline · "+row.jobTitle,
+      companyName:row.companyName,roleTitle:row.jobTitle,
+      visible:true,applied:true,note:"Historical deadline for your application",
+     });
+    }
+   }
   }
   return { supplements, warnings };
 }
