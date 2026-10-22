@@ -7,7 +7,7 @@ describe("Super Admin application scores",()=>{
   expect(source).toContain("max(rr.score_percent)::double precision");
   expect(source).not.toContain("max(rr.score_percent)::integer");
   expect(source).toContain('sql`${source.screeningScore} desc nulls last`');
-  expect(source).toContain('sql`${source.screeningScore} asc nulls first`');
+  expect(source).toContain('sql`${source.screeningScore} asc nulls last`');
  });
  it("rounds the display percentage while retaining the underlying sort value",()=>{
   const ui=readFileSync("src/components/placements/college-application-pipeline-controls.tsx","utf8");
