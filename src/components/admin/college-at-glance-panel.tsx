@@ -18,6 +18,8 @@ export function CollegeAtGlancePanel({collegeId,initial}:{collegeId:string;initi
  const currentCounts=useRef<CollegeAtGlanceCounts|null>(initial);
  const requestSequence=useRef(0);
  const currentCollegeId=useRef(collegeId);
+ const [refreshing,setRefreshing]=useState(false);
+ const [error,setError]=useState("");
  useEffect(()=>{
   currentCollegeId.current=collegeId;
   requestSequence.current+=1;
@@ -25,8 +27,6 @@ export function CollegeAtGlancePanel({collegeId,initial}:{collegeId:string;initi
   setCounts(initial);
   setError("");
  },[collegeId,initial]);
- const [refreshing,setRefreshing]=useState(false);
- const [error,setError]=useState("");
  const refresh=useCallback(async()=>{
   const seq=++requestSequence.current;
   setRefreshing(true);

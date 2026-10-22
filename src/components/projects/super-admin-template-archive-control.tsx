@@ -12,6 +12,7 @@ export function SuperAdminTemplateArchiveControl({templateId,title,status}:{
 }){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
  const {askConfirm,dialog}=useConfirmFlow();
+ const {showToast}=useToast();
 
  async function archive(){
   if(!(await askConfirm("Archive template \""+title+"\"? Existing workspaces keep their pinned snapshot. This template will no longer be available for new assignments.")))return;
