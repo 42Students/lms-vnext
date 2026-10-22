@@ -89,7 +89,7 @@ export function TpoRoundResultEntryForm({roundId,applicationId,currentResultId}:
    ):null}
    <div className="flex min-w-0 flex-col border-t border-border pt-[var(--lms-space-4)] sm:flex-row sm:justify-end md:col-span-2">
     <Button variant="primary" type="submit" loading={pending}
-      disabled={pending||saved} className="w-full sm:w-auto">
+      disabled={pending||saved} className="min-h-11 w-full sm:w-auto md:min-h-9">
      {pending?"Saving…":saved?"Result staged":"Confirm staged result"}
     </Button>
    </div>

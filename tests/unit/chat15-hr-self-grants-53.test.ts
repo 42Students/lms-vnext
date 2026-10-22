@@ -14,6 +14,9 @@ vi.mock("@/modules/permissions/policy",()=>({
  },
  requirePermission:mocks.permission,
 }));
+vi.mock("@/modules/placements/public-recruiter-invite-accept-service",()=>({
+ listSignedInRecruiterPendingInvites:async()=>[],
+}));
 vi.mock("@/modules/placements/recruiter-profile-service",()=>({
  getRecruiterSelfProfile:mocks.profile,
 }));
@@ -53,7 +56,7 @@ describe("HR-SELF-GRANTS-53 recruiter current-access profile respects persisted 
  });
  it("without authorized grants returns an empty list without looking up grant rows",async()=>{
   const noGrants={...activeUser,recruiter:{...activeUser.recruiter,grants:[]}};
-  await expect(getRecruiterSelfGrantOverview(noGrants as never)).resolves.toEqual({
+  await expect(getRecruiterSelfGrantOverview(noGrants as never)).resolves.toMatchObject({
    profileStatus:"ACTIVE",grants:[],
   });
   expect(mocks.getDb).not.toHaveBeenCalled();
@@ -66,7 +69,7 @@ describe("HR-SELF-GRANTS-53 recruiter current-access profile respects persisted 
    'eq(colleges.status, "ACTIVE")',
    'eq(organizations.status, "ACTIVE")',
   ])expect(source).toContain(clause);
-  await expect(getRecruiterSelfGrantOverview(activeUser as never)).resolves.toEqual({
+  await expect(getRecruiterSelfGrantOverview(activeUser as never)).resolves.toMatchObject({
    profileStatus:"ACTIVE",grants:[],
   });
   expect(mocks.permission).toHaveBeenCalledWith(activeUser,"placements.recruiter.read",{

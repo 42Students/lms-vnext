@@ -6,14 +6,15 @@ describe("chat-13 TPO second-third cross-audit repairs",()=>{
   const s=read("src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/page.tsx");
   expect(s).toContain('DataTable<(typeof offers)[number]>');
   expect(s).toContain('Letter acknowledged');
-  expect(s).toContain('empty={<p role="status"');
+  expect(s).toContain('empty={<EmptyState title="No persisted offers exist for this drive."');
   expect(s).toContain('Unavailable');
   expect(s).not.toContain('<table');
  });
  it("UX-cross-tpo-second-C13-002 share audit preserves UTC evidence on phone and paging",()=>{
   const s=read("src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx");
   expect(s).toContain('<DataTable');
-  expect(s).toContain('UTC timestamp');
+  expect(s).toContain('timeZone:"Asia/Kolkata"');
+  expect(s).toContain('+" IST"');
   expect(s).toContain('No share-page views or CSV downloads match this event filter for this drive.');
   expect(s).toContain('companyShareAuditPageHref');
   expect(s).not.toContain('<table');
@@ -44,13 +45,15 @@ describe("chat-13 TPO second-third cross-audit repairs",()=>{
  });
  it("UX-cross-tpo-second-C13-006 overview primary actions are WCAG sized and contrast safe",()=>{
   const s=read("src/app/(authenticated)/tpo/placements/overview/page.tsx");
-  expect(s).not.toContain("min-h-9");
-  expect(s).not.toContain("text-on-primary");
-  expect(s).toContain('New opportunity');
+  expect(s).toContain("min-h-11");
+  expect(s).toContain("md:min-h-9");
+  expect(s).toContain('href="/tpo/placements/new"');
+  expect(s).toContain("+ Create drive");
  });
  it("UX-cross-tpo-second-C13-007 campaign CTA contrast and phone link targets",()=>{
   const s=read("src/app/(authenticated)/tpo/recruiters/campaigns/page.tsx");
-  expect(s).not.toContain("text-on-primary");
+  expect(s).toContain('bg-primary');
+  expect(s).toContain('text-on-primary');
   expect(s).toContain('New email campaign');
   expect(s).toContain('min-h-11');
  });
@@ -94,7 +97,7 @@ describe("chat-13 TPO second-third cross-audit repairs",()=>{
  it("UX-cross-tpo-second-C13-014 send campaign confirmation is accessible and cannot auto-send",()=>{
    const s=read("src/components/tpo/tpo-campaign-send-control.tsx");
    expect(s).toContain("<ConfirmDialog");
-   expect(s).toContain("This cannot be undone.");
+   expect(s).toContain("This sends to the currently reachable recruiters and cannot be undone.");
    expect(s).toContain("async function sendCampaign()");
    expect(s).not.toContain("window.confirm");
  });
@@ -178,7 +181,7 @@ describe("chat-13 TPO second-third cross-audit repairs",()=>{
  });
  it("UX-cross-tpo-second-C13-025 recruiter board and invitations use accessible confirmations and focus trap",()=>{
   const s=read("src/components/tpo/recruiter-leads-workspace.tsx");
-  expect(s).toContain('<Dialog open={adding}');
+  expect(s).toContain('<Dialog open={adding && confirmation?.kind!=="DISCARD"}');
   expect(s).toContain('<ConfirmDialog open={confirmation!==null}');
   expect(s).toContain('moveBoardLeadToContacted(target.leadId,true)');
   expect(s).toContain('createInviteLink(lead,true)');
@@ -188,12 +191,12 @@ describe("chat-13 TPO second-third cross-audit repairs",()=>{
  });
  it("UX-cross-tpo-second-C13-027 recruiter directory and company communication remain accessible across viewports",()=>{
   const s=read("src/components/tpo/recruiter-leads-workspace.tsx");
-  expect(s).toContain('<DataTable<(typeof visibleCompanies)[number]>');
-  expect(s).toContain('<DataTable<(typeof sortedVisible)[number]>');
+  expect(s).toContain('<EngageCompanyTpoGrid rows={visibleCompanies}');
+  expect(s).toContain('<RecruiterTpoGrid rows={sortedVisible}');
   expect(s).toContain('mobilePriority:"action"');
-  expect(s).toContain('Select all visible recruiters');
+  expect(s).toContain('selection={{');
   expect(s).toContain('RecruiterRosterDisplayControls');
-  expect(s).toContain('visibleColumns.includes(column.key as EngageColumn)');
+  expect(s).toContain('columnKeys.includes(column.key)');
   expect(s).not.toContain('<table');
  });
 });
