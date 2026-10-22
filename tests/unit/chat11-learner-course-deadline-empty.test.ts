@@ -25,8 +25,9 @@ describe("learner course deadline, own submissions and empty state",()=>{
   it("LEARNER-course-detail-20 restores no-roadmap, no-content and filtered lesson copy",()=>{
     const page=source("src/components/courses/learner-course-workspace.tsx");
     for(const copy of ["No roadmap items yet","Create lessons and add content to show the learner roadmap.",
-       "No lectures in this lesson.","No lesson content yet","No content in this lesson yet."])
+       "No lectures in this lesson.","No lesson content yet"])
       expect(page).toContain(copy);
     expect(page).not.toContain("No published learning items in this lesson yet.");
+    expect(page).toContain('activeFilter==="all"?"No lesson content yet"');
   });
 });

@@ -65,7 +65,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
   <PageHeader eyebrow="TPO · Batches" title={TPO_OWNER_PAGE_COPY.placementEligibility}
    description="Decide who is in placements, one passing-out batch at a time. New students follow their class."/>
   <Alert tone="error">Could not load batches. The batch directory is temporarily unavailable.
-   <Link href="/tpo/batches" className="ml-2 inline-flex min-h-9 items-center font-semibold text-link underline">Retry</Link>
+   <Link href="/tpo/batches" className="ml-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline">Retry</Link>
   </Alert>
  </div>;
  const eligibility=await listTpoBatchCardEligibility(context,data.batches.map(batch=>batch.id)).catch(()=>null);
@@ -158,7 +158,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
   {recent===null?<InlineNotice tone="info" message="Recent decisions could not load. Open a batch to view its history."/>:null}
   {!data.ready&&deadlineParsed.data!=="ALL"?<InlineNotice tone="info" message="Deadline details are temporarily unavailable. All matching batches are still shown."/>:null}
   {!data.ready&&parsed.data.state!=="ALL"?<InlineNotice tone="info" message="Batch state details are temporarily unavailable. All matching batches are still shown."/>:null}
-  {!data.ready?<Alert tone="warning">Couldn't refresh batches. Some batch details are temporarily unavailable; academic batches remain visible. <Link href="/tpo/batches" className="lms-inline-link inline-flex min-h-9 items-center font-semibold text-link underline">Retry</Link></Alert>:null}
+  {!data.ready?<Alert tone="warning">Couldn't refresh batches. Some batch details are temporarily unavailable; academic batches remain visible. <Link href="/tpo/batches" className="lms-inline-link inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline">Retry</Link></Alert>:null}
   {workingSet.hidden>0?<Alert tone="info" className="flex-row flex-wrap items-center gap-2">
     {workingSet.hidden} older {workingSet.hidden===1?"batch is":"batches are"} hidden from your working set.
     <Link href={tpoBatchPageHref({...pageFilters,showOlder:"1"},1,pageParsed.data.pageSize)}

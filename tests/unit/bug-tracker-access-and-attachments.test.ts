@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   BUG_SCREENSHOT_MAX_BYTES,
+  BugTrackerAttachmentError,
   BUG_SCREENSHOT_MAX_PER_ISSUE,
   bugScreenshotType,
   canMutateBugTrackerWorkflow,
@@ -42,6 +43,13 @@ describe("DB10 tracker access policy", () => {
   });
 });
 
+function rejectedCode(operation:()=>unknown):string|null{
+  try{operation();}catch(error){
+    return error instanceof BugTrackerAttachmentError?error.code:null;
+  }
+  return null;
+}
+
 describe("DB10 screenshot validation without public object URLs", () => {
   const id = "LMS-0001";
   const key = "bug-tracker/LMS-0001/550e8400-e29b-41d4-a716-446655440000.png";
@@ -64,9 +72,9 @@ describe("DB10 screenshot validation without public object URLs", () => {
   it.each(["image/svg+xml", "image/gif", "application/pdf", "text/html"])(
     "refuses unsupported content type %s",
     (contentType) => {
-      expect(() => validateBugScreenshotUpload({
+      expect(rejectedCode(() => validateBugScreenshotUpload({
         fileName: "file.svg", contentType, contentLength: 10, currentCount: 0,
-      })).toThrow("INVALID_FILE");
+      }))).toBe("INVALID_FILE");
     },
   );
 
@@ -80,18 +88,18 @@ describe("DB10 screenshot validation without public object URLs", () => {
 
   it.each([0, -1, BUG_SCREENSHOT_MAX_BYTES + 1, 1.5, Number.NaN])(
     "rejects invalid object content size %s", (contentLength) => {
-      expect(() => validateBugScreenshotUpload({
+      expect(rejectedCode(() => validateBugScreenshotUpload({
         fileName: "valid.png", contentType: "image/png", contentLength,
         currentCount: 0,
-      })).toThrow("INVALID_FILE");
+      }))).toBe("INVALID_FILE");
     },
   );
 
   it("refuses fourth attachment even if MIME and size are valid", () => {
-    expect(() => validateBugScreenshotUpload({
+    expect(rejectedCode(() => validateBugScreenshotUpload({
       fileName: "screen.png", contentType: "image/png",
       contentLength: 1, currentCount: 3,
-    })).toThrow("TOO_MANY_ATTACHMENTS");
+    }))).toBe("TOO_MANY_ATTACHMENTS");
   });
 
   it("confirms only object whose metadata matches its issue-bound UUID key", () => {
