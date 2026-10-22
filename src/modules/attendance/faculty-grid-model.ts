@@ -112,15 +112,17 @@ export function facultyAttendanceDayCell(
     else present += 1;
   }
 
-  const sessionCount = sessions.length;
   const heldCount = present + absent + notMarked;
+  // Legacy calendar ratios and class-day totals count held sessions only.
+  // Scheduled future slots appear separately and never dilute attendance.
+  const sessionCount = heldCount;
 
   if (heldCount === 0 && scheduled > 0) {
     return {
       // A future timetable slot is not a held class or attendance mark.
       // Scheduling remains visible in the separate timetable view.
-      code: "—",
-      label: "No class",
+      code: "S",
+      label: scheduled === 1 ? "Scheduled" : `${scheduled} scheduled sessions`,
       present,
       absent,
       notMarked,
@@ -163,7 +165,7 @@ export function facultyAttendanceDayCell(
 
   return {
     code: "MIXED",
-    label: `${present} present, ${absent} absent, ${notMarked} not marked${scheduled ? `, ${scheduled} scheduled` : ""} of ${sessionCount} sessions`,
+    label: `${present} present, ${absent} absent, ${notMarked} not marked of ${sessionCount} held sessions${scheduled ? `; ${scheduled} upcoming` : ""}`,
     present,
     absent,
     notMarked,
