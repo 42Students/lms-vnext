@@ -20,8 +20,9 @@ export async function POST(request:Request){
   const context=await getCurrentRequestContext();
   if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)
    return NextResponse.json({error:"FORBIDDEN"},{status:403});
-  const thread=payload.data.message
-    ?await composeAndSendRecruiterThreadMessage(context,payload.data)
+  const message=payload.data.message;
+  const thread=message
+    ?await composeAndSendRecruiterThreadMessage(context,{...payload.data,message})
     :await openRecruiterMessageThread(context,payload.data);
   return NextResponse.redirect(new URL("/hr/conversations/"+thread.id,request.url),303);
  }catch(error){
