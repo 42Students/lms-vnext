@@ -386,6 +386,10 @@ export function LearnerProfileWorkspace(props: {
       setContactError("Alternate phone number must be 10 to 15 digits");
       return;
     }
+    if(alternate&&!primary){
+      setContactError("Verify your primary mobile number before adding an alternate phone number");
+      return;
+    }
     if(primary&&alternate.slice(-10)===primary){
       setContactError("Alternate phone number cannot be the same as primary mobile number");
       return;
