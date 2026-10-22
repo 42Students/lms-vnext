@@ -26,38 +26,35 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
   const db = getDb();
   const lookupWarnings:string[]=[];
   let countsAvailable=true;
-  let metadataAvailable=true;
   await db.transaction(async(tx)=>{await requireTpoJobActor(tx,context);},{accessMode:"read only"});
-  // Independent metadata lookups must not conceal the placement list.
-  const [seasons,owners,batches,companies]=await Promise.all([
-    db.select({id:placementSeasons.id,name:placementSeasons.name,
-      status:placementSeasons.status,startDate:placementSeasons.startDate})
-      .from(placementSeasons).where(eq(placementSeasons.collegeId,collegeId))
-      .orderBy(desc(placementSeasons.startDate),desc(placementSeasons.createdAt))
-      .catch(()=>{metadataAvailable=false;lookupWarnings.push("Could not load seasons");return [];}),
-    db.selectDistinct({id:users.id,name:users.displayName})
-      .from(placementJobs).innerJoin(users,eq(users.id,placementJobs.createdByUserId))
-      .where(and(eq(placementJobs.collegeId,collegeId),isNull(placementJobs.archivedAt)))
-      .orderBy(users.displayName)
-      .catch(()=>{metadataAvailable=false;lookupWarnings.push("Could not load drive owner names");return [];}),
-    db.select({id:cohorts.id,name:cohorts.name,programName:programs.name})
-      .from(cohorts).innerJoin(programs,eq(programs.id,cohorts.programId))
-      .innerJoin(departments,eq(departments.id,programs.departmentId))
-      .where(eq(departments.collegeId,collegeId)).orderBy(cohorts.name,cohorts.id)
-      .catch(()=>{metadataAvailable=false;lookupWarnings.push("Could not load batch names");return [];}),
-    db.select({id:placementCompanies.id,name:placementCompanies.name})
-      .from(placementCompanyRelationships)
-      .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
-      .where(eq(placementCompanyRelationships.collegeId,collegeId))
-      .orderBy(placementCompanies.name)
-      .catch(()=>{metadataAvailable=false;lookupWarnings.push("Could not load company names");return [];}),
-  ]);
-  // All seasons remains the safe default to retain historical applications.
-  const season=filters.seasonId?seasons.find(s=>s.id===filters.seasonId):null;
-  if(filters.seasonId&&!metadataAvailable&&seasons.length===0)
-    throw new PlacementsServiceError("PLACEMENT_SEASON_NOT_FOUND");
-  if(filters.cohortId&&metadataAvailable&&!batches.some(batch=>batch.id===filters.cohortId))
-    throw new PlacementsServiceError("PLACEMENT_ELIGIBILITY_SCOPE_MISMATCH");
+  const seasons = await db.select({ id: placementSeasons.id, name: placementSeasons.name,
+    status: placementSeasons.status, startDate: placementSeasons.startDate })
+    .from(placementSeasons).where(eq(placementSeasons.collegeId, collegeId))
+    .orderBy(desc(placementSeasons.startDate), desc(placementSeasons.createdAt));
+  // TPO-drives-20: default to all college seasons, never silently hide old drives.
+  const season = filters.seasonId
+    ? seasons.find((s) => s.id === filters.seasonId)
+    : null;
+  const owners=await db.selectDistinct({id:users.id,name:users.displayName})
+    .from(placementJobs).innerJoin(users,eq(users.id,placementJobs.createdByUserId))
+    .where(and(eq(placementJobs.collegeId,collegeId),isNull(placementJobs.archivedAt)))
+    .orderBy(users.displayName).catch(()=>{
+      lookupWarnings.push("Could not load drive owner names");return [];
+    });
+  const batches=await db.select({id:cohorts.id,name:cohorts.name,programName:programs.name})
+    .from(cohorts).innerJoin(programs,eq(programs.id,cohorts.programId))
+    .innerJoin(departments,eq(departments.id,programs.departmentId))
+    .where(eq(departments.collegeId,collegeId))
+    .orderBy(cohorts.name,cohorts.id).catch(()=>{
+      lookupWarnings.push("Could not load batch names");return [];
+    });
+  if(filters.cohortId&&!batches.some(batch=>batch.id===filters.cohortId))
+   throw new PlacementsServiceError("PLACEMENT_ELIGIBILITY_SCOPE_MISMATCH");
+  const companies=await db.select({id:placementCompanies.id,name:placementCompanies.name})
+    .from(placementCompanyRelationships)
+    .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
+    .where(eq(placementCompanyRelationships.collegeId,collegeId))
+    .orderBy(placementCompanies.name);
 
   if (filters.seasonId && !season) throw new PlacementsServiceError("PLACEMENT_SEASON_NOT_FOUND");
   const attentionBoundary=new Date(now.getTime()+7*86400000);
@@ -66,8 +63,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       and not exists(select 1 from placement_applications a
         where a.job_id=${placementJobs.id} and a.status='SUBMITTED'))::int`,
     noDeadline:sql<number>`count(*) filter(where ${placementJobs.status}='PUBLISHED'
-      and ${placementJobs.applicationDeadline} is null
-       and ${placementJobs.recordedOutside} = false)::int`
+      and ${placementJobs.applicationDeadline} is null)::int`,
     dueSoon:sql<number>`count(*) filter(where ${placementJobs.status}='PUBLISHED'
       and ${placementJobs.applicationDeadline} >= ${now}
       and ${placementJobs.applicationDeadline} <= ${attentionBoundary})::int`,
@@ -101,7 +97,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     .catch(()=>{countsAvailable=false;lookupWarnings.push("Could not load applicant and pipeline counts");return [];});
   const statusCounts=aggregate??{all:0,drafts:0,live:0,closed:0};
   const selectedView=defaultTpoDriveView(needsReviewCount,
-    typeof raw==="object"&&raw!==null&&"view" in raw?filters.view:countsAvailable?undefined:"ALL");
+    typeof raw==="object"&&raw!==null&&"view" in raw?filters.view:undefined);
   if (selectedView === "REQUESTS") {
     const counts = {total:0,drafts:0,live:0,closed:0,deadlinesNextSevenDays:0};
     const common = {seasons,season,companies,batches,cohortId:filters.cohortId,owners,ownerUserId:filters.ownerUserId,
@@ -110,8 +106,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       employmentType:filters.employmentType,jobTypeLabel:filters.jobTypeLabel,sort:filters.sort,display:filters.display,
       minApplied:filters.minApplied,maxApplied:filters.maxApplied,minOffers:filters.minOffers,maxOffers:filters.maxOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
       attentionCounts,needsReviewCount,statusCounts,asOf:now.toISOString(),
-      countsAvailable,metadataAvailable,countSnapshot:countsAvailable?"COMPLETE" as const:"PARTIAL" as const,
-      countsAsOf:countsAvailable?now.toISOString():null,ownerMeaning:"CREATOR_FALLBACK" as const,lookupWarnings};
+      countsAvailable,lookupWarnings};
     const pattern=tpoApplicantExportSearchPattern(filters.search);
     const requestScope=and(
       eq(placementRecruiterDriveRequests.collegeId,collegeId),
@@ -261,7 +256,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       filters.payCategory==="REGULAR"?eq(placementJobs.isDream,false):undefined,
     filters.attention==="NO_APPLICANTS"?and(eq(placementJobs.status,"PUBLISHED"),
       sql`not exists(select 1 from placement_applications a where a.job_id=${placementJobs.id} and a.status='SUBMITTED')`):
-    filters.attention==="NO_DEADLINE"?and(eq(placementJobs.status,"PUBLISHED"),isNull(placementJobs.applicationDeadline),eq(placementJobs.recordedOutside,false)):
+    filters.attention==="NO_DEADLINE"?and(eq(placementJobs.status,"PUBLISHED"),isNull(placementJobs.applicationDeadline)):
     filters.attention==="DUE_SOON"?and(eq(placementJobs.status,"PUBLISHED"),
       gte(placementJobs.applicationDeadline,now),lte(placementJobs.applicationDeadline,new Date(now.getTime()+7*86400000))):
     filters.attention==="OVERDUE"?and(eq(placementJobs.status,"PUBLISHED"),lt(placementJobs.applicationDeadline,now)):
@@ -331,7 +326,6 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     applicationsClosed:row.status==="PUBLISHED"&&row.applicationDeadline!==null&&row.applicationDeadline<now,
     applicationState:row.status!=="PUBLISHED"?row.status:
       row.applicationDeadline!==null&&row.applicationDeadline<now?"APPLICATIONS_CLOSED":"ACCEPTING_APPLICATIONS",
-    displayStatus:row.status==="PUBLISHED"&&row.applicationDeadline!==null&&row.applicationDeadline<now?"Applications closed":row.status==="PUBLISHED"?"Live":row.status,
     nextRoundAt:row.nextRoundAt?.toISOString()??null,
    }))};
   },{isolationLevel:"repeatable read",accessMode:"read only"});
@@ -340,8 +334,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     companyId:filters.companyId, view: selectedView,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,recruiterDriveMode:filters.recruiterDriveMode,employmentType:filters.employmentType,jobTypeLabel:filters.jobTypeLabel,sort:filters.sort,display:filters.display,
     minApplied:filters.minApplied,maxApplied:filters.maxApplied,minOffers:filters.minOffers,maxOffers:filters.maxOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
     attentionCounts,needsReviewCount,statusCounts,asOf: now.toISOString(),
-    countsAvailable,metadataAvailable,countSnapshot:countsAvailable?"COMPLETE" as const:"PARTIAL" as const,
-    countsAsOf:countsAvailable?now.toISOString():null,ownerMeaning:"CREATOR_FALLBACK" as const,lookupWarnings,
+    countsAvailable,lookupWarnings,
     requestsAvailable: false as const,
     requestRows: [] as {id:string;status:string;title:string;company:string;createdAt:string;approvedJobId:string|null;
       recruiterEmail:string|null;recruiterPhone:string|null;recruiterUserId:string;
