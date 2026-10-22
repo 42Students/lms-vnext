@@ -20,7 +20,7 @@ type Job={id:string;title:string;description:string;locations:string[];
  workMode:"ONSITE"|"HYBRID"|"REMOTE";responsibilities:string;
  importantDates:Array<{label:string;at:string;type?:string;dateType?:string}>;
  customEligibilityRules:Array<{label:string;value:string}>;
- status:string;
+ status:string;legacyVisibilityType?:string|null;
  targeting:{programs:number;cohorts:number;sections:number}|null};
 function istLocal(value:string|null){
  if(!value)return "";
@@ -111,9 +111,24 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
    document.removeEventListener("click",interceptInternalLink,true);
   };
  },[open,dirty]);
+ const detailsHref="/admin/placements/jobs/"+encodeURIComponent(job.id);
+ /** Only formatting tags without attributes survive a rich-text save. Unsafe
+  * tags are escaped, not ever mounted as untrusted HTML in this editor. */
+ function sanitizeRichSource(value:string){
+  const escaped=value.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  return escaped.replace(/&lt;\/?(?:strong|em|p|br|ul|ol|li|h3)&gt;/gi,
+   tag=>tag.replace("&lt;","<").replace("&gt;",">"));
+ }
+ function insertRichTag(name:"description"|"responsibilities",tag:"strong"|"em"|"p"|"li"){
+  const element=formRef.current?.elements.namedItem(name);
+  if(!(element instanceof HTMLTextAreaElement))return;
+  const start=element.selectionStart,end=element.selectionEnd;
+  const markup="<"+tag+">"+(element.value.slice(start,end)||"Text")+"</"+tag+">";
+  element.setRangeText(markup,start,end,"select");element.focus();setDirty(true);
+ }
  function closeEditor(){
-  if(dirty){setLeaveHref(null);setConfirmLeave(true);}
-  else setOpen(false);
+  if(dirty){setLeaveHref(detailsHref);setConfirmLeave(true);}
+  else {setOpen(false);router.push(detailsHref);}
  }
  function reviewSave(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
@@ -163,7 +178,7 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
      method:"PATCH",headers:{"content-type":"application/json"},
      body:JSON.stringify({confirmed:true,expectedUpdatedAt:job.updatedAt,
       reason:String(data.get("reason")??"").trim(),title:String(data.get("title")??"").trim(),
-      description,
+      description:sanitizeRichSource(description),
       companyRelationshipId:String(data.get("companyRelationshipId")??""),
       assessmentUrl:String(data.get("assessmentUrl")??"").trim(),
       assessmentDeadline:String(data.get("assessmentDeadline")??"")===istLocal(job.assessmentDeadline)
@@ -179,7 +194,7 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
        minGpa:nullableNumber(data.get("minGpa")),
        city:String(data.get("preferredCity")??"").trim(),
       },
-      responsibilities:String(data.get("responsibilities")??"").trim(),
+      responsibilities:sanitizeRichSource(String(data.get("responsibilities")??"").trim()),
       jobTypeLabel:String(data.get("jobTypeLabel")??"").trim(),
       employmentType:String(data.get("employmentType")??""),
       workMode:String(data.get("workMode")??""),
@@ -192,6 +207,7 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
     });
     setDirty(false);setOpen(false);
     showToast({tone:"success",title:"Job updated"});
+    router.push(detailsHref);
     router.refresh();
    }catch(e){
     const fallback=e instanceof Error?e.message:"Unable to edit this drive. Refresh and retry.";
@@ -213,8 +229,8 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
     onClick={()=>{setDirty(false);setImportantDates(job.importantDates);
       setCustomRules(job.customEligibilityRules);setOpen(true);}}>
    {"Edit "+job.status.toLowerCase()+" drive"}</Button>:
-   <form ref={formRef} className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] sm:grid-cols-2" onChange={()=>setDirty(true)} onSubmit={reviewSave}>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title<Input name="title" required minLength={3} maxLength={100}
+   <form ref={formRef} className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] min-[768px]:grid-cols-2 min-[992px]:grid-cols-3" onChange={()=>setDirty(true)} onSubmit={reviewSave}>
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Job Title<Input name="title" autoFocus placeholder="e.g., Software Engineer" required minLength={3} maxLength={100}
      defaultValue={job.title} className={cls}/></label>
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Application deadline (IST)<Input type="datetime-local" required
      name="deadline" defaultValue={istLocal(job.applicationDeadline)} className={cls}/></label>
@@ -236,9 +252,24 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessment deadline (IST)
       <Input type="datetime-local" name="assessmentDeadline" defaultValue={istLocal(job.assessmentDeadline)} className={cls}/>
     </label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2">Description<Textarea name="description" required
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2 min-[992px]:col-span-3">Job Description
+      <div className="flex flex-wrap gap-1.5 py-1" role="toolbar" aria-label="Job Description formatting">
+       {(["strong","em","p","li"] as const).map(tag=>
+        <Button key={tag} type="button" variant="secondary" size="sm" disabled={pending}
+         onClick={()=>insertRichTag("description",tag)}>
+         {tag==="strong"?"Bold":tag==="em"?"Italic":tag==="p"?"Paragraph":"List item"}
+        </Button>)}
+      </div>
+      <Textarea name="description" required
      maxLength={15000} defaultValue={job.description} rows={4} className={cls}/></label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2">Responsibilities
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2 min-[992px]:col-span-3">Responsibilities
+     <div className="flex flex-wrap gap-1.5 py-1" role="toolbar" aria-label="Responsibilities formatting">
+      {(["strong","em","p","li"] as const).map(tag=>
+       <Button key={tag} type="button" variant="secondary" size="sm" disabled={pending}
+        onClick={()=>insertRichTag("responsibilities",tag)}>
+        {tag==="strong"?"Bold":tag==="em"?"Italic":tag==="p"?"Paragraph":"List item"}
+       </Button>)}
+     </div>
      <Textarea name="responsibilities" maxLength={15000} rows={3} defaultValue={job.responsibilities} className={cls}/></label>
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Job Type
      <Select name="jobTypeLabel" required defaultValue={job.jobTypeLabel} className={cls}>
@@ -256,7 +287,7 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
       <option value="ONSITE">Onsite</option><option value="HYBRID">Hybrid</option>
       <option value="REMOTE">Remote</option>
      </Select></label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2">Locations (comma-separated)<Input name="locations"
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2 min-[992px]:col-span-3">Locations (comma-separated)<Input name="locations"
      defaultValue={job.locations.join(", ")} className={cls}/></label>
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Openings<Input name="openings" type="number" min={1}
      defaultValue={job.openings??""} className={cls}/></label>
@@ -264,7 +295,7 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
      type="number" min={0} defaultValue={job.minCtc??""} className={cls}/></label>
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum annual CTC (INR)<Input name="maximumAnnualCtcInr"
      type="number" min={0} defaultValue={job.maxCtc??""} className={cls}/></label>
-    <fieldset className="grid min-w-0 gap-3 border-t border-border pt-3 sm:col-span-2 sm:grid-cols-2">
+    <fieldset className="grid min-w-0 gap-3 border-t border-border pt-3 sm:col-span-2 min-[992px]:col-span-3 sm:grid-cols-2">
       <legend className="mb-3 text-sm font-semibold">Preferred candidate details (informational)</legend>
       <label className="grid gap-1 text-xs font-semibold">Preferred Degree
         <Input name="preferredDegree" maxLength={160} defaultValue={job.candidatePreferences.preferredDegree}/></label>
@@ -279,7 +310,7 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
       <p className="self-end text-xs text-muted-foreground">Saved as legacy display preferences, not admission eligibility gates.</p>
     </fieldset>
 
-    <fieldset className="min-w-0 space-y-3 border-t border-border pt-3 sm:col-span-2">
+    <fieldset className="min-w-0 space-y-3 border-t border-border pt-3 sm:col-span-2 min-[992px]:col-span-3">
      <legend className="text-sm font-semibold text-[var(--lms-heading)]">Important dates</legend>
      <p className="text-xs text-muted-foreground">Add up to 20 labelled dates. Times use IST.</p>
      {importantDates.map((row,index)=><div key={index} className="grid min-w-0 gap-2 rounded-[var(--lms-control-radius)] border border-border p-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
@@ -302,7 +333,7 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
       onClick={()=>{setImportantDates(rows=>[...rows,{label:"",at:""}]);setDirty(true);}}>+ Add important date</Button>
      {importantDates.length>=20?<p className="text-xs text-muted-foreground">Maximum 20 important dates reached.</p>:null}
     </fieldset>
-    <fieldset className="min-w-0 space-y-3 border-t border-border pt-3 sm:col-span-2">
+    <fieldset className="min-w-0 space-y-3 border-t border-border pt-3 sm:col-span-2 min-[992px]:col-span-3">
      <legend className="text-sm font-semibold text-[var(--lms-heading)]">Custom eligibility rules (informational)</legend>
      <p className="text-xs text-muted-foreground">Custom rules appear in the job description. Enforceable eligibility remains in the saved college policy.</p>
      {customRules.map((row,index)=><div key={index} className="grid min-w-0 gap-2 rounded-[var(--lms-control-radius)] border border-border p-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
@@ -322,15 +353,17 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
       onClick={()=>{setCustomRules(rows=>[...rows,{label:"",value:""}]);setDirty(true);}}>+ Add custom rule</Button>
      {customRules.length>=20?<p className="text-xs text-muted-foreground">Maximum 20 custom rules reached.</p>:null}
     </fieldset>
-    <div className="sm:col-span-2 border-y border-border py-3 text-sm">
+    <div className="sm:col-span-2 min-[992px]:col-span-3 border-y border-border py-3 text-sm">
+     <p className="font-semibold">Visibility</p>
+     <p className="mt-1 text-body">Legacy visibility: {job.legacyVisibilityType??"Not configured"}. Published targeting stays locked to protect applicants; use a draft copy for changes to the audience.</p>
      <p className="font-semibold">Target Audience · Department / Program / Batch / Class</p>
      <p className="mt-1 text-body">Published eligibility targeting is locked to protect existing applicant policy and historical evaluations. Duplicate this drive as a draft to change the dependent academic audience; blank restrictions mean all eligible students within the selected college.</p>
      {job.targeting?<p className="mt-1 text-muted-foreground">Saved restrictions: {job.targeting.programs} programs · {job.targeting.cohorts} batches · {job.targeting.sections} classes.</p>:<p role="alert" className="text-error">Eligibility policy could not be verified.</p>}
     </div>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2">Reason for edit
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2 min-[992px]:col-span-3">Reason for edit
      <Textarea name="reason" required minLength={10} maxLength={1000} rows={2} className={cls}/></label>
-    {error?<p role="alert" className="text-sm text-error sm:col-span-2">{error}</p>:null}
-    <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap sm:items-center sm:col-span-2">
+    {error?<p role="alert" className="text-sm text-error sm:col-span-2 min-[992px]:col-span-3">{error}</p>:null}
+    <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap sm:items-center sm:col-span-2 min-[992px]:col-span-3">
      <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending||!sourceReady}>
       {pending?"Saving…":"Review and save published changes"}</Button>
      <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={closeEditor}>Cancel</Button>
