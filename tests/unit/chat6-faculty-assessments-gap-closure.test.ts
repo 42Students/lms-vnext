@@ -42,7 +42,7 @@ describe("chat-6 Faculty assessments verified gap closure",()=>{
   it("FAC-assessments-06 single-click grade save and publication",()=>{
     const src0=source("src/components/courses/faculty-assignment-review.tsx");
     expect(src0).toContain("async function saveAndPublish");
-    expect(src0).toContain("Grade saved and published to the learner.");
+    expect(src0).toContain("Grade submitted. The learner can now see the score.");
     expect(src0).toContain("Submit grade");
   });
   it("FAC-assessments-07 grade publication and submission notifications",()=>{
@@ -104,8 +104,8 @@ describe("chat-6 Faculty assessments verified gap closure",()=>{
   });
   it("FAC-assessments-23 grade pending and graded points wording",()=>{
     const src0=source("src/components/courses/faculty-assignment-review.tsx");
-    expect(src0).toContain("Grade pending");
-    expect(src0).toContain("Graded: ");
+    expect(src0).toContain("Not graded");
+    expect(src0).toContain("Graded, not published");
     expect(src0).toContain("Submit grade");
   });
   it("FAC-assessments-29 stacked mobile assessment and grading actions",()=>{
@@ -123,15 +123,15 @@ describe("chat-6 Faculty assessments verified gap closure",()=>{
   });
   it("FAC-assessments-25 NOT-A-GAP legacy overview fields now shown",()=>{
     const src0=source("src/components/courses/faculty-assessment-overview.tsx");
-    expect(src0).toContain("Course: {item.courseName}");
-    expect(src0).toContain("Lesson: {item.lessonName}");
+    expect(src0).toContain("{item.courseName} · {item.sectionName} · {item.lessonName}");
+    expect(src0).toContain("Draft · hidden from students");
     expect(src0).toContain("Needs due date");
     expect(src0).toContain("Draft · hidden from students");
   });
   it("FAC-assessments-26 NOT-A-GAP zero-submission draft review supported",()=>{
     const src0=source("src/components/courses/faculty-assignment-review.tsx");
     expect(src0).toContain("if(status===\"DRAFT\")");
-    expect(src0).toContain("No submissions yet. Publish this assignment");
+    expect(src0).toContain('<EmptyState title="No submissions yet" description="Publish this assignment to allow students to submit work."');
   });
   it("FAC-assessments-28 NOT-A-GAP report headings and download exist",()=>{
     const src0=source("src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx");

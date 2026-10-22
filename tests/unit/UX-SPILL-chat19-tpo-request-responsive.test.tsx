@@ -1,5 +1,6 @@
 import {describe,expect,it} from "vitest";
 import {renderToStaticMarkup} from "react-dom/server";
+import {readFileSync} from "node:fs";
 import {
  TpoRequestPageClipboard,type TpoRequestClipboardRow,
 } from "@/components/placements/tpo-request-page-clipboard";
@@ -23,7 +24,9 @@ describe("UX-SPILL-TPO-CLIP-02: request mobile cards retain selection and full f
   expect(html).toContain("Select all request rows");
   expect(html).toContain("Select visible page");
   expect(html).toContain("Copy selected rows");
-  expect(html).toContain("Request spreadsheet scrollable columns");
+  // Check the caption-to-scroll-region linkage in the shared semantic table.
+  const table=readFileSync("src/components/ui/data-table.tsx","utf8");
+  expect(table).toContain('caption+" scrollable columns"');
   expect(html).toContain("min-w-[860px]");
   expect(html).not.toContain("md:block");
   expect(html).not.toContain("min-w-[46rem]");

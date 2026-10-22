@@ -25,7 +25,7 @@ describe("chat-6 tracker report and manager navigation parity",()=>{
     expect(form).toContain("Report another");
     expect(form).toContain("Similar issues");
     expect(form).toContain('"Find similar issues"');
-    expect(form).toContain('"/api/tracker/issues?"+query.toString()');
+    expect(form).toContain('"/api/tracker/issues?"+params.toString()');
     expect(api).toContain("listBugTrackerIssuesForAdmin(context, query)");
   });
   it("SA-placements-projects-112 exposes the legacy manager nav destinations with an accessible skip target",()=>{
@@ -34,8 +34,8 @@ describe("chat-6 tracker report and manager navigation parity",()=>{
     expect(nav).toContain('href="#tracker-content"');
     expect(nav).toContain('id="tracker-content"');
     expect(nav).toContain('href="/tracker"');
-    expect(nav).toContain('href="/tracker/issues"');
-    expect(nav).toContain('href="/tracker/logs"');
-    expect(nav).toContain('href="/tracker/audit-findings"');
+    expect(nav).toContain('href: "/tracker/issues"');
+    expect(nav).toContain('href: "/tracker/logs"');
+    expect(nav).toContain('href: "/tracker/audit-findings"');
   });
 });

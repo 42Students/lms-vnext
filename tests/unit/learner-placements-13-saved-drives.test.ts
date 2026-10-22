@@ -12,7 +12,8 @@ describe("LEARNER-placements-13 saved drive bookmarks",()=>{
   expect([...summary.visibleIds]).toEqual(["a"]);
  });
  it("LEARNER-placements-13 uses the exact legacy saved-drive button and toast text",()=>{
-  expect(learnerSavedDriveCopy(false)).toEqual({action:"Save for later",toast:"Saved for later"});
-  expect(learnerSavedDriveCopy(true)).toEqual({action:"Remove from saved jobs",toast:"Removed from saved jobs"});
+  expect(learnerSavedDriveCopy(false)).toMatchObject({action:"Save for later",toast:"Saved for later",iconLabel:"Not saved",showToast:true});
+  expect(learnerSavedDriveCopy(true)).toMatchObject({action:"Remove from saved jobs",toast:"Removed from saved jobs",iconLabel:"Saved",showToast:true});
+  expect(learnerSavedDriveCopy(false,"LIST")).toMatchObject({toast:null,showToast:false});
  });
 });

@@ -9,7 +9,7 @@ describe("Chat5 next batch states",()=>{
   expect(loading).toContain("<GracefulPageLoading");
   expect(src("src/components/ui/graceful-page-loading.tsx")).toContain("aria-busy={true}");
   expect(src("src/components/ui/graceful-page-loading.tsx")).toContain("animate-pulse");
-  expect(failure).toContain("Couldn&apos;t refresh batches");
+  expect(failure).toContain("Couldn't refresh batches");
   expect(failure).toContain("No eligibility decisions were changed.");
   expect(failure).toContain('onClick={reset}>Retry');
  });

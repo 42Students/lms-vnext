@@ -3,7 +3,8 @@ import { DateInput } from "@/components/ui/date-input";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 
-import {useState,useTransition,type FormEvent} from "react";
+import {useRef,useState,useTransition,type FormEvent} from "react";
+import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 type Classroom={id:string;name:string;cohortName:string;periodStart:string;periodEnd:string;updatedAt:string};
@@ -12,14 +13,18 @@ export function CollegeHallBookingAction({hallId,classes,faculty}:{
   hallId:string;classes:Classroom[];faculty:Faculty[];
 }){
   const router=useRouter(),[pending,start]=useTransition();
+  const {askConfirm,dialog}=useConfirmFlow();
+  const pendingRef=useRef(false);
   const [sectionId,setSectionId]=useState(""),[facultyId,setFacultyId]=useState("");
   const [date,setDate]=useState(""),[from,setFrom]=useState("09:00"),[to,setTo]=useState("10:00");
   const [title,setTitle]=useState("Class session"),[error,setError]=useState(""),[notice,setNotice]=useState("");
   const selected=classes.find(row=>row.id===sectionId);
-  function submit(event:FormEvent<HTMLFormElement>){
+  async function submit(event:FormEvent<HTMLFormElement>){
     event.preventDefault();
-    if(!selected)return;
-    if(!window.confirm("Book this class session? All hall, class and Faculty overlaps will be rechecked."))return;
+    if(!selected||pendingRef.current||pending)return;
+    if(!(await askConfirm("Book this class session? All hall, class and Faculty overlaps will be rechecked.")))return;
+    if(pendingRef.current)return;
+    pendingRef.current=true;
     setError("");setNotice("");
     start(async()=>{
       try{
@@ -28,12 +33,10 @@ export function CollegeHallBookingAction({hallId,classes,faculty}:{
           body:JSON.stringify({sectionId,facultyMembershipId:facultyId||null,date,from,to,title,
             expectedSectionUpdatedAt:selected.updatedAt,confirm:true}),
         });
-        if(!response.ok){
-          const result=await response.json().catch(()=>({error:"HALL_BOOKING_FAILED"})) as {error?:string};
-          throw new Error(result.error??"HALL_BOOKING_FAILED");
-        }
+        if(!response.ok)throw new Error("Booking could not be saved. Check hall, class and Faculty availability before retrying.");
         setNotice("Session booked and audited.");router.refresh();
-      }catch(reason){setError(reason instanceof Error?reason.message:"Booking failed");}
+      }catch{setError("Booking could not be saved. Check hall, class and Faculty availability before retrying.");}
+      finally{pendingRef.current=false;}
     });
   }
   const field="min-h-11 md:min-h-9 min-w-0";
@@ -71,5 +74,6 @@ export function CollegeHallBookingAction({hallId,classes,faculty}:{
     {notice?<p role="status" className="mt-2 text-sm text-success">{notice}</p>:null}
       </div>
     </details>
+    {dialog}
   </section>;
 }

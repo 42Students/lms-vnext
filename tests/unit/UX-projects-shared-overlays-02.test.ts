@@ -42,7 +42,9 @@ describe("UX-projects-shared-overlays-02 guarded action/confirmation paths",()=>
     expect(s).toContain("<PopoverPanel");
     expect(s).toContain('onDismiss={dismiss}');
     expect(s).toContain('triggerRef.current?.focus()');
-    expect(s).toContain("onOpenChange={setOpen}");
+    expect(s).toContain("onDismiss={dismiss}");
+    expect(s).toContain("triggerRef.current?.focus()");
+    expect(s).toContain('aria-haspopup="dialog"');
   });
   it("project-create-control opens a named workspace creation dialog",()=>{
     const s=src("project-create-control");

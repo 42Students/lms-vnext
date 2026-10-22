@@ -12,7 +12,7 @@ describe("TPO campaign delivery receipts and audit",()=>{
   expect(service).toContain("recipientKey:placementTpoEmailCampaignRecipients.recipientKey");
   expect(service).toContain("eq(placementTpoEmailCampaignRecipients.collegeId,college.id)");
   expect(service).toContain("tx.insert(messagingDeliveryReceipts).values(receipts)");
-  expect(service).toContain("finalizedAt:new Date()");
+  expect(service).toContain("finalizedAt:unresolved?null:new Date()");
   expect(service).toContain('status:"SENDING"');
   expect(service).toContain('"QUEUED"');
   expect(service).toContain(".set({status:preliminary})");
@@ -27,6 +27,8 @@ describe("TPO campaign delivery receipts and audit",()=>{
   expect(service).toContain('row.status==="SKIPPED_NO_EMAIL"?"invalid-recipient":"unsubscribed"');
   const history=src("src/app/(authenticated)/tpo/recruiters/campaigns/page.tsx");
   expect(src("src/components/tpo/tpo-campaign-send-control.tsx")).toContain("Provider acceptance does not prove delivery.");
-  expect(history).toContain("TpoCampaignSendControl");
+  expect(history).toContain('href={"/tpo/recruiters/campaigns/drafts/"+encodeURIComponent(item.campaign_id)}');
+  const draft=src("src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx");
+  expect(draft).toContain("<TpoCampaignSendControl");
  });
 });

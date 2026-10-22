@@ -8,7 +8,7 @@ describe("UX-courses-external-links-01 safe learner and offering external conten
    const src=read(component);
    expect(src).toContain('rel="noopener noreferrer"');
    expect(src).not.toContain('target="_blank"');
-   expect(src).toMatch(/href=\{(?:item\.)?externalUrl\}/);
+   expect(src).toContain(component==="learner-youtube-player"?'href={videoUrl}':'href={item.externalUrl}');
    expect(src).toContain("min-h-11");
   });
  }

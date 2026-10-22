@@ -31,7 +31,7 @@ export default async function MentorProjectTimelinePage({
   const data=await getMentorProjectTimeline(
     await getCurrentRequestContext(),parsed.data,
   );
-  const filtered=data.query.releaseStatus!=="ALL"||data.query.sprintStatus!=="ALL";
+  const filtered=parsed.data.releaseStatus!=="ALL"||parsed.data.sprintStatus!=="ALL";
   return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Release & Sprint timeline"
       description={data.enabled?data.projectTitle:"Projects access is disabled; no timeline was loaded."}

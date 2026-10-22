@@ -208,6 +208,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
       <Button type="button" variant="secondary" aria-pressed={!reason} disabled={saving}
        onClick={()=>setReason("")}>Write my own reason</Button>
      </div>
+     <p className="text-sm text-[var(--lms-body-text)]">The student sees your reason and fixes it on their profile.</p>
      <label className="grid gap-1 text-sm font-semibold">Or write what needs to change
       <Textarea rows={3} value={additional} onChange={event=>setAdditional(event.target.value)}
        maxLength={500} placeholder="Or write what needs to change" disabled={saving}/>

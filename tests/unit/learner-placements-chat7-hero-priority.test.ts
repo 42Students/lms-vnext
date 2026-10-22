@@ -14,6 +14,8 @@ describe("learner placements next-action hero",()=>{
  });
  it("LEARNER-placements-05 reads accepted offers from scoped server source",()=>{
   const page=readFileSync(new URL("../../src/app/(authenticated)/learn/my-placements/page.tsx",import.meta.url),"utf8");
-  expect(page).toContain('acceptedOffer={offerRows?offerRows.some(row=>row.offer.status==="ACCEPTED"):null}');
+  expect(page).toContain('acceptedOffer={countingOfferKnown?Boolean(countingAcceptedOffer):null}');
+  expect(page).toContain('offer.offer.status==="ACCEPTED"');
+  expect(page).toContain('row.job.countsAsPlaced===true');
  });
 });

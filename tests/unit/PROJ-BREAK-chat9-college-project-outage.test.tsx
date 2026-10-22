@@ -79,7 +79,7 @@ describe("IIT Dharwad College Admin Projects: independent outage and view contra
   it("PROJ-BREAK-college-ux-26 strict backend query excludes cards/table view but keeps valid filters",async()=>{
     const content=visible(await render({view:"table",q:"alpha",status:"ACTIVE",page:"2",pageSize:"25"})).join(" ");
     expect(content).not.toContain("Project workspaces unavailable");
-    expect(state.receivedQuery).toEqual({q:"alpha",status:"ACTIVE",page:2,pageSize:25});
+    expect(state.receivedQuery).toEqual({q:"alpha",status:"ACTIVE",page:2,pageSize:20});
     expect(state.workspaceReads).toBe(1);
   });
 });

@@ -80,7 +80,7 @@ export async function CollegeWebAddressContent({ params }: {
      {managedResult.status==="fulfilled"&&managedResult.value?.currentHost?
        <p role="status" className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-success bg-success-subtle px-3 py-2 text-sm">
          <strong>Live at</strong>
-         <a href={"https://"+managedResult.value.currentHost} target="_blank" rel="noopener noreferrer"
+         <a href={"https://"+managedResult.value.currentHost}
            className="break-all font-semibold text-primary-text underline">{managedResult.value.currentHost} ↗</a>
        </p>:null}
      {managedResult.status==="fulfilled"&&managedResult.value ? <ManagedCollegeSubdomain collegeId={college.id} initial={managedResult.value}/> :

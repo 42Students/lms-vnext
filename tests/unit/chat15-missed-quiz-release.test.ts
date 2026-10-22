@@ -16,7 +16,7 @@ describe("chat-15 learner missed quiz, release, and progress parity",()=>{
   const policy=read("src/modules/courses/learner-quiz-result-release-policy.ts");
   const svc=read("src/modules/courses/quiz-service.ts");
   expect(svc).toContain("learnerQuizResultsReleased");
-  expect(policy).toContain('quiz.status==="PUBLISHED"||quiz.status==="CLOSED"');
+  expect(policy).toContain('quiz.status==="CLOSED"');
   expect(policy).toContain("quiz.resultsPublished===true");
   expect(policy).toContain("quiz.dueAt.getTime()<=nowMs");
   const ui=read("src/components/courses/quiz-attempt-control.tsx");

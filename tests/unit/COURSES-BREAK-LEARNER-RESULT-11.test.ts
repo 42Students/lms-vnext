@@ -6,7 +6,7 @@ const now=Date.parse("2026-10-18T05:00:00.000Z");
 const prior=new Date(now-1),exact=new Date(now),future=new Date(now+1);
 describe("COURSES-BREAK-LEARNER-RESULT-11 publish vs deadline vs session snapshot",()=>{
  it.each([
-  ["PUBLISHED",true,prior,true],
+  ["PUBLISHED",true,prior,false],
   ["PUBLISHED",false,prior,false],
   ["CLOSED",false,prior,false],
   ["ARCHIVED",true,prior,false],

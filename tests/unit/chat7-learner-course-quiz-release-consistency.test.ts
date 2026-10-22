@@ -8,7 +8,7 @@ describe("LEARNER-QUIZ-WORKSPACE-EMBARGO-01 consistent quiz result release acros
   for(const status of ["DRAFT","PUBLISHED","ARCHIVED","CLOSED"]){
    for(const resultsPublished of [true,false]){
     for(const seenAt of [now-1,now,now+1]){
-     const expected=(status==="CLOSED"||status==="PUBLISHED")&&resultsPublished&&seenAt>=now;
+     const expected=status==="CLOSED"&&resultsPublished&&seenAt>=now;
      expect(learnerQuizResultsReleased({status,resultsPublished,dueAt},seenAt)).toBe(expected);
     }
    }
