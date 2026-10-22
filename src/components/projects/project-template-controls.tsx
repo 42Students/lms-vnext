@@ -327,6 +327,7 @@ export function ProjectTemplateActions({
     useState<string | null>(null);
   const [confirmArchive, setConfirmArchive] =
     useState(false);
+  const [confirmLifecycle,setConfirmLifecycle]=useState<"PUBLISH"|"UNPUBLISH"|null>(null);
 
   const [confirmRevoke, setConfirmRevoke] = useState(false);
   const [duplicateOpen,setDuplicateOpen]=useState(false);
@@ -432,13 +433,7 @@ export function ProjectTemplateActions({
             disabled={pending !== null || overviewDirty || missing.length>0}
             title={overviewDirty?"Save your overview changes before publishing":
               missing.length?"Complete "+missing.join(", ")+" before publishing":undefined}
-            onClick={() =>
-              void mutate(
-                "Publish template",
-                "/api/projects/templates/" + templateId + "/publish",
-                "POST",
-              )
-            }
+            onClick={() => setConfirmLifecycle("PUBLISH")}
           >
             {pending === "Publish template" ? "Publishing…" : "Publish"}
           </Button>
@@ -462,13 +457,7 @@ export function ProjectTemplateActions({
             loading={pending === "Unpublish template"}
             disabled={pending !== null || overviewDirty}
             title={overviewDirty?"Save overview changes first":undefined}
-            onClick={() =>
-              void mutate(
-                "Unpublish template",
-                "/api/projects/templates/" + templateId + "/unpublish",
-                "POST",
-              )
-            }
+            onClick={() => setConfirmLifecycle("UNPUBLISH")}
           >
             {pending === "Unpublish template" ? "Unpublishing…" : "Unpublish"}
           </Button>
@@ -530,15 +519,15 @@ export function ProjectTemplateActions({
         description="Create a new draft copy. The source template and its assigned workspaces remain unchanged."
         footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button className="w-full sm:w-auto" variant="secondary" disabled={pending!==null} onClick={()=>setDuplicateOpen(false)}>Cancel</Button>
-          <Button className="w-full sm:w-auto" loading={pending==="Duplicate template"} disabled={pending!==null||!copyTitle.trim()||!copySlug.trim()}
+          <Button className="w-full sm:w-auto" loading={pending==="Duplicate template"} disabled={pending!==null}
             onClick={()=>void duplicate()}>{pending==="Duplicate template"?"Duplicating…":"Duplicate template"}</Button>
         </div>}>
         <div className="grid gap-3">
           <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New title
-            <Input required maxLength={200} value={copyTitle} onChange={e=>setCopyTitle(e.target.value)}/>
+            <Input maxLength={200} value={copyTitle} onChange={e=>setCopyTitle(e.target.value)}/>
           </label>
           <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New slug
-            <Input required maxLength={64} pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
+            <Input maxLength={64} pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
               value={copySlug} onChange={e=>setCopySlug(e.target.value.toLowerCase())}/>
           </label>
           <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New summary
@@ -546,8 +535,28 @@ export function ProjectTemplateActions({
           </label>
         </div>
       </Dialog>
+      <Dialog open={confirmLifecycle!==null} onOpenChange={open=>{if(!open)setConfirmLifecycle(null);}}
+        title={confirmLifecycle==="PUBLISH"?"Publish this template?":"Unpublish this template?"}
+        description={confirmLifecycle==="PUBLISH"
+          ?"Publishing makes this template available for college assignment. Existing workspaces keep their versions."
+          :"Unpublishing stops new assignments and workspace creation. Existing workspaces remain unaffected."}
+        footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button variant="secondary" disabled={pending!==null} onClick={()=>setConfirmLifecycle(null)}>Cancel</Button>
+          <Button disabled={pending!==null} onClick={()=>{
+            const action=confirmLifecycle;
+            setConfirmLifecycle(null);
+            if(action==="PUBLISH")void mutate("Publish template",
+              "/api/projects/templates/"+templateId+"/publish","POST");
+            else if(action==="UNPUBLISH")void mutate("Unpublish template",
+              "/api/projects/templates/"+templateId+"/unpublish","POST");
+          }}>{confirmLifecycle==="PUBLISH"?"Publish":"Unpublish"}</Button>
+        </div>}>
+        <p className="m-0 text-sm leading-6 text-body">
+          Confirm this change to the published template lifecycle.
+        </p>
+      </Dialog>
       <Dialog open={confirmRevoke} onOpenChange={setConfirmRevoke}
-        title="Revoke college assignment?" description={templateAssignmentRevocationNotice()}
+        title="Remove this template from the college?" description={templateAssignmentRevocationNotice()}
         footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button className="w-full sm:w-auto" variant="secondary" disabled={pending !== null} onClick={() => setConfirmRevoke(false)}>Cancel</Button>
           <Button disabled={pending !== null || !selectedCollegeId} onClick={() => {
@@ -555,7 +564,7 @@ export function ProjectTemplateActions({
             setConfirmRevoke(false);
             void mutate("Revoke college assignment", "/api/projects/templates/" + templateId + "/assignments",
               "DELETE", { collegeId: selectedCollegeId });
-          }} className="w-full sm:w-auto" loading={pending==="Revoke college assignment"}>Confirm revocation</Button>
+          }} className="w-full sm:w-auto" loading={pending==="Revoke college assignment"}>Remove</Button>
         </div>}>
         <p className="text-sm text-body">Only this college&apos;s availability changes.</p>
       </Dialog>

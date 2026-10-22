@@ -1,7 +1,7 @@
 import "server-only";
 import {and,asc,eq,ne,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {collegeMemberships,placementApplications,placementJobRounds,placementJobs,placementRoundResults,users} from "@/db/schema";
+import {collegeMemberships,learnerProfiles,placementApplications,placementJobRounds,placementJobs,placementRoundResults,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {applyPlacementRoundResult} from "./result-service";
@@ -23,12 +23,15 @@ export async function getTpoRoundApplyPreview(context:RequestContext,rawJobId:un
  if(!scope)throw new PlacementsServiceError("PLACEMENT_ROUND_NOT_FOUND");
  const facts=await getDb().select({
   resultId:placementRoundResults.id,applicationId:placementRoundResults.applicationId,
-  student:users.displayName,outcome:placementRoundResults.outcome,
+  student:users.displayName,roll:learnerProfiles.rollNumber,
+  outcome:placementRoundResults.outcome,source:placementRoundResults.source,
+  reasonCategory:placementRoundResults.reasonCategory,
   status:placementRoundResults.status,version:placementRoundResults.version,
  }).from(placementRoundResults)
   .innerJoin(placementApplications,eq(placementApplications.id,placementRoundResults.applicationId))
   .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
   .where(and(eq(placementRoundResults.roundId,roundId),
    eq(placementApplications.jobId,jobId),eq(collegeMemberships.collegeId,collegeId),
    ne(placementRoundResults.status,"SUPERSEDED")))
@@ -41,7 +44,9 @@ export async function getTpoRoundApplyPreview(context:RequestContext,rawJobId:un
  const currentIndex=evaluativeRounds.findIndex(x=>x.id===roundId);
  const next=currentIndex>=0?evaluativeRounds[currentIndex+1]??null:null;
  const passDestination=next?next.kind==="INTERVIEW"?"Interview":next.kind==="GD"?"Group discussion":next.kind==="VENDOR_TEST"?"External assessment":"Next test":"Final round cleared";
- const rows=facts.map(x=>({...x,student:x.student??"Learner",
+ // Show the legacy entered-by source, reason and learner roll while leaving
+ // internal reviewer comments and candidate messages in authorized detail views.
+ const rows=facts.map(x=>({...x,student:x.student??"Learner",roll:x.roll??"",
   destination:x.outcome==="PASS"?passDestination:x.outcome==="FAIL"?"Not cleared":
    x.outcome==="HOLD"?"Waitlisted":"Absent"}));
  const ready=scope.jobStatus==="PUBLISHED"&&scope.roundStatus==="COMPLETED"&&scope.roundKind!=="TALK";
