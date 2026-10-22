@@ -36,3 +36,10 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/app/(authenticated)/admin/companies/page.tsx
 - Legacy: Colleges and Drives columns widths90/80 `docs/legacy-source/frontend/src/pages/superadmin/sections/CompanyCuration.js:68-69`
 - Expected fix: Show global platform aggregates in fixed-width table columns.
+
+## Lane-12 fast verification triage (2026-10-22)
+
+OK (limited to cited behavior inspected in vNext): G2-9-011-020, G2-9-011-046, G2-9-028-019.
+
+DEFERRED — not verified or fixed; needs deeper implementation, policy, API or migration review: G2-9-014-030, G2-9-014-098, G2-9-033-090, G2-9-034-064.
+Triage is complete, parity verification is not. Do not interpret deferred rows as completed fixes.
