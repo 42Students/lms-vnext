@@ -1,8 +1,9 @@
 import "server-only";
-import { and, asc, desc, eq, exists, gte, ilike, or, sql } from "drizzle-orm";
+import {z} from "zod";
+import { and, asc, desc, eq, exists, gte, ilike, or, sql,lte } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, placementApplications, placementApplicationScreenings, placementJobRoleOptions,
-  placementJobs, users, learnerProfiles, learnerProgramEnrollments, cohorts, programs, departments,placementCandidateAcademicEvidence } from "@/db/schema";
+  placementJobs, users, learnerProfiles, learnerProgramEnrollments, sectionEnrollments, cohorts, programs, departments,placementCandidateAcademicEvidence } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
@@ -10,6 +11,25 @@ import { PlacementsServiceError } from "./errors";
 import { requireTpoJobActor } from "./tpo-job-write-base";
 import { tpoApplicantPipelinePage, tpoApplicantPipelineParams,tpoApplicantSubmittedSince } from "./tpo-applicant-pipeline-model";
 import {tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-model";
+/** Job/college scoped compatibility facets. Org-wide indexing uses another service. */
+const oldFacetsSchema=z.strictObject({
+ submittedAfter:z.iso.date().optional(),submittedBefore:z.iso.date().optional(),
+ minScore:z.coerce.number().int().min(0).max(100).optional(),
+ maxScore:z.coerce.number().int().min(0).max(100).optional(),
+ cohortId:z.uuid().optional(),sectionId:z.uuid().optional(),
+ programId:z.uuid().optional(),departmentId:z.uuid().optional(),
+ source:z.enum(["ALL","LEARNER","COLLEGE"]).default("ALL"),
+}).superRefine((x,ctx)=>{
+ if(x.minScore!==undefined&&x.maxScore!==undefined&&x.maxScore<x.minScore)
+  ctx.addIssue({code:"custom",path:["maxScore"],message:"Maximum score cannot be below minimum"});
+ if(x.submittedAfter&&x.submittedBefore&&x.submittedBefore<x.submittedAfter)
+  ctx.addIssue({code:"custom",path:["submittedBefore"],message:"End date must follow start date"});
+});
+export const legacyTpoApplicantRouteMap={
+ list:"GET /api/placements/tpo/jobs/[jobId]/applicants-pipeline",
+ detail:"GET /api/placements/jobs/[jobId]",
+ jobApplications:"GET /api/placements/jobs/[jobId]/applications",
+} as const;
 export async function getTpoApplicantPipeline(context: RequestContext, raw: unknown) {
   const membership = context.membership;
   if (!membership || !hasMembershipRole(context,"TPO") ||
@@ -19,7 +39,14 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
   const collegeId=membership.collegeId;
   if(!can(context,"placements.manage",{collegeId})) throw new AuthorizationError("placements.manage");
   requirePermission(context,"placements.manage",{collegeId});
-  const input=tpoApplicantPipelineParams.parse(raw);
+  const params:Record<string,unknown>=raw&&typeof raw==="object"&&!Array.isArray(raw)?
+   {...raw as Record<string,unknown>}:{ };
+  const oldRaw:Record<string,unknown>={};
+  for(const key of ["submittedAfter","submittedBefore","minScore","maxScore","cohortId","sectionId","programId","departmentId","source"]){
+   if(Object.prototype.hasOwnProperty.call(params,key)){oldRaw[key]=params[key];delete params[key];}
+  }
+  const input=tpoApplicantPipelineParams.parse(params);
+  const oldFacets=oldFacetsSchema.parse(oldRaw);
   await requirePlacementManageScope(context,collegeId);
   const db=getDb();
   await db.transaction(async(tx)=>{await requireTpoJobActor(tx,context);},{accessMode:"read only"});
@@ -33,6 +60,24 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
   const projection=await db.transaction(async tx=>{
    const since=tpoApplicantSubmittedSince(input.submittedWithin,new Date());
    const queryPattern=tpoApplicantExportSearchPattern(input.search);
+   const from=oldFacets.submittedAfter?new Date(oldFacets.submittedAfter+"T00:00:00+05:30"):null;
+   const before=oldFacets.submittedBefore?
+    new Date(Date.parse(oldFacets.submittedBefore+"T00:00:00+05:30")+86400000-1):null;
+   const rosterScope=oldFacets.cohortId||oldFacets.sectionId||oldFacets.programId||oldFacets.departmentId?exists(
+    tx.select({id:learnerProgramEnrollments.id})
+     .from(learnerProgramEnrollments)
+     .innerJoin(cohorts,eq(cohorts.id,learnerProgramEnrollments.cohortId))
+     .innerJoin(programs,eq(programs.id,cohorts.programId))
+     .innerJoin(departments,eq(departments.id,programs.departmentId))
+     .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),
+       eq(learnerProgramEnrollments.status,"ACTIVE"),eq(departments.collegeId,collegeId),
+       oldFacets.cohortId?eq(cohorts.id,oldFacets.cohortId):undefined,
+       oldFacets.programId?eq(programs.id,oldFacets.programId):undefined,
+       oldFacets.departmentId?eq(departments.id,oldFacets.departmentId):undefined,
+       oldFacets.sectionId?exists(tx.select({id:sectionEnrollments.id}).from(sectionEnrollments)
+         .where(and(eq(sectionEnrollments.learnerEnrollmentId,learnerProgramEnrollments.id),
+           eq(sectionEnrollments.sectionId,oldFacets.sectionId)))):undefined))
+   ):undefined;
    const rosterMatch=input.search?exists(
     tx.select({id:learnerProgramEnrollments.id})
       .from(learnerProgramEnrollments)
@@ -62,12 +107,20 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     sql`${placementApplications.legacyWasDeleted} is distinct from true`,
     flagScope,
     since?gte(placementApplications.submittedAt,since):undefined,
+    from?gte(placementApplications.submittedAt,from):undefined,
+    before?lte(placementApplications.submittedAt,before):undefined,
+    oldFacets.source==="COLLEGE"?sql<boolean>`${placementApplications.submittedByUserId}<>${collegeMemberships.userId}`:
+     oldFacets.source==="LEARNER"?eq(placementApplications.submittedByUserId,collegeMemberships.userId):undefined,
+    oldFacets.minScore!==undefined?gte(placementApplicationScreenings.scorePercent,oldFacets.minScore):undefined,
+    oldFacets.maxScore!==undefined?lte(placementApplicationScreenings.scorePercent,oldFacets.maxScore):undefined,
+    rosterScope,
     input.channel!=="ALL"?eq(placementApplications.channel,input.channel):undefined,
     input.eligibility!=="ALL"?eq(placementApplications.eligibilityStatus,input.eligibility):undefined,
     input.search?or(
       ilike(users.displayName,queryPattern),ilike(placementJobRoleOptions.title,queryPattern),
       ilike(learnerProfiles.rollNumber,queryPattern),ilike(users.email,queryPattern),
-      ilike(users.phoneE164,queryPattern),rosterMatch):undefined);
+      ilike(users.phoneE164,queryPattern),rosterMatch,
+      sql<boolean>`concat_ws(' ',coalesce(${users.displayName},''),coalesce(${placementJobRoleOptions.title},''),coalesce(${learnerProfiles.rollNumber},''),coalesce(${users.email},'')) ilike ${queryPattern}`):undefined);
    const stage=sql`case when ${placementApplications.status} = 'WITHDRAWN' then 'WITHDRAWN'
     when ${placementApplicationScreenings.status} in ('SHORTLISTED','HOLD','REJECTED')
     then ${placementApplicationScreenings.status}::text else 'PENDING' end`;
@@ -97,7 +150,7 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
    const pagination=tpoApplicantPipelinePage(totalMatching,input.page);
    const records=await tx.select({
     id:placementApplications.id,
-    student:users.displayName,
+    student:sql<string>`coalesce(nullif(trim(${users.displayName}),''),nullif(trim(${learnerProfiles.rollNumber}),''),split_part(${users.email},'@',1),'Learner')`,
     role:placementJobRoleOptions.title,
     rollNumber:learnerProfiles.rollNumber,
     email:users.email,
@@ -131,6 +184,7 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
       order by r.sequence desc,result.updated_at desc limit 1)`,
     applicationStatus:placementApplications.status,
     screeningStatus:placementApplicationScreenings.status,
+    screeningScore:placementApplicationScreenings.scorePercent,
     screeningUpdatedAt:placementApplicationScreenings.updatedAt,
     eligibilityStatus:placementApplications.eligibilityStatus,
     channel:placementApplications.channel,
@@ -189,7 +243,7 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     screeningUpdatedAt:row.screeningUpdatedAt?.toISOString()??null,
    }))};
   },{isolationLevel:"repeatable read",accessMode:"read only"});
-  return {job,stage:input.stage,search:input.search,channel:input.channel,eligibility:input.eligibility,sort:input.sort,submittedWithin:input.submittedWithin,flag:input.flag,...projection};
+  return {job,stage:input.stage,search:input.search,channel:input.channel,eligibility:input.eligibility,sort:input.sort,submittedWithin:input.submittedWithin,flag:input.flag,oldFacets,...projection};
 }
 
 // Organization-wide access is a separate explicitly authorized Super Admin surface.

@@ -34,7 +34,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_recruiter-placement-portfolio.tsx.md` (edit src/components/placements/recruiter-placement-portfolio.tsx; 14 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_super-admin-company-identities-service.ts.md` (edit src/modules/placements/super-admin-company-identities-service.ts; 14 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_public-join_send-code-service.ts.md` (edit src/modules/placements/public-join/send-code-service.ts; 14 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_tpo-applicant-pipeline-service.ts.md` (edit src/modules/placements/tpo-applicant-pipeline-service.ts; 12 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_tpo-applicant-pipeline-service.ts.md` (edit src/modules/placements/tpo-applicant-pipeline-service.ts; 12 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_super-admin-needs-attention.tsx.md` (edit src/components/placements/super-admin-needs-attention.tsx; 11 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_public-page_read-service.ts.md` (edit src/modules/placements/public-page/read-service.ts; 11 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_recruiter-message-email-dispatch-service.ts.md` (edit src/modules/placements/recruiter-message-email-dispatch-service.ts; 11 findings; best P2)
