@@ -1,11 +1,10 @@
 "use client";
 import { Alert } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { BoardColumn } from "@/components/ui/board-column";
 import styles from "./legacy-project-board.module.css";
-import {useEffect,useMemo,useState} from "react";
+import {useMemo,useState} from "react";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import {DataTable} from "@/components/ui/data-table";
@@ -199,26 +198,26 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
     To assign a task without dragging, use the Assign to selector on its card.
   </p>
   <div role="region" aria-label="Task allocation cards; scroll sideways for more learners" tabIndex={0} data-dragging={dragging}
-    className={styles.scrollRegion}><div className={styles.track}>
+    className={styles["scrollRegion"]}><div className={styles["track"]}>
    {groups.map(group=>{
     const cards=filtered.filter(task=>task.assigneeMembershipId===group.membershipId);
     return <BoardColumn key={group.membershipId??"unassigned"} label={group.displayName??"Learner"}
-       className={[styles.lane,group.membershipId===null?styles.backlogLane:"",groups.length===1?styles.singleLane:""].filter(Boolean).join(" ")}
+       className={[styles["lane"],group.membershipId===null?styles["backlogLane"]:"",groups.length===1?styles["singleLane"]:""].filter(Boolean).join(" ")}
        data-can-drop={!readOnly&&!busy}
       onDragOver={e=>e.preventDefault()} onDrop={e=>drop(e,group.membershipId)}>
-     <h2 className={styles.header}>
+     <h2 className={styles["header"]}>
       <span>{group.displayName??"Learner"}</span><span>{cards.length}</span></h2>
      <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
       {cards.filter(task=>task.status==="DONE").length} done ·
       {" "}{cards.filter(task=>task.status==="BLOCKED").length} blocked ·
       {" "}{cards.reduce((sum,task)=>sum+(task.estimatePoints??0),0)} pts
      </p>
-     <ul className={styles.body}>{cards.map(task=><li key={task.id}
+     <ul className={styles["body"]}>{cards.map(task=><li key={task.id}
        draggable={!readOnly&&!busy&&!["DONE","IN_REVIEW"].includes(task.status)}
        aria-describedby={!readOnly?"mentor-allocation-keyboard-help":undefined}
        onDragStart={event=>{event.dataTransfer.setData("text/plain",task.id);setDragging(true);}}
         onDragEnd={()=>setDragging(false)}
-       className={"border p-3 text-sm "+styles.card}>
+       className={"border p-3 text-sm "+styles["card"]}>
        <p className="break-words font-semibold">{task.title}</p>
        <p className="mt-1 text-xs text-body leading-[20px]">{task.priority} · {task.status}</p>
        <p className="mt-1 text-xs text-body leading-[20px]">
