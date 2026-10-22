@@ -16,9 +16,11 @@ describe("Faculty languages section",()=>{
   }).languages).toEqual([]);
  });
  it("rejects malformed entries and duplicate IDs",()=>{
-  expect(()=>updateFacultyProfileSection(emptyFacultyProfileDocument,{
+  // Historic untitled entries remain editable rather than being deleted.
+  const untitled=updateFacultyProfileSection(emptyFacultyProfileDocument,{
    section:"languages",value:[{id,language:"",proficiency:"Fluent"}],expectedVersion:0,
-  })).toThrow();
+  });
+  expect(untitled.languages[0]?.language).toBe("");
   const row=[{id,language:"Telugu",proficiency:"Fluent"}][0];
   expect(()=>updateFacultyProfileSection(emptyFacultyProfileDocument,{
    section:"languages",value:[row,row],expectedVersion:0,

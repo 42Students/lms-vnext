@@ -28,7 +28,7 @@ describe("resilient one-time-code sign in", () => {
     expect(login).toContain('apiFetch<T>(url, {');
     expect(login).toContain("useGuardedAction(");
     expect(login).toContain("Your code is on its way.");
-    expect(login).toContain("Get the code by email");
+    expect(login).toContain('"We sent a code to " + result.data.maskedContact');
     expect(login).toContain("It expires in 5 minutes.");
     expect(login).toContain("      ));");
     expect(login).toContain("window.clearTimeout(slowNotice);");
