@@ -287,13 +287,21 @@ export async function getPlacementOfferReleaseState(
   .where(eq(placementOffers.applicationId,applicationId))
   .orderBy(desc(placementOffers.issuedAt),desc(placementOffers.id)).limit(1);
  const state=selection?.status??"NOT_SELECTED";
+ // Legacy migration could record RELEASED on the application while the
+ // separately persisted offer is missing or references another row. Never
+ // infer a learner-visible offer from that coarse application status.
+ const inconsistentLegacyRelease=state==="RELEASED"&&
+  (!selection?.releasedOfferId||!latestOffer||
+   selection.releasedOfferId!==latestOffer.id);
  const issued=latestOffer!==undefined;
  const activeOffer=latestOffer?.status==="ISSUED"||latestOffer?.status==="ACCEPTED";
  const eligibleApplication=current.application.status==="SUBMITTED"&&
    current.screening.status==="SHORTLISTED";
  const expiredLatest=latestOffer?.status==="EXPIRED"||
    (latestOffer?.status==="ISSUED"&&latestOffer.expiresAt!==null&&latestOffer.expiresAt.getTime()<=Date.now());
- const releaseBlockReason=!eligibleApplication
+ const releaseBlockReason=inconsistentLegacyRelease
+  ?"This legacy release has no matching persisted offer. Review and repair the offer record before taking another action."
+  :!eligibleApplication
   ?"Only an active shortlisted application can receive an offer."
   :state==="NOT_SELECTED"?"Select this applicant before verifying or releasing an offer."
   :state==="SELECTED"?"Verify the selected applicant before releasing the offer."
@@ -321,7 +329,7 @@ export async function getPlacementOfferReleaseState(
   }:null,
   selectionRoleTitle:selection?.roleTitle??null,
   selectionAnnualCtcInr:selection?.annualCtcInr??null,
-  releaseBlockReason,expiredLatest,
+  releaseBlockReason,expiredLatest,inconsistentLegacyRelease,
   // SELECTED/VERIFIED never imply an applicant-visible issued offer.
   canVerifySelection:state==="SELECTED"&&eligibleApplication,
   canReleaseSelection:state==="VERIFIED"&&!activeOffer&&eligibleApplication,
