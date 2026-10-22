@@ -25,8 +25,8 @@ export const dynamic="force-dynamic";
 export default async function BatchPage({params,searchParams}:{params:Promise<{batchId:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const {batchId}=await params;
  const query=await searchParams;
- const rawTab=query.tab;
- const backHref=tpoBatchReturnHref(query.returnTo);
+ const rawTab=query["tab"];
+ const backHref=tpoBatchReturnHref(query["returnTo"]);
  const selected=Array.isArray(rawTab)?rawTab[0]:rawTab;
  const aliases:Record<string,string>={classes:"classes",registration:"registrations",students:"students",registrations:"registrations",rules:"rules",history:"history"};
  if(selected && aliases[selected]){
@@ -194,7 +194,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
    </div>)}
   </dl>
   {summary.complete&&summary.assessed>0?
-   <StackedMetricBar className={batchStyles.bar} maximum={summary.assessed}
+   <StackedMetricBar className={batchStyles["bar"]} maximum={summary.assessed}
     label={summary.eligible+" eligible, "+summary.ineligible+" ineligible, "+summary.undecided+" not decided, "+summary.needsReview+" need review"}
     segments={[{label:"Eligible",value:summary.eligible,tone:"success"},
       {label:"Ineligible",value:summary.ineligible,tone:"error"},
