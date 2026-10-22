@@ -19,7 +19,7 @@ function TpoGeneralRequestFacts({kind,payload}:{kind:string;payload:Record<strin
     <dt className="text-xs text-muted-foreground">{item.label}</dt>
     <dd className="break-words font-medium">{item.value}</dd>
    </div>)}</dl>:null}
-  {detail.proofUrl?<a href={detail.proofUrl} target="_blank" rel="noopener noreferrer"
+  {detail.proofUrl?<a href={detail.proofUrl}
    className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:underline">Review submitted proof link</a>:
    detail.requiresProof?<InlineNotice tone="error" message={detail.proofIssue??"No proof attached"}/>:null}
  </div>;
