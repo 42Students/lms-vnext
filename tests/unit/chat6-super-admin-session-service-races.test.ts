@@ -78,7 +78,7 @@ describe("AUTH-sessions-09 transactional admin revoke adversarial contracts",()=
   it("AUTH-sessions-09 zero-row retry is idempotent and does not append a second audit",async()=>{
     execute.mockResolvedValueOnce({rows:[]});
     const result=await revokeCollegeAdminSessions(actor,collegeId,userId);
-    expect(result).toEqual({revoked:0});
+    expect(result).toEqual({revoked:0,message:"No active sessions."});
     expect(execute).toHaveBeenCalledOnce();
     expect(recordActivityEventInTransaction).not.toHaveBeenCalled();
   });
@@ -86,7 +86,7 @@ describe("AUTH-sessions-09 transactional admin revoke adversarial contracts",()=
   it("AUTH-sessions-09 revokes all live sessions and audits exactly the affected count",async()=>{
     execute.mockResolvedValueOnce({rows:[{id:"device-1"},{id:"device-2"}]});
     const result=await revokeCollegeAdminSessions(actor,collegeId,userId);
-    expect(result).toEqual({revoked:2});
+    expect(result).toEqual({revoked:2,message:"All sessions revoked"});
     expect(assertPersistedPlatformPermission).toHaveBeenCalledWith(
       expect.objectContaining({execute}),
       actor,"college.manage",{organizationId,collegeId},

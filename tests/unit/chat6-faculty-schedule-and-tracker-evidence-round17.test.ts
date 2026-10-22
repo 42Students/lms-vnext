@@ -21,9 +21,9 @@ describe("chat-6 source-evidence gaps",()=>{
   it("SA-placements-projects-102 mounts authenticated Alt+B report drawer with captured page/browser/viewport context",()=>{
     const launcher=src("src/components/tracker/tracker-quick-report-launcher.tsx");
     const shell=src("src/components/shell/app-shell.tsx");
-    expect(launcher).toContain('event.altKey&&!event.repeat&&event.key.toLowerCase()==="b"');
+    expect(launcher).toContain('event.altKey&&!event.ctrlKey&&!event.metaKey&&!event.repeat&&event.key.toLowerCase()==="b"');
     expect(launcher).toContain("event.preventDefault()");
-    expect(launcher).toContain('<Drawer open={open} onOpenChange={setOpen} title="Report an issue">');
+    expect(launcher).toContain('<Drawer open={open} onOpenChange={setOpen} title="Report an issue"');
     expect(launcher).toContain('closest("input,textarea,select,[contenteditable=true]")');
     expect(launcher).toContain("window.location.pathname+window.location.search");
     expect(launcher).toContain("navigator.userAgent");
@@ -34,7 +34,7 @@ describe("chat-6 source-evidence gaps",()=>{
     expect(drawer).toContain("onCancel={event =>");
     expect(drawer).toContain("onOpenChange(false)");
     expect(drawer).toContain('aria-labelledby={titleId}');
-    expect(launcher).toContain("<TrackerReportForm contextPrefill={context}/>");
+    expect(launcher).toContain("{formReady?<TrackerReportForm contextPrefill={context}/>:null}");
     expect(shell).toContain("TrackerQuickReportLauncher");
   });
 });
