@@ -81,8 +81,8 @@ const overlayCases = [
   },
   {
     "path": "src/components/tpo/tpo-mobile-footer.tsx",
-    "kind": "BottomSheet",
-    "cue": "More TPO workspaces"
+    "kind": "Navigation",
+    "cue": "/tpo/more"
   },
   {
     "path": "src/components/tpo/tpo-new-followup-modal.tsx",
@@ -150,6 +150,15 @@ describe("UX-tpo-overlay component coverage: accessible dialogs, names and guard
   for (const { path, kind, cue } of overlayCases) {
     it("UX-tpo-overlay-" + path.split("/").pop() + " keeps a named shared overlay and scoped interaction", () => {
       const source = readFileSync(path, "utf8");
+      if (kind === "Navigation") {
+        expect(source).toContain('<nav aria-label="TPO mobile footer"');
+        expect(source).toContain("<Link");
+        expect(source).toContain('aria-current={active ? "page" : undefined}');
+        expect(source).toContain(cue);
+        expect(source).not.toContain("window.open");
+        expect(source).not.toContain("target=\"_blank\"");
+        return;
+      }
       expect(source).toContain("<" + kind);
       expect(source).toContain("onOpenChange=");
       expect(source).toContain(cue);
