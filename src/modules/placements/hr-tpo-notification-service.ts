@@ -5,7 +5,7 @@ import {activityEvents,collegeMemberships,colleges,inAppNotifications,membership
 import type {RequestContext} from "@/modules/identity/context";
 
 type Tx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
-type Action="ROUND_CREATED"|"ROUND_UPDATED"|"ROUND_REMOVED"|"RESULT_STAGED"|"SLOT_PROPOSED"|"SLOT_OFFERED"|"SLOT_CANCELLED";
+type Action="ROUND_CREATED"|"ROUND_UPDATED"|"ROUND_REMOVED"|"RESULT_STAGED"|"SLOT_PROPOSED"|"SLOT_OFFERED"|"SLOT_CANCELLED"|"SELECTION_LIST_SUBMITTED";
 const ACTIONS:Record<Action,{eventType:string;title:string;tab:string}>={
  ROUND_CREATED:{eventType:"placements.hr_round.created",title:"A recruiter added a round",tab:"rounds"},
  ROUND_UPDATED:{eventType:"placements.hr_round.updated",title:"A recruiter updated a round",tab:"rounds"},
@@ -14,11 +14,13 @@ const ACTIONS:Record<Action,{eventType:string;title:string;tab:string}>={
  SLOT_PROPOSED:{eventType:"placements.hr_slot.proposed",title:"A recruiter proposed interview slots",tab:"rounds"},
  SLOT_OFFERED:{eventType:"placements.hr_slot.offered",title:"A recruiter proposed interview slots",tab:"rounds"},
  SLOT_CANCELLED:{eventType:"placements.hr_slot.cancelled",title:"A recruiter cancelled interview slots",tab:"rounds"},
+ SELECTION_LIST_SUBMITTED:{eventType:"placements.recruiter.selection_list_submitted",title:"A recruiter sent a selection list for verification",tab:"offers"},
 };
 /** REC-home-drives-R01: persist TPO activity and notification in the same
  * transaction as the authoritative recruiter action, never after commit. */
 export async function notifyTpoOfRecruiterAction(tx:Tx,context:RequestContext,input:{
  collegeId:string;jobId:string;subjectId:string;action:Action;roundId?:string;
+ kind?:string;count?:number;
 }){
  const meta=ACTIONS[input.action];
  const [college]=await tx.select({organizationId:colleges.organizationId})
@@ -27,10 +29,13 @@ export async function notifyTpoOfRecruiterAction(tx:Tx,context:RequestContext,in
  const [event]=await tx.insert(activityEvents).values({
   organizationId:college.organizationId,collegeId:input.collegeId,actorUserId:context.user.id,
   module:"PLACEMENTS",eventType:meta.eventType,
-  subjectType:"placement_job",subjectId:input.jobId,
+  subjectType:input.action==="SELECTION_LIST_SUBMITTED"?"recruiter_selection_list":"placement_job",
+  subjectId:input.action==="SELECTION_LIST_SUBMITTED"?input.subjectId:input.jobId,
   subjectLabel:meta.title,summary:meta.title,metadata:{
    jobId:input.jobId,subjectId:input.subjectId,roundId:input.roundId??null,
    source:"RECRUITER",
+   ...(input.action==="SELECTION_LIST_SUBMITTED"?
+     {kind:input.kind??null,count:input.count??null}:{}) ,
   },
  }).returning({id:activityEvents.id});
  if(!event)return;

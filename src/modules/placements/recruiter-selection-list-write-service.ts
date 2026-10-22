@@ -3,13 +3,14 @@ import {and,eq,inArray,gt,ne,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementApplicationScreenings,
  placementJobs,placementJobRounds,placementRoundResults,placementRecruiterCollegeGrants,placementCompanyRelationships,
- users,activityEvents} from "@/db/schema";
+ users} from "@/db/schema";
 import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
 import {getRecruiterPlacementWorkspace} from "./recruiter-workspace-service";
 import {hrSelectionReadyApplicationIds} from "./hr-offer-selection-read-model";
 import {recruiterSelectionListInputSchema,recruiterSelectionRangeWarning} from "./recruiter-selection-list-model";
 import {stagedRecruiterSelectionLists,stagedRecruiterSelectionItems} from "./recruiter-selection-staged-schema";
 import {placementTableExists} from "./staged-tables";
+import {notifyTpoOfRecruiterAction} from "./hr-tpo-notification-service";
 
 /** A recruiter's proposed selection is NOT an offer. The placement cell must
  * verify it before any formal offer is issued. Never trust client college,
@@ -135,12 +136,12 @@ export async function submitRecruiterSelectionList(
    input.applicationIds.map(applicationId=>({
     selectionListId:inserted.id,applicationId,jobId:job.id,status:"PROPOSED",
    })));
-  await tx.insert(activityEvents).values({
-   organizationId:null,collegeId:job.collegeId,actorUserId:context.user.id,
-   module:"PLACEMENTS",eventType:"placements.recruiter.selection_list_submitted",
-   subjectType:"recruiter_selection_list",subjectId:inserted.id,
-   summary:"Recruiter submitted a selection list for placement-cell verification",
-   metadata:{jobId:job.id,kind:input.kind,count:input.applicationIds.length},
+  // The selection list, proposed candidate rows and TPO handoff must
+  // commit together. A failed inbox delivery rolls the proposal back, while
+  // an idempotent re-submit above never sends duplicate handoff notices.
+  await notifyTpoOfRecruiterAction(tx,context,{
+   collegeId:job.collegeId,jobId:job.id,subjectId:inserted.id,
+   action:"SELECTION_LIST_SUBMITTED",kind:input.kind,count:input.applicationIds.length,
   });
   return {id:inserted.id,status:"SENT_FOR_VERIFICATION" as const,submitted:true};
  });
