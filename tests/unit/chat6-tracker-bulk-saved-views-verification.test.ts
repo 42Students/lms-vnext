@@ -10,7 +10,7 @@ describe("Chat-6 tracker issue list parity", () => {
     expect(page).toContain("<TrackerIssueBulkActions");
     expect(page).toContain("version:issue.version");
     expect(bulk).toContain("Select issues");
-    expect(bulk).toContain("Select this page");
+    expect(bulk).toContain('aria-label="All on this page"');
     expect(bulk).toContain("Set status to…");
     expect(bulk).toContain("selected.length");
     expect(bulk).toContain("if(lock.current||!selected.length)return");
@@ -29,7 +29,7 @@ describe("Chat-6 tracker issue list parity", () => {
     expect(views).toContain("filterOnlyIssuesView(filters)");
     expect(views).toContain("new URLSearchParams(search)");
     expect(views).toContain("value.length<=120");
-    expect(views).toContain("item.name.length<=60");
+    expect(views).toContain("row.name.trim().slice(0,40)");
     expect(views).toContain("item.filters.length<=500");
     expect(views).toContain("views.length>=12");
     expect(views).toContain("window.localStorage.setItem");

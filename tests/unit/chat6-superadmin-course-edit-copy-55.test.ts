@@ -8,7 +8,7 @@ describe("Super Admin courses legacy edit semantics",()=>{
   expect(COLLEGE_COURSES_COPY.createTitle).toBe("Create New Course");
   expect(COLLEGE_COURSES_COPY.existingTitle).toBe("Existing Courses");
   const actions=read("src/components/courses/admin-course-actions.tsx");
-  expect(actions).toContain("{COLLEGE_COURSES_COPY.nameLabel}");
+  expect(actions).toContain("Course Name");
   expect(actions).toContain('Updated course “"+name.trim()+"”.');
   expect(actions).toContain("Department ownership is immutable");
   expect(actions).toContain("Discard unsaved course changes?");
