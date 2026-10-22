@@ -33,9 +33,13 @@ export async function GET(request:Request){
    Number.isFinite(row.averageHoursToFirstShortlist)&&
    row.firstShortlistObservationCount>0);
   const observed=measured.reduce((sum,row)=>sum+row.firstShortlistObservationCount,0);
-  if(observed>0)summary.push(["Avg. time to shortlist (hrs)",
-   Math.round(measured.reduce((sum,row)=>
-    sum+row.averageHoursToFirstShortlist!*row.firstShortlistObservationCount,0)/observed)]);
+  // Only persist an average when historical first-shortlist observations exist.
+  // A missing measurement is not zero latency and must not bias the denominator.
+  const observedHours=measured.reduce((sum,row)=>
+   sum+(row.averageHoursToFirstShortlist??0)*row.firstShortlistObservationCount,0);
+  if(observed>0)summary.push([
+   "Avg. time to shortlist (hrs)",Math.round(observedHours/observed),
+  ]);
   const funnel:(string|number)[][]=funnelStages.map(stage=>[
    stage.charAt(0).toUpperCase()+stage.slice(1),
    data.funnelRows.reduce((sum,row)=>sum+row[stage],0),
