@@ -6,8 +6,11 @@ describe("Super Admin Module Access entry",()=>{
  const path=join(process.cwd(),"src/app/(authenticated)/admin/module-access/page.tsx");
  it("uses persisted scoped module-access service, not a dummy redirect",()=>{
   const s=readFileSync(path,"utf8");
-  expect(s).toContain("listSuperAdminFeatureControls(context,parsed)");
-  expect(s).toContain('"/admin/features/"+encodeURIComponent(college.id)');
+  expect(s).toContain('requirePermission(context, "admin-scope.select")');
+  expect(s).toContain("const collegeId = context.adminScope?.collegeId");
+  expect(s).toContain("<SuperAdminCollegeModuleAccessPage params={Promise.resolve({collegeId})}");
+  expect(s).toContain("getModuleAccessOverviewMetrics(context, [collegeId])");
+  expect(s).toContain('"/admin/features/"+encodeURIComponent(collegeId)');
   expect(s).toContain('title="Module Access"');
   expect(existsSync(join(process.cwd(),"src/app/(authenticated)/admin/features/[collegeId]/page.tsx"))).toBe(true);
  });
