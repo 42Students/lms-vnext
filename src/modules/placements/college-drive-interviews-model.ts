@@ -11,6 +11,10 @@ export const driveInterviewsQuerySchema = z.object({
   appointmentPage: z.coerce.number().int().min(1).max(1000).default(1),
   appointmentPageSize:z.coerce.number().int().refine(n=>[10,20,50,100].includes(n)).default(20),
   appointmentSort:z.enum(["DATE_ASC","DATE_DESC"]).default("DATE_ASC"),
+  candidatePage:z.coerce.number().int().min(1).max(10000).default(1),
+  candidatePageSize:z.coerce.number().int()
+    .refine(value=>[10,20,50,100,200,1000].includes(value)).default(1000),
+  candidateSearch:z.string().trim().max(120).optional(),
 }).strict();
 export type DriveInterviewsQuery = z.infer<typeof driveInterviewsQuerySchema>;
 export const DRIVE_INTERVIEW_PAGE_SIZE = 20;
@@ -18,7 +22,7 @@ export const DRIVE_INTERVIEW_PAGE_SIZES=[10,20,50,100] as const;
 
 export function driveInterviewsParams(raw: Record<string,string|string[]|undefined>) {
   const filtered: Record<string,string> = {};
-  for (const key of ["kind","status","applicationId","page","appointmentStatus","appointmentMode","appointmentSearch","appointmentPage","appointmentPageSize","appointmentSort"] as const) {
+  for (const key of ["kind","status","applicationId","page","appointmentStatus","appointmentMode","appointmentSearch","appointmentPage","appointmentPageSize","appointmentSort","candidatePage","candidatePageSize","candidateSearch"] as const) {
     const value = raw[key];
     if (Array.isArray(value)) return null;
     if (typeof value === "string" && value !== "") filtered[key] = value;
@@ -39,6 +43,9 @@ export function driveInterviewsHref(jobId: string, query: DriveInterviewsQuery) 
   if(query.appointmentPageSize!==20)params.set("appointmentPageSize",String(query.appointmentPageSize));
   if(query.appointmentSort!=="DATE_ASC")params.set("appointmentSort",query.appointmentSort);
   if (query.appointmentPage>1) params.set("appointmentPage",String(query.appointmentPage));
+  if(query.candidatePage>1)params.set("candidatePage",String(query.candidatePage));
+  if(query.candidatePageSize!==1000)params.set("candidatePageSize",String(query.candidatePageSize));
+  if(query.candidateSearch)params.set("candidateSearch",query.candidateSearch);
   return "/college/placements/jobs/" + encodeURIComponent(jobId) + "/interviews" +
     (params.size ? "?" + params.toString() : "");
 }
@@ -82,6 +89,7 @@ export function driveInterviewFilterError(raw: Record<string, string | string[] 
 
 export function appointmentFilterChange(query:DriveInterviewsQuery,patch:Partial<DriveInterviewsQuery>){
  const changed=Object.keys(patch).some(key=>key!=="appointmentPage"&&
+   key!=="candidatePage"&&key!=="candidatePageSize"&&key!=="candidateSearch"&&
   query[key as keyof DriveInterviewsQuery]!==patch[key as keyof DriveInterviewsQuery]);
  return {...query,...patch,appointmentPage:changed?1:(patch.appointmentPage??query.appointmentPage)};
 }
