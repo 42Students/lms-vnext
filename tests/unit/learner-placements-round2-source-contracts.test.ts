@@ -38,7 +38,8 @@ describe("Chat-7 learner placement verified-closure source contracts",()=>{
     expect(text).toContain('placeholder="Search jobs, companies, roles, locations…"');
     expect(text).toContain("Highest CTC");
     expect(text).toContain("Eligible only");
-    expect(text).toContain("Closing in 7 days");
+    expect(text).toContain("Closing soon");
+    expect(text).toContain("closingSoonIstDayEndMs(Date.parse(snapshotNowIso))");
   });
   it("LEARNER-placements-17 source behavior or reviewed disposition",()=>{
     const text=source("src/modules/placements/learner-drives-empty-state-model.ts");

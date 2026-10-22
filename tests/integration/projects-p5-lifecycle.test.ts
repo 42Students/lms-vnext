@@ -636,7 +636,9 @@ describe("Projects P5 lifecycle", () => {
         {expectedUpdatedAt:unshipped.updatedAt.toISOString()},
       ),
     ).rejects.toMatchObject({
-      code: "PROJECT_RELEASE_HAS_OPEN_SPRINTS",
+      // An unshipped release remains IN_PROGRESS; it cannot be shipped again.
+      // A reopened sprint must remain unshipped until the release is ready.
+      code: "PROJECT_RELEASE_INVALID_STATE",
     });
   });
 
