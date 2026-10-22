@@ -7,6 +7,7 @@ import {db10AuditFindingFiles,db10AuditFindings,db10AuditFindingEvents}
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
 import {independentAuditFindingsReady} from "./independent-audit-findings-service";
+import {classifyAuditFindingSourceEvent} from "./audit-finding-source-event-model";
 
 const sourceData=z.strictObject({
  externalId:z.string().min(1).max(120),
@@ -90,12 +91,6 @@ export async function ingestIndependentAuditFindingFile(
      sourcePath:input.sourcePath,sourceCommitSha:input.sourceCommitSha??null,
     }).returning({id:db10AuditFindings.id});
     findingId=created.id;
-    await tx.insert(db10AuditFindingEvents).values({
-     findingId:created.id,actorKind:"SYNC_AGENT",
-     actorLabel:"Authorized Super Admin file import",
-     sourceFile:input.sourcePath,sourceCommitSha:input.sourceCommitSha??null,
-     action:"COMMENT",note:"First accepted source file; actor-approved import",
-    });
    }
   }
   const [file]=await tx.insert(db10AuditFindingFiles).values({
@@ -103,6 +98,26 @@ export async function ingestIndependentAuditFindingFile(
    action:input.action,result,errorCode,findingId,
    sourceCommitSha:input.sourceCommitSha??null,runId:input.runId??null,
   }).returning({id:db10AuditFindingFiles.id});
+  const sourceEvent=classifyAuditFindingSourceEvent(input.action,result);
+  if(findingId&&sourceEvent){
+   // A refused/tampered replacement never overwrites the original finding.
+   // The source-file action, result and actor are append-only provenance,
+   // not a user-authored STATUS transition or silent severity update.
+   await tx.insert(db10AuditFindingEvents).values({
+    findingId,actorKind:"SYNC_AGENT",
+    actorLabel:"Authorized Super Admin file import",
+    sourceFile:input.sourcePath,sourceCommitSha:input.sourceCommitSha??null,
+    action:"COMMENT",
+    note:sourceEvent==="imported"
+     ?"First accepted source file; finding imported"
+     :sourceEvent==="agent_update"
+      ?"Authorized source update receipt recorded; finding fields unchanged"
+      :sourceEvent==="file_changed"
+       ?"Changed file refused; original imported finding preserved"
+       :"Source file deleted; original imported finding preserved",
+    toValue:{sourceEvent,sourceAction:input.action,sourceResult:result},
+   });
+  }
   return {fileId:file.id,result,replayed:false,findingId};
  });
 }
