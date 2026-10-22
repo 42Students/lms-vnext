@@ -6,7 +6,7 @@ describe("chat-16 independent audit findings sync evidence",()=>{
   const service=code("src/modules/bug-tracker/independent-audit-findings-service.ts");
   const page=code("src/app/(authenticated)/tracker/audit-findings/page.tsx");
   expect(service).toContain('requireIndependentFindingAccess(context)');
-  expect(service).toContain('if(!independentAuditFindingsReady())return null;');
+  expect(service).toContain('if(!await independentAuditFindingsStorageReady())return null;');
   expect(service).toContain('eq(db10AuditFindingSyncs.source,"42Students/lms-findings")');
   expect(service).toContain('refusedCount:row.refusedFiles.length');
   expect(page).toContain("readIndependentFindingSyncState(ctx)");
