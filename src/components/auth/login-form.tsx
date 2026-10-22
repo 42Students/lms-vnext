@@ -744,7 +744,7 @@ export function LoginForm({
           <p className="text-xs text-muted-foreground">The code is 4 to 6 digits. Codes expire after five minutes. You have up to five verification attempts; email resend limit is five.</p>
           {legacySuperAdmin?<label className="flex min-h-11 items-center gap-2 text-sm text-body">
            <Checkbox checked={acceptedTerms} onChange={event=>setAcceptedTerms(event.target.checked)}/>
-           <span>By clicking here, I agree to 42 LMS&apos; <a href="/assets/static/terms-and-conditions-view.html" target="_blank" rel="noopener noreferrer" className="text-primary-text underline">Terms &amp; Conditions</a>.</span>
+           <span>By clicking here, I agree to 42 LMS&apos; <a href="/assets/static/terms-and-conditions-view.html" rel="noopener noreferrer" className="text-primary-text underline">Terms &amp; Conditions</a>.</span>
           </label>:null}
           <Button
             type="submit"
@@ -801,7 +801,7 @@ function LoginConsent() {
     <p className="text-xs leading-5 text-muted-foreground">
       By continuing, you agree to the{" "}
       <a href="/assets/static/terms-and-conditions-view.html"
-        className="text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" target="_blank" rel="noopener noreferrer">Terms of Use</a>
+        className="text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" rel="noopener noreferrer">Terms of Use</a>
       {" "}and{" "}
       <a href="/privacy-policy" className="text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Privacy Policy</a>.
     </p>

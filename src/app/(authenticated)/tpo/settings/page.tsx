@@ -23,7 +23,7 @@ export default async function TpoSettingsIndex({searchParams}:{
     </Link>
     <p className="text-sm leading-6 text-body">Choose a settings section to review the policy, people, and visibility options for this college. Changes are saved within each section.</p>
     <Link href="/tpo/settings/rules"
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-white md:min-h-9">
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
      Open Placement Rules
     </Link>
     <Link href="/tpo/settings/public-page" className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 md:min-h-9">Public placements settings</Link>

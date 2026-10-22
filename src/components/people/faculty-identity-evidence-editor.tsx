@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import {Button} from "@/components/ui/button";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 type Purpose="AADHAAR"|"PAN";
 type Grant={objectKey:string;uploadUrl:string;requiredHeaders:Record<string,string>};
 type Saved={saved:boolean;version:number;receiptId:string;kind:Purpose};
@@ -13,6 +14,7 @@ export function FacultyIdentityEvidenceEditor({
  onRevoked:(value:{kind:Purpose;version:number})=>void;
 }){
  const [busy,setBusy]=useState(false);
+ const [revokeKind,setRevokeKind]=useState<Purpose|null>(null);
  const [checking,setChecking]=useState<{kind:Purpose;key:string}|null>(null);
  const [message,setMessage]=useState("");
  const [error,setError]=useState("");
@@ -77,7 +79,7 @@ export function FacultyIdentityEvidenceEditor({
   finally{setBusy(false);}
  }
  async function revoke(kind:Purpose){
-  if(blocked||!window.confirm("Remove access to this private evidence? Historical audit and retention records are kept."))return;
+  if(blocked)return;
   setBusy(true);setError("");setReadLink(null);
   try{
    const response=await fetch("/api/people/faculty-self-document/identity",{
@@ -87,7 +89,7 @@ export function FacultyIdentityEvidenceEditor({
    if(!response.ok)throw Error("Evidence could not be removed. Refresh the profile.");
    const result=await response.json() as {saved:boolean;version:number};
    if(!result.saved)throw Error("The evidence is not current. Refresh the profile.");
-   onRevoked({kind,version:result.version});setMessage("Private evidence access removed.");
+   onRevoked({kind,version:result.version});setMessage("Private evidence access removed.");setRevokeKind(null);
   }catch(cause){setError(cause instanceof Error?cause.message:"Removal unavailable.");}
   finally{setBusy(false);}
  }
@@ -118,16 +120,19 @@ export function FacultyIdentityEvidenceEditor({
     <Button type="button" variant="secondary" disabled={blocked}
      onClick={()=>void open(item.kind,item.id!)}>Request private link</Button>
     <Button type="button" variant="danger" disabled={blocked}
-     onClick={()=>void revoke(item.kind)}>Remove evidence</Button>
+     onClick={()=>setRevokeKind(item.kind)}>Remove evidence</Button>
    </div>:null}
    {readLink?.kind===item.kind&&readLink.expiresAt>Date.now()?
-    <a href={readLink.href} target="_blank" rel="noopener noreferrer"
+    <a href={readLink.href} rel="noopener noreferrer"
       className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
       Open verified document (expires soon)
     </a>:null}
   </div>)}
   {checking?<Button type="button" variant="secondary" disabled={blocked}
     onClick={()=>void finish()}>Confirm {checking.kind==="PAN"?"PAN":"Aadhaar"} evidence after scan</Button>:null}
+  <ConfirmDialog open={revokeKind!==null} onOpenChange={value=>{if(!value&&!blocked)setRevokeKind(null);}}
+  title="Remove private evidence?" description="Remove access to this private evidence? Historical audit and retention records are kept."
+  pending={blocked} confirmLabel="Remove evidence" onConfirm={()=>{if(revokeKind)void revoke(revokeKind);}}/>
   {busy?<p role="status" className="text-sm">Checking file or updating evidence…</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="text-xs text-muted-foreground">{message}</p>:null}
