@@ -154,7 +154,7 @@ export async function acceptPublicTpoRecruiterInviteOtp(rawToken:unknown,rawCode
       .where(and(eq(collegeMemberships.collegeId,lead.collegeId),
         eq(collegeMemberships.status,"ACTIVE"),eq(membershipRoles.role,"TPO"),
         eq(users.platformStatus,"ACTIVE")));
-    const first=updatedName.trim().split(/\\s+/)[0]||"Recruiter";
+    const first=updatedName.trim().split(/\s+/)[0]||"Recruiter";
     if(officers.length)await tx.insert(inAppNotifications).values(officers.map(officer=>({
       eventId:pendingEvent.id,userId:officer.userId,
       title:first+" already has a 42LMS account",
