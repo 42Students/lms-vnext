@@ -24,7 +24,7 @@ describe("UX admin scroll and motion after invisible scrollbar owner decision",(
   const code=source("src/components/ui/drawer.tsx");
   expect(code).toContain("<ScrollCue axis=\"y\"");
   expect(code).toContain("drawer content");
-  expect(code).toContain("flex h-full [min-height:0] flex-col overflow-hidden");
+  expect(code).toContain("flex h-full min-h-0 flex-col overflow-hidden");
   expect(code).toContain("availableHeight");
   expect(code).toContain("env(safe-area-inset-bottom)");
   expect(code).not.toContain("transition-all");
