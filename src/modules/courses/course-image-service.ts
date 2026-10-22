@@ -37,23 +37,23 @@ function fail(code: string, status: number): never { throw new CourseImageError(
 function receipt(raw: unknown): Receipt | null {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
   const row = raw as Record<string, unknown>;
-  if (typeof row.id !== "string" || !/^[a-f0-9-]{36}$/i.test(row.id) ||
-      typeof row.key !== "string" ||
-      !IMAGE_PATH.test(row.key) || typeof row.ownerMembershipId !== "string" ||
-      typeof row.tokenHash !== "string" || !/^[a-f0-9]{64}$/.test(row.tokenHash) ||
-      typeof row.contentType !== "string" || !IMAGE_MIMES.has(row.contentType) ||
-      typeof row.sizeBytes !== "number" || row.sizeBytes < 1 ||
-      row.sizeBytes > MAX_IMAGE_BYTES || typeof row.expiresAt !== "string" ||
-      !Number.isFinite(Date.parse(row.expiresAt)) ||
-      !row.key.includes("/" + row.ownerMembershipId + "/") ||
-      !["UPLOADING", "VERIFYING", "READY"].includes(String(row.status))) return null;
+  if (typeof row["id"] !== "string" || !/^[a-f0-9-]{36}$/i.test(row["id"]) ||
+      typeof row["key"] !== "string" ||
+      !IMAGE_PATH.test(row["key"]) || typeof row["ownerMembershipId"] !== "string" ||
+      typeof row["tokenHash"] !== "string" || !/^[a-f0-9]{64}$/.test(row["tokenHash"]) ||
+      typeof row["contentType"] !== "string" || !IMAGE_MIMES.has(row["contentType"]) ||
+      typeof row["sizeBytes"] !== "number" || row["sizeBytes"] < 1 ||
+      row["sizeBytes"] > MAX_IMAGE_BYTES || typeof row["expiresAt"] !== "string" ||
+      !Number.isFinite(Date.parse(row["expiresAt"])) ||
+      !row["key"].includes("/" + row["ownerMembershipId"] + "/") ||
+      !["UPLOADING", "VERIFYING", "READY"].includes(String(row["status"]))) return null;
   return row as unknown as Receipt;
 }
 function state(meta: Record<string, unknown> | null): ImageState {
   const value = meta?.courseCoverAsset;
   const row = value && typeof value === "object" && !Array.isArray(value)
     ? value as Record<string, unknown> : {};
-  return { active: receipt(row.active), pending: receipt(row.pending) };
+  return { active: receipt(row["active"]), pending: receipt(row["pending"]) };
 }
 function nextMeta(meta: Record<string, unknown> | null, value: ImageState) {
   return { ...(meta ?? {}), courseCoverAsset: value };
@@ -112,13 +112,13 @@ export async function grantCourseImage(context: RequestContext, rawId: string, r
   if (Object.keys(declaration).some(key =>
     !["originalName", "contentType", "sizeBytes"].includes(key)))
     fail("INVALID_REQUEST", 400);
-  if (typeof declaration.originalName !== "string" ||
-      typeof declaration.contentType !== "string" ||
-      typeof declaration.sizeBytes !== "number") fail("INVALID_REQUEST", 400);
+  if (typeof declaration["originalName"] !== "string" ||
+      typeof declaration["contentType"] !== "string" ||
+      typeof declaration["sizeBytes"] !== "number") fail("INVALID_REQUEST", 400);
   const parsed = validateStorageDeclaration("lesson-video-thumbnail", {
-    originalName: declaration.originalName,
-    contentType: declaration.contentType,
-    sizeBytes: declaration.sizeBytes,
+    originalName: declaration["originalName"],
+    contentType: declaration["contentType"],
+    sizeBytes: declaration["sizeBytes"],
   });
   if (!parsed.ok) fail(parsed.code, parsed.code === "STORAGE_FILE_TOO_LARGE" ? 413 : 400);
   let grant: Awaited<ReturnType<typeof createPrivateUploadGrant>>;
