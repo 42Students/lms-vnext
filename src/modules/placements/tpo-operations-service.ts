@@ -685,21 +685,100 @@ db
       from ranked where rn<=3
       order by code,rn
   `).then(result=>result.rows).catch(()=>null);
+  // Legacy shows a few named affected learners, not only a drive count.
+  // This read stays tenant-bound and returns at most three records per
+  // candidate category. The exact totals above remain independent of the
+  // sample, and a candidate-read failure falls back to safe drive summaries.
+  type AttentionLearnerRow = {
+    code:string;application_id:string;job_id:string;job_title:string;
+    company_name:string;learner_name:string;detail:string;
+  };
+  const attentionLearners = attentionRead===null?null:await db.execute<AttentionLearnerRow>(sql`
+    with candidates as (
+      select 'STALE_APPLICATIONS'::text as code,
+             a.id as application_id,j.id as job_id,j.title as job_title,
+             c.name as company_name,
+             coalesce(u.display_name,'Learner') as learner_name,
+             'Waiting more than seven days for screening'::text as detail
+        from placement_applications a
+        join placement_jobs j on j.id=a.job_id
+        join placement_application_screenings s on s.application_id=a.id
+        join college_memberships m on m.id=a.membership_id
+        join users u on u.id=m.user_id
+        join placement_company_relationships rel on rel.id=j.company_relationship_id
+        join placement_companies c on c.id=rel.company_id
+       where j.college_id=${collegeId} and rel.college_id=j.college_id
+         and m.college_id=j.college_id and j.archived_at is null
+         and j.status='PUBLISHED' and a.status='SUBMITTED'
+         and s.status in ('PENDING','HOLD') and a.submitted_at<=${staleBefore}
+      union all
+      select 'INTERVIEW_UNSCHEDULED',a.id,j.id,j.title,c.name,
+             coalesce(u.display_name,'Learner'),
+             'Interview round exists, with no scheduled session'
+        from placement_applications a
+        join placement_jobs j on j.id=a.job_id
+        join placement_application_screenings s on s.application_id=a.id
+        join college_memberships m on m.id=a.membership_id
+        join users u on u.id=m.user_id
+        join placement_company_relationships rel on rel.id=j.company_relationship_id
+        join placement_companies c on c.id=rel.company_id
+       where j.college_id=${collegeId} and rel.college_id=j.college_id
+         and m.college_id=j.college_id and j.archived_at is null
+         and j.status='PUBLISHED' and a.status='SUBMITTED'
+         and s.status='SHORTLISTED'
+         and exists (
+           select 1 from placement_job_rounds r where r.job_id=j.id
+             and r.kind='INTERVIEW' and r.status<>'CANCELLED')
+         and not exists (
+           select 1 from placement_job_rounds r where r.job_id=j.id
+             and r.kind='INTERVIEW' and r.status='SCHEDULED')
+      union all
+      select 'OFFERED_NO_LETTER',a.id,j.id,j.title,c.name,
+             coalesce(u.display_name,'Learner'),
+             case when o.status='ACCEPTED'
+               then 'Accepted offer without letter'
+               else 'Issued offer without letter' end
+        from placement_offers o
+        join placement_applications a on a.id=o.application_id
+        join placement_jobs j on j.id=a.job_id
+        join college_memberships m on m.id=a.membership_id
+        join users u on u.id=m.user_id
+        join placement_company_relationships rel on rel.id=j.company_relationship_id
+        join placement_companies c on c.id=rel.company_id
+       where j.college_id=${collegeId} and rel.college_id=j.college_id
+         and m.college_id=j.college_id and j.archived_at is null
+         and j.status<>'CANCELLED' and o.status in ('ISSUED','ACCEPTED')
+         and nullif(btrim(o.offer_letter_url),'') is null
+    ), ranked as (
+      select candidates.*,row_number() over(partition by code
+        order by job_title,learner_name,application_id) as rn
+        from candidates
+    )
+    select code,application_id,job_id,job_title,company_name,learner_name,detail
+      from ranked where rn<=3 order by code,rn
+  `).then(result=>result.rows).catch(()=>null);
   const attentionCodes = [
     "STALE_APPLICATIONS", "INTERVIEW_UNSCHEDULED",
     "OFFERED_NO_LETTER", "CLOSING_SOON_LOW_CONVERSION",
   ] as const;
   const attentionCategories = attentionCodes.map(code => {
     const rows = (attentionRead ?? []).filter(row => row.code === code);
+    const learnerRows=(attentionLearners??[]).filter(row=>row.code===code);
+    const sampleBasis=learnerRows.length>0?"learners" as const:"drives" as const;
+    const priority=(code==="STALE_APPLICATIONS"||code==="OFFERED_NO_LETTER"
+      ?"HIGH":"MEDIUM") as QueuePriority;
     return {
       code,
       jobs: Number(rows[0]?.category_jobs ?? 0),
       affected: Number(rows[0]?.category_affected ?? 0),
-      samples: rows.map(row => ({
+      sampleBasis,
+      samples: learnerRows.length>0?learnerRows.map(row=>({
+        code,jobId:row.job_id,jobTitle:row.job_title,
+        companyName:row.company_name,count:1,priority,
+        learnerName:row.learner_name,detail:row.detail,
+      })):rows.map(row=>({
         code, jobId: row.job_id, jobTitle: row.job_title,
-        companyName: row.company_name, count: Number(row.affected),
-        priority: (code === "STALE_APPLICATIONS" ||
-          code === "OFFERED_NO_LETTER" ? "HIGH" : "MEDIUM") as QueuePriority,
+        companyName: row.company_name, count: Number(row.affected),priority,
       })),
     };
   });

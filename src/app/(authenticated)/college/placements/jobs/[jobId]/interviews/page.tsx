@@ -64,7 +64,8 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     appointmentStatus:query.appointmentStatus,mode:query.appointmentMode,
     search:query.appointmentSearch,
   });
-  const scheduled=appointments.interviews.filter(item=>item.status==="SCHEDULED");
+  const scheduled=appointments.interviews.filter(item=>
+    ["SCHEDULED","CONFIRMED","RESCHEDULE_REQUESTED"].includes(item.status));
   const todayIst=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
   const dateIst=(iso:string)=>new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(iso));
   const interviewToday=scheduled.filter(item=>dateIst(item.scheduledAt)===todayIst).length;
@@ -163,6 +164,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold">Sort interviews
         <Select name="appointmentSort" aria-label="Sort interviews" defaultValue={query.appointmentSort}>
           <option value="DATE_ASC">Date earliest</option><option value="DATE_DESC">Date latest</option>
+          <option value="JOB">Job title</option><option value="STATUS">Status</option>
         </Select>
       </label>
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold">Per page
