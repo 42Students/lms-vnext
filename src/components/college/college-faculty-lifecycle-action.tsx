@@ -100,7 +100,7 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
     <ConfirmDialog open={editing} onOpenChange={setOpen}
       title={actionLabel}
       description={action==="DEACTIVATE"
-        ? "Faculty: "+name+". Suspension immediately blocks access through this college membership, but does not necessarily revoke sessions or block login through other active memberships. Data and history are preserved, and this action is reversible. Supply a reason before confirming."
+        ? "Faculty: "+name+". Suspension immediately blocks this college membership and revokes current device sessions. Other active memberships remain available after signing in again. Data and history are preserved, and this action is reversible. Supply a reason before confirming."
         : "Faculty: "+name+". Reactivation restores access through this college membership. It does not change another membership or override platform-wide login restrictions."}
       confirmLabel={action==="DEACTIVATE"?"Confirm suspension":"Confirm reactivation"}
       confirmVariant={action==="DEACTIVATE"?"danger":"primary"} pending={busy}

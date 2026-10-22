@@ -117,6 +117,20 @@ describe("Chat-6 adversarial OTP, handoff and session lifecycle", () => {
     expect(login).toContain("deps.repository.consumeAttempt(");
   });
 
+  it("AUTH-sessions-03 revoke all devices expires the current authentication and role cookies", () => {
+    const route = source("src/app/api/auth/devices/route.ts");
+    expect(route).toContain('scope==="all"');
+    expect(route).toContain("revokeAllOwnSessions(session.userId)");
+    expect(route).toContain('if (scope === "all")');
+    for (const name of [
+      "SESSION_COOKIE_NAME", "MEMBERSHIP_COOKIE_NAME",
+      "ROLE_COOKIE_NAME", "ADMIN_SCOPE_COOKIE_NAME",
+    ]) expect(route).toContain(name);
+    expect(route).toContain('maxAge: 0');
+    expect(route).toContain('response.headers.set("Clear-Site-Data"');
+    expect(route).toContain("revokeOtherSessions(session.userId,session.sessionId)");
+  });
+
   it("AUTH-sessions-02 only own devices may be revoked and mutations require same origin", () => {
     const all = source("src/app/api/auth/devices/route.ts");
     const one = source("src/app/api/auth/devices/[sessionId]/route.ts");
@@ -127,6 +141,12 @@ describe("Chat-6 adversarial OTP, handoff and session lifecycle", () => {
     expect(all).toContain("session.sessionId");
     expect(one).toContain("revokeOwnSession(sessionId, session.userId)");
     expect(one).toContain("z.string().uuid().parse");
+    expect(one).toContain("sessionId === session.sessionId");
+    expect(one).toContain("maxAge: 0");
+    expect(one).toContain('response.headers.set("Clear-Site-Data"');
+    for (const cookie of ["SESSION_COOKIE_NAME","MEMBERSHIP_COOKIE_NAME","ROLE_COOKIE_NAME","ADMIN_SCOPE_COOKIE_NAME"]) {
+      expect(one).toContain(cookie);
+    }
     for(const cookie of ["SESSION_COOKIE_NAME","MEMBERSHIP_COOKIE_NAME","ADMIN_SCOPE_COOKIE_NAME"]) {
       expect(logout).toContain(cookie);
     }

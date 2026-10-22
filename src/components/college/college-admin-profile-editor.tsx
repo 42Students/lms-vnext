@@ -40,6 +40,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
   const [discardOpen,setDiscardOpen]=useState(false);
   const [discardSection,setDiscardSection]=useState<ProfileSection|null>(null);
   const formRef=useRef<HTMLFormElement>(null);
+  const [pendingNavigation,setPendingNavigation]=useState<string|null>(null);
   const [editableSection,setEditableSection]=useState<ProfileSection|null>(null);
   const dirty=JSON.stringify(profile)!==JSON.stringify(savedSnapshot.current);
   // A successful background refresh updates the baseline only while this
@@ -61,6 +62,28 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
     };
     window.addEventListener("beforeunload",onBeforeUnload);
     return ()=>window.removeEventListener("beforeunload",onBeforeUnload);
+  },[dirty]);
+  useEffect(()=>{
+    if(!dirty)return;
+    // The App Router does not emit Pages Router routeChangeStart events.
+    // Intercept same-origin links while drafts are dirty, without breaking
+    // external links, modifier shortcuts, downloads or in-page anchors.
+    const onClick=(event:MouseEvent)=>{
+      if(event.defaultPrevented||event.button!==0||event.ctrlKey||event.metaKey||
+        event.shiftKey||event.altKey||!(event.target instanceof Element))return;
+      const link=event.target.closest("a[href]");
+      if(!link||link.hasAttribute("download")||
+        (link.getAttribute("target")&&link.getAttribute("target")!=="_self"))return;
+      const destination=new URL(link.getAttribute("href")??"",window.location.href);
+      if(destination.origin!==window.location.origin)return;
+      const current=window.location.pathname+window.location.search;
+      if(destination.pathname+destination.search===current)return;
+      event.preventDefault();
+      event.stopPropagation();
+      setPendingNavigation(destination.pathname+destination.search+destination.hash);
+    };
+    document.addEventListener("click",onClick,true);
+    return ()=>document.removeEventListener("click",onClick,true);
   },[dirty]);
   function sectionChanged(section:ProfileSection){
     const baseline=savedSnapshot.current;
@@ -96,9 +119,10 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
     setError("");setSaved(false);setEditableSection(null);
   }
   function editSection(section:ProfileSection){
-    if(saving||readOnly)return;
+    if(saving)return;
+    if(editableSection===section){cancelSection(section);return;}
     // Changing the edited card never discards unsaved changes in another card.
-    setEditableSection(current=>current===section?null:section);
+    setEditableSection(section);
   }
   function cardHeader(section:ProfileSection,title:string){
     return <header className="-mx-4 -mt-4 mb-4 flex flex-wrap items-center justify-between gap-2 rounded-t-[var(--lms-canvas-radius)] border-b border-[#b8dce9] bg-[#e8f5fd] px-4 py-3">
@@ -111,7 +135,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
           stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L9 17l-4 1 1-4L16.5 3.5Z"/>
         </svg>
-        {editableSection===section?"Done":"Edit"}
+        {editableSection===section?"Close":"Edit"}
       </Button>
       {editableSection===section?<div className="flex flex-wrap gap-2">
         <Button type="button" variant="secondary" disabled={saving}
@@ -189,6 +213,18 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
   }
   return (
     <>
+    <ConfirmDialog open={pendingNavigation!==null}
+      onOpenChange={open=>{if(!open)setPendingNavigation(null);}}
+      title="Discard your unsaved profile changes?"
+      confirmLabel="Discard changes" cancelLabel="Keep editing"
+      onConfirm={()=>{
+        if(!pendingNavigation)return;
+        const href=pendingNavigation;
+        setPendingNavigation(null);
+        router.push(href);
+      }}>
+      <p className="text-sm text-body">Navigating away will discard the unsaved profile edits.</p>
+    </ConfirmDialog>
     <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
       title={discardSection?"Discard "+discardSection+" changes?":"Discard your unsaved profile changes?"}
       confirmLabel="Discard changes"

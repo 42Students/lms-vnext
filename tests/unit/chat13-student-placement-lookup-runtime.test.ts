@@ -53,7 +53,8 @@ describe("Super Admin placement lookup — real service orchestration of bounded
       applicationStatus:"SUBMITTED",offerStatus:null,joining:null,
     }));
     const select=vi.fn((fields:Record<string,unknown>)=>
-      "jobId" in fields ? new SelectRows(details) : new SelectRows(people),
+      "jobId" in fields ? new SelectRows(details) :
+      "applicationId" in fields ? new SelectRows([]) : new SelectRows(people),
     );
     const selectDistinct=vi.fn(()=>new SelectRows([
       {membershipId:people[0]!.membershipId},
@@ -69,7 +70,7 @@ describe("Super Admin placement lookup — real service orchestration of bounded
     expect(result.students[0]?.truncated).toBe(true);
     expect(result.students[1]?.placed).toBe(false);
     expect(selectDistinct).toHaveBeenCalledTimes(1);
-    expect(select).toHaveBeenCalledTimes(11);
+    expect(select).toHaveBeenCalledTimes(21);
     expect(mocks.requireCollegePlacementAdmin).toHaveBeenCalledWith(admin);
   });
 
@@ -84,7 +85,8 @@ describe("Super Admin placement lookup — real service orchestration of bounded
       applicationStatus:"SUBMITTED",offerStatus:null,joining:null,
     }));
     const select=vi.fn((fields:Record<string,unknown>)=>
-      "jobId" in fields ? new SelectRows(details) : new SelectRows(people),
+      "jobId" in fields ? new SelectRows(details) :
+      "applicationId" in fields ? new SelectRows([]) : new SelectRows(people),
     );
     mocks.getDb.mockReturnValue({
       select,

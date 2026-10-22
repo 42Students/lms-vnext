@@ -28,3 +28,15 @@ export function placementReminderWithinCooldown(sentAt:Date,now:Date):boolean{
  return Number.isFinite(sentAt.getTime())&&
   sentAt.getTime()>placementReminderCooldownCutoff(now).getTime();
 }
+
+/** Reminder eligibility is the same in preview and locked delivery. Outside
+ * drives record participation after the event; they do not accept student
+ * applications and must never receive non-applicant reminders. */
+export function tpoNonApplicantReminderBlockReason(
+ job:{status:string;recordedOutside:boolean;applicationDeadline:Date|null},now:Date,
+):"Drive is not published"|"Outside drives do not accept applications"|"Application deadline has passed"|null{
+ if(job.status!=="PUBLISHED")return "Drive is not published";
+ if(job.recordedOutside)return "Outside drives do not accept applications";
+ if(job.applicationDeadline&&job.applicationDeadline<=now)return "Application deadline has passed";
+ return null;
+}

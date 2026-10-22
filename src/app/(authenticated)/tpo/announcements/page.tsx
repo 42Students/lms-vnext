@@ -35,11 +35,15 @@ import {tpoAnnouncementTabSchema} from "@/modules/announcements/tpo-placement-re
 import {tpoNoticeDeliveryVerified} from "@/modules/announcements/tpo-notice-delivery-readiness";
 type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];targetIds?:string|string[];noticeError?:string|string[];sentNotice?:string|string[];page?:string|string[];mine?:string|string[];noticeSuccess?:string|string[]}>};
 
-// A scheduled notice is not sent when it is drafted. The effective publish
-// clock starts no earlier than scheduledAt; delayed worker delivery can only
-// shorten the remaining Undo window, never extend it past the old rule.
-function noticeUndoAnchor(row:{createdAt:Date;scheduledAt:Date|null}):Date {
- return row.scheduledAt&&row.scheduledAt>row.createdAt?row.scheduledAt:row.createdAt;
+// The undo clock starts at actual persisted delivery, never at a planned
+// schedule timestamp. Older immediate notices without broadcast-group rows
+// were sent on creation; a scheduled row without sentAt is not yet sent.
+function noticeUndoAnchor(row:{createdAt:Date;scheduledAt:Date|null;sentAt:Date|null}):Date|null {
+ return row.sentAt??(row.scheduledAt===null?row.createdAt:null);
+}
+function noticeCanUndo(row:{createdAt:Date;scheduledAt:Date|null;sentAt:Date|null},now:Date):boolean {
+ const sentAt=noticeUndoAnchor(row);
+ return sentAt!==null&&canUndoTpoAnnouncementSend(sentAt,now);
 }
 export default async function TpoAnnouncements({searchParams}:Props){
  const context=await getCurrentRequestContext();
@@ -70,7 +74,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
  const sentId=first(raw.sentNotice);
  const sent=result.status==="READY"&&tab.data==="yours"&&sentId?
   result.items.find(row=>row.id===sentId&&row.senderUserId===context.user.id&&
-    canUndoTpoAnnouncementSend(noticeUndoAnchor(row),new Date())):null;
+    noticeCanUndo(row,new Date())):null;
  const query=tpoAudiencePreviewQuery.safeParse({
   audience:first(raw.audience)??"PLACEMENTS",
   targetId:first(raw.targetId)||undefined,
@@ -134,7 +138,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
   {first(raw.noticeSuccess)==="SAVED"?<InlineNotice tone="success" message="Saved"/>:null}
   {first(raw.noticeSuccess)==="SCHEDULED"?<InlineNotice tone="success" message="Scheduled"/>:null}
   {noticeError?<InlineNotice tone="error" role="alert" message={noticeError}/>:null}
-  {sent?<TpoNoticeUndoToast id={sent.id} version={sent.version} createdAt={noticeUndoAnchor(sent).toISOString()}/>:null}
+  {sent?<TpoNoticeUndoToast id={sent.id} version={sent.version} createdAt={(noticeUndoAnchor(sent)??sent.createdAt).toISOString()}/>:null}
   <Tabs ariaLabel="Announcement tabs" renderPanel={false} value={tab.data} items={([
     ["yours","To your students"],["from-42","From 42"],["deleted","Recently removed"]
   ] as const).map(([value,label])=>({
@@ -273,7 +277,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
       </Button>
      </form>:null}
     {tab.data==="yours"&&
-     canUndoTpoAnnouncementSend(noticeUndoAnchor(row),new Date())?
+     noticeCanUndo(row,new Date())?
      <form method="post" action={"/api/placements/tpo/announcements/"+row.id+"/lifecycle"}
       className="min-w-0">
       <Input type="hidden" name="expectedVersion" value={row.version}/>

@@ -239,7 +239,7 @@ export async function listProgramsPage(
       throw new AcademicsServiceError("DEPARTMENT_NOT_FOUND");
   }
   const page = Math.max(1, Math.min(10000, Math.trunc(raw.page ?? 1) || 1));
-  const pageSize = Math.max(1, Math.min(100, Math.trunc(raw.pageSize ?? 25) || 25));
+  const pageSize = Math.max(1, Math.min(100, Math.trunc(raw.pageSize ?? 20) || 20));
   const conditions = and(
     eq(departments.collegeId, collegeId),
     departmentId ? eq(programs.departmentId, departmentId) : undefined,

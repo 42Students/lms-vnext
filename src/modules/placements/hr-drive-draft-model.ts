@@ -194,6 +194,12 @@ export function hrDraftFromAuthorizedJob(job: {
 }, rounds: readonly { kind: string; name: string }[]): HrDriveDraft {
   const base = emptyHrDriveDraft();
   const safeExternalLink=safeRecruiterExternalLink(job.externalApplicationUrl)??"";
+  // Legacy driveMode is the source-of-truth when present. A historical
+  // off-campus drive without recruiterDriveMode must keep its application URL.
+  const driveMode = job.legacyDriveMode==="ON_CAMPUS" ||
+    job.legacyDriveMode==="POOL" || job.legacyDriveMode==="OFF_CAMPUS"
+      ? job.legacyDriveMode
+      : job.recruiterDriveMode==="OFF_CAMPUS" ? "OFF_CAMPUS" : "ON_CAMPUS";
   const type = z.enum(["FULL_TIME", "INTERNSHIP", "INTERNSHIP_FULL_TIME", "CONTRACT"]).safeParse(job.employmentType);
   const mode = z.enum(["ONSITE", "HYBRID", "REMOTE", "NO_PREFERENCE"]).safeParse(job.workMode);
   const allowedRoundKinds = z.enum(["TALK", "TEST", "VENDOR_TEST", "GD", "INTERVIEW"]);
@@ -210,11 +216,15 @@ export function hrDraftFromAuthorizedJob(job: {
     location: job.locations[0] ?? "",
     employmentType: type.success ? type.data : base.employmentType,
     workMode: mode.success ? mode.data : base.workMode,
-    driveMode:job.legacyDriveMode==="POOL"?"POOL":job.recruiterDriveMode==="OFF_CAMPUS"?"OFF_CAMPUS":"ON_CAMPUS",
-    externalApplicationUrl:job.recruiterDriveMode==="OFF_CAMPUS"?safeExternalLink:"",
-    branches:(job.eligibleBranches??[]).map(value=>value.trim()).filter(Boolean).slice(0,30),
+    driveMode,
+    externalApplicationUrl:driveMode==="OFF_CAMPUS"?safeExternalLink:"",
+    // Keep every authorized branch so the editor can report its 30-branch limit.
+    // Never issue a narrower copy by silently discarding eligibility rules.
+    branches:(job.eligibleBranches??[]).map(value=>value.trim()).filter(Boolean),
     passingYear:job.eligiblePassingYear?.toString()??"",
-    passingYears:job.eligiblePassingYears?.filter(year=>Number.isInteger(year) && year>=2000 && year<=2100),
+    // Invalid historical years must be corrected explicitly. Never silently
+    // narrow an authorized eligibility audience while copying the drive.
+    passingYears:job.eligiblePassingYears ? [...job.eligiblePassingYears] : undefined,
     // Existing jobs may predate the standalone legacy LPA field; carry the
     // authorized advertised salary into the required CTC control for Hire Again.
     ctcLpa:job.ctcLpa || (job.maximumAnnualCtcInr && job.maximumAnnualCtcInr>0
@@ -229,7 +239,9 @@ export function hrDraftFromAuthorizedJob(job: {
     // An authorized job with no process rounds stays round-free. Do not
     // invent an Interview round when cloning an existing legacy drive.
     // A NEW draft still offers one editable Interview row by default.
-    rounds: validRounds.slice(0, HR_DRIVE_ROUND_LIMIT),
+    // Preserve all existing authorized rounds. More than 100 stays visible but
+    // invalid until the recruiter explicitly removes excess rows.
+    rounds: validRounds,
   };
 }
 

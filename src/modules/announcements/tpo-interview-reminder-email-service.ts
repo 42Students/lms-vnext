@@ -10,7 +10,7 @@ import {tomorrowInIndiaUtcWindow,type ScheduledJobFence}
 type ReminderRow={
  slot_id:string;slot_version:number;user_id:string;
  application_id:string;college_id:string;organization_id:string;
- starts_at:Date;job_title:string;company_name:string;round_name:string;
+ starts_at:Date;job_title:string;company_name:string;round_name:string;round_description:string|null;
  mode:string|null;room:string;meeting_url:string|null;what_to_bring:string|null;
  recipient_email:string;recipient_name:string;
 };
@@ -64,7 +64,8 @@ export async function queueFencedInterviewReminderEmails(
   select s.id as slot_id,s.version as slot_version,
     m.user_id,a.id as application_id,c.id as college_id,c.organization_id,
     s.starts_at,j.title as job_title,company.name as company_name,
-    r.name as round_name,r.mode,coalesce(nullif(s.room,''),r.venue,'') as room,
+    r.name as round_name,s.legacy_round_description as round_description,
+    r.mode,coalesce(nullif(s.room,''),r.venue,'') as room,
     r.meeting_url,r.what_to_bring,u.email as recipient_email,
     coalesce(nullif(u.display_name,''),'Learner') as recipient_name
   from placement_round_candidate_slots s
@@ -175,7 +176,7 @@ export async function queueFencedInterviewReminderEmails(
     interviewTime:timeInIndia(row.starts_at)+" IST",
     interviewMode:row.mode==="VIRTUAL"?"Virtual":"On campus",
     interviewLocation:location,
-    roundDescription:row.round_name.slice(0,200),
+    roundDescription:(row.round_description?.trim()||row.round_name).slice(0,200),
     whatToBring:row.what_to_bring?.trim()||"Nothing specific",
    },
   });

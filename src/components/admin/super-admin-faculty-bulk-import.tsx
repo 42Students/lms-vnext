@@ -99,7 +99,7 @@ export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
   }finally{submissionInProgress.current=false;}
  }
  const downloadSample=()=>{
-  const sample="First Name,Last Name,Mobile Number,Email,Faculty Type\r\nJohn,Doe,9876543210,john@example.com,LECTURER\r\nJane,Smith,9876543211,,MENTOR\r\n";
+  const sample="First Name,Last Name,Mobile Number,Email,Department,Faculty Type\r\nJohn,Doe,9876543210,john@example.com,,LECTURER\r\nJane,Smith,9876543211,,,MENTOR\r\n";
   const element=document.createElement("a");
   const url=URL.createObjectURL(new Blob([sample],{type:"text/csv"}));
   element.href=url;element.download="bulk_faculty_sample.csv";
@@ -111,8 +111,8 @@ export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
   {dialog}
   <h3 className="font-semibold text-foreground">Bulk register faculty</h3>
   <p className="text-sm text-body">
-    Import up to 500 faculty. Columns: First Name, Last Name, Mobile Number, Email (optional), Faculty Type (LECTURER or MENTOR).
-    All imported faculty are assigned to the selected college department.
+    Import up to 500 faculty. Columns: First Name, Last Name, Mobile Number, Email (optional), Department (optional), Faculty Type (LECTURER or MENTOR).
+    The selected college department is the fallback when a CSV Department cell is blank. Named departments must match an active department in this college.
     Local preview does not check existing college accounts. The server validates each identity during creation; partial imports are possible.
   </p>
   <label className="grid max-w-lg min-w-0 gap-1 text-sm font-semibold text-[var(--lms-neutral-400)]">
@@ -165,6 +165,7 @@ export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
       {key:"lastName",header:"Last Name",mobilePriority:"secondary",cell:entry=>entry.row.lastName},
       {key:"mobile",header:"Mobile Number",mobilePriority:"secondary",cell:entry=>entry.row.phoneE164},
       {key:"email",header:"Email",mobilePriority:"secondary",cell:entry=>entry.row.email??"—"},
+      {key:"department",header:"Department",mobilePriority:"secondary",cell:entry=>entry.row.departmentName||departments.find(item=>item.id===departmentId)?.name||"Choose department"},
       {key:"facultyType",header:"Faculty Type",mobilePriority:"secondary",cell:entry=>entry.row.facultyType},
      ]}/>
 
@@ -186,6 +187,8 @@ export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
      columns={[
       {key:"row",header:"Row",mobilePriority:"primary",cell:row=>row.row},
       {key:"name",header:"Name",mobilePriority:"secondary",cell:row=>row.name},
+      {key:"department",header:"Department",mobilePriority:"secondary",cell:row=>parsedRows[row.row-2]?.departmentName||departments.find(item=>item.id===departmentId)?.name||"—"},
+      {key:"facultyType",header:"Faculty Type",mobilePriority:"secondary",cell:row=>parsedRows[row.row-2]?.facultyType||"—"},
       {key:"result",header:"Result",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="CREATED"?"success":row.status==="FAILED"||row.status==="PARTIAL"?"error":"neutral"}>{row.status}</StatusBadge>},
       {key:"reason",header:"Reason",mobilePriority:"secondary",cell:row=>row.message},
      ]}/>

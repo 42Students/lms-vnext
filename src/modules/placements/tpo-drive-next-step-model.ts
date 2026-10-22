@@ -111,7 +111,8 @@ export function projectTpoDriveNextStep(input: TpoDriveNextStepInput): {
       description: input.shortlistCount + " shortlisted application(s) are available for review.",
       href: root + "/share-preview",
     });
-    if (input.canRemindNonApplicants && (input.nonApplicantCount ?? 0) > 0) actions.push({
+    if (!input.recordedOutside && !input.deadlinePassed &&
+      input.canRemindNonApplicants && (input.nonApplicantCount ?? 0) > 0) actions.push({
       label: "Remind all",
       description: input.nonApplicantCount + " eligible registered students have not applied. Remind once today before the deadline.",
       href: "#drive-registered-not-applied",

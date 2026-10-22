@@ -1,12 +1,13 @@
 import "server-only";
 import {and,desc,eq,gte,gt,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {activityEvents,collegeMemberships,colleges,inAppNotifications,placementJobs,users} from "@/db/schema";
+import {activityEvents,collegeMemberships,colleges,inAppNotifications,placementJobs,placementRecruiterCollegeGrants,users} from "@/db/schema";
 import {placementCompanyApplicantShares as shares,placementCompanyApplicantShareViews as views} from "@/db/schema/placement-company-shares";
 import {companyShareTablesReady} from "./readiness";
 import {companyShareAccessProof,companyShareTokenSchema,hashCompanyShareToken,validCompanyShareAccessCode,issueCompanyShareAccessCode} from "./token-model";
 import {sendZeptoMailTemplate,resolveZeptoMailTemplateId} from "@/modules/notifications/zeptomail-email";
 import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
+import {COMPANY_SHARE_EMAILS_PER_HOUR,companyShareEmailThrottle} from "./email-code-throttle-model";
 /** Anonymous visitors never choose the delivery address. The recipient must
  * be an authenticated, live recruiter with the share's persisted company grant.
  * A separate configured template and durable per-share throttle guard sending.
@@ -38,6 +39,18 @@ export async function canEmailAuthorizedCompanyShareCode(
  if(!share||!context.recruiter.grants.some(grant=>
   grant.collegeId===share.collegeId&&
   grant.companyRelationshipId===share.relationshipId))return false;
+ // Session grants are only a selector: revocation and expiry may have changed
+ // since session creation. Recheck the persisted relationship before offering
+ // a code-delivery action to a recruiter.
+ const [liveGrant]=await getDb().select({id:placementRecruiterCollegeGrants.id})
+  .from(placementRecruiterCollegeGrants).where(and(
+   eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
+   eq(placementRecruiterCollegeGrants.companyRelationshipId,share.relationshipId),
+   eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+   isNull(placementRecruiterCollegeGrants.revokedAt),
+   gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
+  )).limit(1);
+ if(!liveGrant)return false;
  const [recipient]=await getDb().select({
   email:users.email,status:users.platformStatus,
  }).from(users).where(eq(users.id,context.user.id)).limit(1);
@@ -76,6 +89,17 @@ export async function emailAuthorizedCompanyShareCode(
   if(!share||!context.recruiter?.grants.some(grant=>
     grant.collegeId===share.collegeId &&
     grant.companyRelationshipId===share.relationshipId))return "DENIED" as const;
+  // Hold a shared lock on the persisted grant while the code is dispatched,
+  // preventing a concurrent revoke from racing an authorized send.
+  const [liveGrant]=await tx.select({id:placementRecruiterCollegeGrants.id})
+   .from(placementRecruiterCollegeGrants).where(and(
+    eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
+    eq(placementRecruiterCollegeGrants.companyRelationshipId,share.relationshipId),
+    eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+    isNull(placementRecruiterCollegeGrants.revokedAt),
+    gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
+   )).for("share").limit(1);
+  if(!liveGrant)return "DENIED" as const;
   const [recipient]=await tx.select({
    email:users.email,name:users.displayName,status:users.platformStatus,
   }).from(users).where(eq(users.id,context.user.id)).limit(1);
@@ -88,10 +112,10 @@ export async function emailAuthorizedCompanyShareCode(
     eq(activityEvents.subjectId,share.id),
     eq(activityEvents.eventType,COMPANY_SHARE_EMAIL_KIND),
     gte(activityEvents.occurredAt,new Date(now.getTime()-COMPANY_SHARE_EMAIL_WINDOW_MS))))
-   .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(3);
-  if(sent.length>=3)return "LIMITED" as const;
-  if(sent[0] && now.getTime()-sent[0].occurredAt.getTime()<60000)
-   return "TOO_SOON" as const;
+   .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id))
+   .limit(COMPANY_SHARE_EMAILS_PER_HOUR);
+  const throttle=companyShareEmailThrottle(sent.map(row=>row.occurredAt),now);
+  if(throttle)return throttle;
   const challenge=issueCompanyShareAccessCode();
   // The provider call is inside the locked transaction so a rejected mail
   // cannot silently invalidate the manual code. Do not retry ambiguous sends.

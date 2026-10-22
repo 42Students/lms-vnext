@@ -29,6 +29,14 @@ export const publicRecruitEnquirySchema=z.strictObject({
  mobile:normalizedTpoLeadPhoneSchema,
  hiringFor:z.string().max(8192).transform(value=>cleanRecruitText(value,1000)),
 });
+/** Retain legacy TPO CRM activity wording and quoted hiring note.
+ * Call with the cleaned, bounded public enquiry fields only. */
+export function publicRecruitLeadActivityNote(hiringFor:string,company:string,name:string):string {
+ return "Asked to recruit through your placements page"+
+   (hiringFor?': "'+hiringFor.slice(0,900)+'"':"")+
+   (company.length>150?" · Full company: "+company:"")+
+   (name.length>120?" · Full recruiter name: "+name:"");
+}
 export async function submitPublicRecruitEnquiry(collegeId:string,raw:unknown,verifiedIp:string|null){
  const parsed=publicRecruitEnquirySchema.safeParse(raw);
  if(!parsed.success||!z.string().uuid().safeParse(collegeId).success){
@@ -93,10 +101,7 @@ export async function submitPublicRecruitEnquiry(collegeId:string,raw:unknown,ve
   if(!lead)throw new PublicEnquiryError("INVALID");
   await tx.insert(placementTpoLeadActivities).values({
    collegeId,leadId:lead.id,type:"SYSTEM",isSystem:true,
-   note:"Recruiter reached out through public placements"+
-    (hiringFor?" · "+hiringFor.slice(0,900):"")+
-    (company.length>150?" · Full company: "+company:"")+
-    (name.length>120?" · Full recruiter name: "+name:""),
+   note:publicRecruitLeadActivityNote(hiringFor,company,name),
    createdAt:now,
   });
   const [event]=await tx.insert(activityEvents).values({

@@ -35,8 +35,9 @@ export function legacyGridExportFilename(
   extension: "csv" | "xlsx",
 ): string {
   const clean = String(name || "export")
-    .replace(/[\\/:*?"<>|]+/g, "-")
+    .replace(/[\\/:*?"<>|\u0000-\u001f\u007f]+/g, "-")
     .replace(/\.(xlsx|csv)$/i, "")
+    .trim()
     .slice(0, 80) || "export";
   return `${clean}.${extension}`;
 }

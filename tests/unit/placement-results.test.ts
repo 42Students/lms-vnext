@@ -63,7 +63,7 @@ describe("Placement round result validation", () => {
     }
   });
 
-  it("keeps score percentages bounded and integral", () => {
+  it("accepts fractional legacy scores while rejecting out-of-range values", () => {
     expect(() =>
       stagePlacementRoundResultInputSchema.parse({
         applicationId:
@@ -81,5 +81,13 @@ describe("Placement round result validation", () => {
         scorePercent: 87,
       }).scorePercent,
     ).toBe(87);
+    expect(stagePlacementRoundResultInputSchema.parse({
+      applicationId:"70000000-0000-4000-8000-000000000001",
+      outcome:"PASS",scorePercent:87.125,
+    }).scorePercent).toBe(87.125);
+    expect(stagePlacementRoundResultInputSchema.safeParse({
+      applicationId:"70000000-0000-4000-8000-000000000001",
+      outcome:"PASS",scorePercent:50,source:"PANELIST",
+    }).success).toBe(false);
   });
 });

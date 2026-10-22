@@ -8,8 +8,8 @@ import {PlacementsServiceError} from "./errors";
 import {requireTpoJobActor,requireTpoJobCollege} from "./tpo-job-write-base";
 import {previewEligiblePublishedDrive} from "./tpo-drive-publish-effects";
 import {placementJobIdSchema} from "./validation";
-import {placementReminderCooldownCutoff,placementReminderDay,placementReminderPreviewToken,tpoRemindNotAppliedSchema}
- from "./tpo-remind-not-applied-model";
+import {placementReminderCooldownCutoff,placementReminderDay,placementReminderPreviewToken,
+ tpoRemindNotAppliedSchema,tpoNonApplicantReminderBlockReason} from "./tpo-remind-not-applied-model";
 
 
 /** Documentation-only compatibility matrix; never invoke an old endpoint or
@@ -56,15 +56,18 @@ async function scopedJob(context:RequestContext,rawJobId:unknown){
  const collegeId=await requireTpoJobCollege(context),jobId=placementJobIdSchema.parse(rawJobId);
  const [job]=await getDb().select({
   id:placementJobs.id,title:placementJobs.title,collegeId:placementJobs.collegeId,
-  status:placementJobs.status,applicationDeadline:placementJobs.applicationDeadline,
+  status:placementJobs.status,recordedOutside:placementJobs.recordedOutside,
+  applicationDeadline:placementJobs.applicationDeadline,
  }).from(placementJobs).where(and(eq(placementJobs.id,jobId),
   eq(placementJobs.collegeId,collegeId))).limit(1);
  if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
  return job;
 }
-function ensureLive(job:{status:string;applicationDeadline:Date|null},now:Date){
- if(job.status!=="PUBLISHED")throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
- if(job.applicationDeadline&&job.applicationDeadline<=now)
+function ensureLive(job:{status:string;recordedOutside:boolean;applicationDeadline:Date|null},now:Date){
+ const reason=tpoNonApplicantReminderBlockReason(job,now);
+ if(reason==="Drive is not published"||reason==="Outside drives do not accept applications")
+  throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
+ if(reason==="Application deadline has passed")
   throw new PlacementsServiceError("PLACEMENT_APPLICATION_DEADLINE_PASSED");
 }
 export async function getTpoNonApplicantReminderPreview(context:RequestContext,rawJobId:unknown){
@@ -75,10 +78,9 @@ export async function getTpoNonApplicantReminderPreview(context:RequestContext,r
    eq(activityEvents.subjectId,job.id),
    eq(activityEvents.eventType,"PLACEMENTS_TPO_REMIND_NOT_APPLIED"),
    gt(activityEvents.occurredAt,placementReminderCooldownCutoff(now)))).limit(1);
- const allowed=job.status==="PUBLISHED"&&(!job.applicationDeadline||job.applicationDeadline>now);
- if(!allowed)return {jobId:job.id,day,count:0,allowed:false,alreadySent:Boolean(past),
-  previewToken:null,canRemind:false,
-  reason:job.status!=="PUBLISHED"?"Drive is not published":"Application deadline has passed"};
+ const blocked=tpoNonApplicantReminderBlockReason(job,now);
+ if(blocked)return {jobId:job.id,day,count:0,allowed:false,alreadySent:Boolean(past),
+  previewToken:null,canRemind:false,reason:blocked};
  const recipients=await getDb().transaction(async tx=>{
   await requireTpoJobActor(tx,context);
   return candidateAudience(tx,context,job);
@@ -95,7 +97,8 @@ export async function remindTpoNonApplicants(context:RequestContext,rawJobId:unk
  return getDb().transaction(async tx=>{
   await requireTpoJobActor(tx,context);
   const [locked]=await tx.select({
-   status:placementJobs.status,applicationDeadline:placementJobs.applicationDeadline,
+   status:placementJobs.status,recordedOutside:placementJobs.recordedOutside,
+   applicationDeadline:placementJobs.applicationDeadline,
   }).from(placementJobs).where(eq(placementJobs.id,job.id)).for("update").limit(1);
   if(!locked)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
   ensureLive(locked,now);

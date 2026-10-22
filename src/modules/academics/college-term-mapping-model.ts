@@ -7,6 +7,13 @@ import { z } from "zod";
  */
 export const termCourseCreditsSchema = z.number().int().min(0).max(30);
 
+/** An empty number input is not zero. Preserve valid zero-credit legacy rows,
+ * but reject blank, invalid or out-of-range drafts before submitting edits. */
+export function parseTermCourseCreditsDraft(raw: string) {
+  const trimmed = raw.trim();
+  return termCourseCreditsSchema.safeParse(/^\d+$/.test(trimmed) ? Number(trimmed) : Number.NaN);
+}
+
 /** Legacy default applies only to creating a NEW mapping; never overwrite
  * imported legacy_is_mandatory / type based on the database CORE default.
  * Those are distinct storage columns until a deliberate migration resolves

@@ -132,7 +132,7 @@ export function CourseActions({
     useState(course.code);
   const [description, setDescription] =
     useState(course.description ?? "");
-  const [shortTitle,setShortTitle]=useState(course.shortTitle??course.name.slice(0,120));
+  const [shortTitle,setShortTitle]=useState(course.shortTitle??course.name.slice(0,64));
   const [officialCode,setOfficialCode]=useState(course.officialCode??"");
   const [cardColor,setCardColor]=useState(course.cardColor??"");
   const [coverUrl,setCoverUrl]=useState(course.thumbnailUrl??"");
@@ -157,7 +157,7 @@ export function CourseActions({
     useCourseMutation();
   const dirty = name!==course.name || code!==course.code ||
     description!==(course.description??"")||(allowMetadata&&(
-      shortTitle!==(course.shortTitle??course.name.slice(0,120))||
+      shortTitle!==(course.shortTitle??course.name.slice(0,64))||
       officialCode!==(course.officialCode??"")||cardColor!==(course.cardColor??"")||
       coverUrl!==(course.thumbnailUrl??"")||takeaways!==(course.takeaways??"")));
   function closeEdit(next:boolean) {
@@ -171,7 +171,7 @@ export function CourseActions({
     setNameFieldError("");
     setName(course.name);
     setCode(course.code);
-    setShortTitle(course.shortTitle??course.name.slice(0,120));
+    setShortTitle(course.shortTitle??course.name.slice(0,64));
     setOfficialCode(course.officialCode??"");
     setCardColor(course.cardColor??"");
     setCoverUrl(course.thumbnailUrl??"");setCoverPreviewBroken(false);setCoverUrlError("");
@@ -322,7 +322,7 @@ export function CourseActions({
         dismissible={!pending}
         title={"Edit “"+course.name+"”"}
         className="max-w-[660px] max-h-[min(85vh,900px)] overflow-y-auto"
-        description="Department ownership is immutable after Course creation. Existing files and linked lessons remain attached."
+        description="A Course without any Offerings can move within the same college using Move department. Existing metadata and files remain attached."
         footer={
           <>
             <Button
@@ -397,7 +397,7 @@ export function CourseActions({
           </label>
           {allowMetadata?<div className="grid gap-3">
             <label className="grid gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Short display name
-              <Input value={shortTitle} onChange={event=>setShortTitle(event.target.value)} maxLength={120}/>
+              <Input value={shortTitle} onChange={event=>setShortTitle(event.target.value)} maxLength={64} placeholder="e.g. DSA"/>
             </label>
             <label className="grid gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Official course code (optional)
               <Input value={officialCode} onChange={event=>setOfficialCode(event.target.value)} maxLength={40}

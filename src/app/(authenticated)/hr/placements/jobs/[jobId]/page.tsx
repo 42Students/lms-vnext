@@ -1,3 +1,4 @@
+import {shouldShowRecruiterApplicantSearch} from "@/modules/placements/hr-applicant-search-visibility";
 import { MetricBar } from "@/components/ui/metric-bar";
 import funnelStyles from "@/components/hr/recruiter-drive-funnel.module.css";
 import { Button } from "@/components/ui/button";
@@ -578,12 +579,12 @@ export default async function HrPlacementJobPage({
               className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               Export shared applicants CSV
             </Link>
-            {applicants.rows.some(row=>row.resumeShared)?<RecruiterResumesZipDownload jobId={workspace.job.id}/>:null}
+            <RecruiterResumesZipDownload jobId={workspace.job.id}/>
           </div>
           <p className="text-sm text-body">Only placement-cell-shortlisted applicants are visible to this employer. Private pending, held and rejected candidates are excluded. Counts include all authorized shared applications, while the list loads 25 per page.</p>
           <p className="text-sm text-body">Open each applicant in turn and choose Shortlist, Waitlist or Reject. The placement cell applies your decisions.</p>
           {!workspace.rounds.length?<p role="status" className="border-l-2 border-warning bg-warning-subtle p-3 text-sm">Reviewing needs a round. The placement cell has not set up a round for this drive yet.</p>:null}
-          {applicants.rows.length>8 ? <form method="get"
+          {shouldShowRecruiterApplicantSearch(applicants.counts.all,applicantSearch) ? <form method="get"
             action={"/recruiter/drives/"+encodeURIComponent(workspace.job.id)}
             role="search" aria-label="Search shared applicants on this page"
             className="flex min-w-0 flex-wrap items-end gap-2 border-b border-border pb-3">

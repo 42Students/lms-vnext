@@ -11,6 +11,11 @@ export const updateWorkspaceBriefSchema=z.strictObject({
  expectedUpdatedAt:z.iso.datetime({offset:true}),
 });
 export type WorkspaceBrief=z.infer<typeof workspaceBriefSchema>;
+/** Drafts may be incomplete. Published, editable workspaces cannot lose all deliverables.
+ * Validate by lifecycle state, not by the role of the person editing the brief. */
+export function workspaceBriefRequiresDeliverables(status:string):boolean {
+ return status==="ACTIVE";
+}
 export const emptyWorkspaceBrief:WorkspaceBrief={
  goal:"",description:"",deliverables:[],completionConditions:[],personas:[],
 };
@@ -39,7 +44,9 @@ export function parseWorkspaceBrief(value:unknown):WorkspaceBrief {
   goal:typeof raw.goal==="string"?raw.goal:"",
   description:typeof raw.description==="string"?raw.description:"",
   deliverables:list(raw.deliverables),
-  completionConditions:list(raw.completionConditions??raw.definitionOfDone),
+  // An explicitly cleared native field, including a historic null, wins over
+  // inherited definitionOfDone. Absence alone activates the old alias.
+  completionConditions:list("completionConditions" in raw?raw.completionConditions:raw.definitionOfDone),
   personas:list(raw.personas),
  };
  const result=workspaceBriefSchema.safeParse(fallback);

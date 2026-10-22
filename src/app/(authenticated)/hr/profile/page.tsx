@@ -45,6 +45,9 @@ export default async function HrProfilePage({ searchParams }: {
     }))}/>
   </div>;
   const scopedCollegeId = requestedId ?? grants[0]?.collegeId;
+  const retryHref = scopedCollegeId
+    ? "/hr/profile?collegeId=" + encodeURIComponent(scopedCollegeId)
+    : "/hr/profile";
   const [profileResult,overviewResult]=await Promise.allSettled([
     getRecruiterSelfProfile(context, scopedCollegeId),getRecruiterSelfGrantOverview(context),
   ]);
@@ -52,7 +55,7 @@ export default async function HrProfilePage({ searchParams }: {
    return <div className="min-w-0 space-y-4"><PageHeader title="Your Profile"/>
     <ErrorState title="We couldn't load your profile"
       description="Your recruiter profile or college access could not be verified. No other account details have been substituted."
-      action={<Link href="/hr/profile" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+      action={<Link href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
    </div>;
   const profile=profileResult.value;
   const allOverview=overviewResult.value;

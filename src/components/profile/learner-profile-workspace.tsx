@@ -602,7 +602,7 @@ export function LearnerProfileWorkspace(props: {
           </div>
           <div className="min-w-0 border-t border-border pt-3">
             <p className="m-0 text-sm font-semibold text-foreground">Resume</p>
-            <p className="mt-1 text-xs leading-5 text-muted-foreground">Upload/import/remove remains explicitly blocked until Cloud Storage signing and cleanup are live.</p>
+            <p className="mt-1 text-xs leading-5 text-muted-foreground">Use the Default resume section below to upload a private scanned PDF and select or replace the resume for placement applications. Removing a saved receipt is managed separately.</p>
           </div>
         </div>
         </details>

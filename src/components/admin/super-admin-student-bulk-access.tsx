@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {useEffect,useRef,useState} from "react";
 import {superAdminStudentBulkFailure} from "@/modules/module-access/super-admin-student-bulk-feedback";
 import {useRouter} from "next/navigation";
@@ -32,6 +33,7 @@ export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:reado
  const [module,setModule]=useState<"projects"|"electives">("projects");
  const [action,setAction]=useState<"ENABLE"|"DISABLE"|"INHERIT">("ENABLE");
  const [busy,setBusy]=useState(false),[error,setError]=useState<string|null>(null);
+ const [confirmOpen,setConfirmOpen]=useState(false);
  const [report,setReport]=useState<{requested:number;applied:number;failures:{id:string;error:string}[]}|null>(null);
  const capped=learners;
  const visibleIds=capped.map(row=>row.id);
@@ -53,8 +55,6 @@ export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:reado
    return;
   }
   const membershipIds=[...selected],requestedModule=module,requestedAction=action;
-  if(!confirm(requestedAction+" "+requestedModule+" access for "+membershipIds.length+
-   " selected students in this college? Each group of 25 is atomic; earlier confirmed groups stay saved if a later group fails."))return;
   pendingRef.current=true;setBusy(true);setError(null);setReport(null);
   const confirmedIds=new Set<string>();
   const failures:{id:string;error:string}[]=[];
@@ -121,7 +121,7 @@ export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:reado
     "Earlier confirmed groups remain saved. The current group's outcome is unknown; "+
     "refresh the rule preview before retrying the remaining students.");
    if(confirmedIds.size>0)router.refresh();
-  }finally{pendingRef.current=false;setBusy(false);}
+  }finally{pendingRef.current=false;setBusy(false);setConfirmOpen(false);}
  }
 
  return <section aria-label="Bulk student access" className="min-w-0 space-y-3 pb-4">
@@ -182,13 +182,24 @@ export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:reado
     className="min-h-11 w-full">
     <option value="ENABLE">Enable</option><option value="DISABLE">Disable</option>
     <option value="INHERIT">Clear override / Inherit</option></Select></label>
-   <Button variant="primary" type="button" className="min-h-11 w-full md:w-auto" disabled={busy||!selected.length} onClick={()=>void submit()}
-    >{busy?"Saving…":"Apply to selected"}</Button>
+   <Button variant="primary" type="button" className="min-h-11 w-full md:w-auto" disabled={busy||!selected.length} onClick={()=>setConfirmOpen(true)}
+    >{busy?"Saving…":"Review and apply"}</Button>
   </div>
   {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
   {report?<div role="status" className="space-y-1 text-sm text-body">
    <p>{report.applied} of {report.requested} updated · {report.failures.length} failed or not processed</p>
    {report.failures.length?<ul className="list-disc pl-5">{report.failures.map(f=><li key={f.id}>{f.id}: {f.error}</li>)}</ul>:null}
   </div>:null}
+  <ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!busy)setConfirmOpen(next);}}
+    title={"Apply " + action.toLowerCase() + " " + module + " access?"}
+    description={selected.length + " selected students in this college. Only this college's authorized memberships will be updated."}
+    confirmLabel="Apply to selected" confirmVariant={action==="DISABLE"?"danger":"primary"}
+    pending={busy} confirmDisabled={busy||selected.length===0}
+    onConfirm={()=>void submit()}>
+    <p className="text-sm text-body leading-[22px]">
+      Each group of 25 is atomic. Earlier confirmed groups remain saved if a later group fails.
+      Failed and unprocessed students stay selected for a reviewed retry.
+    </p>
+  </ConfirmDialog>
  </section>;
 }

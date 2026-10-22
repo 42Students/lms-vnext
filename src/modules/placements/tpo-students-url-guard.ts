@@ -1,9 +1,16 @@
 import {TPO_STUDENT_VISIBLE_KEYS,validTpoColumnPreference} from "./tpo-grid-model";
 import {TPO_STUDENT_LEGACY_FILTER_ALIASES} from "./tpo-students-filter-aliases";
+/** A view label is only export presentation metadata, never a data filter or
+ * authority to read a different roster. Require printable, bounded text. */
+export function tpoStudentExportViewName(value:unknown):string|null {
+ if(typeof value!=="string")return null;
+ const name=value.trim();
+ return name.length>0&&name.length<=100&&!/[\u0000-\u001f\u007f]/.test(name)?name:null;
+}
 /** Never choose the first of repeated query values on an authorized student roster. */
 export function tpoStudentUrlError(raw:Record<string,string|string[]|undefined>):string|null {
   if(Object.values(raw).some(value=>Array.isArray(value))) return "Repeated Students filters are not allowed. No student data was loaded.";
-  const supported = new Set(["everyone","journeyState","branchId","programId","classId","afterCollege","profileStatus","minApplications","maxApplications","minOffers","maxOffers","offerWaiting","minCgpa","maxCgpa","maxActiveBacklogs","maxPastBacklogs","cgpaRecorded","batchId","search","q","page","pageSize","columns","student",
+  const supported = new Set(["everyone","journeyState","branchId","programId","classId","afterCollege","profileStatus","minApplications","maxApplications","minOffers","maxOffers","offerWaiting","minCgpa","maxCgpa","maxActiveBacklogs","maxPastBacklogs","cgpaRecorded","batchId","search","q","page","pageSize","columns","student","view",
     "legacyStage","minRoundReached","needsAttention","interviewedWith","debarred","gender","birthYear","minSkills","minProjects","minCertifications","minExperiences","hasProfileLinks",
     "minTenthPct","minTwelfthPct","minDiplomaPct","minUgPct","passingYear","maxGapYears","marksVerified","isLateralEntry","hasResume","hasCodingProfiles","skillName"]);
   const aliasesForTargets=new Set<string>();
@@ -17,6 +24,8 @@ export function tpoStudentUrlError(raw:Record<string,string|string[]|undefined>)
   }
   if(typeof raw.q==="string"&&raw.search!==undefined) return "Use one Students search field at a time.";
   if(Object.keys(raw).some(key=>!supported.has(key)&&!Object.hasOwn(TPO_STUDENT_LEGACY_FILTER_ALIASES,key))) return "Unsupported Students filter. No student data was loaded.";
+  if(raw.view!==undefined&&!tpoStudentExportViewName(raw.view))
+    return "Saved view name is invalid. Choose a view again.";
   if(typeof raw.student==="string"&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(raw.student))
     return "The selected student is invalid. No student data was loaded.";
   if(!validTpoColumnPreference(typeof raw.columns==="string"?raw.columns:undefined,TPO_STUDENT_VISIBLE_KEYS))

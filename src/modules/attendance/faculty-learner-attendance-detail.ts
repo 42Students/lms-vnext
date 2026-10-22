@@ -98,19 +98,23 @@ export function facultyAttendanceMonthSummary(
   const presentMarks = sum("present");
   const absentMarks = sum("absent");
   const markedMarks = presentMarks + absentMarks;
+  // A pre-marked *future* timetable row is still upcoming, never a held
+  // class. Legacy held counts require both a started session and a mark.
+  const observed = sessions.filter((session) => {
+    const start = new Date(session.startsAt).getTime();
+    return Number.isFinite(start) && start <= now.getTime();
+  });
+  const markedHeld = observed.filter((session) => session.attendanceStatus === "MARKED");
+  const upcoming = sessions.filter((session) => {
+    const start = new Date(session.startsAt).getTime();
+    return Number.isFinite(start) && start > now.getTime();
+  });
   return {
     learnerCount: ids.length,
-    // Only MARKED sessions are evidenced as held; future timetable rows
-    // remain in upcomingSessions and do not inflate legacy held counts.
-    sessionCount: sessions.filter((s) => s.attendanceStatus === "MARKED").length,
-    markedSessions: sessions.filter((s) => s.attendanceStatus === "MARKED").length,
-    unmarkedSessions: sessions.filter((s) =>
-      new Date(s.startsAt).getTime() <= now.getTime() &&
-      s.attendanceStatus !== "MARKED",
-    ).length,
-    upcomingSessions: sessions.filter((s) =>
-      new Date(s.startsAt).getTime() > now.getTime(),
-    ).length,
+    sessionCount: markedHeld.length,
+    markedSessions: markedHeld.length,
+    unmarkedSessions: observed.filter((session) => session.attendanceStatus !== "MARKED").length,
+    upcomingSessions: upcoming.length,
     presentMarks,
     absentMarks,
     markedMarks,

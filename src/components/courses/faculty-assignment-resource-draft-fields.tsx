@@ -101,8 +101,9 @@ export function FacultyAssignmentResourceDraftFields({
    Instructions and resources ({resources.length}/30)
   </legend>
   <p className="text-xs leading-5 text-muted-foreground">
-   Add one Instructions block, plus any number of PDF, File or Link entries.
-   All file uploads are private and require malware-scan approval.
+   Each assignment needs at least one completed resource (maximum 30):
+   Instructions, PDF, File or Link. The empty Instructions placeholder does
+   not count. Private uploads require malware-scan approval before publishing.
   </p>
   {resources.map((item,index)=><div key={index}
     className="min-w-0 space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">

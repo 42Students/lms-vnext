@@ -1233,9 +1233,11 @@ export const stagePlacementRoundResultInputSchema =
         .max(100_000)
         .nullable()
         .optional(),
+      // Legacy RoundResult.score is Double: preserve fractional percentages.
+      // Caller-supplied source remains forbidden; audited source is actor-derived.
       scorePercent: z
         .number()
-        .int()
+        .finite()
         .min(0)
         .max(100)
         .nullable()

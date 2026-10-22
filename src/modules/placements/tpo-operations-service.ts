@@ -663,8 +663,10 @@ db
         from scoped_jobs j left join missing_letters o on o.job_id = j.id
        where coalesce(o.missing,0)>0 and j.status <> 'CANCELLED'
       union all
+      -- This category counts drives, not the applications those drives received.
+      -- A low-conversion drive contributes one affected drive to the summary.
       select 'CLOSING_SOON_LOW_CONVERSION', j.id, j.title, j.company_name,
-             greatest(1,coalesce(a.submitted,0))
+             1::int
         from scoped_jobs j left join applications a on a.job_id = j.id
        where j.status = 'PUBLISHED' and j.openings is not null
          and j.application_deadline > ${now}

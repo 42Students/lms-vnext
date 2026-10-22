@@ -2,7 +2,7 @@ import "server-only";
 import {and,eq,isNull,isNotNull} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {db10Announcements} from "@/db/schema/db10-announcements";
+import {db10Announcements,announcementBroadcastGroups} from "@/db/schema/db10-announcements";
 import {activityEvents} from "@/db/schema/activity";
 import {inAppNotifications} from "@/db/schema";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
@@ -35,26 +35,29 @@ export async function mutateTpoNotice(context:RequestContext,raw:unknown){
    deletedAt:db10Announcements.deletedAt,
    createdAt:db10Announcements.createdAt,
    scheduledAt:db10Announcements.scheduledAt,
-  }).from(db10Announcements).where(and(
+   sentAt:announcementBroadcastGroups.sentAt,
+  }).from(db10Announcements)
+   .leftJoin(announcementBroadcastGroups,
+    eq(announcementBroadcastGroups.id,db10Announcements.broadcastGroupId))
+   .where(and(
    eq(db10Announcements.id,input.noticeId),
    eq(db10Announcements.collegeId,college.id),
    eq(db10Announcements.organizationId,college.organizationId),
    eq(db10Announcements.receiverType,"COLLEGE"),
    eq(db10Announcements.receiverId,college.id),
    eq(db10Announcements.senderType,"TPO"),
-  )).for("update").limit(1);
+  )).for("update",{of:db10Announcements}).limit(1);
   if(!current)throw new Error("ANNOUNCEMENT_NOT_FOUND");
   if(current.version!==input.expectedVersion)throw new Error("ANNOUNCEMENT_STALE");
   if(deletingAction(input.action) && current.deletedAt || input.action==="RESTORE" && !current.deletedAt)
    throw new Error("ANNOUNCEMENT_STALE");
   const now=new Date();
-  // A notice scheduled days ago must not lose its 30-second send undo window
-  // merely because its draft was authored earlier. Before scheduled delivery
-  // it can still be deleted normally, but it has not yet been "sent".
+  // The broadcast group's committed delivery time is authoritative. A
+  // scheduled row with no dispatch cannot be undone as if it were sent.
+  // Pre-group immediate legacy records used creation as send time.
   if(input.action==="UNDO_SEND"){
-   if(current.scheduledAt && current.scheduledAt>now)
-    throw new Error("ANNOUNCEMENT_NOT_SENT");
-   const sentAt=current.scheduledAt??current.createdAt;
+   const sentAt=current.sentAt??(current.scheduledAt===null?current.createdAt:null);
+   if(!sentAt)throw new Error("ANNOUNCEMENT_NOT_SENT");
    if(!canUndoTpoAnnouncementSend(sentAt,now))
     throw new Error("ANNOUNCEMENT_UNDO_EXPIRED");
   }

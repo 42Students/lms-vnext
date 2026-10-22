@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, eq, gte, isNull, lt, ne } from "drizzle-orm";
+import { and, asc, eq, gte, inArray, isNull, lt, ne } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { placementJobRounds, placementJobs, placementCompanies, placementCompanyRelationships } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
@@ -47,7 +47,8 @@ export async function getTpoDriveDayQueue(
     .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
     .where(and(
       eq(placementJobs.collegeId,collegeId),
-      eq(placementJobs.status,"PUBLISHED"),
+      // Completed drives can still have rounds recorded today.
+      inArray(placementJobs.status,["PUBLISHED","CLOSED"]),
       isNull(placementJobs.archivedAt),
       eq(placementJobs.recruiterDriveMode,"ON_CAMPUS"),
       ne(placementJobRounds.status,"CANCELLED"),

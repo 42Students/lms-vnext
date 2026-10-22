@@ -11,11 +11,11 @@ import {useRouter} from "next/navigation";
 import {tpoTeamFormErrorMessage} from "@/modules/placements/tpo-team-form-feedback-model";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
+import {buildTpoTeamFormData} from "@/modules/placements/tpo-team-form-payload";
 
 type Member={membershipId:string;displayName:string};
-async function postForm(url:string,values:Record<string,string>){
- const body=new FormData();
- for(const [key,value] of Object.entries(values))body.set(key,value);
+async function postForm(url:string,values:Record<string,string|readonly string[]>){
+ const body=buildTpoTeamFormData(values);
  try{
   const reply=await apiFetch<{id?:string;href?:string}>(url,{
    method:"POST",credentials:"same-origin",
@@ -73,15 +73,14 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
  const [busy,setBusy]=useState(false),[error,setError]=useState("");
  async function create(event:React.FormEvent<HTMLFormElement>){
   event.preventDefault();if(pending.current||busy||!recipient||!topic.trim()||
-   ((kind==="DRIVE"||kind==="COMPANY")&&!/^[0-9a-f-]{36}$/i.test(contextId))||
-   (kind!=="DIRECT"&&additional.length===0))return;
+   ((kind==="DRIVE"||kind==="COMPANY")&&!/^[0-9a-f-]{36}$/i.test(contextId)))return;
   pending.current=true;setBusy(true);setError("");
   try{
    if(!createKey.current){createKey.current=crypto.randomUUID();
     try{sessionStorage.setItem(draftKey+":createKey",createKey.current);}catch{/* Optional. */}}
    const result=await postForm("/api/placements/tpo/team/threads",{
     recipientMembershipId:recipient,topic:topic.trim(),firstMessage:firstMessage.trim(),idempotencyKey:createKey.current,
-    kind,participantMembershipIds:kind==="DIRECT"?"":additional.join(","),
+    kind,participantMembershipIds:kind==="DIRECT"?[]:additional,
     contextId:kind==="DRIVE"||kind==="COMPANY"?contextId:"",
    });
    if(!result.ok||!result.href){
@@ -164,7 +163,6 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
   <p className="text-xs text-muted-foreground">Only named, currently active placement team members can take part. Contexts are rechecked by the server.</p>
   {error?<InlineNotice tone="error" role="alert" message={error}/>:null}
   <Button type="submit" disabled={busy||!recipient||!topic.trim()||
-   (kind!=="DIRECT"&&additional.length===0)||
    ((kind==="DRIVE"||kind==="COMPANY")&&!/^[0-9a-f-]{36}$/i.test(contextId))}
    className="min-h-11 md:min-h-9">
    {busy?"Starting…":"Start conversation"}

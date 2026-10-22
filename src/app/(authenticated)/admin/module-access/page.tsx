@@ -23,8 +23,8 @@ export default async function SuperAdminModuleAccessPage({
     return <div className="min-w-0 space-y-4 md:space-y-6">
       <PageHeader title="Module Access" description="Manage the selected college's module access hierarchy." />
       <Banner tone="warning" role="status">
-        Select a college to continue. Module access is deliberately college-scoped.
-        Choose a college in the header to inspect inherited access without mixing tenants.
+        <strong className="block font-semibold">Select a college to continue</strong>
+        <span className="block">Module access is deliberately college-scoped. Choose a college in the header to inspect inherited access without mixing tenants.</span>
         No hierarchy, student overrides or historic decisions have been loaded.
       </Banner>
       <Link href="/admin/colleges"
