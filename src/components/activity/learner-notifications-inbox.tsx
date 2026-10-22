@@ -299,13 +299,14 @@ export function LearnerNotificationsInbox({
             className="min-h-11 w-full md:w-auto md:min-h-9">View all</Button>:null}
         </div>
       ) : (
-        <NotificationList items={visible.map(item=>({
-            ...item,
-            actionHref:learnerNotificationPlacementAction(item.actionHref)?.href??null,
-            ...(learnerNotificationPlacementAction(item.actionHref)?.label !== undefined
-              ? { actionLabel: learnerNotificationPlacementAction(item.actionHref)?.label }
-              : {}),
-          }))}
+        <NotificationList items={visible.map(item=>{
+            const action = learnerNotificationPlacementAction(item.actionHref);
+            return {
+              ...item,
+              actionHref: action?.href ?? null,
+              ...(action?.label !== undefined ? { actionLabel: action.label } : {}),
+            };
+          })}
           onSelect={setSelected} readEndpoint="/api/learn/notifications" />
       )}
       </div>
