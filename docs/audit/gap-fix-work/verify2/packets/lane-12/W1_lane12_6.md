@@ -126,3 +126,8 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: (none, new feature)
 - Legacy: ProjectReadinessDTO.java:14-19 explicit releases informational, not submission gate
 - Expected fix: Remove release gate or record explicit business decision
+
+## Lane-3 FINAL verification triage (2026-10-22)
+
+- OK: G2-5-012-035, G2-5-012-037, G2-5-012-038, G2-5-012-097. TPO follow-up modal uses paged, abortable two-character recruiter lookup, explicit 5-minute input increments, IST legacy display formatting, and a future-time/step boundary before saving.
+- DEFERRED: G2-5-032-005, G2-6-015-034, G2-6-019-046, G2-11-020-052, G2-11-026-029, G2-12-011-042, G2-6-017-008, G2-6-002-015, G2-6-002-017, G2-6-029-048, G2-6-008-029, G2-12-027-031, G2-14-030-010, G2-15-025-024, G2-17-031-040, G2-19-027-098, G2-7-002-054, G2-7-004-075, G2-7-007-034, G2-7-010-019, G2-7-012-035. These require deeper service, migration, permission, and end-to-end verification; no implementation parity claimed.
