@@ -9,11 +9,11 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - [x] G2-12-016-008  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-12-016-009  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
-- [ ] G2-4-010-097  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+- [x] G2-4-010-097  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-011-080  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-011-082  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [x] G2-4-016-017  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
-- [ ] G2-4-017-006  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+- [x] G2-4-017-006  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-017-008  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-017-017  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-017-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
@@ -22,3 +22,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-12-016-008: OK — `src/db/schema/academic-terms.ts:10-42` preserves `legacySemesterId`, program ownership, term number, name, nullable `totalCredits`, and active state; `docs/audit/gap-fix/academic-term-crosswalk-lane-14.md:5-17` specifies the scoped integer-ID-to-UUID migration, nullable-source handling, and semester-number uniqueness. This is a verified *field map*, not a claim that imports have run. Matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Semester.java:22-39`.
 - G2-4-016-017: OK — `src/modules/messaging/receipt-history-service.ts:105-123` passes both sanitized recipient suffix and purpose to the provider; `src/modules/notifications/exotel-sms.ts:158-176` combines suffix and purpose as `AND` conditions in the append-only ledger query; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/SmsDeliveryLogRepository.java:17-24` and `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminSmsLogController.java:53-71`.
 
+- G2-4-010-097: OK — `src/db/schema/course-assignment-materials.ts:10-16,29-30` preserves separate LINK URL, FILE object key, original filename, MIME type, size, ordered sequence and unmodified `legacyFileDto` JSON; matches legacy JSON-backed content in `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LessonContents.java:33-41` and legacy file DTO assembly in `docs/legacy-source/frontend/src/components/admin/AdminAssignmentBuilderModal.jsx:149-161`. This verifies storage fields, not an executed historical import.
+- G2-4-017-006: OK — `src/db/schema/projects.ts:229-232,264-265,288` keeps mutable `authoredBrief` distinct from historical `legacyOverview` and immutable `legacyTemplateSnapshot`; matches the two independent JSON source fields in `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectWorkspace.java:87-105`. This establishes mapping, not an executed historical import.
