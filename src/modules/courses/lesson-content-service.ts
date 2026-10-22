@@ -539,6 +539,7 @@ export async function createLessonContent(
         ),
       )
       .returning();
+    if (!created) throw new CoursesServiceError("CONTENT_ORDER_CONFLICT");
     if(materialLinks.length)await tx.insert(lessonContentMaterials).values(
       materialLinks.map((material,index)=>({
         lessonContentId:created.id,kind:"LINK",
