@@ -120,11 +120,13 @@ export async function importTpoLeadsCsv(
     const counts=summarizeTpoLeadImport(rows);
     const created=rows.filter(row=>row.status==="created");
     if(created.length){
+     const firstCreated=created[0];
+     if(!firstCreated?.leadId)throw new Error("Imported lead audit requires a created lead");
      const [event]=await tx.insert(activityEvents).values({
       organizationId:college.organizationId,collegeId:college.id,
       actorUserId:context.user.id,actorMembershipId:ownerMembershipId,
       module:"PLACEMENTS",eventType:"RECRUITER_LEADS_IMPORTED",
-      subjectType:"placement_tpo_lead",subjectId:created[0].leadId!,
+      subjectType:"placement_tpo_lead",subjectId:firstCreated.leadId,
       summary:"Recruiter leads imported",
       metadata:{counts,importedLeadIds:created.map(row=>row.leadId)},
      }).returning({id:activityEvents.id});
