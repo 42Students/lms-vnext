@@ -133,6 +133,9 @@ export default async function LearnerProjectsPage({
           const projectAttention = archived ? undefined : attentionByProject.get(row.project.id);
           const blocked = !archived && (Boolean(row.project.blocker?.trim()) ||
             learnerProjectHasBlockedTasks(row.project.status, progressByProject.get(row.project.id)));
+          const progress = progressByProject.get(row.project.id);
+          const team = teamsByProject.get(row.project.id);
+          const due = dueByProject.get(row.project.id);
           return {
             id: row.project.id,
             title: row.project.title,
@@ -145,20 +148,17 @@ export default async function LearnerProjectsPage({
             courseLabel: row.project.courseLabel,
             phase: row.project.phase,
             dueLabel: row.project.dueLabel,
-            memberCount: teamsByProject.get(row.project.id)?.memberCount,
-            progressPercent: progressByProject.get(row.project.id)?.percentage ?? row.project.progressPercent ?? undefined,
-            dueState: dueByProject.get(row.project.id)?.state,
-            dueDate: dueByProject.get(row.project.id)?.date,
-            progressDetail: progressByProject.has(row.project.id)
-              ? "Task completion " + String(progressByProject.get(row.project.id)!.completedTasks) +
-                "/" + String(progressByProject.get(row.project.id)!.totalTasks) + " tasks"
-              : row.project.progressPercent!==null?"Admin-reported progress / Manual estimate":undefined,
+            ...(team?.memberCount !== undefined ? {memberCount:team.memberCount} : {}),
+            ...((progress?.percentage ?? row.project.progressPercent) != null ? {progressPercent: progress?.percentage ?? row.project.progressPercent} : {}),
+            ...(due?.state !== undefined ? {dueState:due.state} : {}),
+            ...(due?.date !== undefined ? {dueDate:due.date} : {}),
+            ...(progress ? {progressDetail: "Task completion " + String(progress.completedTasks) + "/" + String(progress.totalTasks) + " tasks"} : row.project.progressPercent!==null ? {progressDetail:"Admin-reported progress / Manual estimate"} : {}),
             actionLine: archived ? "Archived · view only" :
               projectAttention === "CHANGES_REQUESTED" ? "Update your submission" :
               projectAttention === "DRAFT" ? "Finish your draft submission" :
               blocked ? "Open blocked work" : row.project.nextAction?.trim() || "Open workspace",
-            blockedHref: blocked ? "/learn/projects/" + row.project.id + "?tab=board&lane=Blocked" : undefined,
-            blockerText: row.project.blocker?.trim()||undefined,
+            ...(blocked ? {blockedHref: "/learn/projects/" + row.project.id + "?tab=board&lane=Blocked"} : {}),
+            ...(row.project.blocker?.trim() ? {blockerText:row.project.blocker.trim()} : {}),
             attention:
               archived ? [] : projectAttention === "CHANGES_REQUESTED"
                 ? ["Changes requested"]
