@@ -42,7 +42,8 @@ describe("SA-academics-people-101 teaching role concurrency",()=>{
   expect(change).toContain("member.status!==\"ACTIVE\"");
   expect(change).toContain("FACULTY_ROLE_REQUIRED");
   expect(change).toContain("teachingAssignmentConflict(");
-  expect(change).toContain("if(locked.role===role)return locked");
+  expect(change).toContain("if(locked.role===role&&locked.membershipId===targetMemberId&&");
+  expect(change).toContain("current.deliveryId===targetDeliveryId)return locked");
   expect(change).toContain("recordActivityEventInTransaction(tx,context");
   expect(change.indexOf("teachingAssignmentRevisionMatches(")).toBeLessThan(change.indexOf(".update(courseTeachingAssignments)"));
   expect(change.indexOf(".update(courseTeachingAssignments)")).toBeLessThan(change.indexOf("recordActivityEventInTransaction(tx,context"));
