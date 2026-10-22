@@ -1,42 +1,17 @@
 import "server-only";
 import { and,desc,eq,gt,isNull,sql } from "drizzle-orm";
 import { z } from "zod";
+import {publicRecruitEnquirySchema,publicRecruitLeadActivityNote} from "./recruit-input-model";
 import { getDb } from "@/db/client";
 import {
  activityEvents,collegeMemberships,colleges,inAppNotifications,membershipRoles,
  placementPublicEnquiryChallenges,placementPublicPageSettings,placementPublicRecruitEnquiries,
  placementTpoLeadActivities,placementTpoLeads,users,
 } from "@/db/schema";
-import { publicRecruiterWorkEmailSchema } from "../public-college-join-model";
-import { normalizedTpoLeadPhoneSchema } from "../tpo-crm-validation";
 import { publicEnquiryTablesReady } from "./readiness";
 import { enquiryMacMatches } from "./otp-model";
 import { publicEnquiryNetworkTag,PublicEnquiryError } from "./send-service";
 
-/** Accept legacy sanitized name (150) and company (200) limits. The
- * public-enquiry snapshot and CRM lead have older, smaller column bounds:
- * write those projections safely and preserve the complete cleaned values in
- * the textual enquiry/audit record rather than discarding input silently. */
-function cleanRecruitText(value:string,max:number):string{
- return value.replace(/<[^>]*>/g," ").replace(/[<>\u0000-\u001f\u007f]/g," ")
-  .replace(/\s+/g," ").trim().slice(0,max);
-}
-export const publicRecruitEnquirySchema=z.strictObject({
- email:publicRecruiterWorkEmailSchema.max(150),code:z.string().regex(/^[0-9]{6}$/),
- name:z.string().max(4096).transform(value=>cleanRecruitText(value,150))
-  .refine(value=>value.length>0,"Enter your name"),
- company:z.string().max(4096).transform(value=>cleanRecruitText(value,200)).default(""),
- mobile:normalizedTpoLeadPhoneSchema,
- hiringFor:z.string().max(8192).transform(value=>cleanRecruitText(value,1000)),
-});
-/** Retain legacy TPO CRM activity wording and quoted hiring note.
- * Call with the cleaned, bounded public enquiry fields only. */
-export function publicRecruitLeadActivityNote(hiringFor:string,company:string,name:string):string {
- return "Asked to recruit through your placements page"+
-   (hiringFor?': "'+hiringFor.slice(0,900)+'"':"")+
-   (company.length>150?" · Full company: "+company:"")+
-   (name.length>120?" · Full recruiter name: "+name:"");
-}
 export async function submitPublicRecruitEnquiry(collegeId:string,raw:unknown,verifiedIp:string|null){
  const parsed=publicRecruitEnquirySchema.safeParse(raw);
  if(!parsed.success||!z.string().uuid().safeParse(collegeId).success){
@@ -92,7 +67,7 @@ export async function submitPublicRecruitEnquiry(collegeId:string,raw:unknown,ve
   }).returning({id:placementPublicRecruitEnquiries.id});
   if(!enquiry)throw new PublicEnquiryError("INVALID");
   const [created]=await tx.insert(placementTpoLeads).values({
-   collegeId,name,emailNorm:email,phoneNorm:mobile,companyName:company.slice(0,150),
+   collegeId,name,emailNorm:email,phoneNorm:mobile??null,companyName:company.slice(0,150),
    source:"COMPANY_REACHED_OUT",
   }).onConflictDoNothing().returning({id:placementTpoLeads.id});
   const [lead]=created?[created]:await tx.select({id:placementTpoLeads.id})
