@@ -187,6 +187,9 @@ export function updateFacultyProfileSection(
   // Reparse the *whole* document; cross-entry chronology, URLs and IDs apply.
   const copy: Record<string,unknown> = {...current, [patch.section]:patch.value};
   const next=facultyProfileDocumentSchema.parse(copy);
+  if(patch.section==="skills" && (next.skills.some(row=>!row.skill.trim()) ||
+    new Set(next.skills.map(row=>row.id)).size!==next.skills.length))
+    throw new Error("Skills require unique record IDs and non-empty titles");
   if(patch.section==="education" && !facultyReceiptIdsUnchanged(
     current.education,next.education,["certificateDocumentId"],
   ))throw new Error("Private education document receipts cannot be changed");

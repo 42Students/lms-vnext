@@ -369,7 +369,7 @@ export function LearnerCourseAttendance({
           <div><h3 className="text-sm font-semibold text-foreground">Attendance this month</h3>
             <p className="mt-2 text-3xl font-semibold text-foreground">{summary.percentage===null?"—":summary.percentage+"%"}</p>
           </div>
-          <div><h3 className="text-sm font-semibold text-foreground">Requirement</h3>
+          <div><h3 className="text-sm font-semibold text-foreground">Attendance threshold</h3>
             <p className="mt-2 text-3xl font-semibold text-foreground">{threshold}%</p>
           </div>
         </div>

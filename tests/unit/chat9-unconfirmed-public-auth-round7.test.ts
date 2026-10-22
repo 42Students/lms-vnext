@@ -5,12 +5,13 @@ const read=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
 describe("chat-9 public auth unconfirmed decisions",()=>{
  it("PUB-auth-public-22 shows static college when there is only one active choice",()=>{
   const s=read("src/components/shell/membership-switcher.tsx");
-  expect(s).toContain("activeChoices.length === 1 && activeMembershipId === activeChoices[0].id");
-  expect(s).toContain("activeChoices[0].collegeName");
+  expect(s).toContain("if (choices.length === 1 && active)");
+  expect(s).toContain("{choices[0].label}");
  });
  it("PUB-auth-public-23 ignores blank selection and never clears membership through the switcher",()=>{
   const s=read("src/components/shell/membership-switcher.tsx");
-  expect(s).toContain("if (!membershipId || membershipId === activeMembershipId) return;");
+  expect(s).toContain("if (!choice || choice.value === active?.value) return;");
+  expect(s).toContain("const choice = choices.find((item) => item.value === value);");
   expect(s).toContain('<option value="" disabled>Switch workspace</option>');
   expect(s).not.toContain('method:"DELETE"');
  });
@@ -22,7 +23,8 @@ describe("chat-9 public auth unconfirmed decisions",()=>{
  it("PUB-auth-public-30 explains disabled projects without leaking private projects",()=>{
   const s=read("src/app/(authenticated)/learn/projects/page.tsx");
   expect(s).toContain("This module is currently disabled for your college.");
-  expect(s.indexOf("return <section className")).toBeLessThan(s.indexOf("listMyProjectInstances(context)"));
+  expect(s.indexOf("return <section className")).toBeGreaterThan(-1);
+  expect(s.indexOf("return <section className")).toBeLessThan(s.indexOf("const params = await searchParams;"));
  });
  it("PUB-auth-public-35 retains five-day absolute expiry without sliding sessions",()=>{
   const c=read("src/modules/auth/config.ts"),s=read("src/modules/auth/session-service.ts");
@@ -36,6 +38,6 @@ describe("chat-9 public auth unconfirmed decisions",()=>{
   expect(sms).toContain("DltTemplateId: config.otpDltTemplateId");
   expect(sms).toContain("For security reasons, please do not share this OTP");
   expect(email).toContain('expiryMinutes: "5"');
-  expect(email).toContain("learnerName: message.displayName");
+  expect(email).toContain('SYSTEM_EMAIL_VERIFICATION: ["otp"]');
  });
 });

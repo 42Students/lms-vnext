@@ -44,7 +44,7 @@ describe("learner Course page parity contract", () => {
     ]) {
       expect(content).toContain(label);
     }
-    expect(content).toContain("<details");
+    expect(content).toContain("<Disclosure id={`lesson-${lesson.id}`");
     expect(content).toContain("focusLessonId");
     expect(content).toContain("focusContentId");
     expect(content).toContain("AssignmentSubmissionControl");
