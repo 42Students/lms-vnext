@@ -1,7 +1,9 @@
 import { publishableJobTerms } from "../support/publishable-job-terms";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
-import { closeDatabaseConnection } from "@/db/client";
+import { closeDatabaseConnection,getDb } from "@/db/client";
+import {placementJobEligibilityPolicies} from "@/db/schema";
+import {createPlacementRound} from "@/modules/placements/round-service";
 import type { RequestContext } from "@/modules/identity/context";
 import {
   archivePlacementJob,
@@ -108,6 +110,11 @@ describe("Placement jobs", () => {
     });
     expect(updated.title).toBe("Software Engineer I");
 
+    // Publishing demands a recorded evaluative round and a scoped policy.
+    await createPlacementRound(tpo,draft.id,{kind:"INTERVIEW",name:"Hiring interview"});
+    await getDb().insert(placementJobEligibilityPolicies).values({
+      jobId:draft.id,updatedByUserId:tpo.user.id,
+    });
     const published = await publishPlacementJob(tpo, draft.id);
     expect(published.status).toBe("PUBLISHED");
     expect(published.publishedAt).toBeInstanceOf(Date);
