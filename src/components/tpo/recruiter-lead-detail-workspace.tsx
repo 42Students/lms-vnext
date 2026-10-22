@@ -485,10 +485,10 @@ export function RecruiterLeadDetailWorkspace({
                 href={"/tpo/placements/new?company="+encodeURIComponent(lead.companyName??"")}>
                 Create drive
               </Link>
-              <Link className={button} onClick={event=>{if(!confirmLeave())event.preventDefault();}}
-                href={"/tpo/messages?tab=team&about="+encodeURIComponent("COMPANY:"+(lead.companyName||lead.name).trim().toLowerCase())}>
+              {lead.companyName ? <Link className={button} onClick={event=>{if(!confirmLeave())event.preventDefault();}}
+                href={"/tpo/messages?tab=team&about="+encodeURIComponent("COMPANY:"+lead.companyName.trim().toLowerCase())}>
                 Team talk
-              </Link>
+              </Link> : null}
               <Dropdown mobileSheet align="end" label="Other recruiter actions" trigger="More ···">
                 <div className="flex min-w-48 flex-col gap-1">
                   <Link href="/tpo/recruiters" className={button} onClick={event=>{if(!confirmLeave())event.preventDefault();}}>← Recruiter leads</Link>
