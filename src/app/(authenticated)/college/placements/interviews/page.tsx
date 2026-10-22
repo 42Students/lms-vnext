@@ -77,9 +77,9 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
     {row.conflictKind?<span className="mt-1 block text-xs text-danger-text">⚠ Conflict: {row.conflictKind.toLowerCase()}</span>:null}
   </span>},
   {key:"start",header:"Date & Time",cell:row=>formatter.format(row.start)+" IST"},
-  {key:"interviewer",header:"Interviewer",cell:row=>row.interviewerName??"—"},
+  {key:"interviewer",header:"Interviewer",cell:row=>row.interviewerName?.trim()||"—"},
   {key:"mode",header:"Mode",cell:row=><span>
-    <span className="block">{row.mode==="VIRTUAL"?"▣ Online":"⌖ In-person"}</span>
+    <span className="block">{row.mode==="VIRTUAL"?"▣ Online":row.mode==="ON_CAMPUS"?"⌖ In-person":"Mode not specified"}</span>
     <span className="block max-w-[220px] break-all text-xs text-muted-foreground">{row.venue??"—"}</span>
   </span>},
   {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><div className="min-w-0 space-y-2">
@@ -209,8 +209,9 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
         </div>
         <p className="text-sm">{row.student} <span className="text-muted-foreground">· {row.department??"—"}</span></p>
         <p className="text-sm">{row.typeLabel} · {row.statusLabel} · {formatter.format(row.start)} IST</p>
+        <p className="text-sm">Interviewer: {row.interviewerName?.trim()||"Not assigned"}</p>
         <div className="flex items-center justify-between gap-3 text-sm">
-          <span>{row.mode==="VIRTUAL"?"▣ Online":"⌖ In-person"} · {row.venue??"—"}</span>
+          <span>{row.mode==="VIRTUAL"?"▣ Online":row.mode==="ON_CAMPUS"?"⌖ In-person":"Mode not specified"} · {row.venue??"—"}</span>
           <a href={singleIcsHref(row)} download={"interview-"+row.id+".ics"} className="min-h-11 shrink-0 font-semibold text-primary-text underline">ICS ↓</a>
         </div>
         <Disclosure title="Manage" className="border-t border-border pt-2">
