@@ -6,7 +6,7 @@ describe("UX-tpo-companies-companyid-contact-log-05",()=>{
   expect(source).toContain("<DataTable");
   expect(source).toContain("rows={log.rows}");
   expect(source).toContain("getRowKey={(row)=>row.id}");
-  expect(source).toContain("empty={<p");
+  expect(source).toContain('empty={<EmptyState title="No recorded contact interactions match this filter."');
   expect(source).toContain("No recorded contact interactions match this filter.");
   expect(source).toContain("mobilePriority");
   expect(source).not.toContain("<table");

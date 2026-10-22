@@ -5,7 +5,7 @@ describe("UX-tpo-audit-actors-03",()=>{
  it("uses shared controls without changing legacy labels or authorized data",()=>{
   expect(source).toContain("<Input");
   expect(source).toContain("<Select");
-  expect(source).toContain("<Button type=\"submit\">Apply filters</Button>");
+  expect(source).toMatch(/<Button\s+type="submit"[^>]*>Apply filters<\/Button>/);
   expect(source).toContain("<DataTable");
  });
 });

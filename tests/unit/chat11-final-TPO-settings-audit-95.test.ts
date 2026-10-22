@@ -19,7 +19,8 @@ describe("TPO audit entity navigation",()=>{
   expect(svc).toContain("tpoAuditEntityHref(row.subjectType,row.subjectId)");
   expect(svc).toContain("requirePlacementManageScope(");
   expect(ui).toContain("row.entityHref?");
-  expect(ui).toContain('href={row.entityHref}');
+  expect(ui).toContain('href={scopedAuditHref(row.entityHref)}');
+  expect(ui).toContain('function scopedAuditHref(href:string):string');
   expect(ui).toContain("Open item →");
  });
 });

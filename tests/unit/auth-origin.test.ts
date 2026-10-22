@@ -11,11 +11,22 @@ describe("auth same-origin guard", () => {
           origin: "https://lms.example.com",
           "x-forwarded-host": "lms.example.com",
           "x-forwarded-proto": "https",
+          host: "lms.example.com",
         },
       },
     );
 
     expect(isSameOriginRequest(request)).toBe(true);
+  });
+
+  it("rejects forwarded host spoofing without a matching actual Host", () => {
+    const request = new Request("http://internal-service/api/auth/session",{
+      method:"POST",
+      headers:{origin:"https://lms.example.com",
+        "x-forwarded-host":"lms.example.com","x-forwarded-proto":"https",
+        host:"internal-service"},
+    });
+    expect(isSameOriginRequest(request)).toBe(false);
   });
 
   it("rejects a foreign origin", () => {
