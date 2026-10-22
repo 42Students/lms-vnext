@@ -294,22 +294,26 @@ export function PersonOnboardDialog({
             <legend className="text-[var(--lms-font-sm)] font-semibold text-body">Faculty details</legend>
             <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Department
               <Select required disabled={pending || departments.length===0} value={departmentId}
+                aria-invalid={fieldError?.field==="department"}
+                aria-describedby={fieldError?.field==="department"?"onboard-department-error":undefined}
                 onChange={event=>{setDepartmentId(event.target.value);setFieldError(null);}}>
                 <option value="">Select department</option>
                 {departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
               </Select>
-              {fieldError?.field==="department"?<span role="alert" className="text-xs text-error">{fieldError.message}</span>:null}
+              {fieldError?.field==="department"?<span id="onboard-department-error" role="alert" className="text-xs text-error">{fieldError.message}</span>:null}
             </label>
             {departments.length===0?<p role="alert" className="text-xs text-error">
               Departments unavailable. Refresh the faculty roster after verifying your selected college.
             </p>:null}
             <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Faculty Type
               <Select required disabled={pending} value={facultyType}
+                aria-invalid={fieldError?.field==="facultyType"}
+                aria-describedby={fieldError?.field==="facultyType"?"onboard-faculty-type-error":undefined}
                 onChange={event=>{setFacultyType(event.target.value);setFieldError(null);}}>
                 <option value="">Select faculty type</option>
                 {LEGACY_FACULTY_TYPES.map(type=><option key={type} value={type}>{type}</option>)}
               </Select>
-              {fieldError?.field==="facultyType"?<span role="alert" className="text-xs text-error">{fieldError.message}</span>:null}
+              {fieldError?.field==="facultyType"?<span id="onboard-faculty-type-error" role="alert" className="text-xs text-error">{fieldError.message}</span>:null}
             </label>
             <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Gender
               <Select disabled={pending} value={gender} onChange={event=>setGender(event.target.value)}>
