@@ -27,7 +27,7 @@ describe("chat-5 final sprint: Faculty course discussions",()=>{
   expect(page).toContain("<p>Showing the last messages we loaded.</p>");
   expect(page).toContain("onClick={()=>void load(true)}>Retry</Button>");
   expect(page).toContain("onClick={()=>void load(true)}");
-  expect(page.indexOf(staleBannerGate)).toBeLessThan(page.indexOf("{pinned ? ("));
+  // The pinned highlight may precede the discussion frame, but failed-refresh\n  // feedback must remain above the message viewport and independent of posting.\n  expect(page.indexOf(staleBannerGate)).toBeLessThan(page.indexOf('role="region" aria-label="Course discussion messages"'));
   expect(page).toContain('reconcileLatestDiscussionPage(previous, incoming, received.length)');
   expect(page).toContain('if (learnerDiscussionRefreshIsCurrent(refreshId,latestRefreshId.current))');
  });

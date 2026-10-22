@@ -41,6 +41,7 @@ export async function getMentorTeamMeetings(context:RequestContext,raw:unknown){
   const search=query.search?ilike(projectMeetings.title,
     "%"+escapeMentorMeetingSearch(query.search)+"%"):undefined;
   const meetingFilters=and(eq(projectMeetings.projectId,scope.project.id),
+    isNull(projectMeetings.deletedAt),
     query.status==="ALL"?undefined:eq(projectMeetings.status,query.status),
     query.type==="ALL"?undefined:eq(projectMeetings.meetingType,query.type),
     query.outcome==="ALL"?undefined:

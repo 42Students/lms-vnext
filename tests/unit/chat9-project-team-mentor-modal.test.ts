@@ -11,7 +11,9 @@ describe("College Admin workspace Team actions",()=>{
    expect(dialog).toContain(token);
   expect(dialog).toContain('"/api/projects/reassign-mentor"');
   expect(dialog).toContain("projectIds:[projectId]");
-  expect(dialog).toContain("if(lock.current||!mentorId)return");
+  expect(dialog).toContain("if(lock.current)return;");
+  expect(dialog).toContain("if(!mentorId||!selectedMentor)");
+  expect(dialog).toContain("if(!confirming){setConfirming(true);return;}");
   expect(dialog).toContain("Your selection has been kept");
   expect(dialog).toContain("role:\"MENTOR\"");
  });

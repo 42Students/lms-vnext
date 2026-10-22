@@ -93,6 +93,8 @@ export async function listMyMentorCalendarMeetings(
       eq(projectMembers.role, "MENTOR"),
       isNull(projectMembers.endedAt),
       eq(projectInstances.collegeId, membership.collegeId),
+      isNull(projectInstances.deletedAt),
+      isNull(projectMeetings.deletedAt),
       eq(collegeMemberships.collegeId, membership.collegeId),
       eq(collegeMemberships.userId, context.user.id),
       eq(collegeMemberships.status, "ACTIVE"),

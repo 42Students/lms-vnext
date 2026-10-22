@@ -42,6 +42,9 @@ describe("SA-academics-people-58 live meeting IST/UTC calendar integrity",()=>{
   expect(source).toContain('<Input type="datetime-local"');
   expect(source).toContain('<Dialog open={editing}');
   expect(source).not.toContain("min-h-10");
-  expect(source).toContain('Discard content changes?');
+  expect(source).toContain('title={pendingConfirmation?.kind==="ZONE"?"Change Time Zone?":"Discard unsaved changes?"}');
+  expect(source).toContain('if(dirty){setPendingConfirmation({kind:"DISCARD"});return;}');
+  expect(source).toContain('onClick={acceptConfirmation}');
+  expect(source).toContain('"Discard changes"');
  });
 });
