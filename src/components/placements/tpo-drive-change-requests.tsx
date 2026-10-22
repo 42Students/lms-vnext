@@ -279,7 +279,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
    title={confirmation?.action==="ACCEPT"?"Accept":confirmation?.action==="ANSWER"?"Answer":confirmation?.action==="DECLINE"?"Decline":"Withdraw"}
    confirmLabel={confirmation?.action==="ACCEPT"?"Accept":confirmation?.action==="ANSWER"?"Answer":confirmation?.action==="DECLINE"?"Decline":"Withdraw"}
    confirmVariant={confirmation?.action==="ACCEPT"||confirmation?.action==="ANSWER"?"primary":"danger"} pending={busy}
-   confirmDisabled={(confirmation?.action==="DECLINE"||confirmation?.action==="ANSWER")&&!confirmation.note.trim()}
+   confirmDisabled={Boolean(confirmation&&(confirmation.action==="DECLINE"||confirmation.action==="ANSWER")&&!confirmation.note.trim())}
    onConfirm={()=>{if(confirmation)void send({action:confirmation.action,requestId:confirmation.requestId,
      expectedUpdatedAt:confirmation.expectedUpdatedAt,note:confirmation.note});}}>
    <p className="text-sm text-body leading-[22px]">{confirmation?.action==="ACCEPT"?"Accepting immediately applies this change to the drive.":"This decision is recorded in the drive discussion. Answering a named field updates the drive; declining or withdrawing does not."}</p>

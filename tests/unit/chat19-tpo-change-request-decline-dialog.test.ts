@@ -6,7 +6,7 @@ describe("chat-19 TPO change request decline flow",()=>{
  it("G2-5-023-029 opens the decline dialog before a reason is entered",()=>{
   const source=readFileSync("src/components/placements/tpo-drive-change-requests.tsx","utf8");
   expect(source).toContain('disabled={busy||(action==="ANSWER"&&(notes[item.id]??"").trim().length<1)}');
-  expect(source).toContain('confirmation?.action==="DECLINE"||confirmation?.action==="ANSWER"');
+  expect(source).toContain('confirmation.action==="DECLINE"||confirmation.action==="ANSWER"');
   expect(source).toContain('confirmation.note.trim()');
   expect(source).toContain('value={confirmation.note}');
  });
