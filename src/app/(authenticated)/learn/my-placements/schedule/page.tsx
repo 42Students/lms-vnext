@@ -43,13 +43,19 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
     </div>;
   }
   const workspace=workspaceResult.value;
+  // Optional schedule feeds can fail independently, but access revocation
+  // must not be presented as a partial calendar or a harmless empty result.
+  for (const source of [resultsResult, extrasResult]) {
+    if (source.status==="rejected" && source.reason instanceof AuthorizationError) throw source.reason;
+  }
   const resultsUnavailable=resultsResult.status==="rejected";
   const extrasUnavailable=extrasResult.status==="rejected";
   const extras=extrasResult.status==="fulfilled"?extrasResult.value:null;
   const deadlineExtras=view==="calendar"
-    ? await loadLearnerCareerCalendarSupplements(context).catch(()=>({
-      supplements:[],warnings:["Un-applied job deadlines could not be loaded."],
-    })) : null;
+    ? await loadLearnerCareerCalendarSupplements(context).catch((error:unknown)=>{
+      if(error instanceof AuthorizationError)throw error;
+      return {supplements:[],warnings:["Un-applied job deadlines could not be loaded."]};
+    }) : null;
   const ownResults=resultsResult.status==="fulfilled"?resultsResult.value:[];
   const outcomeByRound=new Map(ownResults.map(row=>[row.applicationId+":"+row.roundId,row]));
   // Newest request wins. A pending move must suppress attendance actions
