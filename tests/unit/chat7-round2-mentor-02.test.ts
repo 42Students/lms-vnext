@@ -18,8 +18,9 @@ it("MEN-projects-meetings-07 mentor-specific page sizes and total-range text",()
 });
 it("MEN-projects-meetings-09 number-aware Team ordering",()=>{
  const code=readFileSync("src/modules/projects/mentor-project-order-model.ts","utf8");
- expect(code).toContain("numeric: true");
- expect(code).toContain("teamTitleCollator.compare");
+ expect(code).toContain("const teamPattern=");
+ expect(code).toContain("Number(left[2])");
+ expect(code).toContain("compareTeamTitles(a.title,b.title)");
  const p=(id:string,title:string,status="ACTIVE")=>({id,title,status,updatedAt:new Date("2099-01-01T00:00:00Z")});
  const rows=[p("10","Team 10"),p("2","Team 2"),p("1","Team 1"),p("a","Team 3","ARCHIVED")];
  expect(rows.sort((a,b)=>compareMentorProjects(a,b,"TITLE")).map(p=>p.title)).toEqual(["Team 1","Team 2","Team 10","Team 3"]);
