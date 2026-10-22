@@ -14,6 +14,8 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import { getPlacementJob } from "@/modules/placements/job-service";
 import {getJobEligibilityPolicy} from "@/modules/placements/eligibility-service";
+import {getSuperAdminDrivePipeline} from "@/modules/placements/super-admin-drive-pipeline-service";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {listPlacementJobTypeChoices} from "@/modules/placements/tpo-configuration-read-service";
 import {listPlacementCompanies} from "@/modules/placements/company-service";
 import {driveSettingsIstDate} from "@/modules/placements/admin-drive-settings-date-model";
@@ -50,6 +52,17 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
     </div>}/>
   </div>;
  }
+ const pipelineRead=await Promise.allSettled([
+  getSuperAdminDrivePipeline(context,job.id),
+ ]);
+ const applicationCount=pipelineRead[0].status==="fulfilled"?pipelineRead[0].value.total:null;
+ const root="/admin/placements/jobs/"+encodeURIComponent(jobId);
+ const sections=[
+   {label:"Overview",href:root},
+   {label:"Applications",href:root+"/applications"},
+   {label:"Schedule",href:root+"/schedule"},
+   {label:"Settings",href:root+"/settings"},
+ ];
  const [policyRead,typesRead,companiesRead]=["PUBLISHED","DRAFT","CLOSED","CANCELLED","ARCHIVED"].includes(job.status)?await Promise.allSettled([
   getJobEligibilityPolicy(context,jobId),
   listPlacementJobTypeChoices(context,job.collegeId),
@@ -73,12 +86,30 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
   draftPrograms!==null&&draftCohorts!==null&&draftSections!==null;
  return <div className="min-w-0 space-y-4 md:space-y-6">
     
+  <nav aria-label="Drive breadcrumb" className="flex min-w-0 flex-wrap items-center gap-2 text-sm text-muted-foreground">
+   <Link href="/admin/placements/drives" className="font-semibold text-link underline">Drives</Link>
+   <span aria-hidden="true">›</span><span className="max-w-full truncate">{job.title}</span>
+  </nav>
+  <nav aria-label="Drive workspace" className="flex min-w-0 flex-wrap gap-2 border-b border-border pb-2">
+    {sections.map(item=><Link key={item.label} href={item.href}
+       aria-current={item.label==="Settings"?"page":undefined}
+       className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-4 text-sm font-semibold md:min-h-9 "+
+         (item.label==="Settings"?"border-b-2 border-[var(--lms-primary)] bg-primary-subtle text-primary-text":
+          "text-body hover:bg-primary-subtle hover:text-primary-text")}>{item.label}</Link>)}
+  </nav>
   <PageHeader title="Settings" description="Drive status, deadline and policy controls for the selected college."
    actions={<PageBackLink href={base} label="Drive overview"/>}/>
   <section aria-label="Job details" className="min-w-0 space-y-[var(--lms-space-2)] border-b border-border pb-[var(--lms-space-4)]">
    <h2 className="break-words text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">{job.title}</h2>
    <p className="text-sm text-body">Application deadline (IST): {job.applicationDeadline ? driveSettingsIstDate(job.applicationDeadline) : "Not configured"}</p>
    <p className="text-sm text-muted-foreground">The existing drive workspace enforces deadline, eligibility and publication state transitions.</p>
+   <div className="flex flex-wrap items-center gap-2">
+    <StatusBadge tone={job.status==="PUBLISHED"?"success":job.status==="DRAFT"?"warning":"neutral"}>
+     {job.status==="PUBLISHED"?"Active":job.status==="DRAFT"?"Draft":job.status==="CLOSED"?"Closed":job.status==="CANCELLED"?"Cancelled":job.status}
+    </StatusBadge>
+    {applicationCount===null?<p role="status" className="text-xs text-muted-foreground">Applications count unavailable. <Link href={base+"/settings"} className="text-link underline">Retry</Link></p>:
+     <p className="text-xs text-body">{applicationCount} {applicationCount===1?"application":"applications"} recorded</p>}
+   </div>
   </section>
   <section aria-label="Edit drive" className="min-w-0 space-y-3">
    <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Edit drive</h2>
@@ -176,6 +207,9 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
    <div className="space-y-2">
     <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Job description</h3>
     <p className="whitespace-pre-wrap break-words text-sm text-body">{job.description}</p>
+    {/<[a-z][^>]*>/i.test(job.description)?<p className="mt-1 text-xs text-muted-foreground">
+      Saved HTML formatting is retained in the source. For safety, markup is shown as text until it can be rendered by an approved sanitizer.
+    </p>:null>
    </div>
    <div className="space-y-2">
     <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Eligibility and target audience</h3>
@@ -233,14 +267,19 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
     </div>
   </details>:null}
   {job.status==="PUBLISHED"?<SuperAdminDriveDeadline jobId={jobId} deadline={job.applicationDeadline?.toISOString()??null}/>:null}
-  <SuperAdminDriveStatusControl jobId={job.id} status={job.status}/>
+  <div className="rounded-[8px] border border-border bg-white p-4">
+    <SuperAdminDriveStatusControl jobId={job.id} status={job.status}/>
+    {job.status==="CLOSED"?<p className="mt-2 text-xs text-body">
+      Legacy Open drive is not allowed for a completed vNext drive; create a new draft using Duplicate instead.
+    </p>:null}
+   </div>
   <section aria-label="Duplicate drive" className="min-w-0 space-y-3 border-b border-border pb-4">
    <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Duplicate</h2>
    <SuperAdminDriveDuplicate jobId={jobId} title={job.title}/>
   </section>
   {job.status!=="ARCHIVED"?<section aria-label="Danger zone"
    className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[#ffccc7] bg-[#fff1f0] p-4">
-   <h2 className="text-lg font-semibold text-[#cf1322]">Danger zone</h2>
+   <h2 className="border-b border-[#ffccc7] pb-3 text-lg font-semibold text-[#cf1322]">Danger zone</h2>
    <p className="text-sm text-[#7f1d1d]">Deleting archives this drive; existing application and decision records remain retained. Review the impact and reason before confirming.</p>
    <SuperAdminDriveArchive jobId={jobId} title={job.title}/>
   </section>:null}

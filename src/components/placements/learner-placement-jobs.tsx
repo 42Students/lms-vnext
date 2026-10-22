@@ -799,77 +799,69 @@ export function LearnerPlacementJobs({
             className="min-w-0 py-4 first:pt-0 last:pb-0 md:py-5"
             aria-label={item.job.title+" · "+item.roleOption.title}
           >
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-              <div className="min-w-0">
-                {firstRole?<span aria-hidden="true" className="mb-3 inline-flex size-12 items-center justify-center rounded-lg border border-border bg-primary-subtle text-sm font-bold text-primary-text">
-                  {item.company.name.trim().split(/\s+/).slice(0,2).map(word=>word.charAt(0)).join("").toUpperCase()||"C"}
-                </span>:null}
-                <p className="m-0 break-words text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
-                  {firstRole?item.company.name:item.job.title}
-                </p>
-                {firstRole?<p className="mt-1 text-sm font-semibold text-foreground">{item.job.title}{roleCount>1?" · "+roleCount+" role options":""}</p>:null}
-                <h2 className="mt-1 break-words text-xl font-semibold text-foreground">
-                  <Link
-                    href={learnerJobDetailFromDrivesHref(item.job.id,returnQuery) ?? "/learn/my-placements/jobs"}
-                    className="underline-offset-2 hover:text-primary-text hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center focus-visible:underline"
-                    aria-label={`View ${item.roleOption.title} drive details at ${item.company.name}`}
-                  >
+            <div className="grid min-w-0 gap-3 md:gap-4 lg:grid-cols-[48px_minmax(0,1fr)_220px_44px]">
+              <span aria-hidden="true" className="flex size-12 shrink-0 items-center justify-center rounded-lg border border-border bg-primary-subtle text-sm font-bold text-primary-text">
+                {item.company.name.trim().split(/\s+/).slice(0,2).map(word=>word.charAt(0)).join("").toUpperCase()||"C"}
+              </span>
+              <div className="min-w-0 space-y-2">
+                <div className="flex min-w-0 flex-wrap items-center gap-2">
+                  {firstRole?<StatusBadge tone="info">
+                    {item.job.jobTypeLabel?.trim()||humanize(item.job.employmentType)}
+                  </StatusBadge>:null}
+                  {item.application?<StatusBadge tone={item.application.status==="SUBMITTED"?"success":"neutral"}>
+                    {learnerApplicationStageLabel(item.application.stage??item.application.status)}
+                  </StatusBadge>:null}
+                  {!item.canApply&&!item.application?<StatusBadge tone="warning">Not open to you</StatusBadge>:null}
+                  {item.deadlinePassed?<StatusBadge tone="neutral">Applications closed</StatusBadge>:null}
+                </div>
+                <h2 className="m-0 break-words text-lg font-semibold leading-snug text-foreground">
+                  <Link href={learnerJobDetailFromDrivesHref(item.job.id,returnQuery)??"/learn/my-placements/jobs"}
+                    aria-label={"View "+item.roleOption.title+" at "+item.company.name}
+                    className="text-link underline-offset-2 hover:underline focus-visible:underline">
                     {item.roleOption.title}
                   </Link>
                 </h2>
-                {item.roleOption.title !==
-                item.job.title ? (
-                  <p className="mt-1 text-xs font-semibold text-muted-foreground">
-                    Drive · {item.job.title}
-                  </p>
-                ) : null}
-                <p className="mt-2 line-clamp-3 max-w-3xl break-words text-sm leading-6 text-body">
-                  {item.job.description}
+                <p className="m-0 break-words text-sm text-body">
+                  {item.company.name}
+                  {roleCount>1?" · "+roleCount+" role options":""}
+                  {item.roleOption.title!==item.job.title?" · "+item.job.title:""}
                 </p>
+                {item.job.description?<p className="line-clamp-2 break-words text-sm leading-6 text-body">
+                  {item.job.description}
+                </p>:null}
                 {jobDescriptionUrl?.startsWith("https://")?<a href={jobDescriptionUrl}
                   target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer"
-                  className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-2 md:min-h-9">
+                  className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
                   View job description ↗
                 </a>:null}
               </div>
-              <div className="flex min-w-0 flex-wrap items-center gap-2 sm:justify-end">
-              <LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={savedJobIds.includes(item.job.id)}/>
-              {firstRole?<StatusBadge tone="info">{item.job.jobTypeLabel?.trim() || humanize(item.job.employmentType)}</StatusBadge>:null}
-               {item.application ? (
-                 <StatusBadge tone={item.application.status==="SUBMITTED"?"success":"neutral"}>
-                   {learnerApplicationStageLabel(item.application.stage??item.application.status)}
-                 </StatusBadge>
-               ) : null}
-              <StatusBadge
-                tone={eligibilityTone(
-                  item.eligibility.status,
-                )}
-              >
-                {humanize(item.eligibility.status)}
-              </StatusBadge>
+              <dl className="grid min-w-0 gap-3 border-t border-border pt-3 text-sm sm:grid-cols-3 lg:grid-cols-1 lg:border-0 lg:pt-0">
+                <div className="min-w-0">
+                  <dt className="text-xs font-semibold text-muted-foreground">CTC</dt>
+                  <dd className="mt-1 break-words font-semibold text-body">
+                    {formatCtc(item.roleOption.minimumAnnualCtcInr,item.roleOption.maximumAnnualCtcInr)}
+                  </dd>
+                </div>
+                <div className="min-w-0">
+                  <dt className="text-xs font-semibold text-muted-foreground">Deadline</dt>
+                  <dd className="mt-1 break-words font-semibold text-body">
+                    <span data-tone={learnerDriveDeadlineUrgency(item.job.applicationDeadline,item.deadlinePassed,snapshotNowIso).tone}>
+                     {learnerDriveDeadlineUrgency(item.job.applicationDeadline,item.deadlinePassed,snapshotNowIso).label}
+                    </span>
+                  </dd>
+                </div>
+                <div className="min-w-0">
+                  <dt className="text-xs font-semibold text-muted-foreground">Location</dt>
+                  <dd className="mt-1 break-words font-semibold text-body">
+                    {item.roleOption.locations.length?item.roleOption.locations.join(", "):"Not specified"}
+                  </dd>
+                </div>
+              </dl>
+              <div className="flex shrink-0 items-start justify-end">
+                {firstRole?<LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title}
+                  initialSaved={savedJobIds.includes(item.job.id)} surface="LIST"/>:null}
               </div>
             </div>
-
-            <dl className="mt-4 grid min-w-0 gap-x-5 gap-y-3 text-sm sm:grid-cols-3 [&>div]:min-w-0">
-              <div>
-                <dt className="text-xs font-semibold text-muted-foreground">CTC</dt>
-                <dd className="mt-1 break-words font-semibold text-body">
-                  {formatCtc(item.roleOption.minimumAnnualCtcInr,item.roleOption.maximumAnnualCtcInr)}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-xs font-semibold text-muted-foreground">Deadline</dt>
-                <dd className="mt-1 break-words font-semibold text-body">
-                  {learnerDriveDeadlineUrgency(item.job.applicationDeadline,item.deadlinePassed,snapshotNowIso).label}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-xs font-semibold text-muted-foreground">Location</dt>
-                <dd className="mt-1 break-words font-semibold text-body">
-                  {item.roleOption.locations.length?item.roleOption.locations.join(", "):"Not specified"}
-                </dd>
-              </div>
-            </dl>
 
             <p className="mt-3 text-xs font-medium text-muted-foreground">{postedAtLabel(item.job.publishedAt,snapshotNowIso)}</p>
             {!item.canApply && !item.application ? (

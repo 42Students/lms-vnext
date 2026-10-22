@@ -112,6 +112,7 @@ export async function listPlacementRounds(
     .orderBy(
       asc(placementJobRounds.sequence),
       asc(placementJobRounds.createdAt),
+      asc(placementJobRounds.id),
     );
 }
 
@@ -134,7 +135,8 @@ export async function getPlacementRound(
     .where(
       eq(placementJobRoundEvents.roundId, roundId),
     )
-    .orderBy(asc(placementJobRoundEvents.createdAt));
+    .orderBy(asc(placementJobRoundEvents.createdAt),
+      asc(placementJobRoundEvents.id));
 
   return { ...row, events };
 }
@@ -179,6 +181,8 @@ export async function createPlacementRound(
       // Include cancelled rounds: historic sequence numbers may still appear
       // in event logs or applicant results, and should never be reassigned.
       .where(eq(placementJobRounds.jobId, job.id));
+    // Never compact gaps: cancelled/removed rounds may still be referenced
+    // by offers, candidate histories and recruiter interview links.
     const sequence =
       Number(aggregate?.maxSequence ?? 0) + 1;
 
@@ -246,6 +250,22 @@ export async function updatePlacementRound(
       .for("update").limit(1);
     if (!roundActionJobMutable(lockedJob)) {
       throw new PlacementsServiceError("PLACEMENT_ROUND_JOB_READ_ONLY");
+    }
+    if(input.kind!==undefined&&input.kind!==current.round.kind){
+      // The legacy form allowed changing an unused round type. Once results,
+      // attendance or candidate exceptions exist, changing kind would erase
+      // the meaning of recorded assessment/interview decisions.
+      const [result]=await tx.select({id:placementRoundResults.id})
+        .from(placementRoundResults)
+        .where(eq(placementRoundResults.roundId,roundId)).limit(1);
+      const [attendance]=await tx.select({id:placementRoundAttendance.id})
+        .from(placementRoundAttendance)
+        .where(eq(placementRoundAttendance.roundId,roundId)).limit(1);
+      const [exception]=await tx.select({id:placementApplicationRoundExceptions.id})
+        .from(placementApplicationRoundExceptions)
+        .where(eq(placementApplicationRoundExceptions.roundId,roundId)).limit(1);
+      if(result||attendance||exception)throw new PlacementsServiceError(
+        "PLACEMENT_ROUND_NOT_EDITABLE");
     }
     const [updated] = await tx
       .update(placementJobRounds)
