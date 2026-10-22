@@ -116,13 +116,13 @@ export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
    if(!response.ok||!value||typeof value!=="object")
     throw new Error("Server validation failed. Check the department and retry.");
    const parsed=value as Record<string,unknown>;
-   if(!Array.isArray(parsed.results)||typeof parsed.needsReview!=="number")
+   if(!Array.isArray(parsed["results"])||typeof parsed["needsReview"]!=="number")
     throw new Error("The server preview could not be verified.");
-   const problems=parsed.results.flatMap(entry=>{
+   const problems=parsed["results"].flatMap(entry=>{
     if(!entry||typeof entry!=="object")return ["Invalid preview response"];
     const item=entry as Record<string,unknown>;
-    return item.status==="READY"?[]:
-     [`Row ${String(item.row)}: ${String(item.message??"Review required")}`];
+    return item["status"]==="READY"?[]:
+     [`Row ${String(item["row"])}: ${String(item["message"]??"Review required")}`];
    });
    if(version!==fileVersion.current||selectedDepartment!==departmentId)return;
    setPreviewIssues(problems);setPreviewDepartment(selectedDepartment);setPreviewVersion(version);
