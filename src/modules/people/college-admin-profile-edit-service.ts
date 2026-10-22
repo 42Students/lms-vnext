@@ -133,7 +133,7 @@ export async function loadCollegeOwnProfile(context: RequestContext) {
       .from(facultyProfiles).where(eq(facultyProfiles.membershipId, member.id)).limit(1),
   ]);
   if (!person[0]) throw new Error("PROFILE_NOT_FOUND");
-  const saved = record[0]?.document?.collegeAdmin;
+  const saved = record[0]?.document?.["collegeAdmin"];
   const read=readCollegeProfileSections(saved);
   return {
     displayName:person[0].displayName??"",...read.document,
@@ -150,7 +150,7 @@ export async function updateCollegeOwnProfile(context: RequestContext, raw: unkn
   const submitted = raw && typeof raw === "object" && !Array.isArray(raw)
     ? raw as Record<string, unknown> : {};
   const version = z.number().int().nonnegative()
-    .safeParse(submitted.profileDocumentVersion);
+    .safeParse(submitted["profileDocumentVersion"]);
   if (!version.success) throw new CollegeProfileVersionRequired();
 
   // Modern editors send an explicit section diff and their saved baseline.
@@ -158,10 +158,10 @@ export async function updateCollegeOwnProfile(context: RequestContext, raw: unkn
   const sectionSchema = z.array(
     z.enum(["personal", "social", "address", "contacts"]),
   ).min(1).max(4);
-  const sectionInput = submitted.changedSections === undefined ? null
-    : sectionSchema.safeParse(submitted.changedSections);
-  const baselineInput = submitted.baseline === undefined ? null
-    : collegeOwnProfileSchema.safeParse(submitted.baseline);
+  const sectionInput = submitted["changedSections"] === undefined ? null
+    : sectionSchema.safeParse(submitted["changedSections"]);
+  const baselineInput = submitted["baseline"] === undefined ? null
+    : collegeOwnProfileSchema.safeParse(submitted["baseline"]);
   if ((sectionInput && !sectionInput.success) ||
       (sectionInput && (!baselineInput || !baselineInput.success)) ||
       (!sectionInput && baselineInput)) {
@@ -194,7 +194,7 @@ export async function updateCollegeOwnProfile(context: RequestContext, raw: unkn
     const [existing] = await tx.select().from(facultyProfiles)
       .where(eq(facultyProfiles.membershipId, member.id)).for("update").limit(1);
     const currentVersion = existing?.profileDocumentVersion ?? 0;
-    const previous = existing?.profileDocument?.collegeAdmin;
+    const previous = existing?.profileDocument?.["collegeAdmin"];
     const previousRead = readCollegeProfileSections(previous);
     if (previousRead.partialLoad) {
       // Don't silently overwrite corrupted stored sections with defaults.
@@ -236,16 +236,16 @@ export async function updateCollegeOwnProfile(context: RequestContext, raw: unkn
       }).where(eq(users.id, account.id));
     }
 
-    const priorAddress = prior.address && typeof prior.address === "object" &&
-      !Array.isArray(prior.address) ? prior.address as Record<string, unknown> : {};
-    const priorContacts = prior.contacts && typeof prior.contacts === "object" &&
-      !Array.isArray(prior.contacts) ? prior.contacts as Record<string, unknown> : {};
+    const priorAddress = prior["address"] && typeof prior["address"] === "object" &&
+      !Array.isArray(prior["address"]) ? prior["address"] as Record<string, unknown> : {};
+    const priorContacts = prior["contacts"] && typeof prior["contacts"] === "object" &&
+      !Array.isArray(prior["contacts"]) ? prior["contacts"] as Record<string, unknown> : {};
     const mergedDetails = {
       ...current,
       ...(nameChanged ? {
         roleTitle: details.roleTitle, about: details.about, photoUrl: details.photoUrl,
-        ...(details.personalDetails === undefined && prior.personalDetails
-          ? { personalDetails: prior.personalDetails } :
+        ...(details.personalDetails === undefined && prior["personalDetails"]
+          ? { personalDetails: prior["personalDetails"] } :
           { personalDetails: details.personalDetails }),
       } : {}),
       ...((edited === null || edited.has("social"))
