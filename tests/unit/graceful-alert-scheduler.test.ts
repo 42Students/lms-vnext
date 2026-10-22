@@ -28,7 +28,7 @@ describe("scheduled Telegram alerts", () => {
     expect(scheduler).toContain("await runOptionalAlertTask(() => flushOverflow(now))");
     expect(scheduler).toContain("await runOptionalAlertTask(() => sweepUndeliveredRegressions(now))");
     expect(scheduler).toContain("await pollCloudLoggingErrors(now)");
-    expect(scheduler).toContain('withScheduledLease("telegram-digest"');
+    expect(scheduler).toContain('withScheduledLease("telegram-digest-" + environment');
   });
 
   it("GR-116 preserves excess burst counts for a later summary", () => {

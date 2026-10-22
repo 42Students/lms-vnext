@@ -28,13 +28,13 @@ function job(id: string, deadline: string | null, deadlinePassed = false) {
 describe("Own published drive closing-soon filter", () => {
   const rows = [
     job("within", "2026-10-15T00:00:00Z"),
-    job("boundary", "2026-10-21T00:00:00Z"),
-    job("beyond", "2026-10-21T00:00:01Z"),
+    job("boundary", "2026-10-21T18:29:59.999Z"),
+    job("beyond", "2026-10-21T18:30:00Z"),
     job("expired", "2026-10-13T23:59:59Z", true),
     job("unscheduled", null),
   ];
 
-  it("selects only non-expired persisted deadlines within inclusive seven days", () => {
+  it("selects non-expired deadlines through the seventh future IST calendar-day end", () => {
     const matches = filterLearnerPlacementJobs(
       rows,
       { ...DEFAULT_LEARNER_JOB_FILTERS, closingSoon: true },
