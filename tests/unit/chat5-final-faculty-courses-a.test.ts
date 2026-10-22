@@ -23,7 +23,8 @@ describe("chat-5 final sprint faculty course list and core lesson contracts",()=
   expect(list).toContain("FacultyCourseFilterAutoSubmit");
   expect(list).toContain('placeholder="Search Courses..."');
   expect(list).toContain('action="/teacher/courses" method="get"');
-  expect(auto).toContain('target.name==="q"?350:0');
+  // Only text search is debounced; select filters navigate on the same event.
+  expect(auto).toContain('target.name==="q"?120:0');
   expect(auto).toContain('router.replace("/teacher/courses"+(query?"?"+query:""),{scroll:false})');
   expect(auto).toContain("new FormData(form)");
   expect(auto).not.toContain("form.requestSubmit()");
