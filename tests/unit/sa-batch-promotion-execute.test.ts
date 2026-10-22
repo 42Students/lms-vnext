@@ -9,7 +9,7 @@ describe("SA-academics-people-24 scoped Super Admin promotion execution",()=>{
   expect(page).toContain("preview.simulatedReadiness");
   expect(page).toContain('preview.plan.action === "PROMOTE"');
   expect(page).toContain("preview.batch.version");
-  expect(page).toContain("yearStart={input.data.yearStart}");
+  expect(page).toContain("input.data.yearStart !== undefined ? {yearStart:input.data.yearStart} : {}");
  });
  it("checks selected persisted tenant with existing versioned transaction and audit",()=>{
   const service=readFileSync("src/modules/academics/college-batch-promotion-execute.ts","utf8");
