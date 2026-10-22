@@ -42,10 +42,11 @@ describe("COL-people-local-identity-01 safe directory read and create contracts"
   expect(mocks.where).toHaveBeenCalledOnce();
   const condition:unknown=mocks.where.mock.calls[0]?.[0];
   const hasNormalizedParameter=(fragment:unknown):boolean=>{
+   if(fragment==="missing@example.edu")return true;
    if(!fragment||typeof fragment!=="object")return false;
    if("value" in fragment&&fragment.value==="missing@example.edu")return true;
    return "queryChunks" in fragment&&Array.isArray(fragment.queryChunks)
-    ? fragment.queryChunks.some(hasNormalizedParameter):false;
+    ?fragment.queryChunks.some(hasNormalizedParameter):false;
   };
   expect(hasNormalizedParameter(condition)).toBe(true);
   mocks.rows.push([stored]);

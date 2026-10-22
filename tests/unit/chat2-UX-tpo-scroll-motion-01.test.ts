@@ -46,14 +46,14 @@ describe("UX-tpo-scroll-motion: invisible scrollbars must never hide available c
     expect(source).toContain("<TpoCompanyMemoryDriveGrid");
     expect(src("src/components/tpo/tpo-company-memory-drive-grid.tsx")).toContain("<GridWorkspace rows={shown}");
     expect(source).toContain("No drives yet");
-    expect(source).toContain("encodeURIComponent(drive.id)");
+    expect(src("src/components/tpo/tpo-company-memory-drive-grid.tsx")).toContain("encodeURIComponent(row.id)");
     expect(src("src/components/tpo/tpo-company-memory-drive-grid.tsx")).toContain('columnKey:"role"');
     expect(source).not.toMatch(/<table(?:\s|>)/);
   });
   it("UX-tpo-scroll-motion-06 academic import preview keeps row-level opt-in and match checks", () => {
     const source = tpo("tpo-academic-import-workspace");
     expect(source).toContain("<DataTable rows={preview.filter(row=>row.match===previewTab)}");
-    expect(source).toContain("No students were found in the import preview.");
+    expect(source).toContain("No rows found. The first row must be the column headings.");
     expect(source).toContain('row.match!=="WILL_UPDATE"');
     expect(source).toContain("setExcluded(current=>event.target.checked");
     expect(source).not.toMatch(/<table(?:\s|>)/);

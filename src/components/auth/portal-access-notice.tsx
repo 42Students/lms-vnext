@@ -21,7 +21,7 @@ export function PortalAccessNotice(){
     if(timer.current)clearTimeout(timer.current);};
  },[]);
  return apiDenied||search.get("access")==="denied"?
-  <Alert tone="error" aria-live="assertive" className="my-[var(--lms-space-3)] w-full min-w-0">
+  <Alert tone="error" role="alert" aria-live="assertive" className="my-[var(--lms-space-3)] w-full min-w-0">
    {PORTAL_PERMISSION_DENIED}
   </Alert>:null;
 }

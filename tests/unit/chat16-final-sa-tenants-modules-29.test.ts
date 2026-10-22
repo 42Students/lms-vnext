@@ -11,6 +11,7 @@ describe("SA-tenants-modules-29 population-aware confirmation",()=>{
  });
  it("SA-tenants-modules-29 requires acknowledgement at 100 learners and separately warns for lock changes",()=>{
   const s=read("src/components/admin/college-feature-rule-editor.tsx");
+  expect(s).toContain("students!==null&&students>=100");
   expect(s).toContain("students<100||acknowledgedPopulation");
   expect(s).toContain("I understand this may change access for");
   expect(s).toContain("Confirm college feature lock change");
