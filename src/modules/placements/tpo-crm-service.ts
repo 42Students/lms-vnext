@@ -26,6 +26,7 @@ import {
   leadNotNowAuditNote,
 } from "./tpo-crm-confirmed-write-model";
 import { requirePlacementManageScope } from "./scope";
+import { nextDayTpoFollowupAt } from "./tpo-crm-followup-policy";
 import {notifyActiveTposOfRecruiterEvent} from "./tpo-recruiter-bell-service";
 import { inferLegacyRecruiterCompanyName,deriveTpoRecruiterInviteStatus } from "./tpo-recruiter-lead-policy";
 import { recruiterAttentionFromPersistedFacts } from "./tpo-recruiter-attention-model";
@@ -71,13 +72,6 @@ export class TpoCrmError extends Error {
   }
 }
 
-/** The legacy No answer default is 10:00 AM tomorrow in the college's IST day. */
-function nextDayTpoFollowupAt(now: Date): Date {
-  const india = new Date(now.getTime() + 330 * 60_000);
-  return new Date(Date.UTC(
-    india.getUTCFullYear(), india.getUTCMonth(), india.getUTCDate() + 1, 4, 30,
-  ));
-}
 
 /** Mirrors legacy contact normalization; no raw invitation tokens are stored. */
 function normalizePhone(value: string | null | undefined): string | null {
