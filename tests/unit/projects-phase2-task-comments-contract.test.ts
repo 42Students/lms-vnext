@@ -9,7 +9,9 @@ describe("PR-S2-04 registered comments",()=>{
   expect(s).toContain("eq(projectTaskComments.projectId,scope.project.id)");
   expect(s).toContain("eq(projectTaskComments.taskId,taskId)");
   expect(s).toContain('date_trunc(\'milliseconds\'');
-  expect(s).toContain('scope.access==="OBSERVER"');
+  expect(s).toContain("requireProjectReadAccess(context,projectId)");
+  expect(s).toContain("Observer is a read-only editor role, but an active project participant may");
+  expect(s).toContain("context.membership.collegeId!==scope.collegeId");
   expect(s).toContain('project.status==="ARCHIVED"');
  });
  it("protects POST from cross-origin and retains GET read auth",()=>{

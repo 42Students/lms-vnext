@@ -8,9 +8,10 @@ const edit=()=>src("src/modules/announcements/tpo-placement-edit-service.ts");
 const receipt=()=>src("src/modules/announcements/tpo-notice-read-receipts-service.ts");
 describe("TPO placement announcement round-4 evidence",()=>{
  it("TPO-inbox-team-45 shows the audience count and guards zero recipients during compose",()=>{
-  expect(page()).toContain("<TpoNoticeScheduleControls minDateTime={formMinDateTime} count={audience?.potentiallyVisibleMemberships??null}");
-  expect(page()).toContain("audience.potentiallyVisibleMemberships>0");
-  expect(page()).toContain("retryPreviewHref");
+  expect(page()).toContain("<TpoNoticeLiveSubmitControls minDateTime={formMinDateTime}");
+  expect(src("src/components/tpo/tpo-notice-live-preview.tsx")).toContain("<TpoNoticeScheduleControls minDateTime={minDateTime}");
+  expect(src("src/components/tpo/tpo-notice-live-preview.tsx")).toContain("preview.count>0");
+  expect(page()).toContain("<TpoNoticeLiveReach targetedReady={targetedReady}");
  });
  it("TPO-inbox-team-46 never claims an undelivered notice was actually delivered",()=>{
   expect(receipt()).toContain("notDelivered:Number(counts[0]?.delivered??0)===0");
@@ -40,8 +41,10 @@ describe("TPO placement announcement round-4 evidence",()=>{
   const dialog=src("src/components/ui/dialog.tsx");
   expect(c).toContain("<Dialog open={open}");
   expect(dialog).toContain("<dialog");
-  expect(dialog).toContain("modal.showModal()");
-  expect(dialog).toContain("opener.current?.focus()");
+  expect(dialog).toContain("useOverlayExit(ref, opener, open, 180)");
+  expect(src("src/components/ui/use-overlay-exit.ts")).toContain("dialog.showModal()");
+  expect(dialog).toContain("opener.current.focus()");
+  expect(src("src/components/ui/use-overlay-exit.ts")).toContain("opener.focus()");
   expect(dialog).toContain("onCancel={event =>");
   expect(page()).toContain("Button (optional)");
   expect(page()).toContain("maxLength={60}");
@@ -77,7 +80,8 @@ describe("TPO placement announcement round-4 evidence",()=>{
  it("TPO-inbox-team-55 never echoes raw validation codes into the form",()=>{
   const errors=src("src/modules/announcements/tpo-notice-form-error-model.ts");
   expect(errors).toContain("The link has to start with https://");
-  expect(page()).toContain('role="alert"');
+  expect(page()).toContain('<Alert tone="error">');
+  expect(src("src/components/ui/alert.tsx")).toContain('role={role ?? (tone === "error" ? "alert" : "status")}');
   expect(create()).toContain("buttonUrl");
   expect(edit()).toContain("buttonUrl");
  });
