@@ -13,9 +13,9 @@ export async function POST(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  if(!recruiterInviteAcceptReady({
-   db09:process.env.DB09_TPO_API_READY,
-   otp:process.env.TPO_RECRUITER_OTP_READY,
-   delivery:process.env.TPO_RECRUITER_OTP_DELIVERY_READY,
+   db09:process.env["DB09_TPO_API_READY"],
+   otp:process.env["TPO_RECRUITER_OTP_READY"],
+   delivery:process.env["TPO_RECRUITER_OTP_DELIVERY_READY"],
  }))return NextResponse.json({error:"RECRUITER_INVITE_NOT_READY"},{status:503});
  const body=await readBoundedJsonBody(request);
  if(body.kind==="TOO_LARGE")return NextResponse.json({error:"INVITE_INVALID"},
