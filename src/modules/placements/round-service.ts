@@ -21,7 +21,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
 import {requireAvailableRoundVenue} from "./round-venue-booking-service";
-import { roundReorderLockMessage } from "./tpo-round-reorder-model";
+import { roundReorderLockMessage, planRoundReorderSequences } from "./tpo-round-reorder-model";
 import { roundActionJobMutable, roundActionSnapshotMatches } from "./round-action-guards";
 import {
   createPlacementRoundInputSchema,
@@ -713,11 +713,17 @@ export async function reorderPlacementRounds(
       );
     }
 
-    const [historicMax] = await tx.select({
-      sequence: max(placementJobRounds.sequence),
+    const historical = await tx.select({
+      sequence: placementJobRounds.sequence,
+      status: placementJobRounds.status,
     }).from(placementJobRounds)
       .where(eq(placementJobRounds.jobId, job.id));
-    const maxSequence = Number(historicMax?.sequence ?? 0);
+    const maxSequence = historical.reduce(
+      (maximum, round) => Math.max(maximum, round.sequence), 0,
+    );
+    const reserved = historical.filter(round => round.status === "CANCELLED")
+      .map(round => round.sequence);
+    const reorderedSequences = planRoundReorderSequences(input.roundIds.length, reserved);
     const offset = maxSequence + 1_000_000;
 
     await tx
@@ -742,7 +748,7 @@ export async function reorderPlacementRounds(
       index += 1
     ) {
       const id = input.roundIds[index]!;
-      const sequence = index + 1;
+      const sequence = reorderedSequences[index]!;
       await tx
         .update(placementJobRounds)
         .set({
