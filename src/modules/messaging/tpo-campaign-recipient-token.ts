@@ -1,4 +1,4 @@
-import {createHmac,timingSafeEqual} from "node:crypto";
+import {createHmac,createHash,timingSafeEqual} from "node:crypto";
 import {z} from "zod";
 
 /** Use one purpose-specific signing secret for issue, preview and unsubscribe. */
@@ -33,10 +33,35 @@ export function issueTpoCampaignRecipientToken(
   return body+"."+signature(body,secret).toString("base64url");
 }
 
+/** Legacy links contain 24 random bytes (base64url). They have no embedded
+ * recipient identity. Only a pre-imported, tenant-scoped token digest may
+ * resolve them; never derive a claim from a bare token or its URL.
+ * The explicit namespace prevents confusing these tokens with HMAC claims.
+ */
+export function legacyCampaignRecipientTokenDigest(value:string):string|null {
+ if(!/^[A-Za-z0-9_-]{32}$/.test(value))return null;
+ try{
+  const raw=Buffer.from(value,"base64url");
+  if(raw.length!==24||raw.toString("base64url")!==value)return null;
+  return createHash("sha256").update("tpo-legacy-campaign-unsubscribe-v1:")
+   .update(raw).digest("hex");
+ }catch{return null;}
+}
 export function verifyTpoCampaignRecipientToken(
   value:string,secret:string,nowMs:number,
+  resolveLegacyDigest?:((digest:string)=>TpoCampaignRecipientClaim|null),
 ):TpoCampaignRecipientClaim|null {
   if(typeof value!=="string"||value.length>2048||!Number.isFinite(nowMs))return null;
+  // Historical links remain valid only when their random token was actually
+  // imported into an authorized mapping. Without it, fail closed.
+  if(!value.includes(".")){
+   const digest=legacyCampaignRecipientTokenDigest(value);
+   if(!digest||!resolveLegacyDigest)return null;
+   try{
+    const match=resolveLegacyDigest(digest);
+    return match?payload.parse(match):null;
+   }catch{return null;}
+  }
   const [body,mac,...extra]=value.split(".");
   if(!body||!mac||extra.length||!(/^[A-Za-z0-9_-]+$/).test(body)||
     !(/^[A-Za-z0-9_-]+$/).test(mac))return null;
