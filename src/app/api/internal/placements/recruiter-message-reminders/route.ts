@@ -10,7 +10,7 @@ export const runtime="nodejs";
 // dev CronJob invokes this authenticated worker on five-minute ticks.
 const STARTUP_GRACE_MS=90_000;
 function allowed(request:Request){
- const secret=process.env.RECRUITER_MESSAGE_WORKER_SECRET??"";
+ const secret=process.env["RECRUITER_MESSAGE_WORKER_SECRET"]??"";
  const authorization=request.headers.get("authorization")??"";
  // Whitespace-only/misquoted secrets must not enable a privileged mail worker.
  if(Buffer.byteLength(secret.trim(),"utf8")<32||secret!==secret.trim()||
