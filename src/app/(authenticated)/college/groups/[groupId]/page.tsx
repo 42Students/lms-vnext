@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -57,12 +56,11 @@ export default async function CollegeGroupDetailPage({
   // Legacy student-group bookmarks never loaded a group. Preserve the
   // history-replacing People redirect instead of treating numeric IDs as UUIDs.
   if (process.env.COLLEGE_STUDY_GROUPS_RELEASED !== "true") redirect("/college/people");
-  // Old /college-admin/student-groups/:id links were unconditional People
-  // redirects, even when :id was numeric. Do not treat the old integer ID
-  // as a vNext group UUID (nor accidentally enumerate a different group).
-  if (/^[1-9][0-9]{0,12}$/.test(groupId)) redirect("/college/people");
-  // Modern canonical links must be UUIDs scoped to the signed-in college.
-  if (!z.uuid().safeParse(groupId).success) notFound();
+  // The old student-groups detail route redirected EVERY identifier (even
+  // malformed, removed, or nonnumeric bookmarks) to People. Only a canonical
+  // vNext UUID is eligible to reach the college-scoped group detail lookup.
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(groupId))
+    redirect("/college/people");
 
   let detail: Detail;
   try {
