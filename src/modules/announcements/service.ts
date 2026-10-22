@@ -176,6 +176,7 @@ export async function createAnnouncement(context: RequestContext, raw: unknown) 
       expiresAt: input.expiresAt ?? null,
       isPinned: input.isPinned,
     }).returning();
+    if (!created) throw new Error("ANNOUNCEMENT_INSERT_RETURNED_NO_ROW");
     if (isSuperAdmin(context)) {
       await tx.insert(activityEvents).values({
         collegeId: scope.collegeId,
@@ -700,7 +701,7 @@ export async function listVisibleAnnouncementsForMembershipPage(
   now = new Date(),
   before?: MembershipAnnouncementCursor,
 ) {
-  const rows=await listVisibleAnnouncementsForMembership(context,now,{limit:101,before});
+  const rows=await listVisibleAnnouncementsForMembership(context,now,{limit:101,...(before === undefined ? {} : {before})});
   const items=rows.slice(0,100);
   const last=items[items.length-1];
   return {
