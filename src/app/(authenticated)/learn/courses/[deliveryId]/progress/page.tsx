@@ -48,11 +48,12 @@ export default async function LearnerCourseProgressPage({
 
   return (
     <div className="min-w-0 space-y-6">
+      <PageHeader title="Course progress by lesson" />
       <Link href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/home"}
         className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         ← Course overview
       </Link>
-      <PageHeader title="Course progress by lesson" />
+
       {latestContentAttempt>1 ? (
         <div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-soft-surface)] px-4 py-3 text-sm text-body">
           Attempt {latestContentAttempt} started. The previous attempt is kept as history.
