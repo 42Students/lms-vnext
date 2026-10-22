@@ -79,9 +79,9 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
     if(id!==requestId.current||abort.signal.aborted)return;
     const parsed=data as {attempts:Attempt[];hasMore:boolean};
     setAttempts(parsed.attempts);setHasMore(parsed.hasMore);
-   }catch(cause){
+   }catch{
     if(id!==requestId.current||abort.signal.aborted)return;
-    setError(cause instanceof Error?cause.message:"Failed to load submissions");
+    setError("Could not load quiz attempts. Check your selected Section and try again.");
    }finally{
     if(id===requestId.current&&!abort.signal.aborted)setLoading(false);
    }
@@ -106,7 +106,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
    <span className="text-xs font-normal text-muted-foreground">View one authorized Section at a time.</span>
   </label>:null}
   {error?<Alert tone="error" className="flex-row flex-wrap items-center gap-2">
-   <span>Unable to load submissions. {error}</span>
+   <span>{error}</span>
    <Button variant="secondary" type="button" onClick={()=>setRetryKey(value=>value+1)}>Retry</Button>
   </Alert>:null}
   {loading?<QuizAttemptsSkeleton/>:null}
