@@ -20,7 +20,7 @@ import {
  */
 export async function listSuperAdminInterviews(
  context:RequestContext,raw:unknown,
-):Promise<SuperAdminReadResult>{
+):Promise<SuperAdminReadResult & {items:(SuperAdminReadResult["items"][number]&{jobId:string})[]}>{
  const query=superAdminReadQuerySchema.parse(raw);
  const scope=requireSuperAdminSelectedCollege(context,"placements.read");
  const s=placementRoundCandidateSlots;
@@ -122,7 +122,7 @@ export async function listSuperAdminInterviews(
    const href="/admin/placements/calendar?view=agenda&date="+
     encodeURIComponent(dateKey)+"&jobId="+encodeURIComponent(row.jobId);
    return {
-    id:row.id,title:row.jobTitle,subtitle:candidate+" · "+row.companyName,
+    id:row.id,jobId:row.jobId,title:row.jobTitle,subtitle:candidate+" · "+row.companyName,
     status:row.status,revision:String(row.version),href,
     secondaryHref:row.applicationId?
      "/admin/placements/applications?applicationId="+encodeURIComponent(row.applicationId):undefined,
