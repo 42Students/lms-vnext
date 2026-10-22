@@ -87,7 +87,7 @@ export function observedEventHash(
  * Telegram credentials, and Cloud Logging reader IAM for the polling job.
  */
 function trustedAccountHash(input: ReportableError): string | null {
-  const key = process.env.LOG_ALERT_ACCOUNT_HASH_KEY;
+  const key = process.env["LOG_ALERT_ACCOUNT_HASH_KEY"];
   if (!key || !input.userId || !/^[a-f0-9-]{20,64}$/i.test(input.userId)) return null;
   return createHmac("sha256", key)
     .update((input.collegeId ?? "platform") + ":" + input.userId).digest("hex");
@@ -122,9 +122,13 @@ export async function reportErrorForAlert(input: ReportableError): Promise<boole
   const eventHash = observedEventHash(environment, hash, input.requestId, input.sourceEventId);
   const summary = formatAlert({
     kind: "new error", environment, time: now,
-    event: input.event, path, message, requestId: input.requestId,
-    status: input.status, component: input.component,
-    browserFamily:input.browserFamily,viewport:input.viewport,buildId:input.buildId,
+    event: input.event, path, message,
+    ...(input.requestId !== undefined ? { requestId: input.requestId } : {}),
+    ...(input.status !== undefined ? { status: input.status } : {}),
+    ...(input.component !== undefined ? { component: input.component } : {}),
+    ...(input.browserFamily !== undefined ? { browserFamily: input.browserFamily } : {}),
+    ...(input.viewport !== undefined ? { viewport: input.viewport } : {}),
+    ...(input.buildId !== undefined ? { buildId: input.buildId } : {}),
   });
 
   if (!logAlertsRuntimeEnabled()) {
@@ -215,8 +219,12 @@ export async function reportErrorForAlert(input: ReportableError): Promise<boole
       const kind = decision === "NEW" ? "new error" : decision === "SPIKE" ? "error spike" : "regression";
       const delivered = await sendTelegramAlert(formatAlert({
         kind, environment, time: now, event: input.event, path, message,
-        requestId: input.requestId, status: input.status, component: input.component,
-        browserFamily:input.browserFamily,viewport:input.viewport,buildId:input.buildId,
+        ...(input.requestId !== undefined ? { requestId: input.requestId } : {}),
+        ...(input.status !== undefined ? { status: input.status } : {}),
+        ...(input.component !== undefined ? { component: input.component } : {}),
+        ...(input.browserFamily !== undefined ? { browserFamily: input.browserFamily } : {}),
+        ...(input.viewport !== undefined ? { viewport: input.viewport } : {}),
+        ...(input.buildId !== undefined ? { buildId: input.buildId } : {}),
         count: current ? Number(current.occurrenceCount) + 1 : 1,
         affectedAccounts:Number(radius?.total??0)>0
           ? Number(radius!.total) : accountHash?1:null,
