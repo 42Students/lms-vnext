@@ -71,7 +71,12 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
   </dl>
   <div className="min-w-0 space-y-[var(--lms-space-3)] print:hidden">
    <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] sm:grid-cols-2">
-    {choices("Type",unique(events.map(x=>x.kind)),kind,change(setKind))}
+    <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-body">Type
+      <Select value={kind} onChange={e=>{setKind(e.target.value);setPage(1);}} className="min-h-11 md:min-h-9">
+       <option value="ALL">All types</option>
+       {(["SCREENING","TECHNICAL","HR","MANAGERIAL","FINAL"] as const).map(type=><option key={type} value={type}>{type==="HR"?"HR":type.charAt(0)+type.slice(1).toLowerCase()}</option>)}
+      </Select>
+     </label>
     {choices("Status",unique(events.map(x=>x.status)),status,change(setStatus))}
    </div>
    <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-body">Search candidates, jobs or companies
@@ -81,7 +86,13 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
    <details className="min-w-0" open={mode!=="ALL"||department!=="ALL"||sort!=="DATE_ASC"||conflictsOnly}>
     <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
     <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 lg:grid-cols-3">
-     {choices("Mode",unique(events.map(calendarMode)),mode,change(setMode))}
+     <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-body">Mode
+       <Select value={mode} onChange={e=>{setMode(e.target.value);setPage(1);}} className="min-h-11 md:min-h-9">
+        <option value="ALL">All modes</option>
+        <option value="Virtual">Online</option>
+        <option value="On campus">In-person</option>
+       </Select>
+      </label>
      {choices("Department",unique(events.map(x=>x.departmentName??"Not recorded")),department,change(setDepartment))}
      <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-body">Sort by
        <Select value={sort} onChange={e=>{setSort(e.target.value);setPage(1);}} className="min-h-11 md:min-h-9">
