@@ -9,7 +9,8 @@ describe("Super Admin course catalogue action and copy parity",()=>{
   expect(page).toContain("<SuperAdminLessonCreate");
   expect(page).toContain("<LessonActions");
   expect(page).toContain("<CollegeLessonReorderActions");
-  expect(page).toContain("Open offering to add lessons");
+  expect(page).toContain("Open offering");
+  expect(page).toContain("Reordering is unavailable in a filtered, multi-path or incomplete list.");
  });
  it("SA-academics-people-64 exposes existing assignment builder and grading actions without falsely labeling them read-only",()=>{
   const page=read("src/app/(authenticated)/admin/assignments/page.tsx");

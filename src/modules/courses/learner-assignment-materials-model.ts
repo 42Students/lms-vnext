@@ -7,7 +7,7 @@ export const facultyAssignmentMaterialLinkSchema=z.object({
   try{
    const url=new URL(raw);
    return url.protocol==="https:"&&!url.username&&!url.password&&
-    !url.hash&&!["localhost","127.0.0.1","::1"].includes(url.hostname.toLowerCase());
+    !url.hash&&!["localhost","127.0.0.1","::1","[::1]"].includes(url.hostname.toLowerCase());
   }catch{return false;}
  },"Use a public HTTPS resource link"),
 }).strict();
