@@ -34,7 +34,7 @@ describe("SA-placements-projects-117 export and Claude report",()=>{
   const source=readFileSync("src/components/tracker/tracker-live-logs-explorer.tsx","utf8");
   expect(source).toContain("for(let i=0;i<20;i++)");
   expect(source).toContain("not claimed complete when the 240-entry export limit is reached");
-  expect(source).toContain("Downloaded "+rows.length+" log entries.");
+  expect(source).toContain('"Downloaded "+rows.length+" log entries."');
   expect(source).toContain("No matching log entries to download.");
   expect(source).toContain("Report for Claude");
   expect(source).toContain("trackerLogCsv(rows)");

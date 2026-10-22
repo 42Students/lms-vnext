@@ -184,7 +184,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
                   {profile?.verifiedAt&&result.company.trusted?<Badge tone="success">Verified</Badge>:null}
                   {companyDomains.length?<span className="break-all text-sm text-muted-foreground">{companyDomains.join(", ")}</span>:null}
                 </div>
-                {profile?.industry?<p className="mt-1 text-sm text-muted-foreground">{profile.industry}</p>:null}
+                <p className="mt-1 text-sm text-muted-foreground">{profile?.industry?.trim() || "Industry not set"}</p>
                 <p className="mt-1 text-xs text-muted-foreground">{result.grant.collegeName}</p>
               </div>
             </div>

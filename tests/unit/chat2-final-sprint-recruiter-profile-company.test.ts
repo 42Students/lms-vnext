@@ -50,8 +50,8 @@ describe("Final sprint recruiter profile/company verification",()=>{
   const page=src("src/app/(authenticated)/hr/company/reports/page.tsx");
   expect(src("src/components/hr/hr-company-reports-grid.tsx")).toContain('key:"applied",label:"Applied"');
   expect(page).toContain("applications:job.applications");
-  expect(page).toContain('"Offered"');
-  expect(page).toContain("job.outstandingOffers+job.acceptedOffers+job.declinedOffers");
+  expect(src("src/components/hr/hr-company-reports-grid.tsx")).toContain('label:"Offered"');
+  expect(src("src/components/hr/hr-company-reports-grid.tsx")).toContain("row.outstandingOffers+row.acceptedOffers+row.declinedOffers");
   expect(page).toContain("job.acceptedOffers");
   expect(page).toContain("job.declinedOffers");
   expect(page).toContain("job.joinedOffers");
@@ -70,7 +70,7 @@ describe("Final sprint recruiter profile/company verification",()=>{
   expect(ui).toContain("Contact details are shared only as the placement cell allows.");
   expect(ui).toContain('type="email" readOnly={Boolean(invite.contactEmail)}');
   expect(ui).toContain('value={invite.contactEmail??requestedEmail}');
-  expect(src("src/components/ui/input.tsx")).toContain('<input data-slot="input"');
+  expect(src("src/components/ui/input.tsx")).toMatch(/<input\s+data-slot="input"/);
   expect(ui).toContain('{"From your invitation. You\'ll sign in with it."}');
  });
  it("REC-calendar-messages-profile-26 independent final-sprint acceptance regression",()=>{
@@ -89,7 +89,7 @@ describe("Final sprint recruiter profile/company verification",()=>{
 
  it("REC-calendar-messages-profile-30 independent final-sprint acceptance regression",()=>{
   expect(src("src/components/hr/recruiter-profile-access.tsx")).toContain("<ConfirmActionDialog");
-  expect(src("src/components/hr/recruiter-profile-access.tsx")).toContain("method: \"DELETE\", credentials: \"same-origin\"");
+  expect(src("src/components/hr/recruiter-profile-access.tsx")).toMatch(/method:\s*"DELETE",\s*credentials:\s*"same-origin"/);
   expect(src("src/components/hr/recruiter-profile-access.tsx")).toContain("window.location.assign(\"/hr/home\")");
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-30 |");
  });
@@ -116,7 +116,7 @@ describe("Final sprint recruiter profile/company verification",()=>{
  });
 
  it("REC-calendar-messages-profile-35 independent final-sprint acceptance regression",()=>{
-  expect(src("src/app/(authenticated)/hr/company/reports/page.tsx")).toContain("job.outstandingOffers+job.acceptedOffers+job.declinedOffers");
+  expect(src("src/components/hr/hr-company-reports-grid.tsx")).toContain("row.outstandingOffers+row.acceptedOffers+row.declinedOffers");
   expect(src("src/app/(authenticated)/hr/company/reports/page.tsx")).toContain("Reports appear once you have a drive with applicants.");
   expect(src("src/modules/placements/hr-company-report-export-model.ts")).toContain("\"Issued\",\"Accepted\"");
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-35 |");

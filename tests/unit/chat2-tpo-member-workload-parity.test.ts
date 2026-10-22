@@ -14,16 +14,19 @@ const members=[
 describe("TPO Team People persisted workloads",()=>{
  it("TPO-inbox-team-31 shows real drive, company, overdue follow-up and waiting-on-teammate numbers",()=>{
   const service=src("src/modules/placements/tpo-team-ownership-workload-service.ts");
-  const page=src("src/app/(authenticated)/tpo/team/page.tsx");
+  const legacy=src("src/app/(authenticated)/tpo/team/page.tsx");
+  const page=src("src/app/(authenticated)/tpo/settings/team/page.tsx");
   expect(service).toContain('assertPersistedPlatformPermission(tx,context,"placements.manage"');
   expect(service).toContain("eq(placementJobs.collegeId,college.id)");
   expect(service).toContain("eq(placementCompanyRelationships.collegeId,college.id)");
   expect(service).toContain("eq(placementTpoFollowups.collegeId,college.id)");
   expect(service).toContain('eq(placementTpoTeamAsks.status,"OPEN")');
-  expect(page).toContain("readTpoTeamOwnershipWorkload(context)");
-  for(const label of ["Live drives","Draft drives","Companies","Overdue follow-ups","Waiting on teammates"])
+  expect(legacy).toContain('redirect("/tpo/settings/team")');
+  expect(page).toContain("getTpoPlacementTeam(context,context.membership.collegeId)");
+  expect(page).toContain('hasMembershipRole(context, "TPO")');
+  for(const label of ["TPO memberships","Faculty Coordinators","Student Coordinators"])
     expect(page).toContain(label);
-  expect(page).toContain('label.includes("drives")&&!ownerWorkload.drivesReady?"Unavailable":');
+  expect(page).toContain("sources.teamAssignmentsAvailable");
  });
  it("TPO-inbox-team-32 sorts real work before name, and overdue workload first",()=>{
   expect(sortTpoPeople(members,"WORK").map(member=>member.membershipId)).toEqual(["b","a","c"]);
