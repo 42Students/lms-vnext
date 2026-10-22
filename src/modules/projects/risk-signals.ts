@@ -45,7 +45,7 @@ export function deriveProjectRiskReasons({
   latestSubmissionStatus,
   hasBlockedTask = false,
 }: ProjectRiskSignalInput): string[] {
-  if(projectStatus==="ARCHIVED")return [];
+  if(projectStatus==="ARCHIVED" || projectStatus==="COMPLETED")return [];
 
   const reasons: string[] = [];
 
