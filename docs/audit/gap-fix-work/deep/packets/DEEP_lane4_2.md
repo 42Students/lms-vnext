@@ -15,8 +15,8 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-18-009-019  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [x] G2-19-001-087  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [x] G2-19-002-034  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
-- [ ] G2-19-002-092  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
-- [ ] G2-19-002-094  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
+- [x] G2-19-002-092  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
+- [x] G2-19-002-094  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 
 ## Results
 
@@ -28,3 +28,6 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - G2-17-010-010: OK — vNext `src/modules/operations/notification-scheduled-job-service.ts:257-342` processes the `TODAY` interview phase, emits `IN_APP` only and deduplicates by slot/version/user; `src/app/api/internal/operations/notification-scheduler/route.ts:105-110` routes the morning job through its fenced lease; `src/modules/operations/tpo-scheduled-job-registry.ts:35-40` schedules 08:00 IST. Legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/TpoScheduledJobs.java:64-66` runs today's in-app-only interview reminders at 08:00 IST.
 - G2-19-001-087: OK (field crosswalk, not a claim that migration ran) — vNext `src/db/schema/profiles.ts:16-39` preserves learner source ID, batch, roll/unique ID, private JSON and document version; `src/db/schema/memberships.ts:19-47` preserves scoped status/suspension/legacy keys; `docs/audit/gap-fix/legacy-identity-crosswalk-lane-14.md` explicitly maps class transfers via enrollments, audited IDs, contact/identity collision handling, source batch and private profile fields. Legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Learner.java:17-105` contains the monolithic source fields. Actual data backfill remains a separate migration execution obligation.
+
+- G2-19-002-092: FIXED — `d98c27b` adds `docs/audit/gap-fix/legacy-lesson-content-import-crosswalk-chat4.md` mapping source lesson/course/class/faculty and JSON, sequence, visibility, points, deadlines and source IDs to scoped vNext destinations. Destination `src/db/schema/courses.ts:451-495`; legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LessonContents.java:23-58`. Defines importer requirements, not a completed data migration.
+- G2-19-002-094: FIXED — `d98c27b`, `docs/audit/gap-fix/legacy-lesson-content-import-crosswalk-chat4.md` identifies video/YouTube/live/PPT/PDF/resource normalized kinds and preserves raw historical type, while assignment and quiz kinds require dedicated entity imports with crosswalks and quarantine. Legacy `docs/legacy-source/frontend/src/pages/superadmin/sections/LessonContent.js:92-109` and `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LessonContents.java:35-41`.
