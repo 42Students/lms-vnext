@@ -283,6 +283,7 @@ export async function appendCollegeApplicationNote(ctx:RequestContext,job:unknow
    applicationId:application.id,side:"TPO",companyId:null,
    authorUserId:ctx.user.id,body:input.body,
   }).returning({id:placementApplicationNotes.id,createdAt:placementApplicationNotes.createdAt});
+  if(!note)throw new Error("Application note was not created.");
   await tx.insert(activityEvents).values({
    organizationId:acting.organizationId,collegeId,
    actorUserId:ctx.user.id,actorMembershipId:ctx.membership?.id??null,

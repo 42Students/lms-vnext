@@ -84,8 +84,8 @@ export async function bulkWithdrawPlacementOffers(
       }, new Date(), offer.expectedStatus);
       results.push({
         offerId: offer.id,
-        status: updated.status === "WITHDRAWN" ? "withdrawn" : "ineligible",
-        ...(updated.status === "WITHDRAWN" ? {} : { reason: "Offer was not withdrawn" }),
+        status: updated?.status === "WITHDRAWN" ? "withdrawn" : "ineligible",
+        ...(updated?.status === "WITHDRAWN" ? {} : { reason: "Offer was not withdrawn" }),
       });
     } catch (error) {
       if (error instanceof PlacementsServiceError &&
