@@ -3,8 +3,8 @@
 -- reset services select latest attempt and serialize concurrent attempt starts.
 DROP INDEX learner_content_progress_membership_content_uq;
 --> statement-breakpoint
-CREATE UNIQUE INDEX learner_content_progress_membership_content_attempt_uq
+CREATE UNIQUE INDEX IF NOT EXISTS learner_content_progress_membership_content_attempt_uq
  ON learner_content_progress(membership_id, lesson_content_id, attempt);
 --> statement-breakpoint
-CREATE INDEX learner_content_progress_latest_attempt_idx
+CREATE INDEX IF NOT EXISTS learner_content_progress_latest_attempt_idx
  ON learner_content_progress(membership_id, lesson_content_id, attempt DESC);

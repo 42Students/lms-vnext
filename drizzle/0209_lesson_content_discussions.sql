@@ -51,24 +51,19 @@ CREATE TABLE IF NOT EXISTS lesson_content_discussions (
     REFERENCES lesson_content_discussions(id, lesson_content_id)
     ON DELETE RESTRICT
 );
-
 --> statement-breakpoint
 CREATE INDEX IF NOT EXISTS lesson_content_discussions_content_created_idx
   ON lesson_content_discussions (lesson_content_id, created_at, id)
   WHERE deleted_at IS NULL;
-
 --> statement-breakpoint
 CREATE INDEX IF NOT EXISTS lesson_content_discussions_author_idx
   ON lesson_content_discussions (author_membership_id, created_at DESC);
-
 --> statement-breakpoint
 CREATE INDEX IF NOT EXISTS lesson_content_discussions_parent_idx
   ON lesson_content_discussions (parent_discussion_id)
   WHERE parent_discussion_id IS NOT NULL;
-
-
 --> statement-breakpoint
-CREATE UNIQUE INDEX lesson_content_discussions_legacy_college_id_uq
+CREATE UNIQUE INDEX IF NOT EXISTS lesson_content_discussions_legacy_college_id_uq
  ON lesson_content_discussions(college_id, legacy_discussion_id)
  WHERE legacy_discussion_id IS NOT NULL;
 --> statement-breakpoint
@@ -177,11 +172,13 @@ BEGIN
   RETURN NEW;
 END;
 $db05_lesson_discussions_college$;
-
 --> statement-breakpoint
-CREATE TRIGGER db05_lesson_discussions_tenant_before_write
+DO $idem$ BEGIN
+  EXECUTE $stmt$CREATE TRIGGER db05_lesson_discussions_tenant_before_write
 BEFORE INSERT OR UPDATE ON lesson_content_discussions
-FOR EACH ROW EXECUTE FUNCTION db05_lesson_discussions_tenant_guard();
+FOR EACH ROW EXECUTE FUNCTION db05_lesson_discussions_tenant_guard()$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;
 --> statement-breakpoint
 CREATE OR REPLACE FUNCTION db05_block_discussed_content_reparent()
 RETURNS trigger LANGUAGE plpgsql AS $$
@@ -195,12 +192,14 @@ BEGIN
 END;
 $$;
 --> statement-breakpoint
-CREATE TRIGGER db05_discussed_content_no_reparent
+DO $idem$ BEGIN
+  EXECUTE $stmt$CREATE TRIGGER db05_discussed_content_no_reparent
 BEFORE UPDATE OF lesson_id, delivery_id ON lesson_contents
 FOR EACH ROW WHEN (OLD.lesson_id IS DISTINCT FROM NEW.lesson_id
                     OR OLD.delivery_id IS DISTINCT FROM NEW.delivery_id)
-EXECUTE FUNCTION db05_block_discussed_content_reparent();
-
+EXECUTE FUNCTION db05_block_discussed_content_reparent()$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;
 --> statement-breakpoint
 -- Per-content stable historical sequence, independent from delivery chat order.
 CREATE INDEX IF NOT EXISTS lesson_content_discussions_content_sequence_idx

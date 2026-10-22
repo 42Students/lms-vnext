@@ -1,7 +1,7 @@
 -- [chat-14] Privacy-restricted diversity outreach metadata, NOT screening.
 -- Staged for lane-15 journal/replay after purpose, retention and consent review.
 -- No employer/public applicant API may select from this relation.
-CREATE TABLE placement_job_diversity_outreach (
+CREATE TABLE IF NOT EXISTS placement_job_diversity_outreach (
   job_id uuid PRIMARY KEY REFERENCES placement_jobs(id) ON DELETE RESTRICT,
   target_gender varchar(32) NOT NULL
     CHECK (target_gender IN ('FEMALE','MALE','NON_BINARY','SELF_DESCRIBED')),
@@ -22,5 +22,5 @@ CREATE TABLE placement_job_diversity_outreach (
 );
 --> statement-breakpoint
 -- No learner gender is stored here. Never join this with employer reporting.
-CREATE INDEX placement_job_diversity_outreach_status_idx
+CREATE INDEX IF NOT EXISTS placement_job_diversity_outreach_status_idx
   ON placement_job_diversity_outreach(status);

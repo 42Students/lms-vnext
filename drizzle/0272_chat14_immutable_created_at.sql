@@ -12,10 +12,16 @@ $$;
 --> statement-breakpoint
 DROP TRIGGER IF EXISTS organizations_immutable_created_at ON organizations;
 --> statement-breakpoint
-CREATE TRIGGER organizations_immutable_created_at BEFORE UPDATE ON organizations
-  FOR EACH ROW EXECUTE FUNCTION prevent_core_created_at_rewrite();
+DO $idem$ BEGIN
+  EXECUTE $stmt$CREATE TRIGGER organizations_immutable_created_at BEFORE UPDATE ON organizations
+  FOR EACH ROW EXECUTE FUNCTION prevent_core_created_at_rewrite()$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;
 --> statement-breakpoint
 DROP TRIGGER IF EXISTS departments_immutable_created_at ON departments;
 --> statement-breakpoint
-CREATE TRIGGER departments_immutable_created_at BEFORE UPDATE ON departments
-  FOR EACH ROW EXECUTE FUNCTION prevent_core_created_at_rewrite();
+DO $idem$ BEGIN
+  EXECUTE $stmt$CREATE TRIGGER departments_immutable_created_at BEFORE UPDATE ON departments
+  FOR EACH ROW EXECUTE FUNCTION prevent_core_created_at_rewrite()$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;

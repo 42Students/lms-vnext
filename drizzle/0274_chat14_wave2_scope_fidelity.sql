@@ -15,9 +15,12 @@ ALTER TABLE placement_public_page_settings
  ADD COLUMN IF NOT EXISTS legacy_publication_payload jsonb,
  ADD COLUMN IF NOT EXISTS updated_by_user_id uuid REFERENCES users(id);
 --> statement-breakpoint
-ALTER TABLE placement_public_page_settings
+DO $idem$ BEGIN
+  EXECUTE $stmt$ALTER TABLE placement_public_page_settings
  ADD CONSTRAINT placement_public_legacy_payload_ck
- CHECK (legacy_publication_payload IS NULL OR jsonb_typeof(legacy_publication_payload)='object');
+ CHECK (legacy_publication_payload IS NULL OR jsonb_typeof(legacy_publication_payload)='object')$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;
 --> statement-breakpoint
 -- Issuers must revoke/disable the previous link in the same transaction before
 -- replacing one college/company's link; never include clock-based expressions in

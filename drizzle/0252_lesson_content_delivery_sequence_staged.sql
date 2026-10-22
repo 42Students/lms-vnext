@@ -3,7 +3,7 @@
 CREATE UNIQUE INDEX IF NOT EXISTS lesson_contents_id_lesson_uq
   ON lesson_contents(id,lesson_id);
 --> statement-breakpoint
-CREATE TABLE lesson_content_delivery_sequences (
+CREATE TABLE IF NOT EXISTS lesson_content_delivery_sequences (
   lesson_content_id uuid NOT NULL REFERENCES lesson_contents(id) ON DELETE CASCADE,
   lesson_id uuid NOT NULL,
   delivery_id uuid NOT NULL REFERENCES course_section_deliveries(id) ON DELETE CASCADE,
@@ -23,14 +23,13 @@ CREATE TABLE lesson_content_delivery_sequences (
     CHECK(legacy_sequence IS NULL OR legacy_sequence >= 0)
 );
 --> statement-breakpoint
-CREATE INDEX lesson_content_delivery_sequences_delivery_sequence_idx
+CREATE INDEX IF NOT EXISTS lesson_content_delivery_sequences_delivery_sequence_idx
   ON lesson_content_delivery_sequences(delivery_id,sequence);
 --> statement-breakpoint
-CREATE INDEX lesson_content_delivery_sequences_source_class_idx
+CREATE INDEX IF NOT EXISTS lesson_content_delivery_sequences_source_class_idx
   ON lesson_content_delivery_sequences(legacy_class_id,legacy_lesson_content_id);
-
 --> statement-breakpoint
-CREATE UNIQUE INDEX lesson_content_delivery_sequences_order_uq
+CREATE UNIQUE INDEX IF NOT EXISTS lesson_content_delivery_sequences_order_uq
   ON lesson_content_delivery_sequences(delivery_id,lesson_id,sequence);
 --> statement-breakpoint
 CREATE OR REPLACE FUNCTION db05_lesson_delivery_order_scope_guard()
@@ -50,6 +49,9 @@ BEGIN
 END;
 $$;
 --> statement-breakpoint
-CREATE TRIGGER db05_lesson_delivery_order_scope_before_write
+DO $idem$ BEGIN
+  EXECUTE $stmt$CREATE TRIGGER db05_lesson_delivery_order_scope_before_write
   BEFORE INSERT OR UPDATE ON lesson_content_delivery_sequences
-  FOR EACH ROW EXECUTE FUNCTION db05_lesson_delivery_order_scope_guard();
+  FOR EACH ROW EXECUTE FUNCTION db05_lesson_delivery_order_scope_guard()$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;

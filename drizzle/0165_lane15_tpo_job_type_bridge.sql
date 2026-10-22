@@ -46,12 +46,15 @@ ALTER TABLE placement_tpo_job_types
 --> statement-breakpoint
 ALTER TABLE placement_tpo_job_types DROP CONSTRAINT IF EXISTS placement_tpo_job_types_label_ck;
 --> statement-breakpoint
-ALTER TABLE placement_tpo_job_types ADD CONSTRAINT placement_tpo_job_types_label_ck
- CHECK (length(btrim(label)) BETWEEN 2 AND 40 AND label ~ '^[[:alnum:] +&/().,''-]{2,40}$');
+DO $idem$ BEGIN
+  EXECUTE $stmt$ALTER TABLE placement_tpo_job_types ADD CONSTRAINT placement_tpo_job_types_label_ck
+ CHECK (length(btrim(label)) BETWEEN 2 AND 40 AND label ~ '^[[:alnum:] +&/().,''-]{2,40}$')$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;
 --> statement-breakpoint
 DROP INDEX IF EXISTS placement_tpo_job_types_college_label_uq;
 --> statement-breakpoint
-CREATE UNIQUE INDEX placement_tpo_job_types_college_label_uq
- ON placement_tpo_job_types (college_id, lower(label));
 -- Existing application service synchronizes renamed labels and changed placement answers across jobs in its college-scoped transaction.
 -- Per-drive counts_as_placed remains nullable when unaudited; do not silently invent placement outcomes from employment_type.
+CREATE UNIQUE INDEX IF NOT EXISTS placement_tpo_job_types_college_label_uq
+ ON placement_tpo_job_types (college_id, lower(label));

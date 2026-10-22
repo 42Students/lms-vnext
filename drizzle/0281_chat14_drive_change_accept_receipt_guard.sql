@@ -4,8 +4,11 @@
 -- accepted writes after the TPO mutation service is deployed.
 -- Lane 15: coordinate replay with service owner; applying before service
 -- rollout deliberately blocks the legacy status-only ACCEPT endpoint.
-ALTER TABLE placement_drive_change_requests
+DO $idem$ BEGIN
+  EXECUTE $stmt$ALTER TABLE placement_drive_change_requests
  ADD CONSTRAINT placement_drive_changes_accepted_receipt_ck
  CHECK (status <> 'ACCEPTED' OR
         (applied_at IS NOT NULL AND applied_by_user_id IS NOT NULL
-         AND applied_job_version IS NOT NULL)) NOT VALID;
+         AND applied_job_version IS NOT NULL)) NOT VALID$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;

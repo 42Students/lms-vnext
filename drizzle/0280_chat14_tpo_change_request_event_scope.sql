@@ -28,10 +28,13 @@ BEGIN
 END;
 $tpo_event_scope$;
 --> statement-breakpoint
-CREATE TRIGGER lms_tpo_message_change_request_scope_trg
+DO $idem$ BEGIN
+  EXECUTE $stmt$CREATE TRIGGER lms_tpo_message_change_request_scope_trg
 BEFORE INSERT OR UPDATE OF thread_id,change_request_id
 ON placement_tpo_messages
-FOR EACH ROW EXECUTE FUNCTION lms_tpo_message_change_request_scope();
+FOR EACH ROW EXECUTE FUNCTION lms_tpo_message_change_request_scope()$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;
 --> statement-breakpoint
 CREATE FUNCTION lms_tpo_thread_job_change_guard()
 RETURNS trigger LANGUAGE plpgsql AS $tpo_thread_scope$
@@ -48,6 +51,9 @@ BEGIN
 END;
 $tpo_thread_scope$;
 --> statement-breakpoint
-CREATE TRIGGER lms_tpo_thread_job_change_guard_trg
+DO $idem$ BEGIN
+  EXECUTE $stmt$CREATE TRIGGER lms_tpo_thread_job_change_guard_trg
 BEFORE UPDATE OF job_id ON placement_tpo_message_threads
-FOR EACH ROW EXECUTE FUNCTION lms_tpo_thread_job_change_guard();
+FOR EACH ROW EXECUTE FUNCTION lms_tpo_thread_job_change_guard()$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;

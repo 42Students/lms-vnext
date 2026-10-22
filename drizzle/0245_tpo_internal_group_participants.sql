@@ -1,21 +1,27 @@
 -- [chat-14] Proposed group roster. Existing direct-only author trigger requires service integration.
-ALTER TABLE placement_tpo_internal_threads ADD COLUMN kind varchar(16) NOT NULL DEFAULT 'DIRECT';
+ALTER TABLE placement_tpo_internal_threads ADD COLUMN IF NOT EXISTS kind varchar(16) NOT NULL DEFAULT 'DIRECT';
 --> statement-breakpoint
-ALTER TABLE placement_tpo_internal_threads ADD COLUMN is_private boolean NOT NULL DEFAULT true;
+ALTER TABLE placement_tpo_internal_threads ADD COLUMN IF NOT EXISTS is_private boolean NOT NULL DEFAULT true;
 --> statement-breakpoint
-ALTER TABLE placement_tpo_internal_threads ADD COLUMN context_id uuid;
+ALTER TABLE placement_tpo_internal_threads ADD COLUMN IF NOT EXISTS context_id uuid;
 --> statement-breakpoint
-ALTER TABLE placement_tpo_internal_threads ADD CONSTRAINT tpo_internal_threads_kind_ck
-  CHECK(kind IN ('DIRECT','TOPIC','DRIVE','COMPANY'));
+DO $idem$ BEGIN
+  EXECUTE $stmt$ALTER TABLE placement_tpo_internal_threads ADD CONSTRAINT tpo_internal_threads_kind_ck
+  CHECK(kind IN ('DIRECT','TOPIC','DRIVE','COMPANY'))$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;
 --> statement-breakpoint
-ALTER TABLE placement_tpo_internal_threads ADD CONSTRAINT tpo_internal_threads_context_ck
+DO $idem$ BEGIN
+  EXECUTE $stmt$ALTER TABLE placement_tpo_internal_threads ADD CONSTRAINT tpo_internal_threads_context_ck
   CHECK((kind IN ('DIRECT','TOPIC') AND context_id IS NULL)
-    OR (kind IN ('DRIVE','COMPANY') AND context_id IS NOT NULL));
+    OR (kind IN ('DRIVE','COMPANY') AND context_id IS NOT NULL))$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;
 --> statement-breakpoint
-CREATE INDEX tpo_internal_threads_college_kind_idx
+CREATE INDEX IF NOT EXISTS tpo_internal_threads_college_kind_idx
   ON placement_tpo_internal_threads(college_id,kind,created_at);
 --> statement-breakpoint
-CREATE TABLE placement_tpo_internal_thread_participants (
+CREATE TABLE IF NOT EXISTS placement_tpo_internal_thread_participants (
   thread_id uuid NOT NULL,
   college_id uuid NOT NULL,
   membership_id uuid NOT NULL,
@@ -29,7 +35,7 @@ CREATE TABLE placement_tpo_internal_thread_participants (
   CONSTRAINT tpo_internal_thread_participants_leave_ck CHECK(left_at IS NULL OR left_at >= joined_at)
 );
 --> statement-breakpoint
-CREATE INDEX tpo_internal_thread_participants_member_idx
+CREATE INDEX IF NOT EXISTS tpo_internal_thread_participants_member_idx
   ON placement_tpo_internal_thread_participants(college_id,membership_id,left_at);
 --> statement-breakpoint
 INSERT INTO placement_tpo_internal_thread_participants(thread_id,college_id,membership_id)

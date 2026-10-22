@@ -6,7 +6,7 @@
 CREATE UNIQUE INDEX IF NOT EXISTS project_meetings_project_id_id_uq
  ON project_meetings (project_id,id);
 --> statement-breakpoint
-CREATE TABLE project_meeting_history (
+CREATE TABLE IF NOT EXISTS project_meeting_history (
  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
  project_id uuid NOT NULL REFERENCES project_instances(id) ON DELETE RESTRICT,
  project_meeting_id uuid,
@@ -34,15 +34,15 @@ CREATE TABLE project_meeting_history (
  CONSTRAINT project_meeting_history_action_nonempty_ck CHECK (length(trim(action_type)) > 0)
 );
 --> statement-breakpoint
-CREATE INDEX project_meeting_history_project_time_idx ON project_meeting_history(project_id,created_at);
+CREATE INDEX IF NOT EXISTS project_meeting_history_project_time_idx ON project_meeting_history(project_id,created_at);
 --> statement-breakpoint
-CREATE INDEX project_meeting_history_meeting_idx ON project_meeting_history(project_meeting_id,created_at);
+CREATE INDEX IF NOT EXISTS project_meeting_history_meeting_idx ON project_meeting_history(project_meeting_id,created_at);
 --> statement-breakpoint
-CREATE INDEX project_meeting_history_cursor_idx ON project_meeting_history(project_id,created_at DESC,id DESC);
+CREATE INDEX IF NOT EXISTS project_meeting_history_cursor_idx ON project_meeting_history(project_id,created_at DESC,id DESC);
 --> statement-breakpoint
-CREATE INDEX project_meeting_history_project_key_time_id_idx ON project_meeting_history(project_id,meeting_key,created_at DESC,id DESC);
+CREATE INDEX IF NOT EXISTS project_meeting_history_project_key_time_id_idx ON project_meeting_history(project_id,meeting_key,created_at DESC,id DESC);
 --> statement-breakpoint
-CREATE TABLE project_resource_audit (
+CREATE TABLE IF NOT EXISTS project_resource_audit (
  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
  project_id uuid NOT NULL REFERENCES project_instances(id) ON DELETE RESTRICT,
  project_resource_id uuid,
@@ -68,11 +68,11 @@ CREATE TABLE project_resource_audit (
  CONSTRAINT project_resource_audit_action_nonempty_ck CHECK (length(trim(action_type)) > 0)
 );
 --> statement-breakpoint
-CREATE INDEX project_resource_audit_project_time_idx ON project_resource_audit(project_id,created_at);
+CREATE INDEX IF NOT EXISTS project_resource_audit_project_time_idx ON project_resource_audit(project_id,created_at);
 --> statement-breakpoint
-CREATE INDEX project_resource_audit_resource_idx ON project_resource_audit(project_resource_id,created_at);
+CREATE INDEX IF NOT EXISTS project_resource_audit_resource_idx ON project_resource_audit(project_resource_id,created_at);
 --> statement-breakpoint
-CREATE INDEX project_resource_audit_cursor_idx ON project_resource_audit(project_id,created_at DESC,id DESC);
+CREATE INDEX IF NOT EXISTS project_resource_audit_cursor_idx ON project_resource_audit(project_id,created_at DESC,id DESC);
 --> statement-breakpoint
 CREATE FUNCTION lms_project_meeting_history_capture() RETURNS trigger AS $$
 DECLARE
@@ -115,9 +115,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 --> statement-breakpoint
-CREATE TRIGGER lms_project_meeting_history_capture_trg
+DO $idem$ BEGIN
+  EXECUTE $stmt$CREATE TRIGGER lms_project_meeting_history_capture_trg
  AFTER INSERT OR UPDATE ON project_meetings
- FOR EACH ROW EXECUTE FUNCTION lms_project_meeting_history_capture();
+ FOR EACH ROW EXECUTE FUNCTION lms_project_meeting_history_capture()$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;
 --> statement-breakpoint
 CREATE FUNCTION lms_project_resource_audit_capture() RETURNS trigger AS $$
 DECLARE
@@ -154,6 +157,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 --> statement-breakpoint
-CREATE TRIGGER lms_project_resource_audit_capture_trg
+DO $idem$ BEGIN
+  EXECUTE $stmt$CREATE TRIGGER lms_project_resource_audit_capture_trg
  AFTER INSERT OR UPDATE OR DELETE ON project_resources
- FOR EACH ROW EXECUTE FUNCTION lms_project_resource_audit_capture();
+ FOR EACH ROW EXECUTE FUNCTION lms_project_resource_audit_capture()$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;

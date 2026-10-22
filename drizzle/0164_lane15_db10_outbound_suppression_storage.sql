@@ -2,7 +2,7 @@
 -- This migration stores only keyed HMAC recipient identifiers and encrypted payloads. No sender, provider role or credentials are activated.
 -- No legacy data is present in this greenfield vNext deployment; any future legacy email_suppression export must be normalized and HMAC'd offline with
 -- the dedicated stable DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64 and domain label global-email-suppression-v1, deduped before import, then plaintext securely discarded.
-CREATE TABLE outbound_messages (
+CREATE TABLE IF NOT EXISTS outbound_messages (
   id uuid PRIMARY KEY NOT NULL,
   organization_id uuid NOT NULL REFERENCES organizations(id) ON DELETE RESTRICT,
   college_id uuid NOT NULL REFERENCES colleges(id) ON DELETE RESTRICT,
@@ -62,15 +62,15 @@ CREATE TABLE outbound_messages (
   )
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX db10_outbound_idempotency_uq ON outbound_messages(idempotency_key);
+CREATE UNIQUE INDEX IF NOT EXISTS db10_outbound_idempotency_uq ON outbound_messages(idempotency_key);
 --> statement-breakpoint
-CREATE INDEX db10_outbound_due_idx ON outbound_messages(status,next_attempt_at,not_before);
+CREATE INDEX IF NOT EXISTS db10_outbound_due_idx ON outbound_messages(status,next_attempt_at,not_before);
 --> statement-breakpoint
-CREATE INDEX db10_outbound_scope_idx ON outbound_messages(organization_id,college_id,created_at);
+CREATE INDEX IF NOT EXISTS db10_outbound_scope_idx ON outbound_messages(organization_id,college_id,created_at);
 --> statement-breakpoint
-CREATE INDEX db10_outbound_claim_expiry_idx ON outbound_messages(claim_expires_at,status);
+CREATE INDEX IF NOT EXISTS db10_outbound_claim_expiry_idx ON outbound_messages(claim_expires_at,status);
 --> statement-breakpoint
-CREATE TABLE outbound_suppressions (
+CREATE TABLE IF NOT EXISTS outbound_suppressions (
   id uuid PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
   organization_id uuid NOT NULL REFERENCES organizations(id) ON DELETE RESTRICT,
   channel varchar(16) NOT NULL,
@@ -90,14 +90,14 @@ CREATE TABLE outbound_suppressions (
   )
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX db10_outbound_suppressions_active_uq
+CREATE UNIQUE INDEX IF NOT EXISTS db10_outbound_suppressions_active_uq
   ON outbound_suppressions(organization_id,channel,recipient_hash)
   WHERE cleared_at IS NULL;
 --> statement-breakpoint
-CREATE INDEX db10_outbound_suppressions_scope_idx
+CREATE INDEX IF NOT EXISTS db10_outbound_suppressions_scope_idx
   ON outbound_suppressions(organization_id,created_at);
 --> statement-breakpoint
-CREATE TABLE outbound_global_email_suppressions (
+CREATE TABLE IF NOT EXISTS outbound_global_email_suppressions (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   recipient_hash varchar(64) NOT NULL,
   reason varchar(24) NOT NULL,
@@ -112,16 +112,19 @@ CREATE TABLE outbound_global_email_suppressions (
     CHECK (cleared_at IS NULL OR cleared_at >= created_at)
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX db10_global_email_suppressions_active_uq
+CREATE UNIQUE INDEX IF NOT EXISTS db10_global_email_suppressions_active_uq
   ON outbound_global_email_suppressions(recipient_hash)
   WHERE cleared_at IS NULL;
 --> statement-breakpoint
-CREATE INDEX db10_global_email_suppressions_created_idx
+CREATE INDEX IF NOT EXISTS db10_global_email_suppressions_created_idx
   ON outbound_global_email_suppressions(created_at);
 --> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS colleges_id_organization_uq ON colleges (id, organization_id);
 --> statement-breakpoint
 -- Newly created outbound table is empty; enforce the correct college/organization pair before any enqueue.
-ALTER TABLE outbound_messages ADD CONSTRAINT db10_outbound_college_organization_fk
+DO $idem$ BEGIN
+  EXECUTE $stmt$ALTER TABLE outbound_messages ADD CONSTRAINT db10_outbound_college_organization_fk
  FOREIGN KEY (college_id, organization_id) REFERENCES colleges (id, organization_id)
- ON UPDATE RESTRICT ON DELETE RESTRICT;
+ ON UPDATE RESTRICT ON DELETE RESTRICT$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;

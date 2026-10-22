@@ -5,7 +5,12 @@ ALTER TABLE placement_job_rounds
  ADD COLUMN IF NOT EXISTS legacy_round_description text,
  ADD COLUMN IF NOT EXISTS legacy_interview_type varchar(80),
  ADD COLUMN IF NOT EXISTS legacy_mode varchar(20);
+--> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS placement_job_rounds_legacy_id_uq
  ON placement_job_rounds(legacy_round_id) WHERE legacy_round_id IS NOT NULL;
-ALTER TABLE placement_job_rounds ADD CONSTRAINT placement_job_rounds_legacy_description_ck
- CHECK (legacy_round_description IS NULL OR length(legacy_round_description)<=2000);
+--> statement-breakpoint
+DO $idem$ BEGIN
+  EXECUTE $stmt$ALTER TABLE placement_job_rounds ADD CONSTRAINT placement_job_rounds_legacy_description_ck
+ CHECK (legacy_round_description IS NULL OR length(legacy_round_description)<=2000)$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;

@@ -1,6 +1,6 @@
 -- Private interview event ledger: no-show/reschedules/feedback, append-only in services.
 -- Job ancestry constraints prevent linking applicants or rounds across drives.
-CREATE TABLE placement_interview_private_events (
+CREATE TABLE IF NOT EXISTS placement_interview_private_events (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   job_id uuid NOT NULL REFERENCES placement_jobs(id) ON DELETE RESTRICT,
   round_id uuid NOT NULL REFERENCES placement_job_rounds(id) ON DELETE RESTRICT,
@@ -22,5 +22,5 @@ CREATE TABLE placement_interview_private_events (
     CHECK (private_feedback IS NULL OR jsonb_typeof(private_feedback) = 'object')
 );
 --> statement-breakpoint
-CREATE INDEX placement_interview_private_events_subject_idx
+CREATE INDEX IF NOT EXISTS placement_interview_private_events_subject_idx
  ON placement_interview_private_events(round_id, application_id, created_at);

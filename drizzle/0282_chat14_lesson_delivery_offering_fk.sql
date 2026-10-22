@@ -6,7 +6,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS course_section_deliveries_id_offering_uq
  ON course_section_deliveries(id,offering_id);
 --> statement-breakpoint
 ALTER TABLE lesson_content_delivery_sequences
- ADD COLUMN offering_id uuid;
+ ADD COLUMN IF NOT EXISTS offering_id uuid;
 --> statement-breakpoint
 UPDATE lesson_content_delivery_sequences s
  SET offering_id=d.offering_id
@@ -16,7 +16,10 @@ UPDATE lesson_content_delivery_sequences s
 ALTER TABLE lesson_content_delivery_sequences
  ALTER COLUMN offering_id SET NOT NULL;
 --> statement-breakpoint
-ALTER TABLE lesson_content_delivery_sequences
+DO $idem$ BEGIN
+  EXECUTE $stmt$ALTER TABLE lesson_content_delivery_sequences
  ADD CONSTRAINT lesson_content_delivery_sequences_delivery_offering_fk
  FOREIGN KEY(delivery_id,offering_id)
- REFERENCES course_section_deliveries(id,offering_id) ON DELETE CASCADE;
+ REFERENCES course_section_deliveries(id,offering_id) ON DELETE CASCADE$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;

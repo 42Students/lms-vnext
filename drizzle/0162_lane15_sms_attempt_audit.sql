@@ -1,6 +1,6 @@
 -- SMS provider acceptance and failures. Never store plaintext phone or body.
 -- OTP before login legitimately has NULL college / organization IDs.
-CREATE TABLE messaging_sms_delivery_attempts (
+CREATE TABLE IF NOT EXISTS messaging_sms_delivery_attempts (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   organization_id uuid REFERENCES organizations(id) ON DELETE RESTRICT,
   college_id uuid REFERENCES colleges(id) ON DELETE RESTRICT,
@@ -18,8 +18,8 @@ CREATE TABLE messaging_sms_delivery_attempts (
   CONSTRAINT messaging_sms_attempts_recipient_key_ck CHECK (recipient_key IS NULL OR recipient_key ~ '^[a-f0-9]{64}$')
 );
 --> statement-breakpoint
-CREATE INDEX messaging_sms_attempts_time_idx ON messaging_sms_delivery_attempts(attempted_at);
+CREATE INDEX IF NOT EXISTS messaging_sms_attempts_time_idx ON messaging_sms_delivery_attempts(attempted_at);
 --> statement-breakpoint
-CREATE INDEX messaging_sms_attempts_suffix_purpose_idx ON messaging_sms_delivery_attempts(recipient_suffix,purpose,attempted_at);
+CREATE INDEX IF NOT EXISTS messaging_sms_attempts_suffix_purpose_idx ON messaging_sms_delivery_attempts(recipient_suffix,purpose,attempted_at);
 --> statement-breakpoint
-CREATE INDEX messaging_sms_attempts_college_time_idx ON messaging_sms_delivery_attempts(college_id,attempted_at);
+CREATE INDEX IF NOT EXISTS messaging_sms_attempts_college_time_idx ON messaging_sms_delivery_attempts(college_id,attempted_at);

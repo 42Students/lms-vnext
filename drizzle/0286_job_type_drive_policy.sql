@@ -1,10 +1,10 @@
 -- Job Types parity: retain the college-facing label and per-drive placement rule.
 -- Existing greenfield drives use the historic built-in answer (internships do not count).
 ALTER TABLE "placement_jobs"
- ADD COLUMN "job_type_label" varchar(40);
+ ADD COLUMN IF NOT EXISTS "job_type_label" varchar(40);
 --> statement-breakpoint
 ALTER TABLE "placement_jobs"
- ADD COLUMN "counts_as_placed" boolean NOT NULL DEFAULT true;
+ ADD COLUMN IF NOT EXISTS "counts_as_placed" boolean NOT NULL DEFAULT true;
 --> statement-breakpoint
 UPDATE "placement_jobs" SET
  "job_type_label" = CASE "employment_type"
@@ -16,7 +16,7 @@ UPDATE "placement_jobs" SET
 --> statement-breakpoint
 -- Preserve custom choice order independent of renames and version timestamps.
 ALTER TABLE "placement_tpo_job_types"
- ADD COLUMN "sort_order" integer NOT NULL DEFAULT 0;
+ ADD COLUMN IF NOT EXISTS "sort_order" integer NOT NULL DEFAULT 0;
 --> statement-breakpoint
 WITH ranked AS (
  SELECT id, row_number() OVER (PARTITION BY college_id ORDER BY updated_at, id)::integer AS pos
@@ -37,14 +37,17 @@ ALTER TABLE "placement_tpo_job_types"
 --> statement-breakpoint
 ALTER TABLE "placement_tpo_job_types" DROP CONSTRAINT IF EXISTS "placement_tpo_job_types_label_ck";
 --> statement-breakpoint
-ALTER TABLE "placement_tpo_job_types" ADD CONSTRAINT "placement_tpo_job_types_label_ck"
+DO $idem$ BEGIN
+  EXECUTE $stmt$ALTER TABLE "placement_tpo_job_types" ADD CONSTRAINT "placement_tpo_job_types_label_ck"
  CHECK (length(btrim("label")) BETWEEN 2 AND 40
-        AND "label" ~ '^[[:alnum:] +&/().,''-]{2,40}$');
+        AND "label" ~ '^[[:alnum:] +&/().,''-]{2,40}$')$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;
 --> statement-breakpoint
 -- Prevent two custom types with names differing only by case from being persisted.
 DROP INDEX IF EXISTS "placement_tpo_job_types_college_label_uq";
 --> statement-breakpoint
-CREATE UNIQUE INDEX "placement_tpo_job_types_college_label_uq"
+CREATE UNIQUE INDEX IF NOT EXISTS "placement_tpo_job_types_college_label_uq"
  ON "placement_tpo_job_types"("college_id", lower("label"));
 --> statement-breakpoint
 -- Enforce the last-active rule at commit, including five virtual built-in choices.

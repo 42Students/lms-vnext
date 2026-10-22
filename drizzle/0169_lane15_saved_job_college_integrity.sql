@@ -12,8 +12,14 @@ BEGIN
 END;
 $saved_job_scope$;
 --> statement-breakpoint
-ALTER TABLE placement_saved_jobs ADD CONSTRAINT placement_saved_jobs_member_college_fk
- FOREIGN KEY (membership_id,college_id) REFERENCES college_memberships(id,college_id) ON DELETE RESTRICT;
+DO $idem$ BEGIN
+  EXECUTE $stmt$ALTER TABLE placement_saved_jobs ADD CONSTRAINT placement_saved_jobs_member_college_fk
+ FOREIGN KEY (membership_id,college_id) REFERENCES college_memberships(id,college_id) ON DELETE RESTRICT$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;
 --> statement-breakpoint
-ALTER TABLE placement_saved_jobs ADD CONSTRAINT placement_saved_jobs_job_college_fk
- FOREIGN KEY (job_id,college_id) REFERENCES placement_jobs(id,college_id) ON DELETE RESTRICT;
+DO $idem$ BEGIN
+  EXECUTE $stmt$ALTER TABLE placement_saved_jobs ADD CONSTRAINT placement_saved_jobs_job_college_fk
+ FOREIGN KEY (job_id,college_id) REFERENCES placement_jobs(id,college_id) ON DELETE RESTRICT$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;

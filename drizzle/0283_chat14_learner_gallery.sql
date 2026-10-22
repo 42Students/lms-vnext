@@ -3,7 +3,7 @@
 -- attestation, ownership negatives and API/UI tests have been verified.
 -- The legacy JSON image list is imported ONLY via college/member crosswalk,
 -- never as public URLs or bearer identities.
-CREATE TABLE learner_profile_images (
+CREATE TABLE IF NOT EXISTS learner_profile_images (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   learner_membership_id uuid NOT NULL REFERENCES college_memberships(id) ON DELETE RESTRICT,
   receipt_id uuid NOT NULL,
@@ -31,14 +31,14 @@ CREATE TABLE learner_profile_images (
     UNIQUE (learner_membership_id, receipt_id)
 );
 --> statement-breakpoint
-CREATE INDEX learner_profile_images_active_order_idx
+CREATE INDEX IF NOT EXISTS learner_profile_images_active_order_idx
   ON learner_profile_images(learner_membership_id,display_order)
   WHERE is_active = true;
 --> statement-breakpoint
-CREATE INDEX learner_profile_images_stable_order_idx
+CREATE INDEX IF NOT EXISTS learner_profile_images_stable_order_idx
   ON learner_profile_images(learner_membership_id,display_order,id)
   WHERE is_active = true;
 --> statement-breakpoint
-CREATE INDEX learner_profile_images_legacy_source_idx
+CREATE INDEX IF NOT EXISTS learner_profile_images_legacy_source_idx
   ON learner_profile_images(learner_membership_id,legacy_image_id)
   WHERE legacy_image_id IS NOT NULL;

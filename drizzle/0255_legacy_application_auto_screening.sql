@@ -1,6 +1,6 @@
 -- [chat-14] Historical AUTO screening result snapshot, separate from current manual
 -- placement_application_screenings and its decision/actor policy.
-CREATE TABLE placement_application_legacy_auto_screening (
+CREATE TABLE IF NOT EXISTS placement_application_legacy_auto_screening (
  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
  application_id uuid NOT NULL REFERENCES placement_applications(id) ON DELETE RESTRICT,
  legacy_screening_id bigint NOT NULL,
@@ -21,5 +21,5 @@ CREATE TABLE placement_application_legacy_auto_screening (
   CHECK(score IS NULL OR (score BETWEEN 0 AND 100 AND score <> 'NaN'::float8))
 );
 --> statement-breakpoint
-CREATE INDEX placement_legacy_screening_application_idx
+CREATE INDEX IF NOT EXISTS placement_legacy_screening_application_idx
  ON placement_application_legacy_auto_screening(application_id,original_updated_at);

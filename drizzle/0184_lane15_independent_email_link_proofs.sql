@@ -9,10 +9,13 @@ ALTER TABLE identity_auth_attempts
 CREATE INDEX IF NOT EXISTS identity_auth_attempts_user_contact_state_idx
  ON identity_auth_attempts(user_id,contact_fingerprint,target_role,created_at);
 --> statement-breakpoint
-ALTER TABLE identity_auth_attempts ADD CONSTRAINT identity_auth_attempts_superseded_ck
- CHECK (superseded_at IS NULL OR superseded_at>=created_at) NOT VALID;
+DO $idem$ BEGIN
+  EXECUTE $stmt$ALTER TABLE identity_auth_attempts ADD CONSTRAINT identity_auth_attempts_superseded_ck
+ CHECK (superseded_at IS NULL OR superseded_at>=created_at) NOT VALID$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;
 --> statement-breakpoint
-CREATE TABLE identity_email_verification_links(
+CREATE TABLE IF NOT EXISTS identity_email_verification_links(
  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
  user_id uuid NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
  college_id uuid REFERENCES colleges(id) ON DELETE RESTRICT,
@@ -41,17 +44,17 @@ CREATE TABLE identity_email_verification_links(
   AND (revoked_at IS NULL OR revoked_at>=created_at))
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX identity_email_link_digest_uq
+CREATE UNIQUE INDEX IF NOT EXISTS identity_email_link_digest_uq
  ON identity_email_verification_links(token_digest);
 --> statement-breakpoint
-CREATE INDEX identity_email_link_contact_idx
+CREATE INDEX IF NOT EXISTS identity_email_link_contact_idx
  ON identity_email_verification_links(email_fingerprint,created_at);
 --> statement-breakpoint
-CREATE INDEX identity_email_link_application_idx
+CREATE INDEX IF NOT EXISTS identity_email_link_application_idx
  ON identity_email_verification_links(application_id,created_at)
  WHERE application_id IS NOT NULL;
 --> statement-breakpoint
-CREATE INDEX identity_email_link_expiry_idx
+CREATE INDEX IF NOT EXISTS identity_email_link_expiry_idx
  ON identity_email_verification_links(expires_at)
  WHERE verified_at IS NULL AND revoked_at IS NULL;
 --> statement-breakpoint
@@ -73,12 +76,15 @@ BEGIN
 END;
 $$;
 --> statement-breakpoint
-CREATE TRIGGER identity_email_link_scope_guard_trg
+DO $idem$ BEGIN
+  EXECUTE $stmt$CREATE TRIGGER identity_email_link_scope_guard_trg
  BEFORE INSERT OR UPDATE OF application_id,membership_id,college_id,user_id
  ON identity_email_verification_links
- FOR EACH ROW EXECUTE FUNCTION identity_email_link_scope_guard();
+ FOR EACH ROW EXECUTE FUNCTION identity_email_link_scope_guard()$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;
 --> statement-breakpoint
-CREATE TABLE identity_email_ownership_proofs(
+CREATE TABLE IF NOT EXISTS identity_email_ownership_proofs(
  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
  user_id uuid NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
  email_fingerprint varchar(64) NOT NULL,
@@ -94,9 +100,9 @@ CREATE TABLE identity_email_ownership_proofs(
   AND (revoked_at IS NULL OR revoked_at>=verified_at))
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX identity_email_proof_active_uq
+CREATE UNIQUE INDEX IF NOT EXISTS identity_email_proof_active_uq
  ON identity_email_ownership_proofs(user_id,email_fingerprint)
  WHERE revoked_at IS NULL;
 --> statement-breakpoint
-CREATE INDEX identity_email_proof_link_idx
+CREATE INDEX IF NOT EXISTS identity_email_proof_link_idx
  ON identity_email_ownership_proofs(verification_link_id);

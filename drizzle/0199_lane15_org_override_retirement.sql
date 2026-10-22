@@ -1,6 +1,6 @@
 -- [chat-15] Legacy ORG setting scope is intentionally not a runtime
 -- platform-setting grant. Archive only provenance digests; no plaintext value.
-CREATE TABLE platform_legacy_org_override_archives(
+CREATE TABLE IF NOT EXISTS platform_legacy_org_override_archives(
  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
  source_row_id varchar(40) NOT NULL,
  legacy_organization_id varchar(40) NOT NULL,
@@ -16,8 +16,8 @@ CREATE TABLE platform_legacy_org_override_archives(
  CONSTRAINT platform_legacy_org_decision_ck CHECK(decision IN ('ARCHIVED','REVIEW_REQUIRED')),
  CONSTRAINT platform_legacy_org_reason_ck CHECK(length(trim(reason)) BETWEEN 8 AND 500));
 --> statement-breakpoint
-CREATE UNIQUE INDEX platform_legacy_org_source_id_uq
+CREATE UNIQUE INDEX IF NOT EXISTS platform_legacy_org_source_id_uq
  ON platform_legacy_org_override_archives(source_row_id);
 --> statement-breakpoint
-CREATE INDEX platform_legacy_org_scope_key_idx
+CREATE INDEX IF NOT EXISTS platform_legacy_org_scope_key_idx
  ON platform_legacy_org_override_archives(legacy_organization_id,key);

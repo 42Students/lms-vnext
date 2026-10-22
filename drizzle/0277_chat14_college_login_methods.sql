@@ -4,6 +4,9 @@
 ALTER TABLE college_branding
   ADD COLUMN IF NOT EXISTS login_methods varchar(16) NOT NULL DEFAULT 'EMAIL_PHONE';
 --> statement-breakpoint
-ALTER TABLE college_branding
+DO $idem$ BEGIN
+  EXECUTE $stmt$ALTER TABLE college_branding
   ADD CONSTRAINT college_branding_login_methods_ck
-    CHECK (login_methods IN ('EMAIL_PHONE','PHONE_EMAIL','EMAIL_ONLY','PHONE_ONLY'));
+    CHECK (login_methods IN ('EMAIL_PHONE','PHONE_EMAIL','EMAIL_ONLY','PHONE_ONLY'))$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;

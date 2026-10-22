@@ -41,6 +41,9 @@ BEGIN
 END;
 $db05_parent_acyclic$;
 --> statement-breakpoint
-CREATE TRIGGER db05_lesson_discussion_parent_acyclic_before_write
+DO $idem$ BEGIN
+  EXECUTE $stmt$CREATE TRIGGER db05_lesson_discussion_parent_acyclic_before_write
 BEFORE INSERT OR UPDATE OF parent_discussion_id ON lesson_content_discussions
-FOR EACH ROW EXECUTE FUNCTION db05_lesson_discussion_parent_acyclic();
+FOR EACH ROW EXECUTE FUNCTION db05_lesson_discussion_parent_acyclic()$stmt$;
+EXCEPTION WHEN duplicate_object OR duplicate_table THEN NULL;
+END $idem$;
