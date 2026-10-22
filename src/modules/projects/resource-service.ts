@@ -530,19 +530,17 @@ export async function reorderProjectResources(
         .set({sequence:active[i]!.sequence,updatedAt:new Date()})
         .where(and(eq(projectResources.id,orderIds[i]!),eq(projectResources.projectId,scope.project.id)));
     }
-    for(let index=0;index<orderIds.length;index++){
-      const item=active.find(row=>row.id===orderIds[index]);
-      if(!item||item.sequence===active[index]!.sequence)continue;
-      await recordActivityEventInTransaction(tx,context,{
-        eventType:ACTIVITY_EVENT_TYPES.PROJECTS_RESOURCE_UPDATED,
-        collegeId:scope.collegeId,organizationId:scope.organizationId,
-        subjectType:"project_resource",subjectId:item.id,subjectLabel:item.title,
-        summary:"Project resource order changed",
-        metadata:{projectId:scope.project.id,resourceId:item.id,
-          previousSequence:item.sequence,nextSequence:active[index]!.sequence},
-        groupKey:"project:"+scope.project.id+":resources",
-      });
-    }
+    // The reorder is one atomic action even when multiple rows move:
+    // publish a single audit event after both sequence phases complete.
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PROJECTS_RESOURCE_UPDATED,
+      collegeId:scope.collegeId,organizationId:scope.organizationId,
+      subjectType:"project",subjectId:scope.project.id,
+      subjectLabel:"Project resources",
+      summary:"Project resource order changed",
+      metadata:{projectId:scope.project.id,previousOrder:old,nextOrder:orderIds},
+      groupKey:"project:"+scope.project.id+":resources",
+    });
     return {changed:true,count:active.length};
   });
 }

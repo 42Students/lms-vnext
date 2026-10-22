@@ -4,10 +4,12 @@ const src=(path:string)=>readFileSync(path,"utf8");
 describe("Projects IIT Dharwad — cross-account navigation and denial breaker",()=>{
  it("PROJ-BREAK-pages-01 Super Admin without a college scope cannot list or mutate someone else's projects",()=>{
   const p=src("src/app/(authenticated)/admin/projects/page.tsx");
-  expect(p).toContain("context.adminScope?.collegeId ?? null");
-  expect(p).toContain("if (!collegeId)");
-  expect(p).toContain('title="No college selected"');
-  expect(p.indexOf("if (!collegeId)")).toBeLessThan(p.indexOf("listProjectAdminSnapshots("));
+  const scope=src("src/modules/projects/admin-college-scope.ts");
+  expect(scope).toContain("context.adminScope?.collegeId ?? null");
+  expect(scope).toContain('can(context, "projects.manage", {');
+  expect(p).toContain("getProjectAdminCollegeId(context)");
+  expect(p).toContain('if (!collegeId) redirect("/admin/projects/templates")');
+  expect(p.indexOf('if (!collegeId) redirect(')).toBeLessThan(p.indexOf("listProjectAdminSnapshots("));
   expect(p).toContain("ProjectAdminPagination");
  });
  it("PROJ-BREAK-pages-02 College Admin without an active selected membership gets recovery instead of a crash",()=>{
