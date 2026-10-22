@@ -165,7 +165,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
         ]).map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
       </Select>:
       <Textarea value={value} onChange={e=>{setValue(e.target.value);setFieldError("");}} minLength={2}
-       maxLength={field==="ROLE_TITLE"?100:field==="LOCATION"?255:2000}
+       maxLength={field==="ROLE_TITLE"||field==="LOCATION"?255:2000}
        rows={field==="DESCRIPTION"?5:3}
        className="min-h-11 min-[768px]:min-h-9"/>}
     </label>:null}

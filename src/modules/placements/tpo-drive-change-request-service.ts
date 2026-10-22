@@ -130,7 +130,7 @@ async function applyDriveChangeField(
   if(patch.field==="DEADLINE")changes.applicationDeadline=patch.changes.applicationDeadline;
   else changes.locations=patch.changes.locations;
  }else if(field==="ROLE_TITLE"){
-  if(value.length<3||value.length>100)throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
+  if(value.length<3||value.length>255)throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
   requireSingleRole();
   changes.title=value;
   roleChange={title:value};
