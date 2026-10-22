@@ -45,7 +45,7 @@ export function TpoNoticeDraftGuard({formId,actorId}:{formId:string;actorId:stri
   };
   const warn=(event:BeforeUnloadEvent)=>{
    const draft=read();
-   if(!String(draft.title??"").trim()&&!String(draft.message??"").trim())return;
+   if(!String(draft["title"]??"").trim()&&!String(draft["message"]??"").trim())return;
    event.preventDefault();event.returnValue="";
   };
   // A real form POST must not trigger an extra unsaved-work prompt.

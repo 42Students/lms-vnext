@@ -42,7 +42,7 @@ export function TpoNoticeLiveAudienceProvider({formId,children}:{formId:string;c
      if(!response.ok)throw new Error("PREVIEW_UNAVAILABLE");
      const value:unknown=await response.json();
      if(!value||typeof value!=="object")throw new Error("PREVIEW_UNAVAILABLE");
-     const count=(value as Record<string,unknown>).potentiallyVisibleMemberships;
+     const count=(value as Record<string,unknown>)["potentiallyVisibleMemberships"];
      if(typeof count!=="number"||!Number.isInteger(count)||count<0)
       throw new Error("PREVIEW_UNAVAILABLE");
      if(current===generation)setPreview({status:"ready",count,audience});
