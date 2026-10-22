@@ -170,89 +170,89 @@ export default async function HomePage({
     <main
       data-legacy-superadmin={legacySuperAdmin||undefined}
       style={themeStyle}
-      className={styles.viewport}
+      className={styles["viewport"]}
     >
       {desktopBackground ? (
-        <div aria-hidden="true" className={styles.desktopBackdrop}
+        <div aria-hidden="true" className={styles["desktopBackdrop"]}
           style={{ backgroundImage: cssUrl(desktopBackground) }} />
       ) : null}
       {mobileBackground ? (
-        <div aria-hidden="true" className={styles.mobileBackdrop}
+        <div aria-hidden="true" className={styles["mobileBackdrop"]}
           style={{ backgroundImage: cssUrl(mobileBackground) }} />
       ) : null}
       {!desktopBackground ? <LegacyLoginDecor /> : null}
 
-      <header className={styles.brandHeader}>
-        <div className={styles.brandRow}>
+      <header className={styles["brandHeader"]}>
+        <div className={styles["brandRow"]}>
           {/* The mark and letterforms are the original LMS SVG, not a CSS approximation. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <Link href="/" aria-label="42 LMS home">
-            <img src="/assets/images/legacy-42lms-logo.svg" alt="42LMS" className={styles.legacyLogo} />
+            <img src="/assets/images/legacy-42lms-logo.svg" alt="42LMS" className={styles["legacyLogo"]} />
           </Link>
         </div>
         {branding?.collegeName ? (
-          <div className={styles.collegeBrand}>
+          <div className={styles["collegeBrand"]}>
             {branding.logoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={branding.logoUrl} alt="" referrerPolicy="no-referrer" className={styles.collegeLogo} />
+              <img src={branding.logoUrl} alt="" referrerPolicy="no-referrer" className={styles["collegeLogo"]} />
             ) : null}
-            <p className={styles.collegeName}>{branding.collegeName}</p>
+            <p className={styles["collegeName"]}>{branding.collegeName}</p>
           </div>
         ) : null}
       </header>
 
-      <a href="#sign-in-content" className={styles.skipLink}>Skip to sign in</a>
-      <div className={styles.center}>
+      <a href="#sign-in-content" className={styles["skipLink"]}>Skip to sign in</a>
+      <div className={styles["center"]}>
         <div className="relative w-full max-w-[468px]">
           {!desktopBackground ? <LegacyLoginMascot /> : null}
-          <section id="sign-in-content" tabIndex={-1} className={`${styles.card} relative z-10`} aria-label="Sign in">
+          <section id="sign-in-content" tabIndex={-1} className={`${styles["card"]} relative z-10`} aria-label="Sign in">
           {message ? (
-            <div role="alert" className={`${styles.status} ${message.tone === "error" ? styles.statusError : styles.statusWarning}`}>
-              <p className={styles.statusTitle}>{message.title}</p>
-              <p className={styles.statusMessage}>{message.description}</p>
+            <div role="alert" className={`${styles["status"]} ${message.tone === "error" ? styles["statusError"] : styles["statusWarning"]}`}>
+              <p className={styles["statusTitle"]}>{message.title}</p>
+              <p className={styles["statusMessage"]}>{message.description}</p>
               <div className="mt-3 flex flex-wrap items-center gap-3">
-                <a className={styles.statusLink} href={restartHref}>Start a fresh sign-in</a>
-                <a className={styles.statusLink} href="/home">Back to home</a>
+                <a className={styles["statusLink"]} href={restartHref}>Start a fresh sign-in</a>
+                <a className={styles["statusLink"]} href="/home">Back to home</a>
               </div>
             </div>
           ) : null}
           {tenant.kind === "college" && recruiterValue === "email" && signin && !signin.email ? (
-            <div role="status" className={`${styles.status} ${styles.statusWarning}`}>
-              <p className={styles.statusTitle}>Email sign-in is unavailable for this college</p>
-              <p className={styles.statusMessage}>
+            <div role="status" className={`${styles["status"]} ${styles["statusWarning"]}`}>
+              <p className={styles["statusTitle"]}>Email sign-in is unavailable for this college</p>
+              <p className={styles["statusMessage"]}>
                 Use the sign-in method your college has enabled, or ask the placement cell for a new invitation link.
               </p>
             </div>
           ) : null}
           {tenant.kind === "unavailable" ? (
-            <div role="alert" className={`${styles.status} ${styles.statusWarning}`}>
+            <div role="alert" className={`${styles["status"]} ${styles["statusWarning"]}`}>
               <PageHeader title="We couldn’t confirm this college right now" />
-              <p className={styles.statusMessage}>
+              <p className={styles["statusMessage"]}>
                 This address may be correct, but its settings didn&apos;t load. Try again in a moment, or use the main sign-in page.
               </p>
               <div className="flex flex-wrap items-center gap-3">
-                <a className={styles.statusLink} href="/login">Retry college lookup</a>
-                <a className={styles.statusLink} href="https://42lms.com/login">Use the main sign-in page (42lms.com)</a>
+                <a className={styles["statusLink"]} href="/login">Retry college lookup</a>
+                <a className={styles["statusLink"]} href="https://42lms.com/login">Use the main sign-in page (42lms.com)</a>
               </div>
             </div>
           ) : tenant.kind === "unknown" ? (
-            <div role="alert" className={`${styles.status} ${styles.statusWarning}`}>
+            <div role="alert" className={`${styles["status"]} ${styles["statusWarning"]}`}>
               <PageHeader title="This address isn’t set up yet" />
-              <p className={styles.statusMessage}>
+              <p className={styles["statusMessage"]}>
                 Ask your administrator to add this college&apos;s address in 42LMS, or use the main sign-in page.
               </p>
               <div className="flex flex-wrap items-center gap-3">
-                <a className={styles.statusLink} href="/login">Try again</a>
-                <a className={styles.statusLink} href="https://42lms.com/login">Use the main sign-in page (42lms.com)</a>
+                <a className={styles["statusLink"]} href="/login">Try again</a>
+                <a className={styles["statusLink"]} href="https://42lms.com/login">Use the main sign-in page (42lms.com)</a>
               </div>
             </div>
           ) : !signin ? (
-            <div role="alert" className={`${styles.status} ${styles.statusWarning}`}>
-              <p className={styles.statusTitle}>Sign-in is temporarily unavailable</p>
-              <p className={styles.statusMessage}>
+            <div role="alert" className={`${styles["status"]} ${styles["statusWarning"]}`}>
+              <p className={styles["statusTitle"]}>Sign-in is temporarily unavailable</p>
+              <p className={styles["statusMessage"]}>
                 We could not confirm the sign-in methods for this college. Try again to reload the current policy.
               </p>
-              <a className={styles.statusLink} href={restartHref}>Retry sign-in</a>
+              <a className={styles["statusLink"]} href={restartHref}>Retry sign-in</a>
             </div>
           ) : (
             <LoginForm collegeName={branding?.collegeName ?? null}
@@ -265,9 +265,9 @@ export default async function HomePage({
         </div>
       </div>
 
-      <footer className={styles.footer}>
+      <footer className={styles["footer"]}>
         <span>{legacySuperAdmin?"JRSPF Technologies Pvt. Ltd. All rights reserved.":<>© {new Date().getFullYear()} 42LMS · JRSPF Technologies Pvt. Ltd.{tenant.kind === "college" ? " · Powered by 42LMS" : ""}</>}</span>
-        <nav className={styles.footerLinks} aria-label="Sign-in footer">
+        <nav className={styles["footerLinks"]} aria-label="Sign-in footer">
           {branding?.supportEmail ? <a href={`mailto:${branding.supportEmail}`}>{branding.supportEmail}</a> : null}
           {branding?.supportPhone ? <a href={`tel:${branding.supportPhone.replace(/[^+0-9]/g, "")}`}>{branding.supportPhone}</a> : null}
           {!legacySuperAdmin?<Link href="/tracker/issues/public">Public issue updates</Link>:null}
