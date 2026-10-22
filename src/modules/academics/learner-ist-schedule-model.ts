@@ -13,6 +13,9 @@ export function learnerScheduleIstDay(value: string | Date): string {
 export function learnerScheduleDateFromDay(dayInput: string): Date {
   const day = z.iso.date().parse(dayInput);
   const [year, month, date] = day.split("-").map(Number);
+  if (year === undefined || month === undefined || date === undefined) {
+    throw new Error("INVALID_CALENDAR_DAY");
+  }
   return new Date(year, month - 1, date);
 }
 
