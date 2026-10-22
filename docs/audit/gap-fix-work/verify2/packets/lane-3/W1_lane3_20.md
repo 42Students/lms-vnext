@@ -62,6 +62,11 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Legacy: Ant table default page size 10, size changer and row range `docs/legacy-source/frontend/src/pages/superadmin/sections/BatchPromotion.js:442-450`
 - Expected fix: Add 10-per-page pagination and size changer, server-side when large
 
-## Lane-3 verification triage
+## Lane-13 verification notes (22 Oct 2026)
 
-Fast triage (2026-10-22): OK: G2-9-018-002 (explicit no-college warning and administrator guidance), G2-9-022-018 (server-paged 10/25/50 and visible row range). DEFERRED: remaining 10 rows need service/attachment and transition contract review; no implementation parity claimed.
+- **OK G2-9-013-002:** College drive Settings renders the four `Tabs` in Overview, Applications, Schedule, Settings order with `value="settings"` and local same-tab hrefs.
+- **OK G2-9-018-002:** College Programs returns the existing `Admin not assigned to a college` warning, explicitly directs the user to contact their administrator, and does not redirect when college scope is missing.
+- **OK G2-9-022-018:** Batch Promotion defaults to `pageSize=10`, offers 10/25/50 size links, displays row ranges, and passes page/pageSize to the scoped listing service.
+- **DEFERRED G2-9-016-072:** Placement retention report fetch-on-expand, retries and truncation require a complete data/UI walkthrough.
+- **DEFERRED G2-9-014-036:** Shortlist transition-row warning requires action-flow verification.
+- **DEFERRED G2-9-025-011, G2-9-025-015, G2-9-025-024, G2-9-025-029, G2-9-025-034, G2-9-025-040, G2-9-025-066:** Materials/publishing/upload contract requires reviewing authoring controls, API schema, signed storage and scoped persistence together; no unsupported OK asserted.
