@@ -10,7 +10,11 @@ describe("faculty assessment create legacy two-step entry",()=>{
   expect(src).toContain("disabled={!course||!lesson||Boolean(lessonsLoadError)}");
   expect(src).toContain("disabled={!lesson||!course||editorBusy}");
   expect(src).toContain("setLessonKey(\"\")");
-  expect(src).toContain("continued&&lesson&&course");
+  // Quiz uses the authorized course/lesson snapshot captured by Continue,
+  // so a subsequent dropdown change cannot redirect a draft to another lesson.
+  expect(src).toContain('const selectedContext=kind==="QUIZ"?snapshot:');
+  expect(src).toContain('setSnapshot({deliveryId:course.deliveryId,lessonId:lesson.lessonId,nextSequence:lesson.nextSequence})');
+  expect(src).toContain("open&&continued");
   expect(src).toContain("deliveryId={course.deliveryId}");
  });
 });

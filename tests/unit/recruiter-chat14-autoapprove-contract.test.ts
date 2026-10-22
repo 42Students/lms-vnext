@@ -55,7 +55,8 @@ describe("REC-home-drives-33 recruiter formal request auto approval",()=>{
  it("REC-home-drives-33 tells recruiters an autoapproved draft awaits publication, not review",()=>{
   expect(recruiterRequestLegacyLabel("DRAFT")).toBe("Approved awaiting publication");
   expect(recruiterRequestLegacyLabel("REQUEST")).toBe("Sent for review");
-  expect(recruiterRequestLegacyLabel("REJECTED")).toBe("Cancelled");
+  expect(recruiterRequestLegacyLabel("REJECTED")).toBe("Rejected");
+  expect(recruiterRequestLegacyLabel("CANCELLED")).toBe("Cancelled");
  });
 
  it("REC-home-drives-33 defaults untrusted requests to placement-cell review",()=>{

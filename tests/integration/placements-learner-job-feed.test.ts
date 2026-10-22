@@ -107,7 +107,11 @@ async function cleanup() {
   await pool.query(
     "delete from placement_application_status_history",
   );
-  // College-specific stages reference applications and must be removed first.
+  // Stage history depends on stage IDs; delete it before the stage projection,
+  // then remove the projection before its parent applications.
+  await pool.query(
+    "delete from placement_college_application_stage_history",
+  );
   await pool.query(
     "delete from placement_college_application_stages",
   );
