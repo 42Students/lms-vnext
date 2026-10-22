@@ -8,7 +8,7 @@ describe("Faculty QuizReportContent.jsx dev legacy headings and empty states",()
    expect(src).toContain(label);
   }
   expect(src).not.toContain('eyebrow="Faculty · Quiz Report"');
-  expect(src).toContain("← My Quizzes");
+  expect(src).toContain("<FacultyReportBackButton");
  });
  it("uses exact empty text without claiming unreleased question results are visible",()=>{
   expect(src).toContain("This quiz has no questions yet.");
