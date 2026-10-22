@@ -1,5 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {isValidElement,type ReactNode,type ReactElement} from "react";
+import {Input} from "@/components/ui/input";
 import type {RequestContext} from "@/modules/identity/context";
 
 const m=vi.hoisted(()=>({ctx:vi.fn(),rounds:vi.fn(),conversation:vi.fn(),
@@ -96,7 +97,7 @@ describe("HR-BREAK-chat19-drive-pages: job-specific actions never bypass scoped 
   const controls:Array<{type?:string;name?:string;value?:unknown;action?:unknown}>=[];
   visit(result,node=>{
    const p=node.props as {type?:string;name?:string;value?:unknown;action?:unknown};
-   if(typeof node.type==="string"&&(node.type==="input"||node.type==="form"))
+   if(node.type===Input||(typeof node.type==="string"&&(node.type==="input"||node.type==="form")))
     controls.push(p);
   });
   expect(controls).toContainEqual(expect.objectContaining({name:"action",value:"REMOVE"}));

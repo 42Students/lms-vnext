@@ -5,12 +5,14 @@ describe("UX-attendance-calendar-scroll-01 large variable-width attendance calen
  for(const [name,label] of [["admin-attendance-workspace","College attendance monthly grid"],["faculty-attendance-workspace","Faculty attendance monthly grid"]] as const){
   it(`${name} preserves learner/day/mark grid with truthful horizontal scroll fades`,()=>{
    const src=read("src/components/attendance/"+name+".tsx");
-   expect(src).toContain("<ScrollCue");
-   expect(src).toContain('axis="x"');
-   expect(src).toContain(`label="${label}"`);
+   expect(src).toContain("<Table scrollLabel");
+   expect(src).toContain(`scrollLabel="${label}"`);
    expect(src).toContain('sticky left-0');
-   expect(src).toContain("<table");
-   expect(src).toContain("</ScrollCue>");
+   expect(src).toContain("<thead");
+   expect(src).toContain("</Table>");
+   const table=read("src/components/ui/table.tsx");
+   expect(table).toContain("<ScrollCue axis=\"x\"");
+   expect(table).toContain("label={scrollLabel");
    const cue=read("src/components/ui/scroll-cue.tsx");
    expect(cue).toContain("overflow-x-auto overscroll-x-contain");
    expect(cue).toContain("node.scrollWidth - node.clientWidth");

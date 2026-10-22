@@ -20,6 +20,7 @@ vi.mock("@/modules/permissions/policy",()=>({
     ?state.read:state.manage,
 }));
 vi.mock("@/modules/projects/template-service",()=>({
+  resolveLegacyProjectTemplateBookmark:async()=>null,
   getProjectTemplateDetail:async()=>{
     state.detailCalls+=1;
     if(state.fail)throw Error("SECRET_DB_CONNECTION");
@@ -47,7 +48,8 @@ vi.mock("@/modules/projects/template-version-comparison-service",()=>({
   },
 }));
 const detail=()=>TemplateDetail({params:Promise.resolve({templateId})});
-const history=()=>TemplateVersionComparison({params:Promise.resolve({templateId,versionId})});
+const history=()=>TemplateVersionComparison({params:Promise.resolve({templateId,versionId}),
+  searchParams:Promise.resolve({})});
 function textTree(node:unknown):string[]{
   if(node===null||node===undefined||typeof node==="boolean")return [];
   if(typeof node==="string"||typeof node==="number")return [String(node)];
@@ -74,7 +76,7 @@ describe("Super Admin last-third global template detail and version history secu
     state.fail=true;
     const d=textTree(await detail()).join(" ");
     const v=textTree(await history()).join(" ");
-    expect(d).toContain("Project template unavailable");
+    expect(d).toContain("Failed to load template");
     expect(d).toContain("Retry template details");
     expect(v).toContain("Template history unavailable");
     expect(v).toContain("Back to version history");
@@ -84,10 +86,10 @@ describe("Super Admin last-third global template detail and version history secu
     expect(state.versionCalls).toBe(1);
   });
   it("PROJ-BREAK-ux-42 forged template/version identifiers 404 without calling services",async()=>{
-    await expect(TemplateDetail({params:Promise.resolve({templateId:"../bad"})}))
-      .rejects.toThrow("NEXT_NOT_FOUND");
+    const invalid=textTree(await TemplateDetail({params:Promise.resolve({templateId:"../bad"})})).join(" ");
+    expect(invalid).toContain("No template in this link");
     await expect(TemplateVersionComparison({
-      params:Promise.resolve({templateId,versionId:"bad"}),
+      params:Promise.resolve({templateId,versionId:"bad"}),searchParams:Promise.resolve({}),
     })).rejects.toThrow("NEXT_NOT_FOUND");
     expect(state.detailCalls).toBe(0);
     expect(state.versionCalls).toBe(0);

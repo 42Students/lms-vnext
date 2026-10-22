@@ -75,7 +75,10 @@ describe("HR-ROUND-SLOT-ROUTE-25 recruiter mutation routes fail closed",()=>{
   const req=payload("round",{action:"CREATE",kind:"INTERVIEW",name:"Technical"});
   const result=await editRound(req,params);
   expect(result.status).toBe(409);
-  expect(await result.json()).toEqual({error:"STALE_OR_USED_ROUND"});
+  expect(await result.json()).toMatchObject({
+   error:"PLACEMENT_ROUND_STALE",
+   message:expect.stringContaining("Refresh the rounds"),
+  });
  });
  it("slot OFFER makes only a scoped write and redirects within the same employer drive",async()=>{
   const req=payload("slot",{action:"OFFER",slotId,expectedVersion:"4"});

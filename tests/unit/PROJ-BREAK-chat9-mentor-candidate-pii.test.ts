@@ -31,11 +31,14 @@ vi.mock("@/db/client",()=>({
           from:()=>q,innerJoin:()=>q,where:(where:unknown)=>{
             state.filters.push(where);return q;
           },orderBy:()=>q,
-          limit:async(n:number)=>{
+          limit:(n:number)=>{
             state.limits.push(n);
-            return [{membershipId:"44444444-4444-4444-8444-444444444444",
-              displayName:"Dharwad Mentor",email:"mentor@example.invalid"}];
+            return q;
           },
+          offset:async(_offset:number)=>[
+            {membershipId:"44444444-4444-4444-8444-444444444444",
+              displayName:"Dharwad Mentor",email:"mentor@example.invalid"},
+          ],
         };
         return q;
       };
