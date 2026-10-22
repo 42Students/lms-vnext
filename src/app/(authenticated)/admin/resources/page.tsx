@@ -7,7 +7,7 @@ export default async function SuperAdminResourcesPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
  const raw=await searchParams;
- const type=raw.type;
+ const type=raw["type"];
  if(typeof type==="string"&&["video","live-classes","resources"].includes(type)){
   const next=new URLSearchParams();
   for(const [key,value] of Object.entries(raw)){
