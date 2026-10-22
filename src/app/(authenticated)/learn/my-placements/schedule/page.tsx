@@ -83,6 +83,11 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   const needsConfirmation=ahead.filter(row=>roundCanBeManaged(row)&&!row.learnerConfirmedAt).length;
   const actionableRoundKeys=workspace.rounds.filter(roundCanBeManaged)
     .map(row=>row.applicationId+":"+row.roundId);
+  const roundRescheduleNotices=Object.fromEntries(
+    [...rescheduleByRound.entries()].map(([key,row])=>[key,{
+      status:row.request.status,decisionNote:row.request.decisionNote??null,
+    }]),
+  );
   const rounds = workspace.rounds.map(row => ({
     ...row,
     scheduledAt: row.scheduledAt?.toISOString() ?? null,
@@ -281,6 +286,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
         <Suspense fallback={<p role="status">Calendar</p>}>
           <LearnerCareerCalendar initialAnchor={today} todayAnchor={today}
             actionableRoundKeys={actionableRoundKeys}
+            roundRescheduleNotices={roundRescheduleNotices}
             rounds={rounds} supplements={[...(extras?.supplements??[]),...(deadlineExtras?.supplements??[])]}
             surface="schedule" />
         </Suspense>

@@ -70,6 +70,7 @@ export function LearnerCareerCalendar({
   rounds,
   supplements=[],
   actionableRoundKeys=[],
+  roundRescheduleNotices={},
   initialAnchor,
   todayAnchor=initialAnchor,
   surface="calendar",
@@ -78,6 +79,7 @@ export function LearnerCareerCalendar({
   supplements?:readonly CareerCalendarSupplement[];
   /** Server-verified bookings only: excludes talks, past, outcomes and pending moves. */
   actionableRoundKeys?:readonly string[];
+  roundRescheduleNotices?:Readonly<Record<string,{status:string;decisionNote:string|null}>>;
   initialAnchor: string;
   todayAnchor?:string;
   surface?: "calendar" | "schedule";
@@ -431,6 +433,16 @@ export function LearnerCareerCalendar({
                   {event.durationMinutes?<p className="text-body">Duration: {event.durationMinutes} minutes</p>:null}
                   {event.note?<p className="text-body">{event.note}</p>:null}
                   {event.eventType==="EXAM_BLOCK"?<p role="alert" className="text-sm font-semibold text-error">The college has blocked this day. No drives run on it.</p>:null}
+                  {event.eventType==="ROUND" ? (()=>{
+                    const notice=roundRescheduleNotices[event.applicationId+":"+event.roundId];
+                    return notice ? <div role="status" className="border-l-2 border-warning px-3 text-sm">
+                      <strong className="font-semibold">{notice.status==="PENDING"?"Reschedule asked":
+                        notice.status==="APPROVED"?"Reschedule approved":
+                        notice.status==="REJECTED"?"Reschedule declined":"Reschedule request"}</strong>
+                      {notice.decisionNote&&(notice.status==="APPROVED"||notice.status==="REJECTED")?
+                        <p>Placement cell reply: {notice.decisionNote}</p>:null}
+                    </div>:null;
+                  })() : null}
                   {event.eventType==="ROUND" && event.booked &&
                     verifiedActionKeys.has(event.applicationId+":"+event.roundId) ? (
                     <div className="space-y-2 border-l-2 border-[var(--lms-primary)] pl-3">
