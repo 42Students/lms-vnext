@@ -9,6 +9,6 @@ describe("UX-admin first third delegated touch and contrast audits",()=>{
    expect(s).toContain("min-h-11");
    expect(s).not.toMatch(/(?:^|[\s"'])min-h-(?:8|9|10)\b/);
   }
-  if(ink)expect(s).not.toContain("text-primary-text");
+  if(ink)expect(s).not.toContain("text-[#26bac7]");
  });
 });

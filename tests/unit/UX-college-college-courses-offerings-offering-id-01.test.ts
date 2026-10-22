@@ -5,6 +5,6 @@ const route=readFileSync(join(process.cwd(),"src/app/(authenticated)/college/cou
 it("UX-college-college-courses-offerings-offering-id-01 verifies scoped responsive details",()=>{
  expect(route).toContain("AdminOfferingLearningPage");
  expect(route).not.toContain("text-on-primary");
- expect(route).not.toContain("text-primary-text");
+ expect(route).not.toContain("text-[#26bac7]");
  
 });

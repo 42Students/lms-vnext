@@ -7,6 +7,6 @@ it("UX-college-college-attendance-settings-01 preserves state and mobile layout"
  expect(route).toContain("CollegeAttendancePolicyForm");
  expect(route).toContain("PageHeader");
  expect(route).not.toContain("text-on-primary");
- expect(route).not.toContain("text-primary-text");
+ expect(route).not.toContain("text-[#26bac7]");
  
 });

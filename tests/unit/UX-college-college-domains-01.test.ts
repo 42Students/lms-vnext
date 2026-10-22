@@ -5,6 +5,6 @@ const route=readFileSync(join(process.cwd(),"src/app/(authenticated)/college/dom
 it("UX-college-college-domains-01 preserves mobile UX and route policy",()=>{
  expect(route).toContain("overflow-x-clip");
  expect(route).not.toContain("text-on-primary");
- expect(route).not.toContain("text-primary-text");
+ expect(route).not.toContain("text-[#26bac7]");
  
 });

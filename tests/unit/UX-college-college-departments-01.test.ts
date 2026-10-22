@@ -8,6 +8,6 @@ it("UX-college-college-departments-01 verifies scoped responsive details",()=>{
  expect(directory).toContain("overflow-x-auto");
  expect(directory).toContain('aria-label="Existing departments table"');
  expect(route).not.toContain("text-on-primary");
- expect(route).not.toContain("text-primary-text");
+ expect(route).not.toContain("text-[#26bac7]");
  
 });

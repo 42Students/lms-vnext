@@ -23,7 +23,7 @@ describe("chat-9 UX last-third substantive interactions",()=>{
   expect(view).toContain('return <div className="min-w-0 space-y-5">');
   expect(view).not.toContain("<main");
   expect(view).not.toContain("min-h-10");
-  expect(view).not.toContain("text-primary-text");
+  expect(view).not.toContain("text-[#26bac7]");
   expect(view).toContain('focus-visible:outline-2');
   expect(view).toContain("← Back to directory");
  });

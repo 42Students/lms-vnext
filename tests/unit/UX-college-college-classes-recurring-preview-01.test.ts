@@ -10,6 +10,6 @@ it("UX-college-college-classes-recurring-preview-01 retains responsive forms, st
  expect(dialog).toContain('max-h-[70dvh]');
  expect(dialog).toContain("historyMode=\"route\"");
  expect(route).not.toContain("text-on-primary");
- expect(route).not.toContain("text-primary-text");
+ expect(route).not.toContain("text-[#26bac7]");
  
 });

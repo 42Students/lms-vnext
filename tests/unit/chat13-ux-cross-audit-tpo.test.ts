@@ -76,7 +76,7 @@ describe("chat-13 TPO second-third cross-audit repairs",()=>{
  it("UX-cross-tpo-second-C13-011 cancellation reason options are 44px and readable",()=>{
   const s=read("src/components/placements/tpo-drive-cancel-form.tsx");
   expect(s).not.toContain("min-h-10");
-  expect(s).not.toContain("text-primary-text");
+  expect(s).not.toContain("text-[#26bac7]");
   expect(s).toContain("useGuardedAction");
   expect(s).toContain("expectedImpact: preview.impact");
  });

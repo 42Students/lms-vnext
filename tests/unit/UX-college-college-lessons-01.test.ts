@@ -5,5 +5,5 @@ const route=readFileSync(join(process.cwd(),"src/app/(authenticated)/college/les
 it("UX-college-college-lessons-01 ensures route-safe responsive navigation",()=>{
  expect(route).toContain("overflow-x-clip");
  expect(route).not.toContain("text-on-primary");
- expect(route).not.toContain("text-primary-text");
+ expect(route).not.toContain("text-[#26bac7]");
 });

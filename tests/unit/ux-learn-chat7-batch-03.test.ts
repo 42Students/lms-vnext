@@ -5,7 +5,7 @@ describe("UX learner route batch 3",()=>{
 it("UX-learn-learn-my-placements-assessments-01 keeps real learner data and accessible affordances",()=>{
  const s=read("src/app/(authenticated)/learn/my-placements/assessments/page.tsx");
  expect(s.length).toBeGreaterThan(0);
- expect(s).not.toContain('text-primary-text');
+ expect(s).not.toContain('text-[#26bac7]');
  expect(s).toContain('text-[var(--lms-teal-deep)]');
  expect(s).toContain('min-w-0');
  expect(read("src/app/(authenticated)/learn/my-placements/assessments/loading.tsx").length).toBeGreaterThan(0);
@@ -14,7 +14,7 @@ it("UX-learn-learn-my-placements-assessments-01 keeps real learner data and acce
 it("UX-learn-learn-my-placements-assessments-results-01 keeps real learner data and accessible affordances",()=>{
  const s=read("src/app/(authenticated)/learn/my-placements/assessments/results/page.tsx");
  expect(s.length).toBeGreaterThan(0);
- expect(s).not.toContain('text-primary-text');
+ expect(s).not.toContain('text-[#26bac7]');
  expect(s).toContain('text-[var(--lms-teal-deep)]');
  expect(s).toContain('min-w-0');
  expect(read("src/app/(authenticated)/learn/my-placements/assessments/results/loading.tsx").length).toBeGreaterThan(0);
@@ -23,7 +23,7 @@ it("UX-learn-learn-my-placements-assessments-results-01 keeps real learner data 
 it("UX-learn-learn-my-placements-calendar-01 keeps real learner data and accessible affordances",()=>{
  const s=read("src/app/(authenticated)/learn/my-placements/calendar/page.tsx");
  expect(s.length).toBeGreaterThan(0);
- expect(s).not.toContain('text-primary-text');
+ expect(s).not.toContain('text-[#26bac7]');
  
  expect(s).toContain('min-w-0');
  expect(read("src/app/(authenticated)/learn/my-placements/calendar/loading.tsx").length).toBeGreaterThan(0);
@@ -32,7 +32,7 @@ it("UX-learn-learn-my-placements-calendar-01 keeps real learner data and accessi
 it("UX-learn-learn-my-placements-interviews-01 keeps real learner data and accessible affordances",()=>{
  const s=read("src/app/(authenticated)/learn/my-placements/interviews/page.tsx");
  expect(s.length).toBeGreaterThan(0);
- expect(s).not.toContain('text-primary-text');
+ expect(s).not.toContain('text-[#26bac7]');
  
  expect(s).toContain('min-w-0');
  expect(read("src/app/(authenticated)/learn/my-placements/interviews/loading.tsx").length).toBeGreaterThan(0);
@@ -41,7 +41,7 @@ it("UX-learn-learn-my-placements-interviews-01 keeps real learner data and acces
 it("UX-learn-learn-my-placements-jobs-01 keeps real learner data and accessible affordances",()=>{
  const s=read("src/app/(authenticated)/learn/my-placements/jobs/page.tsx");
  expect(s.length).toBeGreaterThan(0);
- expect(s).not.toContain('text-primary-text');
+ expect(s).not.toContain('text-[#26bac7]');
  expect(s).toContain('text-[var(--lms-teal-deep)]');
  expect(s).toContain('min-w-0');
  expect(read("src/app/(authenticated)/learn/my-placements/jobs/loading.tsx").length).toBeGreaterThan(0);
@@ -50,7 +50,7 @@ it("UX-learn-learn-my-placements-jobs-01 keeps real learner data and accessible 
 it("UX-learn-learn-my-placements-jobs-jobId-01 keeps real learner data and accessible affordances",()=>{
  const s=read("src/app/(authenticated)/learn/my-placements/jobs/[jobId]/page.tsx");
  expect(s.length).toBeGreaterThan(0);
- expect(s).not.toContain('text-primary-text');
+ expect(s).not.toContain('text-[#26bac7]');
  
  
  expect(read("src/app/(authenticated)/learn/my-placements/jobs/[jobId]/loading.tsx").length).toBeGreaterThan(0);
@@ -59,7 +59,7 @@ it("UX-learn-learn-my-placements-jobs-jobId-01 keeps real learner data and acces
 it("UX-learn-learn-my-placements-notification-preferences-01 keeps real learner data and accessible affordances",()=>{
  const s=read("src/app/(authenticated)/learn/my-placements/notification-preferences/page.tsx");
  expect(s.length).toBeGreaterThan(0);
- expect(s).not.toContain('text-primary-text');
+ expect(s).not.toContain('text-[#26bac7]');
  expect(s).toContain('text-[var(--lms-teal-deep)]');
  expect(s).toContain('min-w-0');
  expect(read("src/app/(authenticated)/learn/my-placements/notification-preferences/loading.tsx").length).toBeGreaterThan(0);
@@ -68,7 +68,7 @@ it("UX-learn-learn-my-placements-notification-preferences-01 keeps real learner 
 it("UX-learn-learn-my-placements-offers-01 keeps real learner data and accessible affordances",()=>{
  const s=read("src/app/(authenticated)/learn/my-placements/offers/page.tsx");
  expect(s.length).toBeGreaterThan(0);
- expect(s).not.toContain('text-primary-text');
+ expect(s).not.toContain('text-[#26bac7]');
  expect(s).toContain('text-[var(--lms-teal-deep)]');
  expect(s).toContain('min-w-0');
  expect(read("src/app/(authenticated)/learn/my-placements/offers/loading.tsx").length).toBeGreaterThan(0);
@@ -77,7 +77,7 @@ it("UX-learn-learn-my-placements-offers-01 keeps real learner data and accessibl
 it("UX-learn-learn-my-placements-placement-01 keeps real learner data and accessible affordances",()=>{
  const s=read("src/app/(authenticated)/learn/my-placements/placement/page.tsx");
  expect(s.length).toBeGreaterThan(0);
- expect(s).not.toContain('text-primary-text');
+ expect(s).not.toContain('text-[#26bac7]');
  expect(s).toContain('text-[var(--lms-teal-deep)]');
  
  expect(read("src/app/(authenticated)/learn/my-placements/placement/loading.tsx").length).toBeGreaterThan(0);
@@ -86,7 +86,7 @@ it("UX-learn-learn-my-placements-placement-01 keeps real learner data and access
 it("UX-learn-learn-my-placements-preparation-01 keeps real learner data and accessible affordances",()=>{
  const s=read("src/app/(authenticated)/learn/my-placements/preparation/page.tsx");
  expect(s.length).toBeGreaterThan(0);
- expect(s).not.toContain('text-primary-text');
+ expect(s).not.toContain('text-[#26bac7]');
  expect(s).toContain('text-[var(--lms-teal-deep)]');
  expect(s).toContain('min-w-0');
  expect(read("src/app/(authenticated)/learn/my-placements/preparation/loading.tsx").length).toBeGreaterThan(0);

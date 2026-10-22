@@ -24,7 +24,7 @@ describe("UX cross-audit /admin second third (chat-9)",()=>{
   expect(page).toContain('mobilePriority: "primary"');
   expect(page).toContain('mobilePriority: "action"');
   expect(page).not.toContain("min-h-10");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-[#26bac7]");
   expect(page).toContain('setFormError("Could not save the hall. Check your connection and retry.")');
   expect(page).toContain('if (!response.ok)');
   expect(page).toContain('!value && !pending && setEditing(null)');
@@ -123,7 +123,7 @@ describe("UX cross-audit /admin second third (chat-9)",()=>{
   expect(page).toContain('label="Open public link"');
   expect(page).toContain("<Pagination");
   expect(page).not.toContain('target="_blank"');
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-[#26bac7]");
   expect(page).not.toContain("min-h-10");
  });
  it("UX-admin-placements-calendar-02 all calendar chips/events meet phone size and high contrast focus",()=>{
@@ -143,7 +143,7 @@ describe("UX cross-audit /admin second third (chat-9)",()=>{
   const tabs=source("src/components/placements/super-admin-drive-tabs.tsx");
   expect(tabs).toContain("min-h-11");
   expect(tabs).not.toContain("min-h-10");
-  expect(tabs).not.toContain("text-primary-text");
+  expect(tabs).not.toContain("text-[#26bac7]");
   expect(tabs).toContain('aria-current={tab.label===active?"page":undefined}');
  });
 

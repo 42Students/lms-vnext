@@ -6,6 +6,6 @@ it("UX-college-college-courses-01 verifies scoped responsive details",()=>{
  expect(route).toContain('data-module="college-courses" className="min-w-0 max-w-full');
  expect(route).toContain("<CollegeCoursesLastGood");
  expect(route).not.toContain("text-on-primary");
- expect(route).not.toContain("text-primary-text");
+ expect(route).not.toContain("text-[#26bac7]");
  
 });

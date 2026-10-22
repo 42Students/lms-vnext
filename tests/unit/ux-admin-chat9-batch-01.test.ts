@@ -18,7 +18,7 @@ describe("chat-9 last-third admin UX rollout, batch 01",()=>{
  it("UX-admin-placements-student-lookup-01 preserves authorized route and accessible UX surface",()=>{
   const page=source("src/app/(authenticated)/admin/placements/student-lookup/page.tsx");
   expect(page).toMatch(/export default|export\s*\{\s*default\s*\}/);
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-[#26bac7]");
   expect(page).not.toContain("min-h-10");
   expect(page).toContain("<DataTable");
   expect(page).toContain("disabled={!ctx.adminScope?.collegeId}");
@@ -29,14 +29,14 @@ describe("chat-9 last-third admin UX rollout, batch 01",()=>{
  it("UX-admin-programs-01 preserves authorized route and accessible UX surface",()=>{
   const page=source("src/app/(authenticated)/admin/programs/page.tsx");
   expect(page).toMatch(/export default|export\s*\{\s*default\s*\}/);
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-[#26bac7]");
   expect(page).not.toContain("min-h-10");
   expect(page).toMatch(/PageHeader|EmptyState|ErrorState|<ProjectAdminAtRiskPage|<ProjectAdminAuditPage/);
  });
  it("UX-admin-projects-01 preserves authorized route and accessible UX surface",()=>{
   const page=source("src/app/(authenticated)/admin/projects/page.tsx");
   expect(page).toMatch(/export default|export\s*\{\s*default\s*\}/);
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-[#26bac7]");
   expect(page).not.toContain("min-h-10");
   expect(page).toMatch(/PageHeader|EmptyState|ErrorState|<ProjectAdminAtRiskPage|<ProjectAdminAuditPage/);
  });
@@ -61,14 +61,14 @@ describe("chat-9 last-third admin UX rollout, batch 01",()=>{
  it("UX-admin-projects-at-risk-01 preserves authorized route and accessible UX surface",()=>{
   const page=source("src/app/(authenticated)/admin/projects/at-risk/page.tsx");
   expect(page).toMatch(/export default|export\s*\{\s*default\s*\}/);
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-[#26bac7]");
   expect(page).not.toContain("min-h-10");
   expect(page).toMatch(/PageHeader|EmptyState|ErrorState|<ProjectAdminAtRiskPage|<ProjectAdminAuditPage/);
  });
  it("UX-admin-projects-audit-01 preserves authorized route and accessible UX surface",()=>{
   const page=source("src/app/(authenticated)/admin/projects/audit/page.tsx");
   expect(page).toMatch(/export default|export\s*\{\s*default\s*\}/);
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-[#26bac7]");
   expect(page).not.toContain("min-h-10");
   expect(page).toMatch(/PageHeader|EmptyState|ErrorState|<ProjectAdminAtRiskPage|<ProjectAdminAuditPage/);
  });

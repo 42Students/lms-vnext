@@ -84,7 +84,7 @@ describe("HR page-level access, recovery and mobile contracts", () => {
     expect(jobError).toContain("No applicant or offer details are");
     expect(jobError).toContain("text-[var(--lms-teal-deep)]");
     expect(jobError).toContain("focus-visible:outline-2");
-    expect(jobError).not.toContain("text-primary-text");
+    expect(jobError).not.toContain("text-[#26bac7]");
   });
 
   it("UX-hr-job-details-02 invalid and withdrawn applicant deep links fail closed", () => {

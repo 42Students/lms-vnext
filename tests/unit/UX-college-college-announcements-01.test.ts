@@ -5,6 +5,6 @@ const route=readFileSync(join(process.cwd(),"src/app/(authenticated)/college/ann
 it("UX-college-college-announcements-01 keeps responsive layout and legacy wording",()=>{
  expect(route).toContain("overflow-x-clip");
  expect(route).not.toContain("text-on-primary");
- expect(route).not.toContain("text-primary-text");
+ expect(route).not.toContain("text-[#26bac7]");
  
 });

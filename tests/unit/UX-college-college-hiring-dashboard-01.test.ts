@@ -5,6 +5,6 @@ const route=readFileSync(join(process.cwd(),"src/app/(authenticated)/college/hir
 it("UX-college-college-hiring-dashboard-01 keeps accessible shared screen state",()=>{
  expect(route).toContain("overflow-x-clip");
  expect(route).not.toContain("text-on-primary");
- expect(route).not.toContain("text-primary-text");
+ expect(route).not.toContain("text-[#26bac7]");
  
 });
