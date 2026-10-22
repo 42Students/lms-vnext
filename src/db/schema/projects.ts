@@ -326,6 +326,11 @@ export const projectInstances = pgTable(
       "project_instances_status_ck",
       sql`${table.status} in ('PLANNED', 'ACTIVE', 'COMPLETED', 'ARCHIVED')`,
     ),
+    // Keep new workspace titles within the old AdminProjectCreateDTO bound.
+    // Existing imported longer titles remain readable until reconciled;
+    // the SQL migration registers the constraint NOT VALID.
+    check("project_instances_title_length_ck",
+      sql`char_length(trim(${table.title})) between 1 and 160`),
     index("project_instances_section_idx")
       .on(table.sectionId)
       .where(sql`${table.sectionId} is not null`),
@@ -1427,3 +1432,48 @@ export const projectMeetings = pgTable(
     ),
   ],
 );
+
+/**
+ * Legacy sprint display crosswalk. V141+ separated mentor-driven sprint_state
+ * (PLANNED/ACTIVE/COMPLETED) from task-derived sprint_status
+ * (UPCOMING/IN_PROGRESS/COMPLETED/OVERDUE). Do NOT replace the canonical
+ * lifecycle with an imported derived label or assume an imported actor ID is
+ * a valid membership. Historical attribution becomes displayable only after
+ * a verified person+college crosswalk populates the membership UUIDs.
+ */
+export const LEGACY_SPRINT_DERIVED_STATUSES=[
+  "UPCOMING","IN_PROGRESS","COMPLETED","OVERDUE",
+] as const;
+export type LegacySprintDerivedStatus=(typeof LEGACY_SPRINT_DERIVED_STATUSES)[number];
+
+export function projectSprintLegacyDisplayProjection(source:{
+  status:string;
+  legacyDerivedStatus:string|null;
+  dueLabel:string|null;
+  legacyReleaseLabel:string|null;
+  startedAt:Date|null;
+  completedAt:Date|null;
+  startedByMembershipId:string|null;
+  completedByMembershipId:string|null;
+}){
+  const value=source.legacyDerivedStatus?.trim().toUpperCase()??null;
+  const trustedDerived=value!==null&&
+    LEGACY_SPRINT_DERIVED_STATUSES.includes(value as LegacySprintDerivedStatus)
+    ?value as LegacySprintDerivedStatus:null;
+  return {
+    canonicalLifecycle:source.status,
+    taskDerivedStatus:trustedDerived,
+    taskDerivedStatusNeedsReview:value!==null&&trustedDerived===null,
+    displayStatus:trustedDerived??source.status,
+    // A missing actor does not imply that the mentor never started or
+    // completed this sprint; imported numeric IDs need scoped resolution.
+    startedAt:source.startedAt,
+    completedAt:source.completedAt,
+    startedByMembershipId:source.startedByMembershipId,
+    completedByMembershipId:source.completedByMembershipId,
+    attributionComplete:(!source.startedAt||Boolean(source.startedByMembershipId))&&
+      (!source.completedAt||Boolean(source.completedByMembershipId)),
+    releaseLabelFallback:source.legacyReleaseLabel?.trim()||null,
+    dueLabel:source.dueLabel,
+  };
+}
