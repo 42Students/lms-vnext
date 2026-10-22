@@ -24,9 +24,17 @@ describe("UX-SPILL-TPO-CLIP-02: request mobile cards retain selection and full f
   expect(html).toContain("Select all request rows");
   expect(html).toContain("Select visible page");
   expect(html).toContain("Copy selected rows");
-  // Check the caption-to-scroll-region linkage in the shared semantic table.
+  // Server rendering cannot measure overflow. The shared scroll cue only
+  // exposes a labelled, keyboard-focusable region after real overflow exists.
+  // Keep the source contract and assert the non-interactive initial markup.
   const table=readFileSync("src/components/ui/data-table.tsx","utf8");
+  const scrollCue=readFileSync("src/components/ui/scroll-cue.tsx","utf8");
   expect(table).toContain('caption+" scrollable columns"');
+  expect(html).toContain('data-slot="scroll-cue"');
+  expect(html).toContain('data-axis="x"');
+  expect(scrollCue).toContain('role={edges.scrollable ? "region" : undefined}');
+  expect(scrollCue).toContain('aria-label={edges.scrollable ? label : undefined}');
+  expect(scrollCue).toContain('tabIndex={edges.scrollable ? 0 : -1}');
   expect(html).toContain("min-w-[860px]");
   expect(html).not.toContain("md:block");
   expect(html).not.toContain("min-w-[46rem]");
