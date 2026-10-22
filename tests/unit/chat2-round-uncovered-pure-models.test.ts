@@ -70,7 +70,7 @@ describe("chat-2 round model uncovered behavioural boundaries", () => {
 
   it("TPO-round-query-01 denies tenant injection and malformed pagination filters", () => {
     expect(tpoRoundResultTableQuerySchema.parse({jobId:firstId,roundId:secondId}))
-      .toEqual({jobId:firstId,roundId:secondId});
+      .toEqual({jobId:firstId,roundId:secondId,page:1});
     for(const raw of [
       {jobId:firstId,roundId:"invalid"},
       {jobId:firstId,roundId:secondId,collegeId:thirdId},

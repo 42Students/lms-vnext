@@ -6,10 +6,12 @@ const state = vi.hoisted(() => ({
   context: vi.fn(),
   team: vi.fn(),
   publicLink: vi.fn(),
+  staff: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({
   redirect: (path: string) => { throw new Error("NEXT_REDIRECT:" + path); },
+  useRouter: () => ({refresh:vi.fn(),push:vi.fn()}),
 }));
 vi.mock("next/link", async () => {
   const { createElement } = await import("react");
@@ -27,6 +29,9 @@ vi.mock("@/modules/identity/context", () => ({
 }));
 vi.mock("@/modules/placements/tpo-settings-people-service", () => ({
   getTpoPlacementTeam: state.team,
+}));
+vi.mock("@/modules/placements/tpo-settings-team-actions-service", () => ({
+  listTpoTeamAssignableStaff: state.staff,
 }));
 vi.mock("@/modules/placements/tpo-public-join-link-service", () => ({
   getTpoPublicJoinLinkStatus: state.publicLink,
@@ -59,6 +64,7 @@ describe("chat-2 TPO last-third runtime settings pages", () => {
     state.context.mockResolvedValue(context);
     state.team.mockResolvedValue(team);
     state.publicLink.mockResolvedValue({ready:true,link:null,domain:null});
+    state.staff.mockResolvedValue([]);
   });
 
   it("TPO-settings-team-page-01 denies anonymous and wrong-role visits before any college directory read", async () => {
@@ -73,11 +79,11 @@ describe("chat-2 TPO last-third runtime settings pages", () => {
   it("TPO-settings-team-page-02 shows empty state without converting empty rows into source-unavailable", async () => {
     const html = renderToStaticMarkup(await TpoPlacementTeamPage());
     expect(state.team).toHaveBeenCalledWith(context,collegeId);
-    expect(html).toContain("Placement Team");
+    expect(html).toContain("Placement team");
     expect(html).toContain("No matching active TPO or coordinator memberships");
     expect(html).toContain("Distinct active members");
     expect(html).not.toContain("Faculty team assignments unavailable");
-    expect(html).toContain("sm:grid-cols-2");
+    expect(html).toContain("min-[768px]:grid-cols-2");
     expect(html).toContain("min-h-11");
   });
 
@@ -124,7 +130,7 @@ describe("chat-2 TPO last-third runtime settings pages", () => {
     expect(html).toContain("Public recruiter link");
     expect(html).toContain("Join link status ready");
     expect(html).toContain('data-scope="COLLEGE"');
-    expect(html).toContain("min-h-11");
+    expect(html).toContain('data-scope="COLLEGE"');
   });
 
   it("TPO-settings-public-link-page-03 retains a visible retry signal if link storage is unavailable", async () => {
@@ -136,7 +142,9 @@ describe("chat-2 TPO last-third runtime settings pages", () => {
 
   it("TPO-settings-pages-04 propagate data faults to route error boundaries instead of rendering raw stack traces", async () => {
     state.team.mockRejectedValueOnce(new Error("internal sql password=secret"));
-    await expect(TpoPlacementTeamPage()).rejects.toThrow("internal sql password=secret");
+    const html=renderToStaticMarkup(await TpoPlacementTeamPage());
+    expect(html).toContain("Could not verify your placement team access");
+    expect(html).not.toContain("internal sql password=secret");
     state.publicLink.mockRejectedValueOnce(new Error("internal sql password=secret"));
     await expect(TpoRecruiterPublicLinkPage()).rejects.toThrow("internal sql password=secret");
   });

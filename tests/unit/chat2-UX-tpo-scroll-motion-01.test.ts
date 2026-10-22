@@ -7,8 +7,8 @@ const tpo = (name: string) => src("src/components/tpo/" + name + ".tsx");
 describe("UX-tpo-scroll-motion: invisible scrollbars must never hide available content", () => {
   it("UX-tpo-scroll-motion-01 spreadsheet retains sticky pinned columns, desktop cue and mobile row cards", () => {
     const source = tpo("tpo-spreadsheet-grid");
-    expect(source).toContain('<ScrollCue axis="x" label="TPO spreadsheet columns"');
-    expect(source).toContain('className="space-y-2 md:hidden"');
+    expect(source).toContain('<Table scrollLabel="TPO spreadsheet columns"');
+    expect(source).toContain('aria-label="Current page TPO spreadsheet records" className="min-w-0 divide-y divide-border md:hidden"');
     expect(source).toContain('position:"sticky"');
     expect(source).toContain("aria-label={openPrimary.ariaLabel(row)}");
     expect(source).toContain("No matching records.");
@@ -30,7 +30,7 @@ describe("UX-tpo-scroll-motion: invisible scrollbars must never hide available c
     const source = tpo("tpo-bell-panel");
     expect(source).toContain("<Drawer");
     expect(source).toContain('title="Notifications"');
-    expect(source).toContain('aria-label={"Notifications, "+unread+" new"}');
+    expect(source).toContain('aria-label={unread>0?"Notifications, "+unread+" unread":"Notifications, no unread items"}');
     expect(source).not.toContain("max-h-80 space-y-2 overflow-y-auto");
     expect(source).toContain("Mark all read");
   });
@@ -43,15 +43,16 @@ describe("UX-tpo-scroll-motion: invisible scrollbars must never hide available c
   });
   it("UX-tpo-scroll-motion-05 company drive history uses DataTable and authorized job links", () => {
     const source = tpo("tpo-company-memory-workspace");
-    expect(source).toContain("<DataTable rows={visibleDrives}");
-    expect(source).toContain("No matching drives.");
+    expect(source).toContain("<TpoCompanyMemoryDriveGrid");
+    expect(src("src/components/tpo/tpo-company-memory-drive-grid.tsx")).toContain("<GridWorkspace rows={shown}");
+    expect(source).toContain("No drives yet");
     expect(source).toContain("encodeURIComponent(drive.id)");
-    expect(source).toContain('mobilePriority:"primary"');
+    expect(src("src/components/tpo/tpo-company-memory-drive-grid.tsx")).toContain('columnKey:"role"');
     expect(source).not.toMatch(/<table(?:\s|>)/);
   });
   it("UX-tpo-scroll-motion-06 academic import preview keeps row-level opt-in and match checks", () => {
     const source = tpo("tpo-academic-import-workspace");
-    expect(source).toContain("<DataTable rows={preview}");
+    expect(source).toContain("<DataTable rows={preview.filter(row=>row.match===previewTab)}");
     expect(source).toContain("No students were found in the import preview.");
     expect(source).toContain('row.match!=="WILL_UPDATE"');
     expect(source).toContain("setExcluded(current=>event.target.checked");
@@ -60,7 +61,7 @@ describe("UX-tpo-scroll-motion: invisible scrollbars must never hide available c
   it("UX-tpo-scroll-motion-07 nudge roster has a labelled keyboard-accessible vertical cue", () => {
     const source = tpo("tpo-student-nudge-panel");
     expect(source).toContain('<ScrollCue axis="y" label="Students available for message"');
-    expect(source).toContain('viewportClassName="max-h-48 space-y-1"');
+    expect(source).toContain('viewportClassName="max-h-48 space-y-0 py-1"');
     expect(source).toContain("validSelected.length>=25");
   });
   it("UX-tpo-scroll-motion-08 bulk debar confirmation uses single modal scroll; outcomes remain accessible", () => {

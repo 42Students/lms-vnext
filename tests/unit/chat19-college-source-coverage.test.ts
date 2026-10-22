@@ -33,7 +33,8 @@ describe("chat-19 all /college route entry point source coverage", () => {
     // client component audit is a separate release gate.
     expect(source).not.toMatch(/window[.](alert|confirm|prompt)[(]/);
     expect(source).not.toMatch(/<table([ >]|$)/);
-    expect(source).not.toContain("text-primary-text");
+    expect(source).not.toContain('href="javascript:');
+    expect(source).not.toMatch(/text-\[#(?:bbb|ccc|ddd|eee)\]/i);
     expect(source).toMatch(/export /);
   });
 
