@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  boolean,
   check,
   date,
   index,
@@ -594,3 +595,27 @@ export const sectionScheduleEvents = pgTable(
     ),
   ],
 );
+
+/** Old _Class fields map into two distinct vNext classroom representations.
+ * A GROUP_BACKED class uses active LMS group membership, never fabricated
+ * section_enrollments. Archived classes are not reused in active audiences. */
+export const LEGACY_CLASS_COLUMN_MAP={
+ id:"sections.legacy_class_id | group_backed_class_offerings.legacy_class_id",
+ name:"sections.name | group_backed_class_offerings.name",
+ description:"sections.description | group_backed_class_offerings.description",
+ startDate:"starts_on with academic_periods.start_date fallback",
+ endDate:"ends_on with academic_periods.end_date fallback",
+ upperBound:"sections.capacity",lowerBound:"sections.min_size",
+ classType:"SECTION | GROUP_BACKED",
+ rosterGroup:"group_backed_class_offerings.roster_group_id",
+} as const;
+
+/** Class dates take precedence; missing bounds inherit the scoped period's
+ * civil date strings without a browser-timezone conversion. */
+export function effectiveAcademicClassDates(input:{
+ startsOn:string|null;endsOn:string|null;
+ periodStartsOn:string;periodEndsOn:string;
+}):{startDate:string;endDate:string}{
+ return {startDate:input.startsOn??input.periodStartsOn,
+  endDate:input.endsOn??input.periodEndsOn};
+}
