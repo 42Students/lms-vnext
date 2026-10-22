@@ -126,3 +126,33 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/components/tpo/tpo-job-types-editor.tsx
 - Legacy: Old custom hidden type retained for older drives, new selectors exclude `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/JobTypeService.java:89-105`
 - Expected fix: Preserve historical drive type value and prevent new selection
+
+## Fast verification disposition (22 Oct 2026)
+
+Only the rows backed by directly inspected implementation are OK. All other rows remain DEFERRED for deeper service, schema, migration, or route checks, and are not claimed fixed.
+
+- G2-5-016-045: DEFERRED — requires complete implementation and consumer/legacy cross-check
+- G2-5-022-024: DEFERRED — requires complete implementation and consumer/legacy cross-check
+- G2-5-025-037: DEFERRED — requires complete implementation and consumer/legacy cross-check
+- G2-5-025-061: DEFERRED — requires complete implementation and consumer/legacy cross-check
+- G2-5-025-065: DEFERRED — requires complete implementation and consumer/legacy cross-check
+- G2-5-027-047: DEFERRED — requires complete implementation and consumer/legacy cross-check
+- G2-5-028-015: DEFERRED — requires complete implementation and consumer/legacy cross-check
+- G2-6-020-002: DEFERRED — requires complete implementation and consumer/legacy cross-check
+- G2-6-027-015: DEFERRED — requires complete implementation and consumer/legacy cross-check
+- G2-11-014-017: OK — urgent driveNeeds ordered into drive status and action destination
+- G2-11-014-022: OK — null pendingRequests not represented as zero in status
+- G2-11-014-040: OK — empty inbox text only when both request and message counts verified zero
+- G2-11-017-001: DEFERRED — requires complete implementation and consumer/legacy cross-check
+- G2-11-023-008: DEFERRED — requires complete implementation and consumer/legacy cross-check
+- G2-11-026-041: DEFERRED — requires complete implementation and consumer/legacy cross-check
+- G2-13-022-021: DEFERRED — requires complete implementation and consumer/legacy cross-check
+- G2-6-025-008: DEFERRED — requires complete implementation and consumer/legacy cross-check
+- G2-6-030-038: DEFERRED — requires complete implementation and consumer/legacy cross-check
+- G2-6-004-012: OK — Email and Contact columns remain with privacy-preserving Private values
+- G2-6-024-049: DEFERRED — requires complete implementation and consumer/legacy cross-check
+- G2-6-011-009: DEFERRED — requires complete implementation and consumer/legacy cross-check
+- G2-6-011-010: DEFERRED — requires complete implementation and consumer/legacy cross-check
+- G2-6-011-039: DEFERRED — requires complete implementation and consumer/legacy cross-check
+- G2-6-011-044: DEFERRED — requires complete implementation and consumer/legacy cross-check
+- G2-6-011-048: DEFERRED — requires complete implementation and consumer/legacy cross-check
