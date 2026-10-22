@@ -9,9 +9,9 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 - [ ] G2-19-010-067  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-19-010-068  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-19-018-062  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
-- [x] G2-2-006-014  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
+- [ ] G2-2-006-014  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-2-006-062  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
-- [ ] G2-2-010-025  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
+- [x] G2-2-010-025  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-2-013-009  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-2-014-032  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-2-015-092  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
@@ -25,7 +25,7 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 - [ ] G2-4-017-070  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-018-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-018-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
-- [x] G2-4-018-067  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+- [ ] G2-4-018-067  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-018-072  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-018-074  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-025-075  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
@@ -36,6 +36,5 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 
 ## Results
 
+- **G2-2-010-025 — OK (current origin/main):** `src/modules/attendance/policy-service.ts:20-21,84-88,187-188,239-240` restricts each policy mutation (whole policy, single field, reset) to Super Admin before the scoped college lookup. College Admin policy access remains a narrow read operation, not general tenant configuration access. Legacy authority: `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminAttendancePolicyController.java:16-20,37-51`, with no write endpoint. This records effective read/write separation at the service boundary; it does **not** claim distinct policy permission identifiers have been introduced.
 
-- FIXED G2-2-006-014 — `src/components/courses/college-assignment-create.tsx:57,90-91,196-198` and `src/modules/courses/assignment-validation.ts:50-54,77-81` now enforce integer points 0–1000 on UI and create/update API inputs; compare `docs/legacy-source` legacy assignment points range (LS:300-301), recorded in `docs/audit/gap2/lane-2/admin-assignment-content-write-controller.md`. Commits `fafef4cd`, `02288bba`.
-- OK G2-4-018-067 — `src/db/schema/projects.ts:1016-1030` retains the imported optimistic version separately from the native submission ordinal; `src/modules/projects/submission-service.ts:117-207,523-569` uses serialized create and optimistic version guards. Legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectDelivery.java:123-129` uses nullable `@Version` for new entities.
