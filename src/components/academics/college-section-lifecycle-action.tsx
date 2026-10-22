@@ -42,8 +42,8 @@ export function CollegeSectionLifecycleAction({ row }: {
         setConfirming(false);
         showToast({tone:"success",title:action==="ARCHIVE"
          ?'Archived class “'+row.name+'”.':'Restored class “'+row.name+'”.',
-         description:action==="ARCHIVE"
-          ?"Historical class records remain available and this class can be restored.":undefined});
+         ...(action==="ARCHIVE"
+          ?{description:"Historical class records remain available and this class can be restored."}:{})});
         router.refresh();
       } catch (reason) {
         // Preserve distinct learner, timetable, teaching and delivery blockers.
