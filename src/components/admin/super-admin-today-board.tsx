@@ -149,8 +149,8 @@ export function SuperAdminTodayBoard({data}:{data:SuperAdminTodayMetrics|null}){
   </div>
   <div aria-label="Today's classes" className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 border-b border-border pb-3 text-sm text-body">
    {data?<><span><strong>{data.classesScheduled}</strong> {data.classesScheduled===1?"class":"classes"} scheduled today</span>
-    <span><strong>{data.classesEnded}</strong> ended by schedule (held not verified)</span>
-    <span className={data.classesEnded>data.attendanceTaken?"font-semibold text-warning-text":""}>
+    <span><strong>{data.classesHeld??0}</strong> held so far (attendance started)</span>
+    <span className={(data.classesHeld??0)>data.attendanceTaken?"font-semibold text-warning-text":""}>
      <strong>{data.attendanceTaken}</strong> with attendance taken</span></>:
     refreshing?<span role="status">Loading today&apos;s classes…</span>:
      <span role="alert">Today&apos;s classes couldn&apos;t be loaded.</span>}
@@ -166,7 +166,7 @@ export function SuperAdminTodayBoard({data}:{data:SuperAdminTodayMetrics|null}){
    <CheckIcon/> Nothing needs you right now.
   </p>:null}
   <p className="text-xs text-muted-foreground">
-   Ended by schedule does not prove a class was held. Unavailable metrics are never counted as zero.
+   Only classes with started or marked attendance count as held. Unavailable metrics are never counted as zero.
    Refresh keeps the previous rendered overview until the scoped server read completes.
   </p>
  </section>;
