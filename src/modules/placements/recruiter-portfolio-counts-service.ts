@@ -136,3 +136,70 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
  for(const row of offers)counts[row.jobId]!.offers=Number(row.n);
  return counts;
 }
+
+/** Whole-authorized-portfolio counts without loading unbounded recruiter job
+ * rows. The Today cards may preview only 500 jobs, but the headline Live
+ * drives count must not claim that preview is the employer's complete total.
+ * This uses the same live grant, company and ownership restrictions as the
+ * underlying read, including historic indefinite (NULL) grants.
+ */
+export async function recruiterOwnFullPortfolioTotals(context:RequestContext,collegeId:string){
+ const recruiter=context.recruiter;
+ if(!hasActiveRecruiter(context)||!recruiter||recruiter.userId!==context.user.id)
+  throw new AuthorizationError("placements.recruiter.read");
+ const granted=recruiter.grants.filter(grant=>grant.collegeId===collegeId);
+ if(!granted.length)throw new AuthorizationError("placements.recruiter.read");
+ const relationshipIds=[...new Set(granted.map(grant=>grant.companyRelationshipId))];
+ for(const grant of granted)
+  requirePermission(context,"placements.recruiter.read",{
+   collegeId,placementCompanyRelationshipId:grant.companyRelationshipId,
+  });
+ const [countRow]=await getDb().select({
+  total:sql<number>`count(distinct ${placementJobs.id})::int`,
+  live:sql<number>`count(distinct ${placementJobs.id}) filter
+   (where ${placementJobs.status}='PUBLISHED')::int`,
+  closed:sql<number>`count(distinct ${placementJobs.id}) filter
+   (where ${placementJobs.status}='CLOSED')::int`,
+ }).from(placementJobs)
+  .innerJoin(placementCompanyRelationships,and(
+   eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+   eq(placementCompanyRelationships.collegeId,collegeId),
+   eq(placementCompanyRelationships.status,"ACTIVE"),
+   inArray(placementCompanyRelationships.id,relationshipIds),
+  ))
+  .innerJoin(placementCompanies,and(
+   eq(placementCompanies.id,placementCompanyRelationships.companyId),
+   eq(placementCompanies.id,recruiter.companyId),
+   eq(placementCompanies.status,"ACTIVE"),
+  ))
+  .innerJoin(colleges,and(eq(colleges.id,placementJobs.collegeId),
+   eq(colleges.status,"ACTIVE")))
+  .innerJoin(organizations,and(
+   eq(organizations.id,colleges.organizationId),
+   eq(organizations.status,"ACTIVE"),
+  ))
+  .innerJoin(users,and(eq(users.id,context.user.id),
+   eq(users.platformStatus,"ACTIVE")))
+  .innerJoin(placementRecruiterProfiles,and(
+   eq(placementRecruiterProfiles.userId,context.user.id),
+   eq(placementRecruiterProfiles.companyId,placementCompanies.id),
+   eq(placementRecruiterProfiles.status,"ACTIVE"),
+  ))
+  .innerJoin(placementRecruiterCollegeGrants,and(
+   eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
+   eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
+   eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+   eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
+   or(isNull(placementRecruiterCollegeGrants.validUntil),
+    gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`)),
+   sql<boolean>`'DRIVES'=any(${placementRecruiterCollegeGrants.capabilities})`,
+  ))
+  .where(and(
+   eq(placementJobs.collegeId,collegeId),
+   inArray(placementJobs.status,["PUBLISHED","CLOSED"]),
+   isNull(placementJobs.archivedAt),
+   recruiterOwnJobPredicate(context.user.id),
+  ));
+ return {total:Number(countRow?.total??0),live:Number(countRow?.live??0),
+  closed:Number(countRow?.closed??0)};
+}

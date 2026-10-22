@@ -114,5 +114,16 @@ export default async function SuperAdminStudentsPage({searchParams}:{
     {peopleFilters?<><CollegePersonEditAction membershipId={row.id} kind="LEARNER"/><StudentClassMoveAction membershipId={row.id} name={row.title}/></>:null}
     <CollegePersonAuditModal membershipId={row.id} name={row.title} kind="LEARNER"/>
     <CollegePersonProfileOverviewModal membershipId={row.id} name={row.title} kind="LEARNER"/>
+    {row.details.some(detail=>detail.startsWith("Mobile: ")&&
+       detail.slice("Mobile: ".length).trim()!=="—"&&
+       detail.slice("Mobile: ".length).trim().length>0)?
+      <Link href="/admin/otp-lockout"
+       aria-label={"Clear OTP lockout for "+row.title+" using verified mobile number"}
+       className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline md:min-h-9">
+       <svg aria-hidden="true" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+        <rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/>
+       </svg>
+       Clear OTP lockout
+      </Link>:null}
    </div>} loader={query=>listAdminScopedPeople(context,"LEARNER",query)}/></div>;
 }
