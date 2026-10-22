@@ -30,6 +30,22 @@ export const LEGACY_MODULE_SETTING_KEYS = {
   placements:"module.placements.enabled",
   electives:"module.electives.enabled",
 } as const;
+/** Legacy ModuleFeatureCatalog includes `courses`, but vNext Courses is a
+ * core academic workspace rather than an optional student module. Preserve
+ * the legacy key for audits/import review without creating a togglable rule:
+ * permission checks and verified college/delivery audience remain mandatory.
+ * Old `courses` overrides require explicit product migration approval; they
+ * must never be coerced to `electives` or treated as authorization grants. */
+export const LEGACY_COURSES_MODULE_CROSSWALK = {
+ legacyKey:"courses",
+ vNextProduct:"CORE_COURSES",
+ optionalModule:false,
+ readPermission:"courses.read",
+ managePermission:"courses.manage",
+ legacyOverrideDisposition:"REVIEW_BEFORE_IMPORT",
+ scopeBoundary:"VERIFIED_COLLEGE_AND_COURSE_DELIVERY",
+} as const;
+
 export const LEGACY_SCOPE_NAME_BY_VNEXT = {
   MEMBERSHIP:"LEARNER",SECTION:"CLASS",COHORT:"BATCH",
   PROGRAM:"PROGRAM",DEPARTMENT:"DEPARTMENT",COLLEGE:"COLLEGE",
