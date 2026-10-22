@@ -118,7 +118,7 @@ export default async function SuperAdminCalendarAppointmentsPage({
       Math.round((new Date(item.endsAt).getTime()-new Date(item.startsAt).getTime())/60000)+" min"},
      {key:"interviewer",header:"Interviewer",mobilePriority:"secondary",cell:item=>item.interviewer??"Not assigned"},
      {key:"mode",header:"Location / Mode",mobilePriority:"secondary",cell:item=>
-      (item.mode==="ONLINE"?"Online":"In-person")+" · "+(item.mode==="ONLINE"?"Meeting link":item.venue)},
+      (item.mode==="ONLINE"?"Online":"In-person")+" · "+(item.mode==="ONLINE"?"Meeting link":item.venue||"Venue not assigned")},
      {key:"applications",header:"Applications",mobilePriority:"action",cell:item=>
       <Link href={"/admin/placements/jobs/"+encodeURIComponent(item.jobId)+"/applications?"+
        new URLSearchParams({collegeId:result.collegeId,...(item.applicationId ? {applicationId:item.applicationId} : {})}).toString()}
