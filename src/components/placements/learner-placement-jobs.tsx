@@ -344,9 +344,23 @@ function JobActions({
       );
       setConfirmation(null);
       const stored=submitted?.application;
-      if(stored?.id&&stored?.status==="SUBMITTED"){
-       setConfirmedReceipt(stored);
+      // A 2xx HTTP response without a matching durable application receipt
+      // is not a confirmed submission. Resolve the own-scoped ledger once;
+      // keep Apply locked as UNKNOWN if that read cannot confirm it either.
+      let confirmed:OwnApplicationReceipt|null=stored?.id&&stored.status==="SUBMITTED"&&
+        stored.jobId===job.id&&stored.roleOptionId===roleOption.id&&
+        stored.channel===channel?stored:null;
+      if(!confirmed){
+       const lookup=await checkOwnPlacementApplication(job.id,roleOption.id);
+       confirmed=lookup.application?.status==="SUBMITTED"&&
+         lookup.application.channel===channel?lookup.application:null;
       }
+      if(!confirmed){
+       setApplyResolution("UNKNOWN");
+       setApplyError("Application submission could not be confirmed. Check status before trying again.");
+       return;
+      }
+      setConfirmedReceipt(confirmed);
       setApplyResolution("CONFIRMED");
       showToast({
         tone: "success",
