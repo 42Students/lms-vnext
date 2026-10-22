@@ -1,10 +1,10 @@
 import "server-only";
 import { and, eq, gt, lt, ne, notExists, or, sql } from "drizzle-orm";
-import { z } from "zod";
 import { getDb } from "@/db/client";
 import { activityEvents, collegeMemberships, placementApplications, placementJobs } from "@/db/schema";
 import { placementRoundCandidateSlots as slots } from "@/db/schema/placement-round-candidate-slots";
 import type { RequestContext } from "@/modules/identity/context";
+import { collegeInterviewPreviewSchema, summarizeCollegeInterviewPreview } from "./college-interview-conflict-preview-model";
 import { requireCollegePlacementAdmin } from "./college-drive-read-service";
 import { collegeDriveIdSchema } from "./college-drive-read-model";
 
@@ -12,32 +12,6 @@ import { collegeDriveIdSchema } from "./college-drive-read-model";
  * checks inside its write transaction. Never disclose another candidate's
  * name, appointment ID, company, interviewer, or meeting URL here.
  */
-export const collegeInterviewPreviewSchema = z.strictObject({
-  applicationId: z.uuid(),
-  scheduledAt: z.iso.datetime({offset:true}),
-  durationMinutes: z.number().int().min(5).max(480),
-  interviewer: z.string().trim().max(255).nullable().optional(),
-  room: z.string().trim().max(500).nullable().optional(),
-  excludingInterviewId: z.uuid().optional(),
-});
-
-export function summarizeCollegeInterviewPreview(
-  rows: readonly {
-    studentId:string;companyRelationshipId:string;
-    interviewerName:string|null;room:string;
-  }[],
-  candidate:{studentId:string;companyRelationshipId:string;
-    interviewer:string;room:string},
-) {
-  const sameText=(left:string|null,right:string)=>
-    Boolean(right)&&Boolean(left)&&left!.trim().toLocaleLowerCase()===right.trim().toLocaleLowerCase();
-  return {
-    candidate:rows.filter(row=>row.studentId===candidate.studentId).length,
-    interviewer:rows.filter(row=>row.companyRelationshipId===candidate.companyRelationshipId &&
-      sameText(row.interviewerName,candidate.interviewer)).length,
-    room:rows.filter(row=>sameText(row.room,candidate.room)).length,
-  };
-}
 export async function previewCollegeInterviewConflicts(
   context:RequestContext, rawJobId:unknown, rawInput:unknown,
 ) {
