@@ -71,7 +71,7 @@ function createdRecordId(result:unknown,kind:"course"|"offering"|"delivery"){
  if(!result||typeof result!=="object")return null;
  const value=(result as Record<string,unknown>)[kind];
  if(!value||typeof value!=="object")return null;
- const id=(value as Record<string,unknown>).id;
+ const id=(value as Record<string,unknown>)["id"];
  return typeof id==="string"&&/^[a-f0-9-]{36}$/i.test(id)?id:null;
 }
 function safeCourseCoverHref(input:string):string|null{
@@ -272,7 +272,7 @@ export function AdminCourseCreatePanel({
     const completed=await apiFetch<{image:{status:"READY"|"VERIFYING";imageUrl:string|null}}>(
       "/api/courses/"+encodeURIComponent(courseId)+"/image/complete",{
         method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({receiptId}),signal,
+        body:JSON.stringify({receiptId}),...(signal?{signal}:{}),
       });
     if(signal?.aborted)return;
     if(completed.image.status==="READY"){
@@ -382,17 +382,17 @@ export function AdminCourseCreatePanel({
         if (!(error instanceof FriendlyFetchError)) return;
         const fields = error.fieldErrors;
         const next = {
-          department: fields.departmentId ?? fields.dept_id,
-          name: fields.name ?? fields.course_name,
-          shortTitle: fields.shortTitle ?? fields.short_title,
-          code: fields.code ?? fields.official_course_code,
-          heading: fields.introductionHeading ?? fields.introduction_heading,
-          description: fields.description ?? fields.in_this_course_description,
-          coverUrl: fields.thumbnailUrl ?? fields.imageUrl,
-          cardColor: fields.cardColor ?? fields.course_color,
+          department: fields["departmentId"] ?? fields["dept_id"],
+          name: fields["name"] ?? fields["course_name"],
+          shortTitle: fields["shortTitle"] ?? fields["short_title"],
+          code: fields["code"] ?? fields["official_course_code"],
+          heading: fields["introductionHeading"] ?? fields["introduction_heading"],
+          description: fields["description"] ?? fields["in_this_course_description"],
+          coverUrl: fields["thumbnailUrl"] ?? fields["imageUrl"],
+          cardColor: fields["cardColor"] ?? fields["course_color"],
         };
         if (Object.values(next).some(Boolean)) {
-          setCreateErrors(previous => ({...previous, ...next}));
+          setCreateErrors(previous => ({...previous, ...Object.fromEntries(Object.entries(next).filter((entry): entry is [string, string] => typeof entry[1] === "string"))}));
           const key = Object.entries(next).find(([, message]) => Boolean(message))?.[0];
           const ids: Record<string, string> = {
             department: "course-department", name: "course-name",
@@ -497,7 +497,7 @@ export function AdminCourseCreatePanel({
             <Input type="search" aria-label="Search departments" className="mb-2"
               placeholder="Search departments" value={departmentSearch}
               onChange={event=>setDepartmentSearch(event.target.value)}/>
-            <Select id="course-department" value={courseDepartmentId} onChange={(event) => {setCourseDepartmentId(event.target.value);setCreateErrors(previous=>({...previous,department:undefined}));}} required>
+            <Select id="course-department" value={courseDepartmentId} onChange={(event) => {setCourseDepartmentId(event.target.value);setCreateErrors(previous=>{const updated={...previous};delete updated.department;return updated;});}} required>
               <option value="">Select department</option>
               {departments.filter(department=>department.id===courseDepartmentId||
                 department.name.toLocaleLowerCase("en-IN").includes(departmentSearch.trim().toLocaleLowerCase("en-IN")))
@@ -507,18 +507,18 @@ export function AdminCourseCreatePanel({
           </div>
           <div>
             <FieldLabel htmlFor="course-name">{COLLEGE_COURSES_COPY.nameLabel}</FieldLabel>
-            <Input id="course-name" value={courseName} onChange={(event) => { setCourseName(event.target.value);setCreateErrors(previous=>({...previous,name:undefined})); }} placeholder={COLLEGE_COURSES_COPY.namePlaceholder} maxLength={255} required />
+            <Input id="course-name" value={courseName} onChange={(event) => { setCourseName(event.target.value);setCreateErrors(previous=>{const updated={...previous};delete updated.name;return updated;}); }} placeholder={COLLEGE_COURSES_COPY.namePlaceholder} maxLength={255} required />
             {createErrors.name ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.name}</p> : null}
           </div>
           <div className="grid gap-3 md:col-span-2 md:grid-cols-2">
             <div>
               <FieldLabel htmlFor="course-short-title">Short display name</FieldLabel>
-              <Input id="course-short-title" value={shortTitle} onChange={event=>{setShortTitle(event.target.value);setCreateErrors(previous=>({...previous,shortTitle:undefined}));}} maxLength={64} placeholder="e.g. DSA" required />
+              <Input id="course-short-title" value={shortTitle} onChange={event=>{setShortTitle(event.target.value);setCreateErrors(previous=>{const updated={...previous};delete updated.shortTitle;return updated;});}} maxLength={64} placeholder="e.g. DSA" required />
               {createErrors.shortTitle ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.shortTitle}</p> : null}
             </div>
             <div>
               <FieldLabel htmlFor="course-official-code">Official course code</FieldLabel>
-              <Input id="course-official-code" value={officialCode} onChange={event=>{setOfficialCode(event.target.value);setCreateErrors(previous=>({...previous,code:undefined}));}} placeholder="e.g. CS101" maxLength={40}/>
+              <Input id="course-official-code" value={officialCode} onChange={event=>{setOfficialCode(event.target.value);setCreateErrors(previous=>{const updated={...previous};delete updated.code;return updated;});}} placeholder="e.g. CS101" maxLength={40}/>
               {createErrors.code ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.code}</p> : null}
             </div>
             <div className="md:col-span-2 space-y-2" role="group" aria-label="In this Course – Takeaways">
@@ -545,25 +545,25 @@ export function AdminCourseCreatePanel({
             <div>
               <FieldLabel htmlFor="course-card-color">Card colour</FieldLabel>
               <div className="flex flex-wrap items-center gap-3">
-                <Input id="course-card-color" value={cardColor} onChange={event=>{setCardColor(event.target.value);setCreateErrors(previous=>({...previous,cardColor:undefined}));}}
+                <Input id="course-card-color" value={cardColor} onChange={event=>{setCardColor(event.target.value);setCreateErrors(previous=>{const updated={...previous};delete updated.cardColor;return updated;});}}
                   maxLength={7} pattern="#[0-9A-Fa-f]{6}" placeholder="Optional #RRGGBB" className="min-w-0 flex-1"/>
                 <Input type="color" aria-label="Choose card colour" className="!h-11 !w-14 !p-1"
                   value={/^#[0-9a-fA-F]{6}$/.test(cardColor)?cardColor:"#e4eef4"}
-                  onChange={event=>{setCardColor(event.target.value);setCreateErrors(previous=>({...previous,cardColor:undefined}));}}/>
+                  onChange={event=>{setCardColor(event.target.value);setCreateErrors(previous=>{const updated={...previous};delete updated.cardColor;return updated;});}}/>
               </div>
               {createErrors.cardColor ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.cardColor}</p> : null}
             </div>
           </div>
           {!superAdmin?<div>
             <FieldLabel htmlFor="course-code">Code</FieldLabel>
-            <Input id="course-code" value={courseCode} onChange={(event) => {setCourseCode(event.target.value);setCreateErrors(previous=>({...previous,code:undefined}));}} placeholder="CS201" maxLength={64} required />
+            <Input id="course-code" value={courseCode} onChange={(event) => {setCourseCode(event.target.value);setCreateErrors(previous=>{const updated={...previous};delete updated.code;return updated;});}} placeholder="CS201" maxLength={64} required />
             {createErrors.code ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.code}</p> : null}
           </div>:null}
           <div className="md:col-span-2">
             <FieldLabel htmlFor="course-cover-url">Course image (optional)</FieldLabel>
             <Input id="course-cover-url" type="url" value={coverUrl} maxLength={2048}
               aria-invalid={Boolean(createErrors.coverUrl)}
-              onChange={event=>{setCoverUrl(event.currentTarget.value);setCoverPreviewBroken(false);setCreateErrors(old=>({...old,coverUrl:undefined}));}}
+              onChange={event=>{setCoverUrl(event.currentTarget.value);setCoverPreviewBroken(false);setCreateErrors(old=>{const updated={...old};delete updated.coverUrl;return updated;});}}
               placeholder="https://example.edu/course-cover.jpg" />
             <p className="mt-1 text-xs text-muted-foreground">
               Choose an approved public HTTPS course image. Private uploaded images require a verified signed-asset grant
@@ -580,7 +580,7 @@ export function AdminCourseCreatePanel({
                   <a href={safeCourseCoverHref(coverUrl)!} rel="noopener noreferrer"
                     className="inline-flex min-h-9 items-center text-xs font-semibold text-link underline">View full image</a>
                   <Button type="button" size="sm" variant="secondary" onClick={()=>{
-                    setCoverUrl("");setCoverPreviewBroken(false);setCreateErrors(old=>({...old,coverUrl:undefined}));
+                    setCoverUrl("");setCoverPreviewBroken(false);setCreateErrors(old=>{const updated={...old};delete updated.coverUrl;return updated;});
                   }}>Remove image</Button>
                 </div>
               </div>:null}
@@ -619,14 +619,14 @@ export function AdminCourseCreatePanel({
           <div className="md:col-span-2">
             <FieldLabel htmlFor="course-introduction-heading">In this Course – Heading</FieldLabel>
             <Input id="course-introduction-heading" value={introductionHeading}
-              onChange={event=>{setIntroductionHeading(event.target.value);setCreateErrors(old=>({...old,heading:undefined}));}}
+              onChange={event=>{setIntroductionHeading(event.target.value);setCreateErrors(old=>{const updated={...old};delete updated.heading;return updated;});}}
               maxLength={255} required aria-invalid={Boolean(createErrors.heading)}
               placeholder="In this Course"/>
             {createErrors.heading?<p role="alert" className="mt-1 text-xs text-danger">{createErrors.heading}</p>:null}
           </div>
           <div className="md:col-span-2">
             <FieldLabel htmlFor="course-description">In this Course – Description</FieldLabel>
-            <Textarea id="course-description" rows={3} className="min-h-24" value={courseDescription} onChange={(event) => {setCourseDescription(event.target.value);setCreateErrors(previous=>({...previous,description:undefined}));}} maxLength={5000} placeholder="Enter course description" required />
+            <Textarea id="course-description" rows={3} className="min-h-24" value={courseDescription} onChange={(event) => {setCourseDescription(event.target.value);setCreateErrors(previous=>{const updated={...previous};delete updated.description;return updated;});}} maxLength={5000} placeholder="Enter course description" required />
             {createErrors.description ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.description}</p> : null}
           </div>
           <label className="md:col-span-2 flex min-h-11 items-center gap-3 text-sm text-body">
