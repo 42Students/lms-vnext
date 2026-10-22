@@ -72,6 +72,15 @@ export function legacySuperAdminLessonContentHref(raw:Record<string,string|strin
  const rawType=typeof raw.type==="string"?raw.type.toLowerCase():"video";
  const kind:AdminContentKind=rawType==="resources"||rawType==="resource"?"RESOURCES":
   rawType==="live-classes"||rawType==="live-class"?"LIVE_CLASSES":"VIDEOS";
+ // The old classId=0 means course-wide content, not an unknown class.
+ // A positive legacy integer is not a vNext Section delivery UUID and must
+ // not be guessed or forwarded without a scoped identity crosswalk.
+ const oldClass=typeof raw.classId==="string"?raw.classId:null;
+ const oldClassIsDelivery=oldClass!==null&&
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(oldClass);
+ const scopedDelivery=typeof raw.deliveryId==="string"?raw.deliveryId:
+  oldClassIsDelivery?oldClass:undefined;
+ const inferredScope=oldClass==="0"?"SHARED":scopedDelivery?"SECTION":"ALL";
  const valid=adminContentQuerySchema.safeParse({
   q:typeof raw.q==="string"?raw.q:undefined,
   status:typeof raw.status==="string"?raw.status:undefined,
@@ -79,8 +88,8 @@ export function legacySuperAdminLessonContentHref(raw:Record<string,string|strin
   pageSize:typeof raw.pageSize==="string"?raw.pageSize:undefined,
   offeringId:typeof raw.offeringId==="string"?raw.offeringId:undefined,
   lessonId:typeof raw.lessonId==="string"?raw.lessonId:undefined,
-  deliveryId:typeof raw.deliveryId==="string"?raw.deliveryId:undefined,
-  scope:typeof raw.scope==="string"?raw.scope:undefined,
+  deliveryId:scopedDelivery,
+  scope:typeof raw.scope==="string"?raw.scope:inferredScope,
  });
  return adminContentHref(kind,valid.success?valid.data:{});
 }
