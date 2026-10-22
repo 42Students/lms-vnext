@@ -297,10 +297,10 @@ export async function archiveOrganization(
       .where(and(eq(organizations.id,organizationId),eq(organizations.status,"ACTIVE")))
       .for("update").limit(1);
     if(!activeParent)throw new OrganizationServiceError("ORGANIZATION_NOT_FOUND");
-    // Historical/archived colleges still have a live FK to this parent and
-    // must block archival too. Counting only ACTIVE children allowed an
-    // organization with hidden archived children to be incorrectly archived
-    // despite the legacy dependency guard.
+    // Legacy deleteOrganization blocks only colleges whose isDeleted is false.
+    // A soft-deleted college retains its FK but is not a deletion blocker.
+    // The organization row lock prevents a new active child from appearing
+    // between the dependency check and archival.
     const dependentCounts=await tx.select({status:colleges.status,
       total:sql<number>`count(*)::int`}).from(colleges)
       .where(eq(colleges.organizationId,organizationId)).groupBy(colleges.status);
@@ -308,7 +308,7 @@ export async function archiveOrganization(
       active:dependentCounts.filter(row=>row.status==="ACTIVE").reduce((sum,row)=>sum+row.total,0),
       archived:dependentCounts.filter(row=>row.status==="ARCHIVED").reduce((sum,row)=>sum+row.total,0),
     };
-    if(blockerCounts.active+blockerCounts.archived>0)
+    if(blockerCounts.active>0)
       throw new OrganizationServiceError("ORGANIZATION_HAS_COLLEGES",blockerCounts);
     const [archived]=await tx.update(organizations).set({status:"ARCHIVED",updatedAt:new Date()})
      .where(and(eq(organizations.id,organizationId),eq(organizations.status,"ACTIVE")))
