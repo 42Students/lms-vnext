@@ -1,6 +1,6 @@
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
-import {placementApplicationsPerMinute} from "@/modules/placements/application-service";
+import {placementApplicationsPerMinute} from "@/modules/placements/placement-application-rate-policy";
 
 describe("legacy learner application per-minute rate gate",()=>{
  it("has a safe default and bounded operator override",()=>{

@@ -13,6 +13,7 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {placementApplicationsPerMinute} from "./placement-application-rate-policy";
 import {profilePrivateDocumentReceipts} from "@/db/schema/profile-verification";
 import {readPrivateObjectAttestation} from "@/modules/storage/private-object-storage";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -645,11 +646,6 @@ async function snapshotApplicationResume(tx:Tx,applicationId:string,
 
 /** A platform operator may lower the limit, never disable it. A missing or
  * malformed setting retains the legacy five successful applies per minute. */
-export function placementApplicationsPerMinute(env:Record<string,string|undefined>=process.env):number {
- const text=(env.PLACEMENT_APPLICATION_RATE_LIMIT_PER_MINUTE??"").trim();
- if(!/^(?:[1-9]|1[0-9]|2[0-9]|30)$/.test(text))return 5;
- return Number(text);
-}
 /** SERIALIZE all learner application writes across DIFFERENT jobs.
  * A shared membership row lock would permit concurrent transactions through,
  * so a transaction advisory lock prevents cross-job bursts from beating COUNT.
