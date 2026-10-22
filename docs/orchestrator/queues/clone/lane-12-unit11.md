@@ -140,3 +140,10 @@ AssertionError: expected 'import { and, desc, eq, inArray, isNu…' to contain '
 - Projects: archived rows excluded from active readiness override list/export in commit a9a0ca5.
 
 Static inspection only; no CI execution claimed.
+
+## Deep rows (verified chat-12)
+
+- [x] G2-2-014-032 — OK: independent per-course writes and partial-failure classification; recorded in `DEEP_agent2_4.md`.
+- [x] G2-4-025-082 — OK: recent-history persistence and idempotent selection side effect; recorded in `DEEP_agent2_4.md`.
+
+All six listed unit tests were previously ticked and their repair dispositions documented; no repeat fixes made. Lane-13 unit11 currently also has all six files ticked on main, so no unticked carryover files were available.
