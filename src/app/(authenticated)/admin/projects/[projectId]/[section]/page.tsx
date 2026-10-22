@@ -33,10 +33,12 @@ export default async function SuperAdminProjectSectionRoute({
         eq(projectInstances.collegeId,collegeId),
         isNull(projectInstances.deletedAt),
         legacyId!==null?eq(projectInstances.legacyProjectId,legacyId):
-          eq(projectInstances.slug,slug!),
+          eq(projectInstances.slug,slug ?? ""),
       )).limit(2);
     if(matches.length!==1)notFound();
-    canonicalId=matches[0]!.id;
+    const match=matches[0];
+    if(!match)notFound();
+    canonicalId=match.id;
     await requireProjectManageAccess(context,canonicalId);
     const query=await searchParams;
     const retained=new URLSearchParams();
@@ -52,9 +54,12 @@ export default async function SuperAdminProjectSectionRoute({
   const query=await searchParams;
   const one=(value:string|string[]|undefined)=>typeof value==="string"&&
     value.length<=120&&/^[a-zA-Z0-9 _-]*$/.test(value)?value:undefined;
+  const from=one(query["from"]);
+  const reason=one(query["reason"]);
   return <div className="min-w-0 max-w-full space-y-3">
     <AdminProjectSectionPage projectId={canonicalId} section={section}
-      basePath="/admin/projects" from={one(query.from)}
-      reason={one(query.reason)} polishAdminSection/>
+      basePath="/admin/projects"
+      {...(from!==undefined?{from}:{})}
+      {...(reason!==undefined?{reason}:{})} polishAdminSection/>
   </div>;
 }
