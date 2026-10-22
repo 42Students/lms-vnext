@@ -33,6 +33,7 @@ type PreviewRow = Partial<Omit<AcademicRow,"studentCode">> & {
   oldBacklogs: number | null;
   importRow?:AcademicWriteRow|null;
   issue?:string|null;
+  previewKey?:number;
 };
 
 export function TpoAcademicImportWorkspace() {
@@ -108,7 +109,7 @@ export function TpoAcademicImportWorkspace() {
           return {preview:{rows}};
          })();
       if(!Array.isArray(result.preview?.rows))throw Error("Could not process the academic details. Please try again.");
-      const rows = result.preview.rows as PreviewRow[];
+      const rows = result.preview.rows.map((row,index)=>({...row,previewKey:index}));
       setPreview(rows);setPreviewTab("WILL_UPDATE");setSkipAcknowledged(false);
       setExcluded(rows.filter(row => row.match !== "WILL_UPDATE").map(row => row.studentCode));
     } catch (cause) {
@@ -212,7 +213,7 @@ export function TpoAcademicImportWorkspace() {
           <Button type="button" role="tab" variant={previewTab==="WILL_UPDATE"?"primary":"secondary"} aria-selected={previewTab==="WILL_UPDATE"} onClick={()=>setPreviewTab("WILL_UPDATE")}>Will update ({preview.filter(row=>row.match==="WILL_UPDATE").length})</Button>
           <Button type="button" role="tab" variant={previewTab==="CANT_MATCH"?"primary":"secondary"} aria-selected={previewTab==="CANT_MATCH"} onClick={()=>setPreviewTab("CANT_MATCH")}>Can\u0027t match ({preview.filter(row=>row.match==="CANT_MATCH").length})</Button>
         </div>
-        <DataTable rows={preview.filter(row=>row.match===previewTab)} getRowKey={row=>row.studentCode+":"+row.match}
+        <DataTable rows={preview.filter(row=>row.match===previewTab)} getRowKey={row=>String(row.previewKey??row.studentCode)}
           caption="Academic import preview"
           empty={<p>No rows found. The first row must be the column headings.</p>}
           columns={[
