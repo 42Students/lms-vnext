@@ -24,7 +24,7 @@ export const organizationApplicantSearchSchema=z.strictObject({
  pageSize:z.coerce.number().int().min(1).max(100).default(50),
 });
 
-async function organizationScope(context:RequestContext,requested:string|undefined){
+export async function resolveOrganizationPlacementSearchScope(context:RequestContext,requested:string|undefined){
  if(!isSuperAdmin(context))throw new AuthorizationError("placements.read");
  // A selected college is always authoritative. Caller-supplied org IDs may
  // confirm it, never override it (including when a stale tab is still open).
@@ -89,7 +89,7 @@ const activeApplication=sql<boolean>`${placementApplications.legacyWasDeleted} i
 
 export async function getOrganizationApplicationStats(context:RequestContext,raw:unknown){
  const input=z.strictObject({organizationId:z.string().uuid().optional()}).parse(raw);
- const organizationId=await organizationScope(context,input.organizationId);
+ const organizationId=await resolveOrganizationPlacementSearchScope(context,input.organizationId);
  const [row]=await getDb().select({totalApplications:sql<number>`count(*)::int`})
   .from(placementApplications)
   .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
@@ -108,7 +108,7 @@ export async function getOrganizationApplicationStats(context:RequestContext,raw
  */
 export async function searchOrganizationPlacementApplications(context:RequestContext,raw:unknown){
  const input=organizationApplicantSearchSchema.parse(raw);
- const organizationId=await organizationScope(context,input.organizationId);
+ const organizationId=await resolveOrganizationPlacementSearchScope(context,input.organizationId);
  const pattern="%"+input.search.replace(/[\\%_]/g,"\\$&")+"%";
  const filters=and(eq(colleges.organizationId,organizationId),activeApplication,
   input.status==="ALL"?undefined:eq(legacyStage,input.status),
