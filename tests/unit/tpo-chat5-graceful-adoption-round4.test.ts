@@ -34,7 +34,7 @@ describe("Chat-5 graceful-operation adoption",()=>{
  it("GR-35 uses an inline consequence acknowledgement rather than native confirm",()=>{
   for(const component of [driveCancel(),driveLifecycle(),batchLifecycle(),batchImport()]){
    expect(component).not.toContain("window.confirm");
-   expect(component).toContain('type="checkbox"');
+   expect(component).toMatch(/<Checkbox\b|type="checkbox"/);
   }
  });
  it("GR-71 keeps a recoverable empty state for older batches",()=>{
@@ -44,12 +44,15 @@ describe("Chat-5 graceful-operation adoption",()=>{
   expect(page).toContain("Hide older batches");
  });
  it("GR-90 announces failures through role alert in all affected forms",()=>{
-  for(const component of [driveCancel(),driveLifecycle(),batchLifecycle(),batchImport()])
-   expect(component).toContain('role="alert"');
+  for(const component of [driveCancel(),driveLifecycle(),batchLifecycle(),batchImport()]){
+   expect(component).toMatch(/<InlineNotice tone="error"|role="alert"/);
+  }
+  const notice=read("src/components/ui/inline-notice.tsx");
+  expect(notice).toContain('role={tone === "error" ? "alert" : "status"}');
  });
  it("GR-91 keeps explicit acknowledgement and retry controls keyboard-operable",()=>{
   for(const component of [driveCancel(),driveLifecycle(),batchLifecycle(),batchImport()]){
-   expect(component).toContain('type="checkbox"');
+   expect(component).toMatch(/<Checkbox\b|type="checkbox"/);
    expect(component).toContain('type="button"');
   }
  });

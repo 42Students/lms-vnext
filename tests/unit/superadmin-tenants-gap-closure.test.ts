@@ -10,11 +10,12 @@ const org=()=>source("src/components/admin/organization-create-form.tsx");
 describe("Super Admin Tenants/Modules legacy gap contracts",()=>{
  it("SA-tenants-modules-03 scoped setup retains tenant navigation and administration controls",()=>{
   expect(source("src/app/(authenticated)/admin/tenants/setup/page.tsx")).toContain("superAdminTenantSetupSteps");
-  expect(source("src/app/(authenticated)/admin/tenants/page.tsx")).toContain("Tenant details");
+  expect(source("src/app/(authenticated)/admin/tenants/page.tsx")).toContain('caption="Tenant directory"');
+  expect(source("src/app/(authenticated)/admin/tenants/page.tsx")).toContain('href="/admin/tenants/setup"');
  });
  it("SA-tenants-modules-05 tenant scope list does not default to a foreign college",()=>{
   expect(source("src/app/(authenticated)/admin/tenants/setup/page.tsx"))
-   .toContain("No college selected. Setup cannot default to an unrelated tenant.");
+   .toContain("Pick a college first. Select a college in the Super Admin scope switcher");
  });
  it("SA-tenants-modules-08 organizations can search and show an actionable archive guard",()=>{
   const actions=source("src/components/admin/organization-actions.tsx");
@@ -94,14 +95,15 @@ describe("Super Admin Tenants/Modules legacy gap contracts",()=>{
   expect(signin).toContain("Phone only");
   expect(signin).toContain("Sign-in settings saved");
   expect(signin).toContain("expectedVersion");
-  expect(signin).toContain("apiFetch<void>");
+  expect(signin).toContain("apiFetch<{policy:{method:Method;version:number}}>");
+  expect(signin).toContain("body:JSON.stringify({collegeId,method:selection,expectedVersion:currentVersion})");
   expect(signin).toContain("useGuardedAction");
  });
  it("SA-tenants-modules-04 unscoped platform has four described navigation cards including Recruiter accounts",()=>{
   const nav=source("src/modules/admin-ui/admin-dashboard-navigation.ts");
   const page=source("src/components/admin/admin-dashboard-actions.tsx");
-  expect(nav).toContain('href: "/admin/tenants"');
-  expect(nav).toContain('label: "Recruiter accounts", href: "/admin/recruiters"');
+  expect(nav).toContain('href:"/admin/tenants"');
+  expect(nav).toContain('label:"Recruiter accounts",href:"/admin/recruiters"');
   expect(nav).not.toContain('label: "Tenant Setup", href: "/admin/tenants/setup"');
   expect(page).toContain("Choose the level you need to operate at.");
   expect(page).toContain("subtitle={item.subtitle}");
@@ -118,7 +120,7 @@ describe("Super Admin Tenants/Modules legacy gap contracts",()=>{
   const component=source("src/components/admin/college-archive-button.tsx");
   const service=source("src/modules/colleges/service.ts");
   expect(component).toContain("COLLEGE_HAS_DEPENDENCIES");
-  expect(component).toContain("The server checks memberships");
+  expect(component).toContain("The server rechecks memberships");
   expect(service).toContain("assertCollegeCanArchive(usage)");
   expect(service).toContain('status:"ARCHIVED"');
  });
