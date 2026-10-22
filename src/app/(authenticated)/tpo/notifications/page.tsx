@@ -118,7 +118,7 @@ export default async function TpoNotificationsPage({
                 allLabel={firstPage?(inbox.page.nextCursor?"Latest "+items.length:"All ("+items.length+")"):"Older ("+items.length+")"}
                 baseHref={TPO_NOTIFICATIONS_PATH} markAllEndpoint="/api/tpo/notifications/read-all"/>
             </div>
-            <div className={notificationStyles.feed}>
+            <div className={notificationStyles["feed"]}>
             <NotificationList
             variant="tpo"
             items={items}
