@@ -4,11 +4,11 @@ const src=(path:string)=>readFileSync(path,"utf8");
 describe("Team inbox activity and participant notices",()=>{
  it("TPO-inbox-team-18 orders private conversations by last real message and shows last activity in IST",()=>{
   const read=src("src/modules/placements/tpo-team-internal-read-service.ts");
-  const page=src("src/app/(authenticated)/tpo/team/page.tsx");
+  const page=src("src/components/tpo/tpo-team-messages-directory.tsx");
   expect(read).toContain("lastActivityAt:lastActivity");
   expect(read).toContain(".orderBy(desc(lastActivity),desc(tpoInternalThreads.id))");
   expect(read).toContain("m.college_id=");
-  expect(page).toContain("Last activity ·");
+  expect(page).toContain("threadTime(item.lastActivityAt,today)");
   expect(page).toContain("row.lastActivityAt");
  });
  it("TPO-inbox-team-29 sends a person-named bell and safe preview with a message deep link",()=>{

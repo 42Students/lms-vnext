@@ -5,7 +5,7 @@ describe("SA-tenants-modules-27 academic descendant editing guards",()=>{
  it("requires explicit expected state and excludes placements while resolver ignores it",()=>{
   const base={scopeType:"COHORT",scopeId:id,module:"projects",action:"SET",enabled:false,locked:true,expected:null};
   expect(academicModuleRuleInput.safeParse(base).success).toBe(true);
-  expect(academicModuleRuleInput.safeParse({...base,module:"placements"}).success).toBe(true);
+  expect(academicModuleRuleInput.safeParse({...base,module:"placements"}).success).toBe(false);
   expect(academicModuleRuleInput.safeParse({...base,enabled:undefined}).success).toBe(false);
  });
  it("detects optimistic conflicts",()=>{

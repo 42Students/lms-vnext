@@ -7,7 +7,9 @@ describe("TPO confirmed Drive Day attendance", () => {
     expect(tpoDriveDayCheckInSchema.safeParse(base).success).toBe(true);
     expect(tpoDriveDayCheckInSchema.safeParse({ ...base, status: "ABSENT" }).success).toBe(true);
     expect(tpoDriveDayCheckInSchema.safeParse({ ...base, status: "WAITING" }).success).toBe(false);
-    expect(tpoDriveDayCheckInSchema.safeParse({ ...base, expectedAttendance: "DONE" }).success).toBe(false);
+    // A verified DONE state may be corrected, but the expected state must match the persisted row.
+    expect(tpoDriveDayCheckInSchema.safeParse({ ...base, expectedAttendance: "DONE" }).success).toBe(true);
+    expect(decideTpoAttendanceTransition("DONE", "WAITING", "PRESENT")).toBe("STALE");
     expect(tpoDriveDayCheckInSchema.safeParse({ ...base, confirmed: false }).success).toBe(false);
     expect(tpoDriveDayCheckInSchema.safeParse({ ...base, collegeId: applicationId }).success).toBe(false);
   });
