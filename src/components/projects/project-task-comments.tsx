@@ -3,6 +3,7 @@ import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
+import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
@@ -19,11 +20,12 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
  const [rows,setRows]=useState<Comment[]>([]);const [body,setBody]=useState("");
  const [open,setOpen]=useState(false);
  const [kind,setKind]=useState<ProjectTaskCommentKind>("NOTE");
+ const [progressDraft,setProgressDraft]=useState("");
  const [filter,setFilter]=useState<ProjectTaskCommentKind|"ALL">("ALL");
  const [busy,setBusy]=useState(false);const [error,setError]=useState<string|null>(null);
  const [lastPosted,setLastPosted]=useState<{taskId:string;updatedAt:string}|null>(null);
- const discard=useProjectEditorDiscardGuard(open,Boolean(body.trim()),busy,()=>{
-   setBody("");setOpen(false);setError(null);
+ const discard=useProjectEditorDiscardGuard(open,Boolean(body.trim()||progressDraft),busy,()=>{
+   setBody("");setProgressDraft("");setOpen(false);setError(null);
  });
  const currentToken=lastPosted?.taskId===taskId&&Date.parse(lastPosted.updatedAt)>Date.parse(updatedAt)
    ? lastPosted.updatedAt : updatedAt;
@@ -43,14 +45,20 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
  useEffect(()=>{void show();},[projectId,taskId]);
  async function post(){
   if(!body.trim()){setError("Add a note before posting");return;}
+  const progress=progressDraft.trim()===""?null:Number(progressDraft);
+  if(kind==="PROGRESS_UPDATE"&&progress!==null&&
+    (!Number.isInteger(progress)||progress<0||progress>100)){
+    setError("Progress must be a whole percentage from 0 to 100");return;
+  }
   setBusy(true);setError(null);
   try{
    const result=await projectMutation(url,"POST",{
      body:body.trim(),commentKind:kind,expectedTaskUpdatedAt:currentToken,
+     ...(kind==="PROGRESS_UPDATE"&&progress!==null?{progressValue:progress}:{}),
    }) as {comment:{updatedTaskAt?:string|Date}};
    const nextToken=result.comment.updatedTaskAt;
    if(nextToken)setLastPosted({taskId,updatedAt:new Date(nextToken).toISOString()});
-   setBody("");setKind("NOTE");await show();router.refresh();
+   setBody("");setProgressDraft("");setKind("NOTE");await show();router.refresh();
   }catch(caught){setError(caught instanceof Error?caught.message:"Could not add comment");}
   finally{setBusy(false);}
  }
@@ -95,12 +103,20 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
    </article>)}
      {canPost?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
        <Select value={kind} disabled={busy}
-         onChange={event=>setKind(event.target.value as ProjectTaskCommentKind)}
+         onChange={event=>{
+           const selected=event.target.value as ProjectTaskCommentKind;
+           setKind(selected);if(selected!=="PROGRESS_UPDATE")setProgressDraft("");
+         }}
          className="w-full">
          {PROJECT_TASK_COMMENT_KINDS.map(value=><option key={value} value={value}>
            {PROJECT_TASK_COMMENT_KIND_LABELS[value]}
          </option>)}
        </Select>
+     </label>:null}
+     {canPost&&kind==="PROGRESS_UPDATE"?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Progress percentage (optional)
+       <Input type="number" min={0} max={100} step={1} inputMode="numeric"
+         value={progressDraft} disabled={busy} aria-label="Progress percentage"
+         placeholder="0 to 100" onChange={event=>setProgressDraft(event.target.value)}/>
      </label>:null}
      {canPost?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
        <Textarea maxLength={4000} value={body} disabled={busy}
