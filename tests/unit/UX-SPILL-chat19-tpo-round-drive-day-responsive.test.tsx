@@ -12,6 +12,7 @@ vi.mock("@/components/placements/tpo-round-result-recorder",()=>({
 vi.mock("@/components/placements/tpo-bulk-round-result-recorder",()=>({
   TpoBulkRoundResultRecorder:()=> <button type="button" data-action="bulk-stage">Bulk stage</button>,
 }));
+vi.mock("next/navigation",()=>({useRouter:()=>({refresh:vi.fn(),push:vi.fn()})}));
 import {TpoRoundDriveDayReadOnly} from "@/components/placements/tpo-round-drive-day-read-only";
 
 type RoundData=ComponentProps<typeof TpoRoundDriveDayReadOnly>["data"];
