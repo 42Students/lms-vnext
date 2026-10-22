@@ -26,10 +26,9 @@ export const emptyWorkspaceBrief:WorkspaceBrief={
 export function parseWorkspaceBrief(value:unknown):WorkspaceBrief {
  const envelope=value&&typeof value==="object"&&!Array.isArray(value)
   ?value as Record<string,unknown>:{};
- // Tenant identifiers must be held by the authorized workspace record,
- // never embedded as client-editable brief data from a persisted JSON blob.
- if("collegeId" in envelope||"organizationId" in envelope||"membershipId" in envelope)
-  return {goal:"",description:"",deliverables:[],completionConditions:[],personas:[]};
+ // A trusted imported overview can carry historic tenant metadata. Never
+ // treat those keys as authority, but do not erase its actual brief fields.
+ // The strict editor schema excludes metadata from client writes.
  // Historic workspaces sometimes carry the full, untouched template overview
  // in an `overview` map, while vNext writes five native fields at top level.
  // A top-level explicit empty value wins over inherited template defaults.
@@ -73,7 +72,7 @@ export function translateLegacyWorkspaceOverview(value:unknown):{
  const original={...nested,...source};
  const opaqueFacts=Object.fromEntries(Object.entries(original).filter(([key])=>
   !["goal","description","deliverables","definitionOfDone","completionConditions",
-    "personas","overview"].includes(key)));
+    "personas","overview","collegeId","organizationId","membershipId"].includes(key)));
  return {brief:parseWorkspaceBrief(original),opaqueFacts};
 }
 /** A planned draft can be empty; active/published projects cannot be cleared
