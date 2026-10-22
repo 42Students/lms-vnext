@@ -607,9 +607,9 @@ describe("Projects adversarial isolation", () => {
             await projectVersion(project.id),
           title: "Outgoing mentor meeting",
           startsAt:
-            futureMeetingWindow().startsAt,
+            "2099-10-20T10:00:00+05:30",
           endsAt:
-            futureMeetingWindow().endsAt,
+            "2099-10-20T10:30:00+05:30",
           timeZone: "Asia/Kolkata",
           meetingUrl:
             "https://meet.example.com/reassign",
@@ -754,9 +754,9 @@ describe("Projects adversarial isolation", () => {
             await projectVersion(projectA.id),
           title: "Cross-project task injection",
           startsAt:
-            futureMeetingWindow().startsAt,
+            "2099-10-20T10:00:00+05:30",
           endsAt:
-            futureMeetingWindow().endsAt,
+            "2099-10-20T10:30:00+05:30",
           timeZone: "Asia/Kolkata",
           meetingUrl:
             "https://meet.example.com/adversarial",
@@ -1347,9 +1347,9 @@ describe("Projects adversarial isolation", () => {
           await projectVersion(project.id),
         title: "Recent planning touchpoint",
         startsAt:
-          futureMeetingWindow().startsAt,
+          "2099-11-01T10:00:00+05:30",
         endsAt:
-          futureMeetingWindow().endsAt,
+          "2099-11-01T10:30:00+05:30",
         timeZone: "Asia/Kolkata",
         meetingUrl:
           "https://meet.example.com/recent-activity",
