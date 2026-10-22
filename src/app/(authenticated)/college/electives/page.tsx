@@ -1,6 +1,5 @@
 import { collegeDirectoryValidationMessage } from "@/modules/academics/college-directory-validation";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import {isSuperAdmin} from "@/modules/identity/context";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
@@ -21,7 +20,12 @@ export default async function CollegeElectivesPage({
   searchParams,
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership&&!isSuperAdmin(context)) redirect("/dashboard");
+  if (!context.membership&&!isSuperAdmin(context)) return <div className="min-w-0 space-y-4">
+    <PageHeader title="Electives"/>
+    <Alert tone="warning" title="Admin not assigned to a college">
+     Contact your administrator to assign you to a college before managing elective slots.
+    </Alert>
+   </div>;
   if(isSuperAdmin(context)&&!context.adminScope?.collegeId)return <div className="min-w-0 space-y-4">
     <PageHeader title="Electives"/>
     <Alert tone="warning">Select a college first to manage elective slots.</Alert>

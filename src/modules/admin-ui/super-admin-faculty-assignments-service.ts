@@ -115,6 +115,10 @@ export async function listAdminFacultyAssignments(context:RequestContext,raw:unk
   id:row.id,title:row.teacherName?.trim()||"Faculty name unavailable (ID "+row.membershipId+")",
   subtitle:(row.courseName?.trim()||"Course name unavailable (ID "+row.courseId+")")+" ("+row.courseCode+")",
   revision:row.updatedAt.toISOString(),
+  // Private server-rendered action metadata; the generic directory does
+  // not display these membership or delivery identifiers as columns.
+  assignmentMembershipId:row.membershipId,
+  assignmentDeliveryId:row.deliveryId,
   status:row.deletedAt||row.teachingEnded||row.deliveryEnded||row.legacyActive===false?"ENDED":"ACTIVE",
   details:["Class: "+(row.sectionName?.trim()||"Class name unavailable (ID "+row.sectionId+")"),
    "Batch: "+(row.cohortName||"Batch ID "+row.cohortId),

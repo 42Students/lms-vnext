@@ -45,6 +45,9 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
  const active=metrics?.[1].status==="fulfilled"?metrics[1].value.total:null;
  const primary=metrics?.[2].status==="fulfilled"?metrics[2].value[0]?.primary:null;
  const covered=metrics?.[2].status==="fulfilled"?metrics[2].value[0]?.classes:null;
+ const editorDeliveries=workspace?.deliveries.map(delivery=>({
+  ...delivery,programName:workspace.offerings.find(offering=>offering.id===delivery.offeringId)?.programName??"",
+ }))??[];
  return <div className="min-w-0 space-y-4 md:space-y-6">
   {collegeId&&classesResult.status==="rejected"?<Alert tone="warning" title="Some selection options are unavailable">
    Classes could not be loaded. Current faculty assignments remain available.
@@ -68,7 +71,7 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
     </div>)}
    </section>:<p role="status" className="text-sm text-muted-foreground">Faculty assignment totals are temporarily unavailable.</p>}
    <section aria-label="Create Faculty Assignment" className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
-   <SuperAdminFacultyAssignmentCreate deliveries={workspace.deliveries} faculty={workspace.faculty} truncated={workspace.facultyTruncated}/>
+   <SuperAdminFacultyAssignmentCreate deliveries={editorDeliveries} faculty={workspace.faculty} truncated={workspace.facultyTruncated}/>
    <Link href="/admin/courses" className="inline-flex min-h-11 items-center self-start rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Create teaching assignment →</Link>
   </section>
   </div>:null}
@@ -80,17 +83,20 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
     if(row.status!=="ACTIVE")return null;
     const rawRole=row.details.find(detail=>detail.startsWith("Teaching role: "))?.slice("Teaching role: ".length);
     const role=COURSE_TEACHING_ROLES.find(value=>value===rawRole);
+    const assign=row as typeof row & {assignmentMembershipId?:string;assignmentDeliveryId?:string};
     return <div className="flex min-w-0 flex-wrap items-start gap-2" aria-label={"Assignment "+row.id+" actions"}>
       <Disclosure title={"Edit assignment "+row.id} className="min-w-0 border border-border rounded-[var(--lms-control-radius)] px-2"
         contentClassName="flex min-w-0 flex-col items-start gap-2 pb-3 pt-2">
         <p className="m-0 text-xs text-body">Edit assignment {row.id}</p>
-        {role&&row.revision?<SuperAdminTeachingRoleEdit assignmentId={row.id}
-          role={role} revision={row.revision}/>:null}
+        {role&&row.revision&&workspace&&assign.assignmentMembershipId&&assign.assignmentDeliveryId?
+         <SuperAdminTeachingRoleEdit assignmentId={row.id}
+          role={role} revision={row.revision} membershipId={assign.assignmentMembershipId}
+          deliveryId={assign.assignmentDeliveryId}
+          deliveries={editorDeliveries} faculty={workspace.faculty}/>:null}
         <p className="m-0 max-w-prose text-xs text-muted-foreground">
-          To change Faculty, Course, Class, Batch, Semester, or Year, end the
-          existing assignment and create the replacement under the correct
-          course delivery. Keeping distinct assignments preserves attendance
-          and assessment audit history.
+          Changes to faculty, course and class update the active grant in place
+          with a revision check and activity log. Ending an association keeps
+          its historical attendance and assessment records.
         </p>
         <Link href="/admin/courses" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
           Open course delivery setup →

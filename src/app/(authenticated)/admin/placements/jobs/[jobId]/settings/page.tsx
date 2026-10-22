@@ -131,7 +131,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
      description="One or more academic or eligibility options could not be verified. The form is disabled to prevent a partial edit."
      action={<Link href={base+"/settings"} className="font-semibold text-link underline">Retry settings</Link>}
     />:null}
-   {job.status==="PUBLISHED"?
+   {job.status!=="DRAFT"?
     <SuperAdminPublishedDriveEdit
      sourceReady={publishedEditReady}
      jobTypes={publishedJobTypes}
@@ -149,6 +149,9 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
       updatedAt:job.updatedAt.toISOString(),
       jobTypeLabel:job.jobTypeLabel??"",employmentType:job.employmentType,
       workMode:job.workMode,responsibilities:job.legacyPostingDetails?.responsibilities??"",
+      importantDates:job.legacyPostingDetails?.importantDates??[],
+      customEligibilityRules:job.legacyPostingDetails?.customEligibilityRules??[],
+      status:job.status,
       targeting:publishedPolicy?{
        programs:publishedPolicy.allowedProgramIds.length,
        cohorts:publishedPolicy.allowedCohortIds.length,
@@ -202,7 +205,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
        action={<Link href={base+"/settings"} className="font-semibold text-link underline">Retry</Link>}/>}
    </div>
    {job.status!=="PUBLISHED"?<Banner tone="info">
-    This drive is {job.status.toLowerCase()}. Full settings are preserved for review; archived and closed records cannot be silently rewritten. Use the status controls to reopen an eligible drive before editing.
+    This drive is {job.status.toLowerCase()}. Changes to historic records require an explicit reason and preserve existing applications, eligibility and offers. Review the effects before confirming.
    </Banner>:null}
   </section>:null}
   {job.legacyPostingDetails?<details className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]"
