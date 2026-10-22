@@ -27,7 +27,7 @@ export function PlacementDriveDayOverview({ driveDay, embedded = false }: { driv
       </div>
     </section>
     {driveDay.attention.length > 0 ? <section className="border-b border-border pb-4"><h2 className="mb-2 text-base font-semibold text-foreground">Attention</h2><div className="flex flex-wrap gap-2">{driveDay.attention.map((item,index) =>
-      <StatusBadge key={String(item.code)+index} tone={item.code === "RESULTS_OVERDUE" || item.code === "INACTIVE_CANDIDATES" ? "error" : "warning"}>{String(item.code).toLowerCase().split("_").join(" ")}{typeof item.count === "number" ? " · "+item.count : ""}</StatusBadge>)}</div></section> : null}
+      <StatusBadge key={String(item["code"])+index} tone={item["code"] === "RESULTS_OVERDUE" || item["code"] === "INACTIVE_CANDIDATES" ? "error" : "warning"}>{String(item["code"]).toLowerCase().split("_").join(" ")}{typeof item["count"] === "number" ? " · "+item["count"] : ""}</StatusBadge>)}</div></section> : null}
     <section className="space-y-3">
       <div><h2 className="m-0 text-base font-semibold text-foreground">Round pipeline</h2><p className="mt-1 text-sm text-body">Progression is derived from applied results, never staged drafts.</p></div>
       {driveDay.rounds.length === 0 ? <div role="status" className="border-b border-border py-6 text-sm text-muted-foreground">{embedded ? "No rounds planned for this drive day yet." : "Evaluation rounds are not configured yet."}</div> :
