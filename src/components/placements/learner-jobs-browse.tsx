@@ -273,7 +273,7 @@ export function LearnerJobsBrowse({
             onClick={()=>updateQuery({eligible:filters.eligibleOnly?null:"1"})}
             className={"!min-h-11 !rounded-full !px-3 !py-2 text-sm font-semibold !shadow-none focus-visible:outline-2 focus-visible:outline-offset-2 md:!min-h-9 "+
               (filters.eligibleOnly?"!border-[var(--lms-primary)] !bg-[var(--lms-primary-subtle)] !text-primary-text":"!border-border !bg-surface !text-body hover:!border-[var(--lms-primary)]")}>
-            Eligible <span className="text-xs opacity-80">{eligibleCount}</span>
+            Eligible only <span className="text-xs opacity-80">{eligibleCount}</span>
           </Button>
           <Button type="button" variant="secondary" size="sm" aria-pressed={filters.closingSoon}
             onClick={()=>updateQuery({soon:filters.closingSoon?null:"1"})}

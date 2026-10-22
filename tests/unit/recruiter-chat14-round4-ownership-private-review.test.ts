@@ -159,7 +159,9 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
   expect(editor).toContain("Round added. The placement cell will set its date.");
   expect(editor).toContain("Round updated");
   expect(editor).toContain("Round removed");
-  expect(editor).toContain("Change / Remove:");
+  expect(editor).toContain('onClick={()=>edit(row)}>Change</Button>');
+  expect(editor).toContain('edit(row);setConfirmRemove(true);');
+  expect(editor).toContain('title="Remove this round?"');
   const page=source("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx");
   expect(page).toContain('person.result?.status==="STAGED"');
   expect(page).toContain('person.result?.status==="APPLIED"');
