@@ -7,7 +7,7 @@ describe("lane-8 semester mapping stale refresh controls",()=>{
   expect(source).toContain("const [mappingStale, setMappingStale] = useState(false)");
   expect(source).toContain("setMappingStale(false)");
   expect(source).toContain('["TERM_NOT_FOUND","COURSE_NOT_FOUND","TERM_COURSE_DUPLICATE","TERM_COURSE_POSITION_INVALID"]');
-  expect(source).toContain("if (mappingStale || refreshing || inFlight.current) return;");
+  expect(source).toContain("if (readOnly || mappingStale || refreshing || inFlight.current) return;");
   expect(source).toContain("disabled={pending || refreshing || mappingStale || draggedId !== null} checked=");
   expect(source).toContain("Refresh semester courses before adding or editing selections.");
   expect(source).toContain('aria-label="Refresh semester courses"');
