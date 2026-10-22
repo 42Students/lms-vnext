@@ -23,11 +23,16 @@ describe("W03 DB07 staged schema/source-contract (NOT SQL replay)",()=>{
     }
   });
   it("keeps each staged child constrained to the same project as its parent",()=>{
-    for(const name of ["project_meeting_history_project_fk","project_resource_audit_project_fk",
+    for(const name of ["project_meeting_history_project_fk",
       "project_delivery_events_project_fk","project_task_comments_project_fk"]){
       expect(schema).toContain('name:"'+name+'"');
       expect(sql).toContain("CONSTRAINT "+name);
     }
+    // Resource history intentionally survives source resource deletion: it
+    // remains project-scoped by project_id but does not FK the resource row.
+    expect(schema).toContain('projectId:uuid("project_id").notNull().references(()=>projectInstances.id');
+    expect(schema).toContain("resource key can outlive resource deletion");
+    expect(sql).toContain("CONSTRAINT project_resource_audit_project_fk");
   });
   it("never alters W01's migration journal from this staged source",()=>{
     expect(sql).toContain("NOT registered in drizzle/meta/_journal.json");
