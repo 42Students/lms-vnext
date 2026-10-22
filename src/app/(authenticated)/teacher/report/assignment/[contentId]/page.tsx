@@ -63,7 +63,7 @@ export default async function FacultyAssignmentReportPage({
         kind="assignment"
         rosterUnavailable={report.rosterUnavailable}
         incomplete={facultyReportIsIncomplete({kind:"assignment",eligibleLearners:metrics.eligibleLearners??0,
-          submitted:metrics.submitted,graded:metrics.graded,rosterReadFailed:metrics.eligibleLearners===null})}
+          submitted:metrics.submitted,graded:metrics.graded,rosterReadFailed:report.rosterUnavailable})}
         title={assignment.title?.trim()||"Untitled assignment"}
         subtitle={assignment.courseName}
         summary={[
