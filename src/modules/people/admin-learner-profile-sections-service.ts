@@ -14,7 +14,7 @@ export async function getAdminLearnerProfileSections(
 ){
  if(!isSuperAdmin(context)||!context.adminScope?.collegeId)
   throw new AuthorizationError("people.manage");
- const selected=context.adminScope;
+ const selected={...context.adminScope,collegeId:context.adminScope.collegeId};
  requirePermission(context,"people.manage",{
   collegeId:selected.collegeId,organizationId:selected.organizationId,
  });

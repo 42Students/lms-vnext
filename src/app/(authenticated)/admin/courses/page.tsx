@@ -160,13 +160,12 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
       action={<Link href="/admin/courses" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
   </div>;
   const {catalogueQuery,duplicateCourseId,openCreateCourse}=parsed;
-  const [workspaceResult,dependenciesResult]=await Promise.all([
-    getAdminCourseWorkspace(context,collegeId)
-      .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const})),
-    getSuperAdminCourseDependencyCounts(context)
-      .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const})),
-  ]);
+  const workspaceResult=await getAdminCourseWorkspace(context,collegeId)
+    .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}));
   const workspace=workspaceResult.ok?workspaceResult.value:null;
+  const dependenciesResult=await getSuperAdminCourseDependencyCounts(context,
+    (workspace?.courses??[]).slice(0,100).map(course=>course.id))
+    .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}));
   const lessonCountByCourse=dependenciesResult.ok?dependenciesResult.value:undefined;
 
   return (

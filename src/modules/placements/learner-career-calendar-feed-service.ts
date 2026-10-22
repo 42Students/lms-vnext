@@ -13,7 +13,7 @@ import { careerDayKey,legacyJobImportantDatesToSupplements,
  * dates are loaded independently by learner-calendar-extras-service. */
 export async function loadLearnerCareerCalendarSupplements(
   context: RequestContext,
-): Promise<{ supplements: CareerCalendarSupplement[]; warnings: string[] }> {
+): Promise<{ supplements: CareerCalendarSupplement[]; warnings: string[]; dateSourceSummary: { available: number; empty: number; unsupported: number; invalid: number } }> {
   const now = new Date();
   const jobs = await listLearnerPlacementJobs(context, now);
   const supplements: CareerCalendarSupplement[] = [];
