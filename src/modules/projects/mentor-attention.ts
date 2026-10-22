@@ -40,7 +40,8 @@ export function deriveMentorProjectAttention(
     const freshReview=Boolean(submission?.submittedAt)&&
       (!submission?.reviewedAt||
         submission.submittedAt!.getTime()>submission.reviewedAt.getTime())&&
-      !submission?.reopenedAt;
+      (!submission?.reopenedAt||
+        submission.submittedAt!.getTime()>submission.reopenedAt.getTime());
     if(submission && ["SUBMITTED","UNDER_REVIEW","IN_REVIEW"].includes(submission.status)&&
        freshReview&&submission.submittedAt){
       alerts.push({

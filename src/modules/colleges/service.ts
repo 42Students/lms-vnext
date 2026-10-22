@@ -294,6 +294,39 @@ export async function listColleges(
   });
 }
 
+/** Deleted Items lists only archived colleges within the Super Admin's
+ * selected safety scope. Restoration remains a separate, transaction-guarded
+ * mutation and never resurrects students, sign-in or tenant domains. */
+export async function listArchivedColleges(context: RequestContext) {
+  if (!isSuperAdmin(context)) throw new AuthorizationError("college.manage");
+  const selectedCollegeId=context.adminScope?.collegeId??null;
+  const selectedOrganizationId=context.adminScope?.organizationId??null;
+  requirePermission(context,"college.manage",{
+    organizationId:selectedOrganizationId??undefined,
+    collegeId:selectedCollegeId??undefined,
+  });
+  return getDb().transaction(async tx=>{
+    await assertPersistedPlatformPermission(tx,context,"college.manage",{
+      organizationId:selectedOrganizationId??undefined,
+      collegeId:selectedCollegeId??undefined,
+    });
+    return tx.select({
+      id:colleges.id,name:colleges.name,code:colleges.code,
+      organizationId:colleges.organizationId,
+      createdAt:colleges.createdAt,updatedAt:colleges.updatedAt,
+      status:colleges.status,
+    }).from(colleges)
+      .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
+      .where(and(
+        eq(colleges.status,"ARCHIVED"),
+        eq(organizations.status,"ACTIVE"),
+        selectedCollegeId?eq(colleges.id,selectedCollegeId):undefined,
+        selectedOrganizationId?eq(colleges.organizationId,selectedOrganizationId):undefined,
+      ))
+      .orderBy(asc(colleges.name),asc(colleges.id)).limit(200);
+  });
+}
+
 export async function resolveCollegeUsage(
   collegeId: string,
 ): Promise<CollegeUsage> {

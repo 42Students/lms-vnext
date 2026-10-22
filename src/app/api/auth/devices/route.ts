@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentDeviceSession } from "@/auth/current-session";
+import { ADMIN_SCOPE_COOKIE_NAME } from "@/auth/admin-scope";
+import { MEMBERSHIP_COOKIE_NAME, ROLE_COOKIE_NAME, SESSION_COOKIE_NAME } from "@/auth/session";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {privateAuthResponse} from "@/modules/auth/private-response";
@@ -60,10 +62,29 @@ export async function DELETE(request: Request) {
     const revoked = scope==="all"
       ? await revokeAllOwnSessions(session.userId)
       : await revokeOtherSessions(session.userId,session.sessionId);
-    return privateAuthResponse(NextResponse.json({ ok: true, revoked,
+    const response = privateAuthResponse(NextResponse.json({ ok: true, revoked,
       revokedCount:revoked,scope,currentExcluded:scope==="others",
       message:scope==="all"?"All sessions revoked":"Other sessions revoked",
       currentSessionRevoked:scope==="all" }, { headers: { "Cache-Control": "private, no-store" } }));
+    if (scope === "all") {
+      // The database has revoked the current device too. Immediately expire
+      // every cookie that could preserve a stale selected role or tenant.
+      // Keep the other-devices action signed in on this device.
+      for (const name of [
+        SESSION_COOKIE_NAME, MEMBERSHIP_COOKIE_NAME,
+        ROLE_COOKIE_NAME, ADMIN_SCOPE_COOKIE_NAME,
+      ]) {
+        response.cookies.set(name, "", {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          path: "/",
+          maxAge: 0,
+        });
+      }
+      response.headers.set("Clear-Site-Data", '"storage"');
+    }
+    return response;
   } catch (error) {
     return privateAuthResponse(apiErrorResponse(error));
   }

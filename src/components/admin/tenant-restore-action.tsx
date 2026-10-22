@@ -5,7 +5,7 @@ import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Alert} from "@/components/ui/alert";
-import {apiFetch} from "@/lib/api-fetch";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useToast} from "@/components/ui/toast";
 
@@ -33,7 +33,11 @@ export function TenantRestoreAction({
     router.refresh();
    });
   }catch(reason){
-   const message=reason instanceof Error?reason.message:"Could not restore this record. Refresh and retry.";
+   const message=reason instanceof FriendlyFetchError && reason.status===409
+    ?"This record changed or its parent is unavailable. Refresh the archived list before restoring."
+    :reason instanceof FriendlyFetchError && reason.status===403
+    ?"You no longer have permission to restore this record.":
+    "Could not restore this record. Refresh and retry.";
    setError(message);
    showToast({tone:"error",title:"Restore failed",description:message});
   }

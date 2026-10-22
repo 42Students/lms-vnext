@@ -69,7 +69,9 @@ export function CollegeSectionLifecycleAction({ row }: {
         showToast({tone:"success",title:`Class “${row.name}” deleted successfully.`});
         router.refresh();
       }catch(reason){
-        setError(reason instanceof Error?reason.message:"Could not delete this class. Check enrollment, schedule and course dependencies.");
+        const code=reason instanceof FriendlyFetchError?reason.code:null;
+        setError(academicSetupErrorMessage(code??reason,
+          "Could not delete this class. Check enrollment, schedule and course dependencies."));
       }finally{inFlight.current=false;}
     });
   }

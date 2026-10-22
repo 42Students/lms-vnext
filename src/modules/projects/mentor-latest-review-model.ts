@@ -12,11 +12,20 @@ export function currentPendingMentorSubmissions<T extends {
     if(!current||row.version>current.version||
       row.version===current.version&&row.id.localeCompare(current.id)>0){
       latest.set(row.projectId,row);
+    }else if(row.version===current.version&&row.id===current.id){
+      // Review history can fan out one submission into several joined rows.
+      // The last review wins regardless of SQL result order; an old review
+      // receipt must never resurrect a notification for already reviewed work.
+      if(row.reviewedAt&&(!current.reviewedAt||
+        row.reviewedAt.getTime()>current.reviewedAt.getTime())){
+        latest.set(row.projectId,row);
+      }
     }
   }
   for(const [projectId,row] of latest){
     if(!["SUBMITTED","UNDER_REVIEW","IN_REVIEW"].includes(row.status)||
-      !row.submittedAt||row.reopenedAt||
+      !row.submittedAt||
+      row.reopenedAt&&row.submittedAt.getTime()<=row.reopenedAt.getTime()||
       row.reviewedAt&&row.submittedAt.getTime()<=row.reviewedAt.getTime()){
       latest.delete(projectId);
     }

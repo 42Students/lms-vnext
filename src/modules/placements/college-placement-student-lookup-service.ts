@@ -221,6 +221,11 @@ export async function getCollegeStudentPlacementDetails(ctx:RequestContext,raw:u
   room:placementRoundCandidateSlots.room,
  }).from(placementRoundCandidateSlots)
   .innerJoin(placementJobRounds,eq(placementJobRounds.id,placementRoundCandidateSlots.roundId))
+  // Candidate IDs were authorized above; additionally tie the interview
+  // round back to its application's job to reject malformed imported slots.
+  .innerJoin(placementApplications,and(
+   eq(placementApplications.id,placementRoundCandidateSlots.applicationId),
+   eq(placementApplications.jobId,placementJobRounds.jobId)))
   .where(and(inArray(placementRoundCandidateSlots.applicationId,ids),
    eq(placementRoundCandidateSlots.status,"BOOKED"),
    gte(placementRoundCandidateSlots.startsAt,now)))

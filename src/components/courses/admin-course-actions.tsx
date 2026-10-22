@@ -322,7 +322,7 @@ export function CourseActions({
         dismissible={!pending}
         title={"Edit “"+course.name+"”"}
         className="max-w-[660px] max-h-[min(85vh,900px)] overflow-y-auto"
-        description="Department ownership is immutable after Course creation. Existing files and linked lessons remain attached."
+        description="A Course without any Offerings can move within the same college using Move department. Existing metadata and files remain attached."
         footer={
           <>
             <Button
