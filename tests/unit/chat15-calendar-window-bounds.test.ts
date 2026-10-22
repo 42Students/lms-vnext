@@ -13,7 +13,7 @@ describe("chat-15 bounded calendar retrieval",()=>{
   expect(window.to.getTime()-window.from.getTime()).toBe(42*86_400_000);
   const src=readFileSync(join(process.cwd(),"src/modules/academics/learner-schedule-service.ts"),"utf8");
   expect(src).toContain("lt(sectionScheduleEvents.startsAt,visibleWindow.to)");
-  expect(src).toContain("gte(sectionScheduleEvents.endsAt,visibleWindow.from)");
+  expect(src).toContain("gt(sectionScheduleEvents.endsAt,visibleWindow.from)");
   expect(readFileSync(join(process.cwd(),"src/app/(authenticated)/learn/calendar/page.tsx"),"utf8")).toContain("getLearnerClassSchedule(context,window)");
  });
  it("LEARNER-learning-misc-34 bounds attendance calendar and detail reads to IST month",()=>{
