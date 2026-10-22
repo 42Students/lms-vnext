@@ -85,7 +85,7 @@ export function MembershipSwitcher({
 
   // PUB-auth-public-22: no interactive chooser is needed for a single workspace.
   if (choices.length === 1 && active) {
-    return <p className="block min-w-0 max-w-60 truncate text-sm font-semibold text-body">{choices[0].label}</p>;
+    return <p className="block min-w-0 max-w-60 truncate text-sm font-semibold text-body">{active.label}</p>;
   }
 
   return (
