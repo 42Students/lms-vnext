@@ -38,7 +38,8 @@ export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
  const rowIssues:string[]=[];
  const mobileRows=new Map<string,number>(),emailRows=new Map<string,number>();
  parsedRows.forEach((row,index)=>{
-   const rowNumber=index+1;
+   // CSV row one contains headers; diagnostics must point to file row numbers.
+   const rowNumber=index+2;
    const earlierMobile=mobileRows.get(row.phoneE164);
    if(earlierMobile!==undefined)rowIssues.push("Record "+rowNumber+": Duplicate mobile in file (record "+earlierMobile+").");
    else mobileRows.set(row.phoneE164,rowNumber);
