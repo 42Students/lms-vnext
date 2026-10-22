@@ -8,6 +8,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { RecruiterProfileAccess } from "@/components/hr/recruiter-profile-access";
 import { RecruiterProfileDetailsEditor } from "@/components/hr/recruiter-profile-details-editor";
+import { RecruiterPendingInvitations } from "@/components/hr/recruiter-pending-invitations";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getRecruiterSelfProfile } from "@/modules/placements/recruiter-profile-service";
@@ -63,6 +64,8 @@ export default async function HrProfilePage({ searchParams }: {
         title="Your Profile"
         description="Manage your recruiter details and review your college access."
       />
+      <RecruiterPendingInvitations invitations={allOverview.pendingInvites}
+        total={allOverview.pendingTotal} hasMore={allOverview.pendingHasMore}/>
 
       <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,1.55fr)_minmax(18rem,1fr)]">
        <div className="min-w-0">      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-6">
