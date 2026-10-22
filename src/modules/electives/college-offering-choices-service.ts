@@ -59,7 +59,7 @@ export async function listCollegeOfferingChoices(ctx:RequestContext,rawSlotId:st
  const facultyByDelivery=new Map<string,Array<{role:string;displayName:string}>>();
  for(const item of facultyRows){
   const list=facultyByDelivery.get(item.deliveryId)??[];
-  list.push({role:item.role,displayName:item.displayName});
+  list.push({role:item.role,displayName:item.displayName?.trim() || "Faculty"});
   facultyByDelivery.set(item.deliveryId,list);
  }
  return {deliveries,groups,offerings:offerings.map(offering=>({

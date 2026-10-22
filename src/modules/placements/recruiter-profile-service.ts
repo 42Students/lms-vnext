@@ -107,7 +107,7 @@ export async function getRecruiterSelfProfile(context: RequestContext, selectedC
     // The authenticated grant may have expired or been revoked since session resolution.
     throw new AuthorizationError("placements.recruiter.read");
   }
-  const nameParts=row.displayName.trim().split(/\s+/).filter(Boolean);
+  const nameParts=(row.displayName??"").trim().split(/\s+/).filter(Boolean);
   const firstName=nameParts[0]??"";
   const lastName=nameParts.slice(1).join(" ");
   return {...row,
