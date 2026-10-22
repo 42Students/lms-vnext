@@ -183,8 +183,8 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
       setDeleteTarget(null);setFeedbackTone("success");setFeedback("Resource removed.");
     }catch(error){problem(error);}finally{setBusy(false);}
   }
-  return <section className="min-w-0 space-y-4 border-b border-border pb-[var(--lms-space-4)] [overflow-wrap:anywhere]">
-    <h3 className="m-0 text-base font-semibold text-[var(--lms-heading)]">Attached</h3>
+  return <section aria-labelledby={"project-files-"+projectId} className="min-w-0 space-y-4 border-b border-border pb-[var(--lms-space-4)] [overflow-wrap:anywhere]">
+    <h3 id={"project-files-"+projectId} className="m-0 text-base font-semibold text-[var(--lms-heading)]">Attached</h3>
     {canUpload&&<form onSubmit={upload} className="min-w-0 space-y-3 border-b border-border pb-4">
       <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]" htmlFor={"project-file-"+projectId}>Or upload a file</label>
       <Input ref={fileInputRef} id={"project-file-"+projectId} type="file" accept={acceptAttributeFor("project-resource")}
@@ -259,8 +259,8 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
             </div>
           </div>
           {canManage?<Disclosure title="Manage file" className="mt-2" contentClassName="flex min-w-0 flex-wrap gap-2 pt-2">
-            <Button variant="secondary" disabled={busy} onClick={()=>beginEdit(file)} className="min-h-11 w-full md:min-h-9 md:w-auto">Edit resource</Button>
-            <Button variant="link" disabled={busy} onClick={()=>{setFeedback(null);setDeleteTarget(file);}} className="min-h-11 w-full !text-[var(--lms-error)] md:min-h-9 md:w-auto">Delete</Button>
+            <Button variant="secondary" aria-label={"Edit resource "+file.title} disabled={busy} onClick={()=>beginEdit(file)} className="min-h-11 w-full md:min-h-9 md:w-auto">Edit resource</Button>
+            <Button variant="link" aria-label={"Delete resource "+file.title} disabled={busy} onClick={()=>{setFeedback(null);setDeleteTarget(file);}} className="min-h-11 w-full !text-[var(--lms-error)] md:min-h-9 md:w-auto">Delete</Button>
           </Disclosure>:null}
           {editing===file.id&&canManage&&<form onSubmit={event=>void saveEdit(event,file)}
             className="mt-3 grid min-w-0 gap-3 border-t border-[var(--lms-canvas-border)] pt-3 md:grid-cols-2">

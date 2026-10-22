@@ -288,6 +288,7 @@ export function LearnerFinalDeliveryControl({
         <Button
           size="sm"
           variant="secondary"
+          aria-haspopup="dialog" aria-expanded={open}
           onClick={() => {
             resetFromDraft();
             setOpen(true);
@@ -589,15 +590,15 @@ export function FinalReviewControl({
     <>
       {mode==="MENTOR" ? (
         <div className="flex flex-wrap gap-2">
-          <Button size="sm" variant="secondary" onClick={() => {
+          <Button size="sm" variant="secondary" aria-haspopup="dialog" aria-expanded={open} onClick={() => {
             setDecision("APPROVED"); setStaleReview(false); setOpen(true);
           }}>Accept submission</Button>
-          <Button size="sm" variant="secondary" onClick={() => {
+          <Button size="sm" variant="secondary" aria-haspopup="dialog" aria-expanded={open} onClick={() => {
             setDecision("CHANGES_REQUESTED"); setStaleReview(false); setOpen(true);
           }}>Request changes</Button>
         </div>
       ) : (
-        <Button size="sm" variant="secondary" onClick={() => setOpen(true)}>
+        <Button size="sm" variant="secondary" aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen(true)}>
           Review final delivery
         </Button>
       )}
@@ -785,6 +786,7 @@ export function ProjectEvaluationControl({
       <Button
         size="sm"
         variant="secondary"
+        aria-haspopup="dialog" aria-expanded={open}
         onClick={() => setOpen(true)}
       >
         Evaluate project

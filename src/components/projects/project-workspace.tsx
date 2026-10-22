@@ -363,7 +363,7 @@ function AdminDeliveryOverview({workspace}:{workspace:Workspace}){
   reviewState==="CHANGES_REQUESTED"||reviewState==="REJECTED"?"Changes requested":
   reviewState==="SUBMITTED"||reviewState==="UNDER_REVIEW"?"Under review":
   reviewState==="LOCKED"?"Locked":reviewState==="DRAFT"?"Draft":"Pending";
- return <div className="space-y-4" aria-label="Latest final delivery">
+ return <div role="region" className="space-y-4" aria-label="Latest final delivery">
   <section className="rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4">
    <div className="flex flex-wrap items-start justify-between gap-3">
     <div><p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Final delivery</p>

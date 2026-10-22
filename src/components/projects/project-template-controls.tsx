@@ -123,6 +123,7 @@ export function CreateProjectTemplateControl() {
     <>
       <Button
         size="sm"
+        aria-haspopup="dialog" aria-expanded={open}
         onClick={() => {
           reset();
           setOpen(true);
@@ -477,6 +478,7 @@ export function ProjectTemplateActions({
           size="sm"
           variant="secondary"
           disabled={pending !== null}
+          aria-haspopup="dialog" aria-expanded={duplicateOpen}
           onClick={() => setDuplicateOpen(true)}
         >
           {pending === "Duplicate template"

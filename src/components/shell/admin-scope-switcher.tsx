@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect,useState,useTransition} from "react";
+import {useEffect,useId,useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
 import type {AdminScope} from "@/modules/identity/context";
 import type {AdminScopeChoices} from "@/modules/admin-scope/service";
@@ -16,6 +16,7 @@ export function AdminScopeSwitcher({choices,scope}:{
  choices:AdminScopeChoices;scope:AdminScope|null|undefined;
 }){
  const router=useRouter();
+ const searchId=useId();
  const {showToast}=useToast();
  const [error,setError]=useState<string|null>(null);
  const [search,setSearch]=useState("");
@@ -120,8 +121,8 @@ export function AdminScopeSwitcher({choices,scope}:{
   </label>
   <details className="group min-w-0">
    <summary className="flex min-h-9 cursor-pointer items-center text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] max-[767px]:min-h-11">Search colleges</summary>
-   <label htmlFor="admin-college-search" className="sr-only">Search colleges</label>
-   <Input id="admin-college-search" type="search" value={search}
+   <label htmlFor={searchId} className="sr-only">Search colleges</label>
+   <Input id={searchId} type="search" value={search}
     onChange={event=>setSearch(event.target.value)} placeholder="Search colleges"
     className="mt-2 w-full"/>
   </details>

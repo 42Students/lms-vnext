@@ -146,9 +146,9 @@ export function ProjectReadinessOverrideForm({
         </fieldset>
         {Boolean(state) && state !== "CLEAR" ? (
           <div className="grid min-w-0 gap-[6px]">
-            <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]" htmlFor="project-readiness-note">{copy.note}</label>
+            <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]" htmlFor={overrideId+"note"}>{copy.note}</label>
             <Textarea
-              id="project-readiness-note"
+              id={overrideId+"note"}
               value={note}
               disabled={pending}
               required
@@ -167,8 +167,8 @@ export function ProjectReadinessOverrideForm({
           <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]"
             htmlFor="project-readiness-cleared-note">Note</label>
           <Textarea id="project-readiness-cleared-note" rows={3} maxLength={2000}
-            value={note} disabled aria-describedby="readiness-clear-description"/>
-          <p id="readiness-clear-description" className="text-xs text-body">
+            value={note} disabled aria-describedby={overrideId+"clear-description"}/>
+          <p id={overrideId+"clear-description"} className="text-xs text-body">
             Clearing removes the manual override; the note is disabled because no new reason is needed.
           </p>
         </div>:null}

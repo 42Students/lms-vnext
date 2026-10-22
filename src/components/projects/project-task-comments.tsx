@@ -55,11 +55,13 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
   finally{setBusy(false);}
  }
  return <div className="mt-[var(--lms-space-2)] min-w-0 space-y-[var(--lms-space-3)]">
-   <Button size="sm" variant="secondary"
+   <Button size="sm" variant="secondary" aria-expanded={open}
+    aria-controls={"project-task-comments-"+taskId}
     onClick={()=>open?discard.requestClose():void show()}>
      Comments
    </Button>
-   {open?<div className="space-y-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]" aria-label="Task comments">
+   {open?<div id={"project-task-comments-"+taskId} role="region" aria-label="Task comments"
+     className="space-y-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]">
      <p className="text-xs text-muted-foreground leading-[20px]">Task activity timeline with notes and progress updates.</p>
      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Filter comments
        <Select value={filter} onChange={event=>setFilter(event.target.value as typeof filter)}

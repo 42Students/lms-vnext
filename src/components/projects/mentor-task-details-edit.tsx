@@ -1,6 +1,6 @@
 "use client";
 
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useId, useState } from "react";
 import { Select } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,7 @@ type Props={
 };
 export function MentorTaskDetailsEdit(props:Props) {
   const router=useRouter();
+  const estimateErrorId=useId();
   const {showToast}=useToast();
   const [open,setOpen]=useState(false);
   const [confirmOpen,setConfirmOpen]=useState(false);
@@ -124,9 +125,10 @@ export function MentorTaskDetailsEdit(props:Props) {
         </label>
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Estimate
           <Input type="number" min={0} max={1000} value={estimate}
+            aria-invalid={!estimateValid} aria-describedby={!estimateValid?estimateErrorId:undefined}
             onChange={e=>setEstimate(e.target.value)}/>
         </label>
-        {!estimateValid?<p role="alert" className="text-xs text-error">
+        {!estimateValid?<p id={estimateErrorId} role="alert" className="text-xs text-error">
           Estimate must be a whole number from 0 to 1000.
         </p>:null}
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
@@ -155,7 +157,7 @@ export function MentorTaskDetailsEdit(props:Props) {
   );
   return <>
     {(!props.inlineEdit||!open)?
-      <Button size="sm" variant="secondary" onClick={begin}
+      <Button size="sm" variant="secondary" aria-haspopup={props.inlineEdit?undefined:"dialog"} onClick={begin}
         aria-expanded={props.inlineEdit?open:undefined}>
         {props.inlineEdit?"Edit row":"Edit task"}
       </Button>:null}

@@ -39,12 +39,12 @@ export function RecruiterInlineOwner({lead,onUpdated}:{
  }
  return <div className="min-w-28 space-y-2">
   <Button variant="ghost" type="button" aria-label={"Change owner for "+lead.name}
-    aria-expanded={open} disabled={loading}
+    aria-expanded={open} aria-controls={"recruiter-owner-editor-"+lead.id} disabled={loading}
     className="min-h-11 md:min-h-9 max-w-full justify-start rounded-[var(--lms-control-radius)] px-3 text-left transition-[background-color] duration-[200ms] ease-[ease] hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] motion-reduce:transition-none"
     onClick={()=>open?setOpen(false):void begin()}>
    {lead.ownerName??"Unassigned"} · Edit
   </Button>
-  {open?<div role="group" aria-label={"Change owner for "+lead.name} className="min-w-0 space-y-2">
+  {open?<div id={"recruiter-owner-editor-"+lead.id} role="group" aria-label={"Change owner for "+lead.name} className="min-w-0 space-y-2">
    {loading?<p role="status" className="text-xs">Loading…</p>:null}
    <label className="block text-[13px]">Owner
     <Select value={target} onChange={e=>setTarget(e.target.value)}

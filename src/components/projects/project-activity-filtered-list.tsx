@@ -169,8 +169,8 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
         </tr>)}</tbody>
       </table>
     </div>
-    : <div role="feed" aria-label="Project activity" className="space-y-2">
-      {filtered.map(event=><article key={event.id} className="border-b border-border py-4">
+    : <div role="feed" aria-label="Project activity" aria-busy={busy} className="space-y-2">
+      {filtered.map((event,index)=><article key={event.id} aria-posinset={index+1} aria-setsize={filtered.length} className="border-b border-border py-4">
        <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
          <p className="font-semibold">{event.summary}</p>

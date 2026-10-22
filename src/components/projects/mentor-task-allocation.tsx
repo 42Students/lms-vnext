@@ -195,6 +195,9 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
   {filtered.length===0?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-body leading-[22px]">
     {tasks.length===0?"No tasks to allocate yet.":"No tasks match these filters. Use Clear all to see every task."}
   </p>:null}
+  <p className="sr-only" id="mentor-allocation-keyboard-help">
+    To assign a task without dragging, use the Assign to selector on its card.
+  </p>
   <div role="region" aria-label="Task allocation cards; scroll sideways for more learners" tabIndex={0} data-dragging={dragging}
     className={styles.scrollRegion}><div className={styles.track}>
    {groups.map(group=>{
@@ -212,6 +215,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
      </p>
      <ul className={styles.body}>{cards.map(task=><li key={task.id}
        draggable={!readOnly&&!busy&&!["DONE","IN_REVIEW"].includes(task.status)}
+       aria-describedby={!readOnly?"mentor-allocation-keyboard-help":undefined}
        onDragStart={event=>{event.dataTransfer.setData("text/plain",task.id);setDragging(true);}}
         onDragEnd={()=>setDragging(false)}
        className={"border p-3 text-sm "+styles.card}>

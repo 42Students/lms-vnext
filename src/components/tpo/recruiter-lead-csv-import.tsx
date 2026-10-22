@@ -157,7 +157,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
   })??[];
   return (
     <>
-      <Button ref={launchRef} type="button" variant="secondary" className="min-h-11 md:min-h-9 print:hidden" aria-label="Import recruiter leads" onClick={() => setOpen(true)}>
+      <Button ref={launchRef} type="button" variant="secondary" className="min-h-11 md:min-h-9 print:hidden" aria-label="Import recruiter leads" aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen(true)}>
         Import
       </Button>
       <Dialog open={open} onOpenChange={next=>{if(!next)close();}}

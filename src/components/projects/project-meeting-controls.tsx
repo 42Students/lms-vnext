@@ -232,6 +232,7 @@ export function RequestProjectMeetingControl({
       <Button
         size="sm"
         variant="secondary"
+        aria-haspopup="dialog" aria-expanded={open}
         onClick={openDialog}
       >
         Request a meeting
@@ -505,6 +506,7 @@ export function ScheduleProjectMeetingControl({
       <Button
         size="sm"
         variant="secondary"
+        aria-haspopup="dialog" aria-expanded={open}
         onClick={openDialog}
       >
         {meeting

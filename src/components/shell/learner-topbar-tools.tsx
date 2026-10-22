@@ -6,7 +6,7 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import { PopoverListbox } from "@/components/ui/popover";
 import {LearnerNotificationBell} from "./learner-notification-bell";
 import { LEARNER_COURSE_SEARCH_PLACEHOLDER } from "@/modules/courses/learner-course-copy-model";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 
@@ -18,6 +18,7 @@ type LearnerCourse = {
 };
 
 export function LearnerTopbarTools() {
+  const searchId=useId(),resultId=useId();
   const [query, setQuery] = useState("");
   const [courses, setCourses] = useState<LearnerCourse[]>([]);
   const [loadFailed,setLoadFailed]=useState(false);
@@ -66,14 +67,14 @@ export function LearnerTopbarTools() {
         if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
       }}>
       <div className="relative hidden min-w-0 flex-1 sm:block">
-        <label className="sr-only" htmlFor="learner-global-course-search">
+        <label className="sr-only" htmlFor={searchId}>
           Search Courses
         </label>
         <Input
-          id="learner-global-course-search"
+          id={searchId}
           value={query}
           role="combobox" aria-autocomplete="list" aria-haspopup="listbox"
-          aria-expanded={open} aria-controls={open ? "learner-topbar-course-results" : undefined}
+          aria-expanded={open} aria-controls={open?resultId:undefined}
           onFocus={() => setOpen(true)}
           onChange={(event) => {
             setQuery(event.target.value);
@@ -94,7 +95,7 @@ export function LearnerTopbarTools() {
           autoComplete="off"
         />
         {open ? (
-          <PopoverListbox id="learner-topbar-course-results" label="Course search results" onDismiss={() => setOpen(false)}
+          <PopoverListbox id={resultId} label="Course search results" onDismiss={() => setOpen(false)}
             className="absolute left-0 top-[calc(100%+0.5rem)] z-50 w-[min(26rem,calc(100vw-2rem))] min-w-0 max-h-96 overflow-y-auto p-2"
           >
             {loadFailed?<div className="flex flex-wrap items-center gap-[var(--lms-space-2)] p-2"><InlineNotice tone="error" message="Could not load courses. Please try again." onDismiss={()=>setLoadFailed(false)}/>
