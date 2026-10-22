@@ -5,7 +5,8 @@ describe("Chat-5 FIXED-ON-MAIN evidence revalidation",()=>{
  it("TPO-batches-29 redirects legacy tab deep links to the registered workspace routes",()=>{
   const p=source("src/app/(authenticated)/tpo/batches/[batchId]/page.tsx");
   for(const text of ['classes:"classes"','registration:"registrations"','students:"students"','rules:"rules"','history:"history"'])expect(p).toContain(text);
-  expect(p).toContain('redirect("/tpo/batches/"+encodeURIComponent(batchId)+"/"+aliases[selected])');
+  expect(p).toContain('const destination="/tpo/batches/"+encodeURIComponent(batchId)+"/"+aliases[selected]');
+  expect(p).toContain('redirect(destination+(preserved.size?"?"+preserved.toString():""))');
  });
  it("TPO-students-08 exposes authenticated bulk profile verification with guarded write",()=>{
   const c=source("src/components/tpo/tpo-roster-verification-bulk.tsx");

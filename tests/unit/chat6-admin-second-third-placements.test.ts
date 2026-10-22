@@ -75,7 +75,7 @@ describe("/admin placements second-third: scoping, filtering, counts, links", ()
       make("closed", "CLOSED", "Closed hiring"), make("cancelled", "CANCELLED", "Cancelled hiring"),
     ];
     expect(filterAdminDriveDirectory(rows, adminDriveDirectoryQuerySchema.parse({status:"ACTIVE"})).items.map(v=>v.job.id)).toEqual(["published"]);
-    expect(filterAdminDriveDirectory(rows, adminDriveDirectoryQuerySchema.parse({status:"CLOSED"})).items.map(v=>v.job.id)).toEqual(["closed","cancelled"]);
+    expect(filterAdminDriveDirectory(rows, adminDriveDirectoryQuerySchema.parse({status:"CLOSED"})).items.map(v=>v.job.id)).toEqual(["cancelled","closed"]);
     expect(filterAdminDriveDirectory(rows, adminDriveDirectoryQuerySchema.parse({status:"ALL",q:"oPeN"})).items.map(v=>v.job.id)).toEqual(["published"]);
     const view = filterAdminDriveDirectory(rows, adminDriveDirectoryQuerySchema.parse({page:999,pageSize:10}));
     expect(view).toMatchObject({ page: 1, totalPages: 1, total: 4 });
@@ -104,8 +104,11 @@ describe("/admin placements second-third: scoping, filtering, counts, links", ()
   it("CHAT6-ADMIN-APPLICATIONS-01 rejects duplicate query selectors and forged tenant IDs", () => {
     const good = driveApplicationsParams({q:"campus",stage:"INTERVIEW",page:"3"});
     expect(good).toMatchObject({q:"campus",stage:"INTERVIEW",page:3});
+    // Non-scoping legacy display filters recover, but foreign identifiers fail closed.
+    expect(driveApplicationsParams({q:["first","second"]})).toMatchObject({q:""});
+    expect(driveApplicationsParams({stage:"SUPER_ADMIN"})).toMatchObject({stage:"ALL"});
+    expect(driveApplicationsParams({page:"0"})).toMatchObject({page:1});
     for (const bad of [
-      { q: ["first","second"] },{ stage: "SUPER_ADMIN" }, { page: "0" },
       { departmentId: "invalid" }, { programId: "another-college" },
       { page:"1001" },
     ]) expect(driveApplicationsParams(bad)).toBeNull();

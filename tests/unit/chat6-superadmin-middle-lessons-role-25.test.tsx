@@ -15,6 +15,7 @@ vi.mock("@/modules/courses/super-admin-learning-path-picker",()=>({
  listSuperAdminLearningPathPicker:vi.fn(),
 }));
 vi.mock("@/components/courses/super-admin-lesson-create",()=>({SuperAdminLessonCreate:()=>null}));
+vi.mock("@/components/courses/lesson-page-size-preference",()=>({LessonPageSizePreference:()=>null}));
 vi.mock("@/components/admin/super-admin-learning-filter-fields",()=>({SuperAdminLearningFilterFields:()=>null}));
 
 const collegeId="11111111-1111-4111-8111-111111111111";
@@ -47,7 +48,7 @@ describe("SA-middle-lessons-25 scoped authoring role journey",()=>{
  it("supports an unselected platform scope without reading private lessons",async()=>{
   vi.mocked(getCurrentRequestContext).mockResolvedValue(ctx(true,null) as never);
   const html=renderToStaticMarkup(await page());
-  expect(html).toContain("Select a college to continue");
+  expect(html).toContain("Select a college to manage Lessons");
   expect(listCollegeLessons).not.toHaveBeenCalled();
  });
  it("invalid filters show a recovery state without a lessons query",async()=>{

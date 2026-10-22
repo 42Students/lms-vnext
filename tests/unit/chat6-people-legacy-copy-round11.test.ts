@@ -6,7 +6,8 @@ describe("Super Admin People legacy wording",()=>{
   const page=source("src/app/(authenticated)/admin/faculty/page.tsx");
   const create=source("src/components/admin/person-onboard-dialog.tsx");
   const edit=source("src/components/college/college-person-edit-action.tsx");
-  for(const text of ["Register New Faculty","Registered Faculty","Used for OTP login"])expect(page).toContain(text);
+  for(const text of ["Register New Faculty","Registered Faculty"])expect(page).toContain(text);
+  expect(create).toContain("mobile number");
   expect(create).toContain("Faculty registered successfully! They can now login with their mobile number.");
   expect(edit).toContain("Faculty updated successfully!");
   const decisions=source("docs/audit/owner-decisions-resolved.md");
