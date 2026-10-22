@@ -259,8 +259,10 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   const route=source("src/app/(authenticated)/admin/projects/[projectId]/[section]/page.tsx");
   const page=source("src/components/projects/admin-project-section-page.tsx");
   const workspace=source("src/components/projects/project-workspace.tsx");
-  expect(route).toContain("from={one(query.from)}");
-  expect(route).toContain("reason={one(query.reason)}");
+  expect(route).toContain('const from=one(query["from"]);');
+  expect(route).toContain('const reason=one(query["reason"]);');
+  expect(route).toContain("{...(from!==undefined?{from}:{})}");
+  expect(route).toContain("{...(reason!==undefined?{reason}:{})}");
   expect(page).toContain('from === "at-risk" || from === "submissions"');
   expect(page).toContain("sectionQuerySuffix={sectionQuerySuffix}");
   expect(workspace).toContain("<Breadcrumbs items={[");
