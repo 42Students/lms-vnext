@@ -144,6 +144,8 @@ export default async function CollegePlacementsPage({searchParams}:{
           </Link>
         </form>
         {filtered?<DataTable caption="Active college drives" rows={activeRows} getRowKey={row=>row.id}
+          empty={<EmptyState title="No active drives" description="No published drives match your search."
+            action={<Link href={filteredHref} className="font-semibold text-link underline">View all drives</Link>}/>}
           columns={[
             {key:"title",header:"Drive",mobilePriority:"primary",cell:row=>
               <Link href={"/college/placements/jobs/"+encodeURIComponent(row.id)+"/overview"}
