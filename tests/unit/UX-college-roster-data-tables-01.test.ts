@@ -9,13 +9,13 @@ describe("UX-college-roster-data-tables-01 responsive roster and faculty detail"
     expect(s).toMatch(/getRowKey=\{item\s*=>\s*item\.membershipId\}/);
     expect(s).toContain("StudentClassMoveAction membershipId={item.membershipId}");
     expect(s).toMatch(/mobilePriority:\s*"action"/);
-    expect(s).toContain("No matching students.");
+    expect(s).toContain('title="No matching students"');
     expect(s).not.toContain("<table");
   });
   it("/college/electives/[slotId]/allocate retains checked learner IDs inside real form submission",()=>{
     const s=read("electives/[slotId]/allocate");
     expect(s).toContain('caption="Eligible students for allocation"');
-    expect(s).toContain('type="checkbox"');
+    expect(s).toContain("<Checkbox");
     expect(s).toContain('name="membershipId" value={student.membershipId}');
     expect(s).toMatch(/mobilePriority:\s*"action"/);
     expect(s).toContain('name="identifiers"');
