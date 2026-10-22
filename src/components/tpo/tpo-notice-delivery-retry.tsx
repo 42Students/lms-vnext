@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useGuardedAction } from "@/hooks/use-guarded-action";
 
 type DeliveryState = {
   status: "PENDING" | "SENT" | "FAILED";
@@ -11,7 +12,7 @@ type DeliveryState = {
 
 export function TpoNoticeDeliveryRetry({ noticeId }: { noticeId: string }) {
   const [state, setState] = useState<DeliveryState | null>(null);
-  const [retrying, setRetrying] = useState(false);
+  const { run, pending: retrying } = useGuardedAction({busyLabel:"Retrying delivery…"});
   const [message, setMessage] = useState("");
   const endpoint = "/api/placements/tpo/announcements/" +
     encodeURIComponent(noticeId) + "/delivery";
@@ -32,7 +33,7 @@ export function TpoNoticeDeliveryRetry({ noticeId }: { noticeId: string }) {
 
   async function retry() {
     if (retrying || !state?.retryable) return;
-    setRetrying(true);
+    await run(async () => {
     setMessage("");
     try {
       const response = await fetch(endpoint, {
@@ -48,9 +49,8 @@ export function TpoNoticeDeliveryRetry({ noticeId }: { noticeId: string }) {
       setMessage("Delivery retried successfully.");
     } catch {
       setMessage("Couldn't retry delivery. Check your connection and try again.");
-    } finally {
-      setRetrying(false);
     }
+    });
   }
 
   if (!state?.retryable && !message) return null;
