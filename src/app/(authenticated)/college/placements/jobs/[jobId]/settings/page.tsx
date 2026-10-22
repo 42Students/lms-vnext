@@ -13,6 +13,7 @@ import {PlacementDraftEditForm} from "@/components/placements/placement-draft-ed
 import {listPlacementJobTypeChoices} from "@/modules/placements/tpo-configuration-read-service";
 import {listPrograms} from "@/modules/academics/program-service";
 import {listCohorts} from "@/modules/academics/cohort-service";
+import {listSections} from "@/modules/academics/section-service";
 import {getPlacementJob} from "@/modules/placements/job-service";
 import {getJobEligibilityPolicy} from "@/modules/placements/eligibility-service";
 import type {CollegeLegacyDriveStatus} from "@/modules/placements/college-legacy-drive-settings-model";
@@ -74,6 +75,15 @@ export default async function CollegeDriveSettingsPage({
     ?cohortResults.map(row=>row.status==="fulfilled"?row.value:null).filter(
        (row):row is {program:typeof programs[number];cohorts:Awaited<ReturnType<typeof listCohorts>>}=>row!==null)
     :null;
+  const sectionResults=cohortGroups?await Promise.allSettled(
+    cohortGroups.flatMap(({program,cohorts})=>cohorts
+      .filter(cohort=>cohort.status!=="ARCHIVED")
+      .map(async cohort=>({program,cohort,sections:await listSections(context,cohort.id)}))),
+  ):null;
+  const sectionGroups=sectionResults?.every(row=>row.status==="fulfilled")
+    ?sectionResults.map(row=>row.status==="fulfilled"?row.value:null).filter(
+       (row):row is {program:typeof programs[number];cohort:typeof cohortGroups[number]["cohorts"][number];sections:Awaited<ReturnType<typeof listSections>>}=>row!==null)
+    :null;
   const applicationCount=overviewResult.status==="fulfilled"
     ?overviewResult.value.counts.applications:null;
   return <CollegeDriveSettingsDirtyGuard className="min-w-0 space-y-[var(--lms-space-4)]">
@@ -121,7 +131,7 @@ export default async function CollegeDriveSettingsPage({
         in the placement operations workspace before creating a replacement draft.</p>
       {!drive?<Alert tone="info">Company matching could not be verified. Check the Companies directory; do not save an unlinked name.</Alert>:null}
     </section>
-    {job.status==="DRAFT"&&eligibilityPolicy&&cohortGroups?
+    {job.status==="DRAFT"&&eligibilityPolicy&&cohortGroups&&sectionGroups?
       <section aria-label="Edit drive" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
         <PlacementDraftEditForm jobTypes={jobTypes} academicOptions={{
           programs:programs.map(program=>({
@@ -133,6 +143,10 @@ export default async function CollegeDriveSettingsPage({
               id:cohort.id,name:cohort.name,code:cohort.code,
               programId:program.id,programName:program.name,status:cohort.status,
             }))),
+          sections:sectionGroups.flatMap(({program,cohort,sections})=>sections.map(section=>({
+            id:section.id,name:section.name,code:section.code,
+            cohortId:cohort.id,cohortName:cohort.name,programId:program.id,
+          }))),
         }} value={{job:{
           id:job.id,title:job.title,description:job.description,
           employmentType:job.employmentType as "FULL_TIME"|"INTERNSHIP"|"CONTRACT",
@@ -144,9 +158,11 @@ export default async function CollegeDriveSettingsPage({
           applicationMode:job.applicationMode as "INTERNAL"|"HYBRID"|"EXTERNAL_ONLY",
           externalApplicationUrl:job.externalApplicationUrl,
           applicationDeadline:job.applicationDeadline?.toISOString()??null,
+          legacyPostingDetails:job.legacyPostingDetails,
         },policy:{
           allowedProgramIds:eligibilityPolicy.allowedProgramIds,
           allowedCohortIds:eligibilityPolicy.allowedCohortIds,
+          allowedSectionIds:eligibilityPolicy.allowedSectionIds,
           minCgpa:eligibilityPolicy.minCgpa,
           maxActiveBacklogs:eligibilityPolicy.maxActiveBacklogs,
           maxPastBacklogs:eligibilityPolicy.maxPastBacklogs,
