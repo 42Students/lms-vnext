@@ -1,4 +1,8 @@
 import Link from "next/link";
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { can } from "@/modules/permissions/policy";
+import { isSuperAdmin } from "@/modules/identity/context";
+import { ErrorState } from "@/components/ui/error-state";
 import SuperAdminTenantSetup from "./setup/page";
 import TenantDirectory from "./directory/page";
 
@@ -8,6 +12,10 @@ import TenantDirectory from "./directory/page";
 export default async function SuperAdminTenantLanding({searchParams}:{
   searchParams: Promise<Record<string,string|string[]|undefined>>;
 }) {
+  const context = await getCurrentRequestContext();
+  if (!isSuperAdmin(context) || !can(context,"admin-scope.select")) {
+    return <ErrorState title="Tenant setup access denied" description="Your account cannot view platform tenant records." />;
+  }
   const raw = await searchParams;
   const directoryRequest = Object.keys(raw).some(key =>
     ["q","status","organizationId","page"].includes(key)) ||
