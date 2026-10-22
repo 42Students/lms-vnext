@@ -87,9 +87,10 @@ export async function ProjectAdminAtRiskPage({
     </div>;
   }
   const result = riskResult.value;
-  const dynamicDescription=result.total>0
-    ? result.total+" "+(result.total===1?"workspace needs":"workspaces need")+" attention. Reason counts cover the whole filtered report, not only this page."
-    : "No at-risk projects detected for this college.";
+  const dynamicDescription=result.candidatesTotal>0
+    ? result.candidatesTotal+" workspace"+(result.candidatesTotal===1?"":"s")+
+      " need attention (stalled, blocked, or waiting for review). Reason counts cover the whole college."
+    : "Workspaces with activity, blocker, or pending-review signals.";
   const workspaceHref=(project:{id:string;riskReasons:string[]})=>basePath+"/"+
     encodeURIComponent(project.id)+"/summary?from=at-risk&reason="+
     encodeURIComponent(project.riskReasons[0]??"Project needs attention");
