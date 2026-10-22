@@ -5,11 +5,12 @@ const source=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
 describe("College Admin Projects round 6",()=>{
  it("COL-projects-16 provides template search section counts details and a scoped CSV export",()=>{
   const s=source("src/app/(authenticated)/college/projects/templates/page.tsx");
-  for(const text of ["visible.map","Search templates","Section","ProjectTemplateCatalogueExport","projectTemplateSectionCounts","View template"])expect(s).toContain(text);
+  for(const text of ["visible.map","ProjectTemplateCatalogueSearch","Sections","ProjectTemplateCatalogueExport","projectTemplateSectionCounts","View template"])expect(s).toContain(text);
+  expect(source("src/components/projects/project-template-catalogue-search.tsx")).toContain("Search title or slug");
   expect(source("src/modules/projects/project-template-catalogue-model.ts")).toContain("projectTemplateCatalogueCsv");
  });
  it("COL-projects-19 displays the exact Workspaces, Templates, Submission and Audit headings plus the legacy risk description",()=>{
-  expect(source("src/app/(authenticated)/college/projects/page.tsx")).toContain('title="Workspaces"');
+  expect(source("src/app/(authenticated)/college/projects/page.tsx")).toContain('title="Project workspaces"');
   expect(source("src/app/(authenticated)/college/projects/templates/page.tsx")).toContain('title="Project templates"');
   expect(source("src/components/projects/project-admin-submissions-page.tsx")).toContain('title="Submissions dashboard"');
   expect(source("src/components/projects/project-admin-at-risk-page.tsx")).toContain("Workspaces with no recent activity, an active blocker, or a pending review.");
@@ -18,14 +19,18 @@ describe("College Admin Projects round 6",()=>{
  it("COL-projects-20 renders a recovery alert on all College Projects entry routes when college context is absent",()=>{
   for(const suffix of ["readiness/page.tsx","at-risk/page.tsx","submissions/page.tsx","templates/page.tsx","templates/[templateId]/page.tsx","audit/page.tsx"]){
    const s=source("src/app/(authenticated)/college/projects/"+suffix);
-   expect(s).toContain("ProjectAdminMissingCollege");
+   if(suffix==="templates/[templateId]/page.tsx"||suffix==="audit/page.tsx"){
+    expect(s).toContain("if(!collegeId)" .replace("!collegeId",suffix==="audit/page.tsx"?"!getProjectAdminCollegeId(context)":"!collegeId"));
+    expect(s).toContain("<Alert");
+   }else expect(s).toContain("ProjectAdminMissingCollege");
   }
   expect(source("src/components/projects/project-admin-missing-college.tsx")).toContain("Pick a college in the header");
  });
  it("COL-projects-22 is NOT-A-GAP: mentor class and template filters were absent in the old Workspaces list",()=>{
   const filters=source("src/components/projects/project-admin-collection-controls.tsx");
   expect(filters).toContain("Workspace status");
-  expect(filters).toContain('name={legacyWorkspaces ? "search" : "q"}');
+  expect(filters).toContain('const searchKey=searchParamName??(legacyWorkspaces?"search":"q")');
+  expect(filters).toContain("name={searchKey}");
   expect(filters).not.toContain('name="templateId"');
  });
 });
