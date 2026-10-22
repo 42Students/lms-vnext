@@ -2880,7 +2880,7 @@ export function legacyPlacementOfferStageDisposition(input:{
   throw new Error("Invalid historic CTC LPA");
  let annualCtcInr:number|null=null;
  if(ctc){
-  const [integer,fraction=""]=ctc.split(".");
+  const [integer="0",fraction=""]=ctc.split(".");
   const scaled=BigInt(integer)*10000n+BigInt(fraction.padEnd(4,"0"));
   const rupees=(scaled*100000n+5000n)/10000n;
   if(rupees>2147483647n)throw new Error("Historic offer CTC exceeds int32 INR");
