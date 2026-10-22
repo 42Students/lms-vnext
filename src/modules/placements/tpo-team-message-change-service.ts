@@ -1,7 +1,7 @@
 import {hasPlacementTeamMembership} from "./placement-team-access-model";
 import "server-only";
 import {createHash} from "node:crypto";
-import {and,eq,inArray,isNull,or,sql} from "drizzle-orm";
+import {and,eq,inArray,or,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,membershipRoles,users} from "@/db/schema";
