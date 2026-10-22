@@ -136,8 +136,8 @@ export function projectTpoDriveNextStep(input: TpoDriveNextStepInput): {
   if(input.status==="PUBLISHED"){
     const score=(action:TpoDriveAction)=>{
       const name=action.label;
-      if(name.startsWith("Review ")&&name.includes("request"))return 0;
-      if(name.startsWith("Review and apply"))return 1;
+      if(name.startsWith("Review and apply"))return 0;
+      if(name.startsWith("Review ")&&name.includes("request"))return 1;
       if(name.startsWith("Verify and release"))return 2;
       if(name==="Set deadline")return 3;
       if(name.startsWith("Share"))return 4;

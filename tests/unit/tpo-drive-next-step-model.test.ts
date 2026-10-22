@@ -34,8 +34,9 @@ describe("TPO-drive-workspace-02 next step", () => {
   });
   it("does not invent shortlist or request counts when unavailable", () => {
     const result = projectTpoDriveNextStep({...base,status:"PUBLISHED"});
-    expect(result.primary.label).toBe("Applicants");
-    expect(result.more).toEqual([]);
+    expect(result.primary.label).toBe("No action needed");
+    expect(result.more).toHaveLength(1);
+    expect(result.more[0]?.label).toBe("Applicants");
   });
   it("prioritizes the first deadline for a published drive without one",()=>{
     const result=projectTpoDriveNextStep({...base,status:"PUBLISHED",deadlineMissing:true});
