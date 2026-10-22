@@ -54,7 +54,7 @@ describe("IIT Dharwad Super Admin last-third Project route authorization",()=>{
         const content=words(await route.run()).join(" ");
         expect(content,route.title).toContain(route.title);
         expect(content,route.title).toContain("Project access denied");
-        expect(content,route.title).toContain("Back to dashboard");
+        expect(content,route.title).toContain("/dashboard");
         expect(content,route.title).not.toContain("Choose a college");
       }
     }

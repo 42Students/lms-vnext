@@ -10,7 +10,7 @@ describe("UX-tpo-first-third-12 explicit denial, recovery and scope contracts",(
   expect(code).toContain(guard);
   expect(code.indexOf(guard)).toBeLessThan(code.indexOf("await listTpoBatches(ctx)"));
   expect(code).toContain("querySchema.safeParse(rawText)");
-  expect(code).toContain('<Alert tone="error">Search must contain 2–100 characters.</Alert>');
+  expect(code).toContain('<Alert tone="error" role="alert">Search must contain 2–100 characters.</Alert>');
   expect(code).toContain("encodeURIComponent(s.id)");
  });
  it("UX-tpo-audit-actors-01 rejects malformed filter state without invoking audit query",()=>{
@@ -41,7 +41,7 @@ describe("UX-tpo-first-third-12 explicit denial, recovery and scope contracts",(
   const code=page("/messages/[threadId]");
   expect(code).toContain('hasMembershipRole(context,"TPO")');
   expect(code).toContain('role="alert"');
-  expect(code).toContain("if(!data)notFound()");
+  expect(code).toContain("if(!detail||!header)notFound()");
   expect(code).toContain('role="log" aria-live="polite"');
   expect(code).toContain('timeZone:"Asia/Kolkata"');
  });
