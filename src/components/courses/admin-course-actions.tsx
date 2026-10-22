@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import {
   useState,
 } from "react";
@@ -18,6 +19,18 @@ import { useToast } from "@/components/ui/toast";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
+
+function safeCourseCoverHref(input:string):string|null {
+  if(!input.trim())return null;
+  try {
+    const url=new URL(input.trim()),host=url.hostname.toLowerCase();
+    if(url.protocol!=="https:"||url.username||url.password||url.hash||
+       !host||host==="localhost"||host.endsWith(".localhost")||
+       host==="0.0.0.0"||host==="[::1]"||host==="[::]")return null;
+    if(/^(?:127|10|192\.168|169\.254|172\.(?:1[6-9]|2\d|3[01]))\./.test(host))return null;
+    return url.href;
+  }catch{return null;}
+}
 
 /** Inline legacy action glyphs: no icon libraries are installed. */
 function CourseActionIcon({kind}:{kind:"edit"|"duplicate"|"archive"}){
@@ -98,6 +111,7 @@ export function CourseActions({
     shortTitle?:string|null;
     officialCode?:string|null;
     cardColor?:string|null;
+    thumbnailUrl?:string|null;
     takeaways?:string|null;
     description: string | null;
   };
@@ -119,13 +133,17 @@ export function CourseActions({
   const [shortTitle,setShortTitle]=useState(course.shortTitle??course.name.slice(0,120));
   const [officialCode,setOfficialCode]=useState(course.officialCode??"");
   const [cardColor,setCardColor]=useState(course.cardColor??"");
+  const [coverUrl,setCoverUrl]=useState(course.thumbnailUrl??"");
+  const [coverPreviewBroken,setCoverPreviewBroken]=useState(false);
+  const [coverUrlError,setCoverUrlError]=useState("");
   const [takeaways,setTakeaways]=useState(course.takeaways??"");
   const { pending, run } =
     useCourseMutation();
   const dirty = name!==course.name || code!==course.code ||
     description!==(course.description??"")||(allowMetadata&&(
       shortTitle!==(course.shortTitle??course.name.slice(0,120))||
-      officialCode!==(course.officialCode??"")||cardColor!==(course.cardColor??"")||takeaways!==(course.takeaways??"")));
+      officialCode!==(course.officialCode??"")||cardColor!==(course.cardColor??"")||
+      coverUrl!==(course.thumbnailUrl??"")||takeaways!==(course.takeaways??"")));
   function closeEdit(next:boolean) {
     if(!next && pending)return;
     if(!next && dirty){setDiscardOpen(true);return;}
@@ -140,6 +158,7 @@ export function CourseActions({
     setShortTitle(course.shortTitle??course.name.slice(0,120));
     setOfficialCode(course.officialCode??"");
     setCardColor(course.cardColor??"");
+    setCoverUrl(course.thumbnailUrl??"");setCoverPreviewBroken(false);setCoverUrlError("");
     setTakeaways(course.takeaways??"");
     setDescription(
       course.description ?? "",
@@ -215,7 +234,10 @@ export function CourseActions({
                 (allowMetadata?(!shortTitle.trim()||
                   Boolean(cardColor&&!/^#[0-9A-Fa-f]{6}$/.test(cardColor))):false)|| (allowCode&&!code.trim())
               }
-              onClick={() =>
+              onClick={() => {
+                if(allowMetadata&&coverUrl.trim()&&!safeCourseCoverHref(coverUrl)){
+                  setCoverUrlError("Enter a valid HTTPS course cover URL.");return;
+                }
                 run(
                   () =>
                     mutate(
@@ -227,7 +249,8 @@ export function CourseActions({
                         name,
                         code,
                         ...(allowMetadata?{shortTitle:shortTitle.trim(),
-                          officialCode:officialCode.trim()||null,cardColor:cardColor.trim()||null,takeaways:takeaways.trim()||null}:{}),
+                          officialCode:officialCode.trim()||null,cardColor:cardColor.trim()||null,
+                          thumbnailUrl:coverUrl.trim()||null,takeaways:takeaways.trim()||null}:{}),
                         description:
                           description.trim() ||
                           null,
@@ -237,8 +260,8 @@ export function CourseActions({
                   () => {setEditFailure("");setEditOpen(false);},
                   reportEditError,
                   "Course was not edited",
-                )
-              }
+                );
+              }}
             >
               {pending
                 ? "Saving…"
@@ -275,6 +298,28 @@ export function CourseActions({
               <Input value={officialCode} onChange={event=>setOfficialCode(event.target.value)} maxLength={40}
                 placeholder="Official course code (optional)"/>
             </label>
+            <div className="grid gap-2">
+              <label htmlFor={"edit-course-cover-"+course.id} className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                Course image (optional)
+              </label>
+              <Input id={"edit-course-cover-"+course.id} type="url" maxLength={2048}
+                aria-invalid={Boolean(coverUrlError)}
+                value={coverUrl} placeholder="https://example.edu/course-cover.jpg"
+                onChange={event=>{setCoverUrl(event.target.value);setCoverPreviewBroken(false);setCoverUrlError("");}}/>
+              <p className="text-xs text-muted-foreground">Use an approved public HTTPS image; temporary signed storage URLs must not be saved.</p>
+              {safeCourseCoverHref(coverUrl)&&!coverPreviewBroken?
+                <div className="flex min-w-0 flex-wrap items-center gap-3">
+                  <Image src={safeCourseCoverHref(coverUrl)!} width={180} height={100} unoptimized
+                    className="h-[100px] w-[180px] rounded border border-border object-cover"
+                    alt={"Course cover for "+name} onError={()=>setCoverPreviewBroken(true)}/>
+                  <Button type="button" size="sm" variant="secondary" disabled={pending}
+                    onClick={()=>{setCoverUrl("");setCoverPreviewBroken(false);setCoverUrlError("");}}>
+                    Remove image
+                  </Button>
+                </div>:null}
+              {coverPreviewBroken?<p className="text-xs text-warning" role="alert">The course image could not be previewed.</p>:null}
+              {coverUrlError?<p className="text-xs text-error" role="alert">{coverUrlError}</p>:null}
+            </div>
             <label className="grid gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Course takeaways (optional)
               <Textarea value={takeaways} onChange={event=>setTakeaways(event.target.value)} maxLength={2000}/>
             </label>
