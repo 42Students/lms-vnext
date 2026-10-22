@@ -67,7 +67,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Legacy: DGIPUC Student roll-number/PIN and JNTU dedicated login variants; `docs/legacy-source/frontend/src/pages/index.js:18-23,54-62`, `docs/legacy-source/frontend/src/loginPages/DgipucLogin.js:75-160`, `docs/legacy-source/frontend/src/loginPages/JntuLogin.js:68-155`
 - Expected fix: Owner decide explicit removal; if still active tenants, prioritize regaining access before cosmetic clone.
 
-## G2-20-007-004 [P1] MISSING facet F01
+## G2-20-007-004 [OK — canonical metadata and index/follow present] MISSING facet F01
 - Files: src/app/privacy-policy/page.tsx
 - Legacy: Root head canonical=https://42lms.com/privacy-policy; index/follow; `docs/legacy-source/frontend/src/pages/privacy-policy.js:29-34`
 - Expected fix: Add canonical pointing to primary branded URL and robots index/follow to served static or React page; avoid redirect SEO dilution.
@@ -77,7 +77,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Legacy: Legacy retro/attendee/action/reminder/calendar fields persisted `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectMeeting.java:53-157`
 - Expected fix: Record intentional removals and map retained fields to explicit normalized representation
 
-## G2-20-031-058 [P1] GAP facet F11
+## G2-20-031-058 [OK — static privacy policy served at canonical route] GAP facet F11
 - Files: src/app/privacy-policy/page.tsx
 - Legacy: Legacy privacy page directly at canonical /privacy-policy (`docs/legacy-source/frontend/src/pages/privacy-policy.js:29-34`)
 - Expected fix: Serve policy with canonical and indexability at stable route for mobile/store users

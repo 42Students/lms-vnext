@@ -97,7 +97,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Legacy: v2 selects records free-text skill usage (SkillsSearchController.java:92-101).
 - Expected fix: Implement dedicated free-text usage writer preserving independent counters.
 
-## G2-6-006-001 [P1] MISSING facet F01
+## G2-6-006-001 [OK — legacy teacher/fileExplorer redirects to /teacher/courses] MISSING facet F01
 - Files: (none, new feature)
 - Legacy: Old `/teacher/fileExplorer` redirects to `/teacher/courses` server-side `docs/legacy-source/frontend/src/pages/teacher/fileExplorer.js:1-7`
 - Expected fix: Add Next redirect alias `/teacher/fileExplorer` → `/teacher/courses` (temporary/307)
