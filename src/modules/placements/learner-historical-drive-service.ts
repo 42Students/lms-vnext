@@ -60,7 +60,7 @@ export async function getOwnLearnerDriveJourney(context:RequestContext,rawJobId:
   getDb().select({resumeObjectPath:learnerProfiles.resumeObjectPath})
    .from(learnerProfiles).where(eq(learnerProfiles.membershipId,member.id)).limit(1),
  ]);
- const reason=reasonRows[0]?.metadata.reason;
+ const reason=reasonRows[0]?.metadata["reason"];
  return {...owned,jobId,
   applications:applications.map(row=>({
    applicationId:row.applicationId,roleOptionId:row.roleOptionId,roleTitle:row.roleTitle,
