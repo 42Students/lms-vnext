@@ -50,7 +50,7 @@ function receipt(raw: unknown): Receipt | null {
   return row as unknown as Receipt;
 }
 function state(meta: Record<string, unknown> | null): ImageState {
-  const value = meta?.courseCoverAsset;
+  const value = meta?.["courseCoverAsset"];
   const row = value && typeof value === "object" && !Array.isArray(value)
     ? value as Record<string, unknown> : {};
   return { active: receipt(row["active"]), pending: receipt(row["pending"]) };
