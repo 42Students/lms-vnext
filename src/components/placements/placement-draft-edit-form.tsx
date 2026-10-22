@@ -266,7 +266,15 @@ export function PlacementDraftEditForm({
     }
     const originalLegacy=value.job.legacyPostingDetails;
     const assessmentUrl=String(data.get("assessmentUrl")??"").trim();
-    if(assessmentUrl&&(!/^https?:\/\//i.test(assessmentUrl)||assessmentUrl.length>2048)){
+    let assessmentUrlValid=!assessmentUrl;
+    if(assessmentUrl){
+      try {
+        const parsed=new URL(assessmentUrl);
+        assessmentUrlValid=(parsed.protocol==="http:"||parsed.protocol==="https:")&&
+          Boolean(parsed.hostname)&&!parsed.username&&!parsed.password;
+      } catch { assessmentUrlValid=false; }
+    }
+    if(!assessmentUrlValid||assessmentUrl.length>2048){
       setFormError("Must be a valid http or https URL");return;
     }
     const rawAssessmentDeadline=String(data.get("assessmentDeadline")??"");

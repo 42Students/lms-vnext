@@ -10,8 +10,6 @@ import {
 } from "@/db/schema";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
-import { DataTable } from "@/components/ui/data-table";
-import { ScrollCue } from "@/components/ui/scroll-cue";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { joinGroup } from "@/modules/groups/service";
@@ -19,9 +17,9 @@ import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
-import {Checkbox} from "@/components/ui/checkbox";
 import {Alert} from "@/components/ui/alert";
 import {EmptyState} from "@/components/ui/empty-state";
+import {ElectiveEligibleSelection} from "@/components/academics/elective-eligible-selection";
 import {ErrorState} from "@/components/ui/error-state";
 
 const uuid = z.string().uuid();
@@ -267,29 +265,10 @@ export default async function CollegeElectiveAllocatePage({
         </Select>
       </label>
       {offerings.length === 0 && <EmptyState title="No elective offerings" description="Add a course offering to this slot before allocating learners."/>}
-      <ScrollCue axis="y" label="Eligible students for allocation"
-        className="min-w-0" viewportClassName="max-h-[26rem]">
-        <DataTable
-          caption="Eligible students for allocation"
-          rows={students}
-          getRowKey={student => student.membershipId}
-          empty={<EmptyState title="No eligible learners" description="No eligible students match these filters."/>}
-          columns={[
-            { key: "select", header: "Select", mobilePriority: "action", cell: student =>
-              <label className="flex min-h-11 min-w-11 items-center justify-center">
-                <Checkbox
-                  aria-label={"Select " + (student.name ?? student.rollNumber ?? "student") + " for allocation"}
-                  name="membershipId" value={student.membershipId} />
-              </label> },
-            { key: "name", header: "Student", mobilePriority: "primary", cell: student => student.name ?? student.membershipId },
-            { key: "roll", header: "Roll No.", mobilePriority: "secondary", cell: student => student.rollNumber ?? "—" },
-            { key: "section", header: "Section", mobilePriority: "secondary", cell: student => student.sectionName },
-          ]}
-        />
-      </ScrollCue>
-      <p className="text-xs text-muted-foreground leading-5">
-        Showing up to 500 matching active learners. Checkbox selections are for the currently loaded results only; use pasted roll numbers to allocate learners outside this list.</p>
-      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Or paste roll numbers / learner membership IDs
+      <ElectiveEligibleSelection slotId={slotId} students={students}
+         clearAfterAllocation={input.added!==undefined||input.waitlisted!==undefined||
+           input.skipped!==undefined||input.failed!==undefined}/>
+       <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Or paste roll numbers / learner membership IDs
         <Textarea name="identifiers" rows={3} maxLength={12000} className={fieldStyle}
           placeholder="One roll number or membership ID per line, comma separated also supported" />
       </label>
