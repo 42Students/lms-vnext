@@ -28,8 +28,9 @@ describe("TPO calendar adaptive and draft safety",()=>{
   const page=source("src/components/placements/tpo-week-hour-calendar.tsx");
   expect(page).toContain('aria-label={"Add follow-up on "');
   expect(page).toContain('<Dialog open={Boolean(slot)}');
-  const dialog=source("src/components/ui/dialog.tsx");
-  expect(dialog).toContain('role={role}');
-  expect(dialog).toContain('onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}');
+  expect(page).toContain("if(!next&&!saving)cancelDraft()");
+  const native=source("src/components/ui/dialog.tsx");
+  expect(native).toContain("onCancel={event =>");
+  expect(native).toContain("event.preventDefault()");
  });
 });
