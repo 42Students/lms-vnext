@@ -15,8 +15,11 @@ import {
 import { createPlacementCompany } from "@/modules/placements/company-service";
 import { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
 import { replacePlacementEvaluationConfig } from "@/modules/placements/evaluation-config-service";
-import { createPlacementJob } from "@/modules/placements/job-service";
-import { publishPreparedPlacementJob } from "../support/publishable-job-fixture";
+import { upsertJobEligibilityPolicy } from "@/modules/placements/eligibility-service";
+import {
+  createPlacementJob,
+  publishPlacementJob,
+} from "@/modules/placements/job-service";
 import {
   applyPlacementRoundResult,
   stagePlacementRoundResult,
