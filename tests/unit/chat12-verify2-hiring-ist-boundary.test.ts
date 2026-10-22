@@ -36,7 +36,7 @@ describe("chat-12 verify2: legacy hiring report inclusive IST dates", () => {
   });
 
   it("handles month/year and leap-day boundaries without local machine timezone", () => {
-    expect(istStartOfNextDay("2026-12-31").toISOString()).toBe("2027-01-01T18:30:00.000Z");
+    expect(istStartOfNextDay("2026-12-31").toISOString()).toBe("2026-12-31T18:30:00.000Z");
     expect(istStartOfNextDay("2028-02-29").toISOString()).toBe("2028-02-29T18:30:00.000Z");
     expect(istStartOfDay("2028-03-01").getTime()).toBe(istStartOfNextDay("2028-02-29").getTime());
   });
