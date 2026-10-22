@@ -12,8 +12,11 @@ describe("UX-tracker-logs-01",()=>{
   expect(code).toContain("<TrackerTelegramManualPanel");
   expect(code).toContain("<ErrorState");
   expect(code).toContain("Reset filter");
-  expect(code).toContain("aria-label=\"Log environment\"");
-  expect(code).toContain("aria-current={environment === value");
+  expect(code).toContain('ariaLabel="Log environment"');
+  expect(code).toContain('renderPanel={false}');
+  const tabs=source("src/components/ui/tabs.tsx");
+  expect(tabs).toContain("aria-current");
+  expect(code).toContain('value={environment}');
   expect(code).toContain("min-h-11");
 
 

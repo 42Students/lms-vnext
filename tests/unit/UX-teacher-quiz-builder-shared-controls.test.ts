@@ -13,7 +13,9 @@ describe("Shared Quiz authoring controls",()=>{
  });
  it("UX-teacher-courses-deliveryId-quizzes-manage-09 keeps correct single/multiple-choice inputs and limits",()=>{
   const source=read();
-  expect(source).toContain('type={question.type==="SINGLE_CHOICE"?"radio":"checkbox"}');
+  expect(source).toContain('question.type === "SINGLE_CHOICE" ? <Radio');
+  expect(source).toContain('<NativeCheckbox');
+  expect(source).toContain('name={"preview-question-"+index} disabled');
   expect(source).toContain("facultyToggleQuizAnswer");
   expect(source).toContain("maxLength={2000}");
   expect(source).toContain("max={20}");
