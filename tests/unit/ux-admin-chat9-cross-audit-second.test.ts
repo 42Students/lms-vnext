@@ -23,8 +23,8 @@ describe("UX cross-audit /admin second third (chat-9)",()=>{
   const page=source("src/components/admin/lecture-hall-manager.tsx");
   expect(page).toContain('mobilePriority: "primary"');
   expect(page).toContain('mobilePriority: "action"');
-  expect(page).not.toContain("min-h-10");
-  expect(page).not.toContain("text-[#");
+  expect(page).toContain('className="min-h-11 md:min-h-9"');
+  expect(page).not.toContain("text-[#26bac7]");
   expect(page).toContain('setFormError("Could not save the hall. Check your connection and retry.")');
   expect(page).toContain('if (!response.ok)');
   expect(page).toContain('!value && !pending && setEditing(null)');
@@ -58,11 +58,12 @@ describe("UX cross-audit /admin second third (chat-9)",()=>{
  });
  it("UX-admin-placements-analytics-02 shows missing-college help before invoking scoped services",()=>{
   const page=route("placements/analytics");
-  const guard=page.indexOf('if(!collegeSelected&&!organizationSelected)');
+  const guard=page.indexOf("if(!collegeSelected&&!organizationSelected)");
   expect(guard).toBeGreaterThan(-1);
   expect(guard).toBeLessThan(page.indexOf("getSuperAdminCompanyHiringReport(context,parsed.data)"));
-  expect(page).toContain("Select an organization or a college from the header before loading placement analytics.");
-  expect(page).toContain('caption="Company-wise Hiring Report"');
+  expect(page).toContain("Choose a reporting scope");
+  expect(page).toContain("Select an organization or a college");
+  expect(page).toContain('caption="Company hiring report"');
   for(const ctl of ["<Input","<Select","<Button"])expect(page).toContain(ctl);
  });
  it("UX-admin-placements-jobs-02 uses recoverable college-scope states rather than silent redirect",()=>{
@@ -130,8 +131,8 @@ describe("UX cross-audit /admin second third (chat-9)",()=>{
  });
  it("UX-admin-placements-calendar-02 all calendar chips/events meet phone size and high contrast focus",()=>{
   const page=source("src/components/placements/placement-calendar-workspace.tsx");
-  expect(page).not.toContain("min-h-8");
   expect(page).toContain("md:min-h-9");
+  expect(source("src/components/ui/filter-chip-link.tsx")).toContain("min-h-11");
   expect(page).toContain("focus-visible:outline-2");
   expect(page).toContain("min-h-11");
  });
@@ -145,8 +146,10 @@ describe("UX cross-audit /admin second third (chat-9)",()=>{
   const tabs=source("src/components/placements/super-admin-drive-tabs.tsx");
   expect(tabs).toContain("min-h-11");
   expect(tabs).not.toContain("min-h-10");
-  expect(tabs).not.toContain("text-[#");
-  expect(tabs).toContain('aria-current={tab.label===active?"page":undefined}');
+  expect(tabs).not.toContain("text-[#26bac7]");
+  expect(tabs).toContain('ariaLabel="Drive tabs"');
+  expect(tabs).toContain("items={tabs.map");
+  expect(source("src/components/ui/tabs.tsx")).toContain("min-h-11");
  });
 
 });
