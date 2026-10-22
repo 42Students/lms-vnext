@@ -132,11 +132,10 @@ export async function deliverDueTpoNotices(now=new Date(),onlyAnnouncementId?:st
     .where(and(
      eq(collegeMemberships.collegeId,notice.collegeId),
      eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
-     // A COLLEGE audience is a college-wide notice: faculty and admins
-     // must not be silently excluded. Targeted placement audiences retain
-     // their explicit enrolled-learner role and membership allowlist.
+     // College-wide placement notices are addressed to students, not staff.
+     // Narrower audiences must also belong to the persisted recipient set.
+     learners,
      ...(audienceKind==="COLLEGE"?[]:[
-      learners,
       inArray(collegeMemberships.id,
        tx.select({id:placementTpoNoticeRecipients.membershipId})
         .from(placementTpoNoticeRecipients)
