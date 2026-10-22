@@ -289,6 +289,6 @@ export async function getSuperAdminCompanyIdentityByName(
  )).orderBy(asc(placementCompanies.id)).limit(2);
  if(rows.length===0)return {status:"NOT_FOUND",company:null};
  if(rows.length>1)return {status:"AMBIGUOUS",company:null};
- return {status:"FOUND",company:{id:rows[0].id,name:rows[0].name,
-  verified:rows[0].verifiedAt!==null}};
+ return {status:"FOUND",company:{id:match.id,name:match.name,
+  verified:match.verifiedAt!==null}};
 }
