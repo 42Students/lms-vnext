@@ -27,6 +27,8 @@ import { CollegeShortlistedToolbar } from "@/components/placements/college-short
 import { getDb } from "@/db/client";
 import { placementJobs, placementCompanyRelationships, placementCompanies } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
+import { AuthorizationError } from "@/modules/permissions/policy";
+import { CollegeShortlistedLastGood } from "@/components/placements/college-shortlisted-last-good";
 
 /**
  * Legacy Shortlisted workbench. Pipeline stage (ASSESSMENT by default) is the
@@ -78,7 +80,18 @@ export default async function CollegeDriveShortlistedPage({
       })} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
   </div>;
 
-  const data = await getCollegeApplicationPipeline(context, jobId, query);
+  let data: Awaited<ReturnType<typeof getCollegeApplicationPipeline>>;
+  try {
+    data = await getCollegeApplicationPipeline(context, jobId, query);
+  } catch (error) {
+    if (error instanceof AuthorizationError) throw error;
+    return <CollegeShortlistedLastGood
+      key={context.user.id+":"+context.membership.id+":"+jobId}
+      available={false} retryHref={href(query)}
+      closeHref={"/college/placements/jobs/"+encodeURIComponent(jobId)+"/overview"}>
+      {null}
+    </CollegeShortlistedLastGood>;
+  }
   const [job] = await getDb().select({
     status: placementJobs.status,
     locations: placementJobs.locations,
@@ -116,7 +129,11 @@ export default async function CollegeDriveShortlistedPage({
     { key: "actions", header: "Actions", cell: () => "View only" },
   ];
 
-  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
+  return <CollegeShortlistedLastGood
+    key={context.user.id+":"+context.membership.id+":"+jobId}
+    available retryHref={href(query)}
+    closeHref={"/college/placements/jobs/"+encodeURIComponent(jobId)+"/overview"}>
+    <div className="min-w-0 space-y-[var(--lms-space-4)]">
     <nav aria-label="Drive breadcrumbs" className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
       <Link href="/college/placements/drives" className="inline-flex min-h-11 items-center font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Drives</Link>
       <span aria-hidden="true">/</span>
@@ -242,5 +259,6 @@ export default async function CollegeDriveShortlistedPage({
       Stage moves require confirmation and are checked against the latest saved screening and offer history.
       The current internal-page selection is bounded; historical cross-page bulk matching is not yet enabled on this view.
     </p>
-  </div>;
+    </div>
+  </CollegeShortlistedLastGood>;
 }

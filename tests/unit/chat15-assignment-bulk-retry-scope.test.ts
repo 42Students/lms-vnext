@@ -17,5 +17,7 @@ describe("G2-2-008 bulk grade publication retry isolation",()=>{
   expect(source).toContain("await requireWholeAssignmentBulkPermission(context,assignmentId)");
   expect(source).toContain("await publishAssignmentGrade(context,row.id,{expectedVersion:row.version})");
   expect(source).toContain("legacyAuditAction:\"ASSIGNMENT_GRADES_PUBLISH_ALL\"");
+  expect(source).toContain("const receipt=published>0?await recordActivityEvent(context,{");
+  expect(source).toContain("receiptId:receipt?.id??null");
  });
 });

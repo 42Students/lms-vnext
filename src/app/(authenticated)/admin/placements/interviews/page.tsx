@@ -97,16 +97,24 @@ export default async function SuperAdminInterviewsPage({searchParams}:{
   return "/admin/placements/interviews?"+params.toString();
  };
  const columns:DataTableColumn<(typeof items)[number]>[]=[
-  {key:"job",header:"Job / company",mobilePriority:"primary",cell:item=><div className="min-w-0">
-    <span className="block font-semibold">{item.title}</span>
-    <span className="block text-xs text-muted-foreground">{item.subtitle}</span>
+  {key:"job",header:"Job",mobilePriority:"primary",cell:item=><div className="min-w-0">
+    <Link href={"/admin/placements/jobs/"+encodeURIComponent(item.jobId)+"/applications?collegeId="+encodeURIComponent(context.adminScope!.collegeId!)}
+      className="block font-semibold text-link underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2">
+      {item.title}</Link>
+    <span className="block text-xs text-muted-foreground">{item.subtitle.split(" · ").slice(1).join(" · ")}</span>
    </div>},
-  {key:"candidate",header:"Candidate",cell:item=>detail(item,"Candidate")},
-  {key:"department",header:"Department",cell:item=>departmentBySlot.get(item.id)??"Not recorded"},
-  {key:"interview",header:"Interview",cell:item=>detail(item,"Round")},
-  {key:"date",header:"Date & time",cell:item=><span className="whitespace-nowrap">{detail(item,"Date & Time")}</span>},
-  {key:"status",header:"Status",cell:item=><StatusBadge tone={item.status==="CONFIRMED"?"success":"neutral"}>{item.status}</StatusBadge>},
-  {key:"actions",header:"Action",mobilePriority:"action",cell:item=><Link href={item.href??calendarHref}
+  {key:"candidate",header:"Candidate",cell:item=><div className="min-w-0">
+    <span className="block">{detail(item,"Candidate")}</span>
+    <span className="block text-xs text-muted-foreground">{departmentBySlot.get(item.id)??"Department not recorded"}</span>
+   </div>},
+  {key:"type",header:"Type",cell:item=>detail(item,"Type")},
+  {key:"status",header:"Status",cell:item=><StatusBadge
+    tone={item.status==="CONFIRMED"||item.status==="COMPLETED"?"success":
+      item.status==="CANCELLED"||item.status==="NO_SHOW"?"warning":"neutral"}>{item.status.replaceAll("_"," ")}</StatusBadge>},
+  {key:"date",header:"Date & Time",cell:item=><span className="whitespace-nowrap">{detail(item,"Date & Time")}</span>},
+  {key:"interviewer",header:"Interviewer",cell:item=>detail(item,"Interviewer")},
+  {key:"mode",header:"Mode",cell:item=>detail(item,"Mode").replaceAll("_"," ")},
+  {key:"actions",header:"Actions",mobilePriority:"action",cell:item=><Link href={item.href??calendarHref}
     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 md:min-h-9">Open appointment</Link>},
  ];
  return <div className="min-w-0 space-y-5">

@@ -33,8 +33,6 @@ import {
   placementCompanyShareSelections,
   collegeMemberships,
   learnerProfiles,
-  programs,
-  departments,
   users,
 } from "@/db/schema";
 import {
@@ -239,25 +237,6 @@ export async function listLearnerPlacementJobs(
       ))
     : [];
   const policyByJobId = new Map(policies.map((policy) => [policy.jobId, policy]));
-  // Legacy JobSearch indexed the target Department and Program names, not
-  // their UUIDs. Resolve only approved target IDs inside the current college
-  // in one batch, never from an organization-global catalogue.
-  const targetProgramIds=[...new Set(policies.flatMap(policy=>policy.allowedProgramIds))];
-  const targetPrograms=targetProgramIds.length?await getDb().select({
-    id:programs.id,name:programs.name,departmentName:departments.name,
-  }).from(programs).innerJoin(departments,eq(departments.id,programs.departmentId))
-    .where(and(inArray(programs.id,targetProgramIds),
-      eq(departments.collegeId,membership.collegeId))):[];
-  const programById=new Map(targetPrograms.map(row=>[row.id,row]));
-  const targetNamesByJobId=new Map(policies.map(policy=>{
-    const entries=policy.allowedProgramIds.map(id=>programById.get(id))
-      .filter((value):value is (typeof targetPrograms)[number]=>value!==undefined);
-    return [policy.jobId,{
-      programs:[...new Set(entries.map(value=>value.name))].join(", "),
-      departments:[...new Set(entries.map(value=>value.departmentName))].join(", "),
-    }] as const;
-  }));
-
   const targetedRows = rows.filter((row) =>
     isPlacementJobTargetCohort(
       policyByJobId.get(row.job.id),
@@ -369,10 +348,7 @@ export async function listLearnerPlacementJobs(
         heldOfferEligible,
       };
       return {
-        job: {...row.job,
-          targetDepartmentName:targetNamesByJobId.get(row.job.id)?.departments??"",
-          targetProgramName:targetNamesByJobId.get(row.job.id)?.programs??"",
-        },
+        job: row.job,
         roleOption: row.roleOption,
         company: row.company,
         application,

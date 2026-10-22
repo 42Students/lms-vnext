@@ -216,6 +216,8 @@ export const ACTIVITY_EVENT_TYPES = {
     "placements.company.linked",
   PLACEMENTS_JOB_DRAFT_CREATED:
     "placements.job.draft_created",
+  PLACEMENTS_JOB_DRAFT_COMPANY_CHANGED:
+    "placements.job.draft_company_changed",
   PLACEMENTS_JOB_PUBLISHED:
     "placements.job.published",
   PLACEMENTS_APPLICATION_RESCREENED: "placements.application.rescreened",

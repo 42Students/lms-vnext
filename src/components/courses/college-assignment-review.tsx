@@ -60,7 +60,7 @@ export function CollegeAssignmentReview({
    if(typeof receipt.published!=="number"||typeof receipt.failed!=="number"||
       typeof receipt.remaining!=="number"||!Array.isArray(receipt.failedIds)||
       typeof receipt.skippedUngraded!=="number"||typeof receipt.alreadyPublished!=="number"||
-      typeof receipt.receiptId!=="string"){
+      !(receipt.published>0?typeof receipt.receiptId==="string":receipt.receiptId===null)){
     throw Error("Publication result could not be verified. Reload before retrying.");
    }
    const remaining=receipt.remaining;
@@ -74,7 +74,7 @@ export function CollegeAssignmentReview({
    setRetryScope(selectedDeliveryId);
    setRetryAllowed(remaining>0);
    setBulkStatus((remaining>0?remaining+" grades remain. Continue or retry.":"All graded submissions in this scope are published.")+
-    " Audit receipt: "+receipt.receiptId.slice(0,8)+".");
+    (typeof receipt.receiptId==="string"?" Audit receipt: "+receipt.receiptId.slice(0,8)+".":" No batch audit was necessary because no grades were published."));
    router.refresh();
   }catch(cause){
    setRetryScope(selectedDeliveryId);

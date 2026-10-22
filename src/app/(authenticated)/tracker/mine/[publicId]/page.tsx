@@ -4,6 +4,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {PageBackLink} from "@/components/ui/page-back-link";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { Banner } from "@/components/ui/banner";
+import { TrackerScreenshotGallery } from "@/components/tracker/tracker-screenshot-gallery";
 import {trackerAdminRuntimeEnabled} from "@/modules/bug-tracker/readiness";
 import {getMyTrackerReport,listMyTrackerReportHistory,listMyTrackerReportScreenshots} from "@/modules/bug-tracker/reporter-service";
 import {TrackerAdminError} from "@/modules/bug-tracker/admin-errors";
@@ -35,10 +36,14 @@ export default async function MyTrackerReportDetail({
     throw error;
   }
   if(!report)notFound();
-  const [history,screenshots]=await Promise.all([
+  // The issue is authoritative; a failed optional activity or screenshot read
+  // must not replace it with a blank page or expose a fictitious empty list.
+  const [historyResult,screenshotsResult]=await Promise.allSettled([
     listMyTrackerReportHistory(context,publicId),
     listMyTrackerReportScreenshots(context,publicId),
   ]);
+  const history=historyResult.status==="fulfilled"?historyResult.value:[];
+  const screenshots=screenshotsResult.status==="fulfilled"?screenshotsResult.value:[];
   return <article className="min-w-0 max-w-full space-y-4">
     <PageHeader title={report.publicId} description={report.issueType}
       actions={<PageBackLink href="/tracker/mine" label="Back to my reports"/>}/>
@@ -62,16 +67,17 @@ export default async function MyTrackerReportDetail({
     </section>
     <section className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
       <h2 className="text-base font-semibold text-[var(--lms-heading)]">Screenshots ({screenshots.length})</h2>
-      {screenshots.length===0 ? <p className="text-sm text-muted-foreground">No screenshots attached.</p> :
-        <ul className="space-y-2">{screenshots.map(file=><li key={file.id} className="text-sm">
-          <span className="break-words">{file.originalFilename}</span>
-          <span className="text-muted-foreground"> · {(Number(file.sizeBytes)/1024).toFixed(0)} KB</span>
-        </li>)}</ul>}
-      <p className="text-xs text-muted-foreground">Files are shown as metadata only until an authorized short-lived preview is available.</p>
+      {screenshotsResult.status==="rejected"?<Banner tone="warning" role="alert">
+        Screenshots could not be loaded. <a href={"/tracker/mine/"+encodeURIComponent(publicId)} className="font-semibold text-link underline">Retry screenshots</a>
+      </Banner>:screenshots.length===0 ? <p className="text-sm text-muted-foreground">No screenshots attached.</p> :
+        <TrackerScreenshotGallery publicId={publicId} screenshots={screenshots}/>}
+      <p className="text-xs text-muted-foreground">Preview links are issued only after checking your report ownership and the private file scan.</p>
     </section>
     <section className="space-y-3">
       <h2 className="text-base font-semibold text-[var(--lms-heading)]">Activity</h2>
-      {history.length===0?<p className="text-sm text-muted-foreground">No status changes yet.</p>:
+      {historyResult.status==="rejected"?<Banner tone="warning" role="alert">
+        Activity could not be loaded. <a href={"/tracker/mine/"+encodeURIComponent(publicId)} className="font-semibold text-link underline">Retry activity</a>
+      </Banner>:history.length===0?<p className="text-sm text-muted-foreground">No status changes yet.</p>:
         <ol className="space-y-3">{history.map(row=><li key={row.id} className="border-b border-border pb-3 text-sm">
           <span className="font-semibold">{row.type}</span>
           <span className="ml-2 text-muted-foreground">{row.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</span>

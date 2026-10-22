@@ -1,4 +1,5 @@
 import { and, asc, desc, eq, gte, ilike, inArray, isNull, ne, or, sql } from "drizzle-orm";
+import {z} from "zod";
 import {placementDriveSelections} from "@/db/schema/placement-drive-selections";
 import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
 import { getDb } from "@/db/client";
@@ -1195,6 +1196,73 @@ export async function expirePublishedPlacementJobs(
  return {scanned:candidates.length,deactivated:closed.length,closed,
   skipped,failed,summary:"Job auto-expiry complete: "+
    closed.length+" jobs deactivated"};
+}
+
+/** Company edits use their own CAS instead of the general draft patch: a typed
+ * name without a selected, active relationship must never become the drive's
+ * canonical employer. A drive with applications cannot be relinked. */
+const draftCompanySchema=z.strictObject({
+ companyRelationshipId:z.string().uuid(),
+ expectedVersion:z.number().int().positive(),
+});
+export async function relinkDraftPlacementCompany(
+ context:RequestContext,rawJobId:unknown,rawInput:unknown,
+){
+ const jobId=placementJobIdSchema.parse(rawJobId);
+ const input=draftCompanySchema.parse(rawInput);
+ const current=await loadJob(jobId);
+ await requirePlacementManageScope(context,current.collegeId);
+ return getDb().transaction(async tx=>{
+  const [job]=await tx.select().from(placementJobs)
+   .where(and(eq(placementJobs.id,jobId),
+    eq(placementJobs.collegeId,current.collegeId)))
+   .for("update").limit(1);
+  if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+  if(job.status!=="DRAFT"||job.archivedAt)
+   throw new PlacementsServiceError("PLACEMENT_JOB_NOT_EDITABLE");
+  if(job.version!==input.expectedVersion)
+   throw new PlacementsServiceError("PLACEMENT_JOB_STALE");
+  if(job.companyRelationshipId===input.companyRelationshipId)
+   return {id:job.id,companyRelationshipId:job.companyRelationshipId,
+    version:job.version,unchanged:true};
+  const [application]=await tx.select({id:placementApplications.id})
+   .from(placementApplications)
+   .where(eq(placementApplications.jobId,job.id)).limit(1);
+  if(application)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_EDITABLE");
+  const [relationship]=await tx.select({
+   id:placementCompanyRelationships.id,
+   name:placementCompanies.name,
+  }).from(placementCompanyRelationships)
+   .innerJoin(placementCompanies,
+    eq(placementCompanies.id,placementCompanyRelationships.companyId))
+   .where(and(
+    eq(placementCompanyRelationships.id,input.companyRelationshipId),
+    eq(placementCompanyRelationships.collegeId,job.collegeId),
+    eq(placementCompanyRelationships.status,"ACTIVE"),
+    isNull(placementCompanyRelationships.archivedAt),
+    eq(placementCompanies.status,"ACTIVE"),
+    isNull(placementCompanies.archivedAt),
+   )).limit(1);
+  if(!relationship)
+   throw new PlacementsServiceError("PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND");
+  const now=new Date();
+  const [updated]=await tx.update(placementJobs).set({
+   companyRelationshipId:relationship.id,updatedAt:now,
+   version:sql`${placementJobs.version}+1`,
+  }).where(and(eq(placementJobs.id,job.id),eq(placementJobs.version,job.version),
+    eq(placementJobs.status,"DRAFT")))
+   .returning({id:placementJobs.id,version:placementJobs.version});
+  if(!updated)throw new PlacementsServiceError("PLACEMENT_JOB_STALE");
+  await recordActivityEventInTransaction(tx,context,{
+   eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_JOB_DRAFT_COMPANY_CHANGED,
+   collegeId:job.collegeId,subjectType:"placement_job",subjectId:job.id,
+   subjectLabel:job.title,summary:"Draft drive company changed to "+relationship.name,
+   metadata:{previousRelationshipId:job.companyRelationshipId,
+    companyRelationshipId:relationship.id,jobId:job.id},
+   groupKey:"placement-job:"+job.id,
+  });
+  return {...updated,companyRelationshipId:relationship.id,unchanged:false};
+ });
 }
 
 export async function archivePlacementJob(

@@ -11,27 +11,12 @@ import {listOwnPlacementSavedJobs} from "@/modules/placements/saved-job-service"
 import {readOptionalLearnerPlacementSource} from "@/modules/placements/learner-optional-placement-source";
 import {learnerJobDetailFromDrivesHref} from "@/modules/placements/learner-drives-return-model";
 
-function legacyTargetLabel(metadata:Record<string,unknown>|null,kind:"department"|"program"):string|null {
-  const values=kind==="department"
-    ?[metadata?.targetDepartmentName,metadata?.departmentName]
-    :[metadata?.targetProgramName,metadata?.programName];
-  const match=values.find((value):value is string=>typeof value==="string"&&value.trim().length>0);
-  return match?.trim().slice(0,160)??null;
-}
-
 function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number]): LearnerPlacementJobItem {
   return {
     job: {
       id: row.job.id,
       title: row.job.title,
       description: row.job.description,
-      // All eight legacy search fields must survive the server→browser projection.
-      // Import-only targeting names are display data, never a permission grant.
-      responsibilities:row.job.legacyPostingDetails?.responsibilities??null,
-      jobTypeLabel:row.job.jobTypeLabel,
-      targetDepartmentName:legacyTargetLabel(row.job.legacyTargeting,"department")??
-        (row.job.eligibleBranches.length?row.job.eligibleBranches.join(", "):null),
-      targetProgramName:legacyTargetLabel(row.job.legacyTargeting,"program"),
       jobTypeLabel:row.job.jobTypeLabel,
       responsibilities:row.job.legacyPostingDetails?.responsibilities??"",
       employmentType: row.job.employmentType,

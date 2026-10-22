@@ -36,14 +36,21 @@ export async function listMyTrackerReports(context:RequestContext,options:Report
     .limit(size).offset((page-1)*size);
   return rows;
 }
+/** An extra-item probe must not change the SQL OFFSET for page two onward.
+ * Count the same reporter-owned rows instead of requesting size+1 through a
+ * page-sized helper (which would silently skip an item on every later page). */
+export function reporterPageHasMore(page:number,size:number,total:number):boolean{
+ return Number.isSafeInteger(page)&&page>0&&
+  Number.isSafeInteger(size)&&size>0&&
+  Number.isSafeInteger(total)&&total>=0&&page*size<total;
+}
 export async function getMyTrackerReportPage(context:RequestContext,options:ReporterIssuePageOptions={}){
  const page=options.page??1,size=options.size??20;
- const items=await listMyTrackerReports(context,{...options,page,size:size+1<=100?size+1:size});
- // The extra row is fetched only when the requested page size permits it.
- // For a maximum-sized page, the next-page probe remains membership-scoped.
- const hasMore=items.length>size||(size===100&&
-   (await listMyTrackerReports(context,{page:page+1,size:1,order:options.order})).length>0);
- return {items:items.slice(0,size),page,size,hasMore};
+ const items=await listMyTrackerReports(context,{...options,page,size});
+ const [row]=await getDb().select({total:sql<number>`count(*)::int`})
+  .from(db10BugReports)
+  .where(eq(db10BugReports.reporterUserId,context.user.id));
+ return {items,page,size,hasMore:reporterPageHasMore(page,size,Number(row?.total??0))};
 }
 export async function getMyTrackerReport(context:RequestContext,rawPublicId:string){
   requireReporter(context);

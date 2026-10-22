@@ -33,7 +33,11 @@ export async function bulkSuperAdminCourseVisibility(context:RequestContext,raw:
   .innerJoin(departments,eq(departments.id,courses.departmentId))
   .where(and(inArray(courses.id,input.courseIds),eq(departments.collegeId,acting.collegeId),
    eq(courses.status,"ACTIVE")));
- if(selected.length!==input.courseIds.length)throw new CoursesServiceError("COURSE_NOT_FOUND");
+ const validIds=selected.map(course=>course.id);
+ // Legacy processes authorized courses independently and returns per-course
+ // failures, rather than discarding every successful update on one stale ID.
+ if(!validIds.length)throw new CoursesServiceError("COURSE_NOT_FOUND");
+ const unauthorizedIds=input.courseIds.filter(id=>!validIds.includes(id));
  const lessons=await getDb().select({id:courseLessons.id,courseId:courses.id})
   .from(courseLessons)
   .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
@@ -41,7 +45,7 @@ export async function bulkSuperAdminCourseVisibility(context:RequestContext,raw:
   .innerJoin(academicPeriods,eq(academicPeriods.id,courseOfferings.academicPeriodId))
   .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
   .innerJoin(departments,eq(departments.id,courses.departmentId))
-  .where(and(inArray(courses.id,input.courseIds),eq(departments.collegeId,acting.collegeId),
+  .where(and(inArray(courses.id,validIds),eq(departments.collegeId,acting.collegeId),
    eq(academicPeriods.collegeId,acting.collegeId),
    eq(courses.status,"ACTIVE"),eq(courseOfferings.status,"ACTIVE"),
    eq(courseLearningPaths.status,"PUBLISHED"),eq(courseLessons.status,"ACTIVE")))
@@ -50,8 +54,10 @@ export async function bulkSuperAdminCourseVisibility(context:RequestContext,raw:
  // 500-lesson ceiling. Descendant writes below remain scoped and batched.
  const ids=[...new Set(lessons.map(row=>row.id))];
  const lessonCourseIds=new Map(lessons.map(row=>[row.id,row.courseId]));
- const failedCourses=new Set<string>();
- const failures:{id:string;reason:string}[]=[];
+ const failedCourses=new Set<string>(unauthorizedIds);
+ const failures:{id:string;reason:string}[]=unauthorizedIds.map(id=>({
+  id,reason:"Course not found or unavailable in the selected college.",
+ }));
  let matchedContents=0;
  // Count every published descendant without producing an unbounded SQL IN list.
  for(let offset=0;offset<ids.length;offset+=100){
@@ -92,7 +98,7 @@ export async function bulkSuperAdminCourseVisibility(context:RequestContext,raw:
    }
   }
  }
- if(!input.visibleToStudents)await setCourseVisibility(input.courseIds,false);
+ if(!input.visibleToStudents)await setCourseVisibility(validIds,false);
  for(let i=0;i<ids.length;i+=25){
   const slice=ids.slice(i,i+25);
   try{
@@ -115,11 +121,11 @@ export async function bulkSuperAdminCourseVisibility(context:RequestContext,raw:
   }
  }
  if(input.visibleToStudents)
-  await setCourseVisibility(input.courseIds.filter(id=>!failedCourses.has(id)),true);
+  await setCourseVisibility(validIds.filter(id=>!failedCourses.has(id)),true);
  // One batch-level receipt after all scoped updates, including failures.
  // The prior per-lesson activity trail remains the authoritative row history.
  // Do not replace a partial result with a misleading "100 updated" message.
- await getDb().transaction(async tx=>{
+ if(input.courseIds.length>failedCourses.size)await getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"courses.manage",{
    collegeId:acting.collegeId,organizationId:acting.organizationId,
   });

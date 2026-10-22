@@ -109,7 +109,8 @@ export const driveChangeCommandSchema=z.discriminatedUnion("action",[
     ctx.addIssue({code:"custom",path:["reason"],message:"Say what should change"});
    else if(value.field!=="OTHER" && value.proposedValue.length<2 && value.reason.length<3)
     ctx.addIssue({code:"custom",path:["proposedValue"],message:"Say what should change"});
-  }else if(value.proposedValue.length<2){
+  }else if(value.proposedValue.length<2 &&
+    !(value.proposedValue.length===1&&["CTC","STIPEND","MIN_CGPA"].includes(value.field))){
    ctx.addIssue({code:"custom",path:["proposedValue"],
     message:"Give the new value, or ask for it instead"});
   }

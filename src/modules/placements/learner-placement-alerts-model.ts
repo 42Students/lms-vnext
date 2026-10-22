@@ -7,6 +7,8 @@ export type OwnPlacementAlert = {
   actionHref: string | null;
   createdAt: Date;
   readAt: Date | null;
+  eventType?: string;
+  subjectType?: string;
 };
 
 export function presentOwnLearnerPlacementAlerts(
@@ -22,6 +24,10 @@ export function presentOwnLearnerPlacementAlerts(
     body: row.body,
     createdAt: row.createdAt,
     unread: row.readAt === null,
+    status:row.readAt===null?"UNREAD" as const:"READ" as const,
+    source:"IN_APP_NOTIFICATION" as const,
+    event:row.eventType??"PLACEMENT_UPDATE",
+    subjectType:row.subjectType??null,
     actionHref: safeNotificationActionHref(row.actionHref),
   }));
 }

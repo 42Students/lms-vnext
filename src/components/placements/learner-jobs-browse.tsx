@@ -50,18 +50,9 @@ export function LearnerJobsBrowse({
   const urlSearch=urlState.filters.search;
   const [search,setSearch]=useState(urlSearch);
   const [mobileOpen,setMobileOpen]=useState(false);
-  const [expiredLimit,setExpiredLimit]=useState(PAGE_SIZE);
-  const [notOpenLimit,setNotOpenLimit]=useState(PAGE_SIZE);
-  const [savedExpiredLimit,setSavedExpiredLimit]=useState(PAGE_SIZE);
   const [navigating,startNavigation]=useTransition();
   const mobileFilterButton=useRef<HTMLButtonElement|null>(null);
   const lastCommittedQuery=useRef(urlSearch);
-  const partitionQueryKey=params.toString();
-  useEffect(()=>{
-    setExpiredLimit(PAGE_SIZE);
-    setNotOpenLimit(PAGE_SIZE);
-    setSavedExpiredLimit(PAGE_SIZE);
-  },[partitionQueryKey]);
 
   const updateQuery=useCallback((changes:Record<string,string|null>,options?:{replace?:boolean})=>{
     // Legacy ?tab=saved deep links keep their tab when a facet or page
@@ -174,8 +165,8 @@ export function LearnerJobsBrowse({
   const {page,totalPages}=pagination;
   const paged=primary.slice(pagination.startIndex,pagination.endIndex);
   const ordinaryRoleCards=savedOnly?[]:paged;
-  const notOpenRoleCards=savedOnly?[]:notOpenAll.slice(0,notOpenLimit);
-  const expiredRoleCards=savedOnly?[]:expiredAll.slice(0,expiredLimit);
+  const notOpenRoleCards=savedOnly?[]:notOpenAll;
+  const expiredRoleCards=savedOnly?[]:expiredAll;
   const savedOpen=savedOnly&&filters.availability!=="closed"?paged:[];
   const empty=learnerDrivesEmptyState(matchingItems.length,visible.length,filters);
   const filteredEmpty=matchingItems.length>0&&visible.length===0;
@@ -387,12 +378,8 @@ export function LearnerJobsBrowse({
             title={"Expired ("+(savedExpired.length+historicExpired.length)+" saved)"}
             defaultOpen ariaLabel="Expired saved jobs" className="border-t border-border py-3">
             <p className="mb-3 text-sm text-body">Saved jobs remain listed after the deadline or closure. Applying is not available.</p>
-            {savedExpired.length?<LearnerPlacementJobs items={savedExpired.slice(0,savedExpiredLimit)} snapshotNowIso={snapshotNowIso}
+            {savedExpired.length?<LearnerPlacementJobs items={savedExpired} snapshotNowIso={snapshotNowIso}
               returnQuery={params.toString()} savedJobIds={savedJobIds}/>:null}
-            {savedExpired.length>savedExpiredLimit?<Button type="button" variant="secondary"
-              className="min-h-11" onClick={()=>setSavedExpiredLimit(value=>value+PAGE_SIZE)}>
-              Show more expired saved drives · {Math.min(savedExpiredLimit,savedExpired.length)} of {savedExpired.length}
-            </Button>:null}
             {historicExpired.length?<ul className="divide-y divide-border border-y border-border">
               {historicExpired.map(saved=><li key={saved.jobId} className="flex min-w-0 flex-wrap items-center justify-between gap-3 py-3">
                 <div className="min-w-0"><strong className="block break-words">{saved.title?.trim()||"Untitled drive"}</strong>
@@ -425,18 +412,14 @@ export function LearnerJobsBrowse({
             </p>:null}
           {ordinaryRoleCards.length>0?<LearnerPlacementJobs items={ordinaryRoleCards}
             snapshotNowIso={snapshotNowIso} returnQuery={params.toString()} savedJobIds={savedJobIds}/>:null}
-          {expiredRoleCards.length>0?<Disclosure title={"Expired ("+expiredAll.length+" roles)"}
+          {expiredRoleCards.length>0?<Disclosure title={"Expired ("+expiredRoleCards.length+" roles)"}
              defaultOpen={filters.availability==="closed"} ariaLabel="Expired drives"
              className="border-t border-border py-3 [&>summary]:min-h-11">
             <p className="mb-3 text-sm text-body">The application deadline has passed. These records remain available for review.</p>
             <LearnerPlacementJobs items={expiredRoleCards} snapshotNowIso={snapshotNowIso}
              returnQuery={params.toString()} savedJobIds={savedJobIds}/>
-            {expiredAll.length>expiredLimit?<Button type="button" variant="secondary"
-              className="mt-3 min-h-11" onClick={()=>setExpiredLimit(value=>value+PAGE_SIZE)}>
-              Show more expired drives · {Math.min(expiredLimit,expiredAll.length)} of {expiredAll.length}
-            </Button>:null}
           </Disclosure>:null}
-          {notOpenRoleCards.length>0?<Disclosure title={"Not open to you ("+notOpenAll.length+" roles) · See reasons"}
+          {notOpenRoleCards.length>0?<Disclosure title={"Not open to you ("+notOpenRoleCards.length+" roles) · See reasons"}
              defaultOpen={filters.availability==="not-open"} ariaLabel="Not open to you"
              className="border-t border-border py-3 [&>summary]:min-h-11 [&>summary]:text-foreground">
             <p className="mb-3 mt-2 text-sm text-body">
@@ -445,10 +428,6 @@ export function LearnerJobsBrowse({
             </p>
             <LearnerPlacementJobs items={notOpenRoleCards}
               snapshotNowIso={snapshotNowIso} returnQuery={params.toString()} savedJobIds={savedJobIds}/>
-            {notOpenAll.length>notOpenLimit?<Button type="button" variant="secondary"
-              className="mt-3 min-h-11" onClick={()=>setNotOpenLimit(value=>value+PAGE_SIZE)}>
-              Show more unavailable drives · {Math.min(notOpenLimit,notOpenAll.length)} of {notOpenAll.length}
-            </Button>:null}
           </Disclosure>:null}
         </div>
       )}

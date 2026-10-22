@@ -106,6 +106,8 @@ export function FacultyLessonAuthoring({
 }) {
   const router = useRouter();
   const titleRef = useRef<HTMLInputElement>(null);
+  const submissionMethodsRef=useRef<HTMLDivElement>(null);
+  const assignmentResourcesRef=useRef<HTMLDivElement>(null);
   const [mode, setMode] =
     useState<Mode | null>(initialMode);
   const [title, setTitle] = useState("");
@@ -459,6 +461,7 @@ export function FacultyLessonAuthoring({
           throw new Error("Enter a whole number from 1 to 1000.");
         }
         if (allowedAssignmentMethods.length === 0) {
+          submissionMethodsRef.current?.querySelector<HTMLElement>("input,button")?.focus();
           throw new Error("Select at least one allowed submission method.");
         }
 
@@ -472,8 +475,10 @@ export function FacultyLessonAuthoring({
             !(row.kind==="INSTRUCTIONS"&&row.title==="Instructions"&&!row.body?.trim()));
           // Legacy AssignmentContentWriteService requires 1–30 resources.
           // A blank placeholder Instructions block is not a real resource.
-          if(resourcesForSave.length===0)
-            throw new Error("Add at least one assignment instruction or resource.");
+          if(resourcesForSave.length===0){
+             assignmentResourcesRef.current?.querySelector<HTMLElement>("input,textarea,button")?.focus();
+             throw new Error("Add at least one assignment instruction or resource.");
+           }
           const checked=facultyAssignmentResourcesSchema.safeParse(resourcesForSave);
           if(!checked.success)throw new Error(
             checked.error.issues[0]?.message??"Check the assignment resources.");
@@ -948,7 +953,7 @@ export function FacultyLessonAuthoring({
             ) : null}
 
             {mode === "ASSIGNMENT" ? (
-              <div className="mt-4 min-w-0">
+              <div ref={submissionMethodsRef} className="mt-4 min-w-0">
                 <h3 className="mb-2 font-semibold">How Learners Can Submit</h3>
                 <FacultyAssignmentMethodPicker
                   methods={allowedAssignmentMethods}
@@ -995,33 +1000,12 @@ export function FacultyLessonAuthoring({
 
             {mode==="ASSIGNMENT"?<h3 className="mt-4 font-semibold">Assignment Resources</h3>:null}
             {mode==="ASSIGNMENT"&&enableAssignmentResources&&deliveryId?
-              <FacultyAssignmentResourceDraftFields deliveryId={deliveryId}
-                resources={assignmentResources} onChange={setAssignmentResources}
-                disabled={submitting} onPendingChange={setResourceUploading}/>
-              :null}
-            {mode==="ASSIGNMENT"?<details className="mt-4 border-y border-[var(--lms-canvas-border)] py-3">
-              <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-                Review assignment before saving
-              </summary>
-              <dl className="mt-2 grid min-w-0 gap-2 text-sm sm:grid-cols-2">
-                <div><dt className="font-semibold">Due date (IST)</dt><dd>{dueAt||"No deadline"}</dd></div>
-                <div><dt className="font-semibold">Points</dt><dd>{maxPoints.trim()||"0"}</dd></div>
-                <div className="sm:col-span-2"><dt className="font-semibold">How learners can submit</dt>
-                  <dd>{allowedAssignmentMethods.join(", ")||"No method selected"}</dd></div>
-                <div className="sm:col-span-2"><dt className="font-semibold">Instructions and resources ({assignmentResources.length}/30)</dt>
-                  <dd><ul className="mt-1 space-y-1">{assignmentResources.map((item,index)=>
-                    <li key={index}>{index+1}. {item.kind}: {item.title||"Untitled"}
-                      {item.kind==="PDF"||item.kind==="FILE"
-                        ?item.privateObjectKey?" · Private upload attached (scan verified at save)":" · Upload required"
-                        :null}
-                    </li>)}</ul></dd>
-                </div>
-              </dl>
-              <p className="mt-2 text-xs text-muted-foreground">
-                Saving requires one to thirty valid resources, an allowed submission method
-                and clean, tenant-scoped private receipts for any files.
-              </p>
-            </details>:null}
+               <div ref={assignmentResourcesRef} className="min-w-0">
+                 <FacultyAssignmentResourceDraftFields deliveryId={deliveryId}
+                   resources={assignmentResources} onChange={setAssignmentResources}
+                   disabled={submitting} onPendingChange={setResourceUploading}/>
+               </div>
+               :null}
             <details key={mode} open={mode === "RESOURCE" || Boolean(notes)}
               className="mt-4 min-w-0 border-y border-[var(--lms-canvas-border)] py-2">
               <summary className="flex min-h-11 cursor-pointer items-center py-2 text-[13px] font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">

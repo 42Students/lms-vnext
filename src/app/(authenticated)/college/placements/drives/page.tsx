@@ -18,6 +18,7 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {CollegeDrivesRefreshButton} from "@/components/placements/college-drives-refresh-button";
 import {CollegeDrivesQuickFilters} from "@/components/placements/college-drives-quick-filters";
 import {CollegeDriveCreateDialog} from "@/components/placements/college-drive-create-dialog";
+import {CollegeDriveEditDialog} from "@/components/placements/college-drive-edit-dialog";
 import {PlacementJobCreateWorkspace} from "@/components/placements/placement-job-create-workspace";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
@@ -93,8 +94,10 @@ export default async function CollegeDrivesPage({ searchParams }: {
     {key:"actions",header:"Actions",mobilePriority:"action",className:"min-w-[260px] md:sticky md:right-0 md:z-10 md:bg-surface",cell:item=><div className="flex min-w-0 flex-wrap items-center gap-2">
       <Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/applications?returnTo="+encodeURIComponent(driveListHref(query))} aria-label={"View Applications for "+item.title}
         className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View Applications</Link>
-      <Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/settings?returnTo="+encodeURIComponent(driveListHref(query))} aria-label={"Edit "+item.title}
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Edit</Link>
+      {item.status==="DRAFT"
+        ?<CollegeDriveEditDialog jobId={item.id} title={item.title} fullEditorHref={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/settings?returnTo="+encodeURIComponent(driveListHref(query))}/>
+        :<Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/settings?returnTo="+encodeURIComponent(driveListHref(query))}
+          aria-label={"Edit "+item.title} className="inline-flex min-h-11 items-center font-semibold text-link underline">Edit</Link>}
       <CollegeDriveRowLifecycleAction jobId={item.id} title={item.title} status={item.status}/>
       {item.status!=="ARCHIVED"?<details className="min-w-0 w-full">
         <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-error)] md:min-h-9">
@@ -120,7 +123,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
         </CollegeDriveCreateDialog>:null}
         <Link href="/college/placements/new"
           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-on-primary md:min-h-9 hover:bg-[var(--lms-button-primary-hover)]">
-          Full-page editor
+          Create Job
         </Link>
         <Link href="/college/placements"
           className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
@@ -209,8 +212,10 @@ export default async function CollegeDrivesPage({ searchParams }: {
         <div className="flex flex-wrap items-center gap-3 border-t border-[var(--lms-canvas-border)] pt-3">
          <Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/applications?returnTo="+encodeURIComponent(driveListHref(query))}
           aria-label={"View Applications for "+item.title} className="min-h-11 text-sm font-semibold text-link underline">View Applications</Link>
-         <Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/settings?returnTo="+encodeURIComponent(driveListHref(query))}
-          aria-label={"Edit "+item.title} className="min-h-11 text-sm font-semibold text-link underline">Edit</Link>
+         {item.status==="DRAFT"
+          ?<CollegeDriveEditDialog jobId={item.id} title={item.title} fullEditorHref={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/settings?returnTo="+encodeURIComponent(driveListHref(query))}/>
+          :<Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/settings?returnTo="+encodeURIComponent(driveListHref(query))}
+            aria-label={"Edit "+item.title} className="min-h-11 text-sm font-semibold text-link underline">Edit</Link>}
          <CollegeDriveRowLifecycleAction jobId={item.id} title={item.title} status={item.status}/>
          {item.status!=="ARCHIVED"?<details className="min-w-0 w-full">
           <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-error)]">Delete / archive drive</summary>

@@ -106,7 +106,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
         <span className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-1 text-xs font-semibold"
          style={{backgroundColor:"hsl("+companyHue+" 70% 94%)"}}><span aria-hidden="true" className="size-2 rounded-full"
          style={{backgroundColor:"hsl("+companyHue+" 52% 40%)"}}/>{driveTitle}</span>
-        <Link href={driveInterviewsHref(jobId,query)} className="inline-flex min-h-9 items-center font-semibold text-link underline">Refresh</Link>
+        <Link href={driveInterviewsHref(jobId,query)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Refresh</Link>
       </div>}/>
     <div className="grid min-w-0 grid-cols-2 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 text-sm sm:grid-cols-4"
       aria-label="Interview schedule summary">
@@ -146,7 +146,8 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold">Appointment status
         <Select name="appointmentStatus" defaultValue={query.appointmentStatus??"ALL"}>
           <option value="ALL">All statuses</option>
-          <option value="UPCOMING">Active</option>
+          <option value="ACTIVE">Active</option>
+          <option value="UPCOMING">Upcoming</option>
           <option value="COMPLETED">Completed</option>
           <option value="CANCELLED">Cancelled</option>
         </Select>

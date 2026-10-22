@@ -19,6 +19,8 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Banner } from "@/components/ui/banner";
 import { ErrorState } from "@/components/ui/error-state";
 import { getFacultyAssignmentReport } from "@/modules/courses/faculty-assessment-report-service";
+import {getFacultyAssessmentOverview} from "@/modules/courses/faculty-assessment-service";
+import {CoursesServiceError} from "@/modules/courses/errors";
 import { facultySubmissionListHref } from "@/modules/courses/faculty-assignment-submissions-model";
 
 export default async function FacultyAssignmentReportPage({
@@ -40,6 +42,26 @@ export default async function FacultyAssignmentReportPage({
   try {
     report=await getFacultyAssignmentReport(context,parsed.assessmentId,parsed.deliveryId);
   } catch(error) {
+    if(parsed.deliveryId===null&&error instanceof CoursesServiceError&&
+       error.code==="ASSIGNMENT_DELIVERY_MISMATCH"){
+      // The same shared lesson assignment may be delivered to several
+      // Sections the instructor actively teaches. Never default to one
+      // Section or reveal the names of unassigned Sections.
+      const overview=await getFacultyAssessmentOverview(context);
+      const authorized=overview.assignments.filter(item=>item.id===parsed.assessmentId);
+      const choices=[...new Map(authorized.map(item=>[item.deliveryId,item])).values()];
+      if(choices.length>1)return <section className="min-w-0 space-y-4">
+        <PageHeader title="Assignment report" description="Select a Section to view this report."/>
+        <nav aria-label="Choose a teaching Section for the report" className="grid min-w-0 gap-2">
+          {choices.map(item=><Link key={item.deliveryId}
+            href={"/teacher/report/assignment/"+encodeURIComponent(parsed.assessmentId)+
+              "?deliveryId="+encodeURIComponent(item.deliveryId)}
+            className="flex min-h-11 min-w-0 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              {item.sectionName} · {item.courseName} · {item.lessonName}
+            </Link>)}
+        </nav>
+      </section>;
+    }
     if(facultyAssignmentReportHidden(error)) notFound();
     throw error;
   }

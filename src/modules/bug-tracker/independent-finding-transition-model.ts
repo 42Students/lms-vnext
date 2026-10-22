@@ -35,3 +35,10 @@ export const INDEPENDENT_FINDING_TRANSITION_MIGRATION = {
  duplicateRequiresSeparateUuidAction:true,
  minimumNoteCharacters:4,
 } as const;
+
+/** A fix-commit reference is evidence for work already marked fixed.
+ * Draft, duplicate and deliberately rejected findings retain their original
+ * status; committing code alone must not promote them into fixed history. */
+export function canAttachFixCommitToFinding(status:IndependentFindingStatus):boolean{
+ return status==="FIXED_DEV"||status==="RELEASED_PROD"||status==="VERIFIED";
+}

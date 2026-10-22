@@ -57,11 +57,14 @@ export function useProjectEditorDiscardGuard(
   const navigateTo=destination.current;
   destination.current=null;
   setDiscardOpen(false);
-  onDiscard();
   if(navigateTo){
+   // Only one navigation is allowed. Calling onDiscard first used to schedule
+   // a competing router.push before the confirmed anchor's destination.
    leaveConfirmed.current=true;
    window.location.assign(navigateTo);
+   return;
   }
+  onDiscard();
  }
  function changeDiscardOpen(next:boolean){
   if(!next)destination.current=null;
