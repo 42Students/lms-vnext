@@ -9,7 +9,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - [x] G2-2-012-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [x] G2-2-014-028  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
-- [ ] G2-2-019-001  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
+- [x] G2-2-019-001  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [x] G2-20-004-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [x] G2-20-008-040  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [x] G2-20-028-010  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
@@ -31,3 +31,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-7-012-035: OK — `src/modules/projects/readiness-service.ts:101-109,132-157,184-195` gates execution on sprints/tasks rather than shipped releases, and reports unshipped releases only as advisory; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/projects/ProjectReadinessDTO.java:14-19` (release counts explicitly informational).
 
 - G2-2-014-028: OK — `src/app/api/courses/bulk-status/route.ts:9-23` exposes the college-admin POST with same-origin protection and current request context; `src/components/courses/college-course-bulk-visibility.tsx:70-111,136-176` provides authorized bulk selection/confirmation and per-course failure retry; `src/modules/courses/super-admin-course-bulk-visibility.ts` handles the scoped bulk operation. This matches the authenticated, per-course access checks and independent updates of `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminCourseBulkController.java:96-145`.
+
+- G2-2-019-001: FIXED — commits `609524a`, `c01d821`, `922d109`, `4e993b1`, `9873b1e`, `277dcc8` implement selected-college notification delivery history with confirm-before-action retry/send-now and cancel-schedule controls; server-side same-origin, actor/audience/college scope, status transition, and migrated CANCELLED constraint in `src/app/(authenticated)/admin/announcements/delivery/page.tsx`, `src/components/announcements/notification-delivery-actions.tsx`, `src/app/api/admin/notification-delivery/[id]/cancel-schedule/route.ts`, and `drizzle/0312_chat12_notification_delivery_cancelled.sql`; matches operator semantics from `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminNotificationDeliveryController.java:43-144`. Static inspection only; tests and migration were not executed.
