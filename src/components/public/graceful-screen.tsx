@@ -35,49 +35,49 @@ export function GracefulScreen({ title, message, homeHref = "/dashboard", retry,
   }
   return (
     <main className={legacyStatus
-      ? statusCode===500 ? styles.legacyErrorPage+" "+styles.legacyServerError : styles.legacyErrorPage
-      : styles.page}>
-      {!legacyStatus ? <header className={styles.header}>
-        <Link href={destination} className={styles.brand} aria-label="42LMS home">
+      ? statusCode===500 ? styles["legacyErrorPage"]+" "+styles["legacyServerError"] : styles["legacyErrorPage"]
+      : styles["page"]}>
+      {!legacyStatus ? <header className={styles["header"]}>
+        <Link href={destination} className={styles["brand"]} aria-label="42LMS home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/assets/images/legacy-42lms-logo.svg" alt="42LMS" className={styles.legacyLogo} />
+          <img src="/assets/images/legacy-42lms-logo.svg" alt="42LMS" className={styles["legacyLogo"]} />
         </Link>
       </header> : null}
-      <div className={styles.center}>
-        <section className={styles.card} aria-labelledby="public-screen-title">
-          {legacyStatus?<div className={styles.legacyHeading}>
-            <span className={styles.statusNumeral} aria-hidden="true">{statusCode}</span>
-            <h1 id="public-screen-title" className={styles.legacyTitle}>
+      <div className={styles["center"]}>
+        <section className={styles["card"]} aria-labelledby="public-screen-title">
+          {legacyStatus?<div className={styles["legacyHeading"]}>
+            <span className={styles["statusNumeral"]} aria-hidden="true">{statusCode}</span>
+            <h1 id="public-screen-title" className={styles["legacyTitle"]}>
               {statusCode===404?"Page Not Found":"Server Error"}
             </h1>
           </div>:<>
-            <div aria-hidden="true" className={styles.icon}>!</div>
+            <div aria-hidden="true" className={styles["icon"]}>!</div>
             <PageHeader id="public-screen-title" title={title} />
           </>}
-          <p className={styles.message}>{message}</p>
+          <p className={styles["message"]}>{message}</p>
           {!legacyStatus && reference ? (
-            <div className={styles.reference}>
+            <div className={styles["reference"]}>
               <span>{reference}</span>
-              <Button variant="secondary" size="sm" type="button" className={styles.copy}
+              <Button variant="secondary" size="sm" type="button" className={styles["copy"]}
                 onClick={() => { if (requestId) void navigator.clipboard?.writeText(requestId).catch(() => {}); }}>
                 Copy reference
               </Button>
             </div>
           ) : null}
-          <div className={styles.actions}>
-            <Link href={destination} className={styles.primary}>
+          <div className={styles["actions"]}>
+            <Link href={destination} className={styles["primary"]}>
               {statusCode===500?"Go to Home":homeLabel}
             </Link>
-            {legacyStatus?<button type="button" className={styles.secondary}
+            {legacyStatus?<button type="button" className={styles["secondary"]}
               onClick={goBack}>Go back</button>:null}
-            {retry ? <Button type="button" onClick={retry} className={styles.secondary}>Try again</Button> : null}
+            {retry ? <Button type="button" onClick={retry} className={styles["secondary"]}>Try again</Button> : null}
           </div>
-          {legacyStatus && reference ? <p className={styles.reference}>Reference: {reference}</p> : null}
+          {legacyStatus && reference ? <p className={styles["reference"]}>Reference: {reference}</p> : null}
         </section>
       </div>
-      {!legacyStatus ? <footer className={styles.footer}>
+      {!legacyStatus ? <footer className={styles["footer"]}>
         <span>© {new Date().getFullYear()} 42LMS · JRSPF Technologies Pvt. Ltd.</span>
-        <nav className={styles.footerLinks} aria-label="Footer">
+        <nav className={styles["footerLinks"]} aria-label="Footer">
           <Link href="/privacy-policy">Privacy</Link>
           <a href="/assets/static/terms-and-conditions-view.html">Terms</a>
         </nav>
