@@ -148,3 +148,7 @@ AssertionError: expected '"use client";\n\nimport { useEffect, …' to contain '
 - `public-auth-login-gap-verification.test.ts`: recovery calls `loadLoginAttempt(tenantKey)` so a code never resumes for the wrong tenant; updated test and expiration assertion in commit `18dd2247`.
 
 Static source review only: current runner is unavailable; CI pass is not claimed. No test files were deleted or skipped.
+
+## Current-main recheck (2026-10-23)
+
+All six unit-test entries were already checked in `main` and `chatgpt/chat-15-b` with prior dispositions; no source edits or CI pass are claimed in this recheck. Deep rows G2-2-017-052 and G2-13-031-098 reviewed against current `main`, recorded OK in `DEEP_agent2_4.md` (commit `9bf926fd`). Proceed to lane 16 queue, whose six listed unit-test rows are already checked on `main`.
