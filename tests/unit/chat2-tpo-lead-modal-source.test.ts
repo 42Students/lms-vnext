@@ -29,6 +29,7 @@ describe("TPO recruiter contact modal and source parity",()=>{
   expect(overlay).toContain("dialog.showModal()");
   expect(dialog).toContain("onCancel={event =>");
   expect(dialog).toContain("onOpenChange(false)");
-  expect(dialog).toContain("opener.current?.focus()");
+  expect(dialog).toContain("opener.current.focus()");
+  expect(overlay).toContain("opener.focus()");
  });
 });
