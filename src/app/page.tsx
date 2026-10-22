@@ -7,7 +7,7 @@ import { LoginForm } from "@/components/auth/login-form";
 import { PageHeader } from "@/components/ui/page-header";
 import styles from "./login-shell.module.css";
 import { resolveRequestTenant } from "@/modules/auth/request-tenant";
-import { brandStyleVariables, deriveBrandTokens } from "@/modules/colleges/branding";
+import { publicLoginStyleVariables } from "@/modules/colleges/branding";
 import { getPublicCollegeBranding } from "@/modules/colleges/branding-service";
 import {effectiveCollegeSignInCapabilities} from "@/modules/colleges/public-signin-policy-service";
 
@@ -158,10 +158,9 @@ export default async function HomePage({
   const returnTo = safeReturnTo(requested);
   const restartHref = "/login" + (legacySuperAdmin?"?legacy=superadmin":"") +
     (returnTo?(legacySuperAdmin?"&":"?")+"returnTo="+encodeURIComponent(returnTo):"");
-  const themeStyle = brandStyleVariables(
-    branding?.primaryColor,
-  ) as React.CSSProperties;
-  const authPrimary = branding?.primaryColor ? deriveBrandTokens(branding.primaryColor).text : "var(--lms-primary)";
+  // The retired per-college login_theme never changes the shared legacy teal.
+  // Scoped branding is still used for verified college name/logo and backgrounds.
+  const themeStyle = publicLoginStyleVariables() as React.CSSProperties;
   const desktopBackground = branding?.loginBackgroundUrl ?? null;
   const mobileBackground =
     branding?.loginBackgroundUrlMobile ?? desktopBackground;
@@ -169,7 +168,7 @@ export default async function HomePage({
   return (
     <main
       data-legacy-superadmin={legacySuperAdmin||undefined}
-      style={{ ...themeStyle, "--auth-primary": authPrimary } as React.CSSProperties}
+      style={themeStyle}
       className={styles.viewport}
     >
       {desktopBackground ? (
