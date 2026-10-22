@@ -106,7 +106,8 @@ export default async function SuperAdminDepartmentsPage({
 
   return (
     <div className="min-w-0 space-y-6">
-      <PageHeader title="Departments"/>
+      <PageHeader title="Departments" actions={<Link href="/admin/academics"
+        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Academic overview</Link>}/>
       <AcademicSetupSteps step={1} />
       <Link href="/admin/academics" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9">Academic overview</Link>
       {incompleteUsage>0?<Alert tone="warning">

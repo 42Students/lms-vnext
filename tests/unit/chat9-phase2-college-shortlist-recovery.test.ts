@@ -13,11 +13,11 @@ describe("College Admin shortlist page recovery",()=>{
     const src=readFileSync(join(process.cwd(),
       "src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx"),"utf8");
     const guard=src.indexOf('hasMembershipRole(context,"COLLEGE_ADMIN")');
-    const scopedRead=src.indexOf("listCollegeDriveApplications(context,jobId,query)");
-    const recovery=src.indexOf("query.page>data.totalPages");
+    const scopedRead=src.indexOf("getCollegeApplicationPipeline(context, jobId, query)");
+    const recovery=src.indexOf("if (query.page > data.totalPages) redirect(");
     expect(guard).toBeGreaterThan(0);
     expect(scopedRead).toBeGreaterThan(guard);
     expect(recovery).toBeGreaterThan(scopedRead);
-    expect(src).toContain("redirect(collegeShortlistedHref(jobId,{q:query.q,page:data.totalPages}))");
+    expect(src).toContain("redirect(href({ ...query, page: data.totalPages }))");
   });
 });

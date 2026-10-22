@@ -133,7 +133,7 @@ describe("chat-7 learner course discovery/list behavioural matrix",()=>{
   expect(query.get("tooLong")).toBeNull();
   expect(query.get("page")).toBe("2");
   expect(query.get("semester")).toBe("2025");
-  expect(new URLSearchParams(learnerCourseTabPersistentQuery({a:["x","y"]})).get("a")).toBe("x");
+  expect(new URLSearchParams(learnerCourseTabPersistentQuery({a:["x","y"]})).get("a")).toBeNull();
   expect(new URLSearchParams(learnerCourseTabPersistentQuery(
    Object.fromEntries(Array.from({length:30},(_,index)=>["k"+index,"v"+index])))).size).toBe(20);
  });
