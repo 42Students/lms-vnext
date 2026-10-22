@@ -144,11 +144,11 @@ export default async function FacultyAssignmentReportPage({
             const total = Math.max(metrics.graded, 1);
             const width = Math.max(6,Math.round((bucket.count / total) * 100));
             return (
-              <Disclosure key={bucket.label} title={<span className={styles.distribution+" min-w-0 flex-1"}>
-                <span className={styles.distributionLabel}>{bucket.label}</span>
-                <MetricBar className={styles.distributionTrack+" "+(bucket.min>=90?styles.distributionExcellent:bucket.min>=80?styles.distributionGood:bucket.min>=70?styles.distributionFair:bucket.min>=60?styles.distributionWeak:styles.distributionPoor)} label={bucket.label+" grade distribution"}
+              <Disclosure key={bucket.label} title={<span className={styles["distribution"]+" min-w-0 flex-1"}>
+                <span className={styles["distribution"]Label}>{bucket.label}</span>
+                <MetricBar className={styles["distribution"]Track+" "+(bucket.min>=90?styles["distribution"]Excellent:bucket.min>=80?styles["distribution"]Good:bucket.min>=70?styles["distribution"]Fair:bucket.min>=60?styles["distribution"]Weak:styles["distribution"]Poor)} label={bucket.label+" grade distribution"}
                   value={width} maximum={100} unit="percent" />
-                <strong className={styles.distributionCount}>{bucket.count}</strong>
+                <strong className={styles["distribution"]Count}>{bucket.count}</strong>
                 </span>}
                  className="border-b border-border p-2 text-sm [&>summary]:min-h-11 md:[&>summary]:min-h-[var(--lms-control-height)] [&>summary]:px-0">
                 <ul className="mt-2 space-y-1 border-t border-border pt-2">
