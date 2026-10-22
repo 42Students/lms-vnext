@@ -12,6 +12,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { collegeLessonQuerySchema } from "@/modules/courses/college-learning-directory-model";
 import { listCollegeLessons } from "@/modules/courses/college-learning-directory-service";
 import { lessonsCsvHref } from "@/modules/courses/college-lessons-export-model";
+import {CollegeLessonsCapture} from "@/components/courses/college-lessons-last-good";
 
 type Search = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) =>
@@ -106,6 +107,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
       {value:"quizzes",label:"Quizzes",href:"/college/quizzes"},
       {value:"course-progress",label:"Progress",href:"/college/course-progress"},
     ]} />
+    <CollegeLessonsCapture>
     <CollegeLearningDirectory
     data={await listCollegeLessons(context, parsed.data)}
     showHeader={false}
@@ -123,5 +125,6 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
     </Link>
     </div>}
   />
+    </CollegeLessonsCapture>
   </div>;
 }
