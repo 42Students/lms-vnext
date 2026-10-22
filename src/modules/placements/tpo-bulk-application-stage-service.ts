@@ -2,7 +2,7 @@ import "server-only";
 import {and,asc,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
-import {activityEvents,collegeMemberships,colleges,placementApplications,
+import {activityEvents,inAppNotifications,collegeMemberships,colleges,placementApplications,
  placementApplicationScreenings,placementApplicationScreeningHistory,
  placementJobRounds,placementJobs,placementOffers,users} from "@/db/schema";
 import {placementTpoApplicationStages} from "@/db/schema/placement-tpo-application-stages";
@@ -22,6 +22,15 @@ export const TPO_LEGACY_APPLICATION_STAGE_MAP = {
  WAITLISTED:"On hold / waitlisted round result",
  OFFERED:"Placement offer",HIRED:"Offer and joining outcome",
  REJECTED:"Screening or college pipeline rejection",
+} as const;
+/** The old College Admin job route is now an authorized placement workspace.
+ * The same stage command is available to persisted CA/TPO members; it never
+ * authorizes its actor from a URL-selected college alone.
+ */
+export const TPO_LEGACY_STAGE_NAVIGATION={
+ collegeAdmin:{jobs:"/college/placements",applications:"/college/placements/drives"},
+ tpo:{jobs:"/tpo/placements",applications:"/tpo/placements/jobs"},
+ learner:{applications:"/learn/my-placements/applications"},
 } as const;
 export class TpoBulkStageError extends Error{
  constructor(readonly code:"STAGE_STORAGE_PENDING"|"STAGE_STALE"|"STAGE_NOT_ALLOWED"){
@@ -98,6 +107,7 @@ export async function moveTpoBulkApplicationStage(ctx:RequestContext,jobId:strin
   // as the applicant change, even if its session cookie has not expired.
   await requireTpoJobActor(tx,ctx);
   const [app]=await tx.select({id:placementApplications.id,jobId:placementApplications.jobId,
+   learnerUserId:users.id,
    status:placementApplications.status,screening:placementApplicationScreenings.status})
    .from(placementApplications).innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
    .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
@@ -134,13 +144,25 @@ export async function moveTpoBulkApplicationStage(ctx:RequestContext,jobId:strin
   }
   const [college]=await tx.select({organizationId:colleges.organizationId}).from(colleges)
    .where(eq(colleges.id,collegeId)).limit(1);
-  await tx.insert(activityEvents).values({
+  const [event]=await tx.insert(activityEvents).values({
    organizationId:college?.organizationId??ctx.membership!.organizationId,
    collegeId,actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,
    module:"PLACEMENTS",eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_APPLICANT_STAGE_MOVED,
    subjectType:"placement_application",subjectId:applicationId,
    summary:"Placement cell moved applicant to "+target.toLowerCase(),
    metadata:{jobId,from:current?.stage??"SCREENING",to:target,roundId:round.id},
+  }).returning({id:activityEvents.id});
+  if(!event)throw new Error("Stage change audit event could not be created.");
+  // Match the legacy student change/invitation notice at the moment this
+  // transition commits. No unsaved assessment URL or external email/SMS
+  // delivery is claimed; the linked learner journey is separately authorized.
+  await tx.insert(inAppNotifications).values({
+   userId:app.learnerUserId,eventId:event.id,
+   title:target==="TEST"?"Assessment invitation":"Interview round update",
+   body:target==="TEST"
+    ?"Your placement cell moved your application to the assessment round. Check your application for confirmed details."
+    :"Your placement cell moved your application to the interview round. Check your application for confirmed details.",
+   actionHref:TPO_LEGACY_STAGE_NAVIGATION.learner.applications,
   });
   return {applicationId,stage:target,roundId:round.id};
  });
@@ -154,7 +176,7 @@ export async function moveTpoBulkApplicationStages(
 ){
  if(!items.length)throw new RangeError("Select at least one application.");
  if(items.length>TPO_BULK_STAGE_LIMIT)
-  throw new RangeError("You can update at most 100 applications at a time.");
+  throw new RangeError("Maximum 100 applications per bulk update");
  const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
  if(!uuid.test(jobId))throw new RangeError("Select a valid placement drive.");
  const seen=new Set<string>();
@@ -210,7 +232,7 @@ export async function applyTpoLegacyBulkStatuses(
 ){
  if(!items.length)throw new RangeError("Select at least one application.");
  if(items.length>TPO_BULK_STAGE_LIMIT)
-  throw new RangeError("You can update at most 100 applications at a time.");
+  throw new RangeError("Maximum 100 applications per bulk update");
  const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
  if(!uuid.test(jobId))throw new RangeError("Select a valid placement drive.");
  const seen=new Set<string>();

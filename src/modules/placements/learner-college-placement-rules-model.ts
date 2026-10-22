@@ -27,8 +27,10 @@ export function learnerCollegePlacementRulePoints(rules:LearnerCollegeRule,held:
   (onAccept?"accepted":"released")+". They can hold up to "+heldLimit+" "+
   (heldLimit===1?"offer":"offers")+". Once placed, they can apply again only for a CTC at least "+
   uplift+"% higher, or a Dream drive. Offers give "+hours+" hours to respond.";
+ // RELEASED was the Spring-side status; ISSUED is vNext's equivalent.
+ // A declined, expired, or LOI record never counts toward the held maximum.
  const active=held.filter(row=>row.kind==="OFFER"&&
-   (row.status==="ISSUED"||row.status==="ACCEPTED"));
+   (row.status==="ISSUED"||row.status==="RELEASED"||row.status==="ACCEPTED"));
  const recorded=active.map(row=>row.annualCtcInr).filter((v):v is number=>v!==null&&
    Number.isFinite(v)&&v>=0);
  const max=recorded.length?Math.max(...recorded):null;
@@ -36,6 +38,9 @@ export function learnerCollegePlacementRulePoints(rules:LearnerCollegeRule,held:
  // The legacy learner sentence rounds UP to 0.01 LPA, never down:
  // 0.01 lakh equals 1000 INR.
  const minNext=max===null?null:Math.ceil(max*(100+rules.upliftPct)/100/1000)*1000;
+ // Legacy personalNote is null without a released/accepted counted offer.
+ // Keep separate explanatory UI copy for that empty state instead of
+ // presenting a speculative CTC or inventing placement outcomes.
  const personal=active.length===0?"No active counted offers are currently recorded under this college's placement rules.":
   max===null?"You hold an offer, but a verified CTC is not recorded. Review your college rules before applying.":
   "You hold an offer of "+money(max)+". "+
@@ -43,5 +48,11 @@ export function learnerCollegePlacementRulePoints(rules:LearnerCollegeRule,held:
       ?"Once you accept it, you can apply only to "
       :"From now on you can apply only to ")+
     "drives paying "+money(minNext!)+" or more, or any drive tagged Dream.";
- return {points,summary,personal,activeOffers:active.length};
+ return {points,summary,personal,
+  personalNote:active.length?personal:null,
+  activeOffers:active.length,
+  // The view receives the already-effective cohort override, not the
+  // unrelated college baseline. Unknown package values have no threshold.
+  minimumEligibleCtcInr:max===null?null:minNext,
+ };
 }

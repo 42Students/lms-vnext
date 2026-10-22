@@ -127,7 +127,10 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
     industry:placementCompanies.industry,logoPublicUrl:placementCompanies.logoPublicUrl,
     verifiedAt:placementCompanies.verifiedAt,
   }).from(placementCompanies).where(eq(placementCompanies.id,result.company.id)).limit(1) : [null];
-  const publicLogo=profile?.logoPublicUrl && /^https:\/\/[^\s]+$/i.test(profile.logoPublicUrl)?profile.logoPublicUrl:null;
+  // The authorized company-team service may issue a short-lived signed
+  // image URL. Never surface the backing private logo object path.
+  const publicLogo=result.company.logoUrl??
+    (profile?.logoPublicUrl && /^https:\/\/[^\s]+$/i.test(profile.logoPublicUrl)?profile.logoPublicUrl:null);
   const companyDomains=result.company.primaryDomain ? ["@"+result.company.primaryDomain.replace(/^@/,"")] : [];
   if (tab==="team" && (!Array.isArray(result.team) ||
     !result.team.every(member => typeof member.userId === "string" &&

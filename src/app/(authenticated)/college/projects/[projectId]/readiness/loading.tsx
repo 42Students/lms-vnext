@@ -1,10 +1,5 @@
-import { PageHeader } from "@/components/ui/page-header";
-import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+import {WorkspaceReadinessLoading} from "@/components/projects/workspace-readiness-loading";
 
-/** GR-19: loading is bounded by a visible recovery action. */
-export default function Loading() {
-  return <div className="min-w-0 space-y-6">
-    <PageHeader title="Projects" />
-    <GracefulPageLoading shape="directory" />
-  </div>;
+export default function Loading(){
+ return <WorkspaceReadinessLoading basePath="/college/projects"/>;
 }

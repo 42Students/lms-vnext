@@ -1,6 +1,13 @@
-import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+"use client";
+import {usePathname} from "next/navigation";
+import {GracefulPageLoading} from "@/components/ui/graceful-page-loading";
+import {WorkspaceReadinessLoading} from "@/components/projects/workspace-readiness-loading";
 
-/** GR-19: loading is bounded by a visible recovery action. */
-export default function Loading() {
-  return <GracefulPageLoading label="Loading project section…" shape="directory" />;
+/** Keep other sections' loading state unchanged; readiness has its own
+ * six-metric skeleton and still routes through server authorization. */
+export default function Loading(){
+ const path=usePathname();
+ return path.endsWith("/readiness")
+  ? <WorkspaceReadinessLoading basePath="/admin/projects"/>
+  : <GracefulPageLoading label="Loading project section…" shape="directory"/>;
 }

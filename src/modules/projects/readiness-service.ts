@@ -22,6 +22,17 @@ import {
   requireProjectReadAccess,
 } from "./access";
 
+/** The legacy snapshot treated DONE and COMPLET* as finished. Imported
+ * project tasks are normalized to DONE by the canonical DB constraint, but
+ * keep this read adapter for archived imports and future source adapters.
+ * Do not count INCOMPLETE as completed merely because it contains COMPLET.
+ */
+export function projectTaskReadinessIsComplete(status:string|null|undefined):boolean{
+ const normalized=(status??"").trim().toUpperCase();
+ return normalized==="DONE"||normalized==="COMPLETE"||normalized==="COMPLETED"||
+  normalized.startsWith("COMPLET_")||normalized.endsWith("_COMPLETED");
+}
+
 export async function getProjectReadiness(
   context: RequestContext,
   projectIdInput: string,
@@ -74,7 +85,8 @@ export async function getProjectReadiness(
       .from(projectTaskSubmissions)
       .innerJoin(projectTasks,eq(projectTasks.id,projectTaskSubmissions.taskId))
       .where(and(eq(projectTaskSubmissions.projectId,projectId),
-        eq(projectTasks.projectId,projectId),eq(projectTasks.status,"DONE"),
+        eq(projectTasks.projectId,projectId),
+        sql`(upper(${projectTasks.status})='DONE' or upper(${projectTasks.status}) like 'COMPLET%')`,
         isNull(projectTasks.deletedAt),
         sql`length(trim(${projectTaskSubmissions.submissionUrl})) > 0`)),
   ]);
@@ -100,7 +112,7 @@ export async function getProjectReadiness(
     (row) => row.status === "COMPLETED",
   ).length;
   const doneTasks = tasks.filter(
-    (row) => row.status === "DONE",
+    (row) => projectTaskReadinessIsComplete(row.status),
   ).length;
   const shippedReleases = releases.filter(
     (row) => row.status === "SHIPPED",

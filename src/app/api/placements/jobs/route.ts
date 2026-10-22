@@ -15,7 +15,7 @@ export const runtime = "nodejs";
  * is scoped by authenticated college membership and uses indexed SQL paging.
  * Legacy organization/catalog/category probes MUST NOT cross tenant borders.
  */
-export const LEGACY_JOB_SEARCH_COMPATIBILITY={
+const LEGACY_JOB_SEARCH_COMPATIBILITY={
  search:"GET /api/placements/jobs?mode=search",
  popular:"GET /api/placements/jobs?mode=search&sort=POSTED_DESC",
  category:"GET /api/placements/jobs?mode=search&applicationMode=...",
@@ -25,6 +25,12 @@ export const LEGACY_JOB_SEARCH_COMPATIBILITY={
  program:"learner-specific eligibility feed, never a global catalog",
  stats:"college-scoped placement reporting",
  refresh:"no shared in-memory cache; queries always read current database state",
+ // Old /api/v2/jobs/{search,popular,category,organizations,refresh} is
+ // intentionally NOT exposed without authentication. Every surviving
+ // consumer must select an authorized college before querying this route.
+ legacyOrganizations:["42Learn","External Companies"],
+ resultCopy:{search:"Jobs retrieved",popular:"Popular jobs retrieved"},
+ refreshPolicy:"SQL reads current committed state; writes require no in-process cache eviction",
 } as const;
 const searchInput=z.object({
  mode:z.enum(["list","search"]).default("list"),
@@ -33,7 +39,7 @@ const searchInput=z.object({
  sort:z.enum(["POSTED_DESC","POSTED_ASC","DEADLINE_ASC","DEADLINE_DESC","TITLE_ASC"]).default("POSTED_DESC"),
  applicationMode:z.enum(["ALL","INTERNAL","HYBRID","EXTERNAL_ONLY"]).default("ALL"),
  page:z.coerce.number().int().min(0).max(9999).default(0),
- size:z.coerce.number().int().min(1).max(100).default(20),
+ size:z.coerce.number().int().min(1).max(100).default(50),
 }).strict();
 
 
@@ -58,17 +64,21 @@ export async function GET(request: Request) {
         sort:url.searchParams.get("sort")??"POSTED_DESC",
         applicationMode:url.searchParams.get("applicationMode")??"ALL",
         page:url.searchParams.get("page")??0,size:url.searchParams.get("limit")??
-          url.searchParams.get("size")??20,
+          url.searchParams.get("size")??50,
       });
       if(!parsed.success)return NextResponse.json({error:"INVALID_JOB_SEARCH",
         message:"Choose valid job search filters and retry."},{status:400});
       const page=await listPlacementJobsPage(context,collegeId,{
         q:parsed.data.q,status:parsed.data.status,sort:parsed.data.sort,
         applicationMode:parsed.data.applicationMode,page:parsed.data.page+1,
-        pageSize:[10,20,50,100].includes(parsed.data.size)?parsed.data.size:20,
+        pageSize:[10,20,50,100].includes(parsed.data.size)?parsed.data.size:50,
       });
       return NextResponse.json({
         success:true,content:page.items,jobs:page.items,
+        // The old response included a measured milliseconds string.
+        // Such timings belong in request telemetry, not fabricated UI copy.
+        message:LEGACY_JOB_SEARCH_COMPATIBILITY.resultCopy.search,
+        source:"COLLEGE_SCOPED_DATABASE",
         page:parsed.data.page,size:page.pageSize,
         totalElements:page.totalCount,totalPages:page.totalPages,
         empty:page.empty,retryable:false,
