@@ -379,7 +379,8 @@ export function PersonOnboardDialog({
       <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
         title="Discard unsaved onboarding details?"
         description="Your unsaved changes will be lost."
-        confirmLabel="Discard changes" onConfirm={()=>{setDiscardOpen(false);setOpen(false);reset();}}/>
+        confirmLabel="Discard changes" confirmVariant="danger"
+        onConfirm={()=>{setDiscardOpen(false);setOpen(false);reset();}}/>
     </>
   );
 }

@@ -165,6 +165,7 @@ export default async function SuperAdminBatchPromotionPage({
           {key:"action",header:"Action",mobilePriority:"action",cell:batch=>batch.status==="ACTIVE"?
             <Link href={"/admin/batch-promotion?"+new URLSearchParams({
               ...(input.data.programId?{programId:input.data.programId}:{}),cohortId:batch.id,
+              ...(filters.yearStart!==undefined?{yearStart:formatPromotionAcademicYear(filters.yearStart)}:{}),
               ...(showCompleted?{showCompleted:"1"}:{}),
             })} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
               {preview?.batch.id===batch.id&&preview.batch.currentTermNumber!==null&&
