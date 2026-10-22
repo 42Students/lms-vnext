@@ -22,9 +22,10 @@ describe("chat-14 HR UX rollout batch 01",()=>{
   const src=readFileSync("src/app/(authenticated)/hr/company/reports/page.tsx","utf8");
   expect(src).toContain("min-w-0 max-w-full");
   expect(src).not.toContain("min-h-10");
-  expect(src).toContain("<DataTable");
-  expect(src).toContain('caption="Company Reports table"');
-  expect(src).toContain('mobilePriority:"primary"');
+  expect(src).toContain("<HrCompanyReportsGrid");
+  const grid=readFileSync("src/components/hr/hr-company-reports-grid.tsx","utf8");
+  expect(grid).toContain("Hiring activity");
+  expect(src).toContain("scopeKey={[context.user.id,collegeId].join");
   expect(src).toContain('aria-label="Company reports pagination"');
  });
  it("UX-hr-hr-conversations-01 retains recruiter UX and safe markup contracts",()=>{

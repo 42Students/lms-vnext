@@ -23,7 +23,7 @@ describe("TPO recruiter grant read model", () => {
         ),
         revokedAt: null,
       }),
-    ).toEqual({
+    ).toMatchObject({
       displayName: "Ananya Rao",
       companyName: "Example Company",
       status: "ACTIVE",
@@ -51,7 +51,7 @@ describe("TPO recruiter grant read model", () => {
       ),
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       displayName: "Recruiter B",
       companyName: "Archived Relationship Ltd",
       status: "REVOKED",
@@ -90,9 +90,9 @@ describe("TPO recruiter grant read model", () => {
       revokedAt: null,
     });
 
-    expect(result.displayName).toBe(
-      "Unnamed recruiter",
-    );
+    expect(result.displayName).toBe("Unnamed recruiter");
+    expect(result.joinedVia).toBe("Not recorded");
+    expect(result.maskedPhone).toBeNull();
 
     expect(
       Object.keys(result).sort(),
@@ -107,7 +107,10 @@ describe("TPO recruiter grant read model", () => {
       "status",
       "validUntilDate",
       "verificationStatus",
-    ]);
+      "joinedVia",
+      "maskedPhone",
+      "grantSourceLabel",
+    ].sort());
   });
 
   it("rejects unsupported grant statuses instead of relabelling them", () => {

@@ -15,7 +15,7 @@ describe("TPO batch remaining legacy controls",()=>{
   expect(ui).toContain("Common ineligibility reasons");
   for(const reason of ["Higher studies","Not interested in placements","Detained / year back","Discontinued","Disciplinary","Already has a job"])expect(ui).toContain(reason);
   expect(ui).toContain("reason.trim().length>=3");
-  expect(ui).toContain('role="alert"');
+  expect(ui).toContain('<InlineNotice tone="error" message="Enter a reason of at least 3 characters."');
  });
  it("TPO-batches-47 never matches an ambiguous roll number to an arbitrary student",()=>{
   const roster=[
@@ -33,6 +33,7 @@ describe("TPO batch remaining legacy controls",()=>{
   expect(ui).toContain('registration:"registrations"');
   expect(ui).toContain('students:"students"');
   expect(ui).toContain('history:"history"');
-  expect(ui).toContain('redirect("/tpo/batches/"+encodeURIComponent(batchId)+"/"+aliases[selected])');
+  expect(ui).toContain('const destination="/tpo/batches/"+encodeURIComponent(batchId)+"/"+aliases[selected]');
+  expect(ui).toContain('redirect(destination+(preserved.size?"?"+preserved.toString():""))');
  });
 });

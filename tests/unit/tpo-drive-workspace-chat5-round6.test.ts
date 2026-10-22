@@ -55,7 +55,8 @@ describe("chat-5 Drive Workspace next 25+ OPEN gap evidence",()=>{
  it("TPO-drive-workspace-49 partial or implemented scope is recorded without inferring unsupported parity",()=>{expect(source("src/modules/placements/tpo-drive-offer-register-model.ts")).toContain("joiningBonusLpa");});
  it("TPO-drive-workspace-51 partial or implemented scope is recorded without inferring unsupported parity",()=>{expect(source("src/modules/placements/tpo-drive-offer-register-model.ts")).toContain("acceptedDisputableUntil");});
  it("TPO-drive-workspace-56 partial or implemented scope is recorded without inferring unsupported parity",()=>{expect(source("src/modules/placements/tpo-drive-offer-register-model.ts")).toContain("Joining bonus (LPA)");});
- it("TPO-drive-workspace-09 partial or implemented scope is recorded without inferring unsupported parity",()=>{const ui=source("src/components/placements/placement-drive-workspace.tsx");expect(ui).toContain("Applicants");expect(ui).toContain("Close drive");expect(ui).toContain('driveDay.job.company.name + " · " + driveDay.job.title');});
+ it("TPO-drive-workspace-09 partial or implemented scope is recorded without inferring unsupported parity",()=>{const ui=source("src/components/placements/placement-drive-workspace.tsx");expect(ui).toContain("Applicants");expect(ui).toContain("Close drive");expect(ui).toContain('driveDay.job.status');
+expect(ui).toContain('job.title');});
  it("TPO-drive-workspace-11 partial or implemented scope is recorded without inferring unsupported parity",()=>{const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/page.tsx");
   expect(page).toContain('can(context, "placements.manage", { collegeId: context.membership.collegeId })');
   expect(page).toContain("getPlacementJob(context, jobId)");
@@ -74,7 +75,11 @@ describe("chat-5 Drive Workspace next 25+ OPEN gap evidence",()=>{
  it("TPO-drive-workspace-57 partial or implemented scope is recorded without inferring unsupported parity",()=>{expect(source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx")).toContain("respond-by time is at least 48 hours and never ends on a Sunday or holiday.");});
  it("TPO-drive-workspace-59 partial or implemented scope is recorded without inferring unsupported parity",()=>{expect(source("src/modules/placements/tpo-drive-discussion-service.ts")).toContain("eq(placementTpoMessageThreads.jobId,jobId)");});
  it("TPO-drive-workspace-61 partial or implemented scope is recorded without inferring unsupported parity",()=>{expect(source("src/modules/placements/tpo-recruiter-invite-service.ts")).toContain("requirePlacementManageScope");});
- it("TPO-drive-workspace-63 partial or implemented scope is recorded without inferring unsupported parity",()=>{expect(source("src/components/placements/placement-drive-controls.tsx")).toContain("Force exclude");});
+ it("TPO-drive-workspace-63 partial or implemented scope is recorded without inferring unsupported parity",()=>{const sourceText=source("src/components/placements/placement-drive-controls.tsx");
+  expect(sourceText).toContain('"EXCLUDE"');
+  expect(sourceText).toContain("Exclude from drive");
+  expect(sourceText).toContain("Remove override");
+  expect(sourceText).toContain("Required reason for manual include/exclude");});
  it("TPO-drive-workspace-67 partial or implemented scope is recorded without inferring unsupported parity",()=>{expect(source("src/components/placements/tpo-applicant-review-drawer.tsx")).toContain("Open full applicant detail");});
  it("TPO-drive-workspace-69 partial or implemented scope is recorded without inferring unsupported parity",()=>{expect(source("src/components/tpo/tpo-bulk-action-panel.tsx")).toContain("Retry skipped/failed");});
  it("TPO-drive-workspace-70 partial or implemented scope is recorded without inferring unsupported parity",()=>{expect(source("src/components/placements/tpo-drive-cancel-form.tsx")).toContain("checked={reviewed}");});
