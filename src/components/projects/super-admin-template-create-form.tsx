@@ -1,6 +1,7 @@
 "use client";
 
 import {useRef,useState,type FormEvent} from "react";
+import {ZodError} from "zod";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Banner} from "@/components/ui/banner";
@@ -60,6 +61,7 @@ export function SuperAdminTemplateCreateForm(){
   const [saving,setSaving]=useState(false);
   const [saved,setSaved]=useState(false);
   const [error,setError]=useState("");
+  const [errorSection,setErrorSection]=useState<string|null>(null);
   const dirty=JSON.stringify([values,releases,sprints,tasks,resources])!==
     JSON.stringify([empty,firstReleases,firstSprints,firstTasks,[]]);
   const guard=useProjectEditorDiscardGuard(!saved,dirty,saving,
@@ -108,7 +110,7 @@ export function SuperAdminTemplateCreateForm(){
   async function submit(event:FormEvent<HTMLFormElement>){
     event.preventDefault();
     if(savingRef.current)return;
-    setError("");
+    setError("");setErrorSection(null);
     if(!values.title.trim()){setError("Template title is required.");return;}
     if(values.title.trim().length>160){
       setError("Template title must be 160 characters or fewer.");return;
@@ -116,14 +118,49 @@ export function SuperAdminTemplateCreateForm(){
     if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(values.slug)||values.slug.length>80){
       setError("Use a slug of at most 80 lowercase letters, numbers and hyphens.");return;
     }
+    const overviewGroups=[
+      {name:"Deliverables",value:values.deliverables},
+      {name:"Definition of done",value:values.definitionOfDone},
+      {name:"Personas",value:values.personas},
+    ];
     if(!lines(values.deliverables).length){
-      setError("Add at least one deliverable (one per line).");return;
+      setError("Add at least one deliverable (one per line).");
+      setErrorSection("overview");return;
+    }
+    for(const group of overviewGroups){
+      const rows=lines(group.value);
+      if(rows.length>50||rows.some(row=>row.length>500)){
+        setError(group.name+" supports up to 50 rows and 500 characters per row.");
+        setErrorSection("overview");return;
+      }
     }
     if(!releases.length||!sprints.length||!tasks.length){
       setError("Add at least one release, sprint and task.");return;
     }
-    if([...releases,...sprints,...tasks,...resources].some(row=>!row.title.trim())){
-      setError("Each release, sprint, task and resource must have a title.");return;
+    for(const group of [
+      {name:"releases",rows:releases},
+      {name:"sprints",rows:sprints},
+      {name:"tasks",rows:tasks},
+      {name:"resources",rows:resources},
+    ]){
+      const invalid=group.rows.findIndex(row=>!row.title.trim());
+      if(invalid>=0){
+        setError(group.name+" · item "+(invalid+1)+": Title required.");
+        setErrorSection(group.name);return;
+      }
+      const keys=new Set<string>();
+      for(let i=0;i<group.rows.length;i++){
+        const key=group.rows[i]!.key.trim();
+        if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(key)||key.length>64){
+          setError(group.name+" · item "+(i+1)+": Use a valid key (up to 64 characters).");
+          setErrorSection(group.name);return;
+        }
+        if(keys.has(key)){
+          setError(group.name+" · item "+(i+1)+": Key already exists.");
+          setErrorSection(group.name);return;
+        }
+        keys.add(key);
+      }
     }
     savingRef.current=true;setSaving(true);
     try{
@@ -139,7 +176,11 @@ export function SuperAdminTemplateCreateForm(){
         encodeURIComponent(result.template.id));
       router.refresh();
     }catch(caught){
-      const detail=caught instanceof Error?caught.message:"Template creation failed.";
+      const issue=caught instanceof ZodError?caught.issues[0]:undefined;
+      const detail=issue?
+        (issue.path.length?issue.path.join(" · ")+": ":"")+issue.message:
+        caught instanceof Error?caught.message:"Template creation failed.";
+      setErrorSection(issue?.path[0]?.toString()??null);
       setError(detail);
       showToast({tone:"error",title:"Template creation failed",description:detail});
     }finally{
@@ -239,7 +280,7 @@ export function SuperAdminTemplateCreateForm(){
     <section className="space-y-4 border-t border-border pt-4" aria-label="Releases">
       <h2 className="text-base font-semibold">Releases</h2>
       {!releases.length?<p className="text-sm text-body">No releases yet.</p>:null}
-      {releases.map((row,index)=><fieldset key={row.key+":"+index}
+      {releases.map((row,index)=><fieldset key={index}
         className="space-y-3 border-b border-border pb-4">
         <legend className="font-semibold">Release {index+1}</legend>
         <div className="grid gap-3 md:grid-cols-2">
@@ -275,7 +316,7 @@ export function SuperAdminTemplateCreateForm(){
     <section className="space-y-4 border-t border-border pt-4" aria-label="Sprints">
       <h2 className="text-base font-semibold">Sprints</h2>
       {!sprints.length?<p className="text-sm text-body">No sprints yet.</p>:null}
-      {sprints.map((row,index)=><fieldset key={row.key+":"+index}
+      {sprints.map((row,index)=><fieldset key={index}
         className="space-y-3 border-b border-border pb-4">
         <legend className="font-semibold">Sprint {index+1}</legend>
         <div className="grid gap-3 md:grid-cols-2">
@@ -297,12 +338,12 @@ export function SuperAdminTemplateCreateForm(){
               value={row.title} onChange={event=>changeSprint(index,{title:event.target.value})}/>
           </label>
           <label className={label}>Due label
-            <Input className={input} maxLength={160} disabled={saving}
+            <Input className={input} maxLength={120} disabled={saving}
               value={row.dueLabel} onChange={event=>changeSprint(index,{dueLabel:event.target.value})}/>
           </label>
         </div>
         <label className={label}>Goal
-          <Textarea className={input} maxLength={2000} disabled={saving}
+          <Textarea className={input} maxLength={1000} disabled={saving}
             value={row.goal} onChange={event=>changeSprint(index,{goal:event.target.value})}/>
         </label>
         <label className={label}>Description
@@ -327,7 +368,7 @@ export function SuperAdminTemplateCreateForm(){
     <section className="space-y-4 border-t border-border pt-4" aria-label="Tasks">
       <h2 className="text-base font-semibold">Tasks</h2>
       {!tasks.length?<p className="text-sm text-body">No tasks yet.</p>:null}
-      {tasks.map((row,index)=><fieldset key={row.key+":"+index}
+      {tasks.map((row,index)=><fieldset key={index}
         className="space-y-3 border-b border-border pb-4">
         <legend className="font-semibold">Task {index+1}</legend>
         <div className="grid gap-3 md:grid-cols-2">
@@ -386,7 +427,7 @@ export function SuperAdminTemplateCreateForm(){
     <section className="space-y-4 border-t border-border pt-4" aria-label="Resources">
       <h2 className="text-base font-semibold">Resources</h2>
       {!resources.length?<p className="text-sm text-body">No resources yet.</p>:null}
-      {resources.map((row,index)=><fieldset key={row.key+":"+index}
+      {resources.map((row,index)=><fieldset key={index}
         className="space-y-3 border-b border-border pb-4">
         <legend className="font-semibold">Resource {index+1}</legend>
         <div className="grid gap-3 md:grid-cols-2">
@@ -424,7 +465,9 @@ export function SuperAdminTemplateCreateForm(){
         Add resource
       </Button>
     </section>
-    {error?<Banner tone="error">{error}</Banner>:null}
+    {error?<Banner tone="error">
+      {errorSection?errorSection[0]!.toUpperCase()+errorSection.slice(1)+": ":""}{error}
+    </Banner>:null}
     <div className="flex flex-wrap items-center justify-end gap-3 border-t border-border pt-4">
       <Button type="button" variant="secondary" disabled={saving}
         onClick={guard.requestClose}>Cancel</Button>
