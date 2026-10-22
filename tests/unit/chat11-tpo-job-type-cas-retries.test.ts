@@ -42,6 +42,8 @@ describe("TPO-settings-audit-23 atomic, idempotent job-type config changes",()=>
  });
  it("TPO-settings-audit-23 refuses symbol-only labels while allowing Indian scripts",()=>{
   expect(tpoJobTypeNameSchema.safeParse("--")).toMatchObject({success:false});
+  expect(tpoJobTypeNameSchema.safeParse("++")).toMatchObject({success:false});
+  expect(tpoJobTypeNameSchema.safeParse("M.Tech")).toMatchObject({success:true});
   expect(tpoJobTypeNameSchema.safeParse("తెలుగు ఉద్యోగం")).toMatchObject({success:true});
  });
 });
