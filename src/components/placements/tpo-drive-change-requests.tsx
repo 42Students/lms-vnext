@@ -39,6 +39,7 @@ function readableValue(field:string,value:string|null|undefined):string{
    timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"
   })+" IST":value;
  }
+ if(field==="WORK_MODE"||field==="MODE")return ({"ON_CAMPUS":"On campus","POOL":"Pool drive","OFF_CAMPUS":"Off campus"} as Record<string,string>)[cleaned]??cleaned;
  if(field==="CTC")return cleaned+" LPA";
  if(field==="STIPEND")return "₹"+cleaned+" a month";
  return cleaned;
@@ -144,6 +145,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
     {mode==="ASK"?"Your question":"New value"}
     {mode==="SUGGEST"&&field==="DEADLINE"?
       <Input type="datetime-local" value={value} onChange={e=>setValue(e.target.value)}
+       onFocus={e=>{e.currentTarget.min=new Date(Date.now()+330*60_000).toISOString().slice(0,16);}}
        className="min-h-11 min-[768px]:min-h-9"/>:
      mode==="SUGGEST"&&["CTC","STIPEND","MIN_CGPA","PAY"].includes(field)?
       <Input type="number" min={0} max={field==="MIN_CGPA"?10:field==="CTC"?1000:undefined}
@@ -153,9 +155,13 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
       <Select value={value} onChange={e=>setValue(e.target.value)}
        className="min-h-11 min-[768px]:min-h-9">
        <option value="">Choose an option</option>
-       {(field==="WORK_MODE"?["On campus","Off campus","Hybrid","Remote"]:
-          ["Full time","Internship","Internship + full time","Contract"]).map(option=>
-         <option key={option} value={option}>{option}</option>)}
+       {(field==="WORK_MODE"?[
+         {value:"ON_CAMPUS",label:"On campus"},{value:"POOL",label:"Pool drive"},{value:"OFF_CAMPUS",label:"Off campus"},
+        ]:[
+         {value:"Full-time",label:"Full-time"},{value:"Internship",label:"Internship"},
+         {value:"Internship + full-time",label:"Internship + full-time"},
+         {value:"Contract",label:"Contract"},{value:"Apprenticeship",label:"Apprenticeship"},
+        ]).map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
       </Select>:
       <Textarea value={value} onChange={e=>{setValue(e.target.value);setFieldError("");}} minLength={2}
        maxLength={field==="ROLE_TITLE"||field==="LOCATION"?255:2000}
@@ -220,7 +226,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
      </p>:null}
      <Link href={party==="TPO"
        ?"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/discussion?requestId="+encodeURIComponent(item.id)
-       :"/recruiter/messages"}
+       :"/recruiter/drives/"+encodeURIComponent(jobId)+"/messages?requestId="+encodeURIComponent(item.id)}
        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2">
        Discuss in drive conversation
      </Link>
@@ -235,7 +241,23 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
         ["DEADLINE"].includes(item.legacyField??item.field)?
         <Input type="datetime-local" value={notes[item.id]??""}
          onChange={e=>setNotes(p=>({...p,[item.id]:e.target.value}))}
+         onFocus={e=>{e.currentTarget.min=new Date(Date.now()+330*60_000).toISOString().slice(0,16);}}
          className="min-h-11 min-[768px]:min-h-9"/>:
+       item.mode==="ASK"&&item.targetParty===party&&
+        ["WORK_MODE","MODE","JOB_TYPE"].includes(item.legacyField??item.field)?
+        <Select value={notes[item.id]??""}
+         onChange={e=>setNotes(p=>({...p,[item.id]:e.target.value}))}
+         className="min-h-11 min-[768px]:min-h-9">
+         <option value="">Choose an answer</option>
+         {(item.field==="JOB_TYPE"?[
+           {value:"Full-time",label:"Full-time"},{value:"Internship",label:"Internship"},
+           {value:"Internship + full-time",label:"Internship + full-time"},
+           {value:"Contract",label:"Contract"},{value:"Apprenticeship",label:"Apprenticeship"},
+          ]:[
+           {value:"ON_CAMPUS",label:"On campus"},{value:"POOL",label:"Pool drive"},
+           {value:"OFF_CAMPUS",label:"Off campus"},
+          ]).map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
+        </Select>:
         <Textarea maxLength={2000} value={notes[item.id]??""}
          onChange={e=>setNotes(p=>({...p,[item.id]:e.target.value}))}
          rows={2} className="min-h-11 min-[768px]:min-h-9"/>}
