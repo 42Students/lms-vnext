@@ -4,7 +4,7 @@ No-mercy program part A (compiler flags). Work packets in order; each lists file
 
 - [x] `docs/audit/strictness/A/packets/A_018.md`
 - [x] `docs/audit/strictness/A/packets/A_038.md`
-- [ ] `docs/audit/strictness/A/packets/A_058.md`
+- [x] `docs/audit/strictness/A/packets/A_058.md`
 - [ ] `docs/audit/strictness/A/packets/A_078.md`
 - [ ] `docs/audit/strictness/A/packets/A_098.md`
 - [ ] `docs/audit/strictness/A/packets/A_118.md`
