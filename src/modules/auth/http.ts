@@ -58,9 +58,7 @@ export function loginErrorResponse(
       },
       {
         status: error.status,
-        headers: error.retryAfterSeconds
-          ? { "Retry-After": String(error.retryAfterSeconds) }
-          : undefined,
+        ...(error.retryAfterSeconds ? {headers:{"Retry-After":String(error.retryAfterSeconds)}} : {}),
       },
     );
   }
@@ -163,6 +161,6 @@ export async function guardLoginRequest<T extends z.ZodTypeAny>(
     ok: true,
     body: parsed.data,
     tenantCollegeId: tenant.kind === "college" ? tenant.collegeId : null,
-    ip,
+    ip:ip??"unknown",
   };
 }
