@@ -144,6 +144,9 @@ export function TpoRoundDriveDayReadOnly({
       waiting:roster.filter(row=>row.attendance==="PRESENT").length,
       inside:roster.filter(row=>row.attendance==="IN_INTERVIEW").length,
       next:roster.filter(row=>row.attendance==="PRESENT").sort((a,b)=>
+        // Historical drive-day called the earliest booked slot first,
+        // breaking ties by natural roll order and stable application ID.
+        (a.slotStartsAt??"9999").localeCompare(b.slotStartsAt??"9999")||
         (a.rollNumber??"").localeCompare(b.rollNumber??"","en",{numeric:true})||
         a.applicationId.localeCompare(b.applicationId))[0]??null,
     })).sort((a,b)=>a.room.localeCompare(b.room));
