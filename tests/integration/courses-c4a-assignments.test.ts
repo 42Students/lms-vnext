@@ -915,15 +915,15 @@ describe("courses C4A assignments against PostgreSQL", () => {
       pool.query(
         `insert into assignment_submissions
           (assignment_id, delivery_id, membership_id, submission_type, text_content)
-         values ($1, $2, $3, 'LINK', 'invalid-shape')`,
+         values ($1, $2, $3, 'TEXT', '    ')`,
         [
-          randomUUID(),
+          assignment.id,
           structure.deliveryA.id,
           SEED_IDS.facultyCollegeAMembership,
         ],
       ),
     ).rejects.toMatchObject({
-      code: "23503",
+      code: "23514",
     });
 
     await expect(
