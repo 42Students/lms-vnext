@@ -15,7 +15,7 @@ import { registrableWorkDomain } from "./domain-model";
 import { companyJoinEmailCandidate } from "./company-preview-policy";
 import { publicJoinAcceptSchema } from "./form-model";
 import { matchesPublicJoinCode, PUBLIC_JOIN_MAX_FAILURES, PUBLIC_JOIN_PER_IP_JOIN_HOUR } from "./code-policy";
-import { opaqueNetworkTag, PublicJoinCodeError } from "./send-code-service";
+import { opaqueNetworkTag } from "./send-code-service";
 import { publicJoinTablesReady } from "./readiness";
 import { publicRecruiterJoinedNotification } from "./join-notification-model";
 import { recruiterGrantValidUntil, recruiterGrantEffectiveAt } from "../recruiter-grant-expiry-policy";
@@ -55,7 +55,7 @@ export async function acceptPublicRecruiterJoin(
 ): Promise<{ joined: true; outcome: "JOINED" | "ALREADY_JOINED";signInEmail:string }> {
   const input = publicJoinAcceptSchema.safeParse(raw);
   if (!input.success) throw new PublicJoinAcceptError("INVALID");
-  const secret = process.env.TPO_RECRUITER_OTP_HMAC_SECRET ?? "";
+  const secret = process.env["TPO_RECRUITER_OTP_HMAC_SECRET"] ?? "";
   if (Buffer.byteLength(secret, "utf8") < 32) throw new PublicJoinAcceptError("NOT_CONFIGURED");
   let ipTag: string;
   try { ipTag = opaqueNetworkTag(verifiedClientIp ?? "", secret); }
