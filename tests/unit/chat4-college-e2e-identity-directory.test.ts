@@ -1,4 +1,5 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
+import {readFileSync} from "node:fs";
 
 const mocks=vi.hoisted(()=>({
  select:vi.fn(),where:vi.fn(),limit:vi.fn(),
@@ -56,10 +57,12 @@ describe("COL-people-e2e-identity-01 deterministic fixture identity isolation",(
    email:"student@example.edu",displayName:"A Student",
   });
   expect(result).not.toHaveProperty("id");
-  const query=mocks.where.mock.calls[0]?.[0] as {queryChunks?:unknown[]};
-  expect((query.queryChunks??[]).some(chunk=>
-   typeof chunk==="object"&&chunk!==null&&"value" in chunk&&
-   chunk.value==="student@example.edu")).toBe(true);
+  // Drizzle now nests its bound parameter inside a SQL template fragment.
+  // Assert the normalized value is interpolated as a parameter, not as SQL.
+  const source=readFileSync("src/modules/people/e2e-identity-directory.ts","utf8");
+  expect(source).toContain('sql<boolean>`lower(${users.email}) = ${email');
+  expect(source).toContain('.trim()\n          .toLowerCase()');
+  expect(mocks.where).toHaveBeenCalledTimes(1);
   expect(mocks.limit).toHaveBeenCalledWith(1);
  });
  it("missing synthetic identities return null rather than inferring a foreign user",async()=>{

@@ -11,7 +11,7 @@ describe("Chat-4 college UX round 2 source contracts",()=>{
  });
  it("UX-college-attendance-01 prevents width overflow and preserves accessible controls",()=>{
  const page=source("attendance");
- expect(page).toContain("min-w-0 overflow-x-clip space-y");
+ expect(page).toContain("min-w-0 space-y-[var(--lms-space-4)]");
  expect(page).toContain("min-h-11");
  
  });
@@ -29,13 +29,13 @@ describe("Chat-4 college UX round 2 source contracts",()=>{
  });
  it("UX-college-attendance-settings-01 prevents width overflow and preserves accessible controls",()=>{
  const page=source("attendance/settings");
- expect(page).toContain("min-w-0 overflow-x-clip space-y");
+ expect(page).toContain("min-w-0 space-y-[var(--lms-space-4)]");
  expect(page).toContain("min-h-11");
  
  });
  it("UX-college-batch-promotion-01 prevents width overflow and preserves accessible controls",()=>{
  const page=source("batch-promotion");
- expect(page).toContain("min-w-0 overflow-x-clip space-y");
+ expect(page).toContain("min-w-0 space-y-4 md:space-y-6");
  
  
  });

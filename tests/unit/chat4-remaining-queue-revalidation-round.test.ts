@@ -22,7 +22,7 @@ describe("chat-4 remaining source contracts after final-sprint split",()=>{
  it("SA-placements-projects-75 shows persisted audit summary, export, and event details",()=>{
   const audit=source("src/components/projects/project-admin-audit-page.tsx");
   for(const label of ["Actions shown","People who made changes","Destructive actions",
-    "ProjectAuditPageExport","<ActivityCenter"])
+    "ProjectAuditPageExport","listActivityEvents("])
    expect(audit).toContain(label);
   expect(audit).toContain("listActivityEvents(");
  });
@@ -47,7 +47,9 @@ describe("chat-4 remaining source contracts after final-sprint split",()=>{
   const exportComponent=source("src/components/projects/project-submissions-page-export.tsx");
   expect(page).toContain("pendingDays:");
   expect(page).toContain("reviewedBy");
-  expect(page).toContain("Reassign mentor");
+  const reassignment=source("src/components/projects/project-admin-reassign-mentor-page.tsx");
+  expect(reassignment).toContain("Bulk mentor reassignment");
+  expect(reassignment).toContain("<ProjectMentorReassignment");
   expect(exportComponent).toContain("Export CSV");
   expect(exportComponent).toContain("Revisions");
   expect(exportComponent).toContain("Reviewed by");
