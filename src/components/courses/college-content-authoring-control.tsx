@@ -517,8 +517,13 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
       className="max-w-[700px]" dismissible={!busy}>
       {editorFields}
     </Dialog>:
+    editing ? <Dialog open={open} onOpenChange={value=>{if(!value)closeEditor();}}
+      title={"Edit Content: "+title} description="Edit lesson content details."
+      className="max-w-[600px]" dismissible={!busy}>
+      {editorFields}
+    </Dialog> :
     <section aria-label="Add Content" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
-      <h3 className="mb-3 font-semibold">{editing?"Edit Content: "+title:"Add Content"}</h3>
+      <h3 className="mb-3 font-semibold">Add Content</h3>
       {editorFields}
     </section>:null}
   <ConfirmDialog open={saveConfirmOpen} onOpenChange={setSaveConfirmOpen}
