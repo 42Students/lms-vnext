@@ -1,4 +1,6 @@
 import Link from "next/link";
+import {DataTable} from "@/components/ui/data-table";
+import {EmptyState} from "@/components/ui/empty-state";
 import {redirect} from "next/navigation";
 import {and,asc,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
@@ -204,63 +206,46 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
     <p className="text-sm text-muted-foreground">
       Sorted furthest-behind first, which is the order worth acting on. A student retaking the course counts only their current attempt.
     </p>
-    {shownRows.length?<div role="region" aria-label="Per student progress table" tabIndex={0}
-      className="min-w-0 overflow-x-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-      <table className="w-full min-w-[860px] border-collapse text-left text-sm tabular-nums">
-        <caption className="sr-only">Student course progress by current attempt. Scroll horizontally for all columns.</caption>
-        <thead className="bg-[var(--lms-neutral-50)] text-xs font-semibold text-muted-foreground">
-          <tr>
-            <th scope="col" className="border-b border-border px-3 py-3">Student</th>
-            <th scope="col" className="border-b border-border px-3 py-3">Roll number</th>
-            <th scope="col" className="w-[90px] border-b border-border px-3 py-3">Videos</th>
-            <th scope="col" className="w-[110px] border-b border-border px-3 py-3">Assignments</th>
-            <th scope="col" className="w-[90px] border-b border-border px-3 py-3">Quizzes</th>
-            <th scope="col" aria-sort={sort==="percent-asc"?"ascending":"descending"}
-              className="w-[220px] border-b border-border px-3 py-3">
-              <Link href={reportHref(1,pageSize,sort==="percent-asc"?"percent-desc":"percent-asc")}
-                className="inline-flex min-h-11 items-center gap-1 font-semibold text-link underline underline-offset-2 md:min-h-9"
-                aria-label={"Sort progress "+(sort==="percent-asc"?"descending":"ascending")}>
-                Progress <span aria-hidden="true">{sort==="percent-asc"?"↑":"↓"}</span>
-              </Link>
-            </th>
-            <th scope="col" className="border-b border-border px-3 py-3">Progress attempt</th>
-          </tr>
-        </thead>
-        <tbody>{shownRows.map(row=>{
-          const completed=studentCourseCompletion(row);
-          const percent=completed===null?null:Math.max(0,Math.min(100,completed));
-          const progressState=percent===0?"Not started":percent!==null&&percent<40?"Below 40%":"Progress recorded";
-          const progressColour=percent===0?"bg-[#ff4d4f]":percent!==null&&percent<40?"bg-[#1890ff]":"bg-[#52c41a]";
-          return <tr key={row.membershipId} className="hover:bg-[var(--lms-neutral-50)]">
-            <th scope="row" className="border-b border-border px-3 py-3 text-left font-semibold text-[var(--lms-heading)]">
-              {row.studentName?.trim()||"Student #"+row.membershipId.slice(0,8)}
-            </th>
-            <td className="border-b border-border px-3 py-3">{row.rollNumber?.trim()||"—"}</td>
-            <td className="border-b border-border px-3 py-3">{row.videos}/{row.totalVideos}</td>
-            <td className="border-b border-border px-3 py-3">{row.assignments}/{row.totalAssignments}</td>
-            <td className="border-b border-border px-3 py-3">{row.quizzes}/{row.totalQuizzes}</td>
-            <td className="border-b border-border px-3 py-3">
-              {percent===null?<span className="text-muted-foreground">Not measured</span>:
-                <div className="flex min-w-[190px] items-center gap-2">
-                  <div role="progressbar" aria-label={"Course completion for "+(row.studentName||"student")}
-                    aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent}
-                    aria-valuetext={percent+" percent; "+progressState}
-                    className="h-2 w-[145px] overflow-hidden rounded-full bg-[var(--lms-neutral-100)]">
-                    <div className={"h-full rounded-full "+progressColour}
-                      style={{width:percent+"%"}}/>
-                  </div>
-                  <span className="min-w-10 text-right font-medium">{percent}%</span>
-                  <span className="sr-only">{progressState}</span>
-                </div>}
-            </td>
-            <td className="border-b border-border px-3 py-3">
-              <AdminProgressRetakeAction offeringId={offeringId}
-                membershipId={row.membershipId} learnerName={row.studentName}/>
-            </td>
-          </tr>;
-        })}</tbody>
-      </table>
-    </div>:<div role="status" className="rounded-[var(--lms-control-radius)] bg-muted p-4 text-sm text-body">
+    {shownRows.length?<DataTable caption="Student Course Progress"
+      rows={shownRows} getRowKey={row=>row.membershipId}
+      mobileMode="scroll"
+      empty={<EmptyState title="No students in this section." />}
+      sortHref={(_key,next)=>reportHref(1,pageSize,next==="ascending"?"percent-asc":"percent-desc")}
+      columns={[
+        {key:"student",header:"Student",mobilePriority:"primary",
+          cell:row=><strong className="break-words text-[var(--lms-heading)]">{row.studentName?.trim()||"Student #"+row.membershipId.slice(0,8)}</strong>},
+        {key:"roll",header:"Roll number",mobilePriority:"secondary",
+          cell:row=>row.rollNumber?.trim()||"—"},
+        {key:"videos",header:"Videos",mobilePriority:"secondary",
+          cell:row=>row.videos+"/"+row.totalVideos},
+        {key:"assignments",header:"Assignments",mobilePriority:"secondary",
+          cell:row=>row.assignments+"/"+row.totalAssignments},
+        {key:"quizzes",header:"Quizzes",mobilePriority:"secondary",
+          cell:row=>row.quizzes+"/"+row.totalQuizzes},
+        {key:"progress",header:"Progress",mobilePriority:"secondary",
+          sortable:true,sortDirection:sort==="percent-asc"?"ascending":"descending",
+          cell:row=>{
+            const completed=studentCourseCompletion(row);
+            const percent=completed===null?null:Math.max(0,Math.min(100,completed));
+            const progressState=percent===0?"Not started":percent!==null&&percent<40?"Below 40%":"Progress recorded";
+            const progressColour=percent===0?"bg-[#ff4d4f]":percent!==null&&percent<40?"bg-[#1890ff]":"bg-[#52c41a]";
+            return percent===null?<span className="text-muted-foreground">Not measured</span>:
+              <div className="flex min-w-[190px] items-center gap-2">
+                <div role="progressbar" aria-label={"Course completion for "+(row.studentName||"student")}
+                  aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent}
+                  aria-valuetext={percent+" percent; "+progressState}
+                  className="h-2 w-[145px] overflow-hidden rounded-full bg-[var(--lms-neutral-100)]">
+                  <div className={"h-full rounded-full "+progressColour} style={{width:percent+"%"}}/>
+                </div>
+                <span className="min-w-10 text-right font-medium">{percent}%</span>
+                <span className="sr-only">{progressState}</span>
+              </div>;
+          }},
+        {key:"retake",header:"Progress attempt",mobilePriority:"action",
+          cell:row=><AdminProgressRetakeAction offeringId={offeringId}
+            membershipId={row.membershipId} learnerName={row.studentName}/>},
+      ]}
+    />:<div role="status" className="rounded-[var(--lms-control-radius)] bg-muted p-4 text-sm text-body">
       No students in this section.
     </div>}
   </section>
