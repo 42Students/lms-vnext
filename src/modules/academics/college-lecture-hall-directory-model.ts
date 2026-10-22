@@ -25,9 +25,14 @@ export const collegeLectureHallFiltersBaseSchema = z.object({
     "Choose 10, 20, 50 or 100 rooms").default(COLLEGE_LECTURE_HALL_PAGE_SIZE),
 }).strict();
 
-export function withCollegeLectureHallCapacityCheck<T extends z.ZodType<{ minimumCapacity?: number | undefined; maximumCapacity?: number | undefined }>>(schema: T): T {
+export function withCollegeLectureHallCapacityCheck<T extends z.ZodType>(schema: T): T {
   return schema.refine(
-    (q) => q.minimumCapacity === undefined || q.maximumCapacity === undefined || q.minimumCapacity <= q.maximumCapacity,
+    (query) => {
+      if (typeof query !== "object" || query === null) return true;
+      const minimum = "minimumCapacity" in query ? query.minimumCapacity : undefined;
+      const maximum = "maximumCapacity" in query ? query.maximumCapacity : undefined;
+      return typeof minimum !== "number" || typeof maximum !== "number" || minimum <= maximum;
+    },
     { path: ["maximumCapacity"], message: "Maximum seats must not be below minimum seats" },
   );
 }
