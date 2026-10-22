@@ -42,16 +42,16 @@ export function parseProjectAdminSubmissionsQuery(params: Record<string,string|s
   if (Object.values(params).some(Array.isArray) ||
       Object.keys(params).some(key=>!["view","q","status","submissionStatus","sort","page","pageSize","tab","projectId","focusedProjectId"].includes(key)))
     return schema.safeParse(null);
-  const rawStatus=first(params["status"])?.trim();
+  const rawStatus=first(params.status)?.trim();
   const workspaceStatus=rawStatus && ["PLANNED","ACTIVE","COMPLETED","ARCHIVED"].includes(rawStatus.toUpperCase())
     ? rawStatus.toUpperCase() : undefined;
   const legacySubmission=rawStatus && !workspaceStatus ? normalizeSubmissionStatus(rawStatus) : undefined;
   const entries = {
-    view:first(params["view"])??(first(params["tab"])?.toLowerCase()==="notsubmitted"?"NOT_SUBMITTED":"ALL"),
-    q:first(params["q"]),focusedProjectId:first(params["focusedProjectId"])??first(params["projectId"]),status:workspaceStatus,
-    sort:first(params["sort"]),
-    submissionStatus:normalizeSubmissionStatus(first(params["submissionStatus"]) ?? legacySubmission),
-    page:first(params["page"]),pageSize:first(params["page"]Size) ?? (options.superAdmin ? "10" : undefined),
+    view:first(params.view)??(first(params.tab)?.toLowerCase()==="notsubmitted"?"NOT_SUBMITTED":"ALL"),
+    q:first(params.q),focusedProjectId:first(params.focusedProjectId)??first(params.projectId),status:workspaceStatus,
+    sort:first(params.sort),
+    submissionStatus:normalizeSubmissionStatus(first(params.submissionStatus) ?? legacySubmission),
+    page:first(params.page),pageSize:first(params.pageSize) ?? (options.superAdmin ? "10" : undefined),
   };
   return schema.safeParse(Object.fromEntries(
     Object.entries(entries).filter(([key,value])=>value!==undefined&&(value!=="" || key==="page" || key==="pageSize")),
@@ -69,11 +69,11 @@ export function projectAdminUnsubmittedHref(
 ):string {
   const params=new URLSearchParams();
   params.set("view","NOT_SUBMITTED");
-  if(query["q"])params.set("q",query["q"]);
-  if(query["focusedProjectId"])params.set("projectId",query["focusedProjectId"]);
-  if(query["status"])params.set("status",query["status"]);
-  if(query["page"]Size)params.set("pageSize",String(query["page"]Size));
-  if(query["sort"]&&query["sort"]!=="SUBMITTED_DESC")params.set("sort",query["sort"]);
+  if(query.q)params.set("q",query.q);
+  if(query.focusedProjectId)params.set("projectId",query.focusedProjectId);
+  if(query.status)params.set("status",query.status);
+  if(query.pageSize)params.set("pageSize",String(query.pageSize));
+  if(query.sort&&query.sort!=="SUBMITTED_DESC")params.set("sort",query.sort);
   if(page>1)params.set("page",String(page));
   return basePath+"?"+params.toString();
 }
@@ -90,11 +90,11 @@ export function projectAdminSubmissionHref(
     "CHANGES_REQUESTED"|"APPROVED",
 ):string {
   const params=new URLSearchParams();
-  if(query["q"])params.set("q",query["q"]);
-  if(query["focusedProjectId"])params.set("projectId",query["focusedProjectId"]);
-  if(query["status"])params.set("status",query["status"]);
-  if(query["page"]Size)params.set("pageSize",String(query["page"]Size));
-  if(query["sort"]&&query["sort"]!=="SUBMITTED_DESC")params.set("sort",query["sort"]);
+  if(query.q)params.set("q",query.q);
+  if(query.focusedProjectId)params.set("projectId",query.focusedProjectId);
+  if(query.status)params.set("status",query.status);
+  if(query.pageSize)params.set("pageSize",String(query.pageSize));
+  if(query.sort&&query.sort!=="SUBMITTED_DESC")params.set("sort",query.sort);
   if(submissionStatus)params.set("submissionStatus",submissionStatus);
   const suffix=params.toString();
   return basePath+(suffix?"?"+suffix:"");
@@ -102,7 +102,7 @@ export function projectAdminSubmissionHref(
 
 // The imported deep-link identifier remains scoped by the listing's college.
 export function focusedProjectIdFromSubmissionUrl(raw: Record<string, string | string[] | undefined>) {
-  const value = first(raw["focusedProjectId"]) ?? first(raw["projectId"]);
+  const value = first(raw.focusedProjectId) ?? first(raw.projectId);
   if (!value || value.length > 120 || /[^a-zA-Z0-9_-]/.test(value)) return null;
   return value;
 }
