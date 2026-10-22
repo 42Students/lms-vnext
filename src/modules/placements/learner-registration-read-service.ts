@@ -99,3 +99,30 @@ export function legacyLearnerRegistrationResponse(
  }:{status:"OK" as const,data:null,
   message:value.registrationMessage??"No placement registration for this batch"};
 }
+
+
+/** On a new placement season the learner's cohort registration survives
+ * only when the season explicitly includes that same academic cohort and
+ * the current invitation/policy still recognizes it. Never transplant
+ * previous cohort consent to an unrelated season. */
+export function learnerRegistrationRolloverDecision(input:{
+ previousCollegeId:string;currentCollegeId:string;
+ priorCohortId:string;currentCohortId:string;
+ previousSeasonId:string|null;currentSeasonId:string|null;
+ currentSeasonCohortIds:readonly string[];
+ currentBatchInvited:boolean;hasCurrentRecord:boolean;
+}){
+ if(input.previousCollegeId!==input.currentCollegeId)
+  throw new Error("Registration rollover crosses college");
+ if(input.hasCurrentRecord)return {
+  state:"CURRENT_RECORD" as const,requiresFreshConsent:false,canShowPriorHistory:true};
+ const sameCohort=input.priorCohortId===input.currentCohortId;
+ const seasonChanged=input.previousSeasonId!==input.currentSeasonId;
+ const approvedCurrentCohort=input.currentSeasonCohortIds.includes(input.currentCohortId);
+ return {state:sameCohort&&!seasonChanged&&approvedCurrentCohort
+     ?"RECHECK_BATCH_INVITE" as const:"FRESH_REGISTRATION" as const,
+   requiresFreshConsent:true,
+   canShowPriorHistory:input.currentBatchInvited,
+   eligibleCurrentSeason:approvedCurrentCohort,
+ };
+}
