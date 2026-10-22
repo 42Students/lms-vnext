@@ -17,9 +17,9 @@ export function derivedSprintProgressStatus(input:{
  state:string;completedTasks:number;totalTasks:number;
  startDate?:string|null;dueDate?:string|null;
 },today=new Date()):LegacySprintProgressStatus{
- const midnight=new Intl.DateTimeFormat("en-CA",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"
- }).format(today);
+ const pieces=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(today);
+ const part=(key:Intl.DateTimeFormatPartTypes)=>pieces.find(item=>item.type===key)?.value??"";
+ const midnight=part("year")+"-"+part("month")+"-"+part("day");
  if(input.state==="COMPLETED"||
   (input.totalTasks>0&&input.completedTasks===input.totalTasks))return "COMPLETED";
  if(input.dueDate&&input.dueDate<midnight)return "OVERDUE";
