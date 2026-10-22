@@ -177,6 +177,7 @@ export async function createCollegeSection(context: RequestContext, raw: unknown
       await assertPeriod(tx, cohort, input.academicPeriodId, member.collegeId);
       await assertUnique(tx, cohort.id, input.academicPeriodId, input.name, input.code);
       const [created] = await tx.insert(sections).values(input).returning();
+      if (!created) throw new CollegeSectionError("CLASS_NOT_FOUND");
       await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_CLASS_CREATED,
         organizationId: member.organizationId, collegeId: member.collegeId,
