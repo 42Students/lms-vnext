@@ -126,7 +126,9 @@ export async function getProjectWorkspaceView(
 
   // MEN-projects-meetings-17: use the version actually materialized into
   // this workspace, not the template's potentially newer live version.
-  const [templateVersion] = await getDb().select({
+  const [templateVersion] = workspace.project.templateVersionId === null
+    ? []
+    : await getDb().select({
     blueprint: projectTemplateVersions.blueprint,
     title: projectTemplateVersions.title,
     version: projectTemplateVersions.version,
