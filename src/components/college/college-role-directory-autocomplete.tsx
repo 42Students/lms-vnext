@@ -78,9 +78,9 @@ export function CollegeRoleDirectoryAutocomplete({
     setQuery(value);remember(value);setOpen(false);
     // Persist popularity only for a real, same-college Faculty option.
     // A recent free-text term has no membership and cannot grant access.
-    if(kind==="FACULTY"&&/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(row.membershipId)){
-      if(popularityWriteRef.current)return;
-      popularityWriteRef.current = true;
+    if(kind==="FACULTY"&&/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(row.membershipId)&&!popularityWriteRef.current){
+      if(popularityWriteRef.current){/* A selection write is already in progress. */}
+      else popularityWriteRef.current = true;
       try{
         await fetch("/api/college/roles/suggest/popular",{
           method:"POST",credentials:"same-origin",

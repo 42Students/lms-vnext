@@ -1,9 +1,10 @@
 "use client";
 import {FilterChip} from "@/components/ui/filter-chip";
 import { Alert } from "@/components/ui/alert";
-import {useState,useTransition} from "react";
+import {useRef,useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
 import {collegeStudentVisibilityAction} from "@/modules/courses/college-student-visibility-control-model";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 export function CollegeStudentVisibilityControl({contentId,initialVisible,initialUpdatedAt}:{
   contentId:string;initialVisible:boolean;initialUpdatedAt:string;
 }){
@@ -11,10 +12,14 @@ export function CollegeStudentVisibilityControl({contentId,initialVisible,initia
   const [visible,setVisible]=useState(initialVisible);
   const [version,setVersion]=useState(initialUpdatedAt);
   const [notice,setNotice]=useState("");
+  const [confirmOpen,setConfirmOpen]=useState(false);
+  const mutationRef=useRef(false);
   const [pending,start]=useTransition();
   const action=collegeStudentVisibilityAction(visible);
-  function toggle(){
-    if(!window.confirm(action.confirmation))return;
+  function toggle(){setConfirmOpen(true);}
+  function apply(){
+    if(mutationRef.current)return;
+    mutationRef.current = true;
     setNotice("");
     start(async()=>{
       try {
@@ -36,6 +41,9 @@ export function CollegeStudentVisibilityControl({contentId,initialVisible,initia
         router.refresh();
       }catch(error){
         setNotice(error instanceof Error?error.message:"Visibility update unavailable.");
+      }finally{
+        mutationRef.current = false;
+        setConfirmOpen(false);
       }
     });
   }
@@ -45,6 +53,9 @@ export function CollegeStudentVisibilityControl({contentId,initialVisible,initia
       className="min-h-11 max-w-full md:min-h-9">
       {pending?"Saving…":action.label}
     </FilterChip>
+    <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+      title="Change student visibility?" description={action.confirmation}
+      confirmLabel="Confirm" pending={pending} onConfirm={apply}/>
     {notice?<Alert tone="error">{notice}</Alert>:null}
   </div>;
 }

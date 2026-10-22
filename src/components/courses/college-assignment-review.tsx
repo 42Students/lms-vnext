@@ -35,8 +35,8 @@ export function CollegeAssignmentReview({
  const [confirmBulk,setConfirmBulk]=useState<{deliveryId:string|null;retryOnly:string[]|null}|null>(null);
  const router=useRouter();
  async function publishAllGrades(selectedDeliveryId:string|null,retryOnly:readonly string[]|null=null){
-  if(publicationRef.current||bulkBusy)return;
   if(publicationRef.current)return;
+  if(bulkBusy)return;
   publicationRef.current = true;
   setBulkBusy(true);setBulkStatus("");setRetryAllowed(false);setFailedIds([]);setFailureDetails([]);setBreakdown(null);
   setProgress("Processing graded submissions on the server…");

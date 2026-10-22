@@ -13,8 +13,8 @@ export function LearnerGroupLists({mine,open}:{mine:LearnerGroupListItem[];open:
  const [error,setError]=useState<string|null>(null);
  const stateOf=(group:LearnerGroupListItem)=>Object.hasOwn(states,group.id)?states[group.id]:group.memberState;
  async function change(group:LearnerGroupListItem,action:"JOIN"|"LEAVE"){
-  if(mutationRef.current||busy)return;
   if(mutationRef.current)return;
+  if(busy)return;
   mutationRef.current = true;
   setBusy(group.id);setError(null);
   try{

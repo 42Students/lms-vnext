@@ -106,7 +106,7 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
    if(currentUriRef.current!==uri)return;
    setDraft(blank);setEditing(null);
    setNotice(action==="REMOVE"?"Material removed.":action==="EDIT_LINK"?"Material updated.":"Material added.");
-  }catch(cause){
+  }catch{
    if(currentUriRef.current===uri)setError("Could not save resource material. Check your permissions and try again.");
   }finally{
    if(currentUriRef.current===uri)setBusy(false);
