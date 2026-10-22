@@ -9,9 +9,9 @@ export function buildRecruiterActionQueue(input:{
  jobs:readonly Job[];collegeId:string;companyId:string;unread:number;now?:Date;
  resultsDue?:readonly Due[];unreadConversations?:readonly UnreadThread[];
  returnedRequests?:readonly {id:string;status:string;draft:unknown}[];
- changeRequests?:readonly {id:string;jobId:string;jobTitle:string;field:string;createdAt:Date}[];
+ changeRequests?:readonly {id:string;jobId:string;jobTitle:string;field:string;createdAt:Date;kind?:"ASK"|"CHANGE";note?:string|null}[];
  roundsNeedingSlots?:readonly {id:string;jobId:string;jobTitle:string;name:string;scheduledAt:Date|null;needsOffer:boolean}[];
- offerActions?:readonly {jobId:string;jobTitle:string;status:string;count:number}[];
+ offerActions?:readonly {jobId:string;jobTitle:string;status:string;count:number;respondBy?:Date|null}[];
  sharedApplicantCounts?:readonly {jobId:string;count:number}[];
  preliveReviewInvites?:readonly {id:string;jobId:string;jobTitle:string;invitedAt:Date}[];
 }) {
@@ -19,11 +19,24 @@ export function buildRecruiterActionQueue(input:{
   row.companyId===input.companyId&&row.job.archivedAt===null&&
   (row.job.status==="PUBLISHED"||row.job.status==="CLOSED"))
   .map(row=>row.job.id));
- const changeRequests=(input.changeRequests??[]).filter(row=>authorized.has(row.jobId))
-  .map(row=>({key:"answer:"+row.id,tone:"URGENT" as const,at:row.createdAt,
-   label:"Answer change request · "+row.jobTitle,
-   description:"The placement cell asked about "+row.field.toLowerCase().replaceAll("_"," ")+".",
-   href:"/recruiter/drives/"+encodeURIComponent(row.jobId)+"?tab=requests"}));
+ // Old Today groups company-facing ASK / CHANGE requests per drive.
+ const grouped=new Map<string,{jobId:string;jobTitle:string;count:number;asks:number;note:string|null;createdAt:Date}>();
+ for(const row of input.changeRequests??[]){
+  if(!authorized.has(row.jobId))continue;
+  const current=grouped.get(row.jobId)??{jobId:row.jobId,jobTitle:row.jobTitle,count:0,asks:0,note:null,createdAt:row.createdAt};
+  current.count++;
+  if(row.kind==="ASK")current.asks++;
+  if(!current.note&&row.note?.trim())current.note=row.note.trim();
+  grouped.set(row.jobId,current);
+ }
+ const changeRequests=[...grouped.values()].map(row=>{
+  const allAsks=row.asks===row.count;
+  const quantity=row.count+" "+(allAsks?(row.count===1?"detail":"details"):(row.count===1?"change":"changes"));
+  return {key:"answer:"+row.jobId,tone:"SOON" as const,at:row.createdAt,
+   label:(allAsks?"The placement cell needs ":"The placement cell suggested ")+quantity,
+   description:row.jobTitle+(row.note?" · “"+row.note+"”":""),
+   href:"/recruiter/drives/"+encodeURIComponent(row.jobId)+"?tab=messages"};
+ });
  const slots=(input.roundsNeedingSlots??[])
   .filter(row=>authorized.has(row.jobId)&&row.scheduledAt!==null)
   .map(row=>({key:"slots:"+row.id,tone:"SOON" as const,at:row.scheduledAt,
@@ -32,17 +45,23 @@ export function buildRecruiterActionQueue(input:{
     "Propose an interviewer time for "+row.jobTitle+"; the placement cell confirms the schedule.",
    href:"/recruiter/drives/"+encodeURIComponent(row.jobId)+"/interview-slots"}));
  const offers=(input.offerActions??[]).filter(row=>authorized.has(row.jobId)&&row.count>0)
-  .map(row=>({key:"offers:"+row.jobId+":"+row.status,
-    tone:(["ISSUED","PENDING_VERIFICATION"].includes(row.status)?"SOON":"FINE") as "URGENT"|"SOON"|"FINE",
-    at:null as Date|null,
-    label:row.status==="ACCEPTED"?"Follow up joining · "+row.jobTitle:
+  .map(row=>{
+   const awaitingReply=row.status==="RELEASED"||row.status==="ISSUED";
+   const respondBy=row.respondBy instanceof Date&&Number.isFinite(row.respondBy.getTime())?row.respondBy:null;
+   const dueSoon=respondBy!==null&&input.now!==undefined&&
+    respondBy.getTime()<input.now.getTime()+2*86400000;
+   return {key:"offers:"+row.jobId+":"+row.status,
+    tone:(awaitingReply&&dueSoon?"SOON":"FINE") as "SOON"|"FINE",
+    at:awaitingReply?respondBy:null,
+    label:awaitingReply?row.count+" "+(row.count===1?"offer":"offers")+" waiting on a reply":
+      row.status==="ACCEPTED"?"Follow up joining · "+row.jobTitle:
       row.status==="DECLINED"?"Review declined offers · "+row.jobTitle:
       row.status==="PENDING_VERIFICATION"?"Await selection verification · "+row.jobTitle:
-      row.status==="SELECTED"?"Selection recorded · "+row.jobTitle:
-      row.status==="RELEASED"?"Released selections · "+row.jobTitle:
-      "Review offers · "+row.jobTitle,
-    description:row.count+" "+row.status.toLowerCase()+" offers recorded for college-shared applicants.",
-    href:"/recruiter/drives/"+encodeURIComponent(row.jobId)+"?tab=offers"}));
+      row.status==="SELECTED"?"Selection recorded · "+row.jobTitle:"Review offers · "+row.jobTitle,
+    description:row.jobTitle+(awaitingReply&&respondBy?
+      " · Reply by "+respondBy.toISOString():" · "+row.count+" "+row.status.toLowerCase()+" offers recorded for college-shared applicants."),
+    href:"/recruiter/drives/"+encodeURIComponent(row.jobId)+"?tab=offers"};
+  });
  const conversations=(input.unreadConversations??[]).filter(item=>item.unread>0)
   .map(item=>({key:"thread:"+item.id, tone:"SOON" as const, at:null as Date|null,
     label:"Open messages · "+item.label,
@@ -100,18 +119,13 @@ export function buildRecruiterActionQueue(input:{
    .map(item=>({key:"invited:"+item.id,tone:"SOON" as const,at:item.invitedAt,
     label:"Review it · "+item.jobTitle,
     description:"The placement cell invited your review before publication.",
-    href:"/recruiter/drives/"+encodeURIComponent(item.jobId)+"?tab=requests"}));
+    href:"/recruiter/drives/"+encodeURIComponent(item.jobId)+"?tab=messages"}));
  const notices=input.unread>0?[{key:"notifications", tone:"SOON" as const, at:null as Date|null,
    label:"Read "+input.unread+" unread notifications",
    description:"Open your college-scoped drive notification inbox.",
    href:"/hr/notifications?collegeId="+encodeURIComponent(input.collegeId)+"&unreadOnly=true"}]:[];
  const actions=[...changeRequests,...returned,...slots,...offers,...conversations,...due,...deadlines,...reviews,...invited,...notices];
  const priority={URGENT:0,SOON:1,FINE:2};
- return actions.sort((a,b)=>{
-  const rank=priority[a.tone]-priority[b.tone];
-  if(rank!==0)return rank;
-  const first=a.at?.getTime()??Number.POSITIVE_INFINITY;
-  const second=b.at?.getTime()??Number.POSITIVE_INFINITY;
-  return first-second||a.key.localeCompare(b.key);
- });
+ // Legacy preserves insertion order within each urgency tier (stable sort).
+ return actions.sort((a,b)=>priority[a.tone]-priority[b.tone]);
 }

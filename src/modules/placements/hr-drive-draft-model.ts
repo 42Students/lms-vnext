@@ -17,12 +17,34 @@ const round = z.strictObject({
    .refine(value=>!/[\x00-\x1f\x7f]/.test(value),{message:"Invalid round name"}),
 });
 /** Legacy optional rounds are omitted, not persisted with a blank name. */
+/** Legacy controls, with explicit bounded limits for this vNext request. */
+export const HR_DRIVE_ROUND_LIMIT=100;
+export const HR_DRIVE_BRANCH_LIMIT=30;
+export const LEGACY_HR_DRIVE_MODES=[
+ {value:"ON_CAMPUS",label:"On campus"},
+ {value:"POOL",label:"Pool"},
+ {value:"OFF_CAMPUS",label:"Off campus"},
+] as const;
+export const LEGACY_HR_DRIVE_FORM_LABELS={
+ description:"Description (optional)",descriptionRows:4,
+ paySection:"Pay packages",packageName:"Package name",
+ ctc:"CTC (LPA)",fixed:"Fixed",variable:"Variable",
+ joiningBonus:"Joining bonus",stipend:"Stipend / month (internship)",
+ duration:"Duration (months)",
+} as const;
+export const HR_DRIVE_CTC_STEP=0.1;
+export const HR_DRIVE_PACKAGE_MONEY_STEP=0.5;
 const payPackage = z.strictObject({
  name: z.string().trim().min(1).max(120),
  ctcLpa: z.string().regex(/^(?:|\d{1,4}(?:\.\d{1,2})?)$/).default(""),
+ fixedLpa: z.string().regex(/^(?:|\d{1,4}(?:\.\d{1,2})?)$/).default(""),
+ variableLpa: z.string().regex(/^(?:|\d{1,4}(?:\.\d{1,2})?)$/).default(""),
+ joiningBonusLpa: z.string().regex(/^(?:|\d{1,4}(?:\.\d{1,2})?)$/).default(""),
  stipendMonthlyInr: z.string().regex(/^\d{0,9}$/).default(""),
  internshipMonths: z.coerce.number().int().min(1).max(120).optional(),
 }).superRefine((item, ctx) => {
+ if(item.ctcLpa&&Number(item.fixedLpa)+Number(item.variableLpa)>Number(item.ctcLpa))
+  ctx.addIssue({code:"custom",path:["fixedLpa"],message:"Fixed and variable must not exceed package CTC"});
  if(!item.ctcLpa && (!item.stipendMonthlyInr || Number(item.stipendMonthlyInr)<=0)){
   ctx.addIssue({code:"custom",path:["ctcLpa"],
    message:"Set the pay (CTC or stipend) for at least one package"});
@@ -44,7 +66,7 @@ export const hrDriveDraftSchema = z.strictObject({
    .refine(value=>!/[\x00-\x1f\x7f]/.test(value),{message:"Invalid location"}),
   employmentType: z.enum(["FULL_TIME", "INTERNSHIP", "INTERNSHIP_FULL_TIME", "CONTRACT"]),
   workMode: z.enum(["ONSITE", "HYBRID", "REMOTE", "NO_PREFERENCE"]),
-  driveMode: z.enum(["ON_CAMPUS","OFF_CAMPUS"]).default("ON_CAMPUS"),
+  driveMode: z.enum(["ON_CAMPUS","POOL","OFF_CAMPUS"]).default("ON_CAMPUS"),
   externalApplicationUrl: z.string().trim().max(2000).refine(value=>
     !value || safeRecruiterExternalLink(value)!==null,
   "Enter a public HTTPS application link").default(""),
@@ -60,21 +82,21 @@ export const hrDriveDraftSchema = z.strictObject({
   bondMonths: z.string().regex(/^\d{0,3}$/),
   bondAmountInr: z.string().regex(/^\d{0,9}$/),
   maximumActiveBacklogs: z.string().regex(/^\d{0,2}$/),
-  branches: z.array(z.string().trim().min(1).max(120)).max(30).default([]),
+  branches: z.array(z.string().trim().min(1).max(120)).max(HR_DRIVE_BRANCH_LIMIT,"At most 30 branches; contact the placement cell for wider eligibility").default([]),
   passingYear: z.string().regex(/^(?:|(?:20\d{2}|2100))$/,"Enter a valid passing year").default(""),
   /** Multi-select years are separate from the older single-year form control. */
   passingYears: z.array(z.number().int().min(2000).max(2100)).max(101)
    .refine(years=>new Set(years).size===years.length,
      "Choose each passing year once").optional(),
   payPackages: z.array(payPackage).max(25).optional(),
-  rounds: z.array(round).max(100,"At most 100 hiring rounds")
+  rounds: z.array(round).max(HR_DRIVE_ROUND_LIMIT,"At most 100 hiring rounds")
    .transform(rows=>rows.filter(item=>item.name.trim().length>0)),
 }).superRefine((data, ctx) => {
   if(data.driveMode==="OFF_CAMPUS"&&!data.externalApplicationUrl){
     ctx.addIssue({code:"custom",path:["externalApplicationUrl"],
       message:"Application website is required for off-campus drives"});
   }
-  if(data.driveMode==="ON_CAMPUS"&&data.externalApplicationUrl){
+  if(data.driveMode!=="OFF_CAMPUS"&&data.externalApplicationUrl){
     ctx.addIssue({code:"custom",path:["externalApplicationUrl"],
       message:"An application website is only valid for off-campus drives"});
   }
@@ -149,7 +171,7 @@ export function emptyHrDriveDraft(): HrDriveDraft {
 export function hrDraftFromAuthorizedJob(job: {
   title: string; description: string; locations: readonly string[];
   employmentType: string; workMode: string;
-  recruiterDriveMode?: string; externalApplicationUrl?:string|null;
+  recruiterDriveMode?: string; legacyDriveMode?:string|null; externalApplicationUrl?:string|null;
   eligibleBranches?:readonly string[];eligiblePassingYear?:number|null;
   eligiblePassingYears?:readonly number[];jdUrl?:string|null;
   ctcLpa?:string|null;fixedCtcLpa?:string|null;variableCtcLpa?:string|null;
@@ -174,7 +196,7 @@ export function hrDraftFromAuthorizedJob(job: {
     location: job.locations[0] ?? "",
     employmentType: type.success ? type.data : base.employmentType,
     workMode: mode.success ? mode.data : base.workMode,
-    driveMode:job.recruiterDriveMode==="OFF_CAMPUS"?"OFF_CAMPUS":"ON_CAMPUS",
+    driveMode:job.legacyDriveMode==="POOL"?"POOL":job.recruiterDriveMode==="OFF_CAMPUS"?"OFF_CAMPUS":"ON_CAMPUS",
     externalApplicationUrl:job.recruiterDriveMode==="OFF_CAMPUS"?safeExternalLink:"",
     branches:(job.eligibleBranches??[]).map(value=>value.trim()).filter(Boolean).slice(0,30),
     passingYear:job.eligiblePassingYear?.toString()??"",
@@ -186,4 +208,13 @@ export function hrDraftFromAuthorizedJob(job: {
     maximumAnnualCtcInr: job.maximumAnnualCtcInr?.toString() ?? "",
     rounds: validRounds.length ? validRounds.slice(0, 12) : base.rounds,
   };
+}
+
+/** Never silently discard imported branch choices past the editor's limit. */
+export function parseHrDraftLegacyBranchTags(raw:string):string[]{
+ const tags=[...new Map(raw.split(",").map(value=>value.trim()).filter(Boolean)
+  .map(value=>[value.toLocaleLowerCase("en-IN"),value] as const)).values()];
+ if(tags.length>HR_DRIVE_BRANCH_LIMIT||tags.some(v=>v.length>120))
+  throw new Error("Enter at most 30 branches with names up to 120 characters.");
+ return tags;
 }
