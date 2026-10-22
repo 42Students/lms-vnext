@@ -28,10 +28,13 @@ describe("Chat-4 college UX round five",()=>{
  const page=source("electives/[slotId]/allocate");
  expect(page).toContain("min-w-0");
  expect(page).toContain("PageHeader");
- expect(page).toContain("<DataTable");
- expect(page).toContain("rows={students}");
- expect(page).toContain('<ScrollCue axis="y" label="Eligible students for allocation"');
- expect(page).toContain('caption="Eligible students for allocation"');
+ expect(page).toContain("<ElectiveEligibleSelection");
+ expect(page).toContain("students={students}");
+ const selection=readFileSync(join(process.cwd(),"src/components/academics/elective-eligible-selection.tsx"),"utf8");
+ expect(selection).toContain("<DataTable");
+ expect(selection).toContain("rows={visible}");
+ expect(selection).toContain('<ScrollCue axis="y" label="Eligible students for allocation"');
+ expect(selection).toContain('caption="Eligible students for allocation"');
  expect(page).toContain("min-h-11");
  });
  it("UX-college-electives-slotId-offerings-offeringId-roster-01 makes the layout or actions more readable on narrow screens",()=>{
