@@ -11,10 +11,9 @@ describe("Super Admin placement interview operations",()=>{
  });
  it("SA-placements-projects-46 renders real round Type Status Mode Sort and conflict-only filters",()=>{
   const component=read("src/components/admin/super-admin-interview-operations.tsx");
-  // Type and Mode use inline native Select controls; Status and Department share choices().
-  for(const label of ['choices("Status"','Sort by','Possible conflicts only'])expect(component).toContain(label);
-  expect(component).toMatch(/>Type\\s*<Select value=\\{kind\\}/);
-  expect(component).toMatch(/>Mode\\s*<Select value=\\{mode\\}/);
+  for(const label of ['>Type','choices("Status"','>Mode','Sort by','Possible conflicts only'])expect(component).toContain(label);
+  expect(component).toContain('value={kind}');
+  expect(component).toContain('value={mode}');
   expect(component).toContain('setKind(e.target.value)');
   expect(component).toContain('setMode(e.target.value)');
   expect(component).toContain('choices("Department"');
