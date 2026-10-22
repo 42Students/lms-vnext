@@ -9,12 +9,12 @@ export function parseSuperAdminTenantSetupQuery(
   if(Object.values(params).some(Array.isArray))
     return schema.safeParse(null);
   const normalized={...params};
-  if(typeof normalized["tab"]==="string"){
+  const tab=normalized["tab"];
+  if(typeof tab==="string"){
     const alias:Record<string,"STRUCTURE"|"LAUNCH">={
       structure:"STRUCTURE",identity:"LAUNCH",launch:"LAUNCH",
       STRUCTURE:"STRUCTURE",LAUNCH:"LAUNCH",
     };
-    const tab=normalized["tab"];
     normalized["tab"]=alias[tab]??tab;
   }
   return schema.safeParse(normalized);
