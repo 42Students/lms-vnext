@@ -9,6 +9,7 @@ import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {getCollegePersonEditor} from "./college-directory-person-editor-service";
 import {facultyProfileDocumentSchema} from "./faculty-profile-document";
 import {learnerProfileDocumentSchema} from "./profile-validation";
+import {projectLearnerAdminProfileSections} from "./learner-admin-profile-sections";
 
 /** COL-people-10: a sanctioned, read-only projection. Never send raw learner PAN/Aadhaar
  * values, private file receipt IDs, or undocumented profile metadata to roster UI. */
@@ -41,7 +42,7 @@ export async function getCollegePersonProfileOverview(ctx:RequestContext,rawId:u
    identity:"Identity numbers and supporting documents are private and are not shown here."};
  }
  const d=learnerProfileDocumentSchema.parse(row.learner??{});
- return{person,education:d.education.map(x=>({title:x.program||x.educationType,
+ return{person,learnerSections:projectLearnerAdminProfileSections(d),education:d.education.map(x=>({title:x.program||x.educationType,
   detail:x.institution,year:x.endYear,extra:x.gradeObtained})),
   skills:d.skills.map(x=>x.name),certifications:d.certifications.map(x=>x.name),
   projects:d.projects.map(x=>x.name),publications:[],awards:d.achievements.map(x=>x.title),

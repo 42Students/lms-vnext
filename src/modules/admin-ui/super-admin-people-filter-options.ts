@@ -47,9 +47,9 @@ export function projectSuperAdminPeopleFilterCascade(input:{
 }){
  const programId=input.programId&&input.programs.some(p=>p.id===input.programId)
   ?input.programId:null;
- const batches=programId?input.batches.filter(row=>row.programId===programId):input.batches;
- const batchId=input.batchId&&batches.some(row=>row.id===input.batchId)?input.batchId:null;
- const classes=batchId?input.classes.filter(row=>row.cohortId===batchId):input.classes;
+ const batches=programId?input.batches.filter(row=>row.programId===programId):[];
+ const batchId=programId&&input.batchId&&batches.some(row=>row.id===input.batchId)?input.batchId:null;
+ const classes=batchId?input.classes.filter(row=>row.cohortId===batchId):[];
  const classId=input.classId&&classes.some(row=>row.id===input.classId)?input.classId:null;
  return {programId,batchId,classId,batches,classes};
 }
