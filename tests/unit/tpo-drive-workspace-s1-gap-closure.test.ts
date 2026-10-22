@@ -102,6 +102,10 @@ describe("TPO drive workspace verified S1 gaps",()=>{
   expect(driveChangeCommandSchema.safeParse({action:"ACCEPT",requestId:id,
    expectedUpdatedAt:"2099-05-03T09:00:00Z",note:"Approved by placement cell"}).success).toBe(true);
   expect(driveChangeCommandSchema.safeParse({action:"COMMENT",requestId:id,body:""}).success).toBe(false);
+  for(const field of ["CTC","STIPEND","MIN_CGPA"] as const){
+   expect(driveChangeCommandSchema.safeParse({action:"CREATE",mode:"SUGGEST",field,
+    proposedValue:"5",reason:""}).success).toBe(true);
+  }
  });
  it("G2-5-023 retains eleven named legacy change fields and typed canonical options",()=>{
   const legacyFields=["ROLE_TITLE","DESCRIPTION","LOCATION","JOB_TYPE","WORK_MODE",

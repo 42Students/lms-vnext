@@ -201,7 +201,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
      "No requests from the company. The drive stays where it is until you both agree to a change.":
      "No institutional requests yet. Request a change and the company can reply here."}/>:
     requests.filter(item=>item.proposerParty===proposer).map(item=>
-    <article key={item.id} className="space-y-3 border-b border-border py-5">
+    <article id={"change-request-"+item.id} key={item.id} className="scroll-mt-24 space-y-3 border-b border-border py-5">
      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
       <h3 className="font-semibold">{LEGACY_DRIVE_CHANGE_FIELD_LABELS[item.field as keyof typeof LEGACY_DRIVE_CHANGE_FIELD_LABELS]??(item.legacyField??item.field).replaceAll("_"," ")} · {item.mode==="SUGGEST"?"propose":item.mode.toLowerCase()}</h3>
       <StatusBadge tone={item.status==="ACCEPTED"?"success":item.status==="DECLINED"?"error":item.status==="OPEN"?"warning":"neutral"}>{item.status==="OPEN"?"Waiting":item.status==="DECLINED"||item.status==="REPLIED"?"Declined":item.status.replaceAll("_"," ")}</StatusBadge>

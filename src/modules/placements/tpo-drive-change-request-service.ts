@@ -209,6 +209,30 @@ async function applyDriveChangeField(
  return patched.version;
 }
 
+/** Single-request context for a discussion deep link; unlike the request list,
+ * this remains accessible when its row has fallen past the first 100 items. */
+export async function getDriveChangeRequestDiscussionContext(
+ context:RequestContext,jobIdInput:unknown,requestIdInput:unknown,
+){
+ const {job}=await scoped(context,jobIdInput);
+ if(typeof requestIdInput!=="string"||
+    !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(requestIdInput))
+  return null;
+ const [request]=await getDb().select({
+  id:placementDriveChangeRequests.id,field:placementDriveChangeRequests.field,
+  legacyField:placementDriveChangeRequests.legacyField,
+  proposedValue:placementDriveChangeRequests.proposedValue,
+  reason:placementDriveChangeRequests.reason,
+ }).from(placementDriveChangeRequests).where(and(
+  eq(placementDriveChangeRequests.id,requestIdInput),
+  eq(placementDriveChangeRequests.jobId,job.id),
+ )).limit(1);
+ if(!request)return null;
+ return {id:request.id,fieldLabel:FIELD_LABELS[request.legacyField??request.field]??
+   FIELD_LABELS[request.field]??"Other",
+  proposedValue:request.proposedValue,reason:request.reason};
+}
+
 export async function getDriveChangeRequests(context:RequestContext,jobId:unknown,cursor?:string|null){
  const {job,party}=await scoped(context,jobId);
  const storageReady=true; // registered in 0114
