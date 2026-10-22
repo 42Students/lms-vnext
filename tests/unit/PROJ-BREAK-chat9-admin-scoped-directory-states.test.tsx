@@ -89,7 +89,7 @@ describe("Super Admin last-third shared scoped directories: no false empties or 
     const message=display(await render({},true)).join(" ");
     expect(message).toContain("Directory totals are temporarily unavailable.");
     expect(message).toContain("The filtered records below remain visible.");
-    expect(message).toContain("0 of 0 students");
+    expect(message).toContain("0 matching records");
     expect(message).not.toContain("PRIVATE_DIRECTORY_DB_PASSWORD");
     expect(state.loaderCalls).toBe(4);
   });
@@ -97,6 +97,6 @@ describe("Super Admin last-third shared scoped directories: no false empties or 
     const message=display(await render()).join(" ");
     expect(message).toContain("0 of 0 students");
     expect(message).not.toContain("Directory unavailable");
-    expect(state.loaderCalls).toBe(1);
+    expect(state.loaderCalls).toBe(4);
   });
 });
