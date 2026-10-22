@@ -44,6 +44,16 @@ function viewSlot(s:typeof slots.$inferSelect,outcome?:string,feedback?:string|n
   statusLabel:s.status==="CANCELLED"?"Cancelled":outcome==="NO_SHOW"?"No Show":outcome==="COMPLETED"?"Completed":"Scheduled",
   notificationChannels:["IN_APP"] as const};
 }
+/** Delivery-channel parity is explicit, not guessed. In-app notices are
+ * persisted in the same transaction as the interview. Email/push/reminders
+ * need an approved message-outbox producer and DLT/email templates; none
+ * are promised by the scheduling action until a provider is registered. */
+export const COLLEGE_INTERVIEW_NOTIFICATION_CHANNELS={
+  inApp:"PERSISTED_ATOMICALLY",
+  email:"NOT_CONFIGURED",
+  push:"NOT_CONFIGURED",
+  reminders:"NOT_CONFIGURED",
+} as const;
 export type CollegeRoundSlotAppointmentFilters = {
  appointmentPage?:number;
  appointmentStatus?:"ALL"|"UPCOMING"|"COMPLETED"|"CANCELLED";
@@ -274,8 +284,12 @@ export async function getCollegeRoundSlotAppointments(
   }
  }
  return {job,storageReady:true,rounds,candidates,
-  candidateTotal,appointmentTotal,appointmentPage,appointmentPageSize,appointmentPages,
-  interviews:bookings.map(row=>viewSlot(row,outcomes.get(row.id),feedbackBySlot.get(row.id),editNotesBySlot.get(row.id),conflictMap.get(row.id)??[]))};
+  notificationChannels:COLLEGE_INTERVIEW_NOTIFICATION_CHANNELS,
+  candidateTotal,candidatePage,candidatePageSize,candidatePages,
+  candidateHasMore:candidatePage<candidatePages,
+  candidateConflicts,candidateConflictsHasMore,
+  appointmentTotal,appointmentPage,appointmentPageSize,appointmentPages,
+  interviews:bookings.map(row=>viewSlot(row,outcomes.get(row.id),feedbackBySlot.get(row.id),editNotesBySlot.get(row.id)))};
 }
 
 export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobId:unknown,raw:unknown){
