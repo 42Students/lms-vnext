@@ -1,4 +1,4 @@
-import {notFound,redirect} from "next/navigation";
+import {redirect} from "next/navigation";
 
 /** Legacy bookmarks use course slugs or numeric IDs, sometimes with cls.
  * The shared /home route resolves aliases only against the authenticated
