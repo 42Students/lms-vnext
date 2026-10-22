@@ -383,25 +383,25 @@ export function facultyLegacyProfileExceptions(raw: unknown): string[] {
       issues.push(name + ": " + value.length + " rows require no-truncation migration review");
     }
   }
-  const contact = record.contact && typeof record.contact === "object" &&
-    !Array.isArray(record.contact)
-    ? record.contact as Record<string, unknown> : record;
-  const primary = typeof contact.contactMobile === "string" ? contact.contactMobile.trim() : "";
-  const alternate = typeof contact.contactPhone === "string" ? contact.contactPhone.trim() : "";
-  const email = typeof contact.contactMail === "string" ? contact.contactMail.trim() : "";
+  const contact = record["contact"] && typeof record["contact"] === "object" &&
+    !Array.isArray(record["contact"])
+    ? record["contact"] as Record<string, unknown> : record;
+  const primary = typeof contact["contactMobile"] === "string" ? contact["contactMobile"].trim() : "";
+  const alternate = typeof contact["contactPhone"] === "string" ? contact["contactPhone"].trim() : "";
+  const email = typeof contact["contactMail"] === "string" ? contact["contactMail"].trim() : "";
   if (alternate && !primary) issues.push("Alternate contact requires primary mobile");
   if (alternate && alternate === primary) issues.push("Duplicate primary and alternate mobile");
   if (primary && !/^\d{10}$/.test(primary)) issues.push("Primary mobile must have 10 digits");
   if (alternate && !/^\d{10,15}$/.test(alternate)) issues.push("Alternate mobile must have 10 to 15 digits");
   if (email && !z.email().safeParse(email).success) issues.push("Invalid contact email");
-  const photo = record.profileImageUrl ?? record.profileImage;
+  const photo = record["profileImageUrl"] ?? record["profileImage"];
   if (typeof photo === "string" && !legacyFacultyProfileImageUrlSchema.safeParse(photo).success) {
     issues.push("Profile image URL must use HTTPS.");
   }
   // Sensitive legacy document URLs require a fresh private upload and an
   // authorized, membership-bound receipt. Never copy raw refs into JSON.
-  if (record.identityDocuments != null || record.aadhaarNumber != null ||
-      record.panNumber != null) issues.push("Private identity evidence requires secure re-verification");
+  if (record["identityDocuments"] != null || record["aadhaarNumber"] != null ||
+      record["panNumber"] != null) issues.push("Private identity evidence requires secure re-verification");
   return issues;
 }
 
@@ -429,9 +429,9 @@ export function importLegacyFacultyProfileDocument(raw: unknown): {
     const candidate = string(value);
     if (!candidate) return "";
     const iso = candidate.match(/^(\d{4}-\d{2}-\d{2})(?:T.*)?$/);
-    if (iso) return iso[1];
+    if (iso?.[1] !== undefined) return iso[1];
     const indian = candidate.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
-    if (indian) return indian[3] + "-" + indian[2].padStart(2, "0") + "-" + indian[1].padStart(2, "0");
+    if (indian?.[1] !== undefined && indian[2] !== undefined && indian[3] !== undefined) return indian[3] + "-" + indian[2].padStart(2, "0") + "-" + indian[1].padStart(2, "0");
     warnings.push("Historical date format needs review before import");
     return candidate;
   };
@@ -441,7 +441,11 @@ export function importLegacyFacultyProfileDocument(raw: unknown): {
     const seed = section + ":" + index;
     const pieces = [2166136261, 2166136261 ^ 0x9e3779b9, 2166136261 ^ 0x85ebca6b, 2166136261 ^ 0xc2b2ae35];
     for (let p = 0; p < pieces.length; p++) {
-      for (const ch of seed) pieces[p] = Math.imul(pieces[p] ^ (ch.charCodeAt(0) + p), 16777619) >>> 0;
+      for (const ch of seed) {
+        const previous = pieces[p];
+        if (previous === undefined) continue;
+        pieces[p] = Math.imul(previous ^ (ch.charCodeAt(0) + p), 16777619) >>> 0;
+      }
     }
     const hex = pieces.map(v => v.toString(16).padStart(8, "0")).join("");
     return hex.slice(0, 8) + "-" + hex.slice(8, 12) + "-4" + hex.slice(13, 16) +
@@ -464,58 +468,58 @@ export function importLegacyFacultyProfileDocument(raw: unknown): {
     if (!Array.isArray(records)) { warnings.push(section + ": expected a list"); return []; }
     return records.map((item, index) => {
       const row = object(item);
-      const id = typeof row.id === "string" && z.string().uuid().safeParse(row.id).success
-        ? row.id : stableId(section, index);
+      const id = typeof row["id"] === "string" && z.string().uuid().safeParse(row["id"]).success
+        ? row["id"] : stableId(section, index);
       const mapped: Record<string, unknown> = { id };
-      for (const key of fields[section]) {
+      for (const key of fields[section] ?? []) {
         if (row[key] !== undefined) mapped[key] = row[key];
       }
       for (const key of ["certificationDate", "validityDate", "from", "to"]) {
         if (mapped[key] !== undefined) mapped[key] = date(mapped[key]);
       }
       if (section === "education") {
-        if (row.certificateUpload) warnings.push("education " + (index + 1) + ": re-verify private certificate");
+        if (row["certificateUpload"]) warnings.push("education " + (index + 1) + ": re-verify private certificate");
       }
-      if (section === "certifications" && row.certificateUpload) warnings.push("certification " + (index + 1) + ": re-verify private certificate");
-      if (section === "experiences" && (row.internshipCertificateUpload || row.offerLetterUpload))
+      if (section === "certifications" && row["certificateUpload"]) warnings.push("certification " + (index + 1) + ": re-verify private certificate");
+      if (section === "experiences" && (row["internshipCertificateUpload"] || row["offerLetterUpload"]))
         warnings.push("experience " + (index + 1) + ": re-verify private attachments");
       return mapped;
     });
   };
-  const sourcePersonal = object(source.personalDetails);
-  const sourceContact = object(source.contact);
-  const sourceAddress = object(source.address);
-  const sourceSocial = object(source.socialProfiles);
+  const sourcePersonal = object(source["personalDetails"]);
+  const sourceContact = object(source["contact"]);
+  const sourceAddress = object(source["address"]);
+  const sourceSocial = object(source["socialProfiles"]);
   const social: Record<string, unknown> = {};
   for (const field of ["linkedIn", "github", "portfolio", "twitter", "googleScholar", "researchGate"]) {
     social[field] = sourceSocial[field] ?? source[field] ?? "";
   }
-  social.codingProfiles = sourceSocial.codingProfiles ?? source.codingProfiles ?? {};
-  social.codingProfileLinks = sourceSocial.codingProfileLinks ?? source.codingProfileLinks ?? [];
+  social["codingProfiles"] = sourceSocial["codingProfiles"] ?? source["codingProfiles"] ?? {};
+  social["codingProfileLinks"] = sourceSocial["codingProfileLinks"] ?? source["codingProfileLinks"] ?? [];
   const address: Record<string, unknown> = {};
   for (const field of ["currentAddress", "permanentAddress", "city", "state", "pincode",
     "currentCity", "currentState", "currentPincode", "permanentCity", "permanentState", "permanentPincode"]) {
     address[field] = sourceAddress[field] ?? source[field] ?? "";
   }
   const canonical = {
-    about: { description: source.about && typeof source.about === "object"
-      ? string(object(source.about).description) : string(source.description ?? source.about) },
+    about: { description: source["about"] && typeof source["about"] === "object"
+      ? string(object(source["about"]).description) : string(source["description"] ?? source["about"]) },
     personalDetails: {
-      gender: sourcePersonal.gender ?? source.gender ?? "",
-      dateOfBirth: date(sourcePersonal.dateOfBirth ?? sourcePersonal.dob ?? source.dateOfBirth ?? source.dob),
-      bloodGroup: sourcePersonal.bloodGroup ?? source.bloodGroup ?? "",
+      gender: sourcePersonal["gender"] ?? source["gender"] ?? "",
+      dateOfBirth: date(sourcePersonal["dateOfBirth"] ?? sourcePersonal["dob"] ?? source["dateOfBirth"] ?? source["dob"]),
+      bloodGroup: sourcePersonal["bloodGroup"] ?? source["bloodGroup"] ?? "",
     },
     contact: {
-      contactMobile: sourceContact.contactMobile ?? source.contactMobile ?? "",
-      contactPhone: sourceContact.contactPhone ?? source.contactPhone ?? "",
-      contactMail: sourceContact.contactMail ?? source.contactMail ?? "",
+      contactMobile: sourceContact["contactMobile"] ?? source["contactMobile"] ?? "",
+      contactPhone: sourceContact["contactPhone"] ?? source["contactPhone"] ?? "",
+      contactMail: sourceContact["contactMail"] ?? source["contactMail"] ?? "",
     },
     address, socialProfiles: social,
     languages: list("languages"), skills: list("skills"),
     education: list("education", "qualifications"), certifications: list("certifications"),
     experiences: list("experiences"), publications: list("publications"), awards: list("awards"),
-    organizations: source.organizations ?? [],
-    metadata: source.metadata ?? {},
+    organizations: source["organizations"] ?? [],
+    metadata: source["metadata"] ?? {},
   };
   const parsed = facultyProfileDocumentSchema.safeParse(canonical);
   if (!parsed.success) {
@@ -524,7 +528,7 @@ export function importLegacyFacultyProfileDocument(raw: unknown): {
     }
     return { document: null, warnings };
   }
-  if (source.profileImage || source.profileImageUrl || source.website)
+  if (source["profileImage"] || source["profileImageUrl"] || source["website"])
     warnings.push("Profile image needs a verified private upload receipt");
   return { document: parsed.data, warnings };
 }
