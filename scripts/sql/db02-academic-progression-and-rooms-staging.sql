@@ -597,22 +597,31 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_course_offering_period_window();
 -- PostgreSQL does not permit a value introduced by ALTER TYPE ... ADD VALUE to be used
 -- until that transaction commits. cohort_status is isolated to cohorts.status in the
 -- current snapshot, so recreate the enum transactionally and preserve existing values.
-DROP TRIGGER IF EXISTS db02_cohort_status_lifecycle_guard ON cohorts;
-ALTER TABLE cohorts ALTER COLUMN status DROP DEFAULT;
-ALTER TYPE cohort_status RENAME TO cohort_status_pre_db02;
-CREATE TYPE cohort_status AS ENUM (
-  'PLANNED',
-  'ACTIVE',
-  'INACTIVE',
-  'COMPLETED',
-  'ARCHIVED'
-);
-ALTER TABLE cohorts
-  ALTER COLUMN status TYPE cohort_status
-  USING status::text::cohort_status;
-ALTER TABLE cohorts
-  ALTER COLUMN status SET DEFAULT 'PLANNED'::cohort_status;
-DROP TYPE cohort_status_pre_db02;
+-- A registered DB02 migration has already promoted this enum on migrated DBs.
+-- Re-running staging must not rename a live enum referenced by constraints.
+-- On an older pre-DB02 database, perform the one-time transactional rewrite.
+DO $db02_cohort_enum$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_enum e
+    JOIN pg_type t ON t.oid=e.enumtypid
+    WHERE t.typname='cohort_status' AND e.enumlabel='INACTIVE'
+  ) THEN
+    DROP TRIGGER IF EXISTS db02_cohort_status_lifecycle_guard ON cohorts;
+    ALTER TABLE cohorts ALTER COLUMN status DROP DEFAULT;
+    ALTER TYPE cohort_status RENAME TO cohort_status_pre_db02;
+    CREATE TYPE cohort_status AS ENUM (
+      'PLANNED', 'ACTIVE', 'INACTIVE', 'COMPLETED', 'ARCHIVED'
+    );
+    ALTER TABLE cohorts
+      ALTER COLUMN status TYPE cohort_status
+      USING status::text::cohort_status;
+    ALTER TABLE cohorts
+      ALTER COLUMN status SET DEFAULT 'PLANNED'::cohort_status;
+    DROP TYPE cohort_status_pre_db02;
+  END IF;
+END;
+$db02_cohort_enum$;
 
 -- Preserve the editable legacy ACTIVE/INACTIVE/COMPLETED states while protecting vNext's
 -- separate ARCHIVED lifecycle. Direct SQL must not create an already-archived cohort, archive
