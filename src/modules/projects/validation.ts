@@ -861,7 +861,7 @@ const projectMeetingWebUrlSchema = z
   .string()
   .trim()
   .url()
-  .max(2048)
+  .max(500)
   .refine(
     (value) => {
       try {
