@@ -9,6 +9,18 @@ type Query = Record<string, string | string[] | undefined>;
 const statuses = ["SENT", "SCHEDULED", "PROCESSING", "FAILED", "DELETED"] as const;
 type DeliveryStatus = (typeof statuses)[number];
 
+function metaText(metadata: Record<string, unknown>, key: string) {
+  const value = metadata[key];
+  return typeof value === "string" && value.trim() ? value : null;
+}
+
+function formatIst(value: string) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime())
+    ? value
+    : date.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }) + " IST";
+}
+
 function single(value: string | string[] | undefined) {
   return typeof value === "string" ? value : undefined;
 }
@@ -89,6 +101,12 @@ export default async function NotificationDeliveryPage({
               </time>
             </div>
             <p className="break-words font-medium">{item.subjectLabel || item.summary || "Notification"}</p>
+            {metaText(item.metadata, "scheduledAt") ? (
+              <p className="text-xs text-muted-foreground">Scheduled for: {formatIst(metaText(item.metadata, "scheduledAt") ?? "")}</p>
+            ) : null}
+            {metaText(item.metadata, "deliveryError") ? (
+              <p className="text-xs text-red-700" role="alert">Delivery error: {metaText(item.metadata, "deliveryError")}</p>
+            ) : null}
             <p className="break-all text-xs text-muted-foreground">Event: {item.id}</p>
             <p className="text-xs text-muted-foreground">
               Delivery history is read-only here. Retry and cancel require the associated outbox delivery ID and an authorized, current-state transition; an event ID is not a delivery ID.

@@ -215,9 +215,14 @@ export function legacyAttendanceAbsence(input:{
  * PRESENT rows. A missing actor must be remapped before marking, not guessed. */
 export function legacyAttendanceSessionState(input:{
   sourceMarked:boolean;sourceMarkedAt:Date|null;actorUserId:string|null;
+  /** Legacy absence rows imply the session was marked even when the source
+   * attendanceMarkedAt flag is missing (adminAttendanceGrid isSessionCounted). */
+  absenceCount?:number;earliestAbsenceMarkedAt?:Date|null;
 }){
-  if(input.sourceMarked&&input.sourceMarkedAt&&input.actorUserId)
-    return {status:"MARKED" as const,markedAt:input.sourceMarkedAt,markedByUserId:input.actorUserId};
+  const impliedMarked=(input.absenceCount??0)>0;
+  const markedAt=input.sourceMarkedAt??(impliedMarked?input.earliestAbsenceMarkedAt??null:null);
+  if((input.sourceMarked||impliedMarked)&&markedAt&&input.actorUserId)
+    return {status:"MARKED" as const,markedAt,markedByUserId:input.actorUserId};
   return {status:"UNMARKED" as const,markedAt:null,markedByUserId:null};
 }
 
