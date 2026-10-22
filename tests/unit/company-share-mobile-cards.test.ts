@@ -15,12 +15,15 @@ it("renders equivalent three-field mobile cards and desktop tables", () => {
   expect(page).toContain("mobileLabel: COMPANY_SHARE_COLUMNS[key]");
   expect(page).toContain('cell: row=>{');
   expect(page).toContain('key==="APPLICATION_ID"?row.applicationId:row.cells[key]');
-  expect(page).toContain("<DataTable columns={tableColumns} rows={result.rows}");
+  expect(page).toContain('<DataTable columns={tableColumns} rows={result.rows} mobileMode="cards"');
   expect(page).toContain("getRowKey={row=>row.applicationId}");
   expect(table).toContain("columns.map(col=>");
-  expect(table).toContain("sm:table-cell");
-  expect(table).toContain("sm:hidden");
-  expect(table).toContain("sm:table-row");
+  expect(table).toContain('mobileMode = "scroll"');
+  expect(table).toContain('horizontal?"table-cell');
+  expect(table).toContain('horizontal?"table-row');
+  expect(table).toContain('phoneVisible?"block":"hidden"');
+  expect(table).toContain('md:table-cell');
+  expect(table).toContain('md:hidden');
   expect(table).toContain("col.mobileLabel??col.header");
   expect(table).toContain('data-slot="data-table"');
 

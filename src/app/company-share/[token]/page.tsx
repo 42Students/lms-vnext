@@ -96,7 +96,7 @@ export default async function CompanySharePage({
   <p role="status" className="text-sm text-body leading-[22px]">
    {result.total.toLocaleString("en-IN")} applicants · Page {result.page} of {result.totalPages}
   </p>
-  <DataTable columns={tableColumns} rows={result.rows}
+  <DataTable columns={tableColumns} rows={result.rows} mobileMode="cards"
    getRowKey={row=>row.applicationId} caption="Shared applicants"
    empty={<div role="status" className="flex flex-wrap items-center justify-between gap-3">
     <p className="text-sm text-body leading-[22px]">No applicants found.</p>
