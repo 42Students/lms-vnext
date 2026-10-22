@@ -63,7 +63,7 @@ describe("HR-BREAK-chat19-profile-page: active recruiter reads and session denia
   expect(text).toContain("ananya@example.com");
   expect(text).toContain("Authorized employer");
   expect(text).toContain("College access");
-  expect(text).toContain("You sign in with this");
+  expect(text).toContain("Your work email is how you sign in");
  });
  it("requires service projection to succeed and never silently reuses a stale profile cache",async()=>{
   m.profile.mockRejectedValue(new Error("profile unavailable"));
