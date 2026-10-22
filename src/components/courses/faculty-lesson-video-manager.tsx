@@ -323,7 +323,7 @@ export function FacultyLessonVideoManager({
     </Drawer>
     {busy&&activeName?<div className="space-y-2" role="status">
       <p className="break-words text-sm text-body leading-[22px]">{activeName}: {progress}%</p>
-      <MetricBar label="Video upload progress" role="progressbar" value={progress} maximum={100} unit="percent" className={uploadStyles.upload} />
+      <MetricBar label="Video upload progress" role="progressbar" value={progress} maximum={100} unit="percent" className={uploadStyles["upload"] ?? ""} />
       <Button size="md" type="button" variant="secondary" onClick={()=>controllerRef.current?.abort()}>Cancel upload</Button>
     </div>:null}
     {loading?<LoadingState label="Loading videos…" />:null}
