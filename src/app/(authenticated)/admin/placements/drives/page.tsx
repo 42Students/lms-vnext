@@ -14,6 +14,7 @@ import { SuperAdminBulkDriveActions,SuperAdminDriveRowStatusAction } from "@/com
 import { SuperAdminDriveArchive } from "@/components/placements/super-admin-drive-archive";
 import { SuperAdminDriveDuplicate } from "@/components/placements/super-admin-drive-duplicate";
 import { SuperAdminDriveDeadline } from "@/components/placements/super-admin-drive-deadline";
+import {SuperAdminDrivesRetained} from "@/components/placements/super-admin-drives-retained";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { Alert } from "@/components/ui/alert";
@@ -39,12 +40,16 @@ export default async function SuperAdminDrivesPage({searchParams}:{
   <ErrorState title="Invalid drive filters" description="Choose valid filters and page number."
    action={<Link href="/admin/placements/drives" className="inline-flex items-center min-h-11 md:min-h-9 font-[650] text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
  </div>;
+ // The retention identity includes actor, selected college AND validated
+ // filters. It cannot reuse another college's or user's successful rows.
+ const retentionKey=ctx.user.id+":"+ctx.adminScope.collegeId+":"+adminDriveDirectoryHref(parsed.data);
  // Keep an unavailable college reporting backend from crashing the entire
  // Super Admin drive directory; preserve the validated filter on Retry.
  const loaded=await listPlacementOperationsJobPage(ctx,ctx.adminScope.collegeId,parsed.data)
   .then(value=>({ok:true as const,value}))
   .catch(error=>({ok:false as const,denied:error instanceof AuthorizationError}));
- if(!loaded.ok)return <div className="min-w-0 space-y-4">
+ if(!loaded.ok){
+  const fallback=<div className="min-w-0 space-y-4">
   <PageHeader title="Jobs Management (LMS)"/>
   <ErrorState
    title={loaded.denied?"Drive access denied":"Drives unavailable"}
@@ -57,6 +62,10 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    </Link>}
   />
  </div>;
+  // A denied scope must never reveal even the last successful dataset.
+  return loaded.denied?fallback:
+   <SuperAdminDrivesRetained key={retentionKey} failed>{fallback}</SuperAdminDrivesRetained>;
+ }
  const data=loaded.value;
  const hasFilters=Boolean(parsed.data.q)||parsed.data.status!=="ALL";
  const href=(page:number)=>adminDriveDirectoryHref({...parsed.data,page});
@@ -125,7 +134,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     </div>;
    }},
  ];
- return <div className="min-w-0 space-y-4 md:space-y-6">
+ return <SuperAdminDrivesRetained key={retentionKey} failed={false}><div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Jobs Management (LMS)"
    description="Review and manage job postings for the selected college."
    actions={<div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:items-center sm:justify-end">
@@ -182,5 +191,5 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     <p className="mt-2 text-xs text-body">Search is limited to the college selected above. Open the matching student to review placement history.</p>
   </section>
 
- </div>;
+ </div></SuperAdminDrivesRetained>;
 }
