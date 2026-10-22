@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 /** Read-only operator diagnostics, not a user-facing status screen. */
 export async function GET(request: Request) {
-  const secret = process.env.TPO_NOTICE_SCHEDULER_SECRET ?? "";
+  const secret = process.env["TPO_NOTICE_SCHEDULER_SECRET"] ?? "";
   const provided = request.headers.get("x-tpo-scheduler-key") ?? "";
   const expectedBytes = Buffer.from(secret, "utf8");
   const receivedBytes = Buffer.from(provided, "utf8");
