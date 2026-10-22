@@ -163,3 +163,10 @@ AssertionError: expected '"use client";\n\nimport { useEffect, …' to contain '
 - `chat9-verify2-learner-assignment-retry.test.ts`: `src/app/(authenticated)/learn/allAssignments/page.tsx` currently contains `Assignments could not be loaded` and `href="/learn/allAssignments?retry=1"`; route retains its alert state rather than presenting an empty list. Source review only.
 
 The historical CI failures are satisfied by currently inspected branch source; no tests or CI were run and these checks do not certify TypeScript build health.
+
+## Deep rows (from DEEP_agent2_4.md, unfinished; do these FIRST)
+
+Record each result under ## Results in docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md as OK (vNext file:line + docs/legacy-source file) or FIXED. No DEFERRED.
+
+- [ ] G2-2-016-134  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
+- [ ] G2-12-016-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)

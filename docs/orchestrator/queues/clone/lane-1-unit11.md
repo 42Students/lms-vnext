@@ -160,3 +160,10 @@ AssertionError: expected 9 to be 8 // Object.is equality
      15|   expect(source).toContain("actor.display_name::text as \"actorName\""…
 ```
 
+
+## Deep rows (from DEEP_agent2_4.md, unfinished; do these FIRST)
+
+Record each result under ## Results in docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md as OK (vNext file:line + docs/legacy-source file) or FIXED. No DEFERRED.
+
+- [ ] G2-16-005-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
+- [ ] G2-4-017-017  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)

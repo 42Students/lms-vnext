@@ -206,3 +206,10 @@ AssertionError: expected 'import { redirect } from "next/naviga…' to contain '
 - `graceful-raw-error-scan.test.ts`: FIXED product action via `useGuardedAction` in `src/components/tpo/tpo-notice-delivery-retry.tsx` (2082ec3), preserving failure messages and preventing double-submit.
 - `HR-BREAK-chat19-report-joined.test.ts`: FIXED formatting-dependent test to assert multiline scoped college membership predicate (67ed320); no removal of tenant scope or historical rows.
 - `chat19-college-cross-audit.test.ts`: FIXED assertions to follow actual composed `ElectiveEligibleSelection` child where the mobile DataTable, labeled selection checkbox and ScrollCue are implemented (4939cd8).
+
+## Deep rows (from DEEP_agent2_4.md, unfinished; do these FIRST)
+
+Record each result under ## Results in docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md as OK (vNext file:line + docs/legacy-source file) or FIXED. No DEFERRED.
+
+- [ ] G2-19-002-095  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
+- [ ] G2-4-017-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)

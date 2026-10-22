@@ -137,3 +137,9 @@ AssertionError: expected 'import "server-only";\nimport {create…' to contain '
 + import {verifyRecruiterMailBridgeWithRotation,extractRecruiterEmailReply} from "./recruiter-message-email-model";
 ```
 
+
+## Deep rows (from DEEP_agent2_4.md, unfinished; do these FIRST)
+
+Record each result under ## Results in docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md as OK (vNext file:line + docs/legacy-source file) or FIXED. No DEFERRED.
+
+- [ ] G2-2-017-057  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)

@@ -208,3 +208,10 @@ AssertionError: expected 'import { redirect } from "next/naviga…' to contain '
 - `UX-superadmin-import-tables-chat17.test.ts`: FIXED in `ae80d175cd537b0f910918fc5a417bac7bd3af7f`; confirmation text now asserts the actual server-validated preview flow, rather than obsolete locally-only validation copy.
 
 - `tpo-inbox-team-round5-parity-review.test.ts`: OK by source inspection — `src/app/(authenticated)/tpo/team/page.tsx` contains `redirect("/tpo/settings/team")`, UUID deep-link forwarding, the `members` alias, placement team membership checks, and message redirect; its reported CI failure reflects the earlier main snapshot, not this branch. Not locally executed.
+
+## Deep rows (from DEEP_agent2_4.md, unfinished; do these FIRST)
+
+Record each result under ## Results in docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md as OK (vNext file:line + docs/legacy-source file) or FIXED. No DEFERRED.
+
+- [ ] G2-17-010-005  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
+- [ ] G2-4-017-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)

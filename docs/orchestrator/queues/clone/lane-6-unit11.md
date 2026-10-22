@@ -180,3 +180,10 @@ AssertionError: expected 'import { redirect } from "next/naviga…' to contain '
 - `PROJ-BREAK-SA-workspace-brief-isolation.test.ts`: metadata-bearing persisted JSON is deliberately rejected by `parseWorkspaceBrief` (`src/modules/projects/workspace-brief-model.ts:24-29`) to avoid importing another tenant's brief. Test now expects the empty brief instead of hostile metadata's text, commit `18824600108cfc85ef3bac9ed94a03415158c582`. Strict editor validation remains intact. Tests not locally executed.
 
 - `tpo-team-workload-chat2.test.ts`: branch already corrects both main-CI stale redirects to canonical `/tpo/settings?tab=team`; verified `src/app/(authenticated)/tpo/team/page.tsx:28-47` and tenant-scoped OPEN ask aggregation `src/modules/placements/tpo-team-workload-service.ts:13-35`. No product change or assertion weakening; tests not locally run.
+
+## Deep rows (from DEEP_agent2_4.md, unfinished; do these FIRST)
+
+Record each result under ## Results in docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md as OK (vNext file:line + docs/legacy-source file) or FIXED. No DEFERRED.
+
+- [ ] G2-19-010-068  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
+- [ ] G2-4-018-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)

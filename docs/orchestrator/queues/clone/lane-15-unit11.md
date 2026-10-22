@@ -148,3 +148,10 @@ AssertionError: expected '"use client";\n\nimport { useEffect, …' to contain '
 - `public-auth-login-gap-verification.test.ts`: recovery calls `loadLoginAttempt(tenantKey)` so a code never resumes for the wrong tenant; updated test and expiration assertion in commit `18dd2247`.
 
 Static source review only: current runner is unavailable; CI pass is not claimed. No test files were deleted or skipped.
+
+## Deep rows (from DEEP_agent2_4.md, unfinished; do these FIRST)
+
+Record each result under ## Results in docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md as OK (vNext file:line + docs/legacy-source file) or FIXED. No DEFERRED.
+
+- [ ] G2-2-017-052  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
+- [ ] G2-13-031-098  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)

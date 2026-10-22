@@ -140,3 +140,10 @@ AssertionError: expected 'import { and, desc, eq, inArray, isNu…' to contain '
 - Projects: archived rows excluded from active readiness override list/export in commit a9a0ca5.
 
 Static inspection only; no CI execution claimed.
+
+## Deep rows (from DEEP_agent2_4.md, unfinished; do these FIRST)
+
+Record each result under ## Results in docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md as OK (vNext file:line + docs/legacy-source file) or FIXED. No DEFERRED.
+
+- [ ] G2-2-014-032  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
+- [ ] G2-4-025-082  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)

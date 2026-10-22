@@ -208,3 +208,10 @@ AssertionError: expected 'import { redirect } from "next/naviga…' to contain '
 - TPO mobile footer test: replaced stale BottomSheet expectations with same-tab `/tpo/more`, route-active, authorization and accessibility checks (`53776239a831f6600f51b79eeb0977a83d696a26`).
 
 - Assessment export pagination recheck: `src/modules/admin-ui/super-admin-learning-csv-service.ts` currently invokes `listCollegeAssessmentAggregate(context,kind,{...params.data,page})` in its assessment loop, preserving quiz `results`/`scope`/`courseCode` filters across up to 20 pages and using a 500-row export cap. This addresses the historic `query`-undefined trace; runtime CI confirmation remains necessary.
+
+## Deep rows (from DEEP_agent2_4.md, unfinished; do these FIRST)
+
+Record each result under ## Results in docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md as OK (vNext file:line + docs/legacy-source file) or FIXED. No DEFERRED.
+
+- [ ] G2-19-010-067  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
+- [ ] G2-4-017-070  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
