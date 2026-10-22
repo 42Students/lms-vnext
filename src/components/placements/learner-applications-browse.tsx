@@ -27,6 +27,7 @@ import {
   learnerApplicationStage,
   learnerApplicationStageOptions,
   learnerApplicationViewCounts,
+  learnerApplicationIsComplete,
   DEFAULT_LEARNER_APPLICATION_FILTERS,
   type LearnerApplicationBrowseFilters,
 } from "@/modules/placements/learner-applications-browse-model";
@@ -89,6 +90,10 @@ export function LearnerApplicationsBrowse({
   const pendingRef = useRef(false);
   const [withdrawError, setWithdrawError] = useState<string | null>(null);
   const [withdrawNotice, setWithdrawNotice] = useState<string | null>(null);
+  const [defaultCollapsed,setDefaultCollapsed]=useState(false);
+  const [companyPreviewId,setCompanyPreviewId]=useState<string|null>(null);
+  const [previewFrameFailed,setPreviewFrameFailed]=useState(false);
+  const [previewRevision,setPreviewRevision]=useState(0);
   const updateQuery=useCallback((changes:Record<string,string|null>)=>{
     const q=updateLearnerApplicationUrl(params.toString(),changes);
     router.push(q?pathname+"?"+q:pathname,{scroll:false});
@@ -172,7 +177,9 @@ export function LearnerApplicationsBrowse({
     }
   }
 
-  const view:LearnerApplicationBrowseFilters["view"]=url.view;
+  const linkedSelected=items.find(item=>item.applicationId===url.applicationId)??null;
+  const view:LearnerApplicationBrowseFilters["view"]=linkedSelected&&
+    learnerApplicationIsComplete(linkedSelected)&&url.view==="progress"?"all":url.view;
   const sort:LearnerApplicationBrowseFilters["sort"]=url.sort;
   const stages = learnerApplicationStageOptions(items);
   const selectedStage=learnerApplicationStageSelection(stages,url.stage);
@@ -188,8 +195,7 @@ export function LearnerApplicationsBrowse({
   const paged = rows.slice(pagination.start,pagination.end);
   const stageCounts = learnerApplicationStageCounts(items);
   const attention=learnerApplicationAttention(items);
-  const selected = items.find((item) =>
-    item.applicationId === url.applicationId) ?? null;
+  const selected=linkedSelected??(!url.applicationId&&!defaultCollapsed?rows[0]??null:null);
   const selectedWithdrawMode=authorizedWithdrawalMode(selected);
   const withdrawMode=authorizedWithdrawalMode(withdrawTarget);
   const selectedAssessment=selected
@@ -297,7 +303,7 @@ export function LearnerApplicationsBrowse({
             Company or role
             <Input type="search" value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search company or role" maxLength={100}
+              placeholder="Search applications…" maxLength={100}
               className="mt-1 w-full" />
           </label>
           <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -358,8 +364,7 @@ export function LearnerApplicationsBrowse({
         <div className="space-y-3">
           <LearnerPlacementJourney items={[]} />
           <div className="border-t border-border py-4">
-            <p className="text-sm text-body">No applications have been recorded for this learner yet.
-              Browse your published college drives and check eligibility before applying.</p>
+            <p className="text-sm text-body">You haven't applied to a drive yet. Browse drives open to you.</p>
             <Link href="/learn/my-placements/jobs"
               className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:underline">
               Browse available drives →
@@ -368,7 +373,9 @@ export function LearnerApplicationsBrowse({
         </div>
       ) : emptyKind==="FILTERED_OUT" ? (
         <div className="flex min-h-44 flex-col items-center justify-center gap-3 rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center">
-          <p className="font-semibold text-foreground">No applications match these filters.</p>
+          <p className="font-semibold text-foreground">{search.trim()?"No applications match your search.":view==="progress"?
+             "No applications are in progress right now.":view==="completed"?
+             "No finished applications yet.":"No applications match these filters."}</p>
           <Button variant="ghost" type="button" onClick={() => {setSearch("");router.push(pathname,{scroll:false});}}
             className="mt-3 min-h-[var(--lms-control-height)] max-[767px]:min-h-11">
             View all applications
@@ -397,7 +404,7 @@ export function LearnerApplicationsBrowse({
           </div>
           <Button type="button" variant="ghost" aria-expanded={true}
             aria-controls={"application-details-"+selected.applicationId}
-            onClick={()=>updateQuery({applicationId:null})}>Collapse details −</Button>
+            onClick={()=>{setDefaultCollapsed(true);updateQuery({applicationId:null});}}>Collapse details −</Button>
         </div>
         <div className="flex min-w-0 w-full flex-col-reverse items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
           {selected ? (
@@ -417,12 +424,10 @@ export function LearnerApplicationsBrowse({
               >
                 Full history
               </Link>
-              <Link
-                href={`/learn/my-placements/applications/${encodeURIComponent(selected.applicationId)}/company`}
-                className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-[650] text-primary-text md:w-auto"
-              >
-                What the company sees
-              </Link>
+              <Button variant="secondary" type="button"
+                  onClick={()=>{setPreviewFrameFailed(false);setCompanyPreviewId(selected.applicationId);}}>
+                  What the company sees
+                </Button>
             </>
           ) : null}
           {selectedWithdrawMode ? (
@@ -436,7 +441,7 @@ export function LearnerApplicationsBrowse({
                 setWithdrawNotice(null);
               }}
             >
-              {selectedWithdrawMode==="REQUEST"?"Ask to withdraw":"Withdraw application"}
+              {selectedWithdrawMode==="REQUEST"?"Ask to withdraw":"Withdraw"}
             </Button>
           ) : null}
           <Link href={selectedAssessment?.href??"/learn/my-placements/assessments"}
@@ -446,13 +451,15 @@ export function LearnerApplicationsBrowse({
           <Link href={selectedInterview?.href??"/learn/my-placements/interviews"} className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-[650] text-primary-text md:w-auto">
             {selectedInterview?"Open this interview":"Interviews"}
           </Link>
-          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={() => updateQuery({applicationId:null})}>Got it</Button>
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={() => {setDefaultCollapsed(true);updateQuery({applicationId:null});}}>Got it</Button>
         </div>
         {selected ? (
           <div className="space-y-5">
             {selected.driveStatus==="CANCELLED"?<div role="alert" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body">
               <p className="font-semibold text-foreground">This drive was cancelled</p>
-              <p>{(selected as WithdrawalGrantItem).cancelledReason ?? "Review placement cell notices for any published reason. Your saved application history remains available."}</p>
+              <p>{(selected as WithdrawalGrantItem).cancelledReason
+                 ?"The placement cell said: "+(selected as WithdrawalGrantItem).cancelledReason
+                 :"Review placement cell notices for any published reason. Your saved application history remains available."}</p>
               <Link href="/learn/my-placements/announcements" className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-primary-text underline focus-visible:underline">College notices</Link>
             </div>:selected.driveStatus==="CLOSED"?<p role="status" className="border-b border-[var(--lms-canvas-border)] py-3 text-sm text-body">This drive has closed. Previously recorded results remain visible.</p>:null}
             {selected.mayStaffOptOut && selected.staffOptOutUntil &&
@@ -520,7 +527,8 @@ export function LearnerApplicationsBrowse({
                 Only events with recorded timestamps are shown. This is a summary, not the full audit history.
               </p>
             </section>
-            {selected.screening.candidateMessage ? (
+            {selected.screening.candidateMessage&&
+               !(selected.offerStatus==="DECLINED"&&selected.screening.candidateMessage.startsWith("Offer declined by candidate")) ? (
               <section className="min-w-0 border-t border-border pt-4 text-sm text-body">
                 <h3 className="font-semibold text-foreground">Placement team feedback</h3>
                 <p className="mt-2 whitespace-pre-wrap">{selected.screening.candidateMessage}</p>
@@ -551,6 +559,30 @@ export function LearnerApplicationsBrowse({
         ) : null}
       </section> : null}
 
+      <Dialog open={companyPreviewId!==null}
+        title={companyPreviewId?"What "+(items.find(item=>item.applicationId===companyPreviewId)?.companyName??"the company")+" sees":"What the company sees"}
+        description="Your authorized preview of the information shared with the company."
+        onOpenChange={open=>{if(!open)setCompanyPreviewId(null);}}
+        footer={<div className="flex flex-wrap items-center justify-end gap-2">
+          {companyPreviewId?<Link href={"/learn/my-placements/applications/"+
+            encodeURIComponent(companyPreviewId)+"/company"}
+            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline"
+            target="_blank" rel="noopener noreferrer">Open full preview ↗</Link>:null}
+          <Button variant="secondary" type="button" onClick={()=>setCompanyPreviewId(null)}>Close</Button>
+        </div>}>
+        {companyPreviewId?<div className="space-y-3">
+          {previewFrameFailed?<p role="alert" className="text-sm text-error">
+            Company preview did not load. Retry or open the full preview.
+          </p>:null}
+          <Button variant="secondary" type="button"
+            onClick={()=>{setPreviewFrameFailed(false);setPreviewRevision(value=>value+1);}}>Retry preview</Button>
+          <iframe key={companyPreviewId+":"+previewRevision} title="Company view of this application"
+            src={"/learn/my-placements/applications/"+encodeURIComponent(companyPreviewId)+"/company"}
+            onError={()=>setPreviewFrameFailed(true)}
+            sandbox="allow-same-origin"
+            className="min-h-[360px] w-full rounded-[var(--lms-control-radius)] border border-border"/>
+        </div>:null}
+      </Dialog>
       <Dialog
         open={withdrawTarget !== null}
         onOpenChange={(open) => {
@@ -559,18 +591,18 @@ export function LearnerApplicationsBrowse({
             setWithdrawError(null);
           }
         }}
-        title={withdrawMode==="REQUEST"?"Ask to withdraw":"Confirm application withdrawal"}
+        title={withdrawTarget?(withdrawMode==="REQUEST"?"Ask to withdraw from ":"Withdraw from ")+withdrawTarget.companyName:"Withdraw application"}
         description={withdrawMode==="REQUEST"
           ?"Your request goes to the placement cell; it does not immediately withdraw your application."
-          :"This changes the official status of your submitted application. This action cannot be undone here."}
+          :"You leave this role for good. You cannot undo withdrawing this application."}
         footer={
           <div className="flex min-w-0 w-full flex-col-reverse items-stretch gap-2 sm:flex-row sm:justify-end [&_button]:min-h-11 [&_button]:w-full sm:[&_button]:w-auto md:[&_button]:min-h-9">
             <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={withdrawPending}
               onClick={() => { setWithdrawTarget(null); setWithdrawError(null); }}>
               Keep application
             </Button>
-            <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
-              disabled={withdrawPending || !withdrawMode ||
+            <Button variant={withdrawMode==="REQUEST"?"primary":"danger"} className="min-h-11 w-full sm:w-auto md:min-h-9"
+               disabled={withdrawPending || !withdrawMode ||
                 (withdrawMode==="REQUEST" &&
                   !learnerWithdrawalReasonSchema.safeParse(withdrawReason).success) ||
                 !learnerApplicationWithdrawalSchema.safeParse({
@@ -578,7 +610,7 @@ export function LearnerApplicationsBrowse({
                 }).success}
               onClick={() => { void confirmWithdrawal(); }}
             >
-              {withdrawPending ? "Withdrawing…" : "Confirm withdrawal"}
+              {withdrawPending?(withdrawMode==="REQUEST"?"Sending…":"Withdrawing…"):(withdrawMode==="REQUEST"?"Send to placement cell":"Withdraw")}
             </Button>
           </div>
         }
