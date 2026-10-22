@@ -15,7 +15,7 @@ expect(content).toContain("Your role:");
 });
 it("FAC-courses-05 maintains the faculty course behavior",()=>{const content=src("src/components/courses/faculty-course-list.tsx");
 expect(content).toContain("Teaching assignment(s)");
-expect(content).toContain("Section(s)");
+expect(content).toContain('sections.length===1?"Section":"Sections"');
 });
 it("FAC-courses-06 maintains the faculty course behavior",()=>{const content=src("src/components/courses/faculty-course-list.tsx");
 expect(content).toContain("All sections (");
