@@ -24,7 +24,7 @@ export function MentorSprintDeleteControl({projectId,sprintId,title,taskCount,up
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to delete sprint.");}
   finally{setBusy(false);}
  }
- return <div className={styles.legacy+" "+styles.contents}><span className="inline-flex flex-col gap-1">
+ return <div className={styles["legacy"]+" "+styles["contents"]}><span className="inline-flex flex-col gap-1">
   <Button variant="danger" type="button" disabled={busy}
    onClick={()=>void remove()} className="min-h-11 px-3 md:min-h-9">
    {busy?"Deleting…":"Delete sprint"}
