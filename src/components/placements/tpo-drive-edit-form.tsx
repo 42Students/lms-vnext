@@ -434,7 +434,6 @@ export function TpoDriveEditForm({job}:{job:Draft}){
       </dl>
      </li>)}</ul>:
      <p className="text-sm text-muted-foreground">No role packages recorded.</p>}
-    <p className="text-sm text-muted-foreground">No role packages recorded.</p>}
    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/about"}
      className="mt-2 inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Review and edit role packages</Link>
     <p className="mt-1 text-xs text-muted-foreground">
