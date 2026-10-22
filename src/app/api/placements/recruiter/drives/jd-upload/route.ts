@@ -3,6 +3,7 @@ import { z, ZodError } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { readRecruiterJsonBody, RecruiterJsonBodyError } from "@/modules/placements/recruiter-json-request";
 import {
   initiateOwnRecruiterJdUpload, verifyOwnRecruiterJdObject, readOwnRecruiterJd,
 } from "@/modules/placements/recruiter-jd-upload-service";
@@ -11,6 +12,10 @@ export const runtime = "nodejs";
 const noStore = { "Cache-Control": "private, no-store" };
 
 function failed(error: unknown) {
+  if (error instanceof RecruiterJsonBodyError)
+    return NextResponse.json({ error: "INVALID_REQUEST" }, {
+      status: error.kind === "TOO_LARGE" ? 413 : 400, headers: noStore,
+    });
   if (error instanceof ZodError)
     return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400, headers: noStore });
   if (error instanceof Error && error.message.startsWith("JD_"))
@@ -26,7 +31,7 @@ export async function POST(request: Request) {
   if (!isSameOriginRequest(request))
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403, headers: noStore });
   try {
-    const body: unknown = await request.json();
+    const body = await readRecruiterJsonBody(request, 4096);
     const input = z.discriminatedUnion("action", [
       z.strictObject({ action: z.literal("INITIATE"), collegeId: z.string().uuid(),
         originalName: z.string(), contentType: z.string(), sizeBytes: z.number() }),
