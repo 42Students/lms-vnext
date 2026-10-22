@@ -13,15 +13,17 @@ describe("Public recruiter verified company mailbox",()=>{
  });
  it("TPO-campaigns-public-22 returns useful field-specific source messages",()=>{
   expect(publicWorkEmailIssueCopy("DISPOSABLE")).toContain("Temporary");
-  expect(publicWorkEmailIssueCopy("ACADEMIC")).toContain("academic");
+  expect(publicWorkEmailIssueCopy("ACADEMIC")).toContain("College and university addresses");
   const ui=readFileSync("src/modules/placements/public-join/client-error-model.ts","utf8");
   expect(ui).toContain("publicWorkEmailIssueCopy(emailIssue)");
  });
  it("TPO-campaigns-public-22 checks MX before issuing a code, with an explicit unavailable retry",()=>{
   const service=readFileSync("src/modules/placements/public-join/send-code-service.ts","utf8");
-  expect(service).toContain("resolveMx(host)");
+  expect(service).toContain("companyDomainAcceptsMail(domain,true)");
+  const resolver=readFileSync("src/modules/placements/company-mail-domain-resolver.ts","utf8");
+  expect(resolver).toContain("resolveMx(domain)");
   expect(service).toContain("EMAIL_NO_MX");
   expect(service).toContain("EMAIL_MX_UNAVAILABLE");
-  expect(service.indexOf("resolveMx(host)")).toBeLessThan(service.indexOf("newPublicJoinCode()"));
+  expect(service.indexOf("companyDomainAcceptsMail(domain,true)")).toBeLessThan(service.indexOf("newPublicJoinCode()"));
  });
 });

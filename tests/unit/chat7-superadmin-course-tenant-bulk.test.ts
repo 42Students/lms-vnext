@@ -25,7 +25,10 @@ describe("SA-academics-people-52/53 GR-COURSES-TENANT-01 safe scoped Super Admin
   expect(sqlScope).toContain("eq(departments.collegeId,acting.collegeId)");
   expect(sqlScope).toContain("eq(academicPeriods.collegeId,acting.collegeId)");
   expect(sqlScope).toContain("eq(courseOfferings.id,courseLearningPaths.offeringId)");
-  expect(sqlScope).toContain("inArray(lessonContents.lessonId,input.lessonIds)");
+  expect(sqlScope).toContain("for(const lessonId of input.lessonIds)");
+  expect(sqlScope).toContain("eq(courseLessons.id,lessonId)");
+  expect(sqlScope).toContain("eq(academicPeriods.collegeId,acting.collegeId)");
+  expect(sqlScope).toContain("assertPersistedPlatformPermission(tx,context");
   expect(sqlScope).toContain("updateCollegeContentStudentVisibility(context");
   const course=source("super-admin-course-bulk-visibility");
   expect(course).toContain("eq(departments.collegeId,acting.collegeId)");
@@ -44,7 +47,10 @@ describe("SA-academics-people-52/53 GR-COURSES-TENANT-01 safe scoped Super Admin
   for(const mod of ["super-admin-course-bulk-visibility","super-admin-lesson-bulk-visibility",
     "college-lesson-visibility-service"]){
    const c=source(mod);
-   expect(c).toContain("safeCourseVisibilityFailure(error)");
+   if(mod==="super-admin-lesson-bulk-visibility"){
+    expect(c).toContain('"Lesson could not be updated. Refresh and retry."');
+    expect(c).toContain("error instanceof CoursesServiceError");
+   }else expect(c).toContain("safeCourseVisibilityFailure(error)");
    expect(c).not.toMatch(/reason\s*:\s*error instanceof Error\s*\?\s*error\.message/);
   }
  });
@@ -72,9 +78,9 @@ describe("SA-academics-people-52/53 GR-COURSES-TENANT-01 safe scoped Super Admin
   }
   expect(adminContentTypeLabel("YOUTUBE")).toContain("YouTube");
   expect(adminContentTypeLabel("OTHER")).toBe("Unknown content");
-  expect(ADMIN_CONTENT_PAGE_SIZE).toBe(25);
+  expect(ADMIN_CONTENT_PAGE_SIZE).toBe(10);
   expect(adminContentPages(0)).toBe(1);
-  expect(adminContentPages(26)).toBe(2);
+  expect(adminContentPages(26)).toBe(3);
  });
  it("Super Admin student progress never invents percent with no denominator; clamps malformed completed counts",()=>{
   const base={videos:0,assignments:0,quizzes:0,totalVideos:0,totalAssignments:0,totalQuizzes:0};

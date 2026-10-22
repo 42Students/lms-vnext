@@ -53,7 +53,7 @@ describe("SA-academics-people-101 multi-course faculty assignment",()=>{
   expect(page).toContain("<SuperAdminFacultyAssignmentCreate");
   expect(form).toContain(">Course(s)</legend>");
   expect(form).toContain("Select up to 9 additional courses for the same class and semester.");
-  expect(form).toContain("item.sectionId===selected.sectionId");
+  expect(form).toContain("const sameClass=scopedDeliveries");
   expect(form).toContain("deliveryIds.length>10");
   expect(form).toContain('apiFetch("/api/admin/faculty-assignment/batch"');
   expect(form).toContain("body:JSON.stringify({deliveryIds,membershipId,role})");

@@ -17,7 +17,8 @@ describe("Super Admin Projects Templates-first legacy strip",()=>{
   expect(superAdminLegacyTabActive("/admin/projects/readiness","/admin/projects")).toBe(false);
   expect(superAdminLegacyTabActive("/admin/projects","/admin/projects")).toBe(true);
   const src=readFileSync(join(process.cwd(),"src/components/projects/project-admin-nav.tsx"),"utf8");
-  expect(src).toContain('basePath === "/admin/projects") return null;');
+  expect(src).toContain('if (basePath === "/college/projects") return null;');
+  expect(src).toContain("PROJECT_ADMIN_SECTIONS.map");
   expect(existsSync(join(process.cwd(),"src/app/(authenticated)/admin/projects/[projectId]/page.tsx"))).toBe(true);
  });
 });

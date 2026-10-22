@@ -17,8 +17,8 @@ describe("TPO recruiter contact modal and source parity",()=>{
  });
  it("TPO-recruiters-36 traps Tab and supports Escape inside editable recruiter dialogs",()=>{
   const dialog=readFileSync("src/components/ui/dialog.tsx","utf8");
-  expect(detail).toContain("<Dialog open={editing}");
-  expect(detail).toContain("<Dialog open={notNowOpen}");
+  expect(detail).toContain("<Dialog open={editing && confirmation===null}");
+  expect(detail).toContain("<Dialog open={notNowOpen && confirmation===null}");
   expect(detail).toContain("dismissible={!saving}");
   expect(detail).toContain('setEditing(false)');
   expect(detail).toContain('setNotNowOpen(false)');

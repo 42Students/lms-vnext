@@ -7,7 +7,7 @@ const detail=()=>src("src/app/(authenticated)/hr/conversations/[threadId]/page.t
 describe("Final sprint recruiter conversations verification",()=>{
  it("REC-calendar-messages-profile-09 shows unread/threads toolbar and searches authorized message bodies",()=>{
   const page=list(),service=src("src/modules/placements/hr-conversation-inbox-service.ts");
-  expect(page).toContain("unread across");
+  expect(page).toContain("result.unreadTotal");
   expect(page).toContain("with new messages on this page");
   expect(page).toContain("Search by drive or message");
   expect(service).toContain("inArray(placementTpoMessages.threadId,accessibleIds)");
@@ -22,7 +22,7 @@ describe("Final sprint recruiter conversations verification",()=>{
  });
  it("REC-calendar-messages-profile-11 keeps the General discussion in the inbox with reply and controlled open action",()=>{
   const page=list();
-  expect(page).toContain("Message the placement cell · General");
+  expect(page).toContain("Talk to the placement cell");
   expect(page).toContain("Placement cell · General");
   expect(page).toContain("<RecruiterConversationReplyForm");
   expect(page).toContain('action="/api/placements/recruiter/conversations/open"');
@@ -31,7 +31,7 @@ describe("Final sprint recruiter conversations verification",()=>{
   const refresh=src("src/components/hr/recruiter-conversation-live-refresh.tsx");
   expect(list()).toContain("<RecruiterConversationLiveRefresh");
   expect(detail()).toContain("<RecruiterConversationLiveRefresh");
-  expect(refresh).toContain("window.setInterval(update,4000)");
+  expect(refresh).toContain("window.setInterval(()=>{void update();},4000)");
   expect(refresh).toContain('document.visibilityState!=="visible"');
   expect(refresh).toContain('window.addEventListener("focus",update)');
   expect(refresh).not.toContain("fetch(");
@@ -54,7 +54,7 @@ describe("Final sprint recruiter conversations verification",()=>{
  });
  it("REC-calendar-messages-profile-18 includes current drive change requests and recruiter/placement sender attribution",()=>{
   const page=detail();
-  expect(page).toContain('aria-label="Drive change request updates"');
+  expect(page).toContain('label="Drive change request updates"');
   expect(page).toContain("Discussion replies:");
   expect(page).toContain("Placement-cell response:");
   expect(page).toContain('message.senderType==="RECRUITER"?"You"');
@@ -89,7 +89,7 @@ describe("Final sprint recruiter conversations verification",()=>{
  });
 
  it("REC-calendar-messages-profile-11 independent final-sprint acceptance regression",()=>{
-  expect(src("src/app/(authenticated)/hr/conversations/page.tsx")).toContain("Message the placement cell · General");
+  expect(src("src/app/(authenticated)/hr/conversations/page.tsx")).toContain("Talk to the placement cell");
   expect(src("src/app/(authenticated)/hr/conversations/page.tsx")).toContain("aria-label=\"General placement-cell messages\"");
   expect(src("src/components/hr/recruiter-conversation-reply-form.tsx")).toContain("event.ctrlKey||event.metaKey");
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-11 |");
@@ -98,7 +98,7 @@ describe("Final sprint recruiter conversations verification",()=>{
  it("REC-calendar-messages-profile-13 independent final-sprint acceptance regression",()=>{
   expect(src("src/components/hr/recruiter-conversation-live-refresh.tsx")).toContain("document.visibilityState!==\"visible\"");
   expect(src("src/components/hr/recruiter-conversation-live-refresh.tsx")).toContain("current.closest(\"input,textarea,select,[contenteditable=true]\")");
-  expect(src("src/components/hr/recruiter-conversation-live-refresh.tsx")).toContain("window.setInterval(update,4000)");
+  expect(src("src/components/hr/recruiter-conversation-live-refresh.tsx")).toContain("window.setInterval(()=>{void update();},4000)");
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-13 |");
  });
 

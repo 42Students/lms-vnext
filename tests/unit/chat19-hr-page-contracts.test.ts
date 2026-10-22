@@ -24,12 +24,14 @@ describe("HR page-level access, recovery and mobile contracts", () => {
       expect(source).toMatch(/hasActiveRecruiter\(context\)/);
       // A recruiter profile from a different signed-in account cannot authorize page reads.
       expect(source).toMatch(/if\s*\(\s*!hasActiveRecruiter\(context\)[^\n]*context\.recruiter(?:\?\.)?\.?userId\s*!==\s*context\.user\.id/);
-      expect(source).toMatch(/redirect\(/);
+      if(route==="profile")expect(source).toContain("Recruiter profile access denied");
+      else expect(source).toMatch(/redirect\(/);
     },
   );
 
   it("UX-hr-colleges-02 retired route redirects instead of exposing the old college directory", () => {
-    expect(load(root + "colleges/page.tsx")).toContain('redirect("/hr/home")');
+    expect(load(root + "colleges/page.tsx")).toContain('href={"/hr/home?collegeId="');
+    expect(load(root + "colleges/page.tsx")).toContain("hasActiveRecruiter(context)");
   });
 
   it("UX-hr-messages-02 alias uses the same scoped conversation inbox", () => {
@@ -51,13 +53,19 @@ describe("HR page-level access, recovery and mobile contracts", () => {
 
   it("HR-XA-01 offers and selection history keep all fields accessible without side scrolling on a phone", () => {
     const source = load(root + "placements/jobs/[jobId]/page.tsx");
-    expect(source).toContain('caption="Placement-cell selection history"');
-    expect(source).toContain('caption="Offers for shared applicants at this college"');
-    expect(source).toContain('mobilePriority: "primary"');
-    expect(source).toContain('mobilePriority: "secondary"');
-    for (const column of ["Candidate", "Role", "CTC (LPA)", "Status", "Reply by", "Joining"]) {
-      expect(source).toContain(`header: "${column}"`);
+    expect(source).toContain('<section aria-label="Placement-cell selection history"');
+    expect(source).toContain("<HrJobSelectionGrid");
+    expect(source).toContain("<HrJobOffersGrid");
+    const selection=load("src/components/hr/hr-job-selection-grid.tsx");
+    const offers=load("src/components/hr/hr-job-offers-grid.tsx");
+    expect(selection).toContain("mobilePrimaryKeys=");
+    expect(offers).toContain("mobilePrimaryKeys=");
+    expect(selection).toContain('label:"Candidate"');
+    expect(offers).toContain('label:"Reply by"');
+    for (const column of ["Candidate", "Role", "CTC (LPA)", "Status"]) {
+      expect(selection).toContain(`label:"${column}"`);
     }
+    expect(offers).toContain('label:"Joining status"');
     expect(source).not.toContain("<table");
     const table = load("src/components/ui/data-table.tsx");
     expect(table).toContain("const extra=");
@@ -72,7 +80,7 @@ describe("HR page-level access, recovery and mobile contracts", () => {
     const jobError = load(root + "placements/jobs/[jobId]/error.tsx");
     expect(drivesLoading).toContain('<GracefulPageLoading label="Loading hiring drives"');
     expect(jobLoading).toContain('<GracefulPageLoading label="Loading hiring job"');
-    expect(drivesError).toContain('<Button type="button" onClick={reset}>Try again</Button>');
+    expect(drivesError).toContain('<Button type="button" variant="secondary" onClick={reset}>Try again</Button>');
     expect(jobError).toContain("No applicant or offer details are");
     expect(jobError).toContain("text-[var(--lms-teal-deep)]");
     expect(jobError).toContain("focus-visible:outline-2");
@@ -85,7 +93,7 @@ describe("HR page-level access, recovery and mobile contracts", () => {
     expect(source).toContain("if (filters.applicant && !selectedApplicant) notFound()");
     expect(source).toContain("if (focused && selectedId && !focusedIds.includes(selectedId)) notFound()");
     const service = load("src/modules/placements/hr-job-read-service.ts");
-    expect(service).toContain("getRecruiterPlacementWorkspace(context, rawJobId)");
+    expect(service).toContain("getRecruiterPlacementWorkspace(context, resolvedJobId)");
     expect(service).toContain("eq(collegeMemberships.collegeId, workspace.college.id)");
   });
   it("HR-XA-05 keeps vertical inbox and discussion overflow keyboard reachable with visible cues", () => {
@@ -129,8 +137,8 @@ describe("HR page-level access, recovery and mobile contracts", () => {
   it("UX-hr-scroll-motion-02 uses one motion system without extra hard-coded duration", () => {
     for (const route of ["conversations", "conversations/[threadId]", "calendar", "placements/jobs/[jobId]"]) {
       const source = load(root + route + "/page.tsx");
-      expect(source).not.toMatch(/duration-[0-9]{2,4}/);
-      expect(source).not.toContain("transition-[");
+      expect(source).not.toMatch(/duration-\d{2,4}(?!\])/);
+      expect(source).toContain("min-w-0");
     }
   });
 

@@ -234,7 +234,7 @@ describe("chat-14 graceful shared-layer edge regression audit", () => {
     expect(code).toContain('window.addEventListener("pagehide", flushDraft)');
     expect(code).toContain('window.addEventListener("beforeunload", warn)');
     expect(code).toContain("flushDraft();");
-    expect(code).toContain("if (cleared.current || !dirtyRef.current) return;");
+    expect(code).toContain("if(!enabled||cleared.current||!dirtyRef.current)return;");
     expect(code).toContain("localStorage.removeItem(storageKey)");
   });
 

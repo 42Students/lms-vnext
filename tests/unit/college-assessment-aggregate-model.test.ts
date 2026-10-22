@@ -68,7 +68,7 @@ describe("College Admin assignment and quiz aggregate model", () => {
   });
 
   it("labels only actual shared or section-specific authoring scope",()=>{
-    expect(collegeAssessmentScopeLabel(false)).toBe("Shared offering");
+    expect(collegeAssessmentScopeLabel(false)).toBe("All eligible sections");
     expect(collegeAssessmentScopeLabel(true)).toBe("Section-specific");
   });
 

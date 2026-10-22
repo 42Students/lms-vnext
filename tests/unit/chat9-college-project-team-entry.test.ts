@@ -9,7 +9,9 @@ describe("College projects team and resource evidence",()=>{
   const control=source("src/components/projects/project-mentor-reassignment.tsx");
   expect(workspace).toContain("Reassign mentor");
   expect(workspace).toContain("encodeURIComponent(workspace.project.id)");
-  expect(admin).toContain("z.string().uuid().safeParse");
+  expect(admin).toContain("parseProjectAdminReassignMentorQuery(recovered.params)");
+  expect(admin).toContain("if(!parsed.success)");
+  expect(admin).toContain("initialProjectId");
   expect(control).toContain("workspaces.some(item => item.id === initialProjectId)");
   expect(control).toContain("matchingWorkspaces");
  });

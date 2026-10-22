@@ -19,7 +19,7 @@ beforeEach(()=>state.reader.mockReset());
 describe("COURSES-WEAK-EXPORT-SERVICE-01 account-scoped export query and cap",()=>{
  it("rejects extra query keys, invalid filters and custom page parameters before making an authorized service read",async()=>{
   for(const invalid of [
-   {page:999},{collegeId:"other"},{status:"UNKNOWN"},{q:"x".repeat(101)},
+   {page:1001},{collegeId:"other"},{status:"UNKNOWN"},{q:"x".repeat(101)},
    {scope:"PRIVATE"},
   ]){
    await expect(exportCollegeAssessments(context,"QUIZ",invalid)).rejects.toThrow();
@@ -38,7 +38,7 @@ describe("COURSES-WEAK-EXPORT-SERVICE-01 account-scoped export query and cap",()
    return {items:Array.from({length:page===3?1:25},(_,i)=>row((page-1)*25+i)),
     total:51,totalPages:3};
   });
-  const out=await exportCollegeAssessments(context,"QUIZ",{status:"PUBLISHED"});
+  const out=await exportCollegeAssessments(context,"QUIZ",{status:"PUBLISHED",exportMode:"ALL"});
   expect(state.reader).toHaveBeenCalledTimes(3);
   for(const call of state.reader.mock.calls){
    expect(call[0]).toBe(context);
@@ -56,7 +56,7 @@ describe("COURSES-WEAK-EXPORT-SERVICE-01 account-scoped export query and cap",()
    items:Array.from({length:25},(_,i)=>row((query.page-1)*25+i)),
    total:1001,totalPages:41,
   }));
-  const out=await exportCollegeAssessments(context,"ASSIGNMENT",{});
+  const out=await exportCollegeAssessments(context,"ASSIGNMENT",{exportMode:"ALL"});
   expect(out.rows).toHaveLength(1000);
   expect(out.truncated).toBe(true);
   expect(out.cap).toBe(1000);

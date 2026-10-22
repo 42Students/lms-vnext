@@ -9,7 +9,7 @@ describe("SA-ADMIN-HISTORY-MODAL-10 accessible college import history",()=>{
     expect(view).toContain('onClick={() => setOpen(true)}');
     expect(view).toContain('footer={<Button type="button" variant="secondary" onClick={()=>setOpen(false)}>Close</Button>}');
     expect(view).toContain('bodyClassName="min-w-0"');
-    expect(view).toContain('aria-label="Bulk import history"');
+    expect(view).toContain('aria-label="Bulk import history records"');
     expect(view).toContain('<DataTable caption="Bulk import history records"');
     expect(view).toContain('min-h-11');
   });

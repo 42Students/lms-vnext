@@ -9,14 +9,15 @@ describe("Safety justified deviations from legacy TPO UI",()=>{
   expect(publicMetricRelease({enabled:true,collegeActive:true,population:10,count:11})).toBeNull();
   expect(publicMetricRelease({enabled:true,collegeActive:true,population:10,count:5})).toBe(5);
   const stats=src("src/modules/placements/public-page/read-service.ts");
-  expect(stats).toContain('placedAt === "SELECTED" ? null');
+  expect(stats).toContain("actual?.acceptedStudents ?? 0");
+  expect(stats).toContain("publicMetricRelease({...input,count:placedCount})");
   expect(stats).toContain("publicPublicationFresh");
  });
  it("TPO-inbox-team-42 uses directly linked accessible mobile conversation pages rather than an inaccessible miniature three-pane view",()=>{
   const inbox=src("src/app/(authenticated)/tpo/team/page.tsx");
   const thread=src("src/app/(authenticated)/tpo/team/[threadId]/page.tsx");
-  expect(inbox).toContain("Internal conversations");
-  expect(inbox).toContain('href={"/tpo/team/"+');
+  expect(inbox).toContain('redirect("/tpo/messages?" + target.toString())');
+  expect(inbox).toContain("hasPlacementTeamMembership(context)");
   expect(thread).toContain("All conversations");
   expect(thread).toContain("max-w-[88%]");
   expect(thread).toContain("TpoTeamThreadDetails");

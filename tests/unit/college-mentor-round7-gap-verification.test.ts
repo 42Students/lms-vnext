@@ -17,7 +17,7 @@ describe("chat-11 college and mentor interaction contracts",()=>{
   expect(src("docs/audit/owner-decisions-resolved.md")).toContain("archive instead of delete");
   const action=src("src/components/admin/department-actions.tsx");
   expect(action).toContain("hasDependencies");
-  expect(action).toContain("Move or remove its programs, courses, faculty before deleting.");
+  expect(action).toContain("Department was not archived. Move or remove its programs, courses or faculty assignments, then retry.");
   expect(action).toContain("Retry delete");
  });
  it("MEN-projects-meetings-57 shows Open link and guards invalid or blocked resource windows",()=>{

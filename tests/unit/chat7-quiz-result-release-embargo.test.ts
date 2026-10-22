@@ -12,10 +12,13 @@ describe("COURSES7-07 private answer-key release boundary",()=>{
   expect(learnerQuizResultsReleased({...ready,dueAt:new Date(now+1)},now)).toBe(false);
  });
  it("COURSES7-07 stale published flag cannot release results before closing quiz",()=>{
-  for(const status of ["DRAFT","PUBLISHED","ARCHIVED","REOPENED"]){
+  for(const status of ["DRAFT","ARCHIVED","REOPENED"]){
    expect(learnerQuizResultsReleased({...ready,status},now+1000)).toBe(false);
   }
   expect(learnerQuizResultsReleased({...ready,resultsPublished:false},now+1000)).toBe(false);
+  // Faculty may release results after the persisted due instant without a CLOSED transition.
+  expect(learnerQuizResultsReleased({...ready,status:"PUBLISHED"},now+1000)).toBe(true);
+  expect(learnerQuizResultsReleased({...ready,status:"PUBLISHED"},now-1)).toBe(false);
  });
  it("COURSES7-07 invalid or missing due date and nonfinite clocks must fail closed",()=>{
   expect(learnerQuizResultsReleased({...ready,dueAt:null},now)).toBe(false);
