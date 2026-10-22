@@ -27,7 +27,8 @@ export function AdminDriveApplicationsRetained({
     ()=>failed?null:children,
   );
   useEffect(()=>{
-    if(!failed){setLastSuccess(children);setRetrying(false);}
+    setRetrying(false);
+    if(!failed)setLastSuccess(children);
   },[children,failed]);
   const selected=selectApplicationsView(children,lastSuccess,failed);
   return <div className="min-w-0 space-y-4">
