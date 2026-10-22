@@ -170,7 +170,10 @@ export async function createCourseLesson(
     courseId:z.union([z.string().trim().min(1),z.number().int().positive()]).optional(),
   }).parse({...(courseSlug!==undefined?{courseSlug}:{}),...(courseId!==undefined?{courseId}:{})});
   const resolvedLegacyPath=legacyScope.courseSlug||legacyScope.courseId!==undefined
-    ?await resolveLegacyLessonLearningPath(context,legacyScope):null;
+    ?await resolveLegacyLessonLearningPath(context,{
+       ...(legacyScope.courseSlug!==undefined?{courseSlug:legacyScope.courseSlug}:{}),
+       ...(legacyScope.courseId!==undefined?{courseId:legacyScope.courseId}:{}),
+     }):null;
   if((legacyScope.courseSlug||legacyScope.courseId!==undefined)&&!resolvedLegacyPath)
     throw new CoursesServiceError("LESSON_NOT_FOUND");
   if(resolvedLegacyPath&&lessonFields["learningPathId"]!==undefined&&
@@ -225,6 +228,7 @@ export async function createCourseLesson(
           visibleToStudents:input.enabled??input.visibleToStudents??true,
         })
         .returning();
+      if(!created)throw new CoursesServiceError("LESSON_NOT_FOUND");
 
       if(children.length){
         const normalized=children.map((raw,index)=>{
