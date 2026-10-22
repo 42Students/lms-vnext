@@ -3,6 +3,7 @@ import {and,eq} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,placementJobs} from "@/db/schema";
+import {PlacementsServiceError} from "./errors";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
@@ -10,6 +11,7 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {collegeDriveIdSchema} from "./college-drive-read-model";
 const input=z.strictObject({
  deadline:z.iso.datetime({offset:true}),
+ expectedDeadline:z.iso.datetime({offset:true}).nullable(),
  confirmed:z.literal(true),
 });
 export async function extendCollegeDriveDeadline(ctx:RequestContext,rawId:unknown,raw:unknown){
@@ -23,26 +25,20 @@ export async function extendCollegeDriveDeadline(ctx:RequestContext,rawId:unknow
    collegeId,organizationId:acting.organizationId,
   });
   const [job]=await tx.select({id:placementJobs.id,title:placementJobs.title,
-   status:placementJobs.status,deadline:placementJobs.applicationDeadline,
-   legacyPostingDetails:placementJobs.legacyPostingDetails})
+   status:placementJobs.status,deadline:placementJobs.applicationDeadline})
    .from(placementJobs).where(and(eq(placementJobs.id,id),
     eq(placementJobs.collegeId,collegeId))).for("update").limit(1);
-  if(!job||job.status!=="PUBLISHED")throw Error("Only active drives can extend their deadlines.");
-  if(deadline<=new Date())throw Error("Choose a future deadline.");
-  if(job.deadline&&deadline<=job.deadline)throw Error("The new deadline must be later than the existing deadline.");
-  // The legacy job edit updates both the canonical application deadline and
-  // its matching Important Dates entry; never leave conflicting student copy.
-  const previousDates=job.legacyPostingDetails?.importantDates??[];
-  const syncedDates=job.legacyPostingDetails?[
-   ...previousDates.filter(date=>date.label.trim().toLowerCase()!=="application deadline"),
-   {label:"Application deadline",at:deadline.toISOString()},
-  ]:null;
+  if(!job||job.status!=="PUBLISHED")
+   throw new PlacementsServiceError("PLACEMENT_JOB_NOT_EDITABLE");
+  // A locked job row plus the original deadline form a CAS snapshot, even
+  // when two staff tabs submit extensions to this college drive together.
+  const expected=value.expectedDeadline===null?null:new Date(value.expectedDeadline).getTime();
+  if((job.deadline?.getTime()??null)!==expected)
+   throw new PlacementsServiceError("PLACEMENT_JOB_STALE");
+  if(job.deadline&&deadline<=job.deadline)
+   throw new PlacementsServiceError("PLACEMENT_JOB_INVALID_DEADLINE");
   const [saved]=await tx.update(placementJobs).set({
-   applicationDeadline:deadline,
-   ...(job.legacyPostingDetails&&syncedDates?{legacyPostingDetails:{
-    ...job.legacyPostingDetails,importantDates:syncedDates,
-   }}:{}),
-   updatedAt:new Date(),
+   applicationDeadline:deadline,updatedAt:new Date(),
   }).where(and(eq(placementJobs.id,id),eq(placementJobs.status,"PUBLISHED")))
   .returning({id:placementJobs.id,deadline:placementJobs.applicationDeadline});
   if(!saved)throw Error("Drive changed; refresh and retry.");
@@ -52,7 +48,8 @@ export async function extendCollegeDriveDeadline(ctx:RequestContext,rawId:unknow
    module:"PLACEMENTS",eventType:"PLACEMENTS_COLLEGE_DRIVE_DEADLINE_EXTENDED",
    subjectType:"placement_job",subjectId:id,summary:"Extended application deadline for "+job.title,
    metadata:{oldDeadline:job.deadline?.toISOString()??null,
-    newDeadline:deadline.toISOString()},
+    newDeadline:deadline.toISOString(),expectedDeadline:value.expectedDeadline,
+    optimisticGuard:"PREVIOUS_DEADLINE_TOKEN"},
   });
   return {id:saved.id,deadline:saved.deadline?.toISOString()??null};
  });
