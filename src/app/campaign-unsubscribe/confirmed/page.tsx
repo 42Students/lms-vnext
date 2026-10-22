@@ -8,7 +8,7 @@ export default async function Unsubscribed({
 }: { searchParams: Promise<{ scope?: string }> }) {
   const cell = (await searchParams).scope === "placement-cell";
   return (
-    <main className={authStyles.page}>
+    <main className={authStyles["page"]}>
       <div className="mx-auto flex min-h-dvh w-full max-w-xl min-w-0 flex-col justify-center gap-4 px-4 pb-8 pt-24 min-[768px]:py-12">
       <Card as="section">
        <div className="flex min-w-0 flex-col items-center gap-4 py-4 text-center">
