@@ -22,6 +22,9 @@ const tones={
  error:"border-[var(--lms-canvas-border)] bg-[var(--lms-error-subtle)] text-[var(--lms-error)]",
 } as const;
 
+// Both button and link chips retain the same accessible 44px touch target at every breakpoint.
+const filterChipGeometry = "inline-flex min-h-11 max-w-full items-center justify-center rounded-[6px] border px-[12px] py-0 text-[12px] font-bold leading-[18px] md:px-[15px] md:py-[2px]";
+
 export function FilterChip({
  className,children,tone="neutral",type="button",...props
 }:FilterChipProps){
@@ -29,7 +32,7 @@ export function FilterChip({
  return <Button {...props} type={type} variant="secondary" size="sm"
    data-slot="filter-chip" data-selected={selected}
    className={cx(
-    "min-h-11 rounded-[6px] border px-[12px] py-0 text-[12px] font-bold leading-[18px] md:min-h-8 md:px-[15px] md:py-[2px]",
+    filterChipGeometry,
     "enabled:hover:!border-[var(--lms-primary)] enabled:hover:!bg-[var(--lms-primary-subtle)] enabled:hover:!text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]",
     "disabled:!cursor-not-allowed disabled:!border-[var(--lms-neutral-200)] disabled:!bg-[var(--lms-neutral-200)] disabled:!text-[var(--lms-neutral-500)] disabled:!opacity-100",
     tones[tone],
@@ -56,7 +59,7 @@ export function FilterChipLink({
  "aria-label":ariaLabel,
 }:FilterChipLinkProps){
  const classes=cx(
-  "inline-flex min-h-11 max-w-full items-center justify-center rounded-[6px] border px-[12px] py-0 text-[12px] font-bold leading-[18px] md:min-h-8 md:px-[15px] md:py-[2px]",
+  filterChipGeometry,
   "transition-colors hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none",
   tones[tone],
   selected&&"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]",

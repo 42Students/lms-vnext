@@ -88,7 +88,7 @@ export function SuperAdminLessonBulkVisibility({
    </p>
    <p className="text-xs text-muted-foreground">Selection applies to this filtered page only, not lessons on other pages. Change search or course to start a new selection. Lesson active status and content publication are unchanged.</p>
    {listIncomplete?<Alert tone="warning">The lesson list is incomplete. Refresh it before changing visibility.</Alert>:null}
-   <label className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold md:min-h-10">
+   <label className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold md:min-h-11">
     <Checkbox checked={lessons.length>0&&selectedInScope.length===lessons.length}
      onChange={event=>setSelected(event.target.checked?lessons.map(item=>item.id):[])}
      disabled={!canChange}/>
@@ -97,7 +97,7 @@ export function SuperAdminLessonBulkVisibility({
    <ScrollCue axis="y" label="Lesson bulk selection" viewportClassName="max-h-48">
     <div className="grid gap-2 md:grid-cols-2">
      {lessons.map(lesson=><label key={lesson.id}
-      className="flex min-h-11 min-w-0 items-center gap-3 border-b border-border px-3 py-2 text-sm md:min-h-10">
+      className="flex min-h-11 min-w-0 items-center gap-3 border-b border-border px-3 py-2 text-sm md:min-h-11">
       <Checkbox checked={selectedInScope.includes(lesson.id)} disabled={!canChange}
        onChange={event=>setSelected(list=>event.target.checked
         ? [...new Set([...list,lesson.id])]

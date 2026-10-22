@@ -124,10 +124,10 @@ export default async function LearnerAttendanceCalendarPage({
     <section aria-label={monthLabel+" attendance calendar"} className={monthStyles.calendarCard}>
       <div className={monthStyles.toolbar}>
         <Link href={previous} aria-label="Previous month"
-          className={monthStyles.navLink+" inline-flex min-h-11 items-center md:min-h-9"}>← Previous</Link>
+          className={monthStyles.navLink}>← Previous</Link>
         <h2 className={monthStyles.period}>{monthLabel}</h2>
         <Link href={next} aria-label="Next month"
-          className={monthStyles.navLink+" inline-flex min-h-11 items-center md:min-h-9"}>Next →</Link>
+          className={monthStyles.navLink}>Next →</Link>
       </div>
       <CalendarGrid className={monthStyles.mobileGrid+" p-1 sm:p-3 md:p-6"}>
         {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((day,index)=>
