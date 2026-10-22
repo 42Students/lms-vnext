@@ -11,7 +11,7 @@ export function mentorMeetingCeremonyLabel(value: string): string {
 }
 
 export function mentorMeetingHttpUrl(raw: string): boolean {
-  if (raw.length > 2048) return false;
+  if (raw.length > 500) return false;
   try {
     const url = new URL(raw);
     return (url.protocol === "https:" || url.protocol === "http:") &&

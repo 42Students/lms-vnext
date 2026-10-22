@@ -20,7 +20,7 @@ const meetingSchema = z.strictObject({
   startsAt: z.iso.datetime({ offset: true }),
   endsAt: z.iso.datetime({ offset: true }),
   timeZone: z.string().trim().min(1).max(80).default("Asia/Kolkata"),
-  meetingUrl: z.string().trim().url().max(2000).nullable().optional(),
+  meetingUrl: z.string().trim().url().max(500).nullable().optional(),
   meetingType: z.enum(["GENERAL", "PLANNING", "STANDUP", "REVIEW", "RETRO"]).default("GENERAL"),
   status: z.enum(["DRAFT", "REQUESTED", "SCHEDULED", "RESCHEDULED", "COMPLETED", "CANCELLED"]).default("DRAFT"),
 }).refine(row => Date.parse(row.startsAt) < Date.parse(row.endsAt), {

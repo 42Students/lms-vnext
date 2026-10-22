@@ -14,7 +14,12 @@ export type LegacyProjectMeetingRecord={
  date?:string|null;startTime?:string|null;endTime?:string|null;
  startsAt?:string|null;endsAt?:string|null;
  timezone?:string|null;timeZone?:string|null;
- sprintLabel?:string|null;meetingUrl?:string|null;status?:string|null;
+ sprintLabel?:string|null;meetingUrl?:string|null;meetLink?:string|null;
+ calendarEventId?:string|null;calendarProvider?:string|null;
+ calendarSyncStatus?:string|null;calendarSyncError?:string|null;
+ reminderAt?:string|null;reminderChannel?:string|null;
+ followUpAt?:string|null;followUpStatus?:string|null;followUpNotes?:string|null;
+ status?:string|null;
 };
 /** Read-only transition adapter, suitable for an idempotent import/backfill.
  * The old meeting identifier and orphaned sprint label survive even if a
@@ -23,7 +28,14 @@ export type LegacyProjectMeetingRecord={
 export function crosswalkLegacyProjectMeeting(input:{
  projectId:string;projectTitle:string;projectStatus:string;
  record:LegacyProjectMeetingRecord;
-}):MentorMeetingCalendarItem & {legacyMeetingKey:string}{
+}):MentorMeetingCalendarItem & {
+ legacyMeetingKey:string;legacyCalendarEventId:string|null;
+ legacyCalendarProvider:string|null;legacyCalendarSyncStatus:string|null;
+ legacyReminderAt:string|null;legacyReminderChannel:string|null;
+ legacyFollowUpAt:string|null;legacyFollowUpStatus:string|null;
+ legacyFollowUpNotes:string|null;
+ calendarSyncRetired:true;reminderDeliveryRetired:true;
+}{
  const r=input.record;
  const meetingKey=String(r.meetingKey??r.id??[
   r.date,r.startTime,r.title??r.meetingTitle,
@@ -39,6 +51,20 @@ export function crosswalkLegacyProjectMeeting(input:{
  };
  const startsAt=parse(r.startsAt,r.startTime);
  const endsAt=parse(r.endsAt,r.endTime)||startsAt;
+ // The legacy importer sometimes stored an actual meeting URL in
+ // calendarEventId after auto-sync was retired. Treat that as the manual
+ // link only when it is a legitimate HTTP(S) URL. Opaque provider IDs stay
+ // historical provenance and never become fake room links or active sync.
+ const approvedLink=(candidate:string|null|undefined)=>{
+  if(!candidate||candidate.length>500)return null;
+  try{
+   const u=new URL(candidate);
+   return (u.protocol==="https:"||u.protocol==="http:")&&u.hostname&&
+    !u.username&&!u.password?u.toString():null;
+  }catch{return null;}
+ };
+ const meetingHref=approvedLink(r.meetingUrl)||
+  approvedLink(r.meetLink)||approvedLink(r.calendarEventId);
  const statuses=["DRAFT","REQUESTED","SCHEDULED","RESCHEDULED","COMPLETED","CANCELLED"] as const;
  const status=statuses.find(v=>v===r.status)??"REQUESTED";
  return {legacyMeetingKey:meetingKey,
@@ -47,9 +73,18 @@ export function crosswalkLegacyProjectMeeting(input:{
   title:(r.title??r.meetingTitle??"Meeting").trim()||"Meeting",
   status,startsAt,endsAt,
   timeZone:r.timeZone??r.timezone??"Asia/Kolkata",
-  meetingUrl:r.meetingUrl??null,linkedSprintTitle:r.sprintLabel??null,
+  meetingUrl:meetingHref,linkedSprintTitle:r.sprintLabel??null,
   legacySprintLabel:r.sprintLabel??null,legacyStartTime:r.startTime??null,
-  legacyEndTime:r.endTime??null};
+  legacyEndTime:r.endTime??null,
+  legacyCalendarEventId:r.calendarEventId?.slice(0,160)??null,
+  legacyCalendarProvider:r.calendarProvider?.slice(0,60)??null,
+  legacyCalendarSyncStatus:r.calendarSyncStatus?.slice(0,20)??null,
+  legacyReminderAt:r.reminderAt??null,
+  legacyReminderChannel:r.reminderChannel?.slice(0,40)??null,
+  legacyFollowUpAt:r.followUpAt??null,
+  legacyFollowUpStatus:r.followUpStatus?.slice(0,40)??null,
+  legacyFollowUpNotes:r.followUpNotes?.slice(0,4000)??null,
+  calendarSyncRetired:true,reminderDeliveryRetired:true};
 }
 
 /** Corrupt or unscheduled legacy records remain reviewable instead of being

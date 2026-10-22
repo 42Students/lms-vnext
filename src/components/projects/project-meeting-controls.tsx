@@ -592,7 +592,7 @@ export function ScheduleProjectMeetingControl({
               type="url"
               required={meetingStatus!=="DRAFT"}
               value={meetingUrl}
-              maxLength={2048}
+              maxLength={500}
               placeholder="https://… or http://…"
               onChange={(event) =>
                 setMeetingUrl(

@@ -2152,7 +2152,7 @@ export function ProjectWorkspace({
               }))} />
           ) : null}
           {mode==="ADMIN"?<p className="border-b border-border pb-3 text-xs text-body">
-            Calendar sync and follow-up state remain system-managed.
+            Calendar sync and automatic reminders are not enabled. Follow-up notes and status are saved with each meeting.
           </p>:null}
           {mode==="MENTOR" && workspace.meetings.length ? (() => {
             const upcoming=workspace.meetings.filter(m=>(m.status==="SCHEDULED"||m.status==="RESCHEDULED")&&new Date(m.endsAt)>renderTime)
@@ -2196,7 +2196,8 @@ export function ProjectWorkspace({
                 return (
                   <article
                     key={meeting.id}
-                    className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4"
+                    id={"meeting-"+meeting.id}
+                    className="min-w-0 scroll-mt-20 border-b border-[var(--lms-canvas-border)] py-4"
                   >
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
@@ -2210,11 +2211,14 @@ export function ProjectWorkspace({
                           Meeting zone: {meeting.timeZone}
                         </p>
                       </div>
-                      <StatusBadge
-                        tone={tone(mentorMeetingDisplayStatus(meeting.status, meeting.endsAt, renderTime))}
-                      >
-                        {label(mentorMeetingDisplayStatus(meeting.status, meeting.endsAt, renderTime))}
-                      </StatusBadge>
+                      <div className="grid justify-items-end gap-1">
+                        <span className="text-xs text-muted-foreground">Meeting status</span>
+                        <StatusBadge
+                          tone={tone(mentorMeetingDisplayStatus(meeting.status, meeting.endsAt, renderTime))}
+                        >
+                          {label(mentorMeetingDisplayStatus(meeting.status, meeting.endsAt, renderTime))}
+                        </StatusBadge>
+                      </div>
                     </div>
                     {meeting.status==="REQUESTED"? (
                       <p className="mt-2 text-xs font-semibold text-warning-text">
@@ -2227,10 +2231,28 @@ export function ProjectWorkspace({
                         {workspace.members.find(member=>member.membershipId===meeting.requestedByMembershipId)?.displayName??"Project member"}
                       </p>
                     ) : null}
-                    {meeting.agenda ? (
-                      <p className="mt-2 text-sm leading-6 text-body">
-                        {meeting.agenda}
+                    {meeting.linkedSprintId ? (
+                      <p className="mt-2 text-xs text-body">
+                        <strong>Linked sprint: </strong>
+                        {workspace.sprints.find(item=>item.id===meeting.linkedSprintId)?.title
+                          ??"Linked sprint unavailable"}
                       </p>
+                    ) : null}
+                    {meeting.linkedTaskId ? (
+                      <p className="mt-1 text-xs text-body">
+                        <strong>Linked task: </strong>
+                        {workspace.tasks.find(item=>item.id===meeting.linkedTaskId)?.title
+                          ??"Linked task unavailable"}
+                      </p>
+                    ) : null}
+                    {meeting.agenda ? (
+                      <section aria-label="Meeting agenda"
+                        className="mt-2 min-w-0 border-b border-[var(--lms-canvas-border)] pb-2">
+                        <h4 className="text-sm font-semibold">Agenda</h4>
+                        <p className="mt-1 whitespace-pre-wrap break-words text-sm leading-6 text-body">
+                          {meeting.agenda}
+                        </p>
+                      </section>
                     ) : null}
                     {meeting.outcome ? (
                       <p className="mt-2 border-l-2 border-[var(--lms-canvas-border)] pl-3 text-sm leading-6 text-body">
@@ -2239,19 +2261,62 @@ export function ProjectWorkspace({
                     ) : null}
                     {mode==="MENTOR"?(()=>{
                       const detail=mentorMeetingFacilitationSchema.parse(meeting.facilitation??{});
-                      const hasDetail=Boolean(detail.notes||detail.actionItems||detail.wentWell||
-                        detail.improve||detail.nextTime||detail.followUpAt||detail.followUpNotes);
-                      return hasDetail?<Disclosure title="Meeting notes and follow-up" className="mt-2 border-t border-[var(--lms-canvas-border)] pt-3 text-sm">
-                        {([
-                          ["Notes",detail.notes],["Action items",detail.actionItems],
-                          ["What went well?",detail.wentWell],["What could improve?",detail.improve],
-                          ["What to try next?",detail.nextTime],["Follow-up notes",detail.followUpNotes],
-                        ] as const).filter(([,value])=>Boolean(value)).map(([label,value])=>
-                          <p key={label} className="mt-2 whitespace-pre-wrap break-words">
-                            <strong>{label}: </strong>{value}</p>)}
-                        {detail.followUpAt?<p className="mt-2">
-                          Follow-up: {formatDateTime(new Date(detail.followUpAt))}
-                          {" · "}{label(detail.followUpStatus)}</p>:null}
+                      const hasNotes=Boolean(detail.notes||detail.actionItems||detail.actionItemRows.length);
+                      const hasRetro=Boolean(detail.wentWell||detail.retroDidntGoWell||
+                        detail.improve||detail.nextTime||detail.retroActions.length);
+                      const hasFollowUp=Boolean(detail.followUpAt||detail.followUpNotes||
+                        detail.followUpStatus!=="NOT_PLANNED");
+                      return hasNotes||hasRetro||hasFollowUp?<Disclosure
+                        title="Meeting notes, retrospective and follow-ups"
+                        className="mt-2 border-t border-[var(--lms-canvas-border)] pt-3 text-sm">
+                        {hasNotes?<section aria-label="Meeting notes and action items"
+                          className="min-w-0 border-b border-[var(--lms-canvas-border)] py-2">
+                          <h4 className="text-sm font-semibold">Notes and action items</h4>
+                          {([["Notes",detail.notes],["Action items",detail.actionItems]] as const)
+                            .filter(([,value])=>Boolean(value)).map(([field,value])=>
+                              <p key={field} className="mt-2 whitespace-pre-wrap break-words">
+                                <strong>{field}: </strong>{value}</p>)}
+                          {detail.actionItemRows.length>0?
+                            <ul className="mt-2 list-disc space-y-1 pl-5">
+                              {detail.actionItemRows.map((row,index)=>
+                                <li key={index} className="break-words">
+                                  {row.text}{row.owner?" · "+row.owner:""}{row.complete?" · Done":""}
+                                </li>)}</ul>:null}
+                        </section>:null}
+                        {hasRetro?<section aria-label="Retrospective"
+                          className="min-w-0 border-b border-[var(--lms-canvas-border)] py-2">
+                          <h4 className="text-sm font-semibold">Retrospective</h4>
+                          {([
+                            ["What went well?",detail.wentWell],
+                            ["What didn't go well?",detail.retroDidntGoWell],
+                            ["What could improve?",detail.improve],
+                            ["What to try next?",detail.nextTime],
+                          ] as const).filter(([,value])=>Boolean(value)).map(([field,value])=>
+                            <p key={field} className="mt-2 whitespace-pre-wrap break-words">
+                              <strong>{field}: </strong>{value}</p>)}
+                          {detail.retroActions.length>0?
+                            <ul className="mt-2 list-disc space-y-1 pl-5">
+                              {detail.retroActions.map((row,index)=>
+                                <li key={index} className="break-words">
+                                  {row.text}{row.complete?" · Done":""}
+                                </li>)}</ul>:null}
+                        </section>:null}
+                        {hasFollowUp?<section aria-label="Meeting follow-up" className="min-w-0 py-2">
+                          <h4 className="text-sm font-semibold">Follow-up</h4>
+                          <p className="mt-2 text-sm">
+                            <strong>Follow-up status: </strong>{label(detail.followUpStatus)}
+                          </p>
+                          {detail.followUpAt?<p className="mt-2">
+                            <strong>Follow-up at (IST): </strong>
+                            {formatDateTime(new Date(detail.followUpAt))}
+                          </p>:null}
+                          {detail.followUpNotes?<p className="mt-2 whitespace-pre-wrap break-words">
+                            <strong>Follow-up notes: </strong>{detail.followUpNotes}
+                          </p>:null}
+                          <p className="mt-2 text-xs text-muted-foreground">
+                            Automatic meeting reminders and calendar sync are not enabled.
+                          </p>
+                        </section>:null}
                       </Disclosure>:null;
                     })():null}
                     {mode==="MENTOR"? (

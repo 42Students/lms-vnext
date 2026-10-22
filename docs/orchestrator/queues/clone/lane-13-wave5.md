@@ -4,4 +4,4 @@ Packets moved to you from lanes that still had a lot left. Same rules as your ot
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_NEW_docs_audit_gap2_lane-20_project-meeting.md.md` (new; 7 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_NEW_docs_audit_gap2_lane-20_project-meeting.md.md` (new; 7 findings; best P2)
