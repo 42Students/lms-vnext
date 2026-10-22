@@ -18,6 +18,7 @@ type Project={
  progressPercent:number;blocker?:string|null;nextAction?:string|null;
  dueLabel?:string|null;sectionId?:string|null;startDate?:Stamp;endDate?:Stamp;
  archivedAt?:Stamp;deletedAt?:Stamp;authoredBrief?:unknown;
+ mentorName?:string|null;nextDueAt?:Stamp;
 };
 type Release=Row&{templateKey:string;title:string;status:string;version?:number;
  description?:string|null;deletedAt?:Stamp};
