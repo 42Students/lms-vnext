@@ -13,7 +13,8 @@ describe("learner/projects round-two gap verification",()=>{
   for(const status of ["ACTIVE","IN_PROGRESS","READY","BLOCKED"])
    expect(list).toContain(status);
   for(const status of ['"IN_PROGRESS"','"READY"','"BLOCKED"'])expect(page).toContain(status);
-  expect(page).toContain('status: statusSchema.safeParse(status).data');
+  expect(page).toContain('const parsedStatus=statusSchema.safeParse(status);');
+  expect(page).toContain('...(parsedStatus.success ? {status:parsedStatus.data} : {})');
  });
  it("LEARNER-projects-06 shows legacy loading failure Retry and both empty messages",()=>{
   expect(source("src/app/(authenticated)/learn/projects/error.tsx")).toContain("Projects could not be loaded");
