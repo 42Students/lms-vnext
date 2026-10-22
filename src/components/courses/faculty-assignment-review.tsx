@@ -60,7 +60,7 @@ const AVATAR_PALETTE=[
 ] as const;
 function studentAvatarHue(value:string){
  let sum=0;for(const ch of value)sum=(sum*33+ch.charCodeAt(0))%AVATAR_PALETTE.length;
- return AVATAR_PALETTE[sum] ?? AVATAR_PALETTE[0];
+ return AVATAR_PALETTE[sum] ?? "bg-cyan-100 text-cyan-900";
 }
 /** Render visible legacy HTML as inert text with line breaks, not unsanitized HTML. */
 function legacySubmissionText(text:string){
