@@ -222,9 +222,11 @@ export async function updateCollegeCohort(
       if (!validCohortPeriodRange(start.startDate, expected?.endDate ?? null)) {
         throw new CollegeCohortMutationError("BATCH_PERIOD_INVALID");
       }
-      if((input.startDate??current.startDate)&&(input.endDate??current.endDate)&&
-         (input.endDate??current.endDate)! < (input.startDate??current.startDate)!)
+      const effectiveStartDate = input.startDate ?? current.startDate;
+      const effectiveEndDate = input.endDate ?? current.endDate;
+      if (effectiveStartDate && effectiveEndDate && effectiveEndDate < effectiveStartDate) {
         throw new CollegeCohortMutationError("BATCH_PERIOD_INVALID");
+      }
       await ensureUnique(tx, current.programId, input.name, input.code, cohortId);
       const [updated] = await tx.update(cohorts).set({
         name: input.name, code: input.code,
