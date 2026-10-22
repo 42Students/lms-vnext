@@ -12,6 +12,8 @@ const pageFiles=(rootPath:string):string[]=>readdirSync(rootPath,{withFileTypes:
   return entry.isDirectory()?pageFiles(path):entry.name==="page.tsx"?[relative(process.cwd(),path).replaceAll("\\","/")]:[];
 });
 const delegated:Record<string,{contains:string; target?:string}>={
+  // Hiring is a legacy alias; authorization and college scoping happen on the destination.
+  "placements/hiring/page.tsx":{contains:'redirect("/admin/placements/analytics',target:"placements/analytics/page.tsx"},
   "projects/[projectId]/page.tsx":{contains:"redirect(",target:"projects/[projectId]/[section]/page.tsx"},
   "projects/[projectId]/[section]/page.tsx":{contains:"AdminProjectSectionPage",target:"src/components/projects/admin-project-section-page.tsx"},
   "projects/[projectId]/readiness/page.tsx":{contains:"ProjectWorkspaceReadiness",target:"src/components/projects/project-workspace-readiness.tsx"},
@@ -65,7 +67,11 @@ describe("Super Admin Projects and Placements page routes — independent securi
           expect(component,path).toContain("getCurrentRequestContext");
           expect(component,path).toMatch(/requireProjectManageAccess|can\(context,\s*"project-template.manage"|getSuperAdminTemplateSubview/);
         }else if(delegate.target){
-          expect(source(root+"/"+delegate.target),path).toContain("AdminProjectSectionPage");
+          const target=source(root+"/"+delegate.target);
+          if(delegate.target.startsWith("placements/")){
+            expect(target,path).toContain("getCurrentRequestContext");
+            expect(target,path).toContain("requireSuperAdminSelectedCollege");
+          }else expect(target,path).toContain("AdminProjectSectionPage");
         }
       }else{
         expect(page,path).toContain("getCurrentRequestContext");

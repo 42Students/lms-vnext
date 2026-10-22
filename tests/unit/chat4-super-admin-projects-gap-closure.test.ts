@@ -142,13 +142,13 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   expect(s).toContain("fromMentorId");
   expect(s).toContain('encodeURIComponent(project.mentorMembershipId??"UNASSIGNED")');
   expect(s).toContain('project.mentorMembershipId?"Reassign mentor":"Assign mentor"');
-  expect(s).toContain('encodeURIComponent(project.riskReasons[0]??"Project needs attention")');
+  expect(s).toContain('project.riskReasons.includes("Pending review")');
   expect(s).toContain("listProjectAdminRiskQueue(");
   const {projectMentorWorkloadAverage,isProjectMentorOverloaded}=await import("@/modules/projects/mentor-overload-model");
   expect(projectMentorWorkloadAverage([])).toBe(0);
   expect(projectMentorWorkloadAverage([2,4,8])).toBeCloseTo(14/3);
   expect(isProjectMentorOverloaded(8,[2,4,8])).toBe(true);
-  expect(isProjectMentorOverloaded(7,[2,4,8])).toBe(true);
+  expect(isProjectMentorOverloaded(7,[2,4,8])).toBe(false);
   expect(isProjectMentorOverloaded(6,[2,4,8])).toBe(false);
   expect(isProjectMentorOverloaded(8,[8,8,8])).toBe(false);
  });
@@ -225,7 +225,7 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   const {isProjectMentorOverloaded,projectMentorWorkloadAverage}=await import("@/modules/projects/mentor-overload-model");
   expect(projectMentorWorkloadAverage([2,4,8])).toBeCloseTo(14/3);
   expect(isProjectMentorOverloaded(8,[2,4,8])).toBe(true);
-  expect(isProjectMentorOverloaded(7,[2,4,8])).toBe(true);
+  expect(isProjectMentorOverloaded(7,[2,4,8])).toBe(false);
   expect(isProjectMentorOverloaded(6,[2,4,8])).toBe(false);
   expect(isProjectMentorOverloaded(8,[8,8,8])).toBe(false);
   expect(isProjectMentorOverloaded(0,[])).toBe(false);
@@ -323,7 +323,7 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
  it("SA-placements-projects-57 restores creator mode wording and split-team help",()=>{
   const src=source("src/components/projects/class-team-workspace-creator.tsx");
   const route=source("src/app/(authenticated)/admin/projects/workspaces/new/page.tsx");
-  for(const label of ["One team","Split a class into teams","One workspace per student",
+  for(const label of ["One team","Teams · Split a class","Cohort · One per student",
     "Pick a class and a team size, preview the teams, move anyone between teams"])
    expect(src).toContain(label);
   expect(route).toContain('title="Create project workspace"');

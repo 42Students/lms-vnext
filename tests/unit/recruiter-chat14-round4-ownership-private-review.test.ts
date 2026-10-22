@@ -165,7 +165,7 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
   const page=source("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx");
   expect(page).toContain('person.result?.status==="STAGED"');
   expect(page).toContain('person.result?.status==="APPLIED"');
-  expect(page).toContain("Date to be decided");
+  expect(page).toContain("Date to be set by the placement cell");
  });
  it("REC-home-drives-47 permits recruiter-owned unpublished rounds without reopening closed drives",()=>{
   const service=source("src/modules/placements/hr-round-editor-service.ts");

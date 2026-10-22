@@ -789,6 +789,7 @@ export function LearnerPlacementJobs({
           <div className="divide-y divide-border/60">
           {roles.map((item,index) => {
         const firstRole=index===0;
+        const urgency=learnerDriveDeadlineUrgency(item.job.applicationDeadline,item.deadlinePassed,snapshotNowIso);
         const jobDescriptionUrl=firstRole?safeLearnerPlacementUrl(item.job.legacyJobDescriptionUrl):null;
         const roleCount=roles.length;
         const failedChecks =
@@ -862,6 +863,7 @@ export function LearnerPlacementJobs({
             </div>
 
             <p className="mt-3 text-xs font-medium text-muted-foreground">{postedAtLabel(item.job.publishedAt,snapshotNowIso)}</p>
+             <div className="mt-2 flex flex-wrap gap-2"><StatusBadge tone={urgency.tone}>{urgency.label}</StatusBadge></div>
             {!item.canApply && !item.application ? (
               <div className="mt-3 min-w-0 border-t border-border pt-3 text-sm text-body"
                 aria-label="Why this role is not open to you">
