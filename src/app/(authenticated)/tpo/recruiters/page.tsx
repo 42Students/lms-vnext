@@ -58,7 +58,8 @@ export default async function TpoRecruiterLeadsPage({ searchParams }: PageProps)
   const requested = first(query.view);
   if (requested === "campaigns") {
     return <CampaignHistory searchParams={Promise.resolve({
-      page:first(query.page),purpose:first(query.purpose),
+      ...(first(query.page)===undefined?{}:{page:first(query.page)}),
+      ...(first(query.purpose)===undefined?{}:{purpose:first(query.purpose)}),
     })} />;
   }
   // Stage URL is a read filter, not authorization for a manual-stage write.
