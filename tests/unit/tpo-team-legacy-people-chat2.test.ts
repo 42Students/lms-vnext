@@ -15,7 +15,8 @@ describe("TPO People roster legacy copy",()=>{
   const page=src("src/app/(authenticated)/tpo/settings/team/page.tsx");
   const legacy=src("src/app/(authenticated)/tpo/team/page.tsx");
   expect(legacy).toContain('redirect("/tpo/settings/team")');
-  expect(page).toContain("rows={members}");
+  expect(page).toContain("rows={sortedMembers}");
+  expect(page).toContain("sortedMembers=sortTpoPeople(members.map");
   expect(page).toContain("getRowKey={member=>member.membershipId}");
   expect(page).toContain("String(summary.total)");
   expect(page).toContain('caption="Active team memberships"');

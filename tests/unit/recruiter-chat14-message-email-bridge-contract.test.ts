@@ -118,7 +118,9 @@ describe("REC-calendar-messages-profile-R01 mail bridge deployment and scope",()
   expect(service).toContain("return false;");
   expect(service).toContain('createHash("sha256").update(token)');
   expect(service).toContain("lastSentAt:now");
-  expect(service).toContain("return {examined:0,sent:0,enabled:false}");
+  expect(service).toContain('if(!readiness.configured)return {examined:0,sent:0,enabled:false,');
+  expect(service).toContain("readinessReason:readiness.reason");
+  expect(service).toContain('operatorAlert:"Recruiter email bridge is not ready: "');
  });
  it("REC-calendar-messages-profile-R01 rejects untrusted inbound sender, invalid grant, and replay",()=>{
   const service=source("src/modules/placements/recruiter-message-email-inbound-service.ts");

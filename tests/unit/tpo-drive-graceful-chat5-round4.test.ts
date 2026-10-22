@@ -26,6 +26,8 @@ describe("Drive action resilience and accessibility",()=>{
   const lifecycle=source("src/components/placements/tpo-drive-lifecycle-controls.tsx");
   expect(cancel).toContain('<InlineNotice tone="error" role="alert" message={error}');
   expect(lifecycle).toContain('<InlineNotice tone="error" message={error}');
+  const notice=source("src/components/ui/inline-notice.tsx");
+  expect(notice).toContain('role={tone === "error" ? "alert" : "status"}');
   expect(lifecycle).toContain('role="alert"');
   expect(cancel).toContain("checked={reviewed}");
   expect(lifecycle).toContain("checked={acknowledged}");

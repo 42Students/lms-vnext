@@ -619,7 +619,7 @@ describe("Projects P6B final delivery and evaluation", () => {
     })).rejects.toMatchObject({name:"ZodError"});
   });
 
-  it("creates one rubric evaluation only for an approved submission and exposes it to participants", async () => {
+  it("creates one rubric evaluation only for an approved submission and exposes it only to authorized reviewers", async () => {
     const project = await createProject();
     await finishExecution(project.id);
 
@@ -733,9 +733,12 @@ describe("Projects P6B final delivery and evaluation", () => {
       code: "PROJECT_EVALUATION_CONFLICT",
     });
 
+    // An approved delivery is not an audited release of private rubric scores.
+    await expect(getProjectEvaluation(learner,project.id,draft.id))
+      .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
     const visible =
       await getProjectEvaluation(
-        learner,
+        mentor,
         project.id,
         draft.id,
       );
