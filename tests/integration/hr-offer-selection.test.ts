@@ -1,7 +1,8 @@
 import { publishableJobTerms } from "../support/publishable-job-terms";
 import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
-import {closeDatabaseConnection} from "@/db/client";
+import {closeDatabaseConnection,getDb} from "@/db/client";
+import {placementJobRounds,placementJobEligibilityPolicies} from "@/db/schema";
 import {createPlacementCompany} from "@/modules/placements/company-service";
 import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
 import {getHrJobRead} from "@/modules/placements/hr-job-read-service";
@@ -21,6 +22,15 @@ describe.skipIf(!enabled)("HR offer read scope PG",()=>{
   const other=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"Offer HR Other "+nonce,primaryDomain:"other-offer-"+nonce+".example"});
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:own.relationship.id,title:"Offer HR "+nonce,
     description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
+  // Direct publication requires a real evaluative round and a persisted
+  // eligibility policy; otherwise the service correctly rejects this draft.
+  await getDb().insert(placementJobRounds).values({
+    jobId:job.id,sequence:1,kind:"INTERVIEW",name:"HR offer review",
+    createdByUserId:tpo.user.id,
+  });
+  await getDb().insert(placementJobEligibilityPolicies).values({
+    jobId:job.id,updatedByUserId:tpo.user.id,
+  }).onConflictDoNothing();
   await publishPlacementJob(tpo,job.id);
   const uid=randomUUID();
   const hr=(companyId:string,rel:string,collegeId:string):RequestContext=>({
