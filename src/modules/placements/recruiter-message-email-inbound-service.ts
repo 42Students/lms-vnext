@@ -16,7 +16,7 @@ const inboundSchema=z.strictObject({
  subject:z.string().max(512).optional(),
  headerFrom:z.string().max(320).optional(),
  auth:z.string().max(2000).optional(),
- providerMessageId:z.string().trim().max(255).optional(),
+ providerMessageId:z.string().trim().min(3).max(255).optional(),
  attachments:z.array(z.strictObject({filename:z.string().max(255).optional(),
   contentType:z.string().max(128).optional()})).max(40).optional(),
 });
