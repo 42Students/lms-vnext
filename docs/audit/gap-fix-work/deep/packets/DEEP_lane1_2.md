@@ -8,7 +8,7 @@ DEFERRED is NOT allowed. For each row: read its full text in the source packet n
 Keep tests passing and TypeScript valid; never silence errors. Write one result line per row under Results, push, then tick this packet in your queue.
 
 - [x] G2-5-027-025  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
-- [ ] G2-5-027-029  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
+- [x] G2-5-027-029  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-5-027-036  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-5-027-042  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-5-027-044  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
@@ -21,3 +21,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 ## Results
 
 - OK G2-5-027-025 — src/modules/people/college-student-registration-service.ts:43-72 verifies same-college active program, cohort and section before identity creation. Legacy: docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LearnerController.java:338-391.
+
+- FIXED G2-5-027-029 — commits 52aca3e, 49a0b13; `src/modules/academics/errors.ts` preserves typed error codes with explicit user-facing messages, and `src/modules/people/college-student-registration-service.ts` validates section membership before identity creation and returns `Learner class must belong to the selected program`, matching `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LearnerController.java:347-356`.
