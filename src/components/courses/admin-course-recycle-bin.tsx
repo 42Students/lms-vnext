@@ -116,6 +116,6 @@ export function AdminCourseRecycleBin({ collegeId }: { collegeId: string }) {
       if (!value && !restoring) setSelected(null);
     }} title="Restore Course" confirmLabel="Restore" confirmVariant="primary"
       pending={restoring} onConfirm={() => void restore()}
-      description={selected ? "Restore “" + selected.name + "”? Its previous course history remains unchanged." : undefined} />
+      {...(selected ? { description: "Restore “" + selected.name + "”? Its previous course history remains unchanged." } : {})} />
   </section>;
 }
