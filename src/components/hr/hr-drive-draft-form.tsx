@@ -230,6 +230,9 @@ export function HrDriveDraftForm({
     };
     const contentType = extension ? types[extension] : undefined;
     if (!contentType) { setJdUploadMessage("A job description must be a PDF or a Word file"); return; }
+    if (file.type && file.type !== contentType) {
+      setJdUploadMessage("The selected file type does not match its PDF or Word extension"); return;
+    }
     if (file.size === 0) { setJdUploadMessage("The file is empty"); return; }
     if (file.size > 5 * 1024 * 1024) {
       setJdUploadMessage("The file is too large. The limit is 5 MB"); return;
@@ -269,7 +272,7 @@ export function HrDriveDraftForm({
       // The browser can open it in another tab via the context menu or modifier click;
       // the unsent draft stays on screen until the learner explicitly follows it.
       setJdReadUrl(parsed.toString());
-      setJdUploadMessage("Signed link ready. Open in a separate tab to keep editing.");
+      setJdUploadMessage("Signed link ready. Following it opens the file in this tab.");
     } catch { setJdReadUrl(null); setJdUploadMessage("Could not open the file. Try again after verification."); }
   }
 
@@ -867,7 +870,16 @@ export function HrDriveDraftForm({
           <div className="mt-4 min-w-0 space-y-2 break-words border-y border-border bg-transparent py-4 text-sm text-body">
             <h3 className="text-base font-semibold text-foreground">{draft.title.trim()||"Role title"}</h3>
             <p className="whitespace-pre-wrap">{draft.description||"Add a job description to see it here."}</p>
-            {draft.jdObjectKey ? <p>Private job description attached. Students receive an authorized link after publication.</p> : null}
+            {draft.jdObjectKey ? <div className="space-y-2">
+              <p>Private job description attached. Students receive an authorized link after publication.</p>
+              <Button type="button" variant="secondary" onClick={() => void viewUploadedJobDescription()}>
+                Preview private job description
+              </Button>
+              {jdReadUrl ? <a href={jdReadUrl} rel="noopener noreferrer" referrerPolicy="no-referrer"
+                className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+                Open verified job description
+              </a> : null}
+            </div> : null}
              {result.success && result.data.jdUrl ?
               <p>Job description: <a href={result.data.jdUrl}
                 rel="noopener noreferrer" referrerPolicy="no-referrer"
