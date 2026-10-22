@@ -237,7 +237,7 @@ export function TpoSpreadsheetGrid<Row>({
            }}>Close actions</Button>
        </div>
       </Dropdown> :
-      <div aria-label="Row actions" className="border-t border-border pt-3">{rowActions(row)}</div>
+      <div role="group" aria-label="Row actions" className="border-t border-border pt-3">{rowActions(row)}</div>
     : null}
    </li>)}</ul>
   </>}

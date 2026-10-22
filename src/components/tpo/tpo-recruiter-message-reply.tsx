@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Disclosure } from "@/components/ui/disclosure";
 import { InlineNotice } from "@/components/ui/inline-notice";
-import {useEffect,useRef,useState} from "react";
+import {useEffect,useId,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {TPO_QUICK_REPLIES,recruiterMessageDraftKey} from "@/modules/placements/tpo-message-draft-model";
 import {apiFetch} from "@/lib/api-fetch";
@@ -12,6 +12,8 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnde
  threadId:string;unread:boolean;actorUserId:string;accessEnded?:boolean;
 }){
  const router=useRouter();
+ const draftHintId=useId();
+ const textareaRef=useRef<HTMLTextAreaElement>(null);
  const [body,setBody]=useState(""),[busy,setBusy]=useState(false);
  const [error,setError]=useState(""),[success,setSuccess]=useState("");
  const draftKey=recruiterMessageDraftKey(actorUserId,threadId);
@@ -47,6 +49,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnde
   }
   setError("");
   persistDraft(text);
+  textareaRef.current?.focus();
  }
  function restoreDraft(){
   if(body)return;
@@ -87,13 +90,13 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnde
   </Disclosure>
   <form aria-busy={busy} onSubmit={event=>{event.preventDefault();void post("messages");}} className="space-y-3">
    <label className="block text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Message
-    <Textarea className="mt-1 min-h-28 w-full"
+    <Textarea ref={textareaRef} aria-describedby={draftHintId} className="mt-1 min-h-28 w-full"
       maxLength={4000} required disabled={accessEnded} aria-label="Message" placeholder="Write a message" value={body}
       onFocus={restoreDraft} onChange={e=>persistDraft(e.target.value)}
       onKeyDown={e=>{if(e.key==="Enter"&&(e.ctrlKey||e.metaKey)&&!e.nativeEvent.isComposing){
        e.preventDefault();if(body.trim()&&!busy&&!accessEnded)void post("messages");}}}/>
    </label>
-   <p className="text-xs text-muted-foreground leading-[20px]" aria-live="polite">Ctrl/Cmd + Enter to send · Enter for a new line · {body.length}/4000</p>
+   <p id={draftHintId} className="text-xs text-muted-foreground leading-[20px]" aria-live="polite">Ctrl/Cmd + Enter to send · Enter for a new line · {body.length}/4000</p>
    <div className="flex min-w-0 flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:items-center">
     <Button variant="secondary" type="button" disabled={busy||accessEnded||!body.trim()} onClick={discardDraft}
      className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">Discard draft</Button>

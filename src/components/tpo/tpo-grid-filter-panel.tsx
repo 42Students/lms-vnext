@@ -56,7 +56,7 @@ export function TpoGridFilterPanel({fields,mobileSheet=false,title="Filter stude
    {title} ({activeCount})
   </Button>
   <BottomSheet open={sheetOpen} onOpenChange={next=>{setSheetOpen(next);if(!next&&autoOpenMobile)onAutoClose?.();}} title={title}>
-   <div id={filterPanelId} aria-label={title} className={wrapper}>{content}</div>
+   <section id={filterPanelId} aria-label={title} className={wrapper}>{content}</section>
   </BottomSheet>
   <aside aria-label="Grid filters" className={wrapper+" hidden md:block"}>{content}</aside>
  </div>:<aside aria-label="Grid filters" className={wrapper}>{content}</aside>;
