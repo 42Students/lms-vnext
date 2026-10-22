@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { FACULTY_ASSIGNMENT_COPY, FACULTY_ASSIGNMENT_ROLE_LABELS, facultyAssignmentRoleLabel } from "@/modules/courses/college-courses-copy";
-import { Alert } from "@/components/ui/alert";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import {
@@ -39,8 +38,8 @@ export default async function CollegeFacultyAssignmentPage({
   const raw = await searchParams;
   const parsed = facultyAssignmentQuerySchema.safeParse(
     Object.fromEntries(Object.entries({
-      q: first(raw.q), status: first(raw.status), role: first(raw.role), page: first(raw.page),
-      courseCode: first(raw.courseCode), sectionCode: first(raw.sectionCode),
+      q: first(raw["q"]), status: first(raw["status"]), role: first(raw["role"]), page: first(raw["page"]),
+      courseCode: first(raw["courseCode"]), sectionCode: first(raw["sectionCode"]),
     }).filter(([, value]) => value !== undefined && value !== "")),
   );
   if (!parsed.success) return (
@@ -54,7 +53,14 @@ export default async function CollegeFacultyAssignmentPage({
   );
 
   const [directory, options] = await Promise.all([
-    listCollegeFacultyAssignments(context, parsed.data),
+    listCollegeFacultyAssignments(context, {
+      q: parsed.data.q,
+      status: parsed.data.status,
+      role: parsed.data.role,
+      page: parsed.data.page,
+      ...(parsed.data.courseCode === undefined ? {} : { courseCode: parsed.data.courseCode }),
+      ...(parsed.data.sectionCode === undefined ? {} : { sectionCode: parsed.data.sectionCode }),
+    }),
     listCollegeTeachingOptions(context),
   ]);
   const { query, items, total, totalPages } = directory;
@@ -140,9 +146,9 @@ export default async function CollegeFacultyAssignmentPage({
             {FACULTY_ASSIGNMENT_COPY.roleLabel}
             <Select name="role" defaultValue={query.role}>
               <option value="ALL">All roles</option>
-              <option value="PRIMARY">{FACULTY_ASSIGNMENT_ROLE_LABELS.PRIMARY}</option>
-              <option value="CO_TEACHER">{FACULTY_ASSIGNMENT_ROLE_LABELS.CO_TEACHER}</option>
-              <option value="TA">{FACULTY_ASSIGNMENT_ROLE_LABELS.TA}</option>
+              <option value="PRIMARY">{FACULTY_ASSIGNMENT_ROLE_LABELS["PRIMARY"]}</option>
+              <option value="CO_TEACHER">{FACULTY_ASSIGNMENT_ROLE_LABELS["CO_TEACHER"]}</option>
+              <option value="TA">{FACULTY_ASSIGNMENT_ROLE_LABELS["TA"]}</option>
             </Select>
           </label>
           <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap xl:col-span-4">
