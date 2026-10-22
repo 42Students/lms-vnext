@@ -1996,6 +1996,13 @@
       "when": 1792358411266,
       "tag": "0308_chat16_season_registration_lifecycle",
       "breakpoints": true
+    },
+    {
+      "idx": 285,
+      "version": "7",
+      "when": 1792358471266,
+      "tag": "0309_chat15_active_group_backed_reuse",
+      "breakpoints": true
     }
   ]
 }

@@ -14,6 +14,8 @@ import {
   colleges,
   groupBackedClassOfferings,
   lmsGroups,
+  lmsGroupMembers,
+  sectionEnrollments,
   courses,
   departments,
   learnerProgramEnrollments,
@@ -502,6 +504,9 @@ export async function listCollegeContentClassAudience(context: RequestContext) {
     db.select({
       id: groupBackedClassOfferings.id, name: groupBackedClassOfferings.name,
       academicPeriodId: groupBackedClassOfferings.academicPeriodId,
+      rosterGroupId: groupBackedClassOfferings.rosterGroupId,
+      startsOn: groupBackedClassOfferings.startsOn,
+      endsOn: groupBackedClassOfferings.endsOn,
     }).from(groupBackedClassOfferings)
       .innerJoin(lmsGroups, and(eq(lmsGroups.id, groupBackedClassOfferings.rosterGroupId),
         eq(lmsGroups.collegeId, collegeId)))
@@ -513,7 +518,73 @@ export async function listCollegeContentClassAudience(context: RequestContext) {
         isNull(lmsGroups.deletedAt))),
   ]);
   return [
-    ...registered.map(row => ({...row, kind: "SECTION" as const})),
+    ...registered.map(row => ({...row, kind: "SECTION" as const,
+      rosterGroupId:null,startsOn:null,endsOn:null})),
     ...grouped.map(row => ({...row, kind: "GROUP_BACKED" as const})),
   ];
+}
+
+
+/** Canonical class audience: standard sections read active enrolments; an
+ * elective GROUP_BACKED classroom reads the current same-college group roster,
+ * never a fabricated academic section. Neither archived group membership
+ * nor removed elective class can confer learner access. */
+export async function listCollegeContentClassRecipients(
+  context:RequestContext,rawKind:unknown,rawId:unknown,
+):Promise<{kind:"SECTION"|"GROUP_BACKED";classId:string;membershipIds:string[]}>{
+ const kind=z.enum(["SECTION","GROUP_BACKED"]).parse(rawKind);
+ const classId=z.string().uuid().parse(rawId);
+ const collegeId=await requireAdminCollege(context);
+ const db=getDb();
+ if(kind==="GROUP_BACKED"){
+  const [offering]=await db.select({rosterGroupId:groupBackedClassOfferings.rosterGroupId})
+   .from(groupBackedClassOfferings)
+   .innerJoin(lmsGroups,and(
+     eq(lmsGroups.id,groupBackedClassOfferings.rosterGroupId),
+     eq(lmsGroups.collegeId,collegeId),
+     eq(lmsGroups.status,"ACTIVE"),
+     isNull(lmsGroups.deletedAt)))
+   .innerJoin(academicPeriods,and(
+     eq(academicPeriods.id,groupBackedClassOfferings.academicPeriodId),
+     eq(academicPeriods.collegeId,collegeId)))
+   .where(and(eq(groupBackedClassOfferings.id,classId),
+     eq(groupBackedClassOfferings.status,"ACTIVE")))
+   .limit(1);
+  if(!offering)throw new Error("Content class is unavailable in this college");
+  const learners=await db.selectDistinct({id:lmsGroupMembers.membershipId})
+   .from(lmsGroupMembers)
+   .innerJoin(collegeMemberships,and(
+     eq(collegeMemberships.id,lmsGroupMembers.membershipId),
+     eq(collegeMemberships.collegeId,collegeId),
+     eq(collegeMemberships.status,"ACTIVE")))
+   .where(and(eq(lmsGroupMembers.groupId,offering.rosterGroupId),
+     eq(lmsGroupMembers.memberType,"LEARNER"),
+     eq(lmsGroupMembers.state,"ACTIVE")));
+  return {kind,classId,membershipIds:learners.map(row=>row.id)};
+ }
+ const [section]=await db.select({id:sections.id,academicPeriodId:sections.academicPeriodId})
+  .from(sections)
+  .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
+  .innerJoin(programs,eq(programs.id,cohorts.programId))
+  .innerJoin(departments,and(eq(departments.id,programs.departmentId),
+    eq(departments.collegeId,collegeId)))
+  .innerJoin(academicPeriods,and(eq(academicPeriods.id,sections.academicPeriodId),
+    eq(academicPeriods.collegeId,collegeId)))
+  .where(and(eq(sections.id,classId),eq(sections.status,"ACTIVE")))
+  .limit(1);
+ if(!section)throw new Error("Content class is unavailable in this college");
+ const learners=await db.selectDistinct({id:learnerProgramEnrollments.membershipId})
+  .from(sectionEnrollments)
+  .innerJoin(learnerProgramEnrollments,and(
+    eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId),
+    eq(learnerProgramEnrollments.status,"ACTIVE")))
+  .innerJoin(collegeMemberships,and(
+    eq(collegeMemberships.id,learnerProgramEnrollments.membershipId),
+    eq(collegeMemberships.collegeId,collegeId),
+    eq(collegeMemberships.status,"ACTIVE")))
+  .where(and(eq(sectionEnrollments.sectionId,classId),
+    eq(sectionEnrollments.academicPeriodId,section.academicPeriodId),
+    eq(sectionEnrollments.status,"ACTIVE"),
+    isNull(sectionEnrollments.endedAt)));
+ return {kind,classId,membershipIds:learners.map(row=>row.id)};
 }
