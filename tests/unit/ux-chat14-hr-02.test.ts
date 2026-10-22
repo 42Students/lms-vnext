@@ -50,8 +50,10 @@ describe("chat-14 HR UX rollout batch 02",()=>{
   expect(src).toContain("<HrJobOffersGrid");
   const selectionGrid=readFileSync("src/components/hr/hr-job-selection-grid.tsx","utf8");
   const offerGrid=readFileSync("src/components/hr/hr-job-offers-grid.tsx","utf8");
-  expect(selectionGrid).toContain('<DataTable');
-  expect(offerGrid).toContain('<DataTable');
+  expect(selectionGrid).toContain('<TpoGrid');
+  expect(offerGrid).toContain('<TpoGrid');
+  expect(selectionGrid).toContain('rowKey={row=>row.id}');
+  expect(offerGrid).toContain('rowKey={row=>row.id}');
   expect(src).toContain("<HrJobApplicantsGrid");
   // Legacy spreadsheet grids replaced DataTable captions with named regions.
   expect(src).toContain('<section aria-label="Placement-cell selection history"');
