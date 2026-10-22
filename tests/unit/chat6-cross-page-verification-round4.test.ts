@@ -22,7 +22,11 @@ describe("chat-6 cross-page gap source verification", () => {
     expect(page).toContain("listCollegeDriveInterviews(context,jobId,query)");
     expect(page).toContain("getCollegeRoundSlotAppointments(context,jobId,{");
     expect(page).toContain("<CollegeInterviewAppointments");
-    expect(appointments).toContain('href={"data:text/calendar;charset=utf-8,"');
+    // The appointment owns the authorized filename; its ICS URL is now
+    // assembled once and reused in desktop and narrow layouts.
+    expect(appointments).toContain('const eventIcsHref=(row:Appointment)=>"data:text/calendar;charset=utf-8,"');
+    expect(appointments).toContain("href={eventIcsHref(row)}");
+    expect(appointments).toContain("download={\"interview-\"+row.id+\".ics\"}");
     expect(appointments).toContain("collegeInterviewIcs");
     expect(appointments).toContain('action:"CANCEL"|"COMPLETED"|"NO_SHOW"');
     expect(appointments).toContain("Schedule interview");
