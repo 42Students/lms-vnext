@@ -44,7 +44,11 @@ describe("TPO Batches next-round source and behavioral gap closure",()=>{
   expect(page).toContain('preview?"Confirm matched decisions":"Preview import"');
   expect(page).toContain("<ConfirmDialog open={discardPending}");
   expect(page).not.toContain(">Confirm import</button>");
-  expect(page).toContain("disabled={busy||preview.ready===0||unresolved>0||!acknowledged}");
+  // The shared drawer renders the same apply guard for preview and confirm;
+  // while previewing, unresolved records must still block submission.
+  expect(page).toContain("disabled={busy||(preview?preview.ready===0||unresolved>0||!acknowledged:false)}");
+  expect(page).toContain("if(!preview||preview.ready===0||busy||actionInFlight.current||!acknowledged)return;");
+  expect(page).toContain("if(unresolved>0)");
  });
  it("TPO-batches-39 distinguishes unchanged CSV imports from genuine updates",()=>{
   const page=source("src/components/tpo/tpo-batch-eligibility-import.tsx");

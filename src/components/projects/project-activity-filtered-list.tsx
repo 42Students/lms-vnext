@@ -109,7 +109,7 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
    {resourceAudit?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Resource change
     <Select value={resourceAction} onChange={event=>{setResourceAction(event.target.value);setPage(1);}}
      className="w-full">
-     <option value="ALL">All actions</option>
+     <option value="ALL">All resource changes</option>
      {(["Added","Edited","Saved","Removed"] as const).map(action=><option key={action} value={action}>{action}</option>)}
     </Select>
    </label>:null}

@@ -44,8 +44,11 @@ describe("SA-academics-people-67 course-progress students export boundary",()=>{
   const response=await GET(new Request("https://app.invalid/api/admin/course-progress/students/export?offeringId="+id));
   expect(response.status).toBe(200);
   expect(state.reader).toHaveBeenCalledWith(actor,{offeringId:id,page:1,pageSize:500});
-  const csv=await response.text();
-  expect(csv.startsWith("\uFEFF")).toBe(true);
+  // Response.text() uses UTF-8 decoding that can strip a BOM. Inspect the
+  // actual exported bytes so the spreadsheet BOM remains an enforced contract.
+  const bytes=new Uint8Array(await response.arrayBuffer());
+  expect(Array.from(bytes.slice(0,3))).toEqual([0xef,0xbb,0xbf]);
+  const csv=new TextDecoder().decode(bytes);
   expect(csv).toContain("'=SUM(1,1)");
   expect(csv).toContain("50");
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");

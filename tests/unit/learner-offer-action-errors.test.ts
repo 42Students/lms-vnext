@@ -6,7 +6,7 @@ describe("non-leaking learner offer action failures",()=>{
   expect(learnerOfferActionErrorMessage(422)).toContain("Refresh");
  });
  it("does not reveal existence on role or college denial",()=>{
-  expect(learnerOfferActionErrorMessage(403)).toContain("current account");
+  expect(learnerOfferActionErrorMessage(403)).toContain("Switch to your learner workspace.");
   expect(learnerOfferActionErrorMessage(404)).toBe(learnerOfferActionErrorMessage(403));
  });
  it("does not echo opaque backend text on unexpected failures",()=>{
