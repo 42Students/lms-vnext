@@ -69,7 +69,9 @@ export default async function SuperAdminProjectsPage({
   // The strict service schema accepts database filters only, not the
   // presentational view toggle. Keep cards/table navigation in the UI.
   const serviceQuery = {
-    q: query.q, status: query.status, page: query.page, pageSize: query.pageSize,
+    ...(query.q !== undefined ? {q:query.q} : {}),
+    ...(query.status !== undefined ? {status:query.status} : {}),
+    page: query.page, pageSize: query.pageSize,
   };
   const view = parsed.data.view;
   const viewHref = (targetView:"table"|"cards") => {
