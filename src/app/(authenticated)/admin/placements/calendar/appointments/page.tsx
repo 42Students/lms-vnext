@@ -38,11 +38,11 @@ export default async function SuperAdminCalendarAppointmentsPage({
   <Alert tone="error">Invalid appointment filters. <Link href="/admin/placements/calendar/appointments" className="font-semibold text-link underline">Reset</Link></Alert>
  </div>;
  const scalar=(value:string|string[]|undefined)=>typeof value==="string"?value:undefined;
- const type=validOption(scalar(query.type),TYPES,"ALL");
- const status=validOption(scalar(query.status),STATUSES,"ALL");
- const mode=validOption(scalar(query.mode),MODES,"ALL");
- const search=(scalar(query.q)??"").trim().toLocaleLowerCase("en-IN").slice(0,100);
- const rawPage=scalar(query.page)??"1";
+ const type=validOption(scalar(query["type"]),TYPES,"ALL");
+ const status=validOption(scalar(query["status"]),STATUSES,"ALL");
+ const mode=validOption(scalar(query["mode"]),MODES,"ALL");
+ const search=(scalar(query["q"])??"").trim().toLocaleLowerCase("en-IN").slice(0,100);
+ const rawPage=scalar(query["page"])??"1";
  const page=/^[1-9][0-9]{0,4}$/.test(rawPage)?Number(rawPage):1;
  const result=await listSuperAdminCalendarAppointments(context);
  const filtered=result.items.filter(item=>
