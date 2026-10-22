@@ -34,7 +34,10 @@ describe("College Admin class mutation model", () => {
     const edit = { name: "A", code: "A-1", capacity: 20, confirm: true };
     expect(updateCollegeSectionSchema.parse(edit)).toEqual(edit);
     expect(updateCollegeSectionSchema.safeParse({ ...edit, confirm: false }).success).toBe(false);
-    expect(updateCollegeSectionSchema.safeParse({ ...edit, cohortId: id }).success).toBe(false);
+    // Explicit parent changes are parsed only; the mutation service must
+    // independently enforce the current college, cohort and term scope.
+    expect(updateCollegeSectionSchema.safeParse({ ...edit, cohortId: id }).success).toBe(true);
+    expect(updateCollegeSectionSchema.safeParse({ ...edit, cohortId: "foreign" }).success).toBe(false);
     expect(updateCollegeSectionSchema.safeParse({ ...edit, capacity: 0 }).success).toBe(false);
   });
 

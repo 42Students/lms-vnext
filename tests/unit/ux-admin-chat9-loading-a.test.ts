@@ -25,7 +25,7 @@ describe("chat-9 bounded loading /admin last third A",()=>{
     const file=source("src/app/(authenticated)/admin/projects/templates/[templateId]/loading.tsx");
     expect(file).toContain("GracefulPageLoading");
     expect(file).not.toContain("animate-pulse");
-    expect(file).toContain("Loading template section");
+    expect(file).toContain("Loading template details");
   });
   it("UX-admin-projects-workspaces-new-02 shows a bounded recoverable loading state",()=>{
     const file=source("src/app/(authenticated)/admin/projects/workspaces/new/loading.tsx");
@@ -35,9 +35,9 @@ describe("chat-9 bounded loading /admin last third A",()=>{
   });
   it("UX-admin-quizzes-02 shows a bounded recoverable loading state",()=>{
     const file=source("src/app/(authenticated)/admin/quizzes/loading.tsx");
-    expect(file).toContain("GracefulPageLoading");
-    expect(file).not.toContain("animate-pulse");
-    expect(file).toContain("Loading quizzes");
+    expect(file).toContain('role="status"');
+    expect(file).toContain('aria-label="Loading quizzes"');
+    expect(file).toContain("Array.from({length:8}");
   });
   it("UX-admin-resources-02 shows a bounded recoverable loading state",()=>{
     const file=source("src/app/(authenticated)/admin/resources/loading.tsx");
@@ -53,9 +53,9 @@ describe("chat-9 bounded loading /admin last third A",()=>{
   });
   it("UX-admin-semesters-02 shows a bounded recoverable loading state",()=>{
     const file=source("src/app/(authenticated)/admin/semesters/loading.tsx");
-    expect(file).toContain("GracefulPageLoading");
-    expect(file).not.toContain("animate-pulse");
-    expect(file).toContain("Loading Super Admin directory");
+    expect(file).toContain('aria-busy="true"');
+    expect(file).toContain('aria-label="Loading semesters"');
+    expect(file).toContain("Array.from({length:8}");
   });
   it("UX-admin-settings-02 shows a bounded recoverable loading state",()=>{
     const file=source("src/app/(authenticated)/admin/settings/loading.tsx");

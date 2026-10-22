@@ -40,7 +40,8 @@ export async function listSuperAdminContentDirectory(context:RequestContext,rawK
   title:aliased(lessonContents.title,"admin_content_title"),
   notes:lessonContents.notes,
   points:lessonContents.points,
-  hasLegacyRichContent:sql<boolean>`${lessonContents.legacyContentData} is not null`.mapWith(Boolean).as("hasLegacyRichContent"),
+  // Do not project an unused SQL expression through a derived table: raw
+  // subquery aliases are not stable between Drizzle versions.
   contentType:lessonContents.contentType,
   status:aliased(lessonContents.status,"admin_content_status"),
   sequence:lessonContents.sequence,

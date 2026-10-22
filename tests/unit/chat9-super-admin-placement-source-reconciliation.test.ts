@@ -5,7 +5,7 @@ const source=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
 describe("Super Admin Placements documented parity and owner-accepted navigation",()=>{
  it("SA-placements-projects-04 restores the legacy Drives landing and no-college wording",()=>{
   const s=source("src/app/(authenticated)/admin/placements/page.tsx");
-  for(const word of ['title="Placement Drives"',"Run active hiring drives from one operational view","Select a college to continue","Drives is college-scoped."])
+  for(const word of ['title="Placement Drives"',"Run active hiring drives from one operational view","Select a college to continue","Choose a college in the header to manage its drives."])
    expect(s).toContain(word);
  });
  it("SA-placements-projects-15 guards unsaved changes on create and edit while preserving draft text",()=>{
@@ -22,12 +22,13 @@ describe("Super Admin Placements documented parity and owner-accepted navigation
   const s=source("src/components/placements/placement-job-create-form.tsx");
   expect(s).toContain("No active placement season.");
   expect(s).toContain("Open placement seasons");
-  expect(s).toContain("disabled={pending || !activeSeason || uncertainCreate}");
+  expect(s).toContain("disabled={pending || !activeSeason || uncertainCreate || loadingCopy}");
  });
  it("SA-placements-projects-24 implements global Verified by 42 with a not-verified filter",()=>{
   const page=source("src/app/(authenticated)/admin/companies/page.tsx");
   const component=source("src/components/admin/super-admin-company-verification.tsx");
-  expect(page).toContain("<SuperAdminCompanyVerification");
+  expect(page).toContain("<SuperAdminGlobalCompanyCatalogue");
+  expect(source("src/components/admin/super-admin-global-company-catalogue.tsx")).toContain("<SuperAdminCompanyVerification");
   expect(page).toContain("Only not verified");
   expect(page).toContain("Verified by 42");
   expect(component).toContain("/api/admin/companies/verification");
@@ -36,7 +37,8 @@ describe("Super Admin Placements documented parity and owner-accepted navigation
  it("SA-placements-projects-26 implements globally scoped Edit company with a confirmed API write",()=>{
   const page=source("src/app/(authenticated)/admin/companies/page.tsx");
   const component=source("src/components/admin/super-admin-company-edit.tsx");
-  expect(page).toContain("<SuperAdminCompanyEdit");
+  expect(page).toContain("<SuperAdminGlobalCompanyCatalogue");
+  expect(source("src/components/admin/super-admin-global-company-catalogue.tsx")).toContain("<SuperAdminCompanyEdit");
   expect(component).toContain("Edit global company");
   expect(component).toContain("/api/admin/companies/edit");
   expect(component).toContain('method:"PATCH"');
@@ -45,7 +47,8 @@ describe("Super Admin Placements documented parity and owner-accepted navigation
   const page=source("src/app/(authenticated)/admin/companies/page.tsx");
   const component=source("src/components/admin/super-admin-company-identities.tsx");
   const route=source("src/app/api/admin/companies/domains/route.ts");
-  expect(page).toContain("<SuperAdminCompanyIdentities");
+  expect(page).toContain("<SuperAdminGlobalCompanyCatalogue");
+  expect(source("src/components/admin/super-admin-global-company-catalogue.tsx")).toContain("<SuperAdminCompanyIdentities");
   expect(component).toContain("Company domain or email");
   expect(component).toContain("domains.length<=1");
   expect(route).toContain("isSameOriginRequest");
@@ -71,8 +74,8 @@ describe("Super Admin Placements documented parity and owner-accepted navigation
   const dialog=source("src/components/admin/super-admin-hr-account-dialog.tsx");
   expect(page).toContain('title="Recruiter accounts"');
   expect(page).toContain("Add recruiter");
-  expect(page).toContain('"Active":"Disabled"');
-  expect(page).toContain('"Suspended"');
+  expect(page).toContain("hrAccountStatusLabel");
+  expect(page).toContain("hrAccountStatusTone");
   expect(dialog).toContain('"Add recruiter"');
  });
  it("SA-placements-projects-43 links Placement Analytics as the canonical full-funnel page",()=>{
@@ -93,7 +96,7 @@ describe("Super Admin Placements documented parity and owner-accepted navigation
   expect(nav).toContain('{href:"/admin/placements/calendar",label:"Interviews"}');
   expect(nav).toContain('{href:"/admin/placements/applications",label:"Applications"}');
   expect(nav).not.toContain("/admin/placements/interviews");
-  expect(view).toContain("<details");
+  expect(view).toContain("<Disclosure");
   expect(view).toContain("More placement reports");
  });
 });
