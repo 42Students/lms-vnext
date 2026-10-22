@@ -134,6 +134,10 @@ async function cleanup() {
     "delete from placement_application_status_history",
   );
   await pool.query("delete from placement_learner_requests");
+  // Stage projections and their immutable history hold non-cascading FKs to
+  // applications. Clear those disposable fixtures before their parent rows.
+  await pool.query("delete from placement_college_application_stage_history");
+  await pool.query("delete from placement_college_application_stages");
   await pool.query(
     "delete from placement_applications",
   );
