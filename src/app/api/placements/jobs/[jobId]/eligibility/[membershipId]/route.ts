@@ -8,6 +8,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {getPlacementJob} from "@/modules/placements/job-service";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {z} from "zod";
+import {placementEligibilityOverrideInputSchema} from "@/modules/placements/validation";
 import {
   evaluatePlacementEligibility,
   revokeEligibilityOverride,
@@ -55,29 +56,47 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: RouteContext,
-) {
-  if (!isSameOriginRequest(request)) {
-    return NextResponse.json(
-      { error: "INVALID_ORIGIN" },
-      { status: 403 },
-    );
-  }
-  try {
-    const context = await getCurrentRequestContext();
-    const { jobId, membershipId } = await params;
-    const override = await setEligibilityOverride(
-      context,
-      jobId,
-      membershipId,
-      await request.json(),
-    );
-    return NextResponse.json({ override });
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
+/** Both legacy POST and modern PUT use the same tenant-scoped membership
+ * identity and optimistic override receipt. Never accept a raw legacy numeric
+ * learnerId as a UUID or infer a college from the caller's JSON payload. */
+async function updateOverride(request:Request,{params}:RouteContext){
+ if(!isSameOriginRequest(request))
+  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+ try{
+  const context=await getCurrentRequestContext();
+  const {jobId,membershipId}=await params;
+  const raw:unknown=await request.json().catch(()=>null);
+  if(!raw||typeof raw!=="object"||Array.isArray(raw))
+   return NextResponse.json({error:"INVALID_REQUEST",message:"Choose include or exclude."},{status:400});
+  const record=raw as Record<string,unknown>;
+  // Legacy named this field type; the canonical membership UUID is provided
+  // in the route, rather than resolving untrusted foreign numeric user IDs.
+  if(record.learnerId!==undefined&&record.learnerId!==membershipId)
+   return NextResponse.json({error:"INVALID_LEARNER",message:"Learner selection has changed. Refresh the drive."},{status:400});
+  const candidate={
+   decision:record.decision??record.type,
+   reason:record.reason,
+   expectedOverrideId:record.expectedOverrideId??null,
+  };
+  if(typeof candidate.reason!=="string"||candidate.reason.trim().length<3)
+   return NextResponse.json({error:"INVALID_REASON",message:"A reason is required."},
+    {status:400,headers:{"Cache-Control":"private, no-store"}});
+  const parsed=placementEligibilityOverrideInputSchema.safeParse(candidate);
+  if(!parsed.success)
+   return NextResponse.json({error:"INVALID_ELIGIBILITY_OVERRIDE",
+     message:"Choose include or exclude."},{status:400,headers:{"Cache-Control":"private, no-store"}});
+  // Present-day editors always send an expectedOverrideId. The old
+  // POST equivalent may only create when no override already exists.
+  const override=await setEligibilityOverride(context,jobId,membershipId,parsed.data);
+  return NextResponse.json({override,ok:true,message:"Eligibility override saved.",
+   expectedOverrideId:override.id},{headers:{"Cache-Control":"private, no-store"}});
+ }catch(error){return apiErrorResponse(error);}
+}
+export async function PUT(request:Request,route:RouteContext){
+ return updateOverride(request,route);
+}
+export async function POST(request:Request,route:RouteContext){
+ return updateOverride(request,route);
 }
 
 export async function DELETE(
