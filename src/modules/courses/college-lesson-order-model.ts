@@ -17,12 +17,12 @@ export function planLessonMove(
   { id: string; previousSequence: number; sequence: number },
 ] | null {
   const index = rows.findIndex(row => row.id === input.lessonId);
-  if (index < 0 || rows[index].sequence !== input.expectedSequence) return null;
+  const first = rows[index];
+  if (!first || first.sequence !== input.expectedSequence) return null;
   const nextIndex = input.direction === "UP" ? index - 1 : index + 1;
   if (nextIndex < 0 || nextIndex >= rows.length) return null;
-  const first = rows[index];
   const second = rows[nextIndex];
-  if (first.sequence === second.sequence) return null;
+  if (!second || first.sequence === second.sequence) return null;
   const park = Math.max(...rows.map(row => row.sequence)) + 1;
   return [
     { id: first.id, previousSequence: first.sequence, sequence: park },
