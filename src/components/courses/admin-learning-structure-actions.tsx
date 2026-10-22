@@ -503,7 +503,7 @@ export function LessonActions({
     (Boolean(lesson.learningPathId) && targetLearningPathId!==lesson.learningPathId);
   const validName = name.trim().length > 0 && name.trim().length <= 255;
   function dismissEdit(next: boolean) {
-    if (pending) {showToast({tone:"warning",title:"Wait for the lesson save to finish."});return;}
+    if (pending) {showToast({tone:"info",title:"Wait for the lesson save to finish."});return;}
     if (!next && dirty) { setDiscardOpen(true); return; }
     setEditOpen(next);
   }

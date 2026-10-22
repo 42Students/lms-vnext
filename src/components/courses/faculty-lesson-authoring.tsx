@@ -85,6 +85,8 @@ export function FacultyLessonAuthoring({
   initialMode = null,
   availableModes,
   onSaved,
+  onBusyChange,
+  formId,
   enableAssignmentResources = true,
 }: {
   lessonId: string;

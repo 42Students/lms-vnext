@@ -399,6 +399,7 @@ async function main() {
                 key: "task-1",
                 sprintKey: "sprint-1",
                 title: "E2E Project Task",
+                taskType: "STORY",
                 priority: "MEDIUM",
                 sequence: 0,
               },

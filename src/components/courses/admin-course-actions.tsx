@@ -117,6 +117,7 @@ export function CourseActions({
     description: string | null;
   };
 }) {
+  const router = useRouter();
   const [editOpen, setEditOpen] =
     useState(false);
   const [archiveOpen, setArchiveOpen] =

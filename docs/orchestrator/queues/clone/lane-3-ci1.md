@@ -2,9 +2,9 @@
 
 TOP PRIORITY: do these BEFORE anything else (pause verify2). CI runs on every push to main, so your fixes are checked automatically. Push after every 3 packets. Tick [x] as you go.
 
-- [ ] `docs/audit/gap-fix-work/ci1/packets/CI1_lane3_1.md` (1 errors; edit scripts/db-e2e-prepare.ts)
-- [ ] `docs/audit/gap-fix-work/ci1/packets/CI1_lane3_2.md` (2 errors; edit src/components/courses/admin-course-actions.tsx)
-- [ ] `docs/audit/gap-fix-work/ci1/packets/CI1_lane3_3.md` (2 errors; edit src/components/courses/admin-course-create-panel.tsx)
+- [x] `docs/audit/gap-fix-work/ci1/packets/CI1_lane3_1.md` (1 errors; edit scripts/db-e2e-prepare.ts)
+- [x] `docs/audit/gap-fix-work/ci1/packets/CI1_lane3_2.md` (2 errors; edit src/components/courses/admin-course-actions.tsx)
+- [x] `docs/audit/gap-fix-work/ci1/packets/CI1_lane3_3.md` (2 errors; edit src/components/courses/admin-course-create-panel.tsx)
 - [ ] `docs/audit/gap-fix-work/ci1/packets/CI1_lane3_4.md` (1 errors; edit src/components/courses/admin-course-overview.tsx)
 - [ ] `docs/audit/gap-fix-work/ci1/packets/CI1_lane3_5.md` (1 errors; edit src/components/courses/admin-learning-structure-actions.tsx)
 - [ ] `docs/audit/gap-fix-work/ci1/packets/CI1_lane3_6.md` (3 errors; edit src/components/courses/faculty-lesson-authoring.tsx)
