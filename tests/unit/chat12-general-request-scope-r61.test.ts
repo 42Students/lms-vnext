@@ -30,7 +30,8 @@ describe("chat-12 request admission and duplicate replay invariants",()=>{
   expect(source).toContain('throw new TpoGeneralRequestError("TARGET_CHANGED")');
  });
  it("TPO-requests-verification-01 returns an idempotent replay only for identical pending requests",()=>{
-  expect(source).toContain("return {id:existing.id,replayed:true}");
+  expect(source).toContain("return {id:existing.id,replayed:true,");
+  expect(source).toContain("You already sent this request");
   expect(source).toContain("return {id:request.id,replayed:false}");
  });
  it("TPO-requests-verification-01 does not create a request before scope and kind guards",()=>{
@@ -40,7 +41,7 @@ describe("chat-12 request admission and duplicate replay invariants",()=>{
  it("TPO-requests-verification-01 keeps all request events and placement-cell notices transactional",()=>{
   expect(source).toContain("getDb().transaction(async tx=>");
   expect(source).toContain("tx.insert(placementLearnerGeneralRequestEvents)");
-  expect(source).toContain("await notifyTpo(tx,college.id,event.id)");
+  expect(source).toContain("await notifyTpo(tx,college.id,event.id,input.kind)");
  });
  it("TPO-requests-verification-01 never silently approves a kind with unsupported domain consequences",()=>{
   expect(source).toContain('throw new TpoGeneralRequestError("EFFECT_UNSUPPORTED")');
@@ -58,7 +59,9 @@ describe("chat-12 request admission and duplicate replay invariants",()=>{
   expect(registered).toContain("-- from chat-12-0134-general-requests-correction.sql");
   expect(registered).toContain("'PLACEMENT_AFTER_PLACEMENT','OFFER_ACCEPTANCE_DISPUTE'");
   expect(schema).toContain("'PLACEMENT_AFTER_PLACEMENT','OFFER_ACCEPTANCE_DISPUTE'");
-  expect(read("docs/proposed-migrations/chat-12-0134-general-requests-correction.sql")).toContain("OFFER_ACCEPTANCE_DISPUTE");
+  const journal=JSON.parse(read("drizzle/meta/_journal.json")) as {entries:Array<{tag:string}>};
+  expect(journal.entries.map(entry=>entry.tag)).toContain("0135_lanes_round_3");
+  expect(schema).toContain("placement_general_request_kind_ck");
   // Retain the live constraint guard for deployments whose 0135 has not yet run.
   expect(source).toContain('await requireRegisteredKind(tx,input.kind)');
  });
