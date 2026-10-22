@@ -148,6 +148,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       <h2 className="text-lg font-semibold text-[var(--lms-heading)]">
         Dry run: {result.ready} ready, {result.blocked} blocked, {result.total} examined
       </h2>
+      <p role="status" className="text-sm text-body">Preview only. No memberships have been changed. Confirm import to apply the validated rows.</p>
       {result.warning ? <Alert tone="warning">{result.warning}</Alert> : null}
       {!imported && result.ready > 0 ? <Button type="button" loading={pending}
         disabled={pending || reading} onClick={confirm}>

@@ -28,7 +28,7 @@ function treeText(node:unknown):string[]{
   if(Array.isArray(node))return node.flatMap(treeText);
   if(!isValidElement(node))return [];
   const props=node.props as Record<string,unknown>;
-  return ["children","title","description","action","href"].flatMap(k=>treeText(props[k]));
+  return ["children","title","description","action","actions","label","empty","href"].flatMap(k=>treeText(props[k]));
 }
 function render(q:Record<string,string|string[]|undefined>={}){
   return TenantDirectory({searchParams:Promise.resolve(q)});

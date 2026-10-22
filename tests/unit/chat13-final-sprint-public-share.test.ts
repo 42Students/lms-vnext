@@ -52,7 +52,8 @@ describe("chat-13 final sprint public company share",()=>{
   // The signed-off UX uses the shared DataTable; it maps the approved columns
   // once and passes that same map to the responsive mobile/desktop renderer.
   expect(page).toContain("columns.map((key,index)=>");
-  expect(page).toContain("cell: row=>row.cells[key]");
+  expect(page).toContain('const value=key==="APPLICATION_ID"?row.applicationId:row.cells[key]');
+  expect(page).toContain('if(url.protocol==="https:"&&!url.username&&!url.password)');
   expect(page).toContain("<DataTable columns={tableColumns} rows={result.rows}");
  });
  it("PUB-auth-public-57 stores and renders the TPO's deadline without mixing it with link expiry",()=>{

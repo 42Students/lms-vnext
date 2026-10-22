@@ -6,7 +6,9 @@ describe("UX-tpo-companies-companyid-01 /tpo/companies/[companyId]",()=>{
     expect(source).not.toContain("text-[#26bac7]");
     expect(source).toContain("bg-primary");
     expect(source).toContain("text-on-primary");
-    expect(source).not.toMatch(/min-h-(?:9|10)\b/);
+    // Desktop controls may use their legacy 36/40px heights; mobile controls must be at least 44px.
+    expect(source).not.toMatch(/(?<![a-z:-])min-h-(?:9|10)\b/);
+    expect(source).toContain("min-h-11");
     expect(source).toMatch(/<PageHeader\b|<h1\b|redirect\(/);
   });
 });
