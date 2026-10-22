@@ -1,7 +1,6 @@
 import "server-only";
 
 import { and, asc, count, eq, exists, ilike, inArray, isNull, ne, not, or, sql, type Column } from "drizzle-orm";
-import { z } from "zod";
 import { alias } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
 import {
@@ -24,7 +23,6 @@ import type { RequestContext } from "@/modules/identity/context";
 import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import {
-  COLLEGE_LEARNING_PAGE_SIZE,
   collegeLessonAutocompleteQuerySchema,
   collegeLearningPageCount,
   collegeLessonQuerySchema,
