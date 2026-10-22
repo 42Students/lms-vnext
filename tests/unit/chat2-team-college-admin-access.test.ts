@@ -19,6 +19,8 @@ describe("College placement team access",()=>{
   const page=src("src/app/(authenticated)/tpo/team/page.tsx");
   expect(page).toContain("hasPlacementTeamMembership(context)");
   expect(page).toContain('redirect("/tpo/settings?tab=team")');
+  expect(page).toContain('tab === "people" || tab === "members" || tab === "roster"');
+  expect(page).toContain('redirect("/tpo/messages?" + target.toString())');
  });
  it("TPO-inbox-team-R02 includes admins at the Team entrypoint and private thread detail",()=>{
   for(const path of ["src/app/(authenticated)/tpo/team/page.tsx",
