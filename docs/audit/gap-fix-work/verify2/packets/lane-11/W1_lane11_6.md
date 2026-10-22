@@ -126,3 +126,30 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: (none, new feature)
 - Legacy: LBE/service/tpo/RecruiterCollegeOverviewService.java:62-113 returns collegeName, studentsTotal rounded, byBranch, cgpaBands verified, cgpaBasedOn, asOf.
 - Expected fix: Separate college demographics aggregate from drive summary and preserve asOf timestamp.
+
+### Lane-5 fast verification triage (2026-10-22)
+- **G2-5-024-017 — DEFERRED**: Source located; parity not proven without runtime/data-flow check.
+- **G2-5-024-018 — DEFERRED**: Source located; parity not proven without runtime/data-flow check.
+- **G2-5-024-031 — DEFERRED**: Source located; parity not proven without runtime/data-flow check.
+- **G2-5-024-032 — DEFERRED**: Source located; parity not proven without runtime/data-flow check.
+- **G2-5-024-036 — DEFERRED**: Source located; parity not proven without runtime/data-flow check.
+- **G2-5-024-038 — DEFERRED**: Source located; parity not proven without runtime/data-flow check.
+- **G2-5-024-042 — DEFERRED**: Source located; parity not proven without runtime/data-flow check.
+- **G2-5-024-049 — DEFERRED**: Source located; parity not proven without runtime/data-flow check.
+- **G2-5-024-066 — DEFERRED**: Source located; parity not proven without runtime/data-flow check.
+- **G2-5-030-039 — DEFERRED**: Source located; parity not proven without runtime/data-flow check.
+- **G2-5-031-037 — DEFERRED**: Source located; parity not proven without runtime/data-flow check.
+- **G2-5-031-038 — DEFERRED**: Source located; parity not proven without runtime/data-flow check.
+- **G2-5-031-042 — DEFERRED**: Source located; parity not proven without runtime/data-flow check.
+- **G2-5-031-059 — DEFERRED**: Source located; parity not proven without runtime/data-flow check.
+- **G2-6-015-032 — DEFERRED**: New-feature or legacy migration contract requires deeper design verification.
+- **G2-6-019-039 — DEFERRED**: New-feature or legacy migration contract requires deeper design verification.
+- **G2-11-020-050 — DEFERRED**: New-feature or legacy migration contract requires deeper design verification.
+- **G2-11-026-027 — DEFERRED**: New-feature or legacy migration contract requires deeper design verification.
+- **G2-12-011-029 — DEFERRED**: New-feature or legacy migration contract requires deeper design verification.
+- **G2-6-018-041 — DEFERRED**: New-feature or legacy migration contract requires deeper design verification.
+- **G2-6-031-038 — DEFERRED**: New-feature or legacy migration contract requires deeper design verification.
+- **G2-6-008-006 — DEFERRED**: Source located; parity not proven without runtime/data-flow check.
+- **G2-12-027-030 — DEFERRED**: New-feature or legacy migration contract requires deeper design verification.
+- **G2-14-030-004 — DEFERRED**: New-feature or legacy migration contract requires deeper design verification.
+- **G2-15-025-009 — DEFERRED**: New-feature or legacy migration contract requires deeper design verification.
