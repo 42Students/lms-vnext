@@ -173,7 +173,10 @@ export default async function LearnerCourseTabPage({
         // workspace when its own fetch fails.
         loadCourseDisplayContentIfReady(workspace.course.id)
           .then(value => ({ data: value, failed: false }))
-          .catch(() => ({ data: null, failed: true })),
+          .catch((error:unknown) => {
+            if(error instanceof AuthorizationError)throw error;
+            return {data:null,failed:true};
+          }),
       ]);
     const display = displayResult.data;
     const courseUpdates = announcements.map(announcement=>({
@@ -251,7 +254,10 @@ export default async function LearnerCourseTabPage({
     );
   } else {
     const chatSettings=await readLearnerPlaybackSettings(context.membership?.collegeId)
-      .catch(()=>({...LEARNER_PLAYBACK_DEFAULTS}));
+      .catch((error:unknown)=>{
+        if(error instanceof AuthorizationError)throw error;
+        return {...LEARNER_PLAYBACK_DEFAULTS};
+      });
     content = <LearnerCourseDiscussion key={learnerDiscussionScopeKey(deliveryId)}
       deliveryId={deliveryId} pollIntervalMs={chatSettings.chatPollIntervalMs} />;
   }
