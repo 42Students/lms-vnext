@@ -19,7 +19,7 @@ describe("chat-12 Verification legacy send-back reason selector",()=>{
   expect(d()).toContain('onClick={()=>setReason("")}');
   expect(d()).toContain('setError("Say what needs to change")');
   expect(d()).toContain("The student sees your reason and fixes it on their profile.");
-  expect(d()).toContain('?"Send "+(row.section==="EDUCATION"?"Education":"Identity")+" back"');
+  expect(d()).toContain('title={"Send "+(row.section==="EDUCATION"?"Education":"Identity")+" back"}');
   expect(d()).toContain('const message=[reason,additional.trim()].filter(Boolean).join(": ").trim()');
  });
  it("GR-33 validates a free-text send-back reason before calling the server",()=>{
