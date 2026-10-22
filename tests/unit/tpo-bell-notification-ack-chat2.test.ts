@@ -7,9 +7,10 @@ describe("TPO notification click acknowledgement",()=>{
   const component=src("src/components/activity/notification-list.tsx");
   expect(component).toContain("await apiFetch(readEndpoint +");
   expect(component).toContain("timeoutMs: 12000");
-  expect(component).toContain("if (acknowledged && openHref) router.push(openHref)");
-  expect(component).toContain("else if (acknowledged) router.refresh()");
-  expect(component).not.toContain("if (openHref) {\n        // A failed acknowledgement");
+  expect(component).toContain("if (acknowledged) router.refresh()");
+  expect(component).toContain("setSelected(item)");
+  expect(component).toContain("onClick={() => markRead(item.id)}");
+  expect(component).not.toContain("if (acknowledged && openHref) router.push(openHref)");
   expect(component).toContain("Could not mark this notification as read");
   expect(component).toContain('variant==="tpo"?<button');
  });
