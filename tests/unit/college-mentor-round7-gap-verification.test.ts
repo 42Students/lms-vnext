@@ -18,7 +18,7 @@ describe("chat-11 college and mentor interaction contracts",()=>{
   const action=src("src/components/admin/department-actions.tsx");
   expect(action).toContain("hasDependencies");
   expect(action).toContain("Department was not archived. Move or remove its programs, courses or faculty assignments, then retry.");
-  expect(action).toContain("Retry delete");
+  expect(action).toContain("Retry archive");
  });
  it("MEN-projects-meetings-57 shows Open link and guards invalid or blocked resource windows",()=>{
   const open=src("src/components/projects/project-resource-open-link.tsx");
