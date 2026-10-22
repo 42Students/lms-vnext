@@ -124,7 +124,7 @@ async function lockLiveContentWriteParents(
   }
 }
 
-function normalizedContentValues(
+export function normalizedContentValues(
   input: CreateLessonContentInput,
   createdByUserId: string,
 ) {

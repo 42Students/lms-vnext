@@ -8,6 +8,8 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {z} from "zod";
+import {normalizedContentValues} from "./lesson-content-service";
 import { lockLiveLessonWriteAncestry } from "./lesson-write-ancestry";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
@@ -36,6 +38,7 @@ import {
 import {
   courseLessonIdSchema,
   createCourseLessonInputSchema,
+  createLessonContentInputSchema,
   learningPathIdSchema,
   updateCourseLessonInputSchema,
   type UpdateCourseLessonInput,
@@ -126,10 +129,19 @@ export async function createCourseLesson(
   context: RequestContext,
   rawInput: unknown,
 ) {
-  const input =
-    createCourseLessonInputSchema.parse(
-      rawInput,
-    );
+  // Legacy lesson creation optionally nested multiple contentsDTOs. Validate
+  // the whole payload before acquiring locks, and insert all children in the
+  // same transaction. Invalid children roll back the parent and its audit.
+  const rawObject=z.record(z.string(),z.unknown()).parse(rawInput);
+  const {contentsDTOs,lessonName,...lessonFields}=rawObject;
+  const input=createCourseLessonInputSchema.parse({
+    ...lessonFields,name:lessonFields.name??lessonName,
+  });
+  const children=contentsDTOs===undefined?[]:
+    z.array(z.record(z.string(),z.unknown())).max(50).parse(contentsDTOs);
+  if(children.some(item=>item.lessonId!==undefined||item.deliveryId!=null||
+     (item.classId!==undefined&&item.classId!==null&&item.classId!==0)))
+    throw new CoursesServiceError("CONTENT_DELIVERY_MISMATCH");
   const path = await loadLearningPathScope(
     input.learningPathId,
   );
@@ -171,6 +183,24 @@ export async function createCourseLesson(
         })
         .returning();
 
+      if(children.length){
+        const normalized=children.map((raw,index)=>{
+          const {type,contentName,name,url,classId,...fields}=raw;
+          void classId; // Already checked as course-wide (null or 0).
+          // Legacy contentName/type/url map to the current scoped content DTO.
+          // Course-wide content has null deliveryId; class-specific content
+          // must be authored separately by its own delivery owner.
+          return createLessonContentInputSchema.parse({
+            ...fields,lessonId:created.id,deliveryId:null,
+            contentType:fields.contentType??type,
+            title:fields.title??contentName??name,
+            externalUrl:fields.externalUrl??url,
+            sequence:fields.sequence??index,
+          });
+        });
+        await tx.insert(lessonContents).values(normalized.map(item=>
+          normalizedContentValues(item,context.user.id)));
+      }
       await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.COURSES_LESSON_CREATED,
         collegeId: path.collegeId,
