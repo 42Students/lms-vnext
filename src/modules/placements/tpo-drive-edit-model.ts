@@ -51,10 +51,13 @@ export const tpoDriveEditSchema=z.object({
  isDream:z.boolean(),
 }).strict();
 export type TpoDriveEditInput=z.infer<typeof tpoDriveEditSchema>;
-export function evaluateTpoDriveEdit(status:string,_seasonStatus:string|null,input:TpoDriveEditInput){
+export function evaluateTpoDriveEdit(status:string,seasonStatus:string|null,input:TpoDriveEditInput){
  // Historical closed/cancelled drives stay frozen; a completed season alone
  // is not a reason to hide an otherwise valid published job correction.
  if(!["DRAFT","PUBLISHED"].includes(status))return "READ_ONLY" as const;
+ // An inactive recruitment season freezes a draft. Audited corrections to
+ // already-published drives remain permitted without reopening the season.
+ if(status==="DRAFT"&&seasonStatus!=="ACTIVE")return "READ_ONLY" as const;
  if(status==="PUBLISHED"&&input.applicationDeadline===null)return "INVALID_DEADLINE" as const;
  if(input.minimumAnnualCtcInr!==null&&input.maximumAnnualCtcInr!==null&&
    input.maximumAnnualCtcInr<input.minimumAnnualCtcInr)return "INVALID_CTC" as const;

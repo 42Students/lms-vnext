@@ -78,8 +78,11 @@ describe("REC-calendar-messages-profile-R01 unread recruiter mail policy",()=>{
  });
  it("REC-calendar-messages-profile-R01 preserves new multiline replies while rejecting oversize",()=>{
   expect(extractRecruiterEmailReply("Line 1\r\nLine 2")).toBe("Line 1\nLine 2");
-  expect(extractRecruiterEmailReply("x".repeat(4001))).toBe(null);
-  expect(extractRecruiterEmailReply("x".repeat(20001))).toBe(null);
+  // The legacy mail bridge clips long replies at the 4,000-unit limit.
+  // Do not discard otherwise valid messages or allow an unbounded payload.
+  expect(extractRecruiterEmailReply("x".repeat(4001))).toBe("x".repeat(4000));
+  expect(extractRecruiterEmailReply("x".repeat(20001))).toBe("x".repeat(4000));
+  expect(extractRecruiterEmailReply("x".repeat(200001))).toBeNull();
  });
 
  it("REC-calendar-messages-profile-R01 waits at least fifteen minutes and a two-minute quiet period",()=>{
