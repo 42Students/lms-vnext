@@ -14,7 +14,7 @@ const switchClass = "inline-flex min-h-11 cursor-pointer items-center gap-[var(-
 function Control({ label, type, className, indeterminate, ...props }: NativeInput & { type: "checkbox" | "radio" }) {
   return (
     <label className={cx(controlClass, className)}>
-      {type === "checkbox" ? <NativeCheckbox {...props} indeterminate={indeterminate} /> : <NativeRadio {...props} />}
+      {type === "checkbox" ? <NativeCheckbox {...props} {...(indeterminate !== undefined ? { indeterminate } : {})} /> : <NativeRadio {...props} />}
       <span className="min-w-0 break-words">{label}{props.required ? <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span> : null}{props.required ? <span className="sr-only"> required</span> : null}</span>
     </label>
   );
