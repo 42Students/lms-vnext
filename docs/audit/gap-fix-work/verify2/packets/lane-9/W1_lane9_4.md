@@ -108,6 +108,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Restore primary Logs workbench as entry and keep Known Errors as a sub-workspace.
 
 ## G2-16-009-008 [P1] MISSING facet F03
+- Verification: OK — attendance load-error alert displays the exact legacy failure text and a Retry action.
 - Files: src/components/courses/learner-course-attendance.tsx
 - Legacy: StudentAttendanceView.jsx:60-68 error alert includes Retry button.
 - Expected fix: Add localized retriable load-error Alert.
@@ -118,6 +119,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Reconcile future/unmarked/cancelled statuses vs legacy helper.
 
 ## G2-16-009-022 [P1] GAP facet F07
+- Verification: OK — attendance load-error alert displays the exact legacy failure text and a Retry action.
 - Files: src/components/courses/learner-course-attendance.tsx
 - Legacy: StudentAttendanceView.jsx:42-49 failure text Failed to load attendance.
 - Expected fix: Catch real service failure independently and display exact text.
