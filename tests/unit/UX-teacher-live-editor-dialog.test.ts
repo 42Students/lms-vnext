@@ -7,8 +7,8 @@ describe("Faculty live class authoring overlay UX",()=>{
   const page=source();
   expect(page).toContain('import { ConfirmDialog } from "@/components/ui/confirm-dialog"');
   expect(page).toContain("facultyLiveConfirmText(action, chosen");
-  expect(page).toContain("onConfirm={()=>void save(true)}");
-  expect(page).toContain('confirmVariant={action==="CANCEL"?"danger":"primary"}');
+  expect(page).toContain("onConfirm={() => void save(true)}");
+  expect(page).toContain('confirmVariant={action === "CANCEL" ? "danger" : "primary"}');
   expect(page).not.toContain("window.confirm");
  });
  it("UX-teacher-live-classes-04 keeps the pending lock and draft values on recoverable errors",()=>{
