@@ -30,7 +30,8 @@ export function validateCodingProfile(platform:CodingProfilePlatform,raw:string)
   try{link=new URL(/^[a-z][a-z\d+.-]*:\/\//i.test(value)?value:"https://"+value);}
   catch{return {url:null,error:"That link is not a "+option.label+" profile. Type your username instead."};}
   const hostname=link.hostname.toLowerCase().replace(/^www\./,"");
-  if(link.protocol!=="https:"||link.username||link.password||link.port||
+  // The legacy form accepts http:// pasted links, then stores a canonical HTTPS URL.
+  if((link.protocol!=="https:"&&link.protocol!=="http:")||link.username||link.password||link.port||
     hostname!==option.host.replace(/^www\./,"")||!link.pathname.startsWith(option.pathPrefix)){
    return {url:null,error:"That link is not a "+option.label+" profile. Type your username instead."};
   }
