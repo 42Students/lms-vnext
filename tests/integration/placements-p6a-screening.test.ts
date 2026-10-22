@@ -7,7 +7,9 @@ import {
   it,
 } from "vitest";
 import { Pool } from "pg";
-import { closeDatabaseConnection } from "@/db/client";
+import { closeDatabaseConnection,getDb } from "@/db/client";
+import {placementJobEligibilityPolicies} from "@/db/schema";
+import {createPlacementRound} from "@/modules/placements/round-service";
 import type { RequestContext } from "@/modules/identity/context";
 import {
   applyToPlacementJob,
@@ -90,6 +92,8 @@ const otherCollegeTpo: RequestContext = {
 };
 
 async function cleanup() {
+  await pool.query("delete from placement_college_application_stage_history");
+  await pool.query("delete from placement_college_application_stages");
   await pool.query(
     "delete from placement_application_screening_history",
   );
@@ -138,6 +142,10 @@ async function createPublishedJob() {
     employmentType: "FULL_TIME",
     workMode: "HYBRID",
     applicationMode: "INTERNAL",
+  });
+  await createPlacementRound(tpo,job.id,{kind:"INTERVIEW",name:"Screening evaluation",durationMinutes:30});
+  await getDb().insert(placementJobEligibilityPolicies).values({
+    jobId:job.id,updatedByUserId:tpo.user.id,
   });
   return publishPlacementJob(tpo, job.id);
 }
