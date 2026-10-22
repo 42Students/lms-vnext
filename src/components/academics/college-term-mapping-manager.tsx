@@ -197,23 +197,25 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
     setConfirm({ type: "ADD", body: { mappings: inputs.flatMap(item => item.success ? [item.data] : []) } });
   }
 
-  function updateMapping(id: string, creditsValue: string, position: number,
+  function updateMapping(id: string, creditsValue: string | null, position: number,
     editFields?: { type: "CORE" | "ELECTIVE"; isMandatory: boolean }) {
     if (inFlight.current) return;
     const previous = data.mapped.find(row => row.id === id);
     if (!previous || !editableTerm || previous.termId !== termId) return;
-    const creditsResult = parseTermCourseCreditsDraft(creditsValue);
-    if (!creditsResult.success) {
-      setFieldErrors({ credits: creditsValue.trim() ? "Enter credits from 0 to 30" : "Enter credits" });
+    // Reordering leaves historical nullable credits untouched; only the
+    // explicit editor parses and changes the credits field.
+    const creditsResult = creditsValue === null ? null : parseTermCourseCreditsDraft(creditsValue);
+    if (creditsResult && !creditsResult.success) {
+      setFieldErrors({ credits: creditsValue?.trim() ? "Enter credits from 0 to 30" : "Enter credits" });
       setError("Enter valid credits before saving this course mapping.");
       return;
     }
     const peers = orderedPeers(previous);
     const oldPosition = peers.findIndex(row => row.id === id) + 1;
-    const changedCredits = creditsResult.data !== (previous.credits ?? 3);
+    const changedCredits = creditsResult?.success === true && creditsResult.data !== previous.credits;
     const parsed = collegeTermCourseUpdateSchema.safeParse({
       position,
-      ...(changedCredits ? { credits: creditsResult.data } : {}),
+      ...(changedCredits && creditsResult?.success ? { credits: creditsResult.data } : {}),
       ...(editFields && editFields.type !== previous.type ? { type: editFields.type } : {}),
       ...(editFields && editFields.isMandatory !== (previous.isMandatory ?? previous.type === "CORE")
         ? { isMandatory: editFields.isMandatory } : {}),
@@ -468,12 +470,12 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                 <Button className="min-h-11 min-w-11 md:min-h-9 md:min-w-9" variant="secondary" type="button" disabled={pending || !editableTerm || orderedPeers(row)[0]?.id===row.id}
                   
                   aria-label={"Move "+row.courseName+" up"}
-                  onClick={()=>updateMapping(row.id,row.credits===null?"3":String(row.credits),
+                  onClick={()=>updateMapping(row.id,null,
                     orderedPeers(row).findIndex(item=>item.id===row.id))}>↑</Button>
                 <Button className="min-h-11 min-w-11 md:min-h-9 md:min-w-9" variant="secondary" type="button" disabled={pending || !editableTerm || orderedPeers(row).at(-1)?.id===row.id}
                   
                   aria-label={"Move "+row.courseName+" down"}
-                  onClick={()=>updateMapping(row.id,row.credits===null?"":String(row.credits),
+                  onClick={()=>updateMapping(row.id,null,
                     orderedPeers(row).findIndex(item=>item.id===row.id)+2)}>↓</Button>
                 <Button className="min-h-11 md:min-h-9" size="sm" variant="danger" disabled={pending || !editableTerm}
                   aria-label={"Remove " + (row.courseName || row.courseId) + " from semester"}
