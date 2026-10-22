@@ -1,12 +1,20 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {
   updateCourseAssignment,getCourseAssignmentForAdmin,
 } from "@/modules/courses/assignment-service";
+import { updateCourseAssignmentInputSchema } from "@/modules/courses/assignment-validation";
 
 export const runtime = "nodejs";
+
+// Admin/faculty edits are read-modify-write: the version the editor loaded
+// must accompany every PATCH so a stale form cannot overwrite newer changes.
+const versionedPatchSchema = z.looseObject({
+  expectedUpdatedAt: z.iso.datetime({ offset: true }),
+});
 
 type RouteContext = {
   params: Promise<{
@@ -38,12 +46,18 @@ export async function PATCH(
     const context =
       await getCurrentRequestContext();
     const { assignmentId } = await params;
-    const body = await request.json();
+    const body: unknown = await request.json();
+    if (!versionedPatchSchema.safeParse(body).success) {
+      return NextResponse.json(
+        { error: "FACULTY_ASSIGNMENT_STALE_VERSION" },
+        { status: 409 },
+      );
+    }
     const assignment =
       await updateCourseAssignment(
         context,
         assignmentId,
-        body,
+        updateCourseAssignmentInputSchema.parse(body),
       );
 
     return NextResponse.json({ assignment });

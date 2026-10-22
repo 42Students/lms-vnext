@@ -17,6 +17,7 @@ import { CollegePromotionPreviewError, listCollegePromotionOptions,
   previewCollegeBatchPromotion } from "@/modules/academics/college-batch-promotion-service";
 import { readAdminPromotionParams, summarizeAdminPromotion } from "@/modules/academics/admin-batch-promotion-read-model";
 import { formatPromotionAcademicYear } from "@/modules/academics/college-batch-promotion-model";
+import { getPromotionTeachingForecast } from "@/modules/academics/college-promotion-teaching-forecast";
 
 export default async function SuperAdminBatchPromotionPage({
   searchParams,
@@ -78,6 +79,10 @@ export default async function SuperAdminBatchPromotionPage({
       }
     }
   }
+  const teachingForecast = preview && preview.plan.targetTermNumber !== null && input.data.cohortId
+    ? await getPromotionTeachingForecast(context, preview.batch.programId,
+      input.data.cohortId, preview.plan.targetTermNumber).catch(() => null)
+    : null;
   const summary = preview ? summarizeAdminPromotion(preview) : null;
   return <div className="min-w-0 space-y-5">
     <nav aria-label="Academic Setup" className="flex flex-wrap items-center gap-4 border-b border-border pb-3 text-sm">
@@ -215,6 +220,7 @@ export default async function SuperAdminBatchPromotionPage({
               expectedVersion={preview.batch.version}
               yearStart={input.data.yearStart}
               targetTerm={preview.plan.targetTermNumber}
+              deactivatedFacultyAssignments={teachingForecast?.ending}
               learnerCount={preview.checkedLearners}
               academicYearStart={preview.plan.academicYearStart} />
           ) : null}
