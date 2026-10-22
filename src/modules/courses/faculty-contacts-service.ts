@@ -15,6 +15,20 @@ import {
   facultyContactDetailParamsSchema, facultyContactTabMatches,
 } from "./faculty-contact-detail-model";
 
+/** Display identities are derived from authorized profile names, not from the
+ * legacy website field (which may contain an arbitrary external URL). */
+export function facultyContactInitials(name:string|null):string {
+ const parts=(name??"").trim().split(/\s+/).filter(Boolean);
+ if(parts.length===0)return "?";
+ return (parts.length===1?parts[0]!.slice(0,2):parts[0]![0]+parts.at(-1)![0])
+  .toLocaleUpperCase("en-IN");
+}
+/** One membership per person; a dual-role member appears once under All and
+ * once in each matching role tab, not twice within the same list. */
+export function facultyContactRoleLabels(roles:readonly string[]):string[] {
+ return ["FACULTY","LEARNER"].filter(role=>roles.includes(role))
+  .map(role=>role==="FACULTY"?"Teacher":"Student");
+}
 const querySchema=z.object({
   tab:z.enum(["ALL","FACULTY","LEARNER"]),
   search:z.string().trim().max(200).default(""),
@@ -27,7 +41,9 @@ const querySchema=z.object({
  * This learner/teacher directory deliberately exposes only active, same-
  * college membership ID, display name, department and public role badges.
  * The membership ID is an opaque, scoped route key; userId, email, mobile,
- * photo and any storage path are never queried or exposed here.
+ * photo and any storage path are never queried or exposed here. Initials
+ * provide a deterministic safe photo fallback; a historical website field
+ * is not a trusted image URL.
  * Email/mobile search remains disabled to prevent existence probing.
  * Old staff-wide access is intentionally narrower: the vNext teacher role
  * workspace requires a persisted ACTIVE FACULTY grant plus courses.read.
@@ -72,6 +88,8 @@ export async function listFacultyContacts(context:RequestContext,rawInput:unknow
     .from(membershipRoles)
     .where(and(eq(membershipRoles.membershipId,collegeMemberships.id),
       inArray(membershipRoles.role,["FACULTY","LEARNER"]))));
+  // Unlike the legacy deleted/suspended roster, counts intentionally exclude
+  // inactive memberships and platform-suspended accounts in every tab.
   const filters=and(
     contactAudience,
     eq(collegeMemberships.collegeId,actor.collegeId),
@@ -130,7 +148,9 @@ export async function listFacultyContacts(context:RequestContext,rawInput:unknow
   return {
     tab:input.tab,search:input.search,page,pageSize:input.pageSize,
     total,totalPages,
-    items:rows.map(row=>({...row,roles:byId.get(row.membershipId)??[]})),
+    items:rows.map(row=>({...row,roles:byId.get(row.membershipId)??[],
+      roleLabels:facultyContactRoleLabels(byId.get(row.membershipId)??[]),
+      photoInitials:facultyContactInitials(row.displayName)})),
   };
 }
 
@@ -167,5 +187,6 @@ export async function getFacultyContactDetail(context:RequestContext,rawParams:u
   const roles=grants.map(x=>x.role);
   if(!facultyContactTabMatches(params.contactsTab,roles))
     throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
-  return {...contact,roles,contactsTab:params.contactsTab};
+  return {...contact,roles,contactsTab:params.contactsTab,
+    roleLabels:facultyContactRoleLabels(roles),photoInitials:facultyContactInitials(contact.displayName)};
 }
