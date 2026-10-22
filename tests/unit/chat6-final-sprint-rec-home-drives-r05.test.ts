@@ -23,12 +23,15 @@ describe("Final sprint recruiter applicant review accessibility", () => {
     // HTMLDialogElement.showModal() makes the browser confine Tab/Shift+Tab
     // to the active modal; focus restoration occurs on both close paths.
     expect(drawer).toContain("useRef<HTMLDialogElement>(null)");
-    expect(drawer).toContain('<dialog ref={ref} data-slot="drawer"');
+    expect(drawer).toContain('<dialog ref={ref} id={id} data-slot="drawer"');
     expect(drawer).toContain("aria-labelledby={titleId}");
-    expect(drawer).toContain("modal.showModal()");
-    expect(drawer).toContain("opener.current = document.activeElement");
-    expect(drawer).toContain("modal.close(); opener.current?.focus()");
-    expect(drawer).toContain("onClose={() => { if (open) onOpenChange(false); opener.current?.focus(); }}");
+    const exit=source("src/components/ui/use-overlay-exit.ts");
+    expect(drawer).toContain("useOverlayExit(ref, opener, open, 200)");
+    expect(exit).toContain("dialog.showModal()");
+    expect(exit).toContain("openerRef.current = document.activeElement");
+    expect(exit).toContain("dialog.close()");
+    expect(exit).toContain("if (opener?.isConnected) opener.focus()");
+    expect(drawer).toContain("if (opener.current?.isConnected) opener.current.focus()");
 
     // Browser Escape cancels the modal; native-app Back dismisses the same
     // route-owned Drawer without creating an extra overlay-history marker.
