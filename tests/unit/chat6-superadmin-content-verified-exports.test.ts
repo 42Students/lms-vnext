@@ -11,9 +11,16 @@ describe("Super Admin content CSV parity",()=>{
   expect(service).toContain("getCurrentRequestContext");
   expect(service).toContain("2000:500");
   expect(service).toContain("X-Export-Truncated");
-  for(const name of ["lessons","course-progress","assignments","quizzes"]){
+  for(const name of ["lessons","course-progress"]){
    const page=readFileSync("src/app/(authenticated)/admin/"+name+"/page.tsx","utf8");
    expect(page).toContain("/api/admin/"+name+"/export");
   }
+  for(const [name,kind] of [["assignments","ASSIGNMENT"],["quizzes","QUIZ"]] as const){
+   const page=readFileSync("src/app/(authenticated)/admin/"+name+"/page.tsx","utf8");
+   expect(page).toContain('adminAssessmentExportHref("'+kind+'",query.data');
+  }
+  const model=readFileSync("src/modules/courses/admin-assessment-directory-model.ts","utf8");
+  expect(model).toContain('"/api/admin/assignments/export"');
+  expect(model).toContain('"/api/admin/quizzes/export"');
  });
 });

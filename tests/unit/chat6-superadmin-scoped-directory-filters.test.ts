@@ -22,7 +22,11 @@ describe("Super Admin selected-college directory filters",()=>{
   for(const key of ["courseCode=CS101","scope=SECTION","results=HIDDEN","page=2"])expect(href).toContain(key);
   expect(adminAssessmentQuerySchema.safeParse({scope:"GLOBAL"}).success).toBe(false);
   expect(adminAssessmentQuerySchema.safeParse({courseCode:""}).success).toBe(true);
-  for(const name of ["assignments","quizzes"]){const code=source("src/app/(authenticated)/admin/"+name+"/page.tsx");expect(code).toContain("courseCode:raw.courseCode");expect(code).toContain("scope:raw.scope");}
+  for(const [name,parser,kind] of [["assignments","parseSuperAdminAssignmentQuery","ASSIGNMENT"],["quizzes","parseSuperAdminQuizQuery","QUIZ"]] as const){
+    const code=source("src/app/(authenticated)/admin/"+name+"/page.tsx");
+    expect(code).toContain(parser+"(raw)");
+    expect(code).toContain('listCollegeAssessmentAggregate(context,'+(kind==="QUIZ"?" ":"")+'"'+kind+'",query.data)');
+  }
   const ui=source("src/components/courses/admin-assessment-read-directory.tsx");
   for(const key of ['name="courseCode"','name="scope"','name="results"'])expect(ui).toContain(key);
   const svc=source("src/modules/courses/college-assessment-aggregate-service.ts");

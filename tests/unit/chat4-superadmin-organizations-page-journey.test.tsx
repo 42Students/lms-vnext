@@ -1,5 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {renderToStaticMarkup} from "react-dom/server";
+vi.mock("next/navigation",()=>({useRouter:()=>({refresh:()=>{},push:()=>{},replace:()=>{}})}));
 import type {ReactNode} from "react";
 
 const mocks=vi.hoisted(()=>({context:vi.fn(),list:vi.fn(),archived:vi.fn()}));
@@ -83,7 +84,7 @@ describe("SA-organizations-page-01 real directory permission, filters and restor
  });
  it("shows actual archived restoration choices only for an authorized platform administrator",async()=>{
   mocks.archived.mockResolvedValue([{
-   id:org,name:"Retired organization",
+   id:org,name:"Retired organization",createdAt:new Date("2088-02-03T00:00:00Z"),
   }]);
   const html=renderToStaticMarkup(await OrganizationsPage(params({})));
   expect(html).toContain("Retired organization");
@@ -93,7 +94,7 @@ describe("SA-organizations-page-01 real directory permission, filters and restor
  });
  it("renders an honest empty organization directory",async()=>{
   const html=renderToStaticMarkup(await OrganizationsPage(params({})));
-  expect(html).toContain("No organizations in this scope");
+  expect(html).toContain("No organizations found.");
   expect(html).not.toContain("Campus 1");
  });
 });

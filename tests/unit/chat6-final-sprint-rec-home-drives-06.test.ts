@@ -19,7 +19,8 @@ describe("Final sprint recruiter this-week combined feed",()=>{
   expect(model).toContain('"INTERVIEW_SLOT"?"SLOT"');
   expect(model).toContain('.slice(0,8)');
   const page=readFileSync("src/app/(authenticated)/hr/home/page.tsx","utf8");
-  expect(page).toContain("recruiterTodayEightDayWindow(now)");
+  expect(page).toContain("recruiterTodayWeekEvents({");
+  expect(page).toContain("allowedJobs:collegeJobs.map(row=>row.job.id),now");
   expect(page).toContain("weekEvents.map(item=>");
  });
 });
