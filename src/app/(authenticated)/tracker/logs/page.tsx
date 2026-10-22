@@ -95,9 +95,9 @@ export default async function TrackerLogsPage({
   const alertsReady = logAlertsRuntimeEnabled();
   const pollingReady = cloudLogPollConfigured();
   const telegramReady = telegramAlertsConfigured();
-  const commit = process.env.DEPLOY_COMMIT ?? "";
+  const commit = process.env["DEPLOY_COMMIT"] ?? "";
   const deploy = /^[0-9a-f]{7,64}$/i.test(commit) ? commit : null;
-  const startedRaw = process.env.DEPLOY_STARTED_AT ?? "";
+  const startedRaw = process.env["DEPLOY_STARTED_AT"] ?? "";
   const backendStartedAt = startedRaw && Number.isFinite(Date.parse(startedRaw))
     ? new Date(startedRaw).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" })
     : null;
