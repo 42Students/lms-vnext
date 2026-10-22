@@ -1285,6 +1285,7 @@ export async function getLearnerPlacementRequestWorkspace(
               WHERE cs.application_id=${placementApplications.id}
                 AND cs.round_id=${placementJobRounds.id} AND cs.status='BOOKED' LIMIT 1)`:
             sql<Date|null>`null`,
+          jobId: placementJobs.id,
           roundId: placementJobRounds.id,
           roundName: placementJobRounds.name,
           roundKind: placementJobRounds.kind,
