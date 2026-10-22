@@ -5,9 +5,9 @@ type Props={children:ReactNode};
 type State={failed:boolean};
 /** GR-70: contain a client render crash to the selected operational card. */
 export class PlacementPanelErrorBoundary extends Component<Props,State>{
- state:State={failed:false};
+ override state:State={failed:false};
  static getDerivedStateFromError():State{return {failed:true};}
- render(){
+ override render(){
   if(this.state.failed)return <section role="alert"
    className="border-l-2 border-error bg-error-subtle px-4 py-3">
    <p className="font-semibold">Could not load this right now. Try again.</p>
