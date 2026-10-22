@@ -77,6 +77,7 @@ export type TpoStudentSource = {
   offers: readonly TpoStudentOfferSignal[];
   appliedResults: readonly TpoStudentRoundSignal[];
   verifiedExternalOfferCount: number;
+  selectedOutcomeVerified?:boolean;
   ambiguousSection: boolean;
 };
 
@@ -253,7 +254,8 @@ export function deriveTpoStudent(
       releasedAt:offer.releasedAt,
       selectedOutcome:offer.selectedOutcome===true,
       countsAsPlacedAt,
-    })) || source.verifiedExternalOfferCount > 0;
+    })) || (countsAsPlacedAt==="SELECTED"&&source.selectedOutcomeVerified===true) ||
+    source.verifiedExternalOfferCount > 0;
 
   const offersAwaitingAnswer=source.offers.filter(offer=>offer.status==="ISSUED").length;
 
