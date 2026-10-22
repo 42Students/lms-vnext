@@ -187,7 +187,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       <option value="LATEST">Most recently updated</option><option value="OLDEST">Oldest updated first</option>
      </Select>
     </label>
-    <label className={"min-w-0 w-full flex-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-[220px] "+inboxStyles.searchField}>Search by drive or message
+    <label className={"min-w-0 w-full flex-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-[220px] "+inboxStyles["searchField"]}>Search by drive or message
      <Input name="q" type="search" maxLength={120} placeholder="⌕ Search by drive or message" defaultValue={parsed.data.q} className="mt-1 min-h-11 w-full md:min-h-9"/></label>
     <Button type="submit" variant="secondary" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Search</Button>
    </form> :
@@ -202,7 +202,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       <option value="LATEST">Most recently updated</option><option value="OLDEST">Oldest updated first</option>
      </Select>
     </label>
-    <label className={"min-w-0 w-full flex-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-[220px] "+inboxStyles.searchField}>Search by drive or message
+    <label className={"min-w-0 w-full flex-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-[220px] "+inboxStyles["searchField"]}>Search by drive or message
      <Input name="q" type="search" maxLength={120} placeholder="⌕ Search by drive or message" defaultValue={parsed.data.q} className="mt-1 min-h-11 w-full md:min-h-9"/></label>
     <Button type="submit" variant="secondary" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Search</Button>
    </form>
