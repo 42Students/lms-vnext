@@ -14,7 +14,7 @@ export function LearnerProjectTabs({ projectId }: { projectId: string }) {
   // Its capture-phase listener blocks navigation only for an actual dirty
   // draft. The tab URL retains taskId, so merely keeping a task open is not
   // itself a reason to force a destructive confirmation.
-  return <div><Tabs className={styles.legacy} ariaLabel="Project sections" renderPanel={false} value={active}
+  return <div><Tabs className={styles["legacy"] ?? ""} ariaLabel="Project sections" renderPanel={false} value={active}
     items={LEARNER_PROJECT_DETAIL_TABS.map(tab => ({
       value: tab.key,
       label: tab.label,
