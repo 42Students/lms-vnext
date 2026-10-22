@@ -58,8 +58,14 @@ describe("SA-tenants-modules-SEC-01: never render admin filter recovery before a
    const noSpace=source.indexOf("if(!parsed)");
    const recovery=[invalid,invalidNoSpace,whitespace,noSpace].filter(index=>index>=0);
    expect(auth,file).toBeGreaterThan(-1);
-   expect(recovery.length,file).toBeGreaterThan(0);
-   expect(auth,file).toBeLessThan(Math.min(...recovery));
+   // Module Access delegates URL validation to the college hierarchy page;
+   // its own selection and authorization are checked before that handoff.
+   const delegate=file.endsWith("/module-access/page.tsx") &&
+     source.includes("SuperAdminCollegeModuleAccessPage params=") &&
+     source.includes("searchParams={searchParams}");
+   expect(recovery.length>0||delegate,file).toBe(true);
+   if(recovery.length>0)expect(auth,file).toBeLessThan(Math.min(...recovery));
+   else expect(auth,file).toBeLessThan(source.indexOf("SuperAdminCollegeModuleAccessPage params="));
    expect(source,file).toContain("getCurrentRequestContext()");
   }
  });
