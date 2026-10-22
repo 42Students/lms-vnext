@@ -54,27 +54,27 @@ function optionalText(value: unknown): string | undefined {
 /** Drop raw stack frames, unsafe IDs and any untrusted JSON payload fields. */
 export function parseCloudErrorEntry(value: unknown): CloudErrorRecord | null {
   const entry = asObject(value);
-  const insertId = optionalText(entry.insertId);
-  const logName = optionalText(entry.logName);
-  const time = typeof entry.timestamp === "string" ? new Date(entry.timestamp) : null;
+  const insertId = optionalText(entry["insertId"]);
+  const logName = optionalText(entry["logName"]);
+  const time = typeof entry["timestamp"] === "string" ? new Date(entry["timestamp"]) : null;
   if (!insertId || !logName || !time || !Number.isFinite(time.getTime())) return null;
-  const json = asObject(entry.jsonPayload);
-  const message = optionalText(json.message) ?? optionalText(entry.textPayload) ??
-    optionalText(json.exception) ?? "An application error was recorded";
-  const requestId = optionalText(json.requestId);
+  const json = asObject(entry["jsonPayload"]);
+  const message = optionalText(json["message"]) ?? optionalText(entry["textPayload"]) ??
+    optionalText(json["exception"]) ?? "An application error was recorded";
+  const requestId = optionalText(json["requestId"]);
   const id = logName + ":" + insertId;
   if (id.length > 1024) return null;
   return {
     id,
     timestamp: time,
-    event: safeAlertLabel(json.event ?? "cloud.error", 80),
+    event: safeAlertLabel(json["event"] ?? "cloud.error", 80),
     // Structured application logs begin with "Error: ..." while the reporter
     // receives error.message; strip the standard name prefix for parity.
     message: redactAlertText(message.replace(/^(?:[A-Za-z]*Error|Exception):\s*/i, "")),
-    path: safeAlertPath(json.path ?? json.route ?? "/"),
-    requestId: requestId && /^(?:[0-9a-f]{8}|[0-9a-f-]{36})$/i.test(requestId)
-      ? requestId : undefined,
-    component: safeAlertLabel(json.component ?? "server", 80),
+    path: safeAlertPath(json["path"] ?? json["route"] ?? "/"),
+    ...(requestId && /^(?:[0-9a-f]{8}|[0-9a-f-]{36})$/i.test(requestId)
+      ? { requestId } : {}),
+    component: safeAlertLabel(json["component"] ?? "server", 80),
   };
 }
 
@@ -155,9 +155,9 @@ export async function cloudLoggingAccessToken(transport: Transport = fetch): Pro
   );
   if (!response.ok) throw new Error("LOG_PROVIDER_AUTH_UNAVAILABLE");
   const result = asObject(response.payload);
-  if (typeof result.access_token !== "string" || !result.access_token ||
-      result.access_token.length > 4096) throw new Error("LOG_PROVIDER_AUTH_UNAVAILABLE");
-  return result.access_token;
+  if (typeof result["access_token"] !== "string" || !result["access_token"] ||
+      result["access_token"].length > 4096) throw new Error("LOG_PROVIDER_AUTH_UNAVAILABLE");
+  return result["access_token"];
 }
 
 export async function readCloudLogErrorPage(input: {
@@ -192,9 +192,9 @@ export async function readCloudLogErrorPage(input: {
   }
   if (!response.ok) throw new Error("LOG_PROVIDER_UNAVAILABLE");
   const raw = asObject(response.payload);
-  const entries = Array.isArray(raw.entries) ? raw.entries.slice(0, 12) : [];
+  const entries = Array.isArray(raw["entries"]) ? raw["entries"].slice(0, 12) : [];
   const errors = entries.map(parseCloudErrorEntry).filter((item): item is CloudErrorRecord => item !== null);
-  const nextPageToken = optionalText(raw.nextPageToken);
+  const nextPageToken = optionalText(raw["nextPageToken"]);
   if (nextPageToken && nextPageToken.length > 1024) throw new Error("LOG_PROVIDER_INVALID_RESPONSE");
   return { errors, ...(nextPageToken ? { nextPageToken } : {}) };
 }
