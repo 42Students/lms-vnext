@@ -24,7 +24,7 @@ export default async function SuperAdminBatchPromotionPage({
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const raw = await searchParams;
   const input = readAdminPromotionParams(raw);
-  const showCompleted = raw.showCompleted==="1";
+  const showCompleted = raw["showCompleted"]==="1";
   if (!input.success) return <div className="min-w-0 space-y-5">
     <PageHeader  title="Batch Promotion" />
     <ErrorState title="Invalid batch promotion filters" description="Use consecutive years, e.g. 2026-27. Check the selected program and batch."
@@ -38,8 +38,8 @@ export default async function SuperAdminBatchPromotionPage({
       <p className="mt-1">Batch promotion is always college-scoped in Superadmin. Use the header Organization/College selector.</p>
     </div>
   </div>;
-  const pageSize=typeof raw.pageSize==="string"&&["10","25","50"].includes(raw.pageSize)?Number(raw.pageSize):10;
-  const requestedPage=typeof raw.page==="string"&&/^[1-9][0-9]{0,3}$/.test(raw.page)?Number(raw.page):1;
+  const pageSize=typeof raw["pageSize"]==="string"&&["10","25","50"].includes(raw["pageSize"])?Number(raw["pageSize"]):10;
+  const requestedPage=typeof raw["page"]==="string"&&/^[1-9][0-9]{0,3}$/.test(raw["page"])?Number(raw["page"]):1;
   let options:Awaited<ReturnType<typeof listCollegePromotionOptions>>;
   try{options=await listCollegePromotionOptions(context,input.data,
     {page:requestedPage,pageSize,includeInactive:showCompleted});}
@@ -218,9 +218,9 @@ export default async function SuperAdminBatchPromotionPage({
               cohortId={preview.batch.id}
               programId={preview.batch.programId}
               expectedVersion={preview.batch.version}
-              yearStart={input.data.yearStart}
+              {...(input.data.yearStart !== undefined ? {yearStart:input.data.yearStart} : {})}
               targetTerm={preview.plan.targetTermNumber}
-              deactivatedFacultyAssignments={teachingForecast?.ending}
+              {...(teachingForecast?.ending !== undefined ? {deactivatedFacultyAssignments:teachingForecast.ending} : {})}
               learnerCount={preview.checkedLearners}
               academicYearStart={preview.plan.academicYearStart}
               activeClasses={preview.activeClasses}
