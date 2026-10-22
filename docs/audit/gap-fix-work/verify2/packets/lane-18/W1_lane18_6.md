@@ -126,3 +126,31 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx
 - Legacy: `docs/legacy-source/frontend/src/pages/superadmin/sections/JobApplications.js:672-693` — Selections are reconciled against newly fetched rows to avoid stale bulk IDs.
 - Expected fix: Reintroduce selection with reconciliation on filter/data changes.
+
+## Chat-12 final quick verification (2026-10-22)
+
+- G2-12-028-015: OK — verified relevant selection, warning, read-state or college-context behavior in cited source.
+- G2-12-028-025: OK — verified relevant selection, warning, read-state or college-context behavior in cited source.
+- G2-12-028-049: OK — verified relevant selection, warning, read-state or college-context behavior in cited source.
+- G2-19-028-004: DEFERRED — needs deeper parity or integration review; not certified.
+- G2-8-018-034: OK — verified relevant selection, warning, read-state or college-context behavior in cited source.
+- G2-8-017-050: DEFERRED — needs deeper parity or integration review; not certified.
+- G2-8-030-012: DEFERRED — needs deeper parity or integration review; not certified.
+- G2-8-030-017: DEFERRED — needs deeper parity or integration review; not certified.
+- G2-8-030-051: DEFERRED — needs deeper parity or integration review; not certified.
+- G2-8-023-009: DEFERRED — needs deeper parity or integration review; not certified.
+- G2-8-022-025: DEFERRED — needs deeper parity or integration review; not certified.
+- G2-9-001-036: DEFERRED — needs deeper parity or integration review; not certified.
+- G2-9-001-040: DEFERRED — needs deeper parity or integration review; not certified.
+- G2-9-001-068: DEFERRED — needs deeper parity or integration review; not certified.
+- G2-9-003-051: OK — verified relevant selection, warning, read-state or college-context behavior in cited source.
+- G2-9-004-014: DEFERRED — needs deeper parity or integration review; not certified.
+- G2-9-004-046: DEFERRED — needs deeper parity or integration review; not certified.
+- G2-9-004-052: DEFERRED — needs deeper parity or integration review; not certified.
+- G2-9-008-032: DEFERRED — needs deeper parity or integration review; not certified.
+- G2-9-010-048: DEFERRED — needs deeper parity or integration review; not certified.
+- G2-9-016-006: DEFERRED — needs deeper parity or integration review; not certified.
+- G2-9-011-017: DEFERRED — needs deeper parity or integration review; not certified.
+- G2-9-011-039: DEFERRED — needs deeper parity or integration review; not certified.
+- G2-9-014-026: DEFERRED — needs deeper parity or integration review; not certified.
+- G2-9-014-086: DEFERRED — needs deeper parity or integration review; not certified.
