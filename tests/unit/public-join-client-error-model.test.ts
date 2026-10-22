@@ -10,7 +10,11 @@ describe("REC-calendar-messages-profile-R04/39/45 join errors",()=>{
  it("rejects mismatched domain and invalid mobile locally",()=>{
   const base={email:"a@another.org",name:"A",phone:"",companyName:"Acme",
     companyDomain:"example.org",scope:"COMPANY" as const};
-  expect(validatePublicJoinClient(base)).toBe("Use your example.org email address for this link.");
+  // Client cannot know all company-verified secondary domains. The server
+  // validates ownership; rejecting here would reject legitimate invitations.
+  expect(validatePublicJoinClient(base)).toBe(null);
+  expect(publicJoinErrorCopy("SEND",400,"COULD_NOT_SEND_CODE","COMPANY","example.org"))
+    .toBe("Use your example.org email address for this link.");
   expect(validatePublicJoinClient({...base,email:"a@example.org",phone:"123"})).toContain("10-digit");
   expect(validatePublicJoinClient({...base,email:"a@example.org"})).toBe(null);
  });

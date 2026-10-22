@@ -21,7 +21,9 @@ describe("chat-11 mentor activity and resource parity",()=>{
   expect(mentorActivityLabel("PROJECT_TASK_UPDATED")).toBe("Task Updated");
   expect(mentorActivityCategory("PROJECT_TASK_UPDATED")).toBe("Task");
   expect(mentorActivityCategory("project.meeting.created")).toBe("Meeting");
-  expect(source("src/components/projects/project-activity-filtered-list.tsx")).toContain("No project activity yet. Task moves");
+  const activity=source("src/components/projects/project-activity-filtered-list.tsx");
+  expect(activity).toContain('items.length===0?"No project activity yet"');
+  expect(activity).toContain("Task moves, sprint updates and resource changes will appear here.");
  });
  it("MEN-projects-meetings-62 renders relative time with exact timestamp on hover",()=>{
   expect(mentorActivityRelativeTime("2099-01-01T00:00:00Z","2099-01-01T01:00:00Z")).toBe("1h ago");

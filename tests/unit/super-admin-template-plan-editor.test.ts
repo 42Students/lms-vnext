@@ -27,10 +27,15 @@ describe("SA-placements-projects-83 Sprint repeating editor", () => {
     expect(moved.tasks).toEqual(source.tasks);
     expect(normalizeTemplatePlan(moved).sprints.map(row => row.sequence)).toEqual([1, 0]);
   });
-  it("renaming the sprint preserves its tasks and rejects deleting a populated sprint", () => {
+  it("renaming a sprint preserves its tasks; deletion moves tasks to the backlog", () => {
     const renamed = updateTemplateSprint(parse(), 0, { key: "sprint-new" });
     expect(renamed.tasks[0].sprintKey).toBe("sprint-new");
-    expect(removeTemplateSprint(renamed, "sprint-new").error).toContain("tasks first");
+    const removed=removeTemplateSprint(renamed,"sprint-new");
+    expect(removed.error).toBeNull();
+    expect(removed.blueprint.sprints.some(row=>row.key==="sprint-new")).toBe(false);
+    expect(removed.blueprint.tasks.filter(row=>row.sprintKey===null).map(row=>row.key))
+      .toEqual(["task-1","task-2"]);
+    expect(projectTemplateBlueprintSchema.safeParse(removed.blueprint).success).toBe(true);
     expect(projectTemplateBlueprintSchema.safeParse(renamed).success).toBe(true);
   });
   it("validates sprint release, required title, due label and goal boundaries", () => {
@@ -51,14 +56,16 @@ describe("SA-placements-projects-84 Task repeating editor", () => {
     expect(moved.tasks.map(row => row.sequence)).toEqual([1, 0]);
     expect(moved.sprints).toEqual(source.sprints);
   });
-  it("validates priority, sprint reference, and 1-13 point estimates", () => {
+  it("validates priority, sprint reference, and legacy 0-1000 integral estimates", () => {
     const source = parse();
     const invalid = (changes: Record<string, unknown>) =>
       projectTemplateBlueprintSchema.safeParse({
         ...source, tasks: [{ ...source.tasks[0], ...changes }],
       }).success;
-    expect(invalid({ estimatePoints: 14 })).toBe(false);
-    expect(invalid({ estimatePoints: 0 })).toBe(false);
+    expect(invalid({ estimatePoints: 14 })).toBe(true);
+    expect(invalid({ estimatePoints: 0 })).toBe(true);
+    expect(invalid({ estimatePoints: -1 })).toBe(false);
+    expect(invalid({ estimatePoints: 1001 })).toBe(false);
     expect(invalid({ estimatePoints: 2.5 })).toBe(false);
     expect(invalid({ priority: "URGENT" })).toBe(false);
     expect(invalid({ sprintKey: "missing" })).toBe(false);
