@@ -211,6 +211,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false, r
             <p>{readiness.reach.eligible} students are eligible and will be told in the app.</p>
             <p>{readiness.reach.excluded} registered students are excluded or have turned off matching-job notices.</p>
             <p>Counts reflect a preview. Eligibility is checked again before publishing.</p>
+            <p>Publishing makes this drive visible to eligible students. The publication notice cannot be recalled; closing the drive later will not undo messages already delivered.</p>
           </Alert>:null}
           {selected.action==="PUBLISH"?<fieldset className="space-y-1 text-sm">
             <legend>Tell students</legend>
