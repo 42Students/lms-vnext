@@ -68,7 +68,8 @@ describe("chat-16 public recruiter OTP accepted before optional company hint", (
       { exchange: "mx.example.org", priority: 10 },
     ]);
     const returned = [
-      [{ id: linkId, domain: "example.org" }],
+      [{ id: linkId, domain: "example.org", companyId: linkId }],
+      [], // Verified-company domains in the locked transaction
       [{ n: 0 }], [{ n: 0 }],
     ];
     const selectInTransaction = vi.fn(() => {
@@ -97,12 +98,17 @@ describe("chat-16 public recruiter OTP accepted before optional company hint", (
         .mockImplementationOnce(() => {
           const preflight = {
             innerJoin: vi.fn(), where: vi.fn(),
-            limit: vi.fn(async () => [{ id: linkId, domain: "example.org" }]),
+            limit: vi.fn(async () => [{ id: linkId, domain: "example.org", companyId: linkId }]),
           };
           preflight.innerJoin.mockReturnValue(preflight);
           preflight.where.mockReturnValue(preflight);
           return { from: vi.fn(() => preflight) };
         })
+        .mockImplementationOnce(() => ({
+          from: vi.fn(() => ({
+            where: vi.fn(async () => []),
+          })),
+        }))
         .mockImplementation(() => { throw new Error("company directory outage"); }),
     };
     vi.mocked(getDb).mockReturnValue(db as never);
@@ -113,12 +119,12 @@ describe("chat-16 public recruiter OTP accepted before optional company hint", (
       "198.51.100.12",
       deliver,
     );
-    expect(result).toEqual({ sent: true, companyName: null });
+    expect(result).toEqual({ sent: true, status: "CODE_SENT", companyName: null });
     expect(deliver).toHaveBeenCalledTimes(1);
     expect(deliver.mock.calls[0]?.[0]).toBe("recruiter@team.example.org");
     expect(deliver.mock.calls[0]?.[1]).toMatch(/^[0-9]{6}$/);
     expect(tx.insert).toHaveBeenCalledTimes(1);
-    expect(db.select).toHaveBeenCalledTimes(2);
+    expect(db.select).toHaveBeenCalledTimes(3);
   });
 
   it("REC-JOIN-MX-11 invalid link is denied before any externally observable DNS, challenge or email", async () => {

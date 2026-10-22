@@ -20,7 +20,12 @@ describe("SA-HIRING-EXPORT-13 protected Super Admin CSV route",()=>{
       user:{id:"admin",identityUid:"admin",platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
       membership:null,adminScope:{organizationId:"org-a",collegeId:"college-a"},
     });
-    mocks.getSuperAdminCompanyHiringReport.mockResolvedValue({rows:[],truncated:false});
+    mocks.getSuperAdminCompanyHiringReport.mockResolvedValue({
+      rows:[],truncated:false,fullShortlistMeanHours:null,
+      fullTotals:{totalApplications:0,applied:0,shortlisted:0,assessment:0,
+        interview:0,offered:0,hired:0,rejected:0,withdrawn:0,waitlisted:0},
+      fullFunnelTotals:{applied:0,shortlisted:0,assessment:0,interview:0,offered:0,hired:0},
+    });
   });
   const get=(qs:string)=>GET(new Request("https://example.test/api/admin/placements/hiring-report/export"+qs));
 

@@ -493,9 +493,8 @@ export function ScheduleProjectMeetingControl({
       });
       router.refresh();
     } catch(reason) {
-      const detail=reason instanceof Error?reason.message:"Failed to update meetings";
-      setError("Failed to update meetings. "+detail+
-        " Your changes have been kept. Refresh the meeting details before retrying if another editor changed the schedule.");
+      // Never surface provider/DB exception text; the draft remains editable.
+      setError("Could not schedule this meeting. Review its latest details and try again.");
     } finally {
       setPending(false);
     }

@@ -148,7 +148,7 @@ export function MentorSprintCreate({
       </Dialog>}
     <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
       title="Discard sprint changes?"
-      description="You have unsaved changes. Leave without saving them?"
+      description="You have unsaved project changes. Leave this page and discard them?"
       confirmLabel="Discard changes" pending={busy}
       onConfirm={guard.confirmDiscard}/>
   </>;
