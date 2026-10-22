@@ -80,7 +80,6 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       action={<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"}
         className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Clear filters</Link>}/>
   </div>;
-  const snapshotKey=[context.adminScope.collegeId,jobId,JSON.stringify(query)].join(":");
   const [pipelineResult,filterResult,jobResult]=await Promise.allSettled([
     getCollegeApplicationPipeline(context,jobId,query),
     listCollegeDriveApplicationFilters(context),

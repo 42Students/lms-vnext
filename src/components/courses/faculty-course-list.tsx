@@ -44,6 +44,25 @@ function pathTone(
   return "neutral" as const;
 }
 
+/** Legacy cards show semester and academic year separately. The college's
+ * persisted period is authoritative; never invent a semester from dates or
+ * interpret a vNext UUID/code as a legacy semester number. */
+export function facultyCourseAcademicBadges(period:{
+ academicPeriodName:string;academicPeriodCode:string;
+ periodStartDate:string;periodEndDate:string;
+}):{semester:string;year:string}{
+ const label=[period.academicPeriodName,period.academicPeriodCode].join(" ");
+ const match=label.match(/(?:sem(?:ester)?)[\\s._-]*([1-9][0-9]?|I{1,3}|IV|V|VI{0,3}|IX|X)(?=\\b|$)/i);
+ const semester=match?"Semester "+match[1]!.toUpperCase():
+  period.academicPeriodName||"Academic period unavailable";
+ const start=period.periodStartDate?.slice(0,4);
+ const end=period.periodEndDate?.slice(0,4);
+ const valid=(value:string|undefined)=>!!value&&/^(?:19|20)\\d{2}$/.test(value);
+ const year=valid(start)&&valid(end)?(start===end?start!:start+"–"+end):
+  (period.academicPeriodCode||"Academic year unavailable");
+ return {semester,year};
+}
+
 export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=false,query,pagination,scopeCount,periods,sections,assignmentChoices}: {
   rows: readonly FacultyCourseListRow[];
   diagnostics?: readonly FacultyCourseAssignmentDiagnostic[];
@@ -183,11 +202,11 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
             <Badge  tone="neutral">
               {course.sectionName?.trim()||"Unknown section"}{course.cohortName?.trim()?" ("+course.cohortName+")":""}
             </Badge>
-            <Badge  tone="neutral">
-              {course.academicPeriodName}
+            <Badge title="Semester / academic period" tone="neutral">
+              {facultyCourseAcademicBadges(course).semester}
             </Badge>
-            <Badge title="Academic year / period" tone="neutral">
-              {course.academicPeriodCode||course.academicPeriodName}
+            <Badge title="Academic year" tone="neutral">
+              {facultyCourseAcademicBadges(course).year}
             </Badge>
             {course.teachingRole!=="PRIMARY"?<Badge tone="warning">
               Your role: {course.teachingRole.replaceAll("_"," ")}

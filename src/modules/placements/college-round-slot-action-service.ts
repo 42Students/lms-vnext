@@ -89,7 +89,7 @@ export const COLLEGE_INTERVIEW_NOTIFICATION_CHANNELS={
 } as const;
 export type CollegeRoundSlotAppointmentFilters = {
  appointmentPage?:number;
- appointmentStatus?:"ALL"|"UPCOMING"|"COMPLETED"|"CANCELLED";
+ appointmentStatus?:"ALL"|"ACTIVE"|"UPCOMING"|"COMPLETED"|"CANCELLED";
  appointmentMode?:"ALL"|"ON_CAMPUS"|"VIRTUAL";
  appointmentSearch?:string;
  appointmentPageSize?:number;
@@ -122,7 +122,10 @@ export async function getCollegeRoundSlotAppointments(
    ?and(eq(slots.status,"BOOKED"),not(noShow),or(done,lt(slots.startsAt,now)))
    :status==="UPCOMING"
     ?and(eq(slots.status,"BOOKED"),not(done),not(noShow),gte(slots.startsAt,now))
-    :undefined;
+    // Legacy Active: still booked and neither completed nor cancelled, whatever the date.
+    :status==="ACTIVE"
+     ?and(eq(slots.status,"BOOKED"),not(done),not(noShow))
+     :undefined;
  const search=filters.appointmentSearch?.trim().slice(0,120)??"";
  const searchPattern="%"+search.replace(/[%_\\]/g,part=>"\\"+part)+"%";
  const candidateNameMatch=search?exists(db.select({id:placementApplications.id})

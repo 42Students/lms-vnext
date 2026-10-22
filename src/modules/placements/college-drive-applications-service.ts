@@ -167,7 +167,7 @@ export async function listCollegeDriveApplications(
   // Age is elapsed days: newest stage updates are youngest and sort first ASC.
   const order=requestedSort==="AGE_ASC"?[desc(source.lastStatusUpdatedAt),asc(source.id)]:
     requestedSort==="AGE_DESC"?[asc(source.lastStatusUpdatedAt),asc(source.id)]:
-    requestedSort==="SCORE_ASC"?[sql`${source.screeningScore} asc nulls first`,desc(source.submittedAt),asc(source.id)]:
+    requestedSort==="SCORE_ASC"?[sql`${source.screeningScore} asc nulls last`,desc(source.submittedAt),asc(source.id)]:
     requestedSort==="SCORE_DESC"?[sql`${source.screeningScore} desc nulls last`,desc(source.submittedAt),asc(source.id)]:
     [desc(source.submittedAt),asc(source.id)];
   const [totalRows, items, stageCountRows] = await Promise.all([
@@ -239,8 +239,9 @@ export async function listLegacyCollegeDriveApplications(
   source:query.source,q:query.q,
   departmentId:query.departmentId,programId:query.programId,cohortId:query.cohortId,
  };
- const sort=query.sort??(query.applicationStatus==="ASSESSMENT"?
-  "SUBMITTED_DESC":"AGE_ASC");
+ // Legacy admin ordering: scored applicants first, unscored last,
+ // ties broken by most recently submitted applications.
+ const sort=query.sort??"SCORE_DESC";
  const firstRead=await listCollegeDriveApplications(context,jobId,{
   ...filters,page:query.page+1,
  },{pageSize:query.size,sort});
@@ -281,6 +282,7 @@ export async function exportLegacyCollegeDriveApplicationsCsv(
  }:raw;
  const data=await listCollegeDriveApplications(context,jobId,filters,{
   exportAll:true,exportCap:LEGACY_CSV_EXPORT_CAP,
+  sort:compatible.success?compatible.data.sort??"SCORE_DESC":"SCORE_DESC",
  });
  const headings=["applicationId","jobId","jobTitle","companyName",
   "learnerId","firstName","lastName","email","applicationStatus",

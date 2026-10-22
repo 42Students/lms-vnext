@@ -42,6 +42,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { CoursesServiceError } from "./errors";
 import { listActiveElectiveDeliveryIds, listBoundElectiveDeliveryIds } from "@/modules/groups/roster-access";
 import { applyDeliveryContentOrderIfReady } from "./lesson-content-order-service";
+import { compareLegacyLearnerLessonItems } from "./legacy-lesson-item-sort-model";
 import { sql } from "drizzle-orm";
 import {
   requireLearningReadAccess,
@@ -1156,12 +1157,6 @@ export async function getLearnerCourseWorkspace(
     }
   }
 
-  const kindOrder = {
-    CONTENT: 0,
-    ASSIGNMENT: 1,
-    QUIZ: 2,
-  } as const;
-
   for (const lesson of lessonList) {
     lesson.items = [
       ...lesson.contents.map((content) => ({
@@ -1190,18 +1185,7 @@ export async function getLearnerCourseWorkspace(
         createdAt:quiz.createdAt,
         progress: quiz.progress,
       })),
-    ].sort(
-      (a,b)=>{
-        const validA=Number.isFinite(a.sequence)&&a.sequence>=0;
-        const validB=Number.isFinite(b.sequence)&&b.sequence>=0;
-        if(validA!==validB)return validA?-1:1;
-        if(validA&&validB&&a.sequence!==b.sequence)return a.sequence-b.sequence;
-        const dateA=a.createdAt?.getTime(),dateB=b.createdAt?.getTime();
-        if(Number.isFinite(dateA)&&Number.isFinite(dateB)&&dateA!==dateB)
-         return dateA!-dateB!;
-        return kindOrder[a.kind]-kindOrder[b.kind]||a.id.localeCompare(b.id);
-      },
-    );
+    ].sort(compareLegacyLearnerLessonItems);
   }
 
   const allContents = lessonList.flatMap(

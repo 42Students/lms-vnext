@@ -118,7 +118,7 @@ export function CollegeDriveEditDialog({jobId,title,fullEditorHref}:{
     <Button type="button" variant="danger" onClick={()=>{
      setDiscard(false);setDirty(false);setOpen(false);setInitial(null);
     }}>Discard changes</Button>
-   />}>
+   </>}>
    <p className="text-sm">Discard the edits to this draft job?</p>
   </Dialog>
  </>;

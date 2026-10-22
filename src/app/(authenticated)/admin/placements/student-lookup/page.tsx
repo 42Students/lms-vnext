@@ -137,7 +137,7 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
             : "No selected, verified resume is available. Upload, selection and verification remain with the learner; an administrator cannot replace a resume with an unverified URL."}</p>
           {selectedProfile?.resumeAvailable?<a
             href={"/api/placements/college/students/"+encodeURIComponent(selectedStudent.membershipId)+"/resume"}
-            target="_blank" rel="noopener noreferrer"
+           
             className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
             View verified resume
           </a>:null}

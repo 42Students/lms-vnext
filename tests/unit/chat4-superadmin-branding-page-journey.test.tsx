@@ -1,5 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {renderToStaticMarkup} from "react-dom/server";
+import {readFileSync} from "node:fs";
 
 const mocks=vi.hoisted(()=>({
  context:vi.fn(),preview:vi.fn(),branding:vi.fn(),detail:vi.fn(),notFound:vi.fn(),
@@ -58,6 +59,14 @@ beforeEach(()=>{
 });
 
 describe("SA-colleges-branding-page-01 tenant branding permissions and honest editor state",()=>{
+ it("G2-5-030-018 keeps pending logo crops and removals on navigation",()=>{
+  const uploader=readFileSync("src/components/admin/college-logo-uploader.tsx","utf8");
+  expect(uploader).toContain("file||stagedBlob||stagedRemoval");
+  expect(uploader).toContain('window.addEventListener("beforeunload",beforeUnload)');
+  expect(uploader).toContain('document.addEventListener("click",interceptLink,true)');
+  expect(uploader).toContain("Leave without saving the college logo?");
+  expect(uploader).toContain("pending={busy}");
+ });
  it("denies wrong-role actors before preview, logo, and stored branding reads",async()=>{
   mocks.context.mockResolvedValue({
    user:{...actor.user,systemRoles:[]},
