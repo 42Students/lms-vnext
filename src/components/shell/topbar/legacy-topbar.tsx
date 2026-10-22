@@ -37,36 +37,36 @@ export function LegacyTopbar({
 }) {
   const pathname = usePathname() ?? "/";
   const config = topbarConfigForPath(pathname);
-  return <header className={style.bar} aria-label="Application top bar">
+  return <header className={style["bar"]} aria-label="Application top bar">
     <div className="min-w-0 shrink-0 md:hidden">
       <ShellWidgetBoundary name="Mobile navigation" fallbackHref="/dashboard">
         <MobileNavigation items={navigation}/>
       </ShellWidgetBoundary>
     </div>
-    <div className={style.command + " min-w-0 " + (!config.newHref ? style.commandNoNew : "")}>
+    <div className={style["command"] + " min-w-0 " + (!config.newHref ? style["commandNoNew"] : "")}>
       {config.portal === "tpo" && tpoCollegeId
-        ? <Suspense fallback={<Link href="/tpo/placements/new" className={style.new} aria-label="New placement work">
-            <PlusIcon/><span className={style.newLabel}>New</span>
+        ? <Suspense fallback={<Link href="/tpo/placements/new" className={style["new"]} aria-label="New placement work">
+            <PlusIcon/><span className={style["newLabel"]}>New</span>
           </Link>}>
             <TpoQuickCreate collegeId={tpoCollegeId}/>
           </Suspense>
         : config.newHref ? <Link href={config.newHref} title="Create new"
-            className={style.new} aria-label="New">
-            <PlusIcon/> <span className={style.newLabel}>New</span>
+            className={style["new"]} aria-label="New">
+            <PlusIcon/> <span className={style["newLabel"]}>New</span>
           </Link> : null}
       <TopbarCommandSearch key={pathname} items={navigation}/>
       <ShellWidgetBoundary name="Header notifications" fallbackHref={config.notificationsHref}>
         <TopbarNotifications key={config.portal} config={config}/>
       </ShellWidgetBoundary>
     </div>
-    <div className={style.accountArea + " min-w-0 shrink-0"}>
+    <div className={style["accountArea"] + " min-w-0 shrink-0"}>
       <TopbarOrganizationSwitcher organizationName={organizationName}
-        memberships={memberships} activeMembershipId={activeMembershipId} activeRole={activeRole}
+        memberships={memberships} activeMembershipId={activeMembershipId} {...(activeRole !== undefined ? {activeRole} : {})}
         choices={adminScopeChoices} scope={adminScope}/>
       <ShellWidgetBoundary name="Account actions" fallbackHref="/account/security">
         <TopbarAccountMenu identityUid={identityUid} roleLabel={roleLabel}
           organizationName={organizationName} variant={accountVariant}
-          memberships={memberships} activeMembershipId={activeMembershipId} activeRole={activeRole}
+          memberships={memberships} activeMembershipId={activeMembershipId} {...(activeRole !== undefined ? {activeRole} : {})}
           adminScopeChoices={adminScopeChoices} scope={adminScope}/>
       </ShellWidgetBoundary>
     </div>
