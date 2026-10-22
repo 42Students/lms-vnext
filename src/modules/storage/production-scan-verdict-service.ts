@@ -42,6 +42,7 @@ type ScanVerdict=z.infer<typeof productionScanVerdictSchema>;
 type ScanRecord={
  id:string;collegeId:string;ownerMembershipId:string;objectKey:string;
  objectGeneration:string|null;status:string;scanStatus:string;
+ uploadExpiresAt:Date;
  uploadTokenHash:string;verifiedContentType:string|null;
  verifiedSizeBytes:number|null;deletedAt:Date|null;
  scanAttestedBy:string|null;
@@ -85,6 +86,7 @@ export async function applyProductionScanVerdict(raw:unknown){
    ownerMembershipId:assignmentSubmissionFiles.ownerMembershipId,
    objectKey:assignmentSubmissionFiles.objectKey,
    objectGeneration:assignmentSubmissionFiles.objectGeneration,
+   uploadExpiresAt:assignmentSubmissionFiles.uploadExpiresAt,
    status:assignmentSubmissionFiles.status,scanStatus:assignmentSubmissionFiles.scanStatus,
    uploadTokenHash:assignmentSubmissionFiles.uploadTokenHash,
    verifiedContentType:assignmentSubmissionFiles.verifiedContentType,
@@ -102,6 +104,7 @@ export async function applyProductionScanVerdict(raw:unknown){
    ownerMembershipId:projectResourceFiles.uploaderMembershipId,
    objectKey:projectResourceFiles.objectKey,
    objectGeneration:projectResourceFiles.objectGeneration,
+   uploadExpiresAt:projectResourceFiles.uploadExpiresAt,
    status:projectResourceFiles.status,scanStatus:projectResourceFiles.scanStatus,
    uploadTokenHash:projectResourceFiles.uploadTokenHash,
    verifiedContentType:projectResourceFiles.verifiedContentType,
@@ -118,6 +121,7 @@ export async function applyProductionScanVerdict(raw:unknown){
    ownerMembershipId:lessonVideoAssets.uploaderMembershipId,
    objectKey:lessonVideoAssets.objectKey,
    objectGeneration:lessonVideoAssets.objectGeneration,
+   uploadExpiresAt:lessonVideoAssets.uploadExpiresAt,
    status:lessonVideoAssets.processingStatus,scanStatus:lessonVideoAssets.scanStatus,
    uploadTokenHash:lessonVideoAssets.uploadTokenHash,
    verifiedContentType:lessonVideoAssets.verifiedContentType,
@@ -136,6 +140,13 @@ export async function applyProductionScanVerdict(raw:unknown){
   return {accepted:true,changed:false,scanStatus:row.scanStatus};
  if(row.status!==(input.kind==="LESSON_VIDEO"?"PROCESSING":"VERIFYING")||
     row.scanStatus!=="PENDING")throw new Error("SCAN_STATE_CHANGED");
+ // A valid presigned PUT can overwrite the scanned object until expiry.
+ // Do not release CLEAN bytes while the original browser upload capability
+ // is still usable; add a minute for clock skew. Reject verdicts can be
+ // quarantined immediately, because those rows cannot issue read grants.
+ if(input.verdict==="CLEAN" &&
+    row.uploadExpiresAt.getTime()+60_000>Date.now())
+  throw new Error("UPLOAD_GRANT_STILL_ACTIVE");
  await validateScannedObject(row);
  const clean=input.verdict==="CLEAN";
  const at=new Date();
