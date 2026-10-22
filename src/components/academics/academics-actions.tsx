@@ -826,6 +826,8 @@ export function SectionActions({
         ? ""
         : String(section.capacity),
     );
+  const capacityValid=capacity.trim()===""||(
+    Number.isInteger(Number(capacity))&&Number(capacity)>=1&&Number(capacity)<=200);
   const { pending, run } =
     useAcademicMutation();
 
@@ -890,7 +892,8 @@ export function SectionActions({
               disabled={
                 pending ||
                 !name.trim() ||
-                !code.trim()
+                !code.trim() ||
+                !capacityValid
               }
               onClick={() =>
                 run(
@@ -942,12 +945,14 @@ export function SectionActions({
             <Input
               type="number"
               min={1}
-              max={10000}
+              max={200}
+              aria-invalid={!capacityValid}
               value={capacity}
               onChange={(event) =>
                 setCapacity(event.target.value)
               }
             />
+            {!capacityValid?<span role="alert" className="text-xs text-error">Maximum must be a whole number from 1 to 200.</span>:null}
           </label>
         </div>
       </Dialog>
