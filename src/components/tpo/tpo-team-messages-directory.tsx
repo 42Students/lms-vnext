@@ -206,7 +206,8 @@ export async function TpoTeamMessagesDirectory({
        </ol>}
       {messageId&&tpoThreadIdSchema.safeParse(messageId).success?
        <p className="my-2 text-xs text-muted-foreground"><a href={"#team-message-"+messageId} className="text-link underline">Jump to linked message</a></p>:null}
-      <TpoTeamReplyComposer threadId={active.thread.id} actorUserId={context.user.id}/>
+      <TpoTeamReplyComposer threadId={active.thread.id} actorUserId={context.user.id}
+        kind={active.thread.kind}/>
      </>}
    </section>
    <aside aria-label="Conversation details" className="hidden min-w-0 border-l border-border p-4 xl:block">

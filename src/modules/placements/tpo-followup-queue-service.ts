@@ -257,5 +257,5 @@ export async function listLegacyTpoFollowups(
  context:RequestContext,rawQuery:unknown={},
 ){
  const queue=await getTpoDueFollowupQueue(context,new Date(),rawQuery);
- return queue.items;
+ return queue.rows;
 }

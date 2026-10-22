@@ -45,7 +45,7 @@ export function AdminScopeSwitcher({choices,scope}:{
  }
  function denyLocked(){
   const message="Tenant lock is enabled. Unlock to change scope.";
-  setError(message);showToast({tone:"warning",title:message});
+  setError(message);showToast({tone:"info",title:message});
  }
  const filteredColleges=choices.colleges.filter(item=>
   (filterOrganization===""||item.organizationId===filterOrganization)
