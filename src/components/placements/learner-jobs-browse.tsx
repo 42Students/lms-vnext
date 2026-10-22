@@ -115,7 +115,10 @@ export function LearnerJobsBrowse({
   }).map(row=>row.job.id)).size;
   const availabilityCounts=useMemo(()=>learnerDriveAvailabilityDriveCounts(items),[items]);
   const allDrives=useMemo(()=>learnerDriveOverview(items),[items]);
-  const savedSummary=learnerSavedDriveSummary(items.map(row=>row.job.id),savedJobIds);
+  const savedSummary=useMemo(
+    ()=>learnerSavedDriveSummary(items.map(row=>row.job.id),savedJobIds),
+    [items,savedJobIds],
+  );
   const accessibleIds=new Set(items.map(row=>row.job.id));
   const ownSavedIds=new Set(savedJobIds);
   const historicSaved=savedHistory.filter(row=>
@@ -136,7 +139,7 @@ export function LearnerJobsBrowse({
   ].filter(Boolean).join(", ")||"your filters";
   const matchingItems=useMemo(()=>savedOnly
     ?items.filter(item=>savedSummary.visibleIds.has(item.job.id)):items,
-    [items,savedOnly,savedJobIds.join(",")]);
+    [items,savedOnly,savedSummary.visibleIds]);
   const visible=useMemo(()=>
     filterLearnerPlacementJobs(matchingItems,filters,Date.parse(snapshotNowIso)),
    [matchingItems,snapshotNowIso,filters.search,filters.employmentType,filters.location,
