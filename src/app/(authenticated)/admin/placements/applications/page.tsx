@@ -13,10 +13,10 @@ export default async function SuperAdminApplicationsPage({searchParams}:{
 }){
  const context=await getCurrentRequestContext();
  const raw=await searchParams;
- const jobId=typeof raw.jobId==="string"&&
-  /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(raw.jobId)
-  ?raw.jobId:null;
- const shortlisted=raw.shortlisted==="true";
+ const jobId=typeof raw["jobId"]==="string"&&
+  /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(raw["jobId"])
+  ?raw["jobId"]:null;
+ const shortlisted=raw["shortlisted"]==="true";
  if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-4">
   <PageHeader title="Applications" actions={<PageBackLink href="/admin/placements" label="Placement overview"/>}/>
   <Banner tone="warning" role="alert">
@@ -40,7 +40,7 @@ export default async function SuperAdminApplicationsPage({searchParams}:{
     {shortlisted&&!jobId?<span role="status" className="text-muted-foreground">
       Shortlisted view requires a selected drive.
     </span>:null}
-  </nav>} backHref="/admin/placements" applicationFilters={applicationFilters} title="Applications" path="/admin/placements/applications" statuses={statuses}
+  </nav>} backHref="/admin/placements" {...(applicationFilters !== undefined ? {applicationFilters} : {})} title="Applications" path="/admin/placements/applications" statuses={statuses}
   exportPath="/api/admin/placements/applications/export" exportFilename="super-admin-placement-applications-ist.csv"
   description="Persisted applications by job, academic cohort and hiring stage in the selected college. Open details for an authorized scoped application and hiring-stage history; private contact, resume and screening notes are withheld until a separate permissioned detail contract is available."
   searchParams={searchParams} loader={query=>listAdminPlacementApplications(context,query)}/>
