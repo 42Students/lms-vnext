@@ -14,6 +14,7 @@ describe("TPO People roster legacy copy",()=>{
  it("TPO-inbox-team-32 keeps the number of displayed team members consistent with the filtered roster",()=>{
   const page=src("src/app/(authenticated)/tpo/settings/team/page.tsx");
   const legacy=src("src/app/(authenticated)/tpo/team/page.tsx");
+  expect(legacy).toContain('if (tab === "people" || tab === "members" || tab === "roster")');
   expect(legacy).toContain('redirect("/tpo/settings/team")');
   expect(page).toContain("rows={sortedMembers}");
   expect(page).toContain("sortedMembers=sortTpoPeople(members.map");
