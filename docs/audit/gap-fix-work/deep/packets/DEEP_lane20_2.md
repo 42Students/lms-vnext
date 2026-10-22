@@ -30,3 +30,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - G2-9-008-047: OK — class-level reporting is expressly removed as a vNext policy rather than misrepresented as a cohort filter, with explanation and strict rejection of unsupported `classId` at `src/modules/placements/college-hiring-analytics-model.ts:3-10,11-26,43-57`. Legacy accepts optional class-related filtering through `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/AdminJobService.java:170-195`. This is documented feature removal, not class-filter parity.
 
+
+- G2-9-010-080: OK — `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx:51-81` independently loads job, applicant pipeline, and filter choices with `Promise.allSettled`; rejected list reads preserve the job title and status while rendering a retryable register error, and rejected filters do not discard a successful register (`:132-135`). This retains the independently loaded job header documented in `docs/legacy-source/frontend/src/pages/superadmin/sections/JobApplications.js:619-655`.
