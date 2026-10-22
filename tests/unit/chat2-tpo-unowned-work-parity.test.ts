@@ -41,6 +41,9 @@ describe("TPO unowned work assignment safety",()=>{
   expect(page).toContain("unowned.ready?");
   expect(page).toContain("TpoTeamAssignUnowned");
   expect(page).toContain("readTpoUnownedWork(context)");
+  expect(legacy).toContain('getCurrentRequestContext()');
+  expect(legacy).toContain('hasPlacementTeamMembership(context)');
+  expect(legacy).toContain('tab === "people" || tab === "members" || tab === "roster"');
   expect(legacy).toContain('redirect("/tpo/settings/team")');
   expect(schema).toContain('ownerMembershipId: uuid("owner_membership_id")');
   expect(registeredProposal).toContain("placement_jobs_owner_college_fk");
