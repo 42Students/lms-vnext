@@ -156,8 +156,14 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
       setRowErrors(rowIssues);
       const first=parsed.error.issues[0];
       const section=first?.path[0],index=first?.path[1];
-      setError((typeof index==="number"&&typeof section==="string"?
-        section.slice(0,-1)+" "+(index+1)+": ":"")+
+      const rowKind=section==="releases"||section==="sprints"||section==="tasks"?section:null;
+      if(section==="tasks"&&typeof index==="number"){
+        setTaskSearch("");setTaskPage(Math.floor(index/25)+1);
+        const task=normalized.tasks[index];
+        if(task)setCollapsedTaskIds(current=>current.filter(key=>key!==task.key));
+      }
+      setError((typeof index==="number"&&rowKind?
+        rowKind.slice(0,-1)+" "+(index+1)+": ":"")+
         (first?.message??"Invalid template plan."));
       return;
     }
