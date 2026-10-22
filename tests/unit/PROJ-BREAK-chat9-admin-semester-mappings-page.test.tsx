@@ -27,7 +27,7 @@ function visible(node:unknown):string[]{
   if(Array.isArray(node))return node.flatMap(visible);
   if(!isValidElement(node))return [];
   const props=node.props as Record<string,unknown>;
-  return ["children","title","description","action","href"].flatMap(key=>visible(props[key]));
+  return ["children","title","description","action","href","intro"].flatMap(key=>visible(props[key]));
 }
 function includesDirectory(node:unknown):boolean{
   if(Array.isArray(node))return node.some(includesDirectory);
@@ -51,7 +51,7 @@ describe("Super Admin last-third Semester–Course Mapping guarded journeys",()=
   it("UX-admin-semester-courses-33 missing selected college shows correct next step without reading mapping data",async()=>{
     state.selected=false;
     const page=visible(await render()).join(" ");
-    expect(page).toContain("Select a college to continue");
+    expect(page).toContain("Select a college to manage Semester–Course Mapping.");
     expect(state.editorReads).toBe(0);
   });
   it("UX-admin-semester-courses-34 editor dependency failure preserves authorized mapping directory",async()=>{

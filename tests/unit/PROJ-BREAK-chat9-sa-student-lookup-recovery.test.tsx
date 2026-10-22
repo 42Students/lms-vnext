@@ -16,11 +16,12 @@ vi.mock("@/auth/request-context",()=>({
   }),
 }));
 vi.mock("@/modules/placements/college-placement-student-lookup-service",()=>({
-  lookupCollegeStudentPlacement:async(_ctx:unknown,query:string)=>{
+  suggestCollegePlacementLearners:async(_ctx:unknown,query:string)=>{
     state.calls+=1;
     state.lastQuery=query;
     return {students:[],truncated:false};
   },
+  getCollegeStudentPlacementDetails:async()=>{throw new Error("Unexpected detail read without a selected student");},
 }));
 function texts(node:unknown):string[]{
   if(node===null||node===undefined||typeof node==="boolean")return [];
@@ -44,8 +45,8 @@ describe("Super Admin last-third student placement lookup: URL safety and role s
       expect(parseSuperAdminPlacementStudentSearch({q}).invalid).toBe(true);
       const page=await SuperAdminPlacementStudentLookup({searchParams:Promise.resolve({q})});
       const content=texts(page).join(" ");
-      expect(content).toContain("Invalid student search");
-      expect(content).toContain("Clear search");
+      expect(content).toContain("Enter 2 to 150 characters in a single search");
+      expect(content).toContain("Search results are scoped to the selected college.");
     }
     expect(state.calls).toBe(0);
   });
@@ -55,7 +56,7 @@ describe("Super Admin last-third student placement lookup: URL safety and role s
       searchParams:Promise.resolve({q:"student"}),
     });
     expect(state.calls).toBe(0);
-    expect(texts(page).join(" ")).toContain("Select a college to continue");
+    expect(texts(page).join(" ")).toContain("Choose a college in the header above");
   });
   it("SA-placements-student-lookup-04 absent query is safe and does not search",async()=>{
     expect(parseSuperAdminPlacementStudentSearch({}))
