@@ -9,7 +9,6 @@ import {
 import { getDb } from "@/db/client";
 import {legacyProjectDeliveryProjection} from "./legacy-project-delivery-projection";
 import {assertCurrentEvaluationActor} from "./evaluation-service";
-import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {readProjectReadinessOverride} from "./readiness-override-service";
 import {effectiveProjectSubmissionReady} from "./readiness-override-model";
 import {deriveProjectExecutionReadiness} from "./execution-readiness";
@@ -333,8 +332,8 @@ export async function updateProjectSubmissionDraft(
       const label=(value:unknown):string=>{
         if(!value||typeof value!=="object")return "Evidence";
         const entry=value as Record<string,unknown>;
-        return typeof entry.name==="string"?
-          entry.name.slice(0,120).replace(/[\\r\\n]/g," "):"Evidence";
+        return typeof entry["name"]==="string"?
+          entry["name"].slice(0,120).replace(/[\\r\\n]/g," "):"Evidence";
       };
       const previous=Array.isArray(submission.attachments)?submission.attachments:[];
       const current=input.attachments;
