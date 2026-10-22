@@ -169,30 +169,34 @@ function resolveReportScope<T extends { id: string; deliveryId: string }>(
   // A shared offering item can appear in multiple authorized Sections.
   // Refuse to produce misleading cross-section analytics without context.
   if (matching.length > 1) throw new CoursesServiceError(mismatched);
-  return matching[0]!;
+  const scoped = matching[0];
+  if (!scoped) throw new CoursesServiceError(notFound);
+  return scoped;
 }
 
 export function scoreSummary(
   rows: readonly { score: number | null; maxScore: number | null }[],
 ) {
-  const graded = rows.filter((row) =>
-    row.score !== null &&
-    row.maxScore !== null &&
-    Number.isFinite(row.score) &&
-    Number.isFinite(row.maxScore) &&
-    row.maxScore > 0 &&
-    row.score >= 0 &&
-    row.score <= row.maxScore,
-  );
-  const averagePercent = graded.length
+  const percentages = rows.flatMap((row) => {
+    const { score, maxScore } = row;
+    if (
+      score === null ||
+      maxScore === null ||
+      !Number.isFinite(score) ||
+      !Number.isFinite(maxScore) ||
+      maxScore <= 0 ||
+      score < 0 ||
+      score > maxScore
+    ) return [];
+    return [Math.round((score / maxScore) * 100)];
+  });
+  const averagePercent = percentages.length
     ? Math.round(
-        graded.reduce(
-          (sum, row) => sum + Math.round((row.score! / row.maxScore!) * 100),
-          0,
-        ) / graded.length,
+        percentages.reduce((sum, percent) => sum + percent, 0) /
+          percentages.length,
       )
     : null;
-  return { attempted: rows.length, graded: graded.length, averagePercent };
+  return { attempted: rows.length, graded: percentages.length, averagePercent };
 }
 
 export async function getFacultyQuizReport(
