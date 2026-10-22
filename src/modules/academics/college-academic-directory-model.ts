@@ -47,7 +47,11 @@ export function withCollegeSemesterCreditCheck<T extends z.ZodType<{ minimumCred
       {path:["creditState"],message:"Unconfigured semester credits cannot be combined with credit bounds"});
 }
 
-export const collegeSemesterDirectorySchema = withCollegeSemesterCreditCheck(collegeSemesterDirectoryBaseSchema);
+export const collegeSemesterDirectorySchema = collegeSemesterDirectoryBaseSchema
+  .refine(q => q.minimumCredits === undefined || q.maximumCredits === undefined || q.minimumCredits <= q.maximumCredits,
+    {path:["maximumCredits"],message:"Maximum credits must be at least the minimum"})
+  .refine(q => q.creditState !== "UNSET" || (q.minimumCredits === undefined && q.maximumCredits === undefined),
+    {path:["creditState"],message:"Unconfigured semester credits cannot be combined with credit bounds"});
 
 export const collegeBatchDirectoryBaseSchema = z.object({
   ...common,
@@ -71,7 +75,15 @@ export function withCollegeBatchFilterCheck<T extends z.ZodType<{startOnOrAfter?
   {path:["yearStart"],message:"An unrecorded academic year cannot match a year-start filter"}).refine(q=>q.progression!=="MISSING"||q.yearStart===undefined,
   {path:["yearStart"],message:"A missing progression record cannot match a recorded academic year"});
 }
-export const collegeBatchDirectorySchema=withCollegeBatchFilterCheck(collegeBatchDirectoryBaseSchema);
+export const collegeBatchDirectorySchema = collegeBatchDirectoryBaseSchema
+  .refine(q=>q.startOnOrAfter===undefined||q.startOnOrBefore===undefined||q.startOnOrAfter<=q.startOnOrBefore,
+    {path:["startOnOrBefore"],message:"Batch start-date end limit must not precede start limit"})
+  .refine(q=>q.progression!=="MISSING"||q.currentTerm===undefined,
+    {path:["currentTerm"],message:"A missing progression record cannot have a recorded current term"})
+  .refine(q=>q.academicYearState!=="UNRECORDED"||q.yearStart===undefined,
+    {path:["yearStart"],message:"An unrecorded academic year cannot match a year-start filter"})
+  .refine(q=>q.progression!=="MISSING"||q.yearStart===undefined,
+    {path:["yearStart"],message:"A missing progression record cannot match a recorded academic year"});
 
 export type CollegeSemesterDirectoryQuery = z.infer<typeof collegeSemesterDirectorySchema>;
 export type CollegeBatchDirectoryQuery = z.infer<typeof collegeBatchDirectorySchema>;
