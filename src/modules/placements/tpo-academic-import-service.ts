@@ -200,9 +200,9 @@ export async function commitTpoAcademicImport(context: RequestContext, raw: unkn
       const evidence = {
         ...nextFields,
         source: "VERIFIED" as const,
-        // Direct correction retains the previous import's provenance, while
-        // new imports receive their own immutable event and timestamp.
-        importedAt: input.mode==="SINGLE"?before?.importedAt??null:now,
+        // Every verified write receives a fresh import timestamp, including a
+        // single-field correction, matching the legacy upsert provenance.
+        importedAt: now,
         sourceMetadata:{
           ...(input.mode==="SINGLE"?previousMetadata:{}),
           mode:input.mode,verifiedFields,
