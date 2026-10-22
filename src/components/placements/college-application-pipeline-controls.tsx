@@ -343,7 +343,13 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
      </div>:null}
     {target==="INTERVIEW"?<p className="text-sm text-body">Moving a candidate to Interview does not schedule an appointment. Use Schedule Interview in the applicant row after the update.</p>:null}
     {target==="OFFERED"||target==="HIRED"?<p className="text-sm text-body">An existing issued offer is required for Offered, and accepted offer plus confirmed joining are required for Hired. This action does not create an offer or joining outcome.</p>:null}
-    <p className="text-xs text-muted-foreground">Successful updates send in-app notifications only. Email delivery is unavailable.</p>
+    <label className="flex min-h-11 items-start gap-2 text-xs text-muted-foreground">
+     <Checkbox checked={false} disabled aria-label="Notify candidates by email (unavailable)"/>
+     <span><strong className="block text-foreground">Notify candidates by email (not available)</strong>
+      In-app notifications remain enabled. Email requires an approved placement-stage template,
+      recipient preference and suppression checks, and a durable audited outbox. The stage move
+      never silently sends unapproved email.</span>
+    </label>
     {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
     {outcome&&outcome.results.length>5?<p id="pipeline-outcome-scroll-cue" className="text-xs text-muted-foreground leading-5">More outcomes below ↓</p>:null}
     {outcome?<div role="status" tabIndex={0} aria-label="Bulk application outcomes" aria-describedby={outcome.results.length>5?"pipeline-outcome-scroll-cue":undefined}
