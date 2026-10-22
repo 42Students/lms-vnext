@@ -3,7 +3,7 @@ import "server-only";
 import { and, asc, count, eq, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
-  attendanceRecords, attendanceSessions, cohorts, collegeMemberships,
+  academicPeriods, attendanceRecords, attendanceSessions, cohorts, collegeMemberships,
   departments, learnerProfiles, learnerProgramEnrollments, membershipRoles,
   programs, sectionEnrollments, sectionScheduleEvents, sections, users,
 } from "@/db/schema";
@@ -77,12 +77,16 @@ export async function getCollegeStudentDetail(
     ? await db.select({
       enrollmentId: sectionEnrollments.learnerEnrollmentId,
       sectionName: sections.name, sectionCode: sections.code,
+      cohortName:cohorts.name,cohortCode:cohorts.code,
+      programName:programs.name,
+      academicPeriodId:academicPeriods.id,semesterName:academicPeriods.name,
     }).from(sectionEnrollments)
       .innerJoin(sections, and(
         eq(sections.id, sectionEnrollments.sectionId),
         eq(sections.status, "ACTIVE"),
         eq(sections.academicPeriodId, sectionEnrollments.academicPeriodId),
       ))
+      .innerJoin(academicPeriods,eq(academicPeriods.id,sectionEnrollments.academicPeriodId))
       .innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
       .innerJoin(programs, eq(programs.id, cohorts.programId))
       .innerJoin(departments, and(
