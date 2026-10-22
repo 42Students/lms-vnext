@@ -165,6 +165,9 @@ export async function getCollegeStudentPlacementDetails(ctx:RequestContext,raw:u
   eq(placementJobs.collegeId,collegeId));
  const [totalRow]=await db.select({total:count()}).from(placementApplications)
   .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+  .innerJoin(placementCompanyRelationships,and(
+   eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+   eq(placementCompanyRelationships.collegeId,collegeId)))
   .where(appScope);
  // Joined is a persistent outcome and must be found independently of
  // the current 25-record history page and independently of the last offer.

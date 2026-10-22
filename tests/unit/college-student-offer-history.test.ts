@@ -23,3 +23,4 @@ describe("G2-15-002-057 college placement applications have one authoritative of
   expect(offers.map(o=>o.id)).toEqual(["new","old"]);
  });
 });
+
