@@ -1,5 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {createElement} from "react";
+import {renderToStaticMarkup} from "react-dom/server";
 import type {RequestContext} from "@/modules/identity/context";
 
 const harness=vi.hoisted(()=>({request:vi.fn(),redirect:vi.fn()}));
@@ -25,7 +26,10 @@ describe("HR-BREAK-session-layout-01: recruiter route entry under role and sessi
  });
  it("renders exactly the authorized child for a live recruiter",async()=>{
   const child=createElement("p",null,"Authorized HR content");
-  expect(await HrLayout({children:child})).toBe(child);
+  const markup=renderToStaticMarkup(await HrLayout({children:child}));
+  expect(markup).toContain("Authorized HR content");
+  expect(markup).toContain('href="#hr-page-content"');
+  expect(markup).toContain('id="hr-page-content"');
   expect(harness.redirect).not.toHaveBeenCalled();
  });
  it.each([
@@ -41,7 +45,9 @@ describe("HR-BREAK-session-layout-01: recruiter route entry under role and sessi
  it("empty current grant list is allowed to render a no-access recovery page, not implicit access",async()=>{
   harness.request.mockResolvedValue({...authorized,recruiter:{...authorized.recruiter!,grants:[]}});
   const child=createElement("p",null,"No college access");
-  expect(await HrLayout({children:child})).toBe(child);
+  const markup=renderToStaticMarkup(await HrLayout({children:child}));
+  expect(markup).toContain("No college access");
+  expect(markup).toContain('id="hr-page-content"');
   expect(harness.redirect).not.toHaveBeenCalled();
  });
 });

@@ -21,7 +21,10 @@ const owner={user:{id:actor,platformStatus:"ACTIVE"},recruiter:{
 }};
 function builder(items:unknown[]){
  return {from(){return this;},where(){return this;},orderBy(){return this;},
-  limit(){return this;},offset(){return Promise.resolve(items);}};
+  limit(){return this;},offset(){return Promise.resolve(items);},
+  then(onFulfilled:(value:unknown[])=>unknown,onRejected?:(error:unknown)=>unknown){
+   return Promise.resolve(items).then(onFulfilled,onRejected);
+  }};
 }
 describe("HR-ACTIVITY-OWNER-28 scope checks before activity and college chooser",()=>{
  beforeEach(()=>{
@@ -67,16 +70,15 @@ describe("HR-ACTIVITY-OWNER-28 scope checks before activity and college chooser"
    {job:{id:jobId,title:"Graduate engineer"},collegeId:college,companyId:"firm-a"},
    {job:{id:otherJobId,title:"Other college"},collegeId:otherCollege,companyId:"firm-a"},
   ]);
-  mocks.rows=[[
-   {id:"evt-one",subjectId:jobId,eventType:"placements.job.published",occurredAt:new Date("2099-01-01T09:00:00Z")},
-   {id:"evt-foreign",subjectId:otherJobId,eventType:"placements.job.closed",occurredAt:new Date("2099-01-01T10:00:00Z")},
-   {id:"evt-private",subjectId:jobId,eventType:"placements.application.submitted",occurredAt:new Date("2099-01-01T11:00:00Z")},
-  ]];
+  mocks.rows=[
+   [{total:1}],
+   [{id:"evt-one",subjectId:jobId,eventType:"placements.job.published",occurredAt:new Date("2099-01-01T09:00:00Z")}],
+  ];
   const result=await listRecruiterJobActivity(owner as never,{collegeId:college,kind:"ALL"});
   expect(result.status).toBe("READY");
   if(result.status!=="READY")return;
   expect(result.events.map(e=>e.id)).toEqual(["evt-one"]);
-  expect(mocks.select).toHaveBeenCalledTimes(1);
+  expect(mocks.select).toHaveBeenCalledTimes(2);
   expect(result.events[0]).toMatchObject({jobId,title:"Graduate engineer",status:"Published"});
  });
 });

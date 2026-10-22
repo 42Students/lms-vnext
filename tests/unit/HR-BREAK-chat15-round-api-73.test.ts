@@ -3,7 +3,10 @@ const m=vi.hoisted(()=>({ctx:vi.fn(),origin:vi.fn(),edit:vi.fn()}));
 vi.mock("server-only",()=>({}));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:m.ctx}));
 vi.mock("@/auth/origin",()=>({isSameOriginRequest:m.origin}));
-vi.mock("@/modules/placements/hr-round-editor-service",()=>({editHrJobRound:m.edit}));
+vi.mock("@/modules/placements/hr-round-editor-service",()=>({
+ editHrJobRound:m.edit,
+ hrRoundEditorUnavailableMessage:()=>"This drive or round is no longer available.",
+}));
 import {POST} from "@/app/api/placements/recruiter/drives/[jobId]/rounds/route";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 
@@ -56,13 +59,15 @@ describe("HR-ROUND-API-73: recruiter round command HTTP boundaries",()=>{
   const result=await post({action:"UPDATE",roundId,
    expectedUpdatedAt:"2099-01-01T00:00:00.000Z",name:"Changed"});
   expect(result.status).toBe(409);
-  expect(await result.json()).toMatchObject({error:"STALE_OR_USED_ROUND"});
+  expect(await result.json()).toMatchObject({error:"PLACEMENT_ROUND_STALE"});
   expect(result.headers.get("location")).toBeNull();
  });
  it("a foreign or deleted round maps to non-enumerating 404",async()=>{
   m.edit.mockRejectedValue(new PlacementsServiceError("PLACEMENT_ROUND_NOT_FOUND"));
   const result=await post({action:"REMOVE",roundId,expectedUpdatedAt:"2099-01-01T00:00:00.000Z"});
   expect(result.status).toBe(404);
-  expect(await result.json()).toMatchObject({error:"NOT_FOUND"});
+  expect(await result.json()).toMatchObject({
+   error:"NOT_FOUND",message:"This drive or round is no longer available.",
+  });
  });
 });

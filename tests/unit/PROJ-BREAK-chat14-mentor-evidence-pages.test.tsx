@@ -21,8 +21,8 @@ vi.mock("@/components/ui/page-header",()=>({
   <header><h1>{title}</h1><p>{description}</p>{actions}</header>,
 }));
 vi.mock("@/components/ui/empty-state",()=>({
- EmptyState:({title,description}:{title:string;description:string})=>
-  <section role="status"><h2>{title}</h2><p>{description}</p></section>,
+ EmptyState:({title,description,action}:{title:string;description:string;action?:ReactNode})=>
+  <section role="status"><h2>{title}</h2><p>{description}</p>{action}</section>,
 }));
 vi.mock("@/auth/request-context",()=>({
  getCurrentRequestContext:async()=>({user:{id:"mentor"}}),
