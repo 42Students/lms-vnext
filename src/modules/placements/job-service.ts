@@ -572,7 +572,12 @@ export async function createPlacementJob(
           input.minimumAnnualCtcInr ?? null,
         maximumAnnualCtcInr:
           input.maximumAnnualCtcInr ?? null,
-        isDream: input.isDream,
+        // An explicit pay-category override is the source of truth for the
+        // dream flag; otherwise the drive keeps the submitted dream flag.
+        isDream: input.legacyJobCategory ? input.legacyJobCategory !== "REGULAR" : input.isDream,
+        legacyJobCategory: input.legacyJobCategory ?? null,
+        legacyCategoryOverrideReason: input.legacyJobCategory
+          ? input.categoryOverrideReason?.trim() ?? null : null,
         fixedCtcLpa:input.fixedCtcLpa==null?null:input.fixedCtcLpa.toFixed(2),
         variableCtcLpa:input.variableCtcLpa==null?null:input.variableCtcLpa.toFixed(2),
         stipendPerMonthInr:input.stipendPerMonthInr??null,
@@ -754,10 +759,16 @@ export async function updatePlacementJob(
         nextCountsAsPlaced = builtin?.countsAsPlaced ?? configured?.countsAsPlaced ?? true;
       }
     }
+    const {categoryOverrideReason,...columnInput}=input;
     const [updated] = await tx
       .update(placementJobs)
       .set({
-        ...input,
+        ...columnInput,
+        ...(input.legacyJobCategory===undefined?{}:{
+          legacyJobCategory:input.legacyJobCategory,
+          legacyCategoryOverrideReason:input.legacyJobCategory?categoryOverrideReason?.trim()??null:null,
+          ...(input.legacyJobCategory?{isDream:input.legacyJobCategory!=="REGULAR"}:{}),
+        }),
         applicationDeadline:input.applicationDeadline===undefined&&milestoneDeadline!==null?
           milestoneDeadline:input.applicationDeadline,
         jobTypeLabel:nextTypeLabel,

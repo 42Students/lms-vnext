@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DRIVE_PAY_CATEGORIES, DRIVE_PAY_CATEGORY_REASON_MAX, drivePayCategoryOverrideIssue } from "./drive-pay-category-model";
 
 export const placementCompanyIdSchema = z.string().uuid();
 export const placementCompanyRelationshipIdSchema = z.string().uuid();
@@ -346,6 +347,10 @@ const placementJobFieldsSchema = z
     maximumAnnualCtcInr: z.number().int().min(0).max(100_000_000).nullable().optional(),
     /** Persisted dream classification and pay detail on the drive itself. */
     isDream: z.boolean().optional().default(false),
+    /** Manual pay-category override (Regular/Dream/Super dream). Absent means the
+     * tier is worked out from the highest CTC; an override carries a reason. */
+    legacyJobCategory: z.enum(DRIVE_PAY_CATEGORIES).nullable().optional(),
+    categoryOverrideReason: z.string().trim().max(DRIVE_PAY_CATEGORY_REASON_MAX).nullable().optional(),
     fixedCtcLpa: z.number().min(0).max(1000).nullable().optional(),
     variableCtcLpa: z.number().min(0).max(1000).nullable().optional(),
     stipendPerMonthInr: z.number().int().min(0).max(10_000_000).nullable().optional(),
@@ -357,6 +362,8 @@ const placementJobFieldsSchema = z
 
 export const createPlacementJobInputSchema =
   placementJobFieldsSchema.superRefine((value, ctx) => {
+    const categoryIssue=drivePayCategoryOverrideIssue(value);
+    if(categoryIssue)ctx.addIssue({code:"custom",path:[categoryIssue.path],message:categoryIssue.message});
     const assessmentDeadline=value.legacyPostingDetails?.assessmentDeadline;
     if(assessmentDeadline){
       const cutoff=Date.parse(assessmentDeadline);
@@ -412,6 +419,10 @@ export const updatePlacementJobInputSchema =
           code: "custom",
           message: "Provide at least one job field",
         });
+      }
+      if(value.legacyJobCategory!==undefined||value.categoryOverrideReason!==undefined){
+        const categoryIssue=drivePayCategoryOverrideIssue(value);
+        if(categoryIssue)ctx.addIssue({code:"custom",path:[categoryIssue.path],message:categoryIssue.message});
       }
       const assessmentDeadline=value.legacyPostingDetails?.assessmentDeadline;
       if(assessmentDeadline){
