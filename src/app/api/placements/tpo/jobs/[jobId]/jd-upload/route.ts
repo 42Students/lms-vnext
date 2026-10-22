@@ -10,7 +10,7 @@ export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const noStore={"Cache-Control":"private, no-store"} as const;
 type Ctx={params:Promise<{jobId:string}>};
-const discriminator=z.strictObject({action:z.enum(["INITIATE","CONFIRM","REMOVE"])});
+const discriminator=z.object({action:z.enum(["INITIATE","CONFIRM","REMOVE"])});
 export async function POST(request:Request,{params}:Ctx){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},
   {status:403,headers:noStore});

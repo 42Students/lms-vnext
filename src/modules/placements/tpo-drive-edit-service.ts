@@ -1,12 +1,13 @@
 import "server-only";
 import {and,asc,eq,sql,inArray,or} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {placementJobRoleOptions,placementJobs,placementSeasons,placementJobEligibilityPolicies,placementApplications,placementRecruiterDriveRequests,collegeMemberships,users,inAppNotifications,activityEvents,cohorts,programs,departments} from "@/db/schema";
+import {placementJobRoleOptions,placementJobs,placementSeasons,placementJobEligibilityPolicies,placementApplications,placementRecruiterDriveRequests,collegeMemberships,users,inAppNotifications,activityEvents,cohorts,programs,departments,learnerProgramEnrollments,membershipRoles} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {placementJobIdSchema} from "./validation";
 import {auditTpoJobChange,requireTpoJobActor,requireTpoJobCollege} from "./tpo-job-write-base";
 import {evaluateTpoDriveEdit,tpoDriveEditSchema} from "./tpo-drive-edit-model";
+import {evaluatePlacementEligibilityBatch} from "./eligibility-service";
 export async function getTpoDriveEditState(context:RequestContext,rawJobId:unknown){
  const collegeId=await requireTpoJobCollege(context),jobId=placementJobIdSchema.parse(rawJobId);
  const [job]=await getDb().select({
@@ -262,4 +263,72 @@ export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:u
   }
   return {id:updated.id,status:updated.status,updatedAt:updated.updatedAt.toISOString(),notified};
  });
+}
+
+/** Exact saved-policy reach of active, enrolled learners in one college.
+ * Never return learner identities. Oversized cohorts must fail closed instead
+ * of disguising a partial sample as an exact all-college count.
+ */
+export async function getTpoDriveEligibilityReachPreview(
+ context:RequestContext,rawJobId:unknown,
+){
+ const collegeId=await requireTpoJobCollege(context);
+ const jobId=placementJobIdSchema.parse(rawJobId);
+ const [job]=await getDb().select({id:placementJobs.id,
+  updatedAt:placementJobs.updatedAt,
+ }).from(placementJobs).where(and(
+  eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId))).limit(1);
+ if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+ const audience=await getDb().selectDistinct({
+  membershipId:collegeMemberships.id,
+  programName:programs.name,
+ }).from(collegeMemberships)
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .innerJoin(membershipRoles,and(
+   eq(membershipRoles.membershipId,collegeMemberships.id),
+   eq(membershipRoles.role,"LEARNER")))
+  .innerJoin(learnerProgramEnrollments,and(
+   eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),
+   eq(learnerProgramEnrollments.status,"ACTIVE")))
+  .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
+  .innerJoin(departments,and(eq(departments.id,programs.departmentId),
+   eq(departments.collegeId,collegeId)))
+  .where(and(eq(collegeMemberships.collegeId,collegeId),
+   eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))
+  .orderBy(asc(collegeMemberships.id),asc(programs.name))
+  .limit(1001);
+ const memberIds=[...new Set(audience.map(row=>row.membershipId))];
+ if(audience.length>1000)return {
+  kind:"UNAVAILABLE" as const,
+  reason:"More than 1,000 active enrollment records. Narrow the eligibility scope before calculating a complete preview.",
+ };
+ const evaluated=await evaluatePlacementEligibilityBatch(context,jobId,memberIds);
+ const result={eligible:0,eligibleWithMissingEvidence:0,needsData:0,ineligible:0};
+ const branchMap=new Map<string,{eligible:number;total:number}>();
+ const unique=new Map<string,string>();
+ for(const row of audience){
+  // Ambiguous concurrent program enrollments are evaluated by the canonical
+  // eligibility service and counted once; do not double-count a learner.
+  unique.set(row.membershipId,unique.has(row.membershipId)?
+   "Multiple active programs":row.programName);
+ }
+ for(const [id,branch] of unique){
+  const value=evaluated.get(id);
+  if(!value)throw new Error("ELIGIBILITY_PREVIEW_INCOMPLETE");
+  if(value.status==="ELIGIBLE")result.eligible++;
+  else if(value.status==="ELIGIBLE_WITH_MISSING_EVIDENCE")result.eligibleWithMissingEvidence++;
+  else if(value.status==="NEEDS_DATA")result.needsData++;
+  else result.ineligible++;
+  const stats=branchMap.get(branch)??{eligible:0,total:0};
+  stats.total++;
+  if(value.status==="ELIGIBLE")stats.eligible++;
+  branchMap.set(branch,stats);
+ }
+ const branches=[...branchMap.entries()].sort((a,b)=>a[0].localeCompare(b[0]))
+  .map(([name,counts])=>({name,...counts}));
+ return {kind:"READY" as const,asOf:new Date().toISOString(),
+  savedRevision:job.updatedAt.toISOString(),
+  evaluated:memberIds.length,...result,branches,
+  scopeNote:"Saved policy only. Active enrolled learners; grade and evidence checks use the canonical apply evaluator. The preview excludes learners without an active program enrollment.",
+ };
 }
