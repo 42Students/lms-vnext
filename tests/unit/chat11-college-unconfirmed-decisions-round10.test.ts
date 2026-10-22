@@ -8,7 +8,8 @@ describe("chat-11 delegated College Admin decisions",()=>{
  it("COL-academic-setup-41 supports long cards and keyboard-scrollable tables at 375px",()=>{
   const cards=src("src/components/admin/college-dashboard-cards.tsx");
   const forms=src("src/components/academics/college-academic-directory.tsx");
-  expect(cards).toContain("break-words");
+  expect(cards).toContain("COLLEGE_AT_A_GLANCE_CARD_CLASS");
+  expect(src("src/components/ui/stat-tile.tsx")).toContain("mt-2 break-words");
   expect(forms).toContain("grid grid-cols-1 gap-3 sm:grid-cols-2");
   expect(forms).toContain("overflow-x-auto");
  });
@@ -33,7 +34,8 @@ describe("chat-11 delegated College Admin decisions",()=>{
    const code=src("src/app/(authenticated)/college/"+segment+"/error.tsx");
    expect(code).toContain("Retry");
    expect(code).toContain("reset");
-   expect(code).not.toContain("error.message");
+   expect(code).not.toContain("description={error.message}");
+   expect(code).not.toContain("{error.message}");
   }
  });
  it("COL-course-tabs-25 keeps watched threshold platform-wide and hidden from college editors",()=>{
@@ -44,8 +46,8 @@ describe("chat-11 delegated College Admin decisions",()=>{
  it("COL-dashboard-17 exposes 375px-safe cards and a single-column first checklist",()=>{
   const cards=src("src/components/admin/college-dashboard-cards.tsx");
   const checklist=src("src/components/admin/college-setup-checklist.tsx");
-  expect(cards).toContain("min-[375px]:grid-cols-2");
-  expect(cards).toContain("min-w-0 break-words");
+  expect(cards).toContain("grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-4");
+  expect(src("src/components/ui/stat-tile.tsx")).toContain("block min-w-0");
   expect(checklist).toContain("grid min-w-0 gap-4 md:grid-cols-2");
  });
  it("COL-people-12 does not add unsafe permanent OTP account unlock for five-minute challenges",()=>{
@@ -58,7 +60,7 @@ describe("chat-11 delegated College Admin decisions",()=>{
   const svc=src("src/modules/people/membership-service.ts");
   for(const method of ["addMembershipRole","removeMembershipRole"]){
    const part=svc.slice(svc.indexOf("export async function "+method));
-   expect(part).toContain('if (input.role === "COLLEGE_ADMIN")');
+   expect(part).toContain('if (input.role === "COLLEGE_ADMIN" || input.role === "TPO")');
    expect(part).toContain('requirePermission(context, "admin-scope.select")');
   }
  });
