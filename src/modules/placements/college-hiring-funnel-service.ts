@@ -56,7 +56,12 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
   cohorts:cohortLookup.status==="rejected"?
    "Batches could not be loaded. Retry this report.":null,
  };
- const academicFilter=query.departmentId||query.programId||query.cohortId;
+ // Legacy picker uses the most specific selected academic scope.
+ // A stale broader value must not silently exclude a selected cohort.
+ const academicFilter=query.cohortId||query.programId||query.departmentId;
+ const chosenCohortId=query.cohortId;
+ const chosenProgramId=chosenCohortId?undefined:query.programId;
+ const chosenDepartmentId=chosenCohortId||chosenProgramId?undefined:query.departmentId;
  const base=db.select({
   applicationId:placementApplications.id,
   previousStage:placementCollegeApplicationStages.previousStage,
@@ -100,9 +105,9 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
    .innerJoin(departments,eq(departments.id,programs.departmentId))
    .where(and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),
     eq(learnerProgramEnrollments.status,"ACTIVE"),eq(departments.collegeId,collegeId),
-    query.departmentId?eq(departments.id,query.departmentId):undefined,
-    query.programId?eq(programs.id,query.programId):undefined,
-    query.cohortId?eq(learnerProgramEnrollments.cohortId,query.cohortId):undefined,
+    chosenDepartmentId?eq(departments.id,chosenDepartmentId):undefined,
+    chosenProgramId?eq(programs.id,chosenProgramId):undefined,
+    chosenCohortId?eq(learnerProgramEnrollments.cohortId,chosenCohortId):undefined,
    ))):undefined,
  )).as("college_hiring_funnel_base");
  const observedStageCount=(stage:string)=>sql<number>`count(*) filter (
