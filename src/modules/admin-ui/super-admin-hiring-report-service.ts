@@ -121,17 +121,27 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
       )
     )
   )::integer`.mapWith(Number),
+  // The first SHORTLISTED instant is the earliest of the native stage history
+  // and the screening history (migrated applications keep their first decision
+  // there), the same two sources the college funnel reads.
   firstShortlistCount:sql<number>`count((
-    select min(h.moved_at) from ${placementCollegeApplicationStageHistory} h
-    where h.stage_id = ${placementCollegeApplicationStages.id}
-      and h.to_stage = 'SHORTLISTED' and h.moved_at >= ${appliedAt}
+    select min(t.at) from (
+      select h.moved_at as at from ${placementCollegeApplicationStageHistory} h
+       where h.stage_id = ${placementCollegeApplicationStages.id} and h.to_stage = 'SHORTLISTED'
+      union all
+      select sh.created_at as at from placement_application_screening_history sh
+       where sh.application_id = ${placementApplications.id} and sh.to_status = 'SHORTLISTED'
+    ) t where t.at >= ${appliedAt}
   ))::integer`.mapWith(Number),
   firstShortlistHours:sql<number|null>`avg((
-    select extract(epoch from (min(h.moved_at)-${appliedAt}))/3600
-    from ${placementCollegeApplicationStageHistory} h
-    where h.stage_id = ${placementCollegeApplicationStages.id}
-      and h.to_stage = 'SHORTLISTED'
-      and h.moved_at >= ${appliedAt}
+    select extract(epoch from (min(t.at)-${appliedAt}))/3600
+    from (
+      select h.moved_at as at from ${placementCollegeApplicationStageHistory} h
+       where h.stage_id = ${placementCollegeApplicationStages.id} and h.to_stage = 'SHORTLISTED'
+      union all
+      select sh.created_at as at from placement_application_screening_history sh
+       where sh.application_id = ${placementApplications.id} and sh.to_status = 'SHORTLISTED'
+    ) t where t.at >= ${appliedAt}
   ))`.mapWith(Number),
  }).from(placementJobs)
   .innerJoin(placementCompanyRelationships,and(

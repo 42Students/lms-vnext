@@ -78,8 +78,16 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
       <Link href={clearRangeHref} aria-label="Clear applied date range"
         className="inline-flex min-h-11 items-center gap-1 font-semibold text-link underline md:min-h-9">Clear date range <span aria-hidden="true">×</span></Link>
     </div>:null}
-   <details className="min-w-0 border-t border-border pt-2 print:hidden" open={Boolean(q.departmentId||q.programId||q.cohortId||q.from||q.to)||undefined}>
+   <details className="min-w-0 border-t border-border pt-2 print:hidden" open={Boolean(q.departmentId||q.programId||q.cohortId||q.from||q.to||
+      data.filters.errors.departments||data.filters.errors.programs||data.filters.errors.cohorts)||undefined}>
      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Filters</summary>
+     {(["departments","programs","cohorts"] as const).map(key=>data.filters.errors[key]?
+      <p key={key} role="alert" className="mt-2 text-sm text-warning-text">
+       {data.filters.errors[key]}{" "}
+       <Link href={collegeHiringAnalyticsHref({seasonId:selectedSeasonId??undefined,jobId:selectedJobId??undefined,
+         departmentId:q.departmentId,programId:q.programId,cohortId:q.cohortId,from:q.from,to:q.to})}
+        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>
+      </p>:null)}
      <form method="get" className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 min-[992px]:grid-cols-5">
     <input type="hidden" name="seasonId" value={selectedSeasonId??""}/>
     <input type="hidden" name="jobId" value={selectedJobId??""}/>
