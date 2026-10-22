@@ -151,3 +151,9 @@ AssertionError: expected 'import "server-only";\nimport {create…' to contain '
 +  placementCompanies,placementCompanyRelationships,
 ```
 
+
+## Lane-13 recheck (2026-10-23)
+
+- All six listed unit11 tests are already marked fixed on current main and lane branch; no product/test edits needed for those previously closed assertions. No test execution claimed.
+- Deep rows G2-2-015-092 and G2-4-028-012 reviewed first and recorded in `docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md`, including the migration deployment caveat.
+- Lane-13 unit11 completed; taking remaining unticked tests from lane-14 unit11 next.
