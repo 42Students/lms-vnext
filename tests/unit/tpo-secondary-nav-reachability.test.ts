@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 import { TPO_SECTION_LABELS, getShellNavigation } from "@/components/shell/shell-model";
 import { TPO_SETTINGS_NAV_GROUPS } from "@/components/placements/tpo-settings-nav";
 import { TPO_MORE_GROUPS } from "@/modules/placements/tpo-utility-model";
@@ -23,11 +24,13 @@ describe("TPO exact sidebar groups and secondary route reachability", () => {
   }
  });
  it("preserves companies as an Engage tab and keeps the ten legacy Settings sections", () => {
-  expect(TPO_MORE_GROUPS.flatMap(group => [...group.links] as { label: string; href: string }[]).some(item =>
-    item.label === "Companies" && item.href === "/tpo/recruiters?view=companies",
-  )).toBe(true);
-  // chat-9 restored the ten legacy Settings sections, which have no "More" tab.
-  expect(TPO_SETTINGS_NAV_GROUPS.flatMap(group=>[...group.items] as { label: string; href: string }[]).some(item =>
+  expect(TPO_MORE_GROUPS.flatMap(group => [...group.links]).some(item => item.label === "Companies")).toBe(false);
+  expect(readFileSync("src/app/(authenticated)/tpo/recruiters/page.tsx","utf8"))
+    .toContain('requested === "board" || requested === "companies"');
+  // The five primary Settings sections are visible; other scoped controls retain their direct routes.
+  expect(TPO_SETTINGS_NAV_GROUPS.flatMap(group=>[...group.items]).map(item=>item.label))
+    .toEqual(["Placement rules","Job types","After college","Placement team","Recruiters"]);
+  expect(TPO_SETTINGS_NAV_GROUPS.flatMap(group=>[...group.items]).some(item =>
     item.label === "More",
   )).toBe(false);
  });
