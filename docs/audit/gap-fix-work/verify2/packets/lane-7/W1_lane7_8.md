@@ -126,3 +126,30 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/modules/placements/college-drive-attention-service.ts
 - Legacy: `docs/legacy-source/frontend/src/pages/superadmin/sections/DrivesLanding.js:19-26` — Four attention categories include missingOfferLetters, stale, unscheduled, low conversion.
 - Expected fix: Restore fourth category when evidence available or explicit UNKNOWN with source.
+
+### Lane-5 fast verification triage (2026-10-22)
+- **G2-15-026-046 — DEFERRED**: Source exists or was checked, but behavior/data semantics require targeted parity validation; not marked OK.
+- **G2-8-026-064 — DEFERRED**: New feature or migration requires an ownership/data contract review; not marked OK.
+- **G2-8-029-009 — DEFERRED**: Source exists or was checked, but behavior/data semantics require targeted parity validation; not marked OK.
+- **G2-8-029-048 — DEFERRED**: Source exists or was checked, but behavior/data semantics require targeted parity validation; not marked OK.
+- **G2-8-024-015 — DEFERRED**: New feature or migration requires an ownership/data contract review; not marked OK.
+- **G2-8-023-069 — DEFERRED**: New feature or migration requires an ownership/data contract review; not marked OK.
+- **G2-8-022-064 — DEFERRED**: New feature or migration requires an ownership/data contract review; not marked OK.
+- **G2-9-007-036 — DEFERRED**: Source exists or was checked, but behavior/data semantics require targeted parity validation; not marked OK.
+- **G2-9-008-029 — DEFERRED**: Source exists or was checked, but behavior/data semantics require targeted parity validation; not marked OK.
+- **G2-9-008-042 — DEFERRED**: Source exists or was checked, but behavior/data semantics require targeted parity validation; not marked OK.
+- **G2-9-008-048 — DEFERRED**: Source exists or was checked, but behavior/data semantics require targeted parity validation; not marked OK.
+- **G2-9-008-049 — DEFERRED**: Source exists or was checked, but behavior/data semantics require targeted parity validation; not marked OK.
+- **G2-9-008-050 — DEFERRED**: Source exists or was checked, but behavior/data semantics require targeted parity validation; not marked OK.
+- **G2-9-008-058 — DEFERRED**: Source exists or was checked, but behavior/data semantics require targeted parity validation; not marked OK.
+- **G2-9-008-070 — DEFERRED**: Source exists or was checked, but behavior/data semantics require targeted parity validation; not marked OK.
+- **G2-9-008-074 — DEFERRED**: Source exists or was checked, but behavior/data semantics require targeted parity validation; not marked OK.
+- **G2-9-008-075 — DEFERRED**: Source exists or was checked, but behavior/data semantics require targeted parity validation; not marked OK.
+- **G2-9-008-078 — DEFERRED**: Source exists or was checked, but behavior/data semantics require targeted parity validation; not marked OK.
+- **G2-9-008-079 — DEFERRED**: Source exists or was checked, but behavior/data semantics require targeted parity validation; not marked OK.
+- **G2-9-015-015 — DEFERRED**: Source exists or was checked, but behavior/data semantics require targeted parity validation; not marked OK.
+- **G2-9-015-028 — DEFERRED**: Source exists or was checked, but behavior/data semantics require targeted parity validation; not marked OK.
+- **G2-9-015-032 — DEFERRED**: Source exists or was checked, but behavior/data semantics require targeted parity validation; not marked OK.
+- **G2-9-015-067 — DEFERRED**: Source exists or was checked, but behavior/data semantics require targeted parity validation; not marked OK.
+- **G2-9-016-024 — DEFERRED**: Source exists or was checked, but behavior/data semantics require targeted parity validation; not marked OK.
+- **G2-9-016-025 — DEFERRED**: Source exists or was checked, but behavior/data semantics require targeted parity validation; not marked OK.
