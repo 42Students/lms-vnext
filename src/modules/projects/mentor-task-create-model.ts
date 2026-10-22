@@ -3,6 +3,18 @@ import {projectTaskExpandedFieldsSchema} from "./pr-s2-04-task-fields-model";
 export const mentorTaskCreateParamsSchema=z.object({
   projectId:z.string().uuid(),
 }).strict();
+/** Legacy TASK_FIELDS (projectSectionFieldConfigs.js:90-140) -> vNext field map.
+ * key (auto from title)      -> none: vNext tasks are keyed by UUID, never a typed key.
+ * priority Low/Medium/High   -> priority LOW/MEDIUM/HIGH (+CRITICAL), required.
+ * title (required)           -> title, 1-200 chars.
+ * sprintKey (blank=backlog)  -> sprintId + expectedSprintUpdatedAt; null = backlog (status TODO).
+ * estimatePoints 1,2,3,5,8,13-> estimatePoints int 0-1000; the UI offers the project's
+ *                               estimation-unit scale (mentor-estimation-unit-model.ts),
+ *                               which contains the legacy scale.
+ * taskType Story/Bug/Chore/Spike -> taskType STORY/BUG/CHORE/SPIKE, optional.
+ * dueLabel (free text)       -> dueDate ISO date (a real date replaces the label).
+ * description / acceptanceCriteria / approach -> same names, each max 4000 chars.
+ * vNext-only: status (TODO default), assigneeMembershipId, blockerReason (required when BLOCKED). */
 export const mentorTaskCreateSchema=z.object({
   sprintId:z.string().uuid().nullable(),
   title:z.string().trim().min(1).max(200),

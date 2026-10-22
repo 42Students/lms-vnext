@@ -14,6 +14,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { collegePromotionQuerySchema, formatPromotionAcademicYear } from "@/modules/academics/college-batch-promotion-model";
 import { BATCH_PROMOTION_COPY, promotionImpactMessage } from "@/modules/academics/college-batch-promotion-copy";
 import { getPromotionFacultyReadiness } from "@/modules/academics/college-promotion-faculty-readiness";
+import { getPromotionTeachingForecast } from "@/modules/academics/college-promotion-teaching-forecast";
 import {
   listCollegePromotionOptions,
   previewCollegeBatchPromotion,
@@ -85,6 +86,9 @@ export default async function CollegeBatchPromotionPage({
   const previewError=previewResult.status==="rejected";
   const facultySetup=preview?.plan.targetTermNumber&&parsed.data.cohortId
     ?await getPromotionFacultyReadiness(context,preview.batch.programId,
+      parsed.data.cohortId,preview.plan.targetTermNumber).catch(()=>null):null;
+  const teachingForecast=preview?.plan.targetTermNumber&&parsed.data.cohortId
+    ?await getPromotionTeachingForecast(context,preview.batch.programId,
       parsed.data.cohortId,preview.plan.targetTermNumber).catch(()=>null):null;
   const inactiveCount=options.cohorts.filter(row=>row.status!=="ACTIVE").length;
   const visibleCohorts=options.cohorts.filter(row=>{
@@ -277,6 +281,7 @@ export default async function CollegeBatchPromotionPage({
                 expectedVersion={preview.batch.version}
                 yearStart={parsed.data.yearStart}
                 targetTerm={preview.plan.targetTermNumber!}
+                deactivatedFacultyAssignments={teachingForecast?.ending}
                 learnerCount={preview.checkedLearners}
                 academicYearStart={preview.plan.academicYearStart!} />
             ) : null}

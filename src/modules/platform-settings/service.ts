@@ -239,10 +239,11 @@ export async function getSuperAdminPlatformSettings(
         ],
         note:
           "The threshold applies to VIDEO and YOUTUBE progress. " +
-          "Legacy watched and in-progress thresholds are stored overrides with " +
-          "reader verification required. Classroom polling (3000–600000ms) and " +
-          "video progress saves (5000–600000ms) remain STORED_ONLY until a " +
-          "runtime consumer is verified. Saving them does not change live timers.",
+          "Legacy watched and in-progress thresholds, classroom polling " +
+          "(3000–600000ms) and video progress saves (5000–600000ms) are read " +
+          "by the learner runtime through readLearnerPlaybackSettings; open " +
+          "pages pick up a changed value on reload. Other stored overrides " +
+          "without a verified reader are labelled as such.",
       },
       {
         id: "attendance",
@@ -487,16 +488,16 @@ export async function getSuperAdminPlatformSettings(
  */
 export const PLATFORM_OVERRIDE_RUNTIME_CONSUMERS = {
   "course.watchedThresholdPercent": {
-    state:"READER_VERIFICATION_REQUIRED",reader:"Learner playback/progress threshold",
+    state:"RUNTIME_CONSUMED",reader:"Learner progress service (progress-service.ts) via readLearnerPlaybackSettings",
   },
   "course.minInProgressPercent": {
-    state:"READER_VERIFICATION_REQUIRED",reader:"Learner course progress categorization",
+    state:"RUNTIME_CONSUMED",reader:"Learner progress service (progress-service.ts) via readLearnerPlaybackSettings",
   },
   "ui.chatPollIntervalMs": {
-    state:"STORED_ONLY",reader:"Classroom chat client has no proven override read",
+    state:"RUNTIME_CONSUMED",reader:"Learner classroom chat poller (learn/courses page) via readLearnerPlaybackSettings",
   },
   "ui.progressSaveIntervalMs": {
-    state:"STORED_ONLY",reader:"Learner video progress save client has no proven override read",
+    state:"RUNTIME_CONSUMED",reader:"Learner video players (saveIntervalMs) via readLearnerPlaybackSettings",
   },
   "schedule.pastBookingGraceMinutes": {
     state:"STORED_ONLY",reader:"Scheduling policy uses separate source and membership guards",

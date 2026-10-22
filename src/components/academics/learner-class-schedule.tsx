@@ -409,12 +409,9 @@ export function LearnerClassSchedule({
       ), sectionId),sessionSearch),sessionKind),upcomingOnly,filterNowMs),
     [events, selectedDeliveryIds, sectionId,sessionSearch,sessionKind,upcomingOnly,filterNowMs],
   );
-  const filteredMetrics = useMemo(
-    () => filterLearnerScheduleUpcoming(filterLearnerScheduleByKind(filterLearnerScheduleBySearch(filterLearnerScheduleSections(filterScheduleEvents(
-      metricEvents ?? events, selectedDeliveryIds,
-    ), sectionId), sessionSearch), sessionKind), upcomingOnly, filterNowMs),
-    [metricEvents, events, selectedDeliveryIds, sectionId, sessionSearch, sessionKind, upcomingOnly, filterNowMs],
-  );
+  // Legacy Today/Next metrics come from their own today..+180 day request and
+  // ignore the grid's course, section, search and kind filters and its anchor.
+  const filteredMetrics = metricEvents ?? events;
   const days = useMemo(
     () => calendarDays(anchor, view),
     [anchor, view],

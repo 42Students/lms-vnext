@@ -533,6 +533,14 @@ export async function updateLessonVideo(
       .where(and(eq(lessonVideoAssets.id, row.id), isNull(lessonVideoAssets.deletedAt)))
       .returning();
     if (!next) throw new StorageFileError("STORAGE_NOT_FOUND");
+    // Legacy VideoDrawer updated the lesson content itself: keep the linked
+    // lesson content title in step with the managed video title.
+    const linkedContentId = next.lessonContentId;
+    if (input.title !== undefined && linkedContentId && input.title !== row.title) {
+      await tx.update(lessonContents).set({
+        title: input.title, version: sql`${lessonContents.version} + 1`, updatedAt: new Date(),
+      }).where(and(eq(lessonContents.id, linkedContentId), ne(lessonContents.status, "ARCHIVED")));
+    }
     for (const eventType of events) {
       await recordStorageFileEvent(tx, context, {
         collegeId: row.collegeId,
@@ -562,6 +570,19 @@ export async function removeLessonVideo(context: RequestContext, videoIdInput: s
       .where(and(eq(lessonVideoAssets.id, row.id), isNull(lessonVideoAssets.deletedAt)))
       .returning();
     if (!next) throw new StorageFileError("STORAGE_NOT_FOUND");
+    // Legacy teacher delete removed the lesson content itself. Retire the linked
+    // lesson content in the same transaction (unless another live video still
+    // uses it) so learners are never left with a published item whose video is gone.
+    if (row.lessonContentId) {
+      const [otherVideo] = await tx.select({ id: lessonVideoAssets.id }).from(lessonVideoAssets)
+        .where(and(eq(lessonVideoAssets.lessonContentId, row.lessonContentId),
+          ne(lessonVideoAssets.id, row.id), isNull(lessonVideoAssets.deletedAt))).limit(1);
+      if (!otherVideo) {
+        await tx.update(lessonContents).set({
+          status: "ARCHIVED", version: sql`${lessonContents.version} + 1`, updatedAt: new Date(),
+        }).where(and(eq(lessonContents.id, row.lessonContentId), ne(lessonContents.status, "ARCHIVED")));
+      }
+    }
     await recordStorageFileEvent(tx, context, {
       collegeId: row.collegeId,
       subjectKind: "LESSON_VIDEO",
