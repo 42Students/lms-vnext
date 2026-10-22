@@ -12,7 +12,7 @@ export function ConfirmDialog({
   confirmLabel?: string; cancelLabel?: string; confirmVariant?: "primary" | "danger";
   pending?: boolean; confirmDisabled?: boolean; onConfirm: () => void; children?: ReactNode;
 }) {
-  return <Dialog open={open} onOpenChange={onOpenChange} title={title} description={description} role="alertdialog" dismissible={!pending}
+  return <Dialog open={open} onOpenChange={onOpenChange} title={title} {...(description===undefined?{}:{description})} role="alertdialog" dismissible={!pending}
     className="lms-legacy-confirm-dialog" bodyClassName="p-[var(--lms-space-4)] md:p-[var(--lms-canvas-padding)]"
     footer={<div className="flex w-full min-w-0 flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
       <Button type="button" variant="secondary" autoFocus disabled={pending} onClick={() => onOpenChange(false)}
