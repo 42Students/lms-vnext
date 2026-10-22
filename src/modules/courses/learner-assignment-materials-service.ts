@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,eq,sql} from "drizzle-orm";
+import {and,asc,eq,isNull,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -7,6 +7,8 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {courseAssignmentMaterials,courseAssignments,courseAssignmentResources} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireDeliveryContentMutation,requireLearningReadAccess} from "./learning-access";
+import {loadCourseSectionDeliveryScope} from "./scope";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {loadCourseAssignmentScope} from "./assignment-scope";
 import {CoursesServiceError} from "./errors";
 import {createPrivateReadGrant} from "@/modules/storage/private-object-storage";
@@ -56,9 +58,20 @@ export async function commandFacultyAssignmentMaterialLink(context:RequestContex
  if(role!=="FACULTY"&&role!=="ADMIN")throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
  if(!(await assignmentMaterialTableReady()))throw new CoursesServiceError("ASSIGNMENT_FILE_NOT_READY");
  const assignment=await loadCourseAssignmentScope(assignmentId);
- if(assignment.deliveryId!==deliveryId)throw new CoursesServiceError("ASSIGNMENT_DELIVERY_MISMATCH");
+ // A course-wide (SHARED) assignment belongs to every delivery in its
+ // offering, but only a persisted college administrator may change its
+ // global materials. A faculty grant in one Section is not a global grant.
+ const delivery=await loadCourseSectionDeliveryScope(deliveryId);
+ if(delivery.offeringId!==assignment.offeringId||
+    assignment.deliveryId!==null&&assignment.deliveryId!==deliveryId)
+  throw new CoursesServiceError("ASSIGNMENT_DELIVERY_MISMATCH");
+ if(assignment.deliveryId===null&&role!=="ADMIN")
+  throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
  return getDb().transaction(async tx=>{
-  await lockPublishedOrDraftAssignment(tx,assignmentId,deliveryId);
+  if(role==="ADMIN")await assertPersistedPlatformPermission(tx,context,"courses.manage",{
+   collegeId:delivery.collegeId,organizationId:delivery.organizationId,
+  });
+  await lockPublishedOrDraftAssignment(tx,assignmentId,deliveryId,assignment.deliveryId===null);
   const rows=await tx.select().from(courseAssignmentMaterials)
    .where(eq(courseAssignmentMaterials.assignmentId,assignmentId))
    .orderBy(asc(courseAssignmentMaterials.sequence));
@@ -95,9 +108,10 @@ export async function commandFacultyAssignmentMaterialLink(context:RequestContex
   return {id:created.id,removed:false};
  });
 }
-async function lockPublishedOrDraftAssignment(tx:Tx,assignmentId:string,deliveryId:string){
+async function lockPublishedOrDraftAssignment(tx:Tx,assignmentId:string,deliveryId:string,shared:boolean){
  const [row]=await tx.select({status:courseAssignments.status}).from(courseAssignments)
-  .where(and(eq(courseAssignments.id,assignmentId),eq(courseAssignments.deliveryId,deliveryId)))
+  .where(and(eq(courseAssignments.id,assignmentId),
+    shared?isNull(courseAssignments.deliveryId):eq(courseAssignments.deliveryId,deliveryId)))
   .for("update").limit(1);
  if(!row||row.status==="ARCHIVED")throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
 }
