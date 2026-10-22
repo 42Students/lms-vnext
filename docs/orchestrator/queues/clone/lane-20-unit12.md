@@ -55,9 +55,3 @@ ZodError: [
 Record each result under ## Results in the deep packet named next to the row: OK (vNext file:line + docs/legacy-source file) or FIXED. No DEFERRED.
 
 - [x] G2-4-018-067  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md; record in: docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md)
-
-## Chat-19 overflow repairs (static review; CI not run)
-
-- G2-4-018-067: verified import/concurrency distinction recorded in DEEP_agent2_4.md (a52c146).
-- COL-XA-11: moved audit assertions to the actual extracted ElectiveEligibleSelection component, preserving mobile action/primary/secondary, accessibility and table requirements, while tolerating whitespace (0d8380b, 567dec6).
-- DB04: old learner profile permits 10–15 plain numeric digits; updated regression to assert digit-only acceptance and to reject separators and alphabetic impostors (dfeb4df).
