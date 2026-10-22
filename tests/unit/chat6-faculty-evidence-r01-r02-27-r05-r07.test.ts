@@ -48,8 +48,8 @@ describe("chat-6 faculty audit evidence verified from current source",()=>{
   it("FAC-assessments-R07 reveals exact learner-score rows when a quiz distribution bucket expands",()=>{
     const page=src("src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx");
     expect(page).toContain("Score distribution");
-    expect(page).toContain("<details key={bucket.label}");
-    expect(page).toContain("<summary");
+    expect(page).toContain("<Disclosure key={bucket.label}");
+    expect(page).toContain('className="border-b border-[var(--lms-canvas-border)] p-2 text-sm [&>summary]:min-h-11');
     expect(page).toContain("latestAttempts.filter(attempt=>");
     expect(page).toContain("percent>=bucket.min&&percent<=bucket.max");
     expect(page).toContain("facultyReportLearnerName(attempt.learnerDisplayName)");

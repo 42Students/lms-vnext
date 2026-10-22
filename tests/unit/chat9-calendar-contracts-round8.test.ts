@@ -5,7 +5,7 @@ import {readFileSync} from "node:fs";import {join} from "node:path";
 const s=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
 describe("chat-9 TPO calendar source-verified contracts",()=>{
  it("TPO-calendar-reports-11 distinguishes talks from rounds and supports additive multi-kind selection",()=>{
-  expect(TPO_CALENDAR_CHIP_CHOICES.map(x=>x.label)).toContain("Talks");
+  expect(TPO_CALENDAR_CHIP_CHOICES.map(x=>x.label)).toContain("Talk");
   expect(parseTpoCalendarChips("ROUND,TALK,ROUND,BOGUS")).toEqual(["ROUND","TALK"]);
   expect(toggleTpoCalendarChip(["ROUND"],"TALK")).toEqual(["ROUND","TALK"]);
   expect(toggleTpoCalendarChip(["ROUND","TALK"],"ROUND")).toEqual(["TALK"]);
@@ -32,7 +32,8 @@ describe("chat-9 TPO calendar source-verified contracts",()=>{
   const c=s("src/components/placements/tpo-week-hour-calendar.tsx");
   expect(c).toContain('aria-label={"Move follow-up: "+event.title}');
   expect(c).toContain("onClick={()=>setMove(");
-  expect(c).toContain('aria-label="Move recruiter follow-up"');
-  expect(c).toContain('event.key==="Escape"');
+  expect(c).toContain('title="Move follow-up"');
+  expect(c).toContain("<Dialog open={Boolean(move)}");
+  expect(c).toContain("onOpenChange={next=>{if(!next)setMove(null);}}");
  });
 });
