@@ -16,10 +16,10 @@ export function currentPendingMentorSubmissions<T extends {
       // Review history can fan out one submission into several joined rows.
       // The last review wins regardless of SQL result order; an old review
       // receipt must never resurrect a notification for already reviewed work.
-      const latestReview=row.reviewedAt&&(!current.reviewedAt||
-        row.reviewedAt.getTime()>current.reviewedAt.getTime())
-        ?row.reviewedAt:current.reviewedAt;
-      latest.set(row.projectId,{...current,reviewedAt:latestReview});
+      if(row.reviewedAt&&(!current.reviewedAt||
+        row.reviewedAt.getTime()>current.reviewedAt.getTime())){
+        latest.set(row.projectId,row);
+      }
     }
   }
   for(const [projectId,row] of latest){
