@@ -35,7 +35,7 @@ describe("LEARNER-ASSESSMENTS-CLASS-01 truthful class and scoped assessments",()
   expect(result.classScope).toBe("PRESENT");
   expect(result.assignments).toEqual([]);
   expect(result.quizzes).toEqual([]);
-  expect(state.rows).toHaveBeenCalledWith([],memberId,expect.any(Number));
+  expect(state.rows).toHaveBeenCalledWith([],memberId,expect.any(Number),undefined);
  });
  it("distinguishes unavailable class lookup from an actual no-class result",async()=>{
   state.classReadFails=true;
@@ -60,7 +60,7 @@ describe("LEARNER-ASSESSMENTS-CLASS-01 truthful class and scoped assessments",()
   expect(result.selectedCourseId).toBe(courseId);
   expect(result.assignments.map(x=>x.title)).toEqual(["Z","A","B"]);
   expect(result.quizzes.map(x=>x.title)).toEqual(["Due","No deadline"]);
-  expect(state.rows).toHaveBeenCalledWith([item],memberId,expect.any(Number));
+  expect(state.rows).toHaveBeenCalledWith([item],memberId,expect.any(Number),undefined);
  });
  it("LEARNER-ASSESSMENTS-FILTER-01 refuses forged or malformed course filters instead of broadening to all courses",async()=>{
   for(const invalid of [
@@ -74,7 +74,7 @@ describe("LEARNER-ASSESSMENTS-CLASS-01 truthful class and scoped assessments",()
   }
   const all=await getLearnerAssessmentOverview(context,{courseId:""});
   expect(all.selectedCourseId).toBeNull();
-  expect(state.rows).toHaveBeenCalledWith([item],memberId,expect.any(Number));
+  expect(state.rows).toHaveBeenCalledWith([item],memberId,expect.any(Number),undefined);
  });
  it("enforces ACTIVE Section status with exact cohort and academic period for the class-present probe",()=>{
   const src=readFileSync("src/modules/courses/learner-assessment-service.ts","utf8");

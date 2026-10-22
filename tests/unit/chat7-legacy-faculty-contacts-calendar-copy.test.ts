@@ -7,13 +7,14 @@ describe("Faculty contacts tabs, timetable and back-link wording",()=>{
   for(const label of ["All Contacts","Teachers","Students"]){
    expect(page).toContain('label: "'+label+'"');
   }
-  expect(page).toContain("title={selected.label}");
+  expect(page).toContain('<PageHeader title="Contacts" />');
+  expect(page).toContain("in {selected.label}");
   expect(page).not.toContain('eyebrow="Faculty"');
   expect(page).not.toContain("Public directory of active college names, roles");
  });
  it("uses Class Schedule and no invented calendar subtitle",()=>{
   const calendar=file("calendar/page.tsx");
-  expect(calendar).toContain('<PageHeader title="Class Schedule" />');
+  expect(calendar).toContain('<PageHeader title="Class Schedule" actions={<Link href="/teacher/live-classes"');
   expect(calendar).not.toContain('eyebrow="Faculty"');
  });
  it("retains the exact legacy Back to courses button text",()=>{

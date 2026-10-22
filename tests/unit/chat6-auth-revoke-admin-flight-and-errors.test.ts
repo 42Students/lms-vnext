@@ -18,7 +18,9 @@ describe("AUTH-sessions-07 administrative session-revocation failure resilience"
     expect(source).toContain("pending={busy}");
     expect(source).toContain("setConfirmOpen(false)");
     expect(source).toContain("setErrorMessage(error instanceof Error?error.message");
-    expect(source).toContain('description={"All active sessions for this administrator, including other colleges, will be revoked immediately."+(errorMessage?" "+errorMessage:"")}');
+    expect(source).toContain('description="Ends every active session for this administrator, including other colleges.');
+    expect(source).toContain('{errorMessage}</p>');
+    expect(source).toContain('role="alert"');
     expect(source).toContain("router.refresh()");
     expect(source).not.toContain("const response=await fetch(");
     expect(source).not.toContain("setBusy(true)");

@@ -123,7 +123,7 @@ export async function listOrganizations(
  // instead of trusting the stale role captured at request startup.
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"organization.read",{
-   collegeId:context.adminScope?.collegeId??undefined,
+   collegeId:context.adminScope?.collegeId??context.membership?.collegeId??undefined,
    organizationId:context.adminScope?.organizationId??
     context.membership?.organizationId??undefined,
   });

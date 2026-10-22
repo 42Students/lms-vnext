@@ -8,7 +8,7 @@ describe("chat9 public page, signature and audit evidence",()=>{
   expect(publicPlacementContentInput.safeParse({about:"Campus",metricKeys:["PLACED","OFFERS"],expectedUpdatedAt:null}).success).toBe(true);
   expect(publicPlacementContentInput.safeParse({about:"a".repeat(4001),metricKeys:["PLACED"],expectedUpdatedAt:null}).success).toBe(false);
   expect(publicPlacementContentInput.safeParse({about:"",metricKeys:["PLACED","PLACED"],expectedUpdatedAt:null}).success).toBe(false);
-  expect(formatPublicPlacementMetric("PLACED",{population:null,placed:null,offers:null,employers:null,highestCtcInr:null,medianCtcInr:null})).toBe("(not enough data yet)");
+  expect(formatPublicPlacementMetric("PLACED",{population:null,placed:null,offers:null,employers:null,highestCtcInr:null,medianCtcInr:null})).toBeNull();
   const page=read("src/app/(authenticated)/tpo/settings/public-page/page.tsx");
   expect(page).toContain("readOptionalPublicPlacementData(");
   expect(page).toContain("Unpublished, stale or suppressed counts are not filled from private dashboards.");
@@ -29,7 +29,7 @@ describe("chat9 public page, signature and audit evidence",()=>{
  it("TPO-settings-audit-92 scopes audit quick looks to the current TPO member and retains explicit category and date filters",()=>{
   const page=read("src/app/(authenticated)/tpo/audit/page.tsx");
   expect(page).toContain('aria-label="Quick looks"');
-  expect(page).toContain('aria-label="Filter audit by category"');
+  expect(page).toContain('<Tabs ariaLabel="Filter audit by category"');
   expect(page).toContain("Apply filters");
   expect(page).toContain("getTpoAuditLog");
  });
@@ -38,13 +38,16 @@ describe("chat9 public page, signature and audit evidence",()=>{
   expect(route).toContain("getCurrentRequestContext()");
   expect(route).toContain("tpoAuditQuerySchema.parse");
   expect(route).toContain("getTpoAuditLog(context,");
-  expect(route).toContain("page<=20");
-  expect(route).toContain('filename="audit-log.csv"');
+  expect(route).toContain("page<=50");
+  expect(route).toContain('"X-Export-Row-Limit":"5000"');
+  expect(route).toContain('gridExportFilename("audit-log", format)');
   expect(route).toContain('"X-Export-Truncated"');
  });
  it("TPO-settings-audit-97 escapes formula-leading clipboard cells and exposes explicit copy selection",()=>{
   const grid=read("src/components/tpo/tpo-audit-grid.tsx");
-  expect(grid).toContain('return /^[\\s\\uFEFF]*[=+\\-@]/u.test(oneLine)?"\'"+oneLine:oneLine;');
+  const serializer=read("src/components/tpo/grid/grid-export.ts");
+  expect(grid).toContain("safeGridClipboardCell");
+  expect(serializer).toContain("return /^[\\s\\u0000-\\u001f\\u007f\\uFEFF]*[=+\\-@]/u.test(oneLine)");
   expect(grid).toContain("Copy rows");
   expect(grid).toContain("setOldestFirst");
   expect(grid).toContain("Select all visible rows");
