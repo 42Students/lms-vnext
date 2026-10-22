@@ -10,6 +10,11 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { fileStatusDescriptor, formatFileSize } from "@/modules/storage/ui-models";
 import { parseFileDownloadGrant, parseSubmissionFiles, storageApiError, type SubmissionFile } from "@/modules/courses/learner-storage-ui-model";
 
+/** Obtain an expiration reference outside React render, on user initiation only. */
+function parseCurrentDownloadGrant(payload:unknown){
+  return parseFileDownloadGrant(payload,Date.now());
+}
+
 /** Teaching scope is enforced by the server, not by the learner-provided submission ID.
  * Legacy submissionAssets mixed files, URLs and written parts. vNext keeps
  * each verified file attachment separate, while the review card renders the
@@ -63,7 +68,7 @@ export function FacultySubmissionFileReview({ submissionId }: { submissionId: st
       );
       if (!response.ok) throw new Error(await storageApiError(response));
       // Event-handler only (async click); the purity rule misreads this closure as render.
-      const grant = parseFileDownloadGrant(await response.json(), Date.now());
+      const grant = parseCurrentDownloadGrant(await response.json());
       if (grant.file.id !== file.id || grant.file.submissionId !== submissionId)
         throw new Error("The file permission does not match this submission.");
       if (controller.signal.aborted) return;
