@@ -469,3 +469,22 @@ export function legacyEventSmsTemplateKey(event: LegacyMailEvent): string | null
   if (!LEGACY_NOTIFICATION_CHANNELS[event].includes("SMS")) return null;
   return "job.update";
 }
+
+
+/** Legacy TpoMailService was not a browser-side mail API. Trigger mapping
+ * records which verified sender owns each workflow. The caller must invoke
+ * that workflow's tenant-scoped producer (including suppression, replay and
+ * template authorization); never send directly based on a client trigger. */
+export const LEGACY_TPO_EMAIL_WORKFLOW_FACADE={
+ RECRUITER_INVITATION:"recruiter-invitation",
+ DRIVE_ANNOUNCEMENT:"tpo-drive-announcements",
+ JOB_INTERVIEW_SCHEDULED:"placement-round-notifications",
+ JOB_OFFER_EXTENDED:"placement-offer-release",
+ INTERVIEW_REMINDER:"placement-round-notifications",
+ RECRUITER_MESSAGE:"recruiter-message-email-dispatch",
+ CAMPAIGN:"tpo-email-campaign",
+} as const;
+export type LegacyTpoEmailTrigger=keyof typeof LEGACY_TPO_EMAIL_WORKFLOW_FACADE;
+export function legacyTpoEmailWorkflowRoute(trigger:LegacyTpoEmailTrigger){
+ return LEGACY_TPO_EMAIL_WORKFLOW_FACADE[trigger];
+}
