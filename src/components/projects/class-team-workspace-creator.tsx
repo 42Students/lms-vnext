@@ -228,7 +228,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
   async function fetchPreflight(signal?:AbortSignal):Promise<PreflightResult>{
     const response=await fetch("/api/projects/cohort-preflight?collegeId="+encodeURIComponent(collegeId)+
       "&classId="+encodeURIComponent(classId)+"&templateId="+encodeURIComponent(templateId),
-      {signal,cache:"no-store"});
+      {...(signal === undefined ? {} : {signal}),cache:"no-store"});
     if(!response.ok)throw Error(await projectApiError(response));
     const invalid="The server did not return a valid cohort preflight. Nothing was created.";
      const payload:unknown=await response.json().catch(()=>{throw new Error(invalid);});
@@ -372,7 +372,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
         showToast({tone:"info",title:"Partial cohort creation",description:message});
       }
       if(mode!=="INDIVIDUAL"){
-        if(result.created.length===1)router.push(basePath+"/"+encodeURIComponent(result.created[0].projectId)+"/summary");
+        if(result.created.length===1 && result.created[0])router.push(basePath+"/"+encodeURIComponent(result.created[0].projectId)+"/summary");
         else router.push(basePath);
       }
       router.refresh();
