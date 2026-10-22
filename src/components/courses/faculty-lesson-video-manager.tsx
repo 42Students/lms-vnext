@@ -158,9 +158,15 @@ export function FacultyLessonVideoManager({
         signal,onProgress:setProgress,
       });
       setFile(null);setTitle("");setDuration("");setUploadDrawerOpen(false);
-      setInfo(result.processingStatus==="READY"?"Video upload completed.":"Video uploaded. Processing is not complete yet.");
+      const scanReady=result.processingStatus==="READY";
+      const notice=scanReady?chosen.name+" uploaded successfully!":
+        chosen.name+" uploaded. Security verification is still pending.";
+      setInfo(notice);
+      showToast({tone:scanReady?"success":"info",title:notice,
+        description:scanReady?"Video is ready for lesson linking.":
+          "Processing and scan checks must finish before learners can watch it."});
       router.refresh();
-    },chosen.name);
+    },chosen.name,"Upload failed");
   }
   function thumbnail(video:ManagedVideo,selected:File|null){
     if(!selected)return;

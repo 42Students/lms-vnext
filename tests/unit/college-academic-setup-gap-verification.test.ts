@@ -52,7 +52,9 @@ describe("College Academic Setup source acceptance",()=>{
  });
  it("COL-academic-setup-10 verified academic workflow",()=>{
   const code=source("src/app/(authenticated)/college/semester-courses/page.tsx");
-  expect(code).toContain("CollegeTermMappingManager");
+  expect(code).toContain("CollegeTermMappingRetained");
+  expect(source("src/components/academics/college-term-mapping-retained.tsx")).toContain("<CollegeTermMappingManager data={mapped} readOnly={!data}");
+  expect(source("src/components/academics/college-term-mapping-retained.tsx")).toContain("disabled={!data}");
   expect(code).toContain("Semester–Course Mapping");
  });
  it("COL-academic-setup-13 verified academic workflow",()=>{

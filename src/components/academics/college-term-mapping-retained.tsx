@@ -35,7 +35,7 @@ export function CollegeTermMappingRetained({ data }: { data: MappingRead | null 
         onClick={() => router.refresh()}>Retry curriculum</Button>
     </Alert> : null}
     <fieldset disabled={!data} className="min-w-0 border-0 p-0">
-      <CollegeTermMappingManager data={mapped} />
+      <CollegeTermMappingManager data={mapped} readOnly={!data} />
     </fieldset>
   </div>;
 }
