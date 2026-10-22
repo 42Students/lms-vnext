@@ -130,23 +130,30 @@ export const updateLectureHallSchema = z
  */
 export async function listSuperAdminOrganizationLectureHalls(
  context:RequestContext,
- raw:{organizationId:string;q?:string;limit?:number;offset?:number},
+ raw:{organizationId?:string;q?:string;limit?:number;offset?:number},
 ){
  const query=z.object({
-  organizationId:z.string().uuid(),
+  organizationId:z.string().uuid().optional(),
   q:z.string().trim().max(100).optional(),
   limit:z.number().int().min(1).max(100).default(20),
   offset:z.number().int().min(0).default(0),
  }).parse(raw);
+ // Legacy GET /lecture-halls/fetch: a college-scoped Super Admin sees that
+ // college, an organization-scoped one sees the organization and an unscoped
+ // (global) one sees every hall. The last two are served here, always
+ // read-only, bounded and gated by academics.read.
  if(!isSuperAdmin(context) || context.adminScope?.collegeId ||
-   context.adminScope?.organizationId!==query.organizationId)
+   (context.adminScope?.organizationId??undefined)!==query.organizationId)
   throw new AuthorizationError("academics.read");
- requirePermission(context,"academics.read",{organizationId:query.organizationId});
- const condition=and(eq(colleges.organizationId,query.organizationId),
+ requirePermission(context,"academics.read",
+  query.organizationId?{organizationId:query.organizationId}:{});
+ const escaped=query.q?.replace(/[\\%_]/g,"\\$&");
+ const condition=and(
+  query.organizationId?eq(colleges.organizationId,query.organizationId):undefined,
   eq(colleges.status,"ACTIVE"),
-  query.q?or(
-   ilike(lectureHalls.name,"%"+query.q.replace(/[\\%_]/g,"\\// Missing college scope is a validation error, never a signal to query other")+"%"),
-   ilike(lectureHalls.description,"%"+query.q.replace(/[\\%_]/g,"\\// Missing college scope is a validation error, never a signal to query other")+"%"),
+  escaped?or(
+   ilike(lectureHalls.name,"%"+escaped+"%"),
+   ilike(lectureHalls.description,"%"+escaped+"%"),
   ):undefined);
  const [items,[total]]=await Promise.all([
   getDb().select({id:lectureHalls.id,collegeId:colleges.id,
@@ -248,12 +255,15 @@ function isUniqueViolation(error: unknown) {
 export async function listLectureHalls(
   context: RequestContext,
   rawQuery: unknown,
+  permission: "academics.manage" | "academics.read" = "academics.manage",
 ) {
   const query = listLectureHallsSchema.parse(rawQuery);
   const college = await loadCollege(query.collegeId);
-  // The administrative room directory is privileged; enrolled learners may
-  // see their own scheduled room via class events, not enumerate all rooms.
-  authorize(context, college, "academics.manage");
+  // The administrative room directory is privileged (manage). Only the legacy
+  // fetch-style adapters below (room picker and 0-based page list) request
+  // read access, which a member of the college holds for that college only;
+  // every write path still calls authorize() with academics.manage.
+  authorize(context, college, permission);
 
   const scheduledFuture = sql<boolean>`exists (select 1 from ${sectionScheduleEvents} future where future.lecture_hall_id = ${lectureHalls.id} and future.status = 'SCHEDULED' and future.ends_at > now())`;
   // Match name and optional description after the college/department predicate.
@@ -523,10 +533,10 @@ export async function searchLectureHallsForPicker(context: RequestContext, raw: 
   };
   const primary = await listLectureHalls(context, {
     ...base, ...(query.query ? { q: query.query } : {}),
-  });
+  }, "academics.read");
   const primaryMatches = primary.items;
   const candidateRows = query.query.length >= 3 && primaryMatches.length < 5
-    ? (await listLectureHalls(context, base)).items
+    ? (await listLectureHalls(context, base, "academics.read")).items
     : primaryMatches;
   const unique = new Map(primaryMatches.map(row => [row.id, row]));
   for (const row of candidateRows) unique.set(row.id, row);
@@ -583,7 +593,7 @@ export async function listLectureHallsLegacyPage(context: RequestContext, raw: u
     q: query.query,
     limit: query.size,
     offset: query.page * query.size,
-  });
+  }, "academics.read");
   const totalElements = result.pagination.total;
   const totalPages = Math.ceil(totalElements / query.size);
   return {
