@@ -16,7 +16,7 @@ export default async function ExternalJobPage({params}:{
   <p className="text-sm">Work mode: {job.workMode.replaceAll("_"," ")}</p>
   <p className="text-sm">This external application is managed by the employer.
    The LMS cannot confirm whether your employer application was submitted.</p>
-  <a href={job.applyHref} target="_blank" rel="noopener noreferrer"
+  <a href={job.applyHref} rel="noopener noreferrer"
    className="inline-flex min-h-11 items-center rounded-md bg-[var(--lms-button-primary)] px-5 font-semibold text-white">
    Continue to employer website ↗
   </a>
