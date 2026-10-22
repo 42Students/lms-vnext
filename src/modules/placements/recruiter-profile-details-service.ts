@@ -7,7 +7,7 @@ import {requirePermission,AuthorizationError} from "@/modules/permissions/policy
 import {PlacementsServiceError} from "./errors";
 import {joinHrRecruiterName,sameHrNameVersion} from "./hr-recruiter-name-fields-model";
 import {sameRecruiterProfileVersion,normalizeRecruiterDesignation} from "./recruiter-designation-model";
-import {recruiterProfileDetailsPatchSchema} from "./recruiter-profile-details-model";
+import {normalizeLegacyRecruiterMobile,recruiterProfileDetailsPatchSchema} from "./recruiter-profile-details-model";
 import {placementTableExists} from "./staged-tables";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
@@ -22,10 +22,8 @@ export async function updateOwnRecruiterProfileDetails(context:RequestContext,ra
  // instead of truncating either field (which would lose identity information).
  const name=joinHrRecruiterName(input.firstName,input.lastName);
  const title=normalizeRecruiterDesignation(input.title);
- const phone=input.phone.trim().startsWith("+91")
-  ?input.phone.trim().slice(3):input.phone.trim();
- if(phone&&!/^[0-9]{10}$/.test(phone))
-  throw new PlacementsServiceError("PLACEMENT_RECRUITER_PROFILE_STALE");
+ const phone=normalizeLegacyRecruiterMobile(input.phone);
+ if(phone===null)throw new PlacementsServiceError("PLACEMENT_RECRUITER_PROFILE_STALE");
  const contactReady=await placementTableExists("placement_recruiter_public_contacts");
  // Empty phone is a valid clear operation only when the contact table exists;
  // never accidentally overwrite identity provider phone_e164 login credentials.

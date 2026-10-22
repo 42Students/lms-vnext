@@ -44,7 +44,7 @@ export default async function SuperAdminLessonsPage({
   </div>;
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-4 md:space-y-6">
-    <PageHeader title="Lessons" />
+    <PageHeader title="Lessons" actions={<Link href="/admin/lessons/index" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Global lesson index</Link>} />
     <Alert tone="warning" role="alert" title="Select a college to manage Lessons">
       Choose a college in the header above to see its lessons.
     </Alert>
@@ -91,6 +91,7 @@ export default async function SuperAdminLessonsPage({
     <LessonPageSizePreference storageKey="admin-lessons-page-size" />
     <PageHeader title="Lessons"
       description="Authored lessons in the selected college."
+      actions={<Link href="/admin/lessons/index" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Global lesson index</Link>}
     />
     
     <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
