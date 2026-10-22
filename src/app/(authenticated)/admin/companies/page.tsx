@@ -7,10 +7,6 @@ import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import {redirect} from "next/navigation";
 import { SuperAdminCompanyMerge } from "@/components/admin/super-admin-company-merge";
-import {SuperAdminCompanyRestore} from "@/components/admin/super-admin-company-restore";
-import {SuperAdminCompanyVerification} from "@/components/admin/super-admin-company-verification";
-import {SuperAdminCompanyEdit} from "@/components/admin/super-admin-company-edit";
-import {SuperAdminCompanyIdentities} from "@/components/admin/super-admin-company-identities";
 import {SuperAdminCollegeCompanyCreate,SuperAdminCollegeCompanyRelationshipActions}
   from "@/components/admin/super-admin-college-company-actions";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -41,7 +37,7 @@ export default async function SuperAdminCompaniesPage({
       action={<Link href="/admin/companies" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
   </div>;
   const context=await getCurrentRequestContext();
-  const view=params.view==="GLOBAL"?"GLOBAL":context.adminScope?.collegeId?"COLLEGE":"GLOBAL";
+  const view=params["view"]==="GLOBAL"?"GLOBAL":context.adminScope?.collegeId?"COLLEGE":"GLOBAL";
   const scoped=Boolean(context.adminScope?.collegeId||context.adminScope?.organizationId);
   if(view==="GLOBAL"&&scoped)return <div className="min-w-0 space-y-5">
    <PageHeader title="Companies" description="Global company catalogue"/>
