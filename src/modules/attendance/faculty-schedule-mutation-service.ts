@@ -95,7 +95,8 @@ export async function commandFacultyAttendanceSchedule(
         .where(eq(attendanceSessions.scheduleEventId,current.id)).limit(1);
       if(marked?.status==="MARKED")throw new CoursesServiceError("SCHEDULE_EVENT_CONFLICT");
       if(!facultyScheduleFieldsChanged(current,{
-         ...input,
+         title:input.title,description:input.description,location:input.location,
+         startsAt:input.startsAt,endsAt:input.endsAt,
          ...(input.lectureHallId!==undefined?{lectureHallId:input.lectureHallId}:{})
        }))
         throw new CoursesServiceError("FACULTY_ATTENDANCE_SCHEDULE_NO_CHANGE");
