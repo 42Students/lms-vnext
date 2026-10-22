@@ -3,9 +3,9 @@
 CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER your deep packets 1-2 in lane-4-deep.md. For each file: read the failure below, read the test and the code it tests, decide which side is wrong against the old LMS (docs/legacy-source) and fix THAT side (fix the product code if it regressed; update the test only if the test asserts outdated/wrong behaviour). Never delete tests, never .skip, never weaken assertions to pass. Push after every file and tick it here.
 
 - [ ] `tests/unit/HR-BREAK-chat19-report-joined.test.ts` (1 failing)
-- [ ] `tests/unit/UX-teacher-shared-surfaces.test.ts` (1 failing)
+- [x] `tests/unit/UX-teacher-shared-surfaces.test.ts` (1 failing)
 - [ ] `tests/unit/chat19-college-cross-audit.test.ts` (2 failing)
-- [ ] `tests/unit/chat4-college-verification-misc-gap-closure.test.ts` (2 failing)
+- [x] `tests/unit/chat4-college-verification-misc-gap-closure.test.ts` (2 failing)
 - [ ] `tests/unit/chat7-superadmin-course-tenant-bulk.test.ts` (1 failing)
 - [ ] `tests/unit/graceful-raw-error-scan.test.ts` (1 failing)
 - [ ] `tests/unit/tpo-team-legacy-people-chat2.test.ts` (1 failing)
@@ -193,3 +193,8 @@ AssertionError: expected 'import { redirect } from "next/naviga…' to contain '
 +   return Array.isArray(value) ? value[0] : value;
 ```
 
+
+## Repair results
+
+- `UX-teacher-shared-surfaces.test.ts`: FIXED production disclosure minimum 44px via `src/components/ui/disclosure.tsx` (2adc636); native keyboard/summary behavior retained.
+- `chat4-college-verification-misc-gap-closure.test.ts`: FIXED obsolete anchor-markup assertion to check actual `onClick={retry}` button path (aa6beaa); retained profile uses `router.refresh()` and disables the button while pending.
