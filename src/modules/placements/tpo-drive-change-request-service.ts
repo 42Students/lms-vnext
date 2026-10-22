@@ -386,6 +386,7 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
     mode,field:canonicalField,legacyField:input.field,
     proposedValue,reason,
    }).returning();
+   if(!created)throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
    await announce(tx,context,job,target,"PLACEMENTS_DRIVE_CHANGE_REQUEST_CREATED",created.id,
     "New "+input.field.toLowerCase()+" change request for "+job.title+".");
    const [open]=await tx.select({total:sql<number>`count(*)::int`}).from(placementDriveChangeRequests)
@@ -404,6 +405,7 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
    const [message]=await tx.insert(placementDriveChangeRequestMessages).values({
     requestId:request.id,senderUserId:context.user.id,senderParty:party,body:input.body,
    }).returning({id:placementDriveChangeRequestMessages.id});
+   if(!message)throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
    await announce(tx,context,job,party==="TPO"?"COMPANY":"TPO",
     "PLACEMENTS_DRIVE_CHANGE_COMMENTED",request.id,
     "New reply in the "+request.field.toLowerCase()+" change request for "+job.title+".");
