@@ -140,7 +140,7 @@ export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:reado
       <Button type="button" size="sm" variant="ghost" disabled={busy} onClick={()=>setSelected([])}>Clear selection</Button>
     </div>
   </div>:null}
-  <p className="text-xs text-muted-foreground leading-5">Select any number of authorized students across roster pages. Each 25-person group is atomic; already completed groups remain committed if a later group fails. Selection is retained across this college's roster pages and filters for this browser session. Updates are saved in validated batches of 25 with a separate audit event for each group. Placements remains configured at college scope (not per student); Projects and Electives can be overridden here. Locked ancestor policies remain protected.</p>
+  <p className="text-xs text-muted-foreground leading-5">Select at most 1,000 authorized students across roster pages. Each 25-person group is atomic; already completed groups remain committed if a later group fails. Selection is retained across this college's roster pages and filters for this browser session. Updates are saved in validated batches of 25 with a separate audit event for each group. Placements remains configured at college scope (not per student); Projects and Electives can be overridden here. Locked ancestor policies remain protected.</p>
   <label className="flex min-h-11 items-center gap-2 text-sm text-body print:hidden">
    <Checkbox checked={allVisible}
     onChange={e=>toggleVisible(e.target.checked)} disabled={busy}/>
