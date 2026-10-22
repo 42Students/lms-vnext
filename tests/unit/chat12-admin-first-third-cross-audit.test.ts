@@ -38,7 +38,8 @@ describe("UX-admin-first-third-chat12 independent source cross-audit",()=>{
   expect(src.indexOf("if (!parsed.success)")).toBeLessThan(src.indexOf("listSuperAdminCompanyDirectory(context, parsed.data)"));
   expect(src).toContain('title="Invalid company search"');
   expect(src).toContain("context.adminScope?.collegeId");
-  expect(src).toContain("results below remain restricted to that college");
+  expect(src).toContain("Clear the selected organization and college scope");
+  expect(src).toContain("This Global tab never shows a college-only list under a global heading.");
  });
  it("UX-admin-features-collegeId-01 refuses malformed tenant ID and duplicate scope filters",()=>{
   const src=page("/features/[collegeId]");

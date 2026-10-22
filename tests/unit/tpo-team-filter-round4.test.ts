@@ -29,7 +29,7 @@ describe("TPO conversations filters",()=>{
   const canonical=readFileSync(join(process.cwd(),"src/components/tpo/tpo-team-messages-directory.tsx"),"utf8");
   expect(canonical).toContain('["asks","Asks"]');
   expect(canonical).toContain('["decisions","Decisions"]');
-  expect(page).toContain('"Decisions"');
+  expect(page).toContain("for (const [key, value] of Object.entries(params))");
  });
  it("TPO-inbox-team-22 uses only scoped OPEN asks for the Asks and @ Me chips",()=>{
   const reader=readFileSync(join(process.cwd(),"src/modules/placements/tpo-team-internal-read-service.ts"),"utf8");
