@@ -15,6 +15,7 @@ Record of assistance by chat-15. Do **not** modify `lane-6-verify2.md`. Reviewed
 - [x] **G2-9-033-077 / G2-9-033-079 (OK):** Create parser requires website or company domain and enforces HTTPS website/logo; matching form shows legacy identity and invalid-link feedback.
 - [x] **G2-9-022-028 (OK):** Unexpected promotion-preview errors return fail-closed `Couldn't verify promotion` with Retry; confirmation renders only from verified ready preview.
 - [x] **G2-9-014-042 (FIXED):** Bulk Assessment move now shows actual moved count with stage-specific legacy success wording, explicit skipped count for partial writes and specific failure prefix. Added dedicated unit and source-wiring tests.
+- [x] **G2-17-023-046 (FIXED):** Learner offer ACCEPT and DECLINE now send a distinct, transactionally audited in-app notice to active TPO-role users in the offer’s college. No suspended or cross-college recipients; existing learner notices remain. Added regression checks.
 - [ ] Other W1_lane6_20 rows require further service-level verification; this packet is NOT claimed closed and lane 6's queue remains unchanged.
 
 Next: continue W1_lane6_20 remaining rows from bottom upward before W1_lane6_19.
