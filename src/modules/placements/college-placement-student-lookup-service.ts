@@ -10,23 +10,60 @@ import type {RequestContext} from "@/modules/identity/context";
 import {learnerProfileDocumentSchema} from "@/modules/people/profile-validation";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {capStudentLookupRows,STUDENT_LOOKUP_CAP,STUDENT_LOOKUP_APPLICATION_CAP} from "./college-placement-student-lookup-model";
-export async function lookupCollegeStudentPlacement(ctx:RequestContext,raw:unknown){
+/** Legacy first/last name is represented by one persisted displayName
+ * in vNext. Never fabricate a name component or client supplied learner ID. */
+export function collegeStudentLookupLabel(row:{
+ name:string|null;email:string|null;roll:string|null;
+ legacyLearnerId:number|null;membershipId:string;
+}):string{
+ const name=row.name?.trim().replace(/\\s+/g," ");
+ return name||row.email?.trim()||
+  (row.legacyLearnerId!==null?"Student #"+row.legacyLearnerId:null)||
+  row.roll?.trim()||"Student #"+row.membershipId;
+}
+
+/** Convert UTC history dates using the product's IST zone. */
+export function formatCollegePlacementAppliedDate(at:Date|string|null|undefined):string{
+ if(!at)return "-";
+ const d=at instanceof Date?at:new Date(at);
+ if(!Number.isFinite(d.getTime()))return "-";
+ return new Intl.DateTimeFormat("en-GB",{
+  timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric",
+ }).format(d);
+}
+
+/** No private application or profile joins in autocomplete. */
+export async function suggestCollegePlacementLearners(ctx:RequestContext,raw:unknown){
  const q=z.string().trim().min(2).max(150).parse(raw);
  const collegeId=await requireCollegePlacementAdmin(ctx),db=getDb();
- const people=await db.select({membershipId:collegeMemberships.id,name:users.displayName,
-  roll:learnerProfiles.rollNumber,email:users.email})
- .from(collegeMemberships)
- .innerJoin(users,eq(users.id,collegeMemberships.userId))
- .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
-  eq(membershipRoles.role,"LEARNER")))
- .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
- .where(and(eq(collegeMemberships.collegeId,collegeId),
-  or(ilike(users.displayName,"%"+q.replace(/[\\%_]/g,"\\$&")+"%"),
-   eq(learnerProfiles.rollNumber,q),eq(users.email,q))))
- .orderBy(asc(users.displayName),asc(collegeMemberships.id))
- .limit(Math.min(10,STUDENT_LOOKUP_CAP)+1);
- if(!people.length)return{students:[],truncated:false};
- const visiblePeople=capStudentLookupRows(people,Math.min(10,STUDENT_LOOKUP_CAP)).items;
+ const escaped=q.replace(/[\\\\%_]/g,"\\$&");
+ const people=await db.select({
+  membershipId:collegeMemberships.id,name:users.displayName,
+  roll:learnerProfiles.rollNumber,email:users.email,
+  legacyLearnerId:learnerProfiles.legacyLearnerId,
+ }).from(collegeMemberships)
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+   eq(membershipRoles.role,"LEARNER")))
+  .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
+  .where(and(eq(collegeMemberships.collegeId,collegeId),
+    eq(collegeMemberships.status,"ACTIVE"),
+    or(ilike(users.displayName,"%"+escaped+"%"),
+      ilike(users.email,"%"+escaped+"%"),
+      ilike(learnerProfiles.rollNumber,"%"+escaped+"%"))))
+  .orderBy(asc(users.displayName),asc(collegeMemberships.id))
+  .limit(STUDENT_LOOKUP_CAP+1);
+ return {students:people.slice(0,STUDENT_LOOKUP_CAP).map(person=>({
+  ...person,label:collegeStudentLookupLabel(person),
+ })),truncated:people.length>STUDENT_LOOKUP_CAP};
+}
+
+/** Backwards-compatible detailed history. Selected learners may instead use
+ * getCollegeStudentPlacementDetails without reading other candidates. */
+export async function lookupCollegeStudentPlacement(ctx:RequestContext,raw:unknown){
+ const {students:visiblePeople,truncated}=await suggestCollegePlacementLearners(ctx,raw);
+ const collegeId=await requireCollegePlacementAdmin(ctx),db=getDb();
+ if(!visiblePeople.length)return{students:[],truncated:false};
  // Joining can have happened on an older drive beyond the 100-row detail cap.
  // Query that fact separately for all visible learner memberships, scoped to
  // the selected college's jobs AND employer relationships.
@@ -82,11 +119,11 @@ export async function lookupCollegeStudentPlacement(ctx:RequestContext,raw:unkno
      row.joining==="JOINED"?"HIRED":row.offerStatus==="ISSUED"||row.offerStatus==="ACCEPTED"?
       "OFFERED":row.recordedStage??row.screeningStatus??"APPLIED",
     rejectionReason:row.screeningStatus==="REJECTED"?row.candidateRejectionReason:null,
-   })),
+   })).map(row=>({...row,appliedDateLabel:formatCollegePlacementAppliedDate(row.submittedAt)})),
    placed:joinedMemberships.has(person.membershipId),
    truncated:applications.truncated};
  }));
- return{students:result,truncated:people.length>Math.min(10,STUDENT_LOOKUP_CAP)};
+ return{students:result,truncated};
 }
 
 /** Selected-learner detail is a separate authorized read, keyed only by the

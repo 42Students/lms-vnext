@@ -614,7 +614,19 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
                 {key:"actions",header:"Actions",mobilePriority:"action" as const,
                   cell:item=>item.status==="ARCHIVED"
                     ? <span className="text-xs text-muted-foreground">Restore using the visibility column</span>
-                    : <LessonActions lesson={{id:item.id,name:item.name,description:item.description,sequence:item.sequence}}/>},
+                    : <div className="min-w-0 space-y-2">
+                        <LessonActions lesson={{
+                          id:item.id,name:item.name,description:item.description,
+                          sequence:item.sequence,updatedAt:item.updatedAt,
+                          visibleToStudents:item.visibleToStudents,
+                        }}/>
+                        <p className="text-xs leading-5 text-muted-foreground">
+                          Moving a lesson to another course requires an eligible destination
+                          learning path and verified absence of learner-bound content.
+                          Rename and visibility changes are available in Edit; changing
+                          the parent course is not an implicit rename.
+                        </p>
+                      </div>},
               ]}
             /> : <DataTable
               caption="Recorded course progress"
