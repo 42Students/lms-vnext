@@ -7,6 +7,7 @@ import { tpoIstDayWindow } from "@/modules/placements/tpo-live-drive-day-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
+import {TpoDriveDayLoadWarning} from "@/components/placements/tpo-drive-day-load-warning";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { listMyDriveDayRounds } from "@/modules/placements/drive-day-coordinator-service";
@@ -80,7 +81,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
             Live attendance and on-site monitoring
           </summary>
           <div className="space-y-4 pt-3">
-        {!snapshot?<Alert tone="error">Could not load today's live attendance data. The attendance totals below may be stale or unavailable. <Link href="/tpo/drive-day" className="font-semibold text-link underline">Retry</Link></Alert>:null}
+        {!snapshot?<TpoDriveDayLoadWarning/>:null}
         <h2 className="text-lg font-semibold">Rounds happening now</h2>
         <form action="/tpo/drive-day" method="get" className="grid min-w-0 grid-cols-1 gap-[8px] sm:grid-cols-2 sm:items-end xl:grid-cols-[minmax(0,1fr)_auto_auto_auto]" aria-label="Filter drive day">
           <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search live rounds<Input name="q" type="search" maxLength={100} defaultValue={search.data} placeholder="Company, job or round" className="block min-h-11 min-[768px]:min-h-[var(--lms-control-height)] mt-[6px]"/></label>
