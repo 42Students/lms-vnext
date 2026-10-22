@@ -163,7 +163,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
    </label>
   </div>
   <details className="text-[13px] leading-5 text-[var(--lms-muted-text)]"><summary className="w-fit cursor-pointer font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] max-[767px]:flex max-[767px]:min-h-11 max-[767px]:items-center">How to use this calendar</summary><p className="mt-[var(--lms-space-2)] max-w-prose">Click an empty hour to add a recruiter follow-up, or drag an existing follow-up onto another hour to move it. Events with an unknown duration use a 30-minute visual marker; it is not a booked time range. Overlapping events share their time lane.</p></details>
-  <div tabIndex={0} role="region" aria-label="Recruiter follow-up weekly calendar, scroll horizontally for more days" className={"overflow-x-auto overscroll-x-contain bg-surface focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] "+weekStyles.grid}>
+  <div tabIndex={0} role="region" aria-label="Recruiter follow-up weekly calendar, scroll horizontally for more days" className={"overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,black_0%,black_94%,transparent_100%)] bg-surface focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] "+weekStyles.grid}>
    <div className={"grid min-w-[56rem] "+weekStyles.weekColumns}>
     <div className={"sticky left-0 z-10 border-b border-r bg-surface "+weekStyles.corner}>IST</div>
     {days.map(day=><div key={day} className={"border-b border-r text-center text-xs font-semibold "+weekStyles.dayHead}>

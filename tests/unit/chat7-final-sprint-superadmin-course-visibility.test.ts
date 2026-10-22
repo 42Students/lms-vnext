@@ -10,7 +10,8 @@ describe("Final sprint Super Admin course student visibility",()=>{
   for(const word of ["Show to students","Hide from students","Retry failed","Select all courses on this page"]){
    expect(ui).toContain(word);
   }
-  expect(ui).toContain("window.confirm(");
+  expect(ui).toContain("<ConfirmDialog open={action!==null}");
+  expect(ui).toContain("onConfirm={()=>void apply()}");
   expect(ui).toContain('"/api/admin/courses/bulk-status"');
   expect(ui).toContain("report.failures.length");
  });
@@ -24,7 +25,8 @@ describe("Final sprint Super Admin course student visibility",()=>{
   expect(service).toContain('eq(courses.status,"ACTIVE")');
   expect(service).toContain('eq(courseLessons.status,"ACTIVE")');
   expect(service).toContain("bulkSuperAdminLessonVisibility(context");
-  expect(leaf).toContain("updateCollegeContentStudentVisibility(context");
+  expect(leaf).toContain('resolveActingCollege(context,"courses.manage")');
+  expect(leaf).toContain("assertPersistedPlatformPermission");
   expect(item).toContain("isSuperAdmin(context)");
   expect(item).toContain("requirePermission(context");
   expect(api).toContain("isSameOriginRequest(request)");
@@ -37,8 +39,8 @@ describe("SA-academics-people-52/53 selected-course retry integrity",()=>{
   const client=read("src/components/courses/super-admin-course-bulk-visibility.tsx");
   const service=read("src/modules/courses/super-admin-course-bulk-visibility.ts");
   const lesson=read("src/modules/courses/super-admin-lesson-bulk-visibility.ts");
-  expect(client).toContain("void apply(lastAction,report.failedCourseIds)");
-  expect(client).toContain("ids=ids.filter(id=>currentIds.has(id))");
+  expect(client).toContain("chooseAction(lastAction,report.failedCourseIds)");
+  expect(client).toContain("changeSelection(data.failedCourseIds)");
   expect(service).toContain("failedCourseIds:input.courseIds.filter(id=>failedCourses.has(id))");
   expect(service).toContain("lessonCourseIds.get(failure.lessonId)");
   expect(service).toContain("lessonCourseIds.get(id)");
@@ -47,7 +49,8 @@ describe("SA-academics-people-52/53 selected-course retry integrity",()=>{
  it("SA-academics-people-52 accepts the 100-course page but refuses unbounded bulk actions",()=>{
   const service=read("src/modules/courses/super-admin-course-bulk-visibility.ts");
   expect(service).toContain("courseIds:z.array(z.uuid()).min(1).max(100)");
-  expect(service).toContain(".limit(501)");
+  expect(service).toContain("Math.min(100,Math.max(1,limit))");
+  expect(service).toContain("ids.slice(i,i+25)");
   expect(service).toContain("COURSE_VISIBILITY_BULK_TOO_LARGE");
   expect(service).toContain("selected.length!==input.courseIds.length");
  });

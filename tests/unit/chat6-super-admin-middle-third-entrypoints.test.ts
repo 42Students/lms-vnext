@@ -31,6 +31,11 @@ describe("SA-admin-middle-inventory-01 37 actual Super Admin page entrypoints",(
   it.each(middleThird)("SA-admin-middle-inventory-01 %s authenticates before any scoped view",route=>{
     const code=entry(route);
     expect(code).toMatch(/export default (?:async )?function|export \{ default \}/);
+    if(route==="/admin/placements/hiring"){
+      expect(code).toContain('redirect("/admin/placements/analytics"');
+      expect(entry("/admin/placements/analytics")).toContain("getCurrentRequestContext");
+      return;
+    }
     if(route==="/admin/live-classes"){
       expect(code).toContain("<SuperAdminContentDirectoryPage");
       const shared=readFileSync("src/components/courses/super-admin-content-directory-page.tsx","utf8");
@@ -59,7 +64,15 @@ describe("SA-admin-middle-inventory-01 37 actual Super Admin page entrypoints",(
     "joining","offers","screenings","seasons",
   ])("SA-admin-middle-inventory-03 /admin/placements/%s delegates filtered reads to protected scaffold",view=>{
     const code=entry("/admin/placements/"+view);
-    expect(code).toContain("<AdminScopedReadPage");
-    expect(code).toContain("getCurrentRequestContext");
+    if(view==="hiring"){
+      expect(code).toContain('redirect("/admin/placements/analytics"');
+      expect(entry("/admin/placements/analytics")).toContain("getCurrentRequestContext");
+    }else if(view==="interviews"){
+      expect(code).toContain("listSuperAdminInterviews(context");
+      expect(code).toContain("context.adminScope?.collegeId");
+    }else{
+      expect(code).toContain("<AdminScopedReadPage");
+    }
+    if(view!=="hiring")expect(code).toContain("getCurrentRequestContext");
   });
 });

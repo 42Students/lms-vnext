@@ -178,7 +178,7 @@ export function TpoBulkRoundResultRecorder({
                   setError(null);setSelected(resolved.ids);
                 }}>Select matching learners</Button>
             </Disclosure>
-            <div tabIndex={0} role="group" aria-label="Unmarked learners, scroll for more" className="max-h-56 min-h-0 min-w-0 divide-y divide-border overflow-auto overscroll-contain border-y border-border px-2 print:max-h-none print:overflow-visible">
+            <div tabIndex={0} role="group" aria-label="Unmarked learners, scroll for more" className="max-h-56 min-h-0 min-w-0 divide-y divide-border overflow-auto overscroll-contain border-y border-border px-2 [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)] print:max-h-none print:overflow-visible">
               {visible.map((row) => (
                 <label key={row.applicationId} className="flex min-h-11 min-w-0 items-center gap-3 px-2 text-sm text-body hover:bg-muted md:min-h-9">
                   <Checkbox

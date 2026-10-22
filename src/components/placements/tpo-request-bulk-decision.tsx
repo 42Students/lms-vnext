@@ -146,7 +146,7 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
    </p>
    {rows.length>0?<>
     <div tabIndex={0} role="group" aria-label="Waiting requests, scroll for more"
-     className="max-h-64 min-h-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+     className="max-h-64 min-h-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)] [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
      {rows.map(row=>{
       const checked=selected.includes(row.id);
       const unavailable=pending||auditRetry!==null||(!checked&&(selected.length>=MAX_BULK_REQUESTS||(chosenKind!==null&&chosenKind!==row.requestType)));
@@ -194,7 +194,7 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
      Review {chosen.length} {chosenKind?.replaceAll("_"," ").toLowerCase()} request(s) one by one.
     </p>
     <ul tabIndex={0} aria-label="Selected request names, scroll for more"
-     className="max-h-40 min-h-0 list-disc divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-1)] pl-[var(--lms-space-5)] pr-[var(--lms-space-2)] text-[var(--lms-font-base)] leading-5 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+     className="max-h-40 min-h-0 list-disc divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-1)] pl-[var(--lms-space-5)] pr-[var(--lms-space-2)] text-[var(--lms-font-base)] leading-5 [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
      {chosen.map(row=><li key={row.id} className="min-w-0 break-words py-[var(--lms-space-2)]">{row.studentName}</li>)}
     </ul>
     <label className="flex min-h-11 cursor-pointer items-start gap-[var(--lms-space-3)] text-[var(--lms-font-base)] leading-5 text-[var(--lms-body-text)]">

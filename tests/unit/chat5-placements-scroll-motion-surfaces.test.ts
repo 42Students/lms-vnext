@@ -15,11 +15,12 @@ describe("chat-5 placements scroll and motion surface contracts",()=>{
   ["11","placement-drive-day-overview.tsx",1],
  ] as const)("UX-placements-scroll-motion-%s cues every newly audited scroll container in %s",(_,file,count)=>{
   const source=load(file);
-  if (file === "tpo-round-drive-day-read-only.tsx" || file === "placement-drive-day-overview.tsx") {
+  if (file === "tpo-round-drive-day-read-only.tsx" || file === "placement-drive-day-overview.tsx" ||
+      file === "tpo-round-results-import.tsx" || file === "tpo-selection-import.tsx") {
     // The rosters use the shared responsive DataTable, whose ScrollCue owns
     // overflow detection, accessible keyboard focus and edge gradients.
-    expect(source).toMatch(/import\s*\{\s*DataTable\s*\}/);
-    expect(source).toContain("<DataTable");
+    expect(source).toContain("DataTable");
+    expect((source.match(/<DataTable/g)??[]).length).toBeGreaterThanOrEqual(count);
     expect(source).toContain("getRowKey=");
     expect(source).toContain("caption=");
     expect(source).toContain("mobilePriority:");
@@ -27,8 +28,8 @@ describe("chat-5 placements scroll and motion surface contracts",()=>{
     const cue = readFileSync("src/components/ui/scroll-cue.tsx", "utf8");
     expect(table).toContain('<ScrollCue axis="x"');
     expect(table).toContain('scope="col"');
-    expect(table).toContain('sm:first:sticky');
-    expect(table).toContain('sm:first:left-0');
+    expect(table).toContain('md:first:sticky');
+    expect(table).toContain('md:first:left-0');
     expect(cue).toContain('role={edges.scrollable ? "region" : undefined}');
     expect(cue).toContain('tabIndex={edges.scrollable ? 0 : -1}');
     expect(cue).toContain('overflow-x-auto overscroll-x-contain');
@@ -72,15 +73,17 @@ describe("chat-5 placements scroll and motion surface contracts",()=>{
   expect(overview).toContain('caption={"Round "+round.sequence+" candidate progress"}');
   expect(overview).toContain('{key:"candidate",header:"Candidate",mobilePriority:"primary"');
   expect(overview).toContain('getRowKey={participant=>participant.applicationId}');
-  expect(table).toContain('sm:first:sticky');
-  expect(table).toContain('sm:first:left-0');
-  expect(table).toContain('sm:first:bg-surface');
+  expect(table).toContain('md:first:sticky');
+  expect(table).toContain('md:first:left-0');
+  expect(table).toContain('md:first:bg-inherit');
   expect(table).toContain('scope="col"');
  });
  it("UX-placements-scroll-motion-09 keeps import preview separate from release confirmation",()=>{
   const selection=load("tpo-selection-import.tsx");
-  expect(selection).toContain("Selection import preview, scroll for more");
-  expect(selection).toContain("Unmatched selection import rows, scroll for more");
+  expect(selection).toContain('caption="Selection import preview"');
+  expect(selection).toContain('caption="Unmatched selection import rows"');
+  const table=readFileSync("src/components/ui/data-table.tsx","utf8");
+  expect(table).toContain('<ScrollCue axis="x"');
   expect(selection).toContain("<ConfirmDialog");
   expect(selection).toContain("onConfirm={()=>void confirm()}");
  });
