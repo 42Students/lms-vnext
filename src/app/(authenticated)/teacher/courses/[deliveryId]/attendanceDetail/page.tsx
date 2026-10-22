@@ -9,6 +9,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {notFound,redirect} from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {FacultyAttendanceScheduleEditor} from "@/components/attendance/faculty-attendance-schedule-editor";
+import {FacultyClassSwitcher} from "@/components/attendance/faculty-class-switcher";
 import {
   FacultyAttendanceWorkspace,
   type FacultyAttendanceWorkspaceData,
@@ -112,27 +113,13 @@ async function FacultyCourseAttendanceContent({
 
   return (
     <div className="min-w-0 max-w-full space-y-4">
-      {sections.length>1?<form method="get"
-        action={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/attendanceDetail"}
-        aria-label="Teaching section selector"
-        className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-3">
-        <label className="grid min-w-[160px] flex-1 gap-1 text-sm font-semibold text-body">
-          Class
-          <Select name="cls" defaultValue={deliveryId}
-            className="min-h-11 w-full min-w-[160px] md:min-h-9">
-            <option value="" disabled>Select class</option>
-            {sections.map(item=><option key={item.deliveryId} value={item.deliveryId}>
-              {item.sectionName} ({item.sectionCode})
-            </option>)}
-          </Select>
-        </label>
-        <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">
-          View class
-        </Button>
-        <p className="w-full text-xs text-muted-foreground">
-          Choose a class to see that section&#39;s attendance. Save any changed marks before switching.
-        </p>
-      </form>:null}
+      {sections.length>1?
+        <FacultyClassSwitcher currentDeliveryId={deliveryId}
+          sections={sections.map(item=>({
+            deliveryId:item.deliveryId,
+            sectionName:item.sectionName,
+            sectionCode:item.sectionCode,
+          }))}/>:null}
       <p className="text-sm text-body">See your attendance record and class-wise status in one place.</p>
       <nav aria-label="Course attendance shortcuts" className="flex min-w-0 flex-col gap-2 border-b border-border pb-3 sm:flex-row sm:items-center sm:justify-between">
       <Link
