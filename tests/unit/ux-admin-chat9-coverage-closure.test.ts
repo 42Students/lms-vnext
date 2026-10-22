@@ -32,7 +32,7 @@ describe("chat-9 route coverage and native DataTable closure",()=>{
   expect(source).not.toMatch(/<table\b/);
   expect(source).toContain("MODULE_SCOPE_LABELS");
   expect(source).toContain("describeStoredOverride");
-  expect(source).toContain('<StatusBadge tone="success">Winner</StatusBadge>');
+  expect(source).toContain('<StatusBadge tone="success">Decided here</StatusBadge>');
   expect(source).toContain('<StatusBadge tone="warning">Ignored</StatusBadge>');
   expect(source).toContain('header:"Why"');
   expect(source).toContain("No stored rules or fallback steps were found for this module.");
