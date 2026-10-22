@@ -12,8 +12,9 @@ describe("chat12 selected student CSV",()=>{
  it("TPO-students-17 exports only the currently authorized visible page selection",()=>{
   const source=s("src/components/tpo/tpo-students-spreadsheet.tsx");
   expect(source).toContain("const chosen=sortedRows.filter");
+  expect(source).toContain("exportTpoStudentsCsv(chosen");
   expect(source).toContain("permitted.has(row.membershipId)");
-  expect(source).toContain('anchor.download="selected-tpo-students.csv"');
+  expect(source).toContain('anchor.download=legacyGridExportFilename(viewName,"csv")');
   expect(source).toContain('role="alert"');
  });
 });
