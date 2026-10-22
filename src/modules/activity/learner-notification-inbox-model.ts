@@ -5,6 +5,10 @@ export const learnerNotificationInboxQuerySchema = z.object({
   category:z.enum(["all","course","project","general","job"]).optional().default("all"),
   unread:z.enum(["all","unread"]).optional().default("all"),
   q:z.string().trim().max(100).optional().default(""),
+  // Legacy class/course inbox links filter recipient-owned notifications.
+  classId:z.string().uuid().optional(),
+  courseId:z.string().uuid().optional(),
+  courseSlug:z.string().trim().min(1).max(64).regex(/^[a-zA-Z0-9._-]+$/).optional(),
 }).strict();
 export type LearnerInboxQuery = z.infer<typeof learnerNotificationInboxQuerySchema>;
 /** Legacy ?tab links use the same validated category vocabulary; the
@@ -34,6 +38,9 @@ export function learnerNotificationInboxHref(raw: unknown) {
   if(state.category!=="all")search.set("category",state.category);
   if(state.unread!=="all")search.set("unread",state.unread);
   if(state.q)search.set("q",state.q);
+  if(state.classId)search.set("classId",state.classId);
+  if(state.courseSlug)search.set("courseSlug",state.courseSlug);
+  else if(state.courseId)search.set("courseId",state.courseId);
   const q=search.toString();
   return "/learn/notifications"+(q?"?"+q:"");
 }
