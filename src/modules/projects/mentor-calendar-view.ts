@@ -16,6 +16,9 @@ export type MentorMeetingCalendarItem = {
   timeZone: string;
   meetingUrl: string | null;
   linkedSprintTitle: string | null;
+  legacySprintLabel?:string|null;
+  legacyStartTime?:string|null;
+  legacyEndTime?:string|null;
 };
 
 export function splitMentorMeetings(

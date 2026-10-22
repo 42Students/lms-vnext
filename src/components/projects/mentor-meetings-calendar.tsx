@@ -12,20 +12,26 @@ import {Button} from "@/components/ui/button";
 import styles from "./mentor-meetings-calendar.module.css";
 
 const PAST_PREVIEW = 20;
-const prettyDate = (iso: string) => {
-  const d = new Date(iso);
-  return Number.isFinite(d.getTime()) ? new Intl.DateTimeFormat("en-IN", {
-    weekday: "short", day: "numeric", month: "short", year: "numeric",
-    timeZone: "Asia/Kolkata",
-  }).format(d) : "Date TBD";
-};
-const prettyTime = (iso: string) => {
-  const d = new Date(iso);
-  return Number.isFinite(d.getTime()) ? new Intl.DateTimeFormat("en-IN", {
-    hour: "numeric", minute: "2-digit", hour12: true, timeZoneName: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(d) : "Time TBD";
-};
+const validTime=(raw:string)=>raw.trim().length>0&&Number.isFinite(Date.parse(raw));
+function dateLabel(raw:string){
+ if(!validTime(raw))return "Date TBD";
+ const parts=new Intl.DateTimeFormat("en-US",{weekday:"short",month:"short",day:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).formatToParts(new Date(raw));
+ const pick=(kind:Intl.DateTimeFormatPartTypes)=>parts.find(p=>p.type===kind)?.value??"";
+ return `${pick("weekday")}, ${pick("month")} ${pick("day")} ${pick("year")}`;
+}
+function clockLabel(raw:string):string|null{
+ if(!validTime(raw))return null;
+ const parts=new Intl.DateTimeFormat("en-US",{hour:"2-digit",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"}).formatToParts(new Date(raw));
+ const pick=(kind:Intl.DateTimeFormatPartTypes)=>parts.find(p=>p.type===kind)?.value??"";
+ return `${pick("hour")}:${pick("minute")} ${pick("dayPeriod").toUpperCase()}`;
+}
+function meetingTimeLabel(meeting:MentorMeetingCalendarItem){
+ const start=clockLabel(meeting.startsAt);
+ if(!start)return (meeting.legacyStartTime?.trim()||"--")+
+    (meeting.legacyEndTime?.trim()?" – "+meeting.legacyEndTime.trim():"");
+ const end=clockLabel(meeting.endsAt);
+ return start+(end&&meeting.endsAt!==meeting.startsAt?" – "+end:"")+" (GMT+05:30)";
+}
 function MeetingRow({
   meeting, now,
 }: {meeting: MentorMeetingCalendarItem; now: Date;}) {
@@ -45,9 +51,9 @@ function MeetingRow({
         }>{status}</StatusBadge>
       </div>
       <p className={styles.meta}>
-        {prettyDate(meeting.startsAt)} · {prettyTime(meeting.startsAt)}
-        {" – "}{prettyTime(meeting.endsAt)}
-        {meeting.linkedSprintTitle ? " · Sprint: " + meeting.linkedSprintTitle : ""}
+        {dateLabel(meeting.startsAt)} · {meetingTimeLabel(meeting)}
+        {(meeting.linkedSprintTitle||meeting.legacySprintLabel)
+          ? " · Sprint: " + (meeting.linkedSprintTitle||meeting.legacySprintLabel) : ""}
       </p>
       {meeting.projectStatus === "ARCHIVED" ? (
         <p className="mt-2 text-xs text-muted-foreground leading-[20px]">Archived project · Read-only</p>

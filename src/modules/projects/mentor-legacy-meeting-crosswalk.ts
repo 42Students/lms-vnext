@@ -47,5 +47,18 @@ export function crosswalkLegacyProjectMeeting(input:{
   title:(r.title??r.meetingTitle??"Meeting").trim()||"Meeting",
   status,startsAt,endsAt,
   timeZone:r.timeZone??r.timezone??"Asia/Kolkata",
-  meetingUrl:r.meetingUrl??null,linkedSprintTitle:r.sprintLabel??null};
+  meetingUrl:r.meetingUrl??null,linkedSprintTitle:r.sprintLabel??null,
+  legacySprintLabel:r.sprintLabel??null,legacyStartTime:r.startTime??null,
+  legacyEndTime:r.endTime??null};
+}
+
+/** Corrupt or unscheduled legacy records remain reviewable instead of being
+ * silently excluded from import or incorrectly assigned to another sprint. */
+export function legacyMeetingImportDisposition(record:LegacyProjectMeetingRecord){
+ const usable=Boolean(
+  (record.startsAt&&Number.isFinite(Date.parse(record.startsAt)))||
+  (record.date&&/^\d{4}-\d{2}-\d{2}$/.test(record.date)&&
+   record.startTime&&/^\d{2}:\d{2}(?::\d{2})?$/.test(record.startTime)));
+ return {requiresReview:!usable,reason:usable?null:"MISSING_OR_INVALID_START",
+  preserveForAudit:true as const,sourceSprintLabel:record.sprintLabel??null};
 }
