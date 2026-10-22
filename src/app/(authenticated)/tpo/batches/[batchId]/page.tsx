@@ -194,7 +194,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
    </div>)}
   </dl>
   {summary.complete&&summary.assessed>0?
-   <StackedMetricBar className={batchStyles["bar"]} maximum={summary.assessed}
+   <StackedMetricBar {...(batchStyles["bar"] === undefined ? {} : { className: batchStyles["bar"] })} maximum={summary.assessed}
     label={summary.eligible+" eligible, "+summary.ineligible+" ineligible, "+summary.undecided+" not decided, "+summary.needsReview+" need review"}
     segments={[{label:"Eligible",value:summary.eligible,tone:"success"},
       {label:"Ineligible",value:summary.ineligible,tone:"error"},
