@@ -126,8 +126,19 @@ export function CollegePromotionConfirmation({
       pending={pending} confirmDisabled={yearChanged} confirmVariant="primary" onConfirm={submit}>
       <div aria-busy={pending} className="min-w-0 space-y-3">
       <p className="m-0 max-w-prose break-words text-sm leading-[22px] text-body">
-        {promotionImpactMessage(learnerCount)}. The server will recheck blockers and the saved version.
+        {promotionImpactMessage(learnerCount,activeClasses)}. The server will recheck blockers and the saved version.
       </p>
+      <p className="m-0 text-sm font-semibold text-foreground">This will:</p>
+      <ul className="m-0 max-w-prose list-disc space-y-1 pl-5 text-sm leading-[22px] text-body">
+        <li>Update the batch&apos;s current semester from <strong>Semester {Math.max(1,targetTerm-1)}</strong> to <strong>Semester {targetTerm}</strong></li>
+        {deactivatedFacultyAssignments!==undefined?
+          <li>Deactivate <strong>{deactivatedFacultyAssignments}</strong> active faculty assignment{deactivatedFacultyAssignments===1?"":"s"} for Semester {Math.max(1,targetTerm-1)}</li>:
+          <li>Deactivate active faculty assignments for Semester {Math.max(1,targetTerm-1)}</li>}
+        <li>{learnerCount===1?<>The <strong>1</strong> student</>:<>All <strong>{learnerCount}</strong> students</>} in this batch will see the new semester&apos;s courses</li>
+        {yearStart!==undefined&&yearStart!==academicYearStart?null:
+          <li>Advance academic year to <strong>{formatPromotionAcademicYear(academicYearStart)}</strong> unless overridden</li>}
+        {maxSemester!==undefined?<li>Program max semester: <strong>{maxSemester}</strong></li>:null}
+      </ul>
       <label className="grid gap-1 text-sm font-semibold text-foreground">
         New academic year (YYYY-YY)
         <Input type="text" name="promotionYear" maxLength={7}
