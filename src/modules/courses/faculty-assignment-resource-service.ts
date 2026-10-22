@@ -2,6 +2,7 @@ import "server-only";
 import {and,asc,eq} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {courseAssignments,courseAssignmentResources} from "@/db/schema/assessments";
 import type {RequestContext} from "@/modules/identity/context";
 import {loadCourseSectionDeliveryScope} from "./scope";
@@ -36,7 +37,9 @@ export async function attestFacultyAssignmentResources(
  resources:readonly FacultyAssignmentResourceInput[],assignmentId?:string,
 ):Promise<Resource[]>{
  const member=context.membership;
- if(!member||member.collegeId!==collegeId||!member.roles.includes("FACULTY"))
+ if(!member||member.collegeId!==collegeId||member.status!=="ACTIVE"||
+    context.user.platformStatus!=="ACTIVE"||
+    !(member.roles.includes("FACULTY")||member.roles.includes("COLLEGE_ADMIN")))
   throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
  const existing=new Map<string,Row>();
  if(assignmentId){
@@ -109,8 +112,16 @@ export async function listFacultyAssignmentResources(
  context:RequestContext,deliveryIdRaw:string,assignmentIdRaw:string,
 ){
  const deliveryId=id.parse(deliveryIdRaw),assignmentId=id.parse(assignmentIdRaw);
- if(await requireDeliveryContentMutation(context,deliveryId)!=="FACULTY")
+ const actor=await requireDeliveryContentMutation(context,deliveryId);
+ const admin=actor==="ADMIN"&&context.membership?.status==="ACTIVE"&&
+  context.membership.roles.includes("COLLEGE_ADMIN")&&context.user.platformStatus==="ACTIVE";
+ if(actor!=="FACULTY"&&!admin)
   throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+ if(admin){
+  const scope=await loadCourseSectionDeliveryScope(deliveryId);
+  await getDb().transaction(tx=>assertPersistedPlatformPermission(tx,context,
+   "courses.manage",{collegeId:scope.collegeId,organizationId:scope.organizationId}));
+ }
  const [assignment]=await getDb().select({id:courseAssignments.id})
   .from(courseAssignments).where(and(
    eq(courseAssignments.id,assignmentId),
@@ -137,9 +148,15 @@ export async function presignFacultyAssignmentResource(
 ){
  const deliveryId=id.parse(deliveryIdRaw),member=context.membership;
  const scope=await loadCourseSectionDeliveryScope(deliveryId);
- if(!member||member.status!=="ACTIVE"||member.collegeId!==scope.collegeId||
-    await requireDeliveryContentMutation(context,deliveryId)!=="FACULTY")
+ const actor=await requireDeliveryContentMutation(context,deliveryId);
+ const admin=actor==="ADMIN"&&member?.roles.includes("COLLEGE_ADMIN");
+ if(!member||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
+    member.collegeId!==scope.collegeId||(actor!=="FACULTY"&&!admin))
   throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+ if(admin){
+  await getDb().transaction(tx=>assertPersistedPlatformPermission(tx,context,
+   "courses.manage",{collegeId:scope.collegeId,organizationId:scope.organizationId}));
+ }
  const data=uploadInput.parse(raw);
  const contentType=data.contentType.toLowerCase();
  if(!MIME.has(contentType)||(data.kind==="PDF"&&contentType!=="application/pdf"))

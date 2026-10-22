@@ -50,6 +50,12 @@ export const facultyAssignmentCommandSchema=z.discriminatedUnion("action",[
     expectedUpdatedAt:expected,
     confirmed:z.literal(true),
   }),
+  // Resource-only update avoids resubmitting assessment points or due dates;
+  // College Admin courses may have up to 10,000 points while the historic
+  // Faculty text editor retains its 0..1,000-point authoring guard.
+  z.strictObject({action:z.literal("RESOURCES"),assignmentId:z.string().uuid(),
+    resources:facultyAssignmentResourcesSchema,
+    expectedUpdatedAt:expected,confirmed:z.literal(true)}),
   z.object({
     action:z.enum(["PUBLISH","ARCHIVE"]),
     assignmentId:z.string().uuid(),
