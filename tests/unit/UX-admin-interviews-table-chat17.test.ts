@@ -31,6 +31,6 @@ describe("UX-UNOWNED-TABLE-04 Super Admin interview operations",()=>{
     expect(source).toContain('timeZone:"Asia/Kolkata"');
     expect(source).toContain('href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)+"/schedule"}');
     expect(source).toContain('conflicts.get(row.id)?.join("; ")');
-    expect(source).toContain('title:row.title,date:row.startsAt');
+    expect(source).toContain('title:e.title,date:e.startsAt');
   });
 });
