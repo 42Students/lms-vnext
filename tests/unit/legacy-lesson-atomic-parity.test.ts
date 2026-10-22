@@ -23,7 +23,7 @@ describe("legacy lesson authoring is atomic and scoped",()=>{
  });
  it("inserts the lesson and all course-wide child contents under one transaction",()=>{
   const start=lesson.indexOf("return await getDb().transaction(async (tx) =>");
-  const inserted=lesson.indexOf("tx.insert(courseLessons)",start);
+  const inserted=lesson.indexOf(".insert(courseLessons)",start);
   const children=lesson.indexOf("tx.insert(lessonContents)",inserted);
   const audit=lesson.indexOf("recordActivityEventInTransaction(tx, context",children);
   expect(start).toBeGreaterThan(-1);
