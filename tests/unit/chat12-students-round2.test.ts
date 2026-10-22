@@ -14,7 +14,7 @@ describe("chat-12 round-2 students compatibility and layout",()=>{
    const sheet=source("src/components/tpo/tpo-students-spreadsheet.tsx");
    const page=source("src/app/(authenticated)/tpo/students/page.tsx");
    expect(sheet).not.toContain('key:"journeyState"');
-   expect(sheet).not.toContain('key:"branchId"');
+   expect((sheet.match(/key:"branchId"/g)??[])).toHaveLength(1);
    expect(page).toContain('name="journeyState"');
    expect(page).toContain('name="branchId"');
  });
