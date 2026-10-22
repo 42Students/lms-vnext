@@ -18,6 +18,7 @@ import {tpoBatchPlacementState} from "@/modules/placements/tpo-batch-state-label
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Banner } from "@/components/ui/banner";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import {projectTpoBatchNextStep} from "@/modules/placements/tpo-batch-next-step-state-model";
 import {getTpoBatchOwnDecisionSummary} from "@/modules/placements/tpo-batch-own-decision-service";
 export const dynamic="force-dynamic";
@@ -39,7 +40,63 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   redirect(destination+(preserved.size?"?"+preserved.toString():""));
  }
  const context=await getCurrentRequestContext();
- const [{batch,lifecycle,ready,decision},eligibility,history,registrations,invitePreview]=await Promise.all([getTpoBatch(context,batchId),getTpoBatchEligibilitySummary(context,batchId),listTpoBatchHistory(context,batchId),getTpoBatchRegistrationSummary(context,batchId),getTpoBatchInvitationPreview(context,batchId)]);
+ const {batch,lifecycle,ready,decision}=await getTpoBatch(context,batchId);
+ // An optional eligibility, history, registration or invitation read must not
+ // erase a valid batch detail. Keep these independent and never manufacture
+ // zero counts or successful availability from a failed read.
+ const [eligibilityRead,historyRead,registrationsRead,inviteRead]=await Promise.allSettled([
+  getTpoBatchEligibilitySummary(context,batchId),
+  listTpoBatchHistory(context,batchId),
+  getTpoBatchRegistrationSummary(context,batchId),
+  getTpoBatchInvitationPreview(context,batchId),
+ ]);
+ const failures=[eligibilityRead,historyRead,registrationsRead,inviteRead].filter(
+  (value):value is PromiseRejectedResult=>value.status==="rejected");
+ for(const failure of failures){
+  if(failure.reason instanceof AuthorizationError)throw failure.reason;
+ }
+ if(eligibilityRead.status!=="fulfilled"||historyRead.status!=="fulfilled"||
+    registrationsRead.status!=="fulfilled"||inviteRead.status!=="fulfilled"){
+  const retryHref="/tpo/batches/"+encodeURIComponent(batchId);
+  return <div className="min-w-0 space-y-4">
+   <Link href={backHref} className="inline-flex min-h-11 items-center font-semibold text-link underline">
+    Placement eligibility
+   </Link>
+   <PageHeader title={batch.name} description={batch.program+" · "+batch.department}/>
+   {!ready?<Banner role="alert" tone="warning">Batch details may be stale. The lifecycle status could not be verified.</Banner>:null}
+   {eligibilityRead.status==="rejected"?<Banner role="alert" tone="warning">
+    Batch roster or eligibility counts could not be loaded. Do not rely on an earlier snapshot.
+    <Link href={retryHref+"/students"} className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline">
+     Retry roster
+    </Link>
+   </Banner>:null}
+   {registrationsRead.status==="rejected"?<Banner role="alert" tone="warning">
+    Student registration profiles are unavailable. No students have been assumed registered or opted out.
+    <Link href={retryHref+"/registrations"} className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline">
+     Retry profiles
+    </Link>
+   </Banner>:null}
+   {historyRead.status==="rejected"?<Banner role="alert" tone="warning">
+    Decision history is unavailable. Undo actions cannot be safely offered.
+    <Link href={retryHref+"/history"} className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline">
+     Retry history
+    </Link>
+   </Banner>:null}
+   {inviteRead.status==="rejected"?<Banner role="alert" tone="warning">
+    Invitation readiness could not be checked. Invitation actions are temporarily unavailable.
+    <Link href={retryHref} className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline">
+     Retry invitation readiness
+    </Link>
+   </Banner>:null}
+   <Link href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-link underline">
+    Retry batch details
+   </Link>
+  </div>;
+ }
+ const eligibility=eligibilityRead.value;
+ const history=historyRead.value;
+ const registrations=registrationsRead.value;
+ const invitePreview=inviteRead.value;
  const undoable=actionableBatchHistory(history.events).find(event=>event.canRequestUndo);
  const summary=eligibility.summary;
  const own=await getTpoBatchOwnDecisionSummary(context,batchId).catch(()=>null);
