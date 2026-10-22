@@ -1212,6 +1212,22 @@ export const placementRoundResultOutcomes = [
   "ABSENT",
 ] as const;
 
+/** Legacy StageRequest.source is a self-asserted import value, never a live
+ * authorization grant. The runtime derives provenance from the verified actor
+ * and submission channel; historical data must use this explicit crosswalk.
+ */
+export const LEGACY_ROUND_RESULT_SOURCE_TO_VNEXT={
+ recruiter:"HR",PANELIST:"FACULTY",DRIVE_DAY:"TPO",EXCEL:"IMPORT",TPO:"TPO",
+} as const;
+export function mapHistoricalRoundResultSource(source:unknown){
+ if(typeof source!=="string" ||
+    !Object.prototype.hasOwnProperty.call(LEGACY_ROUND_RESULT_SOURCE_TO_VNEXT,source))
+  throw new Error("Unsupported historical round-result source");
+ return LEGACY_ROUND_RESULT_SOURCE_TO_VNEXT[
+  source as keyof typeof LEGACY_ROUND_RESULT_SOURCE_TO_VNEXT
+ ];
+}
+
 export const placementRoundResultReasonCategories = [
   "APTITUDE",
   "TECHNICAL",
