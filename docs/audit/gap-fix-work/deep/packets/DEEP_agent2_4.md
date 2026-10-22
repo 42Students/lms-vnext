@@ -19,7 +19,7 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 - [ ] G2-2-017-052  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [x] G2-2-017-057  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [x] G2-4-017-017  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
-- [ ] G2-4-017-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+- [x] G2-4-017-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-017-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-017-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-017-070  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
@@ -40,3 +40,4 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 
 
 - G2-4-017-017 — FIXED: `src/db/schema/projects.ts:246-262` permits the nullable template/version pair and preserves immutable `legacyTemplateSnapshot`; `drizzle/0313_chat14_template_less_legacy_projects.sql:1-9` drops both NOT NULL constraints and enforces pair consistency. Current `src/modules/projects/instance-service.ts` creation requires a published, assigned template, preserving the new-project rule while imported historic manual projects retain nulls. Legacy comparison: `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectWorkspace.java:79-91` (nullable template ID and snapshot).
+- G2-4-017-018 — OK: `src/db/schema/projects.ts:230-240,266` retains `legacyRecoverableContent` independently of the archive/deletion lifecycle; `src/modules/projects/instance-service.ts` `archiveProjectInstance` changes status and `archivedAt` without destroying resources, and live listing excludes deleted workspaces. Legacy comparison: `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectWorkspace.java:93-95` (`recoverableContent` default false).
