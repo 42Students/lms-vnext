@@ -25,7 +25,7 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 - [ ] G2-4-017-070  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-018-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [x] G2-4-018-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
-- [ ] G2-4-018-067  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+- [x] G2-4-018-067  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-018-072  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-018-074  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-025-075  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
@@ -39,3 +39,4 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 - G2-2-017-057 — OK: `drizzle/0212_learner_content_progress_attempts.sql:3-9` drops the obsolete membership/content unique index, creates a membership/content/attempt unique index, and adds the descending latest-attempt index; `src/db/schema/courses.ts:594,608-621` matches the attempt default and indexes. Legacy comparison: `docs/legacy-source/backend/src/main/resources/db/migration/V132__learner_content_progress_attempt.sql:19-32` (learner ID becomes scoped membership ID). Migration 0212 is registered in `drizzle/meta/_journal.json`. The earlier `0098` only introduced the attempt column and is correctly followed by 0212.
 
 - G2-4-018-046 — OK: `src/db/schema/projects.ts:1019-1045` defines `planLegacyDeliveryRevisionImport`, retaining the legacy `revisionCount` and optimistic version independently while importing the current snapshot as submission version 1. It requires independent, chronological historical evidence rather than inventing previous revisions from the counter. Source: `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectDelivery.java:63-64,123-129`.
+- G2-4-018-067 — OK: `src/db/schema/projects.ts:1019-1043` separates legacy `optimisticVersion` from revision counts and vNext submission ordinal; `src/modules/projects/submission-service.ts:193-224,237-262` locks the draft row and checks `expectedUpdatedAt` before mutation, rejecting stale concurrent edits. Source: `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectDelivery.java:123-129` (nullable JPA @Version). The new row uses its own concurrency token rather than the imported legacy token.
