@@ -65,8 +65,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SuperAdminE2eController.java`
 - [x] U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/RecruiterCollegeController.java`
 - [x] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PlacementJobController.java`
-- [ ] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/FacultyController.java`
-- [ ] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/sprints.js`
+- [x] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/FacultyController.java`
+- [x] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/sprints.js`
 - [ ] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/semesters.js`
 - [ ] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/HiringDashboard.js`
 - [ ] U031 (Cross-cutting area) `cross/15: Learning flow: courses, lessons, quizzes, assignments, attendance, grading, certificates`

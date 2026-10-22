@@ -55,13 +55,13 @@ export async function listSuperAdminContentDirectory(context:RequestContext,rawK
   learningPathStatus:aliased(courseLearningPaths.status,"admin_learning_path_status"),
   courseStatus:aliased(courses.status,"admin_course_status"),
   offeringId:aliased(courseOfferings.id,"admin_offering_id"),
-  lessonId:courseLessons.id,
+  lessonId:aliased(courseLessons.id,"admin_lesson_id"),
   deliveryId:lessonContents.deliveryId,
   offeringStatus:aliased(courseOfferings.status,"admin_offering_status"),
   courseName:aliased(courses.name,"admin_course_name"),
-  courseCode:courses.code,
-  courseId:courses.id,
-  sectionName:sections.name,
+  courseCode:aliased(courses.code,"admin_course_code"),
+  courseId:aliased(courses.id,"admin_course_id"),
+  sectionName:aliased(sections.name,"admin_section_name"),
   cohortName:aliased(cohorts.name,"admin_cohort_name"),
   periodName:aliased(academicPeriods.name,"admin_period_name"),
  }).from(lessonContents)
@@ -88,7 +88,7 @@ export async function listSuperAdminContentDirectory(context:RequestContext,rawK
   .where(and(
    // For section-targeted content, verify both the delivery's offering and
    // its section. A dangling/foreign section never appears in the UI.
-   sql`${lessonContents.deliveryId} is null or ${sections.id} is not null`,
+   sql`(${lessonContents.deliveryId} is null or ${sections.id} is not null)`,
    inArray(lessonContents.contentType,[...contentTypesForKind(kind)]),
    // Do not show every college resource until a course, lesson or class is selected.
    kind==="RESOURCES"&&!query.offeringId&&!query.lessonId&&!query.deliveryId?sql`false`:undefined,

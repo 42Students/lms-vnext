@@ -21,7 +21,9 @@ describe("PR-S2-07 registered 0091 final delivery links and Project page copy",(
   expect(workspace.match(/ariaLabel="Project workspace sections"/g)).toHaveLength(1);
   expect(mentor).toContain("<MentorProjectTabs");
   expect(learner).toContain("<LearnerProjectTabs");
-  expect(college).toContain('if (basePath === "/college/projects" || basePath === "/admin/projects") return null;');
+  expect(college).toContain('if (basePath === "/college/projects") return null;');
+  expect(college).not.toContain('basePath === "/admin/projects") return null');
+  expect(college).toContain('<Tabs className={styles.legacy}');
   for(const label of ["Workspaces","At Risk","Readiness","Submissions","Templates","Audit"]){
    expect(legacyA).toContain('label: "'+label+'"');
    expect(legacyB).toContain('label: "'+label+'"');

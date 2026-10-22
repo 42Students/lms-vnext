@@ -35,7 +35,8 @@ describe("MEN-projects-meetings-27 meeting draft lifecycle", () => {
     expect(service).toContain('ne(projectMeetings.status, "DRAFT")');
     expect(service).toContain('inArray(projectMeetings.status,["DRAFT","REQUESTED","SCHEDULED","RESCHEDULED"])');
     expect(service).toContain('if (meeting.status === "DRAFT") return cancelled;');
-    expect(service).toContain('scope.access!=="MENTOR" && scope.access!=="ADMIN" ? [');
+    expect(service).toContain('const moderator = scope.access === "MENTOR" || scope.access === "ADMIN";');
+    expect(service).toContain('...(!moderator ? [');
     expect(service).toContain('or(ne(projectMeetings.status,"CANCELLED")');
     expect(service).toContain('isNotNull(projectMeetings.requestedByMembershipId)');
     expect(service).toContain('isNotNull(projectMeetings.scheduledByUserId)');

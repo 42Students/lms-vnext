@@ -30,7 +30,7 @@ export const inboundMailListQuerySchema = z.strictObject({
  routingStatus:z.enum(inboundMailRoutingStatuses).optional(),
  q: z.string().trim().max(120,{message:"Search must contain at most 120 characters"}).default(""),
  recipient: z.string().trim().toLowerCase().pipe(z.email().max(320)).optional(),
- page: z.coerce.number().int().catch(1).transform(value=>Math.max(1,Math.min(10000,value))).default(1),
+ page: z.coerce.number().int().min(1).max(10000).default(1),
 });
 export const inboundMailMetadataSchema = z.strictObject({
  id: z.uuid(), receivedAt: z.iso.datetime({ offset: true }),
