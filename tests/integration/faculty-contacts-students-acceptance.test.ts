@@ -47,7 +47,9 @@ describe("Faculty Students Contacts registered PostgreSQL acceptance",()=>{
     }
   });
   it("searches public fields, caps page size, and never searches private login email",async()=>{
-    const listed=await listFacultyContacts(faculty,{tab:"LEARNER",search:"",page:1,pageSize:10});
+    // The seeded learner is not necessarily among the first ten names.
+    // Use the same authorized 50-row window as the visibility assertion above.
+    const listed=await listFacultyContacts(faculty,{tab:"LEARNER",search:"",page:1,pageSize:50});
     const student=listed.items.find(x=>x.membershipId===SEED_IDS.learnerCollegeAMembership);
     expect(student).toBeDefined();
     if(student!.displayName?.trim()){

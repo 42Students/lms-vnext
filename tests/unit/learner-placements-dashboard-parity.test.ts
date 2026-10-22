@@ -27,7 +27,10 @@ describe("Learner placement dashboard route wiring", () => {
     expect(dash).toContain("Browse drives");
     expect(source("src/app/(authenticated)/learn/my-placements/error.tsx"))
       .toContain("This is a loading problem");
-    expect(source("src/app/(authenticated)/learn/my-placements/loading.tsx"))
-      .toContain("aria-busy");
+    const loading=source("src/app/(authenticated)/learn/my-placements/loading.tsx");
+    expect(loading).toContain('<GracefulPageLoading label="Loading my placements…" shape="directory"');
+    const shared=source("src/components/ui/graceful-page-loading.tsx");
+    expect(shared).toContain('aria-busy={true}');
+    expect(shared).toContain('<span role="status" className="sr-only">{label}</span>');
   });
 });
