@@ -1,5 +1,5 @@
 import "server-only";
-import {eq} from "drizzle-orm";
+import {and,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementCompanies,placementCompanyDomains} from "@/db/schema";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
@@ -17,7 +17,8 @@ export async function setSuperAdminGlobalCompanyVerification(context:RequestCont
   await assertPersistedPlatformPermission(tx,context,"admin-scope.select");
   const [company]=await tx.select({
    id:placementCompanies.id,name:placementCompanies.name,
-   status:placementCompanies.status,verifiedAt:placementCompanies.verifiedAt,
+   status:placementCompanies.status,version:placementCompanies.version,
+   verifiedAt:placementCompanies.verifiedAt,
    primaryDomain:placementCompanies.primaryDomain,
   }).from(placementCompanies).where(eq(placementCompanies.id,input.companyId)).for("update").limit(1);
   if(!company||company.status!=="ACTIVE")throw new Error("Company unavailable for verification.");
@@ -45,8 +46,11 @@ export async function setSuperAdminGlobalCompanyVerification(context:RequestCont
     const [saved]=await tx.update(placementCompanies).set({
       verifiedAt:input.verified?now:null,
       verifiedByUserId:input.verified?context.user.id:null,
+      version:sql`${placementCompanies.version} + 1`,
       updatedAt:now,
-    }).where(eq(placementCompanies.id,company.id)).returning({id:placementCompanies.id});
+    }).where(and(eq(placementCompanies.id,company.id),
+       eq(placementCompanies.version,company.version)))
+      .returning({id:placementCompanies.id});
     if(!saved)throw new Error("Company changed. Refresh and retry.");
   }
   if(input.verified&&primary){

@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,ilike,isNull} from "drizzle-orm";
+import {and,eq,ilike,isNull,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,placementCompanies,placementCompanyDomains,placementCompanyRelationships,tenantDomains} from "@/db/schema";
@@ -31,6 +31,7 @@ export async function addTpoCompanyDomain(context:RequestContext,raw:unknown){
   });
   const [company]=await tx.select({
    id:placementCompanies.id,domain:placementCompanies.primaryDomain,
+   version:placementCompanies.version,
   }).from(placementCompanies)
    .innerJoin(placementCompanyRelationships,and(
     eq(placementCompanyRelationships.companyId,placementCompanies.id),
@@ -75,9 +76,11 @@ export async function addTpoCompanyDomain(context:RequestContext,raw:unknown){
   }
   if(!company.domain){
    const [updated]=await tx.update(placementCompanies).set({
-    primaryDomain:input.domain,updatedAt:new Date(),
+    primaryDomain:input.domain,
+    version:sql`${placementCompanies.version} + 1`,updatedAt:new Date(),
    }).where(and(eq(placementCompanies.id,company.id),
-    isNull(placementCompanies.primaryDomain)))
+    isNull(placementCompanies.primaryDomain),
+    eq(placementCompanies.version,company.version)))
      .returning({domain:placementCompanies.primaryDomain});
    if(!updated)throw new CompanyDomainError("ALREADY_SET");
   }

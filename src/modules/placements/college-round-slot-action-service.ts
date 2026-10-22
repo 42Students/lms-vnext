@@ -20,6 +20,11 @@ async function scope(ctx:RequestContext,raw:unknown){
  if(!job)throw Error("Placement drive not found");
  return {collegeId,job};
 }
+function roundInterviewInstantIst(value:Date):string{
+ return new Intl.DateTimeFormat("en-IN",{
+  timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+ }).format(value)+" IST";
+}
 function viewSlot(s:typeof slots.$inferSelect,outcome?:string,feedback?:string|null,editNotes?:string|null){
  const virtual=s.room.startsWith("https://");
  return {id:s.id,jobId:s.jobId,roundId:s.roundId,applicationId:s.applicationId??"",
@@ -298,7 +303,7 @@ export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobI
     }).returning();
     booked=saved;
     eventType="PLACEMENTS_COLLEGE_INTERVIEW_SCHEDULED";
-    message="Interview scheduled for "+job.title+" on "+start.toISOString()+".";
+    message="Interview scheduled for "+job.title+" on "+roundInterviewInstantIst(start)+".";
    }else{
     const [old]=await tx.select().from(slots).where(and(eq(slots.id,cmd.interviewId),
      eq(slots.jobId,job.id),eq(slots.status,"BOOKED")))
@@ -313,7 +318,7 @@ export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobI
     if(!saved)throw Error("Interview changed; refresh and retry.");
     booked=saved;
     eventType="PLACEMENTS_COLLEGE_INTERVIEW_RESCHEDULED";
-    message="Interview rescheduled for "+job.title+" on "+start.toISOString()+". "+cmd.reason;
+    message="Interview rescheduled for "+job.title+" on "+roundInterviewInstantIst(start)+". "+cmd.reason;
    }
    learnerApplicationId=a.applicationId;
   }else{

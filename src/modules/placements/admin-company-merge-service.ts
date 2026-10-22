@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, eq, ilike, inArray, ne } from "drizzle-orm";
+import { and, eq, ilike, inArray, ne, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   placementCompanies, placementCompanyRelationships, placementJobs,
@@ -148,18 +148,23 @@ export async function mergeSuperAdminCompanies(context: RequestContext, raw: unk
     const movedDomain = !target.primaryDomain && Boolean(source.primaryDomain);
     if (movedDomain) {
       await tx.update(placementCompanies)
-        .set({ primaryDomain: null, updatedAt: now })
-        .where(eq(placementCompanies.id, source.id));
+        .set({ primaryDomain:null,updatedAt:now,
+          version:sql`${placementCompanies.version} + 1` })
+        .where(and(eq(placementCompanies.id,source.id),
+          eq(placementCompanies.version,source.version)));
     }
     await tx.update(placementCompanies).set({
       websiteUrl: target.websiteUrl ?? source.websiteUrl,
       logoObjectPath: target.logoObjectPath ?? source.logoObjectPath,
       ...(movedDomain ? {primaryDomain: source.primaryDomain} : {}),
-      updatedAt: now,
-    }).where(eq(placementCompanies.id, target.id));
+      version:sql`${placementCompanies.version} + 1`,updatedAt:now,
+    }).where(and(eq(placementCompanies.id,target.id),
+      eq(placementCompanies.version,target.version)));
     await tx.update(placementCompanies).set({
-      status:"ARCHIVED", archivedAt: now, updatedAt: now,
-    }).where(eq(placementCompanies.id, source.id));
+      status:"ARCHIVED",archivedAt:now,
+      version:sql`${placementCompanies.version} + 1`,updatedAt:now,
+    }).where(and(eq(placementCompanies.id,source.id),
+      eq(placementCompanies.version,source.version+(movedDomain?1:0))));
 
     await recordActivityEventInTransaction(tx, context, {
       eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_COMPANY_LINKED,
