@@ -55,7 +55,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
  const submitted=await searchParams;
  // Old pagination bookmarks used page=0 (or negative) for the first page.
  // Recover only that legacy shape; keep strict rejection of forged pages.
- const oldPage=Array.isArray(submitted.page)?submitted.page[0]:submitted.page;
+ const oldPage=Array.isArray(submitted["page"])?submitted["page"][0]:submitted["page"];
  const raw=oldPage&&/^-?\d+$/.test(oldPage)&&Number(oldPage)<=0
   ?{...submitted,page:"1"}:submitted;
  let filter:ReturnType<typeof parseCollegeContactsSearchParams>;
