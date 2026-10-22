@@ -259,8 +259,8 @@ export async function getMentorSprintTransitionHistory(
   eq(activityEvents.subjectId,params.sprintId),
   eq(activityEvents.eventType,ACTIVITY_EVENT_TYPES.PROJECTS_SPRINT_UPDATED),
  )).orderBy(desc(activityEvents.occurredAt)).limit(100);
- return events.filter(event=>["START","COMPLETE","REOPEN"].includes(String(event.metadata?.action)))
-  .map(event=>({action:String(event.metadata?.action),at:event.occurredAt,
+ return events.filter(event=>["START","COMPLETE","REOPEN"].includes(String(event.metadata?.["action"])))
+  .map(event=>({action:String(event.metadata?.["action"]),at:event.occurredAt,
     actorUserId:event.actorUserId,actorMembershipId:event.actorMembershipId,
-    from:event.metadata?.from,to:event.metadata?.to}));
+    from:event.metadata?.["from"],to:event.metadata?.["to"]}));
 }
