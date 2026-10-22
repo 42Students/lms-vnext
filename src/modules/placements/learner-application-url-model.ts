@@ -15,16 +15,17 @@ for(const key of allowed){
  const values=params.getAll(key);
  if(values.length!==1)continue;
  // Validate each independent facet without losing other valid selections.
- if(learnerApplicationUrlSchema.safeParse({[key]:values[0]}).success)safe[key]=values[0];
+ const candidate=values[0];
+ if(candidate!==undefined&&learnerApplicationUrlSchema.safeParse({[key]:candidate}).success)safe[key]=candidate;
 }
 // Legacy links used ?show=live|ended|all; an application-specific
 // notice link must not disappear behind a narrower saved view.
 const showValues=params.getAll("show");
 if(!("view" in safe)&&showValues.length===1){
  const show=showValues[0];
- safe.view=show==="all"?"all":show==="ended"?"completed":"progress";
+ safe["view"]=show==="all"?"all":show==="ended"?"completed":"progress";
 }
-if(safe.applicationId)safe.view="all";
+if(safe["applicationId"])safe["view"]="all";
 return learnerApplicationUrlSchema.parse(safe);
 }
 export function updateLearnerApplicationUrl(current:string,changes:Record<string,string|null>){
