@@ -123,7 +123,10 @@ export async function POST(request:Request,{params}:Ctx) {
   const mailReady=process.env.TPO_RECRUITER_INVITE_EMAIL_READY==="VERIFIED";
   const invite=await issueTpoRecruiterInvite(context,collegeId,leadId,new Date(),{
    sendEmail:body.sendEmail&&mailReady,
-   deliver:deliverTpoRecruiterInviteEmail,
+   deliver:async (targetCollegeId,targetLeadId,token)=>{
+    const result=await deliverTpoRecruiterInviteEmail(targetCollegeId,targetLeadId,token);
+    return typeof result==="boolean"?result:result.status==="ACCEPTED";
+   },
   });
   const manualPath="/recruiter-invite/"+invite.token;
   const letter="Hello "+body.name+",\n\n"+body.note+

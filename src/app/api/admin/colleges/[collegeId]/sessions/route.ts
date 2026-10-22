@@ -21,10 +21,18 @@ export async function GET(request:Request,{params}:RouteContext){
   // Legacy numeric faculty IDs and adminType are not trusted as canonical
   // identities. The target must be a verified, college-scoped user UUID.
   const result=await listCollegeAdminSessions(await getCurrentRequestContext(),(await params).collegeId,userId!);
-  const sessions=result.devices.map(row=>({
-   id:row.id,...collegeAdminSessionDisplay(row),
-   createdAt:row.created_at,expiresAt:row.expires_at,
-  }));
+  // Raw SQL results are surfaced as unknown records by the DB driver.
+  // Validate the session projection before formatting its sensitive fields.
+  const sessionRow=z.object({
+   id:z.uuid(),device_name:z.string().nullable(),user_agent:z.string().nullable(),
+   ip_address:z.string().nullable(),last_seen_at:z.union([z.date(),z.string()]),
+   created_at:z.union([z.date(),z.string()]),expires_at:z.union([z.date(),z.string()]),
+  });
+  const sessions=result.devices.map(raw=>{
+   const row=sessionRow.parse(raw);
+   return {id:row.id,...collegeAdminSessionDisplay(row),
+    createdAt:row.created_at,expiresAt:row.expires_at};
+  });
   return NextResponse.json({...result,sessions,sessionCount:sessions.length},
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}

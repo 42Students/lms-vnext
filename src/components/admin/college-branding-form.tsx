@@ -76,12 +76,16 @@ export function CollegeBrandingForm({
   const lastCollegeRef=useRef(collegeId);
   const requestSequence=useRef(0);
   const [leaveHref,setLeaveHref]=useState<string|null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [saving, startSave] = useTransition();
+  // A dedicated busy state also guards discrete submit events while async work runs.
+  const [saveInFlight,setSaveInFlight] = useState(false);
   useEffect(()=>{
     if(lastCollegeRef.current!==collegeId){
       // The owning route keys this editor by college; still guard its
       // standalone use so one tenant never inherits another tenant's draft.
       if(JSON.stringify(clean(values))!==JSON.stringify(clean(savedValues.current)))
-        showToast({title:"Unsaved branding changes were discarded because the selected college changed.",tone:"warning"});
+        showToast({title:"Unsaved branding changes were discarded because the selected college changed.",tone:"info"});
       lastCollegeRef.current=collegeId;
       requestSequence.current++;
       savedValues.current=initial;
@@ -123,7 +127,7 @@ export function CollegeBrandingForm({
            target.search === window.location.search)) return;
       event.preventDefault();
       event.stopPropagation();
-      if (savingRef.current) {
+      if (saveInFlight) {
         showToast({title:"Wait for the current college setup action to finish.",tone:"info"});
       } else {
         setLeaveHref(target.href);
@@ -131,12 +135,7 @@ export function CollegeBrandingForm({
     };
     document.addEventListener("click", onLinkClick, true);
     return () => document.removeEventListener("click", onLinkClick, true);
-  }, [dirty, showToast]);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [saving, startSave] = useTransition();
-  // A transition is not a synchronous double-click guard.
-  const savingRef = useRef(false);
-
+  }, [dirty, showToast, saveInFlight]);
   const validColor = (value: string | null) =>
     value && /^#[0-9a-fA-F]{6}$/.test(value) ? value : null;
   const previewLogoUrl=latestLogoUrl||safeTpoBrandLogoUrl(values.logoUrl);
@@ -145,7 +144,7 @@ export function CollegeBrandingForm({
   const previewHeight=previewDesktop?191:302;
 
   async function reloadBranding(force=false){
-    if(!collegeId||(savingRef.current&&!force)||fetching)return;
+    if(!collegeId||(saveInFlight&&!force)||fetching)return;
     if(dirty&&!force){
       setLeaveHref("__reload__");
       return;
@@ -189,8 +188,8 @@ export function CollegeBrandingForm({
 
   function save(event: React.FormEvent) {
     event.preventDefault();
-    if (!canEdit || !collegeId || fetching || loadError || savingRef.current) return;
-    savingRef.current = true;
+    if (!canEdit || !collegeId || fetching || loadError || saveInFlight) return;
+    setSaveInFlight(true);
     startSave(async () => {
       try {
       const response = await fetch(`/api/colleges/${collegeId}/branding`, {
@@ -241,7 +240,7 @@ export function CollegeBrandingForm({
       } catch {
         showToast({title:"Couldn't save branding",description:"Check your connection and try again.",tone:"error"});
       } finally {
-        savingRef.current = false;
+        setSaveInFlight(false);
       }
     });
   }
@@ -254,7 +253,7 @@ export function CollegeBrandingForm({
       confirmLabel={leaveHref==="__reload__"?"Discard changes and reload":"Leave without saving"} confirmVariant="danger"
       onOpenChange={next => {if (!next) setLeaveHref(null);}}
       onConfirm={() => {
-        if (!leaveHref || savingRef.current) return;
+        if (!leaveHref || saveInFlight) return;
         if(leaveHref==="__reload__"){
           setLeaveHref(null);
           void reloadBranding(true);
@@ -347,7 +346,7 @@ export function CollegeBrandingForm({
             Approximation — the real page also shows the floating symbols and the full sign-in form.
           </p>
         </div>
-        {canEdit?<Button type="submit" loading={saving} disabled={saving||fetching||Boolean(loadError)||!collegeId}
+        {canEdit?<Button type="submit" loading={saving} disabled={saving||saveInFlight||fetching||Boolean(loadError)||!collegeId}
            className="min-h-11 w-full justify-center sm:w-auto md:min-h-9">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
            strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
