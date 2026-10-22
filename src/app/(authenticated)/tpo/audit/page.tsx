@@ -184,6 +184,16 @@ export default async function TpoAuditPage({
    });
    return "/tpo/audit?"+params.toString();
   };
+  const gridRefreshQuery=new URLSearchParams({
+    kind:query.kind,page:String(query.page),pageSize:String(query.pageSize),
+    ...(query.from?{from:query.from}:{}),
+    ...(query.to?{to:query.to}:{}),
+    ...(query.q?{q:query.q}:{}),
+    ...(query.who?{who:query.who}:{})
+  });
+  for(const key of ["f_about","f_event","f_who","f_when"] as const)
+   for(const item of query[key])gridRefreshQuery.append(key,item);
+  const gridRefreshHref="/api/placements/tpo/audit?"+gridRefreshQuery.toString();
   return (
     <div data-testid="tpo.audit" className="min-w-0 max-w-full space-y-4">
       <PageHeader
@@ -413,7 +423,8 @@ export default async function TpoAuditPage({
               className="md:min-h-9 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{summary.total===0?"Clear filters":"First page"}</Link>}
           />
         ) : (
-          <TpoAuditGrid rows={items}/>
+          <TpoAuditGrid key={context.membership.id+":"+gridRefreshQuery.toString()}
+       rows={items} refreshHref={gridRefreshHref}/>
         )}
 
         {totalPages>1?<nav
