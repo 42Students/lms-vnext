@@ -22,7 +22,7 @@ export async function readAdminCollegeSignInPolicy(context:RequestContext,colleg
    collegeId:college.id,organizationId:college.organizationId,
   });
   const present=await tx.execute(sql<{found:boolean}>`SELECT to_regclass('public.college_signin_policies') IS NOT NULL AS found`);
-  if(present.rows[0]?.found!==true)return {college,policy:signInPolicyReadState(false,null),version:null,updatedAt:null};
+  if(present.rows[0]?.["found"]!==true)return {college,policy:signInPolicyReadState(false,null),version:null,updatedAt:null};
   const [row]=await tx.select({
    method:collegeSignInPoliciesStaged.method,
    version:collegeSignInPoliciesStaged.version,
@@ -46,7 +46,7 @@ export async function saveAdminCollegeSignInPolicy(context:RequestContext,raw:un
  requirePermission(context,"college.manage",{organizationId:college.organizationId,collegeId:college.id});
  const db=getDb();
  const [ready]= (await db.execute(sql<{ready:boolean}>`select to_regclass('public.college_signin_policies') is not null as ready`)).rows;
- if(!ready?.ready)throw new CollegeSignInPolicyError("SIGNIN_STORAGE_PENDING");
+ if(!ready?.["ready"])throw new CollegeSignInPolicyError("SIGNIN_STORAGE_PENDING");
  return db.transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"college.manage",{
    organizationId:college.organizationId,collegeId:college.id,
@@ -68,6 +68,7 @@ export async function saveAdminCollegeSignInPolicy(context:RequestContext,raw:un
    ?await tx.update(collegeSignInPoliciesStaged).set({method:input.method,version:current.version+1,updatedAt:now})
      .where(eq(collegeSignInPoliciesStaged.collegeId,college.id)).returning()
    :await tx.insert(collegeSignInPoliciesStaged).values({collegeId:college.id,method:input.method,version:1,updatedAt:now}).returning();
+  if(!saved)throw new CollegeSignInPolicyError("SIGNIN_POLICY_STALE");
   await tx.insert(activityEvents).values({
    organizationId:college.organizationId,collegeId:college.id,actorUserId:context.user.id,
    module:"IDENTITY",eventType:"identity.college_signin.updated",importance:"HIGH",
