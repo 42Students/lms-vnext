@@ -67,7 +67,7 @@ export default async function CollegeBatchPromotionPage({
   </div>;
   const [optionsResult,previewResult]=await Promise.allSettled([
     listCollegePromotionOptions(context,parsed.data,
-      {page:batchPage!,pageSize:batchSize!,includeInactive:showCompleted}),
+      {page:batchPage,pageSize:batchSize,includeInactive:showCompleted}),
     parsed.data.cohortId?previewCollegeBatchPromotion(context,parsed.data):Promise.resolve(null),
   ]);
   if(optionsResult.status==="rejected"){
@@ -100,11 +100,11 @@ export default async function CollegeBatchPromotionPage({
     return searchable.includes(batchSearch.toLowerCase());
   });
   const totalBatches=visibleCohorts.length;
-  const totalBatchPages=Math.max(1,Math.ceil(totalBatches/batchSize!));
-  const currentBatchPage=Math.min(batchPage!,totalBatchPages);
+  const totalBatchPages=Math.max(1,Math.ceil(totalBatches/batchSize));
+  const currentBatchPage=Math.min(batchPage,totalBatchPages);
   const directoryRows=visibleCohorts.slice(
-    (currentBatchPage-1)*batchSize!,currentBatchPage*batchSize!);
-  const currentUrl=(page:number,size=batchSize!)=>{
+    (currentBatchPage-1)*batchSize,currentBatchPage*batchSize);
+  const currentUrl=(page:number,size=batchSize)=>{
     const params=new URLSearchParams();
     if(parsed.data.programId)params.set("programId",parsed.data.programId);
     if(showInactive)params.set("showInactive","1");
@@ -168,8 +168,8 @@ export default async function CollegeBatchPromotionPage({
         ]}
         empty={<EmptyState title={showInactive?"No batches found":"No active batches."} description={showInactive?"No batches match the current filters.":"Turn on Show completed / inactive to view the rest."}/> }/>
       <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
-        <span>Showing {totalBatches?((currentBatchPage-1)*batchSize!+1):0}–
-          {Math.min(totalBatches,currentBatchPage*batchSize!)} of {totalBatches} · Page {currentBatchPage} of {totalBatchPages}</span>
+        <span>Showing {totalBatches?((currentBatchPage-1)*batchSize+1):0}–
+          {Math.min(totalBatches,currentBatchPage*batchSize)} of {totalBatches} · Page {currentBatchPage} of {totalBatchPages}</span>
         <div className="flex flex-wrap items-center gap-3">
           <form method="get">
             {parsed.data.programId?<input type="hidden" name="programId" value={parsed.data.programId}/>:null}
@@ -177,7 +177,7 @@ export default async function CollegeBatchPromotionPage({
             {batchSearch?<input type="hidden" name="search" value={batchSearch}/>:null}
             {parsed.data.cohortId?<input type="hidden" name="cohortId" value={parsed.data.cohortId}/>:null}
             <label className="flex items-center gap-2">Rows per page
-              <Select name="batchPageSize" defaultValue={batchSize!} className="min-w-20">
+              <Select name="batchPageSize" defaultValue={batchSize} className="min-w-20">
                 {[10,20,50].map(size=><option key={size} value={size}>{size}</option>)}
               </Select>
             </label>
