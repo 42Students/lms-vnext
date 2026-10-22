@@ -43,6 +43,11 @@ describe("HR-BREAK-TEAM-ATTRIBUTION-40: count approved drives, never stale reque
   const source=readFileSync("src/modules/placements/recruiter-college-branch-service.ts","utf8");
   expect(source).toContain('context.recruiter?.userId!==context.user.id');
   expect(source).toContain('!hasActiveRecruiter(context)');
-  expect(source).toContain('isNull(departments.archivedAt)');
+  // The SQL filter moved into the shared grant-scoped demographics service.
+   const demographics=readFileSync("src/modules/placements/recruiter-college-demographics-service.ts","utf8");
+   expect(source).toContain("getRecruiterCollegeDemographics(context,collegeId)");
+   expect(demographics).toContain("isNull(departments.archivedAt)");
+   expect(demographics).toContain('eq(learnerProgramEnrollments.status,"ACTIVE")');
+   expect(demographics).toContain('.having(sql`${countDistinctLearners} >= ${MIN_GROUP}`)');
  });
 });
