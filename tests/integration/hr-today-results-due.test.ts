@@ -4,6 +4,7 @@ import {afterAll,describe,expect,it} from "vitest";
 import {closeDatabaseConnection} from "@/db/client";
 import {createPlacementCompany} from "@/modules/placements/company-service";
 import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
+import {upsertJobEligibilityPolicy} from "@/modules/placements/eligibility-service";
 import {createPlacementRound,actOnPlacementRound} from "@/modules/placements/round-service";
 import {listRecruiterCalendarEvents} from "@/modules/placements/recruiter-calendar-service";
 import {listOwnRecruiterPlacementJobs} from "@/modules/placements/recruiter-service";
@@ -26,6 +27,7 @@ describe.skipIf(!enabled)("HR today results due PostgreSQL",()=>{
   const round=await createPlacementRound(tpo,job.id,{kind:"INTERVIEW",name:"Technical"});
   await actOnPlacementRound(tpo,round.id,{action:"SCHEDULE",scheduledAt:new Date("2026-10-18T08:00:00Z"),
     timezone:"Asia/Kolkata",mode:"VIRTUAL",meetingUrl:"https://example.test/meet",resultsDueAt:new Date("2026-10-19T08:00:00Z")});
+  await upsertJobEligibilityPolicy(tpo,job.id,{});
   await publishPlacementJob(tpo,job.id);
   const uid=randomUUID();
   const hr=(companyId:string,relation:string,collegeId:string):RequestContext=>({

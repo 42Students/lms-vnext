@@ -327,9 +327,13 @@ describe("core platform pre-browser acceptance flow", () => {
     ).resolves.toEqual([
       expect.objectContaining({
         id: college.id,
-        code: collegeCode,
+        name: "Acceptance Engineering College",
       }),
     ]);
+
+    const persistedCollege=await pool.query<{code:string}>(
+      "select code from colleges where id=$1",[college.id]);
+    expect(persistedCollege.rows[0]?.code).toBe(collegeCode);
 
     const adminDepartment = await createDepartment(
       collegeAdmin,

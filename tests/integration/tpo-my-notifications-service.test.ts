@@ -1,4 +1,5 @@
-import { afterAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { Pool } from "pg";
 import type { RequestContext } from "@/modules/identity/context";
 import { closeDatabaseConnection } from "@/db/client";
 import { getTpoMyNotifications } from "@/modules/placements/tpo-my-notifications-service";
@@ -24,7 +25,17 @@ const tpo: RequestContext = {
   },
 };
 
-afterAll(async () => {
+const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
+let addedTpoRoleId:string|null=null;
+beforeAll(async()=>{
+  const result=await pool.query<{id:string}>(
+    "insert into membership_roles(membership_id,role) values($1,'TPO') on conflict do nothing returning id",
+    [SEED_IDS.collegeAdminMembership]);
+  addedTpoRoleId=result.rows[0]?.id??null;
+});
+afterAll(async()=>{
+  if(addedTpoRoleId)await pool.query("delete from membership_roles where id=$1",[addedTpoRoleId]);
+  await pool.end();
   await closeDatabaseConnection();
 });
 
