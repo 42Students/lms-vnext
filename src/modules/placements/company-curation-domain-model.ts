@@ -1,26 +1,42 @@
 import {z} from "zod";
 import {publicWorkEmailIssue} from "./public-work-email-policy";
 import {validTpoTrustedHost} from "./tpo-trusted-domain-validation";
+import {PUBLIC_SUFFIX_RULE_DATA} from "./public-suffix-data";
 
-/** Preserve the common multi-label suffixes from legacy imports. This is
- * a conservative, local fallback (not a complete Public Suffix List); adding
- * a dependency is prohibited in this lane. Ownership is still checked under
- * the company row lock before the canonical value is persisted. */
-const MULTI_LABEL_SUFFIXES=new Set([
- "co.in","com.in","net.in","org.in","firm.in","gen.in","ind.in","ac.in","edu.in","gov.in","res.in",
- "co.uk","org.uk","ac.uk","gov.uk","me.uk","ltd.uk","plc.uk","sch.uk",
- "com.au","net.au","org.au","edu.au","gov.au","asn.au","id.au",
- "co.nz","org.nz","govt.nz","ac.nz","geek.nz",
- "com.sg","net.sg","org.sg","edu.sg","gov.sg",
- "co.jp","ne.jp","or.jp","ac.jp","go.jp",
- "co.kr","or.kr","go.kr","ac.kr","com.br","com.mx","com.tr",
- "com.cn","net.cn","org.cn","com.hk","com.tw","co.za","com.my",
-]);
-function registrableCompanyHost(host:string):string{
- if(!validTpoTrustedHost(host))return host;
+/** PSL registrable-domain boundary. The vendored ICANN + PRIVATE rules
+ * include wildcard and exception entries; this prevents unrelated tenants on
+ * shared hosts (e.g. *.blogspot.com) collapsing to one corporate identity.
+ * This is data-only, not a new runtime package. */
+const SUFFIX_RULES=new Set(PUBLIC_SUFFIX_RULE_DATA.split("\n").map(raw=>{
+ const marker=raw.startsWith("!")?"!":raw.startsWith("*.")?"*.":"";
+ const rule=raw.slice(marker.length);
+ try{return marker+new URL("https://"+rule).hostname.toLowerCase()}
+ catch{return marker+rule.toLowerCase()}
+}));
+
+function registrableCompanyHost(rawHost:string):string{
+ let host:string;
+ try{
+  const parsed=new URL("https://"+rawHost);
+  if(parsed.username||parsed.password||parsed.port||parsed.pathname!=="/"||
+     parsed.search||parsed.hash)return "";
+  host=parsed.hostname.toLowerCase();
+ }catch{return ""}
+ if(!validTpoTrustedHost(host))return "";
  const labels=host.split(".");
- const suffix=labels.slice(-2).join(".");
- return labels.slice(-(MULTI_LABEL_SUFFIXES.has(suffix)?3:2)).join(".");
+ let ruleSize=1,exceptionSize:number|null=null;
+ for(let i=0;i<labels.length;i++){
+  const candidate=labels.slice(i).join(".");
+  const length=labels.length-i;
+  if(SUFFIX_RULES.has("!"+candidate)){exceptionSize=length;break}
+  if(SUFFIX_RULES.has(candidate))ruleSize=Math.max(ruleSize,length);
+  if(i+1<labels.length&&SUFFIX_RULES.has("*."+labels.slice(i+1).join(".")))
+   ruleSize=Math.max(ruleSize,length);
+ }
+ const publicSuffixLength=exceptionSize===null?ruleSize:exceptionSize-1;
+ // A bare public suffix is not a registrable employer-controlled domain.
+ return labels.length>publicSuffixLength?
+  labels.slice(-(publicSuffixLength+1)).join("."):"";
 }
 /** Accept email, @domain, raw host and http(s) website spellings. */
 function domainFromInput(raw:string):string{
