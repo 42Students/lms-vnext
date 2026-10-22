@@ -6,6 +6,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/components/courses/college-assignment-create.tsx
 - Legacy: Legacy resource upload presign and Google Drive importer in builder. (`docs/legacy-source/frontend/src/components/admin/AdminAssignmentBuilderModal.jsx:149-183;docs/legacy-source/frontend/src/components/admin/AdminAssignmentBuilderModal.jsx:418-423`)
 - Expected fix: Wire existing signed file upload, safe URL resource list and Drive attachment importer.
+- [ ] DEFERRED: Requires implementation-level parity confirmation; no OK or FIXED claim made in this pass.
 
 ## G2-4-012-028 [P1] GAP facet F06
 - [x] Verified: assignment points blank maps to zero; nonblank requires integer 1–1000 in faculty lesson authoring.
@@ -29,6 +30,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/components/courses/faculty-lesson-authoring.tsx, src/db/schema/assessments.ts
 - Legacy: Old creation publishes immediately with resources/methods. (`docs/legacy-source/frontend/src/components/Global/Offcanvas/Assignment/newAssignment.js:456-491`)
 - Expected fix: Document owner approval for deviations or fix.
+- [ ] DEFERRED: Requires implementation-level parity confirmation; no OK or FIXED claim made in this pass.
 
 ## G2-4-013-012 [P1] GAP facet F03
 - [x] Verified: authorized submission metrics survive roster failure; warning Banner says Report is partially loaded and Retry roster links to the same report.
@@ -64,11 +66,13 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/modules/courses/faculty-assessment-report-service.ts
 - Legacy: Legacy isGraded accepts graded==1 OR nonnegative pointsObtained. (`docs/legacy-source/frontend/src/utils/assignmentReport.js:23-28`)
 - Expected fix: Map legacy graded flag/score to new grading status consistently.
+- [ ] DEFERRED: Requires implementation-level parity confirmation; no OK or FIXED claim made in this pass.
 
 ## G2-4-013-054 [P1] GAP facet F12
 - Files: src/modules/courses/faculty-assessment-report-service.ts
 - Legacy: Legacy notSubmitted from entire roster minus deduped student ids, no foreign-row filter. (`docs/legacy-source/frontend/src/utils/assignmentReport.js:95-112`)
 - Expected fix: Document differences for withdrawn/transfer students in historic reports.
+- [ ] DEFERRED: Requires implementation-level parity confirmation; no OK or FIXED claim made in this pass.
 
 ## G2-4-013-057 [P1] GAP facet F13
 - [x] Verified: partial roster still retains submissions and leaves missing unknown.
@@ -86,6 +90,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/modules/courses/faculty-assessment-report-service.ts
 - Legacy: Legacy studentId numeric, multiple rows deduped per student; status graded numeric or points. (`docs/legacy-source/frontend/src/utils/assignmentReport.js:23-28`; `docs/legacy-source/frontend/src/utils/assignmentReport.js:43-55`)
 - Expected fix: Specify migration of attempt count, points, graded visibility and identity.
+- [ ] DEFERRED: Requires implementation-level parity confirmation; no OK or FIXED claim made in this pass.
 
 ## G2-4-013-090 [P1] GAP facet F22
 - [ ] Partial: nullable dueAt and roster-loss behavior exist; historical period roster snapshot is not established.
@@ -103,11 +108,13 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/modules/courses/assignment-submission-service.ts
 - Legacy: Legacy activity row best-effort despite potential missing audit. `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/AssignmentServiceImpl.java:1093-1107`
 - Expected fix: Keep generic feed private and add separate complete grade ledger.
+- [ ] DEFERRED: Requires implementation-level parity confirmation; no OK or FIXED claim made in this pass.
 
 ## G2-5-002-066 [P1] GAP facet F21 Integrations
 - Files: (none, new feature)
 - Legacy: Shared conflict helper used for pre-submit warning and calendar. (docs/legacy-source/frontend/src/components/InterviewCalendar/InterviewCalendarContent.js:42-44; docs/legacy-source/frontend/src/components/InterviewCalendar/InterviewCalendarContent.js:224-230)
 - Expected fix: Share full interviewer/student conflict policy with booking.
+- [ ] DEFERRED: Requires implementation-level parity confirmation; no OK or FIXED claim made in this pass.
 
 ## G2-5-006-049 [P1] GAP facet F14 Exports
 - [x] Verified: attendance CSV exports blank no-session dates, P/A/N for single sessions, and aggregated attended/marked for multiple sessions.
