@@ -161,6 +161,10 @@ export async function acceptAuthenticatedRecruiterEmailReply(
       collegeId:routed.collegeId,recruiterUserId:routed.recruiterUserId,
     }:{}),
     routingStatus:routedStatus,
+    // Posted replies show the stripped body. Failed routes retain full text
+    // for operator triage; originalBodyPlain always preserves the receipt.
+    bodyPlain:routedStatus==="POSTED"?replyBody:fullText,
+    bodyPreview:replyBody.slice(0,1000),
     routeAttemptCount:routedStatus==="STORED"?0:1,
     lastRouteAttemptAt:routedStatus==="STORED"?null:new Date(),
     lastRouteErrorCode:routedStatus==="POSTED"||routedStatus==="STORED"?null:routedStatus,
@@ -240,6 +244,7 @@ export async function acceptAuthenticatedRecruiterEmailReply(
    // misleading unrouted NEW message in the operator triage queue.
    await tx.update(inboundMailMessages).set({
     kind:"REPLY",routingStatus:"POSTED",status:"RESOLVED",
+    bodyPlain:replyBody,bodyPreview:replyBody.slice(0,1000),
     // The dedup ledger UUID is not the conversation message UUID.
     threadId:duplicate.threadId,postedMessageId:duplicate.messageId,
     recruiterUserId:state.recruiterUserId,collegeId:auth.rows[0].college_id,

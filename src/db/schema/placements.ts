@@ -1811,7 +1811,9 @@ export const placementRoundResults = pgTable(
     version: integer("version").notNull(),
     outcome: varchar("outcome", { length: 24 }).notNull(),
     waitlistRank: integer("waitlist_rank"),
-    scorePercent: integer("score_percent"),
+    // 10 fractional digits retain historical Double scores without
+    // rounding them to an integer; Drizzle reads/writes finite JS numbers.
+    scorePercent: numeric("score_percent", {precision:18,scale:10,mode:"number"}),
     reasonCategory: varchar("reason_category", {
       length: 32,
     }),

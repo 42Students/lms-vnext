@@ -2045,6 +2045,13 @@
       "when": 1792358831266,
       "tag": "0291_registered_schema_missing_columns",
       "breakpoints": true
+    },
+    {
+      "idx": 292,
+      "version": "7",
+      "when": 1792358891266,
+      "tag": "0292_chat6_fractional_round_result_score",
+      "breakpoints": true
     }
   ]
 }
