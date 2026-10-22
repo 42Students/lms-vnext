@@ -2,7 +2,7 @@ import "server-only";
 
 import { and, asc, eq, ilike, ne, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { courseLearningPaths, courseLessons, courseOfferings, courses, departments, lessonContents } from "@/db/schema";
+import { courseLearningPaths, courseLessons, courseOfferings, courses, departments } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
 
