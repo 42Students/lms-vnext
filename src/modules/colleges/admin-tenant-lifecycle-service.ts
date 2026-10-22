@@ -17,8 +17,8 @@ function scopedTenantSource(context: RequestContext, query?: z.output<typeof ten
   if (scope?.organizationId && query?.organizationId && query.organizationId !== scope.organizationId) {
     throw new AuthorizationError("college.read");
   }
-  requirePermission(context, "college.read", { collegeId: scope?.collegeId,
-    organizationId: query?.organizationId || scope?.organizationId });
+  requirePermission(context, "college.read", { ...(scope?.collegeId !== undefined ? {collegeId:scope.collegeId} : {}),
+    ...((query?.organizationId || scope?.organizationId) !== undefined ? {organizationId:query?.organizationId || scope?.organizationId} : {}) });
   const where: SQL[] = [];
   if (scope?.collegeId) where.push(eq(colleges.id, scope.collegeId));
   if (scope?.organizationId) where.push(eq(colleges.organizationId, scope.organizationId));
@@ -51,8 +51,8 @@ function scopedTenantSource(context: RequestContext, query?: z.output<typeof ten
  * before this SELECT must deny the actual tenant rows and export. Holding
  * persisted SHARE locks for the transaction prevents mid-read role removal. */
 function persistedTenantScope(context:RequestContext,organizationId?:string){
- return {collegeId:context.adminScope?.collegeId,
-  organizationId:organizationId||context.adminScope?.organizationId};
+ return {...(context.adminScope?.collegeId !== undefined ? {collegeId:context.adminScope.collegeId} : {}),
+  ...((organizationId||context.adminScope?.organizationId) !== undefined ? {organizationId:organizationId||context.adminScope?.organizationId} : {})};
 }
 export async function getSuperAdminTenantLifecycleDirectory(context: RequestContext, raw: unknown) {
   const query = tenantLifecycleQuerySchema.parse(raw), source = scopedTenantSource(context, query);
