@@ -12,10 +12,12 @@ describe("Super Admin Tenant Setup dev-legacy stage copy",()=>{
  });
  it("keeps Create and Set up explicitly reachable without assuming college scope",()=>{
   const hub=readFileSync(join(root,"page.tsx"),"utf8");
-  expect(hub).toContain('href="/admin/tenants/create"');
-  expect(hub).toContain('href="/admin/tenants/setup"');
+  const setup=readFileSync(join(root,"setup/page.tsx"),"utf8");
+  expect(setup).toContain("<OrganizationCreateForm");
+  expect(setup).toContain("<CollegeCreateForm");
+  expect(hub).toContain('"./setup/page"');
   expect(existsSync(join(root,"create/page.tsx"))).toBe(true);
   expect(existsSync(join(root,"setup/page.tsx"))).toBe(true);
-  expect(hub).toContain('title="Tenant Setup"');
+  expect(setup).toContain('title="Tenant Setup"');
  });
 });
