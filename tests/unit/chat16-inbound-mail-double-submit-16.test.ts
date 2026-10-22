@@ -30,7 +30,7 @@ describe("chat-16 inbound-mail exactly-once browser action guards",()=>{
   expect(code).toContain('method:"PATCH",credentials:"same-origin"');
   expect(code).toContain("expectedStatus:current.status,expectedVersion:current.version");
   expect(code).toContain("Message was changed elsewhere. Refresh before retrying.");
-  expect(code).toContain("disabled={busy}");
+  expect(code).toContain("disabled={busy||detailLoading||!detail}");
   expect(code).toContain('role="status"');
   expect(code).toContain("const controller=new AbortController()");
   expect(code).toContain("controller.abort(),15000");

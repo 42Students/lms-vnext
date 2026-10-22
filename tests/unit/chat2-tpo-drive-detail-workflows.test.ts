@@ -8,7 +8,8 @@ describe("TPO drive detail navigation",()=>{
  });
  it("keeps the drive overview and operational drive-day entry",()=>{
   const tabs=tpoDriveTabs("id");
-  expect(tabs[0]?.href).toBe("/tpo/placements/jobs/id");
+  expect(tabs[0]?.href).toBe("/tpo/placements/jobs/id/applicants-pipeline");
+  expect(tpoDriveMoreTabs("id").find(t=>t.label==="Overview")?.href).toBe("/tpo/placements/jobs/id");
   expect(tabs.find(t=>t.label==="Drive day")?.href).toBe("/tpo/placements/jobs/id/drive-day");
  });
 });

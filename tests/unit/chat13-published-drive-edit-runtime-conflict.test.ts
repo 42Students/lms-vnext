@@ -32,6 +32,12 @@ const input={
  confirmed:true,expectedUpdatedAt:"2099-01-02T00:00:00.000Z",
  reason:"Update published description",title:"Graduate Engineering",
  description:"New details",locations:["Hyderabad"],
+ companyRelationshipId:"55555555-5555-4555-8555-555555555555",
+ assessmentUrl:"",assessmentDeadline:null,importantDates:[],
+ customEligibilityRules:[],
+ candidatePreferences:{preferredDegree:"",specialization:"",graduationYear:null,minGpa:null,city:""},
+ jobTypeLabel:"Full Time",employmentType:"FULL_TIME",workMode:"ONSITE",
+ responsibilities:"Build features",
  applicationDeadline:"2099-12-31T00:00:00.000Z",openings:2,
  minimumAnnualCtcInr:300000,maximumAnnualCtcInr:800000,
 };

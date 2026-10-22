@@ -56,7 +56,7 @@ describe("chat-16 reassigned mentor legacy parity",()=>{
     const service=read("src/modules/projects/resource-service.ts");
     const route=read("src/app/api/projects/[projectId]/resources/reorder/route.ts");
     const list=read("src/components/projects/project-resource-list.tsx");
-    expect(service).toContain("requireProjectLifecycleAccess(context,projectIdInput)");
+    expect(service).toContain("requireProjectLifecycleMutationAccess(context,projectIdInput)");
     expect(service).toContain("active.some(row=>!orderIds.includes(row.id))");
     expect(service).toContain("maxSequence+1+i");
     expect(service).toContain("sequence:active[i]!.sequence");
@@ -81,7 +81,8 @@ describe("chat-16 reassigned mentor legacy parity",()=>{
     expect(mentorActivityLabel("PROJECT_TASK_UPDATED")).toBe("Task Updated");
     expect(mentorActivityCategory("PROJECT_RESOURCE_ADDED")).toBe("Resource");
     expect(code).toContain('role="feed"');
-    expect(code).toContain("No project activity yet. Task moves, sprint updates and resource changes will appear here.");
+    expect(code).toContain('"No project activity yet"');
+    expect(code).toContain("Task moves, sprint updates and resource changes will appear here.");
     expect(code).toContain("No activity matches this source and date range.");
     expect(code).toContain("Clear filters");
   });
@@ -111,7 +112,8 @@ describe("chat-16 reassigned mentor legacy parity",()=>{
   it("MEN-projects-meetings-69 keeps meeting load failure inline with a Retry action",()=>{
     const page=read("src/app/(authenticated)/mentor/calendar/page.tsx");
     const fallback=read("src/components/projects/mentor-calendar-load-failure.tsx");
-    expect(page).toContain("listMyMentorCalendarMeetings(context).catch(()=>null)");
+    expect(page).toContain("listMyMentorCalendarMeetings(context)");
+    expect(page).toContain("calendarRead.items===null");
     expect(page).toContain("<MentorCalendarLoadFailure/>");
     expect(fallback).toContain("We couldn&apos;t load your meetings.");
     expect(fallback).toContain("router.refresh()");
@@ -136,7 +138,7 @@ describe("chat-16 reassigned mentor legacy parity",()=>{
       ["allQuizzes/page.tsx","/mentor/projects"],
       ["fileExplorer/page.tsx","/mentor/projects"],
       ["contacts/[[...contactsTab]]/page.tsx","/mentor/projects"],
-      ["courses/page.tsx","/mentor"],
+      ["courses/page.tsx","/mentor/projects"],
       ["courses/[courseId]/[[...courseTab]]/page.tsx","/mentor/projects"],
     ] as const;
     for(const [file,target] of redirects){
