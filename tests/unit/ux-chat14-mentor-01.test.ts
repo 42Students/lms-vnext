@@ -3,7 +3,7 @@ import {readFileSync} from "node:fs";
 describe("chat-14 mentor UX rollout batch 01",()=>{
  it("UX-mentor-mentor-01 preserves route layout, wording, and touch/scroll source contracts",()=>{
   const src=readFileSync("src/app/(authenticated)/mentor/page.tsx","utf8");
-  expect(src).toContain("min-w-0 max-w-full");
+  expect(src).toContain("mx-auto flex min-h-[320px] w-full max-w-[700px]");
   expect(src).not.toContain("min-h-10");
  });
  it("UX-mentor-mentor-activity-01 preserves route layout, wording, and touch/scroll source contracts",()=>{

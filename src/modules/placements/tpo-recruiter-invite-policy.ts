@@ -51,13 +51,13 @@ export function isRecruiterInviteTokenShape(
   return typeof token === "string" && TOKEN_SHAPE.test(token);
 }
 
-/** Expiry matches legacy LocalDateTime.isBefore: equality is still usable.
+/** Invite expiry is exclusive: at the seven-day boundary the credential is expired.
  * Absolute UTC milliseconds are used, so seven days do not depend on IST
  * midnight or daylight savings. Future-dated issuedAt is always invalid.
  */
 export function recruiterInviteWithinWindow(issuedAt:Date,now:Date){
  return validDate(issuedAt)&&validDate(now)&&now.getTime()>=issuedAt.getTime()&&
-  now.getTime()-issuedAt.getTime()<=RECRUITER_INVITE_TTL_MS;
+  now.getTime()-issuedAt.getTime()<RECRUITER_INVITE_TTL_MS;
 }
 /** Hash lookup key. Never persist or log the raw invitation token. */
 export function recruiterInviteTokenHash(token: string): string {

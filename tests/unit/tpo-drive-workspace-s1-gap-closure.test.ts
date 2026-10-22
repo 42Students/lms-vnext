@@ -95,7 +95,7 @@ describe("TPO drive workspace verified S1 gaps",()=>{
  });
  it("TPO-drive-workspace-60 validates scoped two-way field changes and decision acknowledgements",()=>{
   const id="11111111-1111-4111-8111-111111111111";
-  expect(driveChangeCommandSchema.safeParse({action:"CREATE",mode:"SUGGEST",field:"PAY",
+  expect(driveChangeCommandSchema.safeParse({action:"CREATE",mode:"ASK",field:"PAY",
    proposedValue:"9 LPA",reason:"Updated employer budget"}).success).toBe(true);
   expect(driveChangeCommandSchema.safeParse({action:"CREATE",mode:"ASK",field:"PAY",
    proposedValue:"9 LPA",reason:"Updated employer budget",collegeId:"forged"}).success).toBe(false);
@@ -111,7 +111,7 @@ describe("TPO drive workspace verified S1 gaps",()=>{
   expect(result.category).toBe("Dream");
   expect(result.ctc).toContain("50,000");
   expect(result.deadline).toBe("Deadline not set");
-  expect(result.status).toBe("Published");
+  expect(result.status).toBe("Open");
  });
  it("TPO-drive-workspace-40 refuses CSV multiline learner identities and malformed quoting",()=>{
   expect(parseSelectionCsv('Application ID,Result\n"a,b",PASS',true,1000)[1]).toEqual(["a,b","PASS"]);
