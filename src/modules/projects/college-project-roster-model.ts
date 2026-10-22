@@ -6,8 +6,6 @@ export const replaceCollegeProjectRosterSchema=z.object({
  mode:z.enum(["ADD","REPLACE"]).default("ADD"),
  confirmRemoval:z.boolean().optional(),
  expectedUpdatedAt:z.iso.datetime({offset:true}),
- mode:z.enum(["ADD","REPLACE"]).default("ADD"),
- confirmRemoval:z.boolean().optional(),
 }).strict();
 
 /** The legacy 500-learner cap is on the effective roster, not each batch. */

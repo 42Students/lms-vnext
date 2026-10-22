@@ -265,8 +265,10 @@ export async function listLearnerPlacementJobs(
   // Apply the same current-college held-offer limit that the write path
   // checks again under locks. This controls only the affordance, not access.
   const [rules] = await getDb().select({
+    countsAsPlacedAt:placementCollegeRules.countsAsPlacedAt,
     maxHeldOffers: placementCollegeRules.maxHeldOffers,
     upliftPct: placementCollegeRules.upliftPct,
+    minResponseHours:placementCollegeRules.minResponseHours,
   }).from(placementCollegeRules)
     .where(eq(placementCollegeRules.collegeId, membership.collegeId)).limit(1);
   // Apply the same validated batch rules as the own Rules page.

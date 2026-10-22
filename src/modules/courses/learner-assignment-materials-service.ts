@@ -76,7 +76,7 @@ export async function commandFacultyAssignmentMaterialLink(context:RequestContex
    return {id:found.id,removed:true};
   }
   if(rows.length>=20)throw new CoursesServiceError("CONTENT_TYPE_SHAPE_INVALID");
-  if(rows.some(row=>row.externalUrl.toLowerCase()===input.link.externalUrl.toLowerCase()))
+  if(rows.some(row=>row.externalUrl?.toLowerCase()===input.link.externalUrl.toLowerCase()))
    throw new CoursesServiceError("CONTENT_TYPE_SHAPE_INVALID");
   const used=new Set(rows.map(row=>row.sequence));
   const sequence=Array.from({length:20},(_,i)=>i).find(i=>!used.has(i));
