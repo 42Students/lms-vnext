@@ -28,7 +28,7 @@ vi.mock("@/components/admin/managed-college-subdomain",async()=>{
 vi.mock("next/navigation",()=>({
  notFound:()=>{mocks.notFound();throw new Error("NEXT_NOT_FOUND");},
 }));
-import CollegeWebAddress from "@/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page";
+import {CollegeWebAddressContent} from "@/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page";
 import {CollegeServiceError} from "@/modules/colleges/service";
 
 const collegeId="11111111-1111-4111-8111-111111111111";
@@ -49,7 +49,7 @@ beforeEach(()=>{
 
 describe("SA-colleges-domains-page-01 verified domain admin scope",()=>{
  it("allows managing only the selected authorized college and renders an empty state without fabricated hosts",async()=>{
-  const html=renderToStaticMarkup(await CollegeWebAddress(props));
+  const html=renderToStaticMarkup(await CollegeWebAddressContent(props));
   expect(html).toContain("IIT Dharwad");
   expect(html).toContain("Only a verified address can become primary");
   expect(html).toContain('data-college="'+collegeId+'"');
@@ -64,7 +64,7 @@ describe("SA-colleges-domains-page-01 verified domain admin scope",()=>{
    verifiedAt:new Date("2099-01-01T00:00:00Z"),
    lastCheckedAt:new Date("2099-01-02T00:00:00Z"),lastCheckResult:"OK",
   }]);
-  const html=renderToStaticMarkup(await CollegeWebAddress(props));
+  const html=renderToStaticMarkup(await CollegeWebAddressContent(props));
   expect(html).toContain("lms.college.example.edu");
   expect(html).toContain('data-count="1"');
   expect(html).toContain("Moving an address between colleges is not supported");
@@ -74,13 +74,13 @@ describe("SA-colleges-domains-page-01 verified domain admin scope",()=>{
    user:{...actor.user,systemRoles:[]},
    membership:{id:"learner",collegeId,organizationId:org,status:"ACTIVE",roles:["LEARNER"]},
   });
-  await expect(CollegeWebAddress(props)).rejects.toBeDefined();
+  await expect(CollegeWebAddressContent(props)).rejects.toBeDefined();
   expect(mocks.domains).not.toHaveBeenCalled();
   expect(mocks.managed).not.toHaveBeenCalled();
  });
  it("404s an unknown or out-of-scope tenant before reading domain metadata",async()=>{
   mocks.tenant.mockRejectedValueOnce(new CollegeServiceError("COLLEGE_NOT_FOUND"));
-  await expect(CollegeWebAddress(props)).rejects.toThrow("NEXT_NOT_FOUND");
+  await expect(CollegeWebAddressContent(props)).rejects.toThrow("NEXT_NOT_FOUND");
   expect(mocks.notFound).toHaveBeenCalledOnce();
   expect(mocks.domains).not.toHaveBeenCalled();
  });
