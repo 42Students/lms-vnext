@@ -12,6 +12,7 @@ import { requirePlacementManageScope } from "./scope";
 import { requireTpoBatchActor } from "./tpo-batch-workspace-read-service";
 import { tpoStudentNudgeInputSchema } from "./tpo-student-nudge-send-model";
 import { sendZeptoMailTemplate } from "@/modules/notifications/zeptomail-email";
+import { placementEmailChannelEnabled } from "./placement-mail-event-matrix";
 
 /** TPO-students-04: private, tenant-scoped in-app delivery and transactional audit.
  * Repeating the same exact message to the same recipient on the same UTC day is
@@ -77,7 +78,7 @@ export async function sendTpoStudentNudges(context:RequestContext,raw:unknown){
  // non-OTP template for each notification intent.
  let emailAccepted=0,emailFailed=0,emailSkipped=0;
  for(const recipient of stored.emailRecipients){
-  if(process.env.TPO_STUDENT_NUDGE_EMAIL_ENABLED!=="true"||!recipient.email){
+  if(!placementEmailChannelEnabled("STUDENT_NUDGE",process.env)||!recipient.email){
    emailSkipped++;
    continue;
   }

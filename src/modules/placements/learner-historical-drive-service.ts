@@ -1,7 +1,7 @@
 import "server-only";
 import {and,asc,desc,eq,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {activityEvents,placementApplications,placementApplicationStatusHistory,placementCompanies,
+import {activityEvents,learnerProfiles,placementApplications,placementApplicationStatusHistory,placementCompanies,
  placementCompanyRelationships,placementJobRoleOptions,placementJobRounds,placementJobs} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireLearnerPlacementAccess} from "./learner-participation-guard";
@@ -35,7 +35,7 @@ export async function getOwnLearnerDriveJourney(context:RequestContext,rawJobId:
   .limit(30);
  const owned=applications[0];
  if(!owned)return null;
- const [rounds,reasonRows,history]=await Promise.all([
+ const [rounds,reasonRows,history,resumeProfiles]=await Promise.all([
   getDb().select({id:placementJobRounds.id,name:placementJobRounds.name,
    sequence:placementJobRounds.sequence,status:placementJobRounds.status,
    scheduledAt:placementJobRounds.scheduledAt})
@@ -57,6 +57,8 @@ export async function getOwnLearnerDriveJourney(context:RequestContext,rawJobId:
    .where(inArray(placementApplicationStatusHistory.applicationId,
     applications.map(row=>row.applicationId)))
    .orderBy(asc(placementApplicationStatusHistory.createdAt)).limit(100),
+  getDb().select({resumeObjectPath:learnerProfiles.resumeObjectPath})
+   .from(learnerProfiles).where(eq(learnerProfiles.membershipId,member.id)).limit(1),
  ]);
  const reason=reasonRows[0]?.metadata.reason;
  return {...owned,jobId,
@@ -71,9 +73,10 @@ export async function getOwnLearnerDriveJourney(context:RequestContext,rawJobId:
     at:entry.createdAt.toISOString(),
    })),
   })),
-  // Private resume snapshots are intentionally not projected; a signed URL
-  // must be authorized through its separate learner-evidence endpoint.
-  resumeEvidenceAvailable:false,
+  // Reveal only whether the learner has an own stored private resume key.
+  // Never return a raw path, nor treat a stored key as read authorization;
+  // the evidence endpoint must re-check ownership, attestation and malware scan.
+  resumeEvidenceAvailable:Boolean(resumeProfiles[0]?.resumeObjectPath),
   reason:typeof reason==="string"&&reason.trim()?reason.trim():null,
   rounds:rounds.map(row=>({...row,scheduledAt:row.scheduledAt?.toISOString()??null}))};
 }
