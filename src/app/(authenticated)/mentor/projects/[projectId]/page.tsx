@@ -82,7 +82,7 @@ export default async function MentorProjectPage({
         ? <p role="status" className="border-b border-border py-3 text-sm text-muted-foreground">
             No project content available for this section.
             <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=overview"}
-              className="ml-2 font-semibold text-link underline">Overview</Link>
+              className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Overview</Link>
           </p>
         : <section aria-label="Current project section" className="min-w-0 space-y-1">
             <h2 className="sr-only">{breadcrumbTab[selectedTab??"overview"]??"Overview"}</h2>

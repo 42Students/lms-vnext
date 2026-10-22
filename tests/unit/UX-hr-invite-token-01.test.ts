@@ -17,8 +17,10 @@ describe("UX-hr-invite-token-01 legacy HR invitation",()=>{
  it("uses bounded public loading and public-safe recovery instead of a duplicate form",()=>{
   const loading=read("src/app/hr-invite/[token]/loading.tsx");
   const failure=read("src/app/hr-invite/[token]/error.tsx");
-  expect(loading).toContain("min-h-dvh");
-  expect(loading).toContain("<GracefulPageLoading");
+  expect(loading).toContain('<PublicPageLoading label="Loading invitation..."');
+  const shared=read("src/components/public/public-page-loading.tsx");
+  expect(shared).toContain('<GracefulPageLoading label={label}');
+  expect(shared).toContain('role="status"');
   expect(failure).toContain('<GracefulErrorBoundary error={error} reset={reset} homeHref="/"');
  });
 });

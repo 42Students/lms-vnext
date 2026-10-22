@@ -321,7 +321,7 @@ export async function PlacementDriveWorkspace({
           <Dropdown mobileSheet align="end" label="Drive actions" trigger={isTpo?"More":"Actions"} className="w-full sm:w-auto">
             <p className="hidden text-xs text-muted-foreground group-open:block md:!hidden leading-[20px]">Scroll for more drive actions ↓</p>
             <div role="group" aria-label="Drive action choices" tabIndex={0}
-              className="flex max-h-[65dvh] min-w-0 flex-col gap-2 overflow-y-auto overscroll-contain pb-4 md:max-h-72 md:flex-col md:overflow-y-auto md:pb-0">
+              className="flex max-h-[65dvh] min-w-0 flex-col gap-2 overflow-y-auto overscroll-contain pb-4 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1rem),transparent_100%)] md:max-h-72 md:flex-col md:overflow-y-auto md:pb-0">
             {nextStep&&!isTpo ? (
               <Link href={nextStep.primary.href}
                 className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-white hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[rgba(38,186,199,0.35)] min-[768px]:min-h-[var(--lms-control-height)]">

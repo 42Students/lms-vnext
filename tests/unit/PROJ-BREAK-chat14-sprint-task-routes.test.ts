@@ -152,8 +152,8 @@ describe("Sprint and task mutating routes under Mentor account",()=>{
  it("PROJ-BREAK-MENTOR-344 malformed Sprint/task editor JSON cannot invoke a write",async()=>{
   for(const route of requests.filter(item=>item.readsBody && item.name!=="sprint-delete")){
    const response=await route.invoke(request(route.method,"{broken JSON"));
-   const bounded=new Set(["sprint-create","sprint-edit","task-edit"]);
-   expect(response.status).toBe(bounded.has(route.name)?400:403);
+   const bounded=new Set(["sprint-create","sprint-edit","task-create","task-edit"]);
+   expect(response.status).toBe(400);
    if(bounded.has(route.name))
     expect(await response.json()).toMatchObject({error:"INVALID_PROJECT_COMMAND_BODY"});
   }

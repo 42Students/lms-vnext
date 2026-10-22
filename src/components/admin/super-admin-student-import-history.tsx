@@ -24,8 +24,8 @@ export function SuperAdminStudentImportHistory({ runs }: { runs: readonly Run[] 
           getRowKey={run=>String(run.index)}
           empty={<p role="status" className="text-sm text-body">No import history found.</p>}
           columns={[
-            {key:"when",header:"Date",mobilePriority:"primary",cell:run=>run.when},
-            {key:"students",header:"Rows",mobilePriority:"secondary",cell:run=>run.students},
+            {key:"when",header:"When",mobilePriority:"primary",cell:run=>run.when},
+            {key:"students",header:"Students",mobilePriority:"secondary",cell:run=>run.students},
             {key:"created",header:"Created",mobilePriority:"secondary",cell:run=>run.created},
             {key:"failed",header:"Failed",mobilePriority:"secondary",cell:run=>run.failed},
           ]} />

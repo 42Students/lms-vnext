@@ -2,9 +2,9 @@
 
 Do these right after your ci1 queue. CI checks every push to main. Push after every 3 packets. Tick [x] as you go.
 
-- [ ] `docs/audit/gap-fix-work/ci2/packets/CI2U_lane6_1.md` (6 test files)
-- [ ] `docs/audit/gap-fix-work/ci2/packets/CI2U_lane6_2.md` (6 test files)
-- [ ] `docs/audit/gap-fix-work/ci2/packets/CI2U_lane6_3.md` (6 test files)
+- [x] `docs/audit/gap-fix-work/ci2/packets/CI2U_lane6_1.md` (6 test files)
+- [x] `docs/audit/gap-fix-work/ci2/packets/CI2U_lane6_2.md` (6 test files)
+- [x] `docs/audit/gap-fix-work/ci2/packets/CI2U_lane6_3.md` (6 test files)
 - [ ] `docs/audit/gap-fix-work/ci2/packets/CI2U_lane6_4.md` (6 test files)
 - [ ] `docs/audit/gap-fix-work/ci2/packets/CI2U_lane6_5.md` (6 test files)
 - [ ] `docs/audit/gap-fix-work/ci2/packets/CI2U_lane6_6.md` (6 test files)

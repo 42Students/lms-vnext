@@ -6,7 +6,7 @@ describe("Faculty live class authoring overlay UX",()=>{
  it("UX-teacher-live-classes-03 confirms schedule/edit/cancel in a focus-managed shared ConfirmDialog",()=>{
   const page=source();
   expect(page).toContain('import { ConfirmDialog } from "@/components/ui/confirm-dialog"');
-  expect(page).toContain("facultyLiveConfirmText(action,chosen");
+  expect(page).toContain("facultyLiveConfirmText(action, chosen");
   expect(page).toContain("onConfirm={()=>void save(true)}");
   expect(page).toContain('confirmVariant={action==="CANCEL"?"danger":"primary"}');
   expect(page).not.toContain("window.confirm");

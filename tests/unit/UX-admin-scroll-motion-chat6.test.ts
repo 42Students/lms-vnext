@@ -6,7 +6,7 @@ describe("UX admin scroll and motion after invisible scrollbar owner decision",(
   const code=source("src/components/ui/data-table.tsx");
   expect(code).toContain("<ScrollCue axis=\"x\"");
   expect(code).toContain("Scrollable table columns");
-  expect(code).toContain("sm:rounded-xl");
+  expect(code).toContain("md:rounded-[var(--lms-radius-md)]");
   expect(code).toContain("<table");
   expect(code).toContain("More details");
   expect(code).not.toContain("transition-all");
@@ -51,7 +51,8 @@ describe("UX admin scroll and motion after invisible scrollbar owner decision",(
  it("UX-admin-scroll-motion-06 drive action menu has vertical fade, focusable bounded region and narrow-phone hint (src/components/placements/placement-drive-workspace.tsx)",()=>{
   const code=source("src/components/placements/placement-drive-workspace.tsx");
   expect(code).toContain("Scroll for more drive actions");
-  expect(code).toContain("tabIndex={0}");
+  expect(code).toContain("tabIndex={detail.notes.length>3?0:undefined}");
+  expect(code).toContain('aria-describedby={detail.notes.length>3');
   expect(code).toContain("overflow-y-auto overscroll-contain");
   expect(code).toContain("[mask-image:linear-gradient");
   expect(code).toContain("max-h-[65dvh]");
@@ -61,7 +62,8 @@ describe("UX admin scroll and motion after invisible scrollbar owner decision",(
   const code=source("src/components/placements/placement-calendar-workspace.tsx");
   expect(code).toContain("overflow-x-auto overscroll-x-contain");
   expect(code).toContain("[mask-image:linear-gradient(to_right");
-  expect(code).toContain("min-w-[56rem]");
+  expect(code).toContain("min-[992px]:min-w-[56rem]");
+  expect(code).toContain("min-w-[42rem]");
   expect(code).toContain("tabIndex={0}");
   expect(code).not.toContain("transition-all");
  });
@@ -70,7 +72,7 @@ describe("UX admin scroll and motion after invisible scrollbar owner decision",(
   expect(code).toContain("<Drawer open");
   expect(code).toContain("onOpenChange=");
   expect(code).toContain("title={selected.subject");
-  expect(code).toContain("disabled={busy}");
+  expect(code).toContain("disabled={busy||detailLoading||!detail}");
   expect(code).toContain("Plain text message");
   expect(code).not.toContain("<dialog");
  });
@@ -109,7 +111,8 @@ describe("UX admin scroll and motion after invisible scrollbar owner decision",(
   const code=source("src/components/admin/person-profile-dialog.tsx");
   expect(code).toContain("<Dialog");
   expect(code).toContain("onOpenChange");
-  expect(code).toContain("role=\"alert\"");
+  expect(code).toContain("showToast({");
+  expect(code).toContain('tone: "error"');
   expect(code).not.toContain("<dialog");
  });
  it("UX-admin-scroll-motion-14 interview scheduling overlay keeps modal and confirm semantics (src/components/placements/college-interview-appointments.tsx)",()=>{
@@ -123,7 +126,7 @@ describe("UX admin scroll and motion after invisible scrollbar owner decision",(
  it("UX-admin-scroll-motion-15 uses motion tokens and global reduced-motion and hidden-scrollbar rules",()=>{
   const css=source("src/app/globals.css");
   expect(css).toContain("--lms-motion-fast: 150ms");
-  expect(css).toContain("--lms-motion-base: 200ms");
+  expect(css).toContain("--lms-motion-base: 250ms");
   expect(css).toContain("var(--lms-motion-ease)");
   expect(css).toContain("prefers-reduced-motion: reduce");
   expect(css).toContain("scrollbar-width: none");
@@ -207,7 +210,8 @@ describe("UX admin scroll and motion after invisible scrollbar owner decision",(
   expect(code).toContain("Extend the published application deadline? This affects when students can apply.");
   expect(code).toContain("inFlightRef.current=true");
   expect(code).toContain("inFlightRef.current=false");
-  expect(code).toContain("text-base sm:text-sm");
+  expect(code).toContain('<Input name="deadline" type="datetime-local" required');
+  expect(code).toContain('aria-invalid={Boolean(error)}');
   expect(code).not.toContain("window.confirm");
   expect(code).not.toContain("data?.error");
  });

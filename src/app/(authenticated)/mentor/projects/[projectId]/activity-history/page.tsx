@@ -126,7 +126,7 @@ export default async function MentorProjectActivityHistoryPage({
         Project lifecycle and audit events are separate from the authoritative
         meeting-edit revisions. {" "}
         <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
-         "/activity-history?view=MEETINGS"} className="font-semibold text-link underline">
+         "/activity-history?view=MEETINGS"} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
           View meeting change history
         </Link>
         {" "}for actor, changed fields and redacted before/after details.
@@ -168,7 +168,7 @@ export default async function MentorProjectActivityHistoryPage({
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-semibold text-[var(--lms-heading)]">{PROJECT_MEETING_HISTORY_TITLE}</h2>
           <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=meetings"}
-            className="min-h-9 text-sm font-semibold text-link underline">Back to meetings</Link>
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Back to meetings</Link>
         </div>
         <p className="text-sm text-body">Recorded meeting revisions, newest first. Each revision is
           scoped to this project and can be filtered by meeting key. Actor names and allowed
@@ -190,7 +190,7 @@ export default async function MentorProjectActivityHistoryPage({
         {!meetingHistory ? <p role="alert" className="text-sm text-error">
           Meeting history could not be loaded. Other activity events are still available.
           <Link href={mentorProjectActivityHref({...data.query,view:"MEETINGS",page:1})}
-            className="ml-2 font-semibold underline">Retry</Link>
+            className="ml-2 inline-flex min-h-11 items-center font-semibold underline md:min-h-9">Retry</Link>
         </p> : meetingHistory.items.length===0 ?
           <EmptyState title="No meeting changes recorded"
             description="No persisted typed meeting revisions match this project and meeting key. This does not mean no generic project activity occurred or that pre-migration edits never happened."/> :

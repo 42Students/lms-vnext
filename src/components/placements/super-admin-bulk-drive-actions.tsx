@@ -101,7 +101,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
     </div>
     {eligible.length>3?<p id="bulk-drive-scroll-cue" className="text-xs text-muted-foreground">More drives below ↓ · Scroll to review published or closed drives.</p>:null}
     <div tabIndex={0} role="region" aria-label="Eligible drive list" aria-describedby={eligible.length>3?"bulk-drive-scroll-cue":undefined}
-      className="grid max-h-56 min-w-0 gap-2 overflow-y-auto overscroll-contain border-y border-border py-2 sm:grid-cols-2 xl:grid-cols-3">
+      className="grid max-h-56 min-w-0 gap-2 overflow-y-auto overscroll-contain border-y border-border py-2 sm:grid-cols-2 xl:grid-cols-3 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1rem),transparent_100%)]">
       {eligible.map(d=><div key={d.id} className="min-w-0 border-b border-border py-2">
         <label className="flex min-h-11 min-w-0 items-start gap-2 text-sm">
           <Checkbox disabled={busy || (!selected.includes(d.id) && selected.length>=100)} checked={selected.includes(d.id)}

@@ -25,8 +25,9 @@ function copy(node:ReactNode):string{
  if(Array.isArray(node))return node.map(copy).join(" ");
  if(typeof node==="string"||typeof node==="number")return String(node);
  if(!isValidElement(node))return "";
- const p=node.props as {children?:ReactNode;title?:string;description?:string};
- return [p.title??"",p.description??"",copy(p.children)].join(" ");
+ const p=node.props as {children?:ReactNode;title?:string;description?:string;
+  items?:Array<{label:string;href:string}>};
+ return [p.title??"",p.description??"",...(p.items??[]).map(item=>item.label),copy(p.children)].join(" ");
 }
 describe("HR-BREAK-chat19-drive-list: selected college may never widen account data",()=>{
  beforeEach(()=>{
@@ -79,7 +80,7 @@ describe("HR-BREAK-chat19-drive-list: selected college may never widen account d
    ...base.recruiter!.grants,{...base.recruiter!.grants[0]!,id:"grant-b",collegeId:b,collegeName:"College B"},
   ]}});
   const result=await page();
-  expect(copy(result)).toContain("Choose an authorized college");
+  expect(copy(result)).toContain("Select a college workspace");
   expect(copy(result)).toContain("College A");
   expect(copy(result)).toContain("College B");
   expect(m.drives).not.toHaveBeenCalled();
@@ -88,7 +89,7 @@ describe("HR-BREAK-chat19-drive-list: selected college may never widen account d
  it("zero grants offers placement-cell recovery, not platform-wide recruiter inventory",async()=>{
   m.ctx.mockResolvedValue({...base,recruiter:{...base.recruiter!,grants:[]}});
   const result=await page();
-  expect(copy(result)).toContain("No active college access");
+  expect(copy(result)).toContain("Drive access is not switched on");
   expect(m.drives).not.toHaveBeenCalled();
   expect(m.requests).not.toHaveBeenCalled();
  });
