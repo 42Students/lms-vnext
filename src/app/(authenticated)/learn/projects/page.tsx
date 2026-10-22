@@ -65,25 +65,25 @@ export default async function LearnerProjectsPage({
   const allowedKeys=["search","status","attention","work","sort","page","pageSize"];
   const invalidFilters=Object.keys(params).some(key=>!allowedKeys.includes(key)) ||
     Object.values(params).some(Array.isArray) ||
-    (params.search!==undefined&&!searchSchema.safeParse(one(params.search)).success) ||
-    (params.status!==undefined&&!statusSchema.safeParse(one(params.status)).success) ||
-    (params.attention!==undefined&&!attentionSchema.safeParse(one(params.attention)).success) ||
-    (params.work!==undefined&&!workSchema.safeParse(one(params.work)).success) ||
-    (params.sort!==undefined&&!sortSchema.safeParse(one(params.sort)).success) ||
-    (params.page!==undefined&&!z.coerce.number().int().min(0).max(100000).safeParse(one(params.page)).success) ||
-    (params.pageSize!==undefined&&!z.coerce.number().int().safeParse(one(params.pageSize)).success) ||
-    (params.pageSize!==undefined&&![10,25,50].includes(Number(one(params.pageSize))));
-  const status = one(params.status);
-  const attention = one(params.attention);
-  const work = one(params.work);
+    (params["search"]!==undefined&&!searchSchema.safeParse(one(params["search"])).success) ||
+    (params["status"]!==undefined&&!statusSchema.safeParse(one(params["status"])).success) ||
+    (params["attention"]!==undefined&&!attentionSchema.safeParse(one(params["attention"])).success) ||
+    (params["work"]!==undefined&&!workSchema.safeParse(one(params["work"])).success) ||
+    (params["sort"]!==undefined&&!sortSchema.safeParse(one(params["sort"])).success) ||
+    (params["page"]!==undefined&&!z.coerce.number().int().min(0).max(100000).safeParse(one(params["page"])).success) ||
+    (params["page"]Size!==undefined&&!z.coerce.number().int().safeParse(one(params["page"]Size)).success) ||
+    (params["page"]Size!==undefined&&![10,25,50].includes(Number(one(params["page"]Size))));
+  const status = one(params["status"]);
+  const attention = one(params["attention"]);
+  const work = one(params["work"]);
   const query: ProjectParticipantListQuery = {
-    search: searchSchema.safeParse(one(params.search)).data || undefined,
+    search: searchSchema.safeParse(one(params["search"])).data || undefined,
     status: statusSchema.safeParse(status).data,
     attention: attentionSchema.safeParse(attention).data,
     work: workSchema.safeParse(work).data,
-    sort: sortSchema.safeParse(one(params.sort)).data,
-    page: parsePage(one(params.page)),
-    pageSize: parsePageSize(one(params.pageSize)),
+    sort: sortSchema.safeParse(one(params["sort"])).data,
+    page: parsePage(one(params["page"])),
+    pageSize: parsePageSize(one(params["page"]Size)),
   };
 
   const directory = await listMyLearnerProjectPage(context,query);
