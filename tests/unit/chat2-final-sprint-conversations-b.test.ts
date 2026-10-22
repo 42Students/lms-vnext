@@ -12,7 +12,8 @@ describe("Final sprint recruiter conversation parity — group B",()=>{
  it("REC-calendar-messages-profile-11 exposes in-place general conversation with history and reply",()=>{
   const inbox=read("src/app/(authenticated)/hr/conversations/page.tsx");
   const composer=read("src/components/hr/recruiter-conversation-reply-form.tsx");
-  expect(inbox).toContain("Message the placement cell · General");
+  expect(inbox).toContain("<RecruiterGeneralDrawer>");
+  expect(inbox).toContain("Talk to the placement cell");
   expect(inbox).toContain("Placement cell · General");
   expect(inbox).toContain('aria-label="General placement-cell messages"');
   expect(inbox).toContain("<RecruiterConversationReplyForm");
@@ -23,7 +24,7 @@ describe("Final sprint recruiter conversation parity — group B",()=>{
   const refresh=read("src/components/hr/recruiter-conversation-live-refresh.tsx");
   const inbox=read("src/app/(authenticated)/hr/conversations/page.tsx");
   const thread=read("src/app/(authenticated)/hr/conversations/[threadId]/page.tsx");
-  expect(refresh).toContain("window.setInterval(update,4000)");
+  expect(refresh).toContain("window.setInterval(()=>{void update();},4000)");
   expect(refresh).toContain("router.refresh()");
   expect(inbox).toContain("<RecruiterConversationLiveRefresh");
   expect(thread).toContain("<RecruiterConversationLiveRefresh");

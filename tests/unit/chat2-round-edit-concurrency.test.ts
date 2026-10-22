@@ -24,6 +24,7 @@ beforeEach(()=>{
  state.updated=[];state.events.length=0;state.writes.length=0;
  state.scope.mockResolvedValue({id:"college-a",organizationId:"org-a"});
  const tx={
+  select:()=>({from:()=>({where:()=>({for:()=>({limit:async()=>[job]})})})}),
   update:()=>({
    set:(value:unknown)=>{state.writes.push(value);return {
     where:()=>({returning:async()=>state.updated}),

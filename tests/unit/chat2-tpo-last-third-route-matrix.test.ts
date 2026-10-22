@@ -35,7 +35,7 @@ describe("UX-tpo-LAST-THIRD-01: route-level security and resilient rendering",()
   expect(errorPage).toContain("GracefulErrorBoundary");
   expect(errorPage).toContain("reset");
   const reportError=read("src/app/(authenticated)/tpo/reports/error.tsx");
-  expect(reportError).toContain("role=\"alert\"");
+  expect(reportError).toContain("<ErrorState");
   expect(reportError).toContain("onClick={reset}");
   expect(reportError).toContain("No placement total");
   const settingsError=read("src/app/(authenticated)/tpo/settings/error.tsx");

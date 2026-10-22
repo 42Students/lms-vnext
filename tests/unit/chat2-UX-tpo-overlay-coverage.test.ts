@@ -87,7 +87,7 @@ const overlayCases = [
   {
     "path": "src/components/tpo/tpo-new-followup-modal.tsx",
     "kind": "Dialog",
-    "cue": "Discard this unfinished follow-up?"
+    "cue": "Discard this follow-up draft?"
   },
   {
     "path": "src/components/tpo/tpo-new-recruiter-conversation.tsx",
@@ -102,7 +102,7 @@ const overlayCases = [
   {
     "path": "src/components/tpo/tpo-public-join-link-card.tsx",
     "kind": "ConfirmDialog",
-    "cue": "PUBLIC_JOIN_LINK_COPY.replaceExplanation"
+    "cue": "PUBLIC_JOIN_LINK_COPY.replace"
   },
   {
     "path": "src/components/tpo/tpo-student-nudge-panel.tsx",
@@ -112,7 +112,7 @@ const overlayCases = [
   {
     "path": "src/components/tpo/tpo-student-quick-panel.tsx",
     "kind": "Drawer",
-    "cue": "Retry loading student details"
+    "cue": "onClick={()=>void fetchDetail()}"
   },
   {
     "path": "src/components/tpo/tpo-student-saved-views.tsx",
@@ -132,7 +132,7 @@ const overlayCases = [
   {
     "path": "src/components/tpo/tpo-students-bulk-debar.tsx",
     "kind": "Dialog",
-    "cue": "Confirm bulk debarment"
+    "cue": "Confirm debarment"
   },
   {
     "path": "src/components/tpo/tpo-students-drive-visibility.tsx",
@@ -154,8 +154,8 @@ describe("UX-tpo-overlay component coverage: accessible dialogs, names and guard
       expect(source).toContain("onOpenChange=");
       expect(source).toContain(cue);
       expect(source).not.toMatch(/transition-all|duration-(?:500|700|1000)/);
-      // Each shared modal uses native showModal(): focus is trapped, Escape and
-      // backdrop dismiss by policy, and focus returns to the original trigger.
+      // Shared modal delegates focus trapping and Escape handling to the
+      // native dialog while the exit hook manages focus return and transitions.
       const shared = readFileSync("src/components/ui/" +
         (kind === "ConfirmDialog" ? "confirm-dialog" : kind === "BottomSheet" ? "bottom-sheet" : kind.toLowerCase()) + ".tsx", "utf8");
       expect(shared).toMatch(/<Dialog|<dialog/);
@@ -165,13 +165,17 @@ describe("UX-tpo-overlay component coverage: accessible dialogs, names and guard
   it("UX-tpo-overlay shared modal title/focus/escape and safe viewport cues have direct evidence", () => {
     for (const name of ["dialog", "drawer", "bottom-sheet"]) {
       const source = readFileSync("src/components/ui/" + name + ".tsx", "utf8");
-      expect(source).toContain("showModal()");
-      expect(source).toContain("opener.current?.focus()");
+      expect(source).toContain("useOverlayExit(ref, opener, open,");
+      expect(source).toContain("if (opener.current?.isConnected) opener.current.focus()");
       expect(source).toContain("aria-labelledby={titleId}");
+      expect(source).toContain("<dialog");
       expect(source).toContain("onCancel={event =>");
       expect(source).toContain("onClick={event =>");
       expect(source).toContain("<ScrollCue");
       expect(source).toContain("--lms-visual-height");
     }
+    const exitHook=readFileSync("src/components/ui/use-overlay-exit.ts","utf8");
+    expect(exitHook).toContain("dialog.showModal()");
+    expect(exitHook).toContain("opener.focus()");
   });
 });

@@ -1,4 +1,5 @@
-import {describe,expect,it} from "vitest";
+import {describe,expect,it,vi} from "vitest";
+vi.mock("next/navigation",()=>({useRouter:()=>({refresh:vi.fn()})}));
 import {renderToStaticMarkup} from "react-dom/server";
 import {CollegeHiringFunnel} from "@/components/placements/college-hiring-funnel";
 
@@ -12,6 +13,9 @@ function fixture(hasRows:boolean):Funnel{
   query:{},
   filters:{departments:[],programs:[],cohorts:[]},
   totalApplications:hasRows?9:0,
+  companyReportUnavailable:false,
+  normalizedCompanySubtotals:[],
+  cumulativeTotals:hasRows?totals:Object.fromEntries(Object.keys(totals).map(k=>[k,0])),
   averageHoursToShortlist:hasRows?5:null,
   totals:hasRows?totals:Object.fromEntries(Object.keys(totals).map(k=>[k,0])),
   companyRows:hasRows?[{
@@ -26,10 +30,10 @@ describe("UX-SPILL-COL-FUNNEL-01: college hiring report phone and zero-state ren
   const html=renderToStaticMarkup(<CollegeHiringFunnel data={fixture(true)}
    selectedSeasonId={null} selectedJobId={null}/>);
   expect(html).toContain('data-slot="data-table"');
-  expect(html).toContain("Company-wise hiring report");
+  expect(html).toContain("Company-wise Hiring Report");
   expect(html).toContain("IIT Dharwad partner");
   expect(html).toContain("Campus software role");
-  expect(html).toContain("More details");
+  expect(html).toContain("More statuses");
   expect(html).toContain("All drives · Totals");
   for(const label of ["Company","Job","Total","Applied","Shortlisted","Assessment","Interview",
    "Waitlisted","Offered","Hired","Rejected","Withdrawn"]){
@@ -41,7 +45,7 @@ describe("UX-SPILL-COL-FUNNEL-01: college hiring report phone and zero-state ren
  it("an authorized empty portfolio has explicit no-data copy but no invented employer row",()=>{
   const html=renderToStaticMarkup(<CollegeHiringFunnel data={fixture(false)}
    selectedSeasonId={null} selectedJobId={null}/>);
-  expect(html).toContain("No data for the selected filters");
+  expect(html).toContain("No placement applications have been recorded yet");
   expect(html).not.toContain("IIT Dharwad partner");
   expect(html).not.toContain("All drives · Totals");
   expect(html).toContain("Clear filters");
