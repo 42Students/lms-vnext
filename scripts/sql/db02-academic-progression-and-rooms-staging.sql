@@ -42,7 +42,7 @@ END;
 $$;
 
 DROP TRIGGER IF EXISTS db02_program_term_bounds_guard ON program_terms;
-CREATE TRIGGER db02_program_term_bounds_guard
+CREATE OR REPLACE TRIGGER db02_program_term_bounds_guard
 BEFORE INSERT OR UPDATE OF program_id, term_number ON program_terms
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_bounds();
 
@@ -59,7 +59,7 @@ BEGIN
 END;
 $$;
 DROP TRIGGER IF EXISTS db02_program_duration_term_floor ON programs;
-CREATE TRIGGER db02_program_duration_term_floor BEFORE UPDATE OF duration_terms ON programs
+CREATE OR REPLACE TRIGGER db02_program_duration_term_floor BEFORE UPDATE OF duration_terms ON programs
  FOR EACH ROW EXECUTE FUNCTION db02_guard_program_duration_term_floor();
 
 CREATE TABLE IF NOT EXISTS program_term_courses (
@@ -110,7 +110,7 @@ END;
 $$;
 
 DROP TRIGGER IF EXISTS db02_program_term_course_tenant ON program_term_courses;
-CREATE TRIGGER db02_program_term_course_tenant
+CREATE OR REPLACE TRIGGER db02_program_term_course_tenant
 BEFORE INSERT OR UPDATE OF program_term_id, course_id ON program_term_courses
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_course_tenant();
 
@@ -129,14 +129,14 @@ END;
 $$;
 
 DROP TRIGGER IF EXISTS db02_program_term_course_identity_guard ON program_term_courses;
-CREATE TRIGGER db02_program_term_course_identity_guard
+CREATE OR REPLACE TRIGGER db02_program_term_course_identity_guard
 BEFORE UPDATE OF program_term_id, course_id ON program_term_courses
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_course_identity();
 
 -- A curriculum row may be removed while unused, matching legacy semester-course removal.
 -- Once any offering materializes the term/course pair, deletion would rewrite historical
 -- curriculum identity and is therefore rejected.
-CREATE FUNCTION db02_guard_program_term_course_delete()
+CREATE OR REPLACE FUNCTION db02_guard_program_term_course_delete()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF EXISTS (
@@ -152,12 +152,12 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_program_term_course_delete_guard
+CREATE OR REPLACE TRIGGER db02_program_term_course_delete_guard
 BEFORE DELETE ON program_term_courses
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_course_delete();
 
 -- Keep a materialized CORE curriculum row historically CORE.
-CREATE FUNCTION db02_guard_program_term_course_type_history()
+CREATE OR REPLACE FUNCTION db02_guard_program_term_course_type_history()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.type IS DISTINCT FROM OLD.type
@@ -174,7 +174,7 @@ BEGIN
   RETURN NEW;
 END;
 $$;
-CREATE TRIGGER db02_program_term_course_type_history_guard
+CREATE OR REPLACE TRIGGER db02_program_term_course_type_history_guard
 BEFORE UPDATE OF type ON program_term_courses
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_course_type_history();
 
@@ -206,7 +206,7 @@ END;
 $$;
 
 DROP TRIGGER IF EXISTS db02_department_college_immutable ON departments;
-CREATE TRIGGER db02_department_college_immutable
+CREATE OR REPLACE TRIGGER db02_department_college_immutable
 BEFORE UPDATE OF college_id ON departments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_department_college_immutability();
 
@@ -238,7 +238,7 @@ END;
 $$;
 
 DROP TRIGGER IF EXISTS db02_program_department_move_guard ON programs;
-CREATE TRIGGER db02_program_department_move_guard
+CREATE OR REPLACE TRIGGER db02_program_department_move_guard
 BEFORE UPDATE OF department_id ON programs
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_department_move();
 
@@ -270,13 +270,13 @@ END;
 $$;
 
 DROP TRIGGER IF EXISTS db02_course_department_move_guard ON courses;
-CREATE TRIGGER db02_course_department_move_guard
+CREATE OR REPLACE TRIGGER db02_course_department_move_guard
 BEFORE UPDATE OF department_id ON courses
 FOR EACH ROW EXECUTE FUNCTION db02_guard_course_department_move();
 
 DROP TRIGGER IF EXISTS db02_cohort_period_scope_guard ON cohorts;
 DROP FUNCTION IF EXISTS db02_guard_cohort_period_scope();
-CREATE FUNCTION db02_guard_cohort_period_scope()
+CREATE OR REPLACE FUNCTION db02_guard_cohort_period_scope()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   program_college uuid;
@@ -372,14 +372,14 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_cohort_period_scope_guard
+CREATE OR REPLACE TRIGGER db02_cohort_period_scope_guard
 BEFORE INSERT OR UPDATE OF program_id, start_period_id, expected_end_period_id
 ON cohorts
 FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_period_scope();
 
 DROP TRIGGER IF EXISTS db02_section_period_scope_guard ON sections;
 DROP FUNCTION IF EXISTS db02_guard_section_period_scope();
-CREATE FUNCTION db02_guard_section_period_scope()
+CREATE OR REPLACE FUNCTION db02_guard_section_period_scope()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   cohort_college uuid;
@@ -431,7 +431,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_section_period_scope_guard
+CREATE OR REPLACE TRIGGER db02_section_period_scope_guard
 BEFORE INSERT OR UPDATE OF cohort_id, academic_period_id
 ON sections
 FOR EACH ROW EXECUTE FUNCTION db02_guard_section_period_scope();
@@ -451,10 +451,10 @@ ALTER TABLE course_offerings
     OR (type = 'ELECTIVE' AND program_term_course_id IS NULL)
   );
 
-CREATE INDEX course_offerings_program_term_idx
+CREATE INDEX IF NOT EXISTS course_offerings_program_term_idx
   ON course_offerings(program_term_id, status);
 
-CREATE FUNCTION db02_guard_course_offering_program_term_scope()
+CREATE OR REPLACE FUNCTION db02_guard_course_offering_program_term_scope()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   term_program uuid;
@@ -532,14 +532,14 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_course_offering_program_term_guard
+CREATE OR REPLACE TRIGGER db02_course_offering_program_term_guard
 BEFORE INSERT OR UPDATE OF course_id, cohort_id, academic_period_id, type, program_term_id, program_term_course_id
 ON course_offerings
 FOR EACH ROW EXECUTE FUNCTION db02_guard_course_offering_program_term_scope();
 
 DROP TRIGGER IF EXISTS db02_course_offering_period_window_guard ON course_offerings;
 DROP FUNCTION IF EXISTS db02_guard_course_offering_period_window();
-CREATE FUNCTION db02_guard_course_offering_period_window()
+CREATE OR REPLACE FUNCTION db02_guard_course_offering_period_window()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   cohort_start_day date;
@@ -582,7 +582,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_course_offering_period_window_guard
+CREATE OR REPLACE TRIGGER db02_course_offering_period_window_guard
 BEFORE INSERT OR UPDATE OF cohort_id, academic_period_id
 ON course_offerings
 FOR EACH ROW EXECUTE FUNCTION db02_guard_course_offering_period_window();
@@ -664,7 +664,7 @@ END;
 $$;
 
 DROP TRIGGER IF EXISTS db02_cohort_status_lifecycle_guard ON cohorts;
-CREATE TRIGGER db02_cohort_status_lifecycle_guard
+CREATE OR REPLACE TRIGGER db02_cohort_status_lifecycle_guard
 BEFORE INSERT OR UPDATE OF status ON cohorts
 FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_status_lifecycle();
 
@@ -689,7 +689,7 @@ END;
 $$;
 
 DROP TRIGGER IF EXISTS db02_program_archive_cohort_dependency_guard ON programs;
-CREATE TRIGGER db02_program_archive_cohort_dependency_guard
+CREATE OR REPLACE TRIGGER db02_program_archive_cohort_dependency_guard
 BEFORE UPDATE OF status ON programs
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_archive_with_live_cohorts();
 
@@ -733,7 +733,7 @@ ALTER TABLE sections
 -- ---------------------------------------------------------------------------
 -- Teaching assignments and schedules inherit cohort/period/term identity through delivery.
 -- Protect that chain at the database boundary instead of relying only on service validation.
-CREATE FUNCTION db02_guard_course_section_delivery_scope()
+CREATE OR REPLACE FUNCTION db02_guard_course_section_delivery_scope()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   offering_cohort uuid;
@@ -781,12 +781,12 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_course_section_delivery_scope_guard
+CREATE OR REPLACE TRIGGER db02_course_section_delivery_scope_guard
 BEFORE INSERT OR UPDATE OF offering_id, section_id, ended_at
 ON course_section_deliveries
 FOR EACH ROW EXECUTE FUNCTION db02_guard_course_section_delivery_scope();
 
-CREATE FUNCTION db02_guard_schedule_event_delivery_scope()
+CREATE OR REPLACE FUNCTION db02_guard_schedule_event_delivery_scope()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   event_section uuid;
@@ -818,7 +818,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_schedule_event_delivery_scope_guard
+CREATE OR REPLACE TRIGGER db02_schedule_event_delivery_scope_guard
 BEFORE INSERT OR UPDATE OF schedule_event_id, delivery_id
 ON section_schedule_event_courses
 FOR EACH ROW EXECUTE FUNCTION db02_guard_schedule_event_delivery_scope();
@@ -886,7 +886,7 @@ DROP FUNCTION IF EXISTS db02_guard_progression_event_immutability();
 DROP FUNCTION IF EXISTS db02_initialize_cohort_progression_state();
 DROP FUNCTION IF EXISTS db02_guard_program_duration_reduction();
 
-CREATE FUNCTION db02_guard_cohort_progression_state()
+CREATE OR REPLACE FUNCTION db02_guard_cohort_progression_state()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   max_terms integer;
@@ -989,7 +989,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_cohort_progression_state_guard
+CREATE OR REPLACE TRIGGER db02_cohort_progression_state_guard
 BEFORE INSERT OR UPDATE OF current_term_number, current_academic_year_start, current_period_id, version, updated_by_user_id
 ON cohort_progression_state
 FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_progression_state();
@@ -1004,7 +1004,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_progression_state();
 -- Faculty-teaching assignment deactivation must remain transactional
 -- with the owning role/membership status change; this trigger cannot
 -- prove that service-layer transition.
-CREATE FUNCTION db02_guard_cohort_promotion_readiness()
+CREATE OR REPLACE FUNCTION db02_guard_cohort_promotion_readiness()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   v_program_id uuid;
@@ -1068,7 +1068,7 @@ BEGIN
   RETURN NEW;
 END;
 $$;
-CREATE TRIGGER db02_cohort_promotion_readiness_guard
+CREATE OR REPLACE TRIGGER db02_cohort_promotion_readiness_guard
 BEFORE UPDATE OF current_term_number
 ON cohort_progression_state
 FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_promotion_readiness();
@@ -1076,7 +1076,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_promotion_readiness();
 
 -- Database-owned history: a direct SQL update cannot advance canonical state without
 -- producing a matching immutable event. Application code must NOT insert a duplicate event.
-CREATE FUNCTION db02_record_cohort_progression_event()
+CREATE OR REPLACE FUNCTION db02_record_cohort_progression_event()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   INSERT INTO cohort_progression_events (
@@ -1114,7 +1114,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_cohort_progression_history
+CREATE OR REPLACE TRIGGER db02_cohort_progression_history
 AFTER UPDATE OF current_term_number, current_academic_year_start, current_period_id, version
 ON cohort_progression_state
 FOR EACH ROW EXECUTE FUNCTION db02_record_cohort_progression_event();
@@ -1126,7 +1126,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_record_cohort_progression_event();
 -- An explicit event is only valid when written by the cohort-state AFTER UPDATE
 -- trigger. Application accounts must not forge, mutate or delete the audit trail.
 -- This is a staging defense, not a substitute for restricting schema/DDL privileges.
-CREATE FUNCTION db02_guard_progression_event_immutability()
+CREATE OR REPLACE FUNCTION db02_guard_progression_event_immutability()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF TG_OP = 'INSERT' AND pg_trigger_depth() >= 2 THEN
@@ -1148,18 +1148,18 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_cohort_progression_events_immutable
+CREATE OR REPLACE TRIGGER db02_cohort_progression_events_immutable
 BEFORE INSERT OR UPDATE OR DELETE ON cohort_progression_events
 FOR EACH ROW EXECUTE FUNCTION db02_guard_progression_event_immutability();
 
-CREATE TRIGGER db02_cohort_progression_events_no_truncate
+CREATE OR REPLACE TRIGGER db02_cohort_progression_events_no_truncate
 BEFORE TRUNCATE ON cohort_progression_events
 FOR EACH STATEMENT EXECUTE FUNCTION db02_guard_progression_event_immutability();
 
 -- Ensure every newly created cohort has exactly one canonical term/year row.
 -- The initial July-boundary year is only a default; an explicit user-supplied
 -- legacy year override still needs a reviewed cohort creation API contract.
-CREATE FUNCTION db02_initialize_cohort_progression_state()
+CREATE OR REPLACE FUNCTION db02_initialize_cohort_progression_state()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   start_day date;
@@ -1183,14 +1183,14 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_cohort_progression_initialize
+CREATE OR REPLACE TRIGGER db02_cohort_progression_initialize
 AFTER INSERT ON cohorts
 FOR EACH ROW EXECUTE FUNCTION db02_initialize_cohort_progression_state();
 
 -- A program cannot shrink below an existing term or promoted cohort.
 -- Program term inserts and cohort promotion also lock the program row FOR SHARE,
 -- serializing concurrent duration reduction with active academic writes.
-CREATE FUNCTION db02_guard_program_duration_reduction()
+CREATE OR REPLACE FUNCTION db02_guard_program_duration_reduction()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.duration_terms < OLD.duration_terms THEN
@@ -1211,7 +1211,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_program_duration_reduction_guard
+CREATE OR REPLACE TRIGGER db02_program_duration_reduction_guard
 BEFORE UPDATE OF duration_terms ON programs
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_duration_reduction();
 
@@ -1254,7 +1254,7 @@ DROP FUNCTION IF EXISTS db02_guard_lecture_hall_archive();
 DROP FUNCTION IF EXISTS db02_guard_section_faculty_assignment_scope();
 DROP FUNCTION IF EXISTS db02_guard_course_teaching_assignment_scope();
 
-CREATE FUNCTION db02_guard_lecture_hall_department()
+CREATE OR REPLACE FUNCTION db02_guard_lecture_hall_department()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   department_college uuid;
@@ -1274,7 +1274,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_lecture_hall_department_guard
+CREATE OR REPLACE TRIGGER db02_lecture_hall_department_guard
 BEFORE INSERT OR UPDATE OF college_id, department_id ON lecture_halls
 FOR EACH ROW EXECUTE FUNCTION db02_guard_lecture_hall_department();
 
@@ -1285,7 +1285,7 @@ CREATE INDEX IF NOT EXISTS section_schedule_events_hall_time_idx
   ON section_schedule_events(lecture_hall_id, starts_at, ends_at)
   WHERE lecture_hall_id IS NOT NULL AND status = 'SCHEDULED';
 
-CREATE FUNCTION db02_guard_schedule_hall_tenant()
+CREATE OR REPLACE FUNCTION db02_guard_schedule_hall_tenant()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   section_college uuid;
@@ -1353,7 +1353,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_schedule_hall_tenant_guard
+CREATE OR REPLACE TRIGGER db02_schedule_hall_tenant_guard
 BEFORE INSERT OR UPDATE OF section_id, faculty_membership_id, lecture_hall_id, status, starts_at, ends_at
 ON section_schedule_events
 FOR EACH ROW EXECUTE FUNCTION db02_guard_schedule_hall_tenant();
@@ -1361,7 +1361,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_schedule_hall_tenant();
 -- Serialize hall archival with booking creation. The schedule trigger takes FOR SHARE on the
 -- hall; an archive UPDATE takes the conflicting row lock. Whichever wins first determines the
 -- valid result without allowing an ACTIVE future booking to reference an archived hall.
-CREATE FUNCTION db02_guard_lecture_hall_archive()
+CREATE OR REPLACE FUNCTION db02_guard_lecture_hall_archive()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.status = 'ACTIVE' AND NEW.status = 'ARCHIVED' AND EXISTS (
@@ -1378,7 +1378,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_lecture_hall_archive_guard
+CREATE OR REPLACE TRIGGER db02_lecture_hall_archive_guard
 BEFORE UPDATE OF status ON lecture_halls
 FOR EACH ROW EXECUTE FUNCTION db02_guard_lecture_hall_archive();
 
@@ -1414,7 +1414,7 @@ ALTER TABLE section_schedule_events
 -- ---------------------------------------------------------------------------
 -- 3a) Section faculty assignment tenant/role integrity
 -- ---------------------------------------------------------------------------
-CREATE FUNCTION db02_guard_section_faculty_assignment_scope()
+CREATE OR REPLACE FUNCTION db02_guard_section_faculty_assignment_scope()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   section_college uuid;
@@ -1470,7 +1470,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_section_faculty_assignment_scope_guard
+CREATE OR REPLACE TRIGGER db02_section_faculty_assignment_scope_guard
 BEFORE INSERT OR UPDATE OF section_id, membership_id, ended_at
 ON section_faculty_assignments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_section_faculty_assignment_scope();
@@ -1478,7 +1478,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_section_faculty_assignment_scope();
 -- ---------------------------------------------------------------------------
 -- 3b) Course teaching assignment tenant/role integrity
 -- ---------------------------------------------------------------------------
-CREATE FUNCTION db02_guard_course_teaching_assignment_scope()
+CREATE OR REPLACE FUNCTION db02_guard_course_teaching_assignment_scope()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   delivery_college uuid;
@@ -1544,7 +1544,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_course_teaching_assignment_scope_guard
+CREATE OR REPLACE TRIGGER db02_course_teaching_assignment_scope_guard
 BEFORE INSERT OR UPDATE OF delivery_id, membership_id, ended_at
 ON course_teaching_assignments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_course_teaching_assignment_scope();
@@ -1584,7 +1584,7 @@ DROP FUNCTION IF EXISTS db02_end_faculty_course_associations_on_role_removal();
 DROP FUNCTION IF EXISTS db02_end_faculty_course_associations_on_membership_inactive();
 DROP FUNCTION IF EXISTS db02_end_faculty_course_associations_on_course_archive();
 
-CREATE FUNCTION db02_guard_faculty_course_association_scope()
+CREATE OR REPLACE FUNCTION db02_guard_faculty_course_association_scope()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   membership_college uuid;
@@ -1638,7 +1638,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_faculty_course_association_scope_guard
+CREATE OR REPLACE TRIGGER db02_faculty_course_association_scope_guard
 BEFORE INSERT OR UPDATE OF membership_id, course_id
 ON faculty_course_associations
 FOR EACH ROW EXECUTE FUNCTION db02_guard_faculty_course_association_scope();
@@ -1646,7 +1646,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_faculty_course_association_scope();
 -- Keep association lifecycle valid when identity state changes after association creation.
 -- The insert/update guard alone is insufficient: admins can later remove FACULTY or suspend/end
 -- the membership. These AFTER triggers close active associations in the same transaction.
-CREATE FUNCTION db02_end_faculty_course_associations_on_role_removal()
+CREATE OR REPLACE FUNCTION db02_end_faculty_course_associations_on_role_removal()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.role = 'FACULTY' THEN
@@ -1679,11 +1679,11 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_faculty_course_associations_role_removal
+CREATE OR REPLACE TRIGGER db02_faculty_course_associations_role_removal
 AFTER DELETE ON membership_roles
 FOR EACH ROW EXECUTE FUNCTION db02_end_faculty_course_associations_on_role_removal();
 
-CREATE FUNCTION db02_end_faculty_course_associations_on_membership_inactive()
+CREATE OR REPLACE FUNCTION db02_end_faculty_course_associations_on_membership_inactive()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.status = 'ACTIVE' AND NEW.status <> 'ACTIVE' THEN
@@ -1716,11 +1716,11 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_faculty_course_associations_membership_inactive
+CREATE OR REPLACE TRIGGER db02_faculty_course_associations_membership_inactive
 AFTER UPDATE OF status ON college_memberships
 FOR EACH ROW EXECUTE FUNCTION db02_end_faculty_course_associations_on_membership_inactive();
 
-CREATE FUNCTION db02_end_faculty_course_associations_on_course_archive()
+CREATE OR REPLACE FUNCTION db02_end_faculty_course_associations_on_course_archive()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.status = 'ACTIVE' AND NEW.status <> 'ACTIVE' THEN
@@ -1734,7 +1734,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_faculty_course_associations_course_archive
+CREATE OR REPLACE TRIGGER db02_faculty_course_associations_course_archive
 AFTER UPDATE OF status ON courses
 FOR EACH ROW EXECUTE FUNCTION db02_end_faculty_course_associations_on_course_archive();
 
@@ -1744,7 +1744,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_end_faculty_course_associations_on_course_arc
 -- ---------------------------------------------------------------------------
 -- 5a) Remaining tenant-owner roots are immutable
 -- ---------------------------------------------------------------------------
-CREATE FUNCTION db02_guard_remaining_college_owner_immutable()
+CREATE OR REPLACE FUNCTION db02_guard_remaining_college_owner_immutable()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.college_id IS DISTINCT FROM OLD.college_id THEN
@@ -1755,14 +1755,14 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_academic_period_college_immutable
+CREATE OR REPLACE TRIGGER db02_academic_period_college_immutable
 BEFORE UPDATE OF college_id ON academic_periods
 FOR EACH ROW EXECUTE FUNCTION db02_guard_remaining_college_owner_immutable();
 
 -- Period dates may be edited while a PLANNED period is unused. Once academic state points
 -- at the period, changing its boundaries would reinterpret cohort/section/offering history.
 -- Child writers lock the period row before validation so this rule is race-safe.
-CREATE FUNCTION db02_guard_academic_period_date_history()
+CREATE OR REPLACE FUNCTION db02_guard_academic_period_date_history()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.start_date IS NOT DISTINCT FROM OLD.start_date
@@ -1786,15 +1786,15 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_academic_period_date_history_guard
+CREATE OR REPLACE TRIGGER db02_academic_period_date_history_guard
 BEFORE UPDATE OF start_date, end_date ON academic_periods
 FOR EACH ROW EXECUTE FUNCTION db02_guard_academic_period_date_history();
 
-CREATE TRIGGER db02_membership_college_immutable
+CREATE OR REPLACE TRIGGER db02_membership_college_immutable
 BEFORE UPDATE OF college_id ON college_memberships
 FOR EACH ROW EXECUTE FUNCTION db02_guard_remaining_college_owner_immutable();
 
-CREATE TRIGGER db02_lecture_hall_college_immutable
+CREATE OR REPLACE TRIGGER db02_lecture_hall_college_immutable
 BEFORE UPDATE OF college_id ON lecture_halls
 FOR EACH ROW EXECUTE FUNCTION db02_guard_remaining_college_owner_immutable();
 
@@ -1806,7 +1806,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_remaining_college_owner_immutable();
 -- create explicit history instead of rewriting the parent keys in place.
 DROP TRIGGER IF EXISTS db02_cohort_program_immutable ON cohorts;
 DROP FUNCTION IF EXISTS db02_guard_cohort_parent_immutable();
-CREATE FUNCTION db02_guard_cohort_parent_immutable()
+CREATE OR REPLACE FUNCTION db02_guard_cohort_parent_immutable()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.program_id IS DISTINCT FROM OLD.program_id
@@ -1819,7 +1819,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_cohort_program_immutable
+CREATE OR REPLACE TRIGGER db02_cohort_program_immutable
 BEFORE UPDATE OF program_id, start_period_id ON cohorts
 FOR EACH ROW EXECUTE FUNCTION db02_guard_cohort_parent_immutable();
 
@@ -1837,7 +1837,7 @@ END;
 $$;
 
 DROP TRIGGER IF EXISTS db02_program_term_identity_immutable ON program_terms;
-CREATE TRIGGER db02_program_term_identity_immutable
+CREATE OR REPLACE TRIGGER db02_program_term_identity_immutable
 BEFORE UPDATE OF program_id, term_number ON program_terms
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_identity_immutable();
 
@@ -1845,7 +1845,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_identity_immutable();
 -- cohort progression currently occupies or has historically traversed the term number for
 -- this program, hard deletion would erase the reusable semester definition beneath history.
 -- Deactivation remains separately editable; this guard is delete-only.
-CREATE FUNCTION db02_guard_program_term_delete_history()
+CREATE OR REPLACE FUNCTION db02_guard_program_term_delete_history()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF EXISTS (
@@ -1873,14 +1873,14 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_program_term_delete_history_guard
+CREATE OR REPLACE TRIGGER db02_program_term_delete_history_guard
 BEFORE DELETE ON program_terms
 FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_delete_history();
 
 -- Empty sections may still be reparented within the canonical same-college/window rules.
 -- Once any learner/faculty/delivery/schedule history exists, structural movement requires an
 -- explicit controlled-transfer workflow so prior history is not silently reinterpreted.
-CREATE FUNCTION db02_guard_section_history_reparent()
+CREATE OR REPLACE FUNCTION db02_guard_section_history_reparent()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF (
@@ -1900,14 +1900,14 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_section_history_reparent_guard
+CREATE OR REPLACE TRIGGER db02_section_history_reparent_guard
 BEFORE UPDATE OF cohort_id, academic_period_id ON sections
 FOR EACH ROW EXECUTE FUNCTION db02_guard_section_history_reparent();
 
 -- ---------------------------------------------------------------------------
 -- 5c) Learner program/section enrollment scope
 -- ---------------------------------------------------------------------------
-CREATE FUNCTION db02_guard_learner_program_enrollment_tenant()
+CREATE OR REPLACE FUNCTION db02_guard_learner_program_enrollment_tenant()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   membership_college uuid;
@@ -1973,12 +1973,12 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_learner_program_enrollment_tenant
+CREATE OR REPLACE TRIGGER db02_learner_program_enrollment_tenant
 BEFORE INSERT OR UPDATE OF membership_id, program_id, cohort_id
 ON learner_program_enrollments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_learner_program_enrollment_tenant();
 
-CREATE FUNCTION db02_guard_section_enrollment_cohort_period()
+CREATE OR REPLACE FUNCTION db02_guard_section_enrollment_cohort_period()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   learner_cohort uuid;
@@ -2029,7 +2029,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_section_enrollment_cohort_period
+CREATE OR REPLACE TRIGGER db02_section_enrollment_cohort_period
 BEFORE INSERT OR UPDATE OF learner_enrollment_id, section_id, academic_period_id
 ON section_enrollments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_section_enrollment_cohort_period();
@@ -2041,7 +2041,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_section_enrollment_cohort_period();
 -- Legacy batch usage still counts suspended, non-deleted learners attached to primary classes.
 -- Removing LEARNER or ending the college membership is different: active section/program
 -- enrollment must become historical and must not keep contributing to current cohort counts.
-CREATE FUNCTION db02_withdraw_learner_on_role_delete()
+CREATE OR REPLACE FUNCTION db02_withdraw_learner_on_role_delete()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.role <> 'LEARNER' THEN
@@ -2069,11 +2069,11 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_withdraw_learner_on_role_removal
+CREATE OR REPLACE TRIGGER db02_withdraw_learner_on_role_removal
 AFTER DELETE ON membership_roles
 FOR EACH ROW EXECUTE FUNCTION db02_withdraw_learner_on_role_delete();
 
-CREATE FUNCTION db02_withdraw_learner_on_membership_end()
+CREATE OR REPLACE FUNCTION db02_withdraw_learner_on_membership_end()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.status = 'ENDED' OR NEW.status <> 'ENDED' THEN
@@ -2101,7 +2101,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_withdraw_learner_on_membership_end
+CREATE OR REPLACE TRIGGER db02_withdraw_learner_on_membership_end
 AFTER UPDATE OF status ON college_memberships
 FOR EACH ROW EXECUTE FUNCTION db02_withdraw_learner_on_membership_end();
 
@@ -2111,7 +2111,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_withdraw_learner_on_membership_end();
 -- PostgreSQL FK inserts normally take KEY SHARE, compatible with NO KEY UPDATE.
 -- Promote history-producing references to SHARE so they serialize with section reparenting
 -- before the history guard decides whether a move remains legal.
-CREATE FUNCTION db02_lock_section_history_parent()
+CREATE OR REPLACE FUNCTION db02_lock_section_history_parent()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   PERFORM 1
@@ -2128,26 +2128,26 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_lock_section_for_learner_enrollment
+CREATE OR REPLACE TRIGGER db02_lock_section_for_learner_enrollment
 BEFORE INSERT OR UPDATE OF section_id ON section_enrollments
 FOR EACH ROW EXECUTE FUNCTION db02_lock_section_history_parent();
 
-CREATE TRIGGER db02_lock_section_for_faculty_assignment
+CREATE OR REPLACE TRIGGER db02_lock_section_for_faculty_assignment
 BEFORE INSERT OR UPDATE OF section_id ON section_faculty_assignments
 FOR EACH ROW EXECUTE FUNCTION db02_lock_section_history_parent();
 
-CREATE TRIGGER db02_lock_section_for_course_delivery
+CREATE OR REPLACE TRIGGER db02_lock_section_for_course_delivery
 BEFORE INSERT OR UPDATE OF section_id ON course_section_deliveries
 FOR EACH ROW EXECUTE FUNCTION db02_lock_section_history_parent();
 
-CREATE TRIGGER db02_lock_section_for_schedule_event
+CREATE OR REPLACE TRIGGER db02_lock_section_for_schedule_event
 BEFORE INSERT OR UPDATE OF section_id ON section_schedule_events
 FOR EACH ROW EXECUTE FUNCTION db02_lock_section_history_parent();
 
 -- ---------------------------------------------------------------------------
 -- 5f) Enrollment identity is historical, not mutable parentage
 -- ---------------------------------------------------------------------------
-CREATE FUNCTION db02_guard_learner_program_enrollment_identity_immutable()
+CREATE OR REPLACE FUNCTION db02_guard_learner_program_enrollment_identity_immutable()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.membership_id IS DISTINCT FROM OLD.membership_id
@@ -2161,12 +2161,12 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_academic_enrollment_identity_immutable
+CREATE OR REPLACE TRIGGER db02_academic_enrollment_identity_immutable
 BEFORE UPDATE OF membership_id, program_id, cohort_id
 ON learner_program_enrollments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_learner_program_enrollment_identity_immutable();
 
-CREATE FUNCTION db02_guard_section_enrollment_identity_immutable()
+CREATE OR REPLACE FUNCTION db02_guard_section_enrollment_identity_immutable()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.learner_enrollment_id IS DISTINCT FROM OLD.learner_enrollment_id
@@ -2180,7 +2180,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_section_enrollment_identity_immutable
+CREATE OR REPLACE TRIGGER db02_section_enrollment_identity_immutable
 BEFORE UPDATE OF learner_enrollment_id, section_id, academic_period_id
 ON section_enrollments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_section_enrollment_identity_immutable();
@@ -2192,7 +2192,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_section_enrollment_identity_immutable()
 -- 6a) Canonical progression-state identity/lifecycle: the initializer creates one row per cohort.
 -- A direct cohort_id change would attach progress to the wrong cohort while leaving
 -- immutable event history on the old identity; DELETE/TRUNCATE would silently lose it.
-CREATE FUNCTION db02_guard_progression_state_identity()
+CREATE OR REPLACE FUNCTION db02_guard_progression_state_identity()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF TG_OP = 'TRUNCATE' THEN
@@ -2221,11 +2221,11 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_progression_state_identity_guard
+CREATE OR REPLACE TRIGGER db02_progression_state_identity_guard
 BEFORE UPDATE OF cohort_id OR DELETE ON cohort_progression_state
 FOR EACH ROW EXECUTE FUNCTION db02_guard_progression_state_identity();
 
-CREATE TRIGGER db02_progression_state_no_truncate
+CREATE OR REPLACE TRIGGER db02_progression_state_no_truncate
 BEFORE TRUNCATE ON cohort_progression_state
 FOR EACH STATEMENT EXECUTE FUNCTION db02_guard_progression_state_identity();
 
@@ -2233,7 +2233,7 @@ FOR EACH STATEMENT EXECUTE FUNCTION db02_guard_progression_state_identity();
 -- events into future bookings on an ARCHIVED hall. The canonical tenant/hall
 -- guard runs on section/actor/hall/status changes, not bare starts_at/ends_at.
 -- FOR SHARE on the hall row serializes against an archive UPDATE.
-CREATE FUNCTION db02_guard_future_schedule_room_lifecycle()
+CREATE OR REPLACE FUNCTION db02_guard_future_schedule_room_lifecycle()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   current_hall_status varchar(32);
@@ -2255,7 +2255,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_schedule_future_hall_lifecycle_guard
+CREATE OR REPLACE TRIGGER db02_schedule_future_hall_lifecycle_guard
 BEFORE INSERT OR UPDATE OF starts_at, ends_at, status, lecture_hall_id
 ON section_schedule_events
 FOR EACH ROW EXECUTE FUNCTION db02_guard_future_schedule_room_lifecycle();
@@ -2266,7 +2266,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_future_schedule_room_lifecycle();
 -- ---------------------------------------------------------------------------
 -- Once dependent academic/attendance history exists, parent identity cannot be silently
 -- rewritten. SHARE locks serialize history creation against otherwise-valid parent moves.
-CREATE FUNCTION db02_guard_historic_offering_parent()
+CREATE OR REPLACE FUNCTION db02_guard_historic_offering_parent()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF (
@@ -2295,12 +2295,12 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_historic_offering_parent_guard
+CREATE OR REPLACE TRIGGER db02_historic_offering_parent_guard
 BEFORE UPDATE OF cohort_id, academic_period_id, course_id, program_term_id, type, program_term_course_id
 ON course_offerings
 FOR EACH ROW EXECUTE FUNCTION db02_guard_historic_offering_parent();
 
-CREATE FUNCTION db02_guard_historic_delivery_parent()
+CREATE OR REPLACE FUNCTION db02_guard_historic_delivery_parent()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF (NEW.offering_id, NEW.section_id)
@@ -2316,12 +2316,12 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_historic_delivery_parent_guard
+CREATE OR REPLACE TRIGGER db02_historic_delivery_parent_guard
 BEFORE UPDATE OF offering_id, section_id
 ON course_section_deliveries
 FOR EACH ROW EXECUTE FUNCTION db02_guard_historic_delivery_parent();
 
-CREATE FUNCTION db02_guard_historic_event_section()
+CREATE OR REPLACE FUNCTION db02_guard_historic_event_section()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF NEW.section_id IS DISTINCT FROM OLD.section_id AND (
@@ -2336,7 +2336,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_historic_event_section_guard
+CREATE OR REPLACE TRIGGER db02_historic_event_section_guard
 BEFORE UPDATE OF section_id ON section_schedule_events
 FOR EACH ROW EXECUTE FUNCTION db02_guard_historic_event_section();
 
@@ -2344,7 +2344,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_historic_event_section();
 -- which uses NO KEY UPDATE. Explicit SHARE locks serialize parent reparenting
 -- against history insertion. The parent guard then sees committed children
 -- or the child's validation runs against the committed parent.
-CREATE FUNCTION db02_lock_offering_for_delivery()
+CREATE OR REPLACE FUNCTION db02_lock_offering_for_delivery()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   PERFORM 1 FROM course_offerings WHERE id = NEW.offering_id FOR SHARE;
@@ -2355,11 +2355,11 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_delivery_parent_serialization
+CREATE OR REPLACE TRIGGER db02_delivery_parent_serialization
 BEFORE INSERT OR UPDATE OF offering_id ON course_section_deliveries
 FOR EACH ROW EXECUTE FUNCTION db02_lock_offering_for_delivery();
 
-CREATE FUNCTION db02_lock_delivery_for_teaching()
+CREATE OR REPLACE FUNCTION db02_lock_delivery_for_teaching()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   PERFORM 1 FROM course_section_deliveries WHERE id = NEW.delivery_id FOR SHARE;
@@ -2370,11 +2370,11 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_teaching_delivery_serialization
+CREATE OR REPLACE TRIGGER db02_teaching_delivery_serialization
 BEFORE INSERT OR UPDATE OF delivery_id ON course_teaching_assignments
 FOR EACH ROW EXECUTE FUNCTION db02_lock_delivery_for_teaching();
 
-CREATE FUNCTION db02_lock_event_delivery_for_course_link()
+CREATE OR REPLACE FUNCTION db02_lock_event_delivery_for_course_link()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   -- Lock rows in fixed order to reduce multi-resource deadlock exposure.
@@ -2390,11 +2390,11 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_event_course_parent_serialization
+CREATE OR REPLACE TRIGGER db02_event_course_parent_serialization
 BEFORE INSERT OR UPDATE OF schedule_event_id, delivery_id ON section_schedule_event_courses
 FOR EACH ROW EXECUTE FUNCTION db02_lock_event_delivery_for_course_link();
 
-CREATE FUNCTION db02_lock_event_for_attendance_history()
+CREATE OR REPLACE FUNCTION db02_lock_event_for_attendance_history()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   PERFORM 1 FROM section_schedule_events WHERE id = NEW.schedule_event_id FOR SHARE;
@@ -2405,11 +2405,11 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_attendance_session_event_serialization
+CREATE OR REPLACE TRIGGER db02_attendance_session_event_serialization
 BEFORE INSERT OR UPDATE OF schedule_event_id ON attendance_sessions
 FOR EACH ROW EXECUTE FUNCTION db02_lock_event_for_attendance_history();
 
-CREATE TRIGGER db02_attendance_record_event_serialization
+CREATE OR REPLACE TRIGGER db02_attendance_record_event_serialization
 BEFORE INSERT OR UPDATE OF schedule_event_id ON attendance_records
 FOR EACH ROW EXECUTE FUNCTION db02_lock_event_for_attendance_history();
 
@@ -2421,7 +2421,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_lock_event_for_attendance_history();
 -- close the opposite race ordering: if a child commits first, the parent transition rechecks
 -- dependencies after waiting; if the parent commits first, the child rechecks parent status.
 
-CREATE FUNCTION db02_guard_course_archive_dependencies()
+CREATE OR REPLACE FUNCTION db02_guard_course_archive_dependencies()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.status = 'ACTIVE'
@@ -2439,11 +2439,11 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_course_archive_dependency_guard
+CREATE OR REPLACE TRIGGER db02_course_archive_dependency_guard
 BEFORE UPDATE OF status ON courses
 FOR EACH ROW EXECUTE FUNCTION db02_guard_course_archive_dependencies();
 
-CREATE FUNCTION db02_guard_course_offering_archive_dependencies()
+CREATE OR REPLACE FUNCTION db02_guard_course_offering_archive_dependencies()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.status = 'ACTIVE'
@@ -2461,11 +2461,11 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_course_offering_archive_dependency_guard
+CREATE OR REPLACE TRIGGER db02_course_offering_archive_dependency_guard
 BEFORE UPDATE OF status ON course_offerings
 FOR EACH ROW EXECUTE FUNCTION db02_guard_course_offering_archive_dependencies();
 
-CREATE FUNCTION db02_guard_delivery_end_dependencies()
+CREATE OR REPLACE FUNCTION db02_guard_delivery_end_dependencies()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.ended_at IS NULL
@@ -2483,11 +2483,11 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_delivery_end_dependency_guard
+CREATE OR REPLACE TRIGGER db02_delivery_end_dependency_guard
 BEFORE UPDATE OF ended_at ON course_section_deliveries
 FOR EACH ROW EXECUTE FUNCTION db02_guard_delivery_end_dependencies();
 
-CREATE FUNCTION db02_guard_section_archive_dependencies()
+CREATE OR REPLACE FUNCTION db02_guard_section_archive_dependencies()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.status <> 'ACTIVE' OR NEW.status <> 'ARCHIVED' THEN
@@ -2539,7 +2539,7 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_section_archive_dependency_guard
+CREATE OR REPLACE TRIGGER db02_section_archive_dependency_guard
 BEFORE UPDATE OF status ON sections
 FOR EACH ROW EXECUTE FUNCTION db02_guard_section_archive_dependencies();
 
@@ -2588,7 +2588,7 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_section_archive_dependencies();
 -- ---------------------------------------------------------------------------
 -- Closing historical faculty/learner rows remains valid during de-role/end;
 -- reopening cannot bypass initial membership/role checks by editing status/ended_at.
-CREATE FUNCTION db02_guard_faculty_assignment_reactivation()
+CREATE OR REPLACE FUNCTION db02_guard_faculty_assignment_reactivation()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   v_status membership_status;
@@ -2649,19 +2649,19 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_course_pool_reactivation_role_guard
+CREATE OR REPLACE TRIGGER db02_course_pool_reactivation_role_guard
 BEFORE UPDATE OF ended_at ON faculty_course_associations
 FOR EACH ROW EXECUTE FUNCTION db02_guard_faculty_assignment_reactivation();
 
-CREATE TRIGGER db02_section_faculty_reactivation_role_guard
+CREATE OR REPLACE TRIGGER db02_section_faculty_reactivation_role_guard
 BEFORE UPDATE OF ended_at ON section_faculty_assignments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_faculty_assignment_reactivation();
 
-CREATE TRIGGER db02_teaching_reactivation_role_guard
+CREATE OR REPLACE TRIGGER db02_teaching_reactivation_role_guard
 BEFORE UPDATE OF ended_at ON course_teaching_assignments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_faculty_assignment_reactivation();
 
-CREATE FUNCTION db02_guard_learner_program_reactivation()
+CREATE OR REPLACE FUNCTION db02_guard_learner_program_reactivation()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   v_status membership_status;
@@ -2701,11 +2701,11 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_program_enrollment_reactivation_role_guard
+CREATE OR REPLACE TRIGGER db02_program_enrollment_reactivation_role_guard
 BEFORE UPDATE OF status ON learner_program_enrollments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_learner_program_reactivation();
 
-CREATE FUNCTION db02_guard_learner_section_reactivation()
+CREATE OR REPLACE FUNCTION db02_guard_learner_section_reactivation()
 RETURNS trigger LANGUAGE plpgsql AS $$
 DECLARE
   v_program_status learner_program_enrollment_status;
@@ -2755,12 +2755,12 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_section_enrollment_reactivation_role_guard
+CREATE OR REPLACE TRIGGER db02_section_enrollment_reactivation_role_guard
 BEFORE UPDATE OF status ON section_enrollments
 FOR EACH ROW EXECUTE FUNCTION db02_guard_learner_section_reactivation();
 
 -- Direct enrollment withdrawal/completion previously left ACTIVE child sections.
-CREATE FUNCTION db02_close_active_sections_on_program_exit()
+CREATE OR REPLACE FUNCTION db02_close_active_sections_on_program_exit()
 RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   IF OLD.status = 'ACTIVE' AND NEW.status <> 'ACTIVE' THEN
@@ -2775,6 +2775,6 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER db02_program_exit_close_active_sections
+CREATE OR REPLACE TRIGGER db02_program_exit_close_active_sections
 AFTER UPDATE OF status ON learner_program_enrollments
 FOR EACH ROW EXECUTE FUNCTION db02_close_active_sections_on_program_exit();
