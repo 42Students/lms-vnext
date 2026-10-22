@@ -324,6 +324,13 @@ export async function createPlacementCompany(
   requirePermission(context, "placements.manage", { collegeId: input.collegeId });
   await requirePlacementManageScope(context, input.collegeId);
   const db = getDb();
+  const privateFields = {
+    ...(input.contactPersonName===undefined?{}:{contactPersonName:input.contactPersonName}),
+    ...(input.contactEmail===undefined?{}:{contactEmail:input.contactEmail}),
+    ...(input.contactPhone===undefined?{}:{contactPhone:input.contactPhone}),
+    ...(input.internalNotes===undefined?{}:{internalNotes:input.internalNotes}),
+  };
+  const hasPrivateDetails=Object.keys(privateFields).length>0;
 
   return db.transaction(async (tx) => {
     // Display names are not globally unique. Two colleges can work with
@@ -355,6 +362,7 @@ export async function createPlacementCompany(
         name:input.name,websiteUrl:input.websiteUrl??null,
         primaryDomain:domain,industry:input.industry??null,about:input.about??null,
         createdByUserId:context.user.id,
+        logoPublicUrl:input.logoPublicUrl??null,
       }).onConflictDoNothing().returning();
       company=created??null;
       if(!company){
@@ -374,10 +382,29 @@ export async function createPlacementCompany(
       .where(and(eq(placementCompanyRelationships.collegeId,input.collegeId),
         eq(placementCompanyRelationships.companyId,company.id)))
       .for("update").limit(1);
-    if(existingLink?.status==="ACTIVE")return {
-      company,relationship:existingLink,existed:true,alreadyLinked:true,
-      createdByUserId:existingLink.createdByUserId,
-    };
+    if(existingLink?.status==="ACTIVE"){
+      if(!hasPrivateDetails)return {
+        company,relationship:existingLink,existed:true,alreadyLinked:true,
+        createdByUserId:existingLink.createdByUserId,
+      };
+      const [updated]=await tx.update(placementCompanyRelationships)
+        .set({...privateFields,updatedAt:new Date()})
+        .where(and(eq(placementCompanyRelationships.id,existingLink.id),
+          eq(placementCompanyRelationships.collegeId,input.collegeId),
+          eq(placementCompanyRelationships.status,"ACTIVE"))).returning();
+      if(!updated)throw new PlacementsServiceError("PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND");
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_COMPANY_LINKED,
+        collegeId:input.collegeId,
+        subjectType:"placement_company_relationship",subjectId:updated.id,
+        subjectLabel:company.name,
+        summary:"College employer private contact details updated",
+        metadata:{action:"UPDATE_PRIVATE_CONTACT",relationshipId:updated.id},
+        groupKey:"placement-companies:"+input.collegeId,
+      });
+      return {company,relationship:updated,existed:true,alreadyLinked:true,
+        createdByUserId:updated.createdByUserId};
+    }
     // Canonical employer edits need verified ownership, not a link operation.
     const now = new Date();
     const [relationship] = await tx
@@ -387,6 +414,7 @@ export async function createPlacementCompany(
         companyId: company.id,
         isTrusted: input.isTrusted,
         createdByUserId: context.user.id,
+        ...privateFields,
       })
       .onConflictDoUpdate({
         target: [
@@ -397,6 +425,7 @@ export async function createPlacementCompany(
           status: "ACTIVE",
           archivedAt: null,
           updatedAt: now,
+          ...privateFields,
         },
       })
       .returning();

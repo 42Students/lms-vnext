@@ -631,9 +631,22 @@ export async function listVisibleAnnouncementsForMembership(
   const targetedGuard=schemaCheck.rows[0]?.audiences?sql`
    (not exists(select 1 from placement_tpo_notice_audiences ta
       where ta.announcement_id=${db10Announcements.id})
+    or exists(select 1 from placement_tpo_notice_audiences ta
+      where ta.announcement_id=${db10Announcements.id}
+        and ta.kind='COLLEGE')
     or exists(select 1 from placement_tpo_notice_recipients tr
       where tr.announcement_id=${db10Announcements.id}
        and tr.membership_id=${membership.id}::uuid))`:undefined;
+  // TPO broadcasts have a 30-second Undo hold from the later of creation
+  // and the scheduled release time. Their generic college notice feed must
+  // not reveal the message before the same hold used by the delivery worker.
+  const dueCutoff=new Date(now.getTime()-30_000);
+  const tpoHoldGuard=sql`(
+   ${db10Announcements.senderType}<>'TPO'
+   or (${db10Announcements.createdAt}<=${dueCutoff}
+     and (${db10Announcements.scheduledAt} is null
+       or ${db10Announcements.scheduledAt}<=${dueCutoff}))
+  )`;
   const before=options?.before;
   // Descending pinned, timestamp, UUID: preserve both page ordering and
   // a unique boundary even when many notices share the same createdAt.
@@ -659,6 +672,7 @@ export async function listVisibleAnnouncementsForMembership(
     .from(db10Announcements)
     .where(and(
       targetedGuard,
+      tpoHoldGuard,
       cursorCondition,
       eq(db10Announcements.collegeId, membership.collegeId),
       isNull(db10Announcements.deletedAt),

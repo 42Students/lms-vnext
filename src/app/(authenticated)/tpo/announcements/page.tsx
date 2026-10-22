@@ -32,6 +32,7 @@ import {listTpoPlacementAnnouncements,countUnreadTpo42Announcements} from "@/mod
 import {tpoAudiencePreviewQuery} from "@/modules/announcements/tpo-audience-preview-query";
 import {TpoNoticeLiveAudienceProvider,TpoNoticeLiveReach,TpoNoticeLiveSubmitControls} from "@/components/tpo/tpo-notice-live-preview";
 import {tpoAnnouncementTabSchema} from "@/modules/announcements/tpo-placement-read-model";
+import {tpoNoticeDeliveryVerified} from "@/modules/announcements/tpo-notice-delivery-readiness";
 type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];targetIds?:string|string[];noticeError?:string|string[];sentNotice?:string|string[];page?:string|string[];mine?:string|string[];noticeSuccess?:string|string[]}>};
 
 // A scheduled notice is not sent when it is drafted. The effective publish
@@ -63,6 +64,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
  const from42Unread=await countUnreadTpo42Announcements(context).catch(()=>null);
  const targetedReady=await placementTableExists("placement_tpo_notice_audiences")&&
   await placementTableExists("placement_tpo_notice_recipients");
+ const deliveryReady=tpoNoticeDeliveryVerified();
  const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
  const noticeError=tpoNoticeFormErrorMessage(first(raw.noticeError));
  const sentId=first(raw.sentNotice);
@@ -123,7 +125,8 @@ export default async function TpoAnnouncements({searchParams}:Props){
     <p className="text-xs text-muted-foreground">After this, students no longer see it. You still do.</p>
     <label className="flex items-center gap-2 text-[var(--lms-font-sm)] font-semibold leading-4"><Checkbox name="pinned" /> Pin it to the top</label>
     <p className="text-xs text-muted-foreground">Students get a notice in the app. You can undo for 30 seconds after sending. Email and SMS are unavailable.</p>
-    <TpoNoticeLiveSubmitControls minDateTime={formMinDateTime} targetedReady={targetedReady}/>
+    <TpoNoticeLiveSubmitControls minDateTime={formMinDateTime}
+     targetedReady={targetedReady} deliveryReady={deliveryReady}/>
    </form>
    </TpoNoticeLiveAudienceProvider>
   </section></TpoNoticeComposerDialog>:null}/>
@@ -221,7 +224,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
         </div>
        </details>
        <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Send at (IST)
-        <DateInput mode="datetime-local" name="sendAt"
+        <DateInput mode="datetime-local" name="sendAt" disabled={!deliveryReady}
          defaultValue={row.scheduledAt?new Date(new Date(row.scheduledAt).getTime()+330*60000).toISOString().slice(0,16):""}
          className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
        </label>

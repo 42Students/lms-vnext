@@ -100,7 +100,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-13/NEW_docs_audit_gap2_lane-20_r2-storage-utils.md.md` (new; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-13/src_modules_log-alerts_reporter.ts.md` (edit src/modules/log-alerts/reporter.ts; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-13/NEW_docs_audit_gap2_lane-20_learner-group-controller.md.md` (new; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-13/src_modules_attendance_faculty-marking-window.ts.md` (edit src/modules/attendance/faculty-marking-window.ts; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-13/src_modules_attendance_faculty-marking-window.ts.md` (edit src/modules/attendance/faculty-marking-window.ts; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-13/src_modules_attendance_faculty-schedule-mutation-model.ts.md` (edit src/modules/attendance/faculty-schedule-mutation-model.ts; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-13/src_modules_attendance_learner-attendance-filter-model.ts.md` (edit src/modules/attendance/learner-attendance-filter-model.ts; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-13/src_modules_attendance_parent-sms-provider.ts.md` (edit src/modules/attendance/parent-sms-provider.ts; 1 findings; best P1)

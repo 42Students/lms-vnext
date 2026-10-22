@@ -12,7 +12,7 @@ This is wave 3 of the fix job. Work every packet below, in order, one at a time,
 Packets:
 
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-5/W3_src_modules_placements_hr-job-read-service.ts.md` (edit src/modules/placements/hr-job-read-service.ts; 1 findings; best P0)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-5/W3_src_components_admin_super-admin-college-company-actions.tsx.md` (edit src/components/admin/super-admin-college-company-actions.tsx; 7 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-5/W3_src_components_admin_super-admin-college-company-actions.tsx.md` (edit src/components/admin/super-admin-college-company-actions.tsx; 7 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-5/W3_src_app_authenticated_admin_placements_jobs_jobId_settings_page.tsx.md` (edit src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx; 4 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-5/W3_src_components_admin_tenant-settings-editor.tsx.md` (edit src/components/admin/tenant-settings-editor.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-5/W3_src_app_authenticated_admin_features_collegeId_page.tsx.md` (edit src/app/(authenticated)/admin/features/[collegeId]/page.tsx; 2 findings; best P1)

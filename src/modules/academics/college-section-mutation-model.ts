@@ -87,7 +87,7 @@ export const legacyClassImportSchema = z.object({
   startDate: z.string().nullable().optional(),
   endDate: z.string().nullable().optional(),
 }).superRefine((input, ctx) => {
-  if (input.lower_limit != null && input.lower_limit > input.upper_limit)
+  if (input.upper_limit !== 0 && input.lower_limit != null && input.lower_limit > input.upper_limit)
     ctx.addIssue({ code: "custom", path: ["upper_limit"],
       message: "Maximum cannot be less than minimum" });
 });
@@ -111,7 +111,9 @@ export function translateLegacyClassToSection(
     academicPeriodId: uuid.parse(resolved.academicPeriodId),
     name: input.name,
     code: code.parse(resolved.code),
-    capacity: input.upper_limit === 0 ? 1 : input.upper_limit,
+    // The legacy zero upper limit means unlimited, not a one-seat class.
+    // Validate the lower limit with a temporary finite value before persisting null.
+    capacity: input.upper_limit === 0 ? Math.max(1, input.lower_limit ?? 1) : input.upper_limit,
     minSize: input.lower_limit ?? null,
     description: input.description ?? null,
   });

@@ -108,7 +108,12 @@ export default async function SuperAdminCompaniesPage({
     "Never posted"}</span>},
 
    {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><div className="min-w-0 space-y-2">
-     {context.adminScope?.collegeId===row.collegeId&&row.relationshipStatus==="ACTIVE"&&row.companyStatus==="ACTIVE"?<SuperAdminCollegeCompanyEdit relationshipId={row.relationshipId} name={row.name}/>:null}
+     {context.adminScope?.collegeId===row.collegeId&&row.relationshipStatus==="ACTIVE"&&row.companyStatus==="ACTIVE"?<SuperAdminCollegeCompanyEdit relationshipId={row.relationshipId} company={{
+       id:row.companyId,name:row.name,website:row.website??null,
+       industry:row.industry??null,about:row.about??null,
+       logoPublicUrl:row.logoPublicUrl??null,
+       updatedAt:row.updatedAt?.toISOString()??null,
+      }}/>:null}
      {context.adminScope?.collegeId===row.collegeId?<SuperAdminCollegeCompanyRelationshipActions
       relationshipId={row.relationshipId} name={row.name} trusted={row.trusted}
       status={row.relationshipStatus} driveCount={row.driveCount??0} companyStatus={row.companyStatus}/>:null}
