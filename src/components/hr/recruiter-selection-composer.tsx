@@ -87,7 +87,7 @@ export function RecruiterSelectionComposer({jobId,collegeId,candidates,minCtcInr
    </Button>
   </div>
   {disabled?<p role="status" className="text-sm text-warning-text">This drive is closed; selection submissions are unavailable.</p>:null}
-  {!disabled&&candidates.length===0?<p role="status" className="text-sm text-body">No applicants have passed every completed assessment and interview round on this page.</p>:null}
+  {!disabled&&candidates.length===0?<p role="status" className="text-sm text-body">No applicants have passed every completed assessment and interview round.</p>:null}
   {success?<p role="status" className="text-sm text-success">{success}</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {open&&!disabled?<div className="space-y-4 border-t border-border pt-4">
@@ -116,7 +116,7 @@ export function RecruiterSelectionComposer({jobId,collegeId,candidates,minCtcInr
      <Checkbox checked={candidates.length>0&&chosen.length===candidates.length}
       indeterminate={chosen.length>0&&chosen.length<candidates.length}
       onChange={event=>{setSelected(event.target.checked?candidates.map(item=>item.id):[]);nonce.current=null;}}/>
-     Select all eligible on this page
+     Select all eligible applicants
     </label>
     <div className="max-h-56 overflow-y-auto rounded-lg border border-border">
      {candidates.map(candidate=><label key={candidate.id}
