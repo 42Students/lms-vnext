@@ -263,7 +263,7 @@ export function ProjectMentorReassignment({
             className="w-full sm:w-auto">
             Clear selection
           </Button>
-          <span className="text-sm text-body">{selected.length} selected across pages</span>
+          <span role="status" aria-live="polite" className="text-sm text-body">{selected.length} selected across pages</span>
           {matchingCapped?<p role="status" className="w-full text-sm text-warning-text">
             More than 1,000 workspaces match. Selection is limited to the first 1,000;
             narrow the filters to include the remaining workspaces.

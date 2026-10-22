@@ -291,6 +291,7 @@ export function CreateProjectResourceControl({
       <Button
         size="sm"
         variant="secondary"
+        aria-haspopup="dialog" aria-expanded={open}
         onClick={() => setOpen(true)}
       >
         {isLearner ? "Share a resource" : "Add resource"}

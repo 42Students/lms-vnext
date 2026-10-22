@@ -238,12 +238,12 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-15.md: file, number of 
 - [x] `src/components/projects/project-activity-filtered-list.tsx`
 - [x] `src/components/projects/project-create-control.tsx`
 - [x] `src/components/projects/project-delivery-file-uploader.tsx`
-- [ ] `src/components/projects/project-final-delivery-controls.tsx`
-- [ ] `src/components/projects/project-meeting-controls.tsx`
-- [ ] `src/components/projects/project-mentor-reassignment.tsx`
-- [ ] `src/components/projects/project-readiness-override-form.tsx`
-- [ ] `src/components/projects/project-resource-controls.tsx`
-- [ ] `src/components/projects/project-resource-files-panel.tsx`
+- [x] `src/components/projects/project-final-delivery-controls.tsx`
+- [x] `src/components/projects/project-meeting-controls.tsx`
+- [x] `src/components/projects/project-mentor-reassignment.tsx`
+- [x] `src/components/projects/project-readiness-override-form.tsx`
+- [x] `src/components/projects/project-resource-controls.tsx`
+- [x] `src/components/projects/project-resource-files-panel.tsx`
 - [ ] `src/components/projects/project-resource-list.tsx`
 - [ ] `src/components/projects/project-task-comments.tsx`
 - [ ] `src/components/projects/project-template-controls.tsx`
