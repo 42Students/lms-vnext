@@ -4,5 +4,5 @@ Rows that fast mode deferred without checking. Do them AFTER anything left in la
 
 - [x] `docs/audit/gap-fix-work/deep/packets/DEEP_lane18_1.md` (10 rows)
 - [x] `docs/audit/gap-fix-work/deep/packets/DEEP_lane18_2.md` (10 rows)
-- [ ] `docs/audit/gap-fix-work/deep/packets/DEEP_lane18_3.md` (10 rows)
-- [ ] `docs/audit/gap-fix-work/deep/packets/DEEP_lane18_4.md` (10 rows)
+- [x] `docs/audit/gap-fix-work/deep/packets/DEEP_lane18_3.md` (10 rows)
+- [x] `docs/audit/gap-fix-work/deep/packets/DEEP_lane18_4.md` (10 rows)
