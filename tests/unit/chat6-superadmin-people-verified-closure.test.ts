@@ -9,7 +9,7 @@ describe("chat-6 selected-college People gap verification",()=>{
   expect(s).toContain("Select a college to continue");
   expect(s).toContain("Choose a college in the header above to continue.");
    expect(s).toContain("Choose an Organization + College in the header above to view faculty assignments.");
-  for(const noun of ["faculty assignments","people directory","students"])expect(s).toContain(noun);
+  for(const noun of ["faculty assignments","matching records","students"])expect(s).toContain(noun);
  });
  it("SA-academics-people-82 validates the 500-row faculty sample and preserves row result feedback",()=>{
   const rows=parseFacultyBulkCsv("First Name,Last Name,Mobile Number,Email\nAnjali,Sharma,9876543210,anjali@example.edu\n");
