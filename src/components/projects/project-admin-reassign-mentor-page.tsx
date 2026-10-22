@@ -20,7 +20,7 @@ import {findLegacyReassignmentMentorMembership} from "@/modules/projects/mentor-
 import { listProjectMentorCandidates } from "@/modules/projects/member-service";
 import { listCollegeProjectMentorWorkload, listCollegeReassignmentWorkspaces } from "@/modules/projects/mentor-reassignment-workload-service";
 import Link from "next/link";
-import { isProjectMentorOverloaded } from "@/modules/projects/mentor-overload-model";
+import {ProjectMentorWorkloadTable} from "./project-mentor-workload-table";
 
 export async function ProjectAdminReassignMentorPage({
   collegeId,
@@ -89,36 +89,21 @@ export async function ProjectAdminReassignMentorPage({
     right.activeWorkspaces - left.activeWorkspaces ||
     (left.mentorName ?? "").localeCompare(right.mentorName ?? "", "en-IN"),
   );
-  const mentorCounts = sortedWorkload.filter(row => row.mentorMembershipId !== null).map(row => row.activeWorkspaces);
   return (
     <div className="min-w-0 space-y-[16px]">
-      <div className="min-w-0">
-        <PageBackLink href={basePath} label="Back to workspaces" />
-        <PageHeader title="Bulk mentor reassignment"
-          description="Move multiple active workspaces to a new mentor at once" />
-      </div>
+      <PageHeader title="Bulk mentor reassignment"
+        description="Move multiple active workspaces to a new mentor at once."
+        actions={<PageBackLink href={basePath} label="Back to workspaces"/>}/>
       <ProjectAdminNav basePath={basePath} active="workspaces" />
       {mentorsRead.status==="rejected"?<ErrorState
         title="Mentor options could not be loaded"
         description="The workspace list and workload are available, but reassignment is disabled until current mentor permissions can be verified."
         action={<Link className="font-semibold text-link underline"
           href={projectAdminReassignMentorHref(basePath,parsed.data)}>Retry mentors</Link>}/>:null}
-      <Disclosure title="Mentor workload" className="border-b border-border pb-4" contentClassName="pt-2">
-        <div className="mt-2 grid min-w-0 gap-x-4 gap-y-0 md:grid-cols-2">
-          {workload.map(row => {
-            const mentor = mentors.find(person => person.membershipId === row.mentorMembershipId);
-            const filter = row.mentorMembershipId ?? "UNASSIGNED";
-            return <Link key={filter}
-              href={basePath + "/reassign-mentor?fromMentorId=" + encodeURIComponent(filter)}
-              className="block min-h-11 min-w-0 border-b border-border px-2 py-3 break-words hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">
-              <p className="font-semibold">{row.mentorName ?? mentor?.displayName ?? mentor?.email ?? (row.mentorMembershipId?"Mentor":"Unassigned")}</p>
-              <p className="text-sm leading-[22px]">{row.activeWorkspaces} active workspaces</p>
-              <p className="text-sm leading-[22px]">{row.atRisk} at risk</p>
-              {row.mentorMembershipId && isProjectMentorOverloaded(row.activeWorkspaces, mentorCounts) ?
-                <StatusBadge tone="warning">Overloaded</StatusBadge> : null}
-            </Link>;
-          })}
-        </div>
+      <Disclosure title="Mentor workload"
+        defaultOpen className="border-b border-border pb-4" contentClassName="pt-2">
+        <ProjectMentorWorkloadTable rows={sortedWorkload}
+          basePath={basePath} selectedMentorId={fromMentorId}/>
       </Disclosure>
       <Disclosure title="Filter by current mentor" className="border-b border-border pb-4" contentClassName="space-y-4 pt-3" defaultOpen>
       <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto_auto]"
