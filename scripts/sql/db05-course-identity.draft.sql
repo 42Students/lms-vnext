@@ -35,18 +35,18 @@ ALTER TABLE courses
     CHECK (slug IS NULL OR length(btrim(slug)) > 0);
 
 -- Legacy slug reservation is GLOBAL, including archived/soft-deleted rows.
-CREATE UNIQUE INDEX db05_course_slug_reserved_uq
+CREATE UNIQUE INDEX IF NOT EXISTS db05_course_slug_reserved_uq
   ON courses (slug)
   WHERE slug IS NOT NULL;
 
 -- Active course and short-title uniqueness use LOWER(TRIM). These remain
 -- partial on ACTIVE rows only; archived courses can reuse a visible title,
 -- but their immutable/public slug is still reserved forever.
-CREATE UNIQUE INDEX db05_course_active_department_short_title_trim_uq
+CREATE UNIQUE INDEX IF NOT EXISTS db05_course_active_department_short_title_trim_uq
   ON courses (department_id, lower(btrim(short_title)))
   WHERE status = 'ACTIVE' AND short_title IS NOT NULL;
 
-CREATE UNIQUE INDEX db05_course_active_department_name_trim_uq
+CREATE UNIQUE INDEX IF NOT EXISTS db05_course_active_department_name_trim_uq
   ON courses (department_id, lower(btrim(name)))
   WHERE status = 'ACTIVE';
 

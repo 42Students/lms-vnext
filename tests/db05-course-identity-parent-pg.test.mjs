@@ -45,7 +45,8 @@ async function insertCourse(client, changes = {}) {
 async function rejected(client, query, params, code, constraint) {
   await client.query("SAVEPOINT db05_expected_rejection");
   await assert.rejects(client.query(query, params), error =>
-    error.code === code && error.constraint === constraint,
+    error.code === code &&
+    (Array.isArray(constraint) ? constraint.includes(error.constraint) : error.constraint === constraint),
     "unexpected SQLSTATE/constraint: " + constraint);
   await client.query("ROLLBACK TO SAVEPOINT db05_expected_rejection");
   await client.query("RELEASE SAVEPOINT db05_expected_rejection");
@@ -83,7 +84,7 @@ test("DB05 archived rows release a visible name, but NEVER release a slug", asyn
     await rejected(client,
       "insert into courses(department_id,name,code,slug) values ($1,$2,$3,$4)",
       [dept, "new course " + randomUUID(), "db05-" + randomUUID(), slug],
-      "23505", "db05_course_slug_reserved_uq");
+      "23505", ["courses_slug_uq","db05_course_slug_reserved_uq"]);
   });
 });
 

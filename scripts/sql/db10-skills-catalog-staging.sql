@@ -1,8 +1,13 @@
 -- DB-022 DB10 skill catalog — STAGING ONLY, NOT A NUMBERED MIGRATION.
+-- Registered migrations 0195 and 0244 already establish these tables and
+-- indexes. CREATE IF NOT EXISTS is intentional: CI overlays the contract
+-- onto the fully migrated disposable database without dropping any data.
+-- Existing schema constraints remain authoritative. This overlay does not
+-- perform data migration, weaken uniqueness or replace protected rows.
 -- Oracle: 42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5
 -- Skill.java / SkillSynonym.java / SkillRepository.java / SkillUsageTracker.java
 -- Chat 1 owns integration into drizzle/meta and src/db/schema/index.ts.
-CREATE TABLE skills (
+CREATE TABLE IF NOT EXISTS skills (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   name varchar(200) NOT NULL,
   display_name varchar(200) NOT NULL,
@@ -17,11 +22,11 @@ CREATE TABLE skills (
   CONSTRAINT db10_skills_usage_ck CHECK (usage_count >= 0),
   CONSTRAINT db10_skills_priority_ck CHECK (search_priority BETWEEN 0 AND 100)
 );
-CREATE UNIQUE INDEX db10_skills_name_uq ON skills ((lower(name)));
-CREATE INDEX db10_skills_active_category_name_idx ON skills (is_active,category,display_name);
-CREATE INDEX db10_skills_popularity_idx ON skills (is_active,usage_count,search_priority);
+CREATE UNIQUE INDEX IF NOT EXISTS db10_skills_name_uq ON skills ((lower(name)));
+CREATE INDEX IF NOT EXISTS db10_skills_active_category_name_idx ON skills (is_active,category,display_name);
+CREATE INDEX IF NOT EXISTS db10_skills_popularity_idx ON skills (is_active,usage_count,search_priority);
 
-CREATE TABLE skill_synonyms (
+CREATE TABLE IF NOT EXISTS skill_synonyms (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   skill_id uuid NOT NULL REFERENCES skills(id) ON DELETE RESTRICT,
   synonym varchar(100) NOT NULL,
@@ -30,10 +35,10 @@ CREATE TABLE skill_synonyms (
 );
 -- Legacy synonym lookup can return multiple skills for the same alias.
 -- NO global UNIQUE synonym constraint (unlike the superseded initial draft).
-CREATE INDEX db10_skill_synonyms_search_idx ON skill_synonyms ((lower(synonym)));
-CREATE INDEX db10_skill_synonyms_skill_idx ON skill_synonyms (skill_id);
+CREATE INDEX IF NOT EXISTS db10_skill_synonyms_search_idx ON skill_synonyms ((lower(synonym)));
+CREATE INDEX IF NOT EXISTS db10_skill_synonyms_skill_idx ON skill_synonyms (skill_id);
 
-CREATE TABLE skill_usage (
+CREATE TABLE IF NOT EXISTS skill_usage (
   skill_name varchar(200) PRIMARY KEY,
   usage_count integer NOT NULL DEFAULT 0,
   last_used timestamp with time zone NOT NULL DEFAULT now(),
