@@ -481,7 +481,10 @@ export function PlacementJobCreateForm({
         for(const field of Array.from(formRef.current.querySelectorAll<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>("input[name],textarea[name],select[name]"))){
           if(field.dataset.skipBackup)continue;
           if(field instanceof HTMLInputElement&&field.type==="checkbox")field.checked=(saved.checked??[]).includes(field.name);
-          else if(saved.values[field.name]!==undefined)field.value=saved.values[field.name];
+          else {
+            const restoredValue = saved.values[field.name];
+            if (restoredValue !== undefined) field.value = restoredValue;
+          }
         }
         // TPO-drives-45: restoring a draft must never overwrite its chosen time.
         if(typeof saved.values["applicationDeadline"]==="string"&&saved.values["applicationDeadline"].trim()){
