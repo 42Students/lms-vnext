@@ -60,12 +60,13 @@ export async function submitPublicRecruitEnquiry(collegeId:string,raw:unknown,ve
     eq(placementPublicEnquiryChallenges.workEmail,email)))
    .orderBy(desc(placementPublicEnquiryChallenges.requestedAt),
     desc(placementPublicEnquiryChallenges.id)).for("update").limit(1);
-  if(!challenge||challenge.verifiedAt||challenge.expiresAt<=now||challenge.attempts>=5)
-   return "DENIED";
+  if(!challenge)return "WRONG_CODE";
+  if(challenge.verifiedAt||challenge.attempts>=5)return "CODE_LOCKED";
+  if(challenge.expiresAt<=now)return "CODE_EXPIRED";
   if(!enquiryMacMatches(challenge.codeHash,challenge.id,email,code,secret)){
    await tx.update(placementPublicEnquiryChallenges)
     .set({attempts:challenge.attempts+1}).where(eq(placementPublicEnquiryChallenges.id,challenge.id));
-   return "DENIED";
+   return "WRONG_CODE";
   }
   // The challenge and enquiry must commit together, preventing code replay.
   const [consumed]=await tx.update(placementPublicEnquiryChallenges).set({verifiedAt:now})
@@ -115,6 +116,8 @@ export async function submitPublicRecruitEnquiry(collegeId:string,raw:unknown,ve
   return "DONE";
  });
  if(outcome==="LIMIT")throw new PublicEnquiryError("LIMIT");
+ if(outcome==="CODE_EXPIRED"||outcome==="CODE_LOCKED"||outcome==="WRONG_CODE")
+   throw new PublicEnquiryError(outcome);
  if(outcome!=="DONE")throw new PublicEnquiryError("INVALID");
  return {received:true as const,status:"RECEIVED" as const};
 }
