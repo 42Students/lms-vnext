@@ -1,6 +1,6 @@
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
-import {collegeInterviewFilters,listCollegeInterviewDirectory}
+import {listCollegeInterviewDirectory}
  from "@/modules/placements/college-interview-directory-service";
 import {apiErrorResponse} from "@/lib/api-error";
 export const runtime="nodejs";
