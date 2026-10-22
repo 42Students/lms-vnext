@@ -11,7 +11,7 @@ export async function POST(request: Request) {
   const body=await readBoundedJsonBody(request);
   if(body.kind!=="OK")return NextResponse.json({error:body.kind==="TOO_LARGE"?"REQUEST_TOO_LARGE":"COULD_NOT_JOIN"},
     {status:body.kind==="TOO_LARGE"?413:400,headers:{"Cache-Control":"no-store"}});
-  const trusted = process.env.PUBLIC_JOIN_TRUSTED_PROXY_READY === "VERIFIED";
+  const trusted = process.env["PUBLIC_JOIN_TRUSTED_PROXY_READY"] === "VERIFIED";
   const ip = trusted ? request.headers.get("x-public-verified-client-ip") : null;
   try {
     const result = await acceptPublicRecruiterJoin("COLLEGE", body.value, ip);
