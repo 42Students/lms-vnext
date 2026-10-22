@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
+import {Dialog} from "@/components/ui/dialog";
 import {useToast} from "@/components/ui/toast";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meetingUrl}:{applicationId:string;roundId:string;mode:"ON_CAMPUS"|"VIRTUAL";venue:string|null;meetingUrl:string|null}){
@@ -31,7 +32,7 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
   }
   // A datetime-local input has no timezone. Interpret it in the college's
   // IST timezone, not the learner browser's device timezone.
-  if(!/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$/.test(date)){
+  if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(date)){
    setError("Choose a valid future date and time in IST.");return;
   }
   const when=new Date(date+":00+05:30");
@@ -70,18 +71,18 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
   finally{setBusy(false);}
  }
  return <div className="mt-3 space-y-2">
-  <Button variant="link" type="button" aria-expanded={open} aria-controls={"learner-reschedule-details-"+roundId} onClick={()=>setOpen(x=>!x)}
-    className="max-md:min-h-11 font-semibold text-primary-text underline">{open?"Cancel":"Can't make it? Ask to reschedule"}</Button>
+  <Button variant="link" type="button" aria-haspopup="dialog" aria-expanded={open} onClick={()=>{if(!busy)setOpen(x=>!x)}}
+    className="max-md:min-h-11 font-semibold text-primary-text underline">{open?"Close":"Can't make it?"}</Button>
   {success?<p role="status" className="text-sm text-success">{success}</p>:null}
-  {open?<div id={"learner-reschedule-details-"+roundId} role="region" aria-label="Reschedule request details" className="grid gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
-   <h4 className="font-semibold">Ask to reschedule</h4>
+  {<Dialog open={open} onOpenChange={value=>{if(!busy)setOpen(value)}} title="Ask to reschedule" dismissible={!busy}>
+   <div className="grid gap-3">
    <p className="text-sm text-body">The placement cell must approve your suggested time. You can add flexible times as notes, but the current approval process also needs an exact future date and a contact location or meeting link.</p>
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason (3–900 characters)
+   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Why can't you make it?
     <Textarea value={reason} onChange={e=>setReason(e.target.value)} minLength={3} maxLength={900} rows={3}
       className="mt-1 min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-[rgba(38,186,199,0.15)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"/></label>
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Times that work for you (optional)
     <Textarea rows={2} maxLength={200} value={preferredTimes} onChange={e=>setPreferredTimes(e.target.value)}
-     className="mt-1 min-h-20 w-full" placeholder="e.g. weekday mornings, or after 3 PM"/>
+     className="mt-1 min-h-20 w-full" placeholder="e.g. Any time after 2 PM on 16 Oct"/>
    </label>
    <label className="text-sm">Preferred date and time (required for an approved new booking)
     <DateInput required mode="datetime-local" value={date} onChange={e=>setDate(e.target.value)}
@@ -99,10 +100,14 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-[rgba(38,186,199,0.15)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"/></label>}
    {requestReason.length>900?<p role="alert" className="text-xs text-error">Reason and preferred times must stay within 900 characters.</p>:null}
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+   <div className="flex flex-wrap items-center justify-end gap-2">
+   <Button variant="secondary" type="button" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
    <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={busy||reason.trim().length<3||requestReason.length>900||!date||
      (nextMode==="ON_CAMPUS"?!nextVenue.trim():!/^https:\/\//i.test(nextUrl))}
      onClick={()=>void save()} >
-    {busy?"Sending…":"Send request"}</Button>
-  </div>:null}
+    {busy?"Sending…":"Send to the placement cell"}</Button>
+   </div>
+   </div>
+  </Dialog>}
  </div>;
 }
