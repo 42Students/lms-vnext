@@ -23,9 +23,11 @@ type SaveMessage = {
 export function CollegeAttendancePolicyForm({
   collegeId,
   initialPolicy,
+  readOnly = false,
 }: {
   collegeId: string;
   initialPolicy: PolicyValues;
+  readOnly?: boolean;
 }) {
   const router = useRouter();
 
@@ -83,6 +85,32 @@ export function CollegeAttendancePolicyForm({
     // COL-attendance-16: reset persists through the audited, college-scoped PUT.
     await persistPolicy(DEFAULT_ATTENDANCE_POLICY,
       "Attendance policy reset to the defaults. Existing attendance records remain unchanged.");
+  }
+
+  if (readOnly) {
+    return <section aria-label="College attendance policy" className="min-w-0 max-w-[920px] space-y-4 border-b border-[var(--lms-canvas-border)] pb-4">
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="text-lg font-semibold text-[var(--lms-heading)]">College attendance policy</h2>
+          <p className="mt-1 text-sm text-muted-foreground">These attendance policy fields are read-only for College Admin.</p>
+        </div>
+        <Button type="button" variant="secondary" className="min-h-11 md:min-h-9"
+          onClick={()=>router.refresh()} aria-label="Reload attendance policy">
+          <span aria-hidden="true">↻</span> Reload
+        </Button>
+      </div>
+      <dl className="grid min-w-0 gap-4 sm:grid-cols-2">
+        <div className="min-w-0">
+          <dt className="text-sm font-semibold text-[var(--lms-heading)]">Eligibility threshold (%) <span className="text-xs font-normal text-muted-foreground">Read-only</span></dt>
+          <dd className="mt-2 rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-sm tabular-nums text-body">{initialPolicy.eligibilityThresholdPercent}%</dd>
+        </div>
+        <div className="min-w-0">
+          <dt className="text-sm font-semibold text-[var(--lms-heading)]">Correction window (hours) <span className="text-xs font-normal text-muted-foreground">Read-only</span></dt>
+          <dd className="mt-2 rounded-[var(--lms-control-radius)] border border-border bg-muted p-3 text-sm tabular-nums text-body">{initialPolicy.correctionWindowHours} hours</dd>
+        </div>
+      </dl>
+      <p className="text-xs leading-5 text-muted-foreground">A Super Admin with the selected college scope can change these values. Reload to read the latest saved policy.</p>
+    </section>;
   }
 
   return (

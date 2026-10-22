@@ -5,12 +5,21 @@ import {z} from "zod";
 import { getDb } from "@/db/client";
 import { activityEvents, attendancePolicies } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
+import {isSuperAdmin} from "@/modules/identity/context";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import { requireAttendanceCollege } from "./admin-service";
 import {CoursesServiceError} from "@/modules/courses/errors";
 import {
   attendancePolicyUpdateSchema,
   DEFAULT_ATTENDANCE_POLICY,
 } from "./policy-validation";
+
+/** Legacy College Admin policy inputs are read-only; mutations are reserved
+ * for authorized Super Admin acting in the college. Keep this at the service
+ * boundary so direct PUT/PATCH/DELETE calls cannot bypass the read-only UI. */
+function requirePolicyWriteActor(context:RequestContext){
+ if(!isSuperAdmin(context))throw new AuthorizationError("academics.manage");
+}
 
 export async function correctionHoursDeploymentMax(){
  const row=await getDb().execute(sql<{definition:string}>`
@@ -76,6 +85,7 @@ export async function updateCollegeAttendancePolicy(
   context: RequestContext,
   rawInput: unknown,
 ) {
+  requirePolicyWriteActor(context);
   const input =
     attendancePolicyUpdateSchema.parse(rawInput);
 
@@ -175,6 +185,7 @@ const attendancePolicyFieldPatchSchema=z.strictObject({
     ctx.addIssue({code:"custom",path:["value"],message:"Minimum attendance must be 1–100%"});
 });
 export async function updateCollegeAttendancePolicyField(context:RequestContext,raw:unknown){
+ requirePolicyWriteActor(context);
   const input=attendancePolicyFieldPatchSchema.parse(raw);
   const college=await requireAttendanceCollege(context,input.collegeId);
   if(input.field==="correctionWindowHours" && input.value>(await correctionHoursDeploymentMax()))
@@ -226,6 +237,7 @@ export async function updateCollegeAttendancePolicyField(context:RequestContext,
  * advisory lock before resetting inheritance; the change is audited.
  */
 export async function resetCollegeAttendancePolicyOverride(context:RequestContext,raw:unknown){
+ requirePolicyWriteActor(context);
  const input=z.strictObject({
   collegeId:z.string().uuid(),
   expectedCorrectionWindowHours:z.number().int().min(1).max(8760),

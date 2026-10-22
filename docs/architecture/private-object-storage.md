@@ -8,6 +8,8 @@ Private files live in **Cloudflare R2**, accessed through the dependency-free S3
 
 `R2_ACCOUNT_ID`, `R2_ACCESS_KEY`, `R2_SECRET_KEY` and `R2_PRIVATE_BUCKET`. The private bucket **must differ** from the legacy `R2_BUCKET_NAME`, which is served publicly through `R2_PUBLIC_URL`; the code refuses to run (`PRIVATE_STORAGE_BUCKET_UNSAFE`) if they match. Never enable public access or a public domain on the private bucket.
 
+**All-or-nothing provisioning:** The old Spring `r2.account.id` bean condition is not sufficient for vNext. Set `R2_ACCOUNT_ID`, `R2_ACCESS_KEY`, `R2_SECRET_KEY` and `R2_PRIVATE_BUCKET` together in the same deployment's secret configuration. If even one is missing or the private bucket fails the isolation check, storage upload/read grants must return `PRIVATE_STORAGE_NOT_CONFIGURED` or `PRIVATE_STORAGE_BUCKET_UNSAFE` (sanitized HTTP 503); unrelated LMS pages remain usable. `GET /api/admin/storage/readiness` reports configuration only, **not** an actual R2 connectivity test. Do not enable file features until signed PUT/HEAD/GET and scanner acceptance are checked.
+
 Creating the bucket needs an R2 token with bucket-create permission (the legacy object-scoped key gets AccessDenied). Once available: `R2_* node/tsx scripts/ops/r2-create-private-bucket.ts lms-vnext-private`.
 
 ## Contract
