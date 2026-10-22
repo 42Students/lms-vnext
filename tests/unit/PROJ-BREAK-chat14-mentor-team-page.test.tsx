@@ -14,8 +14,8 @@ vi.mock("next/navigation",()=>({redirect:(destination:string)=>{
  throw new Error("REDIRECT:"+destination);
 }}));
 vi.mock("@/components/ui/page-header",()=>({
- PageHeader:({title,actions}:{title:string;actions:ReactNode})=>
-  <header><h1>{title}</h1>{actions}</header>,
+ PageHeader:({title,description,actions}:{title:string;description?:string;actions?:ReactNode})=>
+  <header><h1>{title}</h1>{description?<p>{description}</p>:null}{actions}</header>,
 }));
 vi.mock("@/components/ui/empty-state",()=>({
  EmptyState:({title,description}:{title:string;description:string})=>
