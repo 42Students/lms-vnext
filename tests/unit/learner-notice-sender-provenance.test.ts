@@ -3,6 +3,7 @@ import {learnerPlacementNoticeFeed,learnerNoticeSourceLabel,learnerNoticeAudienc
 it("distinguishes persisted publisher and audience without inventing a TPO source",()=>{
  const row={id:"a",title:"Announcement",message:"Test",createdAt:new Date("2026-10-15T00:00:00Z"),isPinned:true,senderType:"TPO",receiverType:"COLLEGE"};
  expect(learnerPlacementNoticeFeed([row])[0]).toMatchObject({senderLabel:"Placement cell",audienceLabel:null});
+ expect(learnerPlacementNoticeFeed([{...row,forYou:true}])[0]).toMatchObject({audienceLabel:"You"});
  expect(learnerNoticeSourceLabel("UNKNOWN")).toBeNull();
  expect(learnerNoticeAudienceLabel("EMPLOYER")).toBeNull();
  expect(learnerNoticeAudienceLabel("DEPARTMENT")).toBe("Department");
