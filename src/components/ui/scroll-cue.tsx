@@ -4,6 +4,9 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { cx } from "@/lib/class-names";
 
 type ScrollAxis = "x" | "y";
+// The styles do not determine keyboard focus; actual measured overflow does.
+const horizontalViewportClass="min-w-0 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
+const verticalViewportClass="min-h-0 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
 
 /** UX scroll-motion: hidden scrollbars need truthful edge cues. A focusable
  * region is only added when there is overflow. Works with wheel, touch,
@@ -63,8 +66,7 @@ export function ScrollCue({ children, axis, label, className, viewportClassName 
     <div ref={viewport} role={edges.scrollable ? "region" : undefined}
       aria-label={edges.scrollable ? label : undefined}
       tabIndex={edges.scrollable ? 0 : -1}
-      className={cx(axis === "x" ? "min-w-0 overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" :
-        "min-h-0 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+      className={cx(axis === "x" ? horizontalViewportClass : verticalViewportClass,
         "focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]",
         viewportClassName)}>{children}</div>
     {edges.start ? <span aria-hidden="true" data-scroll-fade="start" className={cx(

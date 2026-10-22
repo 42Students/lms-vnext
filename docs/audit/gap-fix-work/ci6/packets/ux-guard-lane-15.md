@@ -4,8 +4,8 @@ The CI lint job runs `npm run ux:guard` (scripts/check-ux-anti-drift.mjs). Fix t
 
 Rules: unsafe-target = target=_blank needs rel="noopener noreferrer" (or drop target); small-touch-target / unverified-touch-class = interactive control needs the shared >=44px touch class the guard recognises; white-on-teal = white text on #26bac7 fails contrast, use the approved darker token; native-popup = replace window.confirm/alert/prompt with the shared dialog component.
 
-- [ ] src/app/college-join/[token]/loading.tsx:6: unverified-touch-class
-- [ ] src/components/courses/admin-course-overview.tsx:104: unsafe-target
-- [ ] src/components/placements/learner-application-resume-link.tsx:30: unsafe-target
-- [ ] src/components/tpo/tpo-companies-spreadsheet.tsx:64: unsafe-target
-- [ ] src/components/ui/scroll-cue.tsx:66: unverified-touch-class
+- [x] src/app/college-join/[token]/loading.tsx:6: unverified-touch-class
+- [x] src/components/courses/admin-course-overview.tsx:104: unsafe-target
+- [x] src/components/placements/learner-application-resume-link.tsx:30: unsafe-target
+- [x] src/components/tpo/tpo-companies-spreadsheet.tsx:64: unsafe-target
+- [x] src/components/ui/scroll-cue.tsx:66: unverified-touch-class
