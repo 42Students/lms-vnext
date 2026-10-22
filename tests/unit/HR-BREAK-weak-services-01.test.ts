@@ -55,7 +55,7 @@ describe("HR-BREAK-weak-services-01: actual service branches with mocked persist
   expect(mock.getDb).not.toHaveBeenCalled();
   // The demographics reader suppresses low-count groups in SQL before
   // projecting names. Only authorized aggregate groups reach the branch list.
-  mock.rows=[[{total:25}],
+  mock.rows=[[{name:"Engineering College"}], [{total:25}],
    [{branch:"Computer Science",roundedCount:15},{branch:"Electronics",roundedCount:10}],
    []];
   expect(await listRecruiterCollegeBranches(context as never,college))
