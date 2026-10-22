@@ -26,7 +26,10 @@ export const legacyLearnerRequestChoices=[
 
 export const tpoGeneralRequestInputSchema=z.discriminatedUnion("kind",[
  z.object({kind:z.literal("OFF_CAMPUS_OFFER"),reason,
-  companyName:z.string().trim().min(1,"Which company?").max(150),ctcLpa:z.string().regex(/^\d{1,8}(?:\.\d{1,2})?$/),
+  companyName:z.string().trim().min(1,"Which company?").max(200),
+  // Match the verified outside-offer workflow: compensation may be unknown.
+  ctcLpa:z.string().regex(/^(?:0|[1-9][0-9]{0,7})(?:\.[0-9]{1,2})?$/)
+   .nullable().optional(),
   proofUrl}),
  z.object({kind:z.literal("REGISTRATION_CHANGE"),reason,cohortId:uuid,
   choice:z.enum(["PLACEMENTS","HIGHER_STUDIES","NOT_INTERESTED","ENTREPRENEURSHIP","COMPETITIVE_EXAMS"]),
