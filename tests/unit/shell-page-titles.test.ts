@@ -4,7 +4,7 @@ import { browserTitleForPath } from "@/components/shell/page-titles";
 describe("legacy browser titles (dev format `<title> · 42LMS`)", () => {
   it("uses the bare 42LMS fallback when no title is known", () => {
     expect(browserTitleForPath("/")).toBe("42LMS");
-    expect(browserTitleForPath("/tpo/home")).toBe("42LMS");
+    expect(browserTitleForPath("/tpo/home")).toBe("Home · 42LMS");
   });
 
   it.each([
