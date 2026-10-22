@@ -12,13 +12,14 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-5-005-005  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [ ] G2-5-006-044  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [ ] G2-5-007-028  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
-- [ ] G2-5-009-037  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
+- [x] G2-5-009-037  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [x] G2-5-011-030  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [x] G2-5-024-002  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [ ] G2-11-020-050  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 - [ ] G2-11-026-027  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 
 ## Results
+- G2-5-009-037: OK — `src/components/attendance/admin-attendance-workspace.tsx:151-152,745-771,782-796` provides one current-state-dependent correction action (`Mark present` for recorded absence, otherwise `Mark absent`) and radio reasons defaulting to `ABSENT`; matches `docs/legacy-source/frontend/src/pages/superadmin/sections/Attendance.js:265-275`. The vNext dialog additionally re-verifies status before mutation.
 - G2-5-011-030: OK — `src/app/(authenticated)/teacher/calendar/page.tsx:43-50,79-86` retains the loaded calendar when upcoming course data fails and shows a dismissible warning with the exact `Failed to load course data` headline and `Calendar events may be incomplete` description; matches `docs/legacy-source/frontend/src/components/CalendarComp/ClassScheduleContent.jsx:387-397`.
 - G2-5-005-005: FIXED — commit `18372ffcf909a3dc8612a62b35c6c1cc940993c0`, `src/app/(authenticated)/hr/calendar/page.tsx`. Monday-start seven-day week now defaults to compact nonempty-day agenda; legacy `docs/legacy-source/frontend/src/pages/recruiter/calendar.js:29-42,92-124`.
 - G2-4-031-071: OK — `src/modules/auth/runtime.ts:38-48` enforces tenant sign-in channel capability for OTP initiation; `src/app/api/auth/login/start/route.ts:51-58` supplies guarded host tenant ID; matches configured channel policy in `docs/legacy-source/frontend/src/pages/superadmin/sections/CollegeSignIn.js:8-17,103-115`.
