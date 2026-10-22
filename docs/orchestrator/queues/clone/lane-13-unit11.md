@@ -5,11 +5,13 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [x] `tests/unit/UX-college-college-electives-slot-id-allocate-01.test.ts` (1 failing)
 - [x] `tests/unit/chat13-final-sprint-learner-24.test.ts` (1 failing)
 - [x] `tests/unit/chat2-tpo-member-workload-parity.test.ts` (1 failing)
-- [ ] `tests/unit/chat6-superadmin-people-round3.test.ts` (1 failing)
+- [x] `tests/unit/chat6-superadmin-people-round3.test.ts` (1 failing)
 - [x] `tests/unit/chat9-verify2-admin-course-dependency-pages.test.ts` (1 failing)
 - [x] `tests/unit/pub-auth-public-42-rollback.test.ts` (1 failing)
 
 ## Repair results
+
+- FIXED `tests/unit/chat6-superadmin-people-round3.test.ts` — commits `5f266475f6c66148c99d47dac1ebf4cf6438d4b0`, `c3e3be0dfdca0a4bba349196751fdd16c19198c6`, `src/components/admin/super-admin-student-bulk-access.tsx`: reinstate 1,000-student safety ceiling on hydrated, page, range, single-checkbox and submission selections while retaining 25-row atomic groups. Restored expected exact validation message.
 
 - FIXED `tests/unit/pub-auth-public-42-rollback.test.ts` — commit `f428306cdcebd4dbf5aa78227634e258e77b3255`: test the actual active-grant rejection, pending-only grant refresh, and invite consumption rollback. An existing PENDING_RECRUITER grant is intentionally updated after signed-in consent rather than universally rejected.
 
