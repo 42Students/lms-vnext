@@ -180,7 +180,7 @@ export async function ProjectAdminReadinessPage({
           rows={visibleOverrides}
           getRowKey={row=>row.projectId}
           columns={[
-            {key:"workspace",header:"Workspace",mobilePriority:"primary",cell:row=>row.workspace},
+            {key:"workspace",header:"Workspace",mobilePriority:"primary",cell:row=><span className="flex flex-wrap items-center gap-2">{row.workspace}{row.archived?<StatusBadge tone="neutral">Archived</StatusBadge>:null}</span>},
             {key:"direction",header:"Override",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.overrideValue?"success":"warning"}>{row.overrideValue?"✓ Force unlocked":"! Force blocked"}</StatusBadge>},
             {key:"note",header:"Note",mobilePriority:"secondary",cell:row=>row.note},
             {key:"by",header:"By",mobilePriority:"secondary",cell:row=>row.by},
@@ -195,8 +195,8 @@ export async function ProjectAdminReadinessPage({
         />}
         {matchingOverrides.length>25?<nav aria-label="Active override pages" className="mt-3 flex items-center justify-between gap-2 text-sm">
           <span>Page {currentOverridePage} of {overrideTotalPages}</span>
-          <div className="flex gap-3">{currentOverridePage>1?<Link href={overridePageHref(currentOverridePage-1)} className="text-primary-text underline">Previous</Link>:null}
-            {currentOverridePage<overrideTotalPages?<Link href={overridePageHref(currentOverridePage+1)} className="text-primary-text underline">Next</Link>:null}</div>
+          <div className="flex gap-3">{currentOverridePage>1?<Link href={overridePageHref(currentOverridePage-1)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Previous</Link>:null}
+            {currentOverridePage<overrideTotalPages?<Link href={overridePageHref(currentOverridePage+1)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Next</Link>:null}</div>
         </nav>:null}
       </Disclosure>
       <div className="flex min-w-0 flex-wrap items-center justify-end">
