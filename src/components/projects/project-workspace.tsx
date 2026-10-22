@@ -1125,7 +1125,7 @@ export function ProjectWorkspace({
         {mode==="ADMIN"&&!readOnly&&!workspace.project.teamGroupId?<div className="flex justify-end">
           <AddProjectMemberControl projectId={workspace.project.id}/>
         </div>:null}
-        {mode==="ADMIN"?<ProjectRosterTable projectId={workspace.project.id} rows={workspace.members.map(member=>{
+        {mode==="ADMIN"?<><h3 className="text-base font-semibold text-[var(--lms-heading)]">Project people</h3><ProjectRosterTable projectId={workspace.project.id} rows={workspace.members.map(member=>{
           // Deleted tasks are not part of a member's current assignment coverage.
           // Match membership UUIDs; legacy numeric assignee IDs are not valid here.
           const assigned=workspace.tasks.filter(task=>!task.deletedAt&&
@@ -1141,7 +1141,7 @@ export function ProjectWorkspace({
             lastTaskUpdate:last?formatDateTime(last):null,
             canEdit:!readOnly&&(!workspace.project.teamGroupId||member.role!=="LEARNER"),
           };
-        })}/>:null}
+        })}/></>:null}
         <div className="grid min-w-0 gap-x-6 gap-y-2 md:grid-cols-2 xl:grid-cols-3">
           {mode==="MENTOR"?workspace.mentorRoster.map(member=>{
             const active=member.endedAt===null && member.memberStatus==="ACTIVE" &&
