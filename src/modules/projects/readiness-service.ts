@@ -155,6 +155,21 @@ export async function getProjectReadiness(
     totalReleases:releases.length,shippedReleases,
     proofCoverage:{covered:proofCovered,completedTasks:doneTasks,
       unknown:doneTasks>proofCovered},
+    // Task/sprint status is the required readiness signal. Optional proof
+    // links and release shipping are advisory, never disguised as unknown
+    // *required* evidence or silently added to the submission gate.
+    advisoryWarnings:[
+      ...(doneTasks>proofCovered?[
+        (doneTasks-proofCovered)+" completed tasks have no recorded proof link."
+      ]:[]),
+      ...(releases.length>shippedReleases?[
+        (releases.length-shippedReleases)+" releases have not shipped (informational)."
+      ]:[]),
+    ],
+    requiredEvidence:{
+      tasksStatusKnown:true,sprintsStatusKnown:true,
+      complete:executionComplete,
+    },
     submissionExists:latestSubmission!==null,
     submissionStatus:latestSubmission?.status??null,
     overrideActive:readinessOverride.state==="FORCE_UNLOCK"||
