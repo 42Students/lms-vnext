@@ -177,7 +177,7 @@ export function AdminPlacementStudentProfileEditor({membershipId,skills:initialS
   {error?<p role="alert" className="text-sm text-error">{error} Refresh the student record before retrying a conflicting change.</p>:null}
   <ConfirmDialog open={removeIndex!==null} pending={pending}
    onOpenChange={value=>{if(!value&&!pending)setRemoveIndex(null);}}
-   title="Remove skill?"
+   title="Remove this entry?"
    description={removeIndex===null?"":'Remove "'+(skills[removeIndex]?.name??"this skill")+'" from the learner profile?'}
    confirmLabel="Remove skill" confirmVariant="danger"
    onConfirm={()=>{if(removeIndex!==null)void submit("DELETE_SKILL",{index:removeIndex});}}/>

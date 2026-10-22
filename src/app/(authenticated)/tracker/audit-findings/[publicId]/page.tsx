@@ -51,6 +51,15 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
    {([["Paths",finding.paths],["Pages",finding.pages],["Endpoints",finding.endpoints]] as const).map(([label,values])=>
     <div key={label} className="mt-3"><h3 className="text-sm font-semibold text-[var(--lms-heading)]">{label}</h3>
      <ul className="list-disc pl-5 text-sm">{values.map(value=><li key={value} className="break-all [overflow-wrap:anywhere]">{value}</li>)}</ul></div>)}
+   <dl className="mt-3 grid gap-x-4 gap-y-2 text-sm text-body sm:grid-cols-2">
+    <div><dt className="font-semibold">Affects / roles</dt><dd>{finding.roles.length?finding.roles.join(", "):"Not recorded"}</dd></div>
+    <div><dt className="font-semibold">Seen on / environment</dt><dd>{finding.environment??"Not recorded"}</dd></div>
+    <div><dt className="font-semibold">Reported by</dt><dd>{finding.foundBy??"Not recorded"}</dd></div>
+    <div><dt className="font-semibold">Reported agent / session</dt><dd>Not recorded in this audit import</dd></div>
+    <div><dt className="font-semibold">Reported severity</dt><dd>{finding.reportedSeverity??"Not recorded"}</dd></div>
+    <div><dt className="font-semibold">Source commit</dt><dd className="break-all">{finding.sourceCommitSha??"Not recorded"}</dd></div>
+    <div><dt className="font-semibold">Duplicate</dt><dd>{finding.duplicateOf?"Linked to another finding":"Not marked duplicate"}</dd></div>
+   </dl>
   </section>
   <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
     <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">Related tools</summary>
