@@ -118,9 +118,10 @@ export { db10Skills, db10SkillSynonyms, db10SkillUsage } from "./db10-skills-cat
 
 export { db10AuditFindingFiles } from "./db10-audit-findings.draft";
 
-// DB06 grade history remains an isolated source-only schema proposal.
-// Writers that deliberately use its candidate model import it directly;
-// do not include this proposal in the registered schema barrel.
+// DB06 history remains source-only until its SQL prerequisites and journal
+// migration are independently registered. This explicit named export exposes
+// the proposed grade-event model for parity review; it does not apply its SQL.
+export {assignmentGradeEventsStaged} from "./db06-history-staged";
 
 // DB10 log-alert tables exist in registered migration 0133; no poller,
 // digest sender or automatically trusted legacy-account marker is enabled.
