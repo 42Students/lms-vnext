@@ -10,7 +10,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-5-018-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
 - [ ] G2-5-019-008  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
 - [ ] G2-5-019-011  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
-- [ ] G2-11-018-010  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
+- [x] G2-11-018-010  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
 - [ ] G2-11-018-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
 - [ ] G2-11-024-051  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
 - [ ] G2-19-028-022  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
@@ -19,4 +19,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-8-018-058  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
 
 ## Results
-
+- G2-11-018-010 OK — `src/modules/activity/tpo-notifications-service.ts:72-98` separately counts persisted unread receipts across the full college history, without restricting the bell to page/window results; legacy `docs/legacy-source/frontend/src/pages/tpo/notifications.js:43,87-93` uses the server unread count for the same reason.
