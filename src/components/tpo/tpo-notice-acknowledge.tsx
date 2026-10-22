@@ -2,10 +2,12 @@
 import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {useCallback,useEffect,useRef,useState} from "react";
+import {useRouter} from "next/navigation";
 /** Legacy placement-cell notices became read on opening. Keep a scoped POST
  * rather than making a read-only GET mutate state; automatic failures retain
  * an explicit accessible retry, so transient errors never consume the badge. */
 export function TpoNoticeAcknowledge({id}:{id:string}){
+ const router=useRouter();
  const attempted=useRef(false);
  const busyRef=useRef(false);
  const [read,setRead]=useState(false);
@@ -29,10 +31,12 @@ export function TpoNoticeAcknowledge({id}:{id:string}){
    window.dispatchEvent(new CustomEvent("placement-announcements-read",{
      detail:{noticeId:id},
    }));
+   // Refresh the server-rendered unread count from the same persisted receipt.
+   router.refresh();
   }catch{
    setError("Notice still unread. Retry marking this notice read.");
   }finally{busyRef.current=false;setBusy(false);}
- },[id]);
+ },[id,router]);
  useEffect(()=>{if(attempted.current)return;attempted.current=true;void mark();},[mark]);
  if(read||(!error&&busy))return null;
  return <div className="mt-3 space-y-1">
