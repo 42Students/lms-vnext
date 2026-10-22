@@ -38,5 +38,6 @@ export async function createTpoDraftDriveStepOne(
     locations: [],
     applicationDeadline: normalizedTpoDraftDeadline(input.applicationDeadline),
   });
+  if (!job) throw new Error("Placement job creation returned no job");
   return { id: job.id, status: job.status };
 }
