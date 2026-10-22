@@ -25,6 +25,7 @@ export async function getTpoDriveDeadlineState(context:RequestContext,rawJobId:u
   applicationDeadline:job.applicationDeadline?.toISOString()??null,
   importedDates:importedJobImportantDates(job.id,job.legacyPostingDetails).map(item=>({
     id:item.id,label:item.label,date:item.at.toISOString(),eventType:item.eventType,
+    originalType:item.originalType,
   })),
   extendable:job.status==="PUBLISHED"&&season?.status==="ACTIVE"};
 }

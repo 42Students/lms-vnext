@@ -610,7 +610,7 @@ export const placementJobs = pgTable(
       skillsWanted?:string[];
       assessmentUrl:string|null;
       assessmentDeadline:string|null;
-      importantDates:Array<{label:string;at:string}>;
+      importantDates:Array<{label:string;at:string;type?:string;dateType?:string}>;
       candidatePreferences:{
         preferredDegree:string;specialization:string;graduationYear:number|null;
         minGpa:number|null;city:string;
@@ -1199,6 +1199,23 @@ export const placementEligibilityOverrides = pgTable(
  * application state, mutable stage, offer lifecycle, and score evidence are
  * separate authorities; never treat a mutable stage label as consent or an
  * application status. The original numeric key is only provenance. */
+/** Invalid/unknown source imports default to external; the persisted
+ * application channel is assigned explicitly, not by a database default. */
+export function legacyApplicationSourceChannel(raw:unknown):"INTERNAL"|"EXTERNAL"{
+ const source=typeof raw==="string"?raw.trim().toUpperCase():"";
+ return source==="INTERNAL"?"INTERNAL":"EXTERNAL";
+}
+/** Historic DRAFT_LIKE is a request workflow, not published job visibility. */
+export type LegacyDriveLifecycleState=
+ "REQUEST"|"SENT_BACK"|"REJECTED"|"DRAFT"|"PUBLISHED"|"CLOSED"|"CANCELLED";
+export function projectLegacyDriveLifecycle(status:LegacyDriveLifecycleState){
+ const isDraft=status==="REQUEST"||status==="SENT_BACK"||
+  status==="REJECTED"||status==="DRAFT";
+ const isActive=status!=="CLOSED"&&status!=="CANCELLED";
+ return {isDraft,isActive,listedToLearners:status==="PUBLISHED",
+  canResubmit:status==="SENT_BACK",
+  canWithdrawRequest:status==="SENT_BACK"||status==="REQUEST"};
+}
 export const LEGACY_APPLICATION_SOURCE_CROSSWALK={
  id:"placementApplications.legacyApplicationId",
  learnerId:"placementApplications.membershipId (verified college UUID mapping)",

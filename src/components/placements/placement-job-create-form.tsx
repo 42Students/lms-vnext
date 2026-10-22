@@ -64,7 +64,7 @@ export type PlacementCompanyChoice = {
 
 const inputClass = "min-h-11 w-full min-w-0 md:min-h-9";
 const textareaClass = "min-h-28 w-full min-w-0";
-type ImportantDateRow = {id:number;label:string;date:string};
+type ImportantDateRow = {id:number;label:string;date:string;type:string};
 type CustomRuleRow = {id:number;label:string;value:string};
 type ExtraPackageRow = {id:number;name:string;ctcLpa:string;
   fixedLpa:string;variableLpa:string;joiningBonusLpa:string;
@@ -151,7 +151,7 @@ export function PlacementJobCreateForm({
   const [applicationMode,setApplicationMode]=useState<"INTERNAL"|"HYBRID"|"EXTERNAL_ONLY">("INTERNAL");
   const [roundPreset,setRoundPreset]=useState<TpoRoundPresetKey>("NONE");
   const nextRowId=useRef(1000);
-  const [importantDateRows,setImportantDateRows]=useState<ImportantDateRow[]>([{id:0,label:"",date:""}]);
+  const [importantDateRows,setImportantDateRows]=useState<ImportantDateRow[]>([{id:0,label:"",date:"",type:""}]);
   const [customRuleRows,setCustomRuleRows]=useState<CustomRuleRow[]>([{id:1,label:"",value:""}]);
   const [assessmentUrlLength,setAssessmentUrlLength]=useState(0);
   const [wantedSkills,setWantedSkills]=useState<string[]>([]);
@@ -320,7 +320,7 @@ export function PlacementJobCreateForm({
         id:nextRowId.current++,label:row.label,value:row.value
       })):[{id:nextRowId.current++,label:"",value:""}]);
       setWantedSkills((source.legacyPostingDetails?.skillsWanted??[]).slice(0,30));
-      setImportantDateRows([{id:nextRowId.current++,label:"",date:""}]);
+      setImportantDateRows([{id:nextRowId.current++,label:"",date:"",type:""}]);
       setRoundRows([]);
       setExtraPackages([]);
       setRoundPreset("NONE");
@@ -440,7 +440,7 @@ export function PlacementJobCreateForm({
         if(Array.isArray(saved.importantDateRows)&&saved.importantDateRows.length<=20){
           const dates=saved.importantDateRows.filter(row=>row&&typeof row.id==="number"&&
             typeof row.label==="string"&&typeof row.date==="string");
-          if(dates.length)setImportantDateRows(dates);
+          if(dates.length)setImportantDateRows(dates.map(row=>({...row,type:typeof row.type==="string"?row.type.slice(0,80):""})));
         }
         if(Array.isArray(saved.customRuleRows)&&saved.customRuleRows.length<=20){
           const rules=saved.customRuleRows.filter(row=>row&&typeof row.id==="number"&&
@@ -645,7 +645,7 @@ export function PlacementJobCreateForm({
           if(label.toLowerCase()==="application deadline")
             throw new Error("This label is reserved — use the Application deadline field above");
           if(label.length>100)throw new Error("Important date labels must be at most 100 characters.");
-          return {label,at:driveDeadlineIstToIso(row.date+"T23:59")};
+          return {label,at:driveDeadlineIstToIso(row.date+"T23:59"),...(row.type.trim()?{type:row.type.trim()}: {})};
         });
       if(new Set(importantDates.map(row=>row.label.toLowerCase())).size!==importantDates.length)
         throw new Error("Important date labels must be unique.");
@@ -1716,7 +1716,7 @@ export function PlacementJobCreateForm({
             <legend className="text-sm font-semibold text-foreground">Important dates</legend>
             <p className="text-xs text-muted-foreground">Add up to 20 dates. The Application deadline field above is reserved.</p>
             {importantDateRows.map(row=>(
-              <div key={row.id} className="grid items-end gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+              <div key={row.id} className="grid items-end gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto]">
                 <label className="grid min-w-0 gap-1 text-xs font-semibold">Label
                   <Input aria-label="Important date label" maxLength={100} placeholder="e.g. Screening round, Technical round"
                     value={row.label} onChange={event=>setImportantDateRows(current=>current.map(item=>item.id===row.id?{...item,label:event.target.value}:item))}
@@ -1727,6 +1727,12 @@ export function PlacementJobCreateForm({
                     onChange={event=>setImportantDateRows(current=>current.map(item=>item.id===row.id?{...item,date:event.target.value}:item))}
                     className={inputClass}/>
                 </label>
+                <label className="grid min-w-0 gap-1 text-xs font-semibold">Type
+                  <Input aria-label="Important date type" maxLength={80} value={row.type}
+                    placeholder="e.g. Interview, Assessment"
+                    onChange={event=>setImportantDateRows(current=>current.map(item=>item.id===row.id?{...item,type:event.target.value}:item))}
+                    className={inputClass}/>
+                </label>
                 <Button type="button" variant="secondary" disabled={importantDateRows.length<=1}
                   title={importantDateRows.length<=1?"At least one row required":"Remove important date"}
                   aria-label="Remove important date"
@@ -1735,7 +1741,7 @@ export function PlacementJobCreateForm({
               </div>
             ))}
             <Button type="button" variant="secondary" disabled={importantDateRows.length>=20}
-              onClick={()=>{setImportantDateRows(current=>[...current,{id:nextRowId.current++,label:"",date:""}]);markDirty();}}
+              onClick={()=>{setImportantDateRows(current=>[...current,{id:nextRowId.current++,label:"",date:"",type:""}]);markDirty();}}
               className="min-h-11 border-dashed md:min-h-9">
               Add date{importantDateRows.length>=20?" (max 20)":""}
             </Button>
