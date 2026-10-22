@@ -16,6 +16,8 @@ describe("TPO draft edit policy",()=>{
   // Published drives support confirmed, audited edits; they are not draft-only.
   expect(evaluateTpoDriveEdit("PUBLISHED","ACTIVE",input)).toBe("ALLOW");
   expect(evaluateTpoDriveEdit("DRAFT","CLOSED",input)).toBe("READ_ONLY");
+  expect(evaluateTpoDriveEdit("DRAFT",null,input)).toBe("READ_ONLY");
+  expect(evaluateTpoDriveEdit("PUBLISHED","CLOSED",input)).toBe("ALLOW");
   expect(evaluateTpoDriveEdit("DRAFT","ACTIVE",{...input,maximumAnnualCtcInr:100})).toBe("INVALID_CTC");
  });
  it("validates confirmation, scope-free input and location uniqueness",()=>{
