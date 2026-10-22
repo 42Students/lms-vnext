@@ -10,7 +10,6 @@ import { CreateProjectControl } from "@/components/projects/project-create-contr
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { ProjectAdminWorkspaceList } from "@/components/projects/project-admin-workspace-list";
 import {ProjectWorkspacePageExport} from "@/components/projects/project-workspace-page-export";
-import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { parseAdminProjectsQuery } from "@/modules/projects/admin-projects-query-model";
 import { PageHeader } from "@/components/ui/page-header";
@@ -49,33 +48,9 @@ export default async function SuperAdminProjectsPage({
   }
   const collegeId = getProjectAdminCollegeId(context);
 
-  if (!collegeId) {
-    return (
-      <div className="min-w-0 space-y-4">
-        <PageHeader
-          title="Project workspaces"
-          description="College project workspaces for students and mentors."
-          actions={<ProjectWorkspaceRefreshButton/>}
-        />
-        <ProjectAdminNav
-          basePath="/admin/projects"
-          active="workspaces"
-        />
-        <Banner tone="info" role="status">
-          <strong>Select a College to manage Projects</strong>
-          <p className="mt-1 text-sm">Choose a college in the header account switcher. The global template catalogue remains available without a selected college.</p>
-        </Banner>
-        <EmptyState
-          title="No college selected"
-          description="Pick a college in the header to manage its project workspaces. The Super Admin template catalogue remains available without a selected college."
-          action={<Link href="/admin/projects/templates"
-            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
-            Browse project templates
-          </Link>}
-        />
-      </div>
-    );
-  }
+  // Global Super Admin projects land on the template catalogue until an
+  // explicit college context is selected; never fabricate college workspaces.
+  if (!collegeId) redirect("/admin/projects/templates");
 
   const parsed = parseAdminProjectsQuery(await searchParams);
   if (!parsed.success) {
