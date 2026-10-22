@@ -9,7 +9,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - [ ] G2-9-007-050  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 - [ ] G2-9-012-026  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
-- [ ] G2-9-013-060  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
+- [x] G2-9-013-060  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 - [ ] G2-9-014-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 - [x] G2-9-015-065  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 - [ ] G2-9-036-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
@@ -25,3 +25,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-9-036-057: OK — vNext `src/modules/module-access/service.ts:123-129`; legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/ModuleFeatureCatalog.java:62-85`; college-level Placements ignores learner/section/cohort/program/department scopes.
 - G2-9-036-058: OK — vNext `src/modules/module-access/admin-college-rule-write.ts:35-55`; legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SuperAdminFeatureController.java:178-206`; rejects mutation under a college-local or inherited lock.
 - G2-9-036-049: OK — vNext `src/modules/module-access/admin-college-rule-write.ts:58-76`; legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SuperAdminFeatureController.java:208-222`; performs scoped upsert and required audit insertion in the same transaction.
+- G2-9-013-060: FIXED — commit `0ea77c7f70195fc279055d820e39e21d9d5dad97`; `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx`. Legacy: `docs/legacy-source/frontend/src/components/admin/ModuleGroupGuard.jsx:27-75`; disabled Placements now blocks the settings page with Super Admin recovery guidance.
