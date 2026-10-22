@@ -413,7 +413,7 @@ export const placementTpoEmailCampaignRecipients = pgTable(
 export function legacyCrmLeadCrosswalk(input:{collegeId:number;leadId:number},
   candidates:readonly {legacyCollegeId:number;legacyLeadId:number;nativeLeadId:string}[]):string|null{
   const rows=candidates.filter(x=>x.legacyCollegeId===input.collegeId&&x.legacyLeadId===input.leadId);
-  return rows.length===1?rows[0].nativeLeadId:null;
+  return rows.length===1?(rows[0]?.nativeLeadId??null):null;
 }
 
 /** Interpret naive source CRM timestamp strings as Asia/Kolkata wall time. */
