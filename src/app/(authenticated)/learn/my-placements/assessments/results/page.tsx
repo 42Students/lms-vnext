@@ -69,14 +69,15 @@ export default async function LearnerAssessmentResultsPage({
 
   return (
     <div className="min-w-0 space-y-6">
-      <Link href="/learn/my-placements/assessments"
-        className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text hover:underline">
-        ← Assessment schedule
-      </Link>
       <PageHeader
         title="Official assessment results"
         description="Only placement-team-applied test outcomes from your own applications. A scheduled or submitted assessment is not a published result."
       />
+      <Link href="/learn/my-placements/assessments"
+        className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text hover:underline">
+        ← Assessment schedule
+      </Link>
+
       <Tabs ariaLabel="Filter published assessment results" renderPanel={false} value={view} items={views.map(option=>({value:option.id,label:option.label,count:results.counts[option.id],href:href(option.id)}))}/>
       <form method="get" role="search" aria-label="Placement assessment results filters" className="flex min-w-0 flex-col items-stretch gap-2 border-b border-border pb-4 sm:flex-row sm:items-end sm:gap-[8px]">
         {view!=="all" ? <Input type="hidden" name="view" value={view}/> : null}
