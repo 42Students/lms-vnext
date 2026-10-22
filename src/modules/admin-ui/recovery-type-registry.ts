@@ -1,7 +1,7 @@
 /** Scoped entity types displayed by the legacy Deleted Items selector. */
 export const RECOVERY_ENTITY_TYPES=[
  {value:"organization",label:"Organization",platformLevel:true,implemented:true},
- {value:"college",label:"College",platformLevel:true,implemented:false},
+ {value:"college",label:"College",platformLevel:true,implemented:true},
  {value:"department",label:"Department",platformLevel:false,implemented:false},
  {value:"program",label:"Program",platformLevel:false,implemented:false},
  {value:"class",label:"Class",platformLevel:false,implemented:false},

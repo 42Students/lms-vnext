@@ -11,7 +11,7 @@ import {Alert} from "@/components/ui/alert";
 import {Disclosure} from "@/components/ui/disclosure";
 import {useToast} from "@/components/ui/toast";
 import {collegeRulePayload,isCollegeRuleDirty,collegeRuleReceipt,collegeRuleSelection,parseCollegeRuleRecheck,type CollegeModule,type CollegeChoice,type ObservedCollegeRule} from "@/modules/module-access/admin-college-rule-ui-model";
-export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked}:{collegeId:string;module:CollegeModule;stored:ObservedCollegeRule;ancestorLocked:boolean}){
+export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked,effectiveEnabled=false,collegeLabel="selected college"}:{collegeId:string;module:CollegeModule;stored:ObservedCollegeRule;ancestorLocked:boolean;effectiveEnabled?:boolean;collegeLabel?:string}){
  const router=useRouter();
  const {showToast}=useToast();
  const [observed,setObserved]=useState<ObservedCollegeRule>(stored);
@@ -155,13 +155,13 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
     <Button type="button" variant="secondary" size="sm" className="min-h-9" onClick={()=>setFeedback("")}>Dismiss</Button>
    </div>
   </Alert>:null}
-  <div role="group" aria-label="Quick college module override" className="flex flex-wrap items-center gap-2">
-   <span className="text-sm font-semibold text-body">Quick override</span>
-   <Button size="sm" variant={choice==="ON"?"primary":"secondary"} aria-pressed={choice==="ON"}
-    disabled={busy||impactBusy||confirm||ancestorLocked} aria-label={"Turn on "+moduleLabel+" for selected college"} onClick={()=>{setChoice("ON");setFeedback("");}}>Turn on</Button>
-   <Button size="sm" variant={choice==="OFF"?"primary":"secondary"} aria-pressed={choice==="OFF"}
-    disabled={busy||impactBusy||confirm||ancestorLocked} aria-label={"Turn off "+moduleLabel+" for selected college"} onClick={()=>{setChoice("OFF");setFeedback("");}}>Turn off</Button>
-   {choice==="INHERIT"?<span className="text-xs text-muted-foreground">Inherits broader policy</span>:null}
+  <div role="group" aria-label="Quick college module override" className="flex min-h-11 flex-wrap items-center gap-3">
+   <Switch label={moduleLabel+" for "+collegeLabel}
+    checked={choice==="INHERIT"?effectiveEnabled:choice==="ON"}
+    disabled={busy||impactBusy||confirm||ancestorLocked}
+    onChange={event=>{setChoice(event.target.checked?"ON":"OFF");setFeedback("");}}/>
+   {choice==="INHERIT"?<span className="text-xs text-muted-foreground">Inherited from broader policy</span>:null}
+   {dirty?<span role="status" className="text-xs font-medium text-warning-text">Not saved — review policy change</span>:null}
   </div>
   <Disclosure title="Advanced rule: inheritance and lock" contentClassName="pt-3">
   <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] sm:items-end">

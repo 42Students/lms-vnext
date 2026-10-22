@@ -132,7 +132,7 @@ export function AdminCourseCreatePanel({
   const [courseName, setCourseName] = useState(copy?.name??"");
   const [courseCode, setCourseCode] = useState(copy?.code??"");
   const duplicated=courses.find(course=>course.id===duplicateCourseId);
-  const [shortTitle,setShortTitle]=useState((duplicated?.shortTitle??copy?.name??"").slice(0,120));
+  const [shortTitle,setShortTitle]=useState((duplicated?.shortTitle??copy?.name??"").slice(0,64));
   const [officialCode,setOfficialCode]=useState((duplicated?.officialCode??"").slice(0,40));
   const [cardColor,setCardColor]=useState(duplicated?.cardColor??"");
   const [coverUrl,setCoverUrl]=useState(duplicated?.thumbnailUrl??"");

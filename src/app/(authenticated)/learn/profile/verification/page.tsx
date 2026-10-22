@@ -88,6 +88,10 @@ export default async function LearnerVerificationPage() {
         {item.section==="EDUCATION"&&row.changedSinceVerification?<Banner tone="warning" className="mt-3">
           Your current education details differ from the last verified record. Submit an update for college review.
         </Banner>:null}
+        {item.section==="IDENTITY"&&row.identityChangedSinceVerification===true?<Banner tone="warning" role="status" className="mt-3">
+          Your current identity details differ from the last verified record. Submit an update for college review.
+          For privacy, the previously verified identity number is never displayed.
+        </Banner>:null}
         {item.section==="EDUCATION"&&row.submittedEducation.length>0?<section className="mt-4 border-t border-border pt-3"
           aria-label="Education submitted for review">
           <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Education submitted for review</h3>

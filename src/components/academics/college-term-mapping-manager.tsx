@@ -12,7 +12,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { DataTable } from "@/components/ui/data-table";
 import { Dialog } from "@/components/ui/dialog";
-import { TERM_MAPPING_COPY, collegeTermCourseAddSchema, collegeTermCourseUpdateSchema, collegeTermMappingErrorMessage } from "@/modules/academics/college-term-mapping-model";
+import { TERM_MAPPING_COPY, collegeTermCourseAddSchema, collegeTermCourseUpdateSchema, collegeTermMappingErrorMessage, parseTermCourseCreditsDraft } from "@/modules/academics/college-term-mapping-model";
 
 type MappingRead = {
   terms: readonly { id: string; name: string; termNumber: number; programId: string; programName: string; departmentId: string; isActive: boolean }[];
@@ -197,12 +197,18 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
     if (inFlight.current) return;
     const previous = data.mapped.find(row => row.id === id);
     if (!previous || !editableTerm || previous.termId !== termId) return;
+    const creditsResult = parseTermCourseCreditsDraft(creditsValue);
+    if (!creditsResult.success) {
+      setFieldErrors({ credits: creditsValue.trim() ? "Enter credits from 0 to 30" : "Enter credits" });
+      setError("Enter valid credits before saving this course mapping.");
+      return;
+    }
     const peers = orderedPeers(previous);
     const oldPosition = peers.findIndex(row => row.id === id) + 1;
-    const changedCredits = Number(creditsValue) !== (previous.credits ?? 3);
+    const changedCredits = creditsResult.data !== (previous.credits ?? 3);
     const parsed = collegeTermCourseUpdateSchema.safeParse({
       position,
-      ...(changedCredits ? { credits: Number(creditsValue) } : {}),
+      ...(changedCredits ? { credits: creditsResult.data } : {}),
       ...(editFields && editFields.type !== previous.type ? { type: editFields.type } : {}),
       ...(editFields && editFields.isMandatory !== (previous.isMandatory ?? previous.type === "CORE")
         ? { isMandatory: editFields.isMandatory } : {}),

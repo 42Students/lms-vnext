@@ -19,11 +19,24 @@ describe("HR-BREAK-REPORT-JOINED-51: employer joined stage only includes accepte
    outstandingOffers:0,acceptedOffers:1,declinedOffers:1,joinedOffers:1,
   }])[0]).toMatchObject({joinedOffers:1,acceptedOffers:1,withdrawnApplications:2});
  });
+ it("retains historical college applicants in page counts after graduation or deactivation",()=>{
+  const section=source.split("const reportCounts =")[1]?.split("const summaryRecord")[0]??"";
+  expect(section).toContain("eq(collegeMemberships.collegeId,");
+  expect(section).toContain("eq(users.id,collegeMemberships.userId)");
+  expect(section).not.toContain('eq(collegeMemberships.status,"ACTIVE")');
+  expect(section).not.toContain('eq(users.platformStatus,"ACTIVE")');
+  // The employer grant remains enforced at the job/relationship boundary.
+  expect(source).toContain("placementCompanyRelationshipId: relationshipId");
+  expect(source).toContain("eq(placementJobs.collegeId, collegeId)");
+ });
  it("leaves no shared applicant names or contacts in the funnel SQL",()=>{
   const section=source.split("with jobs as (")[1]?.split("const totalFunnel")[0]??"";
   expect(section).toContain("and m.college_id=${collegeId}::uuid");
-  expect(section).toContain("m.status='ACTIVE'");
-  expect(section).toContain("u.platform_status='ACTIVE'");
+  // Status changes never rewrite historical employer hiring metrics.
+  expect(section).toContain("join college_memberships m on m.id=a.membership_id");
+  expect(section).toContain("join users u on u.id=m.user_id");
+  expect(section).not.toContain("m.status='ACTIVE'");
+  expect(section).not.toContain("u.platform_status='ACTIVE'");
   expect(section).toContain("s.status='SHORTLISTED'");
  });
 });

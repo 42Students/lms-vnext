@@ -1,4 +1,5 @@
 import { FilterBar } from "@/components/ui/filter-bar";
+import {courseThumbnailUrlSchema} from "@/modules/courses/validation";
 import { StatTile } from "@/components/ui/stat-tile";
 import { Alert } from "@/components/ui/alert";
 import { Disclosure } from "@/components/ui/disclosure";
@@ -23,6 +24,7 @@ import type {
   getAdminCourseWorkspace,
 } from "@/modules/courses/admin-course-workspace";
 import { AdminCourseCreatePanel } from "./admin-course-create-panel";
+import {CourseDepartmentMoveAction} from "./course-department-move-action";
 import { SuperAdminCourseBulkVisibility } from "./super-admin-course-bulk-visibility";
 import {AdminCourseVisibilityControl} from "./admin-course-visibility-control";
 import {CollegeCourseBulkVisibility,CollegeCourseBulkVisibilityCheckbox} from "./college-course-bulk-visibility";
@@ -99,12 +101,15 @@ export function AdminCourseOverview({
     {
       key: "cover",
       header: "Image",
-      cell:course=>(<div className="h-[35px] w-[50px] overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle">
-        {course.thumbnailUrl?.startsWith("https://")?
-          <a href={course.thumbnailUrl}
+      cell:course=>{
+       const parsed=courseThumbnailUrlSchema.safeParse(course.thumbnailUrl);
+       const safeCover=parsed.success?parsed.data:null;
+       return <div className="h-[35px] w-[50px] overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle">
+        {safeCover?
+          <a href={safeCover}
             aria-label={"Preview "+(course.name?.trim()||"Untitled course")+" cover"}
             className="block h-full w-full focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)]">
-            <img src={course.thumbnailUrl} alt={(course.name?.trim()||"Untitled course")+" cover"}
+            <img src={safeCover} alt={(course.name?.trim()||"Untitled course")+" cover"}
               width={50} height={35} loading="lazy" className="h-full w-full object-cover"/>
           </a>:
           <span role="img" aria-label="Course preview unavailable"
@@ -115,7 +120,8 @@ export function AdminCourseOverview({
               <circle cx="8" cy="8" r="1.5"/><path d="m3 17 5-5 4 4 3-3 6 5"/>
             </svg>
           </span>}
-      </div>),
+      </div>;
+      },
     },
     {
       key: "course",
@@ -196,6 +202,7 @@ export function AdminCourseOverview({
       ),
       className: "text-right",
       cell: (course) => (
+        <div className="flex flex-wrap justify-end gap-2">
         <CourseActions
           allowMetadata
           allowCode={!courseBasePath.startsWith("/admin/")}
@@ -216,6 +223,12 @@ export function AdminCourseOverview({
               course.description,
           }}
         />
+        <CourseDepartmentMoveAction
+          course={{id:course.id,name:course.name,departmentId:course.departmentId,
+            updatedAt:course.updatedAt.toISOString()}}
+          departments={workspace.departments.map(item=>({id:item.id,name:item.name}))}
+          activeOfferingCount={activeOfferingCountByCourse.get(course.id)??0}/>
+        </div>
       ),
     },
   ];

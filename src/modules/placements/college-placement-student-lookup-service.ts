@@ -9,7 +9,7 @@ import {collegeMemberships,learnerProfiles,membershipRoles,users,
 import type {RequestContext} from "@/modules/identity/context";
 import {learnerProfileDocumentSchema} from "@/modules/people/profile-validation";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
-import {capStudentLookupRows,STUDENT_LOOKUP_CAP,STUDENT_LOOKUP_APPLICATION_CAP} from "./college-placement-student-lookup-model";
+import {capStudentLookupRows,relevantStudentApplicationOffers,STUDENT_LOOKUP_CAP,STUDENT_LOOKUP_APPLICATION_CAP} from "./college-placement-student-lookup-model";
 /** Legacy first/last name is represented by one persisted displayName
  * in vNext. Never fabricate a name component or client supplied learner ID. */
 export function collegeStudentLookupLabel(row:{
@@ -83,7 +83,10 @@ export async function lookupCollegeStudentPlacement(ctx:RequestContext,raw:unkno
    .where(inArray(placementApplications.membershipId,visiblePeople.map(person=>person.membershipId)));
  const joinedMemberships=new Set(joinedRows.map(row=>row.membershipId));
  const result=await Promise.all(visiblePeople.map(async person=>{
-  const rows=await db.select({jobId:placementJobs.id,job:placementJobs.title,
+  // Paginate distinct applications BEFORE joining offer versions. A learner
+  // with many historical offer letters must not crowd out other applications.
+  const rows=await db.select({
+   jobId:placementJobs.id,job:placementJobs.title,
    company:placementCompanies.name,
    submittedAt:placementApplications.submittedAt,
    applicationStatus:placementApplications.status,
@@ -92,34 +95,39 @@ export async function lookupCollegeStudentPlacement(ctx:RequestContext,raw:unkno
    candidateRejectionReason:placementApplicationScreenings.candidateMessage,
    screeningStatus:placementApplicationScreenings.status,
    recordedStage:placementCollegeApplicationStages.stage,
-   offerStatus:placementOffers.status,
-   joining:placementJoiningOutcomes.status,
   }).from(placementApplications)
    .innerJoin(placementJobs,and(eq(placementJobs.id,placementApplications.jobId),
     eq(placementJobs.collegeId,collegeId)))
-   // Both the job and its company relationship must belong to this college.
-   // An incorrect cross-tenant relationship FK must never disclose another
-   // college's company account through the selected-college lookup.
-   .innerJoin(placementCompanyRelationships,
-    and(eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
-      eq(placementCompanyRelationships.collegeId,collegeId)))
+   .innerJoin(placementCompanyRelationships,and(
+    eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+    eq(placementCompanyRelationships.collegeId,collegeId)))
    .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
    .leftJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .leftJoin(placementCollegeApplicationStages,eq(placementCollegeApplicationStages.applicationId,placementApplications.id))
-   .leftJoin(placementOffers,eq(placementOffers.applicationId,placementApplications.id))
-   .leftJoin(placementJoiningOutcomes,eq(placementJoiningOutcomes.offerId,placementOffers.id))
    .where(eq(placementApplications.membershipId,person.membershipId))
-   .orderBy(desc(placementApplications.submittedAt),desc(placementApplications.id),desc(placementOffers.id)).limit(STUDENT_LOOKUP_APPLICATION_CAP+1);
-  // An application may have multiple offers. Old LMS displayed exactly one
-  // application history row; keep the most recent offer for that application.
-  const distinct=[...new Map(rows.map(row=>[row.applicationId,row])).values()];
-  const applications=capStudentLookupRows(distinct,STUDENT_LOOKUP_APPLICATION_CAP);
-  return{...person,applications:applications.items.map(row=>({
-    ...row,legacyStage:row.applicationStatus==="WITHDRAWN"?"WITHDRAWN":
-     row.joining==="JOINED"?"HIRED":row.offerStatus==="ISSUED"||row.offerStatus==="ACCEPTED"?
-      "OFFERED":row.recordedStage??row.screeningStatus??"APPLIED",
-    rejectionReason:row.screeningStatus==="REJECTED"?row.candidateRejectionReason:null,
-   })).map(row=>({...row,appliedDateLabel:formatCollegePlacementAppliedDate(row.submittedAt)})),
+   .orderBy(desc(placementApplications.submittedAt),desc(placementApplications.id))
+   .limit(STUDENT_LOOKUP_APPLICATION_CAP+1);
+  const applications=capStudentLookupRows(rows,STUDENT_LOOKUP_APPLICATION_CAP);
+  const applicationIds=applications.items.map(row=>row.applicationId);
+  const offers=applicationIds.length?await db.select({
+   id:placementOffers.id,applicationId:placementOffers.applicationId,
+   status:placementOffers.status,joining:placementJoiningOutcomes.status,
+  }).from(placementOffers)
+   .leftJoin(placementJoiningOutcomes,eq(placementJoiningOutcomes.offerId,placementOffers.id))
+   .where(inArray(placementOffers.applicationId,applicationIds))
+   .orderBy(desc(placementOffers.issuedAt),desc(placementOffers.id)):[];
+  const chosenOffers=relevantStudentApplicationOffers(offers);
+  return {...person,applications:applications.items.map(row=>{
+    const offer=chosenOffers.get(row.applicationId);
+    const offerStatus=offer?.status??null,joining=offer?.joining??null;
+    return {...row,offerStatus,joining,
+      legacyStage:row.applicationStatus==="WITHDRAWN"?"WITHDRAWN":
+       joining==="JOINED"?"HIRED":offerStatus==="ISSUED"||offerStatus==="ACCEPTED"?
+        "OFFERED":row.recordedStage??row.screeningStatus??"APPLIED",
+      rejectionReason:row.screeningStatus==="REJECTED"?row.candidateRejectionReason:null,
+      appliedDateLabel:formatCollegePlacementAppliedDate(row.submittedAt),
+    };
+   }),
    placed:joinedMemberships.has(person.membershipId),
    truncated:applications.truncated};
  }));
@@ -157,6 +165,9 @@ export async function getCollegeStudentPlacementDetails(ctx:RequestContext,raw:u
   eq(placementJobs.collegeId,collegeId));
  const [totalRow]=await db.select({total:count()}).from(placementApplications)
   .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+  .innerJoin(placementCompanyRelationships,and(
+   eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+   eq(placementCompanyRelationships.collegeId,collegeId)))
   .where(appScope);
  // Joined is a persistent outcome and must be found independently of
  // the current 25-record history page and independently of the last offer.
@@ -201,25 +212,20 @@ export async function getCollegeStudentPlacementDetails(ctx:RequestContext,raw:u
   .leftJoin(placementJoiningOutcomes,eq(placementJoiningOutcomes.offerId,placementOffers.id))
   .where(inArray(placementOffers.applicationId,ids))
   .orderBy(desc(placementOffers.issuedAt),desc(placementOffers.id)):[];
- // The newest row is not necessarily the authoritative offer: a later
- // withdrawn/revoked letter must not hide a previously accepted and joined
- // placement. Within equal lifecycle priority the latest issued offer wins.
- const offerPriority=(row:typeof offers[number]):number=>
-  row.joining==="JOINED"?6:row.status==="ACCEPTED"?5:
-  row.status==="ISSUED"?4:row.status==="DECLINED"?3:
-  row.status==="EXPIRED"?2:row.status==="REVOKED"?1:0;
- const latestOffers=new Map<string,typeof offers[number]>();
- for(const row of offers){
-  const current=latestOffers.get(row.applicationId);
-  if(!current||offerPriority(row)>offerPriority(current))
-   latestOffers.set(row.applicationId,row);
- }
+ // Shared with the College Admin history: an older confirmed joining is
+ // more relevant than a newer revoked letter for the same application.
+ const latestOffers=relevantStudentApplicationOffers(offers);
  const interviews=ids.length?await db.select({
   applicationId:placementRoundCandidateSlots.applicationId,
   roundName:placementJobRounds.name,startsAt:placementRoundCandidateSlots.startsAt,
   room:placementRoundCandidateSlots.room,
  }).from(placementRoundCandidateSlots)
   .innerJoin(placementJobRounds,eq(placementJobRounds.id,placementRoundCandidateSlots.roundId))
+  // Candidate IDs were authorized above; additionally tie the interview
+  // round back to its application's job to reject malformed imported slots.
+  .innerJoin(placementApplications,and(
+   eq(placementApplications.id,placementRoundCandidateSlots.applicationId),
+   eq(placementApplications.jobId,placementJobRounds.jobId)))
   .where(and(inArray(placementRoundCandidateSlots.applicationId,ids),
    eq(placementRoundCandidateSlots.status,"BOOKED"),
    gte(placementRoundCandidateSlots.startsAt,now)))

@@ -11,17 +11,7 @@ import {placementCollegeApplicationStages,placementCollegeApplicationStageHistor
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {superAdminHiringReportQuery,SUPER_ADMIN_HIRING_EXPORT_CAP,type SuperAdminHiringRow} from "./super-admin-hiring-report-model";
-/**
- * Legacy Dayjs boundaries denote IST calendar days. Use the next midnight as
- * an EXCLUSIVE bound rather than losing sub-millisecond timestamps at 23:59:59.
- * IST never applies daylight-saving changes.
- */
-function istStartOfDay(value:string):Date {
- return new Date(value+"T00:00:00+05:30");
-}
-function istStartOfNextDay(value:string):Date {
- return new Date(istStartOfDay(value).getTime()+86_400_000);
-}
+import {istStartOfDay,istStartOfNextDay} from "./super-admin-hiring-ist-boundary";
 
 /**
  * A separate cumulative funnel is required: snapshots are mutually exclusive,

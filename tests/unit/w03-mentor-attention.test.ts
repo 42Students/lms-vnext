@@ -43,6 +43,18 @@ describe("W03 mentor notification attention parity",()=>{
       expect(alerts.some(a=>a.kind==="REVIEW")).toBe(false);
     }
   });
+  it("only alerts after a learner resubmits newer than the reopen and last review",()=>{
+    const reviewed=new Date("2026-10-08T10:00:00.000Z");
+    const reopened=new Date("2026-10-09T10:00:00.000Z");
+    const oldSubmission=new Date("2026-10-07T10:00:00.000Z");
+    const pending=(submittedAt:Date,reviewedAt:Date=reviewed)=>deriveMentorProjectAttention([
+      project({submission:{id:"reviewed-work",status:"UNDER_REVIEW",submittedAt,reviewedAt,reopenedAt:reopened}})
+    ],now).filter(alert=>alert.kind==="REVIEW");
+    expect(pending(oldSubmission)).toHaveLength(0);
+    expect(pending(reopened)).toHaveLength(0);
+    expect(pending(new Date("2026-10-10T11:00:00.000Z"))).toHaveLength(1);
+    expect(pending(new Date("2026-10-10T11:00:00.000Z"),now)).toHaveLength(0);
+  });
   it("excludes archived projects from every generated alert",()=>{
     const alerts=deriveMentorProjectAttention([project({
       projectStatus:"ARCHIVED",

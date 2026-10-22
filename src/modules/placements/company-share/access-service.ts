@@ -1,7 +1,7 @@
 import "server-only";
 import {and,desc,eq,gte,gt,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {activityEvents,collegeMemberships,colleges,inAppNotifications,placementJobs,users} from "@/db/schema";
+import {activityEvents,collegeMemberships,colleges,inAppNotifications,placementJobs,placementRecruiterCollegeGrants,users} from "@/db/schema";
 import {placementCompanyApplicantShares as shares,placementCompanyApplicantShareViews as views} from "@/db/schema/placement-company-shares";
 import {companyShareTablesReady} from "./readiness";
 import {companyShareAccessProof,companyShareTokenSchema,hashCompanyShareToken,validCompanyShareAccessCode,issueCompanyShareAccessCode} from "./token-model";
@@ -38,6 +38,18 @@ export async function canEmailAuthorizedCompanyShareCode(
  if(!share||!context.recruiter.grants.some(grant=>
   grant.collegeId===share.collegeId&&
   grant.companyRelationshipId===share.relationshipId))return false;
+ // Session grants are only a selector: revocation and expiry may have changed
+ // since session creation. Recheck the persisted relationship before offering
+ // a code-delivery action to a recruiter.
+ const [liveGrant]=await getDb().select({id:placementRecruiterCollegeGrants.id})
+  .from(placementRecruiterCollegeGrants).where(and(
+   eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
+   eq(placementRecruiterCollegeGrants.companyRelationshipId,share.relationshipId),
+   eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+   isNull(placementRecruiterCollegeGrants.revokedAt),
+   gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
+  )).limit(1);
+ if(!liveGrant)return false;
  const [recipient]=await getDb().select({
   email:users.email,status:users.platformStatus,
  }).from(users).where(eq(users.id,context.user.id)).limit(1);
@@ -76,6 +88,17 @@ export async function emailAuthorizedCompanyShareCode(
   if(!share||!context.recruiter?.grants.some(grant=>
     grant.collegeId===share.collegeId &&
     grant.companyRelationshipId===share.relationshipId))return "DENIED" as const;
+  // Hold a shared lock on the persisted grant while the code is dispatched,
+  // preventing a concurrent revoke from racing an authorized send.
+  const [liveGrant]=await tx.select({id:placementRecruiterCollegeGrants.id})
+   .from(placementRecruiterCollegeGrants).where(and(
+    eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
+    eq(placementRecruiterCollegeGrants.companyRelationshipId,share.relationshipId),
+    eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+    isNull(placementRecruiterCollegeGrants.revokedAt),
+    gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
+   )).for("share").limit(1);
+  if(!liveGrant)return "DENIED" as const;
   const [recipient]=await tx.select({
    email:users.email,name:users.displayName,status:users.platformStatus,
   }).from(users).where(eq(users.id,context.user.id)).limit(1);
