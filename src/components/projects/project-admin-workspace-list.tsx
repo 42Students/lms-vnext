@@ -77,7 +77,7 @@ function WorkspaceActions({item,basePath}:{item:ProjectAdminWorkspaceListItem;ba
     <svg aria-hidden="true" viewBox="0 0 18 18" fill="none" className="size-4" stroke="currentColor" strokeWidth="1.5">
       <path d="M2 9c2.5-3.5 4.8-5 7-5s4.5 1.5 7 5c-2.5 3.5-4.8 5-7 5S4.5 12.5 2 9Z"/>
       <circle cx="9" cy="9" r="2.3"/>
-    </svg>Open
+    </svg>Open workspace
   </Link>
   <Link href={root+"/team"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Assign Mentor</Link>
   <Link href={root+"/team?editLearners=1"} title="Review the existing roster before replacing learners"

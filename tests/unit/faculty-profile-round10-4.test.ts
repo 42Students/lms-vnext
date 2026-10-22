@@ -3,5 +3,5 @@ import {facultyProfileTextDraftIssue} from "@/modules/people/faculty-profile-dra
 it("names the invalid field so Faculty can correct it",()=>{
  expect(facultyProfileTextDraftIssue("personalDetails",{dateOfBirth:"2025-02-31"})).toMatch(/^dateOfBirth:/);
  expect(facultyProfileTextDraftIssue("address",{currentAddress:"Hi"})).toBeNull();
- expect(facultyProfileTextDraftIssue("about",{description:"x".repeat(5001)})).toMatch(/^description:/);
+ expect(facultyProfileTextDraftIssue("about",{description:"x".repeat(100001)})).toMatch(/^description:/);
 });

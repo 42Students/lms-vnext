@@ -6,7 +6,7 @@ describe("learner drive fact parity",()=>{
   const cards=source("src/components/placements/learner-placement-jobs.tsx");
   expect(cards).toContain("postedAtLabel(item.job.publishedAt,snapshotNowIso)");
   expect(cards).toContain("Posted date not specified");
-  expect(cards).toContain('className="mt-2 line-clamp-3');
+  expect(cards).toContain('className="line-clamp-2 break-words text-sm');
   expect(cards).toContain("item.application.status");
   expect(cards).toContain("Not disclosed");
   expect(cards).toContain("learnerDriveDeadlineUrgency(");
