@@ -180,10 +180,8 @@ export function LearnerJobsBrowse({
   const closeMobileFilters=()=>{setMobileOpen(false);mobileFilterButton.current?.focus();};
   const resetFilters=()=>{
     setSearch("");
-    // Legacy Reset clears the search facets but preserves Saved/All and
-    // the selected sorting order. Move back to the first results page.
     updateQuery({q:null,type:null,loc:null,eligible:null,soon:null,
-      availability:null,department:null,program:null,jobType:null,page:null});
+      availability:null,sort:null});
     setMobileOpen(false);
   };
   return (
