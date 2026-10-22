@@ -22,3 +22,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - G2-5-001-040: OK — `src/components/attendance/admin-attendance-workspace.tsx:270-279` computes counted and present marks separately for each learner, including absent-implied counted cells via `adminAttendanceCellState`; matches `docs/legacy-source/frontend/src/pages/superadmin/sections/Attendance.js:99-112`.
 - G2-5-001-046: OK — `src/components/attendance/admin-attendance-workspace.tsx:380-394` exports empty unscheduled dates, N for unmarked, and attended/counted for multi-session days; matches `docs/legacy-source/frontend/src/pages/superadmin/sections/Attendance.js:448-463`.
+- G2-5-006-025: OK — `src/components/attendance/admin-attendance-workspace.tsx:208-224,413,528-534` preserves last verified results only for an identical scope, warns on refresh failure and offers Retry; matches `docs/legacy-source/frontend/src/pages/superadmin/sections/Attendance.js:523-538`.
