@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 const pages = [
   ["assessments", "LearnerCareerRoundsWorkspace"],
   ["interviews", 'redirect("/learn/my-placements/schedule"'],
-  ["calendar", "LearnerCareerCalendar"],
+  ["calendar", 'redirect("/learn/my-placements/schedule?"'],
   ["placement", "LearnerPlacementOffers"],
   ["rules", "How eligibility works"],
 ] as const;
@@ -19,6 +19,7 @@ describe("learner placement route parity", () => {
       );
       expect(content).toContain(marker);
       expect(content).not.toContain('className="min-h-56 rounded-xl border border-border bg-surface"');
+      if(route==="calendar")expect(content).toContain('new URLSearchParams({view:"calendar"})');
     }
   });
 
