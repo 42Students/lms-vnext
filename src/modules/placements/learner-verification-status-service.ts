@@ -6,6 +6,7 @@ import { learnerProfiles } from "@/db/schema";
 import { learnerProfileDocumentSchema } from "@/modules/people/profile-validation";
 import { evaluateVerificationEvidence, type Receipt } from "@/modules/profile-verification/evidence";
 import {learnerPrivateEvidenceSummary} from "./learner-private-evidence-model";
+import {learnerVerifiedIdentityChanged} from "./learner-verified-identity-diff";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireOwnLearnerProfileAccess } from "@/modules/people/learner-profile-access-service";
 import { learnerVerificationStatus } from "./learner-verification-status-model";
@@ -92,9 +93,12 @@ export async function getOwnLearnerVerificationStatus(context: RequestContext) {
     const submittedEducation=section==="EDUCATION"?educationSnapshotSummary(row?.submittedSnapshot):[];
     const verifiedEducation=section==="EDUCATION"?educationSnapshotSummary(row?.verifiedSnapshot):[];
     const currentEducation=section==="EDUCATION"?educationSnapshotSummary({education:document.education}):[];
+    const identityChanged=section==="IDENTITY"
+      ?learnerVerifiedIdentityChanged(row?.verifiedSnapshot,document.identity):null;
     return {
       ...view,
       submittedEducation,verifiedEducation,
+      identityChangedSinceVerification:identityChanged,
       changedSinceVerification:section==="EDUCATION"&&Boolean(row?.verifiedSnapshot)&&
         JSON.stringify(academicValues(verifiedEducation))!==JSON.stringify(academicValues(currentEducation)),
       missing:readiness(section).missing,
