@@ -79,14 +79,14 @@ function legacyProgramSearch<T extends {
 
 function legacyProgramCreateInput(raw: unknown) {
   const source=z.record(z.string(),z.unknown()).parse(raw);
-  const name=typeof source.name==="string"?source.name.trim():"";
-  const code=typeof source.code==="string"&&source.code.trim()?source.code.trim():
+  const name=typeof source["name"]==="string"?source["name"].trim():"";
+  const code=typeof source["code"]==="string"&&source["code"].trim()?source["code"].trim():
     name.toUpperCase().replace(/[^A-Z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,64);
-  const years=source.durationYears??source.duration_years;
+  const years=source["durationYears"]??source["duration_years"];
   return {
-    departmentId:source.departmentId??source.dept_id??source.deptId,
+    departmentId:source["departmentId"]??source["dept_id"]??source["deptId"],
     name,code,
-    durationTerms:source.durationTerms??(
+    durationTerms:source["durationTerms"]??(
       typeof years==="number"?years*2:typeof years==="string"&&years.trim()?
         Number(years)*2:undefined),
   };
