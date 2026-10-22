@@ -379,7 +379,7 @@ export function RecruiterLeadDetailWorkspace({
 
   async function sendInviteEmail(confirmed=false) {
     if (!confirmed) { setConfirmation("SEND_INVITE"); return; }
-    if (!lead?.emailNorm || !lead.companyRelationshipId || lead.unsubscribedAt) {
+    if (!lead?.emailNorm || lead.unsubscribedAt) {
       setActionError("Add a work email before inviting.");
       return;
     }
