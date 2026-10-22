@@ -23,6 +23,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Scope and render stage-specific actions.
 
 ## G2-10-018-005 [P1] GAP facet F02
+- [x] Verified: LectureHallManager uses desktop lg grid 5fr/7fr (10/24 and 14/24), with stacked mobile create/list cards.
 - Files: src/app/(authenticated)/admin/lecture-halls/page.tsx
 - Legacy: docs/legacy-source/frontend/src/pages/superadmin/sections/LectureHalls.js:301-307 — Inline Create card left 10/24, Existing table card right 14/24.
 - Expected fix: Restore desktop side-by-side create/list layout.
@@ -38,11 +39,13 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Add Super Admin organization/college selection and cascading context before create.
 
 ## G2-10-030-007 [P1] GAP facet F03
+- [x] Verified: Important dates have per-row Label, Date (IST), Type, Add date and Remove controls; submission validates nonblank paired label/date, unique labels, reserved application deadline, and ISO conversion.
 - Files: src/components/placements/placement-job-create-form.tsx
 - Legacy: docs/legacy-source/frontend/src/pages/superadmin/sections/JobForm.js:785-900 — Important dates structured date rows directly in form.
 - Expected fix: Restore date row editor with validators and datepicker.
 
 ## G2-10-030-011 [P1] GAP facet F04
+- [ ] Partial: description field is now required with 280px height; full rich-text editing remains unavailable.
 - Files: src/components/placements/placement-job-create-form.tsx
 - Legacy: docs/legacy-source/frontend/src/pages/superadmin/sections/JobForm.js:684-693 — Job Description required rich-text editor height280.
 - Expected fix: Restore rich text and nonempty HTML-stripped validation.
@@ -58,6 +61,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Map cascade and target audience semantics by role.
 
 ## G2-10-030-021 [P1] GAP facet F06
+- [x] FIXED: draft creation now rejects whitespace-only/HTML-tag-only job descriptions using HTML-stripped meaningful text and the exact legacy warning.
 - Files: src/components/placements/placement-job-create-form.tsx
 - Legacy: docs/legacy-source/frontend/src/pages/superadmin/sections/JobForm.js:33-38,684-693 — whitespace-only rich HTML rejected Please enter job description.
 - Expected fix: Add required HTML-stripped rule.

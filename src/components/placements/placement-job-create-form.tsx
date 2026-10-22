@@ -539,6 +539,7 @@ export function PlacementJobCreateForm({
       const deadlineRaw=String(data.get("applicationDeadline")??"").trim();
       const deadlineIso=deadlineRaw?driveDeadlineIstToIso(deadlineRaw):null;
       if (!title) throw new Error("Please enter a job title.");
+      if (!meaningfulDescription) throw new Error("Please enter job description");
       if (title.length < 3) throw new Error("Job title: At least 3 characters.");
       if (title.length > 100) throw new Error("Job title must be no longer than 100 characters.");
       const minimumLpa = nullableDecimal(String(data.get("minimumLpa") ?? ""));
@@ -1362,8 +1363,9 @@ export function PlacementJobCreateForm({
               Job Description
             </span>
             <Textarea
-              className={textareaClass}
+              className={textareaClass+" min-h-[280px]"}
               name="description"
+              required
               maxLength={15000}
               placeholder="Role, responsibilities, requirements and hiring context."
             />
