@@ -51,7 +51,12 @@ describe("chat-5 final sprint faculty course list and core lesson contracts",()=
  });
  it("FAC-courses-28 renders contacts and missing-roll copy, sorted roster, and an authorized avatar preview fallback",()=>{
   const roster=src("src/components/courses/faculty-course-roster.tsx");
-  expect(roster).toContain('const contacts = learners.filter(');
+  const metrics=src("src/modules/courses/faculty-roster-display-model.ts");
+  expect(roster).toContain("facultyRosterMetrics(learners)");
+  expect(metrics).toContain("const contacts=learners.filter(");
+  expect(metrics).toContain("row.phoneE164?.trim()||row.email?.trim()");
+  expect(metrics).toContain("const missingRoll=learners.filter(");
+  expect(metrics).toContain('rollLabel:missingRoll?missingRoll+" without a roll number":"All have roll numbers"');
   expect(roster).toContain("sortFacultyRosterByRollThenName");
   expect(roster).toContain("facultyRosterMetrics");
   expect(roster).toContain('aria-label={"View "+nameOf(learner)+" profile photo"}');
