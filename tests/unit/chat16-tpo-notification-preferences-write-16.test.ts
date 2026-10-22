@@ -22,7 +22,7 @@ const tpo:RequestContext={
 const input={morningDigest:true,recruiterMessages:true,requests:true,
  resultsReady:true,followUps:true,expectedVersion:null as string|null};
 function mockDb(current:Record<string,unknown>|null){
- const collegeLimit=vi.fn(async()=>[{id:college}]);
+ const collegeLimit=vi.fn(async()=>[{id:college,status:"ACTIVE"}]);
  const prefLimit=vi.fn(async()=>current?[current]:[]);
  const select=vi.fn()
   .mockImplementationOnce(()=>({from:()=>({where:()=>({for:()=>({limit:collegeLimit})})})}))
