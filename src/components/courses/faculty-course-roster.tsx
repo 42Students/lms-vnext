@@ -272,7 +272,7 @@ export function FacultyCourseRoster({
       )}
       <Dialog open={preview!==null} onOpenChange={open=>{if(!open)setPreview(null);}}
         title={preview?nameOf(preview):"Photo preview"}
-        description={preview?"Roll "+(preview.rollNumber||"not assigned"):undefined}
+        {...(preview ? {description:"Roll "+(preview.rollNumber||"not assigned")} : {})}
         className="max-w-[360px] w-[calc(100%_-_32px)]">
         {preview&&facultyRosterPhotoPreview(preview.photoDownloadUrl)?
           <img src={facultyRosterPhotoPreview(preview.photoDownloadUrl)!}
