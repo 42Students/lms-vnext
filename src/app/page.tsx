@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import { safeReturnTo } from "@/lib/return-to";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LoginForm } from "@/components/auth/login-form";
-import { DgipucSignIn } from "@/components/auth/dgipuc-sign-in";
 import { PageHeader } from "@/components/ui/page-header";
 import styles from "./login-shell.module.css";
 import { resolveRequestTenant } from "@/modules/auth/request-tenant";
@@ -255,17 +254,11 @@ export default async function HomePage({
               <a className={styles.statusLink} href={restartHref}>Retry sign-in</a>
             </div>
           ) : (
-            {tenant.kind==="college" && requestHeaders.get("host")?.toLowerCase().split(":")[0]==="dgi.42lms.com"
-             ? <DgipucSignIn collegeName={branding?.collegeName ?? null}
+            <LoginForm collegeName={branding?.collegeName ?? null}
               legacySuperAdmin={legacySuperAdmin&&signin.phone}
                defaultChannel={legacySuperAdmin&&signin.phone?"PHONE":recruiterValue === "email" && signin.email ? "EMAIL" : signin.primary}
               allowedChannels={signin.email && signin.phone ? ["EMAIL", "PHONE"] :
                 signin.email ? ["EMAIL"] : ["PHONE"]} />
-             : <LoginForm collegeName={branding?.collegeName ?? null}
-              legacySuperAdmin={legacySuperAdmin&&signin.phone}
-               defaultChannel={legacySuperAdmin&&signin.phone?"PHONE":recruiterValue === "email" && signin.email ? "EMAIL" : signin.primary}
-              allowedChannels={signin.email && signin.phone ? ["EMAIL", "PHONE"] :
-                signin.email ? ["EMAIL"] : ["PHONE"]} />}
           )}
           </section>
         </div>
