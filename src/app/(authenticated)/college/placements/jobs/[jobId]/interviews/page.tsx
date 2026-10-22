@@ -163,6 +163,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold">Sort interviews
         <Select name="appointmentSort" aria-label="Sort interviews" defaultValue={query.appointmentSort}>
           <option value="DATE_ASC">Date earliest</option><option value="DATE_DESC">Date latest</option>
+          <option value="JOB">Job title</option><option value="STATUS">Status</option>
         </Select>
       </label>
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold">Per page
