@@ -14,7 +14,7 @@ if(enabled)assertDb018DisposableTarget(process.env,{serviceBound:true});
 const pool=enabled?new Pool({connectionString:process.env.TEST_DATABASE_URL,max:2}):null;
 const uid=()=>randomUUID();
 const ids={actor:uid(),actorMembership:uid(),oldUser:uid(),old:uid(),otherOldUser:uid(),otherOld:uid(),replacementUser:uid(),replacement:uid(),
- period:uid(),program:uid(),cohort:uid(),section:uid(),session:uid(),otherSession:uid()};
+ period:uid(),program:uid(),cohort:uid(),section:uid(),otherSection:uid(),session:uid(),otherSession:uid()};
 const tag="chat4-faculty-"+ids.session.slice(0,8);
 const actor:RequestContext={
  user:{id:ids.actor,identityUid:tag+"-actor",platformStatus:"ACTIVE",systemRoles:[]},
@@ -47,6 +47,10 @@ describe.skipIf(!enabled)("College faculty schedule reassignment (disposable Pos
    [ids.cohort,ids.program,tag,ids.period]);
   await pool.query("insert into sections(id,cohort_id,academic_period_id,name,code,status) values($1,$2,$3,$4::text,$4::text,'ACTIVE')",
    [ids.section,ids.cohort,ids.period,tag]);
+  // Cross-faculty concurrency must use different sections; the database
+  // already excludes overlapping events within one section.
+  await pool.query("insert into sections(id,cohort_id,academic_period_id,name,code,status) values($1,$2,$3,$4::text,$4::text,'ACTIVE')",
+   [ids.otherSection,ids.cohort,ids.period,tag+"-parallel"]);
   const start=new Date(Date.now()+72*3600000),end=new Date(start.getTime()+3600000);
   await pool.query("insert into section_schedule_events(id,section_id,faculty_membership_id,title,starts_at,ends_at,status) values($1,$2,$3,$4,$5,$6,'SCHEDULED')",
    [ids.session,ids.section,ids.old,tag,start,end]);
@@ -55,6 +59,7 @@ describe.skipIf(!enabled)("College faculty schedule reassignment (disposable Pos
   try {
    if(pool){
     await pool.query("delete from section_schedule_events where id=any($1::uuid[])",[[ids.session,ids.otherSession]]);
+    await pool.query("delete from sections where id=$1",[ids.otherSection]);
     await pool.query("delete from sections where id=$1",[ids.section]);
     await pool.query("delete from cohorts where id=$1",[ids.cohort]);
     await pool.query("delete from programs where id=$1",[ids.program]);
@@ -95,11 +100,11 @@ describe.skipIf(!enabled)("College faculty schedule reassignment (disposable Pos
   // this isolated fixture so BOTH sources begin with colliding intervals.
   await pool!.query("update section_schedule_events set faculty_membership_id=$2 where id=$1",
    [ids.session,ids.old]);
-  const row=await pool!.query<{section_id:string;starts_at:Date;ends_at:Date}>(
-   "select section_id,starts_at,ends_at from section_schedule_events where id=$1",[ids.session]);
+  const row=await pool!.query<{starts_at:Date;ends_at:Date}>(
+   "select starts_at,ends_at from section_schedule_events where id=$1",[ids.session]);
   const current=row.rows[0]!;
   await pool!.query("insert into section_schedule_events(id,section_id,faculty_membership_id,title,starts_at,ends_at,status) values($1,$2,$3,$4,$5,$6,'SCHEDULED')",
-   [ids.otherSession,current.section_id,ids.otherOld,tag+"-parallel",current.starts_at,current.ends_at]);
+   [ids.otherSession,ids.otherSection,ids.otherOld,tag+"-parallel",current.starts_at,current.ends_at]);
   const payload={replacementMembershipId:ids.replacement,confirmed:true};
   const results=await Promise.all([
    reassignFacultyUpcomingSchedules(actor,ids.old,payload),

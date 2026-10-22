@@ -9,7 +9,10 @@ describe("College Projects risk and activity acceptance",()=>{
   const resourceAudit=src("src/components/projects/project-resource-audit-list.tsx");
   expect(resourceAudit).toContain('aria-label="Resource activity"');
   expect(resourceAudit).toContain('aria-label="Search resource audit"');
-  expect(src("src/components/projects/project-workspace.tsx")).toContain('resourceAudit={mode==="ADMIN"}');
+  const workspace=src("src/components/projects/project-workspace.tsx");
+  expect(workspace).toContain('mode==="ADMIN"&&!workspace.activityLoadError?');
+  expect(workspace).toContain('<ProjectResourceAuditList events={workspace.activity.map(event => ({');
+  expect(workspace).toContain('mode==="ADMIN"&&workspace.activityLoadError?');
  });
  it("COL-projects-23 ensures ten-tab workspace navigation is keyboard-scrollable at narrow widths",()=>{
   const s=src("src/components/projects/project-workspace.tsx");

@@ -171,7 +171,9 @@ describe("IIT Dharwad Projects adversarial service and route contracts",()=>{
   expect(collegePage).toContain('role="alert"');
   expect(collegePage).toContain('href="/dashboard"');
   expect(projectPage).toContain("<PageHeader");
-  expect(collegePage).toContain('title="Workspaces"');
+  expect(collegePage).toContain('title="Project workspaces"');
+  expect(collegePage).toContain('emptyTitle={query.q||query.status?');
+  expect(collegePage).toContain('title="No college selected"');
  });
  it("PROJ-BREAK-resilience-01 object-store cleanup failure cannot reverse committed soft deletion or quarantine",()=>{
   const page=moduleSource("project-resource-file-service");

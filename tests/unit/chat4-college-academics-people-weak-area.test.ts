@@ -47,13 +47,18 @@ describe("College academics/people weak-area behavioural ledger",()=>{
   expect(batchCsvSchema.safeParse({progression:"MISSING",yearStart:2026}).success).toBe(false);
   expect(batchCsvSchema.safeParse({progression:"RECORDED",currentTerm:2}).success).toBe(true);
   const batches=renderBatchCsv([{
-   name:"=IMPORTXML(1)",code:"B-1",status:"ACTIVE",programName:"B.Tech",
+   id:"11111111-1111-4111-8111-111111111111",
+   name:"=IMPORTXML(1)",code:"B-1",status:"ACTIVE",
+   programId:"22222222-2222-4222-8222-222222222222",academicYear:null,
+   startDate:null,endDate:null,programName:"B.Tech",
    programCode:"CS",currentTermNumber:null,currentAcademicYearStart:null,
    activeSections:2,activeEnrolledLearners:0,
   }],true);
   expect(batches).toContain("'=IMPORTXML(1)");
   expect(batches).toContain("EXPORT TRUNCATED");
-  expect(batches).toContain("Active learner enrollments");
+  expect(batches).toContain('"students"');
+  expect(batches).toContain('"batchName"');
+  expect(batches).toContain('"status"');
   expect(batches).toContain(',"","",');
   const semesters=renderSemesterCsv([{
    name:"-cmd",termNumber:2,programName:"B.Tech",programCode:"CS",
