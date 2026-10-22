@@ -24,7 +24,8 @@ describe("TPO Students phone presentation and scoped selection summary",()=>{
   expect(grid).toContain('aria-label={"Row actions for "+');
   const filters=src("src/components/tpo/tpo-grid-filter-panel.tsx");
   const sheet=src("src/components/ui/bottom-sheet.tsx");
-  expect(filters).toContain('<BottomSheet open={sheetOpen} onOpenChange={setSheetOpen} title="Filter students">');
+  expect(filters).toContain('<BottomSheet open={sheetOpen}');
+  expect(filters).toContain('onOpenChange={next=>{setSheetOpen(next);if(!next&&autoOpenMobile)onAutoClose?.();}} title={title}');
   expect(sheet).toContain('className="fixed inset-x-0 bottom-[var(--lms-visual-bottom)]');
   expect(sheet).toContain("modal.showModal()");
   expect(sheet).toContain("onClose={() => { if (open) onOpenChange(false); opener.current?.focus(); }}");

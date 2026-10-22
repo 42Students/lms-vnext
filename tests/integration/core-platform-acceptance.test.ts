@@ -496,8 +496,20 @@ describe("core platform pre-browser acceptance flow", () => {
       ]),
     );
 
-    const suspended = await updateMembershipLifecycle(
+    // College Admins must not suspend an account once it holds the
+    // protected TPO role. The scoped Super Admin is the authorized actor.
+    await expect(updateMembershipLifecycle(
       collegeAdmin,
+      faculty.membership.id,
+      {
+        action: "SUSPEND",
+        reason: "Acceptance suspension",
+      },
+      drizzlePeopleRepository,
+    )).rejects.toMatchObject({code:"MEMBERSHIP_PROTECTED"});
+
+    const suspended = await updateMembershipLifecycle(
+      selectedIssuer,
       faculty.membership.id,
       {
         action: "SUSPEND",

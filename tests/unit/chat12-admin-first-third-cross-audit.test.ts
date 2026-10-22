@@ -35,7 +35,9 @@ describe("UX-admin-first-third-chat12 independent source cross-audit",()=>{
  it("UX-admin-companies-01 errors on malformed filters before directory lookup and labels safety scope",()=>{
   const src=page("/companies");
   expect(src).toContain("parseAdminCompanyDirectoryParams(params)");
-  expect(src.indexOf("if (!parsed.success)")).toBeLessThan(src.indexOf("listSuperAdminCompanyDirectory(context, parsed.data)"));
+  const lookup=src.search(/listSuperAdminCompanyDirectory\(\s*context,\s*parsed\.data\s*\)/);
+  expect(lookup).toBeGreaterThan(-1);
+  expect(src.indexOf("if (!parsed.success)")).toBeLessThan(lookup);
   expect(src).toContain('title="Invalid company search"');
   expect(src).toContain("context.adminScope?.collegeId");
   expect(src).toContain("Clear the selected organization and college scope");

@@ -86,7 +86,7 @@ describe("chat-13 additional admin mutation and recruiter account security",()=>
   const service=read("src/modules/placements/super-admin-published-drive-edit-service.ts");
   expect(service).toContain('assertPersistedPlatformPermission(tx,context,"placements.manage"');
   expect(service).toContain('eq(placementJobs.collegeId,acting.collegeId)');
-  expect(service).toContain('!["PUBLISHED","CLOSED","CANCELLED","ARCHIVED"].includes(job.status)');
+  expect(service).toContain('if(job.status!=="PUBLISHED")');
   expect(service).toContain("cmd.expectedUpdatedAt");
   expect(service).toContain("isLegacyAssessmentDeadlineAfterApplication(");
  });

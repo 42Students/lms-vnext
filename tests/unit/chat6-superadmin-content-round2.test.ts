@@ -12,7 +12,7 @@ describe("Super Admin Courses and Content gap closure",()=>{
   const model=readFileSync("src/modules/courses/super-admin-content-directory-model.ts","utf8");
   const view=readFileSync("src/components/courses/super-admin-content-directory-page.tsx","utf8");
   expect(model).toContain('LIVE_CLASSES:"Live classes"');
-  expect(model).toContain('type==="YOUTUBE"?"YouTube"');
+  expect(model).toContain('type==="YOUTUBE"?"YouTube Video"');
   expect(model).toContain('type==="VIDEO"?"Video"');
   expect(view).toContain("Upload a video or link a YouTube video to a lesson.");
   expect(view).toContain("Schedule a live class with a meeting link on a lesson.");

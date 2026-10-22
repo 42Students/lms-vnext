@@ -50,7 +50,9 @@ describe("TPO supplemental job metadata",()=>{
   const safe=source("src/components/ui/third-party-link.tsx");
   expect(safe).toContain('url.protocol === "https:"');
   expect(safe).toContain('!url.username && !url.password');
-  expect(safe).toContain('target="_blank" rel="noopener noreferrer"');
+  expect(safe).toContain('href={safeHref} rel="noopener noreferrer"');
+  expect(safe).not.toContain('target="_blank"');
+  expect(safe).toContain("Copy link");
  });
  it("TPO-drives-41 blocks both native unload and in-app navigation while unsaved",()=>{
   const guard=source("src/components/placements/use-unsaved-drive-guard.ts");
