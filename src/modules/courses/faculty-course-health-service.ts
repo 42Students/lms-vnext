@@ -58,7 +58,7 @@ export async function getFacultyCourseAssessmentHealth(
         outstanding:report.metrics.missing,
         graded:report.metrics.graded,
         averagePercent:report.metrics.averagePercent,
-        coveragePercent:responseCoverage(report.metrics.eligibleLearners,report.metrics.submitted),
+        coveragePercent:responseCoverage(report.metrics.eligibleLearners,report.metrics.submitted ?? Number.NaN),
         href:"/teacher/report/assignment/"+encodeURIComponent(row.id)+
           "?deliveryId="+encodeURIComponent(query.deliveryId),
       };
@@ -71,7 +71,7 @@ export async function getFacultyCourseAssessmentHealth(
       outstanding:report.metrics.notAttempted,
       graded:report.metrics.graded,
       averagePercent:report.metrics.averagePercent,
-      coveragePercent:responseCoverage(report.metrics.eligibleLearners,report.metrics.submittedLearners),
+      coveragePercent:responseCoverage(report.metrics.eligibleLearners,report.metrics.submittedLearners ?? Number.NaN),
       href:"/teacher/report/quiz/"+encodeURIComponent(row.id)+
         "?deliveryId="+encodeURIComponent(query.deliveryId),
     };
