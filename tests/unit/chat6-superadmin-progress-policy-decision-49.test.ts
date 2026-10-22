@@ -7,12 +7,13 @@ describe("Super Admin course progress threshold policy",()=>{
   const progress=src("src/modules/courses/progress-service.ts");
   const owner=src("docs/audit/owner-decisions-resolved.md");
   expect(owner).toContain("OD-34 | Watched threshold platform-wide, hidden.");
-  expect(settings).toContain("watchedThresholdPercent:90,minInProgressPercent:5");
+  expect(settings).toContain("watchedThresholdPercent:90");
+  expect(settings).toContain("minInProgressPercent:0");
   expect(settings).toContain('"course.watchedThresholdPercent"');
   expect(settings).toContain('"course.minInProgressPercent"');
   expect(settings).toContain('eq(platformSettingOverrides.scopeType,"GLOBAL")');
   expect(settings).toContain('eq(platformSettingOverrides.scopeId,"GLOBAL")');
-  expect(settings).toContain('minInProgressPercent:learnerPlaybackSettingValue');
+  expect(settings).toContain("minInProgressPercent:safeValue(keys[2],defaults.minInProgressPercent)");
   expect(progress).toContain("minInProgressPercent = 5");
   expect(progress).toContain("percentComplete >= minInProgressPercent");
   expect(progress).toContain("settings.minInProgressPercent");

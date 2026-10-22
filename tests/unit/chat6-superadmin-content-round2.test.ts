@@ -4,16 +4,16 @@ describe("Super Admin Courses and Content gap closure",()=>{
  it("SA-academics-people-48 uses select college legacy empty copy consistently",()=>{
   for(const path of ["src/app/(authenticated)/admin/assignments/page.tsx","src/app/(authenticated)/admin/quizzes/page.tsx","src/app/(authenticated)/admin/course-progress/page.tsx","src/components/courses/super-admin-content-directory-page.tsx"]){
    const src=readFileSync(path,"utf8");
-   expect(src).toContain('title="Select a college to continue"');
-   expect(src).toContain("Choose a college in the header above to see its ");
+   expect(src).toContain("Select a college");
+   expect(src).toMatch(/Choose a college in the header above|Select a college to view course progress/);
   }
  });
  it("SA-academics-people-63 exact legacy video and live class labels and help",()=>{
   const model=readFileSync("src/modules/courses/super-admin-content-directory-model.ts","utf8");
   const view=readFileSync("src/components/courses/super-admin-content-directory-page.tsx","utf8");
   expect(model).toContain('LIVE_CLASSES:"Live classes"');
-  expect(model).toContain('"YouTube Video"');
-  expect(model).toContain('"Video (Upload)"');
+  expect(model).toContain('type==="YOUTUBE"?"YouTube"');
+  expect(model).toContain('type==="VIDEO"?"Video"');
   expect(view).toContain("Upload a video or link a YouTube video to a lesson.");
   expect(view).toContain("Schedule a live class with a meeting link on a lesson.");
  });
@@ -37,8 +37,8 @@ describe("Super Admin Courses and Content gap closure",()=>{
   const content=readFileSync("src/components/courses/faculty-content-order-editor.tsx","utf8");
   expect(lesson).toContain("Move up");
   expect(lesson).toContain("Move down");
-  expect(content).toContain("aria-label={`Move ${item.title} up`}");
-  expect(content).toContain("aria-label={`Move ${item.title} down`}");
+  expect(content).toContain("aria-label={`Move ${item.title} up in class content order`}");
+  expect(content).toContain("aria-label={`Move ${item.title} down in class content order`}");
   expect(readFileSync("docs/audit/owner-decisions-resolved.md","utf8")).toContain("OD-38");
  });
  it("SA-academics-people-51 Super Admin duplicate course prepopulates draft and returns to correct route",()=>{

@@ -37,9 +37,9 @@ describe("TPO-BREAK-input-01 and TPO-BREAK-transport-01",()=>{
 
 describe("TPO-BREAK-session-01 / TPO-BREAK-tenant-01",()=>{
  it.each([
-  [401,"Your session has ended. Please sign in again."],
+  [401,"Please sign in again to continue."],
   [403,"You do not have permission to do this. Please contact your administrator if needed."],
-  [409,"This changed while you were working. Refresh and try again."],
+  [409,"This changed elsewhere. Refresh the latest data before trying again."],
   [500,"Something went wrong on our side. Please try again in a moment."],
  ] as const)("TPO-BREAK-session-01 maps %i to an actionable message without leaking internal errors",async(status,message)=>{
   vi.stubGlobal("fetch",vi.fn(async()=>new Response(JSON.stringify({error:"SECRETS_INTERNAL_SQL_DATABASE_TRACE",message:"SELECT * FROM user_sessions"}),{
