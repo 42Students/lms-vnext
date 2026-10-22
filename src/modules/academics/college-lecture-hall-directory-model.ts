@@ -28,6 +28,7 @@ export const collegeLectureHallFiltersBaseSchema = z.object({
 export function withCollegeLectureHallCapacityCheck<T extends z.ZodType>(schema: T): T {
   return schema.refine(
     (query) => {
+      if (typeof query !== "object" || query === null) return true;
       const minimum = "minimumCapacity" in query ? query.minimumCapacity : undefined;
       const maximum = "maximumCapacity" in query ? query.maximumCapacity : undefined;
       return typeof minimum !== "number" || typeof maximum !== "number" || minimum <= maximum;
