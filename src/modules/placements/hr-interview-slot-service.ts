@@ -58,7 +58,7 @@ async function verifyRecruiterSlotJob(tx:TpoJobTx,context:RequestContext,jobId:s
  * signature for existing workspaces; callers can request subsequent pages. */
 export const hrInterviewSlotPageSchema=z.strictObject({
  page:z.coerce.number().int().min(1).max(100000).default(1),
- pageSize:z.coerce.number().int().min(1).max(100).default(20),
+ pageSize:z.coerce.number().int().min(1).max(100).default(100),
 });
 export async function listHrInterviewSlots(context:RequestContext,rawJobId:unknown,rawPage:unknown={}) {
  const jobId=z.string().uuid().parse(rawJobId);
