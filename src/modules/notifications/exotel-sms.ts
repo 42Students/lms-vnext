@@ -126,13 +126,16 @@ export async function appendSmsDeliveryAttempt(input: SmsAttemptInput): Promise<
         { purpose: input.purpose, reason: "DB31_NOT_REGISTERED" });
       return "STORAGE_PENDING";
     }
+    // 0162 registers the audit fields above; never assume the optional
+    // command_id extension exists. Attempts must still be written on a
+    // database with only the numbered 0162 migration applied.
     await db.execute(sql`
       insert into messaging_sms_delivery_attempts
         (organization_id, college_id, purpose, recipient_suffix, outcome,
-         provider_message_id, error_code, command_id, attempted_at)
+         provider_message_id, error_code, attempted_at)
       values (${input.organizationId ?? null}, ${input.collegeId ?? null},
         ${input.purpose}, ${suffix}, ${input.outcome}, ${sid}, ${code},
-        ${input.sourceEventId ?? null}, clock_timestamp())
+        clock_timestamp())
     `);
     return "RECORDED";
   } catch {
