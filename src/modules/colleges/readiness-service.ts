@@ -46,6 +46,7 @@ import {
   type CollegeReadinessFacts,
 } from "./readiness-model";
 import {evaluateLegacyDomainLoginReadiness,validateLegacyDomainLoginReadinessResponse} from "./legacy-domain-login-readiness";
+import {TENANT_RESOLVER_REQUIRES_VERIFIED_DOMAIN} from "@/modules/tenant-domains/repository";
 
 function isMissingRelation(
   error: unknown,
@@ -460,7 +461,7 @@ export async function getSuperAdminCollegeReadiness(
   // The current vNext tenant resolver requires verified hosts; pass that same
   // policy explicitly rather than reading a divergent "strict" env default.
   // The pure adapter also supports historic lenient readiness for test/crosswalk.
-  const requireVerifiedDomains=true;
+  const requireVerifiedDomains=TENANT_RESOLVER_REQUIRES_VERIFIED_DOMAIN;
   const domainPolicy=validateLegacyDomainLoginReadinessResponse(evaluateLegacyDomainLoginReadiness({
     requireVerifiedDomains,domainTotal,domainVerified,domainPrimary,verifiedPrimaryDomains,
     hasLogo:college.logoObjectPath?.trim()||college.legacyLogoUrl?.trim()?true:
