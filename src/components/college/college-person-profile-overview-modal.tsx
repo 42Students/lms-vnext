@@ -32,7 +32,7 @@ export function CollegePersonProfileOverviewModal({membershipId,name,kind}:{
  return <>
   <Button variant="secondary" type="button" onClick={()=>void show()}
    className="min-h-11 w-full md:min-h-9 md:w-auto">Profile</Button>
-  <Dialog open={open} onOpenChange={next=>{if(!next)close();}} title={"Profile for "+name} footer={<Button variant="secondary" type="button" onClick={close}
+  <Dialog open={open} onOpenChange={next=>{if(!next)close();}} title={"Profile — "+name} className="!max-w-[860px]" footer={<Button variant="secondary" type="button" onClick={close}
       className="min-h-11 w-full md:min-h-9 md:w-auto">Close</Button>}>
     
     {loading?<Skeleton variant="row" count={3} label="Loading profile"/>:null}

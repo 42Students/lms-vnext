@@ -6,6 +6,8 @@ import {
   eq,
   isNull,
   ne,
+  or,
+  ilike,
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -225,7 +227,7 @@ export async function listPrograms(
 export async function listProgramsPage(
   context: RequestContext,
   collegeIdInput: string,
-  raw: { departmentId?: string | null; page?: number; pageSize?: number; includeArchived?: boolean } = {},
+  raw: { departmentId?: string | null; q?: string; page?: number; pageSize?: number; includeArchived?: boolean } = {},
 ) {
   const collegeId = collegeIdSchema.parse(collegeIdInput);
   const college = await loadAcademicCollegeScope(collegeId);
@@ -240,9 +242,16 @@ export async function listProgramsPage(
   }
   const page = Math.max(1, Math.min(10000, Math.trunc(raw.page ?? 1) || 1));
   const pageSize = Math.max(1, Math.min(100, Math.trunc(raw.pageSize ?? 20) || 20));
+  const q = (raw.q ?? "").trim();
+  if (q.length > 100) throw new Error("Invalid program search");
+  const escaped = q.replace(/[\\%_]/g, "\\  const pageSize = Math.max(1, Math.min(100, Math.trunc(raw.pageSize ?? 20) || 20));
+  const conditions = and(");
+  const searchPattern = `%${escaped}%`;
   const conditions = and(
     eq(departments.collegeId, collegeId),
     departmentId ? eq(programs.departmentId, departmentId) : undefined,
+    q ? or(ilike(programs.name, searchPattern), ilike(programs.code, searchPattern),
+      ilike(departments.name, searchPattern)) : undefined,
     raw.includeArchived ? undefined : isNull(departments.archivedAt),
     raw.includeArchived ? undefined : eq(programs.status, "ACTIVE"),
   );
