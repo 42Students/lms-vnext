@@ -42,7 +42,8 @@ export async function deleteMentorProjectSprint(context:RequestContext,rawPath:u
   if(meeting||carryHistory)throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
   const moved=await tx.update(projectTasks).set({
     sprintId:null,carriedFromSprintId:sprint.id,carriedOverAt:new Date(),updatedAt:new Date(),
-  }).where(and(eq(projectTasks.projectId,scope.project.id),eq(projectTasks.sprintId,sprint.id)))
+  }).where(and(eq(projectTasks.projectId,scope.project.id),
+      eq(projectTasks.sprintId,sprint.id),isNull(projectTasks.deletedAt)))
     .returning({id:projectTasks.id});
   // Preserve a workspace-deleted sprint as a template merge tombstone, and keep
   // carriedFromSprintId references so task history retains the source sprint.
