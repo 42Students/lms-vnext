@@ -32,6 +32,50 @@ function requireTeachingAssignmentManager(context:RequestContext){
  return {collegeId:member.collegeId,organizationId:member.organizationId};
 }
 
+/** Historical saveAll imports may contain hundreds of course references. Do not
+ * enlarge the ten-delivery transactional lock set: advance one bounded page
+ * per explicit import request, and return stable duplicate-specific feedback.
+ * Every page still passes through persisted member/course authorization.
+ */
+const teachingImportPageSchema=z.strictObject({
+ deliveryIds:z.array(z.uuid()).min(1).max(500),
+ membershipId:z.uuid(),
+ role:z.enum(COURSE_TEACHING_ROLES).default("PRIMARY"),
+ offset:z.number().int().min(0).max(500).default(0),
+});
+export function planTeachingAssignmentImportPage(raw:unknown){
+ const input=teachingImportPageSchema.parse(raw);
+ const seen=new Set<string>();
+ const uniqueIds:string[]=[];
+ const duplicateIds:string[]=[];
+ for(const id of input.deliveryIds){
+  if(seen.has(id)){duplicateIds.push(id);continue;}
+  seen.add(id);uniqueIds.push(id);
+ }
+ const batch=uniqueIds.slice(input.offset,input.offset+10);
+ return {...input,deliveryIds:batch,
+  duplicateIds,
+  duplicateMessage:duplicateIds.length?"Duplicate course: choose each course only once":null,
+  nextOffset:input.offset+batch.length<uniqueIds.length?input.offset+batch.length:null,
+  totalDistinct:uniqueIds.length};
+}
+export async function createImportedTeachingAssignmentPage(
+ context:RequestContext,raw:unknown,
+){
+ const page=planTeachingAssignmentImportPage(raw);
+ if(page.deliveryIds.length===0)return {
+  assignments:[] as Awaited<ReturnType<typeof createCourseTeachingAssignmentsBatch>>,
+  duplicateIds:page.duplicateIds,duplicateMessage:page.duplicateMessage,
+  nextOffset:null,totalDistinct:page.totalDistinct,
+ };
+ const assignments=await createCourseTeachingAssignmentsBatch(context,{
+  membershipId:page.membershipId,role:page.role,deliveryIds:page.deliveryIds,
+ });
+ return {assignments,duplicateIds:page.duplicateIds,
+  duplicateMessage:page.duplicateMessage,nextOffset:page.nextOffset,
+  totalDistinct:page.totalDistinct};
+}
+
 /** SA-academics-people-101: selected courses share one class and period.
  * All teaching grants and their audit records commit or roll back together. */
 export async function createCourseTeachingAssignmentsBatch(
