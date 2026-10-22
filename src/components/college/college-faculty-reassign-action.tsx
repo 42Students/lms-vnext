@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
 import {Input} from "@/components/ui/input";
 import {Alert} from "@/components/ui/alert";
+import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {teachingReassignPrompt} from "@/modules/courses/college-teaching-reassign-model";
@@ -22,6 +23,7 @@ export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldM
   const [pending,setPending]=useState(false);
   const inFlightRef=useRef(false);
   const [error,setError]=useState("");
+  const {askConfirm,dialog:confirmationDialog}=useConfirmFlow();
   const candidates=faculty.filter(f=>f.id!==oldMembershipId);
   const [editOpen,setEditOpen]=useState(false);
   const [editMember,setEditMember]=useState(oldMembershipId);
@@ -37,14 +39,16 @@ export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldM
       !editActive||editYear!==(currentDelivery?.academicYear??"")||
       editSemester!==(currentDelivery?.semesterNumber==null?"":String(currentDelivery.semesterNumber));
   }
-  function closeEditor(){
+  async function closeEditor(){
     if(pending)return;
-    if(editHasChanges()&&!window.confirm("Discard assignment changes?"))return;
+    if(editHasChanges()&&!(await askConfirm("Discard assignment changes?")))return;
+    if(pending||inFlightRef.current)return;
     setEditOpen(false);setError("");
   }
-  function closeReassign(){
+  async function closeReassign(){
     if(pending)return;
-    if(replacementMembershipId&&!window.confirm("Discard assignment changes?"))return;
+    if(replacementMembershipId&&!(await askConfirm("Discard assignment changes?")))return;
+    if(pending||inFlightRef.current)return;
     setOpen(false);setReplacementMembershipId("");setError("");
   }
   function openEditor(){
@@ -65,7 +69,8 @@ export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldM
     if(semester!==null&&(!Number.isInteger(semester)||semester<1||semester>20)){
       setError("Select a valid semester.");return;
     }
-    if(!window.confirm("Save Changes to this faculty assignment? Earlier teaching history will be retained."))return;
+    if(!(await askConfirm("Save Changes to this faculty assignment? Earlier teaching history will be retained.")))return;
+    if(pending||inFlightRef.current)return;
     inFlightRef.current=true;setPending(true);setError("");
     try{
       const response=await fetch("/api/college/teaching-assignments/"+encodeURIComponent(assignmentId)+"/edit",{
@@ -187,5 +192,6 @@ export function CollegeFacultyReassignAction({assignmentId,facultyName,role,oldM
         
     </Dialog>
     {!open&&error?<Alert tone="error">{error}</Alert>:null}
+    {confirmationDialog}
   </div>;
 }
