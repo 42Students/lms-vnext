@@ -47,6 +47,8 @@ export default async function MentorTaskReviewsPage({
   </section>;
 
   const data = await getMentorTaskReviews(context, parsed.data);
+  const { projectId, version, ...requiredQuery } = data.query;
+  const linkQuery = { ...requiredQuery, ...(projectId === undefined ? {} : { projectId }), ...(version === undefined ? {} : { version }) };
   const hasFilters = Boolean(data.query.search || data.query.projectId || data.query.assignment !== "ALL" || data.query.priority !== "ALL" || data.query.age !== "ALL" || data.query.version !== undefined || data.query.order !== "NEWEST" || data.pageSize !== 20);
   const hasAdvancedFilters = data.query.assignment !== "ALL" || data.query.priority !== "ALL" || data.query.age !== "ALL" || data.query.version !== undefined || data.query.order !== "NEWEST" || data.pageSize !== 20;
   return <div className={mentorTaskReviewMobileLayout}>
@@ -130,7 +132,7 @@ export default async function MentorTaskReviewsPage({
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3 text-sm">
         <p className="text-sm text-body leading-[22px]">{data.total === 0 ? "No matching submissions" : "Showing " + data.first + "–" + data.last + " of " + data.total + " pending submissions"}</p>
         <div className="flex flex-wrap items-center gap-3">
-        <Link href={mentorTaskReviewExportHref(data.query)} download
+        <Link href={mentorTaskReviewExportHref(linkQuery)} download
           className="inline-flex min-h-11 items-center font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
           Export pending task review metadata CSV (max 200)
         </Link>
@@ -160,11 +162,11 @@ export default async function MentorTaskReviewsPage({
             </Link>
           </article>)}</div>}
       {data.total>0&&data.items.length===0?
-        <Link href={mentorTaskReviewHref({...data.query,page:1})}
+        <Link href={mentorTaskReviewHref({...linkQuery,page:1})}
           className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
           Return to first matching page
         </Link>:null}
-      {data.totalPages > 1 ? <Pagination label="Task review pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page => mentorTaskReviewHref({...data.query,page})}/> : null}
+      {data.totalPages > 1 ? <Pagination label="Task review pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page => mentorTaskReviewHref({...linkQuery,page})}/> : null}
     </>}
     <p className="text-xs leading-5 text-muted-foreground">
       This view reads registered task submissions only.
