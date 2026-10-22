@@ -8,7 +8,7 @@ DEFERRED is NOT allowed. For each row: read its full text in the source packet n
 Keep tests passing and TypeScript valid; never silence errors. Write one result line per row under Results, push, then tick this packet in your queue.
 
 - [x] G2-9-007-050  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
-- [ ] G2-9-012-026  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
+- [x] G2-9-012-026  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 - [x] G2-9-013-060  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 - [x] G2-9-014-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 - [x] G2-9-015-065  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
@@ -30,3 +30,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-9-036-018: OK — vNext `src/modules/module-access/admin-read-service.ts:200-258`; legacy `docs/legacy-source/frontend/src/pages/superadmin/sections/FeatureControlsHub.js:293-299`; overview module counters count the full matching college scope rather than one result page.
 - G2-9-036-047: OK — vNext `src/app/api/admin/features/[collegeId]/rules/route.ts:10-49` and `src/modules/module-access/admin-college-rule-write.ts:13-20`; legacy `docs/legacy-source/frontend/src/api/Services/AdminService.js:48-54`; versioned SET/INHERIT expected-state API intentionally replaces legacy bare module/enabled write and preserves catalog validation and authorization.
 - G2-9-014-049: OK — vNext `src/components/placements/college-application-pipeline-controls.tsx:285-305,403-439` (row Schedule Interview link; guarded reinstatement confirmation dialog) rendered by `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx:229-235`; legacy `docs/legacy-source/frontend/src/pages/superadmin/sections/JobApplications.js:1394-1446`.
+- G2-9-012-026: FIXED — commit `ff72cbe9209a63039e8f7446e35f7456afb55406`; `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`, `src/components/placements/college-interviews-last-good.tsx`, `src/app/(authenticated)/college/placements/jobs/[jobId]/layout.tsx`. Legacy: `docs/legacy-source/frontend/src/components/InterviewCalendar/InterviewCalendarContent.js:780-788`; isolated failure alert, retry and scoped last-good schedule retention.
