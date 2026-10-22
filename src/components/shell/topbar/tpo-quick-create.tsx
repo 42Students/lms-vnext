@@ -24,15 +24,15 @@ export function TpoQuickCreate({ collegeId }: { collegeId: string }) {
       href: "/tpo/placements/new?company=" + encodeURIComponent(company) },
   ] : TPO_TOPBAR_QUICK_LINKS.filter(link => link.label !== "Follow-up");
 
-  return <Dropdown align="end" className={style.createMenu} label="New placement work"
-    triggerClassName={style.new} trigger={<><PlusIcon/><span className={style.newLabel}>New</span></>}>
+  return <Dropdown align="end" {...(style["createMenu"] !== undefined ? {className: style["createMenu"]} : {})} label="New placement work"
+    {...(style["new"] !== undefined ? {triggerClassName: style["new"]} : {})} trigger={<><PlusIcon/><span className={style["new"]Label}>New</span></>}>
     <nav className="grid w-full min-w-[min(15rem,calc(100vw_-_5rem))] max-w-full gap-0"
       aria-label={company ? "Create work for " + company : "Create placement work"}>
       {links.map(link => <Link key={link.href} href={link.href}
-        className={`${style.menuItem} w-full min-w-0 break-words [overflow-wrap:anywhere]`}>
+        className={`${style["menuItem"]} w-full min-w-0 break-words [overflow-wrap:anywhere]`}>
         {link.label}
       </Link>)}
-      <hr className={style.menuDivider}/>
+      <hr className={style["menuDivider"]}/>
       <div className="min-w-0 [&>button]:!min-h-11 [&>button]:!px-[11px]">
         <TpoNewFollowupModal collegeId={collegeId}/>
       </div>

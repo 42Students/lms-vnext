@@ -92,7 +92,7 @@ function messageFrom(response: Response, fallback: string) {
   return response.json().then((payload: unknown) => {
     const body = payload !== null && typeof payload === "object" && !Array.isArray(payload)
       ? payload as Record<string, unknown> : {};
-    const code = typeof body.error === "string" ? body.error : null;
+    const code = typeof body["error"] === "string" ? body["error"] : null;
     // Never trust provider or API message strings as display copy.
     return response.status ? friendlyApiError({ status: response.status, code }) : fallback;
   }).catch(() => friendlyApiError({ status: response.status }));
@@ -197,8 +197,8 @@ export function LearnerQuizAttempt() {
     try {
       const query = `deliveryId=${encodeURIComponent(deliveryId)}&includeCorrectAnswers=true`;
       const [quizResponse, attemptsResponse] = await Promise.all([
-        fetch(`/api/courses/quizzes/${encodeURIComponent(quizId)}?${query}`, { cache: "no-store", signal }),
-        fetch(`/api/courses/quizzes/${encodeURIComponent(quizId)}/my-attempts?${query}`, { cache: "no-store", signal }),
+        fetch(`/api/courses/quizzes/${encodeURIComponent(quizId)}?${query}`, { cache: "no-store", ...(signal ? { signal } : {}) }),
+        fetch(`/api/courses/quizzes/${encodeURIComponent(quizId)}/my-attempts?${query}`, { cache: "no-store", ...(signal ? { signal } : {}) }),
       ]);
       if (!quizResponse.ok) throw new Error(await messageFrom(quizResponse, "Unable to load this quiz."));
       if (!attemptsResponse.ok) throw new Error(await messageFrom(attemptsResponse, "Unable to load your attempts."));
@@ -525,7 +525,7 @@ export function LearnerQuizAttempt() {
           ? `You have ${answerProgress.total-answerProgress.answered} unanswered question${answerProgress.total-answerProgress.answered === 1 ? "" : "s"}. Your quiz will still be submitted. Submit this quiz attempt? You cannot edit this attempt after submission.`
           : "Submit this quiz attempt? You cannot edit this attempt after submission."}
         confirmLabel="Submit" confirmVariant="primary" onConfirm={() => void submit()} />
-      <div className={styles.header+" pb-4"}>
+      <div className={styles["header"]+" pb-4"}>
         <PageHeader title={quiz.quiz.title}
           eyebrow="Quiz"
           actions={<div className="flex flex-wrap gap-2">
@@ -537,7 +537,7 @@ export function LearnerQuizAttempt() {
         <p className="text-sm font-semibold">Progress</p>
         <MetricBar label={`Question ${step+1} of ${questions.length}`}
           role="progressbar" value={step+1} maximum={questions.length}
-          className={styles.track+" mt-2"} />
+          className={styles["track"]+" mt-2"} />
         <p className="mt-2 text-xs font-semibold text-muted-foreground leading-[20px]">
           Question {step + 1} / {questions.length} · {quiz.attemptsRemaining} attempt(s) remaining
         </p>
@@ -548,7 +548,7 @@ export function LearnerQuizAttempt() {
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm text-body" aria-live="polite">
           <span>{answerProgress.answered} answered · {answerProgress.total-answerProgress.answered} unanswered</span>
           {answerProgress.firstUnanswered!==null ? (
-            <Button type="button" onClick={() => setStep(answerProgress.firstUnanswered!)}
+            <Button type="button" onClick={() => { if (answerProgress.firstUnanswered !== null) setStep(answerProgress.firstUnanswered); }}
               variant="secondary" className="min-h-11 md:min-h-9">
               Go to first unanswered
             </Button>
@@ -667,7 +667,7 @@ export function LearnerQuizAttempt() {
             ) : null}
           </div>
           {error ? <Alert tone="error" className="mt-4">{error}</Alert> : null}
-          <div className={styles.actions+" bottom-0 z-10 mt-7 grid min-w-0 grid-cols-2 gap-2"}>
+          <div className={styles["actions"]+" bottom-0 z-10 mt-7 grid min-w-0 grid-cols-2 gap-2"}>
             {step>0?<Button variant="secondary" className="min-h-11 w-full md:min-h-9" onClick={() => setStep((value) => Math.max(0, value - 1))}>Previous</Button>:<span aria-hidden="true"/>}
             {step < questions.length - 1 ? (
               <Button className="min-h-11 w-full md:min-h-9" disabled={!current || (answers[current.id]??[]).length===0}

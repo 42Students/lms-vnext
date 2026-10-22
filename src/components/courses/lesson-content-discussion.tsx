@@ -42,7 +42,7 @@ export function LessonContentDiscussion({contentId,deliveryId}:{
   const query=new URLSearchParams({deliveryId,limit:"50"});
   if(cursor){query.set("afterSequence",String(cursor.afterSequence));query.set("afterId",cursor.afterId);}
   try{
-   const response=await fetch(root+"?"+query.toString(),{cache:"no-store",signal});
+   const response=await fetch(root+"?"+query.toString(),{cache:"no-store",...(signal ? {signal} : {})});
    if(response.status===503){
     if(activeScope.current===scope&&mounted.current){
      setUnavailable(true);setMessages([]);setNextCursor(null);

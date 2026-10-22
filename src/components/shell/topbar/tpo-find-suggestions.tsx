@@ -55,7 +55,7 @@ export function TpoFindSuggestions({
     </div> : null}
     {ready && !state.error && state.results.map(result =>
       <Button type="button" variant="ghost" role="option" aria-selected={false} aria-label={result.label+" — "+result.group}
-        data-tpo-result="" key={result.href} className={style.suggestion+" min-w-0 max-w-full"}
+        data-tpo-result="" key={result.href} className={style["suggestion"]+" min-w-0 max-w-full"}
         onClick={() => onOpen(result.href)}>
         <SearchIcon/>
         <span className="min-w-0 flex-1 truncate">{result.label}</span>

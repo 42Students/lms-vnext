@@ -88,7 +88,7 @@ function ensureYouTubeIframeApi() {
   script.src =
     "https://www.youtube.com/iframe_api";
   script.async = true;
-  script.dataset.courseYoutubeApi =
+  script.dataset["courseYoutubeApi"] =
     "true";
   script.onerror = () => {
     iframeApiRequested = false;
@@ -356,7 +356,7 @@ export function LearnerYouTubePlayer({
         if (!response.ok) {
           if (!keepalive) {
             setSaveError(
-              await courseApiError(response),
+              (await courseApiError(response)) ?? null,
             );
           }
           return;

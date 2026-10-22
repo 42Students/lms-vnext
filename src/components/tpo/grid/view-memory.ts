@@ -21,14 +21,14 @@ export function parseGridViewMemory(
     for (const item of data) {
       if (!item || typeof item !== "object" || Array.isArray(item)) continue;
       const column = item as Record<string, unknown>;
-      if (typeof column.key !== "string" || !allowed.has(column.key) || used.has(column.key)) continue;
-      if (typeof column.width !== "number" || !Number.isFinite(column.width)) continue;
-      used.add(column.key);
+      if (typeof column["key"] !== "string" || !allowed.has(column["key"]) || used.has(column["key"])) continue;
+      if (typeof column["width"] !== "number" || !Number.isFinite(column["width"])) continue;
+      used.add(column["key"]);
       result.push({
-        key: column.key,
-        width: Math.max(100, Math.min(500, Math.round(column.width))),
-        pinned: column.pinned === true,
-        hidden: column.hidden === true,
+        key: column["key"],
+        width: Math.max(100, Math.min(500, Math.round(column["width"]))),
+        pinned: column["pinned"] === true,
+        hidden: column["hidden"] === true,
       });
     }
     return result;
@@ -44,13 +44,13 @@ export function serializeGridViewMemory(
   const allowed = new Set(permittedKeys);
   const used = new Set<string>();
   return JSON.stringify(columns.filter(column => {
-    if (!allowed.has(column.key) || used.has(column.key) || !Number.isFinite(column.width)) return false;
-    used.add(column.key);
+    if (!allowed.has(column["key"]) || used.has(column["key"]) || !Number.isFinite(column["width"])) return false;
+    used.add(column["key"]);
     return true;
   }).map(column => ({
-    key: column.key,
-    width: Math.max(100, Math.min(500, Math.round(column.width))),
-    pinned: Boolean(column.pinned),
-    hidden: Boolean(column.hidden),
+    key: column["key"],
+    width: Math.max(100, Math.min(500, Math.round(column["width"]))),
+    pinned: Boolean(column["pinned"]),
+    hidden: Boolean(column["hidden"]),
   })));
 }
