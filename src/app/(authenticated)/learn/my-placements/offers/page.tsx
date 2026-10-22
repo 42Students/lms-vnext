@@ -199,7 +199,10 @@ export default async function LearnerOffersPage({
         ← Applications
       </Link>
 
-      <PageHeader title="My offers" description="Your official placement offers and recorded joining outcomes." />
+      <div className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-3">
+        <h2 className="text-[18px] font-semibold leading-6 text-[var(--lms-heading)]">My offers</h2>
+        <p className="mt-1 text-sm text-body">Your official placement offers and recorded joining outcomes.</p>
+      </div>
 
       {conflictingDeadlines ? <Banner tone="warning">
         The due-soon and historical expiry filters cannot be combined. Showing the selected expiry state instead.
