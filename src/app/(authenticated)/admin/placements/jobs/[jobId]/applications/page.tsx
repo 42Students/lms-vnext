@@ -101,6 +101,12 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
   const totalStageCount=Object.values(data.stageCounts).reduce((sum,num)=>sum+num,0);
   return <div className="min-w-0 space-y-4 md:space-y-6">
     
+    <PageHeader title={"Applications ("+data.total.toLocaleString("en-IN")+")"}
+      description="Review applications, move candidates through hiring stages and notify them about decisions."
+      actions={<div className="flex flex-wrap gap-2">
+        <Link href="/admin/placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Back to Jobs</Link>
+        <Link href={retryHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">↻ Refresh</Link>
+      </div>} />
     <nav aria-label="Drive breadcrumb" className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
       <Link href={returnTo} className="font-semibold text-primary-text hover:underline">
         Drives
@@ -109,12 +115,6 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
         {job?.title||data.drive.title||"Drive #"+jobId.slice(0,8)}
       </Link>
     </nav>
-    <PageHeader title={"Applications ("+data.total.toLocaleString("en-IN")+")"}
-      description="Review applications, move candidates through hiring stages and notify them about decisions."
-      actions={<div className="flex flex-wrap gap-2">
-        <Link href="/admin/placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Back to Jobs</Link>
-        <Link href={retryHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">↻ Refresh</Link>
-      </div>} />
     <CollegeDriveApplicationsSizeControl
       action={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"}
       query={query}/>
@@ -125,7 +125,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
         {item.label}
       </Link>)}
     </nav>
-    <section aria-label="Drive details" className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
+    <section aria-label="Drive details" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold text-foreground">{job?.title||data.drive.title}</h2>
@@ -137,9 +137,9 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
           {job?.status??"Status unavailable"}
         </StatusBadge>
       </div>
-      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-5">
+      <div className="mt-4 grid grid-cols-2 overflow-hidden rounded-[var(--lms-radius-md)] border border-[var(--lms-canvas-border)] sm:grid-cols-4 lg:grid-cols-5">
         {(["APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","OFFERED"] as const).map(stage=>
-          <div key={stage} className="rounded-lg border border-border bg-surface-subtle px-3 py-2">
+          <div key={stage} className="border-r border-b border-[var(--lms-canvas-border)] bg-surface px-3 py-2 last:border-r-0">
             <p className="text-xs font-semibold text-muted-foreground">
               {stage.charAt(0)+stage.slice(1).toLowerCase()}
             </p>
@@ -163,10 +163,10 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     {filters===null?<Banner tone="warning" action={<Link href={retryHref} className="font-semibold underline">Retry filter choices</Link>}>
       Department, program and batch options could not be loaded. The current applications remain visible; academic filter choices are unavailable.
     </Banner>:null}
-    <form method="get" className="min-w-0 space-y-[var(--lms-space-3)] rounded-[8px] border border-[#f0f0f0] bg-[#fafafa] p-4" aria-label="Filter job applications">
-      {shortlisted?<input type="hidden" name="shortlisted" value="true"/>:null}
-      {query.attention!=="ALL"?<input type="hidden" name="attention" value={query.attention}/>:null}
-      {preserved?<input type="hidden" name="returnTo" value={returnTo}/>:null}
+    <form method="get" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-4" aria-label="Filter job applications">
+      {shortlisted?<Input type="hidden" name="shortlisted" value="true"/>:null}
+      {query.attention!=="ALL"?<Input type="hidden" name="attention" value={query.attention}/>:null}
+      {preserved?<Input type="hidden" name="returnTo" value={returnTo}/>:null}
       <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_auto]">
       <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Name, email, roll or role
         <Input name="q" defaultValue={query.q} maxLength={100} className="min-h-11 w-full md:min-h-9" />
@@ -250,7 +250,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       <Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/shortlisted"}
        className="font-semibold text-primary-text underline">Manage Shortlisted · Assessment</Link>
     </nav>
-    <div className={shortlisted?"rounded-[8px] border border-[#f0f0f0] bg-[#f5f5f5] p-[3px]":"min-w-0"}>
+    <div className="min-w-0">
     <Tabs ariaLabel="Application pipeline stages" value={query.stage} renderPanel={false}
       items={(shortlisted?(["ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED"] as const):
         (["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const)).map(stage=>({

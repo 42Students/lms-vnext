@@ -107,7 +107,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
  return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Placement Analytics"
    description={"Track the hiring funnel, conversion and company performance for the "+scopeLabel+". Filters apply consistently to the headline metrics, funnel and company report below."}
-   actions={<span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Placements</span>}/>
+   />
   {filters===null?<Banner tone="warning"
    action={collegeSelected?<Link href={reportPageHref(reportPage)} className="font-semibold underline">Retry dropdown choices</Link>:undefined}>
    {collegeSelected
@@ -153,10 +153,10 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
     const next=new URLSearchParams(params);
     next.delete(key);
     return <Link key={key} href={"/admin/placements/analytics"+(next.size?"?"+next.toString():"")}
-     className="inline-flex min-h-8 items-center gap-2 rounded border border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] px-2 font-medium text-primary-text hover:underline"
+     className="inline-flex min-h-11 items-center gap-2 rounded border border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] px-2 font-medium text-primary-text hover:underline"
      aria-label={"Remove "+key+" filter"}>{key==="appliedFrom"?"Applied from":key==="appliedTo"?"Applied to":key==="jobId"?"Job":key==="cohortId"?"Batch":key==="departmentId"?"Department":key==="programId"?"Program":"Search"}: {value}<span aria-hidden="true">×</span></Link>;
    })}
-   <Link href="/admin/placements/analytics" className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Clear all</Link>
+   <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear all</Link>
   </div>:null}
   <p role="status" className="text-sm text-body">{data.matchingJobCount} matching drives · showing {data.rows.length} across {groups.length} displayed companies{data.truncated?" (row/CSV cap: 5,000 drives)":""}</p>
   {data.truncated?<Banner tone="warning">
@@ -164,14 +164,14 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   </Banner>:null}
   <section aria-label="Hiring metrics" className="min-w-0">
    <h2 className="sr-only">Hiring metrics</h2>
-   <dl className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6">
-    {metricKeys.map((key,index)=><div key={key} className={"min-w-0 rounded-[8px] border border-border bg-surface px-3 py-4 "+(index===0?"col-span-2 sm:col-span-2":"")}>
+   <dl className="grid min-w-0 grid-cols-2 overflow-hidden rounded-[var(--lms-radius-md)] border border-[var(--lms-canvas-border)] sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6">
+    {metricKeys.map((key,index)=><div key={key} className={"min-w-0 border-r border-b border-[var(--lms-canvas-border)] bg-surface px-3 py-4 last:border-r-0 "+(index===0?"col-span-2 sm:col-span-2":"")}>
      <dt className="text-[13px] font-medium text-muted-foreground">{hiringMetricLabel(key)}</dt>
      <dd className="mt-2 text-2xl font-semibold tabular-nums text-[var(--lms-heading)]">{totals[key].toLocaleString("en-IN")}</dd>
     </div>)}
    </dl>
   </section>
-  <section className="min-w-0 rounded-[8px] border border-border bg-surface p-4" aria-label="Hiring Funnel">
+  <section className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-4" aria-label="Hiring Funnel">
    <h2 className="mb-4 text-[var(--lms-font-lg)] font-semibold text-[var(--lms-heading)]">Hiring Funnel</h2>
    {funnelTotals.applied===0?
     <p role="status" className="text-sm text-muted-foreground">No funnel data</p>:
@@ -191,12 +191,12 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
        value={step.widthPercent} maximum={100} unit="percent"/>
      </li>)}</ol>}
   </section>
-  {meanShortlistHours!==null?<div className="w-full rounded-[8px] border border-border bg-surface p-3 sm:max-w-[280px]">
+  {meanShortlistHours!==null?<div className="w-full border-t border-[var(--lms-canvas-border)] pt-4">
    <p className="text-sm text-muted-foreground">Avg. time to shortlist</p>
    <p className="mt-2 text-2xl font-semibold tabular-nums">{meanShortlistHours.toLocaleString("en-IN")} <span className="text-sm font-normal">hrs</span></p>
    <p className="mt-1 text-xs text-muted-foreground">Mean of drives with recorded first-shortlist transitions.</p>
   </div>:<p className="text-sm text-muted-foreground">Avg. time to shortlist: Not recorded. A first-shortlist transition is required before this metric can be calculated.</p>}
-  <section aria-label="Company-wise Hiring Report" className="min-w-0 space-y-3 rounded-[8px] border border-border bg-surface p-4">
+  <section aria-label="Company-wise Hiring Report" className="min-w-0 space-y-3 border-t border-[var(--lms-canvas-border)] pt-4">
    <h2 className="text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Company-wise Hiring Report</h2>
    <DataTable columns={columns} rows={visibleRows} getRowKey={row=>row.jobId}
     caption="Company-wise Hiring Report" mobileMode="scroll"
