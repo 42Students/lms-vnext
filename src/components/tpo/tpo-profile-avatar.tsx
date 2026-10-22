@@ -96,13 +96,13 @@ export function TpoProfileAvatar({name,initials}:{name:string;initials:string}){
      if(selected)void upload(selected);event.currentTarget.value="";}}/>
    <button type="button" title="Change profile photo" aria-label="Change profile photo"
     disabled={busy} onClick={()=>fileRef.current?.click()}
-    className="absolute -bottom-1 -right-1 flex h-10 w-10 items-center justify-center rounded-full border border-[var(--lms-canvas-border)] bg-white text-[var(--lms-primary-text)] shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">
+    className="absolute -bottom-1 -right-1 flex h-11 w-11 items-center justify-center rounded-full border border-[var(--lms-canvas-border)] bg-white text-[var(--lms-primary-text)] shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">
     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
      <path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4Z"/>
     </svg>
    </button>
   </div>
-  <button type="button" className="block min-h-9 text-left text-xs font-semibold text-link underline"
+  <button type="button" className="block min-h-11 md:min-h-9 text-left text-xs font-semibold text-link underline"
    disabled={busy} aria-expanded={showLink} onClick={()=>setShowLink(!showLink)}>Use an image link</button>
   {showLink?<div className="w-full min-w-[220px] max-w-[340px] space-y-2">
    <label htmlFor="tpo-avatar-link" className="block text-xs font-semibold">HTTPS image URL</label>

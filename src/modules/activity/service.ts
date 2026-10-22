@@ -509,7 +509,10 @@ async function resolveReadScope(
   };
 }
 
-/** Historical audit categories, scoped before LIMIT/cursor to preserve counts. */
+/** Match legacy audit entity groups before pagination, with explicit vNext
+ * entity aliases for membership and project workspace rows.  Filtering by
+ * broad module would pull unrelated course, identity and project chatter into
+ * the legacy quick-filter totals. Important also includes vNext severity. */
 function legacyCategoryCondition(category:"important"|"setup"|"people"|"teaching"|"projects"):SQL{
  const subject=sql`lower(${activityEvents.subjectType})`;
  const event=sql`upper(${activityEvents.eventType})`;
@@ -517,23 +520,13 @@ function legacyCategoryCondition(category:"important"|"setup"|"people"|"teaching
   inArray(activityEvents.importance,["HIGH","CRITICAL"]),
   sql`${event} ~ '(DELETE|RESTORE|PROMOTE|BATCH[._]SEMESTER[._]UPDATE|SUSPEND|REACTIVAT|IMPERSONAT|MODULE[._]ACCESS|FEATURE[._]TOGGLE|IDENTITY[._]READ|BULK[._]STATUS)'`,
  )!;
- if(category==="setup")return or(
-  sql`${subject} in ('department','program','semester','batch','class','course','lesson','lecture_hall','academic_year')`,
-  inArray(activityEvents.module,["ACADEMICS","COURSES"]),
- )!;
+ if(category==="setup")return sql`${subject} in ('department','program','semester','batch','class','course','lesson','lecture_hall','academic_year')`;
  if(category==="people")return or(
   sql`${subject} in ('faculty','learner','learner_profile','user','college_membership')`,
-  sql`${event} like '%MODULE_ACCESS%'`,
-  eq(activityEvents.module,"IDENTITY"),
+  sql`${event} ~ '(^|[._])MODULE[._]ACCESS'`,
  )!;
- if(category==="teaching")return or(
-  sql`${subject} in ('class_schedule','announcement','quiz','lesson_content','attendance')`,
-  eq(activityEvents.module,"COURSES"),
- )!;
- return or(
-  sql`${subject} in ('project','project_task','project_template','project_instance','project_task_comment')`,
-  eq(activityEvents.module,"PROJECTS"),
- )!;
+ if(category==="teaching")return sql`${subject} in ('class_schedule','announcement','quiz','lesson_content')`;
+ return sql`${subject} in ('project','project_task','project_template','project_instance','project_task_comment')`;
 }
 
 export async function listActivityEvents(
