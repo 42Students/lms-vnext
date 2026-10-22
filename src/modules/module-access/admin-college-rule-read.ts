@@ -7,6 +7,7 @@ import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {OPTIONAL_MODULE_KEYS} from "./service";
 import {collegeRuleReadSnapshot} from "./admin-college-rule-model";
+import {resolveOptionalModuleAccessForChain} from "./service";
 /** An exact persisted tenant lookup precedes any returned rule state. */
 export async function getSuperAdminCollegeFeatureSnapshot(context:RequestContext,collegeInput:string){
  if(!isSuperAdmin(context))throw new AuthorizationError("admin-scope.select");
@@ -19,5 +20,14 @@ export async function getSuperAdminCollegeFeatureSnapshot(context:RequestContext
  const rules=await db.select({module:moduleAccessRules.module,enabled:moduleAccessRules.enabled,locked:moduleAccessRules.locked})
   .from(moduleAccessRules).where(and(eq(moduleAccessRules.scopeType,"COLLEGE"),eq(moduleAccessRules.scopeId,collegeId),
     inArray(moduleAccessRules.module,[...OPTIONAL_MODULE_KEYS])));
- return {college:{id:college.id,name:college.name},rules:collegeRuleReadSnapshot(rules)};
+ // Resolve the real effective policy using only the selected college and
+ // persisted ancestors. This is a second read independent of the stored-rule
+ // receipt, so the client can confirm policy propagation before celebrating.
+ const effective=await resolveOptionalModuleAccessForChain([
+  {scopeType:"COLLEGE",scopeId:college.id},
+  {scopeType:"ORGANIZATION",scopeId:college.organizationId},
+  {scopeType:"GLOBAL",scopeId:null},
+ ]);
+ return {college:{id:college.id,name:college.name},
+  rules:collegeRuleReadSnapshot(rules),effective};
 }
