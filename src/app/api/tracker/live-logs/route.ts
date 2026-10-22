@@ -24,17 +24,17 @@ function normalizedFilters(raw:Record<string,unknown>){
     if(target in next)return null;
     next[target]=value;
   }
-  if(next.environment!==undefined && next.environment!==alertEnvironment())return null;
-  delete next.environment;
-  if(next.size!==undefined){
-    const size=Number(next.size);
+  if(next["environment"]!==undefined && next["environment"]!==alertEnvironment())return null;
+  delete next["environment"];
+  if(next["size"]!==undefined){
+    const size=Number(next["size"]);
     if(!Number.isSafeInteger(size)||size<1||size>12)return null;
   }
-  const size=next.size===undefined?12:Number(next.size);
-  delete next.size;
+  const size=next["size"]===undefined?12:Number(next["size"]);
+  delete next["size"];
   // Legacy level values are case-insensitive; the provider is restricted to
   // WARNING/ERROR and never accepts raw Cloud Logging filter expressions.
-  if(typeof next.minimumSeverity==="string")next.minimumSeverity=next.minimumSeverity.toUpperCase();
+  if(typeof next["minimumSeverity"]==="string")next["minimumSeverity"]=next["minimumSeverity"].toUpperCase();
   const parsed=trackerCloudLogQuerySchema.safeParse(next);
   return parsed.success?{query:parsed.data,size}:null;
 }
@@ -116,7 +116,8 @@ export async function POST(request:Request){
       message:"Deployment history is not configured for this environment."},
       {headers:{"Cache-Control":"private, no-store"}});
   }
-  const at=parsed.data.at!;
+  const at=parsed.data.at;
+  if(!at)return NextResponse.json({message:"Deployment timestamp is required."},{status:400});
   const deployedAt=new Date(at).getTime();
   const now=Date.now();
   if(deployedAt>now-10*60_000 || deployedAt<now-24*60*60_000){
