@@ -12,6 +12,15 @@ import {collegeDriveIdSchema} from "./college-drive-read-model";
 import {collegeInterviewActionSchema} from "./college-interview-action-model";
 import {placementCollegeApplicationStages} from "@/db/schema/placement-college-application-stages";
 
+/** The current write API remains job/round/application scoped; old jobApplication
+ * and learner IDs resolve through the chosen college membership, never across tenants. */
+export const collegeInterviewLegacyActionMap={
+ create:"SCHEDULE",update:"EDIT",cancel:"CANCEL",complete:"COMPLETE",noShow:"NO_SHOW",
+ response:"id/status/version",
+} as const;
+export class CollegeInterviewFieldError extends Error {
+ constructor(readonly field:"scheduledAt"|"meetingUrl",message:string){super(message);this.name="CollegeInterviewFieldError";}
+}
 async function scope(ctx:RequestContext,raw:unknown){
  const collegeId=await requireCollegePlacementAdmin(ctx),jobId=collegeDriveIdSchema.parse(raw);
  const [job]=await getDb().select({id:placementJobs.id,title:placementJobs.title,
@@ -20,12 +29,7 @@ async function scope(ctx:RequestContext,raw:unknown){
  if(!job)throw Error("Placement drive not found");
  return {collegeId,job};
 }
-function roundInterviewInstantIst(value:Date):string{
- return new Intl.DateTimeFormat("en-IN",{
-  timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
- }).format(value)+" IST";
-}
-function viewSlot(s:typeof slots.$inferSelect,outcome?:string,feedback?:string|null,editNotes?:string|null){
+function viewSlot(s:typeof slots.$inferSelect,outcome?:string,feedback?:string|null,editNotes?:string|null,conflictKinds:readonly string[]=[]){
  const virtual=s.room.startsWith("https://");
  return {id:s.id,jobId:s.jobId,roundId:s.roundId,applicationId:s.applicationId??"",
   status:s.status==="CANCELLED"?"CANCELLED":outcome??(s.legacyInterviewStatus==="RESCHEDULE_REQUESTED"?"RESCHEDULE_REQUESTED":"SCHEDULED"),
@@ -34,7 +38,10 @@ function viewSlot(s:typeof slots.$inferSelect,outcome?:string,feedback?:string|n
   mode:virtual?"VIRTUAL":"ON_CAMPUS",venue:virtual?null:s.room,
   meetingUrl:virtual?s.room:null,interviewer:s.panel,outcomeNote:feedback??null,
   version:s.version,interviewType:s.legacyInterviewType,
-  roundDescription:s.legacyRoundDescription,editNotes:editNotes??null};
+  roundDescription:s.legacyRoundDescription,editNotes:editNotes??null,
+  hasConflict:conflictKinds.length>0,conflictKinds,
+  statusLabel:s.status==="CANCELLED"?"Cancelled":outcome==="NO_SHOW"?"No Show":outcome==="COMPLETED"?"Completed":"Scheduled",
+  notificationChannels:["IN_APP"] as const};
 }
 export type CollegeRoundSlotAppointmentFilters = {
  appointmentPage?:number;
@@ -184,6 +191,35 @@ export async function getCollegeRoundSlotAppointments(
     "PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW","PLACEMENTS_COLLEGE_INTERVIEW_FEEDBACK",
     "PLACEMENTS_COLLEGE_INTERVIEW_RESCHEDULED"])))
   .orderBy(asc(activityEvents.occurredAt),asc(activityEvents.id)):[];
+ // Compute collisions for the selected bounded page, not the entire historical
+ // calendar in client memory. Compare with *all* active appointments of this
+ // college including jobs outside the current view; prevent cross-tenant leaks.
+ const conflicts=ids.length?await db.select({id:slots.id,
+  candidateConflict:sql<boolean>`exists(
+   select 1 from placement_round_candidate_slots other
+   join placement_jobs jo on jo.id=other.job_id and jo.college_id=${collegeId}
+   join placement_applications me on me.id=${slots.applicationId}
+   join placement_applications oa on oa.id=other.application_id
+   where other.id<>${slots.id} and other.status='BOOKED'
+     and oa.membership_id=me.membership_id
+     and other.starts_at < ${slots.endsAt} + interval '15 minutes'
+     and other.ends_at > ${slots.startsAt} - interval '15 minutes'
+     and not exists(select 1 from activity_events e where e.subject_id=other.id
+      and e.subject_type='placement_round_candidate_slot'
+      and e.event_type in ('PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED','PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW')))` ,
+  roomConflict:sql<boolean>`exists(
+   select 1 from placement_round_candidate_slots other
+   join placement_jobs jo on jo.id=other.job_id and jo.college_id=${collegeId}
+   where other.id<>${slots.id} and other.status='BOOKED'
+    and lower(trim(other.room))=lower(trim(${slots.room}))
+    and other.starts_at < ${slots.endsAt} + interval '15 minutes'
+    and other.ends_at > ${slots.startsAt} - interval '15 minutes'
+    and not exists(select 1 from activity_events e where e.subject_id=other.id
+     and e.subject_type='placement_round_candidate_slot'
+     and e.event_type in ('PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED','PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW')))` ,
+ }).from(slots).where(inArray(slots.id,ids)):[];
+ const conflictMap=new Map(conflicts.map(row=>[row.id,
+   [...(row.candidateConflict?["CANDIDATE"]:[]),...(row.roomConflict?["ROOM"]:[])] as string[]]));
  const outcomes=new Map<string,string>();
  const feedbackBySlot=new Map<string,string>();
  const editNotesBySlot=new Map<string,string>();
@@ -237,11 +273,8 @@ export async function getCollegeRoundSlotAppointments(
   }
  }
  return {job,storageReady:true,rounds,candidates,
-  candidateTotal,candidatePage,candidatePageSize,candidatePages,
-  candidateHasMore:candidatePage<candidatePages,
-  candidateConflicts,candidateConflictsHasMore,
-  appointmentTotal,appointmentPage,appointmentPageSize,appointmentPages,
-  interviews:bookings.map(row=>viewSlot(row,outcomes.get(row.id),feedbackBySlot.get(row.id),editNotesBySlot.get(row.id)))};
+  candidateTotal,appointmentTotal,appointmentPage,appointmentPageSize,appointmentPages,
+  interviews:bookings.map(row=>viewSlot(row,outcomes.get(row.id),feedbackBySlot.get(row.id),editNotesBySlot.get(row.id),conflictMap.get(row.id)??[]))};
 }
 
 export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobId:unknown,raw:unknown){
@@ -261,7 +294,8 @@ export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobI
   if(cmd.action==="SCHEDULE"||cmd.action==="EDIT"){
    const a=cmd.appointment;
    const start=new Date(a.scheduledAt),end=new Date(start.getTime()+a.durationMinutes*60_000);
-   if(start<=new Date())throw Error("The selected date and time is in the past");
+   if(start<=new Date())throw new CollegeInterviewFieldError("scheduledAt","The selected date and time is in the past");
+   if(a.mode==="VIRTUAL"&&!a.meetingUrl?.startsWith("https://"))throw new CollegeInterviewFieldError("meetingUrl","Enter an HTTPS meeting link");
    const [app]=await tx.select({id:placementApplications.id,userId:collegeMemberships.userId,
     membershipId:placementApplications.membershipId})
     .from(placementApplications)
@@ -430,7 +464,7 @@ export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobI
    body:message,actionHref:"/learn/my-placements/interviews",
   }).onConflictDoNothing();
   return {id:booked.id,status:cmd.action==="SCHEDULE"||cmd.action==="EDIT"?
-   "SCHEDULED":cmd.action,version:booked.version};
+   "SCHEDULED":cmd.action,version:booked.version,notificationChannels:["IN_APP"] as const};
  });
 }
 
