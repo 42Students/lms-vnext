@@ -13,6 +13,8 @@ import { AuthorizationError, requirePermission } from "@/modules/permissions/pol
 import { requireLearnerPlacementAccess } from "@/modules/placements/learner-participation-guard";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { listVisibleAnnouncementsForMembership } from "@/modules/announcements/service";
+import { listOwnLearnerAnnouncementReceipts } from "@/modules/announcements/learner-announcement-receipts-service";
+import { LearnerNoticeReadAction } from "@/components/placements/learner-notice-read-action";
 import { learnerPlacementNoticeFeed } from "@/modules/placements/learner-placement-announcement-model";
 import { learnerPlacementNoticeView } from "@/modules/placements/learner-placement-notice-view-model";
 import {getOwnLearnerPlacementAlerts,getUnreadOwnLearnerPlacementAlertCount} from "@/modules/placements/learner-placement-alerts-service";
@@ -63,8 +65,16 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
   const collegeNoticesRead = ready
     ? await readOptionalLearnerAlertSource(() => listVisibleAnnouncementsForMembership(context))
     : { available: false as const, items: [] };
+  const receiptsRead=collegeNoticesRead.available
+    ?await readOptionalLearnerAlertSource(()=>
+       listOwnLearnerAnnouncementReceipts(context,collegeNoticesRead.items.map(row=>row.id)))
+    :{available:false as const,items:[]};
+  const ownReceipts=new Map(receiptsRead.items.map(row=>[row.announcementId,row]));
   const allNotices = collegeNoticesRead.available
-    ? learnerPlacementNoticeFeed(collegeNoticesRead.items)
+    ? learnerPlacementNoticeFeed(collegeNoticesRead.items.map(row=>({
+       ...row,
+       unread:ownReceipts.has(row.id)?ownReceipts.get(row.id)!.readAt===null:null,
+      })))
     : [];
   // College notices and personal updates have independent unread populations.
   // Unknown per-notice receipts must never be displayed as zero unread.
@@ -240,6 +250,8 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
                  </div>
                ) : null}
               {notice.senderLabel==="Placement cell"?<TpoNoticeAcknowledge id={notice.id}/>:null}
+              {notice.unread===true&&ownReceipts.has(notice.id)?
+                <LearnerNoticeReadAction notificationId={ownReceipts.get(notice.id)!.notificationId}/>:null}
               {learnerNoticeHref(notice.id) ? (
                 <Link href={learnerNoticeHref(notice.id)!}
                   className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">

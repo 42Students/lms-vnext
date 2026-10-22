@@ -12,6 +12,36 @@ import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import type { MentorMeetingCalendarItem } from "./mentor-calendar-view";
 
 /**
+ * Organizer time zones describe how meetings were originally scheduled, not
+ * the attendee's display zone. vNext intentionally displays every meeting in
+ * IST, even when the mentor or organizer is elsewhere. The persisted
+ * timestamptz is already an instant: format it as UTC ISO once, never parse
+ * an organizer's wall clock in the server or apply a second zone offset.
+ */
+export const MENTOR_CALENDAR_VIEW_ZONE = "Asia/Kolkata" as const;
+
+export function mentorCalendarMeetingInstants(
+  startsAt:Date, endsAt:Date, organizerZone:string,
+) {
+  if (!Number.isFinite(startsAt.getTime()) || !Number.isFinite(endsAt.getTime()) ||
+      endsAt.getTime() < startsAt.getTime()) {
+    throw new Error("Invalid persisted mentor meeting time window");
+  }
+  let validOrganizerZone=organizerZone.trim();
+  try {
+    new Intl.DateTimeFormat("en-IN",{timeZone:validOrganizerZone}).format(startsAt);
+  } catch {
+    validOrganizerZone=MENTOR_CALENDAR_VIEW_ZONE;
+  }
+  return {
+    startsAt:startsAt.toISOString(),
+    endsAt:endsAt.toISOString(),
+    organizerZone:validOrganizerZone,
+    displayZone:MENTOR_CALENDAR_VIEW_ZONE,
+  };
+}
+
+/**
  * Single tenant-scoped query across ONLY currently assigned mentor projects.
  * A platform/college admin cannot use this personal Mentor endpoint to browse
  * arbitrary projects. The active mentor membership and role are rechecked in DB.
@@ -70,7 +100,9 @@ export async function listMyMentorCalendarMeetings(
     ))
     .orderBy(asc(projectMeetings.startsAt), asc(projectMeetings.id));
 
-  return rows.map(row => ({
+  return rows.map(row => {
+    const window=mentorCalendarMeetingInstants(row.startsAt,row.endsAt,row.timeZone);
+    return {
     id: row.id,
     projectId: row.projectId,
     projectTitle: row.projectTitle,
@@ -78,10 +110,11 @@ export async function listMyMentorCalendarMeetings(
     title: row.title,
     status: row.status as MentorMeetingCalendarItem["status"],
     meetingType: row.meetingType as MentorMeetingCalendarItem["meetingType"],
-    startsAt: row.startsAt.toISOString(),
-    endsAt: row.endsAt.toISOString(),
-    timeZone: row.timeZone,
+    startsAt: window.startsAt,
+    endsAt: window.endsAt,
+    timeZone: window.organizerZone,
     meetingUrl: row.meetingUrl,
     linkedSprintTitle: row.linkedSprintTitle,
-  }));
+    };
+  });
 }

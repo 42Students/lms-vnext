@@ -12,6 +12,18 @@ import {collegeHiringAnalyticsSchema} from "./college-hiring-analytics-model";
 const stages=["APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED",
  "OFFERED","HIRED","REJECTED","WITHDRAWN"] as const;
 
+/** Old college hiring report headings; stage facts in vNext remain persisted,
+ * not inferred from missing screening/offer records. */
+export const COLLEGE_HIRING_LEGACY_METRIC_LABELS={
+ applications:"Total Applications",
+ shortlisted:"Shortlisted",
+ interviewed:"Interviewed",
+ offered:"Offers Made",
+ hired:"Hired",
+ averageTimeToShortlist:"Avg Time to Shortlist",
+ companyBreakdown:"Company Performance",
+} as const;
+
 /** All counts are observed application stage facts in the selected college; never
  * infer a funnel stage solely from the existence of an offer or scheduled round. */
 export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown){
@@ -56,12 +68,15 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
      case when ${placementApplicationScreenings.status}='SHORTLISTED' then 'SHORTLISTED'
       when ${placementApplicationScreenings.status}='REJECTED' then 'REJECTED'
       else 'APPLIED' end) end`.as("observed_stage"),
-  shortlistHours:sql<number|null>`(select extract(epoch from
-    (min(h.moved_at)-${placementApplications.submittedAt}))/3600
+  // Legacy TIMESTAMPDIFF(SECOND) truncated each row before averaging.
+  // Preserve that precision so the public millisecond metric rounds exactly
+  // like the historic MySQL report; the ISO instants are timezone-independent.
+  shortlistSeconds:sql<number|null>`(select trunc(extract(epoch from
+    (min(h.moved_at)-${placementApplications.submittedAt})))
     from placement_college_application_stage_history h
     inner join placement_college_application_stages s on s.id=h.stage_id
     where s.application_id=${placementApplications.id} and h.to_stage='SHORTLISTED')`
-    .as("shortlist_hours"),
+    .as("shortlist_seconds"),
  }).from(placementApplications)
  .innerJoin(placementJobs,and(eq(placementJobs.id,placementApplications.jobId),
    eq(placementJobs.collegeId,collegeId)))
@@ -117,8 +132,9 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
    .orderBy(asc(base.companyName),asc(base.jobTitle))
    .then(rows=>rows).catch(()=>null),
   db.select({stage:base.stage,total:count()}).from(base).groupBy(base.stage),
-  db.select({avgHours:sql<number|null>`avg(${base.shortlistHours})`}).from(base)
-   .where(sql`${base.shortlistHours} >= 0`),
+  db.select({avgSeconds:sql<number|null>`avg(${base.shortlistSeconds})`,
+    sampled:sql<number>`count(${base.shortlistSeconds})::integer`.mapWith(Number)})
+   .from(base).where(sql`${base.shortlistSeconds} >= 0`),
   db.select(stageProjections).from(base),
  ]);
  const totals=Object.fromEntries(stages.map(stage=>[stage,0])) as Record<string,number>;
@@ -174,7 +190,14 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
    a.company.localeCompare(b.company)),
   companyRowsFirstPage:[...companies.values()].slice(0,10),
   companyRowsPageSize:10,
-  averageHoursToShortlist:averages[0]?.avgHours==null?null:Number(averages[0].avgHours),
+  averageHoursToShortlist:averages[0]?.avgSeconds==null?null:
+    Number(averages[0].avgSeconds)/3600,
+  // Mirror legacy avgTimeToShortlistMs, including the legacy integer rounding
+  // and explicit null when no first-shortlist history exists.
+  averageTimeToShortlistMs:averages[0]?.avgSeconds==null?null:
+    Math.round(Number(averages[0].avgSeconds)*1000),
+  shortlistHistorySampleCount:averages[0]?.sampled??0,
+  legacyMetricLabels:COLLEGE_HIRING_LEGACY_METRIC_LABELS,
   availableStages:[...stages],
   filters:{departments:departmentsList,programs:programList,cohorts:cohortList,errors:filterErrors}};
 }
