@@ -25,16 +25,16 @@ import {VerificationQueueLimitError} from "./staff-queue-service";
 const fmt=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"});
 export async function exportCollegeVerificationCsv(context:RequestContext,raw:unknown,superAdminCollegeId?:string){
  const filter=verificationQueueFilters.parse(raw);
- if(!verificationSubmissionWindowValid(filter))throw Error("INVALID_VERIFICATION_SUBMISSION_WINDOW");
+ if(!verificationSubmissionWindowValid({ ...(filter.submittedFrom!==undefined?{submittedFrom:filter.submittedFrom}:{}), ...(filter.waitingSince!==undefined?{waitingSince:filter.waitingSince}:{}) }))throw Error("INVALID_VERIFICATION_SUBMISSION_WINDOW");
  if(!verificationWaitingStateValid(filter))throw Error("INVALID_VERIFICATION_WAITING_STATE");
- if(!verificationEnrollmentFiltersValid(filter))throw Error("INVALID_VERIFICATION_ENROLLMENT_FILTERS");
+ if(!verificationEnrollmentFiltersValid({ enrollment:filter.enrollment, ...(filter.programId!==undefined?{programId:filter.programId}:{}), ...(filter.batchId!==undefined?{batchId:filter.batchId}:{}), ...(filter.branchId!==undefined?{branchId:filter.branchId}:{}), ...(filter.sectionId!==undefined?{sectionId:filter.sectionId}:{}) }))throw Error("INVALID_VERIFICATION_ENROLLMENT_FILTERS");
  if(!verificationAgeBandValid(filter))throw Error("INVALID_VERIFICATION_AGE_BAND");
- if(!verificationSectionEvidenceFiltersValid(filter))throw Error("INVALID_VERIFICATION_SECTION_EVIDENCE_FILTERS");
+ if(!verificationSectionEvidenceFiltersValid({ marksheets:filter.marksheets,attention:filter.attention,...(filter.kind!==undefined?{kind:filter.kind}:{}) }))throw Error("INVALID_VERIFICATION_SECTION_EVIDENCE_FILTERS");
  if(!verificationWaitingAttentionValid(filter))throw Error("INVALID_VERIFICATION_ATTENTION_TAB");
  if(!verificationAttentionAgeCompatible(filter))throw Error("INVALID_VERIFICATION_ATTENTION_AGE");
  const scope=superAdminCollegeId ? await requireSuperAdminVerificationCollege(context,superAdminCollegeId) : await requireCollegeVerificationActor(context);
  await requireVerificationTables();
- const dateBounds=verificationSubmittedSqlBounds(filter);
+ const dateBounds=verificationSubmittedSqlBounds({ ...(filter.submittedFrom!==undefined?{submittedFrom:filter.submittedFrom}:{}), ...(filter.waitingSince!==undefined?{waitingSince:filter.waitingSince}:{}) });
  const evaluatedAt=new Date();
  const ageBounds=verificationAgeSqlBounds(filter.ageBand,evaluatedAt);
  const rows=await getDb().select({
@@ -77,8 +77,7 @@ export async function exportCollegeVerificationCsv(context:RequestContext,raw:un
    missingMarksheet:section==="EDUCATION"&&marks.missing>0},evaluatedAt);
   return {learnerName:row.learnerName?.trim()||"Learner",section,status:row.status,
    submittedAt:fmt.format(row.submittedAt),reviewedAt:row.decidedAt?fmt.format(row.decidedAt):"",
-   educationEntryCount:section==="EDUCATION"?marks.count:undefined,
-   missingDocumentCount:section==="EDUCATION"?marks.missing:undefined,
+   ...(section==="EDUCATION"?{educationEntryCount:marks.count,missingDocumentCount:marks.missing}:{}),
    attentionFlags:flags.map(flag=>flag.replaceAll("_"," ").toLowerCase()).join("; "),
   };
  }));
