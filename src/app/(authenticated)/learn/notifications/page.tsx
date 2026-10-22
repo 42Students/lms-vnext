@@ -94,7 +94,8 @@ async function LearnerNotificationsContent({searchParams}:{searchParams:Promise<
   try {
     personalPage = await listOwnNotificationPage(context,{
       limit:60,collegeId:membership.collegeId,
-      classId:query.data.classId,courseId:selectedCourseId,
+      ...(query.data.classId!==undefined?{classId:query.data.classId}:{}),
+      ...(selectedCourseId!==undefined?{courseId:selectedCourseId}:{}),
       ...(cursorDate?.success&&cursorId?.success?{
         beforeCreatedAt:new Date(cursorDate.data),beforeId:cursorId.data,
       }:{}),
