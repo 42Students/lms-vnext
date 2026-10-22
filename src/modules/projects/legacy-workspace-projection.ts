@@ -12,7 +12,7 @@ const token=(a:readonly {id:string;updatedAt:Date}[])=>a.map(
 type Row={id:string;updatedAt:Date;sequence:number};
 type Project={
  id:string;slug:string;title:string;summary:string|null;status:string;
- templateId:string;templateVersionId:string;updatedAt:Date;
+ templateId:string|null;templateVersionId:string|null;updatedAt:Date;
  legacyProjectId?:number|null;legacyStatus?:string|null;legacyClassId?:number|null;
  legacyRevision?:number|null;courseLabel?:string|null;phase?:string|null;
  progressPercent:number;blocker?:string|null;nextAction?:string|null;

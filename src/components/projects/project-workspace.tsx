@@ -194,7 +194,7 @@ function formatWorkspaceTarget(value: string | null | undefined) {
 }
 
 /** Match the legacy read-first snapshot without overwriting execution-managed progress. */
-function WorkspaceHealthSnapshot({ workspace, templateHref }: { workspace: Workspace; templateHref: string }) {
+function WorkspaceHealthSnapshot({ workspace, templateHref }: { workspace: Workspace; templateHref: string | null }) {
   const tasks = workspace.readiness.execution.tasks;
   const sprints = workspace.readiness.execution.sprints;
   // Legacy overall progress weighs every task and sprint equally. Only use the
@@ -215,7 +215,7 @@ function WorkspaceHealthSnapshot({ workspace, templateHref }: { workspace: Works
         <p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">Workspace health</p>
         <div className="flex flex-wrap items-center gap-2">
           <StatusBadge tone={tone(workspace.project.status)}>{label(workspace.project.status)}</StatusBadge>
-          {workspace.project.templateVersionId ? (
+          {workspace.project.templateVersionId && templateHref ? (
             <Link href={templateHref} className="rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]"
               aria-label={"View template " + (workspace.templateTitle ?? "attached to workspace")}>
               <StatusBadge tone="neutral">
@@ -742,9 +742,11 @@ export function ProjectWorkspace({
 
       {mode === "ADMIN" && show("summary") ? (
         <WorkspaceHealthSnapshot workspace={workspace}
-          templateHref={(backHref.startsWith("/college/") ? "/college/projects/templates/" : "/admin/projects/templates/") +
-            encodeURIComponent(workspace.project.templateId) +
-            (backHref.startsWith("/college/") ? "" : "/overview")} />
+          templateHref={workspace.project.templateId
+            ? (backHref.startsWith("/college/") ? "/college/projects/templates/" : "/admin/projects/templates/") +
+              encodeURIComponent(workspace.project.templateId) +
+              (backHref.startsWith("/college/") ? "" : "/overview")
+            : null} />
       ) : null}
       {show("readiness") ? <WorkspaceReadinessSnapshot workspace={workspace} /> : null}
       {mode==="ADMIN"&&show("summary")&&!readOnly?<CollegeProjectSummaryEditorFull

@@ -281,21 +281,21 @@ export async function verifyTenantDomain(
   // Reverification after a host edit remains possible because editing clears
   // the verified flag and rotates its challenge.
   if (domain.isVerified) return domain;
-  const checkedDomain = domain;
-  if (!checkedDomain.verificationToken) {
+  const verificationToken = domain.verificationToken;
+  if (!verificationToken) {
     throw new TenantDomainServiceError("DOMAIN_NOT_VERIFIED");
   }
 
   const result = await verifier.verify(
     domain.host,
-    domain.verificationToken,
+    verificationToken,
   );
 
   return repository.recordVerificationResult(domain.id, {
     ...result,
     checkedAt: new Date(),
     expectedHost:domain.host,
-    expectedToken:domain.verificationToken,
+    expectedToken:verificationToken,
     context,
   });
 }

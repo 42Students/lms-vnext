@@ -64,7 +64,10 @@ export const collegeBatchDirectoryBaseSchema = z.object({
   status: z.enum(["ALL", "PLANNED", "ACTIVE", "INACTIVE", "COMPLETED", "ARCHIVED"]).default("ALL"),
 }).strict();
 
-export function withCollegeBatchFilterCheck(schema: typeof collegeBatchDirectoryBaseSchema){
+type CollegeBatchFilterFields=Pick<z.output<typeof collegeBatchDirectoryBaseSchema>,
+ "startOnOrAfter"|"startOnOrBefore"|"progression"|"currentTerm"|"academicYearState"|"yearStart">;
+// Generic so callers keep their full inferred type, including .omit() variants for CSV export.
+export function withCollegeBatchFilterCheck<T extends z.ZodType<CollegeBatchFilterFields>>(schema:T){
  return schema.refine(q=>q.startOnOrAfter===undefined||q.startOnOrBefore===undefined||q.startOnOrAfter<=q.startOnOrBefore,
   {path:["startOnOrBefore"],message:"Batch start-date end limit must not precede start limit"}).refine(q=>q.progression!=="MISSING"||q.currentTerm===undefined,
   {path:["currentTerm"],message:"A missing progression record cannot have a recorded current term"}).refine(q=>q.academicYearState!=="UNRECORDED"||q.yearStart===undefined,
