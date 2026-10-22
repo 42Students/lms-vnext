@@ -10,7 +10,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-12-011-029  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 - [x] G2-12-027-030  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 - [ ] G2-14-030-004  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
-- [ ] G2-15-025-009  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
+- [x] G2-15-025-009  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 - [x] G2-5-024-017  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 - [ ] G2-5-024-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 - [x] G2-5-024-031  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
@@ -19,6 +19,8 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-5-024-038  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 
 ## Results
+
+- FIXED G2-15-025-009 — commit `3013c26f97aebebe666b3eed6f0603668df94cb1`, `src/modules/placements/recruiter-college-demographics-service.ts:16-24,33-42,73-79,111-122` exposes collegeName, rounded demographic totals, branch and verified CGPA bands, provenance and asOf independently of drive counts; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/RecruiterCollegeOverviewService.java:62-113`.
 
 - FIXED G2-5-024-036 — commit `629ac9eef98b4387bbaca1507b87961ab99c32cd`, `src/modules/tenant-domains/service.ts` allows explicit DNS recheck for verified domains while the repository retains `isVerified` on failed checks; legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/TenantDomainVerificationService.java:62-107`.
 
