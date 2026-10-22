@@ -120,3 +120,12 @@ export { db10AuditFindingFiles } from "./db10-audit-findings.draft";
 
 // DB06 grade audit is recorded atomically by the assignment writers.
 export {assignmentGradeEventsStaged} from "./db06-history-staged";
+
+// DB10 log-alert tables exist in registered migration 0133; no poller,
+// digest sender or automatically trusted legacy-account marker is enabled.
+// Runtime activation remains explicitly gated after replay and role review.
+export {
+ db10LogAlertSignatures,db10LogAlertSignatureAccounts,
+ db10LogAlertStates,db10LogAlertDailyCounts,
+ db10LogAlertObservedEvents,
+} from "./db10-log-alerts.draft";
