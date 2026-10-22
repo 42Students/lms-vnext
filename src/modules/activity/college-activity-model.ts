@@ -90,10 +90,10 @@ export function activitySearchParams(
   // Keep unknown/duplicate parameters so strict Zod can reject them.
   const entries: Record<string, string | string[] | undefined> =
     Object.fromEntries(Object.entries(raw).filter(([, value]) => value !== undefined && value !== ""));
-  if (!entries.from && !entries.to && entries.range !== "ALL") {
+  if (!entries["from"] && !entries["to"] && entries["range"] !== "ALL") {
     const query = new URL(collegeActivityRecentHref({}, 30, new Date()), "https://local.invalid").searchParams;
-    entries.from = query.get("from") ?? undefined;
-    entries.to = query.get("to") ?? undefined;
+    entries["from"] = query.get("from") ?? undefined;
+    entries["to"] = query.get("to") ?? undefined;
   }
   return entries;
 }
