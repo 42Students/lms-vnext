@@ -5,13 +5,13 @@ describe("Recruiter Messages draft protection",()=>{
  it("REC-calendar-messages-profile-12 warns before closing a nonempty reply",()=>{
   expect(ui).toContain("Discard this unsent message?");
   expect(ui).toContain("Your draft reply will be lost.");
-  expect(ui).toContain("<ConfirmActionDialog");
+  expect(ui).toContain("<ConfirmDialog");
   expect(ui).toContain("open={leaveHref!==null}");
-  expect(ui).toContain('confirmLabel="Discard"');
-  expect(ui).toContain("onCancel={()=>setPendingLeave(null)}");
+  expect(ui).toContain('confirmLabel="Discard message"');
+  expect(ui).toContain("if(!next){setPendingLeave(null);inputRef.current?.focus();}");
   expect(ui).toContain("setPendingLeave(destination.pathname+destination.search+destination.hash)");
   expect(ui).toContain("if(href)router.push(href)");
-  expect(ui).toContain("const href=leaveHref;setPendingLeave(null);setBody(\"\")");
+  expect(ui).toContain('const href=leaveHref;navigating.current=true;setPendingLeave(null);setBody("");');
  });
  it("REC-calendar-messages-profile-12 protects native unload while unsent text remains",()=>{
   expect(ui).toContain('window.addEventListener("beforeunload",warn)');

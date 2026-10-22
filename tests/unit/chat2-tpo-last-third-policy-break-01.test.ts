@@ -57,7 +57,7 @@ describe("TPO-BREAK-last-third-01 verification, published stats and export filte
   expect(tpoVerificationWaitingDateRange("TODAY",now).after?.toISOString())
    .toBe("2026-10-20T18:30:00.000Z");
   expect(tpoVerificationWaitingDateRange("WEEK",now).after?.toISOString())
-   .toBe("2026-10-14T18:30:00.000Z");
+   .toBe("2026-10-13T18:30:00.000Z");
   expect(tpoVerificationWaitingDateRange("OVER_WEEK",now).before?.toISOString())
    .toBe("2026-10-13T18:30:00.000Z");
  });

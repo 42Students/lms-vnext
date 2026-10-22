@@ -171,7 +171,7 @@ describe("WEAK-tenant-domains service authorization, idempotency and hostile hos
     expect(repo.setPrimary).not.toHaveBeenCalled();
     repo.loadDomain.mockResolvedValueOnce(domain({isVerified:true}));
     await expect(setPrimaryTenantDomain(asSuperAdmin(),DOMAIN,repo)).resolves.toMatchObject({isPrimary:true});
-    expect(repo.setPrimary).toHaveBeenCalledWith(DOMAIN);
+    expect(repo.setPrimary).toHaveBeenCalledWith(DOMAIN,asSuperAdmin());
   });
 
   it("WEAK-tenant-domains-14 primary-domain deletion requires exact confirmed name",async()=>{
@@ -184,7 +184,7 @@ describe("WEAK-tenant-domains service authorization, idempotency and hostile hos
       .rejects.toMatchObject({code:"PRIMARY_HOST_CONFIRMATION_REQUIRED"});
     expect(repo.deleteDomain).not.toHaveBeenCalled();
     await deleteTenantDomain(asSuperAdmin(),DOMAIN,repo,HOST);
-    expect(repo.deleteDomain).toHaveBeenCalledWith(DOMAIN,HOST);
+    expect(repo.deleteDomain).toHaveBeenCalledWith(DOMAIN,HOST,asSuperAdmin());
   });
 
   it("WEAK-tenant-domains-15 resolves only canonical request-host and rejects spoofed backslashes",async()=>{
