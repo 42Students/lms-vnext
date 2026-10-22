@@ -8,7 +8,6 @@ import {PageBackLink} from "@/components/ui/page-back-link";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {EmptyState} from "@/components/ui/empty-state";
 import {Disclosure} from "@/components/ui/disclosure";
-import {Button} from "@/components/ui/button";
 import {Pagination} from "@/components/ui/pagination";
 import {ErrorState} from "@/components/ui/error-state";
 import {PersonOnboardDialog} from "@/components/admin/person-onboard-dialog";
@@ -108,12 +107,11 @@ export default async function CollegeAdministratorsPage({params,searchParams}:{
           className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
           History
         </Link>
-        <Button size="sm" variant="ghost" disabled
-          title={item.status==="ACTIVE"
-            ?"Suspend this administrator before reviewing deletion. Permanent deletion is not implemented."
-            :"Permanent deletion is unavailable until faculty, mentoring and audit dependencies are verified."}>
-          Delete
-        </Button>
+        <span className="text-xs text-muted-foreground">
+          {item.status==="SUSPENDED"
+            ?"Use Access → End membership to revoke this membership while retaining its audit history."
+            :"Suspend this administrator in Access before permanently ending their membership."}
+        </span>
       </div>},
     ]}/>
   </section>
