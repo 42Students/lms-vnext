@@ -46,7 +46,7 @@ describe("chat-6 verified UNCONFIRMED decisions (18)",()=>{
  });
  it("SA-placements-projects-68 keeps workspace tab navigation on the readiness route",()=>{
    has("SA-placements-projects-68","Keep readiness");
-   expect(read("src/components/projects/project-workspace-readiness.tsx")).toContain('ariaLabel="Workspace sections"');
+   expect(read("src/components/projects/project-workspace-readiness.tsx")).toContain('<Tabs ariaLabel="Workspace sections"');
  });
  it("SA-placements-projects-72 confirms admin acceptance and requires feedback for changes",()=>{
    has("SA-placements-projects-72","Admin final review");
