@@ -151,7 +151,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
       workMode:job.workMode,responsibilities:job.legacyPostingDetails?.responsibilities??"",
       importantDates:job.legacyPostingDetails?.importantDates??[],
       customEligibilityRules:job.legacyPostingDetails?.customEligibilityRules??[],
-      status:job.status,
+      status:job.status,legacyVisibilityType:job.legacyVisibilityType,
       targeting:publishedPolicy?{
        programs:publishedPolicy.allowedProgramIds.length,
        cohorts:publishedPolicy.allowedCohortIds.length,

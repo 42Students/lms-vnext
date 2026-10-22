@@ -247,7 +247,7 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
      <small className="font-normal text-muted-foreground">Choose a verified company in this college. Employer reassignment is blocked after any applications.</small>
     </label>
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessment URL
-      <Input type="url" name="assessmentUrl" maxLength={2000} defaultValue={job.assessmentUrl??""} className={cls}/>
+      <Input type="url" name="assessmentUrl" maxLength={2048} defaultValue={job.assessmentUrl??""} className={cls}/>
     </label>
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessment deadline (IST)
       <Input type="datetime-local" name="assessmentDeadline" defaultValue={istLocal(job.assessmentDeadline)} className={cls}/>

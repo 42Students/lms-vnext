@@ -149,13 +149,31 @@ export async function getCollegeStudentPlacementDetails(ctx:RequestContext,raw:u
   .innerJoin(users,eq(users.id,collegeMemberships.userId))
   .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
   .where(and(eq(collegeMemberships.id,input.membershipId),
-    eq(collegeMemberships.collegeId,collegeId))).limit(1);
+    eq(collegeMemberships.collegeId,collegeId),
+    eq(collegeMemberships.status,"ACTIVE"),
+    eq(users.platformStatus,"ACTIVE"))).limit(1);
  if(!student)throw new Error("Student not found in this college");
  const appScope=and(eq(placementApplications.membershipId,input.membershipId),
   eq(placementJobs.collegeId,collegeId));
  const [totalRow]=await db.select({total:count()}).from(placementApplications)
   .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
   .where(appScope);
+ // Joined is a persistent outcome and must be found independently of
+ // the current 25-record history page and independently of the last offer.
+ const [confirmedJoining]=await db.select({membershipId:placementApplications.membershipId})
+  .from(placementApplications)
+  .innerJoin(placementJobs,and(eq(placementJobs.id,placementApplications.jobId),
+    eq(placementJobs.collegeId,collegeId)))
+  .innerJoin(placementCompanyRelationships,and(
+    eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+    eq(placementCompanyRelationships.collegeId,collegeId)))
+  .innerJoin(placementOffers,and(
+    eq(placementOffers.applicationId,placementApplications.id),
+    eq(placementOffers.status,"ACCEPTED")))
+  .innerJoin(placementJoiningOutcomes,and(
+    eq(placementJoiningOutcomes.offerId,placementOffers.id),
+    eq(placementJoiningOutcomes.status,"JOINED")))
+  .where(eq(placementApplications.membershipId,input.membershipId)).limit(1);
  const pageSize=25;
  const rows=await db.select({
   applicationId:placementApplications.id,legacyApplicationId:placementApplications.legacyApplicationId,
@@ -213,6 +231,7 @@ export async function getCollegeStudentPlacementDetails(ctx:RequestContext,raw:u
     resumeScanStatus:student.resumeScanStatus,
     profileDocumentVersion:student.profileDocumentVersion??0}},
   page:input.page,pageSize,total:totalRow?.total??0,
+  placed:Boolean(confirmedJoining),
   hasMore:input.page*pageSize<(totalRow?.total??0),
   applications:rows.map(row=>{
     const offer=latestOffers.get(row.applicationId),interview=nextInterviewByApplication.get(row.applicationId);
