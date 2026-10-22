@@ -203,7 +203,8 @@ export function formatTpoAuditEventType(
    "placements.tpo_blocked_date.created":"Blocked dates changed",
    "placements.tpo_blocked_date.deleted":"Blocked dates changed",
   };
-  if(Object.prototype.hasOwnProperty.call(legacy,value))return legacy[value];
+  const legacyLabel=legacy[value];
+  if(legacyLabel!==undefined)return legacyLabel;
   return value
     .replaceAll(/[._]/g, " ")
     .replaceAll(/\s+/g, " ")
