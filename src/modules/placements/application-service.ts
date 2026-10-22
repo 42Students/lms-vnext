@@ -9,9 +9,12 @@ import {
   gte,
   lte,
   ilike,
+  gt,
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {profilePrivateDocumentReceipts} from "@/db/schema/profile-verification";
+import {readPrivateObjectAttestation} from "@/modules/storage/private-object-storage";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import {deliverRecordedLearnerPlacementEvent} from "./learner-placement-event-delivery";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
@@ -24,6 +27,8 @@ import {
   membershipRoles,
   moduleAccessRules,
   placementApplications,
+  placementApplicationPrivateArtifacts,
+  learnerProfiles,
   placementApplicationStatusHistory,
   placementApplicationScreenings,
   placementCandidateAcademicEvidence,
@@ -563,6 +568,81 @@ export function resolveExistingApplication(
   return existing;
 }
 
+/** Resolve only owner-verified storage receipts; legacy public resume URLs
+ * are not trusted application input. Defaults may be absent without blocking
+ * learners who have never uploaded a resume.
+ */
+async function resolveApplicationResume(membershipId:string,collegeId:string,receiptId?:string){
+ const [profile]=await getDb().select({path:learnerProfiles.resumeObjectPath})
+   .from(learnerProfiles).where(eq(learnerProfiles.membershipId,membershipId)).limit(1);
+ if(!receiptId&&!profile?.path)return null;
+ const [receipt]=await getDb().select().from(profilePrivateDocumentReceipts)
+   .where(and(
+     receiptId?eq(profilePrivateDocumentReceipts.id,receiptId):
+       eq(profilePrivateDocumentReceipts.privateObjectKey,profile!.path!),
+     eq(profilePrivateDocumentReceipts.owningMembershipId,membershipId),
+     eq(profilePrivateDocumentReceipts.purpose,"RESUME"),
+     eq(profilePrivateDocumentReceipts.scanStatus,"CLEAN"),
+     isNull(profilePrivateDocumentReceipts.revokedAt),
+     or(isNull(profilePrivateDocumentReceipts.retentionUntil),
+       gt(profilePrivateDocumentReceipts.retentionUntil,new Date())),
+   )).orderBy(desc(profilePrivateDocumentReceipts.uploadedAt)).limit(1);
+ if(!receipt){
+   if(receiptId)throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
+   return null;
+ }
+ try{
+   const proof=await readPrivateObjectAttestation(receipt.privateObjectKey,{
+     collegeId,ownerMembershipId:membershipId,
+   });
+   if(proof.generation!==receipt.objectGeneration||
+      proof.sha256Hex.toLowerCase()!==receipt.sha256Hex.toLowerCase()||
+      proof.contentType!=="application/pdf"||
+      proof.sizeBytes!==receipt.sizeBytes||proof.sizeBytes>10*1024*1024)
+     throw Error("RESUME_PROOF_INVALID");
+ }catch{
+   if(receiptId)throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
+   return null;
+ }
+ return {id:receipt.id,path:receipt.privateObjectKey,fromProfile:!receiptId};
+}
+async function snapshotApplicationResume(tx:Tx,applicationId:string,
+ membershipId:string,actorId:string,resume:Awaited<ReturnType<typeof resolveApplicationResume>>){
+ if(!resume)return;
+ const [valid]=await tx.select({id:profilePrivateDocumentReceipts.id})
+   .from(profilePrivateDocumentReceipts).where(and(
+     eq(profilePrivateDocumentReceipts.id,resume.id),
+     eq(profilePrivateDocumentReceipts.owningMembershipId,membershipId),
+     eq(profilePrivateDocumentReceipts.privateObjectKey,resume.path),
+     eq(profilePrivateDocumentReceipts.scanStatus,"CLEAN"),
+     isNull(profilePrivateDocumentReceipts.revokedAt),
+     or(isNull(profilePrivateDocumentReceipts.retentionUntil),
+       gt(profilePrivateDocumentReceipts.retentionUntil,new Date())),
+   )).for("share").limit(1);
+ if(!valid)throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
+ if(resume.fromProfile){
+   const [profile]=await tx.select({path:learnerProfiles.resumeObjectPath})
+     .from(learnerProfiles).where(eq(learnerProfiles.membershipId,membershipId))
+     .for("share").limit(1);
+   if(profile?.path!==resume.path)
+     throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
+ }
+ const [prior]=await tx.select({path:placementApplicationPrivateArtifacts.resumeObjectPath,
+   history:placementApplicationPrivateArtifacts.resumeHistory})
+   .from(placementApplicationPrivateArtifacts)
+   .where(eq(placementApplicationPrivateArtifacts.applicationId,applicationId))
+   .for("update").limit(1);
+ if(prior?.path===resume.path)return;
+ const when=new Date(),history=[...(prior?.history??[]),
+   ...(prior?.path?[{objectPath:prior.path,replacedAt:when.toISOString()}]:[])];
+ await tx.insert(placementApplicationPrivateArtifacts).values({
+   applicationId,resumeObjectPath:resume.path,resumeHistory:history,
+   updatedAt:when,updatedByUserId:actorId,
+ }).onConflictDoUpdate({target:placementApplicationPrivateArtifacts.applicationId,
+   set:{resumeObjectPath:resume.path,resumeHistory:history,
+     updatedAt:when,updatedByUserId:actorId}});
+}
+
 /** Re-application never resurrects stale screening, rounds, or official offers. */
 export function canReapplyWithdrawnPlacementApplication(input: {
   sameChannel: boolean;
@@ -660,6 +740,7 @@ export async function applyToPlacementJob(
   const preflightDenial = placementApplyEligibilityDenial(eligibility.status);
   if (preflightDenial) throw new PlacementsServiceError(preflightDenial);
 
+  const chosenResume=await resolveApplicationResume(membership.id,job.collegeId,input.resumeReceiptId);
   const created = await getDb().transaction(
     async (tx) => {
       // Lock the live job and role before inserting, not just during the
@@ -867,6 +948,7 @@ export async function applyToPlacementJob(
         }).where(and(eq(placementApplications.id, liveExisting.id),
           eq(placementApplications.status, "WITHDRAWN"))).returning();
         if (!restored) throw new PlacementsServiceError("PLACEMENT_APPLICATION_ALREADY_WITHDRAWN");
+        await snapshotApplicationResume(tx,restored.id,membership.id,context.user.id,chosenResume);
         await tx.insert(placementApplicationStatusHistory).values({
           applicationId: restored.id,
           fromStatus: "WITHDRAWN", toStatus: "SUBMITTED",
@@ -912,6 +994,7 @@ export async function applyToPlacementJob(
         .returning();
 
       if (!application) return null;
+      await snapshotApplicationResume(tx,application.id,membership.id,context.user.id,chosenResume);
 
       await tx
         .insert(
