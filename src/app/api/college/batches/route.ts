@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     const body: unknown = await request.json();
     const raw=body&&typeof body==="object"&&!Array.isArray(body)
       ?body as Record<string,unknown>:{};
-    if("batchName" in raw&&!raw.startPeriodId){
+    if("batchName" in raw&&!raw["startPeriodId"]){
       return NextResponse.json({
         status:"ERROR",error:"BATCH_PERIOD_REQUIRED",
         message:"Select an exact academic start period and program UUID before creating a batch. Legacy year-only records cannot identify a period.",
