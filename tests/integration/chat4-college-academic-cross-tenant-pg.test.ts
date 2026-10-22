@@ -27,7 +27,12 @@ async function insertForgery(sql:string,params:readonly unknown[]):Promise<boole
  if(!pool)throw new Error("Disposable DB03 required");
  try {await pool.query(sql,[...params]);return true;}
  catch(error){
-  expect(error).toMatchObject({code:expect.stringMatching(/^235(03|14)$/)});
+  // Tenant-integrity triggers may raise SQLSTATE P0001 in addition to FK/check violations.
+  // Only the expected cross-college rejection counts as a deliberate denial.
+  const rejected=error as {code?:unknown;message?:unknown};
+  expect(rejected.code==="23503" || rejected.code==="23514" ||
+    (rejected.code==="P0001" && typeof rejected.message==="string" &&
+      /must belong to one college/i.test(rejected.message))).toBe(true);
   return false;
  }
 }
