@@ -53,7 +53,8 @@ export function parseAdminCompanyDirectoryParams(
   if(unverified!==undefined){
     if((unverified!=="true"&&unverified!=="false")||params.verified!==undefined)
       return adminCompaniesQuerySchema.safeParse({...filters,unverified});
-    filters.verified=unverified==="true"?"NOT_VERIFIED":"VERIFIED";
+    // Legacy unverified=false means no verified-state restriction.
+    if(unverified==="true")filters.verified="NOT_VERIFIED";
   }
   return adminCompaniesQuerySchema.safeParse(
     validView ? filters : { ...filters, view: params.view },

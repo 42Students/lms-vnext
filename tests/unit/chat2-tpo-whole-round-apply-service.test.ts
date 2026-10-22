@@ -112,12 +112,27 @@ describe("TPO-drive-workspace-42 whole-round preview/apply authorization and par
    confirmed:true,expectedPreviewToken:preview.previewToken,
   });
   expect(state.apply).toHaveBeenCalledTimes(2);
-  expect(state.apply).toHaveBeenCalledWith(actor,first,1);
-  expect(state.apply).toHaveBeenCalledWith(actor,second,2);
+  expect(state.apply).toHaveBeenCalledWith(actor,first,1,true);
+  expect(state.apply).toHaveBeenCalledWith(actor,second,2,true);
   expect(result).toMatchObject({total:3,previouslyApplied:1,applied:1,skipped:1,unchanged:1});
   expect(result.results.find(item=>item.resultId===second)).toMatchObject({
    status:"skipped",reason:"Result was not applied. Refresh this round and try again.",
   });
+  expect(result.notifyLearners).toBe(true);
   expect(JSON.stringify(result)).not.toMatch(/password|private postgres/);
+ });
+ it("TPO-drive-workspace-42 sends no learner notices when the officer opts out",async()=>{
+  const preview=await getTpoRoundApplyPreview(actor,jobId,roundId);
+  fixture();
+  const result=await applyTpoWholeRound(actor,jobId,roundId,{
+   confirmed:true,expectedPreviewToken:preview.previewToken,
+  },false);
+  expect(state.apply).toHaveBeenCalledTimes(2);
+  expect(state.apply).toHaveBeenNthCalledWith(1,actor,first,1,false);
+  expect(state.apply).toHaveBeenNthCalledWith(2,actor,second,2,false);
+  expect(result).toMatchObject({
+   total:3,applied:2,skipped:0,unchanged:1,
+   notifyLearners:false,retryRequiresFreshPreview:false,
+  });
  });
 });
