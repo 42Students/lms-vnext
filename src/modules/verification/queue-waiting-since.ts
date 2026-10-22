@@ -4,6 +4,7 @@ export function matchesWaitingSince(submittedAt:Date,waitingSince:string|undefin
  if(!waitingSince)return true;
  if(!/^\d{4}-\d{2}-\d{2}$/.test(waitingSince))throw Error("INVALID_WAITING_SINCE");
  const [year,month,day]=waitingSince.split("-").map(Number);
+ if (year === undefined || month === undefined || day === undefined) throw Error("INVALID_WAITING_SINCE");
  const dayStart=new Date(Date.UTC(year,month-1,day));
  if(!Number.isFinite(dayStart.getTime())||
     dayStart.toISOString().slice(0,10)!==waitingSince)throw Error("INVALID_WAITING_SINCE");
@@ -17,6 +18,7 @@ export function matchesSubmittedFrom(submittedAt:Date,submittedFrom:string|undef
  if(!submittedFrom)return true;
  if(!/^\d{4}-\d{2}-\d{2}$/.test(submittedFrom))throw Error("INVALID_SUBMITTED_FROM");
  const [year,month,day]=submittedFrom.split("-").map(Number);
+ if (year === undefined || month === undefined || day === undefined) throw Error("INVALID_SUBMITTED_FROM");
  const valid=new Date(Date.UTC(year,month-1,day));
  if(!Number.isFinite(valid.getTime())||valid.toISOString().slice(0,10)!==submittedFrom)throw Error("INVALID_SUBMITTED_FROM");
  return submittedAt.getTime()>=new Date(submittedFrom+"T00:00:00+05:30").getTime();
