@@ -9,6 +9,7 @@ import {reportAuthFailure} from "@/lib/report-client-error";
 import {FRIENDLY_MESSAGES} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {safeReturnTo} from "@/lib/return-to";
+import {loginRetryWindowIst} from "@/modules/auth/login-retry-time-model";
 
 type Channel = "PHONE" | "EMAIL";
 
@@ -262,9 +263,12 @@ export function LoginForm({
       ?(channel==="EMAIL"?"This college signs in with a mobile number. Use your phone number instead.":
         "This college signs in with email. Use your email instead."):
        errorCode?ERROR_MESSAGES[errorCode]:undefined;
-    setError(legacySuperAdmin&&errorCode==="INCORRECT_OTP"?"OTP InValid!":errorCode==="TOO_MANY_REQUESTS" && safeRetry !== null
-      ? "Too many codes were requested. Try again in about "+
-        (safeRetry < 120 ? safeRetry+" seconds." : Math.ceil(safeRetry/60)+" minutes.")
+    const retryWindow=safeRetry===null?null:loginRetryWindowIst(new Date(),safeRetry);
+    setError(legacySuperAdmin&&errorCode==="INCORRECT_OTP"?"OTP InValid!":
+      (errorCode==="TOO_MANY_REQUESTS"||errorCode==="OTP_ATTEMPTS_EXCEEDED") && retryWindow
+      ? "Verification is temporarily blocked. Retry in "+retryWindow.seconds+
+        " seconds; estimated local retry time: "+retryWindow.timeIst+
+        " IST. The sign-in server rechecks the limit when you retry."
       : known ?? "Something went wrong. Try again in a moment.");
     if(safeRetry !== null)setCooldown(Math.max(cooldown,safeRetry));
     setErrorCode(errorCode ?? null);
