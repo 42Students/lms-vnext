@@ -86,6 +86,7 @@ export async function createCollegeDepartment(context: RequestContext, raw: unkn
       const [created] = await tx.insert(departments).values({
         collegeId: member.collegeId, name: input.name,
       }).returning();
+      if (!created) throw new CollegeDepartmentMutationError("DEPARTMENT_NOT_FOUND");
       await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_DEPARTMENT_CREATED,
         collegeId: member.collegeId, organizationId: member.organizationId,
