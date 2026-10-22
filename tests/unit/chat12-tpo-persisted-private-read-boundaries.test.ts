@@ -6,7 +6,7 @@ const read=(path:string)=>readFileSync(resolve(process.cwd(),path),"utf8");
 const resources=[
  ["src/app/(authenticated)/tpo/students/page.tsx","const incoming=await searchParams;"],
  ["src/app/(authenticated)/tpo/companies/page.tsx","const raw = await searchParams;"],
- ["src/app/api/placements/tpo/students/export/route.ts","const filters = tpoStudentsQuerySchema"],
+ ["src/app/api/placements/tpo/students/export/route.ts","const filters = tpoStudentsQueryObjectSchema"],
  ["src/app/api/placements/tpo/companies/export/route.ts","const parsed=tpoCompaniesQuerySchema"],
 ] as const;
 describe("PROJ-BREAK-TPO-READ-07 expired/revoked role cannot open student and company data routes",()=>{
