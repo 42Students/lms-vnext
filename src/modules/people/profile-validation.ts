@@ -73,11 +73,9 @@ const phoneValue = z
   .refine(
     (value) => {
       if (value === "") return true;
-      // Accept legacy international formatting while counting actual digits.
-      // Reject letters and other punctuation; separators never bypass the
-      // 10–15 digit bound.
-      return /^\+?[0-9][0-9 ()-]*$/.test(value) &&
-        /^\d{10,15}$/.test(value.replace(/\D/g, ""));
+      // Legacy contacts allow a leading + and spacing/hyphens, but only
+      // 10–15 actual digits; nonnumeric letters are never phone numbers.
+      return /^[+\d][\d\s-]*$/.test(value) && /^\d{10,15}$/.test(value.replace(/\D/g, ""));
     },
     "Phone number must be 10-15 digits",
   )
