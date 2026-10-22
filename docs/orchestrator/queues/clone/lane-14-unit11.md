@@ -2,11 +2,11 @@
 
 CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER your deep packets 1-2 in lane-14-deep.md. For each file: read the failure below, read the test and the code it tests, decide which side is wrong against the old LMS (docs/legacy-source) and fix THAT side (fix the product code if it regressed; update the test only if the test asserts outdated/wrong behaviour). Never delete tests, never .skip, never weaken assertions to pass. Push after every file and tick it here.
 
-- [ ] `tests/unit/UX-college-cross-audit-chat19.test.ts` (1 failing)
-- [ ] `tests/unit/chat13-superadmin-interview-operations.test.ts` (1 failing)
+- [x] `tests/unit/UX-college-cross-audit-chat19.test.ts` (1 failing)
+- [x] `tests/unit/chat13-superadmin-interview-operations.test.ts` (1 failing)
 - [x] `tests/unit/chat2-tpo-team-open-increments.test.ts` (1 failing)
-- [ ] `tests/unit/chat6-superadmin-people-verified-closure.test.ts` (1 failing)
-- [ ] `tests/unit/chat9-verify2-learner-assignment-retry.test.ts` (2 failing)
+- [x] `tests/unit/chat6-superadmin-people-verified-closure.test.ts` (1 failing)
+- [x] `tests/unit/chat9-verify2-learner-assignment-retry.test.ts` (2 failing)
 - [x] `tests/unit/public-auth-error-retry-round5.test.ts` (1 failing)
 
 ## Failures (from CI log)
@@ -154,3 +154,12 @@ AssertionError: expected '"use client";\n\nimport { useEffect, …' to contain '
 
 - `chat2-tpo-team-open-increments.test.ts`: inspected current `src/app/(authenticated)/tpo/team/page.tsx` against the precise failing assertion; `redirect("/tpo/settings/team")` exists in the `people`/`members`/`roster` branch, while UUID conversation aliases are bounded and scoped. This is a stale failure on the recorded main commit, not a reason to change the test. Source checked; no new test execution claimed.
 - `public-auth-error-retry-round5.test.ts`: inspected current `src/components/auth/login-form.tsx`; `safeRetry < 120`, `reason.retryAfterSeconds`, `setCooldown(Math.max(cooldown,safeRetry))`, and the rate-limit copy all exist. The failing string assertion is satisfied by the current branch source. Source checked; no new test execution claimed.
+
+## Current branch source verification (no test execution)
+
+- `UX-college-cross-audit-chat19.test.ts`: `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx` now contains `<DataTable`, `mobilePriority: "primary"`, and the existing shared responsive table implementation. The recorded failure was from older main.
+- `chat13-superadmin-interview-operations.test.ts`: `src/components/admin/super-admin-interview-operations.tsx` currently includes `choices("Type"`, `choices("Status"`, `choices("Mode"`, and `choices("Department"` with retained filter functionality. The recorded failure predates the branch.
+- `chat6-superadmin-people-verified-closure.test.ts`: inspected `parseFacultyBulkCsv` with the shared RFC4180 reader; it returns nonblank rows including trailing line-separated records, and the supplied sample retains one data record with normalized +91 phone. Source review only.
+- `chat9-verify2-learner-assignment-retry.test.ts`: `src/app/(authenticated)/learn/allAssignments/page.tsx` currently contains `Assignments could not be loaded` and `href="/learn/allAssignments?retry=1"`; route retains its alert state rather than presenting an empty list. Source review only.
+
+The historical CI failures are satisfied by currently inspected branch source; no tests or CI were run and these checks do not certify TypeScript build health.
