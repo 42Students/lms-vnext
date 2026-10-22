@@ -6,7 +6,7 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [x] `tests/unit/chat10-campaign-unsubscribe-legacy-path.test.ts` (1 failing)
 - [x] `tests/unit/chat19-tpo-mobile-footer.test.ts` (3 failing)
 - [x] `tests/unit/chat5-final-faculty-courses-a.test.ts` (1 failing)
-- [ ] `tests/unit/chat7-superadmin-learning-export-service-behavior.test.ts` (2 failing)
+- [x] `tests/unit/chat7-superadmin-learning-export-service-behavior.test.ts` (2 failing) — Rechecked against current main: `super-admin-learning-csv-service.ts` passes `(context, kind, {...params.data, page})` on every aggregate page, retaining the filters and page number; old CI's undefined third argument no longer matches this implementation (static review; tests not executed).
 - [x] `tests/unit/learner-coding-profile-link.test.ts` (1 failing)
 - [x] `tests/unit/tpo-team-person-context-chat2.test.ts` (1 failing)
 
