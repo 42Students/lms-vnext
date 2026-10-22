@@ -11,7 +11,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-8-020-074  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
 - [ ] G2-8-020-076  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
 - [x] G2-8-020-078  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
-- [ ] G2-8-027-007  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
+- [x] G2-8-027-007  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
 - [ ] G2-8-027-014  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
 - [ ] G2-8-031-061  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
 - [ ] G2-8-031-067  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_24.md)
@@ -20,4 +20,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 ## Results
 
+- OK G2-8-027-007 — `src/db/schema/placement-round-candidate-slots.ts:14-19,58-63` persists and constrains the five legacy interview types; `src/modules/placements/college-round-slot-action-service.ts:72-74,457-460,470-473` returns and persists type on slot views and writes. Matches the legacy allowed names in `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/InterviewServiceImpl.java:52-56`.
 - OK G2-8-020-078 — `src/db/schema/courses.ts:37-68` keeps `enabled`, independent `status`, `legacyAllowedForDisplay`, and `deletedAt`, with `src/db/schema/courses.ts:88-97` indexing their visibility state. Matches the separate `active`, `enabled`, and `allowedForDisplay` fields in `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Course.java:36-41`. This verifies separate persistence, not all downstream visibility queries.
