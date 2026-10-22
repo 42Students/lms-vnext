@@ -111,6 +111,19 @@ const learner: RequestContext = {
 };
 
 async function cleanupC4A() {
+  // The immutable grade ledger retains strict submission identity. Fixture
+  // teardown clears only its test-owned rows before removing the parent.
+  await pool.query(
+    `delete from assignment_grade_events where assignment_submission_id in (
+      select s.id from assignment_submissions s
+      join course_assignments a on a.id=s.assignment_id
+      join course_lessons cl on cl.id=a.lesson_id
+      join course_learning_paths lp on lp.id=cl.learning_path_id
+      join course_offerings co on co.id=lp.offering_id
+      join courses c on c.id=co.course_id
+      where c.code like 'C4A-%'
+    )`,
+  );
   await pool.query(
     `delete from assignment_submissions
      where assignment_id in (
