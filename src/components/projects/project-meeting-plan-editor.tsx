@@ -87,8 +87,16 @@ export function ProjectMeetingPlanEditor({ projectId, meetingsToken, meetings, s
     setOpen(false);
   }
   const guard = useProjectEditorDiscardGuard(open, dirty, pending, reset);
-  function update<K extends keyof Draft>(id: string, field: K, value: Draft[K]) {
-    setDraft(current => current.map(row => row.id === id ? { ...row, [field]: value } : row));
+  function update<K extends keyof Draft>(id:string,field:K,value:Draft[K]){
+    setDraft(current=>current.map(row=>row.id===id?{...row,[field]:value}:row));
+  }
+  function changeTimePart(id:string,field:"startsAt"|"endsAt",
+    part:"date"|"time",value:string){
+    setDraft(current=>current.map(row=>{
+      if(row.id!==id)return row;
+      const [date="",time=""]=row[field].split("T");
+      return {...row,[field]:part==="date"?value+"T"+time:date+"T"+value};
+    }));
   }
   async function save() {
     if (pending || saving.current) return;
@@ -127,9 +135,11 @@ export function ProjectMeetingPlanEditor({ projectId, meetingsToken, meetings, s
     }
   }
 
-  return <section aria-label="Meeting plan" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
+  return <section aria-label="Meeting plan"
+    className="min-w-0 space-y-4 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 sm:p-5">
     <div>
-      <p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">Team cadence</p>
+      <h2 className="text-lg font-semibold text-foreground">Meeting plan</h2>
+      <p className="mt-3 text-xs font-semibold uppercase tracking-[0.08em] text-body">Team cadence</p>
       <h3 className="mt-1 text-base font-semibold text-foreground">
         Keep project conversations attached to the work they move forward
       </h3>
@@ -172,6 +182,7 @@ export function ProjectMeetingPlanEditor({ projectId, meetingsToken, meetings, s
         </legend>
         <label className="block text-[13px] font-semibold text-body">Title
           <Input className="mt-1" required maxLength={200} value={row.title}
+            aria-invalid={!row.title.trim()} placeholder="e.g. Weekly sync"
             onChange={event => update(row.id, "title", event.target.value)} />
         </label>
         <div className="grid min-w-0 gap-3 md:grid-cols-2">
@@ -198,18 +209,28 @@ export function ProjectMeetingPlanEditor({ projectId, meetingsToken, meetings, s
           <Textarea className="mt-1" maxLength={4000} value={row.notes??""}
             onChange={event=>update(row.id,"notes",event.target.value||null)}/>
         </label>
-        <label className="block text-[13px] font-semibold text-body">Agenda
+        <label className="block text-[13px] font-semibold text-body">Agenda (optional)
           <Textarea className="mt-1" maxLength={4000} value={row.agenda ?? ""}
+            placeholder="What this meeting covers"
             onChange={event => update(row.id, "agenda", event.target.value || null)} />
         </label>
         <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+          <label className="block text-[13px] font-semibold text-body">Date · IST
+            <Input className="mt-1" type="date" required
+              value={row.startsAt.slice(0,10)}
+              onChange={event=>changeTimePart(row.id,"startsAt","date",event.target.value)}/>
+          </label>
           <label className="block text-[13px] font-semibold text-body">Start time · IST
-            <Input className="mt-1" type="datetime-local" required value={row.startsAt}
-              onChange={event => update(row.id, "startsAt", event.target.value)} />
+            <Input className="mt-1" type="time" required value={row.startsAt.slice(11,16)}
+              onChange={event=>changeTimePart(row.id,"startsAt","time",event.target.value)}/>
+          </label>
+          <label className="block text-[13px] font-semibold text-body">End date · IST
+            <Input className="mt-1" type="date" required value={row.endsAt.slice(0,10)}
+              onChange={event=>changeTimePart(row.id,"endsAt","date",event.target.value)}/>
           </label>
           <label className="block text-[13px] font-semibold text-body">End time · IST
-            <Input className="mt-1" type="datetime-local" required value={row.endsAt}
-              onChange={event => update(row.id, "endsAt", event.target.value)} />
+            <Input className="mt-1" type="time" required value={row.endsAt.slice(11,16)}
+              onChange={event=>changeTimePart(row.id,"endsAt","time",event.target.value)}/>
           </label>
           <label className="block text-[13px] font-semibold text-body">Linked sprint
             <Select className="mt-1" value={row.linkedSprintId ?? ""}
@@ -239,7 +260,8 @@ export function ProjectMeetingPlanEditor({ projectId, meetingsToken, meetings, s
           }}>Undo row</Button>
       </fieldset>)}
       {!valid ? <p role="alert" className="text-sm font-semibold text-error">
-        Check meeting details and linked tasks before saving.
+        Check meeting dates in IST: the end must follow the start.
+        Linked tasks must belong to the selected sprint.
       </p> : null}
       <div className="flex flex-wrap gap-2">
         <Button loading={pending} disabled={pending || !valid || changed.length > 500}

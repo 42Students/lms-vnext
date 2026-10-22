@@ -77,6 +77,7 @@ export function ProjectAdminFilters({
   legacyWorkspaces = false,
   atRiskHref = "/admin/projects/at-risk",
   searchParamName,
+  searchPlaceholder,
   filterView,
 }: {
   query: ProjectAdminCollectionQuery;
@@ -85,6 +86,7 @@ export function ProjectAdminFilters({
   legacyWorkspaces?: boolean;
   atRiskHref?:string;
   searchParamName?:"q"|"search";
+  searchPlaceholder?:string;
   filterView?: "NOT_SUBMITTED";
 }) {
   const router=useRouter();
@@ -117,7 +119,7 @@ export function ProjectAdminFilters({
         <Input
           name={searchKey}
           type="search"
-          placeholder={legacyWorkspaces ? "Search title or slug" : "Workspace title or slug"}
+          placeholder={searchPlaceholder??(legacyWorkspaces ? "Search title or slug" : "Workspace title or slug")}
           className="w-full min-w-0"
           value={searchText}
           onChange={event=>setSearchText(event.target.value)}

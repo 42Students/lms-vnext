@@ -130,7 +130,8 @@ export async function ProjectAdminAtRiskPage({
         <Link href={riskHref(basePath,query,null)} className="font-semibold text-link underline"
           aria-label="Clear selected risk bucket filter">Clear ×</Link>
       </div>:null}
-      <FilterBar title="Filters"><ProjectAdminFilters query={query} includeRiskSort /></FilterBar>
+      <FilterBar title="Filters"><ProjectAdminFilters query={query} includeRiskSort
+        searchPlaceholder="Search workspace title or ID" /></FilterBar>
       <p className="text-xs text-body" role="status">
         Risk buckets count the current search and status filters, independent
         of the selected quick filter. Completed workspaces appear only for
