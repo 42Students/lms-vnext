@@ -30,7 +30,7 @@ describe("Super Admin college bulk import adversarial input grammar",()=>{
 
  it("SA-colleges-bulk-input-03 rejects duplicate codes independent of case and enforces row cap",()=>{
   expect(()=>parseCollegeImportCsv(csv("College A,CODE,,,","College B,code,,,")))
-   .toThrow("Duplicate college code");
+   .toThrow("duplicate college code");
   expect(MAX_COLLEGE_IMPORT_ROWS).toBe(200);
   const rows=Array.from({length:201},(_,i)=>"College "+i+",C-"+i+",,,");
   expect(()=>parseCollegeImportCsv(csv(...rows))).toThrow("at most 200");
