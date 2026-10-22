@@ -118,6 +118,10 @@ function blueprint(label: string) {
 }
 
 async function cleanup() {
+  // Resource audit history can outlive the resource row; delete only this
+  // disposable fixture's audit records before removing its owning projects.
+  await pool.query(`delete from project_resource_audit
+    where project_id in (select id from project_instances where slug like 'p3-%')`);
   await pool.query(
     `delete from project_members
      where project_id in (

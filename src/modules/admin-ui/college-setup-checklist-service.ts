@@ -31,8 +31,8 @@ export async function getCollegeSetupChecklist(context: RequestContext, raw: unk
   const db = getDb();
   // Counts are from current registered records, not a synthetic progress percentage.
   const [
-    dept, course, lesson, content, program, term, mapping,
-    period, batch, section, faculty, assignment, student, hall, job,
+    dept, course, lesson, content, program, term, mapping, period,
+    batch, section, faculty, assignment, student, hall, job,
   ] = await Promise.all([
     db.select({ count: count() }).from(departments)
       .where(and(eq(departments.collegeId, collegeId), isNull(departments.archivedAt))),
@@ -64,9 +64,8 @@ export async function getCollegeSetupChecklist(context: RequestContext, raw: unk
       .innerJoin(programs, eq(programs.id, programTerms.programId))
       .innerJoin(departments, eq(departments.id, programs.departmentId))
       .where(eq(departments.collegeId, collegeId)),
-    // Batches, classes and elective offerings need an open (not CLOSED) period.
     db.select({ count: count() }).from(academicPeriods)
-      .where(and(eq(academicPeriods.collegeId, collegeId), ne(academicPeriods.status, "CLOSED"))),
+      .where(eq(academicPeriods.collegeId, collegeId)),
     db.select({ count: count() }).from(cohorts)
       .innerJoin(programs, eq(programs.id, cohorts.programId))
       .innerJoin(departments, eq(departments.id, programs.departmentId))

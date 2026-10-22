@@ -142,9 +142,9 @@ export async function deliverRecordedLearnerPlacementEvent(
   status:applicationStatus,statusUpdatedAt:applicationStatusUpdatedAt,
   assessmentUrl:input.applicationId?input.approvedAssessmentUrl:undefined,
  });
- // The delivery payload is strict: send only the rendered inbox fields.
- const message={title:rendered.title,body:rendered.body,actionHref:rendered.actionHref};
- const delivered=await deliverInAppNotificationInTransaction(tx,input.eventId,[row.userId],message);
+ const delivered=await deliverInAppNotificationInTransaction(tx,input.eventId,[row.userId],{
+  title:message.title,body:message.body,actionHref:message.actionHref,
+ });
  return {delivered:delivered.delivered>0,skipped:null};
 }
 
