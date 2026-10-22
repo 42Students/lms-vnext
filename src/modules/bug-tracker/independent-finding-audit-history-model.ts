@@ -13,8 +13,8 @@ function commits(value:unknown):string{
  if(!Array.isArray(value))return "None";
  const rows:string[]=[];
  for(const item of value.slice(0,40)){
-  if(!object(item)||typeof item.repo!=="string"||typeof item.sha!=="string")continue;
-  const repo=item.repo.trim(),sha=item.sha.trim();
+  if(!object(item)||typeof item["repo"]!=="string"||typeof item["sha"]!=="string")continue;
+  const repo=item["repo"].trim(),sha=item["sha"].trim();
   if(!/^[A-Za-z0-9._/-]{1,80}$/.test(repo)||!/^[0-9a-f]{7,40}$/i.test(sha))continue;
   rows.push(repo+"@"+sha);
  }
