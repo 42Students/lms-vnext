@@ -13,7 +13,7 @@ describe("college shortlisted route",()=>{
   it("forces submitted+shortlisted through the authorized college applicant read",()=>{
     const src=readFileSync(join(process.cwd(),
       "src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx"),"utf8");
-    expect(src).toContain('hasMembershipRole(context,"COLLEGE_ADMIN")');
+    expect(src).toContain('hasMembershipRole(context, "COLLEGE_ADMIN")');
     expect(src).toContain('status:"SUBMITTED"');
     expect(src).toContain('screening:"SHORTLISTED"');
     expect(src).toContain("listCollegeDriveApplications(context,jobId,query)");
