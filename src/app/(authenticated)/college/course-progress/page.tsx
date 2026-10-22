@@ -85,7 +85,7 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
       <CollegeLearnerProgressReport data={report} showHeading={false}/>
       {report.report && !report.report.noMeasurableWork?<CollegeCourseRetakeAction
         learners={report.report.rows.map(row=>({membershipId:row.membershipId,
-          name:row.name,rollNumber:row.rollNumber}))}
+          name:row.name??"Learner",rollNumber:row.rollNumber}))}
         offeringId={report.report.chosen.offeringId}
         deliveryId={report.report.chosen.deliveryId}
         courseName={report.choices.find(choice=>choice.offeringId===report.report?.chosen.offeringId)?.courseName??"selected course"}
