@@ -20,4 +20,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 ## Results
 
-- OK G2-11-022-077 — `src/app/(authenticated)/tpo/reports/page.tsx:198-247` renders an immediately visible, accessible, linked Placement journey before report cards, including Looking for a job, Placed, Accepted, Unplaced, Not accepted yet, counts and percentages. Matches `docs/legacy-source/frontend/src/pages/tpo/reports/index.js:62-74` (JourneyStrip, stage and gap destinations).
+- OK G2-11-022-077 — `src/app/(authenticated)/tpo/reports/page.tsx:251-293` renders an immediately visible, accessible, linked Placement journey before report cards, including Looking for a job, Placed, Accepted, Unplaced, Not accepted yet, counts and percentages. Matches `docs/legacy-source/frontend/src/pages/tpo/reports/index.js:62-74` (JourneyStrip, stage and gap destinations).
