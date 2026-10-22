@@ -86,12 +86,12 @@ export async function getProjectResourceHistory(
    .limit(requested.pageSize).offset((page-1)*requested.pageSize);
   return {rows:entries.map(({metadata,...row})=>{
    const meta=metadata??{};
-   const order=meta.resourceOrder;
-   const key=meta.resourceKey;
-   const type=meta.actionType;
-   const changed=meta.changedFields;
-   const previousSequence=meta.previousSequence;
-   const nextSequence=meta.nextSequence;
+   const order=meta["resourceOrder"];
+   const key=meta["resourceKey"];
+   const type=meta["actionType"];
+   const changed=meta["changedFields"];
+   const previousSequence=meta["previousSequence"];
+   const nextSequence=meta["nextSequence"];
    const reordered=Number.isSafeInteger(previousSequence)&&
     Number.isSafeInteger(nextSequence);
    return {
@@ -102,8 +102,8 @@ export async function getProjectResourceHistory(
     resourceOrder:typeof order==="number"&&Number.isSafeInteger(order)&&order>=0
      ?order:typeof nextSequence==="number"&&Number.isSafeInteger(nextSequence)&&nextSequence>=0
       ?nextSequence:null,
-    beforeJson:safeSnapshot(meta.beforeJson)??(reordered?{sequence:previousSequence as number}:null),
-    afterJson:safeSnapshot(meta.afterJson)??(reordered?{sequence:nextSequence as number}:null),
+    beforeJson:safeSnapshot(meta["beforeJson"])??(reordered?{sequence:previousSequence as number}:null),
+    afterJson:safeSnapshot(meta["afterJson"])??(reordered?{sequence:nextSequence as number}:null),
     changedFields:Array.isArray(changed)?changed.filter((field):field is string=>
       typeof field==="string"&&resourceSnapshotKeys.has(field)):(reordered?["sequence"]:[]),
    };
