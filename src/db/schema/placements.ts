@@ -2820,3 +2820,76 @@ export function legacyCollegeCompanyRelationshipImport(input:{
   internalNotes:input.internalNotes?.trim()??null,
   newRecruiterGrantAuthorized:false as const};
 }
+
+
+/** One-way historic offer fields. SELECTED is a staging decision, not an
+ * issued letter; RELEASED becomes a dated ISSUED offer after a scoped TPO
+ * approval. Joining belongs to joining_outcomes, never a fabricated offer
+ * acceptance. The archived original LPA remains exact decimal provenance. */
+export const LEGACY_PLACEMENT_OFFER_FIELDS={
+ id:"placement_offers.legacy_offer_id",
+ applicationId:"placement_offers.application_id (validated UUID crosswalk)",
+ roleName:"placement_offers.role_title",
+ roleOptionName:"placement_offers.legacy_role_option_name",
+ ctcLpa:"placement_offers.legacy_ctc_lpa",
+ ctcInr:"placement_offers.annual_ctc_inr",
+ fixedCtc:"placement_offers.fixed_lpa",
+ variableCtc:"placement_offers.variable_lpa",
+ joiningBonus:"placement_offers.joining_bonus_lpa",
+ bondMonths:"placement_offers.bond_months",
+ joiningDate:"placement_offers.joining_date (civil DATE)",
+ offerLetterUrl:"placement_offers.offer_letter_object_path (scanned signed grant)",
+ expiryDate:"placement_offers.expires_at (timezone validated)",
+ accepted:"placement_offers.status = ACCEPTED",
+ declined:"placement_offers.status = DECLINED",
+ issuedAt:"placement_offers.issued_at",
+ createdBy:"placement_offers.issued_by_user_id (verified actor crosswalk)",
+ releasedBy:"placement_offers.verified_by_user_id",
+ statusHistory:"placement_offer_status_history",
+ joiningStatus:"placement_joining_outcomes",
+ dispute:"placement_offer_status_history / dispute case",
+} as const;
+export function legacyPlacementOfferStageDisposition(input:{
+ sourceOfferId:number;applicationId:string;collegeId:string;
+ selected:boolean;released:boolean;withdrawn:boolean;
+ accepted:boolean|null;declined:boolean|null;
+ sourceCtcLpa:string|null;
+ releasedAt:string|null;
+}){
+ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ if(!Number.isSafeInteger(input.sourceOfferId)||input.sourceOfferId<1||
+   !uuid.test(input.applicationId)||!uuid.test(input.collegeId))
+  throw new Error("Unmapped legacy offer identity");
+ if(input.accepted&&input.declined||input.released&&!input.selected||
+    input.withdrawn&&(input.accepted||input.declined))
+  throw new Error("Conflicting old offer state");
+ if(input.releasedAt!==null&&(
+   !/(?:Z|[+-]\d{2}:\d{2})$/.test(input.releasedAt)||
+   !Number.isFinite(Date.parse(input.releasedAt))))
+  throw new Error("Historic release instant requires source timezone verification");
+ const ctc=input.sourceCtcLpa?.trim()??"";
+ if(ctc&&!/^(?:0|[1-9]\d{0,4})(?:\.\d{1,4})?$/.test(ctc))
+  throw new Error("Invalid historic CTC LPA");
+ let annualCtcInr:number|null=null;
+ if(ctc){
+  const [integer,fraction=""]=ctc.split(".");
+  const scaled=BigInt(integer)*10000n+BigInt(fraction.padEnd(4,"0"));
+  const rupees=(scaled*100000n+5000n)/10000n;
+  if(rupees>2147483647n)throw new Error("Historic offer CTC exceeds int32 INR");
+  annualCtcInr=Number(rupees);
+ }
+ const state=!input.selected?"NOT_SELECTED":
+   !input.released?"SELECTION_STAGED":
+   input.withdrawn?"WITHDRAWN":
+   input.accepted?"ACCEPTED":
+   input.declined?"DECLINED":"ISSUED";
+ if(input.released&&input.releasedAt===null)
+  throw new Error("Released offer requires verified release time");
+ return {legacyOfferId:input.sourceOfferId,
+  applicationId:input.applicationId,collegeId:input.collegeId,
+  annualCtcInr,legacyCtcLpa:ctc||null,
+  state,offerIssuable:state==="ISSUED",
+  releaseAt:input.releasedAt===null?null:new Date(input.releasedAt),
+  requiresVerifiedIssuer:true as const,
+  joiningOutcomeStoredSeparately:true as const};
+}

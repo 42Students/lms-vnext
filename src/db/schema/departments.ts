@@ -41,3 +41,30 @@ export const departments = pgTable(
     uniqueIndex("departments_id_college_uq").on(table.id, table.collegeId),
   ],
 );
+
+
+/** Old Department.id/collegeId integers are source import keys only.
+ * An archived department may be retained for roster/history references but
+ * cannot be revived under a conflicting active name in the same college. */
+export function legacyDepartmentImportDisposition(input:{
+ legacyId:number;sourceCollegeId:number;resolvedCollegeId:string|null;
+ name:string;deleted:boolean;sourceArchivedAt:string|null;
+ activeNameAlreadyUsed:boolean;
+}){
+ if(!Number.isSafeInteger(input.legacyId)||input.legacyId<1||
+    !Number.isSafeInteger(input.sourceCollegeId)||input.sourceCollegeId<1||
+    !input.resolvedCollegeId||
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(input.resolvedCollegeId))
+  throw new Error("Unmapped department or college ID");
+ const name=input.name.trim();
+ if(name.length<1||name.length>255)throw new Error("Invalid source department name");
+ if(!input.deleted&&input.activeNameAlreadyUsed)
+  throw new Error("Active department name collision in this college");
+ const retired=input.deleted?input.sourceArchivedAt:null;
+ if(retired!==null&&(!/(?:Z|[+-]\d{2}:\d{2})$/.test(retired)||
+  !Number.isFinite(Date.parse(retired))))
+  throw new Error("Department archive time needs timezone mapping");
+ return {collegeId:input.resolvedCollegeId,name,
+  archivedAt:input.deleted?new Date(retired??"1970-01-01T00:00:00Z"):null,
+  legacyDepartmentId:input.legacyId,activate:false as const};
+}
