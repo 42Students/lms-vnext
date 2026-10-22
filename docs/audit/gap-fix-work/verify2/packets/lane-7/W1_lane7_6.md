@@ -126,3 +126,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: (none, new feature)
 - Legacy: LFE/components/admin/projects/useUnsavedFormGuard.js:31-61: keyboard route Back guarded for changed form
 - Expected fix: Guard keyboard/browser/tab navigation on dirty dialogs
+
+## Lane-16 FAST verification triage (2026-10-22)
+
+DEFERRED — all 25 rows require service, authorization, migration or multi-screen behavior verification beyond a quick source inspection. No parity or completed fixes claimed for these rows; retain each gap for detailed follow-up.
