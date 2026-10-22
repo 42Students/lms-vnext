@@ -5,7 +5,7 @@ type MentorReviewQuery=z.infer<typeof mentorReviewQuerySchema>;
 
 /** Strip pagination before export so the server applies the same authorized filters. */
 export function mentorReviewExportHref(query:MentorReviewQuery) {
- const listing=mentorPortfolioHref("reviews",{...query,page:1,pageSize:20});
+ const listing=mentorPortfolioHref("reviews",{...query,...(query.projectId!==undefined?{projectId:query.projectId}:{}),page:1,pageSize:20});
  const suffix=listing.includes("?")?listing.slice(listing.indexOf("?")):"";
  return "/api/mentor/reviews/export"+suffix;
 }
