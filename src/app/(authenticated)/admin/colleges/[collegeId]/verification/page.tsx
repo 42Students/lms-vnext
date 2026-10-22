@@ -7,7 +7,6 @@ import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {PageBackLink} from "@/components/ui/page-back-link";
-import {Disclosure} from "@/components/ui/disclosure";
 import {ErrorState} from "@/components/ui/error-state";
 import {SuperAdminVerificationPanel} from "@/components/verification/SuperAdminVerificationPanel";
 import {getSuperAdminTenantLifecycleDetail} from "@/modules/colleges/admin-tenant-lifecycle-service";
