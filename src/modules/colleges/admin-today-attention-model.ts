@@ -6,6 +6,11 @@ export function istDayBounds(date:Date){
  const start=new Date(get("year")+"-"+get("month")+"-"+get("day")+"T00:00:00+05:30");
  return {from:start,to:new Date(start.getTime()+86400000)};
 }
+/** Pending attendance counts classes that ENDED within the preceding 168
+ * hours, including classes started before the cutoff. */
+export function pendingAttendanceWindowStart(now:Date):Date{
+ return new Date(now.getTime()-7*24*60*60*1000);
+}
 /** AttentionBoard "when": ddd D MMM, h:mm A rendered in IST. */
 export function formatSuperAdminAttentionWhen(value:Date):string{
  const parts=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",
