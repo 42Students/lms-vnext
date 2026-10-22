@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     // Never infer a domain from an unvalidated, personal or disposable address.
     const email = typeof raw.recruiterEmail === "string" ? raw.recruiterEmail.trim().toLowerCase() : "";
     const derivedDomain = email.includes("@") ? email.split("@")[1] : undefined;
-    const withDomain = {
+    const withDomain: Record<string, unknown> = {
       ...raw,
       ...(!raw.primaryDomain && derivedDomain ? { primaryDomain: derivedDomain } : {}),
     };

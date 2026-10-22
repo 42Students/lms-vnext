@@ -285,7 +285,6 @@ export default async function CollegeBatchPromotionPage({
                 learnerCount={preview.checkedLearners}
                 academicYearStart={preview.plan.academicYearStart!}
                 activeClasses={preview.activeClasses}
-                deactivatedFacultyAssignments={preview.endingFacultyAssignments}
                 maxSemester={preview.batch.durationTerms} />
             ) : null}
         </section>
