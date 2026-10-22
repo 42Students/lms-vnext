@@ -185,6 +185,17 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
       order by r.sequence desc,result.updated_at desc limit 1)`,
     applicationStatus:placementApplications.status,
     screeningStatus:placementApplicationScreenings.status,
+    /** Legacy appliedAt is first application, even after a re-submission. */
+    firstAppliedAt:placementApplications.firstAppliedAt,
+    sourceProvider:placementApplications.sourceProvider,
+    externalRef:placementApplications.externalRef,
+    candidateMessage:placementApplicationScreenings.candidateMessage,
+    resumeRecorded:sql<boolean>`exists(select 1 from placement_application_private_artifacts artifact
+      where artifact.application_id=${placementApplications.id}
+        and artifact.resume_object_path is not null)`,
+    privateNotesRecorded:sql<boolean>`exists(select 1 from placement_application_private_artifacts artifact
+      where artifact.application_id=${placementApplications.id}
+        and nullif(trim(artifact.internal_notes),'') is not null)`,
     screeningScore,
     screeningUpdatedAt:placementApplicationScreenings.updatedAt,
     eligibilityStatus:placementApplications.eligibilityStatus,
@@ -240,7 +251,13 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
       ...(row.pendingWithdrawal?["Withdrawal requested"]:[]),
       ...(row.noShow?["No-show"]:[]),
       ...(row.placedElsewhere?["Accepted offer elsewhere"]:[]),
-    ],submittedAt:row.submittedAt.toISOString(),
+    ],
+    submittedAt:row.submittedAt.toISOString(),
+    firstAppliedAt:row.firstAppliedAt?.toISOString()??row.submittedAt.toISOString(),
+    // The detail route grants a scanned, time-bounded attachment. Raw URLs,
+    // storage object paths and staff private notes never enter this list.
+    resumeAvailable:row.resumeRecorded,
+    staffNoteAvailable:row.privateNotesRecorded,
     screeningUpdatedAt:row.screeningUpdatedAt?.toISOString()??null,
    }))};
   },{isolationLevel:"repeatable read",accessMode:"read only"});
