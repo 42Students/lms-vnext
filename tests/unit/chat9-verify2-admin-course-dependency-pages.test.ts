@@ -23,8 +23,8 @@ describe("Super Admin paged course dependency counts",()=>{
   expect(service).toContain('requireSuperAdminSelectedCollege(context,"courses.read")');
   expect(service).toContain("z.array(z.uuid()).max(100).parse(visibleCourseIds)");
   expect(service).toContain("inArray(courses.id,courseIds)");
-  expect(page).toContain("paginateCollegeCourses(workspace.courses,catalogueQuery).items");
-  expect(page).toContain("getSuperAdminCourseDependencyCounts(context,visibleCourseIds)");
+  expect(page).toMatch(/paginateCollegeCourses\(workspace\?\.courses\s*\?\?\s*\[\],\s*catalogueQuery\)\.items\.map\(course\s*=>\s*course\.id\)/);
+  expect(page).toMatch(/getSuperAdminCourseDependencyCounts\(context,\s*paginateCollegeCourses\(/);
   expect(page).toContain("!dependenciesResult.ok");
  });
 });
