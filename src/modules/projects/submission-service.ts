@@ -726,7 +726,8 @@ export async function listProjectSubmissions(
     memberIds.length?db.select({id:collegeMemberships.id,name:users.displayName})
       .from(collegeMemberships)
       .innerJoin(users,eq(users.id,collegeMemberships.userId))
-      .where(inArray(collegeMemberships.id,memberIds)):Promise.resolve([]),
+      .where(and(inArray(collegeMemberships.id,memberIds),
+        eq(collegeMemberships.collegeId,scope.collegeId))):Promise.resolve([]),
     reviewerIds.length?db.select({id:users.id,name:users.displayName})
       .from(users).where(inArray(users.id,reviewerIds)):Promise.resolve([]),
   ]);
@@ -770,6 +771,8 @@ export async function listProjectSubmissions(
     a.version-b.version||a.id.localeCompare(b.id));
   return {
    submissions,reviews,deliveryEvents,history,
+   latestSubmission:submissions[submissions.length-1]??null,
+   versionCount:submissions.length,
    legacyDelivery:legacyProjectDeliveryProjection({submissions,reviews,deliveryEvents}),
    revisionCount:submissions[submissions.length-1]?.legacyRevisionCount??null,
    reviewCount:reviews.length,

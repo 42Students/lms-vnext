@@ -56,6 +56,17 @@ export default async function MentorCalendarPage({searchParams}:{
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Meetings"
       description="Every scheduled meeting across your assigned projects, in one place."/>
+    <section className="ln-module-card min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 sm:p-5"
+      aria-label="Meeting dates and history">
+      <MentorMeetingsCalendar meetings={displayed}
+      // eslint-disable-next-line react-hooks/purity -- Current instant is supplied by server for hydration, refreshed on the client.
+      initialNow={now.toISOString()}/>
+    </section>
+    <Disclosure title={"Search & filters"+(activeCount?" ("+activeCount+" active)":"")}
+      defaultOpen={activeCount>0} className="min-w-0 border-t border-border pt-3"
+      contentClassName="pt-3">
+      <p className="mb-3 text-xs text-body">Filter the Upcoming and Past meetings above;
+        choose Filter to apply a new search.</p>
     <FilterBar title="Meeting filters" activeCount={activeCount}
       search={<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
         <Input type="search" name="search" form="mentor-calendar-filters" maxLength={100}
@@ -147,8 +158,6 @@ export default async function MentorCalendarPage({searchParams}:{
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">    <p className="text-sm text-body">{displayed.length} matching meeting{displayed.length===1?"":"s"} of {meetings.length} currently assigned.</p>
       {displayed.length===0 && activeCount>0 ? <Link href="/mentor/calendar" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link> : null}
     </div>
-    <MentorMeetingsCalendar meetings={displayed}
-      // eslint-disable-next-line react-hooks/purity -- Current instant is supplied by server for hydration, refreshed on the client.
-      initialNow={now.toISOString()}/>
+    </Disclosure>
   </div>;
 }
