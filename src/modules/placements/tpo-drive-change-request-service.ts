@@ -347,7 +347,7 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
       eq(placementDriveChangeRequests.field,canonicalField),
       eq(placementDriveChangeRequests.status,"OPEN"))).limit(1);
     if(duplicate)throw new OpenDriveChangeConflict(
-      FIELD_LABELS[input.field]??FIELD_LABELS[canonicalField]??"this field");
+      legacyChangeFieldLabel(input.field,canonicalField));
    }
    if(mode==="SUGGEST"&&["PAY","CTC","STIPEND"].includes(input.field)){
     const roleCounts=await tx.select({total:sql<number>`count(*)::integer`.mapWith(Number)})
