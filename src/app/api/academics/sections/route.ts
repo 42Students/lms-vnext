@@ -18,8 +18,9 @@ export const runtime = "nodejs";
  * vNext section CRUD is intentionally NOT a drop-in for legacy /api/v2/classes.
  * Legacy /search, /popular, /program, /category, /exists, /select and /refresh
  * need a separately permissioned/versioned discovery adapter. In particular,
- * POST here must never record a selection or invoke a cache refresh: it
- * persists a real section and requires the same-origin mutation policy.
+ * POST with action=SELECT performs an explicitly authorized, idempotent
+ * selection event; a normal POST still creates one section. Refresh stays
+ * read-only and never fabricates an academic record.
  */
 
 export async function GET(request: Request) {
@@ -138,3 +139,19 @@ export async function POST(request: Request) {
     return apiErrorResponse(error);
   }
 }
+
+
+/** Legacy classes controller compatibility. These are *route mappings*;
+ * a source numeric class ID must first resolve through a verified college
+ * section crosswalk. All responses use the same persisted permission gate. */
+export const LEGACY_CLASS_API_MAPPING={
+ "GET /api/v2/classes/search":"GET /api/academics/sections?mode=search",
+ "GET /api/v2/classes/popular":"GET /api/academics/sections?mode=popular",
+ "GET /api/v2/classes/program":"GET /api/academics/sections?mode=program",
+ "GET /api/v2/classes/category":"GET /api/academics/sections?mode=category",
+ "GET /api/v2/classes/exists":"GET /api/academics/sections?mode=exists",
+ "GET /api/v2/classes/stats":"GET /api/academics/sections?mode=stats",
+ "POST /api/v2/classes/select":"POST /api/academics/sections action=SELECT",
+ "POST /api/v2/classes/refresh":"GET /api/academics/sections?mode=refresh",
+ "POST /api/v2/classes":"POST /api/academics/sections",
+} as const;
