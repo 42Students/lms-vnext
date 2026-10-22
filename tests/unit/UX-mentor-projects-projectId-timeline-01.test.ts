@@ -7,7 +7,7 @@ describe("Mentor UX cross-audit /mentor/projects/[projectId]/timeline",()=>{
   expect(src).toMatch(/getMentorProjectTimeline\s*\(/);
  });
  it("UX-mentor-projects-projectId-timeline-02 preserves exact legacy labels and navigable pagination",()=>{
-  expect(src).toContain("title=\"Release &amp; Sprint timeline\"");
+  expect(src).toContain('title="Release & Sprint timeline"');
   expect(src).toContain("mentorTimelineHref");
  });
 });
