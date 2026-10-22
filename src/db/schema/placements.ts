@@ -2564,3 +2564,45 @@ export const LEGACY_TPO_OFFER_STATE_CROSSWALK={
  WITHDRAWN:{selection:"RELEASED",offerStatus:"WITHDRAWN"},
  REVOKED:{selection:"REVOKED",offerStatus:"WITHDRAWN"},
 } as const;
+
+/** Import-only grant capability crosswalk. Unknown values are retained for
+ * review, not included in an effective vNext entitlement. A missing company
+ * relationship or verification blocks activation regardless of capabilities. */
+export const LEGACY_RECRUITER_GRANT_CAPABILITIES=[
+ "DRIVES","APPLICANT_EXPORT","INTERVIEWS","MESSAGES",
+] as const;
+export function legacyRecruiterCapabilityDisposition(raw:readonly string[]){
+ const allowed=new Set<string>(LEGACY_RECRUITER_GRANT_CAPABILITIES);
+ const accepted=[...new Set(raw.filter(value=>allowed.has(value)))];
+ const unknown=[...new Set(raw.filter(value=>!allowed.has(value)))];
+ return {accepted,unknown,requiresReview:unknown.length>0||accepted.length===0};
+}
+/** One historical Interview row maps to a booked candidate slot and
+ * immutable lifecycle/feedback events; never a globally unscoped interview. */
+export const LEGACY_INTERVIEW_FIELD_DISPOSITION={
+ id:"placementRoundCandidateSlots.legacyInterviewId",
+ job:"placementRoundCandidateSlots.jobId via scoped placementJobs",
+ application:"placementRoundCandidateSlots.applicationId",
+ learner:"placementApplications.membershipId",
+ interviewType:"placementRoundCandidateSlots.legacyInterviewType",
+ interviewStatus:"placementRoundCandidateSlots.legacyInterviewStatus",
+ scheduledDate:"placementRoundCandidateSlots.legacyScheduledAt",
+ location:"placementRoundCandidateSlots.legacyLocation",
+ interviewer:"placementRoundCandidateSlots.legacyInterviewerName",
+ feedback:"placementInterviewPrivateEvents.privateFeedback (staff only)",
+ reschedules:"placementRoundCandidateSlots.legacyRescheduleHistory and private events",
+} as const;
+export const LEGACY_COMPANY_RELATIONSHIP_FIELD_DISPOSITION={
+ id:"placementCompanyRelationships.id (import alias required)",
+ collegeId:"placementCompanyRelationships.collegeId",
+ companyId:"placementCompanyRelationships.companyId",
+ contactName:"placementCompanyRelationships.contactPersonName (private college CRM)",
+ contactEmail:"placementCompanyRelationships.contactEmail (private college CRM)",
+ contactPhone:"placementCompanyRelationships.contactPhone (private college CRM)",
+ ownerFacultyId:"archived source mapping, activate only after same-college verified owner membership",
+ internalNotes:"placementCompanyRelationships.internalNotes (never org-public)",
+ isTrusted:"placementCompanyRelationships.isTrusted",
+ joinTokenHash:"placementPublicJoinLinks.tokenHash (rotated, never reuse legacy token)",
+ joinOpens:"placementPublicJoinLinks.opensCount (atomic)",
+ joinCount:"placementPublicJoinLinks.joinsCount (atomic)",
+} as const;
