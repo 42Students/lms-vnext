@@ -31,7 +31,7 @@ describe("SA-HIRING-FILTER-ORG-21 persisted organization must own selected colle
   expect(source).toContain("eq(colleges.id,scope.collegeId)");
   expect(source).toContain("eq(colleges.organizationId,scope.organizationId)");
   expect(source.indexOf("if(!college)throw new AuthorizationError"))
-   .toBeLessThan(source.indexOf("Promise.all(["));
+   .toBeLessThan(source.indexOf("Promise.allSettled(["));
   expect(source).toContain("eq(placementJobs.collegeId,scope.collegeId)");
   expect(source).toContain("eq(departments.collegeId,scope.collegeId)");
  });

@@ -65,7 +65,7 @@ describe("TPO-BREAK-notes-01 authenticated writer and foreign-ID isolation",()=>
    membershipIds:[LEARNER,FOREIGN],note:"  Confirmed meeting  ",
   });
   expect(result).toEqual({
-   added:1,skipped:1,savedMembershipIds:[LEARNER],
+   ok:true,added:1,skipped:1,savedMembershipIds:[LEARNER],
   });
   expect(mocks.insert).toHaveBeenCalledTimes(2);
   expect(mocks.permission).toHaveBeenCalledWith(expect.anything(),ctx,"placements.manage",{
