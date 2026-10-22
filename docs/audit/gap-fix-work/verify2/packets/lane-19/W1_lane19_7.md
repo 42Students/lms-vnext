@@ -48,11 +48,13 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Implement safe reassignment with dependency validation.
 
 ## G2-5-012-077 [P1] GAP facet F16
+- Verification: OK — `tpoCalendarViewForViewport` uses the actual width <768 and explicit URL view takes precedence.
 - Files: src/modules/placements/tpo-calendar-url-model.ts
 - Legacy: Legacy <768px viewport switches default view from Week to Agenda (`docs/legacy-source/frontend/src/pages/tpo/calendar.js:51-52`)
 - Expected fix: Switch by actual client viewport including narrow desktop; preserve URL override
 
 ## G2-5-016-016 [P1] GAP facet F07
+- Verification: OK — skills GET returns the legacy search-failure wording plus retryable 503 when the catalog is disabled.
 - Files: src/app/api/skills/route.ts
 - Legacy: Legacy search failure message 'Failed to search skills. Please try again or contact support.' `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SkillController.java:49-62`
 - Expected fix: Provide useful unavailable/search-retry UI message.
