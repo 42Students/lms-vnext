@@ -107,7 +107,7 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
    setDraft(blank);setEditing(null);
    setNotice(action==="REMOVE"?"Material removed.":action==="EDIT_LINK"?"Material updated.":"Material added.");
   }catch(cause){
-   if(currentUriRef.current===uri)setError(cause instanceof Error?cause.message:"Material change failed.");
+   if(currentUriRef.current===uri)setError("Could not save resource material. Check your permissions and try again.");
   }finally{
    if(currentUriRef.current===uri)setBusy(false);
   }

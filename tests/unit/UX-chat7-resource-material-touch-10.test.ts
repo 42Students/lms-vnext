@@ -12,7 +12,9 @@ describe("UX-LEARN-RESOURCE-10 mobile and keyboard resource material workflow",(
  });
  it("preserves reply-safe authoring confirmation, inline error and cancel states",()=>{
   const source=readFileSync("src/components/courses/lesson-resource-materials-control.tsx","utf8");
-  expect(source).toContain("Remove this material? Students will no longer see it.");
+  expect(source).toContain('title="Remove this material?" description="Students will no longer see it."');
+  expect(source).toContain('<ConfirmDialog open={removeId!==null}');
+  expect(source).toContain('pending={busy} onConfirm=');
   expect(source).toContain("Could not save resource material. Check your permissions and try again.");
   expect(source).toContain("Cancel edit");
   expect(source).toContain('<Alert tone="error">{error}</Alert>');
