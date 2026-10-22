@@ -32,6 +32,7 @@ const legacyTeamSendSchema=z.strictObject({
  topic:z.string().trim().min(1).max(200).optional(),
  body:z.string().trim().min(1).max(4000),
  mentionMembershipIds:z.array(z.string().uuid()).max(20).default([]),
+ addMentionedMembers:z.boolean().default(false),
  markDecision:z.boolean().default(false),
  idempotencyKey:z.string().uuid().optional(),
  ask:z.object({
@@ -61,16 +62,9 @@ export async function sendLegacyTpoTeamConversation(context:RequestContext,raw:u
  const existing=input.threadId?await readTpoInternalConversation(context,input.threadId,1):null;
  if(existing&&existing.status!=="READY")
   return {status:existing.status,threadId:input.threadId??null};
- if(existing?.status==="READY"&&input.mentionMembershipIds.length){
-  const authorized=new Set([
-   existing.thread.startedByMembershipId,existing.thread.invitedMembershipId,
-  ]);
-  // For a group, notifications already fan out to active participants in the
-  // persisted message writer; IDs outside the direct pair require a group
-  // participant membership service rather than an unscoped mention.
-  if(input.mentionMembershipIds.some(id=>!authorized.has(id)))
-   throw new AuthorizationError("placements.manage");
- }
+ // The transactional writer checks every mention against this college,
+ // the persisted active thread roster and Add people consent. Do not
+ // incorrectly restrict group mentions to the original direct pair.
  const threadId=input.threadId??(await createTpoInternalThread(context,
   internalThreadSchema.parse({
    recipientMembershipId:input.recipientMembershipId,
@@ -79,6 +73,8 @@ export async function sendLegacyTpoTeamConversation(context:RequestContext,raw:u
   }))).id;
  const message=await postTpoInternalMessage(context,{
   threadId,body:input.body,markDecision:input.markDecision,
+  mentionMembershipIds:input.mentionMembershipIds,
+  addMentionedMembers:input.addMentionedMembers,
   idempotencyKey:input.idempotencyKey,
  });
  if(!input.ask)return {status:"READY" as const,threadId,messageId:message.id,
