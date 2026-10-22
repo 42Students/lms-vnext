@@ -58,6 +58,7 @@ export async function saveTpoBatchRegistrationDeadline(
     rulesOverride: lifecycle?.rulesOverride ?? null,
     expectedVersion: input.expectedVersion,
   });
+  if (!saved) throw new Error("BATCH_SETTINGS_NOT_SAVED");
   return {
     deadline: saved.registrationDeadline?.toISOString() ?? null,
     invitedAt: saved.invitedAt?.toISOString() ?? null,
