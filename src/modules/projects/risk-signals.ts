@@ -68,7 +68,7 @@ export function deriveProjectRiskReasons({
   // not-yet-started PLANNED project can retain historical submissions but
   // must not advertise an operation the review state machine forbids.
   const currentReviewStatus = latestSubmissionStatus?.trim().toUpperCase().replace(/[ -]/g,"_");
-  if ((projectStatus === "ACTIVE" || projectStatus === "COMPLETED") && (
+  if (projectStatus === "ACTIVE" && (
     currentReviewStatus === "SUBMITTED" ||
     currentReviewStatus === "UNDER_REVIEW" ||
     currentReviewStatus === "IN_REVIEW"

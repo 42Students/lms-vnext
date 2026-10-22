@@ -31,7 +31,7 @@ function CopyLinkIcon(){
 export function LearnerLiveClassLink({href,endsAt}:{href:string;endsAt?:string|null}){
  const [message,setMessage]=useState("");
  const [ended,setEnded]=useState(false);
- const noticeTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
+ const noticeTimer=useRef<number|null>(null);
  const timeUnknown=Boolean(endsAt&&!Number.isFinite(Date.parse(endsAt)));
  const provider=meetingProvider(href);
  useEffect(()=>{

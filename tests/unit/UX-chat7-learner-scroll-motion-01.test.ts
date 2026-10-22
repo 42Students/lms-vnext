@@ -7,9 +7,11 @@ describe("UX-chat7-learner-scroll-motion-01 hidden scrollbar resilience",()=>{
   const board=read("src/components/projects/learner-board-interactive.tsx");
   expect(board).toContain('aria-label="Project Board lanes, scroll horizontally to see more"');
   expect(board).toContain("tabIndex={0}");
-  expect(board).toContain("overscroll-x-contain");
+  const boardStyles=read("src/components/projects/legacy-project-board.module.css");
+  expect(boardStyles).toContain("overscroll-behavior-x: contain");
+  expect(boardStyles).toContain(".scrollRegion:focus-visible");
   expect(board).toContain("Scroll sideways to see all Board lanes.");
-  expect(board).toContain("focus-visible:outline-2");
+  expect(board).toContain("styles.scrollRegion");
   expect(board).toContain("min-h-11");
  });
  it("keeps both Semester course and credits lists operable without visible scrollbars",()=>{
@@ -18,7 +20,7 @@ describe("UX-chat7-learner-scroll-motion-01 hidden scrollbar resilience",()=>{
   expect(list.match(/tabIndex=\{0\}/g)?.length).toBeGreaterThanOrEqual(2);
   expect(list.match(/overscroll-contain/g)?.length).toBeGreaterThanOrEqual(2);
   expect(list).toContain("Scroll inside the list for more courses.");
-  expect(list).toContain("Scroll inside the list for the full credits breakdown.");
+  expect(list).toContain("Scroll inside the list for the credits breakdown.");
  });
  it("makes long quiz submissions focusable and provides a non-scrollbar cue",()=>{
   const quizzes=read("src/components/courses/learner-assessment-overview.tsx");

@@ -46,7 +46,8 @@ describe("Super Admin last-third /admin/semesters security and resilience",()=>{
   it("UX-admin-semesters-13 missing selected college gives a safe next step without data reads",async()=>{
     state.selected=false;
     const page=visible(await render()).join(" ");
-    expect(page).toContain("Select a college to continue");
+    expect(page).toContain("Select a College to manage Semesters.");
+    expect(page).toContain("Choose Organization and College in the header first.");
     expect(state.reads).toBe(0);
   });
   it("UX-admin-semesters-14 malformed paging gets an explicit error before the service",async()=>{

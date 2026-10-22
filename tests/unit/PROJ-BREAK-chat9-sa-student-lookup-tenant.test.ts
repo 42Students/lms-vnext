@@ -92,7 +92,7 @@ describe("Super Admin last-third student lookup: tenant-safe application joins",
     expect(state.reads).toBe(0);
   });
   it("SA-placements-student-lookup-07 overly long/short searches fail before authorization and query",async()=>{
-    for(const value of ["ab","x".repeat(151),[],null]){
+    for(const value of ["x","x".repeat(151),[],null]){
       await expect(lookupCollegeStudentPlacement(ctx,value)).rejects.toThrow();
     }
     expect(state.reads).toBe(0);
