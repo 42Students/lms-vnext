@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,count,eq,exists,ilike,or,sql} from "drizzle-orm";
+import {and,asc,count,desc,eq,exists,ilike,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {aliasedColumn} from "@/db/aliased-column";
 import {cohorts,colleges,collegeMemberships,departments,facultyProfiles,learnerProfiles,
@@ -82,6 +82,16 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
     ${facultyProfiles.profileDocument}->'personalDetails'->>'gender',
     ${learnerProfiles.profileDocument}->'personalDetails'->>'gender'
   )`.as("admin_person_gender"),
+  facultyContactEmail:sql<string|null>`coalesce(
+    nullif(${facultyProfiles.profileDocument}->'personalDetails'->>'contactMail',''),
+    nullif(${facultyProfiles.profileDocument}->'personalDetails'->>'email',''),
+    ${users.email}
+  )`.as("admin_faculty_contact_email"),
+  facultyContactMobile:sql<string|null>`coalesce(
+    nullif(${facultyProfiles.profileDocument}->'personalDetails'->>'contactMobile',''),
+    nullif(${facultyProfiles.profileDocument}->'personalDetails'->>'mobile',''),
+    ${users.phoneE164}
+  )`.as("admin_faculty_contact_mobile"),
   rollNumber:learnerProfiles.rollNumber,
   // Legacy learner.contactMail/contactMobile can differ from the globally
   // verified account identity. Display the learner profile's recorded

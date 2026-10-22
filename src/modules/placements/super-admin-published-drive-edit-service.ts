@@ -80,7 +80,7 @@ export async function editSuperAdminPublishedDrive(context:RequestContext,rawJob
     eq(placementCompanyRelationships.collegeId,acting.collegeId),
     eq(placementCompanyRelationships.status,"ACTIVE"),
   )).limit(1);
-  if(!companyRelationship)throw new PlacementsServiceError("PLACEMENT_COMPANY_NOT_FOUND");
+  if(!companyRelationship)throw new PlacementsServiceError("PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND");
   if(cmd.companyRelationshipId!==job.companyRelationshipId){
     // Reassigning a published company after applicants or offers exist would
     // silently move their employer identity. Refuse rather than rewriting records.
