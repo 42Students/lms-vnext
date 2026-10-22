@@ -66,10 +66,21 @@ describe("HR-PORTFOLIO-SCOPE-29 no cross-employer applicant or offer aggregates"
   ])expect(source).toContain(clause);
   expect(source).toContain("requirePermission(context");
   // Both aggregate queries must independently enforce live DB tenancy.
-  expect(source.split('eq(placementCompanyRelationships.status,"ACTIVE")').length-1).toBe(2);
-  expect(source.split('eq(placementCompanies.status,"ACTIVE")').length-1).toBe(2);
-  expect(source.split('eq(placementRecruiterCollegeGrants.status,"ACTIVE")').length-1).toBe(2);
-  expect(source.split('eq(placementRecruiterProfiles.status,"ACTIVE")').length-1).toBe(2);
-  expect(source).toContain("const ids=[...new Set(authorizedJobIds)].slice(0,20)");
+  const aggregateSql=source.slice(source.indexOf("const [shared,offers]"),
+   source.indexOf("const counts:",source.indexOf("const [shared,offers]")));
+  const aggregateBranches=aggregateSql.split("db.select({jobId:placementApplications.jobId").slice(1);
+  expect(aggregateBranches).toHaveLength(2);
+  // Both aggregates separately revalidate the persisted recruiter/company
+  // grants; the whole-portfolio summary may independently recheck them too.
+  for(const query of aggregateBranches)for(const guard of [
+   'eq(placementCompanyRelationships.status,"ACTIVE")',
+   'eq(placementCompanies.status,"ACTIVE")',
+   'eq(placementRecruiterCollegeGrants.status,"ACTIVE")',
+   'eq(placementRecruiterProfiles.status,"ACTIVE")',
+  ])expect(query).toContain(guard);
+  // A large authorized portfolio must be batched rather than silently capped.
+  expect(source).toContain("const allIds=[...new Set(authorizedJobIds)]");
+  expect(source).toContain("allIds.slice(index,index+20)");
+  expect(source).toContain("const ids=allIds");
  });
 });

@@ -39,7 +39,11 @@ describe("IIT Dharwad Projects: global audit authorization", () => {
     }
     const page = readFileSync("src/components/projects/project-admin-audit-page.tsx", "utf8");
     expect(page).toContain("const globalTemplateAudit = mayReadGlobalProjectAudit(context)");
-    expect(page).toContain("nextRemaining={result.remainingCount}");
+    // Cursor pagination replaced the removed button's local remaining state.
+    // Keep its persisted cursor and count in the rendered navigation.
+    expect(page).toContain("result.nextCursor?<Link");
+    expect(page).toContain('basePath+"/audit?"+nextParams.toString()');
+    expect(page).toContain('result.remainingCount?" ("+result.remainingCount+" remaining":""');
   });
 
   it("PROJ-BREAK-idor-26 a disabled Super Admin or active College Admin cannot see platform audit", () => {

@@ -7,7 +7,7 @@ const base:RecruiterDriveProgressInput={
  shared:0,active:0,withdrawn:0,issuedOffers:0,acceptedOffers:0,
  totalRounds:0,completedRounds:0,readOnly:false,
 };
-const request=(id:number,status:string,draft:unknown={title:"Role"})=>({
+const request=(id:number,status:string,draft:unknown=undefined)=>({
  id:"request-"+id,status,draft,createdAt:new Date(Date.UTC(2099,0,id+1)),
 });
 describe("HR-BREAK-TODAY-WAITING-39 persisted recruiter requests only",()=>{
