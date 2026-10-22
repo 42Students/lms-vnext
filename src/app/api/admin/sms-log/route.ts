@@ -17,8 +17,8 @@ export async function POST(request:Request){
    return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
   const source=body as Record<string,unknown>;
   const rows=await listSupportSmsDeliveryHistory(context,{
-   recipientSuffix:source.recipientSuffix,purpose:source.purpose,
-   page:source.page,size:source.size,
+   recipientSuffix:source["recipientSuffix"],purpose:source["purpose"],
+   page:source["page"],size:source["size"],
   });
   return NextResponse.json(rows,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
