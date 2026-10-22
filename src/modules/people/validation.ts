@@ -87,11 +87,13 @@ export const membershipRoleMutationInputSchema = z.object({
   role: membershipRoleInputSchema,
 });
 
-const suspensionReasonSchema = z
-  .string()
-  .trim()
-  .min(1, "Suspension reason is required")
-  .max(1000, "Suspension reason must be 1000 characters or less");
+/** Membership-scoped suspension is audited and revokes access immediately.
+ * Legacy allowed an empty request body; vNext intentionally requires a
+ * written reason consistently for faculty, learners and protected admins. */
+export const SUSPENSION_REASON_POLICY={min:3,max:1000} as const;
+const suspensionReasonSchema = z.string().trim()
+  .min(SUSPENSION_REASON_POLICY.min,"Enter a suspension reason of at least 3 characters.")
+  .max(SUSPENSION_REASON_POLICY.max,"Suspension reason must be 1000 characters or less");
 
 export const membershipLifecycleInputSchema = z.discriminatedUnion("action", [
   z.object({
