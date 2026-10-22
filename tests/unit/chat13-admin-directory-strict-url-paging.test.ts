@@ -48,7 +48,8 @@ describe("chat-13 Super Admin scoped directories refuse coerced URL paging", () 
     const href = adminDriveDirectoryHref(accepted);
     const parsed = new URL(href, "https://example.test");
     expect(parsed.searchParams.get("page")).toBe("2");
-    expect(parsed.searchParams.get("pageSize")).toBe("20");
+    expect(parsed.searchParams.has("pageSize")).toBe(false);
+    expect(parsed.searchParams.has("size")).toBe(false);
     expect(parsed.searchParams.get("q")).toBe("Acme & Company");
   });
 
