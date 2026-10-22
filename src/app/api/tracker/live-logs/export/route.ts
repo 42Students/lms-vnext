@@ -66,58 +66,79 @@ export async function GET(request: Request) {
   const environment = alertEnvironment();
   const encoder = new TextEncoder();
   let cancelled = false;
+  let cursorMs = start.getTime();
+  let pageToken: string | undefined;
+  let count = 0;
+  let finished = false;
+  const trailer = (complete: boolean) => JSON.stringify({
+    _meta: {
+      environment, since: start.toISOString(), until: end.toISOString(),
+      count, complete, truncated: !complete,
+      source: "REDACTED_CLOUD_LOGGING",
+      ...(complete ? {} : { error: "LOG_PROVIDER_UNAVAILABLE" }),
+    },
+  }) + "\n";
   const stream = new ReadableStream<Uint8Array>({
-    async start(controller) {
-      let count = 0;
-      let complete = false;
+    // pull is backpressure-aware: at most one 12-entry provider page is
+    // enqueued per downstream read, including for 31 days of log history.
+    // Async start() would eagerly load the entire range into memory.
+    async pull(controller) {
+      if (finished) return;
+      if (cancelled || request.signal.aborted) {
+        finished = true;
+        controller.close();
+        return;
+      }
+      if (cursorMs >= end.getTime()) {
+        finished = true;
+        controller.enqueue(encoder.encode(trailer(true)));
+        controller.close();
+        return;
+      }
+      const untilMs = Math.min(end.getTime(), cursorMs + 86_400_000);
       try {
-        for (let cursorMs = start.getTime(); cursorMs < end.getTime();) {
-          const untilMs = Math.min(end.getTime(), cursorMs + 86_400_000);
-          let cursor: string | undefined;
-          do {
-            if (cancelled || request.signal.aborted) return;
-            const page = await readCloudLogErrorPage({
-              project: config.project, namespace: config.namespace,
-              start: new Date(cursorMs === start.getTime() ? cursorMs - 1 : cursorMs),
-              end: new Date(untilMs), token,
-              minimumSeverity: parsed.data.minimumSeverity,
-              ...(cursor ? { pageToken: cursor } : {}),
-            });
-            for (const entry of page.errors) {
-              if (cancelled || request.signal.aborted) return;
-              const at = entry.timestamp.getTime();
-              if (at < start.getTime() || at > end.getTime()) continue;
-              controller.enqueue(encoder.encode(JSON.stringify({
-                timestamp: entry.timestamp.toISOString(),
-                event: entry.event, message: entry.message, route: entry.path,
-                reference: entry.requestId ?? null, component: entry.component ?? null,
-              }) + "\n"));
-              count++;
-            }
-            cursor = page.nextPageToken;
-          } while (cursor);
+        const page = await readCloudLogErrorPage({
+          project: config.project, namespace: config.namespace,
+          start: new Date(cursorMs === start.getTime() ? cursorMs - 1 : cursorMs),
+          end: new Date(untilMs), token,
+          minimumSeverity: parsed.data.minimumSeverity,
+          ...(pageToken ? { pageToken } : {}),
+        });
+        if (cancelled || request.signal.aborted) {
+          finished = true;
+          controller.close();
+          return;
+        }
+        for (const entry of page.errors) {
+          const at = entry.timestamp.getTime();
+          if (at < start.getTime() || at > end.getTime()) continue;
+          controller.enqueue(encoder.encode(JSON.stringify({
+            timestamp: entry.timestamp.toISOString(),
+            event: entry.event, message: entry.message, route: entry.path,
+            reference: entry.requestId ?? null, component: entry.component ?? null,
+          }) + "\n"));
+          count++;
+        }
+        if (page.nextPageToken) {
+          if (page.nextPageToken === pageToken) throw new Error("LOG_CURSOR_STALLED");
+          pageToken = page.nextPageToken;
+        } else {
+          pageToken = undefined;
           cursorMs = untilMs;
         }
-        complete = true;
-      } catch {
-        // Headers have been sent, so the trailer must explicitly identify a
-        // partial file. Never include provider response bodies or credentials.
-      } finally {
-        if (!cancelled && !request.signal.aborted) {
-          try {
-            controller.enqueue(encoder.encode(JSON.stringify({
-              _meta: {
-                environment, since: start.toISOString(), until: end.toISOString(),
-                count, complete, truncated: !complete,
-                source: "REDACTED_CLOUD_LOGGING",
-                ...(complete ? {} : { error: "LOG_PROVIDER_UNAVAILABLE" }),
-              },
-            }) + "\n"));
-            controller.close();
-          } catch {
-            // The consumer disconnected; never attempt another send.
-          }
+        if (cursorMs >= end.getTime()) {
+          finished = true;
+          controller.enqueue(encoder.encode(trailer(true)));
+          controller.close();
         }
+      } catch {
+        // Provider errors mid-stream cannot modify HTTP status. The terminal
+        // incomplete record prevents truncated files being mistaken for full.
+        finished = true;
+        if (!cancelled && !request.signal.aborted) {
+          controller.enqueue(encoder.encode(trailer(false)));
+        }
+        controller.close();
       }
     },
     cancel() { cancelled = true; },
