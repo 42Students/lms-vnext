@@ -119,8 +119,9 @@ export default async function LearnerPlacementJobDetailPage({
   return <div className="min-w-0 space-y-5">
    {rows.length===0 && journey ?
     <PageHeader title="Placement drive history" description="Your recorded application journey remains available."
-      actions={<Link href={back} className="inline-flex min-h-11 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9">← Back to drives</Link>} /> :
-    <PageHeader title="My Placements" description="Opportunities and your application journey" />}
+      actions={<Link href={back} className="inline-flex min-h-11 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9">← Back to drives</Link>} /> : null}
+   {/* Published jobs supply their own PageHeader through LearnerPlacementJobDetail.
+       Do not duplicate the h1 from this route. */}
    {shell}
    {!savedJobs.available ? <Banner tone="warning" role="alert">Saved-job controls are unavailable because your bookmarks could not be loaded. Drive details remain available. <Link href={"/learn/my-placements/jobs/"+encodeURIComponent(jobId)} className="font-semibold underline">Retry saved jobs</Link></Banner> : null}
    {rows.length>0 && rows.some(row => Boolean(row.job.jobDescriptionObjectPath)) ?
