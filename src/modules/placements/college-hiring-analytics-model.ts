@@ -33,7 +33,10 @@ export function collegeHiringAcademicScope(query:{
   const cohortId=query.cohortId;
   const programId=cohortId?undefined:query.programId;
   const departmentId=cohortId||programId?undefined:query.departmentId;
-  return {cohortId,programId,departmentId,
+  return {
+    ...(cohortId !== undefined ? {cohortId} : {}),
+    ...(programId !== undefined ? {programId} : {}),
+    ...(departmentId !== undefined ? {departmentId} : {}),
     filtered:Boolean(query.cohortId||query.programId||query.departmentId)};
 }
 export function collegeHiringAnalyticsQuery(raw: Record<string,string|string[]|undefined>) {

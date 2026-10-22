@@ -43,8 +43,8 @@ export async function getCollegeInterviewFeedback(context:RequestContext,rawJobI
   .orderBy(desc(activityEvents.occurredAt)).limit(1);
  if(!row)return {feedback:null};
  const item=row.metadata;
- return {feedback:{rating:Number(item.rating),recommendation:String(item.recommendation),
-  comments:String(item.comments),createdAt:row.createdAt.toISOString(),actorId:row.actorId}};
+ return {feedback:{rating:Number(item["rating"]),recommendation:String(item["recommendation"]),
+  comments:String(item["comments"]),createdAt:row.createdAt.toISOString(),actorId:row.actorId}};
 }
 export async function recordCollegeInterviewFeedback(context:RequestContext,
  rawJobId:unknown,rawSlotId:unknown,raw:unknown){
@@ -84,6 +84,7 @@ export async function recordCollegeInterviewFeedback(context:RequestContext,
     interviewVersion:slot.version,visibility:"STAFF_ONLY",
    },
   }).returning({id:activityEvents.id});
+  if (!saved) throw Error("Interview feedback could not be recorded.");
   return {id:saved.id,submitted:true as const};
  });
 }

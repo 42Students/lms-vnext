@@ -64,8 +64,8 @@ export function recruiterTableExportGrid(rows:readonly RecruiterTableExportRow[]
  if(!columns)return grid;
  const selected=new Set(columns.filter(column=>ENGAGE_COLUMNS.includes(column)));
  const indices=RECRUITER_TABLE_HEADERS.flatMap((column,index)=>selected.has(column)?[index]:[]);
- return {headers:indices.map(index=>grid.headers[index]),
-  values:grid.values.map(row=>indices.map(index=>row[index]))};
+ return {headers:indices.map(index=>grid.headers[index]??""),
+  values:grid.values.map(row=>indices.map(index=>row[index]??""))};
 }
 export function recruiterTableExportCsv(rows:readonly RecruiterTableExportRow[], columns?:readonly EngageColumn[]){
  const grid=recruiterTableExportGrid(rows,columns);

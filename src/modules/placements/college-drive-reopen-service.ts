@@ -11,7 +11,7 @@ import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 
 export async function reopenCollegeDrive(context:RequestContext,rawJobId:unknown,raw:unknown){
  const jobId=z.string().uuid().parse(rawJobId);
- const input=z.strictObject({confirmed:z.literal(true)}).parse(raw);
+ z.strictObject({confirmed:z.literal(true)}).parse(raw);
  const collegeId=await requireCollegePlacementAdmin(context);
  const acting=await resolveActingCollege(context,"placements.manage");
  if (acting.collegeId !== collegeId) throw new AuthorizationError("placements.manage");

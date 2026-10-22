@@ -58,7 +58,11 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
  };
  // Legacy picker uses the most specific selected academic scope.
  // A stale broader value must not silently exclude a selected cohort.
- const scope=collegeHiringAcademicScope(query);
+ const scope=collegeHiringAcademicScope({
+  ...(query.departmentId !== undefined ? {departmentId:query.departmentId} : {}),
+  ...(query.programId !== undefined ? {programId:query.programId} : {}),
+  ...(query.cohortId !== undefined ? {cohortId:query.cohortId} : {}),
+ });
  const academicFilter=scope.filtered;
  const chosenCohortId=scope.cohortId;
  const chosenProgramId=scope.programId;
@@ -154,7 +158,7 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
  ]);
  const totals=Object.fromEntries(stages.map(stage=>[stage,0])) as Record<string,number>;
  for(const row of currentStageRows){
-  if(row.stage in totals)totals[row.stage]+=row.total;
+  if(row.stage in totals)totals[row.stage]=(totals[row.stage]??0)+row.total;
  }
  const companies=new Map<string,{
   jobId:string;job:string;company:string;total:number;byStage:Record<string,number>
@@ -171,14 +175,14 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
    byStage:Object.fromEntries(stages.map(stage=>[stage,0])),
   };
   current.total+=row.total;
-  if(row.stage in current.byStage)current.byStage[row.stage]+=row.total;
+  if(row.stage in current.byStage)current.byStage[row.stage]=(current.byStage[row.stage]??0)+row.total;
   companies.set(row.jobId,current);
   const subtotal=companySubtotals.get(row.companyId)??{
    companyId:row.companyId,company:row.companyName,total:0,
    byStage:Object.fromEntries(stages.map(stage=>[stage,0])),
   };
   subtotal.total+=row.total;
-  if(row.stage in subtotal.byStage)subtotal.byStage[row.stage]+=row.total;
+  if(row.stage in subtotal.byStage)subtotal.byStage[row.stage]=(subtotal.byStage[row.stage]??0)+row.total;
   companySubtotals.set(row.companyId,subtotal);
   // The old report grouped aliases by a case-insensitive trimmed company
   // display name. Keep stable company-ID subtotals too for vNext drill-downs.
@@ -189,7 +193,7 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
    byStage:Object.fromEntries(stages.map(stage=>[stage,0])),
   };
   named.total+=row.total;
-  if(row.stage in named.byStage)named.byStage[row.stage]+=row.total;
+  if(row.stage in named.byStage)named.byStage[row.stage]=(named.byStage[row.stage]??0)+row.total;
   normalizedSubtotals.set(normalizedKey,named);
  }
  const cumulativeTotals=Object.fromEntries(stages.map(stage=>

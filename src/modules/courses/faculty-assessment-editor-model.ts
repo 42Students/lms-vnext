@@ -25,8 +25,8 @@ export function facultyAssessmentEditReceiptMatches(
  const entity=payload[kind==="QUIZ"?"quiz":"assignment"];
  if(!entity||typeof entity!=="object")return false;
  const row=entity as Record<string,unknown>;
- return row.id===id&&row.status===status&&row.title===expectedTitle &&
-   typeof row.updatedAt==="string"&&Number.isFinite(Date.parse(row.updatedAt));
+ return row["id"]===id&&row["status"]===status&&row["title"]===expectedTitle &&
+   typeof row["updatedAt"]==="string"&&Number.isFinite(Date.parse(row["updatedAt"]));
 }
 
 /** Archive never means deleting learner responses; demand the archived state receipt. */

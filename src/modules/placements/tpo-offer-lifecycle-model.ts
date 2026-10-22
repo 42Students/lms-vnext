@@ -85,7 +85,7 @@ export function canRecordTpoActualJoiningDate(date: string, now: Date): boolean 
     timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
   }).formatToParts(now);
   const local = Object.fromEntries(parts.map(part=>[part.type, part.value]));
-  return date <= local.year + "-" + local.month + "-" + local.day;
+  return date <= local["year"] + "-" + local["month"] + "-" + local["day"];
 }
 
 export function canRecordTpoOfferAction(

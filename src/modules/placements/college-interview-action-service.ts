@@ -239,6 +239,7 @@ export async function mutateCollegeInterview(context:RequestContext,rawJobId:unk
    summary:message,metadata:{jobId:job.id,applicationId,roundId:appointment.roundId,
     status:appointment.status,interviewId:appointment.id},
   }).returning({id:activityEvents.id});
+  if (!audit) throw new Error("Interview audit event could not be recorded.");
   await tx.insert(inAppNotifications).values({
    userId:actor.userId,eventId:audit.id,title:"Interview update",body:message,
    actionHref:"/learn/my-placements/interviews",

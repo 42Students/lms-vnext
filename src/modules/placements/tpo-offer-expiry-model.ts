@@ -20,7 +20,7 @@ export function isoDateInIndia(now: Date) {
     timeZone: "Asia/Kolkata", day: "2-digit", month: "2-digit", year: "numeric",
   }).formatToParts(now);
   const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
-  return `${values.year}-${values.month}-${values.day}`;
+  return `${values["year"]}-${values["month"]}-${values["day"]}`;
 }
 /** Calendar arithmetic uses date-only UTC to avoid server/browser timezone rollover. */
 export function plusCalendarDays(start: string, days: number) {
