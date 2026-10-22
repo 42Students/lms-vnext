@@ -13,9 +13,12 @@ describe("TPO-settings-audit-23 custom job type visibility",()=>{
   const service=readFileSync("src/modules/placements/tpo-job-type-write-service.ts","utf8");
   expect(ui).not.toContain("activeCount<=1");
   expect(ui).not.toContain("types.filter(item=>item.active).length");
-  expect(ui).toContain('<button type="button" disabled={busy} onClick={()=>void send(');
-  expect(ui).toContain("expectedVersion:item.updatedAt");
-  expect(ui).toContain('code==="TPO_JOB_TYPE_LAST_ACTIVE"');
+  expect(ui).toContain('<TpoUnifiedJobTypesEditor types={editable}/>');
+  expect(ui).toContain('expectedVersion:item.updatedAt');
+  const unified=readFileSync("src/components/tpo/tpo-unified-job-types-editor.tsx","utf8");
+  expect(unified).toContain("activeCount = rows.filter(row => row.active).length");
+  expect(unified).toContain("activeCount <= 1");
+  expect(unified).toContain("TPO_JOB_TYPE_LAST_ACTIVE");
   expect(service).toContain("activeCustom+activeFixed<=1");
   expect(service).toContain('throw new TpoConfigError("TPO_JOB_TYPE_LAST_ACTIVE")');
   expect(service).toContain("TPO_BUILTIN_JOB_TYPES.filter");
