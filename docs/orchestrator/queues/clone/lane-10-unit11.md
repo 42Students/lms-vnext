@@ -4,7 +4,7 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 
 - [x] `tests/unit/PROJ-BREAK-chat9-admin-programs-page.test.tsx` (2 failing) — Already corrected on current main: listProgramsPage mock exists; page retains scoped failures and guarded directory. Static review only. (2 failing)
 - [x] `tests/unit/chat12-verify2-legacy-category-controls.test.ts` (1 failing) — Already corrected on current main: avatar assertions use 44px button/link targets and signed scan confirmation. Static review only. (1 failing)
-- [ ] `tests/unit/chat2-team-handover-36.test.ts` (1 failing)
+- [x] `tests/unit/chat2-team-handover-36.test.ts` (1 failing) — Already corrected on current main: redirect assertion follows canonical Settings team tab; guarded handover stays scoped and atomic. Static review only. (1 failing)
 - [ ] `tests/unit/chat6-superadmin-course-edit-copy-55.test.ts` (1 failing)
 - [ ] `tests/unit/chat9-super-admin-placement-remaining-gap-verification.test.ts` (1 failing)
 - [ ] `tests/unit/learner-syllabus-soft-delete-visibility.test.ts` (1 failing)
