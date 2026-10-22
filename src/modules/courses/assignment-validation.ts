@@ -239,10 +239,47 @@ const partsInputSchema=z.strictObject({
     textContent:texts[0]?.textContent,
     links:links.map(part=>({kind:part.linkKind,url:part.url,caption:part.caption}))};
 });
-/** Accept both the existing single-type shape and the normalized mixed
- * parts format, then validate the resulting persisted submission contract. */
+/** Legacy StudentAssignmentDTO fields are a boundary dialect only.
+ * The route still supplies the authorized delivery UUID, and a historical
+ * numeric lesson_content_id or raw file object key is NEVER trusted. Old
+ * file_dto / submission_assets are accepted only after upload receipts have
+ * been verified and converted to UUIDs by the import adapter.
+ */
+const legacyUploadReceipt=z.strictObject({
+ uploadReceiptId:z.uuid().optional(),
+ upload_receipt_id:z.uuid().optional(),
+}).refine(item=>Boolean(item.uploadReceiptId??item.upload_receipt_id),{
+ message:"Legacy files require verified upload receipts",
+}).transform(item=>(item.uploadReceiptId??item.upload_receipt_id)!);
+const legacySubmissionSchema=z.strictObject({
+ deliveryId:courseSectionDeliveryIdSchema,
+ lesson_content_id:courseAssignmentIdSchema,
+ html_content:z.string().trim().max(50000).optional(),
+ file_dto:legacyUploadReceipt.nullable().optional(),
+ submission_assets:z.array(legacyUploadReceipt).max(20).optional(),
+}).superRefine((input,ctx)=>{
+ const receipts=[...(input.file_dto?[input.file_dto]:[]),...(input.submission_assets??[])];
+ if(receipts.length>20)ctx.addIssue({code:"custom",path:["submission_assets"],
+  message:"A submission can contain at most 20 files."});
+ if(new Set(receipts).size!==receipts.length)ctx.addIssue({
+  code:"custom",path:["submission_assets"],message:"Duplicate submission item ID."});
+ if(!receipts.length&&!input.html_content?.trim())ctx.addIssue({
+  code:"custom",path:["html_content"],message:"Add a written response or verified file."});
+}).transform(input=>{
+ const receipts=[...(input.file_dto?[input.file_dto]:[]),...(input.submission_assets??[])];
+ return receipts.length?{
+  deliveryId:input.deliveryId,submissionType:"FILE" as const,
+  uploadReceiptIds:receipts,textContent:input.html_content||undefined,
+ }:{
+  deliveryId:input.deliveryId,submissionType:"TEXT" as const,
+  textContent:input.html_content??"",
+ };
+});
+/** The legacy import dialect and the existing UI protocols converge on one
+ * persisted submission contract. The assignment/lesson linkage remains
+ * independently enforced using the authenticated route ID. */
 export const submitAssignmentInputSchema=z.union([
-  singleSubmissionInputSchema,partsInputSchema,
+  singleSubmissionInputSchema,partsInputSchema,legacySubmissionSchema,
 ]).pipe(singleSubmissionInputSchema);
 
 export const assignmentSubmissionTypeSchema =
