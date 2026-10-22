@@ -15,10 +15,12 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-5-027-014  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [x] G2-5-027-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-5-027-019  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
-- [ ] G2-5-027-021  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
+- [x] G2-5-027-021  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-5-027-024  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 
 ## Results
+
+- G2-5-027-021: FIXED `b86f68e` in `src/modules/people/college-role-directory-service.ts:686-702`: restored legacy page-size default 25, retaining authorized college-only search over names, email, phone, roll, registration, unique ID and class (`src/modules/people/college-role-directory-service.ts:193-230,310-319`). Legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LearnerController.java:535-587` specifies default 25. Class-ID substring equivalence and unrestricted legacy unpaged lists are intentionally not asserted.
 
 - G2-5-027-018: OK — registration profile-field crosswalk and explicit vNext onboarding differences in `src/modules/people/college-student-registration-service.ts:32-38`, with DOB and personal profile persistence at `src/modules/people/college-student-registration-service.ts:95-120`, against legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/request/LearnerDTO.java:14-40`. The phone requirement remains a documented vNext policy difference, not claimed legacy parity.
 
