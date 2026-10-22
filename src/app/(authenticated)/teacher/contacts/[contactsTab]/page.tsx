@@ -13,6 +13,7 @@ import { FacultyContactsLiveSearch } from "./faculty-contacts-live-search";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import { CoursesServiceError } from "@/modules/courses/errors";
 import { Tabs } from "@/components/ui/tabs";
 import { listFacultyContacts } from "@/modules/courses/faculty-contacts-service";
 
@@ -47,10 +48,9 @@ export default async function FacultyContactsPage({
     redirect("/teacher/contacts/allContacts");
   }
 
-  const selected =
-    tabs[contactsTab as keyof typeof tabs];
-  const raw=await searchParams;
-  const filters=parseFacultyContactsQuery(raw);
+  const selected = tabs[contactsTab as keyof typeof tabs];
+  const raw = await searchParams;
+  const filters = parseFacultyContactsQuery(raw);
   if (!filters) {
     return (
       <section role="alert" className="min-w-0 space-y-3">
@@ -64,12 +64,20 @@ export default async function FacultyContactsPage({
       </section>
     );
   }
-  const {page,pageSize,search}=filters;
+  const { page, pageSize, search } = filters;
   const context = await getCurrentRequestContext();
-  const loaded = await listFacultyContacts(context,{
-    tab:selected.value,search,page,pageSize,
-  }).then(value=>({ok:true as const,value}))
-    .catch(error=>({ok:false as const,denied:error instanceof AuthorizationError}));
+  const loaded = await listFacultyContacts(context, {
+    tab: selected.value,
+    search,
+    page,
+    pageSize,
+  }).then((value) => ({ ok: true as const, value }))
+    .catch((error: unknown) => ({
+      ok: false as const,
+      denied: error instanceof AuthorizationError ||
+        (error instanceof CoursesServiceError &&
+          error.code === "FACULTY_TEACHING_SCOPE_REQUIRED"),
+    }));
   if (!loaded.ok) {
     const retryQuery = new URLSearchParams({
       ...(search ? { q: search } : {}),
@@ -77,7 +85,7 @@ export default async function FacultyContactsPage({
       pageSize: String(pageSize),
     });
     const retryHref = loaded.denied
-      ? "/teacher/contacts"
+      ? "/teacher"
       : `/teacher/contacts/${contactsTab}?${retryQuery.toString()}`;
     return (
       <section className="min-w-0 space-y-4">
@@ -88,16 +96,15 @@ export default async function FacultyContactsPage({
             ? "You no longer have access to these contacts."
             : "Something went wrong on our end. Please try again."}
           action={<Link href={retryHref} className="font-semibold text-primary-text underline">
-            {loaded.denied ? "Back to Contacts" : "Retry contacts"}
+            {loaded.denied ? "Back to teaching" : "Retry contacts"}
           </Link>}
         />
       </section>
     );
   }
-  const result=loaded.value;
+  const result = loaded.value;
 
-  const baseHref =
-    `/teacher/contacts/${contactsTab}`;
+  const baseHref = `/teacher/contacts/${contactsTab}`;
   // Keep the legacy Contacts search and row-count preference when changing
   // All Contacts / Teachers / Students. The role switch never changes access.
   const tabQuery = new URLSearchParams();
@@ -110,8 +117,10 @@ export default async function FacultyContactsPage({
       <PageHeader title="Contacts" />
 
       <Tabs ariaLabel="Contacts sections" value={contactsTab} renderPanel={false}
-        items={Object.entries(tabs).map(([key,tab])=>({
-          value:key,label:tab.label,href:`/teacher/contacts/${key}${tabSuffix}`,
+        items={Object.entries(tabs).map(([key, tab]) => ({
+          value: key,
+          label: tab.label,
+          href: `/teacher/contacts/${key}${tabSuffix}`,
         }))} />
 
       <section aria-label="Contact directory results" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
@@ -133,7 +142,11 @@ export default async function FacultyContactsPage({
         search={result.search}
         showRoles={selected.value === "ALL"}
         detailBaseHref={baseHref}
-        detailQuery={facultyContactDirectoryQuery({q:result.search,page:String(result.page),pageSize:String(result.pageSize)})}
+        detailQuery={facultyContactDirectoryQuery({
+          q: result.search,
+          page: String(result.page),
+          pageSize: String(result.pageSize),
+        })}
       />
       <div className="flex min-w-0 flex-wrap items-end justify-between gap-3">
         <FacultyContactsPagination
