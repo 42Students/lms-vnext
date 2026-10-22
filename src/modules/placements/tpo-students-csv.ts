@@ -1,4 +1,6 @@
 import type { TpoStudentRow } from "./tpo-students-model";
+import {tpoStudentMarksVerificationLabel} from "./tpo-student-marks-label";
+import {tpoStudentDisplayLabel} from "./tpo-student-display-label";
 
 /**
  * Escape CSV delimiters, quotes, newlines and spreadsheet
@@ -82,16 +84,16 @@ export function exportTpoStudentsCsv(
       row.cohortName,
       row.registrationChoice,
       row.participationStatus,
-      row.readinessSignal,
+      tpoStudentDisplayLabel(row.readinessSignal),
       row.cgpa,
       row.tenthPct,row.twelfthPct,row.diplomaPct,row.ugPct,
-      row.passingYear,row.gapYears,row.marksVerified==null?"":row.marksVerified?"Yes":"No",
+      row.passingYear,row.gapYears,tpoStudentMarksVerificationLabel(row.marksVerified),
       row.isLateralEntry==null?"":row.isLateralEntry?"Yes":"No",
-      row.journeyState,afterCollege[row.membershipId]??"",
+      tpoStudentDisplayLabel(row.journeyState),afterCollege[row.membershipId]??"",
       row.activeBacklogs,
       row.pastBacklogs,
-      row.journeyState,
-      row.bestSoFar,
+      tpoStudentDisplayLabel(row.journeyState),
+      tpoStudentDisplayLabel(row.bestSoFar),
       row.applicationCount,
       row.activeApplicationCount,
       row.offerCount,
