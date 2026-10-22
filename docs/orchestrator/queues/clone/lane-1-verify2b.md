@@ -8,7 +8,7 @@ All still-open verification-round-2 packets were redistributed evenly over the 2
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_4.md` (25 rows)
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-7/W1_lane7_4.md` (25 rows)
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-9/W1_lane9_6.md` (25 rows)
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_13.md` (25 rows)
+- [x] `docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_13.md` (25 rows)
 - [ ] `docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_10.md` (25 rows)
 - [ ] `docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_16.md` (25 rows)
 - [ ] `docs/audit/gap-fix-work/verify2/packets/lane-18/W1_lane18_5.md` (25 rows)
@@ -27,3 +27,5 @@ All still-open verification-round-2 packets were redistributed evenly over the 2
 - W1_lane7_4: **triaged, not feature-complete**. OK from inspected implementation: G2-2-034-002, G2-2-034-025, G2-2-034-026, G2-2-034-027, G2-20-004-039, G2-20-005-028, G2-20-031-075; DEFERRED (not verified, no parity claim): G2-2-006-045, G2-2-009-022, G2-2-011-052, G2-2-014-012, G2-2-016-117, G2-2-017-002, G2-2-019-070, G2-2-030-010, G2-2-034-037, G2-2-034-059, G2-15-030-074, G2-2-001-041, G2-20-007-017, G2-3-011-009, G2-3-011-024, G2-3-011-025, G2-3-011-031, G2-11-016-001. Remaining items require per-file implementation and/or migration review; no code fix is claimed in this pass.
 
 - W1_lane9_6: **triaged, NOT verified or fixed**. DEFERRED for code-level parity/migration/owner-policy assessment (all 25): G2-18-001-058, G2-18-001-064, G2-18-001-065, G2-18-002-029, G2-18-002-108, G2-19-007-022, G2-19-007-035, G2-19-007-036, G2-19-007-044, G2-19-007-045, G2-19-007-047, G2-19-007-076, G2-19-007-079, G2-19-007-081, G2-19-007-082, G2-19-003-017, G2-19-002-016, G2-19-002-051, G2-19-002-058, G2-19-002-059, G2-19-002-070, G2-19-008-017, G2-19-008-028, G2-19-008-032, G2-19-008-040. No OK or FIXED conclusion for this packet; all rows remain open engineering work.
+
+- W1_lane10_13: **triaged, NOT verified or fixed**. DEFERRED for code-level parity/migration/owner-policy assessment (all 25): G2-7-011-074, G2-7-013-076, G2-7-015-007, G2-7-016-004, G2-7-017-014, G2-7-018-005, G2-7-018-070, G2-7-025-030, G2-7-034-040, G2-7-036-052, G2-7-036-074, G2-8-021-066, G2-11-021-010, G2-11-027-001, G2-11-027-002, G2-11-027-004, G2-11-027-006, G2-11-027-016, G2-11-027-034, G2-13-024-002, G2-13-024-007, G2-13-024-008, G2-13-024-010, G2-13-024-011, G2-13-024-015. No OK or FIXED conclusion for this packet; all rows remain open engineering work.
