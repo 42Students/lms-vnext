@@ -47,9 +47,15 @@ describe("College cross-audit fixes (independent chat-19)",()=>{
     // Grouped historical activity is a chronological event list.
     expect(source).toContain("<ol");
     expect(source).toContain("collegeActivityHref");
+   }else if(route==="electives/[slotId]/allocate"){
+    expect(source).toContain("<ElectiveEligibleSelection");
+    const roster=readFileSync(join(process.cwd(),"src/components/academics/elective-eligible-selection.tsx"),"utf8");
+    expect(roster).toContain("<DataTable");
+    expect(roster).toMatch(/mobilePriority:\\s*["']primary["']/);
+    expect(roster).not.toContain("<table");
    }else{
     expect(source,route).toContain("<DataTable");
-    expect(source,route).toMatch(/mobilePriority:\s*["']primary["']/);
+    expect(source,route).toMatch(/mobilePriority:\\s*["']primary["']/);
     expect(source,route).not.toContain("<table");
    }
    const shared=readFileSync(join(process.cwd(),"src/components/ui/data-table.tsx"),"utf8");
