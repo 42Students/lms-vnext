@@ -12,7 +12,7 @@ describe("SA-REPORT-SCALE-10 indexed Super Admin company and drive analytics", (
       title: "Placement role " + i,
       companyId: companies[i % companies.length]!,
       companyName: "Employer " + (i % companies.length),
-      employmentType: "FULL_TIME",
+      employmentType: "FULL_TIME", countsAsPlaced: true,
     }));
     const applications = jobs.flatMap(job =>
       Array.from({ length: 5 }, (_, index) => ({
@@ -73,7 +73,7 @@ describe("SA-REPORT-SCALE-10 indexed Super Admin company and drive analytics", (
   it("does not double-count duplicated SQL fact rows and retains company-scoped learner deduplication", () => {
     const jobA = {
       id: "a", title: "Engineering A", companyId: "company-one",
-      companyName: "First", employmentType: "FULL_TIME",
+      companyName: "First", employmentType: "FULL_TIME", countsAsPlaced: true,
     };
     const jobB = { ...jobA, id: "b", title: "Engineering B" };
     const fact: PlacementReportFacts = {

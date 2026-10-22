@@ -45,7 +45,7 @@ describe("TPO calendar and reports verified source contracts",()=>{
   const source=load("src/app/(authenticated)/tpo/reports/ctc/page.tsx");expect(source).toContain("Highest (best student offer)");expect(source).toContain("Median (best student offer)");expect(source).toContain("Accepted full-time offers by annual package band");
  });
  it("TPO-calendar-reports-56 honors released and accepted placement rules without double counting",()=>{
-  expect(countsAsPlacedByCollegeRule({employmentType:"FULL_TIME",offerStatus:"ISSUED",countsAsPlacedAt:"OFFER_RELEASED"})).toBe(true);expect(countsAsPlacedByCollegeRule({employmentType:"FULL_TIME",offerStatus:"ISSUED",countsAsPlacedAt:"OFFER_ACCEPTED"})).toBe(false);expect(load("src/components/placements/placement-report-ui.tsx")).toContain("placement rule (selected, released or accepted)");
+  expect(countsAsPlacedByCollegeRule({employmentType:"FULL_TIME",countsAsPlaced:true,offerStatus:"ISSUED",releasedAt:new Date("2026-10-15T10:00:00Z"),countsAsPlacedAt:"OFFER_RELEASED"})).toBe(true);expect(countsAsPlacedByCollegeRule({employmentType:"FULL_TIME",countsAsPlaced:true,offerStatus:"ISSUED",countsAsPlacedAt:"OFFER_ACCEPTED"})).toBe(false);expect(load("src/components/placements/placement-report-ui.tsx")).toContain("placement rule (selected, released or accepted)");
  });
  it("TPO-calendar-reports-58 links the recruiter engagement report to Engage and company memory",()=>{
   const source=load("src/app/(authenticated)/tpo/reports/leads/page.tsx");expect(source).toContain('href="/tpo/recruiters"');expect(source).toContain("Open Engage");expect(source).toContain('href="/tpo/companies"');

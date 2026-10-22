@@ -9,7 +9,7 @@ import {
 
 const jobs = [{
   id: "job-a", title: "Engineer", companyId: "company-a",
-  companyName: "Acme", employmentType: "FULL_TIME",
+  companyName: "Acme", employmentType: "FULL_TIME", countsAsPlaced: true,
 }];
 
 const facts: PlacementReportFacts = {
@@ -39,6 +39,7 @@ const detailOffers: PlacementReportDetailedOffer[] = facts.offers.map(offer => (
   companyId: "company-a",
   companyName: "Acme",
   employmentType: "FULL_TIME",
+  countsAsPlaced: true,
   expiresAt: null,
 }));
 
