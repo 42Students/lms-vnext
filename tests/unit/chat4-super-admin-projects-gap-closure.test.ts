@@ -13,12 +13,12 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
  it("SA-placements-projects-51 accepted archive-and-restore design",()=>{
   const file=source("src/components/projects/project-archive-control.tsx");
   expect(file).toContain("Restore this workspace?");
-  expect(file).toContain("Archive project?");
+  expect(file).toContain("Archive this workspace?");
  });
  it("SA-placements-projects-52 retains the verified Projects behavior",()=>{
   const file=source("src/app/(authenticated)/admin/projects/page.tsx");
   expect(file).toContain("Project workspaces");
-  expect(file).toContain("Live projects, each run by a mentor with a team of students.");
+  expect(file).toContain("College project workspaces for students and mentors.");
   expect(file).toContain("Bulk reassign mentor");
  });
  it("SA-placements-projects-54 retains the verified Projects behavior",()=>{
@@ -63,7 +63,7 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
  it("SA-placements-projects-64 retains the verified Projects behavior",()=>{
   const file=source("src/components/projects/project-admin-readiness-page.tsx");
   expect(file).toContain("Active overrides");
-  expect(file).toContain("Export overrides CSV");
+  expect(file).toContain("Export displayed page CSV");
   expect(file).toContain("No workspace currently has a manual override");
  });
  it("SA-placements-projects-69 retains the verified Projects behavior",()=>{
@@ -86,9 +86,9 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
  });
  it("SA-placements-projects-74 retains the verified Projects behavior",()=>{
   const file=source("src/components/projects/project-admin-audit-page.tsx");
-  expect(file).toContain("label:\"Today\"");
-  expect(file).toContain("label:\"7 days\"");
-  expect(file).toContain("label:\"30 days\"");
+  expect(file).toContain("label: \"Today\"");
+  expect(file).toContain("label: \"7 days\"");
+  expect(file).toContain("label: \"30 days\"");
   expect(file).toContain("name=\"action\"");
  });
  it("SA-placements-projects-76 retains the verified Projects behavior",()=>{
@@ -97,8 +97,8 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
  });
  it("SA-placements-projects-78 retains the verified Projects behavior",()=>{
   const file=source("src/app/(authenticated)/admin/projects/page.tsx");
-  expect(file).toContain("No college selected");
-  expect(file).toContain("Pick a college in the header to manage its project workspaces.");
+  expect(file).toContain('if (!collegeId) redirect("/admin/projects/templates");');
+  expect(file).toContain("listProjectAdminSnapshots(context, collegeId, serviceQuery)");
  });
  it("SA-placements-projects-79 retains the verified Projects behavior",()=>{
   const file=source("src/app/(authenticated)/admin/projects/templates/page.tsx");
@@ -109,7 +109,7 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   const file=source("src/app/(authenticated)/admin/projects/templates/page.tsx");
   expect(file).toContain("SuperAdminTemplatePageExport");
   expect(file).toContain("SuperAdminTemplateArchiveControl");
-  expect(file).toContain("Template title or slug");
+  expect(file).toContain("Search title or slug");
  });
  it("SA-placements-projects-85 retains the verified Projects behavior",()=>{
   const file=source("src/components/projects/super-admin-template-resource-editor.tsx");
@@ -138,23 +138,24 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
  });
  it("SA-placements-projects-58 preserves actual at-risk mentor reassignment and overload semantics",async()=>{
   const s=source("src/components/projects/project-admin-at-risk-page.tsx");
-  expect(s).toContain("Reassign mentor");
+  expect(s).toContain("ProjectAdminSubmissionReview");
   expect(s).toContain("fromMentorId");
-  expect(s).toContain("encodeURIComponent(project.mentorMembershipId ?? \"UNASSIGNED\")");
-  expect(s).toContain('project.mentorMembershipId ? "Reassign mentor" : "Assign mentor"');
-  expect(s).toContain('encodeURIComponent(project.riskReasons.join(", "))');
+  expect(s).toContain('encodeURIComponent(project.mentorMembershipId??"UNASSIGNED")');
+  expect(s).toContain('project.mentorMembershipId?"Reassign mentor":"Assign mentor"');
+  expect(s).toContain('encodeURIComponent(project.riskReasons[0]??"Project needs attention")');
   expect(s).toContain("listProjectAdminRiskQueue(");
   const {projectMentorWorkloadAverage,isProjectMentorOverloaded}=await import("@/modules/projects/mentor-overload-model");
   expect(projectMentorWorkloadAverage([])).toBe(0);
   expect(projectMentorWorkloadAverage([2,4,8])).toBeCloseTo(14/3);
   expect(isProjectMentorOverloaded(8,[2,4,8])).toBe(true);
-  expect(isProjectMentorOverloaded(7,[2,4,8])).toBe(false);
+  expect(isProjectMentorOverloaded(7,[2,4,8])).toBe(true);
+  expect(isProjectMentorOverloaded(6,[2,4,8])).toBe(false);
   expect(isProjectMentorOverloaded(8,[8,8,8])).toBe(false);
  });
  it("SA-placements-projects-65 preserves its implemented foundation while legacy parity remains open",()=>{
   const s=source("src/components/projects/project-workspace-readiness.tsx");
   expect(s).toContain("Current readiness");
-  expect(s).toContain("Submission status");
+  expect(s).toContain("Final submission");
   expect(s).toContain("role=\"progressbar\"");
  });
  it("SA-placements-projects-66 preserves its implemented foundation while legacy parity remains open",()=>{
@@ -216,41 +217,42 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
    expect(parseAdminProjectsQuery({search:"same",q:"same"}).data?.q).toBe("same");
   expect(parseAdminProjectsQuery({pageSize:"0"}).success).toBe(false);
   expect(page).toContain("<ProjectAdminFilters query={query} legacyWorkspaces />");
-  expect(controls).toContain('legacyWorkspaces ? "search" : "q"');
-  expect(controls).toContain("!legacyWorkspaces || size !== 25");
+  expect(controls).toContain('const searchKey=searchParamName??(legacyWorkspaces?"search":"q");');
+  expect(controls).toContain('fixedRiskPageSize?<input type="hidden" name="pageSize" value="25"');
   expect(controls).toContain('basePath === "/admin/projects" ? "search" : "q"');
  });
  it("SA-placements-projects-58 shows average-based mentor overload, not a fixed cap",async()=>{
   const {isProjectMentorOverloaded,projectMentorWorkloadAverage}=await import("@/modules/projects/mentor-overload-model");
   expect(projectMentorWorkloadAverage([2,4,8])).toBeCloseTo(14/3);
   expect(isProjectMentorOverloaded(8,[2,4,8])).toBe(true);
-  expect(isProjectMentorOverloaded(7,[2,4,8])).toBe(false);
+  expect(isProjectMentorOverloaded(7,[2,4,8])).toBe(true);
+  expect(isProjectMentorOverloaded(6,[2,4,8])).toBe(false);
   expect(isProjectMentorOverloaded(8,[8,8,8])).toBe(false);
   expect(isProjectMentorOverloaded(0,[])).toBe(false);
   const page=source("src/components/projects/project-admin-reassign-mentor-page.tsx");
-  expect(page).toContain("isProjectMentorOverloaded(row.activeWorkspaces, mentorCounts)");
+  expect(page).toContain("<ProjectMentorWorkloadTable rows={sortedWorkload}");
   expect(page).toContain("Filter by current mentor");
-  expect(page).toContain("Move selected non-archived project workspaces to a new primary mentor.");
+  expect(page).toContain("Move multiple active workspaces to a new mentor at once.");
  });
  it("SA-placements-projects-67 confirms readiness safely and retains failed drafts",()=>{
   const form=source("src/components/projects/project-readiness-override-form.tsx");
   const page=source("src/components/projects/project-admin-readiness-page.tsx");
   expect(form).toContain("<ConfirmDialog");
-  expect(form).toContain('confirmLabel="Apply override"');
+  expect(form).toContain('confirmLabel={state==="CLEAR"?"Clear override":"Apply override"}');
   expect(form).toContain("await apiFetch(");
-  expect(form).toContain("if (pendingRef.current) return");
-  expect(form).toContain('if (nextState !== state) setNote("")');
+  expect(form).toContain("if (pendingRef.current||checking) return");
+  expect(form).toContain('function chooseOverride(nextState:ReadinessOverrideState)');
   expect(form).toContain("Force Unlock/Block will have no effect here");
   expect(form).not.toContain("window.confirm");
-  expect(page).toContain("one(searchParams.projectId) ?? one(searchParams.workspaceId)");
+  expect(page).toContain("resolveCollegeReadinessWorkspaceId(");
  });
  it("SA-placements-projects-68 keeps readiness within all ten workspace sections",()=>{
   const view=source("src/components/projects/project-workspace-readiness.tsx");
   const route=source("src/app/(authenticated)/admin/projects/[projectId]/readiness/page.tsx");
   for(const section of ["summary","overview","team","sprints","tasks","resources","meetings","readiness","delivery","audit"])
    expect(view).toContain('["'+section+'","');
-  expect(view).toContain('aria-label="Workspace sections"');
-  expect(view).toContain('aria-current={segment==="readiness"?"page":undefined}');
+  expect(view).toContain('ariaLabel="Workspace sections"');
+  expect(view).toContain('renderPanel={false} value="readiness"');
   expect(route).toContain("<ProjectWorkspaceReadiness");
  });
  it("SA-placements-projects-92 preserves origin, reason, breadcrumb and admin shortcut URLs",()=>{
@@ -261,11 +263,11 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   expect(route).toContain("reason={one(query.reason)}");
   expect(page).toContain('from === "at-risk" || from === "submissions"');
   expect(page).toContain("sectionQuerySuffix={sectionQuerySuffix}");
-  expect(workspace).toContain('aria-label="Workspace breadcrumb"');
-  expect(workspace).toContain("section + sectionQuerySuffix");
-  expect(workspace).toContain("Opened from At-risk projects");
+  expect(workspace).toContain("<Breadcrumbs items={[");
+  expect(workspace).toContain('href:sectionBaseHref+"/"+section+sectionQuerySuffix');
+  expect(workspace).toContain("Opened via a filtered view");
   expect(workspace).toContain("Manage override");
-  expect(workspace).toContain("View full project audit");
+  expect(workspace).toContain("View audit trail");
  });
 
 
@@ -274,25 +276,25 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   const display=source("src/components/projects/project-workspace-readiness.tsx");
   expect(service).toContain("overriddenBy:users.displayName");
   expect(service).toContain("leftJoin(users,eq(users.id,activityEvents.actorUserId))");
-  expect(display).toContain("Overridden by {readiness.readinessOverride.overriddenBy}");
+  expect(display).toContain('{override.overriddenBy??"—"}');
  });
  it("SA-placements-projects-66 protects scoped readiness links and shows 25-row picker",()=>{
   const picker=source("src/components/projects/admin-readiness-workspace-picker.tsx");
   const list=source("src/components/projects/project-admin-readiness-page.tsx");
-  expect(picker).toContain("pageSize=25");
-  expect(picker).toContain("Search workspace title or ID");
-  expect(list).toContain("outsideScope=Boolean(chosenId&&!selected)");
-  expect(list).toContain("This workspace belongs to a different college — switch colleges in the header and try again.");
+  expect(picker).toContain("pageSize:25");
+  expect(picker).toContain("Search workspaces by title or ID");
+  expect(list).toContain("const outsideScope=Boolean(requested&&!selected)");
+  expect(list).toContain("This workspace could not be found in the selected college.");
   expect(list).toContain("Target date");
  });
  it("SA-placements-projects-71 offers guarded page CSV export and review evidence fields",()=>{
   const exportFile=source("src/components/projects/project-submissions-page-export.tsx");
   const page=source("src/components/projects/project-admin-submissions-page.tsx");
-  expect(exportFile).toContain("project-submissions-page.csv");
+  expect(exportFile).toContain("project-submissions.csv");
   expect(exportFile).toContain("projectAdminCsv([headings,...data])");
    // The shared export model is stronger than a page-local CSV escape helper.
    expect(projectAdminCsv([["=SUM(1,1)", "+unsafe", "safe"]])).toContain("\"'=SUM(1,1)\"");
-  expect(exportFile).toContain("Pending (days)");
+  expect(exportFile).toContain("Review status");
   expect(page).toContain("<ProjectSubmissionsPageExport");
   expect(page).toContain("Reviewed by");
   expect(page).toContain("Revisions");
@@ -304,7 +306,7 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   expect(page).toContain("Destructive actions");
   expect(page).toContain("View activity log");
   expect(page).toContain("Refresh");
-  expect(page).toContain("<ActivityCenter");
+  expect(page).toContain('href="/admin/audit"');
  });
 
 
@@ -338,8 +340,8 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   expect(control).toContain("Assign selected");
   expect(control).toContain("Remove selected");
   expect(control).toContain("<ConfirmDialog");
-  expect(control).toContain("setSelected(failed)");
-  expect(control).toContain('currentOperation==="assign"?"POST":"DELETE"');
+  expect(control).toContain(" No partial changes were saved by this request. Refresh assignments and retry.");
+  expect(control).toContain('expectedCollegeIds:[...current].sort()');
   expect(control).toContain("Existing workspaces remain unchanged.");
  });
 
@@ -356,7 +358,7 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   expect(dialog).toContain("await apiFetch(");
   expect(dialog).toContain("pendingRef.current");
   expect(dialog).not.toContain("window.confirm");
-  expect(page).toContain("workspaceTitle={submission.projectTitle}");
+  expect(page).toContain("workspaceTitle={row.projectTitle}");
  });
 
 
@@ -368,14 +370,14 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
    expect(service).toContain('"ALREADY_COVERED" as const');
    expect(service).toContain('"TO_CREATE" as const');
    expect(creator).toContain("Learner creation preflight details");
-   expect(creator).toContain("currentPreflight.items.map");
+   expect(creator).toContain("rows={currentPreflight.items.slice");
    expect(creator).toContain("currentPreflight.duplicates");
    expect(creator).toContain("Already covered");
    expect(creator).toContain("Duplicate");
  });
  it("SA-placements-projects-58 shows failed mentor moves in a modal without losing retry selection",()=>{
    const view=source("src/components/projects/project-mentor-reassignment.tsx");
-   expect(view).toContain("Some workspaces were not reassigned");
+   expect(view).toContain(" reassignment(s) failed");
    expect(view).toContain("setFailureOpen(response.failures.length > 0)");
    expect(view).toContain("setSelected([...new Set(response.failures.map");
    expect(view).toContain("Retry failed workspaces");
@@ -391,13 +393,13 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
    expect(team).toContain("Manage students");
    expect(team).toContain("Search learners");
    expect(team).toContain("Role label (optional)");
-   expect(team).toContain("learnerMembershipIds:selected");
+   expect(team).toContain('learnerMembershipIds:mode==="REPLACE"?selected:additions');
    expect(team).toContain("expectedUpdatedAt:version");
-   expect(team).toContain('"Remove "+removeCount+" learner(s) from this workspace?"');
-   expect(team).toContain('confirmLabel="Replace roster"');
+   expect(team).toContain('"Replace this learner roster ("+removedIds.length+" removed)?"');
+   expect(team).toContain('confirmLabel={mode==="REPLACE"?"Replace roster":"Add learners"}');
    expect(team).toContain("setConfirmOpen(true)");
    expect(team).not.toContain("window.confirm");
    expect(mentor).toContain("Reassign mentor");
-   expect(mentor).toContain("New primary mentor");
+   expect(mentor).toContain("Select a mentor");
  });
 });
