@@ -11,5 +11,7 @@ it("TPO-students-36 creates genuine ZIP-based XLSX with sorted scoped columns, m
  expect(route).toContain('"Content-Disposition"');
  expect(route).toContain('legacyGridExportFilename("students", "xlsx")');
  expect(src("src/modules/placements/tpo-students-xlsx.ts")).toContain("How this list was made: ");
- expect(src("src/components/tpo/tpo-students-spreadsheet.tsx")).toContain("Export selected XLSX");
+ const grid=src("src/components/tpo/tpo-students-spreadsheet.tsx");
+ expect(grid).toContain('/api/placements/tpo/students/export-xlsx?');
+ expect(grid).toContain("xlsxHref={xlsxHref}");
 });

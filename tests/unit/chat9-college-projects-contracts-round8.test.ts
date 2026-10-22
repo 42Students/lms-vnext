@@ -16,7 +16,7 @@ describe("chat9 college projects scope and persistence contracts",()=>{
   expect(v).toContain("primaryMentorMembershipId:mentorMembershipId||undefined");
   expect(v).toContain("...old,...roster.map(row=>row.membershipId)");
   expect(v).toContain("new Set([");
-  expect(v).toContain("]).slice(0,500)");
+  expect(v).toMatch(/\]\)\)\.slice\(0,500\)/);
  });
  it("COL-projects-12 restricts readiness overrides by current college and provides actual export",()=>{
   const v=s("src/components/projects/project-admin-readiness-page.tsx");
