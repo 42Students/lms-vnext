@@ -6,7 +6,8 @@ import {listLessonResourceMaterials,resolveLegacyResourceMaterialId} from "@/mod
 import {getPrivateR2Config} from "@/modules/storage/r2-config";
 import {headObject,presignUrl} from "@/modules/storage/s3-client";
 import {apiErrorResponse} from "@/lib/api-error";
-import {getLearnerCourseFileReference,validCourseResourceStorageKey} from "@/modules/courses/learner-course-file-reference-service";
+import {getLearnerCourseFileReference,validCourseResourceStorageKey,
+ parseLearnerCourseMaterialIndex,LearnerCourseFileReferenceInputError} from "@/modules/courses/learner-course-file-reference-service";
 import {loadCourseSectionDeliveryScope} from "@/modules/courses/scope";
 
 export const runtime="nodejs";
@@ -28,19 +29,32 @@ export async function GET(request:Request,{params}:RouteContext){
  if([...url.searchParams.keys()].some(key=>key!=="download"&&key!=="materialId"&&key!=="index") ||
    values.length>1 || materialValues.length>1 || ordinalValues.length>1 ||
    (rawMaterialId!==null&&rawOrdinal!==null) ||
-   (rawOrdinal!==null&&!/^(?:0|[1-9]\d{0,8})$/.test(rawOrdinal)) ||
    (values.length===1&&!["0","1"].includes(values[0]!)) ||
    (rawMaterialId!==null&&!/^[a-f\d]{8}-[a-f\d]{4}-[1-8][a-f\d]{3}-[89ab][a-f\d]{3}-[a-f\d]{12}$/i.test(rawMaterialId)))
   return Response.json({error:"INVALID_REQUEST"},{status:400,headers:{
    "Cache-Control":"private, no-store",
   }});
  const {deliveryId,contentId}=await params;
+ let ordinal:number|null=null;
+ try{
+  if(rawOrdinal!==null)ordinal=parseLearnerCourseMaterialIndex(rawOrdinal);
+  const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  if(!uuid.test(contentId))throw new LearnerCourseFileReferenceInputError("contentId");
+  if(!uuid.test(deliveryId))throw new LearnerCourseFileReferenceInputError("deliveryId");
+ }catch(error){
+  if(error instanceof LearnerCourseFileReferenceInputError){
+   return Response.json({error:error.field==="materialIndex"?"INVALID_MATERIAL_INDEX":
+    error.field==="contentId"?"INVALID_CONTENT_ID":"INVALID_DELIVERY_ID",
+    message:error.message},{status:400,headers:{"Cache-Control":"private, no-store"}});
+  }
+  throw error;
+ }
  let key:string|null;
  let displayName:string|null=null;
  try{
   const context=await getCurrentRequestContext();
   const selectedMaterialId=rawMaterialId??(rawOrdinal!==null
-    ?await resolveLegacyResourceMaterialId(context,contentId,deliveryId,Number(rawOrdinal)):null);
+    ?await resolveLegacyResourceMaterialId(context,contentId,deliveryId,ordinal!):null);
   if(rawMaterialId!==null||rawOrdinal!==null){
    if(!selectedMaterialId)return Response.json({error:"COURSE_FILE_NOT_FOUND",message:"Resource file not found"},
      {status:404,headers:{"Cache-Control":"private, no-store"}});

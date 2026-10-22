@@ -11,7 +11,10 @@ export async function POST(request:Request,{params}:{params:Promise<{projectId:s
  try{
   const {projectId}=await params;
   const result=await writeMentorProjectRelease(await getCurrentRequestContext(),projectId,null,"POST",await readMentorProjectCommandBody(request));
-  return NextResponse.json(result,{status:201});
+  // Creating a planned release is not shipping one: /ship owns "Release shipped".
+  return NextResponse.json({...result,message:"Release added.",success:true},{
+   status:201,headers:{"Cache-Control":"private, no-store"},
+  });
  }catch(error) {
     if(error instanceof MentorProjectCommandBodyError)
       return NextResponse.json({error:error.code,message:mentorProjectBodyFailureMessage(error.status)},

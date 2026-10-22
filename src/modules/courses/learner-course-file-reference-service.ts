@@ -9,14 +9,34 @@ import {CoursesServiceError} from "./errors";
 import {loadCourseSectionDeliveryScope} from "./scope";
 import {requireLearningReadAccess} from "./learning-access";
 
+/** Reject legacy invalid material indices independently from invalid UUIDs.
+ * Never look up a tenant resource using a malformed historical identifier. */
+export class LearnerCourseFileReferenceInputError extends Error {
+ constructor(public readonly field:"deliveryId"|"contentId"|"materialIndex"){
+  super(field==="materialIndex"?"Invalid material index.":field==="contentId"
+   ?"Invalid content ID.":"Invalid delivery ID.");
+  this.name="LearnerCourseFileReferenceInputError";
+ }
+}
+export function parseLearnerCourseMaterialIndex(raw:unknown):number{
+ if(typeof raw!=="string"||!/^(?:0|[1-9][0-9]{0,8})$/.test(raw))
+  throw new LearnerCourseFileReferenceInputError("materialIndex");
+ return Number(raw);
+}
+function parseLearnerCourseUuid(raw:unknown,field:"deliveryId"|"contentId"):string{
+ const parsed=z.string().uuid().safeParse(raw);
+ if(!parsed.success)throw new LearnerCourseFileReferenceInputError(field);
+ return parsed.data;
+}
+
 /** LEARNER-course-detail-R04: one scoped material lookup only.
  * Never rehydrate lessons, quizzes, assessments or learner progress to
  * resolve a private file. Signed redirects are generated only after auth. */
 export async function getLearnerCourseFileReference(
  context:RequestContext,deliveryRaw:unknown,contentRaw:unknown,
 ){
- const uuid=z.string().uuid();
- const deliveryId=uuid.parse(deliveryRaw),contentId=uuid.parse(contentRaw);
+ const deliveryId=parseLearnerCourseUuid(deliveryRaw,"deliveryId");
+ const contentId=parseLearnerCourseUuid(contentRaw,"contentId");
  const delivery=await loadCourseSectionDeliveryScope(deliveryId,true);
  const access=await requireLearningReadAccess(context,delivery.offeringId,deliveryId,{
   includeHistorical:true,
