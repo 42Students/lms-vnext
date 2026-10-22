@@ -10,8 +10,51 @@ import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {materializeCollegeProjectSummaryPatch,collegeProjectStatusChangeAllowed,collegeProjectSummaryMatchesCurrent} from "./college-project-summary-model";
 import {notifyActiveProjectMembers} from "./project-notification-service";
+import {resolveLegacyProjectIdentity} from "./project-legacy-id-resolver";
+/** The old PUT /api/v1/project-workspaces/:id bundled distinct mutations.
+ * New writes MUST be separate, version-checked, tenant-scoped operations.
+ * Project IDs may be old integers only after a college-scoped lookup.
+ * File downloads are short-lived signed reads; the DB never stores a public
+ * object URL. Notification delivery is part of the committed project update.
+ */
+export const LEGACY_COLLEGE_PROJECT_MUTATION_MAP={
+ "PUT /project-workspaces/:id":{
+  target:"updateCollegeProjectSummary",conflict:"PROJECT_SUBMISSION_CONFLICT",
+  note:"Only project summary fields, never unrelated child state",
+ },
+ "PUT /project-workspaces/:id/overview":{
+  target:"updateProjectWorkspaceBrief",conflict:"PROJECT_SUBMISSION_CONFLICT",
+  note:"Author brief only, preserve stored opaque legacy facts",
+ },
+ "PUT /project-workspaces/:id/sprints":{
+  target:"project sprint mutation service",conflict:"PROJECT_SUBMISSION_CONFLICT",
+  note:"Sprint-specific optimistic version and membership enforcement",
+ },
+ "PUT /project-workspaces/:id/resources":{
+  target:"project resource mutation service",conflict:"PROJECT_SUBMISSION_CONFLICT",
+  note:"Private signed grant, scoped receipt, then project-linked asset",
+ },
+ "GET /project-workspaces/:id/resources/:resourceId/download":{
+  target:"signed private resource read",conflict:"PROJECT_ACCESS_DENIED",
+  note:"Read scope rechecked on every short-lived download grant",
+ },
+ "PUT /project-workspaces/:id/delivery":{
+  target:"project final-delivery service",conflict:"PROJECT_SUBMISSION_CONFLICT",
+  note:"Release-specific requirements; no implicit workspace-wide save",
+ },
+ "GET /project-workspaces/:id/activity":{
+  target:"project activity service",conflict:"PROJECT_ACCESS_DENIED",
+  note:"Durable event history, never user-controlled notification text",
+ },
+} as const;
+
 export async function updateCollegeProjectSummary(context:RequestContext,projectId:string,raw:unknown){
- const scope=await requireProjectManageAccess(context,projectId);
+ // Numeric legacy workspace keys are NOT treated as UUIDs or global grants.
+ // Resolve them only inside the explicitly selected college and then enforce
+ // the independent college-admin mutation authority on the resulting UUID.
+ const resolvedId=/^[0-9]{1,10}$/.test(projectId)
+   ?(await resolveLegacyProjectIdentity(context,projectId)).projectId:projectId;
+ const scope=await requireProjectManageAccess(context,resolvedId);
  return getDb().transaction(async tx=>{
   const [row]=await tx.select().from(projectInstances)
    .where(and(eq(projectInstances.id,scope.project.id),
