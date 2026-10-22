@@ -35,7 +35,7 @@ export default async function CollegeLiveClassesPage({searchParams}:{
     <h2 className="text-base font-semibold text-[var(--lms-heading)]">Schedule a live class</h2>
     <CollegeContentAuthoringControl kind="LIVE_CLASS" lessons={authoring.lessons} deliveries={authoring.deliveries} existing={authoring.existing} existingTruncated={authoring.existingTruncated} existingPage={authoring.existingPage}
       existingFilters={authoring.existingFilters}/>
-    <Link prefetch={false} download href={collegeContentCsvHref("LIVE_CLASS",{...data.query,view:data.view,from:data.from,to:data.to})}
+    <Link prefetch={false} download href={collegeContentCsvHref("LIVE_CLASS",{...data.query,view:data.view,...(data.from !== undefined ? {from:data.from} : {}),...(data.to !== undefined ? {to:data.to} : {})})}
       className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">
       Export live-class schedule CSV (UTC)
     </Link>
