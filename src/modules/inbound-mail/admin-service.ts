@@ -139,7 +139,10 @@ export async function changeInboundMailStatusForAdmin(
    })
    .where(and(eq(inboundMailMessagesStaged.id,input.id),
     eq(inboundMailMessagesStaged.status,input.expectedStatus),
-    eq(inboundMailMessagesStaged.version,input.expectedVersion)))
+    eq(inboundMailMessagesStaged.version,input.expectedVersion),
+    // A successfully posted recruiter reply belongs to its conversation;
+    // manual inbox triage must never mutate it, even on a stale open drawer.
+    sql`${inboundMailMessagesStaged.routingStatus} <> 'POSTED'`))
    .returning({id:inboundMailMessagesStaged.id,status:inboundMailMessagesStaged.status,
     version:inboundMailMessagesStaged.version});
   if(!updated)return {kind:"STALE" as const};
