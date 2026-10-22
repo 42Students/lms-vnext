@@ -154,13 +154,13 @@ export async function updateCollegeOwnProfile(context: RequestContext, raw: unkn
   // Persisted contact numbers still follow the legacy 10/10–15 digit rules.
   const primaryContact = input.contacts.contactMobile?.trim() ?? "";
   const alternateContact = (input.contacts.contactPhone || input.contacts.alternatePhone).trim();
-  if (primaryContact && !/^\\d{10}$/.test(primaryContact))
+  if (primaryContact && !/^\d{10}$/.test(primaryContact))
     throw new Error("Primary contact mobile must contain exactly 10 digits.");
-  if (alternateContact && (!/^\\+?[\\d ()-]+$/.test(alternateContact) ||
-    alternateContact.replace(/\\D/g,"").length < 10 ||
-    alternateContact.replace(/\\D/g,"").length > 15))
+  if (alternateContact && (!/^\+?[\d ()-]+$/.test(alternateContact) ||
+    alternateContact.replace(/\D/g,"").length < 10 ||
+    alternateContact.replace(/\D/g,"").length > 15))
     throw new Error("Additional phone must contain 10–15 digits.");
-  if (primaryContact && primaryContact === alternateContact.replace(/\\D/g,""))
+  if (primaryContact && primaryContact === alternateContact.replace(/\D/g,""))
     throw new Error("Additional phone must differ from the primary contact mobile.");
   const version = z.number().int().nonnegative()
     .safeParse(submitted.profileDocumentVersion);
