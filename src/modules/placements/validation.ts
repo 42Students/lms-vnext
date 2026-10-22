@@ -119,6 +119,11 @@ export const placementRecruiterGrantInputSchema =
         .max(160)
         .nullable()
         .optional(),
+      // A legacy admin client may send its requested capability array.
+      // vNext deliberately provisions the single DRIVES capability; reject
+      // UNKNOWN_CAPABILITY (including unrecognized strings) rather than
+      // silently granting broader recruiter access or ignoring the request.
+      capabilities: z.tuple([z.literal("DRIVES")]).optional(),
     })
     .strict();
 
