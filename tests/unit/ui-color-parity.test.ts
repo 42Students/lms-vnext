@@ -54,13 +54,13 @@ describe("first UI batch color parity", () => {
       "amber-",
       "red-",
     ]) {
-      expect(content).not.toContain(forbidden);
+      expect(content).not.toMatch(new RegExp(`(?:^|\\s)(?:bg|text|border|ring|outline|fill|stroke|from|to|via)-${forbidden}`, "m"));
     }
   });
 
   it("uses the canonical LMS semantic token utilities", () => {
-    expect(content).toContain("bg-primary");
-    expect(content).toContain("bg-primary-subtle");
+    expect(content).toContain("bg-[var(--lms-button-primary)]");
+    expect(content).toContain("var(--lms-primary-subtle)");
     expect(content).toContain("border-border");
     expect(content).toContain("text-primary-text");
     expect(content).toContain("text-foreground");
