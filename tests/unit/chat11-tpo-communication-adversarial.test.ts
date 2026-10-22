@@ -51,9 +51,10 @@ describe("TPO-settings-audit-CAS-01 section changes are validated and idempotent
  it("TPO-settings-audit-REVOKE-01 rechecks live staff role and session in the write transaction",()=>{
   const source=readFileSync("src/modules/placements/tpo-communication-settings-service.ts","utf8");
   const persisted=readFileSync("src/modules/permissions/persisted-actor.ts","utf8");
-  const collegeLock=source.indexOf('.for("update")');
-  const authorization=source.indexOf('assertPersistedPlatformPermission(tx,context,"placements.manage"');
-  const version=source.indexOf("tpoCommunicationUpdateAlreadyApplied(current,changes)");
+  const writer=source.slice(source.indexOf("export async function updateTpoCommunicationSettings("));
+  const collegeLock=writer.indexOf('.for("update")');
+  const authorization=writer.indexOf('assertPersistedPlatformPermission(tx,context,"placements.manage"');
+  const version=writer.indexOf("tpoCommunicationUpdateAlreadyApplied(current,changes)");
   expect(collegeLock).toBeGreaterThan(0);
   expect(authorization).toBeGreaterThan(collegeLock);
   expect(authorization).toBeLessThan(version);
@@ -110,7 +111,7 @@ describe("TPO-settings-audit-PREP-02 threshold preference retries",()=>{
   expect(source).toContain("response.status===409");
   expect(source).toContain("response.status===503");
   expect(source).not.toContain("throw Error(result.error");
-  expect(source).toContain('role="alert"');
+  expect(source).toContain('<InlineNotice tone="error" message={error}/>');
  });
 });
 
@@ -128,7 +129,7 @@ describe("TPO-settings-audit-EMAIL-01 graceful, duplicate-safe optional email co
   expect(source).not.toContain("setError(result.error");
   expect(source).toContain("setSaved({...value})");
   expect(source).toContain("setCurrentVersion(result.version??currentVersion)");
-  expect(source).toContain('role="alert"');
+  expect(source).toContain('<InlineNotice tone="error" message={error}/>');
   expect(source).toContain('credentials:"same-origin"');
  });
 });
