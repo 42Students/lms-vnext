@@ -237,8 +237,8 @@ export async function getCollegeStudentPlacementDetails(ctx:RequestContext,raw:u
  // The profile payload is read only after resolving the selected active learner
  // in the college, never as part of the multi-student suggestion result.
  const doc=student.profileDocument;
- const validSkills=learnerProfileDocumentSchema.shape.skills.safeParse(doc?.skills??[]);
- const validPreferences=learnerProfileDocumentSchema.shape.jobPreferences.safeParse(doc?.jobPreferences??{});
+ const validSkills=learnerProfileDocumentSchema.shape.skills.safeParse(doc?.["skills"]??[]);
+ const validPreferences=learnerProfileDocumentSchema.shape.jobPreferences.safeParse(doc?.["jobPreferences"]??{});
  return {
   student:{membershipId:student.membershipId,legacyLearnerId:student.legacyLearnerId,
    name:student.name,email:student.email,roll:student.roll,
