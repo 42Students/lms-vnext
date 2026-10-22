@@ -14,7 +14,7 @@ export async function GET(request: Request) {
       offset:z.coerce.number().int().min(0).max(99900).optional(),
     }).strict().parse(Object.fromEntries(url.searchParams));
     const context = await getCurrentRequestContext();
-    const classes = await listProjectTeamClasses(context,collegeId,{q,limit,offset});
+    const classes = await listProjectTeamClasses(context,collegeId,{...(q!==undefined?{q}:{}),...(limit!==undefined?{limit}:{}),...(offset!==undefined?{offset}:{})});
     return NextResponse.json({ classes }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     return apiErrorResponse(error);
