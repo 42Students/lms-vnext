@@ -22,10 +22,10 @@ export function publicJobImportantDatesFromLegacy(details: unknown): PublicJobIm
   for (const entry of rows.slice(0, 20)) {
     if (!entry || typeof entry !== "object") continue;
     const row = entry as Record<string, unknown>;
-    const name = z.string().trim().min(1).max(120).safeParse(row.label);
+    const name = z.string().trim().min(1).max(120).safeParse(row["label"]);
     if (!name.success) continue;
-    const raw = typeof row.date === "string" ? row.date :
-      typeof row.at === "string" ? row.at : "";
+    const raw = typeof row["date"] === "string" ? row["date"] :
+      typeof row["at"] === "string" ? row["at"] : "";
     let date: string;
     if (dateOnlySchema.safeParse(raw).success) {
       // Reject invalid leap-days and dates normalized by JavaScript.
