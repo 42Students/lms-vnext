@@ -11,6 +11,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
 import {Alert} from "@/components/ui/alert";
 import {StatusBadge} from "@/components/ui/status-badge";
+import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 
 export const dynamic="force-dynamic";
 
@@ -95,6 +96,19 @@ export default async function SuperAdminInterviewsPage({searchParams}:{
   if(requestedJob)params.set("jobId",requestedJob);
   return "/admin/placements/interviews?"+params.toString();
  };
+ const columns:DataTableColumn<(typeof items)[number]>[]=[
+  {key:"job",header:"Job / company",mobilePriority:"primary",cell:item=><div className="min-w-0">
+    <span className="block font-semibold">{item.title}</span>
+    <span className="block text-xs text-muted-foreground">{item.subtitle}</span>
+   </div>},
+  {key:"candidate",header:"Candidate",cell:item=>detail(item,"Candidate")},
+  {key:"department",header:"Department",cell:item=>departmentBySlot.get(item.id)??"Not recorded"},
+  {key:"interview",header:"Interview",cell:item=>detail(item,"Round")},
+  {key:"date",header:"Date & time",cell:item=><span className="whitespace-nowrap">{detail(item,"Date & Time")}</span>},
+  {key:"status",header:"Status",cell:item=><StatusBadge tone={item.status==="CONFIRMED"?"success":"neutral"}>{item.status}</StatusBadge>},
+  {key:"actions",header:"Action",mobilePriority:"action",cell:item=><Link href={item.href??calendarHref}
+    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 md:min-h-9">Open appointment</Link>},
+ ];
  return <div className="min-w-0 space-y-5">
   <PageHeader title="Interviews"
    description="Candidate appointments for the selected college, with each learner's academic department."
@@ -107,28 +121,11 @@ export default async function SuperAdminInterviewsPage({searchParams}:{
    <p className="text-sm text-body">{report.total} appointments · page {report.query.page} of {report.totalPages}</p>
    <Link href={calendarHref} className="text-sm font-semibold text-primary-text underline">Manage bookings and schedules →</Link>
   </div>
-  {items.length===0?<p role="status" className="py-5 text-sm text-body">
-   No candidate appointments in this scope or selected job. Open the interview calendar to schedule a new booking.
-  </p>:<div role="region" aria-label="Candidate interview appointments" tabIndex={0}
-    className="min-w-0 overflow-x-auto overscroll-contain">
-    <table className="w-full min-w-[850px] border-collapse text-left text-sm">
-     <thead className="border-y border-border bg-[var(--lms-soft-surface)]">
-      <tr>{["Job / company","Candidate","Department","Interview","Date & time","Status","Action"].map(label=>
-       <th key={label} scope="col" className="whitespace-nowrap px-3 py-3 font-semibold text-[var(--lms-heading)]">{label}</th>)}</tr>
-     </thead>
-     <tbody>{items.map(item=><tr key={item.id} className="border-b border-border align-top">
-      <td className="min-w-52 px-3 py-3"><span className="block font-semibold">{item.title}</span>
-        <span className="block text-xs text-muted-foreground">{item.subtitle}</span></td>
-      <td className="px-3 py-3">{detail(item,"Candidate")}</td>
-      <td className="px-3 py-3">{departmentBySlot.get(item.id)??"Not recorded"}</td>
-      <td className="px-3 py-3">{detail(item,"Round")}</td>
-      <td className="whitespace-nowrap px-3 py-3">{detail(item,"Date & Time")}</td>
-      <td className="px-3 py-3"><StatusBadge tone={item.status==="CONFIRMED"?"success":"neutral"}>{item.status}</StatusBadge></td>
-      <td className="px-3 py-3"><Link href={item.href??calendarHref}
-       className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Open appointment</Link></td>
-     </tr>)}</tbody>
-    </table>
-   </div>}
+  <DataTable caption="Candidate interview appointments" rows={items} columns={columns}
+   getRowKey={item=>item.id} mobileMode="scroll" empty={<p role="status"
+    className="py-5 text-sm text-body">
+    No candidate appointments in this scope or selected job. Open the interview calendar to schedule a new booking.
+   </p>}/>
   <nav aria-label="Interview appointment pages" className="flex flex-wrap justify-between gap-3">
    {report.query.page>1?<Link href={pageHref(report.query.page-1)}
      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">← Previous</Link>:<span/>}

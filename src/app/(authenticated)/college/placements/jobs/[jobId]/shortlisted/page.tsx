@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -48,6 +49,14 @@ export default async function CollegeDriveShortlistedPage({
         action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Back to dashboard</Link>} />
     </div>;
   }
+  const modules=await resolveOptionalModuleAccess(context);
+  if(!modules.placements.enabled)return <section role="status"
+    className="min-w-0 space-y-4">
+    <PageHeader title="Shortlisted"/>
+    <ErrorState title="Placements unavailable"
+      description="Placements is turned off for this college. Ask a Super Admin to enable Placements in Module Access before reviewing shortlisted candidates."
+      action={<Link href="/college" className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Back to college dashboard</Link>}/>
+  </section>;
   const { jobId } = await params;
   const requested = await searchParams;
   const query = driveApplicationsParams({

@@ -70,15 +70,20 @@ export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unkno
    ilike(placementJobs.title,literalSearch),
    ilike(placementCompanies.name,literalSearch)):undefined);
  const source=db.select({
-  id:interviews.id,jobId:interviews.jobId,roundId:interviews.roundId,
-  applicationId:interviews.applicationId,studentId:collegeMemberships.id,
-  student:users.displayName,company:placementCompanies.name,companyId:placementCompanies.id,
+  id:sql<string>`${interviews.id}`.as("interview_id"),
+  jobId:interviews.jobId,roundId:interviews.roundId,
+  applicationId:interviews.applicationId,
+  studentId:sql<string>`${collegeMemberships.id}`.as("student_id"),
+  student:users.displayName,
+  company:sql<string>`${placementCompanies.name}`.as("company_name"),
+  companyId:sql<string>`${placementCompanies.id}`.as("company_id"),
   department:sql<string|null>`(select d.name from learner_program_enrollments e
    join programs p on p.id=e.program_id join departments d on d.id=p.department_id
    where e.membership_id=${collegeMemberships.id} and e.status='ACTIVE'
     and d.college_id=${collegeId}
    order by e.admitted_at desc,e.id desc limit 1)`.as("department_name"),
-  job:placementJobs.title,roundName:placementJobRounds.name,
+  job:placementJobs.title,
+  roundName:sql<string>`${placementJobRounds.name}`.as("round_name"),
   interviewerName:sql<string|null>`coalesce(nullif(trim(${interviews.legacyInterviewerName}),''),nullif(trim(${interviews.panel}),''))`.as("interviewer_name"),
   kind:placementJobRounds.kind,
   legacyInterviewType:interviews.legacyInterviewType,

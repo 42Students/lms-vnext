@@ -52,6 +52,19 @@ describe("chat-13 additional admin mutation and recruiter account security",()=>
   expect(service).toContain("recordActivityEventInTransaction(tx, context");
  });
 
+ it("G2-9-034-095 keeps private merged data and deduplicates pending recruiter invitations",()=>{
+  const service=read("src/modules/placements/admin-company-merge-service.ts");
+  const dialog=read("src/components/admin/super-admin-company-merge.tsx");
+  expect(service).toContain('const liveStatuses=new Set(["ACTIVE","PENDING_RECRUITER"])');
+  expect(service).toContain("liveStatuses.has(g.status)");
+  expect(service).toContain("liveStatuses.has(g.status) && targetActive.has(g.recruiterUserId)");
+  expect(service).toContain("placementCompanyDomains");
+  expect(service).toContain("placementCompanyAliases");
+  expect(service).toContain("sourceNameRetainedAsAlias:!targetNameMatches");
+  expect(service).toContain("privateCrmNotesMerged:Boolean(sourceNotes)");
+  expect(dialog).toContain("A source linked to any other college is rejected");
+  expect(dialog).not.toContain("NOT bulk-migrated");
+ });
  it("SA-COMPANY-REL-01 requires explicit confirmation for restore/archive of tenant-specific relationship",()=>{
   expect(superAdminCollegeCompanyActionSchema.safeParse({
    relationshipId:id,action:"ARCHIVE",confirmed:true,
