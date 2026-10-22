@@ -39,6 +39,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
  // A late network reply from the previous selected college must not open a
  // drawer or change row selections in the new workspace.
  const scopeEpoch=useRef(0);
+ const savingRef=useRef(false);
  const activeScope=jobId+"|"+basePath;
  const filterScope=JSON.stringify({...query,page:1});
  const [failedDetailId,setFailedDetailId]=useState<string|null>(null);
@@ -130,7 +131,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   setOutcome(null);setError("");setDialog(true);
  }
  async function save(){
-  if(!selectedCount||(action==="CORRECT"&&reason.trim().length<10)||busy)return;
+  if(!selectedCount||(action==="CORRECT"&&reason.trim().length<10)||busy||savingRef.current)return;
   const assessment=assessmentUrl.trim();
   if(action==="MOVE"&&target==="ASSESSMENT"&&assessment){
    try{
@@ -142,6 +143,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
    }
   }
   if(staleConflict){router.refresh();return;}
+  savingRef.current=true;
   const epoch=scopeEpoch.current;
   setBusy(true);setError("");setOutcome(null);
   try{
@@ -173,6 +175,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
     setError("Application status has changed since this page loaded. Refresh the current stages before retrying.");
    }else setError(e instanceof Error?e.message:friendlyApiError({}));
   }finally{
+   savingRef.current=false;
    if(scopeEpoch.current===epoch)setBusy(false);
   }
  }
