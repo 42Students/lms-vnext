@@ -9,14 +9,38 @@ import {CoursesServiceError} from "./errors";
 import {loadCourseSectionDeliveryScope} from "./scope";
 import {requireLearningReadAccess} from "./learning-access";
 
+/** Invalid legacy numeric indices and invalid UUID route IDs have different
+ * field-safe errors. A caller must resolve old positive numeric content IDs
+ * through an authenticated import crosswalk before passing this UUID route.
+ * No untrusted array index selects a private blob.
+ */
+export const learnerResourceReferenceSchema=z.strictObject({
+ deliveryId:z.uuid({error:"A valid Section delivery ID is required"}),
+ contentId:z.uuid({error:"A valid lesson content ID is required"}),
+ legacyMaterialIndex:z.coerce.number().int({error:"Material index must be a whole number"})
+  .min(0,{error:"Material index must not be negative"}).max(2147483647).optional(),
+});
+export function parseLearnerCourseFileReference(
+ deliveryId:unknown,contentId:unknown,legacyMaterialIndex?:unknown,
+){
+ return learnerResourceReferenceSchema.parse({
+  deliveryId,contentId,...(legacyMaterialIndex===undefined?{}:{legacyMaterialIndex}),
+ });
+}
 /** LEARNER-course-detail-R04: one scoped material lookup only.
  * Never rehydrate lessons, quizzes, assessments or learner progress to
  * resolve a private file. Signed redirects are generated only after auth. */
 export async function getLearnerCourseFileReference(
  context:RequestContext,deliveryRaw:unknown,contentRaw:unknown,
+ legacyMaterialIndex?:unknown,
 ){
- const uuid=z.string().uuid();
- const deliveryId=uuid.parse(deliveryRaw),contentId=uuid.parse(contentRaw);
+ const identity=parseLearnerCourseFileReference(deliveryRaw,contentRaw,legacyMaterialIndex);
+ const deliveryId=identity.deliveryId,contentId=identity.contentId;
+ // A historical material index is not a verified material UUID. Only index 0
+ // is compatible with the unique-file fallback below; other indices need
+ // the versioned material-ID endpoint and its own authorization checks.
+ if(identity.legacyMaterialIndex!==undefined&&identity.legacyMaterialIndex!==0)
+  throw new CoursesServiceError("LESSON_CONTENT_NOT_FOUND");
  const delivery=await loadCourseSectionDeliveryScope(deliveryId,true);
  const access=await requireLearningReadAccess(context,delivery.offeringId,deliveryId,{
   includeHistorical:true,
