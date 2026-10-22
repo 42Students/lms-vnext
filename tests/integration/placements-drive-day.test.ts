@@ -179,6 +179,7 @@ async function createDrive() {
       ],
     },
   );
+  await upsertJobEligibilityPolicy(tpo,draftJob.id,{});
   const job = await publishPlacementJob(
     tpo,
     draftJob.id,
