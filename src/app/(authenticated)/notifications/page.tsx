@@ -70,8 +70,9 @@ export default async function NotificationsPage({searchParams}:{searchParams:Pro
   if(result.status==="rejected"&&result.reason instanceof AuthorizationError)throw result.reason;
  }
  const failedNotifications=notificationResult.status==="rejected";
- const failureStatus=failedNotifications&&typeof (notificationResult.reason as {status?:unknown})?.status==="number"
-  ?(notificationResult.reason as {status:number}).status:null;
+ const failureReason=notificationResult.status==="rejected"?notificationResult.reason:null;
+ const failureStatus=typeof (failureReason as {status?:unknown}|null)?.status==="number"
+  ?(failureReason as {status:number}).status:null;
  const failureMessage=failedNotifications?notificationFeedFailure(failureStatus):null;
  const page=notificationResult.status==="fulfilled"
   ?notificationResult.value:{items:[],nextCursor:null};

@@ -10,6 +10,7 @@ export function TpoNoticeComposerDialog({children,mode="NEW",initialOpen=false}:
  return <>
   <Button type="button" variant={mode==="EDIT"?"secondary":"primary"} onClick={()=>setOpen(true)}
    className="min-h-11 w-full min-w-0 sm:w-auto md:min-h-9">
+   {mode==="NEW"?<svg aria-hidden="true" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="mr-1 inline size-4"><path d="M10 4v12M4 10h12"/></svg>:null}
    {title}
   </Button>
   <Dialog open={open} onOpenChange={setOpen} title={title}
