@@ -12,7 +12,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-5-019-040  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-5-019-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-5-019-064  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
-- [ ] G2-5-027-014  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
+- [x] G2-5-027-014  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-5-027-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-5-027-019  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
 - [ ] G2-5-027-021  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md)
@@ -20,3 +20,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 ## Results
 
+- G2-5-027-014: OK — legacy learner hierarchy-enriched detail `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LearnerController.java:589-609` has a documented membership, contact, roll/unique, DOB and scoped hierarchy field crosswalk at `src/modules/people/college-role-directory-service.ts:43-55`. This establishes the requested parity map, not proof that every UI renders the fields.
