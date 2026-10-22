@@ -17,6 +17,8 @@ describe.skipIf(!enabled)("Company applicant share PG capability acceptance",()=
   const company=randomUUID(),relationship=randomUUID(),season=randomUUID();
   const job=randomUUID(),share=randomUUID(),foreignShare=randomUUID();
   const digest=createHash("sha256").update(randomUUID()).digest("hex");
+  const codeSalt=randomUUID().replaceAll("-","");
+  const codeHash=createHash("sha256").update("disposable-share-code:"+codeSalt).digest("hex");
   try{
    await client.query("BEGIN");
    const names=await client.query<{
@@ -41,8 +43,8 @@ describe.skipIf(!enabled)("Company applicant share PG capability acceptance",()=
     [job,SEED_IDS.collegeA,season,relationship,SEED_IDS.collegeAdminUser],
    );
    await client.query(
-    "insert into placement_company_applicant_shares(id,college_id,job_id,created_by_membership_id,token_hash,expires_at) values($1,$2,$3,$4,$5,clock_timestamp()+interval '1 day')",
-    [share,SEED_IDS.collegeA,job,SEED_IDS.collegeAdminMembership,digest],
+    "insert into placement_company_applicant_shares(id,college_id,job_id,created_by_membership_id,token_hash,code_hash,code_salt,expires_at) values($1,$2,$3,$4,$5,$6,$7,clock_timestamp()+interval '1 day')",
+    [share,SEED_IDS.collegeA,job,SEED_IDS.collegeAdminMembership,digest,codeHash,codeSalt],
    );
    const active=await client.query<{count:string}>(
     "select count(*)::text as count from placement_company_applicant_shares where id=$1 and revoked_at is null and expires_at>clock_timestamp()",
@@ -64,14 +66,14 @@ describe.skipIf(!enabled)("Company applicant share PG capability acceptance",()=
    expect(csvEvents.rows[0]?.count).toBe("1");
    await client.query("SAVEPOINT duplicate_token_hash");
    await expect(client.query(
-    "insert into placement_company_applicant_shares(college_id,job_id,created_by_membership_id,token_hash,expires_at) values($1,$2,$3,$4,clock_timestamp()+interval '1 day')",
-    [SEED_IDS.collegeA,job,SEED_IDS.collegeAdminMembership,digest],
+    "insert into placement_company_applicant_shares(college_id,job_id,created_by_membership_id,token_hash,code_hash,code_salt,expires_at) values($1,$2,$3,$4,$5,$6,clock_timestamp()+interval '1 day')",
+    [SEED_IDS.collegeA,job,SEED_IDS.collegeAdminMembership,digest,codeHash,codeSalt],
    )).rejects.toMatchObject({code:"23505"});
    await client.query("ROLLBACK TO SAVEPOINT duplicate_token_hash");
    await client.query("SAVEPOINT invalid_expiry");
    await expect(client.query(
-    "insert into placement_company_applicant_shares(college_id,job_id,created_by_membership_id,token_hash,expires_at) values($1,$2,$3,$4,clock_timestamp()-interval '1 day')",
-    [SEED_IDS.collegeA,job,SEED_IDS.collegeAdminMembership,createHash("sha256").update(randomUUID()).digest("hex")],
+    "insert into placement_company_applicant_shares(college_id,job_id,created_by_membership_id,token_hash,code_hash,code_salt,expires_at) values($1,$2,$3,$4,$5,$6,clock_timestamp()-interval '1 day')",
+    [SEED_IDS.collegeA,job,SEED_IDS.collegeAdminMembership,createHash("sha256").update(randomUUID()).digest("hex"),codeHash,codeSalt],
    )).rejects.toMatchObject({code:"23514"});
    await client.query("ROLLBACK TO SAVEPOINT invalid_expiry");
    const events=await client.query<{count:string}>(
@@ -95,16 +97,16 @@ describe.skipIf(!enabled)("Company applicant share PG capability acceptance",()=
    await client.query("ROLLBACK TO SAVEPOINT invalid_kind");
    await client.query("SAVEPOINT foreign_actor");
    await expect(client.query(
-    "insert into placement_company_applicant_shares(id,college_id,job_id,created_by_membership_id,token_hash,expires_at) values($1,$2,$3,$4,$5,clock_timestamp()+interval '1 day')",
+    "insert into placement_company_applicant_shares(id,college_id,job_id,created_by_membership_id,token_hash,code_hash,code_salt,expires_at) values($1,$2,$3,$4,$5,$6,$7,clock_timestamp()+interval '1 day')",
     [randomUUID(),SEED_IDS.collegeA,job,SEED_IDS.facultyCollegeBMembership,
-      createHash("sha256").update(randomUUID()).digest("hex")],
+      createHash("sha256").update(randomUUID()).digest("hex"),codeHash,codeSalt],
    )).rejects.toMatchObject({code:"23503"});
    await client.query("ROLLBACK TO SAVEPOINT foreign_actor");
    await client.query("SAVEPOINT foreign_tenant");
    await expect(client.query(
-    "insert into placement_company_applicant_shares(id,college_id,job_id,created_by_membership_id,token_hash,expires_at) values($1,$2,$3,$4,$5,clock_timestamp()+interval '1 day')",
+    "insert into placement_company_applicant_shares(id,college_id,job_id,created_by_membership_id,token_hash,code_hash,code_salt,expires_at) values($1,$2,$3,$4,$5,$6,$7,clock_timestamp()+interval '1 day')",
     [foreignShare,SEED_IDS.collegeB,job,SEED_IDS.collegeAdminMembership,
-      createHash("sha256").update(foreignShare).digest("hex")],
+      createHash("sha256").update(foreignShare).digest("hex"),codeHash,codeSalt],
    )).rejects.toMatchObject({code:"23503"});
    await client.query("ROLLBACK TO SAVEPOINT foreign_tenant");
    await client.query("update placement_company_applicant_shares set revoked_at=clock_timestamp() where id=$1",[share]);
