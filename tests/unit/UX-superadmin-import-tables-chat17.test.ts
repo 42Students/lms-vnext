@@ -25,8 +25,8 @@ describe("UX-UNOWNED-TABLE-07/08 Super Admin import surfaces",()=>{
     expect(text.startsWith('"use client";')).toBe(true);
     expect(text).toContain('import { DataTable } from "@/components/ui/data-table"');
     expect(text).toContain('useConfirmFlow');
-    expect(text).toContain('await askConfirm("Create "+count+" faculty from this locally previewed file?');
-    expect(text).toContain("Some rows may fail; there is no server-only validation preview.");
+    expect(text).toContain('await askConfirm("Create "+count+" faculty from this server-validated file?');
+    expect(text).toContain("The server rechecks identity and college before each record.");
     expect(text).toContain('{dialog}');
     expect(text).not.toContain("window.confirm(");
     expect(text).toContain('"/api/admin/faculty/bulk-import"');
