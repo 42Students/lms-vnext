@@ -39,6 +39,7 @@ describe("UX-tpo-companies-duplicate-filters-01 SSR invalid, denied and legacy l
   vi.resetAllMocks();
   mocked.context.mockResolvedValue(ctx);
   mocked.actor.mockResolvedValue(college);
+  mocked.view.mockResolvedValue({page:{items:[],total:0,page:1,pageSize:25,totalPages:1}});
  });
  it("redirects non-placement roles before parsing private employer deep-links",async()=>{
   mocked.context.mockResolvedValueOnce({...ctx,membership:{...ctx.membership!,roles:["LEARNER"]}});
@@ -72,8 +73,9 @@ describe("UX-tpo-companies-duplicate-filters-01 SSR invalid, denied and legacy l
   expect(mocked.view).not.toHaveBeenCalled();
   expect(mocked.actor).toHaveBeenCalledWith(ctx);
  });
- it("keeps the original unfiltered companies redirect, not an empty fabricated directory",async()=>{
-  await expect(page()).rejects.toThrow("REDIRECT_TO_/tpo/recruiters?view=companies");
-  expect(mocked.view).not.toHaveBeenCalled();
+ it("renders the scoped first-class companies directory without fabricating rows",async()=>{
+  const html=renderToStaticMarkup(await page());
+  expect(html).toContain("No companies match these filters.");
+  expect(mocked.view).toHaveBeenCalledWith(ctx,expect.objectContaining({collegeId:college}));
  });
 });

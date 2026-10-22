@@ -57,7 +57,7 @@ describe("chat-11 learner Projects legacy list behavior", () => {
     expect(programs).toContain("Go to Departments");
     expect(programs).toContain("Next, create its semesters and batches.");
     expect(programs).toContain('setName("")');
-    expect(programs).toContain("{[10, 25, 50, 100].map");
+    expect(programs).toContain("options={[10,25,50,100]}");
     expect(programs).toContain("[10,25,50,100].includes(size)");
   });
 });

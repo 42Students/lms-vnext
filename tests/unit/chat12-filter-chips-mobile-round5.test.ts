@@ -4,13 +4,13 @@ const s=(p:string)=>readFileSync(new URL("../../"+p,import.meta.url),"utf8");
 describe("chat12 mobile filters and chips",()=>{
  it("TPO-students-24 displays removable filter chips with URL-preserving reset",()=>{
   const p=s("src/components/tpo/tpo-grid-filter-panel.tsx");
-  expect(p).toContain('aria-label="Active student filters"');
+  expect(p).toContain('aria-label="Active grid filters"');
   expect(p).toContain('aria-label={"Remove "+chip.label}');
   expect(p).toContain("clearTpoGridFilters");
  });
  it("TPO-students-51 exposes an accessible mobile filter disclosure and bottom sheet",()=>{
   const p=s("src/components/tpo/tpo-grid-filter-panel.tsx");
-  expect(p).toContain('<BottomSheet open={sheetOpen} onOpenChange={setSheetOpen} title="Filter students">');
+  expect(p).toContain('<BottomSheet open={sheetOpen} onOpenChange={next=>{setSheetOpen(next);if(!next&&autoOpenMobile)onAutoClose?.();}} title={title}>');
   const sheet=s("src/components/ui/bottom-sheet.tsx");
   expect(sheet).toContain("modal.showModal()");
   expect(sheet).toContain("onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}");

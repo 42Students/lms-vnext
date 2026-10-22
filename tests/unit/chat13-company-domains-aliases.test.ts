@@ -10,15 +10,15 @@ describe("Global company domain and other-name curation",()=>{
   expect(()=>normalizeCompanyDomain("university.ac.in")).toThrow();
   expect(companyDomainCommandSchema.safeParse({companyId:"bad",domain:"foo.com",action:"ADD"}).success).toBe(false);
   const code=read("src/modules/placements/super-admin-company-identities-service.ts");
-  expect(code).toContain("Keep at least one company domain.");
-  expect(code).toContain("Domain belongs to another company.");
+  expect(code).toContain("A company keeps at least one domain");
+  expect(code).toContain("already belongs to another company. Merge them instead.");
   expect(code).toContain("tenantDomains.host");
  });
  it("SA-placements-projects-28 enforces canonical alias collision checks and name search",()=>{
   expect(normalizeCompanyAlias("  T C S  ")).toBe("T C S");
   expect(companyAliasCommandSchema.safeParse({companyId:"bad",alias:"TCS",action:"ADD"}).success).toBe(false);
   const code=read("src/modules/placements/super-admin-company-identities-service.ts");
-  expect(code).toContain("Other name conflicts with another company.");
+  expect(code).toContain("Other name already belongs to ");
   expect(code).toContain("Other name is already registered to another company.");
   const directory=read("src/modules/placements/admin-company-directory-service.ts");
   expect(directory).toContain("placementCompanyAliases.alias");

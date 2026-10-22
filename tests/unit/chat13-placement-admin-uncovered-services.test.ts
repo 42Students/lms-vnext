@@ -38,14 +38,15 @@ describe("Super Admin placements remaining service entrypoint checks",()=>{
   expect(s).toContain('resolveActingCollege(context,"placements.manage")');
   expect(s).toContain('assertPersistedPlatformPermission(tx,context,"placements.manage"');
   expect(s).toContain("eq(placementCompanyRelationships.collegeId,acting.collegeId)");
-  expect(s).toContain('.for("update",{of:placementCompanyRelationships})');
+  expect(s).toContain('.for("update").limit(1)');
   expect(s).toContain('if(row.status===next)return {relationshipId:row.id,status:next,changed:false}');
   expect(s).toContain('eq(placementCompanyRelationships.status,row.status)');
   expect(s).toContain("recordActivityEventInTransaction(tx,context");
  });
  it("SA-COMPANY-EDIT-02 denies selected-college global mutations, stale versions and active duplicates",()=>{
   const s=read("src/modules/placements/super-admin-company-edit-service.ts");
-  expect(s).toContain("!isGlobalCompanyScope(context.adminScope)");
+  expect(s).toContain("if(!isSuperAdmin(context))");
+  expect(s).toContain('requirePermission(context,"admin-scope.select")');
   expect(s).toContain('assertPersistedPlatformPermission(tx,context,"admin-scope.select")');
   expect(s).toContain('current.status!=="ACTIVE"');
   expect(s).toContain("current.updatedAt.toISOString()!==input.expectedUpdatedAt");
@@ -55,7 +56,8 @@ describe("Super Admin placements remaining service entrypoint checks",()=>{
  });
  it("SA-COMPANY-IDENTITIES-03 requires actual current global role and domain/alias uniqueness before writes",()=>{
   const s=read("src/modules/placements/super-admin-company-identities-service.ts");
-  expect(s).toContain("context.adminScope?.collegeId||context.adminScope?.organizationId");
+  expect(s).toContain("if(!isSuperAdmin(context))");
+  expect(s).toContain('requirePermission(context,"admin-scope.select")');
   expect((s.match(/assertPersistedPlatformPermission\(tx,context,"admin-scope.select"\)/g)??[]).length).toBe(2);
   expect(s).toContain("eq(placementCompanyDomains.companyId,company.id)");
   expect(s).toContain("Domain belongs to another company.");

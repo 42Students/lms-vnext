@@ -133,7 +133,7 @@ describe("DB10 legacy bug tracker workflow contract", () => {
     const original = bug({ status: "CLOSED", version: 1 });
     expect(() => applyBugWorkflowRetest(
       original, { expectedVersion: 1, result: "PASS" }, admin, now,
-    )).toThrowError("INVALID_STATE");
+    )).toThrowError("Issue is not ready for retest.");
     expect(original.status).toBe("CLOSED");
     expect(original.version).toBe(1);
   });

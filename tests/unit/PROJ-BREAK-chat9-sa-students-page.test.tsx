@@ -59,7 +59,7 @@ beforeEach(()=>{state.scoped=true;state.fail="";
 });
 describe("Super Admin last-third student registration and bulk import states",()=>{
  it("SA-students-ux-17 each failed policy/import read hides all registration actions",async()=>{
-  for(const failure of ["filters","options","history"]){
+  for(const failure of ["filters","options","history"] as const){
    state.fail=failure;
    const nodes=walk(await render());
    const message={filters:"Academic filter choices could not be loaded.",
