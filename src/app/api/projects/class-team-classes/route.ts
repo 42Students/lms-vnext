@@ -8,12 +8,13 @@ export const runtime = "nodejs";
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
-    const { collegeId, q, limit } = z.object({
+    const { collegeId, q, limit,offset } = z.object({
       collegeId:z.string().uuid(),q:z.string().max(120).optional(),
-      limit:z.coerce.number().int().min(1).max(500).optional(),
+      limit:z.coerce.number().int().min(1).max(100).optional(),
+      offset:z.coerce.number().int().min(0).max(99900).optional(),
     }).strict().parse(Object.fromEntries(url.searchParams));
     const context = await getCurrentRequestContext();
-    const classes = await listProjectTeamClasses(context, collegeId, {q,limit});
+    const classes = await listProjectTeamClasses(context,collegeId,{q,limit,offset});
     return NextResponse.json({ classes }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     return apiErrorResponse(error);

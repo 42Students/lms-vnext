@@ -20,9 +20,8 @@ export async function GET(request: Request) {
         collegeId,
         {
           q: url.searchParams.get("q") ?? "",
-          limit:
-            url.searchParams.get("limit") ??
-            "50",
+          limit:url.searchParams.get("limit") ?? "50",
+          offset:Number(url.searchParams.get("offset")??"0"),
         },
       );
 
