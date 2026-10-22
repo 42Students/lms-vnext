@@ -5,12 +5,15 @@ const source=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
 const create=()=>source("src/components/placements/placement-job-create-form.tsx");
 
 describe("chat-3 remaining Drives audit evidence — open unless explicitly closed",()=>{
- it("TPO-drives-27 JD upload stays disabled until private storage and scanner are connected",()=>{
-  expect(create()).not.toContain('type="file"');
+ it("TPO-drives-27 JD upload requests a private signed upload grant rather than a public URL",()=>{
+  expect(create()).toContain('type="file"');
+  expect(create()).toContain('action:"INITIATE"');
+  expect(create()).toContain('method:"PUT",headers:grant.requiredHeaders,body:jdFile');
  });
  it("TPO-drives-28 college job type is distinct from the fixed employment enum",()=>{
-  expect(create()).toContain('name="employmentType"');
-  expect(create()).toContain("Custom college job types and placed-counting rules");
+  expect(create()).toContain('name="jobTypeLabel"');
+  expect(create()).toContain('name="workMode"');
+  expect(create()).toContain("jobTypes?.length");
  });
  it("TPO-drives-29 pool host logistics are not conflated with work mode",()=>{
   expect(create()).toContain("Pool reporting time and travel arrangements must be coordinated separately.");
@@ -18,7 +21,8 @@ describe("chat-3 remaining Drives audit evidence — open unless explicitly clos
  });
  it("TPO-drives-30 the employer portal URL is clear without claiming a persisted portal name",()=>{
   expect(create()).toContain('name="externalApplicationUrl"');
-  expect(create()).toContain("A separate portal name is not saved by this workflow.");
+  expect(create()).toContain('name="portalName"');
+  expect(create()).toContain('name="portalUrl"');
  });
  it("TPO-drives-31 recorded-outside creates a historical record, not a learner-facing job",()=>{
   const form=source("src/components/placements/recorded-outside-form.tsx");
@@ -47,11 +51,11 @@ describe("chat-3 remaining Drives audit evidence — open unless explicitly clos
   expect(form).toContain("saved.rounds.some");
   expect(form).toContain("planned.slice(saved.rounds.length)");
   expect(form).toContain('"POST",{kind:round.kind,name:round.name}');
-  expect(form).toContain("venues and dates in the drive workspace");
+  expect(form).toContain("scheduling, eligibility reach verification and recruiter invitations are managed in the saved drive workspace.");
  });
  it("TPO-drives-40 learner reach is deferred until persisted evidence can be counted",()=>{
   expect(create()).toContain('aria-label="Who this reaches"');
-  expect(create()).toContain("No reach estimate is fabricated on this form.");
+  expect(create()).toContain("Create a draft, then review the server reach, rounds and notifications before confirming publication.");
   expect(source("src/modules/placements/tpo-drive-lifecycle-service.ts")).toContain("previewEligiblePublishedDrive");
  });
  it("TPO-drives-42 create publish review checks future deadline, compensation and HTTPS employer link",()=>{
@@ -62,7 +66,7 @@ describe("chat-3 remaining Drives audit evidence — open unless explicitly clos
  });
  it("TPO-drives-48 published edits require the live applicant notification contract",()=>{
   const service=source("src/modules/placements/tpo-drive-edit-service.ts");
-  expect(service).toContain('editable:["DRAFT","PUBLISHED"].includes(job.status)&&season?.status==="ACTIVE"');
+  expect(service).toContain('editable:["DRAFT","PUBLISHED"].includes(job.status)&&companyReady');
   expect(service).toContain('job.status==="PUBLISHED"&&input.notifyApplicants');
  });
  it("TPO-drives-52 quick and full create paths are explicitly separate",()=>{
@@ -79,14 +83,15 @@ describe("chat-3 remaining Drives audit evidence — open unless explicitly clos
   const model=source("src/modules/placements/tpo-drive-lifecycle-list-model.ts");
   expect(view).toContain('tone={tpoDriveStatusTone(job.status)}');
   expect(view).toContain('tone={driveRequestStatusTone(item.status)}');
-  expect(model).toContain('status==="CANCELLED"?"Cancelled"');
+  expect(model).toContain('if(status==="CANCELLED")return "Cancelled"');
   expect(model).toContain('status==="REJECTED")return "Declined"');
  });
  it("TPO-drives-38 employer skill tags are not misrepresented as persisted eligibility",()=>{
-  expect(create()).toContain("Skills the employer requires are not configured on this form yet.");
+  expect(create()).toContain('name="skillsWanted"');
+  expect(create()).toContain("skillsWanted,");
  });
  it("TPO-drives-47 recruiter lead invite is not misrepresented as a drive-level email",()=>{
-  expect(create()).toMatch(/recruiter lead invitations are managed separately under Engage\./i);
+  expect(create()).toContain("recruiter invitations are managed in the saved drive workspace.");
   expect(source("src/modules/placements/tpo-recruiter-invite-service.ts")).toContain("lead");
  });
  it("TPO-drives-50 recruiter cannot mutate college-owned approved drive fields through TPO endpoints",()=>{

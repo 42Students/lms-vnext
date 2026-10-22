@@ -1,5 +1,5 @@
 /** The Exotel API acknowledges a request by issuing a nonblank SMS Sid with
- * a nonfailure status. Sid is opaque (do not impose a vNext identifier regex).
+ * a nonfailure status. Sid is opaque but never includes whitespace, control characters or recipient data.
  * Keep accepted states explicit: a novel/provider-error state must not silently
  * count as delivery; "SENT" in our ledger means provider acceptance only. */
 const EXOTEL_ACCEPTED_STATUSES = new Set([
@@ -12,7 +12,7 @@ export function isExotelAcceptedResponse(raw:unknown):boolean{
  if(!message || typeof message!=="object")return false;
  if(!("Sid" in message)||typeof message.Sid!=="string")return false;
  const sid=message.Sid.trim();
- if(!sid || sid.length>255 || /[\x00-\x1f\x7f]/.test(sid))return false;
+ if(!/^[A-Za-z0-9._:-]{1,128}$/.test(sid))return false;
  if(!("Status" in message)||typeof message.Status!=="string")return false;
  const status=message.Status.trim().toLowerCase();
  if(!status || status.startsWith("failed"))return false;
