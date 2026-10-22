@@ -35,7 +35,7 @@ export function apiErrorResponse(error: unknown) {
     const headers = new Headers(init?.headers);
     headers.set("x-request-id", requestId);
     if (status === 429 || status === 503) headers.set("Retry-After", "60");
-    const code = typeof body.error === "string" ? body.error : undefined;
+    const code = typeof body["error"] === "string" ? body["error"] : undefined;
     return NextResponse.json({
       ...body,
       // Teaching-scope denial is safe to explain without exposing a foreign
@@ -44,7 +44,7 @@ export function apiErrorResponse(error: unknown) {
         ? "Too many applications in the last minute. Please try again shortly."
         : code === "FACULTY_TEACHING_SCOPE_REQUIRED"
         ? "You do not teach this course or class"
-        : friendlyApiError({ status, code }),
+        : friendlyApiError({ status, ...(code !== undefined ? { code } : {}) }),
       requestId,
     }, { ...init, status, headers });
   };
