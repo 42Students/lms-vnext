@@ -98,47 +98,83 @@ const secondRoundId =
   "44444444-4444-4444-8444-444444444444";
 
 async function cleanup() {
+  // Integration files share the seeded database. Remove only drive-day
+  // fixtures, not other suites' applications/stages (which may be written
+  // concurrently while this cleanup runs).
+  const jobs = await pool.query<{ id: string }>(
+    "select id from placement_jobs where college_id = $1 and title = $2",
+    [SEED_IDS.collegeA, "Drive Day Engineer"],
+  );
+  const jobIds = jobs.rows.map((row) => row.id);
+  if (jobIds.length) {
+    const applications = await pool.query<{ id: string }>(
+      "select id from placement_applications where job_id = any($1::uuid[])",
+      [jobIds],
+    );
+    const applicationIds = applications.rows.map((row) => row.id);
+    const rounds = await pool.query<{ id: string }>(
+      "select id from placement_job_rounds where job_id = any($1::uuid[])",
+      [jobIds],
+    );
+    const roundIds = rounds.rows.map((row) => row.id);
+
+    for (const table of [
+      "placement_tpo_application_stages",
+      "placement_college_application_stages",
+      "placement_application_screening_history",
+      "placement_application_screenings",
+      "placement_application_status_history",
+    ] as const) {
+      await pool.query(
+        `delete from ${table} where application_id = any($1::uuid[])`,
+        [applicationIds],
+      );
+    }
+    await pool.query(
+      "delete from placement_round_results where round_id = any($1::uuid[])",
+      [roundIds],
+    );
+    await pool.query(
+      "delete from placement_job_round_events where round_id = any($1::uuid[])",
+      [roundIds],
+    );
+    await pool.query(
+      "delete from placement_applications where id = any($1::uuid[])",
+      [applicationIds],
+    );
+    await pool.query(
+      "delete from placement_job_rounds where id = any($1::uuid[])",
+      [roundIds],
+    );
+    for (const table of [
+      "placement_eligibility_overrides",
+      "placement_job_eligibility_policies",
+    ] as const) {
+      await pool.query(
+        `delete from ${table} where job_id = any($1::uuid[])`,
+        [jobIds],
+      );
+    }
+    await pool.query(
+      "delete from placement_jobs where id = any($1::uuid[])",
+      [jobIds],
+    );
+  }
+
+  const companies = await pool.query<{ id: string }>(
+    "select id from placement_companies where name = $1 and primary_domain = $2",
+    ["Drive Day Systems", "drive-day.example"],
+  );
+  const companyIds = companies.rows.map((row) => row.id);
   await pool.query(
-    "delete from placement_tpo_application_stages",
+    "delete from placement_company_relationships where college_id = $1 and company_id = any($2::uuid[])",
+    [SEED_IDS.collegeA, companyIds],
   );
   await pool.query(
-    "delete from placement_round_results",
+    "delete from placement_companies as company where id = any($1::uuid[]) and not exists (select 1 from placement_company_relationships as relationship where relationship.company_id = company.id)",
+    [companyIds],
   );
-  await pool.query(
-    "delete from placement_job_round_events",
-  );
-  await pool.query(
-    "delete from placement_job_rounds",
-  );
-  await pool.query(
-    "delete from placement_application_screening_history",
-  );
-  await pool.query(
-    "delete from placement_application_screenings",
-  );
-  await pool.query(
-    "delete from placement_application_status_history",
-  );
-  await pool.query(
-    "delete from placement_college_application_stages",
-  );
-  await pool.query(
-    "delete from placement_applications",
-  );
-  await pool.query(
-    "delete from placement_eligibility_overrides",
-  );
-  await pool.query(
-    "delete from placement_job_eligibility_policies",
-  );
-  await pool.query(
-    "delete from placement_candidate_academic_evidence",
-  );
-  await pool.query("delete from placement_jobs");
-  await pool.query(
-    "delete from placement_company_relationships",
-  );
-  await pool.query("delete from placement_companies");
+  // Seed learner academic evidence is shared test setup, not owned by this suite.
 }
 
 async function createDrive() {
