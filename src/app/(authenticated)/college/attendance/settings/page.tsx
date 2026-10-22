@@ -30,7 +30,9 @@ export default async function CollegeAttendanceSettingsPage() {
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <PageHeader
         title="Attendance policy"
-        description={`Set the attendance eligibility threshold and correction window for ${college.name}.`}
+        description={isSuperAdmin(context)
+          ? `Set the attendance eligibility threshold and correction window for ${college.name}.`
+          : `Review the attendance eligibility threshold and correction window for ${college.name}.`}
         actions={
           <PageBackLink href="/college/attendance" label="Back to Attendance" className="min-h-11" />
         }
@@ -40,6 +42,7 @@ export default async function CollegeAttendanceSettingsPage() {
         <CollegeAttendancePolicyForm
           collegeId={college.id}
           initialPolicy={policy}
+          readOnly={!isSuperAdmin(context)}
         />
       </section>
     </div>
