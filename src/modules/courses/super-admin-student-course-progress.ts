@@ -38,7 +38,12 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
  });
  const found=await getDb().execute(sql`
   with selected as (
-   select o.id from course_offerings o
+   select o.id,
+    (${deliveryId}::uuid is null or exists (
+     select 1 from course_teaching_assignments ta
+     where ta.delivery_id=${deliveryId}::uuid
+    )) as taught_in_class
+   from course_offerings o
    join courses c on c.id=o.course_id
    join departments d on d.id=c.department_id
    where o.id=${offeringId}::uuid and d.college_id=${collegeId}::uuid
@@ -47,14 +52,15 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
     join sections s on s.id=cd.section_id
      and s.cohort_id=o.cohort_id and s.academic_period_id=o.academic_period_id
     where cd.offering_id=o.id and cd.id=${deliveryId}::uuid
-     and exists (select 1 from course_teaching_assignments ta
-      where ta.delivery_id=cd.id)
    ))
   )
-  select count(*)::int as total from selected
+  select count(*)::int as total,bool_and(taught_in_class) as "taughtInClass" from selected
  `);
- const count=Number((found.rows[0] as {total:number}|undefined)?.total??0);
+ const validity=found.rows[0] as {total:number;taughtInClass:boolean|null}|undefined;
+ const count=Number(validity?.total??0);
  if(count!==1)throw new AuthorizationError("courses.read");
+ if(requestedDeliveryId&&validity?.taughtInClass!==true)
+  throw new Error("COURSE_NOT_TAUGHT_IN_CLASS");
  const result=await getDb().execute(sql`
  with eligible_deliveries as (
   select distinct m.id as membership_id, d.id as delivery_id,
