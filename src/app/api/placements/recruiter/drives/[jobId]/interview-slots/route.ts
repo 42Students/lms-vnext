@@ -2,7 +2,7 @@ import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
-import {writeHrInterviewSlot} from "@/modules/placements/hr-interview-slot-service";
+import {writeHrInterviewSlot,writeHrInterviewSlotsBatch} from "@/modules/placements/hr-interview-slot-service";
 import {parseIstLocalSlot} from "@/modules/placements/hr-interview-slot-model";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 export const runtime="nodejs";
@@ -19,6 +19,13 @@ export async function POST(request:Request,{params}:{params:Promise<{jobId:strin
   const field=(name:string):unknown=>data instanceof FormData?data.get(name):
    typeof data==="object"&&data!==null&&name in data?
     (data as Record<string,unknown>)[name]:undefined;
+  // A legacy JSON slots[] proposal is all-or-nothing. Retain single-slot
+  // form behavior while letting clients retry the same atomic batch.
+  if(json && field("action")==="CREATE_BATCH"){
+   const result=await writeHrInterviewSlotsBatch(
+    await getCurrentRequestContext(),jobId,{slots:field("slots")});
+   return NextResponse.json({...result,added:result.items.length},{status:201});
+  }
   const action=z.enum(["CREATE","OFFER","BOOK","CANCEL"]).parse(field("action"));
   const input=action==="CREATE"?{
    action,roundId:field("roundId"),
@@ -32,7 +39,8 @@ export async function POST(request:Request,{params}:{params:Promise<{jobId:strin
    action,slotId:field("slotId"),expectedVersion:field("expectedVersion"),
   };
   const result=await writeHrInterviewSlot(await getCurrentRequestContext(),jobId,input);
-  // One slot is proposed per form submission (not a batch), so there are no per-row failures.
+  // Single-slot forms remain compatible; JSON CREATE_BATCH uses a separate
+  // all-or-nothing service transaction without partial successes.
   const added=action==="CREATE"?1:0;
   if(request.headers.get("accept")?.includes("application/json"))
    return NextResponse.json({...result,added});
