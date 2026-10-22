@@ -58,7 +58,9 @@ describe.skipIf(!enabled)("College Admin lesson create/edit/move PostgreSQL",()=
     lessonIds.push(first.id);
     const second=await createCourseLesson(admin,{learningPathId:ids.path,name:prefix+" 2",sequence:1});
     lessonIds.push(second.id);
-    const edited=await updateCourseLesson(admin,second.id,{name:prefix+" revised"});
+    const edited=await updateCourseLesson(admin,second.id,{
+      name:prefix+" revised",expectedUpdatedAt:second.updatedAt.toISOString(),
+    });
     expect(edited.name).toContain("revised");
     await expect(moveCollegeCourseLesson(foreign,{learningPathId:ids.path,lessonId:second.id,expectedSequence:1,direction:"UP"}))
       .rejects.toBeInstanceOf(AuthorizationError);

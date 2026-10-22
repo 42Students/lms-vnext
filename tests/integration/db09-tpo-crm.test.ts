@@ -95,6 +95,8 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
     // suspend *that exact truncate trigger* inside a single rollback-safe
     // maintenance transaction; re-enable it before any service assertion.
     // Never disable row-level append-only, tenant or actor guards.
+    // CASCADE clears only dependent fixture tables in this verified isolated
+    // database, keeping every app-level immutable history guard enabled.
     const client = await pool.connect();
     try {
       await client.query("BEGIN");
@@ -102,7 +104,7 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
         "ALTER TABLE placement_tpo_lead_activities DISABLE TRIGGER db09_lead_activity_no_truncate",
       );
       await client.query(
-        "TRUNCATE recruiter_invite_code, placement_tpo_email_campaign_recipients, placement_tpo_lead_activities, placement_tpo_followups, placement_tpo_leads",
+        "TRUNCATE recruiter_invite_code, placement_tpo_email_campaign_recipients, placement_tpo_lead_activities, placement_tpo_followups, placement_tpo_leads CASCADE",
       );
       await client.query(
         "ALTER TABLE placement_tpo_lead_activities ENABLE TRIGGER db09_lead_activity_no_truncate",

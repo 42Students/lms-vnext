@@ -154,7 +154,7 @@ export async function listCollegeAssessmentAggregate(
       courseName: sql<string>`${courses.name}`.mapWith(courses.name).as("course_name_alias"),
       courseCode: courses.code,
       lessonName: sql<string>`${courseLessons.name}`.mapWith(courseLessons.name).as("lesson_name_alias"),
-      lessonId:courseLessons.id,
+      lessonId: sql<string>`${courseLessons.id}`.mapWith(courseLessons.id).as("lesson_id_alias"),
       offeringId: sql<string>`${courseOfferings.id}`.mapWith(courseOfferings.id).as("offering_id_alias"),
       status: courseAssignments.status,
       dueAt: courseAssignments.dueAt,
@@ -162,7 +162,7 @@ export async function listCollegeAssessmentAggregate(
       points: courseAssignments.maxPoints,
       facultyId:courseAssignments.createdByUserId,
       updatedAt:courseAssignments.updatedAt,
-      courseId:courses.id,
+      courseId: sql<string>`${courses.id}`.mapWith(courses.id).as("course_id_alias"),
     }).from(courseAssignments)
       .innerJoin(courseLessons, eq(courseLessons.id, courseAssignments.lessonId))
       .innerJoin(courseLearningPaths, eq(courseLearningPaths.id, courseLessons.learningPathId))
@@ -218,7 +218,7 @@ export async function listCollegeAssessmentAggregate(
       courseName: sql<string>`${courses.name}`.mapWith(courses.name).as("course_name_alias"),
       courseCode: courses.code,
       lessonName: sql<string>`${courseLessons.name}`.mapWith(courseLessons.name).as("lesson_name_alias"),
-      lessonId:courseLessons.id,
+      lessonId: sql<string>`${courseLessons.id}`.mapWith(courseLessons.id).as("lesson_id_alias"),
       offeringId: sql<string>`${courseOfferings.id}`.mapWith(courseOfferings.id).as("offering_id_alias"),
       status: courseQuizzes.status,
       dueAt: courseQuizzes.dueAt,
@@ -226,7 +226,7 @@ export async function listCollegeAssessmentAggregate(
       points: courseQuizzes.totalPoints,
       facultyId:courseQuizzes.createdByUserId,
       updatedAt:courseQuizzes.updatedAt,
-      courseId:courses.id,
+      courseId: sql<string>`${courses.id}`.mapWith(courses.id).as("course_id_alias"),
       resultsPublished: courseQuizzes.resultsPublished,
       createdAt: courseQuizzes.createdAt,
     }).from(courseQuizzes)
