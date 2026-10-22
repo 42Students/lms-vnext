@@ -39,7 +39,9 @@ describe("COL-UX-TERM-MAPPINGS-04 keyboard/mobile curriculum mapping",()=>{
   const html=renderToStaticMarkup(<ToastProvider><CollegeTermMappingManager
    data={{terms:[],courses:[],mapped:[]}}/></ToastProvider>);
   expect(html).toContain("Select a program and semester to view/manage courses");
-  expect(html).toContain("Add Courses to Semester");
+  expect(html).toContain("Select a Semester to View Courses");
+  // Adding courses is available only after selecting an editable semester.
+  expect(html).not.toContain("Add Courses to Semester");
   expect(html).not.toContain("<table");
  });
  it("renders one DataTable with all original actions, drag fallback and phone-visible order controls",()=>{
