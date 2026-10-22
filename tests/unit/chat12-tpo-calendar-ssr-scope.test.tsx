@@ -1,5 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {renderToStaticMarkup} from "react-dom/server";
+import {readFileSync} from "node:fs";
 import type {ActiveMembership,RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 
@@ -63,9 +64,14 @@ describe("UX-tpo-first-third-calendar-02 SSR scope, invalid filters and navigati
   expect(html).toContain("Authorized calendar: TPO");
   expect(html).toContain("Selected day: 2099-01-31");
   expect(html).toContain("Selected view: week");
-  expect(html).toContain("/tpo/calendar/export");
-  expect(html).toContain("/tpo/calendar/interviews");
-  expect(html).toContain("/tpo/calendar/rounds");
+  const route=readFileSync("src/app/(authenticated)/tpo/calendar/page.tsx","utf8");
+  const workspace=readFileSync("src/components/placements/placement-calendar-workspace.tsx","utf8");
+  expect(route).toContain("<PlacementCalendarWorkspace");
+  expect(route).toContain('audience="TPO"');
+  expect(route).toContain("searchParams={{...parsed.data,kinds:first(raw.kinds)}}");
+  expect(workspace).toContain("calendarHref(basePath,audience,state,");
+  expect(workspace).toContain("Rounds and talks");
+  expect(workspace).toContain("View interviews");
   expect(mock.persisted).toHaveBeenCalledWith(context(["TPO"]),COLLEGE);
  });
 });

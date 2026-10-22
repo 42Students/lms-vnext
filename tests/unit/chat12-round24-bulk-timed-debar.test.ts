@@ -6,7 +6,8 @@ const draft={action:"DEBAR",reason:"Documented policy",untilDate:"2099-06-15",du
 describe("TPO timed debarment bulk guard",()=>{
  it("TPO-students-06 validates batches, duration and reason before per-learner server writes",()=>{
   expect(validateTpoBulkDebarDraft(draft).ok).toBe(true);
-  expect(validateTpoBulkDebarDraft({...draft,count:26}).ok).toBe(false);
+  expect(validateTpoBulkDebarDraft({...draft,count:200}).ok).toBe(true);
+  expect(validateTpoBulkDebarDraft({...draft,count:201}).ok).toBe(false);
   expect(validateTpoBulkDebarDraft({...draft,reason:""}).ok).toBe(false);
   expect(validateTpoBulkDebarDraft({...draft,duration:"DRIVES",untilDrives:"10001"}).ok).toBe(false);
   const ui=src("src/components/tpo/tpo-students-bulk-debar.tsx");

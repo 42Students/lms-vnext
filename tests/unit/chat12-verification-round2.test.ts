@@ -32,7 +32,8 @@ describe("chat-12 verified TPO verification workflows",()=>{
  });
  it("TPO-requests-verification-29 provides history, roll, education table, private resume and masked-number explanation",()=>{
   const drawer=src("src/components/verification/VerificationReviewDrawer.tsx");
-  for(const text of ['aria-label="Verification history"',"Roll no.:","Numbers show only the last four digits","Education","RESUME","Private supporting documents"])expect(drawer).toContain(text);
+  for(const text of ['aria-label="Verification history"',"Numbers show only the last four digits","Education","RESUME","Private supporting documents"])expect(drawer).toContain(text);
+  expect(drawer).toContain('title={row.learnerName+(row.rollNumber?" · "+row.rollNumber:"")}');
  });
  it("TPO-requests-verification-30 uses exact legacy decision notifications with a reviewer name and correction reason",()=>{
   expect(verificationDecisionNotice({section:"EDUCATION",action:"VERIFIED",reviewerName:"Priya",reason:null}))
