@@ -39,6 +39,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Add Super Admin organization/college selection and cascading context before create.
 
 ## G2-10-030-007 [P1] GAP facet F03
+- [x] Verified: Important dates have per-row Label, Date (IST), Type, Add date and Remove controls; submission validates nonblank paired label/date, unique labels, reserved application deadline, and ISO conversion.
 - Files: src/components/placements/placement-job-create-form.tsx
 - Legacy: docs/legacy-source/frontend/src/pages/superadmin/sections/JobForm.js:785-900 — Important dates structured date rows directly in form.
 - Expected fix: Restore date row editor with validators and datepicker.
