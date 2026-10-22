@@ -99,7 +99,7 @@ export function parseFacultyResultsSearchParams(raw:Record<string,string|string[
  return facultyResultsQuerySchema.safeParse({
   kind:raw["kind"]||undefined,status:raw["status"]||undefined,
   deliveryId:raw["deliveryId"]||undefined,search:raw["search"]??undefined,
-  page:raw["page"],sort:raw["sort"]||undefined,pageSize:raw["page"]Size,due:raw["due"]||undefined,
+  page:raw["page"],sort:raw["sort"]||undefined,pageSize:raw["pageSize"],due:raw["due"]||undefined,
  });
 }
 
