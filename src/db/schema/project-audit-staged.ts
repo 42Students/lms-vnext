@@ -9,7 +9,7 @@ import { desc, sql } from "drizzle-orm";
 import {
   bigint, check, foreignKey, index, integer, jsonb, pgTable, text, timestamp, uuid, varchar,
 } from "drizzle-orm/pg-core";
-import { projectInstances, projectMeetings, projectResources, projectSubmissions,
+import { projectInstances, projectMeetings, projectSubmissions,
   projectTasks } from "./projects";
 import { users } from "./users";
 

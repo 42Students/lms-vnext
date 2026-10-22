@@ -56,7 +56,8 @@ export function TpoDriveActOnPanel(){
       "Drive is no longer eligible";
      proposed.push({id,title:data.title??"Drive",allowed,reason:allowed?"Ready":skipped,
       expectedUpdatedAt:data.expectedUpdatedAt??null,
-      expectedCounts:data.counts,expectedImpact:data.impact});
+      ...(data.counts !== undefined ? { expectedCounts: data.counts } : {}),
+      ...(data.impact !== undefined ? { expectedImpact: data.impact } : {})});
     }catch{proposed.push({id,title:"Drive",allowed:false,reason:"Preflight failed",expectedUpdatedAt:null});}
    }
    setRows(proposed);

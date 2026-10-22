@@ -61,7 +61,7 @@ const fields=[["ROLE_TITLE","Role title"],["DESCRIPTION","Description"],["LOCATI
  ["CTC","CTC (LPA)"],["STIPEND","Monthly stipend"],["MIN_CGPA","Minimum CGPA"],
  ["BRANCHES","Branches (comma separated)"],["OTHER","Something else"],["ROUNDS","Interview rounds"],
  ["PAY","Pay / package"],["ELIGIBILITY","Eligibility"]] as const;
-export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:string;party:Party;userId:string;requests:Item[]}){
+export function TpoDriveChangeRequests({jobId,party,requests}:{jobId:string;party:Party;userId:string;requests:Item[]}){
  const router=useRouter();
  const {showToast}=useToast();
  const [fieldError,setFieldError]=useState("");
@@ -83,7 +83,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
   const validation=driveChangeCommandSchema.safeParse(body);
   if(!validation.success){
     const message=validation.error.issues[0]?.message??"Check the field and value.";
-    setFieldError(body.action==="CREATE"?message:"");
+    setFieldError(body["action"]==="CREATE"?message:"");
     setError(message);
     return;
   }
@@ -107,12 +107,12 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
    const receipt=payload&&typeof payload==="object"&&!Array.isArray(payload)
      ?payload as Record<string,unknown>:null;
    const statuses:Record<string,string>={CREATE:"OPEN",COMMENT:"COMMENTED",ACCEPT:"ACCEPTED",ANSWER:"ANSWERED",DECLINE:"DECLINED",WITHDRAW:"WITHDRAWN"};
-   if(!receipt||typeof receipt.id!=="string"||
-     !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(receipt.id)||
-     receipt.status!==statuses[String(body.action)]||
-     (body.action!=="CREATE"&&body.action!=="COMMENT"&&receipt.id!==body.requestId))
+   if(!receipt||typeof receipt["id"]!=="string"||
+     !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(receipt["id"])||
+     receipt["status"]!==statuses[String(body["action"])]||
+     (body["action"]!=="CREATE"&&body["action"]!=="COMMENT"&&receipt["id"]!==body["requestId"]))
      throw Error("Could not verify saved change request.");
-   const status=String(body.action);
+   const status=String(body["action"]);
    const message=status==="CREATE"?"Sent. The drive stays in review while they answer.":
      status==="ACCEPT"?"Accepted and applied":
      status==="ANSWER"?"Answered":status==="DECLINE"?"Declined":
@@ -120,8 +120,8 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
    setSuccess(message);
    showToast({tone:"success",title:message});
    setConfirmation(null);
-   if(body.action==="CREATE"){setValue("");setReason("");setField("");setMode("SUGGEST");setComposerOpen(false);}
-   if(typeof body.requestId==="string")setNotes(previous=>({...previous,[body.requestId as string]:""}));
+   if(body["action"]==="CREATE"){setValue("");setReason("");setField("");setMode("SUGGEST");setComposerOpen(false);}
+   if(typeof body["requestId"]==="string")setNotes(previous=>({...previous,[body["requestId"] as string]:""}));
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"That didn't work. The request was not saved.");}finally{inFlightRef.current=false;setBusy(false);}
  }

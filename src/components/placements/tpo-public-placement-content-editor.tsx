@@ -38,7 +38,9 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
  function move(index:number,direction:-1|1){
   setMetricKeys(current=>{
    const target=index+direction;if(target<0||target>=current.length)return current;
-   const copy=[...current];[copy[index],copy[target]]=[copy[target],copy[index]];return copy;
+   const source=current[index],destination=current[target];
+   if(source===undefined||destination===undefined)return current;
+   const copy=[...current];copy[index]=destination;copy[target]=source;return copy;
   });
  }
  async function save(){
