@@ -199,9 +199,9 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
             workspace={workspace}
             openCreateCourse={openCreateCourse}
             courseBasePath="/admin/courses"
-            duplicateCourseId={duplicateCourseId}
+            {...(duplicateCourseId!==undefined?{duplicateCourseId}:{})}
             catalogueQuery={catalogueQuery}
-            lessonCountByCourse={lessonCountByCourse}
+            {...(lessonCountByCourse!==undefined?{lessonCountByCourse}:{})}
             offeringBasePath="/admin/courses/offerings"
           />
           <AdminCourseRecycleBin collegeId={collegeId}/>
