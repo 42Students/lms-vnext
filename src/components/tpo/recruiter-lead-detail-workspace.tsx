@@ -184,9 +184,9 @@ export function RecruiterLeadDetailWorkspace({
     setError("");
     try {
       const [l, a, f] = await Promise.all([
-        fetch(base + params, { signal, cache: "no-store", credentials: "same-origin" }),
-        fetch(base + "/activity" + params, { signal, cache: "no-store", credentials: "same-origin" }),
-        fetch(base + "/follow-ups" + params, { signal, cache: "no-store", credentials: "same-origin" }),
+        fetch(base + params, { ...(signal ? { signal } : {}), cache: "no-store", credentials: "same-origin" }),
+        fetch(base + "/activity" + params, { ...(signal ? { signal } : {}), cache: "no-store", credentials: "same-origin" }),
+        fetch(base + "/follow-ups" + params, { ...(signal ? { signal } : {}), cache: "no-store", credentials: "same-origin" }),
       ]);
       const result = await Promise.all([
         readResponse<{ lead: Lead }>(l),
