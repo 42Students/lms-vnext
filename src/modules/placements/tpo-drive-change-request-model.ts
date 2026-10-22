@@ -8,6 +8,57 @@ export const driveChangeFieldSchema=z.enum([
  "DEADLINE","CTC","STIPEND","MIN_CGPA","BRANCHES","OTHER",
  "PAY","ELIGIBILITY","ROUNDS",
 ]);
+/** Exact historic field selector labels, without collapsing pay questions. */
+export const LEGACY_DRIVE_CHANGE_FIELD_LABELS:Readonly<Record<z.infer<typeof driveChangeFieldSchema>,string>>={
+ ROLE_TITLE:"Role title",DESCRIPTION:"Description",LOCATION:"Location",
+ JOB_TYPE:"Job type",WORK_MODE:"Work mode",DEADLINE:"Application deadline",
+ CTC:"CTC (LPA)",STIPEND:"Monthly stipend",MIN_CGPA:"Minimum CGPA",
+ BRANCHES:"Eligible branches",OTHER:"Other",
+ PAY:"Pay / package",ELIGIBILITY:"Eligibility",ROUNDS:"Selection rounds",
+};
+export const LEGACY_DRIVE_CHANGE_ACTION_LABELS={
+ ACCEPT:"Accept",ANSWER:"Answer",DECLINE:"Reply",
+ WITHDRAW:"Withdraw",COMMENT:"Comment",
+} as const;
+
+/** Legacy request bodies used kind/note and field labels. This adapter maps
+ * them BEFORE the strict, scoped command parser, preserving typed vNext calls.
+ * A legacy Reply declines the proposal with status REPLIED in the old UI;
+ * it is NOT a conversational COMMENT and cannot bypass a stale version. */
+export function parseLegacyDriveChangeCommand(raw:unknown){
+ if(!raw||typeof raw!=="object"||Array.isArray(raw))
+  return driveChangeCommandSchema.parse(raw);
+ const object=raw as Record<string,unknown>;
+ const {kind,note,field,...rest}=object;
+ let action=rest.action;
+ if(action==="REPLY")action="DECLINE";
+ if(action==="CREATE"){
+  const selected=typeof field==="string"?field.trim():"";
+  const normalized=selected.toUpperCase().replace(/[^A-Z0-9]+/g,"_");
+  const label=Object.entries(LEGACY_DRIVE_CHANGE_FIELD_LABELS)
+   .find(([,value])=>value.toUpperCase()===selected.toUpperCase())?.[0];
+  const mapped=label??normalized;
+  const allowed=driveChangeFieldSchema.safeParse(mapped);
+  const chosen=allowed.success?allowed.data:"OTHER";
+  const requestedMode=rest.mode??kind??(chosen==="OTHER"?"ASK":"SUGGEST");
+  return driveChangeCommandSchema.parse({
+   ...rest,action,field:chosen,mode:chosen==="OTHER"?"ASK":requestedMode,
+   reason:rest.reason??note??"",
+  });
+ }
+ // COMMENT remains a message, independent from a legacy Reply decision.
+ const reply=rest.action==="COMMENT"?{...rest,body:rest.body??note}:
+  {...rest,action,note:rest.note??note};
+ return driveChangeCommandSchema.parse(reply);
+}
+/** Only the read adapter uses the historic REPLIED label. Mutations persist
+ * the canonical DECLINED state and the decision's replyText atomically. */
+export function legacyDriveChangeStatus(
+ status:string,replyText:string|null,
+):string{
+ return status==="DECLINED"&&replyText!==null?"REPLIED":status;
+}
+
 export const driveChangeCommandSchema=z.discriminatedUnion("action",[
  z.strictObject({
   action:z.literal("CREATE"),mode:z.enum(["SUGGEST","PROPOSE","ASK"]),
