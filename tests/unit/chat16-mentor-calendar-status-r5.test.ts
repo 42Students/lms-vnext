@@ -20,15 +20,15 @@ describe("chat-16 mentor calendar persisted statuses", () => {
     expect(dates.upcoming.map(row => row.id)).toEqual(["m2", "m3"]);
     expect(mentorMeetingDisplayStatus(draft, now)).toBe("DRAFT");
     expect(mentorMeetingDisplayStatus(rescheduled, now)).toBe("RESCHEDULED");
-    // Legacy Join is URL-driven for every non-cancelled meeting, including drafts.
-    expect(safeMentorMeetingJoinUrl(draft, now)).toBe("https://meet.example.org/room");
+    // Only scheduled or rescheduled meetings within their live window expose a join link.
+    expect(safeMentorMeetingJoinUrl(draft, now)).toBeNull();
     expect(safeMentorMeetingJoinUrl(rescheduled, now)).toBe("https://meet.example.org/room");
   });
   it("MEN-projects-meetings-69 does not allow a past rescheduled or cancelled meeting join", () => {
     const past = new Date("2099-10-17T08:01:00Z");
     expect(mentorMeetingDisplayStatus({...base, status: "RESCHEDULED"}, past)).toBe("MISSED");
-    expect(safeMentorMeetingJoinUrl({...base, status: "RESCHEDULED"}, past)).toBe("https://meet.example.org/room");
+    expect(safeMentorMeetingJoinUrl({...base, status: "RESCHEDULED"}, past)).toBeNull();
     expect(safeMentorMeetingJoinUrl({...base, status: "CANCELLED"}, past)).toBeNull();
-    expect(safeMentorMeetingJoinUrl({...base, status: "REQUESTED"}, past)).toBe("https://meet.example.org/room");
+    expect(safeMentorMeetingJoinUrl({...base, status: "REQUESTED"}, past)).toBeNull();
   });
 });

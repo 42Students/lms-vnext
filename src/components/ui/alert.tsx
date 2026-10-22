@@ -14,7 +14,7 @@ const tones = {
 } as const;
 
 export function Alert({ tone = "info", title, className, children, role, ...props }: AlertProps) {
-  return <div {...props} data-slot="alert" data-tone={tone} role={role ?? (tone === "error" ? "alert" : "status")}
+  return <div {...props} data-slot="alert" data-tone={tone} role={tone === "error" ? "alert" : role ?? "status"}
     className={cx("flex min-w-0 max-w-full flex-col gap-[var(--lms-space-1)] rounded-[8px] border px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-left text-[14px] font-normal tracking-normal leading-5 break-words [overflow-wrap:anywhere] shadow-none", tones[tone], className)}>
     {title ? <strong className="min-w-0 break-words font-semibold">{title}</strong> : null}
     {children}
