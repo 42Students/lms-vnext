@@ -51,6 +51,13 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
       sessionStorage.setItem("lms-course-search-recent",JSON.stringify(nextRecent));
       sessionStorage.setItem("lms-course-search-counts",JSON.stringify(nextCounts));
     }catch{/* Storage is optional. */}
+    // Send the selected authorized delivery to the scoped usage ledger.
+    // Navigation is never blocked by a failed optional popularity write.
+    void fetch("/api/courses/search/selection",{
+      method:"POST",credentials:"same-origin",keepalive:true,
+      headers:{"content-type":"application/json"},
+      body:JSON.stringify({deliveryId:id}),
+    }).catch(()=>{/* Private recent selections remain available. */});
   }
   // Preserve the old learner header's authorized course lookup when moving
   // its search box into the common command bar.
@@ -74,6 +81,10 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
         ));
         setCourseError(null);
         setCourseLoading(false);
+        void apiFetch<{counts:Record<string,number>}>(
+          "/api/courses/search/selection",{cache:"no-store"})
+          .then(value=>{if(!cancelled)setPopularity(value.counts??{});})
+          .catch(()=>{/* Private recent history remains a fallback. */});
       })
       .catch(error => {
         if (!cancelled) {
