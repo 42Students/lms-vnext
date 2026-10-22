@@ -8,7 +8,7 @@ export const metadata:Metadata={
  title:{absolute:TITLE},
  description:DESCRIPTION,
  alternates:{canonical:CANONICAL},
- robots:{index:true,follow:true,maxImagePreview:"large",maxSnippet:-1,maxVideoPreview:-1},
+ robots:{index:true,follow:true,"max-image-preview":"large","max-snippet":-1,"max-video-preview":-1},
  openGraph:{
   title:TITLE,description:DESCRIPTION,type:"website",url:CANONICAL,
   siteName:"42 LMS",locale:"en_US",

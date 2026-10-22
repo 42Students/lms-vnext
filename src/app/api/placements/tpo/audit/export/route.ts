@@ -60,8 +60,9 @@ export async function GET(request:Request){
         timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
        }).format(new Date(row.occurredAt))+" IST";
       }
-     }).map(safeCell).join(","))].join("\r\n")+"\r\n";
-  const body=format==="xlsx"?tpoAuditXlsx(filtered,chosen):"\uFEFF"+exported;
+     }).map(value=>safeCell(value??"")).join(","))].join("\r\n")+"\r\n";
+  // A copied ArrayBuffer is a Web Response body; never expose Buffer's pooled backing store.
+  const body=format==="xlsx"?Uint8Array.from(tpoAuditXlsx(filtered,chosen)).buffer:"\uFEFF"+exported;
   return new Response(body,{headers:{
    "Content-Type":format==="xlsx"?"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="' + gridExportFilename("audit-log", format) + '"',
