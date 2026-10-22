@@ -4,7 +4,7 @@ import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import {useEffect,useMemo,useState} from "react";
+import {useEffect,useMemo,useRef,useState} from "react";
 import {useRouter,useSearchParams} from "next/navigation";
 import dynamic from "next/dynamic";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
@@ -69,7 +69,42 @@ function scopedAuditHref(href:string):string{
  if(["/tpo/audit","/tpo/students","/tpo/recruiters","/tpo/placements"].includes(href))return href;
  return "/tpo/audit";
 }
-export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
+export function TpoAuditGrid({rows,refreshHref}:{rows:readonly TpoAuditRow[];refreshHref?:string}){
+ // Retain only this mounted, membership+filters-keyed page's data in memory.
+ // No localStorage/sessionStorage copies of college audit records, and the
+ // authenticated API rechecks persisted actor and college on every refresh.
+ const [snapshotRows,setSnapshotRows]=useState<readonly TpoAuditRow[]>(rows);
+ const [refreshing,setRefreshing]=useState(false);
+ const [stale,setStale]=useState(false);
+ const [lastRefreshAt,setLastRefreshAt]=useState<string|null>(null);
+ const refreshInFlight=useRef(false);
+ useEffect(()=>{setSnapshotRows(rows);setStale(false);},[rows]);
+ async function refreshGrid(){
+  if(!refreshHref||refreshInFlight.current)return;
+  refreshInFlight.current=true;setRefreshing(true);
+  try{
+   const response=await fetch(refreshHref,{
+    method:"GET",credentials:"same-origin",cache:"no-store",
+    headers:{Accept:"application/json"},
+   });
+   if(!response.ok)throw new Error("Audit revalidation failed");
+   const payload:unknown=await response.json();
+   if(!payload||typeof payload!=="object"||!("items" in payload)||
+      !Array.isArray(payload.items)||payload.items.length>100||
+      payload.items.some(row=>!row||typeof row!=="object"||
+       typeof row.id!=="string"||typeof row.eventType!=="string"||
+       typeof row.actorName!=="string"))
+    throw new Error("Invalid audit refresh");
+   setSnapshotRows(payload.items as TpoAuditRow[]);
+   setStale(false);
+   setSelected([]);
+   setLastRefreshAt(new Date().toISOString());
+  }catch{
+   // Keep the original trusted rows; never replace an outage with a false
+   // empty list or display an unverified cross-tenant cached snapshot.
+   setStale(true);
+  }finally{refreshInFlight.current=false;setRefreshing(false);}
+ }
  const [showAbout,setShowAbout]=useState(false),[showDetail,setShowDetail]=useState(false);
  const router=useRouter(),searchParams=useSearchParams();
  const [who,setWho]=useState(""),[what,setWhat]=useState(searchParams.get("q")??"");
@@ -86,12 +121,12 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
  },[what,router,searchParams]);
  const [oldestFirst,setOldestFirst]=useState(false),[selected,setSelected]=useState<string[]>([]);
  const [notice,setNotice]=useState("");
- const visible=useMemo(()=>rows.filter(row=>
+ const visible=useMemo(()=>snapshotRows.filter(row=>
   row.actorName.toLocaleLowerCase("en-IN").includes(who.trim().toLocaleLowerCase("en-IN")) &&
   [row.title,row.detail,row.eventType,row.actorName,TPO_AUDIT_KIND_LABELS[row.kind]]
    .some(field=>field.toLocaleLowerCase("en-IN").includes(what.trim().toLocaleLowerCase("en-IN")))
  ).sort((a,b)=>oldestFirst?a.occurredAt.localeCompare(b.occurredAt):b.occurredAt.localeCompare(a.occurredAt)),
- [rows,who,what,oldestFirst]);
+ [snapshotRows,who,what,oldestFirst]);
  async function copy(){
   const wanted=selected.length?visible.filter(row=>selected.includes(row.kind+":"+row.id)):visible;
   const text=wanted.map(row=>[formatTpoAuditEventType(row.eventType),
@@ -111,6 +146,20 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
   {key:"detail",label:"Detail",exportAlways:true,exportOnly:!showDetail,read:row=>row.detail},
  ];
  return <section aria-label="Audit history grid" className="min-w-0 space-y-3">
+  <div className="flex flex-wrap items-center justify-between gap-2">
+   <span className="text-xs text-muted-foreground">
+    {lastRefreshAt?"Grid checked at "+new Intl.DateTimeFormat("en-IN",{
+     timeZone:"Asia/Kolkata",timeStyle:"short"
+    }).format(new Date(lastRefreshAt))+" IST":"Loaded scoped audit snapshot"}
+   </span>
+   {refreshHref?<Button type="button" size="sm" variant="secondary"
+    loading={refreshing} disabled={refreshing}
+    onClick={()=>void refreshGrid()}>{stale?"Retry audit refresh":"Refresh audit rows"}</Button>:null}
+  </div>
+  {stale?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-2 text-sm text-body">
+   This refresh failed. Showing the last successfully loaded audit rows on this page.
+   Changes and totals cannot be verified until Retry succeeds.
+  </p>:null}
   <div className="grid min-w-0 grid-cols-1 gap-3 border-y border-[var(--lms-canvas-border)] px-3 py-[13px] sm:grid-cols-2 lg:grid-cols-3">
    <label className="min-w-0 flex-1 text-[13px] md:flex-none">What happened
     <Input value={what} onChange={event=>setWhat(event.target.value)} type="search"
@@ -139,7 +188,7 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
     className="min-h-11">Reset grid</Button>
   </div>
 
-  <p role="status" className="text-xs text-muted-foreground">Showing {visible.length} of {rows.length} rows on this page. Copy selected rows or, with nothing selected, all visible rows.</p>
+  <p role="status" className="text-xs text-muted-foreground">Showing {visible.length} of {snapshotRows.length} rows on this page. Copy selected rows or, with nothing selected, all visible rows.</p>
   <TpoAuditQuartz rows={visible} columns={columns} rowKey={row=>row.kind+":"+row.id}
    storageKey="tpo-audit-history-grid-v1" integratedWorkspace mobileActionsCollapsible
    mobilePrimaryKeys={["event","when"]}
