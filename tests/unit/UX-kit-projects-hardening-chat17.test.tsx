@@ -189,7 +189,8 @@ describe("UX-kit-HARDEN-01 shared primitives: a11y, validation, phone and failur
     expect(html).toContain('href="https://example.org/"');
     expect(source("third-party-link")).toContain("The link could not be opened.");
     expect(html).toContain("Copy link");
-    expect(html).toContain('target="_blank" rel="noopener noreferrer"');
+    expect(html).toContain('target="_blank"');
+    expect(html).toContain('rel="noopener noreferrer"');
   });
   it("UX-kit-HARDEN-15 8+ persistent errors remain separately dismissible while timed entries cap",()=>{
     const errors: ToastItem[]=Array.from({length:9},(_,i)=>({id:String(i),title:"Error "+i,tone:"error" as const}));
@@ -276,7 +277,10 @@ describe("UX-kit-HARDEN-22 declared 38-element shared UI surface register",()=>{
     const text=source(name);
     expect(text).not.toMatch(/window\.(?:alert|confirm|prompt|open)\s*\(/);
     expect(text).not.toMatch(/duration-\[(?:3[1-9]\d|[4-9]\d\d)ms\]/);
-    if(name==="third-party-link")expect(text).toContain('target="_blank" rel="noopener noreferrer"');
+    if(name==="third-party-link"){
+      expect(text).toContain('target="_blank"');
+      expect(text).toContain('rel="noopener noreferrer"');
+    }
     else expect(text).not.toContain('target="_blank"');
     // Dedicated tests above cover real rendering, a11y and security for shared types.
     expect(text).toMatch(/export\s+(?:type|const|function)/);

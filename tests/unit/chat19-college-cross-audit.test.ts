@@ -130,9 +130,13 @@ describe("chat-19 college UX cross-audit", () => {
     expect(visible?.[0]).toMatchObject({id:"project-a",title:"Authorized team project",templateTitle:null});
     expect(nestedText(output)).toContain("Workspaces are still listed");
     expect(nestedText(output)).not.toContain("optional template service is offline");
-    expect(models.snapshots).toHaveBeenCalledWith(context,"college-a",
+    const scopedActor=expect.objectContaining({
+      user:expect.objectContaining({id:"actor",platformStatus:"ACTIVE"}),
+      membership:expect.objectContaining({collegeId:"college-a"}),
+    });
+    expect(models.snapshots).toHaveBeenCalledWith(scopedActor,"college-a",
       expect.objectContaining({page:1,pageSize:20}));
-    expect(models.templates).toHaveBeenCalledWith(context,"college-a");
+    expect(models.templates).toHaveBeenCalledWith(scopedActor,"college-a");
     expect(models.snapshots.mock.calls[0]?.[2]).not.toHaveProperty("view");
   });
 

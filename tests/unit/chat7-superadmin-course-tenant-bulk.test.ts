@@ -35,7 +35,13 @@ describe("SA-academics-people-52/53 GR-COURSES-TENANT-01 safe scoped Super Admin
   const course=source("super-admin-course-bulk-visibility");
   expect(course).toContain("eq(departments.collegeId,acting.collegeId)");
   expect(course).toContain("selected.length!==input.courseIds.length");
-  expect(course).toContain("lessons.length>500");
+  // The selected course count bounds writes, while every scoped lesson is
+  // processed in limited batches rather than silently dropped at lesson 501.
+  expect(course).toContain("for(let offset=0;offset<ids.length;offset+=100)");
+  expect(course).toContain("ids.slice(offset,offset+100)");
+  expect(course).toContain("for(let i=0;i<ids.length;i+=25)");
+  expect(course).toContain("lessonIds:slice");
+  expect(course).not.toContain("lessons.length>500");
  });
  it("never propagates raw database, SQL, secret or permission exceptions in per-item results",()=>{
   for(const cause of [
