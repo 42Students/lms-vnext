@@ -30,7 +30,7 @@ export function CollegeElectiveLifecycleAction({slotId,name,status,version}:{
         });
         if(!res.ok){
           const body=await res.json().catch(()=>({error:"ELECTIVE_LIFECYCLE_FAILED"})) as {error?:string};
-          throw new Error(friendlyApiError({status:res.status,code:body.error}));
+          throw new Error(friendlyApiError({status:res.status,...(body.error!==undefined?{code:body.error}:{})}));
         }
         const title=name+(action==="ARCHIVE"?" archived":" restored");
         setSuccess(title);
