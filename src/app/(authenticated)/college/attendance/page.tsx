@@ -61,12 +61,26 @@ export default async function CollegeAttendancePage({
   const month = query.month ?? currentMonth();
   const optionsResult = await Promise.allSettled([getAdminAttendanceOptions(context, collegeId)]);
   if (optionsResult[0].status === "rejected") {
+    // Keep the surrounding page and its navigation available even when the
+    // college-scoped class/course options fail. No stale cross-tenant options
+    // are rendered; retry preserves the user's selected filters.
     return <div className="min-w-0 space-y-[var(--lms-space-4)]">
-      <PageHeader title="Attendance" />
-      <ErrorState title="Couldn't load classes/courses for this college"
-        description="Attendance options are unavailable. Your chosen month and filters are preserved."
-        action={<Link href={"/college/attendance?" + new URLSearchParams(Object.entries(query).filter((entry): entry is [string,string] => typeof entry[1] === "string")).toString()}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>} />
+      <PageHeader title="Attendance"
+        description="Review monthly attendance by class and course, correct recent records, and export the same grid shown on screen." />
+      <Tabs ariaLabel="Attendance views" renderPanel={false}
+        value="/college/attendance"
+        items={[
+          { value: "/college/attendance", label: "Overview", href: "/college/attendance" },
+          { value: "/college/attendance/departments", label: "Attendance by Department", href: "/college/attendance/departments" },
+          { value: "/college/attendance/corrections", label: "Correction windows", href: "/college/attendance/corrections" },
+          { value: "/college/attendance/settings", label: "Attendance policy", href: "/college/attendance/settings" },
+        ]}/>
+      <Banner tone="warning" role="alert">
+        <strong>Couldn't load classes/courses for this college</strong>
+        <p className="mt-1">Attendance options are unavailable. Your chosen month and filters are preserved.</p>
+        <Link href={"/college/attendance?" + new URLSearchParams(Object.entries(query).filter((entry): entry is [string,string] => typeof entry[1] === "string")).toString()}
+          className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>
+      </Banner>
     </div>;
   }
   const options = optionsResult[0].value;
