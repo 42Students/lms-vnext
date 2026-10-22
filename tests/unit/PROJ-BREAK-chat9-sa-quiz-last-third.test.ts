@@ -41,7 +41,7 @@ describe("Super Admin last-third quiz directory, forged URL and outage contract"
     const page=readFileSync("src/app/(authenticated)/admin/quizzes/page.tsx","utf8");
     expect(page).toContain("Promise.allSettled([");
     expect(page).toContain('dataResult.status==="rejected"');
-    expect(page).toContain('title="Quizzes unavailable"');
+    expect(page).toContain('title="Quizzes could not be loaded"');
     expect(page).toContain('Retry loading quizzes');
     expect(page).toContain('lessonsResult.status==="fulfilled"');
     expect(page).toContain('Existing quizzes remain visible.');

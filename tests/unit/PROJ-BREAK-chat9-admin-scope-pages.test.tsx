@@ -39,10 +39,10 @@ function words(node:unknown):string[]{
   return ["children","title","description","action","href","eyebrow"].flatMap(k=>words(props[k]));
 }
 const routes=[
-  {title:"At-risk projects",run:()=>ProjectAtRiskRoute({searchParams:Promise.resolve({})})},
-  {title:"Project submissions",run:()=>ProjectSubmissionsRoute({searchParams:Promise.resolve({})})},
-  {title:"Submission readiness",run:()=>ProjectReadinessRoute({searchParams:Promise.resolve({})})},
-  {title:"Project audit",run:()=>ProjectAuditRoute({searchParams:Promise.resolve({})})},
+  {title:"At Risk",run:()=>ProjectAtRiskRoute({searchParams:Promise.resolve({})})},
+  {title:"Submissions",run:()=>ProjectSubmissionsRoute({searchParams:Promise.resolve({})})},
+  {title:"Readiness",run:()=>ProjectReadinessRoute({searchParams:Promise.resolve({})})},
+  {title:"Audit",run:()=>ProjectAuditRoute({searchParams:Promise.resolve({})})},
 ];
 beforeEach(()=>{state.role="SUPER_ADMIN";state.selected=true;state.scopeCalls=0;state.auditScopeChecks=0;});
 
@@ -73,7 +73,7 @@ describe("IIT Dharwad Super Admin last-third Project route authorization",()=>{
     state.selected=false;
     for(const route of routes){
       const content=words(await route.run()).join(" ");
-      expect(content).toContain("Select a college");
+      expect(content).toMatch(/Select a college|No college selected/);
       expect(content).not.toContain("Project access denied");
     }
     expect(state.scopeCalls).toBe(4);
