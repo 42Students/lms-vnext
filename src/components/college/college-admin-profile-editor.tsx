@@ -169,19 +169,8 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if(saving)return;
-    const primaryMobile=profile.contacts.contactMobile?.trim()??"";
-    if(primaryMobile&&!/^\d{10}$/.test(primaryMobile)){
-      setError("Primary contact mobile must contain exactly 10 digits.");return;
-    }
-    const phoneValue=(profile.contacts.contactPhone||profile.contacts.alternatePhone).trim();
-    if(phoneValue&&(!/^\+?[0-9() -]+$/.test(phoneValue)||
-      phoneValue.replace(/\D/g,"").length<10||
-      phoneValue.replace(/\D/g,"").length>15)){
-      setError("Additional phone must contain 10–15 digits.");return;
-    }
-    if(primaryMobile&&phoneValue.replace(/\D/g,"")===primaryMobile){
-      setError("Additional phone must differ from the primary contact mobile.");return;
-    }
+    const requestedSection=sectionSaveIntent.current;
+    sectionSaveIntent.current=null;
     const baseline = savedSnapshot.current;
     const changedSections:ProfileSection[]=[];
     if (profile.displayName!==baseline.displayName ||
@@ -196,18 +185,45 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
       changedSections.push("address");
     if(JSON.stringify(profile.contacts)!==JSON.stringify(baseline.contacts))
       changedSections.push("contacts");
-    const requestedSection=sectionSaveIntent.current;
-    sectionSaveIntent.current=null;
     const savingSections=requestedSection
       ? changedSections.filter(section=>section===requestedSection) : changedSections;
     if(!savingSections.length)return;
+    if(savingSections.includes("contacts")){
+      const primaryMobile=profile.contacts.contactMobile?.trim()??"";
+      if(primaryMobile&&!/^\d{10}$/.test(primaryMobile)){
+        setError("Primary contact mobile must contain exactly 10 digits.");return;
+      }
+      const phoneValue=(profile.contacts.contactPhone||profile.contacts.alternatePhone).trim();
+      if(phoneValue&&(!/^\+?[0-9() -]+$/.test(phoneValue)||
+        phoneValue.replace(/\D/g,"").length<10||
+        phoneValue.replace(/\D/g,"").length>15)){
+        setError("Additional phone must contain 10–15 digits.");return;
+      }
+      if(primaryMobile&&phoneValue.replace(/\D/g,"")===primaryMobile){
+        setError("Additional phone must differ from the primary contact mobile.");return;
+      }
+    }
+    // The schema validates the entire document. Feed it the latest saved
+    // fields for cards we are not writing, so an unrelated unfinished draft
+    // cannot block or accidentally persist this card's Save action.
+    const submittingProfile:VersionedCollegeProfile={
+      ...baseline,profileDocumentVersion:profile.profileDocumentVersion,
+      ...(savingSections.includes("personal")?{
+        displayName:profile.displayName,roleTitle:profile.roleTitle,
+        about:profile.about,photoUrl:profile.photoUrl,
+        personalDetails:profile.personalDetails,
+      }:{}),
+      ...(savingSections.includes("social")?{social:profile.social}:{}),
+      ...(savingSections.includes("address")?{address:profile.address}:{}),
+      ...(savingSections.includes("contacts")?{contacts:profile.contacts}:{}),
+    };
     setSaving(true); setError(""); setSaved(false);
     try {
       const result = await apiFetch<{profile:VersionedCollegeProfile}>("/api/college/profile", {
         method: "PATCH", headers: { "content-type": "application/json" },
         // Only dirty profile cards replace stored cards. The server checks the
         // baseline under a row lock so concurrent updates to other cards survive.
-        body: JSON.stringify({...profile,baseline,changedSections:savingSections}),
+        body: JSON.stringify({...submittingProfile,baseline,changedSections:savingSections}),
       });
       savedSnapshot.current=result.profile;
       // A card-level Save must never silently publish or discard edits made
