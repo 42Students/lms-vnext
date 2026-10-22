@@ -21,6 +21,10 @@ export const emptyWorkspaceBrief:WorkspaceBrief={
 export function parseWorkspaceBrief(value:unknown):WorkspaceBrief {
  const envelope=value&&typeof value==="object"&&!Array.isArray(value)
   ?value as Record<string,unknown>:{};
+ // Tenant identifiers must be held by the authorized workspace record,
+ // never embedded as client-editable brief data from a persisted JSON blob.
+ if("collegeId" in envelope||"organizationId" in envelope||"membershipId" in envelope)
+  return {goal:"",description:"",deliverables:[],completionConditions:[],personas:[]};
  // Historic workspaces sometimes carry the full, untouched template overview
  // in an `overview` map, while vNext writes five native fields at top level.
  // A top-level explicit empty value wins over inherited template defaults.

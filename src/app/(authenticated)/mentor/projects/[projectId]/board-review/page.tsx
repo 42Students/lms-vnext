@@ -32,7 +32,7 @@ export default async function MentorBoardReviewPage({
   </section>;
   const data=await getMentorBoardReview(await getCurrentRequestContext(),validated.data);
   const base="/mentor/projects/"+encodeURIComponent(projectId);
-  const filtered=Boolean(data.query.search)||data.query.status!=="ALL"||data.query.priority!=="ALL"||Boolean(data.query.sprintId&&data.query.sprintId!=="ALL");
+  const filtered=data.enabled&&(Boolean(data.query.search)||data.query.status!=="ALL"||data.query.priority!=="ALL"||Boolean(data.query.sprintId&&data.query.sprintId!=="ALL"));
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader eyebrow="Mentor · Project" title="Task board status"
       description={data.enabled?data.projectTitle:"Projects access is disabled; no tasks were loaded."}

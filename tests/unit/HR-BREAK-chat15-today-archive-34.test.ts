@@ -28,7 +28,8 @@ describe("HR-TODAY-ARCHIVE-34 no stale archived-drive follow-ups",()=>{
    const source=readFileSync(file,"utf8");
    expect(source).toMatch(/inArray\(placement(?:Jobs\.id|JobRounds\.jobId),ids\)/);
    expect(source).toContain("eq(placementJobs.collegeId,collegeId)");
-   expect(source).toContain('eq(placementJobs.status,"PUBLISHED")');
+   if(file.includes("open-slots"))expect(source).toContain('eq(placementJobs.status,"PUBLISHED")');
+   else expect(source).toContain("inArray(placementJobs.status,[...HR_FOLLOWUP_JOB_STATUSES])");
    expect(source).toContain("isNull(placementJobs.archivedAt)");
   }
  });

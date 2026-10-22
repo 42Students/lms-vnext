@@ -28,7 +28,7 @@ describe("HR-CALENDAR-SERVICE-107 authorized event database preflight",()=>{
  it("an employer with zero authorized jobs gets zero events and no global round query",async()=>{
   const result=await listRecruiterCalendarEvents(actor as never,window);
   expect(result).toMatchObject({events:[],resultsDue:[],authorizedJobCount:0});
-  expect(m.jobs).toHaveBeenCalledWith(actor);
+  expect(m.jobs).toHaveBeenCalledWith(actor,undefined);
   expect(m.db).not.toHaveBeenCalled();
  });
  it("draft and archived jobs never authorize a round or slot lookup",async()=>{
