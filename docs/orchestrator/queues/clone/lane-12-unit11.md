@@ -2,12 +2,12 @@
 
 CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER your deep packets 1-2 in lane-12-deep.md. For each file: read the failure below, read the test and the code it tests, decide which side is wrong against the old LMS (docs/legacy-source) and fix THAT side (fix the product code if it regressed; update the test only if the test asserts outdated/wrong behaviour). Never delete tests, never .skip, never weaken assertions to pass. Push after every file and tick it here.
 
-- [ ] `tests/unit/UX-SPILL-chat19-tpo-request-responsive.test.tsx` (1 failing)
-- [ ] `tests/unit/chat13-faculty-bulk-stale-file-guard.test.ts` (1 failing)
-- [ ] `tests/unit/chat2-team-people-workload-links.test.ts` (1 failing)
-- [ ] `tests/unit/chat6-superadmin-middle-third-adversarial.test.ts` (1 failing)
-- [ ] `tests/unit/chat9-super-admin-unselected-college-copy.test.ts` (1 failing)
-- [ ] `tests/unit/proj-break-chat9-services.test.ts` (1 failing)
+- [x] `tests/unit/UX-SPILL-chat19-tpo-request-responsive.test.tsx` (1 failing)
+- [x] `tests/unit/chat13-faculty-bulk-stale-file-guard.test.ts` (1 failing)
+- [x] `tests/unit/chat2-team-people-workload-links.test.ts` (1 failing)
+- [x] `tests/unit/chat6-superadmin-middle-third-adversarial.test.ts` (1 failing)
+- [x] `tests/unit/chat9-super-admin-unselected-college-copy.test.ts` (1 failing)
+- [x] `tests/unit/proj-break-chat9-services.test.ts` (1 failing)
 
 ## Failures (from CI log)
 
@@ -129,3 +129,14 @@ AssertionError: expected 'import { and, desc, eq, inArray, isNu…' to contain '
 + import {getProjectAdminCollegeId} from "./admin-college-scope";
 ```
 
+
+## Repair disposition (chat-12)
+
+- UX-SPILL: current assertion checks the shared disclosure summary's 44px inline style; no controls or accessibility checks weakened.
+- Faculty CSV: generation guard, reset including preview issues and submit latch all present in the current source; original string expectation in CI was outdated.
+- TPO Team: People bookmark redirect, requests redirect and scoped Messages query redirect are present; earlier CI source was stale.
+- Super Admin CSV: outdated inline search.get expectations replaced by strict shared export parser assertions in commit 380a705.
+- Lecture Halls: exact legacy unselected-college string restored in commit ec87394.
+- Projects: archived rows excluded from active readiness override list/export in commit a9a0ca5.
+
+Static inspection only; no CI execution claimed.
