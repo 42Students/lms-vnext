@@ -222,6 +222,7 @@ describe("TPO Students journey derivation", () => {
           {
             status: "ACCEPTED",
             joiningStatus: "PENDING",
+            countsAsPlaced: true,
           },
         ],
       }),
@@ -231,6 +232,11 @@ describe("TPO Students journey derivation", () => {
     expect(accepted.placed).toBe(true);
     expect(accepted.journeyState).toBe("PLACED");
     expect(accepted.acceptedOfferCount).toBe(1);
+
+    const unconfirmed = deriveTpoStudent(source("unconfirmed", {
+      offers: [{status: "ACCEPTED", joiningStatus: "PENDING"}],
+    }),NOW);
+    expect(unconfirmed.placed).toBe(false);
 
     const notPlaced = deriveTpoStudent(
       source("not-placed", {
@@ -246,6 +252,7 @@ describe("TPO Students journey derivation", () => {
           {
             status: "ACCEPTED",
             joiningStatus: "DID_NOT_JOIN",
+            countsAsPlaced: true,
           },
         ],
       }),
@@ -297,6 +304,7 @@ describe("TPO Students college and branch summaries", () => {
           {
             status: "ACCEPTED",
             joiningStatus: "JOINED",
+            countsAsPlaced: true,
           },
         ],
       }),

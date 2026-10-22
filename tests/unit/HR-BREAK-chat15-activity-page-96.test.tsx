@@ -23,8 +23,8 @@ function text(node:ReactNode):string{
 function links(node:ReactNode):string[]{
  if(Array.isArray(node))return node.flatMap(links);
  if(!isValidElement(node))return [];
- const p=node.props as {href?:string;children?:ReactNode};
- return [...(p.href?[p.href]:[]),...links(p.children)];
+ const p=node.props as {href?:string;children?:ReactNode;action?:ReactNode};
+ return [...(p.href?[p.href]:[]),...links(p.children),...links(p.action)];
 }
 describe("HR-ACTIVITY-PAGE-96 recruiter history role and state coverage",()=>{
  beforeEach(()=>{

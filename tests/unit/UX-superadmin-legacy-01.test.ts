@@ -8,8 +8,10 @@ describe("UX-superadmin-legacy-01",()=>{
   expect(code).toContain("isSuperAdmin(context)");
   expect(code).toContain("redirect(\"/dashboard\")");
   expect(code).toContain("legacySuperAdminDestination(legacy, type)");
-  expect(code).toContain("if(!destination)notFound();");
-  expect(code).toContain("query.q.length<=100");
+  expect(code).toContain("if (!destination) {");
+  expect(code).toContain("notFound();");
+  expect(code).toContain("No template in this link");
+  expect(code).toMatch(/query\.q\.length\s*<=\s*100/);
   expect(code).toContain("return redirect(destination+");
 
   expect(code).not.toContain("window.location");

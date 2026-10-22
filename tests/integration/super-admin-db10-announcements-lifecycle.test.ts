@@ -13,7 +13,7 @@ import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
 const enabled=Boolean(process.env.TEST_DATABASE_URL)&&process.env.DB03_ISOLATED_TEST_DATABASE==="1";
 if(enabled)assertDb018DisposableTarget(process.env,{serviceBound:true});
 const admin:RequestContext={
- user:{id:SEED_IDS.collegeAdminUser,identityUid:"db10-announcements-integration",platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
+ user:{id:SEED_IDS.superAdminUser,identityUid:"db10-announcements-integration",platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
  membership:null,
 };
 describe.skipIf(!enabled)("DB10 announcements registered schema lifecycle (disposable PostgreSQL)",()=>{
@@ -60,10 +60,10 @@ describe.skipIf(!enabled)("DB10 announcements registered schema lifecycle (dispo
    const deletedOnly=await listAnnouncementsForAdmin({...admin,adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeA}}, {q:"DB10 revised",visibility:"DELETED",limit:50});
    expect(deletedOnly.items.map(item=>item.id)).toContain(id);
    expect((await listAnnouncementsForAdmin({...admin,adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeA}},{limit:100})).items.map(item=>item.id)).not.toContain(id);
-   await expect(deleteAnnouncement(admin,id,{expectedVersion:updated.version})).rejects.toMatchObject({code:"STALE_VERSION"});
+   await expect(deleteAnnouncement(admin,id,{expectedVersion:updated.version})).resolves.toMatchObject({id,version:deleted.version,deletedAt:deleted.deletedAt});
    const restored=await restoreAnnouncement(admin,id,{expectedVersion:deleted.version});
    expect(restored.deletedAt).toBeNull();
-   await expect(restoreAnnouncement(admin,id,{expectedVersion:deleted.version})).rejects.toMatchObject({code:"STALE_VERSION"});
+   await expect(restoreAnnouncement(admin,id,{expectedVersion:deleted.version})).resolves.toMatchObject({id,version:restored.version,deletedAt:null});
    await expect(listAnnouncementsForAdmin({...admin,user:{...admin.user,platformStatus:"DISABLED"}},{}))
     .rejects.toMatchObject({code:"FORBIDDEN"});
    await expect(listAnnouncementsForAdmin({...admin,user:{...admin.user,systemRoles:[]}},{}))

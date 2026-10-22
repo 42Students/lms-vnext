@@ -16,7 +16,7 @@ describe("Chat-12 Students claimed-main gaps — verified source contracts",()=>
  });
  it("TPO-students-11 gives roster and per-student private notes a persisted editor",()=>{
   expect(roster()).toContain("<TpoStudentNoteEditor membershipIds={noteEligibleIds}");
-  expect(panel()).toContain("<TpoStudentNoteEditor membershipIds={[student.membershipId]}");
+  expect(panel()).toContain("<TpoStudentNoteEditor key={student.membershipId} membershipIds={[student.membershipId]}");
   expect(read("src/components/tpo/tpo-student-note-editor.tsx")).toContain('"/api/placements/tpo/students/notes"');
  });
  it("TPO-students-18 supports Batch, Program, Branch and Class filters",()=>{

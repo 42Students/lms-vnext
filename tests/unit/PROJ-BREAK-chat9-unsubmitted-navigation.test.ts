@@ -40,11 +40,12 @@ describe("IIT Dharwad Projects: unsubmitted page never loses its filters",()=>{
   it("PROJ-BREAK-submissions-41 the unsubmitted tab does not depend on summary or other delivery results",()=>{
     const source=readFileSync("src/components/projects/project-admin-submissions-page.tsx","utf8");
     expect(source).toContain('view==="ALL"?await Promise.allSettled([');
-    expect(source).toContain('view==="NOT_SUBMITTED"?await listProjectAdminUnsubmitted(');
+    expect(source).toContain('const unsubmittedResult=view==="NOT_SUBMITTED"');
+    expect(source).toContain('? await listProjectAdminUnsubmitted(context,collegeId,{');
     expect(source).toContain('status:query.status');
     expect(source).toContain('filterView="NOT_SUBMITTED"');
-    expect(source).toContain('projectAdminUnsubmittedHref(queuePath,query,unsubmitted.page+1)');
-    expect(source).toContain('projectAdminUnsubmittedHref(queuePath,query,unsubmitted.page-1)');
+    expect(source).toContain('hrefForPage={page=>projectAdminUnsubmittedHref(queuePath,query,page)}');
+    expect(source).toContain('label="Unsubmitted workspace pages"');
     const form=readFileSync("src/components/projects/project-admin-collection-controls.tsx","utf8");
     expect(form).toContain('name="view" value={filterView}');
     expect(form).toContain('filterView?"?view=NOT_SUBMITTED":"?"');

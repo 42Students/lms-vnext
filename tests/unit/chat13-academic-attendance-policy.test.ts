@@ -18,6 +18,8 @@ describe("Super Admin Academic Attendance",()=>{
   for(const value of ["Attendance policy","Late marking allowed for","Minimum attendance",
   "How long after a class ends attendance can be marked or corrected (hours).",
   "It does not block anyone from exams."]) expect(edit).toContain(value);
-  expect(edit).toContain('role={failed?"alert":"status"}');
+  expect(edit).toContain('<Alert tone={failed?"error":"success"}>');
+  const alert=read("src/components/ui/alert.tsx");
+  expect(alert).toContain('role={tone === "error" ? "alert" : role ?? "status"}');
  });
 });

@@ -222,14 +222,10 @@ describe("Projects P2 template persistence", () => {
       SEED_IDS.collegeA,
     );
 
-    // College A may hold other suites' published assignments in a shared test
-    // database; assert only this fixture's assignment.
-    const ownAssigned = async () =>
-      (await listAssignedProjectTemplates(
-        collegeAdmin,
-        SEED_IDS.collegeA,
-      )).filter((row) => row.templateId === created.template.id);
-    let assigned = await ownAssigned();
+    const assignedForThisTemplate = async()=>
+      (await listAssignedProjectTemplates(collegeAdmin,SEED_IDS.collegeA))
+        .filter(item=>item.templateId===created.template.id);
+    let assigned = await assignedForThisTemplate();
     expect(assigned).toEqual([
       expect.objectContaining({
         templateId: created.template.id,
@@ -256,7 +252,7 @@ describe("Projects P2 template persistence", () => {
       created.template.id,
     );
 
-    assigned = await ownAssigned();
+    assigned = await assignedForThisTemplate();
     expect(assigned[0]).toMatchObject({
       version: 2,
       title: "P2 Version Pinning V2",
@@ -266,13 +262,13 @@ describe("Projects P2 template persistence", () => {
       superAdmin,
       created.template.id,
     );
-    expect(await ownAssigned()).toEqual([]);
+    expect(await assignedForThisTemplate()).toEqual([]);
 
     await publishProjectTemplate(
       superAdmin,
       created.template.id,
     );
-    assigned = await ownAssigned();
+    assigned = await assignedForThisTemplate();
     expect(assigned[0]).toMatchObject({
       version: 2,
       title: "P2 Version Pinning V2",

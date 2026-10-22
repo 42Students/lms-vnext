@@ -22,8 +22,8 @@ describe.skipIf(!enabled)("Super Admin feature controls mobile card facts (PG)",
   const scope={...actor,adminScope:{organizationId:org.rows[0]!.id,collegeId:own.rows[0]!.id}};
   const ownResult=await listSuperAdminFeatureControls(scope,{q:nonce});
   expect(ownResult.items).toEqual([expect.objectContaining({id:own.rows[0]!.id})]);
-  // Feature Controls exposes only Projects and Placements (legacy parity).
-  expect(ownResult.items[0]?.modules.map(m=>m.module)).toEqual(["projects","placements"]);
+  // vNext exposes the two managed optional modules: Projects and Placements.
+  expect(ownResult.items[0]?.modules.map(item=>item.module).sort()).toEqual(["placements","projects"]);
   const foreign={...actor,adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeA}};
   expect((await listSuperAdminFeatureControls(foreign,{q:nonce})).items).toHaveLength(0);
   await expect(listSuperAdminFeatureControls({...actor,user:{...actor.user,systemRoles:[]}},{}))

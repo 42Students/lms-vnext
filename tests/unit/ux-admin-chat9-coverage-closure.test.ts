@@ -20,8 +20,9 @@ describe("chat-9 route coverage and native DataTable closure",()=>{
   expect(source).toContain('caption="Student Course Progress"');
   expect(source).toContain('mobilePriority:"primary"');
   expect(source).toContain("studentCourseCompletion");
-  expect(source).toContain("No students are enrolled in this course offering.");
-  expect(source).toContain("Showing the first 500 students.");
+  expect(source).toContain("No students in this section.");
+  expect(source).toContain("report.totalRows");
+  expect(source).toContain("[20,50,100]");
   expect(source).not.toContain("<main");
   expect(source).not.toMatch(/<table\b/);
  });
@@ -31,7 +32,7 @@ describe("chat-9 route coverage and native DataTable closure",()=>{
   expect(source).not.toMatch(/<table\b/);
   expect(source).toContain("MODULE_SCOPE_LABELS");
   expect(source).toContain("describeStoredOverride");
-  expect(source).toContain('<StatusBadge tone="success">Winner</StatusBadge>');
+  expect(source).toContain('<StatusBadge tone="success">Decided here</StatusBadge>');
   expect(source).toContain('<StatusBadge tone="warning">Ignored</StatusBadge>');
   expect(source).toContain('header:"Why"');
   expect(source).toContain("No stored rules or fallback steps were found for this module.");
@@ -39,20 +40,22 @@ describe("chat-9 route coverage and native DataTable closure",()=>{
  it("UX-admin-projects-project-id-04 /admin/projects/[projectId] remains a canonical redirect with stable encoding",()=>{
   const source=page("/admin/projects/[projectId]");
   expect(source).toContain('import { redirect }');
-  expect(source).toContain("encodeURIComponent(projectId)");
-  expect(source).toContain('"/summary"');
+  expect(source).toContain("projectInstanceIdSchema.safeParse(projectId)");
+  expect(source).toContain("requireProjectManageAccess(context,canonicalId)");
+  expect(source).toContain('encodeURIComponent(canonicalId)+"/summary"');
   expect(source).not.toContain("<main");
  });
  it("UX-admin-projects-templates-template-id-overview-04 /admin/projects/templates/[templateId]/overview validates before redirect",()=>{
   const source=page("/admin/projects/templates/[templateId]/overview");
   expect(source).toContain('requirePermission(context,"project-template.read")');
-  expect(source).toContain("projectTemplateIdSchema.safeParse");
-  expect(source).toContain("if(!result.success)notFound()");
-  expect(source).toContain('redirect(templateSubviewHref(result.data,"overview"))');
+  expect(source).toContain('if(!id||id.length>100||!(/^[a-z0-9_-]+$/i.test(id)))notFound()');
+  expect(source).toContain('requirePermission(context,"project-template.read")');
+  expect(source).toContain('redirect("/admin/projects/templates/"+encodeURIComponent(id)');
  });
  it("UX-admin-recruiters-04 /admin/recruiters retains the scoped Super Admin HR editor without a duplicate permission surface",()=>{
   const source=page("/admin/recruiters");
-  expect(source).toContain('export { default } from "../hr/page"');
+  expect(source).toContain('import SuperAdminHrPage from "../hr/page"');
+  expect(source).toContain("<SuperAdminHrPage searchParams={searchParams}/>");
   expect(source).not.toContain("<main");
  });
  it("UX-admin-route-coverage-04 every /admin last-third route has a named source contract and route path",()=>{
