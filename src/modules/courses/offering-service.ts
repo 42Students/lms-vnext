@@ -377,6 +377,7 @@ export async function createCourseOffering(
           displayOrder: appendOrder,
         })
         .returning();
+      if (!created) throw new CoursesServiceError("OFFERING_CONFLICT");
 
       await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.COURSES_OFFERING_CREATED,
