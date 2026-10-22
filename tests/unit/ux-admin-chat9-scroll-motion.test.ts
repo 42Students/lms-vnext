@@ -8,7 +8,8 @@ describe("chat-9 last-third scroll and motion: hidden scrollbars require visible
  it("UX-admin-scroll-motion-01 /admin/projects/templates/[templateId]/versions/[versionId] comparison is keyboard scrollable with a vertical edge",()=>{
   const page=admin("projects/templates/[templateId]/versions/[versionId]");
   expect(page).toContain('aria-label={`${change.label} ${value.label} version content`}');
-  expect(page).toContain('<DataTable caption="Bulk import history records"');
+  expect(page).toContain('aria-label="Changed fields"');
+  expect(page).toContain('aria-label="Selected version snapshot"');
   expect(page).toContain('role="region"');
   expect(page).toContain("border-y border-");
   expect(page).toContain("tabIndex={0}");
@@ -113,7 +114,7 @@ describe("chat-9 last-third scroll and motion: hidden scrollbars require visible
   expect(page).toContain("overscroll-contain");
   expect(page).toContain("[mask-image:linear-gradient(to_bottom");
   expect(page).toContain("min-h-11");
-  expect(page).toContain("md:min-h-9");
+  expect(page).toContain('className="min-h-11 w-full md:w-auto"');
   expect(page).not.toContain("min-h-10");
  });
 
