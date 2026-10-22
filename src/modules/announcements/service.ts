@@ -929,11 +929,11 @@ export async function searchLegacyAnnouncementsForGlobalSuperAdmin(
     const body = message.toLowerCase();
     if (name === query) return 1000;
     if (name.startsWith(query)) return 900;
-    if (name.split(/\\s+/u).some(word => word.startsWith(query))) return 800;
+    if (name.split(/\s+/u).some(word => word.startsWith(query))) return 800;
     if (name.includes(query)) return 700;
     if (body.includes(query)) return 500;
     if (query.length >= 3) {
-      const terms = name.split(/[^\\p{L}\\p{N}]+/u).filter(Boolean).slice(0, 30);
+      const terms = name.split(/[^\p{L}\p{N}]+/u).filter(Boolean).slice(0, 30);
       const distance = Math.min(3, ...terms.map(distanceAtMostTwo));
       if (distance <= 2) return 300 - distance;
     }
