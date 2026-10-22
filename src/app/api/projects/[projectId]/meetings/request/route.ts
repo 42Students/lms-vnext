@@ -28,7 +28,7 @@ export async function POST(
   try {
     const context = await getCurrentRequestContext();
     const { projectId } = await params;
-    const body = readMentorProjectCommandBody(request);
+    const body = await readMentorProjectCommandBody(request);
     const meeting = await requestProjectMeeting(
       context,
       projectId,

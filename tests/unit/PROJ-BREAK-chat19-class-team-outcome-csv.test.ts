@@ -39,7 +39,7 @@ describe("PROJ-BREAK-OUTCOME-CSV-03: IIT Dharwad per-learner creation export",()
   expect(csv).toContain('"CREATED"');
   expect(csv).not.toContain(foreignLearner);
   expect(csv).not.toContain("Foreign-college learner secret");
-  expect(csv).toContain('"Learner","Student membership","Result","Workspace","Project ID"');
+  expect(csv).toContain('"Learner","Student membership","Result","Workspace","Project ID","Reason"');
  });
  it("uses a safe empty name and title for missing roster display or already covered workspaces",()=>{
   const csv=classTeamCreationOutcomeCsv([{
@@ -51,7 +51,7 @@ describe("PROJ-BREAK-OUTCOME-CSV-03: IIT Dharwad per-learner creation export",()
  });
  it("never adds a row when the authorized service returned no individual results",()=>{
   const csv=classTeamCreationOutcomeCsv([],new Map([[foreignLearner,{displayName:"Hidden"}]]));
-  expect(csv).toBe('"Learner","Student membership","Result","Workspace","Project ID"\r\n');
+  expect(csv).toBe('"Learner","Student membership","Result","Workspace","Project ID","Reason"\r\n');
   expect(csv).not.toContain("Hidden");
  });
 });

@@ -51,11 +51,12 @@ describe("HR-BREAK-today-service-01: college-scoped dashboard query branches",()
    [{id:"offered",jobId:job,jobTitle:"Engineer",name:"Round 1",scheduledAt:new Date("2026-11-01")},
     {id:"proposal",jobId:job,jobTitle:"Engineer",name:"Round 2",scheduledAt:new Date("2026-11-02")},
     {id:"missing",jobId:job,jobTitle:"Engineer",name:"Round 3",scheduledAt:new Date("2026-11-03")}],
+   [], // Mock rowset for the NOT EXISTS subquery, which is evaluated by SQL.
    [{roundId:"offered",status:"OFFERED"},{roundId:"proposal",status:"PROPOSED"}],
   ];
   const result=await listRecruiterTodayRoundsNeedingSlots(college,[job],now);
   expect(result.map(x=>[x.id,x.needsOffer])).toEqual([["proposal",true],["missing",false]]);
-  expect(db.select).toHaveBeenCalledTimes(2);
+  expect(db.select).toHaveBeenCalledTimes(3);
  });
  it("Today change requests returns assigned company-facing records, not a placeholder total",async()=>{
   const visible={id:"req1",jobId:job,jobTitle:"Engineer",field:"APPLICATION_DEADLINE",createdAt:new Date()};

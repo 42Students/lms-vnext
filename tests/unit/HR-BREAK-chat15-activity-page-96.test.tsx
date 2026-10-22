@@ -46,7 +46,8 @@ describe("HR-ACTIVITY-PAGE-96 recruiter history role and state coverage",()=>{
  it("bad duplicate filters and unsupported kinds fail with a retry link and no SQL",async()=>{
   for(const query of [{collegeId:[collegeId,collegeId]},{kind:"PRIVATE"},{page:"-2"}]){
    const output=await view(query);
-   expect(text(output)).toContain("Invalid activity filters.");
+   expect(text(output)).toContain("Invalid activity filters");
+   expect(text(output)).toContain("Review the college and event filters.");
    expect(links(output)).toContain("/hr/activity");
   }
   expect(m.list).not.toHaveBeenCalled();
