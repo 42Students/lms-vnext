@@ -74,7 +74,7 @@ export async function ProjectAdminReadinessPage({
 }) {
   const context = await getCurrentRequestContext();
   const pageValue=one(searchParams["page"]);
-  const sizeValue=one(searchParams["page"]Size);
+  const sizeValue=one(searchParams["pageSize"]);
   const statusValue=one(searchParams["status"]);
   const validPage=pageValue===undefined||(/^[1-9][0-9]*$/.test(pageValue)&&Number.isSafeInteger(Number(pageValue)));
   const validSize=sizeValue===undefined||["10","20","25","50","100"].includes(sizeValue);
