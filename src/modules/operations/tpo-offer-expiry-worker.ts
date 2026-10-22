@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { executeScheduledJobWithLease } from "./scheduled-job-runner";
 import { postgresScheduledJobLeaseStore } from "./postgres-scheduled-job-lease-store";
 import { TPO_SCHEDULED_JOBS } from "./tpo-scheduled-job-registry";
-import { sweepExpiredPlacementOffers, remindExpiringPlacementOffers } from "@/modules/placements/placement-offer-expiry-sweep-service";
+import { sweepExpiredPlacementOffers, remindExpiringPlacementOffers, auditExpiredPlacementJobDeadlines } from "@/modules/placements/placement-offer-expiry-sweep-service";
 import {finalizeMaturedExternalTpoAcceptances} from "@/modules/placements/tpo-offer-lifecycle-service";
 
 const JOB_NAME = "tpo.expireOverdueOffers";
@@ -14,7 +14,8 @@ export type TpoOfferExpiryTickResult =
   | { status: "HELD"; expired: 0 }
   | { status: "COMPLETED"; expired: number; batchLimitReached: boolean;
       matured: number; maturityFailed: number; maturityBatchLimitReached: boolean;
-      reminded: number; reminderBatchLimitReached: boolean };
+      reminded: number; reminderBatchLimitReached: boolean;
+      jobsExpired: number; jobExpiryBatchLimitReached: boolean };
 
 /**
  * Called only by the internal POST scheduler route, never by page renders.
@@ -57,6 +58,18 @@ export async function runTpoOfferExpiryTick(): Promise<TpoOfferExpiryTickResult>
         }
         batchLimitReached = true;
       }
+      // The same fenced scheduler also audits application deadlines, but
+      // this never transitions PUBLISHED to manual CLOSED. The application
+      // writer and read projection enforce the exact deadline independently.
+      let jobsExpired=0,jobExpiryBatchLimitReached=false;
+      for(let batch=0;batch<5;batch++){
+        await fence.renew();
+        await fence.assertCurrent();
+        const count=await auditExpiredPlacementJobDeadlines(actorUserId,new Date(),100);
+        jobsExpired+=count;
+        if(count<100){jobExpiryBatchLimitReached=false;break;}
+        jobExpiryBatchLimitReached=true;
+      }
       // The 15-minute sweep also services the hourly at-most-once reminder
       // contract; row-level event dedupe prevents extra user notifications.
       // A separate deployment flag gates reminders until the scheduler and
@@ -91,7 +104,7 @@ export async function runTpoOfferExpiryTick(): Promise<TpoOfferExpiryTickResult>
         maturityBatchLimitReached=true;
       }
       return { expired, batchLimitReached,matured,maturityFailed,maturityBatchLimitReached,
-        reminded,reminderBatchLimitReached };
+        reminded,reminderBatchLimitReached,jobsExpired,jobExpiryBatchLimitReached };
     },
   );
   if (!result.ran) return { status: "HELD", expired: 0 };
