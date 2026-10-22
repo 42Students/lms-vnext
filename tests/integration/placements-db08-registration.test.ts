@@ -93,14 +93,44 @@ async function createBatchFixture(invited = true, deadline = "2026-12-01T00:00:0
   return ids;
 }
 
+let previousModuleRule:{id:string;enabled:boolean}|null=null;
 beforeEach(async () => {
   for (const arr of Object.values(touched)) arr.length = 0;
-  const moduleRuleId = randomUUID();
-  touched.moduleRule.push(moduleRuleId);
-  await pool.query(
-    "INSERT INTO module_access_rules(id,scope_type,scope_id,module,enabled) VALUES($1,'COLLEGE',$2,'placements',true)",
-    [moduleRuleId, SEED_IDS.collegeA],
+  previousModuleRule=null;
+  // CI may seed the college's placement rule already. Keep that row and its
+  // original state; never insert a duplicate unique(scope,module) rule, and
+  // never delete a pre-existing access policy during test cleanup.
+  const existing=await pool.query<{id:string;enabled:boolean}>(
+    "SELECT id,enabled FROM module_access_rules WHERE scope_type='COLLEGE' AND scope_id=$1 AND module='placements'",
+    [SEED_IDS.collegeA],
   );
+  if(existing.rows[0]){
+    previousModuleRule=existing.rows[0];
+    if(!previousModuleRule.enabled)await pool.query(
+      "UPDATE module_access_rules SET enabled=true WHERE id=$1",
+      [previousModuleRule.id],
+    );
+  }else{
+    const inserted=await pool.query<{id:string}>(
+      "INSERT INTO module_access_rules(id,scope_type,scope_id,module,enabled) VALUES($1,'COLLEGE',$2,'placements',true) ON CONFLICT DO NOTHING RETURNING id",
+      [randomUUID(),SEED_IDS.collegeA],
+    );
+    if(inserted.rows[0])touched.moduleRule.push(inserted.rows[0].id);
+    else{
+      // Another setup may have created the scoped rule between SELECT and
+      // INSERT. Preserve its previous value just as for the seeded case.
+      const raced=await pool.query<{id:string;enabled:boolean}>(
+        "SELECT id,enabled FROM module_access_rules WHERE scope_type='COLLEGE' AND scope_id=$1 AND module='placements'",
+        [SEED_IDS.collegeA],
+      );
+      if(!raced.rows[0])throw new Error("Placement module rule disappeared during fixture setup");
+      previousModuleRule=raced.rows[0];
+      if(!previousModuleRule.enabled)await pool.query(
+        "UPDATE module_access_rules SET enabled=true WHERE id=$1",
+        [previousModuleRule.id],
+      );
+    }
+  }
 });
 
 afterEach(async () => {
@@ -121,6 +151,11 @@ afterEach(async () => {
   await pool.query("DELETE FROM academic_periods WHERE id=ANY($1::uuid[])", [touched.period]);
   await pool.query("DELETE FROM programs WHERE id=ANY($1::uuid[])", [touched.program]);
   await pool.query("DELETE FROM module_access_rules WHERE id=ANY($1::uuid[])", [touched.moduleRule]);
+  if(previousModuleRule){
+    await pool.query("UPDATE module_access_rules SET enabled=$2 WHERE id=$1",
+      [previousModuleRule.id,previousModuleRule.enabled]);
+    previousModuleRule=null;
+  }
 });
 afterAll(async () => {
   await pool.end();
