@@ -33,7 +33,7 @@ export default async function SuperAdminAuditPage({searchParams}:{
  }
  const raw=await searchParams;
  const parsed=validateSuperAdminAuditRouteQuery(raw,context.adminScope?.organizationId??null);
- const unsupported=typeof raw.category==="string"?raw.category.trim().slice(0,80):null;
+ const unsupported=typeof raw["category"]==="string"?raw["category"].trim().slice(0,80):null;
  if(!parsed)return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin" title="Audit Log"/>
   <ErrorState title="Invalid audit filters" description={unsupported?
@@ -82,7 +82,7 @@ export default async function SuperAdminAuditPage({searchParams}:{
    This scoped view cannot show platform-wide events. Select a college from the header, then retry.
   </Alert>:embedded==="true"&&parsed.subjectType&&parsed.subjectId?
    <SubjectEventHistory context={context} subjectType={parsed.subjectType}
-    subjectId={parsed.subjectId} collegeId={selectedCollege??undefined} limit={25}/>:
+    subjectId={parsed.subjectId} {...(selectedCollege !== null ? {collegeId:selectedCollege} : {})} limit={25}/>:
    <div className={embedded==="true"?"[&_[aria-label='Activity_Log_filters']]:hidden":""}>
    <ActivityPage searchParams={Promise.resolve({
     ...activityParams,...(mainScope?{collegeId:mainScope}:{}),
