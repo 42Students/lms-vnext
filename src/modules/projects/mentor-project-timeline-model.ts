@@ -57,7 +57,8 @@ export function mentorProjectTimeline(
             progressPercent:group.length>0?Math.round(done/group.length*100):null,
             derivedStatus:derivedSprintProgressStatus({state:sprint.status,
               completedTasks:done,totalTasks:group.length,
-              startDate:sprint.startDate,dueDate:sprint.dueDate}),
+              ...(sprint.startDate!==undefined?{startDate:sprint.startDate}:{}),
+              ...(sprint.dueDate!==undefined?{dueDate:sprint.dueDate}:{})}),
           };
         }),
     })),
