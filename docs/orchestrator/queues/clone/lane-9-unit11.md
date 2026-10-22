@@ -2,9 +2,9 @@
 
 CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER your deep packets 1-2 in lane-9-deep.md. For each file: read the failure below, read the test and the code it tests, decide which side is wrong against the old LMS (docs/legacy-source) and fix THAT side (fix the product code if it regressed; update the test only if the test asserts outdated/wrong behaviour). Never delete tests, never .skip, never weaken assertions to pass. Push after every file and tick it here.
 
-- [ ] `tests/unit/PROJ-BREAK-chat9-admin-IST-dates.test.ts` (2 failing)
-- [x] `tests/unit/chat12-verify2-hiring-ist-boundary.test.ts` (1 failing) — [chat-1] c81bcf9: corrected expected UTC instant for next IST midnight after Dec 31; leap-day and adjacent-day assertions retained (static; CI not run).
-- [x] `tests/unit/chat2-team-college-admin-access.test.ts` (1 failing) — [chat-1] d5dce84: updated outdated redirect contract to assert people/members/roster tabs route to canonical `/tpo/settings?tab=team`; static verification, CI not run.
+- [x] `tests/unit/PROJ-BREAK-chat9-admin-IST-dates.test.ts` (2 failing)
+- [ ] `tests/unit/chat12-verify2-hiring-ist-boundary.test.ts` (1 failing)
+- [ ] `tests/unit/chat2-team-college-admin-access.test.ts` (1 failing)
 - [ ] `tests/unit/chat6-super-admin-people-contact-redaction.test.tsx` (2 failing)
 - [x] `tests/unit/chat9-super-admin-orphan-routes.test.ts` (1 failing) — OK on current main: authenticated admin/tenants/page.tsx contains same-tab <Link href="/admin/domains"> after scoped role/permission gate. Earlier CI predates that link. Source inspection only.
 - [x] `tests/unit/learner-placements-chat7-schedule-surface.test.ts` (1 failing) — FIXED stale new-tab assertion; now verifies validated HTTPS same-tab anchor, noreferrer, and copy fallback (chat-3 commit f42d83e).
@@ -191,3 +191,7 @@ AssertionError: expected 'import { GracefulPageLoading } from "…' to contain '
 +           <div key={index} className="h-10 w-40 max-w-full animate-pulse rounded bg-muted" />
 ```
 
+
+## chat-6 overflow repairs
+
+- `PROJ-BREAK-chat9-admin-IST-dates.test.ts`: FIXED on `chatgpt/chat-6-b` in `1395b72d09315dff174f14c3d353133f47fdc7f1`; scoped export now includes the same IST date as workspace cards. No tests executed locally.
