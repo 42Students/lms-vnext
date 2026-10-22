@@ -1,6 +1,6 @@
 # Deep verification queue: lane chat-14
 
-Rows that fast mode deferred without checking. Do them AFTER anything left in lane-14-verify2c.md. No DEFERRED allowed: every row is OK (with file:line evidence) or FIXED. Push after every packet and tick it here.
+Rows deferred by fast verification; no row may be certified without vNext and legacy evidence.
 
 - [ ] `docs/audit/gap-fix-work/deep/packets/DEEP_lane14_1.md` (10 rows)
 - [ ] `docs/audit/gap-fix-work/deep/packets/DEEP_lane14_2.md` (10 rows)
