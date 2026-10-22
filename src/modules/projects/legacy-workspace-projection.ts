@@ -48,7 +48,10 @@ export function legacyWorkspaceProjection(input:{
   legacyRevision:p.legacyRevision??null,
   courseLabel:p.courseLabel??null,phase:p.phase??null,
   progressPercent:p.progressPercent,blocker:p.blocker??null,
-  nextAction:p.nextAction??null,dueLabel:p.dueLabel??null,
+  // Preserve authored history in the database; omit stale calls to action in
+  // a view-only archived workspace projection, as the legacy UI did.
+  nextAction:p.status==="ARCHIVED"||p.archivedAt||p.legacyStatus?.toUpperCase()==="ARCHIVED"
+    ?null:p.nextAction??null,dueLabel:p.dueLabel??null,
   startDate:ts(p.startDate),endDate:ts(p.endDate),
   archivedAt:ts(p.archivedAt),deletedAt:ts(p.deletedAt),
   authoredBrief:p.authoredBrief??null,

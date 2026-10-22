@@ -982,9 +982,9 @@ export function ProjectWorkspace({
                   (projectTaskDueState(workspace.project.endDate,workspace.project.status==="COMPLETED"?"DONE":"TODO",renderTime)
                     ??"Due")+" · ":""}{workspace.project.dueLabel ||
                   workspace.project.endDate}</strong></p> : <p>No due date</p>}
-              {workspace.project.nextAction ?
+              {!archived && workspace.project.nextAction ?
                 <p>Next step: {workspace.project.nextAction}</p> : null}
-              {workspace.project.blocker ?
+              {!archived && workspace.project.blocker ?
                 <div className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3">
                   <p className="font-semibold">Requires attention</p>
                   <p className="mt-1 whitespace-pre-wrap">{workspace.project.blocker}</p>
@@ -1016,8 +1016,8 @@ export function ProjectWorkspace({
               ) : null}
               <Link href={"/learn/projects/" + workspace.project.id + "?tab=delivery"}
                 className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">
-                {readiness.finalSubmission.latest?.status === "CHANGES_REQUESTED"
-                  ? "Update your submission" : "Open final submission"}
+                {!archived && readiness.finalSubmission.latest?.status === "CHANGES_REQUESTED"
+                  ? "Update your submission" : "View final submission"}
               </Link>
             </section>
           ) : null}
@@ -1032,14 +1032,14 @@ export function ProjectWorkspace({
                     "Not assigned"}</p>
                 </div>
                 <div className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-3 text-sm">
-                  <p className="font-semibold text-foreground">Next step</p>
+                  <p className="font-semibold text-foreground">{archived?"Archived board":"Next step"}</p>
                   <Link href={"/learn/projects/" + workspace.project.id + "?tab=board"}
                     className="mt-1 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link hover:underline">
-                    Open the Board →
+                    {archived?"View the Board":"Open the Board"} →
                   </Link>
                 </div>
               </div>
-              {workspace.tasks.some(task => task.status === "BLOCKED") ? (
+              {!archived && workspace.tasks.some(task => task.status === "BLOCKED") ? (
                 <div className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3">
                   <h3 className="text-sm font-semibold">Requires attention</h3>
                   <p className="mt-1 text-sm text-body">One or more tasks are blocked.</p>
@@ -1059,10 +1059,10 @@ export function ProjectWorkspace({
             <div className="flex flex-wrap gap-3">
               <Link href={"/mentor/projects/"+workspace.project.id+"?tab=board"}
                 className="min-h-11 md:min-h-9 font-semibold text-link underline">
-                {workspace.project.nextAction??"Next step · Open the Board"} →
+                {archived?"View archived board":workspace.project.nextAction??"Next step · Open the Board"} →
               </Link>
             </div>
-            {workspace.project.blocker||workspace.tasks.some(t=>t.status==="BLOCKED")?
+            {!archived && (workspace.project.blocker||workspace.tasks.some(t=>t.status==="BLOCKED"))?
               <div role="status" className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3">
                 <p className="font-semibold">Requires attention</p>
                 <p className="mt-1 whitespace-pre-wrap">{workspace.project.blocker||
