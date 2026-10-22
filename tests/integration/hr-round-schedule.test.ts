@@ -25,7 +25,8 @@ describe.skipIf(!enabled)("HR round schedule scoped PG",()=>{
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:a.relationship.id,
    title:"Schedule "+n,description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
   const round=await createPlacementRound(tpo,job.id,{kind:"INTERVIEW",name:"Panel",durationMinutes:60});
-  await actOnPlacementRound(tpo,round.id,{action:"SCHEDULE",scheduledAt:new Date("2026-10-20T10:00:00Z"),
+  const scheduledAt=new Date(Date.now()+48*60*60*1000);
+  await actOnPlacementRound(tpo,round.id,{action:"SCHEDULE",scheduledAt,
    timezone:"Asia/Kolkata",mode:"VIRTUAL",meetingUrl:"https://example.test/meet"});
   await publishPreparedPlacementJob(tpo,job.id);
   // Recruiter reads require the persisted user/profile/verified grant and
