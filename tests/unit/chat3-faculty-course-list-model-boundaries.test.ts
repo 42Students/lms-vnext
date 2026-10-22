@@ -52,7 +52,11 @@ describe("FAC-COURSE-LIST-MODEL-01 persisted Faculty delivery projection", () =>
     expect(first.items).toHaveLength(FACULTY_COURSE_LIST_PAGE_SIZE);
     const last = pageFacultyCourseList(data, { ...query, page: 9999 });
     expect(last.page).toBe(3);
-    expect(last.items).toHaveLength(4);
+    // The server-rendered course gallery progressively accumulates visible
+    // authorized cards instead of replacing them with a disjoint page.
+    expect(first.items).toHaveLength(48);
+    expect(last.items).toHaveLength(100);
+    expect(last.items.slice(0,48)).toEqual(first.items);
     expect(data).toEqual(snapshot);
   });
 

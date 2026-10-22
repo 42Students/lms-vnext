@@ -4,7 +4,7 @@ const source=(p:string)=>readFileSync(p,"utf8");
 describe("Super Admin faculty assignment copy and audited removal",()=>{
  it("SA-academics-people-103 shows the faculty assignment legacy heading, creation and current assignments labels",()=>{
   const page=source("src/app/(authenticated)/admin/faculty-assignment/page.tsx");
-  for(const text of ["Faculty Assignments","Create teaching assignment","Current teaching assignments",
+  for(const text of ["Faculty Assignments","Create teaching assignment","Faculty assignment overview",
     "Connect faculty to the right class, course, semester and teaching role. Account status and profile changes stay on the Faculty roster."])
     expect(page).toContain(text);
  });

@@ -6,7 +6,10 @@ describe("chat-4 TPO home revalidation",()=>{
  it("TPO-home-32 supplies company-scoped recruiter lead and drive actions plus follow-up",()=>{
   const layout=source("src/app/(authenticated)/tpo/layout.tsx");
   const menu=source("src/components/tpo/tpo-topbar-new-menu.tsx");
-  expect(layout).toContain("<TpoTopbarNewMenu");
+  // New actions moved to the global 68px topbar; an extra TPO bar would
+  // duplicate the command strip and break the old LMS one-canvas shell.
+  expect(layout).not.toContain("<TpoTopbarNewMenu");
+  expect(layout).toContain("The global 68px topbar now owns Find, +New, Messages and Notifications.");
   expect(menu).toContain('pathname==="/tpo/companies"');
   expect(menu).toContain("New recruiter lead");
   expect(menu).toContain("New drive");

@@ -16,7 +16,7 @@ describe("CHAT3-SA-PEOPLE pagination and form audit",()=>{
  it("SA3-PEOPLE-02 route uses normalized numeric page size before DB fetch and URL pagination",()=>{
   const s=readFileSync(join(process.cwd(),"src/app/(authenticated)/admin/people/page.tsx"),"utf8");
   expect(s).toContain("parsePeoplePageSize(rawPageSize)");
-  expect(s).toContain("limit: pageSize");
+  expect(s).toContain("collegeId,limit:pageSize,offset:(requestedPage-1)*pageSize");
   expect(s).toContain("listCollegePeopleWithRuntime");
   expect(s).not.toContain("Number(rawPageSize)");
  });

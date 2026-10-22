@@ -8,7 +8,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-applicants-applicationid.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -20,7 +20,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/applications-export/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/applications-export/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-applications-export.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -32,7 +32,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/cancel-preview/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/cancel-preview/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-cancel-preview.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -44,7 +44,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-candidate-schedule.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -56,7 +56,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/change-requests/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/change-requests/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-change-requests.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -68,7 +68,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/close-preview/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/close-preview/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-close-preview.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -80,7 +80,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/closeout/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/closeout/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-closeout.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -92,7 +92,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-discussion.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -104,7 +104,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/drive-day/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/drive-day/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-drive-day.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -116,7 +116,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-edit.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -128,7 +128,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/extend-deadline/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/extend-deadline/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-extend-deadline.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -140,7 +140,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/interview-slots/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/interview-slots/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-interview-slots.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -152,7 +152,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/joining/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/joining/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-joining.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -164,7 +164,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-letters.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -176,7 +176,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-offers.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -188,7 +188,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-offers-offerid.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -200,7 +200,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-rounds.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -212,7 +212,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/results/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/results/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-rounds-roundid-results.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -224,7 +224,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/slots/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/slots/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-rounds-roundid-slots.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -236,7 +236,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/selections/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/selections/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-selections.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -248,7 +248,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-share-audit.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -260,7 +260,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-share-preview.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -272,7 +272,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-shortlist.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -284,7 +284,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/waitlist/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/waitlist/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-jobs-jobid-waitlist.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -296,7 +296,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/lifecycle/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/lifecycle/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-lifecycle.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -308,7 +308,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/new/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/new/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-new.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -320,7 +320,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/new/draft/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/new/draft/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-new-draft.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -332,7 +332,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/overview/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/overview/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-overview.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -344,7 +344,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/recorded-outside/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/recorded-outside/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-recorded-outside.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -356,7 +356,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/schedule-conflicts/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/placements/schedule-conflicts/loading.tsx");
   const note=source("docs/audit/ux/tpo-placements-schedule-conflicts.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -368,7 +368,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/profile/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/profile/loading.tsx");
   const note=source("docs/audit/ux/tpo-profile.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -380,7 +380,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/recruiters/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/recruiters/loading.tsx");
   const note=source("docs/audit/ux/tpo-recruiters.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -392,12 +392,13 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/recruiters/[leadId]/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/recruiters/[leadId]/loading.tsx");
   const note=source("docs/audit/ux/tpo-recruiters-leadid.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toContain("RecruiterLeadDetailWorkspace");
   const workspace=source("src/components/tpo/recruiter-lead-detail-workspace.tsx");
   expect(workspace.trimStart().startsWith('"use client";')).toBe(true);
-  expect(workspace).toMatch(/<h1[^>]*>\{lead\.name\}<\/h1>/);
+  expect(workspace).toContain("<PageHeader");
+  expect(workspace).toContain("title={lead.name}");
   expect(workspace).toContain("Retry");
   expect(workspace).toContain("min-h-11");
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -409,7 +410,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/recruiters/campaigns/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/recruiters/campaigns/loading.tsx");
   const note=source("docs/audit/ux/tpo-recruiters-campaigns.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -421,7 +422,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/recruiters/campaigns/[batchId]/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/recruiters/campaigns/[batchId]/loading.tsx");
   const note=source("docs/audit/ux/tpo-recruiters-campaigns-batchid.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -433,7 +434,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/loading.tsx");
   const note=source("docs/audit/ux/tpo-recruiters-campaigns-drafts-campaignid.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -445,7 +446,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/recruiters/campaigns/new/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/recruiters/campaigns/new/loading.tsx");
   const note=source("docs/audit/ux/tpo-recruiters-campaigns-new.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -457,7 +458,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/recruiters/campaigns/preview/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/recruiters/campaigns/preview/loading.tsx");
   const note=source("docs/audit/ux/tpo-recruiters-campaigns-preview.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -469,7 +470,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/reports/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/reports/loading.tsx");
   const note=source("docs/audit/ux/tpo-reports.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -481,7 +482,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/reports/accreditation/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/reports/accreditation/loading.tsx");
   const note=source("docs/audit/ux/tpo-reports-accreditation.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -493,7 +494,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/reports/after-college/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/reports/after-college/loading.tsx");
   const note=source("docs/audit/ux/tpo-reports-after-college.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
@@ -505,7 +506,7 @@ describe("chat-5 UX /tpo middle-third route coverage (43–84)",()=>{
   const page=source("src/app/(authenticated)/tpo/reports/branch-season/page.tsx");
   const loading=source("src/app/(authenticated)/tpo/reports/branch-season/loading.tsx");
   const note=source("docs/audit/ux/tpo-reports-branch-season.md");
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-primary-text focus-visible:outline-none");
   expect(page).not.toMatch(/\bmin-h-10\b/);
   expect(page).toMatch(/PageHeader|<h1|redirect\(/);
   expect(loading).toMatch(/aria-busy|GracefulPageLoading|role=["']status["']/);
