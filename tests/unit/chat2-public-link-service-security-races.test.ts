@@ -41,8 +41,8 @@ describe("TPO-settings-audit-55 public links: live access and failure semantics"
   expect(state.db).not.toHaveBeenCalled();
  });
  it("TPO-settings-audit-55 accepts placement admin role but never guesses a foreign college context",async()=>{
-  expect(await getTpoPublicJoinLinkStatus(ctx(["COLLEGE_ADMIN"]),"COLLEGE")).toEqual({
-   ready:false,domain:null,link:null,
+  expect(await getTpoPublicJoinLinkStatus(ctx(["COLLEGE_ADMIN"]),"COLLEGE")).toMatchObject({
+   ready:false,domain:null,link:null,linkState:"STORAGE_UNAVAILABLE",
   });
   expect(state.scope).toHaveBeenCalledWith(expect.objectContaining({
    membership:expect.objectContaining({collegeId:id}),

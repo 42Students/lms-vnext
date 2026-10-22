@@ -1,5 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import React from "react";
+import {SuperAdminHrAccounts} from "@/components/admin/super-admin-hr-accounts";
 import type {RequestContext} from "@/modules/identity/context";
 vi.mock("server-only",()=>({}));
 const stubs=vi.hoisted(()=>({
@@ -28,25 +29,34 @@ beforeEach(()=>{
  stubs.redirect.mockImplementation((dest:string)=>{throw new Error("REDIRECT:"+dest);});
 });
 describe("SA-RECRUITERS-PARTIAL-01 administrative recruiter directory resilience",()=>{
- it("legacy /admin/recruiters aliases the same guarded /admin/hr route",()=>{
-  expect(SuperAdminRecruiterAlias).toBe(SuperAdminHrPage);
+ it("legacy /admin/recruiters wraps the same guarded /admin/hr route",async()=>{
+  const alias=await SuperAdminRecruiterAlias(input);
+  if(!React.isValidElement<{children:React.ReactNode}>(alias))throw new Error("Missing alias wrapper");
+  expect(React.Children.toArray(alias.props.children).some(child=>
+    React.isValidElement(child)&&child.type===SuperAdminHrPage)).toBe(true);
  });
  it("still renders the selected-scoped account list while summary query is offline",async()=>{
   stubs.summary.mockRejectedValueOnce(new Error("database socket reset"));
-  const view=await SuperAdminRecruiterAlias(input);
-  expect(React.isValidElement<{statusSummary:unknown;list:unknown;loadError:unknown}>(view)).toBe(true);
-  if(!React.isValidElement<{statusSummary:unknown;list:unknown;loadError:unknown}>(view))throw new Error("missing result");
-  expect(view.props.statusSummary).toBeNull();
-  expect(view.props.loadError).toBeNull();
-  expect(view.props.list).toMatchObject({total:0,items:[]});
+  const view=await SuperAdminHrPage(input);
+  if(!React.isValidElement<{children:React.ReactNode}>(view))throw new Error("missing directory");
+  const accounts=React.Children.toArray(view.props.children).find(child=>
+    React.isValidElement(child)&&child.type===SuperAdminHrAccounts);
+  if(!React.isValidElement<{statusSummary:unknown;list:unknown;loadError:unknown}>(accounts))
+    throw new Error("missing scoped accounts");
+  expect(accounts.props.statusSummary).toBeNull();
+  expect(accounts.props.loadError).toBeNull();
+  expect(accounts.props.list).toMatchObject({total:0,items:[]});
   expect(stubs.list).toHaveBeenCalledOnce();
  });
  it("does not invent a successful directory when its primary list query fails",async()=>{
   stubs.list.mockRejectedValueOnce(new Error("db temporarily unavailable"));
   const view=await SuperAdminHrPage(input);
-  if(!React.isValidElement<{list:unknown;loadError:unknown}>(view))throw new Error("missing result");
-  expect(view.props.list).toBeNull();
-  expect(view.props.loadError).toBe("The recruiter directory could not be loaded. Retry the request or check the selected administrative scope.");
+  if(!React.isValidElement<{children:React.ReactNode}>(view))throw new Error("missing directory");
+  const accounts=React.Children.toArray(view.props.children).find(child=>
+    React.isValidElement(child)&&child.type===SuperAdminHrAccounts);
+  if(!React.isValidElement<{list:unknown;loadError:unknown}>(accounts))throw new Error("missing error state");
+  expect(accounts.props.list).toBeNull();
+  expect(accounts.props.loadError).toBe("The recruiter directory could not be loaded. Retry the request or check the selected administrative scope.");
  });
  it("denies Faculty and disabled Super Admin before either recruiter query",async()=>{
   const denied:RequestContext[]=[

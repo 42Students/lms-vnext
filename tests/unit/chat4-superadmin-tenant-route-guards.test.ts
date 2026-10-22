@@ -73,7 +73,9 @@ describe("Super Admin tenant API authenticated routes, origin and validation",()
   mock.revoke.mockResolvedValue({revoked:3});
   const result=await revokeSessions(json(url,"POST",{userId:adminUser,confirm:true}),route);
   expect(result.status).toBe(200);
-  expect(await result.json()).toEqual({revoked:3});
+  expect(await result.json()).toEqual({
+    revoked:3,ok:true,partial:false,refreshSessions:true,
+  });
   expect(mock.revoke).toHaveBeenCalledWith(actor,college,adminUser);
  });
  it("SA-colleges-sessions-API-02 GET lists exactly a validated user target and never calls mutation",async()=>{

@@ -5,7 +5,11 @@ import {
  reorderTermCourseIds,collegeTermCourseUpdateSchema,collegeTermMappingErrorMessage,
 } from "@/modules/academics/college-term-mapping-model";
 
-vi.mock("next/navigation",()=>({useRouter:()=>({refresh:vi.fn()})}));
+vi.mock("next/navigation",()=>({
+  useRouter:()=>({refresh:vi.fn(),push:vi.fn(),replace:vi.fn()}),
+  usePathname:()=>"/college/courses",
+  useSearchParams:()=>new URLSearchParams(),
+}));
 vi.mock("@/components/ui/confirm-dialog",async()=>{
  const {createElement}=await import("react");
  return {ConfirmDialog:(p:{open:boolean})=>p.open?
@@ -26,13 +30,14 @@ describe("COL-UX-TERM-MAPPINGS-04 keyboard/mobile curriculum mapping",()=>{
   expect(()=>reorderTermCourseIds(["a","b","c"],"foreign",2))
    .toThrow("TERM_COURSE_POSITION_INVALID");
   expect(collegeTermCourseUpdateSchema.safeParse({credits:3,position:2}).success).toBe(true);
-  expect(collegeTermCourseUpdateSchema.safeParse({credits:11,position:2}).success).toBe(false);
+  expect(collegeTermCourseUpdateSchema.safeParse({credits:11,position:2}).success).toBe(true);
+  expect(collegeTermCourseUpdateSchema.safeParse({credits:31,position:2}).success).toBe(false);
   expect(collegeTermCourseUpdateSchema.safeParse({credits:3,position:0}).success).toBe(false);
  });
  it("retains the empty-state guidance instead of rendering a zero-row modal or phantom mapping",()=>{
   const html=renderToStaticMarkup(<CollegeTermMappingManager
    data={{terms:[],courses:[],mapped:[]}}/>);
-  expect(html).toContain("Select a program and semester to view mapped courses");
+  expect(html).toContain("Select a program and semester to view/manage courses");
   expect(html).toContain("Add Courses to Semester");
   expect(html).not.toContain("<table");
  });
@@ -41,7 +46,7 @@ describe("COL-UX-TERM-MAPPINGS-04 keyboard/mobile curriculum mapping",()=>{
   expect(source).toContain('caption="Semester course mappings"');
   expect(source).toContain('mobilePriority:"primary"');
   expect(source).toContain('mobilePriority:"action"');
-  expect(source).toContain('draggable={!pending}');
+  expect(source).toContain('draggable={!pending && editableTerm}');
   expect(source).toContain('onDrop={event=>');
   expect(source).toContain('aria-label={"Move "+row.courseName+" up"}');
   expect(source).toContain('aria-label={"Move "+row.courseName+" down"}');
@@ -50,7 +55,7 @@ describe("COL-UX-TERM-MAPPINGS-04 keyboard/mobile curriculum mapping",()=>{
  it("rejects simultaneous mutations and maps failures to friendly copy",()=>{
   const source=readFileSync("src/components/academics/college-term-mapping-manager.tsx","utf8");
   expect(source).toContain("if (!confirm || inFlight.current) return;");
-  expect(source).toContain("if(inFlight.current)return;");
+  expect(source).toContain("if (inFlight.current) return;");
   expect(source.match(/inFlight.current=false;/g)).toHaveLength(2);
   expect(collegeTermMappingErrorMessage("TERM_COURSE_POSITION_INVALID"))
    .toContain("Choose a position");

@@ -28,7 +28,7 @@ describe("Company Team posting routes and graceful draft retention",()=>{
   expect(service).toContain('eq(collegeMemberships.collegeId,college.id)');
   expect(service).toContain('eq(users.platformStatus,"ACTIVE")');
   expect(service).toContain('"/team#team-message-"+message.id');
-  expect(service).toContain("notifyIds.delete(membership.id)");
-  expect(service).toContain("inArray(collegeMemberships.id,[...notifyIds].slice(0,250))");
+  expect(service).toContain("actorMembershipId:membership.id");
+  expect(service).toContain("inArray(collegeMemberships.id,notifyIds)");
  });
 });

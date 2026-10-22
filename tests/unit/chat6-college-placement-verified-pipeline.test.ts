@@ -7,7 +7,8 @@ describe("College Admin placement pipeline verified parity",()=>{
  it("COL-placements-01 supports transition guards and per-row/bulk Reinstate/Move",()=>{
   expect(COLLEGE_APPLICATION_TRANSITIONS.APPLIED).toContain("SHORTLISTED");
   expect(COLLEGE_APPLICATION_TRANSITIONS.SHORTLISTED).toContain("ASSESSMENT");
-  expect(COLLEGE_APPLICATION_TRANSITIONS.HIRED).toHaveLength(0);
+  // A recorded hire can be corrected back to OFFERED with an audited reason.
+  expect(COLLEGE_APPLICATION_TRANSITIONS.HIRED).toEqual(["OFFERED"]);
   const controls=src("src/components/placements/college-application-pipeline-controls.tsx");
   for(const word of ["Move to...","Reinstate","Move to Assessment","Mark Hired","reason:reason.trim()"])expect(controls).toContain(word);
   const service=src("src/modules/placements/college-application-stage-service.ts");
@@ -18,14 +19,18 @@ describe("College Admin placement pipeline verified parity",()=>{
   const page=src("src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx");
   const controls=src("src/components/placements/college-interview-appointments.tsx");
   expect(page).toContain("CollegeInterviewAppointments");
-  for(const label of ["Schedule interview","Edit interview","No Show","Cancel","COMPLETED","NO_SHOW","Schedule and notify"])expect(controls).toContain(label);
+  for(const label of ["Schedule interview","Edit interview","No Show","Cancel","COMPLETED","NO_SHOW","The learner was notified."])expect(controls).toContain(label);
   expect(controls).toContain("collegeInterviewIcs");
  });
  it("COL-placements-05 scopes applicant filters by source academic department program batch and stage",()=>{
   const parsed=driveApplicationsQuerySchema.safeParse({source:"INTERNAL",status:"ALL",screening:"ALL",stage:"SHORTLISTED"});
   expect(parsed.success).toBe(true);
   const page=src("src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx");
-  for(const label of ['name="source"','name="departmentId"','name="programId"','name="cohortId"'])expect(page).toContain(label);
+  expect(page).toContain('name="source"');
+  expect(page).toContain("<CollegeApplicationDependentFilters");
+  const cascade=src("src/components/placements/college-application-dependent-filters.tsx");
+  for(const label of ['name="departmentId"','name="programId"','name="cohortId"'])expect(cascade).toContain(label);
+  expect(cascade).toContain('setDepartmentId(event.target.value);setProgramId("");setCohortId("")');
   const model=src("src/modules/placements/college-drive-applications-model.ts");
   expect(model).toContain("stage");
  });

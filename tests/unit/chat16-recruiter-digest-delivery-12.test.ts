@@ -12,6 +12,7 @@ const env = {
   RECRUITER_MESSAGE_REPLY_DOMAIN: "reply.example.org",
   RECRUITER_MESSAGE_DIGEST_TEMPLATE_KEY: "campaign-recruiter-digest",
   ZEPTOMAIL_TOKEN: "local-only-token",
+  ZEPTOMAIL_LEGACY_KEY_REVOKED: "confirmed",
   ZEPTOMAIL_OTP_TEMPLATE_KEY: "auth-otp",
   ZEPTOMAIL_API_URL: "https://api.zeptomail.in/v1.1/email/template",
 };
@@ -97,7 +98,10 @@ describe("chat-16 recruiter unread mail bridge fail-closed and privacy behaviors
       RECRUITER_MESSAGE_INBOUND_HMAC_SECRET: "i".repeat(64),
       RECRUITER_MESSAGE_DIGEST_TEMPLATE_KEY: "login.otp",
     }, new Date("2026-10-18T12:00:00.000Z"));
-    expect(result).toEqual({ examined: 0, sent: 0, enabled: false });
+    expect(result).toMatchObject({
+      examined: 0, sent: 0, enabled: false,
+      readinessReason: "TEMPLATE_NOT_CONFIGURED",
+    });
     expect(getDb).not.toHaveBeenCalled();
     expect(outboundFetch).not.toHaveBeenCalled();
   });

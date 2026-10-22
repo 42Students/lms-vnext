@@ -149,9 +149,16 @@ describe("FAC-REPORT-SERVICE-01 authenticated Section report projections", () =>
   });
 
   it("fails safely when roster or report source rejects an access grant after page load", async () => {
-    stubs.roster.mockRejectedValueOnce(new Error("revoked faculty assignment"));
-    await expect(getFacultyQuizReport(actor, quizId, deliveryId))
-      .rejects.toThrow("revoked faculty assignment");
+    stubs.roster.mockRejectedValueOnce(new Error("roster temporarily unavailable"));
+    // The independently authorized quiz source remains usable, while the
+    // unavailable roster can no longer be used to infer missing learners.
+    stubs.quizzes.mockResolvedValueOnce([{membershipId:a,attemptNumber:1,
+      submittedAt:oldDate,score:2,maxScore:10,answers:[{questionId:q1,correct:false}]}]);
+    const report=await getFacultyQuizReport(actor, quizId, deliveryId);
+    expect(report.rosterUnavailable).toBe(true);
+    expect(report.reportCompleteness).toBe("PARTIAL_ROSTER_UNAVAILABLE");
+    expect(report.metrics).toMatchObject({eligibleLearners:null,notAttempted:null});
+    expect(report.attempts).toHaveLength(1);
     expect(stubs.quizDetails).toHaveBeenCalledTimes(1);
   });
 });
