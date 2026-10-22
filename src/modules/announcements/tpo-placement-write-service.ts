@@ -49,8 +49,11 @@ export async function createTpoNotice(context:RequestContext,raw:unknown){
  if(!membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
  if(!await placementTableExists("announcements"))throw new Error("ANNOUNCEMENTS_NOT_REGISTERED");
- if(data.audience!=="COLLEGE"&&(!await placementTableExists("placement_tpo_notice_audiences")||
-  !await placementTableExists("placement_tpo_notice_recipients")))
+ // Every notice, including a college-wide broadcast, needs a persisted
+ // audience record for the due-delivery worker. A source-only event without
+ // recipient authorization must never silently broadcast to all learners.
+ if(!await placementTableExists("placement_tpo_notice_audiences")||
+    !await placementTableExists("placement_tpo_notice_recipients"))
   throw new Error("TARGETED_NOTICES_NOT_REGISTERED");
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
@@ -64,15 +67,17 @@ export async function createTpoNotice(context:RequestContext,raw:unknown){
    scheduledAt:schedule.scheduledAt,expiresAt:schedule.expiresAt,
   }).returning({id:db10Announcements.id,version:db10Announcements.version});
   if(!notice)throw new Error("NOTICE_CREATE_FAILED");
+  // Persist the explicit college audience even when there are no targeted
+  // rows: the worker treats missing audiences as an import/release error.
+  await tx.insert(placementTpoNoticeAudiences).values({
+   announcementId:notice.id,kind:data.audience,
+  });
   if(data.audience!=="COLLEGE"){
    const matched=await tx.execute<{id:string}>(tpoTargetedRecipientQuery(college.id,{
     kind:data.audience,targetId:data.targetId,targetIds:data.targetIds,
    }));
    const recipients=freezeTpoNoticeRecipients(matched.rows.map(row=>row.id));
    if(recipients.length===0)throw new Error("TPO_NOTICE_NO_RECIPIENTS");
-   await tx.insert(placementTpoNoticeAudiences).values({
-    announcementId:notice.id,kind:data.audience,
-   });
    for(let index=0;index<recipients.length;index+=500){
     await tx.insert(placementTpoNoticeRecipients).values(
      recipients.slice(index,index+500).map(membershipId=>({

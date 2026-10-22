@@ -174,6 +174,16 @@ export default async function LegacySuperAdminRedirect({
     if (typeof query.page === "string" && /^[1-9][0-9]{0,2}$/.test(query.page))
       search.set("page", query.page);
   }
+  // The historic template root redirected to /overview with its query
+  // intact. Preserve bounded, harmless view state through the UUID crosswalk
+  // without trusting arbitrary college identifiers or redirect targets.
+  if (destination.startsWith("/admin/projects/templates/")) {
+    for (const key of ["tab","view","version"] as const) {
+      const value=query[key];
+      if(typeof value==="string"&&/^[a-zA-Z0-9_-]{1,64}$/.test(value))
+        search.set(key,value);
+    }
+  }
   // Legacy template backlinks may be kept only within the authorized modern
   // Super Admin projects area, never arbitrary redirects or user-provided hosts.
   if (destination.startsWith("/admin/projects/") &&

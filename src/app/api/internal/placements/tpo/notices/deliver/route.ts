@@ -21,6 +21,12 @@ export async function POST(request:Request){
   );
   if(result.ran&&!result.result.ready)
    return NextResponse.json({error:"DELIVERY_STORAGE_NOT_READY"},{status:503});
+  if(result.ran&&result.result.failed>0)
+   return NextResponse.json({
+    error:"NOTICE_DELIVERY_INCOMPLETE",
+    failed:result.result.failed,scanned:result.result.scanned,
+    delivered:result.result.delivered,retryable:true,
+   },{status:503,headers:{"Cache-Control":"no-store"}});
   return NextResponse.json(result.ran?result.result:{skipped:true,reason:result.reason},
    {headers:{"Cache-Control":"no-store"}});
  }catch{

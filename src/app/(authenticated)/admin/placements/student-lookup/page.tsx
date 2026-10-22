@@ -132,6 +132,7 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
           <Link href="/admin/students" className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Open student directory</Link>
         </details>
         <AdminPlacementStudentProfileEditor
+          key={selectedStudent.membershipId}
           membershipId={selectedStudent.membershipId}
           skills={selectedProfile?.skills ?? []}
           preferences={selectedProfile?.jobPreferences ?? null}
