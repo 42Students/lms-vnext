@@ -21,28 +21,28 @@ describe("chat-19 TPO five-icon mobile footer",()=>{
       expect(existsSync("public/assets/images/common/"+icons[i])).toBe(true);
     }
     expect(source).toContain('href:"/tpo/placements"');
-    expect(source).toContain('onClick={()=>setMoreOpen(open=>!open)}');
+    expect(source).toContain('href:"/tpo/more"');
+    expect(source).not.toContain('target="_blank"');
   });
-  it("closes More on browser route commits or tablet/desktop resize",()=>{
+  it("keeps More navigation in the same tab and marks its secondary routes active",()=>{
     const source=footer();
-    expect(source).toContain('import { useEffect, useState } from "react"');
-    expect(source).toContain("useEffect(()=>{setMoreOpen(false);},[pathname]);");
-    expect(source).toContain('window.matchMedia("(min-width: 768px)")');
-    expect(source).toContain('media?.addEventListener("change",closeOnTablet)');
-    expect(source).toContain('media?.removeEventListener("change",closeOnTablet)');
-    expect(source).toContain('window.addEventListener("resize",closeOnTablet)');
-    expect(source).toContain('window.removeEventListener("resize",closeOnTablet)');
-    expect(source).toContain('onClick={()=>setMoreOpen(false)}');
+    const morePage=read("src/app/(authenticated)/tpo/more/page.tsx");
+    expect(source).toContain('import { usePathname } from "next/navigation"');
+    expect(source).toContain('pathname === href || pathname.startsWith(href + "/")');
+    expect(source).toContain('aria-current={active ? "page" : undefined}');
+    expect(source).toContain('href:"/tpo/more"');
+    expect(source).not.toContain('target="_blank"');
+    expect(morePage).toContain('hasMembershipRole(context, "TPO")');
+    expect(morePage).toContain("<TpoMoreNavigation />");
     expect(source).toContain('className="lms-tpo-mobile-footer fixed inset-x-0 bottom-0 z-40 grid min-w-0 grid-cols-5 md:hidden"');
   });
-  it("keeps shared buttons, valid opening/closing tags and icon-label contents",()=>{
+  it("keeps accessible link names, valid tags and icon-label contents",()=>{
     const source=footer();
-    expect(source).toContain('import { Button } from "@/components/ui/button"');
     expect(source).toContain('import Image from "next/image"');
-    expect(source).toContain("<BottomSheet");
-    expect(source).toContain("</BottomSheet>");
-    expect(source).toContain("</Button>");
-    expect(source).toContain("</Link>");
+    expect(source).toContain('import Link from "next/link"');
+    expect(source).toContain('aria-label="TPO mobile footer"');
+    expect(source).toContain('title={link.label}');
+    expect(source).toContain('</Link>');
     expect(source).toContain('className="lms-tpo-mobile-footer-icon"');
     expect(source).toContain('className="lms-tpo-mobile-footer-label"');
   });
