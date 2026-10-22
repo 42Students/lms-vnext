@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
 import {collegeWorkspaceStatusLabel} from "@/modules/projects/college-workspace-status-label";
+import {legacyAdminProjectStatus} from "@/modules/projects/admin-projects-query-model";
 import {formatProjectAdminUpdatedDateIst} from "@/modules/projects/project-admin-date-model";
 
 export type ProjectAdminWorkspaceListItem = {
@@ -28,6 +29,15 @@ export type ProjectAdminWorkspaceListItem = {
 /** Do not announce impossible backend progress as a valid ARIA percentage. */
 export function safeProjectProgressPercent(value: number): number | null {
   return Number.isFinite(value) && value >= 0 && value <= 100 ? value : null;
+}
+
+/** Super Admin retains the old project lifecycle words. Student and college
+ * workspace views keep their own labels; blocker evidence is never dropped. */
+function workspaceStatus(item:ProjectAdminWorkspaceListItem,basePath:string){
+ if(!basePath.startsWith("/admin/"))
+  return collegeWorkspaceStatusLabel(item.status,item.riskReasons);
+ const blocker=item.riskReasons?.includes("Active blocker")?"Active blocker":null;
+ return legacyAdminProjectStatus(item.status,blocker);
 }
 
 function tone(status:string,riskReasons:readonly string[]=[]){
@@ -138,7 +148,7 @@ export function ProjectAdminWorkspaceList({
       {key:"mentor",header:"Mentor",mobilePriority:"secondary",cell:item=>item.mentorName?.trim()||"—"},
       {key:"phase",header:"Phase",mobilePriority:"secondary",cell:item=>item.phase??"—"},
       {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>
-        <StatusBadge tone={tone(item.status,item.riskReasons)}>{collegeWorkspaceStatusLabel(item.status,item.riskReasons)}</StatusBadge>},
+        <StatusBadge tone={tone(item.status,item.riskReasons)}>{workspaceStatus(item,basePath)}</StatusBadge>},
       {key:"progress",header:"Progress",mobilePriority:"secondary",cell:item=>{
         const progress=safeProjectProgressPercent(item.progressPercent);
         return progress===null ? <span className="text-sm text-muted-foreground">Progress unavailable</span> :
@@ -161,7 +171,7 @@ export function ProjectAdminWorkspaceList({
         <div className="min-w-0">
           <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
             <Link href={workspaceSummaryHref(item,basePath)} className="inline-flex min-h-11 max-w-full items-center break-words text-base font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">{workspaceTitle(item)}</Link>
-            <StatusBadge tone={tone(item.status,item.riskReasons)}>{collegeWorkspaceStatusLabel(item.status,item.riskReasons)}</StatusBadge>
+            <StatusBadge tone={tone(item.status,item.riskReasons)}>{workspaceStatus(item,basePath)}</StatusBadge>
           </div>
           <p className="mt-1 break-words text-sm text-body leading-[22px]">{item.summary ?? "Project workspace."}</p>
           <div className="mt-2"><TemplateLink item={item} basePath={basePath}/></div>
@@ -201,7 +211,7 @@ export function ProjectAdminWorkspaceList({
             <StatusBadge
               tone={tone(item.status,item.riskReasons)}
             >
-              {collegeWorkspaceStatusLabel(item.status,item.riskReasons)}
+              {workspaceStatus(item,basePath)}
             </StatusBadge>
           </div>
 
