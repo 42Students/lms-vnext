@@ -5,7 +5,7 @@ import { getDb } from "@/db/client";
 import { placementCompanies, placementCompanyRelationships, placementJobs, placementSeasons } from "@/db/schema";
 import { hasMembershipRole, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
-import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
 import { collegeDriveListQuerySchema } from "./college-drive-read-model";
 
