@@ -18,13 +18,15 @@ describe("UX-company-join-01 company recruiter invitation",()=>{
   expect(form).toContain("One more step");
   expect(form).toContain("<InlineNotice");
   expect(form).toContain("submittingRef.current");
-  expect(form).toContain('variant="secondary"');
+  expect(form).toContain('type="button" disabled={pending}');
+  expect(form).toContain('loading={pending}');
   expect(form).toContain('Join {college} placements');
  });
  it("reuses accessible preview retry rather than conflating network errors and expired links",()=>{
   const retry=read("src/components/placements/public-join-preview-retry.tsx");
   expect(retry).toContain('scope==="COMPANY"?"/company-join/":"/college-join/"');
   expect(retry).toContain("encodeURIComponent(token)");
-  expect(retry).toContain('text-foreground');
+  expect(retry).toContain('role="alert"');
+  expect(retry).toContain('aria-label="Invitation preview unavailable"');
  });
 });
