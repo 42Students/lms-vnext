@@ -85,18 +85,6 @@ export async function MentorProjectsContent({
 
   // MEN-projects-meetings-10: common filters are paged and counted in SQL.
   // Nontrivial attention/task ranking keeps the legacy full-set path.
-  const retrySearch=new URLSearchParams();
-  Object.entries(query).forEach(([key,value])=>{
-    if(typeof value==="string"&&value)retrySearch.set(key,value);
-    if(typeof value==="number"&&Number.isFinite(value))retrySearch.set(key,String(value));
-  });
-  const retryLink = <Link href={"/mentor/projects"+(retrySearch.size?"?"+retrySearch.toString():"")} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>;
-  const readFailure = () => <div className="min-w-0 space-y-4">
-    <PageHeader title="Projects"/>
-    <ErrorState title="Projects could not be loaded"
-      description="Couldn't refresh projects. Try again; your college and mentor access remain unchanged."
-      action={retryLink}/>
-  </div>;
   const canPageInSql=canPageMentorProjectList(query);
   // A list failure belongs next to this page, not to a route-level error that
   // loses the current filter controls. Never infer an empty list from a failed read.
@@ -267,6 +255,16 @@ export async function MentorProjectsContent({
     start +
       (query.pageSize ?? 25),
   );
+  const controlQuery = {
+    sort: query.sort,
+    pageSize: query.pageSize,
+    page,
+    ...(query.search !== undefined ? { search: query.search } : {}),
+    ...(query.status !== undefined ? { status: query.status } : {}),
+    ...(query.assignment !== undefined ? { assignment: query.assignment } : {}),
+    ...(query.attention !== undefined ? { attention: query.attention } : {}),
+    ...(query.work !== undefined ? { work: query.work } : {}),
+  };
 
   return (
     <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
@@ -277,10 +275,7 @@ export async function MentorProjectsContent({
 
       <ProjectParticipantListControls
         basePath="/mentor/projects"
-        query={{
-          ...query,
-          page,
-        }}
+        query={controlQuery}
         mentor
       />
 
@@ -308,6 +303,12 @@ export async function MentorProjectsContent({
                 ? "team"
                 : null;
 
+          const progress = mentorTaskProgress(workCounts.get(row.project.id), row.project.progressPercent);
+          const nextAction = row.project.status === "ARCHIVED" ? undefined :
+            projectKinds?.has("REVIEW") ? "Review submission" : row.project.nextAction?.trim() ||
+            (row.project.blocker?.trim() ? "Open blocked work" : "Open workspace");
+          const blockedHref = row.project.status !== "ARCHIVED" && row.project.blocker?.trim()
+            ? "/mentor/projects/" + row.project.id + "?tab=board&lane=BLOCKED" : undefined;
           return {
             id: row.project.id,
             title: row.project.title,
@@ -318,18 +319,15 @@ export async function MentorProjectsContent({
             updatedAt:
               row.project.updatedAt,
             memberCount: teamSizes.get(row.project.id) ?? 0,
-            progressPercent: mentorTaskProgress(workCounts.get(row.project.id),row.project.progressPercent)?.percent ?? undefined,
-            progressDetail: mentorTaskProgress(workCounts.get(row.project.id),row.project.progressPercent)?.label,
+            ...(progress?.percent !== undefined ? { progressPercent: progress.percent } : {}),
+            ...(progress?.label !== undefined ? { progressDetail: progress.label } : {}),
             readOnlyLabel: row.project.status === "ARCHIVED" ? "Read-only" : null,
             courseLabel:row.project.courseLabel,
             phase:row.project.phase,
             phaseLabel:row.project.phase?.trim() || "In progress",
             dueLabel:row.project.dueLabel || row.project.endDate,
-            actionLine:row.project.status==="ARCHIVED"?undefined:
-              projectKinds?.has("REVIEW")?"Review submission":row.project.nextAction?.trim() ||
-              (row.project.blocker?.trim()?"Open blocked work":"Open workspace"),
-            blockedHref:row.project.status!=="ARCHIVED"&&row.project.blocker?.trim()
-              ? "/mentor/projects/"+row.project.id+"?tab=board&lane=BLOCKED" : undefined,
+            ...(nextAction !== undefined ? { actionLine: nextAction } : {}),
+            ...(blockedHref !== undefined ? { blockedHref } : {}),
             participation:
               row.isPrimaryMentor
                 ? "Primary mentor"
@@ -358,7 +356,7 @@ export async function MentorProjectsContent({
 
       <ProjectParticipantPagination
         basePath="/mentor/projects"
-        query={query}
+        query={controlQuery}
         page={page}
         totalPages={totalPages}
         total={total}
