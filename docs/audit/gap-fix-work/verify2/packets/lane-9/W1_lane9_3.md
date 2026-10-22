@@ -126,3 +126,31 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/components/courses/faculty-lesson-video-manager.tsx
 - Legacy: Legacy update VideoDrawer calls updateLessonContent(id,NewData) preserving file; vNext manager PATCH video title does not necessarily change lesson content metadata — `docs/legacy-source/frontend/src/components/Course/Syllabus/VideoDrawer.jsx:197-216`
 - Expected fix: Synchronize managed video and published lesson content title/points/version
+
+## Chat-18 fast verification triage (2026-10-22)
+
+- G2-17-029-014: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-17-029-016: OK — Stored-only scheduling override is explicitly labeled with 0..1440 bounds and non-effective cutoff.
+- G2-19-019-014: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-12-005-006: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-12-008-012: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-17-23-055: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-17-028-040: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-18-026-001: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-19-029-016: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-13-006-044: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-13-013-001: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-13-013-007: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-13-013-008: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-13-013-012: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-13-013-025: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-13-013-029: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-13-013-031: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-13-013-057: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-13-011-045: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-18-018-035: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-18-018-039: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-19-022-007: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-14-008-022: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-14-008-036: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-14-008-037: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
