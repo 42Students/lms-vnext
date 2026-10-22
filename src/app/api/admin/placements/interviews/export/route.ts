@@ -9,7 +9,7 @@ export async function GET(request:Request){
  try{
   const params=Object.fromEntries(new URL(request.url).searchParams.entries());
   const query=superAdminReadQuerySchema.parse({
-    q:params.q,status:params.status,jobId:params.jobId,
+    q:params["q"],status:params["status"],jobId:params["jobId"],
   });
   const result=await exportSuperAdminInterviewsCsv(await getCurrentRequestContext(),query);
   return new Response(result.csv,{headers:{
