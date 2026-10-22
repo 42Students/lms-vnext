@@ -165,6 +165,13 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
           {["ALL","SUBMITTED","WITHDRAWN"].map(s=><option key={s} value={s}>{s}</option>)}
         </Select>
       </label>
+      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">Sort applications
+        <Select name="sort" defaultValue={query.sort??"AGE_ASC"} className="min-h-11 w-full md:min-h-9">
+          <option value="AGE_ASC">Age: youngest first</option><option value="AGE_DESC">Age: oldest first</option>
+          <option value="SCORE_ASC">Match Score: lowest first</option><option value="SCORE_DESC">Match Score: highest first</option>
+          <option value="SUBMITTED_DESC">Recently applied first</option>
+        </Select>
+      </label>
       <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Filter</Button>
       </div>
       <details className="min-w-0" open={true}>

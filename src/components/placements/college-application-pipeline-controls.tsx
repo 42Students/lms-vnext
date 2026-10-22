@@ -13,7 +13,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {useToast} from "@/components/ui/toast";
 import {COLLEGE_APPLICATION_STAGES,COLLEGE_APPLICATION_TRANSITIONS} from "@/modules/placements/college-stage-action-model";
-import type {DriveApplicationsQuery} from "@/modules/placements/college-drive-applications-model";
+import {driveApplicationsHref,type DriveApplicationsQuery} from "@/modules/placements/college-drive-applications-model";
 import {CollegeApplicationDetailDrawer,type CollegeApplicationDetail} from "./college-application-detail-drawer";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge, applicationStatusTone } from "@/components/ui/status-badge";
@@ -187,6 +187,11 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   query.stage!=="ALL"||query.screening!=="ALL"||query.departmentId||
   query.programId||query.cohortId||query.appliedFrom||query.appliedTo);
  const clearHref=basePath+"/jobs/"+encodeURIComponent(jobId)+"/applications";
+ const sortHref=(column:string,next:"ascending"|"descending")=>{
+  const sort=column==="age"?(next==="ascending"?"AGE_ASC":"AGE_DESC"):
+   next==="ascending"?"SCORE_ASC":"SCORE_DESC";
+  return driveApplicationsHref(jobId,{...query,page:1,sort}).replace("/college/placements/",basePath+"/");
+ };
  const dialogTitle=action==="REINSTATE"?"Reinstate application?":
   target==="REJECTED"?"Reject application?":"Move applications to "+stageLabel(target);
  const columns:DataTableColumn<Row>[]=[
@@ -205,7 +210,8 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   {key:"source",header:"Source",mobilePriority:"secondary",cell:row=><StatusBadge tone="info">{row.source==="EXTERNAL"?"External":row.source==="INTERNAL"?"Internal":row.source||"—"}</StatusBadge>},
   {key:"date",header:"Applied Date",mobilePriority:"secondary",
    cell:row=>Number.isFinite(new Date(row.submittedAt).getTime())?istDay.format(new Date(row.submittedAt)):"—"},
-  {key:"age",header:"Age",mobilePriority:"secondary",cell:row=>{
+  {key:"age",header:"Age",mobilePriority:"secondary",sortable:true,
+   sortDirection:query.sort==="AGE_DESC"?"descending":!query.sort||query.sort==="AGE_ASC"?"ascending":"none",cell:row=>{
    const days=stageAge(row);
    return <span title={row.stageMovedAt?"Time since most recent stage change":"Time since application"}
      className="inline-flex items-center gap-1.5"><span aria-hidden="true" className="size-1.5 rounded-full bg-[var(--lms-info)]"/>
@@ -219,7 +225,8 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
      <span className="text-xs text-muted-foreground" title="Last stage change">{istDateTime.format(new Date(row.stageMovedAt))} IST</span>:null}
    </span>},
   {key:"screening",header:"Screening",mobilePriority:"secondary",cell:row=>row.screening?<StatusBadge tone={applicationStatusTone(row.screening)}>{stageLabel(row.screening)}</StatusBadge>:"—"},
-  {key:"score",header:"Match Score",mobilePriority:"secondary",cell:row=>{
+  {key:"score",header:"Match Score",mobilePriority:"secondary",sortable:true,
+   sortDirection:query.sort==="SCORE_DESC"?"descending":query.sort==="SCORE_ASC"?"ascending":"none",cell:row=>{
    const score=row.screeningScore;
    if(score===null||score===undefined||!Number.isFinite(score))return "—";
    const percent=Math.max(0,Math.min(100,Math.round(score)));
@@ -321,7 +328,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
       .map(key=>columns.find(col=>col.key===key))
       .filter((col):col is DataTableColumn<Row>=>col!==undefined)
     :columns} rows={rows} getRowKey={row=>row.id}
-   caption="Applications pipeline" mobileMode="scroll"
+   caption="Applications pipeline" mobileMode="scroll" sortHref={sortHref}
    empty={<EmptyState title={filtered?"No applications match these filters.":"No applications yet."}
     description={filtered?"Try another search or clear the filters.":"Applicants will appear here when students apply for this drive."}
     action={filtered?<Link href={clearHref} className="inline-flex min-h-11 items-center font-semibold text-link underline">Clear filters</Link>:undefined}/>}/>
