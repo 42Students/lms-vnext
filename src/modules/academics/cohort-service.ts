@@ -308,12 +308,7 @@ export async function createCohort(
     if(!created)throw new Error("Unable to persist cohort mutation.");
     const yearLabel=legacy.academicYear??
       batchAcademicYearWithStartMonth(periodWindow.start.startDate,7);
-    await tx.insert(cohortProgressionState).values({
-      cohortId:created.id,currentTermNumber:1,
-      currentAcademicYearStart:Number(yearLabel.slice(0,4)),
-      currentPeriodId:input.startPeriodId,
-      version:0,updatedByUserId:context.user.id,
-    });
+    // DB02 inserts the version-0 progression row via its cohort INSERT trigger.
     await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_COHORT_CREATED,
       organizationId:program.organizationId,collegeId:program.collegeId,
