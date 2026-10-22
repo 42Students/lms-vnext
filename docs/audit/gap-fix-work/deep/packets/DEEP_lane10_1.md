@@ -16,7 +16,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-11-019-077  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [x] G2-11-019-079  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [x] G2-11-022-020  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
-- [ ] G2-19-001-012  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
+- [x] G2-19-001-012  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 
 ## Results
 
@@ -25,3 +25,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - OK G2-11-019-029 — `src/components/tpo/recruiter-lead-detail-workspace.tsx:380-405,574-576` and `src/app/api/placements/tpo/leads/[leadId]/invite/route.ts:22-50` implement confirmed email dispatch with provider acceptance and explicit unavailable error; matches invite dispatch from `docs/legacy-source/frontend/src/pages/tpo/recruiters/[recruiterLeadId].js:204-205` (email sending is conditioned on verified delivery configuration).
 - OK G2-11-022-020 — `src/app/(authenticated)/tpo/reports/page.tsx:232-233,280` and `src/modules/placements/report-service.ts:82-98` preserve distinct student counts and placed-minus-accepted gap; matches `docs/legacy-source/frontend/src/pages/tpo/reports/index.js:63-72`.
 - FIXED G2-11-019-077 — `e378f15dce821a4ac0861dd3b62ce7bbb014a602` — `src/components/tpo/recruiter-lead-detail-workspace.tsx:487-491`; matched `docs/legacy-source/frontend/src/pages/tpo/recruiters/[recruiterLeadId].js:206-207` (company-only Team talk URL).
+- OK G2-19-001-012 — `src/modules/admin-ui/super-admin-scoped-people-service.ts:115-127,204-216` projects learner `contactMail`/`contactMobile` from `learnerProfiles.profileDocument` before canonical account fallback and limits selection to the authorized college; matches `docs/legacy-source/frontend/src/pages/superadmin/sections/Students.js:937-938`.
