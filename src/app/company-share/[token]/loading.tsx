@@ -1,7 +1,7 @@
 import authStyles from "@/components/public/public-auth-skin.module.css";
 import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 
-const shareLoadingPageClass = `${authStyles.page} mx-auto min-h-dvh w-full max-w-[1000px] px-4 py-12`;
+const shareLoadingPageClass = `${authStyles["page"]} mx-auto min-h-dvh w-full max-w-[1000px] px-4 py-12`;
 
 export default function Loading() {
  return <main className={shareLoadingPageClass}>

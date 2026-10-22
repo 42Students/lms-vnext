@@ -140,19 +140,19 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
     <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Company name
       <Input required minLength={2} maxLength={150} placeholder="e.g. Infosys Limited" value={name}
         aria-invalid={Boolean(fieldErrors.name)}
-        onChange={e=>{setName(e.target.value);setFieldErrors(current=>({...current,name:undefined}));}}
+        onChange={e=>{setName(e.target.value);setFieldErrors(current=>{const next={...current};delete next.name;return next;});}}
         className={field} />
       {fieldErrors.name?<span role="alert" className="text-xs font-normal text-error">{fieldErrors.name}</span>:null}
     </label>
     <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Website (HTTPS, optional)
       <Input type="url" pattern="https://.*" maxLength={500} value={websiteUrl} aria-invalid={Boolean(fieldErrors.websiteUrl)}
-        onChange={e=>{setWebsiteUrl(e.target.value);setFieldErrors(current=>({...current,websiteUrl:undefined}));}}
+        onChange={e=>{setWebsiteUrl(e.target.value);setFieldErrors(current=>{const next={...current};delete next.websiteUrl;return next;});}}
         placeholder="https://example.com" className={field}/>
       {fieldErrors.websiteUrl?<span role="alert" className="text-xs font-normal text-error">{fieldErrors.websiteUrl}</span>:null}
     </label>
     <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Company email domain (optional)
       <Input value={primaryDomain} maxLength={255} aria-invalid={Boolean(fieldErrors.primaryDomain)}
-        onChange={e=>{setPrimaryDomain(e.target.value);setFieldErrors(current=>({...current,primaryDomain:undefined}));}}
+        onChange={e=>{setPrimaryDomain(e.target.value);setFieldErrors(current=>{const next={...current};delete next.primaryDomain;return next;});}}
         placeholder="example.com" className={field}/>
       {fieldErrors.primaryDomain?<span role="alert" className="text-xs font-normal text-error">{fieldErrors.primaryDomain}</span>:null}
     </label>
@@ -164,14 +164,14 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
     <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Contact email
       <Input value={contactEmail} type="email" maxLength={150}
         placeholder="recruiter@company.com" aria-invalid={Boolean(fieldErrors.contactEmail)}
-        onChange={e=>{setContactEmail(e.target.value);setFieldErrors(current=>({...current,contactEmail:undefined}));}}
+        onChange={e=>{setContactEmail(e.target.value);setFieldErrors(current=>{const next={...current};delete next.contactEmail;return next;});}}
         className={field}/>
       {fieldErrors.contactEmail?<span role="alert" className="text-xs font-normal text-error">{fieldErrors.contactEmail}</span>:null}
     </label>
     <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Contact phone
       <Input value={contactPhone} type="tel" maxLength={30}
         aria-invalid={Boolean(fieldErrors.contactPhone)}
-        onChange={e=>{setContactPhone(e.target.value);setFieldErrors(current=>({...current,contactPhone:undefined}));}}
+        onChange={e=>{setContactPhone(e.target.value);setFieldErrors(current=>{const next={...current};delete next.contactPhone;return next;});}}
         className={field}/>
       {fieldErrors.contactPhone?<span role="alert" className="text-xs font-normal text-error">{fieldErrors.contactPhone}</span>:null}
     </label>

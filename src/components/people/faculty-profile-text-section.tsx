@@ -47,7 +47,7 @@ export function FacultyProfileTextSection({ section, title, description, fields,
         const id=`${facultyProfileAnchor(section)}-${field.name}`;
         const fieldError=changed&&issueField===field.name ? issue?.slice(field.name.length+1).trim() : null;
         return <div key={field.name} className={field.multiline?"min-w-0 sm:col-span-2":"min-w-0"}>
-          <FormField id={id} label={field.label} error={fieldError}>
+          <FormField id={id} label={field.label} {...(fieldError !== undefined ? {error:fieldError} : {})}>
           {props=>field.multiline
             ? <Textarea {...props} rows={4} value={draft[field.name]??""} maxLength={field.maxLength}
                 disabled={pending} onChange={event=>setDraft(current=>({...current,[field.name]:event.target.value}))}/>

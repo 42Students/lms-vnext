@@ -2,7 +2,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import authStyles from "@/components/public/public-auth-skin.module.css";
 
-const companySharePageClass = `${authStyles.page} mx-auto flex min-h-dvh w-full max-w-xl min-w-0 flex-col justify-center px-4 pb-8 pt-24 min-[768px]:py-12`;
+const companySharePageClass = `${authStyles["page"]} mx-auto flex min-h-dvh w-full max-w-xl min-w-0 flex-col justify-center px-4 pb-8 pt-24 min-[768px]:py-12`;
 
 export default function CompanyShareNotFound() {
   return (

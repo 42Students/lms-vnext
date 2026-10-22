@@ -116,7 +116,7 @@ export function HrDriveDraftForm({
     window.requestAnimationFrame(() => {
       const controls = formRootRef.current?.querySelectorAll<HTMLElement>("[data-draft-field]");
       const target = Array.from(controls ?? []).find(element =>
-        element.dataset.draftField === first) ?? Array.from(controls ?? [])[0];
+        element.dataset["draftField"] === first) ?? Array.from(controls ?? [])[0];
       target?.focus();
       target?.scrollIntoView({ block: "center", behavior: "smooth" });
     });
@@ -435,11 +435,11 @@ export function HrDriveDraftForm({
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] md:col-span-2 leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Role title
-            <Input className="w-full" data-draft-field="title" aria-invalid={Boolean(fieldErrors.title)} placeholder="e.g. Software Engineer" aria-describedby={fieldErrors.title ? "hr-title-error" : undefined}
+            <Input className="w-full" data-draft-field="title" aria-invalid={Boolean(fieldErrors["title"])} placeholder="e.g. Software Engineer" aria-describedby={fieldErrors["title"] ? "hr-title-error" : undefined}
               value={draft.title} maxLength={200}
               onChange={(event) => { setFieldErrors(current => ({ ...current, title: "" }));
                 setDraft((current) => ({ ...current, title: event.target.value })); }} />
-            {fieldErrors.title ? <span role="alert" id="hr-title-error" className="text-xs text-error">{fieldErrors.title}</span> : null}
+            {fieldErrors["title"] ? <span role="alert" id="hr-title-error" className="text-xs text-error">{fieldErrors["title"]}</span> : null}
           </label>
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] md:col-span-2 leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Description (optional)
@@ -489,15 +489,15 @@ export function HrDriveDraftForm({
         <div className="mt-3 grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
           <label htmlFor="hr-jd-url">Job description link (optional)</label>
           <Input id="hr-jd-url" type="url" inputMode="url" maxLength={2000}
-            data-draft-field="jdUrl" aria-invalid={Boolean(fieldErrors.jdUrl)}
-            aria-describedby={fieldErrors.jdUrl ? "hr-jd-url-error" : "hr-jd-url-help"}
+            data-draft-field="jdUrl" aria-invalid={Boolean(fieldErrors["jdUrl"])}
+            aria-describedby={fieldErrors["jdUrl"] ? "hr-jd-url-error" : "hr-jd-url-help"}
             value={draft.jdUrl??""} placeholder="https://example.com/job-description.pdf"
             onChange={event=>{
               setFieldErrors(current=>({...current,jdUrl:""}));
               setDraft(current=>({...current,jdUrl:event.target.value}));
             }}/>
-          {fieldErrors.jdUrl?<span id="hr-jd-url-error" role="alert" className="text-xs text-error">
-            {fieldErrors.jdUrl}
+          {fieldErrors["jdUrl"]?<span id="hr-jd-url-error" role="alert" className="text-xs text-error">
+            {fieldErrors["jdUrl"]}
           </span>:null}
           <span id="hr-jd-url-help" className="text-xs font-normal text-muted-foreground">
             Use a public HTTPS link, or upload a private PDF/Word file below. Private files require a verified scan and a short-lived authorized link.
@@ -529,11 +529,11 @@ export function HrDriveDraftForm({
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-3">
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             {draft.employmentType==="INTERNSHIP"?"CTC after the internship (LPA, optional)":"CTC (LPA)"}
-            <Input className="w-full" type="number" min={0} step={HR_DRIVE_CTC_STEP} data-draft-field="ctcLpa" aria-invalid={Boolean(fieldErrors.ctcLpa)}
-              inputMode="decimal" value={draft.ctcLpa??""} aria-describedby={fieldErrors.ctcLpa ? "hr-ctc-error" : undefined}
+            <Input className="w-full" type="number" min={0} step={HR_DRIVE_CTC_STEP} data-draft-field="ctcLpa" aria-invalid={Boolean(fieldErrors["ctcLpa"])}
+              inputMode="decimal" value={draft.ctcLpa??""} aria-describedby={fieldErrors["ctcLpa"] ? "hr-ctc-error" : undefined}
               onChange={event=>{setFieldErrors(current=>({...current,ctcLpa:""}));
                 setDraft(current=>({...current,ctcLpa:event.target.value}));}}/>
-            {fieldErrors.ctcLpa ? <span role="alert" id="hr-ctc-error" className="text-xs text-error">{fieldErrors.ctcLpa}</span> : null}
+            {fieldErrors["ctcLpa"] ? <span role="alert" id="hr-ctc-error" className="text-xs text-error">{fieldErrors["ctcLpa"]}</span> : null}
           </label>
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Fixed (optional)
@@ -701,20 +701,20 @@ export function HrDriveDraftForm({
           <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
             Minimum CGPA
             <Input type="number" min={0} max={10} step={0.1} inputMode="decimal"
-              data-draft-field="minimumCgpa" aria-invalid={Boolean(fieldErrors.minimumCgpa)}
+              data-draft-field="minimumCgpa" aria-invalid={Boolean(fieldErrors["minimumCgpa"])}
               value={draft.minimumCgpa}
               onChange={event=>{setFieldErrors(current=>({...current,minimumCgpa:""}));
                 setDraft(current=>({...current,minimumCgpa:event.target.value}));}}/>
-            {fieldErrors.minimumCgpa ? <span role="alert" className="text-xs text-error">{fieldErrors.minimumCgpa}</span> : null}
+            {fieldErrors["minimumCgpa"] ? <span role="alert" className="text-xs text-error">{fieldErrors["minimumCgpa"]}</span> : null}
           </label>
           <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
             Maximum active backlogs
             <Input type="number" min={0} step={1} inputMode="numeric"
               data-draft-field="maximumActiveBacklogs" value={draft.maximumActiveBacklogs}
-              aria-invalid={Boolean(fieldErrors.maximumActiveBacklogs)}
+              aria-invalid={Boolean(fieldErrors["maximumActiveBacklogs"])}
               onChange={event=>{setFieldErrors(current=>({...current,maximumActiveBacklogs:""}));
                 setDraft(current=>({...current,maximumActiveBacklogs:event.target.value}));}}/>
-            {fieldErrors.maximumActiveBacklogs ? <span role="alert" className="text-xs text-error">{fieldErrors.maximumActiveBacklogs}</span> : null}
+            {fieldErrors["maximumActiveBacklogs"] ? <span role="alert" className="text-xs text-error">{fieldErrors["maximumActiveBacklogs"]}</span> : null}
           </label>
         </div>
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
@@ -749,7 +749,7 @@ export function HrDriveDraftForm({
             <label htmlFor="hr-passing-year-add">Passing years</label>
             <div className="flex min-w-0 flex-wrap items-center gap-2">
               <Input id="hr-passing-year-add" className="min-w-0 flex-1" data-draft-field="passingYears"
-                aria-invalid={Boolean(fieldErrors.passingYears||fieldErrors.passingYear)}
+                aria-invalid={Boolean(fieldErrors["passingYears"]||fieldErrors["passingYear"])}
                 aria-describedby="hr-passing-years-help" inputMode="numeric" maxLength={4}
                 placeholder="e.g. 2027" list="recruiter-passing-years" value={yearToAdd}
                 onChange={event=>{setYearToAdd(event.target.value);
@@ -793,9 +793,9 @@ export function HrDriveDraftForm({
                       }}>{year}<span aria-hidden="true">×</span></Button>
                   </li>)}
               </ul>:<span className="text-xs font-normal text-muted-foreground">Any year</span>}
-            {(fieldErrors.passingYears||fieldErrors.passingYear)?
+            {(fieldErrors["passingYears"]||fieldErrors["passingYear"])?
               <span role="alert" className="text-xs font-normal text-error">
-                {fieldErrors.passingYears||fieldErrors.passingYear}</span>:null}
+                {fieldErrors["passingYears"]||fieldErrors["passingYear"]}</span>:null}
           </div>
         </div>
 
