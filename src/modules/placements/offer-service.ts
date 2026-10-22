@@ -1011,7 +1011,8 @@ export async function actOnPlacementOffer(
           eq(placementJobs.collegeId,current.job.collegeId),
           ne(placementOffers.id,offer.id),
           inArray(placementOffers.status,["ISSUED","ACCEPTED"]),
-        )).for("update");
+        // Acquire sibling offer row locks in UUID order across tabs/workers.
+        )).orderBy(asc(placementOffers.id)).for("update");
       if(otherOffers.some(candidate=>candidate.status==="ACCEPTED")){
         throw new PlacementsServiceError("PLACEMENT_OFFER_ACTIVE_EXISTS");
       }
@@ -1050,7 +1051,8 @@ export async function actOnPlacementOffer(
           eq(placementJobs.collegeId,current.job.collegeId),
           ne(placementApplications.id,current.application.id),
           eq(placementApplications.status,"SUBMITTED"),
-        )).for("update");
+        // The following bulk withdrawal must use the same stable lock order.
+        )).orderBy(asc(placementApplications.id)).for("update");
       const withdrawIds=siblingApplications.filter(candidate=>!wouldKeep({
         ...candidate,annualCtcInr:candidate.annualCtcInr??candidate.jobAnnualCtcInr,
       })).map(candidate=>candidate.id);
