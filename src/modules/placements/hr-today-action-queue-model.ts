@@ -9,7 +9,7 @@ export function buildRecruiterActionQueue(input:{
  jobs:readonly Job[];collegeId:string;companyId:string;unread:number;now?:Date;
  resultsDue?:readonly Due[];unreadConversations?:readonly UnreadThread[];
  returnedRequests?:readonly {id:string;status:string;draft:unknown}[];
- changeRequests?:readonly {id:string;jobId:string;jobTitle:string;field:string;createdAt:Date;kind?:"ASK"|"CHANGE";note?:string|null}[];
+ changeRequests?:readonly {id:string;jobId:string;jobTitle:string;field:string;createdAt:Date;kind?:string;note?:string|null}[];
  roundsNeedingSlots?:readonly {id:string;jobId:string;jobTitle:string;name:string;scheduledAt:Date|null;needsOffer:boolean}[];
  offerActions?:readonly {jobId:string;jobTitle:string;status:string;count:number;respondBy?:Date|null}[];
  sharedApplicantCounts?:readonly {jobId:string;count:number}[];
@@ -20,20 +20,26 @@ export function buildRecruiterActionQueue(input:{
   (row.job.status==="PUBLISHED"||row.job.status==="CLOSED"))
   .map(row=>row.job.id));
  // Old Today groups company-facing ASK / CHANGE requests per drive.
- const grouped=new Map<string,{jobId:string;jobTitle:string;count:number;asks:number;note:string|null;createdAt:Date}>();
+ const grouped=new Map<string,{jobId:string;jobTitle:string;count:number;asks:number;unknownKinds:number;note:string|null;createdAt:Date}>();
  for(const row of input.changeRequests??[]){
   if(!authorized.has(row.jobId))continue;
-  const current=grouped.get(row.jobId)??{jobId:row.jobId,jobTitle:row.jobTitle,count:0,asks:0,note:null,createdAt:row.createdAt};
+  const current=grouped.get(row.jobId)??{jobId:row.jobId,jobTitle:row.jobTitle,count:0,asks:0,unknownKinds:0,note:null,createdAt:row.createdAt};
   current.count++;
   if(row.kind==="ASK")current.asks++;
+  if(!row.kind)current.unknownKinds++;
   if(!current.note&&row.note?.trim())current.note=row.note.trim();
   grouped.set(row.jobId,current);
  }
  const changeRequests=[...grouped.values()].map(row=>{
   const allAsks=row.asks===row.count;
   const quantity=row.count+" "+(allAsks?(row.count===1?"detail":"details"):(row.count===1?"change":"changes"));
+  // When an upstream signal lacks the ASK/SUGGEST mode, do not pretend
+  // to know which action the placement cell requested.
+  const label=row.unknownKinds>0
+    ?"The placement cell needs answers to "+row.count+" "+(row.count===1?"request":"requests")
+    :(allAsks?"The placement cell needs ":"The placement cell suggested ")+quantity;
   return {key:"answer:"+row.jobId,tone:"SOON" as const,at:row.createdAt,
-   label:(allAsks?"The placement cell needs ":"The placement cell suggested ")+quantity,
+   label,
    description:row.jobTitle+(row.note?" · “"+row.note+"”":""),
    href:"/recruiter/drives/"+encodeURIComponent(row.jobId)+"?tab=messages"};
  });
