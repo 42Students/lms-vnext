@@ -31,6 +31,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AssignmentFileOpenControl } from "./assignment-file-open-control";
+import { LearnerAssignmentDrawerResources } from "./learner-assignment-drawer-resources";
 import { AssignmentSubmissionLinks } from "./assignment-submission-links";
 import { AssignmentSubmissionControl } from "./assignment-submission-control";
 import { quizOverviewActionState } from "./quiz-overview-state";
@@ -684,8 +685,11 @@ export function LearnerAssessmentOverview({
                   </article>
                 );
               })}
-              {!selectedAssignment.description && !selectedAssignment.resources?.length ? (
-                <p className="text-sm text-muted-foreground">No additional resources were provided.</p>
+              {!selectedAssignment.resources?.length ? (
+                <LearnerAssignmentDrawerResources
+                  key={selectedAssignment.deliveryId+":"+selectedAssignment.id}
+                  assignmentId={selectedAssignment.id}
+                  deliveryId={selectedAssignment.deliveryId}/>
               ) : null}
               <Link href={`/learn/courses/${selectedAssignment.deliveryId}/roadmap?filter=assessments&lesson=${encodeURIComponent(selectedAssignment.lessonId)}&content=${encodeURIComponent(selectedAssignment.id)}`}
                 className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
@@ -797,6 +801,8 @@ export function LearnerAssessmentOverview({
                   <AssignmentSubmissionControl
                     key={selectedAssignment.deliveryId+":"+selectedAssignment.id}
                     fileUploadsEnabled={fileUploadsEnabled}
+                    multipartEnabled={fileUploadsEnabled}
+                    methodsEnabled
                     assignmentId={selectedAssignment.id}
                     assignmentTitle={selectedAssignment.title}
                     dueAt={selectedAssignment.dueAt}
