@@ -352,11 +352,12 @@ export async function runAlertTick(now = new Date()): Promise<{ acquired: boolea
       lockedBy: leases.lockedBy,
       updatedAt: leases.updatedAt,
     }).from(leases).where(eq(leases.jobName, "vnext-health-watch")).limit(1);
+    const deployCommit = process.env["DEPLOY_COMMIT"];
     const message = formatDailyDigest({
       day: previousDay,
       health: healthWatchStatus(health, now),
-      ...(/^[0-9a-f]{7,64}$/i.test(process.env["DEPLOY_COMMIT"] ?? "")
-        ? { deploy: process.env["DEPLOY_COMMIT"] } : {}),
+      ...(deployCommit && /^[0-9a-f]{7,64}$/i.test(deployCommit)
+        ? { deploy: deployCommit } : {}),
       total: Number(counts?.total ?? 0),
       firstSeen: Number(counts?.firstSeen ?? 0),
       muted: Number(counts?.muted ?? 0),
