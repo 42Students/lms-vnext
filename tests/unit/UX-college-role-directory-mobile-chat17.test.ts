@@ -6,9 +6,13 @@ describe("UX-UNOWNED-DENSE-GRID-10 college role directory mobile/desktop parity"
  it("keeps row-level private actions and membership status available without desktop table on phones",()=>{
   const source=readFileSync(join(process.cwd(),
    "src/components/college/college-role-directory-workspace.tsx"),"utf8");
-  expect(source).toContain('className="space-y-3 p-3 md:hidden"');
-  expect(source).toContain('className="hidden w-full min-w-[45rem] text-left text-sm md:table"');
-  expect(source).toContain('<ScrollCue axis="x" label={title + " scrollable results columns"}>');
+  expect(source).toContain('aria-label={title + " mobile records"}');
+  expect(source).toContain('className="space-y-2 md:hidden"');
+  expect(source).toContain("<StatusBadge");
+  expect(source).toContain('className="hidden md:block"');
+  expect(source).toContain("<DataTable");
+  const sharedTable=readFileSync(join(process.cwd(),"src/components/ui/data-table.tsx"),"utf8");
+  expect(sharedTable).toContain('<ScrollCue axis="x"');
   expect(source).toContain("View contact card");
   expect(source).toContain("Profile verification");
   expect(source).toContain("StudentClassMoveAction");

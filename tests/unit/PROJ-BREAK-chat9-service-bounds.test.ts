@@ -18,7 +18,11 @@ describe("IIT Dharwad Projects: hostile pagination never triggers an unbounded d
       for (const page of ["1e309", "100001", "-1", "0", "1.5", "NaN"]) {
         expect(parse({ page }).success, page).toBe(false);
       }
-      expect(parse({ page: "100000", pageSize: "100" }).success).toBe(true);
+      // Risk cards are fixed at 25 rows; the other admin tables permit 100.
+      const pageSize=parse===parseProjectAdminRiskQuery?"25":"100";
+      expect(parse({page:"100000",pageSize}).success).toBe(true);
+      if(parse===parseProjectAdminRiskQuery)
+        expect(parse({page:"100000",pageSize:"100"}).success).toBe(false);
     }
   });
   it("PROJ-BREAK-scale-21 service entrypoints enforce bounds even if API validation is bypassed", () => {

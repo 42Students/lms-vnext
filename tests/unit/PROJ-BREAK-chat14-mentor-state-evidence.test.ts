@@ -109,7 +109,11 @@ describe("PROJ-BREAK-MENTOR-76..84 finite state and final-delivery consistency",
  });
  it("PROJ-BREAK-MENTOR-82 numeric titles, ties and unknown progress have stable ordering",()=>{
   expect(compareMentorProjects(active,older,"RECENT")).toBeLessThan(0);
-  expect(compareMentorProjects(active,older,"TITLE")).toBeLessThan(0);
+  // Numeric ordering is reserved for Team N siblings; "Sprint N" remains
+  // legacy lexical ordering, while a numeric Team 2 precedes Team 10.
+  expect(compareMentorProjects(active,older,"TITLE")).toBeGreaterThan(0);
+  expect(compareMentorProjects({...active,title:"Cohort Team 2"},
+    {...older,title:"Cohort Team 10"},"TITLE")).toBeLessThan(0);
   expect(compareMentorProjectsByProgress(active,older,NaN,50)).toBeGreaterThan(0);
   expect(compareMentorProjectsByProgress(active,older,0,50)).toBeLessThan(0);
   expect(compareMentorProjectsByMostProgress(active,older,90,50)).toBeLessThan(0);

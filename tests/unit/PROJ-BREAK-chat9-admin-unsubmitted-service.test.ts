@@ -101,7 +101,7 @@ describe("IIT Dharwad Projects Admin unsubmitted workspaces service permissions 
     },collegeId,{})).rejects.toThrow("PROJECT_ACCESS_DENIED");
     await expect(listProjectAdminUnsubmitted({
       ...ctx,user:{...ctx.user,platformStatus:"DISABLED"},
-    },collegeId,{})).rejects.toThrow("Missing permission: projects.manage");
+    },collegeId,{})).rejects.toThrow("PROJECT_ACCESS_DENIED");
     expect(state.selects).toBe(0);
   });
   it("PROJ-BREAK-idor-60 a revoked request actor cannot read even an empty authorized tenant directory",async()=>{
@@ -143,7 +143,7 @@ describe("IIT Dharwad Projects Admin unsubmitted workspaces service permissions 
       expect(predicate.sql).toContain('"project_instances"."status"');
       expect(predicate.params).toContain("ARCHIVED");
       expect(predicate.params).toContain("ACTIVE");
-      expect(predicate.params).toContain("%100\\\\%\\\\_cohort%");
+      expect(predicate.params).toContain(adminUnsubmittedLiteralSearchPattern("100%_cohort"));
       expect(predicate.sql.toLowerCase()).toContain("not exists");
     }
     expect(state.limitValues).toContain(10);

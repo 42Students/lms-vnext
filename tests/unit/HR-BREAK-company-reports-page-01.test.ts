@@ -32,7 +32,14 @@ const college="123e4567-e89b-42d3-a456-426614174001";
 describe("HR-BREAK-company-reports-page-01: unauthorized, invalid, multiple college and retry",()=>{
  beforeEach(()=>{
   vi.clearAllMocks();
-  mocks.context.mockResolvedValue({user:{id:"hr-user"}});
+  mocks.context.mockResolvedValue({
+   user:{id:"hr-user",identityUid:"hr",platformStatus:"ACTIVE",systemRoles:[]},
+   membership:null,
+   recruiter:{userId:"hr-user",companyId:"employer",companyName:"Employer",
+    status:"ACTIVE",title:null,grants:[{id:"grant",collegeId:college,
+     collegeName:"College A",organizationId:"org",
+     companyRelationshipId:"relationship"}]},
+  });
   mocks.active.mockReturnValue(true);
   mocks.read.mockResolvedValue({status:"NO_ACCESS",choices:[]});
   mocks.redirect.mockImplementation(()=>{throw new Error("REDIRECT");});

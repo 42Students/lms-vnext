@@ -19,7 +19,7 @@ const textParts=(node:unknown):string[]=>{
   if(Array.isArray(node))return node.flatMap(textParts);
   if(!isValidElement(node))return [];
   const p=node.props as Record<string,unknown>;
-  return ["children","title","description","href","action"].flatMap(key=>textParts(p[key]));
+  return ["children","title","description","href","action","label"].flatMap(key=>textParts(p[key]));
 };
 beforeEach(()=>{state.role="ADMIN";});
 describe("Super Admin last-third authentication policy guard",()=>{

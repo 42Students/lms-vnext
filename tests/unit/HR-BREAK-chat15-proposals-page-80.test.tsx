@@ -29,8 +29,11 @@ function labels(node:ReactNode):string{
 function links(node:ReactNode):string[]{
  if(Array.isArray(node))return node.flatMap(links);
  if(!isValidElement(node))return [];
- const p=node.props as {href?:unknown;children?:ReactNode};
- return [...(typeof p.href==="string"?[p.href]:[]),...links(p.children)];
+ const p=node.props as {href?:unknown;children?:ReactNode;
+ items?:readonly {href?:string}[];actions?:ReactNode;action?:ReactNode};
+ return [...(typeof p.href==="string"?[p.href]:[]),
+ ...(p.items??[]).flatMap(item=>item.href?[item.href]:[]),
+ ...links(p.children),...links(p.actions),...links(p.action)];
 }
 describe("HR-RECRUITER-PAGE-80: persisted sent proposals are not approved drive requests",()=>{
  beforeEach(()=>{

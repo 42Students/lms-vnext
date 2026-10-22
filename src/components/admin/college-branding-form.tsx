@@ -316,7 +316,7 @@ export function CollegeBrandingForm({
               <Button key={mode} type="button" size="sm"
                 variant={previewMode===mode?"primary":"ghost"}
                 aria-pressed={previewMode===mode} onClick={()=>setPreviewMode(mode)}
-                className="min-h-9 px-3">
+                className="min-h-11 px-3 md:min-h-9">
                 {mode==="desktop"?"Desktop":"Mobile"}
               </Button>)}
           </div>
