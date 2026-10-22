@@ -10,7 +10,7 @@ describe("TPO-settings-audit-90 actor column",()=>{
   expect(tpoAuditActorLabel("  ")).toBe("System");
  });
  it("keeps each union source tenant-bound with a single actor field",()=>{
-  expect((source.match(/as actor_user_id/g)??[]).length).toBe(8);
+  expect((source.match(/as actor_user_id/g)??[]).length).toBe(9);
   expect(source).toContain("left join users actor on actor.id = record.actor_user_id");
   expect(source).toContain("actor.display_name::text as \"actorName\"");
  });
