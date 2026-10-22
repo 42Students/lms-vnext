@@ -147,9 +147,9 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
     <Link href={collegeHiringAnalyticsHref({})}
      className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Clear filters</Link>
    </div>:<div className="space-y-3">
-    {order.map(stage=><div key={stage} className={reportStyles.chartRow}>
+    {order.map(stage=><div key={stage} className={reportStyles["chartRow"]}>
       <div className="min-w-0 space-y-1">
-        <strong className={reportStyles.label}>{label(stage)}</strong>
+        <strong className={reportStyles["label"]}>{label(stage)}</strong>
         <span className="inline-flex rounded border border-[var(--lms-primary)] bg-primary-subtle px-2 py-0.5 text-xs font-semibold tabular-nums text-primary-text" title="Ever observed in this stage, from the selected applications and recorded transition history">
           {stage==="APPLIED"?"100% of applied":comparisonStage[stage]&&
            (cumulative[comparisonStage[stage]!]??0)>0
@@ -158,9 +158,9 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
             :Math.round(100*(cumulative[stage]??0)/total)+"% of applications"}
         </span>
       </div>
-      <MetricBar label={label(stage)} size="default" className={reportStyles.track}
+      <MetricBar label={label(stage)} size="default" className={reportStyles["track"]}
        value={cumulative[stage]??0} maximum={total} unit="applications" />
-      <span className={reportStyles.value+" tabular-nums"}>{cumulative[stage]??0}</span>
+      <span className={reportStyles["value"]+" tabular-nums"}>{cumulative[stage]??0}</span>
     </div>)}
    </div>}
    <p className="text-xs text-muted-foreground leading-5">The status tiles above count one current stage per application. This chart counts an application once in each stage recorded in its current state or saved stage history. Missing imported transitions are not guessed; skipped stages and rejected/withdrawn paths may not form a continuous conversion chain.</p>
