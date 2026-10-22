@@ -126,3 +126,8 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/modules/courses/learner-playback-settings.ts
 - Legacy: docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ClientSettingsController.java:52 progress save default15000 floor5000
 - Expected fix: Align default frequency (15 sec vs 5 sec) to avoid 3x client writes at 10k users.
+
+## Lane chat-2 fast verification disposition (2026-10-22)
+
+- OK (source inspected): G2-19-010-037 legacy status translation and skip reasons; G2-2-015-052 explicit choice truncation; G2-2-015-077 imported quiz flags filtered; G2-2-015-079 denominator clamping; G2-2-015-080 and G2-2-015-096 no-work/null average; G2-2-017-059 latest attempt before completion; G2-2-035-030 legacy 15-second save default.
+- DEFERRED (requires source/route/security or integration-level verification, not asserted OK): G2-19-001-044, G2-19-010-061, G2-2-006-055, G2-2-009-039, G2-2-012-017, G2-2-014-024, G2-2-017-028, G2-2-018-007, G2-2-018-018, G2-2-018-027, G2-2-023-004, G2-2-026-005, G2-2-026-009, G2-2-026-017, G2-2-026-027, G2-2-026-052, G2-2-035-001. These are not verified complete; handle through a dedicated implementation review.
