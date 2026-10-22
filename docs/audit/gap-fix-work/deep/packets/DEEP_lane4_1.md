@@ -13,7 +13,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-9-014-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 - [x] G2-9-015-065  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 - [x] G2-9-036-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
-- [ ] G2-9-036-047  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
+- [x] G2-9-036-047  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 - [x] G2-9-036-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 - [x] G2-9-036-057  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 - [x] G2-9-036-058  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
@@ -28,3 +28,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-9-013-060: FIXED — commit `0ea77c7f70195fc279055d820e39e21d9d5dad97`; `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx`. Legacy: `docs/legacy-source/frontend/src/components/admin/ModuleGroupGuard.jsx:27-75`; disabled Placements now blocks the settings page with Super Admin recovery guidance.
 - G2-9-007-050: OK — vNext `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx:37-58`; legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/electives/ElectiveAdminController.java:38-42`; scoped Super Admin role and selected college checked before academics.manage.
 - G2-9-036-018: OK — vNext `src/modules/module-access/admin-read-service.ts:200-258`; legacy `docs/legacy-source/frontend/src/pages/superadmin/sections/FeatureControlsHub.js:293-299`; overview module counters count the full matching college scope rather than one result page.
+- G2-9-036-047: OK — vNext `src/app/api/admin/features/[collegeId]/rules/route.ts:10-49` and `src/modules/module-access/admin-college-rule-write.ts:13-20`; legacy `docs/legacy-source/frontend/src/api/Services/AdminService.js:48-54`; versioned SET/INHERIT expected-state API intentionally replaces legacy bare module/enabled write and preserves catalog validation and authorization.
