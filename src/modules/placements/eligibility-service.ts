@@ -1470,6 +1470,40 @@ async function evaluatePlacementEligibilityInternal(
   };
 }
 
+/** Preload job-specific overrides once for the learner drive browse page.
+ * The caller supplies only published jobs already filtered to the active
+ * college, program, cohort and section. The evaluator still independently
+ * checks each audience and membership boundary before exposing a verdict.
+ */
+export async function evaluatePlacementEligibilityForLearnerJobs(
+ context:RequestContext,jobIds:readonly string[],db:Client|Tx=getDb(),
+):Promise<Map<string,PlacementEligibilityResult>>{
+ const membership=requireSelfLearner(context);
+ await requireLearnerPlacementAccess(context);
+ const ids=[...new Set(jobIds.map(id=>placementJobIdSchema.parse(id)))];
+ if(ids.length>10000)throw new RangeError("Too many learner placement jobs");
+ const result=new Map<string,PlacementEligibilityResult>();
+ if(!ids.length)return result;
+ // PostgreSQL parameters and DB pool concurrency remain bounded even for
+ // colleges with thousands of jobs; do not issue one override query per job.
+ const overrides=new Map<string,typeof placementEligibilityOverrides.$inferSelect>();
+ for(let offset=0;offset<ids.length;offset+=500){
+  const group=await db.select().from(placementEligibilityOverrides).where(and(
+   inArray(placementEligibilityOverrides.jobId,ids.slice(offset,offset+500)),
+   eq(placementEligibilityOverrides.membershipId,membership.id),
+   isNull(placementEligibilityOverrides.revokedAt),
+  ));
+  for(const row of group)overrides.set(row.jobId,row);
+ }
+ for(let offset=0;offset<ids.length;offset+=25){
+  const group=await Promise.all(ids.slice(offset,offset+25).map(async id=>
+   [id,await evaluatePlacementEligibilityInternal(context,id,undefined,db,
+      {override:overrides.get(id)??null})] as const));
+  for(const [id,eligibility] of group)result.set(id,eligibility);
+ }
+ return result;
+}
+
 /** Preload all active overrides in one scoped query before a college-scale
  * preview. Grade/evidence queries remain membership-scoped, in 50-row waves
  * to avoid overwhelming the database pool. */

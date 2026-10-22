@@ -52,7 +52,7 @@ import {placementJobIdSchema} from "./validation";
 import {getOwnLearnerApplicationCompany} from "./learner-application-detail-service";
 import {COMPANY_SHARE_COLUMNS,projectCompanyShareRows,safeCompanyShareColumns} from "./company-share/column-model";
 import {
-  evaluatePlacementEligibility,
+  evaluatePlacementEligibilityForLearnerJobs,
   isPlacementJobTargetCohort,
   isPlacementJobTargetSection,
   type PlacementEligibilityResult,
@@ -288,10 +288,11 @@ export async function listLearnerPlacementJobs(
     membership.collegeId, membership.id,
   );
 
-  const eligibilityByJob = new Map<
-    string,
-    Promise<PlacementEligibilityResult>
-  >();
+  const pendingJobIds=[...new Set(targetedRows
+    .filter(row=>!row.application?.id).map(row=>row.job.id))];
+  const eligibilityByJob=await evaluatePlacementEligibilityForLearnerJobs(
+    context,pendingJobIds,
+  );
 
   return Promise.all(
     targetedRows.map(async (row) => {
@@ -309,20 +310,9 @@ export async function listLearnerPlacementJobs(
           override: null,
         };
       } else {
-        let pending =
-          eligibilityByJob.get(row.job.id);
-        if (!pending) {
-          pending =
-            evaluatePlacementEligibility(
-              context,
-              row.job.id,
-            );
-          eligibilityByJob.set(
-            row.job.id,
-            pending,
-          );
-        }
-        eligibility = await pending;
+        const evaluated=eligibilityByJob.get(row.job.id);
+        if(!evaluated)throw new Error("Learner placement eligibility preview incomplete");
+        eligibility=evaluated;
       }
 
       const deadlinePassed = isPlacementApplicationDeadlinePassed(
