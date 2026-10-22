@@ -420,7 +420,7 @@ export function legacyCrmLeadCrosswalk(input:{collegeId:number;leadId:number},
 export function legacyCrmIstInstant(raw:string):Date|null{
   const pieces=/^([0-9]{4})-([0-9]{2})-([0-9]{2})[T ]([0-9]{2}):([0-9]{2})(?::([0-9]{2}))?$/.exec(raw.trim());
   if(!pieces)return null;
-  const [year,month,day,hour,minute,second]=pieces.slice(1).map(Number);
+  const [year=0,month=0,day=0,hour=0,minute=0,second=0]=pieces.slice(1).map(Number);
   const instant=new Date(Date.UTC(year,month-1,day,hour,minute,second||0)-330*60_000);
   const check=new Date(instant.getTime()+330*60_000);
   return check.getUTCFullYear()===year && check.getUTCMonth()+1===month &&
