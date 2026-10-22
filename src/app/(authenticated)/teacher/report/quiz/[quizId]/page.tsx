@@ -60,11 +60,6 @@ export default async function FacultyQuizReportPage({
 
   return (
     <div className="min-w-0 max-w-full space-y-6">
-      {report.rosterUnavailable ? <Banner tone="warning" role="status">
-        Couldn't load the student roster. Scores from authorized attempts remain visible, but the not-attempted list is unavailable.
-        <a href={"/teacher/report/quiz/"+encodeURIComponent(quizId)+(parsed.deliveryId?"?deliveryId="+encodeURIComponent(parsed.deliveryId):"")}
-          className="ml-2 font-semibold text-primary-text underline">Retry roster</a>
-      </Banner> : null}
       <PageHeader title={quiz.title}
         description={[quiz.courseName, quiz.lessonName].join(" · ")}
         actions={<div className="flex min-w-0 flex-wrap items-center gap-2">
@@ -103,14 +98,19 @@ export default async function FacultyQuizReportPage({
             Individual attempts &amp; question accuracy →
           </Link>
         </div>} />
-      <dl aria-label="Quiz report summary" className="grid min-w-0 grid-cols-2 gap-x-4 border-y border-[var(--lms-canvas-border)] sm:grid-cols-4">
+      {report.rosterUnavailable ? <Banner tone="warning" role="status">
+        Couldn't load the student roster. Scores from authorized attempts remain visible, but the not-attempted list is unavailable.
+        <a href={"/teacher/report/quiz/"+encodeURIComponent(quizId)+(parsed.deliveryId?"?deliveryId="+encodeURIComponent(parsed.deliveryId):"")}
+          className="ml-2 font-semibold text-primary-text underline">Retry roster</a>
+      </Banner> : null}
+      <dl aria-label="Quiz report summary" className="grid min-w-0 grid-cols-2 divide-x divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)] sm:grid-cols-4">
         {[
           ["Submitted", `${metrics.submittedLearners}/${metrics.eligibleLearners}`],
           ["Average score", metrics.averagePercent === null ? "—" : `${metrics.averagePercent}%`],
           ["Questions", metrics.questionCount],
           ["Due date", quiz.dueAt ? new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",month:"short",day:"numeric",year:"numeric"}).format(quiz.dueAt) : "—"],
         ].map(([label, value]) => (
-          <div key={label} className="min-w-0 py-4">
+          <div key={label} className="min-w-0 px-3 py-4 first:pl-0 last:pr-0">
             <dt className="text-xs font-semibold leading-5 text-muted-foreground">{label}</dt>
             <dd className={"mt-1 break-words text-xl font-semibold leading-7 tabular-nums "+(label==="Average score"&&metrics.averagePercent!==null&&metrics.averagePercent<60?"text-warning":"text-[var(--lms-heading)]")}>{value}</dd>
           </div>

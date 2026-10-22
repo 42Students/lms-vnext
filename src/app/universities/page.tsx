@@ -51,7 +51,7 @@ export default function UniversitiesPage(){
           Academic teams and placement cells work with the same college-scoped learners and verified role permissions.
         </p>
       </div>
-      <div className="min-w-0 rounded-[18px] border border-[#d9e8e9] bg-[#f5faf9] p-6 sm:p-8">
+      <div className="min-w-0 rounded-[18px] border border-[var(--lms-canvas-border)] bg-[var(--lms-primary-subtle)] p-6 sm:p-8">
         <h3 className="text-lg font-semibold text-[var(--lms-heading)]">What your campus can coordinate</h3>
         <ul className="mt-5 grid gap-4 text-sm text-[var(--lms-body-text)]">
           {["Academic setup and learner enrollment",
@@ -68,7 +68,7 @@ export default function UniversitiesPage(){
     <ul aria-label="Campus outcomes"
       className="mx-auto mt-8 flex max-w-[1180px] flex-wrap gap-3 px-5">
       {outcomes.map(outcome=><li key={outcome}
-        className="rounded-full border border-[#bfe4e6] bg-[#eaf9f9] px-4 py-2 text-sm font-semibold text-[var(--lms-primary-text)]">
+        className="rounded-full border border-[var(--lms-canvas-border)] bg-[var(--lms-primary-subtle)] px-4 py-2 text-sm font-semibold text-[var(--lms-primary-text)]">
         {outcome}
       </li>)}
     </ul>
@@ -77,7 +77,7 @@ export default function UniversitiesPage(){
     <MarketingFeatureGrid title="For the entire campus" items={capabilities}/>
   </div>
   <section aria-labelledby="university-journey-heading"
-    className="relative left-1/2 w-screen -translate-x-1/2 bg-[#f5faf9] py-14 min-[768px]:py-20">
+    className="relative left-1/2 w-screen -translate-x-1/2 bg-[var(--lms-primary-subtle)] py-14 min-[768px]:py-20">
     <div className="mx-auto max-w-[1180px] space-y-7 px-5">
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--lms-primary-text)]">Connected journey</p>
       <h2 id="university-journey-heading"
@@ -86,8 +86,8 @@ export default function UniversitiesPage(){
       </h2>
       <ol className="grid gap-3 sm:grid-cols-2 min-[992px]:grid-cols-3">
         {journey.map((stage,index)=><li key={stage.label}
-          className="relative flex min-w-0 items-start gap-4 rounded-[16px] border border-[#d9e8e9] bg-white p-5">
-          <span aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#d5f0f0] font-bold text-[var(--lms-primary-text)]">
+          className="relative flex min-w-0 items-start gap-4 rounded-[16px] border border-[var(--lms-canvas-border)] bg-white p-5">
+          <span aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--lms-primary-subtle)] font-bold text-[var(--lms-primary-text)]">
             {index+1}
           </span>
           <div className="min-w-0">

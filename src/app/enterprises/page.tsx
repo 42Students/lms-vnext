@@ -59,31 +59,31 @@ export default function EnterprisesPage(){
        "Review verified candidate information with permission-based recruiting access.",
        "Coordinate screening, interviews, offers and follow-up with placement teams.",
       ].map(point=><li key={point} className="flex items-start gap-3">
-       <span className="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-[#dcf4f3] text-[var(--lms-primary-text)]" aria-hidden="true">
+       <span className="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" className="size-3.5"><path d="m4 12 5 5L20 6"/></svg>
        </span>{point}
       </li>)}
      </ul>
     </div>
-    <aside aria-label="Enterprise outcomes" className="min-w-0 rounded-[18px] border border-[#e0ebeb] bg-[#f5faf9] p-6">
+    <aside aria-label="Enterprise outcomes" className="min-w-0 rounded-[18px] border border-[var(--lms-canvas-border)] bg-[var(--lms-primary-subtle)] p-6">
      <h3 className="text-lg font-semibold text-[var(--lms-heading)]">Outcomes</h3>
      <ul className="mt-5 flex flex-wrap gap-2.5">
       {["Higher Productivity","Faster Onboarding","Better Knowledge Retention",
        "Stronger Workforce Capabilities","Improved Business Performance"].map(label=>
-       <li key={label} className="rounded-full border border-[#c8e5e4] bg-white px-3.5 py-2 text-sm font-semibold text-[#175864]">{label}</li>)}
+       <li key={label} className="rounded-full border border-[var(--lms-canvas-border)] bg-white px-3.5 py-2 text-sm font-semibold text-[var(--lms-primary-text)]">{label}</li>)}
      </ul>
      <p className="mt-5 text-xs leading-5 text-[var(--lms-body-text)]">These are potential organizational outcomes, not measured guarantees.</p>
     </aside>
    </div>
   </section>
-  <section aria-labelledby="enterprise-integrations-heading" className="relative left-1/2 w-screen -translate-x-1/2 bg-[#f5faf9] px-5 py-14 min-[768px]:py-20">
+  <section aria-labelledby="enterprise-integrations-heading" className="relative left-1/2 w-screen -translate-x-1/2 bg-[var(--lms-primary-subtle)] px-5 py-14 min-[768px]:py-20">
    <div className="mx-auto max-w-[1180px] space-y-5">
     <h2 id="enterprise-integrations-heading" className="text-[clamp(1.5rem,3vw,2.125rem)] font-semibold text-[var(--lms-heading)]">Connected learning and hiring workflows</h2>
     <p className="max-w-[75ch] text-sm leading-6 text-[var(--lms-body-text)]">42 LMS workflows are available inside the platform. External GitHub, Slack, Teams, CRM and ERP integration is not advertised as a live feature.</p>
     <ul className="flex flex-wrap gap-3">
      {["Assessments","Assignments","Projects","Interviews","Courses","Learner profiles",
       "Candidate verification","Placement drives","Offers","Placement reporting"].map(label=>
-      <li key={label} className="rounded-full border border-[#c8dfdd] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--lms-heading)]">{label}</li>)}
+      <li key={label} className="rounded-full border border-[var(--lms-canvas-border)] bg-white px-4 py-2.5 text-sm font-semibold text-[var(--lms-heading)]">{label}</li>)}
     </ul>
    </div>
   </section>
