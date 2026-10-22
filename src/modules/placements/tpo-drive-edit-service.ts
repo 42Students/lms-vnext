@@ -1,7 +1,7 @@
 import "server-only";
 import {and,asc,eq,sql,inArray,or} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {placementJobRoleOptions,placementJobs,placementSeasons,placementJobEligibilityPolicies,placementApplications,placementRecruiterDriveRequests,collegeMemberships,users,inAppNotifications,activityEvents,cohorts,programs,departments,learnerProgramEnrollments,membershipRoles} from "@/db/schema";
+import {placementJobRoleOptions,placementJobs,placementSeasons,placementCompanyRelationships,placementCompanies,placementJobEligibilityPolicies,placementApplications,placementRecruiterDriveRequests,collegeMemberships,users,inAppNotifications,activityEvents,cohorts,programs,departments,learnerProgramEnrollments,membershipRoles} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {placementJobIdSchema} from "./validation";
@@ -28,6 +28,16 @@ export async function getTpoDriveEditState(context:RequestContext,rawJobId:unkno
  }).from(placementJobs).where(and(eq(placementJobs.id,jobId),
   eq(placementJobs.collegeId,collegeId))).limit(1);
  if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+ const [companyLink]=await getDb().select({
+  companyName:placementCompanies.name,companyStatus:placementCompanies.status,
+  relationshipStatus:placementCompanyRelationships.status,
+  archivedAt:placementCompanyRelationships.archivedAt,
+ }).from(placementCompanyRelationships)
+  .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
+  .where(and(eq(placementCompanyRelationships.id,job.companyRelationshipId),
+   eq(placementCompanyRelationships.collegeId,collegeId))).limit(1);
+ const companyReady=Boolean(companyLink&&companyLink.companyStatus==="ACTIVE"&&
+  companyLink.relationshipStatus==="ACTIVE"&&!companyLink.archivedAt);
  // An approved recruiter request belongs to its actual submitting recruiter,
  // even when the TPO was the user who authored the resulting draft. Company
  // membership alone is not proof of recruiter ownership.
@@ -92,7 +102,7 @@ export async function getTpoDriveEditState(context:RequestContext,rawJobId:unkno
   .innerJoin(users,eq(users.id,collegeMemberships.userId))
   .where(and(eq(placementApplications.jobId,jobId),eq(placementApplications.status,"SUBMITTED"),
    eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")));
- return {...job,recruiterOwned,
+ return {...job,recruiterOwned,companyName:companyLink?.companyName??null,companyReady,
   recruiterOwnershipSource:recruiterRequest?"APPROVED_RECRUITER_REQUEST":
    recruiterOwned?"LEGACY_RECRUITER_ORIGIN":"TPO_MANAGED",
   updatedAt:job.updatedAt.toISOString(),
@@ -108,8 +118,9 @@ export async function getTpoDriveEditState(context:RequestContext,rawJobId:unkno
   allowedProgramIds,availablePrograms,
   roleOptions,
   allowedCohortIds,availableBatches,applicantCount:Number(counter?.total??0),
-  editable:["DRAFT","PUBLISHED"].includes(job.status),
-  editingBlockedReason:["DRAFT","PUBLISHED"].includes(job.status)?null:"Drive is closed or cancelled",
+  editable:["DRAFT","PUBLISHED"].includes(job.status)&&companyReady,
+  editingBlockedReason:!companyReady?"Add the company. The linked employer is unavailable.":
+   ["DRAFT","PUBLISHED"].includes(job.status)?null:"Drive is closed or cancelled",
   setupWarnings:season?[]:["Could not load season information. Retry setup data."]};
 }
 export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:unknown){
@@ -121,6 +132,16 @@ export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:u
    .where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId)))
    .for("update").limit(1);
   if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+   const [liveCompany]=await tx.select({id:placementCompanyRelationships.id})
+    .from(placementCompanyRelationships)
+    .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
+    .where(and(eq(placementCompanyRelationships.id,job.companyRelationshipId),
+     eq(placementCompanyRelationships.collegeId,collegeId),
+     eq(placementCompanyRelationships.status,"ACTIVE"),
+     eq(placementCompanies.status,"ACTIVE"),
+     sql`${placementCompanyRelationships.archivedAt} is null`))
+    .for("share").limit(1);
+   if(!liveCompany)throw new PlacementsServiceError("PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND");
   if(job.updatedAt.toISOString()!==input.expectedUpdatedAt)
    throw new PlacementsServiceError("PLACEMENT_JOB_STALE");
   const [season]=await tx.select({status:placementSeasons.status}).from(placementSeasons)
