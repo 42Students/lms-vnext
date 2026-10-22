@@ -18,7 +18,7 @@ export function TpoBatchWorkspaceTabs({batchId,active,students}:{
   <Tabs ariaLabel="Batch eligibility tabs" value={active} renderPanel={false}
    items={primary.map(tab=>({
     value:tab.slug,label:tab.label,
-    count:tab.slug==="students"?students:undefined,
+    ...(tab.slug==="students" && students !== undefined ? {count:students} : {}),
     href:prefix+"/"+tab.slug,
    }))}/>
   <nav aria-label="Additional batch workspaces" className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 text-xs">
