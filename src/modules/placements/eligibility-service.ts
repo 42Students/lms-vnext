@@ -821,6 +821,7 @@ export async function setEligibilityOverride(
         createdByUserId: context.user.id,
       })
       .returning();
+    if (!row) throw new Error("Eligibility override insert did not return a row");
     await recordEligibilityOverrideAudit(tx,context,liveJob.collegeId,jobId,membershipId,
       row.id,"SET",input.reason,input.decision);
     return row;
