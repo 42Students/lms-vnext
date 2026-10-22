@@ -4,7 +4,8 @@ describe("Super Admin tenant lifecycle reads", () => {
   it("preserves Active default and lifecycle filters through clamped paging", () => {
     expect(tenantLifecycleQuerySchema.parse({}).status).toBe("ACTIVE");
     expect(tenantLifecycleHref({ status: "ARCHIVED", q: "College", page: 2 })).toBe("/admin/tenants?q=College&status=ARCHIVED&page=2");
-    expect(tenantLifecyclePaging(21, 999)).toEqual({ total: 21, totalPages: 2, page: 2, offset: 20 });
+    expect(tenantLifecyclePaging(21, 999)).toEqual({ total: 21, totalPages: 1, page: 1, offset: 0 });
+    expect(tenantLifecyclePaging(26, 999)).toEqual({ total: 26, totalPages: 2, page: 2, offset: 25 });
     expect(tenantLifecyclePaging(0, 999).page).toBe(1);
   });
   it("does not show setup links for an archived college or organization", () => {

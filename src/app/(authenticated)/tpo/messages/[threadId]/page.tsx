@@ -44,12 +44,12 @@ export default async function TpoRecruiterConversationPage({params}:{
   <TpoLiveRefresh intervalMs={4000} pulseHref="/api/placements/tpo/messages/pulse"/>
   <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
    <p className="text-sm text-muted-foreground">{data.thread.companyName??"General conversation"} · {data.thread.subject}</p>
-   <Link href={"/tpo/messages?thread="+encodeURIComponent(threadId)} className="hidden min-h-9 items-center font-semibold text-link underline lg:inline-flex">Open alongside inbox</Link>
+   <Link href={"/tpo/messages?thread="+encodeURIComponent(threadId)} className="hidden min-h-11 items-center md:min-h-9 font-semibold text-link underline lg:inline-flex">Open alongside inbox</Link>
   </div>
   {data.thread.accessEnded?<div role="alert" className="rounded-lg border border-warning bg-warning-subtle p-4 text-sm">
    <strong>Access ended</strong>
    <p className="mt-1">Recruiter access has ended. You can read this history, but cannot send new messages. Review recruiter access in settings to reactivate it.</p>
-   <Link className="mt-2 inline-flex min-h-9 items-center font-semibold text-link underline" href="/tpo/settings">Open settings</Link>
+   <Link className="mt-2 inline-flex min-h-11 items-center md:min-h-9 font-semibold text-link underline" href="/tpo/settings">Open settings</Link>
   </div>:null}
   <section role="log" aria-live="polite" aria-relevant="additions text" aria-busy={false} aria-label="Conversation messages" className="min-w-0 max-h-[70vh] space-y-3 overflow-y-auto rounded-lg border border-border bg-surface p-4">
    {data.messages.length===0?<EmptyState title="No messages yet." description="Write the first message to begin this conversation."/>:data.messages.map((item,index)=>

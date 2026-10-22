@@ -16,7 +16,7 @@ describe("Super Admin control-page overview final sprint",()=>{
   const features=read("src/app/(authenticated)/admin/features/page.tsx");
   const access=read("src/app/(authenticated)/admin/module-access/page.tsx");
   const settings=read("src/app/(authenticated)/admin/settings/page.tsx");
-  for(const word of ["Module availability","Optional modules by college","Colleges in scope","Projects on","Placements on"])
+  for(const word of ["Module availability","Optional modules by college","Colleges matching current filters","Projects on","Placements on"])
    expect(features).toContain(word);
   for(const word of ["Effective access","Optional module access hierarchy","Hierarchy scopes","Students in largest scope","Student overrides"])
    expect(access).toContain(word);
