@@ -166,7 +166,8 @@ export async function transitionMentorProjectSprint(
     const [release]=await tx.select({id:projectReleases.id,status:projectReleases.status})
       .from(projectReleases)
       .where(and(eq(projectReleases.id,sprint.releaseId),
-        eq(projectReleases.projectId,scope.project.id)))
+        eq(projectReleases.projectId,scope.project.id),
+         isNull(projectReleases.deletedAt)))
       .for("update").limit(1);
     if(!release || release.status==="SHIPPED") {
       throw new ProjectsServiceError("PROJECT_RELEASE_INVALID_STATE");
@@ -210,7 +211,8 @@ export async function transitionMentorProjectSprint(
         .set({status:"IN_PROGRESS",updatedAt:now})
         .where(and(eq(projectReleases.id,release.id),
           eq(projectReleases.projectId,scope.project.id),
-          ne(projectReleases.status,"SHIPPED")));
+          ne(projectReleases.status,"SHIPPED"),
+           isNull(projectReleases.deletedAt)));
       if(project.status==="PLANNED") await tx.update(projectInstances)
         .set({status:"ACTIVE",updatedAt:now})
         .where(and(eq(projectInstances.id,scope.project.id),

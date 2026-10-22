@@ -1,6 +1,6 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { projectInstances, projectReleases, projectSprints, projectTasks } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -46,7 +46,8 @@ export async function updateLearnerProjectTaskProgress(
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
 
     const [release] = await tx.select({ status: projectReleases.status }).from(projectReleases)
-      .where(and(eq(projectReleases.id, sprint.releaseId), eq(projectReleases.projectId, scope.project.id)))
+      .where(and(eq(projectReleases.id, sprint.releaseId), eq(projectReleases.projectId, scope.project.id),
+         isNull(projectReleases.deletedAt)))
       .for("share").limit(1);
     if (!release || !["PLANNED","IN_PROGRESS"].includes(release.status))
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
