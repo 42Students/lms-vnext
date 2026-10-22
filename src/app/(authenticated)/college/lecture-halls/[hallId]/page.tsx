@@ -40,7 +40,7 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
   }
   const bookingOptions = result?.hall.status === "ACTIVE"
     ? await listRecurringPreviewOptions(await getCurrentRequestContext()) : null;
-  return <div className="min-w-0 max-w-full space-y-4">
+  return <div className="min-w-0 max-w-full overflow-x-clip space-y-4">
     <PageHeader title={result?.hall.name ?? "Room availability"}
       description="Persisted scheduled bookings, not a guarantee of open slots or live room occupancy."
       actions={<PageBackLink href="/college/lecture-halls" label="Back to lecture halls"/>} />
