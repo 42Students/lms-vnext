@@ -41,7 +41,7 @@ export const collegeClassBaseQuerySchema = collegeStructureQuerySchema.extend({
   maximumCapacity: urlDecimalInt(1,100000).optional(),
 });
 
-export function withCollegeClassCapacityCheck<T extends z.ZodType<{minimumCapacity?:number;maximumCapacity?:number;capacityState:"ALL"|"CONFIGURED"|"UNSET";periodStartsOnOrAfter?:string;periodEndsOnOrBefore?:string}>>(schema:T){
+export function withCollegeClassCapacityCheck<T extends z.ZodType<{minimumCapacity?:number|undefined;maximumCapacity?:number|undefined;capacityState:"ALL"|"CONFIGURED"|"UNSET";periodStartsOnOrAfter?:string|undefined;periodEndsOnOrBefore?:string|undefined}>>(schema:T){
   return schema.refine(q=>q.minimumCapacity===undefined||q.maximumCapacity===undefined||q.minimumCapacity<=q.maximumCapacity,
     {path:["maximumCapacity"],message:"Maximum class capacity must not be below minimum"})
     .refine(q=>q.capacityState!=="UNSET"||(q.minimumCapacity===undefined&&q.maximumCapacity===undefined),
@@ -76,7 +76,7 @@ export const collegeElectiveBaseQuerySchema = collegeStructureQuerySchema.extend
 });
 
 export function withCollegeElectiveCreditsCheck<T extends z.ZodType<{
- minimumCredits?:number;maximumCredits?:number;semesterFrom?:number;semesterThrough?:number;minimumRequiredPicks?:number;maximumAllowedPicks?:number;periodStartsOnOrAfter?:string;periodEndsOnOrBefore?:string;semesterNumber?:number;periodState?:"ALL"|"LINKED"|"UNLINKED";periodCode?:string;periodLifecycle?:"ALL"|"PLANNED"|"ACTIVE"|"CLOSED";
+ minimumCredits?:number|undefined;maximumCredits?:number|undefined;semesterFrom?:number|undefined;semesterThrough?:number|undefined;minimumRequiredPicks?:number|undefined;maximumAllowedPicks?:number|undefined;periodStartsOnOrAfter?:string|undefined;periodEndsOnOrBefore?:string|undefined;semesterNumber?:number|undefined;periodState?:"ALL"|"LINKED"|"UNLINKED"|undefined;periodCode?:string|undefined;periodLifecycle?:"ALL"|"PLANNED"|"ACTIVE"|"CLOSED"|undefined;
 }>>(schema:T){
  return schema.refine(q=>q.minimumCredits===undefined||q.maximumCredits===undefined||q.minimumCredits<=q.maximumCredits,
   {path:["maximumCredits"],message:"Maximum elective credits must not be below minimum"})
