@@ -102,13 +102,12 @@ export function parseStaffNotificationSchedule(raw: string | null | undefined): 
         hourRaw === undefined || minuteRaw === undefined || secondRaw === undefined) {
       throw new Error("scheduledAt must be yyyy-MM-dd HH:mm:ss");
     }
-    const [year, month, day, hour, minute, second] = [
-      yearRaw, monthRaw, dayRaw, hourRaw, minuteRaw, secondRaw,
-    ].map(Number);
-    if (year === undefined || month === undefined || day === undefined ||
-        hour === undefined || minute === undefined || second === undefined) {
-      throw new Error("scheduledAt must be yyyy-MM-dd HH:mm:ss");
-    }
+    const year = Number(yearRaw);
+    const month = Number(monthRaw);
+    const day = Number(dayRaw);
+    const hour = Number(hourRaw);
+    const minute = Number(minuteRaw);
+    const second = Number(secondRaw);
     const localAsUtc = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
     if (localAsUtc.getUTCFullYear() !== year ||
         localAsUtc.getUTCMonth() + 1 !== month ||
@@ -136,10 +135,11 @@ export function parseStaffNotificationSchedule(raw: string | null | undefined): 
       hourRaw === undefined || minuteRaw === undefined) {
     throw new Error("scheduledAt must be yyyy-MM-dd HH:mm:ss");
   }
-  const [year, month, day, hour, minute] = [yearRaw, monthRaw, dayRaw, hourRaw, minuteRaw].map(Number);
-  if (year === undefined || month === undefined || day === undefined || hour === undefined || minute === undefined) {
-    throw new Error("scheduledAt must be yyyy-MM-dd HH:mm:ss");
-  }
+  const year = Number(yearRaw);
+  const month = Number(monthRaw);
+  const day = Number(dayRaw);
+  const hour = Number(hourRaw);
+  const minute = Number(minuteRaw);
   const second = timePart.length > 5 && timePart[5] === ":"
     ? Number(timePart.slice(6, 8)) : 0;
   const wallClock = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
