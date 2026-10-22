@@ -193,6 +193,15 @@ export function deriveBrandTokens(primaryHex: string): BrandTokens {
   return { primary, onPrimary, hover, text, subtle };
 }
 
+/** College-specific brand colours must never recolour the shared public sign-in
+ * screen. Legacy login_theme was intentionally retired so every college gets
+ * the same 42LMS teal authentication chrome; logos/background assets remain
+ * independent presentation data. Keep workspace preview colours available
+ * through brandStyleVariables instead of globally disabling branding. */
+export function publicLoginStyleVariables(): Record<string, string> {
+  return { "--auth-primary": "var(--lms-primary)" };
+}
+
 /**
  * CSS custom properties that re-theme a subtree. The Tailwind utilities read
  * the shadcn-style aliases (--primary, --ring, ...), which are resolved at
