@@ -94,6 +94,8 @@ describe("COURSES-BREAK-FACULTY-06 current-roster report anti-IDOR and consisten
   });
   expect(report.questions).toMatchObject([{correctCount:1,answeredCount:2,accuracyPercent:50}]);
   expect(report.latestAttempts.map(row=>row.membershipId)).toContain(foreignLearner);
+  expect(report.notAttemptedLearners).toEqual([]);
+  expect(report.attempts.filter(row=>row.membershipId===foreignLearner)).toHaveLength(1);
  });
  it("FAC-assessments-01 retains historical delivery submissions and excludes them only from missing-roster counts",async()=>{
   const report=await getFacultyAssignmentReport(actor,assignmentId,deliveryId);
