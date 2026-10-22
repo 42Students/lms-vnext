@@ -16,7 +16,7 @@ describe("Super Admin Academic Attendance",()=>{
  it("SA-academics-people-32 preserves exact legacy attendance-policy copy and accessible errors",()=>{
   const edit=read("src/components/admin/super-admin-attendance-settings-editor.tsx");
   for(const value of ["Attendance policy","Late marking allowed for","Minimum attendance",
-  "How long after a class ends attendance can be marked or corrected.",
+  "How long after a class ends attendance can be marked or corrected (hours).",
   "It does not block anyone from exams."]) expect(edit).toContain(value);
   expect(edit).toContain('role={failed?"alert":"status"}');
  });

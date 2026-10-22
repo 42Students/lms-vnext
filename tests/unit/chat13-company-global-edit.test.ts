@@ -18,7 +18,9 @@ describe("Super Admin canonical company editor",()=>{
   expect(code).toContain("assertPersistedPlatformPermission(tx,context");
   expect(code).toContain("date_trunc('milliseconds'");
   expect(code).toContain("recordActivityEventInTransaction(tx,context");
-  expect(code).toContain("Another company already uses this name.");
+  expect(code).toContain("eq(placementCompanies.version,current.version)");
+  expect(code).toContain("Two independent");
+  expect(code).toContain("unique domain constraint remains strict.");
  });
  it("SA-placements-projects-26 exposes a guarded, editable company form",()=>{
   const ui=read("src/components/admin/super-admin-company-edit.tsx");

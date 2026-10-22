@@ -18,7 +18,7 @@ describe("Super Admin create and edit drive safety",()=>{
   const code=source("src/components/placements/placement-job-create-form.tsx");
   expect(code).toContain('basePath+"/seasons"');
   expect(code).toContain("No active placement season.");
-  expect(code).toContain("disabled={pending || !activeSeason || uncertainCreate}");
+  expect(code).toContain("disabled={pending || !activeSeason || uncertainCreate || loadingCopy}");
   expect(code).toContain("The previous create request may have succeeded.");
  });
 });

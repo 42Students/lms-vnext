@@ -10,7 +10,11 @@ describe("LEARNER-home-courses-14 official class announcements",()=>{
  });
  it("LEARNER-home-courses-14 requires a validated learner and owned class",()=>{
   const service=read("src/modules/courses/learner-course-announcements-service.ts");
-  expect(service).toContain('member.roles.includes("LEARNER")');
+  const guard=read("src/modules/courses/learner-access-guard.ts");
+  expect(service).toContain("requireOwnCourseLearnerRead(context)");
+  expect(guard).toContain('membership.roles.includes("LEARNER")');
+  expect(guard).toContain('eq(membershipRoles.role,"LEARNER")');
+  expect(guard).toContain("owner.userId!==context.user.id");
   expect(service).toContain("eq(learnerProgramEnrollments.membershipId,member.id)");
   expect(service).toContain("eq(sectionEnrollments.sectionId,sectionId)");
   expect(service).toContain("if(!section");
@@ -34,9 +38,10 @@ describe("LEARNER-home-courses-14 official class announcements",()=>{
   expect(service).toContain("desc(db10Announcements.createdAt)");
   expect(service).toContain(".limit(2)");
   const overview=read("src/components/courses/learner-course-overview.tsx");
-  expect(overview).toContain("key: `announcement-${update.id}`");
-  expect(overview).toContain("title: update.title");
-  expect(overview).toContain('href: "/learn/notifications"');
+  expect(overview).toContain("courseUpdates.slice(0,2).map");
+  expect(overview).toContain("key:`announcement-${update.id}`");
+  expect(overview).toContain('title:update.title||"Announcement"');
+  expect(overview).toContain('href:"/learn/notifications"');
  });
  it("LEARNER-home-courses-14 degrades safely when the registered announcement table is unavailable",()=>{
   const service=read("src/modules/courses/learner-course-announcements-service.ts");
