@@ -57,7 +57,7 @@ export default async function CollegeAssignmentsPage({
   const data=dataResult.value;
   return <div className="min-w-0 overflow-x-clip space-y-4">
     <nav aria-label="Courses & Content" className="flex items-center gap-2 text-sm text-body">
-      <Link href="/college/courses" className="font-semibold text-primary-text hover:underline">Courses & Content</Link>
+      <Link href="/college/courses" className="font-semibold text-link hover:underline">Courses & Content</Link>
       <span aria-hidden="true">›</span><span aria-current="page">Assignments</span>
     </nav>
     <CollegeAssessmentAggregate data={data}
@@ -67,7 +67,7 @@ export default async function CollegeAssignmentsPage({
           <strong>Course list unavailable</strong>
           <p>Assignment creation options could not be loaded. Existing assignments remain visible.</p>
           <Link href={collegeAssessmentHref("ASSIGNMENT",query)}
-            className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+            className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline">
             Retry courses
           </Link>
         </Alert>}/>
