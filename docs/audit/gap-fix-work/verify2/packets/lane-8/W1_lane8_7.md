@@ -126,3 +126,32 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/modules/academics/college-section-mutation-model.ts
 - Legacy: Legacy _Class programId, batchId, name, description, lower/upper limit. (docs/legacy-source/frontend/src/pages/superadmin/sections/Classes.js:33-48; docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ClassController.java:75-106)
 - Expected fix: Document numeric→UUID migration including legacy lowerLimit and academic period link.
+
+
+## Lane chat-1 verification triage (2026-10-22)
+
+- G2-4-024-024: DEFERRED — needs targeted implementation and legacy parity inspection; not certified.
+- G2-4-024-026: DEFERRED — needs targeted implementation and legacy parity inspection; not certified.
+- G2-4-024-069: DEFERRED — needs targeted implementation and legacy parity inspection; not certified.
+- G2-4-024-076: DEFERRED — needs targeted implementation and legacy parity inspection; not certified.
+- G2-12-010-001: DEFERRED — needs targeted implementation and legacy parity inspection; not certified.
+- G2-12-010-010: DEFERRED — needs targeted implementation and legacy parity inspection; not certified.
+- G2-12-010-015: DEFERRED — needs targeted implementation and legacy parity inspection; not certified.
+- G2-12-010-020: DEFERRED — needs targeted implementation and legacy parity inspection; not certified.
+- G2-12-010-021: DEFERRED — needs targeted implementation and legacy parity inspection; not certified.
+- G2-12-010-030: DEFERRED — needs targeted implementation and legacy parity inspection; not certified.
+- G2-12-010-031: DEFERRED — needs targeted implementation and legacy parity inspection; not certified.
+- G2-12-010-041: DEFERRED — needs targeted implementation and legacy parity inspection; not certified.
+- G2-4-027-002: DEFERRED — needs targeted implementation and legacy parity inspection; not certified.
+- G2-4-027-038: DEFERRED — needs targeted implementation and legacy parity inspection; not certified.
+- G2-4-027-046: DEFERRED — needs targeted implementation and legacy parity inspection; not certified.
+- G2-4-027-072: DEFERRED — needs targeted implementation and legacy parity inspection; not certified.
+- G2-4-028-001: PARTIAL — legacy Team URL redirects to scoped canonical destinations; remaining contract not fully checked.
+- G2-13-031-087: DEFERRED — needs targeted implementation and legacy parity inspection; not certified.
+- G2-18-029-034: DEFERRED — needs targeted implementation and legacy parity inspection; not certified.
+- G2-5-003-012: DEFERRED — needs targeted implementation and legacy parity inspection; not certified.
+- G2-5-003-014: DEFERRED — needs targeted implementation and legacy parity inspection; not certified.
+- G2-5-003-019: PARTIAL — class directory has a page-size control; persistence requires separate review; remaining contract not fully checked.
+- G2-5-003-052: PARTIAL — recurrence UI explicitly supports an empty weekday selection as daily; remaining contract not fully checked.
+- G2-5-003-054: DEFERRED — needs targeted implementation and legacy parity inspection; not certified.
+- G2-5-003-075: DEFERRED — needs targeted implementation and legacy parity inspection; not certified.
