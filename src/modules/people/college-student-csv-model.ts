@@ -51,7 +51,11 @@ export const studentCsvRequestSchema = z.object({
   if (v.action === "IMPORT" && v.confirm !== true) {
     ctx.addIssue({ code: "custom", path: ["confirm"], message: "Explicit confirmation required" });
   }
-}).transform(v => ({ ...v, csv: v.csv ?? structuredStudentRowsAsCsv(v.students ?? [], v) }));
+}).transform(v => ({ ...v, csv: v.csv ?? structuredStudentRowsAsCsv(v.students ?? [], {
+  ...(v.programId !== undefined ? { programId: v.programId } : {}),
+  ...(v.cohortId !== undefined ? { cohortId: v.cohortId } : {}),
+  ...(v.sectionId !== undefined ? { sectionId: v.sectionId } : {}),
+}) }));
 
 const csvRowSchema = z.object({
   displayName: personDisplayNameSchema,
