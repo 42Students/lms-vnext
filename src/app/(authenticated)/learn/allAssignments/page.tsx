@@ -55,18 +55,23 @@ async function LearnerAssignmentsContent({searchParams}:{searchParams:Promise<As
     if (error instanceof AuthorizationError || error instanceof CoursesServiceError) throw error;
   }
   if (!overview) {
+    // Keep the same keyed client list mounted on a failed router.refresh().
+    // Its last successful rows remain visible but submission is disabled;
+    // a first-ever load failure still has a genuine error and Retry state.
+    const requestedCourse=typeof query.course==="string"?query.course:"";
     return (
-      <div className="min-w-0 max-w-full space-y-4">
+      <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
         <PageHeader title="All Assignments" />
-        <section role="alert" className="rounded-lg border border-border p-5">
-          <h2 className="font-semibold text-foreground">Assignments could not be loaded</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            This is a loading problem, not an empty list. Check your connection and try again.
-          </p>
-          <Link href="/learn/allAssignments?retry=1" className="mt-3 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-4 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
-            Retry
-          </Link>
-        </section>
+        <LearnerAssessmentOverview
+          key={requestedCourse||"all"}
+          initialCourseId={requestedCourse}
+          fileUploadsEnabled={assignmentFilesRuntimeEnabled()}
+          courses={[]}
+          items={[]}
+          kind="ASSIGNMENT"
+          loadError
+          snapshotNowMs={Date.now()}
+        />
       </div>
     );
   }
