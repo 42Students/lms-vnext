@@ -14,6 +14,10 @@ vi.mock("@/modules/projects/scope",()=>({
  },
 }));
 vi.mock("@/modules/permissions/policy",()=>({
+ can:(actor:RequestContext,permission:string,resource:{collegeId?:string;organizationId?:string})=>
+  permission==="projects.manage"&&actor.membership?.collegeId===resource.collegeId&&
+  actor.membership?.organizationId===resource.organizationId&&
+  actor.membership?.roles.includes("COLLEGE_ADMIN")===true,
  requirePermission:(_context:unknown,permission:string,resource:Record<string,unknown>)=>{
   state.permissions++;
   if(!state.permitted||permission!=="projects.manage"||

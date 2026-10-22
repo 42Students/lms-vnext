@@ -33,8 +33,10 @@ function renderText(node:ReactNode):string {
 function links(node:ReactNode):string[] {
  if(Array.isArray(node))return node.flatMap(links);
  if(!isValidElement(node))return [];
- const p=node.props as {href?:unknown,children?:ReactNode};
- return [...(typeof p.href==="string"?[p.href]:[]),...links(p.children)];
+ const p=node.props as {href?:unknown,children?:ReactNode,items?:readonly {href?:string}[]};
+ return [...(typeof p.href==="string"?[p.href]:[]),
+  ...(p.items?.flatMap(item=>typeof item.href==="string"?[item.href]:[])??[]),
+  ...links(p.children)];
 }
 
 describe("HR-BREAK-chat19-notifications-page: recruiter-scoped page behavior",()=>{
@@ -60,7 +62,7 @@ describe("HR-BREAK-chat19-notifications-page: recruiter-scoped page behavior",()
   {collegeId:[college,other]},{page:["1","2"]},{q:["A","B"]},
  ])("invalid filter %j renders recoverable error without reading a tenant inbox",async raw=>{
   const output=await view(raw);
-  expect(renderText(output)).toContain("Invalid inbox filter.");
+  expect(renderText(output)).toContain("Invalid inbox filter");
   expect(links(output)).toContain("/hr/notifications");
   expect(m.notifications).not.toHaveBeenCalled();
  });

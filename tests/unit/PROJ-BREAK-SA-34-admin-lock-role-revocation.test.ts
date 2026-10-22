@@ -77,6 +77,7 @@ describe("PROJ-BREAK-SA-34 persisted actor guard precedes project and submission
     const rows=[
       [{status:"ACTIVE"}],
       [submission],
+      [{id:submissionId}],
       [{reason:"Reviewer lock",actorMembershipId:membershipId}],
     ];
     let index=0;
@@ -86,7 +87,7 @@ describe("PROJ-BREAK-SA-34 persisted actor guard precedes project and submission
     }));
     const result=await lockAdminProjectSubmission(actor,projectId,submissionId,{reason:"Reviewer lock"});
     expect(result).toBe(submission);
-    expect(index).toBe(3);
+    expect(index).toBe(4);
     expect(update).not.toHaveBeenCalled();
     expect(insert).not.toHaveBeenCalled();
     expect(mocks.recordActivityEventInTransaction).not.toHaveBeenCalled();
@@ -96,6 +97,7 @@ describe("PROJ-BREAK-SA-34 persisted actor guard precedes project and submission
     const rows=[
       [{status:"ACTIVE"}],
       [{id:submissionId,status:"APPROVED",lockedAt:new Date("2099-01-01T00:00:00Z"),version:3}],
+      [{id:submissionId}],
       [{reason:"First lock",actorMembershipId:membershipId}],
     ];
     let index=0;
