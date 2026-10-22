@@ -56,7 +56,7 @@ const strictPageNumber=(min:number,max:number,fallback:number)=>z.union([
 
 const projectAdminQuerySchema = z.strictObject({
   riskBucket: z.enum(["STALLED", "BLOCKER", "REVIEW"]).optional(),
-  riskSort: z.enum(["INACTIVE","INACTIVE_DESC","WORKSPACE","SEVERITY"]).optional(),
+  riskSort: z.enum(["INACTIVE","INACTIVE_DESC","WORKSPACE","WORKSPACE_DESC","SEVERITY"]).optional(),
   q: z.string().trim().max(120).optional(),
   status: z
     .enum([
@@ -664,6 +664,7 @@ export async function listProjectAdminRiskQueue(
         .where(where)
         .orderBy(
           query.riskSort==="WORKSPACE"?asc(projectInstances.title):
+          query.riskSort==="WORKSPACE_DESC"?desc(projectInstances.title):
           query.riskSort==="SEVERITY"?sql`${reasonCount} desc`:
           query.riskSort==="INACTIVE_DESC"?desc(lastActivityAt):
             asc(lastActivityAt),
