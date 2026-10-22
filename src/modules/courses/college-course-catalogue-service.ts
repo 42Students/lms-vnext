@@ -132,7 +132,8 @@ export async function searchAuthorizedCourseSuggestions(
   const grants=await listLearnerCourseDeliveries(context);
   authorizedIds=[...new Set(grants.map(row=>row.courseId))];
  }else if(!admin){
-  requirePermission(context,"courses.read",{collegeId:collegeId!,organizationId:orgId});
+  if(!collegeId)throw new AuthorizationError("courses.read");
+  requirePermission(context,"courses.read",{collegeId,...(orgId!==undefined?{organizationId:orgId}:{})});
  }
  if(authorizedIds?.length===0)return [];
  const text=input.q.toLocaleLowerCase("en-IN");
