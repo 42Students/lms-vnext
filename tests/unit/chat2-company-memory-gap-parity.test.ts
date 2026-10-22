@@ -7,7 +7,7 @@ describe("TPO Company Memory legacy parity",()=>{
   for(const label of ['PUBLISHED:"Live"','CLOSED:"Completed"','DRAFT:"Draft"',
    'REQUEST:"Sent for review"','CANCELLED:"Cancelled"'])
    expect(grid).toContain(label);
-  expect(grid).toContain("statusLabel(drive.status)");
+  expect(grid).toContain("read:row=>statusLabel(row.status)");
  });
  it("TPO-companies-21 never exposes DB migration identifiers or raw not-found jargon",()=>{
   expect(source).toContain('phase: "not-found", message: "Company not found"');
