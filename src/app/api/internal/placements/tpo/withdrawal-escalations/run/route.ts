@@ -8,7 +8,7 @@ export const runtime="nodejs";
 export const dynamic="force-dynamic";
 /** POST-only scheduler using the existing TPO scheduler secret; GET cannot send notifications. */
 export async function POST(request:Request){
- const secret=process.env.TPO_NOTICE_SCHEDULER_SECRET??"";
+ const secret=process.env["TPO_NOTICE_SCHEDULER_SECRET"]??"";
  const provided=request.headers.get("x-tpo-scheduler-key")??"";
  // The scheduler credential is mandatory in each deployment. Distinguish a
  // missing worker configuration from a bad caller key without exposing either.
