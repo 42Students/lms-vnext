@@ -261,7 +261,7 @@ export function FacultyCourseRoster({
                   <p className="text-xs text-body">Contact: {phoneLabel(learner.phoneE164)}</p>
                   {deliveryId?<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+
                     "/students/"+encodeURIComponent(learner.membershipId)}
-                    className="inline-flex min-h-9 items-center text-xs font-semibold text-link underline">
+                    className="inline-flex min-h-11 items-center text-xs font-semibold text-link underline md:min-h-9">
                     View student details
                   </Link>:null}
                 </div>
@@ -287,7 +287,7 @@ export function FacultyCourseRoster({
             <div aria-hidden="true" className={"mx-auto flex h-24 w-24 items-center justify-center rounded-full text-2xl font-semibold "+(preview?avatarTint(preview):"bg-primary-subtle text-primary-text")}>
               {preview?initials(nameOf(preview)):""}
             </div>
-
+            <p className="text-sm text-muted-foreground" role="status">No photo is available for this student.</p>
           </div>}
       </Dialog>
     </div>
