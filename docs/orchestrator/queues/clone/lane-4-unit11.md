@@ -8,7 +8,7 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [x] `tests/unit/chat4-college-verification-misc-gap-closure.test.ts` (2 failing)
 - [ ] `tests/unit/chat7-superadmin-course-tenant-bulk.test.ts` (1 failing)
 - [ ] `tests/unit/graceful-raw-error-scan.test.ts` (1 failing)
-- [ ] `tests/unit/tpo-team-legacy-people-chat2.test.ts` (1 failing)
+- [x] `tests/unit/tpo-team-legacy-people-chat2.test.ts` (1 failing)
 
 ## Failures (from CI log)
 
@@ -198,3 +198,5 @@ AssertionError: expected 'import { redirect } from "next/naviga…' to contain '
 
 - `UX-teacher-shared-surfaces.test.ts`: FIXED production disclosure minimum 44px via `src/components/ui/disclosure.tsx` (2adc636); native keyboard/summary behavior retained.
 - `chat4-college-verification-misc-gap-closure.test.ts`: FIXED obsolete anchor-markup assertion to check actual `onClick={retry}` button path (aa6beaa); retained profile uses `router.refresh()` and disables the button while pending.
+
+- `tpo-team-legacy-people-chat2.test.ts`: FIXED with explicit people/members/roster branch assertion; `src/app/(authenticated)/tpo/team/page.tsx` redirects those bookmarks to scoped Settings > People while conversation deep links remain under Messages (5628cf3).
