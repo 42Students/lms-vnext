@@ -110,6 +110,7 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
   <form method="get" action="/admin/inbound-mail" role="search" aria-label="Search inbound mail"
     className="flex min-w-0 flex-1 flex-wrap items-end gap-2">
    <Input type="hidden" name="status" value={parsed.data.status}/>
+   {parsed.data.routingStatus?<Input type="hidden" name="routingStatus" value={parsed.data.routingStatus}/>:null}
    <label className="min-w-0 w-full flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-[300px] sm:max-w-[300px]">
     <span className="sr-only">Search sender, subject or text</span>
     <Input name="q" type="search" defaultValue={parsed.data.q} maxLength={120}
