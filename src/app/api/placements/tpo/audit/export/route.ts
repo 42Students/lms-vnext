@@ -43,8 +43,9 @@ export async function GET(request:Request){
   }
   const selectedIds=new Set(selected);
   const filtered=selected.length?items.filter(row=>selectedIds.has(row.id)):items;
-  const safeCell=(value:string)=>{
-    const safe=/^\s*[=+\-@\t\r]/.test(value)?"'"+value:value;
+  const safeCell=(value:string|undefined)=>{
+    const text=value??"";
+    const safe=/^\s*[=+\-@\t\r]/.test(text)?"'"+text:text;
     return '"'+safe.replaceAll('"','""')+'"';
   };
   const exported=columnsInput===null&&selected.length===0?
@@ -61,7 +62,7 @@ export async function GET(request:Request){
        }).format(new Date(row.occurredAt))+" IST";
       }
      }).map(safeCell).join(","))].join("\r\n")+"\r\n";
-  const body=format==="xlsx"?new Uint8Array(tpoAuditXlsx(filtered,chosen)):"\uFEFF"+exported;
+  const body=format==="xlsx"?new Blob([Uint8Array.from(tpoAuditXlsx(filtered,chosen))]):"\uFEFF"+exported;
   return new Response(body,{headers:{
    "Content-Type":format==="xlsx"?"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="' + gridExportFilename("audit-log", format) + '"',

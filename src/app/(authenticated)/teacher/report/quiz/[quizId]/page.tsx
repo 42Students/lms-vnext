@@ -72,7 +72,7 @@ export default async function FacultyQuizReportPage({
                 <FacultyReportDownload
         kind="quiz"
         incomplete={facultyReportIsIncomplete({kind:"quiz",eligibleLearners:metrics.eligibleLearners??0,
-          submittedLearners:metrics.submittedLearners,questionCount:metrics.questionCount,
+          submittedLearners:metrics.submittedLearners,questionCount:metrics.questionCount??0,
           rosterReadFailed:metrics.eligibleLearners===null})}
         title={quiz.title}
         subtitle={[quiz.courseName, quiz.sectionName, quiz.lessonName].join(" · ")}
