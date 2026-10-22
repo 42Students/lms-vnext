@@ -163,22 +163,22 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
    </label>
   </div>
   <details className="text-[13px] leading-5 text-[var(--lms-muted-text)]"><summary className="w-fit cursor-pointer font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] max-[767px]:flex max-[767px]:min-h-11 max-[767px]:items-center">How to use this calendar</summary><p className="mt-[var(--lms-space-2)] max-w-prose">Click an empty hour to add a recruiter follow-up, or drag an existing follow-up onto another hour to move it. Events with an unknown duration use a 30-minute visual marker; it is not a booked time range. Overlapping events share their time lane.</p></details>
-  <div tabIndex={0} role="region" aria-label="Recruiter follow-up weekly calendar, scroll horizontally for more days" className={"overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,black_0%,black_94%,transparent_100%)] bg-surface focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] "+weekStyles.grid}>
-   <div className={"grid min-w-[56rem] "+weekStyles.weekColumns}>
-    <div className={"sticky left-0 z-10 border-b border-r bg-surface "+weekStyles.corner}>IST</div>
-    {days.map(day=><div key={day} className={"border-b border-r text-center text-xs font-semibold "+weekStyles.dayHead}>
+  <div tabIndex={0} role="region" aria-label="Recruiter follow-up weekly calendar, scroll horizontally for more days" className={"overflow-x-auto overscroll-x-contain [mask-image:linear-gradient(to_right,black_0%,black_94%,transparent_100%)] bg-surface focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] "+weekStyles["grid"]}>
+   <div className={"grid min-w-[56rem] "+weekStyles["weekColumns"]}>
+    <div className={"sticky left-0 z-10 border-b border-r bg-surface "+weekStyles["corner"]}>IST</div>
+    {days.map(day=><div key={day} className={"border-b border-r text-center text-xs font-semibold "+weekStyles["dayHead"]}>
      {label(day)}{day===today?" · Today":""}{blocked.has(day)?" · Blocked":""}
     </div>)}
     <div className="relative border-r border-border bg-surface" style={{height}}>
      {Array.from({length:LAST-FIRST},(_,offset)=><div key={offset} className="absolute w-full border-t border-border"
-       style={{top:offset*HEIGHT}}><span className={weekStyles.hourMarker}>{clock(FIRST+offset)}</span></div>)}
+       style={{top:offset*HEIGHT}}><span className={weekStyles["hourMarker"]}>{clock(FIRST+offset)}</span></div>)}
     </div>
     {days.map(day=>{
      const positioned=(byDay.get(day)??[]).filter(e=>!filter.trim()||
       [e.title,e.companyName,e.roundKind??""].some(x=>x.toLocaleLowerCase("en-IN").includes(filter.trim().toLocaleLowerCase("en-IN"))));
      const offHours=positioned.filter(e=>e.outsideHours);
      const inHours=positioned.filter(e=>!e.outsideHours);
-     return <div key={day} className={"relative border-r "+weekStyles.dayColumn} style={{height}} aria-label={label(day)+" events"}>
+     return <div key={day} className={"relative border-r "+weekStyles["dayColumn"]} style={{height}} aria-label={label(day)+" events"}>
       {Array.from({length:LAST-FIRST},(_,offset)=><Button variant="ghost" key={offset} type="button"
        aria-label={"Add follow-up on "+label(day)+" at "+clock(FIRST+offset)}
        disabled={!canCreate||saving} onClick={clickEvent=>void open(day,FIRST+offset,clickEvent.currentTarget)}
@@ -187,10 +187,10 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
         event.preventDefault();const followupId=event.dataTransfer.getData("application/x-tpo-followup");
         if(followupId)void moveFollowup(followupId,day,FIRST+offset);
        }}
-       className={"absolute inset-x-0 z-0 border-b px-1 text-left focus-visible:z-20 "+weekStyles.slot}
+       className={"absolute inset-x-0 z-0 border-b px-1 text-left focus-visible:z-20 "+weekStyles["slot"]}
        style={{top:offset*HEIGHT,height:HEIGHT}}/>)}
       {day===today&&nowMinutes>=FIRST*60&&nowMinutes<=LAST*60?
-       <div aria-label="Current time" className={"pointer-events-none absolute inset-x-0 border-t-2 "+weekStyles.nowLine}
+       <div aria-label="Current time" className={"pointer-events-none absolute inset-x-0 border-t-2 "+weekStyles["nowLine"]}
         style={{top:(nowMinutes-FIRST*60)/60*HEIGHT}}/>:null}
       {inHours.map(event=>{
        const top=Math.max(0,(event.startMinute-FIRST*60)/60*HEIGHT);
@@ -206,7 +206,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
          aria-label={"Move follow-up: "+event.title} data-event-kind={event.kind}
          draggable onDragStart={dragEvent=>{dragEvent.dataTransfer.setData("application/x-tpo-followup",event.followupId!);dragEvent.dataTransfer.effectAllowed="move";}}
          onClick={()=>setMove({id:event.followupId!,currentIst:calendarDueAtToIstLocal(new Date(event.startsAt))})}
-         style={position} className={"absolute z-10 overflow-hidden px-1 py-0.5 text-left "+tone(event.kind)+" "+weekStyles.event+" [min-height:44px] !max-w-none !rounded-[var(--lms-control-radius)]"}>{inner}</Button>:
+         style={position} className={"absolute z-10 overflow-hidden px-1 py-0.5 text-left "+tone(event.kind)+" "+weekStyles["event"]+" [min-height:44px] !max-w-none !rounded-[var(--lms-control-radius)]"}>{inner}</Button>:
        event.href?<Link key={event.id} href={event.href} title={event.companyName+" · "+event.title} data-event-kind={event.kind}
         draggable={canCreate&&Boolean(event.followupId)}
         onDragStart={dragEvent=>{
@@ -214,8 +214,8 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
          dragEvent.dataTransfer.setData("application/x-tpo-followup",event.followupId);
          dragEvent.dataTransfer.effectAllowed="move";
         }}
-        style={position} className={"absolute z-10 overflow-hidden px-1 py-0.5 "+tone(event.kind)+" "+weekStyles.event}>{inner}</Link>:
-       <div key={event.id} data-event-kind={event.kind} style={position} className={"absolute z-10 overflow-hidden px-1 py-0.5 "+tone(event.kind)+" "+weekStyles.event}>{inner}</div>;
+        style={position} className={"absolute z-10 overflow-hidden px-1 py-0.5 "+tone(event.kind)+" "+weekStyles["event"]}>{inner}</Link>:
+       <div key={event.id} data-event-kind={event.kind} style={position} className={"absolute z-10 overflow-hidden px-1 py-0.5 "+tone(event.kind)+" "+weekStyles["event"]}>{inner}</div>;
       })}
       {offHours.length?<div className="absolute inset-x-0 bottom-0 z-20 space-y-1 border-t border-border bg-surface/95 p-1">
        {offHours.map(e=><p key={e.id} className="truncate text-xs min-w-0" title={e.title}>Outside displayed hours · {e.title}</p>)}

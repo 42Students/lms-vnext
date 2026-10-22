@@ -39,8 +39,8 @@ export function TpoTrustToggle({
       const receipt:unknown=await response.json().catch(()=>null);
       const saved=receipt&&typeof receipt==="object"&&!Array.isArray(receipt)
         ?receipt as Record<string,unknown>:null;
-      if(!saved||saved.relationshipId!==relationshipId||saved.isTrusted!==nextTrusted||
-         typeof saved.changedAt!=="string")
+      if(!saved||saved["relationshipId"]!==relationshipId||saved["isTrusted"]!==nextTrusted||
+         typeof saved["changedAt"]!=="string")
         throw Error("Trust update could not be confirmed. Refresh to review.");
       setReview(false);setReason("");setSuccess(nextTrusted?"Company trust updated.":"Company trust removed.");router.refresh();
     }catch(caught){

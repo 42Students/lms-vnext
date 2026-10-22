@@ -606,7 +606,7 @@ export function TpoRoundDriveDayReadOnly({
       <ConfirmDialog open={gateTarget!==null}
         onOpenChange={next=>{if(!next&&!gateBusy)setGateTarget(null);}}
         title="Mark present?"
-        description={gateTarget?"Confirm check-in for "+gateTarget.displayName+" ("+(gateTarget.rollNumber??"no roll")+")?":undefined}
+        {...(gateTarget ? { description: "Confirm check-in for "+gateTarget.displayName+" ("+(gateTarget.rollNumber??"no roll")+")?" } : {})}
         confirmLabel="Mark present" cancelLabel="Cancel" confirmVariant="primary" pending={gateBusy}
         onConfirm={()=>{
           const student=gateTarget;
