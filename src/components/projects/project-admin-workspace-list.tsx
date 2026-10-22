@@ -50,18 +50,6 @@ function tone(status:string,riskReasons:readonly string[]=[]){
   return "neutral" as const;
 }
 
-function label(status: string) {
-  return status
-    .toLowerCase()
-    .split("_")
-    .map(
-      (part) =>
-        part.charAt(0).toUpperCase() +
-        part.slice(1),
-    )
-    .join(" ");
-}
-
 function TemplateLink({item,basePath}:{item:ProjectAdminWorkspaceListItem;basePath:string}){
   if(item.templateId)return <span className="text-xs text-body">Template: {item.templateTitle?.trim()||"Assigned template"}</span>;
   return <Link href={basePath+"/"+encodeURIComponent(item.id)+"/summary?from=workspaces&openTemplate=1"}
@@ -152,10 +140,10 @@ export function ProjectAdminWorkspaceList({
       {key:"progress",header:"Progress",mobilePriority:"secondary",cell:item=>{
         const progress=safeProjectProgressPercent(item.progressPercent);
         return progress===null ? <span className="text-sm text-muted-foreground">Progress unavailable</span> :
-        <div className={styles.inlineCell}>
-          <MetricBar role="progressbar" className={styles.inlineTrack}
+        <div className={styles["inlineCell"]}>
+          <MetricBar role="progressbar" {...(styles["inlineTrack"] === undefined ? {} : { className: styles["inlineTrack"] })}
             label={item.title+" progress"} value={progress} maximum={100} unit="percent" />
-          <span className={styles.inlinePercent}>{progress}%</span>
+          <span className={styles["inlinePercent"]}>{progress}%</span>
         </div>;
       }},
       {key:"due",header:"Due",mobilePriority:"secondary",cell:item=>item.dueLabel??"—"},
