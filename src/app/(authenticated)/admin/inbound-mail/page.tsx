@@ -44,8 +44,12 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
    Array.isArray(params[key]));
  const parsed=inboundMailListQuerySchema.safeParse({
   status:one(params.status)??(oldShow==="POSTED"||oldShow==="REPLIES"?"ALL":mappedShow??"NEW"),
-  kind:optional(params.kind)??(oldShow==="REPLIES"?"REPLY":undefined),
-  routingStatus:optional(params.routingStatus)??(oldShow==="POSTED"?"POSTED":undefined),
+  // In the historical inbox "Replies" meant posted to a conversation,
+  // including manually marked replies; it was NOT every email of kind REPLY.
+  // vNext stores actual posting independently from human triage.
+  kind:optional(params.kind),
+  routingStatus:optional(params.routingStatus)??((oldShow==="POSTED"||
+    oldShow==="REPLIES")?"POSTED":undefined),
   q:one(params.q),recipient:optional(params.recipient),page:one(params.page),
  });
  if(repeated||(oldShow&&!mappedShow)||(oldShow&&params.status!==undefined)||!parsed.success)return <div className="min-w-0 space-y-4 md:space-y-6">{header}
@@ -84,8 +88,9 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
   {value:"TRIAGED",label:"Being handled",count:null}] as const;
  return <div className="min-w-0 space-y-4 md:space-y-6">{header}
   {!INBOUND_ROUTING_METADATA_READY?<Alert tone="info">
-    Posted to conversations cannot be shown yet: the verified routing outcome is not stored in this inbox.
-    Being handled tracks manual triage only; it does not confirm a recruiter reply was delivered.
+    Automatic posting and manual triage are separate states. Historical manually
+    marked replies require migration evidence; only verified posted outcomes are shown.
+    Being handled does not confirm a recruiter reply was delivered.
     Only persisted inbox messages appear here.
   </Alert>:null}
   <div className="flex min-w-0 flex-wrap items-center gap-3 border-b border-[var(--lms-canvas-border)] pb-3">

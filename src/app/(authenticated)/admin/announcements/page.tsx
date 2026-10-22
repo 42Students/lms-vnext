@@ -17,7 +17,7 @@ import { Banner } from "@/components/ui/banner";
 import { ErrorState } from "@/components/ui/error-state";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import {SuperAdminCollegeBroadcastForm} from "@/components/announcements/super-admin-college-broadcast-form";
-import {getSuperAdminBroadcastReceiptCounts} from "@/modules/announcements/super-admin-broadcast-receipts-service";
+import {getSuperAdminBroadcastReceiptCounts,getSuperAdminBroadcastGroupReceiptCounts} from "@/modules/announcements/super-admin-broadcast-receipts-service";
 import {listSuperAdminBroadcastColleges} from "@/modules/announcements/super-admin-college-broadcast-service";
 import {
   listAnnouncementsForAdmin,
@@ -153,6 +153,17 @@ export default async function AnnouncementsPage({
       return {ok:false as const,value:new Map<string,{delivered:number;read:number;cellRead:number}>()};
     });
   const receipts=receiptResult.value;
+  // A page may contain only some of one broadcast's recipient colleges.
+  // Resolve all copies by their immutable audit group before claiming N of M.
+  const broadcastGroupReceipts=await getSuperAdminBroadcastGroupReceiptCounts(context,
+    page.items.filter(item=>item.senderType==="SUPER_ADMIN"&&
+      item.receiverType==="COLLEGE").map(item=>item.id))
+    .catch(error=>{
+      if(error instanceof AuthorizationError)throw error;
+      return new Map<string,{broadcastGroupKey:string;targetColleges:number;
+       cellRead:number;deliveredRecipients:number;readRecipients:number;
+       collegeReadFraction:number;collegeReadPercent:number}>();
+    });
   // Only SUPER_ADMIN-to-COLLEGE rows belong to the legacy Placement cells feed.
   // The persisted broadcast identity prevents grouping unrelated notices with equal copy.
   const groupedBroadcasts = new Map<string, typeof page.items>();
@@ -197,7 +208,11 @@ export default async function AnnouncementsPage({
         ) : (
           <div className="divide-y divide-border border-y border-border">
             {broadcastFeed.map(({id, copies, first})=>{
-              const reached = copies.reduce((total,copy)=>total+(receipts.get(copy.id)?.cellRead ?? 0),0);
+              const groupReceipt=copies.map(copy=>broadcastGroupReceipts.get(copy.id))
+                .find((entry):entry is NonNullable<typeof entry>=>entry!==undefined);
+              const reached=groupReceipt?.cellRead??copies.reduce((total,copy)=>
+                total+(receipts.get(copy.id)?.cellRead??0),0);
+              const target=groupReceipt?.targetColleges??copies.length;
               const ended = first.expiresAt !== null && first.expiresAt.getTime() <= now;
               const state = first.deletedAt ? "Deleted" : ended ? "Ended"
                 : first.scheduledAt && first.scheduledAt.getTime() > now ? "Scheduled" : "Live";
@@ -217,12 +232,17 @@ export default async function AnnouncementsPage({
                 {first.buttonLabel && first.buttonUrl && /^https:\/\/[^\s]+$/i.test(first.buttonUrl)
                   ? <a href={first.buttonUrl} className="mt-2 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline">{first.buttonLabel} ↗</a> : null}
                 <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted-foreground">
-                  <span>Sent to {copies.length} placement {copies.length === 1 ? "cell" : "cells"} on this page</span>
-                  <span>{reached} of {copies.length} placement cells read on this page</span>
+                  <span>{groupReceipt?
+                    "Sent to "+target+" placement "+(target===1?"cell":"cells"):
+                    "Showing "+copies.length+" placement "+(copies.length===1?"cell":"cells")+" on this page"}</span>
+                  <span>{reached} of {target} placement cells read{groupReceipt?"":" on this page"}</span>
                   {first.expiresAt ? <span>Show until {first.expiresAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</span> : null}
                   {first.updatedAt.getTime() !== first.createdAt.getTime()
                     ? <span>Updated {first.updatedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</span> : null}
                 </div>
+                {groupReceipt&&target>0?<MetricBar role="progressbar"
+                  label={first.title+" placement cells read"} className={chartStyles.track+" mt-3 w-full"}
+                  value={reached} maximum={target} unit="placement cell"/>:null}
               </article>;
             })}
           </div>
