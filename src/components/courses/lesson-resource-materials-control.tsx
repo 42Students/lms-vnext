@@ -6,6 +6,7 @@ import {useEffect,useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import {facultyContentExternalHref} from "@/modules/courses/faculty-content-preview-model";
+import {LessonResourceFileUploader} from "./lesson-resource-file-uploader";
 
 type Material={id:string;kind:string;title:string;notes:string|null;externalUrl:string|null;
  originalName:string|null;sizeBytes:number|null;sequence:number;uploadStatus:string};
@@ -114,19 +115,20 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
    if(currentUriRef.current===uri)setBusy(false);
   }
  }
+ const activeMaterials=materials.filter(material=>material.uploadStatus!=="DELETED");
  return <section aria-label="Resource materials" className="mt-4 space-y-3 rounded-xl border border-border bg-surface-subtle p-3">
   <div className="flex items-center justify-between gap-2">
-   <h4 className="text-sm font-semibold text-foreground">Materials ({materials.length}/20)</h4>
+   <h4 className="text-sm font-semibold text-foreground">Materials ({activeMaterials.length}/20)</h4>
    {loading?<span role="status" className="text-xs">Loading…</span>:null}
   </div>
-  {!loading&&!materials.length?<p className="text-xs text-muted-foreground">No Resource materials.</p>:null}
-  {materials.some(material=>material.kind==="FILE"&&material.uploadStatus!=="READY")?
+  {!loading&&!activeMaterials.length?<p className="text-xs text-muted-foreground">No Resource materials.</p>:null}
+  {activeMaterials.some(material=>material.kind==="FILE"&&material.uploadStatus!=="READY")?
    <Alert tone="warning" role="status">Some Resource files are unavailable. Contact your instructor.</Alert>:null}
   {editable?<p role="status" className="text-xs text-muted-foreground">
-   Audience: {deliveryId?"Selected Section":"Shared course"}. Change the audience in the parent content editor before adding files. Verified private file uploads are managed separately; unverified files cannot be made available to learners.
+   Audience: {deliveryId?"Selected Section":"Shared course"}. Change the audience in the parent content editor before uploading. File materials are private until verified by the security scanner.
   </p>:null}
   <ul className="space-y-2">
-   {materials.map(material=><li key={material.id} className="flex flex-wrap items-start gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
+   {activeMaterials.map(material=><li key={material.id} className="flex flex-wrap items-start gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
     <div className="min-w-0 flex-1">
      <p className="break-words text-sm font-semibold">{material.title}</p>
      {material.notes?<p className="whitespace-pre-wrap text-xs text-body">{material.notes}</p>:null}
@@ -155,7 +157,7 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
     </div>:null}
    </li>)}
   </ul>
-  {editable&&(materials.length<20||editing)?<div className="grid gap-2 rounded-xl border border-border bg-surface p-3">
+  {editable&&(activeMaterials.length<20||editing)?<div className="grid gap-2 rounded-xl border border-border bg-surface p-3">
    <p className="text-sm font-semibold text-foreground">{editing?"Edit link material":"Add link material"}</p>
    <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Title
     <Input value={draft.title} maxLength={255} onChange={e=>setDraft(v=>({...v,title:e.target.value}))}
@@ -177,6 +179,8 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
      onClick={()=>{setEditing(null);setDraft(blank);}}>Cancel edit</Button>:null}
    </div>
   </div>:null}
+  {editable?<LessonResourceFileUploader key={uri} contentId={contentId} deliveryId={deliveryId}
+   materials={activeMaterials} onChanged={reload}/>:null}
   {error?<Alert tone="error">{error}</Alert>:null}
   {notice?<Alert tone="success">{notice}</Alert>:null}
  </section>;
