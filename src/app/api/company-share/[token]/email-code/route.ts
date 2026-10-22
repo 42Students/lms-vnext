@@ -14,6 +14,8 @@ export async function POST(request:Request,{params}:Props){
   const state=await emailAuthorizedCompanyShareCode(await getCurrentRequestContext(),token);
   if(state==="SENT")return NextResponse.json({sent:true},
    {headers:{"Cache-Control":"private, no-store"}});
+  if(state==="TOO_SOON")return NextResponse.json({error:"EMAIL_TOO_SOON"},
+   {status:429,headers:{"Cache-Control":"private, no-store","Retry-After":"60"}});
   if(state==="LIMITED")return NextResponse.json({error:"EMAIL_RATE_LIMITED"},
    {status:429,headers:{"Cache-Control":"private, no-store","Retry-After":"3600"}});
   if(state==="UNAVAILABLE")return NextResponse.json({error:"EMAIL_DELIVERY_UNAVAILABLE"},

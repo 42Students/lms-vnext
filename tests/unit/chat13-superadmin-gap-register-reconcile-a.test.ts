@@ -79,6 +79,8 @@ describe("SA-placements-projects-30 deliberate global/college boundary",()=>{
   for(const copy of ["Add company","Delete company","Restore company"])
    expect(college).toContain(copy);
   const directory=source("src/app/(authenticated)/admin/companies/page.tsx");
-  expect(directory).toContain("Sensitive CRM contacts and sharing defaults are not displayed.");
+  expect(directory).toContain("Sensitive CRM contact information is not shown without a scoped need-to-know read.");
+   expect(directory).toContain("context.adminScope?.collegeId===row.collegeId");
+   expect(directory).toContain("Private to the selected college");
  });
 });

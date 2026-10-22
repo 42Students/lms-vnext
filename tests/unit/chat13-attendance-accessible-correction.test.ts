@@ -9,7 +9,8 @@ describe("Super Admin attendance correction accessibility",()=>{
   expect(source).toContain('onClick={()=>void correct("PRESENT")}');
    expect(source).toContain("onClick={()=>void correct(absenceReason)}");
   expect(source).toContain('useGuardedAction({busyLabel:');
-  expect(source).toContain('disabled={correcting}');
+  expect(source).toContain('disabled={correcting||refreshing||verifyingRecord||!verifiedRecord}');
+  expect(source).toContain('dismissible={!correcting&&!correctionGuard.pending}');
   expect(source).toContain("This change is recorded.");
   expect(source).toContain('role="alert"');
   expect(source).toContain('setTarget(null)');

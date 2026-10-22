@@ -508,7 +508,7 @@ export function LearnerPlacementOffers({
                 >
                   Decline
                 </Button>
-                {item.letterHref && item.status==="ISSUED" ? <a href={item.letterHref} target="_blank" rel="noopener noreferrer"
+                {item.letterHref && item.status==="ISSUED" ? <a href={item.letterHref} rel="noopener noreferrer"
                   className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-body hover:border-primary hover:text-primary-text sm:w-auto md:min-h-9">View offer letter</a> : null}
                 {extensionsAvailable && item.expiresAt && !pendingExtensions.has(item.offerId) ? (
                   <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="sm" variant="secondary" disabled={pendingId!==null}

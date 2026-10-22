@@ -8,6 +8,8 @@ import { Pagination } from "@/components/ui/pagination";
 import { PageHeader } from "@/components/ui/page-header";
 import {cookies} from "next/headers";
 import {getPublicCompanyApplicantShare} from "@/modules/placements/company-share/public-service";
+import {canEmailAuthorizedCompanyShareCode} from "@/modules/placements/company-share/access-service";
+import {getCurrentRequestContext} from "@/auth/request-context";
 import {companyShareApplicantHref} from "@/modules/placements/company-share/public-filter-model";
 import {publicApplicantExportHref} from "@/modules/placements/company-share/export-href-model";
 import {COMPANY_SHARE_COLUMNS,safeCompanyShareColumns} from "@/modules/placements/company-share/column-model";
@@ -28,19 +30,25 @@ export default async function CompanySharePage({
    <ErrorState title="We couldn't load this share" description="We could not load this share. Please retry." action={<Link href={"/company-share/"+encodeURIComponent(token)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-primary-text md:min-h-9">Retry</Link>}/>
   </section>
  </main>;
- if(result.kind==="CODE_REQUIRED")return <main className={`${authStyles.page} mx-auto max-w-[1000px] px-4 py-12`}>
+ if(result.kind==="CODE_REQUIRED"){
+  const context=await getCurrentRequestContext().catch(()=>null);
+  const canEmailCode=context?await canEmailAuthorizedCompanyShareCode(context,token).catch(()=>false):false;
+  return <main className={`${authStyles.page} mx-auto max-w-[1000px] px-4 py-12`}>
   <section className="mx-auto mt-12 min-w-0 max-w-[480px] rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-5 md:p-6">
    <h1 className="mb-4 break-words text-xl font-semibold leading-7 text-[var(--lms-heading)]">Applicants for {result.title}</h1>
    <p className="mb-4 break-words text-sm leading-[22px] text-body">Shared with {result.companyName}. Enter the one-time code the placement cell sent you.</p>
    {access==="invalid"?<p role="alert" className="mb-4 rounded-[var(--lms-control-radius)] border border-[var(--lms-error)] bg-[rgba(239,68,68,0.06)] px-3 py-2 text-sm text-error">That code did not work, or this share is no longer available.</p>:null}
    <ShareCodeForm action={"/company-share/"+encodeURIComponent(token)+"/access"}/>
    <div className="mt-3 space-y-2 border-t border-[var(--lms-canvas-border)] pt-3">
-    <ShareEmailCodeButton token={token}/>
-    <p className="text-xs leading-[20px] text-muted-foreground">To protect applicant privacy, email codes are sent only to an authenticated recruiter with access to this company and college. <Link href="/login" className="font-semibold text-primary-text underline">Sign in</Link> with that recruiter account, or ask the placement cell for the original code. Email requests are limited to three per hour.</p>
+    {canEmailCode?<ShareEmailCodeButton token={token}/>:null}
+    <p className="text-xs leading-[20px] text-muted-foreground">{canEmailCode?
+    "A code can be emailed only to your verified recruiter account. You can request it once per minute, up to three times per hour.":
+    <>To protect applicant privacy, email codes are available only to an authenticated recruiter with access to this company and college. <Link href="/login" className="font-semibold text-primary-text underline">Sign in</Link> with that account, or ask the placement cell for the original code.</>}</p>
    </div>
    <p className="mt-3 break-words text-xs leading-[20px] text-muted-foreground">The link works until {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.expiresAt))}. Everything you open is logged.</p>
   </section>
  </main>;
+ }
  if(result.kind!=="READY")return <main className={`${authStyles.page} mx-auto max-w-[1000px] px-4 py-12`}>
   <section aria-label="Restricted applicant share" className="mx-auto mt-12 max-w-[480px] space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-5 md:p-6">
    <PageHeader title="This link is not valid any more." />
@@ -96,7 +104,7 @@ export default async function CompanySharePage({
   <p role="status" className="text-sm text-body leading-[22px]">
    {result.total.toLocaleString("en-IN")} applicants · Page {result.page} of {result.totalPages}
   </p>
-  <DataTable columns={tableColumns} rows={result.rows}
+  <DataTable columns={tableColumns} rows={result.rows} mobileMode="cards"
    getRowKey={row=>row.applicationId} caption="Shared applicants"
    empty={<div role="status" className="flex flex-wrap items-center justify-between gap-3">
     <p className="text-sm text-body leading-[22px]">No applicants found.</p>

@@ -22,7 +22,7 @@ vi.mock("@/db/client", () => ({
         const q = dialect.sqlToQuery(expression);
         return { sql: q.sql, params: q.params };
       };
-      if (projection && "teacherName" in projection) {
+      if (projection && "teacherName" in projection && state.selects === 1) {
         const fields = projection;
         class SourceQuery {
           innerJoin(_table: unknown, condition: SQL) {

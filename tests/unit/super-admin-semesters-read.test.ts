@@ -5,8 +5,8 @@ describe("Super Admin semester read URL",()=>{
  it("rejects malformed/duplicated filters and never accepts forged college overrides",()=>{
   expect(readAdminQuery({page:["1","2"]}).success).toBe(false);
   expect(readAdminQuery({page:"-1"}).success).toBe(false);
-  expect(readAdminQuery({q:"Semester",collegeId:"another-college"}).success).toBe(true);
-  // Only q/status/page are passed to the service; arbitrary scope parameters are ignored.
+  expect(readAdminQuery({q:"Semester",collegeId:"another-college"}).success).toBe(false);
+  // Forged college scopes fail closed rather than being silently ignored.
  });
  it("preserves search/status page links and clamps count denominator",()=>{
   expect(superAdminReadPages(0)).toBe(1);

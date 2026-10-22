@@ -85,7 +85,7 @@ describe("HR page-level access, recovery and mobile contracts", () => {
     expect(jobError).toContain('<PageBackLink href="/hr/drives" label="Back to Drives"/>');
     const backLink = load("src/components/ui/page-back-link.tsx");
     expect(backLink).toContain("focus-visible:outline-2");
-    expect(backLink).toContain("min-h-11");
+    expect(backLink).toContain("h-11 min-w-11");
     expect(jobError).not.toContain("text-[#26bac7]");
   });
 

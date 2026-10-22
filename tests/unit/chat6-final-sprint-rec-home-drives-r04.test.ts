@@ -13,6 +13,8 @@ describe("Final sprint recruiter closed drive access",()=>{
   expect(page).toContain("Historical hiring rounds and applied outcomes remain readable. New results and interview slots are disabled.");
   expect(page).toContain("driveOverview.readOnly");
   expect(page).toContain("Add, change or remove rounds");
-  expect(page).toContain("Interview slots");
+  expect(page).toContain("Propose interview times");
+  expect(page).toContain("Open slot proposals");
+  expect(page).toContain("readOnly={driveOverview.readOnly}");
  });
 });

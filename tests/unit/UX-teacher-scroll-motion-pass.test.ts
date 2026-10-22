@@ -16,7 +16,9 @@ describe("Faculty scroll and motion cues",()=>{
   const table=read("src/components/ui/table.tsx");
   expect(table).toContain('<ScrollCue axis="x" label={scrollLabel');
   expect(s).toContain('className="sticky left-0 z-10 bg-surface px-3 py-3 text-left"');
-  expect(s).toContain("P = Present · A = Absent");
+  expect(s).toContain('aria-label="Attendance legend"');
+  expect(s).toContain('<StatusBadge tone="success">P = Present</StatusBadge>');
+  expect(s).toContain('<StatusBadge tone="error">A = Absent</StatusBadge>');
  });
  it("UX-teacher-scroll-motion-03 cues desktop roster scrolling while retaining phone cards",()=>{
   const s=read("src/components/courses/faculty-course-roster.tsx");

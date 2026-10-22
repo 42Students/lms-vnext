@@ -10,11 +10,12 @@ permissions:
   contents: read
 
 # Nine independent required jobs: failing lint must not suppress DB acceptance.
-# One run per branch: a newer push cancels the superseded run so frequent merges
-# to main do not starve the shared runner pool.
+# One run per branch at a time: the running run finishes, and only the newest
+# pending push waits behind it (older pending runs are dropped). Frequent merges
+# to main therefore neither starve the runner pool nor cancel every run.
 concurrency:
   group: lms-vnext-ci-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   lint:

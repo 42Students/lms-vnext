@@ -92,7 +92,8 @@ describe("TPO placement announcement round-4 evidence",()=>{
  });
  it("TPO-inbox-team-58 enforces title 200 and message 8000 on create and edit",()=>{
   for(const c of [create(),edit()]){
-   expect(c).toContain("max(200)");
+   // Zod 4 permits the same ceiling with or without an inline error message.
+   expect(c).toMatch(/\.max\(200(?:,|\))/);
    expect(c).toMatch(/\.max\(8000(?:,|\))/);
   }
  });

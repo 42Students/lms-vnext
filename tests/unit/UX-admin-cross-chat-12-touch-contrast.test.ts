@@ -9,7 +9,7 @@ describe("UX-admin first third delegated touch and contrast audits",()=>{
    const controlSource=path==="src/components/academics/academics-section-page.tsx"
     ?readFileSync("src/components/ui/page-back-link.tsx","utf8"):s;
    if(controlSource!==s)expect(s).toContain("<PageBackLink");
-   expect(controlSource).toMatch(/(?:^|[\\s"\'])\b(?:min-h-11|h-11)\b/);
+   expect(controlSource).toMatch(/(?:^|\s)(?:min-h-11|h-11)(?=\s)/);
    expect(controlSource).not.toMatch(/(?:^|[\s"'])min-h-(?:8|9|10)\b/);
   }
   if(ink)expect(s).not.toContain("text-[#26bac7]");

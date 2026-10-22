@@ -18,13 +18,16 @@ describe("chat-12 Students responsive grid and column preference",()=>{
  it("TPO-students-51 keeps mobile row actions always visible while preserving filters",()=>{
   const grid=src("src/components/tpo/tpo-spreadsheet-grid.tsx");
   const sheet=src("src/components/tpo/tpo-students-spreadsheet.tsx");
+  const workspace=src("src/components/tpo/grid/grid-workspace.tsx");
   expect(grid).toContain("mobileActionsCollapsible?");
   expect(grid).toContain("<summary");
   expect(sheet).toContain('<TpoGrid integratedWorkspace defaultVisibleKeys=');
   expect(sheet).toContain("mobilePrimaryKeys=");
   expect(sheet).not.toContain("<TpoGrid mobileActionsCollapsible");
   expect(sheet).toContain("rowActions={row=><div");
-  expect(sheet).toContain("<TpoGridFilterPanel fields={filters} mobileSheet/>");
+  expect(sheet).toContain("filters={filters} rollOf=");
+  expect(workspace).toContain("<TpoGridFilterPanel fields={filters} title={filterTitle} mobileSheet autoOpenMobile");
+  expect(workspace).toContain("onAutoClose={()=>setFilterOpen(false)}");
   expect(sheet).toContain('storageKey="tpo-students-columns-v1"');
   expect(grid).toContain("mobileActionsCollapsible ?");
   expect(grid).toContain('aria-label="Row actions"');

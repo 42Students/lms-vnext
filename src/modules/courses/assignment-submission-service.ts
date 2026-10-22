@@ -252,24 +252,6 @@ export async function submitCourseAssignment(
       }
 
       assertAssignmentSubmissionDeadline(currentAssignment.dueAt, new Date());
-      {
-        const [policy]=await tx.select({methods:courseAssignments.allowedSubmissionMethods})
-          .from(courseAssignments).where(eq(courseAssignments.id,assignmentId)).limit(1);
-        const methodAllowed = policy && (input.submissionType === "FILE"
-          ? allowedAssignmentMixedParts(policy.methods, {
-              hasWrittenResponse: Boolean(input.textContent),
-              links: (input.links ?? []).map((link: SubmissionLink) => ({ kind: link.kind })),
-              fileMimeTypes: preparedFiles.map(file => file.attestation.contentType),
-            })
-          : allowedAssignmentSubmissionPart(policy.methods, {
-              kind: input.submissionType,
-              linkKind: input.submissionType === "LINK" ? input.linkKind : undefined,
-            }));
-        if (!methodAllowed) {
-          throw new CoursesServiceError("ASSIGNMENT_METHOD_NOT_ALLOWED");
-        }
-      }
-
       const [persistedMembership] = await tx
         .select({
           userId: collegeMemberships.userId,
@@ -296,6 +278,40 @@ export async function submitCourseAssignment(
           persistedMembership.status !== "ACTIVE" ||
           context.user.platformStatus !== "ACTIVE") {
         throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
+      }
+
+      // One-shot submissions retain their identity even when the assignment's
+      // accepted methods have since been narrowed. Check persisted ownership
+      // first, then report an existing submission before validating a new part.
+      // The unique constraint below still arbitrates simultaneous inserts.
+      const [existingSubmission] = await tx
+        .select({ id: assignmentSubmissions.id })
+        .from(assignmentSubmissions)
+        .where(and(
+          eq(assignmentSubmissions.assignmentId, assignmentId),
+          eq(assignmentSubmissions.membershipId, membership.id),
+        ))
+        .limit(1);
+      if (existingSubmission) {
+        throw new CoursesServiceError("ASSIGNMENT_ALREADY_SUBMITTED");
+      }
+
+      {
+        const [policy]=await tx.select({methods:courseAssignments.allowedSubmissionMethods})
+          .from(courseAssignments).where(eq(courseAssignments.id,assignmentId)).limit(1);
+        const methodAllowed = policy && (input.submissionType === "FILE"
+          ? allowedAssignmentMixedParts(policy.methods, {
+              hasWrittenResponse: Boolean(input.textContent),
+              links: (input.links ?? []).map((link: SubmissionLink) => ({ kind: link.kind })),
+              fileMimeTypes: preparedFiles.map(file => file.attestation.contentType),
+            })
+          : allowedAssignmentSubmissionPart(policy.methods, {
+              kind: input.submissionType,
+              linkKind: input.submissionType === "LINK" ? input.linkKind : undefined,
+            }));
+        if (!methodAllowed) {
+          throw new CoursesServiceError("ASSIGNMENT_METHOD_NOT_ALLOWED");
+        }
       }
 
       const lockedReceipts: Array<typeof courseUploadReceipts.$inferSelect> = [];

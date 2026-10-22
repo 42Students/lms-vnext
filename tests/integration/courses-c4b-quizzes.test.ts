@@ -647,14 +647,19 @@ describe("courses C4B quizzes against PostgreSQL", () => {
       structure.deliveryA.id,
     );
 
+    // Every authored question requires an answer. Choose an incorrect
+    // option for the second question to verify partial scoring (4/10).
+    const incorrectOption = key.view.questions[1]?.options.find(
+      (option) => option.correct !== true,
+    );
+    expect(incorrectOption).toBeDefined();
     const firstAnswers = key.answers.map(
       (answer, index) =>
         index === 0
           ? answer
           : {
-              questionId:
-                answer.questionId,
-              selectedOptionIds: [],
+              questionId: answer.questionId,
+              selectedOptionIds: [incorrectOption!.id],
             },
     );
 
@@ -776,7 +781,9 @@ describe("courses C4B quizzes against PostgreSQL", () => {
         { published: true },
       ),
     ).rejects.toMatchObject({
-      code: "QUIZ_RESULTS_ADMIN_ONLY",
+      // Delivery faculty have scoped result controls, but results cannot be
+      // released before the assessment is closed.
+      code: "INVALID_QUIZ_TRANSITION",
     });
     await expect(
       setCourseQuizResults(
@@ -975,6 +982,7 @@ describe("courses C4B quizzes against PostgreSQL", () => {
       questions: quizQuestions(),
     });
     await transitionCourseQuiz(faculty, quiz.id, {...await facultyAssessmentFixtureToken(pool,"QUIZ",quiz.id),  action: "PUBLISH" });
+    const key = await answerKey(quiz.id, structure.deliveryA.id);
     const holder = await pool.connect();
     let began = false;
     try {
@@ -983,7 +991,7 @@ describe("courses C4B quizzes against PostgreSQL", () => {
       await holder.query("update course_quizzes set status='CLOSED' where id=$1", [quiz.id]);
       const submission = submitCourseQuiz(learner, quiz.id, {
         deliveryId: structure.deliveryA.id,
-        answers: [],
+        answers: key.answers,
       });
       await new Promise((resolve) => setTimeout(resolve, 100));
       await holder.query("commit");

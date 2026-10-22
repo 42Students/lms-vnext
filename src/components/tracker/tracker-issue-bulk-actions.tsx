@@ -64,7 +64,7 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
       if(failures.length){
         showToast({tone:"error",title:failures.length+" issue(s) could not be updated."});
         const first=failures[0];
-        setNotice(failures.length+" could not be updated ("+failures.join(", ")+"): "+
+        setNotice("Failed IDs: "+failures.join(", ")+". "+
           (reasons[first]??"Refresh issue details and retry."));
       }else{
         showToast({tone:"success",title:"Updated "+completed+" issue(s)."});
