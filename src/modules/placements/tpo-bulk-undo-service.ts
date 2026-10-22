@@ -74,7 +74,7 @@ export async function undoTpoRecruiterBulkRun(context:RequestContext,raw:unknown
   }>;
   if(new Set(changed.map(row=>row.leadId)).size!==changed.length)
    throw new TpoBulkUndoError("INVALID_SNAPSHOT");
-  const auditLeadIds=event.metadata.leadIds;
+  const auditLeadIds=event.metadata["leadIds"];
   if(!Array.isArray(auditLeadIds)||
      changed.some(row=>!auditLeadIds.includes(row.leadId)))
    throw new TpoBulkUndoError("INVALID_SNAPSHOT");
@@ -92,10 +92,11 @@ export async function undoTpoRecruiterBulkRun(context:RequestContext,raw:unknown
    if(!lead||lead.updatedAt.getTime()!==new Date(change.afterUpdatedAt).getTime())
     throw new TpoBulkUndoError("STALE");
    if(stageRun){
+    if (change.beforeStage === undefined) throw new TpoBulkUndoError("INVALID_SNAPSHOT");
     if(lead.manualStage!==change.afterStage||lead.notNowReason!==change.afterReason||
        lead.notNowUntil!==change.afterUntil)throw new TpoBulkUndoError("STALE");
     await tx.update(placementTpoLeads).set({
-     manualStage:change.beforeStage!,notNowReason:change.beforeReason??null,
+     manualStage:change.beforeStage,notNowReason:change.beforeReason??null,
      notNowUntil:change.beforeUntil??null,updatedAt:now,
     }).where(and(eq(placementTpoLeads.id,lead.id),eq(placementTpoLeads.collegeId,college.id)));
    }else{
@@ -110,11 +111,13 @@ export async function undoTpoRecruiterBulkRun(context:RequestContext,raw:unknown
     createdByUserId:context.user.id,
    });
   }
+  const firstChange = sorted[0];
+  if (!firstChange) throw new TpoBulkUndoError("INVALID_SNAPSHOT");
   const [audit]=await tx.insert(activityEvents).values({
    organizationId:college.organizationId,collegeId:college.id,
    actorUserId:context.user.id,actorMembershipId:membership.id,module:"PLACEMENTS",
    eventType:"PLACEMENTS_RECRUITER_BULK_UNDO",subjectType:"placement_tpo_lead",
-   subjectId:sorted[0].leadId,summary:"Undid recruiter lead bulk update",
+   subjectId:firstChange.leadId,summary:"Undid recruiter lead bulk update",
    metadata:{originalRunAuditId:input.runAuditId,kind:stageRun?"STAGE":"OWNER",restored:sorted.length},
    dedupeKey:"tpo-recruiter-bulk-undo:"+input.runAuditId,
    occurredAt:now,
