@@ -12,7 +12,7 @@ describe("TPO drive draft cancellation parity",()=>{
   expect(evaluateTpoDriveCancellation("CANCELLED","ACTIVE",zeros,zeros)).toBe("READ_ONLY");
   expect(evaluateTpoDriveCancellation("DRAFT",null,{...zeros,submittedApplications:1},zeros)).toBe("PREVIEW_STALE");
   const service=source("src/modules/placements/tpo-drive-cancel-service.ts");
-  expect(service).toContain('job.status === "DRAFT" ||');
+  expect(service).toContain('status==="DRAFT"||(status==="PUBLISHED"&&seasonStatus==="ACTIVE")');
   expect(service).toContain('inArray(placementJobs.status, ["DRAFT", "PUBLISHED"])');
   expect(service).toContain("await auditTpoJobChange(");
   expect(service).toContain("await endDriveApplicants(");
