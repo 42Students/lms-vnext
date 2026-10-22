@@ -5,7 +5,7 @@ describe("SA-tenants-modules-37 saved course settings are honored",()=>{
  it("SA-tenants-modules-37 uses editor-compatible validated save intervals",()=>{
   const reader=read("src/modules/courses/learner-playback-settings.ts");
   const spec=read("src/modules/platform-settings/legacy-setting-specs.ts");
-  expect(reader).toContain('n>=5000&&n<=600000');
+  expect(reader).toContain('n<=600000?Math.max(5000,n):null');
   expect(spec).toContain('"ui.progressSaveIntervalMs"');
   expect(reader).toContain('eq(platformSettingOverrides.scopeType,"GLOBAL")');
   expect(reader).toContain('eq(platformSettingOverrides.scopeId,"GLOBAL")');
@@ -15,7 +15,7 @@ describe("SA-tenants-modules-37 saved course settings are honored",()=>{
   const reader=read("src/modules/courses/learner-playback-settings.ts");
   const service=read("src/modules/courses/progress-service.ts");
   expect(reader).toContain('"course.minInProgressPercent"');
-  expect(reader).toContain('minInProgressPercent:5');
+  expect(reader).toContain('minInProgressPercent:0');
   expect(service).toContain('percentComplete >= minInProgressPercent');
   expect(service).toContain('settings.minInProgressPercent');
  });

@@ -29,6 +29,7 @@ describe("SA-HIRING-REPORT-SCOPE-03 tenant-safe job pipeline analytics",()=>{
     expect(source).toContain('requirePermission(context,"placements.read"');
     expect(source).toContain("selected.organizationId?eq(colleges.organizationId,selected.organizationId):undefined");
     expect(source).toContain("const bounded=result.slice(0,SUPER_ADMIN_HIRING_EXPORT_CAP)");
+    expect(source).toContain("for(const row of result)");
     expect(source).toContain("truncated:result.length>SUPER_ADMIN_HIRING_EXPORT_CAP");
   });
 

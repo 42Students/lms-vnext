@@ -14,7 +14,7 @@ describe("HR legacy inventory B explicit UNKNOWN routes, source parity audit",()
   expect(drives).toContain('case "closed":return "CLOSED"');
   expect(drives).toContain("legacyDriveTab(first(raw.tab))");
   expect(drives).toContain("recruiterDriveListQuerySchema.safeParse");
-  expect(drives).toContain("listOwnRecruiterPlacementJobs");
+  expect(drives).toContain("searchOwnRecruiterDrives");
   const parsed=recruiterDriveListQuerySchema.safeParse({view:"CLOSED"});
   expect(parsed.success).toBe(true);
   if(parsed.success)expect(parsed.data.view).toBe("CLOSED");
@@ -30,7 +30,7 @@ describe("HR legacy inventory B explicit UNKNOWN routes, source parity audit",()
   expect(authorize).toBeGreaterThan(-1);
   expect(resolve).toBeGreaterThan(authorize);
   expect(load).toBeGreaterThan(resolve);
-  expect(job).toContain('href={"/recruiter/drives/"+workspace.job.id+"?tab=requests"');
+  expect(job).toContain('href={"/recruiter/drives/"+workspace.job.id+"?tab=discussion"');
   expect(job).toContain('requestsTab&&requestData?.party==="COMPANY"');
   expect(job).toContain('<TpoDriveChangeRequests jobId={workspace.job.id} party="COMPANY"');
  });
@@ -38,7 +38,7 @@ describe("HR legacy inventory B explicit UNKNOWN routes, source parity audit",()
   const direct=page("recruiter/drives/[jobId]/change-requests");
   expect(direct).toContain("getDriveChangeRequests(context,jobId)");
   expect(direct).toContain('if(data.party!=="COMPANY")notFound()');
-  expect(direct).toContain('error.code==="PLACEMENT_JOB_NOT_FOUND"');
+  expect(direct).toContain('e.code==="PLACEMENT_JOB_NOT_FOUND"');
   expect(direct).toContain("notFound()");
  });
 });

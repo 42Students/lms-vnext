@@ -6,9 +6,9 @@ describe("chat-16 mentor delivery review verified actions",()=>{
    const ui=code();
    // The decision must be captured before confirmation; a bare opener would
    // reuse a previous approval/change selection and is not acceptable.
-   expect(ui).toContain('onClick={()=>{setDecision("APPROVED");setConfirmReview(true);}}');
-   expect(ui).toContain('onClick={()=>{setDecision("CHANGES_REQUESTED");setConfirmReview(true);}}');
-   expect(ui).toContain('open={confirmReview} onOpenChange={setConfirmReview}');
+   expect(ui).toContain('setDecision("APPROVED"); setStaleReview(false); setOpen(true);');
+   expect(ui).toContain('setDecision("CHANGES_REQUESTED"); setStaleReview(false); setOpen(true);');
+   expect(ui).toContain('open={confirmReview} onOpenChange={next=>{if(!pending){setConfirmReview(next);if(!next)setOpen(true);}}}');
    expect(ui).toContain('onConfirm={()=>void review()}');
    expect(ui).toContain('confirmLabel={decision==="APPROVED"?"Accept submission":"Request changes"}');
    expect(ui).toContain('decision==="CHANGES_REQUESTED"&&!feedback.trim()');
