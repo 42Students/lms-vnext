@@ -105,7 +105,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
  const setNoteSelection=shared?.setSelected??setLocalSelection;
  const [downloadError,setDownloadError]=useState("");
  const [clipboardNotice,setClipboardNotice]=useState("");
- const viewName=params.get("view")?.trim()||"students";
+ const viewName=params.get("view")?.trim()||"Students";
  const [pageSort,setPageSort]=useState<"NAME"|"APPLICATIONS_DESC"|"APPLICATIONS_ASC"|"OFFERS_DESC"|"OFFERS_ASC">("NAME");
  const sortedRows=[...rows].sort((a,b)=>{
   const diff=pageSort.startsWith("APPLICATIONS")?a.applicationCount-b.applicationCount:
@@ -134,7 +134,8 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   if(!selectedScoped.length)return null;
   if(!allSelected&&selectedScoped.length>200)return null;
   query.set("ids",allSelected?"ALL":selectedScoped.join(","));
-  query.set("view",params.get("afterCollege")||params.get("journeyState")||"Students");
+  // The selected saved view names the export; a filter value is not a view.
+  query.set("view",viewName);
   return "/api/placements/tpo/students/export-xlsx?"+query.toString();
  })();
  function downloadSelection(){

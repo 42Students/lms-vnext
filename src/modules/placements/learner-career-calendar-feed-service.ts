@@ -17,6 +17,7 @@ export async function loadLearnerCareerCalendarSupplements(
   const jobs = await listLearnerPlacementJobs(context, now);
   const supplements: CareerCalendarSupplement[] = [];
   const warnings: string[] = [];
+  const historicalJobIds = new Set<string>();
   const appliedJobIds = new Set(
     jobs.filter(row => row.application !== null).map(row => row.job.id),
   );
@@ -88,6 +89,7 @@ export async function loadLearnerCareerCalendarSupplements(
     "Showing calendar history for the 500 most recent applications. Open Applications for older records.");
    const seenHistory=new Set<string>();
    for(const row of past.slice(0,500)){
+    historicalJobIds.add(row.jobId);
     if(seenHistory.has(row.jobId))continue;
     seenHistory.add(row.jobId);
     const details=row.posting?.importantDates;
@@ -110,5 +112,9 @@ export async function loadLearnerCareerCalendarSupplements(
     }
    }
   }
-  return { supplements, warnings };
+  // One job belongs to one source in the calendar union. Historical owned
+  // applications supersede discoverable-job previews, so a job deadline or
+  // imported important date is not projected twice under different keys.
+  const merged = supplements.filter(item=>item.applied || !historicalJobIds.has(item.jobId));
+  return { supplements:merged, warnings };
 }
