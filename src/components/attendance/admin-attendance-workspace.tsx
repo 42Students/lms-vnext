@@ -218,7 +218,8 @@ export function AdminAttendanceWorkspace({
   useEffect(()=>{
     if(data.grid)setLastGrid({scope:gridScopeKey,value:data.grid});
   },[gridScopeKey,data.grid]);
-  const viewGrid=data.grid??(lastGrid?.scope===gridScopeKey?lastGrid.value:null);
+  const viewGrid=data.grid??(data.gridLookupFailed && lastGrid?.scope===gridScopeKey
+    ?lastGrid.value:null);
 
   const sessionDays = useMemo(() =>
     attendanceMonthDays(data.month,viewGrid?.sessions ?? []),
