@@ -6,7 +6,8 @@ const file=(path:string)=>readFileSync(path,"utf8");
 describe("Drive workspace S2 source-to-UI contracts",()=>{
  it("TPO-drive-workspace-04 shows the export, company share and run-again actions in More",()=>{
   const ui=file("src/components/placements/placement-drive-workspace.tsx");
-  for(const label of ["More ▾","Export applicants","Share with company","Run it again"])expect(ui).toContain(label);
+  expect(ui).toContain('trigger={isTpo?"More":"Actions"}');
+  for(const label of ["Export applicants","Share with company","Run it again"])expect(ui).toContain(label);
  });
  it("TPO-drive-workspace-10 intentionally enforces active seasons before drive publication",()=>{
   const facts:TpoDriveReadinessFacts={jobStatus:"DRAFT",seasonActive:false,companyActive:true,
@@ -78,8 +79,9 @@ describe("Drive workspace S2 source-to-UI contracts",()=>{
  });
  it("TPO-drive-workspace-63 retains applicant-level inclusion actions without cross-college mutation",()=>{
   const controls=file("src/components/placements/placement-drive-controls.tsx");
-  expect(controls).toContain("Force");
-  expect(controls).toContain("Force exclude");
+  expect(controls).toContain("Include in drive");
+  expect(controls).toContain("Exclude from drive");
+  expect(controls).toContain("Required reason for manual include/exclude");
  });
  it("TPO-drive-workspace-67 opens an authorized applicant detail from the review drawer",()=>{
   const drawer=file("src/components/placements/tpo-applicant-review-drawer.tsx");

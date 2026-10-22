@@ -1,20 +1,23 @@
 import { z } from "zod";
 import { BUG_ACCOUNT_ROLES, BUG_ENVIRONMENTS, BUG_SEVERITIES } from "./admin-validation";
-import { LOCATION_OPTIONS } from "./report-form-options";
+import { LOCATION_OPTIONS, ISSUE_TYPE_OPTIONS, REPORTER_OPTIONS } from "./report-form-options";
 
 /** SA-placements-projects-100: exact legacy report intake; server revalidates all fields. */
 export const trackerReportSchema = z.object({
-  reporterName: z.string().trim().min(1, "Select your name.").max(120),
+  reporterName: z.string().trim().min(1, "Select your name.").max(120)
+    .refine(value => REPORTER_OPTIONS.some(item => item.label === value), "Select your name."),
   accountRole: z.enum(BUG_ACCOUNT_ROLES, { error: "Select the account you were testing." }),
   environment: z.enum(BUG_ENVIRONMENTS, { error: "Select where you saw the issue." }),
-  page: z.string().trim().min(1, "Select the page and area.").max(120),
+  page: z.string().trim().min(1, "Select the page and area.").max(120)
+    .refine(value => LOCATION_OPTIONS.some(item => item.value === value), "Select the page and area."),
   screen: z.string().trim().max(120).nullable().optional(),
   section: z.string().trim().max(120).nullable().optional(),
-  // Stale legacy clients can submit custom categories <=80 characters.
-  // The current form still recommends its configured issue-type picker.
-  issueType: z.string().trim().min(1, "Select the closest issue type.").max(80),
+  // Preserve the registered legacy taxonomy; unknown categories are not a
+  // supported reporting channel and must not bypass the issue-type picker.
+  issueType: z.string().trim().min(1, "Select the closest issue type.").max(80)
+    .refine(value => ISSUE_TYPE_OPTIONS.some(item => item.value === value), "Select the closest issue type."),
   severity: z.enum(BUG_SEVERITIES),
-  description: z.string().trim().min(1, "description is required")
+  description: z.string().trim().min(1, "Describe what went wrong.")
     .max(4000, "Keep the description under 4000 characters."),
   evidenceLink: z.union([z.url({ protocol: /^https?$/ }).max(1000, "Evidence link is too long."), z.literal(""), z.null()]).optional(),
   sourceUrl: z.union([
@@ -35,9 +38,8 @@ export const trackerReportSchema = z.object({
 }).strict().superRefine((value, ctx) => {
   const page = LOCATION_OPTIONS.find(option => option.value === value.page);
   if (!page) {
-    // Historical pages/screens are free text in the original tracker.
-    // Keep unknown-but-nonempty legacy locations rather than discarding them;
-    // known pages still enforce the dependent dropdown hierarchy below.
+    // The field-level schema reports an invalid page, without echoing it to
+    // unauthorized error consumers or attempting a broader data lookup.
     return;
   }
   const screen = page.children?.find(option => option.value === value.screen);

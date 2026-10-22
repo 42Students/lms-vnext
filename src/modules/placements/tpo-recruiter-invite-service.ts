@@ -120,10 +120,10 @@ export async function issueTpoRecruiterInvite(
         "TPO_RECRUITER_INVITE_NOT_FOUND",
       );
     }
-    // A linked company is required. If no work email was captured by the
-    // TPO, public OTP issuance must first bind a matching company-domain
-    // mailbox, then verify its ownership by delivering a code.
-    if(!lead.companyRelationshipId){
+    // Issuing a link without a work email or college-linked company creates a
+    // dead-end invitation. Enforce both persisted requirements before rotating
+    // the credential; OTP verification still checks mailbox ownership.
+    if(!lead.emailNorm||!lead.companyRelationshipId){
       throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_ALLOWED");
     }
 
