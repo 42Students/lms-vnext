@@ -42,7 +42,7 @@ async function authorize(ctx:RequestContext,raw:string){
 }
 async function available(){
  const result=await getDb().execute(sql<{ready:boolean}>`select to_regclass('public.organization_setting_overrides') is not null as ready`);
- return Boolean(result.rows[0]?.ready);
+ return Boolean(result.rows[0]?.["ready"]);
 }
 export async function listOrganizationTenantSettings(ctx:RequestContext,rawId:string){
  const organizationId=await authorize(ctx,rawId);
@@ -53,7 +53,7 @@ export async function listOrganizationTenantSettings(ctx:RequestContext,rawId:st
   where organization_id=${organizationId}::uuid order by key`);
  return {ready:true,scope:"ORG" as const,scopeId:organizationId,
   operationalReader:false,entries:rows.rows.map(row=>({
-   ...row,value:typeof row.key==="string" && prohibited.test(row.key)?"[redacted]":row.value,
+   ...row,value:typeof row["key"]==="string" && prohibited.test(row["key"])?"[redacted]":row["value"],
   })),note:"Organization settings are stored for review; no runtime service inherits these values automatically."};
 }
 export async function saveOrganizationTenantSettings(ctx:RequestContext,raw:unknown){
@@ -82,7 +82,7 @@ export async function saveOrganizationTenantSettings(ctx:RequestContext,raw:unkn
     const current=await tx.execute(sql<{version:number}>`
       select version from organization_setting_overrides
       where organization_id=${organizationId}::uuid and key=${k} for update`);
-    const version=Number(current.rows[0]?.version??0);
+    const version=Number(current.rows[0]?.["version"]??0);
     if(version!==row.expectedVersion)throw new OrganizationSettingsError("SETTING_STALE");
     if(!value){
       await tx.execute(sql`delete from organization_setting_overrides where

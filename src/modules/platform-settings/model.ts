@@ -112,7 +112,7 @@ export function fixedPlatformSetting(
     label,
     value,
     source,
-    unit,
+    ...(unit !== undefined ? { unit } : {}),
     origin: "FIXED_SOURCE",
     scope: "PLATFORM",
   };
@@ -143,7 +143,7 @@ export function collegePlatformSetting(input: {
     value: persisted
       ? input.persistedValue!
       : input.defaultValue,
-    unit: input.unit,
+    ...(input.unit !== undefined ? { unit: input.unit } : {}),
     source: persisted
       ? input.persistedTable
       : input.defaultSource,
