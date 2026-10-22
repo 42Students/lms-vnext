@@ -4,9 +4,8 @@ const file=(path:string)=>readFileSync(path,"utf8");
 describe("TPO drive mobile action layout",()=>{
  it("TPO-drive-workspace-72 renders collapsed mobile Actions and responsive applicant cards",()=>{
   const view=file("src/components/placements/placement-drive-workspace.tsx");
-  expect(view).toContain('aria-label="Drive actions"');
-  expect(view).toContain('md:hidden">Actions</summary>');
-  expect(view).toContain("group-open:flex md:flex");
+  expect(view).toContain('<Dropdown mobileSheet align="end" label="Drive actions"');
+  expect(view).toContain('trigger={isTpo?"More":"Actions"}');
   for(const label of ["Applicants","Close drive","Cancel drive","Current shortlist"])
    expect(view).toContain(label);
   const grid=file("src/components/tpo/tpo-applications-spreadsheet.tsx");
