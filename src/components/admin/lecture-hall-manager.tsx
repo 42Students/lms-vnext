@@ -243,7 +243,7 @@ export function LectureHallManager({
       showToast({
         tone: "success",
         title: status === "ARCHIVED" ? "Lecture hall archived" : "Lecture hall restored",
-        description: status === "ARCHIVED" ? "Scheduled class history is preserved. This room can be restored." : undefined,
+        ...(status === "ARCHIVED" ? { description: "Scheduled class history is preserved. This room can be restored." } : {}),
       });
       router.refresh();
       } catch {
