@@ -126,3 +126,31 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/components/attendance/faculty-attendance-workspace.tsx
 - Legacy: Legacy one grid cell per student per day including no class X (`TeacherAttendanceView.jsx:327-419`).
 - Expected fix: Restore full calendar day grid including no-class and upcoming cells.
+
+## Chat-18 fast verification triage (2026-10-22)
+
+- G2-15-009-047: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-15-009-049: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-15-009-051: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-15-009-054: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-15-009-061: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-15-009-080: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-15-009-085: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-15-009-092: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-15-001-018: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-15-004-069: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-15-006-067: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-16-001-026: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-16-005-045: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-16-027-007: OK — Schedule writer has configurable grace, tenant transaction advisory lock, hall row locking, and overlap predicates.
+- G2-16-027-010: OK — Schedule writer has configurable grace, tenant transaction advisory lock, hall row locking, and overlap predicates.
+- G2-16-027-025: OK — Schedule writer has configurable grace, tenant transaction advisory lock, hall row locking, and overlap predicates.
+- G2-16-027-027: OK — Schedule writer has configurable grace, tenant transaction advisory lock, hall row locking, and overlap predicates.
+- G2-16-027-031: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-16-027-036: OK — Schedule writer has configurable grace, tenant transaction advisory lock, hall row locking, and overlap predicates.
+- G2-17-006-030: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-17-010-005: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-17-010-010: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-18-009-002: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-18-009-014: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
+- G2-18-009-019: DEFERRED — requires deeper caller, permission, migration or runtime evidence; not certified as parity.
