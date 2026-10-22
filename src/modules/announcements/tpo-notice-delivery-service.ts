@@ -151,3 +151,7 @@ export async function deliverDueTpoNotices(now=new Date()){
  }
  return {ready:true as const,scanned,delivered,failed:failures.length,failures};
 }
+
+/** Separate live scheduled producers; generic notices never replace their eligibility rules. */
+export {queueEligibleDeadlineTodayReminders} from "./tpo-deadline-today-job-service";
+export {queueFencedInterviewReminderEmails} from "./tpo-interview-reminder-email-service";

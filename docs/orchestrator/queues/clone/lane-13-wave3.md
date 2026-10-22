@@ -20,7 +20,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_components_profile_learner-profile-workspace.tsx.md` (edit src/components/profile/learner-profile-workspace.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_modules_attendance_faculty-schedule-mutation-service.ts.md` (edit src/modules/attendance/faculty-schedule-mutation-service.ts; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_modules_people_college-student-csv-service.ts.md` (edit src/modules/people/college-student-csv-service.ts; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_modules_announcements_tpo-notice-delivery-service.ts.md` (edit src/modules/announcements/tpo-notice-delivery-service.ts; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_modules_announcements_tpo-notice-delivery-service.ts.md` (edit src/modules/announcements/tpo-notice-delivery-service.ts; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_NEW_docs_audit_gap2_lane-6_l15-u024-super-admin-e2e.md.md` (new; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_app_auth_handoff_page.tsx.md` (edit src/app/auth/handoff/page.tsx; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_NEW_docs_audit_gap2_lane-11_l19-u024-super-admin-announcement-controller.md.md` (new; 1 findings; best P1)
