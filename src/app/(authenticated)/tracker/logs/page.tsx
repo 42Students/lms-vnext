@@ -134,7 +134,7 @@ export default async function TrackerLogsPage({
       {!pollingReady ? (
         <Alert tone="warning">Cloud Logging polling is not configured for this deployment. The live source may be unavailable; this is not a healthy-log result.</Alert>
       ) : null}
-      <section className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4" aria-label="Known errors">
+      <section id="known-errors" className="min-w-0 scroll-mt-24 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4" aria-label="Known errors">
          <p className="text-sm text-body">Durable signatures, recurrence, acknowledgements and triage are kept separate from the live log feed.</p>
          {knownErrors ? <>
            <KnownErrorsWorkspace items={items} lastViewedAt={lastViewedAt} backendStartedAt={backendStartedAt}/>

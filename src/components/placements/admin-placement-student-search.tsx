@@ -99,7 +99,7 @@ export function AdminPlacementStudentSearch({ collegeId, initialQuery, choices, 
         ) : <Search aria-hidden="true" size={16} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />}
         <Input id={listId + "-input"} name="q" role="combobox"
           type="search" autoComplete="off" maxLength={150} disabled={!collegeId}
-          value={text} aria-autocomplete="list" aria-haspopup="listbox" aria-expanded={show}
+          value={text} aria-autocomplete="list" aria-haspopup="listbox" aria-expanded={show} aria-busy={searching}
           aria-controls={show ? listId : undefined}
           aria-activedescendant={show && active >= 0 && visible[active] ? listId + "-" + active : undefined}
           aria-describedby={!collegeId ? "placement-student-scope-hint" : listId + "-hint"}
@@ -109,7 +109,7 @@ export function AdminPlacementStudentSearch({ collegeId, initialQuery, choices, 
           onFocus={() => setOpen(true)}
           onBlur={() => window.setTimeout(() => setOpen(false), 100)}
           onKeyDown={event => {
-            if (event.key === "Escape") { setOpen(false); setActive(-1); }
+            if (event.key === "Escape") { event.preventDefault(); setOpen(false); setActive(-1); return; }
             if (!show || !visible.length) return;
             if (event.key === "ArrowDown") { event.preventDefault(); setActive(index => Math.min(index + 1, visible.length - 1)); }
             if (event.key === "ArrowUp") { event.preventDefault(); setActive(index => Math.max(index - 1, 0)); }
@@ -139,7 +139,8 @@ export function AdminPlacementStudentSearch({ collegeId, initialQuery, choices, 
         : visible.length === 0 ? <p role="status" className="p-2 text-sm text-muted-foreground">No students match “{value}”</p>
         : visible.map((choice, index) => <Button key={choice.membershipId} variant="ghost" type="button"
           id={listId + "-" + index} role="option" aria-selected={choice.membershipId === selectedId}
-          onMouseDown={event => event.preventDefault()} onClick={() => choose(choice)}
+          onMouseDown={event => event.preventDefault()} onMouseEnter={() => setActive(index)}
+          onClick={() => choose(choice)}
           className={`flex w-full flex-col items-start rounded px-3 py-2 text-left text-sm hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)] ${active === index ? "bg-[var(--lms-primary-subtle)]" : ""}`}>
           <span className="block font-semibold">{choice.label}</span>
           <span className="block text-xs text-muted-foreground">{choice.roll || choice.email || ""}</span>
