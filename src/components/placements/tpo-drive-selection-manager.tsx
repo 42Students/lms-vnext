@@ -117,7 +117,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
       </Button>
       <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="ghost" type="button" disabled={pending||!chosen.length} onClick={()=>setChosen([])}>Clear selection</Button>
     </div>
-    <fieldset className="max-h-60 min-h-0 min-w-0 divide-y divide-border overflow-auto overscroll-contain border-y border-border px-2">
+    <fieldset tabIndex={0} aria-label="Selectable students, scroll for more" className="max-h-60 min-h-0 min-w-0 divide-y divide-border overflow-auto overscroll-contain border-y border-border px-2 [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)]">
      <legend className="font-semibold">Students ({chosen.length} selected, maximum 100)</legend>
      {(mode==="RECORD"?visibleRecordable.map(c=>({id:c.applicationId,name:c.name,note:c.roleTitle})):
        visibleReleasable.map(s=>({id:s.id,name:s.name,note:s.roleTitle+(s.offerReady?"":" · Needs eligibility review")})))

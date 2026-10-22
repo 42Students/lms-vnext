@@ -1,6 +1,12 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 
-const state=vi.hoisted(()=>({context:{user:{id:"acting-super-admin"}},reader:vi.fn()}));
+const state=vi.hoisted(()=>({context:{
+ user:{id:"11111111-1111-4111-8111-111111111111",identityUid:"acting-super-admin",
+  platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
+ membership:null,
+ adminScope:{collegeId:"22222222-2222-4222-8222-222222222222",
+  organizationId:"33333333-3333-4333-8333-333333333333"},
+},reader:vi.fn()}));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:()=>state.context}));
 vi.mock("@/modules/courses/college-assessment-aggregate-service",()=>({
  listCollegeAssessmentAggregate:(context:unknown,kind:unknown,query:unknown)=>state.reader(context,kind,query),

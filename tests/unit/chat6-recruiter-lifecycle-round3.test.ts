@@ -17,7 +17,7 @@ describe("Super Admin recruiter legacy lifecycle",()=>{
   const drawer=read("src/components/admin/super-admin-hr-detail-drawer.tsx");
   expect(ui).toContain('>Industry access</p>');
   expect(ui).toContain('<section aria-label="Recruiter account lifecycle"');
-  expect(ui).toContain("<h2 className=\"text-base font-semibold\">Recruiter account lifecycle</h2>");
+  expect(ui).toContain("<h2 className=\"text-base font-semibold text-foreground\">Recruiter account lifecycle</h2>");
   expect(ui).toContain("Recruiter accounts");
   expect(ui).toContain('placeholder="Name, mobile or email"');
   expect(drawer).toContain("No colleges yet.");
