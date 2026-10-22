@@ -4,10 +4,10 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 
 - [ ] `tests/unit/UX-college-cross-audit-chat19.test.ts` (1 failing)
 - [ ] `tests/unit/chat13-superadmin-interview-operations.test.ts` (1 failing)
-- [ ] `tests/unit/chat2-tpo-team-open-increments.test.ts` (1 failing)
+- [x] `tests/unit/chat2-tpo-team-open-increments.test.ts` (1 failing)
 - [ ] `tests/unit/chat6-superadmin-people-verified-closure.test.ts` (1 failing)
 - [ ] `tests/unit/chat9-verify2-learner-assignment-retry.test.ts` (2 failing)
-- [ ] `tests/unit/public-auth-error-retry-round5.test.ts` (1 failing)
+- [x] `tests/unit/public-auth-error-retry-round5.test.ts` (1 failing)
 
 ## Failures (from CI log)
 
@@ -149,3 +149,8 @@ AssertionError: expected '"use client";\n\nimport { useEffect, …' to contain '
 + import {FRIENDLY_MESSAGES} from "@/lib/friendly-error";
 ```
 
+
+## Branch inspection results (CI run 39819012064 predates these branch contents)
+
+- `chat2-tpo-team-open-increments.test.ts`: inspected current `src/app/(authenticated)/tpo/team/page.tsx` against the precise failing assertion; `redirect("/tpo/settings/team")` exists in the `people`/`members`/`roster` branch, while UUID conversation aliases are bounded and scoped. This is a stale failure on the recorded main commit, not a reason to change the test. Source checked; no new test execution claimed.
+- `public-auth-error-retry-round5.test.ts`: inspected current `src/components/auth/login-form.tsx`; `safeRetry < 120`, `reason.retryAfterSeconds`, `setCooldown(Math.max(cooldown,safeRetry))`, and the rate-limit copy all exist. The failing string assertion is satisfied by the current branch source. Source checked; no new test execution claimed.
