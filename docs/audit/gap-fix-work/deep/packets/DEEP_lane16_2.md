@@ -15,7 +15,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-12-017-015  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_6.md)
 - [x] G2-12-017-058  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_6.md)
 - [x] G2-12-017-060  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_6.md)
-- [ ] G2-13-013-054  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_6.md)
+- [x] G2-13-013-054  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_6.md)
 - [ ] G2-13-014-061  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_6.md)
 
 ## Results
@@ -29,3 +29,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - G2-12-017-058: OK (field-level compatibility, not historic import execution) — `src/db/schema/projects.ts:637-676` retains legacy integer comment, project, task and commenter identifiers, frozen actor type/name, original soft-deleted/body-null provenance, progress and state snapshot. `src/modules/projects/task-comment-service.ts:25-66` renders historic actor and excludes deleted records. This corresponds to `docs/legacy-source/backend/src/main/resources/db/migration/V76__project_task_comments.sql:1-17` and `docs/legacy-source/backend/src/main/resources/db/migration/V77__project_task_comment_actions.sql:5-25`. No legacy rows are assumed migrated.
 - G2-12-017-060: OK (representation contract) — `src/db/schema/projects.ts:661-697` allows legacy NOTE, PROGRESS, NEEDS_HELP, REVIEW, BLOCKED, STATUS_UPDATE as well as vNext names; `src/modules/projects/task-comment-service.ts:88-105` represents immutable state/review events as timeline comment kinds. Matches `docs/legacy-source/backend/src/main/resources/db/migration/V77__project_task_comment_actions.sql:1-25` and `docs/legacy-source/frontend/src/components/Projects/modals/TaskDetailsModal.jsx:13-35`. Legacy values can be kept without lossy enum conversion.
+
+- G2-13-013-054: OK (vNext schema crosswalk, no executed legacy import) — `src/db/schema/courses.ts:391-443` maps lesson UUID identity via its scoped learning path to course ancestry, retaining sequence, active status, independent student visibility, deletion timestamp and optimistic version. `src/db/schema/courses.ts:448-495` retains lesson-content ordering, soft deletion and version. Source fields: `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Lesson.java:13-38`. No historic integer IDs are passed directly as UUIDs.
