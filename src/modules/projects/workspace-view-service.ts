@@ -82,10 +82,9 @@ export async function getProjectWorkspaceView(
       context,
       projectId,
     ),
-    listProjectEvaluations(
-      context,
-      projectId,
-    ),
+    access.access==="LEARNER"
+      ? Promise.resolve({evaluations:[],items:[]})
+      : listProjectEvaluations(context,projectId),
     listProjectActivity(context,projectId)
       .then(items=>({items,failed:false as const}))
       .catch((error:unknown)=>{
@@ -323,7 +322,9 @@ export async function getProjectWorkspaceSectionView(
  if(section==="DELIVERY"){
   const [finalDelivery,evaluation]=await Promise.all([
    listProjectSubmissions(context,projectId),
-   listProjectEvaluations(context,projectId),
+   access.access==="LEARNER"
+    ? Promise.resolve({evaluations:[],items:[]})
+    : listProjectEvaluations(context,projectId),
   ]);
   return {section,finalDelivery,evaluation};
  }

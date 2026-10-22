@@ -9,7 +9,7 @@ import { learnerProjectListEmptyState } from "@/modules/projects/learner-project
 import { learnerProjectMobileFilterSummary } from "@/modules/projects/learner-project-mobile-filter-model";
 import { listMyProjectInstances } from "@/modules/projects/member-service";
 import { getProjectInstanceWorkspace } from "@/modules/projects/instance-service";
-import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
+import { getProjectWorkspaceView,getProjectWorkspaceSectionView } from "@/modules/projects/workspace-view-service";
 import { findOwnLearnerBoardTask } from "@/modules/projects/learner-board-task-detail-model";
 import { getLearnerProjectGoals } from "@/modules/projects/learner-project-goals-service";
 import { learnerBoardCardMetadata } from "@/modules/projects/learner-board-card-model";
@@ -406,6 +406,11 @@ describe("L21-010 exact learner final delivery tab",()=>{
     const workspace=await getProjectWorkspaceView(context,ids.project);
     expect(workspace.project.id).toBe(ids.project);
     expect(workspace.finalDelivery.submissions).toEqual([]);
+    // Learners may read their delivery, but internal rubric evaluations are not published.
+    expect(workspace.evaluation).toEqual({evaluations:[],items:[]});
+    const ownDelivery=await getProjectWorkspaceSectionView(context,ids.project,"DELIVERY");
+    expect(ownDelivery.finalDelivery.submissions).toEqual([]);
+    expect(ownDelivery.evaluation).toEqual({evaluations:[],items:[]});
     await expect(getProjectWorkspaceView({...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},ids.project)).rejects.toBeDefined();
     await expect(getProjectWorkspaceView({...context,membership:{...context.membership!,status:"SUSPENDED"}},ids.project)).rejects.toBeDefined();
     await expect(getProjectWorkspaceView({...context,membership:{...context.membership!,roles:["FACULTY"]}},ids.project)).rejects.toBeDefined();

@@ -3,6 +3,8 @@ import {afterAll,describe,expect,it} from "vitest";
 import {closeDatabaseConnection} from "@/db/client";
 import {createPlacementCompany} from "@/modules/placements/company-service";
 import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
+import {createPlacementRound} from "@/modules/placements/round-service";
+import {upsertJobEligibilityPolicy} from "@/modules/placements/eligibility-service";
 import {getHrJobRead} from "@/modules/placements/hr-job-read-service";
 import {buildHrApplicantDrawer} from "@/modules/placements/hr-applicant-drawer-model";
 import type {RequestContext} from "@/modules/identity/context";
@@ -20,6 +22,10 @@ describe.skipIf(!enabled)("HR applicant drawer PG guard",()=>{
   const b=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Drawer B "+nonce,primaryDomain:"drawerb-"+nonce+".example"});
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:a.relationship.id,
     title:"Recruiter Drawer "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",minimumAnnualCtcInr:600000,maximumAnnualCtcInr:900000,applicationDeadline:new Date("2099-01-01T00:00:00Z")});
+  // A live drive requires an evaluative round and a persisted eligibility policy.
+  // Do not disable production publication gates for a recruiter read fixture.
+  await createPlacementRound(tpo,job.id,{kind:"INTERVIEW",name:"Technical"});
+  await upsertJobEligibilityPolicy(tpo,job.id,{});
   await publishPlacementJob(tpo,job.id);
   const uid=randomUUID();
   const hr=(companyId:string,rel:string,collegeId:string):RequestContext=>({
