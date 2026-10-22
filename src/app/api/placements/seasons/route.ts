@@ -14,15 +14,14 @@ export const runtime = "nodejs";
  * GET /api/v1/tpo/season → GET /api/placements/seasons (optional selected collegeId)
  * GET /api/v1/tpo/season/current → /tpo/settings/season
  * POST /api/v1/tpo/season → POST /api/placements/seasons
- * Legacy /{seasonId}/open-registration is intentionally not translated to
- * ACTIVE/CLOSED: registration-open state and deadline are independent fields
- * and must use a separately authorized, persisted registration workflow.
+ * Legacy /{seasonId}/open-registration uses the independent, scoped
+ * registration lifecycle with CAS; ACTIVE alone never opens enrollment.
  */
 export const TPO_SEASON_LEGACY_CROSSWALK = {
  list: "/api/placements/seasons?collegeId={uuid}",
  current: "/tpo/settings/season",
  create: "/api/placements/seasons",
- openRegistration: "NOT_AVAILABLE_UNTIL_REGISTRATION_LIFECYCLE",
+ openRegistration: "/api/placements/seasons/{seasonId}/open-registration",
 } as const;
 
 export async function GET(request: Request) {

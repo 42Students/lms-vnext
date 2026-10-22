@@ -24,9 +24,9 @@ import {
 
 /** Legacy season endpoints: GET /season → listPlacementSeasons,
  * GET /current → current ACTIVE season in selected college,
- * POST /season → createPlacementSeason. Open-registration is NOT the same as
- * opening a season: it must use the registered batch-invitation lifecycle
- * with its separate authorization/preview and cannot be inferred by status.
+ * POST /season → createPlacementSeason. Opening registration has its own
+ * versioned service; a managed season gate supplements cohort invitations
+ * and must never be inferred from ACTIVE status alone.
  */
 export async function currentPlacementSeason(context:RequestContext,collegeId:string){
  const scopedId=createPlacementJobInputSchema.shape.collegeId.parse(collegeId);
@@ -272,6 +272,7 @@ export async function closePlacementSeason(
       .update(placementSeasons)
       .set({
         status: "CLOSED",
+        isRegistrationOpen: false,
         closedByUserId:
           context.user.id,
         closedAt: now,
