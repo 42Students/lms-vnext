@@ -248,10 +248,10 @@ export function deriveTpoStudent(
     offer.joiningStatus!=="DID_NOT_JOIN" &&
     countsAsPlacedByCollegeRule({
       employmentType:offer.employmentType??"FULL_TIME",
-      countsAsPlaced:offer.countsAsPlaced??undefined,
+      ...(offer.countsAsPlaced!=null?{countsAsPlaced:offer.countsAsPlaced}:{}),
       offerStatus:offer.status,
       offerKind:offer.kind??"OFFER",
-      releasedAt:offer.releasedAt,
+      ...(offer.releasedAt!==undefined?{releasedAt:offer.releasedAt}:{}),
       selectedOutcome:offer.selectedOutcome===true,
       countsAsPlacedAt,
     })) || (countsAsPlacedAt==="SELECTED"&&source.selectedOutcomeVerified===true) ||
@@ -344,9 +344,9 @@ export function deriveTpoStudent(
     registrationOpen:source.registrationOpen??null,
     registeredForPlacements,
     participationStatus: source.participation.status,
-    participationLevel:source.participation.level,
-    participationReason:source.participation.reason,
-    participationDecidedAt:source.participation.decidedAt,
+    ...(source.participation.level!==undefined?{participationLevel:source.participation.level}:{}),
+    ...(source.participation.reason!==undefined?{participationReason:source.participation.reason}:{}),
+    ...(source.participation.decidedAt!==undefined?{participationDecidedAt:source.participation.decidedAt}:{}),
     readinessSignal,
     preferencesPresent: source.preferencesPresent,
     verification:source.verification,
@@ -375,8 +375,8 @@ export function deriveTpoStudent(
     journeyState,
     bestSoFar,
     // No stored profile document is unknown, not proof of no resume or links.
-    profileFacts:source.profileDocument && typeof source.profileDocument==="object" &&
-      !Array.isArray(source.profileDocument)?tpoStudentProfileFacts(source.profileDocument):undefined,
+    ...(source.profileDocument && typeof source.profileDocument==="object" &&
+      !Array.isArray(source.profileDocument)?{profileFacts:tpoStudentProfileFacts(source.profileDocument)}:{}),
     hiddenSearchMatched:source.hiddenSearchMatched??false,
     skillNameMatched:source.skillNameMatched??false,
     bestDriveResults:[...source.applications].sort((a,b)=>{
