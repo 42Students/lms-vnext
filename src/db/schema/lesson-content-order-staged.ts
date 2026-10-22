@@ -75,10 +75,16 @@ export function mapLegacyLessonDeliveryOrderWithOffering(
  scopedClassMap:ReadonlyMap<bigint,{deliveryId:string;lessonId:string;offeringId:string}>,
  scopedContentMap:ReadonlyMap<bigint,{lessonContentId:string;lessonId:string;offeringId:string}>,
 ):{deliveryId:string;lessonContentId:string;lessonId:string;offeringId:string;sequence:number}|null {
- const base=mapLegacyLessonDeliveryOrder(source,scopedClassMap,scopedContentMap);
  const delivery=scopedClassMap.get(source.classId);
  const content=scopedContentMap.get(source.contentId);
- if(!base||!delivery||!content||!delivery.offeringId||
-    delivery.offeringId!==content.offeringId)return null;
- return {...base,offeringId:delivery.offeringId};
+ // One legacy class/delivery contains many lessons. Its optional lessonId
+ // witness must not incorrectly reject a second lesson within that offering.
+ // The trusted delivery + content offering IDs are the actual scope boundary.
+ if(!delivery||!content||!delivery.offeringId||
+    delivery.offeringId!==content.offeringId||
+    content.lessonId!==source.lessonId||
+    source.sequence<0n||source.sequence>2147483647n)return null;
+ return {deliveryId:delivery.deliveryId,lessonContentId:content.lessonContentId,
+    lessonId:source.lessonId,offeringId:delivery.offeringId,
+    sequence:Number(source.sequence)};
 }

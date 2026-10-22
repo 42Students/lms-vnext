@@ -129,11 +129,28 @@ export function mapLegacyLessonDiscussions(
   // discussion UUIDs alone cannot prove this; reconcile all source rows in
   // one college-scoped batch before accepting a reply.
   const sourceContentByDiscussion=new Map<number,number>();
+  const sourceParentByDiscussion=new Map<number,number|null>();
   const duplicateIds=new Set<number>();
   for(const row of rows){
     if(sourceContentByDiscussion.has(row.legacyDiscussionId))
       duplicateIds.add(row.legacyDiscussionId);
     sourceContentByDiscussion.set(row.legacyDiscussionId,row.legacyContentId);
+    sourceParentByDiscussion.set(row.legacyDiscussionId,row.legacyParentId);
+  }
+  // Reject cycles AND their descendants, even if the caller supplied UUIDs
+  // for every source ID. They cannot be imported as a valid parent chain.
+  const cycleDependentIds=new Set<number>();
+  for(const row of rows){
+    const visited=new Set<number>();
+    let cursor:number|null=row.legacyDiscussionId;
+    while(cursor!==null&&sourceParentByDiscussion.has(cursor)){
+      if(visited.has(cursor)||cycleDependentIds.has(cursor)){
+        for(const id of visited)cycleDependentIds.add(id);
+        break;
+      }
+      visited.add(cursor);
+      cursor=sourceParentByDiscussion.get(cursor)??null;
+    }
   }
   const sorted=[...rows].sort((a,b)=>(a.sequence??Number.MAX_SAFE_INTEGER)-
     (b.sequence??Number.MAX_SAFE_INTEGER)||
@@ -143,6 +160,7 @@ export function mapLegacyLessonDiscussions(
     const content=contentIdMap.get(row.legacyContentId);
     const parent=row.legacyParentId===null?null:discussionIdMap.get(row.legacyParentId);
     if(duplicateIds.has(row.legacyDiscussionId)||
+       cycleDependentIds.has(row.legacyDiscussionId)||
        (row.sequence!==null&&(!Number.isSafeInteger(row.sequence)||row.sequence<0))||
        !Number.isSafeInteger(row.legacyDiscussionId)||row.legacyDiscussionId<=0||
        !Number.isSafeInteger(row.legacyContentId)||row.legacyContentId<=0||
