@@ -614,7 +614,14 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
                 {key:"actions",header:"Actions",mobilePriority:"action" as const,
                   cell:item=>item.status==="ARCHIVED"
                     ? <span className="text-xs text-muted-foreground">Restore using the visibility column</span>
-                    : <LessonActions lesson={{id:item.id,name:item.name,description:item.description,sequence:item.sequence}}/>},
+                    : <div className="flex min-w-0 flex-col items-end gap-1.5">
+                       <LessonActions lesson={{id:item.id,name:item.name,description:item.description,
+                        sequence:item.sequence,updatedAt:item.updatedAt,
+                        visibleToStudents:item.visibleToStudents}}/>
+                       <span className="max-w-52 text-right text-xs leading-5 text-muted-foreground">
+                        Course membership is fixed to the Learning Path. To use this lesson in another Course, create it there; existing progress and files stay here.
+                       </span>
+                      </div>},
               ]}
             /> : <DataTable
               caption="Recorded course progress"
