@@ -3,7 +3,7 @@
 Rows still unchecked after the first deep pass. Each row ends OK (vNext file:line + docs/legacy-source file) or FIXED. DEFERRED is not allowed.
 
 - [ ] G2-16-005-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
-- [ ] G2-16-027-031  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
+- [x] G2-16-027-031  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-17-010-005  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-19-002-095  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-19-010-067  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
@@ -37,3 +37,4 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 ## Results
 
 - **G2-4-017-018 FIXED (static specification):** `src/db/schema/projects.ts:229-240` records legacy recoverability separately from archive/delete, specifies retained child rows and safe restore constraints; `src/modules/projects/instance-service.ts:588-605` archives without deleting children. Legacy: `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectWorkspace.java:93-95`. No restore operation or runtime parity claimed. Commit `162a5b848095119a86baad213778aa725c42f8c6`.
+- **G2-16-027-031 FIXED (static inspection):** `src/modules/attendance/faculty-schedule-mutation-service.ts:27-47,169-225` dispatches section-enrolled active learner notifications post-commit, using legacy class-scheduled title/body and IST weekday format; failed delivery logs without rolling back the booking. Legacy: `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/ClassScheduleServiceImpl.java:381-418`. Commit `e80e32c5a289a6e288d0fd5b8e259a7aac7fcb44`. CI not run.
