@@ -16,13 +16,43 @@ const COMPANY_SHARE_EMAIL_KIND="placements.company_share.email_code_sent";
 const COMPANY_SHARE_EMAIL_WINDOW_MS=60*60*1000;
 const COMPANY_SHARE_EMAIL_CODE_TTL_MS=15*60*1000;
 
+/** Determine whether the optional resend control is available to the current
+ * signed-in recruiter. Never disclose the recipient address or grant details
+ * to visitors with only the public share token. POST independently rechecks
+ * every predicate under the share lock before rotating the access challenge. */
+export async function canEmailAuthorizedCompanyShareCode(
+ context:RequestContext,rawToken:unknown,
+):Promise<boolean>{
+ const token=companyShareTokenSchema.safeParse(rawToken);
+ if(!token.success||!hasActiveRecruiter(context)||!context.recruiter||
+    context.recruiter.userId!==context.user.id||!await companyShareTablesReady())return false;
+ if(!resolveZeptoMailTemplateId({kind:"TPO",templateName:"company-share-access"}))return false;
+ const [share]=await getDb().select({
+  collegeId:shares.collegeId,relationshipId:placementJobs.companyRelationshipId,
+ }).from(shares)
+  .innerJoin(placementJobs,and(eq(placementJobs.id,shares.jobId),
+    eq(placementJobs.collegeId,shares.collegeId)))
+  .innerJoin(colleges,and(eq(colleges.id,shares.collegeId),eq(colleges.status,"ACTIVE")))
+  .where(and(eq(shares.tokenHash,hashCompanyShareToken(token.data)),
+    isNull(shares.revokedAt),gt(shares.expiresAt,sql`clock_timestamp()`))).limit(1);
+ if(!share||!context.recruiter.grants.some(grant=>
+  grant.collegeId===share.collegeId&&
+  grant.companyRelationshipId===share.relationshipId))return false;
+ const [recipient]=await getDb().select({
+  email:users.email,status:users.platformStatus,
+ }).from(users).where(eq(users.id,context.user.id)).limit(1);
+ return recipient?.status==="ACTIVE"&&
+   typeof recipient.email==="string"&&
+   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient.email);
+}
+
 /** Rotate the challenge ONLY after validating a currently active recruiter
  * grant in the same tenant. Serialize resend attempts with the share row lock.
  * The provider sees a short-lived six-digit challenge but neither the raw
  * bearer link nor applicant records. No public address selection is allowed. */
 export async function emailAuthorizedCompanyShareCode(
  context:RequestContext,rawToken:unknown,
-):Promise<"SENT"|"DENIED"|"LIMITED"|"UNAVAILABLE">{
+):Promise<"SENT"|"DENIED"|"TOO_SOON"|"LIMITED"|"UNAVAILABLE">{
  const token=companyShareTokenSchema.safeParse(rawToken);
  if(!token.success||!await companyShareTablesReady()||!hasActiveRecruiter(context)||
     !context.recruiter||context.recruiter.userId!==context.user.id)return "DENIED";
@@ -52,14 +82,16 @@ export async function emailAuthorizedCompanyShareCode(
   if(!recipient?.email||recipient.status!=="ACTIVE"||
     !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient.email))return "DENIED" as const;
   const now=new Date();
-  const sent=await tx.select({id:activityEvents.id}).from(activityEvents)
+  const sent=await tx.select({id:activityEvents.id,occurredAt:activityEvents.occurredAt}).from(activityEvents)
    .where(and(eq(activityEvents.collegeId,share.collegeId),
     eq(activityEvents.subjectType,"company_applicant_share"),
     eq(activityEvents.subjectId,share.id),
     eq(activityEvents.eventType,COMPANY_SHARE_EMAIL_KIND),
     gte(activityEvents.occurredAt,new Date(now.getTime()-COMPANY_SHARE_EMAIL_WINDOW_MS))))
-   .limit(3);
+   .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(3);
   if(sent.length>=3)return "LIMITED" as const;
+  if(sent[0] && now.getTime()-sent[0].occurredAt.getTime()<60000)
+   return "TOO_SOON" as const;
   const challenge=issueCompanyShareAccessCode();
   // The provider call is inside the locked transaction so a rejected mail
   // cannot silently invalidate the manual code. Do not retry ambiguous sends.
