@@ -17,9 +17,10 @@ const program = (
 });
 
 describe("W06 admin Programs directory", () => {
-  it("matches legacy years while preserving exactly two terms per year",()=>{
+  it("labels complete years and nonstandard odd terms without inventing fractional years",()=>{
     expect(programDurationYearsLabel(8)).toBe("4 years");
-    expect(programDurationYearsLabel(1)).toBe("0.5 years");
+    expect(programDurationYearsLabel(1)).toBe("1 semester");
+    expect(programDurationYearsLabel(3)).toBe("3 semesters");
     expect(legacyDurationYearsToTerms(4)).toBe(8);
     expect(legacyDurationYearsToTerms(1.5)).toBe(3);
     expect(legacyDurationYearsToTerms(0.25)).toBeNull();
