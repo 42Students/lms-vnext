@@ -1,5 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {isValidElement} from "react";
+import {Pagination} from "@/components/ui/pagination";
 import {ProjectAdminSubmissionsPage} from "@/components/projects/project-admin-submissions-page";
 
 const state=vi.hoisted(()=>({
@@ -42,7 +43,20 @@ function strings(value:unknown):string[]{
   if(Array.isArray(value))return value.flatMap(strings);
   if(!isValidElement(value))return [];
   const p=value.props as Record<string,unknown>;
-  return ["children","title","description","action","href","eyebrow"].flatMap(key=>strings(p[key]));
+  return ["children","title","description","action","href","eyebrow","empty"].flatMap(key=>strings(p[key]));
+}
+function paginationState(value:unknown): {page:number;pageCount:number}|null {
+  if(Array.isArray(value)){
+    for(const item of value){const found=paginationState(item);if(found)return found;}
+    return null;
+  }
+  if(!isValidElement(value))return null;
+  if(value.type===Pagination){
+    const p=value.props as {page:number;pageCount:number};
+    return {page:p.page,pageCount:p.pageCount};
+  }
+  const p=value.props as Record<string,unknown>;
+  return paginationState(p.children)??paginationState(p.empty)??paginationState(p.action);
 }
 const render=(query:Record<string,string|string[]|undefined>={})=>
   ProjectAdminSubmissionsPage({
@@ -53,15 +67,16 @@ beforeEach(()=>{state.queue=0;state.summary=0;state.unsubmitted=0;state.failure=
 
 describe("IIT Dharwad Projects: adversarial tab outage and pagination journeys",()=>{
   it("PROJ-BREAK-submissions-41 unsubmitted-only navigation never calls final-delivery services",async()=>{
-    const page=strings(await render({
+    const view=await render({
       view:"NOT_SUBMITTED",q:"  IIT  ",status:"ACTIVE",page:"2",pageSize:"50",
-    })).join(" ");
+    });
+    const page=strings(view).join(" ");
     expect(state.queue).toBe(0);
     expect(state.summary).toBe(0);
     expect(state.unsubmitted).toBe(1);
     expect(state.unsubmittedQuery).toEqual({q:"IIT",status:"ACTIVE",page:2,pageSize:50});
     expect(page).toContain("Not submitted");
-    expect(page).toContain("Page 2 of 2");
+    expect(paginationState(view)).toEqual({page:2,pageCount:2});
     expect(page).toContain("q=IIT");
     expect(page).toContain("status=ACTIVE");
     expect(page).toContain("pageSize=50");
@@ -74,13 +89,13 @@ describe("IIT Dharwad Projects: adversarial tab outage and pagination journeys",
     expect(state.summary).toBe(1);
     expect(state.unsubmitted).toBe(0);
     expect(page).toContain("Submission totals are temporarily unavailable.");
-    expect(page).toContain("No final-delivery versions match these filters.");
+    expect(page).toContain("No submissions yet");
     expect(page).not.toContain("DO_NOT_EXPOSE");
   });
   it("PROJ-BREAK-submissions-45 essential queue outage shows retry preserving filters",async()=>{
     state.failure="queue";
     const page=strings(await render({q:"IIT",status:"ACTIVE",page:"3",pageSize:"50"})).join(" ");
-    expect(page).toContain("Submissions unavailable");
+    expect(page).toContain("Submissions could not be loaded");
     expect(page).toContain("Retry loading submissions");
     expect(page).toContain("q=IIT");
     expect(page).toContain("status=ACTIVE");
