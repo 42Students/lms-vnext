@@ -1,5 +1,4 @@
 import { FilterBar } from "@/components/ui/filter-bar";
-import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
