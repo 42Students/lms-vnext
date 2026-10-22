@@ -42,20 +42,20 @@ function interviewTimeIst(at:Date){
 function readLegacyReschedulePreferences(value:unknown){
  const data=value&&typeof value==="object"&&!Array.isArray(value)
   ?value as Record<string,unknown>:{};
- const preferredWindows=Array.isArray(data.preferredWindows)
-  ?data.preferredWindows.filter((window):window is {startsAt:string;endsAt:string}=>{
+ const preferredWindows=Array.isArray(data["preferredWindows"])
+  ?data["preferredWindows"].filter((window):window is {startsAt:string;endsAt:string}=>{
     if(!window||typeof window!=="object"||Array.isArray(window))return false;
     const item=window as Record<string,unknown>;
-    return typeof item.startsAt==="string"&&typeof item.endsAt==="string"&&
-     Number.isFinite(Date.parse(item.startsAt))&&Number.isFinite(Date.parse(item.endsAt))&&
-     Date.parse(item.endsAt)>Date.parse(item.startsAt);
+    return typeof item["startsAt"]==="string"&&typeof item["endsAt"]==="string"&&
+     Number.isFinite(Date.parse(item["startsAt"]))&&Number.isFinite(Date.parse(item["endsAt"]))&&
+     Date.parse(item["endsAt"])>Date.parse(item["startsAt"]);
    }).slice(0,5):[];
- const requestedSlotAt=typeof data.scheduledAt==="string"&&
-  Number.isFinite(Date.parse(data.scheduledAt))?data.scheduledAt:null;
+ const requestedSlotAt=typeof data["scheduledAt"]==="string"&&
+  Number.isFinite(Date.parse(data["scheduledAt"]))?data["scheduledAt"]:null;
  return {
-  originalNote:typeof data.note==="string"?data.note.slice(0,2000):null,
+  originalNote:typeof data["note"]==="string"?data["note"].slice(0,2000):null,
   preferredWindows,requestedSlotAt,
-  timezone:typeof data.timezone==="string"?data.timezone:null,
+  timezone:typeof data["timezone"]==="string"?data["timezone"]:null,
  };
 }
 
