@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 import { ProjectSoftDeleteControl } from "./project-soft-delete-control";
@@ -27,6 +28,11 @@ export function ProjectArchiveControl({
   const [pending, setPending] = useState(false);
   const inFlight=useRef(false);
   const onDialogOpenChange=(value:boolean)=>{if(!inFlight.current)setOpen(value);};
+  const icon=(kind:"archive"|"restore")=><svg aria-hidden="true" viewBox="0 0 24 24" className="mr-1 inline size-4"
+    fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    {kind==="archive"?<><path d="M4 4h16v4H4zM6 8v12h12V8M10 12h4"/></>:
+      <><path d="M9 14 4 9l5-5M4 9h9a7 7 0 1 1 0 14"/></>}
+  </svg>;
 
 
   async function archive() {
@@ -92,14 +98,14 @@ export function ProjectArchiveControl({
   if (status === "ARCHIVED") {
     return (
       <>
-        <Button size="sm" variant="secondary" onClick={() => setOpen(true)}>
-          Restore
+        <Button size="sm" variant="primary" aria-expanded={open} onClick={() => setOpen(true)}>
+          {icon("restore")} Restore
         </Button>
         <Dialog
           open={open}
           onOpenChange={onDialogOpenChange}
           title="Restore this workspace?"
-          description="Restore workspace, members, meetings, tasks, sprints and resources with their edits."
+          description="Restore this workspace and make it available to authorized members again."
           footer={
             <div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
               <Button className="w-full sm:w-auto" variant="secondary" disabled={pending} onClick={() => onDialogOpenChange(false)}>Cancel</Button>
@@ -108,7 +114,9 @@ export function ProjectArchiveControl({
           }
         >
           <p className="m-0 max-w-prose break-words border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-[var(--lms-font-base)] leading-5 text-[var(--lms-body-text)]">
-            Archived workspaces can be reopened with all of their content.
+            Archived workspaces can be reopened with their saved content, including task,
+            sprint, meeting and resource edits. Content restoration follows the vNext
+            versioned workspace model; existing changes are not regenerated from a template.
           </p>
         </Dialog>
         <ProjectSoftDeleteControl projectId={projectId} projectTitle={projectTitle}
@@ -119,12 +127,9 @@ export function ProjectArchiveControl({
 
   return (
     <>
-      <Button
-        size="sm"
-        variant="secondary"
-        onClick={() => setOpen(true)}
-      >
-        Archive
+      <Button size="sm" variant="danger" aria-expanded={open}
+        onClick={() => setOpen(true)}>
+        {icon("archive")} Archive
       </Button>
       <Dialog
         open={open}
@@ -134,7 +139,7 @@ export function ProjectArchiveControl({
         footer={
           <div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
             <Button className="w-full sm:w-auto" variant="secondary" disabled={pending} onClick={() => onDialogOpenChange(false)}>Cancel</Button>
-            <Button className="w-full sm:w-auto" loading={pending} disabled={pending} onClick={() => void archive()}>
+            <Button className="w-full sm:w-auto" variant="danger" loading={pending} disabled={pending} onClick={() => void archive()}>
               {pending ? "Archiving…" : "Archive workspace"}
             </Button>
           </div>
