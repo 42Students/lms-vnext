@@ -114,12 +114,12 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
        {item.changed&&<dd className="text-[12px] font-semibold text-[var(--lms-primary-text)]">Changed</dd>}
       </div>)}</dl>
     </section>
-    {row.section==="EDUCATION"&&Array.isArray(detail.review.submittedSnapshot.education)&&
+    {row.section==="EDUCATION"&&Array.isArray(detail.review.submittedSnapshot["education"])&&
       <section className="space-y-2">
         <h3 className="font-semibold">Education</h3>
         <DataTable
           caption="Submitted education records"
-          rows={verificationEducationRows(detail.review.submittedSnapshot.education)}
+          rows={verificationEducationRows(detail.review.submittedSnapshot["education"])}
           getRowKey={entry=>entry.id}
           empty={<p className="rounded border border-border p-3 text-sm">No education records supplied.</p>}
           columns={[
