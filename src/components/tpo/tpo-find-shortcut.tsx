@@ -90,7 +90,7 @@ export function TpoFindShortcut(){
       onChange={event=>changeQuery(event.target.value)} placeholder="Type at least 2 characters"
       maxLength={100} className="mt-2 min-h-11 w-full min-w-0 md:min-h-9"/>
    </label>
-   <PopoverListbox id="tpo-find-results" label="Matching records" className="mt-3 !min-h-0 max-h-72 space-y-0 overflow-y-auto !border-0 !p-0 !shadow-none" onDismiss={() => setOpen(false)}>
+   <PopoverListbox id="tpo-find-results" label="Matching records" aria-busy={loading} className="mt-3 !min-h-0 max-h-72 space-y-0 overflow-y-auto !border-0 !p-0 !shadow-none" onDismiss={() => setOpen(false)}>
     {query.trim().length<2?<div role="presentation" className="px-3 pb-2 pt-2 text-xs font-semibold text-muted-foreground">Recently opened</div>:null}
     {showing.map((row,index)=><Button variant="ghost" type="button" key={row.href}
       id={"tpo-find-result-"+index} role="option" aria-selected={active===index}
@@ -102,7 +102,7 @@ export function TpoFindShortcut(){
     {!showing.length&&!loading&&!error?<p role="status" className="p-3 text-sm text-muted-foreground leading-[22px]">
       {query.trim().length<2?"Open a record to see it here.":"No matching records."}</p>:null}
     {loading?<p role="status" className="p-3 text-sm text-muted-foreground leading-[22px]">Searching…</p>:null}
-    {error?<Alert tone="error">{error}</Alert>:null}
+    {error?<div role="alert"><Alert tone="error">{error}</Alert></div>:null}
    </PopoverListbox>
    <div className="mt-3 flex min-w-0 flex-col items-stretch gap-2 border-t border-border pt-3 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
     <span className="min-w-0 break-words">↑ ↓ Navigate · Enter Open · Esc Close</span>
