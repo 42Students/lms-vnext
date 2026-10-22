@@ -4,8 +4,10 @@ The last open verification-round-2 packets, spread evenly over all 20 lanes (22 
 
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_14.md` (25 rows)
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-19/W1_lane19_9.md` (25 rows)
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_26.md` (22 rows)
+- [x] `docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_26.md` (22 rows)
 
 Packet 1: triaged on main;  25 rows DEFERRED for deep parity assessment (see packet), no unverified OK/FIXED claims.
 
 Packet 2: triaged on main;  25 rows DEFERRED for deep parity assessment (see packet), no unverified OK/FIXED claims.
+
+Packet 3: triaged on main;  22 rows DEFERRED for deep parity assessment (see packet), no unverified OK/FIXED claims.
