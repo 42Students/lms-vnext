@@ -23,10 +23,11 @@ export async function bulkChangeTpoLeadStages(
   context: RequestContext,
   rawPayload: unknown,
 ) {
-  if (!context.membership) {
+  const membership = context.membership;
+  if (!membership) {
     throw new AuthorizationError("placements.manage");
   }
-  const collegeId = context.membership.collegeId;
+  const collegeId = membership.collegeId;
   if (!can(context, "placements.manage", { collegeId })) {
     throw new AuthorizationError("placements.manage");
   }
@@ -99,12 +100,14 @@ export async function bulkChangeTpoLeadStages(
       if (!result) throw new Error("TPO_CRM_BULK_STAGE_RESULT_MISSING");
       return result;
     });
+    const firstResult = results[0];
+    if (!firstResult) throw new Error("TPO_CRM_BULK_STAGE_RESULT_MISSING");
     const counts=summarizeTpoBulkLeadStages(results);
     const [runAudit]=await tx.insert(activityEvents).values({
       organizationId:college.organizationId,collegeId:college.id,
-      actorUserId:context.user.id,actorMembershipId:context.membership!.id,
+      actorUserId:context.user.id,actorMembershipId:membership.id,
       module:"PLACEMENTS",eventType:"PLACEMENTS_RECRUITER_BULK_STAGE",
-      subjectType:"placement_tpo_lead",subjectId:results[0].leadId,
+      subjectType:"placement_tpo_lead",subjectId:firstResult.leadId,
       summary:"Bulk recruiter lead stage update",
       metadata:{action:input.action,leadIds:results.map(r=>r.leadId),counts,undoVersion:1,changed},
     }).returning({id:activityEvents.id});
