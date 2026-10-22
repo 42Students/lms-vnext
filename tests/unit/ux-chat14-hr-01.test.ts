@@ -24,7 +24,8 @@ describe("chat-14 HR UX rollout batch 01",()=>{
   expect(src).not.toContain("min-h-10");
   expect(src).toContain("<HrCompanyReportsGrid");
   const grid=readFileSync("src/components/hr/hr-company-reports-grid.tsx","utf8");
-  expect(grid).toContain("Hiring activity");
+  expect(grid).toContain("<TpoGrid");
+  expect(src).toContain("Hiring activity by drive");
   expect(src).toContain("scopeKey={[context.user.id,collegeId].join");
   expect(src).toContain('aria-label="Company reports pagination"');
  });

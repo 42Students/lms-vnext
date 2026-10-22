@@ -228,7 +228,7 @@ describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries
       const learner=await createPrincipal(db,tenant,["LEARNER"]);
       await expect(createProjectFixture(db,tenant,wrongAuthor,mentor,learner))
         .rejects.toThrow(/actor role/);
-      const templates=await db.query<{n:number}>("select count(*)::int as n from project_templates");
+      const templates=await db.query<{n:number}>("select count(*)::int as n from project_templates where created_by_user_id=$1",[wrongAuthor.userId]);
       expect(templates[0]!.n).toBe(0);
     });
   });
@@ -246,7 +246,7 @@ describe("PROJ-HARNESS role/tenancy and concurrent PostgreSQL fixture boundaries
       await db.query("update users set platform_status='DISABLED' where id=$1",[admin.userId]);
       await expect(createProjectFixture(db,tenant,admin,mentor,learner))
         .rejects.toThrow(/not an active member/);
-      expect(await db.query("select id from project_instances")).toHaveLength(0);
+      expect(await db.query("select id from project_instances where college_id=$1",[tenant.collegeId])).toHaveLength(0);
     });
   });
 

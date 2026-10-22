@@ -209,7 +209,9 @@ export async function listLectureHalls(
 ) {
   const query = listLectureHallsSchema.parse(rawQuery);
   const college = await loadCollege(query.collegeId);
-  authorize(context, college, "academics.read");
+  // The administrative room directory is privileged; enrolled learners may
+  // see their own scheduled room via class events, not enumerate all rooms.
+  authorize(context, college, "academics.manage");
 
   const scheduledFuture = sql<boolean>`exists (select 1 from ${sectionScheduleEvents} future where future.lecture_hall_id = ${lectureHalls.id} and future.status = 'SCHEDULED' and future.ends_at > now())`;
   // Match name and optional description after the college/department predicate.
