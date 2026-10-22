@@ -7,7 +7,7 @@ describe("Company Memory user-safe load failures",()=>{
   expect(ui).toContain('"Company not found"');
   expect(ui).toContain('onClick={retry}>Retry');
   expect(ui).toContain('payload.error === "DATABASE_NOT_READY"');
-  expect(ui).toContain('"Company details are unavailable right now. Try again."');
+  expect(ui).toContain('"Company details are temporarily unavailable while placement data storage is being prepared. Try again."');
   expect(ui).toContain("Students-placed counts are unavailable");
   expect(ui).not.toContain("Company Memory is awaiting DB09 database verification.");
  });
