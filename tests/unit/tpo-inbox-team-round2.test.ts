@@ -95,8 +95,10 @@ describe("Chat-2 TPO Inbox + Team legacy verification round 2",()=>{
  it("TPO-inbox-team-58 rejects overlong announcement titles and bodies in create and edit forms",()=>{
   for(const file of ["src/modules/announcements/tpo-placement-write-service.ts",
     "src/modules/announcements/tpo-placement-edit-service.ts"]){
-   expect(src(file)).toContain("max(200)");
-   expect(src(file)).toContain("max(8000");
+   // Both zod .max(200) and .max(200,{error:...}) impose the
+   // same 200-character limit; edit uses a field-specific message.
+   expect(src(file)).toMatch(/\.max\(200(?:,|\))/);
+   expect(src(file)).toMatch(/\.max\(8000(?:,|\))/);
   }
   expect(announcements()).toContain("maxLength={200}");
   expect(announcements()).toContain("maxLength={8000}");
