@@ -70,7 +70,7 @@ export async function confirmTrackerAttachment(
    const valid=validateBugScreenshotConfirmation({
       publicId:issue.report.publicId,storageKey:input.storageKey,
       originalFilename:input.originalFilename,storedContentType:head.contentType,
-      storedLength:head.sizeBytes,currentCount:total,
+      storedLength:head.sizeBytes,currentCount:attachmentCount?.total??0,
    });
    const [row]=await tx.insert(db10BugReportAttachments).values({
      bugReportId:locked.id,...valid,
