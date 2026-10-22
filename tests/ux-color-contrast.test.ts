@@ -19,7 +19,7 @@ describe("UX-AUDIT B-01/B-05/B-06 canonical LMS AA pairings",()=>{
   expect(css).toContain("--primary: var(--lms-button-primary)");
   expect(css).toContain("--primary-foreground: var(--lms-on-primary)");
   expect(css).toContain("--color-on-primary: var(--primary-foreground)");
-  expect(css).toContain("--lms-link-text: #0e7c87");
+  expect(css).toContain("--lms-link-text: #0a7c88");
   expect(css).toContain("--lms-link-text: #75dce3");
  });
 });
