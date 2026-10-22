@@ -135,7 +135,7 @@ export function driveApplicationsHref(jobId: string, query: DriveApplicationsQue
   if(query.skills)params.set("skills",query.skills);
   if (query.screening !== "ALL") params.set("screening",query.screening);
   if (query.attention && query.attention!=="ALL") params.set("attention",query.attention);
-  if(query.sort&&query.sort!=="AGE_ASC")params.set("sort",query.sort);
+  if(query.sort&&query.sort!=="SCORE_DESC")params.set("sort",query.sort);
   if (!exportCsv && query.page > 1) params.set("page",String(query.page));
   if(!exportCsv&&query.size!==undefined&&query.size!==DRIVE_APPLICATIONS_PAGE_SIZE)
     params.set("size",String(query.size));
