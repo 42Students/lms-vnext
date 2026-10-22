@@ -1,0 +1,21 @@
+# CI unit-test packet (round 9)
+
+These tests FAIL in CI on main. For each failing assertion decide:
+1. The code change was intentional (old-LMS clone parity, wording parity, audit fix): UPDATE THE TEST to assert the new correct behaviour. Keep the test meaningful; never make it trivially pass.
+2. The code regressed (broken behaviour, missing guard, wrong permission): FIX THE CODE, not the test.
+3. The test reads a file that no longer exists or tests removed functionality: point it at the new location, or delete only that test case with a one-line reason in the commit message.
+Never use .skip/.todo, any, @ts-ignore or eslint-disable to get green. Source-text tests (readFileSync + toContain) are the most common: check the current component and update the expected strings when the new markup is intended.
+
+## tests/unit/learner-placements-round2-source-contracts.test.ts (1 failing)
+- Chat-7 learner placement verified-closure source contracts > LEARNER-placements-14 source behavior or reviewed disposition
+
+  ```
+  AssertionError: expected '"use client";\n\nimport { useCallback…' to contain 'Closing in 7 days'
+  - Expected
+  + Received
+  - Closing in 7 days
+  + "use client";
+  +
+  + import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
+  + import {Disclosure} from "@/components/ui/disclosure";
+  ```
