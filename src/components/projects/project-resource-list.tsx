@@ -239,12 +239,10 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
      <ProjectResourceOpenLink url={resource.url} linkText={mode==="LEARNER"?"Open resource ↗":"Open link"}/>
      {canReorder&&resource.status==="ACTIVE"?<div className="mt-2 flex flex-wrap gap-2">
        <Button variant="secondary" type="button" disabled={stableOrder[0]===resource.id}
-         aria-label={"Move "+resource.title+" up"} className="text-xs"
-         aria-label={"Move up "+resource.title}
+         aria-label={"Move up "+resource.title} className="text-xs"
          onClick={()=>moveRelative(resource.id,-1)}>Move up</Button>
        <Button variant="secondary" type="button" disabled={stableOrder.at(-1)===resource.id}
-         aria-label={"Move "+resource.title+" down"} className="text-xs"
-         aria-label={"Move down "+resource.title}
+         aria-label={"Move down "+resource.title} className="text-xs"
          onClick={()=>moveRelative(resource.id,1)}>Move down</Button>
      </div>:null}
      {mode!=="LEARNER"&&!readOnly&&resource.status!=="ARCHIVED"?<ProjectResourceActions
