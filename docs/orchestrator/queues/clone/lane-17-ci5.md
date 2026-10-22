@@ -6,7 +6,7 @@ SUPER-HEAVY BATCH (owner: close everything in 12 hours). Work this queue file af
 - [x] `docs/audit/gap-fix-work/ci5/packets/CI5U_lane17_2.md` (8 test files)
 - [x] `docs/audit/gap-fix-work/ci5/packets/CI5U_lane17_3.md` (8 test files)
 - [x] `docs/audit/gap-fix-work/ci5/packets/CI5U_lane17_4.md` (8 test files)
-- [ ] `docs/audit/gap-fix-work/ci5/packets/CI5U_lane17_5.md` (8 test files)
+- [x] `docs/audit/gap-fix-work/ci5/packets/CI5U_lane17_5.md` (8 test files)
 - [ ] `docs/audit/gap-fix-work/ci5/packets/CI5U_lane17_6.md` (2 test files)
 - [ ] `docs/audit/gap-fix-work/ci5/packets/CI5dbU_lane17_1.md` (4 test files)
 - [ ] `docs/audit/gap-fix-work/ci5/packets/CI5dbU_lane17_2.md` (3 test files)

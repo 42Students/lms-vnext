@@ -52,7 +52,7 @@ export function adminContentRange(total:number,page:number,size:number){
   end:Math.min(total,page*size)};
 }
 export function adminContentTypeLabel(type:string) {
- return type==="YOUTUBE"?"YouTube":type==="VIDEO"?"Video":
+ return type==="YOUTUBE"?"YouTube Video":type==="VIDEO"?"Video":
   type==="RESOURCE"?"Resource":type==="LIVE_CLASS"?"Live class":"Unknown content";
 }
 /** Effective visibility is the entire published ancestry, not just content's flag. */
