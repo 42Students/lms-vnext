@@ -14,6 +14,11 @@ vi.mock("@/modules/placements/super-admin-drive-pipeline-service",()=>({getSuper
 vi.mock("@/modules/placements/job-service",()=>({getPlacementJob:vi.fn()}));
 vi.mock("@/modules/placements/super-admin-drive-attention-service",()=>({getSuperAdminDriveAttention:vi.fn()}));
 vi.mock("@/components/placements/super-admin-bulk-drive-actions",()=>({SuperAdminBulkDriveActions:()=>null}));
+// This server-route test does not mount the client App Router context.
+// Preserve filter rendering as a labelled control while isolating server scope.
+vi.mock("@/components/placements/super-admin-drive-directory-filters",()=>({
+ SuperAdminDriveDirectoryFilters:()=> <form aria-label="Filter placement drives" />,
+}));
 vi.mock("@/components/placements/placement-drive-workspace",()=>({
  PlacementDriveWorkspace:({jobId}:{jobId:string})=><p data-job-id={jobId}>Authorized drive overview</p>,
 }));

@@ -857,7 +857,9 @@ export async function setCourseQuizResults(
     if(!locked)throw new CoursesServiceError("QUIZ_NOT_FOUND");
     const dueIsPast=locked.dueAt!==null && locked.dueAt.getTime()<=Date.now();
     const eligibleStatus=input.published
-      ? dueIsPast && (locked.status==="CLOSED"||locked.status==="PUBLISHED")
+      // An explicitly closed quiz can release results immediately. An
+      // auto-ended published quiz must have passed its due time first.
+      ? locked.status==="CLOSED"||(dueIsPast&&locked.status==="PUBLISHED")
       : locked.status==="CLOSED";
     if(!eligibleStatus || !legacyQuizResultsWriteAllowed(authorized,"CLOSED",
       locked.resultsPublished,input.published))
