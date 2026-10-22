@@ -51,7 +51,7 @@ export const createCourseAssignmentInputSchema =
       .number()
       .int()
       .min(0)
-      .max(10000),
+      .max(1000),
     sequence: z
       .number()
       .int()
@@ -78,7 +78,7 @@ export const updateCourseAssignmentInputSchema =
         .number()
         .int()
         .min(0)
-        .max(10000)
+        .max(1000)
         .optional(),
       sequence: z
         .number()
