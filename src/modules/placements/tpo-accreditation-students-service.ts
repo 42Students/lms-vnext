@@ -20,7 +20,7 @@ export async function getTpoAccreditationStudentExport(context:RequestContext,ra
   seasonId:z.string().uuid().optional(),jobId:z.string().uuid().optional()}).parse(raw);
  const {collegeId,batch}=await getTpoBatch(context,query.batchId);
  if(collegeId!==query.collegeId)throw Error("BATCH_COLLEGE_MISMATCH");
- requirePermission(context,"placements.manage",{collegeId:query.collegeId,organizationId:context.membership?.organizationId});
+ requirePermission(context,"placements.manage",{collegeId:query.collegeId,...(context.membership?.organizationId!==undefined?{organizationId:context.membership.organizationId}:{})});
  const report=await getPlacementAccreditationReport(context,{collegeId,
   seasonId:query.seasonId,jobId:query.jobId});
  if(!report.selectedSeasonId){
