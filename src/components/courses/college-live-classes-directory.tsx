@@ -105,8 +105,7 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
         <p className="text-sm text-body">{liveClassIstSchedule(item.startsAt,item.endsAt)}</p>
         {"meetingUrl" in item
           ? safeCollegeLiveMeetingUrl(item.meetingUrl)
-            ? <a href={safeCollegeLiveMeetingUrl(item.meetingUrl)!} target="_blank"
-                rel="noopener noreferrer" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+            ? <a href={safeCollegeLiveMeetingUrl(item.meetingUrl)!} rel="noopener noreferrer" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
                 Join ↗</a>
             : <p role="status" className="text-xs text-muted-foreground">
                 {item.meetingUrl?"Invalid link":"No link"}</p>
