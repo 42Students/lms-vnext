@@ -209,7 +209,7 @@ export function NotificationList({
                       </Link>
                   ) : null}
                   {item.externalCta&&safeExternalAction(item.externalCta.href)?(
-                    <a href={safeExternalAction(item.externalCta.href)!} target="_blank" rel="noopener noreferrer"
+                    <a href={safeExternalAction(item.externalCta.href)!}
                       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-button-primary)] px-3 text-sm font-semibold text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                       {item.externalCta.label||"Take Assessment"}
                     </a>
@@ -242,7 +242,7 @@ export function NotificationList({
           className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)]"
           onClick={()=>setSelected(null)}>{legacyActionLabel(selected)}</Link>:null}
         {selected?.externalCta&&safeExternalAction(selected.externalCta.href)?<a
-          href={safeExternalAction(selected.externalCta.href)!} target="_blank" rel="noopener noreferrer"
+          href={safeExternalAction(selected.externalCta.href)!}
           className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)]">
           {selected.externalCta.label}</a>:null}
         <Button variant="primary" onClick={()=>setSelected(null)}>Got it</Button>

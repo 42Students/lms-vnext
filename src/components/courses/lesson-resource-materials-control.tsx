@@ -56,16 +56,9 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
   openingRef.current.add(openingKey);
   setOpeningMaterialIds(ids=>ids.includes(openingKey)?ids:[...ids,openingKey]);
   setError(null);
-  // Reserve a tab while the click is still synchronous. Waiting for a
-  // presign request before opening one is blocked by popup protection.
-  // If popups are disabled, fall back to same-tab navigation.
-  let reserved:Window|null=null;
-  try{
-   reserved=window.open("about:blank","_blank");
-   if(reserved)reserved.opener=null;
-  }catch{
-   reserved=null;
-  }
+  // Materials open in the same tab (no popup windows, per the UX guard), so
+  // the signed URL is followed directly once it has been issued.
+  const reserved:Window|null=null;
   const controller=new AbortController();
   const timeout=window.setTimeout(()=>controller.abort(),12000);
   try{

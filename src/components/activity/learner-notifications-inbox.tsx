@@ -66,7 +66,7 @@ function safeNotificationMarkup(body:string):ReactNode[] {
             safeHref=parsed.toString();
         }catch{ /* Malformed links are not opened. */ }
         nodes.push(safeHref?
-          <a key={key} href={safeHref} target="_blank" rel="noopener noreferrer"
+          <a key={key} href={safeHref}
             className="text-primary-text underline underline-offset-2">{children}</a>:
           <span key={key} title="Only secure HTTPS links can be opened">{children}</span>);
         break;
@@ -337,7 +337,7 @@ export function LearnerNotificationsInbox({
               </Link>
             ) : null}
             {selected?.source==="ANNOUNCEMENT"&&selected.externalCta?
-              <a href={selected.externalCta.href} target="_blank" rel="noopener noreferrer"
+              <a href={selected.externalCta.href}
                 className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-[650] text-primary-text md:w-auto md:min-h-9">
                 {selected.externalCta.label} ↗
               </a>:null}
