@@ -56,7 +56,7 @@ export async function updateOwnLearnerProfileSection(context:RequestContext,rawI
     // Staff correction is a separately permissioned workflow. This
     // self-edit never accepts a client-supplied target membership.
     const view=(items:typeof current)=>input.section==="education"?
-      sortLearnerEducationForView(items):items;
+      sortLearnerEducationForView<(typeof current)[number]>(items):items;
     if(input.expectedItems!==undefined){
       const before=input.expectedItems;
       if(isLearnerProfileSectionStale(view(current),view(before))) {
