@@ -9,22 +9,37 @@ import {
 } from "@/modules/courses/course-service";
 
 export const runtime = "nodejs";
-/** Legacy /api/v1/courses operations remain historical URLs, not live
- * compatibility aliases. Authenticated consumers must use these vNext routes.
- * The old numeric IDs must be resolved explicitly before mutation. */
+/** Historical /api/v1/courses endpoints are NOT live aliases. Old callers
+ * must use the authenticated vNext API, resolve legacy integer IDs via an
+ * imported, college-scoped crosswalk, and adapt the response before rendering.
+ * Unlike the old Response(status, message, data) envelope, vNext returns
+ * {course}/{courses} or {courses,page,size,totalElements,totalPages}.
+ * vNext paging is 1-based; Spring PageResponseDTO was 0-based and also
+ * included content/number/first/last. Never silently use a raw legacy ID.
+ *
+ * Deprecated legacy clients: AdminService/course API helpers, Course Home
+ * and course selection links referring to /api/v1/courses. They must be
+ * migrated individually; this constant does not install a redirect.
+ */
 export const LEGACY_COURSE_API_CROSSWALK = {
- "GET /fetch": "GET /api/courses?collegeId={uuid}",
- "GET /fetchAll": "GET /api/courses?collegeId={uuid}",
+ "GET /fetch": "GET /api/courses?collegeId={uuid}&departmentId={uuid} (legacy deptId must resolve within selected college)",
+ "GET /fetchAll": "GET /api/courses?collegeId={uuid} or authorized /admin/courses global catalogue (Super Admin scope)",
+ "GET /fetchAllPaged": "GET /api/courses?page={legacyPage+1}&size={size}&collegeId={uuid} (Super Admin scope, 1-based vNext pagination)",
  "GET /fetchByCollege": "GET /api/courses?collegeId={uuid}",
+ "GET /fetchByCollegePaged": "GET /api/courses?collegeId={uuid}&page={legacyPage+1}&size={size}",
  "GET /fetchByDepartment": "GET /api/courses?collegeId={uuid}&departmentId={uuid}",
- "GET /fetch/{id}": "GET /api/courses/{courseId}",
- "POST /create": "POST /api/courses",
- "PUT /update/{id}": "PATCH /api/courses/{courseId} (expectedUpdatedAt required)",
- "DELETE /delete/{id}": "DELETE /api/courses/{courseId} (soft archive)",
+ "GET /fetchCourse": "GET /api/courses/{uuid} (resolve legacy numeric courseId inside authorized college first)",
+ "GET /fetch/{id}": "GET /api/courses/{uuid} (legacy numeric IDs require a verified crosswalk)",
+ "GET /by-slug/{slug}": "GET /api/courses/by-slug/{slug}?collegeId={uuid} (authenticated, same-college resolver)",
+ "GET /{courseId}/slug": "GET /api/courses/{uuid} then read course.slug (legacy integer -> scoped UUID)",
+ "GET /fetchCourseName": "GET /api/courses/by-slug/{slug}?collegeId={uuid} or GET /api/courses/{uuid} then read course.name",
+ "POST /create": "POST /api/courses (201 {course}; legacy /create returned 200 Response.data)",
+ "PUT /update/{id}": "PATCH /api/courses/{uuid} (same-origin; expectedUpdatedAt required; 200 {course})",
+ "DELETE /delete/{id}": "DELETE /api/courses/{uuid} (soft archive; 200 {course}, not legacy deletion envelope)",
  "GET /deleted": "GET /api/courses?collegeId={uuid}&onlyArchived=true (courses.manage required)",
- "POST /restore": "POST /api/courses/{courseId}/restore (authorized archived-course restore)",
+ "POST /restore": "POST /api/courses/{uuid}/restore (authorized archived-course restore)",
+ "POST /restore/{id}": "POST /api/courses/{uuid}/restore (legacy integer/collegeId crosswalk required)",
 } as const;
-
 
 export async function GET(request: Request) {
   try {
