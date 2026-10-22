@@ -2052,6 +2052,13 @@
       "when": 1792358891266,
       "tag": "0292_chat6_fractional_round_result_score",
       "breakpoints": true
+    },
+    {
+      "idx": 293,
+      "version": "7",
+      "when": 1792358951266,
+      "tag": "0293_chat16_legacy_short_title_255",
+      "breakpoints": true
     }
   ]
 }

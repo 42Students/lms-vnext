@@ -52,7 +52,7 @@ export const courses = pgTable(
     createdByOrganizationId: uuid("created_by_organization_id")
       .references(() => organizations.id, { onDelete: "restrict" }),
     // SA-academics-people-50: distinct legacy catalogue presentation metadata.
-    shortTitle: varchar("short_title", { length: 120 }),
+    shortTitle: varchar("short_title", { length: 255 }),
     officialCode: varchar("official_code", { length: 64 }),
     cardColor: varchar("card_color", { length: 7 }),
     takeaways: text("takeaways"),

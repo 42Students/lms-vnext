@@ -27,7 +27,7 @@ describe("chat-7 final sprint Super Admin courses and content",()=>{
   expect(ui).toContain("In this Course – Takeaways");
   expect(edit).toContain("Official course code (optional)");
   expect(edit).toContain("Course takeaways (optional)");
-  expect(service).toContain("shortTitle:input.shortTitle??input.name.slice(0,64)");
+  expect(service).toContain("shortTitle:input.shortTitle??input.name.slice(0,255)");
   expect(read("docs/proposed-migrations/registered-0135/chat7-sa-course-catalogue-metadata.sql"))
    .toContain("ADD COLUMN IF NOT EXISTS short_title");
  });

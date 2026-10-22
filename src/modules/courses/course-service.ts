@@ -380,7 +380,7 @@ export async function createCourse(
           throw new CoursesServiceError("COURSE_PARENT_NOT_FOUND");
       }
       await assertCourseShortTitleUnique(
-        tx, input.departmentId, input.shortTitle ?? input.name.slice(0, 64),
+        tx, input.departmentId, input.shortTitle ?? input.name.slice(0, 255),
       );
       const [created] = await tx
         .insert(courses)
@@ -393,7 +393,7 @@ export async function createCourse(
           // Imported legacy slugs retain their original value and identity.
           slug: `c-${randomUUID().replace(/-/g, "")}`,
           createdByOrganizationId: department.organizationId,
-          shortTitle:input.shortTitle??input.name.slice(0,64),
+          shortTitle:input.shortTitle??input.name.slice(0,255),
           officialCode:input.officialCode??null,
           cardColor:input.cardColor??null,
           thumbnailUrl:input.thumbnailUrl||null,
@@ -486,7 +486,7 @@ export async function updateCourse(
       }
       await assertCourseShortTitleUnique(
         tx, scope.departmentId,
-        input.shortTitle ?? locked.shortTitle ?? locked.name.slice(0, 64),
+        input.shortTitle ?? locked.shortTitle ?? locked.name.slice(0, 255),
         courseId,
       );
       // The old LMS has independent enabled and allowedForDisplay values.
@@ -694,7 +694,7 @@ export async function restoreCourse(
       // conflict with a new active name or code in the same department.
       await assertCourseShortTitleUnique(
         tx, scope.departmentId,
-        locked.shortTitle ?? locked.name.slice(0, 64),
+        locked.shortTitle ?? locked.name.slice(0, 255),
         courseId,
       );
       const [restored] = await tx
@@ -815,7 +815,7 @@ export async function moveCourseDepartment(
     .for("share").limit(1);
    if(!lockedTarget)throw new CoursesServiceError("DEPARTMENT_NOT_FOUND");
    await assertCourseShortTitleUnique(tx,newDepartmentId,
-    current.shortTitle??current.name.slice(0,64),courseId);
+    current.shortTitle??current.name.slice(0,255),courseId);
    const duplicate=await tx.select({id:courses.id})
     .from(courses).where(and(eq(courses.departmentId,newDepartmentId),
       eq(courses.status,"ACTIVE"),ne(courses.id,courseId),
