@@ -43,7 +43,7 @@ const courseThumbnailUrlSchema=z.string().trim().max(2048).refine(value=>{
     return url.protocol==="https:"&&!url.username&&!url.password&&!url.hash&&
       host!=="localhost"&&!host.endsWith(".localhost")&&
       host!=="0.0.0.0"&&host!=="[::1]"&&host!=="[::]"&&
-      !/^127\\.|^10\\.|^192\\.168\\.|^169\\.254\\.|^172\\.(?:1[6-9]|2\\d|3[01])\\./.test(host);
+      !/^127\.|^10\.|^192\.168\.|^169\.254\.|^172\.(?:1[6-9]|2\d|3[01])\./.test(host);
   }catch{return false;}
 },"Enter a valid HTTPS course cover URL").nullable();
 
