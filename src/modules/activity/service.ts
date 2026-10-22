@@ -284,7 +284,7 @@ async function writeActivityEvent(
     scope.collegeId &&
     context.membership?.collegeId ===
       scope.collegeId
-      ? context.membership.id
+      ? context.membership?.id ?? null
       : null;
 
   const values = {

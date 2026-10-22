@@ -49,14 +49,17 @@ export const superAdminAuditRouteQuerySchema = z.strictObject({
  * Interpret their wall-clock date/time as IST rather than server local time;
  * the activity boundary parser then validates the actual ISO timestamp. */
 function auditLegacyLocalTime(value:string){
- return /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(?::\\d{2}(?:\\.\\d{1,3})?)?$/.test(value)
+ return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?$/.test(value)
   ?value+"+05:30":value;
 }
 
 /** Translate supported legacy action/category/subject names before validation.
  * Old integer actor/org/college IDs must be resolved by a trusted migration,
  * never translated by coercion or unscoped text matching. */
-export function validateSuperAdminAuditRouteQuery(raw:Record<string,string|string[]|undefined>) {
+export function validateSuperAdminAuditRouteQuery(
+  raw:Record<string,string|string[]|undefined>,
+  verifiedOrganizationId:string|null=null,
+) {
   const mapped:Record<string,string|string[]|undefined>={...raw};
   const legacyCategory=mapped.category;
   if(legacyCategory!==undefined){
@@ -90,10 +93,14 @@ export function validateSuperAdminAuditRouteQuery(raw:Record<string,string|strin
   // Legacy size permits 500 event rows; cursor-backed vNext limits to 100.
   // Invalid size values fail closed instead of silently widening a tenant
   // query, and the UI must explain the newer bounded result contract.
-  // The ActivityPage server read currently scopes to the selected header
-  // organization, not arbitrary query organization IDs. Reject explicit org
-  // selectors until that route passes them into requirePermission and SQL.
-  if(mapped.organizationId!==undefined)return null;
+  // Legacy organization links may carry a scope ID, but it must match the
+  // signed-in Super Admin's selected organization. Never use query parameters
+  // to select a tenant; ActivityPage derives the SQL scope from the context.
+  if(mapped.organizationId!==undefined){
+    if(typeof mapped.organizationId!=="string" ||
+      !verifiedOrganizationId || mapped.organizationId!==verifiedOrganizationId)return null;
+    delete mapped.organizationId;
+  }
   const result=superAdminAuditRouteQuerySchema.safeParse(mapped);
   return result.success?result.data:null;
 }

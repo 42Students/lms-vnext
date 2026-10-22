@@ -32,7 +32,7 @@ export default async function SuperAdminAuditPage({searchParams}:{
   redirect("/dashboard");
  }
  const raw=await searchParams;
- const parsed=validateSuperAdminAuditRouteQuery(raw);
+ const parsed=validateSuperAdminAuditRouteQuery(raw,context.adminScope?.organizationId??null);
  const unsupported=typeof raw.category==="string"?raw.category.trim().slice(0,80):null;
  if(!parsed)return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin" title="Audit Log"/>

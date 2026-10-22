@@ -20,7 +20,7 @@ export async function listMyTrackerReports(context:RequestContext,options:Report
   const page=options.page??1;
   const size=options.size??20;
   if(!Number.isSafeInteger(page)||page<1||!Number.isSafeInteger(size)||size<1||size>100)
-   throw new TrackerAdminError("INVALID_QUERY");
+   throw new TrackerAdminError("INVALID_INPUT");
   const order=options.order==="ASC"?asc:desc;
   const rows=await getDb().select({
     publicId:db10BugReports.publicId,
