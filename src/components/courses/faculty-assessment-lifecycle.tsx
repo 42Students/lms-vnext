@@ -74,6 +74,11 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
      setError(err instanceof Error?err.message:"The assessment could not be changed. Refresh and try again.");
    }finally{inFlight.current=false;setPending(null);}
  }
+ const dialogDescription=confirmAction==="ARCHIVE"
+  ?(kind==="ASSIGNMENT"
+    ?"Learners will no longer be able to access this assignment. This action cannot be undone from this screen. Existing submissions and files are retained for audit."
+    :"Learners will no longer be able to access this quiz. Existing attempts are retained for audit.")
+  :confirmAction===null?undefined:facultyAssessmentLifecycleWarning(kind,confirmAction);
  return <div className="min-w-0 space-y-3">
    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center" aria-label={kind+" lifecycle actions"}>
      {actions.map(action=><Button key={action} type="button" size="md"
@@ -107,11 +112,7 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
    open={confirmAction!==null}
    onOpenChange={open=>{if(!open && pending===null)setConfirmAction(null);}}
    title={confirmAction==="ARCHIVE"?(kind==="ASSIGNMENT"?"Delete this assignment?":"Delete this quiz?"):confirmAction==="CLOSE"?"Close assessment":"Publish assessment"}
-   {...(confirmAction===null?{}:{description:confirmAction==="ARCHIVE"
-    ?(kind==="ASSIGNMENT"
-       ?"Learners will no longer be able to access this assignment. This action cannot be undone from this screen. Existing submissions and files are retained for audit."
-       :"Learners will no longer be able to access this quiz. Existing attempts are retained for audit.")
-    :facultyAssessmentLifecycleWarning(kind,confirmAction)})}
+   {...(dialogDescription===undefined?{}:{description:dialogDescription})}
    confirmLabel={confirmAction==="ARCHIVE"?"Delete":confirmAction==="CLOSE"?"Close":"Publish"}
    confirmVariant={confirmAction==="ARCHIVE"||confirmAction==="CLOSE"?"danger":"primary"}
    pending={pending!==null}
