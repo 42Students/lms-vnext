@@ -40,6 +40,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
   const [discardOpen,setDiscardOpen]=useState(false);
   const [discardSection,setDiscardSection]=useState<ProfileSection|null>(null);
   const formRef=useRef<HTMLFormElement>(null);
+  const sectionSaveIntent=useRef<ProfileSection|null>(null);
   const [pendingNavigation,setPendingNavigation]=useState<string|null>(null);
   const [editableSection,setEditableSection]=useState<ProfileSection|null>(null);
   const dirty=JSON.stringify(profile)!==JSON.stringify(savedSnapshot.current);
@@ -140,8 +141,8 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
       {editableSection===section?<div className="flex flex-wrap gap-2">
         <Button type="button" variant="secondary" disabled={saving}
           onClick={()=>cancelSection(section)} className="min-h-11 md:min-h-9">Cancel</Button>
-        <Button type="button" variant="primary" disabled={saving||!dirty} loading={saving}
-          onClick={()=>formRef.current?.requestSubmit()} className="min-h-11 md:min-h-9">Save</Button>
+        <Button type="button" variant="primary" disabled={saving||!sectionChanged(section)} loading={saving}
+          onClick={()=>{sectionSaveIntent.current=section;formRef.current?.requestSubmit();}} className="min-h-11 md:min-h-9">Save</Button>
       </div>:null}
     </header>;
   }
@@ -195,17 +196,37 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
       changedSections.push("address");
     if(JSON.stringify(profile.contacts)!==JSON.stringify(baseline.contacts))
       changedSections.push("contacts");
-    if(!changedSections.length)return;
+    const requestedSection=sectionSaveIntent.current;
+    sectionSaveIntent.current=null;
+    const savingSections=requestedSection
+      ? changedSections.filter(section=>section===requestedSection) : changedSections;
+    if(!savingSections.length)return;
     setSaving(true); setError(""); setSaved(false);
     try {
       const result = await apiFetch<{profile:VersionedCollegeProfile}>("/api/college/profile", {
         method: "PATCH", headers: { "content-type": "application/json" },
         // Only dirty profile cards replace stored cards. The server checks the
         // baseline under a row lock so concurrent updates to other cards survive.
-        body: JSON.stringify({...profile,baseline,changedSections}),
+        body: JSON.stringify({...profile,baseline,changedSections:savingSections}),
       });
       savedSnapshot.current=result.profile;
-      setProfile(result.profile); setSaved(true);setEditableSection(null);
+      // A card-level Save must never silently publish or discard edits made
+      // earlier in another card. Only the selected section was written.
+      // Overlay still-dirty drafts onto the fresh persisted version/CAS token.
+      setProfile(current=>({
+        ...result.profile,
+        ...(!savingSections.includes("personal")&&changedSections.includes("personal")
+          ? {displayName:current.displayName,roleTitle:current.roleTitle,
+            about:current.about,photoUrl:current.photoUrl,
+            personalDetails:current.personalDetails} : {}),
+        ...(!savingSections.includes("social")&&changedSections.includes("social")
+          ? {social:current.social} : {}),
+        ...(!savingSections.includes("address")&&changedSections.includes("address")
+          ? {address:current.address} : {}),
+        ...(!savingSections.includes("contacts")&&changedSections.includes("contacts")
+          ? {contacts:current.contacts} : {}),
+      }));
+      setSaved(true);setEditableSection(null);
       router.refresh();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : friendlyApiError({}));
