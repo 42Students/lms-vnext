@@ -76,7 +76,7 @@ describe("College academics/people weak-area behavioural ledger",()=>{
  it("COL-people-DIRECTORY-01 rejects duplicated, foreign, cross-role and out-of-range filters",()=>{
   expect(parseCollegeRoleDirectorySearchParams({})).toMatchObject({page:1,pageSize:25});
   for(const raw of [
-   {q:["A","B"]},{untrustedScope:collegeId},{page:"0"},{pageSize:"100"},
+   {q:["A","B"]},{untrustedScope:collegeId},{page:"0"},{pageSize:"999"},
    {joinedFrom:"2026-10-19",joinedThrough:"2026-10-18"},
    {sectionId:"javascript:alert(1)"},{q:"x".repeat(101)},
   ]){
