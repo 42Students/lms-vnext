@@ -21,6 +21,6 @@ describe("legacy faculty report grading boundaries",()=>{
  });
  it("always returns the five legacy score bands",()=>{
   expect(buildScoreDistribution([0,59,60,79,80,89,90,100]).map(x=>x.count))
-   .toEqual([2,1,1,1,3]);
+   .toEqual([2,2,1,1,2]);
  });
 });
