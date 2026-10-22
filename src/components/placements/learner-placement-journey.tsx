@@ -15,6 +15,9 @@ export type LearnerPlacementJourneyItem = {
   channel: string;
   staffOptOutUntil?:Date|null;
   mayStaffOptOut?:boolean;
+  /** Server-derived withdrawal grant (legacy `a.withdraw`). */
+  withdraw?:"SELF"|"REQUEST"|null;
+  cancelledReason?:string|null;
   submittedAt: Date;
   withdrawnAt: Date | null;
   screening: {
