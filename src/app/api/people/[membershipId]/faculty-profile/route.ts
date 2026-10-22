@@ -2,15 +2,11 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
-import { eq, sql } from "drizzle-orm";
-import { getDb } from "@/db/client";
-import { facultyProfiles } from "@/db/schema";
 import { getPersonMembershipDetailWithRuntime } from "@/modules/people/runtime";
-import { PeopleServiceError } from "@/modules/people/errors";
-import { facultyProfileDocumentSchema } from "@/modules/people/faculty-profile-document";
+import { isSuperAdmin } from "@/modules/identity/context";
 import {
- facultySelfSectionPatchSchema, updateFacultyProfileSection,
-} from "@/modules/people/faculty-self-section-model";
+  getFacultyDocumentForAdmin, patchFacultyDocumentForAdmin,
+} from "@/modules/people/faculty-admin-document-service";
 import {
  readBoundedFacultyProfileJson,FacultyProfileBodyTooLarge,
 } from "@/modules/people/faculty-profile-request-body";
@@ -43,12 +39,11 @@ export async function GET(
         roles.includes("TPO");
       if(!roles.includes("FACULTY")&&!protectedRole)
         return NextResponse.json({error:"MEMBERSHIP_NOT_FOUND"},{status:404});
-      const [found]=await getDb().select({
-        document:facultyProfiles.profileDocument,
-        version:facultyProfiles.profileDocumentVersion,
-      }).from(facultyProfiles)
-        .where(eq(facultyProfiles.membershipId,person.membership.id)).limit(1);
-      const parsed=facultyProfileDocumentSchema.parse(found?.document??{});
+      // A detail read alone cannot authorize another person's full profile.
+      // Revalidate persisted actor permission and target ownership in the
+      // shared college-staff document service before loading private sections.
+      const found=await getFacultyDocumentForAdmin(context,person.membership.id);
+      const parsed=found.document;
       // Receipt IDs are not read URLs and must not be copied from the staff
       // editor into a public profile or used as arbitrary storage grants.
       const safeDocument={...parsed,identitySummary:{
@@ -57,9 +52,10 @@ export async function GET(
       },profileImageDocumentId:null};
       return NextResponse.json({
         profile:{membershipId:person.membership.id,
-          profileDocument:safeDocument,profileDocumentVersion:found?.version??0},
-        canEdit:roles.includes("FACULTY")&&!protectedRole,
-        readOnlyReason:protectedRole?"Protected staff profiles are read-only for College Admins":null,
+          profileDocument:safeDocument,profileDocumentVersion:found.version},
+        canEdit:roles.includes("FACULTY")&&(!protectedRole||isSuperAdmin(context)),
+        readOnlyReason:protectedRole&&!isSuperAdmin(context)
+          ?"Protected staff profiles are read-only for College Admins":null,
         roleScope:"COLLEGE_STAFF",
       });
     }
@@ -111,42 +107,27 @@ export async function PUT(
  * may change a tenant-bound Faculty record; ADMIN/TPO profiles are read-only
  * to College Admins. Version CAS rejects overwriting another editor's work.
  */
+/** Backward-compatible staff profile editor; shares the persisted actor,
+ * target-role protection and CAS of the dedicated faculty-document endpoint. */
 export async function PATCH(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
+ try {
   const context=await getCurrentRequestContext();
   const {membershipId}=await params;
-  const person=await getPersonMembershipDetailWithRuntime(context,membershipId);
-  if(!person.membership.roles.includes("FACULTY")||
-     person.membership.roles.includes("COLLEGE_ADMIN")||
-     person.membership.roles.includes("TPO"))
-    return NextResponse.json({error:"PROFILE_READ_ONLY"},{status:403});
   let raw:unknown;
   try{raw=await readBoundedFacultyProfileJson(request);}
   catch(error){return NextResponse.json({
-    error:error instanceof FacultyProfileBodyTooLarge?"REQUEST_TOO_LARGE":"INVALID_REQUEST",
-   },{status:error instanceof FacultyProfileBodyTooLarge?413:400});}
-  const input=facultySelfSectionPatchSchema.parse(raw);
-  const result=await getDb().transaction(async tx=>{
-    const [existing]=await tx.select({
-      document:facultyProfiles.profileDocument,
-      version:facultyProfiles.profileDocumentVersion,
-    }).from(facultyProfiles).where(
-      eq(facultyProfiles.membershipId,person.membership.id))
-      .for("update").limit(1);
-    if(!existing)throw new PeopleServiceError("MEMBERSHIP_NOT_FOUND");
-    if(existing.version!==input.expectedVersion)
-      throw new PeopleServiceError("FACULTY_PROFILE_VERSION_CONFLICT");
-    const current=facultyProfileDocumentSchema.parse(existing.document??{});
-    const next=updateFacultyProfileSection(current,input);
-    await tx.update(facultyProfiles).set({
-      profileDocument:next,
-      profileDocumentVersion:sql`${facultyProfiles.profileDocumentVersion}+1`,
-      updatedAt:new Date(),
-    }).where(eq(facultyProfiles.membershipId,person.membership.id));
-    return {document:next,version:existing.version+1};
-  });
-  return NextResponse.json({...result,updated:true});
+   error:error instanceof FacultyProfileBodyTooLarge?"REQUEST_TOO_LARGE":"INVALID_REQUEST",
+  },{status:error instanceof FacultyProfileBodyTooLarge?413:400});}
+  const result=await patchFacultyDocumentForAdmin(context,membershipId,raw);
+  // This older route never exposes private evidence IDs in a general profile
+  // payload. A signed document read uses the separately authorized route.
+  const safeDocument={...result.document,identitySummary:{
+   ...result.document.identitySummary,
+   aadhaarDocumentId:null,panDocumentId:null,
+  },profileImageDocumentId:null};
+  return NextResponse.json({document:safeDocument,version:result.version,updated:true},
+   {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
