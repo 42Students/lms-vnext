@@ -95,8 +95,10 @@ describe("optional module access resolution", () => {
 
     expect(result.placements).toMatchObject({
       enabled: true,
-      level: "MEMBERSHIP",
-      locked: true,
+      level: "COLLEGE",
+      locked: false,
     });
+    // Per-learner placements eligibility belongs to TPO, not a module toggle.
+    expect(result.projects.enabled).toBe(true);
   });
 });

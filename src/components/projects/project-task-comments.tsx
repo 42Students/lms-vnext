@@ -42,7 +42,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
  }
  useEffect(()=>{void show();},[projectId,taskId]);
  async function post(){
-  if(!body.trim()){setError("message is required");return;}
+  if(!body.trim()){setError("Add a note before posting");return;}
   setBusy(true);setError(null);
   try{
    const result=await projectMutation(url,"POST",{
@@ -108,7 +108,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
          onChange={e=>setBody(e.target.value)}/>
      </label>:null}
      {canPost && !body.trim() ? <p className="text-xs text-muted-foreground leading-[20px]">
-       message is required
+       Add a note before posting
      </p> : null}
      {canPost?<Button className="w-full md:w-auto" size="sm" loading={busy} disabled={busy||!body.trim()} onClick={()=>void post()}>Post comment</Button>:null}
    </div>:null}

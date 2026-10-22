@@ -6,6 +6,7 @@ describe("PUB-auth-public-42 failed identity and grant steps must roll back",()=
   expect(src).toContain('if(existing)throw invalid()');
   expect(src).toContain('if(!grant)throw invalid()');
   expect(src).toContain('if(!user||user.status!=="ACTIVE")throw invalid()');
-  expect(src).toContain('if(!profile||profile.companyId!==relationship.companyId||profile.status!=="ACTIVE")');
+  expect(src).toContain('if(!profile||profile.companyId!==relationship.companyId||');
+  expect(src).toContain('profile.status!=="ACTIVE")throw invalid()');
  });
 });

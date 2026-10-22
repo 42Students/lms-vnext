@@ -729,6 +729,8 @@ export function ProjectWorkspace({
           <p className="mt-1 text-sm leading-6 text-body">
             {archived&&mode==="MENTOR"?
               "This workspace is archived. You can review historical tasks, resources, meetings and submissions, but cannot change them.":
+              archived&&mode==="LEARNER"?
+                "This workspace is archived, so it is read-only.":
               workspace.project.status==="COMPLETED"?
                 "This project is complete. Existing work and meetings remain available to read; editing is disabled.":
                 mode==="MENTOR"?
@@ -1080,7 +1082,7 @@ export function ProjectWorkspace({
       {show("team") ? <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="m-0 text-lg font-semibold text-foreground">Team</h2>
+            <h2 className="m-0 text-lg font-semibold text-foreground">{mode==="LEARNER"?"Project team":"Team"}</h2>
             <p className="mt-1 text-sm text-body">Manage mentor ownership, student membership and workload across this workspace.</p>
           </div>
           {mode==="ADMIN"&&!readOnly
