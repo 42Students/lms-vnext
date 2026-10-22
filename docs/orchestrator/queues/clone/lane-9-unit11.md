@@ -3,16 +3,20 @@
 CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER your deep packets 1-2 in lane-9-deep.md. For each file: read the failure below, read the test and the code it tests, decide which side is wrong against the old LMS (docs/legacy-source) and fix THAT side (fix the product code if it regressed; update the test only if the test asserts outdated/wrong behaviour). Never delete tests, never .skip, never weaken assertions to pass. Push after every file and tick it here.
 
 - [x] `tests/unit/PROJ-BREAK-chat9-admin-IST-dates.test.ts` (2 failing)
-- [ ] `tests/unit/chat12-verify2-hiring-ist-boundary.test.ts` (1 failing)
-- [ ] `tests/unit/chat2-team-college-admin-access.test.ts` (1 failing)
+- [x] `tests/unit/chat12-verify2-hiring-ist-boundary.test.ts` (1 failing)
+- [x] `tests/unit/chat2-team-college-admin-access.test.ts` (1 failing)
 - [ ] `tests/unit/chat6-super-admin-people-contact-redaction.test.tsx` (2 failing)
 - [ ] `tests/unit/chat9-super-admin-orphan-routes.test.ts` (1 failing)
-- [ ] `tests/unit/learner-placements-chat7-schedule-surface.test.ts` (1 failing)
+- [x] `tests/unit/learner-placements-chat7-schedule-surface.test.ts` (1 failing)
 - [ ] `tests/unit/ux-admin-loading-recovery.test.ts` (1 failing)
 
 ## Repair results
 
 - `tests/unit/PROJ-BREAK-chat9-admin-IST-dates.test.ts`: [chat-7] `6a0309c` — scoped export now includes `Updated at (IST)` with the card's date formatter. Borrowed after lanes 7 and 8 were fully checked; source reviewed, not run locally.
+
+ - `tests/unit/chat12-verify2-hiring-ist-boundary.test.ts`: Already corrected on current main; year-end `2026-12-31` and leap-day `2028-02-29` now expect `18:30Z` on their same UTC date for the next IST midnight. No code change; not executed locally.
+- `tests/unit/chat2-team-college-admin-access.test.ts`: [chat-7] `6df98a7` — canonical scoped People bookmark now goes to `/tpo/settings?tab=team`, while conversations remain in Messages. Kept role and roster scope assertions; not executed locally.
+- `tests/unit/learner-placements-chat7-schedule-surface.test.ts`: [chat-7] `e675e79` — same-tab HTTPS test link expectation with validated URL and copy fallback, retaining external link safety. Not executed locally.
 
 ## Failures (from CI log)
 
