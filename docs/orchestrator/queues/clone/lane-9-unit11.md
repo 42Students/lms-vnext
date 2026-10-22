@@ -4,7 +4,7 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 
 - [ ] `tests/unit/PROJ-BREAK-chat9-admin-IST-dates.test.ts` (2 failing)
 - [ ] `tests/unit/chat12-verify2-hiring-ist-boundary.test.ts` (1 failing)
-- [ ] `tests/unit/chat2-team-college-admin-access.test.ts` (1 failing)
+- [x] `tests/unit/chat2-team-college-admin-access.test.ts` (1 failing) — [chat-1] d5dce84: updated outdated redirect contract to assert people/members/roster tabs route to canonical `/tpo/settings?tab=team`; static verification, CI not run.
 - [ ] `tests/unit/chat6-super-admin-people-contact-redaction.test.tsx` (2 failing)
 - [ ] `tests/unit/chat9-super-admin-orphan-routes.test.ts` (1 failing)
 - [ ] `tests/unit/learner-placements-chat7-schedule-surface.test.ts` (1 failing)
