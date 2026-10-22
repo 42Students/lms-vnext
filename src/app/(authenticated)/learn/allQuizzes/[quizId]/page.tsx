@@ -4,7 +4,6 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { EmptyState } from "@/components/ui/empty-state";
 import { Alert } from "@/components/ui/alert";
 import { getLearnerAssessmentOverview } from "@/modules/courses/learner-assessment-service";
 import { resolveLearnerOfferingDelivery } from "@/modules/courses/learner-offering-delivery-model";

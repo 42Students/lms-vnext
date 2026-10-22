@@ -275,7 +275,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       <h2 className="text-[var(--lms-font-lg)] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-7">Your drive requests</h2>
       <ul className="min-w-0 divide-y divide-border border-y border-border">{requestView.map(req=>{
         const draft=req.draft&&typeof req.draft==="object"?req.draft:{};
-        const title=typeof draft.title==="string"?draft.title:"Drive request";
+        const title=typeof draft["title"]==="string"?draft["title"]:"Drive request";
         const editable=req.status==="REQUEST"||req.status==="SENT_BACK";
         const knownRequestStatus=RECRUITER_REQUEST_STATUSES.find(status=>status===req.status);
         return <li key={req.id} className="min-w-0 py-4">
@@ -291,15 +291,15 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
           <p className="mt-2 text-xs text-muted-foreground">Requested {req.createdAt.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</p>
           <dl className="mt-2 grid gap-x-4 gap-y-1 text-xs text-body sm:grid-cols-2 lg:grid-cols-3">
             {([
-              ["Location",draft.location],["Job type",draft.employmentType],["Drive mode",draft.driveMode],
-              ["Minimum CGPA",draft.minimumCgpa],["Passing year",draft.passingYear],["CTC (LPA)",draft.ctcLpa],
-              ["Fixed (LPA)",draft.fixedLpa],["Variable (LPA)",draft.variableLpa],
-              ["Stipend / month (INR)",draft.stipendMonthlyInr],
+              ["Location",draft["location"]],["Job type",draft["employmentType"]],["Drive mode",draft["driveMode"]],
+              ["Minimum CGPA",draft["minimumCgpa"]],["Passing year",draft["passingYear"]],["CTC (LPA)",draft["ctcLpa"]],
+              ["Fixed (LPA)",draft["fixedLpa"]],["Variable (LPA)",draft["variableLpa"]],
+              ["Stipend / month (INR)",draft["stipendMonthlyInr"]],
             ] as const).filter((entry)=>typeof entry[1]==="string"&&entry[1].trim()).map(([label,value])=>
               <div key={label}><dt className="inline font-semibold">{label}: </dt><dd className="inline">{String(value)}</dd></div>)}
-            {Array.isArray(draft.branches)&&draft.branches.length>0?<div>
+            {Array.isArray(draft["branches"])&&draft["branches"].length>0?<div>
               <dt className="inline font-semibold">Branches: </dt>
-              <dd className="inline">{draft.branches.filter((item):item is string=>typeof item==="string").join(", ")}</dd>
+              <dd className="inline">{draft["branches"].filter((item):item is string=>typeof item==="string").join(", ")}</dd>
             </div>:null}
           </dl>
           {editable?<Link href={"/hr/drives/new?collegeId="+encodeURIComponent(selectedCollege)+"&"+(req.status==="SENT_BACK"?"fix":"edit")+"="+encodeURIComponent(req.id)}
