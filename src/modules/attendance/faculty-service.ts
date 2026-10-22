@@ -60,7 +60,7 @@ const sessionInputSchema = z
     },
   ).superRefine((value,ctx)=>{
     const start=Date.parse(value.startsAt),end=Date.parse(value.endsAt);
-    const envMinutes=Number(process.env.FACULTY_SCHEDULE_PAST_GRACE_MINUTES??"5");
+    const envMinutes=Number(process.env["FACULTY_SCHEDULE_PAST_GRACE_MINUTES"]??"5");
     const grace=Number.isInteger(envMinutes)&&envMinutes>=0&&envMinutes<=60?envMinutes:5;
     if(start<Date.now()-grace*60000)
       ctx.addIssue({code:"custom",path:["startsAt"],message:"Cannot schedule a class in the past"});
