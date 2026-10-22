@@ -149,19 +149,6 @@ export async function updateCollegeOwnProfile(context: RequestContext, raw: unkn
   const input = collegeOwnProfileSchema.parse(raw);
   const submitted = raw && typeof raw === "object" && !Array.isArray(raw)
     ? raw as Record<string, unknown> : {};
-  // The profile contact number is not an authentication credential. Never
-  // change users.phoneE164 without its separate verified account flow.
-  // Persisted contact numbers still follow the legacy 10/10–15 digit rules.
-  const primaryContact = input.contacts.contactMobile?.trim() ?? "";
-  const alternateContact = (input.contacts.contactPhone || input.contacts.alternatePhone).trim();
-  if (primaryContact && !/^\d{10}$/.test(primaryContact))
-    throw new Error("Primary contact mobile must contain exactly 10 digits.");
-  if (alternateContact && (!/^\+?[\d ()-]+$/.test(alternateContact) ||
-    alternateContact.replace(/\D/g,"").length < 10 ||
-    alternateContact.replace(/\D/g,"").length > 15))
-    throw new Error("Additional phone must contain 10–15 digits.");
-  if (primaryContact && primaryContact === alternateContact.replace(/\D/g,""))
-    throw new Error("Additional phone must differ from the primary contact mobile.");
   const version = z.number().int().nonnegative()
     .safeParse(submitted.profileDocumentVersion);
   if (!version.success) throw new CollegeProfileVersionRequired();
@@ -181,6 +168,21 @@ export async function updateCollegeOwnProfile(context: RequestContext, raw: unkn
     throw new CollegeProfileVersionRequired();
   }
   const edited = sectionInput?.success ? new Set(sectionInput.data) : null;
+  if(edited===null||edited.has("contacts")){
+  // The profile contact number is not an authentication credential. Never
+  // change users.phoneE164 without its separate verified account flow.
+  // Persisted contact numbers still follow the legacy 10/10–15 digit rules.
+  const primaryContact = input.contacts.contactMobile?.trim() ?? "";
+  const alternateContact = (input.contacts.contactPhone || input.contacts.alternatePhone).trim();
+  if (primaryContact && !/^\d{10}$/.test(primaryContact))
+    throw new Error("Primary contact mobile must contain exactly 10 digits.");
+  if (alternateContact && (!/^\+?[\d ()-]+$/.test(alternateContact) ||
+    alternateContact.replace(/\D/g,"").length < 10 ||
+    alternateContact.replace(/\D/g,"").length > 15))
+    throw new Error("Additional phone must contain 10–15 digits.");
+  if (primaryContact && primaryContact === alternateContact.replace(/\D/g,""))
+    throw new Error("Additional phone must differ from the primary contact mobile.");
+  }
   const baseline = baselineInput?.success ? baselineInput.data : null;
   const { displayName, ...details } = input;
 
