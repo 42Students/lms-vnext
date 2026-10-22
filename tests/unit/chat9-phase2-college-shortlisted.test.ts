@@ -15,7 +15,7 @@ describe("college shortlisted route",()=>{
       "src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx"),"utf8");
     expect(src).toContain('hasMembershipRole(context, "COLLEGE_ADMIN")');
     expect(src).toContain('status: "SUBMITTED"');
-    expect(src).toContain('stage: requested.stage ?? "ASSESSMENT"');
+    expect(src).toContain('stage: requested["stage"] ?? "ASSESSMENT"');
     expect(src).toContain('screening: "ALL"');
     // The stage-aware pipeline service is the authorized college applicant read.
     // Drive metadata is resolved only AFTER that service establishes collegeId,
