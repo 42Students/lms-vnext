@@ -1,9 +1,10 @@
 "use client";
-import {useMemo,useState} from "react";
+import {useMemo,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import {Dialog} from "@/components/ui/dialog";
 
 type Candidate={membershipId:string;displayName:string;hasTpoRole:boolean};
 const endpoint="/api/placements/tpo/settings/team";
@@ -74,29 +75,31 @@ export function TpoSettingsTeamRemove({membershipId,displayName,removable,isSelf
  const router=useRouter();
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false);
  const [error,setError]=useState(""),[success,setSuccess]=useState("");
+ const removalLock=useRef(false);
  async function remove(){
+  if(removalLock.current)return;
+  removalLock.current=true;
   setBusy(true);setError("");
   try{await send("DELETE",membershipId);setOpen(false);setSuccess("Removed from the team");
    router.refresh();}
   catch(reason){setError(reason instanceof Error?reason.message:"Could not remove team member");}
-  finally{setBusy(false);}
+  finally{removalLock.current=false;setBusy(false);}
  }
  if(!removable||isSelf)return <span className="text-xs text-muted-foreground">{isSelf?"Your membership":"Managed by college"}</span>;
  return <div className="min-w-0 space-y-2">
   <Button type="button" size="sm" variant="secondary" onClick={()=>{setOpen(true);setError("");}}>Remove member</Button>
   {success?<p className="text-xs text-[var(--lms-primary-text)]" role="status">{success}</p>:null}
-  {open?<div role="dialog" aria-modal="true" aria-label={"Remove "+displayName}
-    className="min-w-[240px] max-w-sm space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4 shadow-lg">
-   <h3 className="font-semibold">Remove {displayName} from the placement team?</h3>
-   <p className="text-sm">They lose placement team assignment access at once, private conversations included. What they wrote stays, marked “left the team”.</p>
-   {permanentRole?<p className="text-xs text-muted-foreground">Their permanent TPO or College Admin membership is not removed.</p>:null}
-   <p className="text-xs text-muted-foreground">Reassign any active drives and recruiter relationships before removing their team assignment.</p>
-   {error?<InlineNotice tone="error" message={error}/>:null}
-   <div className="flex flex-wrap gap-2">
+  <Dialog open={open} role="alertdialog" title={"Remove "+displayName+" from the placement team?"}
+   description="They lose placement team assignment access at once, including private conversations. What they wrote stays, marked “left the team”."
+   className="max-w-sm" dismissible={!busy} onOpenChange={next=>{if(!busy)setOpen(next);}}
+   footer={<div className="flex w-full flex-wrap justify-end gap-2">
     <Button type="button" size="sm" variant="secondary" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
-    <Button type="button" size="sm" disabled={busy} onClick={()=>void remove()}>
+    <Button type="button" size="sm" variant="danger" loading={busy} disabled={busy} onClick={()=>void remove()}>
      {busy?"Removing…":"Remove"}</Button>
-   </div>
-  </div>:null}
+   </div>}>
+   {permanentRole?<p className="text-xs text-muted-foreground">Their permanent TPO or College Admin membership is not removed.</p>:null}
+   <p className="text-sm">Reassign any active drives and recruiter relationships before removing their team assignment.</p>
+   {error?<InlineNotice tone="error" message={error}/>:null}
+  </Dialog>
  </div>;
 }
