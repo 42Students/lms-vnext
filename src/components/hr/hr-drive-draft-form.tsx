@@ -14,7 +14,11 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {nextHrProposalAttempt} from "@/modules/placements/hr-drive-proposal-attempt-model";
 import type { HrDriveDraft } from "@/modules/placements/hr-drive-draft-model";
-import { emptyHrDriveDraft, hrDriveDraftSchema } from "@/modules/placements/hr-drive-draft-model";
+import { emptyHrDriveDraft, hrDriveDraftSchema,
+ HR_DRIVE_ROUND_LIMIT,HR_DRIVE_BRANCH_LIMIT,LEGACY_HR_DRIVE_MODES,
+ LEGACY_HR_DRIVE_FORM_LABELS,HR_DRIVE_CTC_STEP,HR_DRIVE_PACKAGE_MONEY_STEP,
+ parseHrDraftLegacyBranchTags,
+} from "@/modules/placements/hr-drive-draft-model";
 import {saveHrUnsentDraft,restoreHrUnsentDraft} from "@/modules/placements/hr-unsent-draft-storage-model";
 import {HR_DRIVE_ROUND_PRESETS,applyHrRoundPreset} from "@/modules/placements/hr-drive-round-presets";
 import {reorderHrDraftRound} from "@/modules/placements/hr-draft-round-order-model";
@@ -439,12 +443,14 @@ export function HrDriveDraftForm({
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Mode
             <Select className="w-full" value={draft.driveMode??"ON_CAMPUS"}
-              onChange={event=>setDraft(current=>({...current,driveMode:event.target.value as "ON_CAMPUS"|"OFF_CAMPUS",
-                ...(event.target.value==="ON_CAMPUS"?{externalApplicationUrl:""}:{})}))}>
-              <option value="ON_CAMPUS">On campus</option>
-              <option value="OFF_CAMPUS">Off campus (students apply on your site)</option>
+              onChange={event=>setDraft(current=>({...current,driveMode:event.target.value as HrDriveDraft["driveMode"],
+                ...(event.target.value!=="OFF_CAMPUS"?{externalApplicationUrl:""}:{})}))}>
+              {LEGACY_HR_DRIVE_MODES.map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
             </Select>
           </label>
+          {draft.driveMode==="POOL"?<p className="md:col-span-2 text-xs text-muted-foreground" role="status">
+            Pool drives require placement-cell review; the source pool classification is retained when approved.
+          </p>:null}
           {draft.driveMode==="OFF_CAMPUS"?<label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] md:col-span-2 leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Application website (HTTPS)
             <Input className="w-full" type="url" inputMode="url" maxLength={2000}
@@ -497,11 +503,14 @@ export function HrDriveDraftForm({
       </section>
 
       <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-        <h2 className="font-semibold text-foreground">Pay</h2>
+        <h2 className="font-semibold text-foreground">2 / 3 · {LEGACY_HR_DRIVE_FORM_LABELS.paySection}</h2>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Enter the overall compensation, then add packages for different offers if needed.
+        </p>
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-3">
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             {draft.employmentType==="INTERNSHIP"?"CTC after the internship (LPA, optional)":"CTC (LPA)"}
-            <Input className="w-full" data-draft-field="ctcLpa" aria-invalid={Boolean(fieldErrors.ctcLpa)}
+            <Input className="w-full" type="number" min={0} step={HR_DRIVE_CTC_STEP} data-draft-field="ctcLpa" aria-invalid={Boolean(fieldErrors.ctcLpa)}
               inputMode="decimal" value={draft.ctcLpa??""} aria-describedby={fieldErrors.ctcLpa ? "hr-ctc-error" : undefined}
               onChange={event=>{setFieldErrors(current=>({...current,ctcLpa:""}));
                 setDraft(current=>({...current,ctcLpa:event.target.value}));}}/>
@@ -509,15 +518,15 @@ export function HrDriveDraftForm({
           </label>
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Fixed (optional)
-            <Input className="w-full" inputMode="decimal" value={draft.fixedLpa??""}
+            <Input className="w-full" type="number" min={0} step={HR_DRIVE_PACKAGE_MONEY_STEP} inputMode="decimal" value={draft.fixedLpa??""}
               onChange={event=>setDraft(current=>({...current,fixedLpa:event.target.value}))}/>
           </label>
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Variable (optional)
-            <Input className="w-full" inputMode="decimal" value={draft.variableLpa??""}
+            <Input className="w-full" type="number" min={0} step={HR_DRIVE_PACKAGE_MONEY_STEP} inputMode="decimal" value={draft.variableLpa??""}
               onChange={event=>setDraft(current=>({...current,variableLpa:event.target.value}))}/>
           </label>
-          <p className="text-xs text-muted-foreground md:col-span-3">Fixed and variable LPA must add up to the total CTC if entered.</p>
+          <p className="text-xs text-muted-foreground md:col-span-3">Fixed and variable LPA must not exceed total CTC. Spin controls use legacy increments; entered hundredths are preserved.</p>
           {draft.employmentType!=="FULL_TIME"&&draft.employmentType!=="CONTRACT"?<label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Stipend per month (₹)
             <Input className="w-full" inputMode="numeric" value={draft.stipendMonthlyInr??""}
@@ -543,6 +552,59 @@ export function HrDriveDraftForm({
             </label>
           ))}
         </div>
+        <div className="mt-4 space-y-3 border-t border-border pt-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3 className="font-semibold text-foreground">Pay packages</h3>
+            <Button type="button" variant="secondary"
+              disabled={(draft.payPackages??[]).length>=25}
+              onClick={()=>setDraft(current=>({...current,payPackages:[
+                ...(current.payPackages??[]),
+                {name:"Package "+((current.payPackages?.length??0)+1),
+                 ctcLpa:"",fixedLpa:"",variableLpa:"",joiningBonusLpa:"",
+                 stipendMonthlyInr:""},
+              ]}))}>＋ Add package</Button>
+          </div>
+          {(draft.payPackages??[]).map((item,index)=>
+            <fieldset key={index} className="min-w-0 rounded border border-border p-3">
+              <legend className="px-1 text-sm font-semibold">Package {index+1}</legend>
+              <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {([
+                  ["name",LEGACY_HR_DRIVE_FORM_LABELS.packageName],
+                  ["ctcLpa",LEGACY_HR_DRIVE_FORM_LABELS.ctc],
+                  ["fixedLpa",LEGACY_HR_DRIVE_FORM_LABELS.fixed],
+                  ["variableLpa",LEGACY_HR_DRIVE_FORM_LABELS.variable],
+                  ["joiningBonusLpa",LEGACY_HR_DRIVE_FORM_LABELS.joiningBonus],
+                  ["stipendMonthlyInr",LEGACY_HR_DRIVE_FORM_LABELS.stipend],
+                ] as const).map(([field,label])=><label key={field}
+                  className="grid min-w-0 gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+                  {label}
+                  <Input type={field==="name"?"text":"number"}
+                    min={field==="name"?undefined:0}
+                    step={field==="ctcLpa"?HR_DRIVE_CTC_STEP:
+                      field==="stipendMonthlyInr"?1:HR_DRIVE_PACKAGE_MONEY_STEP}
+                    value={item[field]??""} onChange={event=>setDraft(current=>({
+                      ...current,payPackages:(current.payPackages??[]).map((row,i)=>
+                        i===index?{...row,[field]:event.target.value}:row),
+                    }))}/>
+                </label>)}
+                <label className="grid min-w-0 gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+                  {LEGACY_HR_DRIVE_FORM_LABELS.duration}
+                  <Input type="number" min={1} max={120} step={1}
+                    value={item.internshipMonths??""}
+                    onChange={event=>setDraft(current=>({
+                      ...current,payPackages:(current.payPackages??[]).map((row,i)=>
+                        i===index?{...row,internshipMonths:event.target.value?
+                          Number(event.target.value):undefined}:row),
+                    }))}/>
+                </label>
+              </div>
+              <Button className="mt-3" variant="secondary" type="button"
+                onClick={()=>setDraft(current=>({...current,
+                  payPackages:(current.payPackages??[]).filter((_,i)=>i!==index)}))}>
+                Remove package
+              </Button>
+            </fieldset>)}
+        </div>
         <p className="mt-3 text-xs text-muted-foreground">
           Compensation and eligibility values are submitted as part of the formal request; the placement cell decides whether to approve.
         </p>
@@ -551,7 +613,7 @@ export function HrDriveDraftForm({
       <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold text-foreground">Rounds</h2>
-          <Button type="button" disabled={draft.rounds.length >= 12}
+          <Button type="button" disabled={draft.rounds.length >= HR_DRIVE_ROUND_LIMIT}
             variant="secondary"
             onClick={() => setDraft((current) => ({
               ...current, rounds: [...current.rounds, { kind: "INTERVIEW", name: "Interview" }],
@@ -566,7 +628,9 @@ export function HrDriveDraftForm({
             {preset.label}
           </Button>)}
         </div>
-        <p className="mt-2 text-xs text-muted-foreground">Preset replaces the round list in this unsent draft only; edit each step afterward.</p>
+        <p className="mt-2 text-xs text-muted-foreground">
+          Preset replaces this draft's rounds. Add is capped at {HR_DRIVE_ROUND_LIMIT} to keep approval reviewable.
+        </p>
         <div className="mt-4 min-w-0 space-y-3">
           {draft.rounds.map((round, index) => (
             <div key={index} className="grid min-w-0 gap-3 border-b border-border py-4 last:border-b-0 min-[768px]:grid-cols-2 min-[992px]:grid-cols-[170px_minmax(0,1fr)_auto]">
@@ -595,7 +659,7 @@ export function HrDriveDraftForm({
                 <Button type="button" disabled={index===draft.rounds.length-1} aria-label={"Move "+round.name+" later"}
                   variant="secondary"
                   onClick={()=>{setDraft(current=>reorderHrDraftRound(current,index,1));setShowPreview(false);}}>↓</Button>
-                <Button type="button" disabled={draft.rounds.length>=12}
+                <Button type="button" disabled={draft.rounds.length>=HR_DRIVE_ROUND_LIMIT}
                   aria-label={"Duplicate "+round.name}
                   variant="secondary" className="max-[767px]:flex-1"
                   onClick={()=>{setDraft(current=>duplicateHrDraftRound(current,index));setShowPreview(false);}}>
@@ -639,13 +703,27 @@ export function HrDriveDraftForm({
             Branches
             <Input className="w-full" list="recruiter-eligible-branches"
               value={branchInput} placeholder="All branches"
-              onChange={event=>{setBranchInput(event.target.value);setDraft(current=>({...current,
-                branches:[...new Map(event.target.value.split(",").map(value=>value.trim()).filter(Boolean)
-                  .map(value=>[value.toLocaleLowerCase("en"),value] as const)).values()]}));}}/>
+              onChange={event=>{setBranchInput(event.target.value);
+                const parsed=event.target.value;
+                try{
+                  const branches=parseHrDraftLegacyBranchTags(parsed);
+                  setDraft(current=>({...current,branches}));
+                }catch{
+                  // Keep the unsaved text and show an explicit error, never trim tags.
+                  setFieldErrors(current=>({...current,branches:
+                    "Enter at most 30 branches, each under 120 characters."}));
+                }
+              }}/>
             <datalist id="recruiter-eligible-branches">
               {branchSuggestions.map(name=><option key={name} value={name}/>)}
             </datalist>
-            <span className="text-xs text-muted-foreground">Separate multiple college branches with commas. The placement cell verifies the final eligibility.</span>
+            <span className="text-xs text-muted-foreground">
+              Separate branches with commas (maximum {HR_DRIVE_BRANCH_LIMIT}); the placement cell verifies eligibility.
+            </span>
+            {branchInput.split(",").filter(v=>v.trim()).length>HR_DRIVE_BRANCH_LIMIT?
+              <span role="alert" className="text-xs text-error">
+                Enter at most {HR_DRIVE_BRANCH_LIMIT} branches without dropping any selection.
+              </span>:null}
           </label>
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Passing year
