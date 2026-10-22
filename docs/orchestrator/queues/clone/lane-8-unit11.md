@@ -157,9 +157,11 @@ AssertionError: expected 'import SuperAdminTenantSetup from "./…' to contain '
 ```
 
 
-## Deep rows (from DEEP_agent2_4.md, unfinished; do these FIRST)
+## Deep rows (from current main; checked first)
 
-Record each result under ## Results in docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md as OK (vNext file:line + docs/legacy-source file) or FIXED. No DEFERRED.
+- [x] G2-2-006-014 — FIXED points 0–1000 in UI and create/update Zod schemas; commits fafef4cd, 02288bba; recorded in DEEP_agent2_4.md.
+- [x] G2-4-018-067 — OK project submission optimistic concurrency distinct from version ordinal; evidence recorded in DEEP_agent2_4.md.
 
-- [ ] G2-2-006-014  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
-- [ ] G2-4-018-067  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+## Current-main recheck
+
+- All seven listed unit tests already ticked on current main; no outstanding unit11 test files in lane 8. Next lane 9 unit11 has all seven entries ticked on current main as well. No test assertions removed or weakened.
