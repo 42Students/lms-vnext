@@ -38,6 +38,17 @@ export function proxy(request: NextRequest) {
     response.headers.set("x-request-id",requestId);
     return response;
   }
+  // Legacy /college-admin alias (index.js sent a 302 to its dashboard): the
+  // College Admin dashboard lives at /college in vNext.
+  if (/^\/college-admin(?:\/dashboard)?\/?$/.test(path)) {
+    const target=request.nextUrl.clone();
+    target.pathname="/college";
+    target.search="";
+    const response=NextResponse.redirect(target,302);
+    response.headers.set("Cache-Control","no-store");
+    response.headers.set("x-request-id",requestId);
+    return response;
+  }
   const response = NextResponse.next({ request: { headers: forwardHeaders } });
   response.headers.set("x-request-id", requestId);
   return response;
