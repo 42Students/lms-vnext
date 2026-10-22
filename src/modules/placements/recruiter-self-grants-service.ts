@@ -220,7 +220,8 @@ export async function getRecruiterSelfGrantOverview(
             collegeLogoUrl=url.toString();
         }catch{/* Historic malformed logo URLs are not navigable. */}
       }
-      return {...grant,collegeLogoUrl};
+      // Use the verified joined college key; a grant UUID is not a college UUID.
+      return {...grant,collegeId:source?.collegeId??null,collegeLogoUrl};
     }),
     ...pendingSummary,
   };
