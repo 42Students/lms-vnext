@@ -27,9 +27,10 @@ export const legacyLearnerRequestChoices=[
 export const tpoGeneralRequestInputSchema=z.discriminatedUnion("kind",[
  z.object({kind:z.literal("OFF_CAMPUS_OFFER"),reason,
   companyName:z.string().trim().min(1,"Which company?").max(150),
-  // Match the verified outside-offer workflow: compensation may be unknown.
+  // Legacy optional CTC has a minimum of zero: 0 is a recorded unpaid
+  // or undisclosed offer, not proof of placement or a salary estimate.
   ctcLpa:z.string().regex(/^(?:0|[1-9][0-9]{0,7})(?:\.[0-9]{1,2})?$/)
-   .nullable().optional().refine(value=>value==null||Number(value)>0,{message:"Compensation must be greater than zero"}),
+   .nullable().optional(),
   proofUrl}),
  z.object({kind:z.literal("REGISTRATION_CHANGE"),reason,cohortId:uuid,
   choice:z.enum(["PLACEMENTS","HIGHER_STUDIES","NOT_INTERESTED","ENTREPRENEURSHIP","COMPETITIVE_EXAMS"]),
