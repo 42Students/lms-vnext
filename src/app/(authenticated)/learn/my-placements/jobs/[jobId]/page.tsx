@@ -148,7 +148,7 @@ export default async function LearnerPlacementJobDetailPage({
   if(rows.length===0&&!journey)return <div className="min-w-0 space-y-4">
     <PageHeader title="My Placements" description="Opportunities and your application journey" />
     {shell}
-    <EmptyState title="Job unavailable" description="The link is unavailable, unpublished, or no longer visible to your selected college. No application history for this drive could be found in your account."
+    <EmptyState title="This drive can't be shown" description="The link is unavailable, unpublished, or no longer visible to your selected college. No application history for this drive could be found in your account."
       action={<nav aria-label="Other placement options" className="flex flex-wrap gap-4">
         <Link href={back} className="inline-flex min-h-11 items-center font-semibold text-link underline">Browse drives</Link>
         <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 items-center font-semibold text-link underline">My applications</Link>
