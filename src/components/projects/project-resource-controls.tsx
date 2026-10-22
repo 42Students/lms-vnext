@@ -484,10 +484,7 @@ export function ProjectResourceActions({
       showToast({
         tone: "error",
         title: "Could not archive resource",
-        description:
-          caught instanceof Error
-            ? caught.message
-            : undefined,
+        ...(caught instanceof Error ? {description: caught.message} : {}),
       });
     } finally {
       setPending(false);

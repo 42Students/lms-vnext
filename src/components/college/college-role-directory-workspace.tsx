@@ -28,7 +28,6 @@ import {
   collegeRoleDirectoryFilterMessage,
   collegeRoleDirectoryHasActiveFilters,
   collegeRoleDirectoryPageRange,
-  collegeRoleDirectoryQuerySchema,
   describeCollegeDirectoryContext,
   collegeDirectorySearchHint,
   parseCollegeRoleDirectorySearchParams,
@@ -281,7 +280,7 @@ export async function CollegeRoleDirectoryWorkspace({
           [title,result.metrics.registered],
           ["Active",result.metrics.active],
           ["Suspended",result.metrics.suspended],
-        ].map(([label,value])=><StatTile key={label} variant="college" label={String(label)} value={value}/>)}
+        ] satisfies [string, number][]).map(([label,value])=><StatTile key={label} variant="college" label={String(label)} value={value}/>)}
         <StatTile variant="college" label="Visible now" value={result.total}/>
         <p className="col-span-full text-xs text-muted-foreground leading-[20px]">
           Visible now means {result.total.toLocaleString("en-IN")} matching the selected roster filters, not online presence.

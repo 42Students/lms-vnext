@@ -40,9 +40,9 @@ function safeDraftAttachments(items:unknown[]|undefined):DeliveryAttachment[]{
   return (items??[]).filter((item):item is DeliveryAttachment=>{
     if(!item||typeof item!=="object")return false;
     const row=item as Record<string,unknown>;
-    return (row.kind==="FILE"||row.kind==="LINK")&&typeof row.name==="string"&&
-      (row.fileId===null||typeof row.fileId==="string")&&
-      (row.url===null||typeof row.url==="string");
+    return (row["kind"]==="FILE"||row["kind"]==="LINK")&&typeof row["name"]==="string"&&
+      (row["fileId"]===null||typeof row["fileId"]==="string")&&
+      (row["url"]===null||typeof row["url"]==="string");
   });
 }
 
