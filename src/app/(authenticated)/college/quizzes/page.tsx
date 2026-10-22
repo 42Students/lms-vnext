@@ -41,25 +41,14 @@ export default async function CollegeQuizzesPage({
       </div>
     );
   }
-  try {
-    // An authoring-options outage must not hide the persisted quiz directory.
-    const [data, authoring] = await Promise.all([
-      listCollegeAssessmentAggregate(context, "QUIZ", validation.data),
-      getCollegeQuizAuthoringOptions(context).then(value => ({
-        status: "ready" as const, value,
-      })).catch(error => {
-        if (error instanceof AuthorizationError) throw error;
-        return { status: "unavailable" as const };
-      }),
-    ]);
-    return <CollegeAssessmentAggregate data={data}
-      leading={authoring.status==="ready"
-        ? <CollegeQuizCreate lessons={authoring.value} deliveries={data.reviewDeliveries}/>
-        : <Banner tone="warning" role="status">
-            Quiz authoring options could not be loaded. Existing quizzes remain available. Refresh to retry.
-          </Banner>} />;
-  } catch (error) {
-    if (error instanceof AuthorizationError) throw error;
+  // Resolve reads before rendering JSX. An authoring-options outage must
+  // not hide the persisted quiz directory.
+  const [listResult, authoringResult] = await Promise.allSettled([
+    listCollegeAssessmentAggregate(context, "QUIZ", validation.data),
+    getCollegeQuizAuthoringOptions(context),
+  ]);
+  if(listResult.status==="rejected"){
+    if(listResult.reason instanceof AuthorizationError)throw listResult.reason;
     return <div className="min-w-0 space-y-4">
       <PageHeader title="Quizzes" />
       <ErrorState title="Quizzes could not be loaded"
@@ -68,4 +57,13 @@ export default async function CollegeQuizzesPage({
           className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
     </div>;
   }
+  if(authoringResult.status==="rejected"&&authoringResult.reason instanceof AuthorizationError)
+    throw authoringResult.reason;
+  const data=listResult.value;
+  return <CollegeAssessmentAggregate data={data}
+    leading={authoringResult.status==="fulfilled"
+      ? <CollegeQuizCreate lessons={authoringResult.value} deliveries={data.reviewDeliveries}/>
+      : <Banner tone="warning" role="status">
+          Quiz authoring options could not be loaded. Existing quizzes remain available. Refresh to retry.
+        </Banner>} />;
 }
