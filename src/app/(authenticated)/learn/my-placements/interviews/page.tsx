@@ -4,6 +4,8 @@ import { notFound,redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerCareerRoundsWorkspace } from "@/components/placements/learner-career-rounds-workspace";
 import { PageHeader } from "@/components/ui/page-header";
+import { ErrorState } from "@/components/ui/error-state";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { resolveOwnInterviewDeepLink } from "@/modules/placements/learner-interview-deeplink-model";
 import { learnerInterviewScheduleViewSchema } from "@/modules/placements/learner-interview-view-model";
 import { learnerRoundSearchQuerySchema } from "@/modules/placements/learner-round-search-query-model";
@@ -31,10 +33,23 @@ export default async function LearnerPlacementInterviewsPage({ searchParams }: {
   if(!search.success||!view.success)notFound();
   const context=await getCurrentRequestContext();
   // Rows and withdrawal controls are scoped by signed-in learner membership.
-  const [workspace,withdrawalTargets]=await Promise.all([
-    getLearnerPlacementRequestWorkspace(context),
-    getOwnInterviewWithdrawalTargets(context),
-  ]);
+  let workspace:Awaited<ReturnType<typeof getLearnerPlacementRequestWorkspace>>;
+  let withdrawalTargets:Awaited<ReturnType<typeof getOwnInterviewWithdrawalTargets>>;
+  try {
+    [workspace,withdrawalTargets]=await Promise.all([
+      getLearnerPlacementRequestWorkspace(context),
+      getOwnInterviewWithdrawalTargets(context),
+    ]);
+  } catch(error) {
+    if(error instanceof AuthorizationError)throw error;
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Interviews" />
+      <ErrorState title="Could not load interviews"
+        description="Your booked interview rounds and withdrawal controls could not be verified. Nothing was changed."
+        action={<Link href="/learn/my-placements/interviews"
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry interview schedule</Link>} />
+    </div>;
+  }
   const link = resolveOwnInterviewDeepLink(workspace.rounds, {
     applicationId:query.applicationId,roundId:query.roundId,
   });
