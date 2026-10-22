@@ -27,7 +27,10 @@ describe("TPO calendar adaptive and draft safety",()=>{
  it("TPO-calendar-reports-25 supports keyboard day-hour creation and escape to dismiss the modal",()=>{
   const page=source("src/components/placements/tpo-week-hour-calendar.tsx");
   expect(page).toContain('aria-label={"Add follow-up on "');
-  expect(page).toContain('role="dialog"');
-  expect(page).toContain('event.key==="Escape"');
+  expect(page).toContain('<Dialog open={Boolean(slot)}');
+  expect(page).toContain("if(!next&&!saving)cancelDraft()");
+  const native=source("src/components/ui/dialog.tsx");
+  expect(native).toContain("onCancel={event =>");
+  expect(native).toContain("event.preventDefault()");
  });
 });
