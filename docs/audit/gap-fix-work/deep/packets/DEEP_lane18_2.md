@@ -19,4 +19,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-8-002-021  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 
 ## Results
-
+- G2-14-014-061: OK — `src/db/schema/db10-announcements.ts:55-68,77-89,98-125` preserves original sender type and ID, source timestamps, deletion tombstone and scheduling/expiry/pin data, matching `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Announcement.java:36-68`.
+- G2-8-002-021: OK — `src/app/(authenticated)/admin/people/directory/page.tsx:24-27,51-77` redirects non-Super-Admins and requires a selected college; `src/modules/people/admin-user-directory-service.ts` applies the selected-college boundary, matching staff-only and denied-directory rules from `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/UserController.java:441-447`.
