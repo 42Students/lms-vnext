@@ -6,10 +6,7 @@ import {learnerAttendanceTimeLabel as timeLabel} from "@/modules/attendance/lear
 import {learnerAttendanceUrlRecoveryNotice} from "@/modules/attendance/learner-attendance-url-recovery-model";
 import {monthKey,parseMonth,shiftMonth} from "@/modules/attendance/learner-attendance-month-navigation-model";
 
-import {
-  useMemo,
-  useTransition,
-} from "react";
+import { useTransition } from "react";
 import {
   useRouter,
   useSearchParams,
@@ -198,19 +195,13 @@ export function LearnerAttendanceWorkspace({
         item.deliveryId === deliveryId,
     ) ?? null;
 
-  const monthRows = useMemo(
-    () => filterLearnerAttendanceMonth(records, deliveryId, filters.month),
-    [records, deliveryId, filters.month],
-  );
-  const summary = useMemo(
-    () => summarize(monthRows),
-    [monthRows],
-  );
-  const historyRows = useMemo(
-    () => sortLearnerAttendanceHistory(filterLearnerAttendanceHistory(monthRows,historyFilter),historyOrder),
-    [monthRows,historyFilter,historyOrder],
-  );
-  const attendanceCsv = useMemo(() => learnerAttendanceHistoryCsv(historyRows), [historyRows]);
+  // These projections are pure and bounded to the selected month.
+  // Compute them together rather than maintaining mismatched memo dependencies.
+  const monthRows = filterLearnerAttendanceMonth(records, deliveryId, filters.month);
+  const summary = summarize(monthRows);
+  const historyRows = sortLearnerAttendanceHistory(
+    filterLearnerAttendanceHistory(monthRows,historyFilter),historyOrder);
+  const attendanceCsv = learnerAttendanceHistoryCsv(historyRows);
   const recentStatusDates=(status:RecordRow["status"])=>monthRows
     .filter(row=>row.status===status)
     .sort((a,b)=>Date.parse(b.startsAt)-Date.parse(a.startsAt))

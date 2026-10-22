@@ -827,7 +827,9 @@ export async function resendAnnouncementForAdmin(context:RequestContext,raw:unkn
   throw new AnnouncementError("ANNOUNCEMENT_NOT_FOUND");
  // A platform-wide broadcast requires its own all-colleges fanout transaction.
  if(original.broadcastGroupId)throw new AnnouncementError("STALE_AUDIENCE");
- const target=await resolveTarget(original.receiverType,original.receiverId);
+ const receiverType=ANNOUNCEMENT_RECEIVER_TYPES.find(type=>type===original.receiverType);
+ if(!receiverType)throw new AnnouncementError("STALE_AUDIENCE");
+ const target=await resolveTarget(receiverType,original.receiverId);
  if(target.collegeId!==original.collegeId||
     target.organizationId!==original.organizationId)
   throw new AnnouncementError("TARGET_NOT_FOUND");
