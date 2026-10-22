@@ -336,7 +336,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
        const host=link.hostname.toLowerCase();
        if(link.protocol!=="https:"||link.username||link.password||link.hash||!host||
           host==="localhost"||host.endsWith(".localhost")||host==="0.0.0.0"||
-          host==="[::1]"||host==="[::]"||/^127\\.|^10\\.|^192\\.168\\.|^169\\.254\\.|^172\\.(?:1[6-9]|2\\d|3[01])\\./.test(host))
+          host==="[::1]"||host==="[::]"||/^127\.|^10\.|^192\.168\.|^169\.254\.|^172\.(?:1[6-9]|2\d|3[01])\./.test(host))
         throw Error("Invalid link");
       }catch{setError("Enter a valid public HTTPS link for this material.");return;}
       if(resourceLinks.some(item=>item.externalUrl.toLowerCase()===entry.externalUrl.toLowerCase())){
