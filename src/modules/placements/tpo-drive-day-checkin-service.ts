@@ -138,16 +138,18 @@ export async function confirmTpoDriveDayCheckIn(
     // Only the FIRST transition into ABSENT emits a learner message. The
     // activity event, attendance and preference-aware delivery commit together.
     // A later room change or repeated mark must never emit a second absence.
+    let notificationDelivered=false;
     if (attendanceEvent && input.status === "ABSENT" &&
         prior?.status !== "ABSENT") {
-      await deliverRecordedLearnerPlacementEvent(tx, {
+      const delivery=await deliverRecordedLearnerPlacementEvent(tx, {
         eventId: attendanceEvent.id,
         collegeId,
         membershipId: candidate.membershipId,
         kind: "MARKED_ABSENT",
         subject: roster.round.name + " · " + roster.job.title,
       });
+      notificationDelivered=delivery.delivered;
     }
-    return { attendance: written, changed: true as const };
+    return { attendance: written, changed: true as const, notificationDelivered };
   });
 }

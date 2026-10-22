@@ -44,8 +44,12 @@ export function TpoRoundCheckIn({
          !("status" in result.attendance)||result.attendance.status!==status)
        throw Error("Could not confirm the saved attendance status.");
       const who=displayName+(rollNumber?" ("+rollNumber+")":"");
+      const wasNotified="notificationDelivered" in result &&
+       result.notificationDelivered===true;
       setLastAction(status==="PRESENT"?who+" marked present.":
-       status==="ABSENT"?who+" marked absent.":
+       status==="ABSENT"?(wasNotified
+        ?who+": Marked absent. The student is told today and can dispute."
+        :who+" marked absent. Notification delivery was not confirmed."): 
        who+" marked "+(status==="DONE"?"done.":"in interview."));
       router.refresh();
     } catch (caught) {
@@ -72,7 +76,7 @@ export function TpoRoundCheckIn({
       ) : null}
       {lastAction?<div role="status" className="flex w-full flex-wrap items-center justify-between gap-2 border-l-2 border-primary bg-primary-subtle px-3 py-2 text-sm">
        <span>{lastAction}</span>
-       <button type="button" className="min-h-9 font-semibold text-link underline" onClick={()=>setLastAction(null)}>Dismiss</button>
+       <Button type="button" variant="ghost" className="min-h-11 font-semibold text-link underline" onClick={()=>setLastAction(null)}>Dismiss</Button>
       </div>:null}
       {error ? <div className="min-w-0 sm:w-full"><InlineNotice tone="error" message={error}/></div> : null}
       <ConfirmDialog open={target !== null}
