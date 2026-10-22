@@ -3,7 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { onboardPersonWithRuntime } from "@/modules/people/runtime";
-import {saveCollegePersonEditor} from "@/modules/people/college-directory-person-editor-service";
+
 import {z} from "zod";
 
 export const runtime = "nodejs";
@@ -50,18 +50,9 @@ export async function POST(request: Request) {
     const facultyProfile=parsed.data.facultyProfile;
     if(facultyProfile&&(!Array.isArray(parsed.data.roles)||!parsed.data.roles.includes("FACULTY")))
       return NextResponse.json({error:"FACULTY_ROLE_REQUIRED"},{status:400});
-    const person = await onboardPersonWithRuntime(context, body);
-    if(facultyProfile){
-      try{
-        await saveCollegePersonEditor(context,person.membership.id,facultyProfile);
-      }catch{
-        // Identity has already been provisioned. Return its membership instead
-        // of telling the caller to retry and create a duplicate person.
-        return NextResponse.json({person,profileIncomplete:true,
-          message:"Faculty created. Complete the department and profile from Edit Faculty; do not register again."},
-          {status:207,headers:{"Cache-Control":"no-store"}});
-      }
-    }
+    // Membership, role grant and optional faculty department/profile now
+    // commit together. Never return an active partially registered teacher.
+    const person = await onboardPersonWithRuntime(context, body, facultyProfile);
     return NextResponse.json({ person,profileIncomplete:false },{headers:{"Cache-Control":"no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
