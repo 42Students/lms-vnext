@@ -190,8 +190,8 @@ export async function commitTpoAcademicImport(context: RequestContext, raw: unkn
         ?before.sourceMetadata:{};
       // A one-field verified correction does not de-verify unrelated marks,
       // or erase where the original spreadsheet evidence came from.
-      const previousFields=Array.isArray(previousMetadata.verifiedFields)
-        ?previousMetadata.verifiedFields.filter(
+      const previousFields=Array.isArray(previousMetadata["verifiedFields"])
+        ?previousMetadata["verifiedFields"].filter(
           (field):field is string=>typeof field==="string",
         ):[];
       const verifiedFields=input.mode==="SINGLE"
