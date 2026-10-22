@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, eq, ilike, inArray, ne, sql } from "drizzle-orm";
+import { and, eq, ilike, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   placementCompanies, placementCompanyRelationships, placementJobs,
