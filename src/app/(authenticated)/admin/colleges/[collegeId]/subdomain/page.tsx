@@ -73,17 +73,17 @@ export async function CollegeWebAddressContent({ params }: {
      </div>
      <p className="my-3 max-w-3xl text-sm text-body">
        The address students and staff open to sign in.
-       {managedResult.status==="fulfilled"&&managedResult.value.ready?
+       {managedResult.status==="fulfilled"&&managedResult.value?.ready?
         " It works straight away, with HTTPS, as soon as you allot it.":
         " Allotment becomes available after the platform wildcard DNS and HTTPS certificate are verified."}
      </p>
-     {managedResult.status==="fulfilled"&&managedResult.value.currentHost?
+     {managedResult.status==="fulfilled"&&managedResult.value?.currentHost?
        <p role="status" className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-success bg-success-subtle px-3 py-2 text-sm">
          <strong>Live at</strong>
          <a href={"https://"+managedResult.value.currentHost} target="_blank" rel="noopener noreferrer"
            className="break-all font-semibold text-primary-text underline">{managedResult.value.currentHost} ↗</a>
        </p>:null}
-     {managedResult.status==="fulfilled" ? <ManagedCollegeSubdomain collegeId={college.id} initial={managedResult.value}/> :
+     {managedResult.status==="fulfilled"&&managedResult.value ? <ManagedCollegeSubdomain collegeId={college.id} initial={managedResult.value}/> :
        <ErrorState title="Couldn't load the web address"
          description="The managed college subdomain could not be loaded. Existing custom addresses remain available."
          action={<Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/subdomain?reload=1"}
