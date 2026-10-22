@@ -110,8 +110,6 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
         setCreateError(message);
         if (Object.values(semesterFieldErrors(error)).every(value => !value))
           showToast({ tone: "error", title: message });
-      } finally {
-        deleteInFlight.current = false;
       }
     });
   }
@@ -146,18 +144,6 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
               onChange={e => { setTermNumber(e.target.value); setCreateErrors(current => ({ ...current, number: undefined })); }}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>
-          <div className="grid grid-cols-1 gap-[var(--lms-space-3)] sm:grid-cols-2">
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
-              Program
-              <Input value={row.programName} readOnly disabled
-                title="Program cannot change after creation" aria-label="Program (cannot change)" />
-            </label>
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
-              Semester Number
-              <Input value={row.termNumber} readOnly disabled
-                title="Semester number cannot change after creation" aria-label="Semester Number (cannot change)" />
-            </label>
-          </div>
           <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {SEMESTER_COPY.nameLabel}
             <Input ref={createNameRef} required maxLength={255} value={name} aria-invalid={Boolean(createErrors.name)} aria-describedby={createErrors.name ? "semester-name-error" : undefined}
