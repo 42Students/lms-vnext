@@ -68,10 +68,15 @@ export default async function DriveDayRoundPage({
       context,
       roundId,
     );
-  } catch {
+  } catch (error) {
+    const unavailable = error instanceof PlacementsServiceError &&
+      (error.code === "PLACEMENT_ROUND_NOT_FOUND" ||
+       error.code === "PLACEMENT_DRIVE_DAY_ACCESS_DENIED");
     return <section role="alert" className="min-w-0 space-y-4">
       <PageHeader title="Drive day" />
-      <Alert tone="error">This drive day isn't available to you.</Alert>
+      <Alert tone="error">{unavailable
+        ? "This drive day isn't available to you."
+        : "Could not load this drive day. Try again."}</Alert>
       <Link href={"/tpo/drive-day/" + encodeURIComponent(roundId) + "?retry=1"}
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-primary-subtle">
         Retry

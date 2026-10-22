@@ -1,4 +1,4 @@
-import {and,desc,eq,sql} from "drizzle-orm";
+import {and,asc,desc,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {db10BugReports,db10BugReportActivities,db10BugReportAttachments} from "@/db/schema/db10-bug-tracker";
 import type {RequestContext} from "@/modules/identity/context";
@@ -9,8 +9,19 @@ function requireReporter(context:RequestContext){
   if(context.user.platformStatus!=="ACTIVE")throw new TrackerAdminError("FORBIDDEN");
 }
 /** SA-placements-projects-101: never use untrusted reporter_name or account role to authorize. */
-export async function listMyTrackerReports(context:RequestContext){
+export type ReporterIssuePageOptions={
+ page?:number;size?:number;order?:"ASC"|"DESC";
+};
+/** Legacy public lists default to 20 and cap at 100; a reporter sees only their own reports.
+ * Stable ID tiebreaking prevents duplicate/missing items between offset pages.
+ */
+export async function listMyTrackerReports(context:RequestContext,options:ReporterIssuePageOptions={}){
   requireReporter(context);
+  const page=options.page??1;
+  const size=options.size??20;
+  if(!Number.isSafeInteger(page)||page<1||!Number.isSafeInteger(size)||size<1||size>100)
+   throw new TrackerAdminError("INVALID_QUERY");
+  const order=options.order==="ASC"?asc:desc;
   const rows=await getDb().select({
     publicId:db10BugReports.publicId,
     description:db10BugReports.description,
@@ -21,8 +32,18 @@ export async function listMyTrackerReports(context:RequestContext){
     createdAt:db10BugReports.createdAt,
   }).from(db10BugReports)
     .where(eq(db10BugReports.reporterUserId,context.user.id))
-    .orderBy(desc(db10BugReports.createdAt),desc(db10BugReports.id)).limit(50);
+    .orderBy(order(db10BugReports.createdAt),order(db10BugReports.id))
+    .limit(size).offset((page-1)*size);
   return rows;
+}
+export async function getMyTrackerReportPage(context:RequestContext,options:ReporterIssuePageOptions={}){
+ const page=options.page??1,size=options.size??20;
+ const items=await listMyTrackerReports(context,{...options,page,size:size+1<=100?size+1:size});
+ // The extra row is fetched only when the requested page size permits it.
+ // For a maximum-sized page, the next-page probe remains membership-scoped.
+ const hasMore=items.length>size||(size===100&&
+   (await listMyTrackerReports(context,{page:page+1,size:1,order:options.order})).length>0);
+ return {items:items.slice(0,size),page,size,hasMore};
 }
 export async function getMyTrackerReport(context:RequestContext,rawPublicId:string){
   requireReporter(context);

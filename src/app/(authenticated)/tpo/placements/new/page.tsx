@@ -26,8 +26,8 @@ export default async function TpoNewPlacementPage({searchParams}:{
       <Link href="/tpo/placements/new/draft" className="inline-flex min-h-11 justify-center items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
         Quick draft: Step 1 →
       </Link>
-      <Link href="/tpo/placements/recorded-outside" className="inline-flex min-h-11 justify-center items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
-        Record a drive that happened outside LMS
+      <Link aria-label="Record a drive that happened outside LMS (no student application flow)" href="/tpo/placements/recorded-outside" className="inline-flex min-h-11 justify-center items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+        Record a drive that happened outside LMS (no applications)
       </Link>
       </nav>}
         context={context}
