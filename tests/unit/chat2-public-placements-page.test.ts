@@ -16,7 +16,9 @@ describe("TPO public placements publication and copy",()=>{
   expect(p).toContain('Placements at {college?.collegeName??"your college"}');
   expect(p).toContain("PublicRecruitFromUs");
   const copy=src("src/components/placements/public-recruit-from-us.tsx");
-  expect(copy).toContain('aria-label="Recruit from us"');
+  expect(p).toContain('aria-label="Recruit from us"');
+   expect(copy).toContain('aria-labelledby="public-recruit-from-us-title"');
+   expect(copy).toContain("PUBLIC_RECRUIT_COPY.heading");
   expect(p).not.toContain("42Students · Placements");
   expect(p).not.toContain("Back to college home");
   expect(p).toContain('publicPlacementDisclosure([');
