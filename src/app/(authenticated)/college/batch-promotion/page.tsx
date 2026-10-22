@@ -1,6 +1,7 @@
 import { FilterBar } from "@/components/ui/filter-bar";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
+import { CollegeBatchGraduateButton } from "@/components/academics/college-batch-graduate-button";
 import { CollegePromotionConfirmation } from "@/components/academics/college-promotion-confirmation";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -147,8 +148,8 @@ export default async function CollegeBatchPromotionPage({
         </label>
         <Button type="submit" className="min-h-11 md:min-h-9">Refresh</Button>
       </form>
-      <p className="text-xs text-muted-foreground">Graduation is recorded only after a guarded
-        final-term action is available; no completion is inferred from semester number alone.</p>
+      <p className="text-xs text-muted-foreground">Graduation is a separate confirmed
+        action on a batch in its final semester; no completion is inferred from semester number alone.</p>
       <DataTable caption="All college batches" rows={directoryRows} getRowKey={row=>row.id}
         columns={[
           {key:"batch",header:"Batch Name",mobilePriority:"primary",cell:row=>row.name},
@@ -162,7 +163,7 @@ export default async function CollegeBatchPromotionPage({
           {key:"action",header:"Last Action",mobilePriority:"action",cell:row=>row.status==="ACTIVE"?
             (preview?.batch.id===row.id && row.currentTermNumber!==null &&
              row.currentTermNumber>=preview.batch.durationTerms
-              ?<span className="text-xs text-muted-foreground" title="Graduation requires a verified final-term action; a promotion cannot graduate learners.">Mark graduated — not available</span>
+              ?<CollegeBatchGraduateButton cohortId={row.id} batchName={row.name}/>
               :<Link href={batchPreviewHref(row)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Promote · Preview</Link>):
             <span className="text-xs text-muted-foreground">{row.status==="COMPLETED"?"Graduated":"No action available"}</span>},
         ]}
@@ -302,9 +303,8 @@ export default async function CollegeBatchPromotionPage({
       </>
     )}
     <p className="max-w-[75ch] text-xs leading-5 text-muted-foreground">
-      Preview never writes. Graduation is not an enabled server operation yet;
-      final-semester rows are not marked Completed or graduated by this view.
-      Confirming promotion requires an unchanged version and rechecks
+      Preview never writes. Final-semester rows are marked Completed only through the confirmed
+      Mark graduated action. Confirming promotion requires an unchanged version and rechecks
       blockers in a transaction. Graduation is available for batches in their final registered semester.
     </p>
   </div>;

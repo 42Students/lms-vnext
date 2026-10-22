@@ -73,7 +73,7 @@ function legacyProgramSearch<T extends {
   return {status:"success",message:"Programs retrieved",
     data:sorted.slice(0,limit).map(row=>({
       id:row.id, legacyId:row.legacyProgramId??null, name:row.name,deptId:row.departmentId,deptName:row.departmentName,
-      code:row.code,durationYears:row.durationTerms/2,scope:"COLLEGE",
+      code:row.code,durationYears:Math.ceil(row.durationTerms/2),scope:"COLLEGE",
     })),total:sorted.length,limit};
 }
 

@@ -125,7 +125,14 @@ export default async function CollegeDriveShortlistedPage({
     { key: "status", header: "Current Status", cell: row => row.stage },
     { key: "date", header: "Applied Date", cell: row => Number.isFinite(new Date(row.submittedAt).getTime())?date.format(new Date(row.submittedAt)):"—" },
     { key: "age", header: "Age", cell: row => Number.isFinite(row.ageDays)?row.ageDays+"d":"—" },
-    { key: "score", header: "Match Score", cell: row => row.screeningScore==null?"—":row.screeningScore+"%" },
+    { key: "score", header: "Match Score", cell: row => {
+      const score=row.screeningScore;
+      if(score==null||!Number.isFinite(score))return "—";
+      const percent=Math.max(0,Math.min(100,Math.round(score)));
+      const tone=percent>=70?"bg-[#f9f0ff] text-[#722ed1]":
+        percent>=40?"bg-[#e6fffb] text-[#08979c]":"bg-surface-secondary text-muted-foreground";
+      return <span className={"rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums "+tone}>{percent}%</span>;
+    } },
     { key: "actions", header: "Actions", cell: () => "View only" },
   ];
 
