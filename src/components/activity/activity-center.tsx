@@ -141,7 +141,7 @@ function activityTime(value:string){
 function activityActorName(item:ActivityCenterGroup["latest"]){
  if(item.actor?.displayName?.trim())return item.actor.displayName.trim();
  const id=item.actor?.id;if(!id)return "System";
- const role=String(item.event.metadata.actorUserType??item.event.metadata.actorRole??"").toUpperCase();
+ const role=String(item.event.metadata["actorUserType"]??item.event.metadata["actorRole"]??"").toUpperCase();
  const kind=role.includes("STUDENT")||role.includes("LEARNER")?"Student":
   role.includes("FACULTY")||role.includes("STAFF")?"Staff":"User";
  return kind+" #"+id.slice(0,16);
@@ -252,7 +252,7 @@ export function ActivityCenter({
           <tbody>
             {groups.map((group,index)=>{
               const item=group.latest,day=activityDay(item.event.occurredAt);
-              const previous=index?activityDay(groups[index-1].latest.event.occurredAt):null;
+              const previous=index && groups[index - 1] ? activityDay(groups[index - 1].latest.event.occurredAt) : null;
               return <Fragment key={group.key+":"+item.event.id}>
                 {day!==previous?<tr className="border-t border-border bg-surface-subtle">
                   <th colSpan={5} scope="rowgroup" className="px-3 py-2 text-sm font-semibold">
@@ -306,7 +306,7 @@ export function ActivityCenter({
         {groups.map((group,index) => {
           const item = group.latest;
           const day=activityDay(group.latest.event.occurredAt);
-          const previousDay=index>0?activityDay(groups[index-1].latest.event.occurredAt):null;
+          const previousDay=index > 0 && groups[index - 1] ? activityDay(groups[index - 1].latest.event.occurredAt) : null;
           return (
             <Fragment key={group.key+":"+item.event.id}>
             {day!==previousDay?<h3 className="mt-[var(--lms-space-6)] text-sm font-semibold text-muted-foreground">{day===todayKey?"Today":day===yesterdayKey?"Yesterday":activityDayHeading(item.event.occurredAt)}</h3>:null}
@@ -405,8 +405,8 @@ export function ActivityCenter({
           <td className="whitespace-nowrap px-3 py-2">{formatWhen(item.event.occurredAt)}</td>
           <td className="px-3 py-2" title={item.event.eventType}>{actionSentence(item.event.eventType,item.event.subjectType)}</td>
           <td className="px-3 py-2" title={item.event.subjectId}>{activitySubjectName(item.event)}</td>
-          <td className="px-3 py-2">{String(item.event.metadata.organizationName??"Not retained")}</td>
-          <td className="px-3 py-2">{String(item.event.metadata.collegeName??"Not retained")}</td>
+          <td className="px-3 py-2">{String(item.event.metadata["organizationName"]??"Not retained")}</td>
+          <td className="px-3 py-2">{String(item.event.metadata["collegeName"]??"Not retained")}</td>
           <td className="px-3 py-2" title={item.actor?.id??undefined}>{activityActorName(item)}</td>
           <td className="px-3 py-2">{RAW_AUDIT_MISSING_TRANSPORT}</td>
           <td className="px-3 py-2">{RAW_AUDIT_MISSING_TRANSPORT}</td>
