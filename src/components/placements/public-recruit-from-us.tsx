@@ -58,30 +58,30 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
      message:typeof record?.message==="string"?record.message:undefined,
    };
    if(!response.ok){
-    if(response.status===503||data.error==="RECRUITER_ENQUIRIES_UNAVAILABLE"){
+    if(response.status===503||data["error"]==="RECRUITER_ENQUIRIES_UNAVAILABLE"){
      setUnavailable(true);throw new Error(PUBLIC_RECRUIT_COPY.unavailable);
     }
-    const safeMessage=typeof data.message==="string" && data.message.length<=250
-      ?data.message:null;
+    const safeMessage=typeof data["message"]==="string" && data["message"].length<=250
+      ?data["message"]:null;
     if(["EMAIL_REQUIRED","COMPANY_EMAIL_REQUIRED","EMAIL_INVALID",
-        "INVALID_EMAIL","PERSONAL_EMAIL_NOT_ALLOWED"].includes(data.error??"")){
+        "INVALID_EMAIL","PERSONAL_EMAIL_NOT_ALLOWED"].includes(data["error"]??"")){
      fieldError("email",safeMessage??"Enter your work email");return;
     }
-    if(data.error==="NAME_REQUIRED"){fieldError("name",safeMessage??"Enter your name");return;}
-    if(data.error==="CODE_REQUIRED"){fieldError("code",safeMessage??"Enter the code");return;}
-    if(data.error==="WRONG_CODE"||data.error==="CODE_EXPIRED"||
-       data.error==="CODE_LOCKED"||data.error==="INVALID_CODE_OR_EXPIRED"||
-       data.error==="INVALID_CODE"||data.error==="COULD_NOT_SEND_ENQUIRY"){
+    if(data["error"]==="NAME_REQUIRED"){fieldError("name",safeMessage??"Enter your name");return;}
+    if(data["error"]==="CODE_REQUIRED"){fieldError("code",safeMessage??"Enter the code");return;}
+    if(data["error"]==="WRONG_CODE"||data["error"]==="CODE_EXPIRED"||
+       data["error"]==="CODE_LOCKED"||data["error"]==="INVALID_CODE_OR_EXPIRED"||
+       data["error"]==="INVALID_CODE"||data["error"]==="COULD_NOT_SEND_ENQUIRY"){
      fieldError("code",safeMessage??"The code was not accepted. Check it and try again.");return;
     }
-    if(data.error==="TOO_MANY_TRIES"){
+    if(data["error"]==="TOO_MANY_TRIES"){
      throw new Error("Too many attempts. Please try again later.");
     }
     throw new Error(safeMessage??(kind==="send-code"?
       PUBLIC_RECRUIT_COPY.errorSend:PUBLIC_RECRUIT_COPY.errorSubmit));
    }
    if(kind==="send-code"){
-    setSent(data.email??normalizedEmail);setCode("");
+    setSent(data["email"]??normalizedEmail);setCode("");
    }else setDone(true);
   }catch(cause){setError(cause instanceof Error?cause.message:PUBLIC_RECRUIT_COPY.errorSubmit);}
   finally{savingRef.current=false;setBusy(false);}

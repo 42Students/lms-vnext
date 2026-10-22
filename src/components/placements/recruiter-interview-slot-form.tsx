@@ -96,6 +96,11 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
   try{
    for(let i=0;i<entries.length;i++){
     const slot=entries[i];
+    if (!slot) {
+     setError("A proposed time block could not be found. Review the remaining blocks and retry.");
+     setQueued(entries.slice(i));
+     return;
+    }
     const payload=new FormData();
     payload.set("action","CREATE");
     for(const [key,value] of Object.entries(slot))payload.set(key,value);
