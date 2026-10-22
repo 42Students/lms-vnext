@@ -1,4 +1,5 @@
 import "server-only";
+import {createHash} from "node:crypto";
 
 import {sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
@@ -164,7 +165,7 @@ export async function queueFencedInterviewReminderEmails(
    purpose:{kind:"EVENT",event:"INTERVIEW_REMINDER"},
    toEmail:row.recipient_email,
    recipientName:row.recipient_name,
-   idempotencyKey:dedupe,
+   idempotencyKey:"tpo-interview:"+createHash("sha256").update(dedupe).digest("hex"),
    mergeInfo:{
     learnerName:row.recipient_name,
     jobTitle:row.job_title.slice(0,200),
