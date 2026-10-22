@@ -210,7 +210,7 @@ export function LearnerPlacementPreferences({
               ["FULL_TIME", "Full time"],
               ["INTERNSHIP", "Internship"],
               ["CONTRACT", "Contract"],
-            ].map(([value, label]) => (
+            ] satisfies Array<[string, string]>).map(([value, label]) => (
               <label
                 key={value}
                 className="flex min-h-11 min-w-0 items-center gap-2 text-sm text-body"
