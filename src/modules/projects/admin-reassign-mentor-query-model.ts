@@ -39,7 +39,7 @@ export function projectAdminReassignMentorHref(
   query:z.output<typeof schema>,
 ):string {
   const params=new URLSearchParams();
-  if(query.fromMentorId)params.set("fromMentorId",query.fromMentorId);
+  if(query["fromMentorId"])params.set("fromMentorId",query["fromMentorId"]);
   if(query.projectId)params.set("projectId",query.projectId);
   if(query.mentorSearch)params.set("mentorSearch",query.mentorSearch);
   if(query.mentorPage>1)params.set("mentorPage",String(query.mentorPage));
@@ -60,7 +60,7 @@ export async function resolveLegacyReassignMentorBookmark(
  lookupInSelectedCollege:(legacyMentorId:number)=>Promise<string|null>,
 ):Promise<{ok:true;params:Record<string,string|string[]|undefined>}|
  {ok:false;reason:"INVALID_LEGACY_ID"|"LEGACY_MENTOR_NOT_MAPPED"}> {
- const raw=params.fromMentorId;
+ const raw=params["fromMentorId"];
  if(typeof raw!=="string" || !/^[0-9]+$/.test(raw))
   return {ok:true,params};
  if(!/^[1-9][0-9]{0,14}$/.test(raw)||!Number.isSafeInteger(Number(raw)))

@@ -16,10 +16,10 @@ import { z } from "zod";
 export function readinessOverrideAuditProjection(input:{
  state:unknown;note:unknown;by:string|null;at:Date;
 }){
- const active=input.state==="FORCE_UNLOCK"||input.state==="FORCE_BLOCK";
+ const active=input["state"]==="FORCE_UNLOCK"||input["state"]==="FORCE_BLOCK";
  return {overrideActive:active,
-  overrideValue:input.state==="FORCE_UNLOCK",
-  overrideNote:typeof input.note==="string"?input.note:"",
+  overrideValue:input["state"]==="FORCE_UNLOCK",
+  overrideNote:typeof input["note"]==="string"?input["note"]:"",
   overrideByName:input.by??"Unknown",overrideAt:input.at};
 }
 /** COL-projects-12: latest override event per project, not the full audit history. */
@@ -47,7 +47,7 @@ export async function listCollegeActiveReadinessOverrides(context: RequestContex
         eq(activityEvents.eventType,ACTIVITY_EVENT_TYPES.PROJECTS_READINESS_OVERRIDDEN)))
       .orderBy(activityEvents.subjectId,desc(activityEvents.occurredAt),desc(activityEvents.id));
     const live=events.filter(row=>
-      (row.metadata.state==="FORCE_UNLOCK"||row.metadata.state==="FORCE_BLOCK") &&
+      (row.metadata["state"]==="FORCE_UNLOCK"||row.metadata["state"]==="FORCE_BLOCK") &&
       z.string().uuid().safeParse(row.projectId).success);
     if(!live.length)return [];
     const projects=await tx.select({id:projectInstances.id,title:projectInstances.title,status:projectInstances.status})
@@ -60,9 +60,9 @@ export async function listCollegeActiveReadinessOverrides(context: RequestContex
     return live.filter(row=>titles.has(row.projectId)).map(row=>({
       projectId:row.projectId,workspace:titles.get(row.projectId)?.title??"",
       archived:titles.get(row.projectId)?.status==="ARCHIVED",
-      ...readinessOverrideAuditProjection({state:row.metadata.state,note:row.metadata.note,by:row.by,at:row.at}),
-      direction:row.metadata.state==="FORCE_UNLOCK"?"Ready":"Not ready",
-      note:typeof row.metadata.note==="string"?row.metadata.note:"",
+      ...readinessOverrideAuditProjection({state:row.metadata["state"],note:row.metadata["note"],by:row.by,at:row.at}),
+      direction:row.metadata["state"]==="FORCE_UNLOCK"?"Ready":"Not ready",
+      note:typeof row.metadata["note"]==="string"?row.metadata["note"]:"",
       by:row.by??"Unknown",at:row.at,
     }));
   });
@@ -106,12 +106,12 @@ export async function listCollegeReadinessOverrideHistory(
   return rows.map(row=>({
    id:row.id,projectId:row.projectId,actorUserId:row.actorId,
    ...readinessOverrideAuditProjection({
-    state:row.metadata.state,note:row.metadata.note,
+    state:row.metadata["state"],note:row.metadata["note"],
     by:row.by,at:row.at,
    }),
-   action:row.metadata.state==="CLEAR"?"Cleared":
-     row.metadata.state==="FORCE_UNLOCK"?"Overridden: Ready":
-     row.metadata.state==="FORCE_BLOCK"?"Overridden: Not ready":"Changed",
+   action:row.metadata["state"]==="CLEAR"?"Cleared":
+     row.metadata["state"]==="FORCE_UNLOCK"?"Overridden: Ready":
+     row.metadata["state"]==="FORCE_BLOCK"?"Overridden: Not ready":"Changed",
   }));
  });
 }
