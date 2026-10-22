@@ -9,7 +9,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - [x] G2-9-008-047  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 - [ ] G2-9-010-050  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
-- [ ] G2-9-010-051  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
+- [x] G2-9-010-051  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 - [x] G2-9-010-080  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 - [ ] G2-9-011-037  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 - [ ] G2-9-014-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
@@ -32,3 +32,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 
 - G2-9-010-080: OK — `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx:51-81` independently loads job, applicant pipeline, and filter choices with `Promise.allSettled`; rejected list reads preserve the job title and status while rendering a retryable register error, and rejected filters do not discard a successful register (`:132-135`). This retains the independently loaded job header documented in `docs/legacy-source/frontend/src/pages/superadmin/sections/JobApplications.js:619-655`.
+
+- G2-9-010-051: OK — `src/app/api/placements/college/jobs/[jobId]/applications/[applicationId]/route.ts:26-48` resolves legacy application-level `url` PATCH only against exactly one currently issued/accepted offer; absent offers return 404, ambiguous offers 409. `src/modules/placements/college-application-detail-service.ts:~347-386` validates HTTPS and confirmation, authorizes college ownership, locks the chosen offer, writes URL/actor/timestamp and audits the change. This preserves the application-level letter action from `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminJobController.java:829-855` while preventing assignment to an unrelated or expired offer.
