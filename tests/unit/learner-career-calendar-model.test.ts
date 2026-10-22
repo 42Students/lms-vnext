@@ -27,6 +27,22 @@ describe("Learner Career Calendar", () => {
     expect(events[0]?.dayKey).toBe("2026-10-13");
     expect(events[0]?.rescheduled).toBe(true);
   });
+  it("keeps un-applied deadlines and scoped exam days while excluding hidden events", () => {
+    const events=careerCalendarEvents([],[
+      {key:"deadline",kind:"APPLICATION_DEADLINE",day:"2026-10-17",
+        title:"Apply by 17 Oct",visible:true,applied:false,jobId:"own-job"},
+      {key:"exam",kind:"EXAM_BLOCK",day:"2026-10-17",
+        title:"Midterm exam",visible:true},
+      {key:"foreign",kind:"EXAM_BLOCK",day:"2026-10-17",
+        title:"Hidden college exam",visible:false},
+      {key:"applied",kind:"APPLICATION_DEADLINE",day:"2026-10-17",
+        title:"Already applied",visible:true,applied:true},
+    ]);
+    expect(events).toHaveLength(2);
+    expect(events.map(event=>event.eventType)).toEqual(["APPLICATION_DEADLINE","EXAM_BLOCK"]);
+    expect(events[1]?.title).toContain("No drives run on it");
+    expect(events.every(event=>event.dayKey==="2026-10-17")).toBe(true);
+  });
   it("navigates month/week/day and clamps month ends", () => {
     expect(shiftCareerCalendarDay("2026-01-31", "month", 1)).toBe("2026-02-28");
     expect(shiftCareerCalendarDay("2026-10-13", "week", 1)).toBe("2026-10-20");
