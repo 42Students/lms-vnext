@@ -1350,6 +1350,10 @@ export async function actOnPlacementOffer(
       });
 
     return updated;
+  }, { isolationLevel: "serializable" }).catch(error=>{
+    if(isPlacementIssuanceConcurrencyError(error))
+      throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
+    throw error;
   });
 }
 
