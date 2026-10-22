@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import {legacyWorkspaceSummaryQuery} from "@/modules/projects/legacy-workspace-summary-query";
 
 /** Preserve an existing workspace subsection while enforcing canonical page guards. */
 export default async function LegacyCollegeWorkspaceSectionRedirect({
@@ -9,19 +10,10 @@ export default async function LegacyCollegeWorkspaceSectionRedirect({
 }) {
   const {workspaceId,section}=await params;
   const query=await searchParams;
-  const from=typeof query.from==="string"&&["workspaces","at-risk","submissions"].includes(query.from)?query.from:null;
-  const reason=typeof query.reason==="string"&&query.reason.length<=240&&
-    !/[<>\x00-\x1f]/.test(query.reason)?query.reason:null;
-  const suffix=new URLSearchParams();
-  if(from&&from!=="workspaces")suffix.set("from",from);
-  if(reason)suffix.set("reason",reason);
-  if(query.openTemplate==="1"&&section==="summary")suffix.set("openTemplate","1");
-  // Preserve bounded view context for existing bookmarked workspace aliases.
-  for(const name of ["q","filter","status","sort","page"] as const){
-    const value=query[name];
-    if(typeof value==="string"&&value.length<=120&&!/[\x00-\x1f]/.test(value))
-      suffix.set(name,value);
-  }
+  // The old workspace router forwards the query untouched. Use the same
+  // bounded sanitizer as the parent alias so bookmarks keep template, search,
+  // sorting and future non-identity state rather than silently losing them.
+  const suffix=legacyWorkspaceSummaryQuery(query);
   const next="/college/projects/"+encodeURIComponent(workspaceId)+"/"+encodeURIComponent(section);
-  redirect(next+(suffix.size?"?"+suffix.toString():""));
+  redirect(next+(suffix?"?"+suffix:""));
 }
