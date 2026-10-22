@@ -129,7 +129,7 @@ describe("College People legacy audited page contracts",()=>{
   expect(contacts).toContain('label:"Faculty"');
   expect(contacts).toContain('label:"Students"');
   expect(contacts).toContain("Student accounts");
-  expect(src("src/app/(authenticated)/college/people/page.tsx")).toContain('redirect("/college/contacts")');
+  expect(src("src/app/(authenticated)/college/people/page.tsx")).toContain("return CollegeContactsPage({searchParams})");
  });
  it("COL-people-18 college contacts keep learner phone and email masked without a need-to-know grant",()=>{
   const contacts=src("src/app/(authenticated)/college/contacts/page.tsx");
@@ -197,7 +197,8 @@ describe("College People legacy audited page contracts",()=>{
   expect(page).toContain("md:hidden");
   expect(page).toContain('className="hidden md:block"');
   expect(page).toContain("<DataTable");
-  expect(page).toContain('<ScrollCue axis="x" label={title + " scrollable results columns"}>');
+  expect(page).toContain('<ul aria-label={title + " mobile records"}');
+  expect(src("src/components/ui/data-table.tsx")).toContain('<ScrollCue axis="x"');
   expect(page).toContain("min-w-0");
   expect(page).toContain("Advanced filters");
  });
@@ -237,9 +238,11 @@ describe("College People legacy audited page contracts",()=>{
   const panel=src("src/components/admin/person-membership-actions.tsx");
   const grant=service.slice(service.indexOf("export async function addMembershipRole("));
   const remove=service.slice(service.indexOf("export async function removeMembershipRole("));
-  const guard='if (input.role === "COLLEGE_ADMIN") {\n    requirePermission(context, "admin-scope.select");';
+  const guard='if (input.role === "COLLEGE_ADMIN" || input.role === "TPO") {';
   expect(grant).toContain(guard);
   expect(remove).toContain(guard);
+  expect(grant).toContain('requirePermission(context, "admin-scope.select")');
+  expect(remove).toContain('requirePermission(context, "admin-scope.select")');
   expect(panel).toContain("Only a Super Admin can change the College Admin role.");
   expect(panel).toContain("The College Admin role can only be assigned or removed by a Super Admin.");
   const policy=src("src/modules/permissions/policy.ts");
@@ -252,9 +255,11 @@ describe("College People legacy audited page contracts",()=>{
   const svc=src("src/modules/projects/mentor-reassignment-workload-service.ts");
   expect(page).toContain("Mentor workload");
   expect(page).toContain("listCollegeProjectMentorWorkload");
-  expect(page).toContain("row.activeWorkspaces");
-  expect(page).toContain("row.atRisk");
-  expect(page).toContain("Overloaded");
+  expect(page).toContain("<ProjectMentorWorkloadTable rows={sortedWorkload}");
+  const table=src("src/components/projects/project-mentor-workload-table.tsx");
+  expect(table).toContain("row.activeWorkspaces");
+  expect(table).toContain("row.atRisk");
+  expect(table).toContain("Overloaded");
   expect(page).toContain('"UNASSIGNED"');
   expect(page).toContain("fromMentorId=");
   expect(svc).toContain("listCollegeProjectMentorWorkload");

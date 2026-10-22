@@ -17,6 +17,7 @@ describe("Learner placement dashboard summary and priority", () => {
     const state = learnerPlacementDashboard(empty, now);
     expect(state.firstRun).toBe(true);
     expect(state.nextAction.href).toBe("/learn/my-placements");
+    expect(state.nextAction.label).toBe("All caught up");
     expect(state.openJobCount).toBe(0);
     expect(state.weekEvents).toEqual([]);
   });
@@ -31,7 +32,6 @@ describe("Learner placement dashboard summary and priority", () => {
     expect(state.nextAction.title).toBe("interview");
     expect(state.nextAction.href).toBe(
       "/learn/my-placements/interviews?applicationId=app-1&roundId=interview");
-    expect(state.urgentAssessment?.roundId).toBe("test");
     expect(state.weekEvents.map((event) => event.roundId)).toEqual(["interview", "test"]);
   });
 

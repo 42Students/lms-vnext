@@ -19,10 +19,9 @@ describe("College activity model", () => {
     expect(collegeActivityQuerySchema.safeParse(
       activitySearchParams({ subjectType: ["A", "B"] }),
     ).success).toBe(false);
-    expect(activitySearchParams({actorUserId:"",from:"",subjectType:""})).toMatchObject({
-      from:expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
-      to:expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
-    });
+    const todayDefault=activitySearchParams({actorUserId:"",from:"",subjectType:""}) as Record<string,string>;
+    expect(Object.keys(todayDefault).sort()).toEqual(["from","to"]);
+    expect(collegeActivityQuerySchema.safeParse(todayDefault).success).toBe(true);
   });
   it("constructs exact IST calendar shortcuts and preserves non-date filters without cursor", () => {
     const filter = {module:"ACADEMICS" as const, q:"first term",
@@ -47,7 +46,7 @@ describe("College activity model", () => {
     const url=new URL(collegeActivityHref({pageSize:"50"},{
       beforeOccurredAt:new Date("2026-10-14T12:00:00Z"),beforeId:uuid,
     }),"https://example.test");
-    expect(url.searchParams.has("pageSize")).toBe(false);
+    expect(url.searchParams.has("pageSize")).toBe(false); // 50 is the default.
     expect(url.searchParams.get("beforeId")).toBe(uuid);
     expect(new URL(collegeActivityHref({pageSize:"25"}),"https://example.test").searchParams.get("pageSize")).toBe("25");
   });
