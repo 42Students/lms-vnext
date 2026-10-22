@@ -126,3 +126,31 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/components/projects/project-workspace.tsx
 - Legacy: WorkspaceReadinessOverview.jsx:16-25 unavailable-snapshot warning
 - Expected fix: Guard and render warning instead of runtime error
+
+## Fast verification triage (2026-10-22)
+
+- G2-11-023-018: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-11-029-022: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-14-029-011: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-6-025-027: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-6-002-061: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-6-030-048: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-6-023-006: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-13-023-007: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-14-030-025: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-17-021-047: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-18-021-061: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-7-001-048: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-7-004-002: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-7-004-020: OK — matching implementation observed in targeted source inspection.
+- G2-7-005-031: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-7-008-014: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-7-010-017: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-7-011-024: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-7-012-005: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-7-012-006: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-7-012-008: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-7-012-022: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-7-012-032: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-7-012-036: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
+- G2-7-012-040: DEFERRED — requires additional source, permission or runtime parity verification; no fix asserted.
