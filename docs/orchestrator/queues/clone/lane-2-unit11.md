@@ -2,7 +2,7 @@
 
 CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER your deep packets 1-2 in lane-2-deep.md. For each file: read the failure below, read the test and the code it tests, decide which side is wrong against the old LMS (docs/legacy-source) and fix THAT side (fix the product code if it regressed; update the test only if the test asserts outdated/wrong behaviour). Never delete tests, never .skip, never weaken assertions to pass. Push after every file and tick it here.
 
-- [ ] `tests/unit/HR-BREAK-chat15-company-report-archive-31.test.ts` (1 failing)
+- [x] `tests/unit/HR-BREAK-chat15-company-report-archive-31.test.ts` (1 failing)
 - [x] `tests/unit/UX-learning-cross-audit-chat17.test.ts` (2 failing)
 - [x] `tests/unit/chat17-verify2b-contact-more-parity.test.ts` (1 failing)
 - [x] `tests/unit/chat3-verify2-retention-and-assignments.test.ts` (1 failing)
@@ -18,6 +18,8 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - `chat3-verify2-retention-and-assignments.test.ts`: `1ecc0b0be3dc76079983d14e94f79b6dd98266a6`, `9d83e04a6b09120554fdc574163ded7218aeaa51` — visible assignment review lists allowed methods and resources.
 - `chat7-round3-faculty-contracts.test.ts`: `c000ce8eb15a1555640e63c82afcdfd1f6029fd4` — display academic period code on course card.
 - `tpo-drives-chat-3-round4.test.ts`: `310068edc28b731032818c901ff4a2709f963975` — preserve scoped clone picker wiring and source contract.
+
+- `HR-BREAK-chat15-company-report-archive-31.test.ts`: `67f49fbe3b90636be131bec65b67228f8dd86e85` — filter aggregated applicants by active college membership and active platform account.
 
 ## Failures (from CI log)
 
