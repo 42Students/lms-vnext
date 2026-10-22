@@ -126,8 +126,9 @@ export default async function LearnerProjectsPage({
         items={rows.map((row) => {
           const archived = row.project.status === "ARCHIVED";
           const projectAttention = archived ? undefined : attentionByProject.get(row.project.id);
+          const progress = progressByProject.get(row.project.id);
           const blocked = !archived && (Boolean(row.project.blocker?.trim()) ||
-            learnerProjectHasBlockedTasks(row.project.status, progressByProject.get(row.project.id)));
+            learnerProjectHasBlockedTasks(row.project.status, progress));
           return {
             id: row.project.id,
             title: row.project.title,
@@ -141,12 +142,12 @@ export default async function LearnerProjectsPage({
             phase: row.project.phase,
             dueLabel: row.project.dueLabel,
             memberCount: teamsByProject.get(row.project.id)?.memberCount,
-            progressPercent: progressByProject.get(row.project.id)?.percentage ?? row.project.progressPercent ?? undefined,
+            progressPercent: progress?.percentage ?? row.project.progressPercent ?? undefined,
             dueState: dueByProject.get(row.project.id)?.state,
             dueDate: dueByProject.get(row.project.id)?.date,
-            progressDetail: progressByProject.has(row.project.id)
-              ? "Task completion " + String(progressByProject.get(row.project.id)!.completedTasks) +
-                "/" + String(progressByProject.get(row.project.id)!.totalTasks) + " tasks"
+            progressDetail: progress
+              ? "Task completion " + String(progress.completedTasks) +
+                "/" + String(progress.totalTasks) + " tasks"
               : row.project.progressPercent!==null?"Admin-reported progress / Manual estimate":undefined,
             actionLine: archived ? "Archived · view only" :
               projectAttention === "CHANGES_REQUESTED" ? "Update your submission" :
