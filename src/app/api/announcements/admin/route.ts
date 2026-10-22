@@ -57,13 +57,14 @@ export async function POST(request: Request) {
     try { body = await request.json(); }
     catch { return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 }); }
     const isResend=typeof body==="object"&&body!==null&&!Array.isArray(body)&&
-      (body as Record<string,unknown>).action==="RESEND";
+      (body as Record<string,unknown>)["action"]==="RESEND";
     const announcement=isResend
       ? await resendAnnouncementForAdmin(context,(()=>{
           const {action,...input}=body as Record<string,unknown>;
           return input;
         })())
       : await createAnnouncement(context,body);
+    if (!announcement) throw new Error("Announcement write returned no record");
     // Preserve legacy HTTP 200/status OK while retaining the vNext document.
     return NextResponse.json({ status:"OK",announcement,
       data:{...announcement,announcementId:announcement.id}},

@@ -164,7 +164,7 @@ export async function POST(request: Request) {
     }
 
     const requestedTransport=body!==null&&typeof body==="object"&&!Array.isArray(body)
-      ? (body as Record<string,unknown>).transport : null;
+      ? (body as Record<string,unknown>)["transport"] : null;
     if(requestedTransport==="NATIVE_TOKEN_PAIR"||requestedTransport==="BEARER_TOKEN"||
        requestedTransport==="switch-token"){
       return privateAuthJson({

@@ -60,10 +60,16 @@ export async function POST(request: Request) {
   if (!guarded.ok) return guarded.response;
 
   try {
+    const code = guarded.body.code ?? guarded.body.otp;
+    if (!code) {
+      return loginErrorResponse(new LoginError("INCORRECT_OTP"), {
+        route: "login-verify", ip: guarded.ip,
+      });
+    }
     const verified = await verifyLoginWithRuntime({
       attemptId: guarded.body.attemptId,
-      code: guarded.body.code ?? guarded.body.otp!,
-      secondCode: guarded.body.secondCode,
+      code,
+      ...(guarded.body.secondCode === undefined ? {} : { secondCode: guarded.body.secondCode }),
       tenantCollegeId: guarded.tenantCollegeId,
       // Session is created in the same transaction as the code consume, and
       // any session cookie being replaced is revoked there too.
@@ -90,7 +96,7 @@ export async function POST(request: Request) {
     const autoMembershipId =
       verified.tenantMembershipId ??
       (!verified.isSuperAdmin && active.length === 1
-        ? active[0].id
+        ? active[0]?.id ?? null
         : null);
 
     const base = {
