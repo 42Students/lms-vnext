@@ -37,8 +37,12 @@ export function SuperAdminDriveArchive({jobId,title}:{jobId:string;title:string}
     // The directory rejects unknown query parameters such as archived=1.
     // Return to the canonical Jobs Management list, like legacy /superadmin/jobs.
     router.push("/admin/placements/drives");router.refresh();
-   }catch(e){setError(e instanceof Error?e.message:"Delete action failed. Refresh preview.");
-    setPreview(null);}
+   }catch(e){
+    // Preserve the impact dialog and its entered reason. An unsuccessful
+    // mutation does not confirm a deletion; the operator can refresh the
+    // server-owned preview/version token and retry without reopening the row.
+    setError(e instanceof Error?e.message:"Delete action failed. Refresh preview.");
+   }
   });}finally{endDriveMutation(jobId);}
  }
  return <section aria-labelledby="super-admin-drive-danger-title" className="min-w-0 space-y-[var(--lms-space-3)] rounded-[var(--lms-control-radius)] border border-[#ffccc7] bg-[#fff1f0] p-[var(--lms-space-4)]">
@@ -74,6 +78,8 @@ export function SuperAdminDriveArchive({jobId,title}:{jobId:string;title:string}
       onChange={e=>setReason(e.target.value)} rows={2}
       className="w-full"/></label>
     <div className="flex flex-wrap gap-2">
+     <Button type="button" variant="secondary" disabled={pending}
+      onClick={()=>void inspect()}>Refresh impact preview</Button>
      <Button type="submit" variant="danger"
       disabled={pending||!preview.archivable||reason.trim().length<10}>
       {pending?"Deleting…":"Delete (archive)"}

@@ -121,8 +121,18 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
    const dataAfter:unknown=await responseAfter.json().catch(()=>null);
    const current=responseAfter.ok?parseCollegeRuleRecheck(dataAfter,module):undefined;
    const expected=choice==="INHERIT"?null:{enabled:choice==="ON",locked};
-   if(current===undefined||JSON.stringify(current)!==JSON.stringify(expected)){
-    setFeedbackTone("error");setFeedback("Write accepted but the latest stored rule was not verified. Recheck before editing again.");return;
+   const effective=dataAfter&&typeof dataAfter==="object"&&"effective" in dataAfter
+    ?dataAfter.effective:null;
+   const entry=effective&&typeof effective==="object"&&module in effective
+    ?(effective as Record<string,unknown>)[module]:null;
+   const effectiveEnabled=entry&&typeof entry==="object"&&"enabled" in entry
+    ?entry.enabled:undefined;
+   if(current===undefined||JSON.stringify(current)!==JSON.stringify(expected)||
+      typeof effectiveEnabled!=="boolean"||
+      (choice!=="INHERIT"&&!ancestorLocked&&effectiveEnabled!==(choice==="ON"))){
+    setFeedbackTone("error");setFeedback(
+     "Write accepted, but the stored and effective policy could not both be verified. "+
+     "Recheck access before editing again.");return;
    }
    setObserved(current);setChoice(collegeRuleSelection(current));setLocked(current?.locked??false);
    showToast({tone:"success",title:"Module access updated",description:lockChanged?(choice!=="INHERIT"&&locked?"Locked ":"Unlocked ")+moduleLabel+" for "+collegeName
