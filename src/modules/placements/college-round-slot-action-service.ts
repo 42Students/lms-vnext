@@ -42,6 +42,9 @@ export type CollegeRoundSlotAppointmentFilters = {
  appointmentMode?:"ALL"|"ON_CAMPUS"|"VIRTUAL";
  appointmentSearch?:string;
  appointmentPageSize?:number;
+ candidatePage?:number;
+ candidatePageSize?:number;
+ candidateSearch?:string;
  appointmentSort?:"DATE_ASC"|"DATE_DESC";
  preferredApplicationId?:string;
 };
@@ -102,7 +105,20 @@ export async function getCollegeRoundSlotAppointments(
   .where(and(eq(placementCollegeApplicationStages.applicationId,placementApplications.id),
    eq(placementCollegeApplicationStages.jobId,job.id),
    eq(placementCollegeApplicationStages.stage,"REJECTED"))));
+ const candidateNeedle=filters.candidateSearch?.trim().slice(0,120)??"";
+ const candidateSearchPattern="%"+candidateNeedle.replace(/[%_\\]/g,part=>"\\"+part)+"%";
+ const candidateSearchMatch=candidateNeedle?exists(db.select({id:collegeMemberships.id})
+   .from(collegeMemberships)
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .where(and(eq(collegeMemberships.id,placementApplications.membershipId),
+     eq(collegeMemberships.collegeId,collegeId),
+     ilike(users.displayName,candidateSearchPattern)))):undefined;
+ const candidatePageSize=filters.candidatePageSize===undefined?1000:
+   [10,20,50,100,200].includes(filters.candidatePageSize)?filters.candidatePageSize:20;
+ const candidatePage=Number.isSafeInteger(filters.candidatePage)&&
+   (filters.candidatePage??0)>0?filters.candidatePage!:1;
  const candidateWhere=and(
+  candidateSearchMatch,
   eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"),
   ne(placementApplicationScreenings.status,"REJECTED"),not(stageRejected),
   or(eq(placementApplicationScreenings.status,"SHORTLISTED"),currentStageMatches),
@@ -120,7 +136,8 @@ export async function getCollegeRoundSlotAppointments(
     eq(collegeMemberships.collegeId,collegeId)))
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
    .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
-   .where(candidateWhere).orderBy(asc(users.displayName),asc(placementApplications.id)).limit(1000),
+   .where(candidateWhere).orderBy(asc(users.displayName),asc(placementApplications.id))
+   .limit(candidatePageSize).offset((candidatePage-1)*candidatePageSize),
   db.select({total:sql<number>`count(*)::int`}).from(placementApplications)
    .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
     eq(collegeMemberships.collegeId,collegeId)))
@@ -144,6 +161,7 @@ export async function getCollegeRoundSlotAppointments(
   if(preferred[0])candidates.push(preferred[0]);
  }
  const candidateTotal=candidateCount[0]?.total??0;
+ const candidatePages=Math.max(1,Math.ceil(candidateTotal/candidatePageSize));
  const appointmentTotal=appointmentCount[0]?.total??0;
  const appointmentPageSize=filters.appointmentPage===undefined?2000:
    [10,20,50,100].includes(filters.appointmentPageSize??20)?filters.appointmentPageSize??20:20;
@@ -180,8 +198,49 @@ export async function getCollegeRoundSlotAppointments(
   }else outcomes.set(event.subjectId,
    event.eventType==="PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED"?"COMPLETED":"NO_SHOW");
  }
+ // The selected learner's open appointments across this college form an
+ // authorized conflict preview. Never return other candidates, private
+ // meeting URLs, interviewer names or a truncated, silent conflict list.
+ let candidateConflicts:Array<{id:string;jobTitle:string;startsAt:string;endsAt:string}>=[];
+ let candidateConflictsHasMore=false;
+ if(filters.preferredApplicationId){
+  const [preferred]=await db.select({membershipId:placementApplications.membershipId})
+   .from(placementApplications)
+   .innerJoin(collegeMemberships,and(
+     eq(collegeMemberships.id,placementApplications.membershipId),
+     eq(collegeMemberships.collegeId,collegeId)))
+   .where(and(eq(placementApplications.id,filters.preferredApplicationId),
+     eq(placementApplications.jobId,job.id))).limit(1);
+  if(preferred){
+   const conflictRows=await db.select({
+     id:slots.id,title:placementJobs.title,
+     startsAt:slots.startsAt,endsAt:slots.endsAt,
+   }).from(slots)
+    .innerJoin(placementApplications,eq(placementApplications.id,slots.applicationId))
+    .innerJoin(placementJobs,and(eq(placementJobs.id,slots.jobId),
+      eq(placementJobs.collegeId,collegeId)))
+    .where(and(eq(placementApplications.membershipId,preferred.membershipId),
+      eq(slots.status,"BOOKED"),gte(slots.endsAt,now),
+      notExists(db.select({id:activityEvents.id}).from(activityEvents)
+       .where(and(eq(activityEvents.subjectId,slots.id),
+         eq(activityEvents.subjectType,"placement_round_candidate_slot"),
+         inArray(activityEvents.eventType,[
+           "PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED",
+           "PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW",
+         ]))))))
+    .orderBy(asc(slots.startsAt),asc(slots.id)).limit(101);
+   candidateConflictsHasMore=conflictRows.length>100;
+   candidateConflicts=conflictRows.slice(0,100).map(row=>({
+     id:row.id,jobTitle:row.title,
+     startsAt:row.startsAt.toISOString(),endsAt:row.endsAt.toISOString(),
+   }));
+  }
+ }
  return {job,storageReady:true,rounds,candidates,
-  candidateTotal,appointmentTotal,appointmentPage,appointmentPageSize,appointmentPages,
+  candidateTotal,candidatePage,candidatePageSize,candidatePages,
+  candidateHasMore:candidatePage<candidatePages,
+  candidateConflicts,candidateConflictsHasMore,
+  appointmentTotal,appointmentPage,appointmentPageSize,appointmentPages,
   interviews:bookings.map(row=>viewSlot(row,outcomes.get(row.id),feedbackBySlot.get(row.id),editNotesBySlot.get(row.id)))};
 }
 
