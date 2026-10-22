@@ -6,7 +6,7 @@ describe("Super Admin courses and content page-level scope, recovery and mobile 
  it("SA-academics-people-50/54 selected-college catalogue exposes real create/search/error/empty states",()=>{
   const page=read("src/app/(authenticated)/admin/courses/page.tsx");
   const overview=read("src/components/courses/admin-course-overview.tsx");
-  for(const word of ["getCurrentRequestContext","Select a college to continue",
+  for(const word of ["getCurrentRequestContext","Select a college to manage Courses",
    "Invalid course filters","Clear filters","getAdminCourseWorkspace",
    "getSuperAdminCourseDependencyCounts","<AdminCourseOverview"]){
    expect(page).toContain(word);
@@ -19,8 +19,8 @@ describe("Super Admin courses and content page-level scope, recovery and mobile 
  });
  it("SA-academics-people-56/57 lessons guard invalid filters, no-college and explicit authoring",()=>{
   const page=read("src/app/(authenticated)/admin/lessons/page.tsx");
-  for(const word of ["adminLearningQuerySchema.safeParse",
-   "Select a college to continue","Invalid lesson filters",
+  for(const word of ["parseSuperAdminLearningQuery(safeRaw)",
+   "Select a college to manage Lessons","Invalid lesson filters",
    "<SuperAdminLessonCreate","<SuperAdminLessonBulkVisibility",
    "<CollegeLessonVisibilityControl","<LessonActions",
    "<CollegeLessonReorderActions","Open offering to add lessons"]){
@@ -33,7 +33,7 @@ describe("Super Admin courses and content page-level scope, recovery and mobile 
    "Invalid content filters","Select a college to continue",
    "<SuperAdminContentAuthoring","<SuperAdminContentActions",
    "studentContentVisible(item)","safePublicCourseContentUrl",
-   "Content editing is unavailable for an inactive offering or lesson.",
+   "Unavailable on inactive offerings or lessons.",
    "<Pagination"]){
    expect(content).toContain(word);
   }
@@ -45,10 +45,10 @@ describe("Super Admin courses and content page-level scope, recovery and mobile 
  it("SA-academics-people-64/65 assignments and quizzes preserve validation, scoped reads and interactive submissions",()=>{
   for(const kind of ["assignments","quizzes"]){
    const page=read("src/app/(authenticated)/admin/"+kind+"/page.tsx");
-   expect(page).toContain("adminAssessmentQuerySchema.safeParse");
+   expect(page).toContain(kind==="assignments"?"parseSuperAdminAssignmentQuery(raw)":"parseSuperAdminQuizQuery(raw)");
    expect(page).toContain("Select a college to continue");
    expect(page).toContain("listCollegeAssessmentAggregate(context");
-   expect(page).toContain("Export "+kind+".csv");
+   expect(page).toContain("adminAssessmentExportHref");
    expect(page).toContain("<AdminAssessmentDirectory");
   }
   const directory=read("src/components/courses/admin-assessment-read-directory.tsx");
@@ -61,7 +61,7 @@ describe("Super Admin courses and content page-level scope, recovery and mobile 
  it("SA-academics-people-67 progress directory and per-student details keep scoped recovery and export parity",()=>{
   const page=read("src/app/(authenticated)/admin/course-progress/page.tsx");
   const students=read("src/app/(authenticated)/admin/course-progress/students/page.tsx");
-  for(const word of ["Invalid course progress filters","Select a college to continue",
+  for(const word of ["Invalid course progress filters","Select a college to view course progress.",
    "listCollegeCourseProgress(context","View student progress"]){
    expect(page).toContain(word);
   }

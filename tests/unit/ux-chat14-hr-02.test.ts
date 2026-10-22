@@ -8,7 +8,7 @@ describe("chat-14 HR UX rollout batch 02",()=>{
  });
  it("UX-hr-hr-drives-jobId-rounds-editor-remove-roundId-01 guards recruiter responsive page source",()=>{
   const src=readFileSync("src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx","utf8");
-  expect(src).toContain("min-w-0 max-w-full");
+  expect(src).toContain("min-w-0 max-w-3xl");
   expect(src).not.toContain("<main");
  });
  it("UX-hr-hr-drives-new-01 guards recruiter responsive page source",()=>{
@@ -46,9 +46,12 @@ describe("chat-14 HR UX rollout batch 02",()=>{
  it("UX-hr-hr-placements-jobs-jobId-01 guards recruiter responsive page source",()=>{
   const src=readFileSync("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx","utf8");
   expect(src).toContain("min-w-0 max-w-full");
-  expect(src).toContain("<DataTable");
-  expect(src).toContain('caption="Placement-cell selection history"');
-  expect(src).toContain('caption="Offers for shared applicants at this college"');
+  expect(src).toContain("<HrJobSelectionGrid");
+  expect(src).toContain("<HrJobOffersGrid");
+  const selectionGrid=readFileSync("src/components/hr/hr-job-selection-grid.tsx","utf8");
+  const offerGrid=readFileSync("src/components/hr/hr-job-offers-grid.tsx","utf8");
+  expect(selectionGrid).toContain('<DataTable');
+  expect(offerGrid).toContain('<DataTable');
   const table=readFileSync("src/components/ui/data-table.tsx","utf8");
   const cue=readFileSync("src/components/ui/scroll-cue.tsx","utf8");
   expect(table).toContain('<ScrollCue axis="x"');

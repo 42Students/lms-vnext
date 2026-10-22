@@ -75,11 +75,12 @@ describe("College Admin batch promotion preview policy", () => {
   });
   it("accepts only bounded query fields and valid academic year overrides", () => {
     const uuid = "40000000-0000-4000-8000-000000000001";
-    expect(collegePromotionQuerySchema.parse({ cohortId: uuid, yearStart: "2028" }))
+    expect(collegePromotionQuerySchema.parse({ cohortId: uuid, yearStart: "2028-29" }))
       .toEqual({ cohortId: uuid, yearStart: 2028 });
     for (const invalid of [
       { collegeId: uuid }, { cohortId: "broken" },
       { yearStart: 1899 }, { yearStart: 9999 }, { yearStart: 2026.5 },
+      {yearStart:"2028"}, {yearStart:"2028-30"}, {yearStart:"2028/29"},
     ]) expect(collegePromotionQuerySchema.safeParse(invalid).success).toBe(false);
   });
 });

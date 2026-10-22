@@ -10,13 +10,17 @@ describe("Unread learner placement notifications",()=>{
   expect(s).toContain("isNull(inAppNotifications.readAt)");
   expect(s).toContain("eq(activityEvents.collegeId,membership.collegeId)");
   expect(layout).toContain("getUnreadOwnLearnerPlacementAlertCount(context)");
-  expect(tabs).toContain('title="Unread personal placement alerts"');
+  expect(tabs).toContain('unreadPersonalAlerts: _unreadPersonalAlerts=null');
+  expect(tabs).toContain('count: tab.label==="Notices" && unreadCollegeAnnouncements!==null');
+  expect(tabs).not.toContain('count: unreadPersonalAlerts');
  });
  it("LEARNER-placements-46 does not confuse loaded preview size with all unread alerts",()=>{
   const page=read("src/app/(authenticated)/learn/my-placements/announcements/page.tsx");
   expect(page).toContain("getUnreadOwnLearnerPlacementAlertCount(context)");
-  expect(page).toContain('href="#college-notices"');
-  expect(page).toContain('href="#personal-updates"');
+  expect(page).toContain('<section id="college-notices"');
+  expect(page).toContain('<div id="personal-updates"');
+  expect(page).toContain('href={tabHref("announcements")}');
+  expect(page).toContain('href={tabHref("updates")}');
   expect(page).not.toContain("Updates about you ({personalAlerts.items.length})");
  });
 });

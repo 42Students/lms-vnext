@@ -16,7 +16,7 @@ describe("learner calendar URL date/view/event filters",()=>{
     expect(learnerCalendarHref(state)).toContain("/learn/my-placements/calendar?");
   });
   it("rejects impossible dates, duplicates and untrusted scope selectors",()=>{
-    expect(readLearnerCalendarUrl("date=2026-02-30&view=admin&kind=all&collegeId=foreign",fallback)).toEqual({date:fallback,view:"agenda",kind:"ALL"});
+    expect(readLearnerCalendarUrl("date=2026-02-30&view=admin&kind=all&collegeId=foreign",fallback)).toEqual({date:fallback,view:"month",kind:"ALL"});
     expect(readLearnerCalendarUrl("date=2026-10-17&date=2026-10-18&view=day&view=month",fallback)).toEqual({date:fallback,view:"agenda",kind:"ALL"});
     expect(()=>learnerCalendarHref({date:"2026-10-17",view:"day",kind:"ALL",membershipId:"other"})).toThrow();
     expect(learnerCalendarHref(readLearnerCalendarUrl("collegeId=secret",fallback))).not.toContain("collegeId");

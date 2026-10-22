@@ -33,8 +33,8 @@ describe("UX playbook shared behaviour", () => {
     const markup = renderToStaticMarkup(<DataTable columns={[
       { key: "name", header: "Name", mobilePriority: "primary", cell: (row: { name: string; status: string }) => row.name },
       { key: "status", header: "Status", mobilePriority: "secondary", cell: (row: { name: string; status: string }) => row.status },
-    ]} rows={[{ name: "Example", status: "Active" }]} getRowKey={row => row.name} caption="People" empty={<p>No people</p>} />);
-    expect(markup).toContain('sm:table-row');
+    ]} rows={[{ name: "Example", status: "Active" }]} getRowKey={row => row.name} caption="People" empty={<p>No people</p>} mobileMode="cards" />);
+    expect(markup).toContain('md:table-row');
     expect(markup).toContain("<table");
     expect(markup).toContain('scope="col"');
     expect(markup).toContain("People");
@@ -66,14 +66,15 @@ describe("UX playbook shared behaviour", () => {
   it("RV-05 B-02 keeps hidden fields in More details without audited column mapping",()=>{
     const rows=[{id:"one",secret:"Only on roster"}];
     const html=renderToStaticMarkup(<DataTable rows={rows} getRowKey={row=>row.id}
-      empty={<p>No matching learners</p>} rowHref={row=>"/learners/"+row.id}
+      empty={<p>No matching learners</p>} rowHref={row=>"/learners/"+row.id} mobileMode="cards"
       columns={[
         {key:"id",header:"Student",mobilePriority:"primary",cell:row=>row.id},
         {key:"secret",header:"Sensitive field",mobilePriority:"hidden",
           mobileHiddenReason:"See record",cell:row=>row.secret},
       ]}/>);
-    expect(html).toContain("More details");
+    expect(html).not.toContain("More details");
     expect(html).toContain("Only on roster");
+    expect(html).toContain('class="hidden');
   });
   it("RV-05 B-02 requires positive per-row detail authority to hide a field",()=>{
     const rows=[{id:"one",secret:"Visible without authority"}];
@@ -85,10 +86,11 @@ describe("UX playbook shared behaviour", () => {
         mobileDetail:{fieldKey:"secret",href:row=>"/learners/"+row.id,canView:()=>allowed}},
     ];
     const denied=renderToStaticMarkup(<DataTable rows={rows} getRowKey={row=>row.id}
-      empty={<p>No learners</p>} columns={makeColumns(false)}/>);
-    expect(denied).toContain("More details");
+      empty={<p>No learners</p>} columns={makeColumns(false)} mobileMode="cards" />);
+    expect(denied).not.toContain("Visible without authority");
+    expect(denied).not.toContain("Fields on detail page");
     const allowed=renderToStaticMarkup(<DataTable rows={rows} getRowKey={row=>row.id}
-      empty={<p>No learners</p>} columns={makeColumns(true)}/>);
+      empty={<p>No learners</p>} columns={makeColumns(true)} mobileMode="cards" />);
     expect(allowed).toContain("Fields on detail page");
     expect(allowed).toContain("Secret");
     expect(allowed).toContain("View details");

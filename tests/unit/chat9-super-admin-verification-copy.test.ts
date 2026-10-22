@@ -11,8 +11,9 @@ describe("Super Admin legacy verification exact page copy",()=>{
  });
  it("never selects the first college or exposes cross-college decisions",()=>{
   expect(src).toContain('if (collegeId) {');
-  expect(src).toContain('redirect(`/admin/colleges/${encodeURIComponent(collegeId)}/verification`);');
-  expect(src).toContain("requirePermission(context, \"admin-scope.select\")");
-  expect(src).toContain('href="/admin/colleges"');
+  expect(src).toContain('return <AdminCollegeVerification params={Promise.resolve({collegeId})}');
+  expect(src).toContain('if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))');
+  expect(src).toContain('can(context,"admin-scope.select")');
+  expect(src).toContain('description="Students\' education and identity, checked against their documents."');
  });
 });

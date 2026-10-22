@@ -6,7 +6,7 @@ describe("SA-academics-people-14 semester admin workspace", () => {
     const page = readFileSync("src/app/(authenticated)/admin/semesters/page.tsx", "utf8");
     expect(page).toContain("<CollegeSemesterCreateForm");
     expect(page).toContain("<CollegeSemesterRowActions");
-    expect(page).toContain("listCollegeSemesters(context, parsed.data)");
+    expect(page).toContain("listCollegeSemesters(context,parsed.data)");
     expect(page).not.toContain("This is read-only");
   });
   it("requires the selected college from persisted tenant-scoped authorization", () => {

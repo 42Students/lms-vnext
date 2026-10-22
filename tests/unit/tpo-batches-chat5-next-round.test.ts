@@ -14,7 +14,8 @@ describe("TPO Batches next-round source and behavioral gap closure",()=>{
    ["COMPETITIVE_EXAMS","Competitive exams"],
   ])expect(batchRegistrationLabel(choice)).toBe(label);
   const page=source("src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx");
-  expect(page).toContain("batchRegistrationLabel(s.registration.choice)");
+  expect(page).toContain("batchRegistrationLabel(student.registration.choice)");
+  expect(page).toContain("batchSourceLabel(student.registration.source)");
  });
  it("TPO-batches-56 formats rules dates for India without leaking ISO timestamps",()=>{
   const iso=new Date("2099-01-05T03:30:00.000Z");
@@ -40,7 +41,8 @@ describe("TPO Batches next-round source and behavioral gap closure",()=>{
  it("TPO-batches-40 uses the expected legacy import heading and confirm button",()=>{
   const page=source("src/components/tpo/tpo-batch-eligibility-import.tsx");
   expect(page).toContain(">Import eligibility</h2>");
-  expect(page).toContain(">Confirm matched decisions</button>");
+  expect(page).toContain('preview?"Confirm matched decisions":"Preview import"');
+  expect(page).toContain("<ConfirmDialog open={discardPending}");
   expect(page).not.toContain(">Confirm import</button>");
   expect(page).toContain("disabled={busy||preview.ready===0||unresolved>0||!acknowledged}");
  });
@@ -75,7 +77,8 @@ describe("TPO Batches next-round source and behavioral gap closure",()=>{
   expect(ui).toContain("apiFetch");
   expect(ui).toContain("if(!valid||busy)return");
   expect(ui).toContain("finally{setBusy(false)");
-  expect(ui).toContain('role="alert"');
+  expect(ui).toContain('<InlineNotice tone="error" message={error}');
+  expect(ui).toContain('disabled={!valid||busy||!reviewed}');
  });
  it("TPO-batches-61 keeps audited undo accessible without leaking provider responses",()=>{
   const overview=source("src/app/(authenticated)/tpo/batches/[batchId]/page.tsx");
@@ -89,15 +92,15 @@ describe("TPO Batches next-round source and behavioral gap closure",()=>{
  it("TPO-batches-50 has a complete keyboard-safe loading and recovery state",()=>{
   const pending=source("src/app/(authenticated)/tpo/batches/[batchId]/students/loading.tsx");
   const failed=source("src/app/(authenticated)/tpo/batches/[batchId]/students/error.tsx");
-  expect(pending).toContain('aria-busy="true"');
-  expect(pending).toContain("animate-pulse");
+  expect(pending).toContain('<GracefulPageLoading label="Loading batch students" shape="directory"');
+  expect(pending).toContain('<PageHeader title="Batch students"');
   expect(failed).toContain("Retry");
  });
  it("GR-35 GR-90 avoids native confirmation and exposes an alert for failed batch undo",()=>{
   const ui=source("src/components/tpo/tpo-batch-undo-control.tsx");
   expect(ui).not.toContain("window.confirm");
-  expect(ui).toContain('type="checkbox"');
-  expect(ui).toContain('role="alert"');
+  expect(ui).toContain('<Checkbox checked={reviewed} disabled={busy}');
+  expect(ui).toContain('<InlineNotice tone="error" message={error}');
  });
 
 });

@@ -13,7 +13,8 @@ describe("REC-calendar-messages-profile-21 recruiter notification bell",()=>{
   const svc=readFileSync(new URL("../../src/modules/placements/hr-recruiter-bell-service.ts",import.meta.url),"utf8");
   expect(bell).toContain("30000");
   expect(bell).toContain("setNow(Date.now())");
-  expect(bell).toContain("Loading notifications…");
+  expect(bell).toContain('<Skeleton label="Loading recruiter notifications"');
+  expect(bell).toContain('document.visibilityState==="visible"');
   expect(bell).toContain('Mark all read');
   expect(svc).toContain("eq(inAppNotifications.userId,ctx.user.id)");
   // The explicit college selector is mandatory for a scoped recruiter bell.
