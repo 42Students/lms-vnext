@@ -21,7 +21,8 @@ describe("Chat-7 learner placements follow-up", () => {
   it("LEARNER-placements-04 never masks missing actionable tasks", () => {
     const dashboard = source("src/components/placements/learner-placements-dashboard.tsx");
     const model = source("src/modules/placements/learner-waiting-on-you-model.ts");
-    expect(dashboard).toContain('aria-label="Waiting on you"');
+    expect(dashboard).toContain('aria-labelledby="learner-dashboard-waiting-heading"');
+    expect(dashboard).toContain('id="learner-dashboard-waiting-heading"');
     expect(dashboard).toContain("learnerWaitingOnYou({");
     expect(model).toContain('key:"offers"');
     expect(model).toContain('key:"register"');
