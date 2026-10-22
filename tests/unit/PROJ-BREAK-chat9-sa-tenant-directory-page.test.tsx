@@ -1,6 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {isValidElement} from "react";
-import TenantDirectory from "@/app/(authenticated)/admin/tenants/page";
+import TenantDirectory from "@/app/(authenticated)/admin/tenants/directory/page";
 
 const state=vi.hoisted(()=>({calls:0,fail:false,authorized:true}));
 vi.mock("@/auth/request-context",()=>({
