@@ -98,9 +98,17 @@ export function parseStaffNotificationSchedule(raw: string | null | undefined): 
   const legacy = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/.exec(value);
   if (legacy) {
     const [, yearRaw, monthRaw, dayRaw, hourRaw, minuteRaw, secondRaw] = legacy;
+    if (yearRaw === undefined || monthRaw === undefined || dayRaw === undefined ||
+        hourRaw === undefined || minuteRaw === undefined || secondRaw === undefined) {
+      throw new Error("scheduledAt must be yyyy-MM-dd HH:mm:ss");
+    }
     const [year, month, day, hour, minute, second] = [
       yearRaw, monthRaw, dayRaw, hourRaw, minuteRaw, secondRaw,
     ].map(Number);
+    if (year === undefined || month === undefined || day === undefined ||
+        hour === undefined || minute === undefined || second === undefined) {
+      throw new Error("scheduledAt must be yyyy-MM-dd HH:mm:ss");
+    }
     const localAsUtc = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
     if (localAsUtc.getUTCFullYear() !== year ||
         localAsUtc.getUTCMonth() + 1 !== month ||
@@ -119,8 +127,19 @@ export function parseStaffNotificationSchedule(raw: string | null | undefined): 
   // them (for example February 30). Validate the entered wall-clock fields
   // before applying its explicit timezone offset.
   const [datePart, timePart] = value.split("T");
-  const [year, month, day] = datePart.split("-").map(Number);
-  const [hour, minute] = timePart.slice(0, 5).split(":").map(Number);
+  if (datePart === undefined || timePart === undefined) {
+    throw new Error("scheduledAt must be yyyy-MM-dd HH:mm:ss");
+  }
+  const [yearRaw, monthRaw, dayRaw] = datePart.split("-");
+  const [hourRaw, minuteRaw] = timePart.slice(0, 5).split(":");
+  if (yearRaw === undefined || monthRaw === undefined || dayRaw === undefined ||
+      hourRaw === undefined || minuteRaw === undefined) {
+    throw new Error("scheduledAt must be yyyy-MM-dd HH:mm:ss");
+  }
+  const [year, month, day, hour, minute] = [yearRaw, monthRaw, dayRaw, hourRaw, minuteRaw].map(Number);
+  if (year === undefined || month === undefined || day === undefined || hour === undefined || minute === undefined) {
+    throw new Error("scheduledAt must be yyyy-MM-dd HH:mm:ss");
+  }
   const second = timePart.length > 5 && timePart[5] === ":"
     ? Number(timePart.slice(6, 8)) : 0;
   const wallClock = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
@@ -276,7 +295,9 @@ export async function requireStaffNotificationAudience(
         ...(scopedOrganizationId ? [eq(colleges.organizationId, scopedOrganizationId)] : []),
       )).limit(2);
     if (slugMatches.length !== 1) throw new Error("Course not found for slug");
-    resolvedCourseId = slugMatches[0].id;
+    const matchedCourse = slugMatches[0];
+    if (!matchedCourse) throw new Error("Course not found for slug");
+    resolvedCourseId = matchedCourse.id;
   }
   const [scope] = draft.classId
     ? await db.select({
@@ -432,7 +453,7 @@ export async function requireStaffNotificationMutation(
   }).from(activityEvents).where(eq(activityEvents.id, eventId)).limit(1);
   if (!existing || existing.subjectType !== "NOTIFICATION" ||
       !existing.collegeId || !existing.organizationId ||
-      existing.metadata.deletedAt != null) {
+      existing.metadata["deletedAt"] != null) {
     throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
   }
   const isAdmin = isSuperAdmin(context) || hasMembershipRole(context, "COLLEGE_ADMIN");
@@ -442,10 +463,10 @@ export async function requireStaffNotificationMutation(
   const audience: StaffNotificationAudience = {
     organizationId: existing.organizationId,
     collegeId: existing.collegeId,
-    classId: typeof existing.metadata.classId === "string"
-      ? existing.metadata.classId : null,
-    courseId: typeof existing.metadata.courseId === "string"
-      ? existing.metadata.courseId : null,
+    classId: typeof existing.metadata["classId"] === "string"
+      ? existing.metadata["classId"] : null,
+    courseId: typeof existing.metadata["courseId"] === "string"
+      ? existing.metadata["courseId"] : null,
   };
   // A stored event's scope and the source class/course must still agree.
   // Do not allow a creator (or an administrator) to mutate an event if
@@ -771,11 +792,11 @@ async function writeInAppNotification(
   // The release worker must commit SENT before recipient delivery; generic
   // activity events without a notice lifecycle retain existing behaviour.
   if (event.subjectType === "NOTIFICATION" &&
-      (event.metadata.deletedAt != null ||
-       (event.metadata.deliveryStatus != null &&
-        event.metadata.deliveryStatus !== "SENT") ||
-       (event.metadata.scheduledAt != null &&
-        event.metadata.deliveryStatus !== "SENT"))) {
+      (event.metadata["deletedAt"] != null ||
+       (event.metadata["deliveryStatus"] != null &&
+        event.metadata["deliveryStatus"] !== "SENT") ||
+       (event.metadata["scheduledAt"] != null &&
+        event.metadata["deliveryStatus"] !== "SENT"))) {
     throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
   }
   if (recipients.length !== userIds.length) {
@@ -925,7 +946,10 @@ export async function listScopedAdminNotificationPage(
   `;
   // Counts and paged results share the same tenant AND academic-context
   // filters; selecting a class/course must not show college-wide totals.
-  appendNotificationContextFilters(scopeConditions, options);
+  appendNotificationContextFilters(scopeConditions, {
+    ...(options.classId !== undefined ? { classId: options.classId } : {}),
+    ...(options.courseId !== undefined ? { courseId: options.courseId } : {}),
+  });
   const conditions = [...scopeConditions];
   if (options.deliveryStatus) conditions.push(eq(status, options.deliveryStatus));
   const where = and(...conditions);
@@ -1360,9 +1384,10 @@ export function sanitizeStaffNotificationHtml(input: string): string {
     if (!part.startsWith("<") || !part.endsWith(">")) return escapeText(part);
     const tag = /^<\s*(\/?)\s*([a-z]+)\b([^>]*)>$/i.exec(part);
     if (!tag) return escapeText(part);
-    const name = tag[2].toLowerCase();
+    const name = tag[2]?.toLowerCase();
+    if (!name) return escapeText(part);
     const closing = tag[1] === "/";
-    const attributes = tag[3].trim();
+    const attributes = (tag[3] ?? "").trim();
     if (allowed.has(name) && (!attributes || (name === "br" && attributes === "/"))) {
       return name === "br" ? "<br>" : (closing ? "</" : "<") + name + ">";
     }
@@ -1450,10 +1475,12 @@ export async function createStaffNotification(
         authorUserId: context.user.id,
       },
     }).returning({ id: activityEvents.id });
+    const insertedEvent = event;
+    if (!insertedEvent) throw new ActivityServiceError("ACTIVITY_EVENT_NOT_FOUND");
     const delivered = userIds.length
       ? await tx.insert(inAppNotifications).values(userIds.map((userId) => ({
           userId,
-          eventId: event.id,
+          eventId: insertedEvent.id,
           title,
           body,
           legacyAssessmentUrl: safeAssessmentUrl,
@@ -1464,7 +1491,7 @@ export async function createStaffNotification(
         }))).onConflictDoNothing().returning({ id: inAppNotifications.id })
       : [];
     return {
-      id: event.id,
+      id: insertedEvent.id,
       deliveryStatus,
       delivered: scheduledAt ? 0 : delivered.length,
       scheduled: scheduledAt ? delivered.length : 0,
@@ -1490,11 +1517,11 @@ export async function deleteStaffNotification(
       collegeId: activityEvents.collegeId,
       organizationId:activityEvents.organizationId,
     }).from(activityEvents).where(eq(activityEvents.id, id)).for("update").limit(1);
-    if (!event || event.metadata.deletedAt != null ||
+    if (!event || event.metadata["deletedAt"] != null ||
         event.collegeId !== original.collegeId ||
         event.organizationId !== original.organizationId ||
-        (event.metadata.classId??null)!==original.classId ||
-        (event.metadata.courseId??null)!==original.courseId ||
+        (event.metadata["classId"]??null)!==original.classId ||
+        (event.metadata["courseId"]??null)!==original.courseId ||
         (event.actorUserId !== context.user.id &&
          !isSuperAdmin(context) && !hasMembershipRole(context, "COLLEGE_ADMIN"))) {
       throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
@@ -1555,11 +1582,11 @@ export async function updateStaffNotification(
       collegeId: activityEvents.collegeId,
       metadata: activityEvents.metadata,
     }).from(activityEvents).where(eq(activityEvents.id, id)).for("update").limit(1);
-    if (!event || event.metadata.deletedAt != null ||
+    if (!event || event.metadata["deletedAt"] != null ||
         event.collegeId !== original.collegeId ||
         event.organizationId !== original.organizationId ||
-        (event.metadata.classId??null)!==original.classId ||
-        (event.metadata.courseId??null)!==original.courseId ||
+        (event.metadata["classId"]??null)!==original.classId ||
+        (event.metadata["courseId"]??null)!==original.courseId ||
         (event.actorUserId !== context.user.id &&
          !isSuperAdmin(context) && !hasMembershipRole(context, "COLLEGE_ADMIN"))) {
       throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
@@ -1567,7 +1594,7 @@ export async function updateStaffNotification(
     await assertStaffNoticeWriterInTransaction(tx,context,original,event.actorUserId);
     if (!sameAudience)
       await assertStaffNoticeWriterInTransaction(tx,context,audience,event.actorUserId);
-    const status = event.metadata.deliveryStatus;
+    const status = event.metadata["deliveryStatus"];
     if (status !== "SCHEDULED" && status !== "SENT") {
       throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
     }
@@ -1595,7 +1622,7 @@ export async function updateStaffNotification(
         title,
         htmlContent,
         assessmentUrl: safeAssessmentUrl,
-        scheduledAt: status === "SCHEDULED" ? scheduledAt?.toISOString() : event.metadata.scheduledAt,
+        scheduledAt: status === "SCHEDULED" ? scheduledAt?.toISOString() : event.metadata["scheduledAt"],
         updatedAt: new Date().toISOString(),
       },
     }).where(eq(activityEvents.id, id));
@@ -1652,13 +1679,13 @@ export async function releaseScheduledStaffNotification(
       organizationId: activityEvents.organizationId,
     }).from(activityEvents).where(eq(activityEvents.id, id)).for("update").limit(1);
     if (!event || event.subjectType !== "NOTIFICATION" ||
-        event.metadata.deletedAt != null) {
+        event.metadata["deletedAt"] != null) {
       throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
     }
-    if (event.metadata.deliveryStatus !== "SCHEDULED") {
+    if (event.metadata["deliveryStatus"] !== "SCHEDULED") {
       return { delivered: 0, alreadyReleased: true };
     }
-    const dueValue = event.metadata.scheduledAt;
+    const dueValue = event.metadata["scheduledAt"];
     const due = typeof dueValue === "string" ? new Date(dueValue) : null;
     if (!due || Number.isNaN(due.getTime()) || due.getTime() > now.getTime()) {
       return { delivered: 0, alreadyReleased: false };
@@ -1732,7 +1759,7 @@ export async function releaseDueStaffNotifications(
         await getDb().update(activityEvents).set({
           metadata: {
             ...current.metadata,
-            deliveryAttempts: Number(current.metadata.deliveryAttempts ?? 0) + 1,
+            deliveryAttempts: Number(current.metadata["deliveryAttempts"] ?? 0) + 1,
             lastReleaseError: "Scheduled release could not be completed",
           },
         }).where(and(

@@ -42,9 +42,9 @@ function safelyFlattenHtml(html:string){
 export async function ingestVerifiedInboundMail(raw:string,signature:string,
  env:Record<string,string|undefined>=process.env){
  if(Buffer.byteLength(raw,"utf8")>20000)throw new VerifiedInboundMailError("INVALID_PAYLOAD");
- if(env.INBOUND_MAIL_INGESTION_ENABLED!=="true")
+ if(env["INBOUND_MAIL_INGESTION_ENABLED"]!=="true")
   throw new VerifiedInboundMailError("NOT_CONFIGURED");
- requireWorkerProof(raw,signature,env.INBOUND_MAIL_HMAC_SECRET??"");
+ requireWorkerProof(raw,signature,env["INBOUND_MAIL_HMAC_SECRET"]??"");
  let decoded:unknown;
  try{decoded=JSON.parse(raw);}catch{throw new VerifiedInboundMailError("INVALID_PAYLOAD");}
  const validated=payload.safeParse(decoded);
@@ -56,8 +56,8 @@ export async function ingestVerifiedInboundMail(raw:string,signature:string,
  if(!table?.ready)throw new VerifiedInboundMailError("NOT_READY");
  // Route signed recruiter replies through their separate persisted authorizer.
  // That service writes the same shared Inbox even for rejected/expired replies.
- if(env.RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED==="true"){
-  const recruiterSecret=env.RECRUITER_MESSAGE_INBOUND_HMAC_SECRET??"";
+ if(env["RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED"]==="true"){
+  const recruiterSecret=env["RECRUITER_MESSAGE_INBOUND_HMAC_SECRET"]??"";
   if(Buffer.byteLength(recruiterSecret,"utf8")>=32){
    try{
     const recruiterSig=createHmac("sha256",recruiterSecret)
@@ -70,7 +70,7 @@ export async function ingestVerifiedInboundMail(raw:string,signature:string,
    }
   }
  }
- const kind=inboundMailRecipientKind(input.to,env.RECRUITER_MESSAGE_REPLY_DOMAIN??"");
+ const kind=inboundMailRecipientKind(input.to,env["RECRUITER_MESSAGE_REPLY_DOMAIN"]??"");
  const text=(input.text?.trim()||safelyFlattenHtml(input.html??"")).slice(0,20000);
  const [created]=await getDb().insert(inboundMailMessages).values({
   sourceMessageId:input.providerMessageId,
