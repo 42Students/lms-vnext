@@ -1355,6 +1355,7 @@ export function FacultyAttendanceWorkspace({
                 event.target.value, startsAt.split("T")[1] || "", endsAt.split("T")[1] || "",
               )}/>
           </label>
+          <p className="text-xs font-normal text-muted-foreground md:col-span-2">Past dates remain selectable for checking your schedule, but class creation follows the server booking policy: the start time cannot be more than five minutes in the past unless the college has configured a different grace period.</p>
           <label className="grid min-w-0 gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Course
             <Input className="w-full" value={workspace.course.courseName} disabled readOnly/>
