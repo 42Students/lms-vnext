@@ -57,19 +57,19 @@ export function TopbarOrganizationSwitcher({
       document.removeEventListener("keydown",onKey);
     };
   },[open]);
-  if(!canSwitch)return <p className={style.orgName+" min-w-0"} title={currentName}>{currentName}</p>;
-  return <div ref={root} className={style.orgSwitcher+" min-w-0"}
+  if(!canSwitch)return <p className={style["orgName"]+" min-w-0"} title={currentName}>{currentName}</p>;
+  return <div ref={root} className={style["orgSwitcher"]+" min-w-0"}
     onBlur={event=>{
       const next=event.relatedTarget;
       if(open && next instanceof Node && !event.currentTarget.contains(next))setOpen(false);
     }}>
-    <Button variant="secondary" size="sm" ref={trigger} type="button" className={style.orgTrigger+" min-w-0"}
+    <Button variant="secondary" size="sm" ref={trigger} type="button" className={style["orgTrigger"]+" min-w-0"}
       title={currentName} aria-label={"Switch workspace, current "+currentName}
       aria-haspopup="dialog" aria-expanded={open} aria-keyshortcuts="ArrowDown"
       aria-controls={open?"lms-topbar-org-switcher":undefined}
       onClick={()=>setOpen(value=>!value)}
       onKeyDown={event=>{if(event.key==="ArrowDown"){event.preventDefault();setOpen(true);}}}>
-      <span className={style.orgName+" min-w-0"}>{currentName}</span>
+      <span className={style["orgName"]+" min-w-0"}>{currentName}</span>
       <ChevronIcon/>
     </Button>
     {choices?<span role="status" aria-label="Tenant scope is permission-controlled"
@@ -81,12 +81,12 @@ export function TopbarOrganizationSwitcher({
         <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
       </svg>
     </span>:null}
-    {open?<PopoverPanel id="lms-topbar-org-switcher" label={"Switch workspace from "+currentName} aria-describedby="lms-org-switcher-context" tabIndex={-1} style={{minHeight:0}} className={style.orgPopover+" min-w-0"}
+    {open?<PopoverPanel id="lms-topbar-org-switcher" label={"Switch workspace from "+currentName} aria-describedby="lms-org-switcher-context" tabIndex={-1} style={{minHeight:0}} className={style["orgPopover"]+" min-w-0"}
       onDismiss={() => { setOpen(false); trigger.current?.focus(); }}>
       <span id="lms-org-switcher-context" className="sr-only">Current workspace: {currentName}</span>
-      <p className={style.accountSectionHeading}>Switch workspace</p>
+      <p className={style["accountSectionHeading"]}>Switch workspace</p>
       {choices?<AdminScopeSwitcher choices={choices} scope={scope}/>:
-        <MembershipSwitcher memberships={memberships} activeMembershipId={activeMembershipId} activeRole={activeRole}/>}
+        <MembershipSwitcher memberships={memberships} activeMembershipId={activeMembershipId} {...(activeRole !== undefined ? {activeRole} : {})}/>}
     </PopoverPanel>:null}
   </div>;
 }
