@@ -1,79 +1,130 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import type {RequestContext} from "@/modules/identity/context";
 import {readFileSync} from "node:fs";
+
+/** The bulk command now edits lesson records, not published content rows.
+ * Test its transactional lesson CAS, college scope and partial-failure policy.
+ */
+const lessonId="11111111-1111-4111-8111-111111111111";
+const collegeId="22222222-2222-4222-8222-222222222222";
+const organizationId="33333333-3333-4333-8333-333333333333";
 const state=vi.hoisted(()=>({
- rows:[] as Array<{id:string;lessonId:string;status:string;visible:boolean;updatedAt:Date}>,
- write:vi.fn(),acting:vi.fn(),select:vi.fn(),
+ row:{id:"11111111-1111-4111-8111-111111111111",name:"Lesson",
+  sequence:1,status:"ACTIVE",visible:false,version:7} as {
+  id:string;name:string;sequence:number;status:"ACTIVE"|"ARCHIVED";
+  visible:boolean;version:number;
+ }|null,
+ writeSucceeds:true,
+ transactions:vi.fn(),writes:vi.fn(),audits:vi.fn(),
+ persisted:vi.fn(),acting:vi.fn(),
 }));
 vi.mock("@/modules/permissions/acting-college",()=>({resolveActingCollege:state.acting}));
-vi.mock("@/modules/courses/college-content-visibility-service",()=>({
- updateCollegeContentStudentVisibility:state.write,
+vi.mock("@/modules/permissions/persisted-actor",()=>({
+ assertPersistedPlatformPermission:state.persisted,
 }));
-vi.mock("@/db/client",()=>({getDb:()=>({select:state.select})}));
+vi.mock("@/modules/activity/service",()=>({recordActivityEvent:state.audits}));
+vi.mock("@/db/client",()=>({
+ getDb:()=>({
+  select:()=>({
+   from(){return this;},where(){return this;},limit:async()=>[],
+  }),
+  transaction:async (work:(tx:unknown)=>Promise<unknown>)=>{
+   state.transactions();
+   const tx={
+    select:()=>({
+     from(){return this;},innerJoin(){return this;},where(){return this;},
+     for(){return this;},limit:async()=>state.row?[state.row]:[],
+    }),
+    update:()=>{
+     state.writes();
+     return {
+      set(){return this;},where(){return this;},
+      returning:async()=>state.writeSucceeds?[{id:lessonId}]:[],
+     };
+    },
+   };
+   return work(tx);
+  },
+ }),
+}));
 import {bulkSuperAdminLessonVisibility} from "@/modules/courses/super-admin-lesson-bulk-visibility";
 
-const lessonId="11111111-1111-4111-8111-111111111111";
-const context={user:{id:"test-user"},adminScope:{collegeId:"22222222-2222-4222-8222-222222222222"}} as unknown as RequestContext;
-const row=(id:string,status:string,visible=false)=>({id,lessonId,status,visible,
- updatedAt:new Date("2099-01-01T12:00:00.000Z")});
+const context={
+ user:{id:"test-user",platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
+ membership:null,adminScope:{collegeId,organizationId},
+} as unknown as RequestContext;
 beforeEach(()=>{
- state.rows=[
-  row("draft","DRAFT"),
-  row("archived","ARCHIVED"),
-  row("published-hidden","PUBLISHED"),
-  row("published-already-shown","PUBLISHED",true),
- ];
- state.write.mockReset().mockResolvedValue({id:"published-hidden"});
- state.acting.mockReset().mockResolvedValue({collegeId:"22222222-2222-4222-8222-222222222222",
-  organizationId:"33333333-3333-4333-8333-333333333333"});
- state.select.mockReset().mockImplementation(()=>({from(){return this;},innerJoin(){return this;},
-  where(){return this;},limit:async()=>state.rows}));
+ state.row={id:lessonId,name:"Lesson",sequence:1,status:"ACTIVE",visible:false,version:7};
+ state.writeSucceeds=true;
+ state.transactions.mockReset();state.writes.mockReset();state.audits.mockReset();
+ state.persisted.mockReset().mockResolvedValue({userId:"test-user"});
+ state.acting.mockReset().mockResolvedValue({collegeId,organizationId});
 });
-describe("SA-academics-people-53 bulk course/lesson visibility never alters future content",()=>{
- it("changes only published items whose visibility differs and retains drafts/archived content",async()=>{
-  const result=await bulkSuperAdminLessonVisibility(context,{lessonIds:[lessonId],
-   visibleToStudents:true,confirmed:true});
-  expect(state.write).toHaveBeenCalledTimes(1);
-  expect(state.write).toHaveBeenCalledWith(context,{
-   lessonContentId:"published-hidden",visibleToStudents:true,
-   expectedUpdatedAt:"2099-01-01T12:00:00.000Z",confirmed:true,
+describe("SA-academics-people-53: college-scoped lesson bulk status and visibility",()=>{
+ it("changes an authorized active lesson with a persisted permission and version CAS",async()=>{
+  const result=await bulkSuperAdminLessonVisibility(context,{
+   lessonIds:[lessonId],visibleToStudents:true,confirmed:true,
+   expectedVersions:{[lessonId]:7},
   });
-  expect(result.matchedContents).toBe(4);
-  expect(result.changed).toBe(1);
-  expect(result.unchanged).toBe(3);
-  expect(result.failures).toEqual([]);
+  expect(state.acting).toHaveBeenCalledWith(context,"courses.manage");
+  expect(state.persisted).toHaveBeenCalledWith(expect.anything(),context,
+   "courses.manage",{collegeId,organizationId});
+  expect(state.transactions).toHaveBeenCalledTimes(1);
+  expect(state.writes).toHaveBeenCalledTimes(1);
+  expect(result).toMatchObject({requested:1,updatedCount:1,changed:1,unchanged:0,failed:[]});
+  expect(state.audits).toHaveBeenCalledTimes(1);
  });
- it("returns accurate partial failures without trying to mutate unpublished records",async()=>{
-  state.write.mockRejectedValueOnce(Error("SQL details and secrets"));
-  const result=await bulkSuperAdminLessonVisibility(context,{lessonIds:[lessonId],
-   visibleToStudents:true,confirmed:true});
-  expect(result.changed).toBe(0);
+ it("preserves an already matching lesson and does not generate a write or audit",async()=>{
+  state.row={id:lessonId,name:"Lesson",sequence:1,status:"ACTIVE",visible:true,version:7};
+  const result=await bulkSuperAdminLessonVisibility(context,{
+   lessonIds:[lessonId],visibleToStudents:true,confirmed:true,
+  });
+  expect(result).toMatchObject({updatedCount:1,changed:0,unchanged:1,failed:[]});
+  expect(state.writes).not.toHaveBeenCalled();
+  expect(state.audits).toHaveBeenCalledTimes(1);
+ });
+ it("returns a sanitized partial failure when the CAS write loses a race",async()=>{
+  state.writeSucceeds=false;
+  const result=await bulkSuperAdminLessonVisibility(context,{
+   lessonIds:[lessonId],visibleToStudents:true,confirmed:true,
+  });
+  expect(result).toMatchObject({requested:1,updatedCount:0,changed:0});
   expect(result.failures).toHaveLength(1);
-  expect(result.failures[0]?.id).toBe("published-hidden");
-  expect(result.failures[0]?.reason).not.toContain("SQL details");
-  expect(state.write).toHaveBeenCalledTimes(1);
+  expect(result.failures[0]).toMatchObject({id:lessonId,reason:"Lesson was updated by someone else. Refresh and retry."});
+  expect(state.audits).not.toHaveBeenCalled();
  });
- it("limits bulk visibility SQL to published content under active parents and a published path",()=>{
+ it("rejects invalid lesson identifiers per-row without querying lesson records",async()=>{
+  const result=await bulkSuperAdminLessonVisibility(context,{
+   lessonIds:["not-a-uuid"],visibleToStudents:true,confirmed:true,
+  });
+  expect(result).toMatchObject({requested:1,updatedCount:0,changed:0});
+  expect(result.failures[0]?.reason).toBe("Invalid lesson id");
+  expect(state.transactions).not.toHaveBeenCalled();
+ });
+ it("rejects missing changes and unconfirmed commands before storage access",async()=>{
+  for(const raw of [
+   {lessonIds:[lessonId],confirmed:true},
+   {lessonIds:[lessonId],visibleToStudents:true,confirmed:false},
+   {lessonIds:[],visibleToStudents:true},
+   {lessonIds:Array.from({length:501},(_,i)=>
+    "00000000-0000-4000-8000-"+String(i).padStart(12,"0")),visibleToStudents:true},
+  ]){
+   await expect(bulkSuperAdminLessonVisibility(context,raw)).rejects.toThrow();
+  }
+  expect(state.acting).not.toHaveBeenCalled();
+  expect(state.transactions).not.toHaveBeenCalled();
+ });
+ it("retains tenant, active-parent, role and CAS fencing on each lesson",()=>{
   const source=readFileSync("src/modules/courses/super-admin-lesson-bulk-visibility.ts","utf8");
-  for(const condition of [
-   'eq(lessonContents.status,"PUBLISHED")',
-   'eq(courseLearningPaths.status,"PUBLISHED")',
-   'eq(courseLessons.status,"ACTIVE")',
-   'eq(courseOfferings.status,"ACTIVE")',
-   'eq(courses.status,"ACTIVE")',
+  for(const guard of [
+   'resolveActingCollege(context,"courses.manage")',
    'eq(departments.collegeId,acting.collegeId)',
    'eq(academicPeriods.collegeId,acting.collegeId)',
-   'row.status!=="PUBLISHED"',
-  ])expect(source).toContain(condition);
- });
- it("never opens database queries when the input is unconfirmed or exceeds the allowed lesson batch",async()=>{
-  for(const input of [
-   {lessonIds:[lessonId],visibleToStudents:true,confirmed:false},
-   {lessonIds:[lessonId,lessonId],visibleToStudents:true,confirmed:true},
-   {lessonIds:Array.from({length:26},(_,i)=>"00000000-0000-4000-8000-"+String(i).padStart(12,"0")),
-    visibleToStudents:true,confirmed:true},
-  ])await expect(bulkSuperAdminLessonVisibility(context,input)).rejects.toThrow();
-  expect(state.select).not.toHaveBeenCalled();
-  expect(state.write).not.toHaveBeenCalled();
+   'eq(courseOfferings.status,"ACTIVE")',
+   'eq(courses.status,"ACTIVE")',
+   'assertPersistedPlatformPermission(tx,context,"courses.manage"',
+   'eq(courseLessons.version,lesson.version)',
+   'for("update",{of:courseLessons})',
+  ])expect(source).toContain(guard);
  });
 });

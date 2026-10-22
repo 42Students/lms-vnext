@@ -79,7 +79,7 @@ describe("/admin placements second-third: scoping, filtering, counts, links", ()
     expect(filterAdminDriveDirectory(rows, adminDriveDirectoryQuerySchema.parse({status:"ALL",q:"oPeN"})).items.map(v=>v.job.id)).toEqual(["published"]);
     const view = filterAdminDriveDirectory(rows, adminDriveDirectoryQuerySchema.parse({page:999,pageSize:10}));
     expect(view).toMatchObject({ page: 1, totalPages: 1, total: 4 });
-    expect(adminDriveStatus({status:"PUBLISHED",applicationDeadline:new Date("2026-01-01T00:00:00.000Z")},now)).toBe("Open · Expired");
+    expect(adminDriveStatus({status:"PUBLISHED",applicationDeadline:new Date("2026-01-01T00:00:00.000Z")},now)).toBe("Expired");
     expect(adminDriveStatus({status:"PUBLISHED",applicationDeadline:null},now)).toBe("Open");
     expect(adminDriveIstDate(new Date(Number.NaN))).toBe("—");
     expect(adminDriveIstDate(null)).toBe("—");
