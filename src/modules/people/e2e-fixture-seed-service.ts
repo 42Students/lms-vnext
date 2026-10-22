@@ -1,7 +1,7 @@
 import "server-only";
 
 import {createHash} from "node:crypto";
-import {and,eq} from "drizzle-orm";
+import {and,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
  academicPeriods,activityEvents,assignmentSubmissions,collegeMemberships,
@@ -76,7 +76,7 @@ export async function seedIsolatedE2EAcademicGraph(
   // The same isolated PostgreSQL DB may have competing CI seed attempts.
   // Serialize by namespace, not by provider/app process or user-supplied key.
   await tx.execute(
-   (await import("drizzle-orm")).sql`select pg_advisory_xact_lock(hashtextextended(${"e2e:"+namespace},0))`
+   sql`select pg_advisory_xact_lock(hashtextextended(${"e2e:"+namespace},0))`
   );
   const manifestUsers={} as Record<keyof typeof roleOf,string>;
   const personas=[
