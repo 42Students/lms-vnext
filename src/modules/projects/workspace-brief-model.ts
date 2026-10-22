@@ -44,7 +44,9 @@ export function parseWorkspaceBrief(value:unknown):WorkspaceBrief {
   goal:typeof raw.goal==="string"?raw.goal:"",
   description:typeof raw.description==="string"?raw.description:"",
   deliverables:list(raw.deliverables),
-  completionConditions:list(raw.completionConditions??raw.definitionOfDone),
+  // An explicitly cleared native field, including a historic null, wins over
+  // inherited definitionOfDone. Absence alone activates the old alias.
+  completionConditions:list("completionConditions" in raw?raw.completionConditions:raw.definitionOfDone),
   personas:list(raw.personas),
  };
  const result=workspaceBriefSchema.safeParse(fallback);
