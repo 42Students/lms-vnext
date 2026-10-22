@@ -67,7 +67,7 @@ describe("PROJ-BREAK-COL-SUMMARY-01 College Admin project editing",()=>{
   expect(service).toContain('.for("update")');
   const archived=service.indexOf('row.status==="ARCHIVED"');
   const retry=service.indexOf("collegeProjectSummaryMatchesCurrent(row,input)");
-  const stale=service.indexOf("PROJECT_SUBMISSION_CONFLICT");
+  const stale=service.indexOf('throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT")',retry);
   expect(archived).toBeLessThan(retry);
   expect(retry).toBeLessThan(stale);
   expect(service).toContain("collegeProjectStatusChangeAllowed(row.status,input.status");

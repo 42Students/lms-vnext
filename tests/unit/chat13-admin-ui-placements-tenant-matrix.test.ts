@@ -22,7 +22,12 @@ describe("SA-ADMIN-PLACEMENT-SERVICE-MATRIX-01 all Super Admin placement directo
  for(const file of selectedCollegeDirectories){
   it("checks the role and scoped college before querying "+file,()=>{
    const s=read(file);
-   expect(s).toContain('requireSuperAdminSelectedCollege(context,"placements.read")');
+   if(file==="super-admin-hiring-report-service.ts"){
+    // Read-only hiring reports support a verified organization scope spanning colleges.
+    expect(s).toContain('if(!isSuperAdmin(context))');
+    expect(s).toContain('if(!selected.collegeId&&!selected.organizationId)');
+    expect(s).toContain('requirePermission(context,"placements.read"');
+   }else expect(s).toContain('requireSuperAdminSelectedCollege(context,"placements.read")');
    expect(s).toContain("getDb()");
    expect(s.includes("selected.collegeId")||s.includes("scope.collegeId"),file).toBe(true);
   });
