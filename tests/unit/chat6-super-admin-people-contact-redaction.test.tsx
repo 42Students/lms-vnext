@@ -9,6 +9,9 @@ vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:vi.fn()}));
 vi.mock("@/modules/people/admin-membership-detail-service",()=>({
   getSuperAdminMembershipDetail:vi.fn(),
 }));
+vi.mock("@/modules/people/admin-learner-profile-sections-service",()=>({
+  getAdminLearnerProfileSections:vi.fn().mockResolvedValue(null),
+}));
 vi.mock("@/components/admin/super-admin-platform-block-action",()=>({
   SuperAdminPlatformBlockAction:({userId}:{userId:string})=><span>GLOBAL_BLOCK:{userId}</span>,
 }));
