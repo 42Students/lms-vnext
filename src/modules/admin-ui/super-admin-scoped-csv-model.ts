@@ -5,7 +5,7 @@ export function parseSuperAdminScopedCsvParams(params:URLSearchParams){
  const raw:Record<string,string|string[]>={};
  for(const key of params.keys()){
   const values=params.getAll(key);
-  raw[key]=values.length===1?values[0]:values;
+  raw[key]=values.length===1?(values[0]??""):values;
  }
  return superAdminScopedCsvQuerySchema.parse(raw);
 }
