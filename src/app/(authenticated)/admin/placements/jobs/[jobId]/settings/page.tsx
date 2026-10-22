@@ -69,6 +69,17 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
    .filter(cohort=>cohort.status!=="ARCHIVED")
    .map(async cohort=>({program,cohort,sections:await listSections(context,cohort.id)}))))
    .catch(()=>null):[];
+ // Database rows can contain legacy enum strings. Do not pass unsupported values
+ // into the controlled editors or silently replace stored values with defaults.
+ const employmentType=job.employmentType==="FULL_TIME"||job.employmentType==="INTERNSHIP"||
+  job.employmentType==="CONTRACT"?job.employmentType:null;
+ const workMode=job.workMode==="ONSITE"||job.workMode==="HYBRID"||
+  job.workMode==="REMOTE"?job.workMode:null;
+ const applicationMode=job.applicationMode==="INTERNAL"||job.applicationMode==="HYBRID"||
+  job.applicationMode==="EXTERNAL_ONLY"?job.applicationMode:null;
+ const missingEvidencePolicy=publishedPolicy?.missingEvidencePolicy==="ALLOW_WITH_FLAG"||
+  publishedPolicy?.missingEvidencePolicy==="REQUIRE_COMPLETE"?
+  publishedPolicy.missingEvidencePolicy:null;
  const draftReady=job.status==="DRAFT"&&publishedPolicy!==null&&typesRead?.status==="fulfilled"&&
   draftPrograms!==null&&draftCohorts!==null&&draftSections!==null;
  return <div className="min-w-0 space-y-4 md:space-y-6">
@@ -83,7 +94,8 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
   <section aria-label="Edit drive" className="min-w-0 space-y-3">
    <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Edit drive</h2>
    {job.status==="DRAFT"&&draftReady&&publishedPolicy&&
-    draftPrograms&&draftCohorts&&draftSections&&typesRead?.status==="fulfilled"?
+    draftPrograms&&draftCohorts&&draftSections&&typesRead?.status==="fulfilled"&&
+    employmentType&&workMode&&applicationMode&&missingEvidencePolicy?
     <section id="draft-drive-editor" aria-label="Full draft editor" className="min-w-0 space-y-3">
      <p className="text-sm text-body">Save draft changes before publishing. Eligibility rules and job details are persisted separately; a failed policy update is surfaced and must be corrected before publishing.</p>
      <PlacementDraftEditForm
@@ -103,10 +115,10 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
       value={{
        job:{
         id:job.id,title:job.title,description:job.description,
-        employmentType:job.employmentType,jobTypeLabel:job.jobTypeLabel,
-        workMode:job.workMode,locations:job.locations,openings:job.openings,
+        employmentType,jobTypeLabel:job.jobTypeLabel,
+        workMode,locations:job.locations,openings:job.openings,
         minimumAnnualCtcInr:job.minimumAnnualCtcInr,
-        maximumAnnualCtcInr:job.maximumAnnualCtcInr,applicationMode:job.applicationMode,
+        maximumAnnualCtcInr:job.maximumAnnualCtcInr,applicationMode,
         externalApplicationUrl:job.externalApplicationUrl,
         applicationDeadline:job.applicationDeadline?.toISOString()??null,
         legacyPostingDetails:job.legacyPostingDetails,
@@ -123,7 +135,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
         minUndergraduatePercentage:publishedPolicy.minUndergraduatePercentage,
         maxGapYears:publishedPolicy.maxGapYears,
         allowedPassingYears:publishedPolicy.allowedPassingYears,
-        missingEvidencePolicy:publishedPolicy.missingEvidencePolicy,
+        missingEvidencePolicy,
        },
       }}/>
     </section>:job.status==="DRAFT"?<ErrorState
@@ -131,7 +143,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
      description="One or more academic or eligibility options could not be verified. The form is disabled to prevent a partial edit."
      action={<Link href={base+"/settings"} className="font-semibold text-link underline">Retry settings</Link>}
     />:null}
-   {job.status!=="DRAFT"?
+   {job.status!=="DRAFT"&&employmentType&&workMode?
     <SuperAdminPublishedDriveEdit
      sourceReady={publishedEditReady}
      jobTypes={publishedJobTypes}
@@ -147,8 +159,8 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
       locations:job.locations,applicationDeadline:job.applicationDeadline?.toISOString()??null,
       openings:job.openings,minCtc:job.minimumAnnualCtcInr,maxCtc:job.maximumAnnualCtcInr,
       updatedAt:job.updatedAt.toISOString(),
-      jobTypeLabel:job.jobTypeLabel??"",employmentType:job.employmentType,
-      workMode:job.workMode,responsibilities:job.legacyPostingDetails?.responsibilities??"",
+      jobTypeLabel:job.jobTypeLabel??"",employmentType,
+      workMode,responsibilities:job.legacyPostingDetails?.responsibilities??"",
       importantDates:job.legacyPostingDetails?.importantDates??[],
       customEligibilityRules:job.legacyPostingDetails?.customEligibilityRules??[],
       status:job.status,legacyVisibilityType:job.legacyVisibilityType,
@@ -157,7 +169,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
        cohorts:publishedPolicy.allowedCohortIds.length,
        sections:publishedPolicy.allowedSectionIds.length,
       }:null,
-    }} />:null}
+    }} />:job.status!=="DRAFT"?<ErrorState title="Unsupported saved job type" description="This drive contains a legacy employment type or work mode that cannot be edited. No changes have been made."/>:null}
   </section>
   {job.status!=="DRAFT"?<section aria-label="Full job settings" className="min-w-0 space-y-4 border-b border-border pb-5">
    <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Full job details</h2>
