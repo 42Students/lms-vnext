@@ -45,6 +45,19 @@ import {
 type CourseTx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 type CourseRunner = <T>(work: (tx: CourseTx) => Promise<T>) => Promise<T>;
 
+/** Course-image receipts contain private R2 keys and token hashes.
+ * Ordinary catalogue mutation DTOs must never serialize that server-only
+ * metadata, even for authenticated admins. */
+function withoutPrivateCourseImageReceipt<T extends {
+  legacyMetadata: Record<string, unknown> | null;
+}>(row: T): T {
+  const meta = row.legacyMetadata;
+  if (!meta || !Object.prototype.hasOwnProperty.call(meta, "courseCoverAsset")) return row;
+  const clean = { ...meta };
+  delete clean.courseCoverAsset;
+  return { ...row, legacyMetadata: clean };
+}
+
 function requireCourseWrite(context: RequestContext, organizationId: string, collegeId: string) {
   if (!can(context, "courses.manage", { organizationId, collegeId }))
     throw new AuthorizationError("courses.manage");
@@ -402,7 +415,7 @@ export async function createCourse(
           legacyAuditAction:"COURSE_CREATE",source:"COURSE_CATALOG",
           slug:created.slug,searchFreshness:"DATABASE_READ" },
       });
-      return created;
+      return withoutPrivateCourseImageReceipt(created);
     });
   } catch (error) {
     if (error instanceof CoursesServiceError) throw error;
@@ -518,7 +531,7 @@ export async function updateCourse(
           updatedName: updated.name, updatedCode: updated.code,
           legacyAuditAction:"COURSE_UPDATE",searchFreshness:"DATABASE_READ" },
       });
-      return updated;
+      return withoutPrivateCourseImageReceipt(updated);
     });
   } catch (error) {
     if (error instanceof CoursesServiceError) {
@@ -614,7 +627,7 @@ export async function archiveCourse(
         legacyAuditAction:"COURSE_DELETE",softArchived:true,
         retainedHistory:true,searchFreshness:"DATABASE_READ" },
     });
-    return archived;
+    return withoutPrivateCourseImageReceipt(archived);
   });
 }
 
@@ -708,7 +721,7 @@ export async function restoreCourse(
           code: restored.code,
         },
       });
-      return restored;
+      return withoutPrivateCourseImageReceipt(restored);
     });
   } catch (error) {
     if (error instanceof CoursesServiceError) throw error;
@@ -820,7 +833,7 @@ export async function moveCourseDepartment(
      departmentId:newDepartmentId,
     },
    });
-   return updated;
+   return withoutPrivateCourseImageReceipt(updated);
   });
  }catch(error){
   if(error instanceof CoursesServiceError)throw error;
