@@ -7,7 +7,7 @@ These rows were marked DEFERRED without being checked. Each row must now end as 
 DEFERRED is NOT allowed. For each row: read its full text in the source packet named next to it, find the old behaviour in docs/legacy-source, find the vNext code, decide, and fix if needed.
 Keep tests passing and TypeScript valid; never silence errors. Write one result line per row under Results, push, then tick this packet in your queue.
 
-- [ ] G2-2-012-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
+- [x] G2-2-012-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [ ] G2-2-014-028  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [ ] G2-2-019-001  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [x] G2-20-004-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
@@ -27,3 +27,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-3-021-044: OK — `src/modules/bug-tracker/reporter-service.ts:88-110` limits activity to authenticated reporter ownership and chronologically sorts; `src/components/tracker/tracker-reporter-issue-detail.tsx:71-87` renders an Activity section; matches `docs/legacy-source/frontend/src/components/tracker/ActivityTimeline.jsx:21-43` and `docs/legacy-source/frontend/src/pages/tracker/issues/[issueId].js:45-79`.
 
 - G2-9-014-004: OK — `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx:36-46` explicitly explains the missing College Admin assignment and asks the user to contact their college administrator; matches recovery behavior in `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/shortlisted.js:20-31`.
+- G2-2-012-049: OK — independent accurate totals with an eight-row preview: `src/modules/admin-ui/college-dashboard-attendance-service.ts:43-78`, `src/modules/admin-ui/college-dashboard-risk-service.ts:92-105`, `src/modules/admin-ui/college-dashboard-grading-service.ts:40-67`, `src/modules/admin-ui/college-dashboard-staffing-service.ts:62-99`; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminCollegeDashboardController.java:47,149-154,170-179,181-211` (full counts separate from preview).
