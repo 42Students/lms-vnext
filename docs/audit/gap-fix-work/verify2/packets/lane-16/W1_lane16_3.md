@@ -126,3 +126,10 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: (none, new feature)
 - Legacy: LF:106-118 reset deletes override row
 - Expected fix: Restore inheritance semantics, avoid immutable default override.
+
+## Lane-12 fast verification triage (2026-10-22)
+
+OK (limited to cited behavior inspected in vNext): G2-17-021-019.
+
+DEFERRED — not verified or fixed; needs deeper implementation, policy, API or migration review: G2-15-002-071, G2-15-002-079, G2-15-002-081, G2-15-005-025, G2-15-005-049, G2-15-007-017, G2-16-002-001, G2-16-006-012, G2-16-006-024, G2-16-027-046, G2-16-028-015, G2-16-028-046, G2-17-007-015, G2-17-007-028, G2-17-007-039, G2-17-007-040, G2-17-005-010, G2-17-005-042, G2-17-021-035, G2-18-003-068, G2-19-005-031, G2-2-006-016, G2-2-007-017, G2-2-010-030.
+Triage is complete, parity verification is not. Do not interpret deferred rows as completed fixes.
