@@ -229,6 +229,39 @@ export function PlacementJobCreateForm({
     departmentFilter==="ALL"?[]:visiblePrograms.map(program=>program.id);
   const effectiveCohortIds=selectedCohortIds.filter(id=>visibleCohorts.some(c=>c.id===id));
   const effectiveSectionIds=selectedSectionIds.filter(id=>visibleSections.some(c=>c.id===id));
+  type DraftReach={kind:"READY";activeLearners:number;
+    branches:Array<{programId:string;name:string;total:number}>;scopeNote:string}|
+    {kind:"UNAVAILABLE";reason:string};
+  const [draftReach,setDraftReach]=useState<DraftReach|null>(null);
+  const [draftReachBusy,setDraftReachBusy]=useState(false);
+  const targetingKey=JSON.stringify({
+   programIds:[...effectiveProgramIds].sort(),
+   cohortIds:[...effectiveCohortIds].sort(),
+   sectionIds:[...effectiveSectionIds].sort(),
+  });
+  useEffect(()=>{
+   const controller=new AbortController();
+   const timer=window.setTimeout(()=>{
+    setDraftReachBusy(true);
+    void fetch("/api/placements/tpo/drives/reach-preview",{
+     method:"POST",credentials:"same-origin",signal:controller.signal,
+     headers:{"content-type":"application/json"},body:targetingKey,
+    }).then(async response=>{
+     if(!response.ok)throw new Error("Audience estimate unavailable.");
+     return await response.json() as DraftReach;
+    }).then(result=>{
+     if(!controller.signal.aborted)setDraftReach(result);
+    }).catch(()=>{
+     if(!controller.signal.aborted)setDraftReach({
+      kind:"UNAVAILABLE",reason:"The active learner audience could not be checked.",
+     });
+    }).finally(()=>{
+     if(!controller.signal.aborted)setDraftReachBusy(false);
+    });
+   },350);
+   return ()=>{controller.abort();window.clearTimeout(timer);};
+  },[targetingKey]);
+
 
   async function loadCloneSource(sourceJobId:string){
     if(!sourceJobId||partialJobId||loadingCopy)return;
@@ -2067,7 +2100,26 @@ export function PlacementJobCreateForm({
       <details className="min-w-0 border-b border-border pb-3">
        <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Who this reaches</summary>
       <section aria-label="Who this reaches" className="min-w-0 pb-[var(--lms-space-4)]">
-        <p role="status" className="mt-2 text-sm text-body">Eligibility preview unavailable before the draft is saved. Save the draft, then review eligible and excluded counts in the drive workspace before publishing.</p>
+        {draftReachBusy?<p role="status" className="mt-2 text-sm text-body">
+          Calculating active learner targeting…</p>:null}
+        {draftReach?.kind==="READY"?<div role="status" className="mt-2 space-y-3 text-sm">
+          <p><strong className="tabular-nums text-lg text-foreground">
+           {draftReach.activeLearners.toLocaleString("en-IN")}</strong> active learners match the saved academic target choices.</p>
+          <details className="border-t border-border pt-2">
+           <summary className="min-h-9 cursor-pointer text-sm font-semibold text-link">Branch breakdown</summary>
+           {draftReach.branches.length?<ul className="max-h-44 space-y-1 overflow-y-auto text-xs">
+            {draftReach.branches.map(branch=><li key={branch.programId}
+             className="flex justify-between gap-3 border-b border-border py-1">
+             <span className="min-w-0 break-words">{branch.name}</span>
+             <span className="shrink-0 tabular-nums">{branch.total}</span>
+            </li>)}
+           </ul>:<p className="text-xs text-muted-foreground">No active enrollments match these targets.</p>}
+          </details>
+          <p className="text-xs leading-5 text-muted-foreground">{draftReach.scopeNote}</p>
+         </div>:draftReach?.kind==="UNAVAILABLE"?<p role="alert" className="mt-2 text-sm text-warning">
+          Audience estimate unavailable: {draftReach.reason}
+         </p>:null}
+        <p className="mt-2 text-xs text-muted-foreground">After saving, open Edit drive for a full saved-policy eligibility preview; this preliminary count does not include marks, backlog, debarment or held-offer decisions.</p>
         <p className="mt-2 text-xs text-muted-foreground">Round templates are saved as pending during draft setup; scheduling, eligibility reach verification and recruiter invitations are managed in the saved drive workspace.</p>
       </section>
 
