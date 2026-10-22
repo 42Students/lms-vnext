@@ -15,7 +15,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-13-025-022  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 - [ ] G2-8-022-006  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 - [ ] G2-8-024-035  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
-- [ ] G2-8-025-022  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
+- [x] G2-8-025-022  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 - [x] G2-9-002-006  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 
 ## Results
@@ -28,3 +28,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - G2-13-024-029: FIXED — commit `4950cc668a4f28e1354c34742f221c24a809e44a`, `src/modules/inbound-mail/admin-service.ts`: server-side CAS rejects triage writes to POSTED replies. Legacy: `docs/legacy-source/frontend/src/pages/superadmin/inbound-mail.js:128-146`.
 - G2-13-024-035: FIXED — commit `4950cc668a4f28e1354c34742f221c24a809e44a`, `src/modules/inbound-mail/admin-service.ts`: preserves independent posted routing outcome against manual status changes. Legacy: `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SuperAdminInboundMailController.java:43-54`.
+- G2-8-025-022: FIXED — commit `100ea4ed61110591d2f8de5cbd9b44f7437ea250`, `src/app/api/courses/deliveries/[deliveryId]/contents/[contentId]/file/route.ts`: signed URL errors now yield controlled 503 with legacy wording. Legacy: `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ResourceFileController.java:118-126`.
