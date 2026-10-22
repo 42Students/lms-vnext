@@ -7,7 +7,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Legacy: docs/legacy-source/frontend/src/utils/learnerCourseDetail.js:2-16 course identity integer/slug, courseDTO active/enabled/published flags; docs/legacy-source/frontend/src/utils/courseUtils/contentAvailability.js:47-84 client availability.
 - Expected fix: Document legacy course↔vNext offering↔delivery mapping and historical-visibility policy; no data migration but old bookmarks decision.
 
-## G2-17-008-011 [P1] GAP facet F03
+## G2-17-008-011 [OK] GAP facet F03
 - Files: src/components/courses/lesson-resource-materials-control.tsx
 - Legacy: docs/legacy-source/frontend/src/pages/Dashboard/course/syllabus/resource.js:170-176 — FILE Open and LINK Open are similarly named; unavailable has text.
 - Expected fix: Provide signed FILE Open action, consistent unavailable handling.
@@ -17,27 +17,27 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Legacy: docs/legacy-source/frontend/src/components/Global/Offcanvas/Syallabus/ResourceComposer.js:235-240 — Admin may switch class/shared only before files added.
 - Expected fix: Add safe shared/class selector where authorised.
 
-## G2-17-008-035 [P1] GAP facet F09
+## G2-17-008-035 [DEFERRED — link edit exists; FILE edit parity needs scoped design] GAP facet F09
 - Files: src/components/courses/lesson-resource-materials-control.tsx
 - Legacy: docs/legacy-source/frontend/src/pages/Dashboard/course/syllabus/resource.js:183-188 — Edit Resource passes existing data and refresh callback.
 - Expected fix: Provide complete existing Resource editor.
 
-## G2-17-008-050 [P1] MISSING facet F13
+## G2-17-008-050 [OK] MISSING facet F13
 - Files: src/components/courses/lesson-resource-materials-control.tsx
 - Legacy: docs/legacy-source/frontend/src/pages/Dashboard/course/syllabus/resource.js:69-91 — Opening by material index has individual loading/disabled guard.
 - Expected fix: Add per-file pending/timeout handling.
 
-## G2-17-008-055 [P1] GAP facet F14
+## G2-17-008-055 [OK] GAP facet F14
 - Files: src/components/courses/lesson-resource-materials-control.tsx
 - Legacy: docs/legacy-source/frontend/src/pages/Dashboard/course/syllabus/resource.js:174-176 — Every healthy FILE shows Open; unavailable shows fallback.
 - Expected fix: Restore secure Open/Download CTA for READY files.
 
-## G2-17-008-067 [P1] MISSING facet F19
+## G2-17-008-067 [DEFERRED — conflicts with same-tab/no-popup policy] MISSING facet F19
 - Files: src/components/courses/lesson-resource-materials-control.tsx
 - Legacy: docs/legacy-source/frontend/src/pages/Dashboard/course/syllabus/resource.js:69-75 — Opens blank browser tab synchronously to avoid popup blocker.
 - Expected fix: Reserve safe blank tab synchronously before signing.
 
-## G2-17-008-069 [P1] MISSING facet F20
+## G2-17-008-069 [DEFERRED — popup fallback forbidden by same-tab policy] MISSING facet F20
 - Files: src/components/courses/lesson-resource-materials-control.tsx
 - Legacy: docs/legacy-source/frontend/src/pages/Dashboard/course/syllabus/resource.js:76-91 — If popup blocked, current page navigates; on failure popup closes.
 - Expected fix: Implement popup-block fallback and cleanup.
