@@ -40,7 +40,7 @@ function visibleProps(node: unknown): string[] {
   if (!isValidElement(node)) return [];
   const props = node.props as Record<string, unknown>;
   return Object.entries(props).flatMap(([key, value]) =>
-    ["children", "title", "description", "href", "action", "eyebrow", "label"].includes(key)
+    ["children", "title", "description", "href", "action", "eyebrow", "label", "empty"].includes(key)
       ? visibleProps(value)
       : [],
   );
