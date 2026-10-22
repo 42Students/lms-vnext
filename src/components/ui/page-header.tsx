@@ -59,8 +59,8 @@ export function PageHeader({ eyebrow, title, id, description, actions, needsDoin
   return needsDoingItems?.length ? (
     <div data-slot="page-heading" className="min-w-0">
       {heading}
-      <NeedsDoingChips items={needsDoingItems} selectedKey={selectedNeedKey}
-        label={needsDoingLabel}/>
+      <NeedsDoingChips items={needsDoingItems} {...(selectedNeedKey===undefined?{}:{selectedKey:selectedNeedKey})}
+        {...(needsDoingLabel===undefined?{}:{label:needsDoingLabel})}/>
     </div>
   ) : heading;
 }
