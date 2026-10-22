@@ -57,8 +57,9 @@ describe("UX-HR-PAGES-07: recruiter and tracker page role, error and alias contr
  });
  it("UX-TRACKER-ERROR-06: ordinary reporters never see migration flags or server configuration",()=>{
   const page=read("tracker/page.tsx");
-  expect(page).toContain('context.user.platformStatus !== "ACTIVE"');
-  expect(page).toContain('redirect("/dashboard")');
+  expect(page).toContain('context.user.platformStatus!=="ACTIVE"');
+  expect(page).toContain('title="Sign in to report an issue"');
+  expect(page).toContain('href="/login?returnTo=%2Ftracker"');
   expect(page).toContain("Reports are temporarily unavailable.");
   expect(page).toContain("Your report has not been submitted.");
   expect(page).not.toContain("DB10_TRACKER_READY");

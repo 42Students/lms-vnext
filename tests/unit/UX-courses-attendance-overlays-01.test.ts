@@ -42,7 +42,7 @@ describe("UX-courses-attendance-overlay-foundation-01",()=>{
   ["courses","faculty-content-editor","Drawer",["Discard unsaved changes to this lesson content?","onOpenChange"]],
   ["courses","faculty-lesson-authoring","ConfirmDialog",["Discard this content draft?","Any unsaved changes in this content form will be lost."]],
   ["courses","faculty-quiz-question-editor","Drawer",["Confirm replacement of this draft quiz question bank?","onOpenChange"]],
-  ["courses","faculty-quiz-review","Dialog",["assessment list","onOpenChange"]],
+  ["courses","faculty-quiz-review","Dialog",["title={quizTitle?","Submissions","onOpenChange"]],
   ["courses","faculty-report-download","ConfirmDialog",["This report is incomplete","onConfirm"]],
   ["courses","learner-roadmap-item-dialog","Dialog",["aria-haspopup","min-h-14","onOpenChange","change(openNow:boolean)"]],
   ["courses","resource-progress-control","ConfirmDialog",["Mark as complete","onConfirm"]],
