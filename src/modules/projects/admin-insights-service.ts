@@ -128,7 +128,7 @@ export async function listProjectAdminSnapshots(
       )
     : undefined;
   const workflowStatus = query.status==="READY"?
-    ilike(projectInstances.phase,"Ready"):
+    or(ilike(projectInstances.phase,"Ready"),eq(projectInstances.legacyStatus,"READY")):
     query.status==="BLOCKED"?
       or(
         sql`nullif(trim(${projectInstances.blocker}), '') is not null`,
@@ -138,7 +138,8 @@ export async function listProjectAdminSnapshots(
     query.status==="IN_PROGRESS"?
       and(eq(projectInstances.status,"ACTIVE"),
         sql`nullif(trim(${projectInstances.blocker}), '') is null`,
-        sql`lower(coalesce(${projectInstances.phase},'')) not in ('ready','blocked')`):
+        sql`lower(coalesce(${projectInstances.phase},'')) not in ('ready','blocked')`,
+        sql`coalesce(${projectInstances.legacyStatus},'') not in ('READY','BLOCKED')`):
     query.status?eq(projectInstances.status,query.status):undefined;
   const where = and(
     eq(projectInstances.collegeId, college.id),
@@ -577,6 +578,7 @@ export async function listProjectAdminRiskQueue(
         and blocked.status = 'BLOCKED'
         and nullif(trim(blocked.blocker_reason), '') is not null
     )
+    or ${projectInstances.legacyStatus} = 'BLOCKED'
   )`;
   const blockerSummary = sql<string | null>`coalesce(nullif(trim(${instanceBlocker}), ''), (
     select nullif(trim(blocked.blocker_reason), '')
@@ -585,7 +587,9 @@ export async function listProjectAdminRiskQueue(
       and blocked.status = 'BLOCKED'
       and nullif(trim(blocked.blocker_reason), '') is not null
     order by blocked.updated_at desc, blocked.id desc limit 1
-  ))`;
+  ), case when ${projectInstances.legacyStatus} = 'BLOCKED'
+    then 'Imported workspace marked blocked; no original reason was recorded'
+    else null end)`;
   const staleCutoff =
     new Date(
       Date.now() - 7 * 24 * 60 * 60 * 1000,
@@ -603,14 +607,24 @@ export async function listProjectAdminRiskQueue(
     ${projectInstances.status}<>'COMPLETED' or
     ${pendingReview} or ${blockedTask}
   )`;
+  // Legacy READY and BLOCKED were workflow states, not values in the
+  // vNext lifecycle enum. Resolve them against both imported snapshots and
+  // current phase/task evidence instead of silently returning zero rows.
+  const riskWorkflowStatus=query.status==="READY"
+    ? or(ilike(projectInstances.phase,"Ready"),eq(projectInstances.legacyStatus,"READY"))
+    :query.status==="BLOCKED"?blockedTask
+    :query.status==="IN_PROGRESS"
+      ? and(eq(projectInstances.status,"ACTIVE"),
+        sql`lower(coalesce(${projectInstances.phase},'')) not in ('ready','blocked')`,
+        sql`coalesce(${projectInstances.legacyStatus},'') not in ('READY','BLOCKED')`,
+        sql`not (${blockedTask})`)
+      :query.status?eq(projectInstances.status,query.status):undefined;
   const where = and(
     eq(projectInstances.collegeId, college.id),
     isNull(projectInstances.deletedAt),
     ne(projectInstances.status, "ARCHIVED"),
     completedWithOpenRisk,
-    query.status
-      ? eq(projectInstances.status, query.status)
-      : undefined,
+    riskWorkflowStatus,
     search,
     or(
       stalledSignal,
@@ -633,7 +647,7 @@ export async function listProjectAdminRiskQueue(
     ne(projectInstances.status, "ARCHIVED"),
     completedWithOpenRisk,
     search,
-    query.status?eq(projectInstances.status,query.status):undefined,
+    riskWorkflowStatus,
   ));
   const buckets = {
     stalled: bucketTotals?.stalled ?? 0,
@@ -655,6 +669,7 @@ export async function listProjectAdminRiskQueue(
           summary: projectInstances.summary,
           status: projectInstances.status,
           legacyStatus: projectInstances.legacyStatus,
+          phase: projectInstances.phase,
           updatedAt: projectInstances.updatedAt,
           lastActivityAt,
           pendingReview,
@@ -758,6 +773,13 @@ export async function listProjectAdminRiskQueue(
 
       return {
         ...project,
+        // Display legacy workflow status without changing the canonical
+        // persisted lifecycle used for permissions and mutations.
+        displayStatus:project.status==="ACTIVE"
+          ?project.blockedTask?"BLOCKED"
+            :project.phase?.trim().toUpperCase()==="READY"||project.legacyStatus==="READY"?"READY"
+            :project.legacyStatus==="IN_PROGRESS"?"IN_PROGRESS":"ACTIVE"
+          :project.status,
         inactiveDays: inactivityDays,
         riskReasons: reasons,
         riskSeverity: reasons.length>=3?"HIGH_RISK":reasons.length===2?"AT_RISK":
