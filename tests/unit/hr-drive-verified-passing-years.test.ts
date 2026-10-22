@@ -4,7 +4,7 @@ import {hrDriveDraftSchema,emptyHrDriveDraft} from "@/modules/placements/hr-driv
 
 describe("Recruiter draft multi-year eligibility",()=>{
  it("supports multiple authorized years and legacy single-year editing without widening",()=>{
-  const base=emptyHrDriveDraft();
+  const base={...emptyHrDriveDraft(),title:"Software Engineer",ctcLpa:"10"};
   expect(hrDriveDraftSchema.safeParse({...base,passingYear:"2027"}).success).toBe(true);
   expect(hrDriveDraftSchema.safeParse({...base,passingYear:"",passingYears:[2025,2027,2030]}).success).toBe(true);
   expect(hrDriveDraftSchema.safeParse({...base,passingYear:"2026",passingYears:[2027,2030]}).success).toBe(false);
