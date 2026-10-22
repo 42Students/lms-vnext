@@ -56,7 +56,8 @@ export default async function LearnerQuizzesPage({searchParams}:{searchParams:Pr
        .then(rows=>({matching:rows[0]??null,failed:false}))
        .catch(()=>({matching:null,failed:true}));
       legacyLookupFailed=lookup.failed;
-      if(lookup.matching)linkedQuiz=overview.quizzes.find(item=>item.id===lookup.matching.id);
+      const matching=lookup.matching;
+      if(matching)linkedQuiz=overview.quizzes.find(item=>item.id===matching.id);
     }
     if(linkedQuiz&&linkedQuiz.attemptsUsed>0){
       redirect("/learn/allQuizzes/"+encodeURIComponent(linkedQuiz.id)+
