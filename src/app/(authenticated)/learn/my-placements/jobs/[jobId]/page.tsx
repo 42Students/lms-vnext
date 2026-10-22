@@ -128,6 +128,7 @@ export default async function LearnerPlacementJobDetailPage({
      <LearnerJobDescriptionLink jobId={jobId}/> : null}
    {rows.length>0?<LearnerPlacementJobDetail items={rows.map(toItem)}
     returnHref={back} initialSaved={savedJobs.available&&savedJobs.value.some(row=>row.jobId===jobId)}
+    bookmarkActionsEnabled={savedJobs.available}
     journey={journey?<LearnerOwnDriveJourney journey={journey}/>:null}/>:null}
    {rows.length===0&&journey?<LearnerOwnDriveJourney journey={journey}/>:null}
   </div>;
