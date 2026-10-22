@@ -46,9 +46,8 @@ async function makeDrive(status = "PUBLISHED") {
 const when = (hours: number) => new Date(Date.now() + hours * 3600_000).toISOString();
 const appt = (d: { round: string; app: string }, over: Record<string, unknown> = {}) => ({
   roundId: d.round, applicationId: d.app, scheduledAt: when(48), durationMinutes: 30,
-  mode: "ON_CAMPUS", venue: "Room 101 " + tag, meetingUrl: null, interviewer: "Dr. Rao",
-  // New schedules require the legacy interview type and a short description.
-  interviewType: "TECHNICAL", roundDescription: "Technical interview with the panel", ...over,
+  interviewType: "TECHNICAL", roundDescription: "Technical interview with the college panel",
+  mode: "ON_CAMPUS", venue: "Room 101 " + tag, meetingUrl: null, interviewer: "Dr. Rao", ...over,
 });
 const schedule = (job: string, d: { round: string; app: string }, over: Record<string, unknown> = {}) =>
   mutateCollegeRoundSlotInterview(adminA, job, { action: "SCHEDULE", confirmed: true, appointment: appt(d, over) });
