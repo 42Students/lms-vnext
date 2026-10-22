@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Pagination } from "@/components/ui/pagination";
 import {CollegeArchivedLessonRestore} from "./college-archived-lesson-restore";
 import {LessonActions} from "./admin-learning-structure-actions";
+import {CollegeDirectoryLessonMove} from "./college-directory-lesson-move";
 import {CollegeLessonVisibilityControl,CollegeLessonBulkVisibility} from "./college-lesson-visibility-controls";
 import { COLLEGE_COURSE_TAB_COPY, collegeLessonVisibilityLabel } from "@/modules/courses/college-course-tabs-copy";
 import { PageHeader } from "@/components/ui/page-header";
@@ -26,6 +27,11 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
   const lessons = data.kind === "LESSONS";
   const title = lessons ? COLLEGE_COURSE_TAB_COPY.lessonsTitle : COLLEGE_COURSE_TAB_COPY.progressTitle;
   const href = lessons ? "/college/lessons" : "/college/course-progress";
+  const lessonDestinations=data.kind==="LESSONS"
+    ?[...new Map(data.items.map(row=>[row.learningPathId,{
+      learningPathId:row.learningPathId,
+      label:row.courseName+" ("+row.courseCode+") · "+row.cohortName+" · "+row.periodName,
+    }])).values()]:[];
   const activeAdvanced = Object.entries(data.query).some(([key,value]) =>
     !["q","page","pageSize"].includes(key) && value != null && value !== "" && value !== "ALL"
   );
@@ -614,13 +620,22 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
                 {key:"actions",header:"Actions",mobilePriority:"action" as const,
                   cell:item=>item.status==="ARCHIVED"
                     ? <span className="text-xs text-muted-foreground">Restore using the visibility column</span>
-                    : <div className="flex min-w-0 flex-col items-end gap-1.5">
-                       <LessonActions lesson={{id:item.id,name:item.name,description:item.description,
-                        sequence:item.sequence,updatedAt:item.updatedAt,
-                        visibleToStudents:item.visibleToStudents}}/>
-                       <span className="max-w-52 text-right text-xs leading-5 text-muted-foreground">
-                        Course membership is fixed to the Learning Path. To use this lesson in another Course, create it there; existing progress and files stay here.
-                       </span>
+                    : <div className="min-w-0 space-y-2">
+                        <LessonActions lesson={{
+                          id:item.id,name:item.name,description:item.description,
+                          sequence:item.sequence,updatedAt:item.updatedAt,
+                          visibleToStudents:item.visibleToStudents,
+                        }}/>
+                        <CollegeDirectoryLessonMove
+                          lesson={{id:item.id,name:item.name,learningPathId:item.learningPathId,
+                            updatedAt:item.updatedAt.toISOString()}}
+                          destinations={lessonDestinations}
+                        />
+                        <p className="text-xs leading-5 text-muted-foreground">
+                          Destinations are from the current filtered page. The server
+                          refuses cross-college moves and moves of lessons with
+                          existing learner-bound progress or content.
+                        </p>
                       </div>},
               ]}
             /> : <DataTable
