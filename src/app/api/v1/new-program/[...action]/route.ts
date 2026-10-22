@@ -22,10 +22,15 @@ export async function GET(request: Request, { params }: Context) {
   const [operation, id] = action;
   const url = new URL(request.url);
   try {
-    if (["fetchByCollege","fetchAll","fetchAllPrograms","getProgramsByCollege"].includes(operation ?? "") &&
+    // Legacy operations: fetchAll, fetchByDept, fetchByCollege, fetch/{id},
+    // fetchProgramDetails?programId=, fetchByCollegePaged (plus create/update/
+    // delete below). fetchAll/fetchByDept carried no college id; they resolve to
+    // the caller's selected/own college and never become an unscoped global read.
+    if (["fetchByCollege","fetchAll","fetchAllPrograms","getProgramsByCollege","fetchByDept"].includes(operation ?? "") &&
       action.length === 1) {
       const context = await getCurrentRequestContext();
-      const collegeId = url.searchParams.get("collegeId");
+      const collegeId = url.searchParams.get("collegeId") ??
+        context.adminScope?.collegeId ?? context.membership?.collegeId ?? null;
       const programs = await listPrograms(context,uuid.parse(collegeId),
         url.searchParams.get("departmentId") ?? url.searchParams.get("deptId"));
       if (programs.length === 0)
@@ -34,15 +39,18 @@ export async function GET(request: Request, { params }: Context) {
       return NextResponse.json({status:"success",message:"Programs retrieved",data:programs},
         {headers:{"Cache-Control":"private, no-store"}});
     }
-    if (["fetchById","findById","fetchProgramDetails"].includes(operation ?? "") &&
-      action.length === 2 && uuid.safeParse(id).success) {
-      const response = await canonicalGetDetail(request,{params:Promise.resolve({programId:id!})});
+    const detailId = action.length === 2 ? id
+      : operation === "fetchProgramDetails" && action.length === 1
+        ? url.searchParams.get("programId") : null;
+    if (["fetchById","findById","fetch","fetchProgramDetails"].includes(operation ?? "") &&
+      detailId && uuid.safeParse(detailId).success) {
+      const response = await canonicalGetDetail(request,{params:Promise.resolve({programId:detailId})});
       if (!response.ok) return response;
       const body = await response.json() as {program:unknown};
       return NextResponse.json({status:"success",message:"Program retrieved",data:body.program},
         {headers:{"Cache-Control":"private, no-store"}});
     }
-    if (operation === "fetchPaged" && action.length === 1) {
+    if ((operation === "fetchPaged" || operation === "fetchByCollegePaged") && action.length === 1) {
       url.searchParams.set("page",url.searchParams.get("page") ?? "0");
       url.searchParams.set("size",url.searchParams.get("size") ?? "20");
       return canonicalGet(new Request(url,{method:"GET",headers:request.headers,signal:request.signal}));

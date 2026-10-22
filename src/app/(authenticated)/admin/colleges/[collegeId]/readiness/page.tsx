@@ -15,6 +15,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import {readinessRemediationLink} from "@/modules/colleges/readiness-remediation-links";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Disclosure } from "@/components/ui/disclosure";
+import { legacyDomainLoginVerdict } from "@/modules/colleges/legacy-domain-login-readiness";
 import {
   collegeIdSchema,
 } from "@/modules/colleges/validation";
@@ -329,6 +330,8 @@ export default async function CollegeReadinessPage({
           {legacyDomainReadiness.readyForDomainLogin===null?"Unknown — domain source unavailable":
            legacyDomainReadiness.readyForDomainLogin?"No stored domain blockers":"Domain login configuration has blockers"}
         </p>
+        <p className="text-sm">Domain-login verdict (legacy gate): <strong>{legacyDomainLoginVerdict(legacyDomainReadiness)}</strong>.
+          UNKNOWN means the domain evidence could not be read; it is not the same as READY_WITH_WARNINGS.</p>
         {legacyDomainReadiness.blockers.length?<p className="text-sm text-error">Blockers: {legacyDomainReadiness.blockers.join(", ")}</p>:null}
         {legacyDomainReadiness.warnings.length?<p className="text-sm text-warning">Warnings: {legacyDomainReadiness.warnings.join(", ")}</p>:null}
         {legacyDomainReadiness.recommendedActions.length?<ul className="list-disc space-y-1 pl-5 text-sm">
