@@ -211,11 +211,15 @@ describe("chat-17 UX-coverage-closure-01 owned route contracts",()=>{
   it.each(cases)("UX-$id-coverage-02 maintains authorized route, safe actions and recovery",({route,file})=>{
     const page=read(file);
     expect(page).not.toMatch(/window\.(?:alert|confirm|prompt|open)\s*\(/);
-    expect(page).not.toMatch(/target\s*=\s*["']_blank["']/);
+    // Trusted HTTPS applicant evidence may open in an isolated new tab.
+    const externalTabs=[...page.matchAll(/<a\b[^>]*target\s*=\s*["']_blank["'][^>]*>/g)]
+      .map(([markup])=>markup);
+    for(const markup of externalTabs)
+      expect(markup).toMatch(/rel=["']noopener noreferrer["']/);
     if(route.startsWith("/teacher/")||route.startsWith("/teach/")){
       // Permission context or redirect to a canonical permission-checked destination.
       expect(page).toMatch(/getCurrentRequestContext|redirect\(/);
-      expect(page).toMatch(/PageHeader|FacultyCourseWorkspace|FacultyCourseList|redirect\(/);
+      expect(page).toMatch(/PageHeader|FacultyCourseWorkspace|FacultyCourseList|RetainedFacultyAssignments|redirect\(/);
       if(page.includes("redirect(")){
         expect(page).not.toContain('redirect("/login")');
       }
@@ -229,17 +233,23 @@ describe("chat-17 UX-coverage-closure-01 owned route contracts",()=>{
       expect(page).toContain("<DataTable");
       expect(page).toContain("index:false");
     }else if(route==="/e2e/superadmin-login"){
-      expect(page).toContain('redirect("/")');
+      expect(page).toContain('process.env.NODE_ENV === "development"');
+      expect(page).toContain('isSuperAdmin(await getCurrentRequestContext())');
+      expect(page).toContain("This link no longer creates a Super Admin session.");
     }else if(route==="/forbidden"){
       expect(page).toContain("GracefulScreen");
       expect(page).toContain('homeHref="/dashboard"');
       expect(page).toContain("index: false");
     }else if(route==="/privacy-policy"){
-      expect(page).toContain('redirect("/assets/static/privacy-policy-view.html")');
+      expect(page).toContain('public/assets/static/privacy-policy-view.html');
+      expect(page).toContain('dangerouslySetInnerHTML={{__html:documentBody}}');
+      expect(page).toContain('robots: { index: true, follow: true }');
     }else if(route==="/request-demo"){
       expect(page).toContain("MarketingLayout");
-      expect(page).toContain("mailto:hello@42lms.com");
-      expect(page).toContain("No form data is collected on this page");
+      expect(page).toContain('const DEMO_EMAIL = "hello@42lms.com"');
+      expect(page).toContain('const DEMO_MAILTO = "mailto:" + DEMO_EMAIL');
+      expect(page).toContain("href={DEMO_MAILTO}");
+      expect(page).toContain("Email us to book a demo");
     }else{
       expect(page).toContain("MarketingLayout");
       expect(page).toContain("MarketingHero");
