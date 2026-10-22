@@ -17,7 +17,12 @@ describe("college shortlisted route",()=>{
     expect(src).toContain('status:"SUBMITTED"');
     expect(src).toContain('stage: requested.stage ?? "ASSESSMENT"');
     expect(src).toContain('screening: "ALL"');
-    expect(src).toContain("listCollegeDriveApplications(context,jobId,query)");
-    expect(src).not.toContain("getDb()");
+    // The stage-aware pipeline service is the authorized college applicant read.
+    // Drive metadata is resolved only AFTER that service establishes collegeId,
+    // then explicitly scoped by job and college (not a global applicant feed).
+    expect(src).toContain("getCollegeApplicationPipeline(context, jobId, query)");
+    expect(src).toContain("eq(placementCompanyRelationships.collegeId,data.collegeId)");
+    expect(src).toContain("eq(placementJobs.collegeId,data.collegeId)");
+    expect(src).not.toContain("listAllApplications(");
   });
 });

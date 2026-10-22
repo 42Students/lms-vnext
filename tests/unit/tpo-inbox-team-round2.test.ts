@@ -12,9 +12,11 @@ describe("Chat-2 TPO Inbox + Team legacy verification round 2",()=>{
   expect(messages()).toContain('<TpoLiveRefresh intervalMs={4000} pulseHref="/api/placements/tpo/messages/pulse"/>');
   const component=src("src/components/tpo/tpo-live-refresh.tsx");
   expect(component).toContain("document.visibilityState");
-  expect(component).toContain('window.addEventListener("focus",refresh)');
+  expect(component).toContain('window.addEventListener("focus",onVisible)');
+  expect(component).toContain('fetch(pulseHref,{credentials:"same-origin",cache:"no-store"})');
   expect(component).toContain("router.refresh()");
-  expect(component).not.toContain("fetch(");
+  // The pulse endpoint is a read-only, scoped GET; it never acknowledges reads.
+  expect(component).not.toContain('method:"POST"');
  });
  it("TPO-inbox-team-11 never passes off own notification deliveries as recruiter messages",()=>{
   expect(messages()).toContain("if(!isRecruiterInbox)return");

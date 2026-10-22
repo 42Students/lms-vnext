@@ -176,10 +176,18 @@ describe("identity context and system roles against PostgreSQL", () => {
     });
     // One workspace per role: a multi-role membership resolves to exactly one
     // role, the highest-priority held role unless another held role is chosen.
+    // Disposable DB setups may grant this membership an additional TPO role.
+    // The default must choose exactly one held role by the product priority,
+    // while an explicit role switch below must still select FACULTY.
+    const heldRoles=choices.find(choice=>
+      choice.id===SEED_IDS.facultyCollegeAMembership)?.roles??[];
+    const defaultRole=(["COLLEGE_ADMIN","TPO","MENTOR","FACULTY","LEARNER"] as const)
+      .find(role=>heldRoles.includes(role));
+    expect(defaultRole).toBeDefined();
     expect(collegeA.membership).toMatchObject({
       id: SEED_IDS.facultyCollegeAMembership,
       collegeId: SEED_IDS.collegeA,
-      roles: ["MENTOR"],
+      roles: [defaultRole],
     });
     const collegeAFaculty = await resolveRequestContext({
       identityUid: "seed-shared-faculty",
