@@ -7,6 +7,7 @@ import {CollegeDriveAttentionCards} from "@/components/placements/college-drive-
 import {getCollegeDriveAttention} from "@/modules/placements/college-drive-attention-service";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
+import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { Disclosure } from "@/components/ui/disclosure";
 import { StatTile } from "@/components/ui/stat-tile";
 import { DataTable } from "@/components/ui/data-table";
@@ -26,6 +27,21 @@ export default async function CollegePlacementsPage({searchParams}:{
     <EmptyState title="Admin not assigned to a college" description="You must be assigned to a college to view and manage jobs. Contact your administrator."/>
   </div>;
   if (!hasMembershipRole(context,"COLLEGE_ADMIN")) redirect("/dashboard");
+  const moduleAccess = await resolveOptionalModuleAccess(context);
+  if (!moduleAccess.placements.enabled) return (
+    <section role="status" className="min-w-0 space-y-[var(--lms-space-4)]">
+      <PageHeader title="Placements is switched off for this college" />
+      <Alert tone="info" title="Placements module unavailable">
+        Placement drives, applications and interview actions are unavailable
+        while Placements is disabled for your college. Existing records remain
+        unchanged. Ask your Super Admin to enable Placements.
+      </Alert>
+      <Link href="/college/module-access"
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">
+        View college module access
+      </Link>
+    </section>
+  );
   const incoming=await searchParams;
   const rawSearch=incoming.q;
   if(Array.isArray(rawSearch)||(typeof rawSearch==="string"&&rawSearch.length>100))
