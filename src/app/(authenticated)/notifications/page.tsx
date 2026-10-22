@@ -95,7 +95,7 @@ export default async function NotificationsPage({searchParams}:{searchParams:Pro
  const items:NotificationListItem[]=[
   ...page.items.map(({notification,event})=>({
    id:notification.id,title:notification.title?.trim()||"Notification",
-   body:notification.body,actionHref:notification.actionHref,
+   body:notification.body,
    readAt:notification.readAt?.toISOString()??null,
    createdAt:notification.createdAt.toISOString(),
    module:event.module,importance:event.importance,
