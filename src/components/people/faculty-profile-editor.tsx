@@ -15,6 +15,7 @@ import { FacultyProfileTextSection } from "./faculty-profile-text-section";
 import { FacultyProfileSkills } from "./faculty-profile-skills";
 import { FacultyProfileMetadata } from "./faculty-profile-metadata";
 import {FacultyIdentityEvidenceEditor} from "./faculty-identity-evidence-editor";
+import {FacultyProfileAttachments} from "./faculty-profile-attachments";
 import { FacultyProfileRepeatable } from "./faculty-profile-repeatable";
 import { newFacultyAward } from "@/modules/people/faculty-profile-row-factories";
 import { newFacultyPublication } from "@/modules/people/faculty-profile-row-factories";
@@ -202,6 +203,22 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
       }}
     />
    </section>
+   <div className="min-w-0 lg:col-span-2">
+     <FacultyProfileAttachments document={document} version={version} pending={pending}
+       onChanged={change=>{
+         const collection=change.purpose==="EDUCATION_CERTIFICATE"?"education":
+           change.purpose==="CERTIFICATION"?"certifications":"experiences";
+         const field=change.purpose==="EXPERIENCE_CERTIFICATE"?"experienceCertificateDocumentId":
+           change.purpose==="OFFER_LETTER"?"offerLetterDocumentId":"certificateDocumentId";
+         setDocument(current=>({...current,
+           [collection]:current[collection].map(row=>
+             row.id===change.entryId?{...row,[field]:change.receiptId}:row),
+         }));
+         setVersion(change.version);
+         setSuccess(change.receiptId?"Private profile attachment saved.":
+           "Private profile attachment removed.");
+       }}/>
+   </div>
   </div>
  </div>;
 }
