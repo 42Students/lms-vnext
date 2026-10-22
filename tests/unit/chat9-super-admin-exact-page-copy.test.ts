@@ -4,12 +4,12 @@ import {join} from "node:path";
 import {SUPER_ADMIN_LEGACY_GROUPS} from "@/modules/people/super-admin-legacy-tabs-model";
 const root=join(process.cwd(),"src/app/(authenticated)");
 const copy=[
- ["dashboard/page.tsx","Overview"],
+ ["dashboard/page.tsx","Dashboard"],
  ["admin/tenants/page.tsx","Tenant Setup"],
  ["admin/features/page.tsx","Feature Controls"],
  ["admin/module-access/page.tsx","Module Access"],
  ["admin/settings/page.tsx","Tenant Settings"],
- ["admin/audit/page.tsx","Activity Log"],
+ ["admin/audit/page.tsx","Audit Log"],
  ["activity/page.tsx","Activity Log"],
  ["admin/inbound-mail/page.tsx","Inbound mail"],
  ["admin/verification/page.tsx","Profile verification"],

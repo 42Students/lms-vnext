@@ -6,8 +6,9 @@ const calendar=readFileSync(join(process.cwd(),"src/components/placements/placem
 describe("TPO calendar partial-data recovery",()=>{
  it("TPO-calendar-reports-22 keeps a successful primary calendar visible when auxiliary counts fail",()=>{
   expect(calendar).toContain("const partialCalendar=");
-  expect(calendar).toContain("Calendar summary is partially unavailable.");
-  expect(calendar).toContain("The events shown are from the successful calendar read");
+  expect(calendar).toContain("Could not refresh {partialSummarySources.join");
+  expect(calendar).toContain("The successful events remain visible.");
+  expect(calendar).toContain("Missing counts are not zero.");
   expect(calendar).toContain('href={calendarHref(basePath,audience,state,{})}');
   expect(calendar).toContain("const countSourceEvents=eventTypeCountsSource?.events??[];");
   expect(calendar).toContain('needsWindow?overdue.length:"Unavailable"');
