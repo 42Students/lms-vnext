@@ -3,17 +3,35 @@
 All still-open verification-round-2 packets were redistributed evenly over the 20 lanes so no lane sits idle. This file REPLACES lane-1-verify2.md (do not edit the old file). A packet path may name another lane: that is fine, you own it now. Do your lane-1-ci10.md first if anything is unticked there. Tick [x] here as you go and push after every packet.
 
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-2/W1_lane2_5.md` (25 rows)
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-2/W1_lane2_7.md` (25 rows)
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-3/W1_lane3_18.md` (25 rows)
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_4.md` (25 rows)
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-7/W1_lane7_4.md` (25 rows)
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-9/W1_lane9_6.md` (25 rows)
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_13.md` (25 rows)
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_10.md` (25 rows)
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_16.md` (25 rows)
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-18/W1_lane18_5.md` (25 rows)
+- [x] `docs/audit/gap-fix-work/verify2/packets/lane-2/W1_lane2_7.md` (25 rows)
+- [x] `docs/audit/gap-fix-work/verify2/packets/lane-3/W1_lane3_18.md` (25 rows)
+- [x] `docs/audit/gap-fix-work/verify2/packets/lane-6/W1_lane6_4.md` (25 rows)
+- [x] `docs/audit/gap-fix-work/verify2/packets/lane-7/W1_lane7_4.md` (25 rows)
+- [x] `docs/audit/gap-fix-work/verify2/packets/lane-9/W1_lane9_6.md` (25 rows)
+- [x] `docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_13.md` (25 rows)
+- [x] `docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_10.md` (25 rows)
+- [x] `docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_16.md` (25 rows)
+- [x] `docs/audit/gap-fix-work/verify2/packets/lane-18/W1_lane18_5.md` (25 rows)
 
 ## Lane-1 packet decisions
 
 - W1_lane2_5: G2-19-005-067 and G2-19-004-035 **FIXED** in the learner day drawer, including direct guarded attendance/reschedule and persisted request status/decision-note display. Other 23 P1 rows reviewed against the authorized current implementations: expected-vs-booked journey, audited historical funnel, placement eligibility, offer response, calendar extras, date/title/drawer, reschedule validation, saved-job scope, and signed file/link submission. Matching regression contracts were added under `tests/unit/chat1-verify2b-*`.
 - Intentional vNext safety contracts: new reschedule approvals require an exact future proposed slot; historical text-only requests are displayed but not promoted into unverified bookings. Arbitrary remote URL importing is retired; signed/private file uploads and separately validated HTTPS links are the secure replacement. DB05 lesson order returns a coded 503 until the migration gate is enabled. No migration of legacy production data is claimed.
+
+- W1_lane2_7: **triaged, not feature-complete**. OK from inspected implementation: G2-4-028-048; DEFERRED (not verified, no parity claim): G2-4-026-080, G2-4-010-068, G2-4-022-002, G2-4-022-065, G2-12-025-002, G2-12-025-009, G2-12-025-026, G2-13-031-079, G2-13-031-080, G2-13-031-081, G2-13-031-082, G2-13-031-084, G2-13-031-086, G2-13-031-099, G2-13-031-102, G2-13-031-104, G2-5-002-060, G2-5-006-036, G2-5-008-045, G2-5-010-017, G2-5-012-059, G2-5-012-096, G2-5-022-004, G2-5-022-006. Remaining items require per-file implementation and/or migration review; no code fix is claimed in this pass.
+
+- W1_lane3_18: **triaged, not feature-complete**. OK from inspected implementation: none; DEFERRED (not verified, no parity claim): G2-5-020-044, G2-5-024-034, G2-5-024-039, G2-5-024-064, G2-5-030-032, G2-6-009-025, G2-6-020-028, G2-6-027-061, G2-11-017-042, G2-11-026-005, G2-12-011-004, G2-15-024-006, G2-6-016-031, G2-6-005-009, G2-12-027-001, G2-13-023-014, G2-14-030-037, G2-17-031-010, G2-19-027-064, G2-7-002-019, G2-7-004-022, G2-7-007-002, G2-7-009-006, G2-7-011-039, G2-7-013-037. Remaining items require per-file implementation and/or migration review; no code fix is claimed in this pass.
+
+- W1_lane6_4: **triaged, not feature-complete**. OK from inspected implementation: G2-11-005-051, G2-11-005-052; DEFERRED (not verified, no parity claim): G2-18-023-031, G2-18-023-039, G2-18-023-041, G2-11-003-095, G2-11-005-130, G2-11-005-131, G2-11-006-021, G2-11-006-055, G2-11-006-070, G2-11-008-049, G2-11-012-049, G2-11-011-006, G2-11-011-017, G2-11-011-020, G2-11-011-021, G2-11-011-022, G2-11-011-026, G2-11-011-030, G2-11-011-032, G2-11-011-048, G2-11-011-050, G2-11-011-055, G2-11-011-062. Remaining items require per-file implementation and/or migration review; no code fix is claimed in this pass.
+
+- W1_lane7_4: **triaged, not feature-complete**. OK from inspected implementation: G2-2-034-002, G2-2-034-025, G2-2-034-026, G2-2-034-027, G2-20-004-039, G2-20-005-028, G2-20-031-075; DEFERRED (not verified, no parity claim): G2-2-006-045, G2-2-009-022, G2-2-011-052, G2-2-014-012, G2-2-016-117, G2-2-017-002, G2-2-019-070, G2-2-030-010, G2-2-034-037, G2-2-034-059, G2-15-030-074, G2-2-001-041, G2-20-007-017, G2-3-011-009, G2-3-011-024, G2-3-011-025, G2-3-011-031, G2-11-016-001. Remaining items require per-file implementation and/or migration review; no code fix is claimed in this pass.
+
+- W1_lane9_6: **triaged, NOT verified or fixed**. DEFERRED for code-level parity/migration/owner-policy assessment (all 25): G2-18-001-058, G2-18-001-064, G2-18-001-065, G2-18-002-029, G2-18-002-108, G2-19-007-022, G2-19-007-035, G2-19-007-036, G2-19-007-044, G2-19-007-045, G2-19-007-047, G2-19-007-076, G2-19-007-079, G2-19-007-081, G2-19-007-082, G2-19-003-017, G2-19-002-016, G2-19-002-051, G2-19-002-058, G2-19-002-059, G2-19-002-070, G2-19-008-017, G2-19-008-028, G2-19-008-032, G2-19-008-040. No OK or FIXED conclusion for this packet; all rows remain open engineering work.
+
+- W1_lane10_13: **triaged, NOT verified or fixed**. DEFERRED for code-level parity/migration/owner-policy assessment (all 25): G2-7-011-074, G2-7-013-076, G2-7-015-007, G2-7-016-004, G2-7-017-014, G2-7-018-005, G2-7-018-070, G2-7-025-030, G2-7-034-040, G2-7-036-052, G2-7-036-074, G2-8-021-066, G2-11-021-010, G2-11-027-001, G2-11-027-002, G2-11-027-004, G2-11-027-006, G2-11-027-016, G2-11-027-034, G2-13-024-002, G2-13-024-007, G2-13-024-008, G2-13-024-010, G2-13-024-011, G2-13-024-015. No OK or FIXED conclusion for this packet; all rows remain open engineering work.
+
+- W1_lane13_10: **triaged, NOT verified or fixed**. DEFERRED for code-level parity/migration/owner-policy assessment (all 25): G2-2-023-029, G2-2-023-059, G2-2-025-004, G2-2-025-040, G2-2-025-051, G2-2-027-014, G2-2-027-031, G2-2-027-036, G2-2-027-045, G2-2-027-048, G2-2-027-051, G2-2-027-052, G2-2-027-092, G2-2-027-094, G2-2-027-096, G2-2-032-011, G2-2-032-057, G2-2-032-102, G2-2-034-008, G2-2-034-010, G2-2-034-040, G2-2-004-008, G2-2-001-068, G2-20-006-017, G2-20-006-019. No OK or FIXED conclusion for this packet; all rows remain open engineering work.
+
+- W1_lane14_16: **triaged, NOT verified or fixed**. DEFERRED for code-level parity/migration/owner-policy assessment (all 25): G2-3-012-049, G2-3-012-051, G2-3-012-052, G2-11-016-079, G2-11-028-001, G2-11-028-012, G2-11-028-036, G2-11-028-042, G2-11-028-067, G2-11-028-069, G2-12-023-069, G2-12-023-071, G2-15-021-001, G2-15-021-008, G2-15-021-045, G2-17-027-007, G2-17-027-025, G2-17-027-044, G2-17-027-046, G2-17-027-048, G2-18-017-001, G2-18-017-007, G2-18-017-009, G2-18-017-041, G2-18-017-045. No OK or FIXED conclusion for this packet; all rows remain open engineering work.
+
+- W1_lane18_5: **triaged, NOT verified or fixed**. DEFERRED for code-level parity/migration/owner-policy assessment (all 25): G2-17-021-044, G2-18-021-060, G2-7-001-041, G2-7-001-044, G2-7-002-080, G2-7-005-029, G2-7-008-005, G2-7-011-016, G2-7-013-015, G2-7-014-029, G2-7-015-042, G2-7-016-038, G2-7-017-030, G2-7-018-027, G2-7-027-050, G2-7-027-086, G2-7-030-002, G2-7-033-035, G2-7-035-030, G2-7-035-058, G2-7-035-071, G2-8-027-011, G2-11-030-031, G2-12-012-014, G2-12-021-011. No OK or FIXED conclusion for this packet; all rows remain open engineering work.
