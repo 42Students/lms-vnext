@@ -10,10 +10,10 @@ describe("IIT Dharwad Projects: Super and College Admin risk dashboard URL break
     });
     expect(parseProjectAdminRiskQuery({
       q:"  IIT Dharwad  ",riskBucket:"REVIEW",riskSort:"SEVERITY",status:"ACTIVE",
-      page:"2",pageSize:"100",
+      page:"2",pageSize:"25",
     })).toMatchObject({
       success:true,data:{q:"IIT Dharwad",riskBucket:"REVIEW",riskSort:"SEVERITY",
-        status:"ACTIVE",page:2,pageSize:100},
+        status:"ACTIVE",page:2,pageSize:25},
     });
   });
   it("PROJ-BREAK-ux-15 rejects malicious or unbounded pagination, sorts and risk status", () => {

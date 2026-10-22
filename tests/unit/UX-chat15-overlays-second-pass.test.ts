@@ -7,7 +7,7 @@ describe("UX-chat15-overlays-second-pass scroll, dismiss and motion",()=>{
  it("UX-tracker-live-logs-03 uses shared modal for report export, maintains confirmation for muting and 44px hit targets",()=>{
   const s=src("src/components/tracker/tracker-live-logs-explorer.tsx");
   expect(s).toContain('import {Dialog} from "@/components/ui/dialog"');
-  expect(s).toContain('<Dialog open={reportOpen} onOpenChange={setReportOpen} title="Report for Claude">');
+  expect(s).toContain('<Dialog open={reportOpen} onOpenChange={setReportOpen} title="Report for Claude"');
   expect(s).toContain("<ConfirmDialog open={muteTarget!==null}");
   expect(s).toContain("mutating");
   expect(s).toContain("apiFetch");
@@ -18,11 +18,12 @@ describe("UX-chat15-overlays-second-pass scroll, dismiss and motion",()=>{
  });
  it("UX-tracker-telegram-02 keeps explicit consequence and action confirmation and touch-sized actions",()=>{
   const s=src("src/components/tracker/tracker-telegram-manual-panel.tsx");
-  expect(s).toContain('title="Daily digest"');
+  expect(s).toContain('<Drawer open={open} onOpenChange={next=>{if(!pending)setOpen(next);}} title="Log digest"');
+  expect(s).toContain("Daily digest");
   expect(s).toContain("The sent digest uses up to 100 signatures.");
   expect(s).toContain("Manual sends are rate-limited.");
   expect(s).toContain("if(pending)return");
-  expect(s).toContain("role={error?\"alert\":\"status\"}");
+  expect(s).toContain('<InlineNotice tone={error?"error":"success"} message={notice}/>');
   expect(s).not.toContain("min-h-10");
   expect(s).toContain("min-h-11");
  });
@@ -39,11 +40,11 @@ describe("UX-chat15-overlays-second-pass scroll, dismiss and motion",()=>{
   const s=src("src/components/hr/recruiter-notification-bell.tsx");
   expect(s).toContain('const href="/hr/notifications"');
   expect(s).not.toContain('const href="/hr/messages"');
-  expect(s).toContain('if(event.key!=="Escape")return');
-  expect(s).toContain("triggerRef.current?.focus()");
-  expect(s).toContain('document.addEventListener("pointerdown",pointerDown)');
-  expect(s).toContain("popoverRef.current?.contains(target)");
-  expect(s).toContain('ref={popoverRef} role="dialog" aria-modal="false"');
+  expect(s).toContain('<Drawer open={isOpen} onOpenChange={setIsOpen} title="Notifications"');
+  expect(s).toContain('ref={triggerRef}');
+  expect(s).toContain('onClick={()=>setIsOpen(false)}');
+  expect(s).toContain('requestGate.current.invalidate()');
+  expect(s).toContain('aria-haspopup="dialog"');
   expect(s).toContain('aria-expanded={isOpen}');
   expect(s).toContain("min-h-11");
  });
