@@ -102,7 +102,7 @@ export function TpoProfileAvatar({name,initials}:{name:string;initials:string}){
     </svg>
    </button>
   </div>
-  <button type="button" className="block min-h-9 text-left text-xs font-semibold text-link underline"
+  <button type="button" className="inline-flex min-h-11 items-center text-left md:min-h-9 text-xs font-semibold text-link underline"
    disabled={busy} aria-expanded={showLink} onClick={()=>setShowLink(!showLink)}>Use an image link</button>
   {showLink?<div className="w-full min-w-[220px] max-w-[340px] space-y-2">
    <label htmlFor="tpo-avatar-link" className="block text-xs font-semibold">HTTPS image URL</label>
