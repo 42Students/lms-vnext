@@ -53,11 +53,12 @@ export default async function LearnerCourseAttendanceSummaryPage({
 
   return (
     <div className="min-w-0 space-y-6">
+      <PageHeader title="Course attendance history" />
       <Link href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/attendanceDetail"}
         className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         ← Course attendance
       </Link>
-      <PageHeader title="Course attendance history" />
+
       {query.month!==undefined && !parsedMonth.success ? <Banner tone="warning" role="status">
         The month filter is invalid; all your available attendance months are shown.{" "}
         <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/attendance-summary"} className="font-semibold underline">Clear month filter</Link>
