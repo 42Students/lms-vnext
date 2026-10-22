@@ -108,6 +108,7 @@ export default async function SuperAdminDepartmentsPage({
     <div className="min-w-0 space-y-6">
       <PageHeader title="Departments"/>
       <AcademicSetupSteps step={1} />
+      <Link href="/admin/academics" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9">Academic overview</Link>
       {incompleteUsage>0?<Alert tone="warning">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span>Could not load dependency counts for {incompleteUsage} department(s). Their usage remains unknown; no archive decision should rely on a missing count.</span>

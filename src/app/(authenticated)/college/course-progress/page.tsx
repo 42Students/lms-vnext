@@ -54,7 +54,7 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
   );
   if (!parsed.success) return (
     <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
-      <PageHeader title="Course Progress" />
+      <PageHeader title="Progress" />
       <ErrorState title="Invalid course progress filters"
         description="The search, offering status or page is invalid. No activity was loaded."
         action={<Link href="/college/course-progress" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
@@ -65,7 +65,7 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
     deliveryId:first(params.deliveryId)||undefined,
   });
   return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
-    <PageHeader title="Course Progress"
+    <PageHeader title="Progress"
       description="See measured completion for a class and course, then focus on the students furthest behind."
       actions={
       <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">

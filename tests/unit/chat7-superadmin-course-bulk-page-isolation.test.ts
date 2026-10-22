@@ -10,15 +10,19 @@ describe("SA-courses-visibility-01 admin acting-college, page and bulk selection
   const parent=source("src/components/courses/admin-course-overview.tsx");
   expect(parent).toContain("key={workspace.collegeId");
   expect(parent).toContain("catalogue.items:workspace.courses");
-  expect(parent).toContain("map(course=>course.id).join");
+  expect(parent).toContain("key={workspace.collegeId}");
+  expect(parent).toContain("courses={(catalogue?catalogue.items:workspace.courses).map(course=>({id:course.id,name:course.name}))}");
  });
  it("filters selected items to current college/page on every submit, count and checkbox",()=>{
   const control=source("src/components/courses/super-admin-course-bulk-visibility.tsx");
-  expect(control).toContain("const currentIds=new Set(courses.map(course=>course.id))");
-  expect(control).toContain("const selectedInScope=selected.filter(id=>currentIds.has(id))");
-  expect(control).toContain("ids=ids.filter(id=>currentIds.has(id))");
-  expect(control).toContain("selectedInScope.length");
-  expect(control).toContain("selectedInScope.includes(course.id)");
+  expect(control).toContain("const currentIds=new Set(courses.map(row=>row.id))");
+  expect(control).toContain('const storageKey="lms:college-bulk-course-selection:"+collegeId');
+  expect(control).toContain("saved?.filterKey===filterKey");
+  expect(control).toContain("const selectedHere=selected.filter(id=>currentIds.has(id))");
+  expect(control).toContain("const ids=[...selected]");
+  expect(control).toContain("setSelected([...new Set(ids.filter(");
+  expect(control).toContain("selectedHere.length");
+  expect(control).toContain("selected.includes(course.id)");
   expect(control).toContain('method:"POST"');
   expect(control).toContain("confirmed:true");
  });

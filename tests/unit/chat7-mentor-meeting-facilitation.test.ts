@@ -14,7 +14,8 @@ describe("mentor meeting facilitated notes",()=>{
   const service=read("src/modules/projects/meeting-service.ts");
   const control=read("src/components/projects/project-meeting-controls.tsx");
   expect(schema).toContain('facilitation: jsonb("facilitation")');
-  expect(service).toContain("input.facilitation??existing?.facilitation??{}");
+  expect(service).toContain("facilitation:mentorMeetingFacilitationSchema.parse({");
+  expect(service).toContain("...(existing?.facilitation??{}),...(input.facilitation??{})");
   expect(control).toContain("What went well?");
   expect(control).toContain("Follow-up status");
   expect(control).toContain("Action items");
@@ -35,6 +36,6 @@ describe("mentor meeting facilitated notes",()=>{
   const request=control.split("export function ScheduleProjectMeetingControl")[0];
   expect(request).not.toContain("value={facilitation[field]}");
   expect(control).toContain('meetingType==="RETRO" ||');
-  expect(control).toContain('? "Meeting updated."');
+  expect(control).toContain('title:"Meetings updated"');
  });
 });
