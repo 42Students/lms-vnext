@@ -2,7 +2,7 @@ import "server-only";
 import {and,asc,eq} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {placementJobEligibilityPolicies,placementJobRoleOptions,placementJobs} from "@/db/schema";
+import {placementJobEligibilityPolicies,placementJobRoleOptions,placementJobRounds,placementJobRoundEvents,placementJobs} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {createPlacementJob} from "./job-service";
 import {requireTpoJobCollege} from "./tpo-job-write-base";
@@ -44,6 +44,12 @@ export async function cloneTpoDrive(context:RequestContext,rawJobId:unknown,raw:
   .orderBy(asc(placementJobRoleOptions.createdAt),asc(placementJobRoleOptions.id));
  options.sort((a,b)=>(a.position??32767)-(b.position??32767)||
   a.createdAt.getTime()-b.createdAt.getTime()||a.id.localeCompare(b.id));
+ // Legacy "Copy drive" also copies the round plan. Historic dates, venues,
+ // test/meeting links and results belong to the old cohort, not this draft.
+ const sourceRounds=await getDb().select().from(placementJobRounds)
+  .where(eq(placementJobRounds.jobId,source.id))
+  .orderBy(asc(placementJobRounds.sequence),asc(placementJobRounds.id));
+ const cloneableRounds=sourceRounds.filter(round=>round.status!=="CANCELLED");
  await getDb().transaction(async tx=>{
   await tx.update(placementJobs).set({
     isDream:source.isDream,stipendPerMonthInr:source.stipendPerMonthInr,
@@ -103,17 +109,40 @@ export async function cloneTpoDrive(context:RequestContext,rawJobId:unknown,raw:
     bondAmount:option.bondAmount,isPrimary:false,
    });
   }
+  for(const [index,round] of cloneableRounds.entries()){
+   const [copied]=await tx.insert(placementJobRounds).values({
+    jobId:draft.id,sequence:index+1,status:"PENDING",
+    kind:round.kind,name:round.name,
+    legacyRoundDescription:round.legacyRoundDescription,
+    legacyInterviewType:round.legacyInterviewType,
+    whatToBring:round.whatToBring,platform:round.platform,
+    durationMinutes:round.durationMinutes,
+    // Dates, venue, room and all external links are intentionally blank.
+    scheduledAt:null,assessmentDueAt:null,resultsDueAt:null,
+    timezone:null,mode:null,venue:null,meetingUrl:null,testUrl:null,
+    createdByUserId:context.user.id,
+   }).returning({id:placementJobRounds.id});
+   if(!copied)throw new Error("CLONE_ROUND_FAILED");
+   await tx.insert(placementJobRoundEvents).values({
+    roundId:copied.id,eventType:"CREATED",actorUserId:context.user.id,
+    metadata:{sourceJobId:source.id,sourceRoundId:round.id,
+     sourceSequence:round.sequence,sequence:index+1,kind:round.kind,
+     name:round.name,datesAndLinksCleared:true},
+   });
+  }
  });
  await getDb().transaction(tx=>recordActivityEventInTransaction(tx,context,{
   eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_JOB_DRAFT_CREATED,collegeId,
   subjectType:"placement_job",subjectId:draft.id,subjectLabel:draft.title,
   summary:"New placement drive draft copied from a historical drive",
   metadata:{sourceJobId:source.id,sourceStatus:source.status,
-   cleared:["dates","rounds","applications","results","offers","external portal link"],
+   copied:["round configuration","role packages","eligibility"],
+   cleared:["deadlines","round dates","round links","applications","results","offers","external portal link"],
    reviewRequired:["eligible cohorts and passing years","role packages","pay and eligibility rules"]},
   groupKey:"placement-jobs:"+collegeId,
  }));
  return {jobId:draft.id,sourceJobId:source.id,status:draft.status,
-  cleared:["Deadlines","Rounds","Applications","Results","Offers","External portal link"],
+  copiedRoundCount:cloneableRounds.length,
+  cleared:["Deadlines","Round dates","Round links","Applications","Results","Offers","External portal link"],
   reviewRequired:["Eligible cohorts and passing years","Role packages","Pay and eligibility rules"]};
 }
