@@ -202,7 +202,8 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
           <legend className="px-1 text-[var(--lms-font-sm)] font-semibold text-foreground">Sprint {index + 1}</legend>
           <div className="grid min-w-0 gap-3 md:grid-cols-2">
             <label className={label}>Key (optional)
-              <Input className={field} required maxLength={64} value={sprint.key}
+              <Input className={field} maxLength={64} value={sprint.key}
+                placeholder="Auto-generated from title if left blank"
                 disabled={pending} onChange={event => updateSprint(index, { key: event.target.value })}/>
             </label>
             <label className={label}>Release key
@@ -218,7 +219,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
             </label>
             <label className={label}>Due (optional)
               <Input className={field} maxLength={120} disabled={pending}
-                placeholder="e.g. Week 2" value={sprint.dueLabel ?? ""}
+                placeholder="e.g. Before sprint 1" value={sprint.dueLabel ?? ""}
                 onChange={event => updateSprint(index, { dueLabel: event.target.value || undefined })}/>
             </label>
           </div>
@@ -244,7 +245,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
         <Button type="button" size="sm" variant="secondary"
           disabled={pending || !draft.releases.length || draft.sprints.length >= 200}
           onClick={addSprint}>Add sprint</Button>
-        {!draft.sprints.length ? <p className="text-sm leading-[22px]">No sprints yet.</p> : null}
+        {!draft.sprints.length ? <p className="text-sm leading-[22px]">No sprints yet. Add one to start the template sprint plan.</p> : null}
       </> : <>
         {!draft.sprints.length ? <Banner tone="info">
           Tasks without a sprint stay in the backlog until assigned to a sprint.{" "}
@@ -360,7 +361,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
         {draft.tasks.length>=500?<p className="text-xs text-body">
           Maximum 500 tasks. Remove a task before adding another.
         </p>:null}
-        {!draft.tasks.length ? <p className="text-sm leading-[22px]">No tasks yet.</p> : null}
+        {!draft.tasks.length ? <p className="text-sm leading-[22px]">No tasks yet. Add a task when you are ready to plan work.</p> : null}
       </>}
       {error ? <Banner tone="error">{error}</Banner> : null}
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
