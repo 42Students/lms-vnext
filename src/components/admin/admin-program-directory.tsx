@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition, useSyncExternalStore, type FormEvent } from "react";
+import { useCallback, useEffect, useState, useTransition, useSyncExternalStore, type FormEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -88,9 +88,13 @@ const columns = (departments: readonly {id:string;name:string}[]): DataTableColu
 export function AdminProgramDirectory({
   programs,
   departments,
+  serverPage,
 }: {
   programs: readonly AdminProgramRow[];
   departments: readonly { id: string; name: string }[];
+  /** Present for the SQL-paginated Super Admin directory; absent for the
+   * existing college-local editor, which keeps its client pagination. */
+  serverPage?:{page:number;total:number;totalPages:number;pageSize:number;q:string};
 }) {
   const router = useRouter();
   const pathname=usePathname();
@@ -105,17 +109,33 @@ export function AdminProgramDirectory({
   const [refreshPending,startRefresh]=useTransition();
   const [fieldErrors,setFieldErrors]=useState<{department?:string;name?:string;duration?:string}>({});
   const [createError,setCreateError]=useState("");
-  const [search, setSearch] = useState("");
-  const [debouncedSearch,setDebouncedSearch]=useState("");
+  const [search, setSearch] = useState(serverPage?.q??"");
+  const [debouncedSearch,setDebouncedSearch]=useState(serverPage?.q??"");
   useEffect(()=>{
     const handle=window.setTimeout(()=>setDebouncedSearch(search),220);
     return ()=>window.clearTimeout(handle);
   },[search]);
   const [page, setPage] = useState(1);
-  const pageSize = useSyncExternalStore(listenSize, storedSize, () => 20);
-
-  const filtered = filterAdminPrograms(programs, debouncedSearch);
-  const result = paginateAdminPrograms(filtered, page, pageSize);
+  const storedPageSize = useSyncExternalStore(listenSize, storedSize, () => 20);
+  const pageSize=serverPage?.pageSize??storedPageSize;
+  const hrefFor=useCallback((nextPage:number,nextSize=pageSize,nextQuery=serverPage?.q??search)=>{
+   const params=new URLSearchParams();
+   if(nextQuery.trim())params.set("q",nextQuery.trim());
+   if(nextPage>1)params.set("page",String(nextPage));
+   if(nextSize!==20)params.set("pageSize",String(nextSize));
+   return pathname+(params.size?"?"+params.toString():"");
+  },[pathname,pageSize,serverPage?.q,search]);
+  useEffect(()=>{if(serverPage)setSearch(serverPage.q);},[serverPage?.q]);
+  useEffect(()=>{
+   if(!serverPage||search.trim()===serverPage.q)return;
+   const handle=window.setTimeout(()=>router.replace(hrefFor(1,pageSize,search)),300);
+   return ()=>window.clearTimeout(handle);
+  },[search,serverPage?.q,pageSize,router,hrefFor]);
+  const filtered = serverPage ? [...programs] : filterAdminPrograms(programs, debouncedSearch);
+  const result = serverPage
+   ? {items:filtered,total:serverPage.total,page:serverPage.page,
+      pages:serverPage.totalPages}
+   : paginateAdminPrograms(filtered, page, pageSize);
   const csvHref = "data:text/csv;charset=utf-8," +
     encodeURIComponent("\ufeff" + adminProgramsCsv(filtered));
 
@@ -227,7 +247,7 @@ export function AdminProgramDirectory({
           </div>
           <div>
             <label htmlFor="admin-program-code" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program code (optional)</label>
-            <p className="mb-1 text-xs text-muted-foreground">Leave blank to generate a unique code for this department.</p>
+            <p className="mb-1 text-xs text-muted-foreground">Leave blank to generate a suggested code; the server checks uniqueness for the whole department.</p>
             <Input className="min-h-11 md:min-h-9" id="admin-program-code" value={code} maxLength={64}
               onChange={(event) => setCode(event.target.value)} placeholder="CSE" />
           </div>
@@ -254,7 +274,7 @@ export function AdminProgramDirectory({
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
           <h2 className="m-0 text-base font-semibold">Existing Programs</h2>
           <div className="flex flex-wrap items-center gap-2 print:hidden">
-            <a href={csvHref} download="programs.csv" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export CSV</a>
+            <a href={csvHref} download="programs.csv" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{serverPage?"Export CSV (page)":"Export CSV"}</a>
             <Button variant="secondary" size="sm" disabled={refreshPending} className="min-h-11 md:min-h-9"
               onClick={()=>startRefresh(()=>router.refresh())}>{refreshPending?"Refreshing programs…":"Refresh"}</Button>
           </div>
@@ -270,7 +290,7 @@ export function AdminProgramDirectory({
         </div>
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
           <p role="status" aria-live="polite" className="text-sm text-muted-foreground">
-            {result.total} of {programs.length} {programs.length === 1 ? "result" : "results"}
+            {serverPage?`${result.total} matching programs · page ${result.page} of ${result.pages}`:`${result.total} of ${programs.length} ${programs.length === 1 ? "result" : "results"}`}
           </p>
           {search.trim() ? <Button variant="ghost" className="min-h-11 md:min-h-9"
             onClick={() => { setSearch(""); setPage(1); }}>Clear search</Button> : null}
@@ -289,13 +309,13 @@ export function AdminProgramDirectory({
             <div className="flex min-w-0 flex-wrap items-center justify-start gap-2 md:justify-end">
               <PageSizeSelect id="admin-program-page-size" label="Rows per page"
                options={[10,20,25,50,100]} value={pageSize}
-               onChange={event=>{rememberSize(Number(event.target.value));setPage(1);}}
+               onChange={event=>{const size=Number(event.target.value);rememberSize(size);if(serverPage)router.push(hrefFor(1,size));else setPage(1);}}
                wrapperClassName="w-28 shrink-0" />
               <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={result.page === 1}
-                onClick={() => setPage(result.page - 1)}>Previous</Button>
+                onClick={() => serverPage?router.push(hrefFor(result.page - 1)):setPage(result.page - 1)}>Previous</Button>
               <span aria-live="polite">Page {result.page} of {result.pages}</span>
               <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={result.page === result.pages}
-                onClick={() => setPage(result.page + 1)}>Next</Button>
+                onClick={() => serverPage?router.push(hrefFor(result.page + 1)):setPage(result.page + 1)}>Next</Button>
             </div>
           </div>
         ) : null}

@@ -55,7 +55,12 @@ describe.skipIf(!enabled)("Super Admin Video, Resources and Live Classes authori
 
     const videos = await listSuperAdminContentDirectory(admin, "VIDEOS", { q: fx.tag });
     expect(videos.items.map((row) => row.id)).toEqual([youtube.id]);
-    expect(videos.items[0]).not.toHaveProperty("externalUrl");
+    // The legacy Super Admin directory now exposes validated public HTTPS
+    // authoring links (not private storage keys); the selected college remains enforced.
+    expect(videos.items[0]?.externalUrl).toBe("https://youtu.be/xyz789");
+    const foreignVideos=await listSuperAdminContentDirectory(
+      superAdminContext(SEED_IDS.collegeB),"VIDEOS",{q:fx.tag});
+    expect(foreignVideos.items).toHaveLength(0);
     const live1 = await listSuperAdminContentDirectory(admin, "LIVE_CLASSES", { q: fx.tag });
     expect(live1.items.map((row) => row.id)).toEqual([live.id]);
 

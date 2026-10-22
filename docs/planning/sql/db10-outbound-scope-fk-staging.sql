@@ -41,15 +41,36 @@ $db10_outbound_scope_preflight$;
 -- PostgreSQL composite FK targets require a unique index/constraint covering
 -- exactly these columns, even though colleges.id is already its UUID PK.
 -- Register this parent target through Chat 1's Drizzle/schema workflow.
-CREATE UNIQUE INDEX colleges_id_organization_uq
+CREATE UNIQUE INDEX IF NOT EXISTS colleges_id_organization_uq
   ON colleges (id, organization_id);
 
-ALTER TABLE outbound_messages
-  ADD CONSTRAINT db10_outbound_college_organization_fk
-  FOREIGN KEY (college_id, organization_id)
-  REFERENCES colleges (id, organization_id)
-  ON UPDATE RESTRICT
-  ON DELETE RESTRICT;
+-- Existing registered migrations may already have installed this FK.
+-- Never drop or relax it merely to make the disposable replay succeed.
+DO $db10_outbound_scope_constraint$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+     WHERE conrelid = 'public.outbound_messages'::regclass
+       AND conname = 'db10_outbound_college_organization_fk'
+  ) THEN
+    ALTER TABLE outbound_messages
+      ADD CONSTRAINT db10_outbound_college_organization_fk
+      FOREIGN KEY (college_id, organization_id)
+      REFERENCES colleges (id, organization_id)
+      ON UPDATE RESTRICT
+      ON DELETE RESTRICT;
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+     WHERE conrelid = 'public.outbound_messages'::regclass
+       AND conname = 'db10_outbound_college_organization_fk'
+       AND contype = 'f' AND convalidated
+  ) THEN
+    RAISE EXCEPTION 'DB10 outbound composite scope FK missing or unvalidated'
+      USING ERRCODE = '23514';
+  END IF;
+END;
+$db10_outbound_scope_constraint$;
 
 -- Acceptance gates (NOT EXECUTED):
 -- A. New outbox row with a valid but WRONG organization UUID fails 23503.
