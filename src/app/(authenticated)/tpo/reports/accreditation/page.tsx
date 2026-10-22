@@ -72,7 +72,7 @@ export default async function TpoAccreditationReportPage({
       <PageHeader
         eyebrow="TPO · Reports"
         title="Accreditation export"
-        description={TPO_LEGACY_REPORT_COPY["/tpo/reports/accreditation"].description}
+        description={TPO_LEGACY_REPORT_COPY["/tpo/reports/accreditation"]?.description ?? ""}
         actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto"><PageBackLink href="/tpo/reports" label="All reports" />{selectedBatch&&studentReport&&studentReport.rows.length>0?
           <TpoAccreditationExportPreflight href={"/api/placements/reports?"+query.toString()}
            total={completeness?.total??studentReport.rows.length}
