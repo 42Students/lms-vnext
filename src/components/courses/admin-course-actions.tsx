@@ -53,8 +53,7 @@ async function mutate(
 ) {
   return apiFetch<unknown>(path, {
     method,
-    headers: body ? { "Content-Type": "application/json" } : undefined,
-    body: body ? JSON.stringify(body) : undefined,
+    ...(body ? { headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) } : {}),
   });
 }
 
@@ -186,7 +185,7 @@ export function CourseActions({
     const apiError=error instanceof FriendlyFetchError ? error : null;
     setNameFieldError(apiError?.code==="COURSE_NAME_CONFLICT"
       ?"A course with this name already exists in this department."
-      :apiError?.fieldErrors.name??"");
+      :apiError?.fieldErrors["name"]??"");
     setEditFailure(apiError?.code==="COURSE_STALE_VERSION"
       ?"This course was modified by someone else. Refresh and reapply your changes."
       :academicSetupErrorMessage(error,"Review your changes and retry."));
