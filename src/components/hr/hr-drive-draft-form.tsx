@@ -69,6 +69,7 @@ export function HrDriveDraftForm({
   const [draft, setDraft] = useState<HrDriveDraft>(initial);
   const [branchInput,setBranchInput]=useState((initial.branches??[]).join(", "));
   const [showPreview, setShowPreview] = useState(false);
+  const [yearToAdd, setYearToAdd] = useState("");
   const [notice, setNotice] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const formRootRef = useRef<HTMLDivElement>(null);
@@ -354,7 +355,7 @@ export function HrDriveDraftForm({
         const alias: Record<string, string> = {
           jobTitle: "title", job_title: "title", ctc_lpa: "ctcLpa",
           minCgpa: "minimumCgpa", min_cgpa: "minimumCgpa",
-          passingYears: "passingYear", passing_years: "passingYear",
+          passingYears: "passingYears", passing_years: "passingYears",
         };
         const fields: Record<string, string> = {};
         for (const [key, value] of Object.entries(error.fieldErrors)) fields[alias[key] ?? key] = value;
@@ -741,19 +742,58 @@ export function HrDriveDraftForm({
                 Enter at most {HR_DRIVE_BRANCH_LIMIT} branches without dropping any selection.
               </span>:null}
           </label>
-          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
-            Passing year
-            <Input className="w-full" data-draft-field="passingYear" aria-invalid={Boolean(fieldErrors.passingYear)}
-              inputMode="numeric" maxLength={4}
-              value={draft.passingYear??""} placeholder="Any year, e.g. 2027" list="recruiter-passing-years"
-              onChange={event=>{setFieldErrors(current=>({...current,passingYear:""}));
-                setDraft(current=>({...current,passingYear:event.target.value}));}}/>
+          <div className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+            <label htmlFor="hr-passing-year-add">Passing years</label>
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
+              <Input id="hr-passing-year-add" className="min-w-0 flex-1" data-draft-field="passingYears"
+                aria-invalid={Boolean(fieldErrors.passingYears||fieldErrors.passingYear)}
+                aria-describedby="hr-passing-years-help" inputMode="numeric" maxLength={4}
+                placeholder="e.g. 2027" list="recruiter-passing-years" value={yearToAdd}
+                onChange={event=>{setYearToAdd(event.target.value);
+                  setFieldErrors(current=>({...current,passingYears:"",passingYear:""}));}}/>
+              <Button type="button" variant="secondary" className="min-h-11 md:min-h-9"
+                onClick={()=>{
+                  const year=Number(yearToAdd.trim());
+                  const chosen=draft.passingYears?.length
+                    ?draft.passingYears:(draft.passingYear?[Number(draft.passingYear)]:[]);
+                  if(!/^(20[0-9]{2}|2100)$/.test(yearToAdd.trim()) ||
+                     year<2000||year>2100||chosen.includes(year)){
+                    setFieldErrors(current=>({...current,passingYears:
+                      chosen.includes(year)?"This year is already selected.":"Enter a passing year from 2000 to 2100."}));
+                    return;
+                  }
+                  setDraft(current=>({...current,passingYear:"",
+                    passingYears:[...chosen,year].sort((a,b)=>a-b)}));
+                  setYearToAdd("");
+                  setFieldErrors(current=>({...current,passingYears:"",passingYear:""}));
+                }}>Add year</Button>
+            </div>
             <datalist id="recruiter-passing-years">
-               {Array.from({ length: 3 }, (_, index) => new Date().getFullYear() + index).map(year =>
-                 <option key={year} value={year} />)}
-             </datalist>
-             {fieldErrors.passingYear ? <span role="alert" className="text-xs text-error">{fieldErrors.passingYear}</span> : null}
-          </label>
+              {Array.from({length:5},(_,index)=>new Date().getFullYear()+index).map(year=>
+                <option key={year} value={year}/>)}
+            </datalist>
+            <p id="hr-passing-years-help" className="text-xs font-normal text-muted-foreground">
+              Leave empty for any year, or add every eligible passing year.
+            </p>
+            {(draft.passingYears?.length||draft.passingYear) ?
+              <ul aria-label="Selected passing years" className="flex flex-wrap gap-2">
+                {(draft.passingYears?.length?draft.passingYears:[Number(draft.passingYear)]).map(year=>
+                  <li key={year}>
+                    <Button type="button" variant="secondary" className="min-h-11 gap-2 md:min-h-9"
+                      aria-label={"Remove passing year "+year}
+                      onClick={()=>{
+                        const chosen=draft.passingYears?.length
+                          ?draft.passingYears:(draft.passingYear?[Number(draft.passingYear)]:[]);
+                        setDraft(current=>({...current,passingYear:"",
+                          passingYears:chosen.filter(item=>item!==year)}));
+                        setFieldErrors(current=>({...current,passingYears:"",passingYear:""}));
+                      }}>{year}<span aria-hidden="true">×</span></Button>
+                  </li>)}
+              </ul>:<span className="text-xs font-normal text-muted-foreground">Any year</span>}
+            {(fieldErrors.passingYears||fieldErrors.passingYear)?
+              <span role="alert" className="text-xs font-normal text-error">
+                {fieldErrors.passingYears||fieldErrors.passingYear}</span>:null}
+          </div>
         </div>
 
         <p className="mt-2 text-xs text-muted-foreground">
@@ -837,7 +877,7 @@ export function HrDriveDraftForm({
               <p className="text-xs text-error">Enter a valid public HTTPS job description link to preview it.</p> : null}
             <p>{draft.location || "Location not specified"} · {draft.employmentType.replaceAll("_", " ")} · {LEGACY_HR_DRIVE_MODES.find(option=>option.value===draft.driveMode)?.label??"On campus"} · {draft.workMode}</p>
              <p>Eligible branches: {draft.branches?.length ? draft.branches.join(", ") : "All branches"} ·
-               Passing year: {draft.passingYear || "Any year"}</p>
+               Passing years: {draft.passingYears?.length?draft.passingYears.join(", "):draft.passingYear||"Any year"}</p>
             {draft.driveMode==="OFF_CAMPUS"?
               <p className="break-all">Application website: {result.success&&result.data.externalApplicationUrl
                 ? <a href={result.data.externalApplicationUrl} rel="noopener noreferrer"
