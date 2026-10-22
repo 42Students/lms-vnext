@@ -10,37 +10,37 @@ describe("chat-16 public and auth-adjacent page rendering",()=>{
  it("UX-chat16-public-home-01 offers functional, named destinations without requiring an account",()=>{
   const html=renderToStaticMarkup(<HomeMarketingPage/>);
   expect(homeMetadata.title).toEqual({absolute:"42 LMS — Learning, Projects and Placements"});
-  for(const href of ["/home","/platform","/universities","/enterprises","/request-demo","/login","/privacy-policy"]){
+  for(const href of ["/","/platform","/universities","/enterprises","/request-demo","/login","/privacy-policy"]){
    expect(html).toContain('href="'+href+'"');
   }
-  expect(html).toContain("One connected platform for learning, projects and placements");
+  expect(html).toContain("Build employable graduates. Create stronger talent pipelines.");
   expect(html).toContain('aria-label="Public navigation"');
   expect(html).toContain('application/ld+json');
  });
  it("UX-chat16-public-universities-02 provides a campus-specific overview and next step",()=>{
   const html=renderToStaticMarkup(<UniversitiesPage/>);
   expect(universitiesMetadata.title).toBe("For Universities — 42 LMS");
-  expect(html).toContain("For universities");
-  expect(html).toContain("Placement teams");
-  expect(html).toContain("Administrators");
+  expect(html).toContain("For Universities");
+  expect(html).toContain("Recruitment");
+  expect(html).toContain("Administration");
   expect(html).toContain('href="/request-demo"');
-  expect(html).toContain('aria-label="Campus roles"');
+  expect(html).toContain('aria-label="Campus capabilities"');
  });
  it("UX-chat16-public-enterprises-03 reaches hiring and learning overviews without login",()=>{
   const html=renderToStaticMarkup(<EnterprisesPage/>);
   expect(enterprisesMetadata.title).toEqual({absolute:"For Enterprises — 42 LMS"});
-  expect(html).toContain("For enterprises");
-  expect(html).toContain("Candidate evaluation");
-  expect(html).toContain("Hiring operations");
+  expect(html).toContain("For Enterprises");
+  expect(html).toContain("Connected learning and hiring workflows");
+  expect(html).toContain("Recruiting Operations");
   expect(html).toContain('href="/request-demo"');
-  expect(html).toContain('aria-label="Enterprise capabilities"');
+  expect(html).toContain('aria-label="Enterprise outcomes"');
  });
  it("UX-chat16-public-demo-04 retains explicit contact and no hidden form submission",()=>{
   const html=renderToStaticMarkup(<RequestDemoPage/>);
   expect(demoMetadata.title).toBe("Request a Demo — 42 LMS");
   expect(html).toContain("See 42 LMS in action");
   expect(html).toContain("What to expect");
-  expect(html).toContain('href="mailto:hello@42lms.com?subject=42%20LMS%20demo%20request"');
+  expect(html).toContain('href="mailto:hello@42lms.com?subject=Request%20a%20Demo"');
   expect(html).toContain("No form data is collected on this page.");
   expect(html).not.toContain("<form");
  });

@@ -109,7 +109,7 @@ export default function RequestDemoPage() {
           <article className="min-w-0 rounded-[18px] border border-transparent bg-[#142f3b] p-[30px] text-white">
             <h2 className="mb-4 mt-2 text-2xl font-semibold text-white">Get in touch</h2>
             <p className="leading-6 text-white/85">
-              Email us and a specialist will reach out to schedule your demo.
+              Email us and a specialist will reach out to schedule your demo. No form data is collected on this page.
             </p>
             <div className="mt-[18px] flex flex-wrap justify-start gap-3">
               <a href={DEMO_MAILTO}
