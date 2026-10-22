@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import {useState,useTransition} from "react";
+import {useRef,useState,useTransition} from "react";
+import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useRouter} from "next/navigation";
 import {hallCancellationPrompt} from "@/modules/academics/college-hall-cancel-model";
 import {Input} from "@/components/ui/input";
@@ -8,9 +9,14 @@ export function CollegeHallCancellationAction({hallId,sessionId,title,updatedAt}
   hallId:string;sessionId:string;title:string;updatedAt:string;
 }){
   const router=useRouter(),[pending,start]=useTransition();
+  const {askConfirm,dialog}=useConfirmFlow();
+  const pendingRef=useRef(false);
   const [reason,setReason]=useState("Schedule change"),[error,setError]=useState("");
-  function cancel(){
-    if(!window.confirm(hallCancellationPrompt(title)))return;
+  async function cancel(){
+    if(pendingRef.current||pending)return;
+    if(!(await askConfirm(hallCancellationPrompt(title))))return;
+    if(pendingRef.current)return;
+    pendingRef.current=true;
     setError("");
     start(async()=>{
       try{
@@ -19,12 +25,10 @@ export function CollegeHallCancellationAction({hallId,sessionId,title,updatedAt}
           method:"PATCH",headers:{"content-type":"application/json"},
           body:JSON.stringify({reason,expectedUpdatedAt:updatedAt,confirm:true}),
         });
-        if(!result.ok){
-          const body=await result.json().catch(()=>({error:"CANCELLATION_FAILED"})) as {error?:string};
-          throw new Error(body.error??"CANCELLATION_FAILED");
-        }
+        if(!result.ok)throw new Error("Cancellation could not be saved. Check whether the session changed before retrying.");
         router.refresh();
-      }catch(e){setError(e instanceof Error?e.message:"Cancellation failed");}
+      }catch{setError("Cancellation could not be saved. Check whether the session changed before retrying.");}
+      finally{pendingRef.current=false;}
     });
   }
   return <details className="mt-3 min-w-0">
@@ -40,5 +44,6 @@ export function CollegeHallCancellationAction({hallId,sessionId,title,updatedAt}
     </Button>
     {error?<p role="alert" className="w-full text-xs text-error md:col-span-2">{error}</p>:null}
     </div>
+    {dialog}
   </details>;
 }
