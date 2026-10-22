@@ -27,11 +27,11 @@ export default async function SuperAdminOrganizationJobsPage({searchParams}:{
 }){
  const raw=await searchParams;
  const context=await getCurrentRequestContext();
- const organizationId=first(raw.organizationId);
+ const organizationId=first(raw["organizationId"]);
  const scoped=Boolean(context.adminScope?.organizationId||context.adminScope?.collegeId);
  const params={
-  organizationId, q:first(raw.q),status:first(raw.status)||"ALL",
-  sort:first(raw.sort)||"NEWEST",page:first(raw.page)||"1",
+  organizationId, q:first(raw["q"]),status:first(raw["status"])||"ALL",
+  sort:first(raw["sort"])||"NEWEST",page:first(raw["page"])||"1",
  };
  const searchHref=(page:number)=>{
   const q=new URLSearchParams();
