@@ -25,5 +25,10 @@ export function tpoGeneralRequestReviewFacts(kind:string,payload:Record<string,u
   }catch{/* Unsupported or invalid user-supplied proof is never linked. */}
  }
  return {facts:facts.filter(item=>item.value!==""),
-  requiresProof,proofUrl:requiresProof?proofUrl:null};
+  requiresProof,proofUrl:requiresProof?proofUrl:null,
+  // A submitted but unsafe/invalid URL is not equivalent to no attachment.
+  // Keep the legacy "not a web link" fallback visible to reviewers without
+  // linking untrusted schemes or revealing credential-bearing URLs.
+  proofIssue:!requiresProof||proofUrl?null:raw?"Submitted proof is not a web link":"No proof attached",
+ };
 }

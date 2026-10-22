@@ -12,6 +12,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { DataTable } from "@/components/ui/data-table";
 import { Dialog } from "@/components/ui/dialog";
+import { CollegeTermStaffingReport } from "./college-term-staffing-report";
 import { TERM_MAPPING_COPY, collegeTermCourseAddSchema, collegeTermCourseUpdateSchema, collegeTermMappingErrorMessage, parseTermCourseCreditsDraft } from "@/modules/academics/college-term-mapping-model";
 
 type MappingRead = {
@@ -572,5 +573,6 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
       pending={pending} onConfirm={send}>
       {error ? <p role="alert" className="min-w-0 break-words text-sm text-[var(--lms-error-text)]">{error}</p> : null}
     </ConfirmDialog>
+    <CollegeTermStaffingReport termId={termId}/>
   </section>;
 }
