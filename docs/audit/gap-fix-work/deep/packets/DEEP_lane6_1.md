@@ -8,7 +8,7 @@ DEFERRED is NOT allowed. For each row: read its full text in the source packet n
 Keep tests passing and TypeScript valid; never silence errors. Write one result line per row under Results, push, then tick this packet in your queue.
 
 - [x] G2-19-023-026  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
-- [ ] G2-19-023-058  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
+- [x] G2-19-023-058  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [ ] G2-3-014-001  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [x] G2-3-014-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [ ] G2-3-014-025  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
@@ -28,3 +28,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - G2-4-028-007: OK — `src/app/(authenticated)/tpo/messages/page.tsx:1,86-96,105-109,137,175,202` imports and renders `TpoTeamMessagesDirectory`, exposes the `Team` tab and `Recruiters` tab through `TpoMessagesTabs`, and selects via `?tab=team`; matches `docs/legacy-source/frontend/src/pages/tpo/messages.js:10-13,25-27,39-48,55-64` (legacy Team/Recruiters tablist and TeamConversations). No code change required.
 
+
+- G2-19-023-058: FIXED — commit `055ca46455c67fb80a3eb06538409deedb19806b`, `src/app/api/v1/learner/placement/announcements/unread/route.ts:1-44` adds learner-scoped announcement-only unread GET corresponding to `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerAnnouncementController.java:33-39`. Incomplete pagination or missing delivered read receipts return 503 rather than misreporting zero.
