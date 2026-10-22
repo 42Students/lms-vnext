@@ -2,7 +2,7 @@
 
 Second verification round over the remaining P1 rows (W1_* packets). Do these after your fix queues and the verify queue (lane-8-verify.md). Tick [x] as you go.
 
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-8/W1_lane8_1.md` (25 rows)
+- [x] `docs/audit/gap-fix-work/verify2/packets/lane-8/W1_lane8_1.md` (25 rows)
 - [ ] `docs/audit/gap-fix-work/verify2/packets/lane-8/W1_lane8_2.md` (25 rows)
 - [ ] `docs/audit/gap-fix-work/verify2/packets/lane-8/W1_lane8_3.md` (25 rows)
 - [ ] `docs/audit/gap-fix-work/verify2/packets/lane-8/W1_lane8_4.md` (25 rows)
