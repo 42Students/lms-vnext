@@ -34,7 +34,7 @@ import {Button} from "@/components/ui/button";
 import {FilterChip} from "@/components/ui/filter-chip";
 
 const views: CareerCalendarView[] = ["agenda", "month", "week", "day"];
-type EventFilter = "ALL" | CareerCalendarEvent["kind"];
+type EventFilter = LearnerCalendarUrlState["kind"];
 const filters: { key: EventFilter; label: string }[] = [
   { key: "ALL", label: "All" },
   { key: "ASSESSMENT", label: "Assessments" },

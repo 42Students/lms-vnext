@@ -6,7 +6,7 @@
  * Reuses shared Button; never touches props, mutation, callback or global CSS.
  *
  * Old: components___variables.scss:138-149, old-lms-shell-spec.md:22-24.
- * Scope: src/app/(authenticated)/mentor/**/*.tsx only.
+ * Scope: TSX files beneath src/app/(authenticated)/mentor only.
  * node scripts/codemods/chat8-mentor-submit-touch.cjs [--apply]
  */
 const fs=require("node:fs"),path=require("node:path"),ts=require("typescript");

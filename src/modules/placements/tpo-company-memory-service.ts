@@ -5,6 +5,7 @@ import {
   eq,
   inArray,
   max,
+  sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -182,7 +183,7 @@ async function selectDriveFactRows(jobIds:string[]){
   return db
     .select({
       jobId: placementJobs.id,
-      countsAsPlaced:placementJobs.countsAsPlaced,
+      countsAsPlaced:sql<boolean>`coalesce(${placementJobs.countsAsPlaced}, true)`,
       jobStatus: placementJobs.status,
       archivedAt: placementJobs.archivedAt,
       offerStatus: placementOffers.status,
@@ -301,9 +302,13 @@ export async function listTpoCompanies(
   // The old per-company query was O(number of employers) SQL round trips.
   // Load only this college's relationship-bound job IDs once and partition in
   // memory; retain each offer and joining row for accurate placed counts.
-  const factsByJob=groupTpoDriveFactsByJob(await loadDriveFacts(
-    rows.jobs.map(row=>row.job.id),
-  ));
+  const jobIds=rows.jobs.map(row=>row.job.id);
+  const factsByJob=groupTpoDriveFactsByJob(await loadDriveFacts(jobIds));
+  // Counts are loaded once for the entire college roster, not once per employer.
+  // An unavailable count source must remain unknown instead of showing zero.
+  const countResult=await getCompanyDriveCounts(rows.collegeId,jobIds)
+    .then(value=>({ready:true as const,value}))
+    .catch(()=>({ready:false as const,value:null}));
 
   for (const group of groups.values()) {
     const driveRows=group.jobs.flatMap(row=>factsByJob.get(row.job.id)??[]);

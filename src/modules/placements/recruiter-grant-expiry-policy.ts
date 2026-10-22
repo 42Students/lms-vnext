@@ -92,7 +92,7 @@ export function legacyRecruiterGrantActivationPlan(input:{
   throw Error("Unmapped recruiter/company relationship grant");
  return {collegeId:input.collegeId,relationshipId:input.relationshipId,
    activationAllowed:Boolean(input.active&&input.verified&&input.expiresAt&&
-     Number.isFinite(input.expiresAt.getTime())&&input.expiresAt>Date.now()),
+     Number.isFinite(input.expiresAt.getTime())&&input.expiresAt.getTime()>Date.now()),
    indefiniteLegacyGrant:input.expiresAt===null,
    requiresFiniteExpiryReview:input.expiresAt===null,
    revokedOrSuspended:!input.active};
