@@ -352,7 +352,14 @@ const educationSchema = z
   .strict();
 // Application qualification editors retain the legacy 20-entry limit;
  // learner career profiles are allowed the broader 30-entry collection.
-export const learnerApplicationQualificationWriteSchema = z.array(educationSchema).max(20);
+export const learnerApplicationQualificationWriteSchema = z.array(educationSchema).max(20).superRefine((items,ctx)=>{
+ // An empty optional application draft is permitted, but a submitted
+ // qualification set has exactly one most recent education, as in the old LMS.
+ if(items.length===0)return;
+ const count=items.filter(item=>item.isRecentEducation).length;
+ if(count!==1)ctx.addIssue({code:"custom",path:["isRecentEducation"],
+  message:count===0?"Select one recent education":"Select only one recent education"});
+});
 export const learnerProfileEducationWriteSchema=z.array(educationSchema).max(30).superRefine((items,ctx)=>{
  let recentCount=0;
  for(const [index,entry] of items.entries()){
