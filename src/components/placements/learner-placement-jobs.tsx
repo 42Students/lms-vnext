@@ -124,35 +124,6 @@ function eligibilityTone(
   }
 }
 
-function formatCtc(
-  minimum: number | null,
-  maximum: number | null,
-) {
-  if (minimum === null && maximum === null) {
-    return "Not disclosed";
-  }
-  const lakh = (value: number) =>
-    `₹${(value / 100_000).toLocaleString("en-IN", {
-      maximumFractionDigits: 2,
-    })} LPA`;
-  if (minimum !== null && maximum !== null) {
-    return `${lakh(minimum)} – ${lakh(maximum)}`;
-  }
-  if (minimum !== null) {
-    return `From ${lakh(minimum)}`;
-  }
-  return `Up to ${lakh(maximum!)}`;
-}
-
-function formatDeadline(value: string | null) {
-  if (!value) return "No application deadline";
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(new Date(value));
-}
-
 async function placementMutation(
   url: string,
   body: unknown,
@@ -201,12 +172,12 @@ async function checkOwnPlacementApplication(jobId:string,roleOptionId:string):Pr
   if(matches.length===0)return {known:true,application:null};
   if(matches.length!==1)return {known:false,application:null};
   const selected=(matches[0] as {application:Record<string,unknown>}).application;
-  if(typeof selected.id!=="string"||typeof selected.status!=="string"||
-     typeof selected.channel!=="string"||typeof selected.submittedAt!=="string")
+  if(typeof selected["id"]!=="string"||typeof selected["status"]!=="string"||
+     typeof selected["channel"]!=="string"||typeof selected["submittedAt"]!=="string")
    return {known:false,application:null};
   return {known:true,application:{
-   id:selected.id,jobId,roleOptionId,
-   status:selected.status,channel:selected.channel,submittedAt:selected.submittedAt,
+   id:selected["id"],jobId,roleOptionId,
+   status:selected["status"],channel:selected["channel"],submittedAt:selected["submittedAt"],
   }};
  }catch{return {known:false,application:null};}
 }
@@ -222,14 +193,14 @@ type SignedOwnResume = {url:string;isPdf:boolean};
 function parseSignedOwnResume(value:unknown):SignedOwnResume|null{
  if(!value||typeof value!=="object")return null;
  const response=value as Record<string,unknown>;
- if(response.ready!==true||typeof response.readUrl!=="string"||
-    typeof response.contentType!=="string"||typeof response.expiresAt!=="string")return null;
+ if(response["ready"]!==true||typeof response["readUrl"]!=="string"||
+    typeof response["contentType"]!=="string"||typeof response["expiresAt"]!=="string")return null;
  try{
-  const parsed=new URL(response.readUrl);
-  const expires=Date.parse(response.expiresAt);
+  const parsed=new URL(response["readUrl"]);
+  const expires=Date.parse(response["expiresAt"]);
   if(parsed.protocol!=="https:"||parsed.username||parsed.password||
      !Number.isFinite(expires)||expires<=Date.now())return null;
-  return {url:parsed.href,isPdf:response.contentType==="application/pdf"};
+  return {url:parsed.href,isPdf:response["contentType"]==="application/pdf"};
  }catch{return null;}
 }
 function OwnResumePreview({applicationId}:{applicationId:string}){
