@@ -59,7 +59,7 @@ describe("College academic setup prerequisites and mutation validation",()=>{
   expect(rows.find(row=>row.key==="faculty")).toMatchObject({count:9,hasRecords:true});
   expect(rows.find(row=>row.key==="students")).toMatchObject({count:0,hasRecords:false});
  });
- it.each([0,-1,11,1.5,NaN])(
+ it.each([-1,31,1.5,NaN])(
   "COL-academic-setup-06 refuses invalid curriculum credits %s",credits=>{
    expect(collegeTermCourseAddSchema.safeParse({
     programTermId:"11111111-1111-4111-8111-111111111111",
@@ -67,7 +67,7 @@ describe("College academic setup prerequisites and mutation validation",()=>{
     credits,type:"CORE",
    }).success).toBe(false);
  });
- it.each([1,3,10])("COL-academic-setup-06 accepts positive course credits %s",credits=>{
+ it.each([0,1,3,10,11,30])("COL-academic-setup-06 accepts legacy database-supported course credits %s",credits=>{
   expect(collegeTermCourseAddSchema.safeParse({
    programTermId:"11111111-1111-4111-8111-111111111111",
    courseId:"22222222-2222-4222-8222-222222222222",

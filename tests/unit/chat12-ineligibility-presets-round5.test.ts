@@ -8,7 +8,7 @@ describe("chat12 ineligibility and bulk actions",()=>{
   expect(tpoIneligibleReason("Higher studies")).toBe("Higher studies");
   for(const file of ["src/components/tpo/tpo-bulk-action-panel.tsx","src/components/tpo/tpo-participation-decision-form.tsx"]){
    expect(s(file)).toContain("TPO_INELIGIBLE_REASONS.map");
-   expect(s(file)).toContain(">Other</button>");
+   expect(s(file)).toContain(">Other</Button>");
   }
  });
  it("TPO-students-16 keeps failures readable, including named skipped rows for copying",()=>{

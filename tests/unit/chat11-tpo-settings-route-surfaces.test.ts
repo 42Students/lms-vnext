@@ -5,7 +5,7 @@ const pages=[
  ["after-college","requireTpoBatchActor","Outcome-label storage is not available yet."],
  ["blocked-dates","getTpoBlockedDates","Blocked-date storage is pending migration registration."],
  ["branding","hasMembershipRole","No public logo URL is configured"],
- ["job-types","getTpoJobTypes","Job types storage is awaiting migration registration."],
+ ["job-types","getTpoJobTypes","The job type list is temporarily unavailable. No changes were made."],
  ["notices","requireTpoBatchActor","Communication settings are not available in this database."],
  ["notifications","hasMembershipRole","Invalid notification filters"],
  ["prep-readiness","getTpoPrepReadiness","Saved choices were not changed."],

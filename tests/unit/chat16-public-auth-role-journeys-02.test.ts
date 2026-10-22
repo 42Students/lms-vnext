@@ -28,7 +28,7 @@ describe("chat-16 public auth and invitation page journeys",()=>{
  it("UX-legacy-auth-02 retires old cross-domain handoff and privileged test login",()=>{
   const handoff=read("src/app/auth/handoff/page.tsx");
   const oldSuper=read("src/app/superadmin-login/page.tsx");
-  expect(handoff).toContain('redirect("/?auth=handoff-retired")');
+  expect(handoff).toContain('redirect("/login?auth=handoff-retired"');
   expect(oldSuper).toContain('redirect("/login")');
   expect(handoff).not.toContain("exchangeToken");
   expect(oldSuper).not.toContain("createSession");

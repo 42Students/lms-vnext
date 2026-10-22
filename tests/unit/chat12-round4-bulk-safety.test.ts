@@ -40,6 +40,6 @@ describe("chat-12 round4 guarded TPO bulk, messages and saved views",()=>{
   expect(b()).toContain("runGuarded(confirm)");
   expect(n()).toContain("runGuarded(send)");
   expect(v()).toContain("runGuarded(async()=>");
-  expect(v()).toContain('<Dialog open={deleteTarget!==null}');
+  expect(v()).toContain('<Dialog role="alertdialog" open={deleteTarget!==null}');
  });
 });

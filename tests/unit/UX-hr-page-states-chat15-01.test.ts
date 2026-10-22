@@ -5,19 +5,19 @@ const page=(route:string)=>readFileSync(join(process.cwd(),"src/app/(authenticat
 type RouteCheck={route:string; guards:readonly string[]; states:readonly string[]};
 const canonical:readonly RouteCheck[]=[
  {route:"/hr/activity",guards:["hasActiveRecruiter(context)",'redirect("/dashboard")'],
-  states:['title="Hiring activity"','role="alert"','role="status"']},
+  states:['title="Hiring activity"','<ErrorState title="Invalid activity filters"','role="status"']},
  {route:"/hr/calendar",guards:["hasActiveRecruiter(context)",'redirect("/dashboard")'],
   states:['title="Calendar"','role="status"',"IST"]},
  {route:"/hr/company",guards:["hasActiveRecruiter(context)",'redirect("/dashboard")'],
   states:["Company & Team","Invalid college selection","Invalid team filter","<ErrorState"]},
  {route:"/hr/company/reports",guards:["hasActiveRecruiter(context)",'redirect("/dashboard")'],
-  states:["Company Reports","Invalid report filters","No active college access","<DataTable"]},
+  states:['title="Company & Team"',"Invalid report filters","No active college access","<DataTable"]},
  {route:"/hr/conversations",guards:["hasActiveRecruiter(context)",'redirect("/dashboard")'],
-  states:['title="Messages"','role="alert"',"No matching conversations"]},
+  states:['title="Messages"','<ErrorState title="Invalid conversation filters"',"No matching conversations"]},
  {route:"/hr/conversations/[threadId]",guards:["hasActiveRecruiter(context)",'redirect("/dashboard")'],
-  states:["No access to this college","No messages on this page.","<PageHeader"]},
+  states:["No access to this college","No messages on this page","<PageHeader"]},
  {route:"/hr/drives",guards:["hasActiveRecruiter(context)",'redirect("/dashboard")'],
-  states:["Invalid drive filters","No active college access","<EmptyState"]},
+  states:["Invalid drive filters","Drive access is not switched on","<EmptyState"]},
  {route:"/hr/drives/[jobId]/interview-slots",guards:["hasActiveRecruiter(context)",'redirect("/dashboard")'],
   states:['title="Interview slots"',"No persisted employer time blocks","No"]},
  {route:"/hr/drives/[jobId]/messages",guards:["hasActiveRecruiter(context)",'redirect("/dashboard")'],
@@ -27,7 +27,7 @@ const canonical:readonly RouteCheck[]=[
  {route:"/hr/drives/[jobId]/rounds/editor/remove/[roundId]",guards:["hasActiveRecruiter(context)",'redirect("/dashboard")'],
   states:['title="Confirm unused round removal"',"roundId","<PageHeader"]},
  {route:"/hr/drives/new",guards:["hasActiveRecruiter(context)",'redirect("/dashboard")'],
-  states:["Request a drive","No active college access","<EmptyState"]},
+  states:["Request a drive","No college selected","<EmptyState"]},
  {route:"/hr/drives/proposals",guards:["hasActiveRecruiter(context)",'redirect("/dashboard")'],
   states:['title="Sent drive proposals"',"NO_ACCESS",'role="status"']},
  {route:"/hr/drives/recorded-outside",guards:["hasActiveRecruiter(context)",'redirect("/dashboard")'],
@@ -35,11 +35,11 @@ const canonical:readonly RouteCheck[]=[
  {route:"/hr/home",guards:["hasActiveRecruiter(context)",'redirect("/dashboard")'],
   states:['title="Today"',"Invalid college selection","<EmptyState"]},
  {route:"/hr/notifications",guards:["hasActiveRecruiter(context)",'redirect("/dashboard")'],
-  states:['title="Notifications"',"Invalid inbox filter.",'role="alert"']},
- {route:"/hr/placements/jobs/[jobId]",guards:["hasActiveRecruiter(context)",'redirect("/dashboard")'],
+  states:['title="Notifications"',"Invalid inbox filter",'role="alert"']},
+ {route:"/hr/placements/jobs/[jobId]",guards:["hasActiveRecruiter(context)",'title="No access to this college"'],
   states:["workspace.job.title",'role="status"',"rounds"]},
- {route:"/hr/profile",guards:["hasActiveRecruiter(context)",'redirect("/dashboard")'],
-  states:['title="Profile"',"<DataTable","No active college grants are available."]},
+ {route:"/hr/profile",guards:["hasActiveRecruiter(context)",'title="Recruiter profile access denied"'],
+  states:['title="Your Profile"',"<DataTable","No active college grants are available."]},
  {route:"/hr/round-results",guards:["hasActiveRecruiter(context)",'redirect("/dashboard")'],
   states:["Round Results","Invalid round filters","No hiring drives","No rounds yet"]},
 ];
@@ -56,8 +56,12 @@ describe("UX-hr-page-states-chat15-01 recruiter route coverage",()=>{
   expect(s).toContain('from "@/app/(authenticated)/hr/conversations/page"');
   expect(s).not.toContain('from "@/app/(authenticated)/hr/notifications/page"');
  });
- it("HR-page /hr/colleges redirects obsolete standalone college list to current role-scoped Today",()=>{
-  expect(page("/hr/colleges")).toContain('redirect("/hr/home")');
+ it("HR-page /hr/colleges scopes the current college directory to authorized recruiter grants",()=>{
+  const s=page("/hr/colleges");
+  expect(s).toContain("hasActiveRecruiter(context)");
+  expect(s).toContain("getRecruiterSelfGrantOverview(context)");
+  expect(s).toContain('aria-label="Authorized colleges"');
+  expect(s).toContain('<PageHeader title="Colleges"');
  });
  it("HR-page /hr/placements remains a real role-gated Drives alias",()=>{
   const s=page("/hr/placements");

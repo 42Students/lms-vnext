@@ -51,8 +51,9 @@ describe("SA-tenants-modules-BRAND-06 public college-branding output hygiene",()
   const begin=service.indexOf("export async function getPublicCollegeBranding(");
   const finish=service.indexOf("export async function getCollegeBranding(",begin);
   const source=service.slice(begin,finish);
-  expect(source).toContain("sanitizePublicCollegeBranding(view)");
-  expect(source).toContain('logoUrl:"/api/colleges/"+college.id+"/branding/logo"');
+  expect(source).toContain("sanitizePublicCollegeBranding(toView(branding))");
+  expect(source).toContain('"/api/colleges/"+college.id+"/branding/logo"');
   expect(source).not.toContain("...toView(row),");
+  expect(source).toContain("logoUrl:uploadedLogo??safe.logoUrl");
  });
 });

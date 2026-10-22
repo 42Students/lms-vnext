@@ -18,7 +18,7 @@ describe("chat-16 OTP form real SSR accessibility and tenant channel contracts",
     expect(markup).toContain('aria-selected="false"');
     expect(markup).toContain('type="email"');
     expect(markup).toContain("Privacy Policy");
-    expect(markup).toContain("Continue");
+    expect(markup).toContain("Send code");
     expect(markup).not.toContain('name="code"');
   });
 

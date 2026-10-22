@@ -80,7 +80,7 @@ export default async function FacultyCalendarPage({
        <summary className="cursor-pointer text-sm font-semibold text-[var(--lms-warning-text)]">Failed to load course data</summary>
        <Alert tone="warning" className="mt-2">
          Calendar events may be incomplete. Your loaded class schedule remains available below.
-         <Link href={facultyMonthHref(grid.query)} className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">Retry class schedule</Link>
+         <Link href={facultyMonthHref(grid.query)} className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Retry class schedule</Link>
        </Alert>
      </details>:nextClasses.length===0?<p className="text-sm text-muted-foreground">No upcoming classes scheduled in the next 180 days.</p>:
        <ol className="divide-y divide-border border-y border-border">{nextClasses.map(item=><li key={item.id}
@@ -92,7 +92,7 @@ export default async function FacultyCalendarPage({
            }).format(item.startsAt)} IST · {item.sectionName}</p>
           </div>
           {item.deliveryId?<Link href={"/teacher/courses/"+encodeURIComponent(item.deliveryId)+"/home"}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Open course →</Link>:
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open course →</Link>:
            <span className="text-xs text-muted-foreground">Section-wide class</span>}
          </li>)}</ol>}
     </section>

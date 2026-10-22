@@ -7,7 +7,7 @@ describe("UX-superadmin-legacy-01",()=>{
   const code=source("src/app/(authenticated)/superadmin/[...legacy]/page.tsx");
   expect(code).toContain("isSuperAdmin(context)");
   expect(code).toContain("redirect(\"/dashboard\")");
-  expect(code).toContain("legacySuperAdminDestination(legacy,type)");
+  expect(code).toContain("legacySuperAdminDestination(legacy, type)");
   expect(code).toContain("if(!destination)notFound();");
   expect(code).toContain("query.q.length<=100");
   expect(code).toContain("return redirect(destination+");

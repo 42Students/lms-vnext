@@ -7,7 +7,10 @@ import {PATCH} from "@/app/api/admin/inbound-mail/status/route";
 
 vi.mock("@/auth/origin",()=>({isSameOriginRequest:vi.fn()}));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:vi.fn()}));
-vi.mock("@/modules/inbound-mail/admin-service",()=>({changeInboundMailStatusForAdmin:vi.fn()}));
+vi.mock("@/modules/inbound-mail/admin-service",()=>({
+ changeInboundMailStatusForAdmin:vi.fn(),
+ getInboundMailDetailForAdmin:vi.fn(async()=>({id:"11111111-1111-4111-8111-111111111111",status:"NEW",version:2})),
+}));
 vi.mock("@/lib/api-error",()=>({
  apiErrorResponse:vi.fn(()=>Response.json({error:"Request could not be completed"},{status:500})),
 }));

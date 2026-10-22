@@ -30,7 +30,12 @@ describe("SA-ADMIN-BODY-16 actual-byte-limited Super Admin mutation payloads",()
    "src/app/api/admin/placements/platform-policy/route.ts",
    "src/app/api/admin/placements/jobs/[jobId]/edit-published/route.ts",
   ]){
-   const s=readFileSync(path,"utf8");
+   const fullSource=readFileSync(path,"utf8");
+   // The same route may contain a read-only GET handler above the mutation.
+   const mutationStart=Math.max(fullSource.indexOf("export async function PUT("),
+    fullSource.indexOf("export async function PATCH("));
+   expect(mutationStart).toBeGreaterThanOrEqual(0);
+   const s=fullSource.slice(mutationStart);
    expect(s.indexOf("isSameOriginRequest(request)")).toBeLessThan(
      s.indexOf("readAdminPlacementJson(request,"));
    expect(s.indexOf("readAdminPlacementJson(request,")).toBeLessThan(
