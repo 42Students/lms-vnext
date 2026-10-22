@@ -446,7 +446,10 @@ export async function updateProgram(
 
   await assertProgramUnique(
     targetDepartmentId,
-    input,
+    {
+      ...(input.name !== undefined ? { name: input.name } : {}),
+      ...(input.code !== undefined ? { code: input.code } : {}),
+    },
     programId,
   );
 
@@ -461,8 +464,8 @@ export async function updateProgram(
     durationYears !== undefined ||
     rawDurationTerms !== undefined
       ? normalizeProgramDurationTerms({
-          durationYears,
-          durationTerms: rawDurationTerms,
+          ...(durationYears !== undefined ? { durationYears } : {}),
+          ...(rawDurationTerms !== undefined ? { durationTerms: rawDurationTerms } : {}),
         })
       : undefined;
 
