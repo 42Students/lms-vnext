@@ -205,7 +205,7 @@ export async function getCollegeRoundSlotAppointments(
      and oa.membership_id=me.membership_id
      and other.starts_at < ${slots.endsAt} + interval '15 minutes'
      and other.ends_at > ${slots.startsAt} - interval '15 minutes'
-     and not exists(select 1 from activity_events e where e.subject_id=other.id
+     and not exists(select 1 from activity_events e where e.subject_id=other.id::text
       and e.subject_type='placement_round_candidate_slot'
       and e.event_type in ('PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED','PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW')))` ,
   roomConflict:sql<boolean>`exists(
@@ -215,7 +215,7 @@ export async function getCollegeRoundSlotAppointments(
     and lower(trim(other.room))=lower(trim(${slots.room}))
     and other.starts_at < ${slots.endsAt} + interval '15 minutes'
     and other.ends_at > ${slots.startsAt} - interval '15 minutes'
-    and not exists(select 1 from activity_events e where e.subject_id=other.id
+    and not exists(select 1 from activity_events e where e.subject_id=other.id::text
      and e.subject_type='placement_round_candidate_slot'
      and e.event_type in ('PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED','PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW')))` ,
  }).from(slots).where(inArray(slots.id,ids)):[];

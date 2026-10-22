@@ -185,6 +185,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false, r
         onOpenChange={open=>{if(!open&&!pending){setAction(null);setReason("");setAcknowledged(false);}}}>
        {selected?.decision.allowed ? (
         <div className="mt-4 space-y-3">
+          {error?<InlineNotice tone="error" message={error}/>:null}
           <div className="space-y-2 rounded border border-border bg-surface p-3 text-sm">
             <strong>Readiness checklist</strong>
             {selected.decision.blockers.length>0?
