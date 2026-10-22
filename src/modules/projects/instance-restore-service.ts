@@ -54,7 +54,7 @@ export async function restoreProjectInstance(context:RequestContext,projectIdInp
         eq(activityEvents.subjectType,"project_instance"),eq(activityEvents.subjectId,project.id),
         eq(activityEvents.collegeId,scope.collegeId)))
       .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(1);
-    const status=mentor?restoredProjectStatus(lastArchive?.metadata?.previousStatus):"PLANNED";
+    const status=mentor?restoredProjectStatus(lastArchive?.metadata?.["previousStatus"]):"PLANNED";
     const mentorBlocker="Primary mentor missing. Assign an active mentor before resuming this workspace.";
     const now=new Date(Math.max(Date.now(),project.updatedAt.getTime()+1));
     const [restored]=await tx.update(projectInstances).set({status,archivedAt:null,

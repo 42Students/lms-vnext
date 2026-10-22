@@ -5,8 +5,12 @@ export function swapClassTeamMembers(groups: readonly ProjectTeam[], leftId: str
   const result=groups.map(group=>({name:group.name,membershipIds:[...group.membershipIds]}));
   const find=(id:string)=>result.flatMap((g,i)=>g.membershipIds.map((value,j)=>value===id?{group:i,index:j}:null)).filter((x):x is {group:number;index:number}=>x!==null);
   const a=find(leftId),b=find(rightId);
-  if(leftId===rightId||a.length!==1||b.length!==1||a[0].group===b[0].group)throw Error("TEAM_SWAP_INVALID");
-  result[a[0].group].membershipIds[a[0].index]=rightId;
-  result[b[0].group].membershipIds[b[0].index]=leftId;
+  const left=a[0],right=b[0];
+  if(leftId===rightId||a.length!==1||b.length!==1||!left||!right||left.group===right.group)throw Error("TEAM_SWAP_INVALID");
+  const leftGroup=result[left.group],rightGroup=result[right.group];
+  if(!leftGroup||!rightGroup||leftGroup.membershipIds[left.index]!==leftId||
+     rightGroup.membershipIds[right.index]!==rightId)throw Error("TEAM_SWAP_INVALID");
+  leftGroup.membershipIds[left.index]=rightId;
+  rightGroup.membershipIds[right.index]=leftId;
   return result;
 }

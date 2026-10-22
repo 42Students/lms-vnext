@@ -48,7 +48,10 @@ export function previewClassTeams(raw: TeamSplitInput): ProjectTeam[] {
     };
     for (let i = students.length - 1; i > 0; i--) {
       const j = Math.floor(random() * (i + 1));
-      [students[i], students[j]] = [students[j], students[i]];
+      const left=students[i],right=students[j];
+      if(left===undefined||right===undefined)throw new Error("Invalid shuffle position");
+      students[i]=right;
+      students[j]=left;
     }
   }
   const teamCount = Math.ceil(students.length / input.teamSize);
@@ -76,12 +79,15 @@ export function movePreviewMember(groups: readonly ProjectTeam[], membershipId: 
   const origins = copies.filter(group => group.membershipIds.includes(membershipId));
   if (origins.length !== 1) throw new Error("Student must belong to exactly one team");
   const origin = origins[0];
+  if(!origin)throw new Error("Student must belong to exactly one team");
+  const destination=copies[targetIndex];
+  if(!destination)throw new Error("Invalid destination team");
   const sourceIndex = copies.indexOf(origin);
   if(sourceIndex===targetIndex)return copies;
   // A planner must never create an empty team: the server's strict
   // classTeamPreviewSchema rejects empty teams on apply.
   if(origin.membershipIds.length<=1)throw new Error("TEAM_PREVIEW_EMPTY_TEAM");
   origin.membershipIds = origin.membershipIds.filter(id => id !== membershipId);
-  copies[targetIndex].membershipIds.push(membershipId);
+  destination.membershipIds.push(membershipId);
   return copies;
 }

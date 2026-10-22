@@ -76,7 +76,9 @@ export function makeRecruiterReplyAddress(token:string,domain:string):string|nul
 export function isRecruiterReplyAddress(value:string,domain:string):boolean{
  const parts=/^r-([a-f0-9]{32})@([a-z0-9.-]+)$/i.exec(value);
  if(!parts)return false;
- const expected=makeRecruiterReplyAddress(parts[1].toLowerCase(),domain.trim().toLowerCase());
+ const token=parts[1];
+ if(token===undefined)return false;
+ const expected=makeRecruiterReplyAddress(token.toLowerCase(),domain.trim().toLowerCase());
  return expected!==null&&expected===value.toLowerCase();
 }
 export function recruiterMailBridgeSignature(secret:string,rawBody:string):string{

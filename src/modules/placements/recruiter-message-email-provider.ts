@@ -65,11 +65,11 @@ export function recruiterDigestReadiness(
  catch{return {configured:false,reason:"PROVIDER_NOT_CONFIGURED"};}
  if(endpoint.protocol!=="https:"||endpoint.username||endpoint.password||!config.token.trim())
   return {configured:false,reason:"PROVIDER_NOT_CONFIGURED"};
- const key=(env.RECRUITER_MESSAGE_DIGEST_TEMPLATE_KEY??"").trim();
+ const key=(env["RECRUITER_MESSAGE_DIGEST_TEMPLATE_KEY"]??"").trim();
  if(!key||!isCampaignTemplateKey(key)||key===config.otpTemplateKey)
   return {configured:false,reason:"TEMPLATE_NOT_CONFIGURED"};
- if(!isRecruiterReplyAddress("r-"+"a".repeat(32)+"@"+(env.RECRUITER_MESSAGE_REPLY_DOMAIN??""),
-  env.RECRUITER_MESSAGE_REPLY_DOMAIN??""))
+ if(!isRecruiterReplyAddress("r-"+"a".repeat(32)+"@"+(env["RECRUITER_MESSAGE_REPLY_DOMAIN"]??""),
+  env["RECRUITER_MESSAGE_REPLY_DOMAIN"]??""))
   return {configured:false,reason:"REPLY_DOMAIN_INVALID"};
  return {configured:true,reason:"READY"};
 }
@@ -80,13 +80,13 @@ export function recruiterDigestReadiness(
 export function recruiterDigestWorkspaceUrl(
  env:Record<string,string|undefined>,collegeId?:string,
 ):string|null{
- const raw=(env.RECRUITER_MESSAGE_PUBLIC_BASE_URL??"").trim();
+ const raw=(env["RECRUITER_MESSAGE_PUBLIC_BASE_URL"]??"").trim();
  if(!raw)return null;
  try{
   const site=new URL(raw);
   if(site.protocol!=="https:"||site.username||site.password||
    site.pathname!=="/"||site.search||site.hash)return null;
-  const allowed=(env.RECRUITER_MESSAGE_VERIFIED_PUBLIC_ORIGINS??"")
+  const allowed=(env["RECRUITER_MESSAGE_VERIFIED_PUBLIC_ORIGINS"]??"")
    .split(",").map(item=>item.trim().toLowerCase()).filter(Boolean);
   if(!allowed.includes(site.origin.toLowerCase()))return null;
   const url=new URL("/recruiter/messages",site);
@@ -131,22 +131,22 @@ export async function sendRecruiterMessageDigest(
  if(!placementEmailChannelEnabled("RECRUITER_MESSAGE_DIGEST",env))return false;
  // The legacy provider key appeared in source. No production digest may send
  // until the operator attests that leaked credentials were revoked.
- if((env.APP_ENV==="production"||env.STAGE==="prod"||env.STAGE==="production")&&
-    env.ZEPTOMAIL_LEGACY_KEY_REVOKED!=="confirmed")return false;
+ if((env["APP_ENV"]==="production"||env["STAGE"]==="prod"||env["STAGE"]==="production")&&
+    env["ZEPTOMAIL_LEGACY_KEY_REVOKED"]!=="confirmed")return false;
  const recipient=normalizeRecipient("EMAIL",digest.recipient);
  if(!canContactRecipientAtRuntime("EMAIL",recipient,env))return false;
  const config=readZeptoMailConfig(env);
- const key=(env.RECRUITER_MESSAGE_DIGEST_TEMPLATE_KEY??"").trim();
+ const key=(env["RECRUITER_MESSAGE_DIGEST_TEMPLATE_KEY"]??"").trim();
  let endpoint:URL;
  try{endpoint=new URL(config.apiUrl);}catch{return false;}
  if(endpoint.protocol!=="https:"||endpoint.username||endpoint.password)return false;
  if(!config.token.trim()||!key||!isCampaignTemplateKey(key)||key===config.otpTemplateKey ||
-    !isRecruiterReplyAddress(digest.replyTo,env.RECRUITER_MESSAGE_REPLY_DOMAIN??"")||
+    !isRecruiterReplyAddress(digest.replyTo,env["RECRUITER_MESSAGE_REPLY_DOMAIN"]??"")||
     digest.messages.length===0)return false;
  // A display name is allowed to vary; a From address never varies unless
  // the operator has separately marked that exact address as verified.
  const verifiedFromAddresses=[
-  config.fromAddress,...(env.ZEPTOMAIL_VERIFIED_FROM_ADDRESSES??"").split(","),
+  config.fromAddress,...(env["ZEPTOMAIL_VERIFIED_FROM_ADDRESSES"]??"").split(","),
  ].map(address=>normalizeRecipient("EMAIL",address)).filter(Boolean);
  const requestedFrom=digest.fromAddress?
   normalizeRecipient("EMAIL",digest.fromAddress):normalizeRecipient("EMAIL",config.fromAddress);

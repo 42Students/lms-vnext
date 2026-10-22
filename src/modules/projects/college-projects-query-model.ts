@@ -37,11 +37,11 @@ export function parseCollegeProjectsQuery(
       Object.values(params).some(Array.isArray)) {
     return schema.safeParse(null);
   }
-  const q = first(params.q);
-  const status = first(params.status);
-  const view = first(params.view);
-  const page = first(params.page);
-  const pageSize = first(params.pageSize);
+  const q = first(params["q"]);
+  const status = first(params["status"]);
+  const view = first(params["view"]);
+  const page = first(params["page"]);
+  const pageSize = first(params["pageSize"]);
   // Old bookmarks may carry obsolete status/rows values. Do not turn a
   // harmless stale facet into an empty/error page or lose a valid deep page.
   const validStatus=statuses.some(value=>value===status);
