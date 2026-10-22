@@ -11,8 +11,8 @@ export async function POST(request:Request,{params}:{params:Promise<{token:strin
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const {token}=await params;
  if(!isRecruiterInviteTokenShape(token))return NextResponse.json({error:"INVITE_INVALID"},{status:404});
- if(!recruiterInviteAcceptReady({db09:process.env.DB09_TPO_API_READY,
-  otp:process.env.TPO_RECRUITER_OTP_READY,delivery:process.env.TPO_RECRUITER_OTP_DELIVERY_READY}))
+ if(!recruiterInviteAcceptReady({db09:process.env["DB09_TPO_API_READY"],
+  otp:process.env["TPO_RECRUITER_OTP_READY"],delivery:process.env["TPO_RECRUITER_OTP_DELIVERY_READY"]}))
    return NextResponse.json({error:"RECRUITER_INVITE_NOT_READY"},{status:503});
  let email:string|undefined;
  if(request.body!==null){
