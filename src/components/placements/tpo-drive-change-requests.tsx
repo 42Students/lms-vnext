@@ -209,7 +209,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
     <article id={"change-request-"+item.id} key={item.id} className="scroll-mt-24 space-y-3 border-b border-border py-5">
      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
       <h3 className="font-semibold">{LEGACY_DRIVE_CHANGE_FIELD_LABELS[item.field as keyof typeof LEGACY_DRIVE_CHANGE_FIELD_LABELS]??(item.legacyField??item.field).replaceAll("_"," ")} · {item.mode==="SUGGEST"?"propose":item.mode.toLowerCase()}</h3>
-      <StatusBadge tone={item.status==="ACCEPTED"?"success":item.status==="DECLINED"?"error":item.status==="OPEN"?"warning":"neutral"}>{item.status==="OPEN"?"Waiting":item.status==="DECLINED"?"Declined":item.status==="REPLIED"?"Answered":item.status.replaceAll("_"," ")}</StatusBadge>
+      <StatusBadge tone={item.status==="ACCEPTED"?"success":item.status==="DECLINED"?"error":item.status==="OPEN"?"warning":"neutral"}>{item.status==="OPEN"?"Waiting":item.status==="DECLINED"||item.status==="REPLIED"?"Declined":item.status==="ANSWERED"?"Answered":item.status.replaceAll("_"," ")}</StatusBadge>
      </div>
      {item.mode==="SUGGEST"?<p className="whitespace-pre-wrap break-words text-sm leading-[22px]">
        {readableValue(item.legacyField??item.field,item.currentValue)} <span aria-hidden="true">→</span> {readableValue(item.legacyField??item.field,item.proposedValue)}
