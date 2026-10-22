@@ -7,10 +7,11 @@ describe("UX-tracker-shared-nav-02",()=>{
   const nav=source("src/components/tracker/tracker-admin-nav.tsx");
   expect(nav).toContain("usePathname()");
   for(const destination of ["/tracker/issues","/tracker","/tracker/logs","/tracker/audit-findings"])
-   expect(nav).toContain(`href="${destination}"`);
+   expect(nav).toContain(`href: "${destination}"`);
   for(const label of ["Issues","Report Issue","Logs","Audit findings","Skip to content"])
    expect(nav).toContain(label);
-  expect(nav).toContain('aria-current={pathname === "/tracker" ? "page" : undefined}');
+  expect(nav).toContain('value={pathname.startsWith("/tracker/issues")');
+  expect(nav).toContain('<Tabs renderPanel={false} ariaLabel="42 Tracker"');
   expect(nav).toContain("pathname.startsWith");
   expect(nav).toContain("min-h-11");
   expect(nav).toContain("focus-visible:outline-2");

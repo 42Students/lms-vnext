@@ -83,7 +83,7 @@ export function ProjectParticipantListControls({
           defaultValue={query.search ?? ""}
           aria-label="Search my projects"
           placeholder="Search project title, course or slug"
-          className="w-full sm:w-[300px]"
+          className="min-h-11 w-full min-w-0 max-w-full text-base font-normal text-foreground sm:w-[300px] md:min-h-9 md:text-sm"
         />
       </label>
 

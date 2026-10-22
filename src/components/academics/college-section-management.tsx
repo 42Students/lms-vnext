@@ -153,12 +153,12 @@ export function CollegeClassCreate({ cohorts, periods,
         {!cohorts.length
           ? <>No planned or active batches in this college. <Link href="/college/academics" className="font-semibold underline">Set up programs and batches</Link> first.</>
           : <>No usable academic periods in this college. Create a period first.{" "}
-            <Link href={academicSetupHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Set up academic periods</Link>
+            <Link href={academicSetupHref} className="inline-flex min-h-11 items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Set up academic periods</Link>
           </>}
       </p>
       : <form ref={formRef} noValidate onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)]">
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
-          <Input type="search" aria-label="Search programs" placeholder="Search programs" value={programSearch} onChange={event=>setProgramSearch(event.target.value)} className="min-h-9 w-full" />
+          <Input type="search" aria-label="Search programs" placeholder="Search programs" value={programSearch} onChange={event=>setProgramSearch(event.target.value)} className="min-h-11 w-full md:min-h-9" />
           <Select required name="programId" aria-invalid={Boolean(fieldErrors.programId)} value={programId} onChange={event=>{setProgramId(event.target.value);setCohortId("");}}
            className="min-h-11 w-full md:min-h-9">
            <option value="">Select program</option>

@@ -169,6 +169,6 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
       confirmation before publishing grades. No answers, submission body, learner contacts
       or stored attachments are fetched by this directory.
     </p>
-    <Link href="/admin/courses" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 print:hidden">← Courses</Link>
+    <Link href="/admin/courses" className="inline-flex min-h-11 items-center font-semibold text-link hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 print:hidden">← Courses</Link>
   </div>;
 }

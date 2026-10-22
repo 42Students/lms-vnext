@@ -2,30 +2,34 @@ import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 import {moduleDisableImpactSummary} from "@/modules/module-access/admin-module-impact-model";
 
-const unavailable="Impact counts unavailable. Recheck this college before changing module access.";
+const unavailable={
+ projects:"Mentor-impact data is unavailable. This does not mean disabling Projects is safe: check active workspaces, learner submissions and upcoming meetings before proceeding.",
+ placements:"Impact counts unavailable. Recheck this college before changing module access; this is not proof that disabling it is safe.",
+};
 describe("SA-tenants-modules-MOD-IMPACT-06 module disabling cannot leak or fabricate risk counts",()=>{
  it("explains valid Projects impact with nonnegative exact mentor count",()=>{
-  expect(moduleDisableImpactSummary("projects",[0])).toContain("0 active primary-mentor assignments");
-  expect(moduleDisableImpactSummary("projects",[12])).toContain("12 active primary-mentor assignments");
-  expect(moduleDisableImpactSummary("projects",[12])).toContain("not a safety check");
+  expect(moduleDisableImpactSummary("projects",[0])).toContain("No active primary mentors were found");
+  expect(moduleDisableImpactSummary("projects",[12])).toContain("12 active primary-mentor assignments are recorded");
+  expect(moduleDisableImpactSummary("projects",[12])).toContain("Learners, other members, pending submissions and meetings may also be affected");
  });
  it("explains all three separate placement dimensions without merging populations",()=>{
-  const summary=moduleDisableImpactSummary("placements",[3,9,2]);
+  const summary=moduleDisableImpactSummary("placements",[3,9,2,4]);
   expect(summary).toContain("3 active drives");
   expect(summary).toContain("9 in-progress applications");
   expect(summary).toContain("2 pending offers");
+  expect(summary).toContain("4 upcoming interviews");
   expect(summary).toContain("Existing data is retained");
  });
  it("fails closed on missing, negative, fractional, nonfinite or unsafe counts",()=>{
   for(const module of ["projects","placements"] as const){
    for(const value of [-2,0.75,Number.NaN,Number.NEGATIVE_INFINITY,Number.POSITIVE_INFINITY,
     Number.MAX_SAFE_INTEGER+1]){
-    const values=module==="projects"?[value]:[1,value,3];
-    expect(moduleDisableImpactSummary(module,values)).toBe(unavailable);
+    const values=module==="projects"?[value]:[1,value,3,4];
+    expect(moduleDisableImpactSummary(module,values)).toBe(unavailable[module]);
    }
-   expect(moduleDisableImpactSummary(module,[])).toBe(unavailable);
+   expect(moduleDisableImpactSummary(module,[])).toBe(unavailable[module]);
   }
-  expect(moduleDisableImpactSummary("placements",[1,2])).toBe(unavailable);
+  expect(moduleDisableImpactSummary("placements",[1,2])).toBe(unavailable.placements);
  });
  it("retains historical electives message without claiming student counts",()=>{
   expect(moduleDisableImpactSummary("electives",[])).toContain("No deletion is performed");

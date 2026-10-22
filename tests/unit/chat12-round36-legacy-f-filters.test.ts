@@ -13,7 +13,8 @@ describe("TPO Students historical grid filters",()=>{
  });
  it("TPO-students-24 retains active filter chips and Clear all with live server match counts",()=>{
   const panel=source("src/components/tpo/tpo-grid-filter-panel.tsx");
-  expect(panel).toContain("Active student filters");
+  expect(panel).toContain('aria-label="Active grid filters"');
+  expect(panel).toContain("activeCount} active");
   expect(panel).toContain(">Clear all</button>");
   expect(source("src/app/(authenticated)/tpo/students/page.tsx")).toContain("students in this view");
  });

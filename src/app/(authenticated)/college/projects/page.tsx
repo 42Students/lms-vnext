@@ -62,7 +62,7 @@ export default async function CollegeProjectsPage({
     if (query.q) params.set("q", query.q);
     if (query.status) params.set("status", query.status);
     if (query.page > 1) params.set("page", String(query.page));
-    if (query.pageSize !== 20) params.set("pageSize", String(query.pageSize));
+    if (query.pageSize && query.pageSize !== 20) params.set("pageSize", String(query.pageSize));
     return "/college/projects?" + params.toString();
   };
   // The strict service schema accepts database filters only, not the

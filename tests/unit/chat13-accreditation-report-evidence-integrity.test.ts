@@ -9,7 +9,7 @@ describe("chat-13 Super Admin accreditation evidence-only report adversarial rec
   const facts: AccreditationFacts = {
     jobs: [
       { id: "job-a", title: "Engineer", companyId: "company-a",
-        companyName: "\u200b@HYPERLINK(1)", employmentType: "FULL_TIME" },
+        companyName: "\u200b@HYPERLINK(1)", employmentType: "FULL_TIME", countsAsPlaced:true },
     ],
     applications: [
       { id: "app-a", jobId: "job-a", membershipId: "student-a",

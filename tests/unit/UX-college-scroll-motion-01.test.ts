@@ -17,9 +17,11 @@ describe("UX-college-scroll-motion-01 hidden scrollbars retain honest cues",()=>
   });
   it("directory wide table has a keyboard-reachable responsive edge cue",()=>{
     const s=component("college-role-directory-workspace");
-    expect(s).toContain('import { ScrollCue } from "@/components/ui/scroll-cue"');
-    expect(s).toContain('<ScrollCue axis="x" label={title + " scrollable results columns"}>');
-    expect(s).toContain("min-w-[45rem]");
+    expect(s).toContain('import { DataTable, type DataTableColumn } from "@/components/ui/data-table"');
+    expect(s).toContain('<DataTable');
+    expect(s).toContain('caption={title+" directory"}');
+    const table=read("src/components/ui/data-table.tsx");
+    expect(table).toContain('<ScrollCue axis="x"');
     const cue=read("src/components/ui/scroll-cue.tsx");
     expect(cue).toContain("overscroll-x-contain");
     expect(cue).toContain("tabIndex={edges.scrollable ? 0 : -1}");

@@ -42,7 +42,7 @@ describe("TPO-settings-audit-60 recruiter grant exports keep scope and input saf
  it("accepts bounded caller filters while deriving officer scope server-side",async()=>{
   const response=await GET(request("?status=ACTIVE&q=Example"));
   expect(response.status).toBe(200);
-  expect(response.headers.get("Content-Disposition")).toContain('filename="recruiters.csv"');
+  expect(response.headers.get("Content-Disposition")).toMatch(/filename="recruiters - [0-9]{1,2} [A-Za-z]{3} [0-9]{4}\.csv"/);
   expect(response.headers.get("X-Content-Type-Options")).toBe("nosniff");
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
   expect(mocks.context).toHaveBeenCalledTimes(1);
@@ -57,7 +57,7 @@ describe("TPO-settings-audit-60 recruiter grant exports keep scope and input saf
   expect(response.status).toBe(200);
   expect(response.headers.get("Content-Type"))
    .toBe("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-  expect(response.headers.get("Content-Disposition")).toContain('filename="recruiters.xlsx"');
+  expect(response.headers.get("Content-Disposition")).toMatch(/filename="recruiters - [0-9]{1,2} [A-Za-z]{3} [0-9]{4}\.xlsx"/);
   const bytes=new Uint8Array(await response.arrayBuffer());
   expect(Array.from(bytes.slice(0,4))).toEqual([80,75,3,4]);
   expect(mocks.list).toHaveBeenCalledTimes(1);

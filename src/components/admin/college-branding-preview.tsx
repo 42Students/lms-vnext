@@ -226,7 +226,7 @@ export function CollegeBrandingPreview({
             {(["desktop","mobile"] as const).map(mode=><button type="button" key={mode}
               aria-pressed={previewMode===mode}
               onClick={()=>setPreviewMode(mode)}
-              className={"min-h-9 rounded-md px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary "+
+              className={"min-h-11 md:min-h-9 rounded-md px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary "+
                 (previewMode===mode?"bg-primary text-white":"bg-transparent text-body hover:bg-primary-subtle")}>
               {mode==="desktop"?"Desktop":"Mobile"}
             </button>)}
