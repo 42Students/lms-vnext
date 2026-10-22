@@ -21,6 +21,26 @@ export const LEGACY_DRIVE_CHANGE_ACTION_LABELS={
  WITHDRAW:"Withdraw",COMMENT:"Comment",
 } as const;
 
+/** Legacy browser date-only fields meant the end of that civil day in
+ * Asia/Kolkata; typed request fields use explicit offset instants. Do not
+ * parse YYYY-MM-DD through new Date(raw), which would assume UTC and
+ * accidentally close applications five and a half hours early. */
+export function canonicalLegacyDriveChangeDeadline(raw:string):string{
+ const value=raw.trim();
+ const day=/^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+ if(day){
+  const year=Number(day[1]),month=Number(day[2]),date=Number(day[3]);
+  const test=new Date(Date.UTC(year,month-1,date));
+  if(test.getUTCFullYear()!==year||test.getUTCMonth()+1!==month||
+     test.getUTCDate()!==date)
+   throw new Error("Invalid historical deadline date");
+  return value+"T23:59:59+05:30";
+ }
+ if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})$/.test(value)||
+    !Number.isFinite(Date.parse(value)))
+  throw new Error("Deadline needs an explicit timezone");
+ return value;
+}
 /** Legacy request bodies used kind/note and field labels. This adapter maps
  * them BEFORE the strict, scoped command parser, preserving typed vNext calls.
  * A legacy Reply declines the proposal with status REPLIED in the old UI;
@@ -44,6 +64,8 @@ export function parseLegacyDriveChangeCommand(raw:unknown){
   return driveChangeCommandSchema.parse({
    ...rest,action,field:chosen,mode:chosen==="OTHER"?"ASK":requestedMode,
    reason:rest.reason??note??"",
+   proposedValue:chosen==="DEADLINE"&&typeof rest.proposedValue==="string"
+     ?canonicalLegacyDriveChangeDeadline(rest.proposedValue):rest.proposedValue,
   });
  }
  // COMMENT remains a message, independent from a legacy Reply decision.
