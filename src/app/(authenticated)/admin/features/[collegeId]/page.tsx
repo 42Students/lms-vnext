@@ -307,7 +307,8 @@ export default async function SuperAdminCollegeModuleAccessPage({
 
       <section id="academic-module-rules" aria-label="Academic module rules" className="scroll-mt-24 border-t border-border pt-6">
         <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Department, Program, Batch and Class access</h2>
-        <p className="mt-2 text-sm text-body">Select an academic scope to set Projects or Electives On, Off, or Inherit, with an optional lock. Placements eligibility is decided by the placement cell in TPO Batches; college-or-broader module access is shown above. Lower-level Placements rules are ignored by the resolver.</p>
+        <p className="mt-2 text-sm text-body">Select an academic scope to set Projects or Electives On, Off, or Inherit, with an optional lock. Lower-level Placements rules are ignored by the resolver.</p>
+        <p className="mt-2 text-sm text-body">Placements is switched for the whole college. Who is in placements is decided by the placement cell on the Batches page.</p>
         {academicRead.ok ? <>
           <DescendantFeatureRuleEditor collegeId={college.id} scopes={academicRead.value}/>
           {academicRead.value.length>0?<div className="min-w-0 overflow-x-auto">

@@ -85,7 +85,7 @@ export function ProjectResourceAuditList({ events }: { events: readonly Resource
         {row.action==="UNKNOWN"?row.event.eventType:labelByAction[row.action]}
       </StatusBadge> },
     { key: "actor", header: "Actor", mobilePriority: "secondary",
-      cell: row => <span><span className="block">{row.event.actorDisplayName || "System"}</span>
+      cell: row => <span><span className="block">{row.event.actorDisplayName || row.event.actorUserId || "System"}</span>
         {row.event.actorType?<span className="block text-xs text-muted-foreground">{row.event.actorType}</span>:null}
       </span> },
     { key: "when", header: "When", mobilePriority: "secondary",
@@ -94,7 +94,7 @@ export function ProjectResourceAuditList({ events }: { events: readonly Resource
           dateStyle:"full",timeStyle:"long",timeZone:"Asia/Kolkata",
         })}>{formatWhen(row.event.occurredAt)}</time> },
   ];
-  return <section aria-label="Resource activity" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
+  return <section aria-label="Resource activity" className="min-w-0 space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 sm:p-5">
     <div>
       <p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">Resource activity</p>
       <h3 className="mt-1 text-base font-semibold text-foreground">See who changed project resources and when</h3>
@@ -150,7 +150,7 @@ export function ProjectResourceAuditList({ events }: { events: readonly Resource
       </div>
     </div> : null}
     {events.length >= 100 ? <p className="text-xs text-muted-foreground">
-      This snapshot contains at most 100 recent project events. Older resource changes may only be visible in the full project audit.
+      The workspace activity snapshot is limited to recent events. The four totals only cover loaded events. Open the full audit trail for older resource history.
     </p> : null}
   </section>;
 }

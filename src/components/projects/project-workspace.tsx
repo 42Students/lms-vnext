@@ -1121,7 +1121,10 @@ export function ProjectWorkspace({
           <AddProjectMemberControl projectId={workspace.project.id}/>
         </div>:null}
         {mode==="ADMIN"?<ProjectRosterTable projectId={workspace.project.id} rows={workspace.members.map(member=>{
-          const assigned=workspace.tasks.filter(task=>task.assigneeMembershipId===member.membershipId);
+          // Deleted tasks are not part of a member's current assignment coverage.
+          // Match membership UUIDs; legacy numeric assignee IDs are not valid here.
+          const assigned=workspace.tasks.filter(task=>!task.deletedAt&&
+            task.assigneeMembershipId===member.membershipId);
           const last=assigned.reduce<Date|null>((mostRecent,task)=>
             !mostRecent || task.updatedAt>mostRecent ? task.updatedAt : mostRecent,null);
           return {
@@ -2337,7 +2340,8 @@ export function ProjectWorkspace({
             <ProjectResourceAuditList events={workspace.activity.map(event => ({
             id: event.id, eventType: event.eventType, summary: event.summary,
             subjectLabel: event.subjectLabel, actorDisplayName: event.actorDisplayName,
-            actorType:event.actorType, occurredAt: event.occurredAt.toISOString(),
+            actorType:event.actorType,actorUserId:event.actorUserId,
+            occurredAt: event.occurredAt.toISOString(),
           }))} /> : null}
           {!workspace.activityLoadError&&mode!=="ADMIN"?<ProjectActivityFilteredList
             projectId={workspace.project.id} events={workspace.activity}

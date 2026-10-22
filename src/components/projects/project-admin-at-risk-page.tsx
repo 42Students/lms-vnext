@@ -18,11 +18,22 @@ import {
   listProjectAdminRiskQueue,
 } from "@/modules/projects/admin-insights-service";
 import {ProjectAtRiskPageExport} from "./project-at-risk-page-export";
-import {AuthorizationError} from "@/modules/permissions/policy";
 import {ProjectsServiceError} from "@/modules/projects/errors";
 import {formatProjectAdminActivityDateIst as formatDate,safeProjectAdminUtcIso} from "@/modules/projects/project-admin-date-model";
 import {FilterBar} from "@/components/ui/filter-bar";
 import {DataTable} from "@/components/ui/data-table";
+
+function RiskActionIcon({type}:{type:"open"|"reassign"|"review"}){
+ const paths={
+  open:"M7 17 17 7M9 7h8v8M5 5h7M5 5v14h14v-7",
+  reassign:"M4 21h4l11-11-4-4L4 17v4zM13 8l4 4",
+  review:"M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h5",
+ };
+ return <svg aria-hidden="true" viewBox="0 0 24 24" className="mr-1 inline-block size-4 shrink-0"
+   fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+   <path d={paths[type]}/>
+ </svg>;
+}
 
 function riskHref(basePath:string,query:ProjectAdminCollectionQuery,bucket:string|null){
  const params=new URLSearchParams();
@@ -70,8 +81,6 @@ export async function ProjectAdminAtRiskPage({
     .then(value => ({ ok: true as const, value }))
     .catch(error => ({ ok: false as const, error }));
   if (!riskResult.ok) {
-    const denied=riskResult.error instanceof AuthorizationError ||
-      (riskResult.error instanceof ProjectsServiceError && riskResult.error.code==="PROJECT_ACCESS_DENIED");
     return <div className="min-w-0 space-y-4">
       <PageHeader title="At-risk projects"
         description="Workspaces with no recent activity, an active blocker, or a pending review."
@@ -87,9 +96,10 @@ export async function ProjectAdminAtRiskPage({
     </div>;
   }
   const result = riskResult.value;
-  const dynamicDescription=result.total>0
-    ? result.total+" "+(result.total===1?"workspace needs":"workspaces need")+" attention. Reason counts cover the whole filtered report, not only this page."
-    : "No at-risk projects detected for this college.";
+  const dynamicDescription=result.candidatesTotal>0
+    ? result.candidatesTotal+" workspace"+(result.candidatesTotal===1?"":"s")+
+      " need attention (stalled, blocked, or waiting for review). Reason counts cover the whole college."
+    : "Workspaces with activity, blocker, or pending-review signals.";
   const workspaceHref=(project:{id:string;riskReasons:string[]})=>basePath+"/"+
     encodeURIComponent(project.id)+"/summary?from=at-risk&reason="+
     encodeURIComponent(project.riskReasons[0]??"Project needs attention");
@@ -150,14 +160,16 @@ export async function ProjectAdminAtRiskPage({
 
       <DataTable caption="At-risk project workspaces" rows={result.items}
         mobileMode="scroll"
-        sortHref={column=>riskHref(basePath,{
-          ...query,riskSort:column==="workspace"?"WORKSPACE":
-            query.riskSort==="INACTIVE"?"INACTIVE_DESC":"INACTIVE",
+        sortHref={(column,next)=>riskHref(basePath,{
+          ...query,riskSort:column==="workspace"
+            ?next==="descending"?"WORKSPACE_DESC":"WORKSPACE"
+            :next==="descending"?"INACTIVE":"INACTIVE_DESC",
         },query.riskBucket??null)}
         getRowKey={project=>project.id}
         columns={[
           {key:"workspace",header:"Workspace",mobilePriority:"primary",sortable:true,
-           sortDirection:query.riskSort==="WORKSPACE"?"ascending":"none",
+           sortDirection:query.riskSort==="WORKSPACE"?"ascending":
+             query.riskSort==="WORKSPACE_DESC"?"descending":"none",
            cell:project=><Link href={workspaceHref(project)}
              className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
              {project.title}</Link>},
@@ -179,8 +191,8 @@ export async function ProjectAdminAtRiskPage({
              {!project.riskReasons.length?<span>—</span>:null}
            </div>},
           {key:"inactive",header:"Inactive",mobilePriority:"secondary",sortable:true,
-           sortDirection:query.riskSort==="INACTIVE"?"ascending":
-             query.riskSort==="INACTIVE_DESC"?"descending":"none",
+           sortDirection:query.riskSort==="INACTIVE"?"descending":
+             query.riskSort==="INACTIVE_DESC"?"ascending":"none",
            cell:project=><span title={"Last activity "+formatDate(project.lastActivityAt)}>
              {!project.riskReasons.includes("Stalled")?"—":project.inactiveDays===0?"Today":project.inactiveDays+"d"}</span>},
           {key:"blocker",header:"Blocker",mobilePriority:"secondary",
@@ -189,15 +201,17 @@ export async function ProjectAdminAtRiskPage({
           {key:"actions",header:"Actions",mobilePriority:"action",
            cell:project=><div className="flex flex-col items-start gap-1">
              <Link href={workspaceHref(project)}
-              className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Open</Link>
+              className="inline-flex min-h-11 items-center text-link underline md:min-h-9">
+               <RiskActionIcon type="open"/>Open</Link>
              <Link href={basePath+"/reassign-mentor?fromMentorId="+
                encodeURIComponent(project.mentorMembershipId??"UNASSIGNED")}
                className="inline-flex min-h-11 items-center text-link underline md:min-h-9">
+               <RiskActionIcon type="reassign"/>
                {project.mentorMembershipId?"Reassign mentor":"Assign mentor"}</Link>
              {project.riskReasons.includes("Pending review")?
                <Link href={basePath+"/submissions?tab=submitted&projectId="+encodeURIComponent(project.id)}
                  className="inline-flex min-h-11 items-center text-link underline md:min-h-9">
-                 Review submission</Link>:null}
+                 <RiskActionIcon type="review"/>Review submission</Link>:null}
            </div>},
         ]}
         empty={<EmptyState title={result.total>0?"No workspaces on this page":"No at-risk projects"}

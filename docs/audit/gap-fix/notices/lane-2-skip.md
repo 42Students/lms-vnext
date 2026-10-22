@@ -183,3 +183,13 @@ The packets below were MOVED to other lanes (whole files). Do NOT work on them: 
 - W3_src_app_authenticated_college_placements_jobs_jobId_shortlisted_page.tsx.md
 - W3_src_modules_placements_super-admin-drive-pipeline-service.ts.md
 - W2_src_components_courses_faculty-course-filter-auto-submit.tsx.md
+- W2_src_modules_courses_faculty-quiz-attempts-service.ts.md
+- W2_src_app_api_placements_tpo_settings_season_route.ts.md
+- W2_src_modules_placements_tpo-global-requests-service.ts.md
+- W2_src_modules_courses_admin-learning-read-model.ts.md
+- W2_src_app_api_courses_college_learner-progress_export_route.ts.md
+- W2_src_modules_placements_learner-placement-alerts-service.ts.md
+- W2_src_components_placements_placement-operations-workspace.tsx.md
+- W2_src_modules_courses_assignment-file-readiness.ts.md
+- W2_src_modules_placements_hr-today-action-queue-model.ts.md
+- W2_src_modules_placements_recruiter-company-team-service.ts.md
