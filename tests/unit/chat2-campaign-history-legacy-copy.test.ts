@@ -16,8 +16,8 @@ describe("TPO legacy Emails history copy",()=>{
   expect(page).toContain("No emails sent from Engage yet.");
   expect(page).toContain("To send one, select recruiters in the table and choose Act, then Send an email.");
   expect(page).toContain("{item.sent} sent");
-  expect(page).toContain('item.skipped+" skipped"');
-  expect(page).toContain('item.failed+" failed"');
+  expect(page).toContain("{item.skipped} skipped");
+  expect(page).toContain("{item.failed} failed");
   expect(page).toContain("tpoCampaignHistoryTime(new Date(item.created_at))");
   expect(error).toContain("Couldn't load emails");
   expect(error).toContain("Retry");
