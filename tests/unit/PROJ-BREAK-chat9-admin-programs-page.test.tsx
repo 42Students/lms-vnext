@@ -63,7 +63,7 @@ describe("Super Admin last-third Programs: cross-role, partial outage and scoped
   it("UX-admin-programs-36 disabled and College Admin actors never read private program membership",async()=>{
     for(const role of ["COLLEGE","DISABLED"] as const){
       state.role=role;
-      const content=readable(await SuperAdminProgramsPage()).join(" ");
+      const content=readable(await SuperAdminProgramsPage({searchParams:Promise.resolve({})})).join(" ");
       expect(content).toContain("Program access denied");
       expect(content).toContain("Back to dashboard");
     }
@@ -73,14 +73,14 @@ describe("Super Admin last-third Programs: cross-role, partial outage and scoped
   });
   it("UX-admin-programs-37 missing selected college never performs cross-tenant fallback",async()=>{
     state.selected=false;
-    const content=readable(await SuperAdminProgramsPage()).join(" ");
+    const content=readable(await SuperAdminProgramsPage({searchParams:Promise.resolve({})})).join(" ");
     expect(content).toContain("Select a college to continue");
     expect(state.programs).toBe(0);
   });
   it("UX-admin-programs-38 any essential directory outage displays an honest retry, never a false zero-program list",async()=>{
     for(const fail of ["programs","departments","contents"] as const){
       state.failure=fail;
-      const content=readable(await SuperAdminProgramsPage()).join(" ");
+      const content=readable(await SuperAdminProgramsPage({searchParams:Promise.resolve({})})).join(" ");
       expect(content).toContain("Programs unavailable");
       expect(content).toContain("Retry loading programs");
       expect(content).not.toContain("PRIVATE_");
@@ -89,7 +89,7 @@ describe("Super Admin last-third Programs: cross-role, partial outage and scoped
     }
   });
   it("UX-admin-programs-39 a valid college preserves the exact program/dept association",async()=>{
-    const tree=await SuperAdminProgramsPage();
+    const tree=await SuperAdminProgramsPage({searchParams:Promise.resolve({})});
     const props=componentProps(tree);
     expect(props).toBeDefined();
     expect(props?.programs).toMatchObject([{id:"program",code:"CS",departmentId:"dept",departmentName:"Computing",durationTerms:8}]);

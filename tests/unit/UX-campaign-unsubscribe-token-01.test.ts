@@ -6,10 +6,12 @@ describe("UX-campaign-unsubscribe-token-01 preference confirmation",()=>{
  it("validates the link on GET without any suppression mutation or false success",()=>{
   const page=read("src/app/campaign-unsubscribe/[token]/page.tsx");
   const preview=read("src/modules/placements/public-unsubscribe-preview-service.ts");
-  expect(page).toContain("campaignUnsubscribeTokenKind(token)");
-  expect(page).toContain("This confirmation link is invalid or expired. No preference was changed.");
+  // GET must never reveal whether a campaign recipient token is valid.
+  // Only the confirmed POST validates the signed token and mutates opt-outs.
+  expect(page).not.toContain("campaignUnsubscribeTokenKind(token)");
+  expect(page).toContain("CampaignUnsubscribeConfirm token={token}");
   expect(page).toContain("Opening this link does not unsubscribe you.");
-  expect(page).toContain('cell ? "Stop these emails?" : "Campaign email preferences"');
+  expect(page).toContain("Stop these emails?");
   expect(preview).toContain("verifyUnsubscribeToken");
   expect(preview).toContain("verifyTpoCampaignRecipientToken");
   expect(preview).not.toContain('method:"POST"');
@@ -17,7 +19,7 @@ describe("UX-campaign-unsubscribe-token-01 preference confirmation",()=>{
  it("uses mobile-safe shared Card and a guarded confirmed POST with accessible error",()=>{
   const page=read("src/app/campaign-unsubscribe/[token]/page.tsx");
   const form=read("src/components/placements/campaign-unsubscribe-confirm.tsx");
-  expect(page).toContain("<PageHeader");
+  expect(page).toContain('<h1 className="m-0 text-[20px]');
   expect(page).toContain('<Card as="section"');
   expect(page).toContain('min-h-dvh');
   expect(form).toContain("if(pendingRef.current)return");

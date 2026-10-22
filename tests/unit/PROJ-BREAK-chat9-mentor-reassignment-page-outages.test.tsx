@@ -71,14 +71,16 @@ describe("IIT Dharwad Projects: bulk mentor reassignment partial failure states"
     const page=visible(await render({status:["ACTIVE","ARCHIVED"]})).join(" ");
     expect(page).toContain("Invalid mentor reassignment filters");
     expect(page).toContain("Clear filters");
-    expect(state.context).toBe(0);
+    // The bookmark crosswalk resolves the active actor before checking URL
+    // ambiguity. Invalid filters still must never reach private roster reads.
+    expect(state.context).toBe(1);
     expect(state.projects+state.mentors+state.workload).toBe(0);
   });
   it("PROJ-BREAK-mentor-115 failure in any essential dependency blocks all mutation forms and retains filters",async()=>{
     for(const fail of ["projects","mentors","workload"] as const){
       state.fail=fail;
       const page=visible(await render({q:"IIT",status:"ACTIVE",page:"2",mentorSearch:"faculty"})).join(" ");
-      expect(page).toContain("Mentor reassignment unavailable");
+      expect(page).toContain("Failed to load project workspaces");
       expect(page).toContain("Retry loading mentor reassignment");
       expect(page).toContain("q=IIT");
       expect(page).toContain("mentorSearch=faculty");

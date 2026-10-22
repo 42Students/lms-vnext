@@ -41,14 +41,16 @@ describe("IIT Dharwad Projects: Super Admin template catalogue query resilience"
   });
 
   it("PROJ-BREAK-scale-25 pagination never emits NaN, Infinity, zero or negative page counts", () => {
-    expect(TEMPLATE_DIRECTORY_PAGE_SIZE).toBe(20);
+    expect(TEMPLATE_DIRECTORY_PAGE_SIZE).toBe(10);
     for (const total of [Number.NaN, Infinity, -Infinity, -1, Number.NEGATIVE_INFINITY]) {
       expect(templateDirectoryPages(total)).toBe(1);
     }
     expect(templateDirectoryPages(0)).toBe(1);
-    expect(templateDirectoryPages(20)).toBe(1);
-    expect(templateDirectoryPages(21)).toBe(2);
-    expect(templateDirectoryPages(2000)).toBe(100);
+    expect(templateDirectoryPages(10)).toBe(1);
+    expect(templateDirectoryPages(11)).toBe(2);
+    expect(templateDirectoryPages(20)).toBe(2);
+    expect(templateDirectoryPages(21)).toBe(3);
+    expect(templateDirectoryPages(2000)).toBe(200);
   });
 
   it("PROJ-BREAK-ux-41 template directory links encode hostile search strings without injected query keys", () => {
