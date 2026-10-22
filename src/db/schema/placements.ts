@@ -2513,3 +2513,37 @@ export function evaluatePostgraduatePlacementRequirement(input: {
   if (input.postgraduatePctBasisPoints === null) return "MISSING";
   return input.postgraduatePctBasisPoints >= input.minimumBasisPoints ? "PASS" : "FAIL";
 }
+
+/** Source JobApplication uses one learner+job status; vNext permits distinct
+ * role-option submissions and retains each as its own application. During an
+ * explicitly approved legacy import choose a single mapped role option per
+ * old job record, then prevent duplicate source legacy_application_id rows.
+ * Status projection joins job/application, manual screening, college stage,
+ * verified offer release and joining histories. Never infer OFFERED from a
+ * draft or from SELECTED before verification. */
+export const LEGACY_JOB_APPLICATION_STAGE_CROSSWALK={
+ APPLIED:{application:"SUBMITTED",stage:"APPLIED",screening:null,offer:null},
+ SHORTLISTED:{application:"SUBMITTED",stage:"SHORTLISTED",screening:"SHORTLISTED",offer:null},
+ ASSESSMENT:{application:"SUBMITTED",stage:"ASSESSMENT",screening:"SHORTLISTED",offer:null},
+ INTERVIEW:{application:"SUBMITTED",stage:"INTERVIEW",screening:"SHORTLISTED",offer:null},
+ WAITLISTED:{application:"SUBMITTED",stage:"WAITLISTED",screening:"SHORTLISTED",offer:null},
+ OFFERED:{application:"SUBMITTED",stage:"OFFERED",screening:"SHORTLISTED",offer:"ISSUED"},
+ HIRED:{application:"SUBMITTED",stage:"HIRED",screening:"SHORTLISTED",offer:"ACCEPTED"},
+ REJECTED:{application:"SUBMITTED",stage:"REJECTED",screening:"REJECTED",offer:null},
+ WITHDRAWN:{application:"WITHDRAWN",stage:null,screening:null,offer:null},
+} as const;
+/** Selected and pending-verification are recorded as placement-drive selection
+ * steps, not artificially issued offers. "Released" maps to ISSUED with
+ * releasedAt + verifier, and REVOKED maps to WITHDRAWN with audited reason.
+ * Joining outcome has its own source-backed timeline, independent of consent
+ * to the offer. Source offer @Version is separate from issuance version. */
+export const LEGACY_TPO_OFFER_STATE_CROSSWALK={
+ SELECTED:{selection:"SELECTED",offerStatus:null},
+ PENDING_VERIFICATION:{selection:"PENDING_VERIFICATION",offerStatus:null},
+ RELEASED:{selection:"RELEASED",offerStatus:"ISSUED"},
+ ACCEPTED:{selection:"RELEASED",offerStatus:"ACCEPTED"},
+ DECLINED:{selection:"RELEASED",offerStatus:"DECLINED"},
+ EXPIRED:{selection:"RELEASED",offerStatus:"EXPIRED"},
+ WITHDRAWN:{selection:"RELEASED",offerStatus:"WITHDRAWN"},
+ REVOKED:{selection:"REVOKED",offerStatus:"WITHDRAWN"},
+} as const;
