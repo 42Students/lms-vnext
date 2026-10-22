@@ -73,7 +73,9 @@ export async function GET(request: Request) {
         if(reporter&&reporter.length>120)return invalid("reporter","Invalid reporter");
         const legacy=await listLegacyBugTrackerIssuesForAdmin(context,{
           page,size,sort:rawSort==="asc"||rawSort==="oldest"?"asc":"desc",
-          status,severity,environment,q,reporter,
+          ...(status!==undefined?{status}:{}),...(severity!==undefined?{severity}:{}),
+          ...(environment!==undefined?{environment}:{}),...(q!==undefined?{q}:{}),
+          ...(reporter!==undefined?{reporter}:{}),
         });
         return NextResponse.json(legacy,{headers:{"cache-control":"private, no-store"}});
       }
