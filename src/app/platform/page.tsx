@@ -9,8 +9,12 @@ export const metadata: Metadata = {
 };
 
 /** Non-AI scope: seven former autonomous-agent promises become seven existing
- * people-operated workspaces. These are intentional product-copy replacements,
- * not a claim that AI tutoring, prediction or grading has been implemented.
+ * people-operated workspaces. One-to-one legacy exception map:
+ * Tutor Agent -> Learner, Assessment Agent -> Faculty, Coach Agent -> Mentor,
+ * Career Agent -> Career/placement, Knowledge Agent -> Course/content admin,
+ * Workforce Intelligence Agent -> Placement operations, Talent Development
+ * Agent -> Project/team management. No automated tutoring, AI assessment,
+ * prediction, generated advice or autonomous coaching is promised.
  */
 const WORKSPACES = [
   { title: "Learner workspace", description: "Course material, assignments, assessments and your learning progress." },
@@ -22,17 +26,20 @@ const WORKSPACES = [
   { title: "Project and team management", description: "Track milestones, members, deliveries and feedback without automated coaching." },
 ] as const;
 
-/** Former assessment/skills/learning/knowledge/agent/analytics pillars are
- * intentionally adapted into six non-predictive product pillars.
- * These descriptions make no promise of autonomous assessment or AI insight.
+/** Owner-approved AI retirement, keeping the legacy Pillars section:
+ * AI Assessments + Personalized Learning -> Learning (human-authored quizzes);
+ * Skills Intelligence + AI Agents -> Projects (human mentor review);
+ * Knowledge Intelligence -> Operations (administrative content and reports);
+ * Analytics & Insights -> Placements (recorded applications and outcomes).
+ * The old six AI promises are intentionally four real product pillars.
+ * Integrations means the internal shared workflows below, not a claim of
+ * shipped third-party connectors or predictive scoring.
  */
 const PILLARS = [
-  { title: "Learning", description: "Courses, lessons, assignments, assessments and academic progress." },
+  { title: "Learning", description: "Courses, lessons, faculty-authored assessments, assignments and academic progress." },
   { title: "Projects", description: "Teamwork, mentor feedback, milestones and portfolio evidence." },
   { title: "Placements", description: "Student eligibility, applications, interviews, offers and joining." },
-  { title: "Assessments", description: "Faculty-authored assignments, quizzes and reviewable results." },
-  { title: "Operations", description: "Academic administration, cohort planning and verified reporting." },
-  { title: "Integrations", description: "Connected workflows between academic delivery, projects and placement operations." },
+  { title: "Operations", description: "Academic administration, cohort planning, verified reports and Integrations across internal workflows." },
 ] as const;
 
 const CONNECTED_WORKFLOWS = [
