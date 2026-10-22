@@ -63,6 +63,16 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
   clearRowError(index);
   setRows(old=>old.map((row,i)=>i===index?{...row,...patch}:row));
  };
+ const changeOptional=(index:number,key:"url"|"description"|"accessNotes",value:string)=>{
+  clearRowError(index);
+  setRows(old=>old.map((row,i)=>{
+   if(i!==index)return row;
+   if(value)return {...row,[key]:value};
+   const next={...row};
+   delete next[key];
+   return next;
+  }));
+ };
  const changeTitle=(index:number,titleValue:string)=>{
   clearRowError(index);
   setRows(old=>old.map((row,i)=>{
@@ -173,14 +183,14 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
       {["ACTIVE","DRAFT","ARCHIVED"].map(v=><option key={v} value={v}>{v}</option>)}
     </Select></label>
     <label className="text-[var(--lms-font-sm)] font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">URL (for a Link)<Input value={row.url??""}
-      onChange={e=>change(i,{url:e.target.value||undefined})}
+      onChange={e=>changeOptional(i,"url",e.target.value)}
       placeholder="https://example.com/resource" className={cls}/></label>
     <label className="text-[var(--lms-font-sm)] font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">Description
-     <Textarea value={row.description??""} onChange={e=>change(i,{description:e.target.value||undefined})}
+     <Textarea value={row.description??""} onChange={e=>changeOptional(i,"description",e.target.value)}
       placeholder="What this resource is for" className={cls+" min-h-20"}/></label>
     <label className="text-[var(--lms-font-sm)] font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">Access notes (optional)
      <Input maxLength={2000} value={row.accessNotes??""}
-      onChange={e=>change(i,{accessNotes:e.target.value||undefined})}
+      onChange={e=>changeOptional(i,"accessNotes",e.target.value)}
       placeholder="e.g. Requires college email to view" className={cls}/></label>
     <label className="flex items-center gap-2 text-xs font-semibold text-body"><Checkbox className="size-5"
       checked={row.pinned??false} onChange={e=>change(i,{pinned:e.target.checked})}/>Pinned</label>
