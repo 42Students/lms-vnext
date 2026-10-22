@@ -118,7 +118,7 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
 
  return <section aria-label="Show or hide a drive for selected students" className="min-w-0 space-y-3 border-y border-border py-4">
   <h2 className="font-semibold">Show or hide a drive for selected students</h2>
-  <p className="text-sm text-body">Apply an individual include or exclude decision with a reason. The eligibility rules still protect college and cohort targeting. Existing applications are preserved. Each selected override is version-checked so another officer’s newer decision is not overwritten. Undo restores the previous explicit Include/Exclude state if your change is still current; history is retained.</p>
+  <p className="text-sm text-body">Apply an individual include or exclude decision with a reason. Include may bypass ordinary grade thresholds, but active membership, academic targeting and required verified evidence remain mandatory. Existing applications are preserved. Each selected override is version-checked so another officer’s newer decision is not overwritten. Undo restores the previous explicit Include/Exclude state if your change is still current; history is retained.</p>
   <p role="status" className="break-words text-sm text-body">{picked.length} selected from the current filtered roster (up to 200 per review).</p>
   {drives.length===0?<p role="status" className="text-sm text-body">No draft or published drives can be changed here.</p>:null}
   {!picked.length?<p role="status" className="text-sm text-warning-text">Pick at least one student</p>:null}
