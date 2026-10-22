@@ -156,7 +156,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
    </> : <>Notifications {unread>0?"("+unread+" unread)":""}</>}
   </Button>
   {mobile
-   ? <Drawer id="tpo-notification-drawer" open={open} onOpenChange={changeOpen} {...(compact ? {className:style["topbarNotificationDrawer"],bodyClassName:style["topbarNotificationBody"]} : {})} title="Notifications"
+   ? <Drawer id="tpo-notification-drawer" open={open} onOpenChange={changeOpen} {...(compact ? {className:style["topbarNotificationDrawer"] ?? "",bodyClassName:style["topbarNotificationBody"] ?? ""} : {})} title="Notifications"
        description="Most recent notifications from your own college." footer={panelFooter}>
        {panelBody}
      </Drawer>
