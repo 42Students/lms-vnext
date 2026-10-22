@@ -64,7 +64,7 @@ describe("Final sprint recruiter profile/company verification",()=>{
   const page=company();
   expect(page).toContain('title="Company & Team"');
   expect(page).toContain("Your profile");
-  expect(page).toContain('description={"Your work with " + result.grant.collegeName}');
+  expect(page).toMatch(/description=\{"Your work with "\s*\+\s*result\.grant\.collegeName\}/);
  });
  it("REC-calendar-messages-profile-41 keeps verified invite email read-only and discloses permission-bounded student access",()=>{
   const ui=src("src/components/tpo/recruiter-invite-landing.tsx");
@@ -127,7 +127,7 @@ describe("Final sprint recruiter profile/company verification",()=>{
  it("REC-calendar-messages-profile-36 independent final-sprint acceptance regression",()=>{
   expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain('title="Company & Team"');
   expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("Your profile");
-  expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("description={\"Your work with \" + result.grant.collegeName}");
+  expect(src("src/app/(authenticated)/hr/company/page.tsx")).toMatch(/description=\{"Your work with "\s*\+\s*result\.grant\.collegeName\}/);
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-36 |");
  });
 

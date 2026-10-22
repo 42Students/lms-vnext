@@ -25,7 +25,8 @@ describe("Super Admin published drive editing",()=>{
   const service=read("src/modules/placements/super-admin-published-drive-edit-service.ts");
   expect(service).toContain("resolveActingCollege(context");
   expect(service).toContain("assertPersistedPlatformPermission(tx,context");
-  expect(service).toContain('!["PUBLISHED","CLOSED","CANCELLED","ARCHIVED"].includes(job.status)');
+  expect(service).toContain('if(job.status!=="PUBLISHED")');
+  expect(service).toContain('new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY")');
   expect(service).toContain("date_trunc('milliseconds'");
   expect(service).toContain("recordActivityEventInTransaction(tx,context");
  });
