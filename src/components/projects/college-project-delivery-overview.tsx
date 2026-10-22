@@ -88,9 +88,9 @@ export async function CollegeProjectDeliveryOverview({projectId,basePath="/colle
      {last.notes?<p className="whitespace-pre-wrap text-sm text-body">{last.notes}</p>:null}
      <div className="flex flex-wrap items-start gap-3">
       {primary?.kind==="FILE"?<ProjectDeliveryEvidenceDownload projectId={project.id} fileId={primary.fileId} name={primary.name} legacyReference={last.legacyStorageKey}/>:
-       primary?.url&&safeUrl(primary.url)?<a href={safeUrl(primary.url)!} target="_blank" rel="noopener noreferrer" className={linkStyle}>Open submitted link ↗</a>:null}
-      {safeUrl(last.sourceUrl)?<a href={safeUrl(last.sourceUrl)!} target="_blank" rel="noopener noreferrer" className={linkStyle}>Source code ↗</a>:null}
-      {safeUrl(last.demoUrl)?<a href={safeUrl(last.demoUrl)!} target="_blank" rel="noopener noreferrer" className={linkStyle}>Demo ↗</a>:null}
+       primary?.url&&safeUrl(primary.url)?<a href={safeUrl(primary.url)!} rel="noopener noreferrer" className={linkStyle}>Open submitted link ↗</a>:null}
+      {safeUrl(last.sourceUrl)?<a href={safeUrl(last.sourceUrl)!} rel="noopener noreferrer" className={linkStyle}>Source code ↗</a>:null}
+      {safeUrl(last.demoUrl)?<a href={safeUrl(last.demoUrl)!} rel="noopener noreferrer" className={linkStyle}>Demo ↗</a>:null}
       {primary?.kind==="LINK"&&!safeUrl(primary.url)?<span role="status" className="text-sm text-muted-foreground">Unavailable link</span>:null}
      </div>
     </>}
@@ -102,7 +102,7 @@ export async function CollegeProjectDeliveryOverview({projectId,basePath="/colle
      <li key={index} className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-b border-border py-2">
       <span className="break-words text-sm font-medium">{item.name}</span>
       {item.kind==="FILE"?<ProjectDeliveryEvidenceDownload projectId={project.id} fileId={item.fileId} name={item.name}/>:
-       safeUrl(item.url)?<a href={safeUrl(item.url)!} target="_blank" rel="noopener noreferrer" className={linkStyle}>Open evidence ↗</a>:
+       safeUrl(item.url)?<a href={safeUrl(item.url)!} rel="noopener noreferrer" className={linkStyle}>Open evidence ↗</a>:
        <span role="status" className="text-xs text-muted-foreground">Unavailable link</span>}
      </li>)}</ol>}
   </section>
