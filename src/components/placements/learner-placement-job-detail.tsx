@@ -140,11 +140,12 @@ export function LearnerPlacementJobDetail({
             <dd className="mt-1 font-semibold text-foreground">{humanize(item.job.employmentType)}</dd></div>
           <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Compensation</dt>
             <dd className="mt-1 font-semibold text-foreground">{item.job.minimumAnnualCtcInr!==null
-              ? "₹"+(item.job.minimumAnnualCtcInr/100000).toLocaleString("en-IN")+" LPA" : "Not disclosed"}</dd></div>
-          {item.job.minimumAnnualCtcInr===null&&item.job.stipendPerMonthInr!==null&&item.job.stipendPerMonthInr!==undefined?
-            <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stipend</dt>
-              <dd className="mt-1 font-semibold text-foreground">₹{item.job.stipendPerMonthInr.toLocaleString("en-IN")} / month</dd>
-            </div>:null}
+              ? "₹"+(item.job.minimumAnnualCtcInr/100000).toLocaleString("en-IN")+" LPA"
+              : item.job.maximumAnnualCtcInr!==null
+                ? "Up to ₹"+(item.job.maximumAnnualCtcInr/100000).toLocaleString("en-IN")+" LPA"
+                : item.job.stipendPerMonthInr!=null
+                  ? "₹"+item.job.stipendPerMonthInr.toLocaleString("en-IN")+" / month stipend"
+                  : "Not disclosed"}</dd></div>
           <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Posted</dt>
             <dd className="mt-1 font-semibold text-foreground">{relativePostedDate(item.job.publishedAt)}</dd></div>
           <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applications close</dt>
@@ -153,7 +154,7 @@ export function LearnerPlacementJobDetail({
         </dl>
         <div className="mt-4 flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
           <a href="#job-role-options" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-5 text-sm font-[650] text-[var(--lms-on-primary)] transition-colors duration-150 hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none md:min-h-9">
-            {summary.appliedCount ? "View my application" : "See roles & application"} ↓
+            {summary.appliedCount ? "View roles & applications" : "See roles & application"} ↓
           </a>
           {website ? (
             <a href={website} target="_blank" rel="noopener noreferrer"
@@ -452,7 +453,7 @@ export function LearnerPlacementJobDetail({
       </section>
         </aside>
       </div>
-    {summary.appliedCount===0&&summary.canApplyCount>0?(
+    {summary.canApplyCount>0?(
          <nav aria-label="Apply to this drive" className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-surface px-4 pt-3 shadow-lg lg:hidden"
            style={{paddingBottom:"max(0.75rem,env(safe-area-inset-bottom))"}}>
            <a href="#job-role-options" className="flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
