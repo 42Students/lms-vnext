@@ -21,7 +21,7 @@ import {
 function dependencies(): LoginDependencies {
   const config=getAuthConfig();
   // Development fixtures never hit live DLT or ZeptoMail by accident.
-  const liveTransport=config.appEnv==="production" || process.env.AUTH_DEV_REAL_DELIVERY==="VERIFIED";
+  const liveTransport=config.appEnv==="production" || process.env["AUTH_DEV_REAL_DELIVERY"]==="VERIFIED";
   return {
     repository: drizzleLoginRepository,
     sms:liveTransport?createExotelSmsProvider():{sendOtp:async()=>false},

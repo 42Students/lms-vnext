@@ -22,7 +22,7 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
   const [busy,setBusy]=useState(false);
   const [confirmOpen,setConfirmOpen]=useState(false);
   const [failed,setFailed]=useState<string[]>([]);
-  const [success,setSuccess]=useState(0);
+  const [,setSuccess]=useState(0);
   const [notice,setNotice]=useState("");
   function toggle(id:string){setSelected(current=>current.includes(id)?
     current.filter(item=>item!==id):[...current,id]);setFailed([]);setSuccess(0);}
@@ -65,7 +65,7 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
         showToast({tone:"error",title:failures.length+" issue(s) could not be updated."});
         const first=failures[0];
         setNotice("Failed IDs: "+failures.join(", ")+". "+
-          (reasons[first]??"Refresh issue details and retry."));
+          ((first === undefined ? undefined : reasons[first])??"Refresh issue details and retry."));
       }else{
         showToast({tone:"success",title:"Updated "+completed+" issue(s)."});
         setSelecting(false);

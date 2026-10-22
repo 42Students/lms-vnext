@@ -64,7 +64,7 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
        });
       }
       return {id:learner.id,name:learner.name,status:"saved",
-       action:decision,overrideId:decision==="CLEAR"?undefined:data.override.id,previous};
+       action:decision,...(decision==="CLEAR"?{}:{overrideId:data.override.id}),previous};
      }catch{
       return {id:learner.id,name:learner.name,status:"failed",action:decision};
      }

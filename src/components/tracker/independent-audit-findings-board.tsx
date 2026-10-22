@@ -102,7 +102,7 @@ export function IndependentAuditFindingsBoard({rows,view}:{
    empty={<EmptyState title={view==="RELEASE"?"No open critical or high findings":"No findings match"}
     description="Try changing the current filters."/>}/>
   <Drawer open={Boolean(selected)} title={current?.title??"Finding"}
-   description={selected??undefined} className="md:!w-[min(720px,100vw)]"
+   {...(selected !== null ? {description:selected} : {})} className="md:!w-[min(720px,100vw)]"
    onOpenChange={open=>{if(!open)setSelected(null);}}>
    {loading?<div role="status" aria-live="polite" className="space-y-3">
     <p className="text-sm text-muted-foreground">Loading finding…</p>

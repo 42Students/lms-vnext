@@ -10,12 +10,11 @@ import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 type Screenshot = {id:string;file:File;preview:string;state:"PENDING"|"UPLOADING"|"UPLOADED"|"FAILED";
- storageKey?:string;uploadToken?:string;putComplete?:boolean;error?:string};
+ storageKey?:string;uploadToken?:string;putComplete?:boolean;error?:string|undefined};
 const SCREENSHOT_LIMIT=8*1024*1024;
 
 import { useFormDraft } from "@/hooks/use-form-draft";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
-import { friendlyApiError } from "@/lib/friendly-error";
 import {
   ACCOUNT_OPTIONS, ENVIRONMENT_OPTIONS, ISSUE_TYPE_OPTIONS,
   LOCATION_OPTIONS, REPORTER_OPTIONS, SEVERITY_OPTIONS,
@@ -312,21 +311,21 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
             <option value="" disabled>Select reporter</option>
             {REPORTER_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </Select>
-        {fieldErrors.reporterName?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.reporterName}</span>:null}
+        {fieldErrors["reporterName"]?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors["reporterName"]}</span>:null}
         </label>
         <label className={label}>Account used
           <Select className={field} name="accountRole" required value={draft.accountRole} onChange={event=>patch("accountRole",event.target.value)}>
             <option value="" disabled>Select account</option>
             {ACCOUNT_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </Select>
-        {fieldErrors.accountRole?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.accountRole}</span>:null}
+        {fieldErrors["accountRole"]?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors["accountRole"]}</span>:null}
         </label>
         <label className={label}>Environment
           <Select className={field} name="environment" required value={draft.environment} onChange={event=>patch("environment",event.target.value)}>
             <option value="" disabled>Select environment</option>
             {ENVIRONMENT_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </Select>
-        {fieldErrors.environment?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.environment}</span>:null}
+        {fieldErrors["environment"]?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors["environment"]}</span>:null}
         </label>
       </div>
       <fieldset className="grid min-w-0 gap-3 border-y border-border py-4">
@@ -339,7 +338,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
               <option value="" disabled>Search or select page → screen → section</option>
               {LOCATION_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
             </Select>
-            {fieldErrors.page?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.page}</span>:null}
+            {fieldErrors["page"]?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors["page"]}</span>:null}
           </label>
           <label className={label}>Screen
             <Select className={field} required={Boolean(selectedPage?.children?.length)}
@@ -348,7 +347,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
               <option value="">Select screen</option>
               {selectedPage?.children?.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
             </Select>
-            {fieldErrors.screen?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.screen}</span>:null}
+            {fieldErrors["screen"]?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors["screen"]}</span>:null}
           </label>
           <label className={label}>Section
             <Select className={field} name="section" key={page + ":" + screen}
@@ -357,7 +356,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
               <option value="">Select section</option>
               {selectedScreen?.children?.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
             </Select>
-            {fieldErrors.section?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.section}</span>:null}
+            {fieldErrors["section"]?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors["section"]}</span>:null}
           </label>
         </div>
       </fieldset>
@@ -372,7 +371,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
           <Select className={field} name="severity" value={draft.severity} onChange={event=>patch("severity",event.target.value)} required>
             {SEVERITY_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </Select>
-        {fieldErrors.severity?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.severity}</span>:null}
+        {fieldErrors["severity"]?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors["severity"]}</span>:null}
         </label>
       </div>
       <label className={label}>What went wrong?
@@ -385,7 +384,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
           }}
           placeholder="Example: I opened Lesson 3 and the lesson content kept loading without showing anything." />
         <span className="mt-1 block text-xs font-normal text-muted-foreground" aria-live="polite">{draft.description.length}/4000 characters</span>
-        {fieldErrors.description?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.description}</span>:null}
+        {fieldErrors["description"]?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors["description"]}</span>:null}
       </label>
       <section className="min-w-0 space-y-2 border-b border-border pb-4" aria-label="Screenshots and optional evidence">
         <h2 className="text-sm font-semibold text-[var(--lms-heading)]">Screenshots</h2>

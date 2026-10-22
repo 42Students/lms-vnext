@@ -79,8 +79,8 @@ export function IndependentFindingActions({externalId,version,status,severity,cu
      NOT_FOUND:"Finding not found",
      NOT_READY:"Audit findings storage is not verified.",
     };
-    setError(messages[reason.code??""]??reason.fieldErrors.reason??reason.fieldErrors.note??
-      reason.fieldErrors.duplicateOf??reason.fieldErrors.assignee??reason.fieldErrors.sha??reason.fieldErrors.repo??reason.message);
+    setError(messages[reason.code??""]??reason.fieldErrors["reason"]??reason.fieldErrors["note"]??
+      reason.fieldErrors["duplicateOf"]??reason.fieldErrors["assignee"]??reason.fieldErrors["sha"]??reason.fieldErrors["repo"]??reason.message);
    }else setError(reason instanceof Error?reason.message:friendlyApiError({}));
   }
   finally{lock.current=false;setPending(false);}

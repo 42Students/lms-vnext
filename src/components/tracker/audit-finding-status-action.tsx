@@ -32,8 +32,8 @@ export function AuditFindingStatusAction({publicId,current,version}:{publicId:st
    const issue=receipt&&typeof receipt==="object"&&!Array.isArray(receipt)
      ?(receipt as {issue?:unknown}).issue:null;
    if(!issue||typeof issue!=="object"||Array.isArray(issue)||
-      (issue as Record<string,unknown>).status!==status||
-      (issue as Record<string,unknown>).publicId!==publicId)
+      (issue as Record<string,unknown>)["status"]!==status||
+      (issue as Record<string,unknown>)["publicId"]!==publicId)
      throw Error("Tracker update could not be confirmed.");
    setFeedback("Status saved; updating the board.");setReview(false);router.refresh();
   }catch{setFeedback("Connection failure. No status change was confirmed.");}

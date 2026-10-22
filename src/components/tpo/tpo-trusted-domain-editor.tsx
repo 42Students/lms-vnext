@@ -54,7 +54,7 @@ export function TpoTrustedDomainEditor({domains}:{domains:readonly string[]}){
   <ConfirmDialog open={review!==null}
     onOpenChange={value=>{if(!value&&!busy)setReview(null);}}
     title={review?.action==="REMOVE"?"Stop trusting @"+review.value+"?":"Trust @"+(review?.value.trim().replace(/^@/,"")??"")+"?"}
-    description={review?.action==="TRUST"?"Only verified recruiters are eligible.":undefined}
+    {...(review?.action==="TRUST"?{description:"Only verified recruiters are eligible."}:{})}
     confirmLabel={review?.action==="REMOVE"?"Stop trusting":"Trust domain"}
     confirmVariant={review?.action==="REMOVE"?"danger":"primary"}
     pending={busy}

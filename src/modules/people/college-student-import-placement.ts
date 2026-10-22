@@ -72,6 +72,7 @@ export async function placeImportedLearnerInSection(context: RequestContext, enr
     const [created] = await tx.insert(sectionEnrollments).values({
       learnerEnrollmentId:enrollment.id, sectionId, academicPeriodId:target.periodId,
     }).returning({id:sectionEnrollments.id});
+    if (!created) throw new AcademicsServiceError("CLASS_UNAVAILABLE");
     await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_CLASS_UPDATED, collegeId:member.collegeId,
       organizationId:member.organizationId, subjectType:"section_enrollment", subjectId:created.id,

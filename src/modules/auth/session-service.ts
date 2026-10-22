@@ -80,16 +80,16 @@ export async function resolveSession(
   const row = rowsOf(result)[0];
 
   if (!row) return { ok: false, reason: "SESSION_INVALID" };
-  if (row.revoked) return { ok: false, reason: "SESSION_REVOKED" };
-  if (row.expired) return { ok: false, reason: "SESSION_EXPIRED" };
+  if (row["revoked"]) return { ok: false, reason: "SESSION_REVOKED" };
+  if (row["expired"]) return { ok: false, reason: "SESSION_EXPIRED" };
   // Account disablement is an immediate session revocation, not merely a UI role gate.
-  if (row.platform_status !== "ACTIVE") return { ok: false, reason: "SESSION_REVOKED" };
+  if (row["platform_status"] !== "ACTIVE") return { ok: false, reason: "SESSION_REVOKED" };
 
   // Throttled: at most one write per minute per session.
   await getDb().execute(sql`
     UPDATE identity_device_sessions
     SET last_seen_at = now()
-    WHERE id = ${row.session_id as string}
+    WHERE id = ${row["session_id"] as string}
       AND revoked_at IS NULL
       AND expires_at > now()
       AND last_seen_at < now() - interval '60 seconds'
@@ -98,10 +98,10 @@ export async function resolveSession(
   return {
     ok: true,
     session: {
-      sessionId: row.session_id as string,
-      userId: row.user_id as string,
-      identityUid: row.identity_uid as string,
-      platformStatus: row.platform_status as "ACTIVE" | "DISABLED",
+      sessionId: row["session_id"] as string,
+      userId: row["user_id"] as string,
+      identityUid: row["identity_uid"] as string,
+      platformStatus: row["platform_status"] as "ACTIVE" | "DISABLED",
     },
   };
 }

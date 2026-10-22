@@ -21,7 +21,7 @@ export const rollNumberStartSchema = z.strictObject({
 });
 export function rollNumberOtpEnabledForCollege(collegeId: string | null): boolean {
   if (!collegeId) return false;
-  const allowlist = (process.env.AUTH_ROLL_NUMBER_COLLEGES ?? "")
+  const allowlist = (process.env["AUTH_ROLL_NUMBER_COLLEGES"] ?? "")
     .split(",").map(value => value.trim().toLowerCase());
   return allowlist.includes(collegeId.toLowerCase());
 }

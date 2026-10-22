@@ -116,8 +116,8 @@ export default async function PublicPlacementsPage() {
         </section>
         <section aria-label="Recruit from us" className="min-w-0 rounded-[8px] border border-[#e5e9f0] bg-white p-5 shadow-none sm:p-6 [&>section]:mt-0 [&>section]:border-t-0 [&>section]:pt-0">
           <PublicRecruitFromUs collegeName={college?.collegeName ?? ""}
-            enabled={Boolean(published) && process.env.DB09_TPO_API_READY === "DB09_VERIFIED" &&
-              process.env.PUBLIC_JOIN_TRUSTED_PROXY_READY === "VERIFIED"}/>
+            enabled={Boolean(published) && process.env["DB09_TPO_API_READY"] === "DB09_VERIFIED" &&
+              process.env["PUBLIC_JOIN_TRUSTED_PROXY_READY"] === "VERIFIED"}/>
         </section>
       </main>
     </div>

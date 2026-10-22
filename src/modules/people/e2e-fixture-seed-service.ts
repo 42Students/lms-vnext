@@ -47,11 +47,11 @@ const roleOf={
 
 export function assertE2EFixtureWriterEnabled(){
  if(process.env.NODE_ENV==="production"||
-    process.env.APP_ENV!=="test"||
-    process.env.E2E_SEED_ENABLED!=="true"||
-    process.env.E2E_ISOLATED_DATABASE!=="true"||
-    process.env.E2E_ALLOW_GRAPH_WRITES!=="true"||
-    process.env.APP_E2E_SEED_ENABLED!=="true")
+    process.env["APP_ENV"]!=="test"||
+    process.env["E2E_SEED_ENABLED"]!=="true"||
+    process.env["E2E_ISOLATED_DATABASE"]!=="true"||
+    process.env["E2E_ALLOW_GRAPH_WRITES"]!=="true"||
+    process.env["APP_E2E_SEED_ENABLED"]!=="true")
   throw new Error("E2E_SEED_DISABLED");
 }
 
@@ -69,7 +69,7 @@ export function assertE2EFixtureWriterEnabled(){
  */
 export async function seedIsolatedE2EAcademicGraph(
  actor:RequestContext,
- namespace=process.env.E2E_FIXTURE_NAMESPACE||"e2e-dev",
+ namespace=process.env["E2E_FIXTURE_NAMESPACE"]||"e2e-dev",
 ){
  assertE2EFixtureWriterEnabled();
  if(!isSuperAdmin(actor))throw new Error("E2E_SEED_FORBIDDEN");

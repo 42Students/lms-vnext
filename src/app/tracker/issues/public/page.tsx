@@ -11,7 +11,7 @@ export const metadata={title:"Public issue updates · 42 Tracker"};
  * DB capability is explicitly gated until migration and review are enabled.
  */
 export default async function PublicIssuesPage(){
- const enabled=process.env.PUBLIC_ISSUE_CATALOG_READY==="true";
+ const enabled=process.env["PUBLIC_ISSUE_CATALOG_READY"]==="true";
  const result=!enabled?{ok:false as const,items:[]}:
    await getDb().select({
      publicId:db10BugReports.publicId,
