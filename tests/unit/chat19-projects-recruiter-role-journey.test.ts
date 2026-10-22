@@ -70,7 +70,7 @@ describe("HR/Recruiter Projects role journey", () => {
       expect(isRecruiterSharedCandidateAllowed({ ...allowed, ...changed })).toBe(false);
     }
     const reader = readFileSync("src/modules/placements/hr-job-read-service.ts", "utf8");
-    expect(reader).toContain("getRecruiterPlacementWorkspace(context, rawJobId)");
+    expect(reader).toContain("getRecruiterPlacementWorkspace(context, resolvedJobId)");
     expect(reader).toContain("eq(collegeMemberships.collegeId, workspace.college.id)");
     expect(reader).toContain('eq(placementApplicationScreenings.status, "SHORTLISTED")');
   });
@@ -87,7 +87,7 @@ describe("HR/Recruiter Projects role journey", () => {
     expect(buildHrApplicantDrawer([applicant], applicant.id)?.sharedProjects).toHaveLength(1);
     const page = readFileSync("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx", "utf8");
     expect(page).toContain("if (filters.applicant && !selectedApplicant) notFound()");
-    expect(page).toContain("if (!hasActiveRecruiter(context))");
+    expect(page).toContain("!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id");
     expect(page).toContain("<ThirdPartyLink");
   });
 

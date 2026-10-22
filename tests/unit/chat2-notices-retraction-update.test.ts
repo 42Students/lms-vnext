@@ -17,7 +17,7 @@ describe("TPO announcement delivery retraction and edit notifications",()=>{
   const route=src("src/app/api/placements/tpo/announcements/[noticeId]/edit/route.ts");
   const page=src("src/app/(authenticated)/tpo/announcements/page.tsx");
   expect(edit).toContain("notifyChanged:z.boolean().default(false)");
-  expect(edit).toContain("if(input.notifyChanged && editEvent)");
+  expect(edit).toContain("if((input.notifyChanged||input.tellAgain===true) && editEvent)");
   expect(edit).toContain("eq(inAppNotifications.eventId,original[0].id)");
   expect(edit).toContain("Announcement updated:");
   expect(route).toContain('form?.get("notifyChanged")==="on"');

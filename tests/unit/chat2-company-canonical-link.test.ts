@@ -7,6 +7,7 @@ describe("TPO-companies-R04 Company Memory path to canonical controls",()=>{
  });
  it("shows canonical path when resolved",()=>{
   const ui=readFileSync("src/components/tpo/tpo-company-memory-workspace.tsx","utf8");
-  expect(ui).toContain("Company link and trusted settings");
+  expect(ui).toContain('aria-label="Company link and access"');
+  expect(ui).toContain("Trust and review settings");
  });
 });

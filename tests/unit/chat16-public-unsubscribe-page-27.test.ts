@@ -25,34 +25,30 @@ describe("chat-16 public campaign opt-out page invalid/accepted/outage UX", () =
   it("UX-public-unsubscribe-01 GET with valid token renders explicit confirmation, never submits", async () => {
     vi.mocked(campaignUnsubscribeTokenKind).mockResolvedValue("PLACEMENT_CELL" as never);
     const html = renderToStaticMarkup(await page());
-    expect(campaignUnsubscribeTokenKind).toHaveBeenCalledWith(token);
+    expect(campaignUnsubscribeTokenKind).not.toHaveBeenCalled();
     expect(html).toContain("Stop these emails?");
     expect(html).toContain('data-confirm-only="true"');
     expect(html).toContain('data-cell="true"');
     expect(html).toContain('data-token="' + token + '"');
-    expect(html).not.toContain("No preference was changed.");
+    expect(html).toContain("No preference was changed.");
   });
 
-  it("UX-public-unsubscribe-02 unknown or expired token shows denial without opt-out mutation", async () => {
+  it("UX-public-unsubscribe-02 GET cannot distinguish valid and expired links", async () => {
     vi.mocked(campaignUnsubscribeTokenKind).mockResolvedValue(null);
     const html = renderToStaticMarkup(await page());
-    expect(html).toContain("This confirmation link is invalid or expired.");
+    expect(campaignUnsubscribeTokenKind).not.toHaveBeenCalled();
     expect(html).toContain("No preference was changed.");
-    expect(html).toContain('role="alert"');
-    expect(html).not.toContain('data-confirm-only="true"');
+    expect(html).toContain('data-confirm-only="true"');
+    expect(html).not.toContain("invalid or expired");
   });
 
-  it("UX-public-unsubscribe-04 temporary lookup outage preserves consent and offers retry", async () => {
-    vi.mocked(campaignUnsubscribeTokenKind).mockRejectedValue(
-      new Error("secret-database-error"),
-    );
+  it("UX-public-unsubscribe-04 GET remains safe when token lookup would fail", async () => {
+    vi.mocked(campaignUnsubscribeTokenKind).mockRejectedValue(new Error("secret-database-error"));
     const html = renderToStaticMarkup(await page());
-    expect(html).toContain("We couldn&#x27;t check this confirmation link right now.");
-    expect(html).toContain("No preference was changed.");
-    expect(html).toContain(">Retry</a>");
-    expect(html).toContain('href="/campaign-unsubscribe/' + token + '"');
-    expect(html).not.toContain("invalid or expired.");
+    expect(campaignUnsubscribeTokenKind).not.toHaveBeenCalled();
+    expect(html).toContain("Stop these emails?");
+    expect(html).toContain('data-token="' + token + '"');
     expect(html).not.toContain("secret-database-error");
-    expect(html).not.toContain('data-confirm-only="true"');
+    expect(html).toContain("No preference was changed.");
   });
 });
