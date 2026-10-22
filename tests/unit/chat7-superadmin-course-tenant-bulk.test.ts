@@ -34,7 +34,9 @@ describe("SA-academics-people-52/53 GR-COURSES-TENANT-01 safe scoped Super Admin
   expect(sqlScope).toContain("eventType:ACTIVITY_EVENT_TYPES.COURSES_LESSON_UPDATED");
   const course=source("super-admin-course-bulk-visibility");
   expect(course).toContain("eq(departments.collegeId,acting.collegeId)");
-  expect(course).toContain("selected.length!==input.courseIds.length");
+  expect(course).toContain("const unauthorizedIds=input.courseIds.filter(id=>!validIds.includes(id))");
+  expect(course).toContain("const failedCourses=new Set<string>(unauthorizedIds)");
+  expect(course).toContain("validIds.filter(id=>!failedCourses.has(id))");
   // The selected course count bounds writes, while every scoped lesson is
   // processed in limited batches rather than silently dropped at lesson 501.
   expect(course).toContain("for(let offset=0;offset<ids.length;offset+=100)");
