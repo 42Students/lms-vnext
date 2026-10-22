@@ -8,7 +8,7 @@ DEFERRED is NOT allowed. For each row: read its full text in the source packet n
 Keep tests passing and TypeScript valid; never silence errors. Write one result line per row under Results, push, then tick this packet in your queue.
 
 - [x] G2-12-016-008  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
-- [ ] G2-12-016-009  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+- [x] G2-12-016-009  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [x] G2-4-010-097  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-011-080  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
 - [ ] G2-4-011-082  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
@@ -24,3 +24,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - G2-4-010-097: OK — `src/db/schema/course-assignment-materials.ts:10-16,29-30` preserves separate LINK URL, FILE object key, original filename, MIME type, size, ordered sequence and unmodified `legacyFileDto` JSON; matches legacy JSON-backed content in `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LessonContents.java:33-41` and legacy file DTO assembly in `docs/legacy-source/frontend/src/components/admin/AdminAssignmentBuilderModal.jsx:149-161`. This verifies storage fields, not an executed historical import.
 - G2-4-017-006: OK — `src/db/schema/projects.ts:229-232,264-265,288` keeps mutable `authoredBrief` distinct from historical `legacyOverview` and immutable `legacyTemplateSnapshot`; matches the two independent JSON source fields in `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectWorkspace.java:87-105`. This establishes mapping, not an executed historical import.
+
+- G2-12-016-009: OK — `src/db/schema/academic-terms.ts:11-14,23-24,40` makes current term names non-null/nonblank and active state non-null; `docs/audit/gap-fix/academic-term-crosswalk-lane-14.md:8-10,31-39` explicitly quarantines null/empty legacy names and nullable source active values for reviewed backfill, forbidding invented names, automatic false status or silent import. This is an import contract, not a claim that legacy data was imported. Matches nullable fields in `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Semester.java:32-39`.
