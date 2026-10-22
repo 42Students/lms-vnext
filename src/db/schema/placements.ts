@@ -2606,3 +2606,26 @@ export const LEGACY_COMPANY_RELATIONSHIP_FIELD_DISPOSITION={
  joinOpens:"placementPublicJoinLinks.opensCount (atomic)",
  joinCount:"placementPublicJoinLinks.joinsCount (atomic)",
 } as const;
+
+/** Legacy round identity is an import alias, never an unscoped grant.
+ * Local MySQL schedule times must be converted using the verified source
+ * college timezone; absent creator IDs require a dedicated service actor,
+ * not impersonation of an arbitrary human user. */
+export const LEGACY_ROUND_FIELD_DISPOSITION={
+ id:"placementJobRounds.legacyRoundId",
+ jobId:"placementJobRounds.jobId via verified same-college mapping",
+ sequence:"placementJobRounds.sequence",
+ description:"placementJobRounds.legacyRoundDescription",
+ interviewType:"placementJobRounds.legacyInterviewType",
+ mode:"placementJobRounds.legacyMode",
+ scheduledDate:"placementJobRounds.scheduledAt after explicit source-zone conversion",
+ createdBy:"placementJobRounds.createdByUserId (verified or service actor)",
+ meetingLink:"placementJobRounds.meetingUrl",
+ testLink:"placementJobRounds.testUrl",
+ resultsDueAt:"placementJobRounds.resultsDueAt",
+} as const;
+export const LEGACY_PLACEMENT_ACTOR_POLICY={
+ verified:"Preserve original actor after verified numeric-to-UUID user mapping",
+ missing:"Use explicit tenant-scoped service actor and retain null historic source attribution",
+ unknown:"Quarantine unverified identities, never attribute a real faculty or TPO user",
+} as const;

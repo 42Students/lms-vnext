@@ -380,8 +380,11 @@ export async function sendZeptoMailTemplate(
     if (required.some((key) => !mergeInfo[key]?.trim())) {
       return notSent(purpose, "REQUIRED_VARIABLE_MISSING");
     }
-    if (purpose.event === "JOB_INTERVIEW_SCHEDULED" &&
-      !mergeInfo.meetingLink?.trim() && !mergeInfo.venueAddress?.trim()) {
+    if ((purpose.event === "JOB_INTERVIEW_SCHEDULED" ||
+      purpose.event === "INTERVIEW_REMINDER" ||
+      purpose.event === "INTERVIEW_CONFIRMED") &&
+      !mergeInfo.meetingLink?.trim() && !mergeInfo.venueAddress?.trim() &&
+      !mergeInfo.interviewLocation?.trim()) {
       return notSent(purpose, "REQUIRED_VARIABLE_MISSING");
     }
   }

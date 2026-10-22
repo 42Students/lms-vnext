@@ -77,12 +77,12 @@ export const LEGACY_EVENT_MERGE_FIELDS: Partial<Readonly<Record<LegacyMailEvent,
  JOB_INTERVIEW_SCHEDULED:["learnerName","jobTitle","companyName","applicationId",
   "roundDescription","interviewDate","interviewTime","interviewMode"],
  INTERVIEW_REMINDER:["learnerName","jobTitle","companyName","applicationId",
-  "interviewDate","interviewTime"],
+  "interviewDate","interviewTime","interviewMode"],
  INTERVIEW_CONFIRMED:["learnerName","jobTitle","companyName","applicationId",
-  "interviewDate","interviewTime"],
+  "interviewDate","interviewTime","interviewMode"],
  SYSTEM_EMAIL_VERIFICATION:["learnerName"],
- SYSTEM_APPLICATION_APPROVED:["learnerName"],
- SYSTEM_APPLICATION_REJECTED:["learnerName"],
+ SYSTEM_APPLICATION_APPROVED:["learnerName","applicationId"],
+ SYSTEM_APPLICATION_REJECTED:["learnerName","applicationId","rejectionReason"],
 };
 const RESERVED_TEMPLATE_VARIABLE=/^(?:__proto__|constructor|prototype|password|otp|apiKey|accessToken|secret)$/i;
 export type OutboundVariableValidation =
@@ -114,6 +114,14 @@ export function validateOutboundTemplateVariables(
    RESERVED_TEMPLATE_VARIABLE.test(key))return {ok:false,code:"TEMPLATE_MERGE_INVALID"};
   if(!clean[key])return {ok:false,code:"TEMPLATE_MERGE_MISSING",missing:key};
  }
+ const eventLocationRequired=template.legacyEvent==="JOB_INTERVIEW_SCHEDULED"||
+  template.legacyEvent==="INTERVIEW_REMINDER"||
+  template.legacyEvent==="INTERVIEW_CONFIRMED";
+ if(eventLocationRequired&&![
+   "meetingLink","venueAddress","interviewLocation"
+  ].some(key=>Boolean(clean[key])))
+  return {ok:false,code:"TEMPLATE_MERGE_MISSING",
+    missing:"meetingLink|venueAddress|interviewLocation"};
  for(const alternatives of template.oneOfVariables??[]){
   if(alternatives.length<1||alternatives.some(key=>
       !/^[A-Za-z][A-Za-z0-9_]{0,79}$/.test(key)||
@@ -175,6 +183,13 @@ export function createOutboundProvider(
     }
     const variables=validation.clean;
     if (request.channel === "EMAIL") {
+      // Legacy templates have one location merge slot. An explicitly entered
+      // meeting link or venue is mapped only after the one-of validation.
+      if(template.legacyEvent==="INTERVIEW_REMINDER"||
+         template.legacyEvent==="INTERVIEW_CONFIRMED"){
+        variables.interviewLocation=variables.interviewLocation||
+          variables.meetingLink||variables.venueAddress;
+      }
       if (!template.zeptoTemplateKey || !isCampaignTemplateKey(template.zeptoTemplateKey) ||
         template.zeptoTemplateKey === config.email.otpTemplateKey) {
         return { status: "NOT_CONFIGURED", reason: "EMAIL_TEMPLATE_NOT_PROVISIONED" };
