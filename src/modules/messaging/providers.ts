@@ -1,6 +1,6 @@
 import { outboundFetch } from "@/lib/outbound";
 import { writeStructuredLog } from "@/observability/logger";
-import { readExotelConfig, type ExotelConfig } from "@/modules/notifications/exotel-sms";
+import { appendSmsDeliveryAttempt, readExotelConfig, type ExotelConfig } from "@/modules/notifications/exotel-sms";
 import {
   readZeptoMailConfig, sendZeptoMailTemplate,
   type LegacyMailEvent, type ZeptoMailConfig, type ZeptoMailPurpose,
@@ -250,7 +250,7 @@ export function createOutboundProvider(
       }
       const message=(payload as {SMSMessage:{Sid:string}}).SMSMessage;
       const sid=message.Sid.trim();
-      if(!/^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$/.test(sid)){
+      if(!/^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$/.test(sid)){
         // The acceptance ledger has a narrower SID shape than Exotel.
         // Without an auditable receipt, do not claim an accepted SMS send.
         return {status:"FAILED",reason:"SMS_PROVIDER_RECEIPT_INVALID"};
@@ -262,6 +262,19 @@ export function createOutboundProvider(
   }
   async function sendDetailed(rawRequest: OutboundSendRequest): Promise<OutboundProviderOutcome> {
     const outcome = await sendDetailedOnce(rawRequest);
+    // This is an independent append-on-send audit, not another provider send.
+    // Reuse the same Exotel acceptance/failed outcome from the single bounded
+    // request; never persist the SMS body, OTP, full recipient or credentials.
+    // Suppressed/unconfigured events did not attempt provider delivery.
+    if(rawRequest.channel==="SMS"&&(outcome.status==="ACCEPTED"||outcome.status==="FAILED")){
+      await appendSmsDeliveryAttempt({
+        purpose:rawRequest.templateKey==="job.update"?"job.update":"notification",
+        recipient:normalizeRecipient("SMS",rawRequest.recipient),
+        outcome:outcome.status==="ACCEPTED"?"PROVIDER_ACCEPTED":"FAILED",
+        providerSid:outcome.status==="ACCEPTED"?outcome.providerSid??null:null,
+        failureCode:outcome.status==="FAILED"?outcome.reason:null,
+      });
+    }
     if (outcome.status !== "ACCEPTED") {
       writeStructuredLog("WARNING", "messaging.provider_not_accepted", {
         channel: rawRequest.channel === "EMAIL" ? "EMAIL" : "SMS",
@@ -409,9 +422,10 @@ export function registeredNoticeSmsTemplate(
   };
 }
 
-/** SMS sends must be listed by the upstream delivery receipt repository.
- * The provider deliberately has no database/tenant context: it cannot
- * manufacture authorization, consent, or a persisted recipient attempt.
+/** The provider itself records a redacted, append-only Exotel attempt after
+ * its single bounded send. Upstream delivery receipts still authorize the
+ * dispatch and retain scoped message history; this operational attempt log
+ * cannot manufacture consent or a delivered-handset claim.
  */
 /** Attendance notices have three DLT-approved substitution slots.
  * Values are plain text from authorized schedule/course data, not HTML.
