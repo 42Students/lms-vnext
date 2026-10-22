@@ -381,7 +381,7 @@ export async function createCourse(
           throw new CoursesServiceError("COURSE_PARENT_NOT_FOUND");
       }
       await assertCourseShortTitleUnique(
-        tx, input.departmentId, input.shortTitle ?? input.name.slice(0, 255),
+        tx, input.departmentId, input.shortTitle ?? input.name.slice(0, 64),
       );
       const [created] = await tx
         .insert(courses)
@@ -487,7 +487,7 @@ export async function updateCourse(
       }
       await assertCourseShortTitleUnique(
         tx, scope.departmentId,
-        input.shortTitle ?? locked.shortTitle ?? locked.name.slice(0, 255),
+        input.shortTitle ?? locked.shortTitle ?? locked.name.slice(0, 64),
         courseId,
       );
       // The old LMS has independent enabled and allowedForDisplay values.
@@ -706,7 +706,7 @@ export async function restoreCourse(
       // conflict with a new active name or code in the same department.
       await assertCourseShortTitleUnique(
         tx, scope.departmentId,
-        locked.shortTitle ?? locked.name.slice(0, 255),
+        locked.shortTitle ?? locked.name.slice(0, 64),
         courseId,
       );
       const [restored] = await tx
