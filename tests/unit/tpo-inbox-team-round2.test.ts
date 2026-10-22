@@ -30,6 +30,13 @@ describe("Chat-2 TPO Inbox + Team legacy verification round 2",()=>{
   expect(page).toContain("items.map(item=><li key={item.id}>");
   expect(page).toContain("aria-current={active?.id===item.id?");
   expect(page).toContain("formatTpoInboxTime(item.occurredAt,now)");
+  // The legacy split inbox renders one named list of full-width conversation
+  // links (phone cards) that collapse beside the open thread at desktop widths.
+  expect(page).toContain('<aside aria-label="Recruiter inbox"');
+  expect(page).toContain('<ul className="max-h-[65vh] divide-y divide-border');
+  expect(page).toContain('aria-label={item.participantName+" — "+item.subject}');
+  expect(page).toContain('aria-current={active?.id===item.id?"page":undefined}');
+  expect(page).toContain("lg:grid-cols-[minmax(280px,340px)_minmax(0,1fr)]");
   expect(table).toContain('className="block w-full');
   expect(table).toContain('className="hidden sm:table-header-group');
   expect(table).toContain('className="block space-y-3 sm:table-row-group');

@@ -40,6 +40,7 @@ import {
   updateLessonVideo,
 } from "@/modules/courses/lesson-video-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { releaseSeedLearnerPlacementEnrollment } from "../support/w04-placement-access-fixture";
 import {
   deleted,
   mp4Bytes,
@@ -90,6 +91,7 @@ const outsider = ctx(SEED_IDS.facultyUser, SEED_IDS.facultyCollegeBMembership, S
 const PREFIX = "SFV-";
 
 async function cleanup() {
+  await releaseSeedLearnerPlacementEnrollment(pool);
   const q = (text: string) => pool.query(text);
   await q(`delete from storage_file_events where subject_id in (
       select id from assignment_submission_files union select id from lesson_video_assets)`);

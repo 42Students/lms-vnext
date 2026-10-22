@@ -57,6 +57,7 @@ import {
   getLearnerAttendanceWorkspace,
 } from "@/modules/attendance/learner-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { releaseSeedLearnerPlacementEnrollment } from "../support/w04-placement-access-fixture";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -140,6 +141,7 @@ const secondLearner = {
 };
 
 async function cleanupA2() {
+  await releaseSeedLearnerPlacementEnrollment(pool);
   await pool.query(
     `delete from course_section_deliveries
      where offering_id in (

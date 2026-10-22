@@ -55,6 +55,15 @@ const pool = new Pool({
   max: 1,
 });
 
+/** Mentor ship/unship is optimistic: send the release version the UI would hold. */
+async function releaseVersion(releaseId: string) {
+  const { rows } = await pool.query<{ updated_at: Date }>(
+    "select updated_at from project_releases where id = $1",
+    [releaseId],
+  );
+  return { expectedUpdatedAt: rows[0]!.updated_at.toISOString() };
+}
+
 const superAdmin: RequestContext = {
   user: {
     id: SEED_IDS.superAdminUser,
@@ -238,6 +247,14 @@ async function cleanup() {
        where slug like 'p7a-%'
      )`,
   );
+  // Trigger-written resource audit rows for these disposable projects.
+  await pool.query(
+    `delete from project_resource_audit
+     where project_id in (
+       select id from project_instances
+       where slug like 'p7a-%'
+     )`,
+  );
   await pool.query(
     "delete from project_instances where slug like 'p7a-%'",
   );
@@ -347,8 +364,10 @@ describe("Projects P7A resources and readiness", () => {
       },
     );
 
+    // Every resource now receives a stable, project-unique resource key derived
+    // from its title; it never reuses the template-provided key.
     expect(created).toMatchObject({
-      templateKey: null,
+      templateKey: "mentor-guide",
       sequence: 1,
       status: "ACTIVE",
     });
@@ -375,7 +394,8 @@ describe("Projects P7A resources and readiness", () => {
     expect(visible[0]?.templateKey).toBe(
       "template-guide",
     );
-    expect(visible[1]?.templateKey).toBeNull();
+    // Renaming does not rewrite the stable key assigned on creation.
+    expect(visible[1]?.templateKey).toBe("mentor-guide");
 
     await archiveProjectResource(
       mentor,
@@ -468,6 +488,7 @@ describe("Projects P7A resources and readiness", () => {
       mentor,
       project.id,
       release.id,
+      await releaseVersion(release.id),
     );
 
     readiness = await getProjectReadiness(

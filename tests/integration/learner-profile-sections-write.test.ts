@@ -18,8 +18,10 @@ beforeEach(async()=>{
       status:"ACTIVE",roles:["LEARNER"]},
   };
   fixture={ids,context};
-  await pool.query("INSERT INTO users(id,identity_uid,display_name) VALUES($1,$2,$3)",
-    [ids.user,context.user.identityUid,"Section profile "+ids.user]);
+  // An alternate number is only accepted next to a canonical primary phone.
+  await pool.query("INSERT INTO users(id,identity_uid,display_name,phone_e164) VALUES($1,$2,$3,$4)",
+    [ids.user,context.user.identityUid,"Section profile "+ids.user,
+      "+918"+String(Math.floor(Math.random()*1e9)).padStart(9,"0")]);
   await pool.query("INSERT INTO college_memberships(id,user_id,college_id) VALUES($1,$2,$3)",
     [ids.membership,ids.user,SEED_IDS.collegeA]);
   await pool.query("INSERT INTO membership_roles(id,membership_id,role) VALUES($1,$2,'LEARNER')",

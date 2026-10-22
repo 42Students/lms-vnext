@@ -13,8 +13,8 @@ import { createPlacementCompany } from "@/modules/placements/company-service";
 import {
   closePlacementJob,
   createPlacementJob,
-  publishPlacementJob,
 } from "@/modules/placements/job-service";
+import { publishPreparedPlacementJob } from "../support/publishable-job-fixture";
 import {
   actOnPlacementRound,
   createPlacementRound,
@@ -360,7 +360,7 @@ describe("Placement P6B rounds", () => {
 
   it("makes closed jobs read-only for round operations", async () => {
     const job = await createJob();
-    await publishPlacementJob(tpo, job.id);
+    await publishPreparedPlacementJob(tpo, job.id);
     await closePlacementJob(tpo, job.id);
 
     await expect(

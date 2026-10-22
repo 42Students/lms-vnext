@@ -124,54 +124,54 @@ export default async function MentorProjectPage({
       </MentorProjectSectionCache>
       {access.access === "MENTOR" ? <section className="min-w-0 border-b border-border pb-4"><Disclosure title="Additional project tools" className="min-w-0 [&>summary]:text-link"><div className="mt-3 grid min-w-0 gap-x-4 gap-y-1 sm:grid-cols-2 xl:grid-cols-3">
         <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/board-review"}
-          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">
           Task board status
         </Link>
         <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/risk-readiness"}
-          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">
           At-risk &amp; readiness
         </Link>
         <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
-          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">
           Delivery review summary
         </Link>
         <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/resources-directory"}
-          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">
           Resource link directory
         </Link>
         <Link
           href={"/mentor/projects/" + encodeURIComponent(projectId) + "/timeline"}
-          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]"
         >
           Release &amp; Sprint timeline
         </Link>
         <Link
           href={"/mentor/projects/" + encodeURIComponent(projectId) + "/team-meetings"}
-          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]"
         >
           Team &amp; meeting log
         </Link>
         <Link
           href={"/mentor/projects/" + encodeURIComponent(projectId) + "/team-history"}
-          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]"
         >
           Team membership history
         </Link>
         <Link
           href={"/mentor/projects/" + encodeURIComponent(projectId) + "/closeout"}
-          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]"
         >
           Project closeout checklist
         </Link>
         <Link
           href={"/mentor/projects/" + encodeURIComponent(projectId) + "/review-completeness"}
-          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]"
         >
           Delivery review completeness
         </Link>
         <Link
           href={"/mentor/projects/" + encodeURIComponent(projectId) + "/activity-history"}
-          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+          className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]"
         >
           Recorded project activity →
         </Link>

@@ -10,6 +10,7 @@ import {
   updateCollegeProgram,
 } from "@/modules/academics/college-program-mutation-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { releaseSeedLearnerPlacementEnrollment } from "../support/w04-placement-access-fixture";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 
 const enabled = Boolean(process.env.TEST_DATABASE_URL) &&
@@ -236,6 +237,7 @@ describe.skipIf(!enabled)("College Admin program create/edit/archive transaction
       "INSERT INTO cohorts(id,program_id,name,code,start_period_id) VALUES($1,$2,$3,$4,$5)",
       [ids.cohort, first.id, label + "Cohort", label + "Cohort", ids.period],
     );
+    await releaseSeedLearnerPlacementEnrollment(pool!);
     await pool!.query(
       "INSERT INTO learner_program_enrollments(id,membership_id,program_id,cohort_id) " +
       "VALUES($1,$2,$3,$4)",

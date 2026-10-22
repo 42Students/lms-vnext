@@ -17,8 +17,11 @@ describe("chat12 mobile filters and chips",()=>{
   expect(sheet).toContain('aria-labelledby={titleId}');
   expect(sheet).toContain("opener.current?.focus()");
   expect(sheet).toContain("bottom-[var(--lms-visual-bottom)]");
-  expect(p).toContain("Filter students ({activeCount})");
-  expect(s("src/components/tpo/tpo-students-spreadsheet.tsx")).toContain("fields={filters} mobileSheet");
+  expect(p).toContain('title="Filter students"');
+  expect(p).toContain("{title} ({activeCount})");
+  // The students sheet mounts the shared GridWorkspace, which owns the mobile filter sheet.
+  expect(s("src/components/tpo/tpo-students-spreadsheet.tsx")).toContain("<GridWorkspace");
+  expect(s("src/components/tpo/grid/grid-workspace.tsx")).toContain("<TpoGridFilterPanel fields={filters} title={filterTitle} mobileSheet");
  });
  it("TPO-students-48 announces both filtered counts and visible-page selection",()=>{
   expect(s("src/components/tpo/tpo-grid-filter-panel.tsx")).toContain('role="status"');

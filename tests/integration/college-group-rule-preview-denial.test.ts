@@ -56,6 +56,13 @@ describe.skipIf(!enabled)("College group rule preview — isolated PostgreSQL", 
         values (${ids.program},${SEED_IDS.departmentA},${marker},${marker},4)`);
       await tx.execute(sql`insert into cohorts(id,program_id,name,code,start_period_id,status)
         values (${ids.cohort},${ids.program},${marker},${marker},${ids.period},'ACTIVE')`);
+      // DB02 allows one ACTIVE programme enrolment per membership and earlier
+      // suites (e.g. the W04 placement opt-in) may leave the seeded learner
+      // enrolled elsewhere. Withdraw it inside this always-rolled-back
+      // transaction so the fixture enrolment below is the learner's only one.
+      await tx.execute(sql`update learner_program_enrollments
+        set status='WITHDRAWN', withdrawn_at=now()
+        where membership_id=${SEED_IDS.learnerCollegeAMembership} and status='ACTIVE'`);
       await tx.execute(sql`insert into learner_program_enrollments
         (id,membership_id,program_id,cohort_id,status)
         values (${ids.enrollment},${ids.membership},

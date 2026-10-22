@@ -30,8 +30,8 @@ describe("own learner quiz attempts and results on PostgreSQL",()=>{
     expect(hidden).toHaveLength(1);
     expect(hidden[0]).toMatchObject({score:null,resultsVisible:false});
     expect(learnerAttemptResultLabel(hidden[0]!)).toBe("Result not published");
-    // Published alone does not release grades before the scheduled due instant.
-    await pool.query("UPDATE course_quizzes SET status='CLOSED',results_published=true,due_at='2026-10-01T00:00:00.000Z' WHERE id=$1",[ids.quiz]);
+    await pool.query("UPDATE course_quizzes SET status='CLOSED',results_published=true,due_at=now()-interval '1 minute' WHERE id=$1",[ids.quiz]);
+    // Results are embargoed until the recorded due time (605022baae).
     const publicAttempts=await getMyQuizAttempts(learner.context,ids.quiz,ids.delivery);
     expect(publicAttempts[0]).toMatchObject({score:6,maxScore:10,resultsVisible:true});
   });

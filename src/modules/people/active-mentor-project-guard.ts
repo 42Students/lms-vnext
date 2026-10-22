@@ -8,6 +8,8 @@ type Tx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 /** Legacy mentor guard: any non-ARCHIVED project workspace with an active
  * mentor assignment must be reassigned before suspension. Archived links do
  * not block. Distinct workspace IDs avoid overcounting role aliases.
+ * PostgreSQL rejects FOR SHARE with SELECT DISTINCT, so the matching mentor
+ * rows are locked individually and the workspace IDs are de-duplicated here.
  */
 export async function activeMentorProjectCount(tx:Tx,membershipId:string){
  const rows=await tx.select({id:projectInstances.id})

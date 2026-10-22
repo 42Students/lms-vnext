@@ -366,34 +366,34 @@ export async function MentorProjectsContent({
       <Disclosure title="More project links" className="min-w-0 border-b border-border" contentClassName="min-w-0 py-3">
         <div className="grid min-w-0 gap-x-4 gap-y-1 sm:grid-cols-2 lg:grid-cols-3">
             <Link href="/mentor/reviews"
-              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">
               Review queue
             </Link>
             <Link href="/mentor/sprint-progress"
-              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">
               Sprint progress
             </Link>
             <Link href="/mentor/task-reviews"
-              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">
               Task reviews
             </Link>
             <Link href="/mentor/reports"
-              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">
               Reports
             </Link>
             <Link href="/mentor/activity"
-              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">
               Activity
             </Link>
             <Link
               href="/mentor/calendar"
-              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]"
             >
               Meetings
             </Link>
             <Link
               href="/mentor/notifications"
-              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]"
             >
               Notifications
             </Link>

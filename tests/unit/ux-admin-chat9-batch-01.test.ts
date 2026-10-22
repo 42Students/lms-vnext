@@ -20,11 +20,18 @@ describe("chat-9 last-third admin UX rollout, batch 01",()=>{
   expect(page).toMatch(/export default|export\s*\{\s*default\s*\}/);
   expect(page).not.toContain("text-[#26bac7]");
   expect(page).not.toContain("min-h-10");
+  // The legacy lookup renders placement history as a hairline list and moves the
+  // labelled, scope-disabled search into the shared client search control.
+  const search=source("src/components/placements/admin-placement-student-search.tsx");
+  expect(page).toContain('<ul className="min-w-0 divide-y divide-border border-y border-border">');
   expect(page).toContain("<AdminPlacementStudentSearch");
-  expect(source("src/components/placements/admin-placement-student-search.tsx")).toContain("disabled={!collegeId}");
+  expect(page).toContain("collegeId={scope}");
+  expect(search).toContain("disabled={!collegeId}");
   expect(page).toContain("placement-student-scope-hint");
-  expect(source("src/components/placements/admin-placement-student-search.tsx")).toContain('role="search"');
-  expect(source("src/components/placements/admin-placement-student-search.tsx")).toContain('role="combobox"');
+  expect(search).toContain('aria-describedby={!collegeId ? "placement-student-scope-hint"');
+  expect(search).toContain('role="search"');
+  expect(search).toContain('role="combobox"');
+  expect(page).toContain('<EmptyState title={history.total===0?"No applications yet"');
  });
  it("UX-admin-programs-01 preserves authorized route and accessible UX surface",()=>{
   const page=source("src/app/(authenticated)/admin/programs/page.tsx");

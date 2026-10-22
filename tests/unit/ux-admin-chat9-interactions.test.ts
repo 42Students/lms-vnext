@@ -20,21 +20,21 @@ describe("chat-9 UX last-third substantive interactions",()=>{
  });
  it("UX-admin-placements-shortlisted-application-id-03 enforces the accessible interaction contract",()=>{
   const view=source("src/components/admin/super-admin-placement-detail-view.tsx");
-  expect(view).toContain('return <div className="min-w-0 space-y-5">');
+  expect(view).toContain('return <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">');
   expect(view).not.toContain("<main");
   expect(view).not.toContain("min-h-10");
   expect(view).not.toContain("text-[#26bac7]");
   expect(view).toContain('focus-visible:outline-2');
-  expect(view).toContain("← Back to directory");
+  expect(view).toContain('<PageBackLink href={data.backHref} label="Back to directory"');
  });
  it("UX-admin-placements-student-lookup-03 enforces the accessible interaction contract",()=>{
   const page=source("src/app/(authenticated)/admin/placements/student-lookup/page.tsx");
-  expect(page).toContain("<DataTable");
-  expect(page).toContain("disabled={!ctx.adminScope?.collegeId}");
-  expect(page).toContain("No applications found.");
-  expect(page).toContain('mobilePriority:"primary"');
+  const search=source("src/components/placements/admin-placement-student-search.tsx");
+  expect(page).toContain('<ul className="min-w-0 divide-y divide-border border-y border-border">');
+  expect(search).toContain("disabled={!collegeId}");
+  expect(page).toContain("No applications yet");
   expect(page).toContain("<StatusBadge");
-  expect(page).toContain('role="search"');
+  expect(search).toContain('role="search"');
  });
  it("UX-admin-tenants-03 enforces the accessible interaction contract",()=>{
   const page=source("src/app/(authenticated)/admin/tenants/page.tsx");
@@ -44,7 +44,10 @@ describe("chat-9 UX last-third substantive interactions",()=>{
  });
  it("UX-admin-projects-templates-03 enforces the accessible interaction contract",()=>{
   const page=source("src/app/(authenticated)/admin/projects/templates/page.tsx");
-  for(const slot of ["<Input","<Select","<Button","<Pagination"])expect(page).toContain(slot);
+  for(const slot of ["<Select","<Button","<Pagination"])expect(page).toContain(slot);
+  // The labelled search field lives in the debounced client search, which renders the shared Input.
+  expect(page).toContain("<SuperAdminTemplateAutoSearch");
+  expect(source("src/components/projects/super-admin-template-auto-search.tsx")).toContain("<Input");
   expect(page).toContain("No global template metadata matches these filters.");
   expect(page).toContain('can(context,"project-template.manage")');
  });

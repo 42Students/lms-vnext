@@ -13,9 +13,9 @@ import { createPlacementCompany } from "@/modules/placements/company-service";
 import {
   closePlacementJob,
   createPlacementJob,
-  publishPlacementJob,
   updatePlacementJob,
 } from "@/modules/placements/job-service";
+import { publishPreparedPlacementJob } from "../support/publishable-job-fixture";
 import {
   closePlacementSeason,
   createPlacementSeason,
@@ -202,7 +202,7 @@ describe("Placement P9 seasons", () => {
         "PLACEMENT_SEASON_HAS_ACTIVE_JOBS",
     });
 
-    await publishPlacementJob(
+    await publishPreparedPlacementJob(
       tpo,
       job.id,
     );

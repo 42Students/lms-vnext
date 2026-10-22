@@ -19,7 +19,7 @@ export default async function MentorDeliveryVersionPage({params}:{
     <PageHeader title={"Delivery version "+v.version}
       description={data.projectTitle+" · "+data.projectStatus}
       actions={<Link data-unskin="" href={"/mentor/projects/"+encodeURIComponent(data.projectId)+"/review-overview"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)] w-full md:w-auto justify-center">
         Review overview
       </Link>}/>
     <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
@@ -71,7 +71,7 @@ export default async function MentorDeliveryVersionPage({params}:{
         {([{label:"Source",href:safeProjectExternalHref(v.sourceUrl)},
           {label:"Demo",href:safeProjectExternalHref(v.demoUrl)}]).map(item=>
             item.href?<a key={item.label} href={item.href} target="_blank"
-              rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+              rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">
               Open {item.label.toLowerCase()} link ↗</a>:null)}
         {!safeProjectExternalHref(v.sourceUrl)&&!safeProjectExternalHref(v.demoUrl)?
           <p className="text-sm text-muted-foreground leading-[22px]">No valid source or demo URL.</p>:null}
@@ -87,7 +87,7 @@ export default async function MentorDeliveryVersionPage({params}:{
         return <li key={index} className="py-[var(--lms-space-3)] text-sm">
           <span className="break-words font-semibold">{name}</span> · {kind}
           {href?<a href={href} target="_blank" rel="noopener noreferrer"
-            className="ml-2 inline-flex min-h-11 max-w-full items-center break-all text-link underline min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open link ↗</a>:null}
+            className="ml-2 inline-flex min-h-11 max-w-full items-center break-all text-link underline min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">Open link ↗</a>:null}
           {kind==="File"&&typeof entry.fileId==="string"?
             <span className="ml-2 text-muted-foreground">Uploaded file recorded</span>:null}
         </li>;

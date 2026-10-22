@@ -137,17 +137,14 @@ export async function deliverRecordedLearnerPlacementEvent(
  if(!enabled)return {delivered:false,skipped:"PREFERENCE_OFF"};
  // Re-read the currently authorized job/application inside the event writer
  // transaction; context never comes from a browser-supplied college or URL.
- const message=learnerPlacementEventCopy(input.kind,input.subject,{
+ const rendered=learnerPlacementEventCopy(input.kind,input.subject,{
   jobId:scopedJobId,jobTitle,applicationId:input.applicationId,
   status:applicationStatus,statusUpdatedAt:applicationStatusUpdatedAt,
   assessmentUrl:input.applicationId?input.approvedAssessmentUrl:undefined,
  });
- // Presentation metadata is generated for the learner event model; the
- // personal inbox delivery accepts only the strict title/body/internal link.
- // Never forward event metadata through the notification writer.
- const delivered=await deliverInAppNotificationInTransaction(tx,input.eventId,[row.userId],{
-  title:message.title,body:message.body,actionHref:message.actionHref,
- });
+ // The delivery payload is strict: send only the rendered inbox fields.
+ const message={title:rendered.title,body:rendered.body,actionHref:rendered.actionHref};
+ const delivered=await deliverInAppNotificationInTransaction(tx,input.eventId,[row.userId],message);
  return {delivered:delivered.delivered>0,skipped:null};
 }
 

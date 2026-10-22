@@ -809,7 +809,7 @@ export default async function HrPlacementJobPage({
                 className="text-primary-text underline inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next selections</Link>:null}
               </nav> : null}
             </section>:null}
-          {offers.length ? <HrJobOffersGrid
+          {offers.length ? <section aria-label="Offers for shared applicants at this college"><HrJobOffersGrid
             scopeKey={[context.user.id,workspace.company.id,workspace.college.id,workspace.job.id].join(":")}
             rows={offers.map(offer=>({
               id:offer.id,candidate:offer.name||"Unnamed applicant",role:offer.role,
@@ -826,7 +826,7 @@ export default async function HrPlacementJobPage({
                 offer.joiningStatus==="DID_NOT_JOIN"?"Did not join":"-",
               joiningDate:offer.joiningDate??"-",
             }))}
-          /> : filters.offerState==="ALL"||!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<p className="text-sm text-muted-foreground">No offers yet. When you know who you want to hire, send your selection list below; the placement cell checks it and releases the offers.</p>:null}
+          /></section> : filters.offerState==="ALL"||!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<p className="text-sm text-muted-foreground">No offers yet. When you know who you want to hire, send your selection list below; the placement cell checks it and releases the offers.</p>:null}
           {!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)&&offersPage.pages>1?<nav aria-label="Offer pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
             <span className="text-xs text-muted-foreground">
               {offersPage.first===0 ? "No rows on this page" : "Showing "+offersPage.first+"–"+offersPage.last}

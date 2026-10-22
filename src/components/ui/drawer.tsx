@@ -8,6 +8,16 @@ import { OverlayCloseIcon } from "@/components/ui/overlay-close-icon";
 import { useOverlayWebview } from "@/components/ui/use-overlay-webview";
 import { useOverlayExit } from "@/components/ui/use-overlay-exit";
 
+/** Conditionally rendered overlays can unmount while still open, which skips the
+ * native close event. Release the top layer and return focus to the trigger
+ * instead of leaving keyboard users on the page body. A still-connected node
+ * (StrictMode effect replay) is left to useOverlayExit. */
+function releaseUnmountedOverlay(modal: HTMLDialogElement | null, opener: RefObject<HTMLElement | null>) {
+  if (!modal?.open || modal.isConnected) return;
+  modal.close();
+  if (!document.activeElement || document.activeElement === document.body) opener.current?.focus();
+}
+
 export type DrawerProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -34,9 +44,19 @@ export function Drawer({ open, onOpenChange, title, description, children, foote
   const descriptionId = useId();
   const { availableHeight, viewportTop } = useOverlayWebview({ open, dismissible, historyMode, onDismiss: () => onOpenChange(false) });
   useOverlayExit(ref, opener, open, 200);
+  useEffect(() => {
+    const modal = ref.current;
+    return () => releaseUnmountedOverlay(modal, opener);
+  }, []);
   return <dialog ref={ref} id={id} data-slot="drawer" data-side={side} data-inline-desktop={inlineDesktop || undefined} aria-labelledby={titleId} aria-describedby={description ? descriptionId : undefined}
     onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}
-    onClose={() => { if (open) onOpenChange(false); if (opener.current?.isConnected) opener.current.focus(); }}
+    onClose={() => {
+      const modal = ref.current;
+      // A browser close watcher can force-close after cancel was prevented; a locked overlay stays modal.
+      if (open && !dismissible && modal?.isConnected) { modal.showModal(); return; }
+      if (open) onOpenChange(false);
+      if (opener.current?.isConnected) opener.current.focus();
+    }}
     onClick={event => { if (event.target === ref.current && dismissible) onOpenChange(false); }}
     style={{ "--lms-visual-height": availableHeight ?? "100dvh", "--lms-visual-top": viewportTop ?? "0px" } as CSSProperties}
     className={cx("fixed top-[var(--lms-visual-top)] m-0 h-[var(--lms-visual-height)] max-h-none min-w-0 overflow-hidden overscroll-contain border-0 bg-surface p-0 text-foreground backdrop:bg-[#1e363f]/10 md:bottom-auto", side === "left" ? "left-0 right-auto w-[min(256px,100vw)] max-w-[256px] shadow-[4px_0_16px_rgba(0,0,0,0.12)] md:w-[min(600px,100vw)] md:max-w-none md:border-r md:border-[var(--lms-canvas-border)]" : "inset-x-0 w-full max-w-none shadow-[-4px_0_24px_rgba(0,0,0,0.12)] md:left-auto md:right-0 md:w-[min(600px,100vw)] md:border-l md:border-[var(--lms-canvas-border)]", inlineDesktop ? "md:!static md:!inset-auto md:!block md:!h-auto md:!max-h-none md:!w-full md:!max-w-none md:!border-0 md:!bg-transparent md:!shadow-none" : "", className)}>

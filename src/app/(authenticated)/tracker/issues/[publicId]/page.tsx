@@ -123,7 +123,7 @@ export default async function TrackerIssueDetailPage({
   return (
     <div className="min-w-0 space-y-4">
       <Link href="/tracker/issues"
-        className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">← All issues</Link>
+        className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">← All issues</Link>
       <header className="flex min-w-0 flex-col justify-between gap-4 border-b border-border pb-4 lg:flex-row">
         <div className="min-w-0 space-y-2">
           <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-muted-foreground">
@@ -142,7 +142,7 @@ export default async function TrackerIssueDetailPage({
         </div>
         <div className="flex min-w-40 shrink-0 items-start gap-2 lg:flex-col">
           <span className="text-xs font-semibold text-muted-foreground">Status</span>
-          <a href="#tracker-workflow" className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link underline"
+          <a href="#tracker-workflow" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link underline"
             aria-label={"Change issue status, currently "+legacyLabel(issue.status,STATUS_TEXT)}>
             {legacyLabel(issue.status,STATUS_TEXT)} ↓
           </a>
@@ -152,7 +152,7 @@ export default async function TrackerIssueDetailPage({
       {issue.status==="READY_FOR_RETEST"?<section aria-label="Ready for retest" className="rounded-[var(--lms-control-radius)] border border-border p-4">
         <h2 className="font-semibold">Ready for retest</h2>
         <p className="mt-1 text-sm text-body">Does it work now? Confirm the same flow, then use the retest controls under Engineering details.</p>
-        <a href="#tracker-workflow" className="mt-2 inline-flex min-h-9 items-center font-semibold text-link underline">Retest this issue ↓</a>
+        <a href="#tracker-workflow" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline">Retest this issue ↓</a>
       </section>:null}
       <section aria-label="What went wrong" className="min-w-0 rounded-[var(--lms-control-radius)] border border-border p-4">
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">What went wrong</p>
@@ -199,7 +199,7 @@ export default async function TrackerIssueDetailPage({
       <section id="tracker-workflow" aria-label="Engineering details" className="scroll-mt-12">
         <TrackerWorkflowPanel issue={workflow}/>
         <details className="border-b border-border pb-3">
-          <summary className="min-h-9 cursor-pointer font-semibold text-link">Report technical context</summary>
+          <summary className="min-h-11 md:min-h-9 cursor-pointer font-semibold text-link">Report technical context</summary>
           <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-3">
             <div><dt>Source path</dt><dd className="break-all">{issue.sourcePath??"—"}</dd></div>
             <div><dt>Browser</dt><dd className="break-all">{issue.browser??"—"}</dd></div>
@@ -232,7 +232,7 @@ export default async function TrackerIssueDetailPage({
               ...(cursor.attachmentBeforeCreatedAt&&cursor.attachmentBeforeId?{
                 attachmentBeforeCreatedAt:cursor.attachmentBeforeCreatedAt,attachmentBeforeId:cursor.attachmentBeforeId,
               }:{}),
-            }).toString()} className="inline-flex min-h-9 items-center font-semibold text-link underline">
+            }).toString()} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline">
             Older audit events
           </Link>:null}
         </section>:null}

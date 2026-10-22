@@ -505,6 +505,7 @@ export async function createPlacementRequest(
       .values({
         learnerMembershipId: membership.id,
         applicationId: current.application.id,
+        learnerMembershipId: current.application.membershipId,
         requestType: input.requestType,
         roundId:
           input.requestType === "ROUND_RESCHEDULE"

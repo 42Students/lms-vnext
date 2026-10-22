@@ -12,6 +12,7 @@ import { assignProjectTaskToLearner } from "./support/projects-review-fixture";
 import { listProjectAdminRiskQueue } from "@/modules/projects/admin-insights-service";
 import { postProjectTaskComment } from "@/modules/projects/task-comment-service";
 import { requestProjectMeeting, scheduleProjectMeeting, transitionProjectMeeting } from "@/modules/projects/meeting-service";
+import { startProjectSprint } from "@/modules/projects/lifecycle-service";
 
 const enabled = Boolean(process.env.TEST_DATABASE_URL) && process.env.DB03_ISOLATED_TEST_DATABASE === "1";
 if(enabled) assertDb018DisposableTarget(process.env, {serviceBound:true});
@@ -51,9 +52,12 @@ describe.skipIf(!enabled)("COL-projects-R01 / LEARNER-projects-R01 notification 
   expect((await notificationRows(mentor.user.id)).rows.map(row=>row.title)).toContain("New project assigned");
   const added=await addProjectMember(admin,project.id,{membershipId:learner.membership!.id,role:"LEARNER"});
   expect((await notificationRows(learner.user.id)).rows.map(row=>row.title)).toContain("Added to project");
-  const task=(await getProjectInstanceWorkspace(mentor,project.id)).tasks[0]!;
+  const initial=await getProjectInstanceWorkspace(mentor,project.id);
+  const task=initial.tasks[0]!;
   await assignProjectTaskToLearner({learner,mentor,projectId:project.id,taskId:task.id});
   expect((await notificationRows(learner.user.id)).rows.map(row=>row.title)).toContain("New task assigned");
+  // Risk reasons are reported only for ACTIVE projects; start the sprint first.
+  await startProjectSprint(mentor,project.id,initial.sprints[0]!.id);
   await pool!.query("update project_tasks set status='BLOCKED',blocker_reason='Awaiting API review' where id=$1",
     [task.id]);
   const risk=await listProjectAdminRiskQueue(admin,SEED_IDS.collegeA,{
@@ -74,9 +78,12 @@ describe.skipIf(!enabled)("COL-projects-R01 / LEARNER-projects-R01 notification 
    title:"Planning",startsAt,endsAt,timeZone:"Asia/Kolkata",
   });
   expect((await notificationRows(mentor.user.id)).rows.map(row=>row.title)).toContain("Meeting requested");
+  const requestedVersion=await pool!.query<{updated_at:Date}>(
+   "select updated_at from project_meetings where id=$1",[meeting.id]);
   await scheduleProjectMeeting(mentor,project.id,meeting.id,{
    title:"Planning",startsAt,endsAt,timeZone:"Asia/Kolkata",
    meetingUrl:"https://example.com/meeting",
+   expectedUpdatedAt:requestedVersion.rows[0]!.updated_at.toISOString(),
   });
   expect((await notificationRows(learner.user.id)).rows.map(row=>row.title)).toContain("Project meeting");
   await transitionProjectMeeting(mentor,project.id,meeting.id,{action:"CANCEL",note:"Reschedule later"});

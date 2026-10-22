@@ -137,7 +137,7 @@ describe("chat-2 TPO last-third runtime settings pages", () => {
   it("TPO-settings-public-link-page-03 retains a visible retry signal if link storage is unavailable", async () => {
     state.publicLink.mockResolvedValueOnce({ready:false,link:null,domain:null});
     const html=renderToStaticMarkup(await TpoRecruiterPublicLinkPage());
-    expect(html).toContain("Couldn't load the public link");
+    expect(html).toContain("Couldn&#x27;t load the public link");
     expect(html).not.toContain("Join link status ready");
   });
 

@@ -5,7 +5,8 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { applyToPlacementJob } from "@/modules/placements/application-service";
 import { createPlacementCompany } from "@/modules/placements/company-service";
-import { createPlacementJob, publishPlacementJob } from "@/modules/placements/job-service";
+import { createPlacementJob } from "@/modules/placements/job-service";
+import { publishPreparedPlacementJob } from "../support/publishable-job-fixture";
 import { issuePlacementOffer, listOwnPlacementOffers } from "@/modules/placements/offer-service";
 import { actOnPlacementRound, createPlacementRound } from "@/modules/placements/round-service";
 import { applyPlacementRoundResult, stagePlacementRoundResult } from "@/modules/placements/result-service";
@@ -83,7 +84,7 @@ async function passedApplication() {
     applicationMode: "INTERNAL",
   });
   const round = await createPlacementRound(tpo, job.id, { kind: "INTERVIEW", name: "Final interview" });
-  await publishPlacementJob(tpo, job.id);
+  await publishPreparedPlacementJob(tpo, job.id);
   const application = await applyToPlacementJob(learner, job.id, {});
   await decidePlacementScreening(tpo, application.id, { decision: "SHORTLISTED", candidateMessage: "Shortlisted" });
   await actOnPlacementRound(tpo, round.id, {

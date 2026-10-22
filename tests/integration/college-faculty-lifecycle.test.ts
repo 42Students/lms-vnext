@@ -115,10 +115,14 @@ describe.skipIf(!enabled)("Faculty lifecycle, real PG tenant and active-duty gua
     });
   });
   it("denies foreign college, non-admin and extra caller scope fields", async () => {
-    // Another college's admin must not learn the faculty member exists.
-    await expect(transitionCollegeFaculty(foreign, id.member, {
+    // Another college's admin must not learn the faculty member exists. This
+    // request snapshot claims a College B admin role the database does not
+    // grant, so the in-transaction persisted-permission recheck rejects it
+    // generically before any faculty lookup (no existence signal leaks).
+    const foreignAttempt = transitionCollegeFaculty(foreign, id.member, {
       action: "DEACTIVATE", expectedStatus: "ACTIVE", reason: "No access", confirm: true,
-    })).rejects.toBeInstanceOf(AuthorizationError);
+    });
+    await expect(foreignAttempt).rejects.toBeInstanceOf(AuthorizationError);
     await expect(transitionCollegeFaculty(learner, id.member, {
       action: "DEACTIVATE", expectedStatus: "ACTIVE", reason: "No access", confirm: true,
     })).rejects.toBeInstanceOf(AuthorizationError);

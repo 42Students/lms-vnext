@@ -3,7 +3,9 @@ import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
 import {closeDatabaseConnection} from "@/db/client";
 import {createPlacementCompany} from "@/modules/placements/company-service";
-import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
+import {createPlacementJob} from "@/modules/placements/job-service";
+import {publishPreparedPlacementJob} from "../support/publishable-job-fixture";
+import {createPersistedJobRecruiter,persistedRecruiterContext} from "../support/persisted-job-recruiter-fixture";
 import {listOwnRecruiterPlacementJobs} from "@/modules/placements/recruiter-service";
 import {buildRecruiterCompanyOverview} from "@/modules/placements/recruiter-company-overview-model";
 import type {RequestContext} from "@/modules/identity/context";
@@ -21,13 +23,13 @@ describe.skipIf(!enabled)("HR company profile PG isolation",()=>{
   const other=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Profile Other "+nonce,primaryDomain:"else-"+nonce+".example"});
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:company.relationship.id,
    title:"Profile Hiring "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
-  await publishPlacementJob(tpo,job.id);
-  const uid=randomUUID();
-  const hr=(companyId:string,relation:string,collegeId:string):RequestContext=>({
-    user:{id:uid,identityUid:"hr-profile-"+nonce,platformStatus:"ACTIVE",systemRoles:[]},membership:null,
-    recruiter:{userId:uid,companyId,companyName:"Fixture",status:"ACTIVE",title:null,
-     grants:[{id:randomUUID(),collegeId,organizationId:SEED_IDS.organization,collegeName:"Fixture",companyRelationshipId:relation}]}
-  });
+  await publishPreparedPlacementJob(tpo,job.id);
+  const identityUid="hr-profile-"+nonce;
+  const recruiter=await createPersistedJobRecruiter({companyId:company.company.id,companyRelationshipId:company.relationship.id,
+    collegeId:SEED_IDS.collegeA,jobId:job.id,grantedByUserId:tpo.user.id,identityUid});
+  const hr=(companyId:string,relation:string,collegeId:string):RequestContext=>persistedRecruiterContext({
+    userId:recruiter.userId,identityUid,companyId,grantId:recruiter.grantId,collegeId,
+    organizationId:SEED_IDS.organization,companyRelationshipId:relation});
   const own=await listOwnRecruiterPlacementJobs(hr(company.company.id,company.relationship.id,SEED_IDS.collegeA));
   expect(buildRecruiterCompanyOverview(own,SEED_IDS.collegeA,company.relationship.id).recent.some(row=>row.id===job.id)).toBe(true);
   const foreign=await listOwnRecruiterPlacementJobs(hr(other.company.id,other.relationship.id,SEED_IDS.collegeA));

@@ -137,7 +137,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
               className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Email student</a></>:null}
             <Button variant="ghost" type="button" onClick={()=>{setContactRevealed(false);setContactNotice("");}}>Hide</Button>
           </div>}
-        {contactNotice?<p role="status" className="text-xs text-muted-foreground">{contactNotice}</p>:null}
+        {contactNotice==="Copy failed; select the email manually."?<p role="alert" className="text-xs text-muted-foreground">{contactNotice}</p>:contactNotice?<p role="status" className="text-xs text-muted-foreground">{contactNotice}</p>:null}
         <p className="mt-2 text-xs text-muted-foreground">Phone: {student.profileFacts?.phoneMasked??"Not recorded"}</p>
       </section>
       <h3 className="border-t border-border pt-4 font-semibold">Academic marks</h3>

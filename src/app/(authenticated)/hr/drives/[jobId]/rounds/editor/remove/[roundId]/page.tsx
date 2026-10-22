@@ -31,7 +31,7 @@ export default async function HrRoundRemovalConfirm({params}:{
   <div className="flex min-w-0 flex-col gap-3 min-[768px]:flex-row min-[768px]:items-center">
    <PageBackLink href={"/recruiter/drives/"+encodeURIComponent(jobId)+"/rounds/editor"} label="Keep round"
     className="min-h-11 w-full justify-center border border-border px-4 text-primary-text min-[768px]:min-h-9 min-[768px]:w-auto [&_span]:!inline"/>
-   <form method="post" action={"/api/placements/recruiter/drives/"+jobId+"/rounds"} className="min-w-0 w-full min-[768px]:w-auto">
+   <form method="post" action={"/api/placements/recruiter/drives/"+jobId+"/rounds"} className="min-w-0 max-w-full w-full min-[768px]:w-auto">
     <Input type="hidden" name="action" value="REMOVE"/>
     <Input type="hidden" name="roundId" value={round.id}/>
     <Input type="hidden" name="expectedUpdatedAt" value={round.updatedAt.toISOString()}/>

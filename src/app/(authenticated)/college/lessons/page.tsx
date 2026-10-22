@@ -92,7 +92,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
   );
   const authoringOptions=await getCollegeLessonAuthoringOptions(context);
   const courseChoices=[...new Map(authoringOptions.map(row=>[row.courseCode,{code:row.courseCode,name:row.courseName}])).values()];
-  return <div className="min-w-0 max-w-full overflow-x-clip space-y-[var(--lms-space-4)]">
+  return <div className="max-w-full min-w-0 overflow-x-clip space-y-[var(--lms-space-4)]">
     <LessonPageSizePreference storageKey="college-lessons-page-size" />
     <PageHeader title="Lessons" description="Find lessons by course or lesson name."
       actions={<Link href="/college/courses"

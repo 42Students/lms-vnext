@@ -19,7 +19,7 @@ export default async function TpoDriveClosePreviewPage({params}:{params:Promise<
  return <div className="min-w-0 space-y-6">
   <PageHeader eyebrow="TPO · Drive lifecycle" title={preview.title+" · Close preview"}
    description="Review persisted application, round and offer counts before an audited closure."
-   actions={<Link href={"/tpo/placements/jobs/"+preview.id} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 min-[768px]:w-auto">← Drive workspace</Link>}/>
+   actions={<Link href={"/tpo/placements/jobs/"+preview.id} className="inline-flex min-h-11 items-center w-full justify-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 min-[768px]:w-auto">← Drive workspace</Link>}/>
   {preview.canClose?<TpoDriveClosePreviewForm preview={preview}/>:
    <Alert tone="warning">
     {preview.pendingPromotions>0?

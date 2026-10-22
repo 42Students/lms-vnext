@@ -54,6 +54,7 @@ import {
 } from "@/modules/courses/discussion-service";
 import { getFacultyDeliveryRoster } from "@/modules/attendance/faculty-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { releaseSeedLearnerPlacementEnrollment } from "../support/w04-placement-access-fixture";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -119,6 +120,7 @@ const learner: RequestContext = {
 };
 
 async function cleanupUI2A() {
+  await releaseSeedLearnerPlacementEnrollment(pool);
   // This suite writes immutable attendance audit rows which otherwise outlive
   // its disposable class sessions; remove only events belonging to this fixture.
   await pool.query(`delete from activity_events

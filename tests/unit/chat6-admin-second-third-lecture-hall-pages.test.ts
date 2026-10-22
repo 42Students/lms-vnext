@@ -78,6 +78,8 @@ describe("Super Admin second third: actual Lecture Halls server-page states",()=
     expect(fakes.departments).toHaveBeenCalledWith(base,collegeId);
     expect(html).toContain("IIT Dharwad");
     expect(html).toContain("Showing 0–0 of 2 halls");
+    expect(html).toContain("Lecture Halls");
+    expect(html).toContain('aria-label="Lecture hall results"');
     expect(html).toContain("Scoped lecture-hall actions");
     expect(html).toContain("min-w-0");
   });

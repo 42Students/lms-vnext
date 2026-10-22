@@ -15,6 +15,13 @@ import {createLearningPath} from "@/modules/courses/learning-path-service";
 import {createCourseLesson} from "@/modules/courses/lesson-service";
 import {commandFacultyLiveClass} from "@/modules/courses/faculty-live-mutation-service";
 import {SEED_IDS} from "../../scripts/db-seed-data";
+// Live classes must start in the future; keep every slot relative to "now"
+// (IST calendar days) so the suite does not expire on a fixed date.
+function istDate(offsetDays:number){
+ return new Date(Date.now()+offsetDays*86400000+5.5*3600000).toISOString().slice(0,10);
+}
+const periodEndDate=istDate(400)>"2027-12-31"?istDate(400):"2027-12-31";
+const day1=istDate(11),day2=istDate(12),day3=istDate(13);
 if(!process.env.TEST_DATABASE_URL)throw new Error("Use disposable TEST_DATABASE_URL");
 const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
 const admin:RequestContext={
@@ -54,7 +61,7 @@ async function fixture(){
    name:"C4 live "+tag,code:"C4LIVE-"+tag+"-P",durationTerms:8});
  const period=await createAcademicPeriod(admin,{collegeId:SEED_IDS.collegeA,
    name:"C4 live period "+tag,code:"C4LIVE-"+tag+"-A",
-   startDate:"2026-07-01",endDate:"2027-12-31"});
+   startDate:"2026-07-01",endDate:periodEndDate});
  const cohort=await createCohort(admin,{programId:program.id,
    name:"C4 live cohort "+tag,code:"C4LIVE-"+tag+"-C",startPeriodId:period.id});
  const section=await createSection(admin,{cohortId:cohort.id,academicPeriodId:period.id,
@@ -78,7 +85,7 @@ async function fixture(){
 }
 afterEach(cleanup);
 afterAll(async()=>{try{await cleanup();}finally{await pool.end();await closeDatabaseConnection();}});
-const time={startsAt:"2026-10-21T09:00:00+05:30",endsAt:"2026-10-21T10:00:00+05:30"};
+const time={startsAt:day1+"T09:00:00+05:30",endsAt:day1+"T10:00:00+05:30"};
 describe("Faculty live session create, edit, cancel with PostgreSQL",()=>{
  it("writes once with actor audit, denies collision, foreign and stale scopes",async()=>{
    const {delivery,lesson}=await fixture();
@@ -98,8 +105,8 @@ describe("Faculty live session create, edit, cancel with PostgreSQL",()=>{
    const edited=await commandFacultyLiveClass(faculty,{deliveryId:delivery.id},{
      action:"EDIT",contentId:created.id,expectedUpdatedAt:created.updatedAt.toISOString(),
      title:"Faculty C4 Rescheduled",meetingUrl:"https://meet.google.com/class-new",
-     startsAt:"2026-10-21T10:00:00+05:30",
-     endsAt:"2026-10-21T11:00:00+05:30",confirm:true,
+     startsAt:day1+"T10:00:00+05:30",
+     endsAt:day1+"T11:00:00+05:30",confirm:true,
    });
    expect(edited.status).toBe("PUBLISHED");
    await expect(commandFacultyLiveClass(faculty,{deliveryId:delivery.id},{
@@ -131,8 +138,8 @@ describe("Faculty live scheduling persisted revocation",()=>{
    await expect(commandFacultyLiveClass(faculty,{deliveryId:delivery.id},{
     action:"CREATE",lessonId:lesson.id,title:"Revoked instructor",
     meetingUrl:"https://meet.google.com/revoked",
-    startsAt:"2026-10-22T09:00:00+05:30",
-    endsAt:"2026-10-22T10:00:00+05:30",confirm:true,
+    startsAt:day2+"T09:00:00+05:30",
+    endsAt:day2+"T10:00:00+05:30",confirm:true,
    })).rejects.toMatchObject({code:"FACULTY_TEACHING_SCOPE_REQUIRED"});
   }finally{
    await pool.query("insert into membership_roles(id,membership_id,role) values($1::uuid,$2::uuid,$3::membership_role) on conflict do nothing",
@@ -146,12 +153,12 @@ describe("Faculty live class schedule event occupancy",()=>{
   const {delivery,lesson}=await fixture();
   await pool.query("insert into section_schedule_events(section_id,faculty_membership_id,title,starts_at,ends_at) values ($1::uuid,$2::uuid,$3::text,$4::timestamptz,$5::timestamptz)",
    [active!.sectionId,SEED_IDS.facultyCollegeAMembership,"Classroom occupied",
-    "2026-10-23T09:00:00+05:30","2026-10-23T10:00:00+05:30"]);
+    day3+"T09:00:00+05:30",day3+"T10:00:00+05:30"]);
   await expect(commandFacultyLiveClass(faculty,{deliveryId:delivery.id},{
    action:"CREATE",lessonId:lesson.id,title:"Conflicting online session",
    meetingUrl:"https://meet.google.com/conflict",
-   startsAt:"2026-10-23T09:30:00+05:30",
-   endsAt:"2026-10-23T10:30:00+05:30",confirm:true,
+   startsAt:day3+"T09:30:00+05:30",
+   endsAt:day3+"T10:30:00+05:30",confirm:true,
   })).rejects.toMatchObject({code:"SCHEDULE_EVENT_CONFLICT"});
  });
 });

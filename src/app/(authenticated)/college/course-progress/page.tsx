@@ -64,7 +64,7 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
     offeringId:first(params.offeringId)||undefined,
     deliveryId:first(params.deliveryId)||undefined,
   });
-  return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
+  return <div className="max-w-full min-w-0 overflow-x-clip space-y-[var(--lms-space-4)]">
     <PageHeader title="Progress"
       description="See measured completion for a class and course, then focus on the students furthest behind."
       actions={

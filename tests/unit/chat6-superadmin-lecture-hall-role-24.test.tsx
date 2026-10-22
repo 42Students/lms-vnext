@@ -14,7 +14,7 @@ vi.mock("@/modules/academics/college-hall-availability-service",()=>({
  getCollegeHallAvailability:vi.fn(),
  CollegeHallAvailabilityNotFoundError:class CollegeHallAvailabilityNotFoundError extends Error{},
 }));
-vi.mock("@/components/admin/lecture-hall-manager",()=>({LectureHallManager:()=>null}));
+vi.mock("@/components/admin/lecture-hall-manager",()=>({LectureHallManager:({emptyState}:{emptyState?:{title:string}})=>emptyState?.title??null}));
 
 const collegeId="11111111-1111-4111-8111-111111111111";
 const organizationId="22222222-2222-4222-8222-222222222222";
@@ -64,7 +64,7 @@ describe("SA-middle-lecture-halls-24 platform role and selected college",()=>{
  it("scoped Super Admin gets a bounded empty room listing and selected-college loader",async()=>{
   const html=renderToStaticMarkup(await listPage());
   expect(html).toContain("Lecture Halls");
-  expect(html).toContain("IIT Dharwad");
+  expect(html).toContain('aria-label="Lecture hall results"');
   expect(html).toContain("No lecture halls found");
   expect(listLectureHalls).toHaveBeenCalledWith(expect.anything(),
     expect.objectContaining({collegeId,limit:10,offset:0}));

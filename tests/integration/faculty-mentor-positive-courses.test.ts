@@ -54,6 +54,12 @@ import {createCourseDiscussionMessage,toggleCourseDiscussionPin,deleteCourseDisc
  from "@/modules/courses/discussion-service";
 import { createSectionScheduleEvent } from "@/modules/academics/schedule-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+// Faculty authoring rejects past due dates and past sessions; derive IST
+// calendar days from "now" so these positive paths never expire.
+function istDate(offsetDays:number){
+  return new Date(Date.now()+offsetDays*86400000+5.5*3600000).toISOString().slice(0,10);
+}
+const futureIstDay=istDate(30),futureIstPreviousDay=istDate(29);
 
 if (!process.env.TEST_DATABASE_URL) {
   throw new Error("Requires disposable PostgreSQL TEST_DATABASE_URL (never production DATABASE_URL)");
@@ -179,7 +185,7 @@ async function fixture() {
   });
   const period=await createAcademicPeriod(admin,{
     collegeId:SEED_IDS.collegeA,name:"Chat4 Positive Semester " + runId,
-    code:codePrefix+"-PERIOD",startDate:"2026-07-01",endDate:"2027-12-31",
+    code:codePrefix+"-PERIOD",startDate:"2026-07-01",endDate:istDate(400)>"2027-12-31"?istDate(400):"2027-12-31",
   });
   const cohort=await createCohort(admin,{
     programId:program.id,name:"Chat4 Intake " + runId,code:codePrefix+"-COHORT",startPeriodId:period.id,
@@ -353,16 +359,16 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     const lessonId=lessonRow.rows[0]!.id;
     const created=await commandFacultyAssignment(facultyOnly,{deliveryId:delivery.id},{
       action:"CREATE",lessonId,sequence:10,title:"Faculty owned draft "+runId,
-      description:"Text only",dueAt:authoringDueInstant("2026-10-21T09:30"),maxPoints:15,confirmed:true,
+      description:"Text only",dueAt:authoringDueInstant(futureIstDay+"T09:30"),maxPoints:15,confirmed:true,
     });
     expect(created.status).toBe("DRAFT");
     const edited=await commandFacultyAssignment(facultyOnly,{deliveryId:delivery.id},{
       action:"EDIT",assignmentId:created.id,expectedUpdatedAt:created.updatedAt.toISOString(),
-      title:"Revised draft "+runId,description:"Updated text",dueAt:authoringDueInstant("2026-10-21T00:15"),maxPoints:20,
+      title:"Revised draft "+runId,description:"Updated text",dueAt:authoringDueInstant(futureIstDay+"T00:15"),maxPoints:20,
       confirmed:true,
     });
-    expect(created.dueAt?.toISOString()).toBe("2026-10-21T04:00:00.000Z");
-    expect(edited.dueAt?.toISOString()).toBe("2026-10-20T18:45:00.000Z");
+    expect(created.dueAt?.toISOString()).toBe(futureIstDay+"T04:00:00.000Z");
+    expect(edited.dueAt?.toISOString()).toBe(futureIstPreviousDay+"T18:45:00.000Z");
     expect(edited.maxPoints).toBe(20);
     await expect(commandFacultyAssignment(facultyOnly,{deliveryId:delivery.id},{
       action:"EDIT",assignmentId:created.id,expectedUpdatedAt:created.updatedAt.toISOString(),
@@ -630,19 +636,19 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     const {delivery}=await fixture();
     const payload={action:"CREATE" as const,title:"Own Faculty IST session "+runId,
       description:null,location:null,confirm:true as const,
-      ...facultyScheduleInstants("2026-10-22T00:15","2026-10-22T01:15")};
+      ...facultyScheduleInstants(futureIstDay+"T00:15",futureIstDay+"T01:15")};
     const created=await commandFacultyAttendanceSchedule(facultyOnly,{deliveryId:delivery.id},payload);
     const persisted=await pool.query<{starts_at:Date,ends_at:Date}>(
       "select starts_at,ends_at from section_schedule_events where id=$1",[created.id]);
-    expect(persisted.rows[0]?.starts_at.toISOString()).toBe("2026-10-21T18:45:00.000Z");
-    expect(persisted.rows[0]?.ends_at.toISOString()).toBe("2026-10-21T19:45:00.000Z");
+    expect(persisted.rows[0]?.starts_at.toISOString()).toBe(futureIstPreviousDay+"T18:45:00.000Z");
+    expect(persisted.rows[0]?.ends_at.toISOString()).toBe(futureIstPreviousDay+"T19:45:00.000Z");
     await expect(commandFacultyAttendanceSchedule(learner,{deliveryId:delivery.id},payload)).rejects.toBeDefined();
     await expect(commandFacultyAttendanceSchedule(facultyOnly,{deliveryId:SEED_IDS.collegeB},payload)).rejects.toBeDefined();
     const version=await pool.query<{updated_at:Date}>(
       "update section_schedule_events set updated_at=now() where id=$1 returning updated_at",[created.id]);
     const change={...payload,action:"RESCHEDULE" as const,sessionId:created.id,
       expectedUpdatedAt:version.rows[0]!.updated_at.toISOString(),
-      ...facultyScheduleInstants("2026-10-22T02:15","2026-10-22T03:15")};
+      ...facultyScheduleInstants(futureIstDay+"T02:15",futureIstDay+"T03:15")};
     const saved=await commandFacultyAttendanceSchedule(facultyOnly,{deliveryId:delivery.id},change);
     expect(saved.updatedAt.getTime()).toBeGreaterThan(version.rows[0]!.updated_at.getTime());
     await expect(commandFacultyAttendanceSchedule(facultyOnly,{deliveryId:delivery.id},change))
@@ -702,17 +708,21 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     expect(reason.rows[0]?.metadata.correctionReason).toMatch(/official register/);
     expect(audit.rows[0]?.metadata.markedAt).toBe(corrected.markedAt.toISOString());
   });
-  it("fences Faculty from old Quiz results endpoint and audits the Admin path",async()=>{
+  it("scopes the old Quiz results endpoint to the owning Section Faculty and Admin, with audit",async()=>{
     const {delivery,quiz}=await fixture();
     await transitionCourseQuiz(faculty,quiz.id,{...await facultyAssessmentFixtureToken(pool,"QUIZ",quiz.id), action:"CLOSE"});
-    await expect(setCourseQuizResults(facultyOnly,quiz.id,{published:true}))
-      .rejects.toMatchObject({code:"QUIZ_RESULTS_ADMIN_ONLY"});
+    // Releasing results before the deadline would reveal protected answers.
+    await expect(setCourseQuizResults(admin,quiz.id,{published:true}))
+      .rejects.toMatchObject({code:"INVALID_QUIZ_TRANSITION"});
+    await pool.query("update course_quizzes set due_at=now()-interval '1 hour' where id=$1",[quiz.id]);
     await expect(setCourseQuizResults(learner,quiz.id,{published:true}))
       .rejects.toBeDefined();
     await expect(setCourseQuizResults({
       ...admin,membership:{...admin.membership!,collegeId:SEED_IDS.collegeB},
     },quiz.id,{published:true})).rejects.toBeDefined();
-    const published=await setCourseQuizResults(admin,quiz.id,{published:true});
+    // 3a75ee19f6 restored legacy parity: the Faculty who teaches the quiz's
+    // own Section delivery may release its results (shared quizzes stay Admin-only).
+    const published=await setCourseQuizResults(facultyOnly,quiz.id,{published:true});
     expect(published.resultsPublished).toBe(true);
     await expect(setCourseQuizResults(admin,quiz.id,{published:true}))
       .rejects.toMatchObject({code:"INVALID_QUIZ_TRANSITION"});

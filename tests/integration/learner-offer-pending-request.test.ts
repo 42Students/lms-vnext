@@ -21,7 +21,7 @@ beforeEach(async()=>{
     [offerId,fixture.applicationId,SEED_IDS.collegeAdminUser,"2030-11-01T00:00:00Z"],
   );
   await pool.query(
-    "INSERT INTO placement_learner_requests(id,application_id,request_type,offer_id,scope_key,reason,requested_by_user_id) VALUES($1,$2,'OFFER_EXTENSION',$3,$4,$5,$6)",
+    "INSERT INTO placement_learner_requests(id,application_id,learner_membership_id,request_type,offer_id,scope_key,reason,requested_by_user_id) VALUES($1,$2,(SELECT membership_id FROM placement_applications WHERE id=$2),'OFFER_EXTENSION',$3,$4,$5,$6)",
     [requestId,fixture.applicationId,offerId,"OFFER_EXTENSION:"+fixture.applicationId+":"+offerId,
       "Need more time for exams",fixture.drive.learner.ids.user],
   );

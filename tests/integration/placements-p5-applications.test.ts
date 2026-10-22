@@ -23,9 +23,10 @@ import {
 import {
   closePlacementJob,
   createPlacementJob,
-  publishPlacementJob,
 } from "@/modules/placements/job-service";
+import { publishPreparedPlacementJob } from "../support/publishable-job-fixture";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { deletePlacementRowTrees } from "../support/placement-job-tree-cleanup";
 import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
 
 const databaseUrl =
@@ -93,6 +94,8 @@ const otherLearner: RequestContext = {
 };
 
 async function cleanup() {
+  // Clear every drive child (rounds, applications, stages, offers, ...) first.
+  await deletePlacementRowTrees(pool);
   await pool.query(
     "delete from placement_application_screening_history",
   );
@@ -210,7 +213,7 @@ describe("Placement P5 applications", () => {
           "REQUIRE_COMPLETE",
       },
     );
-    await publishPlacementJob(tpo, job.id);
+    await publishPreparedPlacementJob(tpo, job.id);
 
     await expect(
       applyToPlacementJob(
@@ -291,7 +294,7 @@ describe("Placement P5 applications", () => {
       externalApplicationUrl:
         "https://jobs.example/apply",
     });
-    await publishPlacementJob(tpo, job.id);
+    await publishPreparedPlacementJob(tpo, job.id);
 
     await expect(
       applyToPlacementJob(
@@ -340,7 +343,7 @@ describe("Placement P5 applications", () => {
 
   it("treats withdrawal as a stable terminal application state", async () => {
     const job = await createJob();
-    await publishPlacementJob(tpo, job.id);
+    await publishPreparedPlacementJob(tpo, job.id);
 
     const application =
       await applyToPlacementJob(
@@ -414,7 +417,7 @@ describe("Placement P5 applications", () => {
 
   it("denies new submissions after a published drive is closed", async () => {
     const job = await createJob();
-    await publishPlacementJob(tpo, job.id);
+    await publishPreparedPlacementJob(tpo, job.id);
     await closePlacementJob(tpo, job.id);
 
     await expect(
@@ -432,7 +435,7 @@ describe("Placement P5 applications", () => {
 
   it("blocks expired jobs and cross-college learner substitution", async () => {
     const expired = await createJob();
-    await publishPlacementJob(
+    await publishPreparedPlacementJob(
       tpo,
       expired.id,
     );
@@ -453,7 +456,7 @@ describe("Placement P5 applications", () => {
     });
 
     const open = await createJob();
-    await publishPlacementJob(tpo, open.id);
+    await publishPreparedPlacementJob(tpo, open.id);
 
     await expect(
       applyToPlacementJob(

@@ -555,7 +555,9 @@ describe("courses C3 learner progress against PostgreSQL", () => {
         },
       );
 
-    expect(stale.lastPositionSeconds).toBe(50);
+    // LEARNER-course-detail-R01 (7c4726406b): the resume position is the
+    // learner's actual latest position, not a high-water mark.
+    expect(stale.lastPositionSeconds).toBe(20);
 
     const done =
       await saveLearnerContentProgress(
@@ -679,9 +681,11 @@ describe("courses C3 learner progress against PostgreSQL", () => {
           item.id === futureLiveClass.id,
       );
 
+    // LEARNER-course-detail-R03: a published future live meeting link is
+    // joinable before startsAt; it stays SCHEDULED and cannot be completed.
     expect(future).toMatchObject({
       availability: "SCHEDULED",
-      externalUrl: null,
+      externalUrl: "https://meet.example.com/c3-future",
       storageKey: null,
     });
 

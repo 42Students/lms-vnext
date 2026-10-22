@@ -230,7 +230,7 @@ export default async function AnnouncementsPage({
                 <h3 className="mt-2 text-base font-semibold text-foreground">{first.title}</h3>
                 <p className="mt-1 whitespace-pre-wrap text-sm text-body">{first.message}</p>
                 {first.buttonLabel && first.buttonUrl && /^https:\/\/[^\s]+$/i.test(first.buttonUrl)
-                  ? <a href={first.buttonUrl} className="mt-2 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline">{first.buttonLabel} ↗</a> : null}
+                  ? <a href={first.buttonUrl} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">{first.buttonLabel} ↗</a> : null}
                 <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted-foreground">
                   <span>{groupReceipt?
                     "Sent to "+target+" placement "+(target===1?"cell":"cells"):
@@ -256,7 +256,7 @@ export default async function AnnouncementsPage({
           <div><h2 className="m-0 text-lg font-semibold text-foreground">Announcement management</h2>
             <p className="mt-1 text-sm text-muted-foreground">Search, filter, export and manage authorized announcements. Placement-cell broadcasts are grouped above.</p></div>
           <Link href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}), ...(params.receiverType ? {receiverType:params.receiverType} : {}), ...(params.visibility ? {visibility:params.visibility} : {}), ...(params.pinned ? {pinned:params.pinned} : {}), ...(params.senderType ? {senderType:params.senderType} : {}) }).toString()}
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground hover:bg-[var(--lms-primary-subtle)]">
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground hover:bg-[var(--lms-primary-subtle)]">
             {includeDeleted ? "Active only" : "Include deleted"}
           </Link>
         </div>

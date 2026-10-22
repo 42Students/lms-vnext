@@ -19,7 +19,7 @@ describe("TPO batch retirement and recovery",()=>{
  it("GR-35 and GR-90 confirm retirement by keyboard-reachable checkbox rather than window.confirm",()=>{
   const form=source("src/components/tpo/tpo-batch-lifecycle-control.tsx");
   expect(form).not.toContain("window.confirm");
-  expect(form).toContain('type="checkbox"');
+  expect(form).toMatch(/<Checkbox\b|type="checkbox"/);
   expect(form).toContain("disabled=busy||!reviewed");
   expect(form).toContain('role="alert"');
  });

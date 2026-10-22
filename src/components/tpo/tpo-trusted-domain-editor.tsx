@@ -59,7 +59,7 @@ export function TpoTrustedDomainEditor({domains}:{domains:readonly string[]}){
     confirmVariant={review?.action==="REMOVE"?"danger":"primary"}
     pending={busy}
     onConfirm={()=>{if(review)void change(review.action,review.value);}}>
-    {status?<Alert tone={statusTone}>{status}</Alert>:null}
+    {status?statusTone==="error"?<p role="alert" className="text-sm text-foreground">{status}</p>:<Alert tone={statusTone}>{status}</Alert>:null}
   </ConfirmDialog>
  </section>;
 }

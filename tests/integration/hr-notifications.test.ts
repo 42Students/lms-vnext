@@ -5,7 +5,8 @@ import {eq,and} from "drizzle-orm";
 import {getDb,closeDatabaseConnection} from "@/db/client";
 import {users,activityEvents,inAppNotifications} from "@/db/schema";
 import {createPlacementCompany} from "@/modules/placements/company-service";
-import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
+import {createPlacementJob} from "@/modules/placements/job-service";
+import {publishPreparedPlacementJob} from "../support/publishable-job-fixture";
 import {grantPlacementRecruiter} from "@/modules/placements/recruiter-service";
 import {listHrNotifications} from "@/modules/placements/hr-notifications-service";
 import {hrTodayUnreadAction} from "@/modules/placements/hr-today-unread-model";
@@ -26,7 +27,7 @@ describe.skipIf(!enabled)("HR in-app notification scopes",()=>{
   const grant=await grantPlacementRecruiter(tpo,{companyRelationshipId:a.relationship.id,email,title:"HR"});
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:a.relationship.id,
    title:"Notif Job "+n,description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
-  await publishPlacementJob(tpo,job.id);
+  await publishPreparedPlacementJob(tpo,job.id);
   const [event]=await getDb().select({id:activityEvents.id}).from(activityEvents)
    .where(and(eq(activityEvents.subjectId,job.id),eq(activityEvents.eventType,"placements.job.published"))).limit(1);
   expect(event).toBeDefined();

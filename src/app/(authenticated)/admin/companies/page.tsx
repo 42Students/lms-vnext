@@ -87,7 +87,7 @@ export default async function SuperAdminCompaniesPage({
      <div className="min-w-0 space-y-1">
       <p className="font-semibold text-[var(--lms-heading)]">{row.name}</p>
       {safeCompanyWebsite(row.website)?<a href={safeCompanyWebsite(row.website)!} target="_blank" rel="noopener noreferrer"
-       className="inline-flex min-h-9 items-center break-all text-sm font-semibold text-primary-text underline">Visit ↗</a>:null}
+       className="inline-flex min-h-11 md:min-h-9 items-center break-all text-sm font-semibold text-primary-text underline">Visit ↗</a>:null}
       {row.aliases?.length?<p className="break-words text-xs text-muted-foreground">Also known as {row.aliases.join(", ")}</p>:null}
       <p className="break-all text-xs text-muted-foreground">Domains: {row.domains?.length?row.domains.join(", "):"None"}</p>
       <div className="flex flex-wrap gap-2">
@@ -131,7 +131,7 @@ export default async function SuperAdminCompaniesPage({
       </Disclosure>:null}
      <Link href={"/admin/companies/"+encodeURIComponent(row.companyId)+"/drives"}
       target="_blank" rel="noopener noreferrer"
-      className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">History</Link>
+      className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">History</Link>
      <Disclosure title="Company details" contentClassName="space-y-2 pb-3">
       <p className="text-xs text-body">Added by: {row.addedByType??"—"}</p>
       <p className="break-all text-xs text-body">Domains: {row.domains?.length?row.domains.join(", "):"None"}</p>
@@ -140,7 +140,7 @@ export default async function SuperAdminCompaniesPage({
       {row.about?<p className="text-xs text-body">{row.about}</p>:null}
       <p className="text-xs text-body">Linked colleges: {row.companyCollegeCount??0}</p>
       <Link href={"/admin/companies?"+new URLSearchParams({companyId:row.companyId,status:"ALL",companyStatus:"ALL",trust:"ALL",view:"COLLEGE"}).toString()}
-       className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Review relationships</Link>
+       className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">Review relationships</Link>
      </Disclosure>
     </div>},
   ];

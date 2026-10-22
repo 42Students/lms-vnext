@@ -14,7 +14,7 @@ let f:LearnerCareerCalendarFixture|null=null,requestId:string|null=null;
 beforeEach(async()=>{
   f=newLearnerCareerCalendarFixture();await seedLearnerCareerCalendarFixture(pool,f);
   requestId=randomUUID();
-  await pool.query("INSERT INTO placement_learner_requests(id,application_id,request_type,scope_key,reason,requested_by_user_id) VALUES($1,$2,'APPLICATION_WITHDRAWAL',$3,$4,$5)",
+  await pool.query("INSERT INTO placement_learner_requests(id,application_id,learner_membership_id,request_type,scope_key,reason,requested_by_user_id) VALUES($1,$2,(SELECT membership_id FROM placement_applications WHERE id=$2),'APPLICATION_WITHDRAWAL',$3,$4,$5)",
     [requestId,f.applicationId,"APPLICATION_WITHDRAWAL:"+f.applicationId,
       "Please cancel my pending withdrawal",f.drive.learner.ids.user]);
 },45000);

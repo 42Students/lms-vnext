@@ -77,7 +77,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           cacheKey={context.user.id + ":" + context.membership.collegeId + ":" + window.start.toISOString().slice(0, 10)}
         />
         <details className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-white p-4">
-          <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-link md:min-h-9">
+          <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-link">
             Live attendance and on-site monitoring
           </summary>
           <div className="space-y-4 pt-3">
@@ -89,7 +89,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Prioritize<Select name="sort" defaultValue={sort.data} className="block min-h-11 min-[768px]:min-h-[var(--lms-control-height)] mt-[6px]"><option value="RECENT">Most recent scheduled</option><option value="PENDING_DESC">Most pending first</option><option value="NO_SHOW_DESC">Most no-shows first</option><option value="UNRESOLVED_DESC">Most unresolved first</option></Select></label>
           <Button type="submit" className="min-h-11 w-full self-end bg-primary px-4 text-white md:min-h-[var(--lms-control-height)] xl:w-auto">Apply</Button>
         </form>
-        <div className="flex flex-wrap gap-3"><Link href={tpoLiveCsvHref({q:search.data,issue:issue.data,sort:sort.data})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-[var(--lms-teal-deep)] md:min-h-9">Export current live snapshot CSV</Link><Link href="/tpo/drive-day" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline md:min-h-9">Reset focus</Link></div>
+        <div className="flex flex-wrap gap-3"><Link href={tpoLiveCsvHref({q:search.data,issue:issue.data,sort:sort.data})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-[var(--lms-teal-deep)]">Export current live snapshot CSV</Link><Link href="/tpo/drive-day" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline">Reset focus</Link></div>
         {liveTotals?<dl aria-label="Current authorized live-round snapshot" className="grid min-w-0 grid-cols-2 gap-px overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-border md:grid-cols-3 lg:grid-cols-6">{[
           ["Live rounds",liveTotals.rounds],["Roster",liveTotals.roster],["Checked in",liveTotals.checkedIn],
           ["Explicit no-shows",liveTotals.explicitNoShows],["Pending",liveTotals.pending],["Unrecorded",liveTotals.unrecorded],
@@ -99,7 +99,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           <Alert tone="warning">Only the first 20 live rounds are shown; more records may exist.</Alert>
         ) : null}
         {liveRows.length === 0 ? (
-          <EmptyState title={!snapshot||snapshot.rows.length===0?"No verified round happening now":"No live rounds match this filter"} description="Only published scheduled rounds with a recorded start and duration count as live. A round without duration is not assumed active. No check-ins or no-shows are inferred." action={<Link href="/tpo/drive-day" className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Reset focus</Link>}/>
+          <EmptyState title={!snapshot||snapshot.rows.length===0?"No verified round happening now":"No live rounds match this filter"} description="Only published scheduled rounds with a recorded start and duration count as live. A round without duration is not assumed active. No check-ins or no-shows are inferred." action={<Link href="/tpo/drive-day" className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Reset focus</Link>}/>
         ) : (
           <div className="grid gap-4">
             {liveRows.map((round) => (
@@ -115,9 +115,9 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                     <p className="text-xs text-muted-foreground leading-5">{tpoLiveRoundVenueLabel(round.venue)}</p>
                     {tpoLiveRoundTiming(round,snapshot!.asOf).remainingMinutes!==null?<p className="text-xs text-muted-foreground leading-5">Elapsed {tpoLiveRoundTiming(round,snapshot!.asOf).elapsedMinutes} min · approximately {tpoLiveRoundTiming(round,snapshot!.asOf).remainingMinutes} min scheduled remaining. This is not an actual completion state.</p>:null}
                   </div>
-                  <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap"><Link href={tpoLiveRoundJobHref(round.jobId)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-[var(--lms-teal-deep)] md:min-h-9">Open drive</Link>
+                  <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap"><Link href={tpoLiveRoundJobHref(round.jobId)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-[var(--lms-teal-deep)]">Open drive</Link>
                   <Link href={"/tpo/drive-day/" + round.id}
-                    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-white hover:bg-primary-hover sm:w-auto md:min-h-9">
+                    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-semibold text-white hover:bg-primary-hover sm:w-auto">
                     Open round
                   </Link></div>
                 </div>
@@ -159,7 +159,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
         <section className="rounded-[13px] border border-border bg-surface p-6 text-center">
           <EmptyState title="There is no drive day for you today."
             action={<Link href="/tpo/calendar"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-4 font-semibold text-link md:min-h-9">
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-4 font-semibold text-link">
               See upcoming rounds
             </Link>}/>
         </section>
@@ -188,7 +188,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                     "/tpo/drive-day/" +
                     round.roundId
                   }
-                  className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3 text-sm font-[650] transition hover:border-primary-hover hover:bg-primary-hover text-white md:min-h-9"
+                  className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3 text-sm font-[650] transition hover:border-primary-hover hover:bg-primary-hover text-white"
                 >
                   Open round
                 </Link>

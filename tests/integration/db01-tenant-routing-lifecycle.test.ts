@@ -9,6 +9,7 @@ import {
   deleteTenantDomain,
   resolveTenantFromHost,
 } from "@/modules/tenant-domains/service";
+import { SEED_IDS } from "../../scripts/db-seed-data";
 
 /**
  * DB-004 Chat 2: real repository/host resolution against a registered
@@ -61,6 +62,8 @@ async function withTenantFixture(run: (fixture: TenantFixture) => Promise<void>)
 
     await run(fixture);
   } finally {
+    // Domain removal writes a fixture-college audit receipt; remove it first.
+    await pool.query("delete from activity_events where college_id = $1", [fixture.collegeId]);
     await pool.query("delete from tenant_domains where id = $1", [fixture.domainId]);
     await pool.query("delete from colleges where id = $1", [fixture.collegeId]);
     await pool.query("delete from organizations where id = $1", [fixture.organizationId]);
@@ -136,6 +139,7 @@ describe("DB01 tenant host lifecycle — real repository SQL", () => {
     await withTenantFixture(async (fixture) => {
       const superAdmin: RequestContext = {
         user: {
+          // Persisted SUPER_ADMIN: the delete re-reads system roles under lock.
           id: SEED_IDS.superAdminUser,
           identityUid: "isolated-test-superadmin-uid",
           platformStatus: "ACTIVE",

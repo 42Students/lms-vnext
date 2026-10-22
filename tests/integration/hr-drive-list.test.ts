@@ -4,9 +4,9 @@ import { afterAll, describe, expect, it } from "vitest";
 import type { RequestContext } from "@/modules/identity/context";
 import { closeDatabaseConnection } from "@/db/client";
 import { createPlacementCompany } from "@/modules/placements/company-service";
-import { createPlacementJob, publishPlacementJob } from "@/modules/placements/job-service";
-import { createPlacementRound } from "@/modules/placements/round-service";
-import { upsertJobEligibilityPolicy } from "@/modules/placements/eligibility-service";
+import { createPlacementJob } from "@/modules/placements/job-service";
+import { publishPreparedPlacementJob } from "../support/publishable-job-fixture";
+import { createPersistedJobRecruiter, persistedRecruiterContext } from "../support/persisted-job-recruiter-fixture";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 import { filterRecruiterDrives, recruiterDriveListQuerySchema } from "@/modules/placements/recruiter-drive-list-model";
 import { SEED_IDS } from "../../scripts/db-seed-data";
@@ -23,14 +23,13 @@ describe.skipIf(!enabled)("HR drive list scope (isolated PG)", () => {
    const another=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Drive Foreign "+nonce,primaryDomain:"other-"+nonce+".example"});
    const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:own.relationship.id,
      title:"Recruiter Job "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
-   await createPlacementRound(tpo,job.id,{kind:"TEST",name:"Aptitude screening"});
-   await upsertJobEligibilityPolicy(tpo,job.id,{});
-   await publishPlacementJob(tpo,job.id);
-   const userId=randomUUID();
-   const context=(companyId:string,relationshipId:string,collegeId:string):RequestContext=>({
-     user:{id:userId,identityUid:"hr-drive-"+nonce,platformStatus:"ACTIVE",systemRoles:[]},membership:null,
-     recruiter:{userId,companyId,companyName:"Test",title:null,status:"ACTIVE",grants:[{
-      id:randomUUID(),collegeId,organizationId:SEED_IDS.organization,collegeName:"Fixture",companyRelationshipId:relationshipId}]}});
+   await publishPreparedPlacementJob(tpo,job.id,{round:{kind:"TEST",name:"Aptitude screening"}});
+   const identityUid="hr-drive-"+nonce;
+   const recruiter=await createPersistedJobRecruiter({companyId:own.company.id,companyRelationshipId:own.relationship.id,
+     collegeId:SEED_IDS.collegeA,jobId:job.id,grantedByUserId:tpo.user.id,identityUid});
+   const context=(companyId:string,relationshipId:string,collegeId:string):RequestContext=>persistedRecruiterContext({
+     userId:recruiter.userId,identityUid,companyId,grantId:recruiter.grantId,collegeId,
+     organizationId:SEED_IDS.organization,companyRelationshipId:relationshipId});
    const rows=await listOwnRecruiterPlacementJobs(context(own.company.id,own.relationship.id,SEED_IDS.collegeA));
    expect(filterRecruiterDrives(rows,recruiterDriveListQuerySchema.parse({collegeId:SEED_IDS.collegeA}))
       .some(row=>row.job.id===job.id)).toBe(false); // TPO-authored jobs are not recruiter-owned.

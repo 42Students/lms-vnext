@@ -44,7 +44,7 @@ export default async function RecruiterDriveProposalHistory({
    <form action="/hr/drives/proposals" method="get" role="search" aria-label="Search sent drive proposals" className="flex min-w-0 flex-col gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:flex-row min-[768px]:items-end">
     <Input type="hidden" name="collegeId" value={data.collegeId??""}/>
     <label className="min-w-0 flex-[1_1_12rem] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search by role title
-     <Input type="search" name="q" maxLength={100} defaultValue={input.data.q}
+     <Input name="q" type="search" maxLength={100} defaultValue={input.data.q}
        className="w-full mt-[6px] block" placeholder="Role title" />
     </label>
     <label className="min-w-0 w-full text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-44">Order

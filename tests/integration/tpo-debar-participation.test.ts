@@ -6,10 +6,9 @@ import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { applyToPlacementJob } from "@/modules/placements/application-service";
 import { createPlacementCompany } from "@/modules/placements/company-service";
-import {
-  createPlacementJob,
-  publishPlacementJob,
-} from "@/modules/placements/job-service";
+import { createPlacementJob } from "@/modules/placements/job-service";
+import { publishPreparedPlacementJob } from "../support/publishable-job-fixture";
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import { requireLearnerPlacementAccess } from "@/modules/placements/learner-participation-guard";
 import {
   decideTpoLearnerParticipation,
@@ -81,6 +80,7 @@ describe.skipIf(!enabled)("W42 Debar: disposable PostgreSQL and apply gate", () 
     companyId = company.company.id;
     relationshipId = company.relationship.id;
     const job = await createPlacementJob(tpo, {
+      ...publishableJobTerms,
       collegeId: SEED_IDS.collegeA,
       companyRelationshipId: company.relationship.id,
       title: "W42 Debar Integration",
@@ -91,7 +91,7 @@ describe.skipIf(!enabled)("W42 Debar: disposable PostgreSQL and apply gate", () 
       applicationMode: "INTERNAL",
     });
     jobId = job.id;
-    await publishPlacementJob(tpo, job.id);
+    await publishPreparedPlacementJob(tpo, job.id);
   });
 
   afterAll(async () => {
@@ -107,6 +107,13 @@ describe.skipIf(!enabled)("W42 Debar: disposable PostgreSQL and apply gate", () 
             [jobId],
           );
           await pool.query("DELETE FROM placement_applications WHERE job_id = $1", [jobId]);
+          await pool.query(
+            "DELETE FROM placement_job_round_events " +
+            "WHERE round_id IN (SELECT id FROM placement_job_rounds WHERE job_id = $1)",
+            [jobId],
+          );
+          await pool.query("DELETE FROM placement_job_rounds WHERE job_id = $1", [jobId]);
+          await pool.query("DELETE FROM placement_job_eligibility_policies WHERE job_id = $1", [jobId]);
           await pool.query("DELETE FROM placement_job_role_options WHERE job_id = $1", [jobId]);
           await pool.query("DELETE FROM placement_jobs WHERE id = $1", [jobId]);
         }

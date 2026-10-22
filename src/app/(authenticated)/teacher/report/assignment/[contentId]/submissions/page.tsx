@@ -60,7 +60,7 @@ export default async function FacultyAssignmentSubmissionsPage({
       <label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         Find learner submissions
         <Input type="search" name="q" defaultValue={query.q} maxLength={120} placeholder="Learner name"
-          className="min-h-11 md:min-h-[var(--lms-control-height)] w-full"/>
+          className="min-h-11 md:min-h-[var(--lms-control-height)] w-full max-[767px]:text-[16px]"/>
       </label>
       <Button type="submit" variant="primary" className="w-full md:w-auto">Search</Button>
       <Link href={facultySubmissionListHref({...query,q:"",page:1})}

@@ -50,7 +50,7 @@ async function cleanup(){
     await pool.query("delete from project_meeting_history where project_id=any($1::uuid[])",[tracked.projects]);
     for(const table of [
       "project_task_submissions","project_submission_reviews","project_submissions",
-      "project_meetings","project_members","project_resources",
+      "project_meeting_history","project_meetings","project_members","project_resources","project_resource_audit",
       "project_tasks","project_sprints","project_releases",
     ]){
       await pool.query("delete from "+table+" where project_id=any($1::uuid[])",[tracked.projects]);

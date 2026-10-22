@@ -1,4 +1,5 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+import { randomUUID } from "node:crypto";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
@@ -13,24 +14,54 @@ if (!databaseUrl) throw new Error("W06 notification page tests require disposabl
 const pool = new Pool({ connectionString: databaseUrl, max: 2 });
 const fixtureType = "w06_keyset_pagination_fixture";
 
-const learner: RequestContext = {
-  user: { id: SEED_IDS.learnerUser, identityUid: "seed-learner", platformStatus: "ACTIVE", systemRoles: [] },
-  membership: {
-    id: SEED_IDS.learnerCollegeAMembership,
-    collegeId: SEED_IDS.collegeA, organizationId: SEED_IDS.organization,
-    status: "ACTIVE", roles: ["LEARNER"],
-  },
-};
-const faculty: RequestContext = {
-  user: { id: SEED_IDS.facultyUser, identityUid: "seed-faculty", platformStatus: "ACTIVE", systemRoles: [] },
-  membership: {
-    id: SEED_IDS.facultyCollegeBMembership,
-    collegeId: SEED_IDS.collegeB, organizationId: SEED_IDS.organization,
-    status: "ACTIVE", roles: ["FACULTY"],
-  },
-};
+// Fresh recipients per run: leftover inbox rows written for the shared seeded
+// users by earlier integration files must not skew exact counts.
+type Recipient = { userId: string; membershipId: string; context: RequestContext };
+let learner: RequestContext;
+let faculty: RequestContext;
+const recipients: Recipient[] = [];
+
+async function newRecipient(
+  collegeId: string,
+  role: "LEARNER" | "FACULTY",
+): Promise<Recipient> {
+  const userId = randomUUID();
+  const membershipId = randomUUID();
+  const identityUid = `w06-page-${userId}`;
+  await pool.query(
+    "insert into users (id, identity_uid, display_name) values ($1, $2, $3)",
+    [userId, identityUid, "W06 notification recipient"],
+  );
+  await pool.query(
+    "insert into college_memberships (id, user_id, college_id, status) values ($1, $2, $3, 'ACTIVE')",
+    [membershipId, userId, collegeId],
+  );
+  await pool.query(
+    "insert into membership_roles (membership_id, role) values ($1, $2)",
+    [membershipId, role],
+  );
+  const recipient: Recipient = {
+    userId,
+    membershipId,
+    context: {
+      user: { id: userId, identityUid, platformStatus: "ACTIVE", systemRoles: [] },
+      membership: {
+        id: membershipId,
+        collegeId,
+        organizationId: SEED_IDS.organization,
+        status: "ACTIVE",
+        roles: [role],
+      },
+    },
+  };
+  recipients.push(recipient);
+  return recipient;
+}
 
 async function cleanup() {
+  for (const recipient of recipients) {
+    await pool.query("delete from in_app_notifications where user_id = $1", [recipient.userId]);
+  }
   await pool.query(
     "delete from in_app_notifications where event_id in (select id from activity_events where subject_type = $1)",
     [fixtureType],
@@ -55,13 +86,22 @@ async function seed(count: number) {
     from events
   `, [
     SEED_IDS.organization, SEED_IDS.collegeA, SEED_IDS.collegeAdminUser,
-    fixtureType, count, SEED_IDS.learnerUser,
+    fixtureType, count, learner.user.id,
   ]);
 }
 
+beforeAll(async () => {
+  learner = (await newRecipient(SEED_IDS.collegeA, "LEARNER")).context;
+  faculty = (await newRecipient(SEED_IDS.collegeB, "FACULTY")).context;
+});
 beforeEach(cleanup);
 afterAll(async () => {
   await cleanup();
+  for (const recipient of recipients) {
+    await pool.query("delete from membership_roles where membership_id = $1", [recipient.membershipId]);
+    await pool.query("delete from college_memberships where id = $1", [recipient.membershipId]);
+    await pool.query("delete from users where id = $1", [recipient.userId]);
+  }
   await pool.end();
   await closeDatabaseConnection();
 });

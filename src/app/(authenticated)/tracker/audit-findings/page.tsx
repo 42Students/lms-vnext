@@ -42,7 +42,7 @@ export default async function IndependentFindingsPage({searchParams}:{
  if(!parsed)return <div className="min-w-0 space-y-4">{header}
   <ErrorState title="Invalid audit findings filters." description="Independent findings imported from the audit repository, not user bug reports."
    action={<Link href="/tracker/audit-findings?view=OPEN"
-    className="inline-flex min-h-11 items-center md:min-h-9 font-semibold text-link underline">Reset filters</Link>}/>
+    className="inline-flex min-h-11 items-center md:min-h-9 font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Reset filters</Link>}/>
  </div>;
  if(!independentAuditFindingsReady())return <div className="min-w-0 space-y-4">{header}
   <Banner tone="warning">
@@ -60,7 +60,7 @@ export default async function IndependentFindingsPage({searchParams}:{
    <Banner tone="error">Couldn&apos;t load findings. The last verified data has not been modified.</Banner>
    <ErrorState title="Couldn\u0027t load findings."
     description="Retry the same authorized search and filter set. No synchronization was attempted."
-    action={<Link href={independentFindingHref(parsed)} className="font-semibold text-link underline underline-offset-4">Retry audit findings</Link>} />
+    action={<Link href={independentFindingHref(parsed)} className="font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry audit findings</Link>} />
   </div>;
  }
  const data=findingsResult.value;
@@ -98,7 +98,7 @@ export default async function IndependentFindingsPage({searchParams}:{
    </Banner>:null}
    {syncResult.status==="rejected" ? <Banner tone="warning">
     Import history could not be refreshed. Findings remain available.
-    {" "}<Link href={independentFindingHref(parsed)} className="font-semibold underline underline-offset-4">Retry import status</Link>
+    {" "}<Link href={independentFindingHref(parsed)} className="font-semibold underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry import status</Link>
    </Banner> : null}
    {sync?.lastResult==="FAILED" ? <Banner tone="warning">
     The last recorded repository import failed. {lastImportError??"Check importer credentials and logs."} No sync was started here.
@@ -139,7 +139,7 @@ export default async function IndependentFindingsPage({searchParams}:{
       {[25,50,100,200].map(size=><option key={size} value={size}>{size}</option>)}
      </Select></label>
     <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Search</Button>
-    <Link href="/tracker/audit-findings?view=OPEN" className="inline-flex min-h-11 items-center font-semibold text-link md:min-h-9">Clear</Link>
+    <Link href="/tracker/audit-findings?view=OPEN" className="inline-flex min-h-11 items-center font-semibold text-link md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>
    </div>
    <details open={Boolean(parsed.area || parsed.statuses.length || parsed.severities.length || parsed.kinds.length)}
     className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-2 md:col-span-2 lg:col-span-3">

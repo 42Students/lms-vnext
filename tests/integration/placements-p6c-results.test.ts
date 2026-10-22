@@ -1,5 +1,4 @@
 import { publishableJobTerms } from "../support/publishable-job-terms";
-import {upsertJobEligibilityPolicy} from "@/modules/placements/eligibility-service";
 import {
   afterAll,
   beforeEach,
@@ -14,8 +13,8 @@ import { applyToPlacementJob } from "@/modules/placements/application-service";
 import { createPlacementCompany } from "@/modules/placements/company-service";
 import {
   createPlacementJob,
-  publishPlacementJob,
 } from "@/modules/placements/job-service";
+import { publishPreparedPlacementJob } from "../support/publishable-job-fixture";
 import {
   actOnPlacementRound,
   createPlacementRound,
@@ -28,6 +27,7 @@ import {
 } from "@/modules/placements/result-service";
 import { decidePlacementScreening } from "@/modules/placements/screening-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { deletePlacementRowTrees } from "../support/placement-job-tree-cleanup";
 import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
 
 const databaseUrl =
@@ -94,6 +94,8 @@ const otherCollegeTpo: RequestContext = {
 };
 
 async function cleanup() {
+  // Clear every drive child (rounds, applications, stages, offers, ...) first.
+  await deletePlacementRowTrees(pool);
   await pool.query(
     "delete from placement_tpo_application_stages",
   );
@@ -176,8 +178,8 @@ async function createDrive(roundKinds: Array<
     );
   }
 
-  await upsertJobEligibilityPolicy(tpo,job.id,{});
-  await publishPlacementJob(tpo, job.id);
+  // Rounds above are kept as-is; this only adds the required default policy.
+  await publishPreparedPlacementJob(tpo, job.id);
   const application = await applyToPlacementJob(
     learner,
     job.id,

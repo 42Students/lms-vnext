@@ -26,6 +26,7 @@ it("UX-learn-learn-my-placements-calendar-01 keeps real learner data and accessi
  expect(s).not.toContain('text-[#');
  
  expect(s).toContain('redirect("/learn/my-placements/schedule?"');
+ expect(read("src/app/(authenticated)/learn/my-placements/schedule/page.tsx")).toContain('min-w-0');
  expect(read("src/app/(authenticated)/learn/my-placements/calendar/loading.tsx").length).toBeGreaterThan(0);
  expect(read("src/app/(authenticated)/learn/my-placements/calendar/error.tsx").length).toBeGreaterThan(0);
 });
@@ -35,6 +36,7 @@ it("UX-learn-learn-my-placements-interviews-01 keeps real learner data and acces
  expect(s).not.toContain('text-[#');
  
  expect(s).toContain('redirect("/learn/my-placements/schedule"');
+ expect(read("src/app/(authenticated)/learn/my-placements/schedule/page.tsx")).toContain('min-w-0');
  expect(read("src/app/(authenticated)/learn/my-placements/interviews/loading.tsx").length).toBeGreaterThan(0);
  expect(read("src/app/(authenticated)/learn/my-placements/interviews/error.tsx").length).toBeGreaterThan(0);
 });

@@ -6,7 +6,8 @@ import type {RequestContext} from "@/modules/identity/context";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {createProjectTemplate,publishProjectTemplate,assignProjectTemplateToCollege}
   from "@/modules/projects/template-service";
-import {createProjectInstance} from "@/modules/projects/instance-service";
+import {createProjectInstance,getProjectInstanceWorkspace} from "@/modules/projects/instance-service";
+import {startProjectSprint} from "@/modules/projects/lifecycle-service";
 import {addProjectMember} from "@/modules/projects/member-service";
 import {getMentorMeetingNotes,updateMentorMeetingNotes}
   from "@/modules/projects/mentor-meeting-notes-service";
@@ -33,7 +34,7 @@ async function cleanup(){
   // No deletions from append-only activity_events, or referenced users/memberships.
   if(tracked.projects.length){
     for(const table of ["project_task_submissions","project_submission_reviews","project_submissions",
-      "project_meetings","project_members","project_resources","project_tasks",
+      "project_meeting_history","project_meetings","project_members","project_resources","project_resource_audit","project_tasks",
       "project_sprints","project_releases"]){
       await pool.query("delete from "+table+" where project_id=any($1::uuid[])",[tracked.projects]);
     }
@@ -68,6 +69,9 @@ async function fixture(){
     role:"MENTOR",isPrimary:true});
   await addProjectMember(admin,project.id,{membershipId:SEED_IDS.learnerCollegeAMembership,
     role:"LEARNER"});
+  // Meeting notes are editable only while the project is ACTIVE.
+  const workspace=await getProjectInstanceWorkspace(mentor,project.id);
+  await startProjectSprint(mentor,project.id,workspace.sprints[0]!.id);
   const meetingId=randomUUID();
   await pool.query(`insert into project_meetings
     (id,project_id,status,meeting_type,title,starts_at,ends_at,time_zone,

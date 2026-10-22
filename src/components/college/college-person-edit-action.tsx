@@ -123,7 +123,7 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
     <Dialog open={open} onOpenChange={next=>{if(!next)close();}} title={kind==="FACULTY"?"Edit Faculty":"Edit Student"} dismissible={!pending&&!discardOpen} className="max-w-[600px]">
         
         {loading&&<Skeleton variant="form" count={4} label="Loading profile"/>}
-        {error&&<Alert tone="error" className="my-2">{error}</Alert>}
+        {error&&<Alert tone="error" role="alert" className="my-2">{error}</Alert>}
         {person&&<form onSubmit={submit} className="grid min-w-0 gap-3 md:grid-cols-2">
           <p className="md:col-span-2 text-xs text-muted-foreground">
             Canonical identity name, login phone and login email are managed separately to protect access to other memberships. Academic program and class moves use permission-checked enrollment actions; editing this profile never impersonates or deletes the person.

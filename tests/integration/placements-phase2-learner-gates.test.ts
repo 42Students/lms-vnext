@@ -5,7 +5,8 @@ import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { createPlacementCompany } from "@/modules/placements/company-service";
-import { createPlacementJob, publishPlacementJob } from "@/modules/placements/job-service";
+import { createPlacementJob } from "@/modules/placements/job-service";
+import { publishPreparedPlacementJob } from "../support/publishable-job-fixture";
 import { applyToPlacementJob } from "@/modules/placements/application-service";
 import { upsertJobEligibilityPolicy } from "@/modules/placements/eligibility-service";
 import { sweepExpiredPlacementOffers } from "@/modules/placements/placement-offer-expiry-sweep-service";
@@ -103,7 +104,7 @@ async function makeJob(title: string, beforePublish?: (jobId: string) => Promise
     applicationMode: "INTERNAL",
   });
   if (beforePublish) await beforePublish(job.id);
-  await publishPlacementJob(tpo, job.id);
+  await publishPreparedPlacementJob(tpo, job.id);
   return job;
 }
 

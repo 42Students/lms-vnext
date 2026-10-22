@@ -36,6 +36,7 @@ export default async function CollegeCoursesPage({searchParams}:{searchParams:Pr
         Course directory · Name A–Z is the default sort. Use the course table
         headers and filters to change the order.
       </p>
+      <div className="min-w-0 overflow-x-clip space-y-[var(--lms-space-4)]">
       <CollegeCoursesLastGood
         key={context.user.id+":"+membership.id+":"+JSON.stringify(catalogueQuery)+":"+(duplicateCourseId??"")}
         workspace={workspace}
@@ -43,6 +44,7 @@ export default async function CollegeCoursesPage({searchParams}:{searchParams:Pr
         catalogueData={catalogue}
         duplicateCourseId={duplicateCourseId}
       />
+      </div>
     </div>
   );
 }

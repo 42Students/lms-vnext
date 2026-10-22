@@ -21,7 +21,7 @@ export default async function MentorProjectCloseoutPage({
     <PageHeader eyebrow="Mentor · Project" title="Project closeout"
       description={data.title+" · Current state "+data.status}
       actions={<Link data-unskin="" href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">
         Delivery workspace
       </Link>} />
     <section className="min-w-0 border-b border-border pb-4 md:pb-6">

@@ -562,6 +562,8 @@ jobs:
           tests/integration/placements-db08-registration.test.ts
           tests/integration/placements-db08-external-offers.test.ts
           tests/integration/placements-w04-company-drive-facts.test.ts
+          tests/integration/placements-phase2-learner-gates.test.ts
+          tests/integration/tpo-batch-workspace-db08.test.ts
 
 
   # DB-024/050/067: verify encrypted outbox queue, private opt-outs and

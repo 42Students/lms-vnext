@@ -108,7 +108,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnde
     </Button>:null}
    </div>
   </form>
-  {error?<InlineNotice tone="error" message={error}/>:null}
+  {error?<InlineNotice tone="error" role="alert" message={error}/>:null}
   {success?<InlineNotice tone="success" message={success}/>:null}
  </section>;
 }

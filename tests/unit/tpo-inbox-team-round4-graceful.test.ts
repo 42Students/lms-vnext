@@ -39,7 +39,7 @@ describe("TPO Inbox and Team round-4 failure recovery",()=>{
  });
  it("TPO-inbox-team-64 keeps clickable bell rows and accessible error feedback",()=>{
   expect(bell()).toContain('onClick={()=>void openItem(item)}');
-  expect(bell()).toContain("focus-visible:outline-primary");
+  expect(bell()).toContain("focus-visible:outline-[var(--lms-primary-text)]");
   expect(bell()).toContain('"New  →"');
  });
  it("TPO-inbox-team-04 marks a recruiter conversation read with bounded POST, not a mutating GET",()=>{
@@ -92,7 +92,8 @@ describe("TPO Inbox and Team round-4 failure recovery",()=>{
  it("GR-70 isolates Everyone history failure to a retryable in-page section",()=>{
   const c=source("src/app/(authenticated)/tpo/team/everyone/page.tsx");
   expect(c).toContain('status:"FAILED"');
-  expect(c).toContain('role="alert"');
+  expect(c).toContain('<Alert tone="error">');
+  expect(source("src/components/ui/alert.tsx")).toContain('role={role ?? (tone === "error" ? "alert" : "status")}');
   expect(c).toContain("Retry Everyone");
  });
  it("GR-71 distinguishes unavailable and empty Everyone history without a blank page",()=>{
@@ -126,7 +127,8 @@ describe("TPO Inbox and Team round-4 failure recovery",()=>{
  it("GR-91 keeps retry and dismissal actions reachable by keyboard",()=>{
   const c=source("src/app/(authenticated)/tpo/team/everyone/page.tsx");
   expect(c).toContain("Retry Everyone");
-  expect(everyone()).toContain("focus-visible:outline-primary");
+  expect(everyone()).toContain('import {Button} from "@/components/ui/button"');
+  expect(source("src/components/ui/button.tsx")).toContain("focus-visible:outline-[var(--lms-primary-text)]");
  });
  it("GR-92 does not depend on color alone for failures",()=>{
   expect(everyone()).toContain('role="alert"');

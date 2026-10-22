@@ -1,5 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {renderToStaticMarkup} from "react-dom/server";
+import type {ReactElement} from "react";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getSuperAdminPlacementRetentionReport} from "@/modules/admin-ui/super-admin-placement-retention-service";
 import SuperAdminPlacementInterviewCalendarPage from "@/app/(authenticated)/admin/placements/calendar/page";
@@ -13,6 +14,14 @@ vi.mock("@/components/placements/placement-calendar-workspace",()=>({
  PlacementCalendarWorkspace:({collegeId,audience}:{collegeId:string;audience:string})=>
   <p data-college={collegeId} data-audience={audience}>Scoped interview calendar</p>,
 }));
+type RetentionProps={searchParams:Promise<{details?:string}>};
+// The page streams its report behind a Suspense loading shell; resolve the
+// async report content directly so authorization and recovery are observable.
+const retention=(props:RetentionProps)=>{
+ const shell=SuperAdminRetentionPage(props) as ReactElement<{children:ReactElement<RetentionProps>}>;
+ const content=shell.props.children;
+ return (content.type as (p:RetentionProps)=>Promise<ReactElement>)(content.props);
+};
 const college="11111111-1111-4111-8111-111111111111";
 const org="22222222-2222-4222-8222-222222222222";
 const identity="33333333-3333-4333-8333-333333333333";
@@ -48,18 +57,18 @@ describe("SA-admin-middle-role-journeys-21 private placement pages",()=>{
  });
  it("retention report denies forged learner scope before loading any applicant names",async()=>{
   vi.mocked(getCurrentRequestContext).mockResolvedValue(context("LEARNER") as never);
-  await expect(SuperAdminRetentionPage({searchParams:Promise.resolve({})})).rejects.toThrow();
+  await expect(retention({searchParams:Promise.resolve({})})).rejects.toThrow();
   expect(getSuperAdminPlacementRetentionReport).not.toHaveBeenCalled();
  });
  it("retention report displays recovery without a college and makes no private query",async()=>{
   vi.mocked(getCurrentRequestContext).mockResolvedValue(context("SUPER_ADMIN",false) as never);
-  const html=renderToStaticMarkup(await SuperAdminRetentionPage({searchParams:Promise.resolve({})}));
+  const html=renderToStaticMarkup(await retention({searchParams:Promise.resolve({})}));
   expect(html).toContain("Select a college");
   expect(getSuperAdminPlacementRetentionReport).not.toHaveBeenCalled();
  });
  it("expired session aborts both role journeys without a private report read",async()=>{
   vi.mocked(getCurrentRequestContext).mockRejectedValue(new Error("Revoked session"));
-  await expect(SuperAdminRetentionPage({searchParams:Promise.resolve({})})).rejects.toThrow("Revoked session");
+  await expect(retention({searchParams:Promise.resolve({})})).rejects.toThrow("Revoked session");
   await expect(SuperAdminPlacementInterviewCalendarPage({searchParams:Promise.resolve({})})).rejects.toThrow("Revoked session");
   expect(getSuperAdminPlacementRetentionReport).not.toHaveBeenCalled();
  });

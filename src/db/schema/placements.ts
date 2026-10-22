@@ -2231,6 +2231,8 @@ export const placementLearnerRequests = pgTable(
       .references(() => placementApplications.id, {
         onDelete: "restrict",
       }),
+    // Added by migration 0133 (backfilled from the application, then NOT NULL).
+    learnerMembershipId: uuid("learner_membership_id").notNull(),
     requestType: varchar("request_type", {
       length: 40,
     }).notNull(),

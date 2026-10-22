@@ -8,7 +8,7 @@ import {getSuperAdminLearnerAccessTrace} from "@/modules/module-access/admin-tra
 import type {RequestContext} from "@/modules/identity/context";
 import {writeSuperAdminStudentRule} from "@/modules/module-access/admin-student-rule-write";
 import {SEED_IDS} from "../../scripts/db-seed-data";
-const context:RequestContext={user:{id:SEED_IDS.collegeAdminUser,identityUid:"test",platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},membership:null};
+const context:RequestContext={user:{id:SEED_IDS.superAdminUser,identityUid:"test",platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},membership:null};
 describe.skipIf(!process.env.TEST_DATABASE_URL)("Super Admin student rule write boundaries",()=>{
  it("rejects inherited write from non-Super-Admin actors",async()=>{
   await expect(writeSuperAdminStudentRule({...context,user:{...context.user,systemRoles:[]}},SEED_IDS.collegeA,SEED_IDS.learnerCollegeAMembership,{action:"INHERIT",module:"projects",expected:null})).rejects.toBeDefined();

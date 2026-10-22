@@ -16,9 +16,9 @@ import {
 import { createPlacementCompany } from "@/modules/placements/company-service";
 import {
   createPlacementJob,
-  publishPlacementJob,
   updatePlacementJob,
 } from "@/modules/placements/job-service";
+import { publishPreparedPlacementJob } from "../support/publishable-job-fixture";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 import {
   archivePlacementRoleOption,
@@ -294,7 +294,7 @@ describe("Placement multi-role drives", () => {
       "Missing permission: placements.manage",
     );
 
-    await publishPlacementJob(
+    await publishPreparedPlacementJob(
       tpo,
       draft.id,
     );

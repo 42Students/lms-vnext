@@ -3,8 +3,9 @@ import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
 import {closeDatabaseConnection} from "@/db/client";
 import {createPlacementCompany} from "@/modules/placements/company-service";
-import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
-import {upsertJobEligibilityPolicy} from "@/modules/placements/eligibility-service";
+import {createPlacementJob} from "@/modules/placements/job-service";
+import {publishPreparedPlacementJob} from "../support/publishable-job-fixture";
+import {createPersistedJobRecruiter,persistedRecruiterContext} from "../support/persisted-job-recruiter-fixture";
 import {createPlacementRound,actOnPlacementRound} from "@/modules/placements/round-service";
 import {listRecruiterCalendarEvents} from "@/modules/placements/recruiter-calendar-service";
 import {listOwnRecruiterPlacementJobs} from "@/modules/placements/recruiter-service";
@@ -27,13 +28,13 @@ describe.skipIf(!enabled)("HR today results due PostgreSQL",()=>{
   const round=await createPlacementRound(tpo,job.id,{kind:"INTERVIEW",name:"Technical"});
   await actOnPlacementRound(tpo,round.id,{action:"SCHEDULE",scheduledAt:new Date("2026-10-18T08:00:00Z"),
     timezone:"Asia/Kolkata",mode:"VIRTUAL",meetingUrl:"https://example.test/meet",resultsDueAt:new Date("2026-10-19T08:00:00Z")});
-  await upsertJobEligibilityPolicy(tpo,job.id,{});
-  await publishPlacementJob(tpo,job.id);
-  const uid=randomUUID();
-  const hr=(companyId:string,relation:string,collegeId:string):RequestContext=>({
-    user:{id:uid,identityUid:"hr-today-due-"+nonce,platformStatus:"ACTIVE",systemRoles:[]},membership:null,
-    recruiter:{userId:uid,companyId,companyName:"Fixture",status:"ACTIVE",title:null,
-      grants:[{id:randomUUID(),collegeId,organizationId:SEED_IDS.organization,collegeName:"Fixture",companyRelationshipId:relation}]}});
+  await publishPreparedPlacementJob(tpo,job.id);
+  const identityUid="hr-today-due-"+nonce;
+  const recruiter=await createPersistedJobRecruiter({companyId:a.company.id,companyRelationshipId:a.relationship.id,
+    collegeId:SEED_IDS.collegeA,jobId:job.id,grantedByUserId:tpo.user.id,identityUid});
+  const hr=(companyId:string,relation:string,collegeId:string):RequestContext=>persistedRecruiterContext({
+    userId:recruiter.userId,identityUid,companyId,grantId:recruiter.grantId,collegeId,
+    organizationId:SEED_IDS.organization,companyRelationshipId:relation});
   const window={from:"2026-10-18",to:"2026-10-21"};
   const own=hr(a.company.id,a.relationship.id,SEED_IDS.collegeA);
   const calendar=await listRecruiterCalendarEvents(own,window);

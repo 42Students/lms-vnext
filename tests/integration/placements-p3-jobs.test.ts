@@ -1,9 +1,7 @@
 import { publishableJobTerms } from "../support/publishable-job-terms";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
-import { closeDatabaseConnection,getDb } from "@/db/client";
-import {placementJobEligibilityPolicies} from "@/db/schema";
-import {createPlacementRound} from "@/modules/placements/round-service";
+import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import {
   archivePlacementJob,
@@ -13,6 +11,7 @@ import {
   updatePlacementJob,
 } from "@/modules/placements/job-service";
 import { PlacementsServiceError } from "@/modules/placements/errors";
+import { preparePlacementJobForPublication } from "../support/publishable-job-fixture";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 const databaseUrl = process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL;
@@ -43,6 +42,21 @@ const ids = {
 };
 
 async function cleanup() {
+  const jobScope =
+    "select id from placement_jobs where company_relationship_id in ($1, $2)";
+  await pool.query(
+    "delete from placement_job_round_events where round_id in " +
+      "(select id from placement_job_rounds where job_id in (" + jobScope + "))",
+    [ids.relationshipA, ids.relationshipB],
+  );
+  await pool.query(
+    "delete from placement_job_rounds where job_id in (" + jobScope + ")",
+    [ids.relationshipA, ids.relationshipB],
+  );
+  await pool.query(
+    "delete from placement_job_eligibility_policies where job_id in (" + jobScope + ")",
+    [ids.relationshipA, ids.relationshipB],
+  );
   await pool.query("delete from placement_jobs where company_relationship_id in ($1, $2)", [
     ids.relationshipA,
     ids.relationshipB,
@@ -110,10 +124,12 @@ describe("Placement jobs", () => {
     });
     expect(updated.title).toBe("Software Engineer I");
 
-    // Publishing demands a recorded evaluative round and a scoped policy.
-    await createPlacementRound(tpo,draft.id,{kind:"INTERVIEW",name:"Hiring interview"});
-    await getDb().insert(placementJobEligibilityPolicies).values({
-      jobId:draft.id,updatedByUserId:tpo.user.id,
+    // TPO-drives-42: a draft without an evaluative round and a persisted
+    // eligibility policy is not publishable.
+    await expect(publishPlacementJob(tpo, draft.id))
+      .rejects.toMatchObject({ code: "PLACEMENT_JOB_NOT_PUBLISHABLE" });
+    await preparePlacementJobForPublication(tpo, draft.id, {
+      round: { kind: "INTERVIEW", name: "Hiring interview" },
     });
     const published = await publishPlacementJob(tpo, draft.id);
     expect(published.status).toBe("PUBLISHED");

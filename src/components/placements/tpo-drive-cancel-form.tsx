@@ -118,7 +118,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
             <p className="text-xs text-body leading-[20px]">Students see the reason. You can choose a reason above or write your own.</p>
           </div>
           <p className="text-xs text-body leading-[20px]">If the drive or counts change after this preview, the cancellation is rejected.</p>
-          {error ? <InlineNotice tone="error" message={error}/> : null}
+          {error ? <InlineNotice tone="error" role="alert" message={error}/> : null}
           <label className="flex items-start gap-[6px] text-[13px] text-[var(--lms-neutral-400)]">
             <Checkbox checked={reviewed} onChange={event=>setReviewed(event.target.checked)}
               disabled={pending} className="mt-1 h-4 w-4 accent-primary"/>

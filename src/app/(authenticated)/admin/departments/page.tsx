@@ -42,7 +42,7 @@ export default async function SuperAdminDepartmentsPage({
       Recoveries require the selected tenant safety scope. Restoring a parent does not restore its children.
     </p>
     {recoveryType.platformLevel?<Link href={"/admin/organizations?type="+selectedType}
-      className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">
+      className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">
       Open platform Deleted Items
     </Link>:collegeId?<Alert tone="info">
       {recoveryType.label} recovery must be performed within this selected college.

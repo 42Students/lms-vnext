@@ -72,7 +72,7 @@ export default async function CollegeElectivesPage({
   // Keep its rows visible and retry the editor options independently.
   const data=directoryRead.value;
   const options=optionsRead.status==="fulfilled"?optionsRead.value:undefined;
-  return <div className="min-w-0 space-y-4">
+  return <div className="min-w-0 overflow-x-clip space-y-4">
    <Tabs ariaLabel="Academic Setup" renderPanel={false} value="/college/electives"
      items={[
       {value:"/college/academics",label:"Academic Setup",href:"/college/academics"},

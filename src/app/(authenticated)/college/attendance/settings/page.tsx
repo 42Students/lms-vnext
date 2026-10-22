@@ -32,7 +32,7 @@ export default async function CollegeAttendanceSettingsPage() {
         title="Attendance policy"
         description={`Set the attendance eligibility threshold and correction window for ${college.name}.`}
         actions={
-          <PageBackLink href="/college/attendance" label="Back to Attendance" />
+          <PageBackLink href="/college/attendance" label="Back to Attendance" className="min-h-11" />
         }
       />
 

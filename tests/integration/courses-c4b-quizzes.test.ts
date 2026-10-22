@@ -41,6 +41,7 @@ import {
 import {commandFacultyQuiz} from "@/modules/courses/faculty-quiz-authoring-service";
 import {facultyQuizNormalizeQuestions,facultyMoveQuizQuestion,facultyMoveQuizOption} from "@/modules/courses/faculty-quiz-builder-model";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { releaseSeedLearnerPlacementEnrollment } from "../support/w04-placement-access-fixture";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -106,6 +107,7 @@ const learner: RequestContext = {
 };
 
 async function cleanupC4B() {
+  await releaseSeedLearnerPlacementEnrollment(pool);
   await pool.query(
     `delete from quiz_attempt_answers
      where attempt_id in (

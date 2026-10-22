@@ -81,8 +81,8 @@ export default async function SuperAdminBatchPromotionPage({
   const summary = preview ? summarizeAdminPromotion(preview) : null;
   return <div className="min-w-0 space-y-5">
     <nav aria-label="Academic Setup" className="flex flex-wrap items-center gap-4 border-b border-border pb-3 text-sm">
-      <Link href="/admin/academics" className="min-h-9 font-semibold text-link underline">Academic Setup</Link>
-      <span aria-current="page" className="min-h-9 border-b-2 border-[var(--lms-primary)] font-semibold text-foreground">Batch Promotion</span>
+      <Link href="/admin/academics" className="min-h-11 md:min-h-9 font-semibold text-link underline">Academic Setup</Link>
+      <span aria-current="page" className="min-h-11 md:min-h-9 border-b-2 border-[var(--lms-primary)] font-semibold text-foreground">Batch Promotion</span>
     </nav>
     <PageHeader title="Batch Promotion"
       description="Move a cohort to the next semester only after curriculum and staffing checks are ready." />
@@ -93,7 +93,7 @@ export default async function SuperAdminBatchPromotionPage({
     <section className="min-w-0 space-y-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4" aria-label="Batch Promotion">
     <div className="flex flex-wrap items-center justify-between gap-3">
       <h2 className="text-base font-semibold">Batch Promotion</h2>
-      <Link href={pageHref(currentPage)} className="inline-flex min-h-9 items-center font-semibold text-link underline">
+      <Link href={pageHref(currentPage)} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline">
         <span aria-hidden="true" className="mr-1">↻</span> Refresh
       </Link>
     </div>
@@ -139,7 +139,7 @@ export default async function SuperAdminBatchPromotionPage({
           <span>Rows per page:</span>
           {[10,25,50].map(size=><Link key={size} href={pageHref(1,size)}
             aria-current={size===pageSize?"page":undefined}
-            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)]">{size}</Link>)}
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)]">{size}</Link>)}
         </div>
       </div>
       <DataTable<(typeof visibleCohorts)[number]>

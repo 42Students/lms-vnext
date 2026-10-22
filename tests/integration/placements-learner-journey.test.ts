@@ -12,10 +12,8 @@ import type { RequestContext } from "@/modules/identity/context";
 import { applyToPlacementJob } from "@/modules/placements/application-service";
 import { createPlacementCompany } from "@/modules/placements/company-service";
 import { replacePlacementEvaluationConfig } from "@/modules/placements/evaluation-config-service";
-import {
-  createPlacementJob,
-  publishPlacementJob,
-} from "@/modules/placements/job-service";
+import { createPlacementJob } from "@/modules/placements/job-service";
+import { publishPreparedPlacementJob } from "../support/publishable-job-fixture";
 import { getLearnerPlacementJourney } from "@/modules/placements/learner-journey-service";
 import {
   applyPlacementRoundResult,
@@ -163,7 +161,7 @@ async function createJourneyJob() {
       ],
     },
   );
-  return publishPlacementJob(
+  return publishPreparedPlacementJob(
     tpo,
     draft.id,
   );

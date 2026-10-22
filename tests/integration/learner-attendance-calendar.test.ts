@@ -162,8 +162,8 @@ describe("Learner attendance month calendar against disposable PostgreSQL",()=>{
       month:"2026-10",deliveryId:ids.delivery,
     });
     expect(empty.rows).toEqual([]);
-    // A month with no events has no records in this deliberately bounded
-    // calendar read, even if other months contain past attendance.
+    // f4a680e8c2 bounds the read to the selected IST month, so an empty month
+    // reports no records instead of scanning full attendance history.
     expect(empty.hasAnyRecords).toBe(false);
     expect(empty.summary.percentage).toBeNull();
     } finally {

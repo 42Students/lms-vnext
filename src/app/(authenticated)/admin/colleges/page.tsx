@@ -125,7 +125,7 @@ const columns: DataTableColumn<CollegeRow>[] = [
           Manage
         </Link>
         {college.canManage?<CollegeEditDialog college={college} />:null}
-        <Dropdown trigger="More" label={"More actions for "+college.name} align="end" mobileSheet triggerClassName="md:!min-h-9">
+        <Dropdown trigger="More" label={"More actions for "+college.name} align="end" mobileSheet triggerClassName="md:min-h-9!">
           <div className="grid min-w-0 gap-[var(--lms-space-2)]">
         <Link role="menuitem"
           href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}

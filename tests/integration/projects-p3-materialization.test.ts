@@ -153,6 +153,14 @@ async function cleanup() {
        where slug like 'p3-%'
      )`,
   );
+  // Trigger-written resource audit rows for these disposable projects.
+  await pool.query(
+    `delete from project_resource_audit
+     where project_id in (
+       select id from project_instances
+       where slug like 'p3-%'
+     )`,
+  );
   await pool.query(
     "delete from project_instances where slug like 'p3-%'",
   );

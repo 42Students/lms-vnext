@@ -3,8 +3,10 @@ import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { createPlacementCompany } from "@/modules/placements/company-service";
-import { createPlacementJob, publishPlacementJob } from "@/modules/placements/job-service";
+import { createPlacementJob } from "@/modules/placements/job-service";
+import { publishPreparedPlacementJob } from "../support/publishable-job-fixture";
 import { getManagedCompanyDriveFacts } from "@/modules/placements/company-drive-facts-service";
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 /**
@@ -43,6 +45,15 @@ const ids = {
   companies: [] as string[],
 };
 afterEach(async () => {
+  // Child rows created by publication preparation go first.
+  await pool.query(
+    "DELETE FROM placement_job_round_events WHERE round_id IN " +
+    "(SELECT id FROM placement_job_rounds WHERE job_id=ANY($1::uuid[]))",
+    [ids.jobs],
+  );
+  await pool.query("DELETE FROM placement_job_rounds WHERE job_id=ANY($1::uuid[])", [ids.jobs]);
+  await pool.query("DELETE FROM placement_job_eligibility_policies WHERE job_id=ANY($1::uuid[])", [ids.jobs]);
+  await pool.query("DELETE FROM placement_job_role_options WHERE job_id=ANY($1::uuid[])", [ids.jobs]);
   await pool.query("DELETE FROM placement_jobs WHERE id=ANY($1::uuid[])", [ids.jobs]);
   await pool.query(
     "DELETE FROM placement_company_relationships WHERE id=ANY($1::uuid[])",
@@ -65,6 +76,7 @@ describe("W04 college-scoped derived CRM Drive execution facts", () => {
     ids.companies.push(company.company.id);
     ids.relationships.push(company.relationship.id);
     const draft = await createPlacementJob(tpoA, {
+      ...publishableJobTerms,
       collegeId: SEED_IDS.collegeA,
       companyRelationshipId: company.relationship.id,
       title: "W04 Engineer", description: "W04 scoped CRM derived facts",
@@ -81,7 +93,7 @@ describe("W04 college-scoped derived CRM Drive execution facts", () => {
       hasDrivePlanned: false, hasAcceptedOffer: false, hasConfirmedJoin: false,
     });
 
-    await publishPlacementJob(tpoA, draft.id);
+    await publishPreparedPlacementJob(tpoA, draft.id);
     const published = await getManagedCompanyDriveFacts(
       tpoA, SEED_IDS.collegeA, company.relationship.id,
     );

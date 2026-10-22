@@ -15,8 +15,8 @@ import { createPlacementCompany } from "@/modules/placements/company-service";
 import { replacePlacementEvaluationConfig } from "@/modules/placements/evaluation-config-service";
 import {
   createPlacementJob,
-  publishPlacementJob,
 } from "@/modules/placements/job-service";
+import { publishPreparedPlacementJob } from "../support/publishable-job-fixture";
 import {
   stagePlacementRoundResult,
 } from "@/modules/placements/result-service";
@@ -193,7 +193,7 @@ describe("Placement TPO operations", () => {
       jobId:driveDraft.id,updatedByUserId:tpo.user.id,
     });
     const driveJob =
-      await publishPlacementJob(
+      await publishPreparedPlacementJob(
         tpo,
         driveDraft.id,
       );
@@ -261,7 +261,7 @@ describe("Placement TPO operations", () => {
       jobId:screeningDraft.id,updatedByUserId:tpo.user.id,
     });
     const screeningJob =
-      await publishPlacementJob(
+      await publishPreparedPlacementJob(
         tpo,
         screeningDraft.id,
       );

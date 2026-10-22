@@ -124,7 +124,7 @@ export default async function SuperAdminAuditPage({searchParams}:{
         <td className="p-3">{typeof item.purpose==="string"?item.purpose:"—"}</td>
         <td className="p-3">{typeof item.recipientSuffix==="string"&&item.recipientSuffix?"••••"+item.recipientSuffix:"Masked"}</td>
         <td className="p-3"><StatusBadge tone={item.outcome==="PROVIDER_ACCEPTED"?"success":"warning"}>{item.outcome==="PROVIDER_ACCEPTED"?"Accepted by provider":String(item.outcome??"Unknown")}</StatusBadge></td>
-        <td className="p-3"><details><summary className="min-h-9 cursor-pointer font-semibold text-primary-text">View details</summary>
+        <td className="p-3"><details><summary className="min-h-11 md:min-h-9 cursor-pointer font-semibold text-primary-text">View details</summary>
          <dl className="min-w-0 space-y-2 py-2 text-xs">
           <div><dt className="font-semibold">Attempt ID</dt><dd className="break-all">{String(item.id)}</dd></div>
           <div><dt className="font-semibold">Provider ID</dt><dd className="break-all">{typeof item.providerMessageId==="string"?item.providerMessageId:"Not available"}</dd></div>

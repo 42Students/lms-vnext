@@ -17,9 +17,10 @@ describe.skipIf(!enabled)("HR report result privacy",()=>{
  it("never returns report data for wrong role or a recruiter without company grants",async()=>{
   const nonce=randomUUID().slice(0,8);
   await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Reports "+nonce,primaryDomain:"hrrep-"+nonce+".example"});
-  const userId=randomUUID();
-  const noGrant:RequestContext={user:{id:userId,identityUid:"no-grant-"+nonce,platformStatus:"ACTIVE",systemRoles:[]},
-   membership:null,recruiter:{userId,companyId:randomUUID(),companyName:"Fixture",status:"ACTIVE",title:null,grants:[]}};
+  // The recruiter principal must be the signed-in user; only the grants are empty.
+  const noGrantUserId=randomUUID();
+  const noGrant:RequestContext={user:{id:noGrantUserId,identityUid:"no-grant-"+nonce,platformStatus:"ACTIVE",systemRoles:[]},
+   membership:null,recruiter:{userId:noGrantUserId,companyId:randomUUID(),companyName:"Fixture",status:"ACTIVE",title:null,grants:[]}};
   expect((await getRecruiterCompanyReports(noGrant,{})).status).toBe("NO_ACCESS");
   const forged={...noGrant,recruiter:{...noGrant.recruiter!,userId:randomUUID()}};
   await expect(getRecruiterCompanyReports(forged,{})).rejects.toBeInstanceOf(AuthorizationError);

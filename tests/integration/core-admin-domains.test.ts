@@ -46,7 +46,7 @@ const cleanupPool = new Pool({
 });
 
 const integrationOrgName = "Integration Core Organization";
-const integrationCollegeCode = "ITEST-CORE";
+const integrationCollegeCode = "itest-core";
 
 const superAdmin: RequestContext = {
   user: {
@@ -78,19 +78,19 @@ async function cleanupIntegrationRows() {
   // Audit rows reference the fixture organization/college; remove them first.
   await cleanupPool.query(
     `delete from activity_events
-     where college_id in (select id from colleges where code = $1)
+     where college_id in (select id from colleges where lower(code) = lower($1))
         or organization_id in (select id from organizations where name = any($2))`,
     [integrationCollegeCode, [integrationOrgName, `${integrationOrgName} Renamed`]],
   );
   await cleanupPool.query(
     `delete from departments
      where college_id in (
-       select id from colleges where code = $1
+       select id from colleges where lower(code) = lower($1)
      )`,
     [integrationCollegeCode],
   );
   await cleanupPool.query(
-    "delete from colleges where code = $1",
+    "delete from colleges where lower(code) = lower($1)",
     [integrationCollegeCode],
   );
   await cleanupPool.query(

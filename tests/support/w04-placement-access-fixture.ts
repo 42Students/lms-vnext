@@ -9,9 +9,35 @@ import { SEED_IDS } from "../../scripts/db-seed-data";
  * Runs only against the disposable PostgreSQL chosen by vitest.db.config.ts.
  * This helper intentionally does not modify shared development/prod seeds.
  */
+const W04_FIXTURE_PROGRAM_ID = "9e080001-0000-4000-8000-000000000002";
+
+/**
+ * DB02 allows exactly one ACTIVE programme enrolment per membership. The
+ * placement opt-in above parks the seeded learner in the W04 fixture
+ * programme and (by design) leaves it there for later placement suites, so an
+ * academic/course suite that enrols the seeded learner in its own programme
+ * must first release that fixture-only enrolment. Placement suites re-create
+ * it on demand through enableSeedLearnerPlacementAccess. Only the W04 fixture
+ * programme row is touched; no other enrolment of the seeded learner is.
+ */
+export async function releaseSeedLearnerPlacementEnrollment(pool: Pool) {
+  await pool.query(
+    `DELETE FROM section_enrollments
+      WHERE learner_enrollment_id IN (
+        SELECT id FROM learner_program_enrollments
+         WHERE membership_id = $1 AND program_id = $2)`,
+    [SEED_IDS.learnerCollegeAMembership, W04_FIXTURE_PROGRAM_ID],
+  );
+  await pool.query(
+    `DELETE FROM learner_program_enrollments
+      WHERE membership_id = $1 AND program_id = $2`,
+    [SEED_IDS.learnerCollegeAMembership, W04_FIXTURE_PROGRAM_ID],
+  );
+}
+
 export async function enableSeedLearnerPlacementAccess(pool: Pool) {
   const periodId = "9e080001-0000-4000-8000-000000000001";
-  const programId = "9e080001-0000-4000-8000-000000000002";
+  const programId = W04_FIXTURE_PROGRAM_ID;
   const cohortId = "9e080001-0000-4000-8000-000000000003";
 
   await pool.query(

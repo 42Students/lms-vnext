@@ -21,7 +21,8 @@ describe.skipIf(!enabled)("Super Admin module detail cards PostgreSQL boundary",
   const own={...actor,adminScope:{organizationId:org.rows[0]!.id,collegeId:id}};
   const result=await getSuperAdminCollegeModuleAccess(own,id,{page:1});
   expect(result?.college.id).toBe(id);
-  expect(result?.modules).toHaveLength(3);
+  // Feature Controls exposes only Projects and Placements (legacy parity).
+  expect(result?.modules.map(m=>m.module)).toEqual(["projects","placements"]);
   const foreign={...actor,adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeA}};
   await expect(getSuperAdminCollegeModuleAccess(foreign,id)).rejects.toBeInstanceOf(AuthorizationError);
   await expect(getSuperAdminCollegeModuleAccess({...actor,user:{...actor.user,systemRoles:[]}},id))

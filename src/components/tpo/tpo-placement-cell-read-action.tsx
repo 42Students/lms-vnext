@@ -43,7 +43,7 @@ export function TpoPlacementCellReadAction({id,autoMarkRead=false}:{id:string;au
    className="min-h-11 min-[768px]:min-h-9 px-3">
    {busy?"Saving…":"Mark as read for our placement cell"}
   </Button>
-  {error?<InlineNotice tone="error" message={error}/>:null}
+  {error?<InlineNotice tone="error" role="alert" message={error}/>:null}
   {notice?<InlineNotice tone="success" message={notice}/>:null}
  </div>;
 }

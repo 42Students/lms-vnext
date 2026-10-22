@@ -623,11 +623,20 @@ describe("courses C2 learning structure against PostgreSQL", () => {
       code: "LESSON_NAME_CONFLICT",
     });
 
+    // Legacy contract (049f87d3ad): sequence 0 means "append after the last
+    // active lesson"; an explicit occupied position hits the DB uniqueness.
+    const appended = await createCourseLesson(collegeAdmin, {
+      learningPathId: path.id,
+      name: "C2 Stacks",
+      sequence: 0,
+    });
+    expect(appended.sequence).toBe(lesson.sequence + 1);
+
     await expect(
       createCourseLesson(collegeAdmin, {
         learningPathId: path.id,
-        name: "C2 Stacks",
-        sequence: 0,
+        name: "C2 Queues",
+        sequence: appended.sequence,
       }),
     ).rejects.toMatchObject({
       code: "LESSON_SEQUENCE_CONFLICT",

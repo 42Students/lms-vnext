@@ -28,7 +28,7 @@ export default async function MentorLandingPage() {
        (failed?"border-[var(--lms-warning-border)] bg-[var(--lms-warning-subtle)] text-warning":"border-[var(--lms-info)] bg-[var(--lms-info-subtle)] text-primary-text")}>
       {failed?"!":"ⓘ"}
     </span>
-    <h1 className="text-pretty text-2xl font-semibold leading-8 text-[var(--lms-heading)]">
+    <h1 className="min-w-0 max-w-full text-pretty text-2xl font-semibold leading-8 text-[var(--lms-heading)]">
       {failed?"Could not verify Projects access":"Projects is currently unavailable"}
     </h1>
     <p className="mt-3 max-w-[560px] text-pretty text-sm leading-[22px] text-body">

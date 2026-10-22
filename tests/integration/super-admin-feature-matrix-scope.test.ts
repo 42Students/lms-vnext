@@ -12,7 +12,7 @@ import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
 const enabled=Boolean(process.env.TEST_DATABASE_URL)&&process.env.DB03_ISOLATED_TEST_DATABASE==="1";
 if(enabled)assertDb018DisposableTarget(process.env,{serviceBound:true});
 const admin:RequestContext={
- user:{id:SEED_IDS.collegeAdminUser,identityUid:"feature-admin-fixture",platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
+ user:{id:SEED_IDS.superAdminUser,identityUid:"feature-admin-fixture",platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
  membership:null,adminScope:null,
 };
 describe.skipIf(!enabled)("Super Admin feature matrix strict scoped PostgreSQL filters",()=>{

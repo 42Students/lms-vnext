@@ -71,6 +71,32 @@ const pool = new Pool({
   max: 1,
 });
 
+/** Meetings must start in the future relative to the server clock. */
+function futureMeetingWindow() {
+  const startsAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  startsAt.setUTCSeconds(0, 0);
+  const endsAt = new Date(startsAt.getTime() + 30 * 60 * 1000);
+  return { startsAt: startsAt.toISOString(), endsAt: endsAt.toISOString() };
+}
+
+/** Mentor scheduling is optimistic against the project version the UI holds. */
+async function projectVersion(projectId: string) {
+  const { rows } = await pool.query<{ updated_at: Date }>(
+    "select updated_at from project_instances where id = $1",
+    [projectId],
+  );
+  return rows[0]!.updated_at.toISOString();
+}
+
+/** Mentor ship/unship is optimistic: send the release version the UI would hold. */
+async function releaseVersion(releaseId: string) {
+  const { rows } = await pool.query<{ updated_at: Date }>(
+    "select updated_at from project_releases where id = $1",
+    [releaseId],
+  );
+  return { expectedUpdatedAt: rows[0]!.updated_at.toISOString() };
+}
+
 const superAdmin: RequestContext = {
   user: {
     id: SEED_IDS.superAdminUser,
@@ -244,6 +270,14 @@ async function cleanup() {
        where slug like 'adv-%'
      )`,
   );
+  // Meeting history rows reference these disposable meetings; remove them first.
+  await pool.query(
+    `delete from project_meeting_history
+     where project_id in (
+       select id from project_instances
+       where slug like 'adv-%'
+     )`,
+  );
   await pool.query(
     `delete from project_meetings
      where project_id in (
@@ -281,6 +315,14 @@ async function cleanup() {
   );
   await pool.query(
     `delete from project_releases
+     where project_id in (
+       select id from project_instances
+       where slug like 'adv-%'
+     )`,
+  );
+  // Trigger-written resource audit rows for these disposable projects.
+  await pool.query(
+    `delete from project_resource_audit
      where project_id in (
        select id from project_instances
        where slug like 'adv-%'
@@ -561,11 +603,13 @@ describe("Projects adversarial isolation", () => {
         project.id,
         null,
         {
+          expectedProjectUpdatedAt:
+            await projectVersion(project.id),
           title: "Outgoing mentor meeting",
           startsAt:
-            "2035-10-20T10:00:00+05:30",
+            futureMeetingWindow().startsAt,
           endsAt:
-            "2035-10-20T10:30:00+05:30",
+            futureMeetingWindow().endsAt,
           timeZone: "Asia/Kolkata",
           meetingUrl:
             "https://meet.example.com/reassign",
@@ -706,11 +750,13 @@ describe("Projects adversarial isolation", () => {
         projectA.id,
         null,
         {
+          expectedProjectUpdatedAt:
+            await projectVersion(projectA.id),
           title: "Cross-project task injection",
           startsAt:
-            "2035-10-20T10:00:00+05:30",
+            futureMeetingWindow().startsAt,
           endsAt:
-            "2035-10-20T10:30:00+05:30",
+            futureMeetingWindow().endsAt,
           timeZone: "Asia/Kolkata",
           meetingUrl:
             "https://meet.example.com/adversarial",
@@ -1116,6 +1162,7 @@ describe("Projects adversarial isolation", () => {
       mentor,
       project.id,
       release.id,
+      await releaseVersion(release.id),
     );
 
     const draftOutcomes =
@@ -1296,11 +1343,13 @@ describe("Projects adversarial isolation", () => {
       project.id,
       null,
       {
+        expectedProjectUpdatedAt:
+          await projectVersion(project.id),
         title: "Recent planning touchpoint",
         startsAt:
-          "2035-11-01T10:00:00+05:30",
+          futureMeetingWindow().startsAt,
         endsAt:
-          "2035-11-01T10:30:00+05:30",
+          futureMeetingWindow().endsAt,
         timeZone: "Asia/Kolkata",
         meetingUrl:
           "https://meet.example.com/recent-activity",

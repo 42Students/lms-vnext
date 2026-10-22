@@ -35,7 +35,7 @@ async function cleanup(){
   // Immutable activity events and the identities they reference remain untouched.
   if(tracked.projects.length){
     for(const table of ["project_task_submissions","project_submission_reviews","project_submissions",
-      "project_meetings","project_members","project_resources","project_tasks",
+      "project_meeting_history","project_meetings","project_members","project_resources","project_resource_audit","project_tasks",
       "project_sprints","project_releases"]){
       await pool.query("delete from "+table+" where project_id=any($1::uuid[])",[tracked.projects]);
     }
@@ -163,7 +163,9 @@ describe("Mentor scoped resource metadata and links — PostgreSQL",()=>{
   for(const row of events.rows){
     expect(row.college_id).toBe(SEED_IDS.collegeA);
     expect(row.organization_id).toBe(SEED_IDS.organization);
-    expect(row.metadata).toEqual({projectId:project.id,resourceId:created.id});
+    // Audit metadata now carries redacted before/after resource records; the
+    // private URL and description must still never be persisted in clear.
+    expect(row.metadata).toMatchObject({projectId:project.id,resourceId:created.id});
     expect(JSON.stringify(row)).not.toContain("token=secret");
     expect(JSON.stringify(row)).not.toContain("Internal body");
   }

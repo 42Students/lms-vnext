@@ -28,5 +28,5 @@ export function TpoBatchUndoControl({batchId,actionId}:{batchId:string;actionId:
  }
  return <div className="min-w-0 space-y-2 border-t border-border pt-3 print:hidden"><label className="flex min-h-11 items-start gap-2 text-sm text-body"><Checkbox checked={reviewed} disabled={busy} onChange={event=>setReviewed(event.target.checked)} className="mt-1"/>I reviewed this exact decision. Undo is audited and will be rejected if another decision changed the same learners.</label><Button variant="secondary" type="button" className="min-h-11 px-3 md:min-h-9" disabled={busy||!reviewed}
   onClick={()=>void undo()}>{busy?"Undoing…":"Undo this action"}</Button>
-  {error?<InlineNotice tone="error" message={error}/>:null}</div>;
+  {error?<InlineNotice tone="error" role="alert" message={error}/>:null}</div>;
 }

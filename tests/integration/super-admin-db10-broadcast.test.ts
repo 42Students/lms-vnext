@@ -17,6 +17,7 @@ describe.skipIf(!enabled)("DB10 Super Admin announcement consent and transaction
   const db=getDb(),title="Broadcast Test "+randomUUID().slice(0,9);
   const payload={audienceMode:"SELECTED_COLLEGES",collegeIds:[SEED_IDS.collegeA,SEED_IDS.collegeB],
    title,message:"Disposable test announcement",scheduledAt:null,expiresAt:null,isPinned:false,publishConsent:true,
+   // The exact previewed audience is mandatory (stale-audience fence).
    reviewedCollegeIds:[SEED_IDS.collegeA,SEED_IDS.collegeB]};
   const noticeIds:string[]=[];
   // Broadcast targets only colleges with an active TPO membership.

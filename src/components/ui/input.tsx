@@ -14,8 +14,7 @@ export function Input({ className, error = false, ...props }: InputProps) {
   const placeholder = props.placeholder ?? (props.type === "search" ? "Search..." : undefined);
   const invalid = error || props["aria-invalid"] === true || props["aria-invalid"] === "true";
   return (
-    <input
-      data-slot="input"
+    <input data-slot="input"
       {...props}
       placeholder={placeholder}
       aria-invalid={invalid ? true : props["aria-invalid"]}

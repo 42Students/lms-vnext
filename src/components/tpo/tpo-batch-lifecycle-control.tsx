@@ -45,7 +45,7 @@ export function TpoBatchLifecycleControl({batchId,state}:{batchId:string;state:S
    className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
    {busy?"Updating…":action==="FINISH"?"Mark finished":"Reopen batch"}
   </Button>
-  {error?<InlineNotice tone="error" message={error}/>:null}
+  {error?<InlineNotice tone="error" role="alert" message={error}/>:null}
   {success?<InlineNotice tone="success" message={success}/>:null}
  </div>;
 }

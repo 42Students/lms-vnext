@@ -11,10 +11,8 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { applyToPlacementJob } from "@/modules/placements/application-service";
 import { createPlacementCompany } from "@/modules/placements/company-service";
-import {
-  createPlacementJob,
-  publishPlacementJob,
-} from "@/modules/placements/job-service";
+import { createPlacementJob } from "@/modules/placements/job-service";
+import { publishPreparedPlacementJob } from "../support/publishable-job-fixture";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
@@ -164,7 +162,7 @@ async function createPublishedJob(
       applicationMode: "INTERNAL",
     },
   );
-  return publishPlacementJob(context, draft.id);
+  return publishPreparedPlacementJob(context, draft.id);
 }
 
 beforeEach(async () => {

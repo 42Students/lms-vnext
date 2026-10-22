@@ -221,7 +221,7 @@ export default async function CollegeElectiveAllocatePage({
       (reason ? "&reason=" + encodeURIComponent(reason) : ""));
   }
 
-  return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
+  return <div className="max-w-full min-w-0 overflow-x-clip space-y-[var(--lms-space-4)]">
     <PageHeader title="Eligible students"
       description={"Allocate eligible learners to " + slot.name + ". Existing capacity, waitlist and maximum-choice rules are enforced."}
       actions={<Link href="/college/electives" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Back to Electives</Link>} />

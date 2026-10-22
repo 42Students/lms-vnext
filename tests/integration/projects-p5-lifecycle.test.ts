@@ -173,7 +173,7 @@ async function cleanup() {
     or group_key in (select 'project:'||id::text from project_instances where slug like 'p5-%')`;
   await pool.query(`delete from in_app_notifications where event_id in (${scopedEvents})`);
   await pool.query(`delete from activity_events where id in (${scopedEvents})`);
-  for (const table of ["project_task_comments", "project_submission_reviews", "project_task_submissions", "project_submissions", "project_evaluations", "project_delivery_events", "project_meetings", "project_resource_files"]) {
+  for (const table of ["project_task_comments", "project_submission_reviews", "project_task_submissions", "project_submissions", "project_evaluations", "project_delivery_events", "project_meeting_history", "project_meetings", "project_resource_files"]) {
     await pool.query(`delete from ${table} where project_id in (select id from project_instances where slug like 'p5-%')`);
   }
   await pool.query(
@@ -206,6 +206,14 @@ async function cleanup() {
   );
   await pool.query(
     `delete from project_releases
+     where project_id in (
+       select id from project_instances
+       where slug like 'p5-%'
+     )`,
+  );
+  // Trigger-written resource audit rows for these disposable projects.
+  await pool.query(
+    `delete from project_resource_audit
      where project_id in (
        select id from project_instances
        where slug like 'p5-%'

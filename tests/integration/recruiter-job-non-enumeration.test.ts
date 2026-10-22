@@ -4,7 +4,9 @@ import { afterAll, describe, expect, it } from "vitest";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { createPlacementCompany } from "@/modules/placements/company-service";
-import { createPlacementJob, publishPlacementJob } from "@/modules/placements/job-service";
+import { createPlacementJob } from "@/modules/placements/job-service";
+import { publishPreparedPlacementJob } from "../support/publishable-job-fixture";
+import { createPersistedJobRecruiter, persistedRecruiterContext } from "../support/persisted-job-recruiter-fixture";
 import { getRecruiterPlacementWorkspace } from "@/modules/placements/recruiter-workspace-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
@@ -39,13 +41,17 @@ describe.skipIf(!enabled)("HR employer job non-enumeration (isolated PG)", () =>
       title: "Hiring Analyst " + nonce, description: "Boundary fixture",
       employmentType: "FULL_TIME", workMode: "HYBRID", applicationMode: "INTERNAL",
     });
-    await publishPlacementJob(tpo, job.id);
-    const uid = randomUUID();
+    await publishPreparedPlacementJob(tpo, job.id);
+    // Recruiter reads require persisted user/profile/verified grant and job ownership.
+    const identityUid = "fixture-" + nonce;
+    const recruiter = await createPersistedJobRecruiter({
+      companyId: first.company.id, companyRelationshipId: first.relationship.id,
+      collegeId: SEED_IDS.collegeA, jobId: job.id, grantedByUserId: tpo.user.id, identityUid,
+    });
     function hr(companyId: string, relation: string, collegeId: string): RequestContext {
-      return { user: { id: uid, identityUid: "fixture-" + nonce, platformStatus: "ACTIVE", systemRoles: [] },
-        membership: null, recruiter: { userId: uid, companyId, companyName: "Fixture", status: "ACTIVE", title: null,
-          grants: [{ id: randomUUID(), collegeId, organizationId: SEED_IDS.organization,
-            collegeName: "Fixture College", companyRelationshipId: relation }] } };
+      return persistedRecruiterContext({ userId: recruiter.userId, identityUid, companyId,
+        grantId: recruiter.grantId, collegeId, organizationId: SEED_IDS.organization,
+        companyRelationshipId: relation });
     }
     const own = hr(first.company.id, first.relationship.id, SEED_IDS.collegeA);
     expect((await getRecruiterPlacementWorkspace(own, job.id)).job.id).toBe(job.id);

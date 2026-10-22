@@ -9,6 +9,7 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Button} from "@/components/ui/button";
+import {Checkbox} from "@/components/ui/checkbox";
 import { Alert } from "@/components/ui/alert";
 import { InlineNotice } from "@/components/ui/inline-notice";
 import {Textarea} from "@/components/ui/textarea";
@@ -221,7 +222,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false, r
               App and email (email delivery not configured)</label>
           </fieldset>:null}
           <label className="flex items-start gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            <input type="checkbox" checked={acknowledged}
+            <Checkbox checked={acknowledged}
               onChange={event=>setAcknowledged(event.target.checked)} disabled={pending}
               className="mt-1 h-4 w-4 accent-primary"/>
             I reviewed the learner visibility and drive state consequences. This decision is audited.

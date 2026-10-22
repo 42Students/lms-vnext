@@ -55,7 +55,7 @@ const pool = new Pool({
 });
 
 const organizationName = "Acceptance Flow Organization";
-const collegeCode = "ACCEPT-CORE";
+const collegeCode = "accept-core";
 const identityPrefix = "acceptance-core-";
 
 const superAdmin: RequestContext = {
@@ -223,7 +223,7 @@ async function cleanupAcceptanceRows() {
   // Audit rows written by the superadmin flow reference the fixture college/organization.
   await pool.query(
     `delete from activity_events
-     where college_id in (select id from colleges where code = $1)
+     where college_id in (select id from colleges where lower(code) = lower($1))
         or organization_id in (select id from organizations where name = $2)`,
     [collegeCode, organizationName],
   );
@@ -231,13 +231,13 @@ async function cleanupAcceptanceRows() {
   await pool.query(
     `delete from departments
      where college_id in (
-       select id from colleges where code = $1
+       select id from colleges where lower(code) = lower($1)
      )`,
     [collegeCode],
   );
 
   await pool.query(
-    "delete from colleges where code = $1",
+    "delete from colleges where lower(code) = lower($1)",
     [collegeCode],
   );
 

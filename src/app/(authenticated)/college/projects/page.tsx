@@ -37,7 +37,7 @@ export default async function CollegeProjectsPage({
     return <div className="min-w-0 space-y-4">
       <ProjectAdminNav basePath="/college/projects" active="workspaces"/>
       <PageHeader title="Project workspaces" description="Select a college to continue."/>
-      <ErrorState title="No college selected"
+      <ErrorState title="No college selected" role="alert"
         description="Project workspaces are college-scoped. Choose an active college from the account switcher before opening this page."
         action={<Link href="/dashboard" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Back to dashboard</Link>}/>
     </div>;

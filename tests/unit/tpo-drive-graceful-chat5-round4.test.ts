@@ -11,7 +11,7 @@ describe("Drive action resilience and accessibility",()=>{
   expect(cancel).toContain("disabled={pending || !reviewed}");
   expect(lifecycle).toContain("|| !acknowledged");
   expect(cancel).toContain("<Checkbox checked={reviewed}");
-  expect(lifecycle).toContain('type="checkbox"');
+  expect(lifecycle).toContain("<Checkbox checked={acknowledged}");
  });
  it("GR-31 ignores repeated submits while the previous drive mutation is active",()=>{
   const cancel=source("src/components/placements/tpo-drive-cancel-form.tsx");

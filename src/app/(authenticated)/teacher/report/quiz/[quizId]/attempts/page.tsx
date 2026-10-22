@@ -88,7 +88,7 @@ export default async function FacultyQuizAttemptPage({
       <label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         Search learner attempts
         <Input type="search" name="q" defaultValue={data.query.q} maxLength={120}
-          placeholder="Learner Name" className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] w-full" />
+          placeholder="Learner Name" className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)] w-full max-[767px]:text-[16px]" />
       </label>
       <Button type="submit" variant="primary" className="w-full sm:w-auto">Search</Button>
       <Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,1,data.query.order,"",data.query.view)}

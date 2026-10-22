@@ -38,7 +38,7 @@ async function cleanup(){
   // Immutable activity events and the identities they reference remain untouched.
   if(tracked.projects.length){
     for(const table of ["project_task_submissions","project_submission_reviews","project_submissions",
-      "project_meeting_history","project_meetings","project_members","project_resources","project_tasks",
+      "project_meeting_history","project_meetings","project_members","project_resources","project_resource_audit","project_tasks",
       "project_sprints","project_releases"]){
       await pool.query("delete from "+table+" where project_id=any($1::uuid[])",[tracked.projects]);
     }

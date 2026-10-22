@@ -123,7 +123,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
         onDragEnd={()=>setDragging(false)}
        className={"border p-3 text-sm "+styles.card}>
         <Link href={learnerBoardTaskHref(projectId,filters,task.id)}
-         className="block break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2">{task.title}</Link>
+         className="block break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">{task.title}</Link>
         <p className="mt-2 text-xs text-muted-foreground leading-[20px]">{task.priority}</p>
         {!readOnly && own && (task.sprintId===null||editable) && task.status==="TODO" &&
           task.templateKey.startsWith("learner-"+membershipId!.replaceAll("-","")+"-") ?

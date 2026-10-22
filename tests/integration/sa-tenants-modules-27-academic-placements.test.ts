@@ -26,6 +26,12 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)("SA-tenants-modules-27 academic 
    scopeType:"DEPARTMENT",scopeId:SEED_IDS.departmentA,module:"placements",
    action:"SET",enabled:true,locked:false,expected:null,
   })).rejects.toBeInstanceOf(ZodError);
+  // Placements is college-level only: even the owned college cannot write a
+  // descendant placements rule.
+  await expect(writeDescendantRule(admin,SEED_IDS.collegeA,{
+   scopeType:"DEPARTMENT",scopeId:SEED_IDS.departmentA,module:"placements",
+   action:"SET",enabled:true,locked:false,expected:null,
+  })).rejects.toBeInstanceOf(ZodError);
   await expect(writeDescendantRule(admin,SEED_IDS.collegeB,{
    scopeType:"DEPARTMENT",scopeId:SEED_IDS.departmentA,module:"projects",
    action:"SET",enabled:true,locked:false,expected:null,

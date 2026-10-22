@@ -89,7 +89,7 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
   <Button variant="primary" type="button" onClick={()=>void save()} disabled={!valid||busy||!reviewed}
    className="min-h-11 w-full sm:w-auto md:min-h-9">
    {busy?"Saving…":"Save decision"}</Button>
-  {error?<div className="w-full min-w-0"><InlineNotice tone="error" message={error}/></div>:null}
+  {error?<div className="w-full min-w-0"><InlineNotice tone="error" role="alert" message={error}/></div>:null}
   {notice?<div className="w-full min-w-0"><InlineNotice tone="success" message={notice}/></div>:null}
   {actionId?<div className="w-full"><TpoBatchUndoControl batchId={batchId} actionId={actionId}/></div>:null}
  </div>;

@@ -66,7 +66,7 @@ describe.skipIf(!enabled)("Super Admin Video, Resources and Live Classes authori
   it("SA-academics-people-58: lessons can be created, edited and archived by a Super Admin without membership", async () => {
     const lesson = await createCourseLesson(admin, { learningPathId: fx.ids.path, name: "Authored by SA " + fx.tag, sequence: 5 });
     expect(lesson.name).toBe("Authored by SA " + fx.tag);
-    const renamed = await updateCourseLesson(admin, lesson.id, { name: "Renamed by SA " + fx.tag });
+    const renamed = await updateCourseLesson(admin, lesson.id, { name: "Renamed by SA " + fx.tag, expectedUpdatedAt: lesson.updatedAt.toISOString() });
     expect(renamed.name).toBe("Renamed by SA " + fx.tag);
     expect((await archiveCourseLesson(admin, lesson.id)).status).toBe("ARCHIVED");
   });

@@ -1,10 +1,11 @@
 import { publishableJobTerms } from "../support/publishable-job-terms";
 import { randomUUID } from "node:crypto";
-import { Pool } from "pg";
 import { afterAll, describe, expect, it } from "vitest";
 import { closeDatabaseConnection } from "@/db/client";
 import { createPlacementCompany } from "@/modules/placements/company-service";
-import { createPlacementJob, publishPlacementJob } from "@/modules/placements/job-service";
+import { createPlacementJob } from "@/modules/placements/job-service";
+import { publishPreparedPlacementJob } from "../support/publishable-job-fixture";
+import { createPersistedJobRecruiter, persistedRecruiterContext } from "../support/persisted-job-recruiter-fixture";
 import { getRecruiterPlacementWorkspace } from "@/modules/placements/recruiter-workspace-service";
 import { hrDraftFromAuthorizedJob } from "@/modules/placements/hr-drive-draft-model";
 import {hrDriveSessionStorageKey} from "@/modules/placements/hr-unsent-draft-storage-model";
@@ -22,8 +23,7 @@ const tpo: RequestContext = {
 };
 
 describe.skipIf(!enabled)("Recruiter authorized Hire Again preview", () => {
-  const pool = enabled ? new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1}) : null;
-  afterAll(async () => { await pool?.end(); await closeDatabaseConnection(); });
+  afterAll(async () => { await closeDatabaseConnection(); });
   it("copies a company-owned job while hiding the same job from foreign company, college and wrong role", async () => {
     const nonce = randomUUID().slice(0, 8);
     const a = await createPlacementCompany(tpo, {
@@ -39,27 +39,15 @@ describe.skipIf(!enabled)("Recruiter authorized Hire Again preview", () => {
       title: "Recruiter Draft " + nonce, description: "Hiring engineer test fixture",
       employmentType: "FULL_TIME", workMode: "HYBRID", applicationMode: "INTERNAL", ...publishableJobTerms,
     });
-    // Publication now requires a live hiring step and explicit scoped
-    // eligibility policy. Build both instead of bypassing the guard.
-    if (!pool) throw new Error("Disposable PostgreSQL fixture required");
-    await pool.query(
-      "INSERT INTO placement_job_rounds(job_id,sequence,kind,name,created_by_user_id) VALUES($1,1,'INTERVIEW','Interview',$2)",
-      [job.id,SEED_IDS.facultyUser],
-    );
-    await pool.query(
-      "INSERT INTO placement_job_eligibility_policies(job_id,updated_by_user_id) VALUES($1,$2)",
-      [job.id,SEED_IDS.facultyUser],
-    );
-    await publishPlacementJob(tpo, job.id);
-    const userId = randomUUID();
-    const hr = (companyId: string, relation: string, collegeId: string): RequestContext => ({
-      user: { id: userId, identityUid: "hr-draft-" + nonce, platformStatus: "ACTIVE", systemRoles: [] },
-      membership: null, recruiter: {
-        userId, companyId, companyName: "Fixture", title: null, status: "ACTIVE",
-        grants: [{ id: randomUUID(), collegeId, organizationId: SEED_IDS.organization,
-          collegeName: "Fixture", companyRelationshipId: relation }],
-      },
-    });
+    await publishPreparedPlacementJob(tpo, job.id);
+    const identityUid = "hr-draft-" + nonce;
+    const recruiter = await createPersistedJobRecruiter({ companyId: a.company.id,
+      companyRelationshipId: a.relationship.id, collegeId: SEED_IDS.collegeA, jobId: job.id,
+      grantedByUserId: tpo.user.id, identityUid });
+    const hr = (companyId: string, relation: string, collegeId: string): RequestContext =>
+      persistedRecruiterContext({ userId: recruiter.userId, identityUid, companyId,
+        grantId: recruiter.grantId, collegeId, organizationId: SEED_IDS.organization,
+        companyRelationshipId: relation });
     const own = await getRecruiterPlacementWorkspace(hr(a.company.id, a.relationship.id, SEED_IDS.collegeA), job.id);
     expect(hrDriveSessionStorageKey(SEED_IDS.facultyUser,own.college.id,own.job.id))
       .not.toBe(hrDriveSessionStorageKey(SEED_IDS.facultyUser,SEED_IDS.collegeB,own.job.id));

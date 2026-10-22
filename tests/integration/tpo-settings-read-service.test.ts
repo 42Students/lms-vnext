@@ -1,4 +1,5 @@
-import { afterAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { Pool } from "pg";
 import type { RequestContext } from "@/modules/identity/context";
 import { closeDatabaseConnection } from "@/db/client";
 import {
@@ -32,7 +33,24 @@ const nonTpo: RequestContext = {
   membership: { ...tpo.membership!, roles: ["COLLEGE_ADMIN"] },
 };
 
+const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL, max: 1 });
+let grantedTpoRoleId: string | null = null;
+
+// The services re-check the persisted TPO role, so the seeded college admin
+// membership temporarily holds a real TPO role (removed afterwards).
+beforeAll(async () => {
+  const inserted = await pool.query<{ id: string }>(
+    "INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT DO NOTHING RETURNING id",
+    [SEED_IDS.collegeAdminMembership],
+  );
+  grantedTpoRoleId = inserted.rows[0]?.id ?? null;
+});
+
 afterAll(async () => {
+  if (grantedTpoRoleId) {
+    await pool.query("DELETE FROM membership_roles WHERE id=$1", [grantedTpoRoleId]);
+  }
+  await pool.end();
   await closeDatabaseConnection();
 });
 

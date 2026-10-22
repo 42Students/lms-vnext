@@ -1,10 +1,11 @@
 import { publishableJobTerms } from "../support/publishable-job-terms";
 import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
-import {closeDatabaseConnection,getDb} from "@/db/client";
-import {placementJobRounds,placementJobEligibilityPolicies} from "@/db/schema";
+import {closeDatabaseConnection} from "@/db/client";
 import {createPlacementCompany} from "@/modules/placements/company-service";
-import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
+import {createPlacementJob} from "@/modules/placements/job-service";
+import {publishPreparedPlacementJob} from "../support/publishable-job-fixture";
+import {createPersistedJobRecruiter,persistedRecruiterContext} from "../support/persisted-job-recruiter-fixture";
 import {getHrJobRead} from "@/modules/placements/hr-job-read-service";
 import {buildHrOfferOverview,hrSelectionReadyApplicationIds} from "@/modules/placements/hr-offer-selection-read-model";
 import type {RequestContext} from "@/modules/identity/context";
@@ -22,21 +23,13 @@ describe.skipIf(!enabled)("HR offer read scope PG",()=>{
   const other=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"Offer HR Other "+nonce,primaryDomain:"other-offer-"+nonce+".example"});
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:own.relationship.id,title:"Offer HR "+nonce,
     description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
-  // Direct publication requires a real evaluative round and a persisted
-  // eligibility policy; otherwise the service correctly rejects this draft.
-  await getDb().insert(placementJobRounds).values({
-    jobId:job.id,sequence:1,kind:"INTERVIEW",name:"HR offer review",
-    createdByUserId:tpo.user.id,
-  });
-  await getDb().insert(placementJobEligibilityPolicies).values({
-    jobId:job.id,updatedByUserId:tpo.user.id,
-  }).onConflictDoNothing();
-  await publishPlacementJob(tpo,job.id);
-  const uid=randomUUID();
-  const hr=(companyId:string,rel:string,collegeId:string):RequestContext=>({
-    user:{id:uid,identityUid:"hr-offer-"+nonce,platformStatus:"ACTIVE",systemRoles:[]},membership:null,
-    recruiter:{userId:uid,companyId,companyName:"Fixture",title:null,status:"ACTIVE",
-      grants:[{id:randomUUID(),collegeId,organizationId:SEED_IDS.organization,collegeName:"Fixture",companyRelationshipId:rel}]}});
+  await publishPreparedPlacementJob(tpo,job.id,{round:{kind:"INTERVIEW",name:"HR offer review"}});
+  const identityUid="hr-offer-"+nonce;
+  const recruiter=await createPersistedJobRecruiter({companyId:own.company.id,companyRelationshipId:own.relationship.id,
+    collegeId:SEED_IDS.collegeA,jobId:job.id,grantedByUserId:tpo.user.id,identityUid});
+  const hr=(companyId:string,rel:string,collegeId:string):RequestContext=>persistedRecruiterContext({
+    userId:recruiter.userId,identityUid,companyId,grantId:recruiter.grantId,collegeId,
+    organizationId:SEED_IDS.organization,companyRelationshipId:rel});
   const ownRead=await getHrJobRead(hr(own.company.id,own.relationship.id,SEED_IDS.collegeA),job.id,{tab:"offers"});
   expect(buildHrOfferOverview(ownRead.offers,new Date()).recorded).toBe(0);
   expect(ownRead.offerSummary.recorded).toBe(0);

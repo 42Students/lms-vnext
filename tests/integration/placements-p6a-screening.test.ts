@@ -26,6 +26,7 @@ import {
   listPlacementScreeningQueue,
 } from "@/modules/placements/screening-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { deletePlacementRowTrees } from "../support/placement-job-tree-cleanup";
 import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
 
 const databaseUrl =
@@ -92,6 +93,8 @@ const otherCollegeTpo: RequestContext = {
 };
 
 async function cleanup() {
+  // Clear every drive child (rounds, applications, stages, offers, ...) first.
+  await deletePlacementRowTrees(pool);
   await pool.query("delete from placement_college_application_stage_history");
   await pool.query("delete from placement_college_application_stages");
   await pool.query(

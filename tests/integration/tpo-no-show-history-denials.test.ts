@@ -3,6 +3,7 @@ import { afterAll, describe, expect, it } from "vitest";
 import { closeDatabaseConnection } from "@/db/client";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import type { RequestContext } from "@/modules/identity/context";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import {
   getTpoStudentPlacementHistory,
 } from "@/modules/placements/tpo-student-history-service";
@@ -47,7 +48,7 @@ describe("TPO learner history and no-show PostgreSQL boundaries", () => {
     await expect(getTpoRoundDriveDay(nonTpo, randomUUID())).rejects.toBeDefined();
   });
 
-  it("returns no learner history for unknown and cross-college membership", async () => {
+  it("returns no learner history for unknown membership and denies a forged college scope", async () => {
     await expect(getTpoStudentPlacementHistory(tpo, {
       membershipId: randomUUID(),
     })).resolves.toBeNull();
@@ -56,6 +57,8 @@ describe("TPO learner history and no-show PostgreSQL boundaries", () => {
       ...tpo,
       membership: { ...tpo.membership!, collegeId: SEED_IDS.collegeB },
     };
+    // The persisted membership belongs to college A, so a context claiming
+    // college B is refused before any learner lookup (no existence leak).
     await expect(getTpoStudentPlacementHistory(foreign, {
       membershipId: SEED_IDS.learnerCollegeAMembership,
     })).rejects.toBeInstanceOf(AuthorizationError);

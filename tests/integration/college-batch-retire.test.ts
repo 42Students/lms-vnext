@@ -55,7 +55,7 @@ describe.skipIf(!enabled)("Planned batch guarded removal PostgreSQL",()=>{
     token=updated.rows[0]!.updated_at.toISOString();
     const archived=await retireCollegeBatch(own,ids.cohort,body());
     expect(archived.status).toBe("ARCHIVED");
-    const audit=await pool!.query("SELECT id FROM activity_events WHERE subject_type='cohort' AND subject_id=$1::text AND summary='College Admin removed unused planned batch'",[ids.cohort]);
+    const audit=await pool!.query("SELECT id FROM activity_events WHERE subject_type='cohort' AND subject_id=$1::text AND summary='Unused planned batch archived'",[ids.cohort]);
     expect(audit.rowCount).toBe(1);
   });
   it("conceals a foreign membership, denies a non-admin and forged scope",async()=>{

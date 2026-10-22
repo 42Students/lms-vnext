@@ -1,10 +1,11 @@
 import { publishableJobTerms } from "../support/publishable-job-terms";
 import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
-import {closeDatabaseConnection,getDb} from "@/db/client";
-import {placementJobEligibilityPolicies} from "@/db/schema";
+import {closeDatabaseConnection} from "@/db/client";
 import {createPlacementCompany} from "@/modules/placements/company-service";
-import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
+import {createPlacementJob} from "@/modules/placements/job-service";
+import {publishPreparedPlacementJob} from "../support/publishable-job-fixture";
+import {createPersistedJobRecruiter,persistedRecruiterContext} from "../support/persisted-job-recruiter-fixture";
 import {createPlacementRound,actOnPlacementRound} from "@/modules/placements/round-service";
 import {getRecruiterPlacementWorkspace} from "@/modules/placements/recruiter-workspace-service";
 import {hrScheduledRoundRows} from "@/modules/placements/hr-round-schedule-model";
@@ -26,17 +27,15 @@ describe.skipIf(!enabled)("HR round schedule scoped PG",()=>{
   const round=await createPlacementRound(tpo,job.id,{kind:"INTERVIEW",name:"Panel",durationMinutes:60});
   await actOnPlacementRound(tpo,round.id,{action:"SCHEDULE",scheduledAt:new Date("2026-10-20T10:00:00Z"),
    timezone:"Asia/Kolkata",mode:"VIRTUAL",meetingUrl:"https://example.test/meet"});
-  // Publishing requires an explicit persisted audience/eligibility policy.
-  await getDb().insert(placementJobEligibilityPolicies).values({
-   jobId:job.id,updatedByUserId:tpo.user.id,
-  });
-  await publishPlacementJob(tpo,job.id);
-  const uid=randomUUID();
-  const hr=(companyId:string,rel:string):RequestContext=>({
-   user:{id:uid,identityUid:"hr-schedule-"+n,platformStatus:"ACTIVE",systemRoles:[]},membership:null,
-   recruiter:{userId:uid,companyId,companyName:"Fixture",status:"ACTIVE",title:null,
-    grants:[{id:randomUUID(),collegeId:SEED_IDS.collegeA,organizationId:SEED_IDS.organization,
-     collegeName:"Fixture",companyRelationshipId:rel}]}});
+  await publishPreparedPlacementJob(tpo,job.id);
+  // Recruiter reads require the persisted user/profile/verified grant and
+  // recruiter ownership of the job (approved drive request).
+  const identityUid="hr-schedule-"+n;
+  const recruiter=await createPersistedJobRecruiter({companyId:a.company.id,companyRelationshipId:a.relationship.id,
+   collegeId:SEED_IDS.collegeA,jobId:job.id,grantedByUserId:tpo.user.id,identityUid});
+  const hr=(companyId:string,rel:string):RequestContext=>persistedRecruiterContext({userId:recruiter.userId,
+   identityUid,companyId,grantId:recruiter.grantId,collegeId:SEED_IDS.collegeA,
+   organizationId:SEED_IDS.organization,companyRelationshipId:rel});
   const own=await getRecruiterPlacementWorkspace(hr(a.company.id,a.relationship.id),job.id);
   expect(hrScheduledRoundRows(own.rounds).some(x=>x.id===round.id)).toBe(true);
   await expect(getRecruiterPlacementWorkspace(hr(b.company.id,b.relationship.id),job.id))

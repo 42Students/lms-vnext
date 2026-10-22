@@ -74,6 +74,8 @@ async function cleanup(){
  if(!audit.rowCount){
   await pool.query("delete from membership_roles where membership_id=$1",[f.learnerMembershipId]);
   await pool.query("delete from college_memberships where id=$1",[f.learnerMembershipId]);
+  // Recipient inbox rows for this fixture-only learner block the user delete.
+  await pool.query("delete from in_app_notifications where user_id=$1",[f.learnerUserId]);
   await pool.query("delete from users where id=$1",[f.learnerUserId]);
  }
  active=null;

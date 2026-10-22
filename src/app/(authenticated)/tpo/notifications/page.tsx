@@ -66,7 +66,7 @@ export default async function TpoNotificationsPage({
       <Alert tone="error">
         Could not load notifications.{" "}
         <Link href={TPO_NOTIFICATIONS_PATH}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
           Retry
         </Link>
       </Alert>
@@ -133,7 +133,7 @@ export default async function TpoNotificationsPage({
             <div className="flex justify-stretch min-[768px]:justify-center">
               <Link
                 href={nextHref}
-                className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 min-[768px]:w-auto"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:w-auto"
               >
                 Show older
               </Link>

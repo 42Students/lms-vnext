@@ -24,7 +24,7 @@ export default async function FacultyAssessmentResultsPage({
   const raw = await searchParams;
   const parsed = parseFacultyResultsSearchParams(raw);
   if (!parsed.success) {
-    return <div className="min-w-0 space-y-3"><PageHeader title="Assessment results"/><ErrorState title="Invalid assessment filters" description="Review the assessment search and filters." action={<Link href="/teacher/results" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>}/></div>;
+    return <div className="min-w-0 space-y-3"><PageHeader title="Assessment results"/><ErrorState title="Invalid assessment filters" description="Review the assessment search and filters." role="alert" action={<Link href="/teacher/results" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>}/></div>;
   }
   const context = await getCurrentRequestContext();
   const data = await getFacultyAssessmentResults(context,parsed.data);
@@ -46,7 +46,7 @@ export default async function FacultyAssessmentResultsPage({
       className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-end">
       <label className="grid w-full min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
         <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
-          
+          className="max-[767px]:text-[16px]"
           placeholder="Assessment, course code or Section" />
       </label>
       <label className="grid w-full min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type

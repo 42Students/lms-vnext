@@ -22,6 +22,7 @@ const pool = enabled ? new Pool({
 }) : null;
 
 const globalAdmin: RequestContext = {
+  // A persisted Super Admin: triage audit and handled_by reference users.
   user: { id: SEED_IDS.superAdminUser, identityUid: "chat16-inbound-actor",
     platformStatus: "ACTIVE", systemRoles: ["SUPER_ADMIN"] },
   membership: null,
@@ -59,6 +60,7 @@ describe.skipIf(!enabled)("chat-16 PostgreSQL inbound triage authorization and C
   afterAll(async () => {
     try {
       for (const id of created) {
+        await pool!.query("delete from activity_events where subject_type='INBOUND_MAIL' and subject_id=$1", [id]);
         await pool!.query("delete from inbound_mail_messages where id=$1::uuid", [id]);
       }
     } finally {

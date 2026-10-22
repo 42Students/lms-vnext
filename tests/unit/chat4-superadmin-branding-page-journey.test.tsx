@@ -83,7 +83,7 @@ describe("SA-colleges-branding-page-01 tenant branding permissions and honest ed
  });
  it("renders persisted preview, real optimistic edit version and selected-college uploader",async()=>{
   const html=renderToStaticMarkup(await SuperAdminCollegeBrandingPage(props()));
-  expect(html).toContain("Look and feel");
+  expect(html).toContain("Manage college");
   expect(html).toContain("College login branding");
   expect(mocks.preview).toHaveBeenCalledWith(actor,collegeId);
   expect(html).toContain('data-upload="'+collegeId+'"');

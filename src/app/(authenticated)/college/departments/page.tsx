@@ -40,7 +40,7 @@ export default async function CollegeDepartmentsPage() {
   });
 
   return (
-    <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
+    <div className="max-w-full min-w-0 overflow-x-clip space-y-[var(--lms-space-4)]">
       <PageHeader
         title="Departments"
         description="Create, find, export and manage the departments in your college."

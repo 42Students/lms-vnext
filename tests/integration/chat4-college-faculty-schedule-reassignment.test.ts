@@ -39,13 +39,13 @@ describe.skipIf(!enabled)("College faculty schedule reassignment (disposable Pos
    await pool.query("insert into membership_roles(membership_id,role) values($1,$2)",
     [member,role]);
   }
-  await pool.query("insert into academic_periods(id,college_id,name,code,start_date,end_date,status) values($1,$2,$3,$3,'2026-07-01','2027-06-30','ACTIVE')",
+  await pool.query("insert into academic_periods(id,college_id,name,code,start_date,end_date,status) values($1,$2,$3::text,$3::text,'2026-07-01','2027-06-30','ACTIVE')",
    [ids.period,SEED_IDS.collegeA,tag]);
-  await pool.query("insert into programs(id,department_id,name,code,duration_terms,status) values($1,$2,$3,$3,8,'ACTIVE')",
+  await pool.query("insert into programs(id,department_id,name,code,duration_terms,status) values($1,$2,$3::text,$3::text,8,'ACTIVE')",
    [ids.program,SEED_IDS.departmentA,tag]);
-  await pool.query("insert into cohorts(id,program_id,name,code,start_period_id,status) values($1,$2,$3,$3,$4,'ACTIVE')",
+  await pool.query("insert into cohorts(id,program_id,name,code,start_period_id,status) values($1,$2,$3::text,$3::text,$4,'ACTIVE')",
    [ids.cohort,ids.program,tag,ids.period]);
-  await pool.query("insert into sections(id,cohort_id,academic_period_id,name,code,status) values($1,$2,$3,$4,$4,'ACTIVE')",
+  await pool.query("insert into sections(id,cohort_id,academic_period_id,name,code,status) values($1,$2,$3,$4::text,$4::text,'ACTIVE')",
    [ids.section,ids.cohort,ids.period,tag]);
   const start=new Date(Date.now()+72*3600000),end=new Date(start.getTime()+3600000);
   await pool.query("insert into section_schedule_events(id,section_id,faculty_membership_id,title,starts_at,ends_at,status) values($1,$2,$3,$4,$5,$6,'SCHEDULED')",

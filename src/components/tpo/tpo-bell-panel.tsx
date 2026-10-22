@@ -127,7 +127,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
     <ul role="list" aria-label={"Notifications for "+group.day} className="space-y-0">
     {group.items.map(item=><li key={item.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] text-sm last:border-b-0">
      <Button variant="ghost" type="button" disabled={pending} onClick={()=>void openItem(item)}
-      className="min-h-11 w-full min-w-0 flex-col items-start justify-start gap-1 rounded-[var(--lms-control-radius)] border-0 bg-transparent px-3 py-3 text-left hover:bg-[var(--lms-neutral-50)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:px-4">
+      className="w-full min-h-11 min-w-0 flex-col items-start justify-start gap-1 rounded-[var(--lms-control-radius)] border-0 bg-transparent px-3 py-3 text-left hover:bg-[var(--lms-neutral-50)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:px-4">
      <span className="block max-w-full break-words text-sm font-semibold leading-[1.4] text-foreground">{!item.readAt&&!readIds.includes(item.id)?<span aria-hidden="true" className="mr-2 inline-block h-2 w-2 rounded-full bg-[var(--lms-topbar-unread)]"/>:null}{item.title}{!item.readAt&&!readIds.includes(item.id)?<span className="sr-only"> New notification.</span>:null}</span>
      {item.body?<span className="mt-1 block max-w-full line-clamp-2 break-words text-sm leading-[1.5] text-muted-foreground">{item.body}</span>:null}
      <time dateTime={item.createdAt} className="mt-1 block text-xs text-[var(--lms-muted-text)] leading-[20px]">

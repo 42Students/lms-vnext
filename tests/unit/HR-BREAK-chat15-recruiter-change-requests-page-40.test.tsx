@@ -20,7 +20,8 @@ vi.mock("next/link",()=>({
   React.createElement("a",{href},children),
 }));
 vi.mock("@/components/ui/page-header",()=>({
- PageHeader:({title}:{title:string})=>React.createElement("h1",null,title),
+ PageHeader:({title,actions}:{title:string;actions?:React.ReactNode})=>
+  React.createElement(React.Fragment,null,React.createElement("h1",null,title),actions),
 }));
 vi.mock("@/components/placements/tpo-drive-change-requests",()=>({
  TpoDriveChangeRequests:({jobId,party}:{jobId:string;party:string})=>

@@ -76,7 +76,7 @@ describe.skipIf(!enabled)("College Admin placement pipeline: isolated PostgreSQL
 
   it("COL-placements-01: invalid transitions, Offered without an issued offer and Hired without joining are rejected per row", async () => {
     const { job, app } = await makeDrive();
-    expect((await move(job, [app], "HIRED")).results[0].reason).toMatch(/Invalid transition/);
+    expect((await move(job, [app], "HIRED")).results[0].reason).toMatch(/Cannot move from APPLIED to HIRED. Allowed next stages:/);
     await move(job, [app], "SHORTLISTED");
     await move(job, [app], "INTERVIEW");
     const offered = await move(job, [app], "OFFERED");

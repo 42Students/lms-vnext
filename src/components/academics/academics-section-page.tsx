@@ -43,7 +43,7 @@ export async function AcademicsSectionPage({
         eyebrow={eyebrow}
         title={workspace.section.name}
         description={`${workspace.section.programName} · ${workspace.section.cohortName} · ${workspace.section.academicPeriodName}`}
-        actions={<PageBackLink href={backHref} label="Back to Academics" />}
+        actions={<PageBackLink href={backHref} label="Back to Academics" className="min-h-11" />}
       />
       <SectionOperations
         section={workspace.section}

@@ -72,6 +72,7 @@ async function cleanup() {
   await pool.query(`delete from project_tasks where project_id in (${projects})`);
   await pool.query(`delete from project_sprints where project_id in (${projects})`);
   await pool.query(`delete from project_releases where project_id in (${projects})`);
+  await pool.query(`delete from project_resource_audit where project_id in (${projects})`);
   await pool.query(`delete from project_instances where slug like '${SLUG}%'`);
   await pool.query(`delete from project_template_college_assignments where template_id in (select id from project_templates where slug like '${SLUG}%')`);
   await pool.query(`delete from project_template_versions where template_id in (select id from project_templates where slug like '${SLUG}%')`);

@@ -98,6 +98,6 @@ export function TpoEveryoneControls({muted,actorUserId}:{muted:boolean;actorUser
   </div>
   </Disclosure>
   {success?<InlineNotice tone="success" message={success}/>:null}
-  {error?<InlineNotice tone="error" message={error}/>:null}
+  {error?<InlineNotice tone="error" role="alert" message={error}/>:null}
  </div>;
 }

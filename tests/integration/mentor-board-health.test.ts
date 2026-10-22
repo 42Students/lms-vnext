@@ -38,7 +38,7 @@ const created:{projectIds:string[];templateIds:string[];members:string[];users:s
 async function cleanup(){
   if(created.projectIds.length){
     for(const table of ["project_delivery_events","project_task_submissions","project_submission_reviews",
-      "project_submissions","project_meetings","project_members","project_resources",
+      "project_submissions","project_meeting_history","project_meetings","project_members","project_resources","project_resource_audit",
       "project_tasks","project_sprints","project_releases"]){
       await pool.query("delete from "+table+" where project_id=any($1::uuid[])",[created.projectIds]);
     }
@@ -134,9 +134,9 @@ async function fixture(){
 
 describe("Mentor final delivery reviewed with immutable audit",()=>{
  it("accepts default now() token once and denies stale/foreign/wrong-role",async()=>{
-  const {project,mentor,foreign,learner}=await fixture();
-  // Reviews require an active project, not an unlaunched fixture draft.
-  await pool.query("update project_instances set status='ACTIVE' where id=$1",[project.id]);
+  const {project,mentor,foreign,learner,sprint}=await fixture();
+  // Final delivery is reviewable only on an ACTIVE project (never before activation).
+  await startProjectSprint(mentor,project.id,sprint.id);
   const id=randomUUID();
   const inserted=await pool.query<{updated_at:Date}>(`insert into project_submissions
    (id,project_id,version,status,summary,source_url,created_by_membership_id,
@@ -161,13 +161,15 @@ describe("Mentor final delivery reviewed with immutable audit",()=>{
 describe("Mentor meeting audited optimistic decisions on disposable PostgreSQL",()=>{
  it("completes a SQL-backed meeting and denies replay/foreign/wrong-role",async()=>{
   const {project,mentor,foreign,learner}=await fixture();
-  // Mentor-created meetings require an optimistic token for the containing project.
+  // Meetings must be in the future and mentor scheduling is optimistic on the project version.
+  const startsAt=new Date(Date.now()+7*24*60*60*1000);
+  startsAt.setUTCSeconds(0,0);
   const projectVersion=await pool.query<{updated_at:Date}>(
-    "select updated_at from project_instances where id=$1",[project.id]);
+   "select updated_at from project_instances where id=$1",[project.id]);
   const meeting=await scheduleProjectMeeting(mentor,project.id,null,{
+   title:"Mentor session",startsAt:startsAt.toISOString(),
+   endsAt:new Date(startsAt.getTime()+60*60*1000).toISOString(),timeZone:"Asia/Kolkata",
    expectedProjectUpdatedAt:projectVersion.rows[0]!.updated_at.toISOString(),
-   title:"Mentor session",startsAt:"2026-11-02T09:00:00.000Z",
-   endsAt:"2026-11-02T10:00:00.000Z",timeZone:"Asia/Kolkata",
    meetingUrl:"https://example.invalid/mentor-session",
   });
   // Exercise database now() microseconds, not only JS-authored timestamps.

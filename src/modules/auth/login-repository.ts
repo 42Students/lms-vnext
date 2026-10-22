@@ -187,9 +187,18 @@ export const drizzleLoginRepository: LoginRepository = {
       // A newly started challenge supersedes earlier unused codes for the
       // same verified user/contact. This prevents old SMS and email codes
       // from surviving a restart in another tab or device.
+      // An unverified challenge is superseded and expired, never marked used:
+      // identity_auth_attempts_consumed_shape_ck only admits used_at after a
+      // verification, and superseded sends must keep counting toward the
+      // per-contact/per-address caps above (which count used_at IS NULL).
       await tx.execute(sql`
         UPDATE identity_auth_attempts
-        SET used_at = now(), sms_code_mac = NULL,
+        SET used_at = CASE WHEN verified_at IS NOT NULL THEN now() END,
+            superseded_at = GREATEST(created_at, clock_timestamp()),
+            expires_at = CASE WHEN verified_at IS NOT NULL THEN expires_at
+              ELSE GREATEST(created_at + interval '1 millisecond',
+                            LEAST(expires_at, clock_timestamp())) END,
+            sms_code_mac = NULL,
             sms_code_expires_at = NULL, email_code_mac = NULL,
             email_code_expires_at = NULL, version = version + 1
         WHERE user_id = ${input.userId}
@@ -251,6 +260,7 @@ export const drizzleLoginRepository: LoginRepository = {
           version = version + 1
       WHERE id = ${id}
         AND used_at IS NULL
+        AND superseded_at IS NULL
         AND expires_at > now()
         AND resend_attempts < ${maxResends}
         AND (
@@ -264,9 +274,16 @@ export const drizzleLoginRepository: LoginRepository = {
 
   async invalidateUndeliveredAttempt(id) {
     // Preserve the row for abuse budgets, but remove all still-usable MACs.
+    // An undelivered challenge was never verified, so it is superseded and
+    // expired rather than marked used (identity_auth_attempts_consumed_shape_ck).
     await getDb().execute(sql`
       UPDATE identity_auth_attempts
-      SET used_at=now(), sms_code_mac=NULL, sms_code_expires_at=NULL,
+      SET used_at = CASE WHEN verified_at IS NOT NULL THEN now() END,
+          superseded_at = GREATEST(created_at, clock_timestamp()),
+          expires_at = CASE WHEN verified_at IS NOT NULL THEN expires_at
+            ELSE GREATEST(created_at + interval '1 millisecond',
+                          LEAST(expires_at, clock_timestamp())) END,
+          sms_code_mac=NULL, sms_code_expires_at=NULL,
           email_code_mac=NULL, email_code_expires_at=NULL,
           version=version+1
       WHERE id=${id} AND used_at IS NULL AND expires_at>now()

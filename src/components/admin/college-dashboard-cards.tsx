@@ -49,7 +49,7 @@ export function CollegeDashboardCards({ cards }: { cards: Cards }) {
     </div>
     {error?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm">Summary refresh failed. Showing the last successful college totals.</p>:null}
     {visible.length ? <div className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-4">
-      {visible.map(card => <StatTile key={card.key} variant="college" href={card.href} className={COLLEGE_AT_A_GLANCE_CARD_CLASS}
+      {visible.map(card => <StatTile key={card.key} variant="college" href={card.href} className={COLLEGE_AT_A_GLANCE_CARD_CLASS+" min-w-0 break-words"}
         label={card.label} value={counts[card.key]??"—"}>
         <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none"
          stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"
@@ -58,7 +58,7 @@ export function CollegeDashboardCards({ cards }: { cards: Cards }) {
     </div> : <div className="space-y-2">
       <EmptyState title="No college summary available" description="College summary metrics are not available in the selected scope."/>
       <p role="status" className="text-sm text-muted-foreground">Couldn't refresh college summary. Previous counts are not assumed to be zero.</p>
-      <Link href="/college" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>
+      <Link href="/college" className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Retry</Link>
     </div>}
   </section>;
 }

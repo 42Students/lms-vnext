@@ -1,11 +1,11 @@
 import { publishableJobTerms } from "../support/publishable-job-terms";
 import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
-import {closeDatabaseConnection,getDb} from "@/db/client";
-import {placementJobEligibilityPolicies} from "@/db/schema";
-import {createPlacementRound} from "@/modules/placements/round-service";
+import {closeDatabaseConnection} from "@/db/client";
 import {createPlacementCompany} from "@/modules/placements/company-service";
-import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
+import {createPlacementJob} from "@/modules/placements/job-service";
+import {publishPreparedPlacementJob} from "../support/publishable-job-fixture";
+import {createPersistedJobRecruiter} from "../support/persisted-job-recruiter-fixture";
 import {listOwnRecruiterPlacementJobs} from "@/modules/placements/recruiter-service";
 import type {RequestContext} from "@/modules/identity/context";
 import {SEED_IDS} from "../../scripts/db-seed-data";
@@ -25,17 +25,21 @@ describe.skipIf(!enabled)("HR forged cross-company grant is non-leaking",()=>{
   const second=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:other.relationship.id,
     title:"Private "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"REMOTE",applicationMode:"INTERNAL",...publishableJobTerms});
   for(const job of [first,second]){
-   await createPlacementRound(tpo,job.id,{kind:"INTERVIEW",name:"Technical evaluation"});
-   await getDb().insert(placementJobEligibilityPolicies).values({
-    jobId:job.id,updatedByUserId:tpo.user.id,
-   });
-   await publishPlacementJob(tpo,job.id);
+   await publishPreparedPlacementJob(tpo,job.id,{round:{kind:"INTERVIEW",name:"Technical evaluation"}});
   }
-  const uid=randomUUID();
-  const grants=[own.relationship,other.relationship].map((rel,i)=>({id:randomUUID(),collegeId:SEED_IDS.collegeA,
-    organizationId:SEED_IDS.organization,collegeName:"Fixture",companyRelationshipId:rel.id}));
-  const hr:RequestContext={user:{id:uid,identityUid:"hr-boundary-"+nonce,platformStatus:"ACTIVE",systemRoles:[]},membership:null,
-   recruiter:{userId:uid,companyId:own.company.id,companyName:own.company.name,title:null,status:"ACTIVE",grants}};
+  // Persist only the legitimate own-company recruiter state. The second
+  // relationship grant stays forged (session-only): it must never leak.
+  const identityUid="hr-boundary-"+nonce;
+  const recruiter=await createPersistedJobRecruiter({companyId:own.company.id,companyRelationshipId:own.relationship.id,
+    collegeId:SEED_IDS.collegeA,jobId:first.id,grantedByUserId:tpo.user.id,identityUid});
+  const grants=[
+   {id:recruiter.grantId,collegeId:SEED_IDS.collegeA,organizationId:SEED_IDS.organization,
+    collegeName:"Fixture",companyRelationshipId:own.relationship.id},
+   {id:randomUUID(),collegeId:SEED_IDS.collegeA,organizationId:SEED_IDS.organization,
+    collegeName:"Fixture",companyRelationshipId:other.relationship.id},
+  ];
+  const hr:RequestContext={user:{id:recruiter.userId,identityUid,platformStatus:"ACTIVE",systemRoles:[]},membership:null,
+   recruiter:{userId:recruiter.userId,companyId:own.company.id,companyName:own.company.name,title:null,status:"ACTIVE",grants}};
   const rows=await listOwnRecruiterPlacementJobs(hr);
   expect(rows.some(row=>row.job.id===first.id)).toBe(true);
   expect(rows.some(row=>row.job.id===second.id)).toBe(false);

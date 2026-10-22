@@ -42,7 +42,7 @@ async function migrationReady(){
 async function cleanup(){
  if(tracked.projects.length){
   for(const table of ["project_task_submissions","project_submission_reviews","project_submissions",
-   "project_meeting_history","project_meetings","project_members","project_resources","project_tasks",
+   "project_meeting_history","project_meetings","project_members","project_resources","project_resource_audit","project_tasks",
    "project_sprints","project_releases"]){
    await pool.query("delete from "+table+" where project_id=any($1::uuid[])",[tracked.projects]);
   }
@@ -112,11 +112,17 @@ describe("MEN-projects-meetings-27 persisted facilitator lifecycle",()=>{
   expect((await listProjectMeetings(learner,project.id)).some(row=>row.id===draft.id)).toBe(false);
   expect((await listProjectMeetings(mentor,project.id)).find(row=>row.id===draft.id)?.status)
    .toBe("CANCELLED");
+  // The private draft's cancellation is still recorded as one audited revision,
+  // but no outward notification is sent for an unpublished draft.
   const {rows}=await pool.query<{count:string}>(`
    select count(*)::text from activity_events where subject_id=$1
    and event_type='projects.meeting.decided'`,[draft.id]);
-  // Private draft cancellations remain out of learner notifications but must be audited.
   expect(Number(rows[0]?.count??0)).toBe(1);
+  const notices=await pool.query<{count:string}>(`
+   select count(*)::text from in_app_notifications n
+   join activity_events e on e.id=n.event_id
+   where e.subject_id=$1 and e.event_type='projects.meeting.decided'`,[draft.id]);
+  expect(Number(notices.rows[0]?.count??0)).toBe(0);
  });
  it("MEN-projects-meetings-27 persists facilitator notes without leaking them into learner workspace",async({skip})=>{
   if(!(await migrationReady()))skip();

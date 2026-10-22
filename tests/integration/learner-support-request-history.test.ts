@@ -24,7 +24,7 @@ beforeAll(async()=>{
     [ids.role,ids.job,"Support role "+suffix]);
   await pool.query("INSERT INTO placement_applications(id,job_id,role_option_id,membership_id,channel,status,eligibility_status,eligibility_snapshot,submitted_by_user_id) VALUES($1,$2,$3,$4,'INTERNAL','SUBMITTED','ELIGIBLE','{}'::jsonb,$5)",
     [ids.application,ids.job,ids.role,SEED_IDS.learnerCollegeAMembership,SEED_IDS.learnerUser]);
-  await pool.query("INSERT INTO placement_learner_requests(id,application_id,request_type,scope_key,reason,requested_by_user_id) VALUES($1,$2,'APPLICATION_WITHDRAWAL',$3,$4,$5)",
+  await pool.query("INSERT INTO placement_learner_requests(id,application_id,learner_membership_id,request_type,scope_key,reason,requested_by_user_id) VALUES($1,$2,(SELECT membership_id FROM placement_applications WHERE id=$2),'APPLICATION_WITHDRAWAL',$3,$4,$5)",
     [ids.request,ids.application,"APPLICATION_WITHDRAWAL:"+ids.application,"Please review my withdrawal request",SEED_IDS.learnerUser]);
 },45000);
 afterAll(async()=>{try{if(prepared){

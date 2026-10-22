@@ -21,6 +21,7 @@ import {
   upsertVerifiedAcademicEvidence,
 } from "@/modules/placements/eligibility-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { deletePlacementRowTrees } from "../support/placement-job-tree-cleanup";
 import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
 
 const databaseUrl =
@@ -76,6 +77,8 @@ const otherMembership = {
 };
 
 async function cleanup() {
+  // Clear every drive child (rounds, applications, stages, offers, ...) first.
+  await deletePlacementRowTrees(pool);
   await pool.query(
     "delete from placement_eligibility_overrides",
   );

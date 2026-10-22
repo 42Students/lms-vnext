@@ -133,7 +133,7 @@ export function TpoJoiningUpdateForm({
           className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
           {busy ? "Saving..." : corrected ? "Confirm corrected outcome" : "Confirm joining outcome"}
         </Button>
-        {error ? <div className="mt-3"><InlineNotice tone="error" message={error}/></div> : null}
+        {error ? <div className="mt-3"><InlineNotice tone="error" role="alert" message={error}/></div> : null}
       </div>
       <ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!busy)setConfirmOpen(next);}} pending={busy}
         title={"Record "+status.replaceAll("_"," ")+" for this accepted offer?"}

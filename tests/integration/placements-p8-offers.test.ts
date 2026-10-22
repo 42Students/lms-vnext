@@ -15,9 +15,9 @@ import { applyToPlacementJob } from "@/modules/placements/application-service";
 import { createPlacementCompany } from "@/modules/placements/company-service";
 import {
   createPlacementJob,
-  publishPlacementJob,
   closePlacementJob,
 } from "@/modules/placements/job-service";
+import { publishPreparedPlacementJob } from "../support/publishable-job-fixture";
 import {
   actOnPlacementOffer,
   issuePlacementOffer,
@@ -196,7 +196,7 @@ async function preparePassedApplication() {
       },
     );
 
-  await publishPlacementJob(
+  await publishPreparedPlacementJob(
     tpo,
     job.id,
   );
@@ -1541,7 +1541,7 @@ describe("Placement P8 offers and joining", () => {
         name: "Interview",
       },
     );
-    await publishPlacementJob(
+    await publishPreparedPlacementJob(
       tpo,
       job.id,
     );

@@ -3,7 +3,9 @@ import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
 import {closeDatabaseConnection} from "@/db/client";
 import {createPlacementCompany} from "@/modules/placements/company-service";
-import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
+import {createPlacementJob} from "@/modules/placements/job-service";
+import {publishPreparedPlacementJob} from "../support/publishable-job-fixture";
+import {createPersistedJobRecruiter,persistedRecruiterContext} from "../support/persisted-job-recruiter-fixture";
 import {getHrJobRead} from "@/modules/placements/hr-job-read-service";
 import {buildHrOfferCsv} from "@/modules/placements/hr-offer-export-model";
 import type {RequestContext} from "@/modules/identity/context";
@@ -21,13 +23,13 @@ describe.skipIf(!enabled)("HR offer CSV exact company read",()=>{
   const b=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"OfferCsv Foreign "+n,primaryDomain:"ocother-"+n+".example"});
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:a.relationship.id,
    title:"OfferCsv "+n,description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
-  await publishPlacementJob(tpo,job.id);
-  const uid=randomUUID();
-  const hr=(companyId:string,rel:string):RequestContext=>({
-   user:{id:uid,identityUid:"hr-oc-"+n,platformStatus:"ACTIVE",systemRoles:[]},membership:null,
-   recruiter:{userId:uid,companyId,companyName:"Fixture",status:"ACTIVE",title:null,
-    grants:[{id:randomUUID(),collegeId:SEED_IDS.collegeA,organizationId:SEED_IDS.organization,
-     collegeName:"Fixture",companyRelationshipId:rel}]}});
+  await publishPreparedPlacementJob(tpo,job.id);
+  const identityUid="hr-oc-"+n;
+  const recruiter=await createPersistedJobRecruiter({companyId:a.company.id,companyRelationshipId:a.relationship.id,
+   collegeId:SEED_IDS.collegeA,jobId:job.id,grantedByUserId:tpo.user.id,identityUid});
+  const hr=(companyId:string,rel:string):RequestContext=>persistedRecruiterContext({
+   userId:recruiter.userId,identityUid,companyId,grantId:recruiter.grantId,collegeId:SEED_IDS.collegeA,
+   organizationId:SEED_IDS.organization,companyRelationshipId:rel});
   const own=await getHrJobRead(hr(a.company.id,a.relationship.id),job.id,{tab:"offers"});
   expect(buildHrOfferCsv(own.offers,own.offersPage.total).exported).toBe(0);
   await expect(getHrJobRead(hr(b.company.id,b.relationship.id),job.id,{tab:"offers"}))

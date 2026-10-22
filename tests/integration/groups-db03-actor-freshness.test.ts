@@ -60,6 +60,12 @@ afterAll(async()=>{
     await pool.query("DELETE FROM programs WHERE id=$1",[programId]);
   }
   for(const a of accounts.reverse()) {
+    // Successful fixture writes (e.g. group creation) audit the disposable
+    // actor; remove those fixture-owned events and their fan-out first.
+    const ownedEvents="SELECT id FROM activity_events WHERE actor_user_id=$1 OR actor_membership_id=$2";
+    await pool.query(`DELETE FROM notification_delivery_outbox WHERE event_id IN (${ownedEvents})`,[a.userId,a.membershipId]);
+    await pool.query(`DELETE FROM in_app_notifications WHERE event_id IN (${ownedEvents}) OR user_id=$1`,[a.userId,a.membershipId]);
+    await pool.query("DELETE FROM activity_events WHERE actor_user_id=$1 OR actor_membership_id=$2",[a.userId,a.membershipId]);
     await pool.query("DELETE FROM membership_roles WHERE membership_id=$1",[a.membershipId]);
     await pool.query("DELETE FROM college_memberships WHERE id=$1",[a.membershipId]);
     await pool.query("DELETE FROM users WHERE id=$1",[a.userId]);

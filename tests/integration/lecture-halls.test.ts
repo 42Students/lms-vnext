@@ -279,14 +279,14 @@ describe("lecture halls: authorization", () => {
   it("denies another college's admin and a learner, for every operation", async () => {
     const hall = await make("Guarded Hall");
 
-    // Same-college learners are allowed academics.read to discover rooms,
-    // but no learner can create/update hall records (academics.manage).
+    // The room directory is privileged (cecd59696d): same-college learners
+    // see their own scheduled room via class events, never enumerate halls.
     await expect(
       listLectureHalls(adminB.context, {collegeId:SEED_IDS.collegeA}),
     ).rejects.toBeInstanceOf(AuthorizationError);
     await expect(
       listLectureHalls(learnerA.context, {collegeId:SEED_IDS.collegeA}),
-    ).resolves.toMatchObject({collegeId:SEED_IDS.collegeA});
+    ).rejects.toBeInstanceOf(AuthorizationError);
     for (const denied of [adminB, learnerA]) {
       await expect(
         createLectureHall(denied.context, {

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { cx } from "@/lib/class-names";
 
-export type InlineNoticeProps = { tone: "error" | "success" | "info"; message: string; onDismiss?: () => void; successDismissMs?: number };
+export type InlineNoticeProps = { tone: "error" | "success" | "info"; message: string; onDismiss?: () => void; successDismissMs?: number; role?: "alert" | "status" };
 
 const toneClasses = {
   error: "border-[rgba(239,68,68,0.25)] bg-[var(--lms-error-subtle)] text-[var(--lms-error-text)]",
@@ -12,7 +12,7 @@ const toneClasses = {
   info: "border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] text-[var(--lms-primary-text)]",
 } as const;
 
-export function InlineNotice({ tone, message, onDismiss, successDismissMs = 5_000 }: InlineNoticeProps) {
+export function InlineNotice({ tone, message, onDismiss, successDismissMs = 5_000, role }: InlineNoticeProps) {
   useEffect(() => {
     if (tone !== "success" || !onDismiss) return;
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -30,7 +30,7 @@ export function InlineNotice({ tone, message, onDismiss, successDismissMs = 5_00
       document.removeEventListener("visibilitychange", scheduleWhenVisible);
     };
   }, [tone, message, onDismiss, successDismissMs]);
-  return <div data-slot="inline-notice" data-tone={tone} role={tone === "error" ? "alert" : "status"} aria-live={tone === "error" ? "assertive" : "polite"}
+  return <div data-slot="inline-notice" data-tone={tone} role={tone === "error" ? "alert" : "status"} {...(role ? { role } : {})} aria-live={tone === "error" ? "assertive" : "polite"}
     className={cx("flex min-w-0 items-start gap-3 rounded-[8px] border px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[14px] leading-5", toneClasses[tone])}>
     <span className="min-w-0 flex-1 break-words">{message}</span>
     {onDismiss ? <Button type="button" variant="ghost" size="sm" onClick={onDismiss} aria-label="Dismiss notice"

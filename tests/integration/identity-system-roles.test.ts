@@ -174,11 +174,19 @@ describe("identity context and system roles against PostgreSQL", () => {
       identityUid: "seed-shared-faculty",
       activeMembershipId: SEED_IDS.facultyCollegeAMembership,
     });
+    // One workspace per role: a multi-role membership resolves to exactly one
+    // role, the highest-priority held role unless another held role is chosen.
     expect(collegeA.membership).toMatchObject({
       id: SEED_IDS.facultyCollegeAMembership,
       collegeId: SEED_IDS.collegeA,
-      roles: expect.arrayContaining(["FACULTY", "MENTOR"]),
+      roles: ["MENTOR"],
     });
+    const collegeAFaculty = await resolveRequestContext({
+      identityUid: "seed-shared-faculty",
+      activeMembershipId: SEED_IDS.facultyCollegeAMembership,
+      activeRole: "FACULTY",
+    });
+    expect(collegeAFaculty.membership?.roles).toEqual(["FACULTY"]);
 
     const collegeB = await resolveRequestContext({
       identityUid: "seed-shared-faculty",

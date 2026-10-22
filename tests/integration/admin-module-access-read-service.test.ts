@@ -14,7 +14,7 @@ if (!process.env.TEST_DATABASE_URL) {
 
 const superAdmin: RequestContext = {
   user: {
-    id: SEED_IDS.collegeAdminUser,
+    id: SEED_IDS.superAdminUser,
     identityUid: "seed-super",
     platformStatus: "ACTIVE",
     systemRoles: ["SUPER_ADMIN"],
@@ -30,13 +30,14 @@ describe("module access admin read against PostgreSQL", () => {
   it("lists the college matrix", async () => {
     const result = await listSuperAdminFeatureControls(superAdmin, {});
     expect(result.items.length).toBeLessThanOrEqual(20);
-    for (const item of result.items) expect(item.modules).toHaveLength(3);
+    // Feature Controls exposes only Projects and Placements (legacy parity).
+    for (const item of result.items) expect(item.modules.map((m) => m.module)).toEqual(["projects", "placements"]);
   });
 
   it("executes the descendant override union against the real schema", async () => {
     const detail = await getSuperAdminCollegeModuleAccess(superAdmin, SEED_IDS.collegeA, {});
     expect(detail).not.toBeNull();
-    expect(detail!.modules).toHaveLength(3);
+    expect(detail!.modules.map((m) => m.module)).toEqual(["projects", "placements"]);
     expect(detail!.total).toBeGreaterThanOrEqual(0);
   });
 

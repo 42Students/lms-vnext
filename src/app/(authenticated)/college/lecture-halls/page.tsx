@@ -118,7 +118,7 @@ export default async function CollegeLectureHallsPage({
   const shownEnd = offset + result.items.length;
 
   return (
-    <div className="min-w-0 space-y-4">
+    <div className="min-w-0 overflow-x-clip space-y-4">
       <PageHeader
         title="Lecture Halls"
         description={"Manage registered teaching rooms at " + result.collegeName +

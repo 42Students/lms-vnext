@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
@@ -36,36 +36,49 @@ const admin: RequestContext = {
   },
 };
 
-const learner: RequestContext = {
-  user: {
-    id: SEED_IDS.learnerUser,
-    identityUid: "seed-learner",
-    platformStatus: "ACTIVE",
-    systemRoles: [],
-  },
-  membership: {
-    id: SEED_IDS.learnerCollegeAMembership,
-    collegeId: SEED_IDS.collegeA,
-    organizationId: SEED_IDS.organization,
-    status: "ACTIVE",
-    roles: ["LEARNER"],
-  },
-};
-const otherUser: RequestContext = {
-  user: {
-    id: SEED_IDS.facultyUser,
-    identityUid: "seed-shared-faculty",
-    platformStatus: "ACTIVE",
-    systemRoles: [],
-  },
-  membership: {
-    id: SEED_IDS.facultyCollegeBMembership,
-    collegeId: SEED_IDS.collegeB,
-    organizationId: SEED_IDS.organization,
-    status: "ACTIVE",
-    roles: ["FACULTY"],
-  },
-};
+// Each run gets fresh recipients so leftover inbox rows written for the shared
+// seeded users by earlier integration files cannot skew exact counts.
+type Recipient = { userId: string; membershipId: string; context: RequestContext };
+let learner: RequestContext;
+let otherUser: RequestContext;
+const recipients: Recipient[] = [];
+
+async function newRecipient(
+  collegeId: string,
+  role: "LEARNER" | "FACULTY",
+): Promise<Recipient> {
+  const userId = crypto.randomUUID();
+  const membershipId = crypto.randomUUID();
+  const identityUid = `db10-guard-${userId}`;
+  await pool.query(
+    "insert into users (id, identity_uid, display_name) values ($1, $2, $3)",
+    [userId, identityUid, "DB10 guard recipient"],
+  );
+  await pool.query(
+    "insert into college_memberships (id, user_id, college_id, status) values ($1, $2, $3, 'ACTIVE')",
+    [membershipId, userId, collegeId],
+  );
+  await pool.query(
+    "insert into membership_roles (membership_id, role) values ($1, $2)",
+    [membershipId, role],
+  );
+  const recipient: Recipient = {
+    userId,
+    membershipId,
+    context: {
+      user: { id: userId, identityUid, platformStatus: "ACTIVE", systemRoles: [] },
+      membership: {
+        id: membershipId,
+        collegeId,
+        organizationId: SEED_IDS.organization,
+        status: "ACTIVE",
+        roles: [role],
+      },
+    },
+  };
+  recipients.push(recipient);
+  return recipient;
+}
 
 async function cleanup() {
   await pool.query(
@@ -101,7 +114,7 @@ describe("DB10 notification correctness and privacy", () => {
       actionHref: "/learn/placements",
     };
     const first = await deliverInAppNotification(
-      e.id, [SEED_IDS.learnerUser, SEED_IDS.learnerUser], message,
+      e.id, [learner.user.id, learner.user.id], message,
     );
     expect(first).toEqual({
       delivered: 1,
@@ -110,7 +123,7 @@ describe("DB10 notification correctness and privacy", () => {
     });
 
     const duplicate = await deliverInAppNotification(
-      e.id, [SEED_IDS.learnerUser], message,
+      e.id, [learner.user.id], message,
     );
     expect(duplicate).toEqual({
       delivered: 0,
@@ -141,7 +154,7 @@ describe("DB10 notification correctness and privacy", () => {
         "select $1, id, 'DB10 count', 'Unread fixture'",
         "from activity_events where subject_type = $2",
       ].join(" "),
-      [SEED_IDS.learnerUser, tag],
+      [learner.user.id, tag],
     );
 
     expect(await countOwnUnreadNotifications(learner)).toBe(105);
@@ -161,7 +174,7 @@ describe("DB10 notification correctness and privacy", () => {
       "/safe\nunsafe",
     ]) {
       await expect(
-        deliverInAppNotification(e.id, [SEED_IDS.learnerUser], {
+        deliverInAppNotification(e.id, [learner.user.id], {
           title: "Unsafe link",
           body: "Do not navigate here",
           actionHref,
@@ -173,7 +186,7 @@ describe("DB10 notification correctness and privacy", () => {
 
   it("redacts unsafe legacy-stored action URLs at read time", async () => {
     const e = await event();
-    await deliverInAppNotification(e.id, [SEED_IDS.learnerUser], {
+    await deliverInAppNotification(e.id, [learner.user.id], {
       title: "Existing notice",
       body: "Old row",
       actionHref: "/learn/placements",
@@ -209,7 +222,7 @@ describe("DB10 notification correctness and privacy", () => {
 
   it("returns committed read state when multiple requests acknowledge concurrently", async () => {
     const e = await event();
-    await deliverInAppNotification(e.id, [SEED_IDS.learnerUser], {
+    await deliverInAppNotification(e.id, [learner.user.id], {
       title: "Concurrency notice",
       body: "Mark this once",
       actionHref: "/learn/placements",

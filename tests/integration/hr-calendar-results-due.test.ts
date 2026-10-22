@@ -3,7 +3,9 @@ import {afterAll,describe,expect,it} from "vitest";
 import {closeDatabaseConnection,getDb} from "@/db/client";
 import {hrInterviewSlots} from "@/db/schema";
 import {createPlacementCompany} from "@/modules/placements/company-service";
-import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
+import {createPlacementJob} from "@/modules/placements/job-service";
+import {publishPreparedPlacementJob} from "../support/publishable-job-fixture";
+import {createPersistedJobRecruiter,persistedRecruiterContext} from "../support/persisted-job-recruiter-fixture";
 import {createPlacementRound,actOnPlacementRound} from "@/modules/placements/round-service";
 import {listRecruiterCalendarEvents} from "@/modules/placements/recruiter-calendar-service";
 import {combineHrCalendarDays,selectHrMobileCalendarDays} from "@/modules/placements/hr-calendar-day-model";
@@ -25,7 +27,7 @@ describe.skipIf(!enabled)("HR results due calendar PostgreSQL",()=>{
   const round=await createPlacementRound(tpo,job.id,{kind:"INTERVIEW",name:"Final"});
   await actOnPlacementRound(tpo,round.id,{action:"SCHEDULE",scheduledAt:new Date("2026-10-20T08:00:00Z"),
    resultsDueAt:new Date("2026-10-22T08:00:00Z"),timezone:"Asia/Kolkata",mode:"VIRTUAL",meetingUrl:"https://example.test/meet"});
-  await publishPlacementJob(tpo,job.id);
+  await publishPreparedPlacementJob(tpo,job.id);
   const [slot]=await getDb().insert(hrInterviewSlots).values({
     collegeId:SEED_IDS.collegeA,jobId:job.id,roundId:round.id,
     startAt:new Date("2026-10-21T09:00:00Z"),endAt:new Date("2026-10-21T09:30:00Z"),
@@ -33,11 +35,12 @@ describe.skipIf(!enabled)("HR results due calendar PostgreSQL",()=>{
     status:"PROPOSED",createdByUserId:tpo.user.id,
   }).returning({id:hrInterviewSlots.id});
   expect(slot).toBeDefined();
-  const uid=randomUUID();
-  const hr=(companyId:string,rel:string,collegeId:string):RequestContext=>({
-    user:{id:uid,identityUid:"hr-due-"+nonce,platformStatus:"ACTIVE",systemRoles:[]},membership:null,
-    recruiter:{userId:uid,companyId,companyName:"Fixture",title:null,status:"ACTIVE",
-     grants:[{id:randomUUID(),collegeId,organizationId:SEED_IDS.organization,collegeName:"Fixture",companyRelationshipId:rel}]}});
+  const identityUid="hr-due-"+nonce;
+  const recruiter=await createPersistedJobRecruiter({companyId:a.company.id,companyRelationshipId:a.relationship.id,
+    collegeId:SEED_IDS.collegeA,jobId:job.id,grantedByUserId:tpo.user.id,identityUid});
+  const hr=(companyId:string,rel:string,collegeId:string):RequestContext=>persistedRecruiterContext({
+    userId:recruiter.userId,identityUid,companyId,grantId:recruiter.grantId,collegeId,
+    organizationId:SEED_IDS.organization,companyRelationshipId:rel});
   const query={from:"2026-10-21",to:"2026-10-23"};
   const own=await listRecruiterCalendarEvents(hr(a.company.id,a.relationship.id,SEED_IDS.collegeA),query);
   expect(own.resultsDue.some(item=>item.id===round.id)).toBe(true);

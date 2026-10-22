@@ -92,7 +92,7 @@ describe("COL-UX-PEOPLE-TABLE-03 mobile privacy and desktop People directory",()
   expect(html).toContain('data-edit="'+membershipId+'"');
   expect(html).toContain('data-audit="'+membershipId+'"');
   expect(html).toContain('data-slot="data-table"');
-  expect(html).toContain("Students directory scrollable columns");
+  expect(html).toContain('data-slot="scroll-cue" data-axis="x"');
   expect(mocks.directory).toHaveBeenCalledWith(actor,"LEARNER",expect.anything());
  });
  it("preserves faculty employment actions and never infers a nonexistent academic enrollment",async()=>{
@@ -105,7 +105,7 @@ describe("COL-UX-PEOPLE-TABLE-03 mobile privacy and desktop People directory",()
   expect(html).toContain("2 active course teaching assignments");
   expect(html).toContain('data-faculty-state="'+membershipId+'"');
   expect(html).not.toContain("No active program/batch enrollment recorded");
-  expect(html).toContain("Faculty directory scrollable columns");
+  expect(html).toContain('data-slot="scroll-cue" data-axis="x"');
  });
  it("does not render people from a rejected or revoked college role",async()=>{
   mocks.directory.mockRejectedValueOnce(new Error("REVOKED"));

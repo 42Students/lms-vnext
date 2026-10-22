@@ -39,6 +39,7 @@ import {
   submitCourseAssignment,
 } from "@/modules/courses/assignment-submission-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { releaseSeedLearnerPlacementEnrollment } from "../support/w04-placement-access-fixture";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -104,6 +105,7 @@ const learner: RequestContext = {
 };
 
 async function cleanupC4A() {
+  await releaseSeedLearnerPlacementEnrollment(pool);
   await pool.query(
     `delete from assignment_submissions
      where assignment_id in (

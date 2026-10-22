@@ -133,7 +133,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
   {first(raw.noticeSuccess)==="DELETED"?<InlineNotice tone="success" message="Deleted. Its notices were taken back."/>:null}
   {first(raw.noticeSuccess)==="SAVED"?<InlineNotice tone="success" message="Saved"/>:null}
   {first(raw.noticeSuccess)==="SCHEDULED"?<InlineNotice tone="success" message="Scheduled"/>:null}
-  {noticeError?<InlineNotice tone="error" message={noticeError}/>:null}
+  {noticeError?<InlineNotice tone="error" role="alert" message={noticeError}/>:null}
   {sent?<TpoNoticeUndoToast id={sent.id} version={sent.version} createdAt={noticeUndoAnchor(sent).toISOString()}/>:null}
   <Tabs ariaLabel="Announcement tabs" renderPanel={false} value={tab.data} items={([
     ["yours","To your students"],["from-42","From 42"],["deleted","Recently removed"]

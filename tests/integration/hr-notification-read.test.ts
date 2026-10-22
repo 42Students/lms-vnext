@@ -5,7 +5,8 @@ import {and,eq} from "drizzle-orm";
 import {getDb,closeDatabaseConnection} from "@/db/client";
 import {users,activityEvents,inAppNotifications} from "@/db/schema";
 import {createPlacementCompany} from "@/modules/placements/company-service";
-import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
+import {createPlacementJob} from "@/modules/placements/job-service";
+import {publishPreparedPlacementJob} from "../support/publishable-job-fixture";
 import {grantPlacementRecruiter} from "@/modules/placements/recruiter-service";
 import {markHrNotificationRead} from "@/modules/placements/hr-notification-read-service";
 import type {RequestContext} from "@/modules/identity/context";
@@ -26,7 +27,7 @@ describe.skipIf(!enabled)("HR notification acknowledgement PG",()=>{
   async function publish(relationshipId:string){
    const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:relationshipId,
     title:"Ack Job "+randomUUID(),description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
-   await publishPlacementJob(tpo,job.id);
+   await publishPreparedPlacementJob(tpo,job.id);
    const [event]=await getDb().select({id:activityEvents.id}).from(activityEvents)
     .where(and(eq(activityEvents.subjectId,job.id),eq(activityEvents.eventType,"placements.job.published"))).limit(1);
    const [notice]=await getDb().insert(inAppNotifications).values({

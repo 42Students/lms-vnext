@@ -79,7 +79,7 @@ export default async function CollegeFacultyAssignmentPage({
   // must not be assigned a fabricated semester from today's cohort state.
   const currentDeliveryById=new Map(options.deliveries.map(item=>[item.id,item]));
   return (
-    <div className="min-w-0 max-w-full overflow-x-clip space-y-[var(--lms-space-4)]">
+    <div className="max-w-full min-w-0 overflow-x-clip space-y-[var(--lms-space-4)]">
       <PageHeader
         title={FACULTY_ASSIGNMENT_COPY.title}
         description={FACULTY_ASSIGNMENT_COPY.description}

@@ -104,18 +104,18 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
           <label className="grid gap-[6px] text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Search courses
             <Input name="q" type="search" defaultValue={query.q} maxLength={120}
               placeholder="Search Courses..."
-              className="text-[var(--lms-font-base)] md:text-sm" />
+              className="text-[var(--lms-font-base)] max-[767px]:text-[16px] md:text-sm" />
           </label>
           <label className="grid gap-[6px] text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Academic period
             <Select name="period" defaultValue={query.period}
-              className="text-[var(--lms-font-base)] md:text-sm">
+              className="text-[var(--lms-font-base)] max-[767px]:text-[16px] md:text-sm">
               <option value="">All assigned periods</option>
               {periods.map(period => <option key={period.id} value={period.id}>{period.name}</option>)}
             </Select>
           </label>
           <label className="grid gap-[6px] text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Section
             <Select aria-label="Filter by section" name="section" defaultValue={query.section}
-              className="text-[var(--lms-font-base)] md:text-sm">
+              className="text-[var(--lms-font-base)] max-[767px]:text-[16px] md:text-sm">
               <option value="">All sections ({sections.length})</option>
               {sections.map(section=><option key={section.id} value={section.id}>
                 {section.name} ({section.count})
@@ -124,7 +124,7 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
           </label>
           <label className="grid gap-[6px] text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Teaching role
             <Select name="role" defaultValue={query.role}
-              className="text-[var(--lms-font-base)] md:text-sm">
+              className="text-[var(--lms-font-base)] max-[767px]:text-[16px] md:text-sm">
               <option value="">All assigned roles</option>
               {COURSE_TEACHING_ROLES.map(role => <option key={role} value={role}>{role.replaceAll("_"," ")}</option>)}
             </Select>

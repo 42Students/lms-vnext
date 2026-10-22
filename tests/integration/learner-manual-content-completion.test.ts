@@ -53,7 +53,7 @@ describe("learner manual completion with fresh PostgreSQL actor and course", () 
       total: string; actor_user_id: string; actor_membership_id: string;
     }>(
       "SELECT count(*)::text AS total, min(actor_user_id::text) AS actor_user_id, min(actor_membership_id::text) AS actor_membership_id FROM activity_events WHERE dedupe_key=$1",
-      ["learner-content:" + ids.membership + ":" + ids.content + ":completed"],
+      ["learner-content:" + ids.membership + ":" + ids.content + ":attempt:1:completed"],
     );
     expect(audit.rows[0]).toMatchObject({
       total: "1", actor_user_id: ids.user, actor_membership_id: ids.membership,
@@ -79,7 +79,7 @@ describe("learner manual completion with fresh PostgreSQL actor and course", () 
     expect(persisted.rows).toHaveLength(0);
     const audit = await pool.query(
       "SELECT id FROM activity_events WHERE dedupe_key=$1",
-      ["learner-content:" + ids.membership + ":" + ids.content + ":completed"],
+      ["learner-content:" + ids.membership + ":" + ids.content + ":attempt:1:completed"],
     );
     expect(audit.rows).toHaveLength(0);
   }, 30_000);

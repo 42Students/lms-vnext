@@ -162,7 +162,7 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
     className="w-full" placeholder="Tell the team what this is about"/>
   </label>
   <p className="text-xs text-muted-foreground">Only named, currently active placement team members can take part. Contexts are rechecked by the server.</p>
-  {error?<InlineNotice tone="error" message={error}/>:null}
+  {error?<InlineNotice tone="error" role="alert" message={error}/>:null}
   <Button type="submit" disabled={busy||!recipient||!topic.trim()||
    (kind!=="DIRECT"&&additional.length===0)||
    ((kind==="DRIVE"||kind==="COMPANY")&&!/^[0-9a-f-]{36}$/i.test(contextId))}
@@ -283,7 +283,7 @@ export function TpoTeamReplyComposer({threadId,actorUserId,kind,mentionMembers=[
   </label>
   {markDecision?<p role="status" className="text-xs text-muted-foreground">Will be pinned as a decision</p>:null}
   <p className="text-xs text-muted-foreground" aria-live="polite">Enter to send · Shift+Enter for a new line · {body.length}/4000</p>
-  {error?<InlineNotice tone="error" message={error}/>:null}
+  {error?<InlineNotice tone="error" role="alert" message={error}/>:null}
   {success?<InlineNotice tone="success" message={success}/>:null}
   <Button type="submit" disabled={busy||!body.trim()}
    className="min-h-11 md:min-h-9">{busy?"Sending…":"Send"}</Button>

@@ -171,6 +171,7 @@ describe("Placements P1 companies and employer relationships", () => {
       createPlacementCompany(learner, {
         collegeId: SEED_IDS.collegeA,
         name: "Learner Cannot Create",
+        primaryDomain: "learner-cannot-create.example",
       }),
     ).rejects.toBeInstanceOf(AuthorizationError);
 
@@ -178,6 +179,7 @@ describe("Placements P1 companies and employer relationships", () => {
       createPlacementCompany(tpo, {
         collegeId: SEED_IDS.collegeB,
         name: "Cross College",
+        primaryDomain: "cross-college.example",
       }),
     ).rejects.toBeInstanceOf(AuthorizationError);
   });
@@ -295,11 +297,13 @@ describe("Placements P1 companies and employer relationships", () => {
       code: "PLACEMENT_OWNER_MEMBERSHIP_NOT_FOUND",
     });
 
+    // Identity is the canonical domain (display names are not unique): a
+    // different name claiming the same domain must not rename the record.
     await expect(
       createPlacementCompany(tpo, {
         collegeId: SEED_IDS.collegeA,
-        name: "Owner Test",
-        primaryDomain: "different.example",
+        name: "Renamed Owner Test",
+        primaryDomain: "owner.example",
       }),
     ).rejects.toMatchObject({
       code: "PLACEMENT_COMPANY_IDENTITY_CONFLICT",

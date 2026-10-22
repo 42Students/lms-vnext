@@ -17,7 +17,7 @@ function AcademicPageActions({ scoped }: { scoped: boolean }) {
         </Link>
       ) : null}
       <Dropdown trigger="More" label="More academic actions" align="end" mobileSheet
-        className="w-full sm:w-auto" triggerClassName="w-full justify-center sm:w-auto md:!min-h-9">
+        className="w-full sm:w-auto" triggerClassName="w-full justify-center sm:w-auto md:min-h-9!">
         <nav aria-label="Related academic pages" className="grid min-w-0 gap-[var(--lms-space-1)]">
           <Link href="/admin/electives" className="inline-flex min-h-11 w-full items-center rounded-[var(--lms-control-radius)] px-[var(--lms-space-3)] py-[var(--lms-space-2)] text-sm font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
             {scoped ? "Elective slots" : "Elective slots →"}

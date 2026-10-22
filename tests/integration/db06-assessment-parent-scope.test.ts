@@ -6,6 +6,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import { gradeAssignmentSubmission } from "@/modules/courses/assignment-submission-service";
 import type { RequestContext } from "@/modules/identity/context";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { releaseSeedLearnerPlacementEnrollment } from "../support/w04-placement-access-fixture";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 
 const url=process.env.TEST_DATABASE_URL;
@@ -108,7 +109,7 @@ async function cleanup(){
  learnerEnrollment="";sectionEnrollment="";clearMade();
 }
 
-beforeEach(async()=>{if(!enabled)return;clearMade();A=await graph(p(),SEED_IDS.departmentA,SEED_IDS.collegeA,"A");B=await graph(p(),SEED_IDS.departmentB,SEED_IDS.collegeB,"B");const e=await enroll(p(),SEED_IDS.learnerCollegeAMembership,A);learnerEnrollment=e.le;sectionEnrollment=e.se;await p().query("INSERT INTO course_teaching_assignments(delivery_id,membership_id,role) VALUES($1,$2,'PRIMARY')",[A.delivery,SEED_IDS.facultyCollegeAMembership])});
+beforeEach(async()=>{if(!enabled)return;clearMade();await releaseSeedLearnerPlacementEnrollment(p());A=await graph(p(),SEED_IDS.departmentA,SEED_IDS.collegeA,"A");B=await graph(p(),SEED_IDS.departmentB,SEED_IDS.collegeB,"B");const e=await enroll(p(),SEED_IDS.learnerCollegeAMembership,A);learnerEnrollment=e.le;sectionEnrollment=e.se;await p().query("INSERT INTO course_teaching_assignments(delivery_id,membership_id,role) VALUES($1,$2,'PRIMARY')",[A.delivery,SEED_IDS.facultyCollegeAMembership])});
 afterEach(async()=>{if(enabled)await cleanup()});
 afterAll(async()=>{await pool?.end();await closeDatabaseConnection()});
 

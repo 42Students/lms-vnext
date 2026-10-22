@@ -41,7 +41,7 @@ export default async function FacultyResponseFollowUpsPage({
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
         <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
           placeholder="Course, Section or assessment"
-          className="min-h-11 md:min-h-9" />
+          className="min-h-11 max-[767px]:text-[16px] md:min-h-9" />
       </label>
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessment type
         <Select name="kind" defaultValue={data.query.kind}

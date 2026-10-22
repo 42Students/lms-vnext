@@ -4,8 +4,9 @@ import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { createPlacementCompany } from "@/modules/placements/company-service";
-import { createPlacementJob, publishPlacementJob } from "@/modules/placements/job-service";
+import { createPlacementJob } from "@/modules/placements/job-service";
 import {upsertJobEligibilityPolicy} from "@/modules/placements/eligibility-service";
+import { publishPreparedPlacementJob } from "../support/publishable-job-fixture";
 import { createPlacementRound, actOnPlacementRound } from "@/modules/placements/round-service";
 import { applyToPlacementJob } from "@/modules/placements/application-service";
 import { decidePlacementScreening } from "@/modules/placements/screening-service";
@@ -62,6 +63,7 @@ async function cleanup() {
   await pool.query("delete from placement_application_screenings");
   await pool.query("delete from placement_application_status_history");
   await pool.query("delete from placement_applications");
+  await pool.query("delete from placement_job_eligibility_policies");
   await pool.query("delete from placement_jobs");
   await pool.query("delete from placement_company_relationships");
   await pool.query("delete from placement_companies");
@@ -117,7 +119,7 @@ async function setup() {
     kind: "INTERVIEW", name: "Tomorrow Interview", durationMinutes: 60,
   });
   await upsertJobEligibilityPolicy(tpo,job.id,{missingEvidencePolicy:"ALLOW_WITH_FLAG"});
-  await publishPlacementJob(tpo, job.id);
+  await publishPreparedPlacementJob(tpo, job.id);
   const application = await applyToPlacementJob(applicant, job.id, {});
   await decidePlacementScreening(tpo, application.id, {
     decision: "SHORTLISTED", candidateMessage: "Selected",

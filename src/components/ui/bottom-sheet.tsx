@@ -1,11 +1,21 @@
 "use client";
 
-import { useId, useRef, type ReactNode, type CSSProperties } from "react";
+import { useEffect, useId, useRef, type ReactNode, type RefObject, type CSSProperties } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollCue } from "@/components/ui/scroll-cue";
 import { OverlayCloseIcon } from "@/components/ui/overlay-close-icon";
 import { useOverlayWebview } from "@/components/ui/use-overlay-webview";
 import { useOverlayExit } from "@/components/ui/use-overlay-exit";
+
+/** Conditionally rendered overlays can unmount while still open, which skips the
+ * native close event. Release the top layer and return focus to the trigger
+ * instead of leaving keyboard users on the page body. A still-connected node
+ * (StrictMode effect replay) is left to useOverlayExit. */
+function releaseUnmountedOverlay(modal: HTMLDialogElement | null, opener: RefObject<HTMLElement | null>) {
+  if (!modal?.open || modal.isConnected) return;
+  modal.close();
+  if (!document.activeElement || document.activeElement === document.body) opener.current?.focus();
+}
 
 export type BottomSheetProps = {
   open: boolean;
@@ -26,10 +36,20 @@ export function BottomSheet({ open, onOpenChange, title, description, children, 
   const visualCenter = availableHeight && viewportTop
     ? `${Number.parseFloat(viewportTop) + Number.parseFloat(availableHeight) / 2}px` : "50dvh";
   useOverlayExit(ref, opener, open, 180);
+  useEffect(() => {
+    const modal = ref.current;
+    return () => releaseUnmountedOverlay(modal, opener);
+  }, []);
   return (
     <dialog data-slot="bottom-sheet" ref={ref} aria-labelledby={titleId} aria-describedby={description ? descriptionId : undefined}
       onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}
-      onClose={() => { if (open) onOpenChange(false); if (opener.current?.isConnected) opener.current.focus(); }}
+      onClose={() => {
+        const modal = ref.current;
+        // A browser close watcher can force-close after cancel was prevented; a locked overlay stays modal.
+        if (open && !dismissible && modal?.isConnected) { modal.showModal(); return; }
+        if (open) onOpenChange(false);
+        if (opener.current?.isConnected) opener.current.focus();
+      }}
       onClick={event => { if (event.target === ref.current && dismissible) onOpenChange(false); }}
       style={{ "--lms-visual-height": availableHeight ?? "100dvh", "--lms-visual-top": viewportTop ?? "0px", "--lms-visual-bottom": viewportBottom ?? "0px", "--lms-visual-center": visualCenter } as CSSProperties}
       className="fixed inset-x-0 bottom-[var(--lms-visual-bottom)] top-auto m-0 max-h-[var(--lms-visual-height)] min-h-0 w-full max-w-none rounded-t-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-0 text-foreground shadow-[var(--lms-elevation-4)] backdrop:bg-[#1e363f]/10 md:inset-auto md:left-1/2 md:top-[var(--lms-visual-center)] md:w-[min(36rem,calc(100%_-_2rem))] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-[var(--lms-canvas-radius)]">

@@ -15,8 +15,9 @@ import { applyToPlacementJob } from "@/modules/placements/application-service";
 import { createPlacementCompany } from "@/modules/placements/company-service";
 import {
   createPlacementJob,
-  publishPlacementJob,
 } from "@/modules/placements/job-service";
+import { publishPreparedPlacementJob } from "../support/publishable-job-fixture";
+import { linkRecruiterOwnedJob } from "../support/persisted-job-recruiter-fixture";
 import {
   grantPlacementRecruiter as grantPlacementRecruiterRaw,
   listOwnRecruiterPlacementJobs,
@@ -126,6 +127,10 @@ async function cleanup() {
   await pool.query(
     "delete from placement_candidate_academic_evidence",
   );
+  await pool.query(
+    "delete from placement_recruiter_drive_requests where recruiter_user_id = $1",
+    [recruiterUserId],
+  );
   await pool.query("delete from placement_jobs");
   await pool.query(
     "delete from placement_recruiter_college_grants",
@@ -224,7 +229,13 @@ describe("Placement P7 recruiter identity and grants", () => {
         applicationMode: "INTERNAL",
       },
     );
-    await publishPlacementJob(tpo, jobA.id);
+    await publishPreparedPlacementJob(tpo, jobA.id);
+    // Recruiter-visible drives are the recruiter's own approved requests.
+    await linkRecruiterOwnedJob({
+      recruiterUserId, collegeId: SEED_IDS.collegeA,
+      companyRelationshipId: companyA.relationship.id,
+      jobId: jobA.id, decidedByUserId: tpo.user.id,
+    });
 
     const contextA =
       await resolveRequestContext({
@@ -395,7 +406,12 @@ describe("Placement P7 recruiter identity and grants", () => {
           name: "HR interview",
         },
       );
-    await publishPlacementJob(tpo, job.id);
+    await publishPreparedPlacementJob(tpo, job.id);
+    await linkRecruiterOwnedJob({
+      recruiterUserId, collegeId: SEED_IDS.collegeA,
+      companyRelationshipId: company.relationship.id,
+      jobId: job.id, decidedByUserId: tpo.user.id,
+    });
     const application =
       await applyToPlacementJob(
         learner,

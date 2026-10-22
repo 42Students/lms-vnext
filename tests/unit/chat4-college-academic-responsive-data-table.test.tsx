@@ -45,8 +45,8 @@ describe("COL-UX-ACADEMIC-TABLE-01 responsive Semester and Batch directories",()
   expect(html).toContain("22");
   expect(html).toContain('data-semester="semester-1"');
   expect(html).toContain('data-slot="data-table"');
-  expect(html).toContain("More details");
-  expect(html).toContain("Semester directory scrollable columns");
+  expect(html).toContain("Scroll sideways to view all semester or batch columns.");
+  expect(html).toContain('data-slot="scroll-cue" data-axis="x"');
  });
  it("retains academic year, class count, status and Manage/Students links on batch cards",()=>{
   const data={
@@ -69,7 +69,7 @@ describe("COL-UX-ACADEMIC-TABLE-01 responsive Semester and Batch directories",()
   expect(html).toContain("Students");
   expect(html).toContain("Manage batch");
   expect(html).toContain('data-slot="data-table"');
-  expect(html).toContain("More details");
+  expect(html).toContain("Scroll sideways to view all semester or batch columns.");
  });
  it("keeps a truthful no-results recovery state rather than an inaccessible empty table",()=>{
   const data={...base,kind:"SEMESTERS",query,items:[],total:0,totalPages:1} as unknown as Data;

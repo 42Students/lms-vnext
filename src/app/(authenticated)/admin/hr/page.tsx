@@ -206,7 +206,7 @@ export default async function SuperAdminHrPage({
   return (
     <div className="min-w-0 space-y-3">
       <nav aria-label="Recruiter administration location" className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-        <Link href="/admin/placements" className="min-h-9 content-center font-semibold text-link underline">
+        <Link href="/admin/placements" className="min-h-11 md:min-h-9 content-center font-semibold text-link underline">
           Placements</Link>
         <span aria-hidden="true">›</span><span>Recruiter accounts</span>
         <span className="text-body">· {scopeDescription}</span>

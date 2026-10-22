@@ -77,7 +77,7 @@ describe("TPO Batches next-round source and behavioral gap closure",()=>{
   expect(ui).toContain("apiFetch");
   expect(ui).toContain("if(!valid||busy)return");
   expect(ui).toContain("finally{setBusy(false)");
-  expect(ui).toContain('<InlineNotice tone="error" message={error}');
+  expect(ui).toContain('<InlineNotice tone="error" role="alert" message={error}');
   expect(ui).toContain('disabled={!valid||busy||!reviewed}');
  });
  it("TPO-batches-61 keeps audited undo accessible without leaking provider responses",()=>{
@@ -100,7 +100,7 @@ describe("TPO Batches next-round source and behavioral gap closure",()=>{
   const ui=source("src/components/tpo/tpo-batch-undo-control.tsx");
   expect(ui).not.toContain("window.confirm");
   expect(ui).toContain('<Checkbox checked={reviewed} disabled={busy}');
-  expect(ui).toContain('<InlineNotice tone="error" message={error}');
+  expect(ui).toContain('<InlineNotice tone="error" role="alert" message={error}');
  });
 
 });

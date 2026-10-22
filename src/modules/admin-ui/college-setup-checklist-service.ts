@@ -3,7 +3,7 @@ import "server-only";
 import { and, count, eq, isNull, ne } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
-  academicPeriods,cohorts, collegeMemberships, courseLearningPaths, courseLessons, courseOfferings,
+  academicPeriods, cohorts, collegeMemberships, courseLearningPaths, courseLessons, courseOfferings,
   courses, courseSectionDeliveries, courseTeachingAssignments, departments,
   lessonContents, lectureHalls, membershipRoles,
   placementJobs, programTermCourses, programTerms, programs, sections,
@@ -31,8 +31,8 @@ export async function getCollegeSetupChecklist(context: RequestContext, raw: unk
   const db = getDb();
   // Counts are from current registered records, not a synthetic progress percentage.
   const [
-    dept, course, lesson, content, program, term, mapping,period,
-    batch, section, faculty, assignment, student, hall, job,
+    dept, course, lesson, content, program, term, mapping,
+    period, batch, section, faculty, assignment, student, hall, job,
   ] = await Promise.all([
     db.select({ count: count() }).from(departments)
       .where(and(eq(departments.collegeId, collegeId), isNull(departments.archivedAt))),
@@ -64,8 +64,9 @@ export async function getCollegeSetupChecklist(context: RequestContext, raw: unk
       .innerJoin(programs, eq(programs.id, programTerms.programId))
       .innerJoin(departments, eq(departments.id, programs.departmentId))
       .where(eq(departments.collegeId, collegeId)),
+    // Batches, classes and elective offerings need an open (not CLOSED) period.
     db.select({ count: count() }).from(academicPeriods)
-      .where(eq(academicPeriods.collegeId,collegeId)),
+      .where(and(eq(academicPeriods.collegeId, collegeId), ne(academicPeriods.status, "CLOSED"))),
     db.select({ count: count() }).from(cohorts)
       .innerJoin(programs, eq(programs.id, cohorts.programId))
       .innerJoin(departments, eq(departments.id, programs.departmentId))
@@ -105,7 +106,7 @@ export async function getCollegeSetupChecklist(context: RequestContext, raw: unk
     programs: program[0]?.count ?? 0,
     semesters: term[0]?.count ?? 0,
     "semester-courses": mapping[0]?.count ?? 0,
-    "academic-periods":period[0]?.count??0,
+    "academic-periods": period[0]?.count ?? 0,
     batches: batch[0]?.count ?? 0,
     classes: section[0]?.count ?? 0,
     faculty: faculty[0]?.count ?? 0,
