@@ -70,6 +70,24 @@ describe("SA-placements-projects-84 Task repeating editor", () => {
     expect(invalid({ priority: "URGENT" })).toBe(false);
     expect(invalid({ sprintKey: "missing" })).toBe(false);
   });
+  it("reports a row and field for invalid releases, sprints, and tasks",()=>{
+    const source=parse();
+    const invalid={
+      ...source,
+      releases:source.releases.map(row=>({...row,title:""})),
+      sprints:source.sprints.map((row,index)=>index===1?
+        {...row,releaseKey:"unknown-release"}:row),
+      tasks:source.tasks.map((row,index)=>index===1?
+        {...row,estimatePoints:1001}:row),
+    };
+    const result=projectTemplateBlueprintSchema.safeParse(invalid);
+    expect(result.success).toBe(false);
+    if(result.success)return;
+    const paths=result.error.issues.map(issue=>issue.path.join("."));
+    expect(paths).toContain("releases.0.title");
+    expect(paths).toContain("sprints.1.releaseKey");
+    expect(paths).toContain("tasks.1.estimatePoints");
+  });
   it("preserves all other blueprint sections during a versioned write", () => {
     const parsed = reviseProjectTemplateInputSchema.parse({
       expectedVersion: 3, title: "Test template", changeNote: "Updated template tasks", blueprint: parse(),
