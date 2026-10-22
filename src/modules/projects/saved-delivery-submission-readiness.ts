@@ -13,11 +13,11 @@ export function savedDeliverySubmissionReadiness(
   catch{return "UNSAVED";}
   if(!saved||typeof saved!=="object"||Array.isArray(saved))return "UNSAVED";
   const value=saved as Record<string,unknown>;
-  if(typeof value.summary!=="string"||!value.summary.trim())return "MISSING_EVIDENCE";
+  if(typeof value["summary"]!=="string"||!value["summary"].trim())return "MISSING_EVIDENCE";
   // Do not call a forged/partially uploaded file "evidence": the persisted
   // submission service requires a concrete UUID and a READY project file.
-  const fileEvidence=Array.isArray(value.attachments)&&
-    value.attachments.some(item=>{
+  const fileEvidence=Array.isArray(value["attachments"])&&
+    value["attachments"].some(item=>{
       if(!item||typeof item!=="object"||Array.isArray(item))return false;
       const file=item as {kind?:unknown;fileId?:unknown;url?:unknown};
       return file.kind==="FILE"&&typeof file.fileId==="string"&&
@@ -31,6 +31,6 @@ export function savedDeliverySubmissionReadiness(
       return (parsed.protocol==="https:"||parsed.protocol==="http:")&&Boolean(parsed.hostname);
     }catch{return false;}
   };
-  return (safeUrl(value.sourceUrl)||safeUrl(value.demoUrl)||fileEvidence)
+  return (safeUrl(value["sourceUrl"])||safeUrl(value["demoUrl"])||fileEvidence)
     ? "READY" : "MISSING_EVIDENCE";
 }

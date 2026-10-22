@@ -31,10 +31,10 @@ export function parseSuperAdminTemplateDirectoryQuery(
      Object.values(params).some(Array.isArray))
     return templateDirectoryQuerySchema.safeParse(null);
   const normalized={...params};
-  delete normalized.search;
-  if(params.search!==undefined&&params.q===undefined)normalized.q=params.search;
-  if(typeof normalized.status==="string"&&
-      !["ALL","DRAFT","PUBLISHED","ARCHIVED"].includes(normalized.status))
-    normalized.status="ALL";
+  delete normalized["search"];
+  if(params["search"]!==undefined&&params["q"]===undefined)normalized["q"]=params["search"];
+  if(typeof normalized["status"]==="string"&&
+      !["ALL","DRAFT","PUBLISHED","ARCHIVED"].includes(normalized["status"]))
+    normalized["status"]="ALL";
   return templateDirectoryQuerySchema.safeParse(normalized);
 }
