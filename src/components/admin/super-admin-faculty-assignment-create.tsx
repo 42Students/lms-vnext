@@ -214,6 +214,8 @@ export function SuperAdminTeachingRoleEdit({
  const [discardOpen,setDiscardOpen]=useState(false);
  const {run,pending}=useGuardedAction({busyLabel:"Updating assignment…"});
  const chosen=deliveries.find(item=>item.id===deliveryId);
+ const selectedFacultyName=faculty.find(item=>item.membershipId===initialMembershipId)?.displayName??"Faculty";
+ const selectedCourseName=deliveries.find(item=>item.id===initialDeliveryId)?.courseName??"Course";
  const [program,setProgram]=useState(
   deliveries.find(item=>item.id===initialDeliveryId)?.programName??"");
  const [batch,setBatch]=useState(
@@ -285,9 +287,9 @@ export function SuperAdminTeachingRoleEdit({
    aria-expanded={open} aria-label={"Edit faculty assignment "+assignmentId} disabled={pending}
    onClick={()=>{reset();setOpen(true);}}>Edit</Button>
   <Dialog open={open} onOpenChange={next=>{if(!next)requestClose();}}
-   title={"Edit assignment: #"+assignmentId}
+   title={"Edit assignment: "+selectedFacultyName+" · "+selectedCourseName}
    description="Update faculty, course, program, batch, semester, class, academic year and role."
-   className="!max-w-[560px]" dismissible={!pending}
+   className="!max-w-[500px]" dismissible={!pending}
    footer={<div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
     <Button variant="secondary" type="button" disabled={pending} onClick={requestClose}>Cancel</Button>
     <Button variant="primary" type="button" loading={pending} disabled={pending||!changed}
