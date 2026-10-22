@@ -15,10 +15,12 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-12-020-009  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
 - [ ] G2-12-020-020  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
 - [ ] G2-12-020-037  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
-- [ ] G2-12-020-051  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
-- [ ] G2-12-020-052  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
+- [x] G2-12-020-051  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
+- [x] G2-12-020-052  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_4.md)
 
 ## Results
 
 - G2-12-020-005: OK — `src/db/schema/placement-company-identities.ts:7-14` persists independent domain-level `verifiedBy42`, `verifiedAt` and verifier separate from `placementCompanies`; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/CompanyDomain.java:24-35`.
 - G2-12-020-009: OK — `src/db/schema/placement-company-identities.ts:11-14` implements non-null `verified_by_42` with `.default(false)` plus `verified_at`; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/CompanyDomain.java:34-35`.
+- G2-12-020-051: OK — `src/db/schema/placement-company-identities.ts:7-27` stores tenant-linked company/domain, independent verification, legacy numeric identity and added-by actor/college provenance plus creation timestamp; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/CompanyDomain.java:24-47`.
+- G2-12-020-052: OK — `src/modules/placements/company-curation-domain-model.ts:7-39` canonicalizes to lowercase registrable domain and `src/db/schema/placement-company-identities.ts:28` enforces case-insensitive global uniqueness; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/CompanyDomain.java:14-16` and `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/company/CompanyDomainService.java:128-138`.
