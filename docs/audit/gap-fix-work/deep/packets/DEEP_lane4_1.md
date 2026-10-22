@@ -14,11 +14,14 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-9-015-065  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 - [ ] G2-9-036-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 - [ ] G2-9-036-047  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
-- [ ] G2-9-036-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
-- [ ] G2-9-036-057  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
-- [ ] G2-9-036-058  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
+- [x] G2-9-036-049  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
+- [x] G2-9-036-057  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
+- [x] G2-9-036-058  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md)
 
 ## Results
 
 - G2-9-015-065: FIXED — `4dc297fca80a883188615aece15e0de87711e785`, `src/app/(authenticated)/college/placements/drives/page.tsx`; guards the directory when Placements is disabled and provides Super Admin recovery guidance. Legacy: `docs/legacy-source/frontend/src/pages/college-admin/jobs/all.js:35-43`.
 
+- G2-9-036-057: OK — vNext `src/modules/module-access/service.ts:123-129`; legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/ModuleFeatureCatalog.java:62-85`; college-level Placements ignores learner/section/cohort/program/department scopes.
+- G2-9-036-058: OK — vNext `src/modules/module-access/admin-college-rule-write.ts:35-55`; legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SuperAdminFeatureController.java:178-206`; rejects mutation under a college-local or inherited lock.
+- G2-9-036-049: OK — vNext `src/modules/module-access/admin-college-rule-write.ts:58-76`; legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SuperAdminFeatureController.java:208-222`; performs scoped upsert and required audit insertion in the same transaction.
