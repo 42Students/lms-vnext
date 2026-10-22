@@ -56,7 +56,9 @@ describe("Super Admin workspace brief isolation and malformed persisted JSON", (
    expect(normalized.personas.every(item=>item.length>0&&item.length<=500)).toBe(true);
   }
   expect(parseWorkspaceBrief({...original,collegeId:"other-tenant"}))
-   .toEqual(emptyWorkspaceBrief);
+   .toEqual(parseWorkspaceBrief(original));
+  expect(Object.keys(parseWorkspaceBrief({...original,collegeId:"other-tenant"})))
+   .not.toContain("collegeId");
   expect(updateWorkspaceBriefSchema.safeParse({
    brief:original,expectedUpdatedAt:"2026-10-18T12:00:00+05:30",
   }).success).toBe(true);
