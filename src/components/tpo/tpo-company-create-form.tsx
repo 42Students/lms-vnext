@@ -143,7 +143,7 @@ export function TpoCompanyCreateForm() {
               Existing canonical companies will be reused where identity matches.
               This creates an auditable college relationship.
             </p>:null}
-            {notTheSame?<InlineNotice tone="warning" message="A distinct employer needs its own verified domain and placement-cell review. This choice cannot bypass a matching canonical company."/>:null}
+            {notTheSame?<InlineNotice tone="info" message="A distinct employer needs its own verified domain and placement-cell review. This choice cannot bypass a matching canonical company."/>:null}
             {conflict?<div role="alert" className="space-y-2 border-y border-border py-3">
               <p className="text-sm font-semibold text-[var(--lms-heading)]">{conflict.error==="PLACEMENT_COMPANY_IDENTITY_CONFLICT"?"Company identity needs review":"Matching company found"}</p>
               <p className="text-sm text-body">{conflict.message}</p>

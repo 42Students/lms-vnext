@@ -161,7 +161,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
    const savedCount=receipt.saved;
    const failedCount=receipt.failed;
    setResults(receipt.results as Result[]);
-   if(savedCount>0)showToast({tone:failedCount>0?"warning":"success",
+   if(savedCount>0)showToast({tone:failedCount>0?"info":"success",
     title:"Saved "+savedCount+" setting(s).",
     description:failedCount>0?"Not saved: "+failedCount+" setting(s). Review the errors and refresh before retrying.":"Stored overrides saved; live activation depends on the consumer and deployment."});
    if(failedCount>0)setError("Saved "+savedCount+" setting(s). Not saved: "+failedCount+" setting(s). Refresh stored versions before retrying failed keys.");
@@ -202,20 +202,20 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
      <span className="flex flex-wrap items-center gap-2 font-semibold">{spec.label}{spec.dangerous?<StatusBadge tone="error">High impact</StatusBadge>:null}</span>
      <span className="break-all font-mono text-xs text-muted-foreground">{spec.key}</span>
      {spec.dangerous||spec.key.startsWith("otp.")||
-       ("activation" in spec&&spec.activation!=="ACTIVE")?
+       ("activation" in spec)?
       <StatusBadge tone="warning">{
        "activation" in spec&&spec.activation==="DEPLOYMENT_REQUIRED"?
         "Stored · deployment required":"Stored · runtime activation unverified"
       }</StatusBadge>:null}
-     <span id={"tenant-help-"+spec.key} title={spec.help??runtimeHint(spec)} className="text-xs font-normal leading-5 text-body">
-       {spec.help??runtimeHint(spec)}
+     <span id={"tenant-help-"+spec.key} title={("help" in spec?spec.help:undefined)??runtimeHint(spec)} className="text-xs font-normal leading-5 text-body">
+       {("help" in spec?spec.help:undefined)??runtimeHint(spec)}
        <span className="mt-1 block text-muted-foreground">
-        Source default: {spec.placeholder??"Defined by the running service (not exposed by this inventory)"}.
+        Source default: {("placeholder" in spec?spec.placeholder:undefined)??"Defined by the running service (not exposed by this inventory)"}.
         Blank removes the stored override.
        </span>
       </span>
      {spec.type==="textarea"?<Textarea rows={3} maxLength={4096} value={draft[spec.key]??""}
-      placeholder={spec.placeholder??"Use source default"}
+      placeholder={("placeholder" in spec?spec.placeholder:undefined)??"Use source default"}
       aria-label={spec.label+" for "+(scopeType==="GLOBAL"?"global settings":"selected college")}
       aria-invalid={Boolean(invalidKeys.get(spec.key))}
       aria-describedby={"tenant-help-"+spec.key+(invalidKeys.has(spec.key)?" tenant-invalid-"+spec.key:"")}
@@ -224,7 +224,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
       <Input type={spec.type==="int"||spec.type==="decimal"?"number":"text"}
        min={"min" in spec?spec.min:undefined} max={"max" in spec?spec.max:undefined}
        step={spec.type==="int"?1:spec.type==="decimal"?0.01:undefined}
-       placeholder={spec.placeholder??(spec.type==="decimal"?"0.15":spec.type==="int"?"0":"Enter "+spec.label.toLowerCase())}
+       placeholder={("placeholder" in spec?spec.placeholder:undefined)??(spec.type==="decimal"?"0.15":spec.type==="int"?"0":"Enter "+spec.label.toLowerCase())}
        value={draft[spec.key]??""} maxLength={4096}
        aria-label={spec.label+" for "+(scopeType==="GLOBAL"?"global settings":"selected college")}
        aria-invalid={Boolean(invalidKeys.get(spec.key))}
