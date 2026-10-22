@@ -16,7 +16,7 @@ describe("PROJ-BREAK-COLLEGE-04 College Admin projects route journey", () => {
 
   it("PROJ-BREAK-COLLEGE-04-12 invalid filters recover without a SQL read or a leaked error code", () => {
     const page = read("src/app/(authenticated)/college/projects/page.tsx");
-    expect(page.indexOf("if (!parsed.success)")).toBeLessThan(page.indexOf("listProjectAdminSnapshots(context, collegeId, query)"));
+    expect(page.indexOf("if (!parsed.success)")).toBeLessThan(page.indexOf("listProjectAdminSnapshots(context, collegeId, serviceQuery)"));
     expect(page).toContain("Invalid project filters");
     expect(page).toContain("Clear filters");
     expect(page).toContain("Select a college to continue.");
