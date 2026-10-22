@@ -40,7 +40,8 @@ describe("Super Admin colleges/organizations canvas and page states",()=>{
   expect(admins).toContain("listCollegeAdminSessionTargetsPage(context,collegeId,page,role)");
   expect(admins).toContain("CollegeAdminLifecycleAction");
   expect(admins).toContain("View active devices");
-  expect(admins).toContain("View history");
+  expect(admins).toContain('title="View administrator history"');
+  expect(admins).toContain('>\n          History\n        </Link>');
   expect(admins).toContain('mobilePriority:"primary"');
  });
  it("UX-COL-ONE-CANVAS-04 distinguishes unknown readiness evidence from a passing check",()=>{

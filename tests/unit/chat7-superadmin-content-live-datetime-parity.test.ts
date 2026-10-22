@@ -38,7 +38,9 @@ describe("SA-academics-people-58 live meeting IST/UTC calendar integrity",()=>{
   expect(source).toContain('if(!start||!end){setError("Enter a valid date and time.");return;}');
   expect(source.indexOf("if(!start||!end)")).toBeLessThan(source.indexOf("submissionLock.current=true;setBusy(true)"));
   expect(source.indexOf("if(!start||!end)")).toBeLessThan(source.indexOf('method:"PATCH"'));
-  expect(source).toContain('className="min-h-11');
+  expect(source).toContain('size="icon-sm"');
+  expect(source).toContain('<Input type="datetime-local"');
+  expect(source).toContain('<Dialog open={editing}');
   expect(source).not.toContain("min-h-10");
   expect(source).toContain('Discard content changes?');
  });

@@ -66,8 +66,8 @@ describe("HR-RECRUITER-PAGE-68: scoped drive change-request page",()=>{
    visit(child.children);
   }
   visit(node);
-  expect(props).toEqual(expect.arrayContaining([
-   expect.objectContaining({party:"COMPANY",userId:"recruiter",requests:[{id:"request-one"}]}),
-  ]));
+  expect(props.some(prop=>prop.party==="COMPANY" &&
+   prop.userId==="recruiter" && prop.requests?.length===1 &&
+   (prop.requests[0] as {id:string}).id==="request-one")).toBe(true);
  });
 });

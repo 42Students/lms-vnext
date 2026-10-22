@@ -41,7 +41,7 @@ describe("Final sprint recruiter threads and profile — group C",()=>{
   expect(access).toContain('onClick={() => setConfirmGrant(grant)}');
   expect(access).toContain('onConfirm={()=>{if(confirmGrant)void leave(confirmGrant);}}');
   expect(access).toContain("immediately lose recruiter access to this college");
-  expect(access).toContain('method: "DELETE"');
+  expect(access).toContain('method:"DELETE"');
   expect(access).toContain("encodeURIComponent(grant.id)");
   expect(access).toContain('window.location.assign("/hr/home")');
  });
