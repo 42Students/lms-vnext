@@ -12,7 +12,7 @@ export async function PUT(request:Request,{params}:{params:Promise<{membershipId
    return NextResponse.json({error:"INVALID_INPUT"},{status:400});
   const input=raw as Record<string,unknown>;
   const data=await setTpoAfterCollegeOutcome(await getCurrentRequestContext(),{
-   learnerMembershipId:membershipId,outcome:input.outcome,expectedVersion:input.expectedVersion});
+   learnerMembershipId:membershipId,outcome:input["outcome"],expectedVersion:input["expectedVersion"]});
   return NextResponse.json(data,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){
   if(error instanceof AfterCollegeError)return NextResponse.json({error:error.code},{status:
