@@ -8,7 +8,9 @@ export function legacyOfferCtcToAnnualInr(raw:string|null):number|null{
  const source=raw.trim();
  const match=/^(0|[1-9][0-9]{0,12})(?:\.([0-9]{1,30}))?$/.exec(source);
  if(!match)throw new Error("Invalid source LPA decimal");
- const integer=BigInt(match[1]);
+ const integerPart=match[1];
+ if(integerPart===undefined)throw new Error("Invalid source LPA decimal");
+ const integer=BigInt(integerPart);
  const fractional=(match[2]??"");
  const places=fractional.length;
  const scale=10n**BigInt(places);
