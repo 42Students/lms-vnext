@@ -1,7 +1,10 @@
-import {collegeLectureHallFiltersBaseSchema,withCollegeLectureHallCapacityCheck} from "./college-lecture-hall-directory-model";
+import {collegeLectureHallFiltersBaseSchema} from "./college-lecture-hall-directory-model";
 import {buildCollegeDirectoryCsv,exportParams} from "./college-directory-export-model";
 export const LECTURE_HALLS_EXPORT_CAP=1000;
-export const lectureHallsCsvSchema=withCollegeLectureHallCapacityCheck(collegeLectureHallFiltersBaseSchema.omit({page:true}));
+export const lectureHallsCsvSchema=collegeLectureHallFiltersBaseSchema.omit({page:true}).refine(
+ q=>q.minimumCapacity===undefined || q.maximumCapacity===undefined || q.minimumCapacity<=q.maximumCapacity,
+ {path:["maximumCapacity"],message:"Maximum seats must not be below minimum seats"},
+);
 export {exportParams};
 export function lectureHallsCsvHref(q:{
  q:string;status:"ALL"|"ACTIVE"|"ARCHIVED";
