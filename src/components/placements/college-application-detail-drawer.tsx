@@ -30,6 +30,9 @@ export type CollegeApplicationDetail={
  screening:{status:string;candidateMessage:string|null;internalReason:string|null;
   decidedAt:string|null}|null;
  stage:string|null;stageHistory:Event[];screeningHistory:Event[];history:Event[];
+ stageHistoryHasMore?:boolean;screeningHistoryHasMore?:boolean;
+ historyTruncated?:boolean;notesHasMore?:boolean;
+ internalNotes?:string|null;internalNoteVersion?:string|null;
  notes:{id:string;body:string;createdAt:string}[];
  rounds:{id:string;name:string;testUrl:string|null;scheduledAt:string|null}[];
  assessmentLink?:string|null;jobAssessmentLink?:string|null;
@@ -275,7 +278,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
   }finally{if(requestId===detailReadRef.current)setHistoryLoading(null);}
  }
  return <>
-  <Dialog open={!interviewOpen&&!assessmentOpen} onOpenChange={open=>{if(!open)requestClose();}} title="Application Details">
+  <Dialog open={!interviewOpen&&!assessmentOpen} onOpenChange={open=>{if(!open)requestClose();}} title="Application Details" className="max-w-[800px]">
     <div className="flex min-w-0 items-center justify-end gap-3">
        <Button variant="secondary" type="button" onClick={()=>void reload()} disabled={loading}
         className="min-h-11 w-full sm:w-auto md:min-h-9">Refresh</Button>
@@ -346,6 +349,18 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
           Move to Assessment
         </Button>:null}
        </div>
+       {detail.jobAssessmentLink?.startsWith("https://")?<div className="mt-2 flex min-w-0 flex-wrap items-center gap-3 border border-warning/30 bg-warning/5 px-3 py-2 text-sm" role="note">
+        <span className="font-semibold">Assessment Link:</span>
+        <a href={detail.jobAssessmentLink} target="_blank" rel="noopener noreferrer"
+         className="min-w-0 flex-1 break-all text-link underline">{detail.jobAssessmentLink}</a>
+        <Button variant="secondary" type="button" onClick={async()=>{
+         try{await navigator.clipboard.writeText(detail.jobAssessmentLink!);
+          setLinkNotice("Assessment link copied to clipboard");
+          showToast({tone:"success",title:"Assessment link copied to clipboard"});}
+         catch{setLinkNotice("Failed to copy");
+          showToast({tone:"error",title:"Failed to copy",description:"Select and copy the link shown above."});}
+        }}>Copy</Button>
+       </div>:null}
        {detail.assessmentLink?.startsWith("https://")?<p className="mt-2 text-sm">
         Saved assessment link: <a href={detail.assessmentLink} target="_blank"
           rel="noopener noreferrer" className="break-all font-semibold text-link underline">
@@ -444,7 +459,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
              detail.scoring.scorePercent>=40?"bg-cyan-50 text-cyan-700":
              "bg-slate-100 text-slate-700")}>
             {Math.round(detail.scoring.scorePercent)}%
-            {detail.scoring.partial?" · Partial":""}
+            {detail.scoring.partial?" · Partial match":""}
           </span>
          </div>:
          <p className="mt-2 text-sm text-body">{detail.scoring.reason}</p>}
