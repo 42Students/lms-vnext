@@ -55,7 +55,9 @@ describe("HR-BREAK-chat19-home-portfolio-proposals: no inferred tenant or false 
   expect(m.proposals).not.toHaveBeenCalled();
  });
  it("wrong-tenant selection is rejected on Today before portfolio, calendar or profile reads",async()=>{
-  await expect(home({collegeId:other})).rejects.toThrow("NOT_FOUND");
+  const denied=await home({collegeId:other});
+  expect(textOf(denied)).toContain("College access unavailable");
+  expect(textOf(denied)).toContain("not part of your active recruiter access");
   expect(m.jobs).not.toHaveBeenCalled();
   expect(m.grants).not.toHaveBeenCalled();
  });

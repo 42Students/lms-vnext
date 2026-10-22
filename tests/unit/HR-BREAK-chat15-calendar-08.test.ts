@@ -28,7 +28,7 @@ const slot={id:"slot-one",jobId,roundId:"round-one",
  startAt:new Date("2099-01-02T07:00:00.000Z"),status:"OFFERED",
  timezone:"Asia/Kolkata",meetingLocation:"Room 102"};
 const builder=(rows:unknown[])=>({
- from(){return this;},where(){return this;},
+ from(){return this;},innerJoin(){return this;},where(){return this;},
  orderBy(){return Promise.resolve(rows);},
 });
 describe("HR-CALENDAR-SCOPE-08 authorized recruiter calendar and IST bounds",()=>{

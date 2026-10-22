@@ -1,5 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import type {RequestContext} from "@/modules/identity/context";
+import {isValidElement,type ReactNode} from "react";
 
 const m=vi.hoisted(()=>({ctx:vi.fn(),redirect:vi.fn(),issues:vi.fn(),
  logs:vi.fn(),known:vi.fn()}));
@@ -21,6 +22,13 @@ const root:RequestContext={
 };
 const callIssues=()=>IssuesPage({searchParams:Promise.resolve({})});
 const callLogs=()=>LogsPage({searchParams:Promise.resolve({})});
+function textOf(node:ReactNode):string{
+ if(Array.isArray(node))return node.map(textOf).join(" ");
+ if(typeof node==="string"||typeof node==="number")return String(node);
+ if(!isValidElement(node))return "";
+ const props=node.props as {title?:ReactNode;description?:ReactNode;children?:ReactNode};
+ return [textOf(props.title),textOf(props.description),textOf(props.children)].join(" ");
+}
 
 describe("SA-TRACKER-AUDIT-67 global issues and error logs stay outside acting tenant scopes",()=>{
  beforeEach(()=>{
@@ -33,7 +41,9 @@ describe("SA-TRACKER-AUDIT-67 global issues and error logs stay outside acting t
  ])("acting in %s must not open global Tracker issues or private logs",async(_name,scope)=>{
   m.ctx.mockResolvedValue({...root,adminScope:scope});
   await expect(callIssues()).rejects.toThrow("REDIRECT");
-  await expect(callLogs()).rejects.toThrow("REDIRECT");
+  const denied=await callLogs();
+  expect(denied.type).toBe("section");
+  expect(textOf(denied)).toContain("Sign in to view logs");
   expect(m.redirect).toHaveBeenCalledWith("/dashboard");
   expect(m.issues).not.toHaveBeenCalled();
   expect(m.known).not.toHaveBeenCalled();
@@ -42,7 +52,9 @@ describe("SA-TRACKER-AUDIT-67 global issues and error logs stay outside acting t
  it("a disabled Super Admin must be refused before privileged reads",async()=>{
   m.ctx.mockResolvedValue({...root,user:{...root.user,platformStatus:"DISABLED"}});
   await expect(callIssues()).rejects.toThrow("REDIRECT");
-  await expect(callLogs()).rejects.toThrow("REDIRECT");
+  const denied=await callLogs();
+  expect(denied.type).toBe("section");
+  expect(textOf(denied)).toContain("Sign in to view logs");
   expect(m.issues).not.toHaveBeenCalled();
   expect(m.known).not.toHaveBeenCalled();
  });
@@ -51,7 +63,9 @@ describe("SA-TRACKER-AUDIT-67 global issues and error logs stay outside acting t
    recruiter:{userId:"root",status:"ACTIVE",companyId:"firm-a",companyName:"Firm A",
     title:null,grants:[]}} as RequestContext);
   await expect(callIssues()).rejects.toThrow("REDIRECT");
-  await expect(callLogs()).rejects.toThrow("REDIRECT");
+  const denied=await callLogs();
+  expect(denied.type).toBe("section");
+  expect(textOf(denied)).toContain("Sign in to view logs");
   expect(m.issues).not.toHaveBeenCalled();
   expect(m.known).not.toHaveBeenCalled();
  });

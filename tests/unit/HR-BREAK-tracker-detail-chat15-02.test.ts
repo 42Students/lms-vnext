@@ -1,6 +1,14 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
+import {isValidElement,type ReactNode} from "react";
+function textOf(node:ReactNode):string{
+ if(Array.isArray(node))return node.map(textOf).join(" ");
+ if(typeof node==="string"||typeof node==="number")return String(node);
+ if(!isValidElement(node))return "";
+ const props=node.props as {title?:ReactNode;description?:ReactNode;children?:ReactNode};
+ return [textOf(props.title),textOf(props.description),textOf(props.children)].join(" ");
+}
 const mocks=vi.hoisted(()=>({
- context:vi.fn(),report:vi.fn(),enabled:vi.fn(),redirect:vi.fn(),
+ context:vi.fn(),report:vi.fn(),history:vi.fn(),screenshots:vi.fn(),enabled:vi.fn(),redirect:vi.fn(),
  notFound:vi.fn(),
 }));
 vi.mock("next/navigation",()=>({
@@ -10,7 +18,8 @@ vi.mock("next/navigation",()=>({
 vi.mock("next/link",()=>({default:({children}:{children:unknown})=>children}));
 vi.mock("@/components/ui/page-header",()=>({PageHeader:()=>null}));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:mocks.context}));
-vi.mock("@/modules/bug-tracker/reporter-service",()=>({getMyTrackerReport:mocks.report}));
+vi.mock("@/modules/bug-tracker/reporter-service",()=>({getMyTrackerReport:mocks.report,
+ listMyTrackerReportHistory:mocks.history,listMyTrackerReportScreenshots:mocks.screenshots}));
 vi.mock("@/modules/bug-tracker/readiness",()=>({trackerAdminRuntimeEnabled:mocks.enabled}));
 
 import MyTrackerReportDetail from "@/app/(authenticated)/tracker/mine/[publicId]/page";
@@ -28,6 +37,8 @@ describe("HR-BREAK-tracker-detail-chat15-02: reporter privacy and failure semant
   mocks.context.mockResolvedValue(context);
   mocks.enabled.mockReturnValue(true);
   mocks.report.mockResolvedValue(example);
+  mocks.history.mockResolvedValue([]);
+  mocks.screenshots.mockResolvedValue([]);
  });
  it("rejects an expired or deactivated session before touching private report storage",async()=>{
   mocks.context.mockResolvedValue({user:{id:"reporter-a",platformStatus:"SUSPENDED"}});
@@ -53,8 +64,8 @@ describe("HR-BREAK-tracker-detail-chat15-02: reporter privacy and failure semant
  it("renders a non-querying availability state when the tracker is disabled",async()=>{
   mocks.enabled.mockReturnValue(false);
   const view=await MyTrackerReportDetail(params("LMS-1234"));
-  expect(view.type).toBe("p");
-  expect(view.props.role).toBe("status");
+  expect(view.type).toBe("div");
+  expect(textOf(view)).toContain("Reports are temporarily unavailable");
   expect(mocks.report).not.toHaveBeenCalled();
  });
  it("passes only the authenticated reporter context into the scoped query",async()=>{
@@ -62,5 +73,7 @@ describe("HR-BREAK-tracker-detail-chat15-02: reporter privacy and failure semant
   expect(view.type).toBe("article");
   expect(mocks.report).toHaveBeenCalledTimes(1);
   expect(mocks.report).toHaveBeenCalledWith(context,"LMS-1234");
+  expect(mocks.history).toHaveBeenCalledWith(context,"LMS-1234");
+  expect(mocks.screenshots).toHaveBeenCalledWith(context,"LMS-1234");
  });
 });

@@ -36,14 +36,16 @@ describe("PROJ-BREAK-EXPORT-01: Project workspace visible-page CSV safety and sc
   expect(withoutBom).toContain('"\'=IMPORTRANGE(""secret"",""A:B"")"');
   expect(withoutBom).toContain('"A,""B"""');
   expect(withoutBom).toContain('"Blocked"');
-  expect(withoutBom).toContain('"45","2"');
-  // Oct 19 in IST for 18:45 UTC. UTC date would be Oct 18.
-  expect(withoutBom).toMatch(/19\/10\/26|19\/10\/2026/);
+  expect(withoutBom).toContain('"Blocked","45","A,""B""","Not available"');
+  // Page export mirrors the five visible columns, not private/member counts
+  // or a timestamp column that the current page does not display.
+  expect(withoutBom).not.toContain("19/10/2026");
+  expect(withoutBom).not.toContain('"2"');
   expect(withoutBom).not.toContain("unknown college");
  });
  it("never fetches or includes hidden projects: empty authorized page exports only headings",()=>{
   const csv=projectWorkspacePageCsv([]);
-  expect(csv).toContain('"Workspace","Mentor","Status","Progress %","Members","Last changed (IST)"');
+  expect(csv).toContain('"Workspace","Status","Progress","Mentor","Template ID"');
   expect(csv.split("\r\n")).toHaveLength(2);
  });
 });
