@@ -269,7 +269,9 @@ export function searchLegacyScopedLearnerJobs<T extends BrowseJobShape>(
  return filterLearnerPlacementJobs(authorizedJobs,{
   ...DEFAULT_LEARNER_JOB_FILTERS,
   search:input.q,
-  departmentId:input.departmentId,programId:input.programId,jobType:input.jobType,
+  ...(input.departmentId!==undefined?{departmentId:input.departmentId}:{}),
+   ...(input.programId!==undefined?{programId:input.programId}:{}),
+   ...(input.jobType!==undefined?{jobType:input.jobType}:{}),
   sort:"title",
  }).slice(0,input.limit);
 }
