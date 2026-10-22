@@ -39,6 +39,9 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       appointmentSort:query.appointmentSort,
       appointmentPageSize:query.appointmentPageSize,
       preferredApplicationId:query.applicationId,
+      candidatePage:query.candidatePage,
+      candidatePageSize:query.candidatePageSize,
+      candidateSearch:query.candidateSearch,
     }),
   ]);
   const base="/college/placements/jobs/"+encodeURIComponent(jobId);
@@ -167,8 +170,14 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       <span className="text-muted-foreground">Use Export CSV under Candidate interviews to download this page.</span>
     </div>
     {appointments.candidateTotal>appointments.candidates.length?<p role="status" className="text-sm text-warning-text">
-      Showing {appointments.candidates.length} of {appointments.candidateTotal} shortlisted candidates in the scheduling selector. Open a candidate from their application details to include that specific learner.
+      Showing {appointments.candidates.length} of {appointments.candidateTotal} shortlisted candidates (page {appointments.candidatePage} of {appointments.candidatePages}). Open a candidate from their application details to include that specific learner.
     </p>:null}
+    <nav aria-label="Eligible candidate picker pages" className="flex flex-wrap items-center gap-3 text-sm">
+      {appointments.candidatePage>1?<Link href={driveInterviewsHref(jobId,{...query,candidatePage:appointments.candidatePage-1})}
+        className="inline-flex min-h-11 items-center font-semibold text-link underline">Previous candidates</Link>:null}
+      {appointments.candidatePage<appointments.candidatePages?<Link href={driveInterviewsHref(jobId,{...query,candidatePage:appointments.candidatePage+1})}
+        className="inline-flex min-h-11 items-center font-semibold text-link underline">Next candidates</Link>:null}
+    </nav>
     <CollegeInterviewAppointments jobId={jobId} rounds={appointments.rounds}
       candidates={appointments.candidates} appointments={appointmentRows}
       preferredApplicationId={query.applicationId}/>

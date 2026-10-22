@@ -1,4 +1,5 @@
 import { z } from "zod";
+import {SUSPENSION_REASON_POLICY} from "./validation";
 
 export const collegeFacultyIdSchema = z.string().uuid();
 export const collegeFacultyLifecycleSchema = z.discriminatedUnion("action", [
@@ -9,7 +10,9 @@ export const collegeFacultyLifecycleSchema = z.discriminatedUnion("action", [
     expectedUpdatedAt:z.iso.datetime({offset:true}).optional(),
     // Match the audited College Admin membership suspension contract: a
     // meaningful reason is required and persisted alongside session revocation.
-    reason: z.string().trim().min(3,"Enter a suspension reason of at least 3 characters.").max(1000),
+    reason: z.string().trim()
+      .min(SUSPENSION_REASON_POLICY.min,"Enter a suspension reason of at least 3 characters.")
+      .max(SUSPENSION_REASON_POLICY.max),
     confirm: z.literal(true),
   }).strict(),
   z.object({

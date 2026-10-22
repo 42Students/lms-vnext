@@ -20,6 +20,7 @@ import { Dropdown } from "@/components/ui/dropdown";
 import { Menu, MenuItem } from "@/components/ui/menu";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
+import {SUSPENSION_REASON_POLICY} from "@/modules/people/validation";
 import {
   verifiedMembershipRoleReceipt,
   verifiedMembershipLifecycleReceipt,
@@ -330,7 +331,7 @@ export function PersonMembershipActions({
         confirmLabel={lifecyclePending?"Suspending…":"Suspend membership"}
         confirmVariant="danger"
         pending={lifecyclePending}
-        confirmDisabled={suspensionReason.trim().length<3||suspensionReason.trim().length>500||Boolean(rolePending)}
+        confirmDisabled={suspensionReason.trim().length<SUSPENSION_REASON_POLICY.min||suspensionReason.trim().length>SUSPENSION_REASON_POLICY.max||Boolean(rolePending)}
         onConfirm={()=>lifecycle({action:"SUSPEND",reason:suspensionReason.trim()})}>
         <label htmlFor={`suspension-reason-${membershipId}`}
           className="mb-[6px] block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
@@ -340,12 +341,12 @@ export function PersonMembershipActions({
           id={`suspension-reason-${membershipId}`}
           value={suspensionReason}
           onChange={event=>setSuspensionReason(event.target.value)}
-          minLength={3} maxLength={500}
+          minLength={SUSPENSION_REASON_POLICY.min} maxLength={SUSPENSION_REASON_POLICY.max}
           disabled={lifecyclePending}
-          placeholder="Enter a reason (3–500 characters)."
+          placeholder="Enter a reason (3–1000 characters)."
           aria-describedby={`suspension-help-${membershipId}`}/>
         <p id={`suspension-help-${membershipId}`} className="mt-1 text-xs text-muted-foreground">
-          3–500 characters. Required for the audit record; historical user and college data are kept.
+          3–1000 characters. Required for the audit record; historical user and college data are kept.
         </p>
       </ConfirmDialog>
 

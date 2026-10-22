@@ -56,6 +56,9 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
       appointmentPageSize:query.appointmentPageSize,
       appointmentSort:query.appointmentSort,
       preferredApplicationId:query.applicationId,
+      candidatePage:query.candidatePage,
+      candidatePageSize:query.candidatePageSize,
+      candidateSearch:query.candidateSearch,
     }),
   ]);
   if(roundResult.status==="rejected"&&roundResult.reason instanceof AuthorizationError)
@@ -267,8 +270,14 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
       </p>:null}
       {appointments ? <>
         {appointments.candidateTotal>appointments.candidates.length?<Banner tone="warning">
-          Showing {appointments.candidates.length} of {appointments.candidateTotal} shortlisted candidates in the scheduling selector. Deep-link from the application detail to include an individual learner.
+          Showing {appointments.candidates.length} of {appointments.candidateTotal} shortlisted candidates (page {appointments.candidatePage} of {appointments.candidatePages}). Deep-link from the application detail to include an individual learner.
         </Banner>:null}
+        <nav aria-label="Eligible candidate picker pages" className="flex flex-wrap items-center gap-3 text-sm">
+          {appointments.candidatePage>1?<Link href={adminInterviewsHref(jobId,{...query,candidatePage:appointments.candidatePage-1})}
+            className="inline-flex min-h-11 items-center font-semibold text-link underline">Previous candidates</Link>:null}
+          {appointments.candidatePage<appointments.candidatePages?<Link href={adminInterviewsHref(jobId,{...query,candidatePage:appointments.candidatePage+1})}
+            className="inline-flex min-h-11 items-center font-semibold text-link underline">Next candidates</Link>:null}
+        </nav>
         <p role="status" className="text-sm text-body">{appointments.appointmentTotal} matching candidate appointments · page {appointments.appointmentPage} of {appointments.appointmentPages}
           · {appointments.appointmentPageSize} per page</p>
         <CollegeInterviewAppointments jobId={jobId}
