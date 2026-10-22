@@ -196,7 +196,7 @@ async function assertLearnerTimeAvailable(tx:TpoJobTx,collegeId:string,
   "Choose another slot; the existing booking has been preserved.");
 }
 async function notice(tx:TpoJobTx,context:RequestContext,job:{
- id:string;title:string;round?:{id:string;name:string;mode:string;meetingUrl:string|null};
+ id:string;title:string;round?:{id:string;name:string;mode:string|null;meetingUrl:string|null};
 },applicationId:string,action:string,message:string){
  const safeUrl=job.round?.mode==="VIRTUAL"&&job.round.meetingUrl?.startsWith("https://")
   ?job.round.meetingUrl:null;
