@@ -9,10 +9,13 @@ describe("IIT Dharwad Projects: college and Super Admin page URL hostility",()=>
     });
     expect(parseProjectAdminRiskQuery({
       riskBucket:"BLOCKER",riskSort:"SEVERITY",q:"  Dharwad  ",
-      status:"ACTIVE",page:"2",pageSize:"50",
+      status:"ACTIVE",page:"2",pageSize:"25",
     })).toMatchObject({
       success:true,
-      data:{riskBucket:"BLOCKER",riskSort:"SEVERITY",q:"Dharwad",status:"ACTIVE",page:2,pageSize:50},
+      data:{riskBucket:"BLOCKER",riskSort:"SEVERITY",q:"Dharwad",status:"ACTIVE",page:2,pageSize:25},
+    });
+    expect(parseProjectAdminRiskQuery({search:"cross-tenant"})).toMatchObject({
+      success:true,data:{q:"cross-tenant",pageSize:25},
     });
     // Empty form selectors remain intentionally optional.
     expect(parseProjectAdminRiskQuery({q:"",status:""}).success).toBe(true);
@@ -25,7 +28,7 @@ describe("IIT Dharwad Projects: college and Super Admin page URL hostility",()=>
       {pageSize:""},{pageSize:"1e2"},{pageSize:"0"},{pageSize:"101"},
       {pageSize:" 50"},{riskBucket:"INJECTED"},
       {q:"x".repeat(121)}, {page:["1","2"]},
-      {status:["ACTIVE","ARCHIVED"]},{search:"cross-tenant"},
+      {status:["ACTIVE","ARCHIVED"]},{search:"cross-tenant",q:"other"},
     ]){
       expect(parseProjectAdminRiskQuery(params).success,JSON.stringify(params)).toBe(false);
     }
@@ -36,11 +39,11 @@ describe("IIT Dharwad Projects: college and Super Admin page URL hostility",()=>
       success:true,data:{view:"ALL",page:1,pageSize:25},
     });
     expect(parseProjectAdminSubmissionsQuery({
-      view:"NOT_SUBMITTED",q:"  workspaces ",status:"ACTIVE",
+      view:"ALL",q:"  workspaces ",status:"ACTIVE",
       submissionStatus:"UNDER_REVIEW",page:"3",pageSize:"100",
     })).toMatchObject({
       success:true,
-      data:{view:"NOT_SUBMITTED",q:"workspaces",status:"ACTIVE",
+      data:{view:"ALL",q:"workspaces",status:"ACTIVE",
         submissionStatus:"UNDER_REVIEW",page:3,pageSize:100},
     });
     expect(parseProjectAdminSubmissionsQuery({q:"",submissionStatus:""}).success).toBe(true);
