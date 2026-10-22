@@ -20,10 +20,10 @@ export type SkillCatalogReadiness = {
 };
 
 export function skillsCatalogReadiness(): SkillCatalogReadiness {
-  const schemaReplayVerified = process.env.DB10_SKILLS_SCHEMA_READY === "DB10_REPLAY_VERIFIED";
-  const catalogReplayVerified = process.env.DB10_SKILLS_READY === "DB10_VERIFIED";
-  const synonymsSeedVerified = process.env.DB10_SKILLS_SYNONYMS_READY === "SEED_VERIFIED";
-  const sourceReconciled = process.env.DB10_SKILLS_SOURCE_RECONCILED === "LEGACY_RTF_RECONCILED";
+  const schemaReplayVerified = process.env["DB10_SKILLS_SCHEMA_READY"] === "DB10_REPLAY_VERIFIED";
+  const catalogReplayVerified = process.env["DB10_SKILLS_READY"] === "DB10_VERIFIED";
+  const synonymsSeedVerified = process.env["DB10_SKILLS_SYNONYMS_READY"] === "SEED_VERIFIED";
+  const sourceReconciled = process.env["DB10_SKILLS_SOURCE_RECONCILED"] === "LEGACY_RTF_RECONCILED";
   return {
     schemaReplayVerified,
     catalogReplayVerified,
