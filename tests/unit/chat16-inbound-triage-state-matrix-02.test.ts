@@ -53,7 +53,12 @@ describe("chat-16 inbound mail ledger transition and mutation gate",()=>{
  });
  it("INBOUND-TRIAGE-05 enforces a bounded inbox query and safe preview text",()=>{
   expect(inboundMailListQuerySchema.parse({})).toMatchObject({status:"ALL",page:1,q:""});
-  expect(inboundMailListQuerySchema.parse({page:0}).page).toBe(1);
+  // Invalid pages must fail validation rather than silently widening an inbox request.
+  expect(inboundMailListQuerySchema.safeParse({page:0}).success).toBe(false);
+  expect(inboundMailListQuerySchema.safeParse({page:"0"}).success).toBe(false);
+  expect(inboundMailListQuerySchema.safeParse({page:-1}).success).toBe(false);
+  expect(inboundMailListQuerySchema.safeParse({page:10001}).success).toBe(false);
+  expect(inboundMailListQuerySchema.parse({page:"2"}).page).toBe(2);
   expect(inboundMailListQuerySchema.parse({status:"DELETED"}).status).toBe("ALL");
   expect(inboundMailListQuerySchema.safeParse({recipient:"bad"}).success).toBe(false);
   expect(inboundMailListQuerySchema.parse({recipient:"USER@EXAMPLE.ORG"}).recipient).toBe("user@example.org");
