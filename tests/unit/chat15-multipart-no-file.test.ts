@@ -34,6 +34,6 @@ describe("chat-15 one-shot mixed learner submissions",()=>{
   expect(ui).toContain('!confirmed || (files.length===0&&!hasWrittenOrLinkParts)');
   expect(ui).toContain('fileIds:readySubmissionFileIds(files)');
   expect(source("src/components/courses/assignment-submission-control.tsx"))
-    .toContain('multipartEnabled?"Combine work":"File Upload"');
+    .toContain('multipartEnabled?"Combine work":allowedMethods.includes("PDF_UPLOAD")&&!allowedMethods.includes("FILE_UPLOAD")?"PDF Uploads":"File Uploads"');
  });
 });

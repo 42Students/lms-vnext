@@ -15,8 +15,8 @@ export async function exportTpoMessagingHistory(context:RequestContext,raw:unkno
  const collegeId=context.membership?.collegeId;
  if(!collegeId||!hasMembershipRole(context,"TPO"))
    throw new AuthorizationError("placements.manage");
- const college=await requirePlacementManageScope(context,collegeId);
  const query=messagingHistoryQuerySchema.parse(raw);
+ const college=await requirePlacementManageScope(context,collegeId);
  const where=and(
    eq(messagingDeliveryBatches.collegeId,college.id),
    eq(messagingDeliveryBatches.organizationId,college.organizationId),
@@ -47,8 +47,8 @@ export async function listTpoMessagingHistory(
   const collegeId = context.membership?.collegeId;
   if (!collegeId || !hasMembershipRole(context, "TPO"))
     throw new AuthorizationError("placements.manage");
-  const college = await requirePlacementManageScope(context, collegeId);
   const query = messagingHistoryQuerySchema.parse(raw);
+  const college = await requirePlacementManageScope(context, collegeId);
   const where = and(
     eq(messagingDeliveryBatches.collegeId, college.id),
     eq(messagingDeliveryBatches.organizationId, college.organizationId),

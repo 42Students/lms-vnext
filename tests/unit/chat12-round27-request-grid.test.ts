@@ -11,7 +11,7 @@ describe("TPO Requests grid and 500 row parity",()=>{
   expect(ui).toContain("Choose columns");
   expect(ui).toContain("Decided on · oldest");
   expect(ui).toContain("Asked · newest");
-  expect(ui).toContain("sm:sticky sm:left-10");
+  expect(ui).toContain("md:sticky md:left-10");
   expect(ui).toContain("rows.filter(row=>selected.includes(row.id))");
   expect(ui).toContain("navigator.clipboard.writeText(requestRowsTsv(selectedRows,visible as readonly TpoRequestClipboardColumn[]))");
   expect(ui).toContain('caption="Request spreadsheet"');

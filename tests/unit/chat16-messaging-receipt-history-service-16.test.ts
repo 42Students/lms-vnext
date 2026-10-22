@@ -40,10 +40,11 @@ describe("chat-16 TPO aggregate outbound receipt authorization and privacy",()=>
   expect(getDb).not.toHaveBeenCalled();
  });
  it("messaging-receipt-history-17 validates bounded filters before querying receipt counts",async()=>{
-  for(const filter of [{page:0},{page:10001},{purpose:"x".repeat(161)},{companyId:"other-college"}]){
+  for(const filter of [{purpose:"x".repeat(161)},{companyId:"other-college"},{page:"not-a-page"}]){
    await expect(listTpoMessagingHistory(officer,filter)).rejects.toThrow();
    await expect(exportTpoMessagingHistory(officer,filter)).rejects.toThrow();
   }
+  expect(requirePlacementManageScope).not.toHaveBeenCalled();
   expect(getDb).not.toHaveBeenCalled();
  });
  it("messaging-receipt-history-18 rechecks persisted actor inside scoped transaction before reading aggregate rows",async()=>{

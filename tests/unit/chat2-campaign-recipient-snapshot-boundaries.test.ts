@@ -10,7 +10,7 @@ describe("TPO-campaigns-public-12 recruiter recipient identity and consent bound
    {id:"b",emailNorm:"a@example.COM",...baseline},
    {id:"c",emailNorm:"c@example.com",...baseline},
   ]);
-  expect(actual).toEqual({recipientIds:["a","c"],suppressed:{
+  expect(actual).toEqual({recipientIds:["a","c"],selectedCount:4,eligibleCount:2,suppressed:{
    NO_EMAIL:0,UNSUBSCRIBED:0,BOUNCED:0,NOT_NOW:0,DUPLICATE:2,
   }});
   expect(JSON.stringify(actual)).not.toContain("@");
@@ -37,9 +37,11 @@ describe("TPO-campaigns-public-12 recruiter recipient identity and consent bound
    id:"skip-"+i,emailNorm:"skip"+i+"@example.com",unsubscribedAt:new Date("2099-01-01T00:00:00Z"),
    inviteBouncedAt:null,manualStage:"NEW",
   }));
-  const send=planTpoCampaignRecipients([...suppressed,{id:"send",emailNorm:"send@example.com",...baseline}]);
+  // A selected list over 500 is rejected even when most contacts are suppressed.
+  expect(()=>planTpoCampaignRecipients([...suppressed,{id:"send",emailNorm:"send@example.com",...baseline}])).toThrow("TPO_CAMPAIGN_RECIPIENT_LIMIT");
+  const send=planTpoCampaignRecipients([...suppressed.slice(0,499),{id:"send",emailNorm:"send@example.com",...baseline}]);
   expect(send.recipientIds).toEqual(["send"]);
-  expect(send.suppressed.UNSUBSCRIBED).toBe(650);
+  expect(send.suppressed.UNSUBSCRIBED).toBe(499);
   expect(campaignRecipientDisposition({...baseline,emailNorm:"not-an-email"})).toBe("NO_EMAIL");
  });
  it("caps unique deliverable recipients but allows exactly 500",()=>{

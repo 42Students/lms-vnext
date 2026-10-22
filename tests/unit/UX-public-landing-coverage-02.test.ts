@@ -6,11 +6,12 @@ describe("chat-16 public route responsive and accessible state coverage",()=>{
  it.each(["enterprises","universities","platform"])("UX-%s-02 keeps labelled shared hero, navigation and a usable demo action",area=>{
   const page=read("src/app/"+area+"/page.tsx");
   const kit=read("src/components/marketing/marketing-layout.tsx");
-  expect(page).toContain("<MarketingLayout>");
+  expect(page).toContain("<MarketingLayout");
   expect(page).toContain("<MarketingHero");
   expect(page).toContain("<MarketingCta");
-  expect(kit).toContain('aria-label="Public navigation"');
-  expect(kit).toContain('href="/request-demo"');
+  const header=read("src/components/marketing/marketing-header-client.tsx");
+  expect(header).toContain('aria-label="Primary"');
+  expect(header).toContain('href="/request-demo"');
   expect(kit).toContain("min-h-11");
   expect(kit).toContain("min-w-0");
   expect(kit).toContain("focus-visible:outline-2");
@@ -18,10 +19,12 @@ describe("chat-16 public route responsive and accessible state coverage",()=>{
  it("UX-request-demo-02 is keyboard reachable and does not collect unprotected form data",()=>{
   const page=read("src/app/request-demo/page.tsx");
   expect(page).toContain("<MarketingLayout>");
-  expect(page).toContain('href="mailto:');
-  expect(page).toContain("min-h-12");
+  expect(page).toContain('const DEMO_MAILTO = "mailto:"');
+  expect(page).toContain('href={DEMO_MAILTO}');
+  expect(page).toContain("min-h-11");
   expect(page).toContain("focus-visible:outline-2");
-  expect(page).toContain("No form data is collected");
+  expect(page).toContain("Email us to book a demo");
+  expect(page).not.toContain("<form");
   expect(page).not.toContain('method="post"');
  });
  it("UX-forbidden-02 gives an accessible recovery route, not a redirect loop",()=>{
@@ -36,8 +39,11 @@ describe("chat-16 public route responsive and accessible state coverage",()=>{
   expect(page).toContain("safeCompanyShareColumns(result.selectedColumns)");
   expect(page).toContain("getPublicCompanyApplicantShare");
   expect(page).toContain('result.kind==="CODE_REQUIRED"');
-  expect(page).toContain("type=\"text\" required inputMode=\"numeric\"");
-  expect(page).toContain("minLength={6} maxLength={6}");
+  const code=read("src/app/company-share/[token]/share-code-form.tsx");
+  expect(code).toContain('type="text" inputMode="numeric"');
+  expect(code).toContain("required minLength={6} maxLength={6}");
+  expect(code).toContain('pattern="[0-9]{6}"');
+  expect(code).toContain("disabled={!valid}");
   expect(page).toContain("<DataTable");
   expect(page).toContain("empty={<div role=\"status\"");
   expect(page).toContain('href={publicApplicantExportHref(token,result.search)}');

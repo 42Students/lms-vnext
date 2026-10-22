@@ -49,7 +49,9 @@ describe("TPO-companies-11 historical applicant sharing is scoped, bounded and h
    "src/modules/placements/company-share/company-history-service.ts"),"utf8");
   expect(source).toContain("eq(placementJobs.collegeId,placementCompanyApplicantShares.collegeId)");
   expect(source).toContain("eq(placementCompanyApplicantShares.collegeId,collegeId)");
-  expect(source).toContain("inArray(placementCompanyApplicantShares.jobId,[...jobIds])");
+  expect(source).toContain("companyJobIdBatches(jobIds)");
+  expect(source).toContain("inArray(placementCompanyApplicantShares.jobId,jobBatch)");
+  expect(source).toContain("latestCompanyShareRows(chunks.flat())");
   expect(source).toContain("where sel.share_id = ");
   expect(source).toContain(".limit(100)");
   expect(source).toContain("orderBy(desc(placementCompanyApplicantShares.createdAt))");
