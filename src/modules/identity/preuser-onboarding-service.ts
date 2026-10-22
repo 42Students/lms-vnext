@@ -15,7 +15,7 @@ const input=z.strictObject({
 });
 const MAX_PER_30_MIN=5;
 function secret(){
- const value=process.env.AUTH_ONBOARDING_PEPPER??"";
+ const value=process.env["AUTH_ONBOARDING_PEPPER"]??"";
  if(value.length<32)throw new Error("ONBOARDING_PROVIDER_NOT_CONFIGURED");
  return value;
 }
