@@ -1,4 +1,3 @@
-import { Pagination } from "@/components/ui/pagination";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
