@@ -171,7 +171,7 @@ export async function getSuperAdminCollegeReadiness(
           and(
             eq(
               collegeMemberships.collegeId,
-              college.id,
+              scopedCollegeId,
             ),
             eq(
               collegeMemberships.status,
