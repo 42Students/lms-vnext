@@ -6,8 +6,6 @@ import {
   eq,
   isNull,
   ne,
-  or,
-  ilike,
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -227,7 +225,7 @@ export async function listPrograms(
 export async function listProgramsPage(
   context: RequestContext,
   collegeIdInput: string,
-  raw: { departmentId?: string | null; q?: string; page?: number; pageSize?: number; includeArchived?: boolean } = {},
+  raw: { departmentId?: string | null; page?: number; pageSize?: number; includeArchived?: boolean } = {},
 ) {
   const collegeId = collegeIdSchema.parse(collegeIdInput);
   const college = await loadAcademicCollegeScope(collegeId);
@@ -242,14 +240,9 @@ export async function listProgramsPage(
   }
   const page = Math.max(1, Math.min(10000, Math.trunc(raw.page ?? 1) || 1));
   const pageSize = Math.max(1, Math.min(100, Math.trunc(raw.pageSize ?? 20) || 20));
-  const q=(raw.q??"").trim();
-  if(q.length>100)throw new Error("Invalid program search");
-  const like="%"+q.replace(/[\\%_]/g,"\\$&")+"%";
-  const pageSize = Math.max(1, Math.min(100, Math.trunc(raw.pageSize ?? 20) || 20));")+"%";
   const conditions = and(
     eq(departments.collegeId, collegeId),
     departmentId ? eq(programs.departmentId, departmentId) : undefined,
-    q ? or(ilike(programs.name,like),ilike(programs.code,like),ilike(departments.name,like)) : undefined,
     raw.includeArchived ? undefined : isNull(departments.archivedAt),
     raw.includeArchived ? undefined : eq(programs.status, "ACTIVE"),
   );
@@ -483,22 +476,6 @@ export async function updateProgram(
         ]);
         if (durationTerms < Math.max(term?.number ?? 0,progression?.number ?? 0))
           throw new AcademicsServiceError("PROGRAM_HAS_COHORTS");
-        // Imported learners may be actively enrolled in a cohort whose
-        // progression row was never migrated. A missing term is not evidence
-        // that those students can safely fit inside a shorter program.
-        const [unmappedEnrollment]=await tx.select({id:learnerProgramEnrollments.id})
-          .from(learnerProgramEnrollments)
-          .innerJoin(cohorts,and(
-            eq(cohorts.id,learnerProgramEnrollments.cohortId),
-            eq(cohorts.programId,programId)))
-          .leftJoin(cohortProgressionState,
-            eq(cohortProgressionState.cohortId,cohorts.id))
-          .where(and(
-            eq(learnerProgramEnrollments.programId,programId),
-            eq(learnerProgramEnrollments.status,"ACTIVE"),
-            isNull(cohortProgressionState.cohortId)))
-          .limit(1);
-        if(unmappedEnrollment)throw new AcademicsServiceError("PROGRAM_HAS_COHORTS");
       }
       const [updated] = await tx.update(programs).set({
         ...scalarInput,
