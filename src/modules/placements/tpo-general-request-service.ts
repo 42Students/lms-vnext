@@ -215,8 +215,11 @@ export async function listTpoGeneralRequests(ctx:RequestContext){
 async function approveEffect(tx:Tx,ctx:RequestContext,row:typeof placementLearnerGeneralRequests.$inferSelect){
  const p=row.payload;
  if(row.kind==="OFF_CAMPUS_OFFER"){
-  const company=String(p.companyName??""),compensation=String(p.ctcLpa??"");
-  if(!company||!compensation)throw new TpoGeneralRequestError("TARGET_CHANGED");
+  const company=typeof p.companyName==="string"?p.companyName.trim():"";
+  const compensation=p.ctcLpa==null?null:typeof p.ctcLpa==="string"?p.ctcLpa.trim():null;
+  if(!company||company.length>200||
+     (compensation!==null&&!/^(?:0|[1-9][0-9]{0,7})(?:\.[0-9]{1,2})?$/.test(compensation)))
+   throw new TpoGeneralRequestError("TARGET_CHANGED");
   const [offer]=await tx.insert(placementExternalOffers).values({
    collegeId:row.collegeId,membershipId:row.membershipId,
    companyName:company,ctcLpa:compensation,submittedByUserId:row.requestedByUserId,
