@@ -20,7 +20,7 @@ export function parseSuperAdminCourseProgressParams(raw:Record<string,string|str
  const allowed=["q","status","page","courseCode","cohortCode"] as const;
  if(Object.keys(raw).some(key=>!allowed.includes(key as typeof allowed[number])))return null;
  if(Object.values(raw).some(Array.isArray))return null;
- if(raw.page!==undefined&&(typeof raw.page!=="string"||!/^[1-9][0-9]*$/.test(raw.page)))
+ if(raw.page!==undefined&&(typeof raw.page!=="string"||(!/^[1-9][0-9]*$/.test(raw.page)||Number(raw.page)>1000)))
   return null;
  // Changing a class invalidates a stale course and result page.
  const cohortCode=raw.cohortCode||undefined;
