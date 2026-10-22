@@ -38,8 +38,8 @@ export function CollegeStudentLifecycleAction({ membershipId, name, status }: {
         if (!response.ok) {
           const details:unknown=await response.json().catch(()=>null);
           const payload=details&&typeof details==="object"?details as Record<string,unknown>:{};
-          const safeReason=typeof payload.message==="string"&&payload.message.length<=200
-            ?payload.message:"";
+          const safeReason=typeof payload["message"]==="string"&&payload["message"].length<=200
+            ?payload["message"]:"";
           const reason=response.status===401 ? "Sign in again to change student access."
             : response.status===409
             ? "This membership changed elsewhere. Refresh before retrying."
