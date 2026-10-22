@@ -71,6 +71,7 @@ export function FacultyAssessmentEditor({
   const [confirmAction, setConfirmAction] = useState<"SAVE" | "ARCHIVE" | "DISCARD" | null>(null);
   const [error, setError] =
     useState<string | null>(null);
+  const [deleteFailed,setDeleteFailed]=useState(false);
 
   const dirty = title !== assessment.title || description !== (assessment.description ?? "") ||
     dueAt !== authoringLocalDateTime(assessment.dueAt) ||
@@ -178,6 +179,7 @@ export function FacultyAssessmentEditor({
     }
     if (!confirmed) { setConfirmAction("ARCHIVE"); return; }
     setConfirmAction(null);
+    setDeleteFailed(false);
 
     setError(null);
     setDeleting(true);
@@ -198,6 +200,7 @@ export function FacultyAssessmentEditor({
         },
       );
       if (!response.ok) {
+        setDeleteFailed(true);
         setError(
           await courseApiError(response),
         );
@@ -205,12 +208,15 @@ export function FacultyAssessmentEditor({
       }
       const receipt:unknown=await response.json().catch(()=>null);
       if(!facultyAssessmentArchiveReceiptMatches(assessment.kind,assessment.id,assessment.title,receipt)){
+        setDeleteFailed(true);
         setError("The archive result could not be verified. Reload this Section before trying again.");
         return;
       }
       setOpen(false);
+      setDeleteFailed(false);
       router.refresh();
     } catch {
+      setDeleteFailed(true);
       setError(
         "Could not delete this assessment. Check your connection and try again.",
       );
@@ -225,6 +231,8 @@ export function FacultyAssessmentEditor({
         size="md"
         
         variant="secondary"
+        aria-label={"Edit "+assessment.kind.toLowerCase()+" "+assessment.title}
+        aria-busy={saving||deleting}
         onClick={() => {
           // Reset from latest server props every time: cancelled edits and
           // stale local state must not overwrite subsequently refreshed rows.
@@ -237,6 +245,7 @@ export function FacultyAssessmentEditor({
           setMethods(assessment.allowedMethods?normalizeAssignmentMethods(assessment.allowedMethods):[]);
           setSuccess(null);
           setError(null);
+          setDeleteFailed(false);
           setConfirmAction(null);
           setOpen(true);
         }}
@@ -244,8 +253,22 @@ export function FacultyAssessmentEditor({
         Edit
       </Button>
 
+      {deleteFailed&&error?<div role="alert" className="mt-2 space-y-2">
+        <Alert tone="error"><strong>Assignment was not deleted.</strong> {error}</Alert>
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" variant="secondary" size="sm"
+            disabled={saving||deleting} onClick={()=>void deleteAssessment()}>
+            Retry delete
+          </Button>
+          <Button type="button" variant="ghost" size="sm"
+            disabled={saving||deleting} onClick={()=>{setDeleteFailed(false);setError(null);}}>
+            Dismiss
+          </Button>
+        </div>
+      </div>:null}
       {success?<Alert tone="success">{success}</Alert>:null}
       <Drawer
+        className="md:!w-[min(640px,100vw)]"
         open={open}
         onOpenChange={(next) => {
           if (!next && (saving || deleting)) return;
@@ -265,6 +288,8 @@ export function FacultyAssessmentEditor({
               variant="danger"
               disabled={saving || deleting}
               loading={deleting}
+              aria-label={"Delete "+assessment.kind.toLowerCase()+" "+assessment.title}
+              aria-busy={deleting}
               onClick={() => void deleteAssessment()}
             >
               {deleting
@@ -363,7 +388,7 @@ export function FacultyAssessmentEditor({
            <fieldset className="space-y-2 rounded-lg border border-border p-3">
             <legend className="text-sm font-semibold">Allowed submission methods</legend>
             {(Object.keys(ASSIGNMENT_METHOD_LABELS) as AssignmentMethod[]).map(method=>
-             <label key={method} className="flex items-center gap-2 text-sm">
+             <label key={method} className="flex min-h-11 items-center gap-2 text-sm">
               <input type="checkbox" checked={methods.includes(method)} disabled={saving}
                onChange={event=>setMethods(current=>event.target.checked?
                 [...current,method]:current.filter(value=>value!==method))}
