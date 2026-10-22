@@ -327,7 +327,7 @@ export function PersonMembershipActions({
         open={suspendOpen}
         onOpenChange={next => { if (!lifecycleRequestPending.current && !lifecyclePending) setSuspendOpen(next); }}
         title={`Suspend ${displayName}?`}
-        description="Blocks login immediately and revokes any active session. Reversible — data and history are kept. This affects the selected college membership only; other active college memberships remain eligible after a fresh sign-in."
+        description="Suspends this college membership immediately and revokes its active sessions. The learner or staff member cannot access this college while suspended; other active college memberships may still be used after a fresh sign-in. This does not suspend their entire platform identity, and history is retained."
         confirmLabel={lifecyclePending?"Suspending…":"Suspend membership"}
         confirmVariant="danger"
         pending={lifecyclePending}
