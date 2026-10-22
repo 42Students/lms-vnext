@@ -30,7 +30,7 @@ describe("HR-BREAK-CONVO-RECEIPT-49: persisted recruiter message receipt",()=>{
   const payload:unknown=await response.json();
   expect(payload).toEqual({sent:true,id:messageId,threadId});
   expect(isVerifiedHrReplyReceipt(payload,threadId)).toBe(true);
-  expect(m.send).toHaveBeenCalledWith(expect.anything(),threadId,"Hello");
+  expect(m.send).toHaveBeenCalledWith(expect.anything(),threadId,"Hello",undefined);
  });
  it("keeps the 303 native form fallback",async()=>{
   const response=await route(request(false));

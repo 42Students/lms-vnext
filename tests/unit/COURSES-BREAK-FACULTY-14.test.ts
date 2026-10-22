@@ -70,13 +70,13 @@ describe("COURSES-BREAK-FACULTY-14 persisted Faculty schedule privilege at write
  it("FAC-attendance-grades-03 revoked teaching grant after UI load prevents insert and activity",async()=>{
   state.persistedDenied=true;
   await expect(command()).rejects.toMatchObject({code:"FACULTY_TEACHING_SCOPE_REQUIRED"});
-  expect(state).toMatchObject({locks:2,authChecks:1,selects:0,
+  expect(state).toMatchObject({locks:3,authChecks:1,selects:0,
    inserts:0,writes:0,events:0});
  });
  it("FAC-attendance-grades-03 valid author reaches the guarded conflict read before any insert",async()=>{
   const result=await command();
   expect(result).toMatchObject({id:"session",status:"SCHEDULED"});
-  expect(state).toMatchObject({locks:2,authChecks:1,selects:1,events:1});
+  expect(state).toMatchObject({locks:3,authChecks:1,selects:1,events:1});
   expect(state.inserts).toBe(2);
  });
  it("FAC-attendance-grades-03 suspended, disabled and non-Faculty account fail before transaction",async()=>{
