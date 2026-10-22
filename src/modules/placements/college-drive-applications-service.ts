@@ -116,7 +116,10 @@ export async function listCollegeDriveApplications(
               and s.application_id=${placementApplications.id} and s.status='BOOKED')`:
       query.attention==="STALE_APPLICATIONS"?
         and(eq(placementApplications.status,"SUBMITTED"),
-          sql`coalesce(${placementCollegeApplicationStages.stage},'APPLIED')='APPLIED'`,
+          sql`coalesce(${placementCollegeApplicationStages.stage},
+            case when ${placementApplicationScreenings.status}='SHORTLISTED' then 'SHORTLISTED'
+              when ${placementApplicationScreenings.status}='REJECTED' then 'REJECTED'
+              else 'APPLIED' end)='APPLIED'`,
           lt(placementApplications.submittedAt,new Date(Date.now()-7*86400000))):undefined,
       query.source === "ALL" ? undefined : eq(placementApplications.channel,query.source),
       query.departmentId||query.programId||query.cohortId ? exists(
