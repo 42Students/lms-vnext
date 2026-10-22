@@ -49,7 +49,7 @@ export default async function SuperAdminSemesterCourseMappingPage({searchParams}
      <Link href="/admin/semester-courses" className="font-semibold text-primary-text underline">Retry semester mappings</Link>
     </div>
    </Banner>:null}
-   {curriculum?.lookupFailures.map(name=><Banner key={name} tone="warning">
+   {curriculum?.lookupFailures?.map(name=><Banner key={name} tone="warning">
     <div className="flex flex-wrap items-center gap-3">
      <span>Could not load {name}. Other semester mapping information remains available.</span>
      <Link href="/admin/semester-courses" className="font-semibold text-primary-text underline">Retry {name}</Link>

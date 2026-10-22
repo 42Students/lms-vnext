@@ -4,6 +4,7 @@
 // /college-admin/departments — src/app/(authenticated)/college-admin/departments/page.tsx
 // /college-admin/programs — src/app/(authenticated)/college-admin/programs/page.tsx
 import {beforeEach,describe,expect,it,vi} from "vitest";
+import {isValidElement} from "react";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import type {RequestContext} from "@/modules/identity/context";
@@ -26,21 +27,35 @@ const base:RequestContext={
   status:"ACTIVE",roles:["COLLEGE_ADMIN"]},
 };
 
+function contentOf(node:unknown):string{
+ if(Array.isArray(node))return node.map(contentOf).join(" ");
+ if(node===null||node===undefined||typeof node==="boolean")return "";
+ if(typeof node==="string"||typeof node==="number")return String(node);
+ if(!isValidElement(node))return "";
+ const p=node.props as {children?:unknown;title?:unknown;description?:unknown;href?:unknown};
+ return [p.children,p.title,p.description,p.href].map(contentOf).join(" ");
+}
 beforeEach(()=>vi.clearAllMocks());
 
 describe("chat-16 public/auth redirect pages handle expired sessions and wrong roles",()=>{
- it("UX-e2e-superadmin-login-01 never offers a privileged e2e bypass",()=>{
-  expect(()=>E2EPage()).toThrow("REDIRECT:/login");
-  expect(vi.mocked(redirect)).toHaveBeenCalledExactlyOnceWith("/login");
+ it("UX-e2e-superadmin-login-01 never offers a privileged e2e bypass",async()=>{
+  const page=await E2EPage({searchParams:Promise.resolve({phone:"1234567890"})});
+  expect(contentOf(page)).toContain("This link no longer creates a Super Admin session.");
+  expect(contentOf(page)).toContain("Continue to secure sign-in");
+  expect(vi.mocked(redirect)).not.toHaveBeenCalled();
+  expect(vi.mocked(getCurrentRequestContext)).not.toHaveBeenCalled();
  });
  it("UX-superadmin-login-16 keeps legacy privileged bookmarks on the explicit first-party OTP path",()=>{
-  expect(()=>LegacySuperAdminPage()).toThrow("REDIRECT:/login");
-  expect(vi.mocked(redirect)).toHaveBeenCalledExactlyOnceWith("/login");
+  expect(()=>LegacySuperAdminPage()).toThrow("REDIRECT:/login?legacy=superadmin");
+  expect(vi.mocked(redirect)).toHaveBeenCalledExactlyOnceWith("/login?legacy=superadmin");
  });
- it("UX-privacy-policy-01 links the stable, existing static policy without an auth request",()=>{
-  expect(privacyMetadata.title).toBe("Privacy | 42LMS");
-  expect(()=>PrivacyPage()).toThrow("REDIRECT:/assets/static/privacy-policy-view.html");
+ it("UX-privacy-policy-01 serves the stable indexed policy without an auth request",async()=>{
+  expect(privacyMetadata.title).toBe("Privacy Policy | 42LMS");
+  expect(privacyMetadata.alternates?.canonical).toBe("https://42lms.com/privacy-policy");
+  const page=await PrivacyPage();
+  expect(isValidElement(page)).toBe(true);
   expect(vi.mocked(getCurrentRequestContext)).not.toHaveBeenCalled();
+  expect(vi.mocked(redirect)).not.toHaveBeenCalled();
  });
  it("UX-college-admin-departments-01 keeps active admin bookmark role-scoped",async()=>{
   vi.mocked(getCurrentRequestContext).mockResolvedValue(base);
