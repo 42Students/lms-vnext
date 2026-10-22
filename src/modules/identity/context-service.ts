@@ -264,6 +264,7 @@ export async function resolveRequestContext(
       collegeId: collegeMemberships.collegeId,
       organizationId: colleges.organizationId,
       status: collegeMemberships.status,
+      suspendedAt: collegeMemberships.suspendedAt,
     })
     .from(collegeMemberships)
     .innerJoin(colleges, eq(colleges.id, collegeMemberships.collegeId))
@@ -285,7 +286,7 @@ export async function resolveRequestContext(
     throw new ContextResolutionError("MEMBERSHIP_NOT_FOUND");
   }
 
-  if (membership.status !== "ACTIVE") {
+  if (membership.status !== "ACTIVE" || membership.suspendedAt !== null) {
     throw new ContextResolutionError("MEMBERSHIP_NOT_ACTIVE");
   }
 
