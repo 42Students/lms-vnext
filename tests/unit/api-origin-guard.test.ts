@@ -33,31 +33,31 @@ const ALLOWED: Record<string, string> = {
 const DELEGATED_ORIGIN: Record<string,{call:string;owner:string;guard:RegExp}> = {
   "src/app/api/admin/colleges/[collegeId]/subdomain/route.ts POST":{
     call:"mutate(request,params)",owner:"src/app/api/admin/colleges/[collegeId]/subdomain/route.ts",
-    guard:/async function mutate[\\s\\S]*?isSameOriginRequest\\(request\\)/,
+    guard:/async function mutate[\s\S]*?isSameOriginRequest\(request\)/,
   },
   "src/app/api/admin/colleges/[collegeId]/subdomain/route.ts PUT":{
     call:'mutate(request,params,"PUT")',owner:"src/app/api/admin/colleges/[collegeId]/subdomain/route.ts",
-    guard:/async function mutate[\\s\\S]*?isSameOriginRequest\\(request\\)/,
+    guard:/async function mutate[\s\S]*?isSameOriginRequest\(request\)/,
   },
   "src/app/api/admin/colleges/[collegeId]/subdomain/route.ts DELETE":{
     call:'mutate(request,params,"DELETE")',owner:"src/app/api/admin/colleges/[collegeId]/subdomain/route.ts",
-    guard:/async function mutate[\\s\\S]*?isSameOriginRequest\\(request\\)/,
+    guard:/async function mutate[\s\S]*?isSameOriginRequest\(request\)/,
   },
   "src/app/api/attendance/faculty/sessions/[scheduleEventId]/route.ts POST":{
     call:"PATCH(request,context)",owner:"src/app/api/attendance/faculty/sessions/[scheduleEventId]/route.ts",
-    guard:/export async function PATCH[\\s\\S]*?isSameOriginRequest\\(request\\)/,
+    guard:/export async function PATCH[\s\S]*?isSameOriginRequest\(request\)/,
   },
   "src/app/api/auth/legacy/otp/start/route.ts POST":{
     call:"startScopedLogin(adapted)",owner:"src/app/api/auth/login/start/route.ts",
-    guard:/export async function POST[\\s\\S]*?guardLoginRequest\\(\\s*request/,
+    guard:/export async function POST[\s\S]*?guardLoginRequest\(\s*request/,
   },
   "src/app/api/auth/session/route.ts POST":{
     call:"DELETE(request)",owner:"src/app/api/auth/session/route.ts",
-    guard:/export async function DELETE[\\s\\S]*?isSameOriginRequest\\(request\\)/,
+    guard:/export async function DELETE[\s\S]*?isSameOriginRequest\(request\)/,
   },
   "src/app/api/college/batches/[cohortId]/route.ts PUT":{
     call:"PATCH(request,route)",owner:"src/app/api/college/batches/[cohortId]/route.ts",
-    guard:/export async function PATCH[\\s\\S]*?isSameOriginRequest\\(request\\)/,
+    guard:/export async function PATCH[\s\S]*?isSameOriginRequest\(request\)/,
   },
 };
 
