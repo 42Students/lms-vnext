@@ -712,6 +712,7 @@ export function HrDriveDraftForm({
                 const parsed=event.target.value;
                 try{
                   const branches=parseHrDraftLegacyBranchTags(parsed);
+                  setFieldErrors(current=>({...current,branches:""}));
                   setDraft(current=>({...current,branches}));
                 }catch{
                   // Keep the unsaved text and show an explicit error, never trim tags.
