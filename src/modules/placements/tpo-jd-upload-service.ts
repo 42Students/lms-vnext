@@ -101,3 +101,18 @@ export async function saveTpoJdUpload(context:RequestContext,rawJobId:unknown,ra
   return {updatedAt:updated.updatedAt.toISOString(),hasDocument:Boolean(next),changed:true};
  });
 }
+
+/** Metadata only: a draft wizard may obtain a fresh optimistic token.
+ * Never expose the private object key or signed URL in this response.
+ */
+export async function getTpoJdStatus(context:RequestContext,rawJobId:unknown){
+ const jobId=placementJobIdSchema.parse(rawJobId);
+ const scope=await activeDrive(context,jobId);
+ const [job]=await getDb().select({
+  updatedAt:placementJobs.updatedAt,
+  hasDocument:sql<boolean>`${placementJobs.jobDescriptionObjectPath} is not null`,
+ }).from(placementJobs).where(and(
+  eq(placementJobs.id,jobId),eq(placementJobs.collegeId,scope.collegeId))).limit(1);
+ if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+ return {updatedAt:job.updatedAt.toISOString(),hasDocument:job.hasDocument};
+}

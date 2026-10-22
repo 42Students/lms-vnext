@@ -4,7 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {readBoundedJsonBody} from "@/lib/bounded-json-body";
 import {apiErrorResponse} from "@/lib/api-error";
-import {initiateTpoJdUpload,saveTpoJdUpload} from "@/modules/placements/tpo-jd-upload-service";
+import {getTpoJdStatus,initiateTpoJdUpload,saveTpoJdUpload} from "@/modules/placements/tpo-jd-upload-service";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -30,6 +30,18 @@ export async function POST(request:Request,{params}:Ctx){
    {status:400,headers:noStore});
   if(error instanceof Error&&["JD_FILE_TYPE_INVALID","JD_FILE_SIZE_INVALID"].includes(error.message))
    return NextResponse.json({error:error.message},{status:400,headers:noStore});
+  const response=apiErrorResponse(error);
+  response.headers.set("Cache-Control","private, no-store");
+  return response;
+ }
+}
+
+export async function GET(_request:Request,{params}:Ctx){
+ try{
+  const {jobId}=await params;
+  return NextResponse.json(
+   await getTpoJdStatus(await getCurrentRequestContext(),jobId),{headers:noStore});
+ }catch(error){
   const response=apiErrorResponse(error);
   response.headers.set("Cache-Control","private, no-store");
   return response;
