@@ -715,6 +715,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
         Refresh the preflight and check existing workspaces before retrying.
       </p>
       <DataTable caption="Unconfirmed learner creation"
+        empty={<EmptyState title="No unconfirmed learner creation results" description="Review the creation outcome before retrying." />}
         rows={unconfirmedRows} getRowKey={row=>row.membershipId}
         columns={[
           {key:"learner",header:"Learner",mobilePriority:"primary",
