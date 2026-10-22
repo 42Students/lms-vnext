@@ -825,6 +825,7 @@ export async function allocateGroupMembersFromLegacySelection(
    all.add(mapped[0]!);
   }
  }
+ const unresolvedRollNumbers:string[]=[];
  if(selection.rollNumbers?.length) {
   const found=await getDb().select({
    membershipId:learnerProfiles.membershipId,roll:learnerProfiles.rollNumber,
@@ -833,6 +834,8 @@ export async function allocateGroupMembersFromLegacySelection(
    .where(and(eq(collegeMemberships.collegeId,group.collegeId),
     eq(collegeMemberships.status,"ACTIVE"),
     inArray(learnerProfiles.rollNumber,selection.rollNumbers))).limit(501);
+  const resolved=new Set(found.map(row=>row.roll));
+  for(const roll of selection.rollNumbers)if(!resolved.has(roll))unresolvedRollNumbers.push(roll);
   for(const row of found)all.add(row.membershipId);
  }
  if(selection.fromClassId){
@@ -852,7 +855,9 @@ export async function allocateGroupMembersFromLegacySelection(
   for(const row of found)all.add(row.membershipId);
  }
  if(all.size>500)throw new GroupServiceError("GROUP_BULK_LIMIT_EXCEEDED");
- const results:{membershipId:string;status:"IMPORTED"|"FAILED";reason?:string}[]=[];
+ const results:{membershipId:string;status:"IMPORTED"|"FAILED";reason?:string}[]=
+  unresolvedRollNumbers.map(roll=>({membershipId:roll,status:"FAILED" as const,
+   reason:"No student with this roll number in this college"}));
  for(const membershipId of all){
   try{
    await joinGroup(context,groupId,membershipId,"MANUAL",false,selection.source,
@@ -863,7 +868,7 @@ export async function allocateGroupMembersFromLegacySelection(
     reason:error instanceof GroupServiceError?error.code:"GROUP_IMPORT_FAILED"});
   }
  }
- return {requested:all.size,imported:results.filter(row=>row.status==="IMPORTED").length,
+ return {requested:all.size+unresolvedRollNumbers.length,imported:results.filter(row=>row.status==="IMPORTED").length,
   failed:results.filter(row=>row.status==="FAILED").length,source:selection.source,results};
 }
 
