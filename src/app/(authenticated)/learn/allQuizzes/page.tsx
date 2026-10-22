@@ -50,11 +50,13 @@ export default async function LearnerQuizzesPage({searchParams}:{searchParams:Pr
   if(linkedContent){
     let linkedQuiz=overview.quizzes.find(item=>item.id===linkedContent);
     if(!linkedQuiz&&/^[1-9][0-9]{0,9}$/.test(linkedContent)&&overview.quizzes.length){
-      const [matching]=await getDb().select({id:courseQuizzes.id}).from(courseQuizzes)
+      const lookup=await getDb().select({id:courseQuizzes.id}).from(courseQuizzes)
        .where(and(eq(courseQuizzes.legacyQuizId,Number(linkedContent)),
         inArray(courseQuizzes.id,overview.quizzes.map(item=>item.id)))).limit(1)
-       .catch(()=>{legacyLookupFailed=true;return [] as {id:string}[];});
-      if(matching)linkedQuiz=overview.quizzes.find(item=>item.id===matching.id);
+       .then(rows=>({matching:rows[0]??null,failed:false}))
+       .catch(()=>({matching:null,failed:true}));
+      legacyLookupFailed=lookup.failed;
+      if(lookup.matching)linkedQuiz=overview.quizzes.find(item=>item.id===lookup.matching.id);
     }
     if(linkedQuiz&&linkedQuiz.attemptsUsed>0){
       redirect("/learn/allQuizzes/"+encodeURIComponent(linkedQuiz.id)+
