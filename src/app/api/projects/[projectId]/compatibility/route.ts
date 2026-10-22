@@ -18,7 +18,8 @@ export async function GET(_request:Request,{params}:{
    response:"OK",
    message:"Project workspace sections loaded",
    sections:legacyProjectSectionOrder[role],
-   routes:projectLegacyCompatibilityRoutes(scope.project.id),
+   routes:projectLegacyCompatibilityRoutes(scope.project.id,role,
+      scope.access!=="OBSERVER"),
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }

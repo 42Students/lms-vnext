@@ -39,9 +39,20 @@ export const legacyProjectApiCrosswalk:readonly Binding[]=[
  {section:"delivery",legacy:"reviewSubmission",method:"POST",endpoint:"/submission/review"},
  {section:"delivery",legacy:"createDeliveryDraft",method:"POST",endpoint:"/submissions"},
 ] as const;
-export function projectLegacyCompatibilityRoutes(projectId:string){
+export function projectLegacyCompatibilityRoutes(
+ projectId:string,role:"ADMIN"|"MENTOR"|"LEARNER",
+ allowMutations=true,
+){
  const base="/api/projects/"+encodeURIComponent(projectId);
- return legacyProjectApiCrosswalk.map(row=>({
+ return legacyProjectApiCrosswalk.filter(row=>{
+  if(row.method==="GET")return true;
+  if(!allowMutations)return false;
+  if(role==="LEARNER")return row.legacy==="createDeliveryDraft"||
+    row.legacy==="updateSubmission";
+  if(role==="MENTOR")return !["updateSubmission","reviewSubmission","createDeliveryDraft",
+    "updateWorkspace"].includes(row.legacy);
+  return true;
+ }).map(row=>({
   ...row,url:base+row.endpoint,
  }));
 }
