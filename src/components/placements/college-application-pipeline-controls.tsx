@@ -58,6 +58,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
  const [confirmDiscard,setConfirmDiscard]=useState(false);
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
+ const [transitionWarning,setTransitionWarning]=useState<{id:string;message:string}|null>(null);
  const [staleConflict,setStaleConflict]=useState(false);
  type MoveOutcome={applicationId:string;status:string;reason?:string;
   undoEventId?:string;undoUntil?:string;stageVersion?:number};
@@ -108,6 +109,12 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   }
  }
  function selectRow(row:Row,next:string){
+  if(next!=="REINSTATE"&&next!=="CORRECT_APPLIED"&&
+    !(row.allowedNextStages??transitions[row.stage]??[]).includes(next)){
+    setTransitionWarning({id:row.id,message:"Cannot move from "+stageLabel(row.stage)+" to "+stageLabel(next)});
+    return;
+  }
+  setTransitionWarning(null);
   const correction=next==="CORRECT_APPLIED";
   setAllMatching(false);setSelected([row.id]);setTarget(correction?"APPLIED":next);
   setAction(correction?"CORRECT":next==="REINSTATE"?"REINSTATE":"MOVE");
@@ -291,6 +298,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
      <Link href={basePath+"/jobs/"+encodeURIComponent(jobId)+"/interviews?applicationId="+encodeURIComponent(row.id)}
       className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text underline md:min-h-9">
       Schedule Interview</Link>:null}
+    {transitionWarning?.id===row.id?<span role="alert" className="text-xs text-warning-text">{transitionWarning.message}</span>:null}
     {row.stage==="REJECTED"?
      <Button type="button" disabled={busy||row.status!=="SUBMITTED"}
       aria-label={"Reinstate "+(row.name||"learner")} variant="secondary"
