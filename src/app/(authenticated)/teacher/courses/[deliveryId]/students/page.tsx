@@ -22,8 +22,13 @@ export default async function FacultyCourseStudentsPage({
     const assigned=await listFacultyCourseDeliveries(context);
     const current=assigned.find(item=>item.deliveryId===deliveryId);
     if(!current)notFound();
+    // Resolve historical numeric class IDs only through this faculty member's
+    // authorized, same-course teaching assignments. Never treat a numeric
+    // class reference as an unrestricted tenant-wide roster lookup.
+    const legacyClassId=/^[1-9]\d{0,9}$/.test(cls)?Number(cls):null;
     const target=assigned.find(item=>item.courseId===current.courseId&&
-      (item.sectionId===cls||item.deliveryId===cls));
+      (item.sectionId===cls||item.deliveryId===cls||
+       (legacyClassId!==null&&item.legacyClassId===legacyClassId)));
     // Legacy bookmarked ?cls values that are missing or no longer assigned
     // fall back to this verified teaching section instead of leaking
     // another class or throwing away the teacher's course context.
