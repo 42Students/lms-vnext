@@ -43,8 +43,8 @@ export function AdminScopedLiveSearch({initial,path,placeholder,recentSuggestion
     const record=result as Record<string,unknown>;
     const strings=(v:unknown)=>Array.isArray(v)?
       v.filter((x):x is string=>typeof x==="string"&&x.length<=100).slice(0,15):[];
-    setRemote({recent:strings(record.recent),popular:strings(record.popular),
-      results:strings(record.results)});
+    setRemote({recent:strings(record["recent"]),popular:strings(record["popular"]),
+      results:strings(record["results"])});
    }catch{
     // A transient lookup error must not convert old-stale data into a new
     // authoritative suggestion. The regular directory search still works.
@@ -89,7 +89,7 @@ export function AdminScopedLiveSearch({initial,path,placeholder,recentSuggestion
     if(!all.length)return;
     if(event.key==="ArrowDown"){event.preventDefault();setFocused(true);setActive(prev=>(prev+1)%all.length);}
     if(event.key==="ArrowUp"){event.preventDefault();setFocused(true);setActive(prev=>prev<=0?all.length-1:prev-1);}
-    if(event.key==="Enter"&&focused&&active>=0&&active<all.length){event.preventDefault();setValue(all[active]);setFocused(false);setActive(-1);navigate(all[active]);}
+    if(event.key==="Enter"&&focused&&active>=0){const selected=all[active];if(selected!==undefined){event.preventDefault();setValue(selected);setFocused(false);setActive(-1);navigate(selected);}}
    }}
    aria-label={"Search "+audience} placeholder={searchPlaceholder}
    role="combobox" aria-busy={isPending||lookingUp} aria-expanded={focused&&all.length>0}
