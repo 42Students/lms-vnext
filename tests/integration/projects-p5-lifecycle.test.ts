@@ -628,12 +628,16 @@ describe("Projects P5 lifecycle", () => {
       status: "ACTIVE",
     });
 
+    // Reopening the sprint advances the release version. Read the new token
+    // so this assertion checks the open-sprint guard, not stale-write CAS.
+    const reopenedWorkspace = await getProjectInstanceWorkspace(mentor, project.id);
+    const reopenedRelease = reopenedWorkspace.releases.find(row => row.id === release.id)!;
     await expect(
       shipProjectRelease(
         mentor,
         project.id,
         release.id,
-        {expectedUpdatedAt:unshipped.updatedAt.toISOString()},
+        {expectedUpdatedAt:reopenedRelease.updatedAt.toISOString()},
       ),
     ).rejects.toMatchObject({
       // Un-shipping permits sprint reopening, but shipping still requires
