@@ -96,8 +96,8 @@ export function LearnerNotificationBell(){
    {error&&everLoaded?<p className="mt-2 text-xs text-muted-foreground leading-[20px]">Showing the last successful notifications.</p>:null}
    {loading&&everLoaded?<p role="status" className="px-4 py-2 text-xs text-muted-foreground leading-[20px]">Refreshing notifications…</p>:null}
    {items.length===0&&!error&&!loading?<TopbarNotificationEmpty title="No notifications yet"/>:null}
-   {due.length>0?<section aria-label="Assignments due soon" className="mt-3">
-    <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Assignments due within 48 hours</h3>
+   {due.length>0?<section aria-labelledby="learner-bell-due-heading" className="mt-3">
+    <h3 id="learner-bell-due-heading" className="text-sm font-semibold text-[var(--lms-heading)]">Assignments due within 48 hours</h3>
     <ul className="mt-2 space-y-2">
      {due.slice(0,3).map(item=><li key={item.key}>
       <Link href={item.href} onClick={()=>setOpen(false)}
