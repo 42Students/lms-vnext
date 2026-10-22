@@ -1,7 +1,6 @@
 import type { ProjectTemplateBlueprint } from "./validation";
 
 type Sprint = ProjectTemplateBlueprint["sprints"][number];
-type Task = ProjectTemplateBlueprint["tasks"][number];
 
 /** SA-placements-projects-83/84: reordering never silently reassigns
  * a task to another sprint. The old repeating editor was a flat array,
