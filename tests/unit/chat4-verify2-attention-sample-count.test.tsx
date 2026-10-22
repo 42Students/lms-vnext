@@ -21,6 +21,23 @@ describe("W1-2 legacy Needs attention count and sampled detail",()=>{
   expect(html).toContain("returnTo=");
   expect(html).not.toContain("stage=OFFERED");
  });
+ it("links named affected learners to the scoped category without miscounting samples",()=>{
+  const learner={...sample,learnerName:"Akhila Rao",count:1,detail:"Accepted offer without letter"};
+  const html=renderToStaticMarkup(<SuperAdminNeedsAttention
+   basePath="/admin/placements" items={[]} summary={[{
+    code:"OFFERED_NO_LETTER",affected:15,jobs:8,
+    sampleBasis:"learners",samples:[learner],
+   }]}/>);
+  expect(html).toContain("Needs attention (15)");
+  expect(html).toContain("Akhila Rao");
+  expect(html).toContain("Accepted offer without letter");
+  expect(html).toContain("1 of 15 affected candidate records across 8 flagged drives");
+  expect(html).toContain("+14 more records");
+  expect(html).toContain("q=Akhila+Rao");
+  expect(html).toContain("stage=ALL");
+  expect(html).toContain("attention=OFFERED_NO_LETTER");
+  expect(html).not.toContain("stage=OFFERED");
+ });
  it("preserves unavailable read separately from the true empty state",()=>{
   expect(renderToStaticMarkup(<SuperAdminNeedsAttention
    basePath="/admin/placements" items={[]} available={false}/>))
