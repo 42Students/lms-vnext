@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,sql,inArray,isNotNull} from "drizzle-orm";
+import {and,eq,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,inAppNotifications,collegeMemberships,learnerProfiles,users} from "@/db/schema";
