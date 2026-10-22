@@ -12,9 +12,9 @@ describe("TPO drive override concurrency",()=>{
  });
  it("TPO-students-12 includes server-generated override IDs and guarded per-row undo with an explicit reason",()=>{
   const ui=src("src/components/tpo/tpo-students-drive-visibility.tsx");
-  expect(ui).toContain("current.eligibility.override.id");
-  expect(ui).toContain("expectedOverrideId:row.overrideId");
-  expect(ui).toContain("Undo saved changes (only if still current)");
-  expect(ui).toContain("Undo previous TPO bulk change");
+  expect(ui).toContain("const previous=current.eligibility.override");
+  expect(ui).toContain("expectedOverrideId:row.action===\"CLEAR\"?null:row.overrideId");
+  expect(ui).toContain("Restore previous override state (only if still current)");
+  expect(ui).toContain("Undo restores the previous explicit Include/Exclude state");
  });
 });

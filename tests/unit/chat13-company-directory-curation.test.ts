@@ -8,8 +8,10 @@ describe("Super Admin company curation directory parity",()=>{
   for(const col of ["industry:","addedByType:","companyCollegeCount:","driveCount:",
     "lastActiveAt:","domains:","aliases:"])expect(svc).toContain(col);
   const page=r("src/app/(authenticated)/admin/companies/page.tsx");
-  for(const label of ["Added by:","Industry:","Linked colleges","Drives in this college",
-    "Last drive activity","Domains:","Other names:"])expect(page).toContain(label);
+  for(const label of ["Added by:","Industry:","Linked colleges","With drives",
+    "Last active","Domains:","Other names:"])expect(page).toContain(label);
+  expect(page).toContain("data.relationshipsWithDrivesOnPage");
+  expect(page).toContain("row.lastActiveAt");
  });
  it("SA-placements-projects-29 searches across aliases and every canonical domain",()=>{
   const src=r("src/modules/placements/admin-company-directory-service.ts");
