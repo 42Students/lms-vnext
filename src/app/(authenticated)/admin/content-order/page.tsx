@@ -20,8 +20,8 @@ export default async function AdminSectionSyllabusOrderPage({searchParams}:{
   <Banner tone="warning">Select a college in the header to manage its class syllabus.</Banner>
  </div>;
  const raw=await searchParams;
- const rawOffering=raw.offeringId;
- const rawDelivery=raw.deliveryId;
+ const rawOffering=raw["offeringId"];
+ const rawDelivery=raw["deliveryId"];
  const offeringId=typeof rawOffering==="string"&&/^[\da-f-]{36}$/i.test(rawOffering)?rawOffering:null;
  const deliveryId=typeof rawDelivery==="string"&&/^[\da-f-]{36}$/i.test(rawDelivery)?rawDelivery:null;
  const choices=await listSuperAdminContentSectionOptions(context);
