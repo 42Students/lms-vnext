@@ -43,12 +43,8 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
       <Metric label="All drives" value={operations.summary.totalJobs} description="All non-archived college drives, not the bounded card sample." />
     </div> : null}
     {showDriveSearch?(
-      operations.attention.available
-        ? <SuperAdminNeedsAttention items={attentionItems} basePath={basePath}/>
-        : <section role="status" className="border-b border-border py-4 text-sm text-body">
-            Couldn't check for anything that needs attention.
-            <Link href={basePath} className="ml-3 font-semibold text-link underline">Retry</Link>
-          </section>
+      <SuperAdminNeedsAttention items={attentionItems} basePath={basePath}
+        available={operations.attention.available} summary={operations.attention.categories}/>
     ):
     <section className="border-b border-border pb-6">
       <div className="border-b border-border pb-3">
