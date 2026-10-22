@@ -309,8 +309,8 @@ export async function listArchivedColleges(context: RequestContext) {
   });
   return getDb().transaction(async tx=>{
     await assertPersistedPlatformPermission(tx,context,"college.manage",{
-      organizationId:selectedOrganizationId??undefined,
-      collegeId:selectedCollegeId??undefined,
+      ...(selectedOrganizationId !== null ? { organizationId: selectedOrganizationId } : {}),
+      ...(selectedCollegeId !== null ? { collegeId: selectedCollegeId } : {}),
     });
     return tx.select({
       id:colleges.id,name:colleges.name,code:colleges.code,
