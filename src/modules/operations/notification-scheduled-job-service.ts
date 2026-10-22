@@ -125,7 +125,7 @@ export async function releaseScheduledNotificationOutbox(
 ): Promise<BatchResult> {
   if (fence.lease.jobName !== "notification.release")
     throw new Error("INVALID_NOTIFICATION_JOB_LEASE");
-  if (process.env.DB10_NOTIFICATION_OUTBOX_READY !== "DB10_VERIFIED")
+  if (process.env["DB10_NOTIFICATION_OUTBOX_READY"] !== "DB10_VERIFIED")
     return { processed: 0, hasMore: false };
   let processed = 0;
   for (let n = 0; n < 200; n++) {
@@ -146,12 +146,12 @@ export async function releaseScheduledNotificationOutbox(
       const selection = entry.recipient_selection;
       const record = selection && typeof selection === "object" &&
         !Array.isArray(selection) ? selection as Record<string, unknown> : null;
-      const userId = record?.userId;
-      const title = record?.title;
-      const body = record?.body;
-      const href = record?.actionHref;
+      const userId = record?.["userId"];
+      const title = record?.["title"];
+      const body = record?.["body"];
+      const href = record?.["actionHref"];
       const validId = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
-      const valid = record?.type === "EXPLICIT_USER" &&
+      const valid = record?.["type"] === "EXPLICIT_USER" &&
         typeof userId === "string" && validId.test(userId) &&
         typeof title === "string" && title.trim().length > 0 && title.length <= 240 &&
         typeof body === "string" && body.trim().length > 0 && body.length <= 2000 &&

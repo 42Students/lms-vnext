@@ -44,8 +44,10 @@ export function createApprovedNotificationSmsProvider(
     purpose:message.purpose,recipient:message.phoneE164,
     outcome:outcome.status==="ACCEPTED"?"PROVIDER_ACCEPTED":"FAILED",
     providerSid:outcome.status==="ACCEPTED"?outcome.providerSid??null:null,
-    failureCode:code,collegeId:message.collegeId,
-    organizationId:message.organizationId,sourceEventId:message.sourceEventId,
+    failureCode:code,
+    ...(message.collegeId!==undefined?{collegeId:message.collegeId}:{}),
+    ...(message.organizationId!==undefined?{organizationId:message.organizationId}:{}),
+    ...(message.sourceEventId!==undefined?{sourceEventId:message.sourceEventId}:{}),
    });
   }
   return outcome.status==="ACCEPTED"

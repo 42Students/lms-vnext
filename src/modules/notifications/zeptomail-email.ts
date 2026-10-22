@@ -89,13 +89,13 @@ export function readZeptoMailConfig(
   env: Record<string, string | undefined> = process.env,
 ): ZeptoMailConfig {
   return {
-    apiUrl: env.ZEPTOMAIL_API_URL ?? "https://api.zeptomail.in/v1.1/email/template",
+    apiUrl: env["ZEPTOMAIL_API_URL"] ?? "https://api.zeptomail.in/v1.1/email/template",
     // Never restore the embedded credential from the old LMS, including in dev.
-    token: pairedUnquote((env.ZEPTOMAIL_TOKEN ?? "").trim()),
-    otpTemplateKey: (env.ZEPTOMAIL_OTP_TEMPLATE_KEY ??
+    token: pairedUnquote((env["ZEPTOMAIL_TOKEN"] ?? "").trim()),
+    otpTemplateKey: (env["ZEPTOMAIL_OTP_TEMPLATE_KEY"] ??
       "2518b.4c361928d9526a75.k1.aea6cef0-4e4a-11f1-97e6-e256a66a52e4.19e1e1f015f").trim(),
-    fromAddress: env.ZEPTOMAIL_FROM_ADDRESS ?? "hello@42lms.com",
-    fromName: env.ZEPTOMAIL_FROM_NAME ?? "42Learn",
+    fromAddress: env["ZEPTOMAIL_FROM_ADDRESS"] ?? "hello@42lms.com",
+    fromName: env["ZEPTOMAIL_FROM_NAME"] ?? "42Learn",
   };
 }
 
@@ -261,7 +261,7 @@ function verifiedFrom(
 ): boolean {
   const address = normalizeRecipient("EMAIL", rawAddress);
   if (!isValidRecipient("EMAIL", address)) return false;
-  const verified = [config.fromAddress, ...(env.ZEPTOMAIL_VERIFIED_FROM_ADDRESSES ?? "").split(",")];
+  const verified = [config.fromAddress, ...(env["ZEPTOMAIL_VERIFIED_FROM_ADDRESSES"] ?? "").split(",")];
   return verified.some((entry) => normalizeRecipient("EMAIL", entry) === address);
 }
 
@@ -271,11 +271,11 @@ function verifiedReplyTo(
 ): boolean {
   const address = normalizeRecipient("EMAIL", rawAddress);
   if (!isValidRecipient("EMAIL", address)) return false;
-  const explicit = (env.ZEPTOMAIL_VERIFIED_REPLY_TO_ADDRESSES ?? "").split(",");
+  const explicit = (env["ZEPTOMAIL_VERIFIED_REPLY_TO_ADDRESSES"] ?? "").split(",");
   if (explicit.some((entry) => normalizeRecipient("EMAIL", entry) === address)) return true;
   // Reply routing on a verified sending domain (including college-specific +tags).
   const domain = address.split("@")[1];
-  const domains = [config.fromAddress, ...(env.ZEPTOMAIL_VERIFIED_FROM_ADDRESSES ?? "").split(",")]
+  const domains = [config.fromAddress, ...(env["ZEPTOMAIL_VERIFIED_FROM_ADDRESSES"] ?? "").split(",")]
     .map((entry) => normalizeRecipient("EMAIL", entry))
     .filter((entry) => isValidRecipient("EMAIL", entry))
     .map((entry) => entry.split("@")[1]);
@@ -285,8 +285,8 @@ function verifiedReplyTo(
 function allowedInEnvironment(
   recipient: string, env: Record<string, string | undefined>,
 ): boolean {
-  if (env.APP_ENV === "production" || env.STAGE === "prod" || env.STAGE === "production") return true;
-  const configured = [env.DEV_MAIL_ALLOW ?? "", env.AUTH_TEST_EMAILS ?? ""]
+  if (env["APP_ENV"] === "production" || env["STAGE"] === "prod" || env["STAGE"] === "production") return true;
+  const configured = [env["DEV_MAIL_ALLOW"] ?? "", env["AUTH_TEST_EMAILS"] ?? ""]
     .join(",").split(",").map((value) => value.trim().toLowerCase()).filter(Boolean);
   return configured.some((entry) =>
     entry === recipient || (entry.startsWith("@") && recipient.endsWith(entry)));
@@ -325,10 +325,10 @@ async function safeProviderCode(response: Response): Promise<string | undefined>
     const data: unknown = await response.json();
     if (!data || typeof data !== "object") return undefined;
     const record = data as Record<string, unknown>;
-    const nested = record.error;
-    const code = typeof record.code === "string" ? record.code :
+    const nested = record["error"];
+    const code = typeof record["code"] === "string" ? record["code"] :
       nested && typeof nested === "object" ?
-        (nested as Record<string, unknown>).code : undefined;
+        (nested as Record<string, unknown>)["code"] : undefined;
     // Never log a provider message or arbitrary error body (may contain PII).
     return typeof code === "string" && /^[a-zA-Z0-9_.-]{1,64}$/.test(code)
       ? code : undefined;
@@ -354,8 +354,8 @@ export async function sendZeptoMailTemplate(
   // Legacy source contained an exposed provider token. Require an explicit
   // operational attestation that the old key was REVOKED and a new one provisioned.
   // No token values, hashes or leaked defaults may be stored in source or logs.
-  if ((env.APP_ENV === "production" || env.STAGE === "prod" || env.STAGE === "production") &&
-      env.ZEPTOMAIL_LEGACY_KEY_REVOKED !== "confirmed") {
+  if ((env["APP_ENV"] === "production" || env["STAGE"] === "prod" || env["STAGE"] === "production") &&
+      env["ZEPTOMAIL_LEGACY_KEY_REVOKED"] !== "confirmed") {
     return notSent(purpose, "CREDENTIAL_ROTATION_UNVERIFIED");
   }
   if (!isSecureMailProviderEndpoint(config.apiUrl)) return notSent(purpose, "ENDPOINT_INVALID");
@@ -386,15 +386,15 @@ export async function sendZeptoMailTemplate(
     if ((purpose.event === "JOB_INTERVIEW_SCHEDULED" ||
       purpose.event === "INTERVIEW_REMINDER" ||
       purpose.event === "INTERVIEW_CONFIRMED") &&
-      !mergeInfo.meetingLink?.trim() && !mergeInfo.venueAddress?.trim() &&
-      !mergeInfo.interviewLocation?.trim()) {
+      !mergeInfo["meetingLink"]?.trim() && !mergeInfo["venueAddress"]?.trim() &&
+      !mergeInfo["interviewLocation"]?.trim()) {
       return notSent(purpose, "REQUIRED_VARIABLE_MISSING");
     }
   }
   // Retry a non-OTP POST only if the provider is explicitly attested to
   // honor Idempotency-Key AND the caller supplies its durable outbox key.
   const canRetry=purpose.kind!=="OTP"&&
-   env.ZEPTOMAIL_IDEMPOTENCY_SUPPORTED==="confirmed"&&
+   env["ZEPTOMAIL_IDEMPOTENCY_SUPPORTED"]==="confirmed"&&
    typeof message.idempotencyKey==="string"&&
    /^[a-zA-Z0-9._:-]{16,128}$/.test(message.idempotencyKey);
   try {
