@@ -45,6 +45,19 @@ export function AdminPlacementStudentSearch({ collegeId, initialQuery, choices, 
   const show = open && Boolean(collegeId) && value.length >= 2;
   const base = "/admin/placements/student-lookup";
 
+  // A history/back navigation changes the server query without remounting this
+  // component. Follow that route unless someone is typing a newer query.
+  const lastRouteQuery = useRef(initialQuery);
+  useEffect(() => {
+    if (lastRouteQuery.current === initialQuery) return;
+    const previousRoute = lastRouteQuery.current;
+    lastRouteQuery.current = initialQuery;
+    setText(input => input.trim() === previousRoute.trim() ? initialQuery : input);
+    setOpen(false);
+    setActive(-1);
+    selectedRef.current = false;
+  }, [initialQuery]);
+
   useEffect(() => {
     if (!collegeId || selectedRef.current) return;
     if (value === initialQuery.trim()) return;
