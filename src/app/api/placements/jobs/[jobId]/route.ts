@@ -83,7 +83,7 @@ export async function PUT(request:Request,{params}:RouteContext){
  if(!body||typeof body!=="object"||Array.isArray(body))
   return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
  const wrapped=body as Record<string,unknown>;
- const payload=wrapped.job??body;
+ const payload=wrapped["job"]??body;
  if(!payload||typeof payload!=="object"||Array.isArray(payload))
   return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
  const source=payload as Record<string,unknown>;
