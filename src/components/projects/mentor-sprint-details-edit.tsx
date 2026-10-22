@@ -124,7 +124,7 @@ export function MentorSprintDetailsEdit({
     }
   }
   return <>
-    <Button size="sm" variant="secondary" onClick={begin}>Edit sprint</Button>
+    <Button size="sm" variant="secondary" aria-haspopup="dialog" aria-expanded={open||confirmOpen} onClick={begin}>Edit sprint</Button>
     <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Edit sprint details"
       description="Edit sprint goals and dates. Dates are locked once a sprint is active.">
       <form onSubmit={review} className="grid min-w-0 gap-[var(--lms-space-4)]">
@@ -181,7 +181,9 @@ export function MentorSprintDetailsEdit({
         </div>
       </form>
     </Dialog>
-    <ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!next)guard.requestClose();}}
+    <ConfirmDialog open={confirmOpen} onOpenChange={next=>{
+      if(!next&&!pending){setConfirmOpen(false);setOpen(true);}
+    }}
       title="Confirm sprint changes?"
       description="The revised sprint details will be visible to its project team."
       confirmLabel="Save sprint details" confirmVariant="primary"

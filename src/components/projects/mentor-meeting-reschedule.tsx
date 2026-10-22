@@ -19,6 +19,7 @@ export function MentorMeetingReschedule(props:{
 }){
   const router=useRouter();
   const validationId=useId();
+  const helpId=useId();
   const {showToast}=useToast();
   const [start,setStart]=useState(toIstLocalInput(props.startsAt));
   const [end,setEnd]=useState(toIstLocalInput(props.endsAt));
@@ -51,7 +52,8 @@ export function MentorMeetingReschedule(props:{
     }finally{setPending(false);}
   }
   return <div className={styles.legacy+" "+styles.contents}>
-    <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>{
+    <Button variant="secondary" aria-haspopup="dialog" aria-expanded={open||confirm}
+      className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>{
       setStart(toIstLocalInput(props.startsAt));
       setEnd(toIstLocalInput(props.endsAt));setError(null);setOpen(true);
     }}>Reschedule</Button>
@@ -60,15 +62,16 @@ export function MentorMeetingReschedule(props:{
       <form onSubmit={event=>{
         event.preventDefault();if(parsed.success&&changed){setOpen(false);setConfirm(true);}
       }} className="grid gap-4">
+        <p id={helpId} className="text-sm text-body">Times are in Indian Standard Time (IST). End time must follow start time.</p>
         <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start (IST)
           <Input data-slot="input" type="datetime-local" required value={start}
-            aria-invalid={!parsed.success} aria-describedby={!parsed.success?validationId:undefined}
+            aria-invalid={!parsed.success} aria-describedby={!parsed.success?`${helpId} ${validationId}`:helpId}
             onChange={event=>{setStart(event.target.value);setError(null);}}
             className="min-h-11 min-w-0 max-w-full md:min-h-9"/>
         </label>
         <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End (IST)
           <Input data-slot="input" type="datetime-local" required value={end}
-            aria-invalid={!parsed.success} aria-describedby={!parsed.success?validationId:undefined}
+            aria-invalid={!parsed.success} aria-describedby={!parsed.success?`${helpId} ${validationId}`:helpId}
             onChange={event=>{setEnd(event.target.value);setError(null);}}
             className="min-h-11 min-w-0 max-w-full md:min-h-9"/>
         </label>

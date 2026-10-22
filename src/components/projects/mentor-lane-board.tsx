@@ -195,19 +195,20 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   {error?<Alert tone="error">{error}</Alert>:null}
   {undo?<Button variant="ghost" type="button" disabled={busy} 
     onClick={()=>{const prior=undo;void move(prior.id,prior.status,true);}}>Undo last move</Button>:null}
-  {matching.length>0?<><p className="text-xs text-muted-foreground md:hidden">Swipe sideways to see board lanes.</p><div role="region" aria-label="Project task board; scroll sideways to see more status columns" tabIndex={0} data-dragging={dragging}
+  {matching.length>0?<><p className="text-xs text-muted-foreground md:hidden">Swipe sideways to see board lanes.</p>
+    <p id="mentor-board-keyboard-help" className="sr-only">Use the Move task selection to change a task lane without dragging.</p><div role="region" aria-label="Project task board; scroll sideways to see more status columns" tabIndex={0} data-dragging={dragging}
     className={styles.scrollRegion}><div className={styles.track}>
    {lanes.map(lane=><BoardColumn key={lane.id} label={lane.label}
     className={[styles.lane, lane.id==="BACKLOG"?styles.backlogLane:"", lanes.length===1?styles.singleLane:""].filter(Boolean).join(" ")}
     data-can-drop={!readOnly&&!busy&&editable.includes(lane.id as typeof editable[number])}
     onDragOver={e=>{if(editable.includes(lane.id as typeof editable[number]))e.preventDefault();}}
     onDrop={e=>drop(e,lane.id)}>
-    <h2 className={styles.header}><span>{lane.label}</span><Badge tone="neutral">{lane.tasks.length}</Badge></h2>
+    <h3 className={styles.header}><span>{lane.label}</span><Badge tone="neutral">{lane.tasks.length}</Badge></h3>
     <ul className={styles.body}>{lane.tasks.map(task=>{
      const sprintRow=task.sprintId?bySprint.get(task.sprintId):null;
      const canMove=!readOnly&&!busy&&sprintRow?.status==="ACTIVE"&&
        editable.includes(task.status as typeof editable[number]);
-     return <li key={task.id} draggable={canMove}
+     return <li key={task.id} draggable={canMove} aria-describedby={canMove?"mentor-board-keyboard-help":undefined}
       onDragStart={e=>{e.dataTransfer.setData("text/plain",task.id);setDragging(true);}}
        onDragEnd={()=>setDragging(false)}
       className={"space-y-2 border p-3 text-sm "+styles.card}>
@@ -224,7 +225,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       {task.assigneeMembershipId===null?<p className="text-xs font-semibold text-warning-text">Needs assigning</p>:null}
       {task.blockerReason?<p className="whitespace-pre-wrap text-xs text-warning-text">Blocked: {task.blockerReason}</p>:null}
       {canMove?<label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Move task
-       <Select data-slot="select" value={task.status} disabled={busy} onChange={e=>void move(task.id,e.target.value)}
+       <Select data-slot="select" aria-label={"Move "+task.title+" to lane"} value={task.status} disabled={busy} onChange={e=>void move(task.id,e.target.value)}
         className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
         {editable.map(x=><option key={x} value={x}>{x.replaceAll("_"," ")}</option>)}
        </Select></label>:null}

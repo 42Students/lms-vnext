@@ -228,11 +228,11 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-15.md: file, number of 
 - [x] `src/components/projects/learner-task-status-actions.tsx`
 - [x] `src/components/projects/legacy-project-tabs.module.css`
 - [x] `src/components/projects/mentor-delivery-lock-control.tsx`
-- [ ] `src/components/projects/mentor-lane-board.tsx`
-- [ ] `src/components/projects/mentor-meeting-notes-editor.tsx`
-- [ ] `src/components/projects/mentor-meeting-reschedule.tsx`
-- [ ] `src/components/projects/mentor-release-editor.tsx`
-- [ ] `src/components/projects/mentor-sprint-details-edit.tsx`
+- [x] `src/components/projects/mentor-lane-board.tsx`
+- [x] `src/components/projects/mentor-meeting-notes-editor.tsx`
+- [x] `src/components/projects/mentor-meeting-reschedule.tsx`
+- [x] `src/components/projects/mentor-release-editor.tsx`
+- [x] `src/components/projects/mentor-sprint-details-edit.tsx`
 - [ ] `src/components/projects/mentor-task-allocation.tsx`
 - [ ] `src/components/projects/mentor-task-details-edit.tsx`
 - [ ] `src/components/projects/project-activity-filtered-list.tsx`
