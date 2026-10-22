@@ -14,7 +14,7 @@ const dayInIndia = (value: Date): string => {
 };
 
 const validRecipientEmail = (value: string): boolean =>
-  value.length <= 254 && /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(value);
+  value.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
 const nextDay = (day: string): string => {
   const value = new Date(day + "T12:00:00.000Z");
@@ -70,7 +70,8 @@ export function generateShortlistDueTomorrowCandidates(
     if (row.revokedAt || !row.shortlistBy ||
         dayInIndia(row.shortlistBy) !== tomorrow ||
         row.reminderSentOnIstDays.includes(today) ||
-        !row.recipientEmail?.trim() ||\n        !validRecipientEmail(row.recipientEmail.trim())) return [];
+        !row.recipientEmail?.trim() ||
+        !validRecipientEmail(row.recipientEmail.trim())) return [];
     return [{
       key: "shortlist-tomorrow:" + row.shareId + ":" + today,
       collegeId: row.collegeId, shareId: row.shareId,
