@@ -3,7 +3,7 @@ import {useState} from "react";
 import {Button} from "@/components/ui/button";
 import {useToast} from "@/components/ui/toast";
 
-const SUCCESS="We emailed a code to the address the placement cell used. It works for 15 minutes.";
+const SUCCESS="We emailed a code to your verified recruiter account. It works for 15 minutes.";
 /** No recipient email is accepted from this public UI. The server verifies a
  * live recruiter/company/college grant and sends only to that account. */
 export function ShareEmailCodeButton({token}:{token:string}){
@@ -18,7 +18,10 @@ export function ShareEmailCodeButton({token}:{token:string}){
     headers:{"content-type":"application/json"},body:"{}",
    });
    if(!response.ok){
-    const detail=response.status===429?"Too many email requests. Ask the placement cell or try again after one hour.":
+    const detail=response.status===429?
+     (response.headers.get("Retry-After")==="60"?
+      "A code was sent recently. You can ask for another after one minute.":
+      "Too many email requests. Ask the placement cell or try again after one hour."):
      response.status===503?"Email code delivery is not available. Ask the placement cell for the code.":
      response.status===401||response.status===403?
       "Sign in with your authorized recruiter account to request an email code.":
