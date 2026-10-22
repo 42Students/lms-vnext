@@ -1,6 +1,6 @@
 import {z} from "zod";
 
-const reason=z.string().trim().min(3).max(999,"Keep the reason under 1000 characters.");
+const reason=z.string().trim().min(3).max(900,"Keep the reason to 900 characters or fewer.");
 const uuid=z.string().uuid();
 const nonempty=z.string().trim().min(1).max(1000);
 const proofUrl=z.union([
