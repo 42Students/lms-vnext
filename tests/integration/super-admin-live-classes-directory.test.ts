@@ -39,7 +39,9 @@ describe.skipIf(!enabled)("Super Admin live classes directory disposable Postgre
   const live=await listSuperAdminContentDirectory(admin,"LIVE_CLASSES",{q:name});
   expect(live.items.map(row=>row.id)).toEqual([ids.live]);
   expect(live.items[0]?.startsAt?.toISOString()).toBe("2026-10-16T04:00:00.000Z");
-  expect(live.items[0]).not.toHaveProperty("externalUrl");
+  // Authorized Super Admin directory intentionally exposes a safe HTTPS join
+  // link; unrelated colleges must still return no row or meeting metadata.
+  expect(live.items[0]?.externalUrl).toBe("https://example.test/meet/"+name);
   const foreign={...admin,adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeB}};
   expect((await listSuperAdminContentDirectory(foreign,"LIVE_CLASSES",{q:name})).items).toHaveLength(0);
  });

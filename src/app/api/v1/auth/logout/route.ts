@@ -1,4 +1,5 @@
 import {NextResponse} from "next/server";
+import {isSameOriginRequest} from "@/auth/origin";
 import {DELETE as revokeCurrentSession} from "@/app/api/auth/session/route";
 
 export const runtime="nodejs";
@@ -9,6 +10,7 @@ export const runtime="nodejs";
  * clearing, failure status, and the original "Logged out" success message.
  */
 export async function POST(request:Request){
+ if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  // A legacy Bearer token is not a revocable vNext opaque cookie. Do not claim
  // it was blocklisted or silently bridge authorization across auth systems.
  if(/^Bearer\s+/i.test(request.headers.get("authorization")??"")){
