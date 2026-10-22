@@ -36,6 +36,17 @@ const courseOfficialCodeSchema=z.string().trim().max(40,"Maximum 40 characters")
 export const courseSlugSchema=z.string().trim()
  .regex(/^[a-z0-9][a-z0-9-]{0,63}$/,"Invalid slug format");
 const courseCardColorSchema=z.string().regex(/^#[0-9A-Fa-f]{6}$/,"Use a colour like #0a7c88").nullable();
+const courseThumbnailUrlSchema=z.string().trim().max(2048).refine(value=>{
+  if(!value)return true;
+  try{
+    const url=new URL(value),host=url.hostname.toLowerCase();
+    return url.protocol==="https:"&&!url.username&&!url.password&&!url.hash&&
+      host!=="localhost"&&!host.endsWith(".localhost")&&
+      host!=="0.0.0.0"&&host!=="[::1]"&&host!=="[::]"&&
+      !/^127\\.|^10\\.|^192\\.168\\.|^169\\.254\\.|^172\\.(?:1[6-9]|2\\d|3[01])\\./.test(host);
+  }catch{return false;}
+},"Enter a valid HTTPS course cover URL").nullable();
+
 
 /** Legacy CourseDTO crosswalk (IDs remain tenant-scoped UUIDs): course_name
  * -> name, short_title -> shortTitle (120 DB chars), dept_id -> departmentId,
@@ -53,17 +64,9 @@ export const createCourseInputSchema = z.object({
   shortTitle:courseShortTitleSchema.optional(),
   officialCode:courseOfficialCodeSchema.optional(),
   cardColor:courseCardColorSchema.optional(),
-  /** Legacy public course cover is a verified HTTPS image URL. A private
-   * uploaded object must first be promoted to a signed/public safe asset. */
-  thumbnailUrl:z.string().trim().max(2048).refine(value=>{
-    if(!value)return true;
-    try{
-      const url=new URL(value);
-      return url.protocol==="https:"&&Boolean(url.hostname)&&
-        !/^(localhost|127(?:\.\d+){3}|0\.0\.0\.0)$/i.test(url.hostname)&&
-        !url.username&&!url.password;
-    }catch{return false;}
-  },"Enter a valid HTTPS course cover URL").nullable().optional(),
+  /** Never store temporary signed grants in persistent course records.
+   * Cover URLs here must be approved public HTTPS assets. */
+  thumbnailUrl:courseThumbnailUrlSchema.optional(),
   takeaways:z.string().trim().max(2000).nullable().optional(),
   introductionHeading:z.string().trim().min(1,"Enter the heading").max(255,"Maximum 255 characters").optional(),
   enabled:z.boolean().optional(),
@@ -85,6 +88,7 @@ export const updateCourseInputSchema = z
     shortTitle:courseShortTitleSchema.optional(),
     officialCode:courseOfficialCodeSchema.optional(),
     cardColor:courseCardColorSchema.optional(),
+    thumbnailUrl:courseThumbnailUrlSchema.optional(),
     takeaways:z.string().trim().max(2000).nullable().optional(),
     introductionHeading:z.string().trim().min(1,"Enter the heading").max(255,"Maximum 255 characters").optional(),
     enabled:z.boolean().optional(),
