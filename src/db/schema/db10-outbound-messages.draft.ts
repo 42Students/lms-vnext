@@ -125,7 +125,7 @@ export const db10OutboundSuppressions = pgTable(
     check("db10_outbound_suppressions_channel_ck",
       sql`${t.channel} in ('EMAIL','SMS','WHATSAPP')`),
     check("db10_outbound_suppressions_reason_ck",
-      sql`${t.reason} in ('UNSUBSCRIBED','BOUNCE','COMPLAINT','LEGACY_UNSPECIFIED','ADMIN_BLOCK','LEGACY_UNSPECIFIED')`),
+      sql`${t.reason} in ('UNSUBSCRIBED','BOUNCE','COMPLAINT','ADMIN_BLOCK','LEGACY_UNSPECIFIED')`),
     check("db10_outbound_suppressions_hash_ck",
       sql`${t.recipientHash} ~ '^[0-9a-f]{64}$'`),
     check("db10_outbound_suppressions_clear_order_ck",
@@ -156,6 +156,11 @@ export const db10GlobalEmailSuppressions = pgTable(
     reason: varchar("reason", { length: 24 }).notNull(),
     /** Null for an externally originated opt-out not tied to an event. */
     sourceEventId: uuid("source_event_id"),
+    legacySuppressionId: integer("legacy_suppression_id"),
+    legacyReasonCategory: varchar("legacy_reason_category",{length:24}),
+    legacyCreatedAt: timestamp("legacy_created_at",{withTimezone:true}),
+    clearActorUserId: uuid("clear_actor_user_id"),
+    clearReason: varchar("clear_reason",{length:500}),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull().defaultNow(),
     clearedAt: timestamp("cleared_at", { withTimezone: true }),

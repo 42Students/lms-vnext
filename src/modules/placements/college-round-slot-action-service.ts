@@ -125,7 +125,7 @@ export async function getCollegeRoundSlotAppointments(
      eq(collegeMemberships.collegeId,collegeId),
      ilike(users.displayName,candidateSearchPattern)))):undefined;
  const candidatePageSize=filters.candidatePageSize===undefined?1000:
-   [10,20,50,100,200].includes(filters.candidatePageSize)?filters.candidatePageSize:20;
+   [10,20,50,100,200,1000].includes(filters.candidatePageSize)?filters.candidatePageSize:20;
  const candidatePage=Number.isSafeInteger(filters.candidatePage)&&
    (filters.candidatePage??0)>0?filters.candidatePage!:1;
  const candidateWhere=and(
