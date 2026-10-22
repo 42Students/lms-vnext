@@ -44,6 +44,21 @@ export const PROJECT_TASK_STATUSES = [
   "DONE",
 ] as const;
 
+/** Historical TO_DO maps to canonical TODO while retaining display copy. */
+export const LEGACY_PROJECT_TASK_STATUS_ALIASES = { TO_DO: "TODO" } as const;
+export type ProjectTaskStatus = (typeof PROJECT_TASK_STATUSES)[number];
+export const PROJECT_TASK_STATUS_LABELS: Record<ProjectTaskStatus, string> = {
+  TODO: "To do", IN_PROGRESS: "In progress", BLOCKED: "Blocked",
+  IN_REVIEW: "In review", DONE: "Done",
+};
+export function normalizeProjectTaskStatus(input: string): ProjectTaskStatus | null {
+  const value = input.trim().toUpperCase();
+  const canonical = value === "TO_DO" ? "TODO" : value;
+  return (PROJECT_TASK_STATUSES as readonly string[]).includes(canonical)
+    ? canonical as ProjectTaskStatus : null;
+}
+export const DEFAULT_LEGACY_PROJECT_TASK_TYPE = "STORY" as const;
+
 export const PROJECT_MEMBER_ROLES = [
   "LEARNER",
   "MENTOR",
