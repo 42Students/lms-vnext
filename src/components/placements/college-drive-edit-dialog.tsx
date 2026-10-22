@@ -11,13 +11,13 @@ type JobView={title:string;description:string;updatedAt:string;status:string};
 function validJob(payload:unknown):JobView|null{
  if(!payload||typeof payload!=="object"||Array.isArray(payload))return null;
  const record=payload as Record<string,unknown>;
- const item=record.job;
+ const item=record["job"];
  if(!item||typeof item!=="object"||Array.isArray(item))return null;
  const job=item as Record<string,unknown>;
- if(typeof job.title!=="string"||typeof job.description!=="string"||
-    typeof job.status!=="string"||typeof job.updatedAt!=="string")return null;
- return {title:job.title,description:job.description,status:job.status,
-  updatedAt:job.updatedAt};
+ if(typeof job["title"]!=="string"||typeof job["description"]!=="string"||
+    typeof job["status"]!=="string"||typeof job["updatedAt"]!=="string")return null;
+ return {title:job["title"],description:job["description"],status:job["status"],
+  updatedAt:job["updatedAt"]};
 }
 
 /** Old-LMS 800px in-list edit entry point; full settings remain available for
