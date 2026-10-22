@@ -13,7 +13,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Alert } from "@/components/ui/alert";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {Tabs} from "@/components/ui/tabs";
-import { can } from "@/modules/permissions/policy";
+import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecycle-list-service";
 import {driveRequestStatusTone,driveRequestStatusLabel,TPO_REQUESTS_COPY,tpoDriveStatusLabel,tpoDriveStatusTone,tpoDriveWhereItIs,tpoDriveEmploymentLabel,tpoDriveWorkModeLabel} from "@/modules/placements/tpo-drive-lifecycle-list-model";
 import {Select} from "@/components/ui/select";
@@ -66,7 +66,10 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     ...(first(params.display)?{display:first(params.display)}:{}),
     ...(first(params.page)?{page:first(params.page)}:{}),
     });
-  } catch {
+  } catch (error) {
+    // A revoked live TPO grant must reach the authenticated error boundary.
+    // Never present retained private drives as a mere transient refresh failure.
+    if (error instanceof AuthorizationError) throw error;
     return <TpoLifecycleStaleSnapshot key={snapshotKey} failed>
       <main className="min-w-0 space-y-4">
         <PageHeader eyebrow="TPO" title="Drives" />
