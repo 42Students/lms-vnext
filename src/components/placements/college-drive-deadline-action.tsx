@@ -24,10 +24,11 @@ export function CollegeDriveDeadlineAction({jobId,title,currentDeadline}:{
   try{
    const response=await fetch("/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/extend-deadline",{
     method:"POST",headers:{"content-type":"application/json"},
-    body:JSON.stringify({deadline:deadline.toISOString(),confirmed:true}),
+    body:JSON.stringify({deadline:deadline.toISOString(),expectedDeadline:currentDeadline,confirmed:true}),
    });
    const result=await response.json().catch(()=>null);
-   if(!response.ok)throw Error(result?.error??"Could not extend deadline");
+   if(!response.ok)throw Error(response.status===409
+    ?"Drive changed. Refresh its deadline and try again.":result?.error??"Could not extend deadline");
    setDone("Deadline extended to "+new Intl.DateTimeFormat("en-IN",{
     dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(result.deadline))+".");
    setOpen(false);router.refresh();

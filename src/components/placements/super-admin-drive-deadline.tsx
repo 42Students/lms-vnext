@@ -10,9 +10,8 @@ function suggestedDeadlineInput(deadline:string|null){
  const original=deadline?Date.parse(deadline):NaN;
  const current=Date.now();
  // Legacy extends by seven days and suggests the END of that day in IST.
- const base=Number.isFinite(original)&&original>current
-  ?original:current+7*86_400_000;
- const local=new Date(base+330*60_000);
+ const base=Number.isFinite(original)&&original>current?original:current;
+ const local=new Date(base+7*86_400_000+330*60_000);
  return local.toISOString().slice(0,10)+"T23:59";
 }
 export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:string|null}){
@@ -44,9 +43,10 @@ export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:
   try{
    const result=await fetch("/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/extend-deadline",{
     method:"POST",headers:{"content-type":"application/json"},
-    body:JSON.stringify({deadline:pendingIso,confirmed:true}),
+    body:JSON.stringify({deadline:pendingIso,expectedDeadline:deadline,confirmed:true}),
    });
-   if(!result.ok)throw new Error("Could not extend the deadline");
+   if(!result.ok)throw new Error(result.status===409
+     ?"Drive changed. Refresh its deadline and try again.":"Could not extend the deadline");
    setSavedIso(pendingIso);setPendingIso(null);router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Could not extend the deadline");}
   finally{inFlightRef.current=false;setBusy(false);endDriveMutation(jobId);}
@@ -58,7 +58,7 @@ export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:
     Choose a later date and time (YYYY-MM-DD HH:mm). If the previous deadline has passed,
     the picker suggests seven days from today. This action only extends the application deadline.
     Editing an unrelated drive field does not require extending an unchanged past deadline.
-    The matching application deadline in Important Dates is updated when you confirm.
+    Important Dates are managed separately and are not automatically shifted.
   </p>
   <label className="grid w-full max-w-md gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New application deadline (IST)
    <Input name="deadline" type="datetime-local" required aria-invalid={Boolean(error)} aria-describedby={error?"super-admin-deadline-error":undefined} className="w-full" value={dateDraft}
@@ -75,7 +75,7 @@ export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:
   onConfirm={()=>void save()}>
   <p className="text-sm text-body">Current: {deadline?new Date(deadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"Not set"}</p>
   <p className="mt-2 text-sm text-body">New: {pendingIso?new Date(pendingIso).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"—"}</p>
-  <p className="mt-2 text-xs text-muted-foreground">The matching Important Dates application deadline will be updated. Other milestones will not move.</p>
+  <p className="mt-2 text-xs text-muted-foreground">Important Dates will not move when you extend the application deadline.</p>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </ConfirmDialog>
  </div>;
