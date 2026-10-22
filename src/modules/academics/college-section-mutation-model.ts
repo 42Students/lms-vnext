@@ -29,6 +29,47 @@ export const createCollegeSectionSchema = z.object({
   }
 });
 
+/** Legacy `_Class` (Classes.js classPayload, ClassController.java:75-106)
+ * numeric-to-UUID migration contract. Legacy integer ids are never accepted
+ * as vNext ids: the caller supplies an explicit batch-id -> cohort UUID map,
+ * the academic period the section belongs to (new in vNext) and the section
+ * code. Field mapping: name -> name, description -> description,
+ * batch_id -> cohortId (program_id is implied by the cohort), upper_limit ->
+ * capacity, lower_limit -> minSize. A legacy upper_limit of 0 meant "No limit"
+ * but vNext requires a 1-200 capacity, so such rows must be given an explicit
+ * capacity before import instead of silently becoming unlimited or 200. */
+export function adaptLegacyClassCreate(
+  source: {
+    name: string;
+    description?: string | null;
+    batch_id?: number | string | null;
+    upper_limit?: number | null;
+    lower_limit?: number | null;
+  },
+  mapping: {
+    cohortIds: ReadonlyMap<string, string>;
+    academicPeriodId: string;
+    code: string;
+  },
+) {
+  const batchKey = source.batch_id === null || source.batch_id === undefined
+    ? "" : String(source.batch_id);
+  const cohortId = mapping.cohortIds.get(batchKey);
+  if (!cohortId) throw new Error("LEGACY_CLASS_BATCH_UNMAPPED");
+  const upper = source.upper_limit ?? 60;
+  if (!Number.isInteger(upper) || upper < 1 || upper > 200)
+    throw new Error("LEGACY_CLASS_CAPACITY_UNSUPPORTED");
+  return createCollegeSectionSchema.parse({
+    cohortId,
+    academicPeriodId: mapping.academicPeriodId,
+    name: source.name,
+    code: mapping.code,
+    capacity: upper,
+    minSize: source.lower_limit ?? 0,
+    description: source.description?.trim() ? source.description.trim() : null,
+  });
+}
+
 export const updateCollegeSectionSchema = z.object({
   name,
   code,

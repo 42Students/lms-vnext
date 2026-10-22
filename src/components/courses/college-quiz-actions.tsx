@@ -81,6 +81,8 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
    const response=await fetch(url,{method,headers:{"content-type":"application/json"},body:JSON.stringify(body)});
    const data=await response.json().catch(()=>null);
    if(!response.ok)throw new Error(
+    data?.error==="QUIZ_HAS_ATTEMPTS"&&action==="ARCHIVE"?
+     "This quiz has learner attempts, so it cannot be deleted. Its history is retained for audit.":
     data?.error==="QUIZ_HAS_ATTEMPTS"?
      "Learners have attempted this Quiz or it is closed. Its deadline, questions, attempt limit and shuffle rules cannot be changed.":
     data?.error==="QUIZ_MAX_ATTEMPTS_REACHED"?
