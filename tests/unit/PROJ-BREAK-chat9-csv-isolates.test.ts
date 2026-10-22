@@ -22,7 +22,7 @@ describe("IIT Dharwad Projects: adversarial spreadsheet export", () => {
       const csv = projectTemplateCatalogueCsv([{ templateId, title, version: 1, sections }]);
       expect(csv).toContain(`"'${title}"`);
       expect(csv).not.toContain(`"${title}"`);
-      expect(csv.startsWith('\uFEFF"Template","Version",')).toBe(true);
+      expect(csv.startsWith('\uFEFF"Title","Version",')).toBe(true);
     }
   });
 

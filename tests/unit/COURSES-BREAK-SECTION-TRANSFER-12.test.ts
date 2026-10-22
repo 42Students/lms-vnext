@@ -19,7 +19,10 @@ vi.mock("@/db/client",()=>({
     from(){return chain;},
     innerJoin(_table:unknown,condition:unknown){state.joins.push(condition);return chain;},
     leftJoin(_table:unknown,condition:unknown){state.joins.push(condition);return chain;},
-    where(condition:unknown){state.where.push(condition);return Promise.resolve(data);},
+    where(condition:unknown){state.where.push(condition);return chain;},
+    orderBy(){return chain;},
+    limit(){return chain;},
+    offset(){return Promise.resolve(data);},
    };
    return chain;
   },
@@ -75,7 +78,7 @@ describe("COURSES7-SECTION-TRANSFER-12: one learner attempt quota and submission
   }
  });
  it("performs no database work without a server-authorized delivery",async()=>{
-  expect(await listOwnLearnerAssessmentRows([],membershipId,now)).toEqual({assignments:[],quizzes:[]});
+  expect(await listOwnLearnerAssessmentRows([],membershipId,now)).toEqual({assignments:[],quizzes:[],totals:{assignments:0,quizzes:0}});
   expect(state.reads).toBe(0);
  });
 });

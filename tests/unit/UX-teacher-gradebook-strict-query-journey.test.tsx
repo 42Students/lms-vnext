@@ -52,7 +52,7 @@ describe("FAC-GRADEBOOK-UX-01 Faculty gradebook URL, privacy and recovery",()=>{
   expect(rendered).toContain("Published gradebook");
   expect(rendered).toContain("No current enrolled learners");
   expect(rendered).toContain("No scores were inferred");
-  expect(rendered).toContain("Download full Section CSV");
+  expect(rendered).toContain("Download full section CSV");
   expect(stubs.data).toHaveBeenCalledWith({user:{id:"faculty"}},{deliveryId});
  });
  it("uses a private unmatched-search state without sending notifications or changing grades",async()=>{

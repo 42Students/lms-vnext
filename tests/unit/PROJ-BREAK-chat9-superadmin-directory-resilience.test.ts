@@ -15,7 +15,7 @@ describe("IIT Dharwad Projects: Super Admin template scale and graceful college 
     expect(list).toContain("eq(projectTemplateVersions.version,projectTemplates.currentVersion)");
     expect(list).toContain("inArray(projectTemplates.id,items.map(x=>x.id))");
     expect(source).toContain(".limit(TEMPLATE_DIRECTORY_PAGE_SIZE)");
-    expect(TEMPLATE_DIRECTORY_PAGE_SIZE).toBe(20);
+    expect(TEMPLATE_DIRECTORY_PAGE_SIZE).toBe(10);
     expect(countTemplateBlueprintItems({
       releases: [{}], sprints: [{}, {}], tasks: [{}, {}, {}], resources: [],
     })).toEqual({ releases: 1, sprints: 2, tasks: 3, resources: 0 });

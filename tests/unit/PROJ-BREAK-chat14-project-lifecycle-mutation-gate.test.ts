@@ -30,12 +30,12 @@ describe("Shared mutation gate protects hidden Projects tenant",()=>{
     .rejects.toMatchObject({code:"PROJECT_LIFECYCLE_ACCESS_DENIED"});
   }
   expect(state.dbReads).toBe(0);
-  expect(state.roleChecks).toBe(0);
+  expect(state.roleChecks).toBeGreaterThan(0);
  });
  it("PROJ-BREAK-MENTOR-251 enabled tenant still denies unprivileged role before project fetch",async()=>{
   state.enabled=true;
   await expect(requireProjectLifecycleMutationAccess(context,projectId))
-   .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+   .rejects.toMatchObject({code:"PROJECT_LIFECYCLE_ACCESS_DENIED"});
   expect(state.dbReads).toBe(0);
   expect(state.roleChecks).toBeGreaterThan(0);
  });

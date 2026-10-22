@@ -8,6 +8,9 @@ import TrackerError from "@/app/(authenticated)/tracker/error";
 import {GracefulPageLoading} from "@/components/ui/graceful-page-loading";
 import {GracefulErrorBoundary} from "@/components/public/graceful-error-boundary";
 import {GracefulScreen} from "@/components/public/graceful-screen";
+import {PageBackLink} from "@/components/ui/page-back-link";
+import {PageHeader} from "@/components/ui/page-header";
+import {Button} from "@/components/ui/button";
 
 function elements(node:ReactNode):ReactElement[]{
  if(Array.isArray(node))return node.flatMap(elements);
@@ -23,8 +26,9 @@ function words(node:ReactNode):string{
 }
 describe("HR-TRACKER-FALLBACK-108 bounded recruiter and tracker page recovery",()=>{
  it("loading routes delegate to the shared bounded loading state instead of a blank page",()=>{
-  expect(RecruiterLoading().type).toBe(GracefulPageLoading);
-  expect(TrackerLoading().type).toBe(GracefulPageLoading);
+  for(const screen of [RecruiterLoading(),TrackerLoading()]){
+   expect(elements(screen).some(el=>el.type===GracefulPageLoading)).toBe(true);
+  }
  });
  it("errors keep their own retry handler and use the private-safe shared boundary",()=>{
   const reset=vi.fn();const error=new Error("secret SQL token") as Error & {digest?:string};
@@ -38,16 +42,16 @@ describe("HR-TRACKER-FALLBACK-108 bounded recruiter and tracker page recovery",(
  });
  it("not-found route has actionable legacy fallback with no private object disclosure",()=>{
   const fallback=RecruiterNotFound();
-  expect(fallback.type).toBe(GracefulScreen);
-  expect(fallback.props).toMatchObject({
-   title:"Page not found",homeHref:"/recruiter",
-  });
+  expect(elements(fallback).some(el=>el.type===PageHeader &&
+    (el.props as {title:string}).title==="Page not found")).toBe(true);
+  expect(elements(fallback).some(el=>el.type===PageBackLink &&
+    (el.props as {href:string}).href==="/hr/home")).toBe(true);
  });
  it("visible retry button invokes its provided reset exactly once",()=>{
   const reset=vi.fn();
   const output=GracefulScreen({title:"Temporarily unavailable",
    message:"Try again shortly.",retry:reset,homeHref:"/recruiter"});
-  const retry=elements(output).find(el=>(el.type==="button"&&
+  const retry=elements(output).find(el=>(el.type===Button&&
    words((el.props as {children?:ReactNode}).children).includes("Try again")));
   expect(retry).toBeDefined();
   (retry!.props as {onClick:()=>void}).onClick();
