@@ -76,7 +76,9 @@ export function TpoCompanyCreateForm() {
         if(response.status===409){
           setConflict({error:body?.error??"SAME_COMPANY",
             message:body?.message??"A matching company requires review.",
-            companyId:body?.companyId,name:body?.name,primaryDomain:body?.primaryDomain});
+            ...(body?.companyId !== undefined ? {companyId:body.companyId} : {}),
+            ...(body?.name !== undefined ? {name:body.name} : {}),
+            ...(body?.primaryDomain !== undefined ? {primaryDomain:body.primaryDomain} : {})});
         }
         throw new Error(body?.message??(
           body?.error==="RECRUITER_EMAIL_DOMAIN_MISMATCH"

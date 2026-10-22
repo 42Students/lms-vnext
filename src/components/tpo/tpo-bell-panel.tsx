@@ -120,8 +120,8 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
     <Button variant="ghost" type="button" disabled={refreshing||pending} loading={refreshing} onClick={()=>void refresh()} className="min-h-11 w-full sm:w-auto">Refresh</Button>
    </div>
   </div>;
- const panelBody = <div className="min-w-0"> {refreshing?<p role="status" className={style.topbarNotificationState}>Refreshing notifications…</p>:null}
-   {!refreshing&&displayedItems.length===0&&!error?<div role="status" className={style.topbarNotificationState}><p className="font-medium">Nothing yet</p><p className="text-sm text-muted-foreground leading-[22px]">Things that happen on your drives and recruiters show up here.</p></div> :displayedItems.length>0?<ul role="list" aria-label="Recent placement notifications" className="min-w-0 space-y-0">
+ const panelBody = <div className="min-w-0"> {refreshing?<p role="status" className={style["topbarNotificationState"]}>Refreshing notifications…</p>:null}
+   {!refreshing&&displayedItems.length===0&&!error?<div role="status" className={style["topbarNotificationState"]}><p className="font-medium">Nothing yet</p><p className="text-sm text-muted-foreground leading-[22px]">Things that happen on your drives and recruiters show up here.</p></div> :displayedItems.length>0?<ul role="list" aria-label="Recent placement notifications" className="min-w-0 space-y-0">
     {groupedItems.map((group,index)=><li key={group.day+"-"+index} className="min-w-0 list-none">
     <p className="px-3 pb-2 pt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground leading-[20px]">{group.day}</p>
     <ul role="list" aria-label={"Notifications for "+group.day} className="space-y-0">
@@ -136,7 +136,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
      <span className="mt-1 inline-block text-xs font-semibold text-primary-text">{!item.readAt&&!readIds.includes(item.id)?"New  →":"→"}</span>
      </Button>
     </li>)}</ul></li>)}</ul>:null}
-   {error?<p role="alert" className={style.topbarNotificationError}>{error}</p>:null}
+   {error?<p role="alert" className={style["topbarNotificationError"]}>{error}</p>:null}
 </div>;
  return <div className="relative min-w-0" ref={root}>
   <Button ref={trigger} variant="secondary" size="sm" type="button" aria-label={unread>0?"Notifications, "+unread+" unread":"Notifications, no unread items"} aria-haspopup="dialog" aria-expanded={open} aria-busy={pending}
@@ -156,8 +156,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
    </> : <>Notifications {unread>0?"("+unread+" unread)":""}</>}
   </Button>
   {mobile
-   ? <Drawer id="tpo-notification-drawer" open={open} onOpenChange={changeOpen} className={compact ? style.topbarNotificationDrawer : undefined}
-       bodyClassName={compact ? style.topbarNotificationBody : undefined} title="Notifications"
+   ? <Drawer id="tpo-notification-drawer" open={open} onOpenChange={changeOpen} {...(compact ? {className:style["topbarNotificationDrawer"] ?? "",bodyClassName:style["topbarNotificationBody"] ?? ""} : {})} title="Notifications"
        description="Most recent notifications from your own college." footer={panelFooter}>
        {panelBody}
      </Drawer>

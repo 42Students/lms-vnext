@@ -47,7 +47,7 @@ function scopedAuditHref(href:string):string{
  const segment=(prefix:string)=>{
   if(!href.startsWith(prefix))return null;
   const id=href.slice(prefix.length).split(/[?#/]/,1)[0];
-  return uuid.test(id)?encodeURIComponent(id):"";
+  return id !== undefined && uuid.test(id)?encodeURIComponent(id):"";
  };
  const job=segment("/tpo/drives/");
  if(job!==null)return job?"/tpo/placements/jobs/"+job:"/tpo/placements";
@@ -73,26 +73,26 @@ function scopedAuditHref(href:string):string{
 function isAuditRow(item: unknown): item is TpoAuditRow {
   if (!item || typeof item !== "object" || Array.isArray(item)) return false;
   const row = item as Record<string, unknown>;
-  return typeof row.id === "string" &&
-    typeof row.kind === "string" &&
-    Object.prototype.hasOwnProperty.call(TPO_AUDIT_KIND_LABELS, row.kind) &&
-    typeof row.sourceKind === "string" &&
-    Object.prototype.hasOwnProperty.call(TPO_AUDIT_KIND_LABELS, row.sourceKind) &&
-    typeof row.eventType === "string" &&
-    typeof row.title === "string" &&
-    typeof row.detail === "string" &&
-    typeof row.actorName === "string" &&
-    (row.actorType === "SYSTEM" || row.actorType === "USER") &&
-    row.actorId === null &&
-    typeof row.action === "string" &&
-    typeof row.entityType === "string" &&
-    typeof row.sourceId === "string" &&
-    typeof row.createdAt === "string" &&
-    typeof row.occurredAt === "string" &&
-    Number.isFinite(Date.parse(row.occurredAt)) &&
-    (row.jobId === null || typeof row.jobId === "string") &&
-    (row.entityHref === undefined || row.entityHref === null || typeof row.entityHref === "string") &&
-    (row.entityId === null || typeof row.entityId === "string");
+  return typeof row["id"] === "string" &&
+    typeof row["kind"] === "string" &&
+    Object.prototype.hasOwnProperty.call(TPO_AUDIT_KIND_LABELS, row["kind"]) &&
+    typeof row["sourceKind"] === "string" &&
+    Object.prototype.hasOwnProperty.call(TPO_AUDIT_KIND_LABELS, row["sourceKind"]) &&
+    typeof row["eventType"] === "string" &&
+    typeof row["title"] === "string" &&
+    typeof row["detail"] === "string" &&
+    typeof row["actorName"] === "string" &&
+    (row["actorType"] === "SYSTEM" || row["actorType"] === "USER") &&
+    row["actorId"] === null &&
+    typeof row["action"] === "string" &&
+    typeof row["entityType"] === "string" &&
+    typeof row["sourceId"] === "string" &&
+    typeof row["createdAt"] === "string" &&
+    typeof row["occurredAt"] === "string" &&
+    Number.isFinite(Date.parse(row["occurredAt"])) &&
+    (row["jobId"] === null || typeof row["jobId"] === "string") &&
+    (row["entityHref"] === undefined || row["entityHref"] === null || typeof row["entityHref"] === "string") &&
+    (row["entityId"] === null || typeof row["entityId"] === "string");
 }
 
 export function TpoAuditGrid({rows,refreshHref}:{rows:readonly TpoAuditRow[];refreshHref?:string}){

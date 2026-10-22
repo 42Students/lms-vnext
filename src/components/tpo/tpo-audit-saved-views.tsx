@@ -31,7 +31,7 @@ export function TpoAuditSavedViews({filters}:{filters:{
  const inFlight=useRef(false);
  const selectedView=views.find(view=>view.id===selected);
  const load=useCallback(async(signal?:AbortSignal)=>{
-  const response=await apiFetch<Result>(endpoint,{credentials:"same-origin",signal});
+  const response=await apiFetch<Result>(endpoint,{credentials:"same-origin",...(signal ? {signal} : {})});
   setReady(response.ready);
   setViews(response.views);
   return response;
