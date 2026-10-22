@@ -82,7 +82,7 @@ const legacyStage=sql<string>`case
   and rr.superseded_at is null) then 'ASSESSMENT'
  when ${placementApplicationScreenings.status}='SHORTLISTED' then 'SHORTLISTED'
  else 'APPLIED' end`;
-const appliedScore=sql<number|null>`(select max(rr.score_percent)::integer
+const appliedScore=sql<number|null>`(select max(rr.score_percent)
  from placement_round_results rr where rr.application_id=${placementApplications.id}
  and rr.status='APPLIED' and rr.superseded_at is null)`;
 const activeApplication=sql<boolean>`${placementApplications.legacyWasDeleted} is distinct from true`;
