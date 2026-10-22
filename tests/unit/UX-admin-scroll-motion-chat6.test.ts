@@ -51,8 +51,9 @@ describe("UX admin scroll and motion after invisible scrollbar owner decision",(
  it("UX-admin-scroll-motion-06 drive action menu has vertical fade, focusable bounded region and narrow-phone hint (src/components/placements/placement-drive-workspace.tsx)",()=>{
   const code=source("src/components/placements/placement-drive-workspace.tsx");
   expect(code).toContain("Scroll for more drive actions");
-  expect(code).toContain("tabIndex={detail.notes.length>3?0:undefined}");
-  expect(code).toContain('aria-describedby={detail.notes.length>3');
+  expect(code).toContain('aria-label="Drive action choices"');
+  expect(code).toContain("tabIndex={0}");
+  expect(code).toContain('role="group"');
   expect(code).toContain("overflow-y-auto overscroll-contain");
   expect(code).toContain("[mask-image:linear-gradient");
   expect(code).toContain("max-h-[65dvh]");
@@ -188,7 +189,7 @@ describe("UX admin scroll and motion after invisible scrollbar owner decision",(
   expect(code).toContain('title="Application Details"');
   expect(code).toContain("More internal notes below");
   expect(code).toContain('aria-label="Internal notes history"');
-  expect(code).toContain("tabIndex={0}");
+  expect(code).toContain("tabIndex={detail.notes.length>3?0:undefined}");
   expect(code).toContain("overflow-y-auto overscroll-contain");
   expect(code).toContain("[mask-image:linear-gradient");
   expect(code).not.toContain("max-h-48 space-y-2 overflow-auto");

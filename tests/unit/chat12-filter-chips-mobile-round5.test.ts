@@ -12,7 +12,9 @@ describe("chat12 mobile filters and chips",()=>{
   const p=s("src/components/tpo/tpo-grid-filter-panel.tsx");
   expect(p).toContain('<BottomSheet open={sheetOpen} onOpenChange={next=>{setSheetOpen(next);if(!next&&autoOpenMobile)onAutoClose?.();}} title={title}>');
   const sheet=s("src/components/ui/bottom-sheet.tsx");
-  expect(sheet).toContain("modal.showModal()");
+  // Native modal opening moved into a shared focus/exit hook, not removed.
+  expect(sheet).toContain("useOverlayExit(ref, opener, open");
+  expect(s("src/components/ui/use-overlay-exit.ts")).toContain("dialog.showModal()");
   expect(sheet).toContain("onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}");
   expect(sheet).toContain('aria-labelledby={titleId}');
   expect(sheet).toContain("opener.current?.focus()");

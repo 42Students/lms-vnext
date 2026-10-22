@@ -319,8 +319,8 @@ export async function PlacementDriveWorkspace({
           {isTpo?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/discussion"}
              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">Discussion</Link>:null}
           <Dropdown mobileSheet align="end" label="Drive actions" trigger={isTpo?"More":"Actions"} className="w-full sm:w-auto">
-            <p className="hidden text-xs text-muted-foreground group-open:block md:!hidden leading-[20px]">Scroll for more drive actions ↓</p>
-            <div role="group" aria-label="Drive action choices" tabIndex={0}
+            <p id="drive-actions-scroll-hint" className="hidden text-xs text-muted-foreground group-open:block md:!hidden leading-[20px]">Scroll for more drive actions ↓</p>
+            <div role="group" aria-label="Drive action choices" aria-describedby="drive-actions-scroll-hint" tabIndex={0}
               className="flex max-h-[65dvh] min-w-0 flex-col gap-2 overflow-y-auto overscroll-contain pb-4 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1rem),transparent_100%)] md:max-h-72 md:flex-col md:overflow-y-auto md:pb-0">
             {nextStep&&!isTpo ? (
               <Link href={nextStep.primary.href}

@@ -15,7 +15,9 @@ describe("Faculty reporter and shared control font size",()=>{
  it.each(pages)("%s uses shared controls with mobile-safe 16px and touch targets",(_id,path)=>{
   const source=read(path);
   expect(source).toMatch(/<(?:Input|Select)\b/);
-  expect(source).toContain("max-[767px]:text-[16px]");
+  // Shared native controls apply 16px on phones, even if a page does not repeat the utility.
+  const shared=read("src/components/ui/input.tsx")+"\n"+read("src/components/ui/select.tsx");
+  expect(shared).toContain("max-[767px]:text-[16px]");
   expect(source).toContain("min-h-11");
   for(const control of source.matchAll(/<(?:Input|Select|Textarea)\b[^>]*>/g)){
    const classes=control[0].match(/className="([^"]+)"/)?.[1]??"";

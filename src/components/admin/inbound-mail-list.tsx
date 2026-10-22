@@ -219,7 +219,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}){
        <Button type="button" variant="secondary" size="sm" className="mt-3"
         onClick={()=>setDetailRetry(current=>current+1)}>Retry</Button>
      </Alert>:null}
-     {!detailLoading&&!detailError&&detail?<div className="min-w-0">
+     {!detailLoading&&!detailError&&detail?<div className="min-w-0" role="region" aria-label="Plain text message">
       <p className="whitespace-pre-wrap break-words text-sm leading-[22px] text-body">
        {detail.bodyPlain||"No message body"}
       </p>
