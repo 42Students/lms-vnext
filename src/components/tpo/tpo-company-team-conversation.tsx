@@ -172,7 +172,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
    {data.messages.length===0?<EmptyState title="Nothing here yet." description="Write the first message. @ someone to bring them in, or Ask someone to give a task a name and a date."/>:null}
    <ScrollCue axis="y" label="Company Team message history" viewportClassName="max-h-[35rem]"><ol role="log" aria-live="polite" aria-label="Company Team messages" className="space-y-3">
     {data.messages.map((m,index)=><li key={m.id} id={"company-team-"+m.id} className="border-b border-border px-1 py-4">
-      {(index===0||data.messages[index-1].dayKey!==m.dayKey)?<p className="mb-2 text-center text-xs font-semibold text-body leading-[20px]">{m.dayLabel}</p>:null}
+      {(index===0||data.messages[index-1]?.dayKey!==m.dayKey)?<p className="mb-2 text-center text-xs font-semibold text-body leading-[20px]">{m.dayLabel}</p>:null}
       <p className="text-xs text-muted-foreground leading-[20px]">
         {m.authorMembershipId===actorMembershipId?"You":m.authorName??"Team member"} · {m.createdLabel}
         {m.editedAt?" · edited":""}
