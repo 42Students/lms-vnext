@@ -10,12 +10,12 @@ export function AdminOtpLockoutResetForm() {
   const [phone, setPhone] = useState("");
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<{ text: string; kind: "success" | "error" } | null>(null);
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (busy) return;
     setBusy(true);
-    setMessage(null);
+    setFeedback(null);
     try {
       const response = await fetch("/api/auth/admin/otp-lockout-reset", {
         method: "POST",
@@ -25,9 +25,9 @@ export function AdminOtpLockoutResetForm() {
       if (!response.ok) throw new Error("RESET_FAILED");
       setPhone("");
       setReason("");
-      setMessage("OTP lockout cleared where eligible. The account can request a fresh login code; requester limits still apply.");
+      setFeedback({ kind: "success", text: "OTP lockout cleared. Requester limits still apply." });
     } catch {
-      setMessage("Could not complete this recovery. Check your admin access and try again.");
+      setFeedback({ kind: "error", text: "Could not complete this recovery. Check your admin access and try again." });
     } finally {
       setBusy(false);
     }
@@ -53,6 +53,6 @@ export function AdminOtpLockoutResetForm() {
       >
       {busy ? "Reviewing…" : "Clear OTP lockout"}
     </Button>
-    {message ? <p role="status" className="text-sm text-primary-text">{message}</p> : null}
+    {feedback ? <p role={feedback.kind === "error" ? "alert" : "status"} className="text-sm text-primary-text">{feedback.text}</p> : null}
   </form>;
 }
