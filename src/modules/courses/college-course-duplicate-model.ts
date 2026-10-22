@@ -12,6 +12,15 @@ export function collegeCourseDuplicatePrefill<T extends {id:string;name:string;c
  while(existing.has(next.toLocaleLowerCase("en-IN"))&&attempt<=99){
   next=stem.slice(0,55-String(attempt).length)+"-COPY"+attempt;attempt++;
  }
- return {id:source.id,name:source.name,code:next,
+ const existingNames=new Set(courses.filter(course=>course.departmentId===source.departmentId)
+  .map(course=>course.name.trim().toLocaleLowerCase("en-IN")));
+ const nameStem=source.name.trim().slice(0,248);
+ let duplicateName=nameStem+" (Copy)",nameAttempt=2;
+ while(existingNames.has(duplicateName.toLocaleLowerCase("en-IN"))&&nameAttempt<=99){
+  const suffix=" (Copy "+nameAttempt+")";
+  duplicateName=source.name.trim().slice(0,255-suffix.length)+suffix;
+  nameAttempt++;
+ }
+ return {id:source.id,name:duplicateName,code:next,
   description:source.description??"",departmentId:source.departmentId};
 }
