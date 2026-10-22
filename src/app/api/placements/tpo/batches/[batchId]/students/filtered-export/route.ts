@@ -12,7 +12,7 @@ export async function GET(request:Request,{params}:{params:Promise<{batchId:stri
  try{
   const {batchId}=await params;
   const raw=Object.fromEntries(new URL(request.url).searchParams.entries());
-  const page=pageSchema.parse(raw.page??undefined);
+  const page=pageSchema.parse(raw["page"]??undefined);
   const view=parseBatchStudentSearchParams(raw);
   if(!view.success)throw new Error("Invalid batch student filters");
   const records=await getTpoBatchStudentRegistrationView(await getCurrentRequestContext(),batchId,page,view.data);
