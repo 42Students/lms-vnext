@@ -53,7 +53,7 @@ describe("REC-home-drives-33 recruiter formal request auto approval",()=>{
  });
 
  it("REC-home-drives-33 tells recruiters an autoapproved draft awaits publication, not review",()=>{
-  expect(recruiterRequestLegacyLabel("DRAFT")).toBe("Approved — awaiting publication");
+  expect(recruiterRequestLegacyLabel("DRAFT")).toBe("Approved awaiting publication");
   expect(recruiterRequestLegacyLabel("REQUEST")).toBe("Sent for review");
   expect(recruiterRequestLegacyLabel("REJECTED")).toBe("Cancelled");
  });
