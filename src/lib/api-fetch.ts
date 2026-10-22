@@ -118,6 +118,11 @@ export async function apiFetch<T = unknown>(
       const path=typeof input==="string"?input:input instanceof URL?input.pathname:input instanceof Request?input.url:"";
       const notice=publicNetworkNotice({status,isSessionChange:/\/api\/auth\/session(?:\?|$)/.test(path)});
       if(notice)window.dispatchEvent(new CustomEvent("lms:network-notice",{detail:notice}));
+      // The persistent monitor receives a status category only: no request
+      // path, body, token, response text or user-entered field values.
+      // Never report failure of the telemetry endpoint itself.
+      if(!/\/api\/client-errors(?:\?|$)/.test(path))
+        window.dispatchEvent(new CustomEvent("lms:api-failure",{detail:{status}}));
     }
     if (reason instanceof FriendlyFetchError) throw reason;
     if (didTimeout) {
