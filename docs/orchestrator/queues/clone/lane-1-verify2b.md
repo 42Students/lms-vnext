@@ -11,7 +11,7 @@ All still-open verification-round-2 packets were redistributed evenly over the 2
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_13.md` (25 rows)
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_10.md` (25 rows)
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_16.md` (25 rows)
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-18/W1_lane18_5.md` (25 rows)
+- [x] `docs/audit/gap-fix-work/verify2/packets/lane-18/W1_lane18_5.md` (25 rows)
 
 ## Lane-1 packet decisions
 
@@ -33,3 +33,5 @@ All still-open verification-round-2 packets were redistributed evenly over the 2
 - W1_lane13_10: **triaged, NOT verified or fixed**. DEFERRED for code-level parity/migration/owner-policy assessment (all 25): G2-2-023-029, G2-2-023-059, G2-2-025-004, G2-2-025-040, G2-2-025-051, G2-2-027-014, G2-2-027-031, G2-2-027-036, G2-2-027-045, G2-2-027-048, G2-2-027-051, G2-2-027-052, G2-2-027-092, G2-2-027-094, G2-2-027-096, G2-2-032-011, G2-2-032-057, G2-2-032-102, G2-2-034-008, G2-2-034-010, G2-2-034-040, G2-2-004-008, G2-2-001-068, G2-20-006-017, G2-20-006-019. No OK or FIXED conclusion for this packet; all rows remain open engineering work.
 
 - W1_lane14_16: **triaged, NOT verified or fixed**. DEFERRED for code-level parity/migration/owner-policy assessment (all 25): G2-3-012-049, G2-3-012-051, G2-3-012-052, G2-11-016-079, G2-11-028-001, G2-11-028-012, G2-11-028-036, G2-11-028-042, G2-11-028-067, G2-11-028-069, G2-12-023-069, G2-12-023-071, G2-15-021-001, G2-15-021-008, G2-15-021-045, G2-17-027-007, G2-17-027-025, G2-17-027-044, G2-17-027-046, G2-17-027-048, G2-18-017-001, G2-18-017-007, G2-18-017-009, G2-18-017-041, G2-18-017-045. No OK or FIXED conclusion for this packet; all rows remain open engineering work.
+
+- W1_lane18_5: **triaged, NOT verified or fixed**. DEFERRED for code-level parity/migration/owner-policy assessment (all 25): G2-17-021-044, G2-18-021-060, G2-7-001-041, G2-7-001-044, G2-7-002-080, G2-7-005-029, G2-7-008-005, G2-7-011-016, G2-7-013-015, G2-7-014-029, G2-7-015-042, G2-7-016-038, G2-7-017-030, G2-7-018-027, G2-7-027-050, G2-7-027-086, G2-7-030-002, G2-7-033-035, G2-7-035-030, G2-7-035-058, G2-7-035-071, G2-8-027-011, G2-11-030-031, G2-12-012-014, G2-12-021-011. No OK or FIXED conclusion for this packet; all rows remain open engineering work.
