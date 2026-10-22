@@ -54,8 +54,9 @@ export async function importFacultyCsv(context: RequestContext, input: unknown) 
   const results: Array<{
     row: number; name: string; status: "CREATED"|"SKIPPED"|"FAILED"|"PARTIAL"; message: string;
   }> = [];
-  for (let index=0; index<rows.length; index++) {
-    const entry=rows[index];
+  for (const [index,entry] of rows.entries()) {
+    const selectedDepartmentId=rowDepartments[index];
+    if(!selectedDepartmentId)throw new Error("Faculty department mapping is missing.");
     const name=(entry.firstName+" "+entry.lastName).trim();
     if (seen.has(entry.phoneE164)) {
       results.push({row:index+2,name,status:"SKIPPED",message:"Duplicate mobile in this file"});
@@ -78,7 +79,7 @@ export async function importFacultyCsv(context: RequestContext, input: unknown) 
       // its tenant-owned department and legacy faculty type are attached.
       try {
         await upsertFacultyProfileWithRuntime(context,person.membership.id,{
-          primaryDepartmentId:rowDepartments[index]!,
+          primaryDepartmentId:selectedDepartmentId,
           employmentType:entry.facultyType==="MENTOR"?"Mentor":"Lecturer",
           academicTitle:null,
         });
