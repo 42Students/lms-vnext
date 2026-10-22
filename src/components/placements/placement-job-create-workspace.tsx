@@ -5,7 +5,7 @@ import {and,desc,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementJobs,sections,cohorts,programs as programsTable,departments} from "@/db/schema";
 import { PlacementJobCreateForm } from "./placement-job-create-form";
-import {TpoDriveCloneAction} from "./tpo-drive-clone-action";
+import {TpoDriveClonePicker} from "./tpo-drive-clone-picker";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { listCohorts } from "@/modules/academics/cohort-service";
@@ -53,6 +53,9 @@ export async function PlacementJobCreateWorkspace({
 
   // TPO-drives-25: one college-scoped aggregate, never one query per company.
   // TPO-drives-26: only this college's completed, non-archived drives can be cloned.
+  // Legacy also showed published and draft jobs in its copy list; they remain
+  // visible in the full directory, but cannot be used as a clone source because
+  // that would duplicate a currently recruiting cohort without a review.
   const pastDrives=hasMembershipRole(context,"TPO")
     ?await getDb().select({
       id:placementJobs.id,title:placementJobs.title,status:placementJobs.status,
@@ -60,7 +63,7 @@ export async function PlacementJobCreateWorkspace({
     }).from(placementJobs).where(and(eq(placementJobs.collegeId,collegeId),
       isNull(placementJobs.archivedAt),
       inArray(placementJobs.status,["CLOSED","CANCELLED"])))
-     .orderBy(desc(placementJobs.createdAt)).limit(20)
+     .orderBy(desc(placementJobs.createdAt)).limit(60)
     :[];
   const memoryRows=await getDb().select({
     relationshipId:placementJobs.companyRelationshipId,
@@ -110,7 +113,7 @@ export async function PlacementJobCreateWorkspace({
       <PageHeader
         eyebrow={eyebrow}
         title="Create drive"
-        description="Build the opportunity students will see"
+        description="Start from a completed drive or build a new opportunity for students."
         actions={<PageBackLink href={basePath} label="Back to Drives" />}
       />
       {supportLoadFailed || cohortsLoadFailed ? <p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
@@ -118,14 +121,16 @@ export async function PlacementJobCreateWorkspace({
         <Link href={basePath+"/new"} className="font-semibold text-primary-text underline">Retry setup data</Link>
       </p> : null}
       {preFormActions ? <div className="min-w-0">{preFormActions}</div> : null}
-      {pastDrives.length>0?<Disclosure title="Clone a past drive" className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]">
-        <p className="my-2 text-xs text-body">Shows up to 20 recent completed drives. Cloning makes a new draft; dates, learners, rounds, outcomes, offers and external links are never carried over.</p>
-        <ul className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
-          {pastDrives.map(job=><li key={job.id} className="flex min-w-0 flex-col items-start gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] md:flex-row md:items-center md:justify-between">
-            <span className="text-sm font-semibold">{job.title} · {job.status==="CANCELLED"?"Cancelled":"Closed"}</span>
-            <TpoDriveCloneAction jobId={job.id} label="Clone drive"/>
-          </li>)}
-        </ul>
+      {hasMembershipRole(context,"TPO")?<Disclosure title="Clone a past drive" defaultOpen={pastDrives.length>0}
+        className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]"
+        contentClassName="min-w-0 pt-3">
+        {pastDrives.length>0?<TpoDriveClonePicker drives={pastDrives.map(job=>({
+          id:job.id,title:job.title,status:job.status,
+          createdAt:job.createdAt.toISOString(),
+        }))}/>:<p className="text-sm text-muted-foreground">
+          No completed or cancelled drives are available to clone yet.
+          Create a new drive below.
+        </p>}
       </Disclosure>:null}
       <PlacementJobCreateForm
         jobTypes={jobTypes}

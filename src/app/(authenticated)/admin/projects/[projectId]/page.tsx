@@ -1,6 +1,10 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ErrorState } from "@/components/ui/error-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { and, eq, isNull } from "drizzle-orm";
+import { getDb } from "@/db/client";
+import { projectInstances } from "@/db/schema";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { ProjectsServiceError } from "@/modules/projects/errors";
@@ -23,14 +27,43 @@ export default async function SuperAdminProjectPage({
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
   const { projectId } = await params;
+  // A legacy workspace numeric key/slug is never globally searchable. Resolve
+  // it inside the actively selected college only, then check canonical
+  // authorization. An absent or ambiguous mapping reveals no foreign project.
+  const collegeId=context.adminScope?.collegeId;
+  if(!collegeId)return <div className="min-w-0 space-y-4">
+    <PageHeader title="Project workspace"/>
+    <ErrorState title="No college selected"
+      description="Select a college in the header to open its project workspaces. Existing workspaces in other colleges stay private."
+      action={<Link href="/admin/projects"
+        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+        Back to workspaces
+      </Link>}/>
+  </div>;
   const parsed = projectInstanceIdSchema.safeParse(projectId);
-  if (!parsed.success) return <ErrorState title="Could not load this workspace."
-    description="The workspace ID in this link is invalid. Return to workspaces and select a valid project."
+  let canonicalId:string|null=parsed.success?parsed.data:null;
+  if(!canonicalId){
+    const legacyId=/^[1-9][0-9]{0,9}$/.test(projectId)&&Number(projectId)<=2147483647
+      ?Number(projectId):null;
+    const legacySlug=/^[a-zA-Z0-9_-]{1,96}$/.test(projectId)?projectId:null;
+    if(legacyId!==null||legacySlug!==null){
+      const candidates=await getDb().select({id:projectInstances.id})
+        .from(projectInstances).where(and(
+          eq(projectInstances.collegeId,collegeId),
+          isNull(projectInstances.deletedAt),
+          legacyId!==null?eq(projectInstances.legacyProjectId,legacyId):
+            eq(projectInstances.slug,legacySlug!),
+        )).limit(2);
+      if(candidates.length===1)canonicalId=candidates[0]!.id;
+    }
+  }
+  if(!canonicalId)return <ErrorState title="Could not load this workspace."
+    description="This project link does not match a workspace in the selected college. Choose it from the workspace list."
     action={<Link href="/admin/projects"
-      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+      className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
       Back to workspaces
     </Link>}/>;
-  await requireProjectManageAccess(context, parsed.data);
+  await requireProjectManageAccess(context,canonicalId);
   // Only canonical audited deep-link context survives a legacy redirect.
   // Reject arrays or oversized values rather than reflecting arbitrary URL keys.
   const raw=await searchParams;
@@ -41,5 +74,5 @@ export default async function SuperAdminProjectPage({
       retained.set(key,value);
   }
   const suffix=retained.toString();
-  redirect("/admin/projects/"+encodeURIComponent(parsed.data)+"/summary"+(suffix?"?"+suffix:""));
+  redirect("/admin/projects/"+encodeURIComponent(canonicalId)+"/summary"+(suffix?"?"+suffix:""));
 }
