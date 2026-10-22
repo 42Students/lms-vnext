@@ -19,7 +19,7 @@ const redirects=[
   {
     route:"/mentor/courses",
     file:"src/app/(authenticated)/mentor/courses/page.tsx",
-    destination:"/mentor",
+    destination:"/mentor/projects",
   },
   {
     route:"/mentor/courses/[courseId]/[[...courseTab]]",
