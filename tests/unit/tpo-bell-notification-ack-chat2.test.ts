@@ -12,7 +12,7 @@ describe("TPO notification click acknowledgement",()=>{
   expect(component).toContain("onClick={() => markRead(item.id)}");
   expect(component).not.toContain("if (acknowledged && openHref) router.push(openHref)");
   expect(component).toContain("Could not mark this notification as read");
-  expect(component).toContain('variant==="tpo"?<button');
+  expect(component).toContain('aria-label={"Open notification: "');
  });
  it("TPO-inbox-team-61 keeps notification bell routing dependent on successful POST",()=>{
   const bell=src("src/components/tpo/tpo-bell-panel.tsx");
