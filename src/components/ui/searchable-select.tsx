@@ -142,7 +142,7 @@ export function SearchableSelect({
       const next = event.key === "ArrowDown"
         ? enabledIndices[(position + 1) % enabledIndices.length]
         : enabledIndices[(position <= 0 ? enabledIndices.length : position) - 1];
-      setActiveIndex(next);
+      if (next !== undefined) setActiveIndex(next);
     }
     if (event.key === "Enter" && open && validActiveIndex >= 0 && matches[validActiveIndex]) {
       event.preventDefault();
