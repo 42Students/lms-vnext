@@ -126,3 +126,9 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/components/attendance/faculty-attendance-workspace.tsx
 - Legacy: Legacy one grid cell per student per day including no class X (`TeacherAttendanceView.jsx:327-419`).
 - Expected fix: Restore full calendar day grid including no-class and upcoming cells.
+
+## Lane-13 verification notes (22 Oct 2026)
+
+- **OK (code inspection) G2-16-027-007, G2-16-027-027, G2-16-027-036:** Schedule mutation uses college advisory transaction lock, faculty and section locks, row-locks active hall, and searches all scheduled hall/section/faculty overlaps in the transaction.
+- **OK (code inspection) G2-16-027-010, G2-16-027-025:** Booking grace uses configurable `FACULTY_SCHEDULE_BOOKING_GRACE_MINUTES` defaulting to five and rechecks under transaction lock.
+- **DEFERRED G2-15-009-047/049/051/054/061/080/085/092, G2-15-001-018, G2-15-004-069, G2-15-006-067, G2-16-001-026, G2-16-005-045, G2-16-027-031, G2-17-006-030, G2-17-010-005/010, G2-18-009-002/014/019:** Attendance UI and historical crosswalks, logging access, scheduled notifications, projects paging, and policy decisions require broader code/test review before asserting parity.
