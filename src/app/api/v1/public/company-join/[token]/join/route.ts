@@ -22,7 +22,7 @@ export async function POST(request:Request,{params}:{params:Promise<{token:strin
  const parsed=legacy.safeParse(body.value);
  if(!parsed.success)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
  const {token}=await params;
- const trusted=process.env.PUBLIC_JOIN_TRUSTED_PROXY_READY==="VERIFIED";
+ const trusted=process.env["PUBLIC_JOIN_TRUSTED_PROXY_READY"]==="VERIFIED";
  const ip=trusted?request.headers.get("x-public-verified-client-ip"):null;
  try{
   const input=parsed.data;
