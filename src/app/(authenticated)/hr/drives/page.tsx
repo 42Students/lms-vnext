@@ -27,6 +27,7 @@ import {recruiterRequestLegacyLabel, RECRUITER_REQUEST_STATUSES} from "@/modules
 import {recruiterCollegeAcademicOverview} from "@/modules/placements/recruiter-college-academic-overview-service";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {HrUnsentDriveAlert} from "@/components/hr/hr-unsent-drive-alert";
+import {RecruiterDrivesRetained,RecruiterDrivesRefreshAction} from "@/components/hr/recruiter-drives-retained";
 import {RecruiterRequestCancelButton} from "@/components/hr/recruiter-request-cancel-button";
 import {RecruiterRequestFeedback} from "@/components/hr/recruiter-request-feedback";
 import {hrDriveSessionStorageKey} from "@/modules/placements/hr-unsent-draft-storage-model";
@@ -77,6 +78,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         }),
     }))}/>}</div>;
   const returnTo=recruiterDrivesHref({...query.data,collegeId:selectedCollege});
+  const snapshotKey=context.user.id+":"+selectedCollege+":"+returnTo;
   // A transient source failure is not an invalid filter or empty list.
   // eslint-disable-next-line react-hooks/purity -- deadline filters use the request clock.
   const now = new Date();
@@ -89,12 +91,14 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         {...query.data, collegeId:selectedCollege}, now),
     ]);
   } catch {
-    return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
-      <PageHeader title="Drives" description="Hiring drives for your selected college." />
-      <ErrorState title="Could not load your drives"
-        description="The drive list could not be refreshed. No drives were changed; try again."
-        action={<Link href={returnTo} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Retry</Link>} />
-    </div>;
+    return <RecruiterDrivesRetained key={snapshotKey} failed>
+      <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
+        <PageHeader title="Drives" description="Hiring drives for your selected college." />
+        <ErrorState title="Could not load your drives"
+          description="The drive list could not be refreshed. No drives were changed; try again."
+          action={<RecruiterDrivesRefreshAction/>} />
+      </div>
+    </RecruiterDrivesRetained>;
   }
   const collegeOverview=await recruiterCollegeAcademicOverview(context,selectedCollege).catch(error=>{
     if(error instanceof AuthorizationError)throw error;
@@ -145,7 +149,8 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
   const unansweredRequests=answerableResult.status==="fulfilled"?answerableResult.value:{};
   const partialLoadFailure=soon.status==="rejected"||past.status==="rejected"||
     countsResult.status==="rejected"||answerableResult.status==="rejected";
-  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
+  return <RecruiterDrivesRetained key={snapshotKey} failed={false}>
+   <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title="Drives"
       description="Hiring drives for the selected college and your exact employer relationship. Includes submitted requests, drafts and published drives for this employer."
       actions={<Link href={recruiterDriveDraftHref({collegeId:selectedCollege})}
@@ -343,5 +348,6 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     </section>
     <Link href="/hr/round-results" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Review round results →</Link>
     <p className="text-xs text-muted-foreground">Request history is saved. Placement-cell approval and external sending remain unavailable until the registered employer-request workflow is ready.</p>
-  </div>;
+   </div>
+  </RecruiterDrivesRetained>;
 }
