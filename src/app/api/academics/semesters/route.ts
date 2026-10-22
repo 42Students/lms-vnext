@@ -29,7 +29,7 @@ export async function GET(request: Request) {
     const context = await getCurrentRequestContext();
     const directory = await listCollegeSemesters(context, parsed.data);
     return NextResponse.json({ status: "OK", message: "OK", data: directory.items,
-      semesters: directory.items, total: directory.total, page: directory.query.page,
+      semesters: directory.items, total: directory.total, page: parsed.data.page,
       totalPages: directory.totalPages, programs: directory.programs },
       {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) { return apiErrorResponse(error); }
