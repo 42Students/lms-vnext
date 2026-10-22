@@ -236,12 +236,12 @@ export function DateInput({
     let next = event.key === "Home" ? 0 : event.key === "End" ? choices.length - 1 :
       event.key === "ArrowUp" ? index - columns : event.key === "ArrowDown" ? index + columns :
       event.key === "ArrowLeft" ? index - 1 : index + 1;
-    if (mode === "time" && event.key === "ArrowRight" && choices[index]?.dataset.pickerHour !== undefined) {
-      const minuteIndex = choices.findIndex(item => item.dataset.pickerMinute !== undefined);
+    if (mode === "time" && event.key === "ArrowRight" && choices[index]?.dataset["pickerHour"] !== undefined) {
+      const minuteIndex = choices.findIndex(item => item.dataset["pickerMinute"] !== undefined);
       if (minuteIndex >= 0) next = minuteIndex;
     }
-    if (mode === "time" && event.key === "ArrowLeft" && choices[index]?.dataset.pickerMinute !== undefined) {
-      const hourIndex = choices.findIndex(item => item.dataset.pickerHour !== undefined);
+    if (mode === "time" && event.key === "ArrowLeft" && choices[index]?.dataset["pickerMinute"] !== undefined) {
+      const hourIndex = choices.findIndex(item => item.dataset["pickerHour"] !== undefined);
       if (hourIndex >= 0) next = hourIndex;
     }
     event.preventDefault();
