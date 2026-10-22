@@ -16,6 +16,7 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { lessonMoveSchema, planLessonMove, collegeLessonBulkOrderSchema } from "./college-lesson-order-model";
 import {
  courseLessons,lessonContents,courseAssignments,courseQuizzes,
+ courseLearningPaths,courseOfferings,courses,departments,
  learnerContentProgress,courseDiscussionMessages,lessonVideoAssets,
 } from "@/db/schema";
 import {hasMembershipRole,isSuperAdmin,type RequestContext} from "@/modules/identity/context";
@@ -57,6 +58,36 @@ function mapLessonConstraint(error: unknown) {
     default:
       return error;
   }
+}
+
+/**
+ * Legacy /lesson/fetch accepted courseSlug or numeric courseId. Resolve
+ * those only inside the caller's selected college. Slug wins when both
+ * are present, as in the historical controller. An ambiguous course/path is
+ * never resolved by guessing an arbitrary semester or learner audience.
+ */
+export async function resolveLegacyLessonLearningPath(
+ context:RequestContext,
+ raw:{courseSlug?:string|null;courseId?:string|number|null},
+):Promise<string|null>{
+ const collegeId=context.adminScope?.collegeId??context.membership?.collegeId;
+ if(!collegeId)throw new AuthorizationError("courses.read");
+ const slug=raw.courseSlug?.trim();
+ const legacyId=slug?null:raw.courseId;
+ if(!slug&&(legacyId===null||legacyId===undefined))
+  throw new CoursesServiceError("LESSON_NOT_FOUND");
+ const criterion=slug?eq(courses.slug,slug):
+  typeof legacyId==="number"||typeof legacyId==="string"&&/^\\d+$/.test(legacyId)
+   ?eq(courses.legacyCourseId,Number(legacyId)):
+    eq(courses.id,z.uuid().parse(legacyId));
+ const found=await getDb().selectDistinct({pathId:courseLearningPaths.id})
+  .from(courseLearningPaths)
+  .innerJoin(courseOfferings,eq(courseOfferings.id,courseLearningPaths.offeringId))
+  .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+  .innerJoin(departments,eq(departments.id,courses.departmentId))
+  .where(and(eq(departments.collegeId,collegeId),criterion))
+  .limit(2);
+ return found.length===1?found[0]!.pathId:null;
 }
 
 export async function listCourseLessons(
@@ -133,9 +164,21 @@ export async function createCourseLesson(
   // the whole payload before acquiring locks, and insert all children in the
   // same transaction. Invalid children roll back the parent and its audit.
   const rawObject=z.record(z.string(),z.unknown()).parse(rawInput);
-  const {contentsDTOs,lessonName,...lessonFields}=rawObject;
+  const {contentsDTOs,lessonName,courseSlug,courseId,...lessonFields}=rawObject;
+  const legacyScope=z.strictObject({
+    courseSlug:z.string().trim().max(160).optional(),
+    courseId:z.union([z.string().trim().min(1),z.number().int().positive()]).optional(),
+  }).parse({courseSlug,courseId});
+  const resolvedLegacyPath=legacyScope.courseSlug||legacyScope.courseId!==undefined
+    ?await resolveLegacyLessonLearningPath(context,legacyScope):null;
+  if((legacyScope.courseSlug||legacyScope.courseId!==undefined)&&!resolvedLegacyPath)
+    throw new CoursesServiceError("LESSON_NOT_FOUND");
+  if(resolvedLegacyPath&&lessonFields.learningPathId!==undefined&&
+     lessonFields.learningPathId!==resolvedLegacyPath)
+    throw new CoursesServiceError("LESSON_NOT_FOUND");
   const input=createCourseLessonInputSchema.parse({
-    ...lessonFields,name:lessonFields.name??lessonName,
+    ...lessonFields,learningPathId:lessonFields.learningPathId??resolvedLegacyPath,
+    name:lessonFields.name??lessonName,
   });
   const children=contentsDTOs===undefined?[]:
     z.array(z.record(z.string(),z.unknown())).max(50).parse(contentsDTOs);

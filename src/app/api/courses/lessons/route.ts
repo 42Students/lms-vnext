@@ -9,6 +9,7 @@ import { getCollegeLessonSearchStats, searchCollegeLessons } from "@/modules/cou
 import {
   createCourseLesson,
   listCourseLessons,
+  resolveLegacyLessonLearningPath,
 } from "@/modules/courses/lesson-service";
 
 export const runtime = "nodejs";
@@ -69,9 +70,21 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "INVALID_LESSON_VIEW" },
         { status: 400, headers: noStore });
     }
+    const isLegacyFetch=url.searchParams.has("courseSlug")||
+      url.searchParams.has("courseId");
+    const learningPathId=isLegacyFetch
+      ?await resolveLegacyLessonLearningPath(context,{
+        courseSlug:url.searchParams.get("courseSlug"),
+        courseId:url.searchParams.get("courseId"),
+      })
+      :url.searchParams.get("learningPathId");
+    if(!learningPathId)
+      return NextResponse.json({error:"COURSE_SCOPE_AMBIGUOUS",
+        message:"Select the class, semester and course to open its lessons."},
+        {status:400,headers:noStore});
     const lessons = await listCourseLessons(
       context,
-      url.searchParams.get("learningPathId") ?? "",
+      learningPathId,
       url.searchParams.get("deliveryId"),
       url.searchParams.get("includeArchived") ===
         "true",
