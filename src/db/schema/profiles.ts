@@ -164,6 +164,7 @@ export function legacyFacultyTypeFromOrdinal(ordinal:number):{
  if(!Number.isInteger(ordinal)||ordinal<0||ordinal>=LEGACY_FACULTY_TYPE_ORDINAL.length)
   throw new Error("Unsupported historical faculty type ordinal");
  const type=LEGACY_FACULTY_TYPE_ORDINAL[ordinal];
+  if(type===undefined)throw new Error("Unsupported historical faculty type ordinal");
  const roleHint=type==="MENTOR"?"MENTOR":type==="TPO"?"TPO":
   type==="ADMIN"?"COLLEGE_ADMIN":"FACULTY";
  return {ordinal,type,employmentType:type.replaceAll("_"," "),roleHint};
