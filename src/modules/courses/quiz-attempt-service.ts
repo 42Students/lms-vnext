@@ -754,6 +754,12 @@ export async function listOwnQuizAttemptHistoryIndex(context:RequestContext,page
  const deliveries=await listLearnerCourseDeliveries(context,{includeHistorical:true});
  const allowed=new Map(deliveries.map(item=>[item.deliveryId,item.offeringId]));
  if(!allowed.size)return {items:[],hasMore:false};
+ // Filter authorized delivery/offering pairs before LIMIT/OFFSET. Filtering
+ // after pagination could return a short/empty page while valid older
+ // attempts remained in later pages, or incorrectly report hasMore=false.
+ const authorizedPairs=[...allowed].map(([deliveryId,offeringId])=>
+  and(eq(quizAttempts.deliveryId,deliveryId),
+      eq(courseLearningPaths.offeringId,offeringId)));
  const rows=await getDb().select({
   id:quizAttempts.id,quizId:quizAttempts.quizId,
   deliveryId:quizAttempts.deliveryId,
@@ -766,13 +772,11 @@ export async function listOwnQuizAttemptHistoryIndex(context:RequestContext,page
   .innerJoin(courseLessons,eq(courseLessons.id,courseQuizzes.lessonId))
   .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
   .where(and(eq(quizAttempts.membershipId,context.membership.id),
-    inArray(quizAttempts.deliveryId,[...allowed.keys()])))
+    or(...authorizedPairs),
+    or(isNull(courseQuizzes.deliveryId),eq(courseQuizzes.deliveryId,quizAttempts.deliveryId))))
   .orderBy(desc(quizAttempts.createdAt),desc(quizAttempts.id))
   .limit(201).offset((page-1)*200);
- const matched=rows.filter(row=>
-  allowed.get(row.deliveryId)===row.offeringId&&
-  (!row.quizDeliveryId||row.quizDeliveryId===row.deliveryId));
- return {items:matched.slice(0,200).map(row=>({
+ return {items:rows.slice(0,200).map(row=>({
   id:row.id,quizId:row.quizId,deliveryId:row.deliveryId,
   title:row.title,attemptNumber:row.attemptNumber,
   submittedAt:row.submittedAt?.toISOString()??null,
