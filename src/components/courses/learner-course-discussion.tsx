@@ -140,7 +140,7 @@ export function LearnerCourseDiscussion({
   const [deleteTarget,setDeleteTarget]=useState<string|null>(null);
   const [moderationError, setModerationError] = useState<string | null>(null);
   const [operationToast,setOperationToast]=useState<string|null>(null);
-  const toastTimeout=useRef<ReturnType<typeof setTimeout>|null>(null);
+  const toastTimeout=useRef<number|null>(null);
   useEffect(()=>()=>{if(toastTimeout.current!==null)window.clearTimeout(toastTimeout.current);},[]);
   function showOperationError(message:string){
     setModerationError(message);
