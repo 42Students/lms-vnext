@@ -36,7 +36,7 @@ export function createStructuredLogRecord(
   now = new Date(),
 ): StructuredLogRecord {
   return {
-    requestId: typeof fields.requestId === "string" ? fields.requestId : createRequestId(),
+    requestId: typeof fields["requestId"] === "string" ? fields["requestId"] : createRequestId(),
     ...fields,
     severity,
     event,
@@ -84,16 +84,16 @@ export function logError(
   error: unknown,
   fields: Record<string, unknown> = {},
 ) {
-  const requestId = typeof fields.requestId === "string" ? fields.requestId : createRequestId();
+  const requestId = typeof fields["requestId"] === "string" ? fields["requestId"] : createRequestId();
   writeStructuredLog("ERROR", event, { ...fields, requestId, ...createErrorLogFields(error) });
   void reportErrorForAlert({
     event, error, requestId,
-    component: typeof fields.component === "string" ? fields.component : undefined,
-    path: typeof fields.path === "string" ? fields.path :
-      typeof fields.route === "string" ? fields.route : undefined,
-    status: typeof fields.status === "number" ? fields.status : undefined,
-    userId: typeof fields.userId === "string" ? fields.userId : undefined,
-    collegeId: typeof fields.collegeId === "string" ? fields.collegeId : undefined,
+    ...(typeof fields["component"] === "string" ? { component: fields["component"] } : {}),
+    ...(typeof fields["path"] === "string" ? { path: fields["path"] } :
+      typeof fields["route"] === "string" ? { path: fields["route"] } : {}),
+    ...(typeof fields["status"] === "number" ? { status: fields["status"] } : {}),
+    ...(typeof fields["userId"] === "string" ? { userId: fields["userId"] } : {}),
+    ...(typeof fields["collegeId"] === "string" ? { collegeId: fields["collegeId"] } : {}),
   }).catch(() => undefined);
 }
 
