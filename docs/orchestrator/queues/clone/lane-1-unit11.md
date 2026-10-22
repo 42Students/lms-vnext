@@ -4,9 +4,9 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 
 - [ ] `tests/unit/COURSES-BREAK-FACULTY-06.test.ts` (2 failing)
 - [x] `tests/unit/UX-kit-states-chat17.test.tsx` (1 failing)
-- [ ] `tests/unit/chat17-verify2-team-removal-and-agenda.test.ts` (1 failing)
+- [x] `tests/unit/chat17-verify2-team-removal-and-agenda.test.ts` (1 failing)
 - [x] `tests/unit/chat3-tpo-supplemental-round14.test.ts` (1 failing)
-- [ ] `tests/unit/chat7-meeting-migration-contract.test.ts` (1 failing)
+- [x] `tests/unit/chat7-meeting-migration-contract.test.ts` (1 failing)
 - [x] `tests/unit/company-share-mobile-cards.test.ts` (1 failing)
 - [x] `tests/unit/tpo-audit-actor-display.test.ts` (1 failing)
 
