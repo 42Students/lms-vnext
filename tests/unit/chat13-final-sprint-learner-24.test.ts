@@ -6,7 +6,7 @@ describe("LEARNER-placements-24 cancelled/closed drive history",()=>{
   const route=source("src/app/(authenticated)/learn/my-placements/jobs/[jobId]/page.tsx");
   expect(route).toContain("getOwnLearnerDriveJourney(context,jobId)");
   expect(route).toContain("if(rows.length===0&&!journey)return");
-  expect(route).toContain('<EmptyState title="Job unavailable"');
+  expect(route).toMatch(/<EmptyState\s+title="Job unavailable"/);
   expect(route).toContain("<LearnerOwnDriveJourney journey={journey}/>");
  });
  it("LEARNER-placements-24 protects historical application rows by current persisted learner membership and college",()=>{
