@@ -24,13 +24,13 @@ export type TpoOfferExpiryTickResult =
  * crash and retry cannot produce a second expiry transition or event.
  */
 export async function runTpoOfferExpiryTick(): Promise<TpoOfferExpiryTickResult> {
-  if (process.env.TPO_SCHEDULED_OFFER_EXPIRY_ENABLED !== "true") {
+  if (process.env["TPO_SCHEDULED_OFFER_EXPIRY_ENABLED"] !== "true") {
     return { status: "DISABLED", expired: 0 };
   }
 
   // A real, provisioned service actor must satisfy the history/audit FKs.
   // Never synthesize a user ID or record an expiry as an arbitrary learner.
-  const actorUserId = (process.env.TPO_SCHEDULER_ACTOR_USER_ID ?? "").trim();
+  const actorUserId = (process.env["TPO_SCHEDULER_ACTOR_USER_ID"] ?? "").trim();
   if (!UUID_FORMAT.test(actorUserId)) {
     throw new Error("TPO_SCHEDULER_ACTOR_UNAVAILABLE");
   }
@@ -75,7 +75,7 @@ export async function runTpoOfferExpiryTick(): Promise<TpoOfferExpiryTickResult>
       // A separate deployment flag gates reminders until the scheduler and
       // notification provider are configured and operationally approved.
       let reminded=0,reminderBatchLimitReached=false;
-      if(process.env.TPO_SCHEDULED_OFFER_REMINDERS_ENABLED==="true"){
+      if(process.env["TPO_SCHEDULED_OFFER_REMINDERS_ENABLED"]==="true"){
         for(let batch=0;batch<5;batch++){
           await fence.renew();
           await fence.assertCurrent();

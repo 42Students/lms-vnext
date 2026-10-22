@@ -10,7 +10,8 @@ export async function listSuperAdminUsers(context: RequestContext, raw: unknown)
  if(!isSuperAdmin(context)) throw new AuthorizationError("people.manage");
  const selected=context.adminScope;
  requirePermission(context,"people.manage",{
-  organizationId:selected?.organizationId,collegeId:selected?.collegeId,
+  ...(selected?.organizationId ? {organizationId:selected.organizationId} : {}),
+  ...(selected?.collegeId ? {collegeId:selected.collegeId} : {}),
  });
  const conditions:SQL[]=[];
  if(selected?.collegeId)conditions.push(eq(colleges.id,selected.collegeId));
@@ -100,7 +101,8 @@ export async function superAdminLearnerExactNameExists(context:RequestContext,ra
   throw new AuthorizationError("people.manage");
  const selected=context.adminScope;
  requirePermission(context,"people.manage",{
-  organizationId:selected?.organizationId,collegeId:selected?.collegeId,
+  ...(selected?.organizationId ? {organizationId:selected.organizationId} : {}),
+  ...(selected?.collegeId ? {collegeId:selected.collegeId} : {}),
  });
  const [row]=await getDb().select({id:collegeMemberships.id})
   .from(collegeMemberships)
@@ -125,7 +127,8 @@ export async function superAdminLearnerSearchStats(context:RequestContext){
   throw new AuthorizationError("people.manage");
  const selected=context.adminScope;
  requirePermission(context,"people.manage",{
-  organizationId:selected?.organizationId,collegeId:selected?.collegeId,
+  ...(selected?.organizationId ? {organizationId:selected.organizationId} : {}),
+  ...(selected?.collegeId ? {collegeId:selected.collegeId} : {}),
  });
  const db=getDb();
  const scope=and(

@@ -14,6 +14,8 @@ export function parseTpoAcademicPreviewCsv(csv:string){
  return rows.slice(1).filter(Boolean).map((line,index)=>{
   if(line.includes('"')||line.split(",").length!==3)throw new Error("Invalid unquoted CSV at row "+(index+2));
   const [studentCode,cgpa,activeBacklogs]=line.split(",");
+  if(studentCode===undefined||cgpa===undefined||activeBacklogs===undefined)
+   throw new Error("Invalid unquoted CSV at row "+(index+2));
   const cgpaText=z.string().regex(/^(?:0|[1-9]\d*)(?:\.\d{1,2})?$/).parse(cgpa.trim());
   const backlogText=z.string().regex(/^(?:0|[1-9]\d*)$/).parse(activeBacklogs.trim());
   const result=tpoAcademicPreviewRowSchema.parse({studentCode:studentCode.trim(),cgpa:Number(cgpaText),activeBacklogs:Number(backlogText)});

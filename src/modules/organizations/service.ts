@@ -123,9 +123,8 @@ export async function listOrganizations(
  // instead of trusting the stale role captured at request startup.
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"organization.read",{
-   collegeId:context.adminScope?.collegeId??context.membership?.collegeId??undefined,
-   organizationId:context.adminScope?.organizationId??
-    context.membership?.organizationId??undefined,
+   ...(context.adminScope?.collegeId??context.membership?.collegeId ? {collegeId:context.adminScope?.collegeId??context.membership?.collegeId} : {}),
+   ...(context.adminScope?.organizationId??context.membership?.organizationId ? {organizationId:context.adminScope?.organizationId??context.membership?.organizationId} : {}),
   });
   if(isSuperAdmin(context)){
    const selected=context.adminScope;
@@ -366,7 +365,7 @@ export async function listArchivedOrganizations(context:RequestContext){
  const selectedCollegeId=context.adminScope?.collegeId??null;
  let organizationId=context.adminScope?.organizationId??null;
  requirePermission(context,"organization.manage",{
-  organizationId:organizationId??undefined,collegeId:selectedCollegeId??undefined,
+  ...(organizationId ? {organizationId} : {}),...(selectedCollegeId ? {collegeId:selectedCollegeId} : {}),
  });
  return getDb().transaction(async tx=>{
   // A college-scoped Super Admin cannot enumerate every archived parent when
@@ -379,7 +378,7 @@ export async function listArchivedOrganizations(context:RequestContext){
    organizationId=selected.organizationId;
   }
   await assertPersistedPlatformPermission(tx,context,"organization.manage",{
-   organizationId:organizationId??undefined,collegeId:selectedCollegeId??undefined,
+   ...(organizationId ? {organizationId} : {}),...(selectedCollegeId ? {collegeId:selectedCollegeId} : {}),
   });
   return tx.select({
    id:organizations.id,name:organizations.name,createdAt:organizations.createdAt,

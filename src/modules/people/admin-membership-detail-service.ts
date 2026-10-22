@@ -10,7 +10,7 @@ export async function getSuperAdminMembershipDetail(context:RequestContext,rawId
  const parsed=adminMembershipDetailIdSchema.safeParse(rawId);
  if(!parsed.success)return null;
  const selected=context.adminScope;
- requirePermission(context,"people.manage",{organizationId:selected?.organizationId,collegeId:selected?.collegeId});
+ requirePermission(context,"people.manage",{...(selected?.organizationId ? {organizationId:selected.organizationId} : {}),...(selected?.collegeId ? {collegeId:selected.collegeId} : {})});
  const [row]=await getDb().select({
   id:collegeMemberships.id,userId:users.id,collegeId:colleges.id,collegeName:colleges.name,
   name:users.displayName,platformStatus:users.platformStatus,membershipStatus:collegeMemberships.status,
