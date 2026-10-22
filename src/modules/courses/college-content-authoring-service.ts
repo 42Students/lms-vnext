@@ -166,8 +166,7 @@ export async function getCollegeLessonAuthoringOptions(ctx:RequestContext){
   .leftJoin(courseLearningPaths,and(eq(courseLearningPaths.offeringId,courseOfferings.id),
     ne(courseLearningPaths.status,"ARCHIVED")))
   .where(and(eq(courseOfferings.status,"ACTIVE"),eq(courses.status,"ACTIVE")))
-  .orderBy(asc(courses.name),asc(cohorts.name),asc(academicPeriods.name))
-  .limit(250);
+  .orderBy(asc(courses.name),asc(cohorts.name),asc(academicPeriods.name));
  const ids=offerings.map(item=>item.pathId).filter((id):id is string=>Boolean(id));
  const lessonRows=ids.length?await db.select({
   pathId:courseLessons.learningPathId,sequence:courseLessons.sequence,

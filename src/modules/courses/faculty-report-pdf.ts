@@ -28,7 +28,7 @@ type PdfRasterText={hex:string;width:number;height:number};
  * On a server or unsupported canvas the existing base-14 fallback remains.
  */
 function rasterizeUnicodeText(value:string,font:1|2,size:number,color:string):PdfRasterText|null{
- if(typeof document==="undefined"||!/[^ \u007e-\u00ff]/u.test(value))return null;
+ if(typeof document==="undefined"||!/[^\u0020-\u00ff]/u.test(value))return null;
  try{
   const canvas=document.createElement("canvas");
   const context=canvas.getContext("2d");
