@@ -75,7 +75,7 @@ export async function editTpoNotice(context:RequestContext,raw:unknown){
       schedule.expiresAt<=new Date(Math.max(now.getTime(),schedule.scheduledAt?.getTime()??0))))
     throw new Error("TPO_NOTICE_INVALID_TIME");
   if(input.sendAt!==undefined&&input.showUntil!==undefined)
-    parseTpoNoticeSchedule(input,now);
+    parseTpoNoticeSchedule({sendAt:input.sendAt,showUntil:input.showUntil},now);
   // Existing drafts may still be edited or unscheduled while the delivery
   // worker is unavailable, but creating/extending a future scheduled release
   // must not promise fanout without an operationally verified producer.
@@ -100,7 +100,9 @@ export async function editTpoNotice(context:RequestContext,raw:unknown){
    const change=input.audienceChange;
    const members=change.audience==="COLLEGE"?[]:
     (await tx.execute<{id:string}>(tpoTargetedRecipientQuery(college.id,{
-     kind:change.audience,targetId:change.targetId,targetIds:change.targetIds,
+     kind:change.audience,
+     ...(change.targetId!==undefined?{targetId:change.targetId}:{}),
+     ...(change.targetIds!==undefined?{targetIds:change.targetIds}:{}),
     }))).rows.map(row=>row.id);
    const frozen=freezeTpoNoticeRecipients(members);
    if(change.audience!=="COLLEGE"&&!frozen.length)

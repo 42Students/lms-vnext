@@ -19,7 +19,7 @@ import {facultyAttendanceScheduleParamsSchema,facultyAttendanceScheduleSchema,fa
 
 /** Configurable near-now booking grace (legacy default: five minutes). */
 function bookingGraceMs() {
-  const minutes=Number(process.env.FACULTY_SCHEDULE_BOOKING_GRACE_MINUTES ?? "5");
+  const minutes=Number(process.env["FACULTY_SCHEDULE_BOOKING_GRACE_MINUTES"] ?? "5");
   if(!Number.isInteger(minutes)||minutes<0||minutes>30)
     throw new Error("INVALID_FACULTY_SCHEDULE_BOOKING_GRACE");
   return minutes*60_000;
@@ -94,7 +94,11 @@ export async function commandFacultyAttendanceSchedule(
         .from(attendanceSessions)
         .where(eq(attendanceSessions.scheduleEventId,current.id)).limit(1);
       if(marked?.status==="MARKED")throw new CoursesServiceError("SCHEDULE_EVENT_CONFLICT");
-      if(!facultyScheduleFieldsChanged(current,input))
+      if(!facultyScheduleFieldsChanged(current,{
+         title:input.title,description:input.description,location:input.location,
+         startsAt:input.startsAt,endsAt:input.endsAt,
+         ...(input.lectureHallId!==undefined?{lectureHallId:input.lectureHallId}:{})
+       }))
         throw new CoursesServiceError("FACULTY_ATTENDANCE_SCHEDULE_NO_CHANGE");
     }
     // ClassScheduleDTO.classId -> sectionId, facultyId -> membership.id,

@@ -37,9 +37,9 @@ export async function listCollegeStudentImportHistory(ctx:RequestContext,raw:unk
  });
  return{page,items:rows.slice(0,20).map(row=>({
   id:row.id,when:row.when,
-  students:safeCount(row.metadata.count),
-  imported:safeCount(row.metadata.created),
-  partial:safeCount(row.metadata.partial),
-  failed:safeCount(row.metadata.failed),
+  students:safeCount(row.metadata["count"]),
+  imported:safeCount(row.metadata["created"]),
+  partial:safeCount(row.metadata["partial"]),
+  failed:safeCount(row.metadata["failed"]),
  })),hasNext:rows.length>20};
 }

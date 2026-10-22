@@ -4,7 +4,6 @@ import { and, eq, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships, membershipRoles, users, identityDeviceSessions,
-  courseTeachingAssignments, sectionFacultyAssignments,
 } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
