@@ -5,7 +5,8 @@ const source=(p:string)=>readFileSync(p,"utf8");
 const service=source("src/modules/placements/tpo-team-handover-service.ts");
 const route=source("src/app/api/placements/tpo/team/handover/route.ts");
 const ui=source("src/components/tpo/tpo-team-handover.tsx");
-const page=source("src/app/(authenticated)/tpo/team/page.tsx");
+const page=source("src/app/(authenticated)/tpo/settings/team/page.tsx");
+const legacyRedirect=source("src/app/(authenticated)/tpo/team/page.tsx");
 describe("Scoped Team ownership handover",()=>{
  it("TPO-inbox-team-36 rejects self assignment, role mutation payloads and inactive assignees at the pure boundary",()=>{
   const from="11111111-1111-4111-8111-111111111111";
@@ -50,5 +51,7 @@ describe("Scoped Team ownership handover",()=>{
   expect(ui).toContain("This does not remove team access or transfer private asks.");
   expect(ui).toContain("timeoutMs:12000");
   expect(page).toContain("<TpoTeamHandover");
+  expect(page).toContain('member.membershipId!==actorMembershipId');
+  expect(legacyRedirect).toContain('redirect("/tpo/settings/team")');
  });
 });
