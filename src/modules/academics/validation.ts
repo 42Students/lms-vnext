@@ -43,8 +43,8 @@ const programDurationYearsSchema = z.number().int().min(1, "Duration must be bet
 
 function validateProgramDuration(
   value: {
-    durationTerms?: number;
-    durationYears?: number;
+    durationTerms?: number | undefined;
+    durationYears?: number | undefined;
   },
   ctx: z.RefinementCtx,
   required: boolean,
