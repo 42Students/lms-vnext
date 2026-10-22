@@ -47,6 +47,8 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
     join sections s on s.id=cd.section_id
      and s.cohort_id=o.cohort_id and s.academic_period_id=o.academic_period_id
     where cd.offering_id=o.id and cd.id=${deliveryId}::uuid
+     and exists (select 1 from course_teaching_assignments ta
+      where ta.delivery_id=cd.id)
    ))
   )
   select count(*)::int as total from selected
@@ -69,6 +71,10 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
    join membership_roles role on role.membership_id=m.id and role.role='LEARNER'
    join users u on u.id=m.user_id and u.platform_status='ACTIVE'
    where d.offering_id=${offeringId}::uuid
+    -- An eligible section must have a persisted teaching association
+    -- (ended assignments still count for authorized historical reports).
+    and exists (select 1 from course_teaching_assignments ta
+     where ta.delivery_id=d.id)
     and (${deliveryId}::uuid is not null or d.ended_at is null)
     and (${deliveryId}::uuid is null or d.id=${deliveryId}::uuid)
     and m.college_id=${collegeId}::uuid
