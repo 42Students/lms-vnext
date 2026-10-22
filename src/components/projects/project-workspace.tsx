@@ -2337,7 +2337,8 @@ export function ProjectWorkspace({
             <ProjectResourceAuditList events={workspace.activity.map(event => ({
             id: event.id, eventType: event.eventType, summary: event.summary,
             subjectLabel: event.subjectLabel, actorDisplayName: event.actorDisplayName,
-            actorType:event.actorType, occurredAt: event.occurredAt.toISOString(),
+            actorType:event.actorType,actorUserId:event.actorUserId,
+            occurredAt: event.occurredAt.toISOString(),
           }))} /> : null}
           {!workspace.activityLoadError&&mode!=="ADMIN"?<ProjectActivityFilteredList
             projectId={workspace.project.id} events={workspace.activity}
