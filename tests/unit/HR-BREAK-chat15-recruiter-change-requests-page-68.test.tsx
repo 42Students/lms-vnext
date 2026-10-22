@@ -1,11 +1,12 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {isValidElement,type ReactNode} from "react";
-const m=vi.hoisted(()=>({ctx:vi.fn(),read:vi.fn(),notFound:vi.fn()}));
+const m=vi.hoisted(()=>({ctx:vi.fn(),read:vi.fn(),workspace:vi.fn(),notFound:vi.fn()}));
 vi.mock("server-only",()=>({}));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:m.ctx}));
 vi.mock("@/modules/placements/tpo-drive-change-request-service",()=>({
  getDriveChangeRequests:m.read,
 }));
+vi.mock("@/modules/placements/recruiter-workspace-service",()=>({getRecruiterPlacementWorkspace:m.workspace}));
 vi.mock("next/navigation",()=>({notFound:m.notFound}));
 import RecruiterChangeRequestsPage from "@/app/(authenticated)/recruiter/drives/[jobId]/change-requests/page";
 import {PlacementsServiceError} from "@/modules/placements/errors";
@@ -29,6 +30,7 @@ function hrefs(node:ReactNode):string[]{
 describe("HR-RECRUITER-PAGE-68: scoped drive change-request page",()=>{
  beforeEach(()=>{
   vi.clearAllMocks();m.ctx.mockResolvedValue(actor);
+  m.workspace.mockResolvedValue({college:{name:"College A"}});
   m.notFound.mockImplementation(()=>{throw new Error("NOT_FOUND");});
   m.read.mockResolvedValue({party:"COMPANY",storageReady:false,
    pendingMessage:"Requests unavailable.",job:{title:"Engineering"},requests:[]});
