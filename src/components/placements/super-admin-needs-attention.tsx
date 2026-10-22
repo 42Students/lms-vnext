@@ -2,8 +2,8 @@
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {useState} from "react";
-type Attention={code:string;jobId:string;jobTitle:string;companyName:string;count:number;priority:string;detail?:string|null};
-type CategoryRead={code:string;affected:number;jobs:number;samples:readonly Attention[]};
+type Attention={code:string;jobId:string;jobTitle:string;companyName:string;count:number;priority:string;detail?:string|null;learnerName?:string|null};
+type CategoryRead={code:string;affected:number;jobs:number;samples:readonly Attention[];sampleBasis?:"learners"|"drives"};
 const categories=[
  {code:"STALE_APPLICATIONS",label:"Applications with no action in a week",tab:"APPLIED"},
  {code:"INTERVIEW_UNSCHEDULED",label:"Marked Interview, nothing scheduled",tab:"INTERVIEW"},
@@ -18,7 +18,8 @@ export function SuperAdminNeedsAttention({items,basePath,summary,available=true,
   const facts=summary?.find(fact=>fact.code===category.code);
   const rows=facts?.samples??items.filter(item=>item.code===category.code);
   const affected=facts?.affected??rows.reduce((n,item)=>n+Math.max(0,item.count),0);
-  return {...category,rows,affected,distinctDrives:facts?.jobs??rows.length};
+  return {...category,rows,affected,distinctDrives:facts?.jobs??rows.length,
+   sampleBasis:facts?.sampleBasis??"drives"};
  });
  const total=active.reduce((n,category)=>n+category.affected,0);
  if(loading)return <section aria-label="Needs attention" role="status" className="rounded-[var(--lms-canvas-radius)] border border-border p-4">
@@ -42,7 +43,8 @@ export function SuperAdminNeedsAttention({items,basePath,summary,available=true,
   <div className="mt-3 space-y-3">
    {active.filter(category=>category.affected>0).map(category=>{
     const shown=expanded.includes(category.code)?category.rows:category.rows.slice(0,3);
-    const incomplete=category.distinctDrives>category.rows.length;
+    const incomplete=category.sampleBasis==="learners"?category.affected>category.rows.length:
+     category.distinctDrives>category.rows.length;
     return <div key={category.code} className="min-w-0 space-y-1">
      <h3 className="text-[13px] font-semibold text-[#613400]">{category.label} ({category.affected})</h3>
      <div className="space-y-1">{shown.map((item,index)=>{
@@ -50,15 +52,18 @@ export function SuperAdminNeedsAttention({items,basePath,summary,available=true,
        if(category.tab!==null)params.set("stage",category.tab);
        if(category.code!=="CLOSING_SOON_LOW_CONVERSION")
         params.set("attention",category.code);
+       // Application filters are server-side tenant-scoped. A candidate name
+       // narrows the pre-existing stage+attention filter without exposing IDs.
+       if(item.learnerName)params.set("q",item.learnerName);
        // The applicant list validates this relative path before using it as
        // a contextual Back link; no cross-college data comes from the URL.
        params.set("returnTo",basePath);
        const href=basePath+"/jobs/"+encodeURIComponent(item.jobId)+
         (category.tab===null?"":"/applications?"+params.toString());
        return <Link key={item.jobId+"-"+index} href={href}
-        aria-label={item.jobTitle+", "+category.label+", "+item.count+" affected"}
-        className="flex min-h-9 min-w-0 items-center justify-between gap-3 rounded px-1 py-1 text-[13px] text-[#613400] hover:bg-[#ffe58f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ad6800]">
-        <span className="min-w-0 truncate">{item.companyName?item.companyName+" — ":""}{item.jobTitle}</span>
+        aria-label={(item.learnerName?item.learnerName+", ":"")+item.jobTitle+", "+category.label+", "+item.count+" affected"}
+        className="flex min-h-11 md:min-h-[var(--lms-control-height)] min-w-0 items-center justify-between gap-3 rounded px-1 py-1 text-[13px] text-[#613400] hover:bg-[#ffe58f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ad6800]">
+        <span className="min-w-0 truncate">{item.learnerName?<strong className="font-semibold">{item.learnerName} · </strong>:null}{item.companyName?item.companyName+" — ":""}{item.jobTitle}</span>
         <span className="flex shrink-0 items-center gap-1 text-xs text-[#8c6a35]">{item.detail??item.count+" affected"}
          <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6"/></svg>
         </span>
@@ -69,10 +74,12 @@ export function SuperAdminNeedsAttention({items,basePath,summary,available=true,
       {expanded.includes(category.code)?"Show less":"+"+(category.rows.length-shown.length)+" more"}
      </Button>:null}
      {incomplete?<div className="flex flex-wrap items-center gap-3 text-xs text-[#8c6a35]">
-       <p role="status">Showing top {shown.length} of {category.distinctDrives} flagged drives
-        ({category.affected} affected records across the category). Open a drive to review all matching candidates.</p>
+       <p role="status">{category.sampleBasis==="learners"?
+         <>Showing top {shown.length} of {category.affected} affected candidate records across {category.distinctDrives} flagged drives.</>:
+         <>Showing top {shown.length} of {category.distinctDrives} flagged drives ({category.affected} affected records across the category).</>}
+        {" "}Open a drive to review all matching candidates.</p>
        <Link href={basePath+"/drives"} className="inline-flex min-h-11 items-center font-semibold underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ad6800]">
-        +{Math.max(0,category.distinctDrives-shown.length)} more drives — browse all drives
+        +{Math.max(0,(category.sampleBasis==="learners"?category.affected:category.distinctDrives)-shown.length)} more {category.sampleBasis==="learners"?"records":"drives"} — browse all drives
        </Link>
       </div>:null}
     </div>;
