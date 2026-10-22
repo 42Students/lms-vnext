@@ -18,6 +18,11 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   collegeMemberships,
   courseTeachingAssignments,
+  courseSectionDeliveries,
+  courseOfferings,
+  courses,
+  departments,
+  sections,
   membershipRoles,
   courseDiscussionMessages,
   lessonContents,
@@ -106,6 +111,42 @@ async function discussionAccess(
     delivery,
     mode,
   };
+}
+
+/** Resolve a numeric legacy classroom link without treating its integer IDs
+ * as authorization. Both IDs must select one Section Delivery in the acting
+ * college, and the current actor must independently have read access to that
+ * same delivery. Ambiguous historic course/class combinations fail closed. */
+export async function resolveLegacyClassroomDiscussionDelivery(
+  context: RequestContext,
+  raw: {legacyCourseId:unknown;legacyClassId:unknown},
+): Promise<string|null> {
+  const old=z.strictObject({
+    legacyCourseId:z.coerce.number().int().positive(),
+    legacyClassId:z.coerce.number().int().positive(),
+  }).parse(raw);
+  const collegeId=context.membership?.collegeId??context.adminScope?.collegeId;
+  if(!collegeId)return null;
+  const candidates=await getDb().select({deliveryId:courseSectionDeliveries.id})
+    .from(courseSectionDeliveries)
+    .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
+    .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+    .innerJoin(departments,eq(departments.id,courses.departmentId))
+    .innerJoin(sections,eq(sections.id,courseSectionDeliveries.sectionId))
+    .where(and(
+      eq(departments.collegeId,collegeId),
+      eq(courses.legacyCourseId,old.legacyCourseId),
+      eq(sections.legacyClassId,old.legacyClassId),
+      eq(sections.cohortId,courseOfferings.cohortId),
+      eq(sections.academicPeriodId,courseOfferings.academicPeriodId),
+    )).limit(2);
+  if(candidates.length!==1)return null;
+  try {
+    await discussionAccess(context,candidates[0]!.deliveryId,true);
+    return candidates[0]!.deliveryId;
+  }catch{
+    return null;
+  }
 }
 
 async function loadDiscussionMessage(
