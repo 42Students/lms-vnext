@@ -35,7 +35,12 @@ export function projectTemplateSectionCounts(value: unknown): TemplateSectionCou
 }
 export function projectTemplateCatalogueCsv(rows: readonly TemplateCatalogueRow[]) {
   return projectAdminCsv([
-    ["Title","Version","Summary"],
-    ...rows.map(row=>[row.title,String(row.version),row.summary??""]),
+    ["Title","Version","Sections","Overview","Releases","Sprints","Tasks","Resources","Summary"],
+    ...rows.map(row=>{
+      const {overview,releases,sprints,tasks,resources}=row.sections;
+      return [row.title,String(row.version),
+        String(overview+releases+sprints+tasks+resources),
+        ...[overview,releases,sprints,tasks,resources].map(String),row.summary??""];
+    }),
   ]);
 }
