@@ -85,17 +85,17 @@ export function ElectiveEligibleSelection({slotId,students,clearAfterAllocation=
     getRowKey={student=>student.membershipId}
     empty={<EmptyState title="No eligible learners" description="No eligible students match these filters."/>}
     columns={[
-     {key:"select",header:"Select",mobilePriority:"action" as const,cell:(row:Learner)=>
+     {key:"select",header:"Select",mobilePriority: "action" as const,cell:(row:Learner)=>
       <label className="flex min-h-11 min-w-11 items-center justify-center">
        <Checkbox checked={chosen.has(row.membershipId)}
         onChange={event=>toggle(row.membershipId,event.currentTarget.checked)}
         aria-label={"Select "+(row.name??row.rollNumber??"student")+" for allocation"}/>
       </label>},
-     {key:"name",header:"Student",mobilePriority:"primary" as const,
+     {key:"name",header:"Student",mobilePriority: "primary" as const,
       cell:(row:Learner)=>row.name??row.membershipId},
-     {key:"roll",header:"Roll No.",mobilePriority:"secondary" as const,
+     {key:"roll",header:"Roll No.",mobilePriority: "secondary" as const,
       cell:(row:Learner)=>row.rollNumber??"—"},
-     {key:"section",header:"Section",mobilePriority:"secondary" as const,
+     {key:"section",header:"Section",mobilePriority: "secondary" as const,
       cell:(row:Learner)=>row.sectionName},
     ]}/>
   </ScrollCue>
