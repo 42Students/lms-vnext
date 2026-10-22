@@ -1,7 +1,7 @@
 import "server-only";
 import {and,asc,desc,count,eq,ilike,isNull,or,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {courses,departments} from "@/db/schema";
+import {courses,departments,colleges} from "@/db/schema";
 import {hasMembershipRole,isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {loadAcademicCollegeScope} from "@/modules/academics/scope";
@@ -11,6 +11,7 @@ import {z} from "zod";
 import {collegeCourseCatalogueQuerySchema,COLLEGE_COURSE_CATALOGUE_PAGE_SIZE,
  type CollegeCourseCatalogueQuery} from "./college-course-catalogue-model";
 import {collegeCourseCatalogueExportQuerySchema,COLLEGE_COURSE_EXPORT_CAP} from "./college-course-catalogue-export-model";
+import {learnerCourseSearchScore,LEGACY_COURSE_SEARCH_SYNONYMS} from "./learner-course-card-search-model";
 
 async function authorizedCollege(context:RequestContext){
  const membership=context.membership;
@@ -108,47 +109,70 @@ export async function searchAuthorizedCourseSuggestions(
   q:z.string().trim().min(1).max(200),
   limit:z.number().int().min(1).max(50).default(15),
  }).parse(raw);
- const scope=context.membership;
- const collegeId=isSuperAdmin(context)?context.adminScope?.collegeId:scope?.collegeId;
- if(!collegeId||context.user.platformStatus!=="ACTIVE")
+ if(context.user.platformStatus!=="ACTIVE")
   throw new AuthorizationError("courses.read");
+ const admin=isSuperAdmin(context);
+ const membership=context.membership;
+ const collegeId=admin?context.adminScope?.collegeId:membership?.collegeId;
+ const orgId=admin?context.adminScope?.organizationId:membership?.organizationId;
+ if(!admin&&(!membership||membership.status!=="ACTIVE"||!collegeId))
+  throw new AuthorizationError("courses.read");
+ // A Super Admin can search across the selected organization, or the whole
+ // platform when no tenant is selected. Learner/faculty IDs are always
+ // restricted to their verified delivery grants in their current college.
+ if(admin)requirePermission(context,"courses.read",{
+  ...(collegeId?{collegeId}:{}),...(orgId?{organizationId:orgId}:{}),
+ });
  let authorizedIds:string[]|null=null;
- if(hasMembershipRole(context,"FACULTY")&&!hasMembershipRole(context,"COLLEGE_ADMIN")&&!isSuperAdmin(context)){
+ if(!admin&&hasMembershipRole(context,"FACULTY")&&!hasMembershipRole(context,"COLLEGE_ADMIN")){
   const grants=await listFacultyCourseDeliveries(context);
   authorizedIds=[...new Set(grants.map(row=>row.courseId))];
- }else if(hasMembershipRole(context,"LEARNER")&&!hasMembershipRole(context,"COLLEGE_ADMIN")&&!isSuperAdmin(context)){
+ }else if(!admin&&hasMembershipRole(context,"LEARNER")&&!hasMembershipRole(context,"COLLEGE_ADMIN")){
   const grants=await listLearnerCourseDeliveries(context);
   authorizedIds=[...new Set(grants.map(row=>row.courseId))];
- }else requirePermission(context,"courses.read",{
-  collegeId,organizationId:isSuperAdmin(context)?context.adminScope?.organizationId:scope?.organizationId,
- });
+ }else if(!admin){
+  requirePermission(context,"courses.read",{collegeId:collegeId!,organizationId:orgId});
+ }
  if(authorizedIds?.length===0)return [];
- const text=input.q.toLowerCase();
- const pattern="%"+text.replace(/[\\%_]/g,"\\$&")+"%";
- const rows=await getDb().select({
+ const text=input.q.toLocaleLowerCase("en-IN");
+ const expanded=LEGACY_COURSE_SEARCH_SYNONYMS[text]??null;
+ const pattern=(value:string)=>"%"+value.replace(/[\\%_]/g,"\\$&")+"%";
+ const terms=[text,...(expanded?[expanded]:[])];
+ const matches=or(...terms.flatMap(term=>[
+   ilike(courses.name,pattern(term)),ilike(courses.code,pattern(term)),
+   ilike(courses.shortTitle,pattern(term)),ilike(courses.officialCode,pattern(term)),
+   ilike(departments.name,pattern(term)),
+ ]));
+ const scope=and(
+  collegeId?eq(departments.collegeId,collegeId):undefined,
+  admin&&orgId?eq(colleges.organizationId,orgId):undefined,
+  eq(colleges.status,"ACTIVE"),eq(courses.status,"ACTIVE"),
+  isNull(departments.archivedAt),
+  authorizedIds?inArray(courses.id,authorizedIds):undefined,
+ );
+ const query=()=>getDb().select({
   id:courses.id,name:courses.name,code:courses.code,departmentName:departments.name,
-  shortTitle:courses.shortTitle,officialCode:courses.officialCode,slug:courses.slug,enabled:courses.enabled,
+  shortTitle:courses.shortTitle,officialCode:courses.officialCode,
+  slug:courses.slug,enabled:courses.enabled,
  }).from(courses).innerJoin(departments,eq(departments.id,courses.departmentId))
-  .where(and(eq(departments.collegeId,collegeId),eq(courses.status,"ACTIVE"),
-    isNull(departments.archivedAt),
-    authorizedIds?inArray(courses.id,authorizedIds):undefined,
-    or(ilike(courses.name,pattern),ilike(courses.code,pattern),
-      ilike(courses.shortTitle,pattern),ilike(courses.officialCode,pattern),
-      ilike(departments.name,pattern))))
+   .innerJoin(colleges,eq(colleges.id,departments.collegeId));
+ const initial=await query().where(and(scope,matches))
   .orderBy(asc(courses.name),asc(courses.id)).limit(300);
- const words=text.split(/\s+/).filter(Boolean);
- const rank=(row:typeof rows[number])=>{
-  const code=row.code.toLowerCase(),name=row.name.toLowerCase(),department=row.departmentName.toLowerCase();
-  const shortTitle=(row.shortTitle??"").toLowerCase(),officialCode=(row.officialCode??"").toLowerCase();
-  if(code===text||officialCode===text)return 0;
-  if(name===text||shortTitle===text)return 1;
-  if(code.startsWith(text)||officialCode.startsWith(text))return 2;
-  if(name.startsWith(text)||shortTitle.startsWith(text))return 3;
-  if(words.every(word=>name.includes(word)||code.includes(word)||shortTitle.includes(word)))return 4;
-  return department.includes(text)?6:5;
- };
- return [...rows].sort((a,b)=>rank(a)-rank(b)||a.name.localeCompare(b.name)||a.id.localeCompare(b.id))
-  .slice(0,input.limit);
+ // ILIKE alone cannot recover a two-edit typo ("algoritms"). Probe a bounded
+ // authorized candidate window, never the unfiltered multi-tenant catalog.
+ const candidates=initial.length>=input.limit?initial:
+  await query().where(scope).orderBy(desc(courses.updatedAt),asc(courses.id)).limit(300);
+ const union=new Map([...initial,...candidates].map(row=>[row.id,row]));
+ return [...union.values()].map(row=>{
+   const values=[row.name,row.code,row.shortTitle??"",row.officialCode??"",
+     row.departmentName];
+   const score=Math.max(...values.map(value=>
+     learnerCourseSearchScore(value,text)));
+   return {row,score};
+  }).filter(item=>item.score>0)
+  .sort((left,right)=>right.score-left.score||
+    left.row.name.localeCompare(right.row.name)||left.row.id.localeCompare(right.row.id))
+  .slice(0,input.limit).map(item=>item.row);
 }
 
 /** Permission-scoped legacy-style category, statistics and existence reads.

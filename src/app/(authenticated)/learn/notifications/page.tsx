@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { z } from "zod";
 import Link from "next/link";
 import { Alert } from "@/components/ui/alert";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -7,7 +8,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { LearnerNotificationsInbox } from "@/components/activity/learner-notifications-inbox";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { listVisibleAnnouncementsForMembership } from "@/modules/announcements/service";
-import { listOwnNotifications } from "@/modules/activity/notification-service";
+import { listOwnNotificationPage } from "@/modules/activity/notification-service";
 import { requirePersistedLearnerNotificationMembership } from "@/modules/activity/learner-notification-membership-service";
 import { learnerNotificationInboxHref, learnerNotificationInboxQuerySchema } from "@/modules/activity/learner-notification-inbox-model";
 import { notFound, redirect } from "next/navigation";
@@ -25,7 +26,11 @@ function NotificationsLoading() {
   </div>;
 }
 
-type LearnerNotificationParams={category?:string|string[];tab?:string|string[];unread?:string|string[];q?:string|string[]};
+type LearnerNotificationParams={
+ category?:string|string[];tab?:string|string[];
+ unread?:string|string[];q?:string|string[];
+ beforeCreatedAt?:string|string[];beforeId?:string|string[];
+};
 
 export default function NotificationsPage({searchParams}:{
   searchParams:Promise<LearnerNotificationParams>;
@@ -36,7 +41,16 @@ export default function NotificationsPage({searchParams}:{
 }
 
 async function LearnerNotificationsContent({searchParams}:{searchParams:Promise<LearnerNotificationParams>}) {
-  const { tab, ...filters } = await searchParams;
+  const { tab,beforeCreatedAt,beforeId,...filters } = await searchParams;
+  // Use the existing keyset reader so a personal inbox never ends at its
+  // first 60 messages. Both cursor dimensions must arrive together.
+  if(Boolean(beforeCreatedAt)!==Boolean(beforeId)||
+     Array.isArray(beforeCreatedAt)||Array.isArray(beforeId))notFound();
+  const cursorDate=typeof beforeCreatedAt==="string"
+    ? z.iso.datetime({offset:true}).safeParse(beforeCreatedAt) : null;
+  const cursorId=typeof beforeId==="string"
+    ? z.string().uuid().safeParse(beforeId) : null;
+  if((cursorDate&&!cursorDate.success)||(cursorId&&!cursorId.success))notFound();
   // Do not silently let a legacy tab overwrite a canonical category, and do
   // not accept duplicated tab selectors that could mean different categories.
   if (tab !== undefined && (filters.category !== undefined || Array.isArray(tab))) notFound();
@@ -59,12 +73,15 @@ async function LearnerNotificationsContent({searchParams}:{searchParams:Promise<
   // Personal notifications are required. A failed announcement source must
   // not turn a healthy personal inbox into an empty state or hard error.
   let personalLoadFailed=false;
-  const rows = await listOwnNotifications(context,{
+  const personalPage = await listOwnNotificationPage(context,{
     limit:60,collegeId:membership.collegeId,
+    ...(cursorDate?.success&&cursorId?.success?{
+      beforeCreatedAt:new Date(cursorDate.data),beforeId:cursorId.data,
+    }:{}),
   }).catch((error:unknown)=>{
     if(error instanceof AuthorizationError)throw error;
     personalLoadFailed=true;
-    return [] as Awaited<ReturnType<typeof listOwnNotifications>>;
+    return {items:[],nextCursor:null} as Awaited<ReturnType<typeof listOwnNotificationPage>>;
   });
   let announcements:Awaited<ReturnType<typeof listVisibleAnnouncementsForMembership>>=[];
   let announcementsLoadFailed=false;
@@ -78,7 +95,7 @@ async function LearnerNotificationsContent({searchParams}:{searchParams:Promise<
   }
 
   const items: NotificationListItem[] =
-    rows.map(
+    personalPage.items.map(
       ({
         notification,
         event,
@@ -107,7 +124,7 @@ async function LearnerNotificationsContent({searchParams}:{searchParams:Promise<
         <Link href={learnerNotificationInboxHref(query.data)} className="ml-2 font-semibold text-primary-text underline">Retry personal notifications</Link>
       </Alert>:null}
       <LearnerNotificationsInbox
-        key={query.data.category+":"+query.data.unread+":"+query.data.q}
+        key={query.data.category+":"+query.data.unread+":"+query.data.q+":"+(beforeId??"")}
         personal={items}
         initialFilters={query.data}
         announcementsEnabled={announcementsEnabled}
@@ -124,6 +141,21 @@ async function LearnerNotificationsContent({searchParams}:{searchParams:Promise<
           createdAt: announcement.createdAt,
         }))}
       />
+      {personalPage.nextCursor?<Link
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-link underline underline-offset-4"
+        href={(()=>{
+          const base=new URL(learnerNotificationInboxHref(query.data),"https://lms.local");
+          base.searchParams.set("beforeCreatedAt",personalPage.nextCursor!.beforeCreatedAt.toISOString());
+          base.searchParams.set("beforeId",personalPage.nextCursor!.beforeId);
+          return base.pathname+base.search;
+        })()}>
+        Older personal notifications
+      </Link>:null}
+      {beforeId?<Link
+        className="ml-3 inline-flex min-h-11 items-center text-link underline underline-offset-4"
+        href={learnerNotificationInboxHref(query.data)}>
+        Newest notifications
+      </Link>:null}
     </div>
   );
 }
