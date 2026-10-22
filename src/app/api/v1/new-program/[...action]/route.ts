@@ -88,13 +88,13 @@ export async function PUT(request: Request, { params }: Context) {
     const current = (await currentResponse.json() as {
       program:{name:string;code:string;durationTerms:number;departmentId:string};
     }).program;
-    const rawYears = body.durationYears ?? body.duration_years;
-    const durationTerms = body.durationTerms ??
+    const rawYears = body["durationYears"] ?? body["duration_years"];
+    const durationTerms = body["durationTerms"] ??
       (rawYears === undefined ? current.durationTerms : Number(rawYears)*2);
     const payload = {
-      name: body.name ?? current.name,
-      code: body.code ?? current.code,
-      departmentId: body.departmentId ?? body.dept_id ?? body.deptId ?? current.departmentId,
+      name: body["name"] ?? current.name,
+      code: body["code"] ?? current.code,
+      departmentId: body["departmentId"] ?? body["dept_id"] ?? body["deptId"] ?? current.departmentId,
       durationTerms,
     };
     return canonicalPatch(new Request(request.url,{
