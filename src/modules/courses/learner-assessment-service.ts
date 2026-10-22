@@ -119,7 +119,7 @@ export async function getLearnerAssessmentOverview(
   assignments.sort(byDueDateThenTitle);
   quizzes.sort(byDueDateThenTitle);
 
-  const courses = [
+  const courseOptions = [
     ...new Map(
       deliveries.map((delivery) => [
         delivery.courseId,
@@ -138,7 +138,7 @@ export async function getLearnerAssessmentOverview(
     snapshotNowMs,
     classScope,
     selectedCourseId,
-    courses,
+    courses:courseOptions,
     assignments,
     quizzes,
     ...(page!==null?{pagination:{page,pageSize,totals:result.totals,

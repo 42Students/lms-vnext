@@ -6,10 +6,25 @@ import {listLessonResourceMaterials,resolveLegacyResourceMaterialId} from "@/mod
 import {getPrivateR2Config} from "@/modules/storage/r2-config";
 import {headObject,presignUrl} from "@/modules/storage/s3-client";
 import {apiErrorResponse} from "@/lib/api-error";
-import {getLearnerCourseFileReference,validCourseResourceStorageKey,
- parseLearnerCourseMaterialIndex,LearnerCourseFileReferenceInputError} from "@/modules/courses/learner-course-file-reference-service";
+import {getLearnerCourseFileReference,validCourseResourceStorageKey} from "@/modules/courses/learner-course-file-reference-service";
 import {loadCourseSectionDeliveryScope} from "@/modules/courses/scope";
 
+/** Reject ambiguous, negative and out-of-range historical material indices before
+ * making any scoped file lookup. Keep errors field-safe for older clients. */
+class LearnerCourseFileReferenceInputError extends Error {
+ constructor(readonly field:"materialIndex"|"contentId"|"deliveryId"){
+  super("Invalid "+field);
+  this.name="LearnerCourseFileReferenceInputError";
+ }
+}
+function parseLearnerCourseMaterialIndex(value:string):number {
+ if(!/^(0|[1-9][0-9]{0,9})$/.test(value))
+  throw new LearnerCourseFileReferenceInputError("materialIndex");
+ const parsed=Number(value);
+ if(!Number.isSafeInteger(parsed)||parsed>2147483647)
+  throw new LearnerCourseFileReferenceInputError("materialIndex");
+ return parsed;
+}
 export const runtime="nodejs";
 type RouteContext={params:Promise<{deliveryId:string;contentId:string}>};
 function fileName(key:string){

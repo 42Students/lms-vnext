@@ -95,7 +95,7 @@ export function FacultyAssessmentOverview({
             </option>)}
           </Select>
         </label>
-        <FacultyAssessmentCreate kind={kind} lessons={overview.lessonChoices} toolbar/>
+        <FacultyAssessmentCreate kind="ASSIGNMENT" lessons={overview.lessonChoices} />
       </div>
     }/>:null;
   if (items.length === 0) {

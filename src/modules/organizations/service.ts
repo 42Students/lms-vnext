@@ -94,7 +94,7 @@ async function assertUniqueActiveName(
   ];
 
   if (excludeOrganizationId) {
-    conditions.push(ne(organizations.id, excludeOrganizationId));
+    conditions.push(sql<boolean>`${organizations.id} <> ${excludeOrganizationId}`);
   }
 
   const [existing] = await db

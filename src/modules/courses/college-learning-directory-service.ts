@@ -174,13 +174,14 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
 
   // Count and page share one repeatable-read snapshot; concurrent lesson
   // authoring cannot make the displayed page disagree with its total.
-  const [countRows, baseRows] = await db.transaction(async tx=>Promise.all([
-    tx.select({ total: count() }).from(scoped),
-    tx.select().from(scoped)
+  const {countRows,baseRows} = await db.transaction(async tx=>{
+    const countRows=await tx.select({total:count()}).from(scoped);
+    const baseRows=await tx.select().from(scoped)
       .orderBy(asc(scoped.legacyCourseSort),asc(scoped.courseCode),asc(scoped.sequence),asc(scoped.id))
       .limit(query.pageSize)
-      .offset((query.page - 1) * query.pageSize),
-  ]),{isolationLevel:"repeatable read",readOnly:true});
+      .offset((query.page - 1) * query.pageSize);
+    return {countRows,baseRows};
+  },{isolationLevel:"repeatable read"});
   const ids = baseRows.map(r => r.id);
   const counts = ids.length === 0 ? [] : await db.select({
     id: lessonContents.lessonId,
