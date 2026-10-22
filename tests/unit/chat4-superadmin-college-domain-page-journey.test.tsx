@@ -1,5 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {renderToStaticMarkup} from "react-dom/server";
+import {readFileSync} from "node:fs";
 
 const mocks=vi.hoisted(()=>({
  context:vi.fn(),tenant:vi.fn(),domains:vi.fn(),managed:vi.fn(),notFound:vi.fn(),
@@ -48,6 +49,15 @@ beforeEach(()=>{
 });
 
 describe("SA-colleges-domains-page-01 verified domain admin scope",()=>{
+ it("G2-5-030-018 warns before abandoning unsaved custom-domain changes",()=>{
+  const manager=readFileSync("src/components/admin/tenant-domain-manager.tsx","utf8");
+  expect(manager).toContain("window.addEventListener(\"beforeunload\",before)");
+  expect(manager).toContain('document.addEventListener("click",onLink,true)');
+  expect(manager).toContain("Unsaved custom-domain changes");
+  expect(manager).toContain("Leave without saving this web address?");
+  expect(manager).toContain("pending={busy}");
+ });
+
  it("allows managing only the selected authorized college and renders an empty state without fabricated hosts",async()=>{
   const html=renderToStaticMarkup(await CollegeWebAddressContent(props));
   expect(html).toContain("IIT Dharwad");

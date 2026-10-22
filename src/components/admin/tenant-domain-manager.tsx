@@ -2,6 +2,7 @@
 
 import { formatDateTimeIst } from "@/lib/format-date";
 import {
+  useEffect,
   useRef,
   useState,
   useTransition,
@@ -72,6 +73,40 @@ export function TenantDomainManager({
   const [pendingAction, setPendingAction] =
     useState<string | null>(null);
   const [creating, startCreate] = useTransition();
+
+  const [leaveHref,setLeaveHref]=useState<string|null>(null);
+  const dirty=Boolean(host.trim() || (editTarget && editedHost!==editTarget.host) ||
+    deleteHostConfirmation.trim());
+  const busy=creating || pendingAction!==null;
+  // Custom-domain drafts belong to the selected college, and should not be
+  // silently discarded when the global role/college header changes.
+  useEffect(()=>{
+    if(!dirty&&!busy)return;
+    const before=(event:BeforeUnloadEvent)=>{
+      event.preventDefault();
+      event.returnValue="";
+    };
+    const onLink=(event:MouseEvent)=>{
+      if(event.defaultPrevented||event.button!==0||event.ctrlKey||event.metaKey||
+        event.altKey||event.shiftKey||!(event.target instanceof Element))return;
+      const anchor=event.target.closest("a[href]");
+      if(!(anchor instanceof HTMLAnchorElement)||anchor.hasAttribute("download")||
+        (anchor.target&&anchor.target!=="_self"))return;
+      const next=new URL(anchor.href,window.location.href);
+      if(next.origin!==window.location.origin||
+        (next.pathname===window.location.pathname&&next.search===window.location.search))return;
+      event.preventDefault();
+      event.stopPropagation();
+      if(busy){showToast({tone:"info",title:"Wait until the domain action completes."});return;}
+      setLeaveHref(next.pathname+next.search+next.hash);
+    };
+    window.addEventListener("beforeunload",before);
+    document.addEventListener("click",onLink,true);
+    return ()=>{
+      window.removeEventListener("beforeunload",before);
+      document.removeEventListener("click",onLink,true);
+    };
+  },[dirty,busy,showToast]);
 
   function createDomain() {
     if (createInFlightRef.current || !host.trim()) return;
@@ -509,6 +544,13 @@ export function TenantDomainManager({
         </label> : null}
         {modalError ? <p role="alert" className="mt-[var(--lms-space-2)] break-words rounded-[8px] border border-[rgba(239,68,68,0.25)] bg-[var(--lms-error-subtle)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[14px] leading-5 text-[var(--lms-error-text)]">{modalError}</p> : null}
       </ConfirmDialog>
+      {dirty?<p role="status" className="text-xs text-warning-text">Unsaved custom-domain changes. Save or discard them before switching colleges.</p>:null}
+      <ConfirmDialog open={leaveHref!==null} onOpenChange={open=>{if(!open)setLeaveHref(null);}}
+        title="Leave without saving this web address?"
+        description="Your unsaved custom-domain edits will be discarded."
+        confirmLabel="Leave without saving" confirmVariant="danger" pending={busy}
+        onConfirm={()=>{if(!leaveHref||busy)return;const target=leaveHref;setLeaveHref(null);router.push(target);}}/>
+
     </div>
   );
 }
