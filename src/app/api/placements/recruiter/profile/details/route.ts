@@ -23,14 +23,14 @@ export async function PATCH(request:Request){
     if(Object.hasOwn(source,"designation")||Object.hasOwn(source,"contactMobile")){
       const {designation,contactMobile,...fields}=source;
       normalized={...fields,
-        title:fields.title??designation,
-        phone:fields.phone??contactMobile};
+        title:fields["title"]??designation,
+        phone:fields["phone"]??contactMobile};
     }
   }
   // Legacy RecruiterSelfController returns this exact 400 error contract
   // before attempting a mutation, not a misleading stale-version response.
   if(normalized&&typeof normalized==="object"&&!Array.isArray(normalized)){
-    const candidate=(normalized as Record<string,unknown>).phone;
+    const candidate=(normalized as Record<string,unknown>)["phone"];
     if(typeof candidate==="string"&&normalizeLegacyRecruiterMobile(candidate)===null){
       return NextResponse.json({
         error:"INVALID_MOBILE",
