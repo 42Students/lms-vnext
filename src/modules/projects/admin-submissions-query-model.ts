@@ -48,7 +48,7 @@ export function parseProjectAdminSubmissionsQuery(params: Record<string,string|s
   const legacySubmission=rawStatus && !workspaceStatus ? normalizeSubmissionStatus(rawStatus) : undefined;
   const entries = {
     view:first(params.view)??(first(params.tab)?.toLowerCase()==="notsubmitted"?"NOT_SUBMITTED":"ALL"),
-    q:first(params.q),focusedProjectId:first(params.projectId),status:workspaceStatus,
+    q:first(params.q),focusedProjectId:first(params.focusedProjectId)??first(params.projectId),status:workspaceStatus,
     sort:first(params.sort),
     submissionStatus:normalizeSubmissionStatus(first(params.submissionStatus) ?? legacySubmission),
     sort:first(params.sort),
