@@ -1220,6 +1220,25 @@ export async function archivePlacementJob(
     }
     if (locked.status === "ARCHIVED") return current;
     const now = new Date();
+    // Legacy deletion cancelled nonterminal interviews. Snapshot booked
+    // applications under locks before clearing their slot assignments;
+    // completed/no-show outcomes remain immutable historical evidence.
+    const booked=await tx.select({
+      id:placementRoundCandidateSlots.id,
+      applicationId:placementRoundCandidateSlots.applicationId,
+    }).from(placementRoundCandidateSlots)
+      .where(and(eq(placementRoundCandidateSlots.jobId,jobId),
+        eq(placementRoundCandidateSlots.status,"BOOKED"),
+        isNull(placementRoundCandidateSlots.interviewOutcome)))
+      .for("update");
+    if(booked.length){
+      await tx.update(placementRoundCandidateSlots).set({
+        status:"CANCELLED",applicationId:null,
+        legacyInterviewStatus:"CANCELLED",
+        changedByUserId:context.user.id,updatedAt:now,
+        version:sql`${placementRoundCandidateSlots.version}+1`,
+      }).where(inArray(placementRoundCandidateSlots.id,booked.map(slot=>slot.id)));
+    }
     await withdrawJobIssuedOffers(tx,jobId,context.user.id,now);
     const [archived] = await tx.update(placementJobs)
       .set({status:"ARCHIVED",archivedAt:now,updatedAt:now,
@@ -1235,7 +1254,8 @@ export async function archivePlacementJob(
       collegeId:archived.collegeId,subjectType:"placement_job",
       subjectId:archived.id,subjectLabel:archived.title,
       summary:"Placement drive archived",
-      metadata:{previousStatus:locked.status,jobId:archived.id},
+      metadata:{previousStatus:locked.status,jobId:archived.id,
+        cancelledBookedInterviews:booked.length},
       groupKey:"placement-job:"+archived.id,
       dedupeKey:"placement-job:"+archived.id+":archived",
     });
@@ -1246,10 +1266,29 @@ export async function archivePlacementJob(
         eq(collegeMemberships.collegeId,archived.collegeId),
       )).where(eq(placementApplications.jobId,archived.id));
     const recipients=[...new Set(applicantUsers.map(row=>row.userId))];
+    const affectedApplicationIds=booked.map(slot=>slot.applicationId)
+      .filter((id):id is string=>typeof id==="string");
+    const interruptedUsers=affectedApplicationIds.length
+      ?await tx.select({userId:collegeMemberships.userId})
+        .from(placementApplications)
+        .innerJoin(collegeMemberships,and(
+          eq(collegeMemberships.id,placementApplications.membershipId),
+          eq(collegeMemberships.collegeId,archived.collegeId),
+        ))
+        .where(and(eq(placementApplications.jobId,archived.id),
+          inArray(placementApplications.id,affectedApplicationIds)))
+      :[];
+    const cancelledUserIds=new Set(interruptedUsers.map(row=>row.userId));
+    // One durable in-app notice per learner, with explicit interview
+    // cancellation copy for the students whose live booking was removed.
+    // No unrequested email is sent.
     for(let i=0;i<recipients.length;i+=200){
       await tx.insert(inAppNotifications).values(recipients.slice(i,i+200).map(userId=>({
-        userId,eventId:event.id,title:"Placement drive archived",
-        body:"The "+archived.title+" drive has been archived.",
+        userId,eventId:event.id,
+        title:cancelledUserIds.has(userId)?"Drive archived · Interview cancelled":"Placement drive archived",
+        body:cancelledUserIds.has(userId)
+          ?"The "+archived.title+" drive has been archived and your scheduled interview was cancelled."
+          :"The "+archived.title+" drive has been archived.",
         actionHref:"/learn/my-placements/applications",
       }))).onConflictDoNothing();
     }
