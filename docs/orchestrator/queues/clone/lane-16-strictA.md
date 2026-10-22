@@ -5,7 +5,7 @@ No-mercy program part A (compiler flags). Work packets in order; each lists file
 - [x] `docs/audit/strictness/A/packets/A_016.md` — 96e0715, 694f21e
 - [x] `docs/audit/strictness/A/packets/A_036.md` — 8 source files corrected on chatgpt/chat-16-b
 - [x] `docs/audit/strictness/A/packets/A_056.md` — 5003a519, a970bb59 (prior fixes already present)
-- [ ] `docs/audit/strictness/A/packets/A_076.md`
+- [x] `docs/audit/strictness/A/packets/A_076.md` — 8 source-file commits on chatgpt/chat-16-b
 - [ ] `docs/audit/strictness/A/packets/A_096.md`
 - [ ] `docs/audit/strictness/A/packets/A_116.md`
 - [ ] `docs/audit/strictness/A/packets/A_136.md`
