@@ -186,6 +186,15 @@ export async function createPlacementRound(
     const sequence =
       Number(aggregate?.maxSequence ?? 0) + 1;
 
+    const scheduled = input.scheduledAt !== undefined;
+    // Zod checks the complete scheduling tuple before the transaction; a
+    // concurrent round insert is serialized by the job row lock above.
+    if (scheduled && input.mode==="ON_CAMPUS") await requireAvailableRoundVenue(tx,{
+      collegeId:job.collegeId,
+      venue:input.venue??"",start:input.scheduledAt!,
+      durationMinutes:input.durationMinutes??null,
+    });
+
     const [round] = await tx
       .insert(placementJobRounds)
       .values({
@@ -193,6 +202,13 @@ export async function createPlacementRound(
         sequence,
         kind: input.kind,
         name: input.name,
+        status: scheduled ? "SCHEDULED" : "PENDING",
+        scheduledAt: input.scheduledAt??null,
+        timezone: input.timezone??null,
+        mode: input.mode??null,
+        venue: input.mode==="ON_CAMPUS" ? input.venue??null : null,
+        meetingUrl: input.mode==="VIRTUAL" ? input.meetingUrl??null : null,
+        resultsDueAt: input.resultsDueAt??null,
         whatToBring:
           input.whatToBring ?? null,
         platform: input.platform ?? null,
@@ -213,6 +229,8 @@ export async function createPlacementRound(
           sequence,
           kind: round.kind,
           name: round.name,
+          scheduledAt: round.scheduledAt?.toISOString()??null,
+          mode: round.mode,
         },
       });
 

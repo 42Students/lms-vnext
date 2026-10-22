@@ -995,8 +995,38 @@ const placementRoundDefinitionFields = {
     .optional(),
 };
 
-export const createPlacementRoundInputSchema =
-  z.object(placementRoundDefinitionFields).strict();
+/** A new round can be scheduled atomically; incomplete schedule input
+ * must never create a partially scheduled row. */
+export const createPlacementRoundInputSchema = z.object({
+  ...placementRoundDefinitionFields,
+  scheduledAt: z.coerce.date().optional(),
+  timezone: placementTimeZoneSchema.optional(),
+  mode: z.enum(placementRoundModes).optional(),
+  venue: z.string().trim().min(1).max(500).nullable().optional(),
+  meetingUrl: optionalHttpUrlSchema,
+  resultsDueAt: z.coerce.date().nullable().optional(),
+}).strict().superRefine((value,ctx) => {
+  const schedulingRequested = value.scheduledAt !== undefined ||
+    value.timezone !== undefined || value.mode !== undefined ||
+    value.venue !== undefined || value.meetingUrl !== undefined ||
+    value.resultsDueAt !== undefined;
+  if (!schedulingRequested) return;
+  if (!value.scheduledAt) ctx.addIssue({code:"custom",path:["scheduledAt"],
+    message:"A scheduled round requires a date and time"});
+  if (!value.timezone) ctx.addIssue({code:"custom",path:["timezone"],
+    message:"A scheduled round requires a timezone"});
+  if (!value.mode) ctx.addIssue({code:"custom",path:["mode"],
+    message:"A scheduled round requires a mode"});
+  if (value.mode==="ON_CAMPUS" && !value.venue)
+    ctx.addIssue({code:"custom",path:["venue"],
+      message:"On-campus rounds require a venue"});
+  if (value.mode==="VIRTUAL" && !value.meetingUrl)
+    ctx.addIssue({code:"custom",path:["meetingUrl"],
+      message:"Virtual rounds require a meeting URL"});
+  if (value.scheduledAt && value.resultsDueAt && value.resultsDueAt<value.scheduledAt)
+    ctx.addIssue({code:"custom",path:["resultsDueAt"],
+      message:"Results due date cannot be before the scheduled round"});
+});
 
 export const updatePlacementRoundInputSchema =
   z
