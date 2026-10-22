@@ -57,7 +57,10 @@ export function AdminPlacementStudentProfileEditor({membershipId,skills:initialS
    setSavedPreferences(saved.jobPreferences);
    setRoles(saved.jobPreferences.rolePreferences.join(", "));
    clearSkill();setRemoveIndex(null);setEditingPreferences(false);
-   showToast({tone:"success",title:action==="DELETE_SKILL"?"Skill removed":"Learner profile saved"});
+   const title=action==="DELETE_SKILL"?"Removed":
+    action==="ADD_SKILL"?"Added":
+    action==="EDIT_SKILL"?"Saved":"Job preferences updated";
+   showToast({tone:"success",title});
    router.refresh();
   }catch(cause){
    const message=cause instanceof Error?cause.message:"Unable to update learner profile.";
