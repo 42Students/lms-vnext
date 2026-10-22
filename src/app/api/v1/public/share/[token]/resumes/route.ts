@@ -1,7 +1,7 @@
 import {NextResponse} from "next/server";
 import {isSameOriginRequest} from "@/auth/origin";
 import {legacyShareBody,legacyShareCode,legacyShareCookie,legacyShareInvalid,
- legacyShareVerify,legacyShareHeaders} from "@/modules/placements/company-share/legacy-public-controller";
+ legacyShareVerify} from "@/modules/placements/company-share/legacy-public-controller";
 export const runtime="nodejs";
 export async function POST(request:Request,{params}:{params:Promise<{token:string}>}){
  if(!isSameOriginRequest(request))return legacyShareInvalid();
