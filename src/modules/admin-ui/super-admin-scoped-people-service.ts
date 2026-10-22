@@ -12,31 +12,29 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
  // keeping all results confined to the signed-in Super Admin's college.
  const input=raw&&typeof raw==="object"&&!Array.isArray(raw)
   ?{...(raw as Record<string,unknown>)}:{};
- const sortBy=input.sortBy==="roll"?"roll":"name";
- const sortDesc=input.sortOrder==="desc";
- const departmentName=typeof input.departmentName==="string"?
-  input.departmentName.trim().slice(0,128):"";
- if(input.sortBy!==undefined&&input.sortBy!=="roll"&&input.sortBy!=="name")
+ const sortBy=input["sortBy"]==="roll"?"roll":"name";
+ const sortDesc=input["sortOrder"]==="desc";
+ if(input["sortBy"]!==undefined&&input["sortBy"]!=="roll"&&input["sortBy"]!=="name")
   throw new Error("Invalid roster sort");
- if(input.sortOrder!==undefined&&input.sortOrder!=="asc"&&input.sortOrder!=="desc")
+ if(input["sortOrder"]!==undefined&&input["sortOrder"]!=="asc"&&input["sortOrder"]!=="desc")
   throw new Error("Invalid roster sort direction");
- delete input.departmentName;
- if(input.query!==undefined&&input.q===undefined)input.q=input.query;
- delete input.query;
- if(input.facultyType!==undefined&&input.employmentType===undefined)
-  input.employmentType=input.facultyType;
- delete input.facultyType;
- if(input.deptId!==undefined&&input.departmentId===undefined)
-  input.departmentId=input.deptId;
- delete input.deptId;
+ delete input["departmentName"];
+ if(input["query"]!==undefined&&input["q"]===undefined)input["q"]=input["query"];
+ delete input["query"];
+ if(input["facultyType"]!==undefined&&input["employmentType"]===undefined)
+  input["employmentType"]=input["facultyType"];
+ delete input["facultyType"];
+ if(input["deptId"]!==undefined&&input["departmentId"]===undefined)
+  input["departmentId"]=input["deptId"];
+ delete input["deptId"];
  // The selected college comes exclusively from the signed-in context.
- if(input.collegeId!==undefined){
-  if(typeof input.collegeId!=="string"||
-    input.collegeId!==context.adminScope?.collegeId)
+ if(input["collegeId"]!==undefined){
+  if(typeof input["collegeId"]!=="string"||
+    input["collegeId"]!==context.adminScope?.collegeId)
     throw new Error("Foreign college search is not allowed");
  }
  // A missing optional collegeId is still an unknown property to strict Zod.
- delete input.collegeId;
+ delete input["collegeId"];
  const query=superAdminReadQuerySchema.parse(input),
   selected=requireSuperAdminSelectedCollege(context,"people.manage"),db=getDb();
  const enrollmentFilter=role==="LEARNER"&&(query.programId||query.cohortId||query.departmentId||query.sectionId)
