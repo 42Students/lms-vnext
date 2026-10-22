@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,gt,sql} from "drizzle-orm";
+import {and,eq,gt} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
  placementCompanies,placementCompanyRelationships,
