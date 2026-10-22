@@ -67,7 +67,7 @@ function legacyProgramSearch<T extends {
     data:{totalPrograms:rows.length,departments:new Set(rows.map(row=>row.departmentId)).size} };
   if (mode === "exists") return { status:"success",message:"Program existence checked",
     data: rows.some(row=>row.name.toLocaleLowerCase("en") ===
-      (parsed.name ?? parsed.query).trim().toLocaleLowerCase("en")) };
+      (parsed["name"] ?? parsed.query).trim().toLocaleLowerCase("en")) };
   const limit = parsed.limit ?? (mode === "department" || mode === "category" ? 50 :
     mode === "popular" ? 10 : 15);
   return {status:"success",message:"Programs retrieved",
@@ -189,8 +189,8 @@ export async function POST(request: Request) {
         fieldErrors: new URL(request.url).searchParams.get("legacy") === "1"
           ? (() => {
               const fields=programCreateFieldErrors(error);
-              return {...fields,...(fields.departmentId ? {dept_id:fields.departmentId}:{}),
-                ...(fields.durationTerms ? {duration_years:fields.durationTerms}:{})};
+              return {...fields,...(fields["departmentId"] ? {dept_id:fields["departmentId"]}:{}),
+                ...(fields["durationTerms"] ? {duration_years:fields["durationTerms"]}:{})};
             })()
           : programCreateFieldErrors(error),
         message: "Please review the program details.",
