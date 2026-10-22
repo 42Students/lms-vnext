@@ -36,19 +36,19 @@ export default async function CollegeProjectTemplatesPage({
  const collegeId=getProjectAdminCollegeId(context);
  if(!collegeId)return <ProjectAdminMissingCollege variant="templates"/>;
  const params=await searchParams;
- const legacySearch=one(params.search);
+ const legacySearch=one(params["search"]);
  if(legacySearch!==undefined){
   // Canonicalize the old ?search= deep link without discarding the page
   // number or the project-list return context from a shared bookmark.
-  const canonical=(one(params.q)??legacySearch).trim().slice(0,120);
-  const legacyFrom=one(params.from);
+  const canonical=(one(params["q"])??legacySearch).trim().slice(0,120);
+  const legacyFrom=one(params["from"]);
   const retainedFrom=legacyFrom&&/^(workspaces|create|at-risk)$/.test(legacyFrom)?legacyFrom:null;
-  const legacyPage=one(params.page)??"1";
+  const legacyPage=one(params["page"])??"1";
   const retainedPage=/^[1-9]\d{0,5}$/.test(legacyPage)?Number(legacyPage):1;
   redirect(pageHref(canonical,retainedPage,retainedFrom));
  }
- const q=(one(params.q)??"").trim().slice(0,120);
- const from=one(params.from);
+ const q=(one(params["q"])??"").trim().slice(0,120);
+ const from=one(params["from"]);
  const preservedFrom=from&&/^(workspaces|create|at-risk)$/.test(from)?from:null;
  const read=await listAssignedProjectTemplates(context,collegeId,q)
   .then(value=>({ok:true as const,value}))
@@ -68,7 +68,7 @@ export default async function CollegeProjectTemplatesPage({
    </Link>}/>
  </div>;
  const templates=read.value;
- const rawPage=one(params.page)??"1";
+ const rawPage=one(params["page"])??"1";
  const requestedPage=/^[1-9]\d{0,5}$/.test(rawPage)?Number(rawPage):1;
  const totalPages=Math.max(1,Math.ceil(templates.length/pageSize));
  const page=Math.min(Math.max(1,requestedPage),totalPages);
