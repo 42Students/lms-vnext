@@ -131,24 +131,6 @@ async function loadAssignedTemplateVersion(
   };
 }
 
-async function loadProject(
-  projectId: string,
-) {
-  const [project] = await getDb()
-    .select()
-    .from(projectInstances)
-    .where(eq(projectInstances.id, projectId))
-    .limit(1);
-
-  if (!project) {
-    throw new ProjectsServiceError(
-      "PROJECT_NOT_FOUND",
-    );
-  }
-
-  return project;
-}
-
 export async function createProjectInstance(
   context: RequestContext,
   rawInput: unknown,
