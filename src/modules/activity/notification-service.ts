@@ -947,13 +947,8 @@ export async function listScopedAdminNotificationPage(
   // Counts and paged results share the same tenant AND academic-context
   // filters; selecting a class/course must not show college-wide totals.
   appendNotificationContextFilters(scopeConditions, {
-    ...(options.organizationId !== undefined ? { organizationId: options.organizationId } : {}),
-    ...(options.collegeId !== undefined ? { collegeId: options.collegeId } : {}),
     ...(options.classId !== undefined ? { classId: options.classId } : {}),
     ...(options.courseId !== undefined ? { courseId: options.courseId } : {}),
-    ...(options.deliveryStatus !== undefined ? { deliveryStatus: options.deliveryStatus } : {}),
-    pageNo: options.pageNo,
-    pageSize: options.pageSize,
   });
   const conditions = [...scopeConditions];
   if (options.deliveryStatus) conditions.push(eq(status, options.deliveryStatus));
