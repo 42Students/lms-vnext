@@ -14,9 +14,10 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-15-009-080  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-15-009-085  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-15-009-092  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
-- [ ] G2-16-001-026  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
+- [x] G2-16-001-026  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-16-005-045  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-16-027-031  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 
 ## Results
 
+- G2-16-001-026: OK — `src/app/(authenticated)/tracker/audit-findings/page.tsx:46-71` catches rejected listing requests, preserves authorization errors, renders the inline `Couldn't load findings.` message and an authorized Retry link retaining the filters. Legacy: `docs/legacy-source/frontend/src/pages/tracker/audit-findings.js:60-63` (legacy file path to confirm).
