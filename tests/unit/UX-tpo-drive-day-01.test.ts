@@ -5,7 +5,9 @@ describe("UX-tpo-drive-day-01 /tpo/drive-day",()=>{
   it("preserves legacy UI and signed-off phone and contrast contracts",()=>{
     expect(source).not.toContain("text-[#26bac7]");
     expect(source).not.toContain("text-on-primary");
-    expect(source).not.toMatch(/min-h-(?:9|10)\b/);
+    expect(source).not.toMatch(/(?:^|[\s"'\x60])min-h-(?:9|10)\b/);
+    expect(source).toContain("min-h-11");
+    expect(source).toContain("md:min-h-9");
     expect(source).toMatch(/<PageHeader\b|<h1\b|redirect\(/);
   });
 });

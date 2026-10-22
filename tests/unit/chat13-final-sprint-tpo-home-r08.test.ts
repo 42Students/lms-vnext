@@ -10,5 +10,5 @@ it("TPO-home-R08 loads independent Home signals concurrently and fails each heav
  expect(page).toContain("const batches=batchResult;");
  expect(page).toContain("const operations=operationsResult;");
  expect(page).toContain("Some Home indicators could not be loaded.");
- expect(page).toContain('value={operationsResult?operations.summary.publishedJobs:"—"}');
+ expect(page).toContain('value:operationsResult?operations.summary.publishedJobs:"—"');
 });

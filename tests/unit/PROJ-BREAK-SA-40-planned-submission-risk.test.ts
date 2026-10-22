@@ -21,7 +21,7 @@ describe("PROJ-BREAK-SA-40 Project Admin risk badges must reflect actionable rev
       ).toBe(false);
     }
   });
-  it("preserves a valid pending-review signal and independent planned-workspace staleness", () => {
+  it("preserves active review signals without advertising planned-workspace operations", () => {
     expect(deriveProjectRiskReasons({
       projectStatus: "ACTIVE",
       inactiveDays: 0,
@@ -37,6 +37,6 @@ describe("PROJ-BREAK-SA-40 Project Admin risk badges must reflect actionable rev
       projectStatus: "PLANNED",
       inactiveDays: 7,
       latestSubmissionStatus: "SUBMITTED",
-    })).toEqual(["No activity in 7 days"]);
+    })).toEqual([]);
   });
 });
