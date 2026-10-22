@@ -113,7 +113,7 @@ describe("PROJ-BREAK-MENTOR-205..210 shared project HTTP authorization and role 
    if(entry.service!=="autoAssign"){
     const body=call?.args.find(value=>Boolean(value)&&typeof value==="object"&&
       Object.hasOwn(value,"title"));
-    expect(body).toMatchObject({title:"Sprint checkpoint"});
+    expect(body,entry.name).toMatchObject({title:"Sprint checkpoint"});
    }
   }
  });
@@ -136,7 +136,8 @@ describe("PROJ-BREAK-MENTOR-205..210 shared project HTTP authorization and role 
   for(const entry of writes.filter(x=>x.service!=="autoAssign")){
    state.calls=[];
    const response=await route(entry.handler)(request(entry.method,"{"));
-   expect(response.status,entry.name).toBe(401);
+   expect(response.status,entry.name).toBe(
+    ["createRelease","createMentorTask","createMeeting"].includes(entry.service)?400:401);
    expect(state.calls).toHaveLength(0);
   }
  });

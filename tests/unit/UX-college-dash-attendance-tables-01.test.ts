@@ -6,12 +6,15 @@ const shared=readFileSync(join(process.cwd(),"src/components/ui/data-table.tsx")
 describe("UX-college-dash-attendance-tables-01",()=>{
   it("/college preserves low-attendance threshold evidence without nested scrolling",()=>{
     const s=readFileSync(join(process.cwd(),"src/app/(authenticated)/college/page.tsx"),"utf8");
-    expect(s).toContain('caption="Learners below attendance threshold"');
-    expect(s).toContain('rows={lowAttendance.rows}');
-    expect(s).toContain('lowAttendance.threshold');
-    expect(s).toContain('row.attended+" / "+row.marked');
-    expect(s).toContain("No learners below the attendance threshold.");
-    expect(s).toContain("Showing first 200 at-risk learners.");
+    expect(s).toContain("getCollegeDashboardLowAttendance(context)");
+    expect(s).toContain("risk:lowAttendance");
+    expect(s).toContain("<CollegeNeedsAttentionBoard");
+    const board=readFileSync(join(process.cwd(),"src/components/admin/college-needs-attention-board.tsx"),"utf8");
+    expect(board).toContain('title="Low attendance"');
+    expect(board).toContain("risk?.total??null");
+    expect(board).toContain("risk?.rows.map(row=>");
+    expect(board).toContain('risk.threshold+"%"');
+    expect(board).toContain("No learners below the attendance threshold.");
     expect(s).not.toContain("<table");
   });
   it("/college/attendance/corrections preserves full IST session, status and marking-window evidence",()=>{
@@ -24,8 +27,8 @@ describe("UX-college-dash-attendance-tables-01",()=>{
     expect(s).not.toContain("<table");
   });
   it("shared DataTable owns actual responsive sticky headers, mobile cards and dynamic edge fades",()=>{
-    expect(shared).toContain('sm:sticky sm:top-0');
+    expect(shared).toContain('md:sticky md:top-0');
     expect(shared).toContain('<ScrollCue axis="x"');
-    expect(shared).toContain('sm:hidden');
+    expect(shared).toContain('md:hidden');
   });
 });

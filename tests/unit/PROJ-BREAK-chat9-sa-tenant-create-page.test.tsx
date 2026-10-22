@@ -16,6 +16,7 @@ vi.mock("@/modules/permissions/policy",()=>({
     if(!state.allowed)throw Error("Missing permission: admin-scope.select");
   },
   can:(_context:unknown,action:string,resource?:{organizationId?:string})=>{
+    if(action==="admin-scope.select")return state.allowed;
     if(action==="organization.manage")return state.allowed;
     if(action==="college.manage")return state.allowed&&resource?.organizationId==="11111111-1111-4111-8111-111111111111";
     return false;
@@ -61,7 +62,9 @@ describe("Super Admin last-third tenant creation role and selected-organization 
   });
   it("SA-tenants-create-09 disabled Super Admin cannot read organization list",async()=>{
     state.allowed=false;
-    await expect(render()).rejects.toThrow("Missing permission: admin-scope.select");
+    const copy=text(collect(await render()));
+    expect(copy).toContain("Tenant creation access denied");
+    expect(copy).not.toContain("Forbidden college group");
     expect(state.calls).toBe(0);
   });
   it("SA-tenants-create-10 poisoned preferred organization may not select a cross-tenant destination",async()=>{

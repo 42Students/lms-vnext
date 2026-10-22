@@ -1,5 +1,6 @@
 import "server-only";
-import type {RequestContext} from "@/modules/identity/context";
+import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import { getRecruiterCollegeDemographics } from "./recruiter-college-demographics-service";
 import { recruiterCollegeCardDetail } from "./recruiter-college-card-service";
 
@@ -9,6 +10,8 @@ import { recruiterCollegeCardDetail } from "./recruiter-college-card-service";
  * any result reaches this service. Sorting matches the old Colleges chooser.
  */
 export async function listRecruiterCollegeBranches(context:RequestContext,collegeId:string) {
+ if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)
+  throw new AuthorizationError("placements.recruiter.read");
  const snapshot=await getRecruiterCollegeDemographics(context,collegeId);
  return snapshot.byBranch.map(item=>item.branch)
   .sort((a,b)=>a.localeCompare(b,"en-IN"));
@@ -20,6 +23,8 @@ export async function listRecruiterCollegeBranches(context:RequestContext,colleg
 export async function getRecruiterCollegeBranchesSummary(
  context:RequestContext,collegeId:string,
 ) {
+ if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)
+  throw new AuthorizationError("placements.recruiter.read");
  const card=await recruiterCollegeCardDetail(context,collegeId);
  return {
   collegeId:card.collegeId,

@@ -37,7 +37,7 @@ function visible(node:unknown):string[]{
   if(Array.isArray(node))return node.flatMap(visible);
   if(!isValidElement(node))return [];
   const props=node.props as Record<string,unknown>;
-  return ["children","title","description","action","href"].flatMap(key=>visible(props[key]));
+  return ["children","title","description","action","actions","intro","label","href"].flatMap(key=>visible(props[key]));
 }
 function findImportRuns(node:unknown):unknown{
   if(Array.isArray(node)){
@@ -47,7 +47,7 @@ function findImportRuns(node:unknown):unknown{
   if(!isValidElement(node))return undefined;
   const props=node.props as Record<string,unknown>;
   if("runs" in props)return props.runs;
-  return findImportRuns(props.children);
+  return findImportRuns(props.intro)??findImportRuns(props.children);
 }
 const render=()=>SuperAdminStudentsPage({searchParams:Promise.resolve({})});
 beforeEach(()=>{
@@ -91,8 +91,8 @@ describe("Super Admin last-third student register: role and malformed-import his
   it("UX-admin-students-31 critical registration options failing never expose a half-loaded import form",async()=>{
     state.fail=true;
     const content=visible(await render()).join(" ");
-    expect(content).toContain("Student register unavailable");
-    expect(content).toContain("Retry student register");
+    expect(content).toContain("Registration and bulk-import academic choices could not be loaded");
+    expect(content).toContain("Retry registration options");
     expect(content).not.toContain("Bulk Register Students");
     expect(content).not.toContain("PRIVATE_STUDENT_IMPORT_PASSWORD");
   });

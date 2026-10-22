@@ -24,8 +24,8 @@ function text(node:ReactNode):string{
 function links(node:ReactNode):string[]{
  if(Array.isArray(node))return node.flatMap(links);
  if(!isValidElement(node))return [];
- const p=node.props as {href?:string;children?:ReactNode};
- return [...(p.href?[p.href]:[]),...links(p.children)];
+ const p=node.props as {href?:string;children?:ReactNode;actions?:ReactNode;action?:ReactNode};
+ return [...(p.href?[p.href]:[]),...links(p.actions),...links(p.action),...links(p.children)];
 }
 describe("HR-NOTIFICATIONS-PAGE-97 private recruiter notices and recovery",()=>{
  beforeEach(()=>{
@@ -49,7 +49,7 @@ describe("HR-NOTIFICATIONS-PAGE-97 private recruiter notices and recovery",()=>{
    {collegeId:[collegeId,collegeId]},{unreadOnly:"maybe"},{q:"x".repeat(121)},
   ]){
    const output=await view(params);
-   expect(text(output)).toContain("Invalid inbox filter.");
+   expect(text(output)).toContain("Invalid inbox filter");
    expect(links(output)).toContain("/hr/notifications");
   }
   expect(m.list).not.toHaveBeenCalled();

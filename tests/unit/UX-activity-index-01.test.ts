@@ -14,9 +14,9 @@ describe("UX-activity-index-01 Activity Log",()=>{
   const page=read("src/app/(authenticated)/activity/page.tsx");
   expect(page).toContain('import { Input }');
   expect(page).toContain('import { Select }');
-  expect(page).toContain('<Button type="submit">Apply filters</Button>');
+  expect(page).toContain('<Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>');
   expect(page).toContain('grid-cols-1');
-  expect(page).toContain('sm:grid-cols-2');
+  expect(page).toContain('md:grid-cols-2');
   const list=read("src/components/activity/activity-center.tsx");
   expect(list).toContain('<Card as="article"');
   expect(list).toContain('<EmptyState');
