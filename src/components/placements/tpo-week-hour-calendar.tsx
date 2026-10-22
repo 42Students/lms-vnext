@@ -206,7 +206,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
          aria-label={"Move follow-up: "+event.title} data-event-kind={event.kind}
          draggable onDragStart={dragEvent=>{dragEvent.dataTransfer.setData("application/x-tpo-followup",event.followupId!);dragEvent.dataTransfer.effectAllowed="move";}}
          onClick={()=>setMove({id:event.followupId!,currentIst:calendarDueAtToIstLocal(new Date(event.startsAt))})}
-         style={position} className={"absolute z-10 overflow-hidden px-1 py-0.5 text-left "+tone(event.kind)+" "+weekStyles.event+" !min-h-0 !max-w-none !rounded-[var(--lms-control-radius)]"}>{inner}</Button>:
+         style={position} className={"absolute z-10 overflow-hidden px-1 py-0.5 text-left "+tone(event.kind)+" "+weekStyles.event+" [min-height:44px] !max-w-none !rounded-[var(--lms-control-radius)]"}>{inner}</Button>:
        event.href?<Link key={event.id} href={event.href} title={event.companyName+" · "+event.title} data-event-kind={event.kind}
         draggable={canCreate&&Boolean(event.followupId)}
         onDragStart={dragEvent=>{
