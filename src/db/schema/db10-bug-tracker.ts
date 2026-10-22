@@ -89,6 +89,8 @@ export const db10BugReports = pgTable("bug_reports", {
   regressionTestStatus: varchar("regression_test_status", { length: 24 })
     .notNull().default("NOT_REVIEWED"),
   productionVerified: boolean("production_verified").notNull().default(false),
+  /** Public category-only summary requires an explicit reviewed approval. */
+  publicCatalogApprovedAt:timestamp("public_catalog_approved_at",{withTimezone:true}),
   retestStatus: varchar("retest_status", { length: 24 })
     .notNull().default("NOT_RETESTED"),
   retestedAt: timestamp("retested_at", { withTimezone: true }),
