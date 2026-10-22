@@ -9,7 +9,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { FilterChip } from "@/components/ui/filter-chip";
 import { Dropdown } from "@/components/ui/dropdown";
-import { Disclosure } from "@/components/ui/disclosure";
 
 import {Dialog} from "@/components/ui/dialog";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -681,7 +680,7 @@ export function RecruiterLeadDetailWorkspace({
                 <ol className="ml-2 divide-y divide-border border-l-2 border-primary-subtle pl-4">
                   {activities.map((a,index) => (
                     <li key={a.id} className="relative py-3 text-sm before:absolute before:-left-[22px] before:top-5 before:h-2 before:w-2 before:rounded-full before:bg-primary">
-                      {(!index||activityDayIst(activities[index-1].createdAt)!==activityDayIst(a.createdAt))?
+                      {(!index||activityDayIst(activities[index-1]?.createdAt ?? a.createdAt)!==activityDayIst(a.createdAt))?
                         <h4 className="mb-2 mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                           {activityDayIst(a.createdAt)}
                         </h4>:null}
