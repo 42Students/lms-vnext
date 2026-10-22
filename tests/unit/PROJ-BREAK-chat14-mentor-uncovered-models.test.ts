@@ -136,7 +136,13 @@ describe("PROJ-BREAK-MENTOR-148..163 uncovered mentor model behaviours",()=>{
    const audit=projectResourceAuditInput(action,scope,resource,"revision1");
    expect(audit.collegeId).toBe(scope.collegeId);
    expect(audit.organizationId).toBe(scope.organizationId);
-   expect(audit.metadata).toEqual({projectId,resourceId:releaseId});
+   expect(audit.metadata).toMatchObject({
+    projectId,resourceId:releaseId,resourceKey:releaseId,
+    actionType:action==="CREATED"?"CREATE":action==="UPDATED"?"UPDATE":"DELETE",
+    beforeJson:null,
+   });
+   expect(audit.metadata.afterJson).toMatchObject({title:"Architecture notes"});
+   expect(audit.metadata.changedFields).toContain("title");
    expect(audit.dedupeKey).toContain("revision1");
    expect(JSON.stringify(audit)).not.toContain("privateUrl");
   }
