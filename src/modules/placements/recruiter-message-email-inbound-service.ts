@@ -113,6 +113,7 @@ export async function acceptAuthenticatedRecruiterEmailReply(
  if(!parsed.success)return {accepted:false,replayed:false};
  const input=parsed.data,domain=(env.RECRUITER_MESSAGE_REPLY_DOMAIN??"").toLowerCase();
  const fullText=plainMailText(input.text,input.html).slice(0,200000);
+  if(!fullText)return {accepted:false,replayed:false};
  // Legacy stores up to 200k in the restricted inbox but only a 4k reply in
  // a conversation; slice by JS UTF-16 code units to match imported records.
  // An all-quoted reply is a valid authenticated receipt for human triage.
