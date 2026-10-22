@@ -4,6 +4,7 @@ import {canContactRecipientAtRuntime} from "@/modules/messaging/runtime-safety";
 import {normalizeRecipient} from "@/modules/messaging/model";
 import {readZeptoMailConfig} from "@/modules/notifications/zeptomail-email";
 import {isCampaignTemplateKey} from "@/modules/messaging/template-boundary-model";
+import {placementEmailChannelEnabled} from "./placement-mail-event-matrix";
 import {safeRecruiterDigestMessages,safeRecruiterEmailMergeText,isRecruiterReplyAddress,safeRecruiterEmailAddressName} from "./recruiter-message-email-model";
 
 export type RecruiterMailDigest={
@@ -53,7 +54,7 @@ export type RecruiterDigestReadiness={
 export function recruiterDigestReadiness(
  env:Record<string,string|undefined>=process.env,
 ):RecruiterDigestReadiness{
- if(env.RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED!=="true")
+ if(!placementEmailChannelEnabled("RECRUITER_MESSAGE_DIGEST",env))
   return {configured:false,reason:"BRIDGE_DISABLED"};
  const config=readZeptoMailConfig(env);
  let endpoint:URL;
@@ -99,7 +100,7 @@ export async function sendRecruiterMessageDigest(
  digest:RecruiterMailDigest,env:Record<string,string|undefined>=process.env,
  fetchImpl:typeof fetch=fetch,
 ):Promise<boolean>{
- if(env.RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED!=="true")return false;
+ if(!placementEmailChannelEnabled("RECRUITER_MESSAGE_DIGEST",env))return false;
  // The legacy provider key appeared in source. No production digest may send
  // until the operator attests that leaked credentials were revoked.
  if((env.APP_ENV==="production"||env.STAGE==="prod"||env.STAGE==="production")&&
