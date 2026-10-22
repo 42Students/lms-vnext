@@ -27,3 +27,21 @@ export function collegeShortlistedHref(jobId: string, query: {q:string;page:numb
   const base="/college/placements/jobs/"+encodeURIComponent(jobId)+"/shortlisted";
   return base+(params.size?"?"+params.toString():"");
 }
+
+
+/** Strict URL compatibility with old shortlist/status deep links. The old
+ * list mixed application lifecycle and college recruitment stage; filter
+ * values must remain separate after the normalized schema split. */
+export function legacyCollegeShortlistQuery(input:Record<string,string|string[]|undefined>){
+ const stage=typeof input.stage==="string"?input.stage:
+  typeof input.pipelineStatus==="string"?input.pipelineStatus:
+  typeof input.stageStatus==="string"?input.stageStatus:undefined;
+ const status=typeof input.status==="string"?input.status:undefined;
+ const {pipelineStatus:_oldPipeline,stageStatus:_oldStage,...other}=input;
+ return collegeShortlistedQuery({...other,stage,status});
+}
+export const LEGACY_COLLEGE_SHORTLIST_PIPELINE_LABELS={
+ APPLIED:"Applied",SHORTLISTED:"Shortlisted",ASSESSMENT:"Assessment",
+ INTERVIEW:"Interview",WAITLISTED:"Waitlisted",OFFERED:"Offered",
+ HIRED:"Placed",REJECTED:"Not shortlisted",
+} as const;

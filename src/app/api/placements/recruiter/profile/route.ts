@@ -4,6 +4,9 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {updateOwnRecruiterDesignation} from "@/modules/placements/recruiter-designation-service";
 import {hasActiveRecruiter} from "@/modules/identity/context";
+import {getDb} from "@/db/client";
+import {users} from "@/db/schema";
+import {eq} from "drizzle-orm";
 import {readRecruiterJsonBody,RecruiterJsonBodyError} from "@/modules/placements/recruiter-json-request";
 export const runtime="nodejs";
 export async function PATCH(request:Request) {
@@ -25,9 +28,13 @@ export async function GET(){
   if(!hasActiveRecruiter(context)||!context.recruiter||
      context.recruiter.userId!==context.user.id||context.user.platformStatus!=="ACTIVE")
    return NextResponse.json({error:"FORBIDDEN"},{status:403});
+  const [ownUser]=await getDb().select({
+   displayName:users.displayName,email:users.email,
+  }).from(users).where(eq(users.id,context.user.id)).limit(1);
+  if(!ownUser)return NextResponse.json({error:"NOT_FOUND"},{status:404});
   return NextResponse.json({profile:{
-   id:context.user.id,displayName:context.user.displayName,
-   email:context.user.email,companyId:context.recruiter.companyId,
+   id:context.user.id,displayName:ownUser.displayName,
+   email:ownUser.email,companyId:context.recruiter.companyId,
    companyName:context.recruiter.companyName,
    grants:context.recruiter.grants.map(grant=>({
     collegeId:grant.collegeId,companyRelationshipId:grant.companyRelationshipId,
