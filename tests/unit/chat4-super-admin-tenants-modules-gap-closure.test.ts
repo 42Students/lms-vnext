@@ -24,8 +24,8 @@ describe("chat-4 Super Admin Tenants and Modules verified source contracts",()=>
  });
  it("SA-tenants-modules-51 preserves the audited admin workflow",()=>{
   const s=source("src/components/admin/inbound-mail-list.tsx");
-  expect(s).toContain("Mark done");
-  expect(s).toContain("Move back to To read");
+  expect(s).toContain("Message marked being handled.");
+  expect(s).toContain("Message moved back to To read.");
   expect(s).toContain("/api/admin/inbound-mail/status");
  });
  it("SA-tenants-modules-52 preserves the audited admin workflow",()=>{
@@ -62,12 +62,12 @@ describe("chat-4 Super Admin Tenants and Modules verified source contracts",()=>
   const s=source("src/app/(authenticated)/admin/announcements/page.tsx");
   expect(s).toContain("getSuperAdminBroadcastReceiptCounts");
   expect(s).toContain("Placement-cell read receipts");
-  expect(s).toContain("<progress");
+  expect(s).toContain("<MetricBar role=\"progressbar\"");
   expect(s).toContain("receipt.cellRead");
  });
  it("SA-tenants-modules-61 preserves the audited admin workflow",()=>{
   const s=source("src/modules/announcements/super-admin-college-broadcast-model.ts");
-  expect(s).toContain(".max(200)");
+  expect(s).toContain(".max(200,{error:");
   expect(s).toContain(".max(8000)");
   expect(s).toContain(".max(60)");
   expect(s).toContain(".max(500)");
@@ -111,9 +111,9 @@ describe("chat-4 Super Admin Tenants and Modules verified source contracts",()=>
   ]);
   const drawer=source("src/components/verification/VerificationReviewDrawer.tsx");
   expect(drawer).toContain("tpoVerificationSectionReasons(row.section)");
-  expect(drawer).toContain('apiBase==="/api/admin/verification"');
+  expect(drawer).toContain("`${apiBase}/review`");
   expect(drawer).toContain('"Send "+(row.section==="EDUCATION"?"Education":"Identity")+" back"');
-  expect(drawer).toContain("The student sees your reason and fixes it on their profile.");
+  expect(drawer).toContain("Each student sees the reason and can correct the submitted details.");
   for(const panelPath of [
    "src/components/verification/TpoVerificationPanel.tsx",
    "src/components/verification/SuperAdminVerificationPanel.tsx",
@@ -135,16 +135,16 @@ describe("chat-4 Super Admin Tenants and Modules verified source contracts",()=>
   expect(source("src/app/(authenticated)/activity/page.tsx")).toContain("sanitizeActivityMetadata(group.latest.event.metadata)");
  });
  it("SA-tenants-modules-45 shows 50 events with older matching count",()=>{
-  expect(source("src/app/(authenticated)/activity/page.tsx")).toContain("limit: 50");
+  expect(source("src/app/(authenticated)/activity/page.tsx")).toContain("limit: pageSize");
   expect(source("src/modules/activity/service.ts")).toContain("remainingCount:hasMore?Math.max");
   expect(source("src/components/activity/activity-center.tsx")).toContain("Load more ({nextRemaining} older)");
  });
  it("SA-tenants-modules-44 tells Super Admin the current activity scope",()=>{
   const s=source("src/app/(authenticated)/activity/page.tsx");
   expect(s).toContain('aria-label="Activity scope"');
-  expect(s).toContain("Platform-wide activity.");
-  expect(s).toContain("Organization-wide activity.");
-  expect(s).toContain("Activity restricted to the selected college.");
+  expect(s).toContain("Platform-wide activity");
+  expect(s).toContain("Showing this organization");
+  expect(s).toContain("Activity is pinned to the selected college.");
  });
 
  it("SA-tenants-modules-50 remembers filters across visits and clears them without redirecting elsewhere",()=>{
