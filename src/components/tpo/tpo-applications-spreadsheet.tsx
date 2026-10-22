@@ -64,8 +64,8 @@ export function TpoApplicationsSpreadsheet({rows,jobId,jobStatus}:{rows:readonly
    mobileActionsCollapsible storageKey={"tpo-drive-applicant-grid:"+jobId}
    rowActions={row=><div className="flex min-w-0 flex-col gap-2">
     <TpoApplicantReviewDrawer jobId={jobId} jobStatus={jobStatus} app={row}
-      previousId={rows[(rowPositions.get(row.id)??0)-1]?.id}
-      nextId={rows[(rowPositions.get(row.id)??-1)+1]?.id}/>
+      {...(rows[(rowPositions.get(row.id)??0)-1]?.id !== undefined ? {previousId: rows[(rowPositions.get(row.id)??0)-1]?.id} : {})}
+      {...(rows[(rowPositions.get(row.id)??-1)+1]?.id !== undefined ? {nextId: rows[(rowPositions.get(row.id)??-1)+1]?.id} : {})}/>
     <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applicants/"+encodeURIComponent(row.id)} className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">Open applicant</Link>
    </div>}/>
  </GridWorkspace>;
