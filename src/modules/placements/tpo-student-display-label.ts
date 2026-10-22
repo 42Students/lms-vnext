@@ -10,8 +10,10 @@ const LABELS:Record<string,string>={
 function titleWords(input:string):string {const value=input.toLowerCase().replaceAll("_"," ");return value.charAt(0).toUpperCase()+value.slice(1);}
 export function tpoStudentDisplayLabel(value:string):string {
  const round=/^([A-Z_ ]+) round ([1-9][0-9]*): ([A-Z_]+)$/.exec(value);
- if(round){const outcome=LABELS[round[3]]??titleWords(round[3]);
-  return outcome+" at "+titleWords(round[1])+" (round "+round[2]+")";
+ if(round){const kind=round[1], number=round[2], result=round[3];
+  if(kind===undefined||number===undefined||result===undefined)return LABELS[value]??titleWords(value);
+  const outcome=LABELS[result]??titleWords(result);
+  return outcome+" at "+titleWords(kind)+" (round "+number+")";
  }
  return LABELS[value]??titleWords(value);
 }
