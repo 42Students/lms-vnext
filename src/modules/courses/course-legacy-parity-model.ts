@@ -4,7 +4,7 @@ export function legacyCourseCode(input:{
  code:string;officialCode:string|null;shortTitle:string|null;
  legacyMetadata:Record<string,unknown>|null;
 }){
- const raw=input.legacyMetadata?.courseCode;
+ const raw=input.legacyMetadata?.["courseCode"];
  return typeof raw==="string"&&raw.trim()
   ?raw.trim():input.officialCode?.trim()||input.shortTitle?.trim()||input.code;
 }
