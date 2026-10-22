@@ -90,7 +90,7 @@ export async function completeOwnFacultyIdentityUpload(context:RequestContext,ra
     isNull(profilePrivateDocumentReceipts.revokedAt)));
   await tx.insert(activityEvents).values({
    organizationId:member.organizationId,collegeId:member.collegeId,
-   actorUserId:context.user.id,actorMembershipId:member.id,module:"PEOPLE",
+   actorUserId:context.user.id,actorMembershipId:member.id,module:"IDENTITY",
    eventType:"people.faculty_identity_evidence.updated",
    subjectType:"faculty_profile",subjectId:member.id,
    summary:"Faculty private identity document updated",
@@ -153,7 +153,7 @@ export async function revokeOwnFacultyIdentityEvidence(context:RequestContext,ra
     isNull(profilePrivateDocumentReceipts.revokedAt)));
   await tx.insert(activityEvents).values({
    organizationId:member.organizationId,collegeId:member.collegeId,
-   actorUserId:context.user.id,actorMembershipId:member.id,module:"PEOPLE",
+   actorUserId:context.user.id,actorMembershipId:member.id,module:"IDENTITY",
    eventType:"people.faculty_identity_evidence.revoked",
    subjectType:"faculty_profile",subjectId:member.id,
    summary:"Faculty private identity evidence revoked",
