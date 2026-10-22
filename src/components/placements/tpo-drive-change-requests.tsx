@@ -53,8 +53,8 @@ function formatCreatedAt(value:string):string{
 }
 const fields=[["ROLE_TITLE","Role title"],["DESCRIPTION","Description"],["LOCATION","Location"],
  ["JOB_TYPE","Job type"],["WORK_MODE","Mode"],["DEADLINE","Application deadline"],
- ["CTC","CTC"],["STIPEND","Stipend"],["MIN_CGPA","Minimum CGPA"],
- ["BRANCHES","Branches"],["OTHER","Other"],["ROUNDS","Interview rounds"],
+ ["CTC","CTC (LPA)"],["STIPEND","Monthly stipend"],["MIN_CGPA","Minimum CGPA"],
+ ["BRANCHES","Branches (comma separated)"],["OTHER","Something else"],["ROUNDS","Interview rounds"],
  ["PAY","Pay / package"],["ELIGIBILITY","Eligibility"]] as const;
 export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:string;party:Party;userId:string;requests:Item[]}){
  const router=useRouter();
@@ -209,7 +209,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
       <StatusBadge tone={item.status==="ACCEPTED"?"success":item.status==="DECLINED"?"error":item.status==="OPEN"?"warning":"neutral"}>{item.status==="OPEN"?"Waiting":item.status==="DECLINED"||item.status==="REPLIED"?"Declined":item.status.replaceAll("_"," ")}</StatusBadge>
      </div>
      {item.mode==="SUGGEST"?<p className="whitespace-pre-wrap break-words text-sm leading-[22px]">
-       {readableValue(item.field,item.currentValue)} <span aria-hidden="true">→</span> {readableValue(item.field,item.proposedValue)}
+       {readableValue(item.legacyField??item.field,item.currentValue)} <span aria-hidden="true">→</span> {readableValue(item.legacyField??item.field,item.proposedValue)}
       </p>:<p className="whitespace-pre-wrap break-words text-sm leading-[22px]">
        Question: {readableValue(item.field,item.proposedValue)}
       </p>}
@@ -250,7 +250,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
          onChange={e=>setNotes(p=>({...p,[item.id]:e.target.value}))}
          className="min-h-11 min-[768px]:min-h-9">
          <option value="">Choose an answer</option>
-         {(item.field==="JOB_TYPE"?[
+         {((item.legacyField??item.field)==="JOB_TYPE"?[
            {value:"FULL_TIME",label:"Full-time"},{value:"INTERNSHIP",label:"Internship"},
            {value:"CONTRACT",label:"Contract"},
           ]:[
