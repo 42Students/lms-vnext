@@ -89,7 +89,7 @@ describe("COURSES-BREAK-FACULTY-06 current-roster report anti-IDOR and consisten
  it("FAC-assessments-01 retains historical delivery submissions and excludes them only from missing-roster counts",async()=>{
   const report=await getFacultyAssignmentReport(actor,assignmentId,deliveryId);
   expect(report.submissions).toHaveLength(2);
-  expect(report.metrics).toMatchObject({eligibleLearners:1,submitted:1,
+  expect(report.metrics).toMatchObject({eligibleLearners:1,submitted:2,
    missing:0,onTime:1,late:1,graded:2,gradePublished:2,averagePercent:75});
   expect(report.submissions.map(row=>row.membershipId)).toContain(foreignLearner);
  });
