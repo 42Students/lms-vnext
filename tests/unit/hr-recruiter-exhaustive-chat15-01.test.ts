@@ -80,7 +80,7 @@ describe("HR recruiter exhaustive policy boundaries chat-15",()=>{
     companyDomain:"company.com",trustedDomains:["company.com"],relationshipTrusted:true};
   expect(recruiterDriveApprovalPolicy(basic)).toEqual({autoApprove:false,reason:"REVIEW_REQUIRED"});
   expect(recruiterDriveApprovalPolicy({...basic,grantVerified:true})).toEqual({autoApprove:true,reason:"APPROVAL_OFF"});
-  expect(recruiterDriveApprovalPolicy({...basic,grantVerified:true,approvalRequired:true})).toEqual({autoApprove:true,reason:"TRUSTED_DOMAIN"});
+  expect(recruiterDriveApprovalPolicy({...basic,grantVerified:true,approvalRequired:true})).toEqual({autoApprove:true,reason:"TRUSTED_COMPANY"});
   expect(recruiterDriveApprovalPolicy({...basic,grantVerified:true,approvalRequired:true,
     relationshipTrusted:false,trustedDomains:[]})).toEqual({autoApprove:false,reason:"REVIEW_REQUIRED"});
  });

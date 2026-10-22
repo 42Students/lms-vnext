@@ -27,7 +27,8 @@ describe("College Courses & Content gap closure",()=>{
   expect(read("src/modules/courses/course-display-readiness.ts")).toContain("DB05_VERIFIED");
  });
  it("COL-courses-content-03 visibility is not faked by an archived record label",()=>{
-  expect(catalogue()).toContain("courseVisibleToStudentsLabel(course.status)");
+  expect(catalogue()).toContain("courseVisibleToStudentsLabel(course.status===\"ACTIVE\"&&course.enabled&&");
+  expect(catalogue()).toContain('course.legacyAllowedForDisplay!==0?"ACTIVE":"HIDDEN"');
   expect(read("src/components/courses/admin-offering-section-preview.tsx")).toContain("studentVisible");
  });
  it("COL-courses-content-04 Duplicate produces distinct unoccupied code, retains metadata, not students",()=>{
@@ -48,7 +49,11 @@ describe("College Courses & Content gap closure",()=>{
   expect(creation()).toContain('setNextSetupStep("DELIVERY")');
  });
  it("COL-courses-content-08 offering detail displays Home/Syllabus and scoped teacher identities",()=>{
-  expect(detail()).toContain('aria-label="Course detail tabs"');
+  expect(detail()).toContain("<AdminOfferingSectionTabs");
+  const tabStrip=read("src/components/courses/admin-offering-section-tabs.tsx");
+  expect(tabStrip).toContain('ariaLabel="Course detail tabs"');
+  expect(tabStrip).toContain('label:"Home"');
+  expect(tabStrip).toContain('label:"Syllabus"');
   expect(detail()).toContain("AdminOfferingTeachersPanel");
   expect(detail()).toContain("Back to Courses");
  });
@@ -56,7 +61,8 @@ describe("College Courses & Content gap closure",()=>{
   const body=read("src/components/courses/admin-offering-section-preview.tsx");
   expect(body).toContain("Section-specific");
   expect(body).toContain("Shared offering");
-  expect(body).toContain("does not reveal private video, file or meeting links");
+  expect(body).toContain("does not expose private file, video or meeting URLs.");
+  expect(body).toContain("item.studentVisible");
   expect(detail()).toContain("AdminOfferingSectionPreview");
  });
  it("COL-courses-content-10 absent offering is a friendly page, load failure is distinct",()=>{
@@ -67,12 +73,14 @@ describe("College Courses & Content gap closure",()=>{
   expect(miss).toContain("Back to Courses");
   expect(fail).toContain("Course details could not be loaded");
   expect(fail).toContain("Retry");
-  expect(fail).toContain('role="alert"');
+  expect(fail).toContain("<ErrorState");
+  expect(read("src/components/ui/error-state.tsx")).toContain('role="alert"');
   expect(fail).not.toContain("{error.message}");
  });
  it("COL-courses-content-11 Faculty Assignment form selects multiple courses by program, batch, class, semester and year",()=>{
   const widget=read("src/components/college/college-faculty-assignment-actions.tsx");
-  expect(widget).toContain("Courses to Assign");
+  expect(widget).toContain("Select one or more courses");
+  expect(widget).toContain("choices.map(item =>");
   expect(widget).toContain("setSelected(");
   for(const item of ["programId","cohortId","sectionId","semesterNumber","academicYear"])expect(widget).toContain(item);
   expect(widget).toContain("/api/college/teaching-assignments/bulk");
@@ -105,6 +113,6 @@ describe("College Courses & Content gap closure",()=>{
   expect(read("src/components/courses/learner-course-api.ts")).toContain("COURSE_NAME_CONFLICT");
   expect(read("src/components/courses/admin-course-actions.tsx")).toContain("apiFetch<unknown>");
   expect(creation()).toContain("apiFetch<unknown>");
-  expect(read("src/components/courses/admin-course-display-editor.tsx")).toContain("apiFetch<void>");
+  expect(read("src/components/courses/admin-course-display-editor.tsx")).toContain("apiFetch<{display?:{version:number}}>");
  });
 });
