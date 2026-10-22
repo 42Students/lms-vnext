@@ -36,7 +36,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
   if(sort!==null)matched.sort((a,b)=>{
    const left=a[sort],right=b[sort];
    const comp=typeof left==="number"&&typeof right==="number"?left-right:
-    stringValue(left).localeCompare(stringValue(right),"en-IN",{numeric:true,sensitivity:"base"});
+    stringValue(left??null).localeCompare(stringValue(right??null),"en-IN",{numeric:true,sensitivity:"base"});
    return descending?-comp:comp;
   });
   return matched;
