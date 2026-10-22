@@ -23,6 +23,7 @@ export type ProjectListItem = {
   dueLabel?: string | null;
   dueDate?: string | null;
   blockedHref?: string;
+  blockerText?: string;
   href?: string;
 };
 
@@ -70,6 +71,68 @@ export function ProjectList({
         description={emptyDescription}
       />
     );
+  }
+
+  if (basePath==="/learn/projects"||basePath==="/mentor/projects") {
+    return <div className="grid min-w-0 gap-4 sm:grid-cols-2" aria-label="Assigned project workspaces">
+      {items.map(item=>{
+        const archived=item.status==="ARCHIVED";
+        const blocked=!archived&&(Boolean(item.blockerText)||item.attention?.includes("Blocked"));
+        const needsReview=!archived&&!blocked&&item.attention?.some(label=>/review/i.test(label));
+        const stalled=!archived&&!blocked&&!needsReview&&item.attention?.some(label=>/stall/i.test(label));
+        const notice=archived?"Archived":blocked?"Blocked":needsReview?"Needs review":stalled?"Stalled":
+          item.status==="ACTIVE"?"Active":statusLabel(item.status);
+        const completion=Math.min(100,Math.max(0,Math.round(item.progressPercent??0)));
+        const course=item.courseLabel?.trim()||"Project";
+        const mentor=item.mentorName?.trim()||"Mentor";
+        return <Link key={item.id} href={item.href??basePath+"/"+encodeURIComponent(item.id)}
+          className="group flex min-w-0 flex-col rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-sm transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:p-5">
+          <div className="flex min-w-0 items-center justify-between gap-2">
+            <span className={"inline-flex max-w-full items-center rounded px-2 py-0.5 text-xs font-semibold "+
+              (archived?"bg-muted text-muted-foreground":stalled?"bg-error-subtle text-error":
+                blocked?"bg-warning-subtle text-warning-text":needsReview?"bg-warning-subtle text-warning-text":
+                item.status==="ACTIVE"?"bg-[#e6f9fa] text-[#228e99]":"bg-primary-subtle text-primary-text")}>
+              {notice}
+            </span>
+            <svg aria-hidden="true" viewBox="0 0 24 24"
+              className="size-4 shrink-0 text-primary-text transition-transform group-hover:translate-x-0.5"
+              fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m9 6 6 6-6 6"/>
+            </svg>
+          </div>
+          <h2 className="mt-2 line-clamp-2 break-words text-base font-semibold leading-6 text-foreground">
+            {item.title}
+          </h2>
+          <p className="mt-1 text-xs leading-5 text-body">
+            {course} <span aria-hidden="true"> • </span> {mentor}
+          </p>
+          {item.summary?<p className="mt-2 line-clamp-2 text-xs leading-5 text-muted-foreground">{item.summary}</p>:null}
+          <div className="mt-4 flex min-w-0 flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs text-body">
+            <span>Phase: {item.phaseLabel||item.phase||statusLabel(item.status)}</span>
+            <span>{item.dueState||item.dueLabel||"No due date"}</span>
+          </div>
+          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[var(--lms-neutral-100)]"
+            role="progressbar" aria-label={"Project progress for "+item.title} aria-valuemin={0}
+            aria-valuemax={100} aria-valuenow={completion}>
+            <span className="block h-full rounded-full bg-[#2db7c4]" style={{width:completion+"%"}}/>
+          </div>
+          <p className="mt-1 text-right text-xs tabular-nums text-muted-foreground">
+            {completion}% complete
+          </p>
+          {item.blockerText&&!archived?<p className="mt-2 line-clamp-2 text-xs text-warning-text">
+            Blocker: {item.blockerText}
+          </p>:null}
+          <div className="mt-auto pt-4">
+            <p className="text-sm font-semibold text-foreground">
+              {item.actionLine||"Open workspace"}
+            </p>
+            <span className="mt-1 inline-flex min-h-9 items-center text-xs font-semibold text-link">
+              Open workspace <span aria-hidden="true" className="ml-1">→</span>
+            </span>
+          </div>
+        </Link>;
+      })}
+    </div>;
   }
 
   return (

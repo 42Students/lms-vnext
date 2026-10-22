@@ -9,7 +9,6 @@ import {
   type ProjectParticipantListQuery,
 } from "@/components/projects/project-participant-list-controls";
 import { ProjectList } from "@/components/projects/project-list";
-import { LearnerProjectMobileFilters } from "@/components/projects/learner-project-mobile-filters";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
@@ -118,13 +117,9 @@ export default async function LearnerProjectsPage({
         That project page is no longer available. Showing page {page} instead.
       </Banner> : null}
 
-      <LearnerProjectMobileFilters query={{ ...query, page }} />
-      <div className="hidden min-[768px]:block">
-        <ProjectParticipantListControls
-          basePath="/learn/projects"
-          query={{ ...query, page }}
-          learner
-        />
+      <div className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border p-3 sm:p-4">
+        <ProjectParticipantListControls basePath="/learn/projects"
+          query={{...query,page}} learner/>
       </div>
 
       <ProjectList

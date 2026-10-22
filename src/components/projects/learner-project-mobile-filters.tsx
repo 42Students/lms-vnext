@@ -20,7 +20,7 @@ export function LearnerProjectMobileFilters({
   const active=learnerProjectMobileFilterSummary(query);
   return (
     <section className="min-w-0 space-y-2 min-[768px]:hidden" aria-label="Mobile project filters">
-      <Disclosure
+      <Disclosure defaultOpen
         className="border-b border-border pb-3 [&>summary]:min-h-11 [&>summary]:px-0 [&>summary]:py-2"
         title={<span className="flex min-w-0 flex-1 items-center justify-between gap-3 text-foreground">
           <span>Search &amp; filters</span>
