@@ -36,6 +36,11 @@ describe("Lane 13 verification: faculty lifecycle and private staff profile", ()
     expect(service).toContain("tx.update(identityDeviceSessions)");
     expect(service).toContain("isNull(identityDeviceSessions.revokedAt)");
     expect(service).toContain("activeMentorProjectCount(tx,membershipId)");
+    const mentorGuard = source("src/modules/people/active-mentor-project-guard.ts");
+    expect(mentorGuard).toContain('or(eq(projectMembers.role,"MENTOR"),eq(projectMembers.roleKind,"MENTOR"))');
+    expect(mentorGuard).toContain("isNull(projectMembers.deletedAt)");
+    expect(mentorGuard).toContain("eq(projectMembers.deletedByWorkspace,false)");
+    expect(mentorGuard).toContain('ne(projectInstances.status,"ARCHIVED")');
     expect(route).toContain("activeProjectCount: error.activeMentorProjects");
     expect(route).toContain("message: error.message");
     expect(ui).toContain("revokes current device sessions");
