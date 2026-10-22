@@ -142,4 +142,4 @@ AssertionError: expected 'import "server-only";\nimport {create…' to contain '
 
 Record each result under ## Results in docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md as OK (vNext file:line + docs/legacy-source file) or FIXED. No DEFERRED.
 
-- [ ] G2-2-017-057  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
+- [x] G2-2-017-057 — OK: registered migration 0212 replaces pair uniqueness with membership/content/attempt and adds latest-attempt index; recorded in DEEP_agent2_4.md (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
