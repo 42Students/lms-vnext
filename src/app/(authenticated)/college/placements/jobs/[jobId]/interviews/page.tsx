@@ -16,6 +16,7 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {CollegeDriveScheduleRefresh} from "@/components/placements/college-drive-schedule-refresh";
 import {collegeInterviewConflictIds} from "@/modules/placements/college-interview-conflicts-model";
+import {AuthorizationError} from "@/modules/permissions/policy";
 
 export default async function CollegeDriveInterviewsPage({params,searchParams}:{
   params:Promise<{jobId:string}>;
@@ -47,7 +48,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
   const query=driveInterviewsParams(rawFilters);
   if(!query) return <ErrorState title="Invalid interview filters"
     description={driveInterviewFilterError(await searchParams)} action={<Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/interviews`} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>}/>;
-  const [data,appointments]=await Promise.all([
+  const results=await Promise.allSettled([
     listCollegeDriveInterviews(context,jobId,query),
     getCollegeRoundSlotAppointments(context,jobId,{
       appointmentPage:query.appointmentPage,
@@ -62,6 +63,19 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       candidateSearch:query.candidateSearch,
     }),
   ]);
+  const failed=results.find(result=>result.status==="rejected");
+  if(failed?.status==="rejected"&&failed.reason instanceof AuthorizationError)throw failed.reason;
+  if(results[0].status==="rejected"||results[1].status==="rejected")return <div className="min-w-0 space-y-4">
+    <PageHeader title="Interviews"/>
+    <Alert tone="warning" title="Could not refresh interviews">
+      Your saved interview appointments have not been changed. The latest schedule could not be loaded; retry before making changes.
+    </Alert>
+    <ErrorState title="Interview schedule unavailable"
+      description="The latest interview rounds or candidate appointments could not be loaded."
+      action={<Link href={driveInterviewsHref(jobId,query)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry interviews</Link>}/>
+  </div>;
+  const data=results[0].value;
+  const appointments=results[1].value;
   const base="/college/placements/jobs/"+encodeURIComponent(jobId);
   const appointmentRows=filterDriveCandidateAppointments(appointments.interviews,{
     appointmentStatus:query.appointmentStatus,mode:query.appointmentMode,
