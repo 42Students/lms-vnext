@@ -313,6 +313,50 @@ describe("startLogin", () => {
     ).toBe("OK");
   });
 
+  it("allows an active college role even if another role at that college is suspended", async () => {
+    const { deps, repository } = setup();
+    repository.memberships["user-1"] = [
+      { id: "m-suspended", collegeId: COLLEGE_A, status: "SUSPENDED" },
+      { id: "m-active", collegeId: COLLEGE_A, status: "ACTIVE" },
+    ];
+    expect(
+      await code(startLogin({ channel: "PHONE", contact: "9100060001", tenantCollegeId: COLLEGE_A }, deps)),
+    ).toBe("OK");
+  });
+
+  it("does not let membership at another college bypass recruiter work-email policy", async () => {
+    const { deps, repository } = setup();
+    repository.users[0] = { ...learner, email: "person@gmail.com" };
+    repository.recruiterGrants.add(`user-1:${COLLEGE_B}`);
+    expect(
+      await code(startLogin({ channel: "PHONE", contact: "9100060001", tenantCollegeId: COLLEGE_A }, deps)),
+    ).toBe("OK");
+    expect(
+      await code(startLogin({ channel: "PHONE", contact: "9100060001", tenantCollegeId: COLLEGE_B }, deps)),
+    ).toBe("NO_ACCOUNT_FOR_DOMAIN");
+    repository.users[0] = { ...learner, email: "recruiter@company.example" };
+    expect(
+      await code(startLogin({ channel: "PHONE", contact: "9100060001", tenantCollegeId: COLLEGE_B }, deps)),
+    ).toBe("OK");
+  });
+
+  it("rechecks a recruiter grant's work email before consuming the code", async () => {
+    const { deps, repository, sent } = setup();
+    repository.memberships["user-1"] = [];
+    repository.recruiterGrants.add(`user-1:${COLLEGE_B}`);
+    repository.users[0] = { ...learner, email: "recruiter@company.example" };
+    const started = await startLogin(
+      { channel: "PHONE", contact: "9100060001", tenantCollegeId: COLLEGE_B }, deps,
+    );
+    repository.users[0] = { ...learner, email: "recruiter@gmail.com" };
+    expect(
+      await code(verifyLogin({
+        attemptId: started.attemptId, code: sent[0].code, tenantCollegeId: COLLEGE_B,
+      }, deps)),
+    ).toBe("NO_ACCOUNT_FOR_DOMAIN");
+    expect(repository.attempts.get(started.attemptId)?.usedAt).toBeNull();
+  });
+
   it("allows five sends per contact then throttles", async () => {
     const { deps } = setup();
     for (let i = 0; i < 5; i += 1) {
