@@ -1,10 +1,11 @@
 import { getDb } from "@/db/client";
-import { and, eq, ilike, isNull } from "drizzle-orm";
-import { legacyIdMap, projectTemplates } from "@/db/schema";
+import { and, asc, eq, ilike, isNull } from "drizzle-orm";
+import { colleges, organizations, legacyIdMap, projectTemplates,
+  projectTemplateCollegeAssignments, projectTemplateVersions } from "@/db/schema";
 import { ProjectsServiceError } from "./errors";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
-import { listColleges } from "@/modules/colleges/service";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { getSuperAdminTemplateSubview } from "./template-subview-service";
 import { projectTemplateCollegeAvailability, templateCollegeAvailabilityQuerySchema, templateAvailabilityCollegesInScope } from "./template-college-availability-model";
 /** Legacy getColleges/getProjectTemplateById/assign/unassign/bulkSet are
@@ -48,24 +49,57 @@ export async function resolveTemplateCollegeLegacyId(context: RequestContext, so
 
 export async function listSuperAdminTemplateCollegeAvailability(context: RequestContext, templateId: string, rawQuery: unknown) {
   requirePermission(context, "project-template.read");
+  // Legacy template availability manages a global college assignment set
+  // even when a Super Admin has an acting college selected for other pages.
+  // Ordinary listColleges(context) would silently truncate this to one college.
+  requirePermission(context,"admin-scope.select");
+  if(!isSuperAdmin(context))throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
   const query = templateCollegeAvailabilityQuerySchema.parse(rawQuery);
   const canonicalId=await resolveTemplateCollegeLegacyId(context,templateId);
   let detail: Awaited<ReturnType<typeof getSuperAdminTemplateSubview>>;
   try {
-    detail=await getSuperAdminTemplateSubview(context, canonicalId, true);
+    detail=await getSuperAdminTemplateSubview(context, canonicalId, false);
   } catch (error) {
     if (error instanceof ProjectsServiceError && error.code === "PROJECT_TEMPLATE_NOT_FOUND") throw error;
     throw new TemplateCollegeReadError("TEMPLATE");
   }
-  let colleges: Awaited<ReturnType<typeof listColleges>>;
+  // All rows come from persisted, active tenants. A stale request-context
+  // platform role is rechecked under a lock before any global directory read.
+  // The assignments read is independent of the header's acting-college scope.
+  let snapshot: {
+    collegeRows: Array<{id:string;name:string;code:string;organizationId:string;city:string|null;state:string|null}>;
+    assignments: Array<{collegeId:string;assignedVersion:number|null;assignedAt:Date}>;
+  };
   try {
-    colleges=await listColleges(context);
+    snapshot=await getDb().transaction(async tx=>{
+      await assertPersistedPlatformPermission(tx,context,"admin-scope.select");
+      const [collegeRows,assignments]=await Promise.all([
+        tx.select({
+          id:colleges.id,name:colleges.name,code:colleges.code,
+          organizationId:colleges.organizationId,city:colleges.city,state:colleges.state,
+        }).from(colleges).innerJoin(organizations,eq(colleges.organizationId,organizations.id))
+          .where(and(eq(colleges.status,"ACTIVE"),eq(organizations.status,"ACTIVE")))
+          .orderBy(asc(colleges.name),asc(colleges.id)),
+        tx.select({
+          collegeId:projectTemplateCollegeAssignments.collegeId,
+          assignedVersion:projectTemplateVersions.version,
+          assignedAt:projectTemplateCollegeAssignments.assignedAt,
+        }).from(projectTemplateCollegeAssignments)
+          .leftJoin(projectTemplateVersions,and(
+            eq(projectTemplateVersions.id,projectTemplateCollegeAssignments.templateVersionId),
+            eq(projectTemplateVersions.templateId,projectTemplateCollegeAssignments.templateId),
+          ))
+          .where(and(eq(projectTemplateCollegeAssignments.templateId,canonicalId),
+            isNull(projectTemplateCollegeAssignments.revokedAt))),
+      ]);
+      return {collegeRows,assignments};
+    });
   } catch {
+    // Unavailable global assignment state is not "all colleges unassigned".
     throw new TemplateCollegeReadError("ASSIGNMENTS");
   }
-  // Both reads must succeed: never treat a failed assignment request as an empty list.
   const verified=projectTemplateCollegeAvailability(templateAvailabilityCollegesInScope(
-    colleges,context.adminScope??null,isSuperAdmin(context)),detail.assignedColleges,query);
+    snapshot.collegeRows,context.adminScope??null,true),snapshot.assignments,query);
   return {template:detail.template,...verified,
     assignmentReadState:"VERIFIED" as const,
     draftAssignmentForbidden:detail.template.status!=="PUBLISHED",
