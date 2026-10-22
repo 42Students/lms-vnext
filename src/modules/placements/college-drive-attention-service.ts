@@ -19,11 +19,24 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
   throw Error("Invalid drive identifier.");
  const settingKeys=["placement.staleAppliedDays","placement.closingSoonDays",
   "placement.needsAttentionSampleCap","placement.lowConversionThreshold"];
- const overrides=await db.select({key:platformSettingOverrides.key,value:platformSettingOverrides.value})
-  .from(platformSettingOverrides)
-  .where(and(eq(platformSettingOverrides.scopeType,"GLOBAL"),
-   eq(platformSettingOverrides.scopeId,"GLOBAL"),inArray(platformSettingOverrides.key,settingKeys)));
- const values=new Map(overrides.map(row=>[row.key,row.value]));
+ // Use the selected college's persisted override first; inherit the
+ // platform default only when this college has no explicit value.
+ const overrides=await db.select({
+  key:platformSettingOverrides.key,value:platformSettingOverrides.value,
+  scopeType:platformSettingOverrides.scopeType,
+ }).from(platformSettingOverrides).where(and(
+  inArray(platformSettingOverrides.key,settingKeys),
+  or(
+   and(eq(platformSettingOverrides.scopeType,"GLOBAL"),
+    eq(platformSettingOverrides.scopeId,"GLOBAL")),
+   and(eq(platformSettingOverrides.scopeType,"COLLEGE"),
+    eq(platformSettingOverrides.scopeId,collegeId)),
+  ),
+ ));
+ const values=new Map(overrides.filter(row=>row.scopeType==="GLOBAL")
+  .map(row=>[row.key,row.value]));
+ for(const row of overrides)if(row.scopeType==="COLLEGE")
+  values.set(row.key,row.value);
  const staleDays=storedPlacementPolicyValue("placement.staleAppliedDays",values.get("placement.staleAppliedDays"));
  const closingDays=storedPlacementPolicyValue("placement.closingSoonDays",values.get("placement.closingSoonDays"));
  const sampleCap=storedPlacementPolicyValue("placement.needsAttentionSampleCap",values.get("placement.needsAttentionSampleCap"));
