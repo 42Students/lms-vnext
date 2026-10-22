@@ -150,7 +150,7 @@ export function FacultyAssessmentEditor({
         const result=await response.clone().json().catch(()=>null);
         setError(result?.error==="ASSIGNMENT_HAS_SUBMISSIONS"
           ? "Learner submissions exist. Deadline, points, audience, resources and submission methods are locked. You can still correct the title."
-          : await courseApiError(response));
+          : (await courseApiError(response) ?? "Could not save this assessment."));
         return;
       }
       const receipt:unknown=await response.json().catch(()=>null);
@@ -202,7 +202,7 @@ export function FacultyAssessmentEditor({
       if (!response.ok) {
         setDeleteFailed(true);
         setError(
-          await courseApiError(response),
+          (await courseApiError(response)) ?? "Could not delete this assessment.",
         );
         return;
       }

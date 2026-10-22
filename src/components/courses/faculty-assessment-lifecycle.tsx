@@ -61,7 +61,7 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
      });
      if(!response.ok){
        setDeleteFailed(action==="ARCHIVE");
-       setError(await courseApiError(response));
+       setError((await courseApiError(response)) ?? "The assessment could not be changed. Refresh and try again.");
        return;
      }
      setSaved(true);setLastAction(action);setConfirmAction(null);
