@@ -27,6 +27,10 @@ export default async function TpoTeamLegacyRedirect({
 
   const params = await searchParams;
   const tab = first(params.tab)?.toLowerCase();
+  // Roster bookmarks take precedence over conversation filters, as in the legacy UI.
+  if (tab === "people" || tab === "members" || tab === "roster") {
+    redirect("/tpo/settings/team");
+  }
   // Student requests belong to the role-scoped placement request inbox,
   // not an invented student-private team conversation kind.
   const filter = first(params.filter)?.toLowerCase();
@@ -37,9 +41,6 @@ export default async function TpoTeamLegacyRedirect({
   // Keep the old conversation/person/recruiter tabs addressable from bookmarks.
   // The canonical Messages route owns the Recruiters and Team tabs; Settings
   // owns the People roster. The current role and college remain server-scoped.
-  if (tab === "people" || tab === "members" || tab === "roster") {
-    redirect("/tpo/settings/team");
-  }
   if (tab === "recruiters" || tab === "recruiter") {
     const target = new URLSearchParams({ tab: "recruiters" });
     for (const key of ["q", "status", "from", "to", "page", "pageSize", "thread"]) {
