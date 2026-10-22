@@ -258,6 +258,16 @@ function bestAcceptedFullTimePackages(
   return [...bestByLearner.values()];
 }
 
+/** A legacy drive's persisted "counts as placed" answer is authoritative.
+ * NULL means no verified answer, not an implicit "yes" for FULL_TIME jobs.
+ * In production, fail closed until the TPO explicitly records that answer.
+ * Pure legacy fixtures may omit the optional flag, so the model continues to
+ * support them separately; the DB reader always supplies a boolean.
+ */
+export function verifiedJobCountsAsPlaced(value:boolean|null):boolean{
+ return value===true;
+}
+
 /** P-S2-08: SELECTED requires separate selected-outcome evidence. Never
  * infer selection from mere screening/shortlisting; missing signal fails closed. */
 export function countsAsPlacedByCollegeRule(input: {
