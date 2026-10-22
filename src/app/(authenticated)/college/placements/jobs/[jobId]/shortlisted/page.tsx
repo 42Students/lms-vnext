@@ -101,7 +101,9 @@ export default async function CollegeDriveShortlistedPage({
     { key: "college", header: "College", cell: row => row.collegeName },
     { key: "source", header: "Source", cell: row => row.source },
     { key: "status", header: "Current Status", cell: row => row.stage },
-    { key: "date", header: "Applied Date", cell: row => date.format(new Date(row.submittedAt)) },
+    { key: "date", header: "Applied Date", cell: row => Number.isFinite(new Date(row.submittedAt).getTime())?date.format(new Date(row.submittedAt)):"—" },
+    { key: "age", header: "Age", cell: row => Number.isFinite(row.ageDays)?row.ageDays+"d":"—" },
+    { key: "score", header: "Match Score", cell: row => row.screeningScore==null?"—":row.screeningScore+"%" },
     { key: "actions", header: "Actions", cell: () => "View only" },
   ];
 
@@ -193,9 +195,12 @@ export default async function CollegeDriveShortlistedPage({
         exportHref={"/api/college/placements/jobs/"+encodeURIComponent(jobId)+"/applications/export"+
           (driveApplicationsHref(jobId, query, true).split("/export")[1] ?? "")}/>
     </div>
-    {query.stage === "ASSESSMENT" && !assessmentLink
-      ? <Alert tone="info">Assessment candidates receive in-app notifications when their application stage is updated. No registered assessment link is available for this drive.</Alert>
-      : null}
+    {query.stage==="ASSESSMENT"?<Alert tone="info">
+      When you distribute an assessment or move candidates into this stage,
+      selected learners receive an in-app notification. The stage change
+      is recorded only after confirmation and server validation.
+      {!assessmentLink?" No registered assessment link is available for this drive.":""}
+    </Alert>:null}
     {internal.length ? (
       <CollegeApplicationPipelineControls
         key={jobId + ":" + JSON.stringify(query)}

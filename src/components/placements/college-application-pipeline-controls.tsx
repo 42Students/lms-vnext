@@ -42,6 +42,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
  const filterScope=JSON.stringify({...query,page:1});
  const [failedDetailId,setFailedDetailId]=useState<string|null>(null);
  const [selected,setSelected]=useState<string[]>([]);
+ const [showLegacyExtraColumns,setShowLegacyExtraColumns]=useState(false);
  const [allMatching,setAllMatching]=useState(false);
  const [detailId,setDetailId]=useState<string|null>(null);
  const [detailPayload,setDetailPayload]=useState<CollegeApplicationDetail|null>(null);
@@ -301,7 +302,17 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
     onClick={()=>void openDetail(failedDetailId)}>Retry details</Button>:null}
    <Button type="button" variant="secondary" onClick={()=>router.refresh()}>Reload applications</Button>
   </div>:null}
-  <DataTable columns={columns} rows={rows} getRowKey={row=>row.id}
+  {legacyShortlisted?<label className="flex min-h-11 flex-wrap items-center gap-2 text-sm text-body">
+   <Checkbox checked={showLegacyExtraColumns} disabled={busy}
+     onChange={setShowLegacyExtraColumns} aria-label="Show Roll, Role and Screening columns"/>
+   Show additional Roll, Role and Screening columns
+  </label>:null}
+  <DataTable columns={legacyShortlisted?
+    (["name","email","college","source","status","date","age","score","actions","selected",
+      ...(showLegacyExtraColumns?["roll","role","screening"]:[])] as string[])
+      .map(key=>columns.find(col=>col.key===key))
+      .filter((col):col is DataTableColumn<Row>=>col!==undefined)
+    :columns} rows={rows} getRowKey={row=>row.id}
    caption="Applications pipeline" mobileMode="scroll"
    empty={<EmptyState title={filtered?"No applications match these filters.":"No applications yet."}
     description={filtered?"Try another search or clear the filters.":"Applicants will appear here when students apply for this drive."}
