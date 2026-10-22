@@ -45,7 +45,7 @@ export const tpoNoticeCreateSchema=z.object({
 
 export async function createTpoNotice(context:RequestContext,raw:unknown){
  const data=tpoNoticeCreateSchema.parse(raw);
- const schedule=parseTpoNoticeSchedule(data,new Date());
+ const schedule=parseTpoNoticeSchedule({sendAt:data.sendAt,showUntil:data.showUntil},new Date());
  const membership=context.membership;
  if(!membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
@@ -79,7 +79,9 @@ export async function createTpoNotice(context:RequestContext,raw:unknown){
   });
   if(data.audience!=="COLLEGE"){
    const matched=await tx.execute<{id:string}>(tpoTargetedRecipientQuery(college.id,{
-    kind:data.audience,targetId:data.targetId,targetIds:data.targetIds,
+    kind:data.audience,
+    ...(data.targetId!==undefined?{targetId:data.targetId}:{}),
+    ...(data.targetIds!==undefined?{targetIds:data.targetIds}:{}),
    }));
    const recipients=freezeTpoNoticeRecipients(matched.rows.map(row=>row.id));
    if(recipients.length===0)throw new Error("TPO_NOTICE_NO_RECIPIENTS");
