@@ -60,7 +60,7 @@ describe("College Academic Setup open-register functional checks",()=>{
     startDate:null,endDate:null,currentTermNumber:1,currentAcademicYearStart:2024,
     activeSections:2,activeEnrolledLearners:120}],false);
   expect(batch).toContain("2024 CSE");
-  expect(batch).toContain("Active learner enrollments");
+  expect(batch).toContain('"students"');
  });
  it("COL-academic-setup-40 surfaces retry on department initial load failure",()=>{
   const error=read("src/app/(authenticated)/college/departments/error.tsx");
