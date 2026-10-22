@@ -7,7 +7,8 @@ describe("Super Admin Organizations exact dev-legacy copy",()=>{
   const page=read("src/app/(authenticated)/admin/organizations/page.tsx");
   for(const str of ["Create New Organization","Existing Organizations",'header: "Name"','title="Organizations"'])
     expect(page).toContain(str);
-  expect(page).toContain('{canCreateGlobal?<section aria-label="Create New Organization"');
+  expect(page).toContain("canCreateGlobal?<section");
+  expect(page).toContain("const canCreateGlobal=canCreate&&!context.adminScope?.collegeId&&!context.adminScope?.organizationId");
  });
  it("retains exact legacy create control and example",()=>{
   const form=read("src/components/admin/organization-create-form.tsx");
