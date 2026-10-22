@@ -34,7 +34,7 @@ describe("SA-academics-people-101 guarded course selection HTTP endpoint",()=>{
   const response=await POST(request(body));
   expect(response.status).toBe(201);
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
-  expect(await response.json()).toEqual({assignments:[{id:"one"}]});
+  expect(await response.json()).toMatchObject({assignments:[{id:"one"}],createdCount:1});
   expect(createCourseTeachingAssignmentsBatch).toHaveBeenCalledOnce();
   expect(createCourseTeachingAssignmentsBatch).toHaveBeenCalledWith(context,body);
  });
