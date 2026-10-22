@@ -110,6 +110,8 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
   useEffect(()=>{
     setOutcome(null);setOutcomeRestored(false);
     try{
+      // Old college-only keys were readable after account switching on a shared browser.
+      window.localStorage.removeItem("lms-project-cohort-report:"+collegeId);
       const raw=window.localStorage.getItem(reportKey);
       if(!raw)return;
       const saved=JSON.parse(raw) as {expiresAt?:number;report?:CohortCreationOutcome;
@@ -228,8 +230,8 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
       "&classId="+encodeURIComponent(classId)+"&templateId="+encodeURIComponent(templateId),
       {signal,cache:"no-store"});
     if(!response.ok)throw Error(await projectApiError(response));
-    const payload:unknown=await response.json();
-     const invalid="The server did not return a valid cohort preflight. Nothing was created.";
+    const invalid="The server did not return a valid cohort preflight. Nothing was created.";
+     const payload:unknown=await response.json().catch(()=>{throw new Error(invalid);});
      if(!payload||typeof payload!=="object"||Array.isArray(payload))throw new Error(invalid);
      const data=payload as Partial<PreflightResult>;
      const countIsValid=(value:unknown):value is number=>
