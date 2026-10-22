@@ -194,7 +194,7 @@ export function buildRecruiterResultsDueItems(input: {
       !Number.isFinite(due.getTime()) ||
       due.getTime() < input.startsAt.getTime() || due.getTime() >= input.endsBefore.getTime()) return [];
     return [{ id:round.id, jobId:round.jobId, jobTitle:job.title,
-      roundName:round.name, dueAt:due, status:round.status,
+      roundName:round.name,roundKind:round.kind,dueAt:due,status:round.status,
       category:"RESULTS_DUE" as const,label:"Results due" as const,
       color:"gold" as const }];
   }).sort((a,b)=>a.dueAt.getTime()-b.dueAt.getTime()||a.id.localeCompare(b.id));
