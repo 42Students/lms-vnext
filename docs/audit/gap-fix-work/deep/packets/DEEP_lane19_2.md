@@ -14,9 +14,11 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-9-002-087  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 - [ ] G2-9-008-006  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 - [ ] G2-9-008-011  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
-- [ ] G2-9-008-020  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
-- [ ] G2-9-008-022  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
+- [x] G2-9-008-020  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
+- [x] G2-9-008-022  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 - [ ] G2-9-008-031  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 
 ## Results
 
+- G2-9-008-020: OK — `src/components/placements/college-hiring-funnel.tsx:30-37,94-103` clears the Program selection on Department change and filters programs to the selected department, matching `docs/legacy-source/frontend/src/pages/superadmin/sections/HiringDashboard.js:352-366`.
+- G2-9-008-022: OK — `src/components/placements/college-hiring-funnel.tsx:90-126` keeps jobId, departmentId, programId, cohortId and date inputs in the GET filter form, and Clear all navigates via `collegeHiringAnalyticsHref({})` without any of those filters, matching `docs/legacy-source/frontend/src/pages/superadmin/sections/HiringDashboard.js:225-231`.
