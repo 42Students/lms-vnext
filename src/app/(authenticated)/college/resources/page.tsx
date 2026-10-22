@@ -31,9 +31,25 @@ export default async function CollegeResourcesPage({
       </div>
     );
   }
+  const { courseCode, lessonId, programCode, cohortCode, periodCode, departmentName, offeringType, lessonStatus, pathStatus, deliveryId, offeringStatus, pageSize, ...requiredFilters } = parsed.data;
+  const filters = {
+    ...requiredFilters,
+    ...(courseCode !== undefined ? { courseCode } : {}),
+    ...(lessonId !== undefined ? { lessonId } : {}),
+    ...(programCode !== undefined ? { programCode } : {}),
+    ...(cohortCode !== undefined ? { cohortCode } : {}),
+    ...(periodCode !== undefined ? { periodCode } : {}),
+    ...(departmentName !== undefined ? { departmentName } : {}),
+    ...(offeringType !== undefined ? { offeringType } : {}),
+    ...(lessonStatus !== undefined ? { lessonStatus } : {}),
+    ...(pathStatus !== undefined ? { pathStatus } : {}),
+    ...(deliveryId !== undefined ? { deliveryId } : {}),
+    ...(offeringStatus !== undefined ? { offeringStatus } : {}),
+    ...(pageSize !== undefined ? { pageSize } : {}),
+  };
   const [authoringResult, catalogueResult] = await Promise.allSettled([
     getCollegeContentAuthoringOptions(context,"RESOURCE",collegeExistingContentFiltersFromSearch(supplied)),
-    listCollegeContentAggregate(context,"RESOURCE",parsed.data),
+    listCollegeContentAggregate(context,"RESOURCE",filters),
   ]);
   const authoring=authoringResult.status==="fulfilled"?authoringResult.value:null;
   const catalogue=catalogueResult.status==="fulfilled"?catalogueResult.value:null;
@@ -60,9 +76,9 @@ export default async function CollegeResourcesPage({
           action={<Link href="/college/resources" className="font-semibold text-link underline">Retry</Link>}/>
       </div>}
     <CollegeResourceLastGood
-      key={context.user.id+":"+context.membership.id+":"+JSON.stringify(parsed.data)}
+      key={context.user.id+":"+context.membership.id+":"+JSON.stringify(filters)}
       data={catalogue}/>
-    <Link download prefetch={false} href={collegeContentCsvHref("RESOURCE",parsed.data)}
+    <Link download prefetch={false} href={collegeContentCsvHref("RESOURCE",filters)}
       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 md:min-h-9 text-sm font-semibold text-link hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
       Export filtered resource metadata CSV
     </Link>
