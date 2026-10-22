@@ -9,12 +9,14 @@ import {
 } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
+import { createPrivateReadGrant } from "@/modules/storage/private-object-storage";
 import {
   collegeMemberships,
   placementApplications,
   placementJobRounds,
   placementJobs,
   placementRoundResults,
+  learnerProfiles,
   users,
 } from "@/db/schema";
 import {
@@ -148,6 +150,8 @@ export async function getTpoRoundDriveDay(
             resultOutcome:
               placementRoundResults.outcome,
             phoneE164:users.phoneE164,
+            membershipId:collegeMemberships.id,
+            avatarObjectPath:learnerProfiles.avatarObjectPath,
             branchName:sql<string|null>`(select d.name from learner_program_enrollments e
               join cohorts c on c.id=e.cohort_id join programs p on p.id=c.program_id
               join departments d on d.id=p.department_id
@@ -177,6 +181,7 @@ export async function getTpoRoundDriveDay(
             ),
           )
           .innerJoin(users,eq(users.id,collegeMemberships.userId))
+          .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
           .leftJoin(
             placementRoundResults,
             and(
@@ -219,6 +224,25 @@ export async function getTpoRoundDriveDay(
             ),
           );
 
+  // TPO-only, per-request private previews. Keys never leave the server, and
+  // unsigned, missing, quarantined or unavailable avatars remain absent.
+  const avatarEntries = await Promise.all(details.map(async detail => {
+    if (!detail.avatarObjectPath) return [detail.applicationId, null] as const;
+    try {
+      const grant = await createPrivateReadGrant({
+        objectKey: detail.avatarObjectPath,
+        collegeId: scope.collegeId,
+        ownerMembershipId: detail.membershipId,
+        expiresInMs: 5 * 60 * 1000,
+      });
+      if (!grant.contentType.startsWith("image/")) return [detail.applicationId, null] as const;
+      return [detail.applicationId, grant.readUrl] as const;
+    } catch {
+      return [detail.applicationId, null] as const;
+    }
+  }));
+  const avatarUrls = new Map(avatarEntries);
+
   const projected =
     buildTpoRoundDriveDayRoster(
       roster.students.map((student) => ({
@@ -260,8 +284,10 @@ export async function getTpoRoundDriveDay(
         callHref,
         assignedRoom:detail?.assignedRoom??null,
         slotStartsAt:detail?.slotStartsAt?.toISOString()??null,
-        currentRoom:null as string|null,
-        avatarUrl:null as string|null,
+        // An assigned room becomes the current room only while the
+        // persisted attendance state actually shows an interview in progress.
+        currentRoom:row.attendance==="IN_INTERVIEW"?(detail?.assignedRoom??null):null,
+        avatarUrl:avatarUrls.get(row.applicationId)??null,
       };
     }),
     counts: projected.counts,
