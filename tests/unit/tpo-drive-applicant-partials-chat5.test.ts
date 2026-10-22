@@ -28,7 +28,11 @@ describe("TPO drive applicant partial parity and query safety",()=>{
  });
  it("TPO-drive-workspace-72 collapses mobile actions and filters",()=>{
   const spreadsheet=source("src/components/tpo/tpo-applications-spreadsheet.tsx");
-  expect(spreadsheet).toContain("<TpoGridFilterPanel fields={filters} mobileSheet/>");
+  expect(spreadsheet).toContain('<GridWorkspace rows={rows} columns={columns} rowKey={row=>row.id}');
+  expect(spreadsheet).toContain('filters={filters} filterTitle="Filter applicants"');
+  const grid=source("src/components/tpo/grid/grid-workspace.tsx");
+  expect(grid).toContain("TpoGridFilterPanel");
+  expect(grid).toContain("aria-expanded={externalFilters?.open??filterOpen}");
   expect(spreadsheet).toContain("mobileActionsCollapsible storageKey=");
   const base=source("src/components/tpo/tpo-spreadsheet-grid.tsx");
   expect(base).toContain('md:hidden');
