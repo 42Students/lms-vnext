@@ -146,7 +146,7 @@ export const LEGACY_RECRUITER_DRIVE_DISCOVERY_ROUTES={
 export function mapLegacyRecruiterDriveDiscovery(
  sourcePath:string,rawValue:unknown,
 ):{route:"/hr/drives";searchText:string;employment:string|null}|null{
- const path=sourcePath.split("?")[0].replace(/\/$/,"");
+ const path=(sourcePath.split("?")[0] ?? "").replace(/\/$/,"");
  const mapping=LEGACY_RECRUITER_DRIVE_DISCOVERY_ROUTES[
   path as keyof typeof LEGACY_RECRUITER_DRIVE_DISCOVERY_ROUTES
  ];
