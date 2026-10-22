@@ -82,7 +82,7 @@ describe("Chat-6 /admin middle-third read and application correctness",()=>{
   const settings=source("src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx");
   expect(settings).toContain('Application deadline (IST):');
   expect(settings).toContain("driveSettingsIstDate(job.applicationDeadline)");
-  expect(source("src/modules/placements/super-admin-drive-settings-ist.ts")).toContain('timeZone:"Asia/Kolkata"');
+  expect(source("src/modules/placements/admin-drive-settings-date-model.ts")).toContain('timeZone:"Asia/Kolkata"');
   expect(settings).not.toContain("applicationDeadline?.toISOString().slice(0,10)");
   expect(settings).toContain("<SuperAdminDriveArchive");
   expect(settings).toContain("<SuperAdminDriveDeadline");
