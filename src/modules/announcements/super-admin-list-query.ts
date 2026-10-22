@@ -16,6 +16,6 @@ const querySchema = z.strictObject({
 });
 export function parseSuperAdminAnnouncementParams(raw:Record<string,string|string[]|undefined>){
  if(Object.values(raw).some(Array.isArray))return null;
- const parsed=querySchema.safeParse({...raw,q:typeof raw.q === "string" && raw.q.trim() === "" ? undefined : raw.q,receiverType:raw.receiverType === "" ? undefined : raw.receiverType,visibility:raw.visibility === "" ? undefined : raw.visibility,pinned:raw.pinned === "" ? undefined : raw.pinned,senderType:raw.senderType === "" ? undefined : raw.senderType});
+ const parsed=querySchema.safeParse({...raw,q:typeof raw["q"] === "string" && raw["q"].trim() === "" ? undefined : raw["q"],receiverType:raw["receiverType"] === "" ? undefined : raw["receiverType"],visibility:raw["visibility"] === "" ? undefined : raw["visibility"],pinned:raw["pinned"] === "" ? undefined : raw["pinned"],senderType:raw["senderType"] === "" ? undefined : raw["senderType"]});
  return parsed.success?parsed.data:null;
 }
