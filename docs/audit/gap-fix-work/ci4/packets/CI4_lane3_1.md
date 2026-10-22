@@ -1,7 +1,13 @@
-# CI fix packet (round 4): src/modules/placements/learner-career-calendar-feed-service.ts
+# CI fix packet (round 4): src/app/(authenticated)/admin/batch-promotion/page.tsx
 
 These are REAL errors reported by CI (GitHub Actions) on main. Fix every one of them in this file with the smallest correct change. Keep behaviour and wording; do not touch unrelated code; never use any, @ts-ignore, @ts-expect-error or eslint-disable to silence an error; no new packages. If a fix needs another file, edit it only if it is clearly part of the same error.
 
-File: src/modules/placements/learner-career-calendar-feed-service.ts
+File: src/app/(authenticated)/admin/batch-promotion/page.tsx
 
-- [tsc] line 118:81 error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string'.
+- [tsc] line 56:14 error TS2339: Property 'data' does not exist on type 'ZodSafeParseSuccess<{ programId?: string | undefined; cohortId?: string | undefined; yearStart?: number | undefined; }> | ZodSafeParseError<{ programId?: string | undefined; cohortId?: string | undefined; yearStart?: number | undefined; }> | { ...; }'.
+- [tsc] line 56:57 error TS2339: Property 'data' does not exist on type 'ZodSafeParseSuccess<{ programId?: string | undefined; cohortId?: string | undefined; yearStart?: number | undefined; }> | ZodSafeParseError<{ programId?: string | undefined; cohortId?: string | undefined; yearStart?: number | undefined; }> | { ...; }'.
+- [tsc] line 57:14 error TS2339: Property 'data' does not exist on type 'ZodSafeParseSuccess<{ programId?: string | undefined; cohortId?: string | undefined; yearStart?: number | undefined; }> | ZodSafeParseError<{ programId?: string | undefined; cohortId?: string | undefined; yearStart?: number | undefined; }> | { ...; }'.
+- [tsc] line 57:55 error TS2339: Property 'data' does not exist on type 'ZodSafeParseSuccess<{ programId?: string | undefined; cohortId?: string | undefined; yearStart?: number | undefined; }> | ZodSafeParseError<{ programId?: string | undefined; cohortId?: string | undefined; yearStart?: number | undefined; }> | { ...; }'.
+- [tsc] line 58:14 error TS2339: Property 'data' does not exist on type 'ZodSafeParseSuccess<{ programId?: string | undefined; cohortId?: string | undefined; yearStart?: number | undefined; }> | ZodSafeParseError<{ programId?: string | undefined; cohortId?: string | undefined; yearStart?: number | undefined; }> | { ...; }'.
+- [tsc] line 58:97 error TS2339: Property 'data' does not exist on type 'ZodSafeParseSuccess<{ programId?: string | undefined; cohortId?: string | undefined; yearStart?: number | undefined; }> | ZodSafeParseError<{ programId?: string | undefined; cohortId?: string | undefined; yearStart?: number | undefined; }> | { ...; }'.
+- [tsc] line 162:47 error TS2367: This comparison appears to be unintentional because the types '"ARCHIVED" | "PLANNED" | "COMPLETED"' and '"INACTIVE"' have no overlap.
