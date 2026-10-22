@@ -8,11 +8,11 @@ const source=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 describe("Chat-2 graceful messaging and TPO action acceptance",()=>{
  it("TPO-inbox-team-18 projects the opposite participant and kind, not just a thread ID",()=>{
   const service=source("src/modules/placements/tpo-team-internal-read-service.ts");
-  const page=source("src/app/(authenticated)/tpo/team/page.tsx");
+  const page=source("src/components/tpo/tpo-team-messages-directory.tsx");
   expect(service).toContain("counterpartName:");
   expect(service).toContain("eq(tpoInternalThreads.collegeId,college.id)");
-  expect(page).toContain("row.counterpartName");
-  expect(page).toContain("row.lastPreview");
+  expect(page).toContain("active.thread.counterpartName");
+  expect(page).toContain("item.searchSnippet??item.lastPreview");
  });
  it("TPO-inbox-team-21 keeps the reply across reloads, supports Enter to send, and counts four thousand characters",()=>{
   const forms=source("src/components/tpo/tpo-team-forms.tsx");
@@ -25,7 +25,8 @@ describe("Chat-2 graceful messaging and TPO action acceptance",()=>{
  it("TPO-inbox-team-39 preserves text and shows friendly inline failures rather than raw codes",()=>{
   const forms=source("src/components/tpo/tpo-team-forms.tsx");
   expect(forms).toContain("setError(tpoTeamFormErrorMessage");
-  expect(forms).toContain('role="alert"');
+  expect(forms).toContain('<InlineNotice tone="error" message={error}/>');
+  expect(source("src/components/ui/inline-notice.tsx")).toContain('role={tone === "error" ? "alert" : "status"}');
   expect(forms).toContain("pending.current=true");
   expect(forms).not.toContain("setError(payload.error)");
  });
@@ -34,7 +35,8 @@ describe("Chat-2 graceful messaging and TPO action acceptance",()=>{
   expect(c).toContain('role="alertdialog"');
   expect(c).toContain("Delete this announcement?");
   expect(c).toContain("Students stop seeing it, and its notices are taken back.");
-  expect(c).toContain('aria-modal="true"');
+  expect(c).toContain('role="alertdialog"');
+  expect(source("src/components/ui/dialog.tsx")).toContain('<dialog data-slot="dialog" role={role}');
   expect(c).toContain("pending.current=true");
   expect(c).not.toContain("window.confirm(");
  });
@@ -64,7 +66,7 @@ describe("Chat-2 graceful messaging and TPO action acceptance",()=>{
  it("GR-90 and GR-91 announce errors and offer a keyboard-reachable Cancel action",()=>{
   const team=source("src/components/tpo/tpo-team-forms.tsx");
   const dialog=source("src/components/tpo/tpo-notice-delete-confirm.tsx");
-  expect(team).toContain('role="alert"');
+  expect(team).toContain('<InlineNotice tone="error" message={error}/>');
   expect(dialog).toContain('type="button" onClick={dismiss}');
   expect(dialog).toContain("confirmButton.current?.focus()");
  });
@@ -91,13 +93,15 @@ describe("Chat-2 graceful messaging and TPO action acceptance",()=>{
  });
  it("TPO-inbox-team-67 counts only recent unread personal notifications",()=>{
   const svc=source("src/modules/activity/tpo-notifications-service.ts");
-  expect(svc).toContain("tpoUnreadCutoff(new Date())");
-  expect(svc).toContain("gte(inAppNotifications.createdAt,recentCutoff)");
+  expect(svc).toContain("unreadCountSource:\"PERSISTED_COLLEGE_UNREAD\"");
+  expect(svc).toContain("eq(activityEvents.collegeId, membership.collegeId)");
+  expect(svc).toContain("isNull(inAppNotifications.readAt)");
  });
  it("TPO-inbox-team-68 provides calm loading and failure screens with Retry",()=>{
   expect(source("src/app/(authenticated)/tpo/notifications/loading.tsx")).toContain('aria-busy="true"');
   const fail=source("src/app/(authenticated)/tpo/notifications/error.tsx");
-  expect(fail).toContain('role="alert"');expect(fail).toContain("Retry");
+  expect(fail).toContain("<ErrorState");expect(fail).toContain("Retry");
+  expect(source("src/components/ui/error-state.tsx")).toContain('role="alert"');
   expect(fail).not.toContain("{error.message}");
  });
  it("TPO-inbox-team-R04 paginates announcements instead of silently dropping the hundred-and-first",()=>{
@@ -109,7 +113,8 @@ describe("Chat-2 graceful messaging and TPO action acceptance",()=>{
  });
  it("TPO-inbox-team-54 and GR-90 never surface a read-cell API error code",()=>{
   const view=source("src/components/tpo/tpo-placement-cell-read-action.tsx");
-  expect(view).toContain('role="alert"');
+  expect(view).toContain('<InlineNotice tone="error" message={error}/>');
+  expect(source("src/components/ui/inline-notice.tsx")).toContain('role={tone === "error" ? "alert" : "status"}');
   expect(view).toContain("useGuardedAction({timeoutMs:30000})");
   expect(view).toContain("disabled={busy}");
   expect(view).toContain("30000");
@@ -159,18 +164,22 @@ describe("Chat-2 graceful messaging and TPO action acceptance",()=>{
   expect(client).toContain('draftKey+":createKey"');
  });
  it("TPO-inbox-team-19 GR-71/72/73/76 preserves Team search and shows Retry instead of false empty",()=>{
-  const p=source("src/app/(authenticated)/tpo/team/page.tsx");
-  expect(p).toContain('status:"FAILED" as const');
-  expect(p).toContain("Could not load conversations right now.");
-  expect(p).toContain("Retry conversations");
-  expect(p).toContain('conversations?.status==="FAILED"?null:');
+  const legacy=source("src/app/(authenticated)/tpo/team/page.tsx");
+  const p=source("src/components/tpo/tpo-team-messages-directory.tsx");
+  expect(legacy).toContain('redirect("/tpo/messages?" + target.toString())');
+  expect(p).toContain('if(!data||data.status!=="READY")return <ErrorState');
+  expect(p).toContain('title="Could not load conversations"');
+  expect(p).toContain('href="/tpo/messages?tab=team"');
+  expect(p).toContain(">Retry</Link>');
  });
  it("TPO-inbox-team-45 GR-71/72/73 preserves audience preview filters when one section fails",()=>{
   const p=source("src/app/(authenticated)/tpo/announcements/page.tsx");
-  expect(p).toContain("const previewRequest=");
-  expect(p).toContain("preview.failed");
-  expect(p).toContain("Retry audience preview");
-  expect(p).toContain("targetId:query.data.targetId");
+  const preview=source("src/components/tpo/tpo-notice-live-preview.tsx");
+  expect(p).toContain("<TpoNoticeLiveAudienceProvider");
+  expect(preview).toContain("const data=new FormData(form)");
+  expect(preview).toContain('const target=String(data.get("targetId")');
+  expect(preview).toContain('status:"failed"');
+  expect(preview).toContain('if(current===generation)setPreview');
  });
  it("TPO-inbox-team-54 GR-90 marks From 42 announcements New only with verified college-scoped reads",()=>{
   const service=source("src/modules/announcements/tpo-placement-read-service.ts");
