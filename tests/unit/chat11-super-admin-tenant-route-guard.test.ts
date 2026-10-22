@@ -64,9 +64,13 @@ describe("SA-tenants-modules-SEC-01: never render admin filter recovery before a
    const delegate=file.endsWith("/module-access/page.tsx") &&
      source.includes("SuperAdminCollegeModuleAccessPage params=") &&
      source.includes("searchParams={searchParams}");
-   expect(recovery.length>0||delegate,file).toBe(true);
+   const scopeSelection=file.endsWith("/module-access/page.tsx") &&
+     source.includes("const collegeId = context.adminScope?.collegeId;") &&
+     source.includes("if (!collegeId)");
+   expect(recovery.length>0||delegate||scopeSelection,file).toBe(true);
    if(recovery.length>0)expect(auth,file).toBeLessThan(Math.min(...recovery));
-   else expect(auth,file).toBeLessThan(source.indexOf("SuperAdminCollegeModuleAccessPage params="));
+   else if(delegate)expect(auth,file).toBeLessThan(source.indexOf("SuperAdminCollegeModuleAccessPage params="));
+   else expect(auth,file).toBeLessThan(source.indexOf("if (!collegeId)"));
    expect(source,file).toContain("getCurrentRequestContext()");
   }
  });
