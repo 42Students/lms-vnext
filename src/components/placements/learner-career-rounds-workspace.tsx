@@ -496,7 +496,7 @@ export function LearnerCareerRoundsWorkspace({
         open={selected !== null}
         onOpenChange={(open) => { if (!open) {setSelectedKey(null);setCopyStatus(null);} }}
         title={selected?.roundName ?? "Placement round"}
-        description={selected ? selected.companyName + " · " + selected.roleTitle : undefined}
+        {...(selected ? {description:selected.companyName+" · "+selected.roleTitle} : {})}
         footer={<div className="flex min-w-0 w-full flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
           <Link
             href={selected
