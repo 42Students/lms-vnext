@@ -7,10 +7,11 @@ describe("chat-16 public marketing route rendering and truthful feature contract
   it("UX-public-marketing-01 renders learning, Projects and placements without removed AI claims", () => {
     const page = renderToStaticMarkup(createElement(HomeMarketingPage));
     expect(page).toContain("One connected platform for learning, hands-on projects, mentoring and placements");
-    expect(page).toContain("Connected talent development");
+    expect(page).toContain("One connected team developing talent");
     expect(page).toContain("Create stronger talent pipelines");
-    expect(page).toContain("Team projects with mentors");
-    expect(page).toContain("Eligibility, opportunities");
+    expect(page).toContain("Run team projects with tasks, milestones, submissions and reviews.");
+    expect(page).toContain("Manage readiness, eligibility and student verification.");
+    expect(page).toContain("Bring mentors and learners together around project progress and feedback.");
     expect(page).not.toMatch(/AI-first|AI-enabled|AI grading/i);
     expect(metadata).toMatchObject({title:{absolute:"42 LMS — Learning, Projects and Placements"}});
     expect(metadata.description).not.toMatch(/AI-first|AI-enabled/i);

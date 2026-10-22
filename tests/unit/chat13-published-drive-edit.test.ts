@@ -57,6 +57,6 @@ describe("Super Admin published drive editing",()=>{
   const component=read("src/components/placements/super-admin-published-drive-edit.tsx");
   expect(component).toContain("useGuardedAction");
   expect(component).toContain("driveDeadlineIstToIso");
-  expect(component).toContain("Existing applicant and offer decisions will not be rewritten.");
+  expect(component).toContain("existing applicant and offer decisions will not be rewritten.");
  });
 });

@@ -8,7 +8,7 @@ describe("UX-project-workspaces-41/42 accessible workspace cards",()=>{
     const source=readFileSync(join(process.cwd(),
       "src/components/projects/project-admin-workspace-list.tsx"),"utf8");
     expect(source).toContain('aria-label={"Open summary for "');
-    expect(source).toContain("}>Open");
+    expect(source).toContain("</svg>Open");
     expect(source).toContain("md:min-h-9");
     expect(source).toContain("min-h-11");
   });

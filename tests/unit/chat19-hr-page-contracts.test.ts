@@ -70,7 +70,7 @@ describe("HR page-level access, recovery and mobile contracts", () => {
     const table = load("src/components/ui/data-table.tsx");
     expect(table).toContain("const extra=");
     expect(table).toContain("<Disclosure");
-    expect(table).toContain('sm:hidden');
+    expect(table).toContain('md:hidden');
   });
 
   it("HR-XA-02 HR-XA-03 HR-XA-04 show recovery and readable back navigation after load failures", () => {
@@ -82,8 +82,10 @@ describe("HR page-level access, recovery and mobile contracts", () => {
     expect(jobLoading).toContain('<GracefulPageLoading label="Loading hiring job"');
     expect(drivesError).toContain('<Button type="button" variant="secondary" onClick={reset}>Try again</Button>');
     expect(jobError).toContain("No applicant or offer details are");
-    expect(jobError).toContain("text-[var(--lms-teal-deep)]");
-    expect(jobError).toContain("focus-visible:outline-2");
+    expect(jobError).toContain('<PageBackLink href="/hr/drives" label="Back to Drives"/>');
+    const backLink = load("src/components/ui/page-back-link.tsx");
+    expect(backLink).toContain("focus-visible:outline-2");
+    expect(backLink).toContain("min-h-11");
     expect(jobError).not.toContain("text-[#26bac7]");
   });
 
