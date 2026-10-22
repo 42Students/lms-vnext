@@ -18,7 +18,7 @@ describe("W03 project lifecycle concurrency contract", () => {
   it("rechecks sprint and release prerequisites inside their transactions", () => {
     const completeStart = source.indexOf("export async function completeProjectSprint");
     // Open tasks are re-read under lock inside the transaction and carried to the backlog.
-    const taskCheck = source.indexOf('ne(projectTasks.status, "DONE")', completeStart);
+    const taskCheck = source.indexOf('ne(projectTasks.status,"DONE")', completeStart);
     const transaction = source.indexOf("db.transaction", completeStart);
     expect(transaction).toBeGreaterThan(completeStart);
     expect(taskCheck).toBeGreaterThan(transaction);
