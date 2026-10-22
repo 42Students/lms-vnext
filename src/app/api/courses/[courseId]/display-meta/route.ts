@@ -7,6 +7,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {requirePermission} from "@/modules/permissions/policy";
 import {loadCourseScope} from "@/modules/courses/scope";
+import {legacyCourseMetadataPreview} from "@/modules/courses/legacy-course-metadata-preview";
 export const runtime="nodejs";
 export async function GET(_request:Request,{params}:{
  params:Promise<{courseId:string}>;
@@ -23,11 +24,14 @@ export async function GET(_request:Request,{params}:{
    id:courses.id,name:courses.name,code:courses.code,
    shortTitle:courses.shortTitle,officialCode:courses.officialCode,
    cardColor:courses.cardColor,description:courses.description,
-   updatedAt:courses.updatedAt,
+   legacyMetadata:courses.legacyMetadata,updatedAt:courses.updatedAt,
   }).from(courses).innerJoin(departments,and(
     eq(departments.id,courses.departmentId),eq(departments.collegeId,scope.collegeId),
   )).where(eq(courses.id,id)).limit(1);
   if(!metadata)return NextResponse.json({error:"COURSE_NOT_FOUND"},{status:404});
-  return NextResponse.json({metadata},{headers:{"Cache-Control":"private, no-store"}});
+  const {legacyMetadata,...safeMetadata}=metadata;
+  return NextResponse.json({metadata:{...safeMetadata,
+   legacyFields:legacyCourseMetadataPreview(legacyMetadata),
+  }},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }

@@ -10,11 +10,12 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import { useGuardedAction } from "@/hooks/use-guarded-action";
 import { apiFetch } from "@/lib/api-fetch";
+import type {LegacyCourseMetadataField} from "@/modules/courses/legacy-course-metadata-preview";
 
 type CourseMetadata = {
  id:string;name:string;code:string;shortTitle:string|null;
  officialCode:string|null;cardColor:string|null;description:string|null;
- updatedAt:string;
+ updatedAt:string;legacyFields?:LegacyCourseMetadataField[];
 };
 type Display = {
   introductionText: string | null;
@@ -327,6 +328,23 @@ export function AdminCourseDisplayEditor({
           <Textarea value={description} maxLength={5000} rows={3} disabled={pending} onChange={e=>setDescription(e.target.value)}/>
         </label>
       </div>:null}
+      {metadata?.legacyFields?.some(field=>field.status!=="MISSING")?<Disclosure
+        title="Imported legacy course metadata" className="mt-4 min-w-0"
+        contentClassName="space-y-3 pt-3">
+        <p className="text-xs text-muted-foreground">
+          Historical display fields are read-only. Missing, explicitly empty and saved values
+          remain distinct; imported HTML is shown as text, never executed.
+          These fields do not grant learner access.
+        </p>
+        <dl className="grid min-w-0 gap-2 sm:grid-cols-2">
+          {metadata.legacyFields.map(field=><div key={field.key} className="min-w-0 border-b border-border py-2">
+            <dt className="text-xs font-semibold text-muted-foreground">{field.key}</dt>
+            <dd className="mt-1 break-words text-sm [overflow-wrap:anywhere]">{field.status==="MISSING"
+              ?"Not imported":field.status==="NULL"?"Explicit null":field.value}</dd>
+            <dd className="mt-1 break-words text-xs text-muted-foreground">{field.target}</dd>
+          </div>)}
+        </dl>
+      </Disclosure>:null}
       <div className="mt-[var(--lms-space-4)] grid min-w-0 max-w-[920px] gap-[var(--lms-space-4)]">
         <label className="block min-w-0 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] text-[13px] leading-4">
           Introduction
