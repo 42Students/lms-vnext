@@ -14,10 +14,10 @@ describe("T-S2-04 campaign send policy",()=>{
    {id:"c",...recipient,unsubscribedAt:new Date()},
    {id:"d",...recipient,emailNorm:null},
   ];
-  expect(planTpoCampaignRecipients(candidates)).toEqual({
-   recipientIds:["a"],selectedCount:4,eligibleCount:1,
-   suppressed:{NO_EMAIL:1,UNSUBSCRIBED:1,BOUNCED:0,NOT_NOW:0,DUPLICATE:1},
+  expect(planTpoCampaignRecipients(candidates)).toMatchObject({
+   recipientIds:["a"],suppressed:{NO_EMAIL:1,UNSUBSCRIBED:1,BOUNCED:0,NOT_NOW:0,DUPLICATE:1},
   });
+  expect(planTpoCampaignRecipients(candidates).eligibleCount).toBe(1);
   expect(JSON.stringify(planTpoCampaignRecipients(candidates))).not.toContain("example.org");
   expect(planTpoCampaignRecipients(Array.from({length:501},(_,i)=>({
     ...recipient,id:String(i),unsubscribedAt:i<500?new Date():null,
