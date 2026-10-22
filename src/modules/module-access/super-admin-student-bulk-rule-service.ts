@@ -94,7 +94,7 @@ export async function updateSuperAdminStudentRulesInBulk(
       });
     }
 
-    const scopeKey=(scope:ModuleAccessScope)=>
+    const scopeKey=(scope:{scopeType:string;scopeId:string|null})=>
       scope.scopeType+":"+(scope.scopeId??"");
     const applied = await getDb().transaction(async (tx) => {
       const [college] = await tx.select({
