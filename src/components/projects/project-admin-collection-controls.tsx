@@ -12,7 +12,7 @@ export type ProjectAdminCollectionQuery = {
   fromMentorId?: string;
   focusedProjectId?:string;
   riskBucket?: "STALLED" | "BLOCKER" | "REVIEW";
-  riskSort?: "INACTIVE" | "INACTIVE_DESC" | "WORKSPACE" | "SEVERITY";
+  riskSort?: "INACTIVE" | "INACTIVE_DESC" | "WORKSPACE" | "WORKSPACE_DESC" | "SEVERITY";
   q?: string;
   status?:
     | "PLANNED"
@@ -185,6 +185,7 @@ export function ProjectAdminFilters({
             <option value="INACTIVE_DESC">Inactive (fewest days first)</option>
             <option value="SEVERITY">Severity</option>
             <option value="WORKSPACE">Workspace</option>
+            <option value="WORKSPACE_DESC">Workspace (Z–A)</option>
           </Select>
         </label>
       ) : null}

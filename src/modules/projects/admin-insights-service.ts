@@ -56,7 +56,7 @@ const strictPageNumber=(min:number,max:number,fallback:number)=>z.union([
 
 const projectAdminQuerySchema = z.strictObject({
   riskBucket: z.enum(["STALLED", "BLOCKER", "REVIEW"]).optional(),
-  riskSort: z.enum(["INACTIVE","WORKSPACE","SEVERITY"]).optional(),
+  riskSort: z.enum(["INACTIVE","INACTIVE_DESC","WORKSPACE","WORKSPACE_DESC","SEVERITY"]).optional(),
   q: z.string().trim().max(120).optional(),
   status: z
     .enum([
@@ -625,6 +625,7 @@ export async function listProjectAdminRiskQueue(
     stalled: sql<number>`count(*) filter (where ${stalledSignal})`.mapWith(Number),
     blocker: sql<number>`count(*) filter (where ${blockedTask})`.mapWith(Number),
     review: sql<number>`count(*) filter (where ${pendingReview})`.mapWith(Number),
+    candidates: sql<number>`count(*) filter (where ${stalledSignal} or ${blockedTask} or ${pendingReview})`.mapWith(Number),
   }).from(projectInstances).where(and(
     eq(projectInstances.collegeId, college.id),
     isNull(projectInstances.deletedAt),
@@ -663,8 +664,10 @@ export async function listProjectAdminRiskQueue(
         .where(where)
         .orderBy(
           query.riskSort==="WORKSPACE"?asc(projectInstances.title):
-          query.riskSort==="INACTIVE"?asc(lastActivityAt):
-            sql`${reasonCount} desc`,
+          query.riskSort==="WORKSPACE_DESC"?desc(projectInstances.title):
+          query.riskSort==="SEVERITY"?sql`${reasonCount} desc`:
+          query.riskSort==="INACTIVE_DESC"?desc(lastActivityAt):
+            asc(lastActivityAt),
           asc(projectInstances.title),
           asc(projectInstances.id),
         )
@@ -687,6 +690,7 @@ export async function listProjectAdminRiskQueue(
         Math.ceil(total / query.pageSize),
       ),
       blockerSignalSupported: true,
+      candidatesTotal:bucketTotals?.candidates??0,
       buckets,
     };
   }
@@ -771,6 +775,7 @@ export async function listProjectAdminRiskQueue(
       Math.ceil(total / query.pageSize),
     ),
     blockerSignalSupported: true,
+    candidatesTotal:bucketTotals?.candidates??0,
     buckets,
   };
   });
