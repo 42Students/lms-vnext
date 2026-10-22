@@ -14,6 +14,7 @@ import { advanceFacultySectionRevision } from "@/modules/people/faculty-section-
 import { FacultyProfileTextSection } from "./faculty-profile-text-section";
 import { FacultyProfileSkills } from "./faculty-profile-skills";
 import { FacultyProfileMetadata } from "./faculty-profile-metadata";
+import {FacultyIdentityEvidenceEditor} from "./faculty-identity-evidence-editor";
 import { FacultyProfileRepeatable } from "./faculty-profile-repeatable";
 import { newFacultyAward } from "@/modules/people/faculty-profile-row-factories";
 import { newFacultyPublication } from "@/modules/people/faculty-profile-row-factories";
@@ -179,6 +180,27 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
      <div><dt className="font-semibold">Aadhaar evidence</dt><dd className="text-body">{document.identitySummary.aadhaarDocumentId?"On file":"Not uploaded"}</dd></div>
      <div><dt className="font-semibold">Profile photo</dt><dd className="text-body">{document.profileImageDocumentId?"On file":"Not uploaded"}</dd></div>
     </dl>
+    <FacultyIdentityEvidenceEditor
+      aadhaarReceiptId={document.identitySummary.aadhaarDocumentId}
+      panReceiptId={document.identitySummary.panDocumentId}
+      version={version} pending={pending}
+      onSaved={receipt=>{
+        const field=receipt.kind==="AADHAAR"?"aadhaarDocumentId":"panDocumentId";
+        setDocument(current=>({...current,identitySummary:{
+          ...current.identitySummary,[field]:receipt.receiptId,
+        }}));
+        setVersion(receipt.version);
+        setSuccess("Private identity evidence updated.");
+      }}
+      onRevoked={receipt=>{
+        const field=receipt.kind==="AADHAAR"?"aadhaarDocumentId":"panDocumentId";
+        setDocument(current=>({...current,identitySummary:{
+          ...current.identitySummary,[field]:null,
+        }}));
+        setVersion(receipt.version);
+        setSuccess("Private identity evidence access removed.");
+      }}
+    />
    </section>
   </div>
  </div>;
