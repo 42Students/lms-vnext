@@ -10,7 +10,8 @@ import type {RequestContext} from "@/modules/identity/context";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {collegeDriveIdSchema} from "./college-drive-read-model";
 import {collegeInterviewActionSchema} from "./college-interview-action-model";
-import {placementCollegeApplicationStages} from "@/db/schema/placement-college-application-stages";
+import {placementCollegeApplicationStages,placementCollegeApplicationStageHistory}
+ from "@/db/schema/placement-college-application-stages";
 
 async function scope(ctx:RequestContext,raw:unknown){
  const collegeId=await requireCollegePlacementAdmin(ctx),jobId=collegeDriveIdSchema.parse(raw);
@@ -380,6 +381,38 @@ export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobI
     message="Interview rescheduled for "+job.title+" on "+roundInterviewInstantIst(start)+". "+cmd.reason;
    }
    learnerApplicationId=a.applicationId;
+   // Match the old InterviewService auto-advance. Booking a real interview
+   // advances a shortlisted/assessment learner's independent college
+   // pipeline, but must never downgrade an offer, hire or rejected state.
+   // Do it in this booking transaction so the visible stage and slot cannot
+   // disagree after a partial response or concurrent staff mutation.
+   const [priorStage]=await tx.select().from(placementCollegeApplicationStages)
+    .where(and(eq(placementCollegeApplicationStages.applicationId,a.applicationId),
+      eq(placementCollegeApplicationStages.jobId,job.id)))
+    .for("update").limit(1);
+   const priorName=priorStage?.stage??"SHORTLISTED";
+   if(["APPLIED","SHORTLISTED","ASSESSMENT"].includes(priorName)){
+    const reason="Interview scheduled in the placement calendar";
+    const now=new Date();
+    const [moved]=priorStage
+     ?await tx.update(placementCollegeApplicationStages).set({
+       stage:"INTERVIEW",previousStage:priorStage.stage,
+       version:priorStage.version+1,movedByUserId:ctx.user.id,
+       reason,movedAt:now,updatedAt:now,
+      }).where(and(eq(placementCollegeApplicationStages.id,priorStage.id),
+        eq(placementCollegeApplicationStages.version,priorStage.version)))
+       .returning({id:placementCollegeApplicationStages.id})
+     :await tx.insert(placementCollegeApplicationStages).values({
+       jobId:job.id,applicationId:a.applicationId,
+       stage:"INTERVIEW",previousStage:priorName,
+       movedByUserId:ctx.user.id,reason,movedAt:now,updatedAt:now,
+      }).onConflictDoNothing().returning({id:placementCollegeApplicationStages.id});
+    if(!moved)throw Error("Pipeline stage changed. Refresh and retry.");
+    await tx.insert(placementCollegeApplicationStageHistory).values({
+     stageId:moved.id,fromStage:priorName,toStage:"INTERVIEW",
+     reason,actorUserId:ctx.user.id,movedAt:now,
+    });
+   }
   }else{
    const [old]=await tx.select().from(slots).where(and(eq(slots.id,cmd.interviewId),
      eq(slots.jobId,job.id),eq(slots.status,"BOOKED"))).for("update").limit(1);
