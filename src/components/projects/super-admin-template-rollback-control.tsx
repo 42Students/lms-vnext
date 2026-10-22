@@ -51,7 +51,7 @@ export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
   }
   finally{setBusy(false);}
  }
- return <div className={"min-w-0 space-y-3 border-b border-border pb-4 text-body "+styles.legacy}>
+ return <div className={"min-w-0 space-y-3 border-b border-border pb-4 text-body "+styles["legacy"]}>
   <h2 className="text-sm font-semibold text-foreground">Roll back to this version</h2>
   <p className="text-xs text-body">Review the compared changes above. Rollback creates a new editable version;
    assigned colleges and existing workspaces keep their current pinned versions.
