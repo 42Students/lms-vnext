@@ -34,6 +34,8 @@ describe("TPO drive applicant partial parity and query safety",()=>{
   expect(spreadsheet).toContain("mobileActionsCollapsible storageKey=");
   const base=source("src/components/tpo/tpo-spreadsheet-grid.tsx");
   expect(base).toContain('md:hidden');
-  expect(base).toContain(">Actions</summary>");
+  expect(base).toContain('<Dropdown mobileSheet align="end"');
+  expect(base).toContain('trigger="Actions"');
+  expect(base).toContain("Close actions");
  });
 });

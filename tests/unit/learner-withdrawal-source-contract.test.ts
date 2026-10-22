@@ -15,7 +15,8 @@ describe("Learner withdrawal UX and backend write contracts", () => {
     expect(ui).toContain("confirmed: true");
     expect(ui).toContain("/api/placements/applications/");
     expect(ui).toContain("withdrawPending");
-    expect(ui).toContain("sm:grid-cols-3");
+    expect(ui).toContain("min-[768px]:grid-cols-2");
+    expect(ui).toContain("min-[992px]:grid-cols-3");
     expect(ui).toContain('role="alert"');
     expect(ui).toContain("router.refresh()");
     expect(ui).not.toContain("window.confirm(");

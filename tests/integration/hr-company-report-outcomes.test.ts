@@ -21,7 +21,11 @@ describe.skipIf(!enabled)("HR report result privacy",()=>{
   const noGrantUserId=randomUUID();
   const noGrant:RequestContext={user:{id:noGrantUserId,identityUid:"no-grant-"+nonce,platformStatus:"ACTIVE",systemRoles:[]},
    membership:null,recruiter:{userId:noGrantUserId,companyId:randomUUID(),companyName:"Fixture",status:"ACTIVE",title:null,grants:[]}};
-  await expect(getRecruiterCompanyReports(noGrant,{})).rejects.toBeInstanceOf(AuthorizationError);
+  // A signed-in recruiter with no active grant has a safe access outcome,
+  // not a company report or an inferred college.
+  await expect(getRecruiterCompanyReports(noGrant,{})).resolves.toMatchObject({
+   status:"NO_ACCESS",choices:[],
+  });
   const forged={...noGrant,recruiter:{...noGrant.recruiter!,userId:randomUUID()}};
   await expect(getRecruiterCompanyReports(forged,{})).rejects.toBeInstanceOf(AuthorizationError);
   await expect(getRecruiterCompanyReports(tpo,{})).rejects.toBeDefined();

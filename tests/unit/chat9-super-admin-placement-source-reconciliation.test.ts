@@ -56,7 +56,7 @@ describe("Super Admin Placements documented parity and owner-accepted navigation
   const route=source("src/app/api/admin/companies/domains/route.ts");
   expect(page).toContain("<SuperAdminGlobalCompanyCatalogue");
   expect(source("src/components/admin/super-admin-global-company-catalogue.tsx")).toContain("<SuperAdminCompanyIdentities");
-  expect(component).toContain("Company domain or email");
+  expect(component).toContain("Company domain or work email");
   expect(component).toContain("domains.length<=1");
   expect(route).toContain("isSameOriginRequest");
  });
