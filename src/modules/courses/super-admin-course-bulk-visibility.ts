@@ -8,6 +8,8 @@ import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {bulkSuperAdminLessonVisibility} from "./super-admin-lesson-bulk-visibility";
 import {safeCourseVisibilityFailure} from "./bulk-visibility-failure-model";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {CoursesServiceError} from "./errors";
 
 export const superAdminCourseBulkSchema=z.strictObject({
@@ -114,6 +116,29 @@ export async function bulkSuperAdminCourseVisibility(context:RequestContext,raw:
  }
  if(input.visibleToStudents)
   await setCourseVisibility(input.courseIds.filter(id=>!failedCourses.has(id)),true);
+ // One batch-level receipt after all scoped updates, including failures.
+ // The prior per-lesson activity trail remains the authoritative row history.
+ // Do not replace a partial result with a misleading "100 updated" message.
+ await getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"courses.manage",{
+   collegeId:acting.collegeId,organizationId:acting.organizationId,
+  });
+  await recordActivityEventInTransaction(tx,context,{
+   eventType:ACTIVITY_EVENT_TYPES.COURSES_BULK_STATUS_UPDATE,
+   collegeId:acting.collegeId,
+   subjectType:"college",subjectId:acting.collegeId,
+   subjectLabel:"Courses bulk visibility",
+   summary:"Course bulk status update: "+input.courseIds.length+
+     " requested, "+(input.courseIds.length-failedCourses.size)+" applied, "+
+     failedCourses.size+" failed",
+   metadata:{requested:input.courseIds.length,
+    updated:input.courseIds.length-failedCourses.size,
+    failed:failedCourses.size,matchedLessons:ids.length,
+    matchedContents,changed,unchanged,changedCourses,
+    visibleToStudents:input.visibleToStudents},
+   groupKey:"college:"+acting.collegeId+":courses",
+  });
+ });
  return {operation:"COURSE_AND_PUBLISHED_CONTENT_VISIBILITY" as const,
   selectedCourses:selected.length,matchedLessons:ids.length,
   matchedContents,changed,unchanged,changedCourses,failures,

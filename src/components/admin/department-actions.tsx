@@ -167,7 +167,7 @@ export function DepartmentActions({
         <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9M16.5 3.5l4 4L9 19H5v-4L16.5 3.5z"/></svg>
       </Button>
       <Button variant="ghost" size="icon-sm" disabled={pending||hasDependencies}
-        aria-label={"Delete department "+name} title={hasDependencies?dependencyDetail:"Delete department "+name+" (soft archive)"}
+        aria-label={"Archive department "+name} title={hasDependencies?dependencyDetail:"Archive department "+name+" (retains historical records)"}
         className="text-[var(--lms-error)]"
         onClick={()=>{setArchiveError("");setArchiveOpen(true);}}>
         <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 10v7m4-7v7"/></svg>
@@ -243,8 +243,8 @@ export function DepartmentActions({
         open={archiveOpen}
         onOpenChange={next=>{if(!pending)setArchiveOpen(next);}}
         dismissible={!pending}
-        title="Delete department"
-        description={`Delete ${name}? This is a soft delete. ${dependencyDetail||"No linked dependencies remain."}`}
+        title="Archive department"
+        description={`Archive ${name}? The department is removed from active selections but its historical records remain. ${dependencyDetail||"No linked dependencies remain."}`}
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end [&>button]:w-full sm:[&>button]:w-auto">
             <Button
@@ -263,7 +263,7 @@ export function DepartmentActions({
             >
               {pending
                 ? "Archiving…"
-                : "Yes, delete"}
+                : "Yes, archive"}
             </Button>
           </div>
         }
@@ -276,7 +276,7 @@ export function DepartmentActions({
           </Alert>
         ) : null}
         <p className="m-0 max-w-prose text-sm text-body">
-          Delete means soft archive: this removes the department from active selections without deleting historical records.
+          Archive removes the department from active selections without deleting historical records.
           All linked programs, courses and faculty assignments must be resolved first; dependencies
           are rechecked immediately before the archive. Reactivation is not available here.
         </p>

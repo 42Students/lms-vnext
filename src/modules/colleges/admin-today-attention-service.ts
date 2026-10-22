@@ -32,7 +32,7 @@ export async function getSuperAdminTodayBoard(ctx:RequestContext,rawCollegeId:st
    scheduled:sql<number>`count(distinct ${sectionScheduleEvents.id})::int`,
    ended:sql<number>`count(distinct ${sectionScheduleEvents.id}) filter(where ${sectionScheduleEvents.endsAt}<=${now})::int`,
    marked:sql<number>`count(distinct ${sectionScheduleEvents.id}) filter(where ${attendanceSessions.status}='MARKED')::int`,
-   held:sql<number>`count(distinct ${sectionScheduleEvents.id}) filter(where ${attendanceSessions.status} in ('DRAFT','MARKED'))::int`,
+   held:sql<number>`count(distinct ${sectionScheduleEvents.id}) filter(where ${attendanceSessions.status}='MARKED')::int`,
   }).from(sectionScheduleEvents)
    .innerJoin(sections,eq(sections.id,sectionScheduleEvents.sectionId))
    .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
