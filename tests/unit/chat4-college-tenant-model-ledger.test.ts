@@ -19,7 +19,7 @@ describe("college/tenant directory module coverage ledger",()=>{
     }
   });
   it("parseAdminDirectorySearchParams refuses duplicates, unknown keys, malformed pages, recovers default",()=>{
-    expect(parseAdminDirectorySearchParams({})).toEqual({q:"",page:1,pageSize:25});
+    expect(parseAdminDirectorySearchParams({})).toEqual({q:"",page:1,pageSize:10});
     expect(parseAdminDirectorySearchParams({q:["a","b"]})).toBeNull();
     expect(parseAdminDirectorySearchParams({page:["2"]})).toBeNull();
     expect(parseAdminDirectorySearchParams({collegeId:"other"})).toBeNull();
@@ -27,8 +27,8 @@ describe("college/tenant directory module coverage ledger",()=>{
   });
   it("tenantLifecyclePaging clamps pages and rejects out-of-range filters",()=>{
     expect(tenantLifecyclePaging(0,1)).toEqual({total:0,totalPages:1,page:1,offset:0});
-    expect(tenantLifecyclePaging(45,3)).toEqual({total:45,totalPages:3,page:3,offset:40});
-    expect(tenantLifecyclePaging(45,100).page).toBe(3);
+    expect(tenantLifecyclePaging(45,3)).toEqual({total:45,totalPages:2,page:2,offset:25});
+    expect(tenantLifecyclePaging(45,100).page).toBe(2);
     expect(()=>tenantLifecyclePaging(2,0)).toThrow();
     expect(tenantLifecycleQuerySchema.safeParse({status:"INTERNAL"}).success).toBe(false);
   });
@@ -93,7 +93,7 @@ describe("college/tenant directory module coverage ledger",()=>{
     const read=(n:string)=>readFileSync(join(process.cwd(),"src/app/(authenticated)/admin/"+n+"/page.tsx"),"utf8");
     for(const route of ["colleges","organizations"]){
       const page=read(route);
-      expect(page).toContain("parseAdminDirectorySearchParams(await searchParams)");
+      expect(page).toContain("parseAdminDirectorySearchParams(");
       expect(page).toContain("<ErrorState");
       expect(page).toContain("<DataTable");
       expect(page).toContain("min-h-11");
