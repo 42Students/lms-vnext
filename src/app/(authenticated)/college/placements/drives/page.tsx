@@ -117,6 +117,10 @@ export default async function CollegeDrivesPage({ searchParams }: {
       description="College-owned placement jobs. Filter, review applications or edit a job without leaving the college's placements workspace."
       actions={<div className="flex flex-wrap items-center gap-3">
         <CollegeDrivesRefreshButton/>
+        <Link href="/college/placements/student-lookup"
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline-offset-4 hover:border-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          Look up a student&apos;s placement status →
+        </Link>
         {hasMembershipRole(context,"COLLEGE_ADMIN")?<CollegeDriveCreateDialog>
           <PlacementJobCreateWorkspace context={context}
             collegeId={context.membership.collegeId} basePath="/college/placements"/>

@@ -130,7 +130,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Minimum slot credits
-              <Input name="minimumCredits" type="number" min={1} max={500} step={1}
+              <Input name="minimumCredits" type="number" min={0} max={500} step={1}
                 defaultValue={data.query.minimumCredits??""} placeholder="Any credits"
                 className="min-h-11 min-w-0 md:min-h-9"/>
             </label>
@@ -138,7 +138,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Maximum slot credits
-              <Input name="maximumCredits" type="number" min={1} max={500} step={1}
+              <Input name="maximumCredits" type="number" min={0} max={500} step={1}
                 defaultValue={data.query.maximumCredits ?? ""} placeholder="No upper bound"
                 className="min-h-11 min-w-0 md:min-h-9"/>
             </label>

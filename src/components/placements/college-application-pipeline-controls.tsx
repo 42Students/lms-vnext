@@ -73,9 +73,11 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   setAssessmentUrl("");setSaveAssessmentUrlToJob(true);
  },[activeScope]);
  useEffect(()=>{
-  // Reject late drawer responses and hidden selection after filter changes.
+  // Reject late drawer replies after filter changes, but preserve explicit
+  // selected application UUIDs across pages/filters of this same drive.
+  // Mutations revalidate every selected UUID against current server eligibility.
   scopeEpoch.current+=1;
-  setAllMatching(false);setSelected([]);setDetailId(null);setDetailPayload(null);
+  setAllMatching(false);setDetailId(null);setDetailPayload(null);
   setFailedDetailId(null);setDialog(false);setConfirmDiscard(false);setError("");setOutcome(null);
   setAssessmentUrl("");setSaveAssessmentUrlToJob(true);
  },[filterScope]);
