@@ -73,7 +73,7 @@ type Path={id:string;courseName:string;cohortName:string;periodName:string};
    <Input type="search" value={courseSearch} onChange={event=>setCourseSearch(event.target.value)}
      placeholder="Search courses" aria-label="Search courses" disabled={pending}
      className="min-h-11 w-full md:min-h-9"/>
-   <Select required value={pathId} disabled={pending} onChange={event=>{setPathId(event.target.value);setFieldErrors(old=>({...old,path:undefined}));}}
+   <Select required value={pathId} disabled={pending} onChange={event=>{setPathId(event.target.value);setFieldErrors(({path: _path,...rest})=>rest);}}
     className="min-h-11 w-full md:min-h-9">
     <option value="">Select course</option>
     {paths.filter(path=>path.id===pathId||(path.courseName+" "+path.cohortName+" "+path.periodName)
@@ -86,7 +86,7 @@ type Path={id:string;courseName:string;cohortName:string;periodName:string};
   </label>
   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lesson Name
    <Input maxLength={255} placeholder="e.g., Introduction to Arrays" value={name} disabled={pending}
-    onChange={event=>{setName(event.target.value);setFieldErrors(old=>({...old,name:undefined}));}}
+    onChange={event=>{setName(event.target.value);setFieldErrors(({name: _name,...rest})=>rest);}}
     aria-invalid={Boolean(fieldErrors.name)}
     className="min-h-11 w-full md:min-h-9"/>
    {fieldErrors.name?<span className="text-xs text-error" role="alert">{fieldErrors.name}</span>:null}
