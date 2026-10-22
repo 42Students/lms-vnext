@@ -91,7 +91,7 @@ export function TpoMoreNavigation(){
          <span className="block text-[14px] font-[650] leading-[1.3] text-[#27364d] group-hover:text-[var(--lms-primary)]">{item.label}</span>
          <span className="mt-[2px] block break-words text-xs leading-[1.4] text-muted-foreground">{item.description}</span>
         </span>
-        {badge?<span aria-label={count+" waiting"} className="inline-flex min-w-6 shrink-0 items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-xs font-bold text-on-primary">{badge}</span>:null}
+        {badge?<span aria-label={item.href==="/tpo/messages"?count+" unread messages":count+" waiting requests"} className="inline-flex min-w-6 shrink-0 items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-xs font-bold text-on-primary">{badge}</span>:null}
         <svg aria-hidden="true" className="size-3 shrink-0 text-muted-foreground transition-transform duration-150 group-hover:translate-x-[2px] group-hover:text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 5 7 7-7 7"/></svg>
        </Link>;
       })}
