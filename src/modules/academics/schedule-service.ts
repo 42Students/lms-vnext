@@ -231,7 +231,10 @@ async function validateDeliveryForSection(
   const delivery =
     await loadCourseSectionDeliveryScope(deliveryId);
 
-  if (delivery.sectionId !== sectionId) {
+  // The scheduling picker exposes only active deliveries. Refuse a stale
+  // course choice on submit rather than creating an event linked to a closed
+  // or draft offering that the current class no longer teaches.
+  if (delivery.sectionId !== sectionId || delivery.offeringStatus !== "ACTIVE") {
     throw new AcademicsServiceError(
       "SCHEDULE_COURSE_DELIVERY_MISMATCH",
     );
