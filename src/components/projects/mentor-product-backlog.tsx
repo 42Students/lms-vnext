@@ -167,7 +167,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
     {task.carriedFromSprintId?<Badge tone="warning" className="mt-1">Carried over</Badge>:null}
     {!readOnly&&["TODO","IN_PROGRESS","BLOCKED"].includes(task.status)?
       <div className="mt-2">
-        <MentorTaskDetailsEdit projectId={projectId} taskId={task.id}
+        <MentorTaskDetailsEdit inlineEdit projectId={projectId} taskId={task.id}
           title={task.title} description={task.description} approach={task.approach}
           acceptanceCriteria={task.acceptanceCriteria} priority={task.priority}
           updatedAt={new Date(task.updatedAt).toISOString()}

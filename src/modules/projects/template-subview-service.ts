@@ -12,7 +12,8 @@ import {
   projectTemplates,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
-import { requirePermission } from "@/modules/permissions/policy";
+import { can, requirePermission } from "@/modules/permissions/policy";
+import { isSuperAdmin } from "@/modules/identity/context";
 import { projectTemplateIdSchema } from "./validation";
 import { ProjectsServiceError } from "./errors";
 
@@ -100,8 +101,24 @@ export async function getSuperAdminTemplateSubview(
         )
     : [];
 
+  // A selected tenant can inspect the global blueprint but cannot mutate it.
+  // Archived copies remain available for audit with all writes disabled.
+  const canEdit=isSuperAdmin(context)&&!context.adminScope?.organizationId&&
+    !context.adminScope?.collegeId&&template.status!=="ARCHIVED"&&
+    can(context,"project-template.manage");
+  const readOnlyReason=template.status==="ARCHIVED"
+    ?"Archived templates are read-only."
+    : !canEdit?"Select the global Super Admin workspace to edit this template.":null;
   return {
     template,
+    canEdit,readOnlyReason,
+    publication:{
+      status:template.status,
+      currentVersion:template.currentVersion,
+      publishedVersion:template.publishedVersion,
+      affectsExistingWorkspaces:false,
+      affectsFutureWorkspaces:template.status==="PUBLISHED",
+    },
     currentVersion: currentVersion ?? null,
     versions: [] as Array<NonNullable<typeof currentVersion>>,
     assignments: [],
