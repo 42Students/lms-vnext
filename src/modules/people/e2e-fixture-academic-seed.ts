@@ -373,7 +373,7 @@ export async function persistIsolatedE2EAcademicGraph(input: {
       title: "E2E Attendance session A",
       startsAt: new Date("2026-10-15T04:30:00.000Z"),
       endsAt: new Date("2026-10-15T05:30:00.000Z"),
-      status: "COMPLETED",
+      status: "SCHEDULED",
     }).onConflictDoNothing().returning({ id: sectionScheduleEvents.id });
     const [scheduled] = await tx.select({
       sectionId: sectionScheduleEvents.sectionId,
