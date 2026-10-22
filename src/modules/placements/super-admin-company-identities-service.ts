@@ -1,5 +1,6 @@
 import "server-only";
-import {and,eq,ilike,ne} from "drizzle-orm";
+import {and,asc,eq,ilike,inArray,ne} from "drizzle-orm";
+import {z} from "zod";
 import {getDb} from "@/db/client";
 import {placementCompanies,placementCompanyDomains,placementCompanyAliases,tenantDomains}
  from "@/db/schema";
@@ -11,7 +12,30 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {companyDomainCommandSchema,companyAliasCommandSchema,
  normalizeCompanyDomain,normalizeCompanyAlias} from "./super-admin-company-identities-model";
 import {canonicalCompanyAlias} from "./company-curation-alias-model";
+import {tpoTrustedDomainErrorMessage} from "./tpo-trusted-domain-validation";
 
+/** Read each company's domain aliases in one bounded, consistently ordered query.
+ * This is a privileged global directory projection, not a college-owned list. */
+export async function listSuperAdminCompanyDomainsByCompanyIds(context:RequestContext,rawCompanyIds:unknown){
+ requireGlobal(context);
+ const ids=z.array(z.uuid()).max(100).parse(rawCompanyIds);
+ if(!ids.length)return new Map<string,Array<{id:string;domain:string;verifiedBy42:boolean;createdAt:Date}>>();
+ const db=getDb();
+ return db.transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"admin-scope.select");
+  const rows=await tx.select({id:placementCompanyDomains.id,companyId:placementCompanyDomains.companyId,
+   domain:placementCompanyDomains.domain,verifiedBy42:placementCompanyDomains.verifiedBy42,
+   createdAt:placementCompanyDomains.createdAt})
+   .from(placementCompanyDomains).where(inArray(placementCompanyDomains.companyId,[...new Set(ids)]))
+   .orderBy(asc(placementCompanyDomains.createdAt),asc(placementCompanyDomains.id));
+  const byCompany=new Map<string,Array<{id:string;domain:string;verifiedBy42:boolean;createdAt:Date}>>();
+  for(const id of ids)byCompany.set(id,[]);
+  for(const row of rows)byCompany.get(row.companyId)?.push({
+   id:row.id,domain:row.domain,verifiedBy42:row.verifiedBy42,createdAt:row.createdAt
+  });
+  return byCompany;
+ },{accessMode:"read only"});
+}
 function requireGlobal(context:RequestContext){
  // Domain/alias registry mutations target a platform company identity, not
  // the acting college. A selected college must not silently narrow a global
@@ -22,6 +46,11 @@ function requireGlobal(context:RequestContext){
 export async function changeSuperAdminCompanyDomain(context:RequestContext,raw:unknown){
  requireGlobal(context);
  const cmd=companyDomainCommandSchema.parse(raw),domain=normalizeCompanyDomain(cmd.domain);
+ // Curated company registry accepts a domain without requiring MX. A definite
+ // NO_MAIL result is enforced only for recruiter email/invite flows. Temporary
+ // resolver failure must not change a verified company's identity.
+ const error=tpoTrustedDomainErrorMessage(domain);
+ if(error)throw new Error(error);
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"admin-scope.select");
   const [company]=await tx.select().from(placementCompanies)
@@ -33,7 +62,8 @@ export async function changeSuperAdminCompanyDomain(context:RequestContext,raw:u
     ".edu.au",".ac.nz",".edu.sg",".ac.jp",".edu.cn"].some(suffix=>("."+domain).endsWith(suffix)))
    throw new Error("College and university addresses can\'t be used for a company");
   const current=await tx.select().from(placementCompanyDomains)
-    .where(eq(placementCompanyDomains.companyId,company.id)).for("update");
+    .where(eq(placementCompanyDomains.companyId,company.id))
+    .orderBy(asc(placementCompanyDomains.createdAt),asc(placementCompanyDomains.id)).for("update");
   const own=current.find(d=>d.domain.toLowerCase()===domain);
   if(cmd.action==="ADD"){
    // An older imported canonical domain can predate child-domain backfill.
@@ -54,16 +84,20 @@ export async function changeSuperAdminCompanyDomain(context:RequestContext,raw:u
    if(!own){
     await tx.insert(placementCompanyDomains).values({
       companyId:company.id,domain,addedByUserId:context.user.id,
-      addedByUserType:"SUPER_ADMIN",verifiedBy42:false,
+      addedByUserType:"SUPER_ADMIN",addedByCollegeId:context.adminScope?.collegeId??null,
+      verifiedBy42:false,
     });
    }
-   if(!company.primaryDomain)await tx.update(placementCompanies)
-    .set({primaryDomain:domain,updatedAt:new Date()}).where(eq(placementCompanies.id,company.id));
+   if(!company.primaryDomain||(!current.some(row=>row.domain.toLowerCase()===company.primaryDomain?.toLowerCase())&&!own))
+    await tx.update(placementCompanies)
+     .set({primaryDomain:current[0]?.domain??domain,updatedAt:new Date()})
+     .where(eq(placementCompanies.id,company.id));
   }else{
-   if(!own)throw new Error("Domain is not registered with this company.");
+   if(!own)throw new Error("That domain is not on this company");
    if(current.length<=1)throw new Error("A company keeps at least one domain");
    await tx.delete(placementCompanyDomains).where(eq(placementCompanyDomains.id,own.id));
-   if(company.primaryDomain===domain)await tx.update(placementCompanies)
+   if(company.primaryDomain?.toLowerCase()===domain||!current.some(d=>d.domain.toLowerCase()===company.primaryDomain?.toLowerCase()))
+    await tx.update(placementCompanies)
     .set({primaryDomain:current.find(d=>d.id!==own.id)!.domain,updatedAt:new Date()})
     .where(eq(placementCompanies.id,company.id));
   }
@@ -71,7 +105,9 @@ export async function changeSuperAdminCompanyDomain(context:RequestContext,raw:u
    eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_COMPANY_DOMAIN_UPDATED,
    subjectType:"placement_company",subjectId:company.id,subjectLabel:company.name,
    summary:cmd.action==="ADD"?"Company domain added":"Company domain removed",
-   metadata:{domain,action:cmd.action},
+   metadata:{domain,action:cmd.action,addedByUserType:"SUPER_ADMIN",
+    addedByCollegeId:context.adminScope?.collegeId??null,registrationRequiresMail:false,
+    previousPrimaryDomain:company.primaryDomain??null},
   });
   return {companyId:company.id,domain,action:cmd.action};
  });
