@@ -344,7 +344,7 @@ export function FacultyAssessmentOverview({
 
       <Drawer open={Boolean(viewedItem)} onOpenChange={open=>{if(!open)setViewedKey(null);}}
         title={viewedItem?.title??"Assessment details"}
-        description={viewedItem ? `${viewedItem.courseName} · ${viewedItem.sectionName}` : undefined}>
+        {...(viewedItem ? {description:`${viewedItem.courseName} · ${viewedItem.sectionName}`} : {})}>
         {viewedItem ? <div className="min-w-0 space-y-4 text-sm text-body">
           <div className="flex flex-wrap gap-2">
             <StatusBadge tone={viewedItem.status==="PUBLISHED"?"success":"neutral"}>{viewedItem.status}</StatusBadge>
