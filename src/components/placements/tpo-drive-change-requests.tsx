@@ -69,6 +69,10 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
  const inFlightRef=useRef(false);
  const [busy,setBusy]=useState(false);const [error,setError]=useState("");const [success,setSuccess]=useState("");
  const [confirmation,setConfirmation]=useState<{action:"ACCEPT"|"ANSWER"|"DECLINE"|"WITHDRAW";requestId:string;expectedUpdatedAt:string;note:string}|null>(null);
+ const createRequest={action:"CREATE",field,mode:field==="OTHER"?"ASK":mode,
+  proposedValue:field==="OTHER"?"":field==="DEADLINE"&&mode==="SUGGEST"&&value
+   ?istDateTimeToUtc(value):value.trim(),reason:reason.trim()};
+ const canSubmitRequest=driveChangeCommandSchema.safeParse(createRequest).success;
  async function send(body:Record<string,unknown>){
   if(inFlightRef.current||busy)return;
   const validation=driveChangeCommandSchema.safeParse(body);
@@ -171,10 +175,8 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
      minLength={field==="OTHER"?3:undefined}
      maxLength={1000} rows={2} className="min-h-11 min-[768px]:min-h-9"/></label>
    {fieldError?<p role="alert" className="text-xs text-error">{fieldError}</p>:null}
-   <Button type="button" disabled={busy||!field||(field==="OTHER"?reason.trim().length<3:value.trim().length<2)}
-    onClick={()=>void send({action:"CREATE",field,mode:field==="OTHER"?"ASK":mode,
-     proposedValue:field==="OTHER"?"":field==="DEADLINE"&&mode==="SUGGEST"&&value
-      ?istDateTimeToUtc(value):value.trim(),reason:reason.trim()})}
+   <Button type="button" disabled={busy||!canSubmitRequest}
+    onClick={()=>void send(createRequest)}
     variant="primary" className="min-h-11 w-full sm:w-auto md:min-h-9">
     {busy?"Sending…":"Send"}</Button>
    <Button type="button" variant="secondary" disabled={busy} onClick={()=>{
