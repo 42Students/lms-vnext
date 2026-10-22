@@ -1,5 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import {notFound} from "next/navigation";
+import {learnerAssignmentListPage,learnerAssignmentListHref} from "@/modules/courses/learner-assignment-page-model";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { CoursesServiceError } from "@/modules/courses/errors";
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
@@ -11,7 +13,7 @@ import {
 import { PageHeader } from "@/components/ui/page-header";
 import { getLearnerAssessmentOverview } from "@/modules/courses/learner-assessment-service";
 
-type AssignmentSearchParams = { course?: string | string[] };
+type AssignmentSearchParams = { course?: string | string[]; page?:string|string[] };
 
 function AssignmentsLoading() {
   return (
@@ -41,11 +43,13 @@ export default function LearnerAssignmentsPage({searchParams}:{searchParams:Prom
 
 async function LearnerAssignmentsContent({searchParams}:{searchParams:Promise<AssignmentSearchParams>}) {
   const [context,query] = await Promise.all([getCurrentRequestContext(),searchParams]);
+  const page=learnerAssignmentListPage(query.page);
+  if(page===null)notFound();
   // Learner-only access is enforced by the assessment service. Faculty use
   // their separate teacher workspace; do not expose write actions here.
   let overview: Awaited<ReturnType<typeof getLearnerAssessmentOverview>> | null = null;
   try {
-    overview = await getLearnerAssessmentOverview(context, { courseId: query.course });
+    overview = await getLearnerAssessmentOverview(context, { courseId: query.course,page,pageSize:20 });
   } catch (error) {
     // Never turn permission failures or invalid course scopes into a public list.
     if (error instanceof AuthorizationError || error instanceof CoursesServiceError) throw error;
@@ -117,6 +121,8 @@ async function LearnerAssignmentsContent({searchParams}:{searchParams:Promise<As
     );
 
   const coursesCount = new Set(items.map(item => item.courseId)).size;
+  const totalAssignments=overview.pagination?.totals.assignments??items.length;
+  const totalPages=Math.max(1,Math.ceil(totalAssignments/20));
   const thisMonth = new Intl.DateTimeFormat("en-CA", {timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit"});
   const snapshotMonth = thisMonth.format(new Date(overview.snapshotNowMs));
   const createdThisMonth = items.filter(item => thisMonth.format(new Date(item.createdAt)) === snapshotMonth).length;
@@ -128,16 +134,16 @@ async function LearnerAssignmentsContent({searchParams}:{searchParams:Promise<As
         actions={
           <div className="flex flex-wrap gap-2 text-sm" aria-label="Assignment summary">
             <span className="rounded-lg border border-border px-3 py-1.5 font-medium">
-              {items.length} {items.length === 1 ? "Assignment" : "Assignments"}
+              {totalAssignments} {totalAssignments === 1 ? "Assignment" : "Assignments"}
             </span>
             {coursesCount > 0 ? (
               <span className="rounded-lg border border-border px-3 py-1.5 font-medium">
-                {coursesCount} {coursesCount === 1 ? "Course" : "Courses"}
+                {coursesCount} {coursesCount === 1 ? "Course" : "Courses"} (this page)
               </span>
             ) : null}
             {createdThisMonth > 0 ? (
               <span className="rounded-lg border border-border px-3 py-1.5 font-medium">
-                {createdThisMonth} this month
+                {createdThisMonth} this month (this page)
               </span>
             ) : null}
           </div>
@@ -153,6 +159,14 @@ async function LearnerAssignmentsContent({searchParams}:{searchParams:Promise<As
         kind="ASSIGNMENT"
         snapshotNowMs={overview.snapshotNowMs}
       />
+      <nav aria-label="Assignment list pages" className="flex min-w-0 flex-wrap items-center gap-4 border-t border-border pt-3 text-sm">
+        <span role="status">Page {page} of {totalPages} · {totalAssignments} matching assignments</span>
+        {page>1?<Link href={learnerAssignmentListHref(page-1,overview.selectedCourseId)}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Previous assignments</Link>:null}
+        {page<totalPages?<Link href={learnerAssignmentListHref(page+1,overview.selectedCourseId)}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Next assignments</Link>:null}
+      </nav>
+      <p className="text-xs text-muted-foreground">Search, state and sort controls apply to the assignments on this page. Choose a course to load its authorized assignments before searching.</p>
     </div>
   );
 }
