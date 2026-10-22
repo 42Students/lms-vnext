@@ -46,7 +46,10 @@ describe("Chat-3 graceful-operation coverage for touched pages",()=>{
    "src/app/(authenticated)/college/courses/offerings/[offeringId]/loading.tsx",
    "src/app/(authenticated)/college/attendance/loading.tsx",
    "src/app/(authenticated)/learn/profile/loading.tsx"
-  ]){const src=load(path);expect(src).toContain('aria-busy="true"');expect(src).toContain("animate-pulse");}
+  ]){const src=load(path);expect(src).toContain('<GracefulPageLoading');}
+  const skeleton=load("src/components/ui/graceful-page-loading.tsx");
+  expect(skeleton).toContain('aria-busy={true}');
+  expect(skeleton).toContain('animate-pulse');
  });
  it("GR-20 page-level errors offer Retry rather than a raw framework failure",()=>{
   for(const path of [
@@ -59,7 +62,8 @@ describe("Chat-3 graceful-operation coverage for touched pages",()=>{
  it("GR-31 mutating attendance correction and learner contact save guard duplicate actions",()=>{
   expect(attendance()).toContain("if (");
   expect(attendance()).toContain("correcting");
-  expect(attendance()).toContain("disabled={correcting}");
+  expect(attendance()).toContain("disabled={correcting||refreshing||verifyingRecord");
+  expect(attendance()).toContain("correctionGuard.run(async()=>");
   expect(profile()).toContain("if (contactPending) return;");
   expect(profile()).toContain("setContactPending(true)");
  });
@@ -76,7 +80,7 @@ describe("Chat-3 graceful-operation coverage for touched pages",()=>{
  });
  it("GR-71 course catalogue and attendance lists explain empty vs filtered empty",()=>{
   expect(load("src/components/courses/admin-course-overview.tsx")).toContain("No courses match these filters");
-  expect(attendance()).toContain("No attendance data for this month");
+  expect(attendance()).toContain("No attendance data for this class, course and month");
   expect(attendance()).toContain("Select a class and course");
  });
  it("GR-73 invalid attendance filters recover without losing valid selection in navigation",()=>{
@@ -85,16 +89,19 @@ describe("Chat-3 graceful-operation coverage for touched pages",()=>{
   expect(attendance()).toContain('params.set("courseId"');
  });
  it("GR-90 no raw error code in corrected attendance alert and course load error summary",()=>{
-  expect(attendance()).toContain('role="alert"');
+  expect(attendance()).toContain('<Alert tone="warning"');
+  expect(load("src/components/ui/alert.tsx")).toContain('role={role ?? (tone === "error" ? "alert" : "status")}');
   expect(attendance()).toContain('apiFetch<void>(');
-  expect(courseError()).toContain('role="alert"');
+  expect(courseError()).toContain("<ErrorState");
+  expect(load("src/components/ui/error-state.tsx")).toContain('role="alert"');
   expect(courseError()).not.toContain("{error.message}");
   expect(attendance()).not.toContain("body?.error");
   expect(attendance()).not.toContain("body?.message");
   expect(load("src/components/college/college-faculty-assignment-actions.tsx")).toContain("apiFetch<BulkResult>");
  });
  it("GR-91 Retry is keyboard-accessible in all three role error screens",()=>{
-  expect(courseError()).toContain("<Button onClick={reset}>Retry</Button>");
+  expect(courseError()).toContain("onClick={reset}");
+  expect(courseError()).toContain('className="min-h-11 md:min-h-9"');
   expect(load("src/app/(authenticated)/college/attendance/error.tsx")).toContain("onClick={reset}");
   expect(load("src/app/(authenticated)/learn/profile/error.tsx")).toContain("onClick={reset}");
  });

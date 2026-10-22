@@ -21,9 +21,9 @@ describe("mentor review parity",()=>{
     expect(code).toContain("Refresh before accepting, requesting changes, or locking.");
     expect(code).toContain("Refresh latest submission");
     expect(code).toContain("router.refresh()");
-    expect(code).toContain("if (pending || staleReview) return;");
-    expect(code).toContain("disabled={pending||staleReview}");
-    expect(code).toContain("disabled={pending||staleReview||!feedback.trim()}");
+    expect(code).toContain("if (pending || reviewInFlight.current || staleReview) return;");
+    expect(code).toContain('disabled={pending||staleReview||(decision==="CHANGES_REQUESTED"&&!feedback.trim())}');
+    expect(code).toContain('confirmDisabled={decision==="CHANGES_REQUESTED"&&!feedback.trim()}');
     expect(code).toContain("setFeedback");
   });
   it("MEN-projects-meetings-66 delivers review outcome to active learners in the same transaction",()=>{

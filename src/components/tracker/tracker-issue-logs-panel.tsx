@@ -61,7 +61,7 @@ export function TrackerIssueLogsPanel({publicId}:{publicId:string}){
           {entry.message.slice(0,200)}{entry.message.length>200?"…":""}
         </p>
         <p className="mt-1 break-all text-xs text-muted-foreground leading-[20px]">{entry.path}</p>
-        <Link className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+        <Link className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
           href={"/tracker/logs?query="+encodeURIComponent(entry.requestId??entry.event)}>
           Open in Logs
         </Link>
