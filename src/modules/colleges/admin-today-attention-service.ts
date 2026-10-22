@@ -32,6 +32,7 @@ export async function getSuperAdminTodayBoard(ctx:RequestContext,rawCollegeId:st
    scheduled:sql<number>`count(distinct ${sectionScheduleEvents.id})::int`,
    ended:sql<number>`count(distinct ${sectionScheduleEvents.id}) filter(where ${sectionScheduleEvents.endsAt}<=${now})::int`,
    marked:sql<number>`count(distinct ${sectionScheduleEvents.id}) filter(where ${attendanceSessions.status}='MARKED')::int`,
+   held:sql<number>`count(distinct ${sectionScheduleEvents.id}) filter(where ${attendanceSessions.status} in ('DRAFT','MARKED'))::int`,
   }).from(sectionScheduleEvents)
    .innerJoin(sections,eq(sections.id,sectionScheduleEvents.sectionId))
    .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
@@ -250,6 +251,7 @@ export async function getSuperAdminTodayBoard(ctx:RequestContext,rawCollegeId:st
    .filter((item):item is {dueAt:Date}=>item.dueAt instanceof Date)
    .map(item=>formatSuperAdminAttentionWhen(item.dueAt)),
   classesScheduled:classes[0]?.scheduled??0,classesEnded:classes[0]?.ended??0,
+  classesHeld:classes[0]?.held??0,
   attendanceTaken:classes[0]?.marked??0,attendanceNotTaken:pendingAttendance[0]?.n??0,
   coursesWithoutTeacher:withoutTeacher[0]?.n??0,quizzesClosingThisWeek:closingQuizzes[0]?.n??0,
   attendanceThreshold,attendanceAtRisk:riskTotals[0]?.n??0,attendanceRiskRows,
