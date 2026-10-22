@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 
 import { DateInput } from "@/components/ui/date-input";
 import { Select } from "@/components/ui/select";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -207,6 +207,121 @@ export function TpoOfferLifecyclePanel({
         </Button>
       </div>
       {notice ? <p role={notice.includes("updated and audited")?"status":"alert"} className="text-sm text-body leading-[22px]">{notice}</p> : null}
+      <TpoOfferLetterAttachment jobId={jobId} choices={choices}/>
     </section>
   );
+}
+
+
+type OfferLetterState={
+ id:string;status:string;rowVersion:number;url:string|null;hasPrivateFile:boolean;
+};
+/** Legacy offer-letter URL attachment. Signed private files belong to the
+ * existing storage workflow and cannot be replaced with a public link here.
+ * A separate read of the selected offer supplies the optimistic revision. */
+function TpoOfferLetterAttachment({jobId,choices}:{
+ jobId:string;choices:readonly CandidateOffer[];
+}){
+ const router=useRouter();
+ const requestId=useRef(0);
+ const [selectedId,setSelectedId]=useState("");
+ const [state,setState]=useState<OfferLetterState|null>(null);
+ const [url,setUrl]=useState("");
+ const [reason,setReason]=useState("");
+ const [confirmed,setConfirmed]=useState(false);
+ const [busy,setBusy]=useState(false);
+ const [error,setError]=useState("");
+ const [notice,setNotice]=useState("");
+ const attachable=choices.filter(offer=>offer.status==="ISSUED"||offer.status==="ACCEPTED");
+ const endpoint=(id:string)=>"/api/placements/jobs/"+encodeURIComponent(jobId)+
+  "/offers/"+encodeURIComponent(id)+"/letter";
+ const linkValid=(()=>{
+  try{const parsed=new URL(url.trim());
+   return parsed.protocol==="https:"&&!parsed.username&&!parsed.password&&parsed.hostname.includes(".")&&
+    !/^(localhost|127\.|10\.|192\.168\.|169\.254\.|172\.(1[6-9]|2\d|3[01])\.)/i.test(parsed.hostname);
+  }catch{return false;}
+ })();
+ async function choose(id:string){
+  const current=++requestId.current;
+  setSelectedId(id);setState(null);setUrl("");setReason("");
+  setConfirmed(false);setNotice("");setError("");
+  if(!id)return;
+  setBusy(true);
+  try{
+   const result=await apiFetch<OfferLetterState>(endpoint(id),{cache:"no-store"});
+   if(current!==requestId.current)return;
+   if(!result||result.id!==id||!Number.isSafeInteger(result.rowVersion))
+    throw new Error("Could not verify this offer's current revision.");
+   setState(result);setUrl(result.url??"");
+  }catch(cause){
+   if(current===requestId.current)
+    setError(cause instanceof Error?cause.message:"Offer is unavailable. Retry the selection.");
+  }finally{if(current===requestId.current)setBusy(false);}
+ }
+ async function attach(){
+  if(busy||!selectedId||!state||state.hasPrivateFile||!confirmed||!linkValid||
+    reason.trim().length<10||reason.trim().length>1200)return;
+  const id=selectedId,current=++requestId.current;
+  setBusy(true);setError("");setNotice("");
+  try{
+   const result=await apiFetch<{offerId:string;rowVersion:number}>(
+    endpoint(id),{
+     method:"POST",credentials:"same-origin",
+     headers:{"content-type":"application/json"},
+     body:JSON.stringify({confirmed:true,url:url.trim(),
+      expectedRowVersion:state.rowVersion,reason:reason.trim()}),
+    });
+   if(current!==requestId.current)return;
+   if(result.offerId!==id)throw new Error("The offer-letter attachment was not confirmed.");
+   setState(old=>old?{...old,rowVersion:result.rowVersion,url:url.trim()}:old);
+   setConfirmed(false);setReason("");
+   setNotice("Offer-letter reference saved, audited and an in-app learner notice recorded.");
+   router.refresh();
+  }catch(cause){
+   if(current===requestId.current)
+    setError((cause instanceof Error?cause.message:"Could not attach the offer letter.")+
+     " Refresh the selected offer before retrying if it changed elsewhere.");
+  }finally{if(current===requestId.current)setBusy(false);}
+ }
+ if(attachable.length===0)return null;
+ return <section aria-label="Attach offer letter" className="mt-5 space-y-3 border-t border-border pt-4">
+  <h4 className="text-sm font-semibold text-[var(--lms-heading)]">Attach offer letter</h4>
+  <p className="text-xs text-body">Use a permanent HTTPS reference supplied by the company.
+   The selected-college TPO must record evidence. Private offer-letter files
+   already stored through signed uploads are not replaced here.</p>
+  <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Offer
+   <Select value={selectedId} disabled={busy} onChange={e=>void choose(e.target.value)}
+    className="min-h-11 w-full md:min-h-9">
+    <option value="">Select issued or accepted offer</option>
+    {attachable.map(offer=><option key={offer.id} value={offer.id}>{offer.label} · {offer.status}</option>)}
+   </Select>
+  </label>
+  {state?.hasPrivateFile?<p role="status" className="text-sm text-body">
+   This offer has a private uploaded letter. Use its signed file workflow instead of replacing it with an external link.
+  </p>:state?<div className="min-w-0 space-y-3">
+   <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+    Offer-letter HTTPS URL
+    <Input type="url" maxLength={2048} required value={url} disabled={busy}
+     placeholder="https://company.example/offer-letter.pdf"
+     onChange={event=>{setUrl(event.target.value);setConfirmed(false);}}/>
+   </label>
+   {url&&!linkValid?<p role="alert" className="text-xs text-error">Enter a valid public HTTPS letter link.</p>:null}
+   <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+    Evidence / reason (10–1200 characters)
+    <Textarea rows={2} maxLength={1200} value={reason} disabled={busy}
+     onChange={event=>{setReason(event.target.value);setConfirmed(false);}}/>
+   </label>
+   <label className="flex min-w-0 items-start gap-2 text-xs text-body">
+    <Checkbox checked={confirmed} disabled={busy}
+     onChange={event=>setConfirmed(event.target.checked)}/>
+    I verified this letter with the employer and understand that the affected learner will be notified.
+   </label>
+   <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
+    disabled={busy||!confirmed||!linkValid||reason.trim().length<10} loading={busy}
+    onClick={()=>void attach()}>Save letter reference</Button>
+  </div>:null}
+  {busy?<p role="status" className="text-xs text-muted-foreground">Verifying selected offer…</p>:null}
+  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
+ </section>;
 }

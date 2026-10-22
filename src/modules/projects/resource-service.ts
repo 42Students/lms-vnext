@@ -1,7 +1,6 @@
 import {
   and,
   asc,
-  desc,
   eq,
   isNull,
 } from "drizzle-orm";
@@ -41,10 +40,8 @@ import {
 } from "./validation";
 
 function mapResourceConstraint(error: unknown) {
-  if (
-    postgresConstraintName(error) ===
-    "project_resources_project_sequence_uq"
-  ) {
+  if (["project_resources_project_sequence_uq",
+       "project_resources_project_key_uq"].includes(postgresConstraintName(error)??"")) {
     return new ProjectsServiceError(
       "PROJECT_RESOURCE_SEQUENCE_CONFLICT",
     );
@@ -169,18 +166,34 @@ export async function createProjectResource(
           throw new ProjectsServiceError("PROJECT_RESOURCE_INVALID_STATE");
       }
 
-      const [latest] = await tx
-        .select({ sequence: projectResources.sequence })
-        .from(projectResources)
-        .where(eq(projectResources.projectId, scope.project.id))
-        .orderBy(desc(projectResources.sequence))
-        .limit(1);
+      // Locking the parent project above serializes concurrent creates made
+      // through this service; do not derive sequence or keys outside that lock.
+      // Legacy resource keys must remain stable even for duplicate titles or
+      // resources imported before a key was assigned.
+      const existing = await tx.select({
+        sequence:projectResources.sequence,templateKey:projectResources.templateKey,
+      }).from(projectResources).where(eq(projectResources.projectId,scope.project.id));
+      const latestSequence=existing.reduce((max,row)=>Math.max(max,row.sequence),-1);
+      if(latestSequence>=2147483647)
+        throw new ProjectsServiceError("PROJECT_RESOURCE_SEQUENCE_CONFLICT");
+      const base=input.title.toLocaleLowerCase("en-IN").normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-")
+        .replace(/^-|-$/g,"").slice(0,48).replace(/-$/,"")||"resource";
+      const usedKeys=new Set(existing.map(row=>row.templateKey).filter(
+        (key):key is string=>typeof key==="string"));
+      let templateKey=base;
+      for(let suffix=2;usedKeys.has(templateKey);suffix++){
+        // Unique sequence and resource keys are stable, within varchar(64).
+        if(suffix>existing.length+2)
+          throw new ProjectsServiceError("PROJECT_RESOURCE_SEQUENCE_CONFLICT");
+        templateKey=base.slice(0,64-String(suffix).length-1)+"-"+suffix;
+      }
 
       const [resource] = await tx
         .insert(projectResources)
         .values({
           projectId: scope.project.id,
-          templateKey: null,
+          templateKey,
           title: input.title,
           description: input.description ?? null,
           url: input.url ?? null,
@@ -193,11 +206,13 @@ export async function createProjectResource(
           accessNotes: scope.access==="LEARNER"?null:input.accessNotes??null,
           sprintId: scope.access==="LEARNER"?null:input.sprintId??null,
           taskId: scope.access==="LEARNER"?null:input.taskId??null,
-          sequence: (latest?.sequence ?? -1) + 1,
+          sequence: latestSequence + 1,
         })
         .returning();
 
       if(!resource)throw new ProjectsServiceError("PROJECT_RESOURCE_NOT_FOUND");
+      // The append-only project-resource audit event is written synchronously
+      // in the same transaction as this resource, never in a deferred job.
       const event=await recordActivityEventInTransaction(tx,context,projectResourceAuditInput("CREATED",{
         projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
       },resource,undefined,scope.access==="LEARNER"?"LEARNER":
@@ -353,6 +368,7 @@ export async function updateProjectResource(
       );
     }
 
+    // Dedicated audit before/after snapshots share this SQL transaction.
     const event=await recordActivityEventInTransaction(tx,context,projectResourceAuditInput("UPDATED",{
       projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
     },updated,randomUUID(),undefined,{before:resource,after:updated}));
@@ -450,6 +466,7 @@ export async function archiveProjectResource(
       );
     }
 
+    // The tombstone and append-only resource audit commit atomically.
     await recordActivityEventInTransaction(tx,context,projectResourceAuditInput("ARCHIVED",{
       projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
     },archived,undefined,undefined,{before:resource,after:archived}));

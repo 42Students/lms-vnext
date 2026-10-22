@@ -2165,7 +2165,7 @@ export function ProjectWorkspace({
                   <li key={m.id}>{m.title} · {formatDateTime(m.startsAt)}
                     {m.meetingType?" · "+label(m.meetingType):""}</li>)}</ul>
               </Disclosure>:null}
-              <MentorMeetingHistory meetings={workspace.meetings
+              <MentorMeetingHistory projectId={mode==="MENTOR"?workspace.project.id:undefined} meetings={workspace.meetings
                 .filter(m=>m.status==="COMPLETED"||m.status==="CANCELLED"||
                   ((m.status==="SCHEDULED"||m.status==="RESCHEDULED")&&new Date(m.endsAt)<=renderTime))
                 .sort((a,b)=>new Date(b.startsAt).getTime()-new Date(a.startsAt).getTime())

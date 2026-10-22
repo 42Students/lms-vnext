@@ -1,9 +1,12 @@
 import "server-only";
 
-import { and, asc, eq, inArray, isNull, lte, ne, notExists } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull, lte, ne, notExists, sql } from "drizzle-orm";
+import {z} from "zod";
 import { getDb } from "@/db/client";
 import {
   placementApplications,
+  activityEvents,
+  colleges,
   collegeMemberships,
   placementLearnerGeneralRequests,
   placementJobs,
@@ -412,6 +415,34 @@ export async function finalizeMaturedExternalTpoAcceptances(
           isNull(placementOffers.cascadeId)))
           .returning({id: placementOffers.id});
         if (!saved) throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
+        // The 15-minute system sweep is a separate authority from a TPO user.
+        // Commit one deduplicated event and in-app learner notice in the same
+        // transaction as cascade maturation. Retries cannot notify twice.
+        const [tenant]=await tx.select({
+          organizationId:colleges.organizationId,status:colleges.status,
+        }).from(colleges).where(eq(colleges.id,item.collegeId)).limit(1);
+        if(tenant){
+          const [notice]=await tx.insert(activityEvents).values({
+            organizationId:tenant.organizationId,
+            collegeId:item.collegeId,actorUserId,
+            actorMembershipId:null,module:"PLACEMENTS",
+            eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_OFFER_RESPONDED,
+            subjectType:"placement_offer",subjectId:offer.id,
+            subjectLabel:offer.roleTitle,
+            summary:"External offer acceptance finalized after dispute window",
+            metadata:{action:"EXTERNAL_ACCEPTANCE_FINALIZED",offerId:offer.id,
+              applicationId:offer.applicationId,cascadeId:cascade.cascadeId},
+            groupKey:"placement-offer:"+offer.id,
+            dedupeKey:"placement-external-acceptance-finalized:"+offer.id,
+          }).onConflictDoNothing().returning({id:activityEvents.id});
+          if(notice&&tenant.status==="ACTIVE")await deliverRecordedLearnerPlacementEvent(tx,{
+            eventId:notice.id,collegeId:item.collegeId,
+            membershipId:item.membershipId,
+            kind:"APPLICATION_STATUS_CHANGED",
+            subject:"Your reported acceptance of "+offer.roleTitle+
+              " has been finalized after the dispute window.",
+          });
+        }
         return "FINALIZED" as const;
       });
       if (outcome === "FINALIZED") finalized += 1;
@@ -424,4 +455,102 @@ export async function finalizeMaturedExternalTpoAcceptances(
     }
   }
   return {examined: due.length, finalized, disputed, skipped, failed};
+}
+
+/** Existing offer-letter storage remains private. This legacy-compatible
+ * external HTTPS link attachment never accepts raw object keys or public
+ * storage ACL changes, and never overwrites an already uploaded private file.
+ * A TPO request is checked against the selected college and a locked offer
+ * revision; its evidence, audit event and learner notice commit together. */
+const offerLetterAttachmentInputSchema=z.strictObject({
+ url:z.string().trim().url().max(2048).refine(value=>{
+  try{
+   const parsed=new URL(value);
+   return parsed.protocol==="https:"&&!parsed.username&&!parsed.password&&
+     parsed.hostname.includes(".")&&
+     !/^(localhost|127\.|10\.|192\.168\.|169\.254\.|172\.(1[6-9]|2\d|3[01])\.)/i.test(parsed.hostname);
+  }catch{return false;}
+ },"Provide a public HTTPS offer-letter URL"),
+ expectedRowVersion:z.number().int().min(1),
+ reason:z.string().trim().min(10).max(1200),
+ confirmed:z.literal(true),
+});
+export async function getTpoOfferLetterAttachment(
+ context:RequestContext,rawJobId:unknown,rawOfferId:unknown,
+){
+ if(!context.membership||!hasMembershipRole(context,"TPO"))
+  throw new AuthorizationError("placements.manage");
+ const collegeId=context.membership.collegeId;
+ requirePermission(context,"placements.manage",{collegeId});
+ const jobId=placementJobIdSchema.parse(rawJobId),offerId=z.string().uuid().parse(rawOfferId);
+ await requirePlacementManageScope(context,collegeId);
+ const [row]=await getDb().select({
+  id:placementOffers.id,status:placementOffers.status,
+  rowVersion:placementOffers.rowVersion,
+  offerLetterUrl:placementOffers.offerLetterUrl,
+  offerLetterObjectPath:placementOffers.offerLetterObjectPath,
+ }).from(placementOffers)
+  .innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
+  .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+  .where(and(eq(placementOffers.id,offerId),eq(placementJobs.id,jobId),
+   eq(placementJobs.collegeId,collegeId))).limit(1);
+ if(!row)throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_FOUND");
+ return {id:row.id,status:row.status,rowVersion:row.rowVersion,
+  url:row.offerLetterUrl,hasPrivateFile:Boolean(row.offerLetterObjectPath)};
+}
+export async function attachTpoOfferLetter(
+ context:RequestContext,rawJobId:unknown,rawOfferId:unknown,raw:unknown,
+){
+ if(!context.membership||!hasMembershipRole(context,"TPO"))
+  throw new AuthorizationError("placements.manage");
+ const collegeId=context.membership.collegeId;
+ requirePermission(context,"placements.manage",{collegeId});
+ const jobId=placementJobIdSchema.parse(rawJobId),offerId=z.string().uuid().parse(rawOfferId);
+ const input=offerLetterAttachmentInputSchema.parse(raw);
+ await requirePlacementManageScope(context,collegeId);
+ return getDb().transaction(async tx=>{
+  await requireTpoJobActor(tx,context);
+  const [scoped]=await tx.select({
+   offer:placementOffers,membershipId:placementApplications.membershipId,
+   jobTitle:placementJobs.title,
+  }).from(placementOffers)
+   .innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
+   .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+   .where(and(eq(placementOffers.id,offerId),eq(placementJobs.id,jobId),
+    eq(placementJobs.collegeId,collegeId))).for("update",{of:placementOffers}).limit(1);
+  if(!scoped)throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_FOUND");
+  const offer=scoped.offer;
+  if(!["ISSUED","ACCEPTED"].includes(offer.status)||
+     offer.offerLetterObjectPath!==null)
+   throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
+  if(offer.rowVersion!==input.expectedRowVersion)
+   throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
+  const now=new Date();
+  const [updated]=await tx.update(placementOffers).set({
+   offerLetterUrl:input.url,offerLetterAttachedAt:now,
+   offerLetterAttachedByUserId:context.user.id,
+   rowVersion:sql`${placementOffers.rowVersion}+1`,updatedAt:now,
+  }).where(and(eq(placementOffers.id,offer.id),
+   eq(placementOffers.rowVersion,input.expectedRowVersion))).returning({
+   id:placementOffers.id,rowVersion:placementOffers.rowVersion,
+  });
+  if(!updated)throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
+  const event=await recordActivityEventInTransaction(tx,context,{
+   eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_OFFER_RESPONDED,
+   collegeId,subjectType:"placement_offer",subjectId:offer.id,
+   subjectLabel:offer.roleTitle,
+   summary:"TPO attached a verified external offer-letter reference",
+   metadata:{jobId,action:"OFFER_LETTER_ATTACHED",offerId:offer.id,
+    previousAttached:Boolean(offer.offerLetterUrl),reason:input.reason,
+    evidenceType:"EXTERNAL_HTTPS_REFERENCE",actorRole:"TPO"},
+   groupKey:"placement-job:"+jobId+":offers",
+  });
+  await deliverRecordedLearnerPlacementEvent(tx,{
+   eventId:event.id,collegeId,membershipId:scoped.membershipId,
+   kind:"APPLICATION_STATUS_CHANGED",
+   subject:"Offer letter updated for "+scoped.jobTitle,
+  });
+  return {offerId:updated.id,rowVersion:updated.rowVersion,
+   letterState:"EXTERNAL_REFERENCE" as const,attachedAt:now.toISOString()};
+ });
 }

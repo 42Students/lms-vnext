@@ -749,10 +749,13 @@ export const createProjectResourceInputSchema = z
   .strict()
   .refine(
     (input) =>
-      Boolean(input.description || input.url),
+      Boolean(input.description || input.url ||
+       input.resourceType==="FILE"||input.resourceType==="DOCUMENT"||
+       input.legacyResourceKind==="PDF"||input.legacyResourceKind==="DOC"||
+       input.legacyResourceKind==="PPT"||input.legacyResourceKind==="VIDEO"),
     {
       message:
-        "Project resource requires a description or URL",
+        "A link or note needs a description or URL; file resources may be attached later",
     },
   );
 
