@@ -1,5 +1,6 @@
 import {timingSafeEqual} from "node:crypto";
 import {NextResponse} from "next/server";
+import { isSameOriginRequest } from "@/auth/origin";
 import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
 import {
  applyProductionScanVerdict,productionScannerCallbackReady,
@@ -16,6 +17,9 @@ const noStore={"Cache-Control":"no-store"} as const;
  * captured object generation. Never expose this endpoint as a user action.
  */
 export async function POST(request:Request){
+  // Scheduled/service callbacks have no browser Origin. Reject a foreign Origin when one is supplied.
+  if (request.headers.has("origin") && !isSameOriginRequest(request))
+    return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const secret=process.env.PRIVATE_STORAGE_SCANNER_WEBHOOK_SECRET?.trim()??"";
  if(!productionScannerCallbackReady()){
   return NextResponse.json({error:"SCANNER_NOT_READY"},{status:503,headers:noStore});

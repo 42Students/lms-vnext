@@ -1,5 +1,6 @@
 import {timingSafeEqual} from "node:crypto";
 import {NextResponse} from "next/server";
+import { isSameOriginRequest } from "@/auth/origin";
 import {postgresScheduledJobLeaseStore}
  from "@/modules/operations/postgres-scheduled-job-lease-store";
 import {executeScheduledJobWithLease,scheduledJobWorkerIdentity}
@@ -17,6 +18,9 @@ const noStore={"Cache-Control":"no-store"};
  * required in addition to a transactional PostgreSQL lease.
  */
 export async function POST(request:Request){
+  // Scheduled/service callbacks have no browser Origin. Reject a foreign Origin when one is supplied.
+  if (request.headers.has("origin") && !isSameOriginRequest(request))
+    return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const secret=process.env.TPO_REMINDER_SCHEDULER_SECRET??"";
  const incoming=request.headers.get("x-tpo-reminder-key")??"";
  if(Buffer.byteLength(secret,"utf8")<32)

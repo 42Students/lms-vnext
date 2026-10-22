@@ -21,6 +21,8 @@ async function archive(request:Request,{params}:RouteContext,alias:boolean){
   }catch(error){return apiErrorResponse(error);}
 }
 export async function DELETE(request:Request,context:RouteContext){
+  if(!isSameOriginRequest(request))
+    return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   return archive(request,context,false);
 }
 export async function POST(request:Request,context:RouteContext){

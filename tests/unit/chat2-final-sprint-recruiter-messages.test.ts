@@ -35,7 +35,10 @@ describe("Final sprint recruiter conversations verification",()=>{
   expect(refresh).toContain('document.visibilityState!=="visible"');
   expect(refresh).toContain('window.addEventListener("focus",refresh.current)');
   expect(refresh).toContain('window.removeEventListener("focus",refresh.current)');
-  expect(refresh).not.toContain("fetch(");
+  // Poll only the authenticated, read-only pulse endpoint; no GET-triggered writes.
+  expect(refresh).toContain('fetch("/api/placements/recruiter/conversations/pulse"');
+  expect(refresh).toContain('method:"GET",credentials:"same-origin",cache:"no-store"');
+  expect(refresh).not.toContain('method:"POST"');
  });
  it("REC-calendar-messages-profile-14 acknowledges incoming thread read state by explicit client POST on open",()=>{
   const ctrl=src("src/components/hr/recruiter-conversation-read-control.tsx");

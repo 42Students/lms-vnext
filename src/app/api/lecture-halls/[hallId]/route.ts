@@ -55,6 +55,8 @@ export async function PATCH(request: Request, { params }: RouteContext) {
 
 /** Legacy PUT shares the same validated, tenant-scoped update service. */
 export async function PUT(request:Request,context:RouteContext){
+ if(!isSameOriginRequest(request))
+  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  return PATCH(request,context);
 }
 
