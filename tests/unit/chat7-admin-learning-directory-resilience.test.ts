@@ -39,9 +39,9 @@ describe("SA-COURSES-CONTENT-AUDIT-03 lessons and progress list resilience",()=>
   expect(lesson).toContain("Your filters have not changed.");
   expect(progress).toContain("Your current filters are preserved;");
   expect(lesson).toContain('pathsResult.status==="fulfilled"');
-  expect(lesson).toContain("Existing lessons remain visible");
+  expect(lesson).toContain("The lesson directory and your applied filters remain visible.");
   expect(lesson).toContain("Retry loading lessons");
-  expect(progress).toContain("Retry loading course progress");
+  expect(progress).toContain("Retry course progress");
   expect(progress).not.toContain("throw dataResult.reason");
  });
  it("retains meaning of per-offering progress, never sums distinct students",()=>{
