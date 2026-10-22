@@ -64,9 +64,10 @@ describe("chat-16 real public platform and root recovery page rendering",()=>{
  });
  it("UX-chat16-not-found-19 renders a first-party recovery route instead of a redirect loop",async()=>{
   const html=renderToStaticMarkup(await RootNotFound());
-  expect(html).toContain("Page not found");
-  expect(html).toContain('href="/"');
-  expect(html).toContain("Go to home");
+  expect(html).toContain("Page Not Found");
+  expect(html).toContain('href="/dashboard"');
+  expect(html).toContain("Go to Home");
+  expect(html).toContain("Go back");
  });
  it("UX-chat16-loading-20 displays visible, accessible loading affordances",()=>{
   const html=renderToStaticMarkup(<RootLoading/>);

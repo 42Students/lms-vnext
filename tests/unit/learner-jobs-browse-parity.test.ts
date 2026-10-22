@@ -22,7 +22,7 @@ describe("Learner Drives browse integration", () => {
     expect(browse).toContain("router.push");
     expect(browse).toContain("lastCommittedQuery");
     expect(browse).toContain("PAGE_SIZE = 20");
-    expect(browse).toContain("filterLearnerPlacementJobs(matchingItems, filters, Date.parse(snapshotNowIso))");
+    expect(browse).toContain("filterLearnerPlacementJobs(matchingItems,filters,Date.parse(snapshotNowIso))");
     expect(browse).toContain("Eligible only");
     expect(browse).toContain("Not open to you");
     expect(browse).toContain("snapshotNowIso={snapshotNowIso}");

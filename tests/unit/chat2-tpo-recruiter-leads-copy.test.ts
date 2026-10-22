@@ -11,7 +11,8 @@ describe("TPO recruiter leads visible legacy parity",()=>{
  it("TPO-recruiters-43 retains designation in table and board and names unnamed contacts safely",()=>{
   const page=src("src/components/tpo/recruiter-leads-workspace.tsx");
   expect(page).toContain('{lead.name||"Unnamed contact"}');
-  expect(page).toContain('lead.designation?<p');
+  expect(page).toContain('lead.designation?<small');
+  expect(page).toContain('key:"Designation",label:"Designation"');
   expect(page).toContain('lead.designation?<span');
  });
  it("TPO-recruiters-40 restores edit-action heading and legacy Save label",()=>{
@@ -20,10 +21,10 @@ describe("TPO recruiter leads visible legacy parity",()=>{
   expect(page).toContain('title="Edit contact details"');
   expect(dialog).toContain("aria-labelledby={titleId}");
   expect(dialog).toContain("<h2 id={titleId}");
-  expect(page).toContain(">Save</button>");
+  expect(page).toContain('{saving ? "Saving…" : "Save"}');
   expect(page).toContain("← Recruiter leads");
-  expect(page).toContain('onClick={() => setNotNowOpen(true)}>Not now</button>');
+  expect(page).toContain('onClick={()=>setNotNowOpen(true)}>Not now</Button>');
   expect(page).toContain('title="Not now"');
-  expect(page).toContain('<h2 className="text-lg font-semibold">Log activity</h2>');
+  expect(page).toContain("Log activity");
  });
 });

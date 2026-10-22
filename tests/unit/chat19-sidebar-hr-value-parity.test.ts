@@ -29,7 +29,7 @@ describe("NORTH-STAR-CHAT19-POLISH: measured legacy sidebar and HR control token
   expect(shell).toContain("lms-sidebar-logo-row");
   expect(shell).toContain("lms-sidebar-scroll min-h-0 flex-1 overflow-y-auto pt-2 pb-4");
   expect(shell).toContain("lms-sidebar-role-details");
-  expect(shell).toContain("px-4 py-[25px]");
+  expect(shell).toContain("lms-sidebar-role-details min-w-0 border-t border-[var(--lms-sidebar-border)]");
   expect(shell).toContain("<LegacyTopbar");
  });
  it("shows the drawer only below 768px and avoids a duplicate tablet menu slot",()=>{
