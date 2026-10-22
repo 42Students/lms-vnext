@@ -140,9 +140,6 @@ Only the rows backed by directly inspected implementation are OK. All other rows
 - G2-5-028-015: DEFERRED — requires complete implementation and consumer/legacy cross-check
 - G2-6-020-002: DEFERRED — requires complete implementation and consumer/legacy cross-check
 - G2-6-027-015: DEFERRED — requires complete implementation and consumer/legacy cross-check
-- G2-11-014-017: OK — urgent driveNeeds ordered into drive status and action destination
-- G2-11-014-022: OK — null pendingRequests not represented as zero in status
-- G2-11-014-040: OK — empty inbox text only when both request and message counts verified zero
 - G2-11-017-001: DEFERRED — requires complete implementation and consumer/legacy cross-check
 - G2-11-023-008: DEFERRED — requires complete implementation and consumer/legacy cross-check
 - G2-11-026-041: DEFERRED — requires complete implementation and consumer/legacy cross-check
@@ -156,3 +153,9 @@ Only the rows backed by directly inspected implementation are OK. All other rows
 - G2-6-011-039: DEFERRED — requires complete implementation and consumer/legacy cross-check
 - G2-6-011-044: DEFERRED — requires complete implementation and consumer/legacy cross-check
 - G2-6-011-048: DEFERRED — requires complete implementation and consumer/legacy cross-check
+
+## Results (source-verified)
+
+- G2-11-014-017: OK — `src/modules/placements/tpo-home-legacy-rows.ts:29-65,92-99` prioritizes DRIVE_REQUESTS, RESULTS_READY, SELECTIONS_TO_VERIFY, DEADLINE_TODAY, SHARE_APPLICANTS and other actionable needs, formats drive status, attention and request destination; compared with `docs/legacy-source/frontend/src/components/tpo/home/homeRows.js:74-84,92-96`.
+- G2-11-014-022: OK — `src/modules/placements/tpo-home-legacy-rows.ts:70-78,96-99` keeps null pending request and message counts explicitly unavailable, never conflating unknown with no requests; compared with `docs/legacy-source/frontend/src/components/tpo/home/homeRows.js:82-84,92-105`. The newer unavailable distinction is intentional.
+- G2-11-014-040: OK — `src/modules/placements/tpo-home-legacy-rows.ts:70-78` displays "No requests or messages waiting" only when both inputs are known and zero; compared with `docs/legacy-source/frontend/src/components/tpo/home/homeRows.js:100-102`.
