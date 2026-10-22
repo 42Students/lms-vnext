@@ -55,7 +55,7 @@ describe("SA-academics-people-101 teaching role concurrency",()=>{
   const readService=source("src/modules/admin-ui/super-admin-faculty-assignments-service.ts");
   const ui=source("src/components/admin/super-admin-faculty-assignment-create.tsx");
   expect(readService).toContain("revision:row.updatedAt.toISOString()");
-  expect(page).toContain("role&&row.revision?");
+  expect(page).toContain("role&&row.revision&&workspace&&assign.assignmentMembershipId&&assign.assignmentDeliveryId?");
   expect(page).toContain("revision={row.revision}");
   expect(ui).toContain("useGuardedAction");
   expect(ui).toContain("body:JSON.stringify({role,expectedUpdatedAt:revision})");
