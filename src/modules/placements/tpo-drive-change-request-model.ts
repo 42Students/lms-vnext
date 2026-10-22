@@ -16,6 +16,21 @@ export const LEGACY_DRIVE_CHANGE_FIELD_LABELS:Readonly<Record<z.infer<typeof dri
  BRANCHES:"Eligible branches",OTHER:"Other",
  PAY:"Pay / package",ELIGIBILITY:"Eligibility",ROUNDS:"Selection rounds",
 };
+/** Picker values must be the canonical job enums that the atomic change
+ * service can apply. Keep legacy-friendly labels at the presentation edge. */
+export const DRIVE_CHANGE_EDITOR_OPTIONS = {
+ WORK_MODE: [
+  {value:"ONSITE",label:"On campus"},
+  {value:"HYBRID",label:"Hybrid"},
+  {value:"REMOTE",label:"Remote"},
+ ],
+ JOB_TYPE: [
+  {value:"FULL_TIME",label:"Full-time"},
+  {value:"INTERNSHIP",label:"Internship"},
+  {value:"CONTRACT",label:"Contract"},
+ ],
+} as const;
+
 export const LEGACY_DRIVE_CHANGE_ACTION_LABELS={
  ACCEPT:"Accept",ANSWER:"Answer",DECLINE:"Reply",
  WITHDRAW:"Withdraw",COMMENT:"Comment",
