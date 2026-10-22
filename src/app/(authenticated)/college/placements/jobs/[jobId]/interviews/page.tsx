@@ -178,6 +178,18 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       {appointments.candidatePage<appointments.candidatePages?<Link href={driveInterviewsHref(jobId,{...query,candidatePage:appointments.candidatePage+1})}
         className="inline-flex min-h-11 items-center font-semibold text-link underline">Next candidates</Link>:null}
     </nav>
+    {query.applicationId&&appointments.candidateConflicts.length>0?
+      <aside role="alert" className="rounded-md border border-[var(--lms-warning-border)] p-3 text-sm">
+        <strong>This learner already has other scheduled interviews.</strong>
+        <ul className="mt-2 list-disc pl-5">
+          {appointments.candidateConflicts.slice(0,5).map(conflict=><li key={conflict.id}>
+            {conflict.jobTitle} · {driveRoundTime(new Date(conflict.startsAt),"Asia/Kolkata")}
+          </li>)}
+        </ul>
+        {appointments.candidateConflictsHasMore||appointments.candidateConflicts.length>5?
+          <p>Additional interviews exist; review the learner&apos;s schedule before booking.</p>:null}
+        <p className="mt-1">Overlapping learner, room and interviewer bookings are checked again by the server before saving.</p>
+      </aside>:null}
     <CollegeInterviewAppointments jobId={jobId} rounds={appointments.rounds}
       candidates={appointments.candidates} appointments={appointmentRows}
       preferredApplicationId={query.applicationId}/>

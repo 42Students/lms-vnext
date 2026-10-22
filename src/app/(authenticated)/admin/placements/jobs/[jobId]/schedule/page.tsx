@@ -280,6 +280,18 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
         </nav>
         <p role="status" className="text-sm text-body">{appointments.appointmentTotal} matching candidate appointments · page {appointments.appointmentPage} of {appointments.appointmentPages}
           · {appointments.appointmentPageSize} per page</p>
+        {query.applicationId&&appointments.candidateConflicts.length>0?
+          <Banner tone="warning">
+            <strong>This learner has scheduled interviews elsewhere in the college.</strong>
+            <ul className="mt-2 list-disc pl-5">
+              {appointments.candidateConflicts.slice(0,5).map(conflict=><li key={conflict.id}>
+                {conflict.jobTitle} · {driveRoundTime(new Date(conflict.startsAt),"Asia/Kolkata")}
+              </li>)}
+            </ul>
+            {appointments.candidateConflictsHasMore||appointments.candidateConflicts.length>5?
+              <p>More interviews exist; review the learner schedule.</p>:null}
+            <p>The server checks overlap and staff concurrency before scheduling.</p>
+          </Banner>:null}
         <CollegeInterviewAppointments jobId={jobId}
           rounds={appointments.rounds} candidates={appointments.candidates}
           appointments={appointments.interviews} preferredApplicationId={query.applicationId}/>
