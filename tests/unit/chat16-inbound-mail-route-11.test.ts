@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { isSameOriginRequest } from "@/auth/origin";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { changeInboundMailStatusForAdmin } from "@/modules/inbound-mail/admin-service";
+import { changeInboundMailStatusForAdmin,getInboundMailDetailForAdmin } from "@/modules/inbound-mail/admin-service";
 import { apiErrorResponse } from "@/lib/api-error";
 import { PATCH } from "@/app/api/admin/inbound-mail/status/route";
 
 vi.mock("@/auth/origin", () => ({ isSameOriginRequest: vi.fn() }));
 vi.mock("@/auth/request-context", () => ({ getCurrentRequestContext: vi.fn() }));
 vi.mock("@/modules/inbound-mail/admin-service", () => ({
-  changeInboundMailStatusForAdmin: vi.fn(),
+  changeInboundMailStatusForAdmin: vi.fn(),getInboundMailDetailForAdmin: vi.fn(),
 }));
 vi.mock("@/lib/api-error", () => ({ apiErrorResponse: vi.fn() }));
 
@@ -29,6 +29,7 @@ beforeEach(() => {
   vi.resetAllMocks();
   vi.mocked(isSameOriginRequest).mockReturnValue(true);
   vi.mocked(getCurrentRequestContext).mockResolvedValue(actor as never);
+  vi.mocked(getInboundMailDetailForAdmin).mockResolvedValue({id,status:"RESOLVED"} as never);
   vi.mocked(apiErrorResponse).mockReturnValue(new Response(
     JSON.stringify({ error: "FORBIDDEN" }), { status: 403 },
   ) as never);
@@ -61,7 +62,8 @@ describe("chat-16 private inbound-mail mutation route break-it tests", () => {
     vi.mocked(changeInboundMailStatusForAdmin).mockResolvedValue({ kind: "STALE" } as never);
     const response = await PATCH(req(body));
     expect(response.status).toBe(409);
-    expect(await response.json()).toEqual({ error: "MESSAGE_CHANGED" });
+    expect(await response.json()).toMatchObject({ error: "MESSAGE_CHANGED" });
+    expect(getInboundMailDetailForAdmin).toHaveBeenCalledWith(actor,id);
   });
 
   it("HR-BREAK-INBOUND-ROUTE-04 storage missing is a retryable unavailable state, not an empty result", async () => {
