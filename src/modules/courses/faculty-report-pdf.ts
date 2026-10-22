@@ -20,6 +20,40 @@ const INK="0.090 0.125 0.200";
 const MUTED="0.350 0.408 0.486";
 const BORDER="0.851 0.890 0.925";
 
+type PdfRasterText={hex:string;width:number;height:number};
+
+/** Browser font fallback renders student names outside PDF's WinAnsi glyph set.
+ * This embeds just those text runs as JPEG XObjects, without adding packages.
+ * Their exact Unicode remains in /ActualText for selection/accessibility.
+ * On a server or unsupported canvas the existing base-14 fallback remains.
+ */
+function rasterizeUnicodeText(value:string,font:1|2,size:number,color:string):PdfRasterText|null{
+ if(typeof document==="undefined"||!/[^ \u007e-\u00ff]/u.test(value))return null;
+ try{
+  const canvas=document.createElement("canvas");
+  const context=canvas.getContext("2d");
+  if(!context)return null;
+  context.font=(font===2?"bold ":"")+size+"px sans-serif";
+  const width=Math.min(TEXT_WIDTH,Math.max(8,Math.ceil(context.measureText(value).width+4)));
+  const height=Math.ceil(size*1.5),scale=2;
+  canvas.width=Math.ceil(width*scale);
+  canvas.height=Math.ceil(height*scale);
+  context.scale(scale,scale);
+  context.fillStyle="#ffffff";
+  context.fillRect(0,0,width,height);
+  context.fillStyle="rgb("+color.split(" ").map(part=>Math.round(Number(part)*255)).join(",")+")";
+  context.font=(font===2?"bold ":"")+size+"px sans-serif";
+  context.textBaseline="alphabetic";
+  context.fillText(value,2,size*1.17,width-4);
+  const url=canvas.toDataURL("image/jpeg",0.92);
+  if(!url.startsWith("data:image/jpeg;base64,"))return null;
+  const binary=atob(url.slice("data:image/jpeg;base64,".length));
+  let hex="";
+  for(let i=0;i<binary.length;i++)hex+=binary.charCodeAt(i).toString(16).padStart(2,"0");
+  return {hex:hex.toUpperCase(),width,height};
+ }catch{return null;}
+}
+
 function printable(value:string):string{
  return value.normalize("NFC").replace(/[\u0000-\u001f\u007f]/g," ")
   .replace(/\s+/g," ").trim();
@@ -85,15 +119,24 @@ function generatedDate(value:Date):string{
 
 export function buildFacultyReportPdf(input:FacultyReportPdfInput):string{
  const pages:string[][]=[];
+ const pageImages:PdfRasterText[][]=[];
  let y=0;
  const page=()=>pages[pages.length-1]!;
  function textAt(value:string,x:number,atY:number,font:1|2,size:number,color:string){
   const source=printable(value);
-  const escaped=pdfText(source);
-  if(/[^\u0020-\u00ff]/u.test(source))
-   page().push("/Span << /ActualText <"+unicodeHex(source)+"> >> BDC");
-  page().push(color+" rg BT /F"+font+" "+size+" Tf "+x+" "+atY+" Td ("+escaped+") Tj ET");
-  if(/[^\u0020-\u00ff]/u.test(source))page().push("EMC");
+  const hasUnicode=/[^\u0020-\u00ff]/u.test(source);
+  if(hasUnicode)page().push("/Span << /ActualText <"+unicodeHex(source)+"> >> BDC");
+  const raster=hasUnicode?rasterizeUnicodeText(source,font,size,color):null;
+  if(raster){
+   const images=pageImages[pageImages.length-1]!;
+   const name="Im"+images.length;
+   images.push(raster);
+   page().push("q "+raster.width+" 0 0 "+raster.height+" "+x+" "+(atY-size*0.33)+" cm /"+name+" Do Q");
+  }else{
+   const escaped=pdfText(source);
+   page().push(color+" rg BT /F"+font+" "+size+" Tf "+x+" "+atY+" Td ("+escaped+") Tj ET");
+  }
+  if(hasUnicode)page().push("EMC");
  }
  function rectangle(x:number,bottom:number,width:number,height:number,fill:string){
   page().push(fill+" rg "+x+" "+bottom+" "+width+" "+height+" re f");
@@ -103,6 +146,7 @@ export function buildFacultyReportPdf(input:FacultyReportPdfInput):string{
  }
  function nextPage(){
   pages.push([]);
+  pageImages.push([]);
   y=PAGE_HEIGHT-48;
   rectangle(0,PAGE_HEIGHT-8,PAGE_WIDTH,8,TEAL);
   textAt("FACULTY "+input.kind.toUpperCase()+" REPORT",MARGIN,y,2,12,TEAL);
@@ -200,7 +244,16 @@ export function buildFacultyReportPdf(input:FacultyReportPdfInput):string{
  set(normalFontId,"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>");
  set(boldFontId,"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>");
  const pageIds:number[]=[];
- for(const ops of pages){
+ for(const [index,ops] of pages.entries()){
+  const imageRefs=pageImages[index]!.map((bitmap,imageIndex)=>{
+   const id=reserve();
+   const hex=bitmap.hex+">";
+   set(id,"<< /Type /XObject /Subtype /Image /Width "+Math.ceil(bitmap.width*2)+
+    " /Height "+Math.ceil(bitmap.height*2)+
+    " /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter [/ASCIIHexDecode /DCTDecode] /Length "+
+    hex.length+" >>\nstream\n"+hex+"\nendstream");
+   return "/Im"+imageIndex+" "+id+" 0 R";
+  });
   const stream=ops.join("\n")+"\n";
   const contentId=reserve();
   set(contentId,"<< /Length "+stream.length+" >>\nstream\n"+stream+"endstream");
@@ -208,7 +261,7 @@ export function buildFacultyReportPdf(input:FacultyReportPdfInput):string{
   set(pageId,"<< /Type /Page /Parent "+pagesId+
    " 0 R /MediaBox [0 0 "+PAGE_WIDTH+" "+PAGE_HEIGHT+
    "] /Resources << /Font << /F1 "+normalFontId+
-   " 0 R /F2 "+boldFontId+" 0 R >> >> /Contents "+contentId+" 0 R >>");
+   " 0 R /F2 "+boldFontId+" 0 R >> /XObject << "+imageRefs.join(" ")+" >> >> /Contents "+contentId+" 0 R >>");
   pageIds.push(pageId);
  }
  set(pagesId,"<< /Type /Pages /Kids ["+pageIds.map(id=>id+" 0 R").join(" ")+
