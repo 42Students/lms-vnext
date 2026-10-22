@@ -1,7 +1,7 @@
 import {notFound} from "next/navigation";
 import Link from "next/link";
 import {EmptyState} from "@/components/ui/empty-state";
-import {PageHeader} from "@/components/ui/page-header";
+import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {SuperAdminPlacementDetailView} from "@/components/admin/super-admin-placement-detail-view";
@@ -25,12 +25,19 @@ export default async function SuperAdminApplicationDetail({params}:{params:Promi
   </details>:undefined}/>
   <section aria-label="Application stage history" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
    <h2 className="text-base font-semibold text-[var(--lms-heading)]">Status history</h2>
-   {history?.length?<ol className="min-w-0 divide-y divide-border border-y border-border">{history.map(event=><li key={event.id} className="min-w-0 py-[var(--lms-space-3)] first:pt-0 text-sm">
-     <p className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] break-words font-semibold text-[var(--lms-heading)]"><span>{event.fromStage??"New application"} →</span><StatusBadge tone="info">{event.toStage}</StatusBadge></p>
-     <p className="mt-[var(--lms-space-1)] break-words text-body">{event.reason}</p>
-     <time className="text-xs text-muted-foreground" dateTime={event.changedAt.toISOString()}>
-      {event.changedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</time>
-    </li>)}</ol>:<EmptyState title="No status history" description="No persisted stage transitions recorded yet."/>}
+   <DataTable caption="Application status history" mobileMode="scroll"
+     columns={[
+       {key:"stage",header:"Stage change",mobilePriority:"primary",cell:event=><span className="flex flex-wrap items-center gap-2 font-semibold text-[var(--lms-heading)]">
+         {event.fromStage??"New application"} → <StatusBadge tone="info">{event.toStage}</StatusBadge>
+       </span>},
+       {key:"reason",header:"Reason",mobilePriority:"secondary",cell:event=>event.reason},
+       {key:"date",header:"Changed at",mobilePriority:"secondary",cell:event=><time dateTime={event.changedAt.toISOString()}>
+         {event.changedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST
+       </time>},
+     ] satisfies DataTableColumn<NonNullable<typeof history>[number]>[]}
+     rows={history??[]} getRowKey={event=>String(event.id)}
+     empty={<EmptyState title="No status history" description="No persisted stage transitions recorded yet."/>}/>
+
   </section>
  </div>;
 }

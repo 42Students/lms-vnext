@@ -42,9 +42,9 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [x] `src/app/(authenticated)/admin/lecture-halls/page.tsx`
 - [x] `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx`
 - [x] `src/app/(authenticated)/admin/people/unassigned/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/analytics/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/applications/[applicationId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/applications/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/analytics/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/applications/[applicationId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/applications/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/drives/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx`
