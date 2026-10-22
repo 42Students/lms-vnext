@@ -35,7 +35,10 @@ type Draft={id:string;title:string;description:string;updatedAt:string;status:st
  minTenthPctBasisPoints:number|null;minTwelfthPctBasisPoints:number|null;
  minDiplomaPctBasisPoints:number|null;minUndergraduatePctBasisPoints:number|null;
  minPostgraduatePctBasisPoints:number|null;
- allowedPassingYears:number[];allowedProgramIds:string[];};
+ allowedPassingYears:number[];allowedProgramIds:string[];
+ availablePrograms:Array<{id:string;name:string;code:string;status:string;departmentName:string}>;
+ legacyPostingDetails:{portal?:{studentsRegisterSeparately:boolean;name:string;url:string}}|null;
+};
 function optionalNumber(v:FormDataEntryValue|null){const s=String(v??"").trim();return s===""?null:Number(s);}
 export function TpoDriveEditForm({job}:{job:Draft}){
  const router=useRouter();
@@ -210,10 +213,31 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   }
   const jobTypeLabel=String(fields.get("jobTypeLabel")??"").trim();
   if(jobTypeLabel.length>40){setError("Job type label must be at most 40 characters.");return;}
+  const portalEnabled=fields.get("studentsRegisterSeparately")==="on";
+  const portalName=String(fields.get("portalName")??"").trim();
+  const portalUrl=String(fields.get("portalUrl")??"").trim();
+  if(portalEnabled){
+   if(!portalName){setError("Enter the employer portal name.");return;}
+   try{
+    const url=new URL(portalUrl);
+    if(url.protocol!=="https:"||url.username||url.password||!url.hostname||
+     portalUrl.length>2000)throw Error("INVALID_URL");
+   }catch{setError("Enter a secure HTTPS link for the employer portal.");return;}
+  }
+  const chosenPrograms=fields.getAll("allowedProgramIds").map(String);
+  if(chosenPrograms.some(id=>!job.availablePrograms.some(program=>program.id===id))){
+   setError("An eligible program selection is no longer available. Reload this drive.");return;
+  }
   setProposal({
    confirmed:true,expectedUpdatedAt:version,
    applicationDeadline:deadline,minCgpaHundredths:cgpa===null?null:Math.round(cgpa*100),
    ...(job.availableBatches.length?{allowedCohortIds:fields.getAll("allowedCohortIds").map(String)}:{}),
+   ...(job.availablePrograms.length?{allowedProgramIds:chosenPrograms}:{}),
+   ...(job.legacyPostingDetails?{portal:{
+    studentsRegisterSeparately:portalEnabled,
+    name:portalEnabled?portalName:"",
+    url:portalEnabled?portalUrl:"",
+   }}:{}),
    allowedPassingYears:years,...marks,
    verifiedMarksOnly:fields.get("verifiedMarksOnly")==="on",
    jobTypeLabel:jobTypeLabel||null,
@@ -394,6 +418,22 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     </label>)}
    </div>:<p className="text-sm text-muted-foreground">No active batches. Current targeting is unchanged until a batch is available.</p>}
   </fieldset>
+  <fieldset className="min-w-0 space-y-2 border-b border-border pb-3">
+   <legend className="text-sm font-semibold text-foreground">Eligible programs and branches</legend>
+   <p className="text-xs leading-5 text-body">Select the allowed branches. No selection means all
+    programs in the eligible batches. Only programs from this college can be saved.</p>
+   {job.availablePrograms.length?<div className="grid max-h-56 gap-2 overflow-y-auto sm:grid-cols-2">
+    {job.availablePrograms.map(program=><label key={program.id}
+     className="flex min-h-11 min-w-0 items-start gap-2 rounded border border-border p-2 text-sm">
+     <Checkbox name="allowedProgramIds" value={program.id}
+      defaultChecked={job.allowedProgramIds.includes(program.id)}
+      className="mt-1 shrink-0"/>
+     <span className="min-w-0 break-words">{program.departmentName} · {program.name}
+      {program.status!=="ACTIVE"?<span className="block text-xs text-warning">Previously selected · inactive</span>:null}
+     </span>
+    </label>)}
+   </div>:<p role="status" className="text-xs text-muted-foreground">No college programs available; saved branch targeting is preserved.</p>}
+  </fieldset>
   <section aria-label="Eligibility marks and passing years" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
    <h2 className="text-base font-semibold text-foreground">Eligibility</h2>
    <p className="text-xs leading-5 text-body">Marks follow the Students page: verified first; otherwise student-submitted values are flagged as not verified. Use verified marks only to require confirmed evidence.</p>
@@ -433,6 +473,26 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     </Link>
    </div>
   </section>
+  <fieldset className="space-y-3 border-y border-border py-3">
+   <legend className="text-sm font-semibold text-foreground">Employer's external registration portal</legend>
+   <label className="flex min-h-11 items-center gap-2 text-sm text-body">
+    <Checkbox name="studentsRegisterSeparately"
+     defaultChecked={job.legacyPostingDetails?.portal?.studentsRegisterSeparately??false}/>
+    Students also register on the company portal
+   </label>
+   <div className="grid gap-3 sm:grid-cols-2">
+    <label className="grid gap-1 text-xs font-semibold text-muted-foreground">Portal name
+     <Input name="portalName" maxLength={160}
+      defaultValue={job.legacyPostingDetails?.portal?.name??""} className={cls}/>
+    </label>
+    <label className="grid gap-1 text-xs font-semibold text-muted-foreground">Portal link (HTTPS)
+     <Input name="portalUrl" type="url" maxLength={2000}
+      defaultValue={job.legacyPostingDetails?.portal?.url??""} placeholder="https://..." className={cls}/>
+    </label>
+   </div>
+   {!job.legacyPostingDetails?<p className="text-xs text-warning">
+    This historical drive has no editable portal metadata. Its existing portal fields remain unchanged.</p>:null}
+  </fieldset>
   <div className="grid min-w-0 gap-4 sm:grid-cols-2">
    <label className="block text-[length:var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Application deadline (IST)
     <DateInput name="applicationDeadline" mode="datetime-local"
