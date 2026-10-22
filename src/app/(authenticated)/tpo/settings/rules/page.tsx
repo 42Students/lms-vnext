@@ -1,4 +1,5 @@
 import { Disclosure } from "@/components/ui/disclosure";
+import type {ReactNode} from "react";
 import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -23,6 +24,19 @@ import { getCollegePlacementRules } from "@/modules/placements/tpo-policy-servic
 import { getTpoPlacementRulesSettings } from "@/modules/placements/tpo-settings-read-service";
 
 type SearchParams = Record<string,string|string[]|undefined>;
+function SettingsLayout({children}:{children:ReactNode}){
+ return <div className="min-w-0 space-y-5">
+  <PageHeader title="Settings" description="How your placement cell runs"/>
+  <div className="grid min-w-0 grid-cols-1 gap-5 md:grid-cols-[13.5rem_minmax(0,1fr)] md:gap-6">
+   <TpoSettingsNav active="rules"/>
+   <main className="min-w-0 space-y-5" aria-label="Placement rules settings">
+    <h2 className="text-xl font-semibold text-[var(--lms-heading)]">Placement rules</h2>
+    {children}
+   </main>
+  </div>
+ </div>;
+}
+
 
 function settingSourceLabel(
   source: "PERSISTED" | "SOURCE_DEFAULT",
@@ -88,9 +102,7 @@ export default async function TpoPlacementRulesSettingsPage({
   const selectedPage = parseTpoRulesPageParams(params);
   if (selectedPage === null) {
     return (
-      <div className="min-w-0 space-y-6">
-        <PageHeader title="Placement rules" />
-        <TpoSettingsNav active="rules" compact />
+      <SettingsLayout>
         <ErrorState
           title="Invalid placement rules filters"
           description="The requested job page is invalid. No placement job records were loaded."
@@ -101,7 +113,7 @@ export default async function TpoPlacementRulesSettingsPage({
             </Link>
           }
         />
-      </div>
+      </SettingsLayout>
     );
   }
 
@@ -109,35 +121,38 @@ export default async function TpoPlacementRulesSettingsPage({
   try{
     team=await getTpoPlacementTeam(context,context.membership.collegeId);
   }catch{
-    return <div className="min-w-0 space-y-6">
-      <PageHeader title="Placement rules"/>
-      <TpoSettingsNav active="rules" compact/>
+    return <SettingsLayout>
       <ErrorState title="Could not verify your placement-settings access"
         description="Could not verify your placement-settings access. Please try again."
         action={<Link href="/tpo/settings/rules" className="underline font-semibold text-link">Retry</Link>}/>
-    </div>;
+    </SettingsLayout>;
   }
   const actor=team.members.find(item=>item.membershipId===context.membership?.id);
   const canEdit=Boolean(actor?.roles.includes("TPO_ADMIN")||actor?.roles.includes("COLLEGE_ADMIN"));
-  if(!canEdit)return <div className="min-w-0 space-y-6">
-    <PageHeader title="Placement rules"/>
-    <TpoSettingsNav active="rules" compact/>
+  if(!canEdit)return <SettingsLayout>
     <Alert tone="info">College settings are managed by the TPO admins. Ask a TPO admin if something here needs to change.</Alert>
-  </div>;
+  </SettingsLayout>;
 
-  const [result,cgpaRule] = await Promise.all([
-    getTpoPlacementRulesSettings(context,{page:selectedPage}),
-    getCollegeCgpaConversionRule(context,context.membership.collegeId),
-  ]);
-
+  let result:Awaited<ReturnType<typeof getTpoPlacementRulesSettings>>;
+  let cgpaRule:Awaited<ReturnType<typeof getCollegeCgpaConversionRule>>;
+  let rulesVersion:number;
+  try{
+    [result,cgpaRule]=await Promise.all([
+      getTpoPlacementRulesSettings(context,{page:selectedPage}),
+      getCollegeCgpaConversionRule(context,context.membership.collegeId),
+    ]);
+    rulesVersion=(await getCollegePlacementRules(context,context.membership.collegeId)).version;
+  }catch{
+    return <SettingsLayout>
+      <ErrorState title="Could not load placement rules"
+        description="Your saved settings have not been changed. Retry to reload the current rules and job eligibility."
+        action={<Link href="/tpo/settings/rules" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+    </SettingsLayout>;
+  }
   const rules = result.collegeRules;
-  const rulesVersion = (await getCollegePlacementRules(context, context.membership.collegeId)).version;
 
   return (
-    <div className="min-w-0 space-y-6">
-      <PageHeader title="Placement rules" />
-      <TpoSettingsNav active="rules" compact />
-
+    <SettingsLayout>
       <section className="space-y-2">
         <p className="text-sm leading-6 text-body">
           The college-wide offer policy and
@@ -445,6 +460,6 @@ export default async function TpoPlacementRulesSettingsPage({
         eligibility decisions, or registration.
       </p>
       </Disclosure>
-    </div>
+    </SettingsLayout>
   );
 }
