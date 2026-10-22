@@ -39,7 +39,8 @@ function readableValue(field:string,value:string|null|undefined):string{
    timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"
   })+" IST":value;
  }
- if(field==="WORK_MODE"||field==="MODE")return ({"ON_CAMPUS":"On campus","POOL":"Pool drive","OFF_CAMPUS":"Off campus"} as Record<string,string>)[cleaned]??cleaned;
+ if(field==="WORK_MODE"||field==="MODE")return ({"ONSITE":"On campus","HYBRID":"Hybrid","REMOTE":"Remote"} as Record<string,string>)[cleaned]??cleaned;
+ if(field==="JOB_TYPE")return ({"FULL_TIME":"Full-time","INTERNSHIP":"Internship","CONTRACT":"Contract"} as Record<string,string>)[cleaned]??cleaned;
  if(field==="CTC")return cleaned+" LPA";
  if(field==="STIPEND")return "₹"+cleaned+" a month";
  return cleaned;
@@ -52,8 +53,8 @@ function formatCreatedAt(value:string):string{
 }
 const fields=[["ROLE_TITLE","Role title"],["DESCRIPTION","Description"],["LOCATION","Location"],
  ["JOB_TYPE","Job type"],["WORK_MODE","Mode"],["DEADLINE","Application deadline"],
- ["CTC","CTC"],["STIPEND","Stipend"],["MIN_CGPA","Minimum CGPA"],
- ["BRANCHES","Branches"],["OTHER","Other"],["ROUNDS","Interview rounds"],
+ ["CTC","CTC (LPA)"],["STIPEND","Monthly stipend"],["MIN_CGPA","Minimum CGPA"],
+ ["BRANCHES","Branches (comma separated)"],["OTHER","Something else"],["ROUNDS","Interview rounds"],
  ["PAY","Pay / package"],["ELIGIBILITY","Eligibility"]] as const;
 export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:string;party:Party;userId:string;requests:Item[]}){
  const router=useRouter();
@@ -104,7 +105,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
      throw Error("Could not verify saved change request.");
    const status=String(body.action);
    const message=status==="CREATE"?"Sent. The drive stays in review while they answer.":
-     status==="ACCEPT"?"Accepted. The placement team must separately apply the agreed change.":
+     status==="ACCEPT"?"Accepted and applied":
      status==="ANSWER"?"Answered":status==="DECLINE"?"Declined":
      status==="WITHDRAW"?"Withdrawn":"Reply added to this change request.";
    setSuccess(message);
@@ -130,7 +131,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
     setComposerOpen(false);
    }}>
    <div className="min-w-0 space-y-3">
-   <p className="text-sm text-body leading-[22px]">Both sides can discuss, accept, answer or decline. Acceptance records agreement; the placement team must separately update the drive using the authorized edit action.</p>
+   <p className="text-sm text-body leading-[22px]">Both sides can discuss, accept, answer or decline. Accepting a proposal applies the agreed value to the drive; answering a named field updates it too.</p>
    <div className="grid gap-3 min-[768px]:grid-cols-2">
     {field&&field!=="OTHER"?<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">How
      <Select value={mode}
@@ -156,15 +157,15 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
        className="min-h-11 min-[768px]:min-h-9">
        <option value="">Choose an option</option>
        {(field==="WORK_MODE"?[
-         {value:"ON_CAMPUS",label:"On campus"},{value:"POOL",label:"Pool drive"},{value:"OFF_CAMPUS",label:"Off campus"},
+         {value:"ONSITE",label:"On campus"},{value:"HYBRID",label:"Hybrid"},
+         {value:"REMOTE",label:"Remote"},
         ]:[
-         {value:"Full-time",label:"Full-time"},{value:"Internship",label:"Internship"},
-         {value:"Internship + full-time",label:"Internship + full-time"},
-         {value:"Contract",label:"Contract"},{value:"Apprenticeship",label:"Apprenticeship"},
+         {value:"FULL_TIME",label:"Full-time"},{value:"INTERNSHIP",label:"Internship"},
+         {value:"CONTRACT",label:"Contract"},
         ]).map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
       </Select>:
       <Textarea value={value} onChange={e=>{setValue(e.target.value);setFieldError("");}} minLength={2}
-       maxLength={field==="ROLE_TITLE"||field==="LOCATION"?255:2000}
+       maxLength={field==="ROLE_TITLE"?100:field==="LOCATION"?255:2000}
        rows={field==="DESCRIPTION"?5:3}
        className="min-h-11 min-[768px]:min-h-9"/>}
     </label>:null}
@@ -208,7 +209,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
       <StatusBadge tone={item.status==="ACCEPTED"?"success":item.status==="DECLINED"?"error":item.status==="OPEN"?"warning":"neutral"}>{item.status==="OPEN"?"Waiting":item.status==="DECLINED"||item.status==="REPLIED"?"Declined":item.status.replaceAll("_"," ")}</StatusBadge>
      </div>
      {item.mode==="SUGGEST"?<p className="whitespace-pre-wrap break-words text-sm leading-[22px]">
-       {readableValue(item.field,item.currentValue)} <span aria-hidden="true">→</span> {readableValue(item.field,item.proposedValue)}
+       {readableValue(item.legacyField??item.field,item.currentValue)} <span aria-hidden="true">→</span> {readableValue(item.legacyField??item.field,item.proposedValue)}
       </p>:<p className="whitespace-pre-wrap break-words text-sm leading-[22px]">
        Question: {readableValue(item.field,item.proposedValue)}
       </p>}
@@ -249,13 +250,12 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
          onChange={e=>setNotes(p=>({...p,[item.id]:e.target.value}))}
          className="min-h-11 min-[768px]:min-h-9">
          <option value="">Choose an answer</option>
-         {(item.field==="JOB_TYPE"?[
-           {value:"Full-time",label:"Full-time"},{value:"Internship",label:"Internship"},
-           {value:"Internship + full-time",label:"Internship + full-time"},
-           {value:"Contract",label:"Contract"},{value:"Apprenticeship",label:"Apprenticeship"},
+         {((item.legacyField??item.field)==="JOB_TYPE"?[
+           {value:"FULL_TIME",label:"Full-time"},{value:"INTERNSHIP",label:"Internship"},
+           {value:"CONTRACT",label:"Contract"},
           ]:[
-           {value:"ON_CAMPUS",label:"On campus"},{value:"POOL",label:"Pool drive"},
-           {value:"OFF_CAMPUS",label:"Off campus"},
+           {value:"ONSITE",label:"On campus"},{value:"HYBRID",label:"Hybrid"},
+           {value:"REMOTE",label:"Remote"},
           ]).map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
         </Select>:
         <Textarea maxLength={2000} value={notes[item.id]??""}
@@ -287,7 +287,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
    confirmVariant={confirmation?.action==="ACCEPT"||confirmation?.action==="ANSWER"?"primary":"danger"} pending={busy}
    onConfirm={()=>{if(confirmation)void send({action:confirmation.action,requestId:confirmation.requestId,
      expectedUpdatedAt:confirmation.expectedUpdatedAt,note:confirmation.note});}}>
-   <p className="text-sm text-body leading-[22px]">{confirmation?.action==="ACCEPT"?"Acceptance records agreement; the placement team must separately update the drive using the authorized edit action.":"This decision is recorded in the drive discussion. It does not apply a proposed drive change."}</p>
+   <p className="text-sm text-body leading-[22px]">{confirmation?.action==="ACCEPT"?"Accepting immediately applies this change to the drive.":"This decision is recorded in the drive discussion. Answering a named field updates the drive; declining or withdrawing does not."}</p>
    {confirmation?.action==="ANSWER"||confirmation?.action==="DECLINE"?
     <label className="mt-3 grid gap-1 text-sm font-semibold">
      {confirmation.action==="ANSWER"?"Answer":"Why decline?"}
