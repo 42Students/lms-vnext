@@ -1006,6 +1006,33 @@ export const projectTaskSubmissions = pgTable(
   ],
 );
 
+/** Legacy project_delivery is one mutable row per project, not a revision log.
+ * revisionCount counts edits; it is NOT the project_submissions.version or
+ * the JPA @Version optimistic-lock token. A snapshot imports as version 1;
+ * never fabricate earlier submissions/events from a counter alone. Any real
+ * prior history must be reconstructed only from independently verified legacy
+ * audit records, in source chronological order.
+ */
+export function planLegacyDeliveryRevisionImport(input: {
+  revisionCount: number | null;
+  optimisticVersion: number | null;
+}) {
+  const revisions = input.revisionCount ?? 0;
+  if (!Number.isSafeInteger(revisions) || revisions < 0) {
+    throw new Error("Legacy delivery revision count requires review");
+  }
+  if (input.optimisticVersion !== null &&
+      (!Number.isSafeInteger(input.optimisticVersion) || input.optimisticVersion < 0)) {
+    throw new Error("Legacy delivery optimistic token requires review");
+  }
+  return {
+    submissionVersion: 1,
+    legacyRevisionCount: revisions,
+    legacyOptimisticVersion: input.optimisticVersion,
+    requiresIndependentHistory: revisions > 0,
+  };
+}
+
 export const projectSubmissions = pgTable(
   "project_submissions",
   {
