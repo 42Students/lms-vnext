@@ -19,12 +19,13 @@ describe("chat-11 College roster and Faculty attendance source parity",()=>{
   const move=src("src/components/college/student-class-move-action.tsx");
   expect(move).toContain('expectedSectionEnrollmentId: loaded.current.id');
   expect(move).toContain("Confirm move");
-  expect(src("src/components/academics/college-academic-directory.tsx")).toContain('"/students"');
+  expect(src("src/components/academics/college-cohort-management.tsx")).toContain('encodeURIComponent(row.id) + "/students"');
  });
  it("FAC-attendance-grades-14 restores legacy attendance subtitle while keeping useful coverage navigation",()=>{
   const ui=src("src/components/attendance/faculty-attendance-workspace.tsx");
   expect(ui).toContain('<h1 className="sr-only">Attendance</h1>');
-  expect(ui).toContain("See attendance history and monthly trends in one place.");
+  expect(ui).toContain('aria-label="Attendance legend"');
+  expect(ui).toContain('label="Faculty monthly attendance summary"');
   expect(src("src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/page.tsx")).toContain("Review session coverage");
  });
  it("FAC-attendance-grades-15 keeps audited correction reason and optimistic version checks",()=>{
@@ -38,8 +39,8 @@ describe("chat-11 College roster and Faculty attendance source parity",()=>{
  });
  it("FAC-attendance-grades-18 verifies explicit membership lists and disjoint attendance marks",()=>{
   const code=src("src/modules/attendance/faculty-service.ts");
-  expect(code).toContain("absentMembershipIds: z.array(uuid).max(1000)");
-  expect(code).toContain("presentMembershipIds: z.array(uuid).max(1000)");
+  expect(code).toContain("absentMembershipIds: z.array(uuid).max(500)");
+  expect(code).toContain("presentMembershipIds: z.array(uuid).max(500)");
   expect(code).toContain("A learner cannot be both present and absent");
   expect(code).toContain("Absent learners must be unique");
  });
