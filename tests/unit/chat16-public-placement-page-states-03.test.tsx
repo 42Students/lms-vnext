@@ -6,6 +6,7 @@ import {resolveRequestTenant} from "@/modules/auth/request-tenant";
 import {getPublicCollegeBranding} from "@/modules/colleges/branding-service";
 import {getPublicPlacementStatistics} from "@/modules/placements/public-page/read-service";
 import {getPublicPlacementPageContent} from "@/modules/placements/public-page/content-service";
+import {publicPlacementTableReady} from "@/modules/placements/public-page/readiness";
 import PublicPlacementsPage from "@/app/placements/page";
 
 vi.mock("next/headers",()=>({headers:vi.fn()}));
@@ -16,6 +17,7 @@ vi.mock("@/modules/auth/request-tenant",()=>({resolveRequestTenant:vi.fn()}));
 vi.mock("@/modules/colleges/branding-service",()=>({getPublicCollegeBranding:vi.fn()}));
 vi.mock("@/modules/placements/public-page/read-service",()=>({getPublicPlacementStatistics:vi.fn()}));
 vi.mock("@/modules/placements/public-page/content-service",()=>({getPublicPlacementPageContent:vi.fn()}));
+vi.mock("@/modules/placements/public-page/readiness",()=>({publicPlacementTableReady:vi.fn()}));
 vi.mock("@/components/placements/public-recruit-from-us",()=>({
  PublicRecruitFromUs:({enabled}:{enabled:boolean})=><div data-public-recruit-enabled={String(enabled)}/>,
 }));
@@ -31,6 +33,7 @@ const metrics={
 };
 beforeEach(()=>{
  vi.clearAllMocks();
+ vi.mocked(publicPlacementTableReady).mockResolvedValue(true);
  vi.mocked(headers).mockResolvedValue({
   get:(name:string)=>name==="host"?"placements.example.edu":null,
  } as Awaited<ReturnType<typeof headers>>);
@@ -46,6 +49,11 @@ beforeEach(()=>{
 });
 
 describe("chat-16 public placement page privacy and partial availability",()=>{
+ it("does not publish aggregate data until the publication table is verified",async()=>{
+  vi.mocked(publicPlacementTableReady).mockResolvedValue(false);
+  await expect(PublicPlacementsPage()).rejects.toThrow("PUBLIC_PLACEMENTS_PUBLICATION_NOT_READY");
+  expect(getPublicPlacementStatistics).not.toHaveBeenCalled();
+ });
  it("UX-chat16-public-placements-host-01 blocks unknown host before college or placement reads",async()=>{
   vi.mocked(resolveRequestTenant).mockResolvedValue({kind:"unknown",host:"foreign.example.org"});
   await expect(PublicPlacementsPage()).rejects.toThrow("NOT_FOUND");
@@ -65,33 +73,24 @@ describe("chat-16 public placement page privacy and partial availability",()=>{
   expect(html).toContain("Individual records are never displayed here.");
   expect(html).toContain("College placements overview");
   expect(html).toContain("Students placed");
-  expect(html).toContain("Companies that hired");
-  expect(html).toContain("sm:grid-cols-3");
+  expect(html).toContain("Recruiting employers");
+  expect(html).toContain('aria-label="Public placements statistics"');
   expect(html).toContain('data-public-recruit-enabled="false"');
   expect(html).not.toContain("private-student-email@example.org");
  });
  it("UX-chat16-public-placements-outage-04 distinguishes service outage from explicit unpublishing",async()=>{
   vi.mocked(getPublicPlacementStatistics).mockRejectedValue(new Error("private query failed"));
-  const html=renderToStaticMarkup(await PublicPlacementsPage());
-  expect(html).toContain("statistics are temporarily unavailable");
-  expect(html).toContain("(not enough data yet)");
-  expect(html).not.toContain("private query failed");
+  await expect(PublicPlacementsPage()).rejects.toThrow("PUBLIC_PLACEMENTS_TEMPORARILY_UNAVAILABLE");
   expect(notFound).not.toHaveBeenCalled();
  });
  it("UX-chat16-public-placements-partial-05 protects the public page when content service fails",async()=>{
   vi.mocked(getPublicPlacementPageContent).mockRejectedValue(new Error("hidden content record"));
-  const html=renderToStaticMarkup(await PublicPlacementsPage());
-  expect(html).toContain("Students placed");
-  expect(html).toContain("Offers");
-  expect(html).toContain("Companies that hired");
-  expect(html).not.toContain("hidden content record");
+  await expect(PublicPlacementsPage()).rejects.toThrow("PUBLIC_PLACEMENTS_TEMPORARILY_UNAVAILABLE");
+  expect(notFound).not.toHaveBeenCalled();
  });
  it("UX-chat16-public-placements-brand-06 does not misclassify temporary branding outage as 404",async()=>{
   vi.mocked(getPublicCollegeBranding).mockRejectedValue(new Error("private branding SQL"));
-  const html=renderToStaticMarkup(await PublicPlacementsPage());
-  expect(html).toContain("College placements");
-  expect(html).toContain('role="status"');
-  expect(html).not.toContain("private branding SQL");
+  await expect(PublicPlacementsPage()).rejects.toThrow("PUBLIC_PLACEMENTS_TEMPORARILY_UNAVAILABLE");
   expect(notFound).not.toHaveBeenCalled();
  });
 });

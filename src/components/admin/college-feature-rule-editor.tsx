@@ -37,7 +37,8 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
  const disabled=busy||impactBusy||confirm||!dirty||(ancestorLocked&&choice!=="INHERIT");
  const turningOff=choice==="OFF"&&(observed===null||observed.enabled);
  const projectsOff=turningOff&&module==="projects",placementsOff=turningOff&&module==="placements";
- const canSave=(!turningOff||students!==null&&(students<100||acknowledgedPopulation)&&(impactCounts!==null||ackUnknown));
+ const canSave=students!==null&&(students<100||acknowledgedPopulation)&&
+   (!turningOff||impactCounts!==null||ackUnknown);
  const moduleLabel=module==="projects"?"Projects":module==="placements"?"Placements":"Electives";
  async function recheck(){
   setBusy(true);setFeedback("");
