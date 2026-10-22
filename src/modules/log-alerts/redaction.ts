@@ -2,7 +2,7 @@
 export function redactAlertText(value: unknown): string {
   const raw = typeof value === "string" ? value : "";
   return raw
-    .split(/\r?\n/)[0]
+    .split(/\r?\n/)[0] ?? ""
     .replace(/(?:postgres(?:ql)?|mysql|redis|mongodb(?:\+srv)?):\/\/[^\s"'<>]+/gi, "[connection redacted]")
     .replace(/(?:https?:\/\/)?api\.telegram\.org\/bot[^\s/"']+/gi, "[telegram endpoint]")
     .replace(/https?:\/\/[^\s"'<>]+/gi, "[url redacted]")
