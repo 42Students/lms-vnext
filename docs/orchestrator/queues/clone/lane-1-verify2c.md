@@ -4,6 +4,8 @@ The last open verification-round-2 packets, spread evenly over all 20 lanes (22 
 
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_14.md` (25 rows)
 - [x] `docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md` (25 rows)
-- [ ] `docs/audit/gap-fix-work/verify2/packets/lane-8/W1_lane8_7.md` (25 rows)
+- [x] `docs/audit/gap-fix-work/verify2/packets/lane-8/W1_lane8_7.md` (25 rows)
 
 Verification triage on chatgpt/chat-1-b: three packet files annotated with evidence/DEFERRED rows; packet checkboxes track completed fast triage, NOT resolved deferred gaps. Only three packets are assigned; no 'More packets' section is present.
+
+All three assigned packets have completed fast triage. Deferred rows remain open for follow-up implementation; none are represented as fixed.
