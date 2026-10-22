@@ -39,7 +39,7 @@ const correctionRowSchema=tpoAcademicPreviewRowSchema.partial({
   batch:z.string().trim().max(100).nullable(),
   gender:z.string().trim().max(100).nullable(),
  }).strict().optional(),
-}).refine(row=>Object.keys(row).some(key=>key!=="studentCode"),{
+}).refine(row=>Object.keys(row).some(key=>key!=="studentCode"&&key!=="legacyOrigin"),{
  message:"Enter at least one academic field to verify.",
 });
 const schema = z.object({
@@ -187,7 +187,7 @@ export async function commitTpoAcademicImport(context: RequestContext, raw: unkn
         source: "VERIFIED" as const,
         // Direct correction is not an import batch, even if later reached
         // from a single-row form. Imported rows have a traceable timestamp.
-        importedAt: input.mode==="SINGLE"?null:now,
+        importedAt: input.mode==="SINGLE"?before?.importedAt??null:now,
         sourceMetadata:{mode:input.mode,
          verifiedFields:Object.keys(row).filter(key=>key!=="studentCode"&&key!=="legacyOrigin"),
          ...(row.legacyOrigin?{legacyOrigin:row.legacyOrigin}:{})},
