@@ -7,7 +7,7 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [x] `tests/unit/chat2-team-member-and-alert-parity.test.ts` (2 failing) — updated obsolete default people redirect expectations to assert scoped People bookmark and canonical Messages routing; [chat-11] 05f28919; CI not rerun
 - [x] `tests/unit/chat6-superadmin-middle-drive-ist-date.test.ts` (1 failing) — test effective deadline source matches product; b11e3eac; CI not rerun
 - [x] `tests/unit/chat9-super-admin-tenant-hub-copy.test.ts` (1 failing) — check actual canonical setup workspace for creation and scope; a2d9c666; CI not rerun
-- [ ] `tests/unit/legacy-lesson-atomic-parity.test.ts` (1 failing)
+- [x] `tests/unit/legacy-lesson-atomic-parity.test.ts` (1 failing) — maintained transaction/order assertions, matched formatted insert API; 249b548f; CI not rerun
 
 ## Failures (from CI log)
 
