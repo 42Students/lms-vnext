@@ -80,6 +80,7 @@ describe("SA-placements-projects-30 deliberate global/college boundary",()=>{
    expect(college).toContain(copy);
   const directory=source("src/app/(authenticated)/admin/companies/page.tsx");
   expect(directory).toContain("Sensitive CRM contact information is not shown without a scoped need-to-know read.");
+  expect(directory).toContain('<Tabs ariaLabel="Company directory tabs"');
    expect(directory).toContain("context.adminScope?.collegeId===row.collegeId");
    expect(directory).toContain("Private to the selected college");
  });
