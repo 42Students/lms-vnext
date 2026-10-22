@@ -9,7 +9,6 @@ import {Button} from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
-import {Disclosure} from "@/components/ui/disclosure";
 import {useToast} from "@/components/ui/toast";
 export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
  const router=useRouter();
@@ -195,7 +194,7 @@ export function SuperAdminCollegeCompanyRelationshipActions({relationshipId,name
      action:status==="ACTIVE"?"ARCHIVE":"RESTORE",confirmed:true}),
    });setConfirm(false);
    showToast({tone:"success",title:archive?"Company deleted":"Company restored",
-    description:archive?"Removed from this college; the global company record is retained.":undefined});
+    ...(archive ? {description:"Removed from this college; the global company record is retained."} : {})});
    router.refresh();}
    catch(e){setError(e instanceof Error?e.message:"Could not update company. Retry.");}
   });
