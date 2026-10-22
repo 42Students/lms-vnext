@@ -85,7 +85,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
  return <section className={"min-w-0 space-y-4 "+(selectedLeadIds.length?
    "mx-auto max-w-[680px] rounded-[12px] border border-border bg-white p-4 shadow-[0_12px_35px_rgba(0,0,0,0.08)] sm:p-6":
    "border-t border-border pt-4")} aria-label="Campaign composer">
-  <h2 className="text-lg font-semibold text-foreground">{selectedLeadIds.length?"Email "+selectedLeadIds.length+" recruiters":"Write a campaign"}</h2>
+  <h2 className="text-lg font-semibold text-foreground">{selectedLeadIds.length?"Email "+selectedLeadIds.length+" "+(selectedLeadIds.length===1?"recruiter":"recruiters"):"Write a campaign"}</h2>
   <p className="text-sm text-body">Step 1 of 2 · Write the email and review its eligible recipients. Save a draft, then open it to confirm sending. Nothing is sent from this form.</p>
   <p className="text-xs text-muted-foreground">Saving a draft is available even when sending is disabled. The Send action is only available after selecting eligible recipients and confirming a verified draft.</p>
   <form onSubmit={e=>{e.preventDefault();void save();}} aria-describedby={error?formErrorId:undefined} className="space-y-4">
