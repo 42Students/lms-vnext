@@ -55,9 +55,9 @@ export function RecruiterRequestCancelButton({
       const row = receipt && typeof receipt === "object" && !Array.isArray(receipt)
         ? (receipt as { request?: unknown }).request : null;
       if (!row || typeof row !== "object" || Array.isArray(row) ||
-          (row as Record<string, unknown>).id !== requestId ||
-          (row as Record<string, unknown>).collegeId !== collegeId ||
-          (row as Record<string, unknown>).status !== "CANCELLED") {
+          (row as Record<string, unknown>)["id"] !== requestId ||
+          (row as Record<string, unknown>)["collegeId"] !== collegeId ||
+          (row as Record<string, unknown>)["status"] !== "CANCELLED") {
         throw new Error("CANCELLATION_UNCONFIRMED");
       }
       setCancelled(true);
