@@ -8,6 +8,11 @@ import {
   listAuthorizedOrganizationCollegePicker,
 } from "@/modules/colleges/service";
 import { apiErrorResponse } from "@/lib/api-error";
+import {listAdminScopeChoices} from "@/modules/admin-scope/service";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
+import {getDb} from "@/db/client";
+import {isSuperAdmin} from "@/modules/identity/context";
+import {AuthorizationError} from "@/modules/permissions/policy";
 
 export const runtime = "nodejs";
 
@@ -33,6 +38,24 @@ export async function GET(request: Request) {
     const params=new URL(request.url).searchParams;
     const organizationId=params.get("organizationId");
     const mode=params.get("mode")??"list";
+    // The Super Admin scope switcher must be able to leave a selected college.
+    // Ordinary list/search calls remain selected-college fenced. Only an
+    // explicitly requested global switcher view can enumerate all active
+    // colleges and it must recheck the live platform administrator role.
+    if(params.get("all")==="true"&&mode==="list"){
+      if(!isSuperAdmin(context))throw new AuthorizationError("admin-scope.select");
+      const options=await getDb().transaction(async tx=>{
+        await assertPersistedPlatformPermission(tx,context,"admin-scope.select");
+        return listAdminScopeChoices(context);
+      });
+      return NextResponse.json({
+        colleges:options.colleges.map(row=>({
+          id:row.id,organizationId:row.organizationId,name:row.name,
+          code:row.code,uniqueId:row.uniqueId,
+        })),
+        readOnly:true,scopeChangePerformed:false,
+      },{headers:{"Cache-Control":"private, no-store"}});
+    }
     const q=params.get("q")?.trim()??"";
     const name=params.get("name")?.trim()??"";
     if(q.length>200||name.length>255)
