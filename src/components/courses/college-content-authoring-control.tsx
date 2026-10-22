@@ -512,7 +512,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   </div>}
   {open&&(kind!=="YOUTUBE"||videoMode==="YOUTUBE") ? kind==="RESOURCE"?
     <Dialog open={open} onOpenChange={value=>{if(!value)closeEditor();}}
-      title={editing?"Edit Content: "+title:"Add Resource"}
+      title={editing?"Edit Resource":"Add Resource"}
       description="Select a Course and Lesson to manage the resource."
       className="max-w-[700px]" dismissible={!busy}>
       {editorFields}
