@@ -8,7 +8,7 @@ describe("TPO campaign delivery receipts and audit",()=>{
   const schema=src("src/db/schema/messaging-receipts.ts");
   expect(service).toContain("tx.insert(messagingDeliveryBatches).values");
   expect(service).toContain("organizationId:college.organizationId,collegeId:college.id");
-  expect(service.indexOf("tx.insert(messagingDeliveryBatches)")).toBeLessThan(service.indexOf("outbound.send("));
+  expect(service.indexOf("tx.insert(messagingDeliveryBatches)")).toBeLessThan(service.indexOf("outbound.sendDetailed("));
   expect(service).toContain("recipientKey:placementTpoEmailCampaignRecipients.recipientKey");
   expect(service).toContain("eq(placementTpoEmailCampaignRecipients.collegeId,college.id)");
   expect(service).toContain("tx.insert(messagingDeliveryReceipts).values(receipts)");
@@ -26,6 +26,7 @@ describe("TPO campaign delivery receipts and audit",()=>{
   expect(service).toContain('status:result?"SENT":"FAILED"');
   expect(service).toContain('row.status==="SKIPPED_NO_EMAIL"?"invalid-recipient":"unsubscribed"');
   const history=src("src/app/(authenticated)/tpo/recruiters/campaigns/page.tsx");
-  expect(history).toContain("Provider acceptance does not prove recipient delivery");
+  expect(src("src/components/tpo/tpo-campaign-send-control.tsx")).toContain("Provider acceptance does not prove delivery.");
+  expect(history).toContain("TpoCampaignSendControl");
  });
 });

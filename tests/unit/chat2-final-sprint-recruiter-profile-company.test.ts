@@ -8,7 +8,7 @@ describe("Final sprint recruiter profile/company verification",()=>{
   const editor=src("src/components/hr/recruiter-profile-details-editor.tsx");
   expect(editor).toContain('["firstName","First name"]');
   expect(editor).toContain('["lastName","Last name"]');
-  expect(editor).toContain('key==="title"?160:100');
+  expect(editor).toContain('maxLength={key==="phone"?32:key==="title"?150:100}');
   expect(editor).toContain('autoComplete={key==="firstName"?"given-name"');
  });
  it("REC-calendar-messages-profile-29 discloses actual college-grant expiry without guessing an end date",()=>{
@@ -26,7 +26,7 @@ describe("Final sprint recruiter profile/company verification",()=>{
  });
  it("REC-calendar-messages-profile-32 provides scoped company name, safe website, domain, industry fallback and initials",()=>{
   const page=company();
-  expect(page).toContain('result.company.name.trim().charAt(0).toUpperCase()');
+  expect(page).toContain('result.company.name.slice(0,1).toUpperCase()');
   expect(page).toContain('rel="noopener noreferrer"');
   expect(page).toContain("Primary domain");
   expect(page).toContain("Industry not set");
@@ -34,7 +34,8 @@ describe("Final sprint recruiter profile/company verification",()=>{
  });
  it("REC-calendar-messages-profile-33 keeps a college-private trust classification from appearing as a recruiter permission",()=>{
   const page=company();
-  expect(page).toContain("Linked by the placement cell");
+  expect(page).toContain('profile?.verifiedAt&&result.company.trusted');
+  expect(page).toContain('To change the name or logo, ask the placement cell.');
   expect(page).not.toContain('>Trusted relationship<');
   expect(page).not.toContain("isTrusted ?");
  });
@@ -42,13 +43,13 @@ describe("Final sprint recruiter profile/company verification",()=>{
   const page=company();
   expect(page).toContain("Colleagues from your company who work with this college.");
   expect(page).toContain("attributedDriveCounts[member.userId]");
-  expect(page).toContain("drive(s) here");
+  expect(page).toContain("teamCountsUnavailable");
   expect(page).toContain("hrTeamRosterMessage");
  });
  it("REC-calendar-messages-profile-35 distinguishes verified report status buckets and never counts withdrawals as offers",()=>{
   const page=src("src/app/(authenticated)/hr/company/reports/page.tsx");
-  expect(page).toContain('key:"applied",header:"Applications"');
-  expect(page).toContain("cell:(job)=>job.applications");
+  expect(src("src/components/hr/hr-company-reports-grid.tsx")).toContain('key:"applied",label:"Applied"');
+  expect(page).toContain("applications:job.applications");
   expect(page).toContain('"Offered"');
   expect(page).toContain("job.outstandingOffers+job.acceptedOffers+job.declinedOffers");
   expect(page).toContain("job.acceptedOffers");
@@ -59,7 +60,7 @@ describe("Final sprint recruiter profile/company verification",()=>{
  });
  it("REC-calendar-messages-profile-36 matches legacy recruiter company header label without CSS changes",()=>{
   const page=company();
-  expect(page).toContain('eyebrow="Recruiter"');
+  expect(page).toContain('title="Company & Team"');
   expect(page).toContain("Your profile");
   expect(page).toContain('description={"Your work with " + result.grant.collegeName}');
  });
@@ -67,14 +68,15 @@ describe("Final sprint recruiter profile/company verification",()=>{
   const ui=src("src/components/tpo/recruiter-invite-landing.tsx");
   expect(ui).toContain("You can request placement drives and review the students who apply.");
   expect(ui).toContain("Contact details are shared only as the placement cell allows.");
-  expect(ui).toContain('<Input type="email" readOnly value={invite.contactEmail??""}');
+  expect(ui).toContain('type="email" readOnly={Boolean(invite.contactEmail)}');
+  expect(ui).toContain('value={invite.contactEmail??requestedEmail}');
   expect(src("src/components/ui/input.tsx")).toContain('<input data-slot="input"');
   expect(ui).toContain('{"From your invitation. You\'ll sign in with it."}');
  });
  it("REC-calendar-messages-profile-26 independent final-sprint acceptance regression",()=>{
   expect(src("src/components/hr/recruiter-profile-details-editor.tsx")).toContain("[\"firstName\",\"First name\"]");
   expect(src("src/components/hr/recruiter-profile-details-editor.tsx")).toContain("[\"lastName\",\"Last name\"]");
-  expect(src("src/components/hr/recruiter-profile-details-editor.tsx")).toContain("maxLength={key===\"phone\"?14:key===\"title\"?160:100}");
+  expect(src("src/components/hr/recruiter-profile-details-editor.tsx")).toContain('maxLength={key==="phone"?32:key==="title"?150:100}');
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-26 |");
  });
 
@@ -86,22 +88,22 @@ describe("Final sprint recruiter profile/company verification",()=>{
  });
 
  it("REC-calendar-messages-profile-30 independent final-sprint acceptance regression",()=>{
-  expect(src("src/components/hr/recruiter-profile-access.tsx")).toContain("window.confirm(");
+  expect(src("src/components/hr/recruiter-profile-access.tsx")).toContain("<ConfirmActionDialog");
   expect(src("src/components/hr/recruiter-profile-access.tsx")).toContain("method: \"DELETE\", credentials: \"same-origin\"");
   expect(src("src/components/hr/recruiter-profile-access.tsx")).toContain("window.location.assign(\"/hr/home\")");
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-30 |");
  });
 
  it("REC-calendar-messages-profile-32 independent final-sprint acceptance regression",()=>{
-  expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("result.company.name.trim().charAt(0).toUpperCase()");
+  expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("result.company.name.slice(0,1).toUpperCase()");
   expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("rel=\"noopener noreferrer\"");
   expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("Industry not set");
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-32 |");
  });
 
  it("REC-calendar-messages-profile-33 independent final-sprint acceptance regression",()=>{
-  expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("Linked by the placement cell");
-  expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("One company for everyone at it.");
+  expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("To change the name or logo, ask the placement cell.");
+  expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("Colleges see this profile.");
   expect(src("src/app/(authenticated)/hr/company/page.tsx")).not.toContain(">Trusted relationship<");
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-33 |");
  });
@@ -121,14 +123,14 @@ describe("Final sprint recruiter profile/company verification",()=>{
  });
 
  it("REC-calendar-messages-profile-36 independent final-sprint acceptance regression",()=>{
-  expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("eyebrow=\"Recruiter\"");
+  expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain('title="Company & Team"');
   expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("Your profile");
   expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("description={\"Your work with \" + result.grant.collegeName}");
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-36 |");
  });
 
  it("REC-calendar-messages-profile-41 independent final-sprint acceptance regression",()=>{
-  expect(src("src/components/tpo/recruiter-invite-landing.tsx")).toContain("readOnly value={invite.contactEmail??\"\"}");
+  expect(src("src/components/tpo/recruiter-invite-landing.tsx")).toContain('readOnly={Boolean(invite.contactEmail)}');
   expect(src("src/components/tpo/recruiter-invite-landing.tsx")).toContain("Contact details are shared only as the placement cell allows.");
   expect(src("src/components/tpo/recruiter-invite-landing.tsx")).toContain("You can request placement drives and review the students who apply.");
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-41 |");
