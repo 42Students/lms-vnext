@@ -56,7 +56,7 @@ function textTree(node:unknown):string[]{
   if(Array.isArray(node))return node.flatMap(textTree);
   if(!isValidElement(node))return [];
   const props=node.props as Record<string,unknown>;
-  return ["children","title","description","action","href"].flatMap(k=>textTree(props[k]));
+  return ["children","title","description","action","href","label"].flatMap(k=>textTree(props[k]));
 }
 beforeEach(()=>{
   state.read=true;state.manage=false;state.fail=false;state.missing=false;

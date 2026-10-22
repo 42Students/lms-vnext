@@ -22,7 +22,7 @@ describe("UX-login-01 secure OTP entry",()=>{
   expect(shell).toContain("<GracefulPageLoading");
   expect(styles).toContain("min-height: 100dvh");
   expect(styles).toContain("width: min(100%, 510px)");
-  expect(error).toContain('homeHref="/"');
+  expect(error).toContain('homeHref="/login"');
   expect(error).toContain("<GracefulErrorBoundary");
  });
 });

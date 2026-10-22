@@ -40,6 +40,9 @@ export async function PATCH(
 
     return NextResponse.json({ task });
   } catch (error) {
+    if (error instanceof SyntaxError) {
+      return NextResponse.json({ error: "INVALID_PROJECT_COMMAND_BODY" }, { status: 400 });
+    }
     return apiErrorResponse(error);
   }
 }
