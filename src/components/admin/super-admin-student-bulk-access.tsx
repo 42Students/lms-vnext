@@ -49,48 +49,76 @@ export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:reado
   }
   const membershipIds=[...selected],requestedModule=module,requestedAction=action;
   if(!confirm(requestedAction+" "+requestedModule+" access for "+membershipIds.length+
-   " selected students in this college? Changes are applied in audited groups of 25."))return;
+   " selected students in this college? Each group of 25 is atomic; earlier confirmed groups stay saved if a later group fails."))return;
   pendingRef.current=true;setBusy(true);setError(null);setReport(null);
-  let applied=0;
+  const confirmedIds=new Set<string>();
   const failures:{id:string;error:string}[]=[];
+  let groupStart=0;
+  function markUnconfirmed(ids:readonly string[],message:string){
+   for(const id of ids)failures.push({id,error:message});
+  }
+  function retainOnlyUnconfirmed(){
+   setSelected(curr=>curr.filter(id=>!confirmedIds.has(id)));
+  }
   try{
-   for(let start=0;start<membershipIds.length;start+=25){
-    const ids=membershipIds.slice(start,start+25);
+   for(groupStart=0;groupStart<membershipIds.length;groupStart+=25){
+    const ids=membershipIds.slice(groupStart,groupStart+25);
     const response=await fetch("/api/admin/students/module-access/bulk",{
      method:"POST",headers:{"content-type":"application/json"},
      body:JSON.stringify({membershipIds:ids,module:requestedModule,
       action:requestedAction,confirmed:true}),
     });
     if(!response.ok){
-     const detail=superAdminStudentBulkFailure(response.status);
-     for(const id of ids)failures.push({id,error:detail});
-     for(const id of membershipIds.slice(start+ids.length))
-      failures.push({id,error:"Not processed after the prior group failed."});
+     markUnconfirmed(ids,superAdminStudentBulkFailure(response.status));
+     markUnconfirmed(membershipIds.slice(groupStart+ids.length),
+      "Not processed after the prior group failed.");
      break;
     }
     const data=await response.json() as {
      requested:number;applied:number;failures:{id:string;error:string}[];
     };
-    applied+=data.applied;
-    failures.push(...data.failures);
-    if(data.failures.length||data.applied!==ids.length){
-     for(const id of membershipIds.slice(start+ids.length))
-      failures.push({id,error:"Not processed after the prior group failed."});
-     break;
+    // Never infer 24 successes from a one-row failure diagnostic.
+    // The server commits or rolls back each complete group atomically.
+    if(data.requested===ids.length&&data.applied===ids.length&&
+       Array.isArray(data.failures)&&data.failures.length===0){
+     ids.forEach(id=>confirmedIds.add(id));
+     continue;
     }
+    const diagnostics=new Map<string,string>(
+     Array.isArray(data.failures)?
+      data.failures.filter(row=>typeof row.id==="string"&&typeof row.error==="string")
+       .map(row=>[row.id,row.error] as const):[],
+    );
+    markUnconfirmed(ids,"No confirmed group update; "+
+      (diagnostics.size?"review the failed row details and retry the whole group.":"refresh the learner rules before retrying."));
+    for(const item of failures){
+     if(diagnostics.has(item.id))item.error=diagnostics.get(item.id)!;
+    }
+    markUnconfirmed(membershipIds.slice(groupStart+ids.length),
+     "Not processed after the prior group failed.");
+    break;
    }
-   setReport({requested:membershipIds.length,applied,failures});
-   // Clear only successful members after server acknowledgment; failures
-   // remain selected for safe correction/retry across paginated searches.
-   const failedIds=new Set(failures.map(item=>item.id));
-   setSelected(curr=>curr.filter(id=>failedIds.has(id)&&membershipIds.includes(id)));
-   router.refresh();
-  }catch(e){
-   setReport({requested:membershipIds.length,applied,failures});
-   setError((e instanceof Error?e.message:"Update failed.")+
-    " Completed groups remain saved; review the selection before retrying.");
+   setReport({requested:membershipIds.length,applied:confirmedIds.size,failures});
+   // Retry only the failed/unconfirmed memberships. Confirmed groups are
+   // removed from the cross-page selection after the server acknowledges all
+   // of their IDs; no successful learner is resubmitted by accident.
+   retainOnlyUnconfirmed();
+   if(confirmedIds.size>0)router.refresh();
+  }catch{
+   // A transport failure may happen after the server committed this group.
+   // Previously acknowledged groups are safe to clear; this group and all
+   // unattempted groups remain selected for a fresh read before retry.
+   markUnconfirmed(membershipIds.slice(groupStart),
+    "Outcome not confirmed. Refresh this learner's current rule before retrying.");
+   setReport({requested:membershipIds.length,applied:confirmedIds.size,failures});
+   retainOnlyUnconfirmed();
+   setError("The connection interrupted the bulk update. "+
+    "Earlier confirmed groups remain saved. The current group's outcome is unknown; "+
+    "refresh the rule preview before retrying the remaining students.");
+   if(confirmedIds.size>0)router.refresh();
   }finally{pendingRef.current=false;setBusy(false);}
  }
+
  return <section aria-label="Bulk student access" className="min-w-0 space-y-3 pb-4">
   <div className="flex flex-wrap justify-between gap-3"><h2 className="text-lg font-semibold text-[var(--lms-heading)]">Bulk module access</h2></div>
   {selected.length>0?<div role="status" aria-live="polite"
