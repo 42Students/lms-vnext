@@ -45,7 +45,13 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
     description="You must be assigned to a college to browse the directory. Contact your administrator."
     action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>}/>
  </div>;
- if(context.membership.status!=="ACTIVE"||!hasMembershipRole(context,"COLLEGE_ADMIN"))redirect("/dashboard");
+ if(context.membership.status!=="ACTIVE"||
+    !hasMembershipRole(context,"COLLEGE_ADMIN"))return <div className="min-w-0 space-y-4">
+  <PageHeader title="People Directory"/>
+  <ErrorState title="The contacts directory is for staff only"
+   description="This directory is restricted to authorized college administration staff. Faculty and TPO members can use their own scoped people tools; learners and recruiters cannot view this roster."
+   action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>}/>
+ </div>;
  const submitted=await searchParams;
  // Old pagination bookmarks used page=0 (or negative) for the first page.
  // Recover only that legacy shape; keep strict rejection of forged pages.

@@ -31,7 +31,8 @@ export async function editSuperAdminPublishedDrive(context:RequestContext,rawJob
    .where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,acting.collegeId)))
    .for("update").limit(1);
   if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
-  if(job.status!=="PUBLISHED")throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
+  if(!["PUBLISHED","CLOSED","CANCELLED","ARCHIVED"].includes(job.status))
+   throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
   if(job.updatedAt.getTime()!==Date.parse(cmd.expectedUpdatedAt))
    throw new PlacementsServiceError("PLACEMENT_JOB_STALE");
   const deadline=new Date(cmd.applicationDeadline);
@@ -39,7 +40,7 @@ export async function editSuperAdminPublishedDrive(context:RequestContext,rawJob
   // elapsed application deadline into the future. Only a NEW deadline must
   // satisfy live deadline and assessment chronology policies.
   const deadlineUnchanged = job.applicationDeadline?.getTime() === deadline.getTime();
-  if(!deadlineUnchanged && deadline.getTime()<=Date.now())
+  if(job.status==="PUBLISHED"&&!deadlineUnchanged && deadline.getTime()<=Date.now())
    throw new PlacementsServiceError("PLACEMENT_JOB_INVALID_DEADLINE");
   if(!deadlineUnchanged &&
      !isLegacyAssessmentDeadlineAfterApplication(job.legacyPostingDetails?.assessmentDeadline,deadline))
@@ -47,7 +48,8 @@ export async function editSuperAdminPublishedDrive(context:RequestContext,rawJob
   const [season]=await tx.select({status:placementSeasons.status}).from(placementSeasons)
    .where(and(eq(placementSeasons.id,job.seasonId),
     eq(placementSeasons.collegeId,acting.collegeId))).limit(1);
-  if(season?.status!=="ACTIVE")throw new PlacementsServiceError("PLACEMENT_SEASON_NOT_ACTIVE");
+  if(job.status==="PUBLISHED"&&season?.status!=="ACTIVE")
+   throw new PlacementsServiceError("PLACEMENT_SEASON_NOT_ACTIVE");
   const [primary]=await tx.select({id:placementJobRoleOptions.id}).from(placementJobRoleOptions)
    .where(and(eq(placementJobRoleOptions.jobId,job.id),
     eq(placementJobRoleOptions.isPrimary,true),eq(placementJobRoleOptions.status,"ACTIVE")))
@@ -90,6 +92,8 @@ export async function editSuperAdminPublishedDrive(context:RequestContext,rawJob
    ...(job.legacyPostingDetails??{}),responsibilities:cmd.responsibilities,
    assessmentUrl:cmd.assessmentUrl||null,assessmentDeadline:cmd.assessmentDeadline,
    candidatePreferences:cmd.candidatePreferences,
+   importantDates:cmd.importantDates,
+   customEligibilityRules:cmd.customEligibilityRules,
   });
   if(!isLegacyAssessmentDeadlineAfterApplication(legacyPostingDetails.assessmentDeadline,deadline))
    throw new PlacementsServiceError("PLACEMENT_JOB_INVALID_DEADLINE");
@@ -103,7 +107,7 @@ export async function editSuperAdminPublishedDrive(context:RequestContext,rawJob
    minimumAnnualCtcInr:cmd.minimumAnnualCtcInr,
    maximumAnnualCtcInr:cmd.maximumAnnualCtcInr,
    updatedAt:sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementJobs.updatedAt})+interval '1 millisecond')`,
-  }).where(and(eq(placementJobs.id,job.id),eq(placementJobs.status,"PUBLISHED"),
+  }).where(and(eq(placementJobs.id,job.id),eq(placementJobs.status,job.status),
    eq(placementJobs.collegeId,acting.collegeId),
    sql`date_trunc('milliseconds',${placementJobs.updatedAt})=${cmd.expectedUpdatedAt}::timestamptz`))
    .returning({id:placementJobs.id,updatedAt:placementJobs.updatedAt});
@@ -124,7 +128,8 @@ export async function editSuperAdminPublishedDrive(context:RequestContext,rawJob
     newDeadline:deadline.toISOString(),
     oldCompanyRelationshipId:job.companyRelationshipId,
     newCompanyRelationshipId:cmd.companyRelationshipId,
-    fields:["companyRelationshipId","assessmentUrl","assessmentDeadline","candidatePreferences","title","description","responsibilities","jobTypeLabel","employmentType",
+    fields:["companyRelationshipId","assessmentUrl","assessmentDeadline","importantDates",
+     "customEligibilityRules","candidatePreferences","title","description","responsibilities","jobTypeLabel","employmentType",
      "workMode","locations","applicationDeadline","openings",
      "minimumAnnualCtcInr","maximumAnnualCtcInr"],
     existingApplicationsUnchanged:true},

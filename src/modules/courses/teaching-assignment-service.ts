@@ -518,6 +518,15 @@ export async function changeCourseTeachingAssignmentRole(
   const input = changeCourseTeachingAssignmentRoleInputSchema.parse(roleInput);
   const {role,expectedUpdatedAt} = input;
   const current = await loadCourseTeachingAssignmentScope(assignmentId);
+  const targetDeliveryId=input.deliveryId??current.deliveryId;
+  const targetMemberId=input.membershipId??current.membershipId;
+  // Resolve every new delivery against the same selected college. A change
+  // of course, class or year must not become a cross-college teaching grant.
+  const targetDelivery=targetDeliveryId===current.deliveryId?current:
+    await loadCourseSectionDeliveryScope(targetDeliveryId);
+  if(targetDelivery.collegeId!==current.collegeId||
+     targetDelivery.organizationId!==current.organizationId)
+   throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
   requirePermission(context,"courses.manage",{
     organizationId:current.organizationId,collegeId:current.collegeId,
   });
@@ -530,6 +539,13 @@ export async function changeCourseTeachingAssignmentRole(
           isNull(courseSectionDeliveries.endedAt),
         )).for("update").limit(1);
       if(!liveDelivery)throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
+      if(targetDeliveryId!==current.deliveryId){
+       const [liveTarget]=await tx.select({id:courseSectionDeliveries.id})
+         .from(courseSectionDeliveries)
+         .where(and(eq(courseSectionDeliveries.id,targetDeliveryId),
+           isNull(courseSectionDeliveries.endedAt))).for("update").limit(1);
+       if(!liveTarget)throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
+      }
       const [locked]=await tx.select({
         id:courseTeachingAssignments.id,role:courseTeachingAssignments.role,
         updatedAt:courseTeachingAssignments.updatedAt,
@@ -563,32 +579,45 @@ export async function changeCourseTeachingAssignmentRole(
       if(!scope||scope.collegeId!==current.collegeId||
          scope.organizationId!==current.organizationId)
         throw new CoursesServiceError("TEACHING_ASSIGNMENT_NOT_FOUND");
+      const [targetScope]=await tx.select({
+        collegeId:departments.collegeId,organizationId:colleges.organizationId,
+      }).from(courseSectionDeliveries)
+        .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
+        .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+        .innerJoin(departments,eq(departments.id,courses.departmentId))
+        .innerJoin(colleges,eq(colleges.id,departments.collegeId))
+        .where(eq(courseSectionDeliveries.id,targetDeliveryId)).for("share").limit(1);
+      if(!targetScope||targetScope.collegeId!==current.collegeId||
+         targetScope.organizationId!==current.organizationId)
+        throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
       const [member]=await tx.select({id:collegeMemberships.id,status:collegeMemberships.status,
         collegeId:collegeMemberships.collegeId})
-        .from(collegeMemberships).where(eq(collegeMemberships.id,locked.membershipId))
+        .from(collegeMemberships).where(eq(collegeMemberships.id,targetMemberId))
         .for("share").limit(1);
       if(!member||member.status!=="ACTIVE"||member.collegeId!==current.collegeId)
         throw new CoursesServiceError("MEMBERSHIP_NOT_ACTIVE");
       const [facultyRole]=await tx.select({id:membershipRoles.id})
         .from(membershipRoles).where(and(
-          eq(membershipRoles.membershipId,locked.membershipId),
+          eq(membershipRoles.membershipId,targetMemberId),
           eq(membershipRoles.role,"FACULTY"),
         )).for("share").limit(1);
       if(!facultyRole)throw new CoursesServiceError("FACULTY_ROLE_REQUIRED");
-      if(locked.role===role)return locked;
-      const peers=await tx.select({membershipId:courseTeachingAssignments.membershipId,
+      if(locked.role===role&&locked.membershipId===targetMemberId&&
+         current.deliveryId===targetDeliveryId)return locked;
+      const peers=await tx.select({id:courseTeachingAssignments.id,
+        membershipId:courseTeachingAssignments.membershipId,
         role:courseTeachingAssignments.role})
         .from(courseTeachingAssignments)
         .where(and(
-          eq(courseTeachingAssignments.deliveryId,current.deliveryId),
+          eq(courseTeachingAssignments.deliveryId,targetDeliveryId),
           isNull(courseTeachingAssignments.endedAt),
         ));
-      const conflict=teachingAssignmentConflict({membershipId:locked.membershipId,role},
-        peers.filter(item=>item.membershipId!==locked.membershipId));
+      const conflict=teachingAssignmentConflict({membershipId:targetMemberId,role},
+        peers.filter(item=>item.id!==locked.id));
       if(conflict)throw new CoursesServiceError(conflict);
       const nextUpdatedAt=nextTeachingAssignmentRevision(locked.updatedAt);
       const [updated]=await tx.update(courseTeachingAssignments)
-        .set({role,updatedAt:nextUpdatedAt})
+        .set({role,membershipId:targetMemberId,deliveryId:targetDeliveryId,updatedAt:nextUpdatedAt})
         .where(and(
           eq(courseTeachingAssignments.id,assignmentId),
           eq(courseTeachingAssignments.deliveryId,current.deliveryId),
@@ -600,10 +629,12 @@ export async function changeCourseTeachingAssignmentRole(
         eventType:ACTIVITY_EVENT_TYPES.COURSES_TEACHING_ASSIGNED,
         collegeId:current.collegeId,organizationId:current.organizationId,
         subjectType:"course_teaching_assignment",subjectId:assignmentId,
-        subjectLabel:updated.role,summary:"Faculty teaching role changed",
+        subjectLabel:updated.role,summary:"Faculty teaching assignment updated",
         metadata:{legacyAuditAction:"FACULTY_COURSE_ASSOCIATION_UPDATE",
-          before:{role:locked.role,membershipId:locked.membershipId},
-          after:{role:updated.role,membershipId:updated.membershipId}},
+          before:{role:locked.role,membershipId:locked.membershipId,
+            deliveryId:current.deliveryId},
+          after:{role:updated.role,membershipId:updated.membershipId,
+            deliveryId:updated.deliveryId}},
       });
       return updated;
     });

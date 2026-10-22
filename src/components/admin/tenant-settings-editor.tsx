@@ -201,7 +201,12 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
     {keys.filter(spec=>spec.group===group).map(spec=><label key={spec.key} className={"grid min-w-0 gap-[6px] border-b border-border py-3 text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4 "+(spec.type==="textarea"?"md:col-span-2":"")}>
      <span className="flex flex-wrap items-center gap-2 font-semibold">{spec.label}{spec.dangerous?<StatusBadge tone="error">High impact</StatusBadge>:null}</span>
      <span className="break-all font-mono text-xs text-muted-foreground">{spec.key}</span>
-     {spec.dangerous||spec.key.startsWith("otp.")?<StatusBadge tone="warning">Stored · runtime activation unverified</StatusBadge>:null}
+     {spec.dangerous||spec.key.startsWith("otp.")||
+       ("activation" in spec&&spec.activation!=="ACTIVE")?
+      <StatusBadge tone="warning">{
+       "activation" in spec&&spec.activation==="DEPLOYMENT_REQUIRED"?
+        "Stored · deployment required":"Stored · runtime activation unverified"
+      }</StatusBadge>:null}
      <span id={"tenant-help-"+spec.key} title={spec.help??runtimeHint(spec)} className="text-xs font-normal leading-5 text-body">
        {spec.help??runtimeHint(spec)}
        <span className="mt-1 block text-muted-foreground">
@@ -227,7 +232,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
        onChange={event=>setDraft(prev=>({...prev,[spec.key]:event.target.value}))}
        className="min-h-11 md:min-h-9 w-full"/>}
      {draft[spec.key]?<button type="button" className="justify-self-start text-xs font-semibold text-primary-text underline" disabled={saving||!ready}
-       onClick={()=>setDraft(old=>({...old,[spec.key]:""}))} aria-label={"Clear "+spec.label}>Clear</button>:null}
+       onClick={()=>setDraft(old=>({...old,[spec.key]:""}))} aria-label={"Reset "+spec.label+" to default"}>Reset to default</button>:null}
      {invalidKeys.has(spec.key)?<span id={"tenant-invalid-"+spec.key} role="alert"
       className="text-xs font-semibold text-error">{invalidKeys.get(spec.key)}</span>:null}
      {"min" in spec&&spec.min!==undefined?<span className="text-xs text-muted-foreground">

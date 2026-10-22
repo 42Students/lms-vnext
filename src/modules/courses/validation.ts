@@ -174,6 +174,8 @@ export const createCourseTeachingAssignmentInputSchema =
 /** A stale browser must not silently overwrite another administrator's role edit. */
 export const changeCourseTeachingAssignmentRoleInputSchema = z.object({
   role: z.enum(COURSE_TEACHING_ROLES),
+  membershipId: z.string().uuid().optional(),
+  deliveryId: courseSectionDeliveryIdSchema.optional(),
   expectedUpdatedAt: z.string().datetime({offset:true}),
 }).strict();
 /** A single class may have several courses; batch writes must commit together. */

@@ -16,7 +16,7 @@ import {COURSE_TEACHING_ROLES,type CourseTeachingRole} from "@/modules/courses/c
 import {facultyAssignmentRoleLabel} from "@/modules/courses/college-courses-copy";
 
 type Delivery={id:string;sectionId:string;courseCode:string;courseName:string;sectionName:string;
-  cohortName:string;academicPeriodName:string;endedAt:Date|null};
+  cohortName:string;academicPeriodName:string;endedAt:Date|null;programName?:string};
 type Faculty={membershipId:string;displayName:string};
 
 export function SuperAdminFacultyAssignmentCreate({
@@ -25,6 +25,7 @@ export function SuperAdminFacultyAssignmentCreate({
  const router=useRouter();
  const {showToast}=useToast();
  const [deliveryId,setDeliveryId]=useState("");
+ const [programName,setProgramName]=useState("");
  const [batchName,setBatchName]=useState("");
  const [sectionId,setSectionId]=useState("");
  const [periodName,setPeriodName]=useState("");
@@ -37,8 +38,11 @@ export function SuperAdminFacultyAssignmentCreate({
  const [notice,setNotice]=useState("");
  const {pending,run}=useGuardedAction({timeoutMs:20000});
  const available=deliveries.filter(item=>!item.endedAt);
- const batchNames=[...new Set(available.map(item=>item.cohortName))].sort();
- const batchDeliveries=available.filter(item=>item.cohortName===batchName);
+ const programs=[...new Set(available.map(item=>item.programName??""))].sort();
+ const batchNames=[...new Set(available.filter(item=>item.programName===programName)
+   .map(item=>item.cohortName))].sort();
+ const batchDeliveries=available.filter(item=>item.programName===programName&&
+   item.cohortName===batchName);
  const classOptions=[...new Map(batchDeliveries.map(item=>[item.sectionId,item.sectionName])).entries()];
  const classDeliveries=batchDeliveries.filter(item=>item.sectionId===sectionId);
  const periodOptions=[...new Set(classDeliveries.map(item=>item.academicPeriodName))].sort();
@@ -55,6 +59,7 @@ export function SuperAdminFacultyAssignmentCreate({
  async function submit(e:FormEvent<HTMLFormElement>) {
   e.preventDefault();
   if(pending)return;
+  if(!programName){setError("Select a program");return;}
   if(!batchName){setError("Select a batch");return;}
   if(!sectionId){setError("Select a class");return;}
   if(!periodName){setError("Select a semester");return;}
@@ -95,8 +100,16 @@ export function SuperAdminFacultyAssignmentCreate({
    {notice?<Alert tone="success">{notice}</Alert>:null}
    <form onSubmit={e=>void submit(e)} className="grid min-w-0 gap-3 border-b border-border pb-5 sm:grid-cols-2">
     <p className="md:col-span-2 text-sm text-body leading-[22px]">Select a course and class in the current college. Only active faculty can be assigned. Choose 1–10 active deliveries from the same semester; the batch is atomic. Imported date-only start and end values are historical metadata, not editable overrides to the active delivery.</p>
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
+     <Select required className={inputClass} value={programName} disabled={!programs.length}
+      onChange={event=>{setProgramName(event.target.value);setBatchName("");setSectionId("");
+       setPeriodName("");setDeliveryId("");setOtherDeliveryIds([]);}}>
+      <option value="">Select a program</option>
+      {programs.map(value=><option key={value} value={value}>{value}</option>)}
+     </Select>
+    </label>
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
-     <Select required className={inputClass} value={batchName}
+     <Select required disabled={!programName} className={inputClass} value={batchName}
        onChange={e=>{setBatchName(e.target.value);setSectionId("");setPeriodName("");setDeliveryId("");setOtherDeliveryIds([]);}}>
        <option value="">Select a batch</option>
        {batchNames.map(name=><option key={name} value={name}>{name}</option>)}
@@ -183,70 +196,166 @@ export function SuperAdminFacultyAssignmentCreate({
 }
 
 
-/** Edit retains the persisted assignment ID and declines to create a second
- * primary teacher. The database unique index resolves concurrent editors. */
+/** A full legacy-shaped editor. Course, program, batch, semester and class
+ * resolve to one real course delivery: never issue invented year/term IDs. */
 export function SuperAdminTeachingRoleEdit({
- assignmentId,role:initialRole,revision,
-}:{assignmentId:string;role:CourseTeachingRole;revision:string}){
+ assignmentId,role:initialRole,revision,membershipId:initialMembershipId,
+ deliveryId:initialDeliveryId,deliveries,faculty,
+}:{assignmentId:string;role:CourseTeachingRole;revision:string;
+ membershipId:string;deliveryId:string;deliveries:readonly Delivery[];faculty:readonly Faculty[];}){
  const router=useRouter();
  const {showToast}=useToast();
  const [open,setOpen]=useState(false);
  const [role,setRole]=useState<CourseTeachingRole>(initialRole);
+ const [membershipId,setMembershipId]=useState(initialMembershipId);
+ const [deliveryId,setDeliveryId]=useState(initialDeliveryId);
+ const [active,setActive]=useState(true);
  const [notice,setNotice]=useState("");
  const [discardOpen,setDiscardOpen]=useState(false);
- const {run,pending}=useGuardedAction({busyLabel:"Updating role…"});
- function requestClose(){
-   if(pending)return;
-   if(role!==initialRole){setDiscardOpen(true);return;}
-   setOpen(false);
+ const {run,pending}=useGuardedAction({busyLabel:"Updating assignment…"});
+ const chosen=deliveries.find(item=>item.id===deliveryId);
+ const [program,setProgram]=useState(
+  deliveries.find(item=>item.id===initialDeliveryId)?.programName??"");
+ const [batch,setBatch]=useState(
+  deliveries.find(item=>item.id===initialDeliveryId)?.cohortName??"");
+ const [section,setSection]=useState(
+  deliveries.find(item=>item.id===initialDeliveryId)?.sectionId??"");
+ const [period,setPeriod]=useState(
+  deliveries.find(item=>item.id===initialDeliveryId)?.academicPeriodName??"");
+ const available=deliveries.filter(item=>!item.endedAt);
+ const programs=[...new Set(available.map(item=>item.programName??""))].sort();
+ const batches=[...new Set(available.filter(item=>item.programName===program).map(item=>item.cohortName))].sort();
+ const classes=[...new Map(available.filter(item=>item.programName===program&&
+  item.cohortName===batch).map(item=>[item.sectionId,item.sectionName])).entries()];
+ const periods=[...new Set(available.filter(item=>item.sectionId===section).map(item=>item.academicPeriodName))].sort();
+ const courses=available.filter(item=>item.programName===program&&item.cohortName===batch&&
+  item.sectionId===section&&item.academicPeriodName===period);
+ const academicYear=period.match(/(?:19|20)\d{2}\s*[-/]\s*(?:\d{2}|(?:19|20)\d{2})/)?.[0]??"";
+ const changed=role!==initialRole||membershipId!==initialMembershipId||
+   deliveryId!==initialDeliveryId||!active;
+ function reset(){
+  setRole(initialRole);setMembershipId(initialMembershipId);setDeliveryId(initialDeliveryId);
+  setActive(true);setNotice("");setDiscardOpen(false);
+  const initial=deliveries.find(item=>item.id===initialDeliveryId);
+  setProgram(initial?.programName??"");setBatch(initial?.cohortName??"");
+  setSection(initial?.sectionId??"");setPeriod(initial?.academicPeriodName??"");
  }
- function finishClose(){setDiscardOpen(false);setOpen(false);setRole(initialRole);}
+ function requestClose(){
+  if(pending)return;
+  if(changed){setDiscardOpen(true);return;}
+  setOpen(false);
+ }
+ function finishClose(){setDiscardOpen(false);setOpen(false);reset();}
  async function save(){
   if(pending)return;
+  if(active&&!available.some(item=>item.id===deliveryId)){
+   setNotice("Select an active class, course and semester.");return;
+  }
+  if(active&&!faculty.some(item=>item.membershipId===membershipId)){
+   setNotice("Select an active faculty member.");return;
+  }
   await run(async()=>{
    setNotice("");
    try{
-    await apiFetch("/api/courses/teaching-assignments/"+encodeURIComponent(assignmentId),{
+    if(active){
+     await apiFetch("/api/courses/teaching-assignments/"+encodeURIComponent(assignmentId),{
       method:"PATCH",headers:{"content-type":"application/json"},
-      body:JSON.stringify({role,expectedUpdatedAt:revision}),
-    });
-    setOpen(false);
-    showToast({tone:"success",title:"Assignment updated successfully"});
+      body:JSON.stringify({role,membershipId,deliveryId,expectedUpdatedAt:revision}),
+     });
+    }else{
+     await apiFetch("/api/courses/teaching-assignments/"+encodeURIComponent(assignmentId),{
+      method:"DELETE",
+     });
+    }
+    setOpen(false);showToast({tone:"success",title:active?
+      "Assignment updated successfully":"Association deactivated successfully."});
     router.refresh();
    }catch(cause){
     setNotice(cause instanceof FriendlyFetchError&&cause.status===409
-      ?"This teaching assignment changed in another tab. Refresh before editing again."
-      :cause instanceof FriendlyFetchError?cause.message:
-      "Could not change this teaching role. Refresh and try again.");
+     ?"This teaching assignment changed in another tab. Refresh before editing again."
+     :cause instanceof FriendlyFetchError?cause.message:
+      "Could not update this assignment. Refresh and try again.");
    }
   });
  }
+ const cls="min-h-11 w-full md:min-h-9";
+ const label="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]";
  return <div className="min-w-0 space-y-2 print:hidden">
-   <Button variant="secondary" size="md" type="button" className="min-h-11 md:min-h-9"
-     aria-expanded={open} aria-label={"Edit faculty assignment "+assignmentId} disabled={pending}
-     onClick={()=>{setRole(initialRole);setNotice("");setDiscardOpen(false);setOpen(true);}}>
-      Edit
-   </Button>
-   <Dialog open={open} onOpenChange={next=>{if(!next)requestClose();}} title={`Edit assignment: #${assignmentId}`}
-     description="Change the teaching role. Course, faculty and class changes require a new authorized assignment."
-     className="max-w-[500px]" dismissible={!pending}
-     footer={<div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-       <Button variant="secondary" type="button" disabled={pending} onClick={requestClose}>Cancel</Button>
-       <Button variant="primary" type="button" loading={pending} disabled={pending||role===initialRole}
-         onClick={()=>void save()}>{pending?"Saving…":"Save Changes"}</Button>
-     </div>}>
-     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Teaching role
-       <Select className="min-h-11 md:min-h-9" value={role} disabled={pending}
-         onChange={e=>setRole(e.target.value as CourseTeachingRole)}>
-         {COURSE_TEACHING_ROLES.map(value=><option key={value} value={value}>
-           {facultyAssignmentRoleLabel(value)}</option>)}
-       </Select>
-     </label>
-     <p className="mt-2 text-xs text-muted-foreground leading-5">Changing the active teaching role does not remove past grades, sessions or assignment history.</p>
-     {notice?<Alert tone="error">{notice}</Alert>:null}
-   </Dialog>
-   <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
-     title="Discard assignment changes?" description="Your unsaved changes to this assignment will be lost."
-     confirmLabel="Discard changes" confirmVariant="danger" onConfirm={finishClose}/>
+  <Button variant="secondary" type="button" className={cls}
+   aria-expanded={open} aria-label={"Edit faculty assignment "+assignmentId} disabled={pending}
+   onClick={()=>{reset();setOpen(true);}}>Edit</Button>
+  <Dialog open={open} onOpenChange={next=>{if(!next)requestClose();}}
+   title={"Edit assignment: #"+assignmentId}
+   description="Update faculty, course, program, batch, semester, class, academic year and role."
+   className="!max-w-[560px]" dismissible={!pending}
+   footer={<div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+    <Button variant="secondary" type="button" disabled={pending} onClick={requestClose}>Cancel</Button>
+    <Button variant="primary" type="button" loading={pending} disabled={pending||!changed}
+     onClick={()=>void save()}>{pending?"Saving…":"Save Changes"}</Button>
+   </div>}>
+   <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+    <label className={label}>Faculty
+     <Select required className={cls} value={membershipId} disabled={pending||!active}
+      onChange={e=>setMembershipId(e.target.value)}>
+      <option value="">Select faculty</option>
+      {faculty.map(item=><option key={item.membershipId} value={item.membershipId}>{item.displayName}</option>)}
+     </Select>
+    </label>
+    <label className={label}>Program
+     <Select required className={cls} value={program} disabled={pending||!active}
+      onChange={e=>{setProgram(e.target.value);setBatch("");setSection("");setPeriod("");setDeliveryId("");}}>
+      <option value="">Select a program</option>
+      {programs.map(value=><option key={value} value={value}>{value}</option>)}
+     </Select>
+    </label>
+    <label className={label}>Batch
+     <Select required className={cls} value={batch} disabled={pending||!active||!program}
+      onChange={e=>{setBatch(e.target.value);setSection("");setPeriod("");setDeliveryId("");}}>
+      <option value="">Select a batch</option>
+      {batches.map(value=><option key={value} value={value}>{value}</option>)}
+     </Select>
+    </label>
+    <label className={label}>Class / Section
+     <Select required className={cls} value={section} disabled={pending||!active||!batch}
+      onChange={e=>{setSection(e.target.value);setPeriod("");setDeliveryId("");}}>
+      <option value="">Select a class</option>
+      {classes.map(([id,name])=><option key={id} value={id}>{name}</option>)}
+     </Select>
+    </label>
+    <label className={label}>Semester
+     <Select required className={cls} value={period} disabled={pending||!active||!section}
+      onChange={e=>{setPeriod(e.target.value);setDeliveryId("");}}>
+      <option value="">Select a semester</option>
+      {periods.map(value=><option key={value} value={value}>{value}</option>)}
+     </Select>
+    </label>
+    <label className={label}>Course
+     <Select required className={cls} value={deliveryId} disabled={pending||!active||!period}
+      onChange={e=>setDeliveryId(e.target.value)}>
+      <option value="">Select a course</option>
+      {courses.map(item=><option key={item.id} value={item.id}>{item.courseCode} · {item.courseName}</option>)}
+     </Select>
+    </label>
+    <label className={label}>Academic Year
+     <Input readOnly value={academicYear} className={cls} title="Derived from the active course delivery"/>
+    </label>
+    <label className={label}>Teaching role
+     <Select className={cls} value={role} disabled={pending||!active}
+      onChange={e=>setRole(e.target.value as CourseTeachingRole)}>
+      {COURSE_TEACHING_ROLES.map(value=><option key={value} value={value}>{facultyAssignmentRoleLabel(value)}</option>)}
+     </Select>
+    </label>
+    <label className="flex items-center gap-2 text-sm font-semibold text-foreground sm:col-span-2">
+     <Checkbox checked={active} disabled={pending} onChange={e=>setActive(e.target.checked)}/>
+     Active
+    </label>
+   </div>
+   <p className="mt-3 text-xs text-muted-foreground">Each choice must resolve to an actual current course delivery. Changes are authorized for the selected college, checked for conflicts and recorded in the activity log. Switching Active off ends this association without deleting history.</p>
+   {!chosen&&active?<Alert tone="warning">Choose a current course and class before saving.</Alert>:null}
+   {notice?<Alert tone="error">{notice}</Alert>:null}
+  </Dialog>
+  <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
+   title="Discard assignment changes?" description="Your unsaved changes to this assignment will be lost."
+   confirmLabel="Discard changes" confirmVariant="danger" onConfirm={finishClose}/>
  </div>;
 }
