@@ -14,12 +14,12 @@ export const dynamic = "force-dynamic";
 
 function enabled() {
   return process.env.NODE_ENV !== "production" &&
-    process.env.APP_ENV === "development" &&
-    process.env.APP_E2E_SEED_ENABLED === "true";
+    process.env["APP_ENV"] === "development" &&
+    process.env["APP_E2E_SEED_ENABLED"] === "true";
 }
 
 function seedSecretMatches(provided: string | null) {
-  const expected = process.env.APP_E2E_SEED_SECRET;
+  const expected = process.env["APP_E2E_SEED_SECRET"];
   if (!expected || expected.length < 32 || !provided) return false;
   const a = Buffer.from(provided);
   const b = Buffer.from(expected);
