@@ -86,18 +86,10 @@ const scopedSuperAdminB: RequestContext = {
   },
 };
 
-async function cleanup() {
-  await pool.query(
-    "delete from placement_jobs",
-  );
-  await pool.query(
-    "delete from placement_company_relationships",
-  );
-  await pool.query("delete from placement_companies");
-}
-
+// Company/job fixtures have immutable activity references and are retained only
+// in the disposable CI database. Never delete other tests' jobs or shared
+// employer identities: placement applications and offers may reference them.
 beforeEach(async () => {
-  await cleanup();
   await pool.query(
     `insert into membership_roles (id, membership_id, role)
      values ($1, $2, 'TPO')
@@ -107,7 +99,6 @@ beforeEach(async () => {
 });
 
 afterAll(async () => {
-  await cleanup();
   await pool.query(
     "delete from membership_roles where id = $1",
     [tpoRoleId],
@@ -145,36 +136,34 @@ describe("Placements P1 companies and employer relationships", () => {
       collegeA.relationship.id,
     );
 
-    await expect(
-      listPlacementCompanies(tpo, SEED_IDS.collegeA),
-    ).resolves.toEqual([
+    const inCollegeA=await listPlacementCompanies(tpo,SEED_IDS.collegeA);
+    expect(inCollegeA).toEqual(expect.arrayContaining([
       expect.objectContaining({
-        companyId: collegeA.company.id,
-        name: "Acme Systems",
-        isTrusted: true,
+        companyId:collegeA.company.id,
+        relationshipId:collegeA.relationship.id,
+        name:"Acme Systems",
+        isTrusted:true,
       }),
-    ]);
+    ]));
+    expect(inCollegeA.some(row=>row.relationshipId===collegeB.relationship.id)).toBe(false);
 
     await archivePlacementCompanyRelationship(
       tpo,
       collegeA.relationship.id,
     );
 
-    await expect(
-      listPlacementCompanies(tpo, SEED_IDS.collegeA),
-    ).resolves.toEqual([]);
+    const afterArchive=await listPlacementCompanies(tpo,SEED_IDS.collegeA);
+    expect(afterArchive.some(row=>row.relationshipId===collegeA.relationship.id)).toBe(false);
 
-    await expect(
-      listPlacementCompanies(
-        scopedSuperAdminB,
-        SEED_IDS.collegeB,
-      ),
-    ).resolves.toEqual([
+    const inCollegeB=await listPlacementCompanies(scopedSuperAdminB,SEED_IDS.collegeB);
+    expect(inCollegeB).toEqual(expect.arrayContaining([
       expect.objectContaining({
-        companyId: collegeA.company.id,
-        isTrusted: false,
+        companyId:collegeA.company.id,
+        relationshipId:collegeB.relationship.id,
+        isTrusted:false,
       }),
-    ]);
+    ]));
+    expect(inCollegeB.some(row=>row.relationshipId===collegeA.relationship.id)).toBe(false);
   });
 
   it("keeps placement management role-aware and cross-college closed", async () => {
