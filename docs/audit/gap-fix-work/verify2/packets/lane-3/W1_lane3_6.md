@@ -126,3 +126,9 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx, src/modules/courses/learner-course-service.ts
 - Legacy: docs/legacy-source/frontend/src/pages/learn/courses/[courseId]/[...courseTab].js:17-22 uses legacy slug or numeric courseId and first catch-all segment; docs/legacy-source/frontend/src/utils/learnerCourseDetail.js:2-10 resolves by slug or integer.
 - Expected fix: Create explicit old slug/numeric-to-delivery resolver for legacy bookmarks or record intentional unsupported ID scheme.
+
+## Lane 9 verification notes (2026-10-22)
+
+- OK — G2-16-016-010: quiz question points are 1–100; options accept 1–20 in `quiz-validation.ts` (the runtime additionally validates correct-choice cardinality).
+- OK — G2-16-016-014: `quizQuestionInputSchema.points` uses `.max(100)`.
+- DEFERRED — Remaining 23 rows: not yet individually inspected; no implementation claim or packet completion is implied.
