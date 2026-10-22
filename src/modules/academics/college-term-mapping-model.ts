@@ -11,7 +11,7 @@ export const termCourseCreditsSchema = z.number().int().min(0).max(30);
  * but reject blank, invalid or out-of-range drafts before submitting edits. */
 export function parseTermCourseCreditsDraft(raw: string) {
   const trimmed = raw.trim();
-  return termCourseCreditsSchema.safeParse(trimmed ? Number(trimmed) : Number.NaN);
+  return termCourseCreditsSchema.safeParse(/^\d+$/.test(trimmed) ? Number(trimmed) : Number.NaN);
 }
 
 /** Legacy default applies only to creating a NEW mapping; never overwrite

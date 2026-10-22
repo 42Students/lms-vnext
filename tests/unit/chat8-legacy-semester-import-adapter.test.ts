@@ -3,7 +3,6 @@ import { adaptLegacyProgramStructureCreate } from "@/modules/academics/semester-
 
 const programId = "11111111-1111-4111-8111-111111111111";
 const courseId = "22222222-2222-4222-8222-222222222222";
-const secondCourseId = "33333333-3333-4333-8333-333333333333";
 const map = (entries: readonly (readonly [number, string])[] = [[10, courseId]]) => ({
   legacyProgramId: 5,
   programId,
@@ -53,6 +52,5 @@ describe("lane-8 verify2: legacy semester structure import bridge", () => {
     expect(result.source.status).toBeNull();
     expect(result.source.startDate).toBeNull();
     expect(result.source.endDate).toBeNull();
-    expect(secondCourseId).not.toEqual(courseId);
   });
 });

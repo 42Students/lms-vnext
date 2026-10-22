@@ -6,11 +6,11 @@ const source = (path: string) => readFileSync(path, "utf8");
 
 describe("lane-8 verify2: semester credits and audit stale recovery", () => {
   it("distinguishes blank credits from valid zero-credit legacy mappings", () => {
-    for (const value of ["", "  ", "unknown", "-1", "31", "1.5"]) {
+    for (const value of ["", "  ", "unknown", "-1", "31", "1.5", "0x10", "1e1"]) {
       expect(parseTermCourseCreditsDraft(value).success).toBe(false);
     }
-    expect(parseTermCourseCreditsDraft("0").data).toBe(0);
-    expect(parseTermCourseCreditsDraft("30").data).toBe(30);
+    expect(parseTermCourseCreditsDraft("0")).toMatchObject({ success: true, data: 0 });
+    expect(parseTermCourseCreditsDraft("30")).toMatchObject({ success: true, data: 30 });
     const manager = source("src/components/academics/college-term-mapping-manager.tsx");
     expect(manager).toContain("parseTermCourseCreditsDraft(creditsValue)");
     expect(manager).toContain('creditsValue.trim() ? "Enter credits from 0 to 30" : "Enter credits"');
