@@ -61,6 +61,8 @@ type RescheduleEffect = {
   mode: "ON_CAMPUS" | "VIRTUAL";
   venue: string | null;
   meetingUrl: string | null;
+  // Informational only; never treated as a confirmed meeting time.
+  preferredTimes?: string | null;
 };
 
 type OfferExtensionEffect = {
@@ -417,6 +419,7 @@ function effectPayloadFor(
     return {
       scheduledAt: input.scheduledAt.toISOString(),
       timezone: input.timezone,
+      preferredTimes: input.preferredTimes?.trim() || null,
       mode: input.mode,
       venue:
         input.mode === "ON_CAMPUS"
@@ -651,6 +654,8 @@ function parseRescheduleEffect(
   return {
     scheduledAt: value.scheduledAt,
     timezone: value.timezone,
+    preferredTimes: typeof value.preferredTimes==="string"
+      ? value.preferredTimes.trim().slice(0,200) : null,
     mode: value.mode,
     venue:
       value.mode === "ON_CAMPUS"

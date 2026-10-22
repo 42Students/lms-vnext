@@ -1478,6 +1478,9 @@ export const createPlacementRequestInputSchema =
           applicationId: placementApplicationIdSchema,
           roundId: placementRoundIdSchema,
           reason: placementRequestReasonSchema,
+          // Legacy free-text preferred windows supplement, not replace,
+          // the proposed structured date/time.
+          preferredTimes: z.string().trim().max(200).nullable().optional(),
           scheduledAt: z.coerce.date(),
           timezone: z.string().trim().min(1).max(64),
           mode: z.enum(["ON_CAMPUS", "VIRTUAL"]),
