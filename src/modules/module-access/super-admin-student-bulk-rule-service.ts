@@ -189,11 +189,6 @@ export async function updateSuperAdminStudentRulesInBulk(
             item.ancestors.some(scope=>lockedAncestors.has(scopeKey(scope))))
           throw new StudentRuleConflict("ANCESTOR_LOCKED");
 
-        const predicate = and(
-          eq(moduleAccessRules.scopeType, "MEMBERSHIP"),
-          eq(moduleAccessRules.scopeId, item.membershipId),
-          eq(moduleAccessRules.module, input.module),
-        );
         const previous=storedByMember.get(item.membershipId);
         const before = previous
           ? { enabled: previous.enabled, locked: previous.locked }
