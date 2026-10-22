@@ -118,7 +118,7 @@ export async function completeOwnFacultyAttachmentUpload(context:RequestContext,
    isNull(profilePrivateDocumentReceipts.revokedAt)));
   await tx.insert(activityEvents).values({
    collegeId:member.collegeId,organizationId:member.organizationId,
-   actorUserId:context.user.id,actorMembershipId:member.id,module:"PEOPLE",
+   actorUserId:context.user.id,actorMembershipId:member.id,module:"IDENTITY",
    eventType:"people.faculty_attachment.updated",subjectType:"faculty_profile",
    subjectId:member.id,summary:"Faculty private profile attachment updated",
    metadata:{purpose:input.purpose,entryId:input.entryId,replaced:Boolean(previous)},
@@ -181,7 +181,7 @@ export async function revokeOwnFacultyAttachment(context:RequestContext,raw:unkn
    isNull(profilePrivateDocumentReceipts.revokedAt)));
   await tx.insert(activityEvents).values({
    collegeId:member.collegeId,organizationId:member.organizationId,
-   actorUserId:context.user.id,actorMembershipId:member.id,module:"PEOPLE",
+   actorUserId:context.user.id,actorMembershipId:member.id,module:"IDENTITY",
    eventType:"people.faculty_attachment.revoked",subjectType:"faculty_profile",
    subjectId:member.id,summary:"Faculty private profile attachment revoked",
    metadata:{purpose:input.purpose,entryId:input.entryId},
