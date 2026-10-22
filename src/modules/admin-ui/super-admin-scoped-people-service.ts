@@ -142,9 +142,13 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
   query.status==="ALL"?undefined:eq(collegeMemberships.status,query.status as "ACTIVE"|"SUSPENDED"|"ENDED"),
   role==="FACULTY"&&query.departmentId?eq(departments.id,query.departmentId):undefined,
   role==="FACULTY"&&query.employmentType?
-    query.employmentType.toLowerCase()==="mentor"
+    query.employmentType.toUpperCase()==="MENTOR"
       ?sql`exists(select 1 from membership_roles mentor_filter where mentor_filter.membership_id=${collegeMemberships.id} and mentor_filter.role='MENTOR')`
-      :eq(facultyProfiles.employmentType,query.employmentType):undefined,
+      :query.employmentType.toUpperCase()==="ADMIN"
+        ?sql`exists(select 1 from membership_roles admin_filter where admin_filter.membership_id=${collegeMemberships.id} and admin_filter.role='COLLEGE_ADMIN')`
+        :query.employmentType.toUpperCase()==="TPO"
+          ?sql`exists(select 1 from membership_roles tpo_filter where tpo_filter.membership_id=${collegeMemberships.id} and tpo_filter.role='TPO')`
+          :eq(facultyProfiles.employmentType,query.employmentType):undefined,
   enrollmentFilter,
   query.q?or(ilike(users.displayName,scopedSearchLike(query.q)),
    ilike(users.email,scopedSearchLike(query.q)),
