@@ -267,7 +267,7 @@ export default async function SuperAdminLearnerAccessTracePage({
             {key:"trace",header:"Access trace",mobilePriority:"action",cell:learner=><Link
               href={adminModuleTraceHref(college.id,{
                 q:query.q,page,overridesOnly:query.overridesOnly,
-                overridesModule:query.overridesModule,storedValue:query.storedValue,
+                ...(query.overridesModule !== undefined ? {overridesModule: query.overridesModule} : {}),storedValue:query.storedValue,
                 membershipId:learner.membershipId,
               })}
               aria-current={selected?.membershipId===learner.membershipId?"true":undefined}
@@ -293,10 +293,9 @@ export default async function SuperAdminLearnerAccessTracePage({
                     q: query.q,
                     page: page - 1,
                     overridesOnly: query.overridesOnly,
-                    overridesModule: query.overridesModule,
+                    ...(query.overridesModule !== undefined ? {overridesModule: query.overridesModule} : {}),
                     storedValue: query.storedValue,
-                    membershipId:
-                      query.membershipId,
+                    ...(query.membershipId !== undefined ? {membershipId: query.membershipId} : {}),
                   },
                 )}
                 className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)]"
@@ -313,10 +312,9 @@ export default async function SuperAdminLearnerAccessTracePage({
                     q: query.q,
                     page: page + 1,
                     overridesOnly: query.overridesOnly,
-                    overridesModule: query.overridesModule,
+                    ...(query.overridesModule !== undefined ? {overridesModule: query.overridesModule} : {}),
                     storedValue: query.storedValue,
-                    membershipId:
-                      query.membershipId,
+                    ...(query.membershipId !== undefined ? {membershipId: query.membershipId} : {}),
                   },
                 )}
                 className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)]"

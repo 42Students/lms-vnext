@@ -33,14 +33,14 @@ export default async function SuperAdminElectivesPage({
  const valid=Object.entries(params).every(([key,value])=>
   known.has(key)&&!Array.isArray(value));
  const parsed=valid?adminElectiveQuerySchema.safeParse({
-  q:params.q,status:params.status,
-  programId:params.programId||undefined,semesterNumber:params.semesterNumber||undefined,
-   page:params.page||undefined,
+  q:params["q"],status:params["status"],
+  programId:params["programId"]||undefined,semesterNumber:params["semesterNumber"]||undefined,
+   page:params["page"]||undefined,
  }):null;
- const pageText=params.page??"1";
+ const pageText=params["page"]??"1";
  const pageValid=typeof pageText==="string"&&/^[1-9][0-9]{0,3}$/.test(pageText);
- const slotValid=params.slotId===undefined||
-  (typeof params.slotId==="string"&&/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(params.slotId));
+ const slotValid=params["slotId"]===undefined||
+  (typeof params["slotId"]==="string"&&/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(params["slotId"]));
  const invalid=!parsed?.success||!pageValid||!slotValid;
  if(invalid)return <div className="min-w-0 space-y-4">
   <PageHeader title="Electives"/>
@@ -106,7 +106,7 @@ export default async function SuperAdminElectivesPage({
   if(slotId)next.set("slotId",slotId);
   return "/admin/electives?"+next.toString()+(slotId?"#selected-slot":"");
  };
- const selected=all.find(item=>item.id===params.slotId)??null;
+ const selected=all.find(item=>item.id===params["slotId"])??null;
  const noFilter=!data.query.q&&!data.query.programId&&!data.query.semesterNumber&&data.query.status==="ACTIVE";
  return <div className="min-w-0 space-y-5">
   <PageHeader title="Electives" description="Manage elective slots and their offerings for this college."/>
@@ -212,7 +212,7 @@ export default async function SuperAdminElectivesPage({
      <CollegeSlotManager options={options} row={{
       id:selected.id,name:selected.name,description:selected.description??null,version:selected.version,
       programId:selected.programId,semesterNumber:selected.semesterNumber,
-      academicYear:selected.academicYear,hasEnrollmentHistory:selected.hasEnrollmentHistory,
+      academicYear:selected.academicYear,...(selected.hasEnrollmentHistory !== undefined ? {hasEnrollmentHistory:selected.hasEnrollmentHistory} : {}),
       credits:selected.credits,minPick:selected.minPick,maxPick:selected.maxPick,status:selected.status,
      }}/>
     </Disclosure>
