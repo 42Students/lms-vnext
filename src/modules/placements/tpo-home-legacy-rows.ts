@@ -58,6 +58,7 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
  const drives=(d.liveDrives?d.liveDrives+" live":"No live drives")+
   (detail?" · "+detail:"");
  const requests=d.pendingRequests,messages=d.messages;
+ const requestAttention=actionable.some(item=>item.code==="DRIVE_REQUESTS");
  const inboxParts=[
   requests==null?"Requests unavailable":requests?plural(requests,"request"):null,
   messages==null?"Messages unavailable":messages?plural(messages,"message")+" to answer":null,
@@ -77,7 +78,7 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
  return [
   {key:"batches",title:"Placement eligibility",status:batchStatus,href:"/tpo/batches",
    needsAttention:!batch||(d.hasUninvitedBatch??!batch.invited)},
-  {key:"drives",title:"Drives",status:drives,href:d.driveHref??"/tpo/placements",
+  {key:"drives",title:"Drives",status:drives,href:d.driveHref??(requestAttention?"/tpo/placements?tab=requests":"/tpo/placements"),
    needsAttention:d.driveAttention>0||actionable.length>0},
   {key:"students",title:"Students",status:d.registered===null?"Registration data unavailable":
    d.registered?d.registered+" registered"+(d.placedUnique===null?" · Placed data unavailable":" · "+d.placedUnique+" placed"):"Nobody registered yet",
