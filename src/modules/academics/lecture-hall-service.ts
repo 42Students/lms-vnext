@@ -145,8 +145,8 @@ export async function listSuperAdminOrganizationLectureHalls(
  const condition=and(eq(colleges.organizationId,query.organizationId),
   eq(colleges.status,"ACTIVE"),
   query.q?or(
-   ilike(lectureHalls.name,"%"+query.q.replace(/[\\%_]/g,"\\// Missing college scope is a validation error, never a signal to query other")+"%"),
-   ilike(lectureHalls.description,"%"+query.q.replace(/[\\%_]/g,"\\// Missing college scope is a validation error, never a signal to query other")+"%"),
+   ilike(lectureHalls.name,"%"+query.q.replace(/[\\%_]/g,"\\$&")+"%"),
+   ilike(lectureHalls.description,"%"+query.q.replace(/[\\%_]/g,"\\$&")+"%"),
   ):undefined);
  const [items,[total]]=await Promise.all([
   getDb().select({id:lectureHalls.id,collegeId:colleges.id,
