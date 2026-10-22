@@ -75,6 +75,10 @@ export default async function SuperAdminElectivesPage({
   <Link href="/admin/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry slots</Link>
  </div>;
  const data=dataResult.value;
+ if(data.state==="CHOOSE_COLLEGE")return <div className="min-w-0 space-y-4">
+  <PageHeader title="Electives"/>
+  <Alert tone="warning">Select an active college in the header before viewing its elective slots.</Alert>
+ </div>;
  const options=optionResult.ok?optionResult.value:null;
  // Old React key={selectedCollegeId} reset all filters on switch. A bookmark
  // with a program outside the new college must not keep a stale selection.
