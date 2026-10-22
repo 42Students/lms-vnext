@@ -169,7 +169,7 @@ export default async function LearnerProjectPage({
   const mine = assigneeInput === "mine";
   const sprintReleaseById = new Map(workspace.sprints.map(sprint => [sprint.id,sprint.releaseId]));
   const boardTasks = activeSection === "tasks"
-    ? sortLearnerBoardTasks(filterLearnerBoardTasks(workspace.tasks, search, {priority,status,sprintId,releaseId,sprintReleaseById,mineMembershipId:mine ? context.membership?.id ?? "__missing__" : undefined}),taskSort)
+    ? sortLearnerBoardTasks(filterLearnerBoardTasks(workspace.tasks, search, {priority,status,sprintId,releaseId,sprintReleaseById,...(mine?{mineMembershipId:context.membership?.id ?? "__missing__"}:{})}),taskSort)
     : workspace.tasks;
   const selectedTask=activeSection==="tasks"
     ? findOwnLearnerBoardTask(boardTasks,taskId)
