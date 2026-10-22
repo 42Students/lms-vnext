@@ -200,7 +200,7 @@ export function AssignmentFileSubmissionControl({
     </Button>:null}
     {busy && activeName ? <div className="space-y-2" role="status">
       <p className="break-words text-sm text-body">{activeName}: {progress}%</p>
-      <MetricBar label="File upload progress" role="progressbar" value={progress} maximum={100} unit="percent" className={uploadStyles.upload} />
+      <MetricBar label="File upload progress" role="progressbar" value={progress} maximum={100} unit="percent" {...(uploadStyles["upload"] !== undefined ? {className:uploadStyles["upload"]} : {})} />
       <Button type="button" variant="secondary" onClick={() => active.current?.abort()} className="min-h-11 md:min-h-9">Cancel upload</Button>
       <p className="text-xs text-muted-foreground">Your submission is being sent. Keep this window open until it finishes.</p>
     </div> : null}
