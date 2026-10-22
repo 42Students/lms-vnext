@@ -46,8 +46,11 @@ describe("Super Admin assessment export service scoped pagination",()=>{
   expect(kind).toBe("ASSIGNMENT");
   expect(query).toMatchObject({q:"Graphs",status:"PUBLISHED",courseCode:"CS401",scope:"SECTION",page:1});
   expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+  // Response.text() strips the UTF-8 BOM during decoding; inspect the
+  // exported bytes so the BOM contract is tested rather than a decoder quirk.
+  const bytes=new Uint8Array(await response.clone().arrayBuffer());
+  expect(Array.from(bytes.slice(0,3))).toEqual([0xef,0xbb,0xbf]);
   const csv=await response.text();
-  expect(csv.startsWith("\uFEFF")).toBe(true);
   expect(csv).toContain("'=1+1");
  });
  it("SA-academics-people-65 never drops quiz results filters as later pages are read",async()=>{
