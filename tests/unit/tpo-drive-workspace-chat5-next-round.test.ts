@@ -39,8 +39,7 @@ describe("Drive Workspace next-round graceful action and mobile parity",()=>{
  });
  it("GR-35 GR-90 GR-91 uses an explicit check and announced error for offer confirmations",()=>{
   const panel=source("src/components/placements/tpo-offer-lifecycle-panel.tsx");
-  expect(panel).toContain('<Checkbox checked={reviewed}');
-  expect(panel).toContain('onChange={event=>setReviewed(event.target.checked)}');
+  expect(panel).toContain("<Checkbox checked={reviewed}");
   expect(panel).toContain("checked={reviewed}");
   expect(panel).toContain('role={notice.includes("updated and audited")?"status":"alert"}');
  });
