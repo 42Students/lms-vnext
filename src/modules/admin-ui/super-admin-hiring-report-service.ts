@@ -12,6 +12,7 @@ import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {superAdminHiringReportQuery,SUPER_ADMIN_HIRING_EXPORT_CAP,type SuperAdminHiringRow} from "./super-admin-hiring-report-model";
 import {istStartOfDay,istStartOfNextDay} from "./super-admin-hiring-ist-boundary";
+import {hiringStagesAtOrAfter,type HiringPersistedStage} from "./super-admin-hiring-funnel-model";
 
 /**
  * A separate cumulative funnel is required: snapshots are mutually exclusive,
@@ -65,14 +66,20 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
      and ${placementJoiningOutcomes.status} = 'JOINED'
  )`;
  const tally=(name:string)=>sql<number>`count(distinct ${placementApplications.id}) filter (where ${placementApplications.status} = 'SUBMITTED' and ${stage} = ${name})::integer`.mapWith(Number);
- const reached=(name:string)=>sql<number>`count(distinct ${placementApplications.id}) filter (
+ // A later stage (including a verified JOINED offer) proves that all earlier
+ // milestones were reached even if an imported application has sparse history.
+ // Compute this for each application, not by inflating aggregate stage totals.
+ const reached=(name:HiringPersistedStage)=>{
+  const reachedStages=sql.join(hiringStagesAtOrAfter(name).map(value=>sql`${value}`),sql`, `);
+  return sql<number>`count(distinct ${placementApplications.id}) filter (
    where ${placementApplications.id} is not null
-   and (${stage} = ${name} or exists (
+   and (${stage} in (${reachedStages}) or ${verifiedJoined} or exists (
       select 1 from ${placementCollegeApplicationStageHistory} h
       where h.stage_id = ${placementCollegeApplicationStages.id}
-      and h.to_stage = ${name}
+      and h.to_stage in (${reachedStages})
    ))
- )::integer`.mapWith(Number);
+  )::integer`.mapWith(Number);
+ };
  const applicationFilters=and(
   query.appliedFrom?gte(appliedAt,istStartOfDay(query.appliedFrom)):undefined,
   query.appliedTo?lt(appliedAt,istStartOfNextDay(query.appliedTo)):undefined,

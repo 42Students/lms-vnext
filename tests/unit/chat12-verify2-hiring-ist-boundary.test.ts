@@ -1,6 +1,29 @@
 import { describe, expect, it } from "vitest";
 import { superAdminHiringReportQuery } from "@/modules/admin-ui/super-admin-hiring-report-model";
 import { istStartOfDay, istStartOfNextDay } from "@/modules/admin-ui/super-admin-hiring-ist-boundary";
+import { hiringStagesAtOrAfter, historicalHiringTotals, hiringFunnel } from "@/modules/admin-ui/super-admin-hiring-funnel-model";
+
+describe("chat-12 verify2: historic hiring stage reach", () => {
+  it("counts a later stored stage toward every earlier milestone for sparse imports", () => {
+    expect(hiringStagesAtOrAfter("SHORTLISTED")).toEqual([
+      "SHORTLISTED", "ASSESSMENT", "INTERVIEW", "OFFERED", "HIRED",
+    ]);
+    expect(hiringStagesAtOrAfter("INTERVIEW")).toEqual(["INTERVIEW", "OFFERED", "HIRED"]);
+    expect(hiringStagesAtOrAfter("HIRED")).toEqual(["HIRED"]);
+    const counts = historicalHiringTotals([{
+      applied: 1, shortlisted: 0, assessment: 0, interview: 1, offered: 0, hired: 0,
+    }]);
+    expect(counts).toEqual({
+      applied: 1, shortlisted: 1, assessment: 1, interview: 1, offered: 0, hired: 0,
+    });
+  });
+  it("uses null rather than a misleading percent when no previous stage was reached", () => {
+    const rows = hiringFunnel({
+      applied: 0, shortlisted: 0, assessment: 0, interview: 0, offered: 0, hired: 0,
+    });
+    expect(rows.every(row => row.percentPrevious === null)).toBe(true);
+  });
+});
 
 describe("chat-12 verify2: legacy hiring report inclusive IST dates", () => {
   it("covers the complete requested day, excluding the next local midnight", () => {
