@@ -71,7 +71,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
   <TpoBulkRoundResultRecorder roundId={roundId}
     round={{kind:data.round.kind,status:data.round.status}}
     rows={data.rows.map(row=>({applicationId:row.applicationId,
-      displayName:row.student??"Learner",rollNumber:row.rollNumber,
+      displayName:row.student??"Learner",...(row.rollNumber===undefined?{}:{rollNumber:row.rollNumber}),
       resultStatus:row.resultStatus}))}/>
     </div>
   </details>
