@@ -66,7 +66,7 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     for (const html of items) {
       expect(html).toContain('disabled=""');
       expect(html).toContain('aria-invalid="true"');
-      expect(html).toContain("text-base");
+      expect(html).toContain("text-[var(--lms-font-base)]");
       expect(html).toContain("focus-visible");
     }
     expect(render(<Input required aria-label="Roll number" />)).toContain('required=""');
@@ -301,12 +301,12 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     expect(tabs).toContain('aria-disabled="true"');
 
     const page=render(<Pagination page={2} pageCount={3} label="Projects pages"
-      hrefForPage={n=>n===2?"/college/projects?page=2":"//evil.example.test"}/>);
-    expect(page).toContain('href="/college/projects?page=2"');
+      hrefForPage={n=>n===1?"/college/projects?page=1":"//evil.example.test"}/>);
+    expect(page).toContain('href="/college/projects?page=1"');
     expect(page).not.toContain('href="//evil.example.test"');
     expect(page).toContain("Previous");
     expect(page).toContain("Next");
-    expect(page).toContain('aria-label="Page 1 unavailable"');
+    expect(page).toContain('aria-label="Page 3 unavailable"');
     expect(page).toContain('aria-disabled="true"');
   });
 
@@ -314,22 +314,23 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     const invalid=render(<FilterBar title="Candidates" activeCount={-99}
       search={<Input aria-label="Find candidates"/>}
       filters={<Checkbox name="placed" label="Placed"/>}/>);
-    expect(invalid).toContain("Candidates (0)");
+    expect(invalid).toContain('data-active-count="0"');
     expect(invalid).toContain('aria-label="Find candidates"');
     expect(invalid).toContain('aria-expanded="false"');
     expect(invalid).toContain('data-slot="scroll-cue"');
     expect(render(<FilterBar title="Projects" activeCount={Infinity} filters="Options"/>))
-      .toContain("Projects (0)");
+      .toContain('data-active-count="0"');
   });
 
   it("UX-kit-HARDEN-37 filter drawer closes on viewport resize even without matchMedia",()=>{
-    const source=moduleSource("filter-bar");
+    const source=moduleSource("drawer");
+    expect(moduleSource("filter-bar")).toContain("ResponsiveFilterDrawer");
     expect(source).toContain('typeof window.matchMedia === "function"');
-    expect(source).toContain('media?.matches ?? window.innerWidth >= 640');
-    expect(source).toContain('window.addEventListener("resize", resize)');
-    expect(source).toContain('window.removeEventListener("resize", resize)');
-    expect(source).toContain('media?.removeEventListener("change", resize)');
-    expect(source).toContain('document.body.style.overflow = priorOverflow');
+    expect(source).toContain('media?.matches ?? window.innerWidth >= 768');
+    expect(source).toContain('window.addEventListener("resize", closeOnDesktop)');
+    expect(source).toContain('window.removeEventListener("resize", closeOnDesktop)');
+    expect(source).toContain('media?.removeEventListener("change", closeOnDesktop)');
+    expect(source).toContain("useOverlayExit(ref, opener, open, 200)");
     const html=render(<FilterBar title="Filter project tasks" activeCount={2}
       search={<Input aria-label="Search tasks"/>} filters="My tasks only"/>);
     expect(html).toContain("Filter project tasks (2)");
@@ -359,7 +360,7 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     const html=render(<FileUpload label="Final proof" onFiles={()=>{}} pickerUnavailable
       fallback={<a href="/support">Use URL evidence</a>}/>);
     expect(html).toContain('role="status"');
-    expect(html).toContain('role="alert"');
+    expect(html).not.toContain('role="alert"');
     expect(html).toContain("Use URL evidence");
     expect(html).not.toContain('type="file"');
     const disabled=render(<FileUpload label="Evidence" onFiles={()=>{}} disabled accept=".pdf"/>);
@@ -377,12 +378,12 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
       accept=".png" onFiles={()=>{}}/>);
     expect(allowed).toContain('aria-describedby="project-proof-help"');
     const source=moduleSource("file-upload");
-    expect(source).toContain('error ? `${id}-error` : null');
+    expect(source).toContain('error && !unavailable ? `${id}-error` : null');
   });
 
   it("UX-kit-HARDEN-50 availability transition clears obsolete file validation state",()=>{
     const source=moduleSource("file-upload");
-    expect(source).toContain("if (pickerUnavailable || disabled) setError(null)");
+    expect(source).toContain("if (pickerUnavailable || disabled) { setError(null);");
     expect(source).toContain("selectedRef.current = false");
     expect(source).toContain("onFilesRef.current(null)");
     expect(source).toContain('aria-invalid={error ? true : undefined}');
@@ -411,7 +412,8 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     }
     const allowed=render(<ThirdPartyLink href="https://example.test/meet" label="Join meeting"/>);
     expect(allowed).toContain('href="https://example.test/meet"');
-    expect(allowed).not.toContain('target="_blank"');
+    expect(allowed).toContain('target="_blank"');
+    expect(allowed).toContain('rel="noopener noreferrer"');
     expect(allowed).toContain("Copy link");
   });
 
