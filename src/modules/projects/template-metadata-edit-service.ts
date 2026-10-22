@@ -47,7 +47,12 @@ export async function editSuperAdminTemplateMetadata(context: RequestContext, ra
         ...current.blueprint,
         overview:{
          ...current.blueprint.overview,
-         ...(input.overview??{}),
+         ...(input.overview?.goal!==undefined?{goal:input.overview.goal}:{}),
+         ...(input.overview?.description!==undefined?{description:input.overview.description}:{}),
+         ...(input.overview?.deliverables!==undefined?{deliverables:input.overview.deliverables}:{}),
+         ...(input.overview?.definitionOfDone!==undefined?{definitionOfDone:input.overview.definitionOfDone}:{}),
+         ...(input.overview?.personas!==undefined?{personas:input.overview.personas}:{}),
+         ...(input.overview?.submissionInstructions!==undefined?{submissionInstructions:input.overview.submissionInstructions}:{}),
          ...(input.courseLabel!==undefined?{courseLabel:input.courseLabel}:{}),
          ...(input.phase!==undefined?{phase:input.phase}:{}),
         },
