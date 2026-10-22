@@ -436,7 +436,7 @@ export const drizzlePeopleRepository:
             existingProfile?.document??{},
           );
           const requested=input.facultyProfile;
-          const mobile=requested.contactPhone.replace(/\\D/g,"").slice(-10);
+          const mobile=requested.contactPhone.replace(/\D/g,"").slice(-10);
           const document=facultyProfileDocumentSchema.parse({
             ...original,
             about:{...original.about,description:requested.bio},
