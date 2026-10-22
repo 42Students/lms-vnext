@@ -71,39 +71,42 @@ async function updateOverride(request:Request,{params}:RouteContext){
   const record=raw as Record<string,unknown>;
   // Legacy named this field type; the canonical membership UUID is provided
   // in the route, rather than resolving untrusted foreign numeric user IDs.
-  if(record.learnerId!==undefined&&record.learnerId!==membershipId)
+  if(record["learnerId"]!==undefined&&record["learnerId"]!==membershipId)
    return NextResponse.json({error:"INVALID_LEARNER",message:"Learner selection has changed. Refresh the drive."},{status:400});
   // The historical editor sends a nullable Boolean override + note.
   // true/false map to INCLUDE/EXCLUDE, while null explicitly clears the
   // currently selected override. A mixed legacy/canonical decision is not
   // allowed to mask a conflicting choice.
   const hasLegacyOverride=Object.prototype.hasOwnProperty.call(record,"override");
-  if(hasLegacyOverride&&(record.decision!==undefined||record.type!==undefined))
+  if(hasLegacyOverride&&(record["decision"]!==undefined||record["type"]!==undefined))
    return NextResponse.json({error:"INVALID_ELIGIBILITY_OVERRIDE",
     message:"Choose one eligibility decision format."},{status:400});
-  if(hasLegacyOverride&&record.override!==null&&typeof record.override!=="boolean")
+  if(hasLegacyOverride&&record["override"]!==null&&typeof record["override"]!=="boolean")
    return NextResponse.json({error:"INVALID_ELIGIBILITY_OVERRIDE",
     message:"Override must be true, false or null."},{status:400});
-  if(hasLegacyOverride&&record.override===null){
+  if(hasLegacyOverride&&record["override"]===null){
    const clear=z.strictObject({
      expectedOverrideId:z.string().uuid().optional(),
      reason:z.string().trim().min(3).max(500).optional(),
    }).safeParse({
-     ...(record.expectedOverrideId!==undefined?{expectedOverrideId:record.expectedOverrideId}:{}),
-     ...(record.note!==undefined||record.reason!==undefined?
-       {reason:record.reason??record.note}:{}),
+     ...(record["expectedOverrideId"]!==undefined?{expectedOverrideId:record["expectedOverrideId"]}:{}),
+     ...(record["note"]!==undefined||record["reason"]!==undefined?
+       {reason:record["reason"]??record["note"]}:{}),
    });
    if(!clear.success)return NextResponse.json({error:"INVALID_ELIGIBILITY_OVERRIDE",
      message:"The override could not be cleared."},{status:400});
-   const override=await revokeEligibilityOverride(context,jobId,membershipId,clear.data);
+   const override=await revokeEligibilityOverride(context,jobId,membershipId,{
+     ...(clear.data.expectedOverrideId !== undefined ? {expectedOverrideId:clear.data.expectedOverrideId} : {}),
+     ...(clear.data.reason !== undefined ? {reason:clear.data.reason} : {}),
+   });
    return NextResponse.json({override,ok:true,message:"Eligibility override cleared."},
      {headers:{"Cache-Control":"private, no-store"}});
   }
   const candidate={
-   decision:hasLegacyOverride?(record.override?"INCLUDE":"EXCLUDE"):
-     record.decision??record.type,
-   reason:record.reason??record.note,
-   expectedOverrideId:record.expectedOverrideId??null,
+   decision:hasLegacyOverride?(record["override"]?"INCLUDE":"EXCLUDE"):
+     record["decision"]??record["type"],
+   reason:record["reason"]??record["note"],
+   expectedOverrideId:record["expectedOverrideId"]??null,
   };
   if(typeof candidate.reason!=="string"||candidate.reason.trim().length<3)
    return NextResponse.json({error:"INVALID_REASON",message:"A reason is required."},
@@ -116,7 +119,7 @@ async function updateOverride(request:Request,{params}:RouteContext){
   // POST equivalent may only create when no override already exists.
   const override=await setEligibilityOverride(context,jobId,membershipId,parsed.data);
   return NextResponse.json({override,ok:true,message:"Eligibility override saved.",
-   expectedOverrideId:override.id},{headers:{"Cache-Control":"private, no-store"}});
+   expectedOverrideId:override?.id},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
 export async function PUT(request:Request,route:RouteContext){
@@ -154,7 +157,10 @@ export async function DELETE(
         context,
         jobId,
         membershipId,
-        options,
+        {
+          ...(options.expectedOverrideId !== undefined ? {expectedOverrideId:options.expectedOverrideId} : {}),
+          ...(options.reason !== undefined ? {reason:options.reason} : {}),
+        },
       );
     return NextResponse.json({ override });
   } catch (error) {
