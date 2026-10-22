@@ -3,12 +3,21 @@ import {beforeEach,describe,expect,it,vi} from "vitest";
 vi.mock("server-only",()=>({}));
 const stubs=vi.hoisted(()=>({
  redirect:vi.fn(),notFound:vi.fn(),context:vi.fn(),corrections:vi.fn(),notices:vi.fn(),
+ resolve:vi.fn(),deliveries:vi.fn(),
 }));
 vi.mock("next/navigation",()=>({
  redirect:stubs.redirect,notFound:stubs.notFound,
 }));
 vi.mock("@/auth/request-context",()=>({
  getCurrentRequestContext:stubs.context,
+}));
+vi.mock("@/modules/identity/context",()=>({
+ hasActiveMembership:()=>true,
+ hasMembershipRole:(_ctx:unknown,role:string)=>role==="FACULTY",
+}));
+vi.mock("@/modules/courses/faculty-course-service",()=>({
+ resolveFacultyCourseDeliveryForLink:stubs.resolve,
+ listFacultyCourseDeliveries:stubs.deliveries,
 }));
 vi.mock("@/modules/attendance/faculty-correction-service",()=>({
  getFacultyCorrectionAvailability:stubs.corrections,
@@ -23,7 +32,7 @@ import FacultySectionNoticesPage from "@/app/(authenticated)/teacher/courses/[de
 
 const deliveryId="11111111-1111-4111-8111-111111111111";
 const context={user:{id:"faculty"}};
-const params=(id=deliveryId)=>({params:Promise.resolve({deliveryId:id})});
+const params=(id=deliveryId)=>({params:Promise.resolve({deliveryId:id}),searchParams:Promise.resolve({})});
 beforeEach(()=>{
  vi.resetAllMocks();
  stubs.redirect.mockImplementation((path:string)=>{throw new Error("REDIRECT:"+path);});
@@ -31,18 +40,23 @@ beforeEach(()=>{
  stubs.context.mockResolvedValue(context);
  stubs.corrections.mockResolvedValue({});
  stubs.notices.mockResolvedValue({});
+ stubs.resolve.mockResolvedValue(null);
+ stubs.deliveries.mockResolvedValue([{deliveryId}]);
 });
 describe("UX-teacher-no-shared-01 secure redirect-only legacy routes",()=>{
- it("keeps legacy Contacts index as a zero-render same-origin redirect",()=>{
-  expect(()=>FacultyContactsIndexPage())
-   .toThrow("REDIRECT:/teacher/contacts/allContacts");
-  expect(stubs.context).not.toHaveBeenCalled();
+ it("authenticates Faculty before forwarding Contacts to the same-origin route",async()=>{
+  await expect(FacultyContactsIndexPage())
+   .rejects.toThrow("REDIRECT:/teacher/contacts/allContacts");
+  expect(stubs.context).toHaveBeenCalledOnce();
  });
  it("rejects invalid Faculty course IDs before rendering or requesting private course data",async()=>{
   await expect(FacultyCourseDefaultPage(params("../../college"))).rejects.toThrow("NOT_FOUND");
+  expect(stubs.resolve).toHaveBeenCalledWith(context,"../../college",null);
+  expect(stubs.deliveries).not.toHaveBeenCalled();
   expect(stubs.redirect).not.toHaveBeenCalled();
   await expect(FacultyCourseDefaultPage(params())).rejects.toThrow("REDIRECT:");
   expect(stubs.redirect.mock.calls[0]?.[0]).toContain(deliveryId);
+  expect(stubs.deliveries).toHaveBeenCalledWith(context);
  });
  it("verifies current teaching correction scope before redirecting old bookmarks",async()=>{
   await expect(FacultyAttendanceCorrectionsPage(params("bad-id"))).rejects.toThrow("NOT_FOUND");
