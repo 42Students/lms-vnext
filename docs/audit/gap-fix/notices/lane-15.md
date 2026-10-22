@@ -1,2 +1,3 @@
-# Notice for lane 15 (read and do FIRST)
-Your two commits on src/db/schema/placements.ts ("Add private offer/assessment object keys and scoped external link model with PG check" and "Enforce PG eligibility only when qualification applies and represent unknown evidence") left a SYNTAX ERROR, so the merge robot restored the old file on main and BOTH changes are NOT on main. Re-read the whole file carefully (matching braces and parentheses, commas between column and index definitions, imports, template strings), redo the changes cleanly, and re-read the file once more before you push. Do this for every schema file you edit.
+# Notice for lane 15 (read and apply FIRST)
+
+CI (GitHub Actions) now checks every push to main. TOP PRIORITY: work docs/orchestrator/queues/clone/lane-15-ci1.md (real type-check, lint and build errors reported by CI) BEFORE anything else. Pause the verify2 queue until your ci1 queue is done. Never silence errors (no any, @ts-ignore, @ts-expect-error, eslint-disable). Then continue lane-15-verify.md and lane-15-verify2.md.
