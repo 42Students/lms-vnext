@@ -49,7 +49,7 @@ export function TpoCampaignSendControl({campaignId,ready,recipients,status}:{
   This campaign is {status.toLowerCase()}. Provider acceptance does not prove inbox delivery.
  </p>;
  return <section className="min-w-0 space-y-3 border-t border-border pt-4" aria-label="Campaign send">
-  <h2 className="font-semibold">Step 2 of 2 · Email {recipients} recruiters</h2>
+  <h2 className="font-semibold">Step 2 of 2 · Email {recipients} {recipients===1?"recruiter":"recruiters"}</h2>
   <p className="text-sm text-body">Legacy Send an email is now a verified draft-and-confirm workflow. Review the saved subject and recipient selection before final confirmation. You may save a draft without email delivery configured, but Send requires a ready provider and at least one reachable recipient.</p>
   {!ready?<Alert tone="warning">
    Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.
