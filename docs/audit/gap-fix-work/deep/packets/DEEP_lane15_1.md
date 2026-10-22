@@ -7,8 +7,8 @@ These rows were marked DEFERRED without being checked. Each row must now end as 
 DEFERRED is NOT allowed. For each row: read its full text in the source packet named next to it, find the old behaviour in docs/legacy-source, find the vNext code, decide, and fix if needed.
 Keep tests passing and TypeScript valid; never silence errors. Write one result line per row under Results, push, then tick this packet in your queue.
 
-- [ ] G2-3-024-016  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
-- [ ] G2-3-024-021  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
+- [x] G2-3-024-016  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
+- [x] G2-3-024-021  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
 - [ ] G2-3-024-029  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
 - [ ] G2-3-024-047  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_11.md)
 - [ ] G2-15-031-062  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
@@ -20,3 +20,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 ## Results
 
+- G2-3-024-016: OK — `src/components/groups/college-group-import-preview.tsx:176-196` renders durable requested/added/waitlisted/errors and per-row outcomes returned by `src/modules/groups/college-group-import-service.ts:39-72`; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/groups/AdminGroupController.java:184-200`.
+- G2-3-024-021: OK — `src/modules/groups/college-group-import-service.ts:39-72` individually writes through `joinGroup`, preserves successful rows and errors; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/groups/AdminGroupController.java:168-201`.
