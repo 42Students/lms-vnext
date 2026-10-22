@@ -123,7 +123,7 @@ export default async function LearnerPlacementJobDetailPage({
    {/* Published jobs supply their own PageHeader through LearnerPlacementJobDetail.
        Do not duplicate the h1 from this route. */}
    {shell}
-   {!savedJobs.available ? <Banner tone="warning" role="alert">Saved-job controls are unavailable because your bookmarks could not be loaded. Drive details remain available. <Link href={"/learn/my-placements/jobs/"+encodeURIComponent(jobId)} className="font-semibold underline">Retry saved jobs</Link></Banner> : null}
+   {!savedJobs.available ? <Banner tone="warning" role="alert">Your saved-job status could not be verified. Bookmark controls may show an outdated selection; refresh before changing saved jobs. Drive details remain available. <Link href={"/learn/my-placements/jobs/"+encodeURIComponent(jobId)} className="font-semibold underline">Retry saved jobs</Link></Banner> : null}
    {rows.length>0 && rows.some(row => Boolean(row.job.jobDescriptionObjectPath)) ?
      <LearnerJobDescriptionLink jobId={jobId}/> : null}
    {rows.length>0?<LearnerPlacementJobDetail items={rows.map(toItem)}
