@@ -33,6 +33,7 @@ import {
   courseUploadReceipts,
 } from "@/db/schema/course-upload-receipts-staged";
 import type { RequestContext } from "@/modules/identity/context";
+import {hasMembershipRole,isSuperAdmin} from "@/modules/identity/context";
 import { can } from "@/modules/permissions/policy";
 import { requireOwnCourseLearnerRead } from "./learner-access-guard";
 import {
@@ -903,6 +904,48 @@ export async function addDescriptiveAssignmentPoints(
  });
 }
 
+/** 0205 is registered in the migration journal. Write one immutable private
+ * ledger row before the grading transaction commits; never put points or
+ * feedback into the college-wide activity stream. The optimistic submission
+ * version is the event's unique, ordered version key. */
+async function appendAssignmentGradeEvent(
+  tx:Pick<ReturnType<typeof getDb>,"execute">,
+  context:RequestContext,
+  previous:Awaited<ReturnType<typeof loadAssignmentSubmissionScope>>,
+  next:typeof assignmentSubmissions.$inferSelect,
+  action:"GRADE"|"REGRADE"|"HIDE_GRADE"|"PUBLISH_GRADE",
+){
+  const superAdmin=isSuperAdmin(context);
+  const role=superAdmin?"SUPER_ADMIN":
+    hasMembershipRole(context,"COLLEGE_ADMIN")?"COLLEGE_ADMIN":"FACULTY";
+  const actorMembershipId=superAdmin?null:context.membership?.id??null;
+  if(!superAdmin&&!actorMembershipId)
+    throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+  await tx.execute(sql`
+    insert into assignment_grade_events (
+      assignment_submission_id,assignment_id,delivery_id,learner_membership_id,
+      college_id,actor_user_id,actor_membership_id,actor_role,action,
+      previous_points,new_points,previous_feedback,new_feedback,
+      previous_grading_status,new_grading_status,
+      previous_grade_published,new_grade_published,
+      previous_graded_by_user_id,new_graded_by_user_id,
+      previous_graded_at,new_graded_at,
+      submission_version_before,submission_version_after
+    ) values (
+      ${next.id}::uuid,${next.assignmentId}::uuid,${next.deliveryId}::uuid,
+      ${next.membershipId}::uuid,${previous.collegeId}::uuid,
+      ${context.user.id}::uuid,${actorMembershipId}::uuid,${role},${action},
+      ${previous.pointsAwarded},${next.pointsAwarded},
+      ${previous.feedback},${next.feedback},
+      ${previous.gradingStatus},${next.gradingStatus},
+      ${previous.gradePublished},${next.gradePublished},
+      ${previous.gradedByUserId}::uuid,${next.gradedByUserId}::uuid,
+      ${previous.gradedAt},${next.gradedAt},
+      ${previous.version},${next.version}
+    )
+  `);
+}
+
 export async function gradeAssignmentSubmission(
   context: RequestContext,
   submissionIdInput: string,
@@ -984,8 +1027,10 @@ export async function gradeAssignmentSubmission(
     if (!updated) {
       throw new CoursesServiceError("ASSIGNMENT_SUBMISSION_CONFLICT");
     }
-    // Keep grade history and the persisted update atomic. Never place
-    // scores, student names or private feedback into the shared activity feed.
+    await appendAssignmentGradeEvent(tx,context,current,updated,
+      hideOnly?"HIDE_GRADE":current.gradingStatus==="GRADED"?"REGRADE":"GRADE");
+    // Keep privacy-safe activity summaries separate from the restricted
+    // before/after points ledger; both writes commit with the submission.
     await recordActivityEventInTransaction(tx, context, {
       eventType: ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_GRADED,
       collegeId: current.collegeId,
@@ -1075,6 +1120,7 @@ export async function publishAssignmentGrade(
     if (!updated) {
       throw new CoursesServiceError("ASSIGNMENT_SUBMISSION_CONFLICT");
     }
+    await appendAssignmentGradeEvent(tx,context,current,updated,"PUBLISH_GRADE");
     const gradeEvent = await recordActivityEventInTransaction(tx, context, {
       eventType: ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_GRADE_PUBLISHED,
       collegeId: current.collegeId,
