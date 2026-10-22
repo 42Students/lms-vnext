@@ -98,5 +98,7 @@ describe("optional module access resolution", () => {
       level: "COLLEGE",
       locked: false,
     });
+    // Per-learner placements eligibility belongs to TPO, not a module toggle.
+    expect(result.projects.enabled).toBe(true);
   });
 });

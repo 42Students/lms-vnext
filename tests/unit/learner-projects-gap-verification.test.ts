@@ -58,8 +58,8 @@ describe("learner/projects verified gap closure",()=>{
   const s=read("src/components/projects/project-participant-list-controls.tsx");
   expect(s).toContain("In progress");expect(s).toContain("Ready");
   expect(s).toContain('<option value="BLOCKED">Blocked</option>');
-  expect(page()).toContain('blocked ? ["Blocked"] : []');
-  expect(page()).toContain("attentionSchema.safeParse(attention)");
+  expect(page()).toContain('const attention = one(params.attention)');
+  expect(page()).toContain('attentionSchema = z.enum(["LEARNER_ACTION","BLOCKED"])');
  });
  it("LEARNER-projects-06 exact list empty copy distinguishes no assignment from filters",()=>{
   expect(learnerProjectListEmptyState(0,0).title).toBe("No projects assigned yet.");
@@ -134,7 +134,7 @@ describe("learner/projects verified gap closure",()=>{
  it("LEARNER-projects-30 comments validate nonempty note and expose comment kind",()=>{
   const s=read("src/components/projects/project-task-comments.tsx");
   expect(s).toContain("PROJECT_TASK_COMMENT_KINDS");
-  expect(s).toContain('if(!body.trim()){setError("message is required");return;}');
+  expect(s).toContain('if(!body.trim()){setError("Add a note before posting");return;}');
   expect(s).toContain("Add a note before posting");
  });
  it("LEARNER-projects-31 Board shows Add my task, filters and saving feedback",()=>{
