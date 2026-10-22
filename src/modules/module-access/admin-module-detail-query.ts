@@ -28,14 +28,14 @@ export function parseAdminModuleDetailPageParams(
  const allowed=new Set(["module","scope","locks","storedState","scopeId","page","academicPage"]);
  if(Object.keys(raw).some(key=>!allowed.has(key))||
     Object.values(raw).some(Array.isArray))return null;
- const academicInput=raw.academicPage;
+ const academicInput=raw["academicPage"];
  const academicPage=academicInput===undefined?1:
   typeof academicInput==="string"&&/^[1-9][0-9]*$/.test(academicInput)?Number(academicInput):NaN;
  if(!Number.isSafeInteger(academicPage)||academicPage>10000)return null;
  const parsed=adminModuleDetailQuerySchema.safeParse({
-  module:raw.module||undefined,scope:raw.scope||undefined,
-  locks:raw.locks||undefined,storedState:raw.storedState||undefined,
-  scopeId:raw.scopeId||undefined,page:raw.page||undefined,
+  module:raw["module"]||undefined,scope:raw["scope"]||undefined,
+  locks:raw["locks"]||undefined,storedState:raw["storedState"]||undefined,
+  scopeId:raw["scope"]Id||undefined,page:raw["page"]||undefined,
  });
  return parsed.success?{...parsed.data,academicPage}:null;
 }
