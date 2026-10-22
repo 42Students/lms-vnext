@@ -643,6 +643,34 @@ async function snapshotApplicationResume(tx:Tx,applicationId:string,
      updatedAt:when,updatedByUserId:actorId}});
 }
 
+/** A platform operator may lower the limit, never disable it. A missing or
+ * malformed setting retains the legacy five successful applies per minute. */
+export function placementApplicationsPerMinute(env:Record<string,string|undefined>=process.env):number {
+ const text=(env.PLACEMENT_APPLICATION_RATE_LIMIT_PER_MINUTE??"").trim();
+ if(!/^(?:[1-9]|1[0-9]|2[0-9]|30)$/.test(text))return 5;
+ return Number(text);
+}
+/** SERIALIZE all learner application writes across DIFFERENT jobs.
+ * A shared membership row lock would permit concurrent transactions through,
+ * so a transaction advisory lock prevents cross-job bursts from beating COUNT.
+ * The history table counts only committed SUBMITTED transitions, including
+ * legitimate withdrawals followed by re-apply. Existing idempotent receipts
+ * return without consuming a rate slot.
+ */
+async function assertPlacementApplicationRateLimit(tx:Tx,membershipId:string) {
+ await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${membershipId}::text, 42317))`);
+ const since=new Date(Date.now()-60_000);
+ const [recent]=await tx.select({total:sql<number>`count(*)::int`})
+  .from(placementApplicationStatusHistory)
+  .innerJoin(placementApplications,eq(placementApplications.id,
+    placementApplicationStatusHistory.applicationId))
+  .where(and(eq(placementApplications.membershipId,membershipId),
+    eq(placementApplicationStatusHistory.toStatus,"SUBMITTED"),
+    gte(placementApplicationStatusHistory.createdAt,since)));
+ if(Number(recent?.total??0)>=placementApplicationsPerMinute())
+  throw new PlacementsServiceError("PLACEMENT_APPLICATION_RATE_LIMITED");
+}
+
 /** Re-application never resurrects stale screening, rounds, or official offers. */
 export function canReapplyWithdrawnPlacementApplication(input: {
   sameChannel: boolean;
@@ -936,6 +964,7 @@ export async function applyToPlacementJob(
         })) {
           throw new PlacementsServiceError("PLACEMENT_APPLICATION_ALREADY_WITHDRAWN");
         }
+        await assertPlacementApplicationRateLimit(tx,membership.id);
         const [restored] = await tx.update(placementApplications).set({
           status: "SUBMITTED", withdrawnAt: null,
           // Do not replace the first application date when restoring a valid
@@ -977,6 +1006,7 @@ export async function applyToPlacementJob(
         return restored;
       }
 
+      await assertPlacementApplicationRateLimit(tx,membership.id);
       const [application] = await tx
         .insert(placementApplications)
         .values({

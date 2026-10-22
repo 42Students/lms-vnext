@@ -40,7 +40,9 @@ export function apiErrorResponse(error: unknown) {
       ...body,
       // Teaching-scope denial is safe to explain without exposing a foreign
       // course. Other authorization failures intentionally remain generic.
-      message: code === "FACULTY_TEACHING_SCOPE_REQUIRED"
+      message: code === "PLACEMENT_APPLICATION_RATE_LIMITED"
+        ? "Too many applications in the last minute. Please try again shortly."
+        : code === "FACULTY_TEACHING_SCOPE_REQUIRED"
         ? "You do not teach this course or class"
         : friendlyApiError({ status, code }),
       requestId,
@@ -188,11 +190,8 @@ export function apiErrorResponse(error: unknown) {
     return respond(
       { error: error.code },
       {
-        status: notFound.has(error.code)
-          ? 404
-          : forbidden.has(error.code)
-            ? 403
-            : 409,
+        status: error.code==="PLACEMENT_APPLICATION_RATE_LIMITED"?429:
+          notFound.has(error.code)?404:forbidden.has(error.code)?403:409,
       },
     );
   }
