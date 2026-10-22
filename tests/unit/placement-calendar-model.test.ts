@@ -83,32 +83,32 @@ describe("Placement calendar India-local grouping", () => {
 });
 
 describe("Placement calendar view windows", () => {
-  it("uses Monday-first week boundaries", () => {
+  it("uses legacy Sunday-first TPO week boundaries", () => {
     const window = placementCalendarWindow("2026-10-14", "week");
 
-    expect(window.from).toBe("2026-10-12");
-    expect(window.to).toBe("2026-10-18");
+    expect(window.from).toBe("2026-10-11");
+    expect(window.to).toBe("2026-10-17");
     expect(window.days).toHaveLength(7);
-    expect(window.days[0]).toBe("2026-10-12");
-    expect(window.days[6]).toBe("2026-10-18");
+    expect(window.days[0]).toBe("2026-10-11");
+    expect(window.days[6]).toBe("2026-10-17");
   });
 
   it("includes adjacent month days in a 42-day grid", () => {
     const window = placementCalendarWindow("2026-10-14", "month");
 
-    expect(window.from).toBe("2026-09-28");
-    expect(window.to).toBe("2026-11-08");
+    expect(window.from).toBe("2026-09-27");
+    expect(window.to).toBe("2026-11-07");
     expect(window.days).toHaveLength(42);
     expect(window.days[0]).toBe(window.from);
     expect(window.days[41]).toBe(window.to);
   });
 
-  it("uses the selected calendar month for agenda", () => {
+  it("uses the selected day and inclusive 30-day TPO agenda window", () => {
     const window = placementCalendarWindow("2026-02-14", "agenda");
 
     expect(window).toEqual({
-      from: "2026-02-01",
-      to: "2026-02-28",
+      from: "2026-02-14",
+      to: "2026-03-16",
       days: [],
     });
   });
@@ -116,7 +116,7 @@ describe("Placement calendar view windows", () => {
   it("handles leap-year month boundaries", () => {
     const window = placementCalendarWindow("2028-02-29", "agenda");
 
-    expect(window.to).toBe("2028-02-29");
+    expect(window.to).toBe("2028-03-30");
   });
 });
 
