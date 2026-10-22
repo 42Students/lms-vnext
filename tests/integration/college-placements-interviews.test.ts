@@ -15,6 +15,7 @@ const enabled = Boolean(process.env.TEST_DATABASE_URL) && process.env.DB03_ISOLA
 if (enabled) assertDb018DisposableTarget(process.env, { serviceBound: true });
 const pool = enabled ? new Pool({ connectionString: process.env.TEST_DATABASE_URL, max: 2 }) : null;
 const tag = "CI-" + randomUUID().slice(0, 8);
+let fixtureSlotSequence = 0;
 const adminA: RequestContext = {
   user: { id: SEED_IDS.collegeAdminUser, identityUid: "col-pl-int-a", platformStatus: "ACTIVE", systemRoles: [] },
   membership: { id: SEED_IDS.collegeAdminMembership, collegeId: SEED_IDS.collegeA,
@@ -41,15 +42,15 @@ async function makeDrive(status = "PUBLISHED") {
     [app, job, role, SEED_IDS.learnerCollegeAMembership, SEED_IDS.learnerUser]);
   await p.query("INSERT INTO placement_application_screenings(application_id,status,decided_by_user_id,decided_at) VALUES($1,'SHORTLISTED',$2,now()) ON CONFLICT (application_id) DO UPDATE SET status='SHORTLISTED',decided_by_user_id=$2,decided_at=now()", [app, SEED_IDS.collegeAdminUser]);
   await p.query("INSERT INTO placement_job_rounds(id,job_id,sequence,kind,name,created_by_user_id) VALUES($1,$2,1,'INTERVIEW',$3,$4)", [round, job, tag, SEED_IDS.collegeAdminUser]);
-  return { job, role, app, round };
+  return { job, role, app, round, slotOffsetHours: ++fixtureSlotSequence * 2 };
 }
 const when = (hours: number) => new Date(Date.now() + hours * 3600_000).toISOString();
-const appt = (d: { round: string; app: string }, over: Record<string, unknown> = {}) => ({
-  roundId: d.round, applicationId: d.app, scheduledAt: when(48), durationMinutes: 30,
+const appt = (d: { round: string; app: string; slotOffsetHours?: number }, over: Record<string, unknown> = {}) => ({
+  roundId: d.round, applicationId: d.app, scheduledAt: when(48 + (d.slotOffsetHours ?? 0)), durationMinutes: 30,
   interviewType: "TECHNICAL", roundDescription: "Technical interview with the college panel",
   mode: "ON_CAMPUS", venue: "Room 101 " + tag, meetingUrl: null, interviewer: "Dr. Rao", ...over,
 });
-const schedule = (job: string, d: { round: string; app: string }, over: Record<string, unknown> = {}) =>
+const schedule = (job: string, d: { round: string; app: string; slotOffsetHours?: number }, over: Record<string, unknown> = {}) =>
   mutateCollegeRoundSlotInterview(adminA, job, { action: "SCHEDULE", confirmed: true, appointment: appt(d, over) });
 
 describe.skipIf(!enabled)("College Admin interviews: isolated PostgreSQL", () => {
@@ -145,11 +146,11 @@ describe.skipIf(!enabled)("College Admin interviews: isolated PostgreSQL", () =>
     const d1 = await makeDrive(), d2 = await makeDrive();
     const start = when(96);
     const a = await schedule(d1.job, d1, { scheduledAt: start, venue: "Hall X " + tag, interviewer: "P1" });
-    await schedule(d2.job, d2, { scheduledAt: start, mode: "VIRTUAL", venue: null, meetingUrl: "https://meet.example.com/" + tag, interviewer: "P2" });
+    await expect(schedule(d2.job, d2, { scheduledAt: start, mode: "VIRTUAL", venue: null, meetingUrl: "https://meet.example.com/" + tag, interviewer: "P2" })).rejects.toThrow(/overlaps|overlapping/);
+    await schedule(d2.job, d2, { scheduledAt: when(102), mode: "VIRTUAL", venue: null, meetingUrl: "https://meet.example.com/" + tag, interviewer: "P2" });
     const dir = await listCollegeInterviewDirectory(adminA, { q: tag });
     expect(dir.summary.scheduled).toBeGreaterThanOrEqual(2);
-    expect(dir.summary.conflicts).toBeGreaterThanOrEqual(2);
-    expect(dir.rows.some(r => r.conflict)).toBe(true);
+    expect(dir.rows.find(r => r.id === a.id)?.conflict).toBe(false);
     expect((await listCollegeInterviewDirectory(adminA, { q: tag, mode: "VIRTUAL" })).rows.every(r => r.mode === "VIRTUAL")).toBe(true);
     expect((await listCollegeInterviewDirectory(adminA, { q: tag, companyId: ids.company })).total).toBeGreaterThanOrEqual(2);
     const noShowBefore = (await listCollegeInterviewDirectory(adminA, { q: tag, status: "NO_SHOW" })).total;
