@@ -221,8 +221,11 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
                 placeholder="Auto-generated from title if left blank"
                 disabled={pending} onChange={event => updateSprint(index, { key: event.target.value })}/>
             </label>
-            <label className={label}>Release key
-              <Select className={field} disabled={pending} required value={sprint.releaseKey}
+            <label className={label}>Release (required)
+              <Select className={field} disabled={pending} required
+                aria-invalid={!sprint.releaseKey||
+                  !draft.releases.some(item=>item.key===sprint.releaseKey)}
+                value={sprint.releaseKey}
                 onChange={event => updateSprint(index, { releaseKey: event.target.value })}>
                 {draft.releases.map(release => <option key={release.key} value={release.key}>
                   {release.key}</option>)}
@@ -230,10 +233,11 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
             </label>
             <label className={label}>Title
               <Input className={field} required maxLength={200} disabled={pending}
+                placeholder="e.g. Discovery and design" aria-invalid={!sprint.title.trim()}
                 value={sprint.title} onChange={event => updateSprint(index, { title: event.target.value })}/>
             </label>
             <label className={label}>Due (optional)
-              <Input className={field} maxLength={120} disabled={pending}
+              <Input className={field} maxLength={160} disabled={pending}
                 placeholder="e.g. Before sprint 1" value={sprint.dueLabel ?? ""}
                 onChange={event => updateSprint(index, { dueLabel: event.target.value || undefined })}/>
             </label>
