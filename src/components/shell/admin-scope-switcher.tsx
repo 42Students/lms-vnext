@@ -133,7 +133,7 @@ export function AdminScopeSwitcher({choices,scope}:{
     onChange={event=>switchScope(event.target.value?"college:"+event.target.value:
       filterOrganization?"organization:"+filterOrganization:"")}
     className="w-full min-w-0">
-    <option value="">All Colleges</option>
+    <option value="">All colleges</option>
     {visibleColleges.map(item=><option key={item.id} value={item.id}>
       {item.organizationName} · {item.name}</option>)}
    </Select>

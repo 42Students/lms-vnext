@@ -5,7 +5,8 @@ describe("LEARNER-placements-53 authoritative placement rules",()=>{
  const rules={countsAsPlacedAt:"OFFER_RELEASED",maxHeldOffers:1,upliftPct:40,minResponseHours:48};
  it("LEARNER-placements-53 reports saved college limits and truthful held-offer uplift",()=>{
   const view=learnerCollegePlacementRulePoints(rules,[{kind:"OFFER",status:"ISSUED",annualCtcInr:600000}]);
-  expect(view.points).toContain("Offers you can hold: up to 1 active offer.");
+  expect(view.points.some(point=>point.includes("Offers you can hold: One offer at a time.") &&
+    point.includes("Before you accept, you see exactly which"))).toBe(true);
   expect(view.points.some(point=>point.includes("48 hours"))).toBe(true);
   expect(view.personal).toContain("₹6 LPA");
   expect(view.personal).toContain("₹8.4 LPA");
