@@ -19,10 +19,15 @@ describe("chat-7 final sprint Super Admin courses and content",()=>{
   const ui=read("src/components/courses/admin-course-create-panel.tsx");
   const edit=read("src/components/courses/admin-course-actions.tsx");
   const service=read("src/modules/courses/course-service.ts");
-  for(const text of ["Short display name","Official course code (optional)","Card colour","Course takeaways (optional)"]){
+  for(const text of ["Short display name","Card colour"]){
    expect(ui).toContain(text);expect(edit).toContain(text);
   }
-  expect(service).toContain("shortTitle:input.shortTitle??input.name.slice(0,120)");
+  expect(ui).toContain("Official course code");
+  expect(ui).toContain('id="course-official-code"');
+  expect(ui).toContain("In this Course – Takeaways");
+  expect(edit).toContain("Official course code (optional)");
+  expect(edit).toContain("Course takeaways (optional)");
+  expect(service).toContain("shortTitle:input.shortTitle??input.name.slice(0,64)");
   expect(read("docs/proposed-migrations/registered-0135/chat7-sa-course-catalogue-metadata.sql"))
    .toContain("ADD COLUMN IF NOT EXISTS short_title");
  });
@@ -82,7 +87,9 @@ describe("chat-7 final sprint Super Admin courses and content",()=>{
   expect(read("src/modules/courses/college-assignment-submission-review-service.ts")).toContain("isSuperAdmin(context)");
   expect(read("src/app/(authenticated)/admin/assignments/page.tsx")).toContain("<CollegeAssignmentCreate");
   expect(ui).toContain('const base = assignment ? "/admin/assignments" : "/admin/quizzes"');
-  expect(ui).toContain("Open offering builder / submissions");
+  expect(ui).toContain("Open offering →");
+  expect(ui).toContain("<SuperAdminAssignmentSubmissionsDialog");
+  expect(ui).toContain('href={"/admin/courses/offerings/"+encodeURIComponent(item.offeringId)}');
   expect(read("src/app/(authenticated)/admin/assignments/page.tsx"))
    .toContain('adminAssessmentExportHref("ASSIGNMENT",query.data');
  });
