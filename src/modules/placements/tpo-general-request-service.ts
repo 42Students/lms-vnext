@@ -34,7 +34,7 @@ async function requireRegisteredKind(tx:Tx,kind:string){
    and conname='placement_general_request_kind_ck' and contype='c'
    and pg_get_constraintdef(oid) like '%OFFER_ACCEPTANCE_DISPUTE%'
  ) as enabled`);
- if(result.rows[0]?.enabled!==true)throw new TpoGeneralRequestError("UNAVAILABLE");
+ if(result.rows[0]?.["enabled"]!==true)throw new TpoGeneralRequestError("UNAVAILABLE");
 }
 
 async function requireLearner(ctx:RequestContext){
