@@ -12,7 +12,6 @@ import { ProjectMentorReassignment } from "@/components/projects/project-mentor-
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import {ErrorState} from "@/components/ui/error-state";
-import {StatusBadge} from "@/components/ui/status-badge";
 import { Disclosure } from "@/components/ui/disclosure";
 import {parseProjectAdminReassignMentorQuery,projectAdminReassignMentorHref,
  resolveLegacyReassignMentorBookmark} from "@/modules/projects/admin-reassign-mentor-query-model";
@@ -63,7 +62,7 @@ export async function ProjectAdminReassignMentorPage({
         className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline md:min-h-[var(--lms-control-height)]">Clear filters</Link>}/>
   </div>;
   const {fromMentorId,projectId:initialProjectId,mentorSearch,mentorPage,...filters}=parsed.data;
-  const query={...filters,fromMentorId} satisfies ProjectAdminCollectionQuery;
+  const query={...filters,...(fromMentorId !== undefined ? {fromMentorId} : {})} satisfies ProjectAdminCollectionQuery;
   // The roster, eligible mentors and workload must all be verified before
   // presenting mutation controls. A failed dependency is not an empty list.
   const [projectsRead,mentorsRead,workloadRead]=await Promise.allSettled([
@@ -103,7 +102,7 @@ export async function ProjectAdminReassignMentorPage({
       <Disclosure title="Mentor workload"
         defaultOpen className="border-b border-border pb-4" contentClassName="pt-2">
         <ProjectMentorWorkloadTable rows={sortedWorkload}
-          basePath={basePath} selectedMentorId={fromMentorId}/>
+          basePath={basePath} {...(fromMentorId !== undefined ? {selectedMentorId:fromMentorId} : {})}/>
       </Disclosure>
       <Disclosure title="Filter by current mentor" className="border-b border-border pb-4" contentClassName="space-y-4 pt-3" defaultOpen>
       <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto_auto]"
@@ -154,7 +153,7 @@ export async function ProjectAdminReassignMentorPage({
       </Disclosure>
       {mentorsRead.status==="fulfilled"?<ProjectMentorReassignment
         collegeId={collegeId}
-        initialProjectId={initialProjectId}
+        {...(initialProjectId !== undefined ? {initialProjectId} : {})}
         matchingWorkspaces={projects.matchingWorkspaces}
         matchingCapped={projects.matchingCapped}
         workspaces={projects.items
