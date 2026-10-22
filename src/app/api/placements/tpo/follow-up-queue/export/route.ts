@@ -6,7 +6,7 @@ import {getTpoFollowupQueueCsv} from "@/modules/placements/tpo-followup-queue-se
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export async function GET(request:Request){
- if(process.env.DB09_TPO_API_READY!=="DB09_VERIFIED")
+ if(process.env["DB09_TPO_API_READY"]!=="DB09_VERIFIED")
   return NextResponse.json({error:"DB09_MIGRATIONS_PENDING"},{status:503,
    headers:{"Cache-Control":"private, no-store, max-age=0"}});
  try{
