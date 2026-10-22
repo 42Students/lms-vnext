@@ -149,12 +149,17 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const today = buildRecruiterToday(jobs, calendar.events, selectedId, now);
   const collegeJobs = jobs.filter(row => row.collegeId === selectedId && row.job.archivedAt === null);
   const dueResults = projectHrTodayResultsDue(calendar.resultsDue, collegeJobs.map(row => row.job.id));
-  const liveDrives=hrTodayLiveDriveRows(jobs,selectedId,recruiter.companyId);
+  // Rank the primary card from the whole authorized live-drive preview,
+  // not just the first three deadline-sorted drives. Do not expose the
+  // legacy all-applicant count to HR; shared counts respect TPO grants.
+  const eligibleLiveDrives=hrTodayLiveDriveRows(jobs,selectedId,recruiter.companyId,jobs.length);
   const liveDriveCounts=await recruiterVisiblePortfolioCounts(
-    context,selectedId,liveDrives.map(row=>row.job.id),
+    context,selectedId,eligibleLiveDrives.map(row=>row.job.id),
   ).catch(() => null);
-  const mostSharedLiveId=liveDriveCounts ? [...liveDrives].sort((left,right)=>
-    (liveDriveCounts[right.job.id]?.sharedApplicants??0)-(liveDriveCounts[left.job.id]?.sharedApplicants??0))[0]?.job.id??null : null;
+  const liveDrives=hrTodayLiveDriveRows(
+    jobs,selectedId,recruiter.companyId,3,liveDriveCounts);
+  const mostSharedLiveId=liveDriveCounts&&liveDrives.length
+    ?liveDrives[0]?.job.id??null:null;
   const unreadAction=inboxResult.status==="fulfilled"?hrTodayUnreadAction({...inboxResult.value,collegeId:selectedId}):null;
   const conversationSignals = conversations?.status==="READY"
     ? hrTodayConversationSignals(conversations.items,conversations.total)
@@ -349,17 +354,17 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     </details>
     <section aria-label="Live recruiter hiring drives" className="border-b border-[var(--lms-canvas-border)] pb-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-[var(--lms-font-lg)] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-7">Live drive</h2>
+        <h2 className="text-[var(--lms-font-lg)] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-7">Live drives</h2>
         <Link href={"/hr/drives?collegeId="+encodeURIComponent(selectedId)+"&view=LIVE"}
           className="inline-flex min-h-11 items-center text-sm text-primary-text hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">See all live drives</Link>
       </div>
-      <p className="mt-2 text-xs text-muted-foreground">Applicant counts here show only applicants the placement cell has explicitly shared with you. They are not total college applications; private or unshared submissions are not visible.</p>
+      <p className="mt-2 text-xs text-muted-foreground">The busiest visible shared-applicant drive appears first, followed by up to two more. Counts include only applicants explicitly shared with you by the placement cell—not private applications.</p>
       {liveDrives.length?<div className="mt-4 min-w-0 divide-y divide-[var(--lms-canvas-border)]">
         {liveDrives.map(row=><Link key={row.job.id}
           href={"/recruiter/drives/"+encodeURIComponent(row.job.id)}
           className="block min-w-0 break-words py-4 hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           <span className="block break-words font-semibold text-foreground">{row.job.title}</span>
-          {liveDriveCounts&&row.job.id===mostSharedLiveId&&liveDrives.length>1&&(liveDriveCounts[row.job.id]?.sharedApplicants??0)>0?<Badge  tone="neutral" className="mt-1">Most shared applicants in this preview</Badge>:null}
+          {liveDriveCounts&&row.job.id===mostSharedLiveId&&liveDrives.length>1&&(liveDriveCounts[row.job.id]?.sharedApplicants??0)>0?<Badge  tone="neutral" className="mt-1">Most shared applicants</Badge>:null}
           <span className="mt-1 block text-xs text-muted-foreground">
             {row.job.applicationDeadline?"Applications close "+when(row.job.applicationDeadline)+" IST":"No deadline recorded"}
           </span>

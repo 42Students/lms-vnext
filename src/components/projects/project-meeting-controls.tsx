@@ -436,7 +436,7 @@ export function ScheduleProjectMeetingControl({
       setError("Item 1 required fields: "+validationError);
       return;
     }
-    if(meetingType==="RETRO"&&!facilitation.notes.trim()&&!facilitation.wentWell.trim()&&!facilitation.improve.trim()){
+    if(meetingType==="RETRO"&&!facilitation.notes.trim()&&!facilitation.wentWell.trim()&&!facilitation.retroDidntGoWell.trim()&&!facilitation.improve.trim()&&!facilitation.retroActions.length){
       setError("Item 1 required fields: Add retrospective notes or reflections.");
       return;
     }
@@ -665,10 +665,10 @@ export function ScheduleProjectMeetingControl({
             <fieldset className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)]">
             {([
               ["notes","Notes"],["actionItems","Follow-up actions"],
-              ["wentWell","Retrospective: What went well?"],["improve","Retrospective: What didn't go well?"],
+              ["wentWell","Retrospective: What went well?"],["retroDidntGoWell","Retrospective: What didn't go well?"],["improve","Retrospective: What could improve?"],
               ["nextTime","Retrospective: Actions for next sprint"],["followUpNotes","Follow-up notes"],
             ] as const).filter(([field])=>meetingType==="RETRO" ||
-              !["wentWell","improve","nextTime"].includes(field)).map(([field,label])=>
+              !["wentWell","retroDidntGoWell","improve","nextTime"].includes(field)).map(([field,label])=>
               <label key={field} className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 {label}
                 <Textarea value={facilitation[field]} maxLength={4000}
@@ -709,6 +709,27 @@ export function ScheduleProjectMeetingControl({
                   {text,owner:null,dueAt:null,complete:false})}));
                 }}/>
             </label>:null}
+            {meetingType==="RETRO"&&facilitation.retroActions.length>0?
+              <div className="min-w-0 space-y-2" aria-label="Linked retrospective action tasks">
+                <p className="text-xs font-semibold text-body">Link retrospective actions to project tasks</p>
+                {facilitation.retroActions.map((item,index)=><label key={index}
+                  className="grid min-w-0 gap-1 text-xs text-body">
+                  <span className="break-words">{item.text}</span>
+                  <Select value={item.linkedTaskId??""}
+                    onChange={event=>setFacilitation(prev=>({
+                      ...prev,
+                      retroActions:prev.retroActions.map((action,rowIndex)=>rowIndex===index
+                        ?{...action,linkedTaskId:event.target.value||null}
+                        :action),
+                    }))}>
+                    <option value="">Not linked to a task</option>
+                    {tasks.map(task=><option key={task.id} value={task.id}>{task.label}</option>)}
+                  </Select>
+                  {item.taskKey?<span className="text-muted-foreground">
+                    Legacy promoted task: {item.taskKey} (verify its mapped task before linking)
+                  </span>:null}
+                </label>)}
+              </div>:null}
             <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Outcome
               <Textarea value={outcome} maxLength={4000} onChange={event=>setOutcome(event.target.value)}/>
