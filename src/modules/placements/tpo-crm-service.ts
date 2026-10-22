@@ -573,7 +573,10 @@ export async function markTpoLeadNotNow(
       .for("update")
       .limit(1);
     if (!current) throw new TpoCrmError("TPO_CRM_LEAD_NOT_FOUND");
-    if (isSameNotNowDecision(current, input)) return tpoLeadView(current);
+    if (isSameNotNowDecision(current, {
+       ...(input.reason !== undefined ? { reason: input.reason } : {}),
+       ...(input.revisitDate !== undefined ? { revisitDate: input.revisitDate } : {}),
+     })) return tpoLeadView(current);
 
     const [updated] = await tx.update(placementTpoLeads)
       .set({
