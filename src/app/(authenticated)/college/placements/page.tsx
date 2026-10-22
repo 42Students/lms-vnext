@@ -143,7 +143,7 @@ export default async function CollegePlacementsPage({searchParams}:{
            </svg><span className="ml-1">New Drive</span>
           </Link>
         </form>
-        {filtered?<DataTable caption="Active college drives" rows={activeRows} getRowKey={row=>row.id}
+        {filtered?<DataTable caption="Active college drives" rows={activeRows} getRowKey={row=>row.id} empty={null}
           columns={[
             {key:"title",header:"Drive",mobilePriority:"primary",cell:row=>
               <Link href={"/college/placements/jobs/"+encodeURIComponent(row.id)+"/overview"}

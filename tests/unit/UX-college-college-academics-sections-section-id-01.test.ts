@@ -11,6 +11,6 @@ it("UX-college-college-academics-sections-section-id-01 preserves legacy copy an
  expect(content).toContain("<DataTable");
  expect(table).toContain('<ScrollCue axis="x"');
  expect(route).not.toContain("text-on-primary");
- expect(route).not.toContain("text-primary-text");
+ expect(route).not.toContain("text-[#26bac7]");
  
 });

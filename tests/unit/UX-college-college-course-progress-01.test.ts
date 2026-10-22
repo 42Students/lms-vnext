@@ -11,6 +11,6 @@ it("UX-college-college-course-progress-01 verifies scoped responsive details",()
  const table=readFileSync(join(process.cwd(),"src/components/ui/data-table.tsx"),"utf8");
  expect(table).toContain('<ScrollCue axis="x"');
  expect(route).not.toContain("text-on-primary");
- expect(route).not.toContain("text-primary-text");
+ expect(route).not.toContain("text-[#26bac7]");
  
 });

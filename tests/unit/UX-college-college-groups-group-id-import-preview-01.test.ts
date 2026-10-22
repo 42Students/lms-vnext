@@ -8,6 +8,6 @@ it("UX-college-college-groups-group-id-import-preview-01 keeps accessible shared
  expect(preview).toContain('max-h-[35rem] min-w-0 overflow-auto');
  expect(preview).toContain('aria-label="Student group CSV validation report"');
  expect(route).not.toContain("text-on-primary");
- expect(route).not.toContain("text-primary-text");
+ expect(route).not.toContain("text-[#26bac7]");
  
 });

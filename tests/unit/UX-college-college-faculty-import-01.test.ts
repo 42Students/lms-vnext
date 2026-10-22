@@ -6,6 +6,6 @@ it("UX-college-college-faculty-import-01 preserves keyboard states, responsive l
  expect(route).toContain("min-w-0 max-w-full");
  expect(route).toContain('PageHeader title="Import faculty"');
  expect(route).not.toContain("text-on-primary");
- expect(route).not.toContain("text-primary-text");
+ expect(route).not.toContain("text-[#26bac7]");
  
 });

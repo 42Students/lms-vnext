@@ -7,6 +7,6 @@ it("UX-college-college-classes-01 retains responsive forms, states and legacy co
  expect(route).toContain("CollegeStructureDirectory");
  expect(route).toContain("min-w-0");
  expect(route).not.toContain("text-on-primary");
- expect(route).not.toContain("text-primary-text");
+ expect(route).not.toContain("text-[#26bac7]");
  
 });

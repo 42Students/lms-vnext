@@ -7,6 +7,6 @@ it("UX-college-college-faculty-membership-id-01 preserves keyboard states, respo
  expect(route).toContain("DataTable");
  expect(route).toContain("PageBackLink");
  expect(route).not.toContain("text-on-primary");
- expect(route).not.toContain("text-primary-text");
+ expect(route).not.toContain("text-[#26bac7]");
  
 });

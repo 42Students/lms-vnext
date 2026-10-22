@@ -39,6 +39,14 @@ export type CollegeApplicationDetail={
  offers:{id:string;status:string;issuedAt:string;offerLetterUrl:string|null;offerLetterAttachedAt:string|null}[];
  scoring:{available:boolean;scorePercent?:number|null;partial?:boolean;reason:string};resume:{available:boolean;reason:string;url:string|null};
 };
+const when=(v:string|null|undefined)=>{
+ if(!v)return "—";
+ const parsed=new Date(v);
+ return Number.isFinite(parsed.getTime())
+  ?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
+    timeZone:"Asia/Kolkata"}).format(parsed)+" IST"
+  :"—";
+};
 export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,initialDetail,basePath="/college/placements"}:{
  jobId:string;applicationId:string;onClose:()=>void;initialDetail?:CollegeApplicationDetail;
  basePath?: "/college/placements"|"/admin/placements";

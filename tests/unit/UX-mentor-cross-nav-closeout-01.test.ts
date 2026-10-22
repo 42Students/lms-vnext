@@ -15,7 +15,7 @@ describe("Mentor cross audit delivery discovery and contrast",()=>{
   const src=read("src/components/projects/project-list.tsx");
   expect(src).toContain("hover:bg-primary-subtle");
   expect(src).toContain("focus-visible:outline-2");
-  expect(src).not.toContain("text-primary-text");
+  expect(src).not.toContain("text-[#26bac7]");
   expect(src).not.toContain("focus-visible:ring-[var(--lms-focus-ring)]");
  });
  it("UX-mentor-cross-N03 closeout submission is guarded and minimum-sized",()=>{

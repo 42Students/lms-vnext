@@ -6,5 +6,5 @@ it("UX-college-college-people-01 ensures route-safe responsive navigation",()=>{
  expect(route).toContain('import CollegeContactsPage from "../contacts/page"');
  expect(route).toContain("return CollegeContactsPage({searchParams})");
  expect(route).not.toContain("text-on-primary");
- expect(route).not.toContain("text-primary-text");
+ expect(route).not.toContain("text-[#26bac7]");
 });

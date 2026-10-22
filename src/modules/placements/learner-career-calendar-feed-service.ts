@@ -115,8 +115,6 @@ export async function loadLearnerCareerCalendarSupplements(
   // One job belongs to one source in the calendar union. Historical owned
   // applications supersede discoverable-job previews, so a job deadline or
   // imported important date is not projected twice under different keys.
-  const merged=supplements.filter(item=>
-    item.applied||typeof item.jobId!=="string"||
-    !historicalJobIds.has(item.jobId));
+  const merged = supplements.filter(item=>item.applied || item.jobId==null || !historicalJobIds.has(item.jobId));
   return { supplements:merged, warnings };
 }

@@ -65,7 +65,7 @@ export default async function CollegeDriveShortlistedPage({
       description="The requested search, pipeline stage or page is invalid."
       action={<Link href={href({
         q: "", status: "SUBMITTED", stage: "ASSESSMENT", screening: "ALL",
-        source: "ALL", page: 1,
+        source: "ALL", skills: "", page: 1,
       })} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
   </div>;
 

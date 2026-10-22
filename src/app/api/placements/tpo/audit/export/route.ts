@@ -21,7 +21,7 @@ export async function GET(request:Request){
     {status:400,headers:{"Content-Type":"application/json","Cache-Control":"private, no-store"}});
   const columnsInput=url.searchParams.get("columns");
   const permitted=["Event","About","Detail","Actor","When"] as const;
-  const chosen=columnsInput===null?["Event","Actor","When"]:
+  const chosen:(typeof permitted[number])[]=columnsInput===null?["Event","Actor","When"]:
    columnsInput.split(",").filter((value):value is typeof permitted[number]=>
     permitted.some(name=>name===value));
   if(chosen.length===0)return new Response(JSON.stringify({
@@ -61,7 +61,7 @@ export async function GET(request:Request){
        }).format(new Date(row.occurredAt))+" IST";
       }
      }).map(safeCell).join(","))].join("\r\n")+"\r\n";
-  const body=format==="xlsx"?tpoAuditXlsx(filtered,chosen):"\uFEFF"+exported;
+  const body=format==="xlsx"?new Uint8Array(tpoAuditXlsx(filtered,chosen)):"\uFEFF"+exported;
   return new Response(body,{headers:{
    "Content-Type":format==="xlsx"?"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="' + gridExportFilename("audit-log", format) + '"',

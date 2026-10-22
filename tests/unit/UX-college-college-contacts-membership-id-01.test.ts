@@ -7,6 +7,6 @@ it("UX-college-college-contacts-membership-id-01 verifies scoped responsive deta
  expect(route).toContain("[overflow-wrap:anywhere]");
  expect(route).toContain("getCollegeContactById(await getCurrentRequestContext(),membershipId)");
  expect(route).not.toContain("text-on-primary");
- expect(route).not.toContain("text-primary-text");
+ expect(route).not.toContain("text-[#26bac7]");
  
 });

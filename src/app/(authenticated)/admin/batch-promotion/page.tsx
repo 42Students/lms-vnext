@@ -51,11 +51,12 @@ export default async function SuperAdminBatchPromotionPage({
   const pageCount=Math.max(1,Math.ceil(options.totalCohorts/pageSize));
   const currentPage=Math.min(requestedPage,pageCount);
   const shownCohorts=visibleCohorts;
+  const filters=input.data;
   function pageHref(page:number,size=pageSize){
     const query=new URLSearchParams();
-    if(input.data.programId)query.set("programId",input.data.programId);
-    if(input.data.cohortId)query.set("cohortId",input.data.cohortId);
-    if(input.data.yearStart!==undefined)query.set("yearStart",formatPromotionAcademicYear(input.data.yearStart));
+    if(filters.programId)query.set("programId",filters.programId);
+    if(filters.cohortId)query.set("cohortId",filters.cohortId);
+    if(filters.yearStart!==undefined)query.set("yearStart",formatPromotionAcademicYear(filters.yearStart));
     if(showCompleted)query.set("showCompleted","1");
     if(size!==10)query.set("pageSize",String(size));
     if(page>1)query.set("page",String(page));
@@ -159,7 +160,7 @@ export default async function SuperAdminBatchPromotionPage({
             `${batch.currentAcademicYearStart}-${String((batch.currentAcademicYearStart+1)%100).padStart(2,"0")}`:"-"},
           {key:"students",header:"Students",mobilePriority:"secondary",cell:batch=><span className="tabular-nums">{batch.activeLearners}</span>},
           {key:"status",header:"Status",mobilePriority:"secondary",cell:batch=><StatusBadge tone={
-            batch.status==="ACTIVE"?"success":batch.status==="INACTIVE"?"warning":"neutral"
+            batch.status==="ACTIVE"?"success":"neutral"
           }>{batch.status||"Unknown"}</StatusBadge>},
           {key:"action",header:"Action",mobilePriority:"action",cell:batch=>batch.status==="ACTIVE"?
             <Link href={"/admin/batch-promotion?"+new URLSearchParams({

@@ -5,5 +5,5 @@ const route=readFileSync(join(process.cwd(),"src/app/(authenticated)/college/liv
 it("UX-college-college-live-classes-01 ensures route-safe responsive navigation",()=>{
  expect(route).toContain("min-w-0");
  expect(route).not.toContain("text-on-primary");
- expect(route).not.toContain("text-primary-text");
+ expect(route).not.toContain("text-[#26bac7]");
 });

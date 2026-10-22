@@ -48,6 +48,7 @@ export default async function FacultyNotificationsPage({
   const scopeTab=legacyTab.tab;
   const { view, cursor, invalid } = parseFacultyInboxQuery(query);
   const announcementsEnabled = announcementsRuntimeEnabled();
+  const noAnnouncements: Awaited<ReturnType<typeof listVisibleAnnouncementsForMembership>> = [];
   const [notificationRead, unreadCount, announcementRead] = await Promise.all([
     (invalid
       ? Promise.resolve({ items: [], nextCursor: null })
@@ -64,7 +65,12 @@ export default async function FacultyNotificationsPage({
     countOwnUnreadNotifications(context, { collegeId: membership.collegeId }),
     announcementsEnabled
       ? listVisibleAnnouncementsForMembership(context)
-      : Promise.resolve([]),
+          .then(items=>({available:true as const,items}))
+          .catch(error=>{
+            if(error instanceof AuthorizationError)throw error;
+            return {available:false as const,items:noAnnouncements};
+          })
+      : Promise.resolve({available:true as const,items:noAnnouncements}),
   ]);
   const page=notificationRead.value;
   const announcements = announcementRead.items.filter(item =>

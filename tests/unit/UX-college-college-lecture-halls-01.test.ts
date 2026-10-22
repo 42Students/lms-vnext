@@ -8,6 +8,6 @@ it("UX-college-college-lecture-halls-01 keeps accessible shared screen state",()
  expect(route).toContain("LectureHallManager");
  expect(route).toContain('title="Could not load lecture halls"');
  expect(route).not.toContain("text-on-primary");
- expect(route).not.toContain("text-primary-text");
+ expect(route).not.toContain("text-[#26bac7]");
  
 });

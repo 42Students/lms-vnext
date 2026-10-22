@@ -43,7 +43,7 @@ describe("chat-9 last-third scroll and motion: hidden scrollbars require visible
   expect(page).toContain('caption="Project template records"');
   expect(page).toContain("<DataTable");
   expect(read("src/components/ui/data-table.tsx")).toContain('<ScrollCue axis="x"');
-  expect(page).not.toContain("text-primary-text");
+  expect(page).not.toContain("text-[#26bac7]");
   expect(page).not.toContain("min-h-10");
  });
  it("UX-admin-scroll-motion-06 /admin/projects/submissions unsubmitted table has horizontal edge and keyboard focus",()=>{

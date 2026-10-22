@@ -146,7 +146,7 @@ export default async function SuperAdminCompaniesPage({
   ];
   return <div className="min-w-0 space-y-[var(--lms-space-6)]">
     <PageHeader title="Companies"
-      description={view==="GLOBAL"?"Distinct company identities in the verified platform view; relationship counts are explicitly page-local unless marked otherwise.":"College-owned employer relationships. Sensitive CRM contact information is not shown without a scoped need-to-know read."} />
+      description={"College-owned employer relationships. Sensitive CRM contact information is not shown without a scoped need-to-know read."} />
     <Tabs ariaLabel="Company directory tabs" renderPanel={false} value={view}
       items={[
         {value:"GLOBAL",label:"42's company list",href:"/admin/companies?view=GLOBAL"},

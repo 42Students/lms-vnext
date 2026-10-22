@@ -754,7 +754,7 @@ export function ProjectWorkspace({
         estimatedTaskCount={workspace.tasks.filter(task =>
           !task.deletedAt && task.estimatePoints !== null).length}
         hasMentor={workspace.members.some(member=>
-          member.role==="MENTOR"&&!member.endedAt)}/>:null}
+          member.role==="MENTOR")}/>:null}
       {(mode !== "ADMIN" && show("summary")) || (mode === "MENTOR" && show("overview")) ? (
         <div className="grid min-w-0 grid-cols-2 gap-x-4 gap-y-0 border-t border-[var(--lms-canvas-border)] xl:grid-cols-4">
           <Metric
@@ -2411,7 +2411,7 @@ export function ProjectWorkspace({
             <ProjectResourceAuditList events={workspace.activity.map(event => ({
             id: event.id, eventType: event.eventType, summary: event.summary,
             subjectLabel: event.subjectLabel, actorDisplayName: event.actorDisplayName,
-            actorType:event.actorType,actorUserId:event.actorUserId,
+            actorType:event.actorType,
             occurredAt: event.occurredAt.toISOString(),
           }))} /> : null}
           {!workspace.activityLoadError&&mode!=="ADMIN"?<ProjectActivityFilteredList

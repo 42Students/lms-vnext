@@ -7,6 +7,6 @@ it("UX-college-college-groups-group-id-rule-preview-01 keeps accessible shared s
  expect(route).toContain('title="Rule preview"');
  expect(route).toContain('COLLEGE_RULE_NOT_CONFIGURED_STATE');
  expect(route).not.toContain("text-on-primary");
- expect(route).not.toContain("text-primary-text");
+ expect(route).not.toContain("text-[#26bac7]");
  
 });

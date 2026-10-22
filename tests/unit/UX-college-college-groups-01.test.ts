@@ -6,6 +6,6 @@ it("UX-college-college-groups-01 preserves keyboard states, responsive layout an
  expect(route).toContain("<DataTable");
  expect(route).toContain("min-h-11");
  expect(route).not.toContain("text-on-primary");
- expect(route).not.toContain("text-primary-text");
+ expect(route).not.toContain("text-[#26bac7]");
  expect(route).toContain("empty=");
 });

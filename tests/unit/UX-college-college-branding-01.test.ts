@@ -7,6 +7,6 @@ it("UX-college-college-branding-01 preserves state and mobile layout",()=>{
  expect(route).toContain('title="Branding"');
  expect(route).toContain('canEdit={canEdit}');
  expect(route).not.toContain("text-on-primary");
- expect(route).not.toContain("text-primary-text");
+ expect(route).not.toContain("text-[#26bac7]");
  
 });

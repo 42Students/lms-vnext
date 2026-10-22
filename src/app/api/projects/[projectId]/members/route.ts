@@ -8,6 +8,7 @@ import {
   listProjectMembers,
   reassignProjectPrimaryMentor,
 } from "@/modules/projects/member-service";
+import { addProjectMemberInputSchema } from "@/modules/projects/validation";
 
 export const runtime = "nodejs";
 
@@ -66,7 +67,7 @@ export async function POST(
     const member = await addProjectMember(
       context,
       projectId,
-      body,
+      addProjectMemberInputSchema.parse(body),
     );
 
     return NextResponse.json(

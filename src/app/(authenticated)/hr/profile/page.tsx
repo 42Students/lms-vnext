@@ -56,7 +56,8 @@ export default async function HrProfilePage({ searchParams }: {
    </div>;
   const profile=profileResult.value;
   const allOverview=overviewResult.value;
-  const overview={...allOverview,grants:allOverview.grants.filter(grant=>!scopedCollegeId||grant.collegeId===scopedCollegeId)};
+  const scopedGrantIds=new Set(grants.filter(grant=>grant.collegeId===scopedCollegeId).map(grant=>grant.id));
+  const overview={...allOverview,grants:allOverview.grants.filter(grant=>!scopedCollegeId||scopedGrantIds.has(grant.id))};
 
   return (
     <div className="min-w-0 max-w-full space-y-4 md:space-y-6">

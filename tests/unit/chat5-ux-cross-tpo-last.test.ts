@@ -12,7 +12,7 @@ describe("Chat-5 UX CROSS AUDIT: /tpo LAST THIRD (routes 85–126)",()=>{
   const id="UX-tpo-"+slug(route)+"-09";
   it(id+" preserves legacy page wording while enforcing authenticated shell and contrast invariants",()=>{
    const page=source(pagePath(route)),note=source(notePath(route));
-   expect(page).not.toContain("text-primary-text");
+   expect(page).not.toContain("text-[#26bac7]");
    expect(page).not.toMatch(/<main(?=[\s>])/);
    expect(page).not.toContain("window.alert(");
    expect(page).not.toContain("window.prompt(");
@@ -101,7 +101,7 @@ describe("Chat-5 UX CROSS AUDIT: /tpo LAST THIRD (routes 85–126)",()=>{
   expect(control).toContain('method:"POST"');
   expect(control).toContain("<Dialog");
   expect(control).not.toContain("min-h-10");
-  expect(control).not.toContain("text-primary-text");
+  expect(control).not.toContain("text-[#26bac7]");
   expect(control).toContain("expectedUpdatedAt");
  });
  for(const route of ["/tpo/students/[membershipId]/history","/tpo/students/[membershipId]/participation",
