@@ -35,7 +35,9 @@ export async function PATCH(request: Request, { params }: RouteContext) {
           ...(error.code === "FACULTY_NOT_FOUND" ? { message: "Not found" } : {}),
           ...(error.code === "FACULTY_HAS_ACTIVE_PROJECTS" ? {
             message: error.message,
+            legacyError: error.message,
             activeMentorProjects: error.activeMentorProjects,
+            activeProjectCount: error.activeMentorProjects,
           } : {}),
         },
         { status: error.code === "FACULTY_NOT_FOUND" ? 404 : 409 },

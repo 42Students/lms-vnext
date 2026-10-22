@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,isNull,ne} from "drizzle-orm";
+import {and,eq,isNull,ne,or} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {projectInstances,projectMembers} from "@/db/schema";
 
@@ -16,7 +16,11 @@ export async function activeMentorProjectCount(tx:Tx,membershipId:string){
   .from(projectMembers)
   .innerJoin(projectInstances,eq(projectInstances.id,projectMembers.projectId))
   .where(and(eq(projectMembers.membershipId,membershipId),
-   eq(projectMembers.role,"MENTOR"),isNull(projectMembers.endedAt),
+   // Historic imported faculty mentors may identify the assignment through
+   // roleKind while the legacy role field still carries another staff label.
+   or(eq(projectMembers.role,"MENTOR"),eq(projectMembers.roleKind,"MENTOR")),
+   isNull(projectMembers.endedAt),isNull(projectMembers.deletedAt),
+   eq(projectMembers.deletedByWorkspace,false),
    ne(projectInstances.status,"ARCHIVED")))
   .for("share",{of:projectMembers});
  return new Set(rows.map(row=>row.id)).size;
