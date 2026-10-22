@@ -551,7 +551,7 @@ export function LearnerCourseList({
                           </span>
                         </div>
                         {safeCardProgress(row) !== null ?
-                          <MetricBar role="progressbar" label="Course progress" className={progressStyles.track}
+                          <MetricBar role="progressbar" label="Course progress" {...(progressStyles["track"] === undefined ? {} : {className: progressStyles["track"]})}
                             value={safeCardProgress(row)!} maximum={100} unit="percent" />
                           : <p className="text-xs text-muted-foreground leading-[20px]">No published learning items to measure.</p>}
                         {!row.readOnly && row.overdueAssignments ? (
