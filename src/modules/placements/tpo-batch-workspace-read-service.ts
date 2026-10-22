@@ -101,11 +101,12 @@ export async function getTpoBatchStudents(ctx:RequestContext,rawId:unknown,rawPa
  const find=(kind:string,id:string)=>decisions.find(d=>d.scopeType===kind&&d.scopeId===id);
  const students=visible.map(r=>{const direct=find("MEMBERSHIP",r.membershipId);
  const sectionsFor=activeSections.filter(s=>s.enrollmentId===r.enrollmentId);
- const section=sectionsFor.length===1?find("SECTION",sectionsFor[0].sectionId):undefined;
+ const onlySection=sectionsFor.length===1?sectionsFor[0]:undefined;
+ const section=onlySection?find("SECTION",onlySection.sectionId):undefined;
  const cohort=find("COHORT",batch.id);const winner=direct??(sectionsFor.length>1?undefined:(section??cohort));
  return {membershipId:r.membershipId,name:r.name??"Unnamed learner",rollNumber:r.rollNumber,
-  className:sectionsFor.length===1?sectionsFor[0].sectionName:null,
-  classId:sectionsFor.length===1?sectionsFor[0].sectionId:null,
+  className:onlySection?.sectionName??null,
+  classId:onlySection?.sectionId??null,
   branch:batch.department,program:batch.program,
   decision:winner?.status??"NOT_DECIDED",
   source:!winner?"NONE":winner===direct?"LEARNER":winner===section?"CLASS":"BATCH",
