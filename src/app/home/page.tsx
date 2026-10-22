@@ -104,7 +104,7 @@ export default function HomeMarketingPage() {
         <h2 id="home-integrations" className="max-w-[800px] text-[clamp(1.6rem,3vw,2.25rem)] font-semibold leading-tight text-[var(--lms-heading)]">The signals that matter, in one place</h2>
         <p className="max-w-[780px] text-base leading-7 text-[var(--lms-body-text)]">A shared view of student learning, projects and hiring coordination, grounded in real LMS workflows.</p>
         <ul className="flex flex-wrap gap-3" aria-label="Connected platform workflows">
-          {workflowSignals.map(label => <li key={label} className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[#cee9e9] bg-white px-4 py-2 text-sm font-semibold text-[var(--lms-heading)] shadow-[0_3px_12px_rgba(29,79,88,.04)]">
+          {workflowSignals.map(label => <li key={label} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[#cee9e9] bg-white px-4 py-2 text-sm font-semibold text-[var(--lms-heading)] shadow-[0_3px_12px_rgba(29,79,88,.04)]">
             <span aria-hidden="true" className="h-2 w-2 rounded-full bg-[#0a7c88]" />{label}
           </li>)}
         </ul>

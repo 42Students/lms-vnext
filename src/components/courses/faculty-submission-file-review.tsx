@@ -121,7 +121,7 @@ export function FacultySubmissionFileReview({ submissionId }: { submissionId: st
         sandbox="allow-same-origin allow-downloads" referrerPolicy="no-referrer"
         loading="lazy" className="h-[520px] w-full rounded border border-border bg-surface"/>
       <p className="text-xs text-muted-foreground">
-        If the preview is unavailable, <a href={preview.url} target="_blank" rel="noopener noreferrer"
+        If the preview is unavailable, <a href={preview.url} 
           referrerPolicy="no-referrer" className="font-semibold text-primary-text underline">open this PDF in a new tab</a>.
         This permission expires shortly.
       </p>

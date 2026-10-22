@@ -18,7 +18,7 @@ export function TpoAccreditationExportPreflight({
  const label=compact?"Export anyway":"Export student list CSV";
  const className="min-h-11 w-full sm:w-auto md:min-h-9";
  if(missingStudents===0)return <a href={href}
-   className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-white sm:w-auto md:min-h-9">
+   className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-[var(--lms-on-primary)] sm:w-auto md:min-h-9">
    {label}
   </a>;
  return <>
@@ -29,7 +29,7 @@ export function TpoAccreditationExportPreflight({
    footer={<>
     <Button type="button" variant="secondary" onClick={()=>setOpen(false)}>Cancel</Button>
     <a href={href} onClick={()=>setOpen(false)}
-     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-white md:min-h-9">
+     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-[var(--lms-on-primary)] md:min-h-9">
      Export anyway
     </a>
    </>}>

@@ -86,7 +86,7 @@ export default async function SuperAdminCompaniesPage({
      <SuperAdminCompanyAvatar name={row.name} url={row.logoPublicUrl??null}/>
      <div className="min-w-0 space-y-1">
       <p className="font-semibold text-[var(--lms-heading)]">{row.name}</p>
-      {safeCompanyWebsite(row.website)?<a href={safeCompanyWebsite(row.website)!} target="_blank" rel="noopener noreferrer"
+      {safeCompanyWebsite(row.website)?<a href={safeCompanyWebsite(row.website)!}
        className="inline-flex min-h-11 md:min-h-9 items-center break-all text-sm font-semibold text-primary-text underline">Visit ↗</a>:null}
       {row.aliases?.length?<p className="break-words text-xs text-muted-foreground">Also known as {row.aliases.join(", ")}</p>:null}
       <p className="break-all text-xs text-muted-foreground">Domains: {row.domains?.length?row.domains.join(", "):"None"}</p>
@@ -107,7 +107,7 @@ export default async function SuperAdminCompaniesPage({
         <span className="block text-muted-foreground">No contact email</span>}
       </div>
      : <span className="text-xs text-muted-foreground">Private to the selected college</span>},
-   {key:"website",header:"Website",cell:row=>safeCompanyWebsite(row.website)?<a href={safeCompanyWebsite(row.website)!} target="_blank" rel="noopener noreferrer" className="break-all font-semibold text-primary-text underline">Visit ↗</a>:"—"},
+   {key:"website",header:"Website",cell:row=>safeCompanyWebsite(row.website)?<a href={safeCompanyWebsite(row.website)!} className="break-all font-semibold text-primary-text underline">Visit ↗</a>:"—"},
    {key:"drives",header:"Drives",className:"tabular-nums",sortable:true,
     sortDirection:data.query.sort==="DRIVES"?"descending":data.query.sort==="DRIVES_ASC"?"ascending":"none",cell:row=><span>{row.driveCount??0}</span>},
    {key:"active",header:"Last active",sortable:true,
@@ -130,7 +130,7 @@ export default async function SuperAdminCompaniesPage({
        <SuperAdminCompanyMerge companies={[{id:row.companyId,name:row.name}]}/>
       </Disclosure>:null}
      <Link href={"/admin/companies/"+encodeURIComponent(row.companyId)+"/drives"}
-      target="_blank" rel="noopener noreferrer"
+     
       className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">History</Link>
      <Disclosure title="Company details" contentClassName="space-y-2 pb-3">
       <p className="text-xs text-body">Added by: {row.addedByType??"—"}</p>
