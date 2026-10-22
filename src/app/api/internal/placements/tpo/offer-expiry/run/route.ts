@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 function authorized(request: Request): boolean {
-  const expected = process.env.TPO_NOTICE_SCHEDULER_SECRET ?? "";
+  const expected = process.env["TPO_NOTICE_SCHEDULER_SECRET"] ?? "";
   const provided = request.headers.get("x-tpo-scheduler-key") ?? "";
   // Require an operator-managed secret, fail closed for absent/short values.
   if (Buffer.byteLength(expected, "utf8") < 32) return false;
