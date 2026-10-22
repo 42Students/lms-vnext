@@ -20,14 +20,14 @@ describe("Team workload sorting",()=>{
   expect(service).toContain('eq(placementTpoTeamAsks.collegeId,college.id)');
   expect(service).toContain('eq(placementTpoTeamAsks.status,"OPEN")');
   expect(service).toContain("filter(where");
-  expect(page).toContain('redirect("/tpo/settings?tab=team")');
+  expect(page).toContain('redirect("/tpo/settings/team")');
   expect(page).toContain('hasPlacementTeamMembership(context)');
   expect(page).not.toContain("workloadByMember.get(");
   expect(page).toContain('redirect("/tpo/messages?" + target.toString())');
  });
  it("TPO-inbox-team-22 exposes ask status in People without fabricating work for other colleges",()=>{
   const page=src("src/app/(authenticated)/tpo/team/page.tsx");
-  expect(page).toContain('redirect("/tpo/settings?tab=team")');
+  expect(page).toContain('redirect("/tpo/settings/team")');
   expect(page).toContain('redirect("/tpo/requests")');
   expect(page).not.toContain("member.openAsks");
  });
