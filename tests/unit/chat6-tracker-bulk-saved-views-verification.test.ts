@@ -30,8 +30,9 @@ describe("Chat-6 tracker issue list parity", () => {
     expect(views).toContain("new URLSearchParams(search)");
     expect(views).toContain("value.length<=120");
     expect(views).toContain("row.name.trim().slice(0,40)");
-    expect(views).toContain("item.filters.length<=500");
-    expect(views).toContain("views.length>=12");
+    expect(views).toContain("if(row.filters.length>500)continue;");
+    expect(views).toContain("const MAX_SAVED=10");
+    expect(views).toContain("views.length>=MAX_SAVED");
     expect(views).toContain("window.localStorage.setItem");
     expect(views).toContain('router.push("/tracker/issues"');
     expect(views).toContain("Delete saved view");

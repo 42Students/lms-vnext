@@ -7,7 +7,8 @@ describe("chat-16 mentor editor safeguards",()=>{
     const editor=source("src/components/projects/mentor-sprint-details-edit.tsx");
     expect(editor).toContain("useProjectEditorDiscardGuard(open||confirmOpen,changed,pending,discardDraft)");
     expect(editor).toContain("onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}}");
-    expect(editor).toContain("onOpenChange={next=>{if(!next)guard.requestClose();}}");
+    expect(editor).toContain("if(!next&&!pending){setConfirmOpen(false);setOpen(true);}")
+    expect(editor).toContain("onOpenChange={guard.setDiscardOpen}");
     expect(editor).toContain("onConfirm={guard.confirmDiscard}");
     expect(editor).toContain("You have unsaved changes. Leave without saving them?");
   });
