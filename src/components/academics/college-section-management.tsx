@@ -51,7 +51,7 @@ function validateClassNumbers(name: string, capacity: string, minSize: string) {
     return { field: "name", message: name.trim() ? "Maximum 255 characters" : "Enter the class or section name" };
   if (!/^[0-9]+$/.test(capacity) || Number(capacity) < 1 || Number(capacity) > 200)
     return { field: "capacity", message: "Maximum must be a whole number from 1 to 200" };
-  if (minSize !== "" && (!/^[0-9]+$/.test(minSize) || Number(minSize) > Number(capacity)))
+  if (minSize !== "" && (!/^[0-9]+$/.test(minSize) || Number(minSize) < 1 || Number(minSize) > Number(capacity)))
     return { field: "minSize", message: "Maximum cannot be less than minimum" };
   return null;
 }
