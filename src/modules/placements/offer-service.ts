@@ -761,7 +761,8 @@ async function cancelFutureOfferInterviews(tx:PlacementTx,context:RequestContext
   eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_OFFER_RESPONDED,
   collegeId,subjectType:"placement_offer",subjectId:offerId,
   summary:released.length+" future interview booking(s) cancelled after offer "+action.toLowerCase(),
-  metadata:{jobId,applicationId,action,slotIds:ids,source:"OFFER_RESPONSE"},
+  metadata:{jobId,applicationId,action,slotIds:ids,source:"OFFER_RESPONSE",
+   correlationId:"placement-offer:"+offerId+":"+action.toLowerCase()+":interviews-cancelled"},
   groupKey:"placement-job:"+jobId+":interviews",
   dedupeKey:"placement-offer:"+offerId+":"+action.toLowerCase()+":interviews-cancelled",
  });
@@ -1076,6 +1077,7 @@ export async function actOnPlacementOffer(
             applicationId:
               current.application.id,
             response: "ACCEPTED",
+            correlationId: "placement-offer:"+updated.id+":accepted",
             cascadeId,
             cascadedOfferCount: declinedOffers.length,
             withdrawnApplicationCount: withdrawn.length,
@@ -1168,6 +1170,7 @@ export async function actOnPlacementOffer(
             applicationId:
               current.application.id,
             response: "DECLINED",
+            correlationId: "placement-offer:"+updated.id+":declined",
           },
           groupKey:
             `placement-job:${current.job.id}:offers`,
@@ -1269,6 +1272,7 @@ export async function actOnPlacementOffer(
           applicationId:
             current.application.id,
           response: "WITHDRAWN",
+          correlationId: "placement-offer:"+updated.id+":withdrawn",
         },
         groupKey:
           `placement-job:${current.job.id}:offers`,
