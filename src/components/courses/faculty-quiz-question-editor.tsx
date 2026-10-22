@@ -285,7 +285,8 @@ export function FacultyQuizQuestionEditor({
       index < questions.length;
       index += 1
     ) {
-      const question = questions[index]!;
+      const question = questions[index];
+      if (!question) continue;
       if (!question.prompt.trim()) {
         return `Question ${index + 1} needs a prompt.`;
       }
