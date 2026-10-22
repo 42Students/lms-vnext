@@ -39,8 +39,9 @@ function parsePageSize(value: string | undefined) {
 }
 
 function parsePage(value: string | undefined) {
-  const parsed = z.coerce.number().int().min(1).max(100000).safeParse(value);
-  return parsed.success ? parsed.data : 1;
+  const parsed = z.coerce.number().int().min(0).max(100000).safeParse(value);
+  // The old LMS used zero-based pagination; page=0 is its bookmarked first page.
+  return parsed.success ? Math.max(1,parsed.data) : 1;
 }
 
 export default async function LearnerProjectsPage({
@@ -70,7 +71,7 @@ export default async function LearnerProjectsPage({
     (params.attention!==undefined&&!attentionSchema.safeParse(one(params.attention)).success) ||
     (params.work!==undefined&&!workSchema.safeParse(one(params.work)).success) ||
     (params.sort!==undefined&&!sortSchema.safeParse(one(params.sort)).success) ||
-    (params.page!==undefined&&!z.coerce.number().int().min(1).max(100000).safeParse(one(params.page)).success) ||
+    (params.page!==undefined&&!z.coerce.number().int().min(0).max(100000).safeParse(one(params.page)).success) ||
     (params.pageSize!==undefined&&!z.coerce.number().int().safeParse(one(params.pageSize)).success) ||
     (params.pageSize!==undefined&&![10,25,50].includes(Number(one(params.pageSize))));
   const status = one(params.status);
@@ -104,7 +105,8 @@ export default async function LearnerProjectsPage({
   const emptyState=learnerProjectListEmptyState(directory.assignedCount,total);
 
   return (
-    <div role="region" aria-label="Learner project directory" aria-live="polite" className="min-w-0 space-y-5">
+    <section role="region" aria-label="Projects workspace" aria-live="polite"
+      className="min-w-0 space-y-5 rounded-[var(--lms-canvas-radius)] bg-surface p-4 md:p-[var(--lms-canvas-padding)]">
       <PageHeader title="Projects" description="Choose a project to open its workspace." />
       {invalidFilters ? <Banner tone="warning" role="status">
         Some project filters were invalid and have been reset to safe defaults.
@@ -155,7 +157,8 @@ export default async function LearnerProjectsPage({
               projectAttention === "CHANGES_REQUESTED" ? "Update your submission" :
               projectAttention === "DRAFT" ? "Finish your draft submission" :
               blocked ? "Open blocked work" : row.project.nextAction?.trim() || "Open workspace",
-            blockedHref: blocked ? "/learn/projects/" + row.project.id + "?tab=board&taskStatus=BLOCKED" : undefined,
+            blockedHref: blocked ? "/learn/projects/" + row.project.id + "?tab=board&lane=Blocked" : undefined,
+            blockerText: row.project.blocker?.trim()||undefined,
             attention:
               archived ? [] : projectAttention === "CHANGES_REQUESTED"
                 ? ["Changes requested"]
@@ -165,7 +168,7 @@ export default async function LearnerProjectsPage({
             href:
               "/learn/projects/" +
               row.project.id +
-              (archived ? "" : projectAttention ? "?tab=delivery" : blocked ? "?tab=board&taskStatus=BLOCKED" : ""),
+              (archived ? "" : projectAttention ? "?tab=delivery" : blocked ? "?tab=board&lane=Blocked" : ""),
           };
         })}
         basePath="/learn/projects"
@@ -184,6 +187,6 @@ export default async function LearnerProjectsPage({
       </div>
 
 
-    </div>
+    </section>
   );
 }

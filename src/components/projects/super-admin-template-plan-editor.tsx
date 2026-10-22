@@ -57,14 +57,28 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
   const taskPageCount=Math.max(1,Math.ceil(filteredTasks.length/25));
   const visibleTasks=filteredTasks.slice((Math.min(taskPage,taskPageCount)-1)*25,
     Math.min(taskPage,taskPageCount)*25);
-  function prepareTaskKeys(blueprint:ProjectTemplateBlueprint):ProjectTemplateBlueprint{
-    const taken=blueprint.tasks.map(task=>task.key).filter(Boolean);
-    return {...blueprint,tasks:blueprint.tasks.map(task=>{
-      if(task.key.trim())return task;
-      const key=nextTemplatePlanKey(taken,"task");
-      taken.push(key);
-      return {...task,key};
-    })};
+  function preparePlanKeys(blueprint:ProjectTemplateBlueprint):ProjectTemplateBlueprint{
+    // Legacy fields permit an empty key; generate it only when saved, and
+    // preserve child sprint references if the parent key changes.
+    const sprintTaken=blueprint.sprints.map(row=>row.key.trim()).filter(Boolean);
+    const sprintRemap=new Map<string,string>();
+    const sprints=blueprint.sprints.map(sprint=>{
+      if(sprint.key.trim())return sprint;
+      const key=nextTemplatePlanKey(sprintTaken,"sprint");
+      sprintTaken.push(key);
+      if(sprint.key) sprintRemap.set(sprint.key,key);
+      return {...sprint,key};
+    });
+    const taskTaken=blueprint.tasks.map(task=>task.key.trim()).filter(Boolean);
+    const tasks=blueprint.tasks.map(task=>{
+      const sprintKey=task.sprintKey&&sprintRemap.has(task.sprintKey)
+        ?sprintRemap.get(task.sprintKey)??null:task.sprintKey;
+      if(task.key.trim())return {...task,sprintKey};
+      const key=nextTemplatePlanKey(taskTaken,"task");
+      taskTaken.push(key);
+      return {...task,key,sprintKey};
+    });
+    return {...blueprint,sprints,tasks};
   }
 
   function updateSprint(index: number, patch: Partial<Sprint>) {
@@ -125,7 +139,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
     if(firstEmpty>=0){
       setError("Item "+(firstEmpty+1)+": Title required");return;
     }
-    const normalized = normalizeTemplatePlan(prepareTaskKeys(draft));
+    const normalized = normalizeTemplatePlan(preparePlanKeys(draft));
     const parsed = projectTemplateBlueprintSchema.safeParse(normalized);
     if (!parsed.success) {
       setError(parsed.error.issues[0]?.message ?? "Invalid template plan.");
@@ -207,8 +221,11 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
                 placeholder="Auto-generated from title if left blank"
                 disabled={pending} onChange={event => updateSprint(index, { key: event.target.value })}/>
             </label>
-            <label className={label}>Release key
-              <Select className={field} disabled={pending} required value={sprint.releaseKey}
+            <label className={label}>Release (required)
+              <Select className={field} disabled={pending} required
+                aria-invalid={!sprint.releaseKey||
+                  !draft.releases.some(item=>item.key===sprint.releaseKey)}
+                value={sprint.releaseKey}
                 onChange={event => updateSprint(index, { releaseKey: event.target.value })}>
                 {draft.releases.map(release => <option key={release.key} value={release.key}>
                   {release.key}</option>)}
@@ -216,10 +233,11 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
             </label>
             <label className={label}>Title
               <Input className={field} required maxLength={200} disabled={pending}
+                placeholder="e.g. Discovery and design" aria-invalid={!sprint.title.trim()}
                 value={sprint.title} onChange={event => updateSprint(index, { title: event.target.value })}/>
             </label>
             <label className={label}>Due (optional)
-              <Input className={field} maxLength={120} disabled={pending}
+              <Input className={field} maxLength={160} disabled={pending}
                 placeholder="e.g. Before sprint 1" value={sprint.dueLabel ?? ""}
                 onChange={event => updateSprint(index, { dueLabel: event.target.value || undefined })}/>
             </label>
