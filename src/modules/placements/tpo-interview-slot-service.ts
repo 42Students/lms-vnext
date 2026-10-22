@@ -195,8 +195,13 @@ async function assertLearnerTimeAvailable(tx:TpoJobTx,collegeId:string,
  if(conflict)throw Error("This learner already has an interview at that time. "+
   "Choose another slot; the existing booking has been preserved.");
 }
-async function notice(tx:TpoJobTx,context:RequestContext,job:{id:string;title:string},applicationId:string,
- action:string,message:string){
+async function notice(tx:TpoJobTx,context:RequestContext,job:{
+ id:string;title:string;round?:{id:string;name:string;mode:string;meetingUrl:string|null};
+},applicationId:string,action:string,message:string){
+ const safeUrl=job.round?.mode==="VIRTUAL"&&job.round.meetingUrl?.startsWith("https://")
+  ?job.round.meetingUrl:null;
+ const fullMessage=(job.round?"Round: "+job.round.name+". ":"")+message+
+  (safeUrl?" Join: "+safeUrl:"");
  const [learner]=await tx.select({userId:collegeMemberships.userId})
   .from(placementApplications).innerJoin(collegeMemberships,
    eq(collegeMemberships.id,placementApplications.membershipId))
@@ -207,12 +212,16 @@ async function notice(tx:TpoJobTx,context:RequestContext,job:{id:string;title:st
   organizationId:context.membership!.organizationId,collegeId:context.membership!.collegeId,
   actorUserId:context.user.id,actorMembershipId:context.membership!.id,
   module:"PLACEMENTS",eventType:action,subjectType:"placement_application",
-  subjectId:applicationId,summary:message,metadata:{jobId:job.id},
+  subjectId:applicationId,summary:fullMessage,metadata:{
+    jobId:job.id,roundId:job.round?.id??null,roundName:job.round?.name??null,
+   },
  }).returning({id:activityEvents.id});
  if(!event)throw Error("Interview slot audit failed");
  await tx.insert(inAppNotifications).values({
   userId:learner.userId,eventId:event.id,title:"Your interview schedule has changed",
-  body:message,actionHref:"/learn/my-placements/interviews",
+  body:fullMessage,actionHref:job.round?
+    learnerInterviewLegacyEntry(applicationId,job.round.id):
+    "/learn/my-placements/interviews",
  }).onConflictDoNothing();
 }
 export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:unknown,rawRoundId:unknown,raw:unknown){
@@ -243,7 +252,7 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    .from(placementJobRounds).where(eq(placementJobRounds.id,info.round.id))
    .for("update").limit(1);
   if(current?.status!=="SCHEDULED")throw new PlacementsServiceError("PLACEMENT_ROUND_INVALID_TRANSITION");
-  const job={id:info.round.jobId,title:info.round.jobTitle};
+  const job={id:info.round.jobId,title:info.round.jobTitle,round:info.round};
   if(input.action==="GENERATE_DAY"){
    const proposed=planInterviewDay(input);
    if(proposed.length>300)throw Error("Create up to 300 interview slots at a time.");
@@ -430,7 +439,9 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
     eq(placementLearnerRequests.status,"PENDING"))).returning({id:placementLearnerRequests.id});
    if(!decided)throw new PlacementsServiceError("PLACEMENT_REQUEST_INVALID_STATE");
    await notice(tx,context,job,request.applicationId,"PLACEMENTS_TPO_INTERVIEW_RESCHEDULE_APPROVED",
-    "Your interview reschedule was approved. New slot: "+target.startsAt.toISOString()+
+    "Your interview reschedule was approved. Previous slot: "+
+    (existing?interviewTimeIst(existing.startsAt)+" ("+existing.room+")":"not recorded")+
+    "; new slot: "+interviewTimeIst(target.startsAt)+
     " ("+target.room+"). "+input.reason);
    return {moved:1,requestId:request.id};
   }
@@ -517,7 +528,7 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
     .returning({id:placementRoundCandidateSlots.id});
    if(!saved)throw new PlacementsServiceError("PLACEMENT_ROUND_STALE");
    await notice(tx,context,job,input.applicationId,"PLACEMENTS_TPO_INTERVIEW_BOOKED",
-    "Your interview for "+job.title+" is booked for "+slot.startsAt.toISOString()+" ("+slot.room+").");
+    "Your interview for "+job.title+" is booked for "+interviewTimeIst(slot.startsAt)+" ("+slot.room+").");
    return {booked:1};
   }
   if(input.action==="CANCEL"){
