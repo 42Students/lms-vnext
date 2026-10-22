@@ -408,7 +408,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
       Each team gets its own workspace with the same template and mentor.
     </div>:null}
     {mode==="INDIVIDUAL"?<div className="border-l-2 border-info p-3 text-sm text-body" role="note">
-      <strong>Cohort mode.</strong> Every active student in the section gets their own workspace with the same template, mentor, and title suffixed with their name.
+      <strong>One workspace per student.</strong> Every active student in the section gets their own workspace with the same template, mentor, and title suffixed with their name.
     </div>:null}
     {emptyMessages.classes?<p role="status" className="border-b border-border py-3 text-sm text-body leading-[22px]">{emptyMessages.classes}</p>:null}
     {emptyMessages.templates?<p role="alert" className="border-b border-border py-3 text-sm text-body leading-[22px]">{emptyMessages.templates}</p>:null}
