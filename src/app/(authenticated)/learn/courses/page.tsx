@@ -192,10 +192,16 @@ export default async function LearnerCoursesPage({
 
   const [setupStatus,semesterResult]=await Promise.all([
     rows.length===0&&directoryError===null
-      ?getLearnerCourseSetupStatus(context).catch(()=>null):Promise.resolve(null),
+      ?getLearnerCourseSetupStatus(context).catch((error:unknown)=>{
+        if(error instanceof AuthorizationError)throw error;
+        return null;
+      }):Promise.resolve(null),
     listLearnerProgramSemesters(context)
       .then(value=>({semesters:value,error:null as "LOAD_FAILED"|null}))
-      .catch(()=>({semesters:[],error:"LOAD_FAILED" as const})),
+      .catch((error:unknown)=>{
+        if(error instanceof AuthorizationError)throw error;
+        return {semesters:[],error:"LOAD_FAILED" as const};
+      }),
   ]);
   const programSemesters=semesterResult.semesters;
   const malformedCount=rows.filter(row=>row.unavailable&&
