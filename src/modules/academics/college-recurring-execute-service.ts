@@ -67,7 +67,10 @@ export async function executeCollegeRecurringSchedule(context: RequestContext, r
           isNull(courseSectionDeliveries.endedAt))).for("share",{of:courseSectionDeliveries}).limit(1);
       if (!delivery) throw new CollegeRecurringExecutionError("NOT_FOUND");
     }
-    const first=new Date(slots[0].startsAt),last=new Date(slots[slots.length-1].endsAt);
+    const firstSlot=slots[0];
+    const lastSlot=slots[slots.length-1];
+    if (!firstSlot || !lastSlot) throw new CollegeRecurringExecutionError("SCHEDULE_CONFLICT");
+    const first=new Date(firstSlot.startsAt),last=new Date(lastSlot.endsAt);
     const existing=await tx.select({
       sectionId:sectionScheduleEvents.sectionId,
       facultyMembershipId:sectionScheduleEvents.facultyMembershipId,lectureHallId:sectionScheduleEvents.lectureHallId,
