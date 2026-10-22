@@ -4,7 +4,7 @@ CI run 39849936419 on main (3c24c0c0), the LATEST run failed these unit tests. T
 
 - [ ] `tests/unit/PROJ-BREAK-SA-admin-pages-and-scope.test.ts` (1 failing)
 - [x] `tests/unit/chat3-course-home-metadata-legacy-validation.test.ts` (1 failing)
-- [ ] `tests/unit/tpo-batches-24-chat5.test.ts` (1 failing)
+- [x] `tests/unit/tpo-batches-24-chat5.test.ts` (1 failing)
 
 ## Failures (from CI log)
 
