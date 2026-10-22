@@ -205,7 +205,9 @@ export const LEGACY_TENANT_SETTING_SPECS=[
     "group": "Attendance",
     "dangerous": false,
     "min": 0,
-    "max": 1440
+    "max": 1440,
+    "help": "Legacy accepts 0–1440 minutes. VNext scheduling does not currently read this stored override, so changing it does not alter the active past-booking cutoff.",
+    "activation": "STORED_ONLY"
   },
   {
     "key": "interview.overlapWindowMinutes",
