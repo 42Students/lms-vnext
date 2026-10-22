@@ -5,7 +5,7 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [x] `tests/unit/UX-kit-scroll-motion-01.test.tsx` (1 failing) — FIXED `d014e5c` (`src/components/ui/disclosure.tsx`: summary includes `min-h-11`, preserving native 44px accessible hit target and reduced-motion classes)
 - [x] `tests/unit/chat17-tenant-domain-service-journeys.test.ts` (1 failing) — FIXED `9a3b069`: isolate second attempt's verification-write assertion with mockClear while retaining its fail-closed expectation.
 - [x] `tests/unit/chat3-superadmin-applications-retained.test.ts` (1 failing) — FIXED test expectation for scope-keyed `LastKnownGoodApplications` and verified stale snapshot alert/inert/retry (`40ac7b6`).
-- [ ] `tests/unit/chat7-lesson-inline-transaction-verify2b.test.ts` (1 failing)
+- [x] `tests/unit/chat7-lesson-inline-transaction-verify2b.test.ts` (1 failing) — FIXED `0a3745e`: preserve strict nested-content transaction assertions while expecting scoped legacy course identifiers in destructuring.
 - [ ] `tests/unit/company-share-code-live-grant-guard.test.ts` (1 failing)
 - [ ] `tests/unit/t-s2-07-tpo-undo.test.ts` (1 failing)
 
