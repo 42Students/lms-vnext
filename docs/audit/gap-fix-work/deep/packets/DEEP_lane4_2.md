@@ -9,11 +9,11 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - [ ] G2-17-006-030  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [ ] G2-17-010-005  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
-- [ ] G2-17-010-010  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
+- [x] G2-17-010-010  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [x] G2-18-009-002  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [x] G2-18-009-014  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
 - [x] G2-18-009-019  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_7.md)
-- [ ] G2-19-001-087  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
+- [x] G2-19-001-087  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [x] G2-19-002-034  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-19-002-092  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-19-002-094  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
@@ -25,3 +25,6 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-18-009-002: OK — vNext `src/components/attendance/faculty-class-switcher.tsx:1-57` renders an assigned-section Class selector and canonical delivery-based route; `src/components/attendance/faculty-attendance-workspace.tsx:319-362` broadcasts dirty edits and guards navigation. Legacy `docs/legacy-source/frontend/src/pages/Dashboard/course/Attendance/AttendanceReport.js:20-42` switches the class via `?cls=` with a draft-discard confirmation. vNext delivery route carries the scoped class identity rather than reusing the numeric `cls` hint.
 
 - G2-19-002-034: OK — legacy `docs/legacy-source/frontend/src/pages/superadmin/sections/LessonContent.js:1553-1556` defaults `Visible to students` to true. vNext `src/db/schema/courses.ts:414-423` separately defaults lesson visibility to true; `src/components/courses/super-admin-content-actions.tsx:150-151,227-233` keeps content in DRAFT until an explicit Publish confirmation and explains learner visibility. This preserves default visibility without exposing unpublished content.
+
+- G2-17-010-010: OK — vNext `src/modules/operations/notification-scheduled-job-service.ts:257-342` processes the `TODAY` interview phase, emits `IN_APP` only and deduplicates by slot/version/user; `src/app/api/internal/operations/notification-scheduler/route.ts:105-110` routes the morning job through its fenced lease; `src/modules/operations/tpo-scheduled-job-registry.ts:35-40` schedules 08:00 IST. Legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/TpoScheduledJobs.java:64-66` runs today's in-app-only interview reminders at 08:00 IST.
+- G2-19-001-087: OK (field crosswalk, not a claim that migration ran) — vNext `src/db/schema/profiles.ts:16-39` preserves learner source ID, batch, roll/unique ID, private JSON and document version; `src/db/schema/memberships.ts:19-47` preserves scoped status/suspension/legacy keys; `docs/audit/gap-fix/legacy-identity-crosswalk-lane-14.md` explicitly maps class transfers via enrollments, audited IDs, contact/identity collision handling, source batch and private profile fields. Legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Learner.java:17-105` contains the monolithic source fields. Actual data backfill remains a separate migration execution obligation.
