@@ -138,13 +138,15 @@ export async function listColleges(
   context: RequestContext,
   organizationIdInput?: string | null,
 ) {
-  const resource={
-    organizationId:isSuperAdmin(context)
-      ? context.adminScope?.organizationId??undefined
-      : context.membership?.organizationId??undefined,
-    collegeId:isSuperAdmin(context)
-      ? context.adminScope?.collegeId??undefined
-      : context.membership?.collegeId??undefined,
+  const resourceOrganizationId = isSuperAdmin(context)
+    ? context.adminScope?.organizationId
+    : context.membership?.organizationId;
+  const resourceCollegeId = isSuperAdmin(context)
+    ? context.adminScope?.collegeId
+    : context.membership?.collegeId;
+  const resource = {
+    ...(resourceOrganizationId !== undefined ? { organizationId: resourceOrganizationId } : {}),
+    ...(resourceCollegeId !== undefined ? { collegeId: resourceCollegeId } : {}),
   };
   return getDb().transaction(async db=>{
     await assertPersistedPlatformPermission(db,context,"college.read",resource);
@@ -302,8 +304,8 @@ export async function listArchivedColleges(context: RequestContext) {
   const selectedCollegeId=context.adminScope?.collegeId??null;
   const selectedOrganizationId=context.adminScope?.organizationId??null;
   requirePermission(context,"college.manage",{
-    organizationId:selectedOrganizationId??undefined,
-    collegeId:selectedCollegeId??undefined,
+    ...(selectedOrganizationId !== null ? { organizationId: selectedOrganizationId } : {}),
+    ...(selectedCollegeId !== null ? { collegeId: selectedCollegeId } : {}),
   });
   return getDb().transaction(async tx=>{
     await assertPersistedPlatformPermission(tx,context,"college.manage",{
