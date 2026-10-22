@@ -27,6 +27,7 @@ import {
   learnerApplicationStage,
   learnerApplicationStageOptions,
   learnerApplicationViewCounts,
+  learnerApplicationIsComplete,
   DEFAULT_LEARNER_APPLICATION_FILTERS,
   type LearnerApplicationBrowseFilters,
 } from "@/modules/placements/learner-applications-browse-model";
@@ -89,6 +90,10 @@ export function LearnerApplicationsBrowse({
   const pendingRef = useRef(false);
   const [withdrawError, setWithdrawError] = useState<string | null>(null);
   const [withdrawNotice, setWithdrawNotice] = useState<string | null>(null);
+  const [defaultCollapsed,setDefaultCollapsed]=useState(false);
+  const [companyPreviewId,setCompanyPreviewId]=useState<string|null>(null);
+  const [previewFrameFailed,setPreviewFrameFailed]=useState(false);
+  const [previewRevision,setPreviewRevision]=useState(0);
   const updateQuery=useCallback((changes:Record<string,string|null>)=>{
     const q=updateLearnerApplicationUrl(params.toString(),changes);
     router.push(q?pathname+"?"+q:pathname,{scroll:false});
@@ -172,7 +177,9 @@ export function LearnerApplicationsBrowse({
     }
   }
 
-  const view:LearnerApplicationBrowseFilters["view"]=url.view;
+  const linkedSelected=items.find(item=>item.applicationId===url.applicationId)??null;
+  const view:LearnerApplicationBrowseFilters["view"]=linkedSelected&&
+    learnerApplicationIsComplete(linkedSelected)&&url.view==="progress"?"all":url.view;
   const sort:LearnerApplicationBrowseFilters["sort"]=url.sort;
   const stages = learnerApplicationStageOptions(items);
   const selectedStage=learnerApplicationStageSelection(stages,url.stage);
@@ -188,8 +195,7 @@ export function LearnerApplicationsBrowse({
   const paged = rows.slice(pagination.start,pagination.end);
   const stageCounts = learnerApplicationStageCounts(items);
   const attention=learnerApplicationAttention(items);
-  const selected = items.find((item) =>
-    item.applicationId === url.applicationId) ?? null;
+  const selected=linkedSelected??(!url.applicationId&&!defaultCollapsed?rows[0]??null:null);
   const selectedWithdrawMode=authorizedWithdrawalMode(selected);
   const withdrawMode=authorizedWithdrawalMode(withdrawTarget);
   const selectedAssessment=selected
@@ -297,7 +303,7 @@ export function LearnerApplicationsBrowse({
             Company or role
             <Input type="search" value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search company or role" maxLength={100}
+              placeholder="Search applications…" maxLength={100}
               className="mt-1 w-full" />
           </label>
           <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -397,7 +403,7 @@ export function LearnerApplicationsBrowse({
           </div>
           <Button type="button" variant="ghost" aria-expanded={true}
             aria-controls={"application-details-"+selected.applicationId}
-            onClick={()=>updateQuery({applicationId:null})}>Collapse details −</Button>
+            onClick={()=>{setDefaultCollapsed(true);updateQuery({applicationId:null});}}>Collapse details −</Button>
         </div>
         <div className="flex min-w-0 w-full flex-col-reverse items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
           {selected ? (
@@ -417,12 +423,10 @@ export function LearnerApplicationsBrowse({
               >
                 Full history
               </Link>
-              <Link
-                href={`/learn/my-placements/applications/${encodeURIComponent(selected.applicationId)}/company`}
-                className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-[650] text-primary-text md:w-auto"
-              >
-                What the company sees
-              </Link>
+              <Button variant="secondary" type="button"
+                  onClick={()=>{setPreviewFrameFailed(false);setCompanyPreviewId(selected.applicationId);}}>
+                  What the company sees
+                </Button>
             </>
           ) : null}
           {selectedWithdrawMode ? (
@@ -446,7 +450,7 @@ export function LearnerApplicationsBrowse({
           <Link href={selectedInterview?.href??"/learn/my-placements/interviews"} className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-[650] text-primary-text md:w-auto">
             {selectedInterview?"Open this interview":"Interviews"}
           </Link>
-          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={() => updateQuery({applicationId:null})}>Got it</Button>
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={() => {setDefaultCollapsed(true);updateQuery({applicationId:null});}}>Got it</Button>
         </div>
         {selected ? (
           <div className="space-y-5">
@@ -551,6 +555,29 @@ export function LearnerApplicationsBrowse({
         ) : null}
       </section> : null}
 
+      <Dialog open={companyPreviewId!==null} title="What the company sees"
+        description="Your authorized preview of the information shared with the company."
+        onOpenChange={open=>{if(!open)setCompanyPreviewId(null);}}
+        footer={<div className="flex flex-wrap items-center justify-end gap-2">
+          {companyPreviewId?<Link href={"/learn/my-placements/applications/"+
+            encodeURIComponent(companyPreviewId)+"/company"}
+            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline"
+            target="_blank" rel="noopener noreferrer">Open full preview ↗</Link>:null}
+          <Button variant="secondary" type="button" onClick={()=>setCompanyPreviewId(null)}>Close</Button>
+        </div>}>
+        {companyPreviewId?<div className="space-y-3">
+          {previewFrameFailed?<p role="alert" className="text-sm text-error">
+            Company preview did not load. Retry or open the full preview.
+          </p>:null}
+          <Button variant="secondary" type="button"
+            onClick={()=>{setPreviewFrameFailed(false);setPreviewRevision(value=>value+1);}}>Retry preview</Button>
+          <iframe key={companyPreviewId+":"+previewRevision} title="Company view of this application"
+            src={"/learn/my-placements/applications/"+encodeURIComponent(companyPreviewId)+"/company"}
+            onError={()=>setPreviewFrameFailed(true)}
+            sandbox="allow-same-origin"
+            className="min-h-[360px] w-full rounded-[var(--lms-control-radius)] border border-border"/>
+        </div>:null}
+      </Dialog>
       <Dialog
         open={withdrawTarget !== null}
         onOpenChange={(open) => {
