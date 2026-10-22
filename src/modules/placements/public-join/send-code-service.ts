@@ -14,6 +14,7 @@ import { publicJoinSendCodeSchema, publicJoinCodeDigest,
 } from "./code-policy";
 import { companyJoinEmailCandidate } from "./company-preview-policy";
 import {registrableWorkDomain} from "./domain-model";
+import {canonicalCompanyMailDomain} from "../public-college-join-model";
 
 type Scope = "COLLEGE" | "COMPANY";
 export class PublicJoinCodeError extends Error {
@@ -38,7 +39,7 @@ export function opaqueNetworkTag(ip: string, secret: string) {
 export async function requestPublicJoinCode(
   scope: Scope, raw: unknown, verifiedClientIp: string | null,
   deliver: (email: string, code: string) => Promise<boolean>,
-): Promise<{ sent: true;companyName:string|null }> {
+): Promise<{ sent: true;status:"CODE_SENT";companyName:string|null }> {
   const input = publicJoinSendCodeSchema.safeParse(raw);
   if (!input.success) throw new PublicJoinCodeError("INVALID_LINK");
   const secret = process.env.TPO_RECRUITER_OTP_HMAC_SECRET ?? "";
@@ -88,11 +89,14 @@ export async function requestPublicJoinCode(
   // transient DNS failure is UNKNOWN and is not proof the address is invalid.
   // UNKNOWN may proceed ONLY to a bounded OTP send; ownership still requires
   // a delivered code, and the durable IP/link/email rate limits remain active.
-  const emailHost = email.split("@")[1]!;
-  const domain = scope === "COMPANY"
-    ? (registrableWorkDomain(email) ?? emailHost)
-    : emailHost;
-  const dns = await companyDomainAcceptsMail(domain, true);
+  const emailHost=canonicalCompanyMailDomain(email.split("@")[1]);
+  if(!emailHost)throw new PublicJoinCodeError("INVALID_LINK");
+  const domain=scope==="COMPANY"?registrableWorkDomain(email)??emailHost:emailHost;
+  // The shared resolver owns positive/negative 24-hour caching (max 5,000),
+  // in-flight singleflight and a 1,500ms per-query DNS budget. It never caches
+  // UNKNOWN, which permits OTP delivery but never confers company ownership.
+  // This cache is per Node instance; durability/rate limiting remain in SQL.
+  const dns=await companyDomainAcceptsMail(domain,true);
   if (dns.rejected) {
     // No challenge is written and no delivery is attempted for definite
     // NO_MAIL; the route maps this typed error to actionable user copy.
@@ -161,14 +165,22 @@ export async function requestPublicJoinCode(
   } catch {
     sent = false;
   } finally {
-    if (!sent) await getDb().update(placementPublicJoinChallenges)
-      .set({ expiresAt: new Date() })
-      .where(eq(placementPublicJoinChallenges.id, issued.challengeId));
+    if(!sent){
+      // Expire the unusable code even when the delivery provider rejects it.
+      // A cleanup outage must not disguise a failed send as CODE_SENT.
+      try{
+        await getDb().update(placementPublicJoinChallenges)
+          .set({expiresAt:new Date()})
+          .where(eq(placementPublicJoinChallenges.id,issued.challengeId));
+      }catch{
+        // The code remains unverified; never return delivery success.
+      }
+    }
   }
   if (!sent) throw new PublicJoinCodeError("DELIVERY_FAILED");
   // Show a company only after we have successfully sent a verification code
   // to the provided mailbox, never as an unauthenticated domain oracle.
-  return { sent: true,...(await lookupDeliveredJoinCompanyName(email)) };
+  return { sent: true,status:"CODE_SENT",...(await lookupDeliveredJoinCompanyName(email)) };
 }
 
 /** Optional identity-safe company hint. A lookup outage after code acceptance
