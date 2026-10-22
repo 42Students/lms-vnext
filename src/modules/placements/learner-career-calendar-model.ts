@@ -29,6 +29,8 @@ export type CareerCalendarEvent = {
   mode?:string|null;venue?:string|null;meetingUrl?:string|null;
   durationMinutes?:number|null;booked?:boolean;learnerConfirmedAt?:string|null;
   note?:string|null;
+  /** The original job-important-date type and display label, not inferred from text. */
+  importantDateType?:string|null;importantDateLabel?:string|null;
 };
 
 /** The caller must independently authorize blackout dates and supply only
@@ -38,6 +40,7 @@ export type CareerCalendarSupplement={
  companyName?:string;roleTitle?:string;visible?:boolean;applied?:boolean;
  jobId?:string|null;
  note?:string|null;
+ importantDateType?:string|null;importantDateLabel?:string|null;
 };
 
 
@@ -67,7 +70,7 @@ export function legacyJobImportantDatesToSupplements(
   return [{key:job.jobId+":"+index+":"+record.at,
    kind:legacyJobImportantDateEventType,day:careerDayKey(new Date(entry.at)),
    title:record.label,companyName:job.companyName,roleTitle:job.roleTitle,
-   jobId:job.jobId,
+   jobId:job.jobId,importantDateType:record.type,importantDateLabel:record.label,
    visible:true,note:record.type}];
  });
 }
@@ -165,8 +168,13 @@ export function careerCalendarEvents(
     return [{key:item.kind+":"+item.key,applicationId:"",roundId:"",
       title:item.kind==="EXAM_BLOCK"?"No drives run on it · "+item.title:item.title,
       companyName:item.companyName??"College calendar",roleTitle:item.roleTitle??"",
-      kind:"OTHER" as const,start,dayKey:item.day,rescheduled:false,
-      eventType:item.kind,note:item.note??null,jobId:item.jobId??null}];
+      kind:item.kind==="JOB_IMPORTANT_DATE"&&/^(?:SCREENING|ASSESSMENT|TEST)(?:_|$)/i.test(item.importantDateType??"")?
+       "ASSESSMENT" as const:
+       item.kind==="JOB_IMPORTANT_DATE"&&/^(?:TECHNICAL|INTERVIEW)(?:_|$)/i.test(item.importantDateType??"")?
+        "INTERVIEW" as const:"OTHER" as const,
+      start,dayKey:item.day,rescheduled:false,
+      eventType:item.kind,note:item.note??null,jobId:item.jobId??null,
+      importantDateType:item.importantDateType??null,importantDateLabel:item.importantDateLabel??null}];
   });
   return [...base,...extras].sort((a,b)=>a.start.getTime()-b.start.getTime()||a.key.localeCompare(b.key));
 }
