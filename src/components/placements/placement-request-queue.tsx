@@ -194,20 +194,18 @@ export function PlacementRequestQueue({
               ],
             );
           const requestedMode =
-            typeof item.effectPayload.mode ===
+            typeof item.effectPayload['mode'] ===
             "string"
               ? humanize(
-                  item.effectPayload.mode,
+                  item.effectPayload['mode'],
                 )
               : null;
           const requestedPlace =
-            typeof item.effectPayload.venue ===
+            typeof item.effectPayload['venue'] ===
             "string"
-              ? item.effectPayload.venue
-              : typeof item.effectPayload
-                    .meetingUrl === "string"
-                ? item.effectPayload
-                    .meetingUrl
+              ? item.effectPayload['venue']
+              : typeof item.effectPayload['meetingUrl'] === "string"
+                ? item.effectPayload['meetingUrl']
                 : null;
 
           return (
