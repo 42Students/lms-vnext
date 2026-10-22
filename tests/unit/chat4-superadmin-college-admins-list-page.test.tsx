@@ -43,7 +43,7 @@ beforeEach(()=>{
  mocks.context.mockResolvedValue(actor);
  mocks.targets.mockResolvedValue({college:{name:"IIT Dharwad",organizationId:org},items:[],total:0,page:1,pageCount:1,pageSize:25,truncated:false});
 });
-describe("SA-colleges-admins-list-01 tenant administrator roster page",()=>
+describe("SA-colleges-admins-list-01 tenant administrator roster page",()=>{
  it("G2-5-030-018 keeps unsaved administrator details on navigation",()=>{
   const dialog=readFileSync("src/components/admin/person-onboard-dialog.tsx","utf8");
   expect(dialog).toContain('window.addEventListener("beforeunload",beforeUnload)');
@@ -51,7 +51,6 @@ describe("SA-colleges-admins-list-01 tenant administrator roster page",()=>
   expect(dialog).toContain("Leave without saving administrator details?");
   expect(dialog).toContain("pending={pending}");
  });
-{
  it("renders the empty/permission-safe scoped directory without invented admins",async()=>{
   const html=renderToStaticMarkup(await CollegeAdministratorsPage(params));
   expect(html).toContain("IIT Dharwad");
