@@ -62,7 +62,7 @@ export function ProjectDeletedRowRestore({projectId,title,expectedUpdatedAt,
   </Button>
   <Dialog open={open} onOpenChange={value=>{if(!inFlight.current)setOpen(value);}}
    dismissible={!pending} role="alertdialog" title="Restore this workspace?"
-   description="Deleted workspaces return to the archived list first. No content or memberships will be recreated automatically."
+   description="Restore the workspace to the archived list first. You can review its saved content before reopening it."
    footer={<div className="flex w-full flex-wrap justify-end gap-2">
     <Button type="button" variant="secondary" disabled={pending}
      onClick={()=>setOpen(false)}>Cancel</Button>
@@ -72,6 +72,11 @@ export function ProjectDeletedRowRestore({projectId,title,expectedUpdatedAt,
    <div className="space-y-3 text-sm text-body">
     <strong className="block break-words text-[var(--lms-heading)]">{title}</strong>
     <p>Restore this workspace to the archived list for the selected college?</p>
+    <p className="rounded-[8px] border border-[var(--lms-warning-border)] bg-[var(--lms-warning-subtle)] p-3 text-[var(--lms-warning-text)]">
+     Recovery may be partial for workspaces deleted before content-preserving restore was enabled.
+     Those older workspaces can regain the shell, eligible members and meetings, but prior task, sprint
+     and resource edits may be unavailable. Review the restored contents before resuming work.
+    </p>
     {missingMentor?<p className="rounded-[8px] border border-[var(--lms-warning-border)] bg-[var(--lms-warning-subtle)] p-3 text-[var(--lms-warning-text)]">
      This workspace has no recorded primary mentor. After restoring, assign an active mentor before resuming work.
     </p>:null}
