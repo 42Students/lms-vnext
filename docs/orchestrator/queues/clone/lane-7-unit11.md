@@ -5,12 +5,18 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [x] `tests/unit/PROJ-BREAK-chat14-mentor-calendar-resources.test.ts` (1 failing)
 - [ ] `tests/unit/chat12-drive-visibility-overrides.test.ts` (1 failing)
 - [x] `tests/unit/chat2-UX-tpo-overlay-coverage.test.ts` (1 failing)
-- [ ] `tests/unit/chat6-application-score-precision.test.ts` (1 failing)
-- [ ] `tests/unit/chat8-verify2-mapping-stale.test.ts` (1 failing)
+- [x] `tests/unit/chat6-application-score-precision.test.ts` (1 failing)
+- [x] `tests/unit/chat8-verify2-mapping-stale.test.ts` (1 failing)
 - [x] `tests/unit/learner-contact-edit.test.ts` (1 failing)
-- [ ] `tests/unit/ux-admin-chat9-batch-04.test.ts` (1 failing)
+- [x] `tests/unit/ux-admin-chat9-batch-04.test.ts` (1 failing)
 
 ## Repair results
+
+- `tests/unit/chat6-application-score-precision.test.ts`: 04775f9 — Fractional score SQL remains unchanged; ascending and descending order place unscored (NULL) applications last. Not executed locally.
+
+- `tests/unit/ux-admin-chat9-batch-04.test.ts`: 4691c61 — Tenant filters and pagination now live in directory/page.tsx; test asserts split landing routes plus filter controls on actual directory. Not executed locally.
+
+- `tests/unit/chat8-verify2-mapping-stale.test.ts`: 3bee1c7 — Read-only guard was added to term mapping mutation; exact assertion updated while retaining stale refresh and validation checks. Not executed locally.
 
 - `tests/unit/PROJ-BREAK-chat14-mentor-calendar-resources.test.ts`: FIXED `9a64f10f6dc574957dcea5516cfa2d46519cd251`. The legacy mentor calendar shows an HTTPS join link whenever a meeting is not cancelled, including requested and past meetings (`docs/legacy-source/frontend/src/pages/mentor/calendar.js`); the outdated test now retains URL safety assertions and explicitly checks cancellation. Not executed locally.
 
