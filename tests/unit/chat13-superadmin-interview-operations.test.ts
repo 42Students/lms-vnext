@@ -13,6 +13,8 @@ describe("Super Admin placement interview operations",()=>{
   const component=read("src/components/admin/super-admin-interview-operations.tsx");
   for(const label of ['>Type','choices("Status"','>Mode','Sort by','Possible conflicts only'])expect(component).toContain(label);
   expect(component).toContain('value={kind}');
+  expect(component).toContain('<Select value={kind} onChange={e=>{setKind(e.target.value);setPage(1);}}');
+  expect(component).toContain('<option value="ALL">All types</option>');
   expect(component).toContain('value={mode}');
   expect(component).toContain('setKind(e.target.value)');
   expect(component).toContain('setMode(e.target.value)');
