@@ -130,7 +130,9 @@ async function applyDriveChangeField(
    eq(placementJobRoleOptions.status,"ACTIVE"))).for("update");
  const requireSingleRole=()=>{
   if(roles.length!==1)throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
-  return roles[0];
+  const role=roles[0];
+  if(!role)throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
+  return role;
  };
  if(field==="DEADLINE"||field==="LOCATION"){
   const patch=prepareSafeDriveChangeJobPatch({

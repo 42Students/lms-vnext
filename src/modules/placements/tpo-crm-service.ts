@@ -179,10 +179,10 @@ export async function listTpoLeads(
     return ({
     ...tpoLeadView(row, recruiterAttentionFromPersistedFacts({
     createdAt: row.createdAt,
-    lastContactAt: contactByLead.get(row.id) ? new Date(contactByLead.get(row.id)!) : null,
+    lastContactAt: contactByLead.get(row.id) ? new Date(contactByLead.get(row.id) ?? 0) : null,
     lastActivityAt:activityByLead.get(row.id)?.lastActivityAt??null,
     ...(stage !== undefined ? { stage } : {}),
-    nextFollowupAt: nextByLead.get(row.id) ? new Date(nextByLead.get(row.id)!) : null,
+    nextFollowupAt: nextByLead.get(row.id) ? new Date(nextByLead.get(row.id) ?? 0) : null,
     inviteBouncedAt: row.inviteBouncedAt,
     inviteSentAt: row.inviteSentAt,
     recruiterUserId: row.recruiterUserId,

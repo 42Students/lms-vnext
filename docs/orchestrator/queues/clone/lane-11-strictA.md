@@ -10,4 +10,4 @@ No-mercy program part A (compiler flags). Work packets in order; each lists file
 - [x] `docs/audit/strictness/A/packets/A_111.md`
 - [x] `docs/audit/strictness/A/packets/A_131.md` (faculty profile document fixed; packet tracked on main)
 - [ ] `docs/audit/strictness/A/packets/A_151.md`
-- [ ] `docs/audit/strictness/A/packets/A_171.md`
+- [x] `docs/audit/strictness/A/packets/A_171.md` (strict access and optional inputs repaired; three storage files already compliant)
