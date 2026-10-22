@@ -11,7 +11,7 @@ describe("UX-admin cross-audit BLOCKER native confirmations",()=>{
  });
  it("only invokes session revocation on explicit dialog confirmation",()=>{
   const source=readFileSync(files[2],"utf8");
-  expect(source).toContain("onClick={()=>setConfirmOpen(true)}");
+  expect(source).toContain('onClick={()=>{setMessage("");setErrorMessage("");setConfirmOpen(true);}}');
   expect(source).toContain("onConfirm={()=>void revoke()}");
  });
 });

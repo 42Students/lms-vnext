@@ -219,7 +219,7 @@ export default async function CollegeActivityPage({
         </div>
       </form>
     </section>
-    <section id="activity-feed" className="min-w-0 scroll-mt-5 space-y-5" aria-label="College activity events">
+    <section id="activity-feed" className="min-w-0 overflow-x-clip scroll-mt-5 space-y-5" aria-label="College activity events">
       {data.groups.length===0?<EmptyState title={(data.query.view??"IMPORTANT")==="IMPORTANT"&&!data.query.category
         ? "Nothing important happened in this period." : "No activity in this period."}
         description="Try another category or date range to see recorded changes."

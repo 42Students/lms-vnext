@@ -20,10 +20,11 @@ describe("IIT Dharwad Projects: dashboard counts navigate to equivalent result s
   });
   it("PROJ-BREAK-reports-50 Pending and Needs-action cards target ACTIVE workspaces, not archived history",()=>{
     const page=readFileSync("src/components/projects/project-admin-submissions-page.tsx","utf8");
-    expect(page).toContain('basePath+"?status=ACTIVE"');
-    expect(page).toContain('queuePath+"?status=ACTIVE&submissionStatus=SUBMITTED"');
-    expect(page).toContain('queuePath+"?status=ACTIVE&submissionStatus=CHANGES_REQUESTED"');
-    expect(page).toContain('queuePath+"?submissionStatus=APPROVED"');
+    expect(page).toContain('status==="APPROVED"?query:{...query,status:"ACTIVE"}');
+    expect(page).toContain("projectAdminSubmissionHref(queuePath,");
+    expect(page).toContain('["Pending review",summary.pendingReview,"UNDER_REVIEW"]');
+    expect(page).toContain('["Needs student action",summary.needsStudentAction,"CHANGES_REQUESTED"]');
+    expect(page).toContain('["Reviewed",summary.reviewed,"APPROVED"]');
     expect(page).toContain("summary.pendingReview");
     expect(page).toContain("summary.needsStudentAction");
     expect(page).toContain("summary.reviewed");

@@ -43,7 +43,7 @@ function textParts(node:unknown):string[]{
   if(Array.isArray(node))return node.flatMap(textParts);
   if(!isValidElement(node))return [];
   const props=node.props as Record<string,unknown>;
-  return ["children","title","description","href","action","eyebrow"].flatMap(k=>textParts(props[k]));
+  return ["children","title","description","href","action","eyebrow","label"].flatMap(k=>textParts(props[k]));
 }
 const render=(kind:"VIDEOS"|"RESOURCES",params:Record<string,string|string[]|undefined>={})=>
   SuperAdminContentDirectoryPage({kind,searchParams:Promise.resolve(params)});
@@ -71,14 +71,24 @@ describe("Super Admin last third: Videos and Resources protected directory",()=>
       for(const failure of ["directory","lessons","sections"] as const){
         state.fail=failure;
         const content=textParts(await render(kind,{q:"IIT Dharwad",status:"PUBLISHED",page:"2"})).join(" ");
-        expect(content).toContain("Content directory unavailable");
-        expect(content).toContain("Your filters are unchanged");
-        expect(content).toContain("Retry loading content");
+        if(failure==="directory"){
+          expect(content).toContain("Content directory unavailable");
+          expect(content).toContain("Your filters are unchanged");
+          expect(content).toContain("Retry loading content");
+          expect(content).not.toContain("No content found");
+        }else{
+          // An optional authoring picker failure must not hide a valid directory.
+          expect(content).toContain("Existing Content");
+          expect(content).toContain(failure==="lessons"
+            ?"Course and lesson authoring choices could not be loaded."
+            :"Classes could not be loaded.");
+          expect(content).toContain(failure==="lessons"
+            ?"Retry loading course and lesson choices":"Retry loading classes");
+        }
         expect(content).toContain("q=IIT+Dharwad");
         expect(content).toContain("status=PUBLISHED");
         expect(content).toContain("page=2");
         expect(content).not.toContain("SECRET_");
-        expect(content).not.toContain("No content found");
       }
     }
   });
