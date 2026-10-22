@@ -1,7 +1,7 @@
 import "server-only";
 
 import { randomUUID } from "node:crypto";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { projectInstances, projectReleases, projectSprints, projectTasks } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -52,7 +52,8 @@ export async function updateMentorTaskDetails(
       const [release]=await tx.select({status:projectReleases.status})
         .from(projectReleases)
         .where(and(eq(projectReleases.id,sprint.releaseId),
-          eq(projectReleases.projectId,scope.project.id)))
+          eq(projectReleases.projectId,scope.project.id),
+           isNull(projectReleases.deletedAt)))
         .limit(1);
       if(!release||release.status==="SHIPPED")
         throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");

@@ -86,21 +86,29 @@ export async function writeMentorProjectRelease(
     if(child)throw new ProjectsServiceError("PROJECT_LIFECYCLE_INVALID_STATE");
    }
    if(write.sortOrder!==undefined&&write.sortOrder!==existing.sequence){
+    // Reorder live releases only. Tombstone keys and their existing sequence
+    // positions stay reserved, so never shift deleted releases or overwrite
+    // their positions when sorting active releases.
     const ordered=await tx.select({id:projectReleases.id,sequence:projectReleases.sequence})
-     .from(projectReleases).where(eq(projectReleases.projectId,projectId))
+     .from(projectReleases).where(and(eq(projectReleases.projectId,projectId),
+       isNull(projectReleases.deletedAt)))
      .orderBy(projectReleases.sequence,projectReleases.id).for("update");
+    const liveSlots=ordered.map(row=>row.sequence);
+    const [highest]=await tx.select({sequence:projectReleases.sequence})
+     .from(projectReleases).where(eq(projectReleases.projectId,projectId))
+     .orderBy(desc(projectReleases.sequence)).limit(1);
     const targetIndex=Math.min(write.sortOrder,ordered.length-1);
     const currentIndex=ordered.findIndex(row=>row.id===existing.id);
     if(currentIndex<0)throw new ProjectsServiceError("PROJECT_LIFECYCLE_INVALID_STATE");
     const [moving]=ordered.splice(currentIndex,1);
     ordered.splice(targetIndex,0,moving!);
-    const firstTemporary=Math.max(...ordered.map(row=>row.sequence))+1;
+    const firstTemporary=(highest?.sequence??-1)+1;
     for(const [index,row] of ordered.entries()){
      await tx.update(projectReleases).set({sequence:firstTemporary+index})
       .where(and(eq(projectReleases.id,row.id),eq(projectReleases.projectId,projectId)));
     }
     for(const [index,row] of ordered.entries()){
-     await tx.update(projectReleases).set({sequence:index})
+     await tx.update(projectReleases).set({sequence:liveSlots[index]!})
       .where(and(eq(projectReleases.id,row.id),eq(projectReleases.projectId,projectId)));
     }
    }
