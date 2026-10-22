@@ -6,7 +6,7 @@ import {aliasedColumn} from "@/db/aliased-column";
 import {colleges,courses,departments,programs,programTermCourses,programTerms} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
-import {scopedSearchLike,superAdminReadPages,superAdminReadQuerySchema,SUPER_ADMIN_READ_PAGE_SIZE,type SuperAdminReadResult} from "./super-admin-read-directory-model";
+import {scopedSearchLike,superAdminReadPages,superAdminReadQuerySchema,type SuperAdminReadResult} from "./super-admin-read-directory-model";
 const courseDepartment=alias(departments,"admin_mapping_course_department");
 export async function listAdminTermCourseMappings(context:RequestContext,raw:unknown):Promise<SuperAdminReadResult>{
  const query=superAdminReadQuerySchema.parse(raw),selected=requireSuperAdminSelectedCollege(context,"courses.read"),db=getDb();
