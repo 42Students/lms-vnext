@@ -11,7 +11,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-9-010-050  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 - [x] G2-9-010-051  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 - [x] G2-9-010-080  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
-- [ ] G2-9-011-037  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
+- [x] G2-9-011-037  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 - [ ] G2-9-014-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 - [x] G2-9-014-079  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 - [x] G2-9-018-054  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
@@ -19,6 +19,8 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-9-025-068  (source: docs/audit/gap-fix-work/verify2/packets/lane-17/W1_lane17_10.md)
 
 ## Results
+
+- G2-9-011-037: FIXED `3809dce` in `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx`: resolve college-scoped optional `placements` module access before loading job/metrics/attention, and show a friendly disabled explanation on direct/bookmarked links. Mirrors `ModuleGroupGuard groupKey="placements"` in `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/index.js:114-116` without querying private drive data for a disabled module.
 
 - G2-9-025-055: OK — `src/modules/courses/super-admin-content-directory-service.ts:109-119,151-159` joins authorized lesson content IDs to material manifests, exposing per-resource count and file `title`, `originalName`, `mimeType`, `sizeBytes` without exposing storage keys or unscoped URLs. The legacy material metadata crosswalk is `docs/legacy-source/frontend/src/pages/superadmin/sections/AdminResources.js:26-45` (`file_dto.original_name`, `mimetype`, `size`). Signed access to actual bytes is deliberately kept behind the separate authorization endpoint.
 
