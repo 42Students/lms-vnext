@@ -115,8 +115,9 @@ export function MentorReleaseEditor({
   {(!release||release.status!=="SHIPPED")?<Button variant={release?"secondary":"primary"} type="button" aria-expanded={open} aria-controls={editorId}
    className="min-h-11 px-3 md:min-h-9"
    onClick={()=>{if(open)requestClose();else setOpen(true);}}>{release?"Edit release":"Add release"}</Button>:null}
-  {open?<form id={editorId} onSubmit={event=>{event.preventDefault();void save();}} className="space-y-3 border-t border-border pt-3">
-   <p className="text-sm font-semibold leading-[22px]">{release?"Edit release":"New release"}</p>
+  {open?<form id={editorId} aria-labelledby={editorId+"-heading"}
+    onSubmit={event=>{event.preventDefault();void save();}} className="space-y-3 border-t border-border pt-3">
+   <h3 id={editorId+"-heading"} className="text-sm font-semibold leading-[22px]">{release?"Edit release":"New release"}</h3>
    <label className="block text-[13px] font-semibold">Title
     <Input className="mt-1 min-h-11 w-full md:min-h-9" maxLength={200}
      required value={title} onChange={e=>setTitle(e.target.value)}/></label>

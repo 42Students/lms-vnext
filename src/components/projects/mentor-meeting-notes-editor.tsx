@@ -1,6 +1,6 @@
 "use client";
 import { Textarea } from "@/components/ui/textarea";
-import {useState} from "react";
+import {useId,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -15,6 +15,7 @@ export function MentorMeetingNotesEditor(props:{
   projectId:string;meetingId:string;updatedAt:string;initialNotes:string|null;
 }){
   const router=useRouter();
+  const helpId=useId();
   const {showToast}=useToast();
   const [notes,setNotes]=useState(props.initialNotes??"");
   const [open,setOpen]=useState(false);
@@ -43,7 +44,8 @@ export function MentorMeetingNotesEditor(props:{
     }finally{setPending(false);}
   }
   return <div className={styles.legacy+" "+styles.contents}>
-    <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>{
+    <Button variant="secondary" aria-haspopup="dialog" aria-expanded={open||confirm}
+      className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>{
       setNotes(props.initialNotes??"");setError(null);setOpen(true);
     }}>{props.initialNotes?"Edit outcome notes":"Record outcome notes"}</Button>
     <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Meeting outcome notes"
@@ -51,11 +53,11 @@ export function MentorMeetingNotesEditor(props:{
       <form onSubmit={event=>{event.preventDefault();if(valid){setOpen(false);setConfirm(true);}}}
         className="grid gap-[var(--lms-space-3)]">
         <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Notes
-          <Textarea value={notes} rows={7} maxLength={4000} required
+          <Textarea value={notes} rows={7} maxLength={4000} required aria-describedby={helpId}
             onChange={event=>setNotes(event.target.value)}
             className="w-full min-w-0 max-w-full"/>
         </label>
-        <p className="text-right text-xs text-muted-foreground">{notes.trim().length}/4000 characters</p>
+        <p id={helpId} className="text-right text-xs text-muted-foreground">{notes.trim().length}/4000 characters</p>
         {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
         <div className="flex flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] sm:flex-row sm:justify-end">
           <Button type="button" variant="secondary" className="w-full sm:w-auto" onClick={guard.requestClose}>Cancel</Button>
