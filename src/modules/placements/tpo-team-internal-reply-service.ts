@@ -108,10 +108,10 @@ export async function postTpoInternalMessage(context:RequestContext,raw:unknown)
      eq(activityEvents.actorUserId,context.user.id),
     )).limit(1);
    if(existing){
-    const saved=existing.metadata.messageId;
-    if(existing.metadata.bodyHash!==bodyHash||
-     Boolean(existing.metadata.markDecision)!==Boolean(input.markDecision)||
-     JSON.stringify(existing.metadata.mentionMembershipIds??[])!==
+    const saved=existing.metadata["messageId"];
+    if(existing.metadata["bodyHash"]!==bodyHash||
+     Boolean(existing.metadata["markDecision"])!==Boolean(input.markDecision)||
+     JSON.stringify(existing.metadata["mentionMembershipIds"]??[])!==
        JSON.stringify(requestedMentions)||typeof saved!=="string")
      throw new Error("TEAM_IDEMPOTENCY_CONFLICT");
     return {id:saved,threadId:thread.id,notified:memberIds.length-1};

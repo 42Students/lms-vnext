@@ -193,6 +193,7 @@ export async function listMyTpoInternalThreads(
   for(const row of unread){
    if(!row.href)continue;
    const threadHref=row.href.split("?")[0];
+   if(threadHref===undefined)continue;
    unreadByHref.set(threadHref,(unreadByHref.get(threadHref)??0)+Number(row.total));
   }
   return {status:"READY" as const,items:visibleItems.map(row=>({

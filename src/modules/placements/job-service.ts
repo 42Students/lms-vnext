@@ -593,6 +593,8 @@ export async function createPlacementJob(
       })
       .returning();
 
+    if (!job) throw new Error("PLACEMENT_JOB_CREATE_FAILED");
+
     await tx
       .insert(placementJobRoleOptions)
       .values({

@@ -69,7 +69,9 @@ export function legacyJobImportantDatesToSupplements(
   };
   return [{key:job.jobId+":"+index+":"+record.at,
    kind:legacyJobImportantDateEventType,day:careerDayKey(new Date(entry.at)),
-   title:record.label,companyName:job.companyName,roleTitle:job.roleTitle,
+   title:record.label,
+    ...(job.companyName!==undefined?{companyName:job.companyName}:{}),
+    ...(job.roleTitle!==undefined?{roleTitle:job.roleTitle}:{}),
    jobId:job.jobId,importantDateType:record.type,importantDateLabel:record.label,
    visible:true,note:record.type}];
  });
@@ -150,11 +152,13 @@ export function careerCalendarEvents(
       start,
       dayKey: careerDayKey(start),
       rescheduled: round.exception !== null,
-      eventType:"ROUND" as const,mode:round.exception?.mode??round.mode,
-      venue:round.exception?.venue??round.venue,
-      meetingUrl:round.exception?.meetingUrl??round.meetingUrl,
-      durationMinutes:round.durationMinutes,booked:round.booked,
-      learnerConfirmedAt:round.learnerConfirmedAt,
+      eventType:"ROUND" as const,
+      ...((round.exception?.mode??round.mode)!==undefined?{mode:round.exception?.mode??round.mode}:{}),
+      ...((round.exception?.venue??round.venue)!==undefined?{venue:round.exception?.venue??round.venue}:{}),
+      ...((round.exception?.meetingUrl??round.meetingUrl)!==undefined?{meetingUrl:round.exception?.meetingUrl??round.meetingUrl}:{}),
+      ...(round.durationMinutes!==undefined?{durationMinutes:round.durationMinutes}:{}),
+      ...(round.booked!==undefined?{booked:round.booked}:{}),
+      ...(round.learnerConfirmedAt!==undefined?{learnerConfirmedAt:round.learnerConfirmedAt}:{}),
     }];
   });
   const extras:CareerCalendarEvent[]=supplements.flatMap(item=>{

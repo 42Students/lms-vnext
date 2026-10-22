@@ -1,6 +1,6 @@
 import { z } from "zod";
 import {
-  DEFAULT_LEARNER_JOB_FILTERS, learnerDriveAvailabilitySchema,
+  learnerDriveAvailabilitySchema,
   type LearnerJobBrowseFilters,
 } from "./learner-jobs-browse-model";
 export const learnerDriveUrlSchema=z.object({
