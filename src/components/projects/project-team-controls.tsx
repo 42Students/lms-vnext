@@ -356,10 +356,7 @@ export function ProjectMemberActions({
       showToast({
         tone: "error",
         title: "Could not update mentor",
-        description:
-          caught instanceof Error
-            ? caught.message
-            : undefined,
+        ...(caught instanceof Error ? { description: caught.message } : {}),
       });
     } finally {
       setPending(false);
@@ -385,10 +382,7 @@ export function ProjectMemberActions({
       showToast({
         tone: "error",
         title: "Could not remove teammate",
-        description:
-          caught instanceof Error
-            ? caught.message
-            : undefined,
+        ...(caught instanceof Error ? { description: caught.message } : {}),
       });
     } finally {
       setPending(false);
