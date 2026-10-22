@@ -8,7 +8,7 @@ DEFERRED is NOT allowed. For each row: read its full text in the source packet n
 Keep tests passing and TypeScript valid; never silence errors. Write one result line per row under Results, push, then tick this packet in your queue.
 
 - [x] G2-13-031-089  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
-- [ ] G2-4-016-002  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
+- [x] G2-4-016-002  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [x] G2-4-016-015  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [x] G2-4-016-046  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
 - [x] G2-4-016-048  (source: docs/audit/gap-fix-work/verify2/packets/lane-10/W1_lane10_10.md)
@@ -31,3 +31,5 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - OK G2-13-031-089 — src/modules/placements/report-model.ts:1093-1117 keys company joining outcomes by membershipId, then counts one offer per learner, exposed through src/app/(authenticated)/tpo/reports/joining-status/page.tsx:37-80; matches distinct-per-company learner semantics in docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/TpoInsightsService.java:638-644.
 
 - FIXED G2-5-004-069 — commits 66b5855, e713a0a, ffa45f5; src/modules/projects/mentor-calendar-view.ts now admits validated REQUESTED and COMPLETED join URLs (except CANCELLED), and src/components/projects/mentor-meetings-calendar.tsx opens join links in the same tab; legacy docs/legacy-source/frontend/src/pages/mentor/calendar.js:85-86,120-125.
+
+- OK G2-4-016-002 — shared appendSmsDeliveryAttempt in src/modules/notifications/exotel-sms.ts:116-159 is called for OTP at :160-166, for guardian attendance in src/modules/attendance/parent-sms-provider.ts:17-29, for job.update/notification in src/modules/notifications/legacy-sms-notice-provider.ts:39-58 and src/modules/messaging/providers.ts:264-273; matches sender purposes in docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/ExotelSmsServiceImpl.java:80-133,220-233.
