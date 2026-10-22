@@ -78,12 +78,13 @@ function senderVerified(auth:string|undefined,fromAddress:string){
  // If no DMARC PASS is available, only a domain explicitly paired with
  // its own passing SPF/DKIM result may be accepted. Unknown or unaligned
  // header values remain safely stored for manual triage.
- const aligned=(domain:string)=>domain===senderDomain||
-   senderDomain.endsWith("."+domain);
+ const aligned=(domain:string)=>
+   /^([a-z0-9-]+\.)+[a-z]{2,63}$/.test(domain)&&
+   (domain===senderDomain||senderDomain.endsWith("."+domain));
  const dkim=[...lower.matchAll(/\bdkim\s*=\s*pass\b[^;\n]*\bheader\.d\s*=\s*([a-z0-9.-]+)/g)];
  const spf=[...lower.matchAll(/\bspf\s*=\s*pass\b[^;\n]*\bsmtp\.mailfrom\s*=\s*([a-z0-9._%+-]+@)?([a-z0-9.-]+)/g)];
- return dkim.some(match=>aligned(match[1]))||
-   spf.some(match=>aligned(match[2]));
+ return dkim.some(match=>aligned(match[1]??""))||
+   spf.some(match=>aligned(match[2]??""));
 }
 /** Only a gateway that verifies the upstream mail provider may sign a payload.
  * A sender's From/Reply-To header alone never confers access. No email
