@@ -60,7 +60,7 @@ export async function PUT(request:Request){
   if(!raw||typeof raw!=="object"||Array.isArray(raw))
    return NextResponse.json({error:"INVALID_REQUEST",message:"Supply a versioned settings map."},{status:400});
   const body=raw as Record<string,unknown>;
-  const settings=body.settings,versions=body.expectedVersions;
+  const settings=body["settings"],versions=body["expectedVersions"];
   if(!settings||typeof settings!=="object"||Array.isArray(settings)||
      !versions||typeof versions!=="object"||Array.isArray(versions))
    return NextResponse.json({error:"INVALID_REQUEST",message:"settings and expectedVersions maps are required."},{status:400});
@@ -75,8 +75,8 @@ export async function PUT(request:Request){
     !Number.isSafeInteger(row.expectedVersion)||row.expectedVersion<0))
    return NextResponse.json({error:"INVALID_REQUEST",message:"Each setting needs a string value and current numeric version."},{status:400});
   const result=await saveAdminTenantSettings(await getCurrentRequestContext(),{
-   scopeType:body.scopeType,collegeId:body.collegeId,
-   confirmedHighImpact:body.confirmedHighImpact===true,changes,
+   scopeType:body["scopeType"],collegeId:body["collegeId"],
+   confirmedHighImpact:body["confirmedHighImpact"]===true,changes,
   });
   return NextResponse.json({...result,perKeyErrors:result.results.filter(row=>row.status==="FAILED"),
    partial:result.failed>0,legacyCompatibility:"VERSIONED_MAP"},
