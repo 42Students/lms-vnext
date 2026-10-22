@@ -44,18 +44,18 @@ export function TpoNotificationCluster() {
   }, [refresh]);
 
   const count = state?.value.messages ?? null;
-  return <div role="group" className={style.actions+" min-w-0 shrink-0"} aria-label="Messages and notifications">
-    <Link href="/tpo/messages" className={style.iconButton+" shrink-0"}
+  return <div role="group" className={style["actions"]+" min-w-0 shrink-0"} aria-label="Messages and notifications">
+    <Link href="/tpo/messages" className={style["iconButton"]+" shrink-0"}
       aria-label={"Messages" + (count !== null ? ", " + count + " unread" : "")}
       title="Messages">
       <MessageIcon/>
-      {count !== null && count > 0 ? <span aria-hidden="true" className={style.badge}>
+      {count !== null && count > 0 ? <span aria-hidden="true" className={style["badge"]}>
         {count > 99 ? "99+" : count}
       </span> : null}
     </Link>
     {state ? <TpoBellPanel compact initialUnread={state.value.unread}
       items={state.value.items} revision={state.revision}/> :
-      <Link href="/tpo/notifications" className={style.iconButton+" shrink-0"}
+      <Link href="/tpo/notifications" className={style["iconButton"]+" shrink-0"}
         aria-label="Notifications — open inbox" title="Open notifications inbox">
         <BellIcon/>
       </Link>}
