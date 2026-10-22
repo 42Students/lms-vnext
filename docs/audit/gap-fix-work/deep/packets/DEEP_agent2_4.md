@@ -15,7 +15,7 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 - [ ] G2-2-013-009  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [x] G2-2-014-032  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-2-015-092  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
-- [ ] G2-2-016-134  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
+- [x] G2-2-016-134  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-2-017-052  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-2-017-057  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
 - [ ] G2-4-017-017  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
@@ -39,3 +39,5 @@ Rows still unchecked after the first deep pass. Each row ends OK (vNext file:lin
 
 - G2-2-014-032 — OK: `src/modules/courses/super-admin-course-bulk-visibility.ts:82-139` persists each course in its own transaction and collects per-course failures; `:142-166` retains descendant failures and only enables successful courses. Legacy: `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminCourseBulkController.java:30-33` deliberately has no group transaction.
 - G2-4-025-082 — OK: `src/components/profile/learner-skill-catalog-input.tsx:20-36,98-128` persists recent selections and POSTs explicit selections using an idempotency key and in-flight latch; not triggered from text edits or profile saves. Legacy: `docs/legacy-source/frontend/src/components/Global/SkillsAutocomplete.jsx:313-350`.
+
+- G2-2-016-134 — FIXED: `src/modules/placements/college-drive-applications-service.ts` `exportCollegeDriveApplicationsCsv` now pages every matching college-scoped result in batches of 100 using the validated query and existing deterministic sort, rather than limiting the CSV to `DRIVE_APPLICATION_EXPORT_CAP`. The export returns `exported` and `total` for explicit completion metadata; source: `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminJobController.java:706-736` (complete selected export).
