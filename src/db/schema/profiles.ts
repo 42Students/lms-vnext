@@ -195,3 +195,31 @@ export function validateImportedFacultyAvatarOwnership(input:{
   Number.isSafeInteger(input.sizeBytes)&&input.sizeBytes>0&&
   input.sizeBytes<=5*1024*1024&&input.scanStatus==="CLEAN";
 }
+
+/** One user can hold multiple scoped faculty/mentor/TPO/admin memberships.
+ * Old faculty type is employment metadata, not sufficient to activate an
+ * elevated role. Preserve the department FK for every mapped Faculty row. */
+export function legacyFacultyMembershipDisposition(input:{
+ legacyFacultyId:number;legacyUserId:number;legacyTypeOrdinal:number;
+ userId:string;collegeId:string;membershipId:string;
+ primaryDepartmentId:string|null;departmentCollegeId:string|null;
+ sourceActive:boolean;hasVerifiedStaffRole:boolean;
+}){
+ if(!Number.isSafeInteger(input.legacyFacultyId)||input.legacyFacultyId<1||
+    !Number.isSafeInteger(input.legacyUserId)||input.legacyUserId<1)
+  throw new Error("Unverified historic faculty or user identity");
+ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ if(!uuid.test(input.userId)||!uuid.test(input.collegeId)||!uuid.test(input.membershipId))
+  throw new Error("Faculty import needs verified UUID crosswalks");
+ if(input.primaryDepartmentId!==null&&
+    (!uuid.test(input.primaryDepartmentId)||input.departmentCollegeId!==input.collegeId))
+  throw new Error("Imported department must belong to the same college");
+ const source=legacyFacultyTypeFromOrdinal(input.legacyTypeOrdinal);
+ const requestedRoles=source.roleHint==="FACULTY"?["FACULTY"] as const:
+  ["FACULTY",source.roleHint] as const;
+ if(!input.hasVerifiedStaffRole||!input.sourceActive)
+  return {state:"REVIEW_REQUIRED" as const,source,
+   requestedRoles:[] as string[],primaryDepartmentId:input.primaryDepartmentId};
+ return {state:"READY_FOR_ROLE_AUTHORIZATION" as const,source,
+  requestedRoles:[...requestedRoles],primaryDepartmentId:input.primaryDepartmentId};
+}

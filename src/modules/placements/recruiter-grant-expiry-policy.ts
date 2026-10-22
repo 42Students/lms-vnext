@@ -74,3 +74,26 @@ export function legacyRecruiterAccessMonthsToValidUntil(
   if(legacyMonths===0)return null;
   return recruiterGrantValidUntil(grantedAt,legacyMonths);
 }
+
+/** Preserve the old unlimited recruiter access as a migration exception. A
+ * reviewer must choose a finite expiry and verify the company relationship
+ * before activation; NULL never grants infinite runtime access. */
+export function legacyRecruiterGrantActivationPlan(input:{
+ legacyCollegeId:number;legacyRecruiterId:number;
+ collegeId:string|null;relationshipId:string|null;
+ expiresAt:Date|null;verified:boolean;active:boolean;
+}){
+ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ if(!Number.isSafeInteger(input.legacyCollegeId)||input.legacyCollegeId<1||
+  !Number.isSafeInteger(input.legacyRecruiterId)||input.legacyRecruiterId<1)
+  throw Error("Invalid legacy recruiter grant keys");
+ if(!input.collegeId||!input.relationshipId||!uuid.test(input.collegeId)||
+  !uuid.test(input.relationshipId))
+  throw Error("Unmapped recruiter/company relationship grant");
+ return {collegeId:input.collegeId,relationshipId:input.relationshipId,
+   activationAllowed:Boolean(input.active&&input.verified&&input.expiresAt&&
+     Number.isFinite(input.expiresAt.getTime())&&input.expiresAt>Date.now()),
+   indefiniteLegacyGrant:input.expiresAt===null,
+   requiresFiniteExpiryReview:input.expiresAt===null,
+   revokedOrSuspended:!input.active};
+}

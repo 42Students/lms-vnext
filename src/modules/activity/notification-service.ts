@@ -1743,3 +1743,25 @@ export async function releaseDueStaffNotifications(
   }
   return { checked: due.length, delivered, failed };
 }
+
+/** Historic announcement job/round deep links are constructed from scoped
+ * canonical UUIDs, never from old numeric IDs or external input hrefs. */
+export function legacyNoticeActionRoute(input:{
+ collegeId:string;membershipCollegeId:string;
+ kind:"JOB"|"INTERVIEW"|"COURSE"|"CLASS";
+ jobId?:string;roundId?:string;courseId?:string;sectionId?:string;
+}):string|null{
+ if(input.collegeId!==input.membershipCollegeId)return null;
+ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ const id=input.kind==="JOB"||input.kind==="INTERVIEW"?input.jobId:
+  input.kind==="COURSE"?input.courseId:input.sectionId;
+ if(!id||!uuid.test(id))return null;
+ if(input.kind==="INTERVIEW"&&(!input.roundId||!uuid.test(input.roundId)))
+  return null;
+ const route=input.kind==="JOB"?"/learn/my-placements/jobs/"+id:
+  input.kind==="INTERVIEW"?"/learn/my-placements/schedule?jobId="+id+
+    "&roundId="+input.roundId:
+  input.kind==="COURSE"?"/learn/courses/"+id:
+    "/learn/courses?sectionId="+id;
+ return safeNotificationActionHref(route);
+}

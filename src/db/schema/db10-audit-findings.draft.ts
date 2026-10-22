@@ -115,3 +115,26 @@ export const db10AuditFindingFiles=pgTable("audit_finding_file",{
  check("audit_finding_file_error_len_ck",
   sql`${t.errorCode} is null or length(${t.errorCode}) between 1 and 80`),
 ]);
+
+/** Imported audit events are not user edits. A sync producer must record
+ * attempted provenance, actor kind and original status even for deleted or
+ * tampered sources, and must not silently mark a refusal as success. */
+export const LEGACY_FINDING_SYNC_DISPOSITIONS={
+ NEW:"IMPORTED",UPDATED:"SYNCED",TAMPERED:"TAMPERED",
+ DELETED:"DELETED",REFUSED:"REFUSED",
+} as const;
+export function auditFindingSyncDisposition(input:{
+ event: keyof typeof LEGACY_FINDING_SYNC_DISPOSITIONS;
+ sourceFile:string;repo:string;commit:string;
+ actorKind:"SYNC_AGENT"|"SYSTEM";actorLabel:string;
+ originalExternalId:string;
+}){
+ if(!/^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$/.test(input.originalExternalId)||
+   !input.actorLabel.trim()||input.actorLabel.length>150||
+   !/^[0-9a-f]{40}$/i.test(input.commit)||
+   !input.sourceFile||input.sourceFile.length>500||
+   !input.repo||input.repo.length>180)
+  throw new Error("Unverified sync provenance");
+ return {...input,action:LEGACY_FINDING_SYNC_DISPOSITIONS[input.event],
+  actorUserId:null as null};
+}

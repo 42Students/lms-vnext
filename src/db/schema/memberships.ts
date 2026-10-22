@@ -132,3 +132,26 @@ export function legacyRoleAssignmentCandidate(input:{
   descriptionForAudit:input.description?.trim().slice(0,500)??null,
   persistedRoleAuthority:false as const};
 }
+
+/** Suspend a scoped college membership without deactivating the shared
+ * identity for unrelated colleges. A platform-wide suspension is distinct
+ * and revokes all device sessions and active OTP challenges. An elevated role
+ * removal also triggers explicit session entitlement revalidation. */
+export function legacyIdentitySuspensionDisposition(input:{
+ status:"ACTIVE"|"SUSPENDED"|"REMOVED";
+ scope:"PLATFORM"|"COLLEGE";collegeId:string|null;reason:string|null;
+}){
+ if(input.scope==="COLLEGE"&&!input.collegeId)
+  throw new Error("College suspension needs a verified college");
+ if(input.scope==="PLATFORM"&&input.collegeId)
+  throw new Error("Platform suspension cannot target one college");
+ const suspended=input.status!=="ACTIVE";
+ return {
+  platformSuspended:suspended&&input.scope==="PLATFORM",
+  collegeSuspended:suspended&&input.scope==="COLLEGE",
+  revokeAllDeviceSessions:suspended&&input.scope==="PLATFORM",
+  invalidateAllLoginChallenges:suspended&&input.scope==="PLATFORM",
+  revalidateSelectedMembership:suspended&&input.scope==="COLLEGE",
+  reason:input.reason?.trim().slice(0,500)??null,
+ } as const;
+}
