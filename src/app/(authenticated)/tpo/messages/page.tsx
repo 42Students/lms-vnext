@@ -250,8 +250,10 @@ export default async function TpoMessagesPage({
             </p>
           </div>
           {items.length===0?<div className="p-4">
-            <EmptyState title={searching?"No conversations match this search":narrowing?"No conversations match these filters":"No conversations yet"}
-              description={narrowing?"Try a different search or choose All.":"Start a new message to a recruiter."}/>
+            <EmptyState title={total>0?"No conversations on this page":searching?"No conversations match this search":narrowing?"No conversations match these filters":"No conversations yet"}
+              description={total>0?"Return to the first page or adjust your filters.":narrowing?"Try a different search or choose All.":"Start a new message to a recruiter."}
+              action={total>0?<Link href={tpoMessagesHref({...commonFilters,page:1})}
+                className="inline-flex min-h-10 items-center font-semibold text-link underline">First page</Link>:undefined}/>
           </div>:<ul className="max-h-[65vh] divide-y divide-border overflow-y-auto lg:max-h-[680px]">
             {items.map(item=><li key={item.id}>
               <Link href={threadHref(item.id)}
@@ -287,7 +289,10 @@ export default async function TpoMessagesPage({
           </nav>:null}
         </aside>
         <section aria-label="Conversation" className="min-w-0 p-4 md:p-5">
-          {!active?<EmptyState title={requested?"Conversation not on this page":"No conversations yet"} description={requested?"Clear the thread selection or change filters to find this conversation.":"Select a conversation or start a new message."}/>:
+          {!active?<EmptyState title={requested?"Conversation not on this page":"No conversations yet"}
+            description={requested?"Clear the thread selection or change filters to find this conversation.":"Select a conversation or start a new message."}
+            action={requested?<Link href={tpoMessagesHref({...commonFilters,page})}
+              className="inline-flex min-h-10 items-center font-semibold text-link underline">Clear thread selection</Link>:undefined}/>:
             !detail?<ErrorState title="Could not load this conversation"
               description="This refresh failed. Retry. No messages were acknowledged."
               action={<Link href={threadHref(active.id)} className="font-semibold text-link underline">Retry</Link>}/>:
@@ -312,6 +317,7 @@ export default async function TpoMessagesPage({
                   </article>)}
               </div>
               <TpoRecruiterMessageReply threadId={active.id} actorUserId={context.user.id}
+                accessEnded={Boolean(active.accessEnded)}
                 unread={detail.messages.some(item=>item.senderType==="RECRUITER"&&!item.readAt)}/>
             </>}
         </section>
