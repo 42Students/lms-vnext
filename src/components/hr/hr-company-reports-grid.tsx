@@ -5,6 +5,7 @@ import {useRouter} from "next/navigation";
 import type {MouseEvent} from "react";
 
 import { TpoGrid } from "@/components/tpo/grid/tpo-grid";
+import { StatusBadge } from "@/components/ui/status-badge";
 import type { TpoGridColumn } from "@/modules/placements/tpo-grid-model";
 
 /** Read-only, server-authorized and pagination-scoped company hiring totals. */
@@ -32,7 +33,7 @@ const columns: readonly TpoGridColumn<HrCompanyReportSheetRow>[] = [
     render:row=><div className="min-w-0 space-y-1">
       <Link href={driveHref(row)} className="inline-flex min-h-9 items-center font-semibold text-link underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         aria-label={`Open drive ${row.title}`}>{row.title}</Link>
-      <span className="ml-2 inline-flex rounded-full border border-border px-2 py-0.5 text-xs font-semibold text-body">{row.status}</span>
+      <StatusBadge className="ml-2" tone="neutral">{row.status}</StatusBadge>
       <span className="block text-xs text-muted-foreground">{row.employmentType.replaceAll("_"," ")}</span>
     </div>},
   {key:"status",label:"Status",read:row=>row.status,

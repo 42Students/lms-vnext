@@ -20,8 +20,9 @@ describe("Chat-2 Company relationship and legacy Companies navigation",()=>{
  it("TPO-companies-20 defaults bare Companies to legacy Engage but preserves named and filtered company views",()=>{
   const route=source("src/app/(authenticated)/tpo/companies/page.tsx");
   const engage=source("src/app/(authenticated)/tpo/recruiters/page.tsx");
-  expect(route).toContain('redirect("/tpo/recruiters?view=companies")');
-  expect(route).toContain('first(raw.directory)!=="1"');
+  expect(route).toContain("await requireTpoBatchActor(context)");
+  expect(route).toContain("<TpoCompaniesSpreadsheet rows={page.items}/>");
+  expect(route).toContain('href="/tpo/recruiters"');
   expect(route).toContain('if (name) {');
   expect(route).toContain("TpoCompanyMemoryWorkspace");
   expect(engage).toContain('requested === "board" || requested === "companies"');
@@ -29,19 +30,17 @@ describe("Chat-2 Company relationship and legacy Companies navigation",()=>{
  it("TPO-companies-29 keeps accessible phone cards and per-company data without a second roster",()=>{
   const page=source("src/app/(authenticated)/tpo/companies/page.tsx");
   const table=source("src/components/ui/data-table.tsx");
-  expect(page).toContain('<DataTable');
-  expect(page).toContain('caption="Companies on this page"');
-  expect(page).toContain('mobilePriority:"primary"');
-  expect(page).toContain('mobileLabel:"Confirmed joins"');
-  expect(page).toContain('cell:company=>company.confirmedJoinedLearners');
-  expect(page).toContain('href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}');
-  // Phone rows are block cards with wrapped values, expandable secondary
-  // metrics and a discoverable Create drive action; desktop retains columns.
-  expect(table).toContain('className="block space-y-3 sm:table-row-group');
-  expect(table).toContain('sm:table-row sm:overflow-visible');
-  expect(table).toContain('phoneVisible?"block":"hidden"');
-  expect(table).toContain('More details');
-  expect(table).toContain('<ScrollCue axis="x"');
+  expect(page).toContain('<TpoCompaniesSpreadsheet rows={page.items}/>');
+  const sheet=source("src/components/tpo/tpo-companies-spreadsheet.tsx");
+  expect(sheet).toContain('label:"Confirmed joins"');
+  expect(sheet).toContain('read:company=>company.confirmedJoinedLearners');
+  expect(sheet).toContain('href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}');
+  // The shared Quartz grid now owns phone cards and expandable columns.
+  expect(sheet).toContain('<GridWorkspace rows={rows} columns={columns}');
+  expect(sheet).toContain('openPrimary={{');
+  expect(sheet).toContain('rowActions={company=>');
+  expect(sheet).toContain('storageKey="tpo-company-directory-columns-v1"');
+  expect(table).toContain('mobilePriority');
   const canonical=source("src/app/(authenticated)/tpo/companies/[companyId]/page.tsx");
   expect(canonical).toContain('caption="Company placement drives"');
   expect(canonical).toContain('caption="Company hiring history"');

@@ -228,6 +228,9 @@ export async function acceptAuthenticatedRecruiterEmailReply(
     .from(placementRecruiterInboundEmailEvents)
     .where(eq(placementRecruiterInboundEmailEvents.messageIdHash,msgHash)).limit(1);
   if(duplicate){
+   // The event key includes the live thread ID. A foreign row is corrupt or
+   // adversarial state, never authority to link someone else's conversation.
+   if(duplicate.threadId!==state.threadId)return auditResult("FAILED");
    // The conversation event was already committed, but this provider alias
    // generated a distinct inbox receipt. Resolve it instead of leaving a
    // misleading unrouted NEW message in the operator triage queue.
