@@ -4,3 +4,4 @@ TOP PRIORITY (build blocker): these are the type errors still left on main; the 
 
 - [ ] `docs/audit/gap-fix-work/ci4/packets/CI4_lane8_1.md` (6 errors; edit src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx)
 - [ ] `docs/audit/gap-fix-work/ci4/packets/CI4_lane8_2.md` (1 errors; edit src/app/(authenticated)/tpo/announcements/page.tsx)
+- [ ] `docs/audit/gap-fix-work/ci4/packets/CI4M_lane8_batches_merge.md` (merge removed [cohortId] page features into [batchId]; edit src/app/(authenticated)/admin/batches/[batchId]/students/page.tsx)
