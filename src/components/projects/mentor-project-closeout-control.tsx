@@ -39,7 +39,7 @@ export function MentorProjectCloseoutControl({
     }catch{setError("Project completion could not be saved. Please check the project status and try again.");}
     finally{inFlight.current=false;setPending(false);}
   }
-  return <div className={"space-y-3 "+styles.legacy}>
+  return <div className={"space-y-3 "+styles["legacy"]}>
     <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
     {labels.map((label,i)=><label key={label}
       className="flex min-h-11 min-w-0 items-start gap-3 py-[var(--lms-space-3)] text-sm text-body">
