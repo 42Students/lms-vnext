@@ -103,7 +103,8 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
   const [preflightError,setPreflightError]=useState("");
   const [outcomeRestored,setOutcomeRestored]=useState(false);
   const [prevCollegeId,setPrevCollegeId]=useState(collegeId);
-  const reportKey="lms-project-cohort-report:"+collegeId;
+  // Reports contain learner membership IDs and are scoped to the signed-in administrator.
+  const reportKey="lms-project-cohort-report:"+userId+":"+collegeId;
   // A cohort report is recoverable for seven days after navigating away, and
   // never shared with another college's selected workspace.
   useEffect(()=>{
@@ -227,7 +228,19 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
       "&classId="+encodeURIComponent(classId)+"&templateId="+encodeURIComponent(templateId),
       {signal,cache:"no-store"});
     if(!response.ok)throw Error(await projectApiError(response));
-    return await response.json() as PreflightResult;
+    const payload:unknown=await response.json();
+     const invalid="The server did not return a valid cohort preflight. Nothing was created.";
+     if(!payload||typeof payload!=="object"||Array.isArray(payload))throw new Error(invalid);
+     const data=payload as Partial<PreflightResult>;
+     const countIsValid=(value:unknown):value is number=>
+       typeof value==="number"&&Number.isSafeInteger(value)&&value>=0;
+     if(!countIsValid(data.toCreate)||!countIsValid(data.alreadyCovered)||
+        !countIsValid(data.eligible)||!countIsValid(data.duplicates)||
+        !Array.isArray(data.items)||data.items.length>10000||
+        data.items.some(row=>!row||typeof row.membershipId!=="string"||
+          !["TO_CREATE","ALREADY_COVERED","DUPLICATE"].includes(row.status)))
+       throw new Error(invalid);
+     return data as PreflightResult;
   }
   useEffect(()=>{
     if(!preflightActive)return;
@@ -456,7 +469,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
         {slug.length>0&&!isValidClassTeamBaseSlug(slug)?<span role="alert" className="block text-xs text-error">Use lowercase letters, numbers and single hyphens only. Start and end with a letter or number.</span>:null}
       </label>
       <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">Summary
-        <Textarea value={summary} disabled={!plannerEditable} maxLength={2000}
+        <Textarea value={summary} disabled={!plannerEditable} maxLength={2000} rows={3}
           placeholder="Short live workspace summary"
           onChange={event=>setSummary(event.target.value)}/>
       </label>
