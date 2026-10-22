@@ -16,10 +16,11 @@ export async function GET(request:Request){
    deliveryId:url.searchParams.get("deliveryId")??undefined,
   });
   if(!report)return NextResponse.json({error:"SELECT_CLASS_AND_COURSE"},{status:400});
+  // Legacy CSV headers and order, followed by vNext completion diagnostics.
   const rows=[
-   ["Student ID","Student","Roll number","Videos completed","Videos total",
-    "Assignments completed","Assignments total","Quizzes completed","Quizzes total",
-    "Progress (%)","Completed","Items measured"],
+   ["learnerId","name","rollNumber","videos","videoTotal",
+    "assignments","assignmentTotal","quizzes","quizTotal",
+    "percent","completed","itemsMeasured"],
    ...report.rows.map(row=>[
     row.membershipId,row.name??"",row.rollNumber??"",
     row.videoDone,report.totalVideos,row.assignmentDone,report.totalAssignments,
@@ -31,9 +32,13 @@ export async function GET(request:Request){
    "","", "", "", "", "", "", "", "", "",
   ]);
   const csv="\uFEFF"+rows.map(row=>row.map(quote).join(",")).join("\r\n")+"\r\n";
+  // Use imported identifiers where available; UUID fallback is section-scoped.
+  const safeNamePart=(value:string|number)=>String(value).replace(/[^a-zA-Z0-9_-]/g,"_");
+  const filename="course-progress-"+safeNamePart(report.chosen.legacyOfferingId??report.chosen.offeringId)+
+   "-class-"+safeNamePart(report.chosen.legacyClassId??report.chosen.sectionId)+".csv";
   return new Response(csv,{status:200,headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="college-learner-course-progress.csv"',
+   "Content-Disposition":'attachment; filename="'+filename+'"',
    "Cache-Control":"private, no-store",
    "X-Content-Type-Options":"nosniff",
   }});

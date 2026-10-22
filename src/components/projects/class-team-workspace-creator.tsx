@@ -48,9 +48,10 @@ type CohortCreationOutcome={
 };
 
 
-export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,initialTemplateId}:{
+export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,initialTemplateId,initialMode="TEAMS"}:{
  collegeId:string;userId:string;basePath:string;templates:readonly AssignedProjectTemplateChoice[];
  initialTemplateId?:string|null;
+ initialMode?:"TEAMS"|"INDIVIDUAL";
 }) {
   const router=useRouter();
   const {showToast}=useToast();
@@ -60,7 +61,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
   const [classId,setClassId]=useState("");
   const [roster,setRoster]=useState<Roster|null>(null);
   const [templateId,setTemplateId]=useState(templates.some(t=>t.templateId===initialTemplateId)?initialTemplateId!:templates[0]?.templateId??"");
-  const [mode,setMode]=useState<"TEAMS"|"WHOLE_CLASS"|"INDIVIDUAL">("TEAMS");
+  const [mode,setMode]=useState<"TEAMS"|"WHOLE_CLASS"|"INDIVIDUAL">(initialMode);
   const [templateQuery,setTemplateQuery]=useState("");
   const [order,setOrder]=useState<"ROLL"|"SHUFFLE">("ROLL");
   const [size,setSize]=useState(5);
