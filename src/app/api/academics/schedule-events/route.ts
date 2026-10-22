@@ -6,6 +6,7 @@ import {
   createSectionScheduleEvent,
   listSectionScheduleEvents,
 } from "@/modules/academics/schedule-service";
+import {createSectionScheduleEventInputSchema} from "@/modules/academics/validation";
 
 export const runtime = "nodejs";
 
@@ -55,7 +56,7 @@ export async function POST(request: Request) {
     const event =
       await createSectionScheduleEvent(
         context,
-        body,
+        createSectionScheduleEventInputSchema.parse(body),
       );
 
     // Keep the vNext event and provide the historic OK acknowledgment.
