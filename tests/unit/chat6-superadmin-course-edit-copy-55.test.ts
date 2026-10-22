@@ -10,7 +10,8 @@ describe("Super Admin courses legacy edit semantics",()=>{
   const actions=read("src/components/courses/admin-course-actions.tsx");
   expect(actions).toContain("Course Name");
   expect(actions).toContain('Updated course “"+name.trim()+"”.');
-  expect(actions).toContain("Department ownership is immutable");
+  expect(actions).toContain("A Course without any Offerings can move within the same college using Move department.");
+  expect(actions).toContain("expectedUpdatedAt: course.updatedAt");
   expect(actions).toContain("Discard unsaved course changes?");
   expect(actions).toContain("activeOfferingCount>0");
   const form=read("src/components/courses/admin-course-create-panel.tsx");
