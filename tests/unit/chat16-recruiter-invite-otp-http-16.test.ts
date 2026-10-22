@@ -34,7 +34,7 @@ const ctx={params:Promise.resolve({token})};
 const req=(path:"send-code"|"accept",body?:unknown)=>
  new Request("https://42lms.com/api/public/recruiter-invite/"+token+"/"+path,{
   method:"POST",headers:{"Content-Type":"application/json"},
-  body:JSON.stringify(body??{}),
+  body:JSON.stringify(body??(path==="send-code"?{email:"recruiter@example.org"}:{})),
  });
 
 beforeEach(()=>{
@@ -86,9 +86,9 @@ describe("chat-16 public recruiter invitation code request and acceptance routes
   const response=await sendCode(req("send-code"),ctx);
   expect(response.status).toBe(200);
   expect(response.headers.get("Cache-Control")).toBe("no-store");
-  expect(await response.json()).toEqual({sent:true});
+  expect(await response.json()).toEqual({status:"CODE_SENT",sent:true});
   expect(requestRecruiterInviteOtp).toHaveBeenCalledExactlyOnceWith(
-   token,deliverPublicRecruiterJoinCode,
+   token,expect.any(Function),"recruiter@example.org",
   );
  });
  it("REC-INVITE-HTTP-20 treats used, expired, throttled and failed code requests indistinguishably",async()=>{

@@ -4,10 +4,10 @@ const src=(p:string)=>readFileSync(p,"utf8");
 describe("Engage remaining safe and reachable controls",()=>{
  it("TPO-recruiters-07 provides the actual counted Needs doing chips and zero state",()=>{
   const s=src("src/components/tpo/recruiter-leads-workspace.tsx");
-  for(const label of ["Follow-ups due","No next step","Gone quiet","Unassigned","Nothing right now.","recruiters with access"])
+  for(const label of ["Follow-ups due","No next step","Gone quiet","Unassigned","No recruiters yet.","recruiters with access"])
    expect(s).toContain(label);
   expect(s).toContain('aria-label="Needs doing"');
-  expect(s).toContain("needsExpanded");
+  expect(s).toContain("aria-pressed={attention===key}");
   expect(s).toContain("rows.filter(row=>row.chips?.includes");
  });
  it("TPO-recruiters-30 links a scoped detected duplicate and preserves contact form details",()=>{
@@ -27,7 +27,7 @@ describe("Engage remaining safe and reachable controls",()=>{
   expect(s).toContain("overflow-x-auto");
   expect(s).toContain("Move to… / Actions");
   const dialog=src("src/components/ui/dialog.tsx");
-  expect(edit).toContain("<Dialog open={editing}");
+  expect(edit).toContain("<Dialog open={editing && confirmation===null}");
   expect(edit).toContain("dismissible={!saving}");
   expect(dialog).toContain("modal.showModal()");
   expect(dialog).toContain("onCancel={event =>");

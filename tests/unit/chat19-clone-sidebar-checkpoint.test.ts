@@ -28,8 +28,8 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
 });
  it("keeps the legacy white panel and light border",()=>{
  expect(legacy()).toContain("background: rgb(255, 255, 255); border-right: 1px solid rgb(241, 244, 249)");
- expect(sidebar()).toContain("background:#fff;");
- expect(sidebar()).toContain("border-right:1px solid #f1f4f9;");
+ expect(sidebar()).toContain("background:var(--lms-white);");
+ expect(sidebar()).toContain("border-right:1px solid var(--lms-neutral-100);");
 });
  it("matches 44px navigation items and 8px corners",()=>{
  expect(legacy()).toContain("border-radius: 8px; min-height: 44px; padding: 10px 12px");
@@ -39,13 +39,13 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
 });
  it("matches the teal active fill and inset bar",()=>{
  expect(legacy()).toContain("box-shadow: rgb(38, 186, 199) 3px 0px inset;");
- expect(sidebar()).toContain("background:#eff8fa;");
- expect(sidebar()).toContain("box-shadow:inset 3px 0 #26bac7;");
+ expect(sidebar()).toContain("background:var(--lms-primary-subtle);");
+ expect(sidebar()).toContain("box-shadow:inset 3px 0 var(--lms-primary);");
 });
  it("keeps 7-percent teal hover wash and teal labels",()=>{
  expect(legacy()).toContain("background: rgba(38, 186, 199, 0.07)");
  expect(sidebar()).toContain("background:rgba(38,186,199,.07);");
- expect(sidebar()).toContain("color:#1a95a1;");
+ expect(sidebar()).toContain("color:var(--lms-primary-text);");
 });
  it("preserves 24px icon box and 20px upstream glyph",()=>{
  expect(legacy()).toContain("opacity: 0.55; flex: 0 0 24px");
@@ -93,7 +93,7 @@ describe("chat-19 B3/B4 legacy shell source-value checks",()=>{
  const mobile=read("src/components/shell/mobile-navigation.tsx");
  expect(mobile).toContain('import { Drawer } from "@/components/ui/drawer"');
  expect(mobile).toContain('side="left"');
- expect(mobile).toContain("!px-3 !pt-2 !pb-[calc(24px+env(safe-area-inset-bottom,0px))]");
+ expect(mobile).toContain("!px-[var(--lms-space-3)] !pt-[var(--lms-space-2)] !pb-[calc(24px+env(safe-area-inset-bottom,0px))]");
  expect(sidebar()).toContain("width:82vw;");
  expect(sidebar()).toContain("max-width:300px;");
  expect(sidebar()).toContain(".lms-mobile-sidebar .lms-sidebar-nav {padding-inline:0;");

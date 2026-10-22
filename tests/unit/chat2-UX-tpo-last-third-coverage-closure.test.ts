@@ -26,7 +26,7 @@ describe("TPO last third page-level UX coverage closure",()=>{
   const s=readFileSync("src/app/(authenticated)/tpo/verification/page.tsx","utf8");
   expect(s).toContain("Invalid verification filters");
   expect(s).toContain("Clear filters");
-  expect(s).toContain("Verification records are not available right now");
+  expect(s).toContain("Could not load the queue. Please try again");
   expect(s).toContain("You cannot verify profiles here");
   expect(s).toContain("Your college admin has not allowed");
   expect(s).toContain("Your verification access has been removed");

@@ -52,7 +52,7 @@ describe("chat-16 explicit public campaign suppression API response and side eff
   for(const response of results)
    expect(response.headers.get("location")).toBe("https://42lms.com/campaign-unsubscribe/confirmed?scope=placement-cell");
   expect(getDb).not.toHaveBeenCalled();
-  expect(unsubscribeTpoCampaignRecipient).not.toHaveBeenCalled();
+  expect(unsubscribeTpoCampaignRecipient).toHaveBeenCalledExactlyOnceWith("not-signed");
  });
  it("campaign-unsubscribe-route-18 keeps placement-cell opt-outs on their signed, scoped service path",async()=>{
   vi.mocked(verifyTpoCampaignRecipientToken).mockReturnValue({
