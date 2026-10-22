@@ -85,12 +85,11 @@ export default async function ActivityPage({
     (explicitFilter ? "all" : "important");
   // The Important tab is an OR over HIGH + CRITICAL, not HIGH alone.
   const importantOnly = selectedPreset==="important" && !importanceValue;
-  const categoryModule =
-    selectedPreset==="setup"?"ACADEMICS":
-    selectedPreset==="people"?"IDENTITY":
-    selectedPreset==="teaching"?"COURSES":
-    selectedPreset==="projects"?"PROJECTS":undefined;
-  const effectiveModule=moduleValue??categoryModule;
+  // The old categories span subjects and event types across several modules.
+  // Restricting them to one module silently hid valid academic/people events.
+  // The activity service applies the legacy event taxonomy in scoped SQL
+  // before counts, cursor pagination and grouping.
+  const effectiveModule=moduleValue;
   const selectedCollegeId=isSuperAdmin(context)?context.adminScope?.collegeId??null:null;
   const selectedOrganizationId=isSuperAdmin(context)?context.adminScope?.organizationId??null:null;
   // A college-filter directory failure is recoverable: it must not turn a
@@ -160,6 +159,7 @@ export default async function ActivityPage({
           | (typeof ACTIVITY_IMPORTANCE)[number]
           | undefined,
         importantOnly,
+        legacyCategory:selectedPreset==="all"?undefined:selectedPreset,
         collegeId: selectedCollegeId??one(params.collegeId),
         organizationId: selectedCollegeId?undefined:selectedOrganizationId??undefined,
         actorUserId: one(params.actorUserId),
