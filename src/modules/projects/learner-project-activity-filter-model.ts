@@ -24,7 +24,9 @@ export function learnerProjectActivityCategory(eventType: string): LearnerProjec
   return "OTHER";
 }
 
-/** Filters only an already-authorized Project feed; never accepts a project/actor selector. */
+/** Filters only an already-authorized Project feed; never accepts a project/actor selector.
+ * Legacy eventType/sourceTab remain scoped; category names are display labels.
+ */
 export function filterLearnerProjectActivity<T extends { eventType: string }>(
   events: readonly T[], categoryInput: unknown,
 ): T[] {
@@ -42,7 +44,7 @@ export const learnerProjectActivityFilterSchema = z.object({
   search:z.string().trim().max(100).optional(),
   // Old /activity/feed supported bounded page/size and exact event type.
   // New cursor clients continue to default to page 1 / 100 events.
-  eventType:z.string().trim().regex(/^projects\.[a-z0-9_.-]+$/i).max(120).optional(),
+  eventType:z.string().trim().max(120).regex(/^[a-z0-9_.-]+$/i).optional(),
   page:z.coerce.number().int().min(1).max(1000).default(1),
   size:z.coerce.number().int().min(1).max(100).default(100),
 }).strict().refine(value => Boolean(value.beforeTime) === Boolean(value.beforeId), {
@@ -53,14 +55,21 @@ export const learnerProjectActivityFilterSchema = z.object({
 export type LearnerProjectActivityFilters = z.infer<typeof learnerProjectActivityFilterSchema>;
 
 export function parseLearnerProjectActivityFilters(input: {
-  category?:unknown;from?:unknown;to?:unknown;beforeTime?:unknown;beforeId?:unknown;
+  category?:unknown;from?:unknown;to?:unknown;fromDate?:unknown;toDate?:unknown;
+  beforeTime?:unknown;beforeId?:unknown;
   eventType?:unknown;page?:unknown;size?:unknown;
   sourceTab?:unknown;search?:unknown;
 }) {
+  const categoryText=typeof input.category==="string"?input.category.toUpperCase():input.category;
+  const aliases:Record<string,LearnerProjectActivityCategory>={
+    TASKS:"TASK",SPRINTS:"SPRINT",TEAM_MEMBERS:"TEAM",MEETINGS:"TEAM",
+    RESOURCES:"RESOURCE",SUBMISSIONS:"SUBMISSION",DELIVERY:"SUBMISSION",WORKSPACE:"PROJECT",
+  };
+  const category=typeof categoryText==="string"?aliases[categoryText]??categoryText:categoryText;
   return learnerProjectActivityFilterSchema.safeParse({
-    category: input.category === "" ? undefined : input.category,
-    from: input.from === "" ? undefined : input.from,
-    to: input.to === "" ? undefined : input.to,
+    category: category === "" ? undefined : category,
+    from: (input.fromDate || input.from) || undefined,
+    to: (input.toDate || input.to) || undefined,
     beforeTime: input.beforeTime,beforeId:input.beforeId,
     eventType:input.eventType||undefined,page:input.page||undefined,
     sourceTab:input.sourceTab||undefined,search:input.search||undefined,
@@ -102,5 +111,8 @@ export function learnerProjectActivityPageHref(
   if (next.beforeId) params.set("activityBeforeId", next.beforeId);
   if (next.sourceTab) params.set("activitySourceTab", next.sourceTab);
   if (next.search) params.set("activitySearch", next.search);
+  if (next.eventType) params.set("activityEventType", next.eventType);
+  if (next.page > 1) params.set("activityPage", String(next.page));
+  if (next.size !== 100) params.set("activitySize", String(next.size));
   return "/learn/projects/" + encodeURIComponent(projectId) + "?" + params.toString();
 }
