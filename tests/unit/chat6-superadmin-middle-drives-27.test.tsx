@@ -70,6 +70,15 @@ describe("SA-middle-drives-27 platform administrator drive route isolation",()=>
   expect(html).toContain("No jobs yet");
   expect(listPlacementOperationsJobPage).toHaveBeenCalledWith(expect.anything(),collegeId,expect.anything());
  });
+ it("retains a safe retry state for a temporary backend error without exposing another college",async()=>{
+  vi.mocked(listPlacementOperationsJobPage).mockRejectedValue(new Error("DB_TEMPORARILY_UNAVAILABLE"));
+  const html=renderToStaticMarkup(await listing({q:"internship"}));
+  expect(html).toContain("Drives unavailable");
+  expect(html).toContain("Retry loading drives");
+  expect(html).not.toContain("No jobs yet");
+  expect(html).not.toContain("last successful"); // No successful snapshot in this mounted identity.
+  expect(listPlacementOperationsJobPage).toHaveBeenCalledWith(expect.anything(),collegeId,expect.anything());
+ });
  it("authorized job overview passes the route ID into a scoped detail workspace",async()=>{
   const html=renderToStaticMarkup(await overview());
   expect(html).toContain("Authorized drive overview");
