@@ -133,9 +133,17 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
         <details className="border-b border-border py-2">
           <summary className="min-h-9 cursor-pointer text-sm font-semibold text-[var(--lms-heading)]">Resume</summary>
           <p className="pt-2 text-xs text-muted-foreground">{selectedProfile?.resumeAvailable
-            ? "A verified resume is stored in the learner’s private profile. Open the authorized student directory to review it; no public download URL is exposed."
-            : "No verified resume available. Upload and verification are managed in the learner’s profile."}</p>
-          <Link href="/admin/students" className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Open student directory</Link>
+            ? "The learner’s selected verified resume is stored privately. This link checks college access and file ownership again before granting a short-lived read."
+            : "No selected, verified resume is available. Upload, selection and verification remain with the learner; an administrator cannot replace a resume with an unverified URL."}</p>
+          {selectedProfile?.resumeAvailable?<a
+            href={"/api/placements/college/students/"+encodeURIComponent(selectedStudent.membershipId)+"/resume"}
+            target="_blank" rel="noopener noreferrer"
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+            View verified resume
+          </a>:null}
+          <p className="mt-1 text-xs text-muted-foreground">
+            Resume replacement is learner-owned. Save or Cancel in the authorized profile editor below changes skills and job preferences only.
+          </p>
         </details>
         <AdminPlacementStudentProfileEditor
           key={selectedStudent.membershipId}
@@ -177,13 +185,13 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
                   row.joining === "JOINED" ? " · Joined" :
                   row.offerStatus === "ACCEPTED" ? " · Offer accepted" : ""}
               </p>
+              {row.rejectionReason ? <p className="text-xs text-error">Rejection reason: {row.rejectionReason}</p> : null}
               {row.nextInterview ? <p className="text-xs text-body">
                 Next interview: {row.nextInterview.roundName} · {new Intl.DateTimeFormat("en-IN",{
                   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
                 }).format(new Date(row.nextInterview.startsAt))} IST
                 {row.nextInterview.room?" · "+row.nextInterview.room:""}
               </p> : null}
-              {row.rejectionReason ? <p className="text-xs text-error">Rejection reason: {row.rejectionReason}</p> : null}
             </li>;
           })}
         </ul>}

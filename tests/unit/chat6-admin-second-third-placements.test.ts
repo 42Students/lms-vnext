@@ -104,8 +104,12 @@ describe("/admin placements second-third: scoping, filtering, counts, links", ()
   it("CHAT6-ADMIN-APPLICATIONS-01 rejects duplicate query selectors and forged tenant IDs", () => {
     const good = driveApplicationsParams({q:"campus",stage:"INTERVIEW",page:"3"});
     expect(good).toMatchObject({q:"campus",stage:"INTERVIEW",page:3});
-    // Non-scoping legacy display filters recover, but foreign identifiers fail closed.
-    expect(driveApplicationsParams({q:["first","second"]})).toMatchObject({q:""});
+    // Repeated query selectors can change which applicants are exported or
+    // acted upon: reject the whole request rather than silently widening it.
+    expect(driveApplicationsParams({q:["first","second"]})).toBeNull();
+    // A single malformed optional display enum may still recover safely.
+    expect(driveApplicationsParams({q:"campus",stage:"SUPER_ADMIN"}))
+      .toMatchObject({q:"campus",stage:"ALL"});
     expect(driveApplicationsParams({stage:"SUPER_ADMIN"})).toMatchObject({stage:"ALL"});
     expect(driveApplicationsParams({page:"0"})).toMatchObject({page:1});
     for (const bad of [
