@@ -23,7 +23,8 @@ describe("HR-BREAK-ACTIVE-BELL-34: visible recruiter bell does not auto-ack or l
  it("clears stale private notices on loss of access or late reordered refresh",()=>{
   const source=readFileSync("src/components/hr/hr-recruiter-bell.tsx","utf8");
   expect(source).toContain("if(!loadGate.current.isCurrent(request))return");
-  expect(source).toContain('setState(null);setError("Couldn\'t refresh your notifications")');
+  expect(source).toContain("if(authorizationLost){setState(null);setBadgeUnread(null);}");
+  expect(source).toContain('"Couldn\'t refresh your notifications"');
   expect(source).toContain("loadGate.current.invalidate()");
   const gate=createRecruiterBellRequestGate();
   const a=gate.begin(),b=gate.begin();
@@ -38,8 +39,7 @@ describe("HR-BREAK-ACTIVE-BELL-34: visible recruiter bell does not auto-ack or l
   expect(html).toContain("aria-haspopup");
   const source=readFileSync("src/components/hr/hr-recruiter-bell.tsx","utf8");
   expect(source).toContain('<ScrollCue axis="y" label="Recruiter notifications"');
-  expect(source).toContain('role="dialog" aria-modal="false"');
-  expect(source).toContain('event.key!=="Escape"');
-  expect(source).toContain('triggerRef.current?.focus()');
+  expect(source).toContain('<Drawer id="hr-topbar-notifications" open={open} onOpenChange={setOpen}');
+  expect(source).toContain('aria-expanded={open} aria-haspopup="dialog"');
  });
 });

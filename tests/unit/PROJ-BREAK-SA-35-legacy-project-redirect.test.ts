@@ -28,7 +28,7 @@ describe("PROJ-BREAK-SA-35 legacy Super Admin project redirect hardening",()=>{
     mocks.getCurrentRequestContext.mockResolvedValue(activeAdmin);
     mocks.requireProjectManageAccess.mockResolvedValue({project:{id:uuid},organizationId:"organization-a",collegeId:"college-a"});
   });
-  const request=(projectId:string)=>({params:Promise.resolve({projectId})});
+  const request=(projectId:string)=>({params:Promise.resolve({projectId}),searchParams:Promise.resolve({})});
 
   it("refuses a learner and disabled system actor before reading private project IDs",async()=>{
     for(const user of [
@@ -46,9 +46,10 @@ describe("PROJ-BREAK-SA-35 legacy Super Admin project redirect hardening",()=>{
 
   it("invalid UUID routes go to not-found, without querying the project",async()=>{
     for(const input of ["../../college-b","", "x".repeat(1000)]){
-      await expect(SuperAdminProjectPage(request(input))).rejects.toThrow("NEXT_NOT_FOUND");
+      const page=await SuperAdminProjectPage(request(input));
+      expect(page.props.title).toBe("Could not load this workspace.");
     }
-    expect(mocks.notFound).toHaveBeenCalledTimes(3);
+    expect(mocks.notFound).not.toHaveBeenCalled();
     expect(mocks.requireProjectManageAccess).not.toHaveBeenCalled();
   });
 

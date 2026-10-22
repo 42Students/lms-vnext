@@ -29,10 +29,11 @@ const job={id:jobId,collegeId:college,organizationId:"123e4567-e89b-42d3-a456-42
 const context={user:{id:actor,platformStatus:"ACTIVE"},recruiter:{status:"ACTIVE",userId:actor}};
 const future=new Date("2099-01-01T08:00:00.000Z");
 const slot={id:slotId,roundId,status:"PROPOSED",version:4,bookedCount:0,capacity:2,
- createdByUserId:actor,startAt:future};
+ createdByUserId:actor,startAt:future,endAt:new Date("2099-01-01T08:30:00.000Z")};
 const builder=(rows:unknown[])=>({
  from(){return this;},innerJoin(){return this;},where(){return this;},
- for(){return this;},orderBy(){return this;},limit(){return Promise.resolve(rows);},
+ for(){return this;},orderBy(){return this;},limit(){return this;},offset(){return this;},
+ then(resolve:(result:unknown[])=>void){resolve(rows);},
 });
 const tx={
  select:vi.fn(()=>builder(mocks.rows.shift()??[])),update:mocks.update,insert:mocks.insert,
@@ -111,7 +112,8 @@ describe("HR-SLOT-SERVICE-03 recruiter slot authorization and stale-window write
  });
  it("HR-SLOT-STATE-03 offers only a future proposed own slot, with one TPO alert",async()=>{
   await expect(writeHrInterviewSlot(context as never,jobId,action("OFFER")))
-   .resolves.toEqual({id:slotId,status:"OFFERED"});
+   .resolves.toMatchObject({id:slotId,status:"OFFERED",
+    startAt:future.toISOString(),endAt:slot.endAt.toISOString()});
   expect(mocks.update).toHaveBeenCalledTimes(1);
   expect(mocks.notify).toHaveBeenCalledTimes(1);
   expect(mocks.insert).not.toHaveBeenCalled();
@@ -144,11 +146,11 @@ describe("HR-SLOT-SERVICE-03 recruiter slot authorization and stale-window write
  it("HR-SLOT-READ-01 exposes read-only slot metadata without granting foreign actor mutation",async()=>{
   const view={...slot,startAt:future,endAt:new Date("2099-01-01T08:30:00.000Z"),
    mode:"VIRTUAL",panelLabel:null,meetingLocation:null};
-  mocks.rows=[[job],[view]];
+  mocks.rows=[[job],[{total:1}],[view]];
   await expect(listHrInterviewSlots(context as never,jobId)).resolves.toMatchObject({
    status:"READY",items:[{id:slotId,isOwn:true,canEdit:true}],
   });
-  mocks.rows=[[job],[{...view,createdByUserId:"123e4567-e89b-42d3-a456-426614174099"}]];
+  mocks.rows=[[job],[{total:1}],[{...view,createdByUserId:"123e4567-e89b-42d3-a456-426614174099"}]];
   await expect(listHrInterviewSlots(context as never,jobId)).resolves.toMatchObject({
    status:"READY",items:[{id:slotId,isOwn:false,canEdit:false}],
   });

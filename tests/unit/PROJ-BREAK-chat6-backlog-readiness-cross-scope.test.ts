@@ -64,7 +64,7 @@ describe("IIT Dharwad Projects breaker: backlog, readiness and tenant boundaries
     expect(body).toContain("eq(activityEvents.collegeId,college.id)");
     expect(body).toContain('eq(activityEvents.subjectType,"project_instance")');
     expect(body).toContain('eq(projectInstances.collegeId,college.id)');
-    expect(body).toContain('ne(projectInstances.status,"ARCHIVED")');
+    expect(body).toContain('archived:titles.get(row.projectId)?.status==="ARCHIVED"');
     expect(body).toContain('.for("share")');
     expect(body).toContain("titles.has(row.projectId)");
   });

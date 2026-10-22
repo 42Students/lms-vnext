@@ -51,7 +51,7 @@ describe("PROJ-BREAK-MENTOR-64..69 rendered report page boundary and failure sta
   for(const params of [{search:["Atlas","Other"]},{search:["Atlas","Atlas"]},
    {status:["ACTIVE","ACTIVE"]},{page:["1","2"]}]){
    const html=await renderPage(params);
-   expect(html).toContain("Invalid Mentor report filters");
+   expect(html).toContain("Invalid mentor report filters");
    expect(html).toContain("Clear filters");
    expect(html).toContain('role="alert"');
   }
@@ -59,13 +59,13 @@ describe("PROJ-BREAK-MENTOR-64..69 rendered report page boundary and failure sta
  });
  it("PROJ-BREAK-MENTOR-65 invalid enum, forged status and excessive page reject before service",async()=>{
   for(const params of [{status:"OTHER"},{page:"10001"},{search:"x".repeat(121)}]){
-   expect(await renderPage(params)).toContain("Invalid Mentor report filters");
+   expect(await renderPage(params)).toContain("Invalid mentor report filters");
   }
   expect(state.calls).toBe(0);
  });
  it("PROJ-BREAK-MENTOR-66 empty authorized report never invents success or learner outcome data",async()=>{
   const html=await renderPage({});
-  expect(html).toContain("Assigned Project reports");
+  expect(html).toContain("Assigned project reports");
   expect(html).toContain("No assigned projects match");
   expect(html).toContain("No current Mentor assignments");
   expect(html).toContain("Report counts use registered current assignments");
