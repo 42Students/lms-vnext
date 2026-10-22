@@ -70,10 +70,15 @@ describe("FAC-LIVE-SCALE-01 Faculty live classes bounded Section reads",()=>{
  it("preserves ordering of 20 Sections while never opening more than 8 reads at once",async()=>{
   let active=0,maxActive=0;
   const vals=Array.from({length:20},(_,i)=>i);
+  let releaseFirstBatch:()=>void=()=>{};
+  const firstBatch=new Promise<void>(resolve=>{releaseFirstBatch=resolve;});
   const result=await mapFacultyLiveWorkspacesInBatches(vals,async i=>{
    active++;
    maxActive=Math.max(maxActive,active);
-   for(let j=0;j<i%3;j++)await Promise.resolve();
+   if(i<8){
+    if(active===8)releaseFirstBatch();
+    await firstBatch;
+   }else for(let j=0;j<i%3;j++)await Promise.resolve();
    active--;
    return i*2;
   });

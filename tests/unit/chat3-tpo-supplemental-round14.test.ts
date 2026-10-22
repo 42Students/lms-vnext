@@ -50,21 +50,23 @@ describe("TPO supplemental job metadata",()=>{
   const safe=source("src/components/ui/third-party-link.tsx");
   expect(safe).toContain('url.protocol === "https:"');
   expect(safe).toContain('!url.username && !url.password');
-  expect(safe).not.toContain('target="_blank"');
+  expect(safe).toContain('target="_blank" rel="noopener noreferrer"');
  });
  it("TPO-drives-41 blocks both native unload and in-app navigation while unsaved",()=>{
   const guard=source("src/components/placements/use-unsaved-drive-guard.ts");
   expect(guard).toContain('window.addEventListener("beforeunload", beforeUnload)');
   expect(guard).toContain('document.addEventListener("click",onAnchorClick,true)');
-  expect(guard).toContain("window.confirm");
+  expect(guard).toContain("createElement(ConfirmDialog");
+  expect(guard).toContain('confirmLabel:"Leave without saving"');
+  expect(guard).toContain("router.push(url.pathname+url.search+url.hash)");
   expect(guard).toContain("event.preventDefault()");
   expect(guard).toContain("event.stopPropagation()");
  });
  it("TPO-drives-41 exposes an honest IST local-save timestamp distinct from server persistence",()=>{
   const form=source("src/components/placements/placement-job-create-form.tsx");
   expect(form).toContain("setLastLocalSaveAt(Date.now())");
-  expect(form).toContain("Local draft saved at ");
-  expect(form).toContain("not yet submitted to the server.");
+  expect(form).toContain("Changes not saved to the server · Browser backup at ");
+  expect(form).toContain("Not saved yet · Your changes are backed up locally");
   expect(form).toContain("timeZone:\"Asia/Kolkata\"");
  });
 
@@ -72,7 +74,7 @@ describe("TPO supplemental job metadata",()=>{
   const form=source("src/components/placements/placement-job-create-form.tsx");
   expect(form).toContain('if(reason instanceof FriendlyFetchError&&[0,499,504].includes(reason.status))');
   expect(form).toContain('localStorage.setItem(uncertainKey,"1")');
-  expect(form).toContain('disabled={pending || !activeSeason || uncertainCreate}');
+  expect(form).toContain('disabled={pending || !activeSeason || uncertainCreate || loadingCopy}');
   expect(form).toContain("The previous create request may have succeeded.");
   expect(form).toContain("I checked Drives — allow another attempt");
   expect(form).toContain('createDriveWithKnownResponse({');
@@ -106,7 +108,7 @@ describe("TPO supplemental job metadata",()=>{
   const quick=source("src/components/tpo/tpo-draft-drive-step-one-form.tsx");
   expect(quick).toContain("setUnknownCreate(true)");
   expect(quick).toContain('[0,499,504].includes(cause.status)');
-  expect(quick).toContain('disabled={pending || unknownCreate || !companyRelationshipId}');
+  expect(quick).toContain('disabled={pending || unknownCreate || !companyRelationshipId || jobTypesState !== "ready" || !jobTypeLabel}');
   expect(quick).toContain("I checked for duplicates");
  });
 
