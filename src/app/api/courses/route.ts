@@ -24,7 +24,7 @@ export const runtime = "nodejs";
 export const LEGACY_COURSE_API_CROSSWALK = {
  "GET /fetch": "GET /api/courses?collegeId={uuid}&departmentId={uuid} (legacy deptId must resolve within selected college)",
  "GET /fetchAll": "GET /api/courses?collegeId={uuid} or authorized /admin/courses global catalogue (Super Admin scope)",
- "GET /fetchAllPaged": "GET /api/courses?page={legacyPage+1}&size={size}&collegeId={uuid} (Super Admin scope, 1-based vNext pagination)",
+ "GET /fetchAllPaged": "College-scoped GET /api/courses?collegeId={uuid}&page={legacyPage+1}&size={size}; no identical global JSON endpoint (authorized global /admin/courses catalogue is a page, not a legacy API)",
  "GET /fetchByCollege": "GET /api/courses?collegeId={uuid}",
  "GET /fetchByCollegePaged": "GET /api/courses?collegeId={uuid}&page={legacyPage+1}&size={size}",
  "GET /fetchByDepartment": "GET /api/courses?collegeId={uuid}&departmentId={uuid}",
