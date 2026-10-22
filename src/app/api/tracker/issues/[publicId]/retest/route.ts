@@ -33,13 +33,13 @@ export async function POST(
     // Translate PASS/FAIL to the typed workflow result without relaxing CAS.
     const legacyBody=typeof body==="object"&&body!==null&&!Array.isArray(body)
       ? body as Record<string,unknown> : null;
-    const legacyStatus=legacyBody?.status;
+    const legacyStatus=legacyBody?.["status"];
     const alias=legacyBody&&!Object.prototype.hasOwnProperty.call(legacyBody,"result")&&
       (legacyStatus==="PASS"||legacyStatus==="FAIL");
     const normalized=alias?{
-      expectedVersion:legacyBody.expectedVersion,
+      expectedVersion:legacyBody["expectedVersion"],
       result:legacyStatus,
-      note:legacyBody.note,
+      note:legacyBody["note"],
     }:body;
     const issue = await retestBugTrackerIssueForAdmin(context, publicId, normalized);
     // The persisted issue is the post-transition result, including its new
