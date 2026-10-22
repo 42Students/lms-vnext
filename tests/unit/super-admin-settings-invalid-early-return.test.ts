@@ -4,7 +4,7 @@ import {parseAdminInventoryQuery} from "@/modules/platform-settings/admin-invent
 const page=readFileSync("src/app/(authenticated)/admin/settings/page.tsx","utf8");
 describe("Super Admin Settings filter read fence",()=>{
  it("authorizes before errors, validates before database reads",()=>{
-  const auth=page.indexOf('requirePermission(context,"admin-scope.select")');
+  const auth=page.indexOf('if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))');
   const parse=page.indexOf("parseAdminInventoryQuery(raw)");
   const load=page.indexOf("getSuperAdminPlatformSettings(context)");
   expect(auth).toBeGreaterThan(0);
