@@ -39,7 +39,8 @@ describe("COL-placements-R01 college directory and export behavior",()=>{
   expect(service).toContain("job.college_id =");
   const company=source("src/app/api/college/companies/export/route.ts");
   const interview=source("src/app/api/college/placements/interviews/export/route.ts");
-  expect(company).toContain("listCollegeCompanyDirectory(await getCurrentRequestContext()");
+  expect(company).toContain("listCollegeCompanyDirectory(context,parsed.data,{exportAll:true}");
+  expect(company).toContain("const context=await getCurrentRequestContext()");
   expect(interview).toContain("listCollegeInterviewDirectory(await getCurrentRequestContext()");
   expect(company).toContain("no-store");
   expect(interview).toContain("no-store");
@@ -50,7 +51,8 @@ describe("COL-placements-R01 college directory and export behavior",()=>{
   const interviews=source("src/app/(authenticated)/college/placements/interviews/page.tsx");
   for(const field of ["name=\"showDeleted\"","name=\"sort\"","name=\"pageSize\"","Export CSV"])
    expect(page).toContain(field);
-  expect(rows).toContain("Drives: {item.drives}");
+  expect(rows).toContain("item.drives>0");
+  expect(rows).toContain("Used by drives: switch it off instead");
   expect(interviews).toContain('build(1,"csv")');
   expect(interviews).toContain("Export CSV");
  });

@@ -28,11 +28,11 @@ describe("chat-4 final sprint TPO recruiter gaps B",()=>{
   expect(crm).toContain('input.outcome === "No answer"');
   expect(crm).toContain('note:"Call again — no answer"');
   expect(crm).toContain('isNull(placementTpoFollowups.doneAt)');
-  expect(detail).toContain('Log activity');
+  expect(detail).toContain('Log an interaction');
  });
  it("TPO-recruiters-27 rejects past follow-ups and exposes quick scheduling choices",()=>{
   expect(detail).toContain("Pick a future date and time for this follow-up.");
-  for(const shortcut of ['["Tomorrow",1]','["In 3 days",3]','["In a week",7]'])
+  for(const shortcut of ['["Tomorrow","TOMORROW"]','["Friday","FRIDAY"]','["Next Monday","NEXT_MONDAY"]'])
    expect(detail).toContain(shortcut);
   expect(detail).toContain("Overdue");
  });
@@ -55,8 +55,8 @@ describe("chat-4 final sprint TPO recruiter gaps B",()=>{
   expect(loadingShell).toContain("This is taking longer than expected. Please try again.");
   const skeleton=source("src/components/ui/skeleton.tsx");
   expect(skeleton).toContain('role="status" aria-live="polite"');
-  expect(detail).toContain('<Dialog open={editing}');
-  expect(detail).toContain('<Dialog open={notNowOpen}');
+  expect(detail).toContain('<Dialog open={editing && confirmation===null}');
+  expect(detail).toContain('<Dialog open={notNowOpen && confirmation===null}');
   expect(detail).toContain("Discard unsaved recruiter changes?");
   expect(detail).toContain("Discard your Not now reason and revisit date?");
   const dialog=source("src/components/ui/dialog.tsx");
@@ -90,10 +90,10 @@ describe("chat-4 final sprint TPO recruiter gaps B",()=>{
  it("TPO-recruiters-37 provides keyboard equivalents for inaccessible board dragging and focus-managed dialogs",()=>{
   expect(roster).toContain("Move to… / Actions");
   expect(roster).toContain("onDragStart={event");
-  expect(roster).toContain('<Dialog open={adding}');
+  expect(roster).toContain('<Dialog open={adding && confirmation?.kind!=="DISCARD"}');
   expect(roster).toContain('<ConfirmDialog open={confirmation!==null}');
-  expect(detail).toContain('<Dialog open={editing}');
-  expect(detail).toContain('<Dialog open={notNowOpen}');
+  expect(detail).toContain('<Dialog open={editing && confirmation===null}');
+  expect(detail).toContain('<Dialog open={notNowOpen && confirmation===null}');
   const dialog=source("src/components/ui/dialog.tsx");
   expect(dialog).toContain("modal.showModal()");
   expect(dialog).toContain("onCancel={event => {");
