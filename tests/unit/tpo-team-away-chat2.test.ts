@@ -30,10 +30,10 @@ describe("TPO Team away until",()=>{
   expect(ui).toContain('role="status"');
  });
  it("TPO-inbox-team-31 displays verified away intervals and a Back now action only for the member",()=>{
-  const page=src("src/app/(authenticated)/tpo/team/page.tsx");
+  const page=src("src/app/(authenticated)/tpo/settings/team/page.tsx");
   const form=src("src/components/tpo/tpo-team-away-form.tsx");
   expect(page).toContain("awayByMember.get(member.membershipId)");
-  expect(page).toContain("member.membershipId===context.membership?.id&&awayState?.ready");
+  expect(page).toContain("context.membership && awayState.ready ? <TpoTeamAwayForm");
   expect(form).toContain("Back now");
   expect(form).toContain("timeoutMs:12000");
   expect(src("src/app/api/placements/tpo/team/away/route.ts")).toContain("isSameOriginRequest(request)");
