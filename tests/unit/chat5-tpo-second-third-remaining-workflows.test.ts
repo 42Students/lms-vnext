@@ -48,7 +48,10 @@ describe("TPO second-third — close preview and cancellation model state",()=>{
   const start=canonical.indexOf("export async function closePlacementJob");
   const end=canonical.indexOf("export function canCancelPublishedPlacementJob",start);
   const close=canonical.slice(start,end);
-  expect(close).toContain('current.status !== "PUBLISHED"');
+  expect(close).toContain('!canTransitionPlacementJobStatus(current.status,"CLOSED")');
+  const lifecycle=source("src/modules/placements/tpo-drive-lifecycle-model.ts");
+  expect(lifecycle).toContain('PUBLISHED:["CLOSED","CANCELLED"]');
+  expect(lifecycle).toContain('CLOSED:["ARCHIVED"]');
   expect(close).not.toContain("await requirePlacementJobSeasonActive(");
   const pageCode=page("close-preview");
   expect(pageCode).not.toContain("only for published drives in an active season");
