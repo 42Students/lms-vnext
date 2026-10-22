@@ -4,8 +4,8 @@ Packets moved to you from lanes that still had a lot left. Same rules as your ot
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_tpo-round-apply-service.ts.md` (edit src/modules/placements/tpo-round-apply-service.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_tpo-company-domain-service.ts.md` (edit src/modules/placements/tpo-company-domain-service.ts; 2 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_tpo-round-apply-service.ts.md` (edit src/modules/placements/tpo-round-apply-service.ts; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_tpo-company-domain-service.ts.md` (edit src/modules/placements/tpo-company-domain-service.ts; 2 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_modules_projects_mentor-paged-project-list-service.ts.md` (edit src/modules/projects/mentor-paged-project-list-service.ts; 3 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_tpo-operations-service.ts.md` (edit src/modules/placements/tpo-operations-service.ts; 6 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_modules_projects_mentor-final-delivery-decision-service.ts.md` (edit src/modules/projects/mentor-final-delivery-decision-service.ts; 6 findings; best P2)

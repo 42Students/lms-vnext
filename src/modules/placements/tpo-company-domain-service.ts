@@ -6,15 +6,13 @@ import {activityEvents,placementCompanies,placementCompanyDomains,placementCompa
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
-import {placementCompanyDomainSchema} from "./validation";
 import {requirePlacementManageScope} from "./scope";
 import {companyDomainSchema} from "./company-curation-domain-model";
 
 export const addCompanyDomainSchema=z.strictObject({
- // Keep the original bare-host-only TPO input contract, then run the
- // same registrable-domain, academic and disposable-host validation as the
- // platform's canonical company-domain editor.
- companyId:z.string().uuid(),domain:placementCompanyDomainSchema.pipe(companyDomainSchema),
+ // Legacy accepts bare domain, @domain, work email and http(s) company URLs.
+ // Use the same canonicalizer as the global company-domain editor.
+ companyId:z.string().uuid(),domain:companyDomainSchema,
 });
 export class CompanyDomainError extends Error{
  constructor(readonly code:"COMPANY_NOT_FOUND"|"ALREADY_SET"|"DOMAIN_IN_USE"){super(code);}
@@ -63,6 +61,7 @@ export async function addTpoCompanyDomain(context:RequestContext,raw:unknown){
    .where(ilike(placementCompanyDomains.domain,input.domain)).limit(1);
   if(registered&&registered.ownerId!==company.id)
    throw new CompanyDomainError("DOMAIN_IN_USE");
+  // Never overwrite existing first-source college provenance or verification.
   if(registered&&company.domain===input.domain)
    return {domain:input.domain,unchanged:true as const};
   // A TPO may register a company host but cannot attest ownership; verification
