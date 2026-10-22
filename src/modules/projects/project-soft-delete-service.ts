@@ -39,7 +39,7 @@ export async function listSoftDeletedProjectWorkspaces(context: RequestContext, 
  */
 const deletedPageSchema=z.strictObject({
  page:z.number().int().min(1).max(100000),
- pageSize:z.union([z.literal(10),z.literal(20),z.literal(50),z.literal(100)]),
+ pageSize:z.union([z.literal(10),z.literal(20),z.literal(25),z.literal(50),z.literal(100)]),
 });
 export async function listPaginatedDeletedProjectWorkspaces(
  context:RequestContext,collegeId:string,raw:{page:number;pageSize:number},

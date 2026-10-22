@@ -15,19 +15,19 @@ import {listPaginatedDeletedProjectWorkspaces} from "@/modules/projects/project-
 
 type Query={page?:string|string[];pageSize?:string|string[]};
 const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
-function parseQuery(q:Query):{page:number;pageSize:10|20|50|100}|null{
+function parseQuery(q:Query):{page:number;pageSize:10|20|25|50|100}|null{
  const rawPage=first(q.page);
  const rawSize=first(q.pageSize);
  if(rawPage!==undefined&&!/^[1-9]\d{0,5}$/.test(rawPage))return null;
- if(rawSize!==undefined&&!["10","20","50","100"].includes(rawSize))return null;
+ if(rawSize!==undefined&&!["10","20","25","50","100"].includes(rawSize))return null;
  const page=rawPage?Number(rawPage):1;
  if(!Number.isSafeInteger(page)||page>100000)return null;
- return {page,pageSize:Number(rawSize??20) as 10|20|50|100};
+ return {page,pageSize:Number(rawSize??25) as 10|20|25|50|100};
 }
 function deletedHref(page:number,size:number):string{
  const query=new URLSearchParams();
  if(page!==1)query.set("page",String(page));
- if(size!==20)query.set("pageSize",String(size));
+ if(size!==25)query.set("pageSize",String(size));
  return "/admin/projects/workspaces/deleted"+(query.size?"?"+query.toString():"");
 }
 
@@ -55,7 +55,7 @@ export default async function DeletedAdminWorkspaceProjectsPage({
   <ProjectAdminNav basePath="/admin/projects" active="workspaces"/>
   {header}
   <ErrorState title="Invalid deleted workspace filters"
-   description="Choose a page and 10, 20, 50 or 100 rows per page."
+   description="Choose a page and 10, 20, 25, 50 or 100 rows per page."
    action={<Link href="/admin/projects/workspaces/deleted" className="font-semibold text-primary-text underline">Clear filters</Link>}/>
  </div>;
  const result=await listPaginatedDeletedProjectWorkspaces(context,collegeId,parsed)
@@ -113,7 +113,7 @@ export default async function DeletedAdminWorkspaceProjectsPage({
     </p>
     <Pagination page={data.page} pageCount={data.totalPages} label="Deleted workspaces pages"
      hrefForPage={page=>deletedHref(page,data.pageSize)}
-     pageSize={data.pageSize} pageSizeOptions={[10,20,50,100]}
+     pageSize={data.pageSize} pageSizeOptions={[10,20,25,50,100]}
      hrefForPageSize={size=>deletedHref(1,size)} />
    </div>
   </section>
