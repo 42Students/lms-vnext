@@ -5,7 +5,9 @@ describe("offer register",()=>{
  it("counts versions, filters status and avoids invented joining",()=>{
   const facts=[row("1","ISSUED"),row("2","ACCEPTED","JOINED"),row("3","ACCEPTED")];
   const all=projectOfferRegister(facts,"ALL");
-  expect(all.counts).toEqual({all:3,issued:1,accepted:2,declined:0,withdrawn:0});
+  expect(all.counts).toMatchObject({all:3,issued:1,accepted:2,declined:0,withdrawn:0});
+  expect(all.counts.selected).toBe(0);
+  expect(all.counts.pendingVerification).toBe(0);
   expect(all.rows.find(r=>r.id==="1")?.joining).toBeNull();
   expect(all.rows.find(r=>r.id==="3")?.joining).toBe("PENDING");
   expect(projectOfferRegister(facts,"ACCEPTED").rows).toHaveLength(2);
@@ -57,7 +59,7 @@ describe("offer register",()=>{
   expect(many.truncated).toBe(true);
   expect(many.csv).toContain("TRUNCATED");
   expect(many.csv).toContain("First 5000 of 5001");
-  expect(many.csv.split(/\r?\n/).filter(line=>line.includes("\"ISSUED\"")).length).toBe(5000);
+  expect(many.csv.split(/\r?\n/).filter(line=>line.includes("\"Issued\"")).length).toBe(5000);
  });
  it("rejects unknown statuses and extra keys",()=>{
   const jobId="aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";

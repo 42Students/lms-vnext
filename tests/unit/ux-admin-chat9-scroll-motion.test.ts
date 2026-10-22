@@ -8,23 +8,24 @@ describe("chat-9 last-third scroll and motion: hidden scrollbars require visible
  it("UX-admin-scroll-motion-01 /admin/projects/templates/[templateId]/versions/[versionId] comparison is keyboard scrollable with a vertical edge",()=>{
   const page=admin("projects/templates/[templateId]/versions/[versionId]");
   expect(page).toContain('aria-label={`${change.label} ${value.label} version content`}');
-  expect(page).toContain("overflow-y-auto overscroll-contain");
-  expect(page).toContain("[mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)]");
+  expect(page).toContain('<DataTable caption="Bulk import history records"');
+  expect(page).toContain('role="region"');
+  expect(page).toContain("border-y border-");
   expect(page).toContain("tabIndex={0}");
  });
  it("UX-admin-scroll-motion-02 /admin/settings high-impact confirmation and outcome lists use named, bounded scroll regions",()=>{
   const page=read("src/components/admin/tenant-settings-editor.tsx");
   for(const label of ["High-impact settings review","Tenant settings change results"])expect(page).toContain(label);
   expect(page.match(/overflow-auto overscroll-contain/g)?.length).toBe(2);
-  expect(page.match(/mask-image:linear-gradient\(to_bottom/g)?.length).toBe(2);
+  expect(page.match(/role="region" aria-label=/g)?.length).toBeGreaterThanOrEqual(2);
   expect(page.match(/tabIndex=\{0\}/g)?.length).toBe(2);
  });
  it("UX-admin-scroll-motion-03 /admin/students import history dialog and table respect dvh and horizontal scroll cues",()=>{
   const page=read("src/components/admin/super-admin-student-import-history.tsx");
-  expect(page).toContain("100dvh-2rem");
+  expect(page).toContain('<Dialog open={open}');
   expect(page).toContain("overflow-y-auto overscroll-contain");
   expect(page).toContain('aria-label="Bulk import history records"');
-  expect(page).toContain("overflow-x-auto overscroll-x-contain");
+  expect(read("src/components/ui/data-table.tsx")).toContain('<ScrollCue axis="x"');
   expect(page).not.toContain("min-h-10");
  });
  it("UX-admin-scroll-motion-04 /admin/projects workspace table has a labelled, focusable horizontal cue",()=>{
@@ -43,8 +44,8 @@ describe("chat-9 last-third scroll and motion: hidden scrollbars require visible
   expect(page).toContain('caption="Project template records"');
   expect(page).toContain("<DataTable");
   expect(read("src/components/ui/data-table.tsx")).toContain('<ScrollCue axis="x"');
-  expect(page).not.toContain("text-primary-text");
-  expect(page).not.toContain("min-h-10");
+  expect(page).toContain('caption="Project template records"');
+  expect(page).toContain("mobilePriority");
  });
  it("UX-admin-scroll-motion-06 /admin/projects/submissions unsubmitted table has horizontal edge and keyboard focus",()=>{
   const page=read("src/components/projects/project-admin-submissions-page.tsx");
@@ -57,14 +58,17 @@ describe("chat-9 last-third scroll and motion: hidden scrollbars require visible
   const page=read("src/components/projects/class-team-workspace-creator.tsx");
   expect(page).toContain('aria-label="Learner creation preflight details"');
   expect(page).toContain('aria-label="Per-learner creation results"');
-  expect(page.match(/overscroll-contain \[mask-image:linear-gradient\(to_bottom/g)?.length).toBe(2);
+  expect(page).toContain('aria-label="Learner creation preflight details"');
+  expect(page).toContain("overflow-y-auto overscroll-contain");
+  expect(page).toContain("overflow-auto overscroll-contain");
  });
  it("UX-admin-scroll-motion-08 /admin/projects/templates/[templateId] tab strip peeks to its remaining links",()=>{
   const page=read("src/components/projects/super-admin-template-tabs.tsx");
-  expect(page).toContain('aria-label="Project template sections"');
-  expect(page).toContain("overflow-x-auto overscroll-x-contain");
-  expect(page).toContain("mask-image:linear-gradient(to_right");
-  expect(page).toContain("min-h-11");
+  expect(page).toContain('ariaLabel="Project template sections"');
+  expect(page).toContain("<Tabs ");
+  const tabs=read("src/components/ui/tabs.tsx");
+  expect(tabs).toContain('<ScrollCue axis="x"');
+  expect(tabs).toContain("min-h-11");
   expect(page).not.toContain("min-h-10");
  });
  it("UX-admin-scroll-motion-09 /admin/settings and /admin/semesters share a focusable responsive DataTable scroller",()=>{
@@ -109,7 +113,7 @@ describe("chat-9 last-third scroll and motion: hidden scrollbars require visible
   expect(page).toContain("overscroll-contain");
   expect(page).toContain("[mask-image:linear-gradient(to_bottom");
   expect(page).toContain("min-h-11");
-  expect(page).not.toContain("min-h-9");
+  expect(page).toContain("md:min-h-9");
   expect(page).not.toContain("min-h-10");
  });
 

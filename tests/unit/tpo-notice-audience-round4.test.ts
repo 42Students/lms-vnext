@@ -10,7 +10,7 @@ describe("TPO notice audience selection and graceful preview",()=>{
   const page=text("src/app/(authenticated)/tpo/announcements/page.tsx");
   expect(service).toContain("eq(departments.collegeId,college.id)");
   expect(service).toContain("eq(placementJobs.collegeId,college.id)");
-  expect(service).toContain('eq(placementJobs.status,"PUBLISHED")');
+  expect(service).toContain('inArray(placementJobs.status,["PUBLISHED","CLOSED"])');
   expect(service).toContain("assertPersistedPlatformPermission");
   expect(picker).toContain("No batch is in placements");
   expect(picker).toContain("No student in placements has a branch yet");
@@ -19,9 +19,12 @@ describe("TPO notice audience selection and graceful preview",()=>{
  });
  it("TPO-inbox-team-45 keeps live preview and zero-recipient guards while using truthful student reach",()=>{
   const page=text("src/app/(authenticated)/tpo/announcements/page.tsx");
-  expect(page).toContain('"Goes to "+audience.potentiallyVisibleMemberships+" students');
-  expect(page).toContain("audience.potentiallyVisibleMemberships>0");
-  expect(page).toContain("retryPreviewHref");
+  const preview=text("src/components/tpo/tpo-notice-live-preview.tsx");
+  expect(preview).toContain('const count=(value as Record<string,unknown>).potentiallyVisibleMemberships');
+  expect(preview).toContain("Goes to <strong>{preview.count}");
+  expect(preview).toContain("preview.count!==null&&preview.count>0");
+  expect(page).toContain("<TpoNoticeLiveAudienceProvider");
+  expect(preview).toContain('cache:"no-store"');
   expect(tpoAudiencePreviewQuery.safeParse({audience:"BATCHES"}).success).toBe(false);
  });
  it("GR-71 shows picker-specific empty copy rather than a blank selector",()=>{
