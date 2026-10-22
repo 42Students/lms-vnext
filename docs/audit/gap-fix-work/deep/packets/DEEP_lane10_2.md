@@ -16,10 +16,12 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-5-017-047  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
 - [x] G2-5-018-010  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
 - [ ] G2-5-018-024  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
-- [ ] G2-5-018-040  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
+- [x] G2-5-018-040  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_20.md)
 
 ## Results
 
 - OK G2-5-017-014 — `src/db/schema/projects.ts:129-159` defines an append-only `projectTemplateLegacyEvents` ledger with its own event ID, source action, snapshot and timestamp; no uniqueness on template version, matching `docs/legacy-source/backend/src/main/resources/db/migration/V160__project_template_version_sort_index.sql:1-7`.
 - OK G2-5-017-047 — `src/db/schema/projects.ts:134-159` preserves repeated actions under the same `legacyTemplateVersion` (unique only on `legacyEventId` per template), matching `docs/legacy-source/backend/src/main/resources/db/migration/V160__project_template_version_sort_index.sql:1-7`.
 - OK G2-5-018-010 — `src/db/schema/activity.ts:33-58` retains nullable source user ID and immutable `actorRoleSnapshot`/`actorNameSnapshot` independently of canonical user display data; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectActivityEvent.java:39-46`.
+
+- OK G2-5-018-040 — `src/db/schema/activity.ts:86-89` supplies the partial `(legacy_project_id, occurred_at)` project activity timeline index, while `src/db/schema/activity.ts:82-84` supplies the generic subject/time index; matches the project-first chronological index purpose in `docs/legacy-source/backend/src/main/resources/db/migration/V97__project_performance_indexes.sql:58-71`. The vNext schema uses a typed project ID column instead of searching JSON metadata.
