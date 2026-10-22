@@ -20,7 +20,7 @@ describe("Application re-screen on real academic evidence",()=>{
   expect(ui).toContain("The verified private document loads through the authorized document endpoint.");
   expect(ui).toContain('sandbox="allow-downloads"');
   expect(ui).toContain('referrerPolicy="no-referrer"');
-  expect(ui).toContain("No fabricated public resume URL or match score is shown.");
+  expect(ui).toContain("Historical screening scores are only displayed when backed by persisted evidence.");
   expect(ui).toContain("It does not fabricate a match score or reverse an existing screening decision.");
  });
 });

@@ -61,8 +61,8 @@ describe("UX-HR-TRACKER-15 recruiter reports and tracker security boundaries",()
  });
  it("issue detail validates public ID then maps only genuine missing issues to 404",()=>{
   const source=read("tracker/issues/[publicId]/page.tsx");
-  expect(source).toContain("trackerPublicIdSchema.safeParse(canonical)");
-  expect(source).toContain("canonical!==publicId");
+  expect(source).toContain("trackerPublicIdSchema.safeParse(publicId)");
+  expect(source).toContain("getBugTrackerIssueForAdmin(context, publicId, cursor)");
   expect(source).toContain('error.code === "ISSUE_NOT_FOUND"');
   expect(source).toContain("throw error;");
   expect(source).toContain("The tracker is temporarily unavailable.");
@@ -70,7 +70,9 @@ describe("UX-HR-TRACKER-15 recruiter reports and tracker security boundaries",()
  it("tracker global logs and audit findings never use a college-admin or scoped Super Admin bypass",()=>{
   const logs=read("tracker/logs/page.tsx");
   expect(logs).toMatch(/context\.adminScope\?\.collegeId \|\|\s*context\.adminScope\?\.organizationId/);
-  expect(logs).toContain("Clear the Super Admin organization/college safety scope");
+  expect(logs).toContain('context.adminScope?.collegeId');
+  expect(logs).toContain('context.adminScope?.organizationId');
+  expect(logs).toContain("old shared password is no longer accepted");
   const findings=read("tracker/audit-findings/page.tsx");
   expect(findings).toContain('ctx.adminScope?.collegeId||ctx.adminScope?.organizationId');
   expect(findings).toContain('requirePermission(ctx,"admin-scope.select")');
@@ -79,7 +81,8 @@ describe("UX-HR-TRACKER-15 recruiter reports and tracker security boundaries",()
  it("tracker reporter detail guards the owner context, validates URL ID and retains retryable failures",()=>{
   const source=read("tracker/mine/[publicId]/page.tsx");
   expect(source).toContain('context.user.platformStatus!=="ACTIVE"');
-  expect(source).toContain("trackerPublicIdSchema.safeParse(publicId)");
+  expect(source).toContain("trackerPublicIdSchema.safeParse(canonical)");
+  expect(source).toContain('redirect("/tracker/mine/"+encodeURIComponent(canonical))');
   expect(source).toContain('error.code==="ISSUE_NOT_FOUND"');
   expect(source).toContain("throw error;");
   expect(source).toContain("Reports are temporarily unavailable.");
