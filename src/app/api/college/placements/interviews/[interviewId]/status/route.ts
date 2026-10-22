@@ -11,8 +11,8 @@ export async function POST(request:Request,{params}:{params:Promise<{interviewId
   const {interviewId}=await params;
   const raw=await request.json() as Record<string,unknown>;
   const result=await finishCollegeInterview(await getCurrentRequestContext(),{
-   id:interviewId,status:raw.status,expectedVersion:raw.expectedVersion,
-   reason:raw.reason,
+   id:interviewId,status:raw["status"],expectedVersion:raw["expectedVersion"],
+   reason:raw["reason"],
   });
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){
