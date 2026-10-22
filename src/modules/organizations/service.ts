@@ -39,7 +39,8 @@ export type OrganizationServiceErrorCode =
   | "ORGANIZATION_HAS_COLLEGES";
 
 export class OrganizationServiceError extends Error {
-  constructor(public readonly code: OrganizationServiceErrorCode) {
+  constructor(public readonly code: OrganizationServiceErrorCode,
+    public readonly blockers?:{active:number;archived:number}) {
     super(code);
     this.name = "OrganizationServiceError";
   }
@@ -296,10 +297,19 @@ export async function archiveOrganization(
       .where(and(eq(organizations.id,organizationId),eq(organizations.status,"ACTIVE")))
       .for("update").limit(1);
     if(!activeParent)throw new OrganizationServiceError("ORGANIZATION_NOT_FOUND");
-    const [activeCollege] = await tx.select({id:colleges.id}).from(colleges)
-      .where(and(eq(colleges.organizationId,organizationId),eq(colleges.status,"ACTIVE")))
-      .limit(1);
-    if(activeCollege)throw new OrganizationServiceError("ORGANIZATION_HAS_COLLEGES");
+    // Historical/archived colleges still have a live FK to this parent and
+    // must block archival too. Counting only ACTIVE children allowed an
+    // organization with hidden archived children to be incorrectly archived
+    // despite the legacy dependency guard.
+    const dependentCounts=await tx.select({status:colleges.status,
+      total:sql<number>`count(*)::int`}).from(colleges)
+      .where(eq(colleges.organizationId,organizationId)).groupBy(colleges.status);
+    const blockerCounts={
+      active:dependentCounts.filter(row=>row.status==="ACTIVE").reduce((sum,row)=>sum+row.total,0),
+      archived:dependentCounts.filter(row=>row.status==="ARCHIVED").reduce((sum,row)=>sum+row.total,0),
+    };
+    if(blockerCounts.active+blockerCounts.archived>0)
+      throw new OrganizationServiceError("ORGANIZATION_HAS_COLLEGES",blockerCounts);
     const [archived]=await tx.update(organizations).set({status:"ARCHIVED",updatedAt:new Date()})
      .where(and(eq(organizations.id,organizationId),eq(organizations.status,"ACTIVE")))
      .returning({id:organizations.id,name:organizations.name,status:organizations.status});
