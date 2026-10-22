@@ -5,7 +5,7 @@ import {learnerAlertSafeDate,learnerAlertRelativeDay} from "@/modules/placements
 import {LearnerPlacementAlertAction} from "./learner-placement-alert-action";
 
 type Alerts = Awaited<ReturnType<typeof getOwnLearnerPlacementAlerts>>;
-type RestrictionNotice={active:true;untilDate:string|null;remainingDrives:number|null};
+type RestrictionNotice={active:true;untilDate:string|null;remainingDrives:number|null;reasons?:readonly string[]};
 
 export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=false, restriction=null }: {
  alerts: Alerts; filtered?: boolean; unreadOnly?:boolean; restriction?:RestrictionNotice|null;
@@ -29,6 +29,7 @@ export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=fals
       {restriction?.active?<aside aria-label="Placement restriction" role="status"
         className="mt-4 border-l-4 border-warning bg-muted px-4 py-3 text-sm leading-[22px]">
         <p className="font-semibold">Placement restriction active</p>
+        {restriction.reasons?.length?<p className="mt-1">Reason: {restriction.reasons.join("; ")}</p>:null}
         {restriction.untilDate?<p>Restricted until {restriction.untilDate} (IST).</p>:null}
         {restriction.remainingDrives!==null?<p>Remaining drive restrictions: {restriction.remainingDrives}.</p>:null}
         <p>Contact your placement cell to review the reason or request a dispute.</p>

@@ -60,8 +60,9 @@ function splitTarget(value: string) {
   };
 }
 
-/** Group identity is not yet persisted on announcement rows: never mutate one
- * recipient copy of a Super Admin broadcast as if it were the whole broadcast. */
+/** Super Admin college notices may be physical copies of one broadcast.
+ * The server groups copies transactionally and rejects stale/cross-college writes.
+ * Keep retargeting disabled for these notices: membership is immutable here. */
 function isBroadcastCopy(item: AnnouncementAdminItem) {
   return item.senderType === "SUPER_ADMIN" && item.receiverType === "COLLEGE";
 }
@@ -182,11 +183,7 @@ export function AnnouncementAdminWorkspace({
     action: "DELETE" | "RESTORE" | "PIN",
   ) {
     if (pending || flight.current) return;
-    if (isBroadcastCopy(item)) {
-      showToast({ tone: "error", title: "Broadcast action unavailable", description: "A broadcast must be changed for every selected placement cell together." });
-      return;
-    }
-    flight.current=true;
+     flight.current=true;
     startTransition(async () => {
       try {
       const url = action === "RESTORE"
@@ -194,7 +191,8 @@ export function AnnouncementAdminWorkspace({
         : `/api/announcements/${item.id}`;
       const method = action === "DELETE" ? "DELETE" : action === "RESTORE" ? "POST" : "PATCH";
       const body = action === "PIN"
-        ? { expectedVersion: item.version, isPinned: !item.isPinned }
+        ? { expectedVersion: item.version, isPinned: !item.isPinned,
+            publishConsent: requiresPublicationConsent ? true : undefined }
         : { expectedVersion: item.version };
       const response = await fetch(url, {
         method,
@@ -250,11 +248,7 @@ export function AnnouncementAdminWorkspace({
 
   function saveEdit() {
     if (!editing || pending || flight.current) return;
-    if (isBroadcastCopy(editing)) {
-      showToast({ tone: "error", title: "Broadcast edit unavailable", description: "All placement cells must be updated in one operation." });
-      return;
-    }
-    const form = editFormRef.current;
+     const form = editFormRef.current;
     if (!form) return;
     const data = new FormData(form);
     const targetValue = String(data.get("target") ?? "");
@@ -272,7 +266,9 @@ export function AnnouncementAdminWorkspace({
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           expectedVersion: editing.version,
-          ...receiver,
+          // Shared broadcasts reject retargeting even when it repeats the
+          // same audience; the server locks and updates every college copy.
+          ...(isBroadcastCopy(editing) ? {} : receiver),
           title: String(data.get("title") ?? ""),
           message: String(data.get("message") ?? ""),
           scheduledAt: editTiming.scheduledAt,
@@ -410,8 +406,7 @@ export function AnnouncementAdminWorkspace({
                       <Button size="sm" variant="secondary" disabled={pending} onClick={()=>setDeliveryAction(item)}>
                         {item.deliveryStatus==="FAILED"?"Retry":"Send now"}
                       </Button>:null}
-                    {isBroadcastCopy(item)?<span role="status" className="text-xs text-muted-foreground">Edit placement-cell broadcasts together</span>
-                    :!item.deletedAt?<>
+                    {!item.deletedAt?<>
                       <Button size="sm" variant="secondary" disabled={pending} onClick={()=>{setEditConsent(false);setEditing(item);}}>Edit</Button>
                       <Button size="sm" variant="danger" disabled={pending} onClick={()=>setConfirmDelete(item)}>Delete</Button>
                       <Button size="sm" variant="ghost" disabled={pending} onClick={()=>mutate(item,"PIN")}>{item.isPinned?"Unpin":"Pin"}</Button>
@@ -454,20 +449,26 @@ export function AnnouncementAdminWorkspace({
         onOpenChange={(open) => { if (!open && !pending) setConfirmDelete(null); }}
         dismissible={!pending}
         title="Delete this announcement?"
-        description="Placement cells stop seeing it."
+        description={confirmDelete && isBroadcastCopy(confirmDelete)
+          ? "All affected placement cells stop seeing this broadcast. The change is checked and applied atomically."
+          : "Placement cells stop seeing it."}
         footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
           <Button variant="secondary" disabled={pending} onClick={() => setConfirmDelete(null)}>Cancel</Button>
           <Button variant="danger" disabled={pending} onClick={() => { if (confirmDelete) mutate(confirmDelete, "DELETE"); }}>{pending ? "Deleting…" : "Delete"}</Button>
         </div>}
       >
-        <p className="text-sm text-body">Placement cells stop seeing this announcement after deletion.</p>
+        <p className="text-sm text-body">{confirmDelete && isBroadcastCopy(confirmDelete)
+          ? "This withdraws the entire broadcast from all affected colleges and their notifications, not just this copy."
+          : "Placement cells stop seeing this announcement after deletion."}</p>
       </Dialog>
       <Dialog
         open={Boolean(editing)}
         onOpenChange={(open) => { if (!open&&!pending) setEditing(null); }}
         dismissible={!pending}
         title="Edit announcement"
-        description="Retargeting is re-authorized server-side against both the old and new tenant scope."
+        description={editing && isBroadcastCopy(editing)
+          ? "This edits all college copies of the broadcast together. Audience membership cannot be changed here."
+          : "Retargeting is re-authorized server-side against both the old and new tenant scope."}
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button variant="secondary" disabled={pending} onClick={() => setEditing(null)}>Cancel</Button>
