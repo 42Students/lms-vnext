@@ -45,14 +45,14 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
  const duplicated=Object.values(raw).some(Array.isArray);
  const parsed=(invalidKeys||duplicated)
   ?adminContentQuerySchema.safeParse(null)
-  :adminContentQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page,pageSize:raw.pageSize,
-    offeringId:raw.offeringId,lessonId:raw.lessonId,deliveryId:raw.deliveryId,scope:raw.scope});
+  :adminContentQuerySchema.safeParse({q:raw["q"],status:raw["status"],page:raw["page"],pageSize:raw["page"]Size,
+    offeringId:raw["offeringId"],lessonId:raw["lessonId"],deliveryId:raw["deliveryId"],scope:raw["scope"]});
  const title=ADMIN_CONTENT_LABELS[kind];
- const lessonSearch=typeof raw.lessonSearch==="string"?raw.lessonSearch.trim():"";
- const rawLessonPage=typeof raw.lessonPage==="string"?raw.lessonPage:"1";
+ const lessonSearch=typeof raw["lessonSearch"]==="string"?raw["lessonSearch"].trim():"";
+ const rawLessonPage=typeof raw["lessonPage"]==="string"?raw["lessonPage"]:"1";
  const lessonPage=/^[1-9][0-9]{0,3}$/.test(rawLessonPage)?Number(rawLessonPage):1;
  const invalidLessonQuery=lessonSearch.length>100||
-   (raw.lessonPage!==undefined&&!/^[1-9][0-9]{0,3}$/.test(rawLessonPage));
+   (raw["lessonPage"]!==undefined&&!/^[1-9][0-9]{0,3}$/.test(rawLessonPage));
  if(!parsed.success||invalidLessonQuery)return <div className="min-w-0 space-y-4">
   <PageHeader title={title}/>
   <ErrorState title="Invalid content filters" description="Review search, status and page."
