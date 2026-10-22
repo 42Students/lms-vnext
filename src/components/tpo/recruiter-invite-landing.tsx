@@ -281,7 +281,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       <span aria-hidden="true" className="mx-auto flex size-12 items-center justify-center rounded-full border border-[var(--lms-canvas-border)] text-2xl text-[var(--lms-primary)]">i</span>
       <PageHeader title="One more step" />
       <p className="text-sm font-semibold text-body">Your invitation is awaiting your account sign-in.</p>
-      <p className="text-sm text-muted-foreground leading-[22px]">You already have a 42LMS account. Sign in on {invite.collegeName}&apos;s placement address with your work email to accept the invitation.</p>
+      <p className="text-sm text-muted-foreground leading-[22px]">You already have a 42LMS account. Sign in on {invite.collegeName}&apos;s placement address as {joinedEmail} to accept the invitation.</p>
       <Link className={actionLink} href="/login">Sign in</Link>
     </div>);
   }
@@ -330,13 +330,14 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       <div className="mt-5 space-y-3">
         <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Work email
-          <Input id="invite-email" type="email" readOnly={Boolean(invite.contactEmail)}
+          <Input id="invite-email" type="email" readOnly={Boolean(invite.contactEmail) || codeSent}
             value={invite.contactEmail??requestedEmail} autoComplete="email" required
             onChange={event=>{if(!invite.contactEmail){setRequestedEmail(event.target.value);clearField("email");}}}
             aria-invalid={Boolean(errorFor("email"))} aria-describedby={errorFor("email")?"invite-email-error":undefined}
             className="mt-[6px] min-h-11 w-full md:min-h-9"/>
           <span className="mt-1 block text-xs font-normal text-muted-foreground">
-            {invite.contactEmail?"From your invitation. You'll sign in with it.":
+            {invite.contactEmail?"From your invitation. You'll sign in with it.":codeSent?
+             "Your verification code was sent to this address. Use this same address to sign in.":
              "Enter your company work email. We will check it against the linked employer and send a verification code."}
           </span>
           {errorFor("email")?<span id="invite-email-error" role="alert" className="mt-1 block text-xs font-normal text-[var(--lms-error)]">{errorFor("email")}</span>:null}
