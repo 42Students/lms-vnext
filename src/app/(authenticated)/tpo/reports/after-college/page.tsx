@@ -25,16 +25,16 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
  if(!ctx.membership||!hasMembershipRole(ctx,"TPO"))redirect("/dashboard");
  const raw=await searchParams;
  const batches=await listTpoBatches(ctx);
- const batchId=first(raw.batchId)||undefined,branchId=first(raw.branchId)||undefined;
+ const batchId=first(raw["batchId"])||undefined,branchId=first(raw["branchId"])||undefined;
  if(batchId&&!batches.batches.some(batch=>batch.id===batchId))
   return <div className="space-y-4"><PageHeader title="After college"/><ErrorState title="Invalid batch" description="Choose an available batch for this college." action={<Link href="/tpo/reports/after-college" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear filters</Link>}/></div>;
- const data=await getTpoAfterCollegeReport(ctx,{collegeId:ctx.membership.collegeId,batchId,branchId});
+ const data=await getTpoAfterCollegeReport(ctx,{collegeId:ctx.membership.collegeId,...(batchId?{batchId}:{}),...(branchId?{branchId}:{})});
  const branches=new Map(data.branches.map(row=>[row.id,row.name]));
  if(branchId&&!branches.has(branchId))return <div className="space-y-4"><PageHeader title="After college"/><ErrorState title="Invalid branch" description="Choose a branch in this college." action={<Link href="/tpo/reports/after-college" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear filters</Link>}/></div>;
  const query=new URLSearchParams({...batchId?{batchId}: {},...branchId?{branchId}:{}});
  const displayedCount=Math.min(data.rows.length,300);
  const pageCount=Math.max(1,Math.ceil(displayedCount/25));
- const requestedPage=Number(first(raw.page)??"1");
+ const requestedPage=Number(first(raw["page"])??"1");
  const page=Number.isSafeInteger(requestedPage)?Math.max(1,Math.min(pageCount,requestedPage)):1;
  const pageHref=(nextPage:number)=>{const next=new URLSearchParams(query);next.set("page",String(nextPage));return "/tpo/reports/after-college?"+next.toString();};
  return <div data-tpo-presentation-report className="min-w-0 space-y-4">
