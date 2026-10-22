@@ -7,7 +7,13 @@ export function learnerDriveDeadlineUrgency(
 ):{kind:LearnerDriveUrgency;label:string;tone:"error"|"warning"|"neutral"}{
  if(!deadlineIso)return {kind:"no-deadline",label:"No deadline set",tone:"neutral"};
  const deadline=Date.parse(deadlineIso);
- const now=snapshotNowIso?Date.parse(snapshotNowIso):Date.now();
+ if(!snapshotNowIso){
+  if(deadlinePassed)return {kind:"closed",label:"Closed "+new Intl.DateTimeFormat("en-IN",{
+   day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
+  }).format(new Date(deadline)),tone:"error"};
+  return {kind:"future",label:"Deadline listed",tone:"neutral"};
+ }
+ const now=Date.parse(snapshotNowIso);
  if(!Number.isFinite(deadline)||!Number.isFinite(now))
   return {kind:"no-deadline",label:"No deadline set",tone:"neutral"};
  const formatted=new Intl.DateTimeFormat("en-IN",{

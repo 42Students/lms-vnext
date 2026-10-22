@@ -12,7 +12,8 @@ describe("legacy College Admin Companies route and scope",()=>{
   it("keeps the page on the college-scoped service with a college-role guard",()=>{
     const source=readFileSync(join(process.cwd(),
       "src/app/(authenticated)/college/companies/page.tsx"),"utf8");
-    expect(source).toContain('hasMembershipRole(context, "COLLEGE_ADMIN")');
+    expect(source).toContain('hasMembershipRole(context,"COLLEGE_ADMIN")');
+    expect(source).toContain("isSuperAdmin(context) ? context.adminScope?.collegeId : null");
     expect(source).toContain("listCollegeCompanyDirectory(context,query)");
     expect(source).toContain("listPlacementRelationshipOwners(context,collegeId)");
     expect(source).not.toContain("listSuperAdminCompanyDirectory");

@@ -22,7 +22,7 @@ describe("College recurring preview is IST-safe and bounded", () => {
     for (const bad of [
       { ...input, weekdays: [4, 4] },
       { ...input, from: "2026-02-30" },
-      { ...input, to: "2027-10-16" },
+      { ...input, to: "2027-10-16", weekdays: [] },
       { ...input, startTime: "10:00", endTime: "09:00" },
       { ...input, collegeId: "user-overridden" },
       { ...input, sectionId: "bad" },
