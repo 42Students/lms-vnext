@@ -258,11 +258,13 @@ export default async function SuperAdminFeaturesPage({
                   <ModuleState decision={decision}/>
                   {decision.module==="projects"||decision.module==="placements" ?
                     <CollegeFeatureRuleEditor collegeId={college.id} module={decision.module}
-                      stored={decision.stored} ancestorLocked={decision.ancestorLocked}/> :
+                      stored={decision.stored} ancestorLocked={decision.ancestorLocked}
+                      effectiveEnabled={decision.enabled} collegeLabel={college.name}/> :
                     <Disclosure title={"Change "+decision.label+" →"}
                       className="mt-2 [&>summary]:min-h-11 [&>summary]:text-primary-text">
                       <CollegeFeatureRuleEditor collegeId={college.id} module={decision.module}
-                        stored={decision.stored} ancestorLocked={decision.ancestorLocked}/>
+                        stored={decision.stored} ancestorLocked={decision.ancestorLocked}
+                      effectiveEnabled={decision.enabled} collegeLabel={college.name}/>
                     </Disclosure>}
                 </div>:<span className="text-muted-foreground">—</span>;
               },
