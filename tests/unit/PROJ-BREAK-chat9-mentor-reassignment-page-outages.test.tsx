@@ -80,8 +80,14 @@ describe("IIT Dharwad Projects: bulk mentor reassignment partial failure states"
     for(const fail of ["projects","mentors","workload"] as const){
       state.fail=fail;
       const page=visible(await render({q:"IIT",status:"ACTIVE",page:"2",mentorSearch:"faculty"})).join(" ");
-      expect(page).toContain("Failed to load project workspaces");
-      expect(page).toContain("Retry loading mentor reassignment");
+      if(fail==="projects"||fail==="workload"){
+        expect(page).toContain(fail==="projects"?"Failed to load project workspaces":"Mentor workload could not be loaded");
+        expect(page).toContain("Retry loading mentor reassignment");
+      }else{
+        expect(page).toContain("Mentor options could not be loaded");
+        expect(page).toContain("Retry mentors");
+        expect(page).toContain("Mentor assignments are read-only");
+      }
       expect(page).toContain("q=IIT");
       expect(page).toContain("mentorSearch=faculty");
       expect(page).toContain("status=ACTIVE");
