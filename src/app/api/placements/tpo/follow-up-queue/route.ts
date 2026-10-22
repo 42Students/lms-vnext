@@ -7,7 +7,7 @@ import { createConfirmedTpoFollowup } from "@/modules/placements/tpo-followup-qu
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
-  if (process.env.DB09_TPO_API_READY !== "DB09_VERIFIED") {
+  if (process.env["DB09_TPO_API_READY"] !== "DB09_VERIFIED") {
     return NextResponse.json({ error: "DB09_MIGRATIONS_PENDING" }, { status: 503 });
   }
   if (!isSameOriginRequest(request)) {
