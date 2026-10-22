@@ -386,7 +386,7 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     expect(source).toContain("if (pickerUnavailable || disabled) { setError(null);");
     expect(source).toContain("selectedRef.current = false");
     expect(source).toContain("onFilesRef.current(null)");
-    expect(source).toContain('aria-invalid={error ? true : undefined}');
+    expect(source).toContain('aria-invalid={unavailable ? undefined : error ? true : props["aria-invalid"]}');
     // Unit SSR alone cannot model FileList + effect transitions; the same
     // journey is covered in chat17-ui-kit-interactions.spec.ts.
   });
