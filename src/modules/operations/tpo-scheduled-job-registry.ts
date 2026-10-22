@@ -12,8 +12,10 @@ export const TPO_SCHEDULED_JOBS = {
     description: "Application deadlines today",
   },
   "tpo.offersExpiringSoon": {
-    schedule: "0 * * * *", leaseMs: 50 * 60_000, wired: false,
-    description: "Offers approaching expiry",
+    // Shared fenced 15-minute expiry ingress meets the hourly reminder SLA.
+    // TPO_SCHEDULED_OFFER_REMINDERS_ENABLED must also be true; no standalone cron.
+    schedule: "0 * * * *", leaseMs: 50 * 60_000, wired: true,
+    description: "24-hour offer reminders, deduplicated within the expiry worker",
   },
   "tpo.shortlistDueTomorrow": {
     schedule: "0 8 * * *", leaseMs: 30 * 60_000, wired: false,
