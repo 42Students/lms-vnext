@@ -6,7 +6,7 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [ ] `tests/unit/chat12-verify2-legacy-category-controls.test.ts` (1 failing)
 - [ ] `tests/unit/chat2-team-handover-36.test.ts` (1 failing)
 - [ ] `tests/unit/chat6-superadmin-course-edit-copy-55.test.ts` (1 failing)
-- [ ] `tests/unit/chat9-super-admin-placement-remaining-gap-verification.test.ts` (1 failing)
+- [x] `tests/unit/chat9-super-admin-placement-remaining-gap-verification.test.ts` (1 failing) — Taken by chat-9 after lane-9 unit11 completion; FIXED outdated source-shape assertion: Type and Mode are explicit accessible Select controls with reset-on-change; Status and Department remain shared choices.
 - [ ] `tests/unit/learner-syllabus-soft-delete-visibility.test.ts` (1 failing)
 - [ ] `tests/unit/verify2-lane18-attendance-program-interviews.test.ts` (1 failing)
 
