@@ -210,7 +210,8 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
    if(applicant.stale)matches.push("STALE_APPLIED");
    if(applicant.unscheduled)matches.push("INTERVIEW_UNSCHEDULED");
    if(applicant.missingLetter)matches.push("MISSING_OFFER_LETTER");
-   if(applicant.lowConversion)matches.push("LOW_CONVERSION");
+   // Low conversion is a per-drive condition, not a candidate decision.
+   // Showing individual learner samples here would falsely imply a personal flag.
    for(const category of matches){
     const item=byCategory.get(applicant.jobId+":"+category);
     if(!item||item.examples.length>=sampleCap)continue;
@@ -227,10 +228,16 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
  }
  return {jobs:jobs.slice(0,60).map(job=>({...job,applicants:counts.get(job.id)?.total??0,
   attention:categories.filter(row=>row.jobId===job.id).reduce((n,row)=>n+row.count,0)})),
-  // The legacy Needs attention total is the sum of affected candidate items,
-  // not the number of category labels rendered in a grid.
+  // Counts represent every affected application (or one flagged drive for
+  // LOW_CONVERSION); samples are intentionally bounded and may be incomplete.
   total:categories.reduce((count,item)=>count+item.count,0),
-  categories,hasOfferLetterEvidence:true,
+  categories:categories.map(item=>({
+   ...item,
+   sampleOmitted:item.category==="LOW_CONVERSION"?0:
+    Math.max(0,item.count-item.examples.length),
+   countTotal:item.count,
+  })),
+  hasOfferLetterEvidence:true,
   allDriveCount,activeDriveCount,inactiveDriveCount:allDriveCount-activeDriveCount,
   lookbackDays:staleDays,closingSoonDays:closingDays,sampleCap,conversionThreshold,
   snapshotAt:snapshotAt.toISOString()};
