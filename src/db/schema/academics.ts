@@ -670,3 +670,41 @@ export function legacySchedulesOverlap(
  return left.startsAt.getTime()<right.endsAt.getTime()&&
   right.startsAt.getTime()<left.endsAt.getTime();
 }
+
+/** Legacy NewProgram stored only (int ID, title, int dept ID, years).
+ * Program codes are mandatory in vNext, so generate a stable per-source code
+ * that cannot collide with another program in the verified department.
+ * The importer must reject orphan departments, preserve the old created/
+ * updated chronology and convert is_deleted=true to ARCHIVED. */
+export const LEGACY_NEW_PROGRAM_FIELD_MAP={
+ id:"programs.legacy_program_id",
+ name:"programs.name",
+ dept_id:"programs.department_id (verified same-college UUID crosswalk)",
+ duration_years:"programs.legacy_duration_years and duration_terms=years*2",
+ created_at:"programs.created_at (source zone review)",
+ updated_at:"programs.updated_at (source zone review)",
+ is_deleted:"programs.status=ARCHIVED and legacy_was_deleted",
+} as const;
+export function legacyNewProgramImport(input:{
+ legacyId:number;name:string;durationYears:number;departmentId:string;
+ legacyWasDeleted:boolean;existingCodes:readonly string[];
+}){
+ if(!Number.isSafeInteger(input.legacyId)||input.legacyId<=0)
+  throw new Error("Unmapped historical program identity");
+ if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(input.departmentId))
+  throw new Error("Program department must resolve to a scoped UUID");
+ const name=input.name.trim().replace(/\s+/g," ");
+ if(name.length<2||name.length>200)
+  throw new Error("Historic program name needs review");
+ if(!Number.isSafeInteger(input.durationYears)||input.durationYears<1||input.durationYears>10)
+  throw new Error("Historic program duration needs review");
+ const prefix=name.normalize("NFKD").replace(/[\u0300-\u036f]/g,"")
+  .toUpperCase().replace(/[^A-Z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,32);
+ const code=(prefix||"PROGRAM")+"-"+input.legacyId;
+ if(input.existingCodes.some(value=>value.toUpperCase()===code))
+  throw new Error("Program code conflict; import requires explicit review");
+ return {legacyProgramId:input.legacyId,name,departmentId:input.departmentId,
+  legacyDurationYears:input.durationYears,durationTerms:input.durationYears*2,
+  code,status:input.legacyWasDeleted?"ARCHIVED" as const:"ACTIVE" as const,
+  legacyWasDeleted:input.legacyWasDeleted};
+}

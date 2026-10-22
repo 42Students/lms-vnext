@@ -74,7 +74,10 @@ export function buildRecruiterActionQueue(input:{
       row.status==="SELECTED"?"Selection recorded · "+row.jobTitle:"Review offers · "+row.jobTitle,
     description:row.jobTitle+(awaitingReply&&respondBy?
       " · Reply by "+recruiterDueAtIst(respondBy):" · "+row.count+" "+row.status.toLowerCase()+" offers recorded for college-shared applicants."),
-    href:"/recruiter/drives/"+encodeURIComponent(row.jobId)+"?tab=offers"};
+    // Old Today had no button while waiting for someone else's decision.
+    // Only an accepted/declined offer creates follow-up work for the HR team.
+    href:row.status==="ACCEPTED"||row.status==="DECLINED"
+      ?"/recruiter/drives/"+encodeURIComponent(row.jobId)+"?tab=offers":null};
   });
  const conversations=(input.unreadConversations??[]).filter(item=>item.unread>0)
   .map(item=>({key:"thread:"+item.id, tone:"SOON" as const, at:null as Date|null,
