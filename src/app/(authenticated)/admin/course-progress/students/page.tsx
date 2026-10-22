@@ -50,7 +50,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
  catch(error){
   // Do not expose SQL, stack traces or another tenant's identifiers in the error surface.
   const detail=error instanceof Error&&error.message==="COURSE_NOT_TAUGHT_IN_CLASS"
-    ?"This course is not taught in the selected class. Choose a class that has a teaching assignment for this course."
+    ?"This course is not taught in this class. Choose a class that has a teaching assignment for this course."
     :error instanceof Error&&error.name==="AuthorizationError"
     ?"The selected course offering is not accessible in your current college scope."
     :error instanceof Error&&error.name==="ZodError"
