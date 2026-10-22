@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   cohorts, courseOfferings, courseSectionDeliveries, courses, sections,
-  departments, electiveOfferings, electiveSlots, lmsGroupMembers, lmsGroups, programs,
+  departments, electiveOfferings, electiveSlots, groupBackedClassOfferings, lmsGroupMembers, lmsGroups, programs,
   collegeMemberships, courseTeachingAssignments, users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
