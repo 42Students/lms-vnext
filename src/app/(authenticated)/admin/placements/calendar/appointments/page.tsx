@@ -8,6 +8,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/ui/data-table";
 
 const TYPES=["ALL","SCREENING","TECHNICAL","HR","MANAGERIAL","FINAL"] as const;
 const STATUSES=["ALL","ACTIVE","SCHEDULED","CONFIRMED","RESCHEDULE_REQUESTED",
@@ -94,34 +95,37 @@ export default async function SuperAdminCalendarAppointmentsPage({
   </p>
   {filtered.length===0?<EmptyState title="No interviews match these filters"
     description="Try another status, type or mode."/>:
-   <div className="w-full overflow-x-auto rounded-[var(--lms-canvas-radius)] border border-border">
-    <table className="w-full min-w-[950px] border-collapse text-left text-sm">
-     <thead className="bg-surface-subtle"><tr>
-      {["Candidate / Job","Type","Status","Date & Time","Duration","Interviewer","Location / Mode","Applications"].map(label=>
-       <th scope="col" key={label} className="px-3 py-3 font-semibold">{label}</th>)}
-     </tr></thead>
-     <tbody>{pageItems.map(item=><tr key={item.id} className="border-t border-border align-top">
-      <td className="max-w-[220px] break-words px-3 py-3">
-       <strong className="block">{item.candidateName??"Candidate unavailable"}</strong>
-       <span className="block text-xs text-body">{item.jobTitle} · {item.companyName}</span>
-       {item.conflict?<StatusBadge tone="error">Conflict</StatusBadge>:null}
-      </td>
-      <td className="px-3 py-3">{item.type}</td>
-      <td className="px-3 py-3"><StatusBadge tone={item.status==="CANCELLED"||item.status==="NO_SHOW"?"error":
-       item.status==="COMPLETED"?"success":item.status==="RESCHEDULE_REQUESTED"?"warning":"info"}>{item.status.replaceAll("_"," ")}</StatusBadge></td>
-      <td className="whitespace-nowrap px-3 py-3">{ist(item.startsAt)}</td>
-      <td className="px-3 py-3">{Math.round((new Date(item.endsAt).getTime()-new Date(item.startsAt).getTime())/60000)} min</td>
-      <td className="max-w-[120px] break-words px-3 py-3">{item.interviewer??"Not assigned"}</td>
-      <td className="max-w-[160px] break-words px-3 py-3">{item.mode==="ONLINE"?"Online":"In-person"} · {item.mode==="ONLINE"?"Meeting link":item.venue}</td>
-      <td className="px-3 py-3">
-       <Link href={"/admin/placements/jobs/"+encodeURIComponent(item.jobId)+"/applications?"+
-        new URLSearchParams({collegeId:result.collegeId,...(item.applicationId ? {applicationId:item.applicationId} : {})}).toString()}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
-        View applications</Link>
-      </td>
-     </tr>)}</tbody>
-    </table>
-   </div>}
+   <DataTable
+    caption="Interview appointments"
+    rows={pageItems}
+    getRowKey={item=>item.id}
+    mobileMode="scroll"
+    empty={<EmptyState title="No interviews match these filters" description="Try another status, type or mode."/>}
+    columns={[
+     {key:"candidate",header:"Candidate / Job",mobilePriority:"primary",cell:item=><div className="max-w-[220px] break-words">
+      <strong className="block">{item.candidateName??"Candidate unavailable"}</strong>
+      <span className="block text-xs text-body">{item.jobTitle} · {item.companyName}</span>
+      {item.conflict?<StatusBadge tone="error">Conflict</StatusBadge>:null}
+     </div>},
+     {key:"type",header:"Type",mobilePriority:"secondary",cell:item=>item.type},
+     {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>
+      <StatusBadge tone={item.status==="CANCELLED"||item.status==="NO_SHOW"?"error":
+       item.status==="COMPLETED"?"success":item.status==="RESCHEDULE_REQUESTED"?"warning":"info"}>
+       {item.status.replaceAll("_"," ")}
+      </StatusBadge>},
+     {key:"date",header:"Date & Time",mobilePriority:"secondary",cell:item=><span className="whitespace-nowrap">{ist(item.startsAt)}</span>},
+     {key:"duration",header:"Duration",mobilePriority:"secondary",cell:item=>
+      Math.round((new Date(item.endsAt).getTime()-new Date(item.startsAt).getTime())/60000)+" min"},
+     {key:"interviewer",header:"Interviewer",mobilePriority:"secondary",cell:item=>item.interviewer??"Not assigned"},
+     {key:"mode",header:"Location / Mode",mobilePriority:"secondary",cell:item=>
+      (item.mode==="ONLINE"?"Online":"In-person")+" · "+(item.mode==="ONLINE"?"Meeting link":item.venue)},
+     {key:"applications",header:"Applications",mobilePriority:"action",cell:item=>
+      <Link href={"/admin/placements/jobs/"+encodeURIComponent(item.jobId)+"/applications?"+
+       new URLSearchParams({collegeId:result.collegeId,...(item.applicationId ? {applicationId:item.applicationId} : {})}).toString()}
+       className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+       View applications</Link>},
+    ]}
+   />}
   {pages>1?<nav aria-label="Interview appointment pages" className="flex items-center justify-between gap-3 text-sm">
    {selectedPage>1?<Link href={href(selectedPage-1)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Previous</Link>:<span/>}
    <span>Page {selectedPage} of {pages}</span>
