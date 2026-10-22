@@ -7,6 +7,7 @@ import {ProjectAdminNav} from "@/components/projects/project-admin-nav";
 import {ProjectAdminMissingCollege} from "@/components/projects/project-admin-missing-college";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {EmptyState} from "@/components/ui/empty-state";
+import {DataTable} from "@/components/ui/data-table";
 import {ErrorState} from "@/components/ui/error-state";
 import {listAssignedProjectTemplates} from "@/modules/projects/template-service";
 import {getProjectAdminCollegeId} from "@/modules/projects/admin-college-scope";
@@ -90,49 +91,38 @@ export default async function CollegeProjectTemplatesPage({
      <ProjectTemplateCatalogueExport rows={rows}/>
     </div>
    </div>
-   {visible.length? <div className="max-w-full overflow-x-auto">
-    <table className="w-full min-w-[670px] border-collapse text-left text-sm">
-     <caption className="sr-only">Published project templates assigned to this college</caption>
-     <thead className="border-b border-border text-xs font-semibold text-body">
-      <tr>
-       <th className="px-3 py-3" scope="col">Template</th>
-       <th className="px-3 py-3" scope="col">Version</th>
-       <th className="px-3 py-3" scope="col">Sections</th>
-       <th className="px-3 py-3" scope="col">Action</th>
-      </tr>
-     </thead>
-     <tbody>{visible.map(template=>{
-      const counts=projectTemplateSectionCounts(template.blueprint);
-      return <tr key={template.assignmentId}
-        className="border-b border-border last:border-b-0">
-       <td className="max-w-[380px] px-3 py-3 align-top">
-        <p className="break-words font-semibold text-foreground">{template.title}</p>
-        <p className="mt-1 whitespace-pre-wrap break-words text-xs text-muted-foreground">
-         {template.summary?.trim()||"—"}
-        </p>
-       </td>
-       <td className="px-3 py-3 align-top tabular-nums">
-        {Number.isFinite(template.version)?String(template.version):"—"}
-       </td>
-       <td className="px-3 py-3 align-top">
-        <div className="flex min-w-[260px] flex-wrap gap-1.5">
-         <StatusBadge tone="neutral">Overview {counts.overview}</StatusBadge>
-         <StatusBadge tone="neutral">Sprints {counts.sprints}</StatusBadge>
-         <StatusBadge tone="neutral">Tasks {counts.tasks}</StatusBadge>
-         <StatusBadge tone="neutral">Resources {counts.resources}</StatusBadge>
-        </div>
-       </td>
-       <td className="px-3 py-3 align-top">
-        <Link href={basePath+"/"+encodeURIComponent(template.templateId)}
-         className="inline-flex min-h-11 items-center whitespace-nowrap font-semibold text-link underline md:min-h-9">
-         View &amp; use
-        </Link>
-       </td>
-      </tr>;
-     })}</tbody>
-    </table>
-   </div>:<EmptyState
-    title={q?"No templates match this search":"No templates are available to this college yet"}
+   {visible.length? <DataTable
+      caption="Assigned project templates"
+      rows={visible}
+      getRowKey={template=>template.assignmentId}
+      empty={<EmptyState title="No templates are available to this college yet"/>}
+      mobileMode="cards"
+      columns={[
+        {key:"template",header:"Template",mobileLabel:"Template",mobilePriority:"primary",
+          cell:template=><div className="min-w-0 space-y-1">
+            <p className="break-words font-semibold text-foreground">{template.title}</p>
+            <p className="whitespace-pre-wrap break-words text-xs text-muted-foreground">{template.summary?.trim()||"—"}</p>
+          </div>},
+        {key:"version",header:"Version",mobileLabel:"Version",mobilePriority:"secondary",
+          cell:template=>Number.isFinite(template.version)?String(template.version):"—"},
+        {key:"sections",header:"Sections",mobileLabel:"Sections",mobilePriority:"secondary",
+          cell:template=>{
+            const counts=projectTemplateSectionCounts(template.blueprint);
+            return <div className="flex min-w-0 flex-wrap gap-1.5">
+              <StatusBadge tone="neutral">Overview {counts.overview}</StatusBadge>
+              <StatusBadge tone="neutral">Sprints {counts.sprints}</StatusBadge>
+              <StatusBadge tone="neutral">Tasks {counts.tasks}</StatusBadge>
+              <StatusBadge tone="neutral">Resources {counts.resources}</StatusBadge>
+            </div>;
+          }},
+        {key:"action",header:"Action",mobileLabel:"Action",mobilePriority:"action",
+          cell:template=><Link href={basePath+"/"+encodeURIComponent(template.templateId)}
+            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+            View &amp; use
+          </Link>},
+      ]}
+    />:<EmptyState
+    title={q?"No project templates match this search.":"No templates are available to this college yet"}
     description={q?"No templates match this search. Try another title or slug.":
      "No templates are available to this college yet. Ask a Super Admin to publish and assign one."}
     action={q?<Link href={basePath}
