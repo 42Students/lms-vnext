@@ -801,6 +801,8 @@ export function LearnerAssessmentOverview({
                   <AssignmentSubmissionControl
                     key={selectedAssignment.deliveryId+":"+selectedAssignment.id}
                     fileUploadsEnabled={fileUploadsEnabled}
+                    multipartEnabled={fileUploadsEnabled}
+                    methodsEnabled
                     assignmentId={selectedAssignment.id}
                     assignmentTitle={selectedAssignment.title}
                     dueAt={selectedAssignment.dueAt}

@@ -6,20 +6,22 @@ import {Button} from "@/components/ui/button";
 import {LearnerRichResponseEditor} from "./learner-rich-response-editor";
 export type AssignmentLinkPart={kind:"REPOSITORY_LINK"|"EXTERNAL_LINK";url:string;caption:string};
 
-export function AssignmentMultipartPartsEditor({text,onTextChange,links,onLinksChange,disabled}:{
+export function AssignmentMultipartPartsEditor({text,onTextChange,links,onLinksChange,disabled,allowText=true,allowedLinkKinds=["REPOSITORY_LINK","EXTERNAL_LINK"]}:{
  text:string;onTextChange:(next:string)=>void;links:AssignmentLinkPart[];
  onLinksChange:(next:AssignmentLinkPart[])=>void;disabled:boolean;
+ allowText?:boolean;allowedLinkKinds?:readonly AssignmentLinkPart["kind"][];
 }){
  return <section aria-label="Additional submission parts" className="space-y-3 rounded-xl border border-border bg-surface-subtle p-3">
-  <h4 className="text-sm font-semibold text-foreground">Written response and links (optional)</h4>
-  <LearnerRichResponseEditor value={text} onChange={onTextChange} disabled={disabled}/>
-  {links.map((link,index)=><div key={index} className="grid gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
+  <h4 className="text-sm font-semibold text-foreground">{allowText&&allowedLinkKinds.length
+   ?"Written response and links (optional)":allowText?"Written response (optional)":"Submission links (optional)"}</h4>
+  {allowText?<LearnerRichResponseEditor value={text} onChange={onTextChange} disabled={disabled}/>:null}
+  {allowedLinkKinds.length>0&&links.map((link,index)=><div key={index} className="grid gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
    <label className="grid gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Link type
     <Select value={link.kind} disabled={disabled}
      className="min-h-11 md:min-h-9"
      onChange={e=>onLinksChange(links.map((item,i)=>i===index?{...item,kind:e.target.value as AssignmentLinkPart["kind"]}:item))}>
-     <option value="REPOSITORY_LINK">Repository Link</option>
-     <option value="EXTERNAL_LINK">Website / External Link</option>
+     {allowedLinkKinds.includes("REPOSITORY_LINK")?<option value="REPOSITORY_LINK">Repository Link</option>:null}
+     {allowedLinkKinds.includes("EXTERNAL_LINK")?<option value="EXTERNAL_LINK">Website / External Link</option>:null}
     </Select>
    </label>
    <label className="grid gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">HTTPS link
@@ -35,9 +37,9 @@ export function AssignmentMultipartPartsEditor({text,onTextChange,links,onLinksC
    <Button type="button" size="sm" variant="danger" className="min-h-11 md:min-h-9" disabled={disabled}
     onClick={()=>onLinksChange(links.filter((_,i)=>i!==index))}>Remove link</Button>
   </div>)}
-  <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={disabled||links.length>=20}
-   onClick={()=>onLinksChange([...links,{kind:"EXTERNAL_LINK",url:"",caption:""}])}>
+  {allowedLinkKinds.length>0?<Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={disabled||links.length>=20}
+   onClick={()=>onLinksChange([...links,{kind:allowedLinkKinds[0]!,url:"",caption:""}])}>
    Add another link
-  </Button>
+  </Button>:null}
  </section>;
 }
