@@ -7,7 +7,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_app_api_placements_tpo_students_nudges_route.ts.md` (edit src/app/api/placements/tpo/students/nudges/route.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_recruiter-invite-otp-policy.ts.md` (edit src/modules/placements/recruiter-invite-otp-policy.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_app_api_placements_tpo_announcements_noticeId_read-cell_route.ts.md` (edit src/app/api/placements/tpo/announcements/[noticeId]/read-cell/route.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_tpo-communication-settings-service.ts.md` (edit src/modules/placements/tpo-communication-settings-service.ts; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_tpo-communication-settings-service.ts.md` (edit src/modules/placements/tpo-communication-settings-service.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_recruiter-interview-slot-form.tsx.md` (edit src/components/placements/recruiter-interview-slot-form.tsx; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_app_api_placements_college_jobs_jobId_applications_applicationId_rescreen_route.ts.md` (edit src/app/api/placements/college/jobs/[jobId]/applications/[applicationId]/rescreen/route.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_authenticated_tpo_reports_offers-acceptance_page.tsx.md` (edit src/app/(authenticated)/tpo/reports/offers-acceptance/page.tsx; 1 findings; best P2)

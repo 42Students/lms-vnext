@@ -1,11 +1,12 @@
 import "server-only";
-import {eq,sql} from "drizzle-orm";
+import {and,eq,sql} from "drizzle-orm";
+import {z} from "zod";
 import {
  tpoCommunicationChangeSchema,tpoCommunicationChanges,
  tpoCommunicationUpdateAlreadyApplied,
 } from "./tpo-communication-change-model";
 import {getDb} from "@/db/client";
-import {activityEvents,colleges,placementTpoCollegeSettings} from "@/db/schema";
+import {activityEvents,collegeMemberships,colleges,membershipRoles,placementTpoCollegeSettings,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {placementTableExists} from "./staged-tables";
@@ -103,7 +104,7 @@ export async function updateTpoCommunicationSettings(context:RequestContext,raw:
  *
  * The old LMS made only interview mail eligible for LEARNER recipients; other
  * student events are app-only even if a legacy optional-email switch is on.
- * Four fixed always-on SMS notices do not count against the optional SMS cap.
+ * The fixed always-on SMS notices do not count against the optional SMS cap.
  */
 export type TpoDispatchEvent =
  "DRIVE_PUBLISHED"|"DRIVE_UPDATED"|"APPLICATION_STATUS_CHANGED"|
@@ -176,4 +177,85 @@ export function tpoOutgoingDispatchDecision(input:{
  // The preference check is for optional outgoing EMAIL only; turning that
  // off must not suppress a learner's in-app placement notice.
  return {allowed:true,sendAfter:now,countsAgainstOptionalSmsCap:false};
+}
+
+/** Delivery-time admission for a future audited, provider-backed TPO outbox.
+ * Enqueue-time settings alone are never an authorization to send. Call this
+ * again immediately before claiming each external delivery; never use a
+ * snapshot cached in an app process. No email/SMS is sent by this function.
+ */
+const tpoDispatchClaimSchema=z.strictObject({
+ collegeId:z.uuid(),recipientUserId:z.uuid(),
+ event:z.enum([
+  "DRIVE_PUBLISHED","DRIVE_UPDATED","APPLICATION_STATUS_CHANGED",
+  "NOW_INELIGIBLE","NUDGE","PREP_ASSIGNED","ROUND_SCHEDULED",
+  "ROUND_REMINDER","OFFER_RELEASED","OFFER_EXPIRING",
+  "DEADLINE_TODAY","DRIVE_CANCELLED",
+ ]),
+ channel:z.enum(["APP","EMAIL","SMS"]),
+ recipient:z.enum(["LEARNER","TPO","RECRUITER"]),
+ now:z.date(),
+});
+export type TpoOutboundClaimDecision=
+ | {status:"ALLOW";sendAfter:Date;countsAgainstOptionalSmsCap:boolean;settingsVersion:Date|null}
+ | {status:"DEFER";sendAfter:Date;settingsVersion:Date|null}
+ | {status:"SUPPRESS";reason:"CHANNEL_NOT_ALLOWED"|"OPTION_DISABLED"|"RECIPIENT_UNAVAILABLE"|"SETTINGS_NOT_READY"};
+
+export async function claimTpoOutgoingPolicyAtSend(raw:unknown):Promise<TpoOutboundClaimDecision>{
+ const input=tpoDispatchClaimSchema.parse(raw);
+ if(!Number.isFinite(input.now.getTime()))
+  return {status:"SUPPRESS",reason:"SETTINGS_NOT_READY"};
+ if(!await placementTableExists("placement_tpo_college_settings"))
+  return {status:"SUPPRESS",reason:"SETTINGS_NOT_READY"};
+ return getDb().transaction(async tx=>{
+  const [college]=await tx.select({id:colleges.id})
+   .from(colleges).where(and(eq(colleges.id,input.collegeId),
+     eq(colleges.status,"ACTIVE"))).for("share").limit(1);
+  if(!college)return {status:"SUPPRESS" as const,reason:"RECIPIENT_UNAVAILABLE" as const};
+  // A recruiter is outside the college membership roster: their delivery
+  // must be granted and reverified by the separate company relationship
+  // dispatcher. In its absence this path remains fail-closed.
+  if(input.recipient==="RECRUITER")
+   return {status:"SUPPRESS" as const,reason:"RECIPIENT_UNAVAILABLE" as const};
+  const [member]=await tx.select({id:collegeMemberships.id})
+   .from(collegeMemberships)
+   .innerJoin(users,and(eq(users.id,collegeMemberships.userId),
+     eq(users.platformStatus,"ACTIVE")))
+   .innerJoin(membershipRoles,and(
+     eq(membershipRoles.membershipId,collegeMemberships.id),
+     eq(membershipRoles.role,input.recipient==="LEARNER"?"LEARNER":"TPO")))
+   .where(and(eq(collegeMemberships.collegeId,input.collegeId),
+     eq(collegeMemberships.userId,input.recipientUserId),
+     eq(collegeMemberships.status,"ACTIVE"))).for("share").limit(1);
+  if(!member)
+   return {status:"SUPPRESS" as const,reason:"RECIPIENT_UNAVAILABLE" as const};
+  const [row]=await tx.select({
+   notifyDriveOpenEmail:placementTpoCollegeSettings.notifyDriveOpenEmail,
+   notifyResultApplied:placementTpoCollegeSettings.notifyResultApplied,
+   notifyNudges:placementTpoCollegeSettings.notifyNudges,
+   notifyPrepAssigned:placementTpoCollegeSettings.notifyPrepAssigned,
+   smsMonthlyCap:placementTpoCollegeSettings.smsMonthlyCap,
+   updatedAt:placementTpoCollegeSettings.updatedAt,
+  }).from(placementTpoCollegeSettings)
+   .where(eq(placementTpoCollegeSettings.collegeId,input.collegeId))
+   .for("share").limit(1);
+  const settings:TpoDeliveryPreferences={
+   notifyDriveOpenEmail:row?.notifyDriveOpenEmail??true,
+   notifyResultApplied:row?.notifyResultApplied??true,
+   notifyNudges:row?.notifyNudges??true,
+   notifyPrepAssigned:row?.notifyPrepAssigned??true,
+   smsMonthlyCap:row?.smsMonthlyCap??500,
+  };
+  const decision=tpoOutgoingDispatchDecision({...input,settings});
+  if(!decision.allowed)return {
+   status:"SUPPRESS" as const,reason:decision.reason,
+  };
+  if(decision.sendAfter.getTime()>input.now.getTime())return {
+   status:"DEFER" as const,sendAfter:decision.sendAfter,
+   settingsVersion:row?.updatedAt??null,
+  };
+  return {status:"ALLOW" as const,sendAfter:decision.sendAfter,
+   countsAgainstOptionalSmsCap:decision.countsAgainstOptionalSmsCap,
+   settingsVersion:row?.updatedAt??null};
+ });
 }
