@@ -56,6 +56,8 @@ export async function listCollegeDrives(context: RequestContext, raw: unknown) {
     locations: placementJobs.locations,
     publishedAt: placementJobs.publishedAt,
     createdAt: placementJobs.createdAt,
+    postedAt:sql<Date>`coalesce(${placementJobs.legacyPostedAt},
+      ${placementJobs.publishedAt},${placementJobs.createdAt})`.as("posted_at"),
     // The legacy Applicants column is the historical application count,
     // including subsequently withdrawn records. Keep the operational active
     // count separate so other flows do not mistake it for total history.
@@ -106,8 +108,8 @@ export async function listCollegeDrives(context: RequestContext, raw: unknown) {
   const [totals, items, seasons, companies] = await Promise.all([
     db.select({ total: count() }).from(source).where(applicantsFilter),
     db.select().from(source).where(applicantsFilter).orderBy(query.sort==="DEADLINE"?asc(source.applicationDeadline):
-        query.sort==="NEWEST"?desc(source.createdAt):
-        query.sort==="APPLICANTS"?desc(source.applicants):asc(source.title),asc(source.id))
+        query.sort==="NEWEST"?desc(source.postedAt):
+        query.sort==="APPLICANTS"?desc(source.applicants):asc(source.title),desc(source.createdAt),asc(source.id))
       .limit(Math.min(100,query.pageSize)).offset((query.page - 1) * query.pageSize),
     db.select({ id: placementSeasons.id, name: placementSeasons.name }).from(placementSeasons)
       .where(eq(placementSeasons.collegeId, collegeId)).orderBy(asc(placementSeasons.name)),
