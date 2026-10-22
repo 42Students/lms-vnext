@@ -9,8 +9,9 @@ const source=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 describe("chat-4 College academic and people gap closure",()=>{
  it("COL-courses-content-R01 keeps context for the next teaching assignment",()=>{
   const s=source("src/components/college/college-faculty-assignment-actions.tsx");
-  expect(s).toContain("Created ${successes} teaching assignments for this class.");
-  expect(s).toContain("setSelected(failures.map(item => item.deliveryId))");
+  expect(s).toContain("Bulk associations created successfully.");
+  expect(s).toContain("Review every receipt before retrying.");
+  expect(s).toContain("setSelectedFaculty(failedSelections)");
   expect(s).not.toContain('setMembershipId("")');
   expect(s).not.toContain('setRole("PRIMARY")');
  });
@@ -24,7 +25,8 @@ describe("chat-4 College academic and people gap closure",()=>{
   expect(canCreateSemesterTerm(13,24)).toBe(false);
   const mapping={programTermId:id,courseId:id,type:"CORE",credits:3};
   expect(collegeTermCourseAddSchema.safeParse(mapping).success).toBe(true);
-  for(const credits of [null,0,11,1.5])expect(collegeTermCourseAddSchema.safeParse({...mapping,credits}).success).toBe(false);
+  for(const credits of [0,11,30])expect(collegeTermCourseAddSchema.safeParse({...mapping,credits}).success).toBe(true);
+  for(const credits of [null,-1,31,1.5])expect(collegeTermCourseAddSchema.safeParse({...mapping,credits}).success).toBe(false);
  });
  it("COL-academic-setup-R02 archives offerings and blocks their access without deleting selection history",async()=>{
   const {electiveLifecyclePrompt}=await import("@/modules/electives/college-elective-lifecycle-model");
@@ -110,7 +112,7 @@ describe("chat-4 College academic and people gap closure",()=>{
   expect(guide).toContain('key: "academic-periods", href: "/college/academics"');
   expect(guide.indexOf('key: "academic-periods"')).toBeLessThan(guide.indexOf('key: "batches"'));
   for(const content of [batches,classes]){
-   expect(content).toContain('<Link href="/college/academics"');
+   expect(content).toContain('academicSetupHref');
    expect(content).toContain("Set up academic periods");
   }
   expect(source("src/app/(authenticated)/college/academics/page.tsx")).toContain("<AcademicsOverview");

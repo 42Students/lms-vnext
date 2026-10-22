@@ -17,7 +17,7 @@ describe("COL-people-13 directory information without fabricated private data",(
   expect(page).toContain('["Active",result.metrics.active]');
   expect(page).toContain('["Suspended",result.metrics.suspended]');
   expect(page).toContain("Visible now");
-  expect(page).toContain("Not tracked");
+  expect(page).toContain("not online presence.");
   expect(page).toContain("View contact card");
  });
 });

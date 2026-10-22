@@ -11,7 +11,7 @@ describe("TPO inbox ambiguous legacy behaviours resolved by safer policy",()=>{
  it("TPO-inbox-team-11 fails visibly when recruiter conversations are missing instead of presenting notifications as conversations",()=>{
   const page=source("src/app/(authenticated)/tpo/messages/page.tsx");
   expect(page).toContain("if(!isRecruiterInbox)return");
-  expect(page).toContain("Recruiter conversations are temporarily unavailable");
+  expect(page).toContain("Recruiter conversations are unavailable. Placement notifications remain separate");
   expect(page).toContain('href="/tpo/notifications"');
  });
  it("TPO-inbox-team-35 reserves role grants for audited college administration instead of self-promoting TPO staff",()=>{
