@@ -326,7 +326,7 @@ export function AdminCourseCreatePanel({
        imageFile.size<1||imageFile.size>5*1024*1024)){
       setImageError("Choose a JPEG, PNG or WebP image no larger than 5 MiB.");return;
     }
-    const issues: Partial<Record<"department"|"name"|"shortTitle"|"code"|"heading"|"description"|"cardColor",string>> = {};
+    const issues: Partial<Record<"department"|"name"|"shortTitle"|"code"|"heading"|"description"|"cardColor"|"coverUrl",string>> = {};
     if (!courseDepartmentId) issues.department = "Select a department";
     if (!courseName.trim()) issues.name = "Enter a course name";
     else if (courseName.trim().length > 255) issues.name = "Maximum 255 characters";
