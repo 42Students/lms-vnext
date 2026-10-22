@@ -75,23 +75,23 @@ describe("COURSES-BREAK-FACULTY-06 current-roster report anti-IDOR and consisten
     gradePublished:true,pointsAwarded:10,submittedAt:at(11)},
   ];
  });
- it("FAC-assessments-01 filters foreign and unenrolled learner attempts before summary and per-question accuracy",async()=>{
+ it("FAC-assessments-01 retains delivery-authorized historical attempts while current roster controls missing counts",async()=>{
   const report=await getFacultyQuizReport(actor,quizId,deliveryId);
-  expect(report.attempts).toHaveLength(2);
-  expect(report.latestAttempts).toHaveLength(1);
+  expect(report.attempts).toHaveLength(3);
+  expect(report.latestAttempts).toHaveLength(2);
   expect(report.metrics).toMatchObject({
-   totalAttempts:2,eligibleLearners:1,uniqueLearners:1,
-   submittedLearners:1,notAttempted:0,averagePercent:50,
+   totalAttempts:3,eligibleLearners:1,uniqueLearners:2,
+   submittedLearners:2,notAttempted:0,averagePercent:75,
   });
-  expect(report.questions).toMatchObject([{correctCount:0,answeredCount:1,accuracyPercent:0}]);
-  expect(JSON.stringify(report)).not.toContain(foreignLearner);
+  expect(report.questions).toMatchObject([{correctCount:1,answeredCount:2,accuracyPercent:50}]);
+  expect(report.latestAttempts.map(row=>row.membershipId)).toContain(foreignLearner);
  });
- it("FAC-assessments-01 excludes foreign submissions from published grades, missing counts and late statistics",async()=>{
+ it("FAC-assessments-01 retains historical delivery submissions and excludes them only from missing-roster counts",async()=>{
   const report=await getFacultyAssignmentReport(actor,assignmentId,deliveryId);
-  expect(report.submissions).toHaveLength(1);
+  expect(report.submissions).toHaveLength(2);
   expect(report.metrics).toMatchObject({eligibleLearners:1,submitted:1,
-   missing:0,onTime:1,late:0,graded:1,gradePublished:1,averagePercent:50});
-  expect(JSON.stringify(report)).not.toContain(foreignLearner);
+   missing:0,onTime:1,late:1,graded:2,gradePublished:2,averagePercent:75});
+  expect(report.submissions.map(row=>row.membershipId)).toContain(foreignLearner);
  });
  it("preserves delivery-authorized submissions and attempts during roster failure with unknown absence counts",async()=>{
   state.rosterFailure=true;
