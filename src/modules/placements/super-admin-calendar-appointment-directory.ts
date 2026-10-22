@@ -73,9 +73,10 @@ export async function listSuperAdminCalendarAppointments(context:RequestContext)
  const conflicts=new Set<string>();
  for(let i=0;i<items.length;i++){
   const first=items[i];
-  if(!activeStatuses.has(first.status))continue;
+  if(!first||!activeStatuses.has(first.status))continue;
   for(let j=i+1;j<items.length;j++){
    const second=items[j];
+   if(!second)continue;
    if(second.startsAt>=first.endsAt)break;
    if(!activeStatuses.has(second.status)||second.endsAt<=first.startsAt)continue;
    const sameCandidate=Boolean(first.candidateMembershipId&&
