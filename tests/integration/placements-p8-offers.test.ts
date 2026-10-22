@@ -516,10 +516,11 @@ describe("Placement P8 offers and joining", () => {
       where id=$1`,[round.id,new Date(reference.getTime()+6*3600_000)]);
     const saved=await pool.query<{id:string}>(`
       insert into placement_learner_requests(
-        application_id,request_type,round_id,scope_key,reason,requested_by_user_id
-      ) values($1,'APPLICATION_WITHDRAWAL',null,$2,
+        application_id,learner_membership_id,request_type,round_id,scope_key,reason,requested_by_user_id
+      ) values($1,$4,'APPLICATION_WITHDRAWAL',null,$2,
         'Need to withdraw before next interview',$3) returning id`,[
         application.id,"chat5-tpo-escalation:"+application.id,SEED_IDS.learnerUser,
+        SEED_IDS.learnerCollegeAMembership,
       ]);
     const requestId=saved.rows[0]!.id;
     const first=await escalatePendingWithdrawalRequests(reference);
