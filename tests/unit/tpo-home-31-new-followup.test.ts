@@ -10,7 +10,8 @@ describe("TPO-home-31 quick-create follow-up modal",()=>{
   const ui=readFileSync("src/components/tpo/tpo-new-followup-modal.tsx","utf8");
   const layout=readFileSync("src/app/(authenticated)/tpo/layout.tsx","utf8");
   const menu=readFileSync("src/components/tpo/tpo-topbar-new-menu.tsx","utf8");
-  expect(ui).toContain('"/api/placements/tpo/leads?collegeId="+encodeURIComponent(collegeId)');
+  expect(ui).toContain("new URLSearchParams({collegeId,q:search.trim(),page:String(page)})");
+  expect(ui).toContain('"/api/placements/tpo/leads/search?"+params.toString()');
   expect(ui).toContain('"/api/placements/tpo/calendar/follow-ups"');
   expect(ui).toContain("Choose a recruiter");
   expect(ui).toContain("Pick a date and time");
