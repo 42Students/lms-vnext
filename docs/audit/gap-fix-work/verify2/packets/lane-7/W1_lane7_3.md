@@ -86,6 +86,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Load active debarments as distinct authoritative data source.
 
 ## G2-17-012-020 [P1] GAP facet F06
+- [x] Verified: screening decision saves candidate/internal rejection reason in the screening record and history; event metadata includes rejectionReason, assessmentUrl, and candidateNotificationPolicy.
 - Files: src/modules/placements/screening-service.ts
 - Legacy: docs/legacy-source/backend/src/main/java/com/_42students/lms/service/PlacementJobService.java:114-117 — Rejection requires optional rejectionReason and assessmentUrl.
 - Expected fix: Map rejection reason/assessment URL and notification policy.
@@ -101,11 +102,13 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Distinguish cohort threshold from per-stat suppression.
 
 ## G2-18-011-039 [P1] GAP facet F10
+- [x] Verified: legacy posting schema accepts importantDates date or at, preserves both type and dateType, converts date-only strings with IST offset, and ICS export retains classification.
 - Files: src/modules/placements/placement-legacy-posting-model.ts
 - Legacy: Legacy important dates from Job.importantDates JSON keys label/date/type/dateType (`JobServiceImpl.java:1545-1572`).
 - Expected fix: Read/convert old JSON schema, do not drop date classification or UTC.
 
 ## G2-18-010-036 [P1] GAP facet F10
+- [x] Verified intentional hardening: production sends valid recipients; nonproduction deny-by-default unless the exact email/phone appears in configured AUTH_TEST_EMAILS/PHONES, rejecting legacy domain-wide DEV_MAIL_ALLOW permissiveness.
 - Files: src/modules/messaging/runtime-safety.ts
 - Legacy: Legacy configurable STAGE/DEV_MAIL_ALLOW controls dispatch (`TpoMailService.java:55-61,203-220`).
 - Expected fix: Reconcile environment variables and test nonprod deny-by-default across all sender paths.
@@ -116,6 +119,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Map legacy job/interview/course/assessment targets to safe new route and explicit external consent.
 
 ## G2-18-004-025 [P1] GAP facet F05
+- [x] Verified: notifications page accepts legacy ?tab=all/course/project/general/job, normalizes and redirects to canonical category after persisted learner authorization.
 - Files: src/app/(authenticated)/learn/notifications/page.tsx, src/modules/activity/learner-notification-inbox-model.ts
 - Legacy: Legacy filter persists as `?tab` across refresh. `docs/legacy-source/frontend/src/components/Notifications/NotificationsContent.jsx:532-559`
 - Expected fix: Support tab alias and normalized redirect.
