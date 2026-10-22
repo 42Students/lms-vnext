@@ -120,7 +120,7 @@ async function cleanup() {
 
     // Stage history is the FK child of the current college-stage projection.
     // Delete only history owned by this drive before removing its stages;
-    // never clear another integration suite\'s rows from the shared database.
+    // never clear another integration suite's rows from the shared database.
     await pool.query(
       "delete from placement_college_application_stage_history where stage_id in (select id from placement_college_application_stages where application_id = any($1::uuid[]))",
       [applicationIds],
