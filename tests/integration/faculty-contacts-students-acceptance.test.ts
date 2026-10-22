@@ -47,16 +47,18 @@ describe("Faculty Students Contacts registered PostgreSQL acceptance",()=>{
     }
   });
   it("searches public fields, caps page size, and never searches private login email",async()=>{
-    // The seeded learner is not necessarily among the first ten names.
-    // Use the same authorized 50-row window as the visibility assertion above.
-    const listed=await listFacultyContacts(faculty,{tab:"LEARNER",search:"",page:1,pageSize:50});
-    const student=listed.items.find(x=>x.membershipId===SEED_IDS.learnerCollegeAMembership);
-    expect(student).toBeDefined();
-    if(student!.displayName?.trim()){
+    // Resolve the fixture by its scoped membership, not by an arbitrarily
+    // small first page: other registered learners can sort before this seed.
+    const student=await getFacultyContactDetail(faculty,{
+      contactsTab:"students",membershipId:SEED_IDS.learnerCollegeAMembership,
+    });
+    expect(student.membershipId).toBe(SEED_IDS.learnerCollegeAMembership);
+    expect(student.displayName?.trim()).toBeTruthy();
+    if(student.displayName?.trim()){
       const searched=await listFacultyContacts(faculty,{
-        tab:"LEARNER",search:student!.displayName!.trim(),page:1,pageSize:20,
+        tab:"LEARNER",search:student.displayName.trim(),page:1,pageSize:50,
       });
-      expect(searched.items.some(x=>x.membershipId===student!.membershipId)).toBe(true);
+      expect(searched.items.some(x=>x.membershipId===student.membershipId)).toBe(true);
     }
     const email=await listFacultyContacts(faculty,{
       tab:"LEARNER",search:"learner.seed@example.com",page:1,pageSize:10,
