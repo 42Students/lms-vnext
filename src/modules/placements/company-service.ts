@@ -353,6 +353,15 @@ export async function createPlacementCompany(
       .for("update").limit(1);
     if(domainOwner&&!canonical)
       throw new PlacementsServiceError("PLACEMENT_COMPANY_IDENTITY_CONFLICT");
+    // A secondary-domain claim must not shadow a different primary-domain
+    // owner. Stop instead of silently linking the wrong global company.
+    if(domainOwner){
+      const [primaryOwner]=await tx.select({id:placementCompanies.id})
+        .from(placementCompanies)
+        .where(ilike(placementCompanies.primaryDomain,domain)).limit(1);
+      if(primaryOwner&&primaryOwner.id!==domainOwner.companyId)
+        throw new PlacementsServiceError("PLACEMENT_COMPANY_IDENTITY_CONFLICT");
+    }
     if (canonical && (canonical.status !== "ACTIVE" ||
         canonical.name.trim().toLocaleLowerCase("en-US") !==
           input.name.trim().toLocaleLowerCase("en-US"))) {
