@@ -4,7 +4,7 @@ CI run 39849936419 on main (3c24c0c0), the LATEST run failed these unit tests. T
 
 - [ ] `tests/unit/UX-college-cross-audit-chat19.test.ts` (6 failing)
 - [x] `tests/unit/chat6-superadmin-content-round2.test.ts` (1 failing)
-- [ ] `tests/unit/tpo-team-workload-chat2.test.ts` (2 failing)
+- [x] `tests/unit/tpo-team-workload-chat2.test.ts` (2 failing)
 
 ## Failures (from CI log)
 
