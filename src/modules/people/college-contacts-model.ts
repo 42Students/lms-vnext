@@ -112,8 +112,7 @@ export function parseCollegeContactsSearchParams(raw:Record<string,string|string
  const legacyPage=raw.pageNumber;
  if(legacyPage!==undefined&&!Array.isArray(legacyPage)&&raw.page===undefined&&/^-?\d+$/.test(legacyPage))
   normalized.page=String(Math.max(1,Number(legacyPage)+1));
- if(normalized.page!==undefined&&/^-?\d+$/.test(normalized.page))
-  normalized.page=String(Math.max(1,Number(normalized.page)));
+ // Explicit page controls are strict; legacy pageNumber is adapted above.
  if(normalized.pageSize!==undefined&&/^-?\d+$/.test(normalized.pageSize)&&Number(normalized.pageSize)<=0)
   normalized.pageSize=String(COLLEGE_CONTACTS_PAGE_SIZE);
  const filter=collegeContactsQuerySchema.parse(normalized);
