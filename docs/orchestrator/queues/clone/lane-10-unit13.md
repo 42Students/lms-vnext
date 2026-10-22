@@ -4,7 +4,7 @@ CI run 39849936419 on main (3c24c0c0), the LATEST run failed these unit tests. T
 
 - [ ] `tests/unit/UX-mentor-cross-evidence-links-01.test.ts` (1 failing)
 - [ ] `tests/unit/chat7-college-assessment-export-service-weak.test.ts` (2 failing)
-- [ ] `tests/unit/ux-admin-first-third.test.ts` (1 failing)
+- [x] `tests/unit/ux-admin-first-third.test.ts` (1 failing)
 
 ## Failures (from CI log)
 
