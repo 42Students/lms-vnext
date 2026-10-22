@@ -136,6 +136,7 @@ export default async function LearnerProjectsPage({
           const progress = progressByProject.get(row.project.id);
           const team = teamsByProject.get(row.project.id);
           const due = dueByProject.get(row.project.id);
+          const progressPercent = progress?.percentage ?? row.project.progressPercent;
           return {
             id: row.project.id,
             title: row.project.title,
@@ -149,7 +150,7 @@ export default async function LearnerProjectsPage({
             phase: row.project.phase,
             dueLabel: row.project.dueLabel,
             ...(team?.memberCount !== undefined ? {memberCount:team.memberCount} : {}),
-            ...((progress?.percentage ?? row.project.progressPercent) != null ? {progressPercent: progress?.percentage ?? row.project.progressPercent} : {}),
+            ...(progressPercent != null ? {progressPercent} : {}),
             ...(due?.state !== undefined ? {dueState:due.state} : {}),
             ...(due?.date !== undefined ? {dueDate:due.date} : {}),
             ...(progress ? {progressDetail: "Task completion " + String(progress.completedTasks) + "/" + String(progress.totalTasks) + " tasks"} : row.project.progressPercent!==null ? {progressDetail:"Admin-reported progress / Manual estimate"} : {}),
