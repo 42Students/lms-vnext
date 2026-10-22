@@ -24,7 +24,7 @@ describe("TPO-settings-audit-RULES-PAGE-01 placement rules URL parsing",()=>{
   const service=readFileSync("src/modules/placements/tpo-settings-read-service.ts","utf8");
   const parsed=page.indexOf("parseTpoRulesPageParams(params)");
   const denied=page.indexOf("if (selectedPage === null)");
-  const read=page.indexOf("await getTpoPlacementRulesSettings(context,{page:selectedPage})");
+  const read=page.indexOf("getTpoPlacementRulesSettings(context,{page:selectedPage})");
   const version=page.indexOf("await getCollegePlacementRules(context, context.membership.collegeId)");
   expect(parsed).toBeGreaterThan(0);
   expect(denied).toBeGreaterThan(parsed);
