@@ -2,6 +2,7 @@ import { MetricBar } from "@/components/ui/metric-bar";
 import styles from "./project-workspace-readiness.module.css";
 import Link from "next/link";
 import { ProjectArchiveControl } from "@/components/projects/project-archive-control";
+import {ProjectSoftDeleteControl} from "@/components/projects/project-soft-delete-control";
 import {ProjectAdminWorkspaceQuickView} from "./project-admin-workspace-quick-view";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -83,6 +84,8 @@ function WorkspaceActions({item,basePath}:{item:ProjectAdminWorkspaceListItem;ba
     className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Assign Learners</Link>
   <ProjectArchiveControl projectId={item.id} projectTitle={workspaceTitle(item)}
     status={item.status} expectedUpdatedAt={item.updatedAt.toISOString()}/>
+  <ProjectSoftDeleteControl projectId={item.id} projectTitle={workspaceTitle(item)}
+    expectedUpdatedAt={item.updatedAt.toISOString()} deleted={false}/>
  </div>;
 }
 export function ProjectAdminWorkspaceList({
