@@ -40,9 +40,9 @@ describe("HR-REPORT-ARCHIVE-31 published/closed company report portfolio parity"
   const aggregation=source.slice(source.indexOf("const reportCounts"),
    source.indexOf("const summaryRecord"));
   expect(aggregation).toMatch(/collegeMemberships\.collegeId,\s*collegeId/);
-  expect(aggregation).toContain('eq(collegeMemberships.status,"ACTIVE")');
-  expect(aggregation).toContain('eq(users.id,collegeMemberships.userId)');
-  expect(aggregation).toContain('eq(users.platformStatus,"ACTIVE")');
+  expect(aggregation).toMatch(/eq\(collegeMemberships\.status,\s*"ACTIVE"\)/);
+  expect(aggregation).toMatch(/eq\(users\.id,\s*collegeMemberships\.userId\)/);
+  expect(aggregation).toMatch(/eq\(users\.platformStatus,\s*"ACTIVE"\)/);
   // Shortlist stage is computed in the funnel, not the per-job offer tally.
   expect(source).toContain("where s.status='SHORTLISTED'");
   const funnel=source.slice(source.indexOf("const funnelRows="));
