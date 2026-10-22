@@ -6,7 +6,7 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [x] `tests/unit/chat12-verify2-hiring-ist-boundary.test.ts` (1 failing) — OK on current main: year-end and leap-day next-day boundaries assert correct 18:30Z values; earlier failing 2027-01-01 expectation no longer present. Source inspection only.
 - [x] `tests/unit/chat2-team-college-admin-access.test.ts` (1 failing) — FIXED stale redirect expectation to canonical /tpo/settings?tab=team and verified people/members/roster aliases (chat-3 commit 4a249d8).
 - [ ] `tests/unit/chat6-super-admin-people-contact-redaction.test.tsx` (2 failing)
-- [ ] `tests/unit/chat9-super-admin-orphan-routes.test.ts` (1 failing)
+- [x] `tests/unit/chat9-super-admin-orphan-routes.test.ts` (1 failing) — OK on current main: authenticated admin/tenants/page.tsx contains same-tab <Link href="/admin/domains"> after scoped role/permission gate. Earlier CI predates that link. Source inspection only.
 - [ ] `tests/unit/learner-placements-chat7-schedule-surface.test.ts` (1 failing)
 - [ ] `tests/unit/ux-admin-loading-recovery.test.ts` (1 failing)
 
