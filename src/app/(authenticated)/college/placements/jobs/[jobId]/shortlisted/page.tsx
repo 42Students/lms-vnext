@@ -63,7 +63,7 @@ export default async function CollegeDriveShortlistedPage({
   const requested = await searchParams;
   const query = driveApplicationsParams({
     ...requested,
-    stage: requested.stage ?? "ASSESSMENT",
+    stage: requested["stage"] ?? "ASSESSMENT",
     status: "SUBMITTED",
     screening: "ALL",
   });
@@ -213,7 +213,7 @@ export default async function CollegeDriveShortlistedPage({
         </Select>
       </label>
       {filters ? <CollegeApplicationDependentFilters
-        initial={{departmentId:query.departmentId,programId:query.programId,cohortId:query.cohortId}}
+        initial={{...(query.departmentId!==undefined?{departmentId:query.departmentId}:{}),...(query.programId!==undefined?{programId:query.programId}:{}),...(query.cohortId!==undefined?{cohortId:query.cohortId}:{})}}
         departments={filters.departments} programs={filters.programs} cohorts={filters.cohorts}/> :
         <p role="alert" className="text-sm text-amber-700 lg:col-span-2">Department, program and batch options could not be loaded. <Link className="underline" href={href({...query,page:1})}>Retry options</Link></p>}
       <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Filters</Button>
