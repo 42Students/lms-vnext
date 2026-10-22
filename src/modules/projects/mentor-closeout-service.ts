@@ -1,7 +1,7 @@
 import "server-only";
 
 import {randomUUID} from "node:crypto";
-import {and,count,desc,eq,isNull,ne} from "drizzle-orm";
+import {and,count,desc,eq,isNull,ne,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
   projectInstances,projectSubmissions,projectReleases,projectSprints,projectTasks,
@@ -30,16 +30,38 @@ async function scopeMentor(context:RequestContext,projectId:string){
   })) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   return scope;
 }
-// Keep both the read-only preview and the locked closeout mutation on the
-// same live-row predicates. Workspace-deleted tasks, sprints and releases
-// remain auditable but must not block a project closeout.
+// Preview and locked closeout share exactly the same live-row predicates.
+// Deleting a sprint or release hides its children from the execution checklist,
+// but retains their original database rows for audit and historical views.
 function openTaskPredicate(projectId:string){
-  return and(eq(projectTasks.projectId,projectId),
-    isNull(projectTasks.deletedAt),ne(projectTasks.status,"DONE"));
+  return and(
+    eq(projectTasks.projectId,projectId),
+    isNull(projectTasks.deletedAt),
+    ne(projectTasks.status,"DONE"),
+    sql`(${projectTasks.sprintId} is null or exists (
+      select 1 from project_sprints live_sprint
+      join project_releases live_release
+        on live_release.id = live_sprint.release_id
+        and live_release.project_id = live_sprint.project_id
+      where live_sprint.id = ${projectTasks.sprintId}
+        and live_sprint.project_id = ${projectTasks.projectId}
+        and live_sprint.deleted_at is null
+        and live_release.deleted_at is null
+    ))`,
+  );
 }
 function openSprintPredicate(projectId:string){
-  return and(eq(projectSprints.projectId,projectId),
-    isNull(projectSprints.deletedAt),ne(projectSprints.status,"COMPLETED"));
+  return and(
+    eq(projectSprints.projectId,projectId),
+    isNull(projectSprints.deletedAt),
+    ne(projectSprints.status,"COMPLETED"),
+    sql`exists (
+      select 1 from project_releases live_release
+      where live_release.id = ${projectSprints.releaseId}
+        and live_release.project_id = ${projectSprints.projectId}
+        and live_release.deleted_at is null
+    )`,
+  );
 }
 function openReleasePredicate(projectId:string){
   return and(eq(projectReleases.projectId,projectId),
@@ -48,7 +70,8 @@ function openReleasePredicate(projectId:string){
 
 async function facts(db:ReturnType<typeof getDb>,projectId:string,projectStatus:string){
   const [latest]=await db.select({status:projectSubmissions.status})
-    .from(projectSubmissions).where(eq(projectSubmissions.projectId,projectId))
+    .from(projectSubmissions).where(and(eq(projectSubmissions.projectId,projectId),
+      isNull(projectSubmissions.deletedAt)))
     .orderBy(desc(projectSubmissions.version)).limit(1);
   const [tasks]=await db.select({n:count()}).from(projectTasks)
     .where(openTaskPredicate(projectId));
@@ -92,7 +115,8 @@ export async function completeMentorProject(
     await assertPersistedProjectMutationActor(tx,context,scope);
     // PostgreSQL FK/mutation ownership ensures all rows originate from this project.
     const [latest]=await tx.select({status:projectSubmissions.status})
-      .from(projectSubmissions).where(eq(projectSubmissions.projectId,locked.id))
+      .from(projectSubmissions).where(and(eq(projectSubmissions.projectId,locked.id),
+        isNull(projectSubmissions.deletedAt)))
       .orderBy(desc(projectSubmissions.version)).limit(1);
     const [tasks]=await tx.select({n:count()}).from(projectTasks)
       .where(openTaskPredicate(locked.id));
