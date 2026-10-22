@@ -36,7 +36,9 @@ describe("W03 super-admin project template UI contract", () => {
     expect(detailPage).toContain("context.adminScope?.collegeId");
     expect(detailPage).toContain("assignedToSelectedCollege");
     expect(controls).toContain('"Assign selected college"');
-    expect(controls).toContain('"Revoke selected college"');
+    expect(controls).toContain('"Remove from college"');
+    expect(controls).toContain('"Revoke college assignment"');
+    expect(controls).toContain('"DELETE", { collegeId: selectedCollegeId }');
     expect(controls).toContain("collegeId:");
   });
 });
