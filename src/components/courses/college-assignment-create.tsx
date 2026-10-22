@@ -14,6 +14,7 @@ import {useToast} from "@/components/ui/toast";
 import {Disclosure} from "@/components/ui/disclosure";
 import {FacultyAssignmentMethodPicker} from "./faculty-assignment-method-picker";
 import {FacultyAssignmentMaterialLinks} from "./faculty-assignment-material-links";
+import {FacultyAssignmentResourcesEditor} from "./faculty-assignment-resources-editor";
 import {type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
 import {parseCollegeIstLocal} from "@/modules/courses/college-ist-datetime-model";
 const DEFAULT_ASSIGNMENT_METHODS: AssignmentMethod[] = ["WRITTEN_RESPONSE"];
@@ -40,7 +41,11 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
  const [message,setMessage]=useState("");
  const [error,setError]=useState("");
  const [fieldErrors,setFieldErrors]=useState<{course?:string;lesson?:string;section?:string;title?:string;points?:string}>({});
- const [createdResourceTarget,setCreatedResourceTarget]=useState<{id:string;deliveryId:string}|null>(null);
+ const [createdResourceTarget,setCreatedResourceTarget]=useState<{
+  id:string;deliveryId:string;audience:"SHARED"|"SECTION";
+  saved?:{id:string;title:string;description:string|null;dueAt:string|null;
+    maxPoints:number;updatedAt:string;status:string};
+ }|null>(null);
  const [confirmCreate,setConfirmCreate]=useState(false),[confirmDiscard,setConfirmDiscard]=useState(false);
  const lock=useRef(false);
  const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
@@ -108,10 +113,20 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    if(!response.ok||!payload?.assignment?.id)throw new Error(
     typeof payload?.error==="string"?payload.error:"Could not create assignment.");
    setNextOverride(old=>({...old,[chosen.id]:(old[chosen.id]??chosen.nextSequence)+1}));
-   // Only a persisted section-specific assignment can use the currently
-   // authorized per-delivery material writer. Shared drafts remain separate.
-   setCreatedResourceTarget(delivery
-    ?{id:payload.assignment.id,deliveryId:delivery.deliveryId}:null);
+   // A shared assignment is accessible across this offering, but only an
+   // active College Admin may mutate its resources. An offering with no
+   // delivery has no Section context for this existing safe resource editor.
+   const materialDelivery=delivery??deliveries.find(row=>row.offeringId===chosen.offeringId);
+   const savedVersion=typeof payload.assignment.updatedAt==="string"&&
+     Number.isFinite(Date.parse(payload.assignment.updatedAt))
+     ?payload.assignment.updatedAt:null;
+   setCreatedResourceTarget(materialDelivery?{
+    id:payload.assignment.id,deliveryId:materialDelivery.deliveryId,audience,
+    ...(audience==="SECTION"&&savedVersion?{saved:{
+     id:payload.assignment.id,title:title.trim(),description:description.trim()||null,
+     dueAt:dueIso,maxPoints,updatedAt:savedVersion,status:"DRAFT",
+    }}:{}),
+   }:null);
    setConfirmCreate(false);
    if(!keepOpen)setOpened(false);
    setTitle("");setDescription("");setDueAt("");setPoints("0");
@@ -233,11 +248,15 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
   {message?<Alert tone="success">{message}</Alert>:null}
   {createdResourceTarget?<section className="mt-4 min-w-0 space-y-2 border-t border-border pt-4" aria-label="New assignment resources">
    <div className="flex flex-wrap items-center justify-between gap-2">
-    <p className="text-sm font-semibold">Instructor resources for the new Section assignment</p>
+    <p className="text-sm font-semibold">Instructor resources for the new {createdResourceTarget.audience==="SHARED"?"Course":"Section"} assignment</p>
     <Button type="button" size="sm" variant="secondary" onClick={()=>setCreatedResourceTarget(null)}>Done adding resources</Button>
    </div>
    <p className="text-xs text-muted-foreground">Add secure HTTPS links before publishing. PDF and Drive files require verified private storage and cannot be saved as unverified links.</p>
    <FacultyAssignmentMaterialLinks key={createdResourceTarget.id} deliveryId={createdResourceTarget.deliveryId} assignmentId={createdResourceTarget.id}/>
+   {createdResourceTarget.saved?<FacultyAssignmentResourcesEditor
+     key={createdResourceTarget.saved.id+"-private-resources"}
+     deliveryId={createdResourceTarget.deliveryId}
+     assignment={createdResourceTarget.saved} resourcesOnly/>:null}
   </section>:null}
  </div>;
 }

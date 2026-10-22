@@ -1,17 +1,19 @@
 import {deflateRawSync} from "node:zlib";
 import type {TpoStudentRow} from "./tpo-students-model";
+import {tpoStudentDisplayLabel} from "./tpo-student-display-label";
 /** SpreadsheetML workbook with native inline strings and a minimal RFC 1951 ZIP container.
  * No dynamic formula elements, external links, macros or untrusted ZIP entry names. */
 export const TPO_STUDENT_EXCEL_COLUMNS={
  student:["Student",(row:TpoStudentRow)=>row.displayName],number:["Roll no.",(row:TpoStudentRow)=>row.rollNumber??row.registrationNumber],
- batch:["Batch",(row:TpoStudentRow)=>row.cohortName],branch:["Branch",(row:TpoStudentRow)=>row.branchName],
- stage:["Stage",(row:TpoStudentRow)=>row.journeyState],profile:["Profile",(row:TpoStudentRow)=>row.verification.status],
+ batch:["Batch",(row:TpoStudentRow)=>[row.programName,row.cohortName].filter(Boolean).join(" · ")],
+ class:["Class",(_row:TpoStudentRow)=>""],branch:["Branch",(row:TpoStudentRow)=>row.branchName],
+ stage:["Stage",(row:TpoStudentRow)=>tpoStudentDisplayLabel(row.journeyState)],profile:["Profile",(row:TpoStudentRow)=>row.verification.status],
  cgpa:["CGPA",(row:TpoStudentRow)=>row.cgpa],tenth:["10th %",(row:TpoStudentRow)=>row.tenthPct],
  twelfth:["12th %",(row:TpoStudentRow)=>row.twelfthPct],diploma:["Diploma %",(row:TpoStudentRow)=>row.diplomaPct],
  ug:["UG %",(row:TpoStudentRow)=>row.ugPct],pg:["PG % (profile entry)",(row:TpoStudentRow)=>row.profileFacts?.pgPercentage],
  backlogs:["Active backlogs",(row:TpoStudentRow)=>row.activeBacklogs],
  offers:["Offers",(row:TpoStudentRow)=>row.offerCount],applications:["Applications",(row:TpoStudentRow)=>row.applicationCount],
- best:["Best so far",(row:TpoStudentRow)=>row.bestSoFar],
+ best:["Best so far",(row:TpoStudentRow)=>tpoStudentDisplayLabel(row.bestSoFar)],
  afterCollege:["After college",(row:TpoStudentRow)=>row.registrationChoice],
  gender:["Gender",(row:TpoStudentRow)=>row.profileFacts?.gender],
  skills:["Skills",(row:TpoStudentRow)=>row.profileFacts?.skills],
@@ -19,14 +21,14 @@ export const TPO_STUDENT_EXCEL_COLUMNS={
  certification:["Certifications",(row:TpoStudentRow)=>row.profileFacts?.certifications],
  experience:["Experience entries",(row:TpoStudentRow)=>row.profileFacts?.experiences],
  resume:["Resume",(row:TpoStudentRow)=>row.profileFacts?.resume?"Provided":"Not provided"],
- marksVerified:["Marks verified",(row:TpoStudentRow)=>row.marksVerified?"Verified":"Not verified"],
+ marksVerified:["Marks verified",(row:TpoStudentRow)=>row.marksVerified==null?"":row.marksVerified?"Yes":"No"],
  passingYear:["Passing year",(row:TpoStudentRow)=>row.passingYear],
  email:["Email (export only)",(row:TpoStudentRow)=>row.email],
  eligibilityReason:["Eligibility reason (staff only)",(row:TpoStudentRow)=>row.participationReason],
 } satisfies Record<string,readonly [string,(row:TpoStudentRow)=>string|number|boolean|null|undefined]>;
 export type TpoExcelColumn=keyof typeof TPO_STUDENT_EXCEL_COLUMNS;
 const LEGACY_STUDENT_EXCEL_ORDER=[
- "student","number","batch","branch","stage","afterCollege","profile",
+ "student","number","batch","class","branch","stage","afterCollege","profile",
  "cgpa","tenth","twelfth","diploma","ug","pg","backlogs",
  "best","applications","offers","gender","skills","projects","certification",
  "experience","resume","marksVerified","passingYear","email","eligibilityReason",
@@ -73,13 +75,16 @@ function zip(parts:readonly {name:string;content:string}[]):Uint8Array{
  let cursor=0;for(const part of [...local,...central,end]){output.set(part,cursor);cursor+=part.length;}
  return output;
 }
-export function exportTpoStudentsXlsx(rows:readonly TpoStudentRow[],selectedColumns:readonly string[],viewName:string):Uint8Array{
+export function exportTpoStudentsXlsx(rows:readonly TpoStudentRow[],selectedColumns:readonly string[],viewName:string,
+ classNames:Readonly<Record<string,string>>={}):Uint8Array{
  if(rows.length>5000)throw Error("Export limit is 5,000 scoped students");
  const cols=selectTpoExcelColumns(selectedColumns);
  const col=(index:number):string=>index<26?String.fromCharCode(65+index):col(Math.floor(index/26)-1)+String.fromCharCode(65+index%26);
  const line=(values:readonly unknown[],number:number,italic=false)=>
   `<row r="${number}">${values.map((value,index)=>`<c r="${col(index)}${number}" t="inlineStr"${italic?' s="1"':""}><is><t xml:space="preserve">${xml(value)}</t></is></c>`).join("")}</row>`;
- const sheet=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${line(["How this list was made: "+viewName],1,true)}${line(cols.map(key=>TPO_STUDENT_EXCEL_COLUMNS[key][0]),2)}${rows.map((row,i)=>line(cols.map(key=>TPO_STUDENT_EXCEL_COLUMNS[key][1](row)),i+3)).join("")}</sheetData></worksheet>`;
+ const sheet=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${line(["How this list was made: "+viewName],1,true)}${line(cols.map(key=>TPO_STUDENT_EXCEL_COLUMNS[key][0]),2)}${rows.map((row,i)=>line(cols.map(key=>key==="class"?
+   row.classIds.map(id=>classNames[id]).filter(Boolean).join(", ")||"Not assigned":
+   TPO_STUDENT_EXCEL_COLUMNS[key][1](row)),i+3)).join("")}</sheetData></worksheet>`;
  const parts=[
   {name:"[Content_Types].xml",content:'<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>'},
   {name:"_rels/.rels",content:'<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'},

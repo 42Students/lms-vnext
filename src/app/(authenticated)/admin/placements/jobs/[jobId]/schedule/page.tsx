@@ -83,12 +83,12 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     const left=candidateRows[i]!;
     const leftFrom=Date.parse(left.scheduledAt);
     const leftTo=leftFrom+left.durationMinutes*60_000;
-    if(left.status!=="SCHEDULED"||!Number.isFinite(leftFrom))continue;
+    if(!["SCHEDULED","CONFIRMED","RESCHEDULE_REQUESTED"].includes(left.status)||!Number.isFinite(leftFrom))continue;
     for(let j=i+1;j<candidateRows.length;j++){
       const right=candidateRows[j]!;
       const rightFrom=Date.parse(right.scheduledAt);
       const rightTo=rightFrom+right.durationMinutes*60_000;
-      if(right.status!=="SCHEDULED"||!Number.isFinite(rightFrom)||
+      if(!["SCHEDULED","CONFIRMED","RESCHEDULE_REQUESTED"].includes(right.status)||!Number.isFinite(rightFrom)||
          leftFrom>=rightTo||rightFrom>=leftTo)continue;
       const sameApplicant=Boolean(left.applicationId&&
         left.applicationId===right.applicationId);
@@ -235,6 +235,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
         <Select name="appointmentSort" defaultValue={query.appointmentSort} className="min-h-11 md:min-h-9">
           <option value="DATE_ASC">Date (earliest first)</option>
           <option value="DATE_DESC">Date (latest first)</option>
+          <option value="JOB">Job title</option><option value="STATUS">Status</option>
         </Select>
       </label>
       <label className="grid gap-2 text-sm font-semibold text-muted-foreground">Rows per page

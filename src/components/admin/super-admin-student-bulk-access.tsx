@@ -37,19 +37,14 @@ export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:reado
  const [report,setReport]=useState<{requested:number;applied:number;failures:{id:string;error:string}[]}|null>(null);
  const capped=learners;
  const visibleIds=capped.map(row=>row.id);
- const maxSelection=1000;
  const allVisible=visibleIds.length>0&&visibleIds.every(id=>selected.includes(id));
  function toggleVisible(checked:boolean){
   const visible=new Set(visibleIds);
-  if(checked&&new Set([...selected,...visibleIds]).size>maxSelection){
-   setError("Select at most 1,000 students.");return;
-  }
-  setSelected(curr=>checked?[...new Set([...curr,...visibleIds])].slice(0,maxSelection):
+  setSelected(curr=>checked?[...new Set([...curr,...visibleIds])]:
    curr.filter(id=>!visible.has(id)));
  }
  async function submit(){
   if(pendingRef.current||busy||selected.length===0)return;
-  if(selected.length>maxSelection){setError("Select at most 1,000 students.");return;}
   if(new Set(selected).size!==selected.length){
    setError("Duplicate student membership IDs in the selection. Refresh this page and try again.");
    return;
@@ -139,7 +134,7 @@ export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:reado
       <Button type="button" size="sm" variant="ghost" disabled={busy} onClick={()=>setSelected([])}>Clear selection</Button>
     </div>
   </div>:null}
-  <p className="text-xs text-muted-foreground leading-5">Select at most 1,000 learners in one operation. Each 25-person group is atomic; already completed groups remain committed if a later group fails. Selection is retained across this college's roster pages and filters for this browser session. Updates are saved in validated batches of 25 with a separate audit event for each group. Placements remains configured at college scope (not per student); Projects and Electives can be overridden here. Locked ancestor policies remain protected.</p>
+  <p className="text-xs text-muted-foreground leading-5">Select any number of authorized students across roster pages. Each 25-person group is atomic; already completed groups remain committed if a later group fails. Selection is retained across this college's roster pages and filters for this browser session. Updates are saved in validated batches of 25 with a separate audit event for each group. Placements remains configured at college scope (not per student); Projects and Electives can be overridden here. Locked ancestor policies remain protected.</p>
   <label className="flex min-h-11 items-center gap-2 text-sm text-body print:hidden">
    <Checkbox checked={allVisible}
     onChange={e=>toggleVisible(e.target.checked)} disabled={busy}/>
@@ -155,20 +150,13 @@ export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:reado
        const start=Math.min(lastClickedIndex.current,index),end=Math.max(lastClickedIndex.current,index);
        const range=capped.slice(start,end+1).map(row=>row.id);
        shiftHandled.current=true;
-       if(new Set([...selected,...range]).size>maxSelection){
-        setError("Select at most 1,000 students.");
-       }else{
-        setSelected(curr=>[...new Set([...curr,...range])].slice(0,maxSelection));
-       }
+       setSelected(curr=>[...new Set([...curr,...range])]);
       }
       lastClickedIndex.current=index;
      }}
      onChange={event=>{
       if(shiftHandled.current){shiftHandled.current=false;return;}
-      if(event.target.checked&&!selected.includes(learner.id)&&selected.length>=maxSelection){
-       setError("Select at most 1,000 students.");return;
-      }
-      setSelected(curr=>event.target.checked?[...new Set([...curr,learner.id])].slice(0,maxSelection):
+      setSelected(curr=>event.target.checked?[...new Set([...curr,learner.id])]:
        curr.filter(id=>id!==learner.id));
      }}/>
     <span className="min-w-0 break-words">{learner.name}</span>

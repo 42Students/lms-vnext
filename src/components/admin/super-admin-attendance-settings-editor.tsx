@@ -34,6 +34,14 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
  const thresholdValid=threshold.trim()!==""&&Number.isInteger(Number(threshold))&&Number(threshold)>=1&&Number(threshold)<=100;
  const hoursDirty=hours!==String(savedHours);
  const thresholdDirty=threshold!==String(savedThreshold);
+ // A matching number in a saved college row is not inherited; only deleting
+ // the whole override row restores default inheritance in this schema.
+ const hoursSource=source==="UNKNOWN"?"Policy source unavailable":source==="DEFAULT"
+   ?"Default (24 hours)":savedHours===DEFAULT_ATTENDANCE_POLICY.correctionWindowHours
+    ?"Saved college value · matches default":"Custom for this college";
+ const thresholdSource=source==="UNKNOWN"?"Policy source unavailable":source==="DEFAULT"
+   ?"Default (75%)":savedThreshold===DEFAULT_ATTENDANCE_POLICY.eligibilityThresholdPercent
+    ?"Saved college value · matches default":"Custom for this college";
  function requestSave(field:"correctionWindowHours"|"eligibilityThresholdPercent"){
   if(saving||reloading)return;
   const dirty=field==="correctionWindowHours"?hoursDirty:thresholdDirty;
@@ -166,7 +174,7 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
      onChange={e=>{setHours(e.target.value);setMessage("");setFailed(false);}} aria-describedby="late-marking-help"
      aria-invalid={failed&&!withinRange}
      className="min-h-11 w-full md:min-h-9"/>
-    <span className="text-xs font-normal text-muted-foreground">{source==="COLLEGE"?"College policy":source==="DEFAULT"?"Default (24 hours)":"Policy source unavailable"}</span>
+    <span className="text-xs font-normal text-muted-foreground">{hoursSource}</span>
     <div className="flex flex-wrap gap-2">
      <Button size="sm" type="button" disabled={saving||reloading||!hoursDirty||!withinRange} onClick={()=>requestSave("correctionWindowHours")}>Save</Button>
      <Button size="sm" variant="secondary" type="button" disabled={saving||reloading} aria-label="Reload late marking policy" onClick={()=>void reloadField("correctionWindowHours")}>Reload</Button>
@@ -179,7 +187,7 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
      onChange={e=>{setThreshold(e.target.value);setMessage("");setFailed(false);}} aria-describedby="minimum-attendance-help"
      aria-invalid={failed&&!thresholdValid}
      className="min-h-11 w-full md:min-h-9"/>
-    <span className="text-xs font-normal text-muted-foreground">{source==="COLLEGE"?"College policy":source==="DEFAULT"?"Default (75%)":"Policy source unavailable"}</span>
+    <span className="text-xs font-normal text-muted-foreground">{thresholdSource}</span>
     <div className="flex flex-wrap gap-2">
      <Button size="sm" type="button" disabled={saving||reloading||!thresholdDirty||!thresholdValid} onClick={()=>requestSave("eligibilityThresholdPercent")}>Save</Button>
      <Button size="sm" variant="secondary" type="button" disabled={saving||reloading} aria-label="Reload minimum attendance policy" onClick={()=>void reloadField("eligibilityThresholdPercent")}>Reload</Button>

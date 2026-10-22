@@ -786,7 +786,7 @@ export function FacultyLessonAuthoring({
           onSubmit={submit}
         >
           <fieldset disabled={submitting}>
-            {error ? <Alert tone="error" className="mb-4">{error}</Alert> : null}
+            {error ? <Alert tone="error" role="alert" className="mb-4">{error}</Alert> : null}
             {pendingPublish?.mode===mode&&pendingPublish.lessonId===lessonId&&
               pendingPublish.deliveryId===deliveryId?
               <div className="mb-4 flex flex-wrap items-center gap-3 rounded-md border border-amber-200 bg-amber-50 p-3">
@@ -999,6 +999,29 @@ export function FacultyLessonAuthoring({
                 resources={assignmentResources} onChange={setAssignmentResources}
                 disabled={submitting} onPendingChange={setResourceUploading}/>
               :null}
+            {mode==="ASSIGNMENT"?<details className="mt-4 border-y border-[var(--lms-canvas-border)] py-3">
+              <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                Review assignment before saving
+              </summary>
+              <dl className="mt-2 grid min-w-0 gap-2 text-sm sm:grid-cols-2">
+                <div><dt className="font-semibold">Due date (IST)</dt><dd>{dueAt||"No deadline"}</dd></div>
+                <div><dt className="font-semibold">Points</dt><dd>{maxPoints.trim()||"0"}</dd></div>
+                <div className="sm:col-span-2"><dt className="font-semibold">How learners can submit</dt>
+                  <dd>{allowedAssignmentMethods.join(", ")||"No method selected"}</dd></div>
+                <div className="sm:col-span-2"><dt className="font-semibold">Instructions and resources ({assignmentResources.length}/30)</dt>
+                  <dd><ul className="mt-1 space-y-1">{assignmentResources.map((item,index)=>
+                    <li key={index}>{index+1}. {item.kind}: {item.title||"Untitled"}
+                      {item.kind==="PDF"||item.kind==="FILE"
+                        ?item.privateObjectKey?" · Private upload attached (scan verified at save)":" · Upload required"
+                        :null}
+                    </li>)}</ul></dd>
+                </div>
+              </dl>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Saving requires one to thirty valid resources, an allowed submission method
+                and clean, tenant-scoped private receipts for any files.
+              </p>
+            </details>:null}
             <details key={mode} open={mode === "RESOURCE" || Boolean(notes)}
               className="mt-4 min-w-0 border-y border-[var(--lms-canvas-border)] py-2">
               <summary className="flex min-h-11 cursor-pointer items-center py-2 text-[13px] font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">

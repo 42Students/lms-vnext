@@ -5,11 +5,13 @@ import {Alert} from "@/components/ui/alert";
 import {EmptyState} from "@/components/ui/empty-state";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getTpoDriveDiscussion} from "@/modules/placements/tpo-drive-discussion-service";
+import {getDriveChangeRequestDiscussionContext} from "@/modules/placements/tpo-drive-change-request-service";
 import {TpoRecruiterMessageReply} from "@/components/tpo/tpo-recruiter-message-reply";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 
-export default async function TpoDriveDiscussion({params}:{
- params:Promise<{jobId:string}>
+export default async function TpoDriveDiscussion({params,searchParams}:{
+ params:Promise<{jobId:string}>;
+ searchParams:Promise<{requestId?:string|string[]}>;
 }){
  const {jobId}=await params;
  const context=await getCurrentRequestContext();
@@ -17,10 +19,27 @@ export default async function TpoDriveDiscussion({params}:{
  try{data=await getTpoDriveDiscussion(context,jobId)}
  catch(error){if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_JOB_NOT_FOUND")notFound();throw error}
  const root="/tpo/placements/jobs/"+encodeURIComponent(jobId);
+ const query=await searchParams;
+ const rawRequestId=Array.isArray(query.requestId)?query.requestId[0]:query.requestId;
+ const requestId=rawRequestId&&/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(rawRequestId)
+   ?rawRequestId:null;
+ const request=requestId?await getDriveChangeRequestDiscussionContext(context,jobId,requestId):null;
+ const quote=request?[
+   "Change request "+request.id,
+   request.fieldLabel+": "+request.proposedValue.slice(0,1200),
+   ...(request.reason?["Reason: "+request.reason.slice(0,600)]:[]),
+  ].join("\n"):undefined;
  return <div className="min-w-0 space-y-4">
   <PageHeader title={data.job.title+" · Discussion"}
     description="Conversations with recruiters attached to this drive. Private team notes are not shared with recruiters."
     actions={<Link href={root} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← Back to drive</Link>}/>
+  {requestId?<div role="status" className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm">
+    <p className="font-semibold">{request?"Discuss change request · "+request.fieldLabel:"Change request unavailable"}</p>
+    {request?<p className="mt-1 break-words whitespace-pre-wrap text-body">{request.proposedValue}</p>:null}
+    <Link href={root+"/change-requests#change-request-"+encodeURIComponent(requestId)}
+      className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">View change request</Link>
+    {request?<p className="mt-1 text-xs text-muted-foreground">Choose a recruiter conversation below, then select Quote change request to include its context.</p>:null}
+   </div>:null}
   {!data.available?<Alert tone="warning">
     Recruiter conversation records are unavailable right now. Other drive work is still available. Try again later.
    </Alert>:data.threads.length===0?<EmptyState title="No recruiter conversation is attached to this drive yet."
@@ -53,7 +72,7 @@ export default async function TpoDriveDiscussion({params}:{
     <div className="w-full sm:basis-full">
       <details className="border-t border-border pt-2">
         <summary className="cursor-pointer text-sm font-semibold text-link">Reply in this drive discussion</summary>
-        <TpoRecruiterMessageReply threadId={thread.id} actorUserId={context.user.id} unread={thread.unread>0}/>
+        <TpoRecruiterMessageReply threadId={thread.id} actorUserId={context.user.id} unread={thread.unread>0} quote={quote}/>
         <p className="mt-1 text-xs text-muted-foreground">Showing the latest three messages here. Open the full conversation to review earlier messages and quote context.</p>
       </details>
     </div>

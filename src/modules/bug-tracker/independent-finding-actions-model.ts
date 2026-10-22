@@ -8,7 +8,7 @@ const comment=z.string().trim().min(1,"Write a comment").max(4000);
 export const LEGACY_FINDING_COMMIT_REPOS=["lms","lms2-fe","both","infra","other"] as const;
 export const FINDING_COMMIT_REPOS=[...LEGACY_FINDING_COMMIT_REPOS,"lms-vnext"] as const;
 export const independentFindingActionSchema=z.discriminatedUnion("action",[
- common.extend({action:z.literal("STATUS"),status:z.enum(FINDING_STATUSES),note:reason.optional()}).superRefine((x,ctx)=>{
+ common.extend({action:z.literal("STATUS"),status:z.enum(FINDING_STATUSES,{error:"Unknown status"}),note:reason.optional()}).superRefine((x,ctx)=>{
   if(["WONT_FIX","CANT_REPRODUCE","NEEDS_INFO","VERIFIED"].includes(x.status)&&!x.note)
    ctx.addIssue({code:"custom",path:["note"],message:"A reason is required for this status"});
  }),

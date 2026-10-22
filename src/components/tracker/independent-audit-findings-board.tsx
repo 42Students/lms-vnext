@@ -11,9 +11,10 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {Banner} from "@/components/ui/banner";
 import {IndependentFindingActions} from "@/components/tracker/independent-finding-actions";
 import {IndependentFindingCopyAction} from "@/components/tracker/independent-finding-copy-action";
+import {auditFindingHistoryActionLabel} from "@/modules/bug-tracker/audit-finding-source-event-model";
 
 type Finding=typeof db10AuditFindings.$inferSelect;
-type FindingEvent={id:string;action:string;note:string|null;createdAt:string;fromStatus:string|null;toStatus:string|null};
+type FindingEvent={id:string;action:string;toValue:unknown;note:string|null;createdAt:string;fromStatus:string|null;toStatus:string|null};
 type Similar={id:string;externalId:string;title:string;status:string;score:number};
 type Detail={finding:Finding;events:FindingEvent[];similar:Similar[]};
 function istDate(value:Date|string|null|undefined){
@@ -153,7 +154,7 @@ export function IndependentAuditFindingsBoard({rows,view}:{
     <section className="space-y-2"><h3 className="font-semibold">History</h3>
      {detail?.events.length?<ol className="divide-y divide-[var(--lms-canvas-border)]">
       {detail.events.map(event=><li key={event.id} className="py-2 text-sm">
-       <strong>{event.action}</strong> · {istDate(event.createdAt)}
+       <strong>{auditFindingHistoryActionLabel(event.action,event.toValue)}</strong> · {istDate(event.createdAt)}
        {event.note?<p className="whitespace-pre-wrap break-words">{event.note}</p>:null}
       </li>)}</ol>:<p className="text-sm text-muted-foreground">No history</p>}
     </section>

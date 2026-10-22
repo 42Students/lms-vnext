@@ -28,6 +28,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { listOwnAppliedPlacementResults } from "./result-service";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import {learnerStaffApplicationOptOut} from "./learner-staff-application-optout-model";
+import {learnerWithdrawalMode} from "./learner-withdrawal-mode-model";
 
 /** Display labels are legacy learner phrasing; raw codes remain available for
  * staff workflows and exact API state transitions. */
@@ -352,9 +353,20 @@ export async function getLearnerPlacementJourney(
       }),
       offerHistory:(offersByApplication.get(row.application.id)??[])
         .sort((a,b)=>b.issuedAt.getTime()-a.issuedAt.getTime()),
-      withdrawalMode:row.application.status==="SUBMITTED"
-        ?activeBookings.length>0||appliedResults.length>0?"REQUEST" as const:"SELF" as const
-        :"NONE" as const,
+      withdrawalMode:(()=>{
+        const mode=learnerWithdrawalMode({
+          applicationStatus:row.application.status,
+          screeningStatus:row.screening.status,
+          scheduledRoundCount:activeBookings.length+appliedResults.length,
+        });
+        if(mode==="UNAVAILABLE")return "NONE" as const;
+        // An issued or accepted offer must be handled by the placement cell;
+        // direct self-withdrawal is blocked by the authoritative write service.
+        if(mode==="SELF"&&(offersByApplication.get(row.application.id)??[])
+          .some(offer=>offer.status==="ISSUED"||offer.status==="ACCEPTED"))
+          return "REQUEST" as const;
+        return mode;
+      })(),
     };
   });
 }

@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {roundReorderLockMessage,moveRound} from "@/modules/placements/tpo-round-reorder-model";
+import {roundReorderLockMessage,moveRound,planRoundReorderSequences} from "@/modules/placements/tpo-round-reorder-model";
 import {roundApplyInputSchema,summarizeRoundApply,roundApplyPreviewToken,roundApplyFailureReason} from "@/modules/placements/tpo-round-apply-model";
 
 const a={resultId:"a",applicationId:"learner-a",student:"Student A",
@@ -27,6 +27,13 @@ describe("TPO-BREAK-round-01 outcome integrity and reorder guards",()=>{
   expect(moveRound(ids,"other",1)).toEqual(ids);
   expect(moveRound(["one","two","one"],"one",2)).toEqual(["one","two","one"]);
   expect(ids).toEqual(["one","two","three"]);
+ });
+ it("never reassigns the sequence of a cancelled round when reordering active rounds",()=>{
+  expect(planRoundReorderSequences(3,[2,4])).toEqual([1,3,5]);
+  expect(planRoundReorderSequences(2,[1,2])).toEqual([3,4]);
+  expect(planRoundReorderSequences(2,[2,2,0,-1])).toEqual([1,3]);
+  expect(planRoundReorderSequences(0,[1])).toEqual([]);
+  expect(()=>planRoundReorderSequences(-1,[2])).toThrow("INVALID_ROUND_COUNT");
  });
  it("only counts known staged outcomes, never inherited object property names",()=>{
   const summary=summarizeRoundApply([

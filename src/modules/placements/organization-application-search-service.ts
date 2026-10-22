@@ -2,7 +2,7 @@ import "server-only";
 import {and,asc,desc,eq,ilike,or,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {colleges,collegeMemberships,users,placementJobs,placementApplications,
+import {colleges,organizations,collegeMemberships,users,placementJobs,placementApplications,
  placementApplicationScreenings,placementJobRoleOptions,placementCompanies,
  placementCompanyRelationships} from "@/db/schema";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
@@ -24,17 +24,35 @@ export const organizationApplicantSearchSchema=z.strictObject({
  pageSize:z.coerce.number().int().min(1).max(100).default(50),
 });
 
-async function organizationScope(context:RequestContext,requested:string|undefined){
+export async function resolveOrganizationPlacementSearchScope(context:RequestContext,requested:string|undefined){
  if(!isSuperAdmin(context))throw new AuthorizationError("placements.read");
- const acting=await resolveActingCollege(context,"placements.read");
- if(requested&&acting.organizationId!==requested)
-  throw new AuthorizationError("placements.read");
- await getDb().transaction(async tx=>{
-  await assertPersistedPlatformPermission(tx,context,"placements.read",{
-   organizationId:acting.organizationId,collegeId:acting.collegeId,
+ // A selected college is always authoritative. Caller-supplied org IDs may
+ // confirm it, never override it (including when a stale tab is still open).
+ if(context.adminScope?.collegeId){
+  const acting=await resolveActingCollege(context,"placements.read");
+  if(requested&&acting.organizationId!==requested)
+   throw new AuthorizationError("placements.read");
+  await getDb().transaction(async tx=>{
+   await assertPersistedPlatformPermission(tx,context,"placements.read",{
+    organizationId:acting.organizationId,collegeId:acting.collegeId,
+   });
   });
+  return acting.organizationId;
+ }
+ // Organization-scoped Super Admin stays in that organization. Unscoped
+ // platform Super Admin must choose an explicit, active organization rather
+ // than silently broadening a report to every college in the platform.
+ const organizationId=context.adminScope?.organizationId??requested;
+ if(!organizationId||(requested&&requested!==organizationId))
+  throw new AuthorizationError("placements.read");
+ const [active]=await getDb().select({id:organizations.id}).from(organizations)
+  .where(and(eq(organizations.id,organizationId),
+   eq(organizations.status,"ACTIVE"))).limit(1);
+ if(!active)throw new AuthorizationError("placements.read");
+ await getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"placements.read",{organizationId});
  });
- return acting.organizationId;
+ return organizationId;
 }
 
 // An accepted offer is not a joining outcome. Only a persisted JOINED
@@ -64,14 +82,14 @@ const legacyStage=sql<string>`case
   and rr.superseded_at is null) then 'ASSESSMENT'
  when ${placementApplicationScreenings.status}='SHORTLISTED' then 'SHORTLISTED'
  else 'APPLIED' end`;
-const appliedScore=sql<number|null>`(select max(rr.score_percent)::integer
+const appliedScore=sql<number|null>`(select max(rr.score_percent)
  from placement_round_results rr where rr.application_id=${placementApplications.id}
  and rr.status='APPLIED' and rr.superseded_at is null)`;
 const activeApplication=sql<boolean>`${placementApplications.legacyWasDeleted} is distinct from true`;
 
 export async function getOrganizationApplicationStats(context:RequestContext,raw:unknown){
  const input=z.strictObject({organizationId:z.string().uuid().optional()}).parse(raw);
- const organizationId=await organizationScope(context,input.organizationId);
+ const organizationId=await resolveOrganizationPlacementSearchScope(context,input.organizationId);
  const [row]=await getDb().select({totalApplications:sql<number>`count(*)::int`})
   .from(placementApplications)
   .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
@@ -84,12 +102,13 @@ export async function getOrganizationApplicationStats(context:RequestContext,raw
 }
 
 /** Authenticated org-wide discovery is Super Admin-only. A caller-supplied
- * organizationId can only confirm the selected college's organization; it
- * cannot widen a session into a foreign tenant. Includes archived jobs.
+ * organizationId confirms a selected scope, or explicitly chooses one active
+ * organization when the platform admin is unscoped. It cannot widen a
+ * selected college/organization into a foreign tenant. Includes archived jobs.
  */
 export async function searchOrganizationPlacementApplications(context:RequestContext,raw:unknown){
  const input=organizationApplicantSearchSchema.parse(raw);
- const organizationId=await organizationScope(context,input.organizationId);
+ const organizationId=await resolveOrganizationPlacementSearchScope(context,input.organizationId);
  const pattern="%"+input.search.replace(/[\\%_]/g,"\\$&")+"%";
  const filters=and(eq(colleges.organizationId,organizationId),activeApplication,
   input.status==="ALL"?undefined:eq(legacyStage,input.status),

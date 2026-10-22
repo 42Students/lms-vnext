@@ -14,6 +14,7 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { listFacultyCourseDeliveries } from "./faculty-course-service";
+import { AuthorizationError } from "@/modules/permissions/policy";
 
 /**
  * Faculty read-only schedule is grounded in active teaching assignments.
@@ -36,6 +37,11 @@ export async function getFacultyClassSchedule(
       windowEnd.getTime()-windowStart.getTime()>548*86400000)
     throw new RangeError("Invalid faculty schedule date range");
   const assigned = await listFacultyCourseDeliveries(context);
+  // The authenticated faculty membership, not an optional caller-supplied
+  // ID, scopes explicit faculty sessions. Admin's any-faculty view is served
+  // separately by the college-scoped schedule read.
+  const viewerMembershipId = context.membership?.id;
+  if (!viewerMembershipId) throw new AuthorizationError("courses.read");
   const sectionsList = [...new Map(assigned.map((course) => [
     course.sectionId,
     {
@@ -114,6 +120,13 @@ export async function getFacultyClassSchedule(
       lte(sectionScheduleEvents.startsAt, windowEnd),
       gte(sectionScheduleEvents.endsAt, windowStart),
       inArray(sectionScheduleEvents.sectionId, options.sectionId?[options.sectionId]:sectionIds),
+      // Legacy faculty timetable uses faculty_id = viewer. Section-wide
+      // unassigned announcements remain visible to all course teachers, but
+      // another faculty member's scheduled teaching slots do not.
+      or(
+        isNull(sectionScheduleEvents.facultyMembershipId),
+        eq(sectionScheduleEvents.facultyMembershipId, viewerMembershipId),
+      ),
       or(
         isNull(sectionScheduleEventCourses.deliveryId),
         and(

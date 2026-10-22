@@ -109,7 +109,8 @@ export function AdminProgramDirectory({
   const [refreshPending,startRefresh]=useTransition();
   const [fieldErrors,setFieldErrors]=useState<{department?:string;name?:string;duration?:string}>({});
   const [createError,setCreateError]=useState("");
-  const [search, setSearch] = useState(serverPage?.q??"");
+  const serverQuery=serverPage?.q;
+  const [search, setSearch] = useState(serverQuery??"");
   const [debouncedSearch,setDebouncedSearch]=useState(serverPage?.q??"");
   useEffect(()=>{
     const handle=window.setTimeout(()=>setDebouncedSearch(search),220);
@@ -125,12 +126,12 @@ export function AdminProgramDirectory({
    if(nextSize!==20)params.set("pageSize",String(nextSize));
    return pathname+(params.size?"?"+params.toString():"");
   },[pathname,pageSize,serverPage?.q,search]);
-  useEffect(()=>{if(serverPage)setSearch(serverPage.q);},[serverPage?.q]);
+  useEffect(()=>{if(serverQuery!==undefined)setSearch(serverQuery);},[serverQuery]);
   useEffect(()=>{
-   if(!serverPage||search.trim()===serverPage.q)return;
+   if(serverQuery===undefined||search.trim()===serverQuery)return;
    const handle=window.setTimeout(()=>router.replace(hrefFor(1,pageSize,search)),300);
    return ()=>window.clearTimeout(handle);
-  },[search,serverPage?.q,pageSize,router,hrefFor]);
+  },[search,serverQuery,pageSize,router,hrefFor]);
   const filtered = serverPage ? [...programs] : filterAdminPrograms(programs, debouncedSearch);
   const result = serverPage
    ? {items:filtered,total:serverPage.total,page:serverPage.page,

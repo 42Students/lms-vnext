@@ -21,3 +21,19 @@ export function moveRound(ids:readonly string[],id:string,toIndex:number):string
  next.splice(toIndex,0,id);
  return next;
 }
+
+/** Keep the sequence positions of cancelled rounds reserved. Those positions
+ * remain in applicant history and must not be reassigned when the live plan
+ * is reordered. The caller serializes changes on the parent drive row. */
+export function planRoundReorderSequences(
+ count:number, historicalCancelledSequences:readonly number[],
+):number[]{
+ if(!Number.isSafeInteger(count)||count<0)throw new Error("INVALID_ROUND_COUNT");
+ const reserved=new Set(historicalCancelledSequences.filter(sequence=>
+  Number.isSafeInteger(sequence)&&sequence>0));
+ const result:number[]=[];
+ for(let sequence=1;result.length<count;sequence+=1){
+  if(!reserved.has(sequence))result.push(sequence);
+ }
+ return result;
+}

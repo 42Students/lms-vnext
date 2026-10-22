@@ -29,7 +29,7 @@ describe("Super Admin tenant directory strict URL handling",()=>{
   expect(tenantLifecyclePaging(0,18)).toEqual({total:0,totalPages:1,page:1,offset:0});
  });
  it("SA-tenants-directory-QUERY-03 malformed input renders a recovery page without a tenant query",()=>{
-  const page=readFileSync("src/app/(authenticated)/admin/tenants/page.tsx","utf8");
+  const page=readFileSync("src/app/(authenticated)/admin/tenants/directory/page.tsx","utf8");
   const body=page.slice(page.indexOf("export default async function TenantDirectory("));
   const parse=body.indexOf("parseTenantLifecycleSearchParams(raw)");
   const guard=body.indexOf('if(!parsed) return');
@@ -38,7 +38,7 @@ describe("Super Admin tenant directory strict URL handling",()=>{
   expect(guard).toBeGreaterThan(parse);
   expect(query).toBeGreaterThan(guard);
   expect(body).toContain('title="Invalid tenant filters"');
-  expect(body).toContain('href="/admin/tenants"');
+  expect(body).toContain('href="/admin/tenants/directory"');
   expect(body).toContain('can(context,"admin-scope.select")');
  });
 });

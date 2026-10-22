@@ -18,7 +18,7 @@ const MAX_BATCH=200;
 const bulkPublishInput=z.strictObject({
   requestId:z.string().uuid(),
   deliveryId:z.string().uuid().nullable().optional(),
-  submissionIds:z.array(z.string().uuid()).max(MAX_BATCH).optional(),
+  submissionIds:z.array(z.string().uuid()).min(1).max(MAX_BATCH).optional(),
 });
 
 /**
@@ -60,7 +60,11 @@ export async function publishAssignmentGradeBatch(
    skippedUngraded:sql<number>`count(*) filter (where ${assignmentSubmissions.gradingStatus}<>'GRADED')::int`,
    alreadyPublished:sql<number>`count(*) filter (where ${assignmentSubmissions.gradePublished}=true)::int`,
   }).from(assignmentSubmissions).where(visibleScope);
-  const [initial]=await db.select({total:count()}).from(assignmentSubmissions).where(conditions);
+  // A targeted retry must report its OWN remaining set, not unrelated
+  // pending grades in the assignment or another delivery.
+  const pendingScope=and(conditions,input.submissionIds?
+    inArray(assignmentSubmissions.id,input.submissionIds):undefined);
+  const [initial]=await db.select({total:count()}).from(assignmentSubmissions).where(pendingScope);
   const rows=await db.select({
     id:assignmentSubmissions.id,version:assignmentSubmissions.version,
   }).from(assignmentSubmissions)
@@ -80,7 +84,7 @@ export async function publishAssignmentGradeBatch(
       failedRows.push({submissionId:row.id,reason:"Concurrent grade change or temporary publication failure; retry with the latest version."});
     }
   }
-  const [after]=await db.select({total:count()}).from(assignmentSubmissions).where(conditions);
+  const [after]=await db.select({total:count()}).from(assignmentSubmissions).where(pendingScope);
   const remaining=after?.total??0;
   const receipt=await recordActivityEvent(context,{
     eventType:ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_GRADE_PUBLISHED,

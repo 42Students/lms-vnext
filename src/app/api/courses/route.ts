@@ -7,6 +7,7 @@ import {
   listCourses,
   listCoursesPage,
 } from "@/modules/courses/course-service";
+import {projectLegacyCoursePublic} from "@/modules/courses/legacy-course-public-projection";
 
 export const runtime = "nodejs";
 /** Historical /api/v1/courses endpoints are NOT live aliases. Old callers
@@ -50,6 +51,10 @@ export async function GET(request: Request) {
     const includeArchived=url.searchParams.get("includeArchived") === "true" ||
       url.searchParams.get("onlyArchived") === "true";
     const onlyArchived=url.searchParams.get("onlyArchived") === "true";
+    const rawView=url.searchParams.get("view");
+    if(rawView!==null&&rawView!=="legacy"&&rawView!=="vnext")
+      return NextResponse.json({error:"INVALID_VIEW"},{status:400});
+    const legacyView=rawView==="legacy";
     const rawPage=url.searchParams.get("page");
     const rawSize=url.searchParams.get("size");
     if(rawPage!==null||rawSize!==null){
@@ -64,13 +69,17 @@ export async function GET(request: Request) {
       const listing=await listCoursesPage(context,collegeId,{
         limit:size,offset:(page-1)*size,
       },departmentId,includeArchived,onlyArchived);
-      return NextResponse.json({courses:listing.courses,
+      return NextResponse.json({courses:legacyView
+        ?listing.courses.map(projectLegacyCoursePublic):listing.courses,
         page,size,totalElements:listing.total,
-        totalPages:Math.ceil(listing.total/size)});
+        totalPages:Math.ceil(listing.total/size)},
+        {headers:{"Cache-Control":"private, no-store"}});
     }
     const courses=await listCourses(context,collegeId,departmentId,
       includeArchived,undefined,onlyArchived);
-    return NextResponse.json({ courses });
+    return NextResponse.json({courses:legacyView
+      ?courses.map(projectLegacyCoursePublic):courses},
+      {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
   }

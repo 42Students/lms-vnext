@@ -21,7 +21,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
 import {requireAvailableRoundVenue} from "./round-venue-booking-service";
-import { roundReorderLockMessage } from "./tpo-round-reorder-model";
+import { roundReorderLockMessage, planRoundReorderSequences } from "./tpo-round-reorder-model";
 import { roundActionJobMutable, roundActionSnapshotMatches } from "./round-action-guards";
 import {
   createPlacementRoundInputSchema,
@@ -186,6 +186,15 @@ export async function createPlacementRound(
     const sequence =
       Number(aggregate?.maxSequence ?? 0) + 1;
 
+    const scheduled = input.scheduledAt !== undefined;
+    // Zod checks the complete scheduling tuple before the transaction; a
+    // concurrent round insert is serialized by the job row lock above.
+    if (scheduled && input.mode==="ON_CAMPUS") await requireAvailableRoundVenue(tx,{
+      collegeId:job.collegeId,
+      venue:input.venue??"",start:input.scheduledAt!,
+      durationMinutes:input.durationMinutes??null,
+    });
+
     const [round] = await tx
       .insert(placementJobRounds)
       .values({
@@ -193,6 +202,13 @@ export async function createPlacementRound(
         sequence,
         kind: input.kind,
         name: input.name,
+        status: scheduled ? "SCHEDULED" : "PENDING",
+        scheduledAt: input.scheduledAt??null,
+        timezone: input.timezone??null,
+        mode: input.mode??null,
+        venue: input.mode==="ON_CAMPUS" ? input.venue??null : null,
+        meetingUrl: input.mode==="VIRTUAL" ? input.meetingUrl??null : null,
+        resultsDueAt: input.resultsDueAt??null,
         whatToBring:
           input.whatToBring ?? null,
         platform: input.platform ?? null,
@@ -213,8 +229,21 @@ export async function createPlacementRound(
           sequence,
           kind: round.kind,
           name: round.name,
+          scheduledAt: round.scheduledAt?.toISOString()??null,
+          mode: round.mode,
         },
       });
+    if (scheduled) {
+      // Creation with an initial schedule is one atomic transition but must
+      // remain distinguishable from a never-scheduled draft in the audit log.
+      await tx.insert(placementJobRoundEvents).values({
+        roundId:round.id,eventType:"SCHEDULED",actorUserId:context.user.id,
+        metadata:{scheduledAt:round.scheduledAt?.toISOString()??null,
+          timezone:round.timezone,mode:round.mode,venue:round.venue,
+          meetingUrl:round.meetingUrl,
+          resultsDueAt:round.resultsDueAt?.toISOString()??null},
+      });
+    }
 
     return round;
   });
@@ -684,11 +713,17 @@ export async function reorderPlacementRounds(
       );
     }
 
-    const [historicMax] = await tx.select({
-      sequence: max(placementJobRounds.sequence),
+    const historical = await tx.select({
+      sequence: placementJobRounds.sequence,
+      status: placementJobRounds.status,
     }).from(placementJobRounds)
       .where(eq(placementJobRounds.jobId, job.id));
-    const maxSequence = Number(historicMax?.sequence ?? 0);
+    const maxSequence = historical.reduce(
+      (maximum, round) => Math.max(maximum, round.sequence), 0,
+    );
+    const reserved = historical.filter(round => round.status === "CANCELLED")
+      .map(round => round.sequence);
+    const reorderedSequences = planRoundReorderSequences(input.roundIds.length, reserved);
     const offset = maxSequence + 1_000_000;
 
     await tx
@@ -713,7 +748,7 @@ export async function reorderPlacementRounds(
       index += 1
     ) {
       const id = input.roundIds[index]!;
-      const sequence = index + 1;
+      const sequence = reorderedSequences[index]!;
       await tx
         .update(placementJobRounds)
         .set({

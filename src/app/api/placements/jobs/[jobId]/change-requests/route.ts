@@ -2,7 +2,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
-import {getDriveChangeRequests,mutateDriveChangeRequest} from "@/modules/placements/tpo-drive-change-request-service";
+import {getDriveChangeRequests,mutateDriveChangeRequest,OpenDriveChangeConflict} from "@/modules/placements/tpo-drive-change-request-service";
 import {z} from "zod";
 import {and,eq,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
@@ -131,5 +131,10 @@ export async function POST(req:Request,{params}:Props){
   return NextResponse.json({...result,
    legacyStatus:result.status==="DECLINED"?"REPLIED":legacyDriveChangeStatus(result.status,null)},
    {headers:{"Cache-Control":"private, no-store"}});
- }catch(e){return apiErrorResponse(e);}
+ }catch(e){
+  if(e instanceof OpenDriveChangeConflict)
+   return NextResponse.json({error:e.code,message:e.legacyMessage},
+    {status:409,headers:{"Cache-Control":"private, no-store"}});
+  return apiErrorResponse(e);
+ }
 }

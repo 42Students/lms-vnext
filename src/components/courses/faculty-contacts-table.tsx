@@ -50,7 +50,7 @@ export function FacultyContactsTable({items,showRoles,detailBaseHref,detailQuery
     </div>
     <Table aria-label="Contacts directory" containerClassName="hidden min-[560px]:block [&>table]:min-w-[560px]">
       <thead><tr>
-        <th scope="col">Name</th><th scope="col">Department</th><th scope="col">Email</th><th scope="col">Contact</th>{showRoles?<th scope="col">Role</th>:null}
+        <th scope="col">Name</th><th scope="col">Email</th><th scope="col">Contact</th>{showRoles?<th scope="col">Role</th>:null}
       </tr></thead>
       <tbody>{items.map(item=>{
         const name=item.displayName?.trim()||"—";
@@ -58,9 +58,9 @@ export function FacultyContactsTable({items,showRoles,detailBaseHref,detailQuery
         return <tr key={item.membershipId}>
           <td className="min-w-40 font-semibold">
             <div className="flex min-w-0 items-center gap-2">{avatar(item,name)}<div className="min-w-0">{href?<Link href={href} className="inline-flex min-h-9 items-center break-words text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{name}</Link>:name}
+              <span className="block text-xs font-normal text-muted-foreground">Department: {item.departmentName??"Not recorded"}</span>
             </div></div>
           </td>
-          <td className="min-w-28 text-muted-foreground">{item.departmentName??"—"}</td>
           <td className="min-w-32 text-muted-foreground">Private</td>
           <td className="min-w-32 text-muted-foreground">Private</td>
           {showRoles?<td><ul aria-label="Current college roles" className="flex min-w-0 flex-wrap gap-2">

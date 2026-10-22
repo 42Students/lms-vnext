@@ -14,6 +14,15 @@ import {placementJobIdSchema} from "./validation";
 import {parseLegacyDriveChangeCommand} from "./tpo-drive-change-request-model";
 
 type Party="TPO"|"COMPANY";
+/** Preserve the legacy duplicate-open guidance without exposing SQL failures. */
+export class OpenDriveChangeConflict extends PlacementsServiceError {
+ readonly legacyMessage:string;
+ constructor(fieldLabel:string){
+  super("PLACEMENT_REQUEST_CONFLICT");
+  this.legacyMessage="There is already an open request on "+fieldLabel+
+   ". Withdraw it or discuss it first";
+ }
+}
 async function scoped(context:RequestContext,rawJobId:unknown){
  const jobId=placementJobIdSchema.parse(rawJobId);
  if(context.membership&&(hasMembershipRole(context,"TPO")||hasMembershipRole(context,"COLLEGE_ADMIN"))){
@@ -200,6 +209,30 @@ async function applyDriveChangeField(
  return patched.version;
 }
 
+/** Single-request context for a discussion deep link; unlike the request list,
+ * this remains accessible when its row has fallen past the first 100 items. */
+export async function getDriveChangeRequestDiscussionContext(
+ context:RequestContext,jobIdInput:unknown,requestIdInput:unknown,
+){
+ const {job}=await scoped(context,jobIdInput);
+ if(typeof requestIdInput!=="string"||
+    !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(requestIdInput))
+  return null;
+ const [request]=await getDb().select({
+  id:placementDriveChangeRequests.id,field:placementDriveChangeRequests.field,
+  legacyField:placementDriveChangeRequests.legacyField,
+  proposedValue:placementDriveChangeRequests.proposedValue,
+  reason:placementDriveChangeRequests.reason,
+ }).from(placementDriveChangeRequests).where(and(
+  eq(placementDriveChangeRequests.id,requestIdInput),
+  eq(placementDriveChangeRequests.jobId,job.id),
+ )).limit(1);
+ if(!request)return null;
+ return {id:request.id,fieldLabel:FIELD_LABELS[request.legacyField??request.field]??
+   FIELD_LABELS[request.field]??"Other",
+  proposedValue:request.proposedValue,reason:request.reason};
+}
+
 export async function getDriveChangeRequests(context:RequestContext,jobId:unknown,cursor?:string|null){
  const {job,party}=await scoped(context,jobId);
  const storageReady=true; // registered in 0114
@@ -312,9 +345,9 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
       eq(placementDriveChangeRequests.jobId,job.id),
       eq(placementDriveChangeRequests.proposerParty,party),
       eq(placementDriveChangeRequests.field,canonicalField),
-      eq(placementDriveChangeRequests.status,"OPEN"),
-      eq(placementDriveChangeRequests.legacyField,input.field))).limit(1);
-    if(duplicate)throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
+      eq(placementDriveChangeRequests.status,"OPEN"))).limit(1);
+    if(duplicate)throw new OpenDriveChangeConflict(
+      FIELD_LABELS[input.field]??FIELD_LABELS[canonicalField]??"this field");
    }
    if(mode==="SUGGEST"&&["PAY","CTC","STIPEND"].includes(input.field)){
     const roleCounts=await tx.select({total:sql<number>`count(*)::integer`.mapWith(Number)})
@@ -322,7 +355,7 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
       eq(placementJobRoleOptions.jobId,job.id),
       eq(placementJobRoleOptions.status,"ACTIVE")));
     if((roleCounts[0]?.total??0)>1)
-     throw new Error("This drive has multiple roles. Please ask for the package instead.");
+     throw new Error("This drive has several roles; use Something else and say which role should change");
    }
    if(mode==="SUGGEST"&&input.field==="LOCATION"&&
     lockedJob.locations.join(", ").trim().toLocaleLowerCase("en-IN")===

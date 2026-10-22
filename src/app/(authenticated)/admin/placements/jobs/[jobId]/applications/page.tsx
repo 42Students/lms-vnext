@@ -1,5 +1,6 @@
 import {AdminDriveApplicationsRetained} from "@/components/admin/admin-drive-applications-retained";
 import {CollegeDriveApplicationsSizeControl} from "@/components/placements/college-drive-applications-size-control";
+import {LastKnownGoodApplications} from "@/components/placements/last-known-good-applications";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -79,6 +80,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       action={<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"}
         className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Clear filters</Link>}/>
   </div>;
+  const snapshotKey=[context.adminScope.collegeId,jobId,JSON.stringify(query)].join(":");
   const [pipelineResult,filterResult,jobResult]=await Promise.allSettled([
     getCollegeApplicationPipeline(context,jobId,query),
     listCollegeDriveApplicationFilters(context),
@@ -86,8 +88,9 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
   ]);
   const snapshotKey=[context.user.id,context.adminScope.collegeId,jobId,retryHref].join(":");
   if(pipelineResult.status==="rejected"){
-   // A failed first load still shows the actionable error below.
-   return <AdminDriveApplicationsRetained key={snapshotKey} failed retryHref={retryHref}>
+   // This is a server-rendered, scope-bound read: do not recycle data from a
+   // different selected college or imply that it is still current.
+   return <LastKnownGoodApplications key={snapshotKey} valid={false} retryHref={retryHref}>
     <div className="min-w-0 space-y-5">
     <PageHeader title="Applications"/>
     <ErrorState title="Failed to load data"
@@ -96,8 +99,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       <Link href={retryHref} className="font-semibold text-primary-text underline">Retry applications</Link>
       <Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)} className="font-semibold text-primary-text underline">Drive overview</Link>
      </div>}/>
-    </div>
-   </AdminDriveApplicationsRetained>;
+   </div></LastKnownGoodApplications>;
   }
   const data=pipelineResult.value;
   const filters=filterResult.status==="fulfilled"?filterResult.value:null;
@@ -110,7 +112,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     {label:"Settings",href:root+"/settings"+preserved},
   ];
   const totalStageCount=Object.values(data.stageCounts).reduce((sum,num)=>sum+num,0);
-  return <AdminDriveApplicationsRetained key={snapshotKey} retryHref={retryHref}>
+  return <LastKnownGoodApplications key={snapshotKey} valid retryHref={retryHref}>
    <div className="min-w-0 space-y-4 md:space-y-6">
     
     <PageHeader title={"Applications ("+data.total.toLocaleString("en-IN")+")"}
@@ -311,6 +313,5 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       CSV uses formula-neutralized cells, includes filtered rows up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")},
       and includes a truncation notice if more matching rows exist.
     </p>
-  </div>
-  </AdminDriveApplicationsRetained>;
+  </div></LastKnownGoodApplications>;
 }

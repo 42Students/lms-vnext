@@ -26,6 +26,7 @@ import {
   placementCollegeRules,
   placementJobEligibilityPolicies,
   placementOffers,
+  placementJoiningOutcomes,
   placementBatchRegistrations,
   placementApplicationScreenings,
   placementCompanyApplicantShares,
@@ -250,15 +251,19 @@ export async function listLearnerPlacementJobs(
     .filter((id):id is string=>typeof id==="string"))];
   const releasedOffers=applicationIds.length?await getDb().select({
     applicationId:placementOffers.applicationId,status:placementOffers.status,
-  }).from(placementOffers).where(and(
-    inArray(placementOffers.applicationId,applicationIds),
-    isNotNull(placementOffers.releasedAt),
-    eq(placementOffers.kind,"OFFER"),
-  )).orderBy(desc(placementOffers.version),desc(placementOffers.id)):[];
-  const latestOfferStatus=new Map<string,string>();
+    joiningStatus:placementJoiningOutcomes.status,
+  }).from(placementOffers)
+    .leftJoin(placementJoiningOutcomes,
+      eq(placementJoiningOutcomes.offerId,placementOffers.id))
+    .where(and(
+      inArray(placementOffers.applicationId,applicationIds),
+      isNotNull(placementOffers.releasedAt),
+      eq(placementOffers.kind,"OFFER"),
+    )).orderBy(desc(placementOffers.version),desc(placementOffers.id)):[];
+  const latestOfferByApplication=new Map<string,(typeof releasedOffers)[number]>();
   for(const offer of releasedOffers){
-    if(!latestOfferStatus.has(offer.applicationId)){
-      latestOfferStatus.set(offer.applicationId,offer.status);
+    if(!latestOfferByApplication.has(offer.applicationId)){
+      latestOfferByApplication.set(offer.applicationId,offer);
     }
   }
 
@@ -347,13 +352,14 @@ export async function listLearnerPlacementJobs(
         roleOption: row.roleOption,
         company: row.company,
         application,
-        offerStatus:application?latestOfferStatus.get(application.id)??null:null,
-        // Compatibility display derived from application + latest released offer.
-        // These labels do not change vNext application or joining lifecycle facts.
+        offerStatus:application?latestOfferByApplication.get(application.id)?.status??null:null,
+        // A signed offer is not a joining outcome. The legacy HIRED label
+        // requires a persisted JOINED outcome, not merely accepted terms.
         legacyDisplayStatus:!application?null:application.status==="WITHDRAWN"?"WITHDRAWN":
-          latestOfferStatus.get(application.id)==="ACCEPTED"?"HIRED":
-          latestOfferStatus.get(application.id)==="ISSUED"?"OFFERED":
-          latestOfferStatus.get(application.id)==="DECLINED"?"REJECTED":"APPLIED",
+          latestOfferByApplication.get(application.id)?.status==="ACCEPTED"&&
+          latestOfferByApplication.get(application.id)?.joiningStatus==="JOINED"?"HIRED":
+          ["ISSUED","ACCEPTED"].includes(latestOfferByApplication.get(application.id)?.status??"")?"OFFERED":
+          latestOfferByApplication.get(application.id)?.status==="DECLINED"?"REJECTED":"APPLIED",
         eligibility,
         deadlinePassed,
         canApply: canShowLearnerSelfApply(applyContext),

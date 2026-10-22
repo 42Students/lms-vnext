@@ -1,4 +1,5 @@
 import {describe,expect,it} from "vitest";
+import {readFileSync} from "node:fs";
 import {parseTpoRoundImport,roundImportActionSchema} from "@/modules/placements/tpo-round-import-model";
 import {parseSelectionCsv,prepareSelectionImport} from "@/modules/placements/tpo-selection-import-model";
 import {roundApplyPreviewToken,roundApplyInputSchema,summarizeRoundApply} from "@/modules/placements/tpo-round-apply-model";
@@ -102,6 +103,23 @@ describe("TPO drive workspace verified S1 gaps",()=>{
   expect(driveChangeCommandSchema.safeParse({action:"ACCEPT",requestId:id,
    expectedUpdatedAt:"2099-05-03T09:00:00Z",note:"Approved by placement cell"}).success).toBe(true);
   expect(driveChangeCommandSchema.safeParse({action:"COMMENT",requestId:id,body:""}).success).toBe(false);
+  for(const field of ["CTC","STIPEND","MIN_CGPA"] as const){
+   expect(driveChangeCommandSchema.safeParse({action:"CREATE",mode:"SUGGEST",field,
+    proposedValue:"5",reason:""}).success).toBe(true);
+  }
+ });
+ it("G2-5-023-004/021 deep links preserve scoped request context and typed answer confirmation",()=>{
+  const service=readFileSync("src/modules/placements/tpo-drive-change-request-service.ts","utf8");
+  const page=readFileSync("src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/page.tsx","utf8");
+  const form=readFileSync("src/components/placements/tpo-drive-change-requests.tsx","utf8");
+  expect(service).toContain("export async function getDriveChangeRequestDiscussionContext(");
+  expect(service).toContain("eq(placementDriveChangeRequests.jobId,job.id)");
+  expect(page).toContain("getDriveChangeRequestDiscussionContext(context,jobId,requestId)");
+  expect(form).toContain('id={"change-request-"+item.id}');
+  expect(form).toContain("confirmation?.action===\"ANSWER\"");
+  expect(form).toContain("To change this answer, cancel and edit the field above");
+  expect(form).toContain("readableValue(confirmation.field,confirmation.note)");
+  expect(form).toContain("maxLength={1000}");
  });
  it("G2-5-023 retains eleven named legacy change fields and typed canonical options",()=>{
   const legacyFields=["ROLE_TITLE","DESCRIPTION","LOCATION","JOB_TYPE","WORK_MODE",

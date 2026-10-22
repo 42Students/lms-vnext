@@ -13,6 +13,7 @@ import {
 import { z } from "zod";
 import { LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH } from "./learner-discussion-message-limit-model";
 import { getDb } from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
@@ -520,7 +521,7 @@ export async function toggleCourseDiscussionPin(
   if (requestedDeliveryId !== null && message.deliveryId !== requestedDeliveryId) {
     throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
   }
-  const { mode } = await discussionAccess(
+  const {mode,delivery} = await discussionAccess(
     context,
     message.deliveryId,
   );
@@ -535,6 +536,10 @@ export async function toggleCourseDiscussionPin(
     throw new CoursesServiceError("DISCUSSION_STALE_VERSION");
   // Atomic toggle with millisecond-normalized CAS for route writes.
   return getDb().transaction(async (tx) => {
+    if(mode==="ADMIN")await assertPersistedPlatformPermission(
+      tx,context,"courses.manage",{
+        collegeId:delivery.collegeId,organizationId:delivery.organizationId,
+      });
     if (mode === "FACULTY") await assertLiveFacultyDiscussionModerator(tx,context,message.deliveryId);
     const [updated] = await tx.update(courseDiscussionMessages).set({
       pinned: not(courseDiscussionMessages.pinned),
@@ -551,8 +556,8 @@ export async function toggleCourseDiscussionPin(
     if (!updated) throw new CoursesServiceError("DISCUSSION_STALE_VERSION");
     await recordActivityEventInTransaction(tx, context, {
       eventType: ACTIVITY_EVENT_TYPES.COURSES_DISCUSSION_PIN_CHANGED,
-      collegeId: context.membership!.collegeId,
-      organizationId: context.membership!.organizationId,
+      collegeId: delivery.collegeId,
+      organizationId: delivery.organizationId,
       subjectType: "course_discussion_message",
       subjectId: updated.id,
       summary: updated.pinned ? "Course discussion pinned" : "Course discussion unpinned",
@@ -577,7 +582,7 @@ export async function deleteCourseDiscussionMessage(
   if (requestedDeliveryId !== null && message.deliveryId !== requestedDeliveryId) {
     throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
   }
-  const { mode } = await discussionAccess(
+  const {mode,delivery} = await discussionAccess(
     context,
     message.deliveryId,
   );
@@ -599,6 +604,10 @@ export async function deleteCourseDiscussionMessage(
     throw new CoursesServiceError("DISCUSSION_STALE_VERSION");
   return getDb().transaction(async (tx) => {
     if(mode==="LEARNER")await assertLiveLearnerDiscussionWriter(tx,context);
+    if(mode==="ADMIN")await assertPersistedPlatformPermission(
+      tx,context,"courses.manage",{
+        collegeId:delivery.collegeId,organizationId:delivery.organizationId,
+      });
     if (mode === "FACULTY") await assertLiveFacultyDiscussionModerator(tx,context,message.deliveryId);
     // Retain the stable ID and moderation evidence for delta subscribers.
     // Normal history hides deleted rows; delta reads return only the redacted
@@ -622,8 +631,8 @@ export async function deleteCourseDiscussionMessage(
     if (!deleted) throw new CoursesServiceError("DISCUSSION_STALE_VERSION");
     await recordActivityEventInTransaction(tx, context, {
       eventType: ACTIVITY_EVENT_TYPES.COURSES_DISCUSSION_DELETED,
-      collegeId: context.membership!.collegeId,
-      organizationId: context.membership!.organizationId,
+      collegeId: delivery.collegeId,
+      organizationId: delivery.organizationId,
       subjectType: "course_discussion_message",
       subjectId: deleted.id,
       summary: "Course discussion message deleted",

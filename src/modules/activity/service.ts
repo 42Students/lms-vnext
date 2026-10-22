@@ -606,26 +606,30 @@ export async function listActivityEvents(
     );
   }
   if(input.actionKey){
-    conditions.push(sql`upper(${activityEvents.eventType}) = ${input.actionKey.toUpperCase()}`);
+    // Preserve the immutable imported AdminAuditLog action instead of comparing
+    // only the normalized vNext code.
+    conditions.push(sql`upper(coalesce(${activityEvents.legacyActionKey}, ${activityEvents.eventType})) = ${input.actionKey.toUpperCase()}`);
   }
   if (input.eventType) {
-    conditions.push(
-      eq(
-        activityEvents.eventType,
-        input.eventType,
-      ),
-    );
+    // Historical actionKey deep links are normalized to this route field.
+    conditions.push(or(
+      eq(activityEvents.eventType, input.eventType),
+      sql`upper(${activityEvents.legacyActionKey}) = ${input.eventType.toUpperCase()}`,
+    )!);
   }
   if (input.subjectType) {
-    conditions.push(
-      eq(
-        activityEvents.subjectType,
-        input.subjectType,
-      ),
-    );
+    conditions.push(or(
+      eq(activityEvents.subjectType, input.subjectType),
+      sql`lower(${activityEvents.legacyEntityType}) = ${input.subjectType.toLowerCase()}`,
+    )!);
   }
   if (input.subjectId) {
-    conditions.push(eq(activityEvents.subjectId, input.subjectId));
+    // Numeric legacy labels stay literal text, never guessed UUIDs; tenant
+    // restrictions above apply before the filter and pagination.
+    conditions.push(or(
+      eq(activityEvents.subjectId, input.subjectId),
+      eq(activityEvents.legacyEntityId, input.subjectId),
+    )!);
   }
   if (input.metadataModule) {
     conditions.push(sql`${activityEvents.metadata} ->> 'module' = ${input.metadataModule}`);

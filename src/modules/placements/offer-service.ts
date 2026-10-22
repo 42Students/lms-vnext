@@ -730,6 +730,37 @@ export async function issuePlacementOffer(
   });
 }
 
+/** Notify only active college TPOs after a committed ACCEPT/DECLINE.
+ * The event and bell are atomic, and no foreign-college membership receives
+ * a learner's offer information. */
+async function notifyCollegeTpoOfOfferResponse(
+ tx:PlacementTx,collegeId:string,jobId:string,jobTitle:string,eventId:string,
+ response:"ACCEPTED"|"DECLINED",
+){
+ const officers=await tx.select({userId:collegeMemberships.userId})
+  .from(collegeMemberships)
+  .innerJoin(membershipRoles,and(
+   eq(membershipRoles.membershipId,collegeMemberships.id),
+   eq(membershipRoles.role,"TPO"),
+  ))
+  .innerJoin(users,and(
+   eq(users.id,collegeMemberships.userId),
+   eq(users.platformStatus,"ACTIVE"),
+  ))
+  .where(and(
+   eq(collegeMemberships.collegeId,collegeId),
+   eq(collegeMemberships.status,"ACTIVE"),
+  ));
+ const recipients=[...new Set(officers.map(row=>row.userId))];
+ if(!recipients.length)return;
+ await deliverInAppNotificationInTransaction(tx,eventId,recipients,{
+  title:response==="ACCEPTED"?"Placement offer accepted":"Placement offer declined",
+  body:"A learner "+(response==="ACCEPTED"?"accepted":"declined")+
+   " an offer for "+jobTitle+". Review the offer register.",
+  actionHref:"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/offers",
+ });
+}
+
 /** A response may invalidate future booked interview slots for the SAME
  * application. Only INTERVIEW rounds and future BOOKED rows are touched.
  * Clear the booking's applicationId alongside CANCELLED to preserve the
@@ -1106,6 +1137,8 @@ export async function actOnPlacementOffer(
         membershipId:current.application.membershipId,
         kind:"APPLICATION_STATUS_CHANGED",subject:"Offer accepted for "+current.job.title,
       });
+      await notifyCollegeTpoOfOfferResponse(tx,current.job.collegeId,
+        current.job.id,current.job.title,acceptedNoticeEvent.id,"ACCEPTED");
 
       return { ...updated, cascadeId };
     }
@@ -1196,6 +1229,8 @@ export async function actOnPlacementOffer(
         membershipId:current.application.membershipId,
         kind:"APPLICATION_STATUS_CHANGED",subject:"Offer declined for "+current.job.title,
       });
+      await notifyCollegeTpoOfOfferResponse(tx,current.job.collegeId,
+        current.job.id,current.job.title,declinedNoticeEvent.id,"DECLINED");
 
       return updated;
     }

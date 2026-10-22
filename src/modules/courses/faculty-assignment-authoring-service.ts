@@ -12,6 +12,7 @@ import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {hasActiveMembership,hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {loadCourseLessonScope,loadCourseSectionDeliveryScope} from "./scope";
 import {requireDeliveryContentMutation} from "./learning-access";
 import {CoursesServiceError,postgresConstraintName} from "./errors";
@@ -26,14 +27,18 @@ export async function commandFacultyAssignment(
   const {deliveryId}=facultyAssignmentParamsSchema.parse(rawParams);
   const input=facultyAssignmentCommandSchema.parse(rawInput);
   const membership=context.membership;
-  if(!membership||!hasActiveMembership(context)||!hasMembershipRole(context,"FACULTY"))
+  if(!membership||!hasActiveMembership(context)||
+     !(hasMembershipRole(context,"FACULTY")||hasMembershipRole(context,"COLLEGE_ADMIN")))
     throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
   const delivery=await loadCourseSectionDeliveryScope(deliveryId);
   if(delivery.collegeId!==membership.collegeId||
      !can(context,"courses.read",{collegeId:delivery.collegeId,organizationId:delivery.organizationId}))
     throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
   const actor=await requireDeliveryContentMutation(context,deliveryId);
-  if(actor!=="FACULTY")throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+  const admin=actor==="ADMIN"&&hasMembershipRole(context,"COLLEGE_ADMIN")&&
+    can(context,"courses.manage",{collegeId:delivery.collegeId,organizationId:delivery.organizationId});
+  if(actor!=="FACULTY"&&!admin)
+    throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
   if(input.action==="CREATE"){
     const lesson=await loadCourseLessonScope(input.lessonId);
     if(lesson.offeringId!==delivery.offeringId)
@@ -41,7 +46,7 @@ export async function commandFacultyAssignment(
   }
   const normalizedResources=("resources" in input&&input.resources!==undefined)
     ?await attestFacultyAssignmentResources(context,delivery.collegeId,input.resources,
-      input.action==="EDIT"?input.assignmentId:undefined):undefined;
+      input.action==="EDIT"||input.action==="RESOURCES"?input.assignmentId:undefined):undefined;
   try{
     return await getDb().transaction(async tx=>{
       const [liveDelivery]=await tx.select({id:courseSectionDeliveries.id,endedAt:courseSectionDeliveries.endedAt})
@@ -51,21 +56,30 @@ export async function commandFacultyAssignment(
         throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
       // Recheck persisted actor and teaching rights *inside* the mutation transaction.
       // A stale authenticated context cannot bypass role removal or suspension.
-      const [liveFaculty]=await tx.select({id:courseTeachingAssignments.id})
-        .from(courseTeachingAssignments)
-        .innerJoin(collegeMemberships,eq(collegeMemberships.id,courseTeachingAssignments.membershipId))
-        .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
-          eq(membershipRoles.role,"FACULTY")))
-        .innerJoin(users,eq(users.id,collegeMemberships.userId))
-        .where(and(eq(courseTeachingAssignments.deliveryId,deliveryId),
-          eq(courseTeachingAssignments.membershipId,membership.id),
-          isNull(courseTeachingAssignments.endedAt),
-          eq(collegeMemberships.userId,context.user.id),
-          eq(collegeMemberships.collegeId,delivery.collegeId),
-          eq(collegeMemberships.status,"ACTIVE"),
-          eq(users.platformStatus,"ACTIVE")))
-        .for("share").limit(1);
-      if(!liveFaculty)throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+      if(admin){
+        // An administrator may manage Section resources without being an
+        // assigned teacher. Re-read persisted roles under SHARE locks before
+        // changing the assignment; an old session can never escalate here.
+        await assertPersistedPlatformPermission(tx,context,"courses.manage",{
+          collegeId:delivery.collegeId,organizationId:delivery.organizationId,
+        });
+      }else{
+        const [liveFaculty]=await tx.select({id:courseTeachingAssignments.id})
+          .from(courseTeachingAssignments)
+          .innerJoin(collegeMemberships,eq(collegeMemberships.id,courseTeachingAssignments.membershipId))
+          .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+            eq(membershipRoles.role,"FACULTY")))
+          .innerJoin(users,eq(users.id,collegeMemberships.userId))
+          .where(and(eq(courseTeachingAssignments.deliveryId,deliveryId),
+            eq(courseTeachingAssignments.membershipId,membership.id),
+            isNull(courseTeachingAssignments.endedAt),
+            eq(collegeMemberships.userId,context.user.id),
+            eq(collegeMemberships.collegeId,delivery.collegeId),
+            eq(collegeMemberships.status,"ACTIVE"),
+            eq(users.platformStatus,"ACTIVE")))
+          .for("share").limit(1);
+        if(!liveFaculty)throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
+      }
       let result:typeof courseAssignments.$inferSelect;
       let changedFields:string[]=[];
       let eventType:string;
@@ -90,7 +104,8 @@ export async function commandFacultyAssignment(
           throw new CoursesServiceError("FACULTY_ASSIGNMENT_STALE_VERSION");
         if(current.status==="ARCHIVED")
           throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
-        const storedResources=input.action==="EDIT"&&normalizedResources!==undefined
+        const storedResources=(input.action==="EDIT"||input.action==="RESOURCES")&&
+          normalizedResources!==undefined
           ?await tx.select().from(courseAssignmentResources).where(
             eq(courseAssignmentResources.assignmentId,current.id))
             .orderBy(courseAssignmentResources.position):[];
@@ -109,6 +124,15 @@ export async function commandFacultyAssignment(
           if(facultyAssignmentEditLockedBySubmissions(changedFields,Boolean(submission)))
             throw new CoursesServiceError("ASSIGNMENT_HAS_SUBMISSIONS");
           eventType=ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_UPDATED;
+        }else if(input.action==="RESOURCES"){
+          if(!["DRAFT","PUBLISHED"].includes(current.status))
+            throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
+          if(normalizedResources===undefined||
+             !facultyResourcesChanged(storedResources,normalizedResources))
+            throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
+          if(submission)throw new CoursesServiceError("ASSIGNMENT_HAS_SUBMISSIONS");
+          changedFields=["resources"];
+          eventType=ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_UPDATED;
         }else if(input.action==="PUBLISH"){
           if(current.status!=="DRAFT"||!current.dueAt||current.dueAt.getTime()<=Date.now())
             throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
@@ -125,7 +149,8 @@ export async function commandFacultyAssignment(
             maxPoints:input.maxPoints,updatedAt:now,
             ...(input.allowedMethods&&facultyAssignmentMethodsChanged(current.allowedSubmissionMethods,input.allowedMethods)
               ?{allowedSubmissionMethods:input.allowedMethods}:{}),
-          }:{status:input.action==="PUBLISH"?"PUBLISHED":"ARCHIVED",updatedAt:now},
+          }:input.action==="RESOURCES"?{updatedAt:now}:
+            {status:input.action==="PUBLISH"?"PUBLISHED":"ARCHIVED",updatedAt:now},
         ).where(and(eq(courseAssignments.id,current.id),
           eq(courseAssignments.deliveryId,deliveryId),
           eq(courseAssignments.status,current.status),
@@ -136,7 +161,8 @@ export async function commandFacultyAssignment(
         result=updated;
       }
       if(normalizedResources!==undefined&&(input.action==="CREATE"||
-        (input.action==="EDIT"&&changedFields.includes("resources")))){
+        ((input.action==="EDIT"||input.action==="RESOURCES")&&
+          changedFields.includes("resources")))){
         await replaceFacultyAssignmentResources(tx,result.id,context.user.id,
           normalizedResources);
       }
@@ -144,7 +170,8 @@ export async function commandFacultyAssignment(
         eventType:eventType as typeof ACTIVITY_EVENT_TYPES[keyof typeof ACTIVITY_EVENT_TYPES],
         collegeId:delivery.collegeId,organizationId:delivery.organizationId,
         subjectType:"course_assignment",subjectId:result.id,
-        subjectLabel:result.title,summary:"Faculty assignment "+input.action.toLowerCase(),
+        subjectLabel:result.title,summary:(admin?"College Admin":"Faculty")+
+          " assignment "+input.action.toLowerCase(),
         metadata:{deliveryId,assignmentId:result.id,changedFields},
         groupKey:"course-delivery:"+deliveryId,
         dedupeKey:"faculty-assignment:"+result.id+":"+input.action+":"+randomUUID(),

@@ -1,10 +1,14 @@
-/** A scheduled shortlist round changes withdrawal from self-service to
- * a placement-cell request. An already recorded offer is a separate lock. */
+/** Self-withdrawal is permitted only before the placement cell progresses
+ * a submitted application beyond review. Screened/shortlisted candidates
+ * must request a review even when the interview planner has no slot yet. */
 export function learnerWithdrawalMode(input:{
  applicationStatus:string;
  scheduledRoundCount:number;
  screeningStatus:string;
 }):"UNAVAILABLE"|"SELF"|"REQUEST"{
- if(input.applicationStatus!=="SUBMITTED")return "UNAVAILABLE";
- return input.scheduledRoundCount>0 ? "REQUEST" : "SELF";
+ if(input.applicationStatus!=="SUBMITTED"||input.screeningStatus==="REJECTED")
+  return "UNAVAILABLE";
+ if(input.scheduledRoundCount>0||input.screeningStatus==="SHORTLISTED")
+  return "REQUEST";
+ return "SELF";
 }

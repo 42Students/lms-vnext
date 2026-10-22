@@ -42,6 +42,27 @@ import {
   type PlacementEligibilityPolicyInput,
 } from "./validation";
 
+/** G2-18-023-045: legacy eligibility columns and their scoped vNext reads.
+ * A job's academic criterion is not the college's offer-limit policy;
+ * a pre-placement talk or college exam block is an event, not a PASS check.
+ * Student identity is always the active membership in the job's college.
+ */
+export const LEGACY_PLACEMENT_ELIGIBILITY_FIELD_CROSSWALK=[
+ {legacy:"job.eligibilityCriteria.minimumCgpa",source:"placement_job_eligibility_policies.min_cgpa_hundredths"},
+ {legacy:"job.eligibilityCriteria.minimumTenthPercent",source:"placement_job_eligibility_policies.min_tenth_pct_basis_points"},
+ {legacy:"job.eligibilityCriteria.minimumTwelfthPercent",source:"placement_job_eligibility_policies.min_twelfth_pct_basis_points"},
+ {legacy:"job.eligibilityCriteria.maximumBacklogs",source:"placement_job_eligibility_policies.max_active_backlogs"},
+ {legacy:"job.eligibilityCriteria.maximumGapYears",source:"placement_job_eligibility_policies.max_gap_years"},
+ {legacy:"student.academicRecord",source:"placement_candidate_academic_evidence (verified source and missing state)"},
+ {legacy:"student.placementRegistration",source:"college_memberships plus learner placement participation"},
+ {legacy:"student.department/program/batch",source:"learner_program_enrollments -> cohorts/sections and policy target IDs"},
+ {legacy:"student.eligibilityOverride",source:"placement_eligibility_overrides INCLUDE/EXCLUDE with audited reason"},
+ {legacy:"college.placementRules",source:"placement_college_rules; effective per-cohort placement_batch_lifecycles.rules_override"},
+ {legacy:"student.heldOffers",source:"placement_offers plus joining outcomes, scoped to learner membership"},
+ {legacy:"calendar.prePlacementTalk",source:"placement_job_rounds.kind=TALK, learner-visible jobs only"},
+ {legacy:"calendar.examBlock",source:"placement_tpo_blocked_dates scoped to college and IST date range"},
+] as const;
+
 type Client = ReturnType<typeof getDb>;
 type Tx = Parameters<Parameters<Client["transaction"]>[0]>[0];
 

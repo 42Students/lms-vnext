@@ -12,6 +12,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { DataTable } from "@/components/ui/data-table";
 import { Dialog } from "@/components/ui/dialog";
+import { CollegeTermStaffingReport } from "./college-term-staffing-report";
 import { TERM_MAPPING_COPY, collegeTermCourseAddSchema, collegeTermCourseUpdateSchema, collegeTermMappingErrorMessage, parseTermCourseCreditsDraft } from "@/modules/academics/college-term-mapping-model";
 
 type MappingRead = {
@@ -23,7 +24,7 @@ type MappingRead = {
   }[];
 };
 
-export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
+export function CollegeTermMappingManager({ data, readOnly = false }: { data: MappingRead; readOnly?: boolean }) {
   const router = useRouter();
   const pathname=usePathname();
   const programsHref=pathname.startsWith("/admin")?"/admin/programs":"/college/programs";
@@ -87,6 +88,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   }
 
   async function send() {
+    if (readOnly) return;
     if (!confirm || inFlight.current) return;
     inFlight.current=true;
     start(async () => {
@@ -163,7 +165,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   const filteredCourses = availableCourses.filter(course =>
     (course.name + " " + course.code).toLowerCase().includes(courseQuery.toLowerCase()));
   function toggleCourse(courseId: string, checked: boolean) {
-    if (mappingStale || refreshing || inFlight.current) return;
+    if (readOnly || mappingStale || refreshing || inFlight.current) return;
     setFieldErrors(current => ({ ...current, courses: undefined }));
     setError(null);
     setDraftByTerm(current => ({
@@ -176,6 +178,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
 
   function prepare(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (readOnly) return;
     if (!programId || !termId) {
       setFieldErrors({ program: !programId ? "Select a program" : undefined,
         term: !termId ? "Select a semester" : undefined });
@@ -197,23 +200,26 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
     setConfirm({ type: "ADD", body: { mappings: inputs.flatMap(item => item.success ? [item.data] : []) } });
   }
 
-  function updateMapping(id: string, creditsValue: string, position: number,
+  function updateMapping(id: string, creditsValue: string | null, position: number,
     editFields?: { type: "CORE" | "ELECTIVE"; isMandatory: boolean }) {
+    if (readOnly) return;
     if (inFlight.current) return;
     const previous = data.mapped.find(row => row.id === id);
     if (!previous || !editableTerm || previous.termId !== termId) return;
-    const creditsResult = parseTermCourseCreditsDraft(creditsValue);
-    if (!creditsResult.success) {
-      setFieldErrors({ credits: creditsValue.trim() ? "Enter credits from 0 to 30" : "Enter credits" });
+    // Reordering leaves historical nullable credits untouched; only the
+    // explicit editor parses and changes the credits field.
+    const creditsResult = creditsValue === null ? null : parseTermCourseCreditsDraft(creditsValue);
+    if (creditsResult && !creditsResult.success) {
+      setFieldErrors({ credits: creditsValue?.trim() ? "Enter credits from 0 to 30" : "Enter credits" });
       setError("Enter valid credits before saving this course mapping.");
       return;
     }
     const peers = orderedPeers(previous);
     const oldPosition = peers.findIndex(row => row.id === id) + 1;
-    const changedCredits = creditsResult.data !== (previous.credits ?? 3);
+    const changedCredits = creditsResult?.success === true && creditsResult.data !== previous.credits;
     const parsed = collegeTermCourseUpdateSchema.safeParse({
       position,
-      ...(changedCredits ? { credits: creditsResult.data } : {}),
+      ...(changedCredits && creditsResult?.success ? { credits: creditsResult.data } : {}),
       ...(editFields && editFields.type !== previous.type ? { type: editFields.type } : {}),
       ...(editFields && editFields.isMandatory !== (previous.isMandatory ?? previous.type === "CORE")
         ? { isMandatory: editFields.isMandatory } : {}),
@@ -401,7 +407,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
             <Button type="button" variant="ghost" size="icon-sm"
               aria-label={"Drag to reorder " + (row.courseName || row.courseId) + ". Press Arrow Up or Arrow Down to move."}
               aria-keyshortcuts="ArrowUp ArrowDown"
-              draggable={!pending && editableTerm} disabled={pending || !editableTerm}
+              draggable={!pending && editableTerm && !readOnly} disabled={pending || !editableTerm}
               onDragStart={event => { setDraggedId(row.id); event.dataTransfer.effectAllowed="move"; }}
               onDragEnd={() => setDraggedId(null)}
               onDragOver={event => { if (draggedId && draggedId !== row.id) event.preventDefault(); }}
@@ -409,7 +415,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                 event.preventDefault();
                 const source = currentMappings.find(item => item.id === draggedId);
                 if (source && source.termId === row.termId && source.id !== row.id) {
-                  updateMapping(source.id, String(source.credits ?? 3), orderedPeers(row).findIndex(item => item.id === row.id) + 1);
+                  updateMapping(source.id, null, orderedPeers(row).findIndex(item => item.id === row.id) + 1);
                 }
                 setDraggedId(null);
               }}
@@ -420,7 +426,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                   const index = orderedPeers(row).findIndex(item => item.id === row.id);
                   const next = index + step;
                   if (next >= 0 && next < currentMappings.length)
-                    updateMapping(row.id, String(row.credits ?? 3), next + 1);
+                    updateMapping(row.id, null, next + 1);
                 }
               }} className={draggedId === row.id ? "cursor-grabbing bg-muted" : "cursor-grab"}>
               <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
@@ -435,7 +441,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                 event.preventDefault();
                 const source = currentMappings.find(item => item.id === draggedId);
                 if (source && source.termId === row.termId && source.id !== row.id)
-                  updateMapping(source.id, String(source.credits ?? 3), orderedPeers(row).findIndex(item => item.id === row.id) + 1);
+                  updateMapping(source.id, null, orderedPeers(row).findIndex(item => item.id === row.id) + 1);
                 setDraggedId(null);
               }}>
               <span className="font-semibold">{row.courseName?.trim() || data.courses.find(c => c.id === row.courseId)?.name || "Course " + row.courseId}</span>
@@ -468,12 +474,12 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                 <Button className="min-h-11 min-w-11 md:min-h-9 md:min-w-9" variant="secondary" type="button" disabled={pending || !editableTerm || orderedPeers(row)[0]?.id===row.id}
                   
                   aria-label={"Move "+row.courseName+" up"}
-                  onClick={()=>updateMapping(row.id,row.credits===null?"3":String(row.credits),
+                  onClick={()=>updateMapping(row.id,null,
                     orderedPeers(row).findIndex(item=>item.id===row.id))}>↑</Button>
                 <Button className="min-h-11 min-w-11 md:min-h-9 md:min-w-9" variant="secondary" type="button" disabled={pending || !editableTerm || orderedPeers(row).at(-1)?.id===row.id}
                   
                   aria-label={"Move "+row.courseName+" down"}
-                  onClick={()=>updateMapping(row.id,row.credits===null?"":String(row.credits),
+                  onClick={()=>updateMapping(row.id,null,
                     orderedPeers(row).findIndex(item=>item.id===row.id)+2)}>↓</Button>
                 <Button className="min-h-11 md:min-h-9" size="sm" variant="danger" disabled={pending || !editableTerm}
                   aria-label={"Remove " + (row.courseName || row.courseId) + " from semester"}
@@ -570,5 +576,6 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
       pending={pending} onConfirm={send}>
       {error ? <p role="alert" className="min-w-0 break-words text-sm text-[var(--lms-error-text)]">{error}</p> : null}
     </ConfirmDialog>
+    <CollegeTermStaffingReport termId={termId}/>
   </section>;
 }

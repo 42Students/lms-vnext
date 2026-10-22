@@ -70,3 +70,22 @@ export function planInterviewDay(input:{startsAt:string;durationMinutes:number;g
   return {room,startsAt:begins,endsAt:ends};
  }));
 }
+
+/** The old scheduler's default candidate transfer buffer is fifteen minutes;
+ * this applies across all applications and linked college memberships.
+ * Physical room conflict checks still use exact windows.
+ */
+export const LEGACY_INTERVIEW_CANDIDATE_BUFFER_MINUTES=15;
+export function candidateInterviewBufferedBounds(
+ startsAt:Date,endsAt:Date,
+ bufferMinutes=LEGACY_INTERVIEW_CANDIDATE_BUFFER_MINUTES,
+){
+ const start=startsAt.getTime(),end=endsAt.getTime();
+ if(!Number.isFinite(start)||!Number.isFinite(end)||end<=start||
+    !Number.isSafeInteger(bufferMinutes)||bufferMinutes<0||bufferMinutes>1440)
+  throw new RangeError("Invalid candidate interview window");
+ return {
+  earliestConflictEnd:new Date(start-bufferMinutes*60_000),
+  latestConflictStart:new Date(end+bufferMinutes*60_000),
+ };
+}

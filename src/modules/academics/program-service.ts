@@ -6,6 +6,8 @@ import {
   eq,
   isNull,
   ne,
+  or,
+  ilike,
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -84,10 +86,11 @@ async function assertProgramUnique(
   const db = getDb();
 
   if (input.name) {
+    // Reserve names across archived rows: legacy case-insensitive identity
+    // survives soft deletion. Reusing one would make a future restore ambiguous.
     const conditions = [
       eq(programs.departmentId, departmentId),
-      eq(programs.status, "ACTIVE"),
-      sql<boolean>`lower(${programs.name}) = ${input.name.toLowerCase()}`,
+      sql<boolean>`lower(${programs.name}) = ${input.name.trim().toLowerCase()}`,
     ];
     if (excludeProgramId) {
       conditions.push(ne(programs.id, excludeProgramId));
@@ -107,10 +110,12 @@ async function assertProgramUnique(
   }
 
   if (input.code) {
+    // Department-local codes are immutable identifiers even when archived.
+    // The active-only SQL index still protects concurrent active creations;
+    // preflight additionally refuses recycling an archived code.
     const conditions = [
       eq(programs.departmentId, departmentId),
-      eq(programs.status, "ACTIVE"),
-      sql<boolean>`lower(${programs.code}) = ${input.code.toLowerCase()}`,
+      sql<boolean>`lower(${programs.code}) = ${input.code.trim().toLowerCase()}`,
     ];
     if (excludeProgramId) {
       conditions.push(ne(programs.id, excludeProgramId));
@@ -225,7 +230,7 @@ export async function listPrograms(
 export async function listProgramsPage(
   context: RequestContext,
   collegeIdInput: string,
-  raw: { departmentId?: string | null; page?: number; pageSize?: number; includeArchived?: boolean } = {},
+  raw: { departmentId?: string | null; q?: string; page?: number; pageSize?: number; includeArchived?: boolean } = {},
 ) {
   const collegeId = collegeIdSchema.parse(collegeIdInput);
   const college = await loadAcademicCollegeScope(collegeId);
@@ -240,9 +245,15 @@ export async function listProgramsPage(
   }
   const page = Math.max(1, Math.min(10000, Math.trunc(raw.page ?? 1) || 1));
   const pageSize = Math.max(1, Math.min(100, Math.trunc(raw.pageSize ?? 20) || 20));
+  const q = (raw.q ?? "").trim();
+  if (q.length > 100) throw new Error("Invalid program search");
+  const escaped = q.replace(/[\\%_]/g, "\\$&");
+  const searchPattern = `%${escaped}%`;
   const conditions = and(
     eq(departments.collegeId, collegeId),
     departmentId ? eq(programs.departmentId, departmentId) : undefined,
+    q ? or(ilike(programs.name, searchPattern), ilike(programs.code, searchPattern),
+      ilike(departments.name, searchPattern)) : undefined,
     raw.includeArchived ? undefined : isNull(departments.archivedAt),
     raw.includeArchived ? undefined : eq(programs.status, "ACTIVE"),
   );

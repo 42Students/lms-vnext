@@ -1,3 +1,9 @@
 # Notice for lane 12 (read and apply FIRST)
 
-ORDER: 1) docs/orchestrator/queues/clone/lane-12-ci10.md (current CI failures; finish anything unticked). 2) docs/orchestrator/queues/clone/lane-12-verify2b.md: verification round 2, REBALANCED so every lane has ~10 packets; it REPLACES lane-12-verify2.md and any "help lane X" instruction. Packet paths may name another lane; you own them now. Verify each row against the old LMS source and vNext code and fix real gaps. Keep every test passing; same old-LMS look and wording but accessible; never silence errors (no any, @ts-ignore, @ts-expect-error, eslint-disable, .skip, guard waivers). Push only to chatgpt/chat-12-b after every packet. Never wait for CI.
+HARD DEADLINE 19:15 IST (13:45 UTC) today: after that, push your last finished packet and STOP (dev deploy follows).
+
+FAST MODE until then:
+1) Finish anything unticked in docs/orchestrator/queues/clone/lane-12-ci10.md (and lane-12-ci11.md if it appears).
+2) docs/orchestrator/queues/clone/lane-12-verify2b.md: for each row, if vNext already matches the old LMS, tick it immediately; fix only REAL gaps, smallest correct change. Do not write long notes.
+3) Push to chatgpt/chat-12-b after EVERY packet (unpushed work is lost at the deadline). Never wait for CI.
+Rules: keep every test passing; keep TypeScript valid (keep exports other files import; parse unknown bodies with the existing zod schema); never silence errors (no any, @ts-ignore, @ts-expect-error, eslint-disable, .skip); never add src/app/(authenticated)/mentor/courses/[courseId]/page.tsx.

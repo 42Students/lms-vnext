@@ -595,13 +595,15 @@ export function FacultyAssignmentReview({
   const mutationInFlight=useRef(false);
   const onBusyChange=(busy:boolean)=>{mutationInFlight.current=busy;setMutationBusy(busy);};
   const [bulkBusy,setBulkBusy]=useState(false);
+  const bulkInFlight=useRef(false);
   const [bulkConfirm,setBulkConfirm]=useState(false);
   const [bulkOnlyFailed,setBulkOnlyFailed]=useState(false);
   const [bulkFailedIds,setBulkFailedIds]=useState<string[]>([]);
   const [bulkReceipt,setBulkReceipt]=useState("");
   const [bulkWarning,setBulkWarning]=useState(false);
   async function publishGradedBatch(){
-   if(bulkBusy||mutationInFlight.current)return;
+   if(bulkInFlight.current||mutationInFlight.current)return;
+   bulkInFlight.current=true;
    setBulkBusy(true);setBulkReceipt("");setBulkWarning(false);
    try{
     const result=await fetch("/api/courses/assignments/"+encodeURIComponent(assignmentId)+"/publish-grades",{
@@ -628,7 +630,7 @@ export function FacultyAssignmentReview({
    }catch(reason){
     setBulkWarning(true);
     setBulkReceipt("Failed to publish grades. "+(reason instanceof Error?reason.message:"Refresh and retry."));
-   }finally{setBulkBusy(false);setBulkConfirm(false);}
+   }finally{bulkInFlight.current=false;setBulkBusy(false);setBulkConfirm(false);}
   }
 
 
@@ -648,7 +650,6 @@ export function FacultyAssignmentReview({
   </div>;
 
   async function load(next: {filter:FacultySubmissionFilter;page:number} = {filter,page}) {
-    if(mutationInFlight.current||bulkBusy)return;
     const sequence = ++loadSequence.current;
     setOpen(true);setError(null);setLoading(true);
     // Preserve the last successful page when an in-place refresh fails.
@@ -692,7 +693,7 @@ export function FacultyAssignmentReview({
         className="max-w-[780px]"
         open={open}
         onOpenChange={(nextOpen)=>{
-          if(!nextOpen&&(mutationInFlight.current||bulkBusy))return;
+          if(!nextOpen&&(mutationInFlight.current||bulkInFlight.current))return;
           if(!nextOpen){loadSequence.current+=1;setLoading(false);}
           setOpen(nextOpen);
         }}
@@ -726,7 +727,7 @@ export function FacultyAssignmentReview({
         value={filter}
         renderPanel={false}
         controlledOnly
-        onValueChange={value => {if(!mutationInFlight.current&&!bulkBusy)void load({filter:value as FacultySubmissionFilter,page:1});}}
+        onValueChange={value => {if(!mutationInFlight.current&&!bulkInFlight.current)void load({filter:value as FacultySubmissionFilter,page:1});}}
         items={SUBMISSION_FILTERS.map(value => ({
           value,
           label: value==="ALL"?"All":value==="UNGRADED"?"Pending":value==="GRADED"?"Graded":"Late",
@@ -757,7 +758,7 @@ export function FacultyAssignmentReview({
             <Select className="min-h-11 text-[var(--lms-font-base)] md:hidden"
               value={selectedSubmissionId??submissions[0].id}
               disabled={mutationBusy||bulkBusy}
-              onChange={event=>{if(!mutationInFlight.current&&!bulkBusy)setSelectedSubmissionId(event.target.value);}}>
+              onChange={event=>{if(!mutationInFlight.current&&!bulkInFlight.current)setSelectedSubmissionId(event.target.value);}}>
               {submissions.map(item=><option key={item.id} value={item.id}>
                 {learnerLabel(item)} · {isSubmissionGraded(item)?"Graded":"Pending"}
               </option>)}
@@ -765,7 +766,7 @@ export function FacultyAssignmentReview({
           </label>
           <Button type="button" size="md" variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-[var(--lms-control-height)]"
             disabled={mutationBusy||bulkBusy||submissions.findIndex(item=>item.id===selectedSubmissionId)<=0}
-            onClick={()=>{if(!mutationInFlight.current&&!bulkBusy)setSelectedSubmissionId(current=>submissions[Math.max(0,submissions.findIndex(item=>item.id===current)-1)].id);}}>
+            onClick={()=>{if(!mutationInFlight.current&&!bulkInFlight.current)setSelectedSubmissionId(current=>submissions[Math.max(0,submissions.findIndex(item=>item.id===current)-1)].id);}}>
             <span className="sr-only">Previous student in selected submission page</span>
             <span aria-hidden="true">Previous</span>
           </Button>
@@ -774,7 +775,7 @@ export function FacultyAssignmentReview({
           </span>
           <Button type="button" size="md" variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-[var(--lms-control-height)]"
             disabled={mutationBusy||bulkBusy||submissions.findIndex(item=>item.id===selectedSubmissionId)>=submissions.length-1}
-            onClick={()=>{if(!mutationInFlight.current&&!bulkBusy)setSelectedSubmissionId(current=>submissions[Math.min(submissions.length-1,submissions.findIndex(item=>item.id===current)+1)].id);}}>
+            onClick={()=>{if(!mutationInFlight.current&&!bulkInFlight.current)setSelectedSubmissionId(current=>submissions[Math.min(submissions.length-1,submissions.findIndex(item=>item.id===current)+1)].id);}}>
             <span className="sr-only">Next student in selected submission page</span>
             <span aria-hidden="true">Next</span>
           </Button>
@@ -790,7 +791,7 @@ export function FacultyAssignmentReview({
             <div className="space-y-1">
               {submissions.map(item=><button key={item.id} type="button"
                 disabled={mutationBusy||bulkBusy}
-                onClick={()=>setSelectedSubmissionId(item.id)}
+                onClick={()=>{if(!mutationInFlight.current&&!bulkInFlight.current)setSelectedSubmissionId(item.id);}}
                 aria-current={item.id===(selectedSubmissionId??submissions[0]?.id)?"true":undefined}
                 className={"flex min-h-11 w-full items-center gap-2 rounded-[var(--lms-control-radius)] p-2 text-left text-sm focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)] "+
                   (item.id===(selectedSubmissionId??submissions[0]?.id)?"bg-primary-subtle text-primary-text":"hover:bg-surface-subtle")}>

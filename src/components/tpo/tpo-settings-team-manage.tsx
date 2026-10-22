@@ -127,7 +127,7 @@ export function TpoSettingsTeamRemove({membershipId,displayName,removable,isSelf
     Owned work: {impact.drives} live drives, {impact.companies} companies,
     {impact.recruiterLeads} recruiter leads and {impact.followups} follow-ups.
    </p>:null}
-   {ownedWork>0?<InlineNotice tone="warning"
+   {ownedWork>0?<InlineNotice tone="info"
     message="Hand over this member’s work to another active placement team member before removing them. Then choose Hand over and remove again to recheck ownership."/>:
     <p className="text-sm">No owned work remains. Confirm to remove this team assignment; existing messages remain recorded.</p>}
    {error?<InlineNotice tone="error" message={error}/>:null}

@@ -3,6 +3,8 @@ import {z} from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import {hasMembershipRole} from "@/modules/identity/context";
+import {listLearnerPlacementJobs} from "@/modules/placements/learner-job-service";
 import {
   createPlacementJob,
   listPlacementJobs,
@@ -38,6 +40,10 @@ const searchInput=z.object({
  status:z.enum(["ALL","DRAFT","PUBLISHED","CLOSED","CANCELLED","ARCHIVED"]).default("ALL"),
  sort:z.enum(["POSTED_DESC","POSTED_ASC","DEADLINE_ASC","DEADLINE_DESC","TITLE_ASC"]).default("POSTED_DESC"),
  applicationMode:z.enum(["ALL","INTERNAL","HYBRID","EXTERNAL_ONLY"]).default("ALL"),
+ jobType:z.string().trim().max(100).default(""),
+ programId:z.string().uuid().optional(),
+ deptId:z.string().uuid().optional(),
+ learnerId:z.string().uuid().optional(),
  page:z.coerce.number().int().min(0).max(9999).default(0),
  size:z.coerce.number().int().min(1).max(100).default(50),
 }).strict();
@@ -58,20 +64,67 @@ export async function GET(request: Request) {
       return NextResponse.json({error:"INVALID_SEARCH_MODE",message:"Choose a valid job search mode."},
         {status:400});
     if(requestedMode==="search"){
+      const supported=new Set(["collegeId","mode","query","q","status","sort",
+        "applicationMode","page","limit","size","jobType","programId",
+        "deptId","departmentId","learnerId"]);
+      if([...url.searchParams.keys()].some(key=>!supported.has(key)||
+         url.searchParams.getAll(key).length!==1)||
+         (url.searchParams.has("query")&&url.searchParams.has("q"))||
+         (url.searchParams.has("deptId")&&url.searchParams.has("departmentId"))||
+         (url.searchParams.has("limit")&&url.searchParams.has("size")))
+        return NextResponse.json({error:"INVALID_JOB_SEARCH",
+          message:"Choose one valid value for each job search filter."},{status:400});
       const parsed=searchInput.safeParse({
         mode:"search",q:url.searchParams.get("query")??url.searchParams.get("q")??"",
         status:url.searchParams.get("status")??"ALL",
         sort:url.searchParams.get("sort")??"POSTED_DESC",
         applicationMode:url.searchParams.get("applicationMode")??"ALL",
+        jobType:url.searchParams.get("jobType")??"",
+        programId:url.searchParams.get("programId")??undefined,
+        deptId:url.searchParams.get("deptId")??url.searchParams.get("departmentId")??undefined,
+        learnerId:url.searchParams.get("learnerId")??undefined,
         page:url.searchParams.get("page")??0,size:url.searchParams.get("limit")??
           url.searchParams.get("size")??50,
       });
       if(!parsed.success)return NextResponse.json({error:"INVALID_JOB_SEARCH",
         message:"Choose valid job search filters and retry."},{status:400});
+      if(parsed.data.learnerId){
+        // Legacy learnerId is never an impersonation switch. Its only safe
+        // equivalent is the active learner's own role-and-college feed.
+        if(!context.membership||!hasMembershipRole(context,"LEARNER")||
+           parsed.data.learnerId!==context.membership.id)
+          return NextResponse.json({error:"FORBIDDEN"},{status:403});
+        if(parsed.data.programId||parsed.data.deptId)
+          return NextResponse.json({error:"INVALID_JOB_SEARCH",
+            message:"Learner program and department come from your active enrollment."},
+            {status:400});
+        const own=await listLearnerPlacementJobs(context);
+        const match=parsed.data.q.toLocaleLowerCase("en");
+        const filtered=own.filter(item=>
+          (parsed.data.status==="ALL"||parsed.data.status==="PUBLISHED")&&
+          (parsed.data.applicationMode==="ALL"||
+            item.job.applicationMode===parsed.data.applicationMode)&&
+          (!parsed.data.jobType||item.job.jobTypeLabel?.toLowerCase()===
+            parsed.data.jobType.toLowerCase())&&
+          (!match||item.job.title.toLocaleLowerCase("en").includes(match)||
+            item.company.name.toLocaleLowerCase("en").includes(match)));
+        const ordered=parsed.data.sort==="TITLE_ASC"?
+          [...filtered].sort((a,b)=>a.job.title.localeCompare(b.job.title)):
+          parsed.data.sort==="POSTED_ASC"?[...filtered].reverse():filtered;
+        const begin=parsed.data.page*parsed.data.size;
+        const subset=ordered.slice(begin,begin+parsed.data.size);
+        return NextResponse.json({success:true,content:subset,jobs:subset,
+          message:LEGACY_JOB_SEARCH_COMPATIBILITY.resultCopy.search,
+          source:"OWN_LEARNER_SCOPE",page:parsed.data.page,size:parsed.data.size,
+          totalElements:ordered.length,totalPages:Math.ceil(ordered.length/parsed.data.size),
+          empty:subset.length===0,retryable:false},
+          {headers:{"Cache-Control":"private, no-store"}});
+      }
       const page=await listPlacementJobsPage(context,collegeId,{
         q:parsed.data.q,status:parsed.data.status,sort:parsed.data.sort,
-        applicationMode:parsed.data.applicationMode,page:parsed.data.page+1,
-        pageSize:[10,20,50,100].includes(parsed.data.size)?parsed.data.size:50,
+        applicationMode:parsed.data.applicationMode,
+        jobType:parsed.data.jobType,programId:parsed.data.programId,deptId:parsed.data.deptId,
+        page:parsed.data.page+1,pageSize:parsed.data.size,
       });
       return NextResponse.json({
         success:true,content:page.items,jobs:page.items,
@@ -91,7 +144,15 @@ export async function GET(request: Request) {
     // Never reinterpret a failed database read as an empty job catalog.
     const response=apiErrorResponse(error);
     response.headers.set("Cache-Control","private, no-store");
-    if(response.status>=500)response.headers.set("Retry-After","5");
+    if(response.status>=500){
+      response.headers.set("Retry-After","5");
+      // Differentiate a transient failed read from a genuinely empty search.
+      return NextResponse.json({
+        error:"JOB_SEARCH_UNAVAILABLE",
+        message:"Job search could not be loaded. Retry this search.",
+        retryable:true,requestId:response.headers.get("x-request-id"),
+      },{status:response.status,headers:response.headers});
+    }
     return response;
   }
 }

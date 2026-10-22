@@ -40,6 +40,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
   const [discardOpen,setDiscardOpen]=useState(false);
   const [discardSection,setDiscardSection]=useState<ProfileSection|null>(null);
   const formRef=useRef<HTMLFormElement>(null);
+  const sectionSaveIntent=useRef<ProfileSection|null>(null);
   const [pendingNavigation,setPendingNavigation]=useState<string|null>(null);
   const [editableSection,setEditableSection]=useState<ProfileSection|null>(null);
   const dirty=JSON.stringify(profile)!==JSON.stringify(savedSnapshot.current);
@@ -140,8 +141,8 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
       {editableSection===section?<div className="flex flex-wrap gap-2">
         <Button type="button" variant="secondary" disabled={saving}
           onClick={()=>cancelSection(section)} className="min-h-11 md:min-h-9">Cancel</Button>
-        <Button type="button" variant="primary" disabled={saving||!dirty} loading={saving}
-          onClick={()=>formRef.current?.requestSubmit()} className="min-h-11 md:min-h-9">Save</Button>
+        <Button type="button" variant="primary" disabled={saving||!sectionChanged(section)} loading={saving}
+          onClick={()=>{sectionSaveIntent.current=section;formRef.current?.requestSubmit();}} className="min-h-11 md:min-h-9">Save</Button>
       </div>:null}
     </header>;
   }
@@ -162,25 +163,17 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
     }}));setSaved(false);
   }
   function additionalPhone(value:string){
+    // The legacy Contacts editor accepts digits only and caps alternate
+    // phone numbers at 15 digits; preserve that interaction on input.
+    const digits=value.replace(/\D/g,"").slice(0,15);
     setProfile(current=>({...current,contacts:{...current.contacts,
-      alternatePhone:value,contactPhone:value}}));setSaved(false);
+      alternatePhone:digits,contactPhone:digits}}));setSaved(false);
   }
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if(saving)return;
-    const primaryMobile=profile.contacts.contactMobile?.trim()??"";
-    if(primaryMobile&&!/^\d{10}$/.test(primaryMobile)){
-      setError("Primary contact mobile must contain exactly 10 digits.");return;
-    }
-    const phoneValue=(profile.contacts.contactPhone||profile.contacts.alternatePhone).trim();
-    if(phoneValue&&(!/^\+?[0-9() -]+$/.test(phoneValue)||
-      phoneValue.replace(/\D/g,"").length<10||
-      phoneValue.replace(/\D/g,"").length>15)){
-      setError("Additional phone must contain 10–15 digits.");return;
-    }
-    if(primaryMobile&&phoneValue.replace(/\D/g,"")===primaryMobile){
-      setError("Additional phone must differ from the primary contact mobile.");return;
-    }
+    const requestedSection=sectionSaveIntent.current;
+    sectionSaveIntent.current=null;
     const baseline = savedSnapshot.current;
     const changedSections:ProfileSection[]=[];
     if (profile.displayName!==baseline.displayName ||
@@ -195,17 +188,64 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
       changedSections.push("address");
     if(JSON.stringify(profile.contacts)!==JSON.stringify(baseline.contacts))
       changedSections.push("contacts");
-    if(!changedSections.length)return;
+    const savingSections=requestedSection
+      ? changedSections.filter(section=>section===requestedSection) : changedSections;
+    if(!savingSections.length)return;
+    if(savingSections.includes("contacts")){
+      const primaryMobile=profile.contacts.contactMobile?.trim()??"";
+      if(primaryMobile&&!/^\d{10}$/.test(primaryMobile)){
+        setError("Primary contact mobile must contain exactly 10 digits.");return;
+      }
+      const phoneValue=(profile.contacts.contactPhone||profile.contacts.alternatePhone).trim();
+      if(phoneValue&&(!/^\+?[0-9() -]+$/.test(phoneValue)||
+        phoneValue.replace(/\D/g,"").length<10||
+        phoneValue.replace(/\D/g,"").length>15)){
+        setError("Additional phone must contain 10–15 digits.");return;
+      }
+      if(primaryMobile&&phoneValue.replace(/\D/g,"")===primaryMobile){
+        setError("Additional phone must differ from the primary contact mobile.");return;
+      }
+    }
+    // The schema validates the entire document. Feed it the latest saved
+    // fields for cards we are not writing, so an unrelated unfinished draft
+    // cannot block or accidentally persist this card's Save action.
+    const submittingProfile:VersionedCollegeProfile={
+      ...baseline,profileDocumentVersion:profile.profileDocumentVersion,
+      ...(savingSections.includes("personal")?{
+        displayName:profile.displayName,roleTitle:profile.roleTitle,
+        about:profile.about,photoUrl:profile.photoUrl,
+        personalDetails:profile.personalDetails,
+      }:{}),
+      ...(savingSections.includes("social")?{social:profile.social}:{}),
+      ...(savingSections.includes("address")?{address:profile.address}:{}),
+      ...(savingSections.includes("contacts")?{contacts:profile.contacts}:{}),
+    };
     setSaving(true); setError(""); setSaved(false);
     try {
       const result = await apiFetch<{profile:VersionedCollegeProfile}>("/api/college/profile", {
         method: "PATCH", headers: { "content-type": "application/json" },
         // Only dirty profile cards replace stored cards. The server checks the
         // baseline under a row lock so concurrent updates to other cards survive.
-        body: JSON.stringify({...profile,baseline,changedSections}),
+        body: JSON.stringify({...submittingProfile,baseline,changedSections:savingSections}),
       });
       savedSnapshot.current=result.profile;
-      setProfile(result.profile); setSaved(true);setEditableSection(null);
+      // A card-level Save must never silently publish or discard edits made
+      // earlier in another card. Only the selected section was written.
+      // Overlay still-dirty drafts onto the fresh persisted version/CAS token.
+      setProfile(current=>({
+        ...result.profile,
+        ...(!savingSections.includes("personal")&&changedSections.includes("personal")
+          ? {displayName:current.displayName,roleTitle:current.roleTitle,
+            about:current.about,photoUrl:current.photoUrl,
+            personalDetails:current.personalDetails} : {}),
+        ...(!savingSections.includes("social")&&changedSections.includes("social")
+          ? {social:current.social} : {}),
+        ...(!savingSections.includes("address")&&changedSections.includes("address")
+          ? {address:current.address} : {}),
+        ...(!savingSections.includes("contacts")&&changedSections.includes("contacts")
+          ? {contacts:current.contacts} : {}),
+      }));
+      setSaved(true);setEditableSection(null);
       router.refresh();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : friendlyApiError({}));
@@ -358,11 +398,13 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
           </div>
           <div className="grid min-w-0 gap-4 md:grid-cols-2">
             <Field label="Primary contact mobile (10 digits)" type="tel" maxLength={10}
+              placeholder="Primary Mobile Number (10 digits)"
               value={profile.contacts.contactMobile??""} disabled={editableSection!=="contacts"}
               onChange={v=>detail("contacts","contactMobile",v.replace(/\D/g,""))}/>
             <Field label="Additional email" type="email" maxLength={254} value={profile.contacts.alternateEmail} disabled={editableSection!=="contacts"}
               onChange={v => detail("contacts", "alternateEmail", v)} />
-            <Field label="Additional phone" type="tel" maxLength={40}
+            <Field label="Additional phone" type="tel" maxLength={15}
+              placeholder="Alternate Phone (Optional, 10-15 digits)"
               value={profile.contacts.contactPhone||profile.contacts.alternatePhone} disabled={editableSection!=="contacts"}
               onChange={additionalPhone} />
             <Field label="Contact person" value={profile.contacts.contactPerson} disabled={editableSection!=="contacts"}

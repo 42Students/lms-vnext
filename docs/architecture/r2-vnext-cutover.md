@@ -16,6 +16,8 @@ Legacy public URLs remain historical data and must not silently be reused as sig
 
 `src/modules/storage/r2-config.ts` checks all four required variables only when storage is used. A missing value yields `PRIVATE_STORAGE_NOT_CONFIGURED`; user-facing copy is **“Private document storage is not set up yet. Please try again later.”** Never include missing variable values, account IDs, access keys or the provider response body in end-user error messages. The shared-bucket exception is **development-only**, requires `APP_ENV=development`, a nonempty slash-terminated `R2_PRIVATE_PREFIX`, and no public URL. Production requires an isolated private bucket.
 
+**Provisioning invariant:** `r2.account.id` alone used to govern whether the legacy Spring storage bean existed. vNext needs the four secrets above **all together**; omitting any one disables private storage operations without disabling unrelated LMS pages. Never substitute `R2_BUCKET_NAME`, `R2_PUBLIC_URL` or partial legacy properties. Treat the readiness endpoint as a sanitized configuration check, not a live object-store probe.
+
 `src/modules/storage/s3-client.ts` signs `GET`, `PUT`, `HEAD` and `DELETE` with the R2 `auto` region, AWS4-HMAC-SHA256, `UNSIGNED-PAYLOAD`, RFC-3986 encoded object paths and path-style `/<bucket>/<key>` addressing. The configuration object is lightweight and constructed per operation rather than retaining long-lived singleton credentials. Do **not** cache secrets without a documented rotation strategy; measure overhead before changing this boundary.
 
 

@@ -7,7 +7,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { LoadingState } from "@/components/ui/loading-state";
 import { Input } from "@/components/ui/input";
 import {useEffect,useRef,useState} from "react";
-import {apiFetch} from "@/lib/api-fetch";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {facultyAssignmentMaterialLinkSchema} from "@/modules/courses/learner-assignment-materials-model";
 type Material={id:string;title:string;href:string};
@@ -18,6 +18,7 @@ export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled
  const [title,setTitle]=useState("");
  const [externalUrl,setExternalUrl]=useState("");
  const [loading,setLoading]=useState(true);
+ const [reload,setReload]=useState(0);
  const [pending,setPending]=useState(false);
  const [error,setError]=useState<string|null>(null);
  const [removeId,setRemoveId]=useState<string|null>(null);
@@ -26,6 +27,7 @@ export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled
   "/assignments/"+encodeURIComponent(assignmentId)+"/materials";
  useEffect(()=>{
   const controller=new AbortController();
+  setLoading(true);setError(null);
   fetch(endpoint,{cache:"no-store",signal:controller.signal}).then(async response=>{
    if(!response.ok)throw new Error("Could not load instructor resources.");
    return response.json() as Promise<{available:boolean;links:Material[]}>;
@@ -39,7 +41,7 @@ export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled
    setLoading(false);
   });
   return ()=>controller.abort();
- },[endpoint]);
+ },[endpoint,reload]);
  async function act(input:{action:"ADD";link:{title:string;externalUrl:string}}|
   {action:"REMOVE";materialId:string}){
   if(lock.current||disabled)return;
@@ -52,14 +54,20 @@ export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled
    setLinks(payload.links);
    if(input.action==="ADD"){setTitle("");setExternalUrl("");}
    else setRemoveId(null);
-  }catch(error){setError(error instanceof Error?friendlyApiError({}):"Could not save instructor resources.");}
+  }catch(error){
+   setError(error instanceof FriendlyFetchError?friendlyApiError({status:error.status,code:error.code}):
+    error instanceof Error?error.message:"Could not save instructor resources.");
+  }
   finally{lock.current=false;setPending(false);}
  }
  const parsed=facultyAssignmentMaterialLinkSchema.safeParse({title,externalUrl});
  return <section aria-label="Instructor assignment resources" className="min-w-0 space-y-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-4)] max-[767px]:[&_button]:min-h-11">
   <h3 className="text-base font-semibold">Instructions &amp; resources</h3>
   {loading?<LoadingState label="Loading instructor links…" />:null}
-  {error&&removeId===null?<Alert tone="error">{error}</Alert>:null}
+  {error&&removeId===null?<Alert tone="error" role="alert">{error}</Alert>:null}
+  {!loading&&error&&removeId===null?<Button type="button" variant="secondary"
+    disabled={pending} onClick={()=>setReload(value=>value+1)}
+    className="min-h-11 md:min-h-9">Retry loading resources</Button>:null}
   {!loading&&!error&&links.length===0?<p role="status" className="text-sm text-muted-foreground leading-[22px]">No instructor resources yet.</p>:null}
   <ul className="divide-y divide-border">
    {links.map(link=><li key={link.id} className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] py-[var(--lms-space-3)] text-sm md:flex-row md:items-center md:justify-between">
@@ -82,7 +90,7 @@ export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled
     className="w-full md:w-auto md:justify-self-end md:col-span-2" size="md">Add link</Button>
    </div>
   </Disclosure>:null}
-  <p className="text-xs text-muted-foreground leading-5">Only HTTPS links can be added here. File handouts require verified private storage.</p>
+  <p className="text-xs text-muted-foreground leading-5">Only HTTPS links can be added here. File handouts require verified private storage and cannot be published from a public Drive link.</p>
   <ConfirmDialog
     open={removeId!==null}
     onOpenChange={nextOpen=>{if(!nextOpen&&!pending)setRemoveId(null);}}
@@ -95,7 +103,7 @@ export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled
       if(!removeId||pending)return;
       void act({action:"REMOVE",materialId:removeId});
     }}>
-    {error&&removeId!==null?<Alert tone="error">{error}</Alert>:null}
+    {error&&removeId!==null?<Alert tone="error" role="alert">{error}</Alert>:null}
   </ConfirmDialog>
  </section>;
 }

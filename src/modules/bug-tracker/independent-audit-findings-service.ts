@@ -159,6 +159,8 @@ export async function mutateIndependentAuditFinding(context:RequestContext,exter
    .for("update").limit(1);
   if(!row)return {ok:false as const,reason:"NOT_FOUND"};
   if(row.version!==input.expectedVersion)return {ok:false as const,reason:"STALE_VERSION"};
+  if(input.action==="STATUS"&&row.status===input.status)
+    return {ok:false as const,reason:"STATUS_UNCHANGED"};
   if(input.action==="STATUS"&&!canTransitionIndependentFinding(
     row.status as IndependentFindingStatus,input.status,input.note,
   ))return {ok:false as const,reason:"INVALID_STATUS_TRANSITION"};

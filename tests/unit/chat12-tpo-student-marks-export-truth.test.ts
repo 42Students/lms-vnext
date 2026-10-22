@@ -1,5 +1,6 @@
 import {describe,expect,it} from "vitest";
 import {exportTpoStudentsCsv} from "@/modules/placements/tpo-students-csv";
+import {TPO_STUDENT_EXCEL_COLUMNS} from "@/modules/placements/tpo-students-xlsx";
 import type {TpoStudentRow} from "@/modules/placements/tpo-students-model";
 
 const COLLEGE="aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
@@ -32,6 +33,12 @@ describe("TPO-students-export-TRUTH-02 marks-verification evidence provenance",(
   expect(marksCell({...base,marksVerified:true})).toBe('"Yes"');
   expect(marksCell({...base,marksVerified:false})).toBe('"No"');
   expect(marksCell({...base,cgpa:null,marksVerified:true})).toBe('"Yes"');
+ });
+ it("keeps marks verification truthful in the native XLSX export too",()=>{
+  const marks=TPO_STUDENT_EXCEL_COLUMNS.marksVerified[1];
+  expect(marks({...base,marksVerified:null})).toBe("");
+  expect(marks({...base,marksVerified:true})).toBe("Yes");
+  expect(marks({...base,marksVerified:false})).toBe("No");
  });
  it("keeps marks verification in the extended CSV after the legacy Class column",()=>{
   const [header]=exportTpoStudentsCsv([base]).split("\r\n");

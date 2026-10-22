@@ -104,7 +104,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    }} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">
     Review one by one ({Math.min(20,new Set(candidates.map(row=>row.learnerMembershipId)).size)})
    </Button>
-   <p className="self-center text-xs text-muted-foreground">Review each learner once; any second section remains visible in the queue. Each decision keeps its own audit history.</p>
+   <p role="status" className="self-center text-xs text-muted-foreground">Review one by one includes at most 20 learners from this page only. Use Next under Verification pages to review further requests. Review each learner once; any second section remains visible in the queue. Each decision keeps its own audit history.</p>
   </div>:null}
   {truncated?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-2 text-sm text-warning-text">
     Only the first 1,000 matching source records were inspected. Counts and pages below are lower bounds, not complete college totals.

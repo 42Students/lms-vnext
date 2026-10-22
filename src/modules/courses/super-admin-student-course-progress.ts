@@ -67,12 +67,17 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
    coalesce(nullif(btrim(u.display_name),''),'Student #'||coalesce(m.legacy_membership_id::text,left(m.id::text,8))) as student_name
   from course_section_deliveries d
    join course_offerings o on o.id=d.offering_id
-   join sections s on s.id=d.section_id and s.status='ACTIVE'
+   join sections s on s.id=d.section_id
+    and (${deliveryId}::uuid is not null or s.status='ACTIVE')
     and s.cohort_id=o.cohort_id and s.academic_period_id=o.academic_period_id
    join section_enrollments se on se.section_id=s.id
-    and se.academic_period_id=o.academic_period_id and se.status='ACTIVE'
+    and se.academic_period_id=o.academic_period_id
+    and (se.status='ACTIVE' or
+      (${deliveryId}::uuid is not null and se.status='COMPLETED'))
    join learner_program_enrollments e on e.id=se.learner_enrollment_id
-    and e.cohort_id=o.cohort_id and e.status='ACTIVE'
+    and e.cohort_id=o.cohort_id
+    and (e.status='ACTIVE' or
+      (${deliveryId}::uuid is not null and e.status='COMPLETED'))
    join college_memberships m on m.id=e.membership_id and m.status='ACTIVE'
    join membership_roles role on role.membership_id=m.id and role.role='LEARNER'
    join users u on u.id=m.user_id and u.platform_status='ACTIVE'
@@ -228,9 +233,12 @@ export async function resolveLegacyCourseProgressScope(
  const id=z.union([z.uuid(),z.coerce.number().int().positive()]);
  const courseId=id.parse(raw.courseId);
  const classId=raw.classId==null?null:id.parse(raw.classId);
+ // A legacy class-specific bookmark may refer to a completed term whose
+ // offering has since been archived. Do not drop that historic assignment;
+ // without a class, only live offerings can be inferred unambiguously.
  const filter=and(eq(departments.collegeId,collegeId),
   typeof courseId==="number"?eq(courses.legacyCourseId,courseId):eq(courses.id,courseId),
-  eq(courseOfferings.status,"ACTIVE"));
+  classId===null?eq(courseOfferings.status,"ACTIVE"):undefined);
  if(classId===null){
   const matches=await getDb().selectDistinct({offeringId:courseOfferings.id})
    .from(courseOfferings)
@@ -248,7 +256,11 @@ export async function resolveLegacyCourseProgressScope(
   eq(courseSectionDeliveries.offeringId,courseOfferings.id))
  .innerJoin(sections,eq(sections.id,courseSectionDeliveries.sectionId))
  .where(and(filter,typeof classId==="number"
-  ?eq(sections.legacyClassId,classId):eq(sections.id,classId)))
+  ?eq(sections.legacyClassId,classId):eq(sections.id,classId),
+  // Class and course must have been taught together, not merely offered in
+  // the same semester. Ended associations are valid for historical reporting.
+  sql`exists (select 1 from course_teaching_assignments ta
+    where ta.delivery_id = ${courseSectionDeliveries.id})`))
  .limit(2);
  return matches.length===1?matches[0]!:null;
 }

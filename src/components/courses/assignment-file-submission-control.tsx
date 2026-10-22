@@ -8,6 +8,7 @@ import { MetricBar } from "@/components/ui/metric-bar";
 import uploadStyles from "./legacy-upload-meter.module.css";
 import { Alert } from "@/components/ui/alert";
 import {AssignmentMultipartPartsEditor,type AssignmentLinkPart} from "./assignment-multipart-parts-editor";
+import {ALL_ASSIGNMENT_METHODS,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
   acceptAttributeFor, fileStatusDescriptor, formatFileSize, limitsSummary,
@@ -22,9 +23,10 @@ import {
 } from "./assignment-staged-file-transfer";
 
 export function AssignmentFileSubmissionControl({
-  assignmentId, deliveryId, onBusyChange, onSubmitted, multipartEnabled=false,pdfOnly=false,uploadsAllowed=true,
+  assignmentId, deliveryId, onBusyChange, onSubmitted, multipartEnabled=false,pdfOnly=false,uploadsAllowed=true,allowedMethods=ALL_ASSIGNMENT_METHODS,
 }: { assignmentId: string; deliveryId: string; onBusyChange: (busy: boolean) => void; onSubmitted: () => void;
- multipartEnabled?:boolean;pdfOnly?:boolean;uploadsAllowed?:boolean }) {
+ multipartEnabled?:boolean;pdfOnly?:boolean;uploadsAllowed?:boolean;
+ allowedMethods?:readonly AssignmentMethod[] }) {
   const [selected, setSelected] = useState<File[]>([]);
   const [files, setFiles] = useState<SubmissionFile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -144,6 +146,11 @@ export function AssignmentFileSubmissionControl({
     if (!confirmed || (files.length===0&&!hasWrittenOrLinkParts) ||
       (files.length>0&&!canSubmitStagedFiles(files))) return;
     if(multipartEnabled){
+      if((Boolean(responseText.trim())&&!allowedMethods.includes("WRITTEN_RESPONSE"))||
+         links.some(link=>!allowedMethods.includes(link.kind))){
+        setError("This submission method is not allowed for this assignment.");
+        return;
+      }
       const seen=new Set<string>();
       for(const part of links){
         try{
@@ -212,6 +219,8 @@ export function AssignmentFileSubmissionControl({
     {multipartEnabled?<AssignmentMultipartPartsEditor text={responseText}
       onTextChange={value=>{setResponseText(value);setConfirmed(false);}}
       links={links} onLinksChange={value=>{setLinks(value);setConfirmed(false);}}
+      allowText={allowedMethods.includes("WRITTEN_RESPONSE")}
+      allowedLinkKinds={(["REPOSITORY_LINK","EXTERNAL_LINK"] as const).filter(kind=>allowedMethods.includes(kind))}
       disabled={busy||loading}/>:null}
     {staged.length||hasWrittenOrLinkParts ? <div className="min-w-0 space-y-3 border-t border-border pt-4">
       {hasPending ? <p role="status" className="text-sm text-muted-foreground">Files must pass security checks before final submission.</p> : null}

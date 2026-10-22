@@ -325,7 +325,7 @@ export function AssignmentSubmissionControl({
             </Select>
           </label>:null}
         {submissionType === "FILE" ? <AssignmentFileSubmissionControl
-          assignmentId={assignmentId} deliveryId={deliveryId} onBusyChange={setSubmitting} multipartEnabled={multipartEnabled} uploadsAllowed={fileUploadsEnabled&&mayUpload} pdfOnly={methodsEnabled&&!allowedMethods.includes("FILE_UPLOAD")&&allowedMethods.includes("PDF_UPLOAD")}
+          assignmentId={assignmentId} deliveryId={deliveryId} onBusyChange={setSubmitting} multipartEnabled={multipartEnabled} allowedMethods={allowedMethods} uploadsAllowed={fileUploadsEnabled&&mayUpload} pdfOnly={methodsEnabled&&!allowedMethods.includes("FILE_UPLOAD")&&allowedMethods.includes("PDF_UPLOAD")}
           onSubmitted={() => { setSuccess(true);setFormDirty(false);setDrawerOpen(false); showToast({tone:"success",title:"Assignment submitted successfully."}); router.refresh(); }} /> : submissionType === "TEXT" ? (
           <section className="mt-[var(--lms-space-4)] min-w-0">
             <h3 className="mb-[var(--lms-space-2)] text-xs font-semibold text-body">Written response</h3>

@@ -6,6 +6,8 @@ import {verifyTpoCampaignRecipientToken} from "@/modules/messaging/tpo-campaign-
 import {CampaignUnsubscribeInvalid,unsubscribeTpoCampaignRecipient}
  from "@/modules/messaging/tpo-campaign-unsubscribe-service";
 import {POST} from "@/app/api/public/campaign-unsubscribe/route";
+import {POST as POSTPathCompat} from "@/app/api/public/campaign-unsubscribe/[token]/route";
+import {POST as POSTLegacy} from "@/app/api/v1/public/campaign-unsubscribe/[token]/route";
 
 vi.mock("@/db/client",()=>({getDb:vi.fn()}));
 vi.mock("@/auth/origin",()=>({isSameOriginRequest:vi.fn()}));
@@ -115,4 +117,32 @@ describe("chat-16 explicit public campaign suppression API response and side eff
   expect(verifyUnsubscribeToken).toHaveBeenCalledWith("signed.global-token",expect.any(String),expect.any(Number));
   expect(unsubscribeTpoCampaignRecipient).not.toHaveBeenCalled();
  });
+ it("W1-1 preserves the verified Host when the path-token adapter forwards to the durable suppression writer",async()=>{
+  vi.mocked(isSameOriginRequest).mockImplementation(req=>
+   req.headers.get("host")==="42lms.com" &&
+   req.headers.get("origin")==="https://42lms.com");
+  vi.mocked(verifyTpoCampaignRecipientToken).mockReturnValue({
+   v:1,collegeId:college,campaignId:college,recipientId:college,expiresAt:4102444800000,
+  });
+  vi.mocked(unsubscribeTpoCampaignRecipient).mockResolvedValue({unsubscribed:true});
+  const response=await POSTPathCompat(new Request(
+   "https://42lms.com/api/public/campaign-unsubscribe/signed-token",{
+    method:"POST",headers:{host:"42lms.com",origin:"https://42lms.com"},
+   }),{params:Promise.resolve({token})});
+  expect(response.status).toBe(200);
+  expect(await response.json()).toMatchObject({status:"UNSUBSCRIBED"});
+  expect(unsubscribeTpoCampaignRecipient).toHaveBeenCalledExactlyOnceWith(token);
+ });
+ it("W1-1 never confirms legacy-path unsubscribe when its recipient migration is missing",async()=>{
+  vi.mocked(unsubscribeTpoCampaignRecipient)
+   .mockRejectedValue(new Error("TPO_CAMPAIGNS_NOT_REGISTERED"));
+  const response=await POSTLegacy(new Request(
+   "https://42lms.com/api/v1/public/campaign-unsubscribe/signed-token",{
+    method:"POST",headers:{host:"42lms.com",origin:"https://42lms.com"},
+   }),{params:Promise.resolve({token})});
+  expect(response.status).toBe(503);
+  expect(response.headers.get("cache-control")).toBe("no-store");
+  expect(await response.json()).toMatchObject({error:"SUPPRESSIONS_NOT_READY"});
+ });
+
 });

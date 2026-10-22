@@ -4,6 +4,8 @@ import { Banner } from "@/components/ui/banner";
 import {readOptionalLearnerPlacementSource} from "@/modules/placements/learner-optional-placement-source";
 import { Tabs } from "@/components/ui/tabs";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import type { LearnerPlacementJobItem } from "@/components/placements/learner-placement-jobs";
 import { LearnerPlacementJobDetail } from "@/components/placements/learner-placement-job-detail";
@@ -104,17 +106,53 @@ export default async function LearnerPlacementJobDetailPage({
     </div>
    </div>;
   }
-  const [feed,savedJobs]=await Promise.all([
+  const [feedResult,savedJobsResult,journeyResult]=await Promise.allSettled([
     listLearnerPlacementJobs(context,new Date(),jobId),
     readOptionalLearnerPlacementSource(()=>listOwnPlacementSavedJobs(context)),
+    getOwnLearnerDriveJourney(context,jobId),
   ]);
-  const rows=feed.filter(row=>row.job.id===jobId);
-  const journey=await getOwnLearnerDriveJourney(context,jobId);
+  // A suspended account or revoked placement permission is never a soft
+  // not-found; do not turn an authorization failure into a retriable 404.
+  for(const source of [feedResult,savedJobsResult,journeyResult]){
+    if(source.status==="rejected"&&source.reason instanceof AuthorizationError)
+      throw source.reason;
+  }
+  const failedFeed=feedResult.status==="rejected";
+  const failedJourney=journeyResult.status==="rejected";
+  const savedJobs=savedJobsResult.status==="fulfilled"?savedJobsResult.value:
+    {available:false as const,value:[]};
+  // A failed publication lookup cannot tell us whether the link is revoked.
+  // Keep its error distinct from a genuine absent/unpublished scoped drive.
+  if(failedFeed)return <div className="min-w-0 space-y-4">
+    <PageHeader title="My Placements" description="Opportunities and your application journey"/>
+    {shell}
+    <ErrorState title="We couldn't load this drive"
+      description="The drive could not be checked right now. Retry before assuming it is no longer available."
+      action={<nav aria-label="Drive recovery" className="flex flex-wrap gap-4">
+        <Link href={"/learn/my-placements/jobs/"+encodeURIComponent(jobId)} className="inline-flex min-h-11 items-center font-semibold text-link underline">Retry loading drive</Link>
+        <Link href={back} className="inline-flex min-h-11 items-center font-semibold text-link underline">Browse drives</Link>
+      </nav>}/>
+  </div>;
+  const rows=feedResult.value.filter(row=>row.job.id===jobId);
+  const journey=journeyResult.status==="fulfilled"?journeyResult.value:null;
+  if(rows.length===0&&failedJourney)return <div className="min-w-0 space-y-4">
+    <PageHeader title="My Placements" description="Opportunities and your application journey"/>
+    {shell}
+    <ErrorState title="We couldn't load this drive"
+      description="Drive history could not be checked. Your earlier applications have not been treated as missing."
+      action={<nav aria-label="Drive recovery" className="flex flex-wrap gap-4">
+        <Link href={"/learn/my-placements/jobs/"+encodeURIComponent(jobId)} className="inline-flex min-h-11 items-center font-semibold text-link underline">Retry loading drive</Link>
+        <Link href={back} className="inline-flex min-h-11 items-center font-semibold text-link underline">Browse drives</Link>
+      </nav>}/>
+  </div>;
   if(rows.length===0&&!journey)return <div className="min-w-0 space-y-4">
     <PageHeader title="My Placements" description="Opportunities and your application journey" />
     {shell}
-    <EmptyState title="Job unavailable" description="This drive was not found, is unpublished, or is not available to your selected college."
-      action={<Link href={back} className="inline-flex min-h-11 items-center font-semibold text-link underline">Back to jobs</Link>} />
+    <EmptyState title="This drive can't be shown" description="The link is unavailable, unpublished, or no longer visible to your selected college. No application history for this drive could be found in your account."
+      action={<nav aria-label="Other placement options" className="flex flex-wrap gap-4">
+        <Link href={back} className="inline-flex min-h-11 items-center font-semibold text-link underline">Browse drives</Link>
+        <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 items-center font-semibold text-link underline">My applications</Link>
+      </nav>} />
   </div>;
   return <div className="min-w-0 space-y-5">
    {rows.length===0 && journey ?
@@ -123,6 +161,10 @@ export default async function LearnerPlacementJobDetailPage({
    {/* Published jobs supply their own PageHeader through LearnerPlacementJobDetail.
        Do not duplicate the h1 from this route. */}
    {shell}
+   {failedJourney?<Banner tone="warning" role="alert">
+     Your saved drive history could not be loaded. Current published job information is available; retry before assuming there is no earlier application.
+     <Link href={"/learn/my-placements/jobs/"+encodeURIComponent(jobId)} className="ml-2 font-semibold underline">Retry history</Link>
+   </Banner>:null}
    {!savedJobs.available ? <Banner tone="warning" role="alert">Your saved-job status could not be verified. Bookmark controls may show an outdated selection; refresh before changing saved jobs. Drive details remain available. <Link href={"/learn/my-placements/jobs/"+encodeURIComponent(jobId)} className="font-semibold underline">Retry saved jobs</Link></Banner> : null}
    {rows.length>0 && rows.some(row => Boolean(row.job.jobDescriptionObjectPath)) ?
      <LearnerJobDescriptionLink jobId={jobId}/> : null}

@@ -15,9 +15,13 @@ export async function POST(request:Request,{params}:{
  if(typeof token!=="string"||token.length===0||token.length>2048)
   return NextResponse.json({error:"INVALID_OR_EXPIRED_LINK"},{status:400,headers:{"Cache-Control":"no-store"}});
  const headers=new Headers({"content-type":"application/x-www-form-urlencoded","accept":"application/json"});
+ // Delegation must retain the verified Host. The same-origin write guard
+ // intentionally rejects synthetic requests without that header.
  const origin=request.headers.get("origin"),referer=request.headers.get("referer");
+ const host=request.headers.get("host");
  if(origin)headers.set("origin",origin);
  if(referer)headers.set("referer",referer);
+ if(host)headers.set("host",host);
  const forwarded=new Request(new URL("/api/public/campaign-unsubscribe",request.url),{
   method:"POST",headers,body:new URLSearchParams({token}).toString(),
  });

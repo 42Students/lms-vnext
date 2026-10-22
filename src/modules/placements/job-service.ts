@@ -92,6 +92,7 @@ async function loadJob(jobId: string) {
 
 export type PlacementJobListOptions={
  page?:number;pageSize?:number;q?:string;
+ jobType?:string;programId?:string;deptId?:string;
  status?:"ALL"|"DRAFT"|"PUBLISHED"|"CLOSED"|"CANCELLED"|"ARCHIVED";
  sort?:"TITLE_ASC"|"POSTED_DESC"|"POSTED_ASC"|"DEADLINE_ASC"|"DEADLINE_DESC";
  applicationMode?:"ALL"|"INTERNAL"|"HYBRID"|"EXTERNAL_ONLY";
@@ -153,6 +154,29 @@ function scopedPlacementJobPredicate(collegeId:string,options?:PlacementJobListO
    eq(placementJobs.applicationMode,options.applicationMode):undefined,
   term?or(ilike(placementJobs.title,placementJobSearchPattern(term)),
    ilike(placementCompanies.name,placementJobSearchPattern(term))):undefined,
+  options?.jobType?sql`lower(${placementJobs.jobTypeLabel})=lower(${options.jobType}::text)`:undefined,
+  // Legacy learner program / department filters are restricted to the
+  // requested college before the optional job eligibility policy is applied.
+  options?.programId?sql`exists (
+   select 1 from programs p join departments d on d.id=p.department_id
+    where p.id=${options.programId}::uuid and d.college_id=${collegeId}::uuid
+  ) and (
+   not exists (select 1 from placement_job_eligibility_policies ep
+    where ep.job_id=${placementJobs.id} and cardinality(ep.allowed_program_ids)>0)
+   or exists (select 1 from placement_job_eligibility_policies ep
+    where ep.job_id=${placementJobs.id}
+     and ${options.programId}::uuid=any(ep.allowed_program_ids))
+  )`:undefined,
+  options?.deptId?sql`exists (
+   select 1 from departments d where d.id=${options.deptId}::uuid
+    and d.college_id=${collegeId}::uuid
+  ) and (
+   not exists (select 1 from placement_job_eligibility_policies ep
+    where ep.job_id=${placementJobs.id} and cardinality(ep.allowed_program_ids)>0)
+   or exists (select 1 from placement_job_eligibility_policies ep
+    join programs p on p.id=any(ep.allowed_program_ids)
+    where ep.job_id=${placementJobs.id} and p.department_id=${options.deptId}::uuid)
+  )`:undefined,
  );
 }
 export async function listPlacementJobs(
@@ -167,7 +191,7 @@ export async function listPlacementJobs(
 
   const page=Number.isSafeInteger(options?.page)&&options!.page!>0?
    Math.min(10000,options!.page!):1;
-  const pageSize=[10,20,50,100].includes(options?.pageSize??20)?options?.pageSize??20:20;
+  const pageSize=Number.isSafeInteger(options?.pageSize)&&options!.pageSize!>=1&&options!.pageSize!<=100?options!.pageSize!:20;
   const query=getDb()
     .select({
       job: placementJobs,
@@ -235,7 +259,7 @@ export async function listPlacementJobsPage(
 ){
  const collegeId=createPlacementJobInputSchema.shape.collegeId.parse(collegeIdInput);
  const page=Number.isSafeInteger(options.page)&&options.page!>0?Math.min(10000,options.page!):1;
- const pageSize=[10,20,50,100].includes(options.pageSize??20)?options.pageSize??20:20;
+ const pageSize=Number.isSafeInteger(options.pageSize)&&options.pageSize!>=1&&options.pageSize!<=100?options.pageSize!:20;
  const scoped={...options,page,pageSize};
  const items=await listPlacementJobs(context,collegeId,scoped);
  const [total]=await getDb().select({count:sql<number>`count(*)::int`}).from(placementJobs)
@@ -1196,6 +1220,25 @@ export async function archivePlacementJob(
     }
     if (locked.status === "ARCHIVED") return current;
     const now = new Date();
+    // Legacy deletion cancelled nonterminal interviews. Snapshot booked
+    // applications under locks before clearing their slot assignments;
+    // completed/no-show outcomes remain immutable historical evidence.
+    const booked=await tx.select({
+      id:placementRoundCandidateSlots.id,
+      applicationId:placementRoundCandidateSlots.applicationId,
+    }).from(placementRoundCandidateSlots)
+      .where(and(eq(placementRoundCandidateSlots.jobId,jobId),
+        eq(placementRoundCandidateSlots.status,"BOOKED"),
+        isNull(placementRoundCandidateSlots.interviewOutcome)))
+      .for("update");
+    if(booked.length){
+      await tx.update(placementRoundCandidateSlots).set({
+        status:"CANCELLED",applicationId:null,
+        legacyInterviewStatus:"CANCELLED",
+        changedByUserId:context.user.id,updatedAt:now,
+        version:sql`${placementRoundCandidateSlots.version}+1`,
+      }).where(inArray(placementRoundCandidateSlots.id,booked.map(slot=>slot.id)));
+    }
     await withdrawJobIssuedOffers(tx,jobId,context.user.id,now);
     const [archived] = await tx.update(placementJobs)
       .set({status:"ARCHIVED",archivedAt:now,updatedAt:now,
@@ -1211,7 +1254,8 @@ export async function archivePlacementJob(
       collegeId:archived.collegeId,subjectType:"placement_job",
       subjectId:archived.id,subjectLabel:archived.title,
       summary:"Placement drive archived",
-      metadata:{previousStatus:locked.status,jobId:archived.id},
+      metadata:{previousStatus:locked.status,jobId:archived.id,
+        cancelledBookedInterviews:booked.length},
       groupKey:"placement-job:"+archived.id,
       dedupeKey:"placement-job:"+archived.id+":archived",
     });
@@ -1222,10 +1266,29 @@ export async function archivePlacementJob(
         eq(collegeMemberships.collegeId,archived.collegeId),
       )).where(eq(placementApplications.jobId,archived.id));
     const recipients=[...new Set(applicantUsers.map(row=>row.userId))];
+    const affectedApplicationIds=booked.map(slot=>slot.applicationId)
+      .filter((id):id is string=>typeof id==="string");
+    const interruptedUsers=affectedApplicationIds.length
+      ?await tx.select({userId:collegeMemberships.userId})
+        .from(placementApplications)
+        .innerJoin(collegeMemberships,and(
+          eq(collegeMemberships.id,placementApplications.membershipId),
+          eq(collegeMemberships.collegeId,archived.collegeId),
+        ))
+        .where(and(eq(placementApplications.jobId,archived.id),
+          inArray(placementApplications.id,affectedApplicationIds)))
+      :[];
+    const cancelledUserIds=new Set(interruptedUsers.map(row=>row.userId));
+    // One durable in-app notice per learner, with explicit interview
+    // cancellation copy for the students whose live booking was removed.
+    // No unrequested email is sent.
     for(let i=0;i<recipients.length;i+=200){
       await tx.insert(inAppNotifications).values(recipients.slice(i,i+200).map(userId=>({
-        userId,eventId:event.id,title:"Placement drive archived",
-        body:"The "+archived.title+" drive has been archived.",
+        userId,eventId:event.id,
+        title:cancelledUserIds.has(userId)?"Drive archived · Interview cancelled":"Placement drive archived",
+        body:cancelledUserIds.has(userId)
+          ?"The "+archived.title+" drive has been archived and your scheduled interview was cancelled."
+          :"The "+archived.title+" drive has been archived.",
         actionHref:"/learn/my-placements/applications",
       }))).onConflictDoNothing();
     }
