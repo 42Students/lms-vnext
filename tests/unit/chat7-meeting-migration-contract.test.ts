@@ -7,7 +7,7 @@ const read=(p:string)=>readFileSync(new URL("../../"+p,import.meta.url),"utf8");
 
 describe("MEN-projects-meetings-27 migration and schema parity",()=>{
  const schema=read("src/db/schema/projects.ts");
- const proposal=read("docs/proposed-migrations/chat7-mentor-meeting-facilitation.sql");
+ const proposal=read("docs/proposed-migrations/registered-0135/chat7-mentor-meeting-facilitation.sql");
  it("MEN-projects-meetings-27 registers the same facilitation object check in SQL and Drizzle",()=>{
   expect(schema).toContain('"project_meetings_facilitation_object_ck"');
   expect(schema).toContain("jsonb_typeof(${table.facilitation}) = 'object'");

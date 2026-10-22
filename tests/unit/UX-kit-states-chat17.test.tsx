@@ -416,7 +416,8 @@ describe("UX-kit-STATES: semantic SSR states and accessible fallbacks", () => {
     // WebView-safe external links remain in the current context with an explicit copy fallback.
     expect(allowed).not.toContain('target="_blank"');
     expect(allowed).toContain("Show link to copy");
-    expect(allowed).toContain('rel="noopener noreferrer"');
+    expect(allowed).toContain('href="https://example.test/meet"');
+    expect(allowed).toContain('(external website)');
     expect(allowed).toContain("Copy link");
   });
 

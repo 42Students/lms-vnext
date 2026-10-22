@@ -257,7 +257,7 @@ export default async function HrCalendarPage({
   const view =
     VIEWS.find(
       (candidate) => candidate === requestedView,
-    ) ?? "week";
+    ) ?? "agenda";
 
   // Recruiter legacy calendar starts on Monday and displays seven days by default.
   // Other placement calendars retain their own Sunday-first week conventions.

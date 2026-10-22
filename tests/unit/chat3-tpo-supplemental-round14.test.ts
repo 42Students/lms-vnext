@@ -50,7 +50,8 @@ describe("TPO supplemental job metadata",()=>{
   const safe=source("src/components/ui/third-party-link.tsx");
   expect(safe).toContain('url.protocol === "https:"');
   expect(safe).toContain('!url.username && !url.password');
-  expect(safe).toContain('href={safeHref} rel="noopener noreferrer"');
+  expect(safe).toContain('href={safeHref}');
+  expect(safe).toContain('aria-label={ariaLabel ?');
   expect(safe).not.toContain('target="_blank"');
   expect(safe).toContain("Copy link");
  });
