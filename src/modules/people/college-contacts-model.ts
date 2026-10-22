@@ -42,12 +42,12 @@ export function contactRoleAudienceCompatible(filter:{tab:string;audience:string
  return !(filter.tab==="STUDENT"&&filter.audience==="FACULTY_ONLY")&&
   !(filter.tab==="FACULTY"&&filter.audience==="LEARNER_ONLY");
 }
-export function contactAcademicFiltersCompatible(filter:{teaching:string;teachingRole:string;enrollment:string;cohortId?:string;programId?:string;sectionId?:string;classPresence:string}):boolean {
+export function contactAcademicFiltersCompatible(filter:{teaching:string;teachingRole:string;enrollment:string;cohortId?:string|undefined;programId?:string|undefined;sectionId?:string|undefined;classPresence:string}):boolean {
  if(filter.enrollment==="NONE"&&(filter.cohortId||filter.programId||filter.sectionId||filter.classPresence==="ASSIGNED"))return false;
  if(filter.classPresence==="NONE"&&filter.sectionId)return false;
  return !(filter.teaching==="NONE"&&filter.teachingRole!=="ALL");
 }
-export function contactDateWindowValid(filter:{joinedFrom?:string;joinedThrough?:string}):boolean {
+export function contactDateWindowValid(filter:{joinedFrom?:string|undefined;joinedThrough?:string|undefined}):boolean {
  return !(filter.joinedFrom&&filter.joinedThrough&&filter.joinedFrom>filter.joinedThrough);
 }
 export function contactsIstDayStart(day:string):Date {
@@ -93,8 +93,8 @@ export function clearedCollegeContactsHref(tab:CollegeContactsQuery["tab"]):stri
 }
 export function parseCollegeContactsSearchParams(raw:Record<string,string|string[]|undefined>){
  const entries:[string,string][]=[];
- const legacyView=raw.view;
- const legacyTab=raw.tab;
+ const legacyView=raw["view"];
+ const legacyTab=raw["tab"];
  for(const [key,value] of Object.entries(raw)){
   if(key==="view"||key==="pageNumber")continue;
   if(Array.isArray(value))throw new Error("INVALID_CONTACT_FILTERS");
@@ -106,15 +106,15 @@ export function parseCollegeContactsSearchParams(raw:Record<string,string|string
  if(legacyTab===undefined&&legacyView!==undefined){
   const value=Array.isArray(legacyView)?legacyView[0]:legacyView;
   const lowered=(value??"").toLowerCase();
-  normalized.tab=lowered==="faculty"?"FACULTY":
+  normalized["tab"]=lowered==="faculty"?"FACULTY":
    lowered==="students"||lowered==="student"||lowered==="learner"?"STUDENT":"ALL";
  }
- const legacyPage=raw.pageNumber;
- if(legacyPage!==undefined&&!Array.isArray(legacyPage)&&raw.page===undefined&&/^-?\d+$/.test(legacyPage))
-  normalized.page=String(Math.max(1,Number(legacyPage)+1));
+ const legacyPage=raw["pageNumber"];
+ if(legacyPage!==undefined&&!Array.isArray(legacyPage)&&raw["page"]===undefined&&/^-?\d+$/.test(legacyPage))
+  normalized["page"]=String(Math.max(1,Number(legacyPage)+1));
  // Explicit page controls are strict; legacy pageNumber is adapted above.
- if(normalized.pageSize!==undefined&&/^-?\d+$/.test(normalized.pageSize)&&Number(normalized.pageSize)<=0)
-  normalized.pageSize=String(COLLEGE_CONTACTS_PAGE_SIZE);
+ if(normalized["pageSize"]!==undefined&&/^-?\d+$/.test(normalized["pageSize"])&&Number(normalized["pageSize"])<=0)
+  normalized["pageSize"]=String(COLLEGE_CONTACTS_PAGE_SIZE);
  const filter=collegeContactsQuerySchema.parse(normalized);
  if(!contactDateWindowValid(filter))throw new Error("INVALID_CONTACT_DATE_WINDOW");
  if(!contactAcademicFiltersCompatible(filter))throw new Error("INVALID_CONTACT_ACADEMIC_COMBINATION");
@@ -135,7 +135,9 @@ export function collegeContactsTabHref(filter:CollegeContactsQuery,tab:CollegeCo
 
 /** Exit an exact membership bookmark without erasing meaningful directory filters. */
 export function collegeContactsWithoutMemberHref(filter:CollegeContactsQuery):string{
- return collegeContactsHref({...filter,membershipId:undefined,page:1});
+ const next = {...filter, page:1};
+ delete next.membershipId;
+ return collegeContactsHref(next);
 }
 
 /** The public error explanation must not echo query values, memberships or internal stack traces. */
