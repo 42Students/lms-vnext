@@ -26,5 +26,5 @@ it("uses the saved view label for an export and safely strips HTTP-header contro
  expect(endpoint).toContain('const downloadName=savedViewRequested?viewName:"students";');
  expect(endpoint).toContain('legacySavedViewExportFilename(viewName, "xlsx")');
  expect(legacyGridExportFilename("TCS shortlist","xlsx")).toBe("TCS shortlist.xlsx");
- expect(legacyGridExportFilename("TCS\\r\\nOther: value","csv")).toBe("TCS-Other- value.csv");
+ expect(legacyGridExportFilename("TCS\r\nOther: value","csv")).toBe("TCS-Other- value.csv");
 });
