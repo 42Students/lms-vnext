@@ -20,9 +20,9 @@ describe("chat-4 final sprint TPO recruiter gaps A",()=>{
   const page=source("src/app/(authenticated)/tpo/recruiters/page.tsx");
   expect(page).toContain('requested === "campaigns"');
   expect(page).toContain("<CampaignHistory");
-  expect(roster).toContain('["campaigns","Emails"]');
-  expect(roster).toContain('"Companies ("+companies.length+")"');
-  expect(roster).toContain('role="tab"');
+  expect(roster).toContain('{value:"campaigns",label:"Emails"}');
+  expect(roster).toContain('{value:"companies",label:"Companies",count:companies.length}');
+  expect(roster).toContain("<Tabs");
  });
  it("TPO-recruiters-10 shows persisted company metrics, drives, and added date",()=>{
   expect(detail).toContain("companySummary");
@@ -36,7 +36,7 @@ describe("chat-4 final sprint TPO recruiter gaps A",()=>{
   expect(detail).toContain("Create drive");
   expect(detail).toContain("Team talk");
   expect(detail).toContain('href="#recruiter-invite"');
-  expect(detail).toContain('lead.manualStage === "NEW"');
+  expect(detail).toContain('lead.manualStage==="NEW"');
   expect(detail).toContain('setNotNowOpen(true)');
   expect(detail).toContain('lead.unsubscribedAt');
   expect(detail).toContain('"#recruiter-invite"');
@@ -81,7 +81,7 @@ describe("chat-4 final sprint TPO recruiter gaps A",()=>{
  it("TPO-recruiters-21 has company-required add, future follow-up and dirty-draft confirmation",()=>{
   expect(roster).toContain("Company is required.");
   expect(roster).toContain('list="known-engage-companies"');
-  expect(roster).toContain("Choose a future follow-up date (IST).");
+  expect(roster).toContain("Choose a future follow-up time (IST).");
   expect(roster).toContain("Discard this recruiter draft?");
   expect(roster).toContain('const contacts=[...new Set([form.email.trim(),form.phone.trim()].filter(Boolean))]');
   expect(roster).toContain("This contact is already a recruiter. Open the existing recruiter instead.");
