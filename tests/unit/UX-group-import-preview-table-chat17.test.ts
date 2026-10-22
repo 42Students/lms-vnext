@@ -16,7 +16,7 @@ describe("UX-UNOWNED-TABLE-09 college group bulk import preview",()=>{
     expect(source).toContain("break-all");
     expect(source).toContain("No learner rows were supplied.");
     expect(source).toContain("Download safe error CSV");
-    expect(source).toContain("131072");
+    expect(source).toContain("524288");
     expect(source).toContain("Preview only. No memberships");
     expect(source).not.toMatch(/<\s*table\b/i);
     expect(source).not.toMatch(/<\s*(thead|tbody|tr|td)\b/i);
