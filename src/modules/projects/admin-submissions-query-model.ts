@@ -49,6 +49,7 @@ export function parseProjectAdminSubmissionsQuery(params: Record<string,string|s
   const entries = {
     view:first(params.view)??(first(params.tab)?.toLowerCase()==="notsubmitted"?"NOT_SUBMITTED":"ALL"),
     q:first(params.q),focusedProjectId:first(params.projectId),status:workspaceStatus,
+    sort:first(params.sort),
     submissionStatus:normalizeSubmissionStatus(first(params.submissionStatus) ?? legacySubmission),
     page:first(params.page),pageSize:first(params.pageSize) ?? (options.superAdmin ? "10" : undefined),
   };
