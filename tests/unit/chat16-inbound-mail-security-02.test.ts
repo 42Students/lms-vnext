@@ -28,8 +28,13 @@ describe("chat-16 inbound mail admin security and preview hardening",()=>{
  it("inbound-mail-filters-01 rejects oversized searches, rogue fields and unsafe pagination",()=>{
   expect(inboundMailListQuerySchema.parse({})).toEqual({status:"ALL",q:"",page:1});
   expect(inboundMailListQuerySchema.safeParse({status:"ALL",q:"x".repeat(121)}).success).toBe(false);
-  expect(inboundMailListQuerySchema.parse({page:10001}).page).toBe(10000);
-  expect(inboundMailListQuerySchema.parse({page:0}).page).toBe(1);
+  // Out-of-range page numbers must fail validation, never silently clamp
+  // a caller's invalid pagination or widen a private inbox query.
+  expect(inboundMailListQuerySchema.parse({page:10000}).page).toBe(10000);
+  expect(inboundMailListQuerySchema.safeParse({page:10001}).success).toBe(false);
+  expect(inboundMailListQuerySchema.safeParse({page:0}).success).toBe(false);
+  expect(inboundMailListQuerySchema.safeParse({page:-1}).success).toBe(false);
+  expect(inboundMailListQuerySchema.safeParse({page:""}).success).toBe(false);
   expect(inboundMailListQuerySchema.parse({status:"DELETED"}).status).toBe("ALL");
   expect(inboundMailListQuerySchema.safeParse({unexpected:"yes"}).success).toBe(false);
   expect(inboundMailListQuerySchema.safeParse({recipient:"bad-address"}).success).toBe(false);
