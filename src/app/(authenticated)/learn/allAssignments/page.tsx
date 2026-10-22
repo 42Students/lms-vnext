@@ -59,7 +59,7 @@ async function LearnerAssignmentsContent({searchParams}:{searchParams:Promise<As
           <p className="mt-2 text-sm text-muted-foreground">
             This is a loading problem, not an empty list. Check your connection and try again.
           </p>
-          <Link href="/learn/allAssignments?retry=1" className="mt-3 inline-flex min-h-9 items-center rounded-lg bg-[var(--lms-primary)] px-4 text-sm font-semibold text-white">
+          <Link href="/learn/allAssignments?retry=1" className="mt-3 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-4 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
             Retry
           </Link>
         </section>
