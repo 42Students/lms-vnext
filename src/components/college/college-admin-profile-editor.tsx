@@ -2,6 +2,7 @@
 
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { useRouter } from "next/navigation";
@@ -37,6 +38,8 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
   const [saved, setSaved] = useState(false);
   const savedSnapshot=useRef<VersionedCollegeProfile>(initial);
   const [discardOpen,setDiscardOpen]=useState(false);
+  const [discardSection,setDiscardSection]=useState<ProfileSection|null>(null);
+  const formRef=useRef<HTMLFormElement>(null);
   const [editableSection,setEditableSection]=useState<ProfileSection|null>(null);
   const dirty=JSON.stringify(profile)!==JSON.stringify(savedSnapshot.current);
   useEffect(()=>{
@@ -48,15 +51,38 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
     window.addEventListener("beforeunload",onBeforeUnload);
     return ()=>window.removeEventListener("beforeunload",onBeforeUnload);
   },[dirty]);
+  function sectionChanged(section:ProfileSection){
+    const baseline=savedSnapshot.current;
+    if(section==="personal")return JSON.stringify([
+      profile.displayName,profile.roleTitle,profile.about,profile.photoUrl,profile.personalDetails,
+    ])!==JSON.stringify([
+      baseline.displayName,baseline.roleTitle,baseline.about,baseline.photoUrl,baseline.personalDetails,
+    ]);
+    return JSON.stringify(profile[section])!==JSON.stringify(baseline[section]);
+  }
   function cancel(){
     if(saving)return;
-    if(dirty){setDiscardOpen(true);return;}
-    setError("");setSaved(false);
+    if(dirty){setDiscardSection(null);setDiscardOpen(true);return;}
+    setError("");setSaved(false);setEditableSection(null);
+  }
+  function cancelSection(section:ProfileSection){
+    if(saving)return;
+    if(sectionChanged(section)){setDiscardSection(section);setDiscardOpen(true);return;}
+    setEditableSection(null);
   }
   function discard(){
     if(saving)return;
-    setProfile(savedSnapshot.current);
-    setDiscardOpen(false);setError("");setSaved(false);setEditableSection(null);
+    const baseline=savedSnapshot.current;
+    setProfile(current=>{
+      if(!discardSection)return baseline;
+      if(discardSection==="personal")return {...current,
+        displayName:baseline.displayName,roleTitle:baseline.roleTitle,
+        about:baseline.about,photoUrl:baseline.photoUrl,
+        personalDetails:baseline.personalDetails};
+      return {...current,[discardSection]:baseline[discardSection]};
+    });
+    setDiscardOpen(false);setDiscardSection(null);
+    setError("");setSaved(false);setEditableSection(null);
   }
   function editSection(section:ProfileSection){
     if(saving)return;
@@ -76,6 +102,12 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
         </svg>
         {editableSection===section?"Done":"Edit"}
       </Button>
+      {editableSection===section?<div className="flex flex-wrap gap-2">
+        <Button type="button" variant="secondary" disabled={saving}
+          onClick={()=>cancelSection(section)} className="min-h-11 md:min-h-9">Cancel</Button>
+        <Button type="button" variant="primary" disabled={saving||!dirty} loading={saving}
+          onClick={()=>formRef.current?.requestSubmit()} className="min-h-11 md:min-h-9">Save</Button>
+      </div>:null}
     </header>;
   }
   function top(key: "displayName" | "roleTitle" | "about" | "photoUrl", value: string) {
@@ -86,14 +118,33 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
       ...current, [section]: { ...current[section], [key]: value },
     })); setSaved(false);
   }
+  function personal(key:"gender"|"dateOfBirth"|"bloodGroup",value:string){
+    setProfile(current=>({...current,personalDetails:{
+      gender:current.personalDetails?.gender??"",
+      dateOfBirth:current.personalDetails?.dateOfBirth??"",
+      bloodGroup:current.personalDetails?.bloodGroup??"",
+      [key]:value,
+    }}));setSaved(false);
+  }
+  function additionalPhone(value:string){
+    setProfile(current=>({...current,contacts:{...current.contacts,
+      alternatePhone:value,contactPhone:value}}));setSaved(false);
+  }
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if(saving)return;
-    const phoneValue=profile.contacts.alternatePhone.trim();
+    const primaryMobile=profile.contacts.contactMobile?.trim()??"";
+    if(primaryMobile&&!/^\d{10}$/.test(primaryMobile)){
+      setError("Primary contact mobile must contain exactly 10 digits.");return;
+    }
+    const phoneValue=(profile.contacts.contactPhone||profile.contacts.alternatePhone).trim();
     if(phoneValue&&(!/^\+?[0-9() -]+$/.test(phoneValue)||
       phoneValue.replace(/\D/g,"").length<10||
       phoneValue.replace(/\D/g,"").length>15)){
       setError("Additional phone must contain 10–15 digits.");return;
+    }
+    if(primaryMobile&&phoneValue.replace(/\D/g,"")===primaryMobile){
+      setError("Additional phone must differ from the primary contact mobile.");return;
     }
     const baseline = savedSnapshot.current;
     const changedSections:ProfileSection[]=[];
@@ -128,11 +179,12 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
   return (
     <>
     <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
-      title="Discard your unsaved profile changes?" confirmLabel="Discard changes"
+      title={discardSection?"Discard "+discardSection+" changes?":"Discard your unsaved profile changes?"}
+      confirmLabel="Discard changes"
       cancelLabel="Keep editing" onConfirm={discard}>
       <p className="text-sm text-body">Any unsaved profile edits will be lost. Saved account identity remains unchanged.</p>
     </ConfirmDialog>
-    <form onSubmit={event => void submit(event)} aria-busy={saving}
+    <form ref={formRef} onSubmit={event => void submit(event)} aria-busy={saving}
       className="min-w-0 space-y-6">
       <div className="flex min-w-0 flex-wrap items-center gap-4 border-b border-border pb-4">
         {profile.photoUrl ? (
@@ -165,10 +217,38 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
       <div className="grid min-w-0 items-start gap-5 xl:grid-cols-2">
         <section id="personal" className="min-w-0 scroll-mt-24 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4">
           {cardHeader("personal","Personal Details")}
-          <p className="text-xs text-muted-foreground">Gender, date of birth and blood group require an authorized persisted personal-details schema; they are not editable in this vNext profile form yet.</p>
+          <p className="text-xs text-muted-foreground">Personal details are stored with your college profile, independently of login identity.</p>
           <div className="grid min-w-0 gap-4 md:grid-cols-2">
             <Field label="Name" value={profile.displayName} onChange={v => top("displayName", v)} disabled={editableSection!=="personal"} />
             <Field label="Role / Title" value={profile.roleTitle} onChange={v => top("roleTitle", v)} disabled={editableSection!=="personal"} />
+            <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Gender
+              <Select aria-label="Gender" className={fieldStyle} value={profile.personalDetails?.gender??""}
+                disabled={editableSection!=="personal"} onChange={e=>personal("gender",e.target.value)}>
+                <option value="">Select Gender</option>
+                {["Male","Female","Other","Prefer not to say"].map(value=>
+                  <option key={value} value={value}>{value}</option>)}
+                {profile.personalDetails?.gender&&!["Male","Female","Other","Prefer not to say"].includes(profile.personalDetails.gender)?
+                  <option value={profile.personalDetails.gender}>{profile.personalDetails.gender}</option>:null}
+              </Select>
+            </label>
+            <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date of Birth
+              <Input type="date" aria-label="Date of Birth" className={fieldStyle}
+                value={profile.personalDetails?.dateOfBirth??""}
+                disabled={editableSection!=="personal"}
+                onChange={e=>personal("dateOfBirth",e.target.value)} />
+              <span className="text-xs font-normal text-muted-foreground">DD-MM-YYYY: {profile.personalDetails?.dateOfBirth?
+                profile.personalDetails.dateOfBirth.split("-").reverse().join("-"):"Not specified"}</span>
+            </label>
+            <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Blood Group
+              <Select aria-label="Blood Group" className={fieldStyle} value={profile.personalDetails?.bloodGroup??""}
+                disabled={editableSection!=="personal"} onChange={e=>personal("bloodGroup",e.target.value)}>
+                <option value="">Select Blood Group</option>
+                {["A+","A-","B+","B-","AB+","AB-","O+","O-"].map(value=>
+                  <option key={value} value={value}>{value}</option>)}
+                {profile.personalDetails?.bloodGroup&&!["A+","A-","B+","B-","AB+","AB-","O+","O-"].includes(profile.personalDetails.bloodGroup)?
+                  <option value={profile.personalDetails.bloodGroup}>{profile.personalDetails.bloodGroup}</option>:null}
+              </Select>
+            </label>
             <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">About
               <Textarea rows={3} maxLength={1000} className={fieldStyle}
                 value={profile.about} disabled={editableSection!=="personal"} onChange={e => top("about", e.target.value)} />
@@ -192,15 +272,30 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
             <Field label="Instagram" type="url" maxLength={500} value={profile.social.instagram}
               disabled={editableSection!=="social"} onChange={v => detail("social", "instagram", v)} />
           </div>
-          <p className="text-xs text-muted-foreground">Twitter/X is not stored by the current profile schema; no unpersisted value is collected.</p>
+          <div className="grid min-w-0 gap-4 md:grid-cols-2">
+            <Field label="Twitter / X" type="url" maxLength={500} value={profile.social.twitter??""}
+              disabled={editableSection!=="social"} onChange={v=>detail("social","twitter",v)}/>
+          </div>
         </section>
 
         <section id="address" className="min-w-0 scroll-mt-24 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4 border-t border-border pt-6">
           {cardHeader("address","Address")}
-          <p className="text-xs text-muted-foreground">Current Address and Permanent Address map to the two stored address lines. City, State and Pincode are shared until separate address records are supported.</p>
+          <p className="text-xs text-muted-foreground">Current and Permanent addresses are saved independently. City, State and Pincode below are shared profile defaults.</p>
+          <div className="grid min-w-0 gap-4 md:grid-cols-2">
+            <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Current Address
+              <Textarea rows={2} maxLength={2000} className={fieldStyle}
+                disabled={editableSection!=="address"} value={profile.address.currentAddress??profile.address.line1}
+                onChange={e=>detail("address","currentAddress",e.target.value)}/>
+            </label>
+            <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Permanent Address
+              <Textarea rows={2} maxLength={2000} className={fieldStyle}
+                disabled={editableSection!=="address"} value={profile.address.permanentAddress??profile.address.line2}
+                onChange={e=>detail("address","permanentAddress",e.target.value)}/>
+            </label>
+          </div>
           <div className="grid min-w-0 gap-4 md:grid-cols-2">
             {([
-              ["line1", "Current Address"], ["line2", "Permanent Address"],
+              ["line1", "Address line 1"], ["line2", "Address line 2"],
               ["city", "City"], ["state", "State"], ["postalCode", "Pincode"], ["country", "Country"],
             ] as const).map(([key, label]) => (
               <Field key={key} label={label} value={profile.address[key]} maxLength={key==="postalCode"?20:150}
@@ -211,14 +306,18 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
         <section id="contacts" className="min-w-0 scroll-mt-24 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4 border-t border-border pt-6">
           {cardHeader("contacts","Contacts")}
           <div className="min-w-0 space-y-1">
-            <p className="text-xs text-muted-foreground">Primary login contacts remain read-only for account security.</p>
+            <p className="text-xs text-muted-foreground">Login mobile and email require a separate verified account change. The profile contact number below does not change login credentials.</p>
             <p className="break-words text-sm leading-6 text-body [overflow-wrap:anywhere]">Email: {email || "Not provided"} · Mobile: {phone || "Not provided"}</p>
           </div>
           <div className="grid min-w-0 gap-4 md:grid-cols-2">
+            <Field label="Primary contact mobile (10 digits)" type="tel" maxLength={10}
+              value={profile.contacts.contactMobile??""} disabled={editableSection!=="contacts"}
+              onChange={v=>detail("contacts","contactMobile",v.replace(/\D/g,""))}/>
             <Field label="Additional email" type="email" maxLength={254} value={profile.contacts.alternateEmail} disabled={editableSection!=="contacts"}
               onChange={v => detail("contacts", "alternateEmail", v)} />
-            <Field label="Additional phone" type="tel" maxLength={40} value={profile.contacts.alternatePhone} disabled={editableSection!=="contacts"}
-              onChange={v => detail("contacts", "alternatePhone", v)} />
+            <Field label="Additional phone" type="tel" maxLength={40}
+              value={profile.contacts.contactPhone||profile.contacts.alternatePhone} disabled={editableSection!=="contacts"}
+              onChange={additionalPhone} />
             <Field label="Contact person" value={profile.contacts.contactPerson} disabled={editableSection!=="contacts"}
               onChange={v => detail("contacts", "contactPerson", v)} />
           </div>
