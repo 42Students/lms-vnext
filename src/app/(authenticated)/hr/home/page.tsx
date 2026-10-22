@@ -15,7 +15,7 @@ import {hrResultsDueHref} from "@/modules/placements/hr-calendar-day-model";
 import {hrResultDeadlineUrgency,HR_DEADLINE_URGENCY_LABELS} from "@/modules/placements/hr-result-deadline-urgency-model";
 import {hrTodayLiveDriveRows} from "@/modules/placements/hr-today-live-drive-model";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
-import {recruiterVisiblePortfolioCounts} from "@/modules/placements/recruiter-portfolio-counts-service";
+import {recruiterVisiblePortfolioCounts,recruiterOwnFullPortfolioTotals} from "@/modules/placements/recruiter-portfolio-counts-service";
 import { listRecruiterCalendarEvents } from "@/modules/placements/recruiter-calendar-service";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 import { listHrNotifications } from "@/modules/placements/hr-notifications-service";
@@ -131,6 +131,10 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   }
   // The 500-job preview is not a historical total.
   const recentJobCapReached=jobs.length===500;
+  // Do not present the first 500 drives as an employer's entire portfolio.
+  // This separate aggregate repeats persisted grant/employer/college checks.
+  const fullPortfolio=recentJobCapReached?
+    await recruiterOwnFullPortfolioTotals(context,selectedId).catch(()=>null):null;
   const [calendarResult,inboxResult,conversationResult]=await Promise.allSettled([
     listRecruiterCalendarEvents(context,week),
     listHrNotifications(context,{collegeId:selectedId,unreadOnly:"true"}),
@@ -200,7 +204,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   }
   const greeting = recruiterTodayGreeting(now,profile.displayName,recruiter.companyName,actionQueue.length);
   const actions = [
-    {label:"Live drives", value:today.live, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
+    {label:"Live drives", value:fullPortfolio?.live??today.live, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
     {label:"Deadlines within 7 days", value:today.dueSoon.length, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
     ...(calendarResult.status==="fulfilled" ? [
       {label:"Scheduled rounds this week", value:today.upcomingRounds.length, url:"/hr/calendar"},
@@ -228,6 +232,11 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       }))}/> : null}
     {recentJobCapReached?<Alert tone="warning">
       Today is displaying the 500 most recently created employer drives for this college.
+      {fullPortfolio
+       ? " The complete authorized portfolio has "+fullPortfolio.total+
+         " published or closed drives ("+fullPortfolio.live+" live, "+fullPortfolio.closed+
+         " closed). The Live drives headline uses the complete count."
+       : " Full portfolio counts are temporarily unavailable; the Live drives and upcoming-deadline summaries may be incomplete."}
       Older drives may not appear in these quick summaries. Open Drives for full history.
     </Alert>:null}
     {(summaryPartiallyUnavailable||otherSignalsUnavailable)?<Alert tone="warning">
