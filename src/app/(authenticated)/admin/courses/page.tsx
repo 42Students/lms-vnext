@@ -13,6 +13,7 @@ import { getAdminCourseWorkspace } from "@/modules/courses/admin-course-workspac
 import {parseSuperAdminCourseQuery} from "@/modules/admin-ui/super-admin-course-query-model";
 import { ErrorState } from "@/components/ui/error-state";
 import {getSuperAdminCourseDependencyCounts} from "@/modules/admin-ui/super-admin-course-dependencies-service";
+import {paginateCollegeCourses} from "@/modules/courses/college-course-catalogue-model";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 
@@ -158,12 +159,10 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
       action={<Link href="/admin/courses" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
   </div>;
   const {catalogueQuery,duplicateCourseId,openCreateCourse}=parsed;
-  const [workspaceResult,dependenciesResult]=await Promise.all([
-    getAdminCourseWorkspace(context,collegeId)
-      .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const})),
-    getSuperAdminCourseDependencyCounts(context)
-      .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const})),
-  ]);
+  // Course availability is critical; optional dependency statistics must
+  // never block the catalogue or scan every course when only one page is shown.
+  const workspaceResult=await getAdminCourseWorkspace(context,collegeId)
+    .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}));
   if(!workspaceResult.ok)return <section className="min-w-0 space-y-5">
     <PageHeader title="Courses" description="Manage Courses within the selected college." />
     <ErrorState title="Could not load courses"
@@ -171,6 +170,9 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
       action={<Link href="/admin/courses" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9">Retry</Link>}/>
   </section>;
   const workspace=workspaceResult.value;
+  const visibleCourseIds=paginateCollegeCourses(workspace.courses,catalogueQuery).items.map(course=>course.id);
+  const dependenciesResult=await getSuperAdminCourseDependencyCounts(context,visibleCourseIds)
+    .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}));
   const lessonCountByCourse=dependenciesResult.ok?dependenciesResult.value:undefined;
 
   return (
