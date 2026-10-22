@@ -126,3 +126,30 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/modules/placements/learner-job-service.ts
 - Legacy: Legacy cache depends DepartmentRepository, NewProgramRepository, JobRepository and GenericSearchCache; JobSearchCache.java:6-11,36-50
 - Expected fix: Map joins/indexes and cache removal effects for load and publish
+
+### Lane-5 fast verification triage (2026-10-22)
+- **G2-14-011-076 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-14-012-030 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-14-012-034 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-14-012-055 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-14-015-002 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-14-015-012 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-14-015-026 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-14-017-046 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-14-020-004 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-14-020-016 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-14-020-019 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-14-020-021 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-14-020-030 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-14-020-035 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-14-020-042 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-14-020-045 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-14-020-057 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-15-015-017 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-18-013-008 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-18-013-009 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-18-013-022 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-18-013-029 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-18-013-030 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-18-013-038 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
+- **G2-18-013-044 — DEFERRED**: Requires full lifecycle, policy, data or UI behavior comparison beyond source presence; no parity claim.
