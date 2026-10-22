@@ -779,9 +779,9 @@ export async function listAssignmentSubmissionsPage(
   };
 }
 
-/** Scoped grading activity history. DB06's detailed before/after grade audit is
- * still staged; do not misrepresent this privacy-safe activity trail as that
- * immutable points history or expose unpublished marks to a learner.
+/** Staff-only grading activity and the private 0205 immutable grade ledger.
+ * Both reads are scoped by the persisted submission college; a learner may
+ * never see unpublished points or feedback through this endpoint.
  */
 export async function listAssignmentSubmissionGradeActivity(
   context: RequestContext,
@@ -790,6 +790,31 @@ export async function listAssignmentSubmissionGradeActivity(
   const submissionId = assignmentSubmissionIdSchema.parse(submissionIdInput);
   const submission = await loadAssignmentSubmissionScope(submissionId);
   await requireAssignmentGradeAccess(context, submission);
+  const ledger=await getDb().execute<{
+    id:string;action:string;actorUserId:string;actorRole:string;
+    previousPoints:number|null;newPoints:number|null;
+    previousFeedback:string|null;newFeedback:string|null;
+    previousGradingStatus:string;newGradingStatus:string;
+    previousGradePublished:boolean;newGradePublished:boolean;
+    previousGradedByUserId:string|null;newGradedByUserId:string|null;
+    versionBefore:number;versionAfter:number;occurredAt:Date;
+  }>(sql`
+    select id,action,actor_user_id as "actorUserId",actor_role as "actorRole",
+      previous_points as "previousPoints",new_points as "newPoints",
+      previous_feedback as "previousFeedback",new_feedback as "newFeedback",
+      previous_grading_status as "previousGradingStatus",
+      new_grading_status as "newGradingStatus",
+      previous_grade_published as "previousGradePublished",
+      new_grade_published as "newGradePublished",
+      previous_graded_by_user_id as "previousGradedByUserId",
+      new_graded_by_user_id as "newGradedByUserId",
+      submission_version_before as "versionBefore",
+      submission_version_after as "versionAfter",occurred_at as "occurredAt"
+    from assignment_grade_events
+    where assignment_submission_id=${submissionId}::uuid
+      and college_id=${submission.collegeId}::uuid
+    order by occurred_at desc,id desc limit 100
+  `);
   const rows = await getDb().select({
     id: activityEvents.id,
     eventType: activityEvents.eventType,
@@ -808,7 +833,9 @@ export async function listAssignmentSubmissionGradeActivity(
   )).orderBy(desc(activityEvents.occurredAt), desc(activityEvents.id)).limit(100);
   return {
     historySource: "ACTIVITY_EVENTS" as const,
-    detailedPointsHistoryAvailable: false,
+    gradeHistorySource: "IMMUTABLE_GRADE_EVENTS" as const,
+    detailedPointsHistoryAvailable: ledger.rows.length>0,
+    gradeEvents:ledger.rows,
     events: rows.map(row => ({
       id: row.id, eventType: row.eventType, actorUserId: row.actorUserId,
       occurredAt: row.occurredAt,
