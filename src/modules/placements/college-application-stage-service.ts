@@ -50,6 +50,18 @@ export async function getCollegeApplicationPipeline(context:RequestContext,rawJo
   };
  })};
 }
+/**
+ * Global row-lock order for application stage changes (legacy PlacementJobServiceImpl
+ * locks the job first, then the applications it touches in a fixed order):
+ *   1. placement_jobs row (share lock, update lock when the assessment link is saved to the job)
+ *   2. placement_applications row (one application per transaction, so ids never interleave)
+ *   3. college stage row, 4. screening row, 5. booked interview slots (limit 100)
+ * Offers and joining outcomes are only read here; they are written by the offer workflows,
+ * which lock the application before the offer. The TPO bulk path
+ * (tpo-bulk-application-stage-service.ts) takes the application and then its stage row and never
+ * locks the job, so neither path can wait on the other in the opposite order.
+ * tests/unit/application-stage-lock-order.test.ts keeps this order from drifting.
+ */
 export async function mutateCollegeApplicationStages(context:RequestContext,rawJobId:unknown,raw:unknown){
  const acting=await resolveActingCollege(context,"placements.manage");
  const collegeId=await requireCollegePlacementAdmin(context),jobId=collegeDriveIdSchema.parse(rawJobId);

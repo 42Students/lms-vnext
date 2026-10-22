@@ -33,7 +33,7 @@ import { PlacementsServiceError } from "./errors";
 import {isLegacyAssessmentDeadlineAfterApplication} from "./placement-legacy-posting-model";
 import { isDebarmentActive } from "./batch-registration-policy";
 import {notifyEligiblePublishedDrive} from "./tpo-drive-publish-effects";
-import {hasSecureEmployerPortalUrl} from "./tpo-drive-lifecycle-model";
+import {canTransitionPlacementJobStatus,hasSecureEmployerPortalUrl} from "./tpo-drive-lifecycle-model";
 import {
   requirePlacementJobSeasonActive,
 } from "./season-service";
@@ -866,7 +866,7 @@ export async function publishPlacementJob(
     current,
   );
 
-  if (current.status !== "DRAFT") {
+  if (!canTransitionPlacementJobStatus(current.status,"PUBLISHED")) {
     throw new PlacementsServiceError("PLACEMENT_JOB_NOT_PUBLISHABLE");
   }
   await loadActiveRelationship(
@@ -1064,7 +1064,7 @@ export async function closePlacementJob(
 
   // Closing a published drive remains available after the placement season
   // ends; otherwise unreconciled applications/offers can be stranded.
-  if (current.status !== "PUBLISHED") {
+  if (!canTransitionPlacementJobStatus(current.status,"CLOSED")) {
     throw new PlacementsServiceError("PLACEMENT_JOB_NOT_CLOSABLE");
   }
 
@@ -1139,7 +1139,7 @@ export async function closePlacementJob(
 
 /** P-S2-12: cancelled drives cease accepting applications and pending offers. */
 export function canCancelPublishedPlacementJob(status: string): boolean {
-  return status === "PUBLISHED";
+  return status === "PUBLISHED" && canTransitionPlacementJobStatus(status,"CANCELLED");
 }
 
 export async function cancelPlacementJob(context: RequestContext, jobIdInput: string) {
@@ -1357,12 +1357,12 @@ export async function archivePlacementJob(
   const current = await loadJob(jobId);
   await requirePlacementManageScope(context, current.collegeId);
 
-  if (current.status === "PUBLISHED") {
+  if (current.status === "ARCHIVED") return current;
+  if (!canTransitionPlacementJobStatus(current.status,"ARCHIVED")) {
     throw new PlacementsServiceError(
       "PLACEMENT_JOB_CLOSE_BEFORE_ARCHIVE",
     );
   }
-  if (current.status === "ARCHIVED") return current;
 
   return getDb().transaction(async tx => {
     const [locked] = await tx.select({status:placementJobs.status})

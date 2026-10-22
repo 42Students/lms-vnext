@@ -24,11 +24,16 @@ export function canTransitionLegacyRecruiterRequest(
   return (legacyRecruiterRequestTransitions[from] as readonly string[]).includes(to);
 }
 
+/** The single allowed-transition table for stored drive statuses (the old
+ * JobLifecycleService was the only writer of lifecycleStatus). Every writer,
+ * job-service and the TPO lifecycle service alike, checks it so permission
+ * paths cannot diverge. A published drive is closed or cancelled before it can
+ * be archived; a closed drive is terminal apart from archiving. */
 export const TPO_DRIVE_CANONICAL_TRANSITIONS={
- DRAFT:["PUBLISHED","CANCELLED"],
+ DRAFT:["PUBLISHED","CANCELLED","ARCHIVED"],
  PUBLISHED:["CLOSED","CANCELLED"],
- CLOSED:[],
- CANCELLED:[],
+ CLOSED:["ARCHIVED"],
+ CANCELLED:["ARCHIVED"],
  ARCHIVED:[],
 } as const;
 export type CanonicalTpoDriveStatus=keyof typeof TPO_DRIVE_CANONICAL_TRANSITIONS;
@@ -36,6 +41,11 @@ export function canTransitionTpoDrive(
  from:CanonicalTpoDriveStatus,to:CanonicalTpoDriveStatus,
 ):boolean{
  return (TPO_DRIVE_CANONICAL_TRANSITIONS[from] as readonly string[]).includes(to);
+}
+/** String-safe form for callers holding a raw stored status. */
+export function canTransitionPlacementJobStatus(from:string,to:string):boolean{
+ if(!Object.hasOwn(TPO_DRIVE_CANONICAL_TRANSITIONS,from))return false;
+ return canTransitionTpoDrive(from as CanonicalTpoDriveStatus,to as CanonicalTpoDriveStatus);
 }
 /** A request's initial REQUEST status never belongs in the live job table.
  * Historical DRAFT/ACTIVE flags project from one stored enum status. */
