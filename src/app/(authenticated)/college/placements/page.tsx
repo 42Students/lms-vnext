@@ -9,7 +9,6 @@ import {getCollegeDriveAttention} from "@/modules/placements/college-drive-atten
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
-import { Disclosure } from "@/components/ui/disclosure";
 import { StatTile } from "@/components/ui/stat-tile";
 import { DataTable } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
