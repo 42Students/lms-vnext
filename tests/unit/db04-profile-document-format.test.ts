@@ -5,8 +5,11 @@ const id = "cec83342-dda2-4e5c-a189-19a82f7dbff7";
 describe("DB04 learner profile formatting regressions", () => {
   it("accepts valid alternate telephone digits and rejects alphabetic impostors", () => {
     expect(learnerProfileDocumentSchema.parse({
+      contacts: {alternatePhone: "919876543210"},
+    }).contacts.alternatePhone).toBe("919876543210");
+    expect(() => learnerProfileDocumentSchema.parse({
       contacts: {alternatePhone: "+91 98765-43210"},
-    }).contacts.alternatePhone).toBe("+91 98765-43210");
+    })).toThrow();
     expect(() => learnerProfileDocumentSchema.parse({
       contacts: {alternatePhone: "dddddddddddd"},
     })).toThrow();
