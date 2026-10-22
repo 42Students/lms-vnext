@@ -11,12 +11,12 @@ describe("UX-UNOWNED-TABLE-07/08 Super Admin import surfaces",()=>{
     expect(text.startsWith('"use client";')).toBe(true);
     expect(text).toContain('import { DataTable } from "@/components/ui/data-table"');
     expect(text).toContain('caption="Bulk import history records"');
-    expect(text).toContain('aria-label="Bulk import history"');
-    expect(text).toContain("dialogRef.current?.showModal()");
-    expect(text).toContain("dialogRef.current?.close()");
+    expect(text).toContain('aria-label="Bulk import history records"');
+    expect(text).toContain("<Dialog open={open} onOpenChange={setOpen}");
+    expect(text).toContain("onClick={() => setOpen(true)}");
     for(const title of ["When","Students","Created","Failed"])
       expect(text).toContain('header:"'+title+'"');
-    expect(text).toContain("No bulk imports on file for this college.");
+    expect(text).toContain("No import history found.");
     expect(text).not.toMatch(/<\s*table\b/i);
   });
 
@@ -25,7 +25,8 @@ describe("UX-UNOWNED-TABLE-07/08 Super Admin import surfaces",()=>{
     expect(text.startsWith('"use client";')).toBe(true);
     expect(text).toContain('import { DataTable } from "@/components/ui/data-table"');
     expect(text).toContain('useConfirmFlow');
-    expect(text).toContain('await askConfirm("Onboard "+count+" faculty from this file?")');
+    expect(text).toContain('await askConfirm("Create "+count+" faculty from this locally previewed file?');
+    expect(text).toContain("Some rows may fail; there is no server-only validation preview.");
     expect(text).toContain('{dialog}');
     expect(text).not.toContain("window.confirm(");
     expect(text).toContain('"/api/admin/faculty/bulk-import"');
