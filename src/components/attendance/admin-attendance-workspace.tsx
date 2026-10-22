@@ -744,6 +744,10 @@ export function AdminAttendanceWorkspace({
         footer={
           target ? (
             <div className="grid w-full min-w-0 grid-cols-1 md:grid-cols-2 gap-[var(--lms-space-2)] [&>button]:min-h-11 [&>button:last-child]:col-span-2 sm:flex sm:flex-wrap sm:justify-end sm:[&>button:last-child]:col-span-1 sm:[&>button]:min-h-[var(--lms-control-height)]">
+              {!verifiedRecord && !verifyingRecord ? (
+                <Button size="sm" variant="secondary" disabled={correcting||refreshing}
+                  onClick={()=>openCorrectionTarget(target)}>Retry record</Button>
+              ) : null}
               <Button size="sm" variant="secondary" disabled={correcting||refreshing||verifyingRecord}
                 onClick={()=>{recordRequest.current+=1;setTarget(null);setVerifiedRecord(null);startRefresh(()=>router.refresh());}}>Refresh grid and reopen</Button>
               {verifiedRecord?.status && verifiedRecord.status !== "PRESENT" ? (
