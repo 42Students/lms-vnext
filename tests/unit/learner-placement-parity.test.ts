@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 const pages = [
   ["assessments", "LearnerCareerRoundsWorkspace"],
-  ["interviews", "LearnerCareerRoundsWorkspace"],
+  ["interviews", 'redirect("/learn/my-placements/schedule"'],
   ["calendar", "LearnerCareerCalendar"],
   ["placement", "LearnerPlacementOffers"],
   ["rules", "How eligibility works"],
