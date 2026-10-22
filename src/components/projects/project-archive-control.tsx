@@ -1,158 +1,94 @@
 "use client";
+import {useEffect,useRef,useState} from "react";
+import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
+import {PopoverPanel} from "@/components/ui/popover";
+import {useToast} from "@/components/ui/toast";
+import {projectMutation} from "./project-api";
+import {ProjectSoftDeleteControl} from "./project-soft-delete-control";
 
-import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+function ArchiveIcon(){return <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16"
+ fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+  <path d="M4 5h16v4H4zM6 9v11h12V9M10 13h4"/>
+ </svg>;}
+function RestoreIcon(){return <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16"
+ fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+  <path d="M3 7v5h5M3 12a9 9 0 1 1 3 7M12 7v5l3 2"/>
+ </svg>;}
 
-import { useToast } from "@/components/ui/toast";
-import { projectMutation } from "./project-api";
-import { ProjectSoftDeleteControl } from "./project-soft-delete-control";
-
-export function ProjectArchiveControl({
-  projectId,
-  projectTitle,
-  status,
-  expectedUpdatedAt,
-  deleted = false,
-}: {
-  projectId: string;
-  projectTitle: string;
-  status: string;
-  expectedUpdatedAt: string;
-  deleted?: boolean;
-}) {
-  const router = useRouter();
-  const { showToast } = useToast();
-  const [open, setOpen] = useState(false);
-  const [pending, setPending] = useState(false);
-  const inFlight=useRef(false);
-  const onDialogOpenChange=(value:boolean)=>{if(!inFlight.current)setOpen(value);};
-  const icon=(kind:"archive"|"restore")=><svg aria-hidden="true" viewBox="0 0 24 24" className="mr-1 inline size-4"
-    fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    {kind==="archive"?<><path d="M4 4h16v4H4zM6 8v12h12V8M10 12h4"/></>:
-      <><path d="M9 14 4 9l5-5M4 9h9a7 7 0 1 1 0 14"/></>}
-  </svg>;
-
-
-  async function archive() {
-    // Two clicks before the next React paint are still a single mutation.
-    if(inFlight.current)return;
-    inFlight.current=true;
-    setPending(true);
-    try {
-      await projectMutation(
-        `/api/projects/${encodeURIComponent(projectId)}/archive`,
-        "POST",
-        {expectedUpdatedAt},
-      );
-      setOpen(false);
-      showToast({
-        tone: "success",
-        title: "Workspace archived",
-        description:
-          "The workspace remains available for review.",
-      });
-      router.refresh();
-    } catch (error) {
-      const detail=error instanceof Error&&error.message.trim()?error.message:
-        "Failed to archive workspace";
-      showToast({
-        tone:"error",title:"Failed to archive workspace",
-        description:detail+" Refresh and retry if this workspace changed.",
-      });
-    } finally {
-      inFlight.current=false;
-      setPending(false);
-    }
-  }
-
-  async function restore() {
-    if(inFlight.current)return;
-    inFlight.current=true;
-    setPending(true);
-    try {
-      await projectMutation(
-        `/api/projects/${encodeURIComponent(projectId)}/restore`,
-        "POST",
-        { expectedUpdatedAt },
-      );
-      setOpen(false);
-      showToast({ tone: "success", title: "Workspace restored" });
-      router.refresh();
-    } catch(error) {
-      showToast({tone:"error",title:"Failed to restore workspace",
-        description:error instanceof Error?error.message:
-          "Workspace could not be restored. Refresh and retry."});
-    } finally {
-      inFlight.current=false;
-      setPending(false);
-    }
-  }
-
-  if (deleted) {
-    return <ProjectSoftDeleteControl projectId={projectId} projectTitle={projectTitle}
-      expectedUpdatedAt={expectedUpdatedAt} deleted />;
-  }
-
-  if (status === "ARCHIVED") {
-    return (
-      <>
-        <Button size="sm" variant="primary" aria-expanded={open} onClick={() => setOpen(true)}>
-          {icon("restore")} Restore
-        </Button>
-        <Dialog
-          open={open}
-          onOpenChange={onDialogOpenChange}
-          title="Restore this workspace?"
-          description="Restore this workspace and make it available to authorized members again."
-          footer={
-            <div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
-              <Button className="w-full sm:w-auto" variant="secondary" disabled={pending} onClick={() => onDialogOpenChange(false)}>Cancel</Button>
-              <Button className="w-full sm:w-auto" loading={pending} disabled={pending} onClick={() => void restore()}>Restore</Button>
-            </div>
-          }
-        >
-          <p className="m-0 max-w-prose break-words border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-[var(--lms-font-base)] leading-5 text-[var(--lms-body-text)]">
-            Archived workspaces can be reopened with their saved content, including task,
-            sprint, meeting and resource edits. Content restoration follows the vNext
-            versioned workspace model; existing changes are not regenerated from a template.
-          </p>
-        </Dialog>
-        <ProjectSoftDeleteControl projectId={projectId} projectTitle={projectTitle}
-          expectedUpdatedAt={expectedUpdatedAt} deleted={false} />
-      </>
-    );
-  }
-
-  return (
-    <>
-      <Button size="sm" variant="danger" aria-expanded={open}
-        onClick={() => setOpen(true)}>
-        {icon("archive")} Archive
-      </Button>
-      <Dialog
-        open={open}
-        onOpenChange={onDialogOpenChange}
-        title="Archive this workspace?"
-        description={`${projectTitle} will be archived. The workspace remains accessible for review.`}
-        footer={
-          <div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
-            <Button className="w-full sm:w-auto" variant="secondary" disabled={pending} onClick={() => onDialogOpenChange(false)}>Cancel</Button>
-            <Button className="w-full sm:w-auto" variant="danger" loading={pending} disabled={pending} onClick={() => void archive()}>
-              {pending ? "Archiving…" : "Archive workspace"}
-            </Button>
-          </div>
-        }
-      >
-        <p className="m-0 max-w-prose break-words border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-[var(--lms-font-base)] leading-5 text-[var(--lms-body-text)]">
-          Archiving does not delete the workspace. To move this workspace to
-          Deleted workspaces, use the separate Delete control. Archived content
-          remains available for authorized review and later restoration.
-        </p>
-      </Dialog>
-      <ProjectSoftDeleteControl projectId={projectId} projectTitle={projectTitle}
-        expectedUpdatedAt={expectedUpdatedAt} deleted={false} />
-    </>
-  );
+export function ProjectArchiveControl({projectId,projectTitle,status,expectedUpdatedAt,deleted=false}:{
+ projectId:string;projectTitle:string;status:string;expectedUpdatedAt:string;deleted?:boolean;
+}){
+ const router=useRouter(),{showToast}=useToast();
+ const [open,setOpen]=useState(false),[pending,setPending]=useState(false);
+ const flight=useRef(false),triggerRef=useRef<HTMLButtonElement|null>(null);
+ const cancelRef=useRef<HTMLButtonElement|null>(null);
+ const archived=status==="ARCHIVED";
+ useEffect(()=>{if(open&&!pending)cancelRef.current?.focus();},[open,pending]);
+ function dismiss(){
+  if(flight.current)return;
+  setOpen(false);
+  triggerRef.current?.focus();
+ }
+ async function apply(){
+  if(flight.current||deleted)return;
+  flight.current=true;setPending(true);
+  try{
+   await projectMutation("/api/projects/"+encodeURIComponent(projectId)+
+     (archived?"/restore":"/archive"),"POST",{expectedUpdatedAt});
+   setOpen(false);
+   showToast({tone:"success",title:archived?"Workspace restored":"Workspace archived",
+    description:archived?
+     "The archived workspace is accessible again with its saved task, sprint, resource and meeting data.":
+     "The workspace remains available for authorized review. It has not been deleted."});
+   router.refresh();
+  }catch(error){
+   const reason=error instanceof Error?error.message:
+     archived?"Failed to restore workspace":"Failed to archive workspace";
+   showToast({tone:"error",title:archived?"Failed to restore workspace":
+     "Failed to archive workspace",description:reason+
+       " Refresh the workspace if it changed before retrying."});
+  }finally{flight.current=false;setPending(false);}
+ }
+ if(deleted)return <ProjectSoftDeleteControl projectId={projectId}
+  projectTitle={projectTitle} expectedUpdatedAt={expectedUpdatedAt} deleted/>;
+ return <div className="flex min-w-0 flex-wrap items-center gap-2">
+  <div className="relative">
+   <Button ref={triggerRef} type="button" size="sm"
+    variant={archived?"primary":"danger"} aria-expanded={open}
+    aria-haspopup="dialog" disabled={pending}
+    onClick={()=>open?dismiss():setOpen(true)}>
+    {archived?<RestoreIcon/>:<ArchiveIcon/>}
+    {archived?"Restore":"Archive"}
+   </Button>
+   {open?<PopoverPanel label={archived?"Restore this workspace?":"Archive this workspace?"}
+    onDismiss={dismiss}
+    className="absolute left-0 top-full z-40 mt-2 w-[340px] space-y-3 max-[767px]:w-[min(340px,calc(100vw_-_2rem))]">
+    <p className="text-sm font-semibold text-foreground">
+     {archived?"Restore this workspace?":"Archive this workspace?"}
+    </p>
+    <p className="whitespace-pre-wrap break-words text-sm leading-6 text-body">
+     {archived?
+      "Restore "+projectTitle+"? Archived members, meetings and workspace content become accessible again.":
+      projectTitle+" will be archived. You can still review the workspace, but execution changes stop until restored."}
+    </p>
+    <p className="text-xs leading-5 text-body">
+     {archived?
+      "Unlike the old LMS snapshot restoration, vNext preserves previously saved task, sprint and resource edits; it does not regenerate them from the template.":
+      "Archive is not Delete. The separate Deleted workspaces control starts the recoverable-delete workflow."}
+    </p>
+    <div className="flex flex-wrap justify-end gap-2 border-t border-border pt-3">
+     <Button ref={cancelRef} type="button" size="sm" variant="secondary"
+      disabled={pending} onClick={dismiss}>Cancel</Button>
+     <Button type="button" size="sm" variant={archived?"primary":"danger"}
+      disabled={pending} loading={pending} onClick={()=>void apply()}>
+      {pending?(archived?"Restoring…":"Archiving…"):
+        archived?"Restore workspace":"Archive workspace"}
+     </Button>
+    </div>
+   </PopoverPanel>:null}
+  </div>
+  <ProjectSoftDeleteControl projectId={projectId} projectTitle={projectTitle}
+   expectedUpdatedAt={expectedUpdatedAt} deleted={false}/>
+ </div>;
 }
