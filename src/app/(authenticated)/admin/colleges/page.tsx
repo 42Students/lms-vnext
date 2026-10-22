@@ -217,13 +217,21 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
     (!state||normalizedText(item.state)===normalizedText(state))&&
     (!city||normalizedText(item.city)===normalizedText(city))&&
     (!orgId||item.organizationId===orgId));
-  const ranked=scopeRows.map(item=>({item,score:collegeSearchScore(item,normalized)}));
+  // Legacy search adds up to ten points of usage activity to textual rank.
+  // The vNext directory has no click counter, so the authorized membership
+  // population is a bounded activity proxy, never a reason to include a
+  // college that did not match the search term.
+  const activityBonus=(id:string)=>Math.min(Math.max(popularity.get(id)??0,0),10);
+  const ranked=scopeRows.map(item=>{
+    const textScore=collegeSearchScore(item,normalized);
+    return {item,score:textScore>0?textScore+activityBonus(item.id):0};
+  });
   const primary=ranked.filter(entry=>entry.score>0);
   if(normalized.length>=3&&primary.length<5){
     for(const entry of ranked){
       if(entry.score>0)continue;
       if(collegeFuzzyMatch(normalized,normalizedText(entry.item.name)))
-        primary.push({...entry,score:20});
+        primary.push({...entry,score:20+activityBonus(entry.item.id)});
     }
   }
   const matches=primary.sort((a,b)=>b.score-a.score||
