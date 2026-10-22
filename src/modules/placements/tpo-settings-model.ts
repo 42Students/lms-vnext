@@ -102,7 +102,7 @@ export function parseTpoRulesPageParams(
  raw:Record<string,string|string[]|undefined>,
 ):number|null{
  if(Object.keys(raw).some(key=>key!=="page"))return null;
- const candidate=raw.page;
+ const candidate=raw["page"];
  if(candidate===undefined)return 1;
  if(typeof candidate!=="string"||!/^[1-9][0-9]*$/.test(candidate))return null;
  const value=Number(candidate);
