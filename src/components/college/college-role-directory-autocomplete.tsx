@@ -15,6 +15,7 @@ export function CollegeRoleDirectoryAutocomplete({
 }){
   const [query,setQuery]=useState(defaultValue);
   const [matches,setMatches]=useState<Result[]>([]);
+  const [popularResults,setPopularResults]=useState<Result[]>([]);
   const [recent,setRecent]=useState<string[]>([]);
   const [open,setOpen]=useState(false);
   const [loading,setLoading]=useState(false);
@@ -29,6 +30,18 @@ export function CollegeRoleDirectoryAutocomplete({
         typeof value==="string"&&value.length<=80).slice(0,6));
     }catch{setRecent([]);}
   },[storageKey]);
+  useEffect(()=>{
+    if(kind!=="FACULTY")return;
+    const controller=new AbortController();
+    void fetch("/api/college/roles/suggest/popular",{
+      signal:controller.signal,credentials:"same-origin",cache:"no-store",
+    }).then(async response=>{
+      if(!response.ok)throw Error("POPULAR_FACULTY_UNAVAILABLE");
+      const result=await response.json() as {items:Result[]};
+      if(!controller.signal.aborted)setPopularResults(result.items.slice(0,10));
+    }).catch(()=>{/* Keep page-scoped suggestions if popularity is offline. */});
+    return ()=>controller.abort();
+  },[kind,collegeId]);
   useEffect(()=>{
     const text=escapeQuery(query);
     const generation=++requestNo.current;
@@ -59,11 +72,23 @@ export function CollegeRoleDirectoryAutocomplete({
     try{window.sessionStorage.setItem(storageKey,JSON.stringify(next));}
     catch{/* Private mode: suggestions still work without browser storage. */}
   }
-  function choose(value:string){
+  async function choose(row:Result){
+    const value=row.name;
     setQuery(value);remember(value);setOpen(false);
-    // Let React settle controlled input value before native GET submit.
-    if(inputRef.current){inputRef.current.value=value;
-      inputRef.current.form?.requestSubmit();}
+    // Persist popularity only for a real, same-college Faculty option.
+    // A recent free-text term has no membership and cannot grant access.
+    if(kind==="FACULTY"&&/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(row.membershipId)){
+      try{
+        await fetch("/api/college/roles/suggest/popular",{
+          method:"POST",credentials:"same-origin",
+          headers:{"content-type":"application/json"},
+          body:JSON.stringify({facultyMembershipId:row.membershipId}),
+        });
+      }catch{/* Search remains usable when auxiliary popularity is offline. */}
+    }
+    if(inputRef.current){
+      inputRef.current.value=value;inputRef.current.form?.requestSubmit();
+    }
   }
   const showingLive=query.trim().length>=2;
   const choices=showingLive?matches:
@@ -86,10 +111,10 @@ export function CollegeRoleDirectoryAutocomplete({
       <p className="px-2 py-1 text-xs text-muted-foreground">
         {loading?"Searching…":showingLive?"Matching this college":recent.length?"Recent searches":"Popular on this page"}
       </p>
-      {(choices.length?choices:showingLive?[]:popular.slice(0,6)).map(row=>
+      {(choices.length?choices:showingLive?[]:(popularResults.length?popularResults:popular).slice(0,6)).map(row=>
         <button type="button" role="option" aria-selected={query===row.name}
           key={row.membershipId} className="block min-h-9 w-full truncate rounded px-2 text-left text-sm text-body hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)]"
-          onMouseDown={event=>event.preventDefault()} onClick={()=>choose(row.name)}>
+          onMouseDown={event=>event.preventDefault()} onClick={()=>void choose(row)}>
           {row.name}</button>)}
       {!choices.length&&showingLive&&!loading?
         <p className="px-2 py-1 text-xs text-muted-foreground">{notice||"No names match. Search all filters with the entered text."}</p>:null}
