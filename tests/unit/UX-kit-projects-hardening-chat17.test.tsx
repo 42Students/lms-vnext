@@ -282,9 +282,9 @@ describe("UX-kit-HARDEN-22 declared 38-element shared UI surface register",()=>{
     expect(text).not.toMatch(/duration-\[(?:3[1-9]\d|[4-9]\d\d)ms\]/);
     if(name==="third-party-link"){
       expect(text).not.toContain('target="_blank"');
-      expect(text).toContain('href={safeHref}');
-      expect(text).not.toContain('target="_blank"');
-      expect(text).not.toMatch(/window\\.open\\s*\\(/);
+      expect(text).toContain('href={safeHref} rel="noopener noreferrer"');
+      expect(text).toContain('rel="noopener noreferrer"');
+      expect(text).not.toMatch(/window\.(?:open|alert|confirm|prompt)\s*\(/);
     }
     else expect(text).not.toContain('target="_blank"');
     // Dedicated tests above cover real rendering, a11y and security for shared types.
