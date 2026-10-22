@@ -141,9 +141,9 @@ AssertionError: expected 'import { and, desc, eq, inArray, isNu…' to contain '
 
 Static inspection only; no CI execution claimed.
 
-## Deep rows (from DEEP_agent2_4.md, unfinished; do these FIRST)
+## Deep rows (verified chat-12)
 
-Record each result under ## Results in docs/audit/gap-fix-work/deep/packets/DEEP_agent2_4.md as OK (vNext file:line + docs/legacy-source file) or FIXED. No DEFERRED.
+- [x] G2-2-014-032 — OK: independent per-course writes and partial-failure classification; recorded in `DEEP_agent2_4.md`.
+- [x] G2-4-025-082 — OK: recent-history persistence and idempotent selection side effect; recorded in `DEEP_agent2_4.md`.
 
-- [ ] G2-2-014-032  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_13.md)
-- [ ] G2-4-025-082  (source: docs/audit/gap-fix-work/verify2/packets/lane-14/W1_lane14_19.md)
+All six listed unit tests were previously ticked and their repair dispositions documented; no repeat fixes made. Lane-13 unit11 currently also has all six files ticked on main, so no unticked carryover files were available.
