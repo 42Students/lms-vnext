@@ -122,7 +122,7 @@ export default async function LearnerCourseTabPage({
           className="ml-2 font-semibold text-primary-text underline">Retry</Link>
       </Banner>
       <Link href="/learn/courses" className="font-semibold text-primary-text underline">
-        Back to Courses
+        {LEARNER_BACK_TO_COURSES}
       </Link>
     </div>;
   }
@@ -144,7 +144,7 @@ export default async function LearnerCourseTabPage({
         course and class assignment.
       </Banner>
       <Link href="/learn/courses" className="font-semibold text-primary-text underline">
-        Back to Courses
+        {LEARNER_BACK_TO_COURSES}
       </Link>
     </div>;
   }
