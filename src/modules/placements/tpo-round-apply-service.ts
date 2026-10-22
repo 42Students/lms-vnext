@@ -4,6 +4,8 @@ import {getDb} from "@/db/client";
 import {collegeMemberships,learnerProfiles,placementApplications,placementJobRounds,placementJobs,placementRoundResults,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {applyPlacementRoundResult} from "./result-service";
 import {requireTpoJobCollege,requireTpoJobActor} from "./tpo-job-write-base";
 import {placementJobIdSchema,placementRoundIdSchema} from "./validation";
@@ -103,9 +105,29 @@ export async function applyTpoWholeRound(context:RequestContext,rawJobId:unknown
  }
  const applied=results.filter(r=>r.status==="applied").length;
  const skipped=results.filter(r=>r.status==="skipped").length;
+ const unchanged=preview.rows.filter(r=>r.status==="APPLIED").length;
+ // The whole-round submission is an auditable batch decision even when all
+ // results were unchanged or skipped. Row effects were committed individually;
+ // this aggregate records the final observed counts, not a fictitious
+ // all-or-nothing transaction. The preview hash is the retry dedupe identity.
+ await getDb().transaction(async tx=>{
+  await requireTpoJobActor(tx,context);
+  await recordActivityEventInTransaction(tx,context,{
+   eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_BULK_RUN,
+   collegeId:await requireTpoJobCollege(context),
+   subjectType:"placement_round",subjectId:preview.scope.roundId,
+   subjectLabel:preview.scope.roundName,
+   summary:"Round results applied: "+applied+" applied, "+skipped+" skipped, "+unchanged+" unchanged",
+   metadata:{action:"ROUND_RESULTS_APPLIED",jobId:placementJobIdSchema.parse(rawJobId),
+    roundId:preview.scope.roundId,applied,skipped,unchanged,total:preview.rows.length,
+    retryRequiresFreshPreview:skipped>0,previewToken:preview.previewToken},
+   groupKey:"placement-job:"+placementJobIdSchema.parse(rawJobId)+":results",
+   dedupeKey:"round-results-applied:"+preview.scope.roundId+":"+preview.previewToken,
+  });
+ });
  return {total:preview.rows.length,previouslyApplied:preview.applied,
   applied,skipped,partial:skipped>0,
   completion:"ROUND_ALREADY_COMPLETED" as const,
   retryRequiresFreshPreview:skipped>0,
-  unchanged:preview.rows.filter(r=>r.status==="APPLIED").length,results};
+  unchanged,results};
 }
