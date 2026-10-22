@@ -210,7 +210,7 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(drawer).toContain("onCancel={event =>");
   expect(mobile).toContain("onNavigate={() => setOpen(false)}");
   expect(css).toContain(".lms-mobile-sidebar .lms-sidebar-nav {padding-inline:0;");
-  expect(mobile).toContain("bodyClassName=\"!px-3 !pt-2");
+  expect(mobile).toContain("bodyClassName=\"!px-[var(--lms-space-3)] !pt-[var(--lms-space-2)]");
   expect(css).toContain("margin-bottom:2px;");
   expect(mobile).toContain("pb-[calc(24px+env(safe-area-inset-bottom,0px))]");
  });

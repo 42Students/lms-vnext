@@ -26,7 +26,7 @@ describe("Public unsubscribe confirmations",()=>{
   expect(service).toContain('if(decision!=="APPLY")return decision');
   expect(service).toContain('if(outcome==="DENY")throw new CampaignUnsubscribeInvalid()');
   expect(route).toContain('CampaignUnsubscribeInvalid');
-  expect(route).toContain('scope=placement-cell');
+  expect(route).toContain('url.searchParams.set(\"scope\",\"placement-cell\")');
   expect(route).toContain("isSameOriginRequest(request)");
   expect(route).toContain("if(!claim)return successResponse");
   expect(route).toContain("await db.execute(sql`");
