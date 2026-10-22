@@ -46,13 +46,13 @@ export default async function SuperAdminProjectPage({
     const legacyId=/^[1-9][0-9]{0,9}$/.test(projectId)&&Number(projectId)<=2147483647
       ?Number(projectId):null;
     const legacySlug=/^[a-zA-Z0-9_-]{1,96}$/.test(projectId)?projectId:null;
-    if(legacyId!==null||legacySlug ?? ""==null){
+    if(legacyId!==null||legacySlug!==null){
       const candidates=await getDb().select({id:projectInstances.id})
         .from(projectInstances).where(and(
           eq(projectInstances.collegeId,collegeId),
           isNull(projectInstances.deletedAt),
           legacyId!==null?eq(projectInstances.legacyProjectId,legacyId):
-            eq(projectInstances.slug,legacySlug!),
+            eq(projectInstances.slug,legacySlug ?? ""),
         )).limit(2);
       if(candidates.length===1)canonicalId=candidates[0]?.id ?? null;
     }
