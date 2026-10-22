@@ -37,8 +37,13 @@ vi.mock("@/modules/projects/scope", () => ({
   }),
 }));
 
+vi.mock("@/modules/permissions/persisted-actor", () => ({
+  assertPersistedPlatformPermission: vi.fn(async () => {}),
+}));
+
 vi.mock("@/db/client", () => ({
-  getDb: () => ({
+  getDb: () => {
+    const db = {
     select: (columns: Record<string, unknown>) => {
       state.selected.push(columns);
       const chain: QueryChain = {
@@ -58,7 +63,9 @@ vi.mock("@/db/client", () => ({
       };
       return chain;
     },
-  }),
+    };
+    return { ...db, transaction: <T>(work: (tx: typeof db) => Promise<T>) => work(db) };
+  },
 }));
 
 const actor = (): RequestContext => ({
@@ -122,9 +129,9 @@ describe("IIT Dharwad Projects: admin submission correlated SQL and tenancy", ()
 
   it("PROJ-BREAK-idor-23 selected Super Admin college cannot read another organization's summary or queue", async () => {
     await expect(getProjectAdminSubmissionSummary(actor(), otherCollegeId))
-      .rejects.toThrow("Missing permission: projects.manage");
+      .rejects.toThrow("PROJECT_ACCESS_DENIED");
     await expect(listProjectAdminSubmissionQueue(actor(), otherCollegeId))
-      .rejects.toThrow("Missing permission: projects.manage");
+      .rejects.toThrow("PROJECT_ACCESS_DENIED");
     expect(state.selected).toHaveLength(0);
   });
 });
