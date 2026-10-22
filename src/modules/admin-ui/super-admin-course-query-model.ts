@@ -11,15 +11,15 @@ export function parseSuperAdminCourseQuery(
   const keys=new Set(["q","sort","page","pageSize","duplicate","create"]);
   if(Object.keys(raw).some(key=>!keys.has(key)) ||
      Object.values(raw).some(Array.isArray) ||
-     (raw.page!==undefined && (typeof raw.page!=="string" || !/^[0-9]+$/.test(raw.page))) ||
-     (raw.create!==undefined && raw.create!=="1") ||
-     (raw.duplicate!==undefined &&
-      (typeof raw.duplicate!=="string" || !z.uuid().safeParse(raw.duplicate).success)))
+     (raw["page"]!==undefined && (typeof raw["page"]!=="string" || !/^[0-9]+$/.test(raw["page"]))) ||
+     (raw["create"]!==undefined && raw["create"]!=="1") ||
+     (raw["duplicate"]!==undefined &&
+      (typeof raw["duplicate"]!=="string" || !z.uuid().safeParse(raw["duplicate"]).success)))
     return null;
 
   const parsed=collegeCourseCatalogueQuerySchema.safeParse({
-    q:raw.q,sort:raw.sort,page:raw.page,pageSize:raw.pageSize,
+    q:raw["q"],sort:raw["sort"],page:raw["page"],pageSize:raw["page"]Size,
   });
   if(!parsed.success)return null;
-  return {catalogueQuery:parsed.data,duplicateCourseId:raw.duplicate as string|undefined,openCreateCourse:raw.create==="1"};
+  return {catalogueQuery:parsed.data,duplicateCourseId:raw["duplicate"] as string|undefined,openCreateCourse:raw["create"]==="1"};
 }
