@@ -52,9 +52,11 @@ type Path={id:string;courseName:string;cohortName:string;periodName:string};
    setName("");setDescription("");setVisibleToStudents(true);router.refresh();
   }catch(e){
    const message=e instanceof Error?e.message:"Check your entries and try again.";
-   setError("Lesson was not created. "+(
-    /LESSON_NAME_CONFLICT|duplicate/i.test(message)
-     ?"A lesson with this name already exists in the course":message));
+   setError(/submitted but its saved identifier/i.test(message)
+    ? "The lesson may already have been saved. Refresh Lessons before trying again; another submission could create a duplicate."
+    : "Lesson could not be confirmed. "+(
+       /LESSON_NAME_CONFLICT|duplicate/i.test(message)
+        ?"A lesson with this name already exists in the course":message));
   }finally{lock.current=false;setPending(false);}
  }
  if(!paths.length)return <section aria-label="Create New Lesson" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)]">
