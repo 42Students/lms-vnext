@@ -41,7 +41,9 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     </Link>
   </section>;
   const {jobId}=await params;
-  const query=driveInterviewsParams(await searchParams);
+  const rawFilters=await searchParams;
+  const conflictOnly=rawFilters.conflicts==="1";
+  const query=driveInterviewsParams(rawFilters);
   if(!query) return <ErrorState title="Invalid interview filters"
     description={driveInterviewFilterError(await searchParams)} action={<Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/interviews`} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>}/>;
   const [data,appointments]=await Promise.all([
@@ -69,14 +71,19 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
   const todayIst=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
   const dateIst=(iso:string)=>new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(iso));
   const interviewToday=scheduled.filter(item=>dateIst(item.scheduledAt)===todayIst).length;
-  const conflicts=scheduled.filter(item=>{
+  const conflictIds=new Set(scheduled.filter(item=>{
     const start=Date.parse(item.scheduledAt),end=start+item.durationMinutes*60000;
     return scheduled.some(other=>other.id!==item.id&&Date.parse(other.scheduledAt)<end+15*60000&&
       Date.parse(other.scheduledAt)+other.durationMinutes*60000>start-15*60000&&
       (other.applicationId===item.applicationId||
        (Boolean(item.venue??item.meetingUrl)&&(item.venue??item.meetingUrl)===(other.venue??other.meetingUrl))||
        (Boolean(item.interviewer)&&item.interviewer===other.interviewer)));
-  }).length;
+  }).map(item=>item.id));
+  const conflicts=conflictIds.size;
+  const visibleAppointments=conflictOnly?appointmentRows.filter(item=>conflictIds.has(item.id)):appointmentRows;
+  const baseConflictHref=driveInterviewsHref(jobId,query);
+  const toggleConflictHref=conflictOnly?baseConflictHref:
+    baseConflictHref+(baseConflictHref.includes("?")?"&":"?")+"conflicts=1";
   const driveTitle=data.job.title||appointments.job.title;
   const companyHue=[...driveTitle].reduce((n,char)=>(n*31+char.charCodeAt(0))%360,0);
   const columns:DataTableColumn<(typeof data.items)[number]>[]=[
@@ -118,7 +125,16 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
           <div className="text-xs text-muted-foreground">{metric.label}</div>
         </div>)}
     </div>
+    <div className="flex flex-wrap items-center gap-3">
+      <Link href={toggleConflictHref} role="button" aria-pressed={conflictOnly}
+        className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 "+
+          (conflictOnly?"border-[var(--lms-error)] bg-red-50 text-[var(--lms-error)]":"border-[var(--lms-error)] text-[var(--lms-error)] hover:bg-red-50")}>
+        {conflictOnly?"Show all interviews":"Conflicts ("+conflicts+")"}
+      </Link>
+      {conflictOnly?<span role="status" className="text-sm text-[var(--lms-error)]">Showing {visibleAppointments.length} conflicting appointments on this page.</span>:null}
+    </div>
     <form method="get" role="search" aria-label="Interview round filters" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+      {conflictOnly?<input type="hidden" name="conflicts" value="1"/>:null}
       {query.appointmentStatus&&query.appointmentStatus!=="ALL"?<input type="hidden" name="appointmentStatus" value={query.appointmentStatus}/>:null}
       {query.appointmentMode&&query.appointmentMode!=="ALL"?<input type="hidden" name="appointmentMode" value={query.appointmentMode}/>:null}
       {query.appointmentSearch?<input type="hidden" name="appointmentSearch" value={query.appointmentSearch}/>:null}
@@ -140,6 +156,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     </form>
     <form method="get" role="search" aria-label="Candidate interview appointment filters"
       className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+      {conflictOnly?<input type="hidden" name="conflicts" value="1"/>:null}
       {query.kind!=="ALL"?<input type="hidden" name="kind" value={query.kind}/>:null}
       {query.status!=="ALL"?<input type="hidden" name="status" value={query.status}/>:null}
       {query.applicationId?<input type="hidden" name="applicationId" value={query.applicationId}/>:null}
@@ -179,8 +196,8 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
           className="inline-flex min-h-9 items-center font-semibold text-link underline">Clear filters</Link>
       </div>
     </form>
-    {appointmentRows.length===0?<p className="text-sm text-muted-foreground" role="status">
-      {appointments.appointmentTotal===0?"No interviews scheduled for this drive yet.":"No interviews match these filters."}
+    {visibleAppointments.length===0?<p className="text-sm text-muted-foreground" role="status">
+      {appointments.appointmentTotal===0?"No interviews scheduled for this drive yet.":conflictOnly?"No conflicts match these filters.":"No interviews match these filters."}
     </p>:null}
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
       <span role="status">{appointments.appointmentTotal} interviews · page {appointments.appointmentPage} of {appointments.appointmentPages}</span>
@@ -208,7 +225,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
         <p className="mt-1">Overlapping learner, room and interviewer bookings are checked again by the server before saving.</p>
       </aside>:null}
     <CollegeInterviewAppointments jobId={jobId} rounds={appointments.rounds}
-      candidates={appointments.candidates} appointments={appointmentRows}
+      candidates={appointments.candidates} appointments={visibleAppointments}
       preferredApplicationId={query.applicationId}/>
     <nav aria-label="Candidate interview appointment pages" className="flex flex-wrap items-center gap-4 border-b border-border pb-4 text-sm">
       {appointments.appointmentPage>1?<Link href={driveInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage-1})}
