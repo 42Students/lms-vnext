@@ -549,7 +549,7 @@ export function AdminCourseCreatePanel({
                   onError={()=>setCoverPreviewBroken(true)}
                   className="h-[100px] w-[180px] rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle object-cover"/>
                 <div className="flex flex-wrap gap-2">
-                  <a href={safeCourseCoverHref(coverUrl)!} target="_blank" rel="noopener noreferrer"
+                  <a href={safeCourseCoverHref(coverUrl)!} rel="noopener noreferrer"
                     className="inline-flex min-h-9 items-center text-xs font-semibold text-link underline">View full image</a>
                   <Button type="button" size="sm" variant="secondary" onClick={()=>{
                     setCoverUrl("");setCoverPreviewBroken(false);setCreateErrors(old=>({...old,coverUrl:undefined}));
