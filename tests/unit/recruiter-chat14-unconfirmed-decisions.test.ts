@@ -39,6 +39,6 @@ describe("chat-14 UNCONFIRMED recruiter owner decisions",()=>{
   expect(join).toContain('outcome="ALREADY_JOINED"');
   expect(join).toContain("const [user] = await tx.select().from(users)");
   expect(join).toContain("if(challenge.expiresAt.getTime()<=now.getTime())");
-  expect(join).toContain("recruiterGrantEffectiveAt(grant, now, \"DRIVES\")");
+  expect(join).toContain("recruiterGrantEffectiveAt(grant,now,\"DRIVES\")");
  });
 });
