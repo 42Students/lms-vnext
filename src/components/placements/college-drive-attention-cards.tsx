@@ -64,7 +64,12 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
         className="flex min-w-0 flex-col justify-between gap-3 py-3 first:pt-0 last:pb-0 sm:flex-row sm:items-start">
         <div className="min-w-0 flex-1">
          <p className="break-words text-sm font-semibold text-foreground">{row.title}</p>
-         <p className="text-xs text-body">{row.count} candidate(s) need review</p>
+         <p className="text-xs text-body">{row.category==="LOW_CONVERSION"
+           ?"1 drive flagged for low conversion":row.count.toLocaleString("en-IN")+" candidate(s) need review"}</p>
+         {row.sampleOmitted>0?<p role="status" className="mt-1 text-xs text-muted-foreground">
+          Showing {row.examples.length} sample{row.examples.length===1?"":"s"} of {row.countTotal} affected applications.
+          {row.examples.length===0?" No named sample is available on this read.":""}
+         </p>:null}
          {row.examples.length>0?<ul className="mt-2 space-y-1"
            aria-label={"Affected learners for "+row.title}>
            {row.examples.map(example=><li key={example.id} className="text-xs">
