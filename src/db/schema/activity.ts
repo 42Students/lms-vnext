@@ -329,9 +329,13 @@ export function claimDueNotificationOutboxStatement(
        WHERE deleted_at IS NULL
          AND delivery_attempts < ${maxAttempts}
          AND (
-           (delivery_status IN ('SCHEDULED', 'FAILED')
+           (delivery_status = 'SCHEDULED'
              AND scheduled_at <= ${now}
              AND (next_retry_at IS NULL OR next_retry_at <= ${now}))
+           OR (delivery_status = 'FAILED'
+             AND scheduled_at <= ${now}
+             AND next_retry_at IS NOT NULL
+             AND next_retry_at <= ${now})
            OR (delivery_status = 'PROCESSING'
              AND updated_at <= ${leaseExpiredBefore})
          )
@@ -357,6 +361,7 @@ export function claimDueNotificationOutboxStatement(
  * Complete a claimed scheduled delivery by compare-and-swap. Call this in
  * the SAME transaction that writes every authorized recipient inbox row;
  * marking SENT alone does not grant visibility or dispatch notifications.
+ * FAILED with no next_retry_at is terminal, not immediately retryable.
  * Failed workers may retry only after nextRetryAt, and a stale worker cannot
  * overwrite a later attempt or release a recalled outbox row.
  */

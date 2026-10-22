@@ -25,7 +25,7 @@ export function AdminOtpLockoutResetForm() {
       if (!response.ok) throw new Error("RESET_FAILED");
       setPhone("");
       setReason("");
-      setMessage("Recovery reviewed. The account can request a fresh login code if eligible. Requester limits still apply.");
+      setMessage("OTP lockout cleared where eligible. The account can request a fresh login code; requester limits still apply.");
     } catch {
       setMessage("Could not complete this recovery. Check your admin access and try again.");
     } finally {
