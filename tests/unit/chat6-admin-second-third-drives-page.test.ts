@@ -5,10 +5,14 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 const fakes=vi.hoisted(()=>({ctx:vi.fn(),operations:vi.fn()}));
 vi.mock("server-only",()=>({}));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:fakes.ctx}));
-vi.mock("@/modules/placements/tpo-operations-service",()=>({getPlacementTpoOperations:fakes.operations}));
+vi.mock("@/modules/placements/tpo-operations-service",()=>({listPlacementOperationsJobPage:fakes.operations}));
 vi.mock("@/components/placements/super-admin-bulk-drive-actions",()=>({
   SuperAdminBulkDriveActions:({drives}:{drives:readonly unknown[]})=>`Bulk actions for ${drives.length} drives`,
+  SuperAdminDriveRowStatusAction:()=>null,
 }));
+vi.mock("@/components/placements/super-admin-drive-archive",()=>({SuperAdminDriveArchive:()=>null}));
+vi.mock("@/components/placements/super-admin-drive-duplicate",()=>({SuperAdminDriveDuplicate:()=>null}));
+vi.mock("@/components/placements/super-admin-drive-deadline",()=>({SuperAdminDriveDeadline:()=>null}));
 vi.mock("@/components/ui/data-table",()=>({
   DataTable:({rows}:{rows:readonly unknown[]})=>`Visible drive rows: ${rows.length}`,
 }));
@@ -21,7 +25,7 @@ const admin={
   adminScope:{collegeId,organizationId:"org-a"},
 };
 const ops={
-  jobs:[{
+  items:[{
     job:{
       id:"22222222-2222-4222-8222-222222222222",
       title:"Graduate software trainee",status:"PUBLISHED",
@@ -30,8 +34,10 @@ const ops={
       employmentType:"FULL_TIME",locations:["Bengaluru"],
       company:{id:"33333333-3333-4333-8333-333333333333",name:"Example Technology"},
     },
-    metrics:{submittedApplications:5},
+    company:{id:"33333333-3333-4333-8333-333333333333",name:"Example Technology"},
+    metrics:{applicants:5},
   }],
+  total:1,page:1,pageSize:20,totalPages:1,
 };
 beforeEach(()=>{
   vi.resetAllMocks();
@@ -43,7 +49,7 @@ describe("Super Admin drives: page-level behavior, denial and friendly recovery"
   it("CHAT6-ADMIN-DRIVES-PAGE-01 refuses to fetch tenant data without a selected college",async()=>{
     fakes.ctx.mockResolvedValueOnce({...admin,adminScope:{collegeId:null,organizationId:null}});
     const html=renderToStaticMarkup(await DrivesPage({searchParams:Promise.resolve({})}));
-    expect(html).toContain("Choose a college");
+    expect(html).toContain("Select a College to manage Jobs");
     expect(fakes.operations).not.toHaveBeenCalled();
   });
 
@@ -72,11 +78,12 @@ describe("Super Admin drives: page-level behavior, denial and friendly recovery"
     const html=renderToStaticMarkup(await DrivesPage({
       searchParams:Promise.resolve({status:"ACTIVE",pageSize:"20"}),
     }));
-    expect(fakes.operations).toHaveBeenCalledWith(admin,collegeId);
-    expect(html).toContain("1 matching drives");
+    expect(fakes.operations).toHaveBeenCalledWith(admin,collegeId,
+      expect.objectContaining({status:"ACTIVE",pageSize:20}));
+    expect(html).toContain("1–1 of 1 drives");
     expect(html).toContain("Visible drive rows: 1");
     expect(html).toContain("Bulk actions for 1 drives");
-    expect(html).toContain("Create drive");
+    expect(html).toContain("Create Job");
     expect(html).toContain("min-w-0");
   });
 
