@@ -326,11 +326,12 @@ export default async function AnnouncementsPage({
        })}</ul>
       </section>:null}
       <Banner tone="info" role="status">
-        Broadcast notices are stored as separate college records. This view does not yet
-        combine them by broadcast group or calculate distinct colleges reached; the individual
-        placement-cell receipts above must not be treated as an all-colleges delivery total.
-        Scheduled-delivery retry, cancel and the cross-type recycle bin require separate,
-        audited operator services and are not available through this announcements list.
+        Broadcast notices are stored as separate college records and grouped above when
+        they share a persisted broadcast identity. A complete group receipt counts distinct
+        target colleges; without that receipt, counts cover only copies on the current page.
+        Read receipts are not notification delivery confirmations. Scheduled-notification
+        retry and cancellation are separate operator actions, not announcement actions;
+        they cannot be performed from this list.
       </Banner>
       <AnnouncementAdminWorkspace items={items} targets={targets} requiresPublicationConsent
         emptyMessage={announcementHistoryEmptyMessage({
