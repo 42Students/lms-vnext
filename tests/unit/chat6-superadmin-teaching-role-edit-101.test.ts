@@ -32,7 +32,7 @@ describe("SA-academics-people-101 role edit transactional contract",()=>{
   const route=read("src/app/api/courses/teaching-assignments/[assignmentId]/route.ts");
   expect(route).toContain("export async function PATCH");
   expect(route).toContain("isSameOriginRequest(request)");
-  expect(route).toContain("changeCourseTeachingAssignmentRole(context,assignmentId,body.role)");
+  expect(route).toContain("await scopedTeachingAssignmentId(context,assignmentId),parsed.data");
   const page=read("src/app/(authenticated)/admin/faculty-assignment/page.tsx");
   expect(page).toContain("SuperAdminFacultyAssignmentCreate");
   expect(page).toContain("SuperAdminTeachingRoleEdit");
