@@ -10,6 +10,7 @@ describe("TPO Calendar kind legend",()=>{
   expect(source).toContain("Select multiple event types to combine them");
   expect(source).toContain('filter.value==="BLOCKED"');
   expect(source).toContain('filter.value==="FOLLOW_UP"');
-  expect(source).toContain('name="kind"');
+  expect(source).toContain('<FilterChipLink key={filter.value}');
+  expect(source).toContain("kinds:nextKinds");
  });
 });

@@ -19,17 +19,17 @@ describe("Super Admin Academic Setup gap reconciliation",()=>{
   const form=src("src/components/admin/department-create-form.tsx");
   expect(form).toContain("Please enter department name");
   expect(form).toContain("Department name must be 255 characters or less");
-  expect(form).toContain("Department was not created.");
+  expect(form).toContain("DEPARTMENT_COPY.createFailed");
   expect(form).toContain("maxLength={255}");
   expect(form).not.toContain("setError(payload.error)");
  });
  it("SA-academics-people-08 blocks dependency-unsafe department deletion before the request",()=>{
   const code=src("src/components/admin/department-actions.tsx");
   expect(code).toContain("hasDependencies");
-  expect(code).toContain("usage.programs + usage.courses + usage.faculty");
-  expect(code).toContain("Move or remove its programs, courses, faculty before deleting.");
-  expect(code).toContain("disabled={pending || hasDependencies}");
-  expect(code).toContain("Retry delete");
+  expect(code).toContain("usage.programs+usage.courses+usage.faculty");
+  expect(code).toContain("Move or remove its programs, courses or faculty assignments, then retry.");
+  expect(code).toContain("disabled={pending||hasDependencies}");
+  expect(code).toContain("Retry archive");
  });
  it("SA-academics-people-09 confirms discarding unsaved department rename edits",()=>{
   const code=src("src/components/admin/department-actions.tsx");
@@ -46,7 +46,7 @@ describe("Super Admin Academic Setup gap reconciliation",()=>{
  });
  it("SA-academics-people-13 restores program creation copy and links to scoped Departments",()=>{
   const directory=src("src/components/admin/admin-program-directory.tsx");
-  for(const token of ["Create New Program","Existing Programs","Created program “","Next, create its semesters and batches.","Go to Departments","Duration (Years)",'href="/admin/departments"'])
+  for(const token of ["Create New Program","Existing Programs","Created program “","Next, create its semesters and batches.","Go to Departments","Duration (Years)",'href={departmentHref}'])
    expect(directory).toContain(token);
  });
  it("SA-academics-people-18 offers batch creation and lifecycle directly under the Academic Setup Batches tab",()=>{
@@ -78,7 +78,7 @@ describe("Super Admin Academic Setup gap reconciliation",()=>{
   expect(page).toContain("legacyAcademicStatus(status, true)");
  });
  it("SA-academics-people-37 uses exact empty state copy for departments and lecture halls",()=>{
-  expect(src("src/components/admin/department-directory.tsx")).toContain("No departments found. Create a college first, then add departments.");
+  expect(src("src/components/admin/department-directory.tsx")).toContain("No departments found. Create a department to get started.");
   expect(src("src/components/admin/lecture-hall-manager.tsx")).toContain("No lecture halls found.");
  });
  it("SA-academics-people-41 surfaces per-class learner count, capacity, and full-class warning",()=>{
@@ -96,6 +96,6 @@ describe("Super Admin Academic Setup gap reconciliation",()=>{
  it("SA-academics-people-44 derives a bounded program code rather than making it mandatory in the UI",()=>{
   expect(deriveSuperAdminProgramCode("Computer Science and Engineering")).toBe("CSAE");
   const page=src("src/components/admin/admin-program-directory.tsx");
-  expect(page).toContain("code.trim() || deriveSuperAdminProgramCode(name)");
+  expect(page).toContain("code.trim()||availableSuperAdminProgramCode(name,departmentId,programs)");
  });
 });

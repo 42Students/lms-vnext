@@ -20,7 +20,9 @@ describe("Owner-approved improvements over obsolete legacy workflows",()=>{
   const list=source("src/app/(authenticated)/college/projects/page.tsx");
   expect(decisions).toContain("archive instead of delete");
   expect(archive).toContain("Restore this workspace?");
-  expect(archive).toContain("Archived workspaces can be reopened with all of their content.");
+  expect(archive).toContain("Restore "+'this workspace?');
+  expect(archive).toContain("Archived members, meetings and workspace content become accessible again.");
+  expect(archive).toContain("The workspace remains available for authorized review. It has not been deleted.");
   expect(list).toContain('href="/college/projects?status=ARCHIVED"');
  });
 });

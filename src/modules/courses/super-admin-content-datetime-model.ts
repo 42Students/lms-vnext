@@ -6,6 +6,8 @@ export type AdminContentTimeZone="Asia/Kolkata"|"UTC"|"America/New_York"|"Americ
  * selected IANA zone; reject nonexistent or ambiguous DST times rather than
  * silently changing the scheduled class to a different instant. */
 export function parseAdminContentLocalMoment(value:string,zone:AdminContentTimeZone):string|null{
+ if(zone!=="Asia/Kolkata"&&zone!=="UTC"&&zone!=="America/New_York"&&
+    zone!=="America/Los_Angeles"&&zone!=="Europe/London")return null;
  if(zone==="Asia/Kolkata")return parseCollegeIstLocal(value);
  if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value))return null;
  const year=Number(value.slice(0,4));
