@@ -1,4 +1,4 @@
-import {beforeEach,describe,expect,it,vi} from "vitest";
+import {afterEach,beforeEach,describe,expect,it,vi} from "vitest";
 import {outboundFetch} from "@/lib/outbound";
 import {writeStructuredLog} from "@/observability/logger";
 import {createZeptoMailEmailProvider,type ZeptoMailConfig}
@@ -18,7 +18,14 @@ const smsConfig:ExotelConfig={
  dltEntityId:"1234567890",otpSenderId:"FLERNR",otpDltTemplateId:"otp-template",
  smsType:"transactional_opt_in",
 };
-beforeEach(()=>vi.clearAllMocks());
+beforeEach(()=>{
+ vi.clearAllMocks();
+ // Development sending is explicitly allowlisted; all other recipients fail.
+ vi.stubEnv("DEV_MAIL_ALLOW","learner@example.edu");
+ vi.stubEnv("APP_ENV","development");
+ vi.stubEnv("STAGE","development");
+});
+afterEach(()=>vi.unstubAllEnvs());
 describe("chat-16 transactional OTP provider ports (mock network only)",()=>{
  it("messaging-otp-email-16 fails closed on unsafe endpoints, missing credentials or invalid destination",async()=>{
   for(const cfg of [

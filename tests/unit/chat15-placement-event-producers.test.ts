@@ -27,7 +27,7 @@ describe("LEARNER-placements-R04 persisted event producers",()=>{
    'eq(users.platformStatus,"ACTIVE")',
    'learnerPlacementEventUsesMatchingJobsPreference(input.kind)',
    'deliverInAppNotificationInTransaction(tx,input.eventId',
-   'usersToNotify.slice(start,start+250)',
+   'usersToNotify.slice(start,start+PLACEMENT_NOTICE_DELIVERY_POLICY.inAppBatchSize)',
   ])expect(service).toContain(check);
   expect(service).not.toContain("onConflictDoUpdate");
  });

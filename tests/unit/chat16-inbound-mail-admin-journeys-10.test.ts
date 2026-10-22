@@ -51,13 +51,20 @@ describe("chat-16 Super Admin inbound mail adversarial actions and boundaries", 
       tableExists: vi.fn(async () => true), list: vi.fn(async () => []),
     };
     for (const invalid of [
-      { status: "PRIVATE" }, { page: 0 }, { page: 10001 },
       { q: "x".repeat(121) }, { recipient: "not-mail" }, { unknown: id },
     ]) {
       await expect(listInboundMailForAdmin(admin, invalid, repo)).rejects.toThrow();
     }
     expect(repo.tableExists).not.toHaveBeenCalled();
     expect(repo.list).not.toHaveBeenCalled();
+    // Historical inbox links normalize safely rather than reject old queries.
+    const normalized=await listInboundMailForAdmin(admin,{status:"PRIVATE",page:10001},repo);
+    expect(normalized.page).toBe(10000);
+    expect(repo.list).toHaveBeenCalledWith(expect.objectContaining({
+      status:"ALL",page:10000,
+    }));
+    const first=await listInboundMailForAdmin(admin,{page:0},repo);
+    expect(first.page).toBe(1);
   });
 
   it("HR-BREAK-INBOUND-03 bounds the requested page and counts unread independently of the search", async () => {
@@ -103,7 +110,9 @@ describe("chat-16 Super Admin inbound mail adversarial actions and boundaries", 
     });
     const set = vi.fn(() => ({ where }));
     const update = vi.fn(() => ({ set }));
-    vi.mocked(getDb).mockReturnValue({ execute, update } as never);
+    const transaction=vi.fn(async (callback:(tx:{update:typeof update})=>Promise<unknown>)=>
+      callback({update}));
+    vi.mocked(getDb).mockReturnValue({ execute, transaction } as never);
     expect(await changeInboundMailStatusForAdmin(admin, raw))
       .toEqual({ kind: "STALE" });
     const sql = new PgDialect().sqlToQuery(predicate as never);
