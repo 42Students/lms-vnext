@@ -748,12 +748,13 @@ function learnerApplicationStageLabel(status:string){
 }
 
 export function LearnerPlacementJobs({
-  items,snapshotNowIso=null,returnQuery="",savedJobIds=[],
+  items,snapshotNowIso=null,returnQuery="",savedJobIds=[],bookmarkActionsEnabled=true,
 }: {
   items: readonly LearnerPlacementJobItem[];
   snapshotNowIso?:string|null;
   returnQuery?:string;
   savedJobIds?:readonly string[];
+  bookmarkActionsEnabled?:boolean;
 }) {
   if (items.length === 0) {
     return (
@@ -833,7 +834,8 @@ export function LearnerPlacementJobs({
                 </a>:null}
               </div>
               <div className="flex min-w-0 flex-wrap items-center gap-2 sm:justify-end">
-              <LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={savedJobIds.includes(item.job.id)}/>
+              {bookmarkActionsEnabled?<LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={savedJobIds.includes(item.job.id)}/>:
+                <span role="status" className="text-xs text-muted-foreground">Bookmarks unavailable</span>}
               {firstRole?<StatusBadge tone="info">{item.job.jobTypeLabel?.trim() || humanize(item.job.employmentType)}</StatusBadge>:null}
                {item.application ? (
                  <StatusBadge tone={item.application.status==="SUBMITTED"?"success":"neutral"}>
