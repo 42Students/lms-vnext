@@ -6,8 +6,8 @@ export function tpoHiddenProfileMatchesSearch(document:unknown,search:string):bo
  if(!document||typeof document!=="object"||Array.isArray(document))return false;
  const root=document as Record<string,unknown>;
  const object=(raw:unknown):Record<string,unknown>=>raw&&typeof raw==="object"&&!Array.isArray(raw)?raw as Record<string,unknown>:{};
- const personal=object(root.personalDetails),contact=object(root.contactDetails),
-  social=object(root.socialProfiles);
+ const personal=object(root["personalDetails"]),contact=object(root["contactDetails"]),
+  social=object(root["socialProfiles"]);
  const keys=["phone","phoneNumber","mobile","mobileNumber","alternatePhone","dateOfBirth","city","district","state","address"];
  const values:unknown[]=[
   ...keys.map(key=>personal[key]),...keys.map(key=>contact[key]),
@@ -30,7 +30,7 @@ export function tpoProfileSkillNameMatches(document:unknown,rawName:string):bool
  const search=rawName.trim().toLocaleLowerCase("en-IN");
  if(!search)return false;
  if(!document||typeof document!=="object"||Array.isArray(document))return false;
- const items=(document as Record<string,unknown>).skills;
+ const items=(document as Record<string,unknown>)["skills"];
  return Array.isArray(items)&&items.some(value=>{
   if(!value||typeof value!=="object"||Array.isArray(value))return false;
   const entry=value as Record<string,unknown>;
