@@ -228,7 +228,13 @@ export default async function SuperAdminLessonsPage({
               <td className="min-w-[195px] p-3">
                 {lesson.status==="ACTIVE"?<div className="flex flex-wrap items-center gap-2">
                   <LessonActions lesson={{id:lesson.id,name:lessonName,
-                    description:lesson.description,sequence:lesson.sequence}}/>
+                    description:lesson.description,sequence:lesson.sequence,
+                    updatedAt:lesson.updatedAt,visibleToStudents:lesson.visibleToStudents,
+                    learningPathId:lesson.learningPathId}}
+                    destinations={paths.map(path=>({
+                      learningPathId:path.id,
+                      label:path.courseName+" · "+path.cohortName+" · "+path.periodName,
+                    }))}/>
                   <details className="w-full">
                     <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-primary-text underline md:min-h-9">
                       More actions
