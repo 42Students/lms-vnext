@@ -53,7 +53,7 @@ export function SuperAdminDriveStatusControl({jobId,status}:{
    Close drive</Button>:status==="CLOSED"?<div className="space-y-2">
    <Alert tone="info">This drive is closed. You can reopen it only while its placement season and employer relationship are active. Earlier offers remain unchanged.</Alert>
    <Button type="button" variant="secondary" disabled={pending}
-     onClick={()=>{setError("");setConfirm("REOPEN");}}>Reopen drive</Button>
+     onClick={()=>{setError("");setConfirm("REOPEN");}}>Open drive</Button>
   </div>:status==="DRAFT"?<p className="text-sm text-body">Complete the draft and its eligibility checks before publishing through the drive workspace.</p>:
    <p className="text-sm text-muted-foreground">This drive is not open for applications.</p>}
   {error?<Alert tone="error" role="alert">{error}</Alert>:null}
