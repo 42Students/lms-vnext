@@ -917,13 +917,13 @@ describe("courses C4A assignments against PostgreSQL", () => {
           (assignment_id, delivery_id, membership_id, submission_type, text_content)
          values ($1, $2, $3, 'LINK', 'invalid-shape')`,
         [
-          assignment.id,
+          randomUUID(),
           structure.deliveryA.id,
           SEED_IDS.facultyCollegeAMembership,
         ],
       ),
     ).rejects.toMatchObject({
-      code: "23514",
+      code: "23503",
     });
 
     await expect(
