@@ -897,7 +897,8 @@ export function HrDriveDraftForm({
               {HR_DRAFT_PREVIEW_FIELDS.map(([field,label])=>(
                 <div key={field}>
                   <dt className="text-xs text-muted-foreground">{label}</dt>
-                  <dd className="font-medium text-foreground">{draft[field]||"Not specified"}</dd>
+                  <dd className="font-medium text-foreground">{field==="passingYear"&&draft.passingYears?.length
+                    ?draft.passingYears.join(", "):draft[field]||"Not specified"}</dd>
                 </div>
               ))}
             </dl>
