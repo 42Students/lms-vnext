@@ -13,6 +13,15 @@ describe("Super Admin Academic Attendance",()=>{
   expect(edit).toContain("ConfirmDialog");
   expect(edit).not.toContain("window.confirm");
  });
+ it("G2-5-006-008 distinguishes a saved default-valued college field from inherited policy",()=>{
+  const edit=read("src/components/admin/super-admin-attendance-settings-editor.tsx");
+  expect(edit).toContain('savedHours===DEFAULT_ATTENDANCE_POLICY.correctionWindowHours');
+  expect(edit).toContain('savedThreshold===DEFAULT_ATTENDANCE_POLICY.eligibilityThresholdPercent');
+  expect(edit).toContain('"Saved college value · matches default"');
+  expect(edit).toContain('"Custom for this college"');
+  expect(edit).toContain("Reset college policy to default");
+  expect(edit).toContain("Platform/organization inheritance is not inferred");
+ });
  it("SA-academics-people-32 preserves exact legacy attendance-policy copy and accessible errors",()=>{
   const edit=read("src/components/admin/super-admin-attendance-settings-editor.tsx");
   for(const value of ["Attendance policy","Late marking allowed for","Minimum attendance",

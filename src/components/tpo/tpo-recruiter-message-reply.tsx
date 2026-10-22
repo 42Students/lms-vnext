@@ -8,8 +8,8 @@ import {TPO_QUICK_REPLIES,recruiterMessageDraftKey} from "@/modules/placements/t
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {Textarea} from "@/components/ui/textarea";
-export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnded=false}:{
- threadId:string;unread:boolean;actorUserId:string;accessEnded?:boolean;
+export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnded=false,quote}:{
+ threadId:string;unread:boolean;actorUserId:string;accessEnded?:boolean;quote?:string;
 }){
  const router=useRouter();
  const draftHintId=useId();
@@ -81,6 +81,8 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnde
  return <section className="space-y-3 border-t border-border pt-4" aria-label="Reply to recruiter">
   {accessEnded?<p role="status" className="text-sm text-warning">Recruiter access ended. Sending is unavailable until access is restored.</p>:null}
   <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Reply</h2>
+  {quote?<Button type="button" variant="secondary" disabled={busy||accessEnded}
+    className="min-h-11 md:min-h-9" onClick={()=>addQuickReply(quote)}>Quote change request</Button>:null}
   <Disclosure title="Quick replies" className="min-w-0" contentClassName="pt-2">
   <div role="group" aria-label="Quick replies" className="flex min-w-0 flex-wrap gap-2">
     {TPO_QUICK_REPLIES.map(reply=><Button variant="secondary" key={reply} type="button" disabled={busy||accessEnded}
