@@ -115,11 +115,13 @@ export default async function LearnerCourseTabPage({
   if(workspaceResult.status!=="fulfilled" || deliveriesResult.status!=="fulfilled" ||
       instructorsResult.status!=="fulfilled"){
     return <div className="min-w-0 space-y-4">
-      <PageHeader title="Could not load course" />
+      <PageHeader title={activeTab==="roadmap"?"Lesson content could not be loaded":"Could not load course"} />
       <Banner tone="warning" role="alert">
-        Could not load course. Content and completion counts may be incomplete.
+        {activeTab==="roadmap"
+         ?"Lesson content could not be loaded. Your progress has not been changed; retry to load the latest lesson and completion state."
+         :"Could not load course. Content and completion counts may be incomplete."}
         <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/"+(activeTab??"home")}
-          className="ml-2 font-semibold text-primary-text underline">Retry</Link>
+          className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>
       </Banner>
       <Link href="/learn/courses" className="font-semibold text-primary-text underline">
         {LEARNER_BACK_TO_COURSES}
@@ -140,8 +142,17 @@ export default async function LearnerCourseTabPage({
     return <div className="min-w-0 space-y-4">
       <PageHeader title="Not assigned to a class" />
       <Banner tone="warning" role="alert">
-        Not assigned to a class. Please contact your administrator to check your
-        course and class assignment.
+        <div className="flex items-start gap-3">
+          <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"
+            strokeLinejoin="round" className="mt-0.5 shrink-0">
+            <path d="M12 6c-3-2-6-2.5-9-2v15c3-.5 6 0 9 2m0-15c3-2 6-2.5 9-2v15c-3-.5-6 0-9 2m0-15v15"/>
+          </svg>
+          <div>
+            <p className="font-semibold">Not assigned to a class</p>
+            <p className="mt-1">Please contact your administrator to check your course and class assignment.</p>
+          </div>
+        </div>
       </Banner>
       <Link href="/learn/courses" className="font-semibold text-primary-text underline">
         {LEARNER_BACK_TO_COURSES}
