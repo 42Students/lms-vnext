@@ -42,17 +42,17 @@ export default async function CollegeBatchPromotionPage({
     <Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Choose a college in your account switcher →</Link>
   </div>;
   const incoming = await searchParams;
-  const showCompleted = first(incoming.showCompleted) === "1";
-  const batchPageRaw=first(incoming.batchPage)??"1";
-  const showInactive=first(incoming.showInactive)==="1";
-  const batchSearch=(first(incoming.search)??"").trim().slice(0,120);
-  const batchSizeRaw=first(incoming.batchPageSize)??"10";
+  const showCompleted = first(incoming["showCompleted"]) === "1";
+  const batchPageRaw=first(incoming["batchPage"])??"1";
+  const showInactive=first(incoming["showInactive"])==="1";
+  const batchSearch=(first(incoming["search"])??"").trim().slice(0,120);
+  const batchSizeRaw=first(incoming["batchPageSize"])??"10";
   const batchPage=/^[1-9][0-9]{0,3}$/.test(batchPageRaw)?Number(batchPageRaw):null;
   const batchSize=["10","20","50"].includes(batchSizeRaw)?Number(batchSizeRaw):null;
   const raw = {
-    programId: first(incoming.programId),
-    cohortId: first(incoming.cohortId),
-    yearStart: first(incoming.yearStart),
+    programId: first(incoming["programId"]),
+    cohortId: first(incoming["cohortId"]),
+    yearStart: first(incoming["yearStart"]),
   };
   const parsed = collegePromotionQuerySchema.safeParse(
     Object.fromEntries(Object.entries(raw).filter(([, value]) =>
@@ -60,7 +60,7 @@ export default async function CollegeBatchPromotionPage({
     )),
   );
   if (!parsed.success||batchPage===null||batchSize===null||
-      (first(incoming.showCompleted) !== undefined && !["1",""].includes(first(incoming.showCompleted)!))) return <div className="min-w-0 space-y-4 md:space-y-6">
+      (first(incoming["showCompleted"]) !== undefined && !["1",""].includes(first(incoming["showCompleted"])!))) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Batch Promotion" actions={<PageBackLink href="/college/batches" label="Batches" />} />
     <ErrorState title="Invalid promotion preview filters"
       description="Select a valid program, batch and optional academic-year start. No learner records were loaded."
@@ -280,9 +280,9 @@ export default async function CollegeBatchPromotionPage({
               <CollegePromotionConfirmation cohortId={preview.batch.id}
                 programId={preview.batch.programId}
                 expectedVersion={preview.batch.version}
-                yearStart={parsed.data.yearStart}
+                {...(parsed.data.yearStart!==undefined?{yearStart:parsed.data.yearStart}:{})}
                 targetTerm={preview.plan.targetTermNumber!}
-                deactivatedFacultyAssignments={teachingForecast?.ending}
+                {...(teachingForecast?.ending!==undefined?{deactivatedFacultyAssignments:teachingForecast.ending}:{})}
                 learnerCount={preview.checkedLearners}
                 academicYearStart={preview.plan.academicYearStart!}
                 activeClasses={preview.activeClasses}
