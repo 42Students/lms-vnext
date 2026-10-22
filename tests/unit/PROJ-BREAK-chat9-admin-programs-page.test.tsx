@@ -21,10 +21,10 @@ vi.mock("@/modules/academics/program-service",()=>({
     state.global++;
     return {items:[],total:0,page:1,totalPages:1};
   },
-  listPrograms:async()=>{
+  listProgramsPage:async()=>{
     state.programs++;
     if(state.failure==="programs")throw Error("PRIVATE_PROGRAM_SQL_TOKEN");
-    return [{id:"program",name:"Computer Science",code:"CS",departmentId:"dept",departmentName:"Computing",durationTerms:8}];
+    return {programs:[{id:"program",name:"Computer Science",code:"CS",departmentId:"dept",departmentName:"Computing",durationTerms:8}],page:1,pageSize:20,total:1,totalPages:1};
   },
 }));
 vi.mock("@/modules/departments/service",()=>({
@@ -78,7 +78,7 @@ describe("Super Admin last-third Programs: cross-role, partial outage and scoped
   it("UX-admin-programs-37 missing selected college never performs cross-tenant fallback",async()=>{
     state.selected=false;
     const content=readable(await SuperAdminProgramsPage({searchParams:Promise.resolve({})})).join(" ");
-    expect(content).toContain("Read-only platform catalogue");
+    expect(content).toContain("Read-only program catalogue");
     expect(content).toContain("Changes require an explicitly selected college.");
     expect(state.global).toBe(1);
     expect(state.programs).toBe(0);
