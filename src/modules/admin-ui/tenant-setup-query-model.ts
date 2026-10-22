@@ -14,7 +14,8 @@ export function parseSuperAdminTenantSetupQuery(
       structure:"STRUCTURE",identity:"LAUNCH",launch:"LAUNCH",
       STRUCTURE:"STRUCTURE",LAUNCH:"LAUNCH",
     };
-    normalized["tab"]=alias[normalized["tab"]]??normalized["tab"];
+    const tab=normalized["tab"];
+    normalized["tab"]=alias[tab]??tab;
   }
   return schema.safeParse(normalized);
 }
