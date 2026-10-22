@@ -13,7 +13,7 @@ export function isValidTickSecret(provided: string | null, expected: string | un
 }
 
 export async function POST(request: Request) {
-  if (!isValidTickSecret(request.headers.get("x-internal-alerts-key"), process.env.INTERNAL_ALERT_TICK_SECRET)) {
+  if (!isValidTickSecret(request.headers.get("x-internal-alerts-key"), process.env["INTERNAL_ALERT_TICK_SECRET"])) {
     return NextResponse.json({ message: "Not authorized." }, { status: 403 });
   }
   if (!logAlertsRuntimeEnabled()) {
