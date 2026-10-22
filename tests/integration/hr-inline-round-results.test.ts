@@ -3,8 +3,8 @@ import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
 import {closeDatabaseConnection} from "@/db/client";
 import {createPlacementCompany} from "@/modules/placements/company-service";
-import {createPlacementJob} from "@/modules/placements/job-service";
-import {publishPreparedPlacementJob} from "../support/publishable-job-fixture";
+import {createPlacementJob,publishPlacementJob} from "@/modules/placements/job-service";
+
 import {createPersistedJobRecruiter,persistedRecruiterContext} from "../support/persisted-job-recruiter-fixture";
 import {createPlacementRound} from "@/modules/placements/round-service";
 import {upsertJobEligibilityPolicy} from "@/modules/placements/eligibility-service";
