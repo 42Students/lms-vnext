@@ -17,7 +17,8 @@ export async function GET(request:Request){
   if(url.searchParams.getAll("view").length>1)return Response.json({error:"Repeated view names are not allowed"},{status:400});
   const viewName=raw.view===undefined?"Filtered placement students":tpoStudentExportViewName(raw.view);
   if(!viewName)return Response.json({error:"Invalid saved view name"},{status:400});
-  const downloadName=raw.view===undefined?"students":viewName;
+  const savedViewRequested=raw.view!==undefined;
+  const downloadName=savedViewRequested?viewName:"students";
   const cols=raw.columns?.split(",")??[];
   delete raw.ids;delete raw.columns;delete raw.selected;delete raw.view;
   delete raw.student;delete raw.page;delete raw.pageSize;
@@ -32,7 +33,7 @@ export async function GET(request:Request){
   const bytes=exportTpoStudentsXlsx(subset,cols,viewName);
   return new Response(new Uint8Array(bytes),{headers:{
    "Content-Type":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-   "Content-Disposition":'attachment; filename="' + (raw.view===undefined?legacyGridExportFilename(downloadName, "xlsx"):
+   "Content-Disposition":'attachment; filename="' + (!savedViewRequested?legacyGridExportFilename(downloadName, "xlsx"):
     legacySavedViewExportFilename(viewName, "xlsx")) + '"',
    "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff","Vary":"Cookie",
   }});
