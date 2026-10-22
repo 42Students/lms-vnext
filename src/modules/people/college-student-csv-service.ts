@@ -87,10 +87,14 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
         ...(receipt.membershipId ? {membershipId: receipt.membershipId} : {}),
         ...(receipt.enrollmentId ? {enrollmentId: receipt.enrollmentId} : {}),
       }));
+      // Replay receipts must report the original outcomes, not count failed
+      // onboarding or partial rows as successfully validated learners.
+      const invalid = results.filter(row => row.status === "INVALID").length;
       return { preview: false, structuralErrors: [], results,
-        valid: results.length, invalid: 0,
+        valid: results.length - invalid, invalid,
         runId: prior.runId, bulkImportBatchId: prior.runId,
-        learnerCount: results.length, reversible: false,
+        learnerCount: results.filter(row => row.membershipId !== undefined).length,
+        reversible: false,
         recoveryRequired: results.some(row => row.status === "PARTIAL" || row.status === "FAILED"),
         alreadyProcessed: true };
     }
