@@ -26,6 +26,27 @@ export const collegeInterviewLegacyActionMap={
  create:"SCHEDULE",update:"EDIT",cancel:"CANCEL",complete:"COMPLETE",noShow:"NO_SHOW",
  response:"id/status/version",
 } as const;
+/** Field-by-field old Interview -> candidate-slot crosswalk. Imported integer
+ * identities are references only: tenant-safe reads use the UUID booking and
+ * its matching college/job/application, not an integer from the URL.
+ * Stored instants are timestamptz; UI displays Asia/Kolkata. Preserve the
+ * imported source time zone when available; do not reinterpret wall time.
+ */
+export const COLLEGE_INTERVIEW_LEGACY_FIELD_MAP={
+ id:"legacyInterviewId -> placement_round_candidate_slots.id",
+ learner:"legacyLearnerId -> application.membership.user; college-validated",
+ jobApplication:"legacyApplicationId -> applicationId",
+ job:"legacyJobId -> jobId",
+ organization:"legacyOrganizationId -> job.collegeId through tenant scope",
+ interviewType:"legacyInterviewType -> interviewType",
+ interviewStatus:"legacyInterviewStatus + booking/outcome events -> status",
+ scheduledDate:"legacyScheduledAt/startsAt -> scheduledAt (UTC instant, IST display)",
+ location:"legacyLocation or room -> venue or meetingUrl",
+ interviewer:"legacyInterviewerName or panel -> interviewer",
+ duration:"legacyDurationMinutes or endsAt-startsAt -> durationMinutes",
+ sourceZone:"legacySourceTimeZone retained, never used to offset the stored instant",
+} as const;
+
 export class CollegeInterviewFieldError extends Error {
  constructor(readonly field:"scheduledAt"|"meetingUrl",message:string){super(message);this.name="CollegeInterviewFieldError";}
 }
@@ -39,8 +60,11 @@ async function scope(ctx:RequestContext,raw:unknown){
 }
 function viewSlot(s:typeof slots.$inferSelect,outcome?:string,feedback?:string|null,editNotes?:string|null,conflictKinds:readonly string[]=[]){
  const virtual=s.room.startsWith("https://");
+ const status=s.status==="CANCELLED"?"CANCELLED":outcome??(
+  s.legacyInterviewStatus==="RESCHEDULE_REQUESTED"?"RESCHEDULE_REQUESTED":
+  s.legacyInterviewStatus==="CONFIRMED"||s.learnerConfirmedAt?"CONFIRMED":"SCHEDULED");
  return {id:s.id,jobId:s.jobId,roundId:s.roundId,applicationId:s.applicationId??"",
-  status:s.status==="CANCELLED"?"CANCELLED":outcome??(s.legacyInterviewStatus==="RESCHEDULE_REQUESTED"?"RESCHEDULE_REQUESTED":"SCHEDULED"),
+  status,
   scheduledAt:s.startsAt.toISOString(),
   durationMinutes:Math.round((s.endsAt.getTime()-s.startsAt.getTime())/60000),
   mode:virtual?"VIRTUAL":"ON_CAMPUS",venue:virtual?null:s.room,
@@ -48,7 +72,9 @@ function viewSlot(s:typeof slots.$inferSelect,outcome?:string,feedback?:string|n
   version:s.version,interviewType:s.legacyInterviewType,
   roundDescription:s.legacyRoundDescription,editNotes:editNotes??null,
   hasConflict:conflictKinds.length>0,conflictKinds,
-  statusLabel:s.status==="CANCELLED"?"Cancelled":outcome==="NO_SHOW"?"No Show":outcome==="COMPLETED"?"Completed":"Scheduled",
+  statusLabel:status==="CANCELLED"?"Cancelled":status==="NO_SHOW"?"No Show":
+   status==="COMPLETED"?"Completed":status==="CONFIRMED"?"Confirmed":
+   status==="RESCHEDULE_REQUESTED"?"Reschedule":"Scheduled",
   notificationChannels:["IN_APP"] as const};
 }
 /** Delivery-channel parity is explicit, not guessed. In-app notices are
