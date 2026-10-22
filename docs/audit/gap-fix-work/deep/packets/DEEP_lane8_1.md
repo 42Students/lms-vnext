@@ -15,10 +15,12 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-5-024-018  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 - [x] G2-5-024-031  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 - [x] G2-5-024-032  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
-- [ ] G2-5-024-036  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
+- [x] G2-5-024-036  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 - [x] G2-5-024-038  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 
 ## Results
+
+- FIXED G2-5-024-036 — commit `629ac9eef98b4387bbaca1507b87961ab99c32cd`, `src/modules/tenant-domains/service.ts` allows explicit DNS recheck for verified domains while the repository retains `isVerified` on failed checks; legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/TenantDomainVerificationService.java:62-107`.
 
 - OK G2-5-024-017 — `src/app/api/tenant-domains/[domainId]/route.ts:24-54`, `src/modules/tenant-domains/service.ts:318-342`, `src/modules/tenant-domains/repository.ts:255-297`; matches host-change verification reset, collision and audit in `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/TenantAdminController.java:462-505`.
 - OK G2-5-024-031 — `src/components/admin/tenant-domain-manager.tsx:190`, `src/app/api/tenant-domains/[domainId]/route.ts:24-54`, `src/modules/tenant-domains/repository.ts:284-297`; custom host edit resets DNS proof, corresponding to `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/TenantAdminController.java:470-483`.
