@@ -30,6 +30,11 @@ function istDateTimeToUtc(value:string):string {
  const date=new Date(value+":00+05:30");
  return Number.isFinite(date.getTime())?date.toISOString():value;
 }
+/** datetime-local expects an IST wall clock, not an offset UTC time. */
+function minIstDateTime():string {
+ const now=new Date(Date.now()+5.5*60*60*1000);
+ return now.toISOString().slice(0,16);
+}
 function readableValue(field:string,value:string|null|undefined):string{
  if(!value)return "—";
  const cleaned=field==="DESCRIPTION"?value.replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim():value;
@@ -150,7 +155,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
     {mode==="ASK"?"Your question":"New value"}
     {mode==="SUGGEST"&&field==="DEADLINE"?
       <Input type="datetime-local" value={value} onChange={e=>setValue(e.target.value)}
-       onFocus={e=>{e.currentTarget.min=new Date(Date.now()+330*60_000).toISOString().slice(0,16);}}
+       onFocus={e=>{e.currentTarget.min=minIstDateTime();}}
        className="min-h-11 min-[768px]:min-h-9"/>:
      mode==="SUGGEST"&&["CTC","STIPEND","MIN_CGPA","PAY"].includes(field)?
       <Input type="number" min={0} max={field==="MIN_CGPA"?10:field==="CTC"?1000:undefined}
@@ -240,7 +245,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
         ["DEADLINE"].includes(item.legacyField??item.field)?
         <Input type="datetime-local" value={notes[item.id]??""}
          onChange={e=>setNotes(p=>({...p,[item.id]:e.target.value}))}
-         onFocus={e=>{e.currentTarget.min=new Date(Date.now()+330*60_000).toISOString().slice(0,16);}}
+         onFocus={e=>{e.currentTarget.min=minIstDateTime();}}
          className="min-h-11 min-[768px]:min-h-9"/>:
        item.mode==="ASK"&&item.targetParty===party&&
         ["WORK_MODE","MODE","JOB_TYPE"].includes(item.legacyField??item.field)?
