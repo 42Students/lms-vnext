@@ -57,14 +57,25 @@ describe("chat-16 Super Admin inbound mail adversarial actions and boundaries", 
     }
     expect(repo.tableExists).not.toHaveBeenCalled();
     expect(repo.list).not.toHaveBeenCalled();
-    // Historical inbox links normalize safely rather than reject old queries.
-    const normalized=await listInboundMailForAdmin(admin,{status:"PRIVATE",page:10001},repo);
+    // Only documented historic aliases normalize. Invalid statuses and
+    // out-of-range pages must never trigger private mailbox reads.
+    for(const invalid of [
+      {status:"PRIVATE"},{page:10001},{page:0},{page:-1},{page:"0"},
+    ]){
+      await expect(listInboundMailForAdmin(admin,invalid,repo)).rejects.toThrow();
+    }
+    expect(repo.tableExists).not.toHaveBeenCalled();
+    expect(repo.list).not.toHaveBeenCalled();
+    const normalized=await listInboundMailForAdmin(admin,{status:"OPEN",page:"10000"},repo);
     expect(normalized.page).toBe(10000);
     expect(repo.list).toHaveBeenCalledWith(expect.objectContaining({
-      status:"ALL",page:10000,
+      status:"NEW",page:10000,
     }));
-    const first=await listInboundMailForAdmin(admin,{page:0},repo);
-    expect(first.page).toBe(1);
+    const retired=await listInboundMailForAdmin(admin,{status:"DELETED"},repo);
+    expect(retired.page).toBe(1);
+    expect(repo.list).toHaveBeenLastCalledWith(expect.objectContaining({
+      status:"ALL",page:1,
+    }));
   });
 
   it("HR-BREAK-INBOUND-03 bounds the requested page and counts unread independently of the search", async () => {
