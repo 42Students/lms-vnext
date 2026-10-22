@@ -288,8 +288,9 @@ describe("Section A: placement write/read integration boundaries", () => {
       }
       // One released offer may be accepted. A fifth offer from the same
       // student must not become five distinct compensated learners.
-      await pool.query("UPDATE placement_offers SET status='ACCEPTED' WHERE application_id=$1",
-        [apps[0]!.id]);
+      await pool.query(
+        "UPDATE placement_offers SET status='ACCEPTED',responded_by_user_id=$2,responded_at=now() WHERE application_id=$1",
+        [apps[0]!.id,SEED_IDS.learnerUser]);
       const pub=await getPublicPlacementStatistics(SEED_IDS.collegeA);
       expect(pub?.offers).toBe(5);
       expect(pub?.medianCtcInr).toBeNull();
