@@ -7,6 +7,8 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { AdminProgramDirectory } from "@/components/admin/admin-program-directory";
 import { CollegeArchivedPrograms } from "@/components/academics/college-archived-programs";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
+import { Banner } from "@/components/ui/banner";
 import { listPrograms } from "@/modules/academics/program-service";
 import { listProgramContents } from "@/modules/admin-ui/program-contents-service";
 import { listArchivedCollegePrograms } from "@/modules/academics/college-program-mutation-service";
@@ -59,24 +61,19 @@ export default async function CollegeProgramsPage() {
         title="Programs"
         description="Create, find and manage the programs in your college."
       />
-      <nav aria-label="Academic Setup" className="flex min-w-0 flex-wrap gap-2 border-b border-border pb-3 text-sm">
-        {([
+      <Tabs ariaLabel="Academic Setup" value="Programs" renderPanel={false}
+        items={([
           ["/college/departments","Departments"],
           ["/college/programs","Programs"],
           ["/college/semesters","Semesters"],
           ["/college/batches","Batches"],
           ["/college/classes","Classes"],
-        ] as const).map(([href,label])=><Link key={href} href={href}
-          aria-current={href==="/college/programs"?"page":undefined}
-          className={"inline-flex min-h-11 items-center border-b-[3px] px-3 font-semibold md:min-h-9 "+
-            (href==="/college/programs"?"border-primary text-primary-text":"border-transparent text-body hover:text-primary-text")}>
-          {label}
-        </Link>)}
-      </nav>
-      {partial?<Alert tone="warning">
+        ] as const).map(([href,label])=>({value:label,label,href}))}/>
+      {partial?<Banner tone="warning" action={
+        <Link href="/college/programs" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9">Retry</Link>
+      }>
         Some linked program details could not be loaded. Active programs remain available; refresh to retrieve the missing records.
-        <Link href="/college/programs" className="ml-2 font-semibold text-link underline">Retry</Link>
-      </Alert>:null}
+      </Banner>:null}
       <section aria-label="Active programs" className="min-w-0">
         <AdminProgramDirectory
         programs={programs.map((program) => ({

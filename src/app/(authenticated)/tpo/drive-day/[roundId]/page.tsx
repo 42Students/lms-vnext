@@ -1,7 +1,6 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { PageHeader } from "@/components/ui/page-header";
-import { Alert } from "@/components/ui/alert";
+import { ErrorState } from "@/components/ui/error-state";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { DriveDayRoster } from "@/components/placements/drive-day-roster";
 import { TpoRoundDriveDayReadOnly } from "@/components/placements/tpo-round-drive-day-read-only";
@@ -45,15 +44,14 @@ export default async function DriveDayRoundPage({
       const unavailable = error instanceof PlacementsServiceError &&
         (error.code === "PLACEMENT_ROUND_NOT_FOUND" ||
          error.code === "PLACEMENT_DRIVE_DAY_ACCESS_DENIED");
-      return <section role="alert" className="min-w-0 space-y-4">
+      return <section className="min-w-0 space-y-4">
         <PageHeader title="Drive day" />
-        <Alert tone="error">{unavailable
-          ? "This drive day isn't available to you."
-          : "Could not load this drive day. Try again."}</Alert>
-        <Link href={"/tpo/drive-day/" + encodeURIComponent(roundId) + "?retry=1"}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-primary-subtle">
-          Retry
-        </Link>
+        <ErrorState title="Drive day unavailable"
+          description={unavailable
+            ? "This drive day isn't available to you."
+            : "Could not load this drive day. Try again."}
+          retryHref={"/tpo/drive-day/" + encodeURIComponent(roundId) + "?retry=1"}
+          retryLabel="Retry"/>
       </section>;
     }
 
@@ -72,15 +70,14 @@ export default async function DriveDayRoundPage({
     const unavailable = error instanceof PlacementsServiceError &&
       (error.code === "PLACEMENT_ROUND_NOT_FOUND" ||
        error.code === "PLACEMENT_DRIVE_DAY_ACCESS_DENIED");
-    return <section role="alert" className="min-w-0 space-y-4">
+    return <section className="min-w-0 space-y-4">
       <PageHeader title="Drive day" />
-      <Alert tone="error">{unavailable
-        ? "This drive day isn't available to you."
-        : "Could not load this drive day. Try again."}</Alert>
-      <Link href={"/tpo/drive-day/" + encodeURIComponent(roundId) + "?retry=1"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-primary-subtle">
-        Retry
-      </Link>
+      <ErrorState title="Drive day unavailable"
+        description={unavailable
+          ? "This drive day isn't available to you."
+          : "Could not load this drive day. Try again."}
+        retryHref={"/tpo/drive-day/" + encodeURIComponent(roundId) + "?retry=1"}
+        retryLabel="Retry"/>
     </section>;
   }
 

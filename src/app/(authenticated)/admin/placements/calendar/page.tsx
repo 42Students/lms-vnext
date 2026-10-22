@@ -1,7 +1,7 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import { PlacementCalendarWorkspace } from "@/components/placements/placement-calendar-workspace";
-import { EmptyState } from "@/components/ui/empty-state";
+import { Alert } from "@/components/ui/alert";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 
@@ -29,10 +29,11 @@ export default async function SuperAdminPlacementInterviewCalendarPage({
           description="Interview-calendar oversight requires an exact college safety scope."
           actions={<PageBackLink href="/admin/placements" label="Placement overview"/>}
         />
-        <div className="border-l-2 border-warning bg-warning-subtle px-4 py-3">
-         <EmptyState title="Select an Organization + College in the header above to view interviews."
-          description="Interview appointments are visible only for one explicitly selected college. The organization or platform-wide view cannot display learner bookings."/>
-        </div>
+        <Alert tone="warning" title="Choose a college">
+          Select an Organization + College in the header to view interviews. Interview
+          appointments are visible only for one explicitly selected college; the
+          organization-wide view cannot display learner bookings.
+        </Alert>
       </div>
     );
   }

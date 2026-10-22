@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -7,6 +6,7 @@ import {AdminPlacementCreateDialog} from "@/components/placements/admin-placemen
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PlacementJobCreateWorkspace } from "@/components/placements/placement-job-create-workspace";
 import { requireSuperAdminSelectedCollege } from "@/modules/admin-ui/super-admin-selected-college";
+import { AuthorizationError } from "@/modules/permissions/policy";
 
 export default async function AdminNewPlacementPage() {
   const context = await getCurrentRequestContext();
@@ -25,14 +25,17 @@ export default async function AdminNewPlacementPage() {
   const loaded=await PlacementJobCreateWorkspace({
     context,collegeId,basePath:"/admin/placements",
   }).then(view=>({ok:true as const,view}))
-    .catch(()=>({ok:false as const}));
+    .catch(error=>{
+      if (error instanceof AuthorizationError) throw error;
+      return {ok:false as const};
+    });
   if(!loaded.ok)return <div className="min-w-0 space-y-5">
     <PageHeader title="Create drive"
       description="Build the opportunity students will see"
       actions={<PageBackLink href="/admin/placements" label="Back to drives" />}/>
     <ErrorState title="Drive setup unavailable"
       description="Company, season, or student eligibility choices could not be loaded. No draft was created."
-      action={<Link href="/admin/placements/new" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 w-full md:w-auto">Retry creating drive</Link>}/>
+      retryHref="/admin/placements/new" retryLabel="Retry creating drive"/>
   </div>;
   return <AdminPlacementCreateDialog>{loaded.view}</AdminPlacementCreateDialog>;
 }
