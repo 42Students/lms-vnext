@@ -33,9 +33,11 @@ export async function requestRecruiterInviteOtp(
     const [lead] = await tx.select().from(placementTpoLeads)
       .where(eq(placementTpoLeads.inviteTokenHash,hash))
       .for("update").limit(1);
-    if (!lead || !lead.emailNorm || !lead.companyRelationshipId) {
-      throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_FOUND");
-    }
+    if (!lead) throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_FOUND");
+    // A valid bearer link with incomplete college/company records can give
+    // actionable errors without exposing any arbitrary account enumeration.
+    if (!lead.emailNorm) throw new Error("EMAIL_REQUIRED");
+    if (!lead.companyRelationshipId) throw new Error("COMPANY_EMAIL_REQUIRED");
     try {
       requireRecruiterInviteUsable(token,lead,now);
     } catch {
@@ -53,8 +55,7 @@ export async function requestRecruiterInviteOtp(
           gte(recruiterInviteCodes.sentAt,hourAgo))),
     ]);
     if (!recruiterOtpSendAllowed(forLink?.n??0,forCollege?.n??0)) {
-      // Do not distinguish rate limit from invalid token to public callers.
-      throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_FOUND");
+      throw new Error("TOO_MANY_CODES");
     }
     const [stored] = await tx.insert(recruiterInviteCodes).values({
       leadId:lead.id,collegeId:lead.collegeId,tokenHash:hash,

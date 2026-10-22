@@ -9,6 +9,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Disclosure } from "@/components/ui/disclosure";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Alert } from "@/components/ui/alert";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import {
   listAnnouncementsForAdmin,
   listAnnouncementTargetOptions,
@@ -66,7 +67,9 @@ export default async function AnnouncementsPage({
   }
 
   const includeDeleted = params.deleted === "1";
-  const [page, targetGroups] = await Promise.all([
+  // A database/search-cache failure is NOT an empty announcement list.
+  // Preserve the filters and provide a scoped retry without stale tenant data.
+  const loaded = await Promise.all([
     listAnnouncementsForAdmin(context, {
       includeDeleted,
       beforeCreatedAt: params.beforeCreatedAt,
@@ -74,7 +77,28 @@ export default async function AnnouncementsPage({
       limit: 50,
     }),
     listAnnouncementTargetOptions(context),
-  ]);
+  ]).then(value=>({ok:true as const,value}))
+    .catch(error=>{
+      if(error instanceof AuthorizationError)throw error;
+      return {ok:false as const};
+    });
+  if(!loaded.ok){
+    const retry=new URLSearchParams({
+      ...(includeDeleted?{deleted:"1"}:{}),
+      ...(params.unread==="1"?{unread:"1"}:{}),
+      ...(params.beforeCreatedAt?{beforeCreatedAt:params.beforeCreatedAt}:{}),
+      ...(params.beforeId?{beforeId:params.beforeId}:{}),
+    });
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Announcements"/>
+      <Alert tone="error" title="Could not load announcements">
+        The announcements database could not be refreshed. This is not an empty announcement list.
+      </Alert>
+      <Link href={"/college/announcements"+(retry.size?"?"+retry.toString():"")}
+        prefetch={false} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry announcements</Link>
+    </div>;
+  }
+  const [page,targetGroups]=loaded.value;
 
   const targets: AnnouncementTarget[] = targetGroups
     ? [
