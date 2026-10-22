@@ -78,6 +78,12 @@ export const createCourseInputSchema = z.object({
     .optional(),
 }).strict();
 
+/** Scoped in-college moves require a fresh row token. */
+export const moveCourseDepartmentInputSchema=z.strictObject({
+  departmentId:z.string().uuid(),
+  expectedUpdatedAt:z.iso.datetime({offset:true}),
+});
+
 export const updateCourseInputSchema = z
   .object({
     // The version comes from the course row displayed in the editing form.
