@@ -1,4 +1,7 @@
 import { NextResponse } from "next/server";
+import { and, eq, inArray, or, isNull } from "drizzle-orm";
+import { getDb } from "@/db/client";
+import { programTermCourses, programTerms } from "@/db/schema";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import {
@@ -10,7 +13,9 @@ const headers = { "Cache-Control": "private, no-store" };
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 /** Authenticated-learner-only replacement for StudentCourseController:
- * no studentId/classId override, and no numeric legacy semesterId guesswork.
+ * no studentId/classId override; numeric legacy semesterId is resolved only
+ * through imported term-to-course records for the authenticated learner's
+ * currently authorized programs and courses.
  * The only principal is the current ACTIVE learner membership resolved by
  * listLearnerCourseDeliveries. An independent teacher/admin roster endpoint
  * must handle staff-authorized byClass reads with its own permission check.
@@ -23,11 +28,12 @@ export async function GET(request:Request) {
       return NextResponse.json({ error:"ACCESS_DENIED",message:"Access denied" },
         { status:403,headers });
     }
-    if (url.searchParams.has("semesterId")) {
-      return NextResponse.json({
-        error:"LEGACY_SEMESTER_ID_UNMAPPED",
-        message:"Use an authorized academicPeriodId UUID instead of a legacy numeric semesterId.",
-      },{status:400,headers});
+    const rawLegacySemester=url.searchParams.get("semesterId");
+    const legacySemesterId=rawLegacySemester===null?null:Number(rawLegacySemester);
+    if(rawLegacySemester!==null&&(!/^[1-9][0-9]{0,9}$/.test(rawLegacySemester)||
+       !Number.isSafeInteger(legacySemesterId)||legacySemesterId!>2147483647)){
+      return NextResponse.json({error:"INVALID_LEGACY_SEMESTER_ID"},
+        {status:400,headers});
     }
     const view=url.searchParams.get("view");
     if(view!==null && view!=="semesters")
@@ -36,6 +42,9 @@ export async function GET(request:Request) {
     const rawPeriod=url.searchParams.get("academicPeriodId");
     if(rawPeriod!==null && !uuid.test(rawPeriod))
       return NextResponse.json({error:"INVALID_ACADEMIC_PERIOD_ID"},
+        {status:400,headers});
+    if(rawPeriod!==null && legacySemesterId!==null)
+      return NextResponse.json({error:"AMBIGUOUS_SEMESTER_FILTER"},
         {status:400,headers});
 
     const courses=await listLearnerCourseDeliveries(context);
@@ -58,14 +67,43 @@ export async function GET(request:Request) {
     }
     const periodMatched=rawPeriod!==null &&
       semesters.some(period=>period.id===rawPeriod);
-    const selected=periodMatched
-      ? courses.filter(course=>course.academicPeriodId===rawPeriod)
-      : courses;
+    let legacyMatchedCourseKeys:Set<string>|null=null;
+    if(legacySemesterId!==null&&courses.length){
+      const programIds=[...new Set(courses.map(course=>course.programId))];
+      const courseIds=[...new Set(courses.map(course=>course.courseId))];
+      const mapped=await getDb().select({
+        programId:programTerms.programId,
+        courseId:programTermCourses.courseId,
+      }).from(programTermCourses)
+        .innerJoin(programTerms,eq(programTermCourses.programTermId,programTerms.id))
+        .where(and(eq(programTerms.legacySemesterId,legacySemesterId),
+          inArray(programTerms.programId,programIds),
+          inArray(programTermCourses.courseId,courseIds),
+          eq(programTerms.isActive,true),
+          or(isNull(programTerms.legacyWasDeleted),eq(programTerms.legacyWasDeleted,false)),
+          or(isNull(programTermCourses.legacyWasDeleted),eq(programTermCourses.legacyWasDeleted,false))));
+      const authorized=new Set(courses.map(course=>course.programId+":"+course.courseId));
+      legacyMatchedCourseKeys=new Set(mapped
+        .map(item=>item.programId+":"+item.courseId)
+        .filter(key=>authorized.has(key)));
+    }
+    // Foreign, soft-deleted and unmapped IDs use the existing unfiltered
+    // learner-authorized fallback; we never reveal if an external term exists.
+    const legacyMatched=Boolean(legacyMatchedCourseKeys?.size);
+    const selected=legacyMatched
+      ? courses.filter(course=>legacyMatchedCourseKeys!.has(course.programId+":"+course.courseId))
+      : periodMatched
+       ? courses.filter(course=>course.academicPeriodId===rawPeriod)
+       : courses;
     return NextResponse.json({
       courses:selected,
       ...(rawPeriod!==null?{
         requestedAcademicPeriodId:rawPeriod,
         semesterFallbackApplied:!periodMatched,
+      }:{}),
+      ...(legacySemesterId!==null?{
+        requestedLegacySemesterId:legacySemesterId,
+        semesterFallbackApplied:!legacyMatched,
       }:{}),
     },{headers});
   } catch (error) {
