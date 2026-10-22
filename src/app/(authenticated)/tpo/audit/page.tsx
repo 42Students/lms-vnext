@@ -13,6 +13,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { AuthorizationError } from "@/modules/permissions/policy";
+import { TpoAuditStaleSnapshot, TpoAuditRefreshAction } from "@/components/tpo/tpo-audit-stale-snapshot";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
@@ -116,10 +118,28 @@ export default async function TpoAuditPage({
     );
   }
 
-  const result = await getTpoAuditLog(
-    context,
-    parsed.data,
-  );
+  // A client-only, membership-and-filter-scoped snapshot survives a failed
+  // server refresh. Changing college, role or query remounts it.
+  const snapshotKey = context.membership.id + ":" + JSON.stringify(parsed.data);
+  let result: Awaited<ReturnType<typeof getTpoAuditLog>>;
+  try {
+    result = await getTpoAuditLog(context, parsed.data);
+  } catch (error) {
+    // Revoked access must invalidate the visible page, never reuse old rows.
+    if (error instanceof AuthorizationError) throw error;
+    return (
+      <TpoAuditStaleSnapshot key={snapshotKey} failed>
+        <div className="min-w-0 space-y-4">
+          <PageHeader title="Audit log" description="A traceable history of placement decisions, changes, sharing and access across the workspace." />
+          <ErrorState
+            title="Could not refresh the audit log"
+            description="The latest audit rows could not be verified. Retry to check the college-scoped source; do not treat this as an empty history."
+            action={<TpoAuditRefreshAction />}
+          />
+        </div>
+      </TpoAuditStaleSnapshot>
+    );
+  }
 
   const {
     query,
@@ -195,6 +215,7 @@ export default async function TpoAuditPage({
    for(const item of query[key])gridRefreshQuery.append(key,item);
   const gridRefreshHref="/api/placements/tpo/audit?"+gridRefreshQuery.toString();
   return (
+    <TpoAuditStaleSnapshot key={snapshotKey} failed={false}>
     <div data-testid="tpo.audit" className="min-w-0 max-w-full space-y-4">
       <PageHeader
         title="Audit log"
@@ -482,5 +503,6 @@ export default async function TpoAuditPage({
         This history shows recorded placement decisions, changes, sharing and access. Sensitive personal details are hidden. Earlier changes may not appear if they were not recorded at the time.
       </p>
     </div>
+    </TpoAuditStaleSnapshot>
   );
 }
