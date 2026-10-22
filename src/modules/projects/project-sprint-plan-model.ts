@@ -27,7 +27,11 @@ export const projectSprintPlanSchema = z.strictObject({
   sprints: z.array(sprintPlanRowSchema).min(1).max(500),
 }).superRefine((value, ctx) => {
   const seen = new Set<string>();
+  const seenKeys=new Set<string>();
   value.sprints.forEach((sprint, index) => {
+    const key=sprint.key.trim().toLocaleLowerCase("en");
+    if(seenKeys.has(key))ctx.addIssue({code:"custom",path:["sprints",index,"key"],message:"Duplicate sprint key"});
+    seenKeys.add(key);
     if (seen.has(sprint.id)) {
       ctx.addIssue({ code: "custom", path: ["sprints", index, "id"], message: "Duplicate sprint" });
     }
