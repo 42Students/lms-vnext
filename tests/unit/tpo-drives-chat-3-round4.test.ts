@@ -246,10 +246,13 @@ describe("chat-3 Drives round 4",()=>{
   expect(page).toContain('href="/tpo/placements/new"');
   expect(boundary).toContain("Some drive setup data could not be loaded");
   expect(boundary).toContain("<Button onClick={reset}>Retry setup data</Button>");
-  expect(loading).toContain('<GracefulPageLoading label="Loading drive edit"/>');
-  const loadingUi=source("src/components/ui/graceful-page-loading.tsx");
-  expect(loadingUi).toContain('role="status"');
-  expect(loadingUi).toContain('Try again');
+  // This route now uses the legacy-style drive-edit heading and a bounded
+  // row skeleton, rather than the generic GracefulPageLoading card.
+  expect(loading).toContain('aria-busy="true"');
+  expect(loading).toContain('<PageHeader title="Edit drive" description="Loading drive setup…"');
+  expect(loading).toContain('role="status"');
+  expect(loading).toContain('Editing is unavailable until setup is ready.');
+  expect(loading).toContain('<Skeleton label="Loading drive setup" variant="row" count={8}/>');
  });
 
  it("TPO-drives-45 automatically applies 11:59 PM IST once, then preserves user edits and restored drafts",()=>{
