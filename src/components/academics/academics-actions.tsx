@@ -33,14 +33,10 @@ async function mutate(
 ) {
   const response = await fetch(path, {
     method,
-    headers:
-      body === undefined
-        ? undefined
-        : { "content-type": "application/json" },
-    body:
-      body === undefined
-        ? undefined
-        : JSON.stringify(body),
+    ...(body === undefined ? {} : {
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body),
+    }),
   });
   const payload = await response
     .json()
@@ -253,10 +249,10 @@ export function ProgramActions({
                     if (error instanceof AcademicMutationResponseError) {
                       const fields = error.fieldErrors;
                       setEditFieldErrors({
-                        name: fields.name ?? fields.programName ?? fields.program_name ?? "",
-                        code: fields.code ?? fields.programCode ?? fields.program_code ?? "",
-                        durationTerms: fields.durationTerms ?? fields.duration_terms ?? "",
-                        departmentId: fields.departmentId ?? fields.department_id ?? "",
+                        name: fields["name"] ?? fields["programName"] ?? fields["program_name"] ?? "",
+                        code: fields["code"] ?? fields["programCode"] ?? fields["program_code"] ?? "",
+                        durationTerms: fields["durationTerms"] ?? fields["duration_terms"] ?? "",
+                        departmentId: fields["departmentId"] ?? fields["department_id"] ?? "",
                       });
                     }
                   },
@@ -278,26 +274,26 @@ export function ProgramActions({
             Department
             <Select value={departmentId} disabled={pending || programHasLinkedRecords}
               title={programHasLinkedRecords?"Department is fixed after semesters, batches or classes are linked.":undefined}
-              aria-invalid={Boolean(editFieldErrors.departmentId)}
+              aria-invalid={Boolean(editFieldErrors["departmentId"])}
               onChange={event => {setDepartmentId(event.target.value);setEditFieldErrors(current=>({...current,departmentId:""}));}}>
               {departments.map(department=><option key={department.id} value={department.id}>{department.name}</option>)}
             </Select>
-            {editFieldErrors.departmentId ? <span role="alert" className="text-xs text-error">{editFieldErrors.departmentId}</span> : null}
+            {editFieldErrors["departmentId"] ? <span role="alert" className="text-xs text-error">{editFieldErrors["departmentId"]}</span> : null}
           </label> : null}
           <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Program Name
             <Input value={name} maxLength={255} disabled={pending}
-              aria-invalid={Boolean(editFieldErrors.name)}
+              aria-invalid={Boolean(editFieldErrors["name"])}
               onChange={event=>{setName(event.target.value);setEditFieldErrors(current=>({...current,name:""}));}}/>
-            {editFieldErrors.name ? <span role="alert" className="text-xs text-error">{editFieldErrors.name}</span> : null}
+            {editFieldErrors["name"] ? <span role="alert" className="text-xs text-error">{editFieldErrors["name"]}</span> : null}
           </label>
           <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {displayDurationYears?"Duration (Years)":"Duration (Terms)"}
             <Input type="number" min={1} max={displayDurationYears?10:24} step={1}
-              disabled={pending} value={durationTerms} aria-invalid={Boolean(editFieldErrors.durationTerms)}
+              disabled={pending} value={durationTerms} aria-invalid={Boolean(editFieldErrors["durationTerms"])}
               onChange={event=>{setDurationTerms(event.target.value);
                 setEditFieldErrors(current=>({...current,durationTerms:""}));}}/>
-            {editFieldErrors.durationTerms ? <span role="alert" className="text-xs text-error">{editFieldErrors.durationTerms}</span> : null}
+            {editFieldErrors["durationTerms"] ? <span role="alert" className="text-xs text-error">{editFieldErrors["durationTerms"]}</span> : null}
           </label>
         </div>
       </Dialog>
