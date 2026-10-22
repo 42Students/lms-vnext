@@ -1,6 +1,6 @@
 import "server-only";
 
-import {and,asc,eq,sql} from "drizzle-orm";
+import {and,asc,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {lessonContents} from "@/db/schema";
 import {lessonContentMaterials} from "@/db/schema/lesson-content-materials";
@@ -144,21 +144,21 @@ export function parseLegacyResourceMaterialDrafts(value: unknown): LegacyResourc
   }
   if (!data || typeof data !== "object" || Array.isArray(data)) return [];
   const parent = data as Record<string, unknown>;
-  const dto = parent.contentDataDTO ?? parent.content_data_dto ?? parent;
+  const dto = parent["contentDataDTO"] ?? parent["content_data_dto"] ?? parent;
   if (!dto || typeof dto !== "object" || Array.isArray(dto)) return [];
   const record = dto as Record<string, unknown>;
-  const rawMaterials = record.resourceMaterials ?? record.resource_materials;
+  const rawMaterials = record["resourceMaterials"] ?? record["resource_materials"];
   if (!Array.isArray(rawMaterials)) return [];
   return rawMaterials.flatMap((raw, index): LegacyResourceMaterialDraft[] => {
     if (!raw || typeof raw !== "object" || Array.isArray(raw)) return [];
     const item = raw as Record<string, unknown>;
-    const kind = String(item.kind ?? "").toUpperCase();
+    const kind = String(item["kind"] ?? "").toUpperCase();
     if (kind !== "LINK" && kind !== "FILE") return [];
-    const rawTitle = item.title ?? item.file_name ?? item.fileName ?? "Resource material";
+    const rawTitle = item["title"] ?? item["file_name"] ?? item["fileName"] ?? "Resource material";
     const title = String(rawTitle).trim().slice(0, 255) || "Resource material";
-    const rawNotes = item.notes;
+    const rawNotes = item["notes"];
     const notes = typeof rawNotes === "string" ? rawNotes.slice(0, 2000) : null;
-    const rawUrl = item.url ?? item.externalUrl ?? item.external_url;
+    const rawUrl = item["url"] ?? item["externalUrl"] ?? item["external_url"];
     const externalUrl = kind === "LINK" && typeof rawUrl === "string"
       ? safeLearnerResourceMaterialHref(rawUrl) : null;
     // Reject malformed imported links; never turn a historic object key
