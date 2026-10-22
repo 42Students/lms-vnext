@@ -11,7 +11,23 @@ export const tpoDriveEditSchema=z.object({
  minUndergraduatePctBasisPoints:z.number().int().min(0).max(10000).nullable().optional(),
  minPostgraduatePctBasisPoints:z.number().int().min(0).max(10000).nullable().optional(),
  allowedPassingYears:z.array(z.number().int().min(2000).max(2100)).max(101).optional(),
- allowedProgramIds:z.array(z.string().uuid()).max(100).optional(),
+ allowedProgramIds:z.array(z.string().uuid()).max(100).refine(
+  ids=>new Set(ids).size===ids.length,"Choose each program once.").optional(),
+ portal:z.strictObject({
+  studentsRegisterSeparately:z.boolean(),
+  name:z.string().trim().max(160),
+  url:z.string().trim().max(2000),
+ }).superRefine((portal,ctx)=>{
+  if(!portal.studentsRegisterSeparately)return;
+  if(!portal.name)ctx.addIssue({code:"custom",path:["name"],message:"Enter the portal name."});
+  try{
+   const url=new URL(portal.url);
+   if(url.protocol!=="https:"||!url.hostname||url.username||url.password)
+    throw new Error("Invalid HTTPS portal link");
+  }catch{
+   ctx.addIssue({code:"custom",path:["url"],message:"Enter a secure HTTPS employer portal link."});
+  }
+ }).optional(),
  jobTypeLabel:z.string().trim().max(40).nullable().optional(),
  recruiterDriveMode:z.enum(["ON_CAMPUS","OFF_CAMPUS"]).optional(),
  workMode:z.enum(["ONSITE","HYBRID","REMOTE"]).optional(),
