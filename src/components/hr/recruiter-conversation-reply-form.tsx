@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import {Alert} from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {isVerifiedHrReplyReceipt,hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-feedback-model";
@@ -119,8 +120,9 @@ function RecruiterConversationReplyFormState({threadId,quoteId,quoteLabel,histor
   <p className="text-xs text-muted-foreground leading-5">
    <span className={body.trim().length>4000?"font-semibold text-error":undefined}>{body.trim().length}/4000 characters</span> · Press Ctrl or Cmd+Enter to send. Replies stay in this employer-college thread and are reauthorized when sent.
   </p>
-  {!historyAvailable?<InlineNotice tone="warning"
-    message="Conversation history could not be loaded. Reload this thread before sending a reply."/>:null}
+  {!historyAvailable?<Alert tone="warning">
+    Conversation history could not be loaded. Reload this thread before sending a reply.
+   </Alert>:null}
   {notice?<InlineNotice tone={notice.startsWith("Message was not sent")||notice.startsWith("Could not")||notice.startsWith("Write a")||notice.startsWith("Keep a")?"error":"info"} message={notice}/>:null}
   <div className="flex min-w-0 flex-col items-stretch gap-2 min-[768px]:flex-row min-[768px]:items-center">
   <Button type="submit" disabled={sending||!historyAvailable||!body.trim()||body.trim().length>4000}
