@@ -21,7 +21,7 @@ export function uploadWithProgress(url: string, file: File,
     xhr.addEventListener("load", () => {
       if (xhr.status >= 200 && xhr.status < 300) resolve();
       else reject(new Error(friendlyApiError({
-        status: xhr.status || undefined,
+        ...(xhr.status ? { status: xhr.status } : {}),
         network: xhr.status === 0,
       })));
     });
