@@ -6,6 +6,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {courseBulkSelectionFilterKey} from "@/modules/courses/course-bulk-selection-scope-model";
 type Course={id:string;name:string};
 type Report={
  selectedCourses:number;matchedLessons:number;matchedContents:number;
@@ -22,9 +23,7 @@ export function SuperAdminCourseBulkVisibility({courses,collegeId,maxSelection=1
  const params=useSearchParams();
  // Changing search/filter scope invalidates persisted selection, but paging
  // within the same query retains the selected UUIDs for cross-page bulk work.
- const filterKey=JSON.stringify([...params.entries()]
-  .filter(([key])=>!["page","pageSize","limit","size"].includes(key))
-  .sort(([a],[b])=>a.localeCompare(b)));
+ const filterKey=courseBulkSelectionFilterKey(params.entries());
  const [selected,setSelected]=useState<string[]>([]);
  const [ready,setReady]=useState(false);
  const [pending,setPending]=useState(false);
@@ -42,7 +41,7 @@ export function SuperAdminCourseBulkVisibility({courses,collegeId,maxSelection=1
     ?value as {filterKey?:unknown;ids?:unknown}:null;
    const ids=saved?.filterKey===filterKey&&Array.isArray(saved.ids)?saved.ids:[];
    setSelected([...new Set(ids.filter(
-    (id):id is string=>typeof id==="string"&&/^[0-9a-f-]{36}$/i.test(id)
+    (id):id is string=>typeof id==="string"&&/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(id)
    ))].slice(0,safeLimit));
   }catch{setSelected([]);}
   setReady(true);
@@ -100,10 +99,10 @@ export function SuperAdminCourseBulkVisibility({courses,collegeId,maxSelection=1
    className="min-w-0 space-y-3 border-b border-border pb-5">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div>
-    <h3 className="font-semibold text-heading">Published lesson content visibility</h3>
+    <h3 className="font-semibold text-heading">Visible to students</h3>
     <p className="mt-1 text-xs text-muted-foreground">
      Select courses on the catalogue pages, then Show or Hide them for students.
-     Hiding keeps course records active for staff, but removes access for learners.
+     Off hides the selected courses and their published lessons from students. The course records remain active for staff.
     </p>
    </div>
    <span role="status" className="text-xs font-semibold tabular-nums text-body">
