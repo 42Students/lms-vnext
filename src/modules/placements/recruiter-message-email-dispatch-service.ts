@@ -1,6 +1,6 @@
 import "server-only";
 import {createHash} from "node:crypto";
-import {and,desc,eq,isNull,lt,sql} from "drizzle-orm";
+import {and,count,desc,eq,isNull,lt,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementRecruiterMessageMailState,placementTpoMessages,placementTpoLeads,
   placementCompanyRelationships,colleges} from "@/db/schema";
@@ -70,11 +70,11 @@ export async function dispatchRecruiterUnreadMessageDigests(
     where j.id=t.job_id and j.college_id=t.college_id and j.company_relationship_id=r.id))
   join placement_companies company on company.id=p.company_id and company.status='ACTIVE'
   join colleges c on c.id=t.college_id and c.status='ACTIVE'
-  where u.email is not null and (notified.id is null or
+  where u.email is not null and length(trim(u.email))>0 and (notified.id is null or
     m.created_at>notified.created_at or
     (m.created_at=notified.created_at and m.id>notified.id))
   group by t.id,t.recruiter_user_id,u.email,u.display_name,t.college_id,c.name,company.name
-  order by min(m.created_at),t.id limit 100
+  order by min(m.created_at),t.id limit 200
  `);
  let sent=0,failed=0;
  for(const candidate of due.rows){
@@ -104,7 +104,7 @@ export async function dispatchRecruiterUnreadMessageDigests(
      join colleges c on c.id=t.college_id and c.status='ACTIVE'
      where t.id=${candidate.thread_id}::uuid
        and t.recruiter_user_id=${candidate.recruiter_user_id}::uuid
-       and lower(u.email)=lower(${candidate.recipient_email}::text)
+       and length(trim(u.email))>0 and lower(u.email)=lower(${candidate.recipient_email}::text)
        and (t.job_id is null or exists(
          select 1 from placement_jobs j where j.id=t.job_id
            and j.college_id=t.college_id and j.company_relationship_id=r.id
@@ -112,6 +112,14 @@ export async function dispatchRecruiterUnreadMessageDigests(
     ) as allowed
    `);
    if(grant.rows[0]?.allowed!==true)return false;
+   // Count every newly unread item in the same locked thread before choosing
+   // the three excerpts. The email's 1/N wording must not claim only three
+   // messages when more arrived during a burst.
+   const [unread]=await tx.select({total:count()}).from(placementTpoMessages)
+    .where(and(eq(placementTpoMessages.threadId,candidate.thread_id),
+      eq(placementTpoMessages.senderType,"TPO"),isNull(placementTpoMessages.readAt),
+      state.lastNotifiedMessageId?sql`(${placementTpoMessages.createdAt},${placementTpoMessages.id}) >
+       (select created_at,id from placement_tpo_messages where id=${state.lastNotifiedMessageId}::uuid)`:undefined));
    const messages=await tx.select({id:placementTpoMessages.id,body:placementTpoMessages.body,
       createdAt:placementTpoMessages.createdAt})
     .from(placementTpoMessages).where(and(
@@ -130,10 +138,11 @@ export async function dispatchRecruiterUnreadMessageDigests(
    if(!replyTo)return false;
    const accepted=await sendRecruiterMessageDigest({
     recipient:candidate.recipient_email,
-    recipientName:candidate.recipient_name?.trim().split(/\s+/)[0] || "Recruiter",
+    recipientName:candidate.recipient_name?.trim().split(/\s+/)[0] || "there",
     collegeId:candidate.college_id,
     companyName:candidate.company_name,collegeName:candidate.college_name,
     replyTo,messages:[...messages].reverse(),
+    earlierMessageCount:Math.max(0,(unread?.total??0)-messages.length),
    },env);
    if(!accepted){
     // Reserve a short retry slot on provider errors instead of flooding
