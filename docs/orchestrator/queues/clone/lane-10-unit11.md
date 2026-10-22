@@ -8,7 +8,7 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [x] `tests/unit/chat6-superadmin-course-edit-copy-55.test.ts` (1 failing)
 - [x] `tests/unit/chat9-super-admin-placement-remaining-gap-verification.test.ts` (1 failing) — current main uses accessible inline Type/Mode selects; corrected outdated source-token assertion and verified real filtering predicates (4cb5616).
 - [x] `tests/unit/learner-syllabus-soft-delete-visibility.test.ts` (1 failing) — current main enforces published/visible/not deleted checks; test was slicing the unrelated instructor query instead of syllabus query (3a73678).
-- [ ] `tests/unit/verify2-lane18-attendance-program-interviews.test.ts` (1 failing)
+- [x] `tests/unit/verify2-lane18-attendance-program-interviews.test.ts` (1 failing) — current main missed imported ACTIVE enrollment with no cohort progression when shrinking duration; added transactional guard (3647de1).
 
 ## Failures (from CI log)
 
