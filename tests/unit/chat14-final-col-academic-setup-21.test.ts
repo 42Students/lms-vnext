@@ -6,8 +6,9 @@ describe("chat-14 final sprint",()=>{
   const departments=read("src/components/admin/department-directory.tsx");
   const programs=read("src/components/admin/admin-program-directory.tsx");
   expect(departments).toContain("Department Name");
-  expect(departments).toContain('setNameOrder(nameOrder === "ASC" ? "DESC" : "ASC")');
-  expect(departments).toContain("Showing");
+  expect(departments).toContain('setNameOrder(nameOrder==="ASC"?"DESC":"ASC")');
+  expect(departments).toContain("Departments retrieved ·");
+  expect(departments).toContain("{result.total} of {rows.length}");
   expect(programs).toContain("Rows per page");
   expect(programs).toContain("42lms-program-page-size");
   expect(programs).toContain("Showing");

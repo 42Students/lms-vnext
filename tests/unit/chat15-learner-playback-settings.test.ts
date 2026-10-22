@@ -7,7 +7,8 @@ describe("LEARNER-course-detail-12 playback settings",()=>{
   expect(learnerPlaybackSettingValue("ui.progressSaveIntervalMs","12000")).toBe(12000);
   expect(learnerPlaybackSettingValue("course.watchedThresholdPercent","85")).toBe(85);
   expect(learnerPlaybackSettingValue("course.watchedThresholdPercent","0")).toBeNull();
-  expect(learnerPlaybackSettingValue("ui.progressSaveIntervalMs","200")).toBeNull();
+  expect(learnerPlaybackSettingValue("ui.progressSaveIntervalMs","200")).toBe(5000);
+  expect(learnerPlaybackSettingValue("ui.progressSaveIntervalMs","600001")).toBeNull();
   expect(learnerPlaybackSettingValue("ui.progressSaveIntervalMs","12s")).toBeNull();
  });
  it("LEARNER-course-detail-12 applies college override to playback cadence and server completion",()=>{
@@ -16,6 +17,7 @@ describe("LEARNER-course-detail-12 playback settings",()=>{
   expect(source("src/modules/courses/learner-course-service.ts")).toContain("playbackSettings:await readLearnerPlaybackSettings(membership.collegeId)");
   expect(source("src/components/courses/learner-course-workspace.tsx")).toContain("saveIntervalMs={workspace.playbackSettings.saveIntervalMs}");
   expect(source("src/components/courses/learner-youtube-player.tsx")).toContain('host: "https://www.youtube-nocookie.com"');
-  expect(source("src/components/courses/learner-youtube-player.tsx")).toContain("}, saveIntervalMs);");
+  expect(source("src/components/courses/learner-youtube-player.tsx")).toContain("now-lastAttemptAtRef.current<saveThrottleMs");
+  expect(source("src/components/courses/learner-youtube-player.tsx")).toContain("Math.max(5000,Math.min(120000,saveIntervalMs))");
  });
 });
