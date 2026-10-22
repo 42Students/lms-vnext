@@ -1179,8 +1179,8 @@ describe("Placement P8 offers and joining", () => {
       "select status from placement_offers where id=$1",[issued.id]);
     expect(accepted.rows).toEqual([{status:"ACCEPTED"}]);
     const audit=await pool.query<{metadata:Record<string,unknown>}>(
-      `select metadata from activity_events where subject_id=$1 and event_type='placements.offer.responded'
-       order by occurred_at desc limit 1`,[issued.id]);
+      "select metadata from activity_events where dedupe_key=$1",
+      ["placement-external-acceptance-finalized:"+issued.id]);
     // The TPO's record and the scheduler's finalization are distinct
     // audited actions; the scheduler owns the cascade after the 48h window.
     expect(audit.rows[0]?.metadata).toMatchObject({
