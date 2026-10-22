@@ -126,3 +126,15 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/modules/placements/company-service.ts
 - Legacy: Legacy search is worldwide/global directory plus relationships filtered by selected college (`docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoCompanyController.java:22-24,47-50`)
 - Expected fix: Add separate canonical lookup and curated-first results without cross-college contact leakage.
+
+## Lane chat-20 verification (2026-10-22)
+- FIXED G2-13-020-006: company name now accepts 2..150 with matching validation message.
+- FIXED G2-13-030-014, G2-13-030-018: feedback cap 2000, rejected feedback cap 500, candidate copy no longer promises to share private notes.
+- OK G2-13-020-008, G2-13-020-011, G2-13-020-019, G2-13-020-020, G2-13-020-027, G2-13-020-029, G2-13-020-044: HTTPS 500-character website schema, private contact fields, corporate identity prerequisite, scoped relationship storage, locked canonical domain resolution, audited relationship writes and domain race serialization were confirmed by direct source inspection.
+- OK G2-13-030-012, G2-13-030-020, G2-13-030-027, G2-13-030-047: explicit 1..5 rating and action enum including HIRE; HOLD transition keeps current stage.
+- OK G2-4-023-007: create response returns canonical company metadata, existed, nameLocked, verifiedBy42, logoUrl.
+- DEFERRED G2-4-005-006: faculty assignment edit/delete and restore policy absent from page; requires service and permission design.
+- DEFERRED G2-13-020-021, G2-13-020-028, G2-13-020-032, G2-13-020-045: shared global metadata edit/rename permission and linked job resync need an authorization/transaction review beyond this quick packet.
+- DEFERRED G2-13-030-006, G2-13-030-037, G2-13-030-046: full status mapping, candidate-facing rejection delivery, and historical boolean migration need integration tracing.
+- DEFERRED G2-4-013-077: error boundary describes partial roster failure but exact in-page Retry roster state needs report component tracing.
+- DEFERRED G2-4-023-012: curated-first cross-college directory search requires query result and privacy boundary review.
