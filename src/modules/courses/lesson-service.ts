@@ -168,22 +168,22 @@ export async function createCourseLesson(
   const legacyScope=z.strictObject({
     courseSlug:z.string().trim().max(160).optional(),
     courseId:z.union([z.string().trim().min(1),z.number().int().positive()]).optional(),
-  }).parse({courseSlug,courseId});
+  }).parse({...(courseSlug!==undefined?{courseSlug}:{}),...(courseId!==undefined?{courseId}:{})});
   const resolvedLegacyPath=legacyScope.courseSlug||legacyScope.courseId!==undefined
     ?await resolveLegacyLessonLearningPath(context,legacyScope):null;
   if((legacyScope.courseSlug||legacyScope.courseId!==undefined)&&!resolvedLegacyPath)
     throw new CoursesServiceError("LESSON_NOT_FOUND");
-  if(resolvedLegacyPath&&lessonFields.learningPathId!==undefined&&
-     lessonFields.learningPathId!==resolvedLegacyPath)
+  if(resolvedLegacyPath&&lessonFields["learningPathId"]!==undefined&&
+     lessonFields["learningPathId"]!==resolvedLegacyPath)
     throw new CoursesServiceError("LESSON_NOT_FOUND");
   const input=createCourseLessonInputSchema.parse({
-    ...lessonFields,learningPathId:lessonFields.learningPathId??resolvedLegacyPath,
-    name:lessonFields.name??lessonName,
+    ...lessonFields,learningPathId:lessonFields["learningPathId"]??resolvedLegacyPath,
+    name:lessonFields["name"]??lessonName,
   });
   const children=contentsDTOs===undefined?[]:
     z.array(z.record(z.string(),z.unknown())).max(50).parse(contentsDTOs);
-  if(children.some(item=>item.lessonId!==undefined||item.deliveryId!=null||
-     (item.classId!==undefined&&item.classId!==null&&item.classId!==0)))
+  if(children.some(item=>item["lessonId"]!==undefined||item["deliveryId"]!=null||
+     (item["classId"]!==undefined&&item["classId"]!==null&&item["classId"]!==0)))
     throw new CoursesServiceError("CONTENT_DELIVERY_MISMATCH");
   const path = await loadLearningPathScope(
     input.learningPathId,
@@ -235,10 +235,10 @@ export async function createCourseLesson(
           // must be authored separately by its own delivery owner.
           return createLessonContentInputSchema.parse({
             ...fields,lessonId:created.id,deliveryId:null,
-            contentType:fields.contentType??type,
-            title:fields.title??contentName??name,
-            externalUrl:fields.externalUrl??url,
-            sequence:fields.sequence??index,
+            contentType:fields["contentType"]??type,
+            title:fields["title"]??contentName??name,
+            externalUrl:fields["externalUrl"]??url,
+            sequence:fields["sequence"]??index,
           });
         });
         await tx.insert(lessonContents).values(normalized.map(item=>
@@ -600,7 +600,7 @@ export async function reorderCollegeCourseLessons(context:RequestContext,raw:unk
    .for("update");
   if(live.length!==input.expected.length||
      live.some((item,index)=>item.id!==input.expected[index]?.id||
-      item.sequence!==input.expected[index]?.sequence))
+      item["sequence"]!==input.expected[index]?.sequence))
    throw new CoursesServiceError("LESSON_SEQUENCE_CONFLICT");
   const liveIds=new Set(live.map(item=>item.id));
   if(input.orderedIds.some(id=>!liveIds.has(id)))
@@ -608,7 +608,7 @@ export async function reorderCollegeCourseLessons(context:RequestContext,raw:unk
   if(input.orderedIds.every((id,index)=>id===live[index]?.id))return {changed:false};
   // Parking every row above the current maximum avoids the unique
   // (learning_path_id, sequence) index during any arbitrary reorder.
-  const firstTemporary=Math.max(...live.map(item=>item.sequence))+1;
+  const firstTemporary=Math.max(...live.map(item=>item["sequence"]))+1;
   for(const [index,item] of live.entries()){
    await tx.update(courseLessons).set({
     sequence:firstTemporary+index,updatedAt:new Date(),
