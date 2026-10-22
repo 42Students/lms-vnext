@@ -19,12 +19,13 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
  const [error,setError]=useState(""),[notice,setNotice]=useState("");
  const [name,setName]=useState(""),[primaryDomain,setPrimaryDomain]=useState("");
  const [websiteUrl,setWebsiteUrl]=useState(""),[industry,setIndustry]=useState("");
+ const [logoPublicUrl,setLogoPublicUrl]=useState("");
  const [about,setAbout]=useState(""),[contactName,setContactName]=useState("");
  const [contactEmail,setContactEmail]=useState(""),[contactPhone,setContactPhone]=useState("");
  const [notes,setNotes]=useState("");
- const dirty=Boolean([name,primaryDomain,websiteUrl,industry,about,contactName,contactEmail,contactPhone,notes].some(v=>v.trim()));
+ const dirty=Boolean([name,primaryDomain,websiteUrl,logoPublicUrl,industry,about,contactName,contactEmail,contactPhone,notes].some(v=>v.trim()));
  function clear(){
-  setName("");setPrimaryDomain("");setWebsiteUrl("");setIndustry("");setAbout("");
+  setName("");setPrimaryDomain("");setWebsiteUrl("");setLogoPublicUrl("");setIndustry("");setAbout("");
   setContactName("");setContactEmail("");setContactPhone("");setNotes("");setError("");
  }
  function requestClose(){
@@ -37,8 +38,8 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
   if(pending)return;
   const companyName=name.trim(),domain=primaryDomain.trim(),website=websiteUrl.trim();
   const email=contactEmail.trim(),phone=contactPhone.trim();
-  if(companyName.length<2||companyName.length>150){
-   setError("Company name must be between 2 and 150 characters");return;
+  if(companyName.length<2||companyName.length>100){
+   setError("Company name must be between 2 and 100 characters");return;
   }
   if(!domain&&!website){setError("Add the company's website or a company email domain");return;}
   if(website){try{
@@ -46,6 +47,11 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
    if(url.protocol!=="https:"||url.username||url.password)
     throw new Error("INVALID_URL");
   }catch{setError("Company website must be a valid https link");return;}}
+  if(logoPublicUrl.trim()){
+   try{const url=new URL(logoPublicUrl.trim());
+    if(url.protocol!=="https:"||url.username||url.password)throw new Error("INVALID_URL");
+   }catch{setError("Company logo must be a valid HTTPS link");return;}
+  }
   if(industry.trim().length>100||about.trim().length>2000||notes.trim().length>2000){
    setError("Industry is limited to 100 characters; description and notes to 2,000.");return;
   }
@@ -57,37 +63,27 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
   }
   void run(async()=>{
    setError("");setNotice("");
-   let relationshipId:string|null=null;
    try{
+    // One transaction creates the shared identity and this college's private details.
     const created=await apiFetch<{relationship:{id:string};existed:boolean}>("/api/placements/companies",{
      method:"POST",headers:{"content-type":"application/json"},
      body:JSON.stringify({collegeId,name:companyName,primaryDomain:domain||undefined,
       websiteUrl:website||undefined,industry:industry.trim()||undefined,
-      about:about.trim()||undefined}),
+      about:about.trim()||undefined,logoPublicUrl:logoPublicUrl.trim()||undefined,
+      ...(contactName.trim()?{contactPersonName:contactName.trim()}:{}),
+      ...(email?{contactEmail:email}:{}),
+      ...(phone?{contactPhone:phone}:{}),
+      ...(notes.trim()?{internalNotes:notes.trim()}:{}),
+     }),
     });
-    relationshipId=created.relationship.id;
-    const details={
-     contactPersonName:contactName.trim()||null,contactEmail:email||null,
-     contactPhone:phone||null,internalNotes:notes.trim()||null,
-    };
-    if(Object.values(details).some(v=>v!==null)){
-     await apiFetch("/api/placements/companies/"+encodeURIComponent(relationshipId)+"/history",{
-      method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify(details),
-     });
-    }
     showToast({tone:"success",title:"Company added",
      description:created.existed?"Existing verified company linked to this college.":"Company linked to the selected college."});
     setNotice(created.existed&&Boolean(industry.trim()||about.trim())?
      "Existing global company linked. Its industry and description were preserved; these fields were not overwritten.":
      "Company created for this college.");
    }catch(reason){
-    if(relationshipId){
-     setNotice("Company linked, but college-only contact details could not be saved. Open History to finish editing them.");
-     showToast({tone:"info",title:"Company added",description:"Contact details need to be updated in History."});
-    }else{
-     setError(reason instanceof Error?reason.message:"Company could not be created. Retry.");
-     return;
-    }
+    setError(reason instanceof Error?reason.message:"Company could not be created. Retry.");
+    return;
    }
    clear();setOpen(false);router.refresh();
   });
@@ -111,7 +107,7 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
     <fieldset className="min-w-0 space-y-3" disabled={pending}>
      <legend className="font-semibold text-[var(--lms-heading)]">Identity</legend>
      <label className={labelClass}>Company name
-      <Input required minLength={2} maxLength={150} value={name} onChange={e=>setName(e.target.value)}
+      <Input required minLength={2} maxLength={100} value={name} onChange={e=>setName(e.target.value)}
        placeholder="Company name" className={fieldClass}/>
      </label>
      <label className={labelClass}>Industry
@@ -129,13 +125,15 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
      <label className={labelClass}>Website (HTTPS)
       <Input type="url" maxLength={500} placeholder="https://example.com" value={websiteUrl} onChange={e=>setWebsiteUrl(e.target.value)} className={fieldClass}/>
      </label>
-     <div className={labelClass}>Company logo
-      <p className="text-xs font-normal leading-5 text-muted-foreground">Logo belongs to the shared company identity. Create this college relationship first, then ask a platform administrator to edit its logo from the global company catalogue. A college-only logo cannot override other colleges&apos; records.</p>
-     </div>
+     <label className={labelClass}>Company logo (HTTPS)
+      <Input type="url" maxLength={500} placeholder="https://example.com/logo.png"
+       value={logoPublicUrl} onChange={e=>setLogoPublicUrl(e.target.value)} className={fieldClass}/>
+      <span className="text-xs font-normal leading-5 text-muted-foreground">Saved on a new company identity only. An existing shared company keeps its verified logo.</span>
+     </label>
     </fieldset>
     <fieldset className="min-w-0 space-y-3 border-t border-border pt-3" disabled={pending}>
      <legend className="font-semibold text-[var(--lms-heading)]">Contact</legend>
-     <label className={labelClass}>Contact person
+     <label className={labelClass}>Recruiter contact name
       <Input maxLength={150} value={contactName} onChange={e=>setContactName(e.target.value)} className={fieldClass}/>
      </label>
      <label className={labelClass}>Contact email
