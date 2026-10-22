@@ -255,7 +255,7 @@ export default async function CollegeElectiveAllocatePage({
           {allSections.map(section=><option key={section.id} value={section.id}>{section.name} ({section.code})</option>)}
         </Select>
       </label>
-      <p className="text-xs text-muted-foreground">Whole-section mode ignores the selected checkboxes and pasted IDs; the server verifies the selected section and all eligible learners before making any changes. Manual mode processes at most 100 learners per request.</p>
+      <p className="text-xs text-muted-foreground">Whole-section mode ignores the selected checkboxes and pasted IDs; the server verifies the selected section and all eligible learners before making any changes. Manual mode processes at most 100 unique learners per request. Commas, semicolons and whitespace separate pasted identifiers. If more than 100 are supplied, the request is rejected (not silently truncated); duplicates and existing assignments are reported as skipped.</p>
       <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Allocate selected to…
         <Select name="offeringGroup" required className={fieldStyle}>
           <option value="">Choose elective offering</option>

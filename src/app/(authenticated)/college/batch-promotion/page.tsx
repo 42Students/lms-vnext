@@ -155,9 +155,12 @@ export default async function CollegeBatchPromotionPage({
           {key:"students",header:"Students",cell:row=>row.activeLearners},
           {key:"status",header:"Status",cell:row=>
             <StatusBadge tone={row.status==="ACTIVE"?"success":row.status==="COMPLETED"?"neutral":"warning"}>{row.status==="COMPLETED"?"Completed":row.status==="ACTIVE"?"Active":String(row.status)==="INACTIVE"?"Inactive":row.status||"Status unavailable"}</StatusBadge>},
-          {key:"action",header:"Action",mobilePriority:"action",cell:row=>row.status==="ACTIVE"?
-            <Link href={batchPreviewHref(row)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Preview promotion</Link>:
-            <span className="text-xs text-muted-foreground">No action available</span>},
+          {key:"action",header:"Last Action",mobilePriority:"action",cell:row=>row.status==="ACTIVE"?
+            (preview?.batch.id===row.id && row.currentTermNumber!==null &&
+             row.currentTermNumber>=preview.batch.durationTerms
+              ?<span className="text-xs text-muted-foreground" title="Graduation requires a verified final-term action; a promotion cannot graduate learners.">Mark graduated — not available</span>
+              :<Link href={batchPreviewHref(row)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Promote · Preview</Link>):
+            <span className="text-xs text-muted-foreground">{row.status==="COMPLETED"?"Graduated":"No action available"}</span>},
         ]}
         empty={<EmptyState title={showInactive?"No batches found":"No active batches."} description={showInactive?"No batches match the current filters.":"Turn on Show completed / inactive to view the rest."}/> }/>
       <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
