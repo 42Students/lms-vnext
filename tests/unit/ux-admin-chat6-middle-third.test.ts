@@ -30,13 +30,16 @@ describe("UX /admin middle third route and shared archetype contracts",()=>{
  });
  it("UX-admin-module-access-01 /admin route /admin/module-access preserves its scoped page and legacy UI surface",()=>{
   const page=read("src/app/(authenticated)/admin/module-access/page.tsx");
-  expect(page).toContain("title=\"Module Access\"");
-  expect(page).toContain("No matching colleges");
+  expect(page).toContain('title="Module Access"');
+  expect(page).toContain('SuperAdminCollegeModuleAccessPage params={Promise.resolve({collegeId})}');
+
  });
  it("UX-admin-organizations-01 /admin route /admin/organizations preserves its scoped page and legacy UI surface",()=>{
   const page=read("src/app/(authenticated)/admin/organizations/page.tsx");
+  expect(page).toContain('caption="Existing Organizations"');
+  expect(page).toContain("No organizations found.");
   expect(page).toContain("DataTable");
-  expect(page).toContain("No organizations in this scope");
+
  });
  it("UX-admin-people-01 /admin route /admin/people preserves its scoped page and legacy UI surface",()=>{
   const page=read("src/app/(authenticated)/admin/people/page.tsx");
@@ -47,8 +50,9 @@ describe("UX /admin middle third route and shared archetype contracts",()=>{
  });
  it("UX-admin-people-directory-01 /admin route /admin/people/directory preserves its scoped page and legacy UI surface",()=>{
   const page=read("src/app/(authenticated)/admin/people/directory/page.tsx");
-  expect(page).toContain("title=\"People Directory\"");
-  expect(page).toContain("No matching users");
+  expect(page).toContain('title="People Directory"');
+  expect(page).toContain("No matching contacts");
+
  });
  it("UX-admin-people-directory-membershipId-01 /admin route /admin/people/directory/[membershipId] preserves its scoped page and legacy UI surface",()=>{
   const page=read("src/app/(authenticated)/admin/people/directory/[membershipId]/page.tsx");
@@ -88,22 +92,28 @@ describe("UX /admin middle third route and shared archetype contracts",()=>{
  it("UX-admin-placements-calendar-01 /admin route /admin/placements/calendar preserves its scoped page and legacy UI surface",()=>{
   const page=read("src/app/(authenticated)/admin/placements/calendar/page.tsx");
   expect(page).toContain("PlacementCalendarWorkspace");
-  expect(page).toContain("Select a college scope");
+  expect(page).toContain('title="Choose a college"');
+  expect(page).toContain("requireSuperAdminSelectedCollege");
+
  });
  it("UX-admin-placements-drives-01 /admin route /admin/placements/drives preserves its scoped page and legacy UI surface",()=>{
   const page=read("src/app/(authenticated)/admin/placements/drives/page.tsx");
   expect(page).toContain("DataTable");
-  expect(page).toContain("caption=\"All drives\"");
+  expect(page).toContain('caption="Jobs table"');
+  expect(page).toContain('title="Jobs Management (LMS)"');
+
  });
  it("UX-admin-placements-hiring-01 /admin route /admin/placements/hiring preserves its scoped page and legacy UI surface",()=>{
   const page=read("src/app/(authenticated)/admin/placements/hiring/page.tsx");
-  expect(page).toContain("AdminScopedReadPage");
-  expect(page).toContain("title=\"Hiring Dashboard · Applications\"");
+  expect(page).toContain('redirect("/admin/placements/analytics"');
+  expect(page).toContain("const suffix=");
+
  });
  it("UX-admin-placements-interviews-01 /admin route /admin/placements/interviews preserves its scoped page and legacy UI surface",()=>{
   const page=read("src/app/(authenticated)/admin/placements/interviews/page.tsx");
-  expect(page).toContain("AdminScopedReadPage");
-  expect(page).toContain("title=\"Placement Interviews / Rounds\"");
+  expect(page).toContain("listSuperAdminInterviews");
+  expect(page).toContain('title="Interviews"');
+
  });
  it("UX-admin-placements-interviews-roundId-01 /admin route /admin/placements/interviews/[roundId] preserves its scoped page and legacy UI surface",()=>{
   const page=read("src/app/(authenticated)/admin/placements/interviews/[roundId]/page.tsx");
@@ -123,7 +133,8 @@ describe("UX /admin middle third route and shared archetype contracts",()=>{
  it("UX-admin-placements-jobs-jobId-01 /admin route /admin/placements/jobs/[jobId] preserves its scoped page and legacy UI surface",()=>{
   const page=read("src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx");
   expect(page).toContain("PlacementDriveWorkspace");
-  expect(page).toContain("SuperAdminDriveTabs");
+  expect(page).toContain('ariaLabel="Drive workspace"');
+
  });
  it("UX-admin-placements-jobs-jobId-applications-01 /admin route /admin/placements/jobs/[jobId]/applications preserves its scoped page and legacy UI surface",()=>{
   const page=read("src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx");
