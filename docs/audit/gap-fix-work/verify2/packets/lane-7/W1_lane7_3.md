@@ -97,6 +97,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Preserve screening schema version freeze after applications.
 
 ## G2-17-022-029 [P1] GAP facet F12
+- [x] Verified: public page settings distinguish cohort-wide opt-in requirement of 5 from per-stat suppression below 5, with a clear privacy disclosure and preview controls.
 - Files: src/app/(authenticated)/tpo/settings/public-page/page.tsx
 - Legacy: docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/PlacementsPageService.java:29-32 — K-anonymity MIN_GROUP=5 for students/offers.
 - Expected fix: Distinguish cohort threshold from per-stat suppression.
