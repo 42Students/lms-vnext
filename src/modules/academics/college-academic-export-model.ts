@@ -5,15 +5,15 @@ export const semesterCsvSchema=withCollegeSemesterCreditCheck(collegeSemesterDir
 export const batchCsvSchema=withCollegeBatchFilterCheck(collegeBatchDirectoryBaseSchema.omit({page:true}));
 export type AcademicCsvKind="SEMESTERS"|"BATCHES";
 export function academicExportHref(kind:AcademicCsvKind,query:{
- q:string;programId?:string;status:string;termNumber?:number;minimumCredits?:number;maximumCredits?:number;creditState?:"ALL"|"CONFIGURED"|"UNSET";yearStart?:number;currentTerm?:number;progression?:"ALL"|"RECORDED"|"MISSING";
- programStatus?:"ALL"|"ACTIVE"|"ARCHIVED";
- mappingState?:"ALL"|"MAPPED"|"UNMAPPED";
- expectedEndState?:"ALL"|"SET"|"UNSET";
- academicYearState?:"ALL"|"RECORDED"|"UNRECORDED";
- activeLearnerState?:"ALL"|"HAS_ACTIVE"|"NONE_ACTIVE";
- activeClassState?:"ALL"|"HAS_ACTIVE"|"NONE_ACTIVE";
- startOnOrAfter?:string;
- startOnOrBefore?:string;
+ q:string;programId?:string | undefined;status:string;termNumber?:number | undefined;minimumCredits?:number | undefined;maximumCredits?:number | undefined;creditState?:"ALL"|"CONFIGURED"|"UNSET" | undefined;yearStart?:number | undefined;currentTerm?:number | undefined;progression?:"ALL"|"RECORDED"|"MISSING" | undefined;
+ programStatus?:"ALL"|"ACTIVE"|"ARCHIVED" | undefined;
+ mappingState?:"ALL"|"MAPPED"|"UNMAPPED" | undefined;
+ expectedEndState?:"ALL"|"SET"|"UNSET" | undefined;
+ academicYearState?:"ALL"|"RECORDED"|"UNRECORDED" | undefined;
+ activeLearnerState?:"ALL"|"HAS_ACTIVE"|"NONE_ACTIVE" | undefined;
+ activeClassState?:"ALL"|"HAS_ACTIVE"|"NONE_ACTIVE" | undefined;
+ startOnOrAfter?:string | undefined;
+ startOnOrBefore?:string | undefined;
 }){
  const p=new URLSearchParams();
  if(query.q)p.set("q",query.q);
