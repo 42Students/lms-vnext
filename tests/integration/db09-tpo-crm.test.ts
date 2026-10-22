@@ -63,6 +63,9 @@ const tpo: RequestContext = {
     roles: ["TPO"],
   },
 };
+// The seeded faculty also needs a persisted TPO role for this isolated CRM
+// fixture. A request-context roles array alone never grants real authority.
+let insertedTpoRoleId: string | null = null;
 const learner: RequestContext = {
   ...tpo,
   membership: { ...tpo.membership!, roles: ["LEARNER"] },
@@ -86,6 +89,25 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
     expect(triggers).toContain("db09_lead_activity_immutable");
     expect(triggers).toContain("db09_lead_activity_actor_scope_guard");
     expect(triggers).toContain("db09_lead_activity_no_truncate");
+    const seededActor = await pool.query(
+      "SELECT cm.id FROM college_memberships cm " +
+      "INNER JOIN users u ON u.id = cm.user_id " +
+      "WHERE cm.id = $1 AND cm.college_id = $2 AND cm.user_id = $3 " +
+      "AND cm.status = 'ACTIVE' AND u.platform_status = 'ACTIVE'",
+      [SEED_IDS.facultyCollegeAMembership, SEED_IDS.collegeA, SEED_IDS.facultyUser],
+    );
+    expect(seededActor.rows).toHaveLength(1);
+    const granted = await pool.query<{ id: string }>(
+      "INSERT INTO membership_roles(membership_id, role) VALUES($1, 'TPO') " +
+      "ON CONFLICT (membership_id, role) DO NOTHING RETURNING id",
+      [SEED_IDS.facultyCollegeAMembership],
+    );
+    insertedTpoRoleId = granted.rows[0]?.id ?? null;
+    const persistedGrant = await pool.query(
+      "SELECT id FROM membership_roles WHERE membership_id = $1 AND role = 'TPO'",
+      [SEED_IDS.facultyCollegeAMembership],
+    );
+    expect(persistedGrant.rows).toHaveLength(1);
   });
 
   beforeEach(async () => {
@@ -125,8 +147,15 @@ describe.skipIf(!enabled)("DB09 recruiter CRM isolated PostgreSQL integrity", ()
   });
 
   afterAll(async () => {
-    await pool?.end();
-    await closeDatabaseConnection();
+    try {
+      if (pool && insertedTpoRoleId) {
+        // Do not delete any TPO role that predated this disposable fixture.
+        await pool.query("DELETE FROM membership_roles WHERE id = $1", [insertedTpoRoleId]);
+      }
+    } finally {
+      await pool?.end();
+      await closeDatabaseConnection();
+    }
   });
 
   it("preserves immutable lead history against direct TRUNCATE", async () => {

@@ -184,9 +184,17 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_program_term_course_type_history();
 ALTER TABLE course_offerings
   DROP CONSTRAINT IF EXISTS course_offerings_credits_ck;
 
-ALTER TABLE course_offerings
-  ADD CONSTRAINT db02_course_offerings_credits_ck
-  CHECK (credits IS NULL OR credits BETWEEN 0 AND 30);
+DO $db02_constraint$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conrelid = 'course_offerings'::regclass AND conname = 'db02_course_offerings_credits_ck'
+  ) THEN
+    ALTER TABLE course_offerings
+      ADD CONSTRAINT db02_course_offerings_credits_ck CHECK (credits IS NULL OR credits BETWEEN 0 AND 30);
+  END IF;
+END
+$db02_constraint$;
 
 -- ---------------------------------------------------------------------------
 -- 1a) Stable tenant ownership + academic-period scope
@@ -442,14 +450,25 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_section_period_scope();
 -- academic_period_id is calendar identity. program_term_id is the stable program-specific
 -- curriculum term identity required by promotion, teaching history and elective eligibility.
 ALTER TABLE course_offerings
-  ADD COLUMN program_term_id uuid NOT NULL
+  ADD COLUMN IF NOT EXISTS program_term_id uuid NOT NULL
     REFERENCES program_terms(id) ON DELETE RESTRICT,
-  ADD COLUMN program_term_course_id uuid
-    REFERENCES program_term_courses(id) ON DELETE RESTRICT,
-  ADD CONSTRAINT course_offerings_curriculum_ref_ck CHECK (
+  ADD COLUMN IF NOT EXISTS program_term_course_id uuid
+    REFERENCES program_term_courses(id) ON DELETE RESTRICT;
+
+DO $db02_constraint$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conrelid = 'course_offerings'::regclass AND conname = 'course_offerings_curriculum_ref_ck'
+  ) THEN
+    ALTER TABLE course_offerings
+      ADD CONSTRAINT course_offerings_curriculum_ref_ck CHECK (
     (type = 'CORE' AND program_term_course_id IS NOT NULL)
     OR (type = 'ELECTIVE' AND program_term_course_id IS NULL)
   );
+  END IF;
+END
+$db02_constraint$;
 
 CREATE INDEX IF NOT EXISTS course_offerings_program_term_idx
   ON course_offerings(program_term_id, status);
@@ -680,34 +699,76 @@ FOR EACH ROW EXECUTE FUNCTION db02_guard_program_archive_with_live_cohorts();
 -- Legacy batch dates are optional, independently editable lifecycle metadata. Period FKs
 -- remain the scheduling/calendar anchors, but cannot reproduce arbitrary batch-specific dates.
 ALTER TABLE cohorts
-  ADD COLUMN start_date date,
-  ADD COLUMN end_date date;
+  ADD COLUMN IF NOT EXISTS start_date date,
+  ADD COLUMN IF NOT EXISTS end_date date;
 
-ALTER TABLE cohorts
-  ADD CONSTRAINT cohorts_lifecycle_date_order_ck
-  CHECK (start_date IS NULL OR end_date IS NULL OR end_date >= start_date);
+DO $db02_constraint$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conrelid = 'cohorts'::regclass AND conname = 'cohorts_lifecycle_date_order_ck'
+  ) THEN
+    ALTER TABLE cohorts
+      ADD CONSTRAINT cohorts_lifecycle_date_order_ck CHECK (start_date IS NULL OR end_date IS NULL OR end_date >= start_date);
+  END IF;
+END
+$db02_constraint$;
 
 -- Legacy class description and lower_limit are live admin CRUD fields. sections.capacity is the
 -- upper limit. Keep vNext capacity nullable for non-legacy creation flows, while compatibility
 -- producers must provide it and obey the legacy 1..500 bound.
 ALTER TABLE sections
   ADD COLUMN IF NOT EXISTS description text, -- registered by migration 0098
-  ADD COLUMN minimum_capacity integer NOT NULL DEFAULT 0,
-  ADD COLUMN start_date date,
-  ADD COLUMN end_date date;
+  ADD COLUMN IF NOT EXISTS minimum_capacity integer NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS start_date date,
+  ADD COLUMN IF NOT EXISTS end_date date;
 
-ALTER TABLE sections
-  DROP CONSTRAINT IF EXISTS sections_capacity_ck;
-
-ALTER TABLE sections
-  ADD CONSTRAINT sections_capacity_ck
-    CHECK (capacity IS NULL OR capacity BETWEEN 1 AND 500),
-  ADD CONSTRAINT sections_minimum_capacity_ck
-    CHECK (minimum_capacity >= 0),
-  ADD CONSTRAINT sections_capacity_range_ck
-    CHECK (capacity IS NULL OR minimum_capacity <= capacity),
-  ADD CONSTRAINT sections_lifecycle_date_order_ck
-    CHECK (start_date IS NULL OR end_date IS NULL OR end_date >= start_date);
+-- The migration already installs the lifecycle columns and some constraints.
+-- Keep every check on first application, but never attempt duplicate names.
+DO $db02_constraint$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conrelid = 'sections'::regclass AND conname = 'sections_capacity_ck'
+  ) THEN
+    ALTER TABLE sections
+      ADD CONSTRAINT sections_capacity_ck CHECK (capacity IS NULL OR capacity BETWEEN 1 AND 500);
+  END IF;
+END
+$db02_constraint$;
+DO $db02_constraint$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conrelid = 'sections'::regclass AND conname = 'sections_minimum_capacity_ck'
+  ) THEN
+    ALTER TABLE sections
+      ADD CONSTRAINT sections_minimum_capacity_ck CHECK (minimum_capacity >= 0);
+  END IF;
+END
+$db02_constraint$;
+DO $db02_constraint$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conrelid = 'sections'::regclass AND conname = 'sections_capacity_range_ck'
+  ) THEN
+    ALTER TABLE sections
+      ADD CONSTRAINT sections_capacity_range_ck CHECK (capacity IS NULL OR minimum_capacity <= capacity);
+  END IF;
+END
+$db02_constraint$;
+DO $db02_constraint$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conrelid = 'sections'::regclass AND conname = 'sections_lifecycle_date_order_ck'
+  ) THEN
+    ALTER TABLE sections
+      ADD CONSTRAINT sections_lifecycle_date_order_ck CHECK (start_date IS NULL OR end_date IS NULL OR end_date >= start_date);
+  END IF;
+END
+$db02_constraint$;
 
 -- ---------------------------------------------------------------------------
 -- 1d) Delivery/event chain scope integrity

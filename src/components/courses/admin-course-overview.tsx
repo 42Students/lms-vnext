@@ -490,6 +490,10 @@ export function AdminCourseOverview({
 
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
+      {workspace.loadWarnings.length>0?<Alert tone="warning" role="alert">
+        Some course setup information could not be verified: {workspace.loadWarnings.join("; ")}.
+        Existing course records remain visible; refresh before changing dependent setup.
+      </Alert>:null}
       <Disclosure title="Course catalogue totals" className="min-w-0 border-b border-border"
         contentClassName="py-3">
       <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] lg:grid-cols-4">
@@ -526,10 +530,12 @@ export function AdminCourseOverview({
       <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
       <div id="create-course" className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
       <h2 className="mb-3 text-lg font-semibold text-foreground">Create New Course</h2>
-      {workspace.departments.length===0?<Alert tone="warning" role="status">
+      {!workspace.academicStructureAvailable?<Alert tone="warning" role="alert">
+        Academic structure could not be loaded. The course directory remains available, but course creation is disabled until the data is verified. Refresh this page to retry.
+      </Alert>:workspace.departments.length===0?<Alert tone="warning" role="status">
         No departments in this college yet. Add a department before creating a course.
       </Alert>:null}
-      <Disclosure title="Course details" defaultOpen={true}
+      {workspace.academicStructureAvailable?<Disclosure title="Course details" defaultOpen={true}
         className="min-w-0 border-y border-[var(--lms-canvas-border)]"
         contentClassName="min-w-0 pb-[var(--lms-space-4)] pt-[var(--lms-space-3)]">
       <AdminCourseCreatePanel
@@ -546,7 +552,7 @@ export function AdminCourseOverview({
         faculty={workspace.faculty}
         facultyTruncated={workspace.facultyTruncated}
       />
-      </Disclosure>
+      </Disclosure>:null}
       </div>
 
       <section className="min-w-0 space-y-[var(--lms-space-3)] rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">

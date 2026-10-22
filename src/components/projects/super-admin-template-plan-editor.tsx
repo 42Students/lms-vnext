@@ -46,10 +46,11 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
   const [draft, setDraft] = useState(props.blueprint);
   const [version, setVersion] = useState(props.currentVersion);
   const [error, setError] = useState("");
+  const [rowErrors,setRowErrors]=useState<Record<string,string>>({});
   const [message, setMessage] = useState("");
   const dirty=JSON.stringify(draft)!==JSON.stringify(props.blueprint);
   const reset=()=>{setDraft(props.blueprint);setVersion(props.currentVersion);
-    setExpanded(false);setRemovedTask(null);setError("");};
+    setExpanded(false);setRemovedTask(null);setError("");setRowErrors({});};
   const guard=useProjectEditorDiscardGuard(expanded,dirty,pending,reset);
   const filteredTasks=draft.tasks.map((task,index)=>({task,index}))
     .filter(({task})=>(task.title+" "+task.key+" "+(task.sprintKey??"Backlog"))
@@ -83,14 +84,14 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
 
   function updateSprint(index: number, patch: Partial<Sprint>) {
     setDraft(current => updateTemplateSprint(current, index, patch));
-    setError("");
+    setError("");setRowErrors({});
   }
   function updateTask(index: number, patch: Partial<Task>) {
     setDraft(current => ({
       ...current,
       tasks: current.tasks.map((row, at) => at === index ? { ...row, ...patch } : row),
     }));
-    setError("");
+    setError("");setRowErrors({});
   }
   function addSprint() {
     setDraft(current => {
@@ -137,12 +138,33 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
     const firstEmpty=props.section==="tasks"?draft.tasks.findIndex(row=>!row.title.trim()):
       draft.sprints.findIndex(row=>!row.title.trim());
     if(firstEmpty>=0){
+      setRowErrors({[props.section+":"+firstEmpty]:"Title required"});
       setError("Item "+(firstEmpty+1)+": Title required");return;
     }
     const normalized = normalizeTemplatePlan(preparePlanKeys(draft));
     const parsed = projectTemplateBlueprintSchema.safeParse(normalized);
     if (!parsed.success) {
-      setError(parsed.error.issues[0]?.message ?? "Invalid template plan.");
+      const rowIssues:Record<string,string>={};
+      for(const issue of parsed.error.issues){
+        const [section,index]=issue.path;
+        if((section==="sprints"||section==="tasks"||section==="releases")&&
+          typeof index==="number"){
+          const key=section+":"+index;
+          if(!rowIssues[key])rowIssues[key]=issue.message;
+        }
+      }
+      setRowErrors(rowIssues);
+      const first=parsed.error.issues[0];
+      const section=first?.path[0],index=first?.path[1];
+      const rowKind=section==="releases"||section==="sprints"||section==="tasks"?section:null;
+      if(section==="tasks"&&typeof index==="number"){
+        setTaskSearch("");setTaskPage(Math.floor(index/25)+1);
+        const task=normalized.tasks[index];
+        if(task)setCollapsedTaskIds(current=>current.filter(key=>key!==task.key));
+      }
+      setError((typeof index==="number"&&rowKind?
+        rowKind.slice(0,-1)+" "+(index+1)+": ":"")+
+        (first?.message??"Invalid template plan."));
       return;
     }
     if (!(await askConfirm("Save changes as a new template version?"))) return;
@@ -157,7 +179,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
           changeNote: props.section === "sprints" ? "Updated template sprints" : "Updated template tasks",
         },
       );
-      setDraft(parsed.data);
+      setDraft(parsed.data);setRowErrors({});
       setVersion(result.template.currentVersion);
       setExpanded(false);
       setMessage(props.section === "sprints" ? "Sprints saved" : "Tasks saved");
@@ -200,10 +222,15 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
         {draft.releases.map((release, index) => <label key={release.key} className={label}>
           Release {index + 1} title
           <Input className={field} maxLength={200} required disabled={pending}
-            value={release.title} onChange={event => setDraft(current => ({
-              ...current, releases: current.releases.map((row, at) =>
-                index === at ? { ...row, title: event.target.value } : row),
-            }))}/>
+            aria-invalid={Boolean(rowErrors["releases:"+index])}
+            value={release.title} onChange={event => {
+              setRowErrors({});setDraft(current => ({
+                ...current, releases: current.releases.map((row, at) =>
+                  index === at ? { ...row, title: event.target.value } : row),
+              }));
+            }}/>
+          {rowErrors["releases:"+index]?<span role="alert" className="mt-1 block text-xs text-danger-text">
+            {rowErrors["releases:"+index]}</span>:null}
         </label>)}
         <Button type="button" variant="secondary" size="sm" disabled={pending || draft.releases.length >= 50}
           onClick={() => setDraft(current => ({
@@ -215,6 +242,8 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
         {draft.sprints.map((sprint, index) => <fieldset key={index}
           className="grid min-w-0 gap-3 border-b border-border py-4">
           <legend className="px-1 text-[var(--lms-font-sm)] font-semibold text-foreground">Sprint {index + 1}</legend>
+          {rowErrors["sprints:"+index]?<p role="alert" className="text-sm text-danger-text">
+            {rowErrors["sprints:"+index]}</p>:null}
           <div className="grid min-w-0 gap-3 md:grid-cols-2">
             <label className={label}>Key (optional)
               <Input className={field} maxLength={64} value={sprint.key}
@@ -281,6 +310,8 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
           <legend className="px-1 text-[var(--lms-font-sm)] font-semibold text-foreground">
             Task {index+1} · {task.title||"Untitled task"}
           </legend>
+          {rowErrors["tasks:"+index]?<p role="alert" className="text-sm text-danger-text">
+            {rowErrors["tasks:"+index]}</p>:null}
           <Button type="button" size="sm" variant="secondary"
             aria-expanded={!collapsedTaskIds.includes(task.key)}
             aria-controls={"template-task-fields-"+index}

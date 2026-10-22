@@ -11,6 +11,10 @@ const expectedSuites = {
     "placements-db08-registration.test.ts",
     "placements-db08-external-offers.test.ts",
     "placements-w04-company-drive-facts.test.ts",
+    // These two isolated DB08 suites are also run by db08-staged-acceptance;
+    // neither may be replayed in the registered-only PG job.
+    "placements-phase2-learner-gates.test.ts",
+    "tpo-batch-workspace-db08.test.ts",
   ],
   "db10-skills-acceptance": [
     "db10-skills-catalog.test.ts",

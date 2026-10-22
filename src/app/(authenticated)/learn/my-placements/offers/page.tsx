@@ -116,12 +116,12 @@ export default async function LearnerOffersPage({
   const sortParsed=learnerOfferSortSchema.safeParse(query.sort ?? "priority");
   const order=sortParsed.success?sortParsed.data:"priority";
   const sorted=sortOwnOfferRows(visibleOffers,order,Date.parse(snapshotNowIso));
-  const focused = resolveLearnerOfferFocus(sorted,requestedPage,query.focus);
   const needsReply=(row:(typeof sorted)[number])=>row.offer.status==="ISSUED" &&
     (!row.offer.expiresAt || row.offer.expiresAt.getTime()>Date.parse(snapshotNowIso));
   const totalPending=sorted.filter(needsReply).length;
   // Keep the pending group together up to the supported 50-result page limit.
   const pageSize=view==="all"&&order==="priority"?Math.min(50,Math.max(15,totalPending)):15;
+  const focused = resolveLearnerOfferFocus(sorted,requestedPage,query.focus,pageSize);
   const paginated = paginateOwnOffers(sorted,focused.page,pageSize);
   const waitingOnPage=paginated.items.filter(needsReply);
   const answeredOnPage=paginated.items.filter(row=>!needsReply(row));

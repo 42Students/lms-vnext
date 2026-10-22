@@ -8,11 +8,15 @@ import {PageHeader} from "@/components/ui/page-header";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
 import {getSuperAdminMembershipDetail} from "@/modules/people/admin-membership-detail-service";
+import {getAdminLearnerProfileSections} from "@/modules/people/admin-learner-profile-sections-service";
+import {AdminLearnerProfileSections} from "@/components/admin/admin-learner-profile-sections";
 export default async function MembershipDetail({params}:{params:Promise<{membershipId:string}>}){
  const {membershipId}=await params;
  const context=await getCurrentRequestContext();
  const detail=await getSuperAdminMembershipDetail(context,membershipId);
  if(!detail)notFound();
+ const learnerSections=detail.roles.includes("LEARNER")&&context.adminScope?.collegeId?
+  await getAdminLearnerProfileSections(context,membershipId):null;
  const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"});
  const fields=[
   {label:"College",value:detail.collegeName},
@@ -41,6 +45,7 @@ export default async function MembershipDetail({params}:{params:Promise<{members
     View audit trail →
    </Link>
   <p className="max-w-3xl text-xs leading-5 text-muted-foreground">This page shows only this membership, not roles at other colleges.</p>
+  {learnerSections?<AdminLearnerProfileSections name={detail.name??"Unnamed student"} sections={learnerSections}/>:null}
   {isSuperAdmin(context)&&!context.adminScope?.collegeId&&!context.adminScope?.organizationId?
     <div className="border-t border-border pt-[var(--lms-space-3)]">
       <SuperAdminPlatformBlockAction userId={detail.userId} status={detail.platformStatus}/>

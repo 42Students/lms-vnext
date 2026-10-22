@@ -5,7 +5,7 @@ import {TPO_STUDENT_LEGACY_FILTER_ALIASES} from "./tpo-students-filter-aliases";
 export function tpoStudentExportViewName(value:unknown):string|null {
  if(typeof value!=="string")return null;
  const name=value.trim();
- return name.length>0&&name.length<=100&&!/[\u0000-\u001f\u007f]/.test(name)?name:null;
+ return name.length>0&&name.length<=100&&!/[\u0000-\u001f\u007f]/.test(value)?name:null;
 }
 /** Never choose the first of repeated query values on an authorized student roster. */
 export function tpoStudentUrlError(raw:Record<string,string|string[]|undefined>):string|null {

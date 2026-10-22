@@ -1,6 +1,7 @@
 import {AdminDriveApplicationsRetained} from "@/components/admin/admin-drive-applications-retained";
 import {CollegeDriveApplicationsSizeControl} from "@/components/placements/college-drive-applications-size-control";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getPlacementJobLegacyDetail } from "@/modules/placements/job-service";
 import { PageHeader } from "@/components/ui/page-header";
@@ -64,6 +65,13 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     <ErrorState title="Invalid job ID" description="Choose a valid drive from your selected college."
      action={<Link href="/admin/placements/drives" className="font-semibold text-primary-text underline">Back to drives</Link>}/>
    </div>;
+  // The legacy initial Super Admin Applications view opens Assessment.
+  // Explicit scoped searches/bookmarks remain unchanged.
+  if (Object.keys(rawQuery).every(key => key === "returnTo") && validView) {
+    redirect(resetHref + "?stage=ASSESSMENT" +
+      (requestedReturn && returnTo !== "/admin/placements/drives"
+        ? "&returnTo=" + encodeURIComponent(returnTo) : ""));
+  }
   if (!query||!validView) return <div className="min-w-0 space-y-5">
     <PageHeader title="Applications" description="Review candidates in this drive and manage hiring stages."/>
     <ErrorState title="Invalid applicant filters"

@@ -14,11 +14,15 @@ describe("Independent audit finding action workflow",()=>{
   expect(svc.indexOf("await tx.insert(db10AuditFindingEvents)")).toBeGreaterThan(svc.indexOf("if(!saved)return {ok:false as const,reason:\"STALE_VERSION\"}"));
   const route=src("src/app/api/tracker/audit-findings/[publicId]/route.ts");
   expect(route).toContain("isSameOriginRequest(request)");
+  expect(route).toContain("DUPLICATE_TARGET_NOT_FOUND");
+  expect(svc).toContain('if(!target)return {ok:false as const,reason:"DUPLICATE_TARGET_NOT_FOUND"};');
   const detail=src("src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx");
   expect(detail).toContain("<IndependentFindingActions");
   expect(detail).toContain("Audit event history");
   const client=src("src/components/tracker/independent-finding-actions.tsx");
-  for(const v of ["FIX_COMMIT","COMMENT","DUPLICATE","<ConfirmDialog","onConfirm={()=>void submit(true)}","if(!confirmed){setConfirmOpen(true);return;}"])expect(client).toContain(v);
+  for(const v of ["FIX_COMMIT","COMMENT","DUPLICATE","<ConfirmDialog","onConfirm={()=>void submit(true)}"])expect(client).toContain(v);
+  // Clear previous validation feedback before opening the destructive-action dialog.
+  expect(client).toMatch(/setError\(null\);\s*if\(!confirmed\)\{setConfirmOpen\(true\);return;\}/);
   // Each audit action has a descriptive submit label; the same label appears on
   // its action button and version-checked confirmation dialog.
   expect(client).toContain('action==="COMMENT"?"Add comment":action==="STATUS"?"Set to status":');

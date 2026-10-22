@@ -691,7 +691,7 @@ export function FacultyAssignmentReview({
         className="max-w-[780px]"
         open={open}
         onOpenChange={(nextOpen)=>{
-          if(!nextOpen&&(mutationInFlight.current||bulkBusy))return;
+          if(!nextOpen&&mutationInFlight.current)return;
           if(!nextOpen){loadSequence.current+=1;setLoading(false);}
           setOpen(nextOpen);
         }}

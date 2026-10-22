@@ -98,6 +98,7 @@ export const updateCourseInputSchema = z
     takeaways:z.string().trim().max(2000).nullable().optional(),
     introductionHeading:z.string().trim().min(1,"Enter heading").max(255,"Maximum 255 characters").optional(),
     enabled:z.boolean().optional(),
+    visibleToStudents:z.boolean().optional(),
     description: z
       .string()
       .trim()

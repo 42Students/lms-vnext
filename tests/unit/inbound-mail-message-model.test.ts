@@ -1,11 +1,14 @@
 import {describe,it,expect} from "vitest";
 import {inboundMailListQuerySchema,safeInboundPreview} from "@/modules/inbound-mail/message-model";
 describe("inbound mail search",()=>{
- it("rejects unknown filters and clamps malformed or unbounded legacy paging",()=>{
+ it("rejects unknown filters and malformed or unbounded legacy paging",()=>{
  expect(inboundMailListQuerySchema.safeParse({collegeId:"other"}).success).toBe(false);
- expect(inboundMailListQuerySchema.parse({page:-1}).page).toBe(1);
- expect(inboundMailListQuerySchema.parse({page:1_000_000}).page).toBe(10000);
- expect(inboundMailListQuerySchema.parse({page:"garbage"}).page).toBe(1);
+ // Malformed or excessive pages must be rejected; silently clamping an
+ // invalid user-supplied query could widen or misrepresent the scoped result.
+ for(const page of [-1,0,1_000_000,"garbage","0","",true,["1","2"]])
+  expect(inboundMailListQuerySchema.safeParse({page}).success).toBe(false);
+ expect(inboundMailListQuerySchema.parse({}).page).toBe(1);
+ expect(inboundMailListQuerySchema.parse({page:"10000"}).page).toBe(10000);
  });
  it("normalizes previews without control characters",()=>{
  expect(safeInboundPreview("Hi\n there")).toBe("Hi there");

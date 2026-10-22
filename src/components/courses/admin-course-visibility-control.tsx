@@ -13,7 +13,7 @@ export function AdminCourseVisibilityControl({course}:{
   legacyAllowedForDisplay?:number|null;updatedAt:string};
 }){
  const router=useRouter(),lock=useRef(false);
- const [enabled,setEnabled]=useState(course.enabled&&course.legacyAllowedForDisplay!==0);
+ const [visible,setVisible]=useState(course.legacyAllowedForDisplay!==0);
  const [pending,setPending]=useState(false);
  const [error,setError]=useState("");
  const [notice,setNotice]=useState("");
@@ -23,10 +23,10 @@ export function AdminCourseVisibilityControl({course}:{
   try{
    await apiFetch("/api/courses/"+encodeURIComponent(course.id),{
     method:"PATCH",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({expectedUpdatedAt:course.updatedAt,enabled:next}),
+    body:JSON.stringify({expectedUpdatedAt:course.updatedAt,visibleToStudents:next}),
    });
-   setEnabled(next);
-   setNotice(next?"Course visible to students":"Course hidden from students");
+   setVisible(next);
+   setNotice(next?(course.enabled?"Course visible to students":"Course display allowed, but this Course remains disabled."):"Course hidden from students");
    router.refresh();
   }catch(reason){
    setError("Could not update course visibility. "+
@@ -35,12 +35,13 @@ export function AdminCourseVisibilityControl({course}:{
  }
  return <div className="min-w-0 space-y-1">
   <label className="inline-flex min-h-11 items-center gap-2 text-xs font-semibold md:min-h-9">
-   <Checkbox checked={enabled} disabled={pending||course.status!=="ACTIVE"}
+   <Checkbox checked={visible} disabled={pending||course.status!=="ACTIVE"}
     onChange={event=>void toggle(event.target.checked)}/>
    Visible to students
   </label>
   <p className="max-w-48 text-xs text-muted-foreground">
-   {enabled?"Students see this Course when its term and lesson access allow it.":
+   {!course.enabled?"This Course is disabled. Allowing display does not enable it.":
+    visible?"Students see this Course when its term and lesson access allow it.":
     "Hidden without archiving. Lessons and assessments are retained."}
   </p>
   {error?<Alert tone="error" role="alert">{error}</Alert>:null}

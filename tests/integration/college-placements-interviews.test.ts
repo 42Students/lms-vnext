@@ -125,7 +125,7 @@ describe.skipIf(!enabled)("College Admin interviews: isolated PostgreSQL", () =>
     await expect(schedule(d.job, d, { mode: "VIRTUAL", venue: null, meetingUrl: "http://insecure.example.com/m" })).rejects.toThrow();
     await expect(schedule(d.job, d, { mode: "ON_CAMPUS", venue: null })).rejects.toThrow();
     await schedule(d.job, d);
-    await expect(schedule(d.job, d)).rejects.toThrow(/overlapping/);
+    await expect(schedule(d.job, d)).rejects.toThrow(/previous round is still active/);
     await pool!.query("UPDATE placement_application_screenings SET status='SHORTLISTED' WHERE application_id=$1", [d.app]);
     const other = await makeDrive();
     await pool!.query("UPDATE placement_application_screenings SET status='PENDING',decided_by_user_id=NULL,decided_at=NULL WHERE application_id=$1", [other.app]);

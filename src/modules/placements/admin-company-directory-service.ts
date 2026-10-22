@@ -220,20 +220,27 @@ export async function listSuperAdminGlobalCompanyCatalogue(
    aliases:sql<string[]>`(select coalesce(array_agg(a.alias order by a.alias),array[]::text[])
     from placement_company_aliases a where a.company_id=${placementCompanies.id})`,
    companyCollegeCount:sql<number>`(select count(distinct r.college_id)::int
-    from placement_company_relationships r where r.company_id=${placementCompanies.id})`.mapWith(Number),
+    from placement_company_relationships r where r.company_id=${placementCompanies.id}
+     and r.status='ACTIVE' and r.archived_at is null)`.mapWith(Number),
    driveCount:sql<number>`(select count(*)::int from placement_jobs j
     inner join placement_company_relationships r on r.id=j.company_relationship_id
-    where r.company_id=${placementCompanies.id} and j.status!='ARCHIVED')`.mapWith(Number),
+      and r.college_id=j.college_id
+    where r.company_id=${placementCompanies.id} and r.status='ACTIVE'
+      and r.archived_at is null and j.status!='ARCHIVED' and j.archived_at is null)`.mapWith(Number),
    lastActiveAt:sql<Date|null>`(select max(j.updated_at) from placement_jobs j
     inner join placement_company_relationships r on r.id=j.company_relationship_id
-    where r.company_id=${placementCompanies.id})`,
+      and r.college_id=j.college_id
+    where r.company_id=${placementCompanies.id} and r.status='ACTIVE'
+      and r.archived_at is null and j.status!='ARCHIVED' and j.archived_at is null)`,
   }).from(placementCompanies).where(filter)
    .orderBy(...(query.sort==="RECENT"
     ?[desc(placementCompanies.updatedAt),asc(placementCompanies.id)]
     :query.sort==="DRIVES"?
       [desc(sql`(select count(*) from placement_jobs j
        inner join placement_company_relationships r on r.id=j.company_relationship_id
-       where r.company_id=${placementCompanies.id} and j.status!='ARCHIVED')`),
+      and r.college_id=j.college_id
+       where r.company_id=${placementCompanies.id} and r.status='ACTIVE'
+      and r.archived_at is null and j.status!='ARCHIVED' and j.archived_at is null)`),
        asc(placementCompanies.id)]
     :query.sort==="LAST_ACTIVE"?
       // Legacy global catalogue, unlike per-college activity, is unverified
@@ -246,7 +253,9 @@ export async function listSuperAdminGlobalCompanyCatalogue(
     :query.sort==="DRIVES_ASC"?
       [asc(sql`(select count(*) from placement_jobs j
        inner join placement_company_relationships r on r.id=j.company_relationship_id
-       where r.company_id=${placementCompanies.id} and j.status!='ARCHIVED')`),
+      and r.college_id=j.college_id
+       where r.company_id=${placementCompanies.id} and r.status='ACTIVE'
+      and r.archived_at is null and j.status!='ARCHIVED' and j.archived_at is null)`),
        asc(placementCompanies.id)]
     :[query.sort==="NAME_DESC"?desc(placementCompanies.name):asc(placementCompanies.name),
       asc(placementCompanies.id)]))

@@ -141,6 +141,28 @@ export async function listFutureElectiveLearnerOverlaps(
 
 type ScheduleTx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 
+/** Preflight checks alone can race a course offering closure. Hold SHARE locks
+ * on both the delivery and offering until the schedule link commits. This
+ * covers creates, course edits and cross-section moves alike. */
+async function assertScheduleDeliveryInsideTransaction(
+  tx: ScheduleTx, deliveryId: string, sectionId: string,
+) {
+  const [active] = await tx.select({id: courseSectionDeliveries.id})
+    .from(courseSectionDeliveries)
+    .innerJoin(courseOfferings,
+      eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+    .where(and(
+      eq(courseSectionDeliveries.id, deliveryId),
+      eq(courseSectionDeliveries.sectionId, sectionId),
+      isNull(courseSectionDeliveries.endedAt),
+      eq(courseOfferings.status, "ACTIVE"),
+    ))
+    .for("share")
+    .limit(1);
+  if (!active)
+    throw new AcademicsServiceError("SCHEDULE_COURSE_DELIVERY_MISMATCH");
+}
+
 async function assertScheduleResources(tx: ScheduleTx, input: {
   collegeId: string;
   sectionId: string;
@@ -488,6 +510,8 @@ export async function moveSectionScheduleEvent(
     if(!current||current.status!=="SCHEDULED")
       throw new AcademicsServiceError("SCHEDULE_EVENT_NOT_FOUND");
     eventWindowInsidePeriod(current.startsAt,current.endsAt,period);
+    if (input.targetDeliveryId)
+      await assertScheduleDeliveryInsideTransaction(tx,input.targetDeliveryId,target.id);
     await assertScheduleResources(tx,{
       collegeId:target.collegeId,sectionId:target.id,
       facultyMembershipId:current.facultyMembershipId,
@@ -562,6 +586,8 @@ export async function createSectionScheduleEvent(
 
   const db = getDb();
   return db.transaction(async (tx) => {
+    if (input.deliveryId)
+      await assertScheduleDeliveryInsideTransaction(tx,input.deliveryId,input.sectionId);
     await assertScheduleResources(tx, {
       collegeId: section.collegeId,
       sectionId: input.sectionId,
@@ -669,6 +695,8 @@ export async function updateSectionScheduleEvent(
     const startsAt = input.startsAt ? new Date(input.startsAt) : current.startsAt;
     const endsAt = input.endsAt ? new Date(input.endsAt) : current.endsAt;
     eventWindowInsidePeriod(startsAt, endsAt, period);
+    if (input.deliveryId)
+      await assertScheduleDeliveryInsideTransaction(tx,input.deliveryId,scope.sectionId);
     await assertScheduleResources(tx, {
       collegeId: scope.collegeId,
       sectionId: scope.sectionId,

@@ -10,7 +10,7 @@ import {colleges,sectionScheduleEvents,sections,cohorts,programs,departments,
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {z} from "zod";
-import {istDayBounds,formatSuperAdminAttentionWhen} from "./admin-today-attention-model";
+import {istDayBounds,formatSuperAdminAttentionWhen,pendingAttendanceWindowStart} from "./admin-today-attention-model";
 import {DEFAULT_ATTENDANCE_POLICY} from "@/modules/attendance/policy-validation";
 export async function getSuperAdminTodayBoard(ctx:RequestContext,rawCollegeId:string,now=new Date()){
  if(!isSuperAdmin(ctx))throw new AuthorizationError("admin-scope.select");
@@ -23,8 +23,8 @@ export async function getSuperAdminTodayBoard(ctx:RequestContext,rawCollegeId:st
  requirePermission(ctx,"academics.read",{collegeId:id,organizationId:college.organizationId});
  requirePermission(ctx,"courses.read",{collegeId:id,organizationId:college.organizationId});
  const {from,to}=istDayBounds(now);
- // Seven *local calendar dates* including today, not a guessed UTC date range.
- const attendanceWindowFrom=new Date(from.getTime()-6*86400000);
+ // Complete rolling seven days by end time, including sessions begun earlier.
+ const attendanceWindowFrom=pendingAttendanceWindowStart(now);
  const markedSessions=alias(attendanceSessions,"admin_today_marked_sessions");
  const db=getDb();
  const [classes,pendingAttendance,withoutTeacher,closingQuizzes]=await Promise.all([
@@ -52,7 +52,7 @@ export async function getSuperAdminTodayBoard(ctx:RequestContext,rawCollegeId:st
    .leftJoin(markedSessions,and(eq(markedSessions.scheduleEventId,sectionScheduleEvents.id),
      eq(markedSessions.status,"MARKED")))
    .where(and(eq(departments.collegeId,id),eq(sectionScheduleEvents.status,"SCHEDULED"),
-     gte(sectionScheduleEvents.startsAt,attendanceWindowFrom),
+     gte(sectionScheduleEvents.endsAt,attendanceWindowFrom),
      lte(sectionScheduleEvents.endsAt,now),isNull(markedSessions.scheduleEventId))),
   db.select({n:count()}).from(courseSectionDeliveries)
    .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
@@ -137,7 +137,7 @@ export async function getSuperAdminTodayBoard(ctx:RequestContext,rawCollegeId:st
   .as("super_admin_today_risk");
  const pendingFilter=and(eq(departments.collegeId,id),
   eq(sectionScheduleEvents.status,"SCHEDULED"),
-  gte(sectionScheduleEvents.startsAt,attendanceWindowFrom),
+  gte(sectionScheduleEvents.endsAt,attendanceWindowFrom),
   lte(sectionScheduleEvents.endsAt,now),isNull(markedSessions.scheduleEventId));
  const [riskTotals,riskPreview,pendingPreview,gradingTotals,gradingPreview,
   staffingPreview,setupBatch,setupSection,setupLearners,setupCourses,quizPreview]=await Promise.all([

@@ -42,6 +42,7 @@ import {
 } from "./scope";
 import { PlacementsServiceError } from "./errors";
 import { placementTableExists } from "./staged-tables";
+import {legacyPlacementFunnelDenominator} from "./legacy-placement-funnel-denominator";
 import {
   summarizePlacementReports,
   summarizePlacementReportDetails,
@@ -85,14 +86,22 @@ export function legacyPlacementSummaryProjection(summary:{
  metrics:{registered:number;studentsPlaced:number;studentsAccepted:number;
   offers:number;acceptedOffers:number;applications:number};
 }){
+ const denominator=legacyPlacementFunnelDenominator(summary.metrics);
  return {stats:{
-  registered:summary.metrics.registered,
+  registered:denominator.registeredForLegacyStats,
   placedUnique:summary.metrics.studentsPlaced,
   acceptedUnique:summary.metrics.studentsAccepted,
   offers:summary.metrics.offers,
+ },journey:{
+  looking:denominator.registered,
+  placedUnique:summary.metrics.studentsPlaced,
+  acceptedUnique:summary.metrics.studentsAccepted,
+  ratePercent:denominator.ratePercent,
  },diagnostics:{
   applications:summary.metrics.applications,
   acceptedOffers:summary.metrics.acceptedOffers,
+  registrationState:denominator.state,
+  denominatorNote:denominator.note,
   definition:"Selected college and season, current verified offer policy",
  }};
 }

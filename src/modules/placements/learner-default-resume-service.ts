@@ -4,11 +4,13 @@ import { and, desc, eq, gt, isNull, or } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { learnerProfiles } from "@/db/schema";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { profilePrivateDocumentReceipts } from "@/db/schema/profile-verification";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { verifyPrivateDocumentReceipt } from "@/modules/profile-verification/private-receipts";
 import {
   createPrivateUploadGrant,
+  createPrivateReadGrant,
   readPrivateObjectAttestation,
 } from "@/modules/storage/private-object-storage";
 
@@ -181,4 +183,73 @@ export async function confirmLearnerDefaultResumeUpload(
     )).limit(1);
   if (!receipt) throw new Error("DEFAULT_RESUME_NOT_VERIFIED");
   return selectLearnerDefaultResume(context, receipt.id);
+}
+
+/** A resume receipt is an ownership identifier, never a public object URL.
+ * Reads mint a five-minute signed grant only after actor, document, scan and
+ * storage-generation checks. The list endpoint never exposes object paths. */
+export async function viewOwnLearnerResume(context:RequestContext,rawReceiptId:unknown) {
+ const member=requireOwnLearner(context);
+ const id=receiptIdSchema.parse(rawReceiptId);
+ const now=new Date();
+ const receipt=await getDb().transaction(async tx=>{
+  const persisted=await assertPersistedPlatformPermission(tx,context,"profile.self.manage",{
+   collegeId:member.collegeId,organizationId:member.organizationId,
+  });
+  if(!persisted.membership||persisted.membership.id!==member.id||
+     !persisted.membership.roles.includes("LEARNER"))
+   throw new Error("DEFAULT_RESUME_ACCESS_DENIED");
+  const [row]=await tx.select().from(profilePrivateDocumentReceipts).where(and(
+   eq(profilePrivateDocumentReceipts.id,id),
+   eq(profilePrivateDocumentReceipts.owningMembershipId,member.id),
+   eq(profilePrivateDocumentReceipts.purpose,"RESUME"),
+   eq(profilePrivateDocumentReceipts.scanStatus,"CLEAN"),
+   isNull(profilePrivateDocumentReceipts.revokedAt),
+   or(isNull(profilePrivateDocumentReceipts.retentionUntil),
+      gt(profilePrivateDocumentReceipts.retentionUntil,now)),
+  )).limit(1);
+  if(!row||row.mimeType!=="application/pdf"||row.sizeBytes>10*1024*1024)
+   throw new Error("DEFAULT_RESUME_NOT_VERIFIED");
+  return row;
+ });
+ const evidence={...receipt,purpose:"RESUME" as const,scanStatus:"CLEAN" as const};
+ if(!await verifyPrivateDocumentReceipt(evidence))
+  throw new Error("DEFAULT_RESUME_NOT_VERIFIED");
+ const attestation=await readPrivateObjectAttestation(receipt.privateObjectKey,{
+  collegeId:member.collegeId,ownerMembershipId:member.id,
+ });
+ if(attestation.generation!==receipt.objectGeneration||
+    attestation.sha256Hex.toLowerCase()!==receipt.sha256Hex.toLowerCase()||
+    attestation.contentType!=="application/pdf"||
+    attestation.sizeBytes!==receipt.sizeBytes)
+  throw new Error("DEFAULT_RESUME_NOT_VERIFIED");
+ const grant=await createPrivateReadGrant({
+  objectKey:receipt.privateObjectKey,collegeId:member.collegeId,
+  ownerMembershipId:member.id,expiresInMs:5*60*1000,
+ });
+ return {readUrl:grant.readUrl,expiresAt:grant.expiresAt.toISOString()};
+}
+
+/** Clearing a default does not destroy evidence still referenced by a
+ * submitted application. Every scanned receipt remains available for explicit
+ * re-selection until its own separate retention/revocation workflow. */
+export async function clearOwnLearnerDefaultResume(context:RequestContext) {
+ const member=requireOwnLearner(context);
+ return getDb().transaction(async tx=>{
+  const persisted=await assertPersistedPlatformPermission(tx,context,"profile.self.manage",{
+   collegeId:member.collegeId,organizationId:member.organizationId,
+  });
+  if(!persisted.membership||persisted.membership.id!==member.id||
+     !persisted.membership.roles.includes("LEARNER"))
+   throw new Error("DEFAULT_RESUME_ACCESS_DENIED");
+  const [profile]=await tx.select({path:learnerProfiles.resumeObjectPath})
+   .from(learnerProfiles).where(eq(learnerProfiles.membershipId,member.id))
+   .for("update").limit(1);
+  if(!profile?.path)return {cleared:false};
+  await tx.update(learnerProfiles).set({
+   resumeObjectPath:null,resumeScanStatus:null,resumeVerifiedAt:null,
+   updatedAt:new Date(),
+  }).where(eq(learnerProfiles.membershipId,member.id));
+  return {cleared:true};
+ });
 }

@@ -9,8 +9,12 @@
 -- DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64, not the rotating encryption secret.
 -- The HMAC must be domain-separated: global-email-suppression-v1.
 -- This table never contains raw email, token, phone, address or merge fields.
+-- Replays are only permitted in an isolated database whose registered
+-- migrations already supplied the corresponding canonical table shape.
+-- IF NOT EXISTS prevents duplicate relation failures; it never drops data,
+-- constraints, tenant checks or historical suppression evidence.
 
-CREATE TABLE outbound_global_email_suppressions (
+CREATE TABLE IF NOT EXISTS outbound_global_email_suppressions (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   recipient_hash varchar(64) NOT NULL,
   reason varchar(24) NOT NULL,
@@ -24,10 +28,10 @@ CREATE TABLE outbound_global_email_suppressions (
   CONSTRAINT db10_global_email_suppressions_clear_order_ck
     CHECK (cleared_at IS NULL OR cleared_at >= created_at)
 );
-CREATE UNIQUE INDEX db10_global_email_suppressions_active_uq
+CREATE UNIQUE INDEX IF NOT EXISTS db10_global_email_suppressions_active_uq
   ON outbound_global_email_suppressions(recipient_hash)
   WHERE cleared_at IS NULL;
-CREATE INDEX db10_global_email_suppressions_created_idx
+CREATE INDEX IF NOT EXISTS db10_global_email_suppressions_created_idx
   ON outbound_global_email_suppressions(created_at);
 
 -- Consumer MUST check both existing tenant local active suppression and

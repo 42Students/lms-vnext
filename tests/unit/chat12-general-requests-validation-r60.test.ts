@@ -28,7 +28,11 @@ describe("TPO-requests-verification-01: independent request-kind validation and 
  it("TPO-requests-verification-01 refuses FTP proof links",()=>expect(valid({...correction,proofUrl:"ftp://example.org/proof"})).toBe(false));
  it("TPO-requests-verification-01 refuses relative proof links",()=>expect(valid({...correction,proofUrl:"/private-file"})).toBe(false));
  it("TPO-requests-verification-01 bounds externally supplied proof URLs to 2048 characters",()=>expect(valid({...correction,proofUrl:"https://example.org/"+ "a".repeat(2050)})).toBe(false));
- it("TPO-requests-verification-01 rejects zero pay despite a syntactically numeric salary",()=>expect(valid({...off,ctcLpa:"0.00"})).toBe(false));
+ it("TPO-requests-verification-01 accepts zero pay for an optional legacy CTC field",()=>{
+  expect(valid({...off,ctcLpa:"0"})).toBe(true);
+  expect(valid({...off,ctcLpa:"0.00"})).toBe(true);
+  expect(valid({...off,ctcLpa:null})).toBe(true);
+});
  it("TPO-requests-verification-01 accepts positive fractional compensation",()=>expect(valid({...off,ctcLpa:"0.01"})).toBe(true));
  it("TPO-requests-verification-01 refuses negative compensation",()=>expect(valid({...off,ctcLpa:"-1"})).toBe(false));
  it("TPO-requests-verification-01 refuses over-precision compensation",()=>expect(valid({...off,ctcLpa:"8.999"})).toBe(false));

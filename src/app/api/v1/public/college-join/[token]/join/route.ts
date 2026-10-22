@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import {isSameOriginRequest} from "@/auth/origin";
 import { legacyCollegeJoinRequest } from "@/modules/placements/public-join/legacy-request-adapter";
 import { POST as canonicalPOST } from "@/app/api/public/college-join/join/route";
 
@@ -9,6 +10,7 @@ export const runtime = "nodejs";
 export async function POST(
   request: Request, { params }: { params: Promise<{ token: string }> },
 ) {
+  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   const { token } = await params;
   const adapted = await legacyCollegeJoinRequest(request, token);
   if (!adapted) return NextResponse.json(

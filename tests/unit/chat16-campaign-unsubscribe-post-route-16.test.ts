@@ -76,6 +76,20 @@ describe("chat-16 explicit public campaign suppression API response and side eff
   expect(response.headers.get("location")).toBe("https://42lms.com/campaign-unsubscribe/confirmed?scope=placement-cell");
   expect(getDb).not.toHaveBeenCalled();
  });
+ it("W1-1 signed recruiter unsubscribe never reports success when recipient migration is unavailable",async()=>{
+  vi.mocked(verifyTpoCampaignRecipientToken).mockReturnValue({
+   v:1,collegeId:college,campaignId:college,recipientId:college,expiresAt:4102444800000,
+  });
+  vi.mocked(unsubscribeTpoCampaignRecipient)
+   .mockRejectedValue(new Error("TPO_CAMPAIGNS_NOT_REGISTERED"));
+  const response=await POST(request());
+  expect(response.status).toBe(503);
+  expect(response.headers.get("cache-control")).toBe("no-store");
+  expect(await response.json()).toEqual({
+   error:"SUPPRESSIONS_NOT_READY",message:"That didn't work. Please try again.",
+  });
+  expect(getDb).not.toHaveBeenCalled();
+ });
  it("campaign-unsubscribe-route-20 distinguishes unregistered global suppression storage from successful opt-out",async()=>{
   vi.mocked(verifyUnsubscribeToken).mockReturnValue({
    version:1,recipientKey,expiresAt:4102444800000,

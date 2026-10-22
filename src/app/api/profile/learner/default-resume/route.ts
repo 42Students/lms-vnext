@@ -8,6 +8,8 @@ import {
   initiateLearnerDefaultResumeUpload,
   listLearnerDefaultResumes,
   selectLearnerDefaultResume,
+  viewOwnLearnerResume,
+  clearOwnLearnerDefaultResume,
 } from "@/modules/placements/learner-default-resume-service";
 import { PrivateObjectStorageError } from "@/modules/storage/private-object-storage";
 
@@ -21,6 +23,8 @@ const command = z.discriminatedUnion("action", [
   }),
   z.strictObject({ action: z.literal("CONFIRM"), objectKey: z.string().min(20).max(700) }),
   z.strictObject({ action: z.literal("SELECT"), receiptId: z.uuid() }),
+  z.strictObject({ action: z.literal("VIEW"), receiptId: z.uuid() }),
+  z.strictObject({ action: z.literal("CLEAR_DEFAULT") }),
 ]);
 
 function safeError(error: unknown) {
@@ -67,6 +71,14 @@ export async function POST(request: Request) {
     }
     if (parsed.action === "CONFIRM") {
       return NextResponse.json(await confirmLearnerDefaultResumeUpload(context, parsed),
+        { headers });
+    }
+    if (parsed.action === "VIEW") {
+      return NextResponse.json(await viewOwnLearnerResume(context, parsed.receiptId),
+        { headers });
+    }
+    if (parsed.action === "CLEAR_DEFAULT") {
+      return NextResponse.json(await clearOwnLearnerDefaultResume(context),
         { headers });
     }
     return NextResponse.json(await selectLearnerDefaultResume(context, parsed.receiptId),

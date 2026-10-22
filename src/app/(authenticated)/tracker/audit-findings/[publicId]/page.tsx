@@ -5,6 +5,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {PageBackLink} from "@/components/ui/page-back-link";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {getIndependentAuditFinding,listIndependentAuditFindingEvents} from "@/modules/bug-tracker/independent-audit-findings-service";
+import {independentFindingHistoryChanges} from "@/modules/bug-tracker/independent-finding-audit-history-model";
 import {listSimilarIndependentFindings} from "@/modules/bug-tracker/independent-finding-similar-service";
 import {IndependentFindingActions} from "@/components/tracker/independent-finding-actions";
 import {IndependentFindingCopyAction} from "@/components/tracker/independent-finding-copy-action";
@@ -76,10 +77,23 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
   </details>
   <details aria-labelledby="section-audit-event-history" className="border-b border-[var(--lms-canvas-border)] pb-4">
    <summary id="section-audit-event-history" className="flex min-h-11 cursor-pointer items-center font-semibold text-foreground md:min-h-9">Audit event history</summary>
-   {events.length?<ol aria-label="audit findings entries" className="mt-3 divide-y divide-border border-y border-border text-sm">{events.map(event=><li key={event.id} className="py-3">
-    {event.action} · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(event.createdAt)}
-    {event.note?<p className="mt-1 whitespace-pre-wrap break-words">{event.note}</p>:null}
-   </li>)}</ol>:<p role="status" className="mt-3 border-y border-border py-5 text-sm text-muted-foreground leading-[22px]">No history</p>}
+   {events.length?<ol aria-label="audit findings entries" className="mt-3 divide-y divide-border border-y border-border text-sm">{events.map(event=>{
+    const changes=independentFindingHistoryChanges(event.fromValue,event.toValue);
+    return <li key={event.id} className="space-y-2 py-3">
+     <p className="font-semibold text-body">{event.action} · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(event.createdAt)} IST</p>
+     <p className="break-words text-xs text-muted-foreground">Actor: {event.actorUserId??"System / import"}</p>
+     {event.note?<p className="whitespace-pre-wrap break-words text-body">{event.note}</p>:null}
+     {changes.length?<dl aria-label="Changed audit fields" className="grid gap-2 border-l-2 border-border pl-3">
+      {changes.map(change=><div key={change.label} className="min-w-0 text-sm">
+       <dt className="font-semibold">{change.label}</dt>
+       <dd className="min-w-0 break-all text-muted-foreground">
+        <span className="sr-only">Before: </span>{change.before} <span aria-hidden="true">→</span>
+        <span className="sr-only">After: </span> {change.after}
+       </dd>
+      </div>)}
+     </dl>:null}
+    </li>;
+   })}</ol>:<p role="status" className="mt-3 border-y border-border py-5 text-sm text-muted-foreground leading-[22px]">No history</p>}
   </details>
   <details aria-labelledby="section-fix-commits" className="border-b border-[var(--lms-canvas-border)] pb-4">
    <summary id="section-fix-commits" className="flex min-h-11 cursor-pointer items-center font-semibold text-foreground md:min-h-9">Fix commits</summary>

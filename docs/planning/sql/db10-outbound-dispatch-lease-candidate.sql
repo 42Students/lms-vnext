@@ -15,6 +15,8 @@
 -- * Never log or return decrypted recipients, invitation URLs, or tokens.
 -- * Do not open an HTTP/provider transaction while holding SQL row locks.
 -- * Do not use results as send authorization after any intervening delay.
+-- The guarded CREATE OR REPLACE functions and REVOKE statements below are
+-- idempotent when replayed after the registered DB10 migration.
 
 CREATE OR REPLACE FUNCTION db10_claim_outbound_messages(
   p_worker text,

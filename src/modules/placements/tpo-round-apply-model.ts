@@ -12,6 +12,13 @@ export function assertTpoRoundApplyRoundState(status:string|null,kind:string|nul
  if(kind==="TALK")throw new PlacementsServiceError("PLACEMENT_RESULT_INVALID_ROUND_TYPE");
 }
 
+/** A second caller with an explicit reviewed result revision must not
+ * count an already-applied row as its own successful write. Unversioned
+ * single-result reads preserve their historical idempotent response. */
+export function isVersionedRoundResultReplay(status:string,expectedVersion:number|undefined):boolean{
+ return status==="APPLIED"&&expectedVersion!==undefined;
+}
+
 export const roundApplyInputSchema=z.object({
  confirmed:z.literal(true),
  expectedPreviewToken:z.string().regex(/^[0-9a-f]{64}$/, "Invalid round preview token"),

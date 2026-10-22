@@ -64,7 +64,7 @@ export async function listCollegeDriveApplications(
     submittedByUserId: placementApplications.submittedByUserId,
     submittedByName: sql<string | null>`(select actor.display_name from users actor where actor.id = ${placementApplications.submittedByUserId})`.as("submitted_by_name"),
     // Use applied, unsuperseded round evidence rather than inventing an automated score.
-    screeningScore:sql<number|null>`(select max(rr.score_percent)::integer
+    screeningScore:sql<number|null>`(select max(rr.score_percent)::double precision
       from placement_round_results rr where rr.application_id=${placementApplications.id}
       and rr.status='APPLIED' and rr.superseded_at is null)`.as("screening_score"),
     partialScore: sql<number | null>`null::integer`.as("partial_score"),

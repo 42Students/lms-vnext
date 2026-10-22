@@ -319,7 +319,9 @@ export function CollegeCohortRowActions({ row, periods }: {
           method: "POST", headers: { "content-type": "application/json" },
           body: JSON.stringify({ confirm: true }),
         });
-        setNotice(`Marked “${row.name}” as graduated (Completed).`);
+        const successMessage=`Marked “${row.name}” as graduated (Completed).`;
+        setNotice(successMessage);
+        showToast({tone:"success",title:successMessage});
         router.refresh();
       } catch (error) {
         setNotice(academicSetupErrorMessage(error, "Unable to graduate batch."));

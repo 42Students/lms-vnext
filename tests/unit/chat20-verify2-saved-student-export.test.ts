@@ -1,0 +1,15 @@
+import {describe,expect,it} from "vitest";
+import {legacyGridExportFilename,legacySavedViewExportFilename} from "@/modules/placements/grid-export-filename";
+
+describe("legacy TPO student view export naming",()=>{
+ it("dates saved view exports in Asia/Kolkata but leaves unsaved exports undated",()=>{
+  const now=new Date("2026-10-07T20:00:00.000Z");
+  expect(legacySavedViewExportFilename("TCS shortlist","xlsx",now)).toBe("TCS shortlist – 8 Oct 2026.xlsx");
+  expect(legacySavedViewExportFilename("TCS shortlist","csv",now)).toBe("TCS shortlist – 8 Oct 2026.csv");
+  expect(legacyGridExportFilename("Students","csv")).toBe("Students.csv");
+ });
+ it("neutralizes unsupported filename characters without stripping the dated view label",()=>{
+  const now=new Date("2026-10-07T20:00:00.000Z");
+  expect(legacySavedViewExportFilename("TCS/shortlist","csv",now)).toBe("TCS-shortlist – 8 Oct 2026.csv");
+ });
+});

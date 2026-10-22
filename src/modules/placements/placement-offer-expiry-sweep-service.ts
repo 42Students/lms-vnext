@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, eq, gt, isNotNull, isNull, lte, notExists } from "drizzle-orm";
+import { and, asc, eq, gt, isNotNull, isNull, lte, lt, notExists, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
  activityEvents,colleges,placementApplications,placementJobs,
@@ -7,6 +7,7 @@ import {
 } from "@/db/schema";
 import {deliverRecordedLearnerPlacementEvent} from "./learner-placement-event-delivery";
 import { isIssuedPlacementOfferDue } from "./placement-offer-sweep-policy";
+import {placementJobExpiryAuditKey} from "./application-deadline-policy";
 
 /**
  * P-S1-07: transaction-bound batch primitive for the 15-minute expiry job.
@@ -212,4 +213,65 @@ export async function remindExpiringPlacementOffers(
     }
     return reminded;
   });
+}
+
+/**
+ * Audit application deadlines separately from offer expiry. The effective
+ * status is EXPIRED as soon as a published drive crosses its deadline; the
+ * underlying PUBLISHED lifecycle must remain intact so past applicants,
+ * offer holders and rounds are not silently put through manual Close.
+ *
+ * This idempotent sweep records the historical transition for operators.
+ * A second expiry after an explicit deadline extension receives a distinct
+ * event. The outer scheduler holds a persisted 12-minute lease and checks
+ * its fencing token before each bounded transaction.
+ */
+export async function auditExpiredPlacementJobDeadlines(
+ actorUserId:string,now:Date,limit=100,
+):Promise<number>{
+ if(!Number.isInteger(limit)||limit<1||limit>100||
+    !Number.isFinite(now.getTime()))
+  throw new Error("Invalid job expiry sweep bounds");
+ return getDb().transaction(async tx=>{
+  // Correlate by both job and deadline. A prior expiry event must not
+  // suppress a second expiry after a legitimate extension.
+  const audited=tx.select({id:activityEvents.id}).from(activityEvents)
+   .where(and(
+    eq(activityEvents.subjectType,"placement_job"),
+    eq(activityEvents.eventType,"PLACEMENTS_JOB_DEADLINE_EXPIRED"),
+    eq(activityEvents.subjectId,placementJobs.id),
+    eq(activityEvents.dedupeKey,sql<string>`'placement-job-deadline-expired:' ||
+     ${placementJobs.id}::text || ':' ||
+     floor(extract(epoch from ${placementJobs.applicationDeadline}) * 1000)::bigint::text`),
+   ));
+  const jobs=await tx.select({
+   id:placementJobs.id,title:placementJobs.title,
+   collegeId:placementJobs.collegeId,
+   deadline:placementJobs.applicationDeadline,
+   organizationId:colleges.organizationId,
+  }).from(placementJobs)
+   .innerJoin(colleges,eq(colleges.id,placementJobs.collegeId))
+   .where(and(eq(placementJobs.status,"PUBLISHED"),
+    isNotNull(placementJobs.applicationDeadline),
+    lt(placementJobs.applicationDeadline,now),
+    notExists(audited)))
+   .orderBy(asc(placementJobs.applicationDeadline),asc(placementJobs.id))
+   .limit(limit).for("update",{of:placementJobs,skipLocked:true});
+  let recorded=0;
+  for(const job of jobs){
+   if(!job.deadline)continue;
+   const [event]=await tx.insert(activityEvents).values({
+    organizationId:job.organizationId,collegeId:job.collegeId,
+    actorUserId,actorMembershipId:null,module:"PLACEMENTS",
+    eventType:"PLACEMENTS_JOB_DEADLINE_EXPIRED",
+    subjectType:"placement_job",subjectId:job.id,subjectLabel:job.title,
+    summary:"Application deadline passed for "+job.title,
+    metadata:{deadlineAt:job.deadline.toISOString()},
+    groupKey:"placement-job:"+job.id,
+    dedupeKey:placementJobExpiryAuditKey(job.id,job.deadline),
+   }).onConflictDoNothing().returning({id:activityEvents.id});
+   if(event)recorded++;
+  }
+  return recorded;
+ });
 }

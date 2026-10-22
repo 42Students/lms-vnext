@@ -8,13 +8,14 @@ import { AdminProgramDirectory } from "@/components/admin/admin-program-director
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
-import { listPrograms, listGlobalProgramsForSuperAdmin } from "@/modules/academics/program-service";
+import { listProgramsPage, listGlobalProgramsForSuperAdmin } from "@/modules/academics/program-service";
+import {z} from "zod";
 import { listProgramContents } from "@/modules/admin-ui/program-contents-service";
 import { listDepartments } from "@/modules/departments/service";
 
 export default async function SuperAdminProgramsPage({
  searchParams,
-}: {searchParams?:Promise<{page?:string}>} ) {
+}: {searchParams?:Promise<{page?:string;q?:string;pageSize?:string}>} ) {
   const context = await getCurrentRequestContext();
   if(!isSuperAdmin(context))return <div className="min-w-0 space-y-5">
     <PageHeader title="Programs"/>
@@ -85,10 +86,21 @@ export default async function SuperAdminProgramsPage({
     );
   }
 
-  // Fetch both inventories independently. A missing department/contents read
-  // must not masquerade as an empty directory or enable incomplete edits.
+  // A selected-college directory reads only its SQL page: never load every
+  // learner-facing or archived program to filter them in the browser.
+  const filters=z.strictObject({
+    q:z.string().trim().max(100).default(""),
+    page:z.coerce.number().int().min(1).max(10000).default(1),
+    pageSize:z.coerce.number().int().min(1).max(100).default(20),
+  }).safeParse(await searchParams??{});
+  if(!filters.success)return <div className="min-w-0 space-y-4">
+   <PageHeader title="Programs"/>
+   <ErrorState title="Invalid program filters"
+    description="Search must be at most 100 characters. Choose a page from 1 to 10000 and a size from 1 to 100."
+    action={<Link href="/admin/programs" className="inline-flex min-h-11 items-center font-semibold text-link underline">Clear filters</Link>}/>
+  </div>;
   const [programRead,departmentRead]=await Promise.allSettled([
-    listPrograms(context,collegeId),
+    listProgramsPage(context,collegeId,filters.data),
     listDepartments(context,collegeId),
   ]);
   if(programRead.status==="rejected")return <div className="min-w-0 space-y-5">
@@ -97,7 +109,8 @@ export default async function SuperAdminProgramsPage({
       description="The selected college's program directory could not be verified. No changes were made."
       action={<Link href="/admin/programs" className="lms-inline-link inline-flex min-h-11 items-center font-semibold underline md:min-h-9">Retry loading programs</Link>}/>
   </div>;
-  const programs=programRead.value;
+  const programPage=programRead.value;
+  const programs=programPage.programs;
   const contentsRead=await listProgramContents(context,collegeId,programs.map(program=>program.id))
     .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}));
   if(departmentRead.status==="rejected"||!contentsRead.ok)return <div className="min-w-0 space-y-5">
@@ -135,6 +148,8 @@ export default async function SuperAdminProgramsPage({
       </div>
       <AcademicSetupSteps step={2} />
       <AdminProgramDirectory
+        serverPage={{page:programPage.page,total:programPage.total,totalPages:programPage.totalPages,
+          pageSize:programPage.pageSize,q:filters.data.q}}
         programs={programs.map((program) => ({
           id: program.id,
           name: program.name,

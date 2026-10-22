@@ -28,7 +28,15 @@ describe("Super Admin selected-college directory filters",()=>{
     expect(code.replace(/\s+/g,"")).toContain('listCollegeAssessmentAggregate(context,"'+kind+'",query.data)');
   }
   const ui=source("src/components/courses/admin-assessment-read-directory.tsx");
-  for(const key of ['name="courseCode"','name="scope"','name="results"'])expect(ui).toContain(key);
+  expect(ui).toContain("<CollegeAssessmentCourseSectionFilters");
+  expect(ui).toContain("courses={data.directoryCourses}");
+  expect(ui).toContain("sections={data.directorySections}");
+  for(const key of ['name="scope"','name="results"'])expect(ui).toContain(key);
+  const courseFilters=source("src/components/courses/college-assessment-course-section-filters.tsx");
+  expect(courseFilters).toContain('name="courseCode"');
+  expect(courseFilters).toContain('name="deliveryId"');
+  expect(courseFilters).toContain('sections.filter(section => section.courseCode === courseCode)');
+  expect(courseFilters).toContain('setDeliveryId("")');
   const svc=source("src/modules/courses/college-assessment-aggregate-service.ts");
   expect(svc).toContain("query.courseCode");
   expect(svc).toContain('query.results!=="ALL"');

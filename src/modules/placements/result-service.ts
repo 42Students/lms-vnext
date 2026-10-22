@@ -34,7 +34,7 @@ import {
   can,
 } from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
-import {assertTpoRoundApplyJobState,assertTpoRoundApplyRoundState} from "./tpo-round-apply-model";
+import {assertTpoRoundApplyJobState,assertTpoRoundApplyRoundState,isVersionedRoundResultReplay} from "./tpo-round-apply-model";
 import { requirePlacementManageScope } from "./scope";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
@@ -669,6 +669,9 @@ export async function applyPlacementRoundResult(
     );
   }
 
+  if (isVersionedRoundResultReplay(current.result.status,expectedVersion)) {
+    throw new PlacementsServiceError("PLACEMENT_RESULT_ALREADY_APPLIED");
+  }
   if (current.result.status === "APPLIED") {
     return current.result;
   }
@@ -765,6 +768,11 @@ export async function applyPlacementRoundResult(
     }
     if (expectedVersion !== undefined && lockedResult.version !== expectedVersion)
       throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
+    // Another officer can win the row lock after our preview read. An
+    // explicitly versioned apply is then a conflict, never a second success.
+    if (isVersionedRoundResultReplay(lockedResult.status,expectedVersion)) {
+      throw new PlacementsServiceError("PLACEMENT_RESULT_ALREADY_APPLIED");
+    }
     if (lockedResult.status === "APPLIED") {
       return lockedResult;
     }

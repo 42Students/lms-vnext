@@ -5,7 +5,7 @@ import {roundApplyPreviewToken,roundApplyInputSchema,summarizeRoundApply} from "
 import {planInterviewDay,tpoInterviewSlotActionSchema} from "@/modules/placements/tpo-interview-slot-model";
 import {recordSelectionsSchema,releaseSelectionsSchema,summarizeSelectionRelease} from "@/modules/placements/tpo-drive-selection-model";
 import {tpoWaitlistPromotionSchema,waitlistPreviewToken} from "@/modules/placements/tpo-waitlist-promotion-model";
-import {driveChangeCommandSchema} from "@/modules/placements/tpo-drive-change-request-model";
+import {driveChangeCommandSchema,DRIVE_CHANGE_EDITOR_OPTIONS,LEGACY_DRIVE_CHANGE_FIELD_LABELS} from "@/modules/placements/tpo-drive-change-request-model";
 import {projectTpoDriveHeader} from "@/modules/placements/tpo-drive-header-model";
 import {DEFAULT_TPO_SHARE_VISIBILITY,projectTpoShareApplicant,type TpoShareApplicant} from "@/modules/placements/tpo-share-projection";
 import {placementReminderDay,placementReminderPreviewToken,tpoRemindNotAppliedSchema} from "@/modules/placements/tpo-remind-not-applied-model";
@@ -103,6 +103,32 @@ describe("TPO drive workspace verified S1 gaps",()=>{
    expectedUpdatedAt:"2099-05-03T09:00:00Z",note:"Approved by placement cell"}).success).toBe(true);
   expect(driveChangeCommandSchema.safeParse({action:"COMMENT",requestId:id,body:""}).success).toBe(false);
  });
+ it("G2-5-023 retains eleven named legacy change fields and typed canonical options",()=>{
+  const legacyFields=["ROLE_TITLE","DESCRIPTION","LOCATION","JOB_TYPE","WORK_MODE",
+    "DEADLINE","CTC","STIPEND","MIN_CGPA","BRANCHES","OTHER"] as const;
+  expect(legacyFields.map(field=>LEGACY_DRIVE_CHANGE_FIELD_LABELS[field])).toEqual([
+    "Role title","Description","Location","Job type","Work mode","Application deadline",
+    "CTC (LPA)","Monthly stipend","Minimum CGPA","Eligible branches","Other",
+  ]);
+  expect(DRIVE_CHANGE_EDITOR_OPTIONS.JOB_TYPE.map(option=>option.value)).toEqual([
+    "FULL_TIME","INTERNSHIP","CONTRACT",
+  ]);
+  expect(DRIVE_CHANGE_EDITOR_OPTIONS.WORK_MODE.map(option=>option.value)).toEqual([
+    "ONSITE","HYBRID","REMOTE",
+  ]);
+  const id="11111111-1111-4111-8111-111111111111";
+  const expectedUpdatedAt="2099-05-03T09:00:00Z";
+  expect(driveChangeCommandSchema.safeParse({
+    action:"ACCEPT",requestId:id,expectedUpdatedAt,
+  }).success).toBe(true);
+  expect(driveChangeCommandSchema.safeParse({
+    action:"ANSWER",requestId:id,expectedUpdatedAt,note:"HYBRID",
+  }).success).toBe(true);
+  expect(driveChangeCommandSchema.safeParse({
+    action:"DECLINE",requestId:id,expectedUpdatedAt,note:"x".repeat(1001),
+  }).success).toBe(false);
+ });
+
  it("TPO-drive-workspace-62 displays source-backed deal category and company compensation without guessing dates",()=>{
   const result=projectTpoDriveHeader({status:"PUBLISHED",workMode:"ONSITE",
    employmentType:"INTERNSHIP",applicationMode:"INTERNAL",

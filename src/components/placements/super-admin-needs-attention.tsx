@@ -68,10 +68,13 @@ export function SuperAdminNeedsAttention({items,basePath,summary,available=true,
       onClick={()=>setExpanded(previous=>previous.includes(category.code)?previous.filter(x=>x!==category.code):[...previous,category.code])}>
       {expanded.includes(category.code)?"Show less":"+"+(category.rows.length-shown.length)+" more"}
      </Button>:null}
-     {incomplete?<p role="status" className="text-xs text-[#8c6a35]">
-       Showing {shown.length} of {category.distinctDrives} flagged drives
-       ({category.affected} affected records across the category). Open a drive to review all matching candidates.
-      </p>:null}
+     {incomplete?<div className="flex flex-wrap items-center gap-3 text-xs text-[#8c6a35]">
+       <p role="status">Showing top {shown.length} of {category.distinctDrives} flagged drives
+        ({category.affected} affected records across the category). Open a drive to review all matching candidates.</p>
+       <Link href={basePath+"/drives"} className="inline-flex min-h-11 items-center font-semibold underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ad6800]">
+        +{Math.max(0,category.distinctDrives-shown.length)} more drives — browse all drives
+       </Link>
+      </div>:null}
     </div>;
    })}
   </div>

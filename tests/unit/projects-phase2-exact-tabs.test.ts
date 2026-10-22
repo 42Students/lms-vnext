@@ -1,5 +1,6 @@
 import {describe,it,expect} from "vitest";
 import {LEARNER_PROJECT_DETAIL_TABS} from "@/modules/projects/learner-project-tab-alias-model";
+import {PROJECT_ADMIN_SECTIONS} from "@/modules/projects/project-admin-navigation-model";
 import {readFileSync} from "node:fs";
 const read=(p:string)=>readFileSync(new URL("../../"+p,import.meta.url),"utf8");
 const legacyA=read("docs/audit/legacy-copy-A.md");
@@ -33,7 +34,12 @@ describe("Phase2 exact legacy Projects labels + single tab strip",()=>{
     expect(admin).toContain("<WorkspaceContextTabs projectId={projectId}");
     expect(workspace).toContain('ariaLabel="Project workspace sections"');
     expect(read("src/components/ui/tabs.tsx")).toContain('aria-label={ariaLabel}');
-    expect(college).toContain('["", "Workspaces"]');
+    expect(PROJECT_ADMIN_SECTIONS.map(section=>[section.suffix,section.label])).toEqual([
+      ["","Workspaces"],["/at-risk","At Risk"],["/readiness","Readiness"],
+      ["/submissions","Submissions"],["/templates","Templates"],["/audit","Audit"],
+    ]);
+    expect(college).toContain("items={PROJECT_ADMIN_SECTIONS.map");
+    expect(college).toContain('if (basePath === "/college/projects") return null;');
     for(const label of ["Workspaces","At Risk","Readiness","Submissions","Templates","Audit"]){
       expect(legacyA).toContain('label: "'+label+'"');
       expect(legacyB).toContain('label: "'+label+'"');

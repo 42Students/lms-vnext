@@ -6,32 +6,12 @@ import {
   type LegacyMailEvent, type ZeptoMailConfig, type ZeptoMailPurpose,
 } from "@/modules/notifications/zeptomail-email";
 import type { OutboundProvider } from "./service";
+import {LEGACY_NOTIFICATION_CHANNELS,legacyChannelIsAllowed} from "./legacy-notification-channel-policy";
+export {LEGACY_NOTIFICATION_CHANNELS} from "./legacy-notification-channel-policy";
 import { outboundSendSchema, normalizeRecipient, type OutboundSendRequest } from "./model";
 import { canContactRecipientAtRuntime } from "./runtime-safety";
 import { isExotelAcceptedResponse } from "./provider-acceptance-model";
 import { isCampaignTemplateKey } from "./template-boundary-model";
-
-/** Legacy NotificationEventRegistry channel policy, as of 13 October 2026. */
-export const LEGACY_NOTIFICATION_CHANNELS: Readonly<Record<LegacyMailEvent, readonly ("IN_APP" | "EMAIL" | "SMS")[]>> = {
-  JOB_APPLICATION_CONFIRMATION: ["IN_APP", "SMS"],
-  JOB_SHORTLISTED: ["IN_APP", "SMS"],
-  JOB_ASSESSMENT_INVITE: ["IN_APP"],
-  JOB_INTERVIEW_SCHEDULED: ["IN_APP", "EMAIL", "SMS"],
-  JOB_OFFER_EXTENDED: ["IN_APP"],
-  JOB_HIRED: ["IN_APP"],
-  JOB_APPLICATION_REJECTED: ["IN_APP", "SMS"],
-  JOB_WAITLISTED: ["IN_APP"],
-  INTERVIEW_REMINDER: ["IN_APP", "EMAIL", "SMS"],
-  INTERVIEW_CONFIRMED: ["IN_APP", "EMAIL", "SMS"],
-  INTERVIEW_CANCELLED: ["IN_APP"],
-  INTERVIEW_RESCHEDULED: ["IN_APP"],
-  COURSE_ASSIGNMENT_DUE: ["IN_APP"],
-  COURSE_ASSIGNMENT_SUBMITTED: ["IN_APP"],
-  COURSE_GRADE_PUBLISHED: ["IN_APP"],
-  SYSTEM_EMAIL_VERIFICATION: ["EMAIL"],
-  SYSTEM_APPLICATION_APPROVED: ["EMAIL"],
-  SYSTEM_APPLICATION_REJECTED: ["EMAIL"],
-};
 
 /** Templates are provisioned server-side; OTP IDs never enter this registry. */
 export type OutboundTemplate = {
@@ -139,7 +119,7 @@ export function outboundTemplateReadiness(
  const entry=config.templates[templateKey];
  if(!entry||!isCampaignTemplateKey(templateKey))
   return {ready:false,reason:"UNREGISTERED_TEMPLATE"};
- if(entry.legacyEvent&&!LEGACY_NOTIFICATION_CHANNELS[entry.legacyEvent].includes(channel))
+ if(entry.legacyEvent&&!legacyChannelIsAllowed(entry.legacyEvent,channel))
   return {ready:false,reason:"EVENT_CHANNEL_DISABLED"};
  if(channel==="EMAIL"){
   const valid=Boolean(entry.zeptoTemplateKey&&
@@ -173,7 +153,7 @@ export function createOutboundProvider(
     if (!template || !isCampaignTemplateKey(request.templateKey)) {
       return { status: "NOT_CONFIGURED", reason: "UNREGISTERED_TEMPLATE" };
     }
-    if (template.legacyEvent && !LEGACY_NOTIFICATION_CHANNELS[template.legacyEvent]?.includes(request.channel)) {
+    if (template.legacyEvent && !legacyChannelIsAllowed(template.legacyEvent,request.channel)) {
       return { status: "SUPPRESSED", reason: "EVENT_CHANNEL_DISABLED" };
     }
     const validation=validateOutboundTemplateVariables(request.variables,template);
