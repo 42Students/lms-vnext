@@ -39,7 +39,7 @@ export const drizzleInboundMailAdminRepository:InboundMailAdminRepository={
     EXISTS (SELECT 1 FROM information_schema.columns
       WHERE table_schema='public' AND table_name='inbound_mail_messages'
       AND column_name='kind') AS found`);
-  return result.rows[0]?.found===true;
+  return result.rows[0]?.["found"]===true;
  },
  async count(input){
   const t=inboundMailMessagesStaged,conditions:SQL[]=[];
@@ -94,13 +94,12 @@ export async function listInboundMailForAdmin(
  if(!await repository.tableExists())
   return {available:false,items:[],page:input.page,hasMore:false,total:null,toReadCount:null};
  const [items,total,toReadCount]=await Promise.all([
-  repository.list(input),
-  repository.count?repository.count(input):Promise.resolve(null),
+  repository.list({status:input.status,q:input.q,page:input.page,...(input.recipient!==undefined?{recipient:input.recipient}:{}),...(input.kind!==undefined?{kind:input.kind}:{}),...(input.routingStatus!==undefined?{routingStatus:input.routingStatus}:{})}),
+  repository.count?repository.count({status:input.status,q:input.q,page:input.page,...(input.recipient!==undefined?{recipient:input.recipient}:{}),...(input.kind!==undefined?{kind:input.kind}:{}),...(input.routingStatus!==undefined?{routingStatus:input.routingStatus}:{})}):Promise.resolve(null),
   // The To read badge is global NEW mail, not dependent on the active
   // Posted/routing/recipient filter tab.
   repository.count?repository.count({
-    status:"NEW",q:"",page:1,recipient:undefined,
-    kind:undefined,routingStatus:undefined,
+    status:"NEW",q:"",page:1,
   }):Promise.resolve(null),
  ]);
  return {available:true,items:items.slice(0,50).map(item=>({...item,bodyPreview:safeInboundPreview(item.bodyPlain)})),page:input.page,hasMore:items.length>50,total,toReadCount};
