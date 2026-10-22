@@ -19,7 +19,9 @@ describe("Interview card containment, download safety and fallback decisions",()
  it("GR-91 provides a keyboard-reachable retry button with a visible focus ring",()=>{
   const c=read("src/components/admin/placement-panel-error-boundary.tsx");
   expect(c).toContain("Retry this card");
-  expect(c).toContain("focus-visible:ring-2");
+  expect(c).toContain('<Button type="button" variant="secondary"');
+  const shared=read("src/components/ui/button.tsx");
+  expect(shared).toContain("focus-visible:outline-2");
  });
  it("GR-92 explains failures with text rather than color alone",()=>{
   const c=read("src/components/admin/placement-panel-error-boundary.tsx");

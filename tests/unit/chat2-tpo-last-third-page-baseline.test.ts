@@ -68,7 +68,7 @@ describe("chat-2 last-third TPO pages: role-scoped route and recovery baseline",
   expect(s).toContain('hasMembershipRole(context,"TPO")');
   expect(s).toContain("error instanceof AuthorizationError");
   expect(s).toContain('result.status==="FAILED"');
-  expect(s).toContain('role="alert"');
+  expect(s).toContain('<Alert tone="error">');
   expect(s).toContain("Your messages were not changed.");
   expect(s).toContain("Newer messages");
   expect(s).toContain("Older messages");
@@ -79,14 +79,14 @@ describe("chat-2 last-third TPO pages: role-scoped route and recovery baseline",
   expect(s).toContain("!coursesResult.ok");
   expect(s).toContain("Saved choices were not changed.");
   expect(s).toContain("parsed.success&&coursesResult.ok");
-  expect(s).toContain('role="alert"');
+  expect(s).toContain('<Alert tone="warning">');
   expect(s).toContain("getTpoCommunicationSettings(context)");
  });
  it("UX-tpo-requests-01 requires a current TPO actor and gives recoverable request errors",()=>{
   const s=read("/tpo/requests");
   expect(s).toContain("await requireTpoBatchActor(context)");
   expect(s).toContain('title="Requests"');
-  expect(s).toContain('role="alert"');
+  expect(s).toContain('<ErrorState title="Couldn\'t load requests"');
  });
  it("UX-tpo-students-01 guards direct student data access and all in-page write actors",()=>{
   const s=read("/tpo/students");

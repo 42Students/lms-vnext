@@ -13,7 +13,9 @@ describe("Recruiter access and notification wording",()=>{
   const list=src("src/app/(authenticated)/hr/conversations/page.tsx");
   const detail=src("src/app/(authenticated)/hr/conversations/[threadId]/page.tsx");
   expect(list).toContain("Your access to this college has ended or was removed. Ask the placement cell to give it again.");
-  expect(detail).toContain("if(error instanceof TpoMessagingError)notFound()");
+  expect(detail).toContain('error.code==="TPO_MESSAGE_THREAD_NOT_FOUND")notFound()');
+  expect(detail).toContain('error.code==="TPO_MESSAGE_FORBIDDEN"');
+  expect(detail).toContain('title="No access to this college"');
  });
  it("REC-calendar-messages-profile-48 explains the college placements address on no-access calendar",()=>{
   const cal=src("src/app/(authenticated)/hr/calendar/page.tsx");

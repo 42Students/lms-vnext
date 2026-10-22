@@ -52,13 +52,15 @@ describe("TPO-students-10 preparation assignment current TPO permission boundary
  it("preserves a second persisted actor lock inside the write transaction, before creating any notice",()=>{
   const src=readFileSync(new URL("../../src/modules/placements/tpo-prep-assignment-service.ts",import.meta.url),"utf8");
   expect(src).toContain("await requirePersistedTpoMembership(ctx,m.collegeId)");
-  const tx=src.indexOf("return getDb().transaction(async tx=>");
-  const guard=src.indexOf("await requireTpoJobActor(tx,ctx)",tx);
-  const lock=src.indexOf('for("update").limit(1)',guard);
+  const tx=src.indexOf("return await getDb().transaction(async tx=>");
+  const lock=src.indexOf('for("update").limit(1)',tx);
+  const guard=src.indexOf('await assertPersistedPlatformPermission(tx,ctx,"placements.manage"',tx);
+  const persistedTpo=src.indexOf('if(!hasMembershipRole(persisted,"TPO"))',guard);
   const notification=src.indexOf("await tx.insert(inAppNotifications)",guard);
-  expect(guard).toBeGreaterThan(tx);
-  expect(lock).toBeGreaterThan(guard);
-  expect(notification).toBeGreaterThan(lock);
+  expect(lock).toBeGreaterThan(tx);
+  expect(guard).toBeGreaterThan(lock);
+  expect(persistedTpo).toBeGreaterThan(guard);
+  expect(notification).toBeGreaterThan(persistedTpo);
   expect(src).toContain('eq(departments.collegeId,college.id)');
   expect(src.match(/isNull\(departments\.archivedAt\)/g)).toHaveLength(2);
   expect(src).toContain('onConflictDoNothing()');
@@ -67,12 +69,14 @@ describe("TPO-students-10 preparation assignment current TPO permission boundary
   const src=readFileSync(new URL("../../src/modules/placements/tpo-prep-assignment-service.ts",import.meta.url),"utf8");
   const ui=readFileSync(new URL("../../src/components/tpo/tpo-students-assign-prep.tsx",import.meta.url),"utf8");
   const proposal=readFileSync(new URL("../../docs/proposed-migrations/tpo-students-10-prep-optional-due.sql",import.meta.url),"utf8");
-  expect(src).toContain('dueAt:z.iso.datetime({offset:true}).nullable().optional()');
+  const model=readFileSync(new URL("../../src/modules/placements/tpo-prep-assignment-model.ts",import.meta.url),"utf8");
+  expect(model).toContain('dueAt:z.iso.datetime({offset:true}).nullable().optional()');
   expect(src).toContain('const due=input.dueAt?new Date(input.dueAt):null');
   expect(src).toContain('if(due===null)');
   expect(src).toContain("is_nullable='YES'");
   expect(src).toContain('if(!nullable)throw new TpoPrepError("UNAVAILABLE")');
-  expect(src).toContain('dueAt:due,assignedByUserId:ctx.user.id');
+  expect(src).toContain('dueAt:due,');
+  expect(src).toContain('assignedByUserId:ctx.user.id');
   expect(ui).toContain('const deadline=dueAt?tpoPrepDueAtUtc(dueAt):null');
   expect(ui).toContain('dueAt?dueAt+" IST":"No due date"');
   expect(proposal).toContain("ALTER COLUMN due_at DROP NOT NULL");

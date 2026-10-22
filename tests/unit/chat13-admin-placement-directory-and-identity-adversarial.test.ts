@@ -10,7 +10,7 @@ const row=(id:string,title:string,status:string,company:string)=>({job:{id,title
 describe("chat-13 Super Admin placements: adversarial directory, company identity and HR filters",()=>{
  it("SA-ADMIN-DRIVE-01 rejects malicious pagination/status and never lets URL params escape query encoding",()=>{
   const baseline=adminDriveDirectoryQuerySchema.parse({});
-  expect(baseline).toMatchObject({status:"ALL",q:"",page:1,pageSize:10});
+  expect(baseline).toMatchObject({status:"ALL",q:"",page:1,pageSize:20});
   for(const raw of [{status:"ARCHIVED"},{status:"' OR 1=1--"},{page:0},{page:100001},{page:"NaN"},{pageSize:5},{pageSize:101},{q:"x".repeat(101)},{bogus:true}]){
    expect(adminDriveDirectoryQuerySchema.safeParse(raw).success,JSON.stringify(raw)).toBe(false);
   }
@@ -20,7 +20,8 @@ describe("chat-13 Super Admin placements: adversarial directory, company identit
   const parsed=new URL(url,"https://app.example");
   expect(parsed.searchParams.get("q")).toBe(safe.q);
   expect(parsed.searchParams.get("page")).toBe("2");
-  expect(parsed.searchParams.get("pageSize")).toBe("20");
+  expect(parsed.searchParams.has("size")).toBe(false);
+  expect(new URL(adminDriveDirectoryHref({...safe,pageSize:50}),"https://app.example").searchParams.get("size")).toBe("50");
   expect(parsed.searchParams.get("status")).toBe("ACTIVE");
   expect(adminDriveDirectoryHref(baseline)).toBe("/admin/placements/drives");
  });
@@ -33,14 +34,16 @@ describe("chat-13 Super Admin placements: adversarial directory, company identit
   expect(filterAdminDriveDirectory(rows,adminDriveDirectoryQuerySchema.parse({status:"CLOSED"}))).toMatchObject({total:2});
   expect(filterAdminDriveDirectory(rows,adminDriveDirectoryQuerySchema.parse({status:"ALL",page:5}))).toMatchObject({page:1,totalPages:1});
   expect(rows.map(r=>r.job)).toEqual(baseline);
-  expect(adminDriveStatus({status:"PUBLISHED",applicationDeadline:new Date("2026-10-17T18:30:00.000Z")},new Date("2026-10-18T18:30:00.000Z"))).toBe("Open · Expired");
+  expect(adminDriveStatus({status:"PUBLISHED",applicationDeadline:new Date("2026-10-17T18:30:00.000Z")},new Date("2026-10-18T18:30:00.000Z"))).toBe("Expired");
   expect(adminDriveStatus({status:"PUBLISHED",applicationDeadline:new Date("2026-10-19T18:30:00.000Z")},new Date("2026-10-18T18:30:00.000Z"))).toBe("Open");
  });
  it("SA-COMPANY-IDENTITIES-01 rejects claiming email hosts, college domains and malformed DNS input",()=>{
   expect(normalizeCompanyDomain(" Employee@WWW.Acme.Example ")).toBe("acme.example");
-  for(const input of ["gmail.com","finance@outlook.com","yahoo.com","college.edu","college.ac.in","http://acme.example","@","a..com","com"," "]){
+  for(const input of ["gmail.com","finance@outlook.com","yahoo.com","college.edu","college.ac.in","http://a..com","http://user:password@acme.example","@","a..com","com"," "]){
    expect(()=>normalizeCompanyDomain(input),input).toThrow();
   }
+  // Legacy company domain authoring also accepts a public website URL.
+  expect(normalizeCompanyDomain("http://www.acme.example")).toBe("acme.example");
   expect(companyDomainCommandSchema.safeParse({companyId:uuid,action:"ADD",domain:"acme.example"}).success).toBe(true);
   expect(companyDomainCommandSchema.safeParse({companyId:uuid,action:"ADD",domain:"acme.example",foreignCollege:uuid}).success).toBe(false);
   expect(companyDomainCommandSchema.safeParse({companyId:uuid,action:"STEAL",domain:"acme.example"}).success).toBe(false);
