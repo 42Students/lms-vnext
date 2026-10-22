@@ -10,12 +10,12 @@ import {
 describe("College Admin lecture hall directory filters", () => {
   it("defaults to all statuses and room types with a bounded first page", () => {
     expect(parseCollegeLectureHallSearchParams({})).toEqual({
-      q: "", status: "ALL", roomType: "ALL", upcoming:"ALL", page: 1,
+      q: "", status: "ALL", roomType: "ALL", upcoming:"ALL", page: 1, pageSize: 10,
     });
-    expect(COLLEGE_LECTURE_HALL_PAGE_SIZE).toBe(25);
+    expect(COLLEGE_LECTURE_HALL_PAGE_SIZE).toBe(10);
     expect(collegeLectureHallTotalPages(0)).toBe(1);
-    expect(collegeLectureHallTotalPages(25)).toBe(1);
-    expect(collegeLectureHallTotalPages(26)).toBe(2);
+    expect(collegeLectureHallTotalPages(10)).toBe(1);
+    expect(collegeLectureHallTotalPages(11)).toBe(2);
   });
 
   it("accepts trimmed search with validated type/status/department/page", () => {
@@ -28,7 +28,7 @@ describe("College Admin lecture hall directory filters", () => {
     });
     expect(result).toEqual({
       q: "Comp Lab", status: "ARCHIVED", roomType: "LAB",
-      departmentId: "00000000-0000-4000-8000-000000000001", upcoming:"ALL", page: 2,
+      departmentId: "00000000-0000-4000-8000-000000000001", upcoming:"ALL", page: 2, pageSize: 10,
     });
     expect(parseCollegeLectureHallSearchParams({
       departmentId: "", status: "ALL",

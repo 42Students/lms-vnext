@@ -193,9 +193,10 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
     if (filters.availability !== "all" && learnerDriveAvailability(row) !== filters.availability) return false;
     // Eligibility may be true for a historical snapshot even after closure.
     // Never offer a closed drive as actionable in the eligible-only view.
-    // The legacy Eligible-only filter follows audience visibility, even if
-    // a visible role is temporarily closed or blocked for self-application.
-    if(filters.eligibleOnly && !(row.visibleToLearner ?? row.canApply))return false;
+    // Audience visibility alone must not make an expired or closed role
+    // appear actionable in the eligible-only filter.
+    if(filters.eligibleOnly &&
+       (!(row.visibleToLearner ?? row.canApply)||learnerDriveAvailability(row)==="closed"))return false;
     if(filters.departmentId && row.job.targetDepartmentId!==filters.departmentId)return false;
     if(filters.programId && row.job.targetProgramId!==filters.programId)return false;
     if(filters.jobType && normalizedJobType(visibleJobType(row))!==

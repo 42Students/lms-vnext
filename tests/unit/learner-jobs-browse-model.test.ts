@@ -117,13 +117,13 @@ describe("Learner job browsing filters", () => {
   });
   it("counts employment type using only authorized role options",()=>{
     const counts=learnerJobEmploymentTypeCounts([jobs[0]!,jobs[1]!,jobs[2]!]);
-    expect(counts.get("FULL_TIME")).toBe(2);
-    expect(counts.get("INTERNSHIP")).toBe(1);
+    expect(counts.get("Full-time")).toBe(2);
+    expect(counts.get("Internship")).toBe(1);
     expect(counts.size).toBe(2);
   });
   it("derives facets from real job rows", () => {
     expect(availableLearnerJobFacets(jobs)).toEqual({
-      types:["FULL_TIME","INTERNSHIP"],
+      types:["Full-time","Internship"],
       locations:["Bengaluru","Chennai","Hyderabad"],
     });
   });
