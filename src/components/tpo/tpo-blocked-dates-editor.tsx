@@ -78,7 +78,7 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
   {pastCount>0?<Button type="button" variant="secondary" onClick={()=>setShowPast(value=>!value)}
    className="min-h-11 min-[768px]:min-h-9">{showPast?"Hide past blocked dates":`Show past blocked dates (${pastCount})`}</Button>:null}
   {visible.length===0?<EmptyState title={!showPast&&pastCount>0?"No upcoming blocked dates.":tpoBlockedDatesEmptyMessage(items.length)}/>:
-   <ul className="grid min-w-0 gap-2 min-[768px]:grid-cols-2">{ranges.map(range=><li key={range.items[0].id}
+   <ul className="grid min-w-0 gap-2 min-[768px]:grid-cols-2">{ranges.map(range=><li key={range.startDay+":"+range.endDay}
     className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] border-b border-border py-[var(--lms-space-4)]">
     <div className="min-w-0"><strong>{range.startDay===range.endDay?range.startDay:range.startDay+" – "+range.endDay}</strong><p className="break-words text-sm">{range.reason}</p><p className="text-xs text-muted-foreground">{range.items.length} day(s) · Individual day removal below</p></div>
     {range.items.length>1?<Button type="button" variant="secondary" disabled={busy} onClick={async()=>{
