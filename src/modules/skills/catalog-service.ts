@@ -56,9 +56,9 @@ function editDistanceAtMostTwo(first:string,second:string):number {
   current[0]=i;
   let rowMin=current[0];
   for(let j=1;j<=b.length;j++){
-   current[j]=Math.min(previous[j]+1,current[j-1]+1,
-    previous[j-1]+(a[i-1]===b[j-1]?0:1));
-   rowMin=Math.min(rowMin,current[j]);
+   current[j]=Math.min((previous[j] ?? j)+1,(current[j-1] ?? i)+1,
+    (previous[j-1] ?? (j-1))+(a[i-1]===b[j-1]?0:1));
+   rowMin=Math.min(rowMin,current[j] ?? 3);
   }
   if(rowMin>2)return 3;
   previous=current;
