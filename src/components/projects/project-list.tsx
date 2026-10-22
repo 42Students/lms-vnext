@@ -73,12 +73,15 @@ export function ProjectList({
     );
   }
 
-  if (basePath==="/learn/projects") {
+  if (basePath==="/learn/projects"||basePath==="/mentor/projects") {
     return <div className="grid min-w-0 gap-4 sm:grid-cols-2" aria-label="Assigned project workspaces">
       {items.map(item=>{
         const archived=item.status==="ARCHIVED";
         const blocked=!archived&&(Boolean(item.blockerText)||item.attention?.includes("Blocked"));
-        const notice=archived?"Archived":blocked?"Blocked":item.status==="ACTIVE"?"Active":statusLabel(item.status);
+        const needsReview=!archived&&!blocked&&item.attention?.some(label=>/review/i.test(label));
+        const stalled=!archived&&!blocked&&!needsReview&&item.attention?.some(label=>/stall/i.test(label));
+        const notice=archived?"Archived":blocked?"Blocked":needsReview?"Needs review":stalled?"Stalled":
+          item.status==="ACTIVE"?"Active":statusLabel(item.status);
         const completion=Math.min(100,Math.max(0,Math.round(item.progressPercent??0)));
         const course=item.courseLabel?.trim()||"Project";
         const mentor=item.mentorName?.trim()||"Mentor";
@@ -86,7 +89,8 @@ export function ProjectList({
           className="group flex min-w-0 flex-col rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-sm transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:p-5">
           <div className="flex min-w-0 items-center justify-between gap-2">
             <span className={"inline-flex max-w-full items-center rounded px-2 py-0.5 text-xs font-semibold "+
-              (archived?"bg-muted text-muted-foreground":blocked?"bg-warning-subtle text-warning-text":
+              (archived?"bg-muted text-muted-foreground":stalled?"bg-error-subtle text-error":
+                blocked?"bg-warning-subtle text-warning-text":needsReview?"bg-warning-subtle text-warning-text":
                 item.status==="ACTIVE"?"bg-[#e6f9fa] text-[#228e99]":"bg-primary-subtle text-primary-text")}>
               {notice}
             </span>
