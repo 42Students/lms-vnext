@@ -9,7 +9,9 @@ export default function Loading(){
    <PageHeader title="Loading college invitation..."/>
    <div className="space-y-3" aria-hidden="true">
     {Array.from({length:4},(_,index)=><div key={index}
-      className={`h-4 animate-pulse rounded bg-muted ${index===3?"w-3/5":"w-full"}`}/>)}
+      className={index===3
+        ?"h-4 w-3/5 animate-pulse rounded bg-muted"
+        :"h-4 w-full animate-pulse rounded bg-muted"}/>)}
    </div>
    <p className="sr-only">Loading college invitation</p>
   </section>
