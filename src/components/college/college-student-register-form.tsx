@@ -46,18 +46,21 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
   async function submit(event:FormEvent<HTMLFormElement>) {
     event.preventDefault();setError("");setFieldErrors({});setResult(null);setSavedMemberId(null);
     const invalid:Record<string,string>={};
-    if(!firstName.trim())invalid.firstName="Enter the first name";
-    if(!phoneE164.trim())invalid.mobile="Enter the mobile number";
-    else if(!indianMobileToE164(phoneE164))invalid.mobile="Mobile number must be 10 digits";
-    if(!programId || !choices.programs.some(item=>item.id===programId))invalid.programId="Choose a program";
-    if(!cohortId || !availableBatches.some(item=>item.id===cohortId))invalid.cohortId="Choose a batch";
-    if(sectionId && !availableClasses.some(item=>item.id===sectionId))invalid.sectionId="Choose an available class";
+    if(!firstName.trim())invalid["firstName"]="Enter the first name";
+    if(!phoneE164.trim())invalid["mobile"]="Enter the mobile number";
+    else if(!indianMobileToE164(phoneE164))invalid["mobile"]="Mobile number must be 10 digits";
+    if(!programId || !choices.programs.some(item=>item.id===programId))invalid["programId"]="Choose a program";
+    if(!cohortId || !availableBatches.some(item=>item.id===cohortId))invalid["cohortId"]="Choose a batch";
+    if(sectionId && !availableClasses.some(item=>item.id===sectionId))invalid["sectionId"]="Choose an available class";
     // vNext keeps a mandatory program+batch enrollment while permitting
     // assignment to a class later when none is available in that batch.
     if(Object.keys(invalid).length){
       setFieldErrors(invalid);
       setError("Check the highlighted fields before registering.");
-      (event.currentTarget.elements.namedItem(Object.keys(invalid)[0]) as HTMLElement | null)?.focus();
+      const firstInvalidKey = Object.keys(invalid)[0];
+      if (firstInvalidKey !== undefined) {
+        (event.currentTarget.elements.namedItem(firstInvalidKey) as HTMLElement | null)?.focus();
+      }
       return;
     }
     if(!(await ask("Register this student and enroll them in the selected batch?")))return;
@@ -85,20 +88,20 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
   }
   return <>{confirmation}<form onSubmit={event=>{void submit(event);}} className="grid min-w-0 max-w-4xl gap-4 sm:grid-cols-2">
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">First Name
-      <Input name="firstName" autoComplete="given-name" placeholder="Enter first name" maxLength={120} value={firstName} onChange={e=>setFirstName(e.target.value)} className={field} aria-invalid={Boolean(fieldErrors.firstName)} aria-describedby={fieldErrors.firstName?"register-first-error":undefined}/>
-      {fieldErrors.firstName?<span id="register-first-error" role="alert" className="text-xs text-error">{fieldErrors.firstName}</span>:null}
+      <Input name="firstName" autoComplete="given-name" placeholder="Enter first name" maxLength={120} value={firstName} onChange={e=>setFirstName(e.target.value)} className={field} aria-invalid={Boolean(fieldErrors["firstName"])} aria-describedby={fieldErrors["firstName"]?"register-first-error":undefined}/>
+      {fieldErrors["firstName"]?<span id="register-first-error" role="alert" className="text-xs text-error">{fieldErrors["firstName"]}</span>:null}
     </label>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Last Name
       <span className="text-xs font-normal text-muted-foreground">Optional</span>
-      <Input name="lastName" autoComplete="family-name" placeholder="Enter last name" maxLength={120} value={lastName} onChange={e=>setLastName(e.target.value)} className={field} aria-invalid={Boolean(fieldErrors.lastName)} aria-describedby={fieldErrors.lastName?"register-last-error":undefined}/>
-      {fieldErrors.lastName?<span id="register-last-error" role="alert" className="text-xs text-error">{fieldErrors.lastName}</span>:null}
+      <Input name="lastName" autoComplete="family-name" placeholder="Enter last name" maxLength={120} value={lastName} onChange={e=>setLastName(e.target.value)} className={field} aria-invalid={Boolean(fieldErrors["lastName"])} aria-describedby={fieldErrors["lastName"]?"register-last-error":undefined}/>
+      {fieldErrors["lastName"]?<span id="register-last-error" role="alert" className="text-xs text-error">{fieldErrors["lastName"]}</span>:null}
     </label>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Mobile Number
       <span className="text-xs font-normal text-muted-foreground">Used for OTP login</span>
       <Input name="mobile" type="tel" autoComplete="tel-national" inputMode="numeric" maxLength={10} placeholder="10-digit mobile" value={phoneE164}
         onChange={e=>{const digits=e.target.value.replace(/\D/g,"");setPhone(digits.replace(/^91(?=\d{10}$)/,"").slice(0,10));}} className={field}
-        aria-invalid={Boolean(fieldErrors.mobile)} aria-describedby={fieldErrors.mobile?"register-mobile-error":undefined}/>
-      {fieldErrors.mobile?<span id="register-mobile-error" role="alert" className="text-xs text-error">{fieldErrors.mobile}</span>:null}
+        aria-invalid={Boolean(fieldErrors["mobile"])} aria-describedby={fieldErrors["mobile"]?"register-mobile-error":undefined}/>
+      {fieldErrors["mobile"]?<span id="register-mobile-error" role="alert" className="text-xs text-error">{fieldErrors["mobile"]}</span>:null}
     </label>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Email
       <Input type="email" maxLength={320} value={email} onChange={e=>setEmail(e.target.value)} className={field}/>
@@ -106,33 +109,33 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Roll Number
       <span className="text-xs font-normal text-muted-foreground">Optional</span>
       <Input name="rollNumber" maxLength={128} placeholder="e.g., 22CS101" value={rollNumber} onChange={e=>setRoll(e.target.value)} className={field}
-        aria-invalid={Boolean(fieldErrors.rollNumber)} aria-describedby={fieldErrors.rollNumber?"register-roll-error":undefined}/>
-      {fieldErrors.rollNumber?<span id="register-roll-error" role="alert" className="text-xs text-error">{fieldErrors.rollNumber}</span>:null}
+        aria-invalid={Boolean(fieldErrors["rollNumber"])} aria-describedby={fieldErrors["rollNumber"]?"register-roll-error":undefined}/>
+      {fieldErrors["rollNumber"]?<span id="register-roll-error" role="alert" className="text-xs text-error">{fieldErrors["rollNumber"]}</span>:null}
     </label>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Program
       <Select name="programId" disabled={choices.programs.length===0} value={programId} onChange={e=>{setProgramId(e.target.value);setCohortId("");setSectionId("");}} className={field}
-        aria-invalid={Boolean(fieldErrors.programId)} aria-describedby={fieldErrors.programId?"register-program-error":undefined}>
+        aria-invalid={Boolean(fieldErrors["programId"])} aria-describedby={fieldErrors["programId"]?"register-program-error":undefined}>
         <option value="">Choose program</option>
         {choices.programs.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}
       </Select>
-      {fieldErrors.programId?<span id="register-program-error" role="alert" className="text-xs text-error">{fieldErrors.programId}</span>:null}
+      {fieldErrors["programId"]?<span id="register-program-error" role="alert" className="text-xs text-error">{fieldErrors["programId"]}</span>:null}
     </label>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Batch
       <Select name="cohortId" disabled={!programId||availableBatches.length===0} value={cohortId} onChange={e=>{setCohortId(e.target.value);setSectionId("");}} className={field}
-        aria-invalid={Boolean(fieldErrors.cohortId)} aria-describedby={fieldErrors.cohortId?"register-batch-error":undefined}>
+        aria-invalid={Boolean(fieldErrors["cohortId"])} aria-describedby={fieldErrors["cohortId"]?"register-batch-error":undefined}>
         <option value="">Choose batch</option>
         {availableBatches.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}
       </Select>
-      {fieldErrors.cohortId?<span id="register-batch-error" role="alert" className="text-xs text-error">{fieldErrors.cohortId}</span>:null}
+      {fieldErrors["cohortId"]?<span id="register-batch-error" role="alert" className="text-xs text-error">{fieldErrors["cohortId"]}</span>:null}
     </label>
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Class/Section
       <Select name="sectionId" value={sectionId} onChange={e=>setSectionId(e.target.value)} disabled={!cohortId||availableClasses.length===0} className={field}
-        aria-invalid={Boolean(fieldErrors.sectionId)} aria-describedby={fieldErrors.sectionId?"register-class-error":undefined}>
+        aria-invalid={Boolean(fieldErrors["sectionId"])} aria-describedby={fieldErrors["sectionId"]?"register-class-error":undefined}>
         <option value="">Assign class later</option>
         {availableClasses.map(p=>
           <option key={p.id} value={p.id}>{p.name} · {p.capacity??"Unlimited"} seats</option>)}
       </Select>
-      {fieldErrors.sectionId?<span id="register-class-error" role="alert" className="text-xs text-error">{fieldErrors.sectionId}</span>:null}
+      {fieldErrors["sectionId"]?<span id="register-class-error" role="alert" className="text-xs text-error">{fieldErrors["sectionId"]}</span>:null}
       <span className="text-xs font-normal text-muted-foreground">
         New batch-first enrollment: class placement is optional when no class is assigned yet.
       </span>
