@@ -65,3 +65,19 @@ export function mirrorImportedDeadline<T extends {importantDates:Array<{label:st
  else values.push({label:"Application deadline",at:newIso});
  return {...details,importantDates:values};
 }
+
+/** Keep explicitly authored types from the old Job DTO. Never derive
+ * type from title or treat a bare date as the server's local timezone. */
+export function authoredImportantDateRoundTrip(row:{
+ label:string;at:string;type?:string;dateType?:string;
+}){
+ const label=row.label.trim();
+ const at=parseImportedImportantDateUtc(row.at);
+ if(!label||label.length>120||!at)
+  throw new Error("Important date needs a valid label and date");
+ const type=row.type?.trim(),dateType=row.dateType?.trim();
+ if((type&&type.length>80)||(dateType&&dateType.length>80))
+  throw new Error("Important date type must be 80 characters or fewer");
+ return {label,at:row.at,
+  ...(type?{type}:{}),...(dateType?{dateType}:{})};
+}
