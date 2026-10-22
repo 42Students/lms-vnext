@@ -170,7 +170,7 @@ describe("chat-19 college UX cross-audit", () => {
     expect(page).toContain('empty={<EmptyState title="No eligible learners"');
     expect(page).not.toContain("<table");
     expect(page).toContain('<ScrollCue axis="y"');
-    expect(page).toContain('viewportClassName="max-h-80"');
+    expect(page).toContain('viewportClassName="max-h-[26rem]"');
     expect(page).toContain('aria-label={"Select "');
   });
 
@@ -217,8 +217,10 @@ describe("chat-19 college UX cross-audit", () => {
       expect(source).toContain(`key: "${key}"`);
     }
     expect(source).toContain('name="confirm"');
-    expect(source).toContain('aria-label={"Confirm removal of "+(member.displayName??"this student")} /> Confirm removal');
-    expect(source).toContain('disabled={faculty.length === 0}');
+    expect(source).toContain('required aria-label={"Confirm removal of "');
+    expect(source).toContain('Confirm removal');
+    expect(source).toContain('Archived offerings are read-only.');
+    expect(source).toContain('aria-label={"Confirm removal of "');
     expect(source).toContain('Archived offerings are read-only.');
     expect(source).not.toContain("<table");
   });
@@ -232,6 +234,7 @@ describe("chat-19 college UX cross-audit", () => {
     const tryPosition = source.indexOf("    try {", source.indexOf("async function mutate("));
     expect(parseMembership).toBeGreaterThan(tryPosition);
     expect(source).toContain("Could not update this student. Check eligibility and capacity, then try again.");
+    expect(source).toContain('eq(colleges.id, electiveSlots.collegeId)');
     expect(source).toContain('requirePermission(context, "academics.manage"');
     expect(source).toContain('collegeId: row.slot.collegeId');
   });
@@ -251,7 +254,7 @@ describe("chat-19 college UX cross-audit", () => {
     }
     const allocation = read(tables[4]);
     expect(allocation).toContain('<ScrollCue axis="y"');
-    expect(allocation).toContain('viewportClassName="max-h-80"');
+    expect(allocation).toContain('viewportClassName="max-h-[26rem]"');
     const shared = read("src/components/ui/data-table.tsx");
     expect(shared).toContain('<ScrollCue axis="x"');
   });
