@@ -231,6 +231,72 @@ export async function getCollegeTermMappingDetails(
     canEdit:term.isActive&&term.legacyStructureStatus!=="COMPLETED"};
 }
 
+/** A separate read-only legacy-style staffing report. The editor's
+ * ACTIVE_DELIVERIES warning is deliberately retained: mapped curriculum
+ * and program classes exist before a course offering is created.
+ * A program class counts as staffed only if it has a live delivery for
+ * this mapped course and a non-ended/non-deleted faculty assignment.
+ * Archived classes are included in the legacy program-class total and
+ * identified as historical rather than silently omitted.
+ */
+export async function getCollegeTermStaffingReport(
+ context:RequestContext,rawTermId:unknown,
+){
+ const details=await getCollegeTermMappingDetails(context,rawTermId);
+ const member=await resolveActingCollege(context,"academics.read");
+ const db=getDb();
+ const programClasses=await db.select({
+  id:sections.id,name:sections.name,status:sections.status,
+ }).from(sections)
+  .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
+  .innerJoin(programs,eq(programs.id,cohorts.programId))
+  .innerJoin(departments,and(eq(departments.id,programs.departmentId),
+    eq(departments.collegeId,member.collegeId)))
+  .where(eq(cohorts.programId,details.term.programId))
+  .orderBy(asc(sections.name),asc(sections.id)).limit(2001);
+ if(programClasses.length>2000||details.courses.length>2000)
+  throw new CollegeTermMappingError("STAFFING_REPORT_TOO_LARGE");
+ const sectionIds=programClasses.map(row=>row.id);
+ const courseIds=details.courses.map(row=>row.courseId);
+ const staffed=sectionIds.length&&courseIds.length?await db.select({
+  courseId:courseOfferings.courseId,sectionId:courseSectionDeliveries.sectionId,
+ }).from(courseOfferings)
+  .innerJoin(courseSectionDeliveries,and(
+   eq(courseSectionDeliveries.offeringId,courseOfferings.id),
+   isNull(courseSectionDeliveries.endedAt)))
+  .innerJoin(courseTeachingAssignments,and(
+   eq(courseTeachingAssignments.deliveryId,courseSectionDeliveries.id),
+   isNull(courseTeachingAssignments.endedAt),
+   isNull(courseTeachingAssignments.deletedAt),
+   sql`${courseTeachingAssignments.legacyWasActive} is distinct from false`))
+  .where(and(
+   inArray(courseOfferings.courseId,courseIds),
+   inArray(courseSectionDeliveries.sectionId,sectionIds),
+   eq(courseOfferings.status,"ACTIVE")))
+  .limit(10001):[];
+ if(staffed.length>10000)
+  throw new CollegeTermMappingError("STAFFING_REPORT_TOO_LARGE");
+ const coverage=new Set(staffed.map(row=>row.courseId+":"+row.sectionId));
+ return {
+  term:{id:details.term.id,name:details.term.name,programName:details.term.programName},
+  source:"PROGRAM_CLASSES_WITH_ACTIVE_COURSE_TEACHING_ASSIGNMENTS" as const,
+  // Historical/nonoffered classes remain visible. These figures must not be
+  // confused with the separately displayed live-delivery staffing warning.
+  historicalClassCount:programClasses.filter(row=>row.status!=="ACTIVE").length,
+  totalClasses:programClasses.length,
+  courses:details.courses.map(course=>{
+   const unstaffed=programClasses.filter(section=>!coverage.has(course.courseId+":"+section.id));
+   return {courseId:course.courseId,courseName:course.courseName,
+    totalClasses:programClasses.length,
+    unstaffedClassCount:unstaffed.length,
+    unstaffedClasses:unstaffed.map(section=>section.name||"Class "+section.id),
+    fullyUnstaffed:programClasses.length>0&&unstaffed.length===programClasses.length,
+    historicalUnstaffedClasses:unstaffed.filter(section=>section.status!=="ACTIVE").map(section=>section.name||"Class "+section.id),
+   };
+  }),
+ };
+}
+
 /** The legacy reorder form sends the COMPLETE ordered list. Validate set
  * equality under the same parent row lock as single-course reorders;
  * no partial reorder can commit on stale/foreign/duplicate IDs.
