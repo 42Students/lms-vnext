@@ -9,7 +9,7 @@ describe("learner calendar month totals",()=>{
     ];
     const events=careerCalendarEvents(rounds);
     const october=careerCalendarPeriod(events,"2026-10-17","month").events;
-    expect(learnerCareerKindCounts(october)).toEqual({total:1,assessments:1,interviews:0,other:0});
-    expect(learnerCareerKindCounts([])).toEqual({total:0,assessments:0,interviews:0,other:0});
+    expect(learnerCareerKindCounts(october)).toEqual({total:1,assessments:1,interviews:0,talks:0,other:0});
+    expect(learnerCareerKindCounts([])).toEqual({total:0,assessments:0,interviews:0,talks:0,other:0});
   });
 });
