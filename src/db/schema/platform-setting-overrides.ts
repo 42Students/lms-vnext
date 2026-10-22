@@ -63,10 +63,12 @@ export function legacyOverrideWinner<T extends {updatedAt:string;legacyId:number
  });
  const ordered=verified.sort((a,b)=>b.instant-a.instant||
    b.row.legacyId-a.row.legacyId).map(item=>item.row);
- if(ordered.length>1&&Date.parse(ordered[0].updatedAt)===Date.parse(ordered[1].updatedAt)&&
+ if(ordered[0]&&ordered[1]&&Date.parse(ordered[0].updatedAt)===Date.parse(ordered[1].updatedAt)&&
     ordered[0].legacyId===ordered[1].legacyId)
   throw new Error("Ambiguous legacy override winner");
- return ordered[0];
+ const winner=ordered[0];
+ if(!winner)throw new Error("Missing legacy override winner");
+ return winner;
 }
 
 /** Source-only ORG keys cannot become runtime overrides: the canonical table
@@ -110,8 +112,10 @@ export function planLegacyOrgOverrideDisposition<T extends {
   const ordered=[...versions].sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt)||
     (BigInt(b.sourceRowId)>BigInt(a.sourceRowId)?1:-1));
   const newest=ordered[0];
-  const ambiguous=ordered.length>1&&ordered[0].updatedAt===ordered[1].updatedAt&&
-   ordered[0].valueSha256!==ordered[1].valueSha256;
+  if(!newest)throw new Error("Missing legacy ORG override");
+  const runnerUp=ordered[1];
+  const ambiguous=runnerUp!==undefined&&newest.updatedAt===runnerUp.updatedAt&&
+   newest.valueSha256!==runnerUp.valueSha256;
   return {scopeKey:key,sourceRowId:newest.sourceRowId,
    decision:ambiguous?"REVIEW_REQUIRED" as const:"ARCHIVED" as const,
    suppressedSourceRowIds:ordered.slice(1).map(item=>item.sourceRowId),
