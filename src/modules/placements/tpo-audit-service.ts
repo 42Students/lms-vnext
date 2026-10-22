@@ -54,8 +54,9 @@ const auditFacetSchema = z.preprocess((raw) => {
  * action -> event_type; entity_type / entity_id -> source subject metadata;
  * detail -> allowlisted non-sensitive summary, capped at 1000 characters;
  * created_at -> occurred_at (UTC instant, presented in IST).
- * Legacy college/created_at and college/entity lookup indexes are served by
- * the separate domain-history source indexes, not a fabricated tpo_audit_log.
+ * Legacy college/created_at and college/entity lookup patterns must be
+ * verified against each active source's indexes separately; there is no
+ * fabricated tpo_audit_log index or table in this new empty-data model.
  * The read model alone cannot prove every mutation has a matching writer.
  */
 const LEGACY_AUDIT_SINGULAR_DETAIL =

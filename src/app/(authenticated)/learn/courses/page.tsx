@@ -34,7 +34,10 @@ export default async function LearnerCoursesPage({
   let directoryError:string|null=null;
   const courses=await listLearnerCourseDeliveries(context,{includeHistorical:true})
    .catch(error=>{
-    if(error instanceof AuthorizationError)throw error;
+    if(error instanceof AuthorizationError){
+      directoryError="You do not have permission to view these courses.";
+      return [];
+    }
     directoryError=error instanceof Error&&/ACCESS_DENIED|PERMISSION|AUTH|403/i.test(error.message)
      ?"You do not have permission to view these courses."
      :"Failed to load courses. Please try again.";
@@ -60,6 +63,21 @@ export default async function LearnerCoursesPage({
          ?"This course appears in more than one enrolled class or semester. Choose the class from the current Courses page."
          :"No course in your selected college enrollment matches this old link."}
         <Link href="/learn/courses" className="ml-2 inline-flex min-h-9 font-semibold text-link underline">Choose a course</Link>
+      </Alert>
+    </section>;
+  }
+
+  // An authorization or directory failure is not an empty semester or a
+  // successful course listing. Keep the exact legacy 403/general-error copy
+  // and do not issue secondary metadata requests under a failed permission.
+  if(directoryError){
+    return <section className="min-w-0 space-y-4">
+      <PageHeader title="Courses" />
+      <Alert tone="error" role="alert">
+        {directoryError}
+        <Link href="/learn/courses" className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+          Try again
+        </Link>
       </Alert>
     </section>;
   }
