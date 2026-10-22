@@ -1,6 +1,6 @@
 import {describe,expect,it} from "vitest";
 import {independentFindingActionSchema} from "@/modules/bug-tracker/independent-finding-actions-model";
-import {canTransitionIndependentFinding} from "@/modules/bug-tracker/independent-finding-transition-model";
+import {canAttachFixCommitToFinding,canTransitionIndependentFinding} from "@/modules/bug-tracker/independent-finding-transition-model";
 
 describe("G2-2-001 legacy audit-finding validation",()=>{
  it("preserves Unknown status rather than surfacing a generic enum failure",()=>{
@@ -31,5 +31,13 @@ describe("G2-2-001 legacy audit-finding validation",()=>{
   }).success).toBe(false);
   expect(canTransitionIndependentFinding("RELEASED_PROD","VERIFIED","Re-tested workflow")).toBe(true);
   expect(canTransitionIndependentFinding("CONFIRMED","VERIFIED","Re-tested workflow")).toBe(false);
+ });
+ it("restricts fix-commit evidence to fixed, released or verified findings",()=>{
+  expect(canAttachFixCommitToFinding("NEW")).toBe(false);
+  expect(canAttachFixCommitToFinding("IN_PROGRESS")).toBe(false);
+  expect(canAttachFixCommitToFinding("DUPLICATE")).toBe(false);
+  expect(canAttachFixCommitToFinding("FIXED_DEV")).toBe(true);
+  expect(canAttachFixCommitToFinding("RELEASED_PROD")).toBe(true);
+  expect(canAttachFixCommitToFinding("VERIFIED")).toBe(true);
  });
 });
