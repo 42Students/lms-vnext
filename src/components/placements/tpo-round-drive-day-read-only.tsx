@@ -102,6 +102,8 @@ export function TpoRoundDriveDayReadOnly({
   const [gateBusy,setGateBusy]=useState(false);
   const lastSnapshotAt=useRef(Date.now());
   const [staleSnapshot,setStaleSnapshot]=useState(false);
+  const [refreshFailed,setRefreshFailed]=useState(false);
+  const refreshing=useRef(false);
   const [roomBusy,setRoomBusy]=useState<string|null>(null);
   const inFlightRef=useRef(false);
   const [pasteOpen,setPasteOpen]=useState(false);
@@ -109,22 +111,45 @@ export function TpoRoundDriveDayReadOnly({
   const [pasteBusy,setPasteBusy]=useState(false);
   const [pasteFeedback,setPasteFeedback]=useState("");
   const [pasteFailure,setPasteFailure]=useState("");
-  // A failed route refresh leaves the last rendered roster on screen.
-  // Keep it visible but disclose when the last successful snapshot is old.
+  // Only replace the last good roster after a scoped read succeeds.
+  // A failed/redirected API poll leaves the operator's current rows intact.
   useEffect(()=>{
     lastSnapshotAt.current=Date.now();
     setStaleSnapshot(false);
+    setRefreshFailed(false);
   },[data]);
-  // Keep the operator's roster current while preserving draft gate and paste
-  // entries; React refresh does not reset these controlled inputs.
   useEffect(()=>{
+    const controller=new AbortController();
+    const refresh=async()=>{
+      if(refreshing.current||inFlightRef.current||pasteOpen||
+         document.visibilityState!=="visible")return;
+      refreshing.current=true;
+      try{
+        const response=await fetch("/api/placements/tpo/drive-day/"+
+          encodeURIComponent(data.round.id)+"/refresh",{
+          method:"GET",credentials:"same-origin",cache:"no-store",
+          headers:{Accept:"application/json"},signal:controller.signal,
+        });
+        // 204 is the only success: login HTML or a transient API error must
+        // never make an older server component replace the last good roster.
+        if(response.status!==204)throw new Error("ROSTER_REFRESH_UNAVAILABLE");
+        if(!controller.signal.aborted){
+          setRefreshFailed(false);
+          router.refresh();
+        }
+      }catch{
+        if(!controller.signal.aborted){
+          setRefreshFailed(true);
+          setStaleSnapshot(true);
+        }
+      }finally{refreshing.current=false;}
+    };
     const timer=window.setInterval(()=>{
       if(Date.now()-lastSnapshotAt.current>60_000)setStaleSnapshot(true);
-      if(!inFlightRef.current&&!pasteOpen&&document.visibilityState==="visible")
-        router.refresh();
+      void refresh();
     },20_000);
-    return ()=>window.clearInterval(timer);
-  },[pasteOpen,router]);
+    return ()=>{controller.abort();window.clearInterval(timer);};
+  },[data.round.id,pasteOpen,router]);
   const shownRows=useMemo(()=>{
     const q=rosterSearch.trim().toLocaleLowerCase("en-IN");
     return q?data.rows.filter(row=>
@@ -314,9 +339,11 @@ export function TpoRoundDriveDayReadOnly({
 
 
       {staleSnapshot?<div role="status" className="flex flex-wrap items-center justify-between gap-3">
-        <InlineNotice tone="info" message="The last successful roster snapshot is over a minute old. Check that attendance is current before editing."/>
+        <InlineNotice tone="info" message={refreshFailed
+          ?"Could not refresh the roster. Showing the last loaded details; check before editing."
+          :"The last successful roster snapshot is over a minute old. Check that attendance is current before editing."}/>
         <Button type="button" variant="secondary" disabled={gateBusy||pasteBusy}
-          onClick={()=>router.refresh()}>Retry roster refresh</Button>
+          onClick={()=>{setRefreshFailed(false);router.refresh();}}>Retry roster refresh</Button>
       </div>:null}
       <section aria-label="Gate quick check-in" className="min-w-0 space-y-3 border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
