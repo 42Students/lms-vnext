@@ -44,6 +44,7 @@ describe("IIT Dharwad Projects admin exports: spreadsheet injection resilience",
     expect(csv.startsWith("\uFEFF")).toBe(true);
     expect(csv).toContain('"\'\u034F\u061C=HYPERLINK(1)"');
     expect(csv).toContain('"2","4","1","0","1","2","0"');
+    expect(csv).toContain('"Overview","Releases","Sprints","Tasks","Resources"');
     expect(csv.match(/\uFEFF/g)).toHaveLength(1);
     expect(readFileSync("src/modules/projects/project-template-catalogue-model.ts","utf8"))
       .toContain("return projectAdminCsv(lines)");

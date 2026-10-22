@@ -594,7 +594,6 @@ export function PlacementDraftEditForm({
               defaultValue={
                 value.job.locations.join(", ")
               }
-              placeholder="Hyderabad, Bengaluru"
             />
           </label>
           <label>

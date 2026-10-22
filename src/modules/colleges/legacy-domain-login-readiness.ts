@@ -20,25 +20,30 @@ export function evaluateLegacyDomainLoginReadiness(f:LegacyDomainLoginFacts){
   f.domainPrimary<=f.domainTotal&&f.verifiedPrimaryDomains<=f.domainVerified&&
   f.verifiedPrimaryDomains<=f.domainPrimary;
  if(known){
-  if(f.domainTotal===0){
+  // These nullable facts have passed the complete validity predicate.
+  const domainTotal=f.domainTotal ?? 0;
+  const domainPrimary=f.domainPrimary ?? 0;
+  const domainVerified=f.domainVerified ?? 0;
+  const verifiedPrimaryDomains=f.verifiedPrimaryDomains ?? 0;
+  if(domainTotal===0){
    blockers.push("NO_DOMAIN");
    recommendedActions.push("Add at least one domain under Superadmin → Tenant Domains.");
   }
-  if(f.domainTotal>0&&f.domainPrimary===0){
+  if(domainTotal>0&&domainPrimary===0){
    blockers.push("NO_PRIMARY_DOMAIN");
    recommendedActions.push("Mark exactly one domain as Primary for this college.");
   }
-  if(f.domainPrimary>1){
+  if(domainPrimary>1){
    blockers.push("MULTIPLE_PRIMARY_DOMAINS");
    recommendedActions.push("Ensure only one domain is Primary (others must be non-primary).");
   }
-  if(f.requireVerifiedDomains&&f.domainTotal>0&&f.verifiedPrimaryDomains===0){
+  if(f.requireVerifiedDomains&&domainTotal>0&&verifiedPrimaryDomains===0){
    blockers.push("NO_VERIFIED_PRIMARY_DOMAIN");
    recommendedActions.push("Verify the Primary domain (TXT verification) — required before this address can serve real logins.");
-  }else if(f.domainTotal>0&&f.verifiedPrimaryDomains===0&&f.domainVerified>0){
+  }else if(domainTotal>0&&verifiedPrimaryDomains===0&&domainVerified>0){
    warnings.push("PRIMARY_DOMAIN_NOT_VERIFIED");
    recommendedActions.push("Prefer verifying the Primary domain to avoid future verification breakages.");
-  }else if(f.domainTotal>0&&f.domainVerified===0){
+  }else if(domainTotal>0&&domainVerified===0){
    warnings.push("NO_VERIFIED_DOMAIN");
    recommendedActions.push("Verify at least one domain to make switching + onboarding safer.");
   }

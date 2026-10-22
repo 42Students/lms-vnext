@@ -16,14 +16,14 @@ describe("UX-recruiter-invite-token-01 recruiter invitation",()=>{
  });
  it("renders shared phone-first Card, Input, Skeleton and Button plus focusable friendly errors",()=>{
   const ui=read("src/components/tpo/recruiter-invite-landing.tsx");
-  for(const code of ['<Card as="section"','<Skeleton variant="form"','<Input ','<Button ','<InlineNotice tone="error" message={actionError}','min-h-dvh','ref={errorRef}','busyRef.current=true','busyRef.current=false']){
+  for(const code of ['<Card as="section"','<Skeleton variant="form"','<Input ','<Button ','<InlineNotice tone="error" message={"⚠ "+actionError}','min-h-dvh','ref={errorRef}','busyRef.current=true','busyRef.current=false']){
    expect(ui).toContain(code);
   }
   expect(ui).toContain('controller.abort()');
   expect(ui).toContain('state === "load_error"');
  });
  it("keeps a bounded route skeleton and home-safe failure route",()=>{
-  expect(read("src/app/recruiter-invite/[token]/loading.tsx")).toContain("<GracefulPageLoading");
+  expect(read("src/app/recruiter-invite/[token]/loading.tsx")).toContain('<PublicPageLoading label="Loading recruiter invitation..."');
   expect(read("src/app/recruiter-invite/[token]/error.tsx")).toContain('homeHref="/"');
  });
 });

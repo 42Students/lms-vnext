@@ -51,8 +51,12 @@ describe("COURSES-BREAK-ROUTES-01 real Learner/Faculty course mutation route bou
    expect(spec.service).not.toHaveBeenCalled();
   });
   it(`uses authenticated request context for ${spec.name} and returns only persisted service result`,async()=>{
-   const res=await spec.fn(make(spec.method),params);
-   expect(res.status).toBe(spec.name==="Learner quiz final submission"?201:200);
+   const body=spec.name==="Faculty assignment grade"
+    ?{pointsAwarded:80,expectedVersion:0,feedback:"Evidence reviewed"}:command;
+   const res=await spec.fn(make(spec.method,body),params);
+   // Quiz submissions update one existing attempt; they do not create a
+   // second persisted attempt, so the response is a successful 200.
+   expect(res.status).toBe(200);
    expect(spec.service).toHaveBeenCalledTimes(1);
    expect(spec.service.mock.calls[0][0]).toBe(actor);
    expect(JSON.stringify(await res.json())).not.toContain("foreign");

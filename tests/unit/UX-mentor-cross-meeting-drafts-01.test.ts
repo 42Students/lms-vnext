@@ -5,7 +5,8 @@ describe("Mentor meeting editors preserve drafts and safe errors",()=>{
  it("UX-mentor-cross-F01 notes cancellation returns to the draft and confirms discard",()=>{
   const src=read("src/components/projects/mentor-meeting-notes-editor.tsx");
   expect(src).toContain("useProjectEditorDiscardGuard(open||confirm,changed,pending");
-  expect(src).toContain("if(!next&&!pending)setOpen(true)");
+  expect(src).toContain("if(!next)setOpen(true)");
+  expect(src).toContain("if(pending)return;");
   expect(src).toContain("onClick={guard.requestClose}");
   expect(src).toContain("onConfirm={guard.confirmDiscard}");
   expect(src).toContain("if(!valid||pending)return");
@@ -13,7 +14,8 @@ describe("Mentor meeting editors preserve drafts and safe errors",()=>{
  it("UX-mentor-cross-F02 reschedule has the same discard and retry protection",()=>{
   const src=read("src/components/projects/mentor-meeting-reschedule.tsx");
   expect(src).toContain("useProjectEditorDiscardGuard(open||confirm,dirty,pending");
-  expect(src).toContain("if(!next&&!pending)setOpen(true)");
+  expect(src).toContain("if(!next)setOpen(true)");
+  expect(src).toContain("if(pending)return;");
   expect(src).toContain("if(!parsed.success||!changed||pending)return");
   expect(src).toContain("onClick={guard.requestClose}");
   expect(src).toContain("onConfirm={guard.confirmDiscard}");

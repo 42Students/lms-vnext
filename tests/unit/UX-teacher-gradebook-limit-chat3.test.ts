@@ -9,7 +9,7 @@ describe("UX-teacher-gradebook-limit-chat3: Faculty error and recovery",()=>{
     const page=readFileSync(path,"utf8");
     expect(route).toContain("/teacher/courses/");
     expect(page).toContain("facultyGradebookViewQuerySchema.safeParse");
-    expect(page).toContain('knownKeys?rawSearch:{invalid:true}');
+    expect(page).toContain('knownKeys&&noRepeatedKeys?rawSearch:{invalid:true}');
     expect(page).toContain("Invalid gradebook link or filters");
     expect(page.indexOf("if(!parsed.success||!view.success)"))
       .toBeLessThan(page.indexOf("getCurrentRequestContext()"));

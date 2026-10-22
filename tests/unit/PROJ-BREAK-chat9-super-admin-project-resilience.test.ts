@@ -18,11 +18,10 @@ describe("IIT Dharwad Super Admin Projects graceful degradation",()=>{
   });
   it("PROJ-BREAK-admin-idor-17 missing selected college cannot attempt either project query",()=>{
     const page=source("src/app/(authenticated)/admin/projects/page.tsx");
-    const firstGuard=page.indexOf("if (!collegeId) {");
+    const firstGuard=page.indexOf('if (!collegeId) redirect("/admin/projects/templates")');
     const scopeQuery=page.indexOf("listProjectAdminSnapshots(");
     expect(firstGuard).toBeGreaterThan(0);
     expect(scopeQuery).toBeGreaterThan(firstGuard);
-    expect(page).toContain('title="No college selected"');
-    expect(page).toContain("Pick a college in the header");
+    expect(page).toContain('redirect("/admin/projects/templates")');
   });
 });
