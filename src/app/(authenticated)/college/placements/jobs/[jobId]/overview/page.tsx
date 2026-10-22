@@ -56,7 +56,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
   const expired=drive.status==="PUBLISHED"&&drive.applicationDeadline!==null&&
     new Date(drive.applicationDeadline).getTime()<Date.now();
   const statusLabel=drive.status==="DRAFT"?"Draft":
-    drive.status==="PUBLISHED"?(expired?"Expired":"Open"):
+    drive.status==="PUBLISHED"?(expired?"Open · Expired":"Open"):
     drive.status==="CLOSED"?"Closed":
     drive.status==="CANCELLED"?"Cancelled":drive.status;
   const initials=drive.companyName.trim().split(/\s+/).slice(0,2)

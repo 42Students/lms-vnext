@@ -79,5 +79,9 @@ export default async function TpoDriveDiscussion({params,searchParams}:{
    </li>)}</ul>
    </section>}
   <p className="text-xs text-muted-foreground leading-5">Recruiter messages and internal team notes are separate. Only recorded messages appear here.</p>
+  <p className="text-sm leading-6 text-body">
+   Each drive also has an internal team discussion in Team conversations.{" "}
+   <Link href="/tpo/team?filter=drives" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Open drive team conversations</Link>
+  </p>
  </div>;
 }

@@ -173,7 +173,7 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
      "Replace roster ends access for unchecked existing learners after confirmation; past work is retained."}
      Class-managed teams must be changed through the class team workspace.</p>
     {capExceeded?<p role="alert" className="text-sm text-error">
-      This would exceed the 500-learner limit. Remove {effectiveIds.length-500} selections.
+      This would exceed the 500-learner limit for this workspace — currently {mode==="ADD"?initial.length:0}, adding {mode==="ADD"?additions.length:selected.length}. Remove {effectiveIds.length-500} selections.
     </p>:null}
     {error&&loaded?<p role="alert" className="text-[13px] leading-5 text-[var(--lms-error-text)]">{error}</p>:null}
     <div className="flex flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
