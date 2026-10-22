@@ -2802,6 +2802,8 @@ export function legacyCollegeCompanyRelationshipImport(input:{
  const status=input.legacyStatus==="ACTIVE"?"ACTIVE":
    ["DELETED","INACTIVE","ARCHIVED"].includes(input.legacyStatus)?"ARCHIVED":null;
  if(!status)throw new Error("Unsupported historic company relationship status");
+ if(status==="ARCHIVED"&&!input.legacyArchivedAt)
+  throw new Error("Historic company archive requires verified source time");
  const at=input.legacyArchivedAt===null?null:new Date(input.legacyArchivedAt);
  if(at!==null&&(!Number.isFinite(at.getTime())||
    !/(?:Z|[+-]\d{2}:\d{2})$/.test(input.legacyArchivedAt!)))
@@ -2812,7 +2814,7 @@ export function legacyCollegeCompanyRelationshipImport(input:{
     input.internalNotes!==null&&input.internalNotes.length>2000)
   throw new Error("Company contact or notes exceed the private CRM limit");
  return {collegeId:input.collegeId,companyId:input.companyId,status,
-  archivedAt:status==="ARCHIVED"?at??new Date(0):null,
+  archivedAt:status==="ARCHIVED"?at:null,
   ownerMembershipId:input.ownerMembershipId,
   contactPersonName:input.contactName?.trim()??null,
   contactEmail:input.contactEmail?.trim()??null,
@@ -2861,6 +2863,7 @@ export function legacyPlacementOfferStageDisposition(input:{
    !uuid.test(input.applicationId)||!uuid.test(input.collegeId))
   throw new Error("Unmapped legacy offer identity");
  if(input.accepted&&input.declined||input.released&&!input.selected||
+    (input.accepted||input.declined||input.withdrawn)&&!input.released||
     input.withdrawn&&(input.accepted||input.declined))
   throw new Error("Conflicting old offer state");
  if(input.releasedAt!==null&&(

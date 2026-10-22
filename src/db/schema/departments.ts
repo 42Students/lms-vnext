@@ -61,10 +61,12 @@ export function legacyDepartmentImportDisposition(input:{
  if(!input.deleted&&input.activeNameAlreadyUsed)
   throw new Error("Active department name collision in this college");
  const retired=input.deleted?input.sourceArchivedAt:null;
+ if(input.deleted&&retired===null)
+  throw new Error("Historic department archive needs verified source time");
  if(retired!==null&&(!/(?:Z|[+-]\d{2}:\d{2})$/.test(retired)||
   !Number.isFinite(Date.parse(retired))))
   throw new Error("Department archive time needs timezone mapping");
  return {collegeId:input.resolvedCollegeId,name,
-  archivedAt:input.deleted?new Date(retired??"1970-01-01T00:00:00Z"):null,
+  archivedAt:retired===null?null:new Date(retired),
   legacyDepartmentId:input.legacyId,activate:false as const};
 }
