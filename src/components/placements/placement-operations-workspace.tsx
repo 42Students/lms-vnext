@@ -13,6 +13,7 @@ import { listPlacementSeasons } from "@/modules/placements/season-service";
 import { PlacementEmployerRelationships } from "./placement-employer-relationships";
 import { PlacementRecruiterAccess } from "./placement-recruiter-access";
 import { PlacementOperationsSnapshot } from "./placement-operations-snapshot";
+import { AdminRetentionInlinePreview } from "./admin-retention-inline-preview";
 import { PlacementSeasonManager } from "./placement-season-manager";
 
 export async function PlacementOperationsWorkspace({
@@ -81,15 +82,18 @@ export async function PlacementOperationsWorkspace({
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <PlacementOperationsSnapshot key={collegeId} collegeId={collegeId}
         operations={operations} basePath={basePath} staleDays={staleDays}/>
-      <Disclosure title="Data retention report" className="border-b border-[var(--lms-canvas-border)]">
-        <p className="pb-3 text-sm text-body">
-          Retention checks use the selected college&apos;s real placements,
-          offers and applicant records. No retention purge is performed here.
-        </p>
-        <Link href={basePath+"/reports"} className="font-semibold text-link underline underline-offset-2">
-          Review placement reports
-        </Link>
-      </Disclosure>
+      {basePath.startsWith("/admin/") ?
+        <AdminRetentionInlinePreview collegeId={collegeId} /> :
+        <Disclosure title="Data retention report" className="border-b border-[var(--lms-canvas-border)]">
+          <p className="pb-3 text-sm text-body">
+            Review rejected or withdrawn applications with no activity in the
+            past 180 days. This report is read-only and never deletes data.
+          </p>
+          <Link href={basePath+"/retention"} className="font-semibold text-link underline underline-offset-2">
+            Open data retention report
+          </Link>
+        </Disclosure>}
+
       <Disclosure title="Student placement lookup" className="border-b border-[var(--lms-canvas-border)]">
         <p className="pb-3 text-sm text-body">
           Search student registration, applications and outcomes in this college.
