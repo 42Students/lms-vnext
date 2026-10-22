@@ -5,7 +5,7 @@ CI run 39819012064 on main (3bc2f60a) failed these unit tests. Do this AFTER you
 - [ ] `tests/unit/PROJ-BREAK-SA-admin-pages-and-scope.test.ts` (1 failing)
 - [x] `tests/unit/chat10-campaign-unsubscribe-legacy-path.test.ts` (1 failing)
 - [ ] `tests/unit/chat19-tpo-mobile-footer.test.ts` (3 failing)
-- [ ] `tests/unit/chat5-final-faculty-courses-a.test.ts` (1 failing)
+- [x] `tests/unit/chat5-final-faculty-courses-a.test.ts` (1 failing)
 - [ ] `tests/unit/chat7-superadmin-learning-export-service-behavior.test.ts` (2 failing)
 - [ ] `tests/unit/learner-coding-profile-link.test.ts` (1 failing)
 - [x] `tests/unit/tpo-team-person-context-chat2.test.ts` (1 failing)
@@ -200,3 +200,5 @@ AssertionError: expected 'import { redirect } from "next/naviga…' to contain '
 
 - Campaign unsubscribe failure test: HTTP 503 with explicit `SUPPRESSIONS_NOT_READY` and no success response (`059bbd7ed79322a94deee1d95c32d5f80116e760`).
 - TPO Team bookmark test: current canonical `/tpo/settings?tab=team` route (`59fd1b214ba2b6e4f43329edc16d554255deb5ac`).
+
+- Faculty roster contract test: metrics implementation moved to `faculty-roster-display-model.ts`; retained assertions for contact count, missing-roll copy, roster sorting and authorized photo fallback (`edc029d5ea421c1fab58fe700397974c213dba19`).
