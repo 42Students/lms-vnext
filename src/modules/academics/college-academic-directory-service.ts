@@ -29,7 +29,6 @@ import { resolveActingCollege } from "@/modules/permissions/acting-college";
 
 import {
   academicDirectoryPageCount,
-  COLLEGE_ACADEMIC_PAGE_SIZE,
   collegeBatchDirectorySchema,
   collegeSemesterDirectorySchema,
 } from "./college-academic-directory-model";
