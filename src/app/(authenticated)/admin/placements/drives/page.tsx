@@ -16,6 +16,7 @@ import { SuperAdminDriveDuplicate } from "@/components/placements/super-admin-dr
 import { SuperAdminDriveDeadline } from "@/components/placements/super-admin-drive-deadline";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
+import { Alert } from "@/components/ui/alert";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { adminDriveDirectoryHref, adminDriveDirectoryQuerySchema, adminDriveStatus, adminDriveIsExpired, adminDriveIstDate } from "@/modules/placements/admin-drive-directory-model";
 
@@ -25,10 +26,9 @@ export default async function SuperAdminDrivesPage({searchParams}:{
  const ctx=await getCurrentRequestContext(), raw=await searchParams;
  if(!ctx.adminScope?.collegeId)return <div className="min-w-0 space-y-4">
   <PageHeader title="Jobs Management (LMS)"/>
-  <div role="alert" className="rounded-md border border-[#ffe58f] bg-[#fffbe6] p-4 text-sm text-[#874d00]">
-    <strong className="block">Select a College to manage Jobs</strong>
-    <span className="mt-1 block">Jobs are treated as college-scoped in Superadmin. Use the header Organization/College selector.</span>
-  </div>
+  <Alert tone="warning" title="Select a College to manage Jobs">
+    Jobs are treated as college-scoped in Superadmin. Use the header Organization/College selector.
+  </Alert>
  </div>;
  requireSuperAdminSelectedCollege(ctx,"placements.manage");
  // Parse the whole query: dropping unknown keys would quietly accept
@@ -78,12 +78,12 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     const type=row.job.jobTypeLabel?.trim()||(
       row.job.employmentType==="FULL_TIME"?"Full-time":
       row.job.employmentType==="INTERNSHIP"?"Internship":"Contract");
-    return <span className="inline-flex rounded-[4px] border border-[#d9d9d9] bg-[#fafafa] px-2 py-0.5 text-xs font-medium text-[#595959]">{type}</span>;
+    return <StatusBadge tone="neutral">{type}</StatusBadge>;
    }},
   {key:"location",header:"Location",mobilePriority:"secondary",cell:row=>row.job.locations.join(", ")||"Not specified"},
   {key:"deadline",header:"Deadline",mobilePriority:"secondary",cell:row=>{
     const expired=adminDriveIsExpired(row.job.applicationDeadline,today);
-    return <span className={"inline-flex items-center gap-1 "+(expired?"text-[#fa8c16]":"text-body")}>
+    return <span className={"inline-flex items-center gap-1 "+(expired?"text-warning":"text-body")}>
       <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6M17 2v6M3 10h18"/>
@@ -101,7 +101,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    className:"md:sticky md:right-0 md:z-10 md:min-w-[260px] md:bg-surface",
    cell:row=>{
     const base="/admin/placements/jobs/"+encodeURIComponent(row.job.id);
-    const linkClass="inline-flex min-h-9 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]";
+    const linkClass="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]";
     return <div className="flex min-w-0 flex-col items-start gap-2">
       <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-sm">
         <Link href={base} aria-label={"Open job "+row.job.title} className={linkClass}>View</Link>
@@ -112,7 +112,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
         <div aria-label={"Delete job "+row.job.title}><SuperAdminDriveArchive jobId={row.job.id} title={row.job.title}/></div>
       </div>
       <details className="min-w-0 w-full border-t border-border pt-2 text-sm">
-        <summary className="inline-flex min-h-9 cursor-pointer items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+        <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           More actions · duplicate, deadline
         </summary>
         <div className="min-w-0 space-y-3 pt-3">
@@ -135,25 +135,6 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     <Link href="/admin/placements/new"
      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Create Job</Link>
    </div>} />
-  <section aria-label="Student placement lookup" className="min-w-0 rounded-[8px] border border-[var(--lms-canvas-border)] bg-surface p-4">
-    <div className="flex flex-wrap items-center justify-between gap-2">
-      <h2 className="m-0 text-sm font-semibold text-[var(--lms-heading)]">Look up a student’s placement status</h2>
-      <Link href="/admin/placements/student-lookup" className="text-xs font-semibold text-link underline underline-offset-4">
-        Advanced lookup
-      </Link>
-    </div>
-    <form action="/admin/placements/student-lookup" method="get"
-      aria-label="Search student placement status" className="mt-3 flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
-      <label className="min-w-0 flex-1">
-        <span className="sr-only">Student name, roll number or email</span>
-        <Input type="search" name="q" minLength={2} maxLength={150}
-          required placeholder="Search a student by name or email"
-          className="min-h-11 w-full md:min-h-9"/>
-      </label>
-      <Button variant="secondary" type="submit" className="min-h-11 shrink-0 md:min-h-9">Search student</Button>
-    </form>
-    <p className="mt-2 text-xs text-body">Search is limited to the college selected above. Open the matching student to review placement history.</p>
-  </section>
   <section aria-label="Jobs Management list" className="min-w-0 space-y-3">
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
       <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">Active drives</h2>
@@ -174,13 +155,32 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     {parsed.data.q?" · Search: "+parsed.data.q:""}
   </p>
   <DataTable columns={columns} rows={data.items} getRowKey={row=>row.job.id}
-    mobileMode="cards" caption="Jobs table" empty={hasFilters?
+    mobileMode="scroll" caption="Jobs table" empty={hasFilters?
       <EmptyState title="No jobs match your filters" description="Try a different search or clear the selected filters."
         action={<Link href="/admin/placements/drives" className="inline-flex min-h-11 items-center rounded-md border border-border px-3 font-semibold text-link underline">Clear filters</Link>}/>:
       <EmptyState title="No jobs yet" description="Create your first job posting to start accepting applications."
         action={<Link href="/admin/placements/new" className="inline-flex min-h-11 items-center rounded-md bg-[var(--lms-button-primary)] px-4 font-semibold text-white">Create Job</Link>}/>
     }/>
   <div className="min-w-0 border-t border-border pt-[var(--lms-space-3)]"><Pagination page={data.page} pageCount={data.totalPages} hrefForPage={href} label="Drive list pages"/></div>
+  <section aria-label="Student placement lookup" className="min-w-0 rounded-[8px] border border-[var(--lms-canvas-border)] bg-surface p-4">
+    <div className="flex flex-wrap items-center justify-between gap-2">
+      <h2 className="m-0 text-sm font-semibold text-[var(--lms-heading)]">Look up a student’s placement status</h2>
+      <Link href="/admin/placements/student-lookup" className="text-xs font-semibold text-link underline underline-offset-4">
+        Advanced lookup
+      </Link>
+    </div>
+    <form action="/admin/placements/student-lookup" method="get"
+      aria-label="Search student placement status" className="mt-3 flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
+      <label className="min-w-0 flex-1">
+        <span className="sr-only">Student name, roll number or email</span>
+        <Input type="search" name="q" minLength={2} maxLength={150}
+          required placeholder="Search a student by name or email"
+          className="min-h-11 w-full md:min-h-9"/>
+      </label>
+      <Button variant="secondary" type="submit" className="min-h-11 shrink-0 md:min-h-9">Search student</Button>
+    </form>
+    <p className="mt-2 text-xs text-body">Search is limited to the college selected above. Open the matching student to review placement history.</p>
+  </section>
 
  </div>;
 }

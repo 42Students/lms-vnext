@@ -183,7 +183,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
       ["Minimum CTC (INR)",job.minimumAnnualCtcInr??"Not specified"],
       ["Maximum CTC (INR)",job.maximumAnnualCtcInr??"Not specified"],
       ["External application",job.externalApplicationUrl??"Not configured"],
-     ] as const).map(([label,value])=><div key={label} className="min-w-0">
+     ] as const).map(([label,value])=><div key={label} className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-3">
       <dt className="font-semibold text-muted-foreground">{label}</dt>
       <dd className="mt-1 break-words text-foreground">{String(value)}</dd>
      </div>)}
@@ -209,7 +209,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
        ["Maximum gap years",publishedPolicy.maxGapYears??"Not set"],
        ["Passing years",publishedPolicy.allowedPassingYears.join(", ")||"All"],
        ["Missing evidence",publishedPolicy.missingEvidencePolicy],
-      ] as const).map(([label,value])=><div key={label}>
+      ] as const).map(([label,value])=><div key={label} className="border-b border-[var(--lms-canvas-border)] pb-3">
        <dt className="font-semibold text-muted-foreground">{label}</dt>
        <dd className="mt-1 text-foreground">{String(value)}</dd>
       </div>)}
