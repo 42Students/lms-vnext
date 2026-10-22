@@ -50,6 +50,7 @@ describe("chat9 public page, signature and audit evidence",()=>{
   expect(serializer).toContain("return /^[\\s\\u0000-\\u001f\\u007f\\uFEFF]*[=+\\-@]/u.test(oneLine)");
   expect(grid).toContain("Copy rows");
   expect(grid).toContain("setOldestFirst");
-  expect(grid).toContain("Select all visible rows");
+  expect(grid).toContain("selection={{selected,onChange:setSelected,allIds:visible.map(row=>row.kind+\":\"+row.id)}}");
+  expect(grid).toContain("Copy selected rows or, with nothing selected, all visible rows.");
  });
 });
