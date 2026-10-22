@@ -37,7 +37,10 @@ describe("chat-5 OPEN gap regression baselines",()=>{
   expect(file("src/modules/placements/tpo-drive-discussion-service.ts")).toContain("placementTpoMessageThreads");
  });
  it("TPO-drive-workspace-63 partial baseline — further implementation required",()=>{
-  expect(file("src/components/placements/placement-drive-controls.tsx")).toContain("Force");
+  const controls=file("src/components/placements/placement-drive-controls.tsx");
+  expect(controls).toContain("Override reason required");
+  expect(controls).toContain('decision: "INCLUDE" | "EXCLUDE"');
+  expect(controls).toContain("Candidate included");
  });
  it("TPO-drive-workspace-67 partial baseline — further implementation required",()=>{
   expect(file("src/components/placements/tpo-applicant-review-drawer.tsx")).toContain("Open full applicant detail");
@@ -65,7 +68,10 @@ describe("chat-5 OPEN gap regression baselines",()=>{
   expect(file("src/modules/placements/tpo-batch-workspace-read-service.ts")).toContain("ilike");
  });
  it("TPO-batches-34 partial baseline — further implementation required",()=>{
-  expect(file("src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx")).toContain("Roll number:");
+  const page=file("src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx");
+  expect(page).toContain("<DataTable");
+  expect(page).toContain("student.rollNumber");
+  expect(page).toContain("Search names or roll numbers across the batch");
  });
  it("TPO-batches-35 partial baseline — further implementation required",()=>{
   expect(file("src/modules/placements/tpo-batch-student-view-model.ts")).toContain("filterBatchStudentRegistration");

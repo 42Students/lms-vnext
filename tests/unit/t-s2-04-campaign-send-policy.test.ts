@@ -15,7 +15,8 @@ describe("T-S2-04 campaign send policy",()=>{
    {id:"d",...recipient,emailNorm:null},
   ];
   expect(planTpoCampaignRecipients(candidates)).toEqual({
-   recipientIds:["a"],suppressed:{NO_EMAIL:1,UNSUBSCRIBED:1,BOUNCED:0,NOT_NOW:0,DUPLICATE:1},
+   recipientIds:["a"],selectedCount:4,eligibleCount:1,
+   suppressed:{NO_EMAIL:1,UNSUBSCRIBED:1,BOUNCED:0,NOT_NOW:0,DUPLICATE:1},
   });
   expect(JSON.stringify(planTpoCampaignRecipients(candidates))).not.toContain("example.org");
   expect(planTpoCampaignRecipients(Array.from({length:501},(_,i)=>({
