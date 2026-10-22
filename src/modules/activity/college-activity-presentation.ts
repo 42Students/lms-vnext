@@ -64,11 +64,15 @@ export function collegeActivityAction(eventType:string){
  if(!key.includes(".")&&key.includes("_")){
   const tokens=key.split("_").filter(Boolean);
   let verbIndex=-1;
-  for(let i=tokens.length-1;i>=0;i--)if(VERBS[tokens[i]!]){verbIndex=i;break;}
+  for(let i=tokens.length-1;i>=0;i--){
+   const token=tokens[i];
+   if(token!==undefined&&VERBS[token]){verbIndex=i;break;}
+  }
   if(verbIndex>=0){
    const entity=tokens.slice(0,verbIndex).filter(token=>token!=="BULK");
    const thing=THINGS[entity.join("_")]||entity.join(" ").toLowerCase()||"an item";
-   return VERBS[tokens[verbIndex]!] +" "+thing;
+   const verbToken=tokens[verbIndex];
+   if(verbToken!==undefined)return (VERBS[verbToken]??"changed")+" "+thing;
   }
   return "changed "+tokens.filter(token=>token!=="BULK").join(" ").toLowerCase();
  }
