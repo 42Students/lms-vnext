@@ -1,6 +1,8 @@
 import { Disclosure } from "@/components/ui/disclosure";
 import { TpoSettingsTeamManage, TpoSettingsTeamRemove } from "@/components/tpo/tpo-settings-team-manage";
 import { listTpoTeamAssignableStaff } from "@/modules/placements/tpo-settings-team-actions-service";
+import {readTpoTeamAskWorkload} from "@/modules/placements/tpo-team-workload-service";
+import {sortTpoPeople,type TpoPeopleSort} from "@/modules/placements/tpo-team-people-sort-model";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -28,7 +30,11 @@ function dutyDate(value: string) {
     : value;
 }
 
-export default async function TpoPlacementTeamPage() {
+export default async function TpoPlacementTeamPage({searchParams}: {
+  searchParams?: Promise<{sort?:string|string[]}>;
+} = {}) {
+  const rawSort=(await searchParams)?.sort;
+  const sort:TpoPeopleSort=rawSort==="OVERDUE"||rawSort==="NAME"?rawSort:"WORK";
   const context = await getCurrentRequestContext();
 
   if (
@@ -52,6 +58,13 @@ export default async function TpoPlacementTeamPage() {
   }
 
   const { members, summary, sources } = data;
+  const workload=await readTpoTeamAskWorkload(context).catch(()=>({ready:false as const,items:[]}));
+  const workloadByMember=new Map(workload.items.map(item=>[item.membershipId,item]));
+  const sortedMembers=sortTpoPeople(members.map(member=>({
+    ...member,
+    openAsks:workloadByMember.get(member.membershipId)?.openAsks??0,
+    overdueAsks:workloadByMember.get(member.membershipId)?.overdueAsks??0,
+  })),sort);
   const actorMembershipId = context.membership.id;
   const candidates = sources.teamAssignmentsAvailable
     ? await listTpoTeamAssignableStaff(context)
@@ -151,11 +164,19 @@ export default async function TpoPlacementTeamPage() {
           </p>
         </div>
 
+        <nav aria-label="Team workload sort" className="mb-4 flex min-w-0 flex-wrap gap-2">
+          {([{key:"WORK",label:"Most work first"},{key:"OVERDUE",label:"Overdue first"},{key:"NAME",label:"Name"}] as const).map(option=>(
+            <Link key={option.key} href={"/tpo/settings/team?sort="+option.key}
+              aria-current={sort===option.key?"page":undefined}
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{option.label}</Link>
+          ))}
+        </nav>
+        {!workload.ready?<Alert tone="warning">Ask workload is not available yet. Drive Day duties remain visible; no zero workload is assumed.</Alert>:null}
         {members.length === 0 ? (
           <EmptyState title="No matching active TPO or coordinator memberships were found in the available sources." />
         ) : (
           <DataTable
-            rows={members}
+            rows={sortedMembers}
             getRowKey={member=>member.membershipId}
             caption="Active team memberships"
             empty={<EmptyState title="No matching active TPO or coordinator memberships were found in the available sources."/>}
@@ -169,6 +190,9 @@ export default async function TpoPlacementTeamPage() {
                   </StatusBadge>)}</div>},
               {key:"status",header:"Membership status",mobilePriority:"secondary",cell:member=>
                 <StatusBadge tone="success">{member.status}</StatusBadge>},
+              {key:"workload",header:"Open asks",mobilePriority:"secondary",cell:member=>
+                workload.ready?<span>{member.openAsks} open · {member.overdueAsks} overdue</span>:
+                  <span className="text-muted-foreground">Unavailable</span>},
               {key:"manage",header:"Team access",cell:member=><TpoSettingsTeamRemove
                 membershipId={member.membershipId} displayName={member.displayName}
                 removable={sources.teamAssignmentsAvailable && (member.roles.includes("TPO_ADMIN") || member.roles.includes("FACULTY_COORDINATOR"))}
