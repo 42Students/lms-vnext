@@ -15,7 +15,15 @@ import {PlacementsServiceError} from "./errors";
 
 export type TpoBulkStageAction="MOVE_TEST"|"MOVE_INTERVIEW";
 export const TPO_BULK_STAGE_LIMIT = 100;
-/** Legacy statuses are stored in distinct vNext application facts. */
+/** Legacy JobServiceImpl / ApplicationTransitionService shared one flat
+ * application status validator. VNext intentionally separates legal transitions:
+ * APPLIED lives on the submission, SHORTLISTED/REJECTED are durable screening
+ * decisions, TEST/INTERVIEW require a current drive round and stage revision,
+ * WAITLISTED requires an applied round result, and OFFERED/HIRED require
+ * separate offer and joining evidence. Do not substitute a generic status
+ * UPDATE for these state-specific permission, CAS and audit guards.
+ * The explicit map below is a display/import crosswalk, not a write schema.
+ */
 export const TPO_LEGACY_APPLICATION_STAGE_MAP = {
  APPLIED:"Application submission",SHORTLISTED:"Screening shortlist",
  ASSESSMENT:"TPO test round",INTERVIEW:"TPO interview round",

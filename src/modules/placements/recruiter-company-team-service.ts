@@ -87,6 +87,8 @@ export async function getRecruiterCompanyTeam(
       id: placementCompanies.id,
       name: placementCompanies.name,
       websiteUrl: placementCompanies.websiteUrl,
+      industry: placementCompanies.industry,
+      verifiedAt: placementCompanies.verifiedAt,
       primaryDomain: placementCompanies.primaryDomain,
       logoObjectPath: placementCompanies.logoObjectPath,
       logoPublicUrl: placementCompanies.logoPublicUrl,
