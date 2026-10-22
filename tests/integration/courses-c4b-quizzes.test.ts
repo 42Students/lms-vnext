@@ -1,12 +1,14 @@
 import { facultyAssessmentFixtureToken } from "../support/faculty-assessment-token";
 import {
   afterAll,
+  beforeAll,
   beforeEach,
   describe,
   expect,
   it,
 } from "vitest";
 import { Pool } from "pg";
+import { randomUUID } from "node:crypto";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -89,15 +91,18 @@ const faculty: RequestContext = {
   },
 };
 
+// Use a dedicated learner; the seeded learner already has one active program
+// enrollment and the database correctly forbids a second active enrollment.
+const quizLearnerIds={user:randomUUID(),membership:randomUUID(),role:randomUUID()};
 const learner: RequestContext = {
   user: {
-    id: SEED_IDS.learnerUser,
-    identityUid: "seed-learner",
+    id: quizLearnerIds.user,
+    identityUid: "c4b-learner-"+quizLearnerIds.user,
     platformStatus: "ACTIVE",
     systemRoles: [],
   },
   membership: {
-    id: SEED_IDS.learnerCollegeAMembership,
+    id: quizLearnerIds.membership,
     collegeId: SEED_IDS.collegeA,
     organizationId: SEED_IDS.organization,
     status: "ACTIVE",
@@ -355,7 +360,7 @@ async function createStructure() {
       collegeAdmin,
       {
         membershipId:
-          SEED_IDS.learnerCollegeAMembership,
+          quizLearnerIds.membership,
         programId: program.id,
         cohortId: cohort.id,
       },
@@ -472,12 +477,38 @@ async function answerKey(
   };
 }
 
+beforeAll(async () => {
+  await pool.query(
+    "INSERT INTO users(id,identity_uid,display_name,email,platform_status) VALUES($1,$2,$3,$4,'ACTIVE')",
+    [quizLearnerIds.user,learner.user.identityUid,"C4B Quiz Learner",
+      "c4b.learner."+quizLearnerIds.user+"@example.test"],
+  );
+  await pool.query(
+    "INSERT INTO college_memberships(id,user_id,college_id,status) VALUES($1,$2,$3,'ACTIVE')",
+    [quizLearnerIds.membership,quizLearnerIds.user,SEED_IDS.collegeA],
+  );
+  await pool.query(
+    "INSERT INTO membership_roles(id,membership_id,role) VALUES($1,$2,'LEARNER')",
+    [quizLearnerIds.role,quizLearnerIds.membership],
+  );
+});
+
 beforeEach(async () => {
   await cleanupC4B();
 });
 
 afterAll(async () => {
   await cleanupC4B();
+  // Immutable activity events may retain the learner as an audit actor.
+  const actorHistory=await pool.query<{referenced:boolean}>(
+    "SELECT EXISTS(SELECT 1 FROM activity_events WHERE actor_user_id=$1 OR actor_membership_id=$2) AS referenced",
+    [quizLearnerIds.user,quizLearnerIds.membership],
+  );
+  if(!actorHistory.rows[0]?.referenced){
+    await pool.query("DELETE FROM membership_roles WHERE id=$1",[quizLearnerIds.role]);
+    await pool.query("DELETE FROM college_memberships WHERE id=$1",[quizLearnerIds.membership]);
+    await pool.query("DELETE FROM users WHERE id=$1",[quizLearnerIds.user]);
+  }
   await pool.end();
   await closeDatabaseConnection();
 });
@@ -645,9 +676,9 @@ describe("courses C4B quizzes against PostgreSQL", () => {
       attemptNumber: 1,
       score: 4,
       maxScore: 10,
-      learnerDisplayName: "Seed Learner",
+      learnerDisplayName: "C4B Quiz Learner",
       learnerEmail:
-        "learner.seed@example.com",
+        "c4b.learner."+quizLearnerIds.user+"@example.test",
     });
 
     const hidden = await getMyQuizAttempts(
@@ -910,7 +941,7 @@ describe("courses C4B quizzes against PostgreSQL", () => {
          and membership_id = $2`,
       [
         quiz.id,
-        SEED_IDS.learnerCollegeAMembership,
+        quizLearnerIds.membership,
       ],
     );
     expect(count.rows[0]?.count).toBe("1");
