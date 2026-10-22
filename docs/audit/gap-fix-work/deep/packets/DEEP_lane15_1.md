@@ -14,8 +14,8 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-15-031-062  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [ ] G2-19-023-025  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [ ] G2-19-023-031  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
-- [ ] G2-3-010-004  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
-- [ ] G2-3-010-005  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
+- [x] G2-3-010-004  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
+- [x] G2-3-010-005  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 - [x] G2-3-010-010  (source: docs/audit/gap-fix-work/verify2/packets/lane-13/W1_lane13_12.md)
 
 ## Results
@@ -25,3 +25,6 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-3-024-029: OK — `src/components/groups/college-group-import-preview.tsx:75-98,153-160,183-196` confirms the CSV via POST `/api/college/groups/import` and allows error CSV download; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/groups/AdminGroupController.java:156-201`.
 - G2-3-024-047: OK — `src/components/groups/college-group-import-preview.tsx:75-98,199-237` contains confirmed CSV and manual bulk addition; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/groups/AdminGroupController.java:156-201`.
 - G2-3-010-010: OK — `src/modules/storage/r2-config.ts:43-70` requires account, both credential components and a dedicated private bucket (except explicit development-only isolation), with a fail-closed setup error; the legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/utils/PrivateDocStorage.java:55-57` checked only account, bucket and a single access key. This verifies the intended safe replacement, not identical permissive legacy configuration semantics; deployment must supply all required secrets.
+
+- G2-3-010-004: OK — `src/modules/storage/private-object-storage.ts:21-46,129-145` records the explicit legacy-folder crosswalk and generates tenant/owner/namespace-scoped opaque keys without trusting old `private-doc:` references. The legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/utils/PrivateDocStorage.java:24-31,59-70` stored `private-doc:<key>` references. No legacy data migration is required for this new deployment; a future import must rehost, scan and rewrite owner-authorized records, never interpret old refs as current read grants.
+- G2-3-010-005: OK — `src/modules/storage/private-object-storage.ts:21-46,105-125` documents the required rehosting path, while read grants require scoped keys instead of silently removing leading slashes. The old `docs/legacy-source/backend/src/main/java/com/_42students/lms/utils/PrivateDocStorage.java:63-70` stripped leading slashes from refs. The incompatible legacy reference is intentionally rejected, not granted access; there are no old records to remap in vNext.
