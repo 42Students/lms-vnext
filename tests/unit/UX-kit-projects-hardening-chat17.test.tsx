@@ -192,7 +192,8 @@ describe("UX-kit-HARDEN-01 shared primitives: a11y, validation, phone and failur
     // Legacy in-app/WebView navigation uses the current tab; do not fork a new window.
     expect(html).not.toContain('target="_blank"');
     expect(html).toContain('href="https://example.org/"');
-    expect(html).toContain('rel="noopener noreferrer"');
+    expect(html).not.toMatch(/<a[^>]*\\starget=/);
+    expect(html).toContain('href="https://example.org/"');
   });
   it("UX-kit-HARDEN-15 8+ persistent errors remain separately dismissible while timed entries cap",()=>{
     const errors: ToastItem[]=Array.from({length:9},(_,i)=>({id:String(i),title:"Error "+i,tone:"error" as const}));
@@ -281,8 +282,9 @@ describe("UX-kit-HARDEN-22 declared 38-element shared UI surface register",()=>{
     expect(text).not.toMatch(/duration-\[(?:3[1-9]\d|[4-9]\d\d)ms\]/);
     if(name==="third-party-link"){
       expect(text).not.toContain('target="_blank"');
-      expect(text).toContain('href={safeHref} rel="noopener noreferrer"');
-      expect(text).toContain('rel="noopener noreferrer"');
+      expect(text).toContain('href={safeHref}');
+      expect(text).not.toContain('target="_blank"');
+      expect(text).not.toMatch(/window\\.open\\s*\\(/);
     }
     else expect(text).not.toContain('target="_blank"');
     // Dedicated tests above cover real rendering, a11y and security for shared types.
