@@ -22,8 +22,8 @@ export function TpoDriveClonePicker({drives}:{drives:readonly CloneableTpoDrive[
  return <div className="min-w-0 space-y-3">
    <p className="text-xs leading-5 text-body">
      Choose a completed or cancelled drive to run again. The new copy is a draft.
-     Company, job details, role packages and eligibility are copied; dates,
-     external links, interviews, applications, outcomes and offers are not.
+     Company, job details, role packages, eligibility and the round plan are copied.
+     Round dates, external links, booked interviews, applications, outcomes and offers are not.
      Review batches and passing years before publishing.
    </p>
    <label className="block max-w-[360px] text-xs font-semibold text-body">
