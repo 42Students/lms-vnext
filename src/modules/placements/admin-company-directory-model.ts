@@ -61,6 +61,9 @@ export type AdminCompanyRow = {
   collegeName: string; organizationId: string; relationshipStatus: string;
   companyStatus: string; trusted: boolean; verifiedAt?: Date | null; website: string | null;
   industry?: string | null; about?: string | null; logoPublicUrl?: string | null;
+  /** Only selected-college results project these private relationship fields.
+   * Global/organization catalogue readers return NULL by construction. */
+  contactPersonName?: string | null; contactEmail?: string | null;
   updatedAt?: Date;
   addedByType?: string;
   // Optional because the company creator may be a different college from

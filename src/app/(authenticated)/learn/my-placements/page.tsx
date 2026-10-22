@@ -296,6 +296,9 @@ export default async function LearnerPlacementsPage({
           {debarRead.value.untilDate?" Until "+debarRead.value.untilDate+" (college local date).":""}
           {debarRead.value.remainingDrives!==null?" "+debarRead.value.remainingDrives+" drive(s) remain in the recorded count.":""}
         </p>
+        {debarRead.value.reasons.length?<p className="mt-2 whitespace-pre-wrap text-sm text-body">
+          Reason: {debarRead.value.reasons.join("; ")}
+        </p>:null}
         <Link href="/learn/my-placements/support" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">
           Think this is wrong? Tell the placement cell
         </Link>

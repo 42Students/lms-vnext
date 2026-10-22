@@ -98,7 +98,15 @@ export default async function SuperAdminCompaniesPage({
       </div>
      </div>
     </div>},
-   {key:"contact",header:"Contact",mobilePriority:"secondary",cell:row=><span className="text-xs text-muted-foreground">Private college contact · Edit to view</span>},
+   {key:"contact",header:"Contact",mobilePriority:"secondary",cell:row=>
+    context.adminScope?.collegeId===row.collegeId
+     ? <div className="min-w-0 space-y-1 text-xs">
+       <span className="block break-words text-body">{row.contactPersonName?.trim()||"No contact person"}</span>
+       {row.contactEmail?<a href={"mailto:"+row.contactEmail}
+        className="block break-all font-semibold text-primary-text underline">{row.contactEmail}</a>:
+        <span className="block text-muted-foreground">No contact email</span>}
+      </div>
+     : <span className="text-xs text-muted-foreground">Private to the selected college</span>},
    {key:"website",header:"Website",cell:row=>safeCompanyWebsite(row.website)?<a href={safeCompanyWebsite(row.website)!} target="_blank" rel="noopener noreferrer" className="break-all font-semibold text-primary-text underline">Visit ↗</a>:"—"},
    {key:"drives",header:"Drives",className:"tabular-nums",sortable:true,
     sortDirection:data.query.sort==="DRIVES"?"descending":data.query.sort==="DRIVES_ASC"?"ascending":"none",cell:row=><span>{row.driveCount??0}</span>},
