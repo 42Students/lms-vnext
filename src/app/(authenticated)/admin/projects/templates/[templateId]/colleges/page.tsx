@@ -76,9 +76,24 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
     <div className="min-w-0">
       <Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">← Back to templates</Link>
       <PageHeader title={data.template.title}
-        description="Availability within the current safety scope. Existing workspaces retain their pinned versions." />
+        description="Select the colleges that can use this template." />
     </div>
-    <SuperAdminTemplateTabs templateId={id} active="colleges" />
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <SuperAdminTemplateTabs templateId={id} active="colleges" />
+      <Link href={templateCollegeAvailabilityHref(id,data.query)}
+        className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link md:min-h-9">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none"
+          stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+          <path d="M20 7v5h-5"/><path d="M4 17v-5h5"/>
+          <path d="M5 10a8 8 0 0 1 14-3M19 14a8 8 0 0 1-14 3"/>
+        </svg>
+        Refresh
+      </Link>
+    </div>
+    <p className="text-xs text-muted-foreground">
+      Scope: active colleges accessible to the selected Super Admin. Existing workspaces
+      retain their pinned template version when availability changes.
+    </p>
     <FilterBar title="Filters">
     <form method="get" className="grid min-w-0 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-2 lg:grid-cols-3">
       <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">College name or code
@@ -92,7 +107,8 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
     </FilterBar>
     <p className="text-xs text-muted-foreground">{data.total.toLocaleString("en-IN")} matching active colleges · page {data.query.page} of {data.totalPages}</p>
     <SuperAdminTemplateCollegeBulk templateId={id} published={data.template.status==="PUBLISHED"}
-      colleges={data.items.map(row=>({id:row.id,name:row.name,assigned:Boolean(row.assignment),
+      colleges={data.items.map(row=>({id:row.id,name:row.name,code:row.code,
+        assigned:Boolean(row.assignment),
         canAssign:can(context,"project-template.assign",{collegeId:row.id,organizationId:row.organizationId})}))}/>
     <DataTable<(typeof data.items)[number]> caption="Template college availability"
       rows={data.items} getRowKey={row=>row.id}

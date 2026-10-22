@@ -6,7 +6,7 @@ export const templateCollegeAvailabilityQuerySchema = z.strictObject({
   page: z.coerce.number().int().min(1).max(1000).default(1),
 });
 export function projectTemplateCollegeAvailability(
-  colleges: readonly { id: string; name: string; code: string; organizationId: string }[],
+  colleges: readonly { id: string; name: string; code: string; organizationId: string; city?:string|null; state?:string|null }[],
   assignments: readonly { collegeId: string; assignedVersion: number | null; assignedAt: Date }[],
   rawQuery: unknown,
 ) {
@@ -16,10 +16,10 @@ export function projectTemplateCollegeAvailability(
     .filter(row => (!query.q || `${row.name} ${row.code}`.toLowerCase().includes(query.q.toLowerCase())) &&
       (query.status === "ALL" || Boolean(row.assignment) === (query.status === "ASSIGNED")))
     .sort((a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id));
-  const totalPages = Math.max(1, Math.ceil(matching.length / 20));
+  const totalPages = Math.max(1, Math.ceil(matching.length / 10));
   const page = Math.min(query.page, totalPages);
   return { query: { ...query, page }, total: matching.length, totalPages,
-    items: matching.slice((page - 1) * 20, page * 20) };
+    items: matching.slice((page - 1) * 10, page * 10) };
 }
 export function templateCollegeAvailabilityHref(templateId: string, rawQuery: unknown) {
   const id = z.uuid().parse(templateId);
