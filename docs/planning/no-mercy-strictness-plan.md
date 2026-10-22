@@ -28,3 +28,15 @@ Sentry, structured logs with request ids, health/uptime checks, rate limiting, C
 - Never flip a strict flag on main while its count is above 0.
 - Heat: one heavy tool (tsc, eslint, knip, vitest) at a time, see the low-CPU memory.
 - Every phase ends with a numbers report: errors before and after.
+
+## Fail fast (owner goal, 2026-10-23)
+The owner will maintain vNext alone, so every rule exists to make breakage impossible to merge or loud the moment it happens, never quiet.
+- Config: one typed env module validated with Zod at boot; a missing or malformed variable stops the server from starting (no defaults for secrets, URLs or feature switches).
+- No silent fallbacks: no empty catch blocks, no `catch { return [] }`, no `?? ""` hiding missing required data; errors are typed (AppError subclasses), logged with request id, and shown as a clear user message.
+- Exhaustiveness: every switch over a union ends in an `assertNever`; lint rule `switch-exhaustiveness-check` as error.
+- Invariants: assert impossible states in services (tenant id present, row counts expected) and throw immediately.
+- Data: database constraints (NOT NULL, CHECK, FK, unique) for every rule the code relies on, so bad data is rejected at write time; migration drift check in CI.
+- Gates: CI is a required check; pre-commit runs typecheck on changed files, lint, secret scan; main cannot be pushed red.
+- Visibility: Sentry (or equivalent free tier) for every unhandled error, uptime check on /health, alert on error-rate spike, so failures are seen without anyone looking.
+- Dependencies: pinned versions, lockfile enforced, automated weekly update PRs gated by the full CI, so upgrades never need manual fixing.
+- Tests: permission matrix and contract tests per route fail on any new route without a test.
