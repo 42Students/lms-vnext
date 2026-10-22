@@ -146,7 +146,9 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}){
          <span className="block break-words font-semibold text-foreground">{sender(row)}</span>
          {row.senderDisplayName?<span className="block break-all text-xs text-muted-foreground">{row.fromAddress||"Unknown sender"}</span>:null}
          {row.senderKind?<span className="mt-1 inline-flex max-w-full flex-wrap items-center gap-1 text-xs">
-          <StatusBadge>{row.senderKind}</StatusBadge>
+          <StatusBadge>{row.senderKind==="RECRUITER"?"Recruiter":
+            row.senderKind==="LEARNER"||row.senderKind==="STUDENT"?"Student":
+            row.senderKind==="HR"?"Recruiter":row.senderKind}</StatusBadge>
           {row.collegeName?<span className="text-muted-foreground">{row.collegeName}</span>:null}
          </span>:null}
         </td>

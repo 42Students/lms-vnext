@@ -22,6 +22,7 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
  const [confirmRemove,setConfirmRemove]=useState(false);
  const [stagedBlob,setStagedBlob]=useState<Blob|null>(null);
  const [stagedRemoval,setStagedRemoval]=useState(false);
+ const [retryAfterBrandingSave,setRetryAfterBrandingSave]=useState(false);
  const committingRef=useRef(false);
  useEffect(()=>()=>{if(preview)URL.revokeObjectURL(preview);},[preview]);
  function select(value:File|null){
@@ -35,7 +36,7 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
     setMessage("Choose an image under 10 MiB before cropping.");return;
   }
   setFile(value);setPreview(value?URL.createObjectURL(value):null);
-  setStagedBlob(null);setStagedRemoval(false);
+  setStagedBlob(null);setStagedRemoval(false);setRetryAfterBrandingSave(false);
   setPositionX(50);setPositionY(50);setZoom(1);setMessage("");
   setMessageTone("success");
  }
@@ -49,6 +50,8 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
   const onBrandingSaved=(event:Event)=>{
    if(!(event instanceof CustomEvent)||event.detail?.collegeId!==collegeId||committingRef.current)return;
    committingRef.current=true;setBusy(true);setMessage("");
+   // Only a successful branding save can authorize the staged logo commit.
+   setRetryAfterBrandingSave(true);
    void (async()=>{
     try{
      const endpoint="/api/colleges/"+encodeURIComponent(collegeId)+"/branding/logo";
@@ -61,11 +64,12 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
       const result=await response.json() as {logoUrl:string};
       setSavedUrl(result.logoUrl+"?v="+Date.now());setRemoved(false);
      }else{setSavedUrl(null);setRemoved(true);}
-     setStagedBlob(null);setStagedRemoval(false);setFile(null);setPreview(null);
+     setStagedBlob(null);setStagedRemoval(false);setRetryAfterBrandingSave(false);
+     setFile(null);setPreview(null);
      if(fileInputRef.current)fileInputRef.current.value="";
      setMessageTone("success");setMessage(stagedBlob?"College logo uploaded and saved.":"Uploaded logo removed.");
      router.refresh();
-    }catch(error){setMessageTone("error");setMessage(error instanceof Error?error.message:"Could not save logo. Retry Save.");}
+    }catch(error){setMessageTone("error");setMessage(error instanceof Error?error.message:"Could not publish the staged logo. Retry the logo publication below.");}
     finally{committingRef.current=false;setBusy(false);}
    })();
   };
@@ -103,7 +107,11 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
   <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">College logo</h2>
   <p className="max-w-[75ch] text-sm leading-[22px] text-body">Choose a square logo, crop it, then select Save in the branding form. The current login logo stays active unless the branding save succeeds.</p>
   <p className="text-xs leading-5 text-muted-foreground">Legacy logo links are not imported as active storage objects. To migrate an older logo, choose the original image here, crop it and save; the new private upload and college branding lifecycle then take ownership.</p>
-  {stagedBlob||stagedRemoval?<Alert tone="warning">Unsaved logo {stagedRemoval?"removal":"replacement"} is staged. Save the branding form to apply it, or leave this page to discard it. Your current logo is still live.</Alert>:null}
+  {stagedBlob||stagedRemoval?<Alert tone="warning">{retryAfterBrandingSave?"Branding settings were saved, but the separate logo publication has not been confirmed. Retry publishing this logo below; the previous logo remains active until the server acknowledges the change.":"Unsaved logo "+(stagedRemoval?"removal":"replacement")+" is staged. Save the branding form to apply it, or leave this page to discard it. Your current logo is still live."}</Alert>:null}
+  {canEdit&&retryAfterBrandingSave&&(stagedBlob||stagedRemoval)?<Button type="button" variant="secondary" disabled={busy}
+   onClick={()=>window.dispatchEvent(new CustomEvent("college-branding-saved",{detail:{collegeId}}))}>
+   {busy?"Publishing…":"Retry logo publication"}
+  </Button>:null}
   {(savedUrl||(!removed&&currentUrl))?<div className="flex min-w-0 items-center gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
    <Card as="div" className="w-fit shrink-0 p-2">
     <img src={(savedUrl||currentUrl)!} alt="Current college logo" className="aspect-square w-20 max-w-full object-contain"/>

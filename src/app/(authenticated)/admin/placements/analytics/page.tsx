@@ -40,20 +40,23 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    action={<Link href="/admin/placements/analytics" className="inline-flex items-center min-h-11 md:min-h-9 font-[650] text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear all</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
- if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-4 md:space-y-6">
+ const collegeSelected=Boolean(context.adminScope?.collegeId);
+ const organizationSelected=Boolean(context.adminScope?.organizationId);
+ if(!collegeSelected&&!organizationSelected)return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Placement Analytics"
    description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."/>
-  <Alert tone="warning" title="Select a college to continue">Hiring metrics are college-scoped. Pick an Organization + College in the header above.</Alert>
+  <Alert tone="warning" title="Choose a reporting scope">Select an organization or a college from the header before loading placement analytics.</Alert>
  </div>;
- requireSuperAdminSelectedCollege(context,"placements.read");
+ if(collegeSelected)requireSuperAdminSelectedCollege(context,"placements.read");
+ const scopeLabel=collegeSelected?"selected college":"selected organization";
  const [reportResult,filterResult]=await Promise.allSettled([
   getSuperAdminCompanyHiringReport(context,parsed.data),
-  getSuperAdminHiringReportFilters(context),
+  collegeSelected?getSuperAdminHiringReportFilters(context):Promise.resolve(null),
  ]);
  if(reportResult.status==="rejected")return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Placement Analytics"/>
   <ErrorState title="Failed to load hiring data"
-   description="Couldn't refresh hiring metrics. The selected college's hiring report could not be verified. Retry the current filters; no zero counts are implied."
+   description={"Couldn't refresh hiring metrics. The "+scopeLabel+" hiring report could not be verified. Retry the current filters; no zero counts are implied."}
    action={<Link href="/admin/placements/analytics" className="font-semibold text-primary-text underline">Retry hiring dashboard</Link>}/>
  </div>;
  const data=reportResult.value;
@@ -103,10 +106,13 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
  );
  return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Placement Analytics"
-   description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."
+   description={"Track the hiring funnel, conversion and company performance for the "+scopeLabel+". Filters apply consistently to the headline metrics, funnel and company report below."}
    actions={<span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Placements</span>}/>
-  {filters===null?<Banner tone="warning" action={<Link href={reportPageHref(reportPage)} className="font-semibold underline">Retry dropdown choices</Link>}>
-   Jobs, departments, programs and batches could not be loaded for filtering. The verified hiring results remain visible.
+  {filters===null?<Banner tone="warning"
+   action={collegeSelected?<Link href={reportPageHref(reportPage)} className="font-semibold underline">Retry dropdown choices</Link>:undefined}>
+   {collegeSelected
+    ?"Jobs, departments, programs and batches could not be loaded for filtering. The verified hiring results remain visible."
+    :"Organization-wide hiring totals are visible. Select an individual college to use job, department, program and batch dropdown choices."}
   </Banner>:filters.filtersError?<Banner tone="warning" role="status"
     action={<Link href={reportPageHref(reportPage)} className="font-semibold underline">Retry dropdown choices</Link>}>
     {filters.filtersError}
@@ -196,7 +202,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
     caption="Company-wise Hiring Report" mobileMode="scroll"
     className="min-w-0 [&_table]:min-w-[950px]"
     empty={<EmptyState title={params.size?"No companies match these filters — try widening the date range or clearing filters":"No hiring data yet"}
-     description={params.size?"Widen the selected date range or clear filters to review available hiring data.":"No hiring activity has been recorded for the selected college."}
+     description={params.size?"Widen the selected date range or clear filters to review available hiring data.":"No hiring activity has been recorded for the "+scopeLabel+"."}
      action={params.size?<Link href="/admin/placements/analytics" className="font-semibold text-primary-text underline">Clear filters</Link>:undefined}/>}/>
    {groups.length?<p className="text-xs text-muted-foreground">Company total rows summarize all matching drives across report pages, not just the currently visible page.</p>:null}
    {data.rows.length>10?<div className="flex min-w-0 flex-col gap-3 border-t border-border pt-3 text-sm sm:flex-row sm:items-center sm:justify-between">

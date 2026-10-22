@@ -137,6 +137,26 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
     timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",hour12:true,
    }).format(end)+" IST";
   };
+  // Legacy schedule cards include a company mark when a verified HTTPS
+  // asset is persisted. Never render an imported, unsafe company logo URL.
+  const safeCompanyLogo=(raw:string|null)=>{
+    if(!raw)return null;
+    try{
+      const url=new URL(raw);
+      return url.protocol==="https:"&&!url.username&&!url.password?url.href:null;
+    }catch{return null;}
+  };
+  const companyHeadline=(row:WorkspaceRound)=>{
+    const logo=safeCompanyLogo(row.companyLogoUrl);
+    return <span className="inline-flex min-w-0 items-center gap-2">
+      {logo?(
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={logo} alt="" loading="lazy" referrerPolicy="no-referrer"
+          className="h-8 w-8 shrink-0 rounded-[var(--lms-control-radius)] border border-border bg-surface object-contain"/>
+      ):null}
+      <span className="min-w-0 break-words">{row.roundName} · {row.companyName}</span>
+    </span>;
+  };
   const details = (row: typeof workspace.rounds[number]) => {
     const outcome=outcomeByRound.get(row.applicationId+":"+row.roundId);
     const move=rescheduleByRound.get(row.applicationId+":"+row.roundId)?.request;
@@ -150,6 +170,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
     return <div className="min-w-0 mt-2 space-y-2 text-sm text-body">
       <p>{row.roundKind.replaceAll("_"," ")} · {mode==="VIRTUAL"?"Online":mode==="ON_CAMPUS"?"On campus":mode} · {row.durationMinutes!=null?row.durationMinutes+" minutes":"Duration to be told"}</p>
       <p>{venue?"Venue: "+venue:"Venue to be told"}</p>
+      {row.platform?.trim()?<p>Platform: {row.platform.trim()}</p>:null}
       <p className="whitespace-pre-wrap break-words">{row.whatToBring?.trim()?"What to bring: "+row.whatToBring:"What to bring: No instructions recorded."}</p>
       <div className="flex flex-wrap gap-3">
         {join&&/^https:\/\//i.test(join)?<ThirdPartyLink href={join} label="Join link" />:null}
@@ -216,7 +237,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
          <h3 className="text-sm font-semibold text-foreground">{dayLabel(dayRows[0]?.exception?.scheduledAt??dayRows[0]?.scheduledAt??null)}</h3>
          {dayRows.map(row => <article key={row.roundId+":"+row.applicationId} className="flex min-w-0 items-start gap-3 border-b border-[var(--lms-canvas-border)] py-4 min-[768px]:gap-4 min-[768px]:py-6">
           {dateTile(row.exception?.scheduledAt??row.scheduledAt)}<div className="min-w-0 flex-1">
-          <h3 className="font-semibold text-[var(--lms-heading)]">{row.roundName} · {row.companyName}</h3>
+          <h3 className="font-semibold text-[var(--lms-heading)]">{companyHeadline(row)}</h3>
           <p className="text-sm text-body">
             <Link href={"/learn/my-placements/applications/"+row.applicationId}
               className="font-semibold text-primary-text underline">{row.roleTitle}</Link>
@@ -231,7 +252,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
         </article>)}</section>)}
         {ahead.length === 0 ? <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9" href="/learn/my-placements/applications">See where your applications stand</Link> : null}
         {undated.map(row => <article key={row.roundId+":"+row.applicationId} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4 min-[768px]:py-6">
-          <h3 className="font-semibold text-[var(--lms-heading)]">{row.roundName} · {row.companyName}</h3>
+          <h3 className="font-semibold text-[var(--lms-heading)]">{companyHeadline(row)}</h3>
           <p className="text-sm text-body">Date to be told</p>
           {details(row)}
         </article>)}
@@ -267,7 +288,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
         {past.length === 0 ? <p role="status" className="flex min-h-44 items-center justify-center border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">No past rounds yet.</p> : past.map(row =>
           <article key={row.roundId+":"+row.applicationId} className="flex min-w-0 items-start gap-3 border-b border-[var(--lms-canvas-border)] bg-muted/30 py-4 min-[768px]:py-6">
             {dateTile(row.exception?.scheduledAt??row.scheduledAt)}<div className="min-w-0 flex-1">
-            <h3 className="font-semibold text-[var(--lms-heading)]">{row.roundName} · {row.companyName}</h3>
+            <h3 className="font-semibold text-[var(--lms-heading)]">{companyHeadline(row)}</h3>
             <p className="text-sm text-body">{timeRange(row)}</p>
             {details(row)}
             </div>
