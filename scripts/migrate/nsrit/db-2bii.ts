@@ -111,10 +111,10 @@ export async function loadPlacementsProjects2bii(ctx: LoadContext, plan: Plan2bi
     "module_access_rules",
     p.moduleRules,
     `INSERT INTO module_access_rules (id, scope_type, scope_id, module, enabled, locked, updated_by_user_id, created_at, updated_at)
-     VALUES ($1, 'COLLEGE', $2, $3, $4, false, $5, ${now(6)}, ${now(7)})
+     VALUES ($1, 'COLLEGE', $2, $3, $4, $8::boolean, $5, ${now(6)}, ${now(7)})
      ON CONFLICT (scope_type, scope_id, module) WHERE scope_id IS NOT NULL
-     DO UPDATE SET enabled = excluded.enabled, updated_at = excluded.updated_at WHERE module_access_rules.id = excluded.id`,
-    (i) => [i.newId, i.data.scopeId, i.data.module, i.data.enabled, i.data.updatedByUserId, T(i.data.createdAt), T(i.data.updatedAt)],
+     DO UPDATE SET enabled = excluded.enabled, locked = excluded.locked, updated_at = excluded.updated_at WHERE module_access_rules.id = excluded.id`,
+    (i) => [i.newId, i.data.scopeId, i.data.module, i.data.enabled, i.data.updatedByUserId, T(i.data.createdAt), T(i.data.updatedAt), i.data.locked],
   );
 
   // -------------------------------------------------------------- companies
