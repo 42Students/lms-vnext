@@ -6,7 +6,7 @@ describe("TPO Students academic import resilience",()=>{
   const source=read("src/components/tpo/tpo-academic-import-workspace.tsx");
   expect(source).toContain("Array.isArray(result.preview?.rows)");
   expect(source).toContain("cause instanceof FriendlyFetchError&&cause.status===409");
-  expect(source).toContain("Your academic import choices are kept below");
+  expect(source).toContain("Your verified academic values and import choices are kept below if the import cannot be completed.");
   expect(source).not.toContain("window.confirm(");
   expect(source).toContain("runGuarded(async()=>");
  });
