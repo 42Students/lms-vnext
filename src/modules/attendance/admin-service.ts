@@ -6,7 +6,6 @@ import {
   eq,
   gte,
   inArray,
-  isNull,
   lt,
   sql,
 } from "drizzle-orm";
