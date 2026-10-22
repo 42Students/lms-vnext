@@ -37,6 +37,16 @@ function viewSlot(s:typeof slots.$inferSelect,outcome?:string,feedback?:string|n
   version:s.version,interviewType:s.legacyInterviewType,
   roundDescription:s.legacyRoundDescription,editNotes:editNotes??null};
 }
+/** Delivery-channel parity is explicit, not guessed. In-app notices are
+ * persisted in the same transaction as the interview. Email/push/reminders
+ * need an approved message-outbox producer and DLT/email templates; none
+ * are promised by the scheduling action until a provider is registered. */
+export const COLLEGE_INTERVIEW_NOTIFICATION_CHANNELS={
+  inApp:"PERSISTED_ATOMICALLY",
+  email:"NOT_CONFIGURED",
+  push:"NOT_CONFIGURED",
+  reminders:"NOT_CONFIGURED",
+} as const;
 export type CollegeRoundSlotAppointmentFilters = {
  appointmentPage?:number;
  appointmentStatus?:"ALL"|"UPCOMING"|"COMPLETED"|"CANCELLED";
@@ -238,6 +248,7 @@ export async function getCollegeRoundSlotAppointments(
   }
  }
  return {job,storageReady:true,rounds,candidates,
+  notificationChannels:COLLEGE_INTERVIEW_NOTIFICATION_CHANNELS,
   candidateTotal,candidatePage,candidatePageSize,candidatePages,
   candidateHasMore:candidatePage<candidatePages,
   candidateConflicts,candidateConflictsHasMore,
