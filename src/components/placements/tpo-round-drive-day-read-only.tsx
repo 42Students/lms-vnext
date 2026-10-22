@@ -511,10 +511,9 @@ export function TpoRoundDriveDayReadOnly({
             Applicants in this round
           </h2>
           <p className="mt-1 text-sm text-body">
-            Shortlisted applicants who reached this round
-            under the existing previous-round progression
-            rules. Only student names and roll numbers are
-            displayed.
+            Shortlisted applicants who reached this round under the
+            existing previous-round progression rules. Contact, branch
+            and room details are visible only to authorized placement operators.
           </p>
         </div>
 
@@ -535,7 +534,27 @@ export function TpoRoundDriveDayReadOnly({
             action={<Link href={destinations.schedule} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Candidate schedule →</Link>} />}
           columns={[
             {key:"student",header:"Student",mobilePriority:"primary" as const,
-              cell:(student:(typeof data.rows)[number])=>student.displayName},
+              cell:(student:(typeof data.rows)[number])=><div className="flex min-w-0 items-center gap-2">
+                {student.avatarUrl?<span role="img" aria-label={"Photo of "+student.displayName}
+                  className="size-9 shrink-0 rounded-full bg-cover bg-center"
+                  style={{backgroundImage:`url("${student.avatarUrl}")`}}/>:
+                  <span aria-hidden="true" className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-body">
+                    {student.displayName.trim().charAt(0).toUpperCase()||"?"}
+                  </span>}
+                <span className="min-w-0 break-words">{student.displayName}</span>
+              </div>},
+            {key:"branch",header:"Branch",
+              cell:(student:(typeof data.rows)[number])=>student.branchName??"—"},
+            {key:"room",header:"Room",
+              cell:(student:(typeof data.rows)[number])=><div className="space-y-1 text-xs">
+                <span className="block">Assigned: {student.assignedRoom??"—"}</span>
+                <span className="block">Current: {student.currentRoom??"—"}</span>
+              </div>},
+            {key:"phone",header:"Call",
+              cell:(student:(typeof data.rows)[number])=>student.callHref?
+                <a href={student.callHref} className="inline-flex min-h-9 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  aria-label={"Call "+student.displayName}>{student.phoneE164}</a>:
+                <span className="text-muted-foreground">—</span>},
             {key:"roll",header:"Roll number",mobilePriority:"secondary" as const,
               cell:(student:(typeof data.rows)[number])=>student.rollNumber??"—"},
             {key:"application",header:"Application",mobilePriority:"secondary" as const,
