@@ -229,7 +229,7 @@ export async function ProjectAdminSubmissionsPage({
         workspace:submission.projectTitle,
         version:submission.version,
         status:submission.lockedAt?"Locked":submission.reopenedAt?"Draft (revising)":submission.status,
-        submissionType:submission.attachments.some(entry=>entry && typeof entry==="object" && "kind" in entry && entry.kind==="FILE")?"File upload":
+        submissionType:submission.attachments.some(entry=>entry && typeof entry==="object" && "kind" in entry && entry["kind"]==="FILE")?"File upload":
           submission.sourceUrl||submission.demoUrl?"Link":"Text",
         pendingDays:submission.status==="SUBMITTED"&&submission.submittedAt?
           projectAdminElapsedDays(submission.submittedAt,renderedAt):null,
@@ -311,9 +311,9 @@ export async function ProjectAdminSubmissionsPage({
                 {row.attachments.map((item,index)=>{
                   if(!item||typeof item!=="object")return null;
                   const entry=item as Record<string,unknown>;
-                  const href=typeof entry.url==="string"?safeProjectExternalHref(entry.url):null;
+                  const href=typeof entry["url"]==="string"?safeProjectExternalHref(entry["url"]):null;
                   return href?<a key={index} href={href} target="_blank" rel="noopener noreferrer"
-                    className="text-link underline">Open {entry.kind==="FILE"?"file":"link"}</a>:
+                    className="text-link underline">Open {entry["kind"]==="FILE"?"file":"link"}</a>:
                     <span key={index} role="status" className="text-xs text-error">
                       Could not resolve this submission&apos;s file.</span>;
                 })}
