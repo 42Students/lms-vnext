@@ -122,7 +122,7 @@ export default async function TpoUnplacedReportPage({
         actions={<div className="flex flex-wrap items-center gap-2 print:hidden">
           <TpoReportPresentation/>
           <Link href="/tpo/reports" className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-link md:min-h-9">All reports</Link>
-          <Link href={tpoUnplacedStudentsHref({batchId,branchId})} className="inline-flex min-h-11 items-center rounded border border-primary px-3 text-sm font-semibold text-link md:min-h-9">Act on them on Students</Link>
+          <Link href={tpoUnplacedStudentsHref({...(batchId ? {batchId} : {}),...(branchId ? {branchId} : {})})} className="inline-flex min-h-11 items-center rounded border border-primary px-3 text-sm font-semibold text-link md:min-h-9">Act on them on Students</Link>
           {permittedBatch&&permittedBranch?<a href={filteredExportHref} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-link md:min-h-9">Download filtered CSV</a>:null}
         </div>}
       />
