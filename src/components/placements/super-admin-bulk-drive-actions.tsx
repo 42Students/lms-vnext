@@ -27,20 +27,19 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
   const [busy, setBusy] = useState(false);
   const [confirmOpen,setConfirmOpen]=useState(false);
   const inFlightRef=useRef(false);
-  const eligible = drives.filter(d => action === "CLOSE"
-    ? d.status === "PUBLISHED" : d.status === "CLOSED");
+  const eligible = drives.filter(d => d.status === "PUBLISHED" || d.status === "CLOSED");
   function toggle(id: string) {
     setSelected(ids => ids.includes(id) ? ids.filter(x => x !== id) : [...ids, id]);
     setPreview(null); setResult(null);
   }
-  async function send(confirm: boolean) {
+  async function send(confirm: boolean,requestedAction:"OPEN"|"CLOSE"=action) {
     if (busy || inFlightRef.current || !selected.length || selected.length > 100) return;
     inFlightRef.current=true;
     setBusy(true); setError("");
     try {
       const payload = await apiFetch<Preview | Result>("/api/admin/placements/drives/bulk", {
         method: "POST", headers: {"content-type": "application/json"},
-        body: JSON.stringify({action, jobIds: selected,
+        body: JSON.stringify({action:requestedAction, jobIds: selected,
           ...(confirm ? {confirmed: true} : {confirmStage: "PREVIEW"})}),
       });
       if (confirm) {
@@ -49,7 +48,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
         setSelected(response.results.filter(r => r.status === "SKIPPED").map(r => r.jobId));
         if(response.updated>0)showToast({
           tone:"success",
-          title:response.updated+" drive(s) "+(action==="OPEN"?"opened":"closed"),
+          title:response.updated+" drive(s) "+(requestedAction==="OPEN"?"opened":"closed"),
           description:response.skipped>0?response.skipped+" failed. Retry only those drives.":undefined,
         });
         if(response.skipped>0)showToast({
@@ -73,8 +72,8 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
         className="flex min-h-11 flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-[#91caff] bg-[#e6f4ff] px-3 py-2 text-sm text-[#0958d9]">
         <strong>{selected.length} selected</strong>
         <div className="flex flex-wrap items-center gap-2">
-         <Button type="button" size="sm" disabled={busy} onClick={()=>{setAction("OPEN");setPreview(null);setResult(null);}}>Open</Button>
-         <Button type="button" size="sm" disabled={busy} onClick={()=>{setAction("CLOSE");setPreview(null);setResult(null);}}>Close</Button>
+         <Button type="button" size="sm" disabled={busy} onClick={()=>{setAction("OPEN");setPreview(null);setResult(null);void send(false,"OPEN");}}>Open</Button>
+         <Button type="button" size="sm" disabled={busy} onClick={()=>{setAction("CLOSE");setPreview(null);setResult(null);void send(false,"CLOSE");}}>Close</Button>
          <Button type="button" variant="link" size="sm" disabled={busy} onClick={()=>{setSelected([]);setPreview(null);setResult(null);}}>Clear selection</Button>
         </div>
        </div>:null}
@@ -84,11 +83,11 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
           checked={eligible.length>0 && eligible.slice(0,100).every(d=>selected.includes(d.id))}
           onChange={e=>{setSelected(e.target.checked?eligible.slice(0,100).map(d=>d.id):[]);
             setPreview(null);setResult(null);}}/>
-        Select up to 100 eligible drives ({eligible.length} available)
+        Select up to 100 published or closed drives ({eligible.length} available)
       </label>
       <label className="flex min-w-0 flex-col items-start gap-[6px] text-[13px]">Action
         <Select value={action} aria-label="Bulk action" disabled={busy} onChange={e=>{
-          setAction(e.target.value as "OPEN" | "CLOSE");setSelected([]);
+          setAction(e.target.value as "OPEN" | "CLOSE");
           setPreview(null);setResult(null);}}
           className="min-h-11 w-full min-w-0 md:min-h-9">
           <option value="CLOSE">Close selected</option>
@@ -100,7 +99,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
         Preview {selected.length} drive(s)
       </Button>
     </div>
-    {eligible.length>3?<p id="bulk-drive-scroll-cue" className="text-xs text-muted-foreground">More drives below ↓ · Scroll to review the eligible drives.</p>:null}
+    {eligible.length>3?<p id="bulk-drive-scroll-cue" className="text-xs text-muted-foreground">More drives below ↓ · Scroll to review published or closed drives.</p>:null}
     <div tabIndex={0} role="region" aria-label="Eligible drive list" aria-describedby={eligible.length>3?"bulk-drive-scroll-cue":undefined}
       className="grid max-h-56 min-w-0 gap-2 overflow-y-auto overscroll-contain border-y border-border py-2 sm:grid-cols-2 xl:grid-cols-3">
       {eligible.map(d=><div key={d.id} className="min-w-0 border-b border-border py-2">
