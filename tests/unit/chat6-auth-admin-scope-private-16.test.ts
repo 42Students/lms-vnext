@@ -7,6 +7,7 @@ vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:vi.fn()}));
 vi.mock("@/auth/origin",()=>({isSameOriginRequest:vi.fn()}));
 vi.mock("@/modules/admin-scope/service",()=>({
  listAdminScopeChoices:vi.fn(),resolveAdminScopeSelection:vi.fn(),
+ AdminScopeServiceError:class AdminScopeServiceError extends Error {constructor(public readonly code:string){super(code);}},
 }));
 const organizationId="11111111-1111-4111-8111-111111111111";
 const collegeId="22222222-2222-4222-8222-222222222222";
