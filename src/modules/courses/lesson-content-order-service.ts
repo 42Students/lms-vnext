@@ -246,7 +246,7 @@ export async function updateDeliveryLessonContentOrder(
           (lessonContentId, sequence) => ({
             lessonContentId,
             lessonId: input.lessonId,
-            offeringId: delivery.offeringId,
+            offeringId: lesson.offeringId,
             deliveryId:
               input.deliveryId,
             sequence,

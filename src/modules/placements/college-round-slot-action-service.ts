@@ -13,17 +13,19 @@ import {collegeInterviewActionSchema} from "./college-interview-action-model";
 import {placementCollegeApplicationStages,placementCollegeApplicationStageHistory}
  from "@/db/schema/placement-college-application-stages";
 
+/** A persisted interview instant is displayed in the college's IST zone. */
+function roundInterviewInstantIst(value: Date): string {
+ return new Intl.DateTimeFormat("en-IN",{
+  dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+ }).format(value);
+}
+
 /** The current write API remains job/round/application scoped; old jobApplication
  * and learner IDs resolve through the chosen college membership, never across tenants. */
 export const collegeInterviewLegacyActionMap={
  create:"SCHEDULE",update:"EDIT",cancel:"CANCEL",complete:"COMPLETE",noShow:"NO_SHOW",
  response:"id/status/version",
 } as const;
-function roundInterviewInstantIst(value:Date):string{
- return new Intl.DateTimeFormat("en-IN",{
-  timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
- }).format(value);
-}
 export class CollegeInterviewFieldError extends Error {
  constructor(readonly field:"scheduledAt"|"meetingUrl",message:string){super(message);this.name="CollegeInterviewFieldError";}
 }
