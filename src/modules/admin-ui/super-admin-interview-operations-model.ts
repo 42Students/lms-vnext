@@ -14,8 +14,9 @@ export function potentialRoomConflicts(rows:readonly SuperAdminCalendarRound[]){
  const conflicted=new Set<string>();
  for(let i=0;i<active.length;i++)for(let j=i+1;j<active.length;j++){
   const a=active[i],b=active[j];
-  if(a.id===b.id||a.venue!.trim().toLowerCase()!==b.venue!.trim().toLowerCase())continue;
-  if(Date.parse(a.startsAt)<Date.parse(b.endsAt!)&&Date.parse(b.startsAt)<Date.parse(a.endsAt!)){
+  if(!a||!b||!a.endsAt||!b.endsAt)continue;
+  if(a.id===b.id||a.venue?.trim().toLowerCase()!==b.venue?.trim().toLowerCase())continue;
+  if(Date.parse(a.startsAt)<Date.parse(b.endsAt)&&Date.parse(b.startsAt)<Date.parse(a.endsAt)){
    conflicted.add(a.id);conflicted.add(b.id);
   }
  }
@@ -41,8 +42,9 @@ export function bookingConflicts(rows:readonly SuperAdminCalendarRound[]):Map<st
  const add=(id:string,reason:string)=>indexed.set(id,[...new Set([...(indexed.get(id)??[]),reason])]);
  for(let i=0;i<active.length;i++)for(let j=i+1;j<active.length;j++){
   const a=active[i],b=active[j];
-  if(a.id===b.id||Date.parse(a.startsAt)>=Date.parse(b.endsAt!)||
-   Date.parse(b.startsAt)>=Date.parse(a.endsAt!))continue;
+  if(!a||!b||!a.endsAt||!b.endsAt)continue;
+  if(a.id===b.id||Date.parse(a.startsAt)>=Date.parse(b.endsAt)||
+   Date.parse(b.startsAt)>=Date.parse(a.endsAt))continue;
   if(a.candidateMembershipId && a.candidateMembershipId===b.candidateMembershipId){
    add(a.id,"Candidate double-booked");add(b.id,"Candidate double-booked");
   }
