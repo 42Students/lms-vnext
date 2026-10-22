@@ -34,7 +34,8 @@ describe("LEARNER-placements-19 — reviewer correction: no 20-item pagination g
   // determines the page count.
   expect(ui).toContain("learnerDrivePageState(primary.length,parsedPage,PAGE_SIZE)");
   expect(ui).toContain("const paged=primary.slice(pagination.startIndex,pagination.endIndex)");
-  expect(ui).toContain('aria-label="Drive results pages"');
+  expect(ui).toContain('<Pagination page={page} pageCount={totalPages} label="Drive results pages"');
+  expect(read("src/components/ui/pagination.tsx")).toContain('aria-label={label}');
   expect(ui).toContain("Showing page {page} instead.");
   expect(ui).toContain('totalPages > 1');
  });
