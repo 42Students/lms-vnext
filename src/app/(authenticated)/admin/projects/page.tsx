@@ -107,7 +107,7 @@ export default async function SuperAdminProjectsPage({
         actions={<ProjectWorkspaceRefreshButton/>} />
       <ProjectAdminNav basePath="/admin/projects" active="workspaces" />
       <Banner tone="warning">Couldn't refresh workspaces. Your filters are unchanged, but previously fetched rows are not reused across college scopes.</Banner>
-      <section aria-label="Workspaces" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-none md:p-5">
+      <section aria-label="Workspace filters" className="min-w-0">
         <h2 className="mb-3 text-lg font-semibold text-foreground">Workspaces</h2>
         <FilterBar title="Project workspace filters"><ProjectAdminFilters query={query} legacyWorkspaces /></FilterBar>
       </section>
@@ -136,9 +136,9 @@ export default async function SuperAdminProjectsPage({
     <div className="min-w-0 space-y-4">
       <PageHeader title="Project workspaces"
         description="College project workspaces for students and mentors."
-        actions={<ProjectWorkspaceRefreshButton/>} />
-      <div className="flex min-w-0 flex-wrap items-center gap-2 print:hidden">
-        <CreateProjectControl
+        actions={<div className="flex min-w-0 flex-wrap items-center gap-2 print:hidden">
+          <ProjectWorkspaceRefreshButton />
+          <CreateProjectControl
           collegeId={collegeId} basePath="/admin/projects"
           templates={templates.map(template=>({
             templateId:template.templateId,title:template.title,
@@ -156,14 +156,13 @@ export default async function SuperAdminProjectsPage({
           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-primary md:min-h-9">
           Deleted workspaces
         </Link>
-      </div>
+        </div>} />
       <ProjectAdminNav basePath="/admin/projects" active="workspaces" />
 
       {!templatesResult.ok ? <Banner tone="warning">
         Project templates are temporarily unavailable. Your workspaces are still visible; refresh to try again.
       </Banner> : null}
-      <section aria-label="Workspaces" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-none md:p-5">
-       <h2 className="m-0 text-lg font-semibold text-foreground">Workspaces</h2>
+      <section aria-label="Workspaces" className="min-w-0 space-y-3">
       <Tabs ariaLabel="Workspace display mode" renderPanel={false} value={view??"table"}
         items={[
           {value:"table",label:"Table",href:viewHref("table"),count:result.total},
