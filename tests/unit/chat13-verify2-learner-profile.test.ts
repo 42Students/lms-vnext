@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { learnerProfileDocumentSchema } from "@/modules/people/profile-validation";
+import { learnerProfileDocumentSchema,applyLegacyNullableLearnerProfilePatch } from "@/modules/people/profile-validation";
 import {
   learnerContactEditSchema,
   validateLearnerAlternatePhoneAgainstPrimary,
@@ -21,6 +21,19 @@ describe("Lane 13 verification: learner contact, preferences and signed resume",
   expect(optedOut.jobPreferences.papInterest).toBe("Yes");
   expect(learnerProfileDocumentSchema.parse(optedOut).jobPreferences)
     .toEqual(optedOut.jobPreferences);
+ });
+ it("preserves null and absent legacy patch values while honoring explicit blank clears",()=>{
+  const current={headline:"Existing headline",city:"Vijayawada",notes:"Saved"};
+  const next=applyLegacyNullableLearnerProfilePatch(current,{
+    headline:null,city:"  ",notes:"  Updated  ",forgedField:"ignored",
+  },["headline","city","notes"]);
+  expect(next).toEqual({headline:"Existing headline",city:"",notes:"Updated"});
+  expect(current).toEqual({headline:"Existing headline",city:"Vijayawada",notes:"Saved"});
+  expect(applyLegacyNullableLearnerProfilePatch(current,{},["headline","city"]))
+    .toEqual(current);
+  expect(()=>applyLegacyNullableLearnerProfilePatch(current,{
+    city:42,
+  },["city"])).toThrow("Invalid legacy profile text field");
  });
  it("enforces alternate-phone length and compares against the persisted primary identity",()=>{
   const base={confirmed:true as const,contacts:{
