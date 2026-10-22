@@ -259,10 +259,7 @@ export function CreateProjectControl({
         router.refresh();
         return;
       }
-      showToast({
-        tone: "success",
-        title: standalone ? "Workspace created" : "Project created successfully",
-      });
+      showToast({tone:"success",title:"Workspace created"});
       setOpen(false);
       router.push(`${basePath}/${encodeURIComponent(createdId)}/summary`);
       router.refresh();
@@ -310,6 +307,70 @@ export function CreateProjectControl({
         <form noValidate onSubmit={submit} className="grid min-w-0 grid-cols-1 items-start gap-4">
           <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              Workspace title
+            </span>
+            <Input
+              ref={titleRef}
+              required
+              maxLength={160}
+              aria-invalid={attempted&&!title.trim()}
+              value={title}
+              onChange={(event) => {
+                const next=event.target.value;
+                setTitle(next);
+                if(!slugEdited)setSlug(next.toLowerCase().normalize("NFKD")
+                  .replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-")
+                  .replace(/^-|-$/g,"").slice(0,64).replace(/-$/g,""));
+              }}
+              placeholder="Campus Event Coordination"
+            />
+            <span className="mt-1 block text-xs text-muted-foreground">{title.length}/160</span>
+            {attempted&&!title.trim()?<span role="alert" className="mt-1 block text-xs text-error">
+              Title is required
+            </span>:null}
+          </label>
+          <label className="min-w-0 md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              Summary
+            </span>
+            <Textarea
+              rows={3}
+              maxLength={2000}
+              value={summary}
+              onChange={(event) =>
+                setSummary(event.target.value)
+              }
+              placeholder="Short live workspace summary"
+            />
+          </label>
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+            <Select value={displayStatus} onChange={event=>{
+              const next=event.target.value as typeof displayStatus;
+              const previous=displayStatus;
+              setDisplayStatus(next);
+              setInitialStatus(next==="BLOCKED"||next==="PLANNED"?"PLANNED":"ACTIVE");
+              if(phase==="Planning"||phase===previous.replace("_"," ")){
+                setPhase(next==="IN_PROGRESS"?"In progress":next==="READY"?"Ready":
+                  next==="BLOCKED"?"Blocked":"Planning");
+              }
+            }} className="w-full">
+              <option value="PLANNED">Planning</option>
+              <option value="ACTIVE">Active</option>
+              <option value="IN_PROGRESS">In progress</option>
+              <option value="READY">Ready</option>
+              <option value="BLOCKED">Blocked</option>
+              <option value="ARCHIVED" disabled>Archived (use Archive after creating)</option>
+            </Select>
+            <span className="text-xs text-body">
+              {displayStatus==="READY"||displayStatus==="IN_PROGRESS"
+                ?"The workspace is saved as Active, with the historical stage in Phase.":
+                displayStatus==="BLOCKED"
+                ?"The workspace is saved as Planned, with Blocked recorded in Phase.":
+                "Archive is available after the workspace is created."}
+            </span>
+          </label>
+          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Template
             </span>
             <Input type="search" className="mb-2" maxLength={120}
@@ -338,30 +399,9 @@ export function CreateProjectControl({
             {attempted&&!templateId?<span role="alert" className="mt-1 block text-xs text-error">
               Select a template to start from its sprint and task plan.
             </span>:null}
-          </label>
-          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Workspace title
+            <span className="mt-1 block text-xs font-normal text-body">
+              Search by template title. The assigned published version is pinned to the new workspace.
             </span>
-            <Input
-              ref={titleRef}
-              required
-              maxLength={160}
-              aria-invalid={attempted&&!title.trim()}
-              value={title}
-              onChange={(event) => {
-                const next=event.target.value;
-                setTitle(next);
-                if(!slugEdited)setSlug(next.toLowerCase().normalize("NFKD")
-                  .replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-")
-                  .replace(/^-|-$/g,"").slice(0,64).replace(/-$/g,""));
-              }}
-              placeholder="Campus Event Coordination"
-            />
-            <span className="mt-1 block text-xs text-muted-foreground">{title.length}/160</span>
-            {attempted&&!title.trim()?<span role="alert" className="mt-1 block text-xs text-error">
-              Title is required
-            </span>:null}
           </label>
           <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -382,20 +422,65 @@ export function CreateProjectControl({
               Lowercase letters, numbers and hyphens only.
             </span>
           </label>
-          <label className="min-w-0 md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Summary
+              Primary mentor
             </span>
-            <Textarea
-              rows={3}
-              maxLength={2000}
-              value={summary}
+            <Input className="mb-2" type="search" value={mentorQuery}
+              placeholder={initialStatus==="ACTIVE"?"Required — search by faculty name":"Search by faculty name"} aria-label="Search mentors"
+              disabled={pending} maxLength={120}
+              onChange={event => setMentorQuery(event.target.value)} />
+            <Select
+              value={mentorMembershipId}
+              aria-invalid={attempted&&initialStatus==="ACTIVE"&&!mentorMembershipId}
+              disabled={pending || mentorsLoading}
               onChange={(event) =>
-                setSummary(event.target.value)
+                setMentorMembershipId(event.target.value)
               }
-              placeholder="Short live workspace summary"
-            />
+            >
+              <option value="">
+                {mentorsLoading
+                  ? "Loading mentors…"
+                  : "Assign later"}
+              </option>
+              {mentors.map((mentor) => (
+                <option
+                  key={mentor.membershipId}
+                  value={mentor.membershipId}
+                >
+                  {mentor.displayName} · {mentor.membershipId.slice(0,8)}
+                </option>
+              ))}
+            </Select>
+            <span className="mt-1 block text-xs text-muted-foreground">
+              {initialStatus==="ACTIVE"?
+                "Required — search by faculty name. Active workspaces must have a primary Mentor.":
+                "Optional while Planned; you can assign a primary Mentor later."}
+            </span>
           </label>
+          <div className="min-w-0 space-y-2 md:col-span-2">
+            <Button type="button" variant="secondary" size="sm" disabled={pending}
+              onClick={()=>{setShowClassSelector(v=>!v);setSectionId("");
+                setRoster([]);setLearnerMembershipIds([]);setLoadedRosterSectionId(null);}}>
+              {showClassSelector?"Remove class link":"Or add a whole class"}
+            </Button>
+            <p className="text-xs text-body">
+              Select eligible students directly or add a whole class.
+              You can remove individual students after using the class shortcut.
+            </p>
+          </div>
+          {showClassSelector?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
+            <Input type="search" value={classQuery} maxLength={120}
+              placeholder="Search class name or code" aria-label="Search classes"
+              onChange={event=>setClassQuery(event.target.value)}/>
+            <Select value={sectionId} onChange={e=>{setSectionId(e.target.value);
+              setRoster([]);setLearnerMembershipIds([]);setLoadedRosterSectionId(null);setRosterError(false);}}
+              className="w-full">
+              <option value="">Choose class</option>
+              {classes.map(item=><option key={item.id} value={item.id}>{item.name} · {item.code}</option>)}
+            </Select>
+          </label>:null}
+          {showClassSelector&&classesError?<p role="alert" className="text-sm text-error md:col-span-2">Classes could not load. <Button variant="ghost" type="button" className="underline" onClick={()=>{setClassesError(false);setClassesRetry(value=>value+1);}}>Try Again</Button></p>:null}
           <div className="grid min-w-0 gap-4 md:col-span-2 sm:grid-cols-2">
             <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">
               Phase
@@ -428,87 +513,6 @@ export function CreateProjectControl({
                 placeholder="Optional next step" />
             </label>
           </div>
-          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Primary mentor
-            </span>
-            <Input className="mb-2" type="search" value={mentorQuery}
-              placeholder={initialStatus==="ACTIVE"?"Required — search by faculty name":"Search by faculty name"} aria-label="Search mentors"
-              disabled={pending} maxLength={120}
-              onChange={event => setMentorQuery(event.target.value)} />
-            <Select
-              value={mentorMembershipId}
-              disabled={pending || mentorsLoading}
-              onChange={(event) =>
-                setMentorMembershipId(event.target.value)
-              }
-            >
-              <option value="">
-                {mentorsLoading
-                  ? "Loading mentors…"
-                  : "Assign later"}
-              </option>
-              {mentors.map((mentor) => (
-                <option
-                  key={mentor.membershipId}
-                  value={mentor.membershipId}
-                >
-                  {mentor.displayName} · {mentor.membershipId.slice(0,8)}
-                </option>
-              ))}
-            </Select>
-            <span className="mt-1 block text-xs text-muted-foreground">
-              If selected, the Mentor assignment is validated and committed atomically with workspace creation.
-            </span>
-          </label>
-          <div className="min-w-0 space-y-2 md:col-span-2">
-            <Button type="button" variant="secondary" size="sm" disabled={pending}
-              onClick={()=>{setShowClassSelector(v=>!v);setSectionId("");
-                setRoster([]);setLearnerMembershipIds([]);setLoadedRosterSectionId(null);}}>
-              {showClassSelector?"Remove class link":"Link to a class (optional)"}
-            </Button>
-            <p className="text-xs text-body">
-              Select eligible students directly or add a whole class. You can remove individual students after using the class shortcut.
-            </p>
-          </div>
-          {showClassSelector?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
-            <Input type="search" value={classQuery} maxLength={120}
-              placeholder="Search class name or code" aria-label="Search classes"
-              onChange={event=>setClassQuery(event.target.value)}/>
-            <Select value={sectionId} onChange={e=>{setSectionId(e.target.value);
-              setRoster([]);setLearnerMembershipIds([]);setLoadedRosterSectionId(null);setRosterError(false);}}
-              className="w-full">
-              <option value="">Choose class</option>
-              {classes.map(item=><option key={item.id} value={item.id}>{item.name} · {item.code}</option>)}
-            </Select>
-          </label>:null}
-          {showClassSelector&&classesError?<p role="alert" className="text-sm text-error md:col-span-2">Classes could not load. <Button variant="ghost" type="button" className="underline" onClick={()=>{setClassesError(false);setClassesRetry(value=>value+1);}}>Try Again</Button></p>:null}
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
-            <Select value={displayStatus} onChange={event=>{
-              const next=event.target.value as typeof displayStatus;
-              const previous=displayStatus;
-              setDisplayStatus(next);
-              setInitialStatus(next==="BLOCKED"||next==="PLANNED"?"PLANNED":"ACTIVE");
-              if(phase==="Planning"||phase===previous.replace("_"," ")){
-                setPhase(next==="IN_PROGRESS"?"In progress":next==="READY"?"Ready":
-                  next==="BLOCKED"?"Blocked":"Planning");
-              }
-            }} className="w-full">
-              <option value="PLANNED">Planning</option>
-              <option value="ACTIVE">Active</option>
-              <option value="IN_PROGRESS">In progress</option>
-              <option value="READY">Ready</option>
-              <option value="BLOCKED">Blocked</option>
-              <option value="ARCHIVED" disabled>Archived (use Archive after creating)</option>
-            </Select>
-            <span className="text-xs text-body">
-              {displayStatus==="READY"||displayStatus==="IN_PROGRESS"
-                ?"The workspace is saved as Active, with the historical stage in Phase.":
-                displayStatus==="BLOCKED"
-                ?"The workspace is saved as Planned, with Blocked recorded in Phase.":
-                "Archive is available after the workspace is created."}
-            </span>
-          </label>
           {!mentorMembershipId?<p className="text-xs text-warning md:col-span-2">
             {initialStatus === "ACTIVE" ? "A mentor is required before a workspace can be Active" :
               "This workspace has no mentor. A mentor can be assigned later while the workspace is Planned."}
