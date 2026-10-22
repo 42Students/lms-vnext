@@ -38,13 +38,13 @@ export default async function AccountSecurityPage() {
       ) : (
         <DeviceList
           devices={rows.map((row) => ({
-            id: String(row.id),
+            id: String(row["id"]),
             label:
-              (row.device_name as string | null) ??
-              describeDevice(row.user_agent as string | null),
-            createdAt: deviceTimestampIso(row.created_at),
-            lastSeenAt: deviceTimestampIso(row.last_seen_at),
-            current: row.id === session.sessionId,
+              (row["device_name"] as string | null) ??
+              describeDevice(row["user_agent"] as string | null),
+            createdAt: deviceTimestampIso(row["created_at"]),
+            lastSeenAt: deviceTimestampIso(row["last_seen_at"]),
+            current: row["id"] === session.sessionId,
           }))}
         />
       )}
