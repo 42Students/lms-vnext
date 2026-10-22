@@ -289,7 +289,8 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
       exceptionalCorrection:input.action==="CORRECT",
       cancelledInterviewCount,
       assessmentLinkAttached:next==="ASSESSMENT"&&Boolean(input.assessmentUrl),
-      assessmentLinkSavedToJob:next==="ASSESSMENT"&&Boolean(input.saveAssessmentUrlToJob)},
+      assessmentLinkSavedToJob:next==="ASSESSMENT"&&Boolean(input.saveAssessmentUrlToJob),
+      learnerInAppNoticeRequested:input.notifyLearnerInApp},
     }).returning({id:activityEvents.id});
     const title="Your placement application was updated";
     const body=next==="REJECTED"?
@@ -299,7 +300,8 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
     // Undo is offered ONLY if the registered, separately fenced scheduler
     // can delay delivery and the status change has no other persisted
     // screening, job URL, offer or interview side effects.
-    const reversible=process.env.DB10_NOTIFICATION_OUTBOX_READY==="DB10_VERIFIED"&&
+    const reversible=input.notifyLearnerInApp&&
+     process.env.DB10_NOTIFICATION_OUTBOX_READY==="DB10_VERIFIED"&&
      input.action==="MOVE"&&
      ([["SHORTLISTED","ASSESSMENT"],["ASSESSMENT","INTERVIEW"],
        ["INTERVIEW","WAITLISTED"],["WAITLISTED","ASSESSMENT"],
@@ -332,7 +334,7 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
       returning id
      `);
      if(!queued.rows[0])throw new Error("Learner notification could not be scheduled.");
-    }else{
+    }else if(input.notifyLearnerInApp){
      await tx.insert(inAppNotifications).values({
       userId:application.userId,eventId:audit.id,title,body,
       actionHref:"/learn/my-placements/applications",
