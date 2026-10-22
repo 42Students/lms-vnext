@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from "node:crypto";
-import { desc, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   db10BugReportActivities,
@@ -49,6 +49,17 @@ export async function createBugTrackerIssueForAdmin(
     if (!actor || actor.platformStatus !== "ACTIVE") {
       throw new TrackerAdminError("FORBIDDEN");
     }
+    // Persisted principal revocation takes priority over idempotent replay:
+    // no stale user can re-enable a disabled reporter by submitting a report.
+    const [existingAccess]=await tx.select({
+      id:db10BugTrackerAccess.id,active:db10BugTrackerAccess.active,
+      accessRole:db10BugTrackerAccess.accessRole,
+    }).from(db10BugTrackerAccess)
+      .where(eq(db10BugTrackerAccess.subjectUserId,context.user.id))
+      .for("update").limit(1);
+    if (existingAccess && (!existingAccess.active ||
+        !["REPORTER","MANAGER"].includes(existingAccess.accessRole)))
+      throw new TrackerAdminError("FORBIDDEN");
     if (idempotencyKey) {
       // Locking the reporter's users row above serializes same-user retries;
       // the existing UNIQUE public_id index is the second defense.
@@ -86,20 +97,10 @@ export async function createBugTrackerIssueForAdmin(
     // and only the signed-in user may submit their own selected reporter name.
     if(!reporterName||input.reporterName.trim().toLocaleLowerCase("en-IN")!==reporterName.toLocaleLowerCase("en-IN"))
       throw new TrackerAdminError("INVALID_INPUT");
-    // Historic bug tracker allowed selecting an active named reporter, but
-    // names are not identities and may collide. User IDs are authoritative.
-    // Existing rows are re-used so reporting does not create a new disabled
-    // principal on every submission. No external login token is issued.
-    const [existingAccess]=await tx.select({
-      id:db10BugTrackerAccess.id,active:db10BugTrackerAccess.active,
-      accessRole:db10BugTrackerAccess.accessRole,
-    })
-      .from(db10BugTrackerAccess)
-      .where(eq(db10BugTrackerAccess.subjectUserId,context.user.id)).limit(1);
-    const [prior] = await tx.select({ id: db10BugReports.reporterAccessId })
-      .from(db10BugReports).where(eq(db10BugReports.reporterUserId, context.user.id))
-      .orderBy(desc(db10BugReports.createdAt)).limit(1);
-    const reporter = existingAccess ?? prior ?? (await tx.insert(db10BugTrackerAccess).values({
+    // Historic display names are not identities. Only an ACTIVE access row
+    // belonging to the signed-in user can be reused. Never claim an older
+    // report's access ID; imported access may have been revoked.
+    const reporter = existingAccess ?? (await tx.insert(db10BugTrackerAccess).values({
       subjectUserId:context.user.id,
       displayName: reporterName,
       tokenHash: randomBytes(32).toString("hex"),
@@ -110,14 +111,6 @@ export async function createBugTrackerIssueForAdmin(
       active: true,
     }).returning({ id: db10BugTrackerAccess.id }))[0];
     if (!reporter) throw new Error("Tracker reporter could not be recorded");
-    if(prior && !existingAccess){
-      // A previous report's access ID is trusted only if its reporter was
-      // this persisted user and its principal was not reassigned. Never
-      // promote an inactive or legacy external token as a new session.
-      await tx.update(db10BugTrackerAccess)
-        .set({subjectUserId:context.user.id})
-        .where(eq(db10BugTrackerAccess.id,prior.id));
-    }
     const [report] = await tx.insert(db10BugReports).values({
       publicId,
       reporterAccessId: reporter.id,
