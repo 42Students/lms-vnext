@@ -9,6 +9,7 @@ import { isSuperAdmin } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
+import { NotificationDeliveryActions } from "@/components/announcements/notification-delivery-actions";
 
 export default async function NotificationDeliveryHistoryPage() {
   const context = await getCurrentRequestContext();
@@ -77,6 +78,7 @@ export default async function NotificationDeliveryHistoryPage() {
             {entry.deliveredAt ? " · Delivered " + formatTime(entry.deliveredAt) : ""}
           </p>
           {entry.deliveryError ? <p role="alert" className="text-sm">Delivery error: {entry.deliveryError}</p> : null}
+          <NotificationDeliveryActions id={entry.id} collegeId={collegeId} deliveryStatus={entry.deliveryStatus} />
         </article>)}
       </div>
     )}
