@@ -34,6 +34,19 @@ function sender(row:InboundMailRow){
  return row.senderDisplayName?.trim()||row.fromAddress?.trim()||"Unknown sender";
 }
 const statusLabel:Record<string,string>={NEW:"To read",TRIAGED:"Being handled",RESOLVED:"Done"};
+/** Routing is a delivery outcome, not staff's triage status. Preserve all
+ * eight legacy outcomes independently from the handled/To read badge. */
+const routingTones:Record<InboundMailRoutingStatus,"success"|"info"|"warning"|"error"|"neutral">={
+ POSTED:"success",STORED:"neutral",NO_THREAD:"warning",WRONG_SENDER:"error",
+ NOT_VERIFIED:"warning",EMPTY:"warning",ACCESS_ENDED:"error",FAILED:"error",
+};
+function MailRoutingBadge({status}:{status:string|null|undefined}){
+ if(!status)return null;
+ const kind=status as InboundMailRoutingStatus;
+ return <StatusBadge tone={routingTones[kind]??"neutral"}>
+  {inboundMailRoutingStatusLabels[kind]??status}
+ </StatusBadge>;
+}
 
 export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}){
  const router=useRouter();
@@ -161,7 +174,12 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}){
          </span>
         </td>
         <td className="whitespace-nowrap px-3 py-3 align-top">
-         <StatusBadge>{statusLabel[overrides[row.id]?.status??row.status]??"Unknown status"}</StatusBadge>
+         <div className="flex flex-col items-start gap-1">
+          <MailRoutingBadge status={row.routingStatus}/>
+          {row.handledAt||row.status==="RESOLVED"||overrides[row.id]?.status==="RESOLVED"?
+           <StatusBadge tone="success">Done</StatusBadge>:
+           <StatusBadge>{statusLabel[overrides[row.id]?.status??row.status]??"Unknown status"}</StatusBadge>}
+         </div>
         </td>
        </tr>)}
      </tbody>
@@ -173,15 +191,17 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}){
     description={selected.toAddress+" · "+receivedLabel(selected.receivedAt)}>
     <section className="min-w-0 space-y-4">
      <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
-      {selected.routingStatus&&selected.routingStatus!=="STORED"?
-       <StatusBadge>{inboundMailRoutingStatusLabels[selected.routingStatus as InboundMailRoutingStatus]??selected.routingStatus}</StatusBadge>:
-       <span className="text-xs text-muted-foreground">Inbound message</span>}
+      <span className="flex flex-wrap items-center gap-2">
+       <MailRoutingBadge status={detail?.routingStatus??selected.routingStatus}/>
+       {selected.handledAt||overrides[selected.id]?.status==="RESOLVED"?
+        <StatusBadge tone="success">Done</StatusBadge>:null}
+      </span>
       <div className="flex flex-wrap gap-2">
-       {(selected.routingStatus==="POSTED"?[]:
+       {((detail?.routingStatus??selected.routingStatus)==="POSTED"||!detail||detailLoading||Boolean(detailError)?[]:
          inboundMailStatusActions(overrides[selected.id]?.status??selected.status)).map(action=>
          <Button key={action.status} type="button" size="sm"
           variant={action.status==="RESOLVED"?"primary":"secondary"}
-          disabled={busy} loading={busy} onClick={()=>void change(selected,action.status)}>
+          disabled={busy||detailLoading||!detail} loading={busy} onClick={()=>void change(detail??selected,action.status)}>
           {action.label}
          </Button>)}
       </div>
