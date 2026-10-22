@@ -14,7 +14,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [ ] G2-5-007-028  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [ ] G2-5-009-037  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [x] G2-5-011-030  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
-- [ ] G2-5-024-002  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
+- [x] G2-5-024-002  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_5.md)
 - [ ] G2-11-020-050  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 - [ ] G2-11-026-027  (source: docs/audit/gap-fix-work/verify2/packets/lane-11/W1_lane11_6.md)
 
@@ -24,3 +24,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - G2-4-031-071: OK — `src/modules/auth/runtime.ts:38-48` enforces tenant sign-in channel capability for OTP initiation; `src/app/api/auth/login/start/route.ts:51-58` supplies guarded host tenant ID; matches configured channel policy in `docs/legacy-source/frontend/src/pages/superadmin/sections/CollegeSignIn.js:8-17,103-115`.
 - G2-4-031-067: OK — `src/components/admin/college-signin-method-form.tsx:34,49-80` guards dirty navigation and reports dirty/busy to parent; matches `docs/legacy-source/frontend/src/pages/superadmin/sections/CollegeSignIn.js:78-88`.
 
+- G2-5-024-002: FIXED — commit `41305e4fc10fe11b31d590958087c04991ecdfc4`, `src/app/api/admin/onboarding/resolve-preview/route.ts:1-24`; adds a read-only guarded GET adapter to the existing globally scoped host preview, matching `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/TenantAdminController.java:273-313` (the response uses the vNext tenant-resolution envelope).
