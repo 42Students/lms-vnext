@@ -3,9 +3,18 @@ import {
   expect,
   it,
 } from "vitest";
-import { stagePlacementRoundResultInputSchema } from "@/modules/placements/validation";
+import { stagePlacementRoundResultInputSchema, mapHistoricalRoundResultSource } from "@/modules/placements/validation";
 
 describe("Placement round result validation", () => {
+  it("maps historical provenance without permitting a client-defined live source",()=>{
+    expect(mapHistoricalRoundResultSource("recruiter")).toBe("HR");
+    expect(mapHistoricalRoundResultSource("PANELIST")).toBe("FACULTY");
+    expect(mapHistoricalRoundResultSource("DRIVE_DAY")).toBe("TPO");
+    expect(mapHistoricalRoundResultSource("EXCEL")).toBe("IMPORT");
+    expect(mapHistoricalRoundResultSource("TPO")).toBe("TPO");
+    expect(()=>mapHistoricalRoundResultSource("SUPER_ADMIN")).toThrow();
+  });
+
   it("requires ranked holds", () => {
     expect(() =>
       stagePlacementRoundResultInputSchema.parse({
