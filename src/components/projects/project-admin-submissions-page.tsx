@@ -240,7 +240,7 @@ export async function ProjectAdminSubmissionsPage({
         demoUrl:safeProjectExternalHref(submission.demoUrl),
       }))}/>} />
 
-      <section className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+      <section className="min-w-0 space-y-3 border-t border-[var(--lms-canvas-border)] pt-4">
         <h2 className="font-semibold text-foreground">Submissions</h2>
         <p className="text-xs text-body">
           Showing current and historical final-delivery versions. Historical versions
