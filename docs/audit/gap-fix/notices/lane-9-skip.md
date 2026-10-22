@@ -71,3 +71,7 @@ The packets below were MOVED to other lanes (whole files). Do NOT work on them: 
 - W3_src_app_api_courses_courseId_route.ts.md
 - W3_src_modules_notifications_zeptomail-email.ts.md
 - W3_src_app_api_notifications_route.ts.md
+- W3_src_components_courses_college-learning-directory.tsx.md
+- W3_src_modules_platform-settings_admin-editor-service.ts.md
+- W3_src_modules_notifications_exotel-sms.ts.md
+- W2_src_modules_courses_learner-course-file-reference-service.ts.md
