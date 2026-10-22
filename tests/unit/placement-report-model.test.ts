@@ -237,7 +237,7 @@ describe("placement report aggregations", () => {
   it("never infers counts-as-placed from employment type when the policy is missing", () => {
     const withUnknownPolicy: PlacementReportFacts = {
       ...fixtures,
-      jobs: fixtures.jobs.map(({countsAsPlaced: _ignored, ...job}) => job),
+      jobs: fixtures.jobs.map(job => ({...job,countsAsPlaced:undefined})),
     };
     const result = summarizePlacementReports(withUnknownPolicy);
     expect(result.metrics.studentsPlaced).toBe(0);
@@ -305,7 +305,7 @@ describe("P-S2-05 accepted internships are not full-time placements", () => {
 
 describe("P-S2-08 persisted college counts-as-placed rule", () => {
   it("counts released full-time offers at OFFER_RELEASED but not in acceptance-only mode", () => {
-    const released = {...fixtures.offers[3]!,status:"ISSUED",kind:"OFFER"};
+    const released = {...fixtures.offers[3]!,status:"ISSUED",kind:"OFFER",releasedAt:new Date("2026-10-15T10:00:00Z")};
     const facts = {...fixtures,offers:[released]};
     expect(summarizePlacementReports({...facts,countsAsPlacedAt:"OFFER_RELEASED"}).metrics.studentsPlaced).toBe(1);
     expect(summarizePlacementReports({...facts,countsAsPlacedAt:"OFFER_ACCEPTED"}).metrics.studentsPlaced).toBe(0);

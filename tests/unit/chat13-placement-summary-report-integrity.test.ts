@@ -25,7 +25,7 @@ const offers:PlacementReportDetailedOffer[]=[
 describe("chat-13 Super Admin placement report fraud, counting and CSV integrity",()=>{
  it("SA-REPORT-METRICS-01 counts only permitted milestones and full-time offers",()=>{
   const policy=(offerStatus:string,countsAsPlacedAt:"SELECTED"|"OFFER_RELEASED"|"OFFER_ACCEPTED",employmentType="FULL_TIME",offerKind="OFFER",selectedOutcome=false)=>
-   countsAsPlacedByCollegeRule({offerStatus,countsAsPlacedAt,employmentType,countsAsPlaced:employmentType==="FULL_TIME",offerKind,selectedOutcome});
+   countsAsPlacedByCollegeRule({offerStatus,countsAsPlacedAt,employmentType,countsAsPlaced:employmentType==="FULL_TIME",offerKind,selectedOutcome,releasedAt:countsAsPlacedAt==="OFFER_RELEASED"?new Date("2026-10-15T10:00:00Z"):null});
   expect(policy("ACCEPTED","OFFER_ACCEPTED")).toBe(true);
   expect(policy("ISSUED","OFFER_ACCEPTED")).toBe(false);
   expect(policy("ISSUED","OFFER_RELEASED")).toBe(true);
