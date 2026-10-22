@@ -62,7 +62,8 @@ describe("chat-16 recruiter digest scheduler live authorization",()=>{
  it("email-bridge-digest-worker-16 is inert when a verified bridge is not enabled",async()=>{
   await expect(dispatchRecruiterUnreadMessageDigests({
    ...env,RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED:"false",
-  },now)).resolves.toEqual({examined:0,sent:0,enabled:false});
+  },now)).resolves.toMatchObject({examined:0,sent:0,enabled:false,
+   readinessReason:"BRIDGE_DISABLED",operatorAlert:"Recruiter email bridge is not ready: BRIDGE_DISABLED"});
   expect(getDb).not.toHaveBeenCalled();
   expect(sendRecruiterMessageDigest).not.toHaveBeenCalled();
  });

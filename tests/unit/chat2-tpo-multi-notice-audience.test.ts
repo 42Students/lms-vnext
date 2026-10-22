@@ -43,7 +43,8 @@ describe("TPO announcement targeting",()=>{
   expect(picker).toContain('name="targetIds"');
   expect(picker).toContain("Ctrl or Cmd to choose more.");
   expect(page).toContain("initialTargets={query.success?query.data.targetIds??[]:[]}");
-  expect(page).toContain("query.data.targetIds?.map(id");
+  expect(page).toContain("raw.targetIds?(Array.isArray(raw.targetIds)?raw.targetIds:[raw.targetIds]):undefined");
+  expect(page).toContain("initialTargets={query.success?query.data.targetIds??[]:[]}");
   expect(route).toContain('form.getAll("targetIds")');
   for(const text of ["No batch is in placements","No student in placements has a branch yet","No published drive yet"])
    expect(picker).toContain(text);
