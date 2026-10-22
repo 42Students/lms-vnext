@@ -38,7 +38,8 @@ export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
  const rowIssues:string[]=[];
  const mobileRows=new Map<string,number>(),emailRows=new Map<string,number>();
  parsedRows.forEach((row,index)=>{
-   const rowNumber=index+1;
+   // CSV row one contains headers; diagnostics must point to file row numbers.
+   const rowNumber=index+2;
    const earlierMobile=mobileRows.get(row.phoneE164);
    if(earlierMobile!==undefined)rowIssues.push("Record "+rowNumber+": Duplicate mobile in file (record "+earlierMobile+").");
    else mobileRows.set(row.phoneE164,rowNumber);
@@ -167,7 +168,7 @@ export function SuperAdminFacultyBulkImport({collegeId,departments=[]}:{
   {count>0?<p role="status" className="text-sm text-body">
     Parsed {count} row(s). Choose an active department, then Validate or Create.
   </p>:null}
-  {(issue||error)?<Alert tone="error">{error||issue}</Alert>:null}
+  {(issue||error)?<Alert tone="error"><span className="whitespace-pre-line">{error||issue}</span></Alert>:null}
   {previewIssues.length>0?<Alert tone="error"><p>Server preview needs review:</p><ul className="list-disc pl-5">{previewIssues.slice(0,25).map((message,i)=><li key={i}>{message}</li>)}</ul></Alert>:null}
   {rowIssues.length>0?<Alert tone="error">
     <p>Resolve duplicate rows before creating faculty accounts:</p>
