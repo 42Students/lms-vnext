@@ -437,7 +437,7 @@ export function TenantDomainManager({
                       record until this new challenge verifies; the old root
                       record cannot validate the vNext host.
                     </p>
-                    <p className="text-xs text-muted-foreground">Expected protocol: TXT name <code>{dnsName(domain.host)}</code>, value prefixed with <code>lms-vnext-verification=</code>. Historical records are accepted only with the current token.</p>
+                    <p className="text-xs text-muted-foreground">Expected protocol: TXT name <code>{dnsName(domain.host)}</code>, value prefixed with <code>lms-vnext-verification=</code>. Legacy TXT records do not verify a newly issued vNext challenge. Keep the old records until the new host verifies.</p>
                     <dl className="mt-4 grid gap-3">
                       <div>
                         <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
