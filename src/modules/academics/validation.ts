@@ -294,6 +294,84 @@ export const createSectionScheduleEventInputSchema =
       },
     );
 
+/**
+ * Old ClassScheduleDTO uses snake_case integer IDs and unzoned local start/end
+ * strings. This is a compatibility bridge, NOT a permission or FK resolver:
+ * callers must supply explicit mappings from the authorized college. Missing
+ * course/faculty/hall IDs are rejected, never silently treated as unlinked.
+ */
+export const legacyClassScheduleSourceSchema = z.object({
+  classId: z.number().int().positive("classId must be a positive number"),
+  facultyId: z.number().int().positive("facultyId must be a positive number"),
+  courseId: z.number().int().nonnegative().default(0),
+  courseSlug: z.string().trim().max(160).nullish(),
+  lectureHallId: z.number().int().nonnegative().default(0),
+  title: z.string().trim().max(160).nullish(),
+  startTime: z.string().trim().min(1, "startTime is required"),
+  endTime: z.string().trim().min(1, "endTime is required"),
+}).strict();
+
+function legacyClassScheduleInstant(value: string): string {
+  // Legacy local datetimes were entered and displayed in the LMS IST zone.
+  const normalized = value.trim().replace(" ", "T");
+  const iso = /(?:Z|[+-]\d{2}:\d{2})$/i.test(normalized)
+    ? normalized : normalized + "+05:30";
+  return scheduleDateTimeSchema.parse(iso);
+}
+
+export function adaptLegacyClassScheduleCreate(
+  raw: unknown,
+  mapping: {
+    sectionIds: ReadonlyMap<number, string>;
+    facultyMembershipIds: ReadonlyMap<number, string>;
+    deliveryIdsByLegacyCourseId: ReadonlyMap<number, string>;
+    deliveryIdsByCourseSlug: ReadonlyMap<string, string>;
+    lectureHallIds: ReadonlyMap<number, string>;
+  },
+) {
+  const fields = z.record(z.string(), z.unknown()).parse(raw);
+  const value = (camel: string, snake: string) => {
+    if (camel in fields && snake in fields && fields[camel] !== fields[snake])
+      throw new Error("LEGACY_SCHEDULE_FIELD_CONFLICT");
+    return fields[snake] ?? fields[camel];
+  };
+  const source = legacyClassScheduleSourceSchema.parse({
+    classId: value("classId", "class_id"),
+    facultyId: value("facultyId", "faculty_id"),
+    courseId: value("courseId", "course_id"),
+    courseSlug: value("courseSlug", "course_slug"),
+    lectureHallId: value("lectureHallId", "lecture_hall_id"),
+    title: value("title", "title"),
+    startTime: value("startTime", "start_time"),
+    endTime: value("endTime", "end_time"),
+  });
+  const sectionId = mapping.sectionIds.get(source.classId);
+  const facultyMembershipId = mapping.facultyMembershipIds.get(source.facultyId);
+  if (!sectionId || !facultyMembershipId)
+    throw new Error("LEGACY_SCHEDULE_MEMBER_OR_SECTION_UNMAPPED");
+  const slug = source.courseSlug?.trim();
+  const deliveryId = slug
+    ? mapping.deliveryIdsByCourseSlug.get(slug)
+    : source.courseId > 0
+      ? mapping.deliveryIdsByLegacyCourseId.get(source.courseId)
+      : null;
+  if ((slug || source.courseId > 0) && !deliveryId)
+    throw new Error("LEGACY_SCHEDULE_DELIVERY_UNMAPPED");
+  const lectureHallId = source.lectureHallId > 0
+    ? mapping.lectureHallIds.get(source.lectureHallId) : null;
+  if (source.lectureHallId > 0 && !lectureHallId)
+    throw new Error("LEGACY_SCHEDULE_HALL_UNMAPPED");
+  return createSectionScheduleEventInputSchema.parse({
+    sectionId: z.uuid().parse(sectionId),
+    facultyMembershipId: z.uuid().parse(facultyMembershipId),
+    deliveryId: deliveryId ? z.uuid().parse(deliveryId) : null,
+    lectureHallId: lectureHallId ? z.uuid().parse(lectureHallId) : null,
+    title: source.title || "Class schedule",
+    startsAt: legacyClassScheduleInstant(source.startTime),
+    endsAt: legacyClassScheduleInstant(source.endTime),
+  });
+}
+
 export const updateSectionScheduleEventInputSchema =
   z
     .object({
