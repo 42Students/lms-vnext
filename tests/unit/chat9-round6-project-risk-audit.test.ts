@@ -13,9 +13,11 @@ describe("College Projects risk and activity acceptance",()=>{
  });
  it("COL-projects-23 ensures ten-tab workspace navigation is keyboard-scrollable at narrow widths",()=>{
   const s=src("src/components/projects/project-workspace.tsx");
-  expect(s).toContain('aria-label="Project workspace sections"');
-  expect(s).toContain("flex max-w-full gap-2 overflow-x-auto");
-  expect(s).toContain("tabIndex={0}");
+  expect(s).toContain('ariaLabel="Project workspace sections"');
+  const tabs=src("src/components/ui/tabs.tsx");
+  expect(tabs).toContain('<ScrollCue axis="x"');
+  expect(tabs).toContain('aria-label={ariaLabel}');
+  expect(tabs).toContain('tabIndex={interactive && index === activeIndex ? 0 : -1}');
   const list=src("src/components/projects/project-admin-workspace-list.tsx");
   expect(list).toContain('<DataTable');
   expect(list).toContain('caption="Project workspace table"');
