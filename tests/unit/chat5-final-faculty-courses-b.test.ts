@@ -30,7 +30,8 @@ describe("chat-5 final sprint: teaching surface and discussion parity",()=>{
     expect(page).toContain("listFacultyCourseDeliveries(context)");
     expect(page).toContain("item.courseId===current.courseId");
     expect(page).toContain("item.sectionId===");
-    expect(page).toContain("if(!target)redirect(");
+    expect(page).toMatch(/if\(!target\)(?:\{|redirect\()/);
+    expect(page).toContain('redirect("/teacher/courses/"+encodeURIComponent(');
     expect(page).toContain('"/teacher/courses/"+encodeURIComponent(target.deliveryId)');
   }
  });
