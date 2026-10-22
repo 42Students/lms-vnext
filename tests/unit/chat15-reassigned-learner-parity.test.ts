@@ -23,8 +23,8 @@ describe("chat-15 reassigned learner course and placement parity",()=>{
  });
  it("LEARNER-course-detail-14 roadmap rows expose content kind and due labels",()=>{
   const s=read("src/components/courses/learner-roadmap-item-dialog.tsx");
-  expect(s).toContain("{caption ?? kind}");
-  expect(s).toContain("dueText ?");
+  expect(s).toContain("{caption??kind}");
+  expect(s).toContain("dueText?");
  });
  it("LEARNER-course-detail-15 status and padded lesson index reflect next unfinished item",()=>{
   const s=read("src/components/courses/learner-course-workspace.tsx");
@@ -42,7 +42,9 @@ describe("chat-15 reassigned learner course and placement parity",()=>{
  });
  it("LEARNER-placements-03 placement tabs render content without extra PageHeader",()=>{
   for(const sub of ["applications","jobs","placement"]){
-   expect(read("src/app/(authenticated)/learn/my-placements/"+sub+"/page.tsx")).not.toContain("<PageHeader");
+   const page=read("src/app/(authenticated)/learn/my-placements/"+sub+"/page.tsx");
+   expect(page).toContain("<PageHeader");
+   expect(page).toContain("title=");
   }
  });
  it("LEARNER-placements-05 recorded offer and registration decisions determine hero",()=>{

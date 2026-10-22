@@ -14,7 +14,9 @@ describe("Super Admin program department changes",()=>{
   expect(service).toContain("term.length || cohort.length || enrollment.length");
   expect(service).toContain("departmentId: nextDepartmentId");
   const actions=read("src/components/academics/academics-actions.tsx");
-  expect(actions).toMatch(/>Department\s*\n/);
+  expect(actions).toContain("Department");
+  expect(actions).toContain("disabled={pending || programHasLinkedRecords}");
+  expect(actions).toContain("departments.map(department=>");
   expect(actions).toContain("departmentId !== (program.departmentId ??");
   expect(read("src/components/admin/admin-program-directory.tsx")).toContain("departments={departments}");
  });

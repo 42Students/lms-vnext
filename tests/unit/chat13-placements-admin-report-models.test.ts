@@ -64,7 +64,7 @@ describe("Super Admin placement analytics: behavior, tenant scope and honest sta
   it("SA-ACCREDITATION-02 reports only accepted offers and known branches without guessing certification rates",()=>{
     const period={name:"2026 placements",code:"P26",startDate:"2026-01-01",endDate:"2026-12-31"};
     const facts:AccreditationFacts={
-      jobs:[{id:"j1",title:"Developer",companyId:"c1",companyName:"=HYPERLINK(\"https://evil\",\"X\")",employmentType:"FULL_TIME"}],
+      jobs:[{id:"j1",title:"Developer",companyId:"c1",companyName:"=HYPERLINK(\"https://evil\",\"X\")",employmentType:"FULL_TIME",countsAsPlaced:true}],
       applications:[
         {id:"a1",jobId:"j1",membershipId:"m1",status:"SUBMITTED",screeningStatus:null},
         {id:"a2",jobId:"j1",membershipId:"m2",status:"SUBMITTED",screeningStatus:null},

@@ -15,7 +15,8 @@ describe("chat-14 final sprint",()=>{
   expect(src).toContain("localStorage.setItem(backupKey");
   expect(src).toContain("eligibilityPreset");
   expect(src).toContain('value="review-publish"');
-  expect(src).toContain('"Create draft"');
+  expect(src).toContain('"Save as draft"');
+  expect(src).toContain("No students are notified until you confirm publication.");
   expect(src).toContain("applicationDeadline");
  });
 });

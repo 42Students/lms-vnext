@@ -28,7 +28,9 @@ describe("Super Admin drive delete impact preview",()=>{
   expect(route).toContain("export async function GET");
   const ui=read("src/components/placements/super-admin-drive-archive.tsx");
   expect(ui).toContain("Preview delete impact");
-  expect(ui).toContain("Confirm delete (archive)");
+  expect(ui).toContain("Delete (archive)");
+  expect(ui).toContain("Reason (required)");
+  expect(ui).toContain("disabled={pending||!preview.archivable||reason.trim().length<10}");
   expect(ui).toContain("useGuardedAction");
  });
 });

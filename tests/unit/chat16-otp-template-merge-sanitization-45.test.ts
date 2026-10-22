@@ -1,4 +1,4 @@
-import {beforeEach,describe,expect,it,vi} from "vitest";
+import {afterEach,beforeEach,describe,expect,it,vi} from "vitest";
 import {outboundFetch} from "@/lib/outbound";
 import {writeStructuredLog} from "@/observability/logger";
 import {
@@ -18,8 +18,11 @@ const send=(
 });
 beforeEach(()=>{
  vi.clearAllMocks();
+ vi.stubEnv("DEV_MAIL_ALLOW","user@example.org");
  vi.mocked(outboundFetch).mockResolvedValue(new Response("{}",{status:200}));
 });
+
+afterEach(()=>vi.unstubAllEnvs());
 
 describe("chat-16 ZeptoMail OTP profile merge-variable hardening",()=>{
  it("AUTH-OTP-MERGE-45 HTML-escapes untrusted profile names and strips controls",()=>{
