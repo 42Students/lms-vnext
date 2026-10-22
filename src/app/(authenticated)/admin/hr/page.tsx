@@ -40,15 +40,15 @@ export default async function SuperAdminHrPage({
 
   // Legacy recruiter list used zero-based page + size=25. Accept that
   // bookmark shape, but retain the vNext one-based canonical URLs.
-  if(typeof params.size==="string" &&
-     /^[0-9]{1,3}$/.test(params.size) &&
-     (params.page===undefined||(typeof params.page==="string"&&/^[0-9]{1,5}$/.test(params.page)))) {
-    const oldPage=Number(params.page??"0"),oldSize=Number(params.size);
+  if(typeof params["size"]==="string" &&
+     /^[0-9]{1,3}$/.test(params["size"]) &&
+     (params["page"]===undefined||(typeof params["page"]==="string"&&/^[0-9]{1,5}$/.test(params["page"])))) {
+    const oldPage=Number(params["page"]??"0"),oldSize=Number(params["size"]);
     if(Number.isSafeInteger(oldPage)&&oldPage>=0&&oldPage<10000&&
        oldSize>=1&&oldSize<=100){
       const target=new URLSearchParams();
-      if(typeof params.q==="string"&&params.q.trim())target.set("q",params.q.trim().slice(0,120));
-      if(typeof params.status==="string"&&params.status)target.set("status",params.status);
+      if(typeof params["q"]==="string"&&params["q"].trim())target.set("q",params["q"].trim().slice(0,120));
+      if(typeof params["status"]==="string"&&params["status"])target.set("status",params["status"]);
       if(oldSize!==25)target.set("pageSize",String(oldSize));
       if(oldPage)target.set("page",String(oldPage+1));
       redirect("/admin/recruiters"+(target.size?"?"+target.toString():""));
