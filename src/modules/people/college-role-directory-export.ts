@@ -20,7 +20,11 @@ export function parseCollegeRoleDirectoryExportQuery(params:URLSearchParams){
  if(!parsed.success)throw new Error("INVALID_ROLE_DIRECTORY_EXPORT");
  const {kind,...raw}=parsed.data;
  const filter=collegeRoleDirectoryQuerySchema.parse(raw);
- if(!roleDirectoryDateWindowValid(filter))throw new Error("INVALID_ROLE_DIRECTORY_EXPORT");
+ const dates={
+  ...(filter.joinedFrom!==undefined?{joinedFrom:filter.joinedFrom}:{}),
+  ...(filter.joinedThrough!==undefined?{joinedThrough:filter.joinedThrough}:{}),
+ };
+ if(!roleDirectoryDateWindowValid(dates))throw new Error("INVALID_ROLE_DIRECTORY_EXPORT");
  try{
   assertCompatibleCollegeRoleDirectoryFilters(kind,filter);
   if(kind==="FACULTY"&&(filter.enrollment!=="ALL"||filter.cohortId||filter.programId||filter.sectionId||filter.classPresence!=="ALL"||filter.registrationPresence!=="ALL"||filter.rollPresence!=="ALL"))throw new Error("INCOMPATIBLE_FACULTY_FILTER");

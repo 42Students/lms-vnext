@@ -169,7 +169,12 @@ export async function replaceProjectWorkspaceTemplate(
           [...blueprint.resources].sort((a, b) => a.sequence - b.sequence).map(row => ({
             projectId: project.id, templateKey: row.key, title: row.title,
             description: row.description ?? null, url: row.url ?? null,
-            required: row.required,...templateResourceMaterializationFields(row),
+            required: row.required,...templateResourceMaterializationFields({
+              ...(row.type !== undefined ? { type: row.type } : {}),
+              ...(row.status !== undefined ? { status: row.status } : {}),
+              ...(row.pinned !== undefined ? { pinned: row.pinned } : {}),
+              ...(row.accessNotes !== undefined ? { accessNotes: row.accessNotes } : {}),
+            }),
             sequence: row.sequence,
           })),
         );
