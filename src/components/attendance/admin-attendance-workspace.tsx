@@ -15,7 +15,6 @@ import { useRouter } from "next/navigation";
 import { Table } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
-import { Disclosure } from "@/components/ui/disclosure";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -734,13 +733,7 @@ export function AdminAttendanceWorkspace({
               )}`
             : "Attendance"
         }
-        description={
-          target
-            ? `${target.session.title} · ${formatDateTime(
-                target.session.startsAt,
-              )}`
-            : undefined
-        }
+        {...(target ? {description: `${target.session.title} · ${formatDateTime(target.session.startsAt)}`} : {})}
         footer={
           target ? (
             <div className="grid w-full min-w-0 grid-cols-1 md:grid-cols-2 gap-[var(--lms-space-2)] [&>button]:min-h-11 [&>button:last-child]:col-span-2 sm:flex sm:flex-wrap sm:justify-end sm:[&>button:last-child]:col-span-1 sm:[&>button]:min-h-[var(--lms-control-height)]">
