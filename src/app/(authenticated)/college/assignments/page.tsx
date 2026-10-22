@@ -28,7 +28,7 @@ export default async function CollegeAssignmentsPage({
     </Alert>
   </div>;
   const params = await searchParams;
-  const raw = { q: one(params.q), status: one(params.status), courseCode: one(params.courseCode)||undefined,deliveryId: one(params.deliveryId)||undefined,periodCode:one(params.periodCode)||undefined,cohortCode:one(params.cohortCode)||undefined,programCode:one(params.programCode)||undefined, scope:one(params.scope),duePresence:one(params.duePresence),dueWindow:one(params.dueWindow), page: one(params.page) };
+  const raw = { q: one(params["q"]), status: one(params["status"]), courseCode: one(params["courseCode"])||undefined,deliveryId: one(params["deliveryId"])||undefined,periodCode:one(params["periodCode"])||undefined,cohortCode:one(params["cohortCode"])||undefined,programCode:one(params["programCode"])||undefined, scope:one(params["scope"]),duePresence:one(params["duePresence"]),dueWindow:one(params["dueWindow"]), page: one(params["page"]) };
   const validation = collegeAssessmentListQuerySchema.safeParse(
     Object.fromEntries(Object.entries(raw).filter(([, value]) => value !== undefined)),
   );
