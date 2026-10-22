@@ -10,7 +10,7 @@ it("UX-college-college-batches-cohort-id-students-01 provides keyboard-scrolling
  expect(table).toContain("md:first:sticky md:first:left-0");
  expect(scroll).toContain("tabIndex={edges.scrollable ? 0 : -1}");
  expect(scroll).toContain("role={edges.scrollable");
- expect(scroll).toContain('focus-visible:outline-[var(--lms-teal-deep)]');
+ expect(scroll).toContain('focus-visible:outline-[var(--lms-primary-text)]');
  expect(source).toContain('min-h-11');
  expect(source).not.toContain("text-on-primary");
 });
