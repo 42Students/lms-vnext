@@ -34,6 +34,9 @@ export async function getOwnLearnerPlacementAlerts(context: RequestContext,raw:u
       eq(inAppNotifications.userId, context.user.id),
       eq(activityEvents.collegeId, membership.collegeId),
       eq(activityEvents.module, "PLACEMENTS"),
+      isNull(inAppNotifications.deletedAt),
+      sql`coalesce(${inAppNotifications.deliveryStatus},'SENT')='SENT'`,
+      or(isNull(inAppNotifications.scheduledAt),sql`${inAppNotifications.deliveredAt} is not null`),
       // College announcement entries appear in the official Notices feed.
       // Do not repeat their bell notifications as personal placement updates.
       or(isNull(inAppNotifications.actionHref),
@@ -45,7 +48,11 @@ export async function getOwnLearnerPlacementAlerts(context: RequestContext,raw:u
   return presentOwnLearnerPlacementAlerts(rows);
 }
 
-/** Personal PLACEMENTS notifications only; never conflate with official college notices. */
+/** Personal PLACEMENTS notifications only; never conflate with official college notices.
+ * The official notice feed counts its own membership-scoped receipt rows;
+ * these inbox rows intentionally omit announcement targets and never invent
+ * "unread=0" for a missing college notice receipt source.
+ * Keep the newest-first DB order from the legacy notice API unchanged. */
 export async function getUnreadOwnLearnerPlacementAlertCount(context:RequestContext):Promise<number>{
  const membership=await requireLearnerPlacementAccess(context);
  requirePermission(context,"placements.read",{collegeId:membership.collegeId,organizationId:membership.organizationId});
@@ -56,6 +63,9 @@ export async function getUnreadOwnLearnerPlacementAlertCount(context:RequestCont
    eq(inAppNotifications.userId,context.user.id),
    eq(activityEvents.collegeId,membership.collegeId),
    eq(activityEvents.module,"PLACEMENTS"),
+   isNull(inAppNotifications.deletedAt),
+   sql`coalesce(${inAppNotifications.deliveryStatus},'SENT')='SENT'`,
+   or(isNull(inAppNotifications.scheduledAt),sql`${inAppNotifications.deliveredAt} is not null`),
    or(isNull(inAppNotifications.actionHref),
      sql`${inAppNotifications.actionHref} NOT LIKE '/learn/my-placements/announcements%'`),
    isNull(inAppNotifications.readAt),
