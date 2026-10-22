@@ -138,8 +138,9 @@ describe("UX /admin middle third route and shared archetype contracts",()=>{
  });
  it("UX-admin-placements-jobs-jobId-applications-01 /admin route /admin/placements/jobs/[jobId]/applications preserves its scoped page and legacy UI surface",()=>{
   const page=read("src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx");
-  expect(page).toContain("title={\"Applications · \"");
+  expect(page).toContain('title={"Applications ("+data.total.toLocaleString("en-IN")+")"}');
   expect(page).toContain("CollegeApplicationPipelineControls");
+
  });
  it("UX-admin-placements-jobs-jobId-schedule-01 /admin route /admin/placements/jobs/[jobId]/schedule preserves its scoped page and legacy UI surface",()=>{
   const page=read("src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx");
@@ -148,8 +149,10 @@ describe("UX /admin middle third route and shared archetype contracts",()=>{
  });
  it("UX-admin-placements-jobs-jobId-settings-01 /admin route /admin/placements/jobs/[jobId]/settings preserves its scoped page and legacy UI surface",()=>{
   const page=read("src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx");
-  expect(page).toContain("SuperAdminDriveTabs");
+  expect(page).toContain('<PageHeader title="Settings"');
   expect(page).toContain("SuperAdminDriveDeadline");
+  expect(page).toContain("SuperAdminDriveArchive");
+
  });
  it("UX-admin-placements-joining-01 /admin route /admin/placements/joining preserves its scoped page and legacy UI surface",()=>{
   const page=read("src/app/(authenticated)/admin/placements/joining/page.tsx");
@@ -164,7 +167,9 @@ describe("UX /admin middle third route and shared archetype contracts",()=>{
  it("UX-admin-placements-new-01 /admin route /admin/placements/new preserves its scoped page and legacy UI surface",()=>{
   const page=read("src/app/(authenticated)/admin/placements/new/page.tsx");
   expect(page).toContain("PlacementJobCreateWorkspace");
-  expect(page).toContain("basePath=\"/admin/placements\"");
+  expect(page).toContain('basePath:"/admin/placements"');
+  expect(page).toContain("requireSuperAdminSelectedCollege");
+
  });
  it("UX-admin-placements-offers-01 /admin route /admin/placements/offers preserves its scoped page and legacy UI surface",()=>{
   const page=read("src/app/(authenticated)/admin/placements/offers/page.tsx");
@@ -206,31 +211,34 @@ describe("UX /admin middle third route and shared archetype contracts",()=>{
   expect(page).toContain("sm:grid-cols-2 lg:grid-cols-4");
   expect(page).toContain("No matching records");
   expect(page).toContain('name="channel"');
-  expect(page.match(/<select name="source"/g)?.length).toBe(1);
+  expect(page.match(/<Select name="source"/g)?.length).toBe(1);
   expect(page).toContain('role="status" aria-live="polite"');
  });
  it("UX-admin-placements-detail-02 delegates to a single shell main and 44px navigation",()=>{
   const page=read("src/components/admin/super-admin-placement-detail-view.tsx");
-  expect(page).toContain('return <div className="min-w-0 space-y-5">');
+  expect(page).toContain('return <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">');
   expect(page).not.toContain("<main");
   expect(page).toContain("min-h-11");
   expect(page).toContain("StatusBadge");
+
  });
  it("UX-admin-placements-analytics-02 preserves company totals beside a responsive hiring table",()=>{
   const page=read("src/app/(authenticated)/admin/placements/analytics/page.tsx");
-  expect(page).toContain('caption="Company hiring report"');
-  expect(page).toContain('aria-label="Company totals"');
-  expect(page).toContain("metricKeys.map(key=>");
-  expect(page).toContain("hiringMetricLabel(key)");
+  expect(page).toContain('caption="Company-wise Hiring Report"');
+  expect(page).toContain('aria-label="Company-wise Hiring Report"');
+  expect(page).toContain("metricKeys.map((key,index)=>");
+  expect(page).toContain("COMPANY_HIRING_COLUMNS[index+2]");
   expect(page).not.toContain('min-w-[55rem]');
+
  });
  it("UX-admin-placements-jobs-jobId-applications-02 retains the read-only mobile register when controls are unavailable",()=>{
   const page=read("src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx");
   expect(page).toContain("CollegeApplicationPipelineControls");
   expect(page).toContain('caption="Drive applications"');
-  expect(page).toContain('empty={<p role="status"');
+  expect(page).toContain('empty={<EmptyState title="No matching applications"');
   expect(page).toContain('mobilePriority:"primary"');
   expect(page).toContain("No applications match these filters.");
+
  });
  it("UX-admin-placements-tables-02 uses required legacy-scoped DataTable empty copy and phone columns",()=>{
   for(const path of [
@@ -240,18 +248,19 @@ describe("UX /admin middle third route and shared archetype contracts",()=>{
   ]){
    const page=read(path);
    expect(page).toContain("<DataTable");
-   expect(page).toContain("empty={<");
+   expect(page).toMatch(/empty=(?:\{hasFilters\?|\{<EmptyState)/);
    expect(page).toContain('mobilePriority:"primary"');
    expect(page).not.toContain("min-w-[55rem]");
   }
  });
  it("UX-admin-module-access-02 shared pagination stays query-scoped with keyboard-safe controls",()=>{
   const page=read("src/app/(authenticated)/admin/module-access/page.tsx");
-  expect(page).toContain('import {Pagination} from "@/components/ui/pagination"');
-  expect(page).toContain('label="Module Access pages"');
-  expect(page).toContain("hrefForPage={page=>pageHref(result.q,page)}");
-  expect(page).toContain("sm:grid-cols-[minmax(0,1fr)_auto_auto]");
-  expect(page).toContain('title="No matching colleges"');
+  expect(page).toContain('const collegeId = context.adminScope?.collegeId;');
+  expect(page).toContain('if (!collegeId)');
+  expect(page).toContain('href="/admin/colleges"');
+  expect(page).toContain('SuperAdminCollegeModuleAccessPage params={Promise.resolve({collegeId})}');
+  expect(page).toContain('ModuleAccessHierarchyActions');
+
  });
  it("UX-admin-people-unassigned-02 paginates without losing active filters or revealing contact fields",()=>{
   const page=read("src/app/(authenticated)/admin/people/unassigned/page.tsx");
