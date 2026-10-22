@@ -837,7 +837,7 @@ export function HrDriveDraftForm({
                 View linked job description
               </a></p> : draft.jdUrl ?
               <p className="text-xs text-error">Enter a valid public HTTPS job description link to preview it.</p> : null}
-            <p>{draft.location || "Location not specified"} · {draft.employmentType.replaceAll("_", " ")} · {draft.driveMode==="OFF_CAMPUS"?"Off campus":"On campus"} · {draft.workMode}</p>
+            <p>{draft.location || "Location not specified"} · {draft.employmentType.replaceAll("_", " ")} · {LEGACY_HR_DRIVE_MODES.find(option=>option.value===draft.driveMode)?.label??"On campus"} · {draft.workMode}</p>
              <p>Eligible branches: {draft.branches?.length ? draft.branches.join(", ") : "All branches"} ·
                Passing year: {draft.passingYear || "Any year"}</p>
             {draft.driveMode==="OFF_CAMPUS"?
