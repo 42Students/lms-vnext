@@ -34,9 +34,9 @@ export function filterAdminPrograms(
 export function paginateAdminPrograms(
   rows: readonly AdminProgramRow[],
   page: number,
-  size = 25,
+  size = 20,
 ) {
-  const pageSize = Math.max(1, Math.min(100, Math.trunc(size) || 25));
+  const pageSize = Math.max(1, Math.min(100, Math.trunc(size) || 20));
   const pageCount = Math.max(1, Math.ceil(rows.length / pageSize));
   const currentPage = Math.max(1, Math.min(pageCount, Math.trunc(page) || 1));
   return {

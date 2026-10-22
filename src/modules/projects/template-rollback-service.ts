@@ -18,8 +18,8 @@ export const projectTemplateRollbackRequestSchema=z.strictObject({
  versionId:z.string().uuid(),
  expectedTemplateVersion:z.number().int().min(1),
  confirmed:z.literal(true),
- expectedAssignedCollegeCount:z.number().int().min(0).optional(),
- expectedPinnedWorkspaceCount:z.number().int().min(0).optional(),
+ expectedAssignedCollegeCount:z.number().int().min(0),
+ expectedPinnedWorkspaceCount:z.number().int().min(0),
 });
 export type ProjectTemplateRollbackRequest=z.infer<typeof projectTemplateRollbackRequestSchema>;
 
@@ -92,10 +92,8 @@ export async function rollbackProjectTemplate(context:RequestContext,templateIdI
   ]);
   const assignedCollegeCount=Number(assigned[0]?.total??0);
   const pinnedWorkspaceCount=Number(pinned[0]?.total??0);
-  if((input.expectedAssignedCollegeCount!==undefined&&
-       input.expectedAssignedCollegeCount!==assignedCollegeCount)||
-     (input.expectedPinnedWorkspaceCount!==undefined&&
-       input.expectedPinnedWorkspaceCount!==pinnedWorkspaceCount))
+  if(input.expectedAssignedCollegeCount!==assignedCollegeCount||
+     input.expectedPinnedWorkspaceCount!==pinnedWorkspaceCount)
     throw new ProjectsServiceError("PROJECT_TEMPLATE_STALE_VERSION");
   const blueprint=projectTemplateBlueprintSchema.parse(prior.blueprint);
   const now=new Date();

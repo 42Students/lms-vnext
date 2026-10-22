@@ -32,8 +32,8 @@ function listenSize(fn: () => void) {
 function storedSize(): number {
   try {
     const size = Number(localStorage.getItem(PROGRAM_SIZE_KEY)??localStorage.getItem(FALLBACK_PROGRAM_SIZE_KEY));
-    return [10,25,50,100].includes(size) ? size : 25;
-  } catch { return 25; }
+    return [10,20,25,50,100].includes(size) ? size : 20;
+  } catch { return 20; }
 }
 function rememberSize(size: number) {
   try { localStorage.setItem(PROGRAM_SIZE_KEY, String(size)); } catch { return; }
@@ -112,7 +112,7 @@ export function AdminProgramDirectory({
     return ()=>window.clearTimeout(handle);
   },[search]);
   const [page, setPage] = useState(1);
-  const pageSize = useSyncExternalStore(listenSize, storedSize, () => 25);
+  const pageSize = useSyncExternalStore(listenSize, storedSize, () => 20);
 
   const filtered = filterAdminPrograms(programs, debouncedSearch);
   const result = paginateAdminPrograms(filtered, page, pageSize);
@@ -288,7 +288,7 @@ export function AdminProgramDirectory({
             <span>Showing {(result.page - 1) * pageSize + 1}–{Math.min(result.page * pageSize, result.total)} of {result.total}</span>
             <div className="flex min-w-0 flex-wrap items-center justify-start gap-2 md:justify-end">
               <PageSizeSelect id="admin-program-page-size" label="Rows per page"
-               options={[10,25,50,100]} value={pageSize}
+               options={[10,20,25,50,100]} value={pageSize}
                onChange={event=>{rememberSize(Number(event.target.value));setPage(1);}}
                wrapperClassName="w-28 shrink-0" />
               <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={result.page === 1}

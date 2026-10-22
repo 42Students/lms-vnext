@@ -42,6 +42,8 @@ describe("W06 admin Programs directory", () => {
     const rows = Array.from({ length: 24 }, (_, index) =>
       program("Program " + index, String(index)),
     );
+    expect(paginateAdminPrograms(rows, 1).items).toHaveLength(20);
+    expect(paginateAdminPrograms(rows, 2).items).toHaveLength(4);
     expect(paginateAdminPrograms(rows, 1, 10).items).toHaveLength(10);
     expect(paginateAdminPrograms(rows, 3, 10).items).toHaveLength(4);
     expect(paginateAdminPrograms(rows, 99, 10).page).toBe(3);
