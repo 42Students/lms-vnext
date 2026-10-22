@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { afterAll, describe, expect, it } from "vitest";
 import { closeDatabaseConnection } from "@/db/client";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import type { RequestContext } from "@/modules/identity/context";
 import {
   getTpoStudentPlacementHistory,
@@ -57,7 +58,7 @@ describe("TPO learner history and no-show PostgreSQL boundaries", () => {
     };
     await expect(getTpoStudentPlacementHistory(foreign, {
       membershipId: SEED_IDS.learnerCollegeAMembership,
-    })).resolves.toBeNull();
+    })).rejects.toBeInstanceOf(AuthorizationError);
   });
 
   it("reads only the seeded active college learner with a role", async () => {
