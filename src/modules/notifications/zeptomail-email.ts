@@ -31,6 +31,9 @@ export const LEGACY_NOTIFICATION_TEMPLATE_KEYS = {
   SYSTEM_EMAIL_VERIFICATION: "system.email.verification",
   SYSTEM_APPLICATION_APPROVED: "system.application.approved",
   SYSTEM_APPLICATION_REJECTED: "system.application.rejected",
+  // Legacy registry contains 19 events. OTP is indexed for parity, but its
+  // delivery remains exclusively on the separate verified OTP purpose.
+  SYSTEM_OTP_SMS: "system.otp.sms",
 } as const;
 
 export type LegacyMailEvent = keyof typeof LEGACY_NOTIFICATION_TEMPLATE_KEYS;
