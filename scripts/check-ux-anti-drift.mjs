@@ -80,7 +80,8 @@ for(const path of files) {
 const css=readFileSync(join(root,"src/app/globals.css"),"utf8");
 for(const required of [
   "--primary-foreground: var(--lms-on-primary)",
-  "--lms-on-primary: #1a1d21",
+  // Primary buttons use #0a7c88 (owner decision "same look, accessible"); white on it is ~5:1 (AA), dark ink would be ~3.4:1.
+  "--lms-on-primary: #ffffff",
   "--color-primary-text: var(--lms-link-text)",
 ]) if(!css.includes(required))violations.push("src/app/globals.css: missing "+required);
 if(violations.length) {

@@ -58,7 +58,6 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
   setError(null);
   // Materials open in the same tab (no popup windows, per the UX guard), so
   // the signed URL is followed directly once it has been issued.
-  const reserved:Window|null=null;
   const controller=new AbortController();
   const timeout=window.setTimeout(()=>controller.abort(),12000);
   try{
@@ -75,13 +74,9 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
    const target=new URL(signed);
    if(target.protocol!=="https:"||target.username||target.password)
     throw new Error("Resource file is unavailable. Contact your instructor.");
-   if(currentUriRef.current!==uri){reserved?.close();return;}
-   if(reserved&&!reserved.closed){
-    try{reserved.location.replace(target.href);}
-    catch{reserved.close();window.location.assign(target.href);}
-   }else window.location.assign(target.href);
+   if(currentUriRef.current!==uri)return;
+   window.location.assign(target.href);
   }catch{
-   reserved?.close();
    if(currentUriRef.current===uri)
     setError("Resource file is unavailable. Contact your instructor.");
   }finally{
