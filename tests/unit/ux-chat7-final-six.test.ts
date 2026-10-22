@@ -33,7 +33,7 @@ it("UX-quiz-quiz-01 preserves real route and accessible states",()=>{
  const s=read("src/app/quiz/page.tsx");
  expect(s.length).toBeGreaterThan(0);
  expect(s).not.toContain('text-primary-text');
- expect(s).toContain('focus-visible:outline-[var(--lms-primary-text)]');
+ expect(s).toContain('focus-visible:outline-[var(--lms-teal-deep)]');
  
  expect(read("src/app/quiz/loading.tsx").length).toBeGreaterThan(0);
  expect(read("src/app/quiz/error.tsx").length).toBeGreaterThan(0);
