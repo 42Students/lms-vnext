@@ -215,6 +215,7 @@ export async function reportErrorForAlert(input: ReportableError): Promise<boole
       const [radius] = current
         ? await tx.select({ total: count() }).from(accounts).where(eq(accounts.signatureId, current.id))
         : [{ total: accountHash ? 1 : 0 }];
+      const radiusTotal = Number(radius?.total ?? 0);
       const id = current?.id ?? randomUUID();
       const kind = decision === "NEW" ? "new error" : decision === "SPIKE" ? "error spike" : "regression";
       const delivered = await sendTelegramAlert(formatAlert({
@@ -226,8 +227,7 @@ export async function reportErrorForAlert(input: ReportableError): Promise<boole
         ...(input.viewport !== undefined ? { viewport: input.viewport } : {}),
         ...(input.buildId !== undefined ? { buildId: input.buildId } : {}),
         count: current ? Number(current.occurrenceCount) + 1 : 1,
-        affectedAccounts:Number(radius?.total??0)>0
-          ? Number(radius!.total) : accountHash?1:null,
+        affectedAccounts:radiusTotal>0 ? radiusTotal : accountHash?1:null,
       }), { acknowledgeSignatureId: id });
       if (!delivered) {
         // A known signature was counted even if an optional spike/regression
