@@ -245,7 +245,6 @@ export async function listProgramsPage(
   const q = (raw.q ?? "").trim();
   if (q.length > 100) throw new Error("Invalid program search");
   const escaped = q.replace(/[\\%_]/g, "\\$&");
-  const conditions = and(");
   const searchPattern = `%${escaped}%`;
   const conditions = and(
     eq(departments.collegeId, collegeId),
