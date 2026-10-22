@@ -17,10 +17,11 @@ describe("Chat 6 friendly fetch adoption",()=>{
  it("GR-32 chat-6 edit forms keep draft state and show shared conflict message",()=>{
   expect(source("src/components/college/college-person-edit-action.tsx")).toContain("setPerson(current=>");
   expect(source("src/components/placements/placement-employer-relationships.tsx")).toContain("setDrafts");
-  expect(source("src/lib/friendly-error.ts")).toContain("This changed while you were working.");
+  expect(source("src/lib/friendly-error.ts")).toContain("This changed elsewhere. Refresh the latest data before trying again.");
  });
  it("GR-90 chat-6 inline fetch failures have alert semantics",()=>{
-  expect(source("src/components/college/college-person-edit-action.tsx")).toContain('role="alert"');
+  expect(source("src/components/college/college-person-edit-action.tsx")).toContain('<Alert tone="error"');
+  expect(source("src/components/ui/alert.tsx")).toContain('role={role ?? (tone === "error" ? "alert" : "status")}');
   expect(source("src/components/placements/college-drive-archive-action.tsx")).toContain('role="alert"');
  });
 });

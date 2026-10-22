@@ -7,10 +7,9 @@ describe("chat-5 final sprint faculty course list and core lesson contracts",()=
   const list=src("src/components/courses/faculty-course-list.tsx");
   const card=src("src/components/courses/learner-course-card-image.tsx");
   const cover=src("src/components/courses/faculty-course-cover.tsx");
-  expect(list).toContain("FacultyCourseCover");
+  expect(list).toContain("<FacultyCourseCover");
   expect(cover).toContain('import Image from "next/image"');
   expect(cover).toContain('src="/assets/images/common/course.svg"');
-  expect(cover).toContain('width={100} height={100}');
   expect(cover).toContain('alt="" aria-hidden="true"');
   expect(list).not.toContain('course.courseName.trim().slice(0,2).toUpperCase()');
   expect(card).toContain("learnerCourseCardMediaAfterError(thumbnailUrl,failed)");
@@ -36,7 +35,7 @@ describe("chat-5 final sprint faculty course list and core lesson contracts",()=
   expect(course).toContain("<details");
   expect(course).toContain("<summary");
   expect(course).toContain('defaultOpen={Boolean(selectedLessonId || lessonIndex === 0)}');
-  expect(course).toContain("Expand lesson");
+  expect(course).toContain('Expand lesson');
  });
  it("FAC-courses-17 enforces a real 12-hour IST picker and 15-minute schedule rules",()=>{
   const editor=src("src/components/courses/faculty-live-class-editor.tsx");

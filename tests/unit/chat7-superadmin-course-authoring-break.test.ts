@@ -15,9 +15,10 @@ describe("SA-academics-people-58 GR-COURSES-TENANT-02 authoring, stale tabs and 
   expect(resolveSuperAdminAuthoringLesson(collegeB,c)).toBe(collegeB[1]);
   expect(resolveSuperAdminAuthoringLesson([],a)).toBeUndefined();
   const authoring=readFileSync("src/components/courses/super-admin-content-authoring.tsx","utf8");
-  expect(authoring).toContain("resolveSuperAdminAuthoringLesson(lessons,lessonId)");
+  expect(authoring).toContain("resolveSuperAdminAuthoringLesson(courseLessons,lessonId)");
+  expect(authoring).toContain("lessons.filter(item=>item.offeringId===course?.id)");
   expect(authoring).toContain('value={selected?.id??""}');
-  expect(authoring).toContain("key={selected.id}");
+  expect(authoring).toContain("key={contentKey}");
  });
  it("sanitizer removes all event handlers, SVG, javascript links and embeds while preserving plain readable markup",()=>{
   const raw='<p onclick="alert(1)">Hi <strong style="color:red">team</strong><svg onload="steal()"><script>bad()</script></svg><a href="javascript:steal()">tap</a></p>';

@@ -59,7 +59,7 @@ describe("SA-middle-lessons-25 scoped authoring role journey",()=>{
  it("authorized selected-college listing renders a meaningful empty state",async()=>{
   const html=renderToStaticMarkup(await page());
   expect(html).toContain("Lessons");
-  expect(html).toContain("No lessons found");
+  expect(html).toContain("Choose a course, or opt in to all-courses view.");
   expect(listCollegeLessons).toHaveBeenCalledOnce();
   expect(getSuperAdminLearningFilterOptions).toHaveBeenCalledOnce();
   expect(listSuperAdminLearningPathPicker).toHaveBeenCalledOnce();

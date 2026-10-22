@@ -20,7 +20,10 @@ describe("SA-tenants-modules-48 persisted board filter states",()=>{
   const page=source("src/app/(authenticated)/tracker/audit-findings/page.tsx");
   expect(service).toContain("db10AuditFindings.sourcePath");
   expect(service).toContain("db10AuditFindings.paths}::text");
-  expect(service).toContain("const facetsWhere=and(searchPredicate,areaPredicate");
+  expect(service).toContain("const where=and(...predicates)");
+  expect(service).toContain(".from(db10AuditFindings)");
+  expect(service).toContain(".where(where)");
+  expect(service).toContain("These dashboard facets summarize ALL imported findings");
   expect(service).not.toContain("\\ if(query.view");
   expect(service).toContain("statusCounts");
   expect(service).toContain("criticalOpen");

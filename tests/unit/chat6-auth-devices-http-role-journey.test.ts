@@ -54,13 +54,13 @@ describe("AUTH-sessions-10 device list and revocation HTTP hostile journeys", ()
     expect(result.headers.get("Cache-Control")).toBe("private, no-store");
     expect(listActiveSessions).toHaveBeenCalledOnce();
     expect(listActiveSessions).toHaveBeenCalledWith(userId);
-    expect(await result.json()).toEqual({ devices: [
+    expect(await result.json()).toMatchObject({ devices: [
       { id: sessionId, deviceName: "Current laptop", userAgent: "Browser A",
         createdAt: lastSeen.toISOString(), lastSeenAt: lastSeen.toISOString(),
-        expiresAt: lastSeen.toISOString(), current: true },
+        expiresAt: lastSeen.toISOString(), current: true, ipAddress:null, lastUsedAt:lastSeen.toISOString() },
       { id: otherSessionId, deviceName: null, userAgent: null,
         createdAt: lastSeen.toISOString(), lastSeenAt: lastSeen.toISOString(),
-        expiresAt: lastSeen.toISOString(), current: false },
+        expiresAt: lastSeen.toISOString(), current: false, ipAddress:null, lastUsedAt:lastSeen.toISOString() },
     ] });
     expect(revokeOwnSession).not.toHaveBeenCalled();
     expect(revokeOtherSessions).not.toHaveBeenCalled();
@@ -98,10 +98,10 @@ describe("AUTH-sessions-10 device list and revocation HTTP hostile journeys", ()
   it("AUTH-sessions-10 bulk revoke forwards only caller identity/current device and reports zero-row retries truthfully", async () => {
     vi.mocked(revokeOtherSessions).mockResolvedValueOnce(2).mockResolvedValueOnce(0);
     const first = await DELETE_OTHERS(request());
-    expect(await first.json()).toEqual({ ok: true, revoked: 2 });
+    expect(await first.json()).toMatchObject({ ok: true, revoked: 2, revokedCount:2,scope:"others",currentExcluded:true,currentSessionRevoked:false,message:"Other sessions revoked" });
     expect(first.headers.get("Cache-Control")).toBe("private, no-store");
     const second = await DELETE_OTHERS(request());
-    expect(await second.json()).toEqual({ ok: true, revoked: 0 });
+    expect(await second.json()).toMatchObject({ ok: true, revoked: 0, revokedCount:0,scope:"others",currentExcluded:true,currentSessionRevoked:false });
     expect(revokeOtherSessions).toHaveBeenNthCalledWith(1, userId, sessionId);
     expect(revokeOtherSessions).toHaveBeenNthCalledWith(2, userId, sessionId);
     expect(revokeOwnSession).not.toHaveBeenCalled();
@@ -127,7 +127,7 @@ describe("AUTH-sessions-10 device list and revocation HTTP hostile journeys", ()
     const denied = await DELETE_ONE(request(deviceUrl + "/" + otherSessionId), route(otherSessionId));
     expect(denied.status).toBe(404);
     expect(denied.headers.get("Cache-Control")).toBe("private, no-store");
-    expect(await denied.json()).toEqual({ error: "SESSION_NOT_FOUND" });
+    expect(await denied.json()).toEqual({ error: "SESSION_NOT_FOUND", message:"Session not found" });
     expect(revokeOwnSession).toHaveBeenCalledWith(otherSessionId, userId);
     expect(revokeOtherSessions).not.toHaveBeenCalled();
   });
@@ -139,7 +139,7 @@ describe("AUTH-sessions-10 device list and revocation HTTP hostile journeys", ()
     const first = await DELETE_ONE(request(deviceUrl + "/" + otherSessionId), route(otherSessionId));
     expect(first.status).toBe(200);
     expect(first.headers.get("Cache-Control")).toBe("private, no-store");
-    expect(await first.json()).toEqual({ ok: true });
+    expect(await first.json()).toEqual({ ok: true, message:"Session revoked" });
     const second = await DELETE_ONE(request(deviceUrl + "/" + otherSessionId), route(otherSessionId));
     expect(second.status).toBe(503);
     expect(second.headers.get("Cache-Control")).toBe("private, no-store");

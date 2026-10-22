@@ -44,7 +44,9 @@ describe("SA-academics-people-52/53 selected-course retry integrity",()=>{
   expect(service).toContain("failedCourseIds:input.courseIds.filter(id=>failedCourses.has(id))");
   expect(service).toContain("lessonCourseIds.get(failure.lessonId)");
   expect(service).toContain("lessonCourseIds.get(id)");
-  expect(lesson).toContain("lessonId:row.lessonId,reason:safeCourseVisibilityFailure(error)");
+  expect(lesson).toContain("failed.push({lessonId,reason:error instanceof CoursesServiceError");
+  expect(lesson).toContain("LESSON_STALE_VERSION");
+  expect(lesson).toContain("LESSON_NOT_FOUND");
  });
  it("SA-academics-people-52 accepts the 100-course page but refuses unbounded bulk actions",()=>{
   const service=read("src/modules/courses/super-admin-course-bulk-visibility.ts");
