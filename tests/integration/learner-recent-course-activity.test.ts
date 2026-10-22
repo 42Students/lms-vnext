@@ -22,6 +22,7 @@ describe("L2-016 recent course activity, own persisted completion",()=>{
       deliveryId:ids.delivery,completed:true,
     });
     expect(saved.status).toBe("COMPLETED");
+    expect(saved.attempt).toBe(1);
     const workspace=await getLearnerCourseWorkspace(context,ids.delivery);
     const updates=learnerRecentCourseActivity(workspace.lessons,Date.now());
     expect(updates).toEqual(expect.arrayContaining([
@@ -29,7 +30,7 @@ describe("L2-016 recent course activity, own persisted completion",()=>{
     ]));
     const audit=await pool.query<{total:string}>(
       "SELECT count(*)::text AS total FROM activity_events WHERE dedupe_key=$1",
-      ["learner-content:"+ids.membership+":"+ids.content+":completed"],
+      ["learner-content:"+ids.membership+":"+ids.content+":attempt:"+saved.attempt+":completed"],
     );
     expect(audit.rows[0]?.total).toBe("1");
   },30000);

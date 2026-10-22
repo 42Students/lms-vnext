@@ -349,10 +349,14 @@ async function finishExecution(
     projectId,
     sprint.id,
   );
+  const currentRelease=(await getProjectInstanceWorkspace(mentor,projectId))
+    .releases.find(item=>item.id===release.id);
+  if(!currentRelease)throw new Error("Release no longer belongs to project");
   await shipProjectRelease(
     mentor,
     projectId,
     release.id,
+    {expectedUpdatedAt:currentRelease.updatedAt.toISOString()},
   );
 }
 
