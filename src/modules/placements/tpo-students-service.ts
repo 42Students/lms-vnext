@@ -265,7 +265,9 @@ export async function getTpoStudentsIntelligence(
   options: { includeExportRows?: boolean } = {},
 ) {
   const parsed=tpoStudentsQuerySchema.parse(rawInput);
-  const input={...parsed,search:parsed.search??parsed.q};
+  const {search:parsedSearch,...rest}=parsed;
+  const search=parsedSearch??parsed.q;
+  const input={...rest,...(search!==undefined?{search}:{})};
 
   const college =
     await requirePlacementManageScope(
