@@ -36,6 +36,7 @@ import {
 } from "@/modules/courses/assignment-service";
 import {
   gradeAssignmentSubmission,
+  listAssignmentSubmissionGradeActivity,
   publishAssignmentGrade,
   submitCourseAssignment,
 } from "@/modules/courses/assignment-submission-service";
@@ -705,6 +706,11 @@ describe("courses C4C assessment aggregation", () => {
       {action:"PUBLISH_GRADE",previous_points:8,new_points:8,
         submission_version_before:1,submission_version_after:2},
     ]);
+
+    const staffGradeHistory=await listAssignmentSubmissionGradeActivity(collegeAdmin,submission.id);
+    expect(staffGradeHistory.detailedPointsHistoryAvailable).toBe(true);
+    expect(staffGradeHistory.gradeEvents.map(event=>event.action))
+      .toEqual(["PUBLISH_GRADE","GRADE"]);
 
     const afterAssignment =
       await getLearnerCourseWorkspace(
