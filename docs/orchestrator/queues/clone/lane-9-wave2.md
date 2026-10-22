@@ -82,7 +82,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_college-content-authoring-service.ts.md` (edit src/modules/courses/college-content-authoring-service.ts; 5 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_super-admin-content-directory-service.ts.md` (edit src/modules/courses/super-admin-content-directory-service.ts; 5 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_college-quiz-actions.tsx.md` (edit src/components/courses/college-quiz-actions.tsx; 5 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_faculty-assessment-service.ts.md` (edit src/modules/courses/faculty-assessment-service.ts; 5 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_faculty-assessment-service.ts.md` (edit src/modules/courses/faculty-assessment-service.ts; 5 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_college-lesson-create-control.tsx.md` (edit src/components/courses/college-lesson-create-control.tsx; 4 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_platform-settings_model.ts.md` (edit src/modules/platform-settings/model.ts; 4 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_faculty-assessment-editor.tsx.md` (edit src/components/courses/faculty-assessment-editor.tsx; 4 findings; best P2)
