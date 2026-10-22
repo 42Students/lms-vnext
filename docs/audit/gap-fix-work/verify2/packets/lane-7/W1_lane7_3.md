@@ -6,36 +6,43 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/modules/placements/recruiter-profile-service.ts, src/modules/placements/recruiter-grant-expiry-policy.ts
 - Legacy: Legacy check requires usable recruiter, live college, active grant and capability `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/recruiter/RecruiterAccessService.java:39-85`
 - Expected fix: Reconcile all role, tenant, company and verification rules in auth matrix
+- [ ] DEFERRED: Requires implementation-level parity confirmation; no OK or FIXED claim made in this pass.
 
 ## G2-14-019-031 [P1] GAP facet F08
 - Files: src/modules/placements/tpo-interview-slot-service.ts
 - Legacy: Legacy interview notifications are sent after commit `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/InterviewServiceImpl.java:146-167`
 - Expected fix: Preserve after-commit email/SMS expectations with outbox
+- [ ] DEFERRED: Requires implementation-level parity confirmation; no OK or FIXED claim made in this pass.
 
 ## G2-14-019-040 [P1] GAP facet F11
 - Files: src/modules/placements/tpo-interview-slot-service.ts
 - Legacy: Legacy college admins may manage interview scoped by job college, shared org fallback `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/InterviewRepository.java:38-55`
 - Expected fix: Support approved shared-org history via acting-college gate
+- [ ] DEFERRED: Requires implementation-level parity confirmation; no OK or FIXED claim made in this pass.
 
 ## G2-14-019-051 [P1] GAP facet F15
 - Files: src/modules/placements/tpo-interview-slot-service.ts
 - Legacy: Legacy JobNotificationHelper and event publisher after commit `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/InterviewServiceImpl.java:117-166`
 - Expected fix: Map legacy email/SMS recipients/timing to outbox delivery
+- [ ] DEFERRED: Requires implementation-level parity confirmation; no OK or FIXED claim made in this pass.
 
 ## G2-14-019-061 [P1] GAP facet F20
 - Files: src/modules/placements/tpo-interview-slot-service.ts, src/modules/placements/hr-interview-slot-service.ts
 - Legacy: Legacy application and learner locks serialize concurrent scheduling `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/InterviewServiceImpl.java:185-256` `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/InterviewRepository.java:111-129`
 - Expected fix: Define lock order round/app/learner to eliminate cross-drive conflict
+- [ ] DEFERRED: Requires implementation-level parity confirmation; no OK or FIXED claim made in this pass.
 
 ## G2-14-019-064 [P1] GAP facet F21
 - Files: src/modules/placements/tpo-interview-slot-service.ts, src/modules/placements/hr-interview-slot-service.ts
 - Legacy: Legacy interview notification dispatcher, event publisher, scheduler reminders `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/InterviewServiceImpl.java:117-166`
 - Expected fix: Map scheduled reminders/third-party email templates
+- [ ] DEFERRED: Requires implementation-level parity confirmation; no OK or FIXED claim made in this pass.
 
 ## G2-18-031-077 [P1] GAP facet F21
 - Files: src/modules/people/identity-provisioning.ts, src/db/schema/identity-device-sessions.ts
 - Legacy: Legacy signup/login uses SmsService/test OTP and session token version; LearnerController.java:338-391,674-800;FacultyController.java:421-480;AdminUserLifecycleController.java:178-198
 - Expected fix: Verify provider SMS delivery, identity collision, session revocation timing and no wrong-college session leak
+- [ ] DEFERRED: Requires implementation-level parity confirmation; no OK or FIXED claim made in this pass.
 
 ## G2-20-031-011 [P1] MISSING facet F03
 - [ ] Partial: secure six-digit Open form, conditional Email me a code instead, CSV download implemented; bulk resume ZIP intentionally retired, so ZIP parity requires product approval.
@@ -53,6 +60,7 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/app/company-share/[token]/page.tsx
 - Legacy: Legacy share GET /api/v1/public/share/{token}, POST /open, /send-code, /resumes, /downloaded `PublicShareController.java:17-57`.
 - Expected fix: Map every legacy share action to new server action; verify access logging, resend and ZIP beyond CSV; preserve token confidentiality.
+- [ ] DEFERRED: Requires implementation-level parity confirmation; no OK or FIXED claim made in this pass.
 
 ## G2-20-031-036 [P1] MISSING facet F14
 - [ ] Partial: CSV export uses scoped server endpoint, and legacy ZIP is explicitly retired for per-file audit and malware-scan reasons; historical ZIP parity is not restored.
@@ -64,26 +72,31 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: (none, new feature)
 - Legacy: Archived last; unrelated projects retain backend order; Team N natural order only within same series (ProjectsContent.jsx:130-152; projectListOrdering.js:1-18)
 - Expected fix: Reuse legacy numberedTeamTitle series guard and stable base ordering
+- [ ] DEFERRED: Requires implementation-level parity confirmation; no OK or FIXED claim made in this pass.
 
 ## G2-15-006-014 [P1] GAP facet F04
 - Files: (none, new feature)
 - Legacy: Legacy course title fallback `Course name unavailable` yet still can open valid id (courseListingUtils.js:97-106; courseHref:7-15)
 - Expected fix: Preserve fallback-title but valid-ID navigability where authorized, mark corrupt record separately
+- [ ] DEFERRED: Requires implementation-level parity confirmation; no OK or FIXED claim made in this pass.
 
 ## G2-15-008-040 [P1] GAP facet F11
 - Files: (none, new feature)
 - Legacy: Legacy item availability `learnerChildAvailability` hides non-visible and locks non-actionable (syllabusDetail.js:390-404,463-466)
 - Expected fix: Compare active/enabled/locked/prerequisites and same hidden vs disabled semantics
+- [ ] DEFERRED: Requires implementation-level parity confirmation; no OK or FIXED claim made in this pass.
 
 ## G2-16-004-045 [P1] GAP facet F11
 - Files: src/app/(authenticated)/tracker/issues/page.tsx
 - Legacy: `issues/index.js:227-235`; `PublicBugTrackerController.java:15-47`: public list by default, any visitor may inspect reported issues.
 - Expected fix: Define privacy-safe reporter list (at least public redacted subset), retain private engineering separation.
+- [ ] DEFERRED: Requires implementation-level parity confirmation; no OK or FIXED claim made in this pass.
 
 ## G2-16-023-011 [P1] GAP facet F04
 - Files: src/app/(authenticated)/learn/my-placements/placement/page.tsx
 - Legacy: LearnerPlacementService.java:47-48 debarment id,reason,untilDate,untilDrives.
 - Expected fix: Load active debarments as distinct authoritative data source.
+- [ ] DEFERRED: Requires implementation-level parity confirmation; no OK or FIXED claim made in this pass.
 
 ## G2-17-012-020 [P1] GAP facet F06
 - [x] Verified: screening decision saves candidate/internal rejection reason in the screening record and history; event metadata includes rejectionReason, assessmentUrl, and candidateNotificationPolicy.
@@ -131,8 +144,10 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Files: src/app/(authenticated)/admin/course-progress/page.tsx, src/app/(authenticated)/admin/course-progress/students/page.tsx
 - Legacy: Title then measured-work warning, class/course controls, four stats, per-student table `docs/legacy-source/frontend/src/pages/superadmin/sections/CourseProgress.js:231-388`
 - Expected fix: Restore original screen section order and combined report.
+- [ ] DEFERRED: Requires implementation-level parity confirmation; no OK or FIXED claim made in this pass.
 
 ## G2-19-017-044 [P1] GAP facet F19
 - Files: (none, new feature)
 - Legacy: Legacy byProjectAndMeetingKey query unbounded `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/ProjectMeetingHistoryRepository.java:23-24`
 - Expected fix: Index by (project_id,meeting_key,created_at DESC,id DESC) and enforce pagination.
+- [ ] DEFERRED: Requires implementation-level parity confirmation; no OK or FIXED claim made in this pass.
