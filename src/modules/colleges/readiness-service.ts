@@ -45,7 +45,7 @@ import {
   evaluateCollegeReadiness,
   type CollegeReadinessFacts,
 } from "./readiness-model";
-import {evaluateLegacyDomainLoginReadiness} from "./legacy-domain-login-readiness";
+import {evaluateLegacyDomainLoginReadiness,validateLegacyDomainLoginReadinessResponse} from "./legacy-domain-login-readiness";
 
 function isMissingRelation(
   error: unknown,
@@ -461,12 +461,12 @@ export async function getSuperAdminCollegeReadiness(
   // policy explicitly rather than reading a divergent "strict" env default.
   // The pure adapter also supports historic lenient readiness for test/crosswalk.
   const requireVerifiedDomains=true;
-  const domainPolicy=evaluateLegacyDomainLoginReadiness({
+  const domainPolicy=validateLegacyDomainLoginReadinessResponse(evaluateLegacyDomainLoginReadiness({
     requireVerifiedDomains,domainTotal,domainVerified,domainPrimary,verifiedPrimaryDomains,
     hasLogo:college.logoObjectPath?.trim()||college.legacyLogoUrl?.trim()?true:
       brandingLogo===undefined?null:Boolean(brandingLogo?.trim()),
     departments:activeDepartments,facultyMemberships,enrolledLearners,
-  });
+  }));
 
   const facts: CollegeReadinessFacts = {
     collegeStatus: college.status,

@@ -479,8 +479,8 @@ function JobActions({
             <p className="font-semibold text-foreground">You're in — application sent</p>
             <p className="mt-1 break-all text-body">Application reference (APP): {receipt.id}</p>
             <p className="mt-1 text-body">Recorded: {formatApplicationReceiptTime(receipt.submittedAt)}</p>
-            <p className="mt-1 text-body">Resume: No resume is attached to this application.</p>
-            <p className="mt-1 text-xs text-muted-foreground">Only a separately attached and authorized application resume can be previewed.</p>
+            <p className="mt-1 text-body">Resume: Attachment status is verified when you select Preview resume.</p>
+            <p className="mt-1 text-xs text-muted-foreground">An attached resume is private and available only through a fresh authorized read grant. Applying does not automatically share your contact details or profile documents.</p>
             <OwnResumePreview applicationId={receipt.id} />
             <Link href="/learn/my-placements/applications"
               className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
