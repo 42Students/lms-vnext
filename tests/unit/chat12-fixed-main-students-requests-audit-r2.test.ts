@@ -54,7 +54,8 @@ describe("TPO FIXED-ON-MAIN source checks; live acceptance required",()=>{
  });
  it("TPO-requests-verification-24 retains its assigned source contract",()=>{
   expect(source("src/components/verification/TpoVerificationPanel.tsx")).toContain("MISSING_DOCUMENT");
-  expect(source("src/components/verification/TpoVerificationPanel.tsx")).toContain("Review one by one");
+  expect(source("src/components/verification/TpoVerificationPanel.tsx")).toContain("<VerificationReviewDrawer");
+  expect(source("src/components/verification/TpoVerificationPanel.tsx")).toContain("setSelected(row)");
  });
  it("TPO-requests-verification-26 retains its assigned source contract",()=>{
   expect(source("src/components/verification/TpoVerificationPanel.tsx")).toContain("<TpoRosterVerificationBulk");

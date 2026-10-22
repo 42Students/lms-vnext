@@ -71,8 +71,8 @@ describe("TPO-settings-audit-60 historical recruiter grant Excel and CSV parity"
   expect(route).toContain('format!=="csv"&&format!=="xlsx"');
   expect(route).toContain("listTpoRecruiterAccess(await getCurrentRequestContext()");
   expect(route).toContain("exportAll:true");
-  expect(route).toContain('filename="recruiters.csv"');
-  expect(route).toContain('filename="recruiters.xlsx"');
+  expect(route).toContain('gridExportFilename("recruiters", "csv")');
+  expect(route).toContain('gridExportFilename("recruiters", "xlsx")');
   expect(route).toContain("private, no-store");
   expect(ui).toContain('tpoRecruiterGrantExportHref(query,"xlsx")');
  });

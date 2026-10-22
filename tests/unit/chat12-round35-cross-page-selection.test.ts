@@ -9,7 +9,9 @@ it("TPO-students-17 preserves a tenant-scoped whole-view 5000-row selection acro
  expect(page).toContain("roster.total<=5000");
  expect(page).toContain("page:undefined,pageSize:undefined,columns:undefined");
  expect(page).toContain("scopeKey={context.membership.id");
- expect(grid).toContain("selectAllIds=selection?.allIds??visibleRowIds");
+ expect(grid).toContain("const allowedIds=selection?.allIds??visibleRowIds");
+ expect(grid).toContain("visibleRowIds.filter(id=>allowedIds.includes(id))");
+ expect(grid).toContain("selection.selected.filter(id=>!selectAllIds.includes(id))");
  expect(grid).toContain("visibleRowIds.slice(Math.min(anchor.current,index)");
  expect(grid).toContain("event.nativeEvent.shiftKey");
  expect(s("src/components/tpo/tpo-students-spreadsheet.tsx")).toContain("shared?.allIds??rows.map");
