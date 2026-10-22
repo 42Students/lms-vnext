@@ -116,16 +116,19 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Keep same 1–200 range create/edit.
 
 ## G2-5-020-015 [P1] GAP facet F06
+- [x] Verified: createDiscussionMessageSchema accepts lessonContentId and messageText while persisted sender membership and display name derive from scoped request context, never client identity.
 - Files: src/modules/courses/discussion-service.ts
 - Legacy: Legacy post DiscussionDTO carries lessonContentId,sequence,userId,names,text `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/DiscussionServiceImpl.java:37-55`
 - Expected fix: Define lesson post body compatible with content/sequence; ignore spoofed identity.
 
 ## G2-5-020-021 [P1] GAP facet F07
+- [x] Verified: the write transaction validates lessonContents.deliveryId, checks deletion, and returns LESSON_CONTENT_NOT_FOUND for orphan or other-delivery content.
 - Files: src/modules/courses/discussion-service.ts
 - Legacy: Legacy orphan content without course/class scope 403 fixed error `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/DiscussionController.java:55-71`
 - Expected fix: Implement ancestor-scope guard and wrong-college negative tests.
 
 ## G2-5-020-028 [P1] GAP facet F11
+- [x] Verified: discussionAccess enforces scoped learning read and faculty creation rechecks active teaching assignments and faculty membership inside the write transaction.
 - Files: src/modules/courses/discussion-service.ts
 - Legacy: Legacy scope calls requireAccessClass/course + requireTeachingScope `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/DiscussionController.java:47-70`
 - Expected fix: Match faculty assigned-teaching access for each lesson content.
