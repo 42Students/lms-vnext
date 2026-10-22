@@ -35,21 +35,21 @@ export function parseWorkspaceBrief(value:unknown):WorkspaceBrief {
  // Historic workspaces sometimes carry the full, untouched template overview
  // in an `overview` map, while vNext writes five native fields at top level.
  // A top-level explicit empty value wins over inherited template defaults.
- const nested=envelope.overview&&typeof envelope.overview==="object"&&
-  !Array.isArray(envelope.overview)
-  ?envelope.overview as Record<string,unknown>:{};
+ const nested=envelope["overview"]&&typeof envelope["overview"]==="object"&&
+  !Array.isArray(envelope["overview"])
+  ?envelope["overview"] as Record<string,unknown>:{};
  const raw={...nested,...envelope};
  const list=(data:unknown):string[]=>Array.isArray(data)
   ?data.filter((item):item is string=>typeof item==="string")
   :typeof data==="string"?data.split(/\r?\n/).map(s=>s.trim()).filter(Boolean):[];
  const fallback={
-  goal:typeof raw.goal==="string"?raw.goal:"",
-  description:typeof raw.description==="string"?raw.description:"",
-  deliverables:list(raw.deliverables),
+  goal:typeof raw["goal"]==="string"?raw["goal"]:"",
+  description:typeof raw["description"]==="string"?raw["description"]:"",
+  deliverables:list(raw["deliverables"]),
   // An explicitly cleared native field, including a historic null, wins over
   // inherited definitionOfDone. Absence alone activates the old alias.
-  completionConditions:list("completionConditions" in raw?raw.completionConditions:raw.definitionOfDone),
-  personas:list(raw.personas),
+  completionConditions:list("completionConditions" in raw?raw["completionConditions"]:raw["definitionOfDone"]),
+  personas:list(raw["personas"]),
  };
  const result=workspaceBriefSchema.safeParse(fallback);
  // Return fresh nested arrays even for malformed historical records.
@@ -70,8 +70,8 @@ export function translateLegacyWorkspaceOverview(value:unknown):{
 }{
  const source=value&&typeof value==="object"&&!Array.isArray(value)
   ?value as Record<string,unknown>:{};
- const nested=source.overview&&typeof source.overview==="object"&&
-  !Array.isArray(source.overview)?source.overview as Record<string,unknown>:{};
+ const nested=source["overview"]&&typeof source["overview"]==="object"&&
+  !Array.isArray(source["overview"])?source["overview"] as Record<string,unknown>:{};
  const original={...nested,...source};
  const opaqueFacts=Object.fromEntries(Object.entries(original).filter(([key])=>
   !["goal","description","deliverables","definitionOfDone","completionConditions",
