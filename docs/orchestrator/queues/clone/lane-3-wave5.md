@@ -4,5 +4,5 @@ Packets moved to you from lanes that still had a lot left. Same rules as your ot
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_modules_admin-ui_legacy-superadmin-destination-model.ts.md` (edit src/modules/admin-ui/legacy-superadmin-destination-model.ts; 2 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-9/W3_src_modules_platform-settings_admin-editor-service.ts.md` (edit src/modules/platform-settings/admin-editor-service.ts; 3 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_modules_admin-ui_legacy-superadmin-destination-model.ts.md` (edit src/modules/admin-ui/legacy-superadmin-destination-model.ts; 2 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-9/W3_src_modules_platform-settings_admin-editor-service.ts.md` (edit src/modules/platform-settings/admin-editor-service.ts; 3 findings; best P1)
