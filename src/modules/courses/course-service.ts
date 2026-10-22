@@ -497,13 +497,12 @@ export async function updateCourse(
       .update(courses)
       .set({
         ...changes,
+        // Enabled and allowed-for-display are independent legacy switches.
+        // A PATCH that only edits enabled must not silently overwrite the
+        // display flag; omitted values preserve the existing DB column.
         ...(visibleToStudents!==undefined
           ?{legacyAllowedForDisplay:visibleToStudents?1:0}
-          :input.enabled===undefined?{}:{
-            // Retain legacy PATCH enabled compatibility for older callers;
-            // the dedicated student-visibility action uses only the flag above.
-            legacyAllowedForDisplay:input.enabled?1:0,
-          }),
+          :{}),
         version: sql<number>`${courses.version} + 1`,
         // The persisted token MUST advance even for two edits within one
         // millisecond (or across app/DB clocks). The browser sends this exact
