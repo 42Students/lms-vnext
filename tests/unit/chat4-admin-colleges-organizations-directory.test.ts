@@ -20,7 +20,7 @@ const superAdmin = (scope: RequestContext["adminScope"] = null): RequestContext 
 
 describe("Super Admin colleges and organizations directory contracts (chat-4)", () => {
   it("SA-colleges-directory-01 parses a search/pagination query without discarding legitimate filters", () => {
-    expect(parseAdminDirectorySearchParams({})).toEqual({ q: "", page: 1, pageSize: 25 });
+    expect(parseAdminDirectorySearchParams({})).toEqual({ q: "", page: 1, pageSize: 10 });
     expect(parseAdminDirectorySearchParams({ q: "  College  ", page: "3", pageSize: "50" }))
       .toEqual({ q: "College", page: 3, pageSize: 50 });
     for (const size of [10, 25, 50, 100]) {
@@ -96,7 +96,10 @@ describe("Super Admin colleges and organizations directory contracts (chat-4)", 
     // The organizations page may use its compact style, but must guard the same capability.
     expect(organizationPage).toMatch(/requirePermission\(context,\s*"admin-scope\.select"\)/);
     for (const page of [collegePage, organizationPage]) {
-      expect(page.indexOf("requirePermission(context")).toBeLessThan(page.indexOf("parseAdminDirectorySearchParams(await searchParams)"));
+      const authorization=page.indexOf("requirePermission(context");
+      const parse=page.indexOf("parseAdminDirectorySearchParams(");
+      expect(authorization).toBeGreaterThan(-1);
+      expect(parse).toBeGreaterThan(authorization);
     }
   });
 

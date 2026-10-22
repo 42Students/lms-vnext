@@ -34,7 +34,8 @@ describe("TPO unowned work assignment safety",()=>{
   const registeredProposal=src("docs/proposed-migrations/registered-0135/tpo-team-drive-owner.sql");
   expect(component).toContain("Nobody owns {drives} drives and {companies} companies");
   expect(component).toContain("apiFetch<");
-  expect(component).toContain('role="alert"');
+  expect(component).toContain('<InlineNotice tone="error" message={error}');
+  expect(src("src/components/ui/inline-notice.tsx")).toContain('tone === "error" ? "alert" : "status"');
   expect(component).toContain("pending.current");
   expect(page).toContain("unowned?.ready?");
   expect(page).toContain("TpoTeamAssignUnowned");
