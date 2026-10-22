@@ -36,6 +36,9 @@ export default async function AdminPlacementsPage({ searchParams }: {
       <Link href="/admin/companies" className={secondaryActionClass}>
         Companies directory →
       </Link>
+      <Link href="/admin/placements/organization-jobs" className={secondaryActionClass}>
+        Search organization jobs →
+      </Link>
       <Link href="/admin/placements/retention" className={secondaryActionClass}>
         Data retention report →
       </Link>
