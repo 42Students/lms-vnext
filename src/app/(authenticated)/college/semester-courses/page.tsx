@@ -4,7 +4,7 @@ import { Alert } from "@/components/ui/alert";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
-import { CollegeTermMappingManager } from "@/components/academics/college-term-mapping-manager";
+import { CollegeTermMappingRetained } from "@/components/academics/college-term-mapping-retained";
 import { listCollegeTermMappings } from "@/modules/academics/college-term-mapping-service";
 
 export default async function CollegeSemesterCoursesPage() {
@@ -31,21 +31,16 @@ export default async function CollegeSemesterCoursesPage() {
       <Link href="/college/programs" className="font-semibold text-primary-text hover:underline">Programs</Link>
       <span aria-current="page" className="border-b-2 border-[var(--lms-primary)] pb-1 font-semibold text-foreground">Semester–Course Mapping</span>
     </nav>
-    {!curriculumData ? <ErrorState title="Semester–course mappings could not be loaded"
-      description="The college curriculum could not be refreshed. No mappings were changed."
-      action={<a href="/college/semester-courses" className="font-semibold text-link underline underline-offset-4">Retry curriculum</a>}/> :
-      <>
-        {curriculumData.lookupFailures.length ? <Alert tone="warning" title="Curriculum lookup incomplete">
-          Failed to refresh: {curriculumData.lookupFailures.join(", ")}.
-          {" "}<a href="/college/semester-courses" className="font-semibold underline underline-offset-4">Retry curriculum lookups</a>.
-          The mapping editor is paused until all three same-college reads are available.
-        </Alert> : null}
-        {!curriculumData.staffingAvailable ? <Alert tone="warning" title="Faculty staffing warnings unavailable">
-          The semester mappings are still available, but current active-delivery staffing could not be checked.
-          {" "}<a href="/college/semester-courses" className="font-semibold underline underline-offset-4">Retry staffing read</a>.
-        </Alert> : null}
-        {curriculumData.lookupFailures.length===0 ?
-          <CollegeTermMappingManager key={context.membership.collegeId} data={curriculumData} /> : null}
-      </>}
+    {curriculumData?.lookupFailures.length ? <Alert tone="warning" title="Curriculum lookup incomplete">
+      Failed to refresh: {curriculumData.lookupFailures.join(", ")}.
+      {" "}The last successful mappings for this college remain visible in read-only mode.
+      {" "}Use Retry curriculum to load new values before editing.
+    </Alert> : null}
+    {curriculumData&&!curriculumData.staffingAvailable ? <Alert tone="warning" title="Faculty staffing warnings unavailable">
+      The semester mappings are still available, but current active-delivery staffing could not be checked.
+      {" "}<a href="/college/semester-courses" className="font-semibold underline underline-offset-4">Retry staffing read</a>.
+    </Alert> : null}
+    <CollegeTermMappingRetained key={context.membership.collegeId}
+      data={curriculumData&&curriculumData.lookupFailures.length===0?curriculumData:null} />
   </div>;
 }

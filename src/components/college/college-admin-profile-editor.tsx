@@ -163,8 +163,11 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
     }}));setSaved(false);
   }
   function additionalPhone(value:string){
+    // The legacy Contacts editor accepts digits only and caps alternate
+    // phone numbers at 15 digits; preserve that interaction on input.
+    const digits=value.replace(/\D/g,"").slice(0,15);
     setProfile(current=>({...current,contacts:{...current.contacts,
-      alternatePhone:value,contactPhone:value}}));setSaved(false);
+      alternatePhone:digits,contactPhone:digits}}));setSaved(false);
   }
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -395,11 +398,13 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college, read
           </div>
           <div className="grid min-w-0 gap-4 md:grid-cols-2">
             <Field label="Primary contact mobile (10 digits)" type="tel" maxLength={10}
+              placeholder="Primary Mobile Number (10 digits)"
               value={profile.contacts.contactMobile??""} disabled={editableSection!=="contacts"}
               onChange={v=>detail("contacts","contactMobile",v.replace(/\D/g,""))}/>
             <Field label="Additional email" type="email" maxLength={254} value={profile.contacts.alternateEmail} disabled={editableSection!=="contacts"}
               onChange={v => detail("contacts", "alternateEmail", v)} />
-            <Field label="Additional phone" type="tel" maxLength={40}
+            <Field label="Additional phone" type="tel" maxLength={15}
+              placeholder="Alternate Phone (Optional, 10-15 digits)"
               value={profile.contacts.contactPhone||profile.contacts.alternatePhone} disabled={editableSection!=="contacts"}
               onChange={additionalPhone} />
             <Field label="Contact person" value={profile.contacts.contactPerson} disabled={editableSection!=="contacts"}
