@@ -31,7 +31,7 @@ describe("SA-tenants-modules-LOGIN-CAS-03 successive college sign-in saves",()=>
   expect(component).toContain("setCurrentVersion(committed.version)");
   expect(component.indexOf("setCurrentVersion(committed.version)"))
    .toBeLessThan(component.indexOf('setMessage("Sign-in settings saved")'));
-  expect(component).toContain("Could not save sign-in settings.");
+  expect(component).toContain("Couldn't save sign-in settings: ");
   expect(route).toContain("NextResponse.json({policy}");
   expect(service).toContain("if(current?.method===input.method)");
   expect(service).toContain('new CollegeSignInPolicyError("SIGNIN_POLICY_STALE")');

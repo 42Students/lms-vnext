@@ -59,13 +59,9 @@ describe("Super Admin feature-control model", () => {
         source: "SOURCE_DEFAULT",
         level: "DEFAULT",
       },
-      {
-        module: "electives",
-        enabled: true,
-        source: "SOURCE_DEFAULT",
-        level: "DEFAULT",
-      },
     ]);
+    // Electives is resolved internally, not exposed as a third legacy toggle.
+    expect(resolveModuleAccessFromRules([{scopeType:"GLOBAL",scopeId:null}],[]).electives.enabled).toBe(true);
   });
 
   it("distinguishes college, organization and global persisted rules", () => {
@@ -108,11 +104,6 @@ describe("Super Admin feature-control model", () => {
         enabled: true,
         source: "PERSISTED",
         level: "ORGANIZATION",
-      },
-      {
-        enabled: false,
-        source: "PERSISTED",
-        level: "GLOBAL",
       },
     ]);
   });
@@ -215,9 +206,11 @@ describe("Super Admin feature-control model", () => {
       ],
     );
 
+    // Legacy placements are switched at college scope; a personal access
+    // rule cannot bypass a disabled college's placement module.
     expect(resolution.placements).toMatchObject({
-      enabled: true,
-      level: "MEMBERSHIP",
+      enabled: false,
+      level: "COLLEGE",
     });
   });
 
