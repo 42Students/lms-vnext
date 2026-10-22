@@ -15,13 +15,14 @@ export function CollegeLessonsMemory({children}:{children:ReactNode}){
  },[]);
  return <MemoryContext.Provider value={{last,save}}>{children}</MemoryContext.Provider>;
 }
-export function CollegeLessonsCapture({children,query}:{children:ReactNode;query:string}){
+export function CollegeLessonsCapture({children}:{children:ReactNode}){
  const memory=useContext(MemoryContext);
  const save=memory?.save;
- useEffect(()=>{save?.(query,children);},[query,children,save]);
+ useEffect(()=>{save?.(window.location.search,children);},[children,save]);
  return <>{children}</>;
 }
-export function useLastCollegeLessons(query:string){
+export function useLastCollegeLessons(){
  const snapshot=useContext(MemoryContext)?.last;
- return snapshot?.query===query?snapshot.content:null;
+ return snapshot && typeof window!=="undefined" &&
+  snapshot.query===window.location.search?snapshot.content:null;
 }
