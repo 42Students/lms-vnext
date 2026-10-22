@@ -18,7 +18,7 @@ import {useToast} from "@/components/ui/toast";
 type Party="TPO"|"COMPANY";
 type Item={id:string;proposerParty:string;targetParty:string;mode:string;field:string;legacyField?:string|null;
  proposedValue:string;reason:string;status:string;createdByUserId:string;createdByName?:string|null;
- createdAt:string;updatedAt:string;resolvedAt?:string|null;currentValue?:string|null;
+ createdAt:string;updatedAt:string;resolvedAt?:string|null;fieldLabel?:string|null;currentValue?:string|null;
  answerValue?:string|null;replyText?:string|null;
  decisionNote:string|null;messages:Array<{id:string;senderParty:string;body:string;sentAt:string}>};
 function actionsFor(item:Item):readonly ("ACCEPT"|"ANSWER"|"DECLINE")[] {
@@ -203,7 +203,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
     requests.filter(item=>item.proposerParty===proposer).map(item=>
     <article id={"change-request-"+item.id} key={item.id} className="scroll-mt-24 space-y-3 border-b border-border py-5">
      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-      <h3 className="font-semibold">{LEGACY_DRIVE_CHANGE_FIELD_LABELS[item.field as keyof typeof LEGACY_DRIVE_CHANGE_FIELD_LABELS]??(item.legacyField??item.field).replaceAll("_"," ")} · {item.mode==="SUGGEST"?"propose":item.mode.toLowerCase()}</h3>
+      <h3 className="font-semibold">{item.fieldLabel??LEGACY_DRIVE_CHANGE_FIELD_LABELS[item.field as keyof typeof LEGACY_DRIVE_CHANGE_FIELD_LABELS]??(item.legacyField??item.field).replaceAll("_"," ")} · {item.mode==="SUGGEST"?"propose":item.mode.toLowerCase()}</h3>
       <StatusBadge tone={item.status==="ACCEPTED"?"success":item.status==="DECLINED"?"error":item.status==="OPEN"?"warning":"neutral"}>{item.status==="OPEN"?"Waiting":item.status==="DECLINED"?"Declined":item.status==="REPLIED"?"Replied":item.status.replaceAll("_"," ")}</StatusBadge>
      </div>
      {item.mode==="SUGGEST"?<p className="whitespace-pre-wrap break-words text-sm leading-[22px]">
