@@ -6,7 +6,6 @@ import {collegeMemberships,departments,facultyProfiles,learnerProfiles,membershi
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {RequestContext} from "@/modules/identity/context";
-import {requirePermission} from "@/modules/permissions/policy";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {facultyContactEditSchema,facultyProfileDocumentSchema} from "./faculty-profile-document";
 import {learnerProfileDocumentSchema} from "./profile-validation";
