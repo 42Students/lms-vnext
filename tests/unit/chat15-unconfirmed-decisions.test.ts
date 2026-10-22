@@ -26,7 +26,7 @@ describe("chat-15 evidence-based UNCONFIRMED decisions",()=>{
  });
  it("LEARNER-home-courses-01 deliberately preserves a multi-role dashboard and a dedicated learner courses link",()=>{
   const dashboard=source("src/app/(authenticated)/dashboard/page.tsx");
-  expect(dashboard).toContain("Workspace dashboard");
+  expect(dashboard).toContain("No role workspace is available");
   expect(dashboard).toContain('href="/learn/courses"');
   expect(dashboard).toContain("Active Courses");
  });
@@ -62,13 +62,13 @@ describe("chat-15 evidence-based UNCONFIRMED decisions",()=>{
  });
  it("LEARNER-placements-16 renders true disclosure placeholders, posted date and application status",()=>{
   const jobs=source("src/components/placements/learner-placement-jobs.tsx");
-  for(const term of ["Not disclosed","Not specified","Location","Deadline","Posted ","learnerDriveDeadlineUrgency","item.application"]){
+  for(const term of ["Not disclosed","Posted date not specified","Deadline","Posted ","learnerDriveDeadlineUrgency","item.application"]){
    expect(jobs).toContain(term);
   }
  });
  it("LEARNER-placements-39 does not synthesize blocked exam dates when only round data exists",()=>{
   const calendar=source("src/components/placements/learner-career-calendar.tsx");
-  expect(calendar).toContain("careerCalendarEvents(rounds)");
+  expect(calendar).toContain("careerCalendarEvents(rounds,supplements)");
   expect(calendar).toContain("No career events have been scheduled for you yet.");
   // Deadline and blocked-day sources are required for full parity; decision remains OPEN.
  });
