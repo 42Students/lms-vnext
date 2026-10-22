@@ -50,8 +50,8 @@ describe("HR-BREAK-chat19-profile-page: active recruiter reads and session denia
  });
  it("HR-BREAK-PROFILE-IDENTITY-10 rejects mismatched recruiter identity before profile and grant reads",async()=>{
   m.ctx.mockResolvedValue({...actor,recruiter:{...actor.recruiter!,userId:"another-employee"}});
-  await expect(HrProfilePage()).rejects.toThrow("REDIRECT");
-  expect(m.redirect).toHaveBeenCalledWith("/dashboard");
+  expect(collect(await HrProfilePage({}))).toContain("Recruiter profile access denied");
+  expect(m.redirect).not.toHaveBeenCalled();
   expect(m.profile).not.toHaveBeenCalled();
   expect(m.grants).not.toHaveBeenCalled();
  });

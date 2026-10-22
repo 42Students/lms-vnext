@@ -11,8 +11,12 @@ describe("chat-9 College Projects template catalogue", () => {
     })).toEqual({ overview: 1, releases: 1, sprints: 2, tasks: 0, resources: 1 });
     expect(projectTemplateSectionCounts(null).tasks).toBe(0);
     const page = file("src/app/(authenticated)/college/projects/templates/page.tsx");
-    expect(page).toContain('role="search"');
-    expect(page).toContain("visible.map");
+    expect(page).toContain("<ProjectTemplateCatalogueSearch initialQuery={q}");
+    const search = file("src/components/projects/project-template-catalogue-search.tsx");
+    expect(search).toContain('<Input id="college-template-search" type="search"');
+    expect(search).toContain('className="sr-only">Search title or slug');
+    expect(search).toContain("maxLength={120}");
+    expect(page).toContain("rows={visible}");
     for (const word of ["Template", "Version", "Sections", "Action", "No project templates match"])
       expect(page).toContain(word);
     const csv = projectTemplateCatalogueCsv([{
@@ -34,8 +38,8 @@ describe("chat-9 College Projects template catalogue", () => {
     expect(page).toContain("templatesResult.ok");
     expect(page).toContain("Template names are unavailable right now.");
     expect(service).toContain("templateId: projectInstances.templateId");
-    expect(workspace).toContain('item.templateTitle ? "Template: " + item.templateTitle');
-    expect(workspace).toContain('item.templateTitle??"No template — attach one"');
+    expect(workspace).toContain('Template: {item.templateTitle?.trim()||"Assigned template"}');
+    expect(workspace).toContain('aria-label={"No template for "+(item.title?.trim()||"workspace")+" — attach one"}');
     expect(workspace).toContain("No template — attach one");
   });
 });

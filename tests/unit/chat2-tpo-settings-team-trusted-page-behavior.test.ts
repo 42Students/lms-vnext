@@ -1,5 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import type {RequestContext} from "@/modules/identity/context";
+import {isValidElement} from "react";
 
 const state=vi.hoisted(()=>({
  context:vi.fn(),redirect:vi.fn(),team:vi.fn(),trusted:vi.fn(),
@@ -12,6 +13,14 @@ vi.mock("@/modules/placements/tpo-settings-people-service",()=>({
 import TeamPage from "@/app/(authenticated)/tpo/settings/team/page";
 import TrustedPage from "@/app/(authenticated)/tpo/settings/trusted/page";
 
+function visible(value:unknown):string {
+ if(typeof value==="string"||typeof value==="number")return String(value);
+ if(Array.isArray(value))return value.map(visible).join(" ");
+ if(!isValidElement(value))return "";
+ const props=value.props as Record<string,unknown>;
+ return Object.entries(props).filter(([name])=>name!=="key"&&name!=="ref")
+  .map(([,entry])=>visible(entry)).join(" ");
+}
 const college="00000000-0000-4000-8000-000000000001";
 const ctx=(roles:readonly ("TPO"|"COLLEGE_ADMIN"|"LEARNER")[]=["TPO"]):RequestContext=>({
  user:{id:"tpo",identityUid:"tpo-uid",platformStatus:"ACTIVE",systemRoles:[]},
@@ -54,7 +63,7 @@ describe("UX-tpo-LAST-THIRD-01 settings people page server states",()=>{
   expect(state.team).toHaveBeenCalledWith(expect.objectContaining({
    membership:expect.objectContaining({collegeId:college}),
   }),college);
-  const content=JSON.stringify(page,(key,value)=>key==="type"&&typeof value!=="string"?undefined:value);
+  const content=visible(page);
   expect(content).toContain("Faculty team assignments unavailable");
   expect(content).toContain("Drive Day student-coordinator assignments are unavailable");
   expect(content).toContain("No matching active TPO or coordinator memberships");
@@ -66,7 +75,7 @@ describe("UX-tpo-LAST-THIRD-01 settings people page server states",()=>{
   expect(state.trusted).toHaveBeenCalledWith(expect.objectContaining({
    membership:expect.objectContaining({collegeId:college}),
   }),college);
-  const content=JSON.stringify(page,(key,value)=>key==="type"&&typeof value!=="string"?undefined:value);
+  const content=visible(page);
   expect(content).toContain("Trusted-domain allowlist unavailable");
   expect(content).toContain("No active placement company relationships");
   expect(content).toContain("Unavailable");

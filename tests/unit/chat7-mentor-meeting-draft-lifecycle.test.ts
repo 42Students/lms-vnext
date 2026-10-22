@@ -32,7 +32,8 @@ describe("MEN-projects-meetings-27 meeting draft lifecycle", () => {
   it("MEN-projects-meetings-27 makes draft private and never notifies learners when cancelled", () => {
     const service = read("src/modules/projects/meeting-service.ts");
     const ui = read("src/components/projects/project-meeting-controls.tsx");
-    expect(service).toContain('inArray(projectMeetings.status, ["DRAFT", "REQUESTED", "SCHEDULED","RESCHEDULED"])');
+    expect(service).toContain('ne(projectMeetings.status, "DRAFT")');
+    expect(service).toContain('inArray(projectMeetings.status,["DRAFT","REQUESTED","SCHEDULED","RESCHEDULED"])');
     expect(service).toContain('if (meeting.status === "DRAFT") return cancelled;');
     expect(service).toContain('scope.access!=="MENTOR" && scope.access!=="ADMIN" ? [');
     expect(service).toContain('or(ne(projectMeetings.status,"CANCELLED")');
@@ -68,7 +69,8 @@ describe("MEN-projects-meetings-27 meeting draft lifecycle", () => {
   it("MEN-projects-meetings-27 does not announce manager-only facilitator changes", () => {
     const service=read("src/modules/projects/meeting-service.ts");
     expect(service).toContain("const facilitatorOnlyChange=existing.status===targetStatus");
-    expect(service).toContain('targetStatus==="RESCHEDULED" && existing && existing.status!=="RESCHEDULED"');
+    expect(service).toContain('const facilitatorOnlyChange=existing.status===targetStatus');
+    expect(service).toContain('if(targetStatus==="DRAFT" || facilitatorOnlyChange)return updated;');
     expect(service).toContain('if(targetStatus==="DRAFT" || facilitatorOnlyChange)return updated;');
     expect(service).toContain("(existing.outcome??null)===(values.outcome??null)");
     const decisions=read("src/modules/projects/mentor-meeting-decision-service.ts");

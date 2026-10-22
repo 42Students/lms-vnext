@@ -38,8 +38,11 @@ describe("SA-COURSES-TOUCH-13 Super Admin course catalogue mobile filters and sa
   const component=readFileSync("src/components/courses/admin-course-overview.tsx","utf8");
   expect(component).toContain("Open learning");
   expect(component).toContain("Refresh");
-  expect(component).toContain("Previous");
-  expect(component).toContain("Next");
+  expect(component).toContain("<Pagination page={catalogue.page} pageCount={catalogue.pages}");
+  const pagination=readFileSync("src/components/ui/pagination.tsx","utf8");
+  expect(pagination).toContain('aria-label="Previous page"');
+  expect(pagination).toContain('aria-label="Next page"');
+  expect(pagination).toContain("min-h-11");
   expect(component).toContain("min-h-11");
   expect(component).not.toContain("min-h-10");
   expect(component).not.toContain("min-h-9");
