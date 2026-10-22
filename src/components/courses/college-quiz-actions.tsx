@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Dialog } from "@/components/ui/dialog";
 
 import { DateInput } from "@/components/ui/date-input";
 import {useRef,useState} from "react";
@@ -26,6 +27,7 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
  const [shuffleQuestions,setShuffleQuestions]=useState(false),[shuffleOptions,setShuffleOptions]=useState(false);
  const [expectedUpdatedAt,setExpectedUpdatedAt]=useState("");
  const [metadataOnly,setMetadataOnly]=useState(false);
+ const [confirmDelete,setConfirmDelete]=useState(false);
  async function beginEdit(){
   if(busy||loading||inFlight.current)return;
   if(editing){setEditing(false);return;}
@@ -68,7 +70,6 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
     expectedUpdatedAt,
     ...(quiz.status==="DRAFT"&&!metadataOnly?{maxAttempts,shuffleQuestions,shuffleOptions}:{})};
   }else{
-   if(!window.confirm("Archive this quiz? This retains its questions and history. Quizzes with learner attempts cannot be archived."))return;
    url+="/transition";method="POST";body={action:"ARCHIVE"};
   }
   inFlight.current=true;setBusy(true);setError("");setNotice("");setLastFailedAction(null);
@@ -83,7 +84,9 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
     data?.error==="FACULTY_QUIZ_STALE_VERSION"?
      "Another author changed this Quiz. Close the editor and reload its latest revision.":
     "Unable to update quiz. Check the form and try again.");
-   setEditing(false);setExpectedUpdatedAt("");setNotice(action==="EDIT"?"Quiz updated":"Quiz archived (history retained)");
+   setEditing(false);setExpectedUpdatedAt("");
+   if(action==="ARCHIVE")setConfirmDelete(false);
+   setNotice(action==="EDIT"?"Quiz updated":"Quiz removed from the active list (history retained)");
    router.refresh();
   }catch(cause){
    setLastFailedAction(action);
@@ -97,10 +100,24 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
    <Button type="button" disabled={busy||loading} onClick={()=>void beginEdit()}
     variant="secondary" size="sm" className="min-h-11 md:min-h-9">
     {loading?"Loading…":"Edit metadata"}</Button>
-   <Button type="button" disabled={busy} onClick={()=>void act("ARCHIVE")}
+   <Button type="button" disabled={busy||loading} onClick={()=>setConfirmDelete(true)}
     variant="danger" size="sm" className="min-h-11 md:min-h-9">
-    Archive</Button>
+    Delete</Button>
   </div>
+  <Dialog open={confirmDelete} onOpenChange={setConfirmDelete} role="alertdialog"
+   title="Delete this quiz?"
+   description="Learners will no longer be able to access this quiz. This action cannot be undone from this screen."
+   dismissible={!busy}
+   footer={<>
+    <Button type="button" variant="secondary" disabled={busy} onClick={()=>setConfirmDelete(false)}
+     className="min-h-11 md:min-h-9">Cancel</Button>
+    <Button type="button" variant="danger" loading={busy} disabled={busy}
+     onClick={()=>void act("ARCHIVE")} className="min-h-11 md:min-h-9">
+     {busy?"Deleting…":"Delete quiz"}
+    </Button>
+   </>}>
+   <p className="text-sm leading-6 text-body">This removes the quiz from learner access. Its existing history is retained for audit. Quizzes with learner attempts cannot be archived.</p>
+  </Dialog>
   {quiz.status==="DRAFT"?<CollegeQuizQuestionsEditor quizId={quiz.id}/>:null}
   {editing?<div className="grid gap-2 border-y border-border py-3">
    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Quiz title
