@@ -9,7 +9,7 @@
  * (placementTableExists) and report NOT_REGISTERED when the table is absent.
  */
 export function announcementsRuntimeEnabled() {
-  return process.env.DB10_ANNOUNCEMENTS_READY === "DB10_VERIFIED";
+  return process.env["DB10_ANNOUNCEMENTS_READY"] === "DB10_VERIFIED";
 }
 
 /** Separate an operator-disabled module from a ready module whose database
