@@ -110,11 +110,13 @@ For EACH row: open the vNext file(s) it cites, check that the Fix is really impl
 - Expected fix: Share full interviewer/student conflict policy with booking.
 
 ## G2-5-006-049 [P1] GAP facet F14 Exports
+- [x] Verified: attendance CSV exports blank no-session dates, P/A/N for single sessions, and aggregated attended/marked for multiple sessions.
 - Files: (none, new feature)
 - Legacy: No-class CSV cells blank, multi-session ratio (docs/legacy-source/frontend/src/pages/superadmin/sections/Attendance.js:460-463)
 - Expected fix: Export screen-equivalent N/P/A/ratio and blank no-class cells.
 
 ## G2-5-008-052 [P1] GAP facet F12 Business rules
+- [ ] Partial: scoped delete refuses all dependent enrollments, teaching assignments, schedules and deliveries; historical-dependent archive/delete equivalence requires separate review.
 - Files: (none, new feature)
 - Legacy: Delete blocked when enrolled or active class schedules (docs/legacy-source/frontend/src/pages/superadmin/sections/Classes.js:403-425)
 - Expected fix: Specify delete dependency semantics and distinct archive safety.
