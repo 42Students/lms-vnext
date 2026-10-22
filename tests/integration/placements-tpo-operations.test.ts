@@ -7,7 +7,8 @@ import {
   it,
 } from "vitest";
 import { Pool } from "pg";
-import { closeDatabaseConnection } from "@/db/client";
+import { closeDatabaseConnection, getDb } from "@/db/client";
+import {placementJobEligibilityPolicies} from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { applyToPlacementJob } from "@/modules/placements/application-service";
 import { createPlacementCompany } from "@/modules/placements/company-service";
@@ -19,7 +20,7 @@ import {
 import {
   stagePlacementRoundResult,
 } from "@/modules/placements/result-service";
-import { actOnPlacementRound } from "@/modules/placements/round-service";
+import { actOnPlacementRound, createPlacementRound } from "@/modules/placements/round-service";
 import { decidePlacementScreening } from "@/modules/placements/screening-service";
 import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
@@ -187,6 +188,10 @@ describe("Placement TPO operations", () => {
         ],
       },
     );
+    // Publishing a real drive requires a persisted eligibility policy, not just salary terms.
+    await getDb().insert(placementJobEligibilityPolicies).values({
+      jobId:driveDraft.id,updatedByUserId:tpo.user.id,
+    });
     const driveJob =
       await publishPlacementJob(
         tpo,
@@ -251,6 +256,10 @@ describe("Placement TPO operations", () => {
           applicationMode: "INTERNAL",
         },
       );
+    await createPlacementRound(tpo,screeningDraft.id,{kind:"TEST",name:"Screening test"});
+    await getDb().insert(placementJobEligibilityPolicies).values({
+      jobId:screeningDraft.id,updatedByUserId:tpo.user.id,
+    });
     const screeningJob =
       await publishPlacementJob(
         tpo,
@@ -328,16 +337,14 @@ describe("Placement TPO operations", () => {
           screeningJob.id,
           "SCREENING_PENDING",
         ],
-        [
-          screeningJob.id,
-          "EVALUATION_PLAN_MISSING",
-        ],
         [draftJob.id, "JOB_DRAFT"],
       ]),
     );
     expect(
       operations.workQueue[0]?.priority,
     ).toBe("HIGH");
+    expect(operations.workQueue.some(item=>item.code==="EVALUATION_PLAN_MISSING")).toBe(false);
+    // Publish now enforces at least one evaluative round on every published drive.
   });
 
   it("keeps the TPO operations center tenant-scoped", async () => {
