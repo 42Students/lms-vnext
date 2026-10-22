@@ -77,13 +77,15 @@ export default async function SuperAdminTenantSetup({
  let organizationFailed=false,collegesFailed=false,readinessFailed=false;
  let managedFailed=false,signinFailed=false,brandingFailed=false,detailFailed=false;
  if(tab==="STRUCTURE"&&globallyScoped){
-  const [organizationsResult,collegesResult]=await Promise.allSettled([
-   listOrganizations(context),getSuperAdminTenantLifecycleDirectory(context,{status:"ALL",q:directoryFilters.q,page:directoryFilters.page}),
-  ]);
-  if(organizationsResult.status==="fulfilled")organizations=organizationsResult.value;
-  else organizationFailed=true;
-  if(collegesResult.status==="fulfilled")list=collegesResult.value;
-  else collegesFailed=true;
+  // Stop dependent tenant reads if organization authority cannot be verified.
+  try{organizations=await listOrganizations(context);}
+  catch{organizationFailed=true;}
+  if(!organizationFailed){
+   try{list=await getSuperAdminTenantLifecycleDirectory(context,{
+    status:"ALL",q:directoryFilters.q,page:directoryFilters.page,
+   });}
+   catch{collegesFailed=true;}
+  }
  }else if(tab==="LAUNCH"&&id){
   try {
    college=await getSuperAdminTenantLifecycleDetail(context,id);
@@ -106,7 +108,15 @@ export default async function SuperAdminTenantSetup({
    if(b.status==="fulfilled")branding=b.value;else brandingFailed=true;
   }
  }
- const creatable=organizationFailed?[]:organizations.filter(item=>can(context,"college.manage",{organizationId:item.id}));
+ if(organizationFailed||collegesFailed||readinessFailed)
+  return <div className="min-w-0 space-y-4 md:space-y-6">
+   <PageHeader title="Tenant Setup" actions={<PageBackLink href="/admin/tenants" label="Tenant directory"/>}/>
+   <ErrorState title="Tenant setup unavailable"
+    description="The authorized tenant directory or selected college readiness could not be verified. No tenant changes have been made."
+    action={<Link href={tabLink(tab)}
+     className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry tenant setup</Link>}/>
+  </div>;
+ const creatable=organizations.filter(item=>can(context,"college.manage",{organizationId:item.id}));
  const orgCreate=globallyScoped&&!organizationFailed&&can(context,"organization.manage");
  type SetupCollege=NonNullable<typeof list>["items"][number];
  const collegeColumns:DataTableColumn<SetupCollege>[]=[
@@ -307,7 +317,7 @@ export default async function SuperAdminTenantSetup({
    </section>
    <p className="text-xs text-muted-foreground">Passing persisted checks does not certify live DNS, OTP delivery, teaching, attendance, placements or production launch.</p>
   </>:detailFailed?<ErrorState title="Tenant setup unavailable" description="The selected college could not be verified. No launch edits have been made." action={retry}/>:<Banner tone="info" action={<Link href={tabLink("STRUCTURE")} className="font-semibold text-link underline">Create or select a college →</Link>}>
-   Pick a college first. Select a college in the Super Admin scope switcher to configure its web address, sign-in method and branding. No tenant is guessed.
+   No college selected. Pick a college first in the Super Admin scope switcher to configure its web address, sign-in method and branding. No tenant is guessed.
   </Banner>}
   </div>
  </div>;

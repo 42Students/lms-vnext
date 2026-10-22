@@ -18,7 +18,8 @@ describe("UX-college-join-01 college recruiter invitation",()=>{
  });
  it("keeps a recovery action without claiming the invitation was used",()=>{
   const retry=read("src/components/placements/public-join-preview-retry.tsx");
-  expect(retry).toContain('<Card as="section" role="alert"');
+  expect(retry).toContain('<Card as="section" aria-label="Invitation preview unavailable"');
+  expect(retry).toContain('<p role="alert"');
   expect(retry).toContain("Your invitation was not used.");
   expect(retry).toContain("Retry");
  });

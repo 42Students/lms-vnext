@@ -23,7 +23,7 @@ describe("SA-tenants-modules-BRAND-04 safe unsaved logo preview",()=>{
   expect(safeTpoBrandLogoUrl("https://college.example/logo.png"))
    .toBe("https://college.example/logo.png");
   const form=readFileSync("src/components/admin/college-branding-form.tsx","utf8");
-  expect(form).toContain("const previewLogoUrl=uploadedLogoUrl||safeTpoBrandLogoUrl(values.logoUrl)");
+  expect(form).toContain("const previewLogoUrl=latestLogoUrl||safeTpoBrandLogoUrl(values.logoUrl)");
   expect(form).toContain("src={previewLogoUrl}");
   expect(form).toContain("referrerPolicy=\"no-referrer\"");
   expect(form).not.toContain('^https:\\/\\/');
@@ -65,6 +65,7 @@ describe("SA-tenants-modules-BRAND-03 branding writes require current scoped Sup
   expect(insert).toBeGreaterThan(lock);
   expect(audit).toBeGreaterThan(insert);
   expect(service).toContain("if(!active)throw new CollegeBrandingNotFoundError()");
-  expect(service).toContain("metadata: { version: row.version }");
+  expect(service).toContain('metadata: { version: row.version,changedAssetFields');
+  expect(service).toContain('storageCleanup:"POST_COMMIT_OWNER_REVIEW_REQUIRED"');
  });
 });

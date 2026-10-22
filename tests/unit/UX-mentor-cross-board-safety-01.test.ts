@@ -13,8 +13,13 @@ describe("Mentor board external links and modal focus",()=>{
  });
  it("UX-mentor-cross-B05 task detail restores focus and handles Escape",()=>{
   const detail=read("src/components/projects/mentor-board-task-detail-dialog.tsx");
-  expect(detail).toContain("opener.current?.focus()");
-  expect(detail).toContain("onCancel={event=>{event.preventDefault();ref.current?.close();}}");
+  // Escape and opener focus are handled by the shared accessible Dialog.
+  expect(detail).toContain("<Dialog open={true}");
+  expect(detail).toContain("onOpenChange={next=>{if(!next)onClose();}}");
+  const dialog=read("src/components/ui/dialog.tsx");
+  expect(dialog).toContain("useOverlayExit(ref, opener, open, 180)");
+  expect(dialog).toContain("opener.current.focus()");
+  expect(dialog).toContain("onCancel={event => { event.preventDefault(); if (dismissible) onOpenChange(false); }}");
   expect(detail).toContain("timeZone:\"Asia/Kolkata\"");
  });
  it("UX-mentor-cross-B06 board and destructive controls have 44px targets",()=>{

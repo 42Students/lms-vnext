@@ -12,8 +12,14 @@ describe("UX-tracker-issues-publicId-01",()=>{
   expect(code).toContain("Open linked evidence ↗");
   expect(code).toContain("<TrackerWorkflowPanel");
   expect(code).toContain("<TrackerIssueLogsPanel");
-  expect(code).toContain("No screenshot metadata.");
-  expect(code).toContain("No workflow history yet.");
+  // Evidence and history now render in their scoped components, not inline.
+  expect(code).toContain("<TrackerScreenshotGallery");
+  expect(code).toContain("<TrackerIssueLogsPanel");
+  const screenshots=source("src/components/tracker/tracker-screenshot-gallery.tsx");
+  const logs=source("src/components/tracker/tracker-issue-logs-panel.tsx");
+  expect(screenshots).toContain('referrerPolicy="no-referrer"');
+  expect(screenshots).toContain("/screenshots/");
+  expect(logs).toContain("No warnings or errors were logged around that time.");
   expect(code).toContain("min-h-11");
   expect(code).not.toContain('target="_blank"');
 

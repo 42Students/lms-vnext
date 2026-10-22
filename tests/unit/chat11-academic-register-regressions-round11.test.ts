@@ -8,9 +8,9 @@ describe("College Academic Setup open-register functional checks",()=>{
  it("COL-academic-setup-19 blocks archived departments with dependencies before mutation",()=>{
   const component=read("src/components/admin/department-actions.tsx");
   expect(component).toContain("hasDependencies");
-  expect(component).toContain("disabled={pending || hasDependencies}");
-  expect(component).toContain("Move or remove its programs, courses, faculty before deleting.");
-  expect(component).toContain("Retry delete");
+  expect(component).toContain("disabled={pending||hasDependencies}");
+  expect(component).toContain("Move or remove its programs, courses or faculty assignments, then retry.");
+  expect(component).toContain("Retry archive");
  });
  it("COL-academic-setup-20 confirms abandoning a changed department draft",()=>{
   const component=read("src/components/admin/department-actions.tsx");
@@ -23,12 +23,12 @@ describe("College Academic Setup open-register functional checks",()=>{
   const code=read("src/components/academics/college-cohort-management.tsx");
   expect(code).toContain('row.status!=="PLANNED"');
   expect(code).toContain("row.activeSections>0 || row.activeEnrolledLearners>0");
-  expect(code).toContain("Move or remove its ");
+  expect(code).toContain("Cannot archive while ");
   expect(code).toContain("Remove this planned batch?");
  });
  it("COL-academic-setup-32 retains a section-specific schedule action and class identifier",()=>{
   const code=read("src/components/academics/college-structure-directory.tsx");
-  expect(code).toContain('aria-label={"Schedule recurring sessions for " + item.name}');
+  expect(code).toContain('aria-label={"Schedule recurring sessions for "+item.name}');
   expect(code).toContain("Schedule</Link>");
   expect(code).toContain("item.id");
  });
@@ -54,8 +54,10 @@ describe("College Academic Setup open-register functional checks",()=>{
     totalCredits:24,isActive:true,mappedCourses:6}],false);
   expect(csv).toContain("Semester");
   expect(csv).toContain("B.Tech");
-  const batch=renderBatchCsv([{name:"2024 CSE",code:"B24",status:"ACTIVE",programName:"B.Tech",
-    programCode:"CSE",currentTermNumber:1,currentAcademicYearStart:2024,
+  const batch=renderBatchCsv([{id:"11111111-1111-4111-8111-111111111111",
+    name:"2024 CSE",code:"B24",status:"ACTIVE",programName:"B.Tech",programCode:"CSE",
+    programId:"22222222-2222-4222-8222-222222222222",academicYear:"2024-25",
+    startDate:null,endDate:null,currentTermNumber:1,currentAcademicYearStart:2024,
     activeSections:2,activeEnrolledLearners:120}],false);
   expect(batch).toContain("2024 CSE");
   expect(batch).toContain("Active learner enrollments");
