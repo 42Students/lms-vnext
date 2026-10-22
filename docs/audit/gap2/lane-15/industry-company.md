@@ -1,0 +1,41 @@
+# U019 — IndustryCompany parity
+
+## Source closure
+Legacy: `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java`, `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/IndustryCompanyRepository.java`, `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/BaseModel.java`. vNext: `src/db/schema/placements.ts`, `src/modules/placements/company-service.ts`, `src/modules/placements/recruiter-service.ts`. Static audit; database not executed.
+
+## Facets
+| ID | Facet | Legacy behaviour (file:line) | vNext behaviour (file:line) | Verdict | Severity | Fix | Effort |
+|---|---|---|---|---|---|---|---|
+| G2-15-019-001 | F01 | Global shared company (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | Global canonical employer (`src/db/schema/placements.ts:30-145`) | MATCH | P3 | Keep separation from college CRM | S |
+| G2-15-019-002 | F02 | JPA model no page layout (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | Schema no page layout (`src/db/schema/placements.ts:30-145`) | MATCH | P3 | Audit UI separately | S |
+| G2-15-019-003 | F03 | Name,site,industry,logo (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | Same fields and domain verification (`src/db/schema/placements.ts:30-145`) | EXTRA | P2 | Expose original fields | M |
+| G2-15-019-004 | F04 | Name <=150, site <=500 (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | Equivalent SQL limits (`src/db/schema/placements.ts:30-145`) | MATCH | P3 | Validate form length | S |
+| G2-15-019-005 | F04 | Industry <=100, logo <=500 (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | Checks plus safe object path (`src/db/schema/placements.ts:30-145`) | MATCH | P3 | Reject bad imported URLs | S |
+| G2-15-019-006 | F04 | Integer key and local timestamps (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | UUID, legacy ID, timezone timestamps (`src/db/schema/placements.ts:30-145`) | GAP | P1 | Verify import crosswalk | L |
+| G2-15-019-007 | F04 | Created-by user and type (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | UUID creator and legacy role (`src/db/schema/placements.ts:30-145`) | GAP | P2 | Keep typed creator provenance | M |
+| G2-15-019-008 | F04 | Long version CAS (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | Integer version CAS (`src/db/schema/placements.ts:30-145`) | GAP | P2 | Review overflow and stale edits | M |
+| G2-15-019-009 | F05 | Active name ASC (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | Scoped active name ASC (`src/db/schema/placements.ts:30-145`) | MATCH | P3 | Keep stable ordering | S |
+| G2-15-019-010 | F05 | Casefold name lookup (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | Domain/alias lookup distinct (`src/db/schema/placements.ts:30-145`) | GAP | P2 | Do not merge duplicate names | M |
+| G2-15-019-011 | F06 | Name required (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | Typed company creation validation (`src/db/schema/placements.ts:30-145`) | MATCH | P3 | Retain required marker | S |
+| G2-15-019-012 | F07 | JPA limits and version errors (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | SQL checks and service errors (`src/db/schema/placements.ts:30-145`) | MATCH | P3 | Show errors at field | S |
+| G2-15-019-013 | F08 | No model toast (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | Activity logging for changes (`src/db/schema/placements.ts:30-145`) | EXTRA | P3 | UI wording separate | S |
+| G2-15-019-014 | F09 | No modal in entity (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | No modal in schema (`src/db/schema/placements.ts:30-145`) | MATCH | P3 | Review merge UI separately | S |
+| G2-15-019-015 | F10 | Recruiter references company (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | Recruiter grant references global company (`src/db/schema/placements.ts:30-145`) | MATCH | P3 | Audit employer transfers | S |
+| G2-15-019-016 | F11 | Global company across colleges (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | Per-college CRM private (`src/db/schema/placements.ts:30-145`) | EXTRA | P3 | Do not leak CRM contact | S |
+| G2-15-019-017 | F12 | Soft-delete excludes company (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | ACTIVE and archive filters (`src/db/schema/placements.ts:30-145`) | MATCH | P3 | Maintain all predicates | S |
+| G2-15-019-018 | F13 | Missing active row -> empty (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | Scoped relationship not-found (`src/db/schema/placements.ts:30-145`) | GAP | P2 | Explain archived state | M |
+| G2-15-019-019 | F14 | Direct logo URL (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | Scanned/signed object (`src/db/schema/placements.ts:30-145`) | EXTRA | P2 | Migrate logos safely | M |
+| G2-15-019-020 | F15 | Entity no email action (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | Activity and grants trigger related events (`src/db/schema/placements.ts:30-145`) | UNKNOWN | P3 | Inspect notification producer | S |
+| G2-15-019-021 | F16 | Backend no responsive UI (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | Backend no responsive UI (`src/db/schema/placements.ts:30-145`) | MATCH | P3 | Page review separate | S |
+| G2-15-019-022 | F17 | Backend no ARIA/focus (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | Backend no ARIA/focus (`src/db/schema/placements.ts:30-145`) | MATCH | P3 | Page review separate | S |
+| G2-15-019-023 | F18 | IndustryCompany wording (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | Verified company terminology (`src/db/schema/placements.ts:30-145`) | EXTRA | P3 | Preserve Company labels | S |
+| G2-15-019-024 | F19 | Unbounded active list (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | Unbounded college list (`src/db/schema/placements.ts:30-145`) | GAP | P2 | Add page limit | M |
+| G2-15-019-025 | F20 | Long version and soft delete (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | Integer version and archive (`src/db/schema/placements.ts:30-145`) | GAP | P1 | Review concurrency/import | L |
+| G2-15-019-026 | F21 | Recruiter belongs to company (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | Recruiter grants/domain verification (`src/db/schema/placements.ts:30-145`) | EXTRA | P2 | Keep grant checks | M |
+| G2-15-019-027 | F22 | Integer PK plus BaseModel (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | UUID/indexes/constraints (`src/db/schema/placements.ts:30-145`) | GAP | P1 | Document ID/data mapping | L |
+| G2-15-019-028 | F23 | No aliases or merge history (`docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java:11-50`) | Aliases, domains, merges (`src/db/schema/placements.ts:30-145`) | EXTRA | P2 | Record intentional expansion | M |
+
+## Unit summary
+MATCH: 12, GAP: 8, MISSING: 0, EXTRA: 7, UNKNOWN: 1.
+P0: 0, P1: 3, P2: 9, P3: 16.
+Highest priority gaps: source company identity/time crosswalk (F04), optimistic concurrency/import overflow (F20), DB foreign-key/identity mapping (F22). Live authorization and historical data unverified.
