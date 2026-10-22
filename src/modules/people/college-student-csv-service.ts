@@ -1,5 +1,6 @@
 import "server-only";
 import {createHash, randomUUID} from "node:crypto";
+import { z } from "zod";
 
 import { and, desc, eq, inArray, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -49,6 +50,50 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
   if (parsed.structuralErrors.length) {
     return { preview: true, structuralErrors: parsed.structuralErrors,
       results: [] as StudentCsvResult[], valid: 0, invalid: 0 };
+  }
+
+  // Replaying the exact same confirmed source is a read of its existing
+  // import receipt, never another identity-provisioning operation. This
+  // includes PARTIAL runs: those require reconciliation of the minted
+  // membership rather than blindly creating a second learner.
+  const sourceFingerprint = createHash("sha256").update(JSON.stringify({
+    csv: request.csv, programId: request.programId ?? null,
+    cohortId: request.cohortId ?? null, sectionId: request.sectionId ?? null,
+  })).digest("hex");
+  if (request.action === "IMPORT") {
+    const [prior] = await getDb().select({
+      runId: activityEvents.subjectId, metadata: activityEvents.metadata,
+    }).from(activityEvents).where(and(
+      eq(activityEvents.collegeId, member.collegeId),
+      eq(activityEvents.actorUserId, context.user.id),
+      eq(activityEvents.eventType, "IDENTITY_COLLEGE_STUDENT_CSV_IMPORT"),
+      sql`${activityEvents.metadata}->>'sourceFingerprint' = ${sourceFingerprint}`,
+    )).orderBy(desc(activityEvents.occurredAt)).limit(1);
+    const receiptSchema = z.object({
+      receipts: z.array(z.object({
+        row: z.number().int().positive(),
+        status: z.enum(["VALID", "INVALID", "IMPORTED", "FAILED", "PARTIAL"]),
+        membershipId: z.string().uuid().nullable(),
+        enrollmentId: z.string().uuid().nullable(),
+      })),
+    });
+    const previous = receiptSchema.safeParse(prior?.metadata);
+    if (prior && previous.success && previous.data.receipts.length === parsed.entries.length) {
+      const results: StudentCsvResult[] = previous.data.receipts.map(receipt => ({
+        row: receipt.row, status: receipt.status,
+        detail: receipt.status === "PARTIAL"
+          ? "Previously partially imported. Reconcile the existing membership before any new import."
+          : "Previously processed in this college. No duplicate learner was created.",
+        ...(receipt.membershipId ? {membershipId: receipt.membershipId} : {}),
+        ...(receipt.enrollmentId ? {enrollmentId: receipt.enrollmentId} : {}),
+      }));
+      return { preview: false, structuralErrors: [], results,
+        valid: results.length, invalid: 0,
+        runId: prior.runId, bulkImportBatchId: prior.runId,
+        learnerCount: results.length, reversible: false,
+        recoveryRequired: results.some(row => row.status === "PARTIAL" || row.status === "FAILED"),
+        alreadyProcessed: true };
+    }
   }
 
   const uniqueCohorts = [...new Set(parsed.entries.flatMap(entry =>
@@ -145,10 +190,6 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
   // This digest binds a manual recovery receipt to the exact upload AND the
   // selected academic options; do not persist the CSV or any raw contact here.
   // A digest is not a durable row-level idempotency key or undo ledger.
-  const sourceFingerprint = createHash("sha256").update(JSON.stringify({
-    csv: request.csv, programId: request.programId ?? null,
-    cohortId: request.cohortId ?? null, sectionId: request.sectionId ?? null,
-  })).digest("hex");
   // The run ID is the durable import-batch identity used by history and
   // manual recovery. Individual membership IDs are recorded in the receipt.
   const runId = randomUUID();
