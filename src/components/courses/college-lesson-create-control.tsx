@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/toast";
 
 import {useRouter} from "next/navigation";
+import Link from "next/link";
 import {useState} from "react";
 
 type Offering={
@@ -37,8 +38,8 @@ async function postRecord(url:string,payload:unknown,key:"learningPath"|"lesson"
 export function CollegeLessonCreateControl({options}:{options:Offering[]}){
  const router=useRouter();
  const {showToast}=useToast();
- const [open,setOpen]=useState(false);
- const [offeringId,setOfferingId]=useState(options[0]?.offeringId??"");
+ const [offeringId,setOfferingId]=useState("");
+ const [courseSearch,setCourseSearch]=useState("");
  const [name,setName]=useState("");
  const [description,setDescription]=useState("");
  const [visibleToStudents,setVisibleToStudents]=useState(true);
@@ -47,11 +48,13 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
  const [notice,setNotice]=useState("");
  const [pathOverrides,setPathOverrides]=useState<Record<string,string>>({});
  const [sequenceOverrides,setSequenceOverrides]=useState<Record<string,number>>({});
- const chosen=options.find(item=>item.offeringId===offeringId)??options[0];
+ const chosen=options.find(item=>item.offeringId===offeringId);
+ const matchingOptions=options.filter(item=>
+  [item.courseName,item.courseCode,item.cohortName,item.periodName].join(" ").toLowerCase().includes(courseSearch.trim().toLowerCase())||item.offeringId===offeringId);
  async function create(addAnother:boolean){
   if(busy)return;
   if(!chosen){setError("Select a course");return;}
-  if(!name.trim()){setError("Enter a lesson name");return;}
+  if(!name.trim()){setError("Lesson name is required");return;}
   if(name.trim().length>255){setError("Maximum 255 characters");return;}
   setBusy(true);setError("");setNotice("");
   let pathCreated=false;
@@ -77,7 +80,7 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
    showToast({tone:"success",title:message});
    setName("");setDescription("");setVisibleToStudents(true);
    // Retain the selected course for consecutive lesson creation.
-   if(!addAnother)setOpen(false);
+   if(!addAnother){setOfferingId("");setCourseSearch("");}
    router.refresh();
   }catch(cause){
    const reason=cause instanceof Error?cause.message:"Unable to create Lesson.";
@@ -86,34 +89,32 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
   }finally{setBusy(false);}
  }
  return <section className="min-w-0 space-y-3 md:flex-none">
-  <div className="flex min-w-0 items-center justify-end gap-3">
-   <h2 className="sr-only">Lessons</h2>
-   <Button type="button" aria-expanded={open} onClick={()=>{setOpen(value=>!value);setError("");}}
-    disabled={!options.length||busy}
-    className="min-h-11 w-full md:min-h-9 md:w-auto">
-    Create New Lesson
-   </Button>
-  </div>
-  {!options.length?<p className="text-sm text-muted-foreground leading-[22px]">
-   Create an active Course Offering first. Lessons belong to a Course and Batch.
-  </p>:null}
-  {open&&chosen?<div className="grid gap-3">
+  <h2 className="text-lg font-semibold text-foreground">Create New Lesson</h2>
+  {!options.length?<Alert tone="warning">
+   No courses in this college yet. Create an active Course Offering first. Lessons belong to a Course and Batch.{" "}
+   <Link href="/college/courses" className="font-semibold underline">Go to Courses</Link>
+  </Alert>:null}
+  {options.length?<div className="grid gap-3">
    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Course
-    <Select className="min-h-11 md:min-h-9"
-     value={chosen.offeringId} disabled={busy}
+    <Input type="search" value={courseSearch} disabled={busy} onChange={event=>setCourseSearch(event.target.value)}
+     placeholder="Search courses" aria-label="Search courses" className="min-h-11 md:min-h-9"/>
+    <Select className="min-h-11 md:min-h-9" required aria-label="Select course"
+     value={offeringId} disabled={busy}
      onChange={event=>{setOfferingId(event.target.value);setError("");}}>
-     {options.map(item=><option key={item.offeringId} value={item.offeringId}>
-      {item.courseCode} · {item.courseName} · {item.cohortName} · {item.periodName}
+     <option value="">Select course</option>
+     {matchingOptions.map(item=><option key={item.offeringId} value={item.offeringId}>
+      {item.courseName} · {item.courseCode} · {item.cohortName} · {item.periodName}
      </option>)}
     </Select>
    </label>
    <p className="text-xs text-muted-foreground leading-5">
-    {chosen.pathId||pathOverrides[chosen.offeringId]?
+    {!chosen?"Select course":chosen.pathId||pathOverrides[chosen.offeringId]?
      "The Lesson will be added to this Course Offering’s active Learning Path.":
      "An active Learning Path will be created for this Course Offering before the Lesson."}
    </p>
    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Lesson Name
-    <Input value={name} onChange={event=>setName(event.target.value)} maxLength={255}
+    <Input value={name} onChange={event=>{setName(event.target.value);if(error==="Enter a lesson name")setError("");}}
+     maxLength={255} placeholder="e.g., Introduction to Arrays"
      className="min-h-11 md:min-h-9" required/>
    </label>
    <label className="flex min-h-11 items-center gap-3 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
@@ -136,7 +137,7 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
      variant="secondary" className="min-h-11 md:min-h-9">
      Create Lesson & Add Another
     </Button>
-    <Button type="button" disabled={busy} onClick={()=>setOpen(false)}
+    <Button type="button" disabled={busy} onClick={()=>{setOfferingId("");setCourseSearch("");setName("");setDescription("");setVisibleToStudents(true);setError("");}}
      variant="secondary" className="min-h-11 md:min-h-9">
      Cancel
     </Button>
