@@ -52,7 +52,7 @@ async function resolveTemplateBookmark(context: RequestContext, token: string) {
     .where(match)
     .limit(2);
   // No arbitrary redirect if an old slug matches more than one imported row.
-  return matches.length === 1 ? matches[0]!.id : null;
+  return matches.length === 1 ? (matches[0]?.id ?? null) : null;
 }
 
 /**
@@ -80,7 +80,7 @@ async function resolveWorkspaceBookmark(context: RequestContext, token: string) 
       lookup,
     ))
     .limit(2);
-  return matches.length === 1 ? matches[0]!.id : null;
+  return matches.length === 1 ? (matches[0]?.id ?? null) : null;
 }
 
 async function nestedProjectDestination(
@@ -102,7 +102,9 @@ async function nestedProjectDestination(
   if (route === "templates" &&
       (segments.length === 3 ||
        (segments.length === 4 && (subroute === "overview" || subroute === "colleges")))) {
-    const id = await resolveTemplateBookmark(context, segments[2]!);
+    const templateToken = segments[2];
+    if (!templateToken) return null;
+    const id = await resolveTemplateBookmark(context, templateToken);
     if (!id) return null;
     return subroute === "colleges"
       ? `/admin/projects/templates/${id}/colleges`
@@ -111,7 +113,9 @@ async function nestedProjectDestination(
 
   if (route === "workspaces" && segments.length === 4 &&
       (subroute === "overview" || subroute === "resources")) {
-    const id = await resolveWorkspaceBookmark(context, segments[2]!);
+    const workspaceToken = segments[2];
+    if (!workspaceToken) return null;
+    const id = await resolveWorkspaceBookmark(context, workspaceToken);
     return id ? `/admin/projects/${id}/${subroute}` : null;
   }
   return null;
@@ -138,7 +142,7 @@ export default async function LegacySuperAdminRedirect({
         legacy[2] && NUMERIC_LEGACY_ID.test(legacy[2]) &&
         (legacy.length === 3 ||
          (legacy.length === 4 &&
-          ["overview", "colleges"].includes(legacy[3]!.toLowerCase())))) {
+          ["overview", "colleges"].includes(legacy[3]?.toLowerCase() ?? "")))) {
       return (
         <div className="min-w-0 space-y-5">
           <PageHeader title="Project template" />
