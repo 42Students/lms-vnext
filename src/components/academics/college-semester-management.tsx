@@ -42,13 +42,16 @@ type SemesterFieldErrors = { program?: string; number?: string; name?: string };
 function semesterFieldErrors(error: unknown): SemesterFieldErrors {
   if (!(error instanceof FriendlyFetchError)) return {};
   const fields = error.fieldErrors;
+  const program = fields["program_id"] ?? fields["programId"] ??
+    (error.code === "PROGRAM_NOT_FOUND" ? "Please select program" : undefined);
+  const number = fields["semester_number"] ?? fields["termNumber"] ?? fields["semesterNumber"] ??
+    (error.code === "SEMESTER_NUMBER_CONFLICT" ? "This semester number already exists for the program."
+      : error.code === "SEMESTER_OUTSIDE_PROGRAM_DURATION" ? "Semester number is outside the program duration." : undefined);
+  const name = fields["name"];
   return {
-    program: fields.program_id ?? fields.programId ??
-      (error.code === "PROGRAM_NOT_FOUND" ? "Please select program" : undefined),
-    number: fields.semester_number ?? fields.termNumber ?? fields.semesterNumber ??
-      (error.code === "SEMESTER_NUMBER_CONFLICT" ? "This semester number already exists for the program."
-        : error.code === "SEMESTER_OUTSIDE_PROGRAM_DURATION" ? "Semester number is outside the program duration." : undefined),
-    name: fields.name,
+    ...(program !== undefined ? { program } : {}),
+    ...(number !== undefined ? { number } : {}),
+    ...(name !== undefined ? { name } : {}),
   };
 }
 
@@ -74,13 +77,16 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
     setNotice("");
     setCreateError("");
     setCreateErrors({});
+    const programError = !programId ? "Please select program" : undefined;
+    const numberError = !termNumber.trim() ? "Enter semester number"
+      : !Number.isInteger(Number(termNumber)) || Number(termNumber) < 1 ? "Semester number must be 1 or more"
+      : Number(termNumber) > 12 ? "Semester number must be between 1 and 12" : undefined;
+    const nameError = !name.trim() ? "Please enter semester name"
+      : name.trim().length > 255 ? "Name must be 255 characters or less" : undefined;
     const errors: SemesterFieldErrors = {
-      program: !programId ? "Please select program" : undefined,
-      number: !termNumber.trim() ? "Enter semester number"
-        : !Number.isInteger(Number(termNumber)) || Number(termNumber) < 1 ? "Semester number must be 1 or more"
-        : Number(termNumber) > 12 ? "Semester number must be between 1 and 12" : undefined,
-      name: !name.trim() ? "Please enter semester name"
-        : name.trim().length > 255 ? "Name must be 255 characters or less" : undefined,
+      ...(programError !== undefined ? { program: programError } : {}),
+      ...(numberError !== undefined ? { number: numberError } : {}),
+      ...(nameError !== undefined ? { name: nameError } : {}),
     };
     if (errors.program || errors.number || errors.name) {
       setCreateErrors(errors);
@@ -128,7 +134,7 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
           <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {SEMESTER_COPY.programLabel}
             <Select ref={programRef} required value={programId} aria-invalid={Boolean(createErrors.program)} aria-describedby={createErrors.program ? "semester-program-error" : undefined}
-              onChange={e => { setProgramId(e.target.value); setCreateErrors(current => ({ ...current, program: undefined })); }}
+              onChange={e => { setProgramId(e.target.value); setCreateErrors(current => { const next = { ...current }; delete next.program; return next; }); }}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               <option value="">Select program</option>
               {programs.map(program => <option key={program.id} value={program.id}>
@@ -141,13 +147,13 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
             {SEMESTER_COPY.numberLabel}
             <Input ref={numberRef} required type="number" min={1} max={12} step={1} value={termNumber}
               aria-invalid={Boolean(createErrors.number)} aria-describedby={createErrors.number ? "semester-number-error" : undefined} placeholder={SEMESTER_COPY.numberPlaceholder}
-              onChange={e => { setTermNumber(e.target.value); setCreateErrors(current => ({ ...current, number: undefined })); }}
+              onChange={e => { setTermNumber(e.target.value); setCreateErrors(current => { const next = { ...current }; delete next.number; return next; }); }}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>
           <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {SEMESTER_COPY.nameLabel}
             <Input ref={createNameRef} required maxLength={255} value={name} aria-invalid={Boolean(createErrors.name)} aria-describedby={createErrors.name ? "semester-name-error" : undefined}
-              onChange={e => { setName(e.target.value); setCreateErrors(current => ({ ...current, name: undefined })); }}
+              onChange={e => { setName(e.target.value); setCreateErrors(current => { const next = { ...current }; delete next.name; return next; }); }}
               placeholder={SEMESTER_COPY.namePlaceholder}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>

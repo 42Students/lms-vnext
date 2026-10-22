@@ -49,7 +49,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
         if(response.updated>0)showToast({
           tone:"success",
           title:response.updated+" drive(s) "+(requestedAction==="OPEN"?"opened":"closed"),
-          description:response.skipped>0?response.skipped+" failed. Retry only those drives.":undefined,
+          ...(response.skipped > 0 ? { description: response.skipped + " failed. Retry only those drives." } : {}),
         });
         if(response.skipped>0)showToast({
           tone:"error",title:response.skipped+" drive(s) could not be updated",

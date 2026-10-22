@@ -127,7 +127,7 @@ export async function GET(request:Request,{params}:RouteContext){
  const query=download?{"response-content-disposition":'attachment; filename="'+fileName(displayName??key)+'"'}:undefined;
  let signed:string;
  try{
-  signed=presignUrl(config,{method:"GET",key,expiresSeconds:900,query});
+  signed=presignUrl(config,{method:"GET",key,expiresSeconds:900,...(query === undefined ? {} : {query})});
  }catch{
   // Signing failure is an unavailable dependency, never an unhandled 500
   // or a disclosure of R2 credentials to the learner.
