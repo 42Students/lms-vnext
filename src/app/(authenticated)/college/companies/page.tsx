@@ -28,7 +28,7 @@ export default async function CollegeCompaniesPage({
   const collegeId = context.membership && hasMembershipRole(context,"COLLEGE_ADMIN")
     ? context.membership.collegeId
     : isSuperAdmin(context) ? context.adminScope?.collegeId : null;
-  if (!collegeId) return <div className="min-w-0 space-y-4">
+  if (!collegeId) return <div className="min-w-0 max-w-full overflow-x-clip space-y-4">
     <PageHeader title="Companies"/>
     <Alert tone="warning" title="Admin not assigned to a college">
       You must be assigned to a college to manage companies. Contact your administrator.
@@ -37,7 +37,7 @@ export default async function CollegeCompaniesPage({
   if (!hasMembershipRole(context,"COLLEGE_ADMIN") && !isSuperAdmin(context))
     redirect("/dashboard");
   const parsed=parseCollegeCompaniesQuery(await searchParams);
-  if(!parsed.success) return <div className="min-w-0 space-y-4"><PageHeader title="Companies"/>
+  if(!parsed.success) return <div className="min-w-0 max-w-full overflow-x-clip space-y-4"><PageHeader title="Companies"/>
     <ErrorState title="Invalid company search" description="Check search text or page."
       action={<Link href="/college/companies" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear company filters</Link>}/>
   </div>;
@@ -52,7 +52,7 @@ export default async function CollegeCompaniesPage({
     listCollegeCompanyDirectory(context,{q:"",page:1,pageSize:10,status:"ACTIVE",showDeleted:"0",sort:"LAST_ACTIVE"},{exportAll:true}),
   ]);
   if(dataResult.status==="rejected"||ownersResult.status==="rejected")
-    return <div className="min-w-0 space-y-4">
+    return <div className="min-w-0 max-w-full overflow-x-clip space-y-4">
       <PageHeader title="Companies"/>
       <ErrorState title="Failed to load companies"
         description="Couldn't refresh companies. Check your connection and retry."
@@ -70,7 +70,7 @@ export default async function CollegeCompaniesPage({
   }
 
   const exportParams=new URLSearchParams({q:query.q,status:query.status,pageSize:String(query.pageSize),sort:query.sort,showDeleted:query.showDeleted});
-  return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
+  return <div className="min-w-0 max-w-full overflow-x-clip space-y-[var(--lms-space-4)]">
     <nav aria-label="Placements sections" className="flex min-w-0 flex-wrap gap-5 border-b border-border text-sm font-semibold">
       <Link href="/college/placements" className="inline-flex min-h-11 items-center border-b-2 border-transparent text-body hover:text-primary-text">Placements</Link>
       <Link href="/college/companies" aria-current="page" className="inline-flex min-h-11 items-center border-b-2 border-[var(--lms-primary)] text-primary-text">Companies</Link>

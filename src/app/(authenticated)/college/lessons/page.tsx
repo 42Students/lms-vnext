@@ -20,7 +20,7 @@ const first = (value: string | string[] | undefined) =>
 
 export default async function CollegeLessonsPage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
-  if(!context.membership)return <div className="min-w-0 space-y-4">
+  if(!context.membership)return <div className="min-w-0 max-w-full overflow-x-clip space-y-4">
     <PageHeader title="Lessons" />
     <Alert tone="warning" title="Admin not assigned to a college">
       You must be assigned to a college to view and manage lessons. Contact your administrator.
@@ -33,7 +33,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
   let verifiedCourseCode: string | undefined;
   if (legacyCourseId !== undefined) {
     if (!/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(legacyCourseId)) {
-      return <div className="min-w-0 space-y-4"><PageHeader title="Lessons" />
+      return <div className="min-w-0 max-w-full overflow-x-clip space-y-4"><PageHeader title="Lessons" />
         <ErrorState title="Course link needs updating"
           description="This old course identifier cannot be matched safely. Choose the course in the lesson filters."
           action={<Link href="/college/lessons">Choose a course</Link>} /></div>;
@@ -41,7 +41,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
     const course = await loadCourseScope(legacyCourseId).catch(() => null);
     if (!course || course.collegeId !== context.membership.collegeId ||
         (first(params.courseCode) && first(params.courseCode)!.toLowerCase() !== course.code.toLowerCase())) {
-      return <div className="min-w-0 space-y-4"><PageHeader title="Lessons" />
+      return <div className="min-w-0 max-w-full overflow-x-clip space-y-4"><PageHeader title="Lessons" />
         <ErrorState title="Course not available"
           description="The course is not available in your selected college."
           action={<Link href="/college/lessons">Choose a course</Link>} /></div>;
@@ -83,7 +83,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
     }).filter(([, value]) => value !== undefined)),
   );
   if (!parsed.success) return (
-    <div className="min-w-0 space-y-4">
+    <div className="min-w-0 max-w-full overflow-x-clip space-y-4">
       <PageHeader title="Lessons" />
       <ErrorState title="Invalid lesson filters"
         description="The search, lesson status or page is invalid. No lesson data was loaded."
@@ -92,7 +92,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
   );
   const authoringOptions=await getCollegeLessonAuthoringOptions(context);
   const courseChoices=[...new Map(authoringOptions.map(row=>[row.courseCode,{code:row.courseCode,name:row.courseName}])).values()];
-  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
+  return <div className="min-w-0 max-w-full overflow-x-clip space-y-[var(--lms-space-4)]">
     <LessonPageSizePreference storageKey="college-lessons-page-size" />
     <PageHeader title="Lessons" description="Find lessons by course or lesson name."
       actions={<Link href="/college/courses"

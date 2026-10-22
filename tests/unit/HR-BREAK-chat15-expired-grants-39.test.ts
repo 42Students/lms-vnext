@@ -30,7 +30,7 @@ describe("HR-GRANT-EXPIRE-39 cached recruiter grants cannot outlive persisted ac
    ["src/modules/placements/recruiter-workspace-service.ts",1],
    ["src/modules/placements/hr-round-editor-service.ts",2],
    ["src/modules/placements/hr-interview-slot-service.ts",1],
-   ["src/modules/placements/recruiter-portfolio-counts-service.ts",2],
+   ["src/modules/placements/recruiter-portfolio-counts-service.ts",3],
   ] as const;
   for(const [path,n] of policies){
    const source=readFileSync(path,"utf8");
@@ -55,6 +55,6 @@ describe("HR-GRANT-EXPIRE-39 cached recruiter grants cannot outlive persisted ac
    'gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`)',
   ])expect(query).toContain(clause);
   expect(source.indexOf("if (!company) throw new AuthorizationError"))
-   .toBeLessThan(source.indexOf("const team = await db"));
+   .toBeLessThan(source.indexOf("const team = includeTeam ? await db"));
  });
 });

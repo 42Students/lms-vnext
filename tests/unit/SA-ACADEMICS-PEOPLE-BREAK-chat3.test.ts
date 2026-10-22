@@ -63,10 +63,10 @@ describe("SA-ACADEMICS-PEOPLE-BREAK-chat3 scoped Super Admin academic detail and
    const ctx=admin();ctx.user={...ctx.user,systemRoles:[]};
    ctx.membership={id:"77777777-7777-4777-8777-777777777777",
     collegeId,organizationId,status:"ACTIVE",roles};
-   await expect(resolveSuperAdminSectionDetail(ctx,sectionId)).rejects.toThrow("DENIED");
+   await expect(resolveSuperAdminSectionDetail(ctx,sectionId)).rejects.toThrow("academics.read");
   }
   const disabled=admin();disabled.user={...disabled.user,platformStatus:"DISABLED"};
-  await expect(resolveSuperAdminSectionDetail(disabled,sectionId)).rejects.toThrow("DENIED");
+  await expect(resolveSuperAdminSectionDetail(disabled,sectionId)).rejects.toThrow("academics.read");
   expect(state.reads).toBe(0);
  });
  it("SA-academics-people scope: selected-college mutation helper rejects missing and disabled admin scope",()=>{

@@ -40,7 +40,10 @@ describe("HR-TRACKER-PAGE-81: authenticated reporter intake and HR privacy",()=>
  });
  it("denies expired identity before reading runtime or rendering a form",async()=>{
   m.ctx.mockResolvedValue({...recruiter,user:{...recruiter.user,platformStatus:"DISABLED"}});
-  await expect(view()).rejects.toThrow("REDIRECT");
+  const output=await view();
+  expect(text(output)).toContain("Sign in to report an issue");
+  expect(nodes(output).some(node=>"contextPrefill" in (node.props as object))).toBe(false);
+  expect(m.redirect).not.toHaveBeenCalled();
   expect(m.ready).not.toHaveBeenCalled();
  });
  it("readiness off shows a non-committal no-submission state, not a success",async()=>{

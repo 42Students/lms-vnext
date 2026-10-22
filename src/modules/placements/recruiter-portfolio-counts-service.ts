@@ -85,9 +85,7 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
     eq(placementRecruiterCollegeGrants.companyRelationshipId,placementJobs.companyRelationshipId),
     eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
     eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
-    // Legacy NULL valid_until represents a verified, indefinite grant.
-    or(isNull(placementRecruiterCollegeGrants.validUntil),
-       gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`)),
+    gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
     sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`))
    .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
@@ -118,9 +116,7 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
     eq(placementRecruiterCollegeGrants.companyRelationshipId,placementJobs.companyRelationshipId),
     eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
     eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
-    // Legacy NULL valid_until represents a verified, indefinite grant.
-    or(isNull(placementRecruiterCollegeGrants.validUntil),
-       gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`)),
+    gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
     sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`))
    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
@@ -141,7 +137,7 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
  * rows. The Today cards may preview only 500 jobs, but the headline Live
  * drives count must not claim that preview is the employer's complete total.
  * This uses the same live grant, company and ownership restrictions as the
- * underlying read, including historic indefinite (NULL) grants.
+ * underlying read, and never treats historic indefinite (NULL) grants as active.
  */
 export async function recruiterOwnFullPortfolioTotals(context:RequestContext,collegeId:string){
  const recruiter=context.recruiter;
@@ -190,8 +186,7 @@ export async function recruiterOwnFullPortfolioTotals(context:RequestContext,col
    eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
    eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
    eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
-   or(isNull(placementRecruiterCollegeGrants.validUntil),
-    gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`)),
+   gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
    sql<boolean>`'DRIVES'=any(${placementRecruiterCollegeGrants.capabilities})`,
   ))
   .where(and(

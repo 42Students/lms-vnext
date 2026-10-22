@@ -45,15 +45,16 @@ describe("Super Admin colleges/organizations/tenants adversarial audit", () => {
   it("SA-colleges-tenants-BREAK-02 selected-college scope cannot enumerate every organization", () => {
     const source = read("src/modules/organizations/service.ts");
     const branch = source.slice(source.indexOf("export async function listOrganizations("), source.indexOf("export async function createOrganization("));
-    const selected = branch.indexOf("if (selected?.collegeId)");
-    const unrestricted = branch.indexOf(".where(eq(organizations.status, \"ACTIVE\"))");
+    const selected = branch.indexOf("if(selected?.collegeId)");
+    const unrestricted = branch.indexOf("const globalList=tx.select");
     expect(selected).toBeGreaterThan(-1);
     expect(selected).toBeLessThan(unrestricted);
     const scoped = branch.slice(selected, unrestricted);
     expect(scoped).toContain("eq(colleges.id, selected.collegeId)");
-    expect(scoped).toContain("eq(colleges.organizationId, organizations.id)");
-    expect(scoped).toContain('eq(colleges.status, "ACTIVE")');
-    expect(scoped).toContain("selectedOrganizationId ? eq(organizations.id, selectedOrganizationId)");
+    expect(scoped).toContain("eq(colleges.organizationId,organizations.id)");
+    expect(scoped).toContain('eq(colleges.status,"ACTIVE")');
+    expect(scoped).toContain("selectedOrganizationId?eq(organizations.id,selectedOrganizationId)");
+    expect(scoped).toContain('requirePermission(context,"organization.read"');
     expect(scoped).toContain(".limit(1)");
   });
 
