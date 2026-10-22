@@ -2,7 +2,7 @@ import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {getOwnLearnerAcademicSummary} from "@/modules/people/learner-academic-summary-service";
-import {getOwnLearnerProfileDataActions} from "@/modules/people/learner-profile-data-access-service";
+import {getOwnLearnerProfileDataActions,getOwnLearnerTpoSharePage} from "@/modules/people/learner-profile-data-access-service";
 import {requireOwnLearnerProfileAccess} from "@/modules/people/learner-profile-access-service";
 import {getDb} from "@/db/client";
 import {and,desc,eq,sql} from "drizzle-orm";
@@ -11,10 +11,14 @@ import {placementCompanyShareSelections} from "@/db/schema/placement-company-sha
 import {placementCompanyApplicantShares} from "@/db/schema/placement-company-shares";
 
 /** LEARNER-profile-misc-18: self-only, read-only data-access explanation. */
-export default async function LearnerProfileDataAccessPage(){
+export default async function LearnerProfileDataAccessPage({
+ searchParams,
+}: {searchParams?:Promise<{tpoPage?:string}>}){
+ const rawPage=(await searchParams)?.tpoPage;
+ const tpoPage=rawPage&&/^[1-9][0-9]{0,3}$/.test(rawPage)?Number(rawPage):1;
  const context=await getCurrentRequestContext();
  const member=await requireOwnLearnerProfileAccess(context);
- const [history,academic,shares]=await Promise.all([
+ const [history,academic,shares,tpoShares]=await Promise.all([
   getOwnLearnerProfileDataActions(context),
   getOwnLearnerAcademicSummary(context),
   getDb().select({
@@ -37,6 +41,7 @@ export default async function LearnerProfileDataAccessPage(){
      eq(placementCompanyApplicantShares.collegeId,member.collegeId)))
    .orderBy(desc(placementCompanyApplicantShares.createdAt),desc(placementCompanyApplicantShares.id))
    .limit(50),
+  getOwnLearnerTpoSharePage(context,tpoPage),
  ]);
  return <div className="min-w-0 space-y-5">
   <Link href="/learn/profile" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">← Profile</Link>
@@ -73,6 +78,32 @@ export default async function LearnerProfileDataAccessPage(){
      <p>Shared: <time dateTime={share.sharedAt.toISOString()}>{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(share.sharedAt)} IST</time></p>
      <p>First recorded download: {share.firstDownloadedAt?<time dateTime={new Date(String(share.firstDownloadedAt)).toISOString()}>{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(String(share.firstDownloadedAt)))} IST</time>:"Never downloaded"}</p>
     </li>)}</ul>:<p role="status" className="mt-3 text-sm text-body">No companies have been given your data through a recorded placement shortlist share.</p>}
+  </section>
+
+  <section aria-labelledby="data-access-tpo-shares" className="min-w-0 border-t border-border pt-4">
+   <h2 id="data-access-tpo-shares" className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Recruiter links created for jobs you applied to</h2>
+   <p className="mt-1 max-w-3xl text-xs leading-5 text-muted-foreground">
+    Historical TPO share links are job-wide. The old system did not record which applicant rows were
+    visible to a recipient or exported. A link for your job is a possible disclosure, not proof that
+    your information was shown. The stage limit and selected fields are included where recorded.
+    Open/download events refer to the entire link, never your individual profile.
+   </p>
+   {tpoShares.items.length?<ul className="mt-3 divide-y divide-border">
+    {tpoShares.items.map(share=><li key={share.shareId} className="min-w-0 space-y-1 py-3 text-sm text-body">
+     <p className="font-semibold text-[var(--lms-heading)]">{share.company} · {share.role}</p>
+     <p className="break-all">Recipient: {share.sharedWithEmail}</p>
+     <p>Link created: <time dateTime={share.sharedAt.toISOString()}>{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(share.sharedAt)} IST</time></p>
+     <p>First link-wide download: {share.downloadedAt?
+       <time dateTime={share.downloadedAt.toISOString()}>{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(share.downloadedAt)} IST</time>:
+       "No recorded download"}</p>
+     <p>Stage limit: {share.maxStage??"No limit recorded"} · Fields requested: {share.requestedColumns?.length?share.requestedColumns.join(", "):"Not recorded"}</p>
+     <p className="text-xs text-muted-foreground">{share.revokedAt?"Link revoked":share.expiresAt<=new Date()?"Link expired":"Link validity depends on current grant and access controls"} · Individual-row inclusion not recorded.</p>
+    </li>)}
+   </ul>:<p role="status" className="mt-3 text-sm text-body">No historical recruiter links for jobs you applied to are recorded.</p>}
+   <nav aria-label="Recruiter link history pages" className="mt-3 flex flex-wrap gap-4 text-sm font-semibold">
+    {tpoShares.page>1?<Link href={"/learn/profile/data-access?tpoPage="+(tpoShares.page-1)} className="text-link underline">Previous links</Link>:null}
+    {tpoShares.hasMore?<Link href={"/learn/profile/data-access?tpoPage="+(tpoShares.page+1)} className="text-link underline">Next links</Link>:null}
+   </nav>
   </section>
   <section aria-labelledby="data-access-changes" className="min-w-0 border-t border-border pt-4">
    <h2 id="data-access-changes" className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Recent recorded profile-related changes</h2>

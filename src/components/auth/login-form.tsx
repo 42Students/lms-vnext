@@ -305,7 +305,9 @@ export function LoginForm({
     const slowNotice = window.setTimeout(() =>
       setNotice("Your code is on its way. You can request another code when the timer ends."), 3_000);
     try {
-      const result = await runGuarded(() => post<StartResult>("/api/auth/login/start", {
+      const startUrl=recruiterEntry&&channel==="EMAIL"
+        ?"/api/auth/recruiter/email-login/start":"/api/auth/login/start";
+      const result = await runGuarded(() => post<StartResult>(startUrl, {
         channel,
         contact: contact.trim(),
       }));

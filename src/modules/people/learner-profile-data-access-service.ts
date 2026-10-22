@@ -4,6 +4,8 @@ import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementJobs,placementCompanyRelationships,placementCompanies} from "@/db/schema";
 import {placementCompanyShareSelections} from "@/db/schema/placement-company-share-selection";
 import {placementCompanyApplicantShares,placementCompanyApplicantShareViews} from "@/db/schema/placement-company-shares";
+import {placementTpoShareLinks,placementTpoShareEvents} from "@/db/schema/tpo-collaboration";
+import {TPO_SHARE_COLUMNS} from "@/modules/placements/tpo-share-projection";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireOwnLearnerProfileAccess} from "./learner-profile-access-service";
 
@@ -121,4 +123,80 @@ export async function getOwnLearnerProfileSharePage(
 /** Backwards-compatible first page for existing learner profile callers. */
 export async function getOwnLearnerProfileDataActions(context:RequestContext){
  return (await getOwnLearnerProfileSharePage(context)).rows;
+}
+
+/**
+ * Potential exposure through the earlier DB09 job-wide recruiter link system.
+ *
+ * Unlike the explicit applicant-share selection table, DB09 has NO selected
+ * learner rows or per-row download record. Association with an applied job
+ * cannot establish that this learner appeared in the export at any historical
+ * stage. Return an explicitly UNCONFIRMED disclosure, not a fabricated profile
+ * view. We preserve the actual recipient, link-wide download and stage/column
+ * limitations for the learner's own historically participating memberships.
+ */
+export async function getOwnLearnerTpoSharePage(
+  context:RequestContext,pageInput=1,
+){
+  await requireOwnLearnerProfileAccess(context);
+  const page=Number.isSafeInteger(pageInput)&&pageInput>=1&&pageInput<=10000?pageInput:1;
+  const db=getDb();
+  const records=await db.selectDistinct({
+    shareId:placementTpoShareLinks.id,
+    collegeId:placementTpoShareLinks.collegeId,
+    recipientEmail:placementTpoShareLinks.recipientEmail,
+    companyName:placementCompanies.name,
+    jobTitle:placementJobs.title,
+    createdAt:placementTpoShareLinks.createdAt,
+    expiresAt:placementTpoShareLinks.expiresAt,
+    revokedAt:placementTpoShareLinks.revokedAt,
+    maxStage:placementTpoShareLinks.maxStage,
+    columns:placementTpoShareLinks.columns,
+  }).from(placementTpoShareLinks)
+  .innerJoin(placementJobs,and(
+    eq(placementJobs.id,placementTpoShareLinks.jobId),
+    eq(placementJobs.collegeId,placementTpoShareLinks.collegeId),
+  ))
+  .innerJoin(placementCompanyRelationships,and(
+    eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+    eq(placementCompanyRelationships.collegeId,placementJobs.collegeId),
+  ))
+  .innerJoin(placementCompanies,
+    eq(placementCompanies.id,placementCompanyRelationships.companyId))
+  .innerJoin(placementApplications,
+    eq(placementApplications.jobId,placementTpoShareLinks.jobId))
+  .innerJoin(collegeMemberships,and(
+    eq(collegeMemberships.id,placementApplications.membershipId),
+    eq(collegeMemberships.collegeId,placementTpoShareLinks.collegeId),
+  ))
+  .where(eq(collegeMemberships.userId,context.user.id))
+  .orderBy(desc(placementTpoShareLinks.createdAt),desc(placementTpoShareLinks.id))
+  .limit(LEARNER_PROFILE_SHARE_PAGE_SIZE+1)
+  .offset((page-1)*LEARNER_PROFILE_SHARE_PAGE_SIZE);
+  const hasMore=records.length>LEARNER_PROFILE_SHARE_PAGE_SIZE;
+  const shares=records.slice(0,LEARNER_PROFILE_SHARE_PAGE_SIZE);
+  const activity=shares.length?await db.select({
+    shareId:placementTpoShareEvents.shareId,
+    openedAt:sql<Date|null>`min(${placementTpoShareEvents.createdAt}) filter (where ${placementTpoShareEvents.action} = 'OPENED')`,
+    downloadedAt:sql<Date|null>`min(${placementTpoShareEvents.createdAt}) filter (where ${placementTpoShareEvents.action} in ('DOWNLOADED_LIST','DOWNLOADED_ZIP'))`,
+  }).from(placementTpoShareEvents)
+   .where(inArray(placementTpoShareEvents.shareId,shares.map(share=>share.shareId)))
+   .groupBy(placementTpoShareEvents.shareId):[];
+  const activityById=new Map(activity.map(row=>[row.shareId,row] as const));
+  const allowedFields:ReadonlySet<string>=new Set(TPO_SHARE_COLUMNS);
+  const items=shares.map(share=>({
+    shareId:share.shareId,
+    company:share.companyName,role:share.jobTitle,
+    sharedWithEmail:share.recipientEmail,sharedAt:share.createdAt,
+    openedAt:activityById.get(share.shareId)?.openedAt??null,
+    downloadedAt:activityById.get(share.shareId)?.downloadedAt??null,
+    expiresAt:share.expiresAt,revokedAt:share.revokedAt,
+    maxStage:share.maxStage,
+    requestedColumns:Array.isArray(share.columns)?
+      share.columns.filter((column):column is string=>
+        typeof column==="string"&&allowedFields.has(column)):null,
+    inclusionConfirmed:false as const,
+    downloadEventScope:"WHOLE_LINK_NOT_INDIVIDUAL_ROW" as const,
+  }));
+  return {page,pageSize:LEARNER_PROFILE_SHARE_PAGE_SIZE,hasMore,items};
 }
