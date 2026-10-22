@@ -15,7 +15,7 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 - [x] G2-20-028-010  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [x] G2-3-021-010  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
 - [x] G2-3-021-044  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_4.md)
-- [ ] G2-7-012-035  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_6.md)
+- [x] G2-7-012-035  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_6.md)
 - [x] G2-9-014-004  (source: docs/audit/gap-fix-work/verify2/packets/lane-12/W1_lane12_7.md)
 
 ## Results
@@ -28,3 +28,4 @@ Keep tests passing and TypeScript valid; never silence errors. Write one result 
 
 - G2-9-014-004: OK — `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx:36-46` explicitly explains the missing College Admin assignment and asks the user to contact their college administrator; matches recovery behavior in `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/shortlisted.js:20-31`.
 - G2-2-012-049: OK — independent accurate totals with an eight-row preview: `src/modules/admin-ui/college-dashboard-attendance-service.ts:43-78`, `src/modules/admin-ui/college-dashboard-risk-service.ts:92-105`, `src/modules/admin-ui/college-dashboard-grading-service.ts:40-67`, `src/modules/admin-ui/college-dashboard-staffing-service.ts:62-99`; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminCollegeDashboardController.java:47,149-154,170-179,181-211` (full counts separate from preview).
+- G2-7-012-035: OK — `src/modules/projects/readiness-service.ts:101-109,132-157,184-195` gates execution on sprints/tasks rather than shipped releases, and reports unshipped releases only as advisory; matches `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/projects/ProjectReadinessDTO.java:14-19` (release counts explicitly informational).
