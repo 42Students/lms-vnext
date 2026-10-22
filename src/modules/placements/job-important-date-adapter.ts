@@ -35,11 +35,11 @@ export function importedJobImportantDates(jobId:string,details:unknown):Imported
  return dates.flatMap((item,index):ImportedJobImportantDate[]=>{
   if(!item||typeof item!=="object")return [];
   const row=item as Record<string,unknown>;
-  const label=typeof row.label==="string"?row.label.trim():"";
-  const originalType=typeof row.type==="string"?row.type.trim():
-    typeof row.dateType==="string"?row.dateType.trim():null;
-  const raw=typeof row.at==="string"?row.at:
-    typeof row.date==="string"?row.date:null;
+  const label=typeof row["label"]==="string"?row["label"].trim():"";
+  const originalType=typeof row["type"]==="string"?row["type"].trim():
+    typeof row["dateType"]==="string"?row["dateType"].trim():null;
+  const raw=typeof row["at"]==="string"?row["at"]:
+    typeof row["date"]==="string"?row["date"]:null;
   if(!label&&!originalType||!raw)return [];
   const time=parseImportedImportantDateUtc(raw);
   if(!time)return [];
