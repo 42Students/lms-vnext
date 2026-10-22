@@ -72,7 +72,7 @@ export function isValidRecipient(channel: "EMAIL" | "SMS", recipient: string): b
   const match=/^([^\s@]+)@([^\s@]+)$/.exec(recipient);
   if(!match)return false;
   const [,local,domain]=match;
-  if(local.length>64||!local||local.startsWith(".")||local.endsWith(".")||
+  if(!local||!domain||local.length>64||local.startsWith(".")||local.endsWith(".")||
      local.includes("..")||domain.length>253||!domain.includes("."))return false;
   const labels=domain.split(".");
   return labels.every(label=>label.length>0&&label.length<=63&&
