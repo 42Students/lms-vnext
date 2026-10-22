@@ -125,3 +125,33 @@ export async function searchOwnRecruiterDrives(
   total:options.previewOnly?visible.length:total,
   page,pages:options.previewOnly?(visible.length?1:0):pages,pageSize,totals};
 }
+
+/** Pre-vNext recruiter discovery bookmarks were global browse endpoints.
+ * This lane intentionally does not reinstate unscoped public job search.
+ * The HR Drives workspace owns a verified recruiter/company/college grant;
+ * translate compatible filters into its scoped search and reject global
+ * popularity/category endpoints rather than leaking a second tenant's jobs.
+ */
+export const LEGACY_RECRUITER_DRIVE_DISCOVERY_ROUTES={
+ "/jobs/popular":"UNSUPPORTED_GLOBAL",
+ "/jobs/organizations":"UNSUPPORTED_GLOBAL",
+ "/jobs/org":"UNSUPPORTED_GLOBAL",
+ "/jobs/department":"UNSUPPORTED_GLOBAL",
+ "/jobs/program":"UNSUPPORTED_GLOBAL",
+ "/jobs/type":"AUTHORIZED_EMPLOYMENT_FILTER",
+ "/jobs/categories":"UNSUPPORTED_GLOBAL",
+ "/jobs/category":"UNSUPPORTED_GLOBAL",
+} as const;
+
+export function mapLegacyRecruiterDriveDiscovery(
+ sourcePath:string,rawValue:unknown,
+):{route:"/hr/drives";searchText:string;employment:string|null}|null{
+ const path=sourcePath.split("?")[0].replace(/\/$/,"");
+ const mapping=LEGACY_RECRUITER_DRIVE_DISCOVERY_ROUTES[
+  path as keyof typeof LEGACY_RECRUITER_DRIVE_DISCOVERY_ROUTES
+ ];
+ if(!mapping||mapping==="UNSUPPORTED_GLOBAL")return null;
+ const value=typeof rawValue==="string"?rawValue.trim():"";
+ if(value.length>80||!value||/[\x00-\x1f]/.test(value))return null;
+ return {route:"/hr/drives",searchText:"",employment:value};
+}

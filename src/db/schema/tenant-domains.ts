@@ -113,3 +113,26 @@ export function legacyTenantDomainImportPlan(input:{
   status:input.isDeleted?"ARCHIVED" as const:"ACTIVE" as const,
   diagnostics:redacted,requireNewVerification:!active.isVerified};
 }
+
+
+/** Prefer an actively verified, time-stamped college host. The legacy mail
+ * sender fell back to an unverified primary domain; never do that here.
+ * The URL can be used only after the calling service verifies the college's
+ * active tenant scope, and the public fallback must itself be configured
+ * on a trusted HTTPS host by the operator. */
+export function verifiedCollegeEmailHost(
+ collegeId:string,
+ records:readonly {collegeId:string;host:string;isVerified:boolean;
+  isPrimary:boolean;verifiedAt:Date|null;status?:string}[],
+):string|null{
+ const verified=records.filter(row=>row.collegeId===collegeId&&
+  row.isVerified&&row.verifiedAt instanceof Date&&
+  Number.isFinite(row.verifiedAt.getTime())&&row.status!=="ARCHIVED")
+  .sort((a,b)=>Number(b.isPrimary)-Number(a.isPrimary)||
+   b.verifiedAt!.getTime()-a.verifiedAt!.getTime()||
+   a.host.localeCompare(b.host));
+ for(const row of verified){
+  try{return canonicalTenantHost(row.host);}catch{continue;}
+ }
+ return null;
+}

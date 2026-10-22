@@ -1765,3 +1765,40 @@ export function legacyNoticeActionRoute(input:{
     "/learn/courses?sectionId="+id;
  return safeNotificationActionHref(route);
 }
+
+
+/** Legacy notification action precedence is Assessment, Interview,
+ * Application, then Course. The producer must resolve numeric source IDs to
+ * canonical UUIDs after verifying the same learner's membership/college.
+ * External launch is offered only after the authorized producer issues
+ * a vetted HTTPS/HTTP assessment URL. Unknown targets stay without action. */
+export function legacyAuthorizedNotificationAction(input:{
+  collegeId:string;recipientCollegeId:string;
+  assessmentUrl?:string|null;assessmentAuthorized?:boolean;
+  interviewJobId?:string|null;interviewRoundId?:string|null;
+  applicationId?:string|null;courseId?:string|null;
+  recipientOwnsApplication?:boolean;recipientEnrolledInCourse?:boolean;
+}):{label:string;href:string;external:boolean}|null{
+ if(input.collegeId!==input.recipientCollegeId)return null;
+ const external=input.assessmentAuthorized===true
+   ?safeExternalAssessmentUrl(input.assessmentUrl):null;
+ if(external)return {label:"Take Assessment",href:external,external:true};
+ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ if(input.interviewJobId&&input.interviewRoundId&&
+    uuid.test(input.interviewJobId)&&uuid.test(input.interviewRoundId)){
+  const href=safeNotificationActionHref(
+   "/learn/my-placements/schedule?jobId="+input.interviewJobId+
+   "&roundId="+input.interviewRoundId);
+  if(href)return {label:"View Interview",href,external:false};
+ }
+ if(input.recipientOwnsApplication&&input.applicationId&&uuid.test(input.applicationId)){
+  const href=safeNotificationActionHref(
+   "/learn/my-placements/applications?applicationId="+input.applicationId);
+  if(href)return {label:"View in My Applications",href,external:false};
+ }
+ if(input.recipientEnrolledInCourse&&input.courseId&&uuid.test(input.courseId)){
+  const href=safeNotificationActionHref("/learn/courses/"+input.courseId);
+  if(href)return {label:"View Course",href,external:false};
+ }
+ return null;
+}

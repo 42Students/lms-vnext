@@ -110,3 +110,23 @@ export function learnerApplicationRoundDueCopy(
   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
  }).format(date)};
 }
+
+/** Legacy status copy is driven by the last committed status transition
+ * rather than the offer's independent accepted/declined/issued state. */
+export function legacyApplicationDisplayStatus(input:{
+ currentStatus:string;
+ history:readonly ApplicationStatusEvent[];
+}):string{
+ const timeline=[...input.history].sort((a,b)=>
+  a.occurredAt.getTime()-b.occurredAt.getTime()||a.id.localeCompare(b.id));
+ const latest=timeline.at(-1);
+ if(input.currentStatus==="REJECTED")
+  return learnerApplicationRejectionLabel(latest?.toStatus==="REJECTED"
+   ? latest.fromStatus : latest?.toStatus??null);
+ const labels:Readonly<Record<string,string>>={
+  APPLIED:"Applied",SUBMITTED:"Applied",SHORTLISTED:"Shortlisted",
+  ASSESSMENT:"Assessment",INTERVIEW:"Interview",WAITLISTED:"Waitlisted",
+  OFFERED:"Offered",HIRED:"Placed",WITHDRAWN:"Withdrawn",
+ };
+ return labels[input.currentStatus]??"Application status updated";
+}

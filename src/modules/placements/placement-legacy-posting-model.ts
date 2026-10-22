@@ -108,3 +108,41 @@ export function legacyPostingImportantDatesIcs(
   "CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-CALNAME:"+escape(calendarName),
   ...events,"END:VCALENDAR",""].join("\r\n");
 }
+
+/** Historic company jobs could target an organization without a college,
+ * then select batch/class/program/branch per college. A vNext job needs a
+ * concrete college and role-scoped membership; never silently pick the first
+ * campus or change a legacy org-wide job into a college-only listing. */
+export type LegacyJobTargetScope={
+ legacyOrganizationId:number;legacyCollegeId:number|null;
+ legacyProgramIds:readonly number[];legacyClassIds:readonly number[];
+ legacyBatchIds:readonly number[];legacyDepartmentIds:readonly number[];
+ importantDates:readonly {label:string;at:string;type?:string;dateType?:string}[];
+};
+export function legacyJobTargetImportPlan(source:LegacyJobTargetScope,approved:{
+ organizationId:string;collegeId:string|null;
+ programs:ReadonlyMap<number,string>;classes:ReadonlyMap<number,string>;
+ batches:ReadonlyMap<number,string>;departments:ReadonlyMap<number,string>;
+}){
+ if(!Number.isSafeInteger(source.legacyOrganizationId)||source.legacyOrganizationId<1)
+  throw new Error("Legacy job organization has no verified source ID");
+ if(source.legacyCollegeId===null||approved.collegeId===null)
+  return {status:"REQUIRES_ORG_WIDE_APPROVAL" as const,
+   reason:"Organization-wide legacy drives need explicit multi-college grants",
+   importantDates:source.importantDates};
+ const map=(ids:readonly number[],lookup:ReadonlyMap<number,string>,label:string)=>
+  [...new Set(ids)].map(id=>{
+   const resolved=lookup.get(id);
+   if(!resolved)throw new Error("Unmapped "+label+" for legacy job");
+   return resolved;
+  });
+ return {status:"SCOPED" as const,organizationId:approved.organizationId,
+  collegeId:approved.collegeId,
+  programIds:map(source.legacyProgramIds,approved.programs,"program"),
+  sectionIds:map(source.legacyClassIds,approved.classes,"class"),
+  cohortIds:map(source.legacyBatchIds,approved.batches,"batch"),
+  departmentIds:map(source.legacyDepartmentIds,approved.departments,"branch"),
+  importantDates:placementLegacyPostingDetailsSchema.shape.importantDates.parse(
+   source.importantDates),
+ };
+}
