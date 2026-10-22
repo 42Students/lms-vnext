@@ -29,16 +29,17 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
  const sampleCap=storedPlacementPolicyValue("placement.needsAttentionSampleCap",values.get("placement.needsAttentionSampleCap"));
  const conversionThreshold=storedPlacementPolicyValue("placement.lowConversionThreshold",values.get("placement.lowConversionThreshold"));
  const staleBefore=new Date(Date.now()-staleDays*86400000);
- // Distinct paginated active jobs and cross-status KPI counts. Never use the
- // first 60 job rows as the total number of drives in this college.
+ // Distinct active and all-nonarchived counts. Archived drives belong in
+ // their own history and must not inflate closed/draft totals.
  const [driveCounts]=await db.select({
-  all:sql<number>`count(*)::integer`,
+  all:sql<number>`count(*) filter (where ${placementJobs.archivedAt} is null)::integer`,
   published:sql<number>`count(*) filter (where ${placementJobs.status}='PUBLISHED' and ${placementJobs.archivedAt} is null)::integer`,
  }).from(placementJobs).where(eq(placementJobs.collegeId,collegeId));
  const allDriveCount=driveCounts?.all??0;
  const activeDriveCount=driveCounts?.published??0;
- // Every request recomputes current attention and the uncapped counts. The
- // 60-row cap only bounds visible cards, never all-college totals.
+ // Calculate attention for every published job in the permitted college.
+ // Only the returned drive-card preview is bounded to 60; a 61st drive
+ // must still contribute to Needs attention, including deep-linked jobs.
  const snapshotAt=new Date();
  const jobs=await db.select({id:placementJobs.id,title:placementJobs.title,
   companyName:placementCompanies.name,
@@ -49,9 +50,10 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
     eq(placementCompanyRelationships.collegeId,collegeId)))
   .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
   .where(and(eq(placementJobs.collegeId,collegeId),
-    eq(placementJobs.status,"PUBLISHED"),isNull(placementJobs.archivedAt)))
+    eq(placementJobs.status,"PUBLISHED"),isNull(placementJobs.archivedAt),
+    rawJobId?eq(placementJobs.id,rawJobId):undefined))
   .orderBy(desc(sql`coalesce(${placementJobs.publishedAt},${placementJobs.legacyPostedAt},${placementJobs.createdAt})`),
-    desc(placementJobs.id)).limit(60);
+    desc(placementJobs.id));
  // Include a directly opened older or archived job without widening its
  // visibility to public discovery or silently limiting attention to 60 drives.
  if(rawJobId&&!jobs.some(job=>job.id===rawJobId)){
@@ -210,7 +212,7 @@ export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:
    }
   }
  }
- return {jobs:jobs.map(job=>({...job,applicants:counts.get(job.id)?.total??0,
+ return {jobs:jobs.slice(0,60).map(job=>({...job,applicants:counts.get(job.id)?.total??0,
   attention:categories.filter(row=>row.jobId===job.id).reduce((n,row)=>n+row.count,0)})),
   // The legacy Needs attention total is the sum of affected candidate items,
   // not the number of category labels rendered in a grid.
