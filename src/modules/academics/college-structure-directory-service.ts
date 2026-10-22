@@ -195,9 +195,9 @@ export async function listCollegeElectives(context: RequestContext, raw: unknown
       ? { ...rest, includeArchived }
       : {
         ...rest,
-        pageSize: rest.pageSize ?? 20,
-        semesterNumber: rest.semesterNumber ?? semester,
-        status: rest.status ?? (includeArchived === true || includeArchived === "true" ? "ALL" : "ACTIVE"),
+        pageSize: rest["pageSize"] ?? 20,
+        semesterNumber: rest["semesterNumber"] ?? semester,
+        status: rest["status"] ?? (includeArchived === true || includeArchived === "true" ? "ALL" : "ACTIVE"),
       };
   }
   const query = collegeElectiveQuerySchema.parse(normalized);
