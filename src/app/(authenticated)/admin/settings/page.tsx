@@ -88,7 +88,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
   const attendancePolicy=attendanceResult?.ok?attendanceResult.value:null;
   const scopeLabel=adminControlScopeTag(context.adminScope);
   const documentedControls=allSections.reduce((sum,section)=>sum+section.items.filter(item=>
-    editorScope==="COLLEGE"?item.origin!=="PLATFORM":item.origin!=="COLLEGE").length,0);
+    editorScope==="COLLEGE"?item.scope!=="PLATFORM":item.scope!=="PER_COLLEGE").length,0);
   const editingLabel=viewScope==="ORG"?
     organizationHistory?.ok?"Historical cleanup":"Read only":
     viewScope!==editorScope||organizationOnly?"Select scope":
@@ -177,7 +177,8 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
        <OrganizationSettingsCleanup
         organizationId={context.adminScope!.organizationId!}
         ready={organizationHistory.value.ready}
-        entries={organizationHistory.value.entries}/>:
+        entries={organizationHistory.value.entries.map((entry:Record<string,unknown>)=>({
+         key:String(entry.key),value:String(entry.value),version:Number(entry.version)}))}/>:
        viewScope==="ORG"?<Banner tone="warning" role="status">
         Select the organization in the header to inspect or remove its historical unused keys. No new ORG settings can be created.
        </Banner>:

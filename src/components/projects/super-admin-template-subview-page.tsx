@@ -380,8 +380,8 @@ export async function SuperAdminTemplateSubviewPage({
               .slice()
               .sort(
                 (a, b) =>
-                  a.sprintKey.localeCompare(
-                    b.sprintKey,
+                  (a.sprintKey ?? "").localeCompare(
+                    b.sprintKey ?? "",
                   ) ||
                   a.sequence - b.sequence ||
                   a.key.localeCompare(b.key),

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import {z} from "zod";
-import {projectTemplateBlueprintSchema} from "@/modules/projects/validation";
+import {projectTemplateBlueprintSchema,reviseProjectTemplateInputSchema} from "@/modules/projects/validation";
+import {requirePermission} from "@/modules/permissions/policy";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
@@ -103,10 +104,12 @@ export async function PATCH(
       });
       return NextResponse.json({...result,message:"Project template updated"});
     }
+    // Same order as the writer: permission first, then the strict input schema.
+    requirePermission(context,"project-template.manage");
     const result = await reviseProjectTemplate(
       context,
       templateId,
-      body,
+      reviseProjectTemplateInputSchema.parse(body),
     );
 
     return NextResponse.json({...result,message:"Project template updated"});

@@ -36,7 +36,8 @@ export default async function LearnerCalendarPage({searchParams}:{
         error instanceof AcademicsServiceError ||
         error instanceof CoursesServiceError) throw error;
     scheduleWarning = "Unable to load class schedule. Please try again.";
-    schedule = { sections: [], courses: [], events: [], courseLookupWarning: null };
+    schedule = { sections: [], courses: [], events: [], courseLookupWarning: null,
+      lookupStatus: "LOOKUP_FAILED" };
   }
   // Today and upcoming are independent of whichever calendar month is visible.
   // Each metric window is bounded and re-authorized for this learner.

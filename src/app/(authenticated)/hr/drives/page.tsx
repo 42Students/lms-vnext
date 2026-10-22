@@ -23,7 +23,7 @@ import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-lin
 import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-model";
 import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-drive-request-service";
 import {filterOwnRecruiterRequests,requestStageLabel} from "@/modules/placements/recruiter-request-list-model";
-import {recruiterRequestLegacyLabel} from "@/modules/placements/recruiter-drive-request-model";
+import {RECRUITER_REQUEST_STATUSES,recruiterRequestLegacyLabel} from "@/modules/placements/recruiter-drive-request-model";
 import {recruiterCollegeAcademicOverview} from "@/modules/placements/recruiter-college-academic-overview-service";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {HrUnsentDriveAlert} from "@/components/hr/hr-unsent-drive-alert";
@@ -275,7 +275,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         return <li key={req.id} className="min-w-0 py-4">
           <p className="min-w-0 break-words font-semibold text-foreground">{title}</p>
           <p className="mt-1"><StatusBadge tone={req.status==="REJECTED"||req.status==="CANCELLED"?"error":req.status==="SENT_BACK"?"warning":req.status==="DRAFT"?"info":"info"}>
-            {recruiterRequestLegacyLabel(req.status,req.approvedJobStatus?{status:req.approvedJobStatus}:null)}
+            {recruiterRequestLegacyLabel(RECRUITER_REQUEST_STATUSES.find(status=>status===req.status)??"REQUEST",req.approvedJobStatus?{status:req.approvedJobStatus}:null)}
           </StatusBadge><span className="ml-2 text-xs text-muted-foreground" title="Saved request lifecycle">{requestStageLabel(req.status)}</span></p>
           {req.status==="SENT_BACK"?<Alert tone="warning" className="mt-2">
             Placement-cell feedback: {req.decisionNote??"Please contact the placement cell for the requested changes."}

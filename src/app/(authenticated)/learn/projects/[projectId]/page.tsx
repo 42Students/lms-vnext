@@ -157,13 +157,6 @@ export default async function LearnerProjectPage({
     throw error;
   });
 
-  const parsedActivity = parseLearnerProjectActivityFilters({
-    category: activityCategory, from: activityFrom, to: activityTo,
-    beforeTime: activityBeforeTime, beforeId: activityBeforeId,
-  });
-  const filteredActivity = activeSection === "audit" && parsedActivity.success
-    ? await getProjectActivityPage(context, projectId, parsedActivity.data) : { events: [], hasMore: false };
-
   const goals = activeSection === "overview"
     ? await getLearnerProjectGoals(context,projectId)
     : null;
@@ -240,10 +233,7 @@ export default async function LearnerProjectPage({
               occurredAt:event.occurredAt}))} />
       ) : null}
       {goals ? <LearnerProjectGoals overview={goals} /> : null}
-      {activeSection === "audit" ? <LearnerProjectActivity projectId={projectId}
-        events={filteredActivity.events} hasMore={filteredActivity.hasMore} categoryInput={activityCategory}
-        fromInput={activityFrom} toInput={activityTo}
-        beforeTimeInput={activityBeforeTime} beforeIdInput={activityBeforeId} /> : <ProjectWorkspace
+      <ProjectWorkspace
       workspace={shownWorkspace}
       backHref="/learn/projects"
       backLabel="Projects"
@@ -254,7 +244,7 @@ export default async function LearnerProjectPage({
         context.membership?.id ?? null
       }
       activeSection={activeSection}
-      />}
+      />
     </div>
   );
 }

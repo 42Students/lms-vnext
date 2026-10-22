@@ -11,6 +11,38 @@ import {TpoRecruiterMessageReply} from "@/components/tpo/tpo-recruiter-message-r
 import {hasMembershipRole} from "@/modules/identity/context";
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import {getTpoRecruiterThreadDetail} from "@/modules/placements/tpo-recruiter-thread-detail-service";
+import {sql} from "drizzle-orm";
+import {getDb} from "@/db/client";
+
+type ThreadHeaderRow={recruiter_name:string|null;job_title:string|null;company_name:string|null;access_ended:boolean};
+
+/** Header fields for an already-authorized thread, projected the same way as
+ * the recruiter inbox (recruiter name, job subject, company, access state). */
+async function loadThreadHeader(thread:{id:string;collegeId:string}){
+ const result=await getDb().execute<ThreadHeaderRow>(sql`
+  select u.display_name as recruiter_name,j.title as job_title,
+   (select lead.company_name from placement_tpo_leads lead where lead.college_id=t.college_id
+      and lead.recruiter_user_id=t.recruiter_user_id
+      order by lead.updated_at desc,lead.id desc limit 1) as company_name,
+   not exists(select 1 from placement_recruiter_college_grants grant_row
+      inner join placement_company_relationships rel on rel.id=grant_row.company_relationship_id
+      inner join placement_recruiter_profiles pr on pr.user_id=grant_row.recruiter_user_id
+        and pr.company_id=rel.company_id
+      where rel.college_id=t.college_id and rel.status='ACTIVE' and pr.status='ACTIVE'
+        and grant_row.recruiter_user_id=t.recruiter_user_id and grant_row.status='ACTIVE'
+        and grant_row.verification_status='VERIFIED' and grant_row.valid_until>now()) as access_ended
+  from placement_tpo_message_threads t
+  join users u on u.id=t.recruiter_user_id
+  left join placement_jobs j on j.id=t.job_id and j.college_id=t.college_id
+  where t.id=${thread.id}::uuid and t.college_id=${thread.collegeId}::uuid`);
+ const row=result.rows[0];
+ return {
+  participantName:row?.recruiter_name?.trim()||"Unnamed recruiter",
+  subject:row?.job_title||"General recruiter conversation",
+  companyName:row?.company_name??null,
+  accessEnded:Boolean(row?.access_ended),
+ };
+}
 
 export default async function TpoRecruiterConversationPage({params}:{
  params:Promise<{threadId:string}>,
@@ -26,8 +58,12 @@ export default async function TpoRecruiterConversationPage({params}:{
   <ErrorState title="Messages unavailable" description="Recruiter messaging tables are not registered. No messages were loaded."/>
  </div>;
  const {threadId}=await params;
- let data: Awaited<ReturnType<typeof getTpoRecruiterThreadDetail>>;
- try { data = await getTpoRecruiterThreadDetail(context,threadId); }
+ let detail: Awaited<ReturnType<typeof getTpoRecruiterThreadDetail>>;
+ let header: Awaited<ReturnType<typeof loadThreadHeader>>|null=null;
+ try {
+   detail = await getTpoRecruiterThreadDetail(context,threadId);
+   if(detail)header=await loadThreadHeader(detail.thread);
+ }
  catch {
    // Keep the route and scope, so refresh retries the same thread.
    return <div className="min-w-0 space-y-4">
@@ -37,7 +73,8 @@ export default async function TpoRecruiterConversationPage({params}:{
          className="inline-flex min-h-11 items-center font-semibold text-link underline">Retry conversation</Link>} />
    </div>;
  }
- if(!data)notFound();
+ if(!detail||!header)notFound();
+ const data={...detail,thread:{...detail.thread,...header}};
  return <div className="min-w-0 space-y-4" data-testid="tpo.messages.thread">
   <PageHeader title={data.thread.participantName} description={data.thread.subject+" · "+data.total+" messages · Showing the latest 100"}
     actions={<PageBackLink href="/tpo/messages" label="All conversations"/>}/>

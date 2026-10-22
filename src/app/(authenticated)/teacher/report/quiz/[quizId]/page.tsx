@@ -71,8 +71,9 @@ export default async function FacultyQuizReportPage({
           <FacultyReportBackButton fallbackHref="/teacher/allQuizzes"/>
                 <FacultyReportDownload
         kind="quiz"
-        incomplete={facultyReportIsIncomplete({kind:"quiz",eligibleLearners:metrics.eligibleLearners,
-          submittedLearners:metrics.submittedLearners,questionCount:metrics.questionCount})}
+        incomplete={facultyReportIsIncomplete({kind:"quiz",eligibleLearners:metrics.eligibleLearners??0,
+          submittedLearners:metrics.submittedLearners,questionCount:metrics.questionCount,
+          rosterReadFailed:metrics.eligibleLearners===null})}
         title={quiz.title}
         subtitle={[quiz.courseName, quiz.sectionName, quiz.lessonName].join(" · ")}
         summary={[

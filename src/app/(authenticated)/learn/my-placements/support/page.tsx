@@ -80,7 +80,7 @@ export default async function LearnerSupportHistory({searchParams}:{
         className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-[650] text-[var(--lms-link-text)] hover:bg-[rgba(38,186,199,0.07)] hover:underline">
         ← Newer requests
       </Link>:null}
-      {data.hasMore?<Link href={learnerSupportHistoryHref({status:selectedStatus,type:selectedType,page:data.page+1})}
+      {data.olderPage!==null?<Link href={learnerSupportHistoryHref({status:selectedStatus,type:selectedType,page:data.page+1})}
         className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-[650] text-[var(--lms-link-text)] hover:bg-[rgba(38,186,199,0.07)] hover:underline">
         Older requests →
       </Link>:null}

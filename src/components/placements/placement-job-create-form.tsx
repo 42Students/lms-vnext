@@ -786,7 +786,7 @@ export function PlacementJobCreateForm({
         );
       }
 
-      const applicationMode = String(
+      const submittedApplicationMode = String(
         data.get("applicationMode") ??
           "INTERNAL",
       );
@@ -859,9 +859,9 @@ export function PlacementJobCreateForm({
           variableCtcLpa:nullableDecimal(String(data.get("variableLpa")??"")),
           stipendPerMonthInr:nullableInteger(String(data.get("stipendPerMonthInr")??"")),
           isDream:data.get("isDream")==="on",
-          applicationMode,
+          applicationMode: submittedApplicationMode,
           externalApplicationUrl:
-            applicationMode === "INTERNAL"
+            submittedApplicationMode === "INTERNAL"
               ? null
               : String(
                   data.get(
