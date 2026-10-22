@@ -64,6 +64,42 @@ export function LearnerDefaultResumePicker({ initial }: { initial: ResumeList })
       setWorking(false);
     }
   }
+  async function viewResume(id: string) {
+    if (writeRef.current || working) return;
+    writeRef.current = true;
+    setWorking(true);setError(false);setMessage("");
+    try {
+      const result = await command({action:"VIEW",receiptId:id});
+      const url = typeof result.readUrl === "string" ? result.readUrl : "";
+      // A receipt UUID alone does not grant a read; only the server-issued
+      // short-lived HTTPS URL from the authenticated command may be opened.
+      if (!url.startsWith("https://")) throw new Error("Secure resume view is unavailable.");
+      window.location.assign(url);
+    } catch (cause) {
+      setError(true);
+      setMessage(cause instanceof Error ? cause.message : "Could not view this resume.");
+    } finally {
+      writeRef.current = false;
+      setWorking(false);
+    }
+  }
+
+  async function clearDefault() {
+    if (writeRef.current || working || !list.selected) return;
+    writeRef.current = true;
+    setWorking(true);setError(false);setMessage("");
+    try {
+      await command({action:"CLEAR_DEFAULT"});
+      await reload();
+      setMessage("Default resume cleared. Scanned files remain available.");
+    } catch (cause) {
+      setError(true);
+      setMessage(cause instanceof Error ? cause.message : "Could not clear the default resume.");
+    } finally {
+      writeRef.current = false;
+      setWorking(false);
+    }
+  }
   async function confirm(key: string) {
     await command({ action: "CONFIRM", objectKey: key });
     setPendingKey(null);
@@ -139,15 +175,25 @@ export function LearnerDefaultResumePicker({ initial }: { initial: ResumeList })
           }).format(new Date(item.uploadedAt))}
           {list.selected === item.id ? " · Default" : ""}
         </span>
-        <Button type="button" variant="secondary" size="sm"
-          disabled={working || list.selected === item.id}
-          onClick={() => void select(item.id)}>
-          {list.selected === item.id ? "Selected" : "Set as default"}
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button type="button" variant="secondary" size="sm" className="min-h-11 md:min-h-9"
+            aria-label={"View resume " + (index + 1)}
+            disabled={working} onClick={() => void viewResume(item.id)}>View</Button>
+          <Button type="button" variant="secondary" size="sm" className="min-h-11 md:min-h-9"
+            disabled={working || list.selected === item.id}
+            onClick={() => void select(item.id)}>
+            {list.selected === item.id ? "Selected" : "Set as default"}
+          </Button>
+        </div>
       </li>)}
     </ul> : <p className="text-sm text-muted-foreground">
       No clean, active resume receipts yet. Upload a PDF below.
     </p>}
+    {list.selected ? <Button type="button" variant="secondary"
+      className="min-h-11 md:min-h-9" disabled={working}
+      onClick={() => void clearDefault()}>
+      Clear default resume
+    </Button> : null}
     {list.hasUnlistedSelection ? <p role="alert" className="text-sm text-body">
       The previously selected resume is no longer among active scanned receipts.
       Select a valid resume before relying on it for placements.
