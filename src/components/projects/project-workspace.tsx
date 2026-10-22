@@ -744,7 +744,7 @@ export function ProjectWorkspace({
       {mode === "ADMIN" && show("summary") ? (
         <WorkspaceHealthSnapshot workspace={workspace}
           templateHref={(backHref.startsWith("/college/") ? "/college/projects/templates/" : "/admin/projects/templates/") +
-            encodeURIComponent(workspace.project.templateId) +
+            encodeURIComponent(workspace.project.templateId ?? "") +
             (backHref.startsWith("/college/") ? "" : "/overview")} />
       ) : null}
       {show("readiness") ? <WorkspaceReadinessSnapshot workspace={workspace} /> : null}
@@ -1089,7 +1089,7 @@ export function ProjectWorkspace({
           {mode==="ADMIN"&&!readOnly
             ?<CollegeProjectMentorDialog projectId={workspace.project.id}
               collegeId={workspace.project.collegeId}
-              currentMentorName={workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName}/>
+              {...(workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName === undefined ? {} : {currentMentorName:workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName})}/>
             :mode==="ADMIN"?<Button type="button" variant="secondary" disabled>Reassign mentor…</Button>:null}
           {mode==="ADMIN"&&!readOnly&&!workspace.project.teamGroupId
             ?<CollegeProjectStudentRosterDialog projectId={workspace.project.id}
@@ -2170,7 +2170,7 @@ export function ProjectWorkspace({
                   <li key={m.id}>{m.title} · {formatDateTime(m.startsAt)}
                     {m.meetingType?" · "+label(m.meetingType):""}</li>)}</ul>
               </Disclosure>:null}
-              <MentorMeetingHistory projectId={mode==="MENTOR"?workspace.project.id:undefined} meetings={workspace.meetings
+              <MentorMeetingHistory {...(mode==="MENTOR"?{projectId:workspace.project.id}:{})} meetings={workspace.meetings
                 .filter(m=>m.status==="COMPLETED"||m.status==="CANCELLED"||
                   ((m.status==="SCHEDULED"||m.status==="RESCHEDULED")&&new Date(m.endsAt)<=renderTime))
                 .sort((a,b)=>new Date(b.startsAt).getTime()-new Date(a.startsAt).getTime())
