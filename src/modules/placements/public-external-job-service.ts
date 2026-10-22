@@ -47,6 +47,7 @@ export async function createPublicExternalJobLink(context:RequestContext,rawId:u
   const [created]=await tx.insert(placementPublicExternalJobLinks).values({
    jobId:job.id,collegeId:college.id,slug,
   }).returning({slug:placementPublicExternalJobLinks.slug});
+  if(!created)throw new Error("PUBLIC_EXTERNAL_JOB_NOT_FOUND");
   await tx.update(placementJobs).set({publicExternalSlug:created.slug})
    .where(and(eq(placementJobs.id,job.id),eq(placementJobs.collegeId,college.id)));
   return {href:"/jobs/external/"+created.slug,replayed:false};
