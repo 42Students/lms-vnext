@@ -36,11 +36,11 @@ describe.skipIf(!enabled)("Super Admin resources directory disposable PostgreSQL
    await pool.query(`delete from ${table} where id=$1`,[id]);
  }}finally{await pool?.end();await closeDatabaseConnection();}});
  it("returns only resources, hides other kinds and foreign-college content",async()=>{
-  const videos=await listSuperAdminContentDirectory(admin,"RESOURCES",{q:name});
+  const videos=await listSuperAdminContentDirectory(admin,"RESOURCES",{q:name,offeringId:ids.offering});
   expect(videos.items.map(row=>row.id)).toEqual([ids.resource]);
   expect(videos.items[0]).not.toHaveProperty("storageKey");
   const foreign={...admin,adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeB}};
-  expect((await listSuperAdminContentDirectory(foreign,"RESOURCES",{q:name})).items).toHaveLength(0);
+  expect((await listSuperAdminContentDirectory(foreign,"RESOURCES",{q:name,offeringId:ids.offering})).items).toHaveLength(0);
  });
  it("rejects wrong-role and malformed query before a read",async()=>{
   await expect(listSuperAdminContentDirectory({...admin,user:{...admin.user,systemRoles:[]}},"RESOURCES",{}))
