@@ -28,15 +28,15 @@ export function facultyAssignmentCommandReceipt(
  const row=(raw as {assignment:unknown}).assignment;
  if(!row||typeof row!=="object")return false;
  const data=row as Record<string,unknown>;
- if(typeof data.id!=="string"||!data.id||data.deliveryId!==request.deliveryId)return false;
- if(request.action!=="CREATE"&&data.id!==request.assignmentId)return false;
+ if(typeof data["id"]!=="string"||!data["id"]||data["deliveryId"]!==request.deliveryId)return false;
+ if(request.action!=="CREATE"&&data["id"]!==request.assignmentId)return false;
  const allowed=request.action==="ARCHIVE"?["ARCHIVED"]:
   request.action==="PUBLISH"?["PUBLISHED"]:
   request.action==="EDIT"?["DRAFT","PUBLISHED"]:["DRAFT"];
- if(!allowed.includes(String(data.status)))return false;
+ if(!allowed.includes(String(data["status"])))return false;
  if((request.action==="CREATE"||request.action==="EDIT")&&
-   (data.title!==request.title||data.maxPoints!==request.maxPoints))return false;
- return typeof data.updatedAt==="string" && Number.isFinite(Date.parse(data.updatedAt));
+   (data["title"]!==request.title||data["maxPoints"]!==request.maxPoints))return false;
+ return typeof data["updatedAt"]==="string" && Number.isFinite(Date.parse(data["updatedAt"]));
 }
 
 /** The caller owns a synchronous ref lock; a pending command cannot be duplicated. */
@@ -75,7 +75,7 @@ export function facultyAssignmentPublishIssue(dueAt:string|null,now:Date):string
 /** Errors must describe safe recovery, never reflect untrusted HTTP bodies. */
 export function facultyAssignmentCommandError(status:number,body:unknown):string {
  const envelope:Record<string,unknown>=typeof body==="object"&&body!==null?body as Record<string,unknown>:{};
- const code=typeof envelope.error==="string" && /^[A-Z][A-Z0-9_]{0,79}$/.test(envelope.error)?envelope.error:"";
+ const code=typeof envelope["error"]==="string" && /^[A-Z][A-Z0-9_]{0,79}$/.test(envelope["error"])?envelope["error"]:"";
  if(status===401||status===403||code==="FACULTY_TEACHING_SCOPE_REQUIRED")
   return "Teaching access has changed. Reload or sign in with the correct Faculty account.";
  if(code==="ASSIGNMENT_HAS_SUBMISSIONS")
@@ -95,5 +95,5 @@ export function facultyAssignmentCanSaveDraft(
  draft:{title:string;description:string;dueAt:string;maxPoints:number},
  pending:boolean,confirmed:boolean,
 ){
- return Boolean(current)&&!pending&&confirmed&&facultyAssignmentDraftDirty(current!,draft);
+ return current !== null && !pending && confirmed && facultyAssignmentDraftDirty(current,draft);
 }
