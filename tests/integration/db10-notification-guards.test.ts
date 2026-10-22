@@ -98,9 +98,22 @@ async function event() {
   });
 }
 
+beforeAll(async()=>{
+  const own=await newRecipient(SEED_IDS.collegeA,"LEARNER");
+  const foreign=await newRecipient(SEED_IDS.collegeB,"FACULTY");
+  learner=own.context;
+  otherUser=foreign.context;
+});
 beforeEach(cleanup);
 afterAll(async () => {
   await cleanup();
+  // Isolated recipients must not leak unread rows or memberships into later suites.
+  for(const recipient of recipients){
+    await pool.query("DELETE FROM in_app_notifications WHERE user_id=$1",[recipient.userId]);
+    await pool.query("DELETE FROM membership_roles WHERE membership_id=$1",[recipient.membershipId]);
+    await pool.query("DELETE FROM college_memberships WHERE id=$1",[recipient.membershipId]);
+    await pool.query("DELETE FROM users WHERE id=$1",[recipient.userId]);
+  }
   await pool.end();
   await closeDatabaseConnection();
 });

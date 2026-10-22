@@ -12,7 +12,7 @@ describe("College Admin shortlist page recovery",()=>{
   it("recovers a stale bookmark only after an authorized scoped read",()=>{
     const src=readFileSync(join(process.cwd(),
       "src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx"),"utf8");
-    const guard=src.indexOf('hasMembershipRole(context,"COLLEGE_ADMIN")');
+    const guard=src.search(/hasMembershipRole\(context,\s*"COLLEGE_ADMIN"\)/);
     const scopedRead=src.indexOf("getCollegeApplicationPipeline(context, jobId, query)");
     const recovery=src.indexOf("if (query.page > data.totalPages) redirect(");
     expect(guard).toBeGreaterThan(0);
