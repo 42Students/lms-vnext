@@ -81,7 +81,7 @@ export function TopbarOrganizationSwitcher({
         <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
       </svg>
     </span>:null}
-    {open?<PopoverPanel id="lms-topbar-org-switcher" label={"Switch workspace from "+currentName} aria-describedby="lms-org-switcher-context" tabIndex={-1} className={style.orgPopover+" !min-h-0 min-w-0"}
+    {open?<PopoverPanel id="lms-topbar-org-switcher" label={"Switch workspace from "+currentName} aria-describedby="lms-org-switcher-context" tabIndex={-1} style={{minHeight:0}} className={style.orgPopover+" min-w-0"}
       onDismiss={() => { setOpen(false); trigger.current?.focus(); }}>
       <span id="lms-org-switcher-context" className="sr-only">Current workspace: {currentName}</span>
       <p className={style.accountSectionHeading}>Switch workspace</p>

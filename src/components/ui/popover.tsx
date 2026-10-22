@@ -32,6 +32,7 @@ export type PopoverListboxProps = Omit<ComponentPropsWithoutRef<"div">, "role" |
   label: string;
   onDismiss?: () => void;
 };
+const listboxSurfaceClasses = "min-w-0 max-w-[calc(100vw_-_1.5rem)] max-h-[min(20rem,calc(100dvh_-_2rem))] overflow-y-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-0 py-[5px] shadow-[var(--lms-dropdown-shadow)] [&_[role=option]]:min-h-11 [&_[role=option]]:min-w-0 [&_[role=option]]:break-words [&_[role=option]]:px-3 [&_[role=option]]:py-2 [&_[role=option]:hover]:bg-[#d1f1f1] [&_a:hover]:bg-[#d1f1f1] [&_button:hover]:bg-[#d1f1f1]";
 export function PopoverListbox({ label, children, className, onDismiss, onKeyDown, ...props }: PopoverListboxProps) {
   function handleKey(event: KeyboardEvent<HTMLDivElement>) {
     onKeyDown?.(event);
@@ -60,7 +61,7 @@ export function PopoverListbox({ label, children, className, onDismiss, onKeyDow
     options[next]?.focus();
   }
   return <div {...props} onKeyDown={handleKey} data-slot="popover-listbox" role="listbox" aria-label={label}
-    className={cx("min-w-0 max-w-[calc(100vw_-_1.5rem)] max-h-[min(20rem,calc(100dvh_-_2rem))] overflow-y-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-0 py-[5px] shadow-[var(--lms-dropdown-shadow)] [&_[role=option]]:min-h-11 [&_[role=option]]:min-w-0 [&_[role=option]]:break-words [&_[role=option]]:px-3 [&_[role=option]]:py-2 [&_[role=option]:hover]:bg-[#d1f1f1] [&_a:hover]:bg-[#d1f1f1] [&_button:hover]:bg-[#d1f1f1]", className)}>
+    className={cx(listboxSurfaceClasses, className)}>
     {children}
   </div>;
 }

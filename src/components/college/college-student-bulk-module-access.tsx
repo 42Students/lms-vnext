@@ -81,7 +81,7 @@ export function CollegeStudentBulkModuleAccess({students}:{
      {all?"Clear selection":"Select all visible active students"} ({active.length})
    </label>
    <div className="grid max-h-44 gap-2 overflow-auto sm:grid-cols-2">
-     {active.map(row=><label key={row.membershipId} className="flex min-h-10 items-center gap-2 rounded border border-border px-2 text-sm">
+     {active.map(row=><label key={row.membershipId} className="flex min-h-11 items-center gap-2 rounded border border-border px-2 text-sm">
        <Checkbox disabled={busy} checked={selected.includes(row.membershipId)}
          aria-label={"Select "+row.name} onChange={event=>
            setChecked(row.membershipId,event.target.checked)} />

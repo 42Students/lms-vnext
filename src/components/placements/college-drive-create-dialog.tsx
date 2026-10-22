@@ -6,10 +6,11 @@ import {Dialog} from "@/components/ui/dialog";
  * The authorized server-rendered job editor is reused unchanged. */
 export function CollegeDriveCreateDialog({children}:{children:ReactNode}){
  const [open,setOpen]=useState(false),[dirty,setDirty]=useState(false);
+ const [confirmDiscard,setConfirmDiscard]=useState(false);
  const change=(next:boolean)=>{
-  if(!next&&dirty&&!window.confirm("Discard your unsaved job changes?"))return;
+  if(!next&&dirty){setConfirmDiscard(true);return;}
   setOpen(next);
-  if(!next)setDirty(false);
+  if(!next){setDirty(false);setConfirmDiscard(false);}
  };
  return <>
   <Button type="button" className="min-h-11 md:min-h-9" onClick={()=>setOpen(true)}>
@@ -24,6 +25,15 @@ export function CollegeDriveCreateDialog({children}:{children:ReactNode}){
    <div onInput={()=>setDirty(true)} onChange={()=>setDirty(true)} className="min-w-0">
     {children}
    </div>
+  </Dialog>
+  <Dialog open={confirmDiscard} onOpenChange={setConfirmDiscard}
+    role="alertdialog" title="Discard unsaved changes?"
+    description="Discard your unsaved job changes?"
+    footer={<>
+      <Button type="button" variant="secondary" onClick={()=>setConfirmDiscard(false)}>Keep editing</Button>
+      <Button type="button" variant="danger" onClick={()=>{setConfirmDiscard(false);setDirty(false);setOpen(false);}}>Discard changes</Button>
+    </>}>
+    <p className="text-sm text-[var(--lms-body-text)]">Your unsaved job changes will be lost.</p>
   </Dialog>
  </>;
 }
