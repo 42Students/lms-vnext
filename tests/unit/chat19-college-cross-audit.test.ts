@@ -170,9 +170,9 @@ describe("chat-19 college UX cross-audit", () => {
     const selection=read("src/components/academics/elective-eligible-selection.tsx");
     expect(selection).toContain("<DataTable");
     expect(selection).toContain('caption="Eligible students for allocation"');
-    expect(selection).toMatch(/mobilePriority:\\s*"action"/);
-    expect(selection).toMatch(/mobilePriority:\\s*"primary"/);
-    expect(selection).toMatch(/mobilePriority:\\s*"secondary"/);
+    expect(selection).toMatch(/mobilePriority:\s*"action"/);
+    expect(selection).toMatch(/mobilePriority:\s*"primary"/);
+    expect(selection).toMatch(/mobilePriority:\s*"secondary"/);
     expect(selection).toContain('name="membershipId"');
     expect(selection).toContain('empty={<EmptyState title="No eligible learners"');
     expect(selection).not.toContain("<table");
