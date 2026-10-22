@@ -218,7 +218,7 @@ export async function remindTpoRecruiterInvite(
   deliver: (email: string, token: string, expiresAt: Date) => Promise<boolean>,
   now = new Date(),
 ): Promise<{ reminded: true }> {
-  if (process.env.TPO_RECRUITER_REMINDER_READY !== "VERIFIED") {
+  if (process.env["TPO_RECRUITER_REMINDER_READY"] !== "VERIFIED") {
     throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_ALLOWED");
   }
   const collegeId = tpoCrmCollegeIdSchema.parse(collegeIdInput);
