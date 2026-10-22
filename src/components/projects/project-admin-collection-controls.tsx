@@ -159,7 +159,7 @@ export function ProjectAdminFilters({
               ...(query.status==="COMPLETED"?["COMPLETED" as const]:[])] as const):
             PROJECT_STATUSES).map((status) => (
             <option key={status} value={status}>
-              {label(status)}
+              {status==="IN_PROGRESS"?"In progress":label(status)}
             </option>
           ))}
         </Select>

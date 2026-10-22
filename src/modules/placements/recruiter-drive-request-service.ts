@@ -219,7 +219,17 @@ export async function listOwnRecruiterDriveRequests(context:RequestContext,colle
    eq(placementRecruiterDriveRequests.collegeId,id),
    eq(placementRecruiterDriveRequests.recruiterUserId,context.user.id),
    eq(placementRecruiterDriveRequests.companyRelationshipId,scope.relationshipId)))
-   .orderBy(desc(placementRecruiterDriveRequests.createdAt));
+   // Old Recruiter Drives prioritized corrections sent back by the TPO;
+   // stable UUID is the tie-breaker if two requests share a timestamp.
+   .orderBy(sql`case
+     when ${placementRecruiterDriveRequests.status} = 'SENT_BACK' then 0
+     when ${placementRecruiterDriveRequests.status} = 'REQUEST' then 1
+     when ${placementRecruiterDriveRequests.status} = 'DRAFT' then 2
+     when ${placementRecruiterDriveRequests.status} = 'REJECTED' then 3
+     when ${placementRecruiterDriveRequests.status} = 'CANCELLED' then 4
+     else 5 end`,
+     desc(placementRecruiterDriveRequests.createdAt),
+     desc(placementRecruiterDriveRequests.id));
   const approvedIds=requests.flatMap(request=>request.approvedJobId?[request.approvedJobId]:[]);
   const jobs=approvedIds.length?await tx.select({
    id:placementJobs.id,status:placementJobs.status,
