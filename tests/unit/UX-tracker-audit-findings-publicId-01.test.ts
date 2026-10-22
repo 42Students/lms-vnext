@@ -10,7 +10,7 @@ describe("UX-tracker-audit-findings-publicId-01",()=>{
   expect(source).toContain("<PageHeader");
   expect(source).toContain("<IndependentFindingActions");
   expect(source).toContain("<IndependentFindingCopyAction");
-  expect(source).toContain("← Back to audit findings");
+  expect(source).toContain('<PageBackLink href="/tracker/audit-findings" label="Back to audit findings"/>');
   expect(source).toContain("min-h-11");
   expect(source).toContain("focus-visible:outline-2");
   expect(source).toContain("Audit event history");
